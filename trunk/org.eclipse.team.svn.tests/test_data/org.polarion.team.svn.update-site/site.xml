@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+
+   <description url="http://svn.polarion.org/repos/community/Subversive/trunk/update-site">
+      Subversive update site
+   </description>
+   <feature url="features/org.eclipse.team.svn_0.4.7.jar" id="org.eclipse.team.svn" version="0.4.7">
+      <category name="Subversive"/>
+   </feature>
+   <category-def name="Subversive" label="Subversive SVN Team Provider Plugin">
+      <description>
+         Subversive Team Provider for the Subversion version control system
+      </description>
+   </category-def>
+</site>

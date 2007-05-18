@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="org.eclipse.team.svn.mylar"
+   name="%fragmentName"
+   version="1.0.7"
+   provider-name="%providerName"
+   class="org.eclipse.team.svn.mylar.SVNMylarIntegrationPlugin">
+
+   <runtime>
+      <library name="mylar.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+
+	<requires>
+		<import plugin="org.eclipse.core.resources"/>
+		<import plugin="org.eclipse.team.core"/>
+		<import plugin="org.eclipse.team.ui"/>
+		<import plugin="org.eclipse.ui"/>
+		<import plugin="org.eclipse.core.runtime"/>
+		<import plugin="org.eclipse.team.svn.core"/>
+		<import plugin="org.eclipse.team.svn.ui"/>
+		<import plugin="org.eclipse.mylar.team" version="0.9.2" match="greaterOrEqual"/>
+		<import plugin="org.eclipse.mylar.tasks.core" version="0.9.2" match="greaterOrEqual"/>
+		<import plugin="org.eclipse.mylar.tasks.ui" version="2.0.0.v20070221-0830" match="greaterOrEqual"/>
+	</requires>
+	
+	<extension point="org.eclipse.mylar.team.changeSets">
+		<activeChangeSetProvider class="org.eclipse.team.svn.mylar.SVNActiveChangeSetProvider"/>
+<!--		<repository class="org.eclipse.team.svn.mylar.SVNCommitWorkflowProvider"/>-->
+	</extension>
+	
+	<extension point="org.eclipse.core.runtime.adapters">
+		<factory adaptableType="org.eclipse.team.svn.ui.synchronize.SVNChangeSetCollector$SVNCheckedInChangeSet" class="org.eclipse.team.svn.mylar.SVNLinkedTaskInfoAdapterFactory">
+			<adapter type="org.eclipse.mylar.tasks.core.ILinkedTaskInfo"/>
+		</factory>
+		<factory adaptableType="org.eclipse.team.svn.core.client.LogMessage" class="org.eclipse.team.svn.mylar.SVNLinkedTaskInfoAdapterFactory">
+			<adapter type="org.eclipse.mylar.tasks.core.ILinkedTaskInfo"/>
+		</factory>
+	</extension>
+    
+	<extension point="org.eclipse.team.svn.ui.history">
+		<history class="org.eclipse.team.svn.mylar.MylarHistoryViewFactory"/>
+	</extension>
+
+	<extension
+		point="org.eclipse.mylar.tasks.ui.projectLinkProviders">
+		<linkProvider
+			class="org.eclipse.team.svn.mylar.SVNTaskRepositoryLinkProvider"
+			id="org.eclipse.team.svn.mylar.SVNTaskRepositoryLinkProvider"
+			name="Subversive Link Provider"
+			order="100">
+		</linkProvider>
+	</extension>
+
+</plugin>
