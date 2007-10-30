@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <description url="http://www.eclipse.org/subversive/download/update-site">
+      Polarion Software
+   </description>
+   <feature url="features/org.eclipse.team.svn_0.7.0.jar" id="org.eclipse.team.svn" version="0.7.0">
+      <category name="Subversive (Incubation)"/>
+   </feature>
+   <feature url="features/org.eclipse.team.svn.nl1_0.7.0.jar" id="org.eclipse.team.svn.nl1" version="0.7.0">
+      <category name="Subversive (Incubation)"/>
+   </feature>
+   <feature url="features/org.eclipse.team.svn.resource.ignore.rules.jdt_0.7.0.jar" id="org.eclipse.team.svn.resource.ignore.rules.jdt" version="0.7.0">
+      <category name="Subversive (Incubation)"/>
+   </feature>
+   <feature url="features/org.eclipse.team.svn.mylyn_0.7.0.jar" id="org.eclipse.team.svn.mylyn" version="0.7.0">
+      <category name="Subversive Integration (Incubation)"/>
+   </feature>
+   <feature url="features/org.eclipse.team.svn.projectset_0.7.0.jar" id="org.eclipse.team.svn.projectset" version="0.7.0">
+      <category name="Subversive Integration (Incubation)"/>
+   </feature>
+   <feature url="features/org.eclipse.team.svn.source_0.7.0.Sources.jar" id="org.eclipse.team.svn.source" version="0.7.0.Sources">
+      <category name="Subversive Sources (Incubation)"/>
+   </feature>
+   <category-def name="Subversive (Incubation)" label="Subversive SVN Team Provider Plugin">
+      <description>
+         Subversive Team Provider for the Subversion version control system.
+      </description>
+   </category-def>
+   <category-def name="Subversive Integration (Incubation)" label="Subversive Integration Plug-in&apos;s">
+      <description>
+         Subversive Team Provider integration for third party tools.
+      </description>
+   </category-def>
+   <category-def name="Subversive Sources (Incubation)" label="Subversive Sources">
+      <description>
+         Subversive Team Provider development resources.
+      </description>
+   </category-def>
+</site>

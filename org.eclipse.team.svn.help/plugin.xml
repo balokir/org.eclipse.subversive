@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="org.eclipse.team.svn.help"
+   name="%pluginName"
+   version="0.7.0"
+   provider-name="%providerName">
+
+   <requires>
+      <import plugin="org.eclipse.help"/>
+   </requires>
+
+   <extension 
+		id="org.eclipse.team.svn.help.toc"
+		name="Subversive Help"
+		point="org.eclipse.help.toc">
+		
+		<toc file="toc.xml" primary="true"/>
+		<toc file="getting_started.xml" primary="false"/>
+		<toc file="compare_editor.xml" primary="false"/>
+		<toc file="subversive.xml" primary="false"/>
+		<toc file="preferences.xml" primary="false"/>
+		<toc file="subversion.xml" primary="false"/>
+		<toc file="svn_team.xml" primary="false"/>
+		<toc file="svn_actions.xml" primary="false"/>
+   </extension>
+
+   <extension
+         id="org.eclipse.team.svn.help.context"
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts.xml"
+            plugin="org.eclipse.team.svn.help"/>
+   </extension>
+</plugin>

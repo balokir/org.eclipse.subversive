@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="org.eclipse.team.svn.mylyn"
+   name="%fragmentName"
+   version="0.7.0"
+   provider-name="%providerName"
+   class="org.eclipse.team.svn.mylyn.SVNMylynIntegrationPlugin">
+
+	<runtime>
+		<library name=".">
+			<export name="*"/>
+		</library>
+	</runtime>
+   
+	<requires>
+		<import plugin="org.eclipse.core.resources"/>
+		<import plugin="org.eclipse.team.core"/>
+		<import plugin="org.eclipse.team.ui"/>
+		<import plugin="org.eclipse.ui"/>
+		<import plugin="org.eclipse.core.runtime"/>
+		<import plugin="org.eclipse.team.svn.core"/>
+		<import plugin="org.eclipse.team.svn.ui"/>
+		<import plugin="org.eclipse.mylyn.team.ui" version="2.0.0.v20070623-1130" match="greaterOrEqual"/>
+		<import plugin="org.eclipse.mylyn.tasks.core" version="2.0.0.v20070623-1130" match="greaterOrEqual"/>
+		<import plugin="org.eclipse.mylyn.tasks.ui" version="2.0.0.v20070623-1130" match="greaterOrEqual"/>
+	</requires>
+	
+	<extension point="org.eclipse.mylyn.team.ui.changeSets">
+		<activeChangeSetProvider class="org.eclipse.team.svn.mylyn.SVNActiveChangeSetProvider"/>
+<!--		<repository class="org.eclipse.team.svn.mylyn.SVNCommitWorkflowProvider"/>-->
+	</extension>
+	
+	<extension point="org.eclipse.core.runtime.adapters">
+		<factory adaptableType="org.eclipse.team.svn.ui.synchronize.SVNChangeSetCollector$SVNCheckedInChangeSet" class="org.eclipse.team.svn.mylyn.SVNLinkedTaskInfoAdapterFactory">
+			<adapter type="org.eclipse.mylyn.tasks.core.ILinkedTaskInfo"/>
+		</factory>
+		<factory adaptableType="org.eclipse.team.svn.core.client.LogMessage" class="org.eclipse.team.svn.mylyn.SVNLinkedTaskInfoAdapterFactory">
+			<adapter type="org.eclipse.mylyn.tasks.core.ILinkedTaskInfo"/>
+		</factory>
+	</extension>
+    
+	<extension point="org.eclipse.team.svn.ui.history">
+		<history class="org.eclipse.team.svn.mylyn.MylynHistoryViewFactory"/>
+	</extension>
+
+	<extension
+		point="org.eclipse.mylyn.tasks.ui.projectLinkProviders">
+		<linkProvider
+			class="org.eclipse.team.svn.mylyn.SVNTaskRepositoryLinkProvider"
+			id="org.eclipse.team.svn.mylyn.SVNTaskRepositoryLinkProvider"
+			name="Subversive Link Provider"
+			order="100">
+		</linkProvider>
+	</extension>
+
+</plugin>

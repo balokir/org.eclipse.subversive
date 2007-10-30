@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+	<title>Subversive installation instructions</title>
+	<meta name="copyright"  content="Copyright (c) 2005-2007 Polarion Software. All rights reserved. This page is provided under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/epl-v10.html Contributors: Alexander Gurov."/>
+	<LINK REL="STYLESHEET" HREF="../../book.css" CHARSET="ISO-8859-1" TYPE="text/css"/>
+</head>
+<body>
+
+	<table cellpadding = "0" cellspacing = "0" border = "0" width = "100%">
+		<tr>
+			<td class="head_picture">
+				<img src="../../images/guide_1.gif"/>
+			</td>
+			<td class="head_picture" width="100%" align="right">
+				<img src="../../images/guide_2.gif"/>
+			</td>
+		</tr>
+	</table>
+<h3>Subversive installation instructions</h3>
+	<p>Subversive can be simply installed from within Eclipse using update manager. All what the user should do is just point update manager to the remote or local update site. To install Subversive:</p>
+	<ol>
+		<li>
+			Start Eclipse and select menu item <i>'Help > Software Updates > Find and Install...'</i>
+			<br/><br/><img border="0" src="../../images/find_and_install.png" alt="Find and install"/>
+		</li>
+		<li>
+			In the <i>'Install/Update'</i> wizard select <i>'Search for new features to install'</i> option and click on the <i>'Next'</i> button.
+			<br/><br/><img border="0" src="../../images/feature_updates.png" alt="Feature updates"/>
+		</li>
+		<li>
+			The <i>'Install'</i> dialog shows a list of available update sites. Subversive has its own update site, so you need to add it to the list. You are provided a probability to install either from remote or local update site. Installation from remote update site is preferred, because the user just have to refer the site URL. If the user has downloaded local update site distribution as ZIP archive, he should refer it as local update site location.
+			Click on the <i>'New Remote Site...'</i> button to add Subversive update site.
+			<br/><br/><img border="0" src="../../images/update_sites.png" alt="Update sites"/>
+		</li>
+		<li>
+			On the <i>'New Update Site'</i> dialog enter the name of update site and the URL. Use following values:
+			<ul>
+				<li>
+					<b>Name:</b> Subversive
+				</li>
+				<li>
+					<b>URL:</b>
+					<br/>for Subversive 1.1.x:
+					<br/><a href="http://www.polarion.org/projects/subversive/download/1.1/update-site/">http://www.polarion.org/projects/subversive/download/1.1/update-site/</a>
+					<br/>for Subversive 1.0.x:
+					<br/><a href="http://www.polarion.org/projects/subversive/download/update-site/">http://www.polarion.org/projects/subversive/download/update-site/</a>
+				</li>
+			</ul>
+			<br/>Click on the <i>'OK'</i> button to store update site information.
+			<br/><br/><img border="0" src="../../images/new_update_site.png" alt="New update site"/>
+		</li>
+		<li>
+			To start features search in the list of the update sites the user should select <i>'Subversive'</i> and click on the <i>'Finish'</i> button.
+			<br/><br/><img border="0" src="../../images/update_site_subversive.png" alt="Check 'Subversive'"/>
+		</li>
+		<li>
+			Update manager checks update site and shows the list of available features. You can expand the tree and select features to install. Subversive provides following features list.
+			<ul>
+				Required feature, which should be installed unconditionally:
+				<li>
+					<b>SVN Team Provider</b> - The Eclipse Team Provider for the Subversion version control system.
+				</li>
+				<br/><br/>Optional integrations with other plug-ins, which can be installed if you use these plugins and want to have them integrated with Subversive:
+				<li>
+					<b>Subversive Integration for the Mylyn Project</b> - Integration with Mylyn (<a href="http://www.eclipse.org/mylyn/">http://www.eclipse.org/mylyn/</a>). Installation is possible only if Mylyn is already installed or installed in one step with Subversive.
+				</li>
+				<li>
+					<b>Subversive Integration for the CSC ProjectSet Project</b> - Integration with ProjectSet (<a href="http://vpms.de.csc.com/projectset/">http://vpms.de.csc.com/projectset/</a>). Installation is possible only if ProjectSet is already installed or installed in one step with Subversive.
+				</li>
+				<br/><br/>Other optional features:
+				<li>
+					<b>JDT Ignore Extensions</b> - The feature is useful for Java development because it allows to interpret output folders as ignored resources automatically.
+				</li>
+				<li>
+					<b>SVN Team Provider Sources</b> - The sources of the Eclipse Team Provider for Subversion.
+				</li>
+			</ul>
+			<br/>Select SVN Team Provider and other features if required and click on the <i>'Next >'</i> button.
+			<br/><br/><img border="0" src="../../images/install_search_res.png" alt="Feature Search Result"/>
+		</li>
+		<li>
+			Accept terms of license agreement and click on the <i>'Next >'</i> button.
+			<br/><br/><img border="0" src="../../images/install_license.png" alt="Feature License"/>
+		</li>
+		<li>
+			Click on the <i>'Finish'</i> button in order to start the download of selected features.
+			<br/><br/><img border="0" src="../../images/install_finish.png" alt="Finish installation"/>
+		</li>
+		<li>
+			Click on the <i>'Install All'</i> button in order to confirm installation of downloaded features.
+			<br/><br/><img border="0" src="../../images/install_verification.png" alt="Feature verification"/>
+		</li>
+		<li>
+			To apply installation changes and restart Eclipse click on the <i>'Yes'</i> button.
+			<br/><br/><img border="0" src="../../images/restart_dialog.png" alt="Restart dialog"/>
+		</li>
+		<li>
+			After Eclipse restart you should install some Subversive compatible SVN Client. Then you are able to start using Subversive. You can find Subversive perspective and views in correspondent dialogs, activated by menu items <i>'Window > Open Perspective > Other...'</i> and <i>'Window > Show View > Other...'</i>.
+			<br/><br/>
+			<table border="0" cellpadding="5" cellspacing="0">
+				<tr>
+					<td valign="center">
+						<img border="0" src="../../images/open_perspective.png" alt="Open Perspective"/>
+					</td>
+					<td valign="center">
+						<img border="0" src="../../images/show_view.png" alt="Show View"/>
+					</td>
+				</tr>
+			</table>
+		</li>
+	</ol>
+</body>
+</html>
