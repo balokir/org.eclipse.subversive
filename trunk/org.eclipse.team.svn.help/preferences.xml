@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+<?eclipse version="3.0"?>
+
+<toc label="Preferences">
+	<topic label="SVN" href="preferences/pref_svn.html"/>
+	<topic label="Annotate" href="preferences/pref_annotate.html"/>
+	<topic label="Automatic Properties" href="preferences/pref_autoprops.html"/>
+	<topic label="Comment Templates" href="preferences/pref_comments.html"/>
+	<topic label="Console" href="preferences/pref_console.html"/>
+	<topic label="Label Decorations" href="preferences/pref_label_decors.html"/>
+	<topic label="Password Management" href="preferences/pref_pass.html"/>
+	<topic label="Performance" href="preferences/pref_performance.html"/>
+</toc>

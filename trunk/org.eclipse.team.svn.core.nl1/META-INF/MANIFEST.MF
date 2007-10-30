@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Nl1 Fragment
+Bundle-SymbolicName: org.eclipse.team.svn.core.nl1
+Bundle-Version: 0.7.0
+Fragment-Host: org.eclipse.team.svn.core;bundle-version="0.7.0"
+Bundle-Localization: plugin
