@@ -74,7 +74,7 @@ public class LocateResourceURLInHistoryOperation extends AbstractRepositoryOpera
 		IRepositoryLocation location = current.getRepositoryLocation();
 		ISVNClientWrapper proxy = location.acquireSVNProxy();
 		try {
-			LogEntry []msgs = GetLogMessagesOperation.getMessagesImpl(proxy, current, Revision.fromNumber(0), current.getPegRevision(), true, 1, true, this, monitor);
+			LogEntry []msgs = GetLogMessagesOperation.getMessagesImpl(proxy, current, Revision.fromNumber(0), current.getPegRevision(), null, 1, true, this, monitor);
 			if (msgs != null && msgs.length > 0 && msgs[0] != null) {
 				ChangePath []paths = msgs[0].changedPaths;
 				if (paths == null) {

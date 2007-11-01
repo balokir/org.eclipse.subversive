@@ -130,9 +130,9 @@ public final class SVNUtility {
 		return (RepositoryEntry [])entries.toArray(new RepositoryEntry[entries.size()]);
 	}
 	
-	public static LogEntry []logEntries(ISVNClientWrapper proxy, String path, Revision pegRevision, Revision revisionStart, Revision revisionEnd, boolean stopOnCopy, boolean discoverPath, boolean omitLogText, long limit, ISVNProgressMonitor monitor) throws ClientWrapperException {
+	public static LogEntry []logEntries(ISVNClientWrapper proxy, String path, Revision pegRevision, Revision revisionStart, Revision revisionEnd, boolean stopOnCopy, boolean discoverPath, String[] revProps, long limit, ISVNProgressMonitor monitor) throws ClientWrapperException {
 		final ArrayList entries = new ArrayList();
-		proxy.logEntries(path, pegRevision, revisionStart, revisionEnd, stopOnCopy, discoverPath, false, omitLogText, limit, new ILogEntriesCallback() {
+		proxy.logEntries(path, pegRevision, revisionStart, revisionEnd, stopOnCopy, discoverPath, false, revProps, limit, new ILogEntriesCallback() {
 			public void nextEntry(LogEntry log, boolean hasChildren) {
 				entries.add(log);
 			}
