@@ -12,40 +12,44 @@
 package org.eclipse.team.svn.core.client;
 
 /**
- * Replacement for org.tigris.subversion.javahl.CopySource
+ * Copy source information container
+ * 
+ * The JavaHL API's is the only way to interact between SVN and Java-based tools. At the same time JavaHL client library
+ * is not EPL compatible and we won't to pin plug-in with concrete client implementation. So, the only way to do this is
+ * providing our own client interface which will be covered by concrete client implementation.
  * 
  * @author Alexander Gurov
  */
 public class CopySource {
 	/**
-	 * The source path or URL.
+	 * The copy source path or URL.
 	 */
 	public final String path;
 
 	/**
-	 * The source revision.
+	 * The copy source revision.
 	 */
 	public final Revision revision;
 
 	/**
-	 * The peg revision.
+	 * The copy source peg revision. If null points to {@link Revision#HEAD}.
 	 */
 	public final Revision pegRevision;
 
 	/**
-	 * Create a new instance.
+	 * The {@link CopySource} instance could be initialized only once because all fields are final
 	 * 
 	 * @param path
+	 *            the source path
 	 * @param revision
-	 *            The source revision.
+	 *            the source revision.
 	 * @param pegRevision
-	 *            The peg revision. Typically interpreted as
-	 *            {@link org.tigris.subversion.javahl.Revision#HEAD} when
-	 *            <code>null</code>.
+	 *            the source peg revision
 	 */
 	public CopySource(String path, Revision revision, Revision pegRevision) {
 		this.path = path;
 		this.revision = revision;
 		this.pegRevision = pegRevision;
 	}
+
 }

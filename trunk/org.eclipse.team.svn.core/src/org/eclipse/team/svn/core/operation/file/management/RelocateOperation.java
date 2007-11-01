@@ -14,6 +14,7 @@ package org.eclipse.team.svn.core.operation.file.management;
 import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.client.Depth;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -56,7 +57,7 @@ public class RelocateOperation extends AbstractFileOperation {
 				public void run(IProgressMonitor monitor) throws Exception {
 					String path = current.getAbsolutePath();
 					RelocateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn switch --relocate \"" + remote.getUrl() + "\" \"" + RelocateOperation.this.toUrl + "\" \"" + FileUtility.normalizePath(path) + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n");
-					proxy.relocate(SVNUtility.encodeURL(remote.getUrl()), SVNUtility.encodeURL(RelocateOperation.this.toUrl), path, true, new SVNProgressMonitor(RelocateOperation.this, monitor, null));
+					proxy.relocate(SVNUtility.encodeURL(remote.getUrl()), SVNUtility.encodeURL(RelocateOperation.this.toUrl), path, Depth.INFINITY, new SVNProgressMonitor(RelocateOperation.this, monitor, null));
 				}
 			}, monitor, files.length);
 			location.releaseSVNProxy(proxy);

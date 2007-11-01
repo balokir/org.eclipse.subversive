@@ -17,8 +17,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.client.Depth;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.Notify2;
-import org.eclipse.team.svn.core.client.NotifyInformation;
+import org.eclipse.team.svn.core.client.INotificationCallback;
+import org.eclipse.team.svn.core.client.Notification;
 import org.eclipse.team.svn.core.client.Revision;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IRevisionProvider;
@@ -56,8 +56,8 @@ public class CreateFileOperation extends AbstractRepositoryOperation implements 
 		final IRepositoryLocation location = resource.getRepositoryLocation();
 		this.revisionPair = new RevisionPair[1];
 		final ISVNClientWrapper proxy = location.acquireSVNProxy();
-		Notify2 notify = new Notify2() {
-			public void onNotify(NotifyInformation info) {
+		INotificationCallback notify = new INotificationCallback() {
+			public void notify(Notification info) {
 				if (info.revision != Revision.SVN_INVALID_REVNUM) {
 					String []path = new String[] {resource.getUrl()};
 					CreateFileOperation.this.revisionPair[0] = new RevisionPair(info.revision, path, location);
@@ -78,7 +78,7 @@ public class CreateFileOperation extends AbstractRepositoryOperation implements 
 						proxy.doImport(path, 
 								SVNUtility.encodeURL(url), 
 								CreateFileOperation.this.message, 
-								Depth.files,
+								Depth.FILES,
 								true, 
 								true, 
 								new SVNProgressMonitor(CreateFileOperation.this, monitor, null));		

@@ -23,11 +23,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.client.Depth;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.Notify2;
-import org.eclipse.team.svn.core.client.NotifyInformation;
+import org.eclipse.team.svn.core.client.INotificationCallback;
+import org.eclipse.team.svn.core.client.Notification;
 import org.eclipse.team.svn.core.client.Revision;
 import org.eclipse.team.svn.core.client.Status;
-import org.eclipse.team.svn.core.client.StatusCallback;
+import org.eclipse.team.svn.core.client.IStatusCallback;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRemoteStorage;
@@ -44,7 +44,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * 
  * @author Alexander Gurov
  */
-public class RemoteStatusOperation extends AbstractWorkingCopyOperation implements IRemoteStatusOperation, Notify2 {
+public class RemoteStatusOperation extends AbstractWorkingCopyOperation implements IRemoteStatusOperation, INotificationCallback {
 	protected Status []statuses;
 	protected Map pegRevisions;
 
@@ -66,8 +66,8 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 		IResource []resources = FileUtility.shrinkChildNodes(this.operableData());
 
 		final List result = new ArrayList();
-		final StatusCallback cb = new StatusCallback() {
-			public void doStatus(Status status) {
+		final IStatusCallback cb = new IStatusCallback() {
+			public void nextStatus(Status status) {
 				result.add(status);
 			}
 		};
@@ -114,9 +114,9 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 	    }
 	}
 
-    public void onNotify(NotifyInformation info) {
+    public void notify(Notification info) {
     	if (info.revision != Revision.SVN_INVALID_REVNUM) {
-            this.pegRevisions.put(info.path, Revision.getInstance(info.revision));
+            this.pegRevisions.put(info.path, Revision.fromNumber(info.revision));
     	}
     }
     

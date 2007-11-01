@@ -12,16 +12,16 @@
 package org.eclipse.team.svn.core.svnstorage;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import org.eclipse.team.svn.core.client.ClientWrapperException;
 import org.eclipse.team.svn.core.client.Depth;
-import org.eclipse.team.svn.core.client.DirEntry;
+import org.eclipse.team.svn.core.client.RepositoryEntry;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.Info2;
+import org.eclipse.team.svn.core.client.EntryInfo;
 import org.eclipse.team.svn.core.client.NodeKind;
 import org.eclipse.team.svn.core.client.PropertyData;
 import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.RepositoryEntry.Fields;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -63,11 +63,11 @@ public class SVNRepositoryContainer extends SVNRepositoryResource implements IRe
 		//	in result we can perform excessive work but it is acceptable in that case
 		if (retVal == null) {
 			String thisUrl = this.getUrl();
-			DirEntry []children = null;
+			RepositoryEntry []children = null;
 			
 			ISVNClientWrapper proxy = this.getRepositoryLocation().acquireSVNProxy();
 			try {
-				children = proxy.list(SVNUtility.encodeURL(thisUrl), this.getSelectedRevision(), this.getPegRevision(), Depth.immediates, DirEntry.Fields.all, true, new SVNNullProgressMonitor());
+				children = SVNUtility.list(proxy, SVNUtility.encodeURL(thisUrl), this.getSelectedRevision(), this.getPegRevision(), Depth.IMMEDIATES, Fields.ALL, true, new SVNNullProgressMonitor());
 			}
 			finally {
 			    this.getRepositoryLocation().releaseSVNProxy(proxy);
@@ -78,9 +78,9 @@ public class SVNRepositoryContainer extends SVNRepositoryResource implements IRe
 				
 				for (int i = 0; i < children.length; i++) {
 					String childUrl = thisUrl + "/" + children[i].path;
-					SVNRepositoryResource resource = children[i].nodeKind == NodeKind.dir ? (SVNRepositoryResource)this.asRepositoryContainer(childUrl, false) : (SVNRepositoryResource)this.asRepositoryFile(childUrl, false);
-					resource.setRevision(children[i].lastChangedRevision);
-					resource.setInfo(new IRepositoryResource.Info(children[i].lock, children[i].size, children[i].lastAuthor, children[i].lastChanged, children[i].hasProps));
+					SVNRepositoryResource resource = children[i].nodeKind == NodeKind.DIR ? (SVNRepositoryResource)this.asRepositoryContainer(childUrl, false) : (SVNRepositoryResource)this.asRepositoryFile(childUrl, false);
+					resource.setRevision(children[i].revision);
+					resource.setInfo(new IRepositoryResource.Information(children[i].lock, children[i].size, children[i].author, children[i].date, children[i].hasProperties));
 					retVal[i] = resource;
 				}
 				
@@ -93,11 +93,11 @@ public class SVNRepositoryContainer extends SVNRepositoryResource implements IRe
 	
 	protected void getRevisionImpl(ISVNClientWrapper proxy) throws ClientWrapperException {
 		String url = SVNUtility.encodeURL(this.getUrl());
-		Info2 []infos = proxy.info2(url, this.getSelectedRevision(), this.getPegRevision(), false, new SVNNullProgressMonitor());
+		EntryInfo []infos = SVNUtility.info(proxy, url, this.getSelectedRevision(), this.getPegRevision(), Depth.EMPTY, new SVNNullProgressMonitor());
 		if (infos != null && infos.length > 0 && infos[0].lastChangedRevision != Revision.SVN_INVALID_REVNUM) {
-			this.lastRevision = (Revision.Number)Revision.getInstance(infos[0].lastChangedRevision);
-			PropertyData []data = proxy.properties(url, this.getSelectedRevision(), this.getPegRevision(), new SVNNullProgressMonitor());
-			this.setInfo(new IRepositoryResource.Info(infos[0].lock, 0, infos[0].lastChangedAuthor, new Date(infos[0].lastChangedDate), data != null && data.length > 0));
+			this.lastRevision = (Revision.Number)Revision.fromNumber(infos[0].lastChangedRevision);
+			PropertyData []data = SVNUtility.properties(proxy, url, this.getSelectedRevision(), this.getPegRevision(), new SVNNullProgressMonitor());
+			this.setInfo(new IRepositoryResource.Information(infos[0].lock, 0, infos[0].lastChangedAuthor, infos[0].lastChangedDate, data != null && data.length > 0));
 		}
 	}
 	

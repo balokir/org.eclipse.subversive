@@ -13,7 +13,7 @@ package org.eclipse.team.svn.core.history;
 
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.history.provider.FileHistory;
-import org.eclipse.team.svn.core.client.LogMessage;
+import org.eclipse.team.svn.core.client.LogEntry;
 import org.eclipse.team.svn.core.client.Revision;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -28,10 +28,10 @@ public class SVNResourceHistory extends FileHistory {
 	
 	protected ILocalResource local;
 	protected IRepositoryResource remote;
-	protected LogMessage []msgs;
+	protected LogEntry []msgs;
 	protected boolean full;
 
-	public SVNResourceHistory(ILocalResource local, IRepositoryResource remote, LogMessage []msgs, boolean full) {
+	public SVNResourceHistory(ILocalResource local, IRepositoryResource remote, LogEntry []msgs, boolean full) {
 		this.local = local;
 		this.remote = remote;
 		this.msgs = msgs;

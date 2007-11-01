@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.core.resource;
 
-import java.util.Date;
-
 import org.eclipse.team.svn.core.client.ClientWrapperException;
 import org.eclipse.team.svn.core.client.Lock;
 import org.eclipse.team.svn.core.client.Revision;
@@ -24,14 +22,14 @@ import org.eclipse.team.svn.core.client.Revision;
  */
 public interface IRepositoryResource extends IRepositoryBase, IRepositoryResourceFactory {
 	
-	public static class Info {
+	public static class Information {
 		public final Lock lock;
 		public final long fileSize;
 		public final String lastAuthor;
-		public final Date lastChangedDate;
+		public final long lastChangedDate;
 		public final boolean hasProperties;
 		
-		public Info(Lock lock, long fileSize, String lastAuthor, Date lastChangedDate, boolean hasProperties) {
+		public Information(Lock lock, long fileSize, String lastAuthor, long lastChangedDate, boolean hasProperties) {
 			this.lock = lock;
 			this.fileSize = fileSize;
 			this.lastAuthor = lastAuthor;
@@ -66,6 +64,6 @@ public interface IRepositoryResource extends IRepositoryBase, IRepositoryResourc
 	
 	public IRepositoryLocation getRepositoryLocation();
 	
-	public Info getInfo();
+	public Information getInfo();
 	
 }

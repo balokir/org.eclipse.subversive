@@ -35,7 +35,7 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.LogMessage;
+import org.eclipse.team.svn.core.client.LogEntry;
 import org.eclipse.team.svn.core.client.Revision;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
@@ -101,7 +101,7 @@ public class BuiltInAnnotate {
 				IRepositoryResource resource = annotateOp.getRepositoryResource();
 				ISVNClientWrapper proxy = resource.getRepositoryLocation().acquireSVNProxy();
 				try {
-					LogMessage []msgs = GetLogMessagesOperation.getMessagesImpl(proxy, resource, Revision.getInstance(to), Revision.getInstance(from), false, 0, false, this, monitor);
+					LogEntry []msgs = GetLogMessagesOperation.getMessagesImpl(proxy, resource, Revision.fromNumber(to), Revision.fromNumber(from), false, 0, false, this, monitor);
 					for (int i = 0; i < msgs.length; i++) {
 						BuiltInAnnotateRevision revision = (BuiltInAnnotateRevision)revisions.get(String.valueOf(msgs[i].revision));
 						if (revision != null) {

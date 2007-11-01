@@ -20,7 +20,7 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.client.NodeKind;
 import org.eclipse.team.svn.core.client.Revision;
 import org.eclipse.team.svn.core.client.Status;
-import org.eclipse.team.svn.core.client.StatusKind;
+import org.eclipse.team.svn.core.client.Status.Kind;
 import org.eclipse.team.svn.core.operation.local.IRemoteStatusOperation;
 import org.eclipse.team.svn.core.operation.local.RemoteStatusOperation;
 import org.eclipse.team.svn.core.resource.IChangeStateProvider;
@@ -60,7 +60,7 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
     }
 
 	protected IResourceChange handleResourceChange(IRemoteStorage storage, IRemoteStatusOperation rStatusOp, final Status current) {
-		if (current.textStatus == StatusKind.external) {
+		if (current.textStatus == Kind.EXTERNAL) {
 			return null;
 		}
 		final IResource []scope = rStatusOp.getScope();
@@ -73,7 +73,7 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 			}
 			public Revision.Number getChangeRevision() {
 				long changeRev = current.reposLastCmtRevision == Revision.SVN_INVALID_REVNUM ? current.lastChangedRevision : current.reposLastCmtRevision;
-				return changeRev == Revision.SVN_INVALID_REVNUM ? null : (Revision.Number)Revision.getInstance(changeRev);
+				return changeRev == Revision.SVN_INVALID_REVNUM ? null : (Revision.Number)Revision.fromNumber(changeRev);
 			}
 			public int getTextChangeType() {
 				return current.repositoryTextStatus;
@@ -83,7 +83,7 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 			}
 			public int getNodeKind() {
 				int kind = SVNUtility.getNodeKind(current.path, current.nodeKind, true);
-				return kind == NodeKind.none ? SVNUtility.getNodeKind(current.path, current.reposKind, true) : kind;
+				return kind == NodeKind.NONE ? SVNUtility.getNodeKind(current.path, current.reposKind, true) : kind;
 			}
 			public String getLocalPath() {
 				return current.path;
@@ -101,7 +101,7 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 				return FileUtility.selectOneOf(scope, set);
 			}
 		};
-		if (provider.getNodeKind() == NodeKind.none) {
+		if (provider.getNodeKind() == NodeKind.NONE) {
 			return null;
 		}
 		IResourceChange resourceChange = storage.asResourceChange(provider);
@@ -111,7 +111,7 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 		rStatusOp.setPegRevision(resourceChange);
 		IRepositoryResource originator = storage.asRepositoryResource(resourceChange.getResource());
 		if (originator != null) {
-			originator.setSelectedRevision(Revision.getInstance(resourceChange.getRevision()));
+			originator.setSelectedRevision(Revision.fromNumber(resourceChange.getRevision()));
 			originator.setPegRevision(resourceChange.getPegRevision());
 			resourceChange.setOriginator(originator);
 		}

@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.client.Depth;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.Status;
-import org.eclipse.team.svn.core.client.StatusCallback;
+import org.eclipse.team.svn.core.client.IStatusCallback;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -66,8 +66,8 @@ public class GetAllFilesOperation extends AbstractFileOperation implements IFile
 			IRepositoryLocation location = remote.getRepositoryLocation();
 			ISVNClientWrapper proxy = location.acquireSVNProxy();
 			try {
-				proxy.status(file.getAbsolutePath(), Depth.immediates, false, true, true, false, new StatusCallback() {
-					public void doStatus(Status status) {
+				proxy.status(file.getAbsolutePath(), Depth.IMMEDIATES, false, true, true, false, new IStatusCallback() {
+					public void nextStatus(Status status) {
 						allFiles.add(new File(status.path));
 					}
 				}, new SVNProgressMonitor(this, monitor, null));

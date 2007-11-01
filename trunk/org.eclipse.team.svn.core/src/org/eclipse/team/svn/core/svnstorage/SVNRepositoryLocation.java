@@ -26,9 +26,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.client.Depth;
 import org.eclipse.team.svn.core.client.ICredentialsPrompt;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.Info2;
+import org.eclipse.team.svn.core.client.EntryInfo;
 import org.eclipse.team.svn.core.client.Revision;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNClientWrapperFactory;
@@ -544,10 +545,10 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 					proxy.setPrompt(new BaseCredentialsPromptWrapper(null, location));
 			    }
 			    
-				Info2 []infos = null;
+				EntryInfo []infos = null;
 				String url = location.getUrl();
 				try {
-				    infos = proxy.info2(SVNUtility.encodeURL(url), Revision.HEAD, Revision.HEAD, false, new SVNProgressMonitor(this, monitor, null));
+				    infos = SVNUtility.info(proxy, SVNUtility.encodeURL(url), Revision.HEAD, Revision.HEAD, Depth.EMPTY, new SVNProgressMonitor(this, monitor, null));
 				}
 				finally {
 					proxy.dispose();

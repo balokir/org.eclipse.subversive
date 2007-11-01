@@ -264,7 +264,7 @@ public class RepositoryViewMenuEnablementTest extends TestWorkflow {
         RepositoryResource []resources = this.getAllRepositoryResources();
         for(int i = 0; i < resources.length; i++) {
             if (resources[i] instanceof RepositoryFile) {
-                resources[i].getRepositoryResource().setSelectedRevision(Revision.getInstance(123));
+                resources[i].getRepositoryResource().setSelectedRevision(Revision.fromNumber(123));
                 twoRemoteFiles.add(resources[i]);
                 if (twoRemoteFiles.size() == 2) {
                     return (RepositoryResource [])twoRemoteFiles.toArray(new RepositoryResource[twoRemoteFiles.size()]);

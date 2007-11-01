@@ -15,11 +15,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.BlameCallback;
+import org.eclipse.team.svn.core.client.IAnnotationCallback;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.Revision;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -61,17 +60,17 @@ public class GetResourceAnnotationOperation extends AbstractRepositoryOperation 
 		try {
 			String url = SVNUtility.encodeURL(resource.getUrl());
 //			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn blame " + url + "@" + resource.getPegRevision() + " -r 0:" + resource.getSelectedRevision() + " --username \"" + location.getUsername() + "\"\n");
-			proxy.blame(
+			proxy.annotate(
 				url,
 				resource.getPegRevision(),
-				Revision.getInstance(0),
+				Revision.fromNumber(0),
 				resource.getSelectedRevision(),
 				false, false, 
-				new BlameCallback() {
+				new IAnnotationCallback() {
 					protected int lineNumber = 0;
 					protected String noAuthor = SVNTeamPlugin.instance().getResource("SVNInfo.NoAuthor");
 					
-					public void singleLine(long date, long revision, String author, Date merged_date, long merged_revision, String merged_author, String merged_path, String line) {
+					public void nextLine(String line, long revision, long date, String author, long merged_revision, long merged_date, String merged_author, String merged_path) {
 						String []row = new String[] {
 							String.valueOf(revision),
 							author == null ? this.noAuthor : author,

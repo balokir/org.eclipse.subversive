@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.svn.core.IConnectedProjectInformation;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.client.Depth;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.Status;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
@@ -89,7 +90,7 @@ public class RelocateWorkingCopyOperation extends AbstractWorkingCopyOperation i
 								String oldRoot = SVNUtility.getOldRoot(url, children);
 								if (oldRoot != null) {
 									RelocateWorkingCopyOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn switch --relocate \"" + oldRoot + "\" \"" + rootUrl + "\" \"" + FileUtility.normalizePath(path) + "\"" + FileUtility.getUsernameParam(RelocateWorkingCopyOperation.this.location.getUsername()) + "\n");
-									proxy.relocate(oldRoot, rootUrl, path, true, new SVNProgressMonitor(RelocateWorkingCopyOperation.this, monitor, null));
+									proxy.relocate(oldRoot, rootUrl, path, Depth.INFINITY, new SVNProgressMonitor(RelocateWorkingCopyOperation.this, monitor, null));
 									provider.relocateResource();
 									RelocateWorkingCopyOperation.this.resources.add(current);
 								}

@@ -26,6 +26,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
  * Commit operation implementation
@@ -73,7 +74,7 @@ public class GetPropertiesOperation extends AbstractNonLockingOperation implemen
 		ISVNClientWrapper proxy = location.acquireSVNProxy();
 		try {
 //			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn proplist \"" + local.getWorkingCopyPath() + "\"\n");
-			this.properties = proxy.properties(FileUtility.getWorkingCopyPath(this.resource), this.revision, null, new SVNProgressMonitor(this, monitor, null));
+			this.properties = SVNUtility.properties(proxy, FileUtility.getWorkingCopyPath(this.resource), this.revision, null, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 		    location.releaseSVNProxy(proxy);

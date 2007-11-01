@@ -56,7 +56,7 @@ public class CreatePatchOperation extends AbstractRepositoryOperation {
 			proxy.diff(
 				SVNUtility.encodeURL(first.getUrl()), first.getSelectedRevision(), first.getPegRevision(), 
 				SVNUtility.encodeURL(second.getUrl()), second.getSelectedRevision(), second.getPegRevision(), 
-				this.fileName, this.recurse ? Depth.infinity : Depth.immediates, this.ignoreAncestry, this.ignoreDeleted, this.processBinary, 
+				this.fileName, this.recurse ? Depth.INFINITY : Depth.IMMEDIATES, this.ignoreAncestry, this.ignoreDeleted, this.processBinary, 
 				false, false, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {

@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.team.svn.core.client.LogMessage;
+import org.eclipse.team.svn.core.client.LogEntry;
 import org.eclipse.team.svn.core.client.Revision;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
@@ -57,7 +57,7 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  */
 public class SelectRevisionPanel extends AbstractDialogPanel {
 	protected LogMessagesComposite history;
-	protected LogMessage []logMessages;
+	protected LogEntry []logMessages;
 	protected IRepositoryResource resource;
 	protected long currentRevision;
 	protected long []selectedRevisions;
@@ -65,7 +65,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
 	protected int selectionStyle;
 	protected long limit;
 	protected boolean pagingEnabled;
-	protected LogMessage[] selectedLogMessages;
+	protected LogEntry[] selectedLogMessages;
 
 	protected Text resourceLabel;
 	
@@ -296,7 +296,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
         this.showResourceLabel();
     }
     
-    public LogMessage[] getSelectedLogMessages() {
+    public LogEntry[] getSelectedLogMessages() {
         return this.selectedLogMessages;
     }
     
@@ -318,7 +318,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
         
     }
 
-    protected void addPage(LogMessage[] newMessages) {
+    protected void addPage(LogEntry[] newMessages) {
     	if (this.logMessages == null) {
 			this.logMessages = newMessages;
 		}
@@ -329,7 +329,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
 				newList = newList.subList(1, newList.size());
 				oldList.addAll(newList);
 			}		
-			this.logMessages = (LogMessage [])oldList.toArray(new LogMessage[oldList.size()]);		
+			this.logMessages = (LogEntry [])oldList.toArray(new LogEntry[oldList.size()]);		
 		}
     }
     
@@ -352,8 +352,8 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
 							 SelectRevisionPanel.this.pagingEnabled = SelectRevisionPanel.this.limit > 0 && SelectRevisionPanel.this.logMessages == null ? msgsOp.getMessages().length == SelectRevisionPanel.this.limit : msgsOp.getMessages().length == SelectRevisionPanel.this.limit + 1;
 							 SelectRevisionPanel.this.addPage(msgsOp.getMessages());
 						 }
-						 LogMessage[] toShow = SelectRevisionPanel.this.isFilterEnabled() && SelectRevisionPanel.this.logMessages != null ? SelectRevisionPanel.this.filterMessages(SelectRevisionPanel.this.logMessages) : SelectRevisionPanel.this.logMessages;
-						 Revision current = SelectRevisionPanel.this.currentRevision != -1 ? Revision.getInstance(SelectRevisionPanel.this.currentRevision) : null;
+						 LogEntry[] toShow = SelectRevisionPanel.this.isFilterEnabled() && SelectRevisionPanel.this.logMessages != null ? SelectRevisionPanel.this.filterMessages(SelectRevisionPanel.this.logMessages) : SelectRevisionPanel.this.logMessages;
+						 Revision current = SelectRevisionPanel.this.currentRevision != -1 ? Revision.fromNumber(SelectRevisionPanel.this.currentRevision) : null;
 						 SelectRevisionPanel.this.history.setLogMessages(current, toShow, SelectRevisionPanel.this.resource);
 						 SelectRevisionPanel.this.setPagingEnabled();
 					 }
@@ -394,8 +394,8 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
     		msgsOp.setLimit(showAll ? 0 : this.logMessages == null ? this.limit : this.limit + 1);
     		Revision revision = this.resource.getSelectedRevision();
     		if (this.logMessages != null && this.logMessages.length > 1) {
-    			LogMessage lm = this.logMessages[this.logMessages.length - 1];
-    			revision = Revision.getInstance(lm.revision);
+    			LogEntry lm = this.logMessages[this.logMessages.length - 1];
+    			revision = Revision.fromNumber(lm.revision);
     		}    		
     		msgsOp.setSelectedRevision(revision);
     		this.showMessages(msgsOp);
@@ -424,7 +424,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
 	    return this.filterByAuthor.length() > 0 || this.isCommentFilterEnabled; 
 	}
 	
-	protected LogMessage[] filterMessages(LogMessage[] msgs) {
+	protected LogEntry[] filterMessages(LogEntry[] msgs) {
 	    ArrayList filteredMessages = new ArrayList();
 	    for (int i = 0; i < msgs.length; i++) {
 			String author = msgs[i].author;
@@ -437,7 +437,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
 			    }
 			}
 	    }
-	    LogMessage []result = (LogMessage [])filteredMessages.toArray(new LogMessage[filteredMessages.size()]);
+	    LogEntry []result = (LogEntry [])filteredMessages.toArray(new LogEntry[filteredMessages.size()]);
 	    return result.length > 0 ? result : null;	    
 	}
 	

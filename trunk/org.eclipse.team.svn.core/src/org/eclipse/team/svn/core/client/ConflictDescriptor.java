@@ -12,62 +12,170 @@
 package org.eclipse.team.svn.core.client;
 
 /**
- * Replacement for org.tigris.subversion.javahl.ConflictDescriptor
+ * The conflict description container
+ * 
+ * The JavaHL API's is the only way to interact between SVN and Java-based tools. At the same time JavaHL client library
+ * is not EPL compatible and we won't to pin plug-in with concrete client implementation. So, the only way to do this is
+ * providing our own client interface which will be covered by concrete client implementation.
  * 
  * @author Alexander Gurov
  */
 public class ConflictDescriptor {
+	/**
+	 * Conflict kind: content or properties
+	 */
+	public static class Kind {
+		/**
+		 * Conflicting content
+		 */
+		public static final int CONTENT = 0;
+
+		/**
+		 * Conflicting properties
+		 */
+		public static final int PROPERTIES = 1;
+	}
+
+	/**
+	 * The action in result of which conflict occurs
+	 */
+	public static class Action {
+		/**
+		 * Modification of content or properties
+		 */
+		public static final int MODIFY = 0;
+
+		/**
+		 * Adding entry
+		 */
+		public static final int ADD = 1;
+
+		/**
+		 * Deleting entry
+		 */
+		public static final int DELETE = 2;
+	}
+
+	/**
+	 * The reason why the conflict occurs
+	 */
+	public static class Reason {
+		/**
+		 * The entry is locally modified.
+		 */
+		public static final int MODIFIED = 0;
+
+		/**
+		 * Another entry is in the way.
+		 */
+		public static final int OBSTRUCTED = 1;
+
+		/**
+		 * The entry is locally deleted.
+		 */
+		public static final int DELETED = 2;
+
+		/**
+		 * The entry is missing (deleted from the file system).
+		 */
+		public static final int MISSING = 3;
+
+		/**
+		 * The unversioned entry at the path in the working copy.
+		 */
+		public static final int UNVERSIONED = 4;
+	}
+
+	/**
+	 * The conflicted entry path.
+	 */
 	public final String path;
 
 	/**
-	 * @see .Kind
+	 * The conflict kind (see {@link Kind}).
 	 */
 	public final int conflictKind;
 
 	/**
-	 * @see org.tigris.subversion.javahl.NodeKind
+	 * The node kind (see {@link NodeKind}).
 	 */
 	public final int nodeKind;
 
+	/**
+	 * The conflicting property name.
+	 */
 	public final String propertyName;
 
+	/**
+	 * True if entry is binary.
+	 */
 	public final boolean isBinary;
 
+	/**
+	 * The MIME-type of the entry.
+	 */
 	public final String mimeType;
 
-	// svn_wc_conflict_description_t also provides us with an
-	// svn_wc_adm_access_t *. However, that is only useful to
-	// JNI-based APIs written against svn_wc.h. So, we don't (yet)
-	// expose that to JavaHL. We could expose it is a long
-	// representing the memory address of the struct, which could be
-	// passed off to other JNI APIs.
-
 	/**
-	 * @see #Action
+	 * The action in result of which conflict occurs (see {@link Action}).
 	 */
 	public final int action;
 
 	/**
-	 * @see #Reason
+	 * The reason why the conflict occurs (see {@link Reason}).
 	 */
 	public final int reason;
 
-	// File paths, present only when the conflict involves the merging
-	// of two files descended from a common ancestor, here are the
-	// paths of up to four fulltext files that can be used to
-	// interactively resolve the conflict. NOTE: The content of these
-	// files will be in repository-normal form (LF line endings and
-	// contracted keywords).
+	/**
+	 * The base revision content path.
+	 */
 	public final String basePath;
 
-	public final String theirPath;
+	/**
+	 * The repository revision content path.
+	 */
+	public final String remotePath;
 
-	public final String myPath;
+	/**
+	 * The local version content path.
+	 */
+	public final String localPath;
 
+	/**
+	 * The auto-merged content path.
+	 */
 	public final String mergedPath;
 
+	/**
+	 * The {@link ConflictDescriptor} instance could be initialized only once because all fields are final
+	 * 
+	 * @param path
+	 *            the entry path
+	 * @param conflictKind
+	 *            the conflict kind
+	 * @param nodeKind
+	 *            the entry node kind
+	 * @param propertyName
+	 *            the conflicting property name
+	 * @param isBinary
+	 *            is entry binary or not
+	 * @param mimeType
+	 *            the entry MIME-type
+	 * @param action
+	 *            the action which involves conflict
+	 * @param reason
+	 *            the conflict reason
+	 * @param basePath
+	 *            the base version content path
+	 * @param remotePath
+	 *            the repository version content path
+	 * @param localPath
+	 *            the local version content path
+	 * @param mergedPath
+	 *            the auto-merged content path
+	 */
 	public ConflictDescriptor(String path, int conflictKind, int nodeKind, String propertyName, boolean isBinary, String mimeType, int action, int reason, String basePath,
-			String theirPath, String myPath, String mergedPath) {
+			String remotePath, String localPath, String mergedPath) {
 		this.path = path;
 		this.conflictKind = conflictKind;
 		this.nodeKind = nodeKind;
@@ -77,73 +185,9 @@ public class ConflictDescriptor {
 		this.action = action;
 		this.reason = reason;
 		this.basePath = basePath;
-		this.theirPath = theirPath;
-		this.myPath = myPath;
+		this.remotePath = remotePath;
+		this.localPath = localPath;
 		this.mergedPath = mergedPath;
 	}
 
-	/**
-	 * Poor man's enum for <code>svn_wc_conflict_kind_t</code>.
-	 */
-	public final class Kind {
-		/**
-		 * Attempting to change text or props.
-		 */
-		public static final int text = 0;
-
-		/**
-		 * Attempting to add object.
-		 */
-		public static final int property = 1;
-	}
-
-	/**
-	 * Poor man's enum for <code>svn_wc_conflict_action_t</code>.
-	 */
-	public final class Action {
-		/**
-		 * Attempting to change text or props.
-		 */
-		public static final int edit = 0;
-
-		/**
-		 * Attempting to add object.
-		 */
-		public static final int add = 1;
-
-		/**
-		 * Attempting to delete object.
-		 */
-		public static final int delete = 2;
-	}
-
-	/**
-	 * Poor man's enum for <code>svn_wc_conflict_reason_t</code>.
-	 */
-	public final class Reason {
-		/**
-		 * Local edits are already present.
-		 */
-		public static final int edited = 0;
-
-		/**
-		 * Another object is in the way.
-		 */
-		public static final int obstructed = 1;
-
-		/**
-		 * Object is already schedule-delete.
-		 */
-		public static final int deleted = 2;
-
-		/**
-		 * Object is unknown or missing.
-		 */
-		public static final int missing = 3;
-
-		/**
-		 * Object is unversioned.
-		 */
-		public static final int unversioned = 4;
-	}
 }

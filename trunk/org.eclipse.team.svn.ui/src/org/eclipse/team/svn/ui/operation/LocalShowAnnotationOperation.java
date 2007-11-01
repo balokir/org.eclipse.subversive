@@ -56,7 +56,7 @@ public class LocalShowAnnotationOperation extends AbstractWorkingCopyOperation {
     	boolean notExists = local == null || IStateFilter.SF_NOTEXISTS.accept(resource, local.getStatus(), local.getChangeMask());
     	Revision revision = this.revision;
     	if (revision == null) {
-    		revision = notExists || local.getRevision() == -1 ? Revision.HEAD : Revision.getInstance(local.getRevision());
+    		revision = notExists || local.getRevision() == -1 ? Revision.HEAD : Revision.fromNumber(local.getRevision());
     	}
     	
     	final int []viewType = new int[] {SVNTeamPreferences.getAnnotateInt(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.ANNOTATE_USE_QUICK_DIFF_NAME)};

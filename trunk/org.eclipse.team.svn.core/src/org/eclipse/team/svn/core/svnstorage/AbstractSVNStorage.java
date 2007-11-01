@@ -28,6 +28,7 @@ import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.Revision.Kind;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -225,10 +226,10 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 			resource.getRepositoryLocation().getId() + ";" +
 			new String(Base64.encode(resource.getUrl().getBytes())) + ";" +
 			String.valueOf(selectedKind) + ";" + 
-			(selectedKind == Revision.Kind.number ? String.valueOf(((Revision.Number)resource.getSelectedRevision()).getNumber()) : "0") + ";" +
+			(selectedKind == Kind.NUMBER ? String.valueOf(((Revision.Number)resource.getSelectedRevision()).getNumber()) : "0") + ";" +
 			String.valueOf(IRepositoryRoot.KIND_ROOT) + ";" + 
 			String.valueOf(pegKind) + ";" + 
-			(pegKind == Revision.Kind.number ? String.valueOf(((Revision.Number)resource.getPegRevision()).getNumber()) : "0");
+			(pegKind == Kind.NUMBER ? String.valueOf(((Revision.Number)resource.getPegRevision()).getNumber()) : "0");
 		return retVal.getBytes();
 	}
 	
@@ -251,11 +252,11 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		    return null;
 		}
 		int revisionKind = Integer.parseInt(data[3]);
-		Revision selectedRevision = revisionKind == Revision.Kind.number ? Revision.getInstance(Long.parseLong(data[4])) : new ISVNStorage.KindBasedRevision(revisionKind);
+		Revision selectedRevision = revisionKind == Kind.NUMBER ? (Revision)Revision.fromNumber(Long.parseLong(data[4])) : new ISVNStorage.KindBasedRevision(revisionKind);
 		Revision pegRevision = null;
 		if (data.length > 6) {
 			int pegKind = Integer.parseInt(data[6]);
-			pegRevision = pegKind == Revision.Kind.number ? Revision.getInstance(Long.parseLong(data[7])) : new ISVNStorage.KindBasedRevision(pegKind);
+			pegRevision = pegKind == Kind.NUMBER ? (Revision)Revision.fromNumber(Long.parseLong(data[7])) : new ISVNStorage.KindBasedRevision(pegKind);
 		}
 		
 		String urlPart = base64Label ? new String(Base64.decode(data[2].getBytes())) : data[2];

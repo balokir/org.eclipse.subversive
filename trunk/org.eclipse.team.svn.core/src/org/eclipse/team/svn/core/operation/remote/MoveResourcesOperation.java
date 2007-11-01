@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.Notify2;
-import org.eclipse.team.svn.core.client.NotifyInformation;
+import org.eclipse.team.svn.core.client.INotificationCallback;
+import org.eclipse.team.svn.core.client.Notification;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -46,8 +46,8 @@ public class MoveResourcesOperation extends AbstractCopyMoveResourcesOperation {
 		try {
 			for (int i = 0; i < selectedResources.length && !monitor.isCanceled(); i++) {
 				final IRepositoryResource current = selectedResources[i];
-				Notify2 notify = new Notify2() {
-					public void onNotify(NotifyInformation info) {
+				INotificationCallback notify = new INotificationCallback() {
+					public void notify(Notification info) {
 						String []paths = new String [] {current.getUrl(), dstUrl + "/" + current.getName()};
 						MoveResourcesOperation.this.revisionsPairs.add(new RevisionPair(info.revision, paths, location));
 						String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision");

@@ -30,7 +30,7 @@ import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.client.Lock;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
-import org.eclipse.team.svn.core.resource.IRepositoryResource.Info;
+import org.eclipse.team.svn.core.resource.IRepositoryResource.Information;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.repository.model.IToolTipProvider;
 import org.eclipse.team.svn.ui.repository.model.RepositoryBranches;
@@ -137,8 +137,8 @@ public class RepositoryBrowserTableViewer extends TableViewer {
 				}
 				IRepositoryResource rowData1 = ((RepositoryResource)row1).getRepositoryResource();
 				IRepositoryResource rowData2 = ((RepositoryResource)row2).getRepositoryResource();
-				Info info1 = (rowData1).getInfo();
-				Info info2 = (rowData2).getInfo();
+				Information info1 = (rowData1).getInfo();
+				Information info2 = (rowData2).getInfo();
 				if (column == RepositoryBrowserTableViewer.this.getNameColumnIndex()) {
 					boolean cnd1 = rowData1 instanceof IRepositoryContainer;
                     boolean cnd2 = rowData2 instanceof IRepositoryContainer;
@@ -163,8 +163,8 @@ public class RepositoryBrowserTableViewer extends TableViewer {
 					}
 				} else if (info1 != null && info2 != null) {
 					if (column == RepositoryBrowserTableViewer.this.getDateColumnIndex()) {
-						Long c1 = new Long(info1.lastChangedDate != null ? info1.lastChangedDate.getTime() : 0); 
-						Long c2 = new Long(info2.lastChangedDate != null ? info2.lastChangedDate.getTime() : 0);
+						Long c1 = new Long(info1.lastChangedDate); 
+						Long c2 = new Long(info2.lastChangedDate);
 						return c1.compareTo(c2);
 					} else if (column == RepositoryBrowserTableViewer.this.getAuthorColumnIndex()) {
 						String author1 = info1.lastAuthor;

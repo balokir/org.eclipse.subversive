@@ -31,7 +31,7 @@ import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.quickdiff.IQuickDiffReferenceProvider;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.client.RevisionKind;
+import org.eclipse.team.svn.core.client.Revision.Kind;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -167,7 +167,7 @@ public class SVNTeamQuickDiffProvider implements IQuickDiffReferenceProvider, IR
 				IStorageDocumentProvider provider = (IStorageDocumentProvider)this.documentProvider;
 				String encodingTmp = provider.getEncoding(this.editor.getEditorInput());
 				final String encoding = encodingTmp == null ? provider.getDefaultEncoding() : encodingTmp;
-				final GetLocalFileContentOperation contentOp = new GetLocalFileContentOperation(tmp.getResource(), RevisionKind.base);
+				final GetLocalFileContentOperation contentOp = new GetLocalFileContentOperation(tmp.getResource(), Kind.BASE);
 				CompositeOperation op = new CompositeOperation("Operation.PrepareQuickDiff");
 				op.add(contentOp);
 				op.add(new AbstractNonLockingOperation("Operation.InitializeDocument") {

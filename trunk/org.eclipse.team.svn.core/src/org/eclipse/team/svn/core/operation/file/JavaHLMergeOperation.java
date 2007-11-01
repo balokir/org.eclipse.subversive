@@ -16,7 +16,7 @@ import java.io.File;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.client.Depth;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.Notify2;
+import org.eclipse.team.svn.core.client.INotificationCallback;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -31,9 +31,9 @@ public class JavaHLMergeOperation extends AbstractFileOperation {
 	protected IRepositoryResource from1;
 	protected IRepositoryResource from2;
 	protected boolean dryRun;
-	protected Notify2 notify;
+	protected INotificationCallback notify;
 	
-	public JavaHLMergeOperation(File localTo, IRepositoryResource from1, IRepositoryResource from2, boolean dryRun, Notify2 notify) {
+	public JavaHLMergeOperation(File localTo, IRepositoryResource from1, IRepositoryResource from2, boolean dryRun, INotificationCallback notify) {
 		super("Operation.JavaHLMergeFile", new File[] {localTo});
 		this.from1 = from1;
 		this.from2 = from2;
@@ -55,7 +55,7 @@ public class JavaHLMergeOperation extends AbstractFileOperation {
 			proxy.merge(
 				SVNUtility.encodeURL(this.from1.getUrl()), this.from1.getSelectedRevision(),
 				SVNUtility.encodeURL(this.from2.getUrl()), this.from2.getSelectedRevision(),
-				file.getAbsolutePath(), false, Depth.infinity, false, this.dryRun, new SVNProgressMonitor(this, monitor, null));
+				file.getAbsolutePath(), false, Depth.INFINITY, false, this.dryRun, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 			if (this.notify != null) {

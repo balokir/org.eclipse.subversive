@@ -26,14 +26,13 @@ public interface ISVNStorage extends IRepositoryLocationFactory {
 	
 	public static class KindBasedRevision extends Revision {
 		public KindBasedRevision(int kind) {
-			super(kind, true);
+			super(kind);
 		}
 	}
 	
 	public static class InvalidRevision extends Revision.Number {
 		public InvalidRevision() {
-			super(0);
-			this.revNumber = Revision.SVN_INVALID_REVNUM;
+			super(Revision.SVN_INVALID_REVNUM);
 		}
 	}
 

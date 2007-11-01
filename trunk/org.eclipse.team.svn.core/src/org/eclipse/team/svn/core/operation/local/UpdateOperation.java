@@ -122,8 +122,8 @@ public class UpdateOperation extends AbstractConflictDetectionOperation implemen
 		
 		public void progress(int current, int total, ItemState state) {
 			super.progress(current, total, state);
-		    if (state.contentState == NotifyStatus.conflicted_unresolved || 
-		        state.propState == NotifyStatus.conflicted_unresolved) {
+		    if (state.contentState == NotifyStatus.CONFLICTED || 
+		        state.propState == NotifyStatus.CONFLICTED) {
 		        UpdateOperation.this.hasUnresolvedConflict = true;
 			    for (Iterator it = UpdateOperation.this.processed.iterator(); it.hasNext(); ) {
 			        IResource res = (IResource)it.next();

@@ -20,10 +20,10 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.Notify2;
-import org.eclipse.team.svn.core.client.NotifyInformation;
+import org.eclipse.team.svn.core.client.INotificationCallback;
+import org.eclipse.team.svn.core.client.Notification;
 import org.eclipse.team.svn.core.client.Revision;
-import org.eclipse.team.svn.core.client.StatusCallback;
+import org.eclipse.team.svn.core.client.IStatusCallback;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
@@ -31,7 +31,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * 
  * @author Alexander Gurov
  */
-public class RemoteStatusOperation extends AbstractStatusOperation implements Notify2 {
+public class RemoteStatusOperation extends AbstractStatusOperation implements INotificationCallback {
 	protected Map pegRevisions = new HashMap();
 
 	public RemoteStatusOperation(File []files, boolean recursive) {
@@ -54,13 +54,13 @@ public class RemoteStatusOperation extends AbstractStatusOperation implements No
 	    return null;
 	}
 
-    public void onNotify(NotifyInformation info) {
+    public void notify(Notification info) {
     	if (info.revision != Revision.SVN_INVALID_REVNUM) {
-    		this.pegRevisions.put(info.path, Revision.getInstance(info.revision));
+    		this.pegRevisions.put(info.path, Revision.fromNumber(info.revision));
     	}
     }
     
-	protected void reportStatuses(final ISVNClientWrapper proxy, final StatusCallback cb, final File current, IProgressMonitor monitor, int tasks) {
+	protected void reportStatuses(final ISVNClientWrapper proxy, final IStatusCallback cb, final File current, IProgressMonitor monitor, int tasks) {
 		SVNUtility.addSVNNotifyListener(proxy, this);
     	super.reportStatuses(proxy, cb, current, monitor, tasks);
 		SVNUtility.removeSVNNotifyListener(proxy, this);

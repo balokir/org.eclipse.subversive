@@ -31,7 +31,7 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.SVNTeamProvider;
-import org.eclipse.team.svn.core.client.Info2;
+import org.eclipse.team.svn.core.client.EntryInfo;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
@@ -167,7 +167,7 @@ public class AddRepositoryLocationPage extends AbstractVerifiedWizardPage {
 			}
 			if (connectedProjects.size() > 0) {
 				projectsArray = (IProject [])connectedProjects.toArray(new IProject[connectedProjects.size()]);
-				Info2 info = this.getLocationInfo(this.editable);
+				EntryInfo info = this.getLocationInfo(this.editable);
 				this.oldUuid = info == null ? null : info.reposUUID;
 //				if (info == null) {
 //					panel = new ProjectListPanel(projectsArray, false);
@@ -215,7 +215,7 @@ public class AddRepositoryLocationPage extends AbstractVerifiedWizardPage {
 		if (connectedProjects.size() > 0) {
 			if (panel == null) {
 				this.editable.reconfigure();
-				Info2 newInfo = this.getLocationInfo(this.editable);
+				EntryInfo newInfo = this.getLocationInfo(this.editable);
 				if (newInfo == null) {
 					panel = new ProjectListPanel(projectsArray, false);
 				}
@@ -296,7 +296,7 @@ public class AddRepositoryLocationPage extends AbstractVerifiedWizardPage {
 	    }		
 	}
 	
-	protected Info2 getLocationInfo(IRepositoryLocation location) {
+	protected EntryInfo getLocationInfo(IRepositoryLocation location) {
 		try {
 			return SVNUtility.getLocationInfo(location);
 		}

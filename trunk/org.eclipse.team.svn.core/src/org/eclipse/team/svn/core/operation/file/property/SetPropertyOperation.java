@@ -15,6 +15,7 @@ import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.team.svn.core.client.Depth;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.PropertyData;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -72,7 +73,7 @@ public class SetPropertyOperation extends AbstractFileOperation {
 					    final PropertyData property = SetPropertyOperation.this.propertyData[i];
 					    SetPropertyOperation.this.protectStep(new IUnprotectedOperation() {
 	                        public void run(IProgressMonitor monitor) throws Exception {
-	        					proxy.propertySet(current.getAbsolutePath(), property.name, property.data, SetPropertyOperation.this.isRecursive, false, new SVNProgressMonitor(SetPropertyOperation.this, monitor, null));
+	        					proxy.propertySet(current.getAbsolutePath(), property.name, property.data, Depth.infinityOrEmpty(SetPropertyOperation.this.isRecursive), false, new SVNProgressMonitor(SetPropertyOperation.this, monitor, null));
 	                        }
 	                    }, monitor, SetPropertyOperation.this.propertyData.length);
 					}

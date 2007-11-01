@@ -72,7 +72,7 @@ public class ShowAnnotationAction extends AbstractSynchronizeModelAction {
 						IResourceChange change = ((IResourceChange)((ResourceVariant)operation.getSVNSyncInfo().getRemote()).getResource());
 						IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(resource);
 						remote.setPegRevision(change.getPegRevision());
-						remote.setSelectedRevision(Revision.getInstance(change.getRevision()));
+						remote.setSelectedRevision(Revision.fromNumber(change.getRevision()));
 						UIMonitorUtility.doTaskBusyDefault(new RemoteShowAnnotationOperation(remote, operation.getPart().getSite().getPage()));
 					}
 				});

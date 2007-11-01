@@ -17,7 +17,7 @@ import java.util.HashSet;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.Revision.Kind;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -73,7 +73,7 @@ public class PasteAction extends AbstractRepositoryTeamAction {
 
 	public boolean isEnabled() {
 		IRepositoryResource []selected = this.getSelectedRepositoryResources();
-		if (selected.length != 1 || selected[0].getSelectedRevision().getKind() != Revision.Kind.head) {
+		if (selected.length != 1 || selected[0].getSelectedRevision().getKind() != Kind.HEAD) {
 			return false;
 		}
         Clipboard clipboard = new Clipboard(getShell().getDisplay());

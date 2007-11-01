@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.PropertyData;
 import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.PropertyData.BuiltIn;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.UnreportableException;
@@ -26,7 +27,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
-import org.eclipse.team.svn.core.resource.IRepositoryResource.Info;
+import org.eclipse.team.svn.core.resource.IRepositoryResource.Information;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
@@ -67,13 +68,13 @@ public class GetRemoteFolderChildrenOperation extends AbstractNonLockingOperatio
 		IRepositoryResource []tmp = this.parent.getChildren();
 		
 		// handle svn:externals, if present:
-		Info info = this.parent.getInfo();
+		Information info = this.parent.getInfo();
 		if (info != null && info.hasProperties && SVNTeamPreferences.getRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.REPOSITORY_SHOW_EXTERNALS_NAME)) {
 			IRepositoryLocation location = this.parent.getRepositoryLocation();
 			ISVNClientWrapper proxy = location.acquireSVNProxy();
 			try {
 				String remotePath = this.parent.getUrl();
-				PropertyData data = proxy.propertyGet(remotePath, PropertyData.EXTERNALS, this.parent.getSelectedRevision(), this.parent.getPegRevision(), new SVNProgressMonitor(this, monitor, null));
+				PropertyData data = proxy.propertyGet(remotePath, BuiltIn.EXTERNALS, this.parent.getSelectedRevision(), this.parent.getPegRevision(), new SVNProgressMonitor(this, monitor, null));
 				if (data != null) {
 					String []externals = data.value.trim().split("[\\n]+"); // it seems different clients have different behaviours wrt trailing whitespace.. so trim() to be safe
 					if (externals.length > 0) {
@@ -113,7 +114,7 @@ public class GetRemoteFolderChildrenOperation extends AbstractNonLockingOperatio
 								throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]);
 							}
 							if (revision != Revision.SVN_INVALID_REVNUM) {
-								newTmp[tmp.length + i].setSelectedRevision(Revision.getInstance(revision));
+								newTmp[tmp.length + i].setSelectedRevision(Revision.fromNumber(revision));
 							}
 							this.externalsNames.put(newTmp[tmp.length + i], name);
 						}

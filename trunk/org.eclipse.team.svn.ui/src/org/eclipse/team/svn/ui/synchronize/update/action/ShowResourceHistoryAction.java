@@ -63,7 +63,7 @@ public class ShowResourceHistoryAction extends AbstractSynchronizeModelAction {
 		IResourceChange change = ((IResourceChange)((ResourceVariant)operation.getSVNSyncInfo().getRemote()).getResource());
 		IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(resource);
 		remote.setPegRevision(change.getPegRevision());
-		remote.setSelectedRevision(Revision.getInstance(change.getRevision()));
+		remote.setSelectedRevision(Revision.fromNumber(change.getRevision()));
 		return new ShowHistoryViewOperation(remote, 0, 0);
 	}
 

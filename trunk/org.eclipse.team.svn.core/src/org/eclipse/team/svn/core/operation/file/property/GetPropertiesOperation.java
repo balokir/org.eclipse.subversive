@@ -22,6 +22,7 @@ import org.eclipse.team.svn.core.operation.file.AbstractFileOperation;
 import org.eclipse.team.svn.core.operation.file.SVNFileStorage;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
  * Get resource properties operation
@@ -51,7 +52,7 @@ public class GetPropertiesOperation extends AbstractFileOperation {
 		IRepositoryLocation location = remote.getRepositoryLocation();
 		ISVNClientWrapper proxy = location.acquireSVNProxy();
 		try {
-			this.properties = proxy.properties(file.getAbsolutePath(), this.revision, null, new SVNProgressMonitor(this, monitor, null));
+			this.properties = SVNUtility.properties(proxy, file.getAbsolutePath(), this.revision, null, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 			location.releaseSVNProxy(proxy);

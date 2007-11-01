@@ -19,8 +19,8 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.Notify2;
-import org.eclipse.team.svn.core.client.NotifyInformation;
+import org.eclipse.team.svn.core.client.INotificationCallback;
+import org.eclipse.team.svn.core.client.Notification;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IRevisionProvider;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -65,8 +65,8 @@ public class CreateFolderOperation extends AbstractRepositoryOperation implement
 		final String []childUrls = SVNUtility.asURLArray(toBeCreated, true);
 		FileUtility.sort(childUrls);
 		
-		Notify2 notify = new Notify2() {
-			public void onNotify(NotifyInformation info) {
+		INotificationCallback notify = new INotificationCallback() {
+			public void notify(Notification info) {
 				String [] path = childUrls;
 				CreateFolderOperation.this.revisionPair[0] = new RevisionPair(info.revision, path, location);
 				String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision");

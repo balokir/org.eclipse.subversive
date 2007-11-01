@@ -14,9 +14,9 @@ package org.eclipse.team.svn.core.operation.remote;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.client.ChangePath;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.LogMessage;
+import org.eclipse.team.svn.core.client.LogEntry;
 import org.eclipse.team.svn.core.client.Revision;
-import org.eclipse.team.svn.core.client.RevisionKind;
+import org.eclipse.team.svn.core.client.Revision.Kind;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -54,7 +54,7 @@ public class LocateResourceURLInHistoryOperation extends AbstractRepositoryOpera
 		
 		for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
 			final int idx = i;
-			if (this.converted[i].getSelectedRevision().getKind() == RevisionKind.number) {
+			if (this.converted[i].getSelectedRevision().getKind() == Kind.NUMBER) {
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(IProgressMonitor monitor) throws Exception {
 						IRepositoryResource result = LocateResourceURLInHistoryOperation.this.processEntry(LocateResourceURLInHistoryOperation.this.converted[idx], monitor);
@@ -74,7 +74,7 @@ public class LocateResourceURLInHistoryOperation extends AbstractRepositoryOpera
 		IRepositoryLocation location = current.getRepositoryLocation();
 		ISVNClientWrapper proxy = location.acquireSVNProxy();
 		try {
-			LogMessage []msgs = GetLogMessagesOperation.getMessagesImpl(proxy, current, Revision.getInstance(0), current.getPegRevision(), true, 1, true, this, monitor);
+			LogEntry []msgs = GetLogMessagesOperation.getMessagesImpl(proxy, current, Revision.fromNumber(0), current.getPegRevision(), true, 1, true, this, monitor);
 			if (msgs != null && msgs.length > 0 && msgs[0] != null) {
 				ChangePath []paths = msgs[0].changedPaths;
 				if (paths == null) {
@@ -84,7 +84,7 @@ public class LocateResourceURLInHistoryOperation extends AbstractRepositoryOpera
 				int idx = -1;
 				for (int i = 0; i < paths.length; i++) {
 					if (pattern.startsWith(paths[i].path)) {
-						if (paths[i].copySrcPath != null) {
+						if (paths[i].copiedFromPath != null) {
 							idx = i;
 						}
 						break;
@@ -93,16 +93,16 @@ public class LocateResourceURLInHistoryOperation extends AbstractRepositoryOpera
 				if (idx == -1) {
 					return current;
 				}
-				String copiedFrom = location.getRepositoryRoot().getUrl() + paths[idx].copySrcPath + pattern.substring(paths[idx].path.length());
+				String copiedFrom = location.getRepositoryRoot().getUrl() + paths[idx].copiedFromPath + pattern.substring(paths[idx].path.length());
 				
-				long rev = paths[idx].copySrcRevision;
+				long rev = paths[idx].copiedFromRevision;
 				Revision searchRevision = current.getSelectedRevision();
 				long searchRev = ((Revision.Number)searchRevision).getNumber();
 				if (rev < searchRev) {
 					return current;
 				}
 				
-				Revision revison = Revision.getInstance(rev);
+				Revision revison = Revision.fromNumber(rev);
 				IRepositoryResource retVal = current instanceof IRepositoryFile ? (IRepositoryResource)location.asRepositoryFile(copiedFrom, false) : location.asRepositoryContainer(copiedFrom, false);
 				retVal.setPegRevision(revison);
 				retVal.setSelectedRevision(searchRevision);

@@ -15,7 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.svn.core.client.Status;
-import org.eclipse.team.svn.core.client.StatusKind;
+import org.eclipse.team.svn.core.client.Status.Kind;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.RemoteStatusOperation;
@@ -55,7 +55,7 @@ public class ReportRootChangesTest extends TestWorkflow {
                 		int counter = 0;
                 		for (int i = 0; i < statuses.length; i++) {
                 		    if (statuses[i].path.equals(getSecondProject().getLocation().toString()) && 
-                		            statuses[i].repositoryTextStatus == StatusKind.deleted) {           		        
+                		            statuses[i].repositoryTextStatus == Kind.DELETED) {           		        
                 		        counter = -1;
                 		        break;          		        
                 		    }

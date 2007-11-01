@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.history.provider.FileRevision;
-import org.eclipse.team.svn.core.client.LogMessage;
+import org.eclipse.team.svn.core.client.LogEntry;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 
 /**
@@ -28,11 +28,11 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
  * @author Alexander Gurov
  */
 public class SVNRemoteResourceRevision extends FileRevision {
-	protected LogMessage msg;
+	protected LogEntry msg;
 	protected IRepositoryResource remote;
 	protected boolean isDeletionRev;
 
-	public SVNRemoteResourceRevision(IRepositoryResource remote, LogMessage msg) {
+	public SVNRemoteResourceRevision(IRepositoryResource remote, LogEntry msg) {
 		this.remote = remote;
 		this.msg = msg;
 		if (this.msg.changedPaths != null) {

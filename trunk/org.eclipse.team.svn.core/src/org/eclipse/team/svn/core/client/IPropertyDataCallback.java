@@ -12,15 +12,22 @@
 package org.eclipse.team.svn.core.client;
 
 /**
- * Replacement for org.tigris.subversion.javahl.InfoCallback
+ * Property data call-back interface
+ * 
+ * The JavaHL API's is the only way to interact between SVN and Java-based tools. At the same time JavaHL client library
+ * is not EPL compatible and we won't to pin plug-in with concrete client implementation. So, the only way to do this is
+ * providing our own client interface which will be covered by concrete client implementation.
  * 
  * @author Alexander Gurov
  */
-public interface InfoCallback {
+public interface IPropertyDataCallback {
 	/**
-	 * the method will be called for every line in a file.
+	 * This method will be called by the client library for each found entry
 	 * 
-	 * @param info the Info2 object
+	 * @param path
+	 *            the entry path
+	 * @param data
+	 *            the properties on the path
 	 */
-	public void singleInfo(Info2 info);
+	public void nextEntry(String path, PropertyData[] data);
 }

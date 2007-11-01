@@ -19,7 +19,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.Revision;
-import org.eclipse.team.svn.core.client.RevisionKind;
+import org.eclipse.team.svn.core.client.Revision.Kind;
 import org.eclipse.team.svn.core.operation.AbstractGetFileContentOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -38,11 +38,11 @@ public class GetLocalFileContentOperation extends AbstractGetFileContentOperatio
 	public GetLocalFileContentOperation(IResource resource, int revisionKind) {
 		super("Local");
 		this.resource = resource;
-		this.revision = revisionKind == RevisionKind.base ? Revision.BASE : Revision.WORKING;
+		this.revision = revisionKind == Kind.BASE ? Revision.BASE : Revision.WORKING;
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		if (this.revision.getKind() == RevisionKind.base) {
+		if (this.revision.getKind() == Kind.BASE) {
 		    IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(this.resource);
 			ISVNClientWrapper proxy = location.acquireSVNProxy();
 			FileOutputStream stream = null;

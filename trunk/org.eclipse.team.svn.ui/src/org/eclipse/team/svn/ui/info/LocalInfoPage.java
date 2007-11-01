@@ -27,7 +27,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.Info2;
+import org.eclipse.team.svn.core.client.EntryInfo;
 import org.eclipse.team.svn.core.client.Lock;
 import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
 import org.eclipse.team.svn.core.operation.local.InfoOperation;
@@ -93,7 +93,7 @@ public class LocalInfoPage extends PropertyPage {
 		content.setEditable(false);
 		content.setText(SVNUtility.getStatusText(local.getStatus()));
 		
-		Info2 info = op.getInfo();
+		EntryInfo info = op.getInfo();
 		if (IStateFilter.SF_ONREPOSITORY.accept(resource, local.getStatus(), local.getChangeMask()) && info != null) {
 		    // add space
 		    new Label(composite, SWT.WRAP);

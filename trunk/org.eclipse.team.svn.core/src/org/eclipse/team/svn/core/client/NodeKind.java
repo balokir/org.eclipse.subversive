@@ -12,31 +12,33 @@
 package org.eclipse.team.svn.core.client;
 
 /**
- * Replacement for org.tigris.subversion.javahl.NodeKind
+ * Entry node kind enumeration
+ * 
+ * The JavaHL API's is the only way to interact between SVN and Java-based tools. At the same time JavaHL client library
+ * is not EPL compatible and we won't to pin plug-in with concrete client implementation. So, the only way to do this is
+ * providing our own client interface which will be covered by concrete client implementation.
  * 
  * @author Alexander Gurov
  */
 public class NodeKind {
-    /** absent */
-    public static final int none = 0;
+	/**
+	 * The entry is absent.
+	 */
+	public static final int NONE = 0;
 
-    /** regular file */
-    public static final int file = 1;
+	/**
+	 * The entry is a file
+	 */
+	public static final int FILE = 1;
 
-    /** directory */
-    public static final int dir = 2;
+	/**
+	 * The entry is a directory
+	 */
+	public static final int DIR = 2;
 
-    /** something's here, but we don't know what */
-    public static final int unknown = 3;
+	/**
+	 * The entry kind is unknown
+	 */
+	public static final int UNKNOWN = 3;
 
-    /**
-     * mapping for the constants to text
-     */
-	public static final String[] NAMES = {
-		"none",
-		"file",
-		"dir",
-		"unknown",
-	};
-	
 }

@@ -12,18 +12,20 @@
 package org.eclipse.team.svn.core.client;
 
 /**
- * Replacement for org.tigris.subversion.javahl.LogMessageCallback
+ * Status information call-back interface
+ * 
+ * The JavaHL API's is the only way to interact between SVN and Java-based tools. At the same time JavaHL client library
+ * is not EPL compatible and we won't to pin plug-in with concrete client implementation. So, the only way to do this is
+ * providing our own client interface which will be covered by concrete client implementation.
  * 
  * @author Alexander Gurov
  */
-public interface LogMessageCallback
-{
-    /**
-     * The method will be called for every log message.
-     *
-     * @param log   complete log message
-     * @param hasChildren    when merge sensitive option was requested,
-     *                       whether or not this entry has child entries.
-     */
-    public void singleMessage(LogMessage log, boolean hasChildren);
+public interface IStatusCallback {
+	/**
+	 * This method will be called by the client library for each status entry
+	 * 
+	 * @param status
+	 *            the {@link Status} entry instance
+	 */
+	public void nextStatus(Status status);
 }

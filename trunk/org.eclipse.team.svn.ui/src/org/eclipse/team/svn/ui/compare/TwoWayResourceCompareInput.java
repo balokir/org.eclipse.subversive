@@ -26,7 +26,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.svn.core.client.Status;
-import org.eclipse.team.svn.core.client.StatusKind;
+import org.eclipse.team.svn.core.client.Status.Kind;
 import org.eclipse.team.svn.core.operation.remote.LocateResourceURLInHistoryOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
@@ -104,14 +104,14 @@ public class TwoWayResourceCompareInput extends ResourceCompareInput {
 		right = op.getRepositoryResources()[1];
 
 		// invert diffKind and swap content in order to make compare view the same as Eclipse "Compare Each Other"
-		int diffKind = ResourceCompareInput.getDiffKind(st.textStatus, st.propStatus, StatusKind.normal);
+		int diffKind = ResourceCompareInput.getDiffKind(st.textStatus, st.propStatus, Kind.NORMAL);
 		diffKind = diffKind == Differencer.DELETION ? Differencer.ADDITION : (diffKind == Differencer.ADDITION ? Differencer.DELETION : diffKind);
 		
-		return new CompareNode(parent, diffKind, right, left, st.textStatus == StatusKind.normal ? st.propStatus : st.textStatus);
+		return new CompareNode(parent, diffKind, right, left, st.textStatus == Kind.NORMAL ? st.propStatus : st.textStatus);
 	}
 	
 	protected IDiffContainer makeStubNode(IDiffContainer parent, IRepositoryResource node) {
-		return new CompareNode(parent, Differencer.NO_CHANGE, node, node, StatusKind.normal);
+		return new CompareNode(parent, Differencer.NO_CHANGE, node, node, Kind.NORMAL);
 	}
 	
 	protected boolean isThreeWay() {
@@ -123,7 +123,7 @@ public class TwoWayResourceCompareInput extends ResourceCompareInput {
 			public void setLabelProvider(IBaseLabelProvider labelProvider) {
 				super.setLabelProvider(new LabelProviderWrapper((ILabelProvider)labelProvider) {
 					public Image getImage(Object element) {
-						if (element instanceof CompareNode && ((CompareNode)element).getStatusKind() == StatusKind.replaced) {
+						if (element instanceof CompareNode && ((CompareNode)element).getStatusKind() == Kind.REPLACED) {
 							Image image = (Image)this.images.get(element);
 							if (image == null) {
 								OverlayedImageDescriptor imageDescriptor = new OverlayedImageDescriptor(baseProvider.getImage(element), SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/replaced_2way.gif"), new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V);
@@ -144,8 +144,8 @@ public class TwoWayResourceCompareInput extends ResourceCompareInput {
 		public CompareNode(IDiffContainer parent, int kind, IRepositoryResource left, IRepositoryResource right, int statusKindLeftToRight) {
 			super(parent, kind);
 			this.statusKind = statusKindLeftToRight;
-			this.setRight(new ResourceElement(right, statusKindLeftToRight == StatusKind.added ? StatusKind.none : StatusKind.normal));
-			this.setLeft(new ResourceElement(left, statusKindLeftToRight == StatusKind.deleted ? StatusKind.none : StatusKind.normal));
+			this.setRight(new ResourceElement(right, statusKindLeftToRight == Kind.ADDED ? Kind.NONE : Kind.NORMAL));
+			this.setLeft(new ResourceElement(left, statusKindLeftToRight == Kind.DELETED ? Kind.NONE : Kind.NORMAL));
 		}
 
 		public int getStatusKind() {

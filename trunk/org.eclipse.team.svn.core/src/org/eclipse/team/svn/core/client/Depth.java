@@ -12,108 +12,67 @@
 package org.eclipse.team.svn.core.client;
 
 /**
- * Replacement for org.tigris.subversion.javahl.Depth
+ * Repository or working copy traversal depth
+ * 
+ * The JavaHL API's is the only way to interact between SVN and Java-based tools. At the same time JavaHL client library
+ * is not EPL compatible and we won't to pin plug-in with concrete client implementation. So, the only way to do this is
+ * providing our own client interface which will be covered by concrete client implementation.
  * 
  * @author Alexander Gurov
  */
 public final class Depth {
-	/*
-	 * The order of these depths is important: the higher the number, the deeper
-	 * it descends. This allows us to compare two depths numerically to decide
-	 * which should govern.
+	/**
+	 * Depth undetermined or ignored.
 	 */
-
-	/** Depth undetermined or ignored. */
-	public static final int unknown = -2;
-
-	/** Exclude (i.e, don't descend into) directory D. */
-	public static final int exclude = -1;
+	public static final int UNKNOWN = -2;
 
 	/**
-	 * Just the named directory D, no entries. Updates will not pull in any
-	 * files or subdirectories not already present.
+	 * Exclude (i.e, don't descend into) directory D.
 	 */
-	public static final int empty = 0;
+	public static final int EXCLUDE = -1;
 
 	/**
-	 * D + its file children, but not subdirs. Updates will pull in any files
-	 * not already present, but not subdirectories.
+	 * Just the named file or folder without entries.
 	 */
-	public static final int files = 1;
+	public static final int EMPTY = 0;
 
 	/**
-	 * D + immediate children (D and its entries). Updates will pull in any
-	 * files or subdirectories not already present; those subdirectories'
-	 * this_dir entries will have depth-empty.
+	 * The folder and child files.
 	 */
-	public static final int immediates = 2;
+	public static final int FILES = 1;
 
 	/**
-	 * D + all descendants (full recursion from D). Updates will pull in any
-	 * files or subdirectories not already present; those subdirectories'
-	 * this_dir entries will have depth-infinity. Equivalent to the pre-1.5
-	 * default update behavior.
+	 * The folder and all direct child entries.
 	 */
-	public static final int infinity = 3;
+	public static final int IMMEDIATES = 2;
 
-    /**
-     * @return A depth value of {@link #infinity} when
-     * <code>recurse</code> is <code>true</code>, or {@link #empty}
-     * otherwise.
-     */
-    public static final int infinityOrEmpty(boolean recurse)
-    {
-        return (recurse ? infinity : empty);
-    }
+	/**
+	 * The folder and all descendants at any depth.
+	 */
+	public static final int INFINITY = 3;
 
-    /**
-     * @return A depth value of {@link #infinity} when
-     * <code>recurse</code> is <code>true</code>, or {@link #files}
-     * otherwise.
-     */
-    public static final int infinityOrFiles(boolean recurse)
-    {
-        return (recurse ? infinity : files);
-    }
+	public static final int infinityOrEmpty(boolean recurse) {
+		return (recurse ? Depth.INFINITY : Depth.EMPTY);
+	}
 
-    /**
-     * @return A depth value of {@link #infinity} when
-     * <code>recurse</code> is <code>true</code>, or {@link
-     * #immediates} otherwise.
-     */
-    public static final int infinityOrImmediates(boolean recurse)
-    {
-        return (recurse ? infinity : immediates);
-    }
+	public static final int infinityOrFiles(boolean recurse) {
+		return (recurse ? Depth.INFINITY : Depth.FILES);
+	}
 
-    /**
-     * @return A depth value of {@link #unknown} when
-     * <code>recurse</code> is <code>true</code>, or {@link #empty}
-     * otherwise.
-     */
-    public static final int unknownOrEmpty(boolean recurse)
-    {
-        return (recurse ? unknown : empty);
-    }
+	public static final int infinityOrImmediates(boolean recurse) {
+		return (recurse ? Depth.INFINITY : Depth.IMMEDIATES);
+	}
 
-    /**
-     * @return A depth value of {@link #unknown} when
-     * <code>recurse</code> is <code>true</code>, or {@link #files}
-     * otherwise.
-     */
-    public static final int unknownOrFiles(boolean recurse)
-    {
-        return (recurse ? unknown : files);
-    }
+	public static final int unknownOrEmpty(boolean recurse) {
+		return (recurse ? Depth.UNKNOWN : Depth.EMPTY);
+	}
 
-    /**
-     * @return A depth value of {@link #unknown} when
-     * <code>recurse</code> is <code>true</code>, or {@link
-     * #immediates} otherwise.
-     */
-    public static final int unknownOrImmediates(boolean recurse)
-    {
-        return (recurse ? unknown : immediates);
-    }
-    
+	public static final int unknownOrFiles(boolean recurse) {
+		return (recurse ? Depth.UNKNOWN : Depth.FILES);
+	}
+
+	public static final int unknownOrImmediates(boolean recurse) {
+		return (recurse ? Depth.UNKNOWN : Depth.IMMEDIATES);
+	}
+
 }

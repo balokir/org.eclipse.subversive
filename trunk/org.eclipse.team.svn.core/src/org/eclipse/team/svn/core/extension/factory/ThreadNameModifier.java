@@ -13,26 +13,24 @@ package org.eclipse.team.svn.core.extension.factory;
 
 import java.io.OutputStream;
 
-import org.eclipse.team.svn.core.client.BlameCallback;
 import org.eclipse.team.svn.core.client.ClientWrapperException;
-import org.eclipse.team.svn.core.client.ConflictResolverCallback;
 import org.eclipse.team.svn.core.client.CopySource;
-import org.eclipse.team.svn.core.client.DirEntry;
+import org.eclipse.team.svn.core.client.IAnnotationCallback;
+import org.eclipse.team.svn.core.client.IConflictResolutionCallback;
 import org.eclipse.team.svn.core.client.ICredentialsPrompt;
+import org.eclipse.team.svn.core.client.IEntryInfoCallback;
+import org.eclipse.team.svn.core.client.ILogEntriesCallback;
+import org.eclipse.team.svn.core.client.INotificationCallback;
+import org.eclipse.team.svn.core.client.IPropertyDataCallback;
+import org.eclipse.team.svn.core.client.IRepositoryEntryCallback;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.ISVNProgressMonitor;
-import org.eclipse.team.svn.core.client.Info2;
-import org.eclipse.team.svn.core.client.InfoCallback;
-import org.eclipse.team.svn.core.client.LogMessage;
-import org.eclipse.team.svn.core.client.LogMessageCallback;
+import org.eclipse.team.svn.core.client.IStatusCallback;
 import org.eclipse.team.svn.core.client.MergeInfo;
-import org.eclipse.team.svn.core.client.Notify2;
 import org.eclipse.team.svn.core.client.PropertyData;
-import org.eclipse.team.svn.core.client.ProplistCallback;
 import org.eclipse.team.svn.core.client.Revision;
 import org.eclipse.team.svn.core.client.RevisionRange;
 import org.eclipse.team.svn.core.client.Status;
-import org.eclipse.team.svn.core.client.StatusCallback;
 import org.eclipse.team.svn.core.utility.StringId;
 
 /**
@@ -57,10 +55,10 @@ public class ThreadNameModifier implements ISVNClientWrapper {
 		}
 	}
 
-	public void blame(String path, Revision pegRevision, Revision revisionStart, Revision revisionEnd, boolean ignoreMimeType, boolean includeMergedRevisions, BlameCallback callback, ISVNProgressMonitor monitor) throws ClientWrapperException {
+	public void annotate(String path, Revision pegRevision, Revision revisionStart, Revision revisionEnd, boolean ignoreMimeType, boolean includeMergedRevisions, IAnnotationCallback callback, ISVNProgressMonitor monitor) throws ClientWrapperException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.client.blame(path, pegRevision, revisionStart, revisionEnd, ignoreMimeType, includeMergedRevisions, callback, monitor);
+			this.client.annotate(path, pegRevision, revisionStart, revisionEnd, ignoreMimeType, includeMergedRevisions, callback, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
@@ -127,17 +125,7 @@ public class ThreadNameModifier implements ISVNClientWrapper {
 		}
 	}
 
-	public Status []diffStatus(String url1, Revision pegRevision1, Revision revision1, String url2, Revision pegRevision2, Revision revision2, int depth, boolean ignoreAncestry, ISVNProgressMonitor monitor) throws ClientWrapperException {
-		String oldName = this.overrideThreadName();
-		try {
-			return this.client.diffStatus(url1, pegRevision1, revision1, url2, pegRevision2, revision2, depth, ignoreAncestry, monitor);
-		}
-		finally {
-			this.restoreThreadName(oldName);
-		}
-	}
-
-	public void diffStatus(String url1, Revision pegRevision1, Revision revision1, String url2, Revision pegRevision2, Revision revision2, int depth, boolean ignoreAncestry, StatusCallback cb, ISVNProgressMonitor monitor) throws ClientWrapperException {
+	public void diffStatus(String url1, Revision pegRevision1, Revision revision1, String url2, Revision pegRevision2, Revision revision2, int depth, boolean ignoreAncestry, IStatusCallback cb, ISVNProgressMonitor monitor) throws ClientWrapperException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.diffStatus(url1, pegRevision1, revision1, url2, pegRevision2, revision2, depth, ignoreAncestry, cb, monitor);
@@ -197,10 +185,10 @@ public class ThreadNameModifier implements ISVNClientWrapper {
 		}
 	}
 
-	public Notify2 getNotification2() {
+	public INotificationCallback getNotificationCallback() {
 		String oldName = this.overrideThreadName();
 		try {
-			return this.client.getNotification2();
+			return this.client.getNotificationCallback();
 		}
 		finally {
 			this.restoreThreadName(oldName);
@@ -211,16 +199,6 @@ public class ThreadNameModifier implements ISVNClientWrapper {
 		String oldName = this.overrideThreadName();
 		try {
 			return this.client.getPrompt();
-		}
-		finally {
-			this.restoreThreadName(oldName);
-		}
-	}
-
-	public Info2[] info2(String pathOrUrl, Revision revision, Revision pegRevision, boolean recurse, ISVNProgressMonitor monitor) throws ClientWrapperException {
-		String oldName = this.overrideThreadName();
-		try {
-			return this.client.info2(pathOrUrl, revision, pegRevision, recurse, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
@@ -277,10 +255,10 @@ public class ThreadNameModifier implements ISVNClientWrapper {
 		}
 	}
 
-	public DirEntry []list(String url, Revision revision, Revision pegRevision, int depth, int direntFields, boolean fetchLocks, ISVNProgressMonitor monitor) throws ClientWrapperException {
+	public void list(String url, Revision revision, Revision pegRevision, int depth, int direntFields, boolean fetchLocks, IRepositoryEntryCallback cb, ISVNProgressMonitor monitor) throws ClientWrapperException {
 		String oldName = this.overrideThreadName();
 		try {
-			return this.client.list(url, revision, pegRevision, depth, direntFields, fetchLocks, monitor);
+			this.client.list(url, revision, pegRevision, depth, direntFields, fetchLocks, cb, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
@@ -297,20 +275,10 @@ public class ThreadNameModifier implements ISVNClientWrapper {
 		}
 	}
 
-	public LogMessage []logMessages(String path, Revision pegRevision, Revision revisionStart, Revision revisionEnd, boolean stopOnCopy, boolean discoverPath, boolean omitLogText, long limit, ISVNProgressMonitor monitor) throws ClientWrapperException {
+	public void logEntries(String path, Revision pegRevision, Revision revisionStart, Revision revisionEnd, boolean stopOnCopy, boolean discoverPath, boolean includeMergedRevisions, boolean omitLogText, long limit, ILogEntriesCallback cb, ISVNProgressMonitor monitor) throws ClientWrapperException {
 		String oldName = this.overrideThreadName();
 		try {
-			return this.client.logMessages(path, pegRevision, revisionStart, revisionEnd, stopOnCopy, discoverPath, omitLogText, limit, monitor);
-		}
-		finally {
-			this.restoreThreadName(oldName);
-		}
-	}
-
-	public void logMessages(String path, Revision pegRevision, Revision revisionStart, Revision revisionEnd, boolean stopOnCopy, boolean discoverPath, boolean includeMergedRevisions, boolean omitLogText, long limit, LogMessageCallback cb, ISVNProgressMonitor monitor) throws ClientWrapperException {
-		String oldName = this.overrideThreadName();
-		try {
-			this.client.logMessages(path, pegRevision, revisionStart, revisionEnd, stopOnCopy, discoverPath, includeMergedRevisions, omitLogText, limit, cb, monitor);
+			this.client.logEntries(path, pegRevision, revisionStart, revisionEnd, stopOnCopy, discoverPath, includeMergedRevisions, omitLogText, limit, cb, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
@@ -337,20 +305,20 @@ public class ThreadNameModifier implements ISVNClientWrapper {
 		}
 	}
 
-	public Status[] merge(String url, Revision peg, Revision from, Revision to, String mergePath, Status[] mergeStatus, boolean force, ISVNProgressMonitor monitor) throws ClientWrapperException {
+	public void merge(String url, Revision peg, RevisionRange []revisions, String mergePath, Status[] mergeStatus, boolean force, ISVNProgressMonitor monitor) throws ClientWrapperException {
 		String oldName = this.overrideThreadName();
 		try {
-			return this.client.merge(url, peg, from, to, mergePath, mergeStatus, force, monitor);
+			this.client.merge(url, peg, revisions, mergePath, mergeStatus, force, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
 		}
 	}
 
-	public Status[] mergeStatus(String url, Revision peg, Revision from, Revision to, String path, Revision lastMerged, boolean recurse, boolean ignoreAncestry, ISVNProgressMonitor monitor) throws ClientWrapperException {
+	public void mergeStatus(String url, Revision peg, RevisionRange []revisions, String path, int depth, boolean ignoreAncestry, IStatusCallback cb, ISVNProgressMonitor monitor) throws ClientWrapperException {
 		String oldName = this.overrideThreadName();
 		try {
-			return this.client.mergeStatus(url, peg, from, to, path, lastMerged, recurse, ignoreAncestry, monitor);
+			this.client.mergeStatus(url, peg, revisions, path, depth, ignoreAncestry, cb, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
@@ -387,30 +355,20 @@ public class ThreadNameModifier implements ISVNClientWrapper {
 		}
 	}
 
-	public void notification2(Notify2 notify) {
+	public void setNotificationCallback(INotificationCallback notify) {
 		String oldName = this.overrideThreadName();
 		try {
-			this.client.notification2(notify);
+			this.client.setNotificationCallback(notify);
 		}
 		finally {
 			this.restoreThreadName(oldName);
 		}
 	}
 
-	public void password(String password) {
+	public void setPassword(String password) {
 		String oldName = this.overrideThreadName();
 		try {
-			this.client.password(password);
-		}
-		finally {
-			this.restoreThreadName(oldName);
-		}
-	}
-
-	public PropertyData[] properties(String path, Revision revision, Revision peg, ISVNProgressMonitor monitor) throws ClientWrapperException {
-		String oldName = this.overrideThreadName();
-		try {
-			return this.client.properties(path, revision, peg, monitor);
+			this.client.setPassword(password);
 		}
 		finally {
 			this.restoreThreadName(oldName);
@@ -437,10 +395,10 @@ public class ThreadNameModifier implements ISVNClientWrapper {
 		}
 	}
 
-	public void propertySet(String path, String name, byte []value, boolean recurse, boolean force, ISVNProgressMonitor monitor) throws ClientWrapperException {
+	public void propertySet(String path, String name, byte []value, int depth, boolean force, ISVNProgressMonitor monitor) throws ClientWrapperException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.client.propertySet(path, name, value, recurse, force, monitor);
+			this.client.propertySet(path, name, value, depth, force, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
@@ -457,10 +415,10 @@ public class ThreadNameModifier implements ISVNClientWrapper {
 		}
 	}
 
-	public void relocate(String from, String to, String path, boolean recurse, ISVNProgressMonitor monitor) throws ClientWrapperException {
+	public void relocate(String from, String to, String path, int depth, ISVNProgressMonitor monitor) throws ClientWrapperException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.client.relocate(from, to, path, recurse, monitor);
+			this.client.relocate(from, to, path, depth, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
@@ -597,17 +555,7 @@ public class ThreadNameModifier implements ISVNClientWrapper {
 		}
 	}
 
-	public Status []status(String path, boolean descend, boolean onServer, boolean getAll, boolean noIgnore, boolean ignoreExternals, ISVNProgressMonitor monitor) throws ClientWrapperException {
-		String oldName = this.overrideThreadName();
-		try {
-			return this.client.status(path, descend, onServer, getAll, noIgnore, ignoreExternals, monitor);
-		}
-		finally {
-			this.restoreThreadName(oldName);
-		}
-	}
-
-	public void status(String path, int depth, boolean onServer, boolean getAll, boolean noIgnore, boolean ignoreExternals, StatusCallback callback, ISVNProgressMonitor monitor) throws ClientWrapperException {
+	public void status(String path, int depth, boolean onServer, boolean getAll, boolean noIgnore, boolean ignoreExternals, IStatusCallback callback, ISVNProgressMonitor monitor) throws ClientWrapperException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.status(path, depth, onServer, getAll, noIgnore, ignoreExternals, callback, monitor);
@@ -647,10 +595,10 @@ public class ThreadNameModifier implements ISVNClientWrapper {
 		}
 	}
 
-	public void username(String username) {
+	public void setUsername(String username) {
 		String oldName = this.overrideThreadName();
 		try {
-			this.client.username(username);
+			this.client.setUsername(username);
 		}
 		finally {
 			this.restoreThreadName(oldName);
@@ -697,17 +645,17 @@ public class ThreadNameModifier implements ISVNClientWrapper {
 		}
 	}
 
-	public void info2(String pathOrUrl, Revision revision, Revision pegRevision, int depth, InfoCallback cb, ISVNProgressMonitor monitor) throws ClientWrapperException {
+	public void info(String pathOrUrl, Revision revision, Revision pegRevision, int depth, IEntryInfoCallback cb, ISVNProgressMonitor monitor) throws ClientWrapperException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.client.info2(pathOrUrl, revision, pegRevision, depth, cb, monitor);
+			this.client.info(pathOrUrl, revision, pegRevision, depth, cb, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
 		}
 	}
 
-	public void properties(String path, Revision revision, Revision peg, int depth, ProplistCallback callback, ISVNProgressMonitor monitor) throws ClientWrapperException {
+	public void properties(String path, Revision revision, Revision peg, int depth, IPropertyDataCallback callback, ISVNProgressMonitor monitor) throws ClientWrapperException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.properties(path, revision, peg, depth, callback, monitor);
@@ -737,7 +685,7 @@ public class ThreadNameModifier implements ISVNClientWrapper {
 		}
 	}
 
-	public void setConflictResolver(ConflictResolverCallback listener) {
+	public void setConflictResolver(IConflictResolutionCallback listener) {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.setConflictResolver(listener);

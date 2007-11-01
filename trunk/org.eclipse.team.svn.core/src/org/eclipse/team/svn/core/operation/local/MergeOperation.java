@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.NotifyStatus;
+import org.eclipse.team.svn.core.client.RevisionRange;
 import org.eclipse.team.svn.core.client.Status;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -72,7 +73,7 @@ public class MergeOperation extends AbstractConflictDetectionOperation implement
 		ISVNClientWrapper proxy = location.acquireSVNProxy();
 		
 		try {
-			proxy.merge(null, from.getPegRevision(), this.info.start, from.getSelectedRevision(), null, statuses, this.force, new ConflictDetectionProgressMonitor(this, monitor, null));
+			proxy.merge(null, from.getPegRevision(), new RevisionRange [] {new RevisionRange(this.info.start, from.getSelectedRevision())}, null, statuses, this.force, new ConflictDetectionProgressMonitor(this, monitor, null));
 		}
 		finally {
 			location.releaseSVNProxy(proxy);
@@ -97,10 +98,8 @@ public class MergeOperation extends AbstractConflictDetectionOperation implement
 		
 		public void progress(int current, int total, ItemState state) {
 			super.progress(current, total, state);
-		    if (state.contentState == NotifyStatus.conflicted_unresolved || 
-		    	state.contentState == NotifyStatus.conflicted ||
-		        state.propState == NotifyStatus.conflicted_unresolved ||
-		        state.propState == NotifyStatus.conflicted) {
+		    if (state.contentState == NotifyStatus.CONFLICTED ||
+		        state.propState == NotifyStatus.CONFLICTED) {
 		        MergeOperation.this.hasUnresolvedConflict = true;
 			    for (Iterator it = MergeOperation.this.processed.iterator(); it.hasNext(); ) {
 			        IResource res = (IResource)it.next();

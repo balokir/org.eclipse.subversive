@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.ui.action.remote;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.Revision.Kind;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.remote.RenameResourceOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -57,7 +57,7 @@ public class RenameAction extends AbstractRepositoryTeamAction {
 		for (int i = 0; i < resources.length; i++) {
 			IRepositoryLocation location = resources[i].getRepositoryLocation();
 			if (resources[i].getUrl().equals(location.getRoot().getUrl()) ||
-				resources[i].getSelectedRevision().getKind() != Revision.Kind.head ||
+				resources[i].getSelectedRevision().getKind() != Kind.HEAD ||
 				resources[i] instanceof IRepositoryRoot && 
 				(((IRepositoryRoot)resources[i]).getKind() == IRepositoryRoot.KIND_ROOT || ((IRepositoryRoot)resources[i]).getKind() == IRepositoryRoot.KIND_LOCATION_ROOT)) {
 				return false;

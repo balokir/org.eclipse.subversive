@@ -60,17 +60,17 @@ public class CorrectRevisionOperation extends AbstractNonLockingOperation {
 						long selfRevision = self.getRevision();
 						long revision = parentRevision > selfRevision ? parentRevision : selfRevision;
 						if (revision != Revision.SVN_INVALID_REVNUM) {
-							this.repositoryResources[i].setPegRevision(Revision.getInstance(revision));
+							this.repositoryResources[i].setPegRevision(Revision.fromNumber(revision));
 						}
 					}
 					else {
-						this.repositoryResources[i].setPegRevision(Revision.getInstance(self.getRevision()));
+						this.repositoryResources[i].setPegRevision(Revision.fromNumber(self.getRevision()));
 					}
 				}
 			}
 			if (!this.repositoryResources[i].exists() && this.knownRevisions[i] != Revision.SVN_INVALID_REVNUM) {
 				hasWarning = true;
-				Revision rev = Revision.getInstance(this.knownRevisions[i]);
+				Revision rev = Revision.fromNumber(this.knownRevisions[i]);
 				this.repositoryResources[i].setSelectedRevision(rev);
 				this.repositoryResources[i].setPegRevision(rev);
 				if (this.msgsOps != null) {

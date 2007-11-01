@@ -15,7 +15,7 @@ import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.LogMessage;
+import org.eclipse.team.svn.core.client.LogEntry;
 import org.eclipse.team.svn.core.client.Revision;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -30,7 +30,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * @author Alexander Gurov
  */
 public class GetLogMessagesOperation extends AbstractRepositoryOperation {
-	protected LogMessage []msg;
+	protected LogEntry []msg;
 	protected boolean stopOnCopy;
 	protected Revision selectedRevision;
 	protected long limit;
@@ -79,14 +79,14 @@ public class GetLogMessagesOperation extends AbstractRepositoryOperation {
 		ISVNClientWrapper proxy = location.acquireSVNProxy();
 		try {
 //			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn log " + SVNUtility.encodeURL(this.resource.getUrl()) + (this.limit != 0 ? (" --limit " + this.limit) : "") + (this.stopOnCopy ? " --stop-on-copy" : "") + " -r " + this.selectedRevision + ":0 --username \"" + location.getUsername() + "\"\n");
-			this.msg = GetLogMessagesOperation.getMessagesImpl(proxy, resource, this.selectedRevision, Revision.getInstance(0), false, this.limit, this.stopOnCopy, this, monitor);
+			this.msg = GetLogMessagesOperation.getMessagesImpl(proxy, resource, this.selectedRevision, Revision.fromNumber(0), false, this.limit, this.stopOnCopy, this, monitor);
 		}
 		finally {
 			location.releaseSVNProxy(proxy);
 		}
 	}
 	
-	public LogMessage []getMessages() {
+	public LogEntry []getMessages() {
 		return this.msg;
 	}
 	
@@ -94,8 +94,8 @@ public class GetLogMessagesOperation extends AbstractRepositoryOperation {
 		return this.operableData()[0];
 	}
 	
-	public static LogMessage []getMessagesImpl(ISVNClientWrapper proxy, IRepositoryResource resource, Revision from, Revision to, boolean omitLogText, long limit, boolean stopOnCopy, IActionOperation parent, IProgressMonitor monitor) throws Exception {
-		return proxy.logMessages(SVNUtility.encodeURL(resource.getUrl()), resource.getPegRevision(), from, to, stopOnCopy, true, omitLogText, limit, new SVNProgressMonitor(parent, monitor, null));
+	public static LogEntry []getMessagesImpl(ISVNClientWrapper proxy, IRepositoryResource resource, Revision from, Revision to, boolean omitLogText, long limit, boolean stopOnCopy, IActionOperation parent, IProgressMonitor monitor) throws Exception {
+		return SVNUtility.logEntries(proxy, SVNUtility.encodeURL(resource.getUrl()), resource.getPegRevision(), from, to, stopOnCopy, true, omitLogText, limit, new SVNProgressMonitor(parent, monitor, null));
 	}
 	
 	protected String getShortErrorMessage(Throwable t) {

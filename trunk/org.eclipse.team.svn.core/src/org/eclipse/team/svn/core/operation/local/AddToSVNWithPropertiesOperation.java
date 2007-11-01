@@ -20,6 +20,7 @@ import org.eclipse.team.svn.core.client.ClientWrapperException;
 import org.eclipse.team.svn.core.client.Depth;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.PropertyData;
+import org.eclipse.team.svn.core.client.PropertyData.BuiltIn;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
@@ -78,7 +79,7 @@ public class AddToSVNWithPropertiesOperation extends AddToSVNOperation {
 		String path = FileUtility.getWorkingCopyPath(resource);
 		PropertyData[] properties = CoreExtensionsManager.instance().getOptionProvider().getAutomaticProperties(resource.getName());
 		for (int pCount = 0; pCount < properties.length; pCount++) {
-			proxy.propertySet(path, properties[pCount].name, properties[pCount].value, Depth.empty, false, new SVNProgressMonitor(this, monitor, null));
+			proxy.propertySet(path, properties[pCount].name, properties[pCount].value, Depth.EMPTY, false, new SVNProgressMonitor(this, monitor, null));
 		}
 		if (resource.getType() == IResource.FILE) {
 			this.processFile(resource, proxy, monitor);
@@ -91,13 +92,13 @@ public class AddToSVNWithPropertiesOperation extends AddToSVNOperation {
 			int type = (i == 0) ?
 					Team.getFileContentManager().getTypeForExtension(resource.getFileExtension() == null ? "" : resource.getFileExtension()) :
 					Team.getFileContentManager().getTypeForName(resource.getName());
-			PropertyData data = proxy.propertyGet(path, PropertyData.MIME_TYPE, null, null, new SVNProgressMonitor(this, monitor, null));
+			PropertyData data = proxy.propertyGet(path, BuiltIn.MIME_TYPE, null, null, new SVNProgressMonitor(this, monitor, null));
 			if (data == null) {
 				if (type == Team.BINARY) {
-					proxy.propertySet(path, PropertyData.MIME_TYPE, AddToSVNWithPropertiesOperation.BINARY_FILE, Depth.empty, false, new SVNProgressMonitor(this, monitor, null));
+					proxy.propertySet(path, BuiltIn.MIME_TYPE, AddToSVNWithPropertiesOperation.BINARY_FILE, Depth.EMPTY, false, new SVNProgressMonitor(this, monitor, null));
 				}
 				else if (type == Team.TEXT) {
-					proxy.propertySet(path, PropertyData.MIME_TYPE, AddToSVNWithPropertiesOperation.TEXT_FILE, Depth.empty, false, new SVNProgressMonitor(this, monitor, null));
+					proxy.propertySet(path, BuiltIn.MIME_TYPE, AddToSVNWithPropertiesOperation.TEXT_FILE, Depth.EMPTY, false, new SVNProgressMonitor(this, monitor, null));
 				}
 			}
 		}

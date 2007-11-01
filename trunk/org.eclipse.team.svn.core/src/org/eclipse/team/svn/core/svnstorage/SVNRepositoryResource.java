@@ -37,7 +37,7 @@ public abstract class SVNRepositoryResource extends SVNRepositoryBase implements
 	protected transient Revision.Number lastRevision;
 	protected transient IRepositoryLocation location;
 	protected transient IRepositoryRoot root;
-	protected transient IRepositoryResource.Info info;
+	protected transient IRepositoryResource.Information info;
 
 	// serialization conventional constructor
 	protected SVNRepositoryResource() {
@@ -50,11 +50,11 @@ public abstract class SVNRepositoryResource extends SVNRepositoryBase implements
 		this.selectedRevision = selectedRevision;
 	}
 	
-	public void setInfo(IRepositoryResource.Info info) {
+	public void setInfo(IRepositoryResource.Information info) {
 		this.info = info;
 	}
 	
-	public Info getInfo() {
+	public Information getInfo() {
 		return this.info;
 	}
 	
@@ -86,7 +86,7 @@ public abstract class SVNRepositoryResource extends SVNRepositoryBase implements
 	}
 	
 	public void setRevision(long revisionNumber) {
-		this.lastRevision = new Revision.Number(revisionNumber);
+		this.lastRevision = Revision.fromNumber(revisionNumber);
 	}
 	
 	public synchronized long getRevision() throws ClientWrapperException {

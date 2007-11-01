@@ -35,12 +35,13 @@ import org.eclipse.ui.model.IWorkbenchAdapter2;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.team.svn.core.client.Lock;
 import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.Revision.Kind;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
-import org.eclipse.team.svn.core.resource.IRepositoryResource.Info;
+import org.eclipse.team.svn.core.resource.IRepositoryResource.Information;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.decorator.DecoratorVariables;
 import org.eclipse.team.svn.ui.decorator.IVariable;
@@ -106,7 +107,7 @@ public abstract class RepositoryResource implements IWorkbenchAdapter, IWorkbenc
     
     public boolean isRelatesToLocation() {
     	if (this.relatesToLocation == null) {
-            this.relatesToLocation = Boolean.valueOf(this.resource.getSelectedRevision().getKind() == Revision.Kind.head && new Path(this.resource.getRepositoryLocation().getUrl()).isPrefixOf(new Path(this.resource.getUrl())));
+            this.relatesToLocation = Boolean.valueOf(this.resource.getSelectedRevision().getKind() == Kind.HEAD && new Path(this.resource.getRepositoryLocation().getUrl()).isPrefixOf(new Path(this.resource.getUrl())));
     	}
     	return this.relatesToLocation.booleanValue();
     }
@@ -154,7 +155,7 @@ public abstract class RepositoryResource implements IWorkbenchAdapter, IWorkbenc
 
 	public ImageDescriptor getImageDescriptor(Object o) {
 		ImageDescriptor originalDescriptor = this.getImageDescriptorImpl();
-		Info info = this.resource.getInfo();
+		Information info = this.resource.getInfo();
 		if (info != null && info.lock != null) {
 			if (RepositoryResource.lockDescriptor == null) {
 				RepositoryResource.lockDescriptor = SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/lock.gif");
@@ -209,7 +210,7 @@ public abstract class RepositoryResource implements IWorkbenchAdapter, IWorkbenc
 	
 	public String getValue(IVariable var) {
 		IRepositoryResource resource = (IRepositoryResource)this.getRepositoryResource();
-		Info info = resource.getInfo();
+		Information info = resource.getInfo();
 		Lock lock = info == null ? null : info.lock;
 		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.getDefault());
 		if (var.equals(ToolTipVariableSetProvider.VAR_NAME)) {
@@ -219,8 +220,8 @@ public abstract class RepositoryResource implements IWorkbenchAdapter, IWorkbenc
 			return RepositoryResource.this.formatToolTipLine(var, resource.getUrl());
 		}
 		else if (var.equals(ToolTipVariableSetProvider.VAR_LAST_CHANGE_DATE)) {
-			if (info != null && info.lastChangedDate != null) {
-				return RepositoryResource.this.formatToolTipLine(var, dateFormat.format(info.lastChangedDate));
+			if (info != null && info.lastChangedDate != 0) {
+				return RepositoryResource.this.formatToolTipLine(var, dateFormat.format(new Date(info.lastChangedDate)));
 			}
 		}
 		else if (var.equals(ToolTipVariableSetProvider.VAR_LAST_AUTHOR)) {

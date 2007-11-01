@@ -52,8 +52,8 @@ public class RemoteFileVariant extends RemoteResourceVariant {
 			IRepositoryLocation location = storage.getRepositoryLocation(local.getResource());
 			Status st = SVNUtility.getSVNInfoForNotConnected(this.local.getResource());
 			remote = location.asRepositoryFile(st.urlCopiedFrom, false);
-			remote.setSelectedRevision(Revision.getInstance(st.revisionCopiedFrom));
-			remote.setPegRevision(Revision.getInstance(st.revisionCopiedFrom));
+			remote.setSelectedRevision(Revision.fromNumber(st.revisionCopiedFrom));
+			remote.setPegRevision(Revision.fromNumber(st.revisionCopiedFrom));
 		}
 		else {
 			remote = SVNRemoteStorage.instance().asRepositoryResource(this.local.getResource());
@@ -63,7 +63,7 @@ public class RemoteFileVariant extends RemoteResourceVariant {
 					remote = originator;
 				}
 			}
-			remote.setSelectedRevision(Revision.getInstance(this.local.getRevision()));
+			remote.setSelectedRevision(Revision.fromNumber(this.local.getRevision()));
 			remote.setPegRevision(((IResourceChange)this.local).getPegRevision());
 		}
 		

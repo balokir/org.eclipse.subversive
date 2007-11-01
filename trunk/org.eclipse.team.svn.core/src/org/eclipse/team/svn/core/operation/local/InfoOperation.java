@@ -16,8 +16,9 @@ import java.text.MessageFormat;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.client.Depth;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.Info2;
+import org.eclipse.team.svn.core.client.EntryInfo;
 import org.eclipse.team.svn.core.client.Revision;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -25,6 +26,7 @@ import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
  * This operation provide Info2 information for local resource
@@ -34,14 +36,14 @@ import org.eclipse.team.svn.core.utility.FileUtility;
 public class InfoOperation extends AbstractNonLockingOperation {
     protected IResource resource;
     protected ILocalResource local;
-    protected Info2 info;
+    protected EntryInfo info;
 
     public InfoOperation(IResource resource) {
         super("Operation.Info");
         this.resource = resource;
     }
 
-    public Info2 getInfo() {
+    public EntryInfo getInfo() {
         return this.info;
     }
 
@@ -58,7 +60,7 @@ public class InfoOperation extends AbstractNonLockingOperation {
             ISVNClientWrapper proxy = location.acquireSVNProxy();
             try {
 //    			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn info \"" + this.local.getWorkingCopyPath() + "\"\n");
-                Info2 []infos = proxy.info2(FileUtility.getWorkingCopyPath(this.resource), Revision.WORKING, null, false, new SVNProgressMonitor(this, monitor, null));
+                EntryInfo []infos = SVNUtility.info(proxy, FileUtility.getWorkingCopyPath(this.resource), Revision.WORKING, null, Depth.EMPTY, new SVNProgressMonitor(this, monitor, null));
                 
                 if (infos != null && infos.length > 0) {
                     this.info = infos[0];

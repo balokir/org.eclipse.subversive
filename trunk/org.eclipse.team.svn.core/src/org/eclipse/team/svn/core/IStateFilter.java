@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.PropertyData;
 import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.PropertyData.BuiltIn;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -27,6 +28,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
  * Resource state filter interface and most useful implementations
@@ -331,7 +333,7 @@ public interface IStateFilter {
 					IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(resource);
 					ISVNClientWrapper proxy = location.acquireSVNProxy();
 					try {
-						propData[0] = proxy.properties(FileUtility.getWorkingCopyPath(resource), Revision.BASE, Revision.BASE, new SVNProgressMonitor(this, monitor, null));
+						propData[0] = SVNUtility.properties(proxy, FileUtility.getWorkingCopyPath(resource), Revision.BASE, Revision.BASE, new SVNProgressMonitor(this, monitor, null));
 					}
 					finally {
 						location.releaseSVNProxy(proxy);
@@ -342,7 +344,7 @@ public interface IStateFilter {
 			boolean needsLock = false;
 			if (propData[0] != null) {
 				for (int i = 0; i < propData[0].length; i++) {
-					if (propData[0][i].name.equals(PropertyData.NEEDS_LOCK)) {
+					if (propData[0][i].name.equals(BuiltIn.NEEDS_LOCK)) {
 						needsLock = true;
 						break;
 					}
