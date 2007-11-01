@@ -165,10 +165,10 @@ public class ThreadNameModifier implements ISVNClientWrapper {
 		}
 	}
 
-	public long doSwitch(String path, String url, Revision revision, int depth, boolean ignoreExternals, boolean allowUnverObstructions, ISVNProgressMonitor monitor) throws ClientWrapperException {
+	public long doSwitch(String path, String url, Revision revision, Revision pegRevision, int depth, boolean ignoreExternals, boolean allowUnverObstructions, ISVNProgressMonitor monitor) throws ClientWrapperException {
 		String oldName = this.overrideThreadName();
 		try {
-			return this.client.doSwitch(path, url, revision, depth, ignoreExternals, allowUnverObstructions, monitor);
+			return this.client.doSwitch(path, url, revision, pegRevision, depth, ignoreExternals, allowUnverObstructions, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
@@ -275,10 +275,10 @@ public class ThreadNameModifier implements ISVNClientWrapper {
 		}
 	}
 
-	public void logEntries(String path, Revision pegRevision, Revision revisionStart, Revision revisionEnd, boolean stopOnCopy, boolean discoverPath, boolean includeMergedRevisions, boolean omitLogText, long limit, ILogEntriesCallback cb, ISVNProgressMonitor monitor) throws ClientWrapperException {
+	public void logEntries(String path, Revision pegRevision, Revision revisionStart, Revision revisionEnd, boolean stopOnCopy, boolean discoverPath, boolean includeMergedRevisions, String[] revProps, long limit, ILogEntriesCallback cb, ISVNProgressMonitor monitor) throws ClientWrapperException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.client.logEntries(path, pegRevision, revisionStart, revisionEnd, stopOnCopy, discoverPath, includeMergedRevisions, omitLogText, limit, cb, monitor);
+			this.client.logEntries(path, pegRevision, revisionStart, revisionEnd, stopOnCopy, discoverPath, includeMergedRevisions, revProps, limit, cb, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);

@@ -101,7 +101,7 @@ public class BuiltInAnnotate {
 				IRepositoryResource resource = annotateOp.getRepositoryResource();
 				ISVNClientWrapper proxy = resource.getRepositoryLocation().acquireSVNProxy();
 				try {
-					LogEntry []msgs = GetLogMessagesOperation.getMessagesImpl(proxy, resource, Revision.fromNumber(to), Revision.fromNumber(from), false, 0, false, this, monitor);
+					LogEntry []msgs = GetLogMessagesOperation.getMessagesImpl(proxy, resource, Revision.fromNumber(to), Revision.fromNumber(from), null, 0, false, this, monitor);
 					for (int i = 0; i < msgs.length; i++) {
 						BuiltInAnnotateRevision revision = (BuiltInAnnotateRevision)revisions.get(String.valueOf(msgs[i].revision));
 						if (revision != null) {
