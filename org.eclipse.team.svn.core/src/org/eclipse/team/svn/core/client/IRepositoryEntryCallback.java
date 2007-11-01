@@ -12,17 +12,21 @@
 package org.eclipse.team.svn.core.client;
 
 /**
- * Repalcement for org.tigris.subversion.javahl.Notify2
+ * Repository entry call-back interface
+ * 
+ * The JavaHL API's is the only way to interact between SVN and Java-based tools. At the same time JavaHL client library
+ * is not EPL compatible and we won't to pin plug-in with concrete client implementation. So, the only way to do this is
+ * providing our own client interface which will be covered by concrete client implementation.
  * 
  * @author Alexander Gurov
  */
-public interface Notify2 {
-    /**
-     * Handler for Subversion notifications.
-     *
-     * Override this function to allow Subversion to
-     * send notifications
-     * @param info everything to know about this event
-     */
-    public void onNotify(NotifyInformation info);
+public interface IRepositoryEntryCallback {
+	/**
+	 * This method will be called by the client library for each found entry
+	 * 
+	 * @param entry
+	 *            the found entry
+	 * 
+	 */
+	public void nextEntry(RepositoryEntry entry);
 }

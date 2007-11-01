@@ -18,7 +18,7 @@ import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.client.ISVNProgressMonitor;
 import org.eclipse.team.svn.core.client.NotifyAction;
 import org.eclipse.team.svn.core.client.NotifyStatus;
-import org.eclipse.team.svn.core.client.StatusKind;
+import org.eclipse.team.svn.core.client.Status.Kind;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 
 /**
@@ -64,7 +64,7 @@ public class SVNProgressMonitor implements ISVNProgressMonitor {
 
 	public static void writeToConsole(IConsoleStream stream, int contentState, int propState, int action, String path, long revision) {
 		if (stream != null && path != null && path.length() > 0) {
-			if (action == NotifyAction.update_completed || action == NotifyAction.status_completed) {
+			if (action == NotifyAction.UPDATE_COMPLETED || action == NotifyAction.STATUS_COMPLETED) {
 				String message = SVNTeamPlugin.instance().getResource("Console.AtRevision");
 				stream.write(IConsoleStream.LEVEL_OK, MessageFormat.format(message, new String[] {String.valueOf(revision)}));
 			}
@@ -72,23 +72,22 @@ public class SVNProgressMonitor implements ISVNProgressMonitor {
 				int severity = IConsoleStream.LEVEL_OK;
 				String status = null;
 				switch (action) {
-					case NotifyAction.add: 
-					case NotifyAction.update_add: 
-					case NotifyAction.commit_added: {
+					case NotifyAction.ADD: 
+					case NotifyAction.UPDATE_ADD: 
+					case NotifyAction.COMMIT_ADDED: {
 						status = SVNTeamPlugin.instance().getResource("Console.Action.Added");
 						break;
 					}
-					case NotifyAction.delete: 
-					case NotifyAction.update_delete: 
-					case NotifyAction.commit_deleted: {
+					case NotifyAction.DELETE: 
+					case NotifyAction.UPDATE_DELETE: 
+					case NotifyAction.COMMIT_DELETED: {
 						status = SVNTeamPlugin.instance().getResource("Console.Action.Deleted");
 						break;
 					}
-					case NotifyAction.update_update: {
-						int resourceState = contentState == NotifyStatus.inapplicable || contentState == NotifyStatus.unchanged ? propState : contentState;
+					case NotifyAction.UPDATE_UPDATE: {
+						int resourceState = contentState == NotifyStatus.INAPPLICABLE || contentState == NotifyStatus.UNCHANGED ? propState : contentState;
 						severity = 
-							contentState == NotifyStatus.conflicted || contentState == NotifyStatus.conflicted_unresolved || contentState == NotifyStatus.obstructed  ||
-							propState == NotifyStatus.conflicted || propState == NotifyStatus.conflicted_unresolved ? 
+							contentState == NotifyStatus.CONFLICTED || contentState == NotifyStatus.OBSTRUCTED  || propState == NotifyStatus.CONFLICTED ? 
 							IConsoleStream.LEVEL_WARNING : 
 							IConsoleStream.LEVEL_OK;
 						if (resourceState >= 0 && resourceState < NotifyStatus.shortStatusNames.length) {
@@ -100,41 +99,41 @@ public class SVNProgressMonitor implements ISVNProgressMonitor {
 						status = " ";
 						break;
 					}
-					case NotifyAction.commit_modified: {
+					case NotifyAction.COMMIT_MODIFIED: {
 						status = SVNTeamPlugin.instance().getResource("Console.Action.Modified");
 						break;
 					}
-					case NotifyAction.commit_replaced: {
+					case NotifyAction.COMMIT_REPLACED: {
 						status = SVNTeamPlugin.instance().getResource("Console.Action.Replaced");
 						break;
 					}
-					case NotifyAction.revert: {
+					case NotifyAction.REVERT: {
 						status = SVNTeamPlugin.instance().getResource("Console.Action.Reverted");
 						break;
 					}
-					case NotifyAction.restore: {
+					case NotifyAction.RESTORE: {
 						status = SVNTeamPlugin.instance().getResource("Console.Action.Restored");
 						break;
 					}
-					case NotifyAction.locked: {
+					case NotifyAction.LOCKED: {
 						status = SVNTeamPlugin.instance().getResource("Console.Action.Locked");
 						break;
 					}
-					case NotifyAction.unlocked: {
+					case NotifyAction.UNLOCKED: {
 						status = SVNTeamPlugin.instance().getResource("Console.Action.Unlocked");
 						break;
 					}
 					default: {
-						int resourceState = contentState == StatusKind.normal ? propState : contentState;
+						int resourceState = contentState == Kind.NORMAL ? propState : contentState;
 						status = SVNProgressMonitor.getStatus(resourceState);
 						severity = 
-							resourceState == StatusKind.conflicted || resourceState == StatusKind.obstructed ?
+							resourceState == Kind.CONFLICTED || resourceState == Kind.OBSTRUCTED ?
 							IConsoleStream.LEVEL_WARNING : 
 							IConsoleStream.LEVEL_OK;
 						break;
 					}
 				}
-				if (action == NotifyAction.commit_postfix_txdelta) {
+				if (action == NotifyAction.COMMIT_POSTFIX_TXDELTA) {
 					String message = SVNTeamPlugin.instance().getResource("Console.TransmittingData");
 					stream.write(severity, MessageFormat.format(message, new String[] {path}));
 				}
@@ -148,28 +147,28 @@ public class SVNProgressMonitor implements ISVNProgressMonitor {
 	
 	protected static String getStatus(int resourceState) {
 		switch (resourceState) {
-			case StatusKind.added: {
+			case Kind.ADDED: {
 				return SVNTeamPlugin.instance().getResource("Console.Status.Added");
 			}
-			case StatusKind.modified: {
+			case Kind.MODIFIED: {
 				return SVNTeamPlugin.instance().getResource("Console.Status.Modified");
 			}
-			case StatusKind.deleted: {
+			case Kind.DELETED: {
 				return SVNTeamPlugin.instance().getResource("Console.Status.Deleted");
 			}
-			case StatusKind.missing: {
+			case Kind.MISSING: {
 				return SVNTeamPlugin.instance().getResource("Console.Status.Missing");
 			}
-			case StatusKind.replaced: {
+			case Kind.REPLACED: {
 				return SVNTeamPlugin.instance().getResource("Console.Status.Replaced");
 			}
-			case StatusKind.merged: {
+			case Kind.MERGED: {
 				return SVNTeamPlugin.instance().getResource("Console.Status.Merged");
 			}
-			case StatusKind.conflicted: {
+			case Kind.CONFLICTED: {
 				return SVNTeamPlugin.instance().getResource("Console.Status.Conflicted");
 			}
-			case StatusKind.obstructed: {
+			case Kind.OBSTRUCTED: {
 				return SVNTeamPlugin.instance().getResource("Console.Status.Obstructed");
 			}
 			default: {

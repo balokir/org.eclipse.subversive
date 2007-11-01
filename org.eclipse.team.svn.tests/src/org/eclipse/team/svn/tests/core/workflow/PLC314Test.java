@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.PropertyData;
+import org.eclipse.team.svn.core.client.PropertyData.BuiltIn;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.local.AddToSVNIgnoreOperation;
@@ -59,7 +60,7 @@ public class PLC314Test extends TestWorkflow {
 
                 		PropertyData data = null;
                 		try {
-                    		data = proxy.propertyGet(FileUtility.getWorkingCopyPath(parent), PropertyData.IGNORE, null, null, new SVNProgressMonitor(this, monitor, null));
+                    		data = proxy.propertyGet(FileUtility.getWorkingCopyPath(parent), BuiltIn.IGNORE, null, null, new SVNProgressMonitor(this, monitor, null));
                 		}
                 		finally {
                 		    location.releaseSVNProxy(proxy);

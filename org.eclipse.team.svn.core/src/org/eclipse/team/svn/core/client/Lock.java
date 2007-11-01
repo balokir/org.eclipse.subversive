@@ -12,51 +12,68 @@
 package org.eclipse.team.svn.core.client;
 
 /**
- * Replacement for org.tigris.subversion.javahl.Lock
+ * The lock information container
+ * 
+ * The JavaHL API's is the only way to interact between SVN and Java-based tools. At the same time JavaHL client library
+ * is not EPL compatible and we won't to pin plug-in with concrete client implementation. So, the only way to do this is
+ * providing our own client interface which will be covered by concrete client implementation.
  * 
  * @author Alexander Gurov
  */
 public class Lock {
-    /**
-     * the owner of the lock
-     */
-    public final String owner;
-    /**
-     * the path of the locked item
-     */
-    public final String path;
-    /**
-     * the token provided during the lock operation
-     */
-    public final String token;
-    /**
-     * the comment provided during the lock operation
-     */
-    public final String comment;
-    /**
-     * the date when the lock was created
-     */
-    public final long creationDate;
-    /**
-     * the date when the lock will expire
-     */
-    public final long expirationDate;
-    /**
-     * this constructor should only called from JNI code
-     * @param owner             the owner of the lock
-     * @param path              the path of the locked item
-     * @param token             the lock token
-     * @param comment           the lock comment
-     * @param creationDate      the date when the lock was created
-     * @param expirationDate    the date when the lock will expire
-     */
-    public Lock(String owner, String path, String token, String comment, long creationDate, long expirationDate) {
-        this.owner = owner;
-        this.path = path;
-        this.token = token;
-        this.comment = comment;
-        this.creationDate = creationDate;
-        this.expirationDate = expirationDate;
-    }
+	/**
+	 * The lock owner.
+	 */
+	public final String owner;
+
+	/**
+	 * The locked entry path.
+	 */
+	public final String path;
+
+	/**
+	 * The lock token.
+	 */
+	public final String token;
+
+	/**
+	 * The lock comment. Could be <code>null</code>.
+	 */
+	public final String comment;
+
+	/**
+	 * The lock creation date.
+	 */
+	public final long creationDate;
+
+	/**
+	 * The lock expiration date.
+	 */
+	public final long expirationDate;
+
+	/**
+	 * The {@link Lock} instance could be initialized only once because all fields are final
+	 * 
+	 * @param owner
+	 *            the lock owner
+	 * @param path
+	 *            the locked entry path
+	 * @param token
+	 *            the lock token
+	 * @param comment
+	 *            the lock comment
+	 * @param creationDate
+	 *            the lock creation date
+	 * @param expirationDate
+	 *            the lock expiration date
+	 */
+	public Lock(String owner, String path, String token, String comment, long creationDate, long expirationDate) {
+		this.owner = owner;
+		this.path = path;
+		this.token = token;
+		this.comment = comment;
+		this.creationDate = creationDate;
+		this.expirationDate = expirationDate;
+	}
 
 }

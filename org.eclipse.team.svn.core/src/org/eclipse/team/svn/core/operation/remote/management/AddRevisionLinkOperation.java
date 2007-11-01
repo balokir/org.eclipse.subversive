@@ -29,7 +29,7 @@ public class AddRevisionLinkOperation extends AbstractRepositoryOperation {
 	protected Revision revision;
 	
 	public AddRevisionLinkOperation(IRepositoryResource resource, long revision) {
-		this(resource, Revision.getInstance(revision));
+		this(resource, Revision.fromNumber(revision));
 	}
 	
 	public AddRevisionLinkOperation(IRepositoryResource resource, Revision revision) {
@@ -38,7 +38,7 @@ public class AddRevisionLinkOperation extends AbstractRepositoryOperation {
 	}
 	
 	public AddRevisionLinkOperation(IRepositoryResourceProvider provider, long revision) {
-		this(provider, Revision.getInstance(revision));
+		this(provider, Revision.fromNumber(revision));
 	}
 	
 	public AddRevisionLinkOperation(IRepositoryResourceProvider provider, Revision revision) {
@@ -57,12 +57,12 @@ public class AddRevisionLinkOperation extends AbstractRepositoryOperation {
 					
 					Revision selectedRevision = AddRevisionLinkOperation.this.revision;
 					if (selectedRevision.equals(Revision.HEAD)) {
-						selectedRevision = Revision.getInstance(source.getRevision());
+						selectedRevision = Revision.fromNumber(source.getRevision());
 					}
 					
 					Revision pegRevision = source.getPegRevision();
 					if (pegRevision.equals(Revision.HEAD)) {
-						pegRevision = Revision.getInstance(location.getRepositoryRoot().getRevision());
+						pegRevision = Revision.fromNumber(location.getRepositoryRoot().getRevision());
 					}
 					
 					target.setSelectedRevision(selectedRevision);

@@ -13,6 +13,7 @@ package org.eclipse.team.svn.core.operation.local.property;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.client.Depth;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.PropertyData;
 import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
@@ -90,7 +91,7 @@ public class SetPropertiesOperation extends AbstractWorkingCopyOperation {
 		    final PropertyData current = properties[i];
 		    this.protectStep(new IUnprotectedOperation() {
                 public void run(IProgressMonitor monitor) throws Exception {
-					proxy.propertySet(wcPath, current.name, current.data == null ? current.value.getBytes() : current.data, SetPropertiesOperation.this.isRecursive, false, new SVNProgressMonitor(SetPropertiesOperation.this, monitor, null));
+					proxy.propertySet(wcPath, current.name, current.data == null ? current.value.getBytes() : current.data, Depth.infinityOrEmpty(SetPropertiesOperation.this.isRecursive), false, new SVNProgressMonitor(SetPropertiesOperation.this, monitor, null));
                 }
             }, monitor, properties.length);
 		}

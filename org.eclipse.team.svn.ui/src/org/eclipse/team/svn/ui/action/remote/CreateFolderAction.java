@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.ui.action.remote;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.Revision.Kind;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.remote.CreateFolderOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -53,7 +53,7 @@ public class CreateFolderAction extends AbstractRepositoryTeamAction {
 
 	public boolean isEnabled() {
 		IRepositoryResource []resources = this.getSelectedRepositoryResources();
-		return resources.length == 1 && resources[0].getSelectedRevision().getKind() == Revision.Kind.head;
+		return resources.length == 1 && resources[0].getSelectedRevision().getKind() == Kind.HEAD;
 	}
 
 }

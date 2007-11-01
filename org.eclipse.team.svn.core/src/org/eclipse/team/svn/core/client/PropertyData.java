@@ -12,83 +12,113 @@
 package org.eclipse.team.svn.core.client;
 
 /**
- * Replacement for org.tigris.subversion.javahl.PropertyData
+ * Property data container
+ * 
+ * The JavaHL API's is the only way to interact between SVN and Java-based tools. At the same time JavaHL client library
+ * is not EPL compatible and we won't to pin plug-in with concrete client implementation. So, the only way to do this is
+ * providing our own client interface which will be covered by concrete client implementation.
  * 
  * @author Alexander Gurov
  */
 public class PropertyData {
-    /**
-     * Standard subversion known properties
-     */
-    /**
-     * mime type of the entry, used to flag binary files
-     */
-    public static final String MIME_TYPE = "svn:mime-type";
-    /**
-     * list of filenames with wildcards which should be ignored by add and
-     * status
-     */
-    public static final String IGNORE = "svn:ignore";
-    /**
-     * how the end of line code should be treated during retrieval
-     */
-    public static final String EOL_STYLE = "svn:eol-style";
-    /**
-     * list of keywords to be expanded during retrieval
-     */
-    public static final String KEYWORDS = "svn:keywords";
-    /**
-     * flag if the file should be made excutable during retrieval
-     */
-    public static final String EXECUTABLE = "svn:executable";
-    /**
-     * value for svn:executable
-     */
-    public static final String EXECUTABLE_VALUE = "*";
-    /**
-     * list of directory managed outside of this working copy
-     */
-    public static final String EXTERNALS = "svn:externals";
-    /**
-     * the author of the revision
-     */
-    public static final String REV_AUTHOR = "svn:author";
-    /**
-     * the log message of the revision
-     */
-    public static final String REV_LOG = "svn:log";
-    /**
-     * the date of the revision
-     */
-    public static final String REV_DATE = "svn:date";
-    /**
-     * the original date of the revision
-     */
-    public static final String REV_ORIGINAL_DATE = "svn:original-date";
+	/**
+	 * Built-in SVN properties
+	 */
+	public static class BuiltIn {
+		/**
+		 * The mime type of the binary file
+		 */
+		public static final String MIME_TYPE = "svn:mime-type";
 
-    /**
-     * @since 1.2
-     * flag property if a lock is needed to modify this node
-     */
-    public static final String NEEDS_LOCK = "svn:needs-lock";
-    
-    /**
-     * the name of the property
-     */
-    public final String name;
-    /**
-     * the string value of the property
-     */
-    public final String value;
-    /**
-     * the byte array value of the property
-     */
-    public final byte []data;
+		/**
+		 * New line-separated list of ignored resource name patterns
+		 */
+		public static final String IGNORE = "svn:ignore";
 
-    public PropertyData(String n, String v, byte[] d) {
-        this.name = n;
-        this.value = v;
-        this.data = d;
-    }
+		/**
+		 * Specify the "end-of-line" characters will be used while reading file lines
+		 */
+		public static final String EOL_STYLE = "svn:eol-style";
+
+		/**
+		 * Keywords to be expanded during commit
+		 */
+		public static final String KEYWORDS = "svn:keywords";
+
+		/**
+		 * Marks the file is executable
+		 */
+		public static final String EXECUTABLE = "svn:executable";
+
+		/**
+		 * The value for svn:executable
+		 */
+		public static final String EXECUTABLE_VALUE = "*";
+
+		/**
+		 * The new line-separated list of folders which contains resources not related to this working copy. The value
+		 * could be specified as follows:
+		 * 
+		 * {Folder_name_without_spaces} [-r{revision_number} | -r {revision_number}] {encoded_URL}
+		 */
+		public static final String EXTERNALS = "svn:externals";
+
+		/**
+		 * Internal property. The revision author.
+		 */
+		public static final String REV_AUTHOR = "svn:author";
+
+		/**
+		 * Internal property. The revision message.
+		 */
+		public static final String REV_LOG = "svn:log";
+
+		/**
+		 * Internal property. The revision date.
+		 */
+		public static final String REV_DATE = "svn:date";
+
+		/**
+		 * Internal property. The revision original date.
+		 */
+		public static final String REV_ORIGINAL_DATE = "svn:original-date";
+
+		/**
+		 * @since 1.2 If set points that lock is required to modify this node.
+		 */
+		public static final String NEEDS_LOCK = "svn:needs-lock";
+
+	}
+
+	/**
+	 * The property name
+	 */
+	public final String name;
+
+	/**
+	 * The textual property value. Could be <code>null</code>.
+	 */
+	public final String value;
+
+	/**
+	 * The binary property value. Could be <code>null</code>.
+	 */
+	public final byte[] data;
+
+	/**
+	 * The {@link PropertyData} instance could be initialized only once because all fields are final
+	 * 
+	 * @param name
+	 *            the property name
+	 * @param value
+	 *            the value of the textual property
+	 * @param data
+	 *            the value of the binary property
+	 */
+	public PropertyData(String name, String value, byte[] data) {
+		this.name = name;
+		this.value = value;
+		this.data = data;
+	}
 
 }

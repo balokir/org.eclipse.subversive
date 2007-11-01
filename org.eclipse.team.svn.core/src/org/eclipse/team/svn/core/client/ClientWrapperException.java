@@ -11,16 +11,20 @@
 
 package org.eclipse.team.svn.core.client;
 
-
 /**
  * Basic SVN client wrapper exception
+ * 
+ * The JavaHL API's is the only way to interact between SVN and Java-based tools. At the same time JavaHL client library
+ * is not EPL compatible and we won't to pin plug-in with concrete client implementation. So, the only way to do this is
+ * providing our own client interface which will be covered by concrete client implementation.
  * 
  * @author Alexander Gurov
  */
 public class ClientWrapperException extends Exception {
 	private static final long serialVersionUID = 6066882107735517763L;
-	
+
 	protected boolean runtime;
+
 	protected int errorId;
 
 	public ClientWrapperException() {
@@ -42,7 +46,7 @@ public class ClientWrapperException extends Exception {
 		super(message, cause);
 		this.runtime = runtime;
 	}
-	
+
 	public ClientWrapperException(String message, int errorId, Throwable cause, boolean runtime) {
 		super(message, cause);
 		this.runtime = runtime;
@@ -52,9 +56,9 @@ public class ClientWrapperException extends Exception {
 	public boolean isRuntime() {
 		return this.runtime;
 	}
-	
+
 	public int getErrorId() {
 		return this.errorId;
 	}
-	
+
 }

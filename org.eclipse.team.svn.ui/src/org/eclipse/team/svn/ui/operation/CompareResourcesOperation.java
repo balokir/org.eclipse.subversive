@@ -28,7 +28,7 @@ import org.eclipse.team.svn.core.client.Depth;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.Revision;
 import org.eclipse.team.svn.core.client.Status;
-import org.eclipse.team.svn.core.client.StatusKind;
+import org.eclipse.team.svn.core.client.Revision.Kind;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -85,9 +85,9 @@ public class CompareResourcesOperation extends AbstractNonLockingOperation {
 		
 		this.protectStep(new IUnprotectedOperation() {
 			public void run(IProgressMonitor monitor) throws Exception {
-				localChanges[0] = proxy.status(
+				localChanges[0] = SVNUtility.status(proxy, 
 						FileUtility.getWorkingCopyPath(CompareResourcesOperation.this.resource),
-						true, false, false, false, true,
+						Depth.INFINITY, false, false, false, true,
 						new SVNProgressMonitor(CompareResourcesOperation.this, monitor, null, false));
 			}
 		}, monitor, 3);
@@ -95,13 +95,13 @@ public class CompareResourcesOperation extends AbstractNonLockingOperation {
 			// Remove all folders that are mapped to external resources
 			ArrayList changesList = new ArrayList();
 			for (int i = 0; i < localChanges[0].length; i++) {
-				if (localChanges[0][i].textStatus != StatusKind.external) {
+				if (localChanges[0][i].textStatus != org.eclipse.team.svn.core.client.Status.Kind.EXTERNAL) {
 					changesList.add(localChanges[0][i]);
 				}
 			}
 			localChanges[0] = (Status[])changesList.toArray(new Status[changesList.size()]);
 			
-			if (this.revision.getKind() == Revision.Kind.head || this.revision.getKind() == Revision.Kind.number) {
+			if (this.revision.getKind() == Kind.HEAD || this.revision.getKind() == Kind.NUMBER) {
 				// all revisions should be set here because unversioned resources can be compared
 				final IRepositoryResource remoteRight = local.isCopied() ? this.getRepositoryResourceFor(this.resource, localChanges[0][0].urlCopiedFrom, location) : storage.asRepositoryResource(this.resource);
 				remoteRight.setPegRevision(this.pegRevision);
@@ -109,11 +109,11 @@ public class CompareResourcesOperation extends AbstractNonLockingOperation {
 				// status order may be inconsistent for next lines
 				SVNUtility.reorder(localChanges[0], true);
 				if (local.isCopied()) {
-					remoteRight.setPegRevision(Revision.getInstance(localChanges[0][0].revisionCopiedFrom));
+					remoteRight.setPegRevision(Revision.fromNumber(localChanges[0][0].revisionCopiedFrom));
 					remoteBase.setSelectedRevision(remoteRight.getPegRevision());
 				}
 				else if (local.getRevision() != Revision.SVN_INVALID_REVNUM) {
-					remoteBase.setSelectedRevision(Revision.getInstance(local.getRevision()));
+					remoteBase.setSelectedRevision(Revision.fromNumber(local.getRevision()));
 				}
 				
 				remoteRight.setSelectedRevision(this.revision);
@@ -121,10 +121,10 @@ public class CompareResourcesOperation extends AbstractNonLockingOperation {
 					
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(IProgressMonitor monitor) throws Exception {
-						remoteChanges[0] = proxy.diffStatus(
+						remoteChanges[0] = SVNUtility.diffStatus(proxy,
 								SVNUtility.encodeURL(baseUrl), remoteBase.getPegRevision(), remoteBase.getSelectedRevision(),
 								SVNUtility.encodeURL(remoteRight.getUrl()), remoteRight.getPegRevision(), remoteRight.getSelectedRevision(), 
-								Depth.infinity, false, new SVNProgressMonitor(CompareResourcesOperation.this, monitor, null, false));
+								Depth.INFINITY, false, new SVNProgressMonitor(CompareResourcesOperation.this, monitor, null, false));
 					}
 				}, monitor, 3);
 			}

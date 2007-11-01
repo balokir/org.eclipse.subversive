@@ -43,6 +43,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.client.PropertyData;
+import org.eclipse.team.svn.core.client.PropertyData.BuiltIn;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.property.IPropertyProvider;
@@ -321,7 +322,7 @@ public class PropertyKeywordEditPanel extends AbstractDialogPanel {
 				}
 				SVNKeywordProperty keyProperty = new SVNKeywordProperty(retVal[0] == null ? null : retVal[0].value);
 				PropertyKeywordEditPanel.this.configureProperty(keyProperty);
-				retVal[0] = new PropertyData(PropertyData.KEYWORDS, keyProperty.toString(), null);
+				retVal[0] = new PropertyData(BuiltIn.KEYWORDS, keyProperty.toString(), null);
 				return retVal;
 			}
 		};

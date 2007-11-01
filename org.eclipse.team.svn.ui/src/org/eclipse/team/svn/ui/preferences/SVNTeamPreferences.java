@@ -256,7 +256,7 @@ public final class SVNTeamPreferences {
 	public static final String COMMENT_TEMPLATES_LIST_DEFAULT = "";
 	public static final boolean COMMENT_TEMPLATES_LIST_ENABLED_DEFAULT = true;
 	public static final boolean COMMENT_LOG_TEMPLATES_ENABLED_DEFAULT = true;
-	public static final int COMMENT_SAVED_COMMENTS_COUNT_DEFAULT = 5;
+	public static final int COMMENT_SAVED_COMMENTS_COUNT_DEFAULT = 10;
 	
 	public static final String COMMIT_DIALOG_WEIGHT_NAME = "weight";
 	public static final int COMMIT_DIALOG_WEIGHT_DEFAULT = 50;

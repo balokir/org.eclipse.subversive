@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.client.Depth;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.PropertyData;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -91,7 +92,7 @@ public class SetMultiPropertiesOperation extends AbstractWorkingCopyOperation {
 			final PropertyData property = properties[i];
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-                	proxy.propertySet(wcPath, property.name, property.data == null ? property.value.getBytes() : property.data, false, false, new SVNProgressMonitor(SetMultiPropertiesOperation.this, monitor, null));
+                	proxy.propertySet(wcPath, property.name, property.data == null ? property.value.getBytes() : property.data, Depth.EMPTY, false, new SVNProgressMonitor(SetMultiPropertiesOperation.this, monitor, null));
 				}
 			}, monitor, properties.length);
 		}

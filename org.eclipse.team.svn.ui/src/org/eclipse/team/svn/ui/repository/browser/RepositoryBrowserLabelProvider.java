@@ -107,7 +107,7 @@ public class RepositoryBrowserLabelProvider implements ITableLabelProvider {
 		DateFormat dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.getDefault());
 		if (element instanceof RepositoryResource) {
 			IRepositoryResource resource = ((RepositoryResource)element).getRepositoryResource();
-			IRepositoryResource.Info resourceInfo = resource.getInfo();
+			IRepositoryResource.Information resourceInfo = resource.getInfo();
 			if (columnIndex == tableViewer.getNameColumnIndex()) {
 				return ((RepositoryResource)element).getLabel();
 			}
@@ -128,8 +128,7 @@ public class RepositoryBrowserLabelProvider implements ITableLabelProvider {
 			}
 			else if (resourceInfo != null) {			
 				if (columnIndex == tableViewer.getDateColumnIndex()) {
-					Date date = resourceInfo.lastChangedDate;
-					return (date != null) ? dateTimeFormat.format(date) : RepositoryBrowserLabelProvider.noDate;
+					return (resourceInfo.lastChangedDate != 0) ? dateTimeFormat.format(new Date(resourceInfo.lastChangedDate)) : RepositoryBrowserLabelProvider.noDate;
 				}
 				else if (columnIndex == tableViewer.getAuthorColumnIndex()) {
 					String author = resourceInfo.lastAuthor;

@@ -19,6 +19,7 @@ import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.client.Depth;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.PropertyData;
+import org.eclipse.team.svn.core.client.PropertyData.BuiltIn;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
@@ -84,7 +85,7 @@ public class AddToSVNOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	public static void removeFromParentIgnore(ISVNClientWrapper proxy, String parentPath, String name) throws Exception {
-		PropertyData data = proxy.propertyGet(parentPath, PropertyData.IGNORE, null, null, new SVNNullProgressMonitor());
+		PropertyData data = proxy.propertyGet(parentPath, BuiltIn.IGNORE, null, null, new SVNNullProgressMonitor());
 		String ignoreValue = data == null ? "" : data.value;
 		
 		StringTokenizer tok = new StringTokenizer(ignoreValue, "\n", true);
@@ -103,11 +104,11 @@ public class AddToSVNOperation extends AbstractWorkingCopyOperation {
 		
 		if (ignoreValue.length() > 0)
 		{
-			proxy.propertySet(parentPath, PropertyData.IGNORE, ignoreValue, Depth.empty, false, new SVNNullProgressMonitor());
+			proxy.propertySet(parentPath, BuiltIn.IGNORE, ignoreValue, Depth.EMPTY, false, new SVNNullProgressMonitor());
 		}
 		else
 		{
-			proxy.propertyRemove(parentPath, PropertyData.IGNORE, Depth.empty, new SVNNullProgressMonitor());
+			proxy.propertyRemove(parentPath, BuiltIn.IGNORE, Depth.EMPTY, new SVNNullProgressMonitor());
 		}
 	}
 	

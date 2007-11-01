@@ -49,7 +49,7 @@ public class ExportOperation extends AbstractRepositoryOperation {
 					resource.getPegRevision(), 
 					true, 	// force
 					false, 	// ignore externals 
-					Depth.infinity, 	// recurse
+					Depth.INFINITY, 	// recurse
 					null, 	// native EOL
 					new SVNProgressMonitor(this, monitor, null));
 		}

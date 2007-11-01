@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.client.Depth;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.Status;
-import org.eclipse.team.svn.core.client.StatusCallback;
+import org.eclipse.team.svn.core.client.IStatusCallback;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -52,8 +52,8 @@ public abstract class AbstractStatusOperation extends AbstractFileOperation {
 		File []files = this.operableData();
 
 		final List result = new ArrayList();
-		StatusCallback cb = new StatusCallback() {
-			public void doStatus(Status status) {
+		IStatusCallback cb = new IStatusCallback() {
+			public void nextStatus(Status status) {
 				result.add(status);
 			}
 		};
@@ -70,7 +70,7 @@ public abstract class AbstractStatusOperation extends AbstractFileOperation {
 		this.statuses = (Status [])result.toArray(new Status[result.size()]);
 	}
 
-	protected void reportStatuses(final ISVNClientWrapper proxy, final StatusCallback cb, final File current, IProgressMonitor monitor, int tasks) {
+	protected void reportStatuses(final ISVNClientWrapper proxy, final IStatusCallback cb, final File current, IProgressMonitor monitor, int tasks) {
 		this.protectStep(new IUnprotectedOperation() {
 			public void run(IProgressMonitor monitor) throws Exception {
 				proxy.status(

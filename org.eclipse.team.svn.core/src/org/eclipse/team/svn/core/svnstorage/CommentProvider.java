@@ -13,9 +13,9 @@ package org.eclipse.team.svn.core.svnstorage;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.team.svn.core.client.LogMessage;
+import org.eclipse.team.svn.core.client.LogEntry;
 import org.eclipse.team.svn.core.client.Revision;
-import org.eclipse.team.svn.core.client.RevisionKind;
+import org.eclipse.team.svn.core.client.Revision.Kind;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.GetLogMessagesOperation;
 import org.eclipse.team.svn.core.resource.ICommentProvider;
@@ -30,8 +30,8 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
  */
 public class CommentProvider implements ICommentProvider {
 	public String getComment(IResource resource, Revision rev, Revision peg) {
-		if (rev.getKind() == RevisionKind.number && ((Revision.Number)rev).getNumber() == Revision.SVN_INVALID_REVNUM || 
-			peg != null && peg.getKind() == RevisionKind.number && ((Revision.Number)peg).getNumber() == Revision.SVN_INVALID_REVNUM) {
+		if (rev.getKind() == Kind.NUMBER && ((Revision.Number)rev).getNumber() == Revision.SVN_INVALID_REVNUM || 
+			peg != null && peg.getKind() == Kind.NUMBER && ((Revision.Number)peg).getNumber() == Revision.SVN_INVALID_REVNUM) {
 			return null;
 		}
 		IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(resource);
@@ -45,7 +45,7 @@ public class CommentProvider implements ICommentProvider {
 		op.setLimit(1);
 		ProgressMonitorUtility.doTaskExternalDefault(op, new NullProgressMonitor());
 		if (op.getExecutionState() == IActionOperation.OK) {
-			LogMessage []msgs = op.getMessages();
+			LogEntry []msgs = op.getMessages();
 			if (msgs.length > 0) {
 				return msgs[0].message;
 			}

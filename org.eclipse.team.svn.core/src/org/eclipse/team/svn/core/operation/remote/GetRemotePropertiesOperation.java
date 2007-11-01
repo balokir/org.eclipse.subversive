@@ -68,7 +68,7 @@ public class GetRemotePropertiesOperation extends AbstractRepositoryOperation im
 		try {
 			String url = SVNUtility.encodeURL(resource.getUrl());
 //			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn proplist " + url + "@" + resource.getPegRevision() + " --revprop -r " + resource.getSelectedRevision() + " --username \"" + location.getUsername() + "\"\n");
-			this.properties = proxy.properties(url, resource.getSelectedRevision(), resource.getPegRevision(), new SVNProgressMonitor(this, monitor, null));
+			this.properties = SVNUtility.properties(proxy, url, resource.getSelectedRevision(), resource.getPegRevision(), new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 			location.releaseSVNProxy(proxy);

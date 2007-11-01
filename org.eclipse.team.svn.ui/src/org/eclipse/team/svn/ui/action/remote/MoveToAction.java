@@ -11,7 +11,7 @@
 
 package org.eclipse.team.svn.ui.action.remote;
 
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.Revision.Kind;
 import org.eclipse.team.svn.core.operation.remote.AbstractCopyMoveResourcesOperation;
 import org.eclipse.team.svn.core.operation.remote.MoveResourcesOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -51,7 +51,7 @@ public class MoveToAction extends AbstractCopyMoveAction {
 		for (int i = 0; i < resources.length; i++) {
 			IRepositoryLocation location = resources[i].getRepositoryLocation();
 			if (first != location || 
-				resources[i].getSelectedRevision().getKind() != Revision.Kind.head || 
+				resources[i].getSelectedRevision().getKind() != Kind.HEAD || 
 				resources[i] instanceof IRepositoryRoot && 
 				(((IRepositoryRoot)resources[i]).getKind() == IRepositoryRoot.KIND_ROOT || ((IRepositoryRoot)resources[i]).getKind() == IRepositoryRoot.KIND_LOCATION_ROOT)) {
 				return false;

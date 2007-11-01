@@ -12,14 +12,20 @@
 package org.eclipse.team.svn.core.client;
 
 /**
- * Replacement for org.tigris.subversion.javahl.StatusCallback
+ * Repository or working copy entry information call-back interface
+ * 
+ * The JavaHL API's is the only way to interact between SVN and Java-based tools. At the same time JavaHL client library
+ * is not EPL compatible and we won't to pin plug-in with concrete client implementation. So, the only way to do this is
+ * providing our own client interface which will be covered by concrete client implementation.
  * 
  * @author Alexander Gurov
  */
-public interface StatusCallback {
-    /**
-     * the method will be called for each status item
-     * @param status    the status object
-     */
-    public void doStatus(Status status);
+public interface IEntryInfoCallback {
+	/**
+	 * This method will be called by the client library for each found entry
+	 * 
+	 * @param info
+	 *            the found entry information
+	 */
+	public void nextInfo(EntryInfo info);
 }

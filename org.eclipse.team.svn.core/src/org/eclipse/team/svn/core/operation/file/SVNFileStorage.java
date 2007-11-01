@@ -16,7 +16,7 @@ import java.io.File;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.Info2;
+import org.eclipse.team.svn.core.client.EntryInfo;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -45,7 +45,7 @@ public class SVNFileStorage extends AbstractSVNStorage implements IFileStorage {
 	public IRepositoryResource asRepositoryResource(File file, boolean allowsNull) {
 		// check if this resource is placed in working copy
 		File wcRoot = file;
-		Info2 info = null;
+		EntryInfo info = null;
 		ISVNClientWrapper proxy = CoreExtensionsManager.instance().getSVNClientWrapperFactory().newInstance();
 		try {
 			while (info == null) {

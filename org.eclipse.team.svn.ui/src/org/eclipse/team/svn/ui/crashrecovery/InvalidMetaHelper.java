@@ -17,6 +17,7 @@ import java.util.Iterator;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.team.svn.core.client.Depth;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.Status;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
@@ -78,7 +79,7 @@ public class InvalidMetaHelper implements IResolutionHelper {
 		try {
 			ISVNClientWrapper proxy = factory.newInstance();
 			try {
-				Status []st = proxy.status(path, false, false, true, false, false, new SVNNullProgressMonitor());
+				Status []st = SVNUtility.status(proxy, path, Depth.IMMEDIATES, false, true, false, false, new SVNNullProgressMonitor());
 				return st != null && st.length > 0;
 			}
 			finally {

@@ -15,40 +15,40 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.team.svn.core.client.Notify2;
-import org.eclipse.team.svn.core.client.NotifyInformation;
+import org.eclipse.team.svn.core.client.INotificationCallback;
+import org.eclipse.team.svn.core.client.Notification;
 
 /**
  * Notify composite listener
  * 
  * @author Alexander Gurov
  */
-public class Notify2Composite implements Notify2 {
-	protected Notify2 []listeners;
+public class Notify2Composite implements INotificationCallback {
+	protected INotificationCallback []listeners;
 
 	public Notify2Composite() {
-		this.listeners = new Notify2[0];
+		this.listeners = new INotificationCallback[0];
 	}
 	
-	public void add(Notify2 listener) {
+	public void add(INotificationCallback listener) {
 		List tmp = new ArrayList(Arrays.asList(this.listeners));
 		if (!tmp.contains(listener)) {
 			tmp.add(listener);
 		}
-		this.listeners = (Notify2 [])tmp.toArray(new Notify2[tmp.size()]);
+		this.listeners = (INotificationCallback [])tmp.toArray(new INotificationCallback[tmp.size()]);
 	}
 	
-	public void remove(Notify2 listener) {
+	public void remove(INotificationCallback listener) {
 		List tmp = new ArrayList(Arrays.asList(this.listeners));
 		tmp.remove(listener);
-		this.listeners = (Notify2 [])tmp.toArray(new Notify2[tmp.size()]);
+		this.listeners = (INotificationCallback [])tmp.toArray(new INotificationCallback[tmp.size()]);
 	}
 
-	public void onNotify(NotifyInformation info) {
+	public void notify(Notification info) {
 		// thread safe...
-	    Notify2 []tmp = this.listeners;
+	    INotificationCallback []tmp = this.listeners;
 		for (int i = 0; i < tmp.length; i++) {
-			tmp[i].onNotify(info);
+			tmp[i].notify(info);
 		}
 	}
 

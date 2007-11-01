@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.client.Revision;
-import org.eclipse.team.svn.core.client.RevisionKind;
+import org.eclipse.team.svn.core.client.Revision.Kind;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.GetLocalFileContentOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -40,7 +40,7 @@ public class VirtualRemoteFileVariant extends VirtualRemoteResourceVariant {
 			this.setContents(new ByteArrayInputStream(new byte[0]), monitor);
 			return;
 		}
-		GetLocalFileContentOperation op = new GetLocalFileContentOperation(this.local.getResource(), RevisionKind.base);
+		GetLocalFileContentOperation op = new GetLocalFileContentOperation(this.local.getResource(), Kind.BASE);
 		UIMonitorUtility.doTaskExternalDefault(op, monitor);
 		if (op.getExecutionState() == IActionOperation.OK) {
 			this.setContents(op.getContent(), monitor);

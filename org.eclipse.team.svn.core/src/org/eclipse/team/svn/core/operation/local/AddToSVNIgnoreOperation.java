@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.client.Depth;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.PropertyData;
+import org.eclipse.team.svn.core.client.PropertyData.BuiltIn;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRemoteStorage;
@@ -80,7 +81,7 @@ public class AddToSVNIgnoreOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	public static void changeIgnoreProperty(ISVNClientWrapper proxy, int ignoreType, String pattern, String path, String name) throws Exception {
-		PropertyData data = proxy.propertyGet(path, PropertyData.IGNORE, null, null, new SVNNullProgressMonitor());
+		PropertyData data = proxy.propertyGet(path, BuiltIn.IGNORE, null, null, new SVNNullProgressMonitor());
 		String ignoreValue = data == null ? "" : data.value;
 		String mask = null;
 		switch (ignoreType) {
@@ -101,7 +102,7 @@ public class AddToSVNIgnoreOperation extends AbstractWorkingCopyOperation {
 			}
 		}
 		ignoreValue = AddToSVNIgnoreOperation.addMask(ignoreValue, mask);
-		proxy.propertySet(path, PropertyData.IGNORE, ignoreValue, Depth.empty, false, new SVNNullProgressMonitor());
+		proxy.propertySet(path, BuiltIn.IGNORE, ignoreValue, Depth.EMPTY, false, new SVNNullProgressMonitor());
 	}
 	
 	protected static String addMask(String ignore, String mask) {

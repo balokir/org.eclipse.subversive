@@ -177,7 +177,7 @@ public class ShareProjectOperation extends AbstractWorkingCopyOperation {
 						File tempDir = existingProjects.contains(project) ? ShareProjectOperation.this.createTempDirectory(project) : null;
 						String checkoutTo = tempDir != null ? tempDir.toString() : FileUtility.getWorkingCopyPath(project);
 
-						proxy.checkout(SVNUtility.encodeURL(remote.getUrl()), checkoutTo, Revision.HEAD, Revision.HEAD, Depth.infinity, false, false, new SVNProgressMonitor(ShareProjectOperation.this, monitor, null));
+						proxy.checkout(SVNUtility.encodeURL(remote.getUrl()), checkoutTo, Revision.HEAD, Revision.HEAD, Depth.INFINITY, false, false, new SVNProgressMonitor(ShareProjectOperation.this, monitor, null));
 						
 						if (tempDir != null) {
 							ShareProjectOperation.this.copySVNMeta(tempDir, FileUtility.getResourcePath(project).toFile());

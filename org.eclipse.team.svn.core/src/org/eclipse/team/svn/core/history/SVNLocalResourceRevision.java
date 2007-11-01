@@ -94,7 +94,7 @@ public class SVNLocalResourceRevision extends FileRevision {
 			return this;
 		}
 		IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(this.local.getResource());
-		remote.setSelectedRevision(Revision.getInstance(this.local.getRevision()));
+		remote.setSelectedRevision(Revision.fromNumber(this.local.getRevision()));
 		GetLogMessagesOperation log = new GetLogMessagesOperation(remote);
 		log.setLimit(1);
 		ProgressMonitorUtility.doTaskExternal(log, monitor);

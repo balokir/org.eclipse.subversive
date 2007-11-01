@@ -80,7 +80,7 @@ public class GetRemoteContentsOperation extends AbstractActionOperation {
 					this.remote.getPegRevision(),
 					true, 	// force
 					false, 	// ignore externals 
-					Depth.infinity, 	// recurse
+					Depth.INFINITY, 	// recurse
 					null, 	// native EOL
 					new SVNProgressMonitor(this, monitor, null));
 			}

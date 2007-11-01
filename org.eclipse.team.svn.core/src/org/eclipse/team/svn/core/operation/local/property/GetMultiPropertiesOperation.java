@@ -31,6 +31,7 @@ import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
  * Operation to get properties for multiple resources
@@ -111,7 +112,7 @@ public class GetMultiPropertiesOperation extends AbstractNonLockingOperation imp
 					}
 				}
 				else {
-					PropertyData []data = proxy.properties(wcPath, Revision.BASE, Revision.BASE, new SVNProgressMonitor(GetMultiPropertiesOperation.this, monitor, null));
+					PropertyData []data = SVNUtility.properties(proxy, wcPath, Revision.BASE, Revision.BASE, new SVNProgressMonitor(GetMultiPropertiesOperation.this, monitor, null));
 					if (data != null && data.length != 0) {
 						GetMultiPropertiesOperation.this.properties.put(current, data);
 					}

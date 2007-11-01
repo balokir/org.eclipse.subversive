@@ -12,126 +12,111 @@
 package org.eclipse.team.svn.core.client;
 
 /**
- * Replacement for org.tigris.subversion.javahl.RevisionRange
+ * The revision range container
+ * 
+ * The JavaHL API's is the only way to interact between SVN and Java-based tools. At the same time JavaHL client library
+ * is not EPL compatible and we won't to pin plug-in with concrete client implementation. So, the only way to do this is
+ * providing our own client interface which will be covered by concrete client implementation.
  * 
  * @author Alexander Gurov
  */
-public class RevisionRange implements Comparable {
+public class RevisionRange {
+	/**
+	 * The "from" revision object
+	 */
 	public final Revision from;
 
+	/**
+	 * The "to" revision object
+	 */
 	public final Revision to;
 
 	/**
-	 * Creates a new instance. Called by native library.
+	 * The {@link RevisionRange} instance could be initialized only once because all fields are final
+	 * 
+	 * @param from
+	 *            the "from" revision object. Greater or equals to zero.
+	 * @param to
+	 *            the "to" revision object. Greater or equals to zero.
+	 * @throws IllegalArgumentException
+	 *             if from or to contains negative value
 	 */
 	public RevisionRange(long from, long to) {
-		this.from = Revision.getInstance(from);
-		this.to = Revision.getInstance(to);
+		this.from = Revision.fromNumber(from);
+		this.to = Revision.fromNumber(to);
 	}
 
+	/**
+	 * The {@link RevisionRange} instance could be initialized only once because all fields are final
+	 * 
+	 * @param from
+	 *            the "from" revision object. Cannot be <code>null</code>.
+	 * @param to
+	 *            the "to" revision object Cannot be <code>null</code>.
+	 * @throws NullPointerException
+	 *             if one of arguments (or both) is null
+	 */
 	public RevisionRange(Revision from, Revision to) {
+		if (from == null) {
+			throw new NullPointerException("The \"from\" field cannot be initialized with null");
+		}
+		if (to == null) {
+			throw new NullPointerException("The \"to\" field cannot be initialized with null");
+		}
 		this.from = from;
 		this.to = to;
 	}
 
 	/**
-	 * Accepts a string in one of these forms: n m-n Parses the results into a
-	 * from and to revision
+	 * The {@link RevisionRange} instance could be initialized only once because all fields are final
+	 * 
+	 * Accepts a string in one of these forms:
+	 * 
+	 * {revision} the "from" and "to" fields will be initialized with the same value
+	 * 
+	 * {revision}-{revision} the first revision will be set into "from" object and the second into the "to" object
 	 * 
 	 * @param revisionElement
 	 *            revision range or single revision
+	 * @throws NumberFormatException
+	 *             if the string does not contain a parsable <code>long</code>.
 	 */
 	public RevisionRange(String revisionElement) {
 		int hyphen = revisionElement.indexOf('-');
 		if (hyphen > 0) {
-			long fromRev = Long.parseLong(revisionElement.substring(0, hyphen));
-			long toRev = Long.parseLong(revisionElement.substring(hyphen + 1));
-			this.from = new Revision.Number(fromRev);
-			this.to = new Revision.Number(toRev);
+			this.from = Revision.fromNumber(Long.parseLong(revisionElement.substring(0, hyphen)));
+			this.to = Revision.fromNumber(Long.parseLong(revisionElement.substring(hyphen + 1)));
 		}
 		else {
-			long revNum = Long.parseLong(revisionElement.trim());
-			this.from = new Revision.Number(revNum);
-			this.to = this.from;
+			this.to = this.from = Revision.fromNumber(Long.parseLong(revisionElement.trim()));
 		}
 	}
 
 	public String toString() {
-		if (from != null && to != null) {
-			if (from.equals(to)) {
-				return from.toString();
-			}
-			else {
-				return from.toString() + '-' + to.toString();
-			}
+		if (this.from.equals(this.to)) {
+			return this.from.toString();
 		}
-		return super.toString();
-	}
-
-	public static Long getRevisionAsLong(Revision rev) {
-		long val = 0;
-		if (rev != null && rev instanceof Revision.Number) {
-			val = ((Revision.Number) rev).getNumber();
-		}
-		return new Long(val);
+		return this.from.toString() + '-' + this.to.toString();
 	}
 
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((from == null) ? 0 : from.hashCode());
-		result = prime * result + ((to == null) ? 0 : to.hashCode());
+		result = prime * result + this.from.hashCode();
+		result = prime * result + this.to.hashCode();
 		return result;
 	}
 
-	/**
-	 * @param range
-	 *            The RevisionRange to compare this object to.
-	 */
 	public boolean equals(Object range) {
 		if (this == range) {
 			return true;
 		}
-		if (!super.equals(range)) {
-			return false;
-		}
-		if (getClass() != range.getClass()) {
+		if (!(range instanceof RevisionRange)) {
 			return false;
 		}
 
-		final RevisionRange other = (RevisionRange) range;
-
-		if (from == null) {
-			if (other.from != null) {
-				return false;
-			}
-		}
-		else if (!from.equals(other.from)) {
-			return false;
-		}
-
-		if (to == null) {
-			if (other.to != null) {
-				return false;
-			}
-		}
-		else if (!to.equals(other.to)) {
-			return false;
-		}
-
-		return true;
+		RevisionRange other = (RevisionRange) range;
+		return this.from.equals(other.from) && this.to.equals(other.to);
 	}
 
-	/**
-	 * @param range
-	 *            The RevisionRange to compare this object to.
-	 */
-	public int compareTo(Object range) {
-		if (this == range) {
-			return 0;
-		}
-
-		Revision other = ((RevisionRange) range).from;
-		return RevisionRange.getRevisionAsLong(this.from).compareTo(RevisionRange.getRevisionAsLong(other));
-	}
 }

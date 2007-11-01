@@ -59,9 +59,10 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.client.Depth;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.Info2;
-import org.eclipse.team.svn.core.client.LogMessage;
+import org.eclipse.team.svn.core.client.EntryInfo;
+import org.eclipse.team.svn.core.client.LogEntry;
 import org.eclipse.team.svn.core.client.NodeKind;
 import org.eclipse.team.svn.core.client.Revision;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
@@ -334,8 +335,8 @@ public class AffectedPathsComposite extends Composite {
 			IRepositoryLocation location = this.repositoryResource.getRepositoryLocation();
 			this.returnResource = location.asRepositoryContainer(resourceUrl, false);
 			//FIXME check peg revision
-			this.returnResource.setSelectedRevision(Revision.getInstance(this.currentRevision));
-			this.returnResource.setPegRevision(Revision.getInstance(this.currentRevision));
+			this.returnResource.setSelectedRevision(Revision.fromNumber(this.currentRevision));
+			this.returnResource.setPegRevision(Revision.fromNumber(this.currentRevision));
 		}		
 		public ISchedulingRule getSchedulingRule() {
 			return null;
@@ -481,9 +482,9 @@ public class AffectedPathsComposite extends Composite {
 			if (this.remoteResource == null) {
 				return;
 			}
-			LogMessage []msgs = msgsOp.getMessages();
+			LogEntry []msgs = msgsOp.getMessages();
 			if (msgs != null && msgs.length == 2) {
-				Revision previousRevNum = Revision.getInstance(msgs[1].revision);
+				Revision previousRevNum = Revision.fromNumber(msgs[1].revision);
 				if (this.remoteResource instanceof IRepositoryContainer) {
 					this.right = this.remoteResource.getRepositoryLocation().asRepositoryContainer(this.remoteResource.getUrl(), false);
 				}
@@ -519,7 +520,7 @@ public class AffectedPathsComposite extends Composite {
 		
 		protected String url;
 		protected long revNum;
-		protected Info2 resourceInfo;
+		protected EntryInfo resourceInfo;
 
 		public GetInfoOperation(String url, long revNum) {
 			super("Operation.GetResourceInfo");
@@ -530,8 +531,8 @@ public class AffectedPathsComposite extends Composite {
 		protected void runImpl(IProgressMonitor monitor) throws Exception {
 			ISVNClientWrapper proxy = AffectedPathsComposite.this.repositoryResource.getRepositoryLocation().acquireSVNProxy();
 			try {
-				Revision rev = Revision.getInstance(this.revNum);
-				Info2 []infos = proxy.info2(this.url, rev, rev, false, new SVNProgressMonitor(this, monitor, null));
+				Revision rev = Revision.fromNumber(this.revNum);
+				EntryInfo []infos = SVNUtility.info(proxy, this.url, rev, rev, Depth.EMPTY, new SVNProgressMonitor(this, monitor, null));
 				if (infos != null && infos.length > 0) {
 					this.resourceInfo = infos[0];
 				}
@@ -545,7 +546,7 @@ public class AffectedPathsComposite extends Composite {
 			return null;
 		}
 
-		public Info2 getResourceInfo() {
+		public EntryInfo getResourceInfo() {
 			return this.resourceInfo;
 		}
 		
@@ -580,12 +581,12 @@ public class AffectedPathsComposite extends Composite {
 			UIMonitorUtility.doTaskBusyDefault(infoOp);
 			this.reportStatus(infoOp.getStatus());
 			if (infoOp.getStatus().isOK()) {
-				Info2 info = infoOp.getResourceInfo();
+				EntryInfo info = infoOp.getResourceInfo();
 				
 				IRepositoryLocation location = (IRepositoryLocation)AffectedPathsComposite.this.repositoryResource.getRepositoryLocation();
 				
 				if (info != null) {
-					if (info.kind == NodeKind.dir && this.filesOnly) {
+					if (info.kind == NodeKind.DIR && this.filesOnly) {
 						final String message = MessageFormat.format(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.Open.Message"), new String[] {SVNUtility.decodeURL(info.url)});
 						UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 							public void run() {
@@ -601,11 +602,11 @@ public class AffectedPathsComposite extends Composite {
 						});
 						return;					
 					} else {
-						this.repositoryResource = info.kind == NodeKind.file ?  
+						this.repositoryResource = info.kind == NodeKind.FILE ?  
 								(IRepositoryResource)(location).asRepositoryFile(resourceUrl, false) : 
 								(location).asRepositoryContainer(resourceUrl, false);
-						this.repositoryResource.setSelectedRevision(Revision.getInstance(revision));
-						this.repositoryResource.setPegRevision(Revision.getInstance(revision));
+						this.repositoryResource.setSelectedRevision(Revision.fromNumber(revision));
+						this.repositoryResource.setPegRevision(Revision.fromNumber(revision));
 					}
 				}
 			}

@@ -13,9 +13,10 @@ package org.eclipse.team.svn.core.svnstorage;
 
 import org.eclipse.team.svn.core.client.ClientWrapperException;
 import org.eclipse.team.svn.core.client.Depth;
-import org.eclipse.team.svn.core.client.DirEntry;
+import org.eclipse.team.svn.core.client.RepositoryEntry;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.RepositoryEntry.Fields;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -35,10 +36,10 @@ public class SVNRepositoryFile extends SVNRepositoryResource implements IReposit
 	}
 	
 	protected void getRevisionImpl(ISVNClientWrapper proxy) throws ClientWrapperException {
-		DirEntry []entries = proxy.list(SVNUtility.encodeURL(this.getUrl()), this.getSelectedRevision(), this.getPegRevision(), Depth.empty, DirEntry.Fields.all, true, new SVNNullProgressMonitor());
+		RepositoryEntry []entries = SVNUtility.list(proxy, SVNUtility.encodeURL(this.getUrl()), this.getSelectedRevision(), this.getPegRevision(), Depth.EMPTY, Fields.ALL, true, new SVNNullProgressMonitor());
 		if (entries != null && entries.length > 0) {
-			this.lastRevision = (Revision.Number)Revision.getInstance(entries[0].lastChangedRevision);
-			this.setInfo(new IRepositoryResource.Info(entries[0].lock, entries[0].size, entries[0].lastAuthor, entries[0].lastChanged, entries[0].hasProps));
+			this.lastRevision = (Revision.Number)Revision.fromNumber(entries[0].revision);
+			this.setInfo(new IRepositoryResource.Information(entries[0].lock, entries[0].size, entries[0].author, entries[0].date, entries[0].hasProperties));
 		}
 	}
 	

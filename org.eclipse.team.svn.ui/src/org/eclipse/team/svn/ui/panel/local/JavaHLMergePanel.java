@@ -239,15 +239,15 @@ public class JavaHLMergePanel extends AbstractAdvancedDialogPanel {
 				public void progress(int current, int total, ItemState state) {
 					buf.append("<b>");
 					switch (state.action) {
-					case NotifyAction.update_add: {
+					case NotifyAction.UPDATE_ADD: {
 						buf.append(SVNTeamUIPlugin.instance().getResource("JavaHLMergePanel.Preview.Added"));
 						break;
 					}
-					case NotifyAction.update_delete: {
+					case NotifyAction.UPDATE_DELETE: {
 						buf.append(SVNTeamUIPlugin.instance().getResource("JavaHLMergePanel.Preview.Deleted"));
 						break;
 					}
-					case NotifyAction.update_update: {
+					case NotifyAction.UPDATE_UPDATE: {
 						buf.append(SVNTeamUIPlugin.instance().getResource("JavaHLMergePanel.Preview.Modified"));
 						break;
 					}

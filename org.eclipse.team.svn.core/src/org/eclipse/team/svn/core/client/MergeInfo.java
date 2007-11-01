@@ -19,7 +19,11 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Replacement for org.tigris.subversion.javahl.MergeInfo
+ * The merge information container
+ * 
+ * The JavaHL API's is the only way to interact between SVN and Java-based tools. At the same time JavaHL client library
+ * is not EPL compatible and we won't to pin plug-in with concrete client implementation. So, the only way to do this is
+ * providing our own client interface which will be covered by concrete client implementation.
  * 
  * @author Alexander Gurov
  */
@@ -31,26 +35,20 @@ public class MergeInfo {
 	}
 
 	/**
-	 * Add one or more RevisionRange objects to merge info. If the merge source
-	 * is already stored, the list of revisions is replaced.
+	 * Add one or more RevisionRange objects to merge info.
 	 * 
 	 * @param mergeSrc
 	 *            The merge source URL.
 	 * @param range
 	 *            List of RevisionRange objects to add.
-	 * @throws SubversionException
-	 *             If range list contains objects of type other than
-	 *             RevisionRange.
 	 */
-    public void addRevisions(String mergeSrc, RevisionRange[] ranges) {
+	public void addRevisions(String mergeSrc, RevisionRange[] ranges) {
 		List revisions = this.getRevisionList(mergeSrc);
 		revisions.addAll(Arrays.asList(ranges));
 	}
 
 	/**
-	 * Add a revision range to the merged revisions for a path. If the merge
-	 * source already has associated revision ranges, add the revision range to
-	 * the existing list.
+	 * Add a revision range to the merged revisions for a path.
 	 * 
 	 * @param mergeSrc
 	 *            The merge source URL.
@@ -69,10 +67,7 @@ public class MergeInfo {
 	 */
 	public String[] getPaths() {
 		Set pathSet = this.mergeSources.keySet();
-		if (pathSet == null) {
-			return null;
-		}
-		return (String[]) pathSet.toArray(new String[pathSet.size()]);
+		return pathSet == null ? null : (String[]) pathSet.toArray(new String[pathSet.size()]);
 	}
 
 	/**
@@ -80,33 +75,19 @@ public class MergeInfo {
 	 * 
 	 * @param mergeSrc
 	 *            The merge source URL, or <code>null</code>.
-	 * @return List of RevisionRange objects, or <code>null</code>.
-	 */
-	public List getRevisions(String mergeSrc) {
-		return (List) this.mergeSources.get(mergeSrc);
-	}
-
-	/**
-	 * Get the RevisionRange objects for the specified merge source URL
-	 * 
-	 * @param mergeSrc
-	 *            The merge source URL, or <code>null</code>.
 	 * @return Array of RevisionRange objects, or <code>null</code>.
 	 */
-	public RevisionRange[] getRevisionRange(String mergeSrc) {
-		List revisions = this.getRevisions(mergeSrc);
-		if (revisions == null) {
-			return null;
-		}
-		return (RevisionRange[]) revisions.toArray(new RevisionRange[revisions.size()]);
+	public RevisionRange[] getRevisions(String mergeSrc) {
+		List revisions = (List) this.mergeSources.get(mergeSrc);
+		return revisions == null ? null : (RevisionRange[]) revisions.toArray(new RevisionRange[revisions.size()]);
 	}
 
 	protected List getRevisionList(String mergeSrc) {
-		List revisions = this.getRevisions(mergeSrc);
+		List revisions = (List) this.mergeSources.get(mergeSrc);
 		if (revisions == null) {
 			this.mergeSources.put(mergeSrc, revisions = new ArrayList());
 		}
 		return revisions;
 	}
-	
+
 }

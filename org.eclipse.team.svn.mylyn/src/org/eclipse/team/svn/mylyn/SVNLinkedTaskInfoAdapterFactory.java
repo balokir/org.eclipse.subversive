@@ -24,7 +24,7 @@ import org.eclipse.team.ui.history.IHistoryView;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.team.svn.core.client.LogMessage;
+import org.eclipse.team.svn.core.client.LogEntry;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.history.SVNHistoryPage;
 import org.eclipse.team.svn.ui.panel.local.CommitPanel;
@@ -54,8 +54,8 @@ public class SVNLinkedTaskInfoAdapterFactory implements IAdapterFactory {
 			return this.createFromCheckedInChangeSet((SVNChangeSetCollector.SVNCheckedInChangeSet)adaptableObject);
 		}
 		
-		if (adaptableObject instanceof LogMessage) {
-			LogMessage historyEntry = (LogMessage)adaptableObject;
+		if (adaptableObject instanceof LogEntry) {
+			LogEntry historyEntry = (LogEntry)adaptableObject;
 			String comment = historyEntry.message == null ? "" : historyEntry.message;
 			IWorkbenchWindow window = SVNTeamUIPlugin.instance().getWorkbench().getActiveWorkbenchWindow();
 			if (window != null) {

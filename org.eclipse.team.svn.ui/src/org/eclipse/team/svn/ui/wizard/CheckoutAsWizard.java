@@ -41,6 +41,7 @@ import org.eclipse.ui.actions.NewProjectAction;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.PropertyData;
+import org.eclipse.team.svn.core.client.PropertyData.BuiltIn;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
@@ -335,7 +336,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 			dependency = new IActionOperation[] {addToSVN};
 		}
 		
-		IResourcePropertyProvider concatenateProps = new CheckoutAsWizard.ConcatenateProperyDataOperation(targetFolder, PropertyData.EXTERNALS, externalsData.getBytes());
+		IResourcePropertyProvider concatenateProps = new CheckoutAsWizard.ConcatenateProperyDataOperation(targetFolder, BuiltIn.EXTERNALS, externalsData.getBytes());
 		op.add(concatenateProps, dependency);
 		dependency = new IActionOperation[] {concatenateProps};
 		
@@ -566,7 +567,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 			final ISVNClientWrapper proxy = location.acquireSVNProxy();
 			PropertyData existingProperty;
 			try {
-				existingProperty = proxy.propertyGet(wcPath, PropertyData.EXTERNALS, null, null, new SVNProgressMonitor(CheckoutAsWizard.ConcatenateProperyDataOperation.this, monitor, null));
+				existingProperty = proxy.propertyGet(wcPath, BuiltIn.EXTERNALS, null, null, new SVNProgressMonitor(CheckoutAsWizard.ConcatenateProperyDataOperation.this, monitor, null));
 			}
 			finally {
 				location.releaseSVNProxy(proxy);

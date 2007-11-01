@@ -12,11 +12,13 @@
 package org.eclipse.team.svn.core.operation.local;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.client.Depth;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
+import org.eclipse.team.svn.core.client.IStatusCallback;
+import org.eclipse.team.svn.core.client.RevisionRange;
 import org.eclipse.team.svn.core.client.Status;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -53,12 +55,15 @@ public class MergeStatusOperation extends AbstractWorkingCopyOperation implement
 			
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-					st.addAll(Arrays.asList(proxy.mergeStatus(
-					    	from.getUrl(), from.getPegRevision(),  	// branch URL, peg, start, stop
-					    	MergeStatusOperation.this.info.start, from.getSelectedRevision(), 
-							wcPath, 							// head
-							null, true, false, 									// last merge revision etc.
-							new SVNProgressMonitor(MergeStatusOperation.this, monitor, null))));
+					proxy.mergeStatus(from.getUrl(), from.getPegRevision(), 
+					    	new RevisionRange [] {new RevisionRange(MergeStatusOperation.this.info.start, from.getSelectedRevision())}, 
+							wcPath, Depth.INFINITY, false, 
+							new IStatusCallback() {
+								public void nextStatus(Status status) {
+									st.add(status);
+								}
+							}, 
+							new SVNProgressMonitor(MergeStatusOperation.this, monitor, null));
 				}
 			}, monitor, this.info.to.length);
 			

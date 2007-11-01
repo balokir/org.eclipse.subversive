@@ -50,9 +50,9 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.client.ChangePath;
-import org.eclipse.team.svn.core.client.LogMessage;
+import org.eclipse.team.svn.core.client.LogEntry;
 import org.eclipse.team.svn.core.client.Revision;
-import org.eclipse.team.svn.core.client.RevisionKind;
+import org.eclipse.team.svn.core.client.Revision.Kind;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.ISVNStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
@@ -95,7 +95,7 @@ public class LogMessagesComposite extends SashForm {
 	
 	protected IRepositoryResource repositoryResource;
 	
-	protected LogMessage []msgs = new LogMessage[0];
+	protected LogEntry []msgs = new LogEntry[0];
 	
 	public LogMessagesComposite(Composite parent, int logPercent, int style) {
 	    super(parent, SWT.VERTICAL);
@@ -146,7 +146,7 @@ public class LogMessagesComposite extends SashForm {
 	}
 	
 	public void setSelectedRevision(long revision) {
-		LogMessage newSelection = null;
+		LogEntry newSelection = null;
 		for (int i = 0; i < this.msgs.length; i++) {
 			if (msgs[i].revision == revision) {
 				newSelection = msgs[i];
@@ -167,25 +167,25 @@ public class LogMessagesComposite extends SashForm {
 			long []revisions = new long[tSelection.size()];
 			int i = 0;
 			for (Iterator it = tSelection.iterator(); it.hasNext(); ) {
-				revisions[i++] = ((LogMessage)it.next()).revision;
+				revisions[i++] = ((LogEntry)it.next()).revision;
 			}
 			return revisions;
 		}
 		return new long[0];
 	}
 	
-	public LogMessage []getSelectedLogMessages() {
+	public LogEntry []getSelectedLogMessages() {
 		IStructuredSelection tSelection = (IStructuredSelection)this.historyTable.getSelection();
 		if (tSelection.size() > 0) {
-			return (LogMessage [])tSelection.toList().toArray(new LogMessage[0]);
+			return (LogEntry [])tSelection.toList().toArray(new LogEntry[0]);
 		}
-		return new LogMessage[0];
+		return new LogEntry[0];
 	}
 	
 	public long getSelectedRevision() {
 		IStructuredSelection tSelection = (IStructuredSelection)this.historyTable.getSelection();
 		if (tSelection.size() > 0) {
-			return ((LogMessage)tSelection.getFirstElement()).revision;
+			return ((LogEntry)tSelection.getFirstElement()).revision;
 		}
 		return Revision.SVN_INVALID_REVNUM;
 	}
@@ -193,7 +193,7 @@ public class LogMessagesComposite extends SashForm {
 	public String getSelectedMessage() {
 		IStructuredSelection tSelection = (IStructuredSelection)this.historyTable.getSelection();
 		if (tSelection.size() > 0) {
-			String message = ((LogMessage)tSelection.getFirstElement()).message;
+			String message = ((LogEntry)tSelection.getFirstElement()).message;
 			return message == null ? "" : message;
 		}
 		return "";
@@ -239,14 +239,14 @@ public class LogMessagesComposite extends SashForm {
 		}
 	}
     
-	public void setLogMessages(Revision currentRevision, LogMessage []msgs, IRepositoryResource repositoryResource) {
+	public void setLogMessages(Revision currentRevision, LogEntry []msgs, IRepositoryResource repositoryResource) {
 		this.msgs = msgs;
 		this.repositoryResource = repositoryResource;
 		this.currentRevision = Revision.SVN_INVALID_REVNUM;
 		this.pathData.clear();
 		
 		if (msgs == null || msgs.length == 0) {
-			this.msgs = new LogMessage[0];
+			this.msgs = new LogEntry[0];
 			this.setTableInput();
 			this.historyTableListener.selectionChanged(null);
 			return;
@@ -291,10 +291,10 @@ public class LogMessagesComposite extends SashForm {
 		}
 		
 		if (currentRevision != null && !(currentRevision instanceof ISVNStorage.InvalidRevision)) {
-			if (currentRevision.getKind() == RevisionKind.head) {
+			if (currentRevision.getKind() == Kind.HEAD) {
 				this.currentRevision = Math.max(msgs[0].revision, msgs[msgs.length - 1].revision);
 			}
-			else if (currentRevision.getKind() == RevisionKind.number) {
+			else if (currentRevision.getKind() == Kind.NUMBER) {
 				this.currentRevision = ((Revision.Number)currentRevision).getNumber();
 			}
 		}
@@ -337,14 +337,14 @@ public class LogMessagesComposite extends SashForm {
 		return retVal;
 	}
 	
-	protected String getNextPrefix(LogMessage message, String current, Set relatedParents) {
+	protected String getNextPrefix(LogEntry message, String current, Set relatedParents) {
 		String checked = "/" + current;
 		ChangePath []changes = message.changedPaths;
 		
 		for (int i = 0; i < changes.length; i++) {
-			if (changes[i].copySrcPath != null && checked.startsWith(changes[i].path)) {
+			if (changes[i].copiedFromPath != null && checked.startsWith(changes[i].path)) {
 				String rest = checked.substring(changes[i].path.length());
-				String relatedParent = changes[i].copySrcPath.substring(1);
+				String relatedParent = changes[i].copiedFromPath.substring(1);
 				relatedParents.add(relatedParent);
 				relatedParents.add(changes[i].path.substring(1));
 				return relatedParent + rest;
@@ -371,8 +371,8 @@ public class LogMessagesComposite extends SashForm {
 					this.getAction(paths[i].action), 
 					idx != -1 ? path.substring(idx + 1) : path,
 					idx != -1 ? path.substring(0, idx) : "",
-					paths[i].copySrcRevision != Revision.SVN_INVALID_REVNUM ?  paths[i].copySrcPath : "",
-					paths[i].copySrcRevision != Revision.SVN_INVALID_REVNUM ?  "" + paths[i].copySrcRevision : ""
+					paths[i].copiedFromRevision != Revision.SVN_INVALID_REVNUM ?  paths[i].copiedFromPath : "",
+					paths[i].copiedFromRevision != Revision.SVN_INVALID_REVNUM ?  "" + paths[i].copiedFromRevision : ""
 				};
 		}
 		this.pathData.put(key, pathData);
@@ -441,8 +441,8 @@ public class LogMessagesComposite extends SashForm {
 
 		TableViewerSorter sorter = new TableViewerSorter(this.historyTable, new TableViewerSorter.IColumnComparator() {
             public int compare(Object row1, Object row2, int column) {
-                LogMessage rowData1 = (LogMessage)row1;
-                LogMessage rowData2 = (LogMessage)row2;
+                LogEntry rowData1 = (LogEntry)row1;
+                LogEntry rowData2 = (LogEntry)row2;
                 if (column == 1) {
                     return new Long(rowData1.revision).compareTo(new Long(rowData2.revision));
                 }
@@ -579,7 +579,7 @@ public class LogMessagesComposite extends SashForm {
 		}
 
 		public String getColumnText(Object element, int columnIndex) {
-			LogMessage row = (LogMessage)element;
+			LogEntry row = (LogEntry)element;
 			switch (columnIndex) {
 				case 1: {
 					return LogMessagesComposite.this.revisionToString(row.revision);
@@ -616,7 +616,7 @@ public class LogMessagesComposite extends SashForm {
 		}
 
 		public Font getFont(Object element) {
-			LogMessage row = (LogMessage)element;
+			LogEntry row = (LogEntry)element;
 			if (LogMessagesComposite.this.currentRevision == row.revision && !LogMessagesComposite.this.currentRevisionFont.isDisposed()) {
 				return LogMessagesComposite.this.currentRevisionFont;
 			}
