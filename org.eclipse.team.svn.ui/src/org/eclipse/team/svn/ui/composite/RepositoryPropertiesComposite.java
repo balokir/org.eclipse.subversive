@@ -28,6 +28,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.client.Revision;
 import org.eclipse.team.svn.core.operation.local.management.FindRelatedProjectsOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
+import org.eclipse.team.svn.core.resource.ProxySettings;
+import org.eclipse.team.svn.core.resource.SSHSettings;
+import org.eclipse.team.svn.core.resource.SSLSettings;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -67,11 +70,36 @@ public class RepositoryPropertiesComposite extends Composite implements IPropert
 	protected IValidationManager validationManager;
 	
 	protected IRepositoryLocation credentialsInput;
+	protected ISecurityInfoProvider provider;
 
 	public RepositoryPropertiesComposite(Composite parent, int style, IValidationManager validationManager) {
 		super(parent, style);
 
 		this.validationManager = validationManager;
+	}
+	
+	public String getPasswordDirect() {
+		return this.credentialsComposite.getPassword().getText();
+	}
+	
+	public void setPasswordDirect(String password) {
+		this.credentialsComposite.getPassword().setText(password);
+	}
+	
+	public String getUsernameDirect() {
+		return this.credentialsComposite.getUsername().getText();
+	}
+	
+	public void setUsernameDirect(String username) {
+		this.credentialsComposite.getUsername().setText(username);
+	}
+	
+	public boolean getPasswordSavedDirect() {
+		return this.credentialsComposite.getSavePassword().getSelection();
+	}
+	
+	public void setPasswordSavedDirect(boolean saved) {
+		this.credentialsComposite.getSavePassword().setSelection(saved);
 	}
 	
 	public void initialize() {
@@ -130,9 +158,35 @@ public class RepositoryPropertiesComposite extends Composite implements IPropert
 				IRepositoryLocation location = storage.newRepositoryLocation();
 				location.setUrl(RepositoryPropertiesComposite.this.url.getText());
 				location.setLabel(RepositoryPropertiesComposite.this.url.getText());
-				location.setPassword(RepositoryPropertiesComposite.this.credentialsComposite.getPassword().getText());
-				location.setUsername(RepositoryPropertiesComposite.this.credentialsComposite.getUsername().getText());
-				location.setPasswordSaved(RepositoryPropertiesComposite.this.credentialsComposite.getSavePassword().getSelection());
+				
+				location.setPassword(RepositoryPropertiesComposite.this.provider.getPassword());
+				location.setUsername(RepositoryPropertiesComposite.this.provider.getUsername());
+				location.setPasswordSaved(RepositoryPropertiesComposite.this.provider.isPasswordSaved());
+				
+				SSHSettings sshNew = location.getSSHSettings();
+				SSHSettings sshOriginal = RepositoryPropertiesComposite.this.provider.getSSHSettings();
+				sshNew.setPassPhrase(sshOriginal.getPassPhrase());
+				sshNew.setPassPhraseSaved(sshOriginal.isPassPhraseSaved());
+				sshNew.setPort(sshOriginal.getPort());
+				sshNew.setPrivateKeyPath(sshOriginal.getPrivateKeyPath());
+				sshNew.setUseKeyFile(sshOriginal.isUseKeyFile());
+				
+				SSLSettings sslOriginal = location.getSSLSettings();
+				SSLSettings sslNew = RepositoryPropertiesComposite.this.provider.getSSLSettings();
+				sslNew.setAuthenticationEnabled(sslOriginal.isAuthenticationEnabled());
+				sslNew.setCertificatePath(sslOriginal.getCertificatePath());
+				sslNew.setPassPhrase(sslOriginal.getPassPhrase());
+				sslNew.setPassPhraseSaved(sslOriginal.isPassPhraseSaved());
+				
+				ProxySettings proxyOriginal = location.getProxySettings();
+				ProxySettings proxyNew = RepositoryPropertiesComposite.this.provider.getProxySettings();
+				proxyNew.setAuthenticationEnabled(proxyOriginal.isAuthenticationEnabled());
+				proxyNew.setEnabled(proxyOriginal.isEnabled());
+				proxyNew.setHost(proxyOriginal.getHost());
+				proxyNew.setPassword(proxyOriginal.getPassword());
+				proxyNew.setPasswordSaved(proxyOriginal.isPasswordSaved());
+				proxyNew.setPort(proxyOriginal.getPort());
+				proxyNew.setUsername(proxyOriginal.getUsername());
 				
 				RepositoryBrowsingPanel panel = new RepositoryBrowsingPanel(SVNTeamUIPlugin.instance().getResource("RepositoryPropertiesComposite.SelectNewURL"), location, Revision.HEAD);
 				panel.setAutoexpandFirstLevel(true);
@@ -142,9 +196,36 @@ public class RepositoryPropertiesComposite extends Composite implements IPropert
 						String newUrl = panel.getSelectedResource().getUrl();
 						RepositoryPropertiesComposite.this.url.setText(newUrl);
 					}
-				    RepositoryPropertiesComposite.this.credentialsComposite.getUsername().setText(location.getUsername());
-				    RepositoryPropertiesComposite.this.credentialsComposite.getPassword().setText(location.getPassword());
-				    RepositoryPropertiesComposite.this.credentialsComposite.getSavePassword().setSelection(location.isPasswordSaved());
+					RepositoryPropertiesComposite.this.provider.setUsername(location.getUsername());
+					RepositoryPropertiesComposite.this.provider.setPassword(location.getPassword());
+					RepositoryPropertiesComposite.this.provider.setPasswordSaved(location.isPasswordSaved());
+					
+					sshNew = RepositoryPropertiesComposite.this.provider.getSSHSettings();
+					sshOriginal = location.getSSHSettings();
+					sshNew.setPassPhrase(sshOriginal.getPassPhrase());
+					sshNew.setPassPhraseSaved(sshOriginal.isPassPhraseSaved());
+					sshNew.setPort(sshOriginal.getPort());
+					sshNew.setPrivateKeyPath(sshOriginal.getPrivateKeyPath());
+					sshNew.setUseKeyFile(sshOriginal.isUseKeyFile());
+					
+					sslOriginal = RepositoryPropertiesComposite.this.provider.getSSLSettings();
+					sslNew = location.getSSLSettings();
+					sslNew.setAuthenticationEnabled(sslOriginal.isAuthenticationEnabled());
+					sslNew.setCertificatePath(sslOriginal.getCertificatePath());
+					sslNew.setPassPhrase(sslOriginal.getPassPhrase());
+					sslNew.setPassPhraseSaved(sslOriginal.isPassPhraseSaved());
+					
+					proxyOriginal = RepositoryPropertiesComposite.this.provider.getProxySettings();
+					proxyNew = location.getProxySettings();
+					proxyNew.setAuthenticationEnabled(proxyOriginal.isAuthenticationEnabled());
+					proxyNew.setEnabled(proxyOriginal.isEnabled());
+					proxyNew.setHost(proxyOriginal.getHost());
+					proxyNew.setPassword(proxyOriginal.getPassword());
+					proxyNew.setPasswordSaved(proxyOriginal.isPasswordSaved());
+					proxyNew.setPort(proxyOriginal.getPort());
+					proxyNew.setUsername(proxyOriginal.getUsername());
+					
+					RepositoryPropertiesComposite.this.provider.commit();
 				}
 			}
 		});
@@ -199,9 +280,10 @@ public class RepositoryPropertiesComposite extends Composite implements IPropert
 		this.resetChanges();
 	}
 	
-	public void setRepositoryLocation(IRepositoryLocation location, String rootUrl) {
+	public void setRepositoryLocation(IRepositoryLocation location, String rootUrl, ISecurityInfoProvider provider) {
 		this.credentialsInput = this.repositoryLocation = location;
 		this.rootUrl = rootUrl;
+		this.provider = provider;
 	}
 	
 	public IRepositoryLocation getRepositoryLocation() {
@@ -212,8 +294,9 @@ public class RepositoryPropertiesComposite extends Composite implements IPropert
 		return this.url.getText();
 	}
 	
-	public void setCredentialsInput(IRepositoryLocation location) {
+	public void setCredentialsInput(IRepositoryLocation location, ISecurityInfoProvider provider) {
 		this.credentialsInput = location;
+		this.provider = provider;
 	}
 	
 	public void defineUrlVerifier(AbstractVerifier verifier) {
