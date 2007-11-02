@@ -62,6 +62,33 @@ public class SSLComposite extends Composite implements IPropertiesPanel {
 		this.credentialsInput = new SSLSettings();
 	}
 
+	public SSLSettings getSSLSettingsDirect() {
+		SSLSettings settings = new SSLSettings();
+		this.getSSLSettingsDirectImpl(settings);
+		return settings;
+	}
+	
+	public void setSSLSettingsDirect(SSLSettings settings) {
+		this.savePassphraseCheckBox.setSelection(settings.isPassPhraseSaved());
+		this.enableAuthenticationCheckBox.setSelection(settings.isAuthenticationEnabled());
+		String text = settings.getPassPhrase();
+		this.certificatePassphraseText.setText(text == null ? "" : text);
+		text = settings.getCertificatePath();
+		this.certificateFileText.setText(text == null ? "" : text);
+		
+		if (this.callback) {
+			if (text != null && text.length() > 0) {
+				this.certificatePassphraseText.setFocus();
+				this.certificatePassphraseText.selectAll();
+			}
+			else {
+				this.certificateFileText.setFocus();
+			}
+		}
+		
+		this.refreshControlsEnablement();
+	}
+	
 	public void initialize() {
 		GridLayout layout = null;
 		GridData data = null;
@@ -172,37 +199,24 @@ public class SSLComposite extends Composite implements IPropertiesPanel {
 	}
 
 	public void saveChanges() {
-		this.credentialsInput.setAuthenticationEnabled(this.enableAuthenticationCheckBox.getSelection());
-		this.credentialsInput.setCertificatePath(this.certificateFileText.getText());
-		this.credentialsInput.setPassPhrase(this.certificatePassphraseText.getText());
-		this.credentialsInput.setPassPhraseSaved(this.savePassphraseCheckBox.getSelection());
+		this.getSSLSettingsDirectImpl(this.credentialsInput);
 	}
 
 	public void resetChanges() {
-		this.savePassphraseCheckBox.setSelection(this.credentialsInput.isPassPhraseSaved());
-		this.enableAuthenticationCheckBox.setSelection(this.credentialsInput.isAuthenticationEnabled());
-		String text = this.credentialsInput.getPassPhrase();
-		this.certificatePassphraseText.setText(text == null ? "" : text);
-		text = this.credentialsInput.getCertificatePath();
-		this.certificateFileText.setText(text == null ? "" : text);
-		
-		if (this.callback) {
-			if (text != null && text.length() > 0) {
-				this.certificatePassphraseText.setFocus();
-				this.certificatePassphraseText.selectAll();
-			}
-			else {
-				this.certificateFileText.setFocus();
-			}
-		}
-		
-		this.refreshControlsEnablement();
+		this.setSSLSettingsDirect(this.credentialsInput);
 	}
 
 	public void cancelChanges() {
 		
 	}
 
+	protected void getSSLSettingsDirectImpl(SSLSettings settings) {
+		settings.setAuthenticationEnabled(this.enableAuthenticationCheckBox.getSelection());
+		settings.setCertificatePath(this.certificateFileText.getText());
+		settings.setPassPhrase(this.certificatePassphraseText.getText());
+		settings.setPassPhraseSaved(this.savePassphraseCheckBox.getSelection());
+	}
+	
 	protected void refreshControlsEnablement() {
 		boolean enabled = this.enableAuthenticationCheckBox.getSelection();
 		this.certificateFileText.setEnabled(enabled);

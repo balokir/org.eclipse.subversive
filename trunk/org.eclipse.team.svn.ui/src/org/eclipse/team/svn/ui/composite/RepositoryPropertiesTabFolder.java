@@ -38,6 +38,8 @@ import org.eclipse.team.svn.core.client.ICredentialsPrompt;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.ProxySettings;
+import org.eclipse.team.svn.core.resource.SSHSettings;
+import org.eclipse.team.svn.core.resource.SSLSettings;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
@@ -50,7 +52,7 @@ import org.eclipse.team.svn.ui.verifier.IValidationManager;
  *
  * @author Sergiy Logvin
  */
-public class RepositoryPropertiesTabFolder extends Composite implements IPropertiesPanel {
+public class RepositoryPropertiesTabFolder extends Composite implements IPropertiesPanel, ISecurityInfoProvider {
 	
 	protected RepositoryPropertiesComposite repositoryPropertiesPanel;
 	protected SSHComposite sshComposite;
@@ -90,6 +92,58 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 			this.backup = SVNRemoteStorage.instance().newRepositoryLocation();
 			SVNRemoteStorage.instance().copyRepositoryLocation(this.backup, this.repositoryLocation);
 		}
+	}
+	
+	protected String sipUsername;
+	protected String sipPassword;
+	protected boolean sipIsPasswordSaved;
+	protected ProxySettings sipProxySettings;
+	protected SSHSettings sipSSHSettings;
+	protected SSLSettings sipSSLSettings;
+	
+	public String getUsername() {
+		return this.sipUsername = this.repositoryPropertiesPanel.getUsernameDirect();
+	}
+	
+	public void setUsername(String username) {
+		this.sipUsername = username;
+	}
+	
+	public String getPassword() {
+		return this.sipPassword = this.repositoryPropertiesPanel.getPasswordDirect();
+	}
+	
+	public void setPassword(String password) {
+		this.sipPassword = password;
+	}
+	
+	public boolean isPasswordSaved() {
+		return this.sipIsPasswordSaved = this.repositoryPropertiesPanel.getPasswordSavedDirect();
+	}
+	
+	public void setPasswordSaved(boolean saved) {
+		this.sipIsPasswordSaved = saved;
+	}
+	
+	public ProxySettings getProxySettings() {
+		return this.sipProxySettings = this.proxyComposite.getProxySettingsDirect();
+	}
+	
+	public SSLSettings getSSLSettings() {
+		return this.sipSSLSettings = this.sslComposite.getSSLSettingsDirect();
+	}
+	
+	public SSHSettings getSSHSettings() {
+		return this.sipSSHSettings = this.sshComposite.getSSHSettingsDirect();
+	}
+	
+	public void commit() {
+		this.repositoryPropertiesPanel.setUsernameDirect(this.sipUsername);
+		this.repositoryPropertiesPanel.setPasswordDirect(this.sipPassword);
+		this.repositoryPropertiesPanel.setPasswordSavedDirect(this.sipIsPasswordSaved);
+		this.sshComposite.setSSHSettingsDirect(this.sipSSHSettings);
+		this.sslComposite.setSSLSettingsDirect(this.sipSSLSettings);
+		this.proxyComposite.setProxySettingsDirect(this.sipProxySettings);
 	}
 	
 	public void initialize() {
@@ -249,7 +303,7 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 		}
 		
 		this.repositoryPropertiesPanel.saveChanges();
-		this.repositoryPropertiesPanel.setCredentialsInput(location);
+		this.repositoryPropertiesPanel.setCredentialsInput(location, this);
 		this.repositoryPropertiesPanel.resetChanges();
 		if (CoreExtensionsManager.instance().getSVNClientWrapperFactory().isSSHOptionsAllowed()) {
 			this.sshComposite.saveChanges();
@@ -263,7 +317,7 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 	
 	protected Composite createRepositoryPropertiesPanel(Composite tabFolder) {
 		this.repositoryPropertiesPanel = new RepositoryPropertiesComposite(tabFolder, this.style, this.validationManager);
-		this.repositoryPropertiesPanel.setRepositoryLocation(this.repositoryLocation, this.createNew ? null : this.repositoryLocation.getRepositoryRootUrl());
+		this.repositoryPropertiesPanel.setRepositoryLocation(this.repositoryLocation, this.createNew ? null : this.repositoryLocation.getRepositoryRootUrl(), this);
 		this.repositoryPropertiesPanel.initialize();
 		
 		return this.repositoryPropertiesPanel;

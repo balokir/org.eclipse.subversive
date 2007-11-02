@@ -80,6 +80,33 @@ public class ProxyComposite extends AbstractDynamicComposite implements IPropert
 		this.port = ProxySettings.DEFAULT_PORT;
 	}
 
+	public ProxySettings getProxySettingsDirect() {
+		ProxySettings settings = new ProxySettings();
+		this.getProxySettingsDirectImpl(settings);
+		return settings;
+	}
+	
+	public void setProxySettingsDirect(ProxySettings settings) {
+		this.proxyEnableCheckBox.setSelection(settings.isEnabled());
+		this.portText.setText(String.valueOf(settings.getPort()));
+		this.hostText.setText(settings.getHost());
+		this.enableAuthenticationCheckBox.setSelection(settings.isAuthenticationEnabled());
+		this.usernameText.setText(settings.getUsername());
+		this.passwordText.setText(settings.getPassword());
+		this.savePasswordCheckBox.setSelection(settings.isPasswordSaved());
+		if (this.callback && settings.isAuthenticationEnabled()) {
+			if (this.username != null && this.username.trim().length() > 0) {
+				this.passwordText.setFocus();
+				this.passwordText.selectAll();
+			}
+			else {
+				this.usernameText.setFocus();
+			}
+		}
+		
+		this.refreshControlsEnablement();		
+	}
+	
 	public void saveChanges() {
 		this.userHistory.addLine(this.usernameText.getText());	
 		this.hostHistory.addLine(this.hostText.getText());
@@ -372,4 +399,17 @@ public class ProxyComposite extends AbstractDynamicComposite implements IPropert
 		this.validationManager.validateContent();
 	}
 
+	protected void getProxySettingsDirectImpl(ProxySettings settings) {
+		settings.setEnabled(this.proxyEnableCheckBox.getSelection());
+		settings.setHost(this.hostText.getText());
+		String text = this.portText.getText().trim();
+		if (text.length() > 0) {
+			settings.setPort(Integer.parseInt(text));
+		}
+		settings.setAuthenticationEnabled(this.enableAuthenticationCheckBox.getSelection());
+		settings.setUsername(this.usernameText.getText());
+		settings.setPassword(this.passwordText.getText());
+		settings.setPasswordSaved(this.savePasswordCheckBox.getSelection());
+	}
+	
 }

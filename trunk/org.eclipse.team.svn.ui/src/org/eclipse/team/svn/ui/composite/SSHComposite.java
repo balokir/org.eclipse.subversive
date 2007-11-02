@@ -74,6 +74,30 @@ public class SSHComposite extends AbstractDynamicComposite implements IPropertie
 		this.credentialsInput = new SSHSettings();
 	}
 	
+	public SSHSettings getSSHSettingsDirect() {
+		SSHSettings settings = new SSHSettings();
+		this.getSSHSettingsDirectImpl(settings);
+		return settings;
+	}
+	
+	public void setSSHSettingsDirect(SSHSettings settings) {
+		this.savePassphraseCheckBox.setSelection(settings.isPassPhraseSaved());
+		this.privateKeyRadioButton.setSelection(settings.isUseKeyFile());
+		this.passwordRadioButton.setSelection(!settings.isUseKeyFile());
+		String text = settings.getPassPhrase();
+		this.passphraseText.setText(text == null ? "" : text);
+		text = settings.getPrivateKeyPath();
+		this.privateKeyFileText.setText(text == null ? "" : text);
+		this.portText.setText(String.valueOf(settings.getPort()));
+		
+		if (this.callback && text != null && text.length() > 0) {
+			this.passphraseText.setFocus();
+			this.passphraseText.selectAll();
+		}
+		
+		this.refreshControlsEnablement();
+	}
+	
 	public void initialize() {
 		GridLayout layout = null;
 		GridData data = null;
@@ -224,35 +248,28 @@ public class SSHComposite extends AbstractDynamicComposite implements IPropertie
 	}
 	
 	public void saveChanges() {
-		this.credentialsInput.setPassPhraseSaved(this.savePassphraseCheckBox.getSelection());
-		this.credentialsInput.setUseKeyFile(this.privateKeyRadioButton.getSelection());
-		this.credentialsInput.setPassPhrase(this.passphraseText.getText());
-		this.credentialsInput.setPrivateKeyPath(this.privateKeyFileText.getText());
-		this.credentialsInput.setPort(Integer.parseInt(this.portText.getText().trim()));
+		this.getSSHSettingsDirectImpl(this.credentialsInput);
 	}
 
 	public void resetChanges() {
-		this.savePassphraseCheckBox.setSelection(this.credentialsInput.isPassPhraseSaved());
-		this.privateKeyRadioButton.setSelection(this.credentialsInput.isUseKeyFile());
-		this.passwordRadioButton.setSelection(!this.credentialsInput.isUseKeyFile());
-		String text = this.credentialsInput.getPassPhrase();
-		this.passphraseText.setText(text == null ? "" : text);
-		text = this.credentialsInput.getPrivateKeyPath();
-		this.privateKeyFileText.setText(text == null ? "" : text);
-		this.portText.setText(String.valueOf(this.credentialsInput.getPort()));
-		
-		if (this.callback && text != null && text.length() > 0) {
-			this.passphraseText.setFocus();
-			this.passphraseText.selectAll();
-		}
-		
-		this.refreshControlsEnablement();
+		this.setSSHSettingsDirect(this.credentialsInput);
 	}
 
 	public void cancelChanges() {
 		
 	}
 
+	protected void getSSHSettingsDirectImpl(SSHSettings settings) {
+		settings.setPassPhraseSaved(this.savePassphraseCheckBox.getSelection());
+		settings.setUseKeyFile(this.privateKeyRadioButton.getSelection());
+		settings.setPassPhrase(this.passphraseText.getText());
+		settings.setPrivateKeyPath(this.privateKeyFileText.getText());
+		String port = this.portText.getText().trim();
+		if (port.length() > 0) {
+			settings.setPort(Integer.parseInt(port));
+		}
+	}
+	
 	protected void refreshControlsEnablement() {
 		boolean buttonSelected = this.passwordRadioButton.getSelection();
 		
