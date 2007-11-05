@@ -18,10 +18,10 @@
 		</tr>
 	</table>
 <h3>Mylyn (former Mylar) integration</h3>
-	<p>This topic provides an overview of integration with the Mylyn (Mylar) and demonstrates how both tools can be used together. Starting from 1.1.0 M5 build Subversive provides integration with Mylyn. Such integration is available only in the 1.1.x stream, which is targeted to Eclipse 3.2/Callisto. A quick overview of Mylyn integration is provided below.</p>
+	<p>This topic provides an overview of integration with the Mylyn (Mylar) and demonstrates how both tools can be used together.</p>
 	<ol>
 		<li>In order to start the user should have Eclipse 3.2 and Mylyn installed. During Subversive installation from the Update Site select 'Mylyn Integration' feature. The user should install all Mylyn and Subversive features at once as shown below, because otherwise integration problems can happen. Subversive team together with Mylar team are investigating this problem.</li>
-		<br/><br/><img border="0" src="../../images/mylyn1.png" alt="Select features to install"/>
+		<br/><img border="0" src="../../images/mylyn1.png" alt="Select features to install"/><br/><br/>
 		<li>Checkout or share a project with the Subversive. This step connects a project with the Subversive and as the result you can use Subversive features for it, including integration with the Mylyn.</li>
 		<li>Create some task, e.g. New Task and save it. Then the user should activate the task.</li>
 		<li>As soon as the task is activated make some changes in the source code.</li>
@@ -30,12 +30,14 @@
 			Choose <i>'Team > Synchronize'</i> for this project in order to activate Subversive <i>'Synchronize View'</i>. In the <i>'Synchronize View'</i> press the <i>'Show Change Sets'</i> button. The changes which were made under the <i>'New task'</i> are displayed in the corresponding change set. By this way you can see a code changes related with particular Mylyn task.
 			<br/><br/><img border="0" src="../../images/mylyn2.png" alt="Synchronize view"/><br/><br/>
 			If the user wants to commit changes to the repository he should select <i>'Commit'</i> item in the pop-up menu. In the Subversive <i>'Commit'</i> dialog you will see Mylyn task status, name and URL as a proposed comment.
-			<br/><br/><img border="0" src="../../images/mylyn3.png" alt="Commit"/>
+			<br/><br/><img border="0" src="../../images/mylyn3.png" alt="Commit"/><br/><br/>
 	</li>
-		<li>Task modification</li>
-		<br/><br/>
-		Open the <i>'Task List View'</i> related to Mylyn and choose <i>'Commit Context'</i> menu item in the current task pop-up menu. As the result Subversive <i>'Commit'</i> dialog is shown and you are able to commit all source code changes related with selected task
-		<br/><br/><img border="0" src="../../images/mylyn3.png" alt="Commit"/>
+		<li>
+			Task modification
+			<br/><br/>
+			Open the <i>'Task List View'</i> related to Mylyn and choose <i>'Commit Context'</i> menu item in the current task pop-up menu. As the result Subversive <i>'Commit'</i> dialog is shown and you are able to commit all source code changes related with selected task
+			<br/><br/><img border="0" src="../../images/mylyn3.png" alt="Commit"/>
+		</li>
 	</ol>
 </body>
 </html>
