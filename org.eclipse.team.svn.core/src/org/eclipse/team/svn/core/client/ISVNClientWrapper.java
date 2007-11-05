@@ -59,22 +59,22 @@ public interface ISVNClientWrapper {
     public INotificationCallback getNotificationCallback();
     
 
-	public long checkout(String moduleName, String destPath, Revision revision, Revision pegRevision, int depth, boolean ignoreExternals, boolean allowUnverObstructions, ISVNProgressMonitor monitor) throws ClientWrapperException;
+	public long checkout(EntryReference fromReference, String destPath, int depth, boolean ignoreExternals, boolean allowUnverObstructions, ISVNProgressMonitor monitor) throws ClientWrapperException;
     public void lock(String []path, String comment, boolean force, ISVNProgressMonitor monitor) throws ClientWrapperException;
     public void unlock(String []path, boolean force, ISVNProgressMonitor monitor) throws ClientWrapperException;
 	public void add(String path, int depth, boolean skipIgnores, boolean addParents, ISVNProgressMonitor monitor) throws ClientWrapperException;
 	public long []commit(String []path, String message, int depth, boolean noUnlock, boolean keepChangelist, String changelistName, ISVNProgressMonitor monitor) throws ClientWrapperException;
 	public long []update(String []path, Revision revision, int depth, boolean ignoreExternals, boolean allowUnverObstructions, ISVNProgressMonitor monitor) throws ClientWrapperException;
-	public long doSwitch(String path, String url, Revision revision, Revision pegRevision, int depth, boolean ignoreExternals, boolean allowUnverObstructions, ISVNProgressMonitor monitor) throws ClientWrapperException;
+	public long doSwitch(String path, EntryReference toReference, int depth, boolean ignoreExternals, boolean allowUnverObstructions, ISVNProgressMonitor monitor) throws ClientWrapperException;
 	public void revert(String path, int depth, ISVNProgressMonitor monitor) throws ClientWrapperException;
 	public void status(String path, int depth, boolean onServer, boolean getAll, boolean noIgnore, boolean ignoreExternals, IStatusCallback callback, ISVNProgressMonitor monitor) throws ClientWrapperException;
 	public void relocate(String from, String to, String path, int depth, ISVNProgressMonitor monitor) throws ClientWrapperException;
 	public void cleanup(String path, ISVNProgressMonitor monitor) throws ClientWrapperException;
-	public void merge(String path1, Revision revision1, String path2, Revision revision2, String localPath, boolean force, int depth, boolean ignoreAncestry, boolean dryRun, ISVNProgressMonitor monitor) throws ClientWrapperException;
-	public void merge(String path, Revision pegRevision, RevisionRange []revisions, String localPath, boolean force, int depth, boolean ignoreAncestry, boolean dryRun, ISVNProgressMonitor monitor) throws ClientWrapperException;
-    public MergeInfo getMergeInfo(String path, Revision pegRevision, ISVNProgressMonitor monitor) throws ClientWrapperException;
-    public RevisionRange []getAvailableMerges(String path, Revision pegRevision, String mergeSource, ISVNProgressMonitor monitor) throws ClientWrapperException;
-    public String []suggestMergeSources(String path, Revision pegRevision, ISVNProgressMonitor monitor) throws ClientWrapperException;
+	public void merge(EntryReference reference1, EntryReference reference2, String localPath, boolean force, int depth, boolean ignoreAncestry, boolean dryRun, ISVNProgressMonitor monitor) throws ClientWrapperException;
+	public void merge(EntryReference reference, RevisionRange []revisions, String localPath, boolean force, int depth, boolean ignoreAncestry, boolean dryRun, ISVNProgressMonitor monitor) throws ClientWrapperException;
+    public MergeInfo getMergeInfo(EntryReference reference, ISVNProgressMonitor monitor) throws ClientWrapperException;
+    public RevisionRange []getAvailableMerges(EntryReference reference, String mergeSource, ISVNProgressMonitor monitor) throws ClientWrapperException;
+    public String []suggestMergeSources(EntryReference reference, ISVNProgressMonitor monitor) throws ClientWrapperException;
 	public void resolved(String path, int depth, int conflictResult, ISVNProgressMonitor monitor) throws ClientWrapperException;
 	public void setConflictResolver(IConflictResolutionCallback listener);
     
@@ -82,35 +82,35 @@ public interface ISVNClientWrapper {
     public void removeFromChangelist(String[] paths, String changelist, ISVNProgressMonitor monitor) throws ClientWrapperException;
     public String[] getChangelist(String changelist, String rootPath, ISVNProgressMonitor monitor) throws ClientWrapperException;
 
-	public void merge(String url, Revision peg, RevisionRange []revisions, String mergePath, Status[] mergeStatus, boolean force, ISVNProgressMonitor monitor) throws ClientWrapperException;
-	public void mergeStatus(String url, Revision peg, RevisionRange []revisions, String path, int depth, boolean ignoreAncestry, IStatusCallback cb, ISVNProgressMonitor monitor) throws ClientWrapperException;
+	public void merge(EntryReference reference, RevisionRange []revisions, String mergePath, Status[] mergeStatus, boolean force, ISVNProgressMonitor monitor) throws ClientWrapperException;
+	public void mergeStatus(EntryReference reference, RevisionRange []revisions, String path, int depth, boolean ignoreAncestry, IStatusCallback cb, ISVNProgressMonitor monitor) throws ClientWrapperException;
 
 	
 	public void doImport(String path, String url, String message, int depth, boolean noIgnore, boolean ignoreUnknownNodeTypes, ISVNProgressMonitor monitor) throws ClientWrapperException;
-	public long doExport(String srcPath, String destPath, Revision revision, Revision pegRevision, boolean force, boolean ignoreExternals, int depth, String nativeEOL, ISVNProgressMonitor monitor) throws ClientWrapperException;
+	public long doExport(EntryReference fromReference, String destPath, boolean force, boolean ignoreExternals, int depth, String nativeEOL, ISVNProgressMonitor monitor) throws ClientWrapperException;
 	
-	public void diff(String target1, Revision revision1, Revision peg1, String target2, Revision revision2, Revision peg2, String outFileName, int depth, boolean ignoreAncestry, boolean noDiffDeleted, boolean force, boolean diffUnversioned, boolean relativePath, ISVNProgressMonitor monitor) throws ClientWrapperException;
-	public void diffStatus(String url1, Revision pegRevision1, Revision revision1, String url2, Revision pegRevision2, Revision revision2, int depth, boolean ignoreAncestry, IStatusCallback cb, ISVNProgressMonitor monitor) throws ClientWrapperException;
+	public void diff(EntryReference reference1, EntryReference reference2, String outFileName, int depth, boolean ignoreAncestry, boolean noDiffDeleted, boolean force, boolean diffUnversioned, boolean relativePath, ISVNProgressMonitor monitor) throws ClientWrapperException;
+	public void diffStatus(EntryReference reference1, EntryReference reference2, int depth, boolean ignoreAncestry, IStatusCallback cb, ISVNProgressMonitor monitor) throws ClientWrapperException;
 
-	public void info(String pathOrUrl, Revision revision, Revision pegRevision, int depth, IEntryInfoCallback cb, ISVNProgressMonitor monitor) throws ClientWrapperException;
+	public void info(EntryReference reference, int depth, IEntryInfoCallback cb, ISVNProgressMonitor monitor) throws ClientWrapperException;
 	
-	public void streamFileContent(String path, Revision revision, Revision pegRevision, int bufferSize, OutputStream stream, ISVNProgressMonitor monitor) throws ClientWrapperException;
+	public void streamFileContent(EntryReference reference, int bufferSize, OutputStream stream, ISVNProgressMonitor monitor) throws ClientWrapperException;
 	
 	public void mkdir(String []path, String message, boolean makeParents, ISVNProgressMonitor monitor) throws ClientWrapperException;
 	public void move(String srcPath, String dstPath, boolean force, ISVNProgressMonitor monitor) throws ClientWrapperException;
 	public void move(String []srcPath, String dstPath, String message, boolean force, boolean moveAsChild, boolean makeParents, boolean withMergeHistory, ISVNProgressMonitor monitor) throws ClientWrapperException;
 	public void copy(String srcPath, String destPath, Revision revision, ISVNProgressMonitor monitor) throws ClientWrapperException;
-	public void copy(CopySource []srcPath, String destPath, String message, boolean copyAsChild, boolean makeParents, boolean withMergeHistory, ISVNProgressMonitor monitor) throws ClientWrapperException;
+	public void copy(EntryReference []srcPath, String destPath, String message, boolean copyAsChild, boolean makeParents, boolean withMergeHistory, ISVNProgressMonitor monitor) throws ClientWrapperException;
 	public void remove(String []path, String message, boolean force, boolean keepLocal, ISVNProgressMonitor monitor) throws ClientWrapperException;
 	
-	public void logEntries(String path, Revision pegRevision, Revision revisionStart, Revision revisionEnd, boolean stopOnCopy, boolean discoverPath, boolean includeMergedRevisions, String[] revProps, long limit, ILogEntriesCallback cb, ISVNProgressMonitor monitor) throws ClientWrapperException;
-	public void annotate(String path, Revision pegRevision, Revision revisionStart, Revision revisionEnd, boolean ignoreMimeType, boolean includeMergedRevisions, IAnnotationCallback callback, ISVNProgressMonitor monitor) throws ClientWrapperException;
+	public void logEntries(EntryReference reference, Revision revisionStart, Revision revisionEnd, boolean stopOnCopy, boolean discoverPath, boolean includeMergedRevisions, String[] revProps, long limit, ILogEntriesCallback cb, ISVNProgressMonitor monitor) throws ClientWrapperException;
+	public void annotate(EntryReference reference, Revision revisionStart, Revision revisionEnd, boolean ignoreMimeType, boolean includeMergedRevisions, IAnnotationCallback callback, ISVNProgressMonitor monitor) throws ClientWrapperException;
 	
-	public void list(String url, Revision revision, Revision pegRevision, int depth, int direntFields, boolean fetchLocks, IRepositoryEntryCallback cb, ISVNProgressMonitor monitor) throws ClientWrapperException;
+	public void list(EntryReference reference, int depth, int direntFields, boolean fetchLocks, IRepositoryEntryCallback cb, ISVNProgressMonitor monitor) throws ClientWrapperException;
 
 	
-	public void properties(String path, Revision revision, Revision peg, int depth, IPropertyDataCallback callback, ISVNProgressMonitor monitor) throws ClientWrapperException;
-	public PropertyData propertyGet(String path, String name, Revision revision, Revision pegRevision, ISVNProgressMonitor monitor) throws ClientWrapperException;
+	public void properties(EntryReference reference, int depth, IPropertyDataCallback callback, ISVNProgressMonitor monitor) throws ClientWrapperException;
+	public PropertyData propertyGet(EntryReference reference, String name, ISVNProgressMonitor monitor) throws ClientWrapperException;
 	public void propertySet(String path, String name, byte []value, int depth, boolean force, ISVNProgressMonitor monitor) throws ClientWrapperException;
 	public void propertySet(String path, String name, String value, int depth, boolean force, ISVNProgressMonitor monitor) throws ClientWrapperException;
 	public void propertyRemove(String path, String name, int depth, ISVNProgressMonitor monitor) throws ClientWrapperException;

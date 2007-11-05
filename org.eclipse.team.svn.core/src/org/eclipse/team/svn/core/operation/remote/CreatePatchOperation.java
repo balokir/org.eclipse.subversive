@@ -54,10 +54,9 @@ public class CreatePatchOperation extends AbstractRepositoryOperation {
 		try {
 			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn diff \"" + first.getUrl() + "@" + first.getSelectedRevision() + "\" \"" + second.getUrl() + "@" + second.getSelectedRevision() + "\"" + (this.recurse ? "" : " -N") + (this.ignoreDeleted ? " --no-diff-deleted" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n");
 			proxy.diff(
-				SVNUtility.encodeURL(first.getUrl()), first.getSelectedRevision(), first.getPegRevision(), 
-				SVNUtility.encodeURL(second.getUrl()), second.getSelectedRevision(), second.getPegRevision(), 
-				this.fileName, this.recurse ? Depth.INFINITY : Depth.IMMEDIATES, this.ignoreAncestry, this.ignoreDeleted, this.processBinary, 
-				false, false, new SVNProgressMonitor(this, monitor, null));
+				SVNUtility.getEntryReference(first), SVNUtility.getEntryReference(second), this.fileName, 
+				this.recurse ? Depth.INFINITY : Depth.IMMEDIATES, this.ignoreAncestry, this.ignoreDeleted, 
+				this.processBinary, false, false, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 			location.releaseSVNProxy(proxy);

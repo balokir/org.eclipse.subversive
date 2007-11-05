@@ -14,6 +14,7 @@ package org.eclipse.team.svn.core.operation.local;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.client.Depth;
+import org.eclipse.team.svn.core.client.EntryReference;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.Revision;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
@@ -56,10 +57,8 @@ public class CreatePatchOperation extends AbstractNonLockingOperation {
 		try {
 			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn diff " + (this.recurse ? "" : " -N") + (this.ignoreDeleted ? " --no-diff-deleted" : "") + "\n");
 			proxy.diff(
-				wcPath, Revision.BASE, null, wcPath, Revision.WORKING, null, 
-				this.fileName, Depth.unknownOrFiles(this.recurse), true, this.ignoreDeleted, this.processBinary,
-				this.processUnversioned, this.useRelativePath, 
-				new SVNProgressMonitor(this, monitor, null));
+				new EntryReference(wcPath, Revision.BASE, null), new EntryReference(wcPath, Revision.WORKING, null), this.fileName, Depth.unknownOrFiles(this.recurse), true, this.ignoreDeleted, 
+				this.processBinary, this.processUnversioned, this.useRelativePath, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 			location.releaseSVNProxy(proxy);

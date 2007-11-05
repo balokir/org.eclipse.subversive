@@ -43,14 +43,12 @@ public class ExportOperation extends AbstractRepositoryOperation {
 		try {
 			String path = this.path + "/" + resource.getName();
 			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn export \"" + resource.getUrl() + "@" + resource.getPegRevision() + "\" -r " + resource.getSelectedRevision() + " \"" + FileUtility.normalizePath(path) + "\" --force" + FileUtility.getUsernameParam(location.getUsername()) + "\n");
-			proxy.doExport(SVNUtility.encodeURL(resource.getUrl()), 
+			proxy.doExport(SVNUtility.getEntryReference(resource), 
 					path, 
-					resource.getSelectedRevision(), 
-					resource.getPegRevision(), 
-					true, 	// force
-					false, 	// ignore externals 
-					Depth.INFINITY, 	// recurse
-					null, 	// native EOL
+					true, 
+					false, 
+					Depth.INFINITY, 	// force
+					null, 	// ignore externals 
 					new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {

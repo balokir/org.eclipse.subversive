@@ -16,7 +16,7 @@ import java.text.MessageFormat;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.CopySource;
+import org.eclipse.team.svn.core.client.EntryReference;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.INotificationCallback;
 import org.eclipse.team.svn.core.client.Notification;
@@ -70,7 +70,7 @@ public class BranchTagOperation extends AbstractWorkingCopyOperation {
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(IProgressMonitor monitor) throws Exception {
 						BranchTagOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn copy \"" + wcPath + "\" \"" + destinationUrl + "\" -r " + Revision.WORKING + " -m \"" + BranchTagOperation.this.message + "\"" + FileUtility.getUsernameParam(BranchTagOperation.this.destination.getRepositoryLocation().getUsername()) + "\n");
-						CopySource []src = new CopySource[] {new CopySource(wcPath, Revision.WORKING, null)};
+						EntryReference []src = new EntryReference[] {new EntryReference(wcPath, Revision.WORKING, null)};
 						proxy.copy(src, destinationUrl, BranchTagOperation.this.message, true, false, true, new SVNProgressMonitor(BranchTagOperation.this, monitor, null));
 					}
 				}, monitor, resources.length);

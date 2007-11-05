@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.client.EntryReference;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.PropertyData;
 import org.eclipse.team.svn.core.client.Revision;
@@ -106,13 +107,13 @@ public class GetMultiPropertiesOperation extends AbstractNonLockingOperation imp
 			public void run(IProgressMonitor monitor) throws Exception {
 				String wcPath = FileUtility.getWorkingCopyPath(current);
 				if (GetMultiPropertiesOperation.this.propertyName != null) {
-					PropertyData data = proxy.propertyGet(wcPath, GetMultiPropertiesOperation.this.propertyName, null, null, new SVNProgressMonitor(GetMultiPropertiesOperation.this, monitor, null));
+					PropertyData data = proxy.propertyGet(new EntryReference(wcPath, null, null), GetMultiPropertiesOperation.this.propertyName, new SVNProgressMonitor(GetMultiPropertiesOperation.this, monitor, null));
 					if (data != null) {
 						GetMultiPropertiesOperation.this.properties.put(current, new PropertyData[] {data});
 					}
 				}
 				else {
-					PropertyData []data = SVNUtility.properties(proxy, wcPath, Revision.BASE, Revision.BASE, new SVNProgressMonitor(GetMultiPropertiesOperation.this, monitor, null));
+					PropertyData []data = SVNUtility.properties(proxy, new EntryReference(wcPath, Revision.BASE, null), new SVNProgressMonitor(GetMultiPropertiesOperation.this, monitor, null));
 					if (data != null && data.length != 0) {
 						GetMultiPropertiesOperation.this.properties.put(current, data);
 					}

@@ -32,7 +32,6 @@ import org.eclipse.team.svn.core.client.ClientWrapperCancelException;
 import org.eclipse.team.svn.core.client.ClientWrapperException;
 import org.eclipse.team.svn.core.client.Depth;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.Revision;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.UnreportableException;
@@ -177,7 +176,7 @@ public class ShareProjectOperation extends AbstractWorkingCopyOperation {
 						File tempDir = existingProjects.contains(project) ? ShareProjectOperation.this.createTempDirectory(project) : null;
 						String checkoutTo = tempDir != null ? tempDir.toString() : FileUtility.getWorkingCopyPath(project);
 
-						proxy.checkout(SVNUtility.encodeURL(remote.getUrl()), checkoutTo, Revision.HEAD, Revision.HEAD, Depth.INFINITY, false, false, new SVNProgressMonitor(ShareProjectOperation.this, monitor, null));
+						proxy.checkout(SVNUtility.getEntryReference(remote), checkoutTo, Depth.INFINITY, false, false, new SVNProgressMonitor(ShareProjectOperation.this, monitor, null));
 						
 						if (tempDir != null) {
 							ShareProjectOperation.this.copySVNMeta(tempDir, FileUtility.getResourcePath(project).toFile());

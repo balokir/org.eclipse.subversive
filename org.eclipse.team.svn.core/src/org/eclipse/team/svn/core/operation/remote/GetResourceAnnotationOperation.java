@@ -58,15 +58,13 @@ public class GetResourceAnnotationOperation extends AbstractRepositoryOperation 
 		IRepositoryLocation location = resource.getRepositoryLocation();
 		ISVNClientWrapper proxy = location.acquireSVNProxy();
 		try {
-			String url = SVNUtility.encodeURL(resource.getUrl());
 //			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn blame " + url + "@" + resource.getPegRevision() + " -r 0:" + resource.getSelectedRevision() + " --username \"" + location.getUsername() + "\"\n");
 			proxy.annotate(
-				url,
-				resource.getPegRevision(),
+				SVNUtility.getEntryReference(resource),
 				Revision.fromNumber(0),
 				resource.getSelectedRevision(),
-				false, false, 
-				new IAnnotationCallback() {
+				false,
+				false, new IAnnotationCallback() {
 					protected int lineNumber = 0;
 					protected String noAuthor = SVNTeamPlugin.instance().getResource("SVNInfo.NoAuthor");
 					

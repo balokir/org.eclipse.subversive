@@ -73,8 +73,8 @@ public class CompareRepositoryResourcesOperation extends AbstractNonLockingOpera
 		this.protectStep(new IUnprotectedOperation() {
 			public void run(IProgressMonitor monitor) throws Exception {
 				statuses[0] = SVNUtility.diffStatus(proxy, 
-						SVNUtility.encodeURL(CompareRepositoryResourcesOperation.this.right.getUrl()), CompareRepositoryResourcesOperation.this.right.getPegRevision(), CompareRepositoryResourcesOperation.this.right.getSelectedRevision(), 
-						SVNUtility.encodeURL(CompareRepositoryResourcesOperation.this.left.getUrl()), CompareRepositoryResourcesOperation.this.left.getPegRevision(), CompareRepositoryResourcesOperation.this.left.getSelectedRevision(),
+						SVNUtility.getEntryReference(CompareRepositoryResourcesOperation.this.right), 
+						SVNUtility.getEntryReference(CompareRepositoryResourcesOperation.this.left),
 						Depth.INFINITY, false, new SVNProgressMonitor(CompareRepositoryResourcesOperation.this, monitor, null, false));
 			}
 		}, monitor, 2);

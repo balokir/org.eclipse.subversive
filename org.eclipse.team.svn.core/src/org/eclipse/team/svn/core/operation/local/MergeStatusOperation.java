@@ -25,6 +25,7 @@ import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
  * Merge status operation implementation
@@ -55,10 +56,9 @@ public class MergeStatusOperation extends AbstractWorkingCopyOperation implement
 			
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-					proxy.mergeStatus(from.getUrl(), from.getPegRevision(), 
-					    	new RevisionRange [] {new RevisionRange(MergeStatusOperation.this.info.start, from.getSelectedRevision())}, 
-							wcPath, Depth.INFINITY, false, 
-							new IStatusCallback() {
+					proxy.mergeStatus(SVNUtility.getEntryReference(from), new RevisionRange [] {new RevisionRange(MergeStatusOperation.this.info.start, from.getSelectedRevision())}, 
+					    	wcPath, 
+							Depth.INFINITY, false, new IStatusCallback() {
 								public void nextStatus(Status status) {
 									st.add(status);
 								}

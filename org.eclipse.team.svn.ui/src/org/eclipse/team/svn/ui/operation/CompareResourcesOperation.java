@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.client.Depth;
+import org.eclipse.team.svn.core.client.EntryReference;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.Revision;
 import org.eclipse.team.svn.core.client.Status;
@@ -122,8 +123,8 @@ public class CompareResourcesOperation extends AbstractNonLockingOperation {
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(IProgressMonitor monitor) throws Exception {
 						remoteChanges[0] = SVNUtility.diffStatus(proxy,
-								SVNUtility.encodeURL(baseUrl), remoteBase.getPegRevision(), remoteBase.getSelectedRevision(),
-								SVNUtility.encodeURL(remoteRight.getUrl()), remoteRight.getPegRevision(), remoteRight.getSelectedRevision(), 
+								new EntryReference(SVNUtility.encodeURL(baseUrl), remoteBase.getPegRevision(), remoteBase.getSelectedRevision()),
+								SVNUtility.getEntryReference(remoteRight), 
 								Depth.INFINITY, false, new SVNProgressMonitor(CompareResourcesOperation.this, monitor, null, false));
 					}
 				}, monitor, 3);

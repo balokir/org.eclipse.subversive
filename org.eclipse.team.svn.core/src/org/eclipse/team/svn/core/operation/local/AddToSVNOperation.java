@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.client.Depth;
+import org.eclipse.team.svn.core.client.EntryReference;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.PropertyData;
 import org.eclipse.team.svn.core.client.PropertyData.BuiltIn;
@@ -85,7 +86,7 @@ public class AddToSVNOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	public static void removeFromParentIgnore(ISVNClientWrapper proxy, String parentPath, String name) throws Exception {
-		PropertyData data = proxy.propertyGet(parentPath, BuiltIn.IGNORE, null, null, new SVNNullProgressMonitor());
+		PropertyData data = proxy.propertyGet(new EntryReference(parentPath), BuiltIn.IGNORE, new SVNNullProgressMonitor());
 		String ignoreValue = data == null ? "" : data.value;
 		
 		StringTokenizer tok = new StringTokenizer(ignoreValue, "\n", true);

@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.client.Depth;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.Revision;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.file.AbstractFileOperation;
@@ -127,7 +126,7 @@ public class ShareOperation extends AbstractFileOperation {
 					public void run(IProgressMonitor monitor) throws Exception {
 						IRepositoryContainer remote = (IRepositoryContainer)entry.getValue();
 						File local = (File)entry.getKey();
-						proxy.checkout(SVNUtility.encodeURL(remote.getUrl()), local.getAbsolutePath(), Revision.HEAD, Revision.HEAD, Depth.EMPTY, true, false, new SVNProgressMonitor(ShareOperation.this, monitor, null));
+						proxy.checkout(SVNUtility.getEntryReference(remote), local.getAbsolutePath(), Depth.EMPTY, true, false, new SVNProgressMonitor(ShareOperation.this, monitor, null));
 					}
 				}, monitor, local2remote.size());
 			}

@@ -59,7 +59,7 @@ public class GetRemoteContentsOperation extends AbstractActionOperation {
 					String url = SVNUtility.encodeURL(this.remote.getUrl());
 					this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn cat " + url + "@" + this.remote.getPegRevision() + " -r " + this.remote.getSelectedRevision() + FileUtility.getUsernameParam(location.getUsername()) + "\n");
 					stream = new FileOutputStream(wcPath);
-					proxy.streamFileContent(url, this.remote.getSelectedRevision(), this.remote.getPegRevision(), 2048, stream, new SVNProgressMonitor(this, monitor, null));
+					proxy.streamFileContent(SVNUtility.getEntryReference(this.remote), 2048, stream, new SVNProgressMonitor(this, monitor, null));
 				}
 				catch (FileNotFoundException e) {
 					//skip read-only files
@@ -74,14 +74,12 @@ public class GetRemoteContentsOperation extends AbstractActionOperation {
 				String url = SVNUtility.encodeURL(this.remote.getUrl());
 				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn export " + url + "@" + this.remote.getPegRevision() + " -r " + this.remote.getSelectedRevision() + " \"" + wcPath + "\" --force " + FileUtility.getUsernameParam(location.getUsername()) + "\n");
 				proxy.doExport(
-					url, 
+					SVNUtility.getEntryReference(this.remote), 
 					wcPath, 
-					this.remote.getSelectedRevision(), 
-					this.remote.getPegRevision(),
-					true, 	// force
-					false, 	// ignore externals 
-					Depth.INFINITY, 	// recurse
-					null, 	// native EOL
+					true, 
+					false,
+					Depth.INFINITY, 	// force
+					null, 	// ignore externals 
 					new SVNProgressMonitor(this, monitor, null));
 			}
 		}

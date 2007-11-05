@@ -20,24 +20,34 @@ package org.eclipse.team.svn.core.client;
  * 
  * @author Alexander Gurov
  */
-public class CopySource {
+public class EntryReference {
 	/**
 	 * The copy source path or URL.
 	 */
 	public final String path;
 
 	/**
-	 * The copy source revision.
+	 * The copy source revision. If null could be treated as {@link Revision#HEAD} or ignored depending on calling context.
 	 */
 	public final Revision revision;
 
 	/**
-	 * The copy source peg revision. If null points to {@link Revision#HEAD}.
+	 * The copy source peg revision. If null could be treated as {@link Revision#HEAD} or ignored depending on calling context.
 	 */
 	public final Revision pegRevision;
 
 	/**
-	 * The {@link CopySource} instance could be initialized only once because all fields are final
+	 * The {@link EntryReference} instance could be initialized only once because all fields are final
+	 * 
+	 * @param path
+	 *            the source path
+	 */
+	public EntryReference(String path) {
+		this(path, null, null);
+	}
+
+	/**
+	 * The {@link EntryReference} instance could be initialized only once because all fields are final
 	 * 
 	 * @param path
 	 *            the source path
@@ -46,7 +56,7 @@ public class CopySource {
 	 * @param pegRevision
 	 *            the source peg revision
 	 */
-	public CopySource(String path, Revision revision, Revision pegRevision) {
+	public EntryReference(String path, Revision revision, Revision pegRevision) {
 		this.path = path;
 		this.revision = revision;
 		this.pegRevision = pegRevision;

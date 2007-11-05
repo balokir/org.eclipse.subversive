@@ -58,6 +58,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.client.Depth;
 import org.eclipse.team.svn.core.client.EntryInfo;
+import org.eclipse.team.svn.core.client.EntryReference;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.LogEntry;
 import org.eclipse.team.svn.core.client.NodeKind;
@@ -535,7 +536,7 @@ public class AffectedPathsComposite extends Composite {
 			ISVNClientWrapper proxy = AffectedPathsComposite.this.repositoryResource.getRepositoryLocation().acquireSVNProxy();
 			try {
 				Revision rev = Revision.fromNumber(this.revNum);
-				EntryInfo []infos = SVNUtility.info(proxy, this.url, rev, rev, Depth.EMPTY, new SVNProgressMonitor(this, monitor, null));
+				EntryInfo []infos = SVNUtility.info(proxy, new EntryReference(this.url, rev, rev), Depth.EMPTY, new SVNProgressMonitor(this, monitor, null));
 				if (infos != null && infos.length > 0) {
 					this.resourceInfo = infos[0];
 				}
@@ -572,6 +573,7 @@ public class AffectedPathsComposite extends Composite {
 			if (path.trim().length() == 0 && name.equals("ROOT")) {
 				name = "";
 			}
+			// FIXME should be encoded or not?
 			String affectedPath = path + "/" + name;
 			String rootUrl = AffectedPathsComposite.this.repositoryResource.getRepositoryLocation().getRepositoryRootUrl();
 			String resourceUrl = rootUrl + "/" + affectedPath;

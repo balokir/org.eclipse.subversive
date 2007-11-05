@@ -14,6 +14,7 @@ package org.eclipse.team.svn.core.operation.file.property;
 import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.client.EntryReference;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.PropertyData;
 import org.eclipse.team.svn.core.client.Revision;
@@ -52,7 +53,7 @@ public class GetPropertiesOperation extends AbstractFileOperation {
 		IRepositoryLocation location = remote.getRepositoryLocation();
 		ISVNClientWrapper proxy = location.acquireSVNProxy();
 		try {
-			this.properties = SVNUtility.properties(proxy, file.getAbsolutePath(), this.revision, null, new SVNProgressMonitor(this, monitor, null));
+			this.properties = SVNUtility.properties(proxy, new EntryReference(file.getAbsolutePath(), this.revision, null), new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 			location.releaseSVNProxy(proxy);

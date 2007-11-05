@@ -71,11 +71,10 @@ public class SwitchOperation extends AbstractRepositoryOperation {
 					String wcPath = FileUtility.getWorkingCopyPath(resource);
 					SwitchOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn switch \"" + destination.getUrl() + "\" \"" + FileUtility.normalizePath(wcPath) + "\" -r " + destination.getSelectedRevision() + FileUtility.getUsernameParam(location.getUsername()) + "\n");
 					proxy.doSwitch(wcPath, 
-							SVNUtility.encodeURL(destination.getUrl()), 
-							destination.getSelectedRevision(),
-							destination.getPegRevision(), 
+							SVNUtility.getEntryReference(destination), 
 							Depth.unknownOrFiles(true),
-							false, false, 
+							false, 
+							false,
 							new SVNProgressMonitor(SwitchOperation.this, monitor, null));
 					
 					if (resource instanceof IProject) {
