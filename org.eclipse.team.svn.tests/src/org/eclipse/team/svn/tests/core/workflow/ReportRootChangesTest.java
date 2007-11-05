@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.svn.core.client.Status;
 import org.eclipse.team.svn.core.client.Status.Kind;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
+import org.eclipse.team.svn.core.extension.factory.ISVNClientWrapperFactory;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.RemoteStatusOperation;
 import org.eclipse.team.svn.core.operation.remote.DeleteResourcesOperation;
@@ -36,7 +37,7 @@ import org.eclipse.team.svn.tests.core.TestWorkflow;
  */
 public class ReportRootChangesTest extends TestWorkflow {
     public void testReportRootChanges() {
-    	if (!CoreExtensionsManager.instance().getSVNClientWrapperFactory().isReportRevisionChangeAllowed()) {
+    	if ((CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientWrapperFactory.OptionalFeatures.REPORT_REVISION_CHANGE) == 0) {
     		return;
     	}
         new ShareNewProjectOperationTest() {}.testOperation();

@@ -24,28 +24,80 @@ public interface ISVNClientWrapperFactory {
 	public static final String DEFAULT_ID = "org.polarion.team.svn.client.javahl";
 	public static final String CURRENT_COMPATIBILITY_VERSION = "0.7.0";
 	
-	public static int SVNAPI_1_0_x = 0;
-	public static int SVNAPI_1_1_x = 1;
-	public static int SVNAPI_1_2_x = 2;
-	public static int SVNAPI_1_3_x = 3;
-	public static int SVNAPI_1_4_x = 4;
-	public static int SVNAPI_1_5_x = 5;
+	/**
+	 * Enumeration of client API compatibility levels
+	 */
+	public static class APICompatibility {
+		/**
+		 * Compatibility level for the client library is not specified
+		 */
+		public static final int SVNAPI_NOT_SPECIFIED = -1;
+		/**
+		 * SVN 1.0 compatible API is supported by the client
+		 */
+		public static final int SVNAPI_1_0_x = 0;
+		/**
+		 * SVN 1.1 compatible API is supported by the client
+		 */
+		public static final int SVNAPI_1_1_x = 1;
+		/**
+		 * SVN 1.2 compatible API is supported by the client
+		 */
+		public static final int SVNAPI_1_2_x = 2;
+		/**
+		 * SVN 1.3 compatible API is supported by the client
+		 */
+		public static final int SVNAPI_1_3_x = 3;
+		/**
+		 * SVN 1.4 compatible API is supported by the client
+		 */
+		public static final int SVNAPI_1_4_x = 4;
+		/**
+		 * SVN 1.5 compatible API is supported by the client
+		 */
+		public static final int SVNAPI_1_5_x = 5;
+	}
+	
+	/**
+	 * Enumeration of optional feature masks 
+	 */
+	public static class OptionalFeatures {
+		/**
+		 * No optional features supported
+		 */
+		public static final int NO_OPTIONAL_FEATURES = 0;
+		/**
+		 * All optional features supported
+		 */
+		public static final int ALL_OPTIONAL_FEATURES = ~NO_OPTIONAL_FEATURES;
+		/**
+		 * Direct SSH settings specification is supported by client
+		 */
+		public static final int SSH_SETTINGS = 0x01;
+		/**
+		 * Direct PROXY settings specification is supported by client
+		 */
+		public static final int PROXY_SETTINGS = 0x02;
+		/**
+		 * Atomic cross-working copy commit is supported by client 
+		 */
+		public static final int ATOMIC_X_COMMIT = 0x04;
+		/**
+		 * Compare repository folders is supported by client 
+		 */
+		public static final int COMPARE_FOLDERS = 0x08;
+		/**
+		 * Only revision change reporting is supported by client (makes sense for folders and synchronize view)
+		 */
+		public static final int REPORT_REVISION_CHANGE = 0x10;
+	}
 	
 	public static final ISVNClientWrapperFactory EMPTY = new ISVNClientWrapperFactory() {
 		public ISVNClientWrapper newInstance() {
 			throw new UnreportableException(this.getName());
 		}
-		public boolean isSSHOptionsAllowed() {
-			return false;
-		}
-		public boolean isReportRevisionChangeAllowed() {
-			return false;
-		}
-		public boolean isProxyOptionsAllowed() {
-			return false;
-		}
-		public boolean isAtomicCommitAllowed() {
-			return false;
+		public int getSupportedFeatures() {
+			return OptionalFeatures.NO_OPTIONAL_FEATURES;
 		}
 		public String getVersion() {
 			return "";
@@ -63,7 +115,7 @@ public interface ISVNClientWrapperFactory {
 			return "";
 		}
 		public int getSVNAPIVersion() {
-			return ISVNClientWrapperFactory.SVNAPI_1_5_x;
+			return APICompatibility.SVNAPI_NOT_SPECIFIED;
 		}
 	};
 	
@@ -103,25 +155,10 @@ public interface ISVNClientWrapperFactory {
 	public String getClientVersion();
 	
 	/**
-	 * Tell revision change reporting for folders is allowed or not 
-	 * @return true if allowed false otherwise
+	 * Returns supported optional features set 
+	 * @return supported optional features set
 	 */
-	public boolean isReportRevisionChangeAllowed();
-	/**
-	 * Tell atomic commit is allowed or not
-	 * @return true if allowed false otherwise
-	 */
-	public boolean isAtomicCommitAllowed();
-	/**
-	 * Tell SSH settings is allowed or not
-	 * @return true if allowed false otherwise
-	 */
-	public boolean isSSHOptionsAllowed();
-	/**
-	 * Tell proxy settings is allowed or not
-	 * @return true if allowed false otherwise
-	 */
-	public boolean isProxyOptionsAllowed();
+	public int getSupportedFeatures();
 	/**
 	 * Tell which SVN API version supported
 	 * @return API version Id

@@ -45,22 +45,10 @@ public class ThreadNameModifierFactory implements ISVNClientWrapperFactory {
 		return this.factory.getVersion();
 	}
 
-	public boolean isAtomicCommitAllowed() {
-		return this.factory.isAtomicCommitAllowed();
+	public int getSupportedFeatures() {
+		return this.factory.getSupportedFeatures();
 	}
-
-	public boolean isProxyOptionsAllowed() {
-		return this.factory.isProxyOptionsAllowed();
-	}
-
-	public boolean isReportRevisionChangeAllowed() {
-		return this.factory.isReportRevisionChangeAllowed();
-	}
-
-	public boolean isSSHOptionsAllowed() {
-		return this.factory.isSSHOptionsAllowed();
-	}
-
+	
 	public int getSVNAPIVersion() {
 		return this.factory.getSVNAPIVersion();
 	}
