@@ -36,6 +36,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.team.svn.core.client.ICredentialsPrompt;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
+import org.eclipse.team.svn.core.extension.factory.ISVNClientWrapperFactory;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.ProxySettings;
 import org.eclipse.team.svn.core.resource.SSHSettings;
@@ -168,7 +169,7 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 		this.sshComposite.setVisible(false);
 		this.sshTab = new TabItem(tabFolder, SWT.NONE);
 		this.sshTab.setText(SVNTeamUIPlugin.instance().getResource("RepositoryPropertiesTabFolder.SSHSettings"));
-		if (CoreExtensionsManager.instance().getSVNClientWrapperFactory().isSSHOptionsAllowed()) {
+		if ((CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientWrapperFactory.OptionalFeatures.SSH_SETTINGS) != 0) {
 			this.sshTab.setControl(this.sshComposite);
 		}
 		else {
@@ -187,7 +188,7 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 		this.proxyComposite.setVisible(false);
 		this.proxyTab = new TabItem(tabFolder, SWT.NONE);
 		this.proxyTab.setText(SVNTeamUIPlugin.instance().getResource("RepositoryPropertiesTabFolder.Proxy"));
-		if (CoreExtensionsManager.instance().getSVNClientWrapperFactory().isProxyOptionsAllowed()) {
+		if ((CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientWrapperFactory.OptionalFeatures.PROXY_SETTINGS) != 0) {
 			this.proxyTab.setControl(this.proxyComposite);
 		}
 		else {
@@ -305,7 +306,7 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 		this.repositoryPropertiesPanel.saveChanges();
 		this.repositoryPropertiesPanel.setCredentialsInput(location, this);
 		this.repositoryPropertiesPanel.resetChanges();
-		if (CoreExtensionsManager.instance().getSVNClientWrapperFactory().isSSHOptionsAllowed()) {
+		if ((CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientWrapperFactory.OptionalFeatures.SSH_SETTINGS) != 0) {
 			this.sshComposite.saveChanges();
 			this.sshComposite.setCredentialsInput(location.getSSHSettings());
 			this.sshComposite.resetChanges();
@@ -388,14 +389,14 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 	}
 	
 	public void handleLinkSelection() {
-		boolean sshWasAllowed = CoreExtensionsManager.instance().getSVNClientWrapperFactory().isSSHOptionsAllowed();
-		boolean proxyWasAllowed = CoreExtensionsManager.instance().getSVNClientWrapperFactory().isProxyOptionsAllowed();
+		boolean sshWasAllowed = (CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientWrapperFactory.OptionalFeatures.SSH_SETTINGS) != 0;
+		boolean proxyWasAllowed = (CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientWrapperFactory.OptionalFeatures.PROXY_SETTINGS) != 0;
 
 		String pageId = "org.eclipse.team.svn.ui.SVNTeamPreferences";
 		PreferencesUtil.createPreferenceDialogOn(null, pageId, new String[] {pageId}, null).open();
 
-		boolean sshAllowed = CoreExtensionsManager.instance().getSVNClientWrapperFactory().isSSHOptionsAllowed();
-		boolean proxyAllowed = CoreExtensionsManager.instance().getSVNClientWrapperFactory().isProxyOptionsAllowed();
+		boolean sshAllowed = (CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientWrapperFactory.OptionalFeatures.SSH_SETTINGS) != 0;
+		boolean proxyAllowed = (CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientWrapperFactory.OptionalFeatures.PROXY_SETTINGS) != 0;
 		
 		this.updateTabContent(sshWasAllowed, sshAllowed, this.sshTab, this.sshComposite, this.unavailableSSHComposite);
 		this.updateTabContent(proxyWasAllowed, proxyAllowed, this.proxyTab, this.proxyComposite, this.unavailableProxyComposite);
@@ -435,16 +436,16 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 	
 	public void saveChanges() {
 		this.repositoryPropertiesPanel.saveChanges();
-		if (CoreExtensionsManager.instance().getSVNClientWrapperFactory().isSSHOptionsAllowed()) {
+		if ((CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientWrapperFactory.OptionalFeatures.SSH_SETTINGS) != 0) {
 			this.sshComposite.saveChanges();
 		}
 		this.sslComposite.saveChanges();
-		if (CoreExtensionsManager.instance().getSVNClientWrapperFactory().isProxyOptionsAllowed()) {
+		if ((CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientWrapperFactory.OptionalFeatures.PROXY_SETTINGS) != 0) {
 			this.proxyComposite.saveChanges();
 		}
 		this.rootsComposite.saveChanges();
 		
-		if (CoreExtensionsManager.instance().getSVNClientWrapperFactory().isProxyOptionsAllowed()) {
+		if ((CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientWrapperFactory.OptionalFeatures.PROXY_SETTINGS) != 0) {
 			ProxySettings proxySettings = this.repositoryLocation.getProxySettings();
 			proxySettings.setEnabled(this.proxyComposite.isProxyEnabled());
 			proxySettings.setAuthenticationEnabled(this.proxyComposite.isAuthenticationEnabled());
@@ -480,11 +481,11 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 
 	public void resetChanges() {
 		this.repositoryPropertiesPanel.resetChanges();
-		if (CoreExtensionsManager.instance().getSVNClientWrapperFactory().isSSHOptionsAllowed()) {
+		if ((CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientWrapperFactory.OptionalFeatures.SSH_SETTINGS) != 0) {
 			this.sshComposite.resetChanges();
 		}
 		this.sslComposite.resetChanges();
-		if (CoreExtensionsManager.instance().getSVNClientWrapperFactory().isProxyOptionsAllowed()) {
+		if ((CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientWrapperFactory.OptionalFeatures.PROXY_SETTINGS) != 0) {
 			this.proxyComposite.resetChanges();
 		}
 		this.rootsComposite.resetChanges();

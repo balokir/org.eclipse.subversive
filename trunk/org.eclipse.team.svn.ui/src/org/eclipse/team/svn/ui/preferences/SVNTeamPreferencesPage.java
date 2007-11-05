@@ -240,7 +240,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.tagsField.setText(this.tags);
 		this.showExternalsButton.setSelection(this.showExternals);
 		
-		this.reportRevisionChangeButton.setEnabled(CoreExtensionsManager.instance().getSVNClientWrapperFactory(this.svnClient).isReportRevisionChangeAllowed());
+		this.reportRevisionChangeButton.setEnabled((CoreExtensionsManager.instance().getSVNClientWrapperFactory(this.svnClient).getSupportedFeatures() & ISVNClientWrapperFactory.OptionalFeatures.REPORT_REVISION_CHANGE) != 0);
 		this.reportRevisionChangeButton.setSelection(this.reportRevisionChange);
 		this.fastReportButton.setSelection(this.fastReport);
 		
@@ -356,7 +356,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 			public void widgetSelected(SelectionEvent e) {
 				SVNTeamPreferencesPage.this.svnClient = SVNTeamPreferencesPage.this.factories[SVNTeamPreferencesPage.this.svnClientField.getSelectionIndex()].getId();
 				SVNTeamPreferencesPage.this.initializeClientSettings();
-				SVNTeamPreferencesPage.this.reportRevisionChangeButton.setEnabled(CoreExtensionsManager.instance().getSVNClientWrapperFactory(SVNTeamPreferencesPage.this.svnClient).isReportRevisionChangeAllowed());
+				SVNTeamPreferencesPage.this.reportRevisionChangeButton.setEnabled((CoreExtensionsManager.instance().getSVNClientWrapperFactory(SVNTeamPreferencesPage.this.svnClient).getSupportedFeatures() & ISVNClientWrapperFactory.OptionalFeatures.REPORT_REVISION_CHANGE) != 0);
 			}
 		});
 		
@@ -553,7 +553,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 				SVNTeamPreferencesPage.this.reportRevisionChange = SVNTeamPreferencesPage.this.reportRevisionChangeButton.getSelection();
 			}
 		});
-		this.reportRevisionChangeButton.setEnabled(CoreExtensionsManager.instance().getSVNClientWrapperFactory().isReportRevisionChangeAllowed());
+		this.reportRevisionChangeButton.setEnabled((CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientWrapperFactory.OptionalFeatures.REPORT_REVISION_CHANGE) != 0);
 		
 		this.fastReportButton = new Button(synchViewGroup, SWT.CHECK);
 		data = new GridData();

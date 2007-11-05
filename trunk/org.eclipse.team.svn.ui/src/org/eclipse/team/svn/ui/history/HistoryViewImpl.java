@@ -48,17 +48,12 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IEditorDescriptor;
-import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.client.LogEntry;
 import org.eclipse.team.svn.core.client.Revision;
 import org.eclipse.team.svn.core.client.Revision.Kind;
+import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
+import org.eclipse.team.svn.core.extension.factory.ISVNClientWrapperFactory;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
@@ -113,6 +108,13 @@ import org.eclipse.team.svn.ui.repository.model.RepositoryFile;
 import org.eclipse.team.svn.ui.utility.LockProposeUtility;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.svn.ui.wizard.CreatePatchWizard;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.editors.text.EditorsUI;
 
 /**
  * Internals of the HistoryView. Can be used in Eclipse 3.2 generic HistoryView or in our own HistoryView
@@ -267,7 +269,10 @@ public class HistoryViewImpl {
 						UIMonitorUtility.doTaskScheduledActive(new CompareRepositoryResourcesOperation(left, right));
 					}
 				});
-				tAction.setEnabled(tSelection.size() == 2);
+        		boolean isCompareAllowed = 
+        			(CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientWrapperFactory.OptionalFeatures.COMPARE_FOLDERS) != 0 ||
+        			HistoryViewImpl.this.repositoryResource instanceof IRepositoryFile;
+				tAction.setEnabled(tSelection.size() == 2 && isCompareAllowed);
 				if (tSelection.size() == 1) {
 					final Object []selection = tSelection.toArray();
 					String revision = HistoryViewImpl.this.wcResource != null ? String.valueOf(((LogEntry)selection[0]).revision) : SVNTeamUIPlugin.instance().getResource("HistoryView.HEAD");
@@ -278,7 +283,7 @@ public class HistoryViewImpl {
 							HistoryViewImpl.this.compareWithCurrent(selection[0]);
 						}
 					});
-					tAction.setEnabled(tSelection.size() == 1);
+					tAction.setEnabled(tSelection.size() == 1 && isCompareAllowed);
 				}
 				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CreateUnifiedDiff")) {
 					public void run() {
@@ -803,7 +808,10 @@ public class HistoryViewImpl {
 		if (this.repositoryResource == null) {
 			return;
 		}
-		if ((this.options & HistoryViewImpl.COMPARE_MODE) != 0 && doubleClick) {
+		boolean isCompareAllowed = 
+			(CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientWrapperFactory.OptionalFeatures.COMPARE_FOLDERS) != 0 ||
+			HistoryViewImpl.this.repositoryResource instanceof IRepositoryResource;
+		if ((this.options & HistoryViewImpl.COMPARE_MODE) != 0 && doubleClick && isCompareAllowed) {
 			this.compareWithCurrent(item);
 		}
 		else if (!(this.repositoryResource instanceof IRepositoryContainer)) {
