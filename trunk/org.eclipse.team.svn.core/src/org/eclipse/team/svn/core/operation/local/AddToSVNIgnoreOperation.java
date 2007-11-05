@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.client.Depth;
+import org.eclipse.team.svn.core.client.EntryReference;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.PropertyData;
 import org.eclipse.team.svn.core.client.PropertyData.BuiltIn;
@@ -81,7 +82,7 @@ public class AddToSVNIgnoreOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	public static void changeIgnoreProperty(ISVNClientWrapper proxy, int ignoreType, String pattern, String path, String name) throws Exception {
-		PropertyData data = proxy.propertyGet(path, BuiltIn.IGNORE, null, null, new SVNNullProgressMonitor());
+		PropertyData data = proxy.propertyGet(new EntryReference(path), BuiltIn.IGNORE, new SVNNullProgressMonitor());
 		String ignoreValue = data == null ? "" : data.value;
 		String mask = null;
 		switch (ignoreType) {

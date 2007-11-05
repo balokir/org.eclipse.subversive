@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.svn.core.client.ClientWrapperException;
 import org.eclipse.team.svn.core.client.Depth;
+import org.eclipse.team.svn.core.client.EntryReference;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.PropertyData;
 import org.eclipse.team.svn.core.client.PropertyData.BuiltIn;
@@ -92,7 +93,7 @@ public class AddToSVNWithPropertiesOperation extends AddToSVNOperation {
 			int type = (i == 0) ?
 					Team.getFileContentManager().getTypeForExtension(resource.getFileExtension() == null ? "" : resource.getFileExtension()) :
 					Team.getFileContentManager().getTypeForName(resource.getName());
-			PropertyData data = proxy.propertyGet(path, BuiltIn.MIME_TYPE, null, null, new SVNProgressMonitor(this, monitor, null));
+			PropertyData data = proxy.propertyGet(new EntryReference(path), BuiltIn.MIME_TYPE, new SVNProgressMonitor(this, monitor, null));
 			if (data == null) {
 				if (type == Team.BINARY) {
 					proxy.propertySet(path, BuiltIn.MIME_TYPE, AddToSVNWithPropertiesOperation.BINARY_FILE, Depth.EMPTY, false, new SVNProgressMonitor(this, monitor, null));

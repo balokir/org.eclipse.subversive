@@ -73,8 +73,7 @@ public class GetRemoteFolderChildrenOperation extends AbstractNonLockingOperatio
 			IRepositoryLocation location = this.parent.getRepositoryLocation();
 			ISVNClientWrapper proxy = location.acquireSVNProxy();
 			try {
-				String remotePath = this.parent.getUrl();
-				PropertyData data = proxy.propertyGet(remotePath, BuiltIn.EXTERNALS, this.parent.getSelectedRevision(), this.parent.getPegRevision(), new SVNProgressMonitor(this, monitor, null));
+				PropertyData data = proxy.propertyGet(SVNUtility.getEntryReference(this.parent), BuiltIn.EXTERNALS, new SVNProgressMonitor(this, monitor, null));
 				if (data != null) {
 					String []externals = data.value.trim().split("[\\n]+"); // it seems different clients have different behaviours wrt trailing whitespace.. so trim() to be safe
 					if (externals.length > 0) {

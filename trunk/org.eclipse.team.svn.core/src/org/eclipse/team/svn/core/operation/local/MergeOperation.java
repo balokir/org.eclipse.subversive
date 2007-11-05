@@ -28,6 +28,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
  * Merge operation implementation
@@ -73,7 +74,7 @@ public class MergeOperation extends AbstractConflictDetectionOperation implement
 		ISVNClientWrapper proxy = location.acquireSVNProxy();
 		
 		try {
-			proxy.merge(null, from.getPegRevision(), new RevisionRange [] {new RevisionRange(this.info.start, from.getSelectedRevision())}, null, statuses, this.force, new ConflictDetectionProgressMonitor(this, monitor, null));
+			proxy.merge(SVNUtility.getEntryReference(from), new RevisionRange [] {new RevisionRange(this.info.start, from.getSelectedRevision())}, null, statuses, this.force, new ConflictDetectionProgressMonitor(this, monitor, null));
 		}
 		finally {
 			location.releaseSVNProxy(proxy);

@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.client.Depth;
+import org.eclipse.team.svn.core.client.EntryReference;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.EntryInfo;
 import org.eclipse.team.svn.core.client.Revision;
@@ -60,7 +61,7 @@ public class InfoOperation extends AbstractNonLockingOperation {
             ISVNClientWrapper proxy = location.acquireSVNProxy();
             try {
 //    			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn info \"" + this.local.getWorkingCopyPath() + "\"\n");
-                EntryInfo []infos = SVNUtility.info(proxy, FileUtility.getWorkingCopyPath(this.resource), Revision.WORKING, null, Depth.EMPTY, new SVNProgressMonitor(this, monitor, null));
+                EntryInfo []infos = SVNUtility.info(proxy, new EntryReference(FileUtility.getWorkingCopyPath(this.resource), Revision.WORKING, null), Depth.EMPTY, new SVNProgressMonitor(this, monitor, null));
                 
                 if (infos != null && infos.length > 0) {
                     this.info = infos[0];

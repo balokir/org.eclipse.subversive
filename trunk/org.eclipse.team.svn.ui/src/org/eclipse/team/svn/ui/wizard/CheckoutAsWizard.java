@@ -39,6 +39,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.NewProjectAction;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.client.EntryReference;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.PropertyData;
 import org.eclipse.team.svn.core.client.PropertyData.BuiltIn;
@@ -567,7 +568,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 			final ISVNClientWrapper proxy = location.acquireSVNProxy();
 			PropertyData existingProperty;
 			try {
-				existingProperty = proxy.propertyGet(wcPath, BuiltIn.EXTERNALS, null, null, new SVNProgressMonitor(CheckoutAsWizard.ConcatenateProperyDataOperation.this, monitor, null));
+				existingProperty = proxy.propertyGet(new EntryReference(wcPath), BuiltIn.EXTERNALS, new SVNProgressMonitor(CheckoutAsWizard.ConcatenateProperyDataOperation.this, monitor, null));
 			}
 			finally {
 				location.releaseSVNProxy(proxy);

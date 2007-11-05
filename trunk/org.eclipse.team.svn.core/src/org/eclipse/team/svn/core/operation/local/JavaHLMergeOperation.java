@@ -80,11 +80,11 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 			String wcPath = FileUtility.getWorkingCopyPath(resource);
 			if (from1.getUrl().equals(from2.getUrl())) {
 				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn merge -r " + from1.getSelectedRevision() + ":" + from2.getSelectedRevision() + "\"" + from1.getUrl() + "@" + from1.getPegRevision() + "\" \"" + FileUtility.normalizePath(wcPath) + "\"" + (this.dryRun ? " --dry-run" : "") + (this.ignoreAncestry ? " --ignore-ancestry" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n");
-				proxy.merge(SVNUtility.encodeURL(from1.getUrl()), from1.getPegRevision(), new RevisionRange[] {new RevisionRange(from1.getSelectedRevision(), from2.getSelectedRevision())}, wcPath, false, Depth.INFINITY, this.ignoreAncestry, this.dryRun, new MergeProgressMonitor(this, monitor, null));
+				proxy.merge(SVNUtility.getEntryReference(from1), new RevisionRange[] {new RevisionRange(from1.getSelectedRevision(), from2.getSelectedRevision())}, wcPath, false, Depth.INFINITY, this.ignoreAncestry, this.dryRun, new MergeProgressMonitor(this, monitor, null));
 			}
 			else {
 				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn merge \"" + from1.getUrl() + "@" + from1.getSelectedRevision() + "\" \"" + from2.getUrl() + "@" + from2.getSelectedRevision() + "\" \"" + FileUtility.normalizePath(wcPath) + "\"" + (this.dryRun ? " --dry-run" : "") + (this.ignoreAncestry ? " --ignore-ancestry" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n");
-				proxy.merge(SVNUtility.encodeURL(from1.getUrl()), from1.getSelectedRevision(), SVNUtility.encodeURL(from2.getUrl()), from2.getSelectedRevision(), wcPath, false, Depth.INFINITY, this.ignoreAncestry, this.dryRun, new MergeProgressMonitor(this, monitor, null));
+				proxy.merge(SVNUtility.getEntryReference(from1), SVNUtility.getEntryReference(from2), wcPath, false, Depth.INFINITY, this.ignoreAncestry, this.dryRun, new MergeProgressMonitor(this, monitor, null));
 			}
 		}
 		finally {

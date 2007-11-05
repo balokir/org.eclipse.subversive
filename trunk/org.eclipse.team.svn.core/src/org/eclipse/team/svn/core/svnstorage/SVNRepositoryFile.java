@@ -36,7 +36,7 @@ public class SVNRepositoryFile extends SVNRepositoryResource implements IReposit
 	}
 	
 	protected void getRevisionImpl(ISVNClientWrapper proxy) throws ClientWrapperException {
-		RepositoryEntry []entries = SVNUtility.list(proxy, SVNUtility.encodeURL(this.getUrl()), this.getSelectedRevision(), this.getPegRevision(), Depth.EMPTY, Fields.ALL, true, new SVNNullProgressMonitor());
+		RepositoryEntry []entries = SVNUtility.list(proxy, SVNUtility.getEntryReference(this), Depth.EMPTY, Fields.ALL, true, new SVNNullProgressMonitor());
 		if (entries != null && entries.length > 0) {
 			this.lastRevision = (Revision.Number)Revision.fromNumber(entries[0].revision);
 			this.setInfo(new IRepositoryResource.Information(entries[0].lock, entries[0].size, entries[0].author, entries[0].date, entries[0].hasProperties));

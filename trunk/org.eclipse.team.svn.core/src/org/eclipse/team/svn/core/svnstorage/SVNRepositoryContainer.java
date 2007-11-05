@@ -15,6 +15,7 @@ import java.io.Serializable;
 
 import org.eclipse.team.svn.core.client.ClientWrapperException;
 import org.eclipse.team.svn.core.client.Depth;
+import org.eclipse.team.svn.core.client.EntryReference;
 import org.eclipse.team.svn.core.client.RepositoryEntry;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.EntryInfo;
@@ -67,7 +68,7 @@ public class SVNRepositoryContainer extends SVNRepositoryResource implements IRe
 			
 			ISVNClientWrapper proxy = this.getRepositoryLocation().acquireSVNProxy();
 			try {
-				children = SVNUtility.list(proxy, SVNUtility.encodeURL(thisUrl), this.getSelectedRevision(), this.getPegRevision(), Depth.IMMEDIATES, Fields.ALL, true, new SVNNullProgressMonitor());
+				children = SVNUtility.list(proxy, SVNUtility.getEntryReference(this), Depth.IMMEDIATES, Fields.ALL, true, new SVNNullProgressMonitor());
 			}
 			finally {
 			    this.getRepositoryLocation().releaseSVNProxy(proxy);
@@ -92,11 +93,11 @@ public class SVNRepositoryContainer extends SVNRepositoryResource implements IRe
 	}
 	
 	protected void getRevisionImpl(ISVNClientWrapper proxy) throws ClientWrapperException {
-		String url = SVNUtility.encodeURL(this.getUrl());
-		EntryInfo []infos = SVNUtility.info(proxy, url, this.getSelectedRevision(), this.getPegRevision(), Depth.EMPTY, new SVNNullProgressMonitor());
+		EntryReference reference = SVNUtility.getEntryReference(this);
+		EntryInfo []infos = SVNUtility.info(proxy, reference, Depth.EMPTY, new SVNNullProgressMonitor());
 		if (infos != null && infos.length > 0 && infos[0].lastChangedRevision != Revision.SVN_INVALID_REVNUM) {
 			this.lastRevision = (Revision.Number)Revision.fromNumber(infos[0].lastChangedRevision);
-			PropertyData []data = SVNUtility.properties(proxy, url, this.getSelectedRevision(), this.getPegRevision(), new SVNNullProgressMonitor());
+			PropertyData []data = SVNUtility.properties(proxy, reference, new SVNNullProgressMonitor());
 			this.setInfo(new IRepositoryResource.Information(infos[0].lock, 0, infos[0].lastChangedAuthor, infos[0].lastChangedDate, data != null && data.length > 0));
 		}
 	}

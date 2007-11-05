@@ -15,6 +15,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.client.EntryReference;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.PropertyData;
 import org.eclipse.team.svn.core.client.PropertyData.BuiltIn;
@@ -60,7 +61,7 @@ public class PLC314Test extends TestWorkflow {
 
                 		PropertyData data = null;
                 		try {
-                    		data = proxy.propertyGet(FileUtility.getWorkingCopyPath(parent), BuiltIn.IGNORE, null, null, new SVNProgressMonitor(this, monitor, null));
+                    		data = proxy.propertyGet(new EntryReference(FileUtility.getWorkingCopyPath(parent)), BuiltIn.IGNORE, new SVNProgressMonitor(this, monitor, null));
                 		}
                 		finally {
                 		    location.releaseSVNProxy(proxy);
