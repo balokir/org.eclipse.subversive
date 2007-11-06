@@ -318,7 +318,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 			for (Iterator it = this.switchedToUrls.entrySet().iterator(); it.hasNext(); ) {
 				Map.Entry entry = (Map.Entry)it.next();
 				String cachedUrl = (String)entry.getValue();
-				if (url.startsWith(cachedUrl)) {
+				if (new Path(cachedUrl).isPrefixOf(new Path(url))) {
 					IPath target = ((IPath)entry.getKey()).append(url.substring(cachedUrl.length())).removeFirstSegments(1);
 					return this.asLocalResource(kind == IResource.FOLDER ? (IResource)project.getFolder(target) : project.getFile(target));
 				}
