@@ -47,7 +47,7 @@ public class GetFileContentOperation extends AbstractGetFileContentOperation {
 			stream = new FileOutputStream(this.tmpFile);
 			
 			proxy.streamFileContent(
-					SVNUtility.getEntryReference(this.resource), 
+					SVNUtility.getEntryRevisionReference(this.resource), 
 					2048, 
 					stream,
 					new SVNProgressMonitor(GetFileContentOperation.this, monitor, null));

@@ -15,7 +15,7 @@ import java.io.Serializable;
 
 import org.eclipse.team.svn.core.client.ClientWrapperException;
 import org.eclipse.team.svn.core.client.Depth;
-import org.eclipse.team.svn.core.client.EntryReference;
+import org.eclipse.team.svn.core.client.EntryRevisionReference;
 import org.eclipse.team.svn.core.client.RepositoryEntry;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.EntryInfo;
@@ -68,7 +68,7 @@ public class SVNRepositoryContainer extends SVNRepositoryResource implements IRe
 			
 			ISVNClientWrapper proxy = this.getRepositoryLocation().acquireSVNProxy();
 			try {
-				children = SVNUtility.list(proxy, SVNUtility.getEntryReference(this), Depth.IMMEDIATES, Fields.ALL, true, new SVNNullProgressMonitor());
+				children = SVNUtility.list(proxy, SVNUtility.getEntryRevisionReference(this), Depth.IMMEDIATES, Fields.ALL, true, new SVNNullProgressMonitor());
 			}
 			finally {
 			    this.getRepositoryLocation().releaseSVNProxy(proxy);
@@ -93,7 +93,7 @@ public class SVNRepositoryContainer extends SVNRepositoryResource implements IRe
 	}
 	
 	protected void getRevisionImpl(ISVNClientWrapper proxy) throws ClientWrapperException {
-		EntryReference reference = SVNUtility.getEntryReference(this);
+		EntryRevisionReference reference = SVNUtility.getEntryRevisionReference(this);
 		EntryInfo []infos = SVNUtility.info(proxy, reference, Depth.EMPTY, new SVNNullProgressMonitor());
 		if (infos != null && infos.length > 0 && infos[0].lastChangedRevision != Revision.SVN_INVALID_REVNUM) {
 			this.lastRevision = (Revision.Number)Revision.fromNumber(infos[0].lastChangedRevision);

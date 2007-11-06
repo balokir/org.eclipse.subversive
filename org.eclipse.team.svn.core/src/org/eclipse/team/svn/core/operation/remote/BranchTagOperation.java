@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.EntryReference;
+import org.eclipse.team.svn.core.client.EntryRevisionReference;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.INotificationCallback;
 import org.eclipse.team.svn.core.client.Notification;
@@ -74,7 +74,7 @@ public class BranchTagOperation extends AbstractRepositoryOperation implements I
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(IProgressMonitor monitor) throws Exception {
 						BranchTagOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn copy \"" + current.getUrl() + "\" \"" + BranchTagOperation.this.destinationUrl + "\" -r " + current.getSelectedRevision() + " -m \"" + BranchTagOperation.this.message + "\"" + FileUtility.getUsernameParam(current.getRepositoryLocation().getUsername()) + "\n");
-						EntryReference []src = new EntryReference[] {new EntryReference(SVNUtility.encodeURL(current.getUrl()), current.getSelectedRevision(), current.getPegRevision())};
+						EntryRevisionReference []src = new EntryRevisionReference[] {new EntryRevisionReference(SVNUtility.encodeURL(current.getUrl()), current.getPegRevision(), current.getSelectedRevision())};
 						proxy.copy(src, url2, BranchTagOperation.this.message, true, false, true, new SVNProgressMonitor(BranchTagOperation.this, monitor, null));
 					}
 				}, monitor, resources.length);

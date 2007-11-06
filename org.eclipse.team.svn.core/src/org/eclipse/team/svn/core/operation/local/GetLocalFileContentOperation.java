@@ -17,7 +17,7 @@ import java.text.MessageFormat;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.EntryReference;
+import org.eclipse.team.svn.core.client.EntryRevisionReference;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.Revision;
 import org.eclipse.team.svn.core.client.Revision.Kind;
@@ -51,7 +51,7 @@ public class GetLocalFileContentOperation extends AbstractGetFileContentOperatio
 				this.tmpFile = this.createTempFile();
 				stream = new FileOutputStream(this.tmpFile);
 				proxy.streamFileContent(
-						new EntryReference(FileUtility.getWorkingCopyPath(this.resource), this.revision, null), 
+						new EntryRevisionReference(FileUtility.getWorkingCopyPath(this.resource), null, this.revision), 
 						2048, 
 						stream, 
 						new SVNProgressMonitor(GetLocalFileContentOperation.this, monitor, null));

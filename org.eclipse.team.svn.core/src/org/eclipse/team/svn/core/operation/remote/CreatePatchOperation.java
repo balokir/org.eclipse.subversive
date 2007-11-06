@@ -13,6 +13,7 @@ package org.eclipse.team.svn.core.operation.remote;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.client.Depth;
+import org.eclipse.team.svn.core.client.EntryRevisionReference;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -52,11 +53,22 @@ public class CreatePatchOperation extends AbstractRepositoryOperation {
 		IRepositoryLocation location = first.getRepositoryLocation();
 		ISVNClientWrapper proxy = location.acquireSVNProxy();
 		try {
-			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn diff \"" + first.getUrl() + "@" + first.getSelectedRevision() + "\" \"" + second.getUrl() + "@" + second.getSelectedRevision() + "\"" + (this.recurse ? "" : " -N") + (this.ignoreDeleted ? " --no-diff-deleted" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n");
-			proxy.diff(
-				SVNUtility.getEntryReference(first), SVNUtility.getEntryReference(second), this.fileName, 
-				this.recurse ? Depth.INFINITY : Depth.IMMEDIATES, this.ignoreAncestry, this.ignoreDeleted, 
-				this.processBinary, false, false, new SVNProgressMonitor(this, monitor, null));
+			EntryRevisionReference ref1 = SVNUtility.getEntryRevisionReference(first);
+			EntryRevisionReference ref2 = SVNUtility.getEntryRevisionReference(second);
+			if (SVNUtility.useSingleReferenceSignature(ref1, ref2)) {
+				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn diff -r " + ref1.revision + ":" + ref2.revision + " \"" + first.getUrl() + "@" + ref1.pegRevision + "\"" + (this.recurse ? "" : " -N") + (this.ignoreDeleted ? " --no-diff-deleted" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n");
+				proxy.diff(
+						ref1, ref1.revision, ref2.revision, this.fileName, 
+						this.recurse ? Depth.INFINITY : Depth.IMMEDIATES, this.ignoreAncestry, this.ignoreDeleted, 
+						this.processBinary, false, false, new SVNProgressMonitor(this, monitor, null));
+			}
+			else {
+				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn diff \"" + first.getUrl() + "@" + first.getSelectedRevision() + "\" \"" + second.getUrl() + "@" + second.getSelectedRevision() + "\"" + (this.recurse ? "" : " -N") + (this.ignoreDeleted ? " --no-diff-deleted" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n");
+				proxy.diff(
+						ref1, ref2, this.fileName, 
+						this.recurse ? Depth.INFINITY : Depth.IMMEDIATES, this.ignoreAncestry, this.ignoreDeleted, 
+						this.processBinary, false, false, new SVNProgressMonitor(this, monitor, null));
+			}
 		}
 		finally {
 			location.releaseSVNProxy(proxy);

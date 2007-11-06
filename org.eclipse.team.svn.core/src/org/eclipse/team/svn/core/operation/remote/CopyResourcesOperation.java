@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.core.operation.remote;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.EntryReference;
+import org.eclipse.team.svn.core.client.EntryRevisionReference;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -36,7 +36,7 @@ public class CopyResourcesOperation extends AbstractCopyMoveResourcesOperation {
 
 	protected void processEntry(ISVNClientWrapper proxy, String sourceUrl, String destinationUrl, IRepositoryResource current, IProgressMonitor monitor) throws Exception {
 		this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn copy \"" + SVNUtility.decodeURL(sourceUrl) + "\" \"" + SVNUtility.decodeURL(destinationUrl) + "\" -r " + current.getSelectedRevision() + " -m \"" + this.message + "\"" + FileUtility.getUsernameParam(current.getRepositoryLocation().getUsername()) + "\n");
-		EntryReference []src = new EntryReference[] {new EntryReference(sourceUrl, current.getSelectedRevision(), current.getPegRevision())};
+		EntryRevisionReference []src = new EntryRevisionReference[] {new EntryRevisionReference(sourceUrl, current.getPegRevision(), current.getSelectedRevision())};
 		proxy.copy(src, destinationUrl, this.message, true, false, true, new SVNProgressMonitor(this, monitor, null));
 	}
 	

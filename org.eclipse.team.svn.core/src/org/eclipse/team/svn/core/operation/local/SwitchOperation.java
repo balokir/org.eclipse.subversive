@@ -71,7 +71,7 @@ public class SwitchOperation extends AbstractRepositoryOperation {
 					String wcPath = FileUtility.getWorkingCopyPath(resource);
 					SwitchOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn switch \"" + destination.getUrl() + "\" \"" + FileUtility.normalizePath(wcPath) + "\" -r " + destination.getSelectedRevision() + FileUtility.getUsernameParam(location.getUsername()) + "\n");
 					proxy.doSwitch(wcPath, 
-							SVNUtility.getEntryReference(destination), 
+							SVNUtility.getEntryRevisionReference(destination), 
 							Depth.unknownOrFiles(true),
 							false, 
 							false,

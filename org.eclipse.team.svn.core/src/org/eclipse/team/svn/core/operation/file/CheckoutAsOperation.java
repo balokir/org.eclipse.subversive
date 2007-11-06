@@ -56,7 +56,7 @@ public class CheckoutAsOperation extends AbstractFileOperation {
 			String path = to.getAbsolutePath();
 			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn checkout \"" + this.resource.getUrl() + "@" + this.resource.getPegRevision() + "\" -r " + this.resource.getSelectedRevision() + (this.recursive ? "" : " -N") + " --ignore-externals \"" + FileUtility.normalizePath(path) + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n");
 			proxy.checkout(
-					SVNUtility.getEntryReference(this.resource), 
+					SVNUtility.getEntryRevisionReference(this.resource), 
 					path, 
 					Depth.infinityOrFiles(this.recursive), 
 					this.ignoreExternals, 

@@ -20,16 +20,11 @@ package org.eclipse.team.svn.core.client;
  * 
  * @author Alexander Gurov
  */
-public class EntryReference {
+public class EntryRevisionReference extends EntryReference {
 	/**
-	 * The copy source path or URL.
+	 * The copy source revision. If null could be treated as {@link Revision#HEAD} or ignored depending on calling context.
 	 */
-	public final String path;
-
-	/**
-	 * The copy source peg revision. If null could be treated as {@link Revision#HEAD} or ignored depending on calling context.
-	 */
-	public final Revision pegRevision;
+	public final Revision revision;
 
 	/**
 	 * The {@link EntryRevisionReference} instance could be initialized only once because all fields are final
@@ -37,8 +32,8 @@ public class EntryReference {
 	 * @param path
 	 *            the source path
 	 */
-	public EntryReference(String path) {
-		this(path, null);
+	public EntryRevisionReference(String path) {
+		this(path, null, null);
 	}
 
 	/**
@@ -48,10 +43,12 @@ public class EntryReference {
 	 *            the source path
 	 * @param pegRevision
 	 *            the source peg revision
+	 * @param revision
+	 *            the source revision.
 	 */
-	public EntryReference(String path, Revision pegRevision) {
-		this.path = path;
-		this.pegRevision = pegRevision;
+	public EntryRevisionReference(String path, Revision pegRevision, Revision revision) {
+		super(path, pegRevision);
+		this.revision = revision;
 	}
 
 }
