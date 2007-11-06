@@ -15,7 +15,7 @@ import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.client.Depth;
-import org.eclipse.team.svn.core.client.EntryReference;
+import org.eclipse.team.svn.core.client.EntryRevisionReference;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.Revision;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
@@ -52,7 +52,7 @@ public class CreatePatchOperation extends AbstractFileOperation {
 		try {
 			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn diff " + (this.recurse ? "" : " -N") + (this.ignoreDeleted ? " --no-diff-deleted" : "") + "\n");
 			proxy.diff(
-				new EntryReference(file.getAbsolutePath(), Revision.BASE, null), new EntryReference(file.getAbsolutePath(), Revision.WORKING, null), this.fileName, 
+				new EntryRevisionReference(file.getAbsolutePath(), null, Revision.BASE), new EntryRevisionReference(file.getAbsolutePath(), null, Revision.WORKING), this.fileName, 
 				Depth.unknownOrFiles(this.recurse), true, this.ignoreDeleted,
 				this.processBinary, this.processUnversioned, this.useRelativePath, new SVNProgressMonitor(this, monitor, null));
 		}

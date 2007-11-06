@@ -126,7 +126,7 @@ public class ShareOperation extends AbstractFileOperation {
 					public void run(IProgressMonitor monitor) throws Exception {
 						IRepositoryContainer remote = (IRepositoryContainer)entry.getValue();
 						File local = (File)entry.getKey();
-						proxy.checkout(SVNUtility.getEntryReference(remote), local.getAbsolutePath(), Depth.EMPTY, true, false, new SVNProgressMonitor(ShareOperation.this, monitor, null));
+						proxy.checkout(SVNUtility.getEntryRevisionReference(remote), local.getAbsolutePath(), Depth.EMPTY, true, false, new SVNProgressMonitor(ShareOperation.this, monitor, null));
 					}
 				}, monitor, local2remote.size());
 			}

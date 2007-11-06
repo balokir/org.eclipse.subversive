@@ -43,7 +43,7 @@ public class SwitchOperation extends AbstractFileOperation {
 		ISVNClientWrapper proxy = location.acquireSVNProxy();
 		this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn switch \"" + this.destination.getUrl() + "\" \"" + FileUtility.normalizePath(file.getAbsolutePath()) + "\" -r " + this.destination.getSelectedRevision() + FileUtility.getUsernameParam(location.getUsername()) + "\n");
 		try {
-			proxy.doSwitch(file.getAbsolutePath(), SVNUtility.getEntryReference(this.destination), Depth.unknownOrFiles(true), false, false, new SVNProgressMonitor(this, monitor, null));
+			proxy.doSwitch(file.getAbsolutePath(), SVNUtility.getEntryRevisionReference(this.destination), Depth.unknownOrFiles(true), false, false, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 			location.releaseSVNProxy(proxy);

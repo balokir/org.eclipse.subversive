@@ -16,7 +16,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.team.svn.core.client.EntryReference;
+import org.eclipse.team.svn.core.client.EntryRevisionReference;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.PropertyData;
 import org.eclipse.team.svn.core.client.Revision;
@@ -334,7 +334,7 @@ public interface IStateFilter {
 					IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(resource);
 					ISVNClientWrapper proxy = location.acquireSVNProxy();
 					try {
-						propData[0] = SVNUtility.properties(proxy, new EntryReference(FileUtility.getWorkingCopyPath(resource), Revision.BASE, null), new SVNProgressMonitor(this, monitor, null));
+						propData[0] = SVNUtility.properties(proxy, new EntryRevisionReference(FileUtility.getWorkingCopyPath(resource), null, Revision.BASE), new SVNProgressMonitor(this, monitor, null));
 					}
 					finally {
 						location.releaseSVNProxy(proxy);

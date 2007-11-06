@@ -18,6 +18,7 @@ import org.eclipse.compare.CompareUI;
 import org.eclipse.compare.internal.CompareEditor;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.client.Depth;
+import org.eclipse.team.svn.core.client.EntryRevisionReference;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.Status;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
@@ -72,10 +73,14 @@ public class CompareRepositoryResourcesOperation extends AbstractNonLockingOpera
 		
 		this.protectStep(new IUnprotectedOperation() {
 			public void run(IProgressMonitor monitor) throws Exception {
-				statuses[0] = SVNUtility.diffStatus(proxy, 
-						SVNUtility.getEntryReference(CompareRepositoryResourcesOperation.this.right), 
-						SVNUtility.getEntryReference(CompareRepositoryResourcesOperation.this.left),
-						Depth.INFINITY, false, new SVNProgressMonitor(CompareRepositoryResourcesOperation.this, monitor, null, false));
+				EntryRevisionReference ref1 = SVNUtility.getEntryRevisionReference(CompareRepositoryResourcesOperation.this.right);
+				EntryRevisionReference ref2 = SVNUtility.getEntryRevisionReference(CompareRepositoryResourcesOperation.this.left);
+				if (SVNUtility.useSingleReferenceSignature(ref1, ref2)) {
+					statuses[0] = SVNUtility.diffStatus(proxy, ref1, ref1.revision, ref2.revision, Depth.INFINITY, false, new SVNProgressMonitor(CompareRepositoryResourcesOperation.this, monitor, null, false));
+				}
+				else {
+					statuses[0] = SVNUtility.diffStatus(proxy, ref1, ref2, Depth.INFINITY, false, new SVNProgressMonitor(CompareRepositoryResourcesOperation.this, monitor, null, false));
+				}
 			}
 		}, monitor, 2);
 		

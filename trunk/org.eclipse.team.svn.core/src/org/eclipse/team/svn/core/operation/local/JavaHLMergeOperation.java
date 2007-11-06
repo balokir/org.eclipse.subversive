@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.client.Depth;
+import org.eclipse.team.svn.core.client.EntryRevisionReference;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.ISVNProgressMonitor;
 import org.eclipse.team.svn.core.client.RevisionRange;
@@ -78,13 +79,15 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 		proxy.setTouchUnresolved(true);
 		try {
 			String wcPath = FileUtility.getWorkingCopyPath(resource);
-			if (from1.getUrl().equals(from2.getUrl())) {
+			EntryRevisionReference ref1 = SVNUtility.getEntryRevisionReference(from1);
+			EntryRevisionReference ref2 = SVNUtility.getEntryRevisionReference(from2);
+			if (SVNUtility.useSingleReferenceSignature(ref1, ref2)) {
 				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn merge -r " + from1.getSelectedRevision() + ":" + from2.getSelectedRevision() + "\"" + from1.getUrl() + "@" + from1.getPegRevision() + "\" \"" + FileUtility.normalizePath(wcPath) + "\"" + (this.dryRun ? " --dry-run" : "") + (this.ignoreAncestry ? " --ignore-ancestry" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n");
-				proxy.merge(SVNUtility.getEntryReference(from1), new RevisionRange[] {new RevisionRange(from1.getSelectedRevision(), from2.getSelectedRevision())}, wcPath, false, Depth.INFINITY, this.ignoreAncestry, this.dryRun, new MergeProgressMonitor(this, monitor, null));
+				proxy.merge(ref1, new RevisionRange[] {new RevisionRange(from1.getSelectedRevision(), from2.getSelectedRevision())}, wcPath, false, Depth.INFINITY, this.ignoreAncestry, this.dryRun, new MergeProgressMonitor(this, monitor, null));
 			}
 			else {
 				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn merge \"" + from1.getUrl() + "@" + from1.getSelectedRevision() + "\" \"" + from2.getUrl() + "@" + from2.getSelectedRevision() + "\" \"" + FileUtility.normalizePath(wcPath) + "\"" + (this.dryRun ? " --dry-run" : "") + (this.ignoreAncestry ? " --ignore-ancestry" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n");
-				proxy.merge(SVNUtility.getEntryReference(from1), SVNUtility.getEntryReference(from2), wcPath, false, Depth.INFINITY, this.ignoreAncestry, this.dryRun, new MergeProgressMonitor(this, monitor, null));
+				proxy.merge(ref1, ref2, wcPath, false, Depth.INFINITY, this.ignoreAncestry, this.dryRun, new MergeProgressMonitor(this, monitor, null));
 			}
 		}
 		finally {
