@@ -230,7 +230,7 @@ public abstract class AbstractSVNParticipant extends ScopableSubscriberParticipa
 				ResourceVariant variant = (ResourceVariant)info.getRemote();
 				if (variant != null) {
 				    ILocalResource remote = variant.getResource();
-				    if (remote.getRevision() != Revision.SVN_INVALID_REVNUM) {
+				    if (remote.getRevision() != Revision.INVALID_REVISION_NUMBER) {
 						return text + " " + variant.getContentIdentifier();
 				    }
 				}

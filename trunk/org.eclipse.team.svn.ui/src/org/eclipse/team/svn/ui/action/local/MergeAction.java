@@ -58,7 +58,7 @@ public class MergeAction extends AbstractNonRecursiveTeamAction {
 		long revision = localTo.getRevision();
 		
 		if (resources.length > 1) {
-			revision = Revision.SVN_INVALID_REVNUM;
+			revision = Revision.INVALID_REVISION_NUMBER;
 			remote = remote.getRoot();
 		}
 

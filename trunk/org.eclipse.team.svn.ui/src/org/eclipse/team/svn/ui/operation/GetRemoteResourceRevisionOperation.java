@@ -28,7 +28,7 @@ public class GetRemoteResourceRevisionOperation extends AbstractNonLockingOperat
 	public GetRemoteResourceRevisionOperation(IRepositoryResource resource) {
 		super("Operation.GetRemoteRevision");
 		this.resource = resource;
-		this.revision = Revision.SVN_INVALID_REVNUM;
+		this.revision = Revision.INVALID_REVISION_NUMBER;
 	}
 
 	public long getRevision() {

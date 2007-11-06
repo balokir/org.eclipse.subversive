@@ -68,7 +68,7 @@ public class RevisionComposite extends Composite {
 		super(parent, SWT.NONE);
 		this.stopOnCopy = stopOnCopy;
 		this.validationManager = validationManager;
-		this.lastSelectedRevision = Revision.SVN_INVALID_REVNUM;
+		this.lastSelectedRevision = Revision.INVALID_REVISION_NUMBER;
 		this.captions = captions;
 		this.defaultRevision = defaultRevision;
 		this.createControls();
@@ -159,7 +159,7 @@ public class RevisionComposite extends Composite {
 				else {
 					RevisionComposite.this.changeRevisionButton.setEnabled(true);
 					RevisionComposite.this.revisionField.setEditable(true);
-					if (RevisionComposite.this.lastSelectedRevision != Revision.SVN_INVALID_REVNUM) {
+					if (RevisionComposite.this.lastSelectedRevision != Revision.INVALID_REVISION_NUMBER) {
 						RevisionComposite.this.revisionField.setText(String.valueOf(RevisionComposite.this.lastSelectedRevision));
 						RevisionComposite.this.selectedRevision = Revision.fromNumber(RevisionComposite.this.lastSelectedRevision);
 					}

@@ -54,7 +54,6 @@ import org.eclipse.team.svn.core.client.LogEntry;
 import org.eclipse.team.svn.core.client.Revision;
 import org.eclipse.team.svn.core.client.Revision.Kind;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
-import org.eclipse.team.svn.core.resource.ISVNStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.PatternProvider;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -187,7 +186,7 @@ public class LogMessagesComposite extends SashForm {
 		if (tSelection.size() > 0) {
 			return ((LogEntry)tSelection.getFirstElement()).revision;
 		}
-		return Revision.SVN_INVALID_REVNUM;
+		return Revision.INVALID_REVISION_NUMBER;
 	}
 	
 	public String getSelectedMessage() {
@@ -242,7 +241,7 @@ public class LogMessagesComposite extends SashForm {
 	public void setLogMessages(Revision currentRevision, LogEntry []msgs, IRepositoryResource repositoryResource) {
 		this.msgs = msgs;
 		this.repositoryResource = repositoryResource;
-		this.currentRevision = Revision.SVN_INVALID_REVNUM;
+		this.currentRevision = Revision.INVALID_REVISION_NUMBER;
 		this.pathData.clear();
 		
 		if (msgs == null || msgs.length == 0) {
@@ -290,7 +289,7 @@ public class LogMessagesComposite extends SashForm {
 			}
 		}
 		
-		if (currentRevision != null && !(currentRevision instanceof ISVNStorage.InvalidRevision)) {
+		if (currentRevision != null && currentRevision != Revision.INVALID_REVISION) {
 			if (currentRevision.getKind() == Kind.HEAD) {
 				this.currentRevision = Math.max(msgs[0].revision, msgs[msgs.length - 1].revision);
 			}
@@ -371,8 +370,8 @@ public class LogMessagesComposite extends SashForm {
 					this.getAction(paths[i].action), 
 					idx != -1 ? path.substring(idx + 1) : path,
 					idx != -1 ? path.substring(0, idx) : "",
-					paths[i].copiedFromRevision != Revision.SVN_INVALID_REVNUM ?  paths[i].copiedFromPath : "",
-					paths[i].copiedFromRevision != Revision.SVN_INVALID_REVNUM ?  "" + paths[i].copiedFromRevision : ""
+					paths[i].copiedFromRevision != Revision.INVALID_REVISION_NUMBER ?  paths[i].copiedFromPath : "",
+					paths[i].copiedFromRevision != Revision.INVALID_REVISION_NUMBER ?  "" + paths[i].copiedFromRevision : ""
 				};
 		}
 		this.pathData.put(key, pathData);

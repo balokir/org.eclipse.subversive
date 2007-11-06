@@ -41,7 +41,7 @@ public class RemoteFileVariant extends RemoteResourceVariant {
 
 	protected void fetchContents(IProgressMonitor monitor) throws TeamException {
 		SVNRemoteStorage storage = SVNRemoteStorage.instance();
-		if ((!this.local.isCopied() && this.local.getRevision() == Revision.SVN_INVALID_REVNUM) || 
+		if ((!this.local.isCopied() && this.local.getRevision() == Revision.INVALID_REVISION_NUMBER) || 
 		    IStateFilter.SF_DELETED.accept(this.local.getResource(), this.local.getStatus(), this.local.getChangeMask()) &&
 		    !IStateFilter.SF_REPLACED.accept(this.local.getResource(), this.local.getStatus(), this.local.getChangeMask())) {
 			this.setContents(new ByteArrayInputStream(new byte[0]), monitor);

@@ -66,14 +66,14 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 		final IResource []scope = rStatusOp.getScope();
 		IChangeStateProvider provider = new IChangeStateProvider() {
 			public long getChangeDate() {
-				return current.reposLastCmtRevision == Revision.SVN_INVALID_REVNUM ? current.lastChangedDate : current.reposLastCmtDate;
+				return current.reposLastCmtRevision == Revision.INVALID_REVISION_NUMBER ? current.lastChangedDate : current.reposLastCmtDate;
 			}
 			public String getChangeAuthor() {
-				return current.reposLastCmtRevision == Revision.SVN_INVALID_REVNUM ? current.lastCommitAuthor : current.reposLastCmtAuthor;
+				return current.reposLastCmtRevision == Revision.INVALID_REVISION_NUMBER ? current.lastCommitAuthor : current.reposLastCmtAuthor;
 			}
 			public Revision.Number getChangeRevision() {
-				long changeRev = current.reposLastCmtRevision == Revision.SVN_INVALID_REVNUM ? current.lastChangedRevision : current.reposLastCmtRevision;
-				return changeRev == Revision.SVN_INVALID_REVNUM ? null : (Revision.Number)Revision.fromNumber(changeRev);
+				long changeRev = current.reposLastCmtRevision == Revision.INVALID_REVISION_NUMBER ? current.lastChangedRevision : current.reposLastCmtRevision;
+				return changeRev == Revision.INVALID_REVISION_NUMBER ? null : (Revision.Number)Revision.fromNumber(changeRev);
 			}
 			public int getTextChangeType() {
 				return current.repositoryTextStatus;
@@ -105,7 +105,7 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 			return null;
 		}
 		IResourceChange resourceChange = storage.asResourceChange(provider);
-		if (resourceChange == null || resourceChange.getRevision() == Revision.SVN_INVALID_REVNUM) {
+		if (resourceChange == null || resourceChange.getRevision() == Revision.INVALID_REVISION_NUMBER) {
 			return null;
 		}
 		rStatusOp.setPegRevision(resourceChange);

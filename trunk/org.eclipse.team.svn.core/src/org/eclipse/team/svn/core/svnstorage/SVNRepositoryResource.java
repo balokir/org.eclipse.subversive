@@ -22,7 +22,6 @@ import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
-import org.eclipse.team.svn.core.resource.ISVNStorage;
 
 /**
  * SVN based representation of IRepositoryResource
@@ -91,7 +90,7 @@ public abstract class SVNRepositoryResource extends SVNRepositoryBase implements
 	
 	public synchronized long getRevision() throws ClientWrapperException {
 		if (this.lastRevision == null) {
-			this.lastRevision = new ISVNStorage.InvalidRevision();
+			this.lastRevision = Revision.INVALID_REVISION;
 			ISVNClientWrapper proxy = this.getRepositoryLocation().acquireSVNProxy();
 			try {
 				this.getRevisionImpl(proxy);
@@ -105,7 +104,7 @@ public abstract class SVNRepositoryResource extends SVNRepositoryBase implements
 	
 	public boolean exists() throws ClientWrapperException {
 		try {
-			return this.getRevision() != Revision.SVN_INVALID_REVNUM;
+			return this.getRevision() != Revision.INVALID_REVISION_NUMBER;
 		}
 		catch (ClientWrapperException ex) {
 			//FIXME uncomment this when the WI is resolved ("Unknown node kind" exception instead of "Path not found" (PLC-1008)) 

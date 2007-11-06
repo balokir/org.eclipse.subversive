@@ -113,7 +113,7 @@ public class CompareResourcesOperation extends AbstractNonLockingOperation {
 					remoteRight.setPegRevision(Revision.fromNumber(localChanges[0][0].revisionCopiedFrom));
 					remoteBase.setSelectedRevision(remoteRight.getPegRevision());
 				}
-				else if (local.getRevision() != Revision.SVN_INVALID_REVNUM) {
+				else if (local.getRevision() != Revision.INVALID_REVISION_NUMBER) {
 					remoteBase.setSelectedRevision(Revision.fromNumber(local.getRevision()));
 				}
 				

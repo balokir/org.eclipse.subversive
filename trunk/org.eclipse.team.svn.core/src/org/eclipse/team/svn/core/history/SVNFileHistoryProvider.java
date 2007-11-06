@@ -38,13 +38,13 @@ public class SVNFileHistoryProvider extends FileHistoryProvider {
 		GetLogMessagesOperation logOp = new GetLogMessagesOperation(remote);
 		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
 		if ((flags & IFileHistoryProvider.SINGLE_REVISION) != 0) {
-			if (local.getRevision() != Revision.SVN_INVALID_REVNUM) {
+			if (local.getRevision() != Revision.INVALID_REVISION_NUMBER) {
 				remote.setSelectedRevision(Revision.fromNumber(local.getRevision()));
 			}
 			logOp.setLimit(1);
 		}
 		else if ((flags & IFileHistoryProvider.SINGLE_LINE_OF_DESCENT) != 0) {
-			if (local.getRevision() != Revision.SVN_INVALID_REVNUM) {
+			if (local.getRevision() != Revision.INVALID_REVISION_NUMBER) {
 				remote.setSelectedRevision(Revision.fromNumber(local.getRevision()));
 			}
 			logOp.setLimit(2);

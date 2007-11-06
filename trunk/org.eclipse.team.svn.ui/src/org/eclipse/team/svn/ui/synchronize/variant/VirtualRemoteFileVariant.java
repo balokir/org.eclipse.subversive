@@ -35,7 +35,7 @@ public class VirtualRemoteFileVariant extends VirtualRemoteResourceVariant {
 	}
 
 	protected void fetchContents(IProgressMonitor monitor) throws TeamException {
-		if (!this.local.isCopied() && this.local.getRevision() == Revision.SVN_INVALID_REVNUM &&
+		if (!this.local.isCopied() && this.local.getRevision() == Revision.INVALID_REVISION_NUMBER &&
 			!IStateFilter.SF_PREREPLACED.accept(this.local.getResource(), this.local.getStatus(), this.local.getChangeMask())) {
 			this.setContents(new ByteArrayInputStream(new byte[0]), monitor);
 			return;

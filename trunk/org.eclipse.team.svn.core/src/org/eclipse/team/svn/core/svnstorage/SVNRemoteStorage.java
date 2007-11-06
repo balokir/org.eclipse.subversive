@@ -63,7 +63,6 @@ import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
-import org.eclipse.team.svn.core.resource.ISVNStorage;
 import org.eclipse.team.svn.core.resource.events.IResourceStatesListener;
 import org.eclipse.team.svn.core.resource.events.ResourceStatesChangedEvent;
 import org.eclipse.team.svn.core.utility.FileUtility;
@@ -143,17 +142,17 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		boolean isCopied = changeState.isCopied();
 		boolean isSwitched = changeState.isSwitched();
 	    Revision.Number remoteRevision = changeState.getChangeRevision();
-		long revision = remoteRevision != null ? remoteRevision.getNumber() : Revision.SVN_INVALID_REVNUM;
+		long revision = remoteRevision != null ? remoteRevision.getNumber() : Revision.INVALID_REVISION_NUMBER;
 		// repositoryTextStatus can be StatusKind::none in two cases: resource not modified and non versioned
 		// in the second case we should ignore repository status calculation
-		String statusStr = revision == Revision.SVN_INVALID_REVNUM ? IStateFilter.ST_NOTEXISTS : this.getStatusString(propKind, textKind, true);
+		String statusStr = revision == Revision.INVALID_REVISION_NUMBER ? IStateFilter.ST_NOTEXISTS : this.getStatusString(propKind, textKind, true);
 		if (nodeKind == NodeKind.DIR) {
 		    if ((resource = changeState.getExact(root.findContainersForLocation(location))) == null) {
 		    	return null;
 		    }
 		    int changeMask = this.getChangeMask(textKind, propKind, isCopied, isSwitched);
 		    if (IStateFilter.SF_NOTEXISTS.accept(resource, statusStr, changeMask)) {
-				revision = Revision.SVN_INVALID_REVNUM;
+				revision = Revision.INVALID_REVISION_NUMBER;
 			}
 			return new SVNFolderChange(resource, revision, statusStr, changeMask, changeState.getChangeAuthor(), changeState.getChangeDate(), null, changeState.getComment());
 		}
@@ -163,7 +162,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		    }
 		    int changeMask = this.getChangeMask(textKind, propKind, isCopied, isSwitched);
 		    if (IStateFilter.SF_NOTEXISTS.accept(resource, statusStr, changeMask)) {
-				revision = Revision.SVN_INVALID_REVNUM;
+				revision = Revision.INVALID_REVISION_NUMBER;
 			}			    
 			return new SVNFileChange(resource, revision, statusStr, changeMask, changeState.getChangeAuthor(), changeState.getChangeDate(), null, changeState.getComment());
 		}
@@ -214,7 +213,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		    pegRevision = pegNum == revision ? null : Revision.fromNumber(pegNum);
 		}
 		else {
-		    pegRevision = new ISVNStorage.KindBasedRevision(revisionKind);
+		    pegRevision = Revision.fromKind(revisionKind);
 		}
 		String comment = "null".equals(data[9]) ? null : new String(Base64.decode(data[9].getBytes()));
 		int changeMask = "null".equals(data[10]) ? ILocalResource.NO_MODIFICATION : Integer.parseInt(data[10]);
@@ -269,8 +268,8 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 			int mask = parent == null ? 0 : (parent.getChangeMask() & ILocalResource.IS_SWITCHED);
 			retVal = 
 				resource.getType() == IResource.FILE ? 
-				(ILocalResource)new SVNLocalFile(resource, Revision.SVN_INVALID_REVNUM, IStateFilter.ST_NOTEXISTS, mask, null, -1) :
-				new SVNLocalFolder(resource, Revision.SVN_INVALID_REVNUM, IStateFilter.ST_NOTEXISTS, mask, null, -1);
+				(ILocalResource)new SVNLocalFile(resource, Revision.INVALID_REVISION_NUMBER, IStateFilter.ST_NOTEXISTS, mask, null, -1) :
+				new SVNLocalFolder(resource, Revision.INVALID_REVISION_NUMBER, IStateFilter.ST_NOTEXISTS, mask, null, -1);
 		}
 		return retVal;
 	}
@@ -504,7 +503,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
             	String state = child == resource ? fStatus : SVNRemoteStorage.this.getDelegatedStatus(child, fStatus, 0);
             	int changeMask = (state == IStateFilter.ST_OBSTRUCTED || state == IStateFilter.ST_NEW) ? ILocalResource.TEXT_MODIFIED : ILocalResource.NO_MODIFICATION;
             	changeMask |= parentCM;
-            	ILocalResource retVal = SVNRemoteStorage.this.registerResource(child, Revision.SVN_INVALID_REVNUM, state, changeMask, null, -1);
+            	ILocalResource retVal = SVNRemoteStorage.this.registerResource(child, Revision.INVALID_REVISION_NUMBER, state, changeMask, null, -1);
                 if (tmp[0] == null) {
                 	tmp[0] = retVal;
                 }
@@ -855,7 +854,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	    if (IStateFilter.SF_NONVERSIONED.accept(current, status, changeMask) && 
 	    	!(IStateFilter.SF_PREREPLACEDREPLACED.accept(current, status, changeMask) || IStateFilter.SF_DELETED.accept(current, status, changeMask)) ||
 	        IStateFilter.SF_LINKED.accept(current, status, changeMask)) {
-	        revision = Revision.SVN_INVALID_REVNUM;
+	        revision = Revision.INVALID_REVISION_NUMBER;
 	        author = null;
 	        date = -1;
 	    }

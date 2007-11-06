@@ -59,7 +59,7 @@ public class ChangePath {
 	public final String copiedFromPath;
 
 	/**
-	 * The copy source revision. Contains {@link Revision#SVN_INVALID_REVNUM} if resource revision is not copied.
+	 * The copy source revision. Contains {@link Revision#INVALID_REVISION_NUMBER} if resource revision is not copied.
 	 */
 	public final long copiedFromRevision;
 

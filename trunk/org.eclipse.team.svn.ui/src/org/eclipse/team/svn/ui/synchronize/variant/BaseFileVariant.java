@@ -35,7 +35,7 @@ public class BaseFileVariant extends ResourceVariant {
 	}
 
 	protected void fetchContents(IProgressMonitor monitor) throws TeamException {
-		if (!this.local.isCopied() && this.local.getRevision() == Revision.SVN_INVALID_REVNUM) {
+		if (!this.local.isCopied() && this.local.getRevision() == Revision.INVALID_REVISION_NUMBER) {
 			this.setContents(new ByteArrayInputStream(new byte[0]), monitor);
 			return;
 		}

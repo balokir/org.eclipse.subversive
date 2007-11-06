@@ -61,7 +61,6 @@ import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
-import org.eclipse.team.svn.core.resource.ISVNStorage;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -188,14 +187,14 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 	protected String getRevisionPart(ResourceElement element) throws Exception {
 		IRepositoryResource resource = element.getRepositoryResource();
 		Revision selected = resource.getSelectedRevision();
-		if (selected instanceof ISVNStorage.InvalidRevision) {
+		if (selected == Revision.INVALID_REVISION) {
 			return "";
 		}
 		int kind = selected.getKind();
 		ILocalResource local = element.getLocalResource();
 		String msg = SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.RevisionPart");
 		if (kind == Kind.WORKING || kind == Kind.BASE || (local != null && local.isCopied())) {
-			if (local == null || local.getRevision() == Revision.SVN_INVALID_REVNUM) {
+			if (local == null || local.getRevision() == Revision.INVALID_REVISION_NUMBER) {
 				return "";
 			}
 			return " " + MessageFormat.format(msg, new String[] {String.valueOf(local.getRevision())});
@@ -318,7 +317,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 			this.editable = false;
 			this.listenerList = new Vector();
 			if (kind == org.eclipse.team.svn.core.client.Status.Kind.NONE) {
-				resource.setSelectedRevision(new ISVNStorage.InvalidRevision());
+				resource.setSelectedRevision(Revision.INVALID_REVISION);
 			}
 		}
 		

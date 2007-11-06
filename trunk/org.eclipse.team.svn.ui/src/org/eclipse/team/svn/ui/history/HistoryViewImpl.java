@@ -561,7 +561,7 @@ public class HistoryViewImpl {
 		//must be called first, to initialize backtrack model
 		this.history.getCommentView().usedFor(resource);
 		
-	    long currentRevision = Revision.SVN_INVALID_REVNUM;
+	    long currentRevision = Revision.INVALID_REVISION_NUMBER;
 	    IRepositoryResource remote = null;
 		if (resource != null) {
 			IRemoteStorage storage = SVNRemoteStorage.instance();
@@ -583,7 +583,7 @@ public class HistoryViewImpl {
 		
 		//must be called first, to initialize backtrack model
 		this.history.getCommentView().usedFor(remoteResource);
-		long currentRevision = Revision.SVN_INVALID_REVNUM;
+		long currentRevision = Revision.INVALID_REVISION_NUMBER;
 		try {
 			if (remoteResource != null) {
 				currentRevision = remoteResource.getRevision();

@@ -12,7 +12,6 @@
 package org.eclipse.team.svn.core.resource;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.team.svn.core.client.Revision;
 
 /**
  * SVN storage interface. Allows to manage repository locations.
@@ -24,18 +23,6 @@ public interface ISVNStorage extends IRepositoryLocationFactory {
 	public static final int IGNORE_EXTENSION = 1;
 	public static final int IGNORE_PATTERN = 2;
 	
-	public static class KindBasedRevision extends Revision {
-		public KindBasedRevision(int kind) {
-			super(kind);
-		}
-	}
-	
-	public static class InvalidRevision extends Revision.Number {
-		public InvalidRevision() {
-			super(Revision.SVN_INVALID_REVNUM);
-		}
-	}
-
 	public void initialize(IPath stateInfoLocation) throws Exception;
 	public void dispose();
 	

@@ -69,7 +69,7 @@ public abstract class ResourceVariant extends CachedResourceVariant {
 	}
 
     protected boolean isNotOnRepository() {
-        return this.local.getRevision() == Revision.SVN_INVALID_REVNUM;
+        return this.local.getRevision() == Revision.INVALID_REVISION_NUMBER;
     }
     
 }

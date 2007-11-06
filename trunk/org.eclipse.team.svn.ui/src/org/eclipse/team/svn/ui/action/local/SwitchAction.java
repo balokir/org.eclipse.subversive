@@ -56,7 +56,7 @@ public class SwitchAction extends AbstractNonRecursiveTeamAction {
 		if (resources.length > 1) {
 			IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(resources[0]);
 			remote = SVNUtility.getTrunkLocation(remote);
-			panel = new SwitchPanel(remote, Revision.SVN_INVALID_REVNUM);
+			panel = new SwitchPanel(remote, Revision.INVALID_REVISION_NUMBER);
 		}
 		else {
 			IResource resource = resources[0];
