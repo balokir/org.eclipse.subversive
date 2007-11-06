@@ -100,8 +100,8 @@ public class TwoWayResourceCompareInput extends ResourceCompareInput {
 		
 		LocateResourceURLInHistoryOperation op = new LocateResourceURLInHistoryOperation(new IRepositoryResource[] {left, right}, true);
 		ProgressMonitorUtility.doTaskExternal(op, monitor);
-		left = op.getRepositoryResources()[0];
-		right = op.getRepositoryResources()[1];
+		right = op.getRepositoryResources()[0];
+		left = op.getRepositoryResources()[1];
 
 		// invert diffKind and swap content in order to make compare view the same as Eclipse "Compare Each Other"
 		int diffKind = ResourceCompareInput.getDiffKind(st.textStatus, st.propStatus, Kind.NORMAL);

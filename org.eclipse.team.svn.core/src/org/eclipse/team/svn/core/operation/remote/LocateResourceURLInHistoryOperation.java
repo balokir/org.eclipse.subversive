@@ -74,6 +74,13 @@ public class LocateResourceURLInHistoryOperation extends AbstractRepositoryOpera
 		IRepositoryLocation location = current.getRepositoryLocation();
 		ISVNClientWrapper proxy = location.acquireSVNProxy();
 		try {
+			/*LogEntry []msgs;
+			if (current.exists()) {
+				msgs = GetLogMessagesOperation.getMessagesImpl(proxy, current, Revision.fromNumber(0), current.getPegRevision(), ISVNClientWrapper.EMPTY_LOG_ENTRY_PROPS, 1, true, this, monitor);
+			}
+			else {
+				msgs = GetLogMessagesOperation.getMessagesImpl(proxy, current.getParent(), Revision.fromNumber(0), current.getPegRevision(), ISVNClientWrapper.EMPTY_LOG_ENTRY_PROPS, 1, true, this, monitor); 
+			}*/
 			LogEntry []msgs = GetLogMessagesOperation.getMessagesImpl(proxy, current, Revision.fromNumber(0), current.getPegRevision(), ISVNClientWrapper.EMPTY_LOG_ENTRY_PROPS, 1, true, this, monitor);
 			if (msgs != null && msgs.length > 0 && msgs[0] != null) {
 				ChangePath []paths = msgs[0].changedPaths;
@@ -83,7 +90,7 @@ public class LocateResourceURLInHistoryOperation extends AbstractRepositoryOpera
 				String pattern = current.getUrl().substring(location.getRepositoryRoot().getUrl().length());
 				int idx = -1;
 				for (int i = 0; i < paths.length; i++) {
-					if (pattern.startsWith(paths[i].path)) {
+					if (paths[i].action != 'D' && pattern.startsWith(paths[i].path)) {
 						if (paths[i].copiedFromPath != null) {
 							idx = i;
 						}
