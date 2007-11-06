@@ -36,6 +36,7 @@ import org.eclipse.team.svn.core.operation.remote.PreparedBranchTagOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -154,11 +155,7 @@ public class BranchTagAction extends AbstractNonRecursiveTeamAction {
 		boolean multipleLayout = false;
 		if (resources.length == 1 && resources[0] instanceof IProject) {
 			IRepositoryResource remote = (IRepositoryResource)remoteOperateResources.get(0);
-			IRepositoryLocation location = remote.getRepositoryLocation();
-			String trunkLocation = SVNUtility.getProposedTrunkLocation(location);
-			if (location.isStructureEnabled() && remote.getUrl().startsWith(trunkLocation)) {
-				multipleLayout = !remote.getUrl().equals(trunkLocation);
-			}
+			return !(remote instanceof IRepositoryRoot) || ((IRepositoryRoot)remote).getKind() != IRepositoryRoot.KIND_TRUNK;
 		}
 		return multipleLayout;
 	}

@@ -219,12 +219,14 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 					Status []statuses = rStatusOp.getStatuses();
 					if (statuses != null) {
 						for (int i = 0; i < statuses.length && !monitor.isCanceled(); i++) {
+							if (statuses[i].repositoryPropStatus == Status.Kind.MODIFIED || statuses[i].repositoryTextStatus != Status.Kind.NONE) {
 							IResourceChange resourceChange = AbstractSVNSubscriber.this.handleResourceChange(SVNRemoteStorage.instance(), rStatusOp, statuses[i]);
-							if (resourceChange != null) {
-								ProgressMonitorUtility.setTaskInfo(monitor, this, resourceChange.getResource().getFullPath().toString());
-								ProgressMonitorUtility.progress(monitor, i, statuses.length);
-								AbstractSVNSubscriber.this.statusCache.setBytes(resourceChange.getResource(), SVNRemoteStorage.instance().resourceChangeAsBytes(resourceChange));
-								changes.add(resourceChange.getResource());
+								if (resourceChange != null) {
+									ProgressMonitorUtility.setTaskInfo(monitor, this, resourceChange.getResource().getFullPath().toString());
+									ProgressMonitorUtility.progress(monitor, i, statuses.length);
+									AbstractSVNSubscriber.this.statusCache.setBytes(resourceChange.getResource(), SVNRemoteStorage.instance().resourceChangeAsBytes(resourceChange));
+									changes.add(resourceChange.getResource());
+								}
 							}
 						}
 					}
