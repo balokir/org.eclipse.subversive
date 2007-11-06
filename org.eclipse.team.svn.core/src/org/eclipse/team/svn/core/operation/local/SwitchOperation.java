@@ -72,7 +72,7 @@ public class SwitchOperation extends AbstractRepositoryOperation {
 					SwitchOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn switch \"" + destination.getUrl() + "\" \"" + FileUtility.normalizePath(wcPath) + "\" -r " + destination.getSelectedRevision() + FileUtility.getUsernameParam(location.getUsername()) + "\n");
 					proxy.doSwitch(wcPath, 
 							SVNUtility.getEntryRevisionReference(destination), 
-							Depth.unknownOrFiles(true),
+							Depth.infinityOrFiles(true),
 							false, 
 							false,
 							new SVNProgressMonitor(SwitchOperation.this, monitor, null));

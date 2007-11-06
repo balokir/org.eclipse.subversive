@@ -79,7 +79,7 @@ public class GetLogMessagesOperation extends AbstractRepositoryOperation {
 		ISVNClientWrapper proxy = location.acquireSVNProxy();
 		try {
 //			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn log " + SVNUtility.encodeURL(this.resource.getUrl()) + (this.limit != 0 ? (" --limit " + this.limit) : "") + (this.stopOnCopy ? " --stop-on-copy" : "") + " -r " + this.selectedRevision + ":0 --username \"" + location.getUsername() + "\"\n");
-			this.msg = GetLogMessagesOperation.getMessagesImpl(proxy, resource, this.selectedRevision, Revision.fromNumber(0), null, this.limit, this.stopOnCopy, this, monitor);
+			this.msg = GetLogMessagesOperation.getMessagesImpl(proxy, resource, this.selectedRevision, Revision.fromNumber(0), ISVNClientWrapper.DEFAULT_LOG_ENTRY_PROPS, this.limit, this.stopOnCopy, this, monitor);
 		}
 		finally {
 			location.releaseSVNProxy(proxy);

@@ -105,7 +105,7 @@ public class UpdateOperation extends AbstractConflictDetectionOperation implemen
 					proxy.update(
 					    paths, 
 					    UpdateOperation.this.selectedRevision, 
-						Depth.unknownOrFiles(UpdateOperation.this.doRecursiveUpdate),
+						Depth.infinityOrFiles(UpdateOperation.this.doRecursiveUpdate),
 						false, false, 
 						new ConflictDetectionProgressMonitor(UpdateOperation.this, monitor, null));
 				}

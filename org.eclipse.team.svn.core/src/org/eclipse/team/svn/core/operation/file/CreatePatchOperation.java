@@ -53,7 +53,7 @@ public class CreatePatchOperation extends AbstractFileOperation {
 			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn diff " + (this.recurse ? "" : " -N") + (this.ignoreDeleted ? " --no-diff-deleted" : "") + "\n");
 			proxy.diff(
 				new EntryRevisionReference(file.getAbsolutePath(), null, Revision.BASE), new EntryRevisionReference(file.getAbsolutePath(), null, Revision.WORKING), this.fileName, 
-				Depth.unknownOrFiles(this.recurse), true, this.ignoreDeleted,
+				Depth.infinityOrFiles(this.recurse), true, this.ignoreDeleted,
 				this.processBinary, this.processUnversioned, this.useRelativePath, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {

@@ -23,6 +23,9 @@ import java.io.OutputStream;
  * @author Alexander Gurov
  */
 public interface ISVNClientWrapper {
+	public static final String []EMPTY_LOG_ENTRY_PROPS = new String[] {};
+	public static final String []DEFAULT_LOG_ENTRY_PROPS = new String[] {PropertyData.BuiltIn.REV_LOG, PropertyData.BuiltIn.REV_DATE, PropertyData.BuiltIn.REV_AUTHOR};
+	
 	public String getConfigDirectory() throws ClientWrapperException;
 	public void setConfigDirectory(String configDir) throws ClientWrapperException;
 	
