@@ -57,7 +57,7 @@ public class ImportOperation extends AbstractRepositoryOperation implements IRev
 		ISVNClientWrapper proxy = location.acquireSVNProxy();
 		INotificationCallback notify = new INotificationCallback() {
 			public void notify(Notification info) {
-				if (info.revision != Revision.SVN_INVALID_REVNUM) {
+				if (info.revision != Revision.INVALID_REVISION_NUMBER) {
 					String []path = new String[] {resource.getUrl()};
 					ImportOperation.this.revisionPair[0] = new RevisionPair(info.revision, path, location);
 					String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision");

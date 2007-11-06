@@ -30,8 +30,8 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
  */
 public class CommentProvider implements ICommentProvider {
 	public String getComment(IResource resource, Revision rev, Revision peg) {
-		if (rev.getKind() == Kind.NUMBER && ((Revision.Number)rev).getNumber() == Revision.SVN_INVALID_REVNUM || 
-			peg != null && peg.getKind() == Kind.NUMBER && ((Revision.Number)peg).getNumber() == Revision.SVN_INVALID_REVNUM) {
+		if (rev.getKind() == Kind.NUMBER && ((Revision.Number)rev).getNumber() == Revision.INVALID_REVISION_NUMBER || 
+			peg != null && peg.getKind() == Kind.NUMBER && ((Revision.Number)peg).getNumber() == Revision.INVALID_REVISION_NUMBER) {
 			return null;
 		}
 		IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(resource);

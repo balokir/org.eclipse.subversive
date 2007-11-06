@@ -95,7 +95,7 @@ public class SVNRepositoryContainer extends SVNRepositoryResource implements IRe
 	protected void getRevisionImpl(ISVNClientWrapper proxy) throws ClientWrapperException {
 		EntryRevisionReference reference = SVNUtility.getEntryRevisionReference(this);
 		EntryInfo []infos = SVNUtility.info(proxy, reference, Depth.EMPTY, new SVNNullProgressMonitor());
-		if (infos != null && infos.length > 0 && infos[0].lastChangedRevision != Revision.SVN_INVALID_REVNUM) {
+		if (infos != null && infos.length > 0 && infos[0].lastChangedRevision != Revision.INVALID_REVISION_NUMBER) {
 			this.lastRevision = (Revision.Number)Revision.fromNumber(infos[0].lastChangedRevision);
 			PropertyData []data = SVNUtility.properties(proxy, reference, new SVNNullProgressMonitor());
 			this.setInfo(new IRepositoryResource.Information(infos[0].lock, 0, infos[0].lastChangedAuthor, infos[0].lastChangedDate, data != null && data.length > 0));

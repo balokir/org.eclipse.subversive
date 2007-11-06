@@ -59,7 +59,7 @@ public class CorrectRevisionOperation extends AbstractNonLockingOperation {
 						long parentRevision = parent.getRevision();
 						long selfRevision = self.getRevision();
 						long revision = parentRevision > selfRevision ? parentRevision : selfRevision;
-						if (revision != Revision.SVN_INVALID_REVNUM) {
+						if (revision != Revision.INVALID_REVISION_NUMBER) {
 							this.repositoryResources[i].setPegRevision(Revision.fromNumber(revision));
 						}
 					}
@@ -68,7 +68,7 @@ public class CorrectRevisionOperation extends AbstractNonLockingOperation {
 					}
 				}
 			}
-			if (!this.repositoryResources[i].exists() && this.knownRevisions[i] != Revision.SVN_INVALID_REVNUM) {
+			if (!this.repositoryResources[i].exists() && this.knownRevisions[i] != Revision.INVALID_REVISION_NUMBER) {
 				hasWarning = true;
 				Revision rev = Revision.fromNumber(this.knownRevisions[i]);
 				this.repositoryResources[i].setSelectedRevision(rev);

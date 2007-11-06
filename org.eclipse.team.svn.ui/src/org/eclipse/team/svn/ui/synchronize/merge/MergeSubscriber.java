@@ -83,7 +83,7 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 				return current.lastCommitAuthor;
 			}
 			public Revision.Number getChangeRevision() {
-				return current.lastChangedRevision == Revision.SVN_INVALID_REVNUM ? null : (Revision.Number)Revision.fromNumber(current.lastChangedRevision);
+				return current.lastChangedRevision == Revision.INVALID_REVISION_NUMBER ? null : (Revision.Number)Revision.fromNumber(current.lastChangedRevision);
 			}
 			public int getTextChangeType() {
 				return current.textStatus;
@@ -116,7 +116,7 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 			return null;
 		}
 		IResourceChange resourceChange = storage.asResourceChange(provider);
-		if (resourceChange == null || resourceChange.getRevision() == Revision.SVN_INVALID_REVNUM) {
+		if (resourceChange == null || resourceChange.getRevision() == Revision.INVALID_REVISION_NUMBER) {
 			return null;
 		}
 		IRepositoryResource originator = this.scope.getMergeSet().from[0];

@@ -100,7 +100,7 @@ public class GetRemoteFolderChildrenOperation extends AbstractNonLockingOperatio
 						    url = SVNUtility.normalizeURL(url);
 							// see if we can find a matching repository location:
 							newTmp[tmp.length + i] = SVNRemoteStorage.instance().asRepositoryResource(location, url, false);
-							int revision = Revision.SVN_INVALID_REVNUM;
+							int revision = Revision.INVALID_REVISION_NUMBER;
 							try {
 								if (parts.length == 4) {
 									revision = Integer.parseInt(parts[2]);
@@ -112,7 +112,7 @@ public class GetRemoteFolderChildrenOperation extends AbstractNonLockingOperatio
 							catch (Exception ex) {
 								throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]);
 							}
-							if (revision != Revision.SVN_INVALID_REVNUM) {
+							if (revision != Revision.INVALID_REVISION_NUMBER) {
 								newTmp[tmp.length + i].setSelectedRevision(Revision.fromNumber(revision));
 							}
 							this.externalsNames.put(newTmp[tmp.length + i], name);

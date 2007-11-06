@@ -86,7 +86,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
 	protected boolean initialStopOnCopy;
 
 	public SelectRevisionPanel(GetLogMessagesOperation msgOp, int selectionStyle) {
-		this(msgOp, selectionStyle, Revision.SVN_INVALID_REVNUM);
+		this(msgOp, selectionStyle, Revision.INVALID_REVISION_NUMBER);
     }
 
     public SelectRevisionPanel(GetLogMessagesOperation msgOp, int selectionStyle, long currentRevision) {

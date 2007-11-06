@@ -100,9 +100,14 @@ public class Revision {
 	public static final Revision WORKING = new Revision(Kind.WORKING);
 
 	/**
-	 * Marker revision number for no real revision
+	 * Invalid revision number
 	 */
-	public static final int SVN_INVALID_REVNUM = -1;
+	public static final int INVALID_REVISION_NUMBER = -1;
+
+	/**
+	 * Invalid revision object
+	 */
+	public static final Revision.Number INVALID_REVISION = new Revision.Number(INVALID_REVISION_NUMBER);
 
 	/**
 	 * Number-based revision
@@ -182,6 +187,45 @@ public class Revision {
 	}
 
 	protected int revKind;
+
+	/**
+	 * Creates revision object by revision kind
+	 * 
+	 * @param kind
+	 *            revision kind
+	 * @return revision object
+	 * @throws IllegalArgumentException
+	 *             if kind is {@link Kind#DATE}, {@link Kind#NUMBER} or exceeds kind limits
+	 */
+	public static Revision fromKind(int kind) {
+		switch (kind) {
+		case Kind.BASE: {
+			return Revision.BASE;
+		}
+		case Kind.WORKING: {
+			return Revision.WORKING;
+		}
+		case Kind.HEAD: {
+			return Revision.HEAD;
+		}
+		case Kind.PREVIOUS: {
+			return Revision.PREVIOUS;
+		}
+		case Kind.UNSPECIFIED: {
+			return Revision.START;
+		}
+		case Kind.COMMITTED: {
+			return Revision.COMMITTED;
+		}
+		case Kind.DATE: {
+			throw new IllegalArgumentException("Use fromDate() method instead");
+		}
+		case Kind.NUMBER: {
+			throw new IllegalArgumentException("Use fromNumber() method instead");
+		}
+		}
+		throw new IllegalArgumentException("Invalid revision kind: " + kind);
+	}
 
 	/**
 	 * Creates revision object by revision number

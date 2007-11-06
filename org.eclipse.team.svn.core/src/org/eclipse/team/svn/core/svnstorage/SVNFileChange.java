@@ -16,7 +16,6 @@ import org.eclipse.team.svn.core.client.Revision;
 import org.eclipse.team.svn.core.resource.ICommentProvider;
 import org.eclipse.team.svn.core.resource.IFileChange;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
-import org.eclipse.team.svn.core.resource.ISVNStorage;
 
 /**
  * File change descriptor
@@ -36,7 +35,7 @@ public class SVNFileChange extends SVNLocalFile implements IFileChange {
 	}
 	
 	public Revision getPegRevision() {
-		return this.pegRevision == null ? (this.revision != Revision.SVN_INVALID_REVNUM ? Revision.fromNumber(this.revision) : new ISVNStorage.InvalidRevision()) : this.pegRevision;
+		return this.pegRevision == null ? (this.revision != Revision.INVALID_REVISION_NUMBER ? Revision.fromNumber(this.revision) : Revision.INVALID_REVISION) : this.pegRevision;
 	}
 	
 	public void setPegRevision(Revision pegRevision) {
@@ -54,7 +53,7 @@ public class SVNFileChange extends SVNLocalFile implements IFileChange {
 	public synchronized String getComment() {
 		if (this.comment == null && this.provider != null) {
 			long rev = this.getRevision();
-			this.comment = this.provider.getComment(this.getResource(), rev == Revision.SVN_INVALID_REVNUM ? new ISVNStorage.InvalidRevision() : Revision.fromNumber(rev), this.getPegRevision());
+			this.comment = this.provider.getComment(this.getResource(), rev == Revision.INVALID_REVISION_NUMBER ? Revision.INVALID_REVISION : Revision.fromNumber(rev), this.getPegRevision());
 			this.provider = null;
 		}
 		return this.comment;

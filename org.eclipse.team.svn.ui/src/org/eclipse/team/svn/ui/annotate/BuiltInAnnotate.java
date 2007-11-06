@@ -86,12 +86,12 @@ public class BuiltInAnnotate {
 					}
 					revision.addLine(Integer.parseInt(lines[i][2]));
 				}
-				long from = Revision.SVN_INVALID_REVNUM, to = Revision.SVN_INVALID_REVNUM;
+				long from = Revision.INVALID_REVISION_NUMBER, to = Revision.INVALID_REVISION_NUMBER;
 				for (Iterator it = revisions.values().iterator(); it.hasNext(); ) {
 					BuiltInAnnotateRevision revision = (BuiltInAnnotateRevision)it.next();
 					revision.addLine(BuiltInAnnotateRevision.END_LINE);
 					long revisionNum = Long.parseLong(revision.getId());
-					if (from > revisionNum || from == Revision.SVN_INVALID_REVNUM) {
+					if (from > revisionNum || from == Revision.INVALID_REVISION_NUMBER) {
 						from = revisionNum;
 					}
 					if (to < revisionNum) {

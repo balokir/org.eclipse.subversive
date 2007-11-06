@@ -218,7 +218,7 @@ public class Status {
 	public final Lock reposLock;
 
 	/**
-	 * @since 1.3 Set to the youngest committed revision, or {@link Revision#SVN_INVALID_REVNUM} if not out of date.
+	 * @since 1.3 Set to the youngest committed revision, or {@link Revision#INVALID_REVISION_NUMBER} if not out of date.
 	 */
 	public final long reposLastCmtRevision;
 

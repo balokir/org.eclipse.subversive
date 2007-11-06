@@ -115,7 +115,7 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 	}
 
     public void notify(Notification info) {
-    	if (info.revision != Revision.SVN_INVALID_REVNUM) {
+    	if (info.revision != Revision.INVALID_REVISION_NUMBER) {
             this.pegRevisions.put(info.path, Revision.fromNumber(info.revision));
     	}
     }

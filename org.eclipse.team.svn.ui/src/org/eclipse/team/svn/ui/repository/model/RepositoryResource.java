@@ -304,7 +304,7 @@ public abstract class RepositoryResource implements IWorkbenchAdapter, IWorkbenc
 	
 	public String getRevision() throws Exception {
 		if (this.revisionOp != null) {
-			return this.revisionOp.getRevision() == Revision.SVN_INVALID_REVNUM ? SVNTeamUIPlugin.instance().getResource(this.revisionOp.getExecutionState() == IActionOperation.ERROR ? RepositoryError.ERROR_MSG : RepositoryPending.PENDING) : String.valueOf(this.revisionOp.getRevision());
+			return this.revisionOp.getRevision() == Revision.INVALID_REVISION_NUMBER ? SVNTeamUIPlugin.instance().getResource(this.revisionOp.getExecutionState() == IActionOperation.ERROR ? RepositoryError.ERROR_MSG : RepositoryPending.PENDING) : String.valueOf(this.revisionOp.getRevision());
 		}
 		
 		if (this.resource.isInfoCached()) {

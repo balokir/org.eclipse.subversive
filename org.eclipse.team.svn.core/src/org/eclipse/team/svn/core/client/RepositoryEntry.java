@@ -75,7 +75,7 @@ public class RepositoryEntry {
 	public final String path;
 
 	/**
-	 * The last change revision. Could be {@link Revision#SVN_INVALID_REVNUM} if access mask does not specify the
+	 * The last change revision. Could be {@link Revision#INVALID_REVISION_NUMBER} if access mask does not specify the
 	 * revision field.
 	 */
 	public final long revision;
