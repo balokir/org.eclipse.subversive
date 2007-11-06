@@ -75,7 +75,7 @@ public abstract class AbstractStatusOperation extends AbstractFileOperation {
 			public void run(IProgressMonitor monitor) throws Exception {
 				proxy.status(
 						current.getAbsolutePath(), 
-						Depth.unknownOrImmediates(AbstractStatusOperation.this.recursive), AbstractStatusOperation.this.isRemote(), false, false, false, cb, 
+						Depth.infinityOrImmediates(AbstractStatusOperation.this.recursive), AbstractStatusOperation.this.isRemote(), false, false, false, cb, 
 						new SVNProgressMonitor(AbstractStatusOperation.this, monitor, null, false));
 			}
 		}, monitor, tasks);

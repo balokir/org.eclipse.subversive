@@ -57,7 +57,7 @@ public class CreatePatchOperation extends AbstractNonLockingOperation {
 		try {
 			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn diff " + (this.recurse ? "" : " -N") + (this.ignoreDeleted ? " --no-diff-deleted" : "") + "\n");
 			proxy.diff(
-				new EntryRevisionReference(wcPath, null, Revision.BASE), new EntryRevisionReference(wcPath, null, Revision.WORKING), this.fileName, Depth.unknownOrFiles(this.recurse), true, this.ignoreDeleted, 
+				new EntryRevisionReference(wcPath, null, Revision.BASE), new EntryRevisionReference(wcPath, null, Revision.WORKING), this.fileName, Depth.infinityOrFiles(this.recurse), true, this.ignoreDeleted, 
 				this.processBinary, this.processUnversioned, this.useRelativePath, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {

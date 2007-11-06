@@ -63,16 +63,4 @@ public final class Depth {
 		return (recurse ? Depth.INFINITY : Depth.IMMEDIATES);
 	}
 
-	public static final int unknownOrEmpty(boolean recurse) {
-		return (recurse ? Depth.UNKNOWN : Depth.EMPTY);
-	}
-
-	public static final int unknownOrFiles(boolean recurse) {
-		return (recurse ? Depth.UNKNOWN : Depth.FILES);
-	}
-
-	public static final int unknownOrImmediates(boolean recurse) {
-		return (recurse ? Depth.UNKNOWN : Depth.IMMEDIATES);
-	}
-
 }
