@@ -93,7 +93,7 @@ public class PreparedBranchTagOperation extends CompositeOperation implements IR
 			}
 			this.targets[i] = this.resources[i] instanceof IRepositoryFile ? (IRepositoryResource)this.destination.asRepositoryFile(targetUrl, false) : this.destination.asRepositoryContainer(targetUrl, false);
 			if (this.wcResources != null) {
-				this.add(new org.eclipse.team.svn.core.operation.local.BranchTagOperation(this.operationName, this.wcResources, this.targets[i], this.message), op == null ? null : new IActionOperation[] {op});
+				this.add(new org.eclipse.team.svn.core.operation.local.BranchTagOperation(this.operationName, new IResource[] {this.wcResources[i]}, this.targets[i], this.message), op == null ? null : new IActionOperation[] {op});
 			}
 		}
 		

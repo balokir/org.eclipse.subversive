@@ -536,7 +536,7 @@ public class AffectedPathsComposite extends Composite {
 			ISVNClientWrapper proxy = AffectedPathsComposite.this.repositoryResource.getRepositoryLocation().acquireSVNProxy();
 			try {
 				Revision rev = Revision.fromNumber(this.revNum);
-				EntryInfo []infos = SVNUtility.info(proxy, new EntryRevisionReference(this.url, rev, rev), Depth.EMPTY, new SVNProgressMonitor(this, monitor, null));
+				EntryInfo []infos = SVNUtility.info(proxy, new EntryRevisionReference(SVNUtility.encodeURL(this.url), rev, rev), Depth.EMPTY, new SVNProgressMonitor(this, monitor, null));
 				if (infos != null && infos.length > 0) {
 					this.resourceInfo = infos[0];
 				}
