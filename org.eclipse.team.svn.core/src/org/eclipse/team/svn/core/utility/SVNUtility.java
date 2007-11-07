@@ -375,11 +375,8 @@ public final class SVNUtility {
 	public static String encodeURL(String url) {
 		try {
 			url = SVNUtility.normalizeURL(url);
-			if (url.startsWith("file:")) {
-				return url;
-			}
-			int idx = url.indexOf("://");
-			idx = url.indexOf("/", idx + 3);
+			int idx = url.startsWith("file:///") ? "file:///".length() : (url.startsWith("file://") ? (url.indexOf("/", "file://".length()) + 1) : (url.indexOf("://") + 3));
+			idx = url.indexOf("/", idx);
 			if (idx == -1) {
 				return url;
 			}
@@ -407,11 +404,8 @@ public final class SVNUtility {
 	public static String decodeURL(String url) {
 		try {
 			url = SVNUtility.normalizeURL(url);
-			if (url.startsWith("file:")) {
-				return url;
-			}
-			int idx = url.indexOf("://");
-			idx = url.indexOf("/", idx + 3);
+			int idx = url.startsWith("file:///") ? "file:///".length() : (url.startsWith("file://") ? (url.indexOf("/", "file://".length()) + 1) : (url.indexOf("://") + 3));
+			idx = url.indexOf("/", idx);
 			if (idx == -1) {
 				return url;
 			}
