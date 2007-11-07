@@ -527,7 +527,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	}
 	
 	public static String []fetchRepoInfo(final IRepositoryLocation location, final boolean usePrompt) {
-		// completelly disallow error reporting
+		// completely disallow error reporting
 		final String []retVal = new String[2];
 		ProgressMonitorUtility.doTaskExternal(new AbstractNonLockingOperation("Operation.FetchRepositoryRoot") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
