@@ -118,6 +118,7 @@ public class ProjectsSelectionPage extends AbstractVerifiedWizardPage {
 			public void widgetSelected(SelectionEvent e) {
 				ProjectsSelectionPage.this.checkoutAsFolders = true;
 				ProjectsSelectionPage.this.respectHierarchyButton.setEnabled(false);
+				ProjectsSelectionPage.this.validateContent();
 			}
 		});
 		this.checkoutAsFolderButton.setSelection(false);
@@ -129,6 +130,7 @@ public class ProjectsSelectionPage extends AbstractVerifiedWizardPage {
 			public void widgetSelected(SelectionEvent e) {
 				ProjectsSelectionPage.this.checkoutAsFolders = false;
 				ProjectsSelectionPage.this.respectHierarchyButton.setEnabled(true);
+				ProjectsSelectionPage.this.validateContent();
 			}
 		});
 		this.checkoutAsProjectButton.setSelection(true);

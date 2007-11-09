@@ -97,6 +97,14 @@ public class CheckoutProjectsWizard extends AbstractSVNWizard {
 		this.projectsSelectionPage.postInit(this.locationSelectionPage, (IRepositoryResource[])resource2name.keySet().toArray(new IRepositoryResource[resource2name.keySet().size()]), labelProvider, contentProvider);
 	}
 	
+	public boolean canFinish() {
+		IWizardPage currentPage = this.getContainer().getCurrentPage();
+		if (currentPage instanceof ProjectsSelectionPage && this.isCheckoutAsFoldersSelected()) {
+			return false;
+		}
+		return super.canFinish();
+	}
+	
 	public boolean performFinish() {
 		return true;
 	}

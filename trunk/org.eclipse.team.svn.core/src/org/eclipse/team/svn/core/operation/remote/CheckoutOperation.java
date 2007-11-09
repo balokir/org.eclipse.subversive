@@ -35,8 +35,12 @@ public class CheckoutOperation extends AbstractActionOperation implements IResou
 	protected IProject []projects;
 	protected CheckoutAsOperation []operations;
 	protected ISchedulingRule rule;
-
+	
 	public CheckoutOperation(HashMap checkoutMap, boolean respectHierarchy, String location, boolean checkoutRecursively) {
+		this(checkoutMap, respectHierarchy, location, checkoutRecursively, false);
+	}
+
+	public CheckoutOperation(HashMap checkoutMap, boolean respectHierarchy, String location, boolean checkoutRecursively, boolean ignoreExternals) {
 		super("Operation.CheckOut");
 		this.checkoutMap = checkoutMap;
 		
@@ -46,7 +50,7 @@ public class CheckoutOperation extends AbstractActionOperation implements IResou
 		for (Iterator iter = this.checkoutMap.keySet().iterator(); iter.hasNext(); ) {
 			String name = (String)iter.next();
 			IRepositoryResource currentResource = (IRepositoryResource)this.checkoutMap.get(name);
-			CheckoutAsOperation coOp = CheckoutOperation.getCheckoutAsOperation(name, currentResource, respectHierarchy, location, checkoutRecursively);
+			CheckoutAsOperation coOp = CheckoutOperation.getCheckoutAsOperation(name, currentResource, respectHierarchy, location, checkoutRecursively, ignoreExternals);
 			operations.add(coOp);
 			projects.add(coOp.getProject());
 			rules.add(coOp.getSchedulingRule());
@@ -72,9 +76,9 @@ public class CheckoutOperation extends AbstractActionOperation implements IResou
 		}
 	}
 	
-	public static CheckoutAsOperation getCheckoutAsOperation(String name, IRepositoryResource currentResource, boolean respectHierarchy, String location, boolean checkoutRecursively) {
+	public static CheckoutAsOperation getCheckoutAsOperation(String name, IRepositoryResource currentResource, boolean respectHierarchy, String location, boolean checkoutRecursively, boolean ignoreExternals) {
 		if (location != null && location.trim().length() > 0) {
-			return new CheckoutAsOperation(name, currentResource, respectHierarchy, location, checkoutRecursively);
+			return new CheckoutAsOperation(name, currentResource, respectHierarchy, location, checkoutRecursively, ignoreExternals);
 		}
 		else {
 			return new CheckoutAsOperation(name, currentResource, checkoutRecursively);

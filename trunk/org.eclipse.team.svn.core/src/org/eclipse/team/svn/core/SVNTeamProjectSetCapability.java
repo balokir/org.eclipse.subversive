@@ -115,7 +115,7 @@ public class SVNTeamProjectSetCapability extends ProjectSetCapability {
 				project.exists() ? 
 				FileUtility.getResourcePath(project).removeLastSegments(1).toString() : 
 				Platform.getLocation().toString();
-			CheckoutAsOperation mainOp = new CheckoutAsOperation(project.getName(), resource, projectLocation, true);
+			CheckoutAsOperation mainOp = new CheckoutAsOperation(project.getName(), resource, projectLocation, true, false);
 			op.add(mainOp);
 			return mainOp.getProject();
 		}
