@@ -54,17 +54,22 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 	protected String projectLocation;
 	protected List overlappingProjects;
 	protected boolean recursive;
+	protected boolean ignoreExternals;
 	protected RestoreProjectMetaOperation restoreOp;
 
 	public CheckoutAsOperation(String projectName, IRepositoryResource resource, boolean recursive) {
-		this(projectName, resource, Platform.getLocation().toString(), recursive);
+		this(projectName, resource, Platform.getLocation().toString(), recursive, false);
 	}
 	
-	public CheckoutAsOperation(String projectName, IRepositoryResource resource, boolean respectHierarchy, String location, boolean recursive) {
-		this(projectName, resource, location == null ? Platform.getLocation().toString() : location + (respectHierarchy ? SVNUtility.getResourceParent(resource) : ""), recursive);
+	public CheckoutAsOperation(String projectName, IRepositoryResource resource, boolean recursive, boolean ignoreExternals) {
+		this(projectName, resource, Platform.getLocation().toString(), recursive, ignoreExternals);
 	}
 	
-	public CheckoutAsOperation(String projectName, IRepositoryResource resource, String projectLocation, boolean recursive) {
+	public CheckoutAsOperation(String projectName, IRepositoryResource resource, boolean respectHierarchy, String location, boolean recursive, boolean ignoreExternals) {
+		this(projectName, resource, location == null ? Platform.getLocation().toString() : location + (respectHierarchy ? SVNUtility.getResourceParent(resource) : ""), recursive, ignoreExternals);
+	}
+	
+	public CheckoutAsOperation(String projectName, IRepositoryResource resource, String projectLocation, boolean recursive, boolean ignoreExternals) {
 		super("Operation.CheckOutAs");
 		projectName = FileUtility.formatResourceName(projectName);
 		if (FileUtility.isCaseInsensitiveOS()) {
@@ -83,6 +88,7 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 		this.resource = resource;
 		this.projectLocation = projectLocation;
 		this.recursive = recursive;
+		this.ignoreExternals = ignoreExternals;
 		this.overlappingProjects = new ArrayList();
 		IProject []projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {
@@ -161,7 +167,7 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 					SVNUtility.getEntryRevisionReference(this.resource), 
 					path, 
 					Depth.infinityOrFiles(this.recursive), 
-					false, 
+					this.ignoreExternals, 
 					false,
 					new SVNProgressMonitor(this, monitor, this.project.getFullPath()));
 		}

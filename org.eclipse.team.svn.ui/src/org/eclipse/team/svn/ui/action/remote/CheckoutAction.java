@@ -54,7 +54,7 @@ public class CheckoutAction extends AbstractRepositoryModifyWorkspaceAction {
 	}
 
 	public void runImpl(IAction action) {
-		IActionOperation op = ExtensionsManager.getInstance().getCurrentCheckoutFactory().getCheckoutOperation(this.getShell(), this.getSelectedRepositoryResources(), null, false, null, true);
+		IActionOperation op = ExtensionsManager.getInstance().getCurrentCheckoutFactory().getCheckoutOperation(this.getShell(), this.getSelectedRepositoryResources(), null, false, null, true, false);
 		if (op != null) {
 			this.runScheduled(op);
 		}
@@ -182,7 +182,7 @@ public class CheckoutAction extends AbstractRepositoryModifyWorkspaceAction {
 		return operateResources;
 	}
 	
-	public static IActionOperation getCheckoutOperation(Shell shell, IRepositoryResource []resources, HashMap checkoutMap, boolean respectHierarchy, String location, boolean checkoutRecursively) {
+	public static IActionOperation getCheckoutOperation(Shell shell, IRepositoryResource []resources, HashMap checkoutMap, boolean respectHierarchy, String location, boolean checkoutRecursively, boolean ignoreExternals) {
 		List resourceList = new ArrayList(Arrays.asList(resources));
 		if (checkoutMap != null && checkoutMap.keySet().size() != resources.length) {
 			for (Iterator iter = checkoutMap.entrySet().iterator(); iter.hasNext();) {
@@ -210,7 +210,7 @@ public class CheckoutAction extends AbstractRepositoryModifyWorkspaceAction {
 				operateMap.put(resources2names.get(checkoutSet[i]), checkoutSet[i]);
 			}
 			
-			return new CheckoutOperation(operateMap, respectHierarchy, location, checkoutRecursively);
+			return new CheckoutOperation(operateMap, respectHierarchy, location, checkoutRecursively, ignoreExternals);
 		}
 		return null;
 	}

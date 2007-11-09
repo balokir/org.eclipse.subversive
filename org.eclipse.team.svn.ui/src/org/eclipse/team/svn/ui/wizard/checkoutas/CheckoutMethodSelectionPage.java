@@ -54,6 +54,7 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 	protected String projectName;
 	protected int checkoutType;
 	protected boolean checkoutRecursivelySelected;
+	protected boolean ignoreExternalsSelected;
 
 	public CheckoutMethodSelectionPage(String defaultName, boolean newProjectSelectionEnabled) {
 		super(CheckoutMethodSelectionPage.class.getName(), 
@@ -65,6 +66,7 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 		this.projectName = this.defaultName = defaultName;
 		this.checkoutType = newProjectSelectionEnabled ? CheckoutMethodSelectionPage.USE_NEW_PROJECT_WIZARD : CheckoutMethodSelectionPage.CHECKOUT_AS_PROJECT;
 		this.checkoutRecursivelySelected = true;
+		this.ignoreExternalsSelected = false;
 	}
 	
 	public String getProjectName() {
@@ -85,6 +87,10 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 	
 	public boolean isCheckoutRecursivelySelected() {
 		return this.checkoutRecursivelySelected;
+	}
+	
+	public boolean isIgnoreExternalsSelected() {
+		return this.ignoreExternalsSelected;
 	}
 	
 	protected Composite createControlImpl(Composite parent) {
@@ -192,6 +198,17 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 			}
 		});
 		checkoutRecursivelyCheckbox.setText(SVNTeamUIPlugin.instance().getResource("CheckoutMethodSelectionPage.Recursively"));
+		
+		Button ignoreExternalsCheckbox = new Button (composite, SWT.CHECK);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		ignoreExternalsCheckbox.setLayoutData(data);
+		ignoreExternalsCheckbox.setSelection(false);
+		ignoreExternalsCheckbox.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				CheckoutMethodSelectionPage.this.ignoreExternalsSelected = ((Button)e.widget).getSelection();
+			}
+		});
+		ignoreExternalsCheckbox.setText(SVNTeamUIPlugin.instance().getResource("CheckoutMethodSelectionPage.Externals"));
 		
 //		Setting context help
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.checkoutMethodSelectionContext");

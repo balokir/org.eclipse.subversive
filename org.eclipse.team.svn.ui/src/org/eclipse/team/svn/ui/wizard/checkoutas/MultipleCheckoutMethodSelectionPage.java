@@ -51,6 +51,7 @@ public class MultipleCheckoutMethodSelectionPage extends AbstractVerifiedWizardP
 	
 	protected int checkoutType;
 	protected boolean checkoutRecursively;
+	protected boolean ignoreExternals;
 	protected IRepositoryResource[] selectedResources;
 
 	public MultipleCheckoutMethodSelectionPage(IRepositoryResource[] selectedResources) {
@@ -60,6 +61,7 @@ public class MultipleCheckoutMethodSelectionPage extends AbstractVerifiedWizardP
 		this.selectedResources = selectedResources;
 		this.checkoutType = MultipleCheckoutMethodSelectionPage.FIND_PROJECTS;
 		this.checkoutRecursively = true;
+		this.ignoreExternals = false;
 		
 		this.setDescription(SVNTeamUIPlugin.instance().getResource("MultipleCheckoutMethodSelectionPage.Description"));
 	}
@@ -74,6 +76,10 @@ public class MultipleCheckoutMethodSelectionPage extends AbstractVerifiedWizardP
 	
 	public boolean isCheckoutRecursivelySelected() {
 		return this.checkoutRecursively;
+	}
+	
+	public boolean isIgnoreExternalsSelected() {
+		return this.ignoreExternals;
 	}
 	
 	public Composite createControlImpl(Composite parent) {
@@ -194,6 +200,17 @@ public class MultipleCheckoutMethodSelectionPage extends AbstractVerifiedWizardP
 			}
 		});
 		checkoutRecursivelyCheckbox.setText(SVNTeamUIPlugin.instance().getResource("MultipleCheckoutMethodSelectionPage.Recursively"));
+		
+		Button ingnoreExternalsCheckbox = new Button (composite, SWT.CHECK);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		ingnoreExternalsCheckbox.setLayoutData(data);
+		ingnoreExternalsCheckbox.setSelection(false);
+		ingnoreExternalsCheckbox.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				MultipleCheckoutMethodSelectionPage.this.ignoreExternals = ((Button)e.widget).getSelection();
+			}
+		});
+		ingnoreExternalsCheckbox.setText(SVNTeamUIPlugin.instance().getResource("MultipleCheckoutMethodSelectionPage.Externals"));
 		
 //		Setting context help
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.multiSelectionContext");

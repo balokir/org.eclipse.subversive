@@ -50,7 +50,7 @@ public interface ICheckoutFactory {
 	 * @return alternative Checkout Operation instance
 	 */
 	public IActionOperation getCheckoutOperation(Shell shell, IRepositoryResource []remote, 
-			HashMap checkoutMap, boolean respectHierarchy, String location, boolean checkoutRecursively);
+			HashMap checkoutMap, boolean respectHierarchy, String location, boolean checkoutRecursively, boolean ignoreExternals);
 	/**
 	 * The method allows correction of the automatically proposed project name mapping 
 	 * @param name2resources automatically proposed project name mapping
