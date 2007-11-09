@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.ui.action.remote;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.team.svn.core.client.Revision.Kind;
+import org.eclipse.team.svn.core.client.SVNRevision.Kind;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.remote.RenameResourceOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;

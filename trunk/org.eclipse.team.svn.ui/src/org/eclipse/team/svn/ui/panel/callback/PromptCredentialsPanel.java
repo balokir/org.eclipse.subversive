@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.team.svn.core.client.ICredentialsPrompt;
+import org.eclipse.team.svn.core.client.ISVNCredentialsPrompt;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.ProxySettings;
 import org.eclipse.team.svn.core.resource.SSHSettings;
@@ -44,7 +44,7 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  * @author Alexander Gurov
  */
 public class PromptCredentialsPanel extends AbstractDialogPanel {
-    public static ICredentialsPrompt DEFAULT_PROMPT = new DefaultPrompt();
+    public static ISVNCredentialsPrompt DEFAULT_PROMPT = new DefaultPrompt();
 
     protected String selectedRealm;
     
@@ -94,7 +94,7 @@ public class PromptCredentialsPanel extends AbstractDialogPanel {
     }
 
 	public String getRealmToSave() {
-		return this.selectedRealm == this.rootLocationName ? ICredentialsPrompt.ROOT_LOCATION : this.selectedRealm;
+		return this.selectedRealm == this.rootLocationName ? ISVNCredentialsPrompt.ROOT_LOCATION : this.selectedRealm;
 	}
 	
 	public void setUsername(String username) {
@@ -392,7 +392,7 @@ public class PromptCredentialsPanel extends AbstractDialogPanel {
 
     }
 
-    protected static class DefaultPrompt implements ICredentialsPrompt {
+    protected static class DefaultPrompt implements ISVNCredentialsPrompt {
         protected String realmToSave;
     	protected String username;
     	protected String password;
@@ -444,7 +444,7 @@ public class PromptCredentialsPanel extends AbstractDialogPanel {
                 	retVal[0] = dlg.open();
 	            }
 	        });
-			return retVal[0] == 0 ? ICredentialsPrompt.AcceptTemporary : (retVal[0] == 2 ? ICredentialsPrompt.Reject : (retVal[0] == 1 ? (allowPermanently ? ICredentialsPrompt.AcceptPermanently : ICredentialsPrompt.Reject) : ICredentialsPrompt.Reject));
+			return retVal[0] == 0 ? ISVNCredentialsPrompt.ACCEPT_TEMPORARY : (retVal[0] == 2 ? ISVNCredentialsPrompt.REJECT : (retVal[0] == 1 ? (allowPermanently ? ISVNCredentialsPrompt.ACCEPT_PERMANENTLY : ISVNCredentialsPrompt.REJECT) : ISVNCredentialsPrompt.REJECT));
 		}
         
         public String getUsername() {

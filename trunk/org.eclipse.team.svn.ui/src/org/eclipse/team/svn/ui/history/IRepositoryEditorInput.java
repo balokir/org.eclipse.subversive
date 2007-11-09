@@ -12,9 +12,9 @@
 package org.eclipse.team.svn.ui.history;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
-import org.eclipse.team.svn.core.resource.IRepositoryResource;
 
 /**
  * Repository resource based editor input interface

@@ -11,7 +11,7 @@
 
 package org.eclipse.team.svn.core.svnstorage;
 
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 
@@ -26,7 +26,7 @@ public abstract class SVNRepositoryRootBase extends SVNRepositoryContainer imple
 	protected SVNRepositoryRootBase() {
 	}
 
-	public SVNRepositoryRootBase(IRepositoryLocation location, String url, Revision selectedRevision) {
+	public SVNRepositoryRootBase(IRepositoryLocation location, String url, SVNRevision selectedRevision) {
 		super(location, url, selectedRevision);
 	}
 

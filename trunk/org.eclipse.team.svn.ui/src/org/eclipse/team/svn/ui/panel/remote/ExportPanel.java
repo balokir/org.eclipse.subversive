@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.composite.RevisionComposite;
@@ -48,7 +48,7 @@ public class ExportPanel extends AbstractDialogPanel {
 		this.selectedResource = baseResource;
 	}	
 	
-	public Revision getSelectedRevision() {
+	public SVNRevision getSelectedRevision() {
 		return this.revisionComposite.getSelectedRevision();
 	}
 	
@@ -99,7 +99,7 @@ public class ExportPanel extends AbstractDialogPanel {
 			}
 		});
 		
-		this.revisionComposite = new RevisionComposite(parent, this, false, null, Revision.HEAD);
+		this.revisionComposite = new RevisionComposite(parent, this, false, null, SVNRevision.HEAD);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.revisionComposite.setLayoutData(data);
 		this.revisionComposite.setSelectedResource(this.selectedResource);

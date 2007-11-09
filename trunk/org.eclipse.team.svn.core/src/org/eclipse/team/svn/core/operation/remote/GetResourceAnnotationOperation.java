@@ -18,9 +18,9 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.IAnnotationCallback;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.ISVNAnnotationCallback;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -56,19 +56,19 @@ public class GetResourceAnnotationOperation extends AbstractRepositoryOperation 
 		final ArrayList lines = new ArrayList();
 		IRepositoryResource resource = this.operableData()[0];
 		IRepositoryLocation location = resource.getRepositoryLocation();
-		ISVNClientWrapper proxy = location.acquireSVNProxy();
+		ISVNClient proxy = location.acquireSVNProxy();
 		try {
 //			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn blame " + url + "@" + resource.getPegRevision() + " -r 0:" + resource.getSelectedRevision() + " --username \"" + location.getUsername() + "\"\n");
 			proxy.annotate(
 				SVNUtility.getEntryReference(resource),
-				Revision.fromNumber(0),
+				SVNRevision.fromNumber(0),
 				resource.getSelectedRevision(),
 				false,
-				false, new IAnnotationCallback() {
+				false, new ISVNAnnotationCallback() {
 					protected int lineNumber = 0;
 					protected String noAuthor = SVNTeamPlugin.instance().getResource("SVNInfo.NoAuthor");
 					
-					public void nextLine(String line, long revision, long date, String author, long merged_revision, long merged_date, String merged_author, String merged_path) {
+					public void annotate(String line, long revision, long date, String author, long merged_revision, long merged_date, String merged_author, String merged_path) {
 						String []row = new String[] {
 							String.valueOf(revision),
 							author == null ? this.noAuthor : author,

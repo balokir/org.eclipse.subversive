@@ -24,12 +24,12 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.svn.core.client.Depth;
-import org.eclipse.team.svn.core.client.EntryRevisionReference;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.Revision;
-import org.eclipse.team.svn.core.client.Status;
-import org.eclipse.team.svn.core.client.Revision.Kind;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
+import org.eclipse.team.svn.core.client.SVNEntryStatus;
+import org.eclipse.team.svn.core.client.SVNRevision;
+import org.eclipse.team.svn.core.client.ISVNClient.Depth;
+import org.eclipse.team.svn.core.client.SVNRevision.Kind;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -53,18 +53,18 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  */
 public class CompareResourcesOperation extends AbstractNonLockingOperation {
 	protected IResource resource;
-	protected Revision revision;
-	protected Revision pegRevision;
+	protected SVNRevision revision;
+	protected SVNRevision pegRevision;
 	protected boolean useDialog = false;
 	
-	public CompareResourcesOperation(IResource resource, Revision revision, Revision pegRevision) {
+	public CompareResourcesOperation(IResource resource, SVNRevision revision, SVNRevision pegRevision) {
 		super("Operation.CompareLocal");
 		this.resource = resource;
 		this.revision = revision;
 		this.pegRevision = pegRevision;
 	}
 	
-	public CompareResourcesOperation(IResource resource, Revision revision, Revision pegRevision, boolean useDialog) {
+	public CompareResourcesOperation(IResource resource, SVNRevision revision, SVNRevision pegRevision, boolean useDialog) {
 		this(resource, revision, pegRevision);
 		this.useDialog = useDialog;
 	}
@@ -78,11 +78,11 @@ public class CompareResourcesOperation extends AbstractNonLockingOperation {
 			return;
 		}
 
-		final Status localChanges[][] = new Status[1][];
-		final Status remoteChanges[][] = new Status[1][];
+		final SVNEntryStatus localChanges[][] = new SVNEntryStatus[1][];
+		final SVNEntryStatus remoteChanges[][] = new SVNEntryStatus[1][];
 		
 		final IRepositoryLocation location = remoteBase.getRepositoryLocation();
-		final ISVNClientWrapper proxy = location.acquireSVNProxy();
+		final ISVNClient proxy = location.acquireSVNProxy();
 		
 		this.protectStep(new IUnprotectedOperation() {
 			public void run(IProgressMonitor monitor) throws Exception {
@@ -96,11 +96,11 @@ public class CompareResourcesOperation extends AbstractNonLockingOperation {
 			// Remove all folders that are mapped to external resources
 			ArrayList changesList = new ArrayList();
 			for (int i = 0; i < localChanges[0].length; i++) {
-				if (localChanges[0][i].textStatus != org.eclipse.team.svn.core.client.Status.Kind.EXTERNAL) {
+				if (localChanges[0][i].textStatus != org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.EXTERNAL) {
 					changesList.add(localChanges[0][i]);
 				}
 			}
-			localChanges[0] = (Status[])changesList.toArray(new Status[changesList.size()]);
+			localChanges[0] = (SVNEntryStatus[])changesList.toArray(new SVNEntryStatus[changesList.size()]);
 			
 			if (this.revision.getKind() == Kind.HEAD || this.revision.getKind() == Kind.NUMBER) {
 				// all revisions should be set here because unversioned resources can be compared
@@ -110,11 +110,11 @@ public class CompareResourcesOperation extends AbstractNonLockingOperation {
 				// status order may be inconsistent for next lines
 				SVNUtility.reorder(localChanges[0], true);
 				if (local.isCopied()) {
-					remoteRight.setPegRevision(Revision.fromNumber(localChanges[0][0].revisionCopiedFrom));
+					remoteRight.setPegRevision(SVNRevision.fromNumber(localChanges[0][0].revisionCopiedFrom));
 					remoteBase.setSelectedRevision(remoteRight.getPegRevision());
 				}
-				else if (local.getRevision() != Revision.INVALID_REVISION_NUMBER) {
-					remoteBase.setSelectedRevision(Revision.fromNumber(local.getRevision()));
+				else if (local.getRevision() != SVNRevision.INVALID_REVISION_NUMBER) {
+					remoteBase.setSelectedRevision(SVNRevision.fromNumber(local.getRevision()));
 				}
 				
 				remoteRight.setSelectedRevision(this.revision);
@@ -122,8 +122,8 @@ public class CompareResourcesOperation extends AbstractNonLockingOperation {
 					
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(IProgressMonitor monitor) throws Exception {
-						EntryRevisionReference ref1 = new EntryRevisionReference(SVNUtility.encodeURL(baseUrl), remoteBase.getPegRevision(), remoteBase.getSelectedRevision());
-						EntryRevisionReference ref2 = SVNUtility.getEntryRevisionReference(remoteRight);
+						SVNEntryRevisionReference ref1 = new SVNEntryRevisionReference(SVNUtility.encodeURL(baseUrl), remoteBase.getPegRevision(), remoteBase.getSelectedRevision());
+						SVNEntryRevisionReference ref2 = SVNUtility.getEntryRevisionReference(remoteRight);
 						if (SVNUtility.useSingleReferenceSignature(ref1, ref2)) {
 							remoteChanges[0] = SVNUtility.diffStatus(proxy, ref1, ref1.revision, ref2.revision, Depth.INFINITY, false, new SVNProgressMonitor(CompareResourcesOperation.this, monitor, null, false));
 						}
@@ -134,7 +134,7 @@ public class CompareResourcesOperation extends AbstractNonLockingOperation {
 				}, monitor, 3);
 			}
 			else {
-				remoteChanges[0] = new Status[0];
+				remoteChanges[0] = new SVNEntryStatus[0];
 			}
 		}
 		

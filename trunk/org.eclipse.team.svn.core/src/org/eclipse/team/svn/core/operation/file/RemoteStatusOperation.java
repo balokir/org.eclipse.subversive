@@ -19,11 +19,11 @@ import java.util.Map;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.INotificationCallback;
-import org.eclipse.team.svn.core.client.Notification;
-import org.eclipse.team.svn.core.client.Revision;
-import org.eclipse.team.svn.core.client.IStatusCallback;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNEntryStatusCallback;
+import org.eclipse.team.svn.core.client.ISVNNotificationCallback;
+import org.eclipse.team.svn.core.client.SVNNotification;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
@@ -31,7 +31,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * 
  * @author Alexander Gurov
  */
-public class RemoteStatusOperation extends AbstractStatusOperation implements INotificationCallback {
+public class RemoteStatusOperation extends AbstractStatusOperation implements ISVNNotificationCallback {
 	protected Map pegRevisions = new HashMap();
 
 	public RemoteStatusOperation(File []files, boolean recursive) {
@@ -42,25 +42,25 @@ public class RemoteStatusOperation extends AbstractStatusOperation implements IN
 		super("Operation.UpdateStatusFile", provider, recursive);
 	}
 	
-	public Revision getPegRevision(File change) {
+	public SVNRevision getPegRevision(File change) {
 	    IPath resourcePath = new Path(change.getAbsolutePath());
 	    for (Iterator it = this.pegRevisions.entrySet().iterator(); it.hasNext(); ) {
 	        Map.Entry entry = (Map.Entry)it.next();
 	        IPath rootPath = new Path((String)entry.getKey());
 	        if (rootPath.isPrefixOf(resourcePath)) {
-	            return (Revision)entry.getValue();
+	            return (SVNRevision)entry.getValue();
 	        }
 	    }
 	    return null;
 	}
 
-    public void notify(Notification info) {
-    	if (info.revision != Revision.INVALID_REVISION_NUMBER) {
-    		this.pegRevisions.put(info.path, Revision.fromNumber(info.revision));
+    public void notify(SVNNotification info) {
+    	if (info.revision != SVNRevision.INVALID_REVISION_NUMBER) {
+    		this.pegRevisions.put(info.path, SVNRevision.fromNumber(info.revision));
     	}
     }
     
-	protected void reportStatuses(final ISVNClientWrapper proxy, final IStatusCallback cb, final File current, IProgressMonitor monitor, int tasks) {
+	protected void reportStatuses(final ISVNClient proxy, final ISVNEntryStatusCallback cb, final File current, IProgressMonitor monitor, int tasks) {
 		SVNUtility.addSVNNotifyListener(proxy, this);
     	super.reportStatuses(proxy, cb, current, monitor, tasks);
 		SVNUtility.removeSVNNotifyListener(proxy, this);

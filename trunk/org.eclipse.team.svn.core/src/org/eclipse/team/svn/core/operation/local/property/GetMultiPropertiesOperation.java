@@ -19,10 +19,10 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.client.EntryRevisionReference;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.PropertyData;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
+import org.eclipse.team.svn.core.client.SVNProperty;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -65,15 +65,15 @@ public class GetMultiPropertiesOperation extends AbstractNonLockingOperation imp
 		return (IResource [])resources.toArray(new IResource[resources.size()]);
 	}
 	
-	public PropertyData []getProperties(IResource resource) {
-		return (PropertyData [])this.properties.get(resource);
+	public SVNProperty []getProperties(IResource resource) {
+		return (SVNProperty [])this.properties.get(resource);
 	}
 	
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		for (int i = 0; i < this.resources.length && !monitor.isCanceled(); i++) {
 			final IResource current = this.resources[i];
 			IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(current);
-			final ISVNClientWrapper proxy = location.acquireSVNProxy();
+			final ISVNClient proxy = location.acquireSVNProxy();
 			try {
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(final IProgressMonitor monitor) throws Exception {
@@ -101,19 +101,19 @@ public class GetMultiPropertiesOperation extends AbstractNonLockingOperation imp
 		}
 	}
 
-	protected void processResource(final ISVNClientWrapper proxy, final IResource current, IProgressMonitor monitor) {
+	protected void processResource(final ISVNClient proxy, final IResource current, IProgressMonitor monitor) {
 		ProgressMonitorUtility.setTaskInfo(monitor, this, current.getFullPath().toString());
 		this.protectStep(new IUnprotectedOperation() {
 			public void run(IProgressMonitor monitor) throws Exception {
 				String wcPath = FileUtility.getWorkingCopyPath(current);
 				if (GetMultiPropertiesOperation.this.propertyName != null) {
-					PropertyData data = proxy.propertyGet(new EntryRevisionReference(wcPath, null, Revision.WORKING), GetMultiPropertiesOperation.this.propertyName, new SVNProgressMonitor(GetMultiPropertiesOperation.this, monitor, null));
+					SVNProperty data = proxy.propertyGet(new SVNEntryRevisionReference(wcPath, null, SVNRevision.WORKING), GetMultiPropertiesOperation.this.propertyName, new SVNProgressMonitor(GetMultiPropertiesOperation.this, monitor, null));
 					if (data != null) {
-						GetMultiPropertiesOperation.this.properties.put(current, new PropertyData[] {data});
+						GetMultiPropertiesOperation.this.properties.put(current, new SVNProperty[] {data});
 					}
 				}
 				else {
-					PropertyData []data = SVNUtility.properties(proxy, new EntryRevisionReference(wcPath, null, Revision.WORKING), new SVNProgressMonitor(GetMultiPropertiesOperation.this, monitor, null));
+					SVNProperty []data = SVNUtility.properties(proxy, new SVNEntryRevisionReference(wcPath, null, SVNRevision.WORKING), new SVNProgressMonitor(GetMultiPropertiesOperation.this, monitor, null));
 					if (data != null && data.length != 0) {
 						GetMultiPropertiesOperation.this.properties.put(current, data);
 					}

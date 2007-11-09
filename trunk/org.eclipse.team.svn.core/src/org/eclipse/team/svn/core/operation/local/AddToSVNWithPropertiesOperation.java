@@ -16,12 +16,12 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.Team;
-import org.eclipse.team.svn.core.client.ClientWrapperException;
-import org.eclipse.team.svn.core.client.Depth;
-import org.eclipse.team.svn.core.client.EntryRevisionReference;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.PropertyData;
-import org.eclipse.team.svn.core.client.PropertyData.BuiltIn;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNClientException;
+import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
+import org.eclipse.team.svn.core.client.SVNProperty;
+import org.eclipse.team.svn.core.client.ISVNClient.Depth;
+import org.eclipse.team.svn.core.client.SVNProperty.BuiltIn;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
@@ -48,7 +48,7 @@ public class AddToSVNWithPropertiesOperation extends AddToSVNOperation {
 		super(provider, isRecursive);
 	}
 
-	protected void doAdd(IResource current, final ISVNClientWrapper proxy, final IProgressMonitor monitor) throws Exception {
+	protected void doAdd(IResource current, final ISVNClient proxy, final IProgressMonitor monitor) throws Exception {
 		super.doAdd(current, proxy, monitor);
 		
 		if (!this.isRecursive) {
@@ -65,7 +65,7 @@ public class AddToSVNWithPropertiesOperation extends AddToSVNOperation {
 					try {
 						AddToSVNWithPropertiesOperation.this.processResource(resource, proxy, monitor);
 					}
-					catch (ClientWrapperException cwe) {
+					catch (SVNClientException cwe) {
 						AddToSVNWithPropertiesOperation.this.reportError(cwe);
 						return false;
 					}
@@ -76,9 +76,9 @@ public class AddToSVNWithPropertiesOperation extends AddToSVNOperation {
 		}
 	}
 	
-	protected void processResource(IResource resource, ISVNClientWrapper proxy, IProgressMonitor monitor) throws ClientWrapperException {
+	protected void processResource(IResource resource, ISVNClient proxy, IProgressMonitor monitor) throws SVNClientException {
 		String path = FileUtility.getWorkingCopyPath(resource);
-		PropertyData[] properties = CoreExtensionsManager.instance().getOptionProvider().getAutomaticProperties(resource.getName());
+		SVNProperty[] properties = CoreExtensionsManager.instance().getOptionProvider().getAutomaticProperties(resource.getName());
 		for (int pCount = 0; pCount < properties.length; pCount++) {
 			proxy.propertySet(path, properties[pCount].name, properties[pCount].value, Depth.EMPTY, false, new SVNProgressMonitor(this, monitor, null));
 		}
@@ -87,13 +87,13 @@ public class AddToSVNWithPropertiesOperation extends AddToSVNOperation {
 		}
 	}
 	
-	protected void processFile(IResource resource, ISVNClientWrapper proxy, IProgressMonitor monitor) throws ClientWrapperException {
+	protected void processFile(IResource resource, ISVNClient proxy, IProgressMonitor monitor) throws SVNClientException {
 		String path = FileUtility.getWorkingCopyPath(resource);
 		for (int i = 0; i < 2; i++) {
 			int type = (i == 0) ?
 					Team.getFileContentManager().getTypeForExtension(resource.getFileExtension() == null ? "" : resource.getFileExtension()) :
 					Team.getFileContentManager().getTypeForName(resource.getName());
-			PropertyData data = proxy.propertyGet(new EntryRevisionReference(path), BuiltIn.MIME_TYPE, new SVNProgressMonitor(this, monitor, null));
+			SVNProperty data = proxy.propertyGet(new SVNEntryRevisionReference(path), BuiltIn.MIME_TYPE, new SVNProgressMonitor(this, monitor, null));
 			if (data == null) {
 				if (type == Team.BINARY) {
 					proxy.propertySet(path, BuiltIn.MIME_TYPE, AddToSVNWithPropertiesOperation.BINARY_FILE, Depth.EMPTY, false, new SVNProgressMonitor(this, monitor, null));

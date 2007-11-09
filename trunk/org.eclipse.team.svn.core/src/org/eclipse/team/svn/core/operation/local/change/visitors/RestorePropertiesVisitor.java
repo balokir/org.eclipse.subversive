@@ -14,7 +14,7 @@ package org.eclipse.team.svn.core.operation.local.change.visitors;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.client.PropertyData;
+import org.eclipse.team.svn.core.client.SVNProperty;
 import org.eclipse.team.svn.core.operation.local.change.IActionOperationProcessor;
 import org.eclipse.team.svn.core.operation.local.change.IResourceChangeVisitor;
 import org.eclipse.team.svn.core.operation.local.change.ResourceChange;
@@ -39,7 +39,7 @@ public class RestorePropertiesVisitor implements IResourceChangeVisitor {
 			//remove remote properties
 			GetPropertiesOperation getProp = new GetPropertiesOperation(local.getResource());
 			processor.doOperation(getProp, monitor);
-			PropertyData []remoteProperties = getProp.getProperties();
+			SVNProperty []remoteProperties = getProp.getProperties();
 			if (remoteProperties != null && remoteProperties.length > 0) {
 				RemovePropertiesOperation removeProp = new RemovePropertiesOperation(new IResource[] {local.getResource()}, remoteProperties, false);
 				processor.doOperation(removeProp, monitor);

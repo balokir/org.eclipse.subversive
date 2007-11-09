@@ -18,12 +18,12 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.ui.IWorkingSet;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.decorator.wrapper.AbstractDecoratorWrapper;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
+import org.eclipse.ui.IWorkingSet;
 
 /**
  * Working set decorator

@@ -16,9 +16,9 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.INotificationCallback;
-import org.eclipse.team.svn.core.client.Notification;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNNotificationCallback;
+import org.eclipse.team.svn.core.client.SVNNotification;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -42,12 +42,12 @@ public class MoveResourcesOperation extends AbstractCopyMoveResourcesOperation {
 		final String dstUrl = this.destinationResource.getUrl();
 		IRepositoryResource []selectedResources = this.operableData();
 		final IRepositoryLocation location = selectedResources[0].getRepositoryLocation();
-		final ISVNClientWrapper proxy = location.acquireSVNProxy();
+		final ISVNClient proxy = location.acquireSVNProxy();
 		try {
 			for (int i = 0; i < selectedResources.length && !monitor.isCanceled(); i++) {
 				final IRepositoryResource current = selectedResources[i];
-				INotificationCallback notify = new INotificationCallback() {
-					public void notify(Notification info) {
+				ISVNNotificationCallback notify = new ISVNNotificationCallback() {
+					public void notify(SVNNotification info) {
 						String []paths = new String [] {current.getUrl(), dstUrl + "/" + current.getName()};
 						MoveResourcesOperation.this.revisionsPairs.add(new RevisionPair(info.revision, paths, location));
 						String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision");
@@ -74,7 +74,7 @@ public class MoveResourcesOperation extends AbstractCopyMoveResourcesOperation {
 		return new String [] {srcUrl, dstUrl};
 	}
 
-	protected void processEntry(ISVNClientWrapper proxy, String sourceUrl, String destinationUrl, IRepositoryResource current, IProgressMonitor monitor) throws Exception {
+	protected void processEntry(ISVNClient proxy, String sourceUrl, String destinationUrl, IRepositoryResource current, IProgressMonitor monitor) throws Exception {
 		this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn move \"" + SVNUtility.decodeURL(sourceUrl) + "\" \"" + SVNUtility.decodeURL(destinationUrl) + "\" -m \"" + this.message + "\"" + FileUtility.getUsernameParam(current.getRepositoryLocation().getUsername()) + "\n");
 		proxy.move(new String[] {sourceUrl}, destinationUrl, this.message, false, true, false, true, new SVNProgressMonitor(this, monitor, null));
 	}

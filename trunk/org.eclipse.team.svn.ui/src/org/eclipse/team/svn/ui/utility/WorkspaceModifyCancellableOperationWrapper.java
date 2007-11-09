@@ -18,9 +18,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
  * This wrapper allow to run operations that potentially can modify workspace

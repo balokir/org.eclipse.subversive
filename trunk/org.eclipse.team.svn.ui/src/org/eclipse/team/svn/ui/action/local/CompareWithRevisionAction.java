@@ -14,8 +14,8 @@ package org.eclipse.team.svn.ui.action.local;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.Status;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNEntryStatus;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNClientWrapperFactory;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -54,9 +54,9 @@ public class CompareWithRevisionAction extends AbstractWorkingCopyAction {
 		}
 		if (localLeft.isCopied()) {
 			IRepositoryLocation location = storage.getRepositoryLocation(left);
-			ISVNClientWrapper proxy = location.acquireSVNProxy();
+			ISVNClient proxy = location.acquireSVNProxy();
 			try {
-				Status status = SVNUtility.getSVNInfoForNotConnected(left);
+				SVNEntryStatus status = SVNUtility.getSVNInfoForNotConnected(left);
 				if (status == null) {
 					return;
 				}

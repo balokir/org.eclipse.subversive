@@ -13,9 +13,9 @@ package org.eclipse.team.svn.ui.repository.model;
 
 import java.util.ArrayList;
 
+import org.eclipse.team.svn.ui.repository.RepositoryTreeViewer;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.WorkbenchContentProvider;
-import org.eclipse.team.svn.ui.repository.RepositoryTreeViewer;
 
 /**
  * Repository content provider 

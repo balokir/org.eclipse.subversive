@@ -20,8 +20,8 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.svn.core.IConnectedProjectInformation;
-import org.eclipse.team.svn.core.client.Depth;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNClient.Depth;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -64,7 +64,7 @@ public class SwitchOperation extends AbstractRepositoryOperation {
 			final IResource resource = resources[i];
 			final IRepositoryResource destination = destinations[i];
 			final IRepositoryLocation location = destination.getRepositoryLocation();
-			final ISVNClientWrapper proxy = location.acquireSVNProxy();
+			final ISVNClient proxy = location.acquireSVNProxy();
 			
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {

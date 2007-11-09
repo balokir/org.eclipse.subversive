@@ -21,10 +21,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.team.svn.core.client.Depth;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.NotifyStatus;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNRevision;
+import org.eclipse.team.svn.core.client.ISVNClient.Depth;
+import org.eclipse.team.svn.core.client.SVNNotification.NotifyStatus;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -42,7 +42,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * @author Alexander Gurov
  */
 public class UpdateOperation extends AbstractConflictDetectionOperation implements IResourceProvider {
-	protected Revision selectedRevision;
+	protected SVNRevision selectedRevision;
 	protected boolean doRecursiveUpdate;
 	
 	public UpdateOperation(IResource []resources, boolean doRecursiveUpdate) {
@@ -53,15 +53,15 @@ public class UpdateOperation extends AbstractConflictDetectionOperation implemen
 	    this(provider, null, doRecursiveUpdate);
 	}
 
-	public UpdateOperation(IResourceProvider provider, Revision selectedRevision, boolean doRecursiveUpdate) {
+	public UpdateOperation(IResourceProvider provider, SVNRevision selectedRevision, boolean doRecursiveUpdate) {
 		super("Operation.Update", provider);		
 		this.doRecursiveUpdate = doRecursiveUpdate;
-		this.selectedRevision = selectedRevision == null ? Revision.HEAD : selectedRevision;
+		this.selectedRevision = selectedRevision == null ? SVNRevision.HEAD : selectedRevision;
 	}
 	
-	public UpdateOperation(IResource[] resources, Revision selectedRevision, boolean doRecursiveUpdate) {
+	public UpdateOperation(IResource[] resources, SVNRevision selectedRevision, boolean doRecursiveUpdate) {
 		super("Operation.Update", resources);
-		this.selectedRevision = selectedRevision == null ? Revision.HEAD : selectedRevision;
+		this.selectedRevision = selectedRevision == null ? SVNRevision.HEAD : selectedRevision;
 		this.doRecursiveUpdate = doRecursiveUpdate;
 	}
 	
@@ -99,7 +99,7 @@ public class UpdateOperation extends AbstractConflictDetectionOperation implemen
 				}
 			});
 			
-			final ISVNClientWrapper proxy = location.acquireSVNProxy();
+			final ISVNClient proxy = location.acquireSVNProxy();
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
 					proxy.update(

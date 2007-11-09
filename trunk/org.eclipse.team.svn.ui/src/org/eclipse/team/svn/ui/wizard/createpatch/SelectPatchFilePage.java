@@ -35,9 +35,6 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.ide.misc.ContainerContentProvider;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
@@ -49,6 +46,9 @@ import org.eclipse.team.svn.ui.verifier.ResourceNameVerifier;
 import org.eclipse.team.svn.ui.verifier.ResourcePathVerifier;
 import org.eclipse.team.svn.ui.wizard.AbstractVerifiedWizardPage;
 import org.eclipse.team.svn.ui.wizard.CreatePatchWizard;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.ide.misc.ContainerContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  * Select patch file wizard page

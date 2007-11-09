@@ -16,7 +16,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.file.GetFileContentOperation;
 
@@ -35,7 +35,7 @@ public class GetFileContentOperationTest extends AbstractOperationTestCase {
 		catch(IOException e) {
 			AbstractOperationTestCase.assertFalse(e.getMessage(), true);
 		}
-		return new GetFileContentOperation(new File(this.getFirstFolder().getPath() + "/plugin.properties"), Revision.HEAD, Revision.HEAD, out);
+		return new GetFileContentOperation(new File(this.getFirstFolder().getPath() + "/plugin.properties"), SVNRevision.HEAD, SVNRevision.HEAD, out);
 	}
 
 }

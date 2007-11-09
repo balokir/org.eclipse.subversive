@@ -18,10 +18,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.NotifyStatus;
-import org.eclipse.team.svn.core.client.RevisionRange;
-import org.eclipse.team.svn.core.client.Status;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNEntryStatus;
+import org.eclipse.team.svn.core.client.SVNRevisionRange;
+import org.eclipse.team.svn.core.client.SVNNotification.NotifyStatus;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -62,27 +62,27 @@ public class MergeOperation extends AbstractConflictDetectionOperation implement
 		
 		ArrayList retVal = new ArrayList();
 		for (int i = 0; i < localTo.length && !monitor.isCanceled(); i++) {
-			Status st = this.getStatusFor(localTo[i]);
+			SVNEntryStatus st = this.getStatusFor(localTo[i]);
 			if (st != null) {
 				retVal.add(st);
 			}
 		}
-		Status []statuses = (Status [])retVal.toArray(new Status[retVal.size()]);
+		SVNEntryStatus []statuses = (SVNEntryStatus [])retVal.toArray(new SVNEntryStatus[retVal.size()]);
 		
 		IRepositoryResource from = this.info.from[0];
 		IRepositoryLocation location = from.getRepositoryLocation();
-		ISVNClientWrapper proxy = location.acquireSVNProxy();
+		ISVNClient proxy = location.acquireSVNProxy();
 		
 		try {
-			proxy.merge(SVNUtility.getEntryReference(from), new RevisionRange [] {new RevisionRange(this.info.start, from.getSelectedRevision())}, null, statuses, this.force, new ConflictDetectionProgressMonitor(this, monitor, null));
+			proxy.merge(SVNUtility.getEntryReference(from), new SVNRevisionRange [] {new SVNRevisionRange(this.info.start, from.getSelectedRevision())}, null, statuses, this.force, new ConflictDetectionProgressMonitor(this, monitor, null));
 		}
 		finally {
 			location.releaseSVNProxy(proxy);
 		}
 	}
 	
-	protected Status getStatusFor(IResource resource) {
-		Status []statuses = this.info.getStatuses();
+	protected SVNEntryStatus getStatusFor(IResource resource) {
+		SVNEntryStatus []statuses = this.info.getStatuses();
 		IPath target = FileUtility.getResourcePath(resource);
 		for (int i = 0; i < statuses.length; i++) {
 			if (target.equals(new Path(statuses[i].path))) {

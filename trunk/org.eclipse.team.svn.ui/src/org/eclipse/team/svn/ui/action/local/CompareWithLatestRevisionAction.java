@@ -13,7 +13,7 @@ package org.eclipse.team.svn.ui.action.local;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNClientWrapperFactory;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -40,7 +40,7 @@ public class CompareWithLatestRevisionAction extends AbstractWorkingCopyAction {
 		IResource left = this.getSelectedResources(CompareWithWorkingCopyAction.COMPARE_FILTER)[0];
 		
 		IRepositoryResource resource = SVNRemoteStorage.instance().asRepositoryResource(left);
-		resource.setSelectedRevision(Revision.HEAD);
+		resource.setSelectedRevision(SVNRevision.HEAD);
 		
 		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(left);
 		if (local != null) {

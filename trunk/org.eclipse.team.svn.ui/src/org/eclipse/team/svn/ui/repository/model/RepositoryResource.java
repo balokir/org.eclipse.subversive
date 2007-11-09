@@ -29,13 +29,9 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.ui.model.IWorkbenchAdapter2;
-import org.eclipse.ui.themes.ITheme;
-import org.eclipse.team.svn.core.client.Lock;
-import org.eclipse.team.svn.core.client.Revision;
-import org.eclipse.team.svn.core.client.Revision.Kind;
+import org.eclipse.team.svn.core.client.SVNLock;
+import org.eclipse.team.svn.core.client.SVNRevision;
+import org.eclipse.team.svn.core.client.SVNRevision.Kind;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -54,6 +50,10 @@ import org.eclipse.team.svn.ui.repository.RepositoryTreeViewer;
 import org.eclipse.team.svn.ui.utility.DefaultOperationWrapperFactory;
 import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.model.IWorkbenchAdapter2;
+import org.eclipse.ui.themes.ITheme;
 
 /**
  * Abstract repository element representation 
@@ -211,7 +211,7 @@ public abstract class RepositoryResource implements IWorkbenchAdapter, IWorkbenc
 	public String getValue(IVariable var) {
 		IRepositoryResource resource = (IRepositoryResource)this.getRepositoryResource();
 		Information info = resource.getInfo();
-		Lock lock = info == null ? null : info.lock;
+		SVNLock lock = info == null ? null : info.lock;
 		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.getDefault());
 		if (var.equals(ToolTipVariableSetProvider.VAR_NAME)) {
 			return RepositoryResource.this.formatToolTipLine(var, resource.getName());
@@ -304,7 +304,7 @@ public abstract class RepositoryResource implements IWorkbenchAdapter, IWorkbenc
 	
 	public String getRevision() throws Exception {
 		if (this.revisionOp != null) {
-			return this.revisionOp.getRevision() == Revision.INVALID_REVISION_NUMBER ? SVNTeamUIPlugin.instance().getResource(this.revisionOp.getExecutionState() == IActionOperation.ERROR ? RepositoryError.ERROR_MSG : RepositoryPending.PENDING) : String.valueOf(this.revisionOp.getRevision());
+			return this.revisionOp.getRevision() == SVNRevision.INVALID_REVISION_NUMBER ? SVNTeamUIPlugin.instance().getResource(this.revisionOp.getExecutionState() == IActionOperation.ERROR ? RepositoryError.ERROR_MSG : RepositoryPending.PENDING) : String.valueOf(this.revisionOp.getRevision());
 		}
 		
 		if (this.resource.isInfoCached()) {

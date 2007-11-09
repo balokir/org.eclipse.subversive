@@ -14,10 +14,10 @@ package org.eclipse.team.svn.core.operation.file.property;
 import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.EntryRevisionReference;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.PropertyData;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
+import org.eclipse.team.svn.core.client.SVNProperty;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.file.AbstractFileOperation;
 import org.eclipse.team.svn.core.operation.file.SVNFileStorage;
@@ -31,19 +31,19 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * @author Alexander Gurov
  */
 public class GetPropertiesOperation extends AbstractFileOperation {
-	protected PropertyData []properties;
-	protected Revision revision;
+	protected SVNProperty []properties;
+	protected SVNRevision revision;
 	
 	public GetPropertiesOperation(File file) {
-		this(file, Revision.WORKING);
+		this(file, SVNRevision.WORKING);
 	}
 
-	public GetPropertiesOperation(File file, Revision revision) {
+	public GetPropertiesOperation(File file, SVNRevision revision) {
 		super("Operation.GetPropertiesFile", new File[] {file});
 		this.revision = revision;
 	}
 
-	public PropertyData []getProperties() {
+	public SVNProperty []getProperties() {
 		return this.properties;
 	}
 	
@@ -51,9 +51,9 @@ public class GetPropertiesOperation extends AbstractFileOperation {
 		File file = this.operableData()[0];
 		IRepositoryResource remote = SVNFileStorage.instance().asRepositoryResource(file, false);
 		IRepositoryLocation location = remote.getRepositoryLocation();
-		ISVNClientWrapper proxy = location.acquireSVNProxy();
+		ISVNClient proxy = location.acquireSVNProxy();
 		try {
-			this.properties = SVNUtility.properties(proxy, new EntryRevisionReference(file.getAbsolutePath(), null, this.revision), new SVNProgressMonitor(this, monitor, null));
+			this.properties = SVNUtility.properties(proxy, new SVNEntryRevisionReference(file.getAbsolutePath(), null, this.revision), new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 			location.releaseSVNProxy(proxy);

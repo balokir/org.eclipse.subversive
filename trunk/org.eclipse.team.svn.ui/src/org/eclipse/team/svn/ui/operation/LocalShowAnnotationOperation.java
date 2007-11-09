@@ -15,10 +15,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.operation.local.AbstractWorkingCopyOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -30,6 +28,8 @@ import org.eclipse.team.svn.ui.annotate.CheckPerspective;
 import org.eclipse.team.svn.ui.dialog.PromptOptionDialog;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
 
 /**
  * The operation shows annotation for the local resource.
@@ -38,13 +38,13 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  */
 public class LocalShowAnnotationOperation extends AbstractWorkingCopyOperation {
 	protected IWorkbenchPage page;
-	protected Revision revision;
+	protected SVNRevision revision;
 	
 	public LocalShowAnnotationOperation(IResource resource, IWorkbenchPage page) {
 		this(resource, page, null);
 	}
 
-	public LocalShowAnnotationOperation(IResource resource, IWorkbenchPage page, Revision revision) {
+	public LocalShowAnnotationOperation(IResource resource, IWorkbenchPage page, SVNRevision revision) {
 		super("Operation.ShowAnnotation", new IResource[] {resource});
 		this.page = page;
 		this.revision = revision;
@@ -54,9 +54,9 @@ public class LocalShowAnnotationOperation extends AbstractWorkingCopyOperation {
 		IResource resource = this.operableData()[0];
     	ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
     	boolean notExists = local == null || IStateFilter.SF_NOTEXISTS.accept(resource, local.getStatus(), local.getChangeMask());
-    	Revision revision = this.revision;
+    	SVNRevision revision = this.revision;
     	if (revision == null) {
-    		revision = notExists || local.getRevision() == -1 ? Revision.HEAD : Revision.fromNumber(local.getRevision());
+    		revision = notExists || local.getRevision() == -1 ? SVNRevision.HEAD : SVNRevision.fromNumber(local.getRevision());
     	}
     	
     	final int []viewType = new int[] {SVNTeamPreferences.getAnnotateInt(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.ANNOTATE_USE_QUICK_DIFF_NAME)};

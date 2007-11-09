@@ -16,11 +16,11 @@ import java.util.StringTokenizer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.team.svn.core.client.Depth;
-import org.eclipse.team.svn.core.client.EntryRevisionReference;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.PropertyData;
-import org.eclipse.team.svn.core.client.PropertyData.BuiltIn;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
+import org.eclipse.team.svn.core.client.SVNProperty;
+import org.eclipse.team.svn.core.client.ISVNClient.Depth;
+import org.eclipse.team.svn.core.client.SVNProperty.BuiltIn;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRemoteStorage;
@@ -72,7 +72,7 @@ public class AddToSVNIgnoreOperation extends AbstractWorkingCopyOperation {
 	protected void handleResource(IRemoteStorage storage, IResource current) throws Exception {
 		IResource parent = current.getParent();
 		IRepositoryLocation location = storage.getRepositoryLocation(parent);
-		ISVNClientWrapper proxy = location.acquireSVNProxy();
+		ISVNClient proxy = location.acquireSVNProxy();
 		try {
 			AddToSVNIgnoreOperation.changeIgnoreProperty(proxy, this.ignoreType, this.pattern, FileUtility.getWorkingCopyPath(parent), current.getName());
 		}
@@ -81,8 +81,8 @@ public class AddToSVNIgnoreOperation extends AbstractWorkingCopyOperation {
 		}
 	}
 	
-	public static void changeIgnoreProperty(ISVNClientWrapper proxy, int ignoreType, String pattern, String path, String name) throws Exception {
-		PropertyData data = proxy.propertyGet(new EntryRevisionReference(path), BuiltIn.IGNORE, new SVNNullProgressMonitor());
+	public static void changeIgnoreProperty(ISVNClient proxy, int ignoreType, String pattern, String path, String name) throws Exception {
+		SVNProperty data = proxy.propertyGet(new SVNEntryRevisionReference(path), BuiltIn.IGNORE, new SVNNullProgressMonitor());
 		String ignoreValue = data == null ? "" : data.value;
 		String mask = null;
 		switch (ignoreType) {

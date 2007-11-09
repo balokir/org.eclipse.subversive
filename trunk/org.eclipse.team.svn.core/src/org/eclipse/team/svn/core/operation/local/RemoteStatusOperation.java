@@ -21,13 +21,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.team.svn.core.client.Depth;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.INotificationCallback;
-import org.eclipse.team.svn.core.client.Notification;
-import org.eclipse.team.svn.core.client.Revision;
-import org.eclipse.team.svn.core.client.Status;
-import org.eclipse.team.svn.core.client.IStatusCallback;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNEntryStatusCallback;
+import org.eclipse.team.svn.core.client.ISVNNotificationCallback;
+import org.eclipse.team.svn.core.client.SVNEntryStatus;
+import org.eclipse.team.svn.core.client.SVNNotification;
+import org.eclipse.team.svn.core.client.SVNRevision;
+import org.eclipse.team.svn.core.client.ISVNClient.Depth;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRemoteStorage;
@@ -44,8 +44,8 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * 
  * @author Alexander Gurov
  */
-public class RemoteStatusOperation extends AbstractWorkingCopyOperation implements IRemoteStatusOperation, INotificationCallback {
-	protected Status []statuses;
+public class RemoteStatusOperation extends AbstractWorkingCopyOperation implements IRemoteStatusOperation, ISVNNotificationCallback {
+	protected SVNEntryStatus []statuses;
 	protected Map pegRevisions;
 
 	public RemoteStatusOperation(IResource []resources) {
@@ -66,14 +66,14 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 		IResource []resources = FileUtility.shrinkChildNodes(this.operableData());
 
 		final List result = new ArrayList();
-		final IStatusCallback cb = new IStatusCallback() {
-			public void nextStatus(Status status) {
+		final ISVNEntryStatusCallback cb = new ISVNEntryStatusCallback() {
+			public void next(SVNEntryStatus status) {
 				result.add(status);
 			}
 		};
 		for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
 			IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(resources[i]);
-			final ISVNClientWrapper proxy = location.acquireSVNProxy();
+			final ISVNClient proxy = location.acquireSVNProxy();
 
 			SVNUtility.addSVNNotifyListener(proxy, this);
 			final IResource current = resources[i];
@@ -90,10 +90,10 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 			
 			location.releaseSVNProxy(proxy);
 		}
-		this.statuses = (Status [])result.toArray(new Status[result.size()]);
+		this.statuses = (SVNEntryStatus [])result.toArray(new SVNEntryStatus[result.size()]);
 	}
 
-	public Status []getStatuses() {
+	public SVNEntryStatus []getStatuses() {
 		return this.statuses;
 	}
 	
@@ -103,7 +103,7 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 	        Map.Entry entry = (Map.Entry)it.next();
 	        IPath rootPath = new Path((String)entry.getKey());
 	        if (rootPath.isPrefixOf(resourcePath)) {
-	            change.setPegRevision((Revision)entry.getValue());
+	            change.setPegRevision((SVNRevision)entry.getValue());
 	            return;
 	        }
 	    }
@@ -114,9 +114,9 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 	    }
 	}
 
-    public void notify(Notification info) {
-    	if (info.revision != Revision.INVALID_REVISION_NUMBER) {
-            this.pegRevisions.put(info.path, Revision.fromNumber(info.revision));
+    public void notify(SVNNotification info) {
+    	if (info.revision != SVNRevision.INVALID_REVISION_NUMBER) {
+            this.pegRevisions.put(info.path, SVNRevision.fromNumber(info.revision));
     	}
     }
     

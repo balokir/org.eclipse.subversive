@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.team.svn.core.client.PropertyData;
+import org.eclipse.team.svn.core.client.SVNProperty;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.composite.ApplyPropertyMethodComposite;
 import org.eclipse.team.svn.ui.composite.PropertiesComposite;
@@ -62,7 +62,7 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 	protected Text fileField;
 	protected Button recursiveButton;
 	protected ApplyPropertyMethodComposite applyComposite;
-	protected PropertyData source;
+	protected SVNProperty source;
 	protected int resourcesType;
 	
 	protected String propertyName;
@@ -76,7 +76,7 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 	protected List predefinedProperties;
 	protected IResource []selectedResources;
 
-	public PropertyEditPanel(PropertyData data, IResource []selectedResources) {
+	public PropertyEditPanel(SVNProperty data, IResource []selectedResources) {
 		super();
 		this.dialogTitle = SVNTeamUIPlugin.instance().getResource(data != null ? "PropertyEditPanel.Title.Edit" : "PropertyEditPanel.Title.Add");	
 		this.fileSelected = false;

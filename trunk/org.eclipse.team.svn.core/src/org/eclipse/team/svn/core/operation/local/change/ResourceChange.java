@@ -15,7 +15,7 @@ import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.PropertyData;
+import org.eclipse.team.svn.core.client.SVNProperty;
 import org.eclipse.team.svn.core.resource.ILocalFile;
 import org.eclipse.team.svn.core.resource.ILocalFolder;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -30,7 +30,7 @@ import org.eclipse.team.svn.core.utility.FileUtility;
 public abstract class ResourceChange {
     protected ILocalResource local;
     protected File tmp;
-    protected PropertyData []properties;
+    protected SVNProperty []properties;
     
     public ResourceChange(ResourceChange parent, ILocalResource local, boolean needsTemporary) throws Exception {
         this.local = local;
@@ -45,11 +45,11 @@ public abstract class ResourceChange {
         return this.local;
     }
     
-	public PropertyData []getProperties() {
+	public SVNProperty []getProperties() {
 		return this.properties;
 	}
 	
-	public void setProperties(PropertyData []properties) {
+	public void setProperties(SVNProperty []properties) {
 		this.properties = properties;
 	}
 	

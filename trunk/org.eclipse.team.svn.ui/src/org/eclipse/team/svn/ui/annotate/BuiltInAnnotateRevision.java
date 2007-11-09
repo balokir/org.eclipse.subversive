@@ -18,7 +18,7 @@ import java.util.Locale;
 import org.eclipse.jface.text.revisions.Revision;
 import org.eclipse.jface.text.source.LineRange;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.team.svn.core.client.LogEntry;
+import org.eclipse.team.svn.core.client.SVNLogEntry;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 
 /**
@@ -34,7 +34,7 @@ public class BuiltInAnnotateRevision extends Revision {
 	private int stopLine;
 	private String info;
 	protected RGB color;
-	protected LogEntry msg;
+	protected SVNLogEntry msg;
 	
 	public BuiltInAnnotateRevision(String id, String author, RGB color) {
 		this.id = id;
@@ -43,7 +43,7 @@ public class BuiltInAnnotateRevision extends Revision {
 		this.startLine = this.stopLine = BuiltInAnnotateRevision.END_LINE;
 	}
 	
-	public void setLogMessage(LogEntry msg) {
+	public void setLogMessage(SVNLogEntry msg) {
 		this.msg = msg;
 	}
 	

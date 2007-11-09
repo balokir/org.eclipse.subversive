@@ -14,9 +14,9 @@ package org.eclipse.team.svn.core.operation.file;
 import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.ConflictResolution;
-import org.eclipse.team.svn.core.client.Depth;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNConflictResolution;
+import org.eclipse.team.svn.core.client.ISVNClient.Depth;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -54,11 +54,11 @@ public class MarkResolvedOperation extends AbstractFileOperation {
 			final File current = files[i];
 			
 			IRepositoryLocation location = SVNFileStorage.instance().asRepositoryResource(current, false).getRepositoryLocation();
-			final ISVNClientWrapper proxy = location.acquireSVNProxy();
+			final ISVNClient proxy = location.acquireSVNProxy();
 			
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-					proxy.resolved(current.getAbsolutePath(), Depth.infinityOrEmpty(MarkResolvedOperation.this.recursive), ConflictResolution.CHOOSE_MERGED, new SVNProgressMonitor(MarkResolvedOperation.this, monitor, null));
+					proxy.resolved(current.getAbsolutePath(), Depth.infinityOrEmpty(MarkResolvedOperation.this.recursive), SVNConflictResolution.CHOOSE_MERGED, new SVNProgressMonitor(MarkResolvedOperation.this, monitor, null));
 				}
 			}, monitor, files.length);
 			

@@ -19,10 +19,10 @@ import java.util.Map;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.team.svn.core.client.Depth;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.NotifyStatus;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNRevision;
+import org.eclipse.team.svn.core.client.ISVNClient.Depth;
+import org.eclipse.team.svn.core.client.SVNNotification.NotifyStatus;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -39,15 +39,15 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class UpdateOperation extends AbstractFileConflictDetectionOperation implements IFileProvider {
 	protected boolean updateUnresolved;
-	protected Revision selectedRevision;
+	protected SVNRevision selectedRevision;
 	
-	public UpdateOperation(File []files, Revision selectedRevision, boolean updateUnresolved) {
+	public UpdateOperation(File []files, SVNRevision selectedRevision, boolean updateUnresolved) {
 		super("Operation.UpdateFile", files);
 		this.updateUnresolved = updateUnresolved;
 		this.selectedRevision = selectedRevision;
 	}
 
-	public UpdateOperation(IFileProvider provider, Revision selectedRevision, boolean updateUnresolved) {
+	public UpdateOperation(IFileProvider provider, SVNRevision selectedRevision, boolean updateUnresolved) {
 		super("Operation.UpdateFile", provider);
 		this.updateUnresolved = updateUnresolved;
 		this.selectedRevision = selectedRevision;
@@ -82,7 +82,7 @@ public class UpdateOperation extends AbstractFileConflictDetectionOperation impl
 				}
 			});
 			
-			final ISVNClientWrapper proxy = location.acquireSVNProxy();
+			final ISVNClient proxy = location.acquireSVNProxy();
 			proxy.setTouchUnresolved(this.updateUnresolved);
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {

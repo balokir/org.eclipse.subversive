@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.team.svn.core.client.ClientWrapperCancelException;
+import org.eclipse.team.svn.core.client.SVNClientCancelException;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 
@@ -79,7 +79,7 @@ public abstract class AbstractOperationTest extends TestCase {
 					}
 
 					public Throwable getException() {
-						return new ClientWrapperCancelException();
+						return new SVNClientCancelException();
 					}
 
 					public String getMessage() {

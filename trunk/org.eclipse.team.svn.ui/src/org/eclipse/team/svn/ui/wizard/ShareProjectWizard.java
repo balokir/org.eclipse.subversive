@@ -24,8 +24,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.team.ui.IConfigurationWizard;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
@@ -58,6 +56,8 @@ import org.eclipse.team.svn.ui.wizard.shareproject.IShareProjectWrapper;
 import org.eclipse.team.svn.ui.wizard.shareproject.SelectProjectNamePage;
 import org.eclipse.team.svn.ui.wizard.shareproject.SelectProjectsGroupPage;
 import org.eclipse.team.svn.ui.wizard.shareproject.SelectRepositoryLocationPage;
+import org.eclipse.team.ui.IConfigurationWizard;
+import org.eclipse.ui.IWorkbench;
 
 /**
  * Share project wizard main class

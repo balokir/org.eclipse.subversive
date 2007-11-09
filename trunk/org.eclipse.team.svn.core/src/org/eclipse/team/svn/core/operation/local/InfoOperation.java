@@ -16,11 +16,11 @@ import java.text.MessageFormat;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.client.Depth;
-import org.eclipse.team.svn.core.client.EntryRevisionReference;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.EntryInfo;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNEntryInfo;
+import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
+import org.eclipse.team.svn.core.client.SVNRevision;
+import org.eclipse.team.svn.core.client.ISVNClient.Depth;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -37,14 +37,14 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 public class InfoOperation extends AbstractNonLockingOperation {
     protected IResource resource;
     protected ILocalResource local;
-    protected EntryInfo info;
+    protected SVNEntryInfo info;
 
     public InfoOperation(IResource resource) {
         super("Operation.Info");
         this.resource = resource;
     }
 
-    public EntryInfo getInfo() {
+    public SVNEntryInfo getInfo() {
         return this.info;
     }
 
@@ -58,10 +58,10 @@ public class InfoOperation extends AbstractNonLockingOperation {
         
         if (this.local != null && IStateFilter.SF_ONREPOSITORY.accept(this.resource, this.local.getStatus(), this.local.getChangeMask())) {
             IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(this.resource);
-            ISVNClientWrapper proxy = location.acquireSVNProxy();
+            ISVNClient proxy = location.acquireSVNProxy();
             try {
 //    			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn info \"" + this.local.getWorkingCopyPath() + "\"\n");
-                EntryInfo []infos = SVNUtility.info(proxy, new EntryRevisionReference(FileUtility.getWorkingCopyPath(this.resource), null, Revision.WORKING), Depth.EMPTY, new SVNProgressMonitor(this, monitor, null));
+                SVNEntryInfo []infos = SVNUtility.info(proxy, new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(this.resource), null, SVNRevision.WORKING), Depth.EMPTY, new SVNProgressMonitor(this, monitor, null));
                 
                 if (infos != null && infos.length > 0) {
                     this.info = infos[0];

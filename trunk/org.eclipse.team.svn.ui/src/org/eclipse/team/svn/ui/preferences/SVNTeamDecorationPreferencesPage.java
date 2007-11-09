@@ -58,12 +58,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.team.ui.ISharedImages;
-import org.eclipse.team.ui.TeamImages;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.PreferenceLinkArea;
-import org.eclipse.ui.internal.util.SWTResourceUtil;
-import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.decorator.DecoratorVariables;
@@ -73,6 +67,12 @@ import org.eclipse.team.svn.ui.decorator.TextVariableSetProvider;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.ListSelectionPanel;
 import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
+import org.eclipse.team.ui.ISharedImages;
+import org.eclipse.team.ui.TeamImages;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PreferenceLinkArea;
+import org.eclipse.ui.internal.util.SWTResourceUtil;
+import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 /**
  * Resource decoration preferences page implementation

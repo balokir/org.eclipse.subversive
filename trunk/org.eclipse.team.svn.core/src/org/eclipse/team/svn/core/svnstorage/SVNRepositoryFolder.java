@@ -11,7 +11,7 @@
 
 package org.eclipse.team.svn.core.svnstorage;
 
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.resource.IRepositoryFolder;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 
@@ -23,7 +23,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 public class SVNRepositoryFolder extends SVNRepositoryContainer implements IRepositoryFolder {
 	private static final long serialVersionUID = -8790962415969490733L;
 	
-	public SVNRepositoryFolder(IRepositoryLocation location, String url, Revision selectedRevision) {
+	public SVNRepositoryFolder(IRepositoryLocation location, String url, SVNRevision selectedRevision) {
 		super(location, url, selectedRevision);
 	}
 	

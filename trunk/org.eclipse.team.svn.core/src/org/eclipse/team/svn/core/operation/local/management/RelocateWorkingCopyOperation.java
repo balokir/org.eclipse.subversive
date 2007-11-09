@@ -24,9 +24,9 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.svn.core.IConnectedProjectInformation;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.Depth;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.Status;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNEntryStatus;
+import org.eclipse.team.svn.core.client.ISVNClient.Depth;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -70,7 +70,7 @@ public class RelocateWorkingCopyOperation extends AbstractWorkingCopyOperation i
 		if (projects.length == 0) {
 			return;
 		}
-		final ISVNClientWrapper proxy = this.location.acquireSVNProxy();
+		final ISVNClient proxy = this.location.acquireSVNProxy();
 		
 		try {
 			final IRepositoryResource []children = this.location.getRepositoryRoot().getChildren();
@@ -84,7 +84,7 @@ public class RelocateWorkingCopyOperation extends AbstractWorkingCopyOperation i
 						IPath fsLocation = current.getLocation();
 						if (fsLocation != null) {
 							String path = fsLocation.toString();
-							Status st = SVNUtility.getSVNInfoForNotConnected(current);
+							SVNEntryStatus st = SVNUtility.getSVNInfoForNotConnected(current);
 							if (st != null) {
 								String url = SVNUtility.decodeURL(st.url);
 								String oldRoot = SVNUtility.getOldRoot(url, children);

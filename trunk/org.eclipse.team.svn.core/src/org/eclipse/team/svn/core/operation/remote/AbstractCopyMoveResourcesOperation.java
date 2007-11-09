@@ -16,9 +16,9 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.INotificationCallback;
-import org.eclipse.team.svn.core.client.Notification;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNNotificationCallback;
+import org.eclipse.team.svn.core.client.SVNNotification;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IRevisionProvider;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -53,9 +53,9 @@ public abstract class AbstractCopyMoveResourcesOperation extends AbstractReposit
 		for (int i = 0; i < selectedResources.length && !monitor.isCanceled(); i++) {
 			final IRepositoryResource current = selectedResources[i];
 			final IRepositoryLocation location = current.getRepositoryLocation();
-			final ISVNClientWrapper proxy = location.acquireSVNProxy();
-			INotificationCallback notify = new INotificationCallback() {
-				public void notify(Notification info) {
+			final ISVNClient proxy = location.acquireSVNProxy();
+			ISVNNotificationCallback notify = new ISVNNotificationCallback() {
+				public void notify(SVNNotification info) {
 					String []paths = AbstractCopyMoveResourcesOperation.this.getRevisionPaths(current.getUrl(), dstUrl + "/" + current.getName());
 					AbstractCopyMoveResourcesOperation.this.revisionsPairs.add(new RevisionPair(info.revision, paths, location));
 					String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision");
@@ -76,5 +76,5 @@ public abstract class AbstractCopyMoveResourcesOperation extends AbstractReposit
 	}
 
 	protected abstract String []getRevisionPaths(String srcUrl, String dstUrl);
-	protected abstract void processEntry(ISVNClientWrapper proxy, String sourceUrl, String destinationUrl, IRepositoryResource current, IProgressMonitor monitor) throws Exception;
+	protected abstract void processEntry(ISVNClient proxy, String sourceUrl, String destinationUrl, IRepositoryResource current, IProgressMonitor monitor) throws Exception;
 }

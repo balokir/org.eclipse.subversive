@@ -14,8 +14,6 @@ package org.eclipse.team.svn.ui.synchronize.merge.action;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.ILocalFile;
@@ -27,6 +25,8 @@ import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction
 import org.eclipse.team.svn.ui.synchronize.merge.MergeSyncInfo;
 import org.eclipse.team.svn.ui.synchronize.variant.RemoteResourceVariant;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.ui.IWorkbenchPage;
 
 /**
  * Show annotation action

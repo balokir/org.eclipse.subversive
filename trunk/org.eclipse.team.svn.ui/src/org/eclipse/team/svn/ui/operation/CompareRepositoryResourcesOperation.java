@@ -17,10 +17,10 @@ import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.compare.internal.CompareEditor;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.Depth;
-import org.eclipse.team.svn.core.client.EntryRevisionReference;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.Status;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
+import org.eclipse.team.svn.core.client.SVNEntryStatus;
+import org.eclipse.team.svn.core.client.ISVNClient.Depth;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -68,13 +68,13 @@ public class CompareRepositoryResourcesOperation extends AbstractNonLockingOpera
     	}
     	
 		IRepositoryLocation location = this.left.getRepositoryLocation();
-		final ISVNClientWrapper proxy = location.acquireSVNProxy();
-		final Status [][]statuses = new Status[1][];
+		final ISVNClient proxy = location.acquireSVNProxy();
+		final SVNEntryStatus [][]statuses = new SVNEntryStatus[1][];
 		
 		this.protectStep(new IUnprotectedOperation() {
 			public void run(IProgressMonitor monitor) throws Exception {
-				EntryRevisionReference ref1 = SVNUtility.getEntryRevisionReference(CompareRepositoryResourcesOperation.this.right);
-				EntryRevisionReference ref2 = SVNUtility.getEntryRevisionReference(CompareRepositoryResourcesOperation.this.left);
+				SVNEntryRevisionReference ref1 = SVNUtility.getEntryRevisionReference(CompareRepositoryResourcesOperation.this.right);
+				SVNEntryRevisionReference ref2 = SVNUtility.getEntryRevisionReference(CompareRepositoryResourcesOperation.this.left);
 				if (SVNUtility.useSingleReferenceSignature(ref1, ref2)) {
 					statuses[0] = SVNUtility.diffStatus(proxy, ref1, ref1.revision, ref2.revision, Depth.INFINITY, false, new SVNProgressMonitor(CompareRepositoryResourcesOperation.this, monitor, null, false));
 				}

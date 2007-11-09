@@ -44,16 +44,16 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.ClientWrapperException;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNClientException;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.common.EditAutoPropertiesPanel;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Auto-props preferences page
@@ -470,12 +470,12 @@ public class SVNTeamAutoPropsPreferencePage extends AbstractSVNTeamPreferencesPa
 	}
 	
 	public String findConfigFile(String dialogTitle) {
-		ISVNClientWrapper client = CoreExtensionsManager.instance().getSVNClientWrapperFactory().newInstance();
+		ISVNClient client = CoreExtensionsManager.instance().getSVNClientWrapperFactory().newInstance();
 		String cfgDir;
 		try {
 			cfgDir = client.getConfigDirectory();
 		}
-		catch (ClientWrapperException cwe) {
+		catch (SVNClientException cwe) {
 			LoggedOperation.reportError(SVNTeamUIPlugin.instance().getResource("Error.FindConfigFile"), cwe);
 			return null;
 		}

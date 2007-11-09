@@ -12,9 +12,9 @@
 package org.eclipse.team.svn.core.operation.remote;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.Depth;
-import org.eclipse.team.svn.core.client.EntryRevisionReference;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
+import org.eclipse.team.svn.core.client.ISVNClient.Depth;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -51,10 +51,10 @@ public class CreatePatchOperation extends AbstractRepositoryOperation {
 		IRepositoryResource first = this.operableData()[0];
 		IRepositoryResource second = this.operableData()[1];
 		IRepositoryLocation location = first.getRepositoryLocation();
-		ISVNClientWrapper proxy = location.acquireSVNProxy();
+		ISVNClient proxy = location.acquireSVNProxy();
 		try {
-			EntryRevisionReference ref1 = SVNUtility.getEntryRevisionReference(first);
-			EntryRevisionReference ref2 = SVNUtility.getEntryRevisionReference(second);
+			SVNEntryRevisionReference ref1 = SVNUtility.getEntryRevisionReference(first);
+			SVNEntryRevisionReference ref2 = SVNUtility.getEntryRevisionReference(second);
 			if (SVNUtility.useSingleReferenceSignature(ref1, ref2)) {
 				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn diff -r " + ref1.revision + ":" + ref2.revision + " \"" + first.getUrl() + "@" + ref1.pegRevision + "\"" + (this.recurse ? "" : " -N") + (this.ignoreDeleted ? " --no-diff-deleted" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n");
 				proxy.diff(

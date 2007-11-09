@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.ui.extension.impl.synchronize;
 
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
 import org.eclipse.team.svn.ui.synchronize.merge.action.MarkAsMergedAction;
@@ -20,6 +19,7 @@ import org.eclipse.team.svn.ui.synchronize.merge.action.ShowAnnotationAction;
 import org.eclipse.team.svn.ui.synchronize.merge.action.ShowResourceHistoryAction;
 import org.eclipse.team.svn.ui.synchronize.merge.action.UpdateAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.RevertAction;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
  * Merge action group

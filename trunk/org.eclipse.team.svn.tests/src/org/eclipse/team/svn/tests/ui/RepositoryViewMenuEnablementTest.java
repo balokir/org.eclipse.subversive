@@ -26,7 +26,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.operation.local.AddToSVNOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -264,7 +264,7 @@ public class RepositoryViewMenuEnablementTest extends TestWorkflow {
         RepositoryResource []resources = this.getAllRepositoryResources();
         for(int i = 0; i < resources.length; i++) {
             if (resources[i] instanceof RepositoryFile) {
-                resources[i].getRepositoryResource().setSelectedRevision(Revision.fromNumber(123));
+                resources[i].getRepositoryResource().setSelectedRevision(SVNRevision.fromNumber(123));
                 twoRemoteFiles.add(resources[i]);
                 if (twoRemoteFiles.size() == 2) {
                     return (RepositoryResource [])twoRemoteFiles.toArray(new RepositoryResource[twoRemoteFiles.size()]);

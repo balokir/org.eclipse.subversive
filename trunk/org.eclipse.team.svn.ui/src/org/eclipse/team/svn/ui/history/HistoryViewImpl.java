@@ -49,9 +49,9 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.client.LogEntry;
-import org.eclipse.team.svn.core.client.Revision;
-import org.eclipse.team.svn.core.client.Revision.Kind;
+import org.eclipse.team.svn.core.client.SVNLogEntry;
+import org.eclipse.team.svn.core.client.SVNRevision;
+import org.eclipse.team.svn.core.client.SVNRevision.Kind;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNClientWrapperFactory;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
@@ -162,7 +162,7 @@ public class HistoryViewImpl {
 	
 	protected IPropertyChangeListener configurationListener;
 
-	protected LogEntry []logMessages;
+	protected SVNLogEntry []logMessages;
 	
 	public HistoryViewImpl(IResource wcResource, IRepositoryResource repositoryResource, IViewInfoProvider viewInfoProvider) {
 		this.wcResource = wcResource;
@@ -275,7 +275,7 @@ public class HistoryViewImpl {
 				tAction.setEnabled(tSelection.size() == 2 && isCompareAllowed);
 				if (tSelection.size() == 1) {
 					final Object []selection = tSelection.toArray();
-					String revision = HistoryViewImpl.this.wcResource != null ? String.valueOf(((LogEntry)selection[0]).revision) : SVNTeamUIPlugin.instance().getResource("HistoryView.HEAD");
+					String revision = HistoryViewImpl.this.wcResource != null ? String.valueOf(((SVNLogEntry)selection[0]).revision) : SVNTeamUIPlugin.instance().getResource("HistoryView.HEAD");
 					
 					String msg = MessageFormat.format(SVNTeamUIPlugin.instance().getResource("HistoryView.CompareCurrentWith"), new String[] {revision});
 					manager.add(tAction = new Action(msg) {
@@ -347,7 +347,7 @@ public class HistoryViewImpl {
 				String branchFrom = SVNTeamUIPlugin.instance().getResource("HistoryView.BranchFromRevision");
 				String tagFrom = SVNTeamUIPlugin.instance().getResource("HistoryView.TagFromRevision");
 				if (tSelection.size() == 1) {
-					String revision = String.valueOf(((LogEntry)tSelection.getFirstElement()).revision);
+					String revision = String.valueOf(((SVNLogEntry)tSelection.getFirstElement()).revision);
 					branchFrom = SVNTeamUIPlugin.instance().getResource("HistoryView.BranchFrom");
 					tagFrom = SVNTeamUIPlugin.instance().getResource("HistoryView.TagFrom");
 					branchFrom = MessageFormat.format(branchFrom, new String[] {revision});
@@ -561,7 +561,7 @@ public class HistoryViewImpl {
 		//must be called first, to initialize backtrack model
 		this.history.getCommentView().usedFor(resource);
 		
-	    long currentRevision = Revision.INVALID_REVISION_NUMBER;
+	    long currentRevision = SVNRevision.INVALID_REVISION_NUMBER;
 	    IRepositoryResource remote = null;
 		if (resource != null) {
 			IRemoteStorage storage = SVNRemoteStorage.instance();
@@ -583,7 +583,7 @@ public class HistoryViewImpl {
 		
 		//must be called first, to initialize backtrack model
 		this.history.getCommentView().usedFor(remoteResource);
-		long currentRevision = Revision.INVALID_REVISION_NUMBER;
+		long currentRevision = SVNRevision.INVALID_REVISION_NUMBER;
 		try {
 			if (remoteResource != null) {
 				currentRevision = remoteResource.getRevision();
@@ -602,13 +602,13 @@ public class HistoryViewImpl {
 		if (resource != null) {
 			if (this.repositoryResource != null && resource.getUrl().equals(this.repositoryResource.getUrl())) {
 				if (resource.getSelectedRevision().getKind() == Kind.NUMBER) {
-					Revision currentRevision = resource.getSelectedRevision();
-					this.repositoryResource.setSelectedRevision(Revision.HEAD);
-					this.showHistoryImpl(((Revision.Number)currentRevision).getNumber(), this.repositoryResource, true);
+					SVNRevision currentRevision = resource.getSelectedRevision();
+					this.repositoryResource.setSelectedRevision(SVNRevision.HEAD);
+					this.showHistoryImpl(((SVNRevision.Number)currentRevision).getNumber(), this.repositoryResource, true);
 					return;
 				}
 			}
-			resource.setSelectedRevision(Revision.HEAD);
+			resource.setSelectedRevision(SVNRevision.HEAD);
 			this.showHistory(resource, true);
 		}
 	}
@@ -674,8 +674,8 @@ public class HistoryViewImpl {
 							HistoryViewImpl.this.pagingEnabled = HistoryViewImpl.this.limit > 0 && HistoryViewImpl.this.logMessages == null ? msgsOp.getMessages().length == HistoryViewImpl.this.limit : msgsOp.getMessages().length == HistoryViewImpl.this.limit + 1;
 							HistoryViewImpl.this.addPage(msgsOp.getMessages());
 						}
-						LogEntry[] toShow = HistoryViewImpl.this.isFilterEnabled() && HistoryViewImpl.this.logMessages != null ? HistoryViewImpl.this.filterMessages(HistoryViewImpl.this.logMessages) : HistoryViewImpl.this.logMessages;
-						Revision current = HistoryViewImpl.this.currentRevision != -1 ? Revision.fromNumber(HistoryViewImpl.this.currentRevision) : null;
+						SVNLogEntry[] toShow = HistoryViewImpl.this.isFilterEnabled() && HistoryViewImpl.this.logMessages != null ? HistoryViewImpl.this.filterMessages(HistoryViewImpl.this.logMessages) : HistoryViewImpl.this.logMessages;
+						SVNRevision current = HistoryViewImpl.this.currentRevision != -1 ? SVNRevision.fromNumber(HistoryViewImpl.this.currentRevision) : null;
 						HistoryViewImpl.this.history.setLogMessages(current, toShow, HistoryViewImpl.this.repositoryResource);
 						HistoryViewImpl.this.setPagingEnabled();
 //						HistoryViewImpl.this.viewInfoProvider.setDescription(HistoryViewImpl.this.getResourceLabel());
@@ -767,9 +767,9 @@ public class HistoryViewImpl {
 		
 		CompositeOperation op = new CompositeOperation("Operation.HAddSelectedRevision");
 		for (Iterator iter = tSelection.iterator(); iter.hasNext();) {
-			LogEntry item = (LogEntry)iter.next();
+			SVNLogEntry item = (SVNLogEntry)iter.next();
 			IRepositoryResource resource = SVNUtility.copyOf(this.repositoryResource);
-			resource.setSelectedRevision(Revision.fromNumber(item.revision));
+			resource.setSelectedRevision(SVNRevision.fromNumber(item.revision));
 			LocateResourceURLInHistoryOperation locateOp = new LocateResourceURLInHistoryOperation(new IRepositoryResource[] {resource}, true);
 			op.add(locateOp);
 			op.add(new AddRevisionLinkOperation(locateOp, item.revision), new IActionOperation[] {locateOp});
@@ -786,7 +786,7 @@ public class HistoryViewImpl {
 		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
 		op.add(saveOp);
 	    op.add(revertOp);
-	    op.add(new UpdateOperation(resources, Revision.fromNumber(this.history.getSelectedRevision()), true), new IActionOperation[] {revertOp});
+	    op.add(new UpdateOperation(resources, SVNRevision.fromNumber(this.history.getSelectedRevision()), true), new IActionOperation[] {revertOp});
 		op.add(new RestoreProjectMetaOperation(saveOp));
 	    op.add(new RefreshResourcesOperation(resources));
 	    op.add(new AbstractActionOperation("Operation.HRefreshView") {
@@ -837,12 +837,12 @@ public class HistoryViewImpl {
 			IRepositoryResource left = this.getResourceForSelectedRevision(selected[0]);
 			IRepositoryResource right = null;
 			if (selection.size() == 1) {
-				long revNum = ((Revision.Number)left.getSelectedRevision()).getNumber() - 1;
+				long revNum = ((SVNRevision.Number)left.getSelectedRevision()).getNumber() - 1;
 				right =
 					left instanceof IRepositoryFile ? 
 					(IRepositoryResource)((IRepositoryRoot)left.getRoot()).asRepositoryFile(left.getUrl(), false) : 
 					((IRepositoryRoot)left.getRoot()).asRepositoryContainer(left.getUrl(), false);
-				right.setSelectedRevision(Revision.fromNumber(revNum));
+				right.setSelectedRevision(SVNRevision.fromNumber(revNum));
 				right.setPegRevision(left.getPegRevision());
 			}
 			else {
@@ -864,12 +864,12 @@ public class HistoryViewImpl {
 	}
 	
 	protected IRepositoryResource getResourceForSelectedRevision(Object item) {
-		long revNum = ((LogEntry)item).revision;
+		long revNum = ((SVNLogEntry)item).revision;
 		IRepositoryResource res =
 			this.repositoryResource instanceof IRepositoryFile ? 
 			(IRepositoryResource)((IRepositoryRoot)this.repositoryResource.getRoot()).asRepositoryFile(this.repositoryResource.getUrl(), false) : 
 			((IRepositoryRoot)this.repositoryResource.getRoot()).asRepositoryContainer(this.repositoryResource.getUrl(), false);
-		res.setSelectedRevision(Revision.fromNumber(revNum));
+		res.setSelectedRevision(SVNRevision.fromNumber(revNum));
 		res.setPegRevision(this.repositoryResource.getPegRevision());
 		return res;
 	}
@@ -879,8 +879,8 @@ public class HistoryViewImpl {
 			this.repositoryResource instanceof IRepositoryFile ? 
 			(IRepositoryResource)((IRepositoryRoot)this.repositoryResource.getRoot()).asRepositoryFile(this.repositoryResource.getUrl(), false) : 
 			((IRepositoryRoot)this.repositoryResource.getRoot()).asRepositoryContainer(this.repositoryResource.getUrl(), false);
-		res.setSelectedRevision(Revision.HEAD);
-		res.setPegRevision(Revision.HEAD);
+		res.setSelectedRevision(SVNRevision.HEAD);
+		res.setPegRevision(SVNRevision.HEAD);
 		return res;
 	}
 	
@@ -920,7 +920,7 @@ public class HistoryViewImpl {
 	    return this.filterByAuthor.length() > 0 || this.isCommentFilterEnabled; 
 	}
 	
-	protected LogEntry[] filterMessages(LogEntry[] msgs) {
+	protected SVNLogEntry[] filterMessages(SVNLogEntry[] msgs) {
 		ArrayList filteredMessages = new ArrayList();
 	    for (int i = 0; i < msgs.length; i++) {
 			String author = msgs[i].author;
@@ -932,7 +932,7 @@ public class HistoryViewImpl {
 				filteredMessages.add(msgs[i]);
 			}
 	    }
-	    LogEntry []result = (LogEntry [])filteredMessages.toArray(new LogEntry[filteredMessages.size()]);
+	    SVNLogEntry []result = (SVNLogEntry [])filteredMessages.toArray(new SVNLogEntry[filteredMessages.size()]);
 	    return result.length > 0 ? result : null;	    
 	}
 	
@@ -985,7 +985,7 @@ public class HistoryViewImpl {
 	    return this.compareModeAction;
 	}
 	
-	protected void addPage(LogEntry[] newMessages) {
+	protected void addPage(SVNLogEntry[] newMessages) {
 		if (this.logMessages == null) {
 			this.logMessages = newMessages;
 		}
@@ -996,7 +996,7 @@ public class HistoryViewImpl {
 				newList = newList.subList(1, newList.size());
 				oldList.addAll(newList);
 			}		
-			this.logMessages = (LogEntry [])oldList.toArray(new LogEntry[oldList.size()]);		
+			this.logMessages = (SVNLogEntry [])oldList.toArray(new SVNLogEntry[oldList.size()]);		
 		}
 	}
 	
@@ -1032,8 +1032,8 @@ public class HistoryViewImpl {
 	        	GetLogMessagesOperation msgOp = new GetLogMessagesOperation(HistoryViewImpl.this.repositoryResource, HistoryViewImpl.this.stopOnCopyAction.isChecked());
 	        	msgOp.setLimit(HistoryViewImpl.this.limit + 1);
 	    		if (HistoryViewImpl.this.logMessages != null) {
-	    			LogEntry lm = HistoryViewImpl.this.logMessages[HistoryViewImpl.this.logMessages.length - 1];
-	    			msgOp.setSelectedRevision(Revision.fromNumber(lm.revision));
+	    			SVNLogEntry lm = HistoryViewImpl.this.logMessages[HistoryViewImpl.this.logMessages.length - 1];
+	    			msgOp.setSelectedRevision(SVNRevision.fromNumber(lm.revision));
 	    		}
 	    		HistoryViewImpl.this.showHistoryImpl(msgOp, false);
 	        }
@@ -1050,8 +1050,8 @@ public class HistoryViewImpl {
 	        	GetLogMessagesOperation msgOp = new GetLogMessagesOperation(HistoryViewImpl.this.repositoryResource, HistoryViewImpl.this.stopOnCopyAction.isChecked());
 	    		msgOp.setLimit(0);
 	    		if (HistoryViewImpl.this.logMessages != null) {
-	    			LogEntry lm = HistoryViewImpl.this.logMessages[HistoryViewImpl.this.logMessages.length - 1];
-	    			msgOp.setSelectedRevision(Revision.fromNumber(lm.revision));
+	    			SVNLogEntry lm = HistoryViewImpl.this.logMessages[HistoryViewImpl.this.logMessages.length - 1];
+	    			msgOp.setSelectedRevision(SVNRevision.fromNumber(lm.revision));
 	    		}
 	    		HistoryViewImpl.this.showHistoryImpl(msgOp, false);	        	
 	        }

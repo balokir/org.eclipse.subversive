@@ -14,9 +14,8 @@ package org.eclipse.team.svn.ui.synchronize.update.action;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -27,6 +26,7 @@ import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction
 import org.eclipse.team.svn.ui.synchronize.action.ISyncStateFilter;
 import org.eclipse.team.svn.ui.synchronize.update.UpdateSyncInfo;
 import org.eclipse.team.svn.ui.synchronize.variant.ResourceVariant;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
  * Synchronize view "show resource history" action implementation
@@ -63,7 +63,7 @@ public class ShowResourceHistoryAction extends AbstractSynchronizeModelAction {
 		IResourceChange change = ((IResourceChange)((ResourceVariant)operation.getSVNSyncInfo().getRemote()).getResource());
 		IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(resource);
 		remote.setPegRevision(change.getPegRevision());
-		remote.setSelectedRevision(Revision.fromNumber(change.getRevision()));
+		remote.setSelectedRevision(SVNRevision.fromNumber(change.getRevision()));
 		return new ShowHistoryViewOperation(remote, 0, 0);
 	}
 

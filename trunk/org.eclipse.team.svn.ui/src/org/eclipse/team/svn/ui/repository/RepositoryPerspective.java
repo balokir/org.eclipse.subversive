@@ -11,13 +11,13 @@
 
 package org.eclipse.team.svn.ui.repository;
 
-import org.eclipse.ui.IFolderLayout;
-import org.eclipse.ui.IPageLayout;
-import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.team.svn.ui.annotate.AnnotateView;
 import org.eclipse.team.svn.ui.history.SVNHistoryPage;
 import org.eclipse.team.svn.ui.properties.PropertiesView;
 import org.eclipse.team.svn.ui.repository.browser.RepositoryBrowser;
+import org.eclipse.ui.IFolderLayout;
+import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IPerspectiveFactory;
 
 /**
  * Repository view perspective 

@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -97,22 +97,22 @@ public class RepositoryResourceSelectionComposite extends Composite {
 		return this.selectedResource;
 	}
 	
-	public void setSelectedResource(IRepositoryResource resource, Revision secondRevision) {
+	public void setSelectedResource(IRepositoryResource resource, SVNRevision secondRevision) {
 		this.selectedResource = resource;
 		this.revisionComposite.setSelectedResource(SVNUtility.copyOf(this.selectedResource));
 		if (this.secondRevisionComposite != null) {
 			this.secondSelectedResource = SVNUtility.copyOf(resource);
-			this.secondSelectedResource.setSelectedRevision(secondRevision != null ? secondRevision : Revision.HEAD);
+			this.secondSelectedResource.setSelectedRevision(secondRevision != null ? secondRevision : SVNRevision.HEAD);
 			this.secondRevisionComposite.setSelectedResource(this.secondSelectedResource);
 		}
 		this.setUrl(this.selectedResource.getUrl());
 	}
 	
-	public Revision getStartRevision() {
+	public SVNRevision getStartRevision() {
 		return this.revisionComposite.getSelectedRevision();
 	}
 	
-	public Revision getSecondSelectedRevision() {
+	public SVNRevision getSecondSelectedRevision() {
 		if (this.secondSelectedResource == null || this.secondRevisionComposite == null) {
 			return null;
 		}
@@ -246,7 +246,7 @@ public class RepositoryResourceSelectionComposite extends Composite {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		revisions.setLayoutData(data);
-		this.revisionComposite = new RevisionComposite(revisions, this.validationManager, this.stopOnCopy, new String[] {((this.twoRevisions & MODE_TWO) != 0 ? SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.StartRevision") : SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.Revision")), (this.twoRevisions & MODE_AUTO) != 0 ? SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.Autodetect") : SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.HeadRevision")}, (this.twoRevisions & MODE_AUTO) != 0 ? null : Revision.HEAD) {
+		this.revisionComposite = new RevisionComposite(revisions, this.validationManager, this.stopOnCopy, new String[] {((this.twoRevisions & MODE_TWO) != 0 ? SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.StartRevision") : SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.Revision")), (this.twoRevisions & MODE_AUTO) != 0 ? SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.Autodetect") : SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.HeadRevision")}, (this.twoRevisions & MODE_AUTO) != 0 ? null : SVNRevision.HEAD) {
 			public void additionalValidation() {
 				RepositoryResourceSelectionComposite.this.validateRevisions();
 			}
@@ -256,7 +256,7 @@ public class RepositoryResourceSelectionComposite extends Composite {
 		this.revisionComposite.setLayoutData(data);
 		this.revisionComposite.setSelectedResource(this.selectedResource);
 		if ((this.twoRevisions & MODE_TWO) != 0) {
-			this.secondRevisionComposite = new RevisionComposite(revisions, this.validationManager, this.stopOnCopy, new String[] {SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.StopRevision"), SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.HeadRevision")}, Revision.HEAD) {
+			this.secondRevisionComposite = new RevisionComposite(revisions, this.validationManager, this.stopOnCopy, new String[] {SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.StopRevision"), SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.HeadRevision")}, SVNRevision.HEAD) {
 				public void additionalValidation() {
 					RepositoryResourceSelectionComposite.this.validateRevisions();
 				}

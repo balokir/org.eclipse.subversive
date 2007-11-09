@@ -15,11 +15,11 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.Depth;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.IStatusCallback;
-import org.eclipse.team.svn.core.client.RevisionRange;
-import org.eclipse.team.svn.core.client.Status;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNEntryStatusCallback;
+import org.eclipse.team.svn.core.client.SVNEntryStatus;
+import org.eclipse.team.svn.core.client.SVNRevisionRange;
+import org.eclipse.team.svn.core.client.ISVNClient.Depth;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -45,21 +45,21 @@ public class MergeStatusOperation extends AbstractWorkingCopyOperation implement
 	}
 
     protected void runImpl(IProgressMonitor monitor) throws Exception {
-		this.info.setStatuses(new Status[0]);
+		this.info.setStatuses(new SVNEntryStatus[0]);
 		
 		final ArrayList st = new ArrayList();
 		
 		for (int i = 0; i < this.info.to.length && !monitor.isCanceled(); i++) {
 			final IRepositoryResource from = this.info.from[i];
-			final ISVNClientWrapper proxy = from.getRepositoryLocation().acquireSVNProxy();
+			final ISVNClient proxy = from.getRepositoryLocation().acquireSVNProxy();
 			final String wcPath = FileUtility.getWorkingCopyPath(this.info.to[i]);
 			
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-					proxy.mergeStatus(SVNUtility.getEntryReference(from), new RevisionRange [] {new RevisionRange(MergeStatusOperation.this.info.start, from.getSelectedRevision())}, 
+					proxy.mergeStatus(SVNUtility.getEntryReference(from), new SVNRevisionRange [] {new SVNRevisionRange(MergeStatusOperation.this.info.start, from.getSelectedRevision())}, 
 					    	wcPath, 
-							Depth.INFINITY, false, new IStatusCallback() {
-								public void nextStatus(Status status) {
+							Depth.INFINITY, false, new ISVNEntryStatusCallback() {
+								public void next(SVNEntryStatus status) {
 									st.add(status);
 								}
 							}, 
@@ -69,10 +69,10 @@ public class MergeStatusOperation extends AbstractWorkingCopyOperation implement
 			
 			from.getRepositoryLocation().releaseSVNProxy(proxy);
 		}
-		this.info.setStatuses((Status [])st.toArray(new Status[st.size()]));
+		this.info.setStatuses((SVNEntryStatus [])st.toArray(new SVNEntryStatus[st.size()]));
     }
 
-	public Status []getStatuses() {
+	public SVNEntryStatus []getStatuses() {
 		return this.info.getStatuses();
 	}
 

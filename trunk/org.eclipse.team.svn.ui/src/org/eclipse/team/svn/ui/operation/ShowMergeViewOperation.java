@@ -13,16 +13,16 @@ package org.eclipse.team.svn.ui.operation;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
-import org.eclipse.team.ui.synchronize.SubscriberParticipant;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.local.MergeSet;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.synchronize.merge.MergeParticipant;
 import org.eclipse.team.svn.ui.synchronize.merge.MergeScope;
+import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
+import org.eclipse.team.ui.synchronize.SubscriberParticipant;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Merge operation implementation
@@ -33,9 +33,9 @@ public class ShowMergeViewOperation extends AbstractNonLockingOperation {
     protected IResource []locals;
     protected IRepositoryResource []remoteResources;
     protected IWorkbenchPart part;
-    protected Revision startRevision;
+    protected SVNRevision startRevision;
 
-    public ShowMergeViewOperation(IResource []locals, IRepositoryResource []remoteResources, IWorkbenchPart part, Revision startRevision) {
+    public ShowMergeViewOperation(IResource []locals, IRepositoryResource []remoteResources, IWorkbenchPart part, SVNRevision startRevision) {
         super("Operation.ShowMergeView");
         this.locals = locals;
         this.remoteResources = remoteResources;

@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.core.operation;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.team.svn.core.client.PropertyData;
+import org.eclipse.team.svn.core.client.SVNProperty;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 
 /**
@@ -23,7 +23,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 public interface IResourcePropertyProvider extends IActionOperation {
 	public IResource getLocal();
 	public IRepositoryResource getRemote();
-	public PropertyData []getProperties();
+	public SVNProperty []getProperties();
 	public boolean isEditAllowed();
 	public void refresh();
 }

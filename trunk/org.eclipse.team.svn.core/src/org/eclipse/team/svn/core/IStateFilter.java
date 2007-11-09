@@ -16,11 +16,11 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.team.svn.core.client.EntryRevisionReference;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.PropertyData;
-import org.eclipse.team.svn.core.client.Revision;
-import org.eclipse.team.svn.core.client.PropertyData.BuiltIn;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
+import org.eclipse.team.svn.core.client.SVNProperty;
+import org.eclipse.team.svn.core.client.SVNRevision;
+import org.eclipse.team.svn.core.client.SVNProperty.BuiltIn;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -328,13 +328,13 @@ public interface IStateFilter {
 			if (!(resource instanceof IFile) || IStateFilter.SF_UNVERSIONED.accept(resource, state, mask) || !resource.isAccessible()) {
 				return false;
 			}
-			final PropertyData [][]propData = new PropertyData[1][];
+			final SVNProperty [][]propData = new SVNProperty[1][];
 			IActionOperation op = new AbstractNonLockingOperation("Operation.CheckProperty") {
 				protected void runImpl(IProgressMonitor monitor) throws Exception {
 					IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(resource);
-					ISVNClientWrapper proxy = location.acquireSVNProxy();
+					ISVNClient proxy = location.acquireSVNProxy();
 					try {
-						propData[0] = SVNUtility.properties(proxy, new EntryRevisionReference(FileUtility.getWorkingCopyPath(resource), null, Revision.BASE), new SVNProgressMonitor(this, monitor, null));
+						propData[0] = SVNUtility.properties(proxy, new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(resource), null, SVNRevision.BASE), new SVNProgressMonitor(this, monitor, null));
 					}
 					finally {
 						location.releaseSVNProxy(proxy);

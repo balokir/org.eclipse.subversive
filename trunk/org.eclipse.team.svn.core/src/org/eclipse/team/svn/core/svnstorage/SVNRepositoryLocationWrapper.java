@@ -13,7 +13,7 @@ package org.eclipse.team.svn.core.svnstorage;
 
 import java.util.Collection;
 
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
+import org.eclipse.team.svn.core.client.ISVNClient;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -82,7 +82,7 @@ public class SVNRepositoryLocationWrapper implements IRepositoryLocation {
 		return this.repositoryUUID;
 	}
 
-	public ISVNClientWrapper acquireSVNProxy() {
+	public ISVNClient acquireSVNProxy() {
 		return this.location.acquireSVNProxy();
 	}
 
@@ -178,7 +178,7 @@ public class SVNRepositoryLocationWrapper implements IRepositoryLocation {
 		this.location.reconfigure();
 	}
 
-	public void releaseSVNProxy(ISVNClientWrapper proxy) {
+	public void releaseSVNProxy(ISVNClient proxy) {
 		this.location.releaseSVNProxy(proxy);
 	}
 

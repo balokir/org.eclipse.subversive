@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.core.extension.factory;
 
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
+import org.eclipse.team.svn.core.client.ISVNClient;
 import org.eclipse.team.svn.core.operation.UnreportableException;
 
 /**
@@ -93,7 +93,7 @@ public interface ISVNClientWrapperFactory {
 	}
 	
 	public static final ISVNClientWrapperFactory EMPTY = new ISVNClientWrapperFactory() {
-		public ISVNClientWrapper newInstance() {
+		public ISVNClient newInstance() {
 			throw new UnreportableException(this.getName());
 		}
 		public int getSupportedFeatures() {
@@ -123,7 +123,7 @@ public interface ISVNClientWrapperFactory {
 	 * Makes new SVN Client Library instance
 	 * @return SVN Client Library instance
 	 */
-	public ISVNClientWrapper newInstance();
+	public ISVNClient newInstance();
 	
 	/**
 	 * Returns unique SVN Client library plug-in id

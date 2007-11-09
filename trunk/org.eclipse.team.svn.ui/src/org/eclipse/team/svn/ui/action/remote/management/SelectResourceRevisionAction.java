@@ -13,7 +13,7 @@ package org.eclipse.team.svn.ui.action.remote.management;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -50,7 +50,7 @@ public class SelectResourceRevisionAction extends AbstractRepositoryTeamAction {
 		DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
 		if (dialog.open() == Dialog.OK) {
 			resource = SVNUtility.copyOf(resource);
-			Revision selectedRevision = panel.getSelectedRevision();
+			SVNRevision selectedRevision = panel.getSelectedRevision();
 			resource.setSelectedRevision(selectedRevision);
 			
 			LocateResourceURLInHistoryOperation locateOp = new LocateResourceURLInHistoryOperation(new IRepositoryResource[] {resource}, true);

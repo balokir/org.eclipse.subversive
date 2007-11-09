@@ -12,11 +12,11 @@
 package org.eclipse.team.svn.core.operation.remote;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.ChangePath;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.LogEntry;
-import org.eclipse.team.svn.core.client.Revision;
-import org.eclipse.team.svn.core.client.Revision.Kind;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNLogEntry;
+import org.eclipse.team.svn.core.client.SVNLogPath;
+import org.eclipse.team.svn.core.client.SVNRevision;
+import org.eclipse.team.svn.core.client.SVNRevision.Kind;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -72,18 +72,18 @@ public class LocateResourceURLInHistoryOperation extends AbstractRepositoryOpera
 
 	protected IRepositoryResource processEntry(IRepositoryResource current, IProgressMonitor monitor) throws Exception {
 		IRepositoryLocation location = current.getRepositoryLocation();
-		ISVNClientWrapper proxy = location.acquireSVNProxy();
+		ISVNClient proxy = location.acquireSVNProxy();
 		try {
-			LogEntry []msgs;
+			SVNLogEntry []msgs;
 			int index = 0;
 			if (current.exists()) {
-				msgs = GetLogMessagesOperation.getMessagesImpl(proxy, current, Revision.fromNumber(0), current.getPegRevision(), ISVNClientWrapper.EMPTY_LOG_ENTRY_PROPS, 1, true, this, monitor);
+				msgs = GetLogMessagesOperation.getMessagesImpl(proxy, current, SVNRevision.fromNumber(0), current.getPegRevision(), ISVNClient.EMPTY_LOG_ENTRY_PROPS, 1, true, this, monitor);
 			}
 			else {
-				msgs = GetLogMessagesOperation.getMessagesImpl(proxy, current.getParent(), Revision.fromNumber(0), current.getPegRevision(), ISVNClientWrapper.EMPTY_LOG_ENTRY_PROPS, 1, true, this, monitor);
+				msgs = GetLogMessagesOperation.getMessagesImpl(proxy, current.getParent(), SVNRevision.fromNumber(0), current.getPegRevision(), ISVNClient.EMPTY_LOG_ENTRY_PROPS, 1, true, this, monitor);
 				if (msgs != null) {
 					for (int j = 0; j < msgs.length; j++) {
-						ChangePath []paths = msgs[j].changedPaths;
+						SVNLogPath []paths = msgs[j].changedPaths;
 						if (paths != null) {
 							for (int k = 0; k < paths.length; k++) {
 								if (paths[k] != null && current.getUrl().endsWith(paths[k].path)) {
@@ -96,7 +96,7 @@ public class LocateResourceURLInHistoryOperation extends AbstractRepositoryOpera
 				}
 			}
 			if (msgs != null && msgs.length > index && msgs[index] != null) {
-				ChangePath []paths = msgs[index].changedPaths;
+				SVNLogPath []paths = msgs[index].changedPaths;
 				if (paths == null) {
 					return current;
 				}
@@ -116,13 +116,13 @@ public class LocateResourceURLInHistoryOperation extends AbstractRepositoryOpera
 				String copiedFrom = location.getRepositoryRoot().getUrl() + paths[idx].copiedFromPath + pattern.substring(paths[idx].path.length());
 				
 				long rev = paths[idx].copiedFromRevision;
-				Revision searchRevision = current.getSelectedRevision();
-				long searchRev = ((Revision.Number)searchRevision).getNumber();
+				SVNRevision searchRevision = current.getSelectedRevision();
+				long searchRev = ((SVNRevision.Number)searchRevision).getNumber();
 				if (rev < searchRev) {
 					return current;
 				}
 				
-				Revision revison = Revision.fromNumber(rev);
+				SVNRevision revison = SVNRevision.fromNumber(rev);
 				IRepositoryResource retVal = current instanceof IRepositoryFile ? (IRepositoryResource)location.asRepositoryFile(copiedFrom, false) : location.asRepositoryContainer(copiedFrom, false);
 				retVal.setPegRevision(revison);
 				retVal.setSelectedRevision(searchRevision);

@@ -15,7 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.remote.GetLogMessagesOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -59,18 +59,18 @@ public class CorrectRevisionOperation extends AbstractNonLockingOperation {
 						long parentRevision = parent.getRevision();
 						long selfRevision = self.getRevision();
 						long revision = parentRevision > selfRevision ? parentRevision : selfRevision;
-						if (revision != Revision.INVALID_REVISION_NUMBER) {
-							this.repositoryResources[i].setPegRevision(Revision.fromNumber(revision));
+						if (revision != SVNRevision.INVALID_REVISION_NUMBER) {
+							this.repositoryResources[i].setPegRevision(SVNRevision.fromNumber(revision));
 						}
 					}
 					else {
-						this.repositoryResources[i].setPegRevision(Revision.fromNumber(self.getRevision()));
+						this.repositoryResources[i].setPegRevision(SVNRevision.fromNumber(self.getRevision()));
 					}
 				}
 			}
-			if (!this.repositoryResources[i].exists() && this.knownRevisions[i] != Revision.INVALID_REVISION_NUMBER) {
+			if (!this.repositoryResources[i].exists() && this.knownRevisions[i] != SVNRevision.INVALID_REVISION_NUMBER) {
 				hasWarning = true;
-				Revision rev = Revision.fromNumber(this.knownRevisions[i]);
+				SVNRevision rev = SVNRevision.fromNumber(this.knownRevisions[i]);
 				this.repositoryResources[i].setSelectedRevision(rev);
 				this.repositoryResources[i].setPegRevision(rev);
 				if (this.msgsOps != null) {

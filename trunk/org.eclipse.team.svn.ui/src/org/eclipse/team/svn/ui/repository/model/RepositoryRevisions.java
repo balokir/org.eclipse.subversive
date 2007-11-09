@@ -18,7 +18,7 @@ import java.util.Iterator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -70,7 +70,7 @@ public class RepositoryRevisions extends RepositoryFictiveNode implements IParen
 		return RepositoryRevisions.REVISIONS_NAME;
 	}
 
-	public IRepositoryResource []getLinks(Revision revision) {
+	public IRepositoryResource []getLinks(SVNRevision revision) {
 		IRepositoryResource []resources = this.location.getRevisionLinks();
 		ArrayList retVal = new ArrayList();
 		for (int i = 0; i < resources.length; i++) {
@@ -111,9 +111,9 @@ public class RepositoryRevisions extends RepositoryFictiveNode implements IParen
 	}
 	
 	protected class RevisionWrapper {
-		public Revision revision;
+		public SVNRevision revision;
 		
-		public RevisionWrapper(Revision revision) {
+		public RevisionWrapper(SVNRevision revision) {
 			this.revision = revision;
 		}
 

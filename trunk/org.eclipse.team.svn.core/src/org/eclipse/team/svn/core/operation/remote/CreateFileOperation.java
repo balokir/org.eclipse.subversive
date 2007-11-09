@@ -15,11 +15,11 @@ import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.Depth;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.INotificationCallback;
-import org.eclipse.team.svn.core.client.Notification;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNNotificationCallback;
+import org.eclipse.team.svn.core.client.SVNNotification;
+import org.eclipse.team.svn.core.client.SVNRevision;
+import org.eclipse.team.svn.core.client.ISVNClient.Depth;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IRevisionProvider;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -55,10 +55,10 @@ public class CreateFileOperation extends AbstractRepositoryOperation implements 
 		final IRepositoryResource resource = this.operableData()[0];
 		final IRepositoryLocation location = resource.getRepositoryLocation();
 		this.revisionPair = new RevisionPair[1];
-		final ISVNClientWrapper proxy = location.acquireSVNProxy();
-		INotificationCallback notify = new INotificationCallback() {
-			public void notify(Notification info) {
-				if (info.revision != Revision.INVALID_REVISION_NUMBER) {
+		final ISVNClient proxy = location.acquireSVNProxy();
+		ISVNNotificationCallback notify = new ISVNNotificationCallback() {
+			public void notify(SVNNotification info) {
+				if (info.revision != SVNRevision.INVALID_REVISION_NUMBER) {
 					String []path = new String[] {resource.getUrl()};
 					CreateFileOperation.this.revisionPair[0] = new RevisionPair(info.revision, path, location);
 					String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision");

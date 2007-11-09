@@ -17,10 +17,10 @@ import java.text.MessageFormat;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.EntryRevisionReference;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.Revision;
-import org.eclipse.team.svn.core.client.Revision.Kind;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
+import org.eclipse.team.svn.core.client.SVNRevision;
+import org.eclipse.team.svn.core.client.SVNRevision.Kind;
 import org.eclipse.team.svn.core.operation.AbstractGetFileContentOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -34,24 +34,24 @@ import org.eclipse.team.svn.core.utility.FileUtility;
  */
 public class GetLocalFileContentOperation extends AbstractGetFileContentOperation {
 	protected IResource resource;
-	protected Revision revision;
+	protected SVNRevision revision;
 
 	public GetLocalFileContentOperation(IResource resource, int revisionKind) {
 		super("Local");
 		this.resource = resource;
-		this.revision = revisionKind == Kind.BASE ? Revision.BASE : Revision.WORKING;
+		this.revision = revisionKind == Kind.BASE ? SVNRevision.BASE : SVNRevision.WORKING;
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		if (this.revision.getKind() == Kind.BASE) {
 		    IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(this.resource);
-			ISVNClientWrapper proxy = location.acquireSVNProxy();
+			ISVNClient proxy = location.acquireSVNProxy();
 			FileOutputStream stream = null;
 			try {
 				this.tmpFile = this.createTempFile();
 				stream = new FileOutputStream(this.tmpFile);
 				proxy.streamFileContent(
-						new EntryRevisionReference(FileUtility.getWorkingCopyPath(this.resource), null, this.revision), 
+						new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(this.resource), null, this.revision), 
 						2048, 
 						stream, 
 						new SVNProgressMonitor(GetLocalFileContentOperation.this, monitor, null));

@@ -16,7 +16,7 @@ import java.util.Set;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.svn.core.client.ClientWrapperException;
+import org.eclipse.team.svn.core.client.SVNClientException;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
@@ -138,7 +138,7 @@ public class BranchTagAction extends AbstractRepositoryTeamAction {
 		try {
 			return trunk.asRepositoryFile(trunk.getUrl() + "/.project", false).exists();
 		}
-		catch (ClientWrapperException ex) {
+		catch (SVNClientException ex) {
 			return false;
 		}
 	}

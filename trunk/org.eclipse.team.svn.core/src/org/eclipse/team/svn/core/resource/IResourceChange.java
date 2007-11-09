@@ -11,7 +11,7 @@
 
 package org.eclipse.team.svn.core.resource;
 
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNRevision;
 
 /**
  * Resource change descriptor interface
@@ -19,8 +19,8 @@ import org.eclipse.team.svn.core.client.Revision;
  * @author Alexander Gurov
  */
 public interface IResourceChange extends ILocalResource {
-	public Revision getPegRevision();
-	public void setPegRevision(Revision pegRevision);
+	public SVNRevision getPegRevision();
+	public void setPegRevision(SVNRevision pegRevision);
 	public String getComment();
 	public IRepositoryResource getOriginator();
 	public void setOriginator(IRepositoryResource originator);

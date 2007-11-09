@@ -23,8 +23,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.svn.core.client.ISVNProgressMonitor;
-import org.eclipse.team.svn.core.client.NotifyAction;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNRevision;
+import org.eclipse.team.svn.core.client.SVNNotification.NotifyAction;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.JavaHLMergeOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -87,7 +87,7 @@ public class JavaHLMergePanel extends AbstractAdvancedDialogPanel {
         return new Point(550, 245);
     }
     
-    public Revision getStartRevision() {
+    public SVNRevision getStartRevision() {
     	return this.simpleSelectionComposite.getStartRevision();
     }
     

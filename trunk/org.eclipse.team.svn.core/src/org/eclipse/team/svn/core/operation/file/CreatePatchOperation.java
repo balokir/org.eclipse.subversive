@@ -14,10 +14,10 @@ package org.eclipse.team.svn.core.operation.file;
 import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.Depth;
-import org.eclipse.team.svn.core.client.EntryRevisionReference;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
+import org.eclipse.team.svn.core.client.SVNRevision;
+import org.eclipse.team.svn.core.client.ISVNClient.Depth;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -48,11 +48,11 @@ public class CreatePatchOperation extends AbstractFileOperation {
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		File file = this.operableData()[0];
 		IRepositoryResource remote = SVNFileStorage.instance().asRepositoryResource(file, false);
-		ISVNClientWrapper proxy = remote.getRepositoryLocation().acquireSVNProxy();
+		ISVNClient proxy = remote.getRepositoryLocation().acquireSVNProxy();
 		try {
 			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn diff " + (this.recurse ? "" : " -N") + (this.ignoreDeleted ? " --no-diff-deleted" : "") + "\n");
 			proxy.diff(
-				new EntryRevisionReference(file.getAbsolutePath(), null, Revision.BASE), new EntryRevisionReference(file.getAbsolutePath(), null, Revision.WORKING), this.fileName, 
+				new SVNEntryRevisionReference(file.getAbsolutePath(), null, SVNRevision.BASE), new SVNEntryRevisionReference(file.getAbsolutePath(), null, SVNRevision.WORKING), this.fileName, 
 				Depth.infinityOrFiles(this.recurse), true, this.ignoreDeleted,
 				this.processBinary, this.processUnversioned, this.useRelativePath, new SVNProgressMonitor(this, monitor, null));
 		}

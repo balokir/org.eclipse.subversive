@@ -50,9 +50,8 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.client.PropertyData;
+import org.eclipse.team.svn.core.client.SVNProperty;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
@@ -80,6 +79,7 @@ import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.properties.bugtraq.BugtraqModel;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifier;
+import org.eclipse.ui.IWorkbenchActionConstants;
 
 /**
  * Commit panel 
@@ -440,7 +440,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
     	GetPropertiesOperation op = new GetPropertiesOperation(resource);
     	ProgressMonitorUtility.doTaskExternalDefault(op, new NullProgressMonitor());
     	if (op.getExecutionState() == IStatus.OK) {
-    		PropertyData []logTemplateProperties = op.getProperties();
+    		SVNProperty []logTemplateProperties = op.getProperties();
     		if (logTemplateProperties != null && logTemplateProperties.length > 0) {
     			for (int i = 0; i < logTemplateProperties.length; i++) {
 					if (logTemplateProperties[i].name.equals("tsvn:logtemplate")) {
@@ -545,7 +545,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 	    	GetPropertiesOperation op = new GetPropertiesOperation(resource);
 	    	ProgressMonitorUtility.doTaskExternalDefault(op, new NullProgressMonitor());
 	    	if (op.getExecutionState() == IStatus.OK) {
-	    		PropertyData []resourceProperties = op.getProperties();
+	    		SVNProperty []resourceProperties = op.getProperties();
 	    		if (resourceProperties != null && resourceProperties.length > 0) {
 	    			for (int i = 0; i < resourceProperties.length; i++) {
 						if (bugtraqProperties.contains(resourceProperties[i].name)) {

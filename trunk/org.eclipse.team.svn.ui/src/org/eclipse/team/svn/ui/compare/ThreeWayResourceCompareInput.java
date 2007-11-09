@@ -37,9 +37,9 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.client.Revision;
-import org.eclipse.team.svn.core.client.Status;
-import org.eclipse.team.svn.core.client.Revision.Kind;
+import org.eclipse.team.svn.core.client.SVNEntryStatus;
+import org.eclipse.team.svn.core.client.SVNRevision;
+import org.eclipse.team.svn.core.client.SVNRevision.Kind;
 import org.eclipse.team.svn.core.operation.remote.LocateResourceURLInHistoryOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRemoteStorage;
@@ -62,11 +62,11 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  */
 public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 	protected IResource localLeft;
-	protected Status []localChanges;
-	protected Status []remoteChanges;
+	protected SVNEntryStatus []localChanges;
+	protected SVNEntryStatus []remoteChanges;
 	protected Map newUrl2OldUrl;
 	
-	public ThreeWayResourceCompareInput(CompareConfiguration configuration, IResource left, Revision revision, Revision pegRevision, Status []localChanges, Status []remoteChanges) {
+	public ThreeWayResourceCompareInput(CompareConfiguration configuration, IResource left, SVNRevision revision, SVNRevision pegRevision, SVNEntryStatus []localChanges, SVNEntryStatus []remoteChanges) {
 		super(configuration);
 		this.newUrl2OldUrl = new HashMap();
 		
@@ -74,9 +74,9 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 
 		IRemoteStorage storage = SVNRemoteStorage.instance();
 		this.rootLeft = storage.asRepositoryResource(this.localLeft);
-		this.rootLeft.setSelectedRevision(Revision.WORKING);
+		this.rootLeft.setSelectedRevision(SVNRevision.WORKING);
 		this.rootAncestor = storage.asRepositoryResource(this.localLeft);
-		this.rootAncestor.setSelectedRevision(Revision.BASE);
+		this.rootAncestor.setSelectedRevision(SVNRevision.BASE);
 		this.rootRight = storage.asRepositoryResource(this.localLeft);
 		this.rootRight.setSelectedRevision(revision);
 		this.rootRight.setPegRevision(pegRevision);
@@ -108,7 +108,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		String message = SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.CheckingDelta");
 		for (int i = 0; i < allChanges.length; i++) {
 			monitor.subTask(MessageFormat.format(message, new String[] {allChanges[i]}));
-			this.makeBranch(allChanges[i], (Status)localChanges.get(allChanges[i]), (Status)remoteChanges.get(allChanges[i]), path2node, monitor);
+			this.makeBranch(allChanges[i], (SVNEntryStatus)localChanges.get(allChanges[i]), (SVNEntryStatus)remoteChanges.get(allChanges[i]), path2node, monitor);
 			ProgressMonitorUtility.progress(monitor, i, allChanges.length);
 		}
 		
@@ -156,7 +156,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		}
 	}
 	
-	protected void makeBranch(String url, Status stLocal, Status stRemote, Map path2node, IProgressMonitor monitor) throws Exception {
+	protected void makeBranch(String url, SVNEntryStatus stLocal, SVNEntryStatus stRemote, Map path2node, IProgressMonitor monitor) throws Exception {
 		// skip all ignored resources that does not have real remote variants
 		if (stRemote == null) {
 			IProject project = this.localLeft.getProject();
@@ -176,7 +176,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		}
 	}
 	
-	protected CompareNode makeNode(String oldUrl, Status stLeft, Status stRight, Map path2node, IProgressMonitor monitor) throws Exception {
+	protected CompareNode makeNode(String oldUrl, SVNEntryStatus stLeft, SVNEntryStatus stRight, Map path2node, IProgressMonitor monitor) throws Exception {
 		int rightNodeKind = stRight == null ? this.getNodeKind(stLeft) : this.getNodeKind(stRight);
 		int leftNodeKind = stLeft == null ? this.getNodeKind(stRight) : this.getNodeKind(stLeft);
 		int ancestorNodeKind = this.getAncestorKind(stLeft, leftNodeKind, rightNodeKind);
@@ -184,11 +184,11 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		IRepositoryLocation location = this.rootLeft.getRepositoryLocation();
 		
 		IRepositoryResource left = this.createResourceFor(location, leftNodeKind, oldUrl);
-		left.setSelectedRevision(Revision.WORKING);
+		left.setSelectedRevision(SVNRevision.WORKING);
 		left.setPegRevision(null);
 		
 		IRepositoryResource ancestor = this.createResourceFor(location, ancestorNodeKind, oldUrl);
-		ancestor.setSelectedRevision(Revision.BASE);
+		ancestor.setSelectedRevision(SVNRevision.BASE);
 		ancestor.setPegRevision(null);
 		
 		String rightUrl = stRight != null ? stRight.url : (stLeft != null && stLeft.isCopied ? stLeft.urlCopiedFrom : oldUrl);
@@ -209,18 +209,18 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		}
 		right = tRes;
 		
-		int statusLeft = stLeft == null ? org.eclipse.team.svn.core.client.Status.Kind.NORMAL : (stLeft.textStatus == org.eclipse.team.svn.core.client.Status.Kind.NORMAL ? stLeft.propStatus : stLeft.textStatus);
-		if (statusLeft == org.eclipse.team.svn.core.client.Status.Kind.DELETED && new File(stLeft.path).exists()) {
-			statusLeft = org.eclipse.team.svn.core.client.Status.Kind.REPLACED;
+		int statusLeft = stLeft == null ? org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NORMAL : (stLeft.textStatus == org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NORMAL ? stLeft.propStatus : stLeft.textStatus);
+		if (statusLeft == org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.DELETED && new File(stLeft.path).exists()) {
+			statusLeft = org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.REPLACED;
 		}
-		int statusRight = stRight == null ? (statusLeft == org.eclipse.team.svn.core.client.Status.Kind.IGNORED || statusLeft == org.eclipse.team.svn.core.client.Status.Kind.NONE || statusLeft == org.eclipse.team.svn.core.client.Status.Kind.UNVERSIONED ? org.eclipse.team.svn.core.client.Status.Kind.NONE :  org.eclipse.team.svn.core.client.Status.Kind.NORMAL) : (stRight.textStatus == org.eclipse.team.svn.core.client.Status.Kind.NORMAL ? stRight.propStatus : stRight.textStatus);
+		int statusRight = stRight == null ? (statusLeft == org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.IGNORED || statusLeft == org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NONE || statusLeft == org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.UNVERSIONED ? org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NONE :  org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NORMAL) : (stRight.textStatus == org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NORMAL ? stRight.propStatus : stRight.textStatus);
 		
 		// skip resources that already up-to-date
 		if (stRight != null && local != null) {
 			ILocalResource tmp = SVNRemoteStorage.instance().asLocalResource(this.localLeft);
-			if (this.rootRight.getSelectedRevision().getKind() == Kind.NUMBER && tmp != null && tmp.getRevision() >= ((Revision.Number)this.rootRight.getSelectedRevision()).getNumber()) {
-				if (!local.getResource().exists() && statusRight == org.eclipse.team.svn.core.client.Status.Kind.DELETED || 
-					statusRight != org.eclipse.team.svn.core.client.Status.Kind.DELETED && local.getRevision() == right.getRevision()) {
+			if (this.rootRight.getSelectedRevision().getKind() == Kind.NUMBER && tmp != null && tmp.getRevision() >= ((SVNRevision.Number)this.rootRight.getSelectedRevision()).getNumber()) {
+				if (!local.getResource().exists() && statusRight == org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.DELETED || 
+					statusRight != org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.DELETED && local.getRevision() == right.getRevision()) {
 					return null;
 				}
 			}
@@ -230,18 +230,18 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 				}
 				else {
 					stRight = null;
-					statusRight = statusLeft == org.eclipse.team.svn.core.client.Status.Kind.ADDED || statusLeft == org.eclipse.team.svn.core.client.Status.Kind.IGNORED || statusLeft == org.eclipse.team.svn.core.client.Status.Kind.NONE || statusLeft == org.eclipse.team.svn.core.client.Status.Kind.UNVERSIONED ? org.eclipse.team.svn.core.client.Status.Kind.NONE :  org.eclipse.team.svn.core.client.Status.Kind.NORMAL;
+					statusRight = statusLeft == org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.ADDED || statusLeft == org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.IGNORED || statusLeft == org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NONE || statusLeft == org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.UNVERSIONED ? org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NONE :  org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NORMAL;
 				}
 			}
 		}
 		
 		this.newUrl2OldUrl.put(right.getUrl(), oldUrl);
 		
-		int diffKindLeft = ResourceCompareInput.getDiffKind(statusLeft, stLeft == null ? org.eclipse.team.svn.core.client.Status.Kind.NONE : stLeft.propStatus, org.eclipse.team.svn.core.client.Status.Kind.NORMAL);
+		int diffKindLeft = ResourceCompareInput.getDiffKind(statusLeft, stLeft == null ? org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NONE : stLeft.propStatus, org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NORMAL);
 		if (diffKindLeft != Differencer.NO_CHANGE) {
 			diffKindLeft |= Differencer.LEFT;
 		}
-		int diffKindRight = ResourceCompareInput.getDiffKind(statusRight, stRight == null ? org.eclipse.team.svn.core.client.Status.Kind.NONE : stRight.propStatus, org.eclipse.team.svn.core.client.Status.Kind.NORMAL);
+		int diffKindRight = ResourceCompareInput.getDiffKind(statusRight, stRight == null ? org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NONE : stRight.propStatus, org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NORMAL);
 		if (diffKindRight != Differencer.NO_CHANGE) {
 			diffKindRight |= Differencer.RIGHT;
 		}
@@ -249,14 +249,14 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		return new CompareNode(parent, diffKindLeft | diffKindRight, left, ancestor, right, statusLeft, statusRight);
 	}
 	
-	protected int getAncestorKind(Status stLeft, int leftNodeKind, int rightNodeKind) {
+	protected int getAncestorKind(SVNEntryStatus stLeft, int leftNodeKind, int rightNodeKind) {
 		if (stLeft != null) {
 			switch (stLeft.textStatus) {
-				case org.eclipse.team.svn.core.client.Status.Kind.NONE:
-				case org.eclipse.team.svn.core.client.Status.Kind.ADDED:
-				case org.eclipse.team.svn.core.client.Status.Kind.UNVERSIONED:
-				case org.eclipse.team.svn.core.client.Status.Kind.IGNORED:
-				case org.eclipse.team.svn.core.client.Status.Kind.EXTERNAL: {
+				case org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NONE:
+				case org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.ADDED:
+				case org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.UNVERSIONED:
+				case org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.IGNORED:
+				case org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.EXTERNAL: {
 					return rightNodeKind;
 				}
 			}
@@ -297,7 +297,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 	}
 
 	protected IDiffContainer makeStubNode(IDiffContainer parent, IRepositoryResource node) {
-		return new CompareNode(parent, Differencer.NO_CHANGE, node, node, node, org.eclipse.team.svn.core.client.Status.Kind.NORMAL, org.eclipse.team.svn.core.client.Status.Kind.NORMAL);
+		return new CompareNode(parent, Differencer.NO_CHANGE, node, node, node, org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NORMAL, org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NORMAL);
 	}
 	
 	protected boolean isThreeWay() {
@@ -322,7 +322,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 			public void setLabelProvider(IBaseLabelProvider labelProvider) {
 				super.setLabelProvider(new LabelProviderWrapper((ILabelProvider)labelProvider) {
 					public Image getImage(Object element) {
-						if (element instanceof CompareNode && (((CompareNode)element).getStatusKindLeft() == org.eclipse.team.svn.core.client.Status.Kind.REPLACED || ((CompareNode)element).getStatusKindRight() == org.eclipse.team.svn.core.client.Status.Kind.REPLACED)) {
+						if (element instanceof CompareNode && (((CompareNode)element).getStatusKindLeft() == org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.REPLACED || ((CompareNode)element).getStatusKindRight() == org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.REPLACED)) {
 							Image image = (Image)this.images.get(element);
 							if (image == null) {
 								OverlayedImageDescriptor imageDescriptor = null;
@@ -355,11 +355,11 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 			super(parent, kind);
 			this.statusKindLeft = statusKindLeft;
 			this.statusKindRight = statusKindRight;
-			ResourceElement leftElt = new ResourceElement(left, statusKindLeft == org.eclipse.team.svn.core.client.Status.Kind.NONE || statusKindLeft == org.eclipse.team.svn.core.client.Status.Kind.DELETED ? org.eclipse.team.svn.core.client.Status.Kind.NONE : org.eclipse.team.svn.core.client.Status.Kind.NORMAL);
+			ResourceElement leftElt = new ResourceElement(left, statusKindLeft == org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NONE || statusKindLeft == org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.DELETED ? org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NONE : org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NORMAL);
 			leftElt.setEditable(left instanceof IRepositoryFile);
 			this.setLeft(leftElt);
-			this.setAncestor(new ResourceElement(ancestor, statusKindLeft == org.eclipse.team.svn.core.client.Status.Kind.UNVERSIONED || statusKindRight == org.eclipse.team.svn.core.client.Status.Kind.ADDED ? org.eclipse.team.svn.core.client.Status.Kind.NONE : org.eclipse.team.svn.core.client.Status.Kind.NORMAL));
-			this.setRight(new ResourceElement(right, statusKindRight == org.eclipse.team.svn.core.client.Status.Kind.DELETED || statusKindRight == org.eclipse.team.svn.core.client.Status.Kind.NONE ? org.eclipse.team.svn.core.client.Status.Kind.NONE : org.eclipse.team.svn.core.client.Status.Kind.NORMAL));
+			this.setAncestor(new ResourceElement(ancestor, statusKindLeft == org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.UNVERSIONED || statusKindRight == org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.ADDED ? org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NONE : org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NORMAL));
+			this.setRight(new ResourceElement(right, statusKindRight == org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.DELETED || statusKindRight == org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NONE ? org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NONE : org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NORMAL));
 		}
 
 		public int getStatusKindLeft() {

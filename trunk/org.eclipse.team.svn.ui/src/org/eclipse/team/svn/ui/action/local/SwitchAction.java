@@ -14,7 +14,7 @@ package org.eclipse.team.svn.ui.action.local;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.local.ClearLocalStatusesOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
@@ -56,7 +56,7 @@ public class SwitchAction extends AbstractNonRecursiveTeamAction {
 		if (resources.length > 1) {
 			IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(resources[0]);
 			remote = SVNUtility.getTrunkLocation(remote);
-			panel = new SwitchPanel(remote, Revision.INVALID_REVISION_NUMBER);
+			panel = new SwitchPanel(remote, SVNRevision.INVALID_REVISION_NUMBER);
 		}
 		else {
 			IResource resource = resources[0];

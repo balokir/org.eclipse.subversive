@@ -18,8 +18,8 @@ import java.util.StringTokenizer;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.PropertyData;
-import org.eclipse.team.svn.core.client.PropertyData.BuiltIn;
+import org.eclipse.team.svn.core.client.SVNProperty;
+import org.eclipse.team.svn.core.client.SVNProperty.BuiltIn;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.local.change.IActionOperationProcessor;
@@ -88,7 +88,7 @@ public class FreezeExternalsOperation extends AbstractWorkingCopyOperation imple
 
 		public void preVisit(ResourceChange change, IActionOperationProcessor processor, IProgressMonitor monitor) throws Exception {
 			if (change.getLocal() instanceof ILocalFolder) {
-				PropertyData []properties = change.getProperties();
+				SVNProperty []properties = change.getProperties();
 				if (properties != null) {
 					for (int i = 0; i < properties.length && !monitor.isCanceled(); i++) {
 						if (properties[i].name.equals(BuiltIn.EXTERNALS)) {
@@ -100,7 +100,7 @@ public class FreezeExternalsOperation extends AbstractWorkingCopyOperation imple
 			}
 		}
 		
-		protected void processExternals(ResourceChange change, PropertyData property, IActionOperationProcessor processor, IProgressMonitor monitor) throws Exception {
+		protected void processExternals(ResourceChange change, SVNProperty property, IActionOperationProcessor processor, IProgressMonitor monitor) throws Exception {
 			// process externals
 			String newValue = "";
 			StringTokenizer tok = new StringTokenizer(property.value, "\n\r", false);

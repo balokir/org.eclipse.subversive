@@ -16,10 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.Depth;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.Status;
-import org.eclipse.team.svn.core.client.IStatusCallback;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNEntryStatusCallback;
+import org.eclipse.team.svn.core.client.SVNEntryStatus;
+import org.eclipse.team.svn.core.client.ISVNClient.Depth;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -31,7 +31,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
  * @author Alexander Gurov
  */
 public abstract class AbstractStatusOperation extends AbstractFileOperation {
-	protected Status []statuses;
+	protected SVNEntryStatus []statuses;
 	protected boolean recursive;
 
 	public AbstractStatusOperation(String operationName, File []files, boolean recursive) {
@@ -44,7 +44,7 @@ public abstract class AbstractStatusOperation extends AbstractFileOperation {
 		this.recursive = recursive;
 	}
 
-	public Status []getStatuses() {
+	public SVNEntryStatus []getStatuses() {
 		return this.statuses;
 	}
 
@@ -52,8 +52,8 @@ public abstract class AbstractStatusOperation extends AbstractFileOperation {
 		File []files = this.operableData();
 
 		final List result = new ArrayList();
-		IStatusCallback cb = new IStatusCallback() {
-			public void nextStatus(Status status) {
+		ISVNEntryStatusCallback cb = new ISVNEntryStatusCallback() {
+			public void next(SVNEntryStatus status) {
 				result.add(status);
 			}
 		};
@@ -61,16 +61,16 @@ public abstract class AbstractStatusOperation extends AbstractFileOperation {
 			IRepositoryResource remote = SVNFileStorage.instance().asRepositoryResource(files[i], false);
 			
 			IRepositoryLocation location = remote.getRepositoryLocation();
-			ISVNClientWrapper proxy = location.acquireSVNProxy();
+			ISVNClient proxy = location.acquireSVNProxy();
 
 			this.reportStatuses(proxy, cb, files[i], monitor, files.length);
 			
 			location.releaseSVNProxy(proxy);
 		}
-		this.statuses = (Status [])result.toArray(new Status[result.size()]);
+		this.statuses = (SVNEntryStatus [])result.toArray(new SVNEntryStatus[result.size()]);
 	}
 
-	protected void reportStatuses(final ISVNClientWrapper proxy, final IStatusCallback cb, final File current, IProgressMonitor monitor, int tasks) {
+	protected void reportStatuses(final ISVNClient proxy, final ISVNEntryStatusCallback cb, final File current, IProgressMonitor monitor, int tasks) {
 		this.protectStep(new IUnprotectedOperation() {
 			public void run(IProgressMonitor monitor) throws Exception {
 				proxy.status(

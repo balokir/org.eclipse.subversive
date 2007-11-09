@@ -11,9 +11,9 @@
 
 package org.eclipse.team.svn.core.resource;
 
-import org.eclipse.team.svn.core.client.ClientWrapperException;
-import org.eclipse.team.svn.core.client.Lock;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNClientException;
+import org.eclipse.team.svn.core.client.SVNLock;
+import org.eclipse.team.svn.core.client.SVNRevision;
 
 /**
  * Abstract repository resource
@@ -23,13 +23,13 @@ import org.eclipse.team.svn.core.client.Revision;
 public interface IRepositoryResource extends IRepositoryBase, IRepositoryResourceFactory {
 	
 	public static class Information {
-		public final Lock lock;
+		public final SVNLock lock;
 		public final long fileSize;
 		public final String lastAuthor;
 		public final long lastChangedDate;
 		public final boolean hasProperties;
 		
-		public Information(Lock lock, long fileSize, String lastAuthor, long lastChangedDate, boolean hasProperties) {
+		public Information(SVNLock lock, long fileSize, String lastAuthor, long lastChangedDate, boolean hasProperties) {
 			this.lock = lock;
 			this.fileSize = fileSize;
 			this.lastAuthor = lastAuthor;
@@ -38,25 +38,25 @@ public interface IRepositoryResource extends IRepositoryBase, IRepositoryResourc
 		}
 	}
 
-	public Revision getSelectedRevision();
+	public SVNRevision getSelectedRevision();
 	
-	public void setSelectedRevision(Revision revision);
+	public void setSelectedRevision(SVNRevision revision);
 	
-	public Revision getPegRevision();
+	public SVNRevision getPegRevision();
 	
-	public void setPegRevision(Revision pegRevision);
+	public void setPegRevision(SVNRevision pegRevision);
 	
 	public boolean isInfoCached();
 	
 	public void refresh();
 
-	public boolean exists() throws ClientWrapperException;
+	public boolean exists() throws SVNClientException;
 	
 	public String getName();
 	
 	public String getUrl();
 	
-	public long getRevision() throws ClientWrapperException;
+	public long getRevision() throws SVNClientException;
 	
 	public IRepositoryResource getParent();
 	

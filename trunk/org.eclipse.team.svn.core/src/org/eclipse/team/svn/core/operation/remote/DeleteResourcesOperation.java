@@ -19,9 +19,9 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.INotificationCallback;
-import org.eclipse.team.svn.core.client.Notification;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNNotificationCallback;
+import org.eclipse.team.svn.core.client.SVNNotification;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IRevisionProvider;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -66,9 +66,9 @@ public class DeleteResourcesOperation extends AbstractRepositoryOperation implem
 				}
 			});
 			
-			final ISVNClientWrapper proxy = location.acquireSVNProxy();
-			INotificationCallback notify = new INotificationCallback() {
-				public void notify(Notification info) {
+			final ISVNClient proxy = location.acquireSVNProxy();
+			ISVNNotificationCallback notify = new ISVNNotificationCallback() {
+				public void notify(SVNNotification info) {
 					DeleteResourcesOperation.this.revisionsPairs.add(new RevisionPair(info.revision, paths, location));
 					String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision");
 					DeleteResourcesOperation.this.writeToConsole(IConsoleStream.LEVEL_OK, MessageFormat.format(message, new String[] {String.valueOf(info.revision)}));

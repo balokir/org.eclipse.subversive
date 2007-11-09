@@ -18,7 +18,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
+import org.eclipse.team.svn.core.client.ISVNClient;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRemoteStorage;
@@ -59,7 +59,7 @@ public class MoveResourceOperation extends AbstractActionOperation {
 		IRemoteStorage storage = SVNRemoteStorage.instance();
 		IRepositoryLocation location = storage.getRepositoryLocation(this.source);
 		
-		ISVNClientWrapper proxy = location.acquireSVNProxy();
+		ISVNClient proxy = location.acquireSVNProxy();
 		
 		String srcPath = FileUtility.getWorkingCopyPath(this.source);
 		String dstPath = FileUtility.getWorkingCopyPath(this.destination);

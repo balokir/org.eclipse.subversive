@@ -12,8 +12,8 @@
 package org.eclipse.team.svn.core.operation.local;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.team.svn.core.client.Revision;
-import org.eclipse.team.svn.core.client.Status;
+import org.eclipse.team.svn.core.client.SVNEntryStatus;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 
 /**
@@ -24,21 +24,21 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 public class MergeSet {
     public final IResource []to;
     public final IRepositoryResource []from;
-    public final Revision start;
+    public final SVNRevision start;
     
-    protected Status []statuses;
+    protected SVNEntryStatus []statuses;
     
-    public MergeSet(IResource []to, IRepositoryResource []from, Revision start) {
+    public MergeSet(IResource []to, IRepositoryResource []from, SVNRevision start) {
     	this.to = to;
     	this.from = from;
     	this.start = start;
     }
 
-	public Status []getStatuses() {
+	public SVNEntryStatus []getStatuses() {
 		return this.statuses;
 	}
 
-	public void setStatuses(Status []statuses) {
+	public void setStatuses(SVNEntryStatus []statuses) {
 		this.statuses = statuses;
 	}
     

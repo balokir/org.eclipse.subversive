@@ -14,7 +14,7 @@ package org.eclipse.team.svn.tests.core.workflow;
 import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.PreparedBranchTagOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -38,8 +38,8 @@ public class PLC350Test extends TestWorkflow {
             protected IActionOperation getOperation() {
                 return new AbstractLockingTestOperation("PLC350Test") {
                     protected void runImpl(IProgressMonitor monitor) throws Exception {
-                        IRepositoryResource branchedTrunk = new SVNRepositoryFolder(getLocation(), SVNUtility.getProposedBranchesLocation(getLocation()) + "/trunk", Revision.HEAD);
-		                IRepositoryResource taggedTrunk = new SVNRepositoryFolder(getLocation(), SVNUtility.getProposedTagsLocation(getLocation()) + "/trunk", Revision.HEAD);
+                        IRepositoryResource branchedTrunk = new SVNRepositoryFolder(getLocation(), SVNUtility.getProposedBranchesLocation(getLocation()) + "/trunk", SVNRevision.HEAD);
+		                IRepositoryResource taggedTrunk = new SVNRepositoryFolder(getLocation(), SVNUtility.getProposedTagsLocation(getLocation()) + "/trunk", SVNRevision.HEAD);
 		                if (branchedTrunk.exists()) {
 		                    FileUtility.deleteRecursive(new File (branchedTrunk.getUrl()));
 		                }
@@ -48,10 +48,10 @@ public class PLC350Test extends TestWorkflow {
 		                }
 		                IRepositoryResource branchTagResource = SVNUtility.getProposedTrunk(getLocation());
 		                new PreparedBranchTagOperation("Branch", new IRepositoryResource[] {branchTagResource}, SVNUtility.getProposedBranches(getLocation()), "test branch").run(monitor);
-		                branchedTrunk = new SVNRepositoryFolder(getLocation(), SVNUtility.getProposedBranchesLocation(getLocation()) + "/trunk", Revision.HEAD);
+		                branchedTrunk = new SVNRepositoryFolder(getLocation(), SVNUtility.getProposedBranchesLocation(getLocation()) + "/trunk", SVNRevision.HEAD);
 		                assertTrue("PLC350Test", branchedTrunk.exists());
 		                new PreparedBranchTagOperation("Tag", new IRepositoryResource[] {branchTagResource}, SVNUtility.getProposedTags(getLocation()), "test tag").run(monitor);
-		                taggedTrunk = new SVNRepositoryFolder(getLocation(), SVNUtility.getProposedTagsLocation(getLocation()) + "/trunk", Revision.HEAD);
+		                taggedTrunk = new SVNRepositoryFolder(getLocation(), SVNUtility.getProposedTagsLocation(getLocation()) + "/trunk", SVNRevision.HEAD);
 		                assertTrue("PLC350Test", taggedTrunk.exists());
                     }
                 };

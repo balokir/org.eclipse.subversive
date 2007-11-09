@@ -13,9 +13,9 @@ package org.eclipse.team.svn.core.operation.local.property;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.Depth;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.PropertyData;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNProperty;
+import org.eclipse.team.svn.core.client.ISVNClient.Depth;
 import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -32,21 +32,21 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
  * @author Vladimir Bykov
  */
 public class SetPropertiesOperation extends AbstractWorkingCopyOperation {
-	protected PropertyData []propertyData;
+	protected SVNProperty []propertyData;
 	protected boolean isRecursive;
 	protected IResourcePropertyProvider propertyProvider;
 	
 	public SetPropertiesOperation(IResource []resources, String name, byte []data, boolean isRecursive) {
-		this(resources, new PropertyData[] {new PropertyData(name, null, data)}, isRecursive);
+		this(resources, new SVNProperty[] {new SVNProperty(name, null, data)}, isRecursive);
 	}
 	
-	public SetPropertiesOperation(IResource []resources, PropertyData []data, boolean isRecursive) {
+	public SetPropertiesOperation(IResource []resources, SVNProperty []data, boolean isRecursive) {
 		super("Operation.SetProperties", resources);
 		this.propertyData = data;
 		this.isRecursive = isRecursive;
 	}
 	
-	public SetPropertiesOperation(IResourceProvider resourceProvider, PropertyData []data, boolean isRecursive) {
+	public SetPropertiesOperation(IResourceProvider resourceProvider, SVNProperty []data, boolean isRecursive) {
 		super("Operation.SetProperties", resourceProvider);
 		this.propertyData = data;
 		this.isRecursive = isRecursive;
@@ -69,7 +69,7 @@ public class SetPropertiesOperation extends AbstractWorkingCopyOperation {
 			final IResource resource = resources[i];
 			
 			IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(resource);
-			final ISVNClientWrapper proxy = location.acquireSVNProxy();
+			final ISVNClient proxy = location.acquireSVNProxy();
 
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
@@ -81,14 +81,14 @@ public class SetPropertiesOperation extends AbstractWorkingCopyOperation {
 		}
 	}
 	
-	protected void processResource(final ISVNClientWrapper proxy, IResource resource, IProgressMonitor monitor) {
+	protected void processResource(final ISVNClient proxy, IResource resource, IProgressMonitor monitor) {
 		ProgressMonitorUtility.setTaskInfo(monitor, this, resource.getFullPath().toString());
 		final String wcPath = FileUtility.getWorkingCopyPath(resource);
 		
-		PropertyData[] properties = this.getOperableProperties();
+		SVNProperty[] properties = this.getOperableProperties();
 		
 		for (int i = 0; i < properties.length && !monitor.isCanceled(); i++) {
-		    final PropertyData current = properties[i];
+		    final SVNProperty current = properties[i];
 		    this.protectStep(new IUnprotectedOperation() {
                 public void run(IProgressMonitor monitor) throws Exception {
 					proxy.propertySet(wcPath, current.name, current.data == null ? current.value.getBytes() : current.data, Depth.infinityOrEmpty(SetPropertiesOperation.this.isRecursive), false, new SVNProgressMonitor(SetPropertiesOperation.this, monitor, null));
@@ -97,7 +97,7 @@ public class SetPropertiesOperation extends AbstractWorkingCopyOperation {
 		}
 	}
 	
-	protected PropertyData[] getOperableProperties() {
+	protected SVNProperty[] getOperableProperties() {
 		return this.propertyData == null ? this.propertyProvider.getProperties() : this.propertyData;
 	}
 	

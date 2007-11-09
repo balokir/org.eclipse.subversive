@@ -25,8 +25,8 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.team.svn.core.client.Status;
-import org.eclipse.team.svn.core.client.Status.Kind;
+import org.eclipse.team.svn.core.client.SVNEntryStatus;
+import org.eclipse.team.svn.core.client.SVNEntryStatus.Kind;
 import org.eclipse.team.svn.core.operation.remote.LocateResourceURLInHistoryOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
@@ -41,9 +41,9 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  * @author Alexander Gurov
  */
 public class TwoWayResourceCompareInput extends ResourceCompareInput {
-	protected Status []statuses;
+	protected SVNEntryStatus []statuses;
 	
-	public TwoWayResourceCompareInput(CompareConfiguration configuration, IRepositoryResource leftResource, IRepositoryResource rightResource, Status []statuses) {
+	public TwoWayResourceCompareInput(CompareConfiguration configuration, IRepositoryResource leftResource, IRepositoryResource rightResource, SVNEntryStatus []statuses) {
 		super(configuration);
 		
 		this.rootLeft = SVNUtility.copyOf(leftResource);
@@ -83,7 +83,7 @@ public class TwoWayResourceCompareInput extends ResourceCompareInput {
 		}
 	}
 	
-	protected CompareNode makeNode(Status st, Map path2node, IProgressMonitor monitor) throws Exception {
+	protected CompareNode makeNode(SVNEntryStatus st, Map path2node, IProgressMonitor monitor) throws Exception {
 		String urlLeft = SVNUtility.decodeURL(st.path);
 		String urlRight = SVNUtility.decodeURL(st.url);
 		int nodeKind = this.getNodeKind(st);

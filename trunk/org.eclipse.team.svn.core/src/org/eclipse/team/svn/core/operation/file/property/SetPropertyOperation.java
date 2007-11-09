@@ -15,9 +15,9 @@ import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.team.svn.core.client.Depth;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.PropertyData;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNProperty;
+import org.eclipse.team.svn.core.client.ISVNClient.Depth;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.file.AbstractFileOperation;
@@ -33,24 +33,24 @@ import org.eclipse.team.svn.core.utility.FileUtility;
  * @author Alexander Gurov
  */
 public class SetPropertyOperation extends AbstractFileOperation {
-	protected PropertyData []propertyData;
+	protected SVNProperty []propertyData;
 	protected boolean isRecursive;
 	
 	public SetPropertyOperation(File []files, String name, byte []data, boolean isRecursive) {
-		this(files, new PropertyData[] {new PropertyData(name, null, data)}, isRecursive);
+		this(files, new SVNProperty[] {new SVNProperty(name, null, data)}, isRecursive);
 	}
 
-	public SetPropertyOperation(File []files, PropertyData []data, boolean isRecursive) {
+	public SetPropertyOperation(File []files, SVNProperty []data, boolean isRecursive) {
 		super("Operation.SetPropertiesFile", files);
 		this.propertyData = data;
 		this.isRecursive = isRecursive;
 	}
 
 	public SetPropertyOperation(IFileProvider provider, String name, byte []data, boolean isRecursive) {
-		this(provider, new PropertyData[] {new PropertyData(name, null, data)}, isRecursive);
+		this(provider, new SVNProperty[] {new SVNProperty(name, null, data)}, isRecursive);
 	}
 
-	public SetPropertyOperation(IFileProvider provider, PropertyData []data, boolean isRecursive) {
+	public SetPropertyOperation(IFileProvider provider, SVNProperty []data, boolean isRecursive) {
 		super("Operation.SetPropertiesFile", provider);
 		this.propertyData = data;
 		this.isRecursive = isRecursive;
@@ -66,11 +66,11 @@ public class SetPropertyOperation extends AbstractFileOperation {
 			final File current = files[i];
 			IRepositoryResource remote = SVNFileStorage.instance().asRepositoryResource(files[i], false);
 			IRepositoryLocation location = remote.getRepositoryLocation();
-			final ISVNClientWrapper proxy = location.acquireSVNProxy();
+			final ISVNClient proxy = location.acquireSVNProxy();
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
 					for (int i = 0; i < SetPropertyOperation.this.propertyData.length && !monitor.isCanceled(); i++) {
-					    final PropertyData property = SetPropertyOperation.this.propertyData[i];
+					    final SVNProperty property = SetPropertyOperation.this.propertyData[i];
 					    SetPropertyOperation.this.protectStep(new IUnprotectedOperation() {
 	                        public void run(IProgressMonitor monitor) throws Exception {
 	        					proxy.propertySet(current.getAbsolutePath(), property.name, property.data, Depth.infinityOrEmpty(SetPropertyOperation.this.isRecursive), false, new SVNProgressMonitor(SetPropertyOperation.this, monitor, null));

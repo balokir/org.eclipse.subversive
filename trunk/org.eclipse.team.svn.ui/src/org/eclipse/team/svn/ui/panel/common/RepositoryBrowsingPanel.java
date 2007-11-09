@@ -23,8 +23,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.resource.IRepositoryBase;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -45,6 +44,7 @@ import org.eclipse.team.svn.ui.repository.model.RepositoryLocation;
 import org.eclipse.team.svn.ui.repository.model.RepositoryPending;
 import org.eclipse.team.svn.ui.repository.model.RepositoryResource;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  * Repository browsing panel
@@ -56,18 +56,18 @@ public class RepositoryBrowsingPanel extends AbstractDialogPanel {
 	protected IRepositoryBase root;
 	protected IRepositoryResource selectedResource;
 	protected boolean onlyFolders;
-	protected Revision revision;
+	protected SVNRevision revision;
 	protected boolean autoExpandFirstLevel;
 
     public RepositoryBrowsingPanel(String title, IRepositoryBase root) {
-		this(title, root, Revision.HEAD, true);
+		this(title, root, SVNRevision.HEAD, true);
     }
 
-    public RepositoryBrowsingPanel(String title, IRepositoryBase root, Revision revision) {
+    public RepositoryBrowsingPanel(String title, IRepositoryBase root, SVNRevision revision) {
 		this(title, root, revision, true);
     }
 
-    public RepositoryBrowsingPanel(String title, IRepositoryBase root, Revision revision, boolean onlyFolders) {
+    public RepositoryBrowsingPanel(String title, IRepositoryBase root, SVNRevision revision, boolean onlyFolders) {
         super();
         this.dialogTitle = title;
 		this.root = root;

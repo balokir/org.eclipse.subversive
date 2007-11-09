@@ -13,7 +13,7 @@ package org.eclipse.team.svn.ui.action.remote;
 
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.team.svn.core.client.ClientWrapperCancelException;
+import org.eclipse.team.svn.core.client.SVNClientCancelException;
 import org.eclipse.team.svn.core.operation.ActivityCancelledException;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.action.AbstractRepositoryTeamAction;
@@ -38,7 +38,7 @@ public class ShowBrowsingErrorAction extends AbstractRepositoryTeamAction {
 		Object selectedElement = this.getSelection().getFirstElement();
 		OperationErrorInfo errorInfo =  UILoggedOperation.formatMessage(((RepositoryError)selectedElement).getErrorStatus(), true);
 		ErrorCancelPanel panel;
-        if (errorInfo.exception instanceof ClientWrapperCancelException || 
+        if (errorInfo.exception instanceof SVNClientCancelException || 
         	errorInfo.exception instanceof ActivityCancelledException ||
         	errorInfo.exception instanceof OperationCanceledException) {
         	panel = new ErrorCancelPanel(SVNTeamUIPlugin.instance().getResource("ShowBrowsingErrorAction.Dialog.Title"), errorInfo.simpleMessage, errorInfo.advancedMessage, false, null);

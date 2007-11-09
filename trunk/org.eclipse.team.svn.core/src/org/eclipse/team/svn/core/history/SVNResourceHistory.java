@@ -13,8 +13,8 @@ package org.eclipse.team.svn.core.history;
 
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.history.provider.FileHistory;
-import org.eclipse.team.svn.core.client.LogEntry;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNLogEntry;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 
@@ -28,10 +28,10 @@ public class SVNResourceHistory extends FileHistory {
 	
 	protected ILocalResource local;
 	protected IRepositoryResource remote;
-	protected LogEntry []msgs;
+	protected SVNLogEntry []msgs;
 	protected boolean full;
 
-	public SVNResourceHistory(ILocalResource local, IRepositoryResource remote, LogEntry []msgs, boolean full) {
+	public SVNResourceHistory(ILocalResource local, IRepositoryResource remote, SVNLogEntry []msgs, boolean full) {
 		this.local = local;
 		this.remote = remote;
 		this.msgs = msgs;
@@ -47,23 +47,23 @@ public class SVNResourceHistory extends FileHistory {
 	}
 
 	public IFileRevision getFileRevision(String id) {
-		if (Revision.WORKING.toString().equals(id)) {
-			return new SVNLocalResourceRevision(this.local, Revision.WORKING);
+		if (SVNRevision.WORKING.toString().equals(id)) {
+			return new SVNLocalResourceRevision(this.local, SVNRevision.WORKING);
 		}
-		else if (Revision.BASE.toString().equals(id)) {
-			return new SVNLocalResourceRevision(this.local, Revision.BASE);
+		else if (SVNRevision.BASE.toString().equals(id)) {
+			return new SVNLocalResourceRevision(this.local, SVNRevision.BASE);
 		}
-		else if (Revision.HEAD.toString().equals(id)) {
+		else if (SVNRevision.HEAD.toString().equals(id)) {
 			return this.full ? new SVNRemoteResourceRevision(this.remote, this.msgs[0]) : null;
 		}
-		else if (Revision.START.toString().equals(id)) {
+		else if (SVNRevision.START.toString().equals(id)) {
 			return this.full ? new SVNRemoteResourceRevision(this.remote, this.msgs[this.msgs.length - 1]) : null;
 		}
-		else if (Revision.PREVIOUS.toString().equals(id)) {
+		else if (SVNRevision.PREVIOUS.toString().equals(id)) {
 			int idx = this.getRevisionIdx(this.local.getRevision());
 			return idx != -1 && idx < this.msgs.length - 1 ? new SVNRemoteResourceRevision(this.remote, this.msgs[idx + 1]) : null;
 		}
-		else if (Revision.COMMITTED.toString().equals(id)) {
+		else if (SVNRevision.COMMITTED.toString().equals(id)) {
 			int idx = this.getRevisionIdx(this.local.getRevision());
 			return idx != -1 ? new SVNRemoteResourceRevision(this.remote, this.msgs[idx]) : null;
 		}

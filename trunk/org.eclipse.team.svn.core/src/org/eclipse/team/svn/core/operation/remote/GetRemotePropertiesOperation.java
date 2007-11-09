@@ -15,8 +15,8 @@ import java.text.MessageFormat;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.PropertyData;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNProperty;
 import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -30,7 +30,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * @author Alexander Gurov
  */
 public class GetRemotePropertiesOperation extends AbstractRepositoryOperation implements IResourcePropertyProvider {
-	protected PropertyData []properties;
+	protected SVNProperty []properties;
 
 	public GetRemotePropertiesOperation(IRepositoryResource resource) {
 		super("Operation.GetRevisionProperties", new IRepositoryResource[] {resource});
@@ -40,7 +40,7 @@ public class GetRemotePropertiesOperation extends AbstractRepositoryOperation im
 		super("Operation.GetRevisionProperties", provider);
 	}
 
-	public PropertyData []getProperties() {
+	public SVNProperty []getProperties() {
 		return this.properties;
 	}
 	
@@ -64,7 +64,7 @@ public class GetRemotePropertiesOperation extends AbstractRepositoryOperation im
 		IRepositoryResource resource = this.operableData()[0];
 		this.properties = null;
 		IRepositoryLocation location = resource.getRepositoryLocation();
-		ISVNClientWrapper proxy = location.acquireSVNProxy();
+		ISVNClient proxy = location.acquireSVNProxy();
 		try {
 //			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn proplist " + url + "@" + resource.getPegRevision() + " --revprop -r " + resource.getSelectedRevision() + " --username \"" + location.getUsername() + "\"\n");
 			this.properties = SVNUtility.properties(proxy, SVNUtility.getEntryRevisionReference(resource), new SVNProgressMonitor(this, monitor, null));

@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.core.resource;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNRevision;
 
 /**
  * Allow us to generate ILocalResource-based changes independently from real information provider structure.
@@ -24,7 +24,7 @@ public interface IChangeStateProvider {
 	public int getNodeKind();
 	public int getPropertiesChangeType();
 	public int getTextChangeType();
-	public Revision.Number getChangeRevision();
+	public SVNRevision.Number getChangeRevision();
 	public String getChangeAuthor();
 	public String getComment();
 	public long getChangeDate();

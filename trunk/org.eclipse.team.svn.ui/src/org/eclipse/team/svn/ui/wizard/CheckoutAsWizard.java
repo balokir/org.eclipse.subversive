@@ -36,13 +36,11 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.NewProjectAction;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.client.EntryRevisionReference;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.PropertyData;
-import org.eclipse.team.svn.core.client.PropertyData.BuiltIn;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
+import org.eclipse.team.svn.core.client.SVNProperty;
+import org.eclipse.team.svn.core.client.SVNProperty.BuiltIn;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
@@ -79,6 +77,8 @@ import org.eclipse.team.svn.ui.wizard.checkoutas.CheckoutAsFolderPage;
 import org.eclipse.team.svn.ui.wizard.checkoutas.CheckoutMethodSelectionPage;
 import org.eclipse.team.svn.ui.wizard.checkoutas.MultipleCheckoutMethodSelectionPage;
 import org.eclipse.team.svn.ui.wizard.checkoutas.ProjectLocationSelectionPage;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.NewProjectAction;
 
 /**
  * Checkout as wizard
@@ -552,23 +552,23 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 		protected String propertyName;
 		protected byte[] concatenatedData;
 		
-		protected PropertyData property;
+		protected SVNProperty property;
 		
 		public ConcatenateProperyDataOperation(IResource resource, String propertyName, byte[] concatenatedData) {
 			super("Operation.ConcatenatePropertyData");
 			this.resource = resource;
 			this.propertyName = propertyName;
 			this.concatenatedData = concatenatedData;
-			this.property = new PropertyData(propertyName, null, concatenatedData);
+			this.property = new SVNProperty(propertyName, null, concatenatedData);
 		}
 
 		protected void runImpl(IProgressMonitor monitor) throws Exception {
 			final String wcPath = FileUtility.getWorkingCopyPath(resource);
 			IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(resource);
-			final ISVNClientWrapper proxy = location.acquireSVNProxy();
-			PropertyData existingProperty;
+			final ISVNClient proxy = location.acquireSVNProxy();
+			SVNProperty existingProperty;
 			try {
-				existingProperty = proxy.propertyGet(new EntryRevisionReference(wcPath), BuiltIn.EXTERNALS, new SVNProgressMonitor(CheckoutAsWizard.ConcatenateProperyDataOperation.this, monitor, null));
+				existingProperty = proxy.propertyGet(new SVNEntryRevisionReference(wcPath), BuiltIn.EXTERNALS, new SVNProgressMonitor(CheckoutAsWizard.ConcatenateProperyDataOperation.this, monitor, null));
 			}
 			finally {
 				location.releaseSVNProxy(proxy);
@@ -578,7 +578,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 				byte[] newData = new byte[existingData.length + this.concatenatedData.length];
 				System.arraycopy(existingData, 0, newData, 0, existingData.length);
 				System.arraycopy(this.concatenatedData, 0, newData, existingData.length, this.concatenatedData.length);
-				this.property = new PropertyData(this.propertyName, null, newData);
+				this.property = new SVNProperty(this.propertyName, null, newData);
 			}
 		}
 
@@ -586,8 +586,8 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 			return this.resource;
 		}
 
-		public PropertyData[] getProperties() {
-			return new PropertyData[] {this.property};
+		public SVNProperty[] getProperties() {
+			return new SVNProperty[] {this.property};
 		}
 
 		public IRepositoryResource getRemote() {
