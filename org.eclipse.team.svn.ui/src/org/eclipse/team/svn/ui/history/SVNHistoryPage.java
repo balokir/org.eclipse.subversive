@@ -16,10 +16,6 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.team.ui.history.HistoryPage;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -29,6 +25,10 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.repository.model.RepositoryLocation;
 import org.eclipse.team.svn.ui.repository.model.RepositoryResource;
+import org.eclipse.team.ui.history.HistoryPage;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 
 /**
  * Generic HistoryView page

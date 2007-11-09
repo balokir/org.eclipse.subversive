@@ -13,8 +13,8 @@ package org.eclipse.team.svn.ui;
 
 import org.eclipse.core.resources.team.FileModificationValidator;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.team.svn.core.client.ICredentialsPrompt;
-import org.eclipse.team.svn.core.client.PropertyData;
+import org.eclipse.team.svn.core.client.ISVNCredentialsPrompt;
+import org.eclipse.team.svn.core.client.SVNProperty;
 import org.eclipse.team.svn.core.extension.options.IOptionProvider;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.utility.ILoggedOperationFactory;
@@ -37,7 +37,7 @@ public class UIOptionProvider implements IOptionProvider {
 		return SVNTeamPreferences.getSynchronizeBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.SYNCHRONIZE_REPORT_REVISION_CHANGE_NAME);
 	}
 	
-	public ICredentialsPrompt getCredentialsPrompt() {
+	public ISVNCredentialsPrompt getCredentialsPrompt() {
 		return PromptCredentialsPanel.DEFAULT_PROMPT;
 	}
 	
@@ -89,7 +89,7 @@ public class UIOptionProvider implements IOptionProvider {
 		return SVNTeamPreferences.getDecorationBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.DECORATION_ENABLE_CACHE_NAME);
 	}
 	
-	public PropertyData[] getAutomaticProperties(String template) {
+	public SVNProperty[] getAutomaticProperties(String template) {
 		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
 		Object[] autoProperties = SVNTeamAutoPropsPreferencePage.loadProperties(SVNTeamPreferences.getAutoPropertiesList(store, SVNTeamPreferences.AUTO_PROPERTIES_LIST_NAME));
 		for (int i = 0; i < autoProperties.length; i++) {
@@ -102,20 +102,20 @@ public class UIOptionProvider implements IOptionProvider {
 			StringMatcher matcher = new StringMatcher(autoProperty.fileName);
 			if (matcher.match(template)) {
 				if (autoProperty.properties.length() == 0) {
-					return new PropertyData[0];
+					return new SVNProperty[0];
 				}
 				String[] props = autoProperty.properties.split(";");
-				PropertyData[] propertyData = new PropertyData[props.length];
+				SVNProperty[] propertyData = new SVNProperty[props.length];
 				for (int j = 0; j < props.length; j++) {
 					String[] propsNameValue = props[j].split("=");
-					propertyData[j] = new PropertyData(propsNameValue[0],
+					propertyData[j] = new SVNProperty(propsNameValue[0],
 							propsNameValue.length == 1 ? "" : propsNameValue[1],
 							new byte[0]);
 				}
 				return propertyData;
 			}
 		}
-		return new PropertyData[0];
+		return new SVNProperty[0];
 	}
 	
 	public String getResource(String key) {

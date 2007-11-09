@@ -14,9 +14,9 @@ package org.eclipse.team.svn.core.operation.remote;
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.LogEntry;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNLogEntry;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -30,9 +30,9 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * @author Alexander Gurov
  */
 public class GetLogMessagesOperation extends AbstractRepositoryOperation {
-	protected LogEntry []msg;
+	protected SVNLogEntry []msg;
 	protected boolean stopOnCopy;
-	protected Revision selectedRevision;
+	protected SVNRevision selectedRevision;
 	protected long limit;
 	
 	public GetLogMessagesOperation(IRepositoryResourceProvider provider) {
@@ -66,7 +66,7 @@ public class GetLogMessagesOperation extends AbstractRepositoryOperation {
 		this.limit = limit;
 	}
 	
-	public void setSelectedRevision(Revision revision) {
+	public void setSelectedRevision(SVNRevision revision) {
 		this.selectedRevision = revision;
 	}
 
@@ -76,17 +76,17 @@ public class GetLogMessagesOperation extends AbstractRepositoryOperation {
 			this.selectedRevision = resource.getSelectedRevision();
 		}
 		IRepositoryLocation location = resource.getRepositoryLocation();
-		ISVNClientWrapper proxy = location.acquireSVNProxy();
+		ISVNClient proxy = location.acquireSVNProxy();
 		try {
 //			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn log " + SVNUtility.encodeURL(this.resource.getUrl()) + (this.limit != 0 ? (" --limit " + this.limit) : "") + (this.stopOnCopy ? " --stop-on-copy" : "") + " -r " + this.selectedRevision + ":0 --username \"" + location.getUsername() + "\"\n");
-			this.msg = GetLogMessagesOperation.getMessagesImpl(proxy, resource, this.selectedRevision, Revision.fromNumber(0), ISVNClientWrapper.DEFAULT_LOG_ENTRY_PROPS, this.limit, this.stopOnCopy, this, monitor);
+			this.msg = GetLogMessagesOperation.getMessagesImpl(proxy, resource, this.selectedRevision, SVNRevision.fromNumber(0), ISVNClient.DEFAULT_LOG_ENTRY_PROPS, this.limit, this.stopOnCopy, this, monitor);
 		}
 		finally {
 			location.releaseSVNProxy(proxy);
 		}
 	}
 	
-	public LogEntry []getMessages() {
+	public SVNLogEntry []getMessages() {
 		return this.msg;
 	}
 	
@@ -94,7 +94,7 @@ public class GetLogMessagesOperation extends AbstractRepositoryOperation {
 		return this.operableData()[0];
 	}
 	
-	public static LogEntry []getMessagesImpl(ISVNClientWrapper proxy, IRepositoryResource resource, Revision from, Revision to, String[] revProps, long limit, boolean stopOnCopy, IActionOperation parent, IProgressMonitor monitor) throws Exception {
+	public static SVNLogEntry []getMessagesImpl(ISVNClient proxy, IRepositoryResource resource, SVNRevision from, SVNRevision to, String[] revProps, long limit, boolean stopOnCopy, IActionOperation parent, IProgressMonitor monitor) throws Exception {
 		return SVNUtility.logEntries(proxy, SVNUtility.getEntryReference(resource), from, to, stopOnCopy, true, revProps, limit, new SVNProgressMonitor(parent, monitor, null));
 	}
 	

@@ -27,8 +27,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.team.svn.core.operation.local.management.ShareProjectOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -38,6 +36,8 @@ import org.eclipse.team.svn.ui.verifier.CompositeVerifier;
 import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
 import org.eclipse.team.svn.ui.verifier.ResourceNameVerifier;
 import org.eclipse.team.svn.ui.wizard.AbstractVerifiedWizardPage;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Select repository folder name for project

@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.RepositoryProvider;
-import org.osgi.framework.BundleContext;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.crashrecovery.DefaultErrorHandlingFacility;
 import org.eclipse.team.svn.core.extension.crashrecovery.IErrorHandlingFacility;
@@ -40,6 +39,7 @@ import org.eclipse.team.svn.core.operation.file.SVNFileStorage;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
+import org.osgi.framework.BundleContext;
 
 /**
  * Team provider plugin implementation

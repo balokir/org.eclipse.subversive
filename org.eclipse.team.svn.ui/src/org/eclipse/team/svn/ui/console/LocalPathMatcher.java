@@ -20,14 +20,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.ui.console.IPatternMatchListenerDelegate;
-import org.eclipse.ui.console.PatternMatchEvent;
-import org.eclipse.ui.console.TextConsole;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
+import org.eclipse.ui.console.IPatternMatchListenerDelegate;
+import org.eclipse.ui.console.PatternMatchEvent;
+import org.eclipse.ui.console.TextConsole;
 
 /**
  * Listen to SVN console. Finds lines that contains local resources paths.

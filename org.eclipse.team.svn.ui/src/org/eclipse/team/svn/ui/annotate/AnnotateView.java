@@ -39,17 +39,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.team.ui.history.IHistoryView;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IPartListener;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.texteditor.IDocumentProvider;
-import org.eclipse.ui.texteditor.ITextEditor;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -64,6 +54,16 @@ import org.eclipse.team.svn.ui.history.IRepositoryEditorInput;
 import org.eclipse.team.svn.ui.history.SVNHistoryPage;
 import org.eclipse.team.svn.ui.operation.OpenRemoteFileOperation;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
+import org.eclipse.team.ui.history.IHistoryView;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * Annotate view implementation
@@ -137,7 +137,7 @@ public class AnnotateView extends AbstractSVNView {
 	    this.showEditor(resource, null, null);
 	}
 	
-	public void showEditor(IResource resource, Revision topRevision, Revision pegRevision) {
+	public void showEditor(IResource resource, SVNRevision topRevision, SVNRevision pegRevision) {
 		this.wcResource = resource;
 		IRepositoryResource remoteResource = null;
 		if (resource != null) {

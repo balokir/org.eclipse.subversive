@@ -13,10 +13,10 @@ package org.eclipse.team.svn.core.svnstorage;
 
 import java.io.Serializable;
 
-import org.eclipse.team.svn.core.client.ClientWrapperCancelException;
-import org.eclipse.team.svn.core.client.ClientWrapperException;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNClientCancelException;
+import org.eclipse.team.svn.core.client.SVNClientException;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -31,9 +31,9 @@ import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 public abstract class SVNRepositoryResource extends SVNRepositoryBase implements IRepositoryResource, Serializable {
 	private static final long serialVersionUID = 8854704746872311777L;
 
-	private transient Revision selectedRevision;	// should be managed using setters and getters regarding to "transient" modifier
-	private transient Revision pegRevision;			// revision where we found this item
-	protected transient Revision.Number lastRevision;
+	private transient SVNRevision selectedRevision;	// should be managed using setters and getters regarding to "transient" modifier
+	private transient SVNRevision pegRevision;			// revision where we found this item
+	protected transient SVNRevision.Number lastRevision;
 	protected transient IRepositoryLocation location;
 	protected transient IRepositoryRoot root;
 	protected transient IRepositoryResource.Information info;
@@ -43,7 +43,7 @@ public abstract class SVNRepositoryResource extends SVNRepositoryBase implements
 		super();
 	}
 	
-	public SVNRepositoryResource(IRepositoryLocation location, String url, Revision selectedRevision) {
+	public SVNRepositoryResource(IRepositoryLocation location, String url, SVNRevision selectedRevision) {
 		super(url);
 		this.location = location;
 		this.selectedRevision = selectedRevision;
@@ -57,22 +57,22 @@ public abstract class SVNRepositoryResource extends SVNRepositoryBase implements
 		return this.info;
 	}
 	
-	public Revision getPegRevision() {
-		return this.pegRevision == null ? Revision.HEAD : this.pegRevision;
+	public SVNRevision getPegRevision() {
+		return this.pegRevision == null ? SVNRevision.HEAD : this.pegRevision;
 	}
 	
-	public void setPegRevision(Revision pegRevision) {
+	public void setPegRevision(SVNRevision pegRevision) {
 		this.pegRevision = pegRevision;
 	}
 	
-	public Revision getSelectedRevision() {
+	public SVNRevision getSelectedRevision() {
 		if (this.selectedRevision == null) {
-			this.selectedRevision = Revision.HEAD;
+			this.selectedRevision = SVNRevision.HEAD;
 		}
 		return this.selectedRevision;
 	}
 	
-	public void setSelectedRevision(Revision revision) {
+	public void setSelectedRevision(SVNRevision revision) {
 		this.selectedRevision = revision;
 	}
 
@@ -85,13 +85,13 @@ public abstract class SVNRepositoryResource extends SVNRepositoryBase implements
 	}
 	
 	public void setRevision(long revisionNumber) {
-		this.lastRevision = Revision.fromNumber(revisionNumber);
+		this.lastRevision = SVNRevision.fromNumber(revisionNumber);
 	}
 	
-	public synchronized long getRevision() throws ClientWrapperException {
+	public synchronized long getRevision() throws SVNClientException {
 		if (this.lastRevision == null) {
-			this.lastRevision = Revision.INVALID_REVISION;
-			ISVNClientWrapper proxy = this.getRepositoryLocation().acquireSVNProxy();
+			this.lastRevision = SVNRevision.INVALID_REVISION;
+			ISVNClient proxy = this.getRepositoryLocation().acquireSVNProxy();
 			try {
 				this.getRevisionImpl(proxy);
 			}
@@ -102,11 +102,11 @@ public abstract class SVNRepositoryResource extends SVNRepositoryBase implements
 		return this.lastRevision.getNumber();
 	}
 	
-	public boolean exists() throws ClientWrapperException {
+	public boolean exists() throws SVNClientException {
 		try {
-			return this.getRevision() != Revision.INVALID_REVISION_NUMBER;
+			return this.getRevision() != SVNRevision.INVALID_REVISION_NUMBER;
 		}
-		catch (ClientWrapperException ex) {
+		catch (SVNClientException ex) {
 			//FIXME uncomment this when the WI is resolved ("Unknown node kind" exception instead of "Path not found" (PLC-1008)) 
 //			if (ex instanceof ClientExceptionEx) {
 //				if (((ClientExceptionEx)ex).getErrorMessage().getErrorCode().equals(SVNErrorCode.RA_DAV_PATH_NOT_FOUND)) {
@@ -114,7 +114,7 @@ public abstract class SVNRepositoryResource extends SVNRepositoryBase implements
 //				}
 //			}
 //			throw ex;
-			if (ex instanceof ClientWrapperCancelException) {
+			if (ex instanceof SVNClientCancelException) {
 				throw ex;
 			}
 			return false;
@@ -177,6 +177,6 @@ public abstract class SVNRepositoryResource extends SVNRepositoryBase implements
 		return retVal;
 	}
 	
-	protected abstract void getRevisionImpl(ISVNClientWrapper proxy) throws ClientWrapperException;
+	protected abstract void getRevisionImpl(ISVNClient proxy) throws SVNClientException;
 	
 }

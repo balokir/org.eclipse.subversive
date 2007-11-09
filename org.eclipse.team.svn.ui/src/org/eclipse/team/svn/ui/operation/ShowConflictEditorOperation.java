@@ -18,9 +18,9 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.Depth;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.Status;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNEntryStatus;
+import org.eclipse.team.svn.core.client.ISVNClient.Depth;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
 import org.eclipse.team.svn.core.operation.local.AbstractWorkingCopyOperation;
@@ -65,10 +65,10 @@ public class ShowConflictEditorOperation extends AbstractWorkingCopyOperation {
 		IRemoteStorage storage = SVNRemoteStorage.instance();
 		
 		IRepositoryLocation location = storage.getRepositoryLocation(resource);
-		ISVNClientWrapper proxy = location.acquireSVNProxy();
+		ISVNClient proxy = location.acquireSVNProxy();
 		
 		try {
-			Status []status = SVNUtility.status(proxy, FileUtility.getWorkingCopyPath(resource), Depth.IMMEDIATES, false, false, false, false, new SVNNullProgressMonitor());
+			SVNEntryStatus []status = SVNUtility.status(proxy, FileUtility.getWorkingCopyPath(resource), Depth.IMMEDIATES, false, false, false, false, new SVNNullProgressMonitor());
 			if (status.length == 1) {
 				IContainer parent = resource.getParent();
 				this.openEditor((IFile)resource, status[0].conflictWorking == null || status[0].conflictWorking.length() == 0 ? resource : (IFile)parent.findMember(status[0].conflictWorking), (IFile)parent.findMember(status[0].conflictNew), (IFile)parent.findMember(status[0].conflictOld));

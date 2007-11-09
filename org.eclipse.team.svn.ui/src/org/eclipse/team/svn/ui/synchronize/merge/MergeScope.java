@@ -14,10 +14,10 @@ package org.eclipse.team.svn.ui.synchronize.merge;
 import java.text.MessageFormat;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.team.ui.synchronize.AbstractSynchronizeScope;
-import org.eclipse.ui.IMemento;
 import org.eclipse.team.svn.core.operation.local.MergeSet;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.ui.synchronize.AbstractSynchronizeScope;
+import org.eclipse.ui.IMemento;
 
 /**
  * Merge resources scope. Non-persistent.

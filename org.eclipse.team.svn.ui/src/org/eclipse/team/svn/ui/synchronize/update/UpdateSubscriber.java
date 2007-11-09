@@ -17,10 +17,10 @@ import java.util.Map;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.svn.core.client.NodeKind;
-import org.eclipse.team.svn.core.client.Revision;
-import org.eclipse.team.svn.core.client.Status;
-import org.eclipse.team.svn.core.client.Status.Kind;
+import org.eclipse.team.svn.core.client.SVNEntryStatus;
+import org.eclipse.team.svn.core.client.SVNRevision;
+import org.eclipse.team.svn.core.client.SVNEntry.NodeKind;
+import org.eclipse.team.svn.core.client.SVNEntryStatus.Kind;
 import org.eclipse.team.svn.core.operation.local.IRemoteStatusOperation;
 import org.eclipse.team.svn.core.operation.local.RemoteStatusOperation;
 import org.eclipse.team.svn.core.resource.IChangeStateProvider;
@@ -59,21 +59,21 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
         return new UpdateSyncInfo(localStatus, remoteStatus, this.getResourceComparator());
     }
 
-	protected IResourceChange handleResourceChange(IRemoteStorage storage, IRemoteStatusOperation rStatusOp, final Status current) {
+	protected IResourceChange handleResourceChange(IRemoteStorage storage, IRemoteStatusOperation rStatusOp, final SVNEntryStatus current) {
 		if (current.textStatus == Kind.EXTERNAL) {
 			return null;
 		}
 		final IResource []scope = rStatusOp.getScope();
 		IChangeStateProvider provider = new IChangeStateProvider() {
 			public long getChangeDate() {
-				return current.reposLastCmtRevision == Revision.INVALID_REVISION_NUMBER ? current.lastChangedDate : current.reposLastCmtDate;
+				return current.reposLastCmtRevision == SVNRevision.INVALID_REVISION_NUMBER ? current.lastChangedDate : current.reposLastCmtDate;
 			}
 			public String getChangeAuthor() {
-				return current.reposLastCmtRevision == Revision.INVALID_REVISION_NUMBER ? current.lastCommitAuthor : current.reposLastCmtAuthor;
+				return current.reposLastCmtRevision == SVNRevision.INVALID_REVISION_NUMBER ? current.lastCommitAuthor : current.reposLastCmtAuthor;
 			}
-			public Revision.Number getChangeRevision() {
-				long changeRev = current.reposLastCmtRevision == Revision.INVALID_REVISION_NUMBER ? current.lastChangedRevision : current.reposLastCmtRevision;
-				return changeRev == Revision.INVALID_REVISION_NUMBER ? null : (Revision.Number)Revision.fromNumber(changeRev);
+			public SVNRevision.Number getChangeRevision() {
+				long changeRev = current.reposLastCmtRevision == SVNRevision.INVALID_REVISION_NUMBER ? current.lastChangedRevision : current.reposLastCmtRevision;
+				return changeRev == SVNRevision.INVALID_REVISION_NUMBER ? null : (SVNRevision.Number)SVNRevision.fromNumber(changeRev);
 			}
 			public int getTextChangeType() {
 				return current.repositoryTextStatus;
@@ -105,19 +105,19 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 			return null;
 		}
 		IResourceChange resourceChange = storage.asResourceChange(provider);
-		if (resourceChange == null || resourceChange.getRevision() == Revision.INVALID_REVISION_NUMBER) {
+		if (resourceChange == null || resourceChange.getRevision() == SVNRevision.INVALID_REVISION_NUMBER) {
 			return null;
 		}
 		rStatusOp.setPegRevision(resourceChange);
 		IRepositoryResource originator = storage.asRepositoryResource(resourceChange.getResource());
 		if (originator != null) {
-			originator.setSelectedRevision(Revision.fromNumber(resourceChange.getRevision()));
+			originator.setSelectedRevision(SVNRevision.fromNumber(resourceChange.getRevision()));
 			originator.setPegRevision(resourceChange.getPegRevision());
 			resourceChange.setOriginator(originator);
 		}
 		
 		resourceChange.setCommentProvider(new CommentProvider() {
-			public String getComment(IResource resource, Revision rev, Revision peg) {
+			public String getComment(IResource resource, SVNRevision rev, SVNRevision peg) {
 				String comment = (String)UpdateSubscriber.this.comments.get(rev);
 				if (comment == null) {
 					UpdateSubscriber.this.comments.put(rev, comment = super.getComment(resource, rev, peg));

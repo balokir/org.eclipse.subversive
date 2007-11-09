@@ -39,27 +39,26 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.ClientWrapperException;
-import org.eclipse.team.svn.core.client.Depth;
-import org.eclipse.team.svn.core.client.EntryInfo;
-import org.eclipse.team.svn.core.client.EntryReference;
-import org.eclipse.team.svn.core.client.EntryRevisionReference;
-import org.eclipse.team.svn.core.client.IEntryInfoCallback;
-import org.eclipse.team.svn.core.client.ILogEntriesCallback;
-import org.eclipse.team.svn.core.client.INotificationCallback;
-import org.eclipse.team.svn.core.client.IPropertyDataCallback;
-import org.eclipse.team.svn.core.client.IRepositoryEntryCallback;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNEntryCallback;
+import org.eclipse.team.svn.core.client.ISVNEntryInfoCallback;
+import org.eclipse.team.svn.core.client.ISVNEntryStatusCallback;
+import org.eclipse.team.svn.core.client.ISVNLogEntriesCallback;
+import org.eclipse.team.svn.core.client.ISVNNotificationCallback;
 import org.eclipse.team.svn.core.client.ISVNProgressMonitor;
-import org.eclipse.team.svn.core.client.IStatusCallback;
-import org.eclipse.team.svn.core.client.LogEntry;
-import org.eclipse.team.svn.core.client.NodeKind;
-import org.eclipse.team.svn.core.client.PropertyData;
-import org.eclipse.team.svn.core.client.RepositoryEntry;
-import org.eclipse.team.svn.core.client.Revision;
-import org.eclipse.team.svn.core.client.RevisionRange;
-import org.eclipse.team.svn.core.client.Status;
-import org.eclipse.team.svn.core.client.RepositoryEntry.Fields;
+import org.eclipse.team.svn.core.client.ISVNPropertyCallback;
+import org.eclipse.team.svn.core.client.SVNClientException;
+import org.eclipse.team.svn.core.client.SVNEntry;
+import org.eclipse.team.svn.core.client.SVNEntryInfo;
+import org.eclipse.team.svn.core.client.SVNEntryReference;
+import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
+import org.eclipse.team.svn.core.client.SVNEntryStatus;
+import org.eclipse.team.svn.core.client.SVNLogEntry;
+import org.eclipse.team.svn.core.client.SVNProperty;
+import org.eclipse.team.svn.core.client.SVNRevision;
+import org.eclipse.team.svn.core.client.SVNRevisionRange;
+import org.eclipse.team.svn.core.client.ISVNClient.Depth;
+import org.eclipse.team.svn.core.client.SVNEntry.NodeKind;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.options.IIgnoreRecommendations;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
@@ -110,7 +109,7 @@ public final class SVNUtility {
 				}
 			    url = SVNUtility.normalizeURL(url);
 				// see if we can find a matching repository location:
-				int revision = Revision.INVALID_REVISION_NUMBER;
+				int revision = SVNRevision.INVALID_REVISION_NUMBER;
 				try {
 					if (parts.length == 4) {
 						revision = Integer.parseInt(parts[2]);
@@ -122,107 +121,107 @@ public final class SVNUtility {
 				catch (Exception ex) {
 					throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]);
 				}
-				retVal.put(name, new EntryRevisionReference(url, null, revision != Revision.INVALID_REVISION_NUMBER ? Revision.fromNumber(revision) : null));
+				retVal.put(name, new SVNEntryRevisionReference(url, null, revision != SVNRevision.INVALID_REVISION_NUMBER ? SVNRevision.fromNumber(revision) : null));
 			}
 		}
 		return retVal;
 	}
 	
-	public static boolean useSingleReferenceSignature(EntryRevisionReference reference1, EntryRevisionReference reference2) {
+	public static boolean useSingleReferenceSignature(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2) {
 		int kind1 = reference1.revision.getKind();
 		int kind2 = reference2.revision.getKind();
-		if ((kind1 == Revision.Kind.BASE || kind1 == Revision.Kind.WORKING) && (kind2 == Revision.Kind.BASE || kind2 == Revision.Kind.WORKING)) {
+		if ((kind1 == SVNRevision.Kind.BASE || kind1 == SVNRevision.Kind.WORKING) && (kind2 == SVNRevision.Kind.BASE || kind2 == SVNRevision.Kind.WORKING)) {
 			return false;
 		}
 		return reference1.path.equals(reference2.path) && (reference1.pegRevision == reference2.pegRevision || (reference1.pegRevision != null && reference1.pegRevision.equals(reference2.pegRevision)));
 	}
 
-	public static EntryRevisionReference getEntryRevisionReference(IRepositoryResource resource) {
-		return new EntryRevisionReference(SVNUtility.encodeURL(resource.getUrl()), resource.getPegRevision(), resource.getSelectedRevision());
+	public static SVNEntryRevisionReference getEntryRevisionReference(IRepositoryResource resource) {
+		return new SVNEntryRevisionReference(SVNUtility.encodeURL(resource.getUrl()), resource.getPegRevision(), resource.getSelectedRevision());
 	}
 	
-	public static EntryReference getEntryReference(IRepositoryResource resource) {
-		return new EntryReference(SVNUtility.encodeURL(resource.getUrl()), resource.getPegRevision());
+	public static SVNEntryReference getEntryReference(IRepositoryResource resource) {
+		return new SVNEntryReference(SVNUtility.encodeURL(resource.getUrl()), resource.getPegRevision());
 	}
 	
-	public static PropertyData []properties(ISVNClientWrapper proxy, EntryRevisionReference reference, ISVNProgressMonitor monitor) throws ClientWrapperException {
-		final PropertyData[][] retVal = new PropertyData[1][];
-		proxy.properties(reference, Depth.EMPTY, new IPropertyDataCallback() {
-			public void nextEntry(String path, PropertyData[] data) {
+	public static SVNProperty []properties(ISVNClient proxy, SVNEntryRevisionReference reference, ISVNProgressMonitor monitor) throws SVNClientException {
+		final SVNProperty[][] retVal = new SVNProperty[1][];
+		proxy.properties(reference, Depth.EMPTY, new ISVNPropertyCallback() {
+			public void next(String path, SVNProperty[] data) {
 				retVal[0] = data;
 			}
 		}, monitor);
 		return retVal[0];
 	}
 	
-	public static Status []status(ISVNClientWrapper proxy, String path, int depth, boolean onServer, boolean getAll, boolean noIgnore, boolean ignoreExternals, ISVNProgressMonitor monitor) throws ClientWrapperException {
+	public static SVNEntryStatus []status(ISVNClient proxy, String path, int depth, boolean onServer, boolean getAll, boolean noIgnore, boolean ignoreExternals, ISVNProgressMonitor monitor) throws SVNClientException {
 		final ArrayList statuses = new ArrayList();
-		proxy.status(path, depth, onServer, getAll, noIgnore, ignoreExternals, new IStatusCallback() {
-			public void nextStatus(Status status) {
+		proxy.status(path, depth, onServer, getAll, noIgnore, ignoreExternals, new ISVNEntryStatusCallback() {
+			public void next(SVNEntryStatus status) {
 				statuses.add(status);
 			}
 		}, monitor);
-		return (Status [])statuses.toArray(new Status[statuses.size()]);
+		return (SVNEntryStatus [])statuses.toArray(new SVNEntryStatus[statuses.size()]);
 	}
 	
-	public static Status []diffStatus(ISVNClientWrapper proxy, EntryRevisionReference reference1, EntryRevisionReference reference2, int depth, boolean ignoreAncestry, ISVNProgressMonitor monitor) throws ClientWrapperException {
+	public static SVNEntryStatus []diffStatus(ISVNClient proxy, SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, int depth, boolean ignoreAncestry, ISVNProgressMonitor monitor) throws SVNClientException {
 		final ArrayList statuses = new ArrayList();
-		proxy.diffStatus(reference1, reference2, depth, ignoreAncestry, new IStatusCallback() {
-			public void nextStatus(Status status) {
+		proxy.diffStatus(reference1, reference2, depth, ignoreAncestry, new ISVNEntryStatusCallback() {
+			public void next(SVNEntryStatus status) {
 				statuses.add(status);
 			}
 		}, monitor);
-		return (Status [])statuses.toArray(new Status[statuses.size()]);
+		return (SVNEntryStatus [])statuses.toArray(new SVNEntryStatus[statuses.size()]);
 	}
 	
-	public static Status []diffStatus(ISVNClientWrapper proxy, EntryReference reference, Revision revision1, Revision revision2, int depth, boolean ignoreAncestry, ISVNProgressMonitor monitor) throws ClientWrapperException {
+	public static SVNEntryStatus []diffStatus(ISVNClient proxy, SVNEntryReference reference, SVNRevision revision1, SVNRevision revision2, int depth, boolean ignoreAncestry, ISVNProgressMonitor monitor) throws SVNClientException {
 		final ArrayList statuses = new ArrayList();
-		proxy.diffStatus(reference, revision1, revision2, depth, ignoreAncestry, new IStatusCallback() {
-			public void nextStatus(Status status) {
+		proxy.diffStatus(reference, revision1, revision2, depth, ignoreAncestry, new ISVNEntryStatusCallback() {
+			public void next(SVNEntryStatus status) {
 				statuses.add(status);
 			}
 		}, monitor);
-		return (Status [])statuses.toArray(new Status[statuses.size()]);
+		return (SVNEntryStatus [])statuses.toArray(new SVNEntryStatus[statuses.size()]);
 	}
 	
-	public static Status[] mergeStatus(ISVNClientWrapper proxy, EntryReference reference, RevisionRange []revisions, String path, int depth, boolean ignoreAncestry, ISVNProgressMonitor monitor) throws ClientWrapperException {
+	public static SVNEntryStatus[] mergeStatus(ISVNClient proxy, SVNEntryReference reference, SVNRevisionRange []revisions, String path, int depth, boolean ignoreAncestry, ISVNProgressMonitor monitor) throws SVNClientException {
 		final ArrayList statuses = new ArrayList();
-		proxy.mergeStatus(reference, revisions, path, depth, ignoreAncestry, new IStatusCallback() {
-			public void nextStatus(Status status) {
+		proxy.mergeStatus(reference, revisions, path, depth, ignoreAncestry, new ISVNEntryStatusCallback() {
+			public void next(SVNEntryStatus status) {
 				statuses.add(status);
 			}
 		}, monitor);
-		return (Status [])statuses.toArray(new Status[statuses.size()]);
+		return (SVNEntryStatus [])statuses.toArray(new SVNEntryStatus[statuses.size()]);
 	}
 	
-	public static RepositoryEntry []list(ISVNClientWrapper proxy, EntryRevisionReference reference, int depth, int direntFields, boolean fetchLocks, ISVNProgressMonitor monitor) throws ClientWrapperException {
+	public static SVNEntry []list(ISVNClient proxy, SVNEntryRevisionReference reference, int depth, int direntFields, boolean fetchLocks, ISVNProgressMonitor monitor) throws SVNClientException {
 		final ArrayList entries = new ArrayList();
-		proxy.list(reference, depth, direntFields, fetchLocks, new IRepositoryEntryCallback() {
-			public void nextEntry(RepositoryEntry entry) {
+		proxy.list(reference, depth, direntFields, fetchLocks, new ISVNEntryCallback() {
+			public void next(SVNEntry entry) {
 				entries.add(entry);
 			}
 		}, monitor);
-		return (RepositoryEntry [])entries.toArray(new RepositoryEntry[entries.size()]);
+		return (SVNEntry [])entries.toArray(new SVNEntry[entries.size()]);
 	}
 	
-	public static LogEntry []logEntries(ISVNClientWrapper proxy, EntryReference reference, Revision revisionStart, Revision revisionEnd, boolean stopOnCopy, boolean discoverPath, String[] revProps, long limit, ISVNProgressMonitor monitor) throws ClientWrapperException {
+	public static SVNLogEntry []logEntries(ISVNClient proxy, SVNEntryReference reference, SVNRevision revisionStart, SVNRevision revisionEnd, boolean stopOnCopy, boolean discoverPath, String[] revProps, long limit, ISVNProgressMonitor monitor) throws SVNClientException {
 		final ArrayList entries = new ArrayList();
-		proxy.logEntries(reference, revisionStart, revisionEnd, stopOnCopy, discoverPath, false, revProps, limit, new ILogEntriesCallback() {
-			public void nextEntry(LogEntry log, boolean hasChildren) {
+		proxy.logEntries(reference, revisionStart, revisionEnd, stopOnCopy, discoverPath, false, revProps, limit, new ISVNLogEntriesCallback() {
+			public void next(SVNLogEntry log, boolean hasChildren) {
 				entries.add(log);
 			}
 		}, monitor);
-		return (LogEntry [])entries.toArray(new LogEntry[entries.size()]);
+		return (SVNLogEntry [])entries.toArray(new SVNLogEntry[entries.size()]);
 	}
 	
-	public static EntryInfo []info(ISVNClientWrapper proxy, EntryRevisionReference reference, int depth, ISVNProgressMonitor monitor) throws ClientWrapperException {
+	public static SVNEntryInfo []info(ISVNClient proxy, SVNEntryRevisionReference reference, int depth, ISVNProgressMonitor monitor) throws SVNClientException {
 		final ArrayList infos = new ArrayList();
-		proxy.info(reference, depth, new IEntryInfoCallback() {
-			public void nextInfo(EntryInfo info) {
+		proxy.info(reference, depth, new ISVNEntryInfoCallback() {
+			public void next(SVNEntryInfo info) {
 				infos.add(info);
 			}
 		}, monitor);
-		return (EntryInfo [])infos.toArray(new EntryInfo[infos.size()]);
+		return (SVNEntryInfo [])infos.toArray(new SVNEntryInfo[infos.size()]);
 	}
 	
 	public static String getStatusText(String status) {
@@ -389,7 +388,7 @@ public final class SVNUtility {
 		return new String(Base64.decode(encoded.getBytes()));
 	}
 
-	public synchronized static void addSVNNotifyListener(ISVNClientWrapper proxy, INotificationCallback listener) {
+	public synchronized static void addSVNNotifyListener(ISVNClient proxy, ISVNNotificationCallback listener) {
 		Notify2Composite composite = (Notify2Composite)proxy.getNotificationCallback();
 		if (composite == null) {
 			proxy.setNotificationCallback(composite = new Notify2Composite());
@@ -397,18 +396,18 @@ public final class SVNUtility {
 		composite.add(listener);
 	}
 
-	public synchronized static void removeSVNNotifyListener(ISVNClientWrapper proxy, INotificationCallback listener) {
+	public synchronized static void removeSVNNotifyListener(ISVNClient proxy, ISVNNotificationCallback listener) {
 		Notify2Composite composite = (Notify2Composite)proxy.getNotificationCallback();
 		if (composite != null) {
 			composite.remove(listener);
 		}
 	}
 	
-	public static void reorder(Status []statuses, final boolean parent2Child) {
+	public static void reorder(SVNEntryStatus []statuses, final boolean parent2Child) {
 		FileUtility.sort(statuses, new Comparator() {
 			public int compare(Object o1, Object o2) {
-				String s1 = ((Status)o1).path;
-				String s2 = ((Status)o2).path;
+				String s1 = ((SVNEntryStatus)o1).path;
+				String s2 = ((SVNEntryStatus)o2).path;
 				return parent2Child ? s1.compareTo(s2) : s2.compareTo(s1);
 			}
 			
@@ -492,10 +491,10 @@ public final class SVNUtility {
 	}
 	
 	public static Exception validateRepositoryLocation(IRepositoryLocation location) {
-		ISVNClientWrapper proxy = location.acquireSVNProxy();
+		ISVNClient proxy = location.acquireSVNProxy();
 		try {
-			proxy.list(new EntryRevisionReference(SVNUtility.encodeURL(location.getUrl()), null, null), Depth.EMPTY, Fields.ALL, false, new IRepositoryEntryCallback() {
-				public void nextEntry(RepositoryEntry entry) {
+			proxy.list(new SVNEntryRevisionReference(SVNUtility.encodeURL(location.getUrl()), null, null), Depth.EMPTY, SVNEntry.Fields.ALL, false, new ISVNEntryCallback() {
+				public void next(SVNEntry entry) {
 				}
 			}, new SVNNullProgressMonitor());
 		} 
@@ -509,7 +508,7 @@ public final class SVNUtility {
 		return null;
 	}
 	
-	public static void configureProxy(ISVNClientWrapper proxy, IRepositoryLocation location) {
+	public static void configureProxy(ISVNClient proxy, IRepositoryLocation location) {
 		proxy.setUsername(location.getUsername());
 		proxy.setPassword(location.getPassword());
 		
@@ -541,15 +540,15 @@ public final class SVNUtility {
 	    }
 	}
 	
-	public static Status getSVNInfoForNotConnected(IResource root) {
+	public static SVNEntryStatus getSVNInfoForNotConnected(IResource root) {
 		IPath location = FileUtility.getResourcePath(root);
 		IPath checkedPath = root.getType() == IResource.FILE ? location.removeLastSegments(1) : location;
 		if (!checkedPath.append(SVNUtility.getSVNFolderName()).toFile().exists()) {
 			return null;
 		}
-		ISVNClientWrapper proxy = CoreExtensionsManager.instance().getSVNClientWrapperFactory().newInstance();
+		ISVNClient proxy = CoreExtensionsManager.instance().getSVNClientWrapperFactory().newInstance();
 		try {
-			Status []st = SVNUtility.status(proxy, location.toString(), Depth.IMMEDIATES, false, true, false, false, new SVNNullProgressMonitor());
+			SVNEntryStatus []st = SVNUtility.status(proxy, location.toString(), Depth.IMMEDIATES, false, true, false, false, new SVNNullProgressMonitor());
 			if (st != null && st.length > 0) {
 				SVNUtility.reorder(st, true);
 				return st[0].url == null ? null : st[0];
@@ -568,9 +567,9 @@ public final class SVNUtility {
 	
 	public static String getPropertyForNotConnected(IResource root, String propertyName) {
 		String location = FileUtility.getWorkingCopyPath(root);
-		ISVNClientWrapper proxy = CoreExtensionsManager.instance().getSVNClientWrapperFactory().newInstance();
+		ISVNClient proxy = CoreExtensionsManager.instance().getSVNClientWrapperFactory().newInstance();
 		try {
-			PropertyData data = proxy.propertyGet(new EntryRevisionReference(location, null, Revision.WORKING), propertyName, new SVNNullProgressMonitor());
+			SVNProperty data = proxy.propertyGet(new SVNEntryRevisionReference(location, null, SVNRevision.WORKING), propertyName, new SVNNullProgressMonitor());
 			return data == null ? null : (data.value != null ? data.value : new String(data.data));
 		}
 		catch (Exception ex) {
@@ -620,7 +619,7 @@ public final class SVNUtility {
 	public static Map splitWorkingCopies(File []files) {
 		Map wc2Resources = new HashMap();
 		
-		ISVNClientWrapper proxy = CoreExtensionsManager.instance().getSVNClientWrapperFactory().newInstance();
+		ISVNClient proxy = CoreExtensionsManager.instance().getSVNClientWrapperFactory().newInstance();
 		try {
 			Map file2info = new HashMap();
 			for (int i = 0; i < files.length; i++) {
@@ -630,7 +629,7 @@ public final class SVNUtility {
 			ArrayList restOfFiles = new ArrayList(Arrays.asList(files));
 			while (restOfFiles.size() > 0) {
 				File current = (File)restOfFiles.get(0);
-				EntryInfo info = (EntryInfo)file2info.get(current);
+				SVNEntryInfo info = (SVNEntryInfo)file2info.get(current);
 				Object []wcRoot = SVNUtility.getWCRoot(proxy, current, info);
 				
 				List wcResources = (List)wc2Resources.get(wcRoot[0]);
@@ -639,11 +638,11 @@ public final class SVNUtility {
 				}
 				
 				Path rootPath = new Path(((File)wcRoot[0]).getAbsolutePath());
-				Path rootInfoPath = new Path(((EntryInfo)wcRoot[1]).url);
+				Path rootInfoPath = new Path(((SVNEntryInfo)wcRoot[1]).url);
 				for (Iterator it = restOfFiles.iterator(); it.hasNext(); ) {
 					File checked = (File)it.next();
 					if (rootPath.isPrefixOf(new Path(checked.getAbsolutePath()))) {
-						EntryInfo checkedInfo = (EntryInfo)file2info.get(checked);
+						SVNEntryInfo checkedInfo = (SVNEntryInfo)file2info.get(checked);
 						if (rootInfoPath.isPrefixOf(new Path(checkedInfo.url))) {
 							wcResources.add(checked);
 							it.remove();
@@ -659,13 +658,13 @@ public final class SVNUtility {
 		return wc2Resources;
 	}
 	
-	private static Object []getWCRoot(ISVNClientWrapper proxy, File node, EntryInfo info) {
+	private static Object []getWCRoot(ISVNClient proxy, File node, SVNEntryInfo info) {
 		File oldRoot = node;
-		EntryInfo oldInfo = info;
+		SVNEntryInfo oldInfo = info;
 		
 		node = node.getParentFile();
 		while (node != null) {
-			EntryInfo rootInfo = SVNUtility.getSVNInfo(node, proxy);
+			SVNEntryInfo rootInfo = SVNUtility.getSVNInfo(node, proxy);
 			if (rootInfo != null) {
 				if (oldInfo == null) {
 					oldInfo = rootInfo;
@@ -688,8 +687,8 @@ public final class SVNUtility {
 		return new Object[] {oldRoot, oldInfo};
 	}
 	
-	public static EntryInfo getSVNInfo(File root) {
-		ISVNClientWrapper proxy = CoreExtensionsManager.instance().getSVNClientWrapperFactory().newInstance();
+	public static SVNEntryInfo getSVNInfo(File root) {
+		ISVNClient proxy = CoreExtensionsManager.instance().getSVNClientWrapperFactory().newInstance();
 		try {
 			return SVNUtility.getSVNInfo(root, proxy);
 		}
@@ -698,13 +697,13 @@ public final class SVNUtility {
 		}
 	}
 	
-	public static EntryInfo getSVNInfo(File root, ISVNClientWrapper proxy) {
+	public static SVNEntryInfo getSVNInfo(File root, ISVNClient proxy) {
 		if (root.exists()) {
 			File svnMeta = root.isDirectory() ? root : root.getParentFile();
 			svnMeta = new File(svnMeta.getAbsolutePath() + "/" + SVNUtility.getSVNFolderName());
 			if (svnMeta.exists()) {
 				try {
-					EntryInfo []st = SVNUtility.info(proxy, new EntryRevisionReference(root.getAbsolutePath(), null, Revision.BASE), Depth.EMPTY, new SVNNullProgressMonitor());
+					SVNEntryInfo []st = SVNUtility.info(proxy, new SVNEntryRevisionReference(root.getAbsolutePath(), null, SVNRevision.BASE), Depth.EMPTY, new SVNNullProgressMonitor());
 					return st != null && st.length != 0 ? st[0] : null;
 				}
 				catch (Exception ex) {
@@ -815,9 +814,9 @@ public final class SVNUtility {
 		return retVal;
 	}
 	
-	public static EntryInfo getLocationInfo(IRepositoryLocation location) throws Exception {
-		ISVNClientWrapper proxy = location.acquireSVNProxy();
-		EntryInfo []infos = null;
+	public static SVNEntryInfo getLocationInfo(IRepositoryLocation location) throws Exception {
+		ISVNClient proxy = location.acquireSVNProxy();
+		SVNEntryInfo []infos = null;
 		try {
 		    infos = SVNUtility.info(proxy, SVNUtility.getEntryRevisionReference(location.getRoot()), Depth.EMPTY, new SVNNullProgressMonitor());
 		}

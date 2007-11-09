@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.tests.core.file.property;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.PropertyData;
+import org.eclipse.team.svn.core.client.SVNProperty;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.file.AbstractFileOperation;
 import org.eclipse.team.svn.core.operation.file.property.GetPropertiesOperation;
@@ -37,7 +37,7 @@ public class GetPropertyOpertionTest extends AbstractOperationTestCase {
 				GetPropertiesOperation getOp = new GetPropertiesOperation(GetPropertyOpertionTest.this.getFirstFolder());
 				getOp.run(monitor);
 				boolean containsTestProperty = false;
-				PropertyData []properties = getOp.getProperties();
+				SVNProperty []properties = getOp.getProperties();
 				for (int i = 0; i < properties.length; i++) {
 					if (properties[i].name.equals(SetPropertyOperationTest.TEST_PROPERTY_NAME) &&
 							properties[i].value.equals(SetPropertyOperationTest.TEST_PROPERTY_VALUE)) {

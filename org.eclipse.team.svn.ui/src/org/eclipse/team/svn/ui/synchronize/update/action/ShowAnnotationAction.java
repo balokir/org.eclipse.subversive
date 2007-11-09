@@ -15,9 +15,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.ILocalFile;
@@ -32,6 +31,7 @@ import org.eclipse.team.svn.ui.synchronize.action.ISyncStateFilter;
 import org.eclipse.team.svn.ui.synchronize.update.UpdateSyncInfo;
 import org.eclipse.team.svn.ui.synchronize.variant.ResourceVariant;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
  * Show annotation action implementation
@@ -72,7 +72,7 @@ public class ShowAnnotationAction extends AbstractSynchronizeModelAction {
 						IResourceChange change = ((IResourceChange)((ResourceVariant)operation.getSVNSyncInfo().getRemote()).getResource());
 						IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(resource);
 						remote.setPegRevision(change.getPegRevision());
-						remote.setSelectedRevision(Revision.fromNumber(change.getRevision()));
+						remote.setSelectedRevision(SVNRevision.fromNumber(change.getRevision()));
 						UIMonitorUtility.doTaskBusyDefault(new RemoteShowAnnotationOperation(remote, operation.getPart().getSite().getPage()));
 					}
 				});

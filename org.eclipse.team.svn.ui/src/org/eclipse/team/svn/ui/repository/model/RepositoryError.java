@@ -13,9 +13,9 @@ package org.eclipse.team.svn.ui.repository.model;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 
 /**
  * Unaccessible node representation 

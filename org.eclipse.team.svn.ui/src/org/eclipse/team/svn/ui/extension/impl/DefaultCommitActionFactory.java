@@ -14,14 +14,14 @@ package org.eclipse.team.svn.ui.extension.impl;
 import java.util.Collection;
 
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IRevisionProvider;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.extension.factory.ICommentDialogPanel;
-import org.eclipse.team.svn.ui.extension.factory.ICommitDialog;
 import org.eclipse.team.svn.ui.extension.factory.ICommitActionFactory;
+import org.eclipse.team.svn.ui.extension.factory.ICommitDialog;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Default team commit components factory

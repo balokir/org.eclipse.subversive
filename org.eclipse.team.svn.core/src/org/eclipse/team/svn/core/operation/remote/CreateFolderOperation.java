@@ -18,9 +18,9 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.INotificationCallback;
-import org.eclipse.team.svn.core.client.Notification;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNNotificationCallback;
+import org.eclipse.team.svn.core.client.SVNNotification;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IRevisionProvider;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -65,8 +65,8 @@ public class CreateFolderOperation extends AbstractRepositoryOperation implement
 		final String []childUrls = SVNUtility.asURLArray(toBeCreated, true);
 		FileUtility.sort(childUrls);
 		
-		INotificationCallback notify = new INotificationCallback() {
-			public void notify(Notification info) {
+		ISVNNotificationCallback notify = new ISVNNotificationCallback() {
+			public void notify(SVNNotification info) {
 				String [] path = childUrls;
 				CreateFolderOperation.this.revisionPair[0] = new RevisionPair(info.revision, path, location);
 				String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision");
@@ -84,7 +84,7 @@ public class CreateFolderOperation extends AbstractRepositoryOperation implement
 			}
 		});
 		
-		ISVNClientWrapper proxy = location.acquireSVNProxy();
+		ISVNClient proxy = location.acquireSVNProxy();
 		try {
 			SVNUtility.addSVNNotifyListener(proxy, notify);
 			proxy.mkdir(childUrls, this.comment, false, new SVNProgressMonitor(this, monitor, null));

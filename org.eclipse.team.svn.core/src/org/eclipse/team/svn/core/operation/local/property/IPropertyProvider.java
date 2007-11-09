@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.core.operation.local.property;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.team.svn.core.client.PropertyData;
+import org.eclipse.team.svn.core.client.SVNProperty;
 
 /**
  * Property provider interface
@@ -20,5 +20,5 @@ import org.eclipse.team.svn.core.client.PropertyData;
  * @author Alexander Gurov
  */
 public interface IPropertyProvider {
-	public PropertyData []getProperties(IResource resource);
+	public SVNProperty []getProperties(IResource resource);
 }

@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.core.resource;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNRevision;
 
 /**
  * Deffered in time comment acquisition: SVN does not provide comment while synchronizing with repository
@@ -20,5 +20,5 @@ import org.eclipse.team.svn.core.client.Revision;
  * @author Alexander Gurov
  */
 public interface ICommentProvider {
-	public String getComment(IResource resource, Revision rev, Revision peg);
+	public String getComment(IResource resource, SVNRevision rev, SVNRevision peg);
 }

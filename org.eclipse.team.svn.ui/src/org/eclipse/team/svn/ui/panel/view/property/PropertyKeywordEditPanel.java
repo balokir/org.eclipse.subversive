@@ -42,8 +42,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.client.PropertyData;
-import org.eclipse.team.svn.core.client.PropertyData.BuiltIn;
+import org.eclipse.team.svn.core.client.SVNProperty;
+import org.eclipse.team.svn.core.client.SVNProperty.BuiltIn;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.property.IPropertyProvider;
@@ -315,14 +315,14 @@ public class PropertyKeywordEditPanel extends AbstractDialogPanel {
 		};
 		
 		IPropertyProvider propertyProvider = new IPropertyProvider() {
-			public PropertyData []getProperties(IResource resource) {
-				PropertyData []retVal = PropertyKeywordEditPanel.this.properties == null ? null : PropertyKeywordEditPanel.this.properties.getProperties(resource);
+			public SVNProperty []getProperties(IResource resource) {
+				SVNProperty []retVal = PropertyKeywordEditPanel.this.properties == null ? null : PropertyKeywordEditPanel.this.properties.getProperties(resource);
 				if (retVal == null) {
-					retVal = new PropertyData[1];
+					retVal = new SVNProperty[1];
 				}
 				SVNKeywordProperty keyProperty = new SVNKeywordProperty(retVal[0] == null ? null : retVal[0].value);
 				PropertyKeywordEditPanel.this.configureProperty(keyProperty);
-				retVal[0] = new PropertyData(BuiltIn.KEYWORDS, keyProperty.toString(), null);
+				retVal[0] = new SVNProperty(BuiltIn.KEYWORDS, keyProperty.toString(), null);
 				return retVal;
 			}
 		};
@@ -366,7 +366,7 @@ public class PropertyKeywordEditPanel extends AbstractDialogPanel {
 
 		List alreadyWithPropertiesList = Arrays.asList(this.alreadyWithProperties);
 		for (int i = 0; i < this.selectedResources.length; i++) {
-			PropertyData[] data;
+			SVNProperty[] data;
 			SVNKeywordProperty keywordPropertyValue = new SVNKeywordProperty(null);
 			if (alreadyWithPropertiesList.contains(this.selectedResources[i]) &&
 				this.properties != null &&

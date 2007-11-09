@@ -18,7 +18,7 @@ import org.eclipse.team.core.history.IFileHistory;
 import org.eclipse.team.core.history.IFileHistoryProvider;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.history.provider.FileHistoryProvider;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.GetLogMessagesOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -38,14 +38,14 @@ public class SVNFileHistoryProvider extends FileHistoryProvider {
 		GetLogMessagesOperation logOp = new GetLogMessagesOperation(remote);
 		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
 		if ((flags & IFileHistoryProvider.SINGLE_REVISION) != 0) {
-			if (local.getRevision() != Revision.INVALID_REVISION_NUMBER) {
-				remote.setSelectedRevision(Revision.fromNumber(local.getRevision()));
+			if (local.getRevision() != SVNRevision.INVALID_REVISION_NUMBER) {
+				remote.setSelectedRevision(SVNRevision.fromNumber(local.getRevision()));
 			}
 			logOp.setLimit(1);
 		}
 		else if ((flags & IFileHistoryProvider.SINGLE_LINE_OF_DESCENT) != 0) {
-			if (local.getRevision() != Revision.INVALID_REVISION_NUMBER) {
-				remote.setSelectedRevision(Revision.fromNumber(local.getRevision()));
+			if (local.getRevision() != SVNRevision.INVALID_REVISION_NUMBER) {
+				remote.setSelectedRevision(SVNRevision.fromNumber(local.getRevision()));
 			}
 			logOp.setLimit(2);
 		}
@@ -58,7 +58,7 @@ public class SVNFileHistoryProvider extends FileHistoryProvider {
 	
 	public IFileRevision getWorkspaceFileRevision(IResource resource) {
 		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-		return new SVNLocalResourceRevision(local, Revision.WORKING);
+		return new SVNLocalResourceRevision(local, SVNRevision.WORKING);
 	}
 	
 	public IFileHistory getFileHistoryFor(IFileStore store, int flags, IProgressMonitor monitor) {

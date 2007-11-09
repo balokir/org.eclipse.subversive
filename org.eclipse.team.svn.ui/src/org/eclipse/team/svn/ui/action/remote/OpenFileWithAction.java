@@ -13,13 +13,13 @@ package org.eclipse.team.svn.ui.action.remote;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IEditorDescriptor;
-import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.action.AbstractRepositoryTeamAction;
 import org.eclipse.team.svn.ui.operation.OpenRemoteFileOperation;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFile;
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.editors.text.EditorsUI;
 
 /**
  * The action will open the selected file with the system external editor if available

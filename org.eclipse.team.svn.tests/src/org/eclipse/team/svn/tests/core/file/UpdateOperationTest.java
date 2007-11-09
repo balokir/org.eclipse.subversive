@@ -11,7 +11,7 @@
 
 package org.eclipse.team.svn.tests.core.file;
 
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.file.UpdateOperation;
 
@@ -23,7 +23,7 @@ import org.eclipse.team.svn.core.operation.file.UpdateOperation;
 public class UpdateOperationTest extends AbstractOperationTestCase {
 
 	protected IActionOperation getOperation() {
-		return new UpdateOperation(this.getBothFolders(), Revision.HEAD, false);
+		return new UpdateOperation(this.getBothFolders(), SVNRevision.HEAD, false);
 	}
 
 }

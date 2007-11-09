@@ -31,13 +31,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.wizard.AbstractVerifiedWizardPage;
 import org.eclipse.team.svn.ui.wizard.CheckoutAsWizard;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Checkout method selection page if several repository resources were selected

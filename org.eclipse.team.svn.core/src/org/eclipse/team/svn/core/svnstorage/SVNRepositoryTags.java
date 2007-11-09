@@ -11,7 +11,7 @@
 
 package org.eclipse.team.svn.core.svnstorage;
 
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 
@@ -23,7 +23,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 public class SVNRepositoryTags extends SVNRepositoryRootBase {
 	private static final long serialVersionUID = -2663073044380241572L;
 
-	public SVNRepositoryTags(IRepositoryLocation location, String url, Revision selectedRevision) {
+	public SVNRepositoryTags(IRepositoryLocation location, String url, SVNRevision selectedRevision) {
 		super(location, url, selectedRevision);
 	}
 

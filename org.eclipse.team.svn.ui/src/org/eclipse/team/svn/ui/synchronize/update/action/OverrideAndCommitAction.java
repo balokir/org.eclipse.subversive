@@ -20,7 +20,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
@@ -42,6 +41,7 @@ import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction
 import org.eclipse.team.svn.ui.synchronize.action.ISyncStateFilter;
 import org.eclipse.team.svn.ui.synchronize.update.UpdateSyncInfo;
 import org.eclipse.team.svn.ui.utility.UnacceptableOperationNotificator;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
  * Override and commit conflicting files action

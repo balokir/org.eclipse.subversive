@@ -30,6 +30,12 @@ import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
 import org.eclipse.team.internal.ui.synchronize.IChangeSetProvider;
 import org.eclipse.team.internal.ui.synchronize.ScopableSubscriberParticipant;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
+import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.client.SVNRevision;
+import org.eclipse.team.svn.core.resource.ILocalResource;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.synchronize.variant.ResourceVariant;
+import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizePage;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -37,12 +43,6 @@ import org.eclipse.team.ui.synchronize.ISynchronizeParticipantDescriptor;
 import org.eclipse.team.ui.synchronize.ISynchronizeScope;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.client.Revision;
-import org.eclipse.team.svn.core.resource.ILocalResource;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.synchronize.variant.ResourceVariant;
-import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
 
 /**
  * Abstract SVN participant. Can be merge and synchronize participant.
@@ -230,7 +230,7 @@ public abstract class AbstractSVNParticipant extends ScopableSubscriberParticipa
 				ResourceVariant variant = (ResourceVariant)info.getRemote();
 				if (variant != null) {
 				    ILocalResource remote = variant.getResource();
-				    if (remote.getRevision() != Revision.INVALID_REVISION_NUMBER) {
+				    if (remote.getRevision() != SVNRevision.INVALID_REVISION_NUMBER) {
 						return text + " " + variant.getContentIdentifier();
 				    }
 				}

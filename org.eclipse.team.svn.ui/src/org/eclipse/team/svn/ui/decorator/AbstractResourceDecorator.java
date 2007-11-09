@@ -29,10 +29,6 @@ import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.ui.ISharedImages;
-import org.eclipse.team.ui.TeamImages;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.themes.ITheme;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -49,6 +45,10 @@ import org.eclipse.team.svn.ui.decorator.wrapper.ResourceDecoratorWrapper;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
+import org.eclipse.team.ui.ISharedImages;
+import org.eclipse.team.ui.TeamImages;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.themes.ITheme;
 
 /**
  * Abstract workspace resources decorator

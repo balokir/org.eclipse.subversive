@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.history.provider.FileRevision;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractGetFileContentOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.GetLocalFileContentOperation;
@@ -39,9 +39,9 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 public class SVNLocalResourceRevision extends FileRevision {
 	protected ILocalResource local;
 	protected boolean onServer;
-	protected Revision rev;
+	protected SVNRevision rev;
 
-	public SVNLocalResourceRevision(ILocalResource local, Revision rev) {
+	public SVNLocalResourceRevision(ILocalResource local, SVNRevision rev) {
 		this.local = local;
 		this.onServer = IStateFilter.SF_ONREPOSITORY.accept(this.local.getResource(), this.local.getStatus(), this.local.getChangeMask());
 	}
@@ -94,7 +94,7 @@ public class SVNLocalResourceRevision extends FileRevision {
 			return this;
 		}
 		IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(this.local.getResource());
-		remote.setSelectedRevision(Revision.fromNumber(this.local.getRevision()));
+		remote.setSelectedRevision(SVNRevision.fromNumber(this.local.getRevision()));
 		GetLogMessagesOperation log = new GetLogMessagesOperation(remote);
 		log.setLimit(1);
 		ProgressMonitorUtility.doTaskExternal(log, monitor);

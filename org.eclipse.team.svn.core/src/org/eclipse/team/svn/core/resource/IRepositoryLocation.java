@@ -13,7 +13,7 @@ package org.eclipse.team.svn.core.resource;
 
 import java.util.Collection;
 
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
+import org.eclipse.team.svn.core.client.ISVNClient;
 
 
 /**
@@ -62,8 +62,8 @@ public interface IRepositoryLocation extends IRepositoryBase, IRepositoryResourc
 	public boolean isPasswordSaved();
 	public void setPasswordSaved(boolean saved);
 	
-	public ISVNClientWrapper acquireSVNProxy();
-	public void releaseSVNProxy(ISVNClientWrapper proxy);
+	public ISVNClient acquireSVNProxy();
+	public void releaseSVNProxy(ISVNClient proxy);
 	public void reconfigure();
 	public void dispose();
 	

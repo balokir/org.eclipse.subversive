@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.core.svnstorage;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.resource.ICommentProvider;
 import org.eclipse.team.svn.core.resource.IFolderChange;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -24,22 +24,22 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
  * @author Alexander Gurov
  */
 public class SVNFolderChange extends SVNLocalFolder implements IFolderChange {
-    protected Revision pegRevision;
+    protected SVNRevision pegRevision;
 	protected IRepositoryResource originator;
 	protected String comment;
 	protected ICommentProvider provider;
 
-	public SVNFolderChange(IResource resource, long revision, String status, int changeMask, String author, long lastCommitDate, Revision pegRevision, String comment) {
+	public SVNFolderChange(IResource resource, long revision, String status, int changeMask, String author, long lastCommitDate, SVNRevision pegRevision, String comment) {
 		super(resource, revision, status, changeMask, author, lastCommitDate);
 		this.comment = comment;
 		this.pegRevision = pegRevision;
 	}
 	
-	public Revision getPegRevision() {
-		return this.pegRevision == null ? (this.revision != Revision.INVALID_REVISION_NUMBER ? Revision.fromNumber(this.revision) : Revision.INVALID_REVISION) : this.pegRevision;
+	public SVNRevision getPegRevision() {
+		return this.pegRevision == null ? (this.revision != SVNRevision.INVALID_REVISION_NUMBER ? SVNRevision.fromNumber(this.revision) : SVNRevision.INVALID_REVISION) : this.pegRevision;
 	}
 	
-	public void setPegRevision(Revision pegRevision) {
+	public void setPegRevision(SVNRevision pegRevision) {
 		this.pegRevision = pegRevision;
 	}
 
@@ -57,7 +57,7 @@ public class SVNFolderChange extends SVNLocalFolder implements IFolderChange {
 	public synchronized String getComment() {
 		if (this.comment == null && this.provider != null) {
 			long rev = this.getRevision();
-			this.comment = this.provider.getComment(this.getResource(), rev == Revision.INVALID_REVISION_NUMBER ? Revision.INVALID_REVISION : Revision.fromNumber(rev), this.getPegRevision());
+			this.comment = this.provider.getComment(this.getResource(), rev == SVNRevision.INVALID_REVISION_NUMBER ? SVNRevision.INVALID_REVISION : SVNRevision.fromNumber(rev), this.getPegRevision());
 			this.provider = null;
 		}
 		return this.comment;

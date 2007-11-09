@@ -16,7 +16,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNClientWrapperFactory;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -24,6 +23,7 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.synchronize.AbstractSVNParticipant;
 import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
  * Synchronize options action set

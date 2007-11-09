@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.internal.ide.misc.ContainerSelectionGroup;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.composite.SVNContainerSelectionGroup;
@@ -41,6 +40,7 @@ import org.eclipse.team.svn.ui.verifier.AbstractVerifierProxy;
 import org.eclipse.team.svn.ui.verifier.CompositeVerifier;
 import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
 import org.eclipse.team.svn.ui.verifier.ResourceNameVerifier;
+import org.eclipse.ui.internal.ide.misc.ContainerSelectionGroup;
 
 /**
  * Container selection panel implementation

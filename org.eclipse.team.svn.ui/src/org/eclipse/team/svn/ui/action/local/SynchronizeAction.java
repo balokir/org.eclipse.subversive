@@ -13,11 +13,11 @@ package org.eclipse.team.svn.ui.action.local;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.team.ui.synchronize.WorkingSetScope;
-import org.eclipse.ui.IWorkingSet;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.ui.action.AbstractWorkingCopyAction;
 import org.eclipse.team.svn.ui.operation.ShowUpdateViewOperation;
+import org.eclipse.team.ui.synchronize.WorkingSetScope;
+import org.eclipse.ui.IWorkingSet;
 
 /**
  * Synchronize workspace resources action

@@ -18,8 +18,8 @@ import java.text.MessageFormat;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.UnreportableException;
@@ -62,7 +62,7 @@ public class CopyOperation extends AbstractFileOperation {
 
 		IRepositoryResource remoteTo = SVNFileStorage.instance().asRepositoryResource(this.localTo, true);
 		IRepositoryLocation location = remoteTo == null ? null : remoteTo.getRepositoryLocation();
-		final ISVNClientWrapper proxy = location == null ? null : location.acquireSVNProxy();
+		final ISVNClient proxy = location == null ? null : location.acquireSVNProxy();
 		
 		for (int i = 0; i < files.length && !monitor.isCanceled(); i++) {
 			final File current = files[i];
@@ -74,7 +74,7 @@ public class CopyOperation extends AbstractFileOperation {
 						CopyOperation.this.nonSVNCopy(current, monitor);
 					}
 					else {
-						proxy.copy(current.getAbsolutePath(), checked.getAbsolutePath(), Revision.WORKING, new SVNProgressMonitor(CopyOperation.this, monitor, null));
+						proxy.copy(current.getAbsolutePath(), checked.getAbsolutePath(), SVNRevision.WORKING, new SVNProgressMonitor(CopyOperation.this, monitor, null));
 					}
 				}
 			}, monitor, files.length);

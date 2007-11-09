@@ -17,10 +17,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.Depth;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.Status;
-import org.eclipse.team.svn.core.client.IStatusCallback;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNEntryStatusCallback;
+import org.eclipse.team.svn.core.client.SVNEntryStatus;
+import org.eclipse.team.svn.core.client.ISVNClient.Depth;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -64,10 +64,10 @@ public class GetAllFilesOperation extends AbstractFileOperation implements IFile
 		IRepositoryResource remote = SVNFileStorage.instance().asRepositoryResource(file, true);
 		if (remote != null) {
 			IRepositoryLocation location = remote.getRepositoryLocation();
-			ISVNClientWrapper proxy = location.acquireSVNProxy();
+			ISVNClient proxy = location.acquireSVNProxy();
 			try {
-				proxy.status(file.getAbsolutePath(), Depth.IMMEDIATES, false, true, true, false, new IStatusCallback() {
-					public void nextStatus(Status status) {
+				proxy.status(file.getAbsolutePath(), Depth.IMMEDIATES, false, true, true, false, new ISVNEntryStatusCallback() {
+					public void next(SVNEntryStatus status) {
 						allFiles.add(new File(status.path));
 					}
 				}, new SVNProgressMonitor(this, monitor, null));

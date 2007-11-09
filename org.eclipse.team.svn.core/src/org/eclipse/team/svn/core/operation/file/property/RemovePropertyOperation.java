@@ -15,8 +15,8 @@ import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.team.svn.core.client.Depth;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNClient.Depth;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.file.AbstractFileOperation;
@@ -57,7 +57,7 @@ public class RemovePropertyOperation extends AbstractFileOperation {
 			final File current = files[i];
 			IRepositoryResource remote = SVNFileStorage.instance().asRepositoryResource(files[i], false);
 			IRepositoryLocation location = remote.getRepositoryLocation();
-			final ISVNClientWrapper proxy = location.acquireSVNProxy();
+			final ISVNClient proxy = location.acquireSVNProxy();
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
 					for (int i = 0; i < RemovePropertyOperation.this.names.length && !monitor.isCanceled(); i++) {

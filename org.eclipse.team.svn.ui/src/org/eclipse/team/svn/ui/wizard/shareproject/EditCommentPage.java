@@ -20,13 +20,13 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.team.svn.core.operation.local.management.ShareProjectOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.composite.CommentComposite;
 import org.eclipse.team.svn.ui.wizard.AbstractVerifiedWizardPage;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Page to edit commit comment

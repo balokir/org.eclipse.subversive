@@ -14,10 +14,10 @@ package org.eclipse.team.svn.ui.extension.factory;
 import java.util.Collection;
 
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IRevisionProvider;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Visual and operation components factory. Used to extend Subversive without direct dependencies.

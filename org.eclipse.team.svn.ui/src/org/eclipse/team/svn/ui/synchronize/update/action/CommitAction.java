@@ -16,7 +16,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -27,6 +26,7 @@ import org.eclipse.team.svn.ui.synchronize.SVNChangeSetCapability;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
 import org.eclipse.team.svn.ui.synchronize.update.UpdateSyncInfo;
 import org.eclipse.team.svn.ui.utility.CommitActionUtility;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
  * Synchronize view commit action implementation

@@ -56,13 +56,13 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.Depth;
-import org.eclipse.team.svn.core.client.EntryInfo;
-import org.eclipse.team.svn.core.client.EntryRevisionReference;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.LogEntry;
-import org.eclipse.team.svn.core.client.NodeKind;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNEntryInfo;
+import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
+import org.eclipse.team.svn.core.client.SVNLogEntry;
+import org.eclipse.team.svn.core.client.SVNRevision;
+import org.eclipse.team.svn.core.client.ISVNClient.Depth;
+import org.eclipse.team.svn.core.client.SVNEntry.NodeKind;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNClientWrapperFactory;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
@@ -338,8 +338,8 @@ public class AffectedPathsComposite extends Composite {
 			IRepositoryLocation location = this.repositoryResource.getRepositoryLocation();
 			this.returnResource = location.asRepositoryContainer(resourceUrl, false);
 			//FIXME check peg revision
-			this.returnResource.setSelectedRevision(Revision.fromNumber(this.currentRevision));
-			this.returnResource.setPegRevision(Revision.fromNumber(this.currentRevision));
+			this.returnResource.setSelectedRevision(SVNRevision.fromNumber(this.currentRevision));
+			this.returnResource.setPegRevision(SVNRevision.fromNumber(this.currentRevision));
 		}		
 		public ISchedulingRule getSchedulingRule() {
 			return null;
@@ -486,9 +486,9 @@ public class AffectedPathsComposite extends Composite {
 			if (this.remoteResource == null) {
 				return;
 			}
-			LogEntry []msgs = msgsOp.getMessages();
+			SVNLogEntry []msgs = msgsOp.getMessages();
 			if (msgs != null && msgs.length == 2) {
-				Revision previousRevNum = Revision.fromNumber(msgs[1].revision);
+				SVNRevision previousRevNum = SVNRevision.fromNumber(msgs[1].revision);
 				if (this.remoteResource instanceof IRepositoryContainer) {
 					this.right = this.remoteResource.getRepositoryLocation().asRepositoryContainer(this.remoteResource.getUrl(), false);
 				}
@@ -524,7 +524,7 @@ public class AffectedPathsComposite extends Composite {
 		
 		protected String url;
 		protected long revNum;
-		protected EntryInfo resourceInfo;
+		protected SVNEntryInfo resourceInfo;
 
 		public GetInfoOperation(String url, long revNum) {
 			super("Operation.GetResourceInfo");
@@ -533,10 +533,10 @@ public class AffectedPathsComposite extends Composite {
 		}
 
 		protected void runImpl(IProgressMonitor monitor) throws Exception {
-			ISVNClientWrapper proxy = AffectedPathsComposite.this.repositoryResource.getRepositoryLocation().acquireSVNProxy();
+			ISVNClient proxy = AffectedPathsComposite.this.repositoryResource.getRepositoryLocation().acquireSVNProxy();
 			try {
-				Revision rev = Revision.fromNumber(this.revNum);
-				EntryInfo []infos = SVNUtility.info(proxy, new EntryRevisionReference(SVNUtility.encodeURL(this.url), rev, rev), Depth.EMPTY, new SVNProgressMonitor(this, monitor, null));
+				SVNRevision rev = SVNRevision.fromNumber(this.revNum);
+				SVNEntryInfo []infos = SVNUtility.info(proxy, new SVNEntryRevisionReference(SVNUtility.encodeURL(this.url), rev, rev), Depth.EMPTY, new SVNProgressMonitor(this, monitor, null));
 				if (infos != null && infos.length > 0) {
 					this.resourceInfo = infos[0];
 				}
@@ -550,7 +550,7 @@ public class AffectedPathsComposite extends Composite {
 			return null;
 		}
 
-		public EntryInfo getResourceInfo() {
+		public SVNEntryInfo getResourceInfo() {
 			return this.resourceInfo;
 		}
 		
@@ -586,7 +586,7 @@ public class AffectedPathsComposite extends Composite {
 			UIMonitorUtility.doTaskBusyDefault(infoOp);
 			this.reportStatus(infoOp.getStatus());
 			if (infoOp.getStatus().isOK()) {
-				EntryInfo info = infoOp.getResourceInfo();
+				SVNEntryInfo info = infoOp.getResourceInfo();
 				
 				IRepositoryLocation location = (IRepositoryLocation)AffectedPathsComposite.this.repositoryResource.getRepositoryLocation();
 				
@@ -610,8 +610,8 @@ public class AffectedPathsComposite extends Composite {
 						this.repositoryResource = info.kind == NodeKind.FILE ?  
 								(IRepositoryResource)(location).asRepositoryFile(resourceUrl, false) : 
 								(location).asRepositoryContainer(resourceUrl, false);
-						this.repositoryResource.setSelectedRevision(Revision.fromNumber(revision));
-						this.repositoryResource.setPegRevision(Revision.fromNumber(revision));
+						this.repositoryResource.setSelectedRevision(SVNRevision.fromNumber(revision));
+						this.repositoryResource.setPegRevision(SVNRevision.fromNumber(revision));
 					}
 				}
 			}

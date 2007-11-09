@@ -16,14 +16,14 @@ import java.text.MessageFormat;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IPersistableElement;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IPersistableElement;
 
 /**
  * Properties editor input

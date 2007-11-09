@@ -28,10 +28,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.SVNTeamProvider;
-import org.eclipse.team.svn.core.client.EntryInfo;
+import org.eclipse.team.svn.core.client.SVNEntryInfo;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
@@ -52,6 +51,7 @@ import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.svn.ui.verifier.AbstractFormattedVerifier;
 import org.eclipse.team.svn.ui.wizard.AbstractVerifiedWizardPage;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Add repository location wizard page
@@ -167,7 +167,7 @@ public class AddRepositoryLocationPage extends AbstractVerifiedWizardPage {
 			}
 			if (connectedProjects.size() > 0) {
 				projectsArray = (IProject [])connectedProjects.toArray(new IProject[connectedProjects.size()]);
-				EntryInfo info = this.getLocationInfo(this.editable);
+				SVNEntryInfo info = this.getLocationInfo(this.editable);
 				this.oldUuid = info == null ? null : info.reposUUID;
 //				if (info == null) {
 //					panel = new ProjectListPanel(projectsArray, false);
@@ -215,7 +215,7 @@ public class AddRepositoryLocationPage extends AbstractVerifiedWizardPage {
 		if (connectedProjects.size() > 0) {
 			if (panel == null) {
 				this.editable.reconfigure();
-				EntryInfo newInfo = this.getLocationInfo(this.editable);
+				SVNEntryInfo newInfo = this.getLocationInfo(this.editable);
 				if (newInfo == null) {
 					panel = new ProjectListPanel(projectsArray, false);
 				}
@@ -296,7 +296,7 @@ public class AddRepositoryLocationPage extends AbstractVerifiedWizardPage {
 	    }		
 	}
 	
-	protected EntryInfo getLocationInfo(IRepositoryLocation location) {
+	protected SVNEntryInfo getLocationInfo(IRepositoryLocation location) {
 		try {
 			return SVNUtility.getLocationInfo(location);
 		}

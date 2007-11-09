@@ -20,12 +20,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 
 /**
  * UI Monitor Utility class

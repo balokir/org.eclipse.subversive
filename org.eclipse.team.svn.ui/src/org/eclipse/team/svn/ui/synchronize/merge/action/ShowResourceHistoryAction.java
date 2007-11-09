@@ -13,7 +13,6 @@ package org.eclipse.team.svn.ui.synchronize.merge.action;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
@@ -21,6 +20,7 @@ import org.eclipse.team.svn.ui.operation.ShowHistoryViewOperation;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
 import org.eclipse.team.svn.ui.synchronize.merge.MergeSyncInfo;
 import org.eclipse.team.svn.ui.synchronize.variant.RemoteResourceVariant;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
  * Show resource history action

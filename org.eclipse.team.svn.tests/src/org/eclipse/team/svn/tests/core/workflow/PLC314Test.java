@@ -15,10 +15,10 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.EntryRevisionReference;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.PropertyData;
-import org.eclipse.team.svn.core.client.PropertyData.BuiltIn;
+import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNProperty;
+import org.eclipse.team.svn.core.client.SVNProperty.BuiltIn;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.local.AddToSVNIgnoreOperation;
@@ -57,11 +57,11 @@ public class PLC314Test extends TestWorkflow {
                         IResource parent = current.getParent();
                 		String name = current.getName();
                 		IRepositoryLocation location = storage.getRepositoryLocation(parent);
-                		ISVNClientWrapper proxy = location.acquireSVNProxy();
+                		ISVNClient proxy = location.acquireSVNProxy();
 
-                		PropertyData data = null;
+                		SVNProperty data = null;
                 		try {
-                    		data = proxy.propertyGet(new EntryRevisionReference(FileUtility.getWorkingCopyPath(parent)), BuiltIn.IGNORE, new SVNProgressMonitor(this, monitor, null));
+                    		data = proxy.propertyGet(new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(parent)), BuiltIn.IGNORE, new SVNProgressMonitor(this, monitor, null));
                 		}
                 		finally {
                 		    location.releaseSVNProxy(proxy);

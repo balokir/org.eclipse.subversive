@@ -24,19 +24,9 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.team.ui.history.IHistoryView;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IPartListener;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.ide.ResourceUtil;
-import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.LogEntry;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNLogEntry;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -47,6 +37,16 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.history.SVNHistoryPage;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
+import org.eclipse.team.ui.history.IHistoryView;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.ide.ResourceUtil;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 
 /**
  * Annotation based on Eclipse Platform support.
@@ -86,12 +86,12 @@ public class BuiltInAnnotate {
 					}
 					revision.addLine(Integer.parseInt(lines[i][2]));
 				}
-				long from = Revision.INVALID_REVISION_NUMBER, to = Revision.INVALID_REVISION_NUMBER;
+				long from = SVNRevision.INVALID_REVISION_NUMBER, to = SVNRevision.INVALID_REVISION_NUMBER;
 				for (Iterator it = revisions.values().iterator(); it.hasNext(); ) {
 					BuiltInAnnotateRevision revision = (BuiltInAnnotateRevision)it.next();
 					revision.addLine(BuiltInAnnotateRevision.END_LINE);
 					long revisionNum = Long.parseLong(revision.getId());
-					if (from > revisionNum || from == Revision.INVALID_REVISION_NUMBER) {
+					if (from > revisionNum || from == SVNRevision.INVALID_REVISION_NUMBER) {
 						from = revisionNum;
 					}
 					if (to < revisionNum) {
@@ -99,9 +99,9 @@ public class BuiltInAnnotate {
 					}
 				}
 				IRepositoryResource resource = annotateOp.getRepositoryResource();
-				ISVNClientWrapper proxy = resource.getRepositoryLocation().acquireSVNProxy();
+				ISVNClient proxy = resource.getRepositoryLocation().acquireSVNProxy();
 				try {
-					LogEntry []msgs = GetLogMessagesOperation.getMessagesImpl(proxy, resource, Revision.fromNumber(to), Revision.fromNumber(from), ISVNClientWrapper.DEFAULT_LOG_ENTRY_PROPS, 0, false, this, monitor);
+					SVNLogEntry []msgs = GetLogMessagesOperation.getMessagesImpl(proxy, resource, SVNRevision.fromNumber(to), SVNRevision.fromNumber(from), ISVNClient.DEFAULT_LOG_ENTRY_PROPS, 0, false, this, monitor);
 					for (int i = 0; i < msgs.length; i++) {
 						BuiltInAnnotateRevision revision = (BuiltInAnnotateRevision)revisions.get(String.valueOf(msgs[i].revision));
 						if (revision != null) {

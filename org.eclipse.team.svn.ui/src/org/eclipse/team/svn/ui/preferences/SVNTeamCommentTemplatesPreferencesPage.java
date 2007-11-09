@@ -37,7 +37,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
@@ -45,6 +44,7 @@ import org.eclipse.team.svn.ui.panel.common.EditCommentTemplatePanel;
 import org.eclipse.team.svn.ui.verifier.CompositeVerifier;
 import org.eclipse.team.svn.ui.verifier.IntegerFieldVerifier;
 import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Comments templates preferences page implementation

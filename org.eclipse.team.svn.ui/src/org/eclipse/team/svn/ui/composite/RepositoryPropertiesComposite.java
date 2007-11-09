@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.operation.local.management.FindRelatedProjectsOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.ProxySettings;
@@ -188,7 +188,7 @@ public class RepositoryPropertiesComposite extends Composite implements IPropert
 				proxyNew.setPort(proxyOriginal.getPort());
 				proxyNew.setUsername(proxyOriginal.getUsername());
 				
-				RepositoryBrowsingPanel panel = new RepositoryBrowsingPanel(SVNTeamUIPlugin.instance().getResource("RepositoryPropertiesComposite.SelectNewURL"), location, Revision.HEAD);
+				RepositoryBrowsingPanel panel = new RepositoryBrowsingPanel(SVNTeamUIPlugin.instance().getResource("RepositoryPropertiesComposite.SelectNewURL"), location, SVNRevision.HEAD);
 				panel.setAutoexpandFirstLevel(true);
 				DefaultDialog browser = new DefaultDialog(RepositoryPropertiesComposite.this.getShell(), panel);
 				if (browser.open() == 0) {

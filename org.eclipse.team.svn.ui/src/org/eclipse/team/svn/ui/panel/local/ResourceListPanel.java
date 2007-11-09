@@ -27,11 +27,11 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.ui.internal.util.SWTResourceUtil;
-import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
+import org.eclipse.ui.internal.util.SWTResourceUtil;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * Resource List Panel implementation

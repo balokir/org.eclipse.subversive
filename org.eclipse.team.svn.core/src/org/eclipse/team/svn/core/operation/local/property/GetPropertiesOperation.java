@@ -16,10 +16,10 @@ import java.text.MessageFormat;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.team.svn.core.client.EntryRevisionReference;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.PropertyData;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
+import org.eclipse.team.svn.core.client.SVNProperty;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -35,21 +35,21 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * @author Vladimir Bykov
  */
 public class GetPropertiesOperation extends AbstractNonLockingOperation implements IResourcePropertyProvider {
-	protected PropertyData []properties;
+	protected SVNProperty []properties;
 	protected IResource resource;
-	protected Revision revision;
+	protected SVNRevision revision;
 	
 	public GetPropertiesOperation(IResource resource) {
-		this(resource, Revision.WORKING);
+		this(resource, SVNRevision.WORKING);
 	}
 	
-	public GetPropertiesOperation(IResource resource, Revision revision) {
+	public GetPropertiesOperation(IResource resource, SVNRevision revision) {
 		super("Operation.GetProperties");
 		this.resource = resource;
 		this.revision = revision;
 	}
 	
-	public PropertyData []getProperties() {
+	public SVNProperty []getProperties() {
 		return this.properties;
 	}
 	
@@ -72,10 +72,10 @@ public class GetPropertiesOperation extends AbstractNonLockingOperation implemen
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		this.properties = null;
 		IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(this.resource);
-		ISVNClientWrapper proxy = location.acquireSVNProxy();
+		ISVNClient proxy = location.acquireSVNProxy();
 		try {
 //			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn proplist \"" + local.getWorkingCopyPath() + "\"\n");
-			this.properties = SVNUtility.properties(proxy, new EntryRevisionReference(FileUtility.getWorkingCopyPath(this.resource), null, this.revision), new SVNProgressMonitor(this, monitor, null));
+			this.properties = SVNUtility.properties(proxy, new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(this.resource), null, this.revision), new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 		    location.releaseSVNProxy(proxy);

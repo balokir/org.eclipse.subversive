@@ -41,11 +41,11 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.panel.IDialogManager;
 import org.eclipse.team.svn.ui.panel.IDialogPanel;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Default dialog implementation

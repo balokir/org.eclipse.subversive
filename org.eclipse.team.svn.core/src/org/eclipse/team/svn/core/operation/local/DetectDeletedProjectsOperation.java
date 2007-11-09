@@ -17,7 +17,7 @@ import java.util.Iterator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
+import org.eclipse.team.svn.core.client.ISVNClient;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -81,7 +81,7 @@ public class DetectDeletedProjectsOperation extends AbstractWorkingCopyOperation
 		IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(project);
 		IRepositoryLocation location = remote.getRepositoryLocation();
 		
-		ISVNClientWrapper proxy = location.acquireSVNProxy();
+		ISVNClient proxy = location.acquireSVNProxy();
 		try {
 			if (!remote.exists() && location.getRepositoryRoot().exists()) {
 				this.toDisconnect.add(project);	

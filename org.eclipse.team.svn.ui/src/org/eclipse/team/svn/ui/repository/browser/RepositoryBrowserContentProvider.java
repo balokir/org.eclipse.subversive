@@ -11,13 +11,13 @@
 
 package org.eclipse.team.svn.ui.repository.browser;
 
-import org.eclipse.ui.model.BaseWorkbenchContentProvider;
-import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.team.svn.ui.repository.model.IParentTreeNode;
 import org.eclipse.team.svn.ui.repository.model.RepositoryError;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFictiveWorkingDirectory;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFolder;
 import org.eclipse.team.svn.ui.repository.model.RepositoryPending;
+import org.eclipse.ui.model.BaseWorkbenchContentProvider;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * Repository browser content provider

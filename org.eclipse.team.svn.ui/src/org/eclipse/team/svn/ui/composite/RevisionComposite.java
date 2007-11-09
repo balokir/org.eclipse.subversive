@@ -26,8 +26,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.team.svn.core.client.Revision;
-import org.eclipse.team.svn.core.client.Revision.Kind;
+import org.eclipse.team.svn.core.client.SVNRevision;
+import org.eclipse.team.svn.core.client.SVNRevision.Kind;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.GetLogMessagesOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -49,13 +49,13 @@ import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
  */
 public class RevisionComposite extends Composite {
 	protected IRepositoryResource selectedResource;
-	protected Revision defaultRevision;
+	protected SVNRevision defaultRevision;
 	protected long currentRevision;
 	protected long lastSelectedRevision;
 	protected boolean stopOnCopy;
 	protected String []captions;
 
-	protected Revision selectedRevision;
+	protected SVNRevision selectedRevision;
 	
 	protected Text revisionField;
 	protected Button headRevisionRadioButton;
@@ -64,17 +64,17 @@ public class RevisionComposite extends Composite {
 	
 	protected IValidationManager validationManager;
 	
-	public RevisionComposite(Composite parent, IValidationManager validationManager, boolean stopOnCopy, String []captions, Revision defaultRevision) {
+	public RevisionComposite(Composite parent, IValidationManager validationManager, boolean stopOnCopy, String []captions, SVNRevision defaultRevision) {
 		super(parent, SWT.NONE);
 		this.stopOnCopy = stopOnCopy;
 		this.validationManager = validationManager;
-		this.lastSelectedRevision = Revision.INVALID_REVISION_NUMBER;
+		this.lastSelectedRevision = SVNRevision.INVALID_REVISION_NUMBER;
 		this.captions = captions;
 		this.defaultRevision = defaultRevision;
 		this.createControls();
 	}
 	
-	public Revision getSelectedRevision() {
+	public SVNRevision getSelectedRevision() {
 		return this.selectedRevision;
 	}
 	
@@ -88,10 +88,10 @@ public class RevisionComposite extends Composite {
 	
 	public void setSelectedResource(IRepositoryResource resource) {
 		this.selectedResource = resource;
-		Revision rev = this.selectedResource.getSelectedRevision();
+		SVNRevision rev = this.selectedResource.getSelectedRevision();
 		if (rev.getKind() == Kind.NUMBER) {
 			this.selectedRevision = rev;
-			this.lastSelectedRevision = ((Revision.Number)this.selectedRevision).getNumber();
+			this.lastSelectedRevision = ((SVNRevision.Number)this.selectedRevision).getNumber();
 			
 			if (this.changeRevisionRadioButton != null) {
 				this.revisionField.setText(this.selectedRevision.toString());
@@ -159,9 +159,9 @@ public class RevisionComposite extends Composite {
 				else {
 					RevisionComposite.this.changeRevisionButton.setEnabled(true);
 					RevisionComposite.this.revisionField.setEditable(true);
-					if (RevisionComposite.this.lastSelectedRevision != Revision.INVALID_REVISION_NUMBER) {
+					if (RevisionComposite.this.lastSelectedRevision != SVNRevision.INVALID_REVISION_NUMBER) {
 						RevisionComposite.this.revisionField.setText(String.valueOf(RevisionComposite.this.lastSelectedRevision));
-						RevisionComposite.this.selectedRevision = Revision.fromNumber(RevisionComposite.this.lastSelectedRevision);
+						RevisionComposite.this.selectedRevision = SVNRevision.fromNumber(RevisionComposite.this.lastSelectedRevision);
 					}
 				}
 				RevisionComposite.this.additionalValidation();
@@ -205,7 +205,7 @@ public class RevisionComposite extends Composite {
 					long selectedRevisionNum = Long.parseLong(input);
 					if (selectedRevisionNum >= 0) {
 					    RevisionComposite.this.lastSelectedRevision = selectedRevisionNum;
-					    RevisionComposite.this.selectedRevision = Revision.fromNumber(selectedRevisionNum);
+					    RevisionComposite.this.selectedRevision = SVNRevision.fromNumber(selectedRevisionNum);
 					}
 				}
 				catch (NumberFormatException ex) {
@@ -234,7 +234,7 @@ public class RevisionComposite extends Composite {
 					if (dialog.open() == 0) {
 					    long selectedRevisionNum = panel.getSelectedRevision();
 					    RevisionComposite.this.lastSelectedRevision = selectedRevisionNum;
-					    RevisionComposite.this.selectedRevision = Revision.fromNumber(selectedRevisionNum);
+					    RevisionComposite.this.selectedRevision = SVNRevision.fromNumber(selectedRevisionNum);
 					    RevisionComposite.this.revisionField.setText(String.valueOf(selectedRevisionNum));
 					}
 				}

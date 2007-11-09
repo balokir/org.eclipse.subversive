@@ -19,9 +19,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.wizard.AbstractVerifiedWizardPage;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Create patch options page

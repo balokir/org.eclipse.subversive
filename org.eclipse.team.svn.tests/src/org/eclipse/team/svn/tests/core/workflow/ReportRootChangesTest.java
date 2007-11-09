@@ -14,8 +14,8 @@ package org.eclipse.team.svn.tests.core.workflow;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.team.svn.core.client.Status;
-import org.eclipse.team.svn.core.client.Status.Kind;
+import org.eclipse.team.svn.core.client.SVNEntryStatus;
+import org.eclipse.team.svn.core.client.SVNEntryStatus.Kind;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNClientWrapperFactory;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -52,7 +52,7 @@ public class ReportRootChangesTest extends TestWorkflow {
                         new DeleteResourcesOperation(new IRepositoryResource[] {remote}, "test").run(monitor);
                         RemoteStatusOperation rStatusOp = new RemoteStatusOperation(new IResource[] {getSecondProject()});
                         ProgressMonitorUtility.doTaskExternalDefault(rStatusOp, new NullProgressMonitor());
-                		Status []statuses = rStatusOp.getStatuses();               		
+                		SVNEntryStatus []statuses = rStatusOp.getStatuses();               		
                 		int counter = 0;
                 		for (int i = 0; i < statuses.length; i++) {
                 		    if (statuses[i].path.equals(getSecondProject().getLocation().toString()) && 

@@ -12,12 +12,12 @@
 package org.eclipse.team.svn.ui.operation;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.team.svn.core.operation.remote.AbstractRepositoryOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.annotate.AnnotateView;
 import org.eclipse.team.svn.ui.annotate.CheckPerspective;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
 
 /**
  * The operation shows annotation for repository resource

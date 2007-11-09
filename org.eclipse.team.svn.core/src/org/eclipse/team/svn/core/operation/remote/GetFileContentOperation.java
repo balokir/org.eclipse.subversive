@@ -15,7 +15,7 @@ import java.io.FileOutputStream;
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
+import org.eclipse.team.svn.core.client.ISVNClient;
 import org.eclipse.team.svn.core.operation.AbstractGetFileContentOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -38,7 +38,7 @@ public class GetFileContentOperation extends AbstractGetFileContentOperation {
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		String url = this.resource.getUrl();
 		IRepositoryLocation location = this.resource.getRepositoryLocation();
-		ISVNClientWrapper proxy = location.acquireSVNProxy();
+		ISVNClient proxy = location.acquireSVNProxy();
 		FileOutputStream stream = null;
 		try {
 			url = SVNUtility.encodeURL(url);

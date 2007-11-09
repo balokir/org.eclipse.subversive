@@ -14,7 +14,7 @@ package org.eclipse.team.svn.ui.action.local;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -34,7 +34,7 @@ public class CompareWithWorkingCopyAction extends AbstractWorkingCopyAction {
 
 	public void runImpl(IAction action) {
 		IResource left = this.getSelectedResources()[0];
-		this.runScheduled(new CompareResourcesOperation(left, Revision.BASE, null));
+		this.runScheduled(new CompareResourcesOperation(left, SVNRevision.BASE, null));
 	}
 
 	public boolean isEnabled() {

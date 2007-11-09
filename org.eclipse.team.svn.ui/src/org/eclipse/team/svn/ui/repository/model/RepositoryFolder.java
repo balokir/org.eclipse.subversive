@@ -12,8 +12,6 @@
 package org.eclipse.team.svn.ui.repository.model;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
@@ -24,6 +22,8 @@ import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.ui.operation.GetRemoteFolderChildrenOperation;
 import org.eclipse.team.svn.ui.utility.DefaultOperationWrapperFactory;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Repository folder node representation 

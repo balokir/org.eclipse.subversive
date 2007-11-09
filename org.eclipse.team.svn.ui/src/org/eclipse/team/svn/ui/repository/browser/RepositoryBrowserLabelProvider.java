@@ -23,7 +23,7 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.Lock;
+import org.eclipse.team.svn.core.client.SVNLock;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -135,7 +135,7 @@ public class RepositoryBrowserLabelProvider implements ITableLabelProvider {
 					return (author != null) ? author : RepositoryBrowserLabelProvider.noAuthor;
 				}
 				else if (columnIndex == tableViewer.getLockOwnerColumnIndex()) {
-					Lock lock = resourceInfo.lock;
+					SVNLock lock = resourceInfo.lock;
 					String lockOwner = (lock == null) ? "" : lock.owner;
 					return lockOwner;
 				}

@@ -21,9 +21,9 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.ClientWrapperUnresolvedConflictException;
-import org.eclipse.team.svn.core.client.Depth;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNClientUnresolvedConflictException;
+import org.eclipse.team.svn.core.client.ISVNClient.Depth;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNClientWrapperFactory;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
@@ -110,7 +110,7 @@ public class CommitOperation extends AbstractFileConflictDetectionOperation impl
 			}
 		});
 		
-		final ISVNClientWrapper proxy = location.acquireSVNProxy();
+		final ISVNClient proxy = location.acquireSVNProxy();
 		this.protectStep(new IUnprotectedOperation() {
 			public void run(IProgressMonitor monitor) throws Exception {
 				long revisionNumbers[] = proxy.commit(
@@ -131,7 +131,7 @@ public class CommitOperation extends AbstractFileConflictDetectionOperation impl
 	}
 
     protected void reportError(Throwable t) {
-    	if (t instanceof ClientWrapperUnresolvedConflictException) {
+    	if (t instanceof SVNClientUnresolvedConflictException) {
           	this.hasUnresolvedConflict = true;
           	this.conflictMessage = t.getMessage();
         	for (int i = 0; i < this.paths.length; i++) {

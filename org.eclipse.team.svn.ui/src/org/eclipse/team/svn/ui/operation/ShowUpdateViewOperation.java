@@ -14,16 +14,16 @@ package org.eclipse.team.svn.ui.operation;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.local.AbstractWorkingCopyOperation;
+import org.eclipse.team.svn.core.resource.IResourceProvider;
+import org.eclipse.team.svn.ui.synchronize.update.UpdateParticipant;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizeScope;
 import org.eclipse.team.ui.synchronize.ResourceScope;
 import org.eclipse.team.ui.synchronize.SubscriberParticipant;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
-import org.eclipse.team.svn.core.operation.local.AbstractWorkingCopyOperation;
-import org.eclipse.team.svn.core.resource.IResourceProvider;
-import org.eclipse.team.svn.ui.synchronize.update.UpdateParticipant;
 
 /**
  * Synchronize workspace resources operation

@@ -18,12 +18,12 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.team.svn.ui.repository.RepositoryTreeViewer;
 import org.eclipse.team.svn.ui.repository.model.IRepositoryContentFilter;
 import org.eclipse.team.svn.ui.repository.model.RepositoriesRoot;
 import org.eclipse.team.svn.ui.repository.model.RepositoryContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.part.DrillDownAdapter;
 
 /**
  * Repositories tree composite

@@ -13,11 +13,11 @@ package org.eclipse.team.svn.ui.synchronize.update;
 
 import java.util.Collection;
 
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.ISynchronizeScope;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.synchronize.AbstractSVNParticipant;
 import org.eclipse.team.svn.ui.synchronize.AbstractSVNSubscriber;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.ISynchronizeScope;
 
 /**
  * Synchronize view participant

@@ -39,13 +39,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.team.svn.core.client.Status;
+import org.eclipse.team.svn.core.client.SVNEntryStatus;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.utility.TableViewerSorter;
 import org.eclipse.team.svn.ui.wizard.AbstractVerifiedWizardPage;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Allows to select group of projects which will be shared at once
@@ -91,7 +91,7 @@ public class SelectProjectsGroupPage extends AbstractVerifiedWizardPage implemen
 	protected void performAnalysis() {
 		this.projectGroups = new LinkedHashMap();
 		for (int i = 0; i < this.allProjects.length; i++) {
-			Status info = SVNUtility.getSVNInfoForNotConnected(this.allProjects[i]);
+			SVNEntryStatus info = SVNUtility.getSVNInfoForNotConnected(this.allProjects[i]);
 			if (info == null) {
 				this.getProjectsGroup(null).add(this.allProjects[i]);
 			}

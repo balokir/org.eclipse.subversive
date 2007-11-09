@@ -16,10 +16,10 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.EntryRevisionReference;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.INotificationCallback;
-import org.eclipse.team.svn.core.client.Notification;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNNotificationCallback;
+import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
+import org.eclipse.team.svn.core.client.SVNNotification;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IRevisionProvider;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -56,14 +56,14 @@ public class BranchTagOperation extends AbstractRepositoryOperation implements I
 		
 		ProgressMonitorUtility.setTaskInfo(monitor, this, FileUtility.getNamesListAsString(resources));
 		final IRepositoryLocation location = resources[0].getRepositoryLocation();
-		final ISVNClientWrapper proxy = location.acquireSVNProxy();
+		final ISVNClient proxy = location.acquireSVNProxy();
 		try {
 			for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
 				final IRepositoryResource current = resources[i];
 				final String url2 = SVNUtility.encodeURL(BranchTagOperation.this.destinationUrl);
 
-				INotificationCallback notify = new INotificationCallback() {
-					public void notify(Notification info) {
+				ISVNNotificationCallback notify = new ISVNNotificationCallback() {
+					public void notify(SVNNotification info) {
 						BranchTagOperation.this.revisionsPairs.add(new RevisionPair(info.revision, new String[] {url2}, location));
 						String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision");
 						BranchTagOperation.this.writeToConsole(IConsoleStream.LEVEL_OK, MessageFormat.format(message, new String[] {String.valueOf(info.revision)}));
@@ -74,7 +74,7 @@ public class BranchTagOperation extends AbstractRepositoryOperation implements I
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(IProgressMonitor monitor) throws Exception {
 						BranchTagOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn copy \"" + current.getUrl() + "\" \"" + BranchTagOperation.this.destinationUrl + "\" -r " + current.getSelectedRevision() + " -m \"" + BranchTagOperation.this.message + "\"" + FileUtility.getUsernameParam(current.getRepositoryLocation().getUsername()) + "\n");
-						EntryRevisionReference []src = new EntryRevisionReference[] {new EntryRevisionReference(SVNUtility.encodeURL(current.getUrl()), current.getPegRevision(), current.getSelectedRevision())};
+						SVNEntryRevisionReference []src = new SVNEntryRevisionReference[] {new SVNEntryRevisionReference(SVNUtility.encodeURL(current.getUrl()), current.getPegRevision(), current.getSelectedRevision())};
 						proxy.copy(src, url2, BranchTagOperation.this.message, true, false, true, new SVNProgressMonitor(BranchTagOperation.this, monitor, null));
 					}
 				}, monitor, resources.length);

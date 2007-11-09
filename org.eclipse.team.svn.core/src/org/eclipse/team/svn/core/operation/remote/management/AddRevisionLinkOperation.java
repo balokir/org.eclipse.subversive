@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.core.operation.remote.management;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.remote.AbstractRepositoryOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -26,22 +26,22 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * @author Alexander Gurov
  */
 public class AddRevisionLinkOperation extends AbstractRepositoryOperation {
-	protected Revision revision;
+	protected SVNRevision revision;
 	
 	public AddRevisionLinkOperation(IRepositoryResource resource, long revision) {
-		this(resource, Revision.fromNumber(revision));
+		this(resource, SVNRevision.fromNumber(revision));
 	}
 	
-	public AddRevisionLinkOperation(IRepositoryResource resource, Revision revision) {
+	public AddRevisionLinkOperation(IRepositoryResource resource, SVNRevision revision) {
 		super("Operation.AddRevisionLink", new IRepositoryResource[] {resource});
 		this.revision = revision;
 	}
 	
 	public AddRevisionLinkOperation(IRepositoryResourceProvider provider, long revision) {
-		this(provider, Revision.fromNumber(revision));
+		this(provider, SVNRevision.fromNumber(revision));
 	}
 	
-	public AddRevisionLinkOperation(IRepositoryResourceProvider provider, Revision revision) {
+	public AddRevisionLinkOperation(IRepositoryResourceProvider provider, SVNRevision revision) {
 		super("Operation.AddRevisionLink", provider);
 		this.revision = revision;
 	}
@@ -55,14 +55,14 @@ public class AddRevisionLinkOperation extends AbstractRepositoryOperation {
 					IRepositoryLocation location = source.getRepositoryLocation();
 					IRepositoryResource target = SVNUtility.copyOf(source);
 					
-					Revision selectedRevision = AddRevisionLinkOperation.this.revision;
-					if (selectedRevision.equals(Revision.HEAD)) {
-						selectedRevision = Revision.fromNumber(source.getRevision());
+					SVNRevision selectedRevision = AddRevisionLinkOperation.this.revision;
+					if (selectedRevision.equals(SVNRevision.HEAD)) {
+						selectedRevision = SVNRevision.fromNumber(source.getRevision());
 					}
 					
-					Revision pegRevision = source.getPegRevision();
-					if (pegRevision.equals(Revision.HEAD)) {
-						pegRevision = Revision.fromNumber(location.getRepositoryRoot().getRevision());
+					SVNRevision pegRevision = source.getPegRevision();
+					if (pegRevision.equals(SVNRevision.HEAD)) {
+						pegRevision = SVNRevision.fromNumber(location.getRepositoryRoot().getRevision());
 					}
 					
 					target.setSelectedRevision(selectedRevision);

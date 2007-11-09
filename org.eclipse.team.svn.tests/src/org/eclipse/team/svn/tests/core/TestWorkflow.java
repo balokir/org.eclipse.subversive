@@ -21,7 +21,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
+import org.eclipse.team.svn.core.client.ISVNClient;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
 import org.eclipse.team.svn.core.operation.remote.CreateFolderOperation;
 import org.eclipse.team.svn.core.operation.remote.DeleteResourcesOperation;
@@ -133,7 +133,7 @@ public abstract class TestWorkflow extends TestCase {
 				for (int i = 0; i < children.length; i++) {
 				    toDelete[i] = SVNUtility.encodeURL(children[i].getUrl());
 				}
-				ISVNClientWrapper proxy = this.location.acquireSVNProxy();
+				ISVNClient proxy = this.location.acquireSVNProxy();
 				try {
 				    proxy.remove(toDelete, "Test Done", true, false, new SVNNullProgressMonitor());
 				}

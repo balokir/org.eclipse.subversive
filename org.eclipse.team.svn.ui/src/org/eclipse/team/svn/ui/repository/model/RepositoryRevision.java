@@ -16,11 +16,11 @@ import java.text.MessageFormat;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Repository revision node representation 
@@ -32,9 +32,9 @@ public class RepositoryRevision extends RepositoryFictiveNode implements IParent
 	protected IRepositoryResource []resources;
 	protected RepositoryResource []wrappers;
 	protected RepositoryRevisions parent;
-	protected Revision revision;
+	protected SVNRevision revision;
 	
-	public RepositoryRevision(RepositoryRevisions parent, Revision revision) {
+	public RepositoryRevision(RepositoryRevisions parent, SVNRevision revision) {
 		RepositoryRevision.REVISION_NAME = SVNTeamUIPlugin.instance().getResource("RepositoriesView.Model.Revision");
 		this.parent = parent;
 		this.revision = revision;

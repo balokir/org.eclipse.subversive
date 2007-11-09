@@ -16,11 +16,11 @@ import java.text.MessageFormat;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.EntryRevisionReference;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.INotificationCallback;
-import org.eclipse.team.svn.core.client.Notification;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNNotificationCallback;
+import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
+import org.eclipse.team.svn.core.client.SVNNotification;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -51,14 +51,14 @@ public class BranchTagOperation extends AbstractWorkingCopyOperation {
 		
 		ProgressMonitorUtility.setTaskInfo(monitor, this, FileUtility.getNamesListAsString(resources));
 		IRepositoryLocation location = this.destination.getRepositoryLocation();
-		final ISVNClientWrapper proxy = location.acquireSVNProxy();
+		final ISVNClient proxy = location.acquireSVNProxy();
 		try {
 			final String destinationUrl = SVNUtility.encodeURL(this.destination.getUrl());
 			for (int i = 0; i < resources.length; i++) {
 				final String wcPath = FileUtility.getWorkingCopyPath(resources[i]);
 				
-				INotificationCallback notify = new INotificationCallback() {
-					public void notify(Notification info) {
+				ISVNNotificationCallback notify = new ISVNNotificationCallback() {
+					public void notify(SVNNotification info) {
 						if (info.revision != -1) {
 							String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision");
 							BranchTagOperation.this.writeToConsole(IConsoleStream.LEVEL_OK, MessageFormat.format(message, new String[] {String.valueOf(info.revision)}));
@@ -69,8 +69,8 @@ public class BranchTagOperation extends AbstractWorkingCopyOperation {
 				
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(IProgressMonitor monitor) throws Exception {
-						BranchTagOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn copy \"" + wcPath + "\" \"" + destinationUrl + "\" -r " + Revision.WORKING + " -m \"" + BranchTagOperation.this.message + "\"" + FileUtility.getUsernameParam(BranchTagOperation.this.destination.getRepositoryLocation().getUsername()) + "\n");
-						EntryRevisionReference []src = new EntryRevisionReference[] {new EntryRevisionReference(wcPath, null, Revision.WORKING)};
+						BranchTagOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn copy \"" + wcPath + "\" \"" + destinationUrl + "\" -r " + SVNRevision.WORKING + " -m \"" + BranchTagOperation.this.message + "\"" + FileUtility.getUsernameParam(BranchTagOperation.this.destination.getRepositoryLocation().getUsername()) + "\n");
+						SVNEntryRevisionReference []src = new SVNEntryRevisionReference[] {new SVNEntryRevisionReference(wcPath, null, SVNRevision.WORKING)};
 						proxy.copy(src, destinationUrl, BranchTagOperation.this.message, true, false, true, new SVNProgressMonitor(BranchTagOperation.this, monitor, null));
 					}
 				}, monitor, resources.length);

@@ -53,12 +53,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.team.ui.ISharedImages;
-import org.eclipse.team.ui.TeamImages;
-import org.eclipse.ui.internal.util.SWTResourceUtil;
-import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRemoteStorage;
@@ -74,6 +70,10 @@ import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
 import org.eclipse.team.svn.ui.utility.TableViewerSorter;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
+import org.eclipse.team.ui.ISharedImages;
+import org.eclipse.team.ui.TeamImages;
+import org.eclipse.ui.internal.util.SWTResourceUtil;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * Resource selection composite
@@ -429,7 +429,7 @@ public class ResourceSelectionComposite extends Composite {
 					final IResource resource = (IResource) selection.getFirstElement();
 					UIMonitorUtility.getShell().getDisplay().syncExec(new Runnable() {
 						public void run() {
-							UIMonitorUtility.doTaskScheduledDefault(new CompareResourcesOperation(resource, Revision.BASE, null, true));
+							UIMonitorUtility.doTaskScheduledDefault(new CompareResourcesOperation(resource, SVNRevision.BASE, null, true));
 						}
 					});
 				}

@@ -13,16 +13,16 @@ package org.eclipse.team.svn.core.svnstorage;
 
 import java.io.Serializable;
 
-import org.eclipse.team.svn.core.client.ClientWrapperException;
-import org.eclipse.team.svn.core.client.Depth;
-import org.eclipse.team.svn.core.client.EntryRevisionReference;
-import org.eclipse.team.svn.core.client.RepositoryEntry;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.EntryInfo;
-import org.eclipse.team.svn.core.client.NodeKind;
-import org.eclipse.team.svn.core.client.PropertyData;
-import org.eclipse.team.svn.core.client.Revision;
-import org.eclipse.team.svn.core.client.RepositoryEntry.Fields;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNClientException;
+import org.eclipse.team.svn.core.client.SVNEntry;
+import org.eclipse.team.svn.core.client.SVNEntryInfo;
+import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
+import org.eclipse.team.svn.core.client.SVNProperty;
+import org.eclipse.team.svn.core.client.SVNRevision;
+import org.eclipse.team.svn.core.client.ISVNClient.Depth;
+import org.eclipse.team.svn.core.client.SVNEntry.Fields;
+import org.eclipse.team.svn.core.client.SVNEntry.NodeKind;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -44,7 +44,7 @@ public class SVNRepositoryContainer extends SVNRepositoryResource implements IRe
 		super();
 	}
 
-	public SVNRepositoryContainer(IRepositoryLocation location, String url, Revision selectedRevision) {
+	public SVNRepositoryContainer(IRepositoryLocation location, String url, SVNRevision selectedRevision) {
 		super(location, url, selectedRevision);
 	}
 	
@@ -57,16 +57,16 @@ public class SVNRepositoryContainer extends SVNRepositoryResource implements IRe
 		this.children = null;
 	}
 	
-	public IRepositoryResource []getChildren() throws ClientWrapperException {
+	public IRepositoryResource []getChildren() throws SVNClientException {
 		IRepositoryResource []retVal = this.children;
 		
 		// synchronize only assignment in order to avoid deadlock with this Sync and UI Sync locked from callback
 		//	in result we can perform excessive work but it is acceptable in that case
 		if (retVal == null) {
 			String thisUrl = this.getUrl();
-			RepositoryEntry []children = null;
+			SVNEntry []children = null;
 			
-			ISVNClientWrapper proxy = this.getRepositoryLocation().acquireSVNProxy();
+			ISVNClient proxy = this.getRepositoryLocation().acquireSVNProxy();
 			try {
 				children = SVNUtility.list(proxy, SVNUtility.getEntryRevisionReference(this), Depth.IMMEDIATES, Fields.ALL, true, new SVNNullProgressMonitor());
 			}
@@ -92,12 +92,12 @@ public class SVNRepositoryContainer extends SVNRepositoryResource implements IRe
 		return retVal;
 	}
 	
-	protected void getRevisionImpl(ISVNClientWrapper proxy) throws ClientWrapperException {
-		EntryRevisionReference reference = SVNUtility.getEntryRevisionReference(this);
-		EntryInfo []infos = SVNUtility.info(proxy, reference, Depth.EMPTY, new SVNNullProgressMonitor());
-		if (infos != null && infos.length > 0 && infos[0].lastChangedRevision != Revision.INVALID_REVISION_NUMBER) {
-			this.lastRevision = (Revision.Number)Revision.fromNumber(infos[0].lastChangedRevision);
-			PropertyData []data = SVNUtility.properties(proxy, reference, new SVNNullProgressMonitor());
+	protected void getRevisionImpl(ISVNClient proxy) throws SVNClientException {
+		SVNEntryRevisionReference reference = SVNUtility.getEntryRevisionReference(this);
+		SVNEntryInfo []infos = SVNUtility.info(proxy, reference, Depth.EMPTY, new SVNNullProgressMonitor());
+		if (infos != null && infos.length > 0 && infos[0].lastChangedRevision != SVNRevision.INVALID_REVISION_NUMBER) {
+			this.lastRevision = (SVNRevision.Number)SVNRevision.fromNumber(infos[0].lastChangedRevision);
+			SVNProperty []data = SVNUtility.properties(proxy, reference, new SVNNullProgressMonitor());
 			this.setInfo(new IRepositoryResource.Information(infos[0].lock, 0, infos[0].lastChangedAuthor, infos[0].lastChangedDate, data != null && data.length > 0));
 		}
 	}

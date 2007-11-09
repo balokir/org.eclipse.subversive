@@ -14,8 +14,8 @@ package org.eclipse.team.svn.core.operation.file;
 import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.Depth;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNClient.Depth;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -40,7 +40,7 @@ public class SwitchOperation extends AbstractFileOperation {
 		File file = this.operableData()[0];
 		
 		IRepositoryLocation location = this.destination.getRepositoryLocation();
-		ISVNClientWrapper proxy = location.acquireSVNProxy();
+		ISVNClient proxy = location.acquireSVNProxy();
 		this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn switch \"" + this.destination.getUrl() + "\" \"" + FileUtility.normalizePath(file.getAbsolutePath()) + "\" -r " + this.destination.getSelectedRevision() + FileUtility.getUsernameParam(location.getUsername()) + "\n");
 		try {
 			proxy.doSwitch(file.getAbsolutePath(), SVNUtility.getEntryRevisionReference(this.destination), Depth.infinityOrFiles(true), false, false, new SVNProgressMonitor(this, monitor, null));

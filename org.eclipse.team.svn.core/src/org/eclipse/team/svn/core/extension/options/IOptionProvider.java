@@ -13,8 +13,8 @@ package org.eclipse.team.svn.core.extension.options;
 
 import org.eclipse.core.resources.team.FileModificationValidator;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.ICredentialsPrompt;
-import org.eclipse.team.svn.core.client.PropertyData;
+import org.eclipse.team.svn.core.client.ISVNCredentialsPrompt;
+import org.eclipse.team.svn.core.client.SVNProperty;
 import org.eclipse.team.svn.core.extension.factory.ISVNClientWrapperFactory;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.utility.ILoggedOperationFactory;
@@ -29,7 +29,7 @@ public interface IOptionProvider {
 		public boolean getReportRevisionChange() {
 			return false;
 		}
-		public ICredentialsPrompt getCredentialsPrompt() {
+		public ISVNCredentialsPrompt getCredentialsPrompt() {
 			return null;
 		}
 		public ILoggedOperationFactory getLoggedOperationFactory() {
@@ -58,8 +58,8 @@ public interface IOptionProvider {
 		public String getDefaultTrunkName() {
 			return "trunk";
 		}
-		public PropertyData[] getAutomaticProperties(String template) {
-			return new PropertyData[0];
+		public SVNProperty[] getAutomaticProperties(String template) {
+			return new SVNProperty[0];
 		}
 		public String getResource(String key) {
 			return SVNTeamPlugin.instance().getResource(key);
@@ -67,13 +67,13 @@ public interface IOptionProvider {
 	};
 	
 	public FileModificationValidator getFileModificationValidator();
-	public ICredentialsPrompt getCredentialsPrompt();
+	public ISVNCredentialsPrompt getCredentialsPrompt();
 	public boolean getReportRevisionChange();
 	public ILoggedOperationFactory getLoggedOperationFactory();
 	public void addProjectSetCapabilityProcessing(CompositeOperation op);
 	public boolean isAutomaticProjectShareEnabled();
 	public String getSVNClientId();
-	public PropertyData[] getAutomaticProperties(String template);
+	public SVNProperty[] getAutomaticProperties(String template);
 	
 	public boolean isSVNCacheEnabled();
 	

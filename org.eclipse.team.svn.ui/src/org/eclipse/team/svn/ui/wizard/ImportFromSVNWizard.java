@@ -14,8 +14,6 @@ package org.eclipse.team.svn.ui.wizard;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.ui.INewWizard;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -23,6 +21,8 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.wizard.checkoutas.SelectCheckoutResourcePage;
 import org.eclipse.team.svn.ui.wizard.shareproject.AddRepositoryLocationPage;
 import org.eclipse.team.svn.ui.wizard.shareproject.SelectRepositoryLocationPage;
+import org.eclipse.ui.INewWizard;
+import org.eclipse.ui.IWorkbench;
 
 /**
  * Implements "Import from SVN" functionality

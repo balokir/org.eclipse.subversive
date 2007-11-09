@@ -28,10 +28,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.SVNTeamProjectMapper;
-import org.eclipse.team.svn.core.client.ClientWrapperCancelException;
-import org.eclipse.team.svn.core.client.ClientWrapperException;
-import org.eclipse.team.svn.core.client.Depth;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNClientCancelException;
+import org.eclipse.team.svn.core.client.SVNClientException;
+import org.eclipse.team.svn.core.client.ISVNClient.Depth;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.UnreportableException;
@@ -150,7 +150,7 @@ public class ShareProjectOperation extends AbstractWorkingCopyOperation {
 							existingProjects.add(entry.getKey());
 						}
 					}
-					catch (ClientWrapperException ex) {
+					catch (SVNClientException ex) {
 						// do nothing
 					}
 				}
@@ -158,10 +158,10 @@ public class ShareProjectOperation extends AbstractWorkingCopyOperation {
 		}			
 		
 		if (existingProjects.size() > 0 && this.shareProjectPrompt != null && !this.shareProjectPrompt.prompt((IProject [])existingProjects.toArray(new IProject[existingProjects.size()]))) {
-			throw new ClientWrapperCancelException(this.getNationalizedString("Error.ShareCancelled"));
+			throw new SVNClientCancelException(this.getNationalizedString("Error.ShareCancelled"));
 		}
 		
-		final ISVNClientWrapper proxy = this.location.acquireSVNProxy();
+		final ISVNClient proxy = this.location.acquireSVNProxy();
 		try {
 			IRepositoryResource []resourceSet = this.getOrderedSet(fullSet);
 			this.mkdir(proxy, resourceSet, monitor);
@@ -249,7 +249,7 @@ public class ShareProjectOperation extends AbstractWorkingCopyOperation {
 		return resources;
 	}
 	
-	protected void mkdir(ISVNClientWrapper proxy, IRepositoryResource []resourceSet, IProgressMonitor monitor) throws Exception {
+	protected void mkdir(ISVNClient proxy, IRepositoryResource []resourceSet, IProgressMonitor monitor) throws Exception {
 		ArrayList urlsList = new ArrayList();
 		for (int i = 0; i < resourceSet.length && !monitor.isCanceled(); i++) {
 			ProgressMonitorUtility.setTaskInfo(monitor, this, resourceSet[i].getUrl());

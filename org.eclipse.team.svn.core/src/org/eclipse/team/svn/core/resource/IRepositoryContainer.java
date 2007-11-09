@@ -11,7 +11,7 @@
 
 package org.eclipse.team.svn.core.resource;
 
-import org.eclipse.team.svn.core.client.ClientWrapperException;
+import org.eclipse.team.svn.core.client.SVNClientException;
 
 
 /**
@@ -23,6 +23,6 @@ public interface IRepositoryContainer extends IRepositoryResource {
 
 	public boolean isChildrenCached();
 	
-	public IRepositoryResource []getChildren() throws ClientWrapperException;
+	public IRepositoryResource []getChildren() throws SVNClientException;
 
 }

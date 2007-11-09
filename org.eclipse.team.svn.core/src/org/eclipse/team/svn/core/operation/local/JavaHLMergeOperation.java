@@ -14,11 +14,11 @@ package org.eclipse.team.svn.core.operation.local;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.Depth;
-import org.eclipse.team.svn.core.client.EntryRevisionReference;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
+import org.eclipse.team.svn.core.client.ISVNClient;
 import org.eclipse.team.svn.core.client.ISVNProgressMonitor;
-import org.eclipse.team.svn.core.client.RevisionRange;
+import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
+import org.eclipse.team.svn.core.client.SVNRevisionRange;
+import org.eclipse.team.svn.core.client.ISVNClient.Depth;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -74,16 +74,16 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 	
 	protected void doMerge(IResource resource, IRepositoryResource from1, IRepositoryResource from2, IProgressMonitor monitor) throws Exception {
 		IRepositoryLocation location = from1.getRepositoryLocation();
-		ISVNClientWrapper proxy = location.acquireSVNProxy();
+		ISVNClient proxy = location.acquireSVNProxy();
 		
 		proxy.setTouchUnresolved(true);
 		try {
 			String wcPath = FileUtility.getWorkingCopyPath(resource);
-			EntryRevisionReference ref1 = SVNUtility.getEntryRevisionReference(from1);
-			EntryRevisionReference ref2 = SVNUtility.getEntryRevisionReference(from2);
+			SVNEntryRevisionReference ref1 = SVNUtility.getEntryRevisionReference(from1);
+			SVNEntryRevisionReference ref2 = SVNUtility.getEntryRevisionReference(from2);
 			if (SVNUtility.useSingleReferenceSignature(ref1, ref2)) {
 				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn merge -r " + from1.getSelectedRevision() + ":" + from2.getSelectedRevision() + "\"" + from1.getUrl() + "@" + from1.getPegRevision() + "\" \"" + FileUtility.normalizePath(wcPath) + "\"" + (this.dryRun ? " --dry-run" : "") + (this.ignoreAncestry ? " --ignore-ancestry" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n");
-				proxy.merge(ref1, new RevisionRange[] {new RevisionRange(from1.getSelectedRevision(), from2.getSelectedRevision())}, wcPath, false, Depth.INFINITY, this.ignoreAncestry, this.dryRun, new MergeProgressMonitor(this, monitor, null));
+				proxy.merge(ref1, new SVNRevisionRange[] {new SVNRevisionRange(from1.getSelectedRevision(), from2.getSelectedRevision())}, wcPath, false, Depth.INFINITY, this.ignoreAncestry, this.dryRun, new MergeProgressMonitor(this, monitor, null));
 			}
 			else {
 				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn merge \"" + from1.getUrl() + "@" + from1.getSelectedRevision() + "\" \"" + from2.getUrl() + "@" + from2.getSelectedRevision() + "\" \"" + FileUtility.normalizePath(wcPath) + "\"" + (this.dryRun ? " --dry-run" : "") + (this.ignoreAncestry ? " --ignore-ancestry" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n");

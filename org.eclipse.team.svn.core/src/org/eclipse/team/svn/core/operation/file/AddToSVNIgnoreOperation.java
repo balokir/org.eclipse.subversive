@@ -14,7 +14,7 @@ package org.eclipse.team.svn.core.operation.file;
 import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
+import org.eclipse.team.svn.core.client.ISVNClient;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -63,7 +63,7 @@ public class AddToSVNIgnoreOperation extends AbstractFileOperation {
 		}
 		IRepositoryResource remote = SVNFileStorage.instance().asRepositoryResource(parent, false);
 		IRepositoryLocation location = remote.getRepositoryLocation();
-		ISVNClientWrapper proxy = location.acquireSVNProxy();
+		ISVNClient proxy = location.acquireSVNProxy();
 		try {
 			org.eclipse.team.svn.core.operation.local.AddToSVNIgnoreOperation.changeIgnoreProperty(proxy, this.ignoreType, this.pattern, parent.getAbsolutePath(), current.getName());
 		}

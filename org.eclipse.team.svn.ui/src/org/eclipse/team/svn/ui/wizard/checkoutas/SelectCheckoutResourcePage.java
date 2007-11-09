@@ -21,7 +21,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -31,6 +30,7 @@ import org.eclipse.team.svn.ui.repository.model.IRepositoryContentFilter;
 import org.eclipse.team.svn.ui.repository.model.RepositoryLocation;
 import org.eclipse.team.svn.ui.repository.model.RepositoryResource;
 import org.eclipse.team.svn.ui.wizard.AbstractVerifiedWizardPage;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * "Import from SVN" wizard resource selection page

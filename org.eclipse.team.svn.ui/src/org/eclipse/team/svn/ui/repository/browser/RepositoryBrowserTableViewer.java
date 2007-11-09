@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.Lock;
+import org.eclipse.team.svn.core.client.SVNLock;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource.Information;
@@ -173,8 +173,8 @@ public class RepositoryBrowserTableViewer extends TableViewer {
 						author2 = (author2 != null) ? author2 : RepositoryBrowserTableViewer.noAuthor;
 						return TableViewerSorter.compare(author1, author2);
 					} else if (column == RepositoryBrowserTableViewer.this.getLockOwnerColumnIndex()) {
-						Lock lock1 = info1.lock;
-						Lock lock2 = info2.lock;
+						SVNLock lock1 = info1.lock;
+						SVNLock lock2 = info2.lock;
 						String lockOwner1 = (lock1 == null) ? "" : lock1.owner;
 						String lockOwner2 = (lock2 == null) ? "" : lock2.owner;
 						return TableViewerSorter.compare(lockOwner1, lockOwner2);

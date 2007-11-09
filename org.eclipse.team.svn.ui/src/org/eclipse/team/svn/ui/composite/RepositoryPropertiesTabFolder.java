@@ -33,8 +33,7 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.dialogs.PreferencesUtil;
-import org.eclipse.team.svn.core.client.ICredentialsPrompt;
+import org.eclipse.team.svn.core.client.ISVNCredentialsPrompt;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNClientWrapperFactory;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -47,6 +46,7 @@ import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifier;
 import org.eclipse.team.svn.ui.verifier.IValidationManager;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 
 /**
  * Repository properties tab folder
@@ -226,7 +226,7 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.cachedRealms.setLayoutData(data);
 		final ArrayList itemSet = new ArrayList();
-		itemSet.add(ICredentialsPrompt.ROOT_LOCATION);
+		itemSet.add(ISVNCredentialsPrompt.ROOT_LOCATION);
 		itemSet.addAll(this.repositoryLocation.getRealms());
 		this.cachedRealms.setItems((String [])itemSet.toArray(new String[itemSet.size()]));
 		this.cachedRealms.select(0);

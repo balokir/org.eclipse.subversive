@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.ui.operation;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 
@@ -28,7 +28,7 @@ public class GetRemoteResourceRevisionOperation extends AbstractNonLockingOperat
 	public GetRemoteResourceRevisionOperation(IRepositoryResource resource) {
 		super("Operation.GetRemoteRevision");
 		this.resource = resource;
-		this.revision = Revision.INVALID_REVISION_NUMBER;
+		this.revision = SVNRevision.INVALID_REVISION_NUMBER;
 	}
 
 	public long getRevision() {

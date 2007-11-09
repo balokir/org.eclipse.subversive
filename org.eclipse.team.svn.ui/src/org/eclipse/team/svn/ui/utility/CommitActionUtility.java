@@ -16,7 +16,6 @@ import java.util.HashSet;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.local.AddToSVNWithPropertiesOperation;
@@ -28,6 +27,7 @@ import org.eclipse.team.svn.ui.action.IResourceSelector;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.operation.ClearUpdateStatusesOperation;
 import org.eclipse.team.svn.ui.operation.NotifyUnresolvedConflictOperation;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Utility class for package explorer and synchronize view commit actions

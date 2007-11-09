@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.client.PropertyData;
+import org.eclipse.team.svn.core.client.SVNProperty;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -61,7 +61,7 @@ public class SetPropertyAction extends AbstractNonRecursiveTeamAction {
 	}
 	
 	public static void doSetProperty(final IResource []resources, String propertyName, String value, String fileName, boolean isFileSelected, boolean isRecursive, final int applyMethod, boolean useMask, String filterMask, IActionOperation addOn) {
-		final PropertyData []data = SetPropertyAction.getPropertyData(propertyName, isFileSelected ? fileName : value, isFileSelected);
+		final SVNProperty []data = SetPropertyAction.getPropertyData(propertyName, isFileSelected ? fileName : value, isFileSelected);
 		IActionOperation loadOp = null;
 		if (isFileSelected) {
 			final File f = new File(fileName);
@@ -83,7 +83,7 @@ public class SetPropertyAction extends AbstractNonRecursiveTeamAction {
 		SetPropertyAction.doSetProperty(resources, data, loadOp, isRecursive, applyMethod, useMask, filterMask, addOn);
 	}
 	
-	public static void doSetProperty(final IResource []resources, final PropertyData []data, IActionOperation loadOp, boolean isRecursive, final int applyMethod, boolean useMask, String filterMask, IActionOperation addOn) {
+	public static void doSetProperty(final IResource []resources, final SVNProperty []data, IActionOperation loadOp, boolean isRecursive, final int applyMethod, boolean useMask, String filterMask, IActionOperation addOn) {
 		IResourceProvider resourceProvider = new IResourceProvider() {
 			public IResource []getResources() {
 				return resources;
@@ -98,7 +98,7 @@ public class SetPropertyAction extends AbstractNonRecursiveTeamAction {
 			final StringMatcher matcher = useMask ? new StringMatcher(filterMask) : null; 
 
 			IPropertyProvider propertyProvider = new IPropertyProvider() {
-				public PropertyData []getProperties(IResource resource) {
+				public SVNProperty []getProperties(IResource resource) {
 					return data;
 				}
 			};
@@ -133,9 +133,9 @@ public class SetPropertyAction extends AbstractNonRecursiveTeamAction {
 		UIMonitorUtility.doTaskScheduledWorkspaceModify(composite);
 	}
 	
-	protected static PropertyData []getPropertyData(String name, String data, boolean isFileSelected) {
-		PropertyData retVal = isFileSelected ? new PropertyData(name, null, new byte[(int)new File(data).length()]) : new PropertyData(name, data, null);
-		return new PropertyData[] {retVal};
+	protected static SVNProperty []getPropertyData(String name, String data, boolean isFileSelected) {
+		SVNProperty retVal = isFileSelected ? new SVNProperty(name, null, new byte[(int)new File(data).length()]) : new SVNProperty(name, data, null);
+		return new SVNProperty[] {retVal};
 	}
 
 	public boolean isEnabled() {

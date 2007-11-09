@@ -26,12 +26,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.Depth;
-import org.eclipse.team.svn.core.client.EntryRevisionReference;
-import org.eclipse.team.svn.core.client.ICredentialsPrompt;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.EntryInfo;
-import org.eclipse.team.svn.core.client.Revision;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNCredentialsPrompt;
+import org.eclipse.team.svn.core.client.SVNEntryInfo;
+import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
+import org.eclipse.team.svn.core.client.SVNRevision;
+import org.eclipse.team.svn.core.client.ISVNClient.Depth;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNClientWrapperFactory;
 import org.eclipse.team.svn.core.extension.options.IOptionProvider;
@@ -219,13 +219,13 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
     	
     	if (location.isStructureEnabled()) {
             if (name.equals(location.getTrunkLocation())) {
-                return new SVNRepositoryTrunk(location, url, Revision.HEAD);
+                return new SVNRepositoryTrunk(location, url, SVNRevision.HEAD);
             }
             if (name.equals(location.getTagsLocation())) {
-                return new SVNRepositoryTags(location, url, Revision.HEAD);
+                return new SVNRepositoryTags(location, url, SVNRevision.HEAD);
             }
             if (name.equals(location.getBranchesLocation())) {
-                return new SVNRepositoryBranches(location, url, Revision.HEAD);
+                return new SVNRepositoryBranches(location, url, SVNRevision.HEAD);
             }
     	}
         if (urlPath.equals(new Path(location.getUrl()))) {
@@ -234,14 +234,14 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
         if (urlPath.equals(new Path(location.getRepositoryRootUrl()))) {
             return location.getRepositoryRoot();
         }
-        return new SVNRepositoryFolder(location, url, Revision.HEAD);
+        return new SVNRepositoryFolder(location, url, SVNRevision.HEAD);
     }
 
     public static IRepositoryFile asRepositoryFile(IRepositoryLocation location, String url, boolean allowsNull) {
     	if (!SVNRepositoryLocation.isArgumentsCorrect(location, url, allowsNull)) {
     		return null;
     	}
-        return new SVNRepositoryFile(location, url, Revision.HEAD);
+        return new SVNRepositoryFile(location, url, SVNRevision.HEAD);
     }
 	
 	public String getUsername() {
@@ -385,7 +385,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		}
 	}
 
-	public synchronized ISVNClientWrapper acquireSVNProxy() {
+	public synchronized ISVNClient acquireSVNProxy() {
 		try {
 			this.waiters++;
 			
@@ -410,7 +410,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 				this.proxyConfigurationState = 1;
 			}
 		    
-			ISVNClientWrapper retVal = cache.size() == 0 ? this.newProxyInstance() : (ISVNClientWrapper)cache.remove(0);
+			ISVNClient retVal = cache.size() == 0 ? this.newProxyInstance() : (ISVNClient)cache.remove(0);
 		    this.usedProxies.add(retVal);
 		    this.thread2Proxy.put(current, new ProxyHolder(retVal));
 		    return retVal;
@@ -430,7 +430,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		}
 	}
 	
-	public synchronized void releaseSVNProxy(ISVNClientWrapper proxy) {
+	public synchronized void releaseSVNProxy(ISVNClient proxy) {
 	    List proxies = this.getProxyCache();
 	    
 	    Thread current = Thread.currentThread();
@@ -463,7 +463,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	
 	public synchronized void dispose() {
 		this.reconfigureProxies(new IProxyVisitor() {
-            public void visit(ISVNClientWrapper proxy) {
+            public void visit(ISVNClient proxy) {
             	// When exiting Eclipse IDE client plug-in's can be stopped before Core. So, disallow error reporting in that case. 
     	        try {proxy.dispose();} catch (Throwable ex) {}
             }
@@ -531,13 +531,13 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		final String []retVal = new String[2];
 		ProgressMonitorUtility.doTaskExternal(new AbstractNonLockingOperation("Operation.FetchRepositoryRoot") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
-			    ISVNClientWrapper proxy = CoreExtensionsManager.instance().getSVNClientWrapperFactory().newInstance();
+			    ISVNClient proxy = CoreExtensionsManager.instance().getSVNClientWrapperFactory().newInstance();
 				proxy.setCredentialsCacheEnabled(false);
 				SVNUtility.configureProxy(proxy, location);
 				
 			    if (usePrompt) {
 					IOptionProvider optionProvider = SVNTeamPlugin.instance().getOptionProvider();
-				    ICredentialsPrompt externalPrompt = optionProvider.getCredentialsPrompt();
+				    ISVNCredentialsPrompt externalPrompt = optionProvider.getCredentialsPrompt();
 				    if (externalPrompt != null) {
 						proxy.setPrompt(new BaseCredentialsPromptWrapper(externalPrompt, location));
 				    }
@@ -546,10 +546,10 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 					proxy.setPrompt(new BaseCredentialsPromptWrapper(null, location));
 			    }
 			    
-				EntryInfo []infos = null;
+				SVNEntryInfo []infos = null;
 				String url = location.getUrl();
 				try {
-				    infos = SVNUtility.info(proxy, new EntryRevisionReference(SVNUtility.encodeURL(url), Revision.HEAD, Revision.HEAD), Depth.EMPTY, new SVNProgressMonitor(this, monitor, null));
+				    infos = SVNUtility.info(proxy, new SVNEntryRevisionReference(SVNUtility.encodeURL(url), SVNRevision.HEAD, SVNRevision.HEAD), Depth.EMPTY, new SVNProgressMonitor(this, monitor, null));
 				}
 				finally {
 					proxy.dispose();
@@ -579,7 +579,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	protected void reconfigureImpl() {
 		final IOptionProvider optionProvider = SVNTeamPlugin.instance().getOptionProvider();
 		this.reconfigureProxies(new IProxyVisitor() {
-			public void visit(ISVNClientWrapper proxy) {
+			public void visit(ISVNClient proxy) {
 			    SVNRepositoryLocation.this.configureProxy(proxy, optionProvider);
 			}
 		});
@@ -592,7 +592,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	
 	protected void visitProxies(IProxyVisitor visitor) {
 	    for (Iterator it = this.getProxyCache().iterator(); it.hasNext(); ) {
-		    ISVNClientWrapper proxy = (ISVNClientWrapper)it.next();
+		    ISVNClient proxy = (ISVNClient)it.next();
 		    visitor.visit(proxy);
 	    }
 	}
@@ -606,9 +606,9 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	    return this.proxyCache;
 	}
 	
-	protected ISVNClientWrapper newProxyInstance() {
+	protected ISVNClient newProxyInstance() {
 		IOptionProvider optionProvider = SVNTeamPlugin.instance().getOptionProvider();
-	    ISVNClientWrapper proxy = CoreExtensionsManager.instance().getSVNClientWrapperFactory().newInstance();
+	    ISVNClient proxy = CoreExtensionsManager.instance().getSVNClientWrapperFactory().newInstance();
 	    
 		proxy.setCredentialsCacheEnabled(false);
 		proxy.setSSLCertificateCacheEnabled(true);
@@ -617,7 +617,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		
 	    this.configureProxy(proxy, optionProvider);
 	    
-	    ICredentialsPrompt externalPrompt = optionProvider.getCredentialsPrompt();
+	    ISVNCredentialsPrompt externalPrompt = optionProvider.getCredentialsPrompt();
 	    if (externalPrompt != null) {
 			proxy.setPrompt(new CredentialsPromptWrapper(externalPrompt));
 	    }
@@ -632,7 +632,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		return this.serializedRevisionLinks;
 	}
 	
-	protected void configureProxy(ISVNClientWrapper proxy, IOptionProvider optionProvider) {
+	protected void configureProxy(ISVNClient proxy, IOptionProvider optionProvider) {
 		SVNUtility.configureProxy(proxy, this);
 		proxy.setReportRevisionChange(optionProvider.getReportRevisionChange());
 	}
@@ -658,11 +658,11 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	}
 	
 	protected interface IProxyVisitor {
-	    public void visit(ISVNClientWrapper proxy);
+	    public void visit(ISVNClient proxy);
 	}
 
-	public static class BaseCredentialsPromptWrapper implements ICredentialsPrompt {
-		protected ICredentialsPrompt prompt;
+	public static class BaseCredentialsPromptWrapper implements ISVNCredentialsPrompt {
+		protected ISVNCredentialsPrompt prompt;
 		protected String tryRealm;
 		protected String threadName;
 		// Inadequate client library behaviour: correct client shouldn't ask for the same credentials twice for atomic operation if credentials are valid
@@ -672,8 +672,8 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		protected IRepositoryLocation realmLocation;
 		protected IRepositoryLocation location;
 		
-		public BaseCredentialsPromptWrapper(ICredentialsPrompt prompt, IRepositoryLocation location) {
-			this.prompt = prompt == null ? ICredentialsPrompt.DEFAULT_PROMPT : prompt;
+		public BaseCredentialsPromptWrapper(ISVNCredentialsPrompt prompt, IRepositoryLocation location) {
+			this.prompt = prompt == null ? ISVNCredentialsPrompt.DEFAULT_PROMPT : prompt;
 			this.location = location;
 		}
 
@@ -826,7 +826,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
             if (retVal) {
         		IRepositoryLocation location = this.location;
         		String realmToSave = this.getRealmToSave();
-        		if (!ICredentialsPrompt.ROOT_LOCATION.equals(realmToSave)) {
+        		if (!ISVNCredentialsPrompt.ROOT_LOCATION.equals(realmToSave)) {
         			location = this.location.getLocationForRealm(realmToSave);
         			if (location == null) {
             			location = SVNRemoteStorage.instance().newRepositoryLocation();
@@ -889,14 +889,14 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	
 	protected class CredentialsPromptWrapper extends BaseCredentialsPromptWrapper {
 		
-		public CredentialsPromptWrapper(ICredentialsPrompt prompt) {
+		public CredentialsPromptWrapper(ISVNCredentialsPrompt prompt) {
 			super(prompt, SVNRepositoryLocation.this);
 		}
 
 		public int askTrustSSLServer(IRepositoryLocation location, String info, boolean allowPermanently) {
         	if (!SVNRepositoryLocation.this.trustSiteDefined) {
         		SVNRepositoryLocation.this.trustSite = super.askTrustSSLServer(SVNRepositoryLocation.this, info, allowPermanently);
-        		if (SVNRepositoryLocation.this.trustSite != ICredentialsPrompt.Reject) {
+        		if (SVNRepositoryLocation.this.trustSite != ISVNCredentialsPrompt.REJECT) {
             		SVNRepositoryLocation.this.trustSiteDefined = true;
         		}
         		else {
@@ -922,10 +922,10 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	}
 	
 	protected static class ProxyHolder {
-		public final ISVNClientWrapper proxy;
+		public final ISVNClient proxy;
 		public int referenceCounter;
 		
-		public ProxyHolder(ISVNClientWrapper proxy) {
+		public ProxyHolder(ISVNClient proxy) {
 			this.proxy = proxy;
 			this.referenceCounter = 1;
 		}

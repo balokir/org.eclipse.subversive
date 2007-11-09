@@ -16,8 +16,8 @@ import java.io.ByteArrayInputStream;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.client.Revision;
-import org.eclipse.team.svn.core.client.Status;
+import org.eclipse.team.svn.core.client.SVNEntryStatus;
+import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.GetFileContentOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -41,7 +41,7 @@ public class RemoteFileVariant extends RemoteResourceVariant {
 
 	protected void fetchContents(IProgressMonitor monitor) throws TeamException {
 		SVNRemoteStorage storage = SVNRemoteStorage.instance();
-		if ((!this.local.isCopied() && this.local.getRevision() == Revision.INVALID_REVISION_NUMBER) || 
+		if ((!this.local.isCopied() && this.local.getRevision() == SVNRevision.INVALID_REVISION_NUMBER) || 
 		    IStateFilter.SF_DELETED.accept(this.local.getResource(), this.local.getStatus(), this.local.getChangeMask()) &&
 		    !IStateFilter.SF_REPLACED.accept(this.local.getResource(), this.local.getStatus(), this.local.getChangeMask())) {
 			this.setContents(new ByteArrayInputStream(new byte[0]), monitor);
@@ -50,10 +50,10 @@ public class RemoteFileVariant extends RemoteResourceVariant {
 		IRepositoryResource remote = null;
 		if (this.local.isCopied()) {
 			IRepositoryLocation location = storage.getRepositoryLocation(local.getResource());
-			Status st = SVNUtility.getSVNInfoForNotConnected(this.local.getResource());
+			SVNEntryStatus st = SVNUtility.getSVNInfoForNotConnected(this.local.getResource());
 			remote = location.asRepositoryFile(st.urlCopiedFrom, false);
-			remote.setSelectedRevision(Revision.fromNumber(st.revisionCopiedFrom));
-			remote.setPegRevision(Revision.fromNumber(st.revisionCopiedFrom));
+			remote.setSelectedRevision(SVNRevision.fromNumber(st.revisionCopiedFrom));
+			remote.setPegRevision(SVNRevision.fromNumber(st.revisionCopiedFrom));
 		}
 		else {
 			remote = SVNRemoteStorage.instance().asRepositoryResource(this.local.getResource());
@@ -63,7 +63,7 @@ public class RemoteFileVariant extends RemoteResourceVariant {
 					remote = originator;
 				}
 			}
-			remote.setSelectedRevision(Revision.fromNumber(this.local.getRevision()));
+			remote.setSelectedRevision(SVNRevision.fromNumber(this.local.getRevision()));
 			remote.setPegRevision(((IResourceChange)this.local).getPegRevision());
 		}
 		

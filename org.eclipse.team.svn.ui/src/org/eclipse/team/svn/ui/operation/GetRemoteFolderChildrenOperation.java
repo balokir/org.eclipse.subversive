@@ -17,10 +17,10 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.EntryRevisionReference;
-import org.eclipse.team.svn.core.client.ISVNClientWrapper;
-import org.eclipse.team.svn.core.client.PropertyData;
-import org.eclipse.team.svn.core.client.PropertyData.BuiltIn;
+import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
+import org.eclipse.team.svn.core.client.SVNProperty;
+import org.eclipse.team.svn.core.client.SVNProperty.BuiltIn;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
@@ -71,9 +71,9 @@ public class GetRemoteFolderChildrenOperation extends AbstractNonLockingOperatio
 		Information info = this.parent.getInfo();
 		if (info != null && info.hasProperties && SVNTeamPreferences.getRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.REPOSITORY_SHOW_EXTERNALS_NAME)) {
 			IRepositoryLocation location = this.parent.getRepositoryLocation();
-			ISVNClientWrapper proxy = location.acquireSVNProxy();
+			ISVNClient proxy = location.acquireSVNProxy();
 			try {
-				PropertyData data = proxy.propertyGet(SVNUtility.getEntryRevisionReference(this.parent), BuiltIn.EXTERNALS, new SVNProgressMonitor(this, monitor, null));
+				SVNProperty data = proxy.propertyGet(SVNUtility.getEntryRevisionReference(this.parent), BuiltIn.EXTERNALS, new SVNProgressMonitor(this, monitor, null));
 				if (data != null) {
 					Map externals = SVNUtility.parseSVNExternalsProperty(data.value);
 					IRepositoryResource []newTmp = new IRepositoryResource[tmp.length + externals.size()];
@@ -82,7 +82,7 @@ public class GetRemoteFolderChildrenOperation extends AbstractNonLockingOperatio
 					for (Iterator it = externals.entrySet().iterator(); it.hasNext(); i++) {
 						Map.Entry entry = (Map.Entry)it.next();
 						String name = (String)entry.getKey();
-						EntryRevisionReference ref = (EntryRevisionReference)entry.getValue();
+						SVNEntryRevisionReference ref = (SVNEntryRevisionReference)entry.getValue();
 						newTmp[tmp.length + i] = SVNRemoteStorage.instance().asRepositoryResource(location, ref.path, false);
 						newTmp[tmp.length + i].setSelectedRevision(ref.revision);
 						newTmp[tmp.length + i].setPegRevision(ref.pegRevision);

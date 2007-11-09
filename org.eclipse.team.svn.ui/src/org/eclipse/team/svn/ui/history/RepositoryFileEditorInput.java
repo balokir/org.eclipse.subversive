@@ -18,8 +18,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.IPersistableElement;
-import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.team.svn.core.history.ResourceContentStorage;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
@@ -28,6 +26,8 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.repository.RepositoryTreeViewer;
 import org.eclipse.team.svn.ui.repository.model.IResourceTreeNode;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFile;
+import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * Remote file editor input implementation

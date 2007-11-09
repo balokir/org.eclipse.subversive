@@ -16,7 +16,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.SVNTeamProjectMapper;
-import org.eclipse.team.svn.core.client.Status;
+import org.eclipse.team.svn.core.client.SVNEntryStatus;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.operation.local.AbstractWorkingCopyOperation;
@@ -50,7 +50,7 @@ public class ReconnectProjectOperation extends AbstractWorkingCopyOperation {
 			final IProject project = (IProject)resources[i];
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-					Status st = SVNUtility.getSVNInfoForNotConnected(project);
+					SVNEntryStatus st = SVNUtility.getSVNInfoForNotConnected(project);
 					if (st == null) {
 						throw new UnreportableException(SVNTeamPlugin.instance().getResource("Error.NonSVNPath"));
 					}

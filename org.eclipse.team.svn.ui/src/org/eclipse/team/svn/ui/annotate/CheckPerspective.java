@@ -14,15 +14,15 @@ package org.eclipse.team.svn.ui.annotate;
 import java.text.MessageFormat;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.dialog.PromptOptionDialog;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.views.IViewDescriptor;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.dialog.PromptOptionDialog;
-import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 
 /**
  * Check on which perspective AnnotateView should be opened. 
