@@ -40,7 +40,7 @@ public interface IStateFilter {
 
 	public static final String ST_NOTEXISTS = null;
 
-	public static final String ST_NONE = "None";
+	public static final String ST_IGNORED = "Ignored";
 
 	public static final String ST_NEW = "New";
 
@@ -158,7 +158,7 @@ public interface IStateFilter {
 	
 	public static final IStateFilter SF_IGNORED = new IStateFilter() {
 		public boolean accept(IResource resource, String state, int mask) {
-			return state == IStateFilter.ST_NONE;
+			return state == IStateFilter.ST_IGNORED;
 		}
 		public boolean allowsRecursion(IResource resource, String state, int mask) {
 			return true;
@@ -169,7 +169,7 @@ public interface IStateFilter {
 		public boolean accept(IResource resource, String state, int mask) {
 			return 
 				state == IStateFilter.ST_PREREPLACED || state == IStateFilter.ST_NEW || 
-				state == IStateFilter.ST_NONE || state == IStateFilter.ST_NOTEXISTS;
+				state == IStateFilter.ST_IGNORED || state == IStateFilter.ST_NOTEXISTS;
 		}
 		public boolean allowsRecursion(IResource resource, String state, int mask) {
 			return true;
@@ -192,7 +192,7 @@ public interface IStateFilter {
 		public boolean accept(IResource resource, String state, int mask) {
 			return 
 				state == IStateFilter.ST_PREREPLACED || state == IStateFilter.ST_NEW || 
-				state == IStateFilter.ST_NONE || state == IStateFilter.ST_NOTEXISTS ||
+				state == IStateFilter.ST_IGNORED || state == IStateFilter.ST_NOTEXISTS ||
 				state == IStateFilter.ST_ADDED;
 		}
 		public boolean allowsRecursion(IResource resource, String state, int mask) {
@@ -217,7 +217,7 @@ public interface IStateFilter {
 			return state == IStateFilter.ST_PREREPLACED || state == IStateFilter.ST_NEW;
 		}
 		public boolean allowsRecursion(IResource resource, String state, int mask) {
-			return state != IStateFilter.ST_NONE && state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
+			return state != IStateFilter.ST_IGNORED && state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
 		}
 	};
 	
@@ -303,11 +303,11 @@ public interface IStateFilter {
 	public static final IStateFilter SF_ANY_CHANGE = new IStateFilter() {
 		public boolean accept(IResource resource, String state, int mask) {
 			return 
-				state != IStateFilter.ST_NONE && state != IStateFilter.ST_NORMAL && 
+				state != IStateFilter.ST_IGNORED && state != IStateFilter.ST_NORMAL && 
 				state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
 		}
 		public boolean allowsRecursion(IResource resource, String state, int mask) {
-			return state != IStateFilter.ST_NONE && state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
+			return state != IStateFilter.ST_IGNORED && state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
 		}
 	};
 
@@ -365,7 +365,7 @@ public interface IStateFilter {
 					!IStateFilter.SF_NOTMODIFIED.accept(resource, state, mask);
 		}
 		public boolean allowsRecursion(IResource resource, String state, int mask) {
-			return state != IStateFilter.ST_NONE && state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
+			return state != IStateFilter.ST_IGNORED && state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
 		}
 	};
 	

@@ -106,7 +106,7 @@ public class CredentialsComposite extends Composite {
 		GridData data = new GridData(GridData.FILL_BOTH);
 		this.setLayoutData(data);
 		
-		Group authGroup = new Group(this, SWT.NULL);
+		Group authGroup = new Group(this, SWT.NONE);
 		layout = new GridLayout();
 		layout.verticalSpacing = 12;
 		authGroup.setLayout(layout);
@@ -124,7 +124,7 @@ public class CredentialsComposite extends Composite {
 		data.horizontalSpan = 2;
 		inner.setLayoutData(data);
 		
-		Label description = new Label(inner, SWT.NULL);
+		Label description = new Label(inner, SWT.NONE);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.grabExcessHorizontalSpace = false;
 		data.horizontalIndent = 0;
@@ -141,7 +141,7 @@ public class CredentialsComposite extends Composite {
 		this.userName.setVisibleItemCount(this.userHistory.getDepth());
 		this.userName.setItems(this.userHistory.getHistory());
 		
-		description = new Label(inner, SWT.NULL);
+		description = new Label(inner, SWT.NONE);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.grabExcessHorizontalSpace = false;
 		data.horizontalIndent = 0;

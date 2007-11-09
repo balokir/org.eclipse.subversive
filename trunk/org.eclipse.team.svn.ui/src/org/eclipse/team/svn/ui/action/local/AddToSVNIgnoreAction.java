@@ -98,7 +98,7 @@ public class AddToSVNIgnoreAction extends AbstractNonRecursiveTeamAction {
             return false;
         }
 		public boolean allowsRecursion(IResource resource, String state, int mask) {
-			return state != IStateFilter.ST_NONE && state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
+			return state != IStateFilter.ST_IGNORED && state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
 		}
     };
 

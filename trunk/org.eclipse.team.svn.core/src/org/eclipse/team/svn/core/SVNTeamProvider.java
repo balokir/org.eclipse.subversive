@@ -13,10 +13,10 @@ package org.eclipse.team.svn.core;
 
 import java.text.MessageFormat;
 
-import org.eclipse.core.resources.IFileModificationValidator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceRuleFactory;
+import org.eclipse.core.resources.team.FileModificationValidator;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -109,7 +109,7 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 		return new SVNTeamMoveDeleteHook();
 	}
 	
-    public IFileModificationValidator getFileModificationValidator() {
+    public FileModificationValidator getFileModificationValidator2() {
         return SVNTeamPlugin.instance().getOptionProvider().getFileModificationValidator();
     }
 	

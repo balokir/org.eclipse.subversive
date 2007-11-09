@@ -11,7 +11,7 @@
 
 package org.eclipse.team.svn.ui;
 
-import org.eclipse.core.resources.IFileModificationValidator;
+import org.eclipse.core.resources.team.FileModificationValidator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.team.svn.core.client.ICredentialsPrompt;
 import org.eclipse.team.svn.core.client.PropertyData;
@@ -53,7 +53,7 @@ public class UIOptionProvider implements IOptionProvider {
 		return SVNTeamPreferences.getShareBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.SHARE_ENABLE_AUTO_NAME);
 	}
 	
-	public IFileModificationValidator getFileModificationValidator() {
+	public FileModificationValidator getFileModificationValidator() {
 		return this.modificationValidator;
 	}
 	
