@@ -156,7 +156,7 @@ public interface ISVNClient {
 	public void copy(SVNEntryRevisionReference []srcPath, String destPath, String message, boolean copyAsChild, boolean makeParents, boolean withMergeHistory, ISVNProgressMonitor monitor) throws SVNClientException;
 	public void remove(String []path, String message, boolean force, boolean keepLocal, ISVNProgressMonitor monitor) throws SVNClientException;
 	
-	public void logEntries(SVNEntryReference reference, SVNRevision revisionStart, SVNRevision revisionEnd, boolean stopOnCopy, boolean discoverPath, boolean includeMergedRevisions, String[] revProps, long limit, ISVNLogEntriesCallback cb, ISVNProgressMonitor monitor) throws SVNClientException;
+	public void logEntries(SVNEntryReference reference, SVNRevision revisionStart, SVNRevision revisionEnd, boolean stopOnCopy, boolean discoverPath, boolean includeMergedRevisions, String[] revProps, long limit, ISVNLogEntryCallback cb, ISVNProgressMonitor monitor) throws SVNClientException;
 	public void annotate(SVNEntryReference reference, SVNRevision revisionStart, SVNRevision revisionEnd, boolean ignoreMimeType, boolean includeMergedRevisions, ISVNAnnotationCallback callback, ISVNProgressMonitor monitor) throws SVNClientException;
 	
 	public void list(SVNEntryRevisionReference reference, int depth, int direntFields, boolean fetchLocks, ISVNEntryCallback cb, ISVNProgressMonitor monitor) throws SVNClientException;

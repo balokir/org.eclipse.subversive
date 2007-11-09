@@ -20,7 +20,7 @@ import org.eclipse.team.svn.core.client.ISVNCredentialsPrompt;
 import org.eclipse.team.svn.core.client.ISVNEntryCallback;
 import org.eclipse.team.svn.core.client.ISVNEntryInfoCallback;
 import org.eclipse.team.svn.core.client.ISVNEntryStatusCallback;
-import org.eclipse.team.svn.core.client.ISVNLogEntriesCallback;
+import org.eclipse.team.svn.core.client.ISVNLogEntryCallback;
 import org.eclipse.team.svn.core.client.ISVNNotificationCallback;
 import org.eclipse.team.svn.core.client.ISVNProgressMonitor;
 import org.eclipse.team.svn.core.client.ISVNPropertyCallback;
@@ -296,7 +296,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void logEntries(SVNEntryReference reference, SVNRevision revisionStart, SVNRevision revisionEnd, boolean stopOnCopy, boolean discoverPath, boolean includeMergedRevisions, String[] revProps, long limit, ISVNLogEntriesCallback cb, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void logEntries(SVNEntryReference reference, SVNRevision revisionStart, SVNRevision revisionEnd, boolean stopOnCopy, boolean discoverPath, boolean includeMergedRevisions, String[] revProps, long limit, ISVNLogEntryCallback cb, ISVNProgressMonitor monitor) throws SVNClientException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.logEntries(reference, revisionStart, revisionEnd, stopOnCopy, discoverPath, includeMergedRevisions, revProps, limit, cb, monitor);
