@@ -66,7 +66,7 @@ public class UpdateAction extends AbstractSynchronizeModelAction {
 			return null;
 		}
 		
-		resources = FileUtility.addOperableParents(resources, IStateFilter.SF_NONVERSIONED);
+		resources = FileUtility.addOperableParents(resources, IStateFilter.SF_UNVERSIONED);
 		
 		final IResource []missing = FileUtility.getResourcesRecursive(resources, IStateFilter.SF_MISSING);//, IResource.DEPTH_ZERO
 		if (missing.length > 0) {

@@ -328,8 +328,8 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 		IResource []localResources = new IResource[] {targetFolder};
 		ILocalResource localResource = SVNRemoteStorage.instance().asLocalResource(targetFolder);
 		IResource []newResources = null;
-		if (IStateFilter.SF_NONVERSIONED.accept(targetFolder, localResource.getStatus(), localResource.getChangeMask())){
-			newResources = FileUtility.addOperableParents(localResources, IStateFilter.SF_NONVERSIONED);
+		if (IStateFilter.SF_UNVERSIONED.accept(targetFolder, localResource.getStatus(), localResource.getChangeMask())){
+			newResources = FileUtility.addOperableParents(localResources, IStateFilter.SF_UNVERSIONED);
 		}
 		if (newResources != null && newResources.length > 0) {
 			IActionOperation addToSVN = new AddToSVNOperation(newResources);

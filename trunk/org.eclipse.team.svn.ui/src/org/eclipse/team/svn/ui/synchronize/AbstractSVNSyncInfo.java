@@ -74,7 +74,7 @@ public abstract class AbstractSVNSyncInfo extends SyncInfo {
     }
     
     protected boolean isNonVersioned(String kind, int mask) {
-        return IStateFilter.SF_NONVERSIONED.accept(this.getLocal(), kind, mask);
+        return IStateFilter.SF_UNVERSIONED.accept(this.getLocal(), kind, mask);
     }
     
     protected boolean isNotExists(String kind, int mask) {

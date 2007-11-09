@@ -486,7 +486,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 	    		ProgressMonitorUtility.setTaskInfo(monitor, this, resources[i].getFullPath().toString());
 	    		
 	    		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resources[i]);
-	    		if (local != null && !IStateFilter.SF_NONVERSIONED.accept(resources[i], local.getStatus(), local.getChangeMask())) {
+	    		if (local != null && !IStateFilter.SF_UNVERSIONED.accept(resources[i], local.getStatus(), local.getChangeMask())) {
 	    			String logTemplate = CommitPanel.getLogTemplateProperty(resources[i], parentTemplates);
 	    			if (logTemplate != null) {
 	    				this.logTemplates.add(logTemplate);
@@ -532,7 +532,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 			IResource versionedResource = null;
 			for (int i = 0; i < this.resources.length && !monitor.isCanceled(); i++) {
 				ILocalResource local = SVNRemoteStorage.instance().asLocalResource(this.resources[i]);
-	    		if (local != null && !IStateFilter.SF_NONVERSIONED.accept(this.resources[i], local.getStatus(), local.getChangeMask())) {
+	    		if (local != null && !IStateFilter.SF_UNVERSIONED.accept(this.resources[i], local.getStatus(), local.getChangeMask())) {
 	    			versionedResource = this.resources[i];
 	    		}
 			}

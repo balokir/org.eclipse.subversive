@@ -45,7 +45,7 @@ public class AddToSVNIgnoreAction extends AbstractNonRecursiveTeamAction {
 	public void runImpl(IAction action) {
 		IResource []resources = this.getSelectedResources(AddToSVNIgnoreAction.SF_NEW_AND_PARENT_VERSIONED);
 
-		IResource []operableParents = FileUtility.getOperableParents(resources, IStateFilter.SF_NONVERSIONED);
+		IResource []operableParents = FileUtility.getOperableParents(resources, IStateFilter.SF_UNVERSIONED);
 		if (operableParents.length > 0) {
 		    AddToSVNPanel panel = new AddToSVNPanel(operableParents);
 			DefaultDialog dialog1 = new DefaultDialog(this.getShell(), panel);

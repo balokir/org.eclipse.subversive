@@ -79,7 +79,7 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 		ILocalResource local = storage.asLocalResource(source);
 		if (local == null || 
 		    IStateFilter.SF_NOTEXISTS.accept(source, local.getStatus(), local.getChangeMask()) ||
-		    IStateFilter.SF_NONVERSIONED.accept(source, local.getStatus(), local.getChangeMask()) ||
+		    IStateFilter.SF_UNVERSIONED.accept(source, local.getStatus(), local.getChangeMask()) ||
 		    IStateFilter.SF_OBSTRUCTED.accept(source, local.getStatus(), local.getChangeMask())) {
 			return FileUtility.isSVNInternals(source);
 		}
@@ -102,8 +102,8 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 			op.add(new RestoreProjectMetaOperation(saveOp));
 		    op.add(new RefreshResourcesOperation(new IResource[] {source, destination}, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
 		}
-    	else if (IStateFilter.SF_NONVERSIONED.accept(destination, local.getStatus(), local.getChangeMask())) {
-	        IResource []scheduledForAddition = FileUtility.getOperableParents(new IResource[] {destination}, IStateFilter.SF_NONVERSIONED, true);
+    	else if (IStateFilter.SF_UNVERSIONED.accept(destination, local.getStatus(), local.getChangeMask())) {
+	        IResource []scheduledForAddition = FileUtility.getOperableParents(new IResource[] {destination}, IStateFilter.SF_UNVERSIONED, true);
 	        AbstractActionOperation addToSVNOp = new AddToSVNWithPropertiesOperation(scheduledForAddition, false); 
 	        op.add(addToSVNOp);
 	       	op.add(moveOp, new IActionOperation[] {addToSVNOp});
@@ -128,7 +128,7 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
 		if (local == null || 
 		    IStateFilter.SF_NOTEXISTS.accept(resource, local.getStatus(), local.getChangeMask()) ||
-		    IStateFilter.SF_NONVERSIONED.accept(resource, local.getStatus(), local.getChangeMask())) {
+		    IStateFilter.SF_UNVERSIONED.accept(resource, local.getStatus(), local.getChangeMask())) {
 			return FileUtility.isSVNInternals(resource);
 		}
 		

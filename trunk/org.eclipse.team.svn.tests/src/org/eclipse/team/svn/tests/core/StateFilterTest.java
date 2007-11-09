@@ -135,16 +135,16 @@ public class StateFilterTest extends TestCase {
 	}
 	
 	public void testSF_NONVERSIONED() {
-		if (IStateFilter.SF_NONVERSIONED.accept(null, IStateFilter.ST_ADDED, 0) ||
-			IStateFilter.SF_NONVERSIONED.accept(null, IStateFilter.ST_DELETED, 0) ||
-			IStateFilter.SF_NONVERSIONED.accept(null, IStateFilter.ST_MISSING, 0) ||
-			IStateFilter.SF_NONVERSIONED.accept(null, IStateFilter.ST_MODIFIED, 0) ||
-			!IStateFilter.SF_NONVERSIONED.accept(null, IStateFilter.ST_NEW, 0) ||
-			!IStateFilter.SF_NONVERSIONED.accept(null, IStateFilter.ST_IGNORED, 0) ||
-			IStateFilter.SF_NONVERSIONED.accept(null, IStateFilter.ST_NORMAL, 0) ||
-			!IStateFilter.SF_NONVERSIONED.accept(null, IStateFilter.ST_NOTEXISTS, 0)
+		if (IStateFilter.SF_UNVERSIONED.accept(null, IStateFilter.ST_ADDED, 0) ||
+			IStateFilter.SF_UNVERSIONED.accept(null, IStateFilter.ST_DELETED, 0) ||
+			IStateFilter.SF_UNVERSIONED.accept(null, IStateFilter.ST_MISSING, 0) ||
+			IStateFilter.SF_UNVERSIONED.accept(null, IStateFilter.ST_MODIFIED, 0) ||
+			!IStateFilter.SF_UNVERSIONED.accept(null, IStateFilter.ST_NEW, 0) ||
+			!IStateFilter.SF_UNVERSIONED.accept(null, IStateFilter.ST_IGNORED, 0) ||
+			IStateFilter.SF_UNVERSIONED.accept(null, IStateFilter.ST_NORMAL, 0) ||
+			!IStateFilter.SF_UNVERSIONED.accept(null, IStateFilter.ST_NOTEXISTS, 0)
 			) {
-			throw new RuntimeException(IStateFilter.SF_NONVERSIONED.getClass().getName() + " failed");
+			throw new RuntimeException(IStateFilter.SF_UNVERSIONED.getClass().getName() + " failed");
 		}
 	}
 	

@@ -49,7 +49,7 @@ public class AddToSVNAction extends AbstractRecursiveTeamAction {
 	
 	public boolean isEnabled() {
 		return 
-			this.checkForResourcesPresence(IStateFilter.SF_NONVERSIONED) ||
+			this.checkForResourcesPresence(IStateFilter.SF_UNVERSIONED) ||
 			this.checkForResourcesPresenceRecursive(IStateFilter.SF_NEW);
 	}
 

@@ -54,7 +54,7 @@ public class SVNHistoryPage extends HistoryPage implements IViewInfoProvider, IR
 			}
 			else {
 				ILocalResource local = SVNRemoteStorage.instance().asLocalResource(this.getResource());
-				if (local == null || IStateFilter.SF_NONVERSIONED.accept(this.getResource(), local.getStatus(), local.getChangeMask())) {
+				if (local == null || IStateFilter.SF_UNVERSIONED.accept(this.getResource(), local.getStatus(), local.getChangeMask())) {
 					this.disconnectView();
 				}
 			}

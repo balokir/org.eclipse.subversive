@@ -88,7 +88,7 @@ public class CopyAction extends AbstractWorkingCopyAction {
 					boolean []checkSave = new boolean[] {saveHistory};
 					IActionOperation copyOp = this.getCopyOperation(resources[0], checkSave, destination);
 					if (checkSave[0]) {
-						IResource []parents = FileUtility.getOperableParents(new IResource[] {destination}, IStateFilter.SF_NONVERSIONED, true);
+						IResource []parents = FileUtility.getOperableParents(new IResource[] {destination}, IStateFilter.SF_UNVERSIONED, true);
 						if (parents.length > 0) {
 							addOp = new AddToSVNOperation(parents);
 						}
@@ -107,7 +107,7 @@ public class CopyAction extends AbstractWorkingCopyAction {
 					if (dirPath != null) {
 						new File(dirPath).mkdirs();
 					}
-					IResource []parents = FileUtility.addOperableParents(new IResource[] {destination}, IStateFilter.SF_NONVERSIONED, true);
+					IResource []parents = FileUtility.addOperableParents(new IResource[] {destination}, IStateFilter.SF_UNVERSIONED, true);
 					if (parents.length > 0) {
 						addOp = new AddToSVNOperation(parents);
 						op.add(addOp);

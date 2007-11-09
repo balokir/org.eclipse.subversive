@@ -39,7 +39,7 @@ public interface ISyncStateFilter extends IStateFilter {
         public boolean accept(IResource resource, String state, int mask) {
             return 
             	IStateFilter.SF_REVERTABLE.accept(resource, state, mask) || 
-            	IStateFilter.SF_NONVERSIONED.accept(resource, state, mask);
+            	IStateFilter.SF_UNVERSIONED.accept(resource, state, mask);
         }
 
         public boolean acceptRemote(IResource resource, String state, int mask) {
