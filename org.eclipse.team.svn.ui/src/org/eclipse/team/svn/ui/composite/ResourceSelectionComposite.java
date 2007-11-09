@@ -195,10 +195,10 @@ public class ResourceSelectionComposite extends Composite {
             	if (status1 == status2) {
             		return 0;
             	}
-            	if (status1 == IStateFilter.ST_NEW || status1 == IStateFilter.ST_NONE) {
+            	if (status1 == IStateFilter.ST_NEW || status1 == IStateFilter.ST_IGNORED) {
             		return 1;
             	}
-            	if (status2 == IStateFilter.ST_NEW || status2 == IStateFilter.ST_NONE) {
+            	if (status2 == IStateFilter.ST_NEW || status2 == IStateFilter.ST_IGNORED) {
             		return -1;
             	}
             	return TableViewerSorter.compare(status1, status2);

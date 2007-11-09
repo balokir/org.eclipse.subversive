@@ -478,7 +478,8 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		boolean parentExists = parent != null && parent.isAccessible();
 		if (parentExists && !isLinked) {
 			ILocalResource parentLocal = this.getFirstExistingParentLocal(resource);
-			if (parentLocal == null || !SVNRemoteStorage.SF_NONSVN.accept(parentLocal.getResource(), parentLocal.getStatus(), parentLocal.getChangeMask())) {
+			if (parentLocal == null || !SVNRemoteStorage.SF_NONSVN.accept(parentLocal.getResource(), parentLocal.getStatus(), parentLocal.getChangeMask()) || 
+				(parentLocal.getChangeMask() & ILocalResource.IS_EXTERNAL) != 0 && IStateFilter.SF_IGNORED.accept(parentLocal.getResource(), parentLocal.getStatus(), parentLocal.getChangeMask())) {
 			    retVal = this.loadLocalResourcesSubTreeSVNImpl(provider, resource, noCache);
 			}
 		}
@@ -503,6 +504,10 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
             	String state = child == resource ? fStatus : SVNRemoteStorage.this.getDelegatedStatus(child, fStatus, 0);
             	int changeMask = (state == IStateFilter.ST_OBSTRUCTED || state == IStateFilter.ST_NEW) ? ILocalResource.TEXT_MODIFIED : ILocalResource.NO_MODIFICATION;
             	changeMask |= parentCM;
+            	String path = FileUtility.getWorkingCopyPath(child);
+            	if (new File(path + "/" + SVNUtility.getSVNFolderName()).exists() && SVNUtility.getSVNInfoForNotConnected(child) != null) {
+            		return false;
+            	}
             	ILocalResource retVal = SVNRemoteStorage.this.registerResource(child, Revision.INVALID_REVISION_NUMBER, state, changeMask, null, -1);
                 if (tmp[0] == null) {
                 	tmp[0] = retVal;
@@ -523,7 +528,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 			IPath location = resource.getLocation();
 			if (location != null && this.isFileExists(location)) {
 			    // may be ignored ?
-				status = IStateFilter.ST_NONE;
+				status = IStateFilter.ST_IGNORED;
 				if (!SVNUtility.isIgnored(resource)) {
 				    status = this.getTopLevelStatus(resource, IStateFilter.ST_NEW, 0);
 				}
@@ -604,7 +609,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		return retVal;
 	}
 	
-	protected void scheduleStatusesFetch(final Status []st, IResource target) {
+	protected void scheduleStatusesFetch(Status []st, IResource target) {
 		synchronized (this.fetchQueue) {
 			this.fetchQueue.add(new Object[] {st, target});
 			if (this.fetchQueue.size() == 1) {
@@ -707,14 +712,8 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 				nodePath = nodePath.substring(0, nodePath.length() - 1);
 			}
 			else if (i > 0 && nodePath.trim().length() == 0) {
+				// Debug code was removed. We already have all information about the JavaSVN bug.
 				continue;
-				// Debug code is switched off. We already have all information about the JavaSVN bug.
-//			    throw new RuntimeException(
-//			        "Current [" + i + "] path '" + statuses[i].getPath() + 
-//			        "' with status '" + statuses[i].getTextStatusDescription() + ":" + statuses[i].getPropStatusDescription() + 
-//			        "' and root [0] path '" + statuses[0].getPath() + 
-//			        "' with status '" + statuses[0].getTextStatusDescription() + ":" + statuses[0].getPropStatusDescription() + "' reported by JavaSVN." + 
-//			        "Statuses requested for '" + path + "' that is related to project '" + projectPath + "'.");
 			}
 			
 			IResource tRes = null;
@@ -737,10 +736,14 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 			
 			ILocalResource local = (ILocalResource)this.localResources.get(tRes.getFullPath());
 			if (local == null) {
-				int externalMask = statuses[i].textStatus == org.eclipse.team.svn.core.client.Status.Kind.EXTERNAL ? ILocalResource.IS_EXTERNAL : 0;
+				int externalMask = statuses[i].textStatus == Status.Kind.EXTERNAL ? ILocalResource.IS_EXTERNAL : 0;
 				if (externalMask != 0) {
 					statuses[i] = SVNUtility.getSVNInfoForNotConnected(tRes);
 					if (statuses[i] == null) {
+						local = this.registerResource(tRes, Revision.INVALID_REVISION_NUMBER, IStateFilter.ST_IGNORED, externalMask, null, 0);
+						if (tRes == resource) {
+							retVal = local;
+						}
 						continue;
 					}
 				}
@@ -806,7 +809,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	    }
 	    if (IStateFilter.SF_IGNORED.accept(resource, status, mask) || 
 		    SVNUtility.isIgnored(resource)) {
-	        return IStateFilter.ST_NONE;
+	        return IStateFilter.ST_IGNORED;
 	    }
 	    return this.getTopLevelStatus(resource, status, mask);
 	}
@@ -837,7 +840,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	        			if (location != null) {
 					    	String projectPath = location.removeLastSegments(1).toString();
 					    	File checkedResource = new File(projectPath + current.getFullPath().toString());
-					    	status = !checkedResource.exists() ? IStateFilter.ST_NOTEXISTS : IStateFilter.ST_NONE;
+					    	status = !checkedResource.exists() ? IStateFilter.ST_NOTEXISTS : IStateFilter.ST_IGNORED;
 					    	// Bug fix: incorrect path calculation; thanks to Panagiotis Korros
 				    		IPath invalidMetaPath = new Path(projectPath + current.getFullPath().toString()).append(SVNUtility.getSVNFolderName());
 				    		FileUtility.deleteRecursive(invalidMetaPath.toFile());
@@ -899,8 +902,8 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		if ("null".equals(status)) {
 			return IStateFilter.ST_NOTEXISTS;
 		}
-		else if (IStateFilter.ST_NONE.equals(status)) {
-			return IStateFilter.ST_NONE;
+		else if (IStateFilter.ST_IGNORED.equals(status)) {
+			return IStateFilter.ST_IGNORED;
 		}
 		else if (IStateFilter.ST_NEW.equals(status)) {
 			return IStateFilter.ST_NEW;
@@ -940,7 +943,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		
 		switch (textKind) {
 			case org.eclipse.team.svn.core.client.Status.Kind.IGNORED: {
-				status = IStateFilter.ST_NONE;
+				status = IStateFilter.ST_IGNORED;
 				break;
 			}
 			case org.eclipse.team.svn.core.client.Status.Kind.UNVERSIONED: {
@@ -1021,7 +1024,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		public boolean accept(IResource resource, String state, int mask) {
 			return 
 				state == IStateFilter.ST_PREREPLACED || state == IStateFilter.ST_NEW || 
-				state == IStateFilter.ST_NONE || state == IStateFilter.ST_NOTEXISTS || 
+				state == IStateFilter.ST_IGNORED || state == IStateFilter.ST_NOTEXISTS || 
 				state == IStateFilter.ST_LINKED || state == IStateFilter.ST_OBSTRUCTED;
 		}
 		public boolean allowsRecursion(IResource resource, String state, int mask) {

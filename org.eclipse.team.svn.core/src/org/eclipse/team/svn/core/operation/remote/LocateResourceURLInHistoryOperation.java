@@ -74,16 +74,29 @@ public class LocateResourceURLInHistoryOperation extends AbstractRepositoryOpera
 		IRepositoryLocation location = current.getRepositoryLocation();
 		ISVNClientWrapper proxy = location.acquireSVNProxy();
 		try {
-			/*LogEntry []msgs;
+			LogEntry []msgs;
+			int index = 0;
 			if (current.exists()) {
 				msgs = GetLogMessagesOperation.getMessagesImpl(proxy, current, Revision.fromNumber(0), current.getPegRevision(), ISVNClientWrapper.EMPTY_LOG_ENTRY_PROPS, 1, true, this, monitor);
 			}
 			else {
-				msgs = GetLogMessagesOperation.getMessagesImpl(proxy, current.getParent(), Revision.fromNumber(0), current.getPegRevision(), ISVNClientWrapper.EMPTY_LOG_ENTRY_PROPS, 1, true, this, monitor); 
-			}*/
-			LogEntry []msgs = GetLogMessagesOperation.getMessagesImpl(proxy, current, Revision.fromNumber(0), current.getPegRevision(), ISVNClientWrapper.EMPTY_LOG_ENTRY_PROPS, 1, true, this, monitor);
-			if (msgs != null && msgs.length > 0 && msgs[0] != null) {
-				ChangePath []paths = msgs[0].changedPaths;
+				msgs = GetLogMessagesOperation.getMessagesImpl(proxy, current.getParent(), Revision.fromNumber(0), current.getPegRevision(), ISVNClientWrapper.EMPTY_LOG_ENTRY_PROPS, 1, true, this, monitor);
+				if (msgs != null) {
+					for (int j = 0; j < msgs.length; j++) {
+						ChangePath []paths = msgs[j].changedPaths;
+						if (paths != null) {
+							for (int k = 0; k < paths.length; k++) {
+								if (paths[k] != null && current.getUrl().endsWith(paths[k].path)) {
+									index = j;
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+			if (msgs != null && msgs.length > index && msgs[index] != null) {
+				ChangePath []paths = msgs[index].changedPaths;
 				if (paths == null) {
 					return current;
 				}

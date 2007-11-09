@@ -11,7 +11,7 @@
 
 package org.eclipse.team.svn.core.extension.options;
 
-import org.eclipse.core.resources.IFileModificationValidator;
+import org.eclipse.core.resources.team.FileModificationValidator;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.client.ICredentialsPrompt;
 import org.eclipse.team.svn.core.client.PropertyData;
@@ -40,7 +40,7 @@ public interface IOptionProvider {
 		public boolean isAutomaticProjectShareEnabled() {
 			return false;
 		}
-		public IFileModificationValidator getFileModificationValidator() {
+		public FileModificationValidator getFileModificationValidator() {
 			return null;
 		}
 		public boolean isSVNCacheEnabled() {
@@ -66,7 +66,7 @@ public interface IOptionProvider {
 		}
 	};
 	
-	public IFileModificationValidator getFileModificationValidator();
+	public FileModificationValidator getFileModificationValidator();
 	public ICredentialsPrompt getCredentialsPrompt();
 	public boolean getReportRevisionChange();
 	public ILoggedOperationFactory getLoggedOperationFactory();

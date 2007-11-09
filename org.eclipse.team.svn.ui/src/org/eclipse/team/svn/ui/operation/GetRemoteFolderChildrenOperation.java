@@ -13,16 +13,16 @@ package org.eclipse.team.svn.ui.operation;
 
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.client.EntryRevisionReference;
 import org.eclipse.team.svn.core.client.ISVNClientWrapper;
 import org.eclipse.team.svn.core.client.PropertyData;
-import org.eclipse.team.svn.core.client.Revision;
 import org.eclipse.team.svn.core.client.PropertyData.BuiltIn;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
-import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -75,51 +75,20 @@ public class GetRemoteFolderChildrenOperation extends AbstractNonLockingOperatio
 			try {
 				PropertyData data = proxy.propertyGet(SVNUtility.getEntryRevisionReference(this.parent), BuiltIn.EXTERNALS, new SVNProgressMonitor(this, monitor, null));
 				if (data != null) {
-					String []externals = data.value.trim().split("[\\n]+"); // it seems different clients have different behaviours wrt trailing whitespace.. so trim() to be safe
-					if (externals.length > 0) {
-						IRepositoryResource []newTmp = new IRepositoryResource[tmp.length + externals.length];
-						System.arraycopy(tmp, 0, newTmp, 0, tmp.length);
-						
-						for (int i = 0; i < externals.length; i++) {
-							String []parts = externals[i].split("[\\t ]+");
-							// 2 - name + URL
-							// 3 - name + -rRevision + URL
-							// 4 - name + -r Revision + URL
-							if (parts.length < 2 || parts.length > 4) {
-								throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]);
-							}
-							String name = parts[0];  // hmm, we aren't handle the case were the name does not match the remote name, ie.   "foo  http://server/trunk/bar"..
-							String url = (parts.length == 2 ? parts[1] : (parts.length == 4 ? parts[3] : parts[2])).trim(); // trim() to deal with windoze CR characters..
-							
-							try {
-								url = SVNUtility.decodeURL(url);
-							}
-							catch (IllegalArgumentException ex) {
-								// the URL is not encoded
-							}
-						    url = SVNUtility.normalizeURL(url);
-							// see if we can find a matching repository location:
-							newTmp[tmp.length + i] = SVNRemoteStorage.instance().asRepositoryResource(location, url, false);
-							int revision = Revision.INVALID_REVISION_NUMBER;
-							try {
-								if (parts.length == 4) {
-									revision = Integer.parseInt(parts[2]);
-								}
-								else if (parts.length == 3) {
-									revision = Integer.parseInt(parts[1].substring(2));
-								}
-							}
-							catch (Exception ex) {
-								throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]);
-							}
-							if (revision != Revision.INVALID_REVISION_NUMBER) {
-								newTmp[tmp.length + i].setSelectedRevision(Revision.fromNumber(revision));
-							}
-							this.externalsNames.put(newTmp[tmp.length + i], name);
-						}
-						
-						tmp = newTmp;
+					Map externals = SVNUtility.parseSVNExternalsProperty(data.value);
+					IRepositoryResource []newTmp = new IRepositoryResource[tmp.length + externals.size()];
+					System.arraycopy(tmp, 0, newTmp, 0, tmp.length);
+					int i = 0;
+					for (Iterator it = externals.entrySet().iterator(); it.hasNext(); i++) {
+						Map.Entry entry = (Map.Entry)it.next();
+						String name = (String)entry.getKey();
+						EntryRevisionReference ref = (EntryRevisionReference)entry.getValue();
+						newTmp[tmp.length + i] = SVNRemoteStorage.instance().asRepositoryResource(location, ref.path, false);
+						newTmp[tmp.length + i].setSelectedRevision(ref.revision);
+						newTmp[tmp.length + i].setPegRevision(ref.pegRevision);
+						this.externalsNames.put(newTmp[tmp.length + i], name);
 					}
+					tmp = newTmp;
 				}
 			} finally {
 				location.releaseSVNProxy(proxy);

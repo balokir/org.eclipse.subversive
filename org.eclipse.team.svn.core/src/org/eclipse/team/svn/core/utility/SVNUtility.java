@@ -21,6 +21,7 @@ import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -62,6 +63,7 @@ import org.eclipse.team.svn.core.client.RepositoryEntry.Fields;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.options.IIgnoreRecommendations;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
+import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.operation.file.SVNFileStorage;
 import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
@@ -81,6 +83,50 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
  */
 public final class SVNUtility {
 	private static String svnFolderName = null;
+	
+	public static Map parseSVNExternalsProperty(String property) {
+		if (property == null) {
+			return Collections.EMPTY_MAP;
+		}
+		Map retVal = new HashMap();
+		String []externals = property.trim().split("[\\n]+"); // it seems different clients have different behaviours wrt trailing whitespace.. so trim() to be safe
+		if (externals.length > 0) {
+			for (int i = 0; i < externals.length; i++) {
+				String []parts = externals[i].split("[\\t ]+");
+				// 2 - name + URL
+				// 3 - name + -rRevision + URL
+				// 4 - name + -r Revision + URL
+				if (parts.length < 2 || parts.length > 4) {
+					throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]);
+				}
+				String name = parts[0];  // hmm, we aren't handle the case were the name does not match the remote name, ie.   "foo  http://server/trunk/bar"..
+				String url = (parts.length == 2 ? parts[1] : (parts.length == 4 ? parts[3] : parts[2])).trim(); // trim() to deal with Windows CR characters..
+				
+				try {
+					url = SVNUtility.decodeURL(url);
+				}
+				catch (IllegalArgumentException ex) {
+					// the URL is not encoded
+				}
+			    url = SVNUtility.normalizeURL(url);
+				// see if we can find a matching repository location:
+				int revision = Revision.INVALID_REVISION_NUMBER;
+				try {
+					if (parts.length == 4) {
+						revision = Integer.parseInt(parts[2]);
+					}
+					else if (parts.length == 3) {
+						revision = Integer.parseInt(parts[1].substring(2));
+					}
+				}
+				catch (Exception ex) {
+					throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]);
+				}
+				retVal.put(name, new EntryRevisionReference(url, null, revision != Revision.INVALID_REVISION_NUMBER ? Revision.fromNumber(revision) : null));
+			}
+		}
+		return retVal;
+	}
 	
 	public static boolean useSingleReferenceSignature(EntryRevisionReference reference1, EntryRevisionReference reference2) {
 		int kind1 = reference1.revision.getKind();
@@ -511,6 +557,21 @@ public final class SVNUtility {
 			else {
 				return null;
 			}
+		}
+		catch (Exception ex) {
+			return null;
+		}
+		finally {
+			proxy.dispose();
+		}
+	}
+	
+	public static String getPropertyForNotConnected(IResource root, String propertyName) {
+		String location = FileUtility.getWorkingCopyPath(root);
+		ISVNClientWrapper proxy = CoreExtensionsManager.instance().getSVNClientWrapperFactory().newInstance();
+		try {
+			PropertyData data = proxy.propertyGet(new EntryRevisionReference(location, null, Revision.WORKING), propertyName, new SVNNullProgressMonitor());
+			return data == null ? null : (data.value != null ? data.value : new String(data.data));
 		}
 		catch (Exception ex) {
 			return null;

@@ -28,7 +28,7 @@ public class StateFilterTest extends TestCase {
 			IStateFilter.SF_ADDED.accept(null, IStateFilter.ST_MISSING, 0) ||
 			IStateFilter.SF_ADDED.accept(null, IStateFilter.ST_MODIFIED, 0) ||
 			!IStateFilter.SF_ADDED.accept(null, IStateFilter.ST_NEW, 0) ||
-			IStateFilter.SF_ADDED.accept(null, IStateFilter.ST_NONE, 0) ||
+			IStateFilter.SF_ADDED.accept(null, IStateFilter.ST_IGNORED, 0) ||
 			IStateFilter.SF_ADDED.accept(null, IStateFilter.ST_NORMAL, 0) ||
 			IStateFilter.SF_ADDED.accept(null, IStateFilter.ST_NOTEXISTS, 0)
 			) {
@@ -42,7 +42,7 @@ public class StateFilterTest extends TestCase {
 			!IStateFilter.SF_ALL.accept(null, IStateFilter.ST_MISSING, 0) ||
 			!IStateFilter.SF_ALL.accept(null, IStateFilter.ST_MODIFIED, 0) ||
 			!IStateFilter.SF_ALL.accept(null, IStateFilter.ST_NEW, 0) ||
-			!IStateFilter.SF_ALL.accept(null, IStateFilter.ST_NONE, 0) ||
+			!IStateFilter.SF_ALL.accept(null, IStateFilter.ST_IGNORED, 0) ||
 			!IStateFilter.SF_ALL.accept(null, IStateFilter.ST_NORMAL, 0) ||
 			!IStateFilter.SF_ALL.accept(null, IStateFilter.ST_NOTEXISTS, 0)
 			) {
@@ -56,7 +56,7 @@ public class StateFilterTest extends TestCase {
 			!IStateFilter.SF_ANY_CHANGE.accept(null, IStateFilter.ST_MISSING, 0) ||
 			!IStateFilter.SF_ANY_CHANGE.accept(null, IStateFilter.ST_MODIFIED, 0) ||
 			!IStateFilter.SF_ANY_CHANGE.accept(null, IStateFilter.ST_NEW, 0) ||
-			IStateFilter.SF_ANY_CHANGE.accept(null, IStateFilter.ST_NONE, 0) ||
+			IStateFilter.SF_ANY_CHANGE.accept(null, IStateFilter.ST_IGNORED, 0) ||
 			IStateFilter.SF_ANY_CHANGE.accept(null, IStateFilter.ST_NORMAL, 0) ||
 			!IStateFilter.SF_ANY_CHANGE.accept(null, IStateFilter.ST_NOTEXISTS, 0)
 			) {
@@ -70,7 +70,7 @@ public class StateFilterTest extends TestCase {
 			!IStateFilter.SF_COMMITABLE.accept(null, IStateFilter.ST_MISSING, 0) ||
 			!IStateFilter.SF_COMMITABLE.accept(null, IStateFilter.ST_MODIFIED, 0) ||
 			IStateFilter.SF_COMMITABLE.accept(null, IStateFilter.ST_NEW, 0) ||
-			IStateFilter.SF_COMMITABLE.accept(null, IStateFilter.ST_NONE, 0) ||
+			IStateFilter.SF_COMMITABLE.accept(null, IStateFilter.ST_IGNORED, 0) ||
 			IStateFilter.SF_COMMITABLE.accept(null, IStateFilter.ST_NORMAL, 0) ||
 			IStateFilter.SF_COMMITABLE.accept(null, IStateFilter.ST_NOTEXISTS, 0)
 			) {
@@ -84,7 +84,7 @@ public class StateFilterTest extends TestCase {
 			!IStateFilter.SF_DELETED.accept(null, IStateFilter.ST_MISSING, 0) ||
 			IStateFilter.SF_DELETED.accept(null, IStateFilter.ST_MODIFIED, 0) ||
 			IStateFilter.SF_DELETED.accept(null, IStateFilter.ST_NEW, 0) ||
-			IStateFilter.SF_DELETED.accept(null, IStateFilter.ST_NONE, 0) ||
+			IStateFilter.SF_DELETED.accept(null, IStateFilter.ST_IGNORED, 0) ||
 			IStateFilter.SF_DELETED.accept(null, IStateFilter.ST_NORMAL, 0) ||
 			IStateFilter.SF_DELETED.accept(null, IStateFilter.ST_NOTEXISTS, 0)
 			) {
@@ -98,7 +98,7 @@ public class StateFilterTest extends TestCase {
 			IStateFilter.SF_IGNORED.accept(null, IStateFilter.ST_MISSING, 0) ||
 			IStateFilter.SF_IGNORED.accept(null, IStateFilter.ST_MODIFIED, 0) ||
 			IStateFilter.SF_IGNORED.accept(null, IStateFilter.ST_NEW, 0) ||
-			!IStateFilter.SF_IGNORED.accept(null, IStateFilter.ST_NONE, 0) ||
+			!IStateFilter.SF_IGNORED.accept(null, IStateFilter.ST_IGNORED, 0) ||
 			IStateFilter.SF_IGNORED.accept(null, IStateFilter.ST_NORMAL, 0) ||
 			IStateFilter.SF_IGNORED.accept(null, IStateFilter.ST_NOTEXISTS, 0)
 			) {
@@ -112,7 +112,7 @@ public class StateFilterTest extends TestCase {
 			IStateFilter.SF_MODIFIED.accept(null, IStateFilter.ST_MISSING, 0) ||
 			!IStateFilter.SF_MODIFIED.accept(null, IStateFilter.ST_MODIFIED, 0) ||
 			IStateFilter.SF_MODIFIED.accept(null, IStateFilter.ST_NEW, 0) ||
-			IStateFilter.SF_MODIFIED.accept(null, IStateFilter.ST_NONE, 0) ||
+			IStateFilter.SF_MODIFIED.accept(null, IStateFilter.ST_IGNORED, 0) ||
 			IStateFilter.SF_MODIFIED.accept(null, IStateFilter.ST_NORMAL, 0) ||
 			IStateFilter.SF_MODIFIED.accept(null, IStateFilter.ST_NOTEXISTS, 0)
 			) {
@@ -126,7 +126,7 @@ public class StateFilterTest extends TestCase {
 			IStateFilter.SF_NEW.accept(null, IStateFilter.ST_MISSING, 0) ||
 			IStateFilter.SF_NEW.accept(null, IStateFilter.ST_MODIFIED, 0) ||
 			!IStateFilter.SF_NEW.accept(null, IStateFilter.ST_NEW, 0) ||
-			IStateFilter.SF_NEW.accept(null, IStateFilter.ST_NONE, 0) ||
+			IStateFilter.SF_NEW.accept(null, IStateFilter.ST_IGNORED, 0) ||
 			IStateFilter.SF_NEW.accept(null, IStateFilter.ST_NORMAL, 0) ||
 			IStateFilter.SF_NEW.accept(null, IStateFilter.ST_NOTEXISTS, 0)
 			) {
@@ -140,7 +140,7 @@ public class StateFilterTest extends TestCase {
 			IStateFilter.SF_NONVERSIONED.accept(null, IStateFilter.ST_MISSING, 0) ||
 			IStateFilter.SF_NONVERSIONED.accept(null, IStateFilter.ST_MODIFIED, 0) ||
 			!IStateFilter.SF_NONVERSIONED.accept(null, IStateFilter.ST_NEW, 0) ||
-			!IStateFilter.SF_NONVERSIONED.accept(null, IStateFilter.ST_NONE, 0) ||
+			!IStateFilter.SF_NONVERSIONED.accept(null, IStateFilter.ST_IGNORED, 0) ||
 			IStateFilter.SF_NONVERSIONED.accept(null, IStateFilter.ST_NORMAL, 0) ||
 			!IStateFilter.SF_NONVERSIONED.accept(null, IStateFilter.ST_NOTEXISTS, 0)
 			) {
@@ -154,7 +154,7 @@ public class StateFilterTest extends TestCase {
 			IStateFilter.SF_NOTEXISTS.accept(null, IStateFilter.ST_MISSING, 0) ||
 			IStateFilter.SF_NOTEXISTS.accept(null, IStateFilter.ST_MODIFIED, 0) ||
 			IStateFilter.SF_NOTEXISTS.accept(null, IStateFilter.ST_NEW, 0) ||
-			IStateFilter.SF_NOTEXISTS.accept(null, IStateFilter.ST_NONE, 0) ||
+			IStateFilter.SF_NOTEXISTS.accept(null, IStateFilter.ST_IGNORED, 0) ||
 			IStateFilter.SF_NOTEXISTS.accept(null, IStateFilter.ST_NORMAL, 0) ||
 			!IStateFilter.SF_NOTEXISTS.accept(null, IStateFilter.ST_NOTEXISTS, 0)
 			) {
@@ -168,7 +168,7 @@ public class StateFilterTest extends TestCase {
 			IStateFilter.SF_NOTMODIFIED.accept(null, IStateFilter.ST_MISSING, 0) ||
 			IStateFilter.SF_NOTMODIFIED.accept(null, IStateFilter.ST_MODIFIED, 0) ||
 			IStateFilter.SF_NOTMODIFIED.accept(null, IStateFilter.ST_NEW, 0) ||
-			IStateFilter.SF_NOTMODIFIED.accept(null, IStateFilter.ST_NONE, 0) ||
+			IStateFilter.SF_NOTMODIFIED.accept(null, IStateFilter.ST_IGNORED, 0) ||
 			!IStateFilter.SF_NOTMODIFIED.accept(null, IStateFilter.ST_NORMAL, 0) ||
 			!IStateFilter.SF_NOTMODIFIED.accept(null, IStateFilter.ST_NOTEXISTS, 0)
 			) {
@@ -182,7 +182,7 @@ public class StateFilterTest extends TestCase {
 			!IStateFilter.SF_ONREPOSITORY.accept(null, IStateFilter.ST_MISSING, 0) ||
 			!IStateFilter.SF_ONREPOSITORY.accept(null, IStateFilter.ST_MODIFIED, 0) ||
 			IStateFilter.SF_ONREPOSITORY.accept(null, IStateFilter.ST_NEW, 0) ||
-			IStateFilter.SF_ONREPOSITORY.accept(null, IStateFilter.ST_NONE, 0) ||
+			IStateFilter.SF_ONREPOSITORY.accept(null, IStateFilter.ST_IGNORED, 0) ||
 			!IStateFilter.SF_ONREPOSITORY.accept(null, IStateFilter.ST_NORMAL, 0) ||
 			IStateFilter.SF_ONREPOSITORY.accept(null, IStateFilter.ST_NOTEXISTS, 0)
 			) {
@@ -196,7 +196,7 @@ public class StateFilterTest extends TestCase {
 			!IStateFilter.SF_VERSIONED.accept(null, IStateFilter.ST_MISSING, 0) ||
 			!IStateFilter.SF_VERSIONED.accept(null, IStateFilter.ST_MODIFIED, 0) ||
 			IStateFilter.SF_VERSIONED.accept(null, IStateFilter.ST_NEW, 0) ||
-			IStateFilter.SF_VERSIONED.accept(null, IStateFilter.ST_NONE, 0) ||
+			IStateFilter.SF_VERSIONED.accept(null, IStateFilter.ST_IGNORED, 0) ||
 			!IStateFilter.SF_VERSIONED.accept(null, IStateFilter.ST_NORMAL, 0) ||
 			IStateFilter.SF_VERSIONED.accept(null, IStateFilter.ST_NOTEXISTS, 0)
 			) {

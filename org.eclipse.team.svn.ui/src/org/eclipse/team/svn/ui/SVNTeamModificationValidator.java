@@ -15,8 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFileModificationValidator;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.team.FileModificationValidationContext;
+import org.eclipse.core.resources.team.FileModificationValidator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Shell;
@@ -32,12 +33,12 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  * 
  * @author Sergiy Logvin
  */
-public class SVNTeamModificationValidator implements IFileModificationValidator {
-	public IStatus validateEdit(IFile[] files, final Object context) {
+public class SVNTeamModificationValidator extends FileModificationValidator {
+	public IStatus validateEdit(IFile[] files, final FileModificationValidationContext context) {
 		if (FileUtility.isConnected(files[0])) {
 			final IResource[] needsLockResources = this.getNeedsLockResources(files);
 			if (needsLockResources.length > 0) {
-				LockProposeUtility.proposeLock(needsLockResources, context == null ? UIMonitorUtility.getShell() : (Shell)context);
+				LockProposeUtility.proposeLock(needsLockResources, context == null || context.getShell() == null ? UIMonitorUtility.getShell() : (Shell)context.getShell());
 			}
 		}
 		
