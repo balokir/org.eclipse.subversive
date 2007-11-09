@@ -43,7 +43,7 @@ import org.eclipse.team.svn.core.client.ISVNClient;
 import org.eclipse.team.svn.core.client.ISVNEntryCallback;
 import org.eclipse.team.svn.core.client.ISVNEntryInfoCallback;
 import org.eclipse.team.svn.core.client.ISVNEntryStatusCallback;
-import org.eclipse.team.svn.core.client.ISVNLogEntriesCallback;
+import org.eclipse.team.svn.core.client.ISVNLogEntryCallback;
 import org.eclipse.team.svn.core.client.ISVNNotificationCallback;
 import org.eclipse.team.svn.core.client.ISVNProgressMonitor;
 import org.eclipse.team.svn.core.client.ISVNPropertyCallback;
@@ -206,7 +206,7 @@ public final class SVNUtility {
 	
 	public static SVNLogEntry []logEntries(ISVNClient proxy, SVNEntryReference reference, SVNRevision revisionStart, SVNRevision revisionEnd, boolean stopOnCopy, boolean discoverPath, String[] revProps, long limit, ISVNProgressMonitor monitor) throws SVNClientException {
 		final ArrayList entries = new ArrayList();
-		proxy.logEntries(reference, revisionStart, revisionEnd, stopOnCopy, discoverPath, false, revProps, limit, new ISVNLogEntriesCallback() {
+		proxy.logEntries(reference, revisionStart, revisionEnd, stopOnCopy, discoverPath, false, revProps, limit, new ISVNLogEntryCallback() {
 			public void next(SVNLogEntry log, boolean hasChildren) {
 				entries.add(log);
 			}

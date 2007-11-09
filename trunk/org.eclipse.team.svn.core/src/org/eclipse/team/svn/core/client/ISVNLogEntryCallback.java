@@ -20,7 +20,7 @@ package org.eclipse.team.svn.core.client;
  * 
  * @author Alexander Gurov
  */
-public interface ISVNLogEntriesCallback {
+public interface ISVNLogEntryCallback {
 	/**
 	 * The method will be called by a client library for every reported log entry.
 	 * 
