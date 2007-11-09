@@ -53,7 +53,7 @@ import org.eclipse.team.svn.core.client.SVNLogEntry;
 import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.client.SVNRevision.Kind;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
-import org.eclipse.team.svn.core.extension.factory.ISVNClientWrapperFactory;
+import org.eclipse.team.svn.core.extension.factory.ISVNClientFactory;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
@@ -270,7 +270,7 @@ public class HistoryViewImpl {
 					}
 				});
         		boolean isCompareAllowed = 
-        			(CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientWrapperFactory.OptionalFeatures.COMPARE_FOLDERS) != 0 ||
+        			(CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientFactory.OptionalFeatures.COMPARE_FOLDERS) != 0 ||
         			HistoryViewImpl.this.repositoryResource instanceof IRepositoryFile;
 				tAction.setEnabled(tSelection.size() == 2 && isCompareAllowed);
 				if (tSelection.size() == 1) {
@@ -809,7 +809,7 @@ public class HistoryViewImpl {
 			return;
 		}
 		boolean isCompareAllowed = 
-			(CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientWrapperFactory.OptionalFeatures.COMPARE_FOLDERS) != 0 ||
+			(CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientFactory.OptionalFeatures.COMPARE_FOLDERS) != 0 ||
 			HistoryViewImpl.this.repositoryResource instanceof IRepositoryResource;
 		if ((this.options & HistoryViewImpl.COMPARE_MODE) != 0 && doubleClick && isCompareAllowed) {
 			this.compareWithCurrent(item);

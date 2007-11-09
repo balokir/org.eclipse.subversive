@@ -33,7 +33,7 @@ import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.client.ISVNClient.Depth;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
-import org.eclipse.team.svn.core.extension.factory.ISVNClientWrapperFactory;
+import org.eclipse.team.svn.core.extension.factory.ISVNClientFactory;
 import org.eclipse.team.svn.core.extension.options.IOptionProvider;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.ActivityCancelledException;
@@ -795,7 +795,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		}
 		
 		protected boolean tryCachedRealm(String realm) {
-			if (ISVNClientWrapperFactory.DEFAULT_ID.equals(CoreExtensionsManager.instance().getSVNClientWrapperFactory().getId())) {
+			if (ISVNClientFactory.DEFAULT_ID.equals(CoreExtensionsManager.instance().getSVNClientWrapperFactory().getId())) {
 				return false;
 			}
 			String threadName = Thread.currentThread().getName();

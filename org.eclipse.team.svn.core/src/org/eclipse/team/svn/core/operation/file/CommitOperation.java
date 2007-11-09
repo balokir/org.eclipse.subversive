@@ -25,7 +25,7 @@ import org.eclipse.team.svn.core.client.ISVNClient;
 import org.eclipse.team.svn.core.client.SVNClientUnresolvedConflictException;
 import org.eclipse.team.svn.core.client.ISVNClient.Depth;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
-import org.eclipse.team.svn.core.extension.factory.ISVNClientWrapperFactory;
+import org.eclipse.team.svn.core.extension.factory.ISVNClientFactory;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IRevisionProvider;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -78,7 +78,7 @@ public class CommitOperation extends AbstractFileConflictDetectionOperation impl
 			FileUtility.reorder(files, true);
 		}
 		
-		if ((CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientWrapperFactory.OptionalFeatures.ATOMIC_X_COMMIT) != 0) {
+		if ((CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientFactory.OptionalFeatures.ATOMIC_X_COMMIT) != 0) {
 			Map proxy2Resources = SVNUtility.splitRepositoryLocations(files);
 			for (Iterator it = proxy2Resources.entrySet().iterator(); it.hasNext() && !monitor.isCanceled(); ) {
 				Map.Entry entry = (Map.Entry)it.next();

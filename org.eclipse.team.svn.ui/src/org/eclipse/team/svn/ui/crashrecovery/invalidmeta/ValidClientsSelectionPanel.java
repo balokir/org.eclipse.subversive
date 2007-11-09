@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
-import org.eclipse.team.svn.core.extension.factory.ISVNClientWrapperFactory;
+import org.eclipse.team.svn.core.extension.factory.ISVNClientFactory;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -40,7 +40,7 @@ import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
  */
 public class ValidClientsSelectionPanel extends AbstractDialogPanel {
 	protected Combo svnClientField;
-	protected ISVNClientWrapperFactory []factories;
+	protected ISVNClientFactory []factories;
 	protected String svnClient;
 
 	public ValidClientsSelectionPanel(IProject project, List validClients) {
@@ -49,7 +49,7 @@ public class ValidClientsSelectionPanel extends AbstractDialogPanel {
 		this.dialogDescription = SVNTeamUIPlugin.instance().getResource("ValidClientsSelectionPanel.Description");
 		this.defaultMessage = SVNTeamUIPlugin.instance().getResource("ValidClientsSelectionPanel.Message");
 		
-		this.factories = (ISVNClientWrapperFactory [])validClients.toArray(new ISVNClientWrapperFactory[validClients.size()]);
+		this.factories = (ISVNClientFactory [])validClients.toArray(new ISVNClientFactory[validClients.size()]);
 	}
 	
     public Point getPrefferedSize() {
@@ -85,7 +85,7 @@ public class ValidClientsSelectionPanel extends AbstractDialogPanel {
 		this.svnClientField.setLayoutData(data);
 		FileUtility.sort(this.factories, new Comparator() {
 			public int compare(Object o1, Object o2) {
-				return ((ISVNClientWrapperFactory)o1).getName().compareTo(((ISVNClientWrapperFactory)o2).getName());
+				return ((ISVNClientFactory)o1).getName().compareTo(((ISVNClientFactory)o2).getName());
 			}
 		});
 		String []items = new String[this.factories.length];

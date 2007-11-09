@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.extension.crashrecovery.IResolutionHelper;
-import org.eclipse.team.svn.core.extension.factory.ISVNClientWrapperFactory;
+import org.eclipse.team.svn.core.extension.factory.ISVNClientFactory;
 import org.eclipse.team.svn.core.extension.factory.ThreadNameModifierFactory;
 import org.eclipse.team.svn.core.extension.options.IIgnoreRecommendations;
 import org.eclipse.team.svn.core.extension.options.IOptionProvider;
@@ -93,15 +93,15 @@ public class CoreExtensionsManager {
 		return this.clients.values();
 	}
 	
-	public ISVNClientWrapperFactory getSVNClientWrapperFactory() {
+	public ISVNClientFactory getSVNClientWrapperFactory() {
 		String id = SVNTeamPlugin.instance().getOptionProvider().getSVNClientId();
 		return this.getSVNClientWrapperFactory(id);
 	}
 	
-	public ISVNClientWrapperFactory getSVNClientWrapperFactory(String id) {
-		ISVNClientWrapperFactory retVal = ISVNClientWrapperFactory.EMPTY;
+	public ISVNClientFactory getSVNClientWrapperFactory(String id) {
+		ISVNClientFactory retVal = ISVNClientFactory.EMPTY;
 		if (this.validClients.contains(id)) {
-			retVal = (ISVNClientWrapperFactory)this.clients.get(id);
+			retVal = (ISVNClientFactory)this.clients.get(id);
 		}
 		return retVal;
 	}
@@ -112,10 +112,10 @@ public class CoreExtensionsManager {
 		this.validClients = new HashSet();
 		Object []extensions = this.loadCoreExtensions(CoreExtensionsManager.CLIENT_LIBRARY);
 		for (int i = 0; i < extensions.length; i++) {
-			ISVNClientWrapperFactory factory = new ThreadNameModifierFactory((ISVNClientWrapperFactory)extensions[i]);
+			ISVNClientFactory factory = new ThreadNameModifierFactory((ISVNClientFactory)extensions[i]);
 			try {
 				// extension point API changed and old clients will be declined due to version changes or AbstractMethodError.
-				if (factory.getCompatibilityVersion().compareTo(ISVNClientWrapperFactory.CURRENT_COMPATIBILITY_VERSION) != 0) {
+				if (factory.getCompatibilityVersion().compareTo(ISVNClientFactory.CURRENT_COMPATIBILITY_VERSION) != 0) {
 					continue;
 				}
 			}
@@ -138,7 +138,7 @@ public class CoreExtensionsManager {
 		this.ignoreRecommendations = (IIgnoreRecommendations [])Arrays.asList(extensions).toArray(new IIgnoreRecommendations[extensions.length]);
 	}
 	
-	private void validateClient(ISVNClientWrapperFactory client) {
+	private void validateClient(ISVNClientFactory client) {
 		try {
 			client.newInstance().dispose();
 			this.validClients.add(client.getId());

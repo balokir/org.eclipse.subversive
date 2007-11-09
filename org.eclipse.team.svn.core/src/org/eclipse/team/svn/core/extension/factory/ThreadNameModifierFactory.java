@@ -18,10 +18,10 @@ import org.eclipse.team.svn.core.client.ISVNClient;
  * 
  * @author Alexander Gurov
  */
-public class ThreadNameModifierFactory implements ISVNClientWrapperFactory {
-	protected ISVNClientWrapperFactory factory;
+public class ThreadNameModifierFactory implements ISVNClientFactory {
+	protected ISVNClientFactory factory;
 
-	public ThreadNameModifierFactory(ISVNClientWrapperFactory factory) {
+	public ThreadNameModifierFactory(ISVNClientFactory factory) {
 		this.factory = factory;
 	}
 

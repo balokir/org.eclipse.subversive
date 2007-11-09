@@ -17,7 +17,7 @@ import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.team.svn.core.extension.factory.ISVNClientWrapperFactory;
+import org.eclipse.team.svn.core.extension.factory.ISVNClientFactory;
 import org.eclipse.team.svn.ui.decorator.TextVariableSetProvider;
 import org.eclipse.team.svn.ui.repository.RepositoryPerspective;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -78,7 +78,7 @@ public final class SVNTeamPreferences {
 	
 	public static final String CORE_SVNCLIENT_NAME = "svnclient";
 	
-	public static final String CORE_SVNCLIENT_DEFAULT = ISVNClientWrapperFactory.DEFAULT_ID;
+	public static final String CORE_SVNCLIENT_DEFAULT = ISVNClientFactory.DEFAULT_ID;
 	
 	public static final String CONSOLE_ERR_COLOR_NAME = "error";
 	public static final String CONSOLE_WRN_COLOR_NAME = "warning";

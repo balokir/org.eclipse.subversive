@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
-import org.eclipse.team.svn.core.extension.factory.ISVNClientWrapperFactory;
+import org.eclipse.team.svn.core.extension.factory.ISVNClientFactory;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -70,7 +70,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected boolean detectDeletedProjects;
 	protected boolean useSubversionExternalsBehaviour;
 	protected String svnClient;
-	protected ISVNClientWrapperFactory []factories;
+	protected ISVNClientFactory []factories;
 	protected boolean useJavaHLMerge;
 	protected boolean checkoutUsingDotProjectName;
 	protected boolean branchTagConsiderStructure;
@@ -240,7 +240,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.tagsField.setText(this.tags);
 		this.showExternalsButton.setSelection(this.showExternals);
 		
-		this.reportRevisionChangeButton.setEnabled((CoreExtensionsManager.instance().getSVNClientWrapperFactory(this.svnClient).getSupportedFeatures() & ISVNClientWrapperFactory.OptionalFeatures.REPORT_REVISION_CHANGE) != 0);
+		this.reportRevisionChangeButton.setEnabled((CoreExtensionsManager.instance().getSVNClientWrapperFactory(this.svnClient).getSupportedFeatures() & ISVNClientFactory.OptionalFeatures.REPORT_REVISION_CHANGE) != 0);
 		this.reportRevisionChangeButton.setSelection(this.reportRevisionChange);
 		this.fastReportButton.setSelection(this.fastReport);
 		
@@ -341,10 +341,10 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.svnClientField.setLayoutData(data);
 		Collection fullSet = CoreExtensionsManager.instance().getAccessibleClients();
-		this.factories = (ISVNClientWrapperFactory [])fullSet.toArray(new ISVNClientWrapperFactory[fullSet.size()]);
+		this.factories = (ISVNClientFactory [])fullSet.toArray(new ISVNClientFactory[fullSet.size()]);
 		FileUtility.sort(this.factories, new Comparator() {
 			public int compare(Object o1, Object o2) {
-				return ((ISVNClientWrapperFactory)o1).getName().compareTo(((ISVNClientWrapperFactory)o2).getName());
+				return ((ISVNClientFactory)o1).getName().compareTo(((ISVNClientFactory)o2).getName());
 			}
 		});
 		String []items = new String[fullSet.size()];
@@ -356,7 +356,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 			public void widgetSelected(SelectionEvent e) {
 				SVNTeamPreferencesPage.this.svnClient = SVNTeamPreferencesPage.this.factories[SVNTeamPreferencesPage.this.svnClientField.getSelectionIndex()].getId();
 				SVNTeamPreferencesPage.this.initializeClientSettings();
-				SVNTeamPreferencesPage.this.reportRevisionChangeButton.setEnabled((CoreExtensionsManager.instance().getSVNClientWrapperFactory(SVNTeamPreferencesPage.this.svnClient).getSupportedFeatures() & ISVNClientWrapperFactory.OptionalFeatures.REPORT_REVISION_CHANGE) != 0);
+				SVNTeamPreferencesPage.this.reportRevisionChangeButton.setEnabled((CoreExtensionsManager.instance().getSVNClientWrapperFactory(SVNTeamPreferencesPage.this.svnClient).getSupportedFeatures() & ISVNClientFactory.OptionalFeatures.REPORT_REVISION_CHANGE) != 0);
 			}
 		});
 		
@@ -553,7 +553,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 				SVNTeamPreferencesPage.this.reportRevisionChange = SVNTeamPreferencesPage.this.reportRevisionChangeButton.getSelection();
 			}
 		});
-		this.reportRevisionChangeButton.setEnabled((CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientWrapperFactory.OptionalFeatures.REPORT_REVISION_CHANGE) != 0);
+		this.reportRevisionChangeButton.setEnabled((CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientFactory.OptionalFeatures.REPORT_REVISION_CHANGE) != 0);
 		
 		this.fastReportButton = new Button(synchViewGroup, SWT.CHECK);
 		data = new GridData();

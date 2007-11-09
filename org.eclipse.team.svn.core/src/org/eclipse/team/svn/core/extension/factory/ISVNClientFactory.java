@@ -20,7 +20,7 @@ import org.eclipse.team.svn.core.operation.UnreportableException;
  * 
  * @author Alexander Gurov
  */
-public interface ISVNClientWrapperFactory {
+public interface ISVNClientFactory {
 	public static final String DEFAULT_ID = "org.polarion.team.svn.client.javahl";
 	public static final String CURRENT_COMPATIBILITY_VERSION = "0.7.0";
 	
@@ -92,7 +92,7 @@ public interface ISVNClientWrapperFactory {
 		public static final int REPORT_REVISION_CHANGE = 0x10;
 	}
 	
-	public static final ISVNClientWrapperFactory EMPTY = new ISVNClientWrapperFactory() {
+	public static final ISVNClientFactory EMPTY = new ISVNClientFactory() {
 		public ISVNClient newInstance() {
 			throw new UnreportableException(this.getName());
 		}
@@ -109,7 +109,7 @@ public interface ISVNClientWrapperFactory {
 			return "Error.NoSVNClient";
 		}
 		public String getCompatibilityVersion() {
-			return ISVNClientWrapperFactory.CURRENT_COMPATIBILITY_VERSION;
+			return ISVNClientFactory.CURRENT_COMPATIBILITY_VERSION;
 		}
 		public String getClientVersion() {
 			return "";
