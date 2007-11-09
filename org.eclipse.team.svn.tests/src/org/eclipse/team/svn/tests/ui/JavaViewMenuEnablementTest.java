@@ -326,7 +326,7 @@ public class JavaViewMenuEnablementTest extends TestWorkflow {
     }
     
     protected IResource[] getNonversionedResources() {
-        IResource []nonversionedResources = FileUtility.getResourcesRecursive(new IResource[] {this.getFirstProject(), this.getSecondProject()}, IStateFilter.SF_NONVERSIONED);
+        IResource []nonversionedResources = FileUtility.getResourcesRecursive(new IResource[] {this.getFirstProject(), this.getSecondProject()}, IStateFilter.SF_UNVERSIONED);
         return nonversionedResources;
     }
     

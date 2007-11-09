@@ -101,7 +101,7 @@ public class PropertiesEditor extends EditorPart implements IResourceStatesListe
 			IResource resource = (IResource)this.input.getResource();
 			if (event.contains(resource) || event.contains(resource.getProject())) {
 				ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-				if (!resource.exists() || !FileUtility.isConnected(resource) || local == null || IStateFilter.SF_NONVERSIONED.accept(resource, local.getStatus(), local.getChangeMask())) {
+				if (!resource.exists() || !FileUtility.isConnected(resource) || local == null || IStateFilter.SF_UNVERSIONED.accept(resource, local.getStatus(), local.getChangeMask())) {
 					UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 						public void run() {
 							PropertiesEditor.this.getEditorSite().getPage().closeEditor(PropertiesEditor.this, false);

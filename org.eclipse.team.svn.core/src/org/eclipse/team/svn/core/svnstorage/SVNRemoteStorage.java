@@ -240,11 +240,8 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		
 		Set retVal = (Set)this.parent2Children.get(container.getFullPath());
 		if (retVal == null) {
-			ILocalResource local = this.asLocalResource(container);
-			if (local == null || !SVNRemoteStorage.SF_NONSVN.accept(container, local.getStatus(), local.getChangeMask())) {
-				this.loadLocalResourcesSubTree(container, !CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled());
-				retVal = (Set)this.parent2Children.get(container.getFullPath());
-			}
+			this.loadLocalResourcesSubTree(container, false);
+			retVal = (Set)this.parent2Children.get(container.getFullPath());
 		}
 		if (retVal != null) {
 			retVal = new HashSet(retVal);
@@ -286,7 +283,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 				if (local == null) {
 					if (resource.getProject().isAccessible()) {
 						try {
-							local = this.loadLocalResourcesSubTree(resource, !CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled());
+							local = this.loadLocalResourcesSubTree(resource, true);
 						} 
 						catch (RuntimeException ex) {
 							throw ex;
@@ -462,15 +459,17 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		}
 	}
 	
-	protected ILocalResource loadLocalResourcesSubTree(final IResource resource, boolean noCache) throws Exception {
+	protected ILocalResource loadLocalResourcesSubTree(final IResource resource, boolean recurse) throws Exception {
 		IConnectedProjectInformation provider = (IConnectedProjectInformation)RepositoryProvider.getProvider(resource.getProject(), SVNTeamPlugin.NATURE_ID);
 		if (provider == null || FileUtility.isSVNInternals(resource)) {
 			return null;
 		}
 		
-		if (noCache) {
+		boolean isCacheEnabled = CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled();
+		if (!isCacheEnabled) {
 			this.localResources.clear();
 		}
+		recurse &= isCacheEnabled;
 		
 		ILocalResource retVal = null;
 	    boolean isLinked = FileUtility.isLinked(resource);
@@ -480,14 +479,14 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 			ILocalResource parentLocal = this.getFirstExistingParentLocal(resource);
 			if (parentLocal == null || !SVNRemoteStorage.SF_NONSVN.accept(parentLocal.getResource(), parentLocal.getStatus(), parentLocal.getChangeMask()) || 
 				(parentLocal.getChangeMask() & ILocalResource.IS_EXTERNAL) != 0 && IStateFilter.SF_IGNORED.accept(parentLocal.getResource(), parentLocal.getStatus(), parentLocal.getChangeMask())) {
-			    retVal = this.loadLocalResourcesSubTreeSVNImpl(provider, resource, noCache);
+			    retVal = this.loadLocalResourcesSubTreeSVNImpl(provider, resource, recurse);
 			}
 		}
 
-		return retVal == null ? this.loadUnversionedSubtree(resource, isLinked, noCache) : retVal;
+		return retVal == null || IStateFilter.SF_UNVERSIONED.accept(resource, retVal.getStatus(), retVal.getChangeMask()) ? this.loadUnversionedSubtree(resource, isLinked, recurse) : retVal;
 	}
 	
-	protected ILocalResource loadUnversionedSubtree(final IResource resource, boolean isLinked, boolean noCache) throws CoreException {
+	protected ILocalResource loadUnversionedSubtree(final IResource resource, boolean isLinked, boolean recurse) throws CoreException {
 	    // if resource has unversioned parents it cannot be wrapped directly and it status should be calculated in other way
 		String status = this.calculateUnversionedStatus(resource, isLinked);
 		
@@ -514,7 +513,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
                 }
                 return true;
             }
-        }, noCache ? IResource.DEPTH_ONE : IResource.DEPTH_INFINITE);
+        }, recurse ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE);
         
 		return tmp[0];
 	}
@@ -558,7 +557,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		return false;
 	}
 	
-	protected ILocalResource loadLocalResourcesSubTreeSVNImpl(IConnectedProjectInformation provider, IResource resource, boolean noCache) throws Exception {
+	protected ILocalResource loadLocalResourcesSubTreeSVNImpl(IConnectedProjectInformation provider, IResource resource, boolean recurse) throws Exception {
 		IProject project = resource.getProject();
 		IResource target = null;
 		boolean recursively = false;
@@ -567,7 +566,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		}
 		else {
 			target = resource;
-			recursively = target.getFullPath().segmentCount() > 2 & !noCache;
+			recursively = target.getFullPath().segmentCount() > 2 & recurse;
 		}
 
 		IPath wcPath = project.getLocation();
@@ -602,7 +601,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 			this.parent2Children.put(target.getFullPath(), new HashSet());
 		}
 		
-		if (retVal != null && hasSVNMeta && !recursively && statuses.length > 1 && !noCache) {
+		if (retVal != null && hasSVNMeta && !recursively && statuses.length > 1 && recurse) {
 			this.scheduleStatusesFetch(statuses, target);
 		}
 		
@@ -854,7 +853,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 			}
 	    }
 	    
-	    if (IStateFilter.SF_NONVERSIONED.accept(current, status, changeMask) && 
+	    if (IStateFilter.SF_UNVERSIONED.accept(current, status, changeMask) && 
 	    	!(IStateFilter.SF_PREREPLACEDREPLACED.accept(current, status, changeMask) || IStateFilter.SF_DELETED.accept(current, status, changeMask)) ||
 	        IStateFilter.SF_LINKED.accept(current, status, changeMask)) {
 	        revision = Revision.INVALID_REVISION_NUMBER;

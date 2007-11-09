@@ -38,7 +38,7 @@ public class QueryResourceAddition {
     }
     
     public IResource []queryAddition() {
-		IResource []tRes = FileUtility.addOperableParents(QueryResourceAddition.getSelectedForAddition(this.selector), IStateFilter.SF_NONVERSIONED);
+		IResource []tRes = FileUtility.addOperableParents(QueryResourceAddition.getSelectedForAddition(this.selector), IStateFilter.SF_UNVERSIONED);
 		if (tRes.length > 0) {
 			IResource []userSelectedResources = this.selector.getSelectedResources();
 		    AddToSVNPanel panel = new AddToSVNPanel(tRes, userSelectedResources);
@@ -48,7 +48,7 @@ public class QueryResourceAddition {
 			    tRes = null;
 			}
 		}
-        return tRes == null ? null : FileUtility.addOperableParents(tRes, IStateFilter.SF_NONVERSIONED);
+        return tRes == null ? null : FileUtility.addOperableParents(tRes, IStateFilter.SF_UNVERSIONED);
     }
     
     /**
@@ -62,7 +62,7 @@ public class QueryResourceAddition {
 		HashSet resources = new HashSet();
 		resources.addAll(nonRecursive);
 		resources.addAll(recursive);
-		List parents = Arrays.asList(FileUtility.getOperableParents((IResource [])resources.toArray(new IResource[resources.size()]), IStateFilter.SF_NONVERSIONED));
+		List parents = Arrays.asList(FileUtility.getOperableParents((IResource [])resources.toArray(new IResource[resources.size()]), IStateFilter.SF_UNVERSIONED));
 		nonRecursive.addAll(parents);
 		resources.addAll(parents);
 		
@@ -81,7 +81,7 @@ public class QueryResourceAddition {
 				}
 				else if (panel.getNotSelectedResources().length > 0) {
 					nonRecursive = new HashSet(Arrays.asList(tRes));
-					nonRecursive.addAll(Arrays.asList(FileUtility.addOperableParents(tRes, IStateFilter.SF_NONVERSIONED)));
+					nonRecursive.addAll(Arrays.asList(FileUtility.addOperableParents(tRes, IStateFilter.SF_UNVERSIONED)));
 					recursive.clear();
 				}
 			}

@@ -56,7 +56,7 @@ public class CommitActionUtility {
 		
 		HashSet fullSet = new HashSet(this.newNonRecursive);
 		fullSet.addAll(this.newRecursive);
-		this.parents = new HashSet(Arrays.asList(FileUtility.getOperableParents((IResource [])fullSet.toArray(new IResource[fullSet.size()]), IStateFilter.SF_NONVERSIONED)));
+		this.parents = new HashSet(Arrays.asList(FileUtility.getOperableParents((IResource [])fullSet.toArray(new IResource[fullSet.size()]), IStateFilter.SF_UNVERSIONED)));
 		this.newNonRecursive.addAll(this.parents);
 		fullSet.addAll(this.parents);
 		
@@ -87,7 +87,7 @@ public class CommitActionUtility {
 	}
 
 	protected CompositeOperation getRecursiveImpl(IResource []selectedResources, IResource []notSelectedResources, String message, boolean keepLocks, Shell shell, IWorkbenchPart part) {
-		IResource []notSelectedNew = FileUtility.getResourcesRecursive(notSelectedResources, IStateFilter.SF_NONVERSIONED, IResource.DEPTH_ZERO);
+		IResource []notSelectedNew = FileUtility.getResourcesRecursive(notSelectedResources, IStateFilter.SF_UNVERSIONED, IResource.DEPTH_ZERO);
 		boolean allowsRecursiveAdd = true;
 		for (int i = 0; i < notSelectedNew.length; i++) {
 			if (this.newRecursive.remove(notSelectedNew[i])) {
@@ -132,7 +132,7 @@ public class CommitActionUtility {
 		
 		CompositeOperation op = new CompositeOperation(mainOp.getId());
 		
-		IResource []newResources = FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_NONVERSIONED, IResource.DEPTH_ZERO);
+		IResource []newResources = FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_UNVERSIONED, IResource.DEPTH_ZERO);
 		if (newResources.length > 0) {
 			op.add(new AddToSVNWithPropertiesOperation(newResources, false));
 			op.add(new ClearLocalStatusesOperation(newResources));

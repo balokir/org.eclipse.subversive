@@ -165,7 +165,7 @@ public interface IStateFilter {
 		}
 	};
 	
-	public static final IStateFilter SF_NONVERSIONED = new IStateFilter() {
+	public static final IStateFilter SF_UNVERSIONED = new IStateFilter() {
 		public boolean accept(IResource resource, String state, int mask) {
 			return 
 				state == IStateFilter.ST_PREREPLACED || state == IStateFilter.ST_NEW || 
@@ -325,7 +325,7 @@ public interface IStateFilter {
     
     public static final IStateFilter SF_NEEDS_LOCK = new IStateFilter() {		
 		public boolean accept(final IResource resource, String state, int mask) {
-			if (!(resource instanceof IFile) || IStateFilter.SF_NONVERSIONED.accept(resource, state, mask) || !resource.isAccessible()) {
+			if (!(resource instanceof IFile) || IStateFilter.SF_UNVERSIONED.accept(resource, state, mask) || !resource.isAccessible()) {
 				return false;
 			}
 			final PropertyData [][]propData = new PropertyData[1][];

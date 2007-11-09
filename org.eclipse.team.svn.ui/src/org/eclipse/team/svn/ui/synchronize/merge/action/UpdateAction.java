@@ -69,7 +69,7 @@ public class UpdateAction extends AbstractSynchronizeModelAction {
 	protected IActionOperation execute(FilteredSynchronizeModelOperation operation) {
 		IResource []resources = operation.getSelectedResourcesRecursive(ISyncStateFilter.SF_ONREPOSITORY);
 		// IStateFilter.SF_NONVERSIONED not versioned locally
-		resources = FileUtility.addOperableParents(resources, IStateFilter.SF_NONVERSIONED);
+		resources = FileUtility.addOperableParents(resources, IStateFilter.SF_UNVERSIONED);
 		
 		if (this.advancedMode) {
 			String message;

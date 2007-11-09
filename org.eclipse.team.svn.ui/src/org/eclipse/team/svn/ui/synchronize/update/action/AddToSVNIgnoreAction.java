@@ -77,7 +77,7 @@ public class AddToSVNIgnoreAction extends AbstractSynchronizeModelAction {
 	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {
 		final IResource [][]resources = new IResource[][] {FileUtility.shrinkChildNodes(operation.getSelectedResources(AddToSVNIgnoreAction.SF_NEW_AND_PARENT_VERSIONED))};
 		
-		final IResource [][]operableParents = new IResource[][] {FileUtility.getOperableParents(resources[0], IStateFilter.SF_NONVERSIONED)};
+		final IResource [][]operableParents = new IResource[][] {FileUtility.getOperableParents(resources[0], IStateFilter.SF_UNVERSIONED)};
 		if (operableParents[0].length > 0) {
 		    final AddToSVNPanel panel = new AddToSVNPanel(operableParents[0]);
 			final DefaultDialog dialog1 = new DefaultDialog(operation.getShell(), panel);
