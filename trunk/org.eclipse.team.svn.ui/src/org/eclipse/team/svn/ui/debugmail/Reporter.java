@@ -16,7 +16,7 @@ import java.io.PrintWriter;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
-import org.eclipse.team.svn.core.extension.factory.ISVNClientWrapperFactory;
+import org.eclipse.team.svn.core.extension.factory.ISVNClientFactory;
 import org.eclipse.team.svn.ui.extension.factory.IMailSettingsProvider;
 
 /**
@@ -129,7 +129,7 @@ public class Reporter {
 	}
 	
 	protected static String getSVNClient() {
-		ISVNClientWrapperFactory factory = CoreExtensionsManager.instance().getSVNClientWrapperFactory();
+		ISVNClientFactory factory = CoreExtensionsManager.instance().getSVNClientWrapperFactory();
 		return "<br><br><b>SVN Client:</b> " + factory.getId() + " " + factory.getVersion() + " " + factory.getClientVersion();
 	}
 	

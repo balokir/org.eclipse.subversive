@@ -23,7 +23,7 @@ import org.eclipse.team.svn.core.client.ISVNClient.Depth;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.crashrecovery.ErrorDescription;
 import org.eclipse.team.svn.core.extension.crashrecovery.IResolutionHelper;
-import org.eclipse.team.svn.core.extension.factory.ISVNClientWrapperFactory;
+import org.eclipse.team.svn.core.extension.factory.ISVNClientFactory;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.crashrecovery.invalidmeta.ValidClientsSelectionPanel;
@@ -44,7 +44,7 @@ public class InvalidMetaHelper implements IResolutionHelper {
 			if (location == null || !location.append(SVNUtility.getSVNFolderName()).toFile().exists()) {
 				return false;
 			}
-			ISVNClientWrapperFactory current = CoreExtensionsManager.instance().getSVNClientWrapperFactory();
+			ISVNClientFactory current = CoreExtensionsManager.instance().getSVNClientWrapperFactory();
 			String path = location.toString();
 			// check if already handled for any other project
 			if (this.isValid(current, path)) {
@@ -53,7 +53,7 @@ public class InvalidMetaHelper implements IResolutionHelper {
 			Collection clients = CoreExtensionsManager.instance().getAccessibleClients();
 			final ArrayList valid = new ArrayList();
 			for (Iterator it = clients.iterator(); it.hasNext(); ) {
-				ISVNClientWrapperFactory factory = (ISVNClientWrapperFactory)it.next();
+				ISVNClientFactory factory = (ISVNClientFactory)it.next();
 				if (this.isValid(factory, path)) {
 					valid.add(factory);
 				}
@@ -75,7 +75,7 @@ public class InvalidMetaHelper implements IResolutionHelper {
 		return false;
 	}
 
-	protected boolean isValid(ISVNClientWrapperFactory factory, String path) {
+	protected boolean isValid(ISVNClientFactory factory, String path) {
 		try {
 			ISVNClient proxy = factory.newInstance();
 			try {

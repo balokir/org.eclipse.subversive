@@ -17,7 +17,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.team.svn.core.client.ISVNClient;
 import org.eclipse.team.svn.core.client.SVNEntryStatus;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
-import org.eclipse.team.svn.core.extension.factory.ISVNClientWrapperFactory;
+import org.eclipse.team.svn.core.extension.factory.ISVNClientFactory;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -78,7 +78,7 @@ public class CompareWithRevisionAction extends AbstractWorkingCopyAction {
 	}
 
 	public boolean isEnabled() {
-		boolean isCompareFoldersAllowed = (CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientWrapperFactory.OptionalFeatures.COMPARE_FOLDERS) != 0;
+		boolean isCompareFoldersAllowed = (CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientFactory.OptionalFeatures.COMPARE_FOLDERS) != 0;
 		return 
 			this.getSelectedResources().length == 1 && 
 			(isCompareFoldersAllowed || this.getSelectedResources()[0].getType() == IResource.FILE) && 

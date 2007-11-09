@@ -15,7 +15,7 @@ import org.eclipse.core.resources.team.FileModificationValidator;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.client.ISVNCredentialsPrompt;
 import org.eclipse.team.svn.core.client.SVNProperty;
-import org.eclipse.team.svn.core.extension.factory.ISVNClientWrapperFactory;
+import org.eclipse.team.svn.core.extension.factory.ISVNClientFactory;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.utility.ILoggedOperationFactory;
 
@@ -47,7 +47,7 @@ public interface IOptionProvider {
 			return true;
 		}
 		public String getSVNClientId() {
-			return ISVNClientWrapperFactory.DEFAULT_ID;
+			return ISVNClientFactory.DEFAULT_ID;
 		}
 		public String getDefaultBranchesName() {
 			return "branches";

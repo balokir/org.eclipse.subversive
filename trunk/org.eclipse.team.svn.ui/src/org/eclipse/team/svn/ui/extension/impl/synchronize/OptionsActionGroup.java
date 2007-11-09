@@ -17,7 +17,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
-import org.eclipse.team.svn.core.extension.factory.ISVNClientWrapperFactory;
+import org.eclipse.team.svn.core.extension.factory.ISVNClientFactory;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
@@ -52,7 +52,7 @@ public class OptionsActionGroup extends AbstractSynchronizeActionGroup {
 	}
 	
 	protected void configureActions(ISynchronizePageConfiguration configuration) {
-		if ((CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientWrapperFactory.OptionalFeatures.REPORT_REVISION_CHANGE) != 0) {
+		if ((CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientFactory.OptionalFeatures.REPORT_REVISION_CHANGE) != 0) {
 			this.changeOptionAction = new Action(SVNTeamUIPlugin.instance().getResource("OptionsActionGroup.ReportFolderChanges"), IAction.AS_CHECK_BOX) {
 				public void run() {
 					IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
@@ -71,7 +71,7 @@ public class OptionsActionGroup extends AbstractSynchronizeActionGroup {
 			}
 		};
 		this.refreshOptionButtons();
-		if ((CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientWrapperFactory.OptionalFeatures.REPORT_REVISION_CHANGE) != 0) {
+		if ((CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientFactory.OptionalFeatures.REPORT_REVISION_CHANGE) != 0) {
 			this.appendToGroup(
 					ISynchronizePageConfiguration.P_VIEW_MENU, 
 					OptionsActionGroup.GROUP_SYNCH_OPTIONS,
@@ -100,7 +100,7 @@ public class OptionsActionGroup extends AbstractSynchronizeActionGroup {
 	
     protected void refreshOptionButtons() {
 		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
-		if ((CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientWrapperFactory.OptionalFeatures.REPORT_REVISION_CHANGE) != 0) {
+		if ((CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientFactory.OptionalFeatures.REPORT_REVISION_CHANGE) != 0) {
 			this.changeOptionAction.setChecked(SVNTeamPreferences.getSynchronizeBoolean(store, SVNTeamPreferences.SYNCHRONIZE_REPORT_REVISION_CHANGE_NAME));
 		}
 		this.contiguousOptionAction.setChecked(SVNTeamPreferences.getSynchronizeBoolean(store, SVNTeamPreferences.SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_NAME));
