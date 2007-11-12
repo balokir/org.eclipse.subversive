@@ -31,7 +31,7 @@ public class SVNRevision {
 		/**
 		 * First existing revision
 		 */
-		public static final int UNSPECIFIED = 0;
+		public static final int START = 0;
 
 		/**
 		 * Number-based revision
@@ -77,7 +77,7 @@ public class SVNRevision {
 	/**
 	 * First existing revision
 	 */
-	public static final SVNRevision START = new SVNRevision(Kind.UNSPECIFIED);
+	public static final SVNRevision START = new SVNRevision(Kind.START);
 
 	/**
 	 * Last committed revision, needs working copy
@@ -211,7 +211,7 @@ public class SVNRevision {
 		case Kind.PREVIOUS: {
 			return SVNRevision.PREVIOUS;
 		}
-		case Kind.UNSPECIFIED: {
+		case Kind.START: {
 			return SVNRevision.START;
 		}
 		case Kind.COMMITTED: {
