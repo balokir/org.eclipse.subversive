@@ -77,19 +77,19 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 	protected IResourceChange handleResourceChange(IRemoteStorage storage, IRemoteStatusOperation rStatusOp, final SVNEntryStatus current) {
 		IChangeStateProvider provider = new IChangeStateProvider() {
 			public long getChangeDate() {
-				return current.lastChangedDate;
+				return current.reposLastCmtDate;
 			}
 			public String getChangeAuthor() {
-				return current.lastCommitAuthor;
+				return current.reposLastCmtAuthor;
 			}
 			public SVNRevision.Number getChangeRevision() {
-				return current.lastChangedRevision == SVNRevision.INVALID_REVISION_NUMBER ? null : (SVNRevision.Number)SVNRevision.fromNumber(current.lastChangedRevision);
+				return current.reposLastCmtRevision == SVNRevision.INVALID_REVISION_NUMBER ? null : SVNRevision.fromNumber(current.reposLastCmtRevision);
 			}
 			public int getTextChangeType() {
-				return current.textStatus;
+				return current.repositoryTextStatus;
 			}
 			public int getPropertiesChangeType() {
-				return current.propStatus;
+				return current.repositoryPropStatus;
 			}
 			public int getNodeKind() {
 				int kind = SVNUtility.getNodeKind(current.path, current.reposKind, true);
@@ -121,7 +121,7 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 		}
 		IRepositoryResource originator = this.scope.getMergeSet().from[0];
 		originator = provider.getNodeKind() == NodeKind.DIR ? (IRepositoryResource)originator.asRepositoryContainer(current.url, false) : originator.asRepositoryFile(current.url, false);
-		originator.setSelectedRevision(SVNRevision.fromNumber(current.textStatus == Kind.DELETED ? current.lastChangedRevision - 1 : current.lastChangedRevision));
+		originator.setSelectedRevision(SVNRevision.fromNumber(current.repositoryTextStatus == Kind.DELETED ? current.reposLastCmtRevision - 1 : current.reposLastCmtRevision));
 		resourceChange.setOriginator(originator);
 		resourceChange.setCommentProvider(new ICommentProvider() {
 			public String getComment(IResource resource, SVNRevision rev, SVNRevision peg) {

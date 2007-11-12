@@ -220,7 +220,8 @@ public class SVNEntryStatus {
 	public final SVNLock reposLock;
 
 	/**
-	 * @since 1.3 Set to the youngest committed revision, or {@link SVNRevision#INVALID_REVISION_NUMBER} if not out of date.
+	 * @since 1.3 Set to the youngest committed revision, or {@link SVNRevision#INVALID_REVISION_NUMBER} if not out of
+	 *        date.
 	 */
 	public final long reposLastCmtRevision;
 
@@ -240,7 +241,7 @@ public class SVNEntryStatus {
 	public final String reposLastCmtAuthor;
 
 	/**
-	 * this constructor should only called from JNI code
+	 * The {@link SVNEntryStatus} instance could be initialized only once because all fields are final
 	 * 
 	 * @param path
 	 *            the file system path of item
@@ -299,8 +300,8 @@ public class SVNEntryStatus {
 	 * @param reposLastCmtAuthor
 	 *            the author of the last commit, if out of date
 	 */
-	public SVNEntryStatus(String path, String url, int nodeKind, long revision, long lastChangedRevision, long lastChangedDate, String lastCommitAuthor, int textStatus, int propStatus,
-			int repositoryTextStatus, int repositoryPropStatus, boolean locked, boolean copied, String conflictOld, String conflictNew, String conflictWorking,
+	public SVNEntryStatus(String path, String url, int nodeKind, long revision, long lastChangedRevision, long lastChangedDate, String lastCommitAuthor, int textStatus,
+			int propStatus, int repositoryTextStatus, int repositoryPropStatus, boolean locked, boolean copied, String conflictOld, String conflictNew, String conflictWorking,
 			String urlCopiedFrom, long revisionCopiedFrom, boolean switched, String lockToken, String lockOwner, String lockComment, long lockCreationDate, SVNLock reposLock,
 			long reposLastCmtRevision, long reposLastCmtDate, int reposKind, String reposLastCmtAuthor) {
 		this.path = path;
