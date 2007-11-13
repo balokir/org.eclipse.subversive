@@ -100,7 +100,7 @@ public class LocateResourceURLInHistoryOperation extends AbstractRepositoryOpera
 				if (paths == null) {
 					return current;
 				}
-				String pattern = current.getUrl().substring(location.getRepositoryRoot().getUrl().length());
+				String pattern = current.getUrl().substring(location.getRepositoryRootUrl().length());
 				int idx = -1;
 				for (int i = 0; i < paths.length; i++) {
 					if (paths[i].action != 'D' && pattern.startsWith(paths[i].path)) {
@@ -113,7 +113,7 @@ public class LocateResourceURLInHistoryOperation extends AbstractRepositoryOpera
 				if (idx == -1) {
 					return current;
 				}
-				String copiedFrom = location.getRepositoryRoot().getUrl() + paths[idx].copiedFromPath + pattern.substring(paths[idx].path.length());
+				String copiedFrom = location.getRepositoryRootUrl() + paths[idx].copiedFromPath + pattern.substring(paths[idx].path.length());
 				
 				long rev = paths[idx].copiedFromRevision;
 				SVNRevision searchRevision = current.getSelectedRevision();

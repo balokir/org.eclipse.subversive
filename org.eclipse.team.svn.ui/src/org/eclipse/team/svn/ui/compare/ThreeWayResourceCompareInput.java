@@ -306,7 +306,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 	
 	protected String getLeftLabel() throws Exception {
 		ResourceElement element = this.getLeftResourceElement();
-		return element.getLocalResource().getResource().getFullPath().toString().substring(1) + this.getRevisionPart(element);
+		return element.getLocalResource().getResource().getFullPath().toString().substring(1);
 	}
 	
 	protected ILocalResource getLocalResourceFor(IRepositoryResource base) {

@@ -132,7 +132,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 			
 			String format = CompareUI.getResourceBundle().getString("ResourceCompare.threeWay.title");
 			String ancestorLabel = this.getShortAncestorLabel();
-			this.setTitle(MessageFormat.format(format, new String[] {ancestorLabel, leftLabel, rightLabel}));	
+			this.setTitle(MessageFormat.format(format, new String[] {leftLabel, ancestorLabel, rightLabel}));	
 		} 
 		else {
 			String format = CompareUI.getResourceBundle().getString("ResourceCompare.twoWay.title");
@@ -140,8 +140,8 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		}
 	}
 	
-	protected String getShortAncestorLabel() throws Exception {
-		return this.getShortLabel(this.getAncestorResourceElement());
+	protected String getShortAncestorLabel() throws Exception { 
+		return " " + this.getRevisionPart(this.getAncestorResourceElement()) + " ";
 	}
 
 	protected String getAncestorLabel() throws Exception {
@@ -153,7 +153,12 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 	}
 
 	protected String getShortLeftLabel() throws Exception {
-		return this.getShortLabel(this.getLeftResourceElement());
+		String revisionPart = this.getRevisionPart(this.getLeftResourceElement());
+		String leftResourceName = this.getLeftResourceElement().getName();
+		if (leftResourceName.equals(this.getRightResourceElement().getName())) {
+			return leftResourceName + " [" + revisionPart + " ";
+		}
+		return leftResourceName + " [" + revisionPart + "]";
 	}
 
 	protected String getLeftLabel() throws Exception {
@@ -165,7 +170,12 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 	}
 	
 	protected String getShortRightLabel() throws Exception {
-		return this.getShortLabel(this.getRightResourceElement());
+		String rightResourceName = this.getRightResourceElement().getName();
+		String revisionPart = this.getRevisionPart(this.getRightResourceElement());
+		if (rightResourceName.equals(this.getLeftResourceElement().getName())) {
+			return " " + revisionPart + "]";
+		}
+		return rightResourceName + " [" + revisionPart + "]";
 	}
 	
 	protected String getRightLabel() throws Exception {
@@ -176,12 +186,8 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		return CompareUI.getImage(RepositoryFolder.wrapChild(null, this.getRightResourceElement().getRepositoryResource()));
 	}
 	
-	protected String getShortLabel(ResourceElement element) throws Exception {
-		return element.getName() + this.getRevisionPart(element);
-	}
-	
 	protected String getLabel(ResourceElement element) throws Exception {
-		return element.getRepositoryResource().getUrl() + this.getRevisionPart(element);
+		return element.getRepositoryResource().getUrl() + " [" + this.getRevisionPart(element) + "]";
 	}
 	
 	protected String getRevisionPart(ResourceElement element) throws Exception {
@@ -192,14 +198,17 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		}
 		int kind = selected.getKind();
 		ILocalResource local = element.getLocalResource();
-		String msg = SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.RevisionPart");
+		
 		if (kind == Kind.WORKING || kind == Kind.BASE || (local != null && local.isCopied())) {
 			if (local == null || local.getRevision() == SVNRevision.INVALID_REVISION_NUMBER) {
 				return "";
 			}
-			return " " + MessageFormat.format(msg, new String[] {String.valueOf(local.getRevision())});
+			if (kind == Kind.WORKING) {
+				return "Local";
+			}
+			return "Base:" + String.valueOf(local.getRevision());
 		}
-		return " " + MessageFormat.format(msg, new String[] {String.valueOf(resource.getRevision())});
+		return "Rev:" + String.valueOf(resource.getRevision());
 	}
 	
 	protected ResourceElement getLeftResourceElement() {
