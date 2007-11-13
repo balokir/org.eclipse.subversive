@@ -35,7 +35,7 @@
 		<factory adaptableType="org.eclipse.team.svn.ui.synchronize.SVNChangeSetCollector$SVNCheckedInChangeSet" class="org.eclipse.team.svn.mylyn.SVNLinkedTaskInfoAdapterFactory">
 			<adapter type="org.eclipse.mylyn.tasks.core.ILinkedTaskInfo"/>
 		</factory>
-		<factory adaptableType="org.eclipse.team.svn.core.client.LogEntry" class="org.eclipse.team.svn.mylyn.SVNLinkedTaskInfoAdapterFactory">
+		<factory adaptableType="org.eclipse.team.svn.core.client.SVNLogEntry" class="org.eclipse.team.svn.mylyn.SVNLinkedTaskInfoAdapterFactory">
 			<adapter type="org.eclipse.mylyn.tasks.core.ILinkedTaskInfo"/>
 		</factory>
 	</extension>
