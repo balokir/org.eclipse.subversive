@@ -5,11 +5,11 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 0.7.0.01 release date: 14 November 2007
+Version 0.7.0.M1v20071115 release date: 14 November 2007
 
 1. What's New
 
-   The version is 0.7.0.01 release. The main target of the release is 
+   The version is 0.7.0.M1v20071115 release. The main target of the release is 
    transferring Subversive development to Eclipse.org.
    
    Changes in compare with previous version are listed below. The full list of 

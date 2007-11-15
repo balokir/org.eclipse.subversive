@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.team.svn.projectset"
       label="Subversive Integration for the CSC Project Set Project (Incubation, Optional)"
-      version="0.7.0.01"
+      version="0.7.0.M1v20071115"
       provider-name="Polarion Software"
       colocation-affinity="org.eclipse.team.svn.projectset">
    <install-handler/>
@@ -117,14 +117,14 @@ Java and all Java-based trademarks are trademarks of Sun Microsystems, Inc. in t
 
    <requires>
       <import feature="com.csc.dip.projectset.feature"/>
-      <import feature="org.eclipse.team.svn" version="0.7.0.01" match="equivalent"/>
+      <import feature="org.eclipse.team.svn" version="0.7.0.M1v20071115" match="equivalent"/>
    </requires>
 
    <plugin
          id="org.eclipse.team.svn.projectset"
          download-size="0"
          install-size="0"
-         version="0.7.0.01"
+         version="0.7.0.M1v20071115"
          unpack="false"/>
 
 </feature>
