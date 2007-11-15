@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Nl1 Fragment (Incubation)
 Bundle-SymbolicName: org.eclipse.team.svn.core.nl1
-Bundle-Version: 0.7.0.01
-Fragment-Host: org.eclipse.team.svn.core;bundle-version="0.7.0.01"
+Bundle-Version: 0.7.0.M1v20071115
+Fragment-Host: org.eclipse.team.svn.core;bundle-version="0.7.0.M1v20071115"
 Bundle-Localization: plugin
 Bundle-Vendor: Polarion Software
