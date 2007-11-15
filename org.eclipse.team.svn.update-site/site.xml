@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
    <description url="http://www.eclipse.org/subversive/download/update-site">
-      Copyright (c) 2005-2006 Polarion Software.
+      Eclipse SVN Team Provider
    </description>
    <feature url="features/org.eclipse.team.svn_0.7.0.M1v20071115.jar" id="org.eclipse.team.svn" version="0.7.0.M1v20071115">
       <category name="Subversive (Incubation)"/>

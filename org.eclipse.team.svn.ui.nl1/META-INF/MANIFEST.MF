@@ -5,4 +5,4 @@ Bundle-SymbolicName: org.eclipse.team.svn.ui.nl1
 Bundle-Version: 0.7.0.M1v20071115
 Fragment-Host: org.eclipse.team.svn.ui;bundle-version="0.7.0.M1v20071115"
 Bundle-Localization: plugin
-Bundle-Vendor: Polarion Software
+Bundle-Vendor: Eclipse.org

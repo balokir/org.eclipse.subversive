@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.team.svn.nl1"
-      label="SVN Team Provider Localization (Incubation, Optional)"
+      label="SVN Team Provider Localization (Optional) (Incubation)"
       version="0.7.0.M1v20071115"
-      provider-name="Polarion Software"
-      colocation-affinity="org.eclipse.team.svn.nl1">
+      provider-name="Eclipse.org"
+      colocation-affinity="org.eclipse.team.svn">
    <install-handler/>
 
    <description>

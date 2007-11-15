@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.team.svn.resource.ignore.rules.jdt"
-      label="JDT Ignore Extensions (Incubation, Optional)"
+      label="JDT Ignore Extensions (Optional) (Incubation)"
       version="0.7.0.M1v20071115"
-      provider-name="Polarion Software">
+      provider-name="Eclipse.org"
+      colocation-affinity="org.eclipse.team.svn">
 
    <description>
       The feature is useful for Java development because it allows to interpret output folders as ignored resources automatically.
