@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.team.svn.mylyn"
-      label="Subversive Integration for the Mylyn Project (Incubation, Optional)"
+      label="Subversive Integration for the Mylyn Project (Optional) (Incubation)"
       version="0.7.0.M1v20071115"
-      provider-name="Polarion Software"
-      colocation-affinity="org.eclipse.team.svn.mylyn">
+      provider-name="Eclipse.org"
+      colocation-affinity="org.eclipse.team.svn">
    <install-handler/>
 
    <description>

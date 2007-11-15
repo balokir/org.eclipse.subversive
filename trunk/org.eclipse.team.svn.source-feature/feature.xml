@@ -3,7 +3,8 @@
       id="org.eclipse.team.svn.source"
       label="%featureName"
       version="0.7.0.M1v20071115_Sources"
-      provider-name="%providerName">
+      provider-name="%providerName"
+      colocation-affinity="org.eclipse.team.svn">
 
    <description>
       %description

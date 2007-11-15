@@ -3,12 +3,11 @@
       id="org.eclipse.team.svn"
       label="SVN Team Provider (Incubation)"
       version="0.7.0.M1v20071115"
-      provider-name="Polarion Software"
-      colocation-affinity="org.eclipse.team.svn">
+      provider-name="Eclipse.org">
    <install-handler/>
 
    <description>
-      The Eclipse Team Provider for the Subversion version control system. It includes connector for the Native JavaHL client library. Native binaries should be installed separately.
+      The Eclipse Team Provider for the Subversion version control system. SVN client libraries should be installed separetely.
    </description>
 
    <license url="license.html">
