@@ -2,8 +2,8 @@
 <?eclipse version="3.0"?>
 <plugin
    id="org.eclipse.team.svn.mylyn"
-   name="%fragmentName"
-   version="0.7.0"
+   name="%pluginName"
+   version="0.7.0.01"
    provider-name="%providerName"
    class="org.eclipse.team.svn.mylyn.SVNMylynIntegrationPlugin">
 
@@ -49,7 +49,7 @@
 		<linkProvider
 			class="org.eclipse.team.svn.mylyn.SVNTaskRepositoryLinkProvider"
 			id="org.eclipse.team.svn.mylyn.SVNTaskRepositoryLinkProvider"
-			name="Subversive Link Provider"
+			name="SVN Link Provider"
 			order="100">
 		</linkProvider>
 	</extension>

@@ -5,6 +5,40 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
+Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
+Change Log's for older versions still present in this file.
+
+Version 0.7.0.01 [14 November 2007]
+
+Features:
+ * Add "ignore externals" option to "Find/Checkout As" wizard
+
+Fixes:
+ * Port changes in the connection window do not affect the connection (bug 208256) 
+   + special thanks to Yaron Mazor
+ 
+ * merge UI does not show any changes
+   + special thanks to Chris West
+
+ * build.properties for UI localization plug-in was corrected
+ * SVN client library connector interfaces reworked according to Eclipse guidelines (naming conventions etc.)
+ * switched and svn:externals resources support enhancement
+ * issue in reconstruction URL and PEG pairs from history
+ * incorrect labels in compare UI panels
+ * not encoded URL in AffectedPathsComposite.java
+ * branch operation works incorrectly for multiple project layout when called for working copies
+ * history messages fetched for outgoing changes in context of Incoming Change Set's
+ * file:// and file:/// protocol URL's also should be encoded
+ * support of svn:externals which is not a direct children for the resource on which svn:externals is specified
+ * LocateResourceURLInHistory now works for deleted resources also
+ * incorrect log messages in Change Set mode of merge UI
+ * Mylyn integration refers to incorrect class name
+ * New resources inside new folder does not appear in the Synchronize View
+ * merge UI does not work in "reverse" mode
+ * Enhance compare editor titles readability
+
+--------------------------------------------------------------------------------
+
 Version 1.1.8 [23 October 2007]
 
 Features:

@@ -110,10 +110,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		super();
 	}
 
-    public String getTitle() {
-        return super.getTitle() + "  (Subversive " + SVNTeamUIPlugin.instance().getVersionString() + ")";
-    }
-
 	protected void saveValues(IPreferenceStore store) {
 		SVNTeamPreferences.setRepositoryString(store, SVNTeamPreferences.REPOSITORY_HEAD_NAME, this.head);
 		SVNTeamPreferences.setRepositoryString(store, SVNTeamPreferences.REPOSITORY_BRANCHES_NAME, this.branches);

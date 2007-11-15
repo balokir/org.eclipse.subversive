@@ -133,7 +133,7 @@ public abstract class AbstractOperationTest extends TestCase {
 	}
 
 	public void testGetShortErrorMessage() {
-		String expected = "Subversive: 'op name' operation finished with error: Throwable";
+		String expected = "SVN: 'op name' operation finished with error: Throwable";
 		class MockAbstractActionOperation extends AbstractActionOperation {
 			public MockAbstractActionOperation() {
 				super("op name");
