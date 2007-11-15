@@ -3,7 +3,7 @@
 <plugin
    id="org.eclipse.team.svn.help"
    name="%pluginName"
-   version="0.7.0"
+   version="0.7.0.01"
    provider-name="%providerName">
 
    <requires>

@@ -2,9 +2,9 @@
 <?eclipse version="3.0"?>
 <plugin
    id="org.eclipse.team.svn.tests"
-   name="Subversive Test Plug-in"
-   version="0.0.1"
-   provider-name="POLARION.ORG"
+   name="Subversive Test Plug-in (Incubation)"
+   version="0.0.1.01"
+   provider-name="Polarion.org"
    class="org.eclipse.team.svn.tests.TestPlugin">
 
    <runtime>

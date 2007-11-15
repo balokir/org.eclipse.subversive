@@ -42,7 +42,7 @@ public class AllTests extends TestCase {
 		ResourceBundle bundle = TestPlugin.instance().getResourceBundle();
 		boolean workbenchEnabled = "true".equals(bundle.getString("UI.WorkbenchEnabled"));
 
-		TestSuite suite = new TestSuite("Subversive Tests");
+		TestSuite suite = new TestSuite("SVN Tests");
 
 		suite.addTestSuite(CoreTest.class);
 		suite.addTestSuite(CommitUpdateTest.class);

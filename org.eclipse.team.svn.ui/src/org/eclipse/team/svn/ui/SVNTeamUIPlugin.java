@@ -82,7 +82,7 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
     }
     
     public String getVersionString() {
-        return /*"Subversive " + */(String)this.getBundle().getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
+        return (String)this.getBundle().getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
     }
     
 	public void start(BundleContext context) throws Exception {

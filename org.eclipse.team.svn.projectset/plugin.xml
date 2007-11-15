@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<fragment
-   id="org.eclipse.team.svn.projectset"
-   name="%fragmentName"
-   version="0.7.0"
-   provider-name="%providerName"
-   plugin-id="com.csc.dip.projectset"
-   plugin-version="1.4.4"
-   match="greaterOrEqual">
+<plugin
+	id="org.eclipse.team.svn.projectset"
+	name="%pluginName"
+	version="0.7.0.01"
+	provider-name="%providerName">
 
 	<runtime>
 		<library name=".">
@@ -17,6 +14,7 @@
    
 	<requires>
 		<import plugin="org.eclipse.core.runtime"/>
+		<import plugin="com.csc.dip.projectset" version="1.4.4" match="greaterOrEqual"/>
 	</requires>
 	
 	<extension 
@@ -28,4 +26,4 @@
 			class="org.eclipse.team.svn.projectset.SVNProjectReferenceAnalyser"/>
 	</extension>
 	
-</fragment>
+</plugin>

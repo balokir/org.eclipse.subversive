@@ -50,10 +50,6 @@ public class LocalInfoPage extends PropertyPage {
         super();
     }
 
-    public String getTitle() {
-        return super.getTitle() + "  (" + SVNTeamUIPlugin.instance().getVersionString() + ")";
-    }
-
     protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
