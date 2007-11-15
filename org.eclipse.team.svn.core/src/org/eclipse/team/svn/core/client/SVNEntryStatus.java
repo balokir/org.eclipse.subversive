@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.core.client;
 
-import org.eclipse.team.svn.core.client.SVNEntry.NodeKind;
-
 /**
  * The status information container
  * 
