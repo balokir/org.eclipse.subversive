@@ -3,7 +3,7 @@
 <plugin
 	id="org.eclipse.team.svn.projectset"
 	name="%pluginName"
-	version="0.7.0.M1v20071115"
+	version="0.7.0.qualifier"
 	provider-name="%providerName">
 
 	<runtime>
