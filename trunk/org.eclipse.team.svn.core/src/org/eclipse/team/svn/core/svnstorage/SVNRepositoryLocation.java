@@ -795,7 +795,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		}
 		
 		protected boolean tryCachedRealm(String realm) {
-			if (ISVNClientFactory.DEFAULT_ID.equals(CoreExtensionsManager.instance().getSVNClientWrapperFactory().getId())) {
+			if (!ISVNClientFactory.DEFAULT_ID.equals(CoreExtensionsManager.instance().getSVNClientWrapperFactory().getId())) {
 				return false;
 			}
 			String threadName = Thread.currentThread().getName();
