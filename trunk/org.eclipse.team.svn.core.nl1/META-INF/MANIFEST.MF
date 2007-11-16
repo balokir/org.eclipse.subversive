@@ -3,6 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Nl1 Fragment (Incubation)
 Bundle-SymbolicName: org.eclipse.team.svn.core.nl1
 Bundle-Version: 0.7.0.qualifier
-Fragment-Host: org.eclipse.team.svn.core;bundle-version="0.7.0.M1v20071115"
+Fragment-Host: org.eclipse.team.svn.core;bundle-version="0.7.0.M1v20071116"
 Bundle-Localization: plugin
 Bundle-Vendor: Eclipse.org
