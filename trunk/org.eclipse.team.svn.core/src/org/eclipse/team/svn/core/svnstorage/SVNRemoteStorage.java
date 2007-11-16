@@ -529,6 +529,10 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 			    // may be ignored ?
 				status = IStateFilter.ST_IGNORED;
 				if (!SVNUtility.isIgnored(resource)) {
+					ILocalResource local = (ILocalResource)this.localResources.get(resource.getFullPath());
+					if (local != null) {
+						return local.getStatus();
+					}
 				    status = this.getTopLevelStatus(resource, IStateFilter.ST_NEW, 0);
 				}
 			}
