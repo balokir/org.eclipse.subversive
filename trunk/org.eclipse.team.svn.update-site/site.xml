@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <description url="http://www.eclipse.org/subversive/download/update-site">
+   <description url="http://download.eclipse.org/technology/subversive/update-site/">
       Eclipse SVN Team Provider
    </description>
    <feature url="features/org.eclipse.team.svn_0.7.0.M1v20071115.jar" id="org.eclipse.team.svn" version="0.7.0.M1v20071115">
