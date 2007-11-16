@@ -14,6 +14,7 @@
    
 	<requires>
 		<import plugin="org.eclipse.core.runtime"/>
+		<import plugin="org.eclipse.core.resources"/>
 		<import plugin="com.csc.dip.projectset" version="1.4.4" match="greaterOrEqual"/>
 	</requires>
 	
