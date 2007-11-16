@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -99,11 +100,27 @@ public class CoreExtensionsManager {
 	}
 	
 	public ISVNClientFactory getSVNClientWrapperFactory(String id) {
-		ISVNClientFactory retVal = ISVNClientFactory.EMPTY;
-		if (this.validClients.contains(id)) {
-			retVal = (ISVNClientFactory)this.clients.get(id);
+		ISVNClientFactory retVal = this.getFirstValidClient(id);
+		if (retVal == null) {
+			retVal = ISVNClientFactory.EMPTY;
 		}
 		return retVal;
+	}
+	
+	private ISVNClientFactory getFirstValidClient(String id) {
+		if (this.validClients.contains(id)) {
+			return (ISVNClientFactory)this.clients.get(id);
+		}
+		else if (this.validClients.contains(ISVNClientFactory.DEFAULT_ID)) {
+			return (ISVNClientFactory)this.clients.get(ISVNClientFactory.DEFAULT_ID);
+		}
+		for (Iterator it = this.clients.values().iterator(); it.hasNext(); ) {
+			ISVNClientFactory client = (ISVNClientFactory)it.next(); 
+			if (this.validClients.contains(client.getId())) {
+				return client;
+			}
+		}
+		return null;
 	}
 	
 	private CoreExtensionsManager() {

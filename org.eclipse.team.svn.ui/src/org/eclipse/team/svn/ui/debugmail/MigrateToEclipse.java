@@ -136,7 +136,7 @@ main:
 					String resourceProperty = current.getPersistentProperty(MigrateToEclipse.OLD_RESOURCE_PROPERTY);
 					String locationProperty = current.getPersistentProperty(MigrateToEclipse.OLD_LOCATION_PROPERTY);
 					
-					RepositoryProvider.unmap(current);
+					try {RepositoryProvider.unmap(current);} catch (Exception ex) {}
 					
 					current.setPersistentProperty(SVNTeamProvider.RESOURCE_PROPERTY, resourceProperty);
 					current.setPersistentProperty(SVNTeamProvider.LOCATION_PROPERTY, locationProperty);
@@ -165,7 +165,7 @@ main:
 			int dataLen = MigrateToEclipse.replaceBinaryEntries(data, data.length, MigrateToEclipse.OLD_ENTRY1, MigrateToEclipse.NEW_ENTRY1, false);
 			
 			ByteArrayInputStream input = new ByteArrayInputStream(data, 0, dataLen);
-			Platform.getPreferencesService().importPreferences(input);
+			try {Platform.getPreferencesService().importPreferences(input);} catch (Exception ex) {}
 		}
 		
 	}
