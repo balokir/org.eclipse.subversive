@@ -21,7 +21,7 @@ import org.eclipse.team.svn.core.operation.UnreportableException;
  * @author Alexander Gurov
  */
 public interface ISVNClientFactory {
-	public static final String DEFAULT_ID = "org.polarion.team.svn.client.javahl";
+	public static final String DEFAULT_ID = "org.polarion.team.client.javasvn.standard.core";
 	public static final String CURRENT_COMPATIBILITY_VERSION = "0.7.0";
 	
 	/**
