@@ -41,6 +41,7 @@ import org.eclipse.team.svn.core.operation.local.AbstractWorkingCopyOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.svn.ui.operation.RefreshRepositoryLocationsOperation;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
@@ -67,6 +68,7 @@ public class MigrateToEclipse extends AbstractMainMenuAction {
 		RemapProjects remapOp = new RemapProjects();
 		op.add(remapOp);
 		op.add(new RefreshResourcesOperation(remapOp, IResource.DEPTH_ONE, RefreshResourcesOperation.REFRESH_CACHE));
+		op.add(new RefreshRepositoryLocationsOperation(false));
 		UIMonitorUtility.doTaskNowDefault(op, false);
 	}
 

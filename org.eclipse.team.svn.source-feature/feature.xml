@@ -33,7 +33,7 @@
 
    <includes
          id="org.eclipse.team.svn.mylyn.source"
-         version="0.0.0"/>
+         version="0.7.0.M1v20071119"/>
 
    <includes
          id="org.eclipse.team.svn.projectset.source"
