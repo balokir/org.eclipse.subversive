@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<site
-      mirrorsURL="http://www.eclipse.org/downloads/download.php?file=/technology/subversive/update-site/site.xml&amp;format=xml">
+<site>
    <description url="http://download.eclipse.org/technology/subversive/update-site/">
       Eclipse SVN Team Provider
    </description>
-   <feature url="features/org.eclipse.team.svn_0.7.0.M1v20071116.jar" id="org.eclipse.team.svn" version="0.7.0.M1v20071116">
+   <feature url="features/org.eclipse.team.svn_0.7.0.M1v20071119.jar" id="org.eclipse.team.svn" version="0.7.0.M1v20071119">
       <category name="Subversive (Incubation)"/>
    </feature>
    <feature url="features/org.eclipse.team.svn.nl1_0.7.0.M1v20071116.jar" id="org.eclipse.team.svn.nl1" version="0.7.0.M1v20071116">
@@ -19,7 +18,7 @@
    <feature url="features/org.eclipse.team.svn.projectset_0.7.0.M1v20071116.jar" id="org.eclipse.team.svn.projectset" version="0.7.0.M1v20071116">
       <category name="Subversive Integration (Incubation)"/>
    </feature>
-   <feature url="features/org.eclipse.team.svn.source_0.7.0.M1v20071116_Sources.jar" id="org.eclipse.team.svn.source" version="0.7.0.M1v20071116_Sources">
+   <feature url="features/org.eclipse.team.svn.source_0.7.0.M1v20071119_Sources.jar" id="org.eclipse.team.svn.source" version="0.7.0.M1v20071119_Sources">
       <category name="Subversive Sources (Incubation)"/>
    </feature>
    <category-def name="Subversive (Incubation)" label="Subversive SVN Team Provider Plugin (Incubation)">
