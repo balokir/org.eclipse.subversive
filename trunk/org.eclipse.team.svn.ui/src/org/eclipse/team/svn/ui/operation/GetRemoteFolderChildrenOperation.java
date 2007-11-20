@@ -17,12 +17,16 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.client.ISVNClient;
 import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.client.SVNProperty;
 import org.eclipse.team.svn.core.client.SVNProperty.BuiltIn;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
+import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -75,20 +79,26 @@ public class GetRemoteFolderChildrenOperation extends AbstractNonLockingOperatio
 			try {
 				SVNProperty data = proxy.propertyGet(SVNUtility.getEntryRevisionReference(this.parent), BuiltIn.EXTERNALS, new SVNProgressMonitor(this, monitor, null));
 				if (data != null) {
-					Map externals = SVNUtility.parseSVNExternalsProperty(data.value);
-					IRepositoryResource []newTmp = new IRepositoryResource[tmp.length + externals.size()];
-					System.arraycopy(tmp, 0, newTmp, 0, tmp.length);
-					int i = 0;
-					for (Iterator it = externals.entrySet().iterator(); it.hasNext(); i++) {
-						Map.Entry entry = (Map.Entry)it.next();
-						String name = (String)entry.getKey();
-						SVNEntryRevisionReference ref = (SVNEntryRevisionReference)entry.getValue();
-						newTmp[tmp.length + i] = SVNRemoteStorage.instance().asRepositoryResource(location, ref.path, false);
-						newTmp[tmp.length + i].setSelectedRevision(ref.revision);
-						newTmp[tmp.length + i].setPegRevision(ref.pegRevision);
-						this.externalsNames.put(newTmp[tmp.length + i], name);
+					//Map externals;
+					try {
+						Map externals = SVNUtility.parseSVNExternalsProperty(data.value);
+						IRepositoryResource []newTmp = new IRepositoryResource[tmp.length + externals.size()];
+						System.arraycopy(tmp, 0, newTmp, 0, tmp.length);
+						int i = 0;
+						for (Iterator it = externals.entrySet().iterator(); it.hasNext(); i++) {
+							Map.Entry entry = (Map.Entry)it.next();
+							String name = (String)entry.getKey();
+							SVNEntryRevisionReference ref = (SVNEntryRevisionReference)entry.getValue();
+							newTmp[tmp.length + i] = SVNRemoteStorage.instance().asRepositoryResource(location, ref.path, false);
+							newTmp[tmp.length + i].setSelectedRevision(ref.revision);
+							newTmp[tmp.length + i].setPegRevision(ref.pegRevision);
+							this.externalsNames.put(newTmp[tmp.length + i], name);
+						}
+						tmp = newTmp;
 					}
-					tmp = newTmp;
+					catch (UnreportableException ex) {
+						this.reportStatus(new Status(IStatus.WARNING, SVNTeamPlugin.NATURE_ID, IStatus.OK, this.getShortErrorMessage(ex), ex));
+					}
 				}
 			} finally {
 				location.releaseSVNProxy(proxy);
