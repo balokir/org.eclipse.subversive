@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.team.svn"
       label="SVN Team Provider (Incubation)"
-      version="0.7.0.qualifier"
+      version="0.7.0.v20071120"
       provider-name="Eclipse.org">
    <install-handler/>
 
@@ -110,8 +110,8 @@ Java and all Java-based trademarks are trademarks of Sun Microsystems, Inc. in t
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://download.eclipse.org/technology/subversive/update-site/"/>
-      <discovery label="%discoverySiteName" url="http://download.eclipse.org/technology/subversive/update-site/"/>
+      <update label="%updateSiteName" url="http://download.eclipse.org/technology/subversive/0.7/update-site/"/>
+      <discovery label="%discoverySiteName" url="http://download.eclipse.org/technology/subversive/0.7/update-site/"/>
    </url>
 
    <requires>
@@ -129,28 +129,28 @@ Java and all Java-based trademarks are trademarks of Sun Microsystems, Inc. in t
       <import plugin="org.eclipse.osgi"/>
       <import plugin="org.eclipse.help"/>
       <import plugin="org.eclipse.ui.console"/>
-      <import plugin="org.eclipse.team.svn.client.svnkit" version="2.0.0" match="equivalent"/>
+      <import plugin="org.eclipse.team.svn.client.svnkit" version="2.0.0" match="compatible"/>
    </requires>
 
    <plugin
          id="org.eclipse.team.svn.core"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.7.0.v20071120"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.team.svn.ui"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.7.0.v20071120"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.team.svn.help"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.7.0.v20071120"
          unpack="false"/>
 
 </feature>

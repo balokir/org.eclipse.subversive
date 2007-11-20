@@ -3,7 +3,7 @@
 <plugin
 	id="org.eclipse.team.svn.resource.ignore.rules.jdt"
 	name="%pluginName"
-	version="0.7.0.qualifier"
+	version="0.7.0.v20071120"
 	provider-name="%providerName">
 
 	<runtime>
