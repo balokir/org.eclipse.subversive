@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.team.svn.mylyn"
       label="Subversive Integration for the Mylyn Project (Optional) (Incubation)"
-      version="0.7.0.M1v20071119"
+      version="0.7.0.v20071120"
       provider-name="Eclipse.org"
       colocation-affinity="org.eclipse.team.svn">
    <install-handler/>
@@ -113,21 +113,21 @@ Java and all Java-based trademarks are trademarks of Sun Microsystems, Inc. in t
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://download.eclipse.org/technology/subversive/update-site/"/>
-      <discovery label="%discoverySiteName" url="http://download.eclipse.org/technology/subversive/update-site/"/>
+      <update label="%updateSiteName" url="http://download.eclipse.org/technology/subversive/0.7/update-site/"/>
+      <discovery label="%discoverySiteName" url="http://download.eclipse.org/technology/subversive/0.7/update-site/"/>
    </url>
 
    <requires>
       <import feature="org.eclipse.mylyn.context_feature"/>
       <import feature="org.eclipse.mylyn_feature"/>
-      <import feature="org.eclipse.team.svn" version="0.7.0" match="equivalent"/>
+      <import feature="org.eclipse.team.svn" version="0.7.0" match="compatible"/>
    </requires>
 
    <plugin
          id="org.eclipse.team.svn.mylyn"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.7.0.v20071120"
          unpack="false"/>
 
 </feature>

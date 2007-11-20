@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.team.svn.source"
       label="%featureName"
-      version="0.7.0.qualifier"
+      version="0.7.0.v20071120"
       provider-name="%providerName"
       colocation-affinity="org.eclipse.team.svn">
 
@@ -15,28 +15,28 @@
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://download.eclipse.org/technology/subversive/update-site/"/>
-      <discovery label="%discoverySiteName" url="http://download.eclipse.org/technology/subversive/update-site/"/>
+      <update label="%updateSiteName" url="http://download.eclipse.org/technology/subversive/0.7/update-site/"/>
+      <discovery label="%discoverySiteName" url="http://download.eclipse.org/technology/subversive/0.7/update-site/"/>
    </url>
 
    <includes
          id="org.eclipse.team.svn.sources"
-         version="0.0.0"/>
+         version="0.7.0.v20071120"/>
 
    <includes
          id="org.eclipse.team.svn.nl1.sources"
-         version="0.0.0"/>
+         version="0.7.0.v20071120"/>
 
    <includes
          id="org.eclipse.team.svn.resource.ignore.rules.jdt.source"
-         version="0.0.0"/>
+         version="0.7.0.v20071120"/>
 
    <includes
          id="org.eclipse.team.svn.mylyn.source"
-         version="0.7.0.M1v20071119"/>
+         version="0.7.0.v20071120"/>
 
    <includes
          id="org.eclipse.team.svn.projectset.source"
-         version="0.0.0"/>
+         version="0.7.0.v20071120"/>
 
 </feature>
