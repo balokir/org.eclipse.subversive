@@ -33,12 +33,14 @@ import org.eclipse.team.svn.core.client.SVNRevision.Kind;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
+import org.eclipse.team.svn.core.operation.remote.LocateResourceURLInHistoryOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.compare.ComparePanel;
@@ -104,13 +106,16 @@ public class CompareResourcesOperation extends AbstractNonLockingOperation {
 			
 			if (this.revision.getKind() == Kind.HEAD || this.revision.getKind() == Kind.NUMBER) {
 				// all revisions should be set here because unversioned resources can be compared
-				final IRepositoryResource remoteRight = local.isCopied() ? this.getRepositoryResourceFor(this.resource, localChanges[0][0].urlCopiedFrom, location) : storage.asRepositoryResource(this.resource);
-				remoteRight.setPegRevision(this.pegRevision);
+				IRepositoryResource tmpRight = local.isCopied() ? this.getRepositoryResourceFor(this.resource, localChanges[0][0].urlCopiedFrom, location) : storage.asRepositoryResource(this.resource);
+				tmpRight.setSelectedRevision(this.revision);
+				tmpRight.setPegRevision(this.pegRevision);
+				LocateResourceURLInHistoryOperation op = new LocateResourceURLInHistoryOperation(new IRepositoryResource [] {tmpRight}, true);
+				ProgressMonitorUtility.doTaskExternal(op, monitor);
+				final IRepositoryResource remoteRight = op.getRepositoryResources() [0];
 				remoteBase.setPegRevision(this.pegRevision);
 				// status order may be inconsistent for next lines
 				SVNUtility.reorder(localChanges[0], true);
 				if (local.isCopied()) {
-					remoteRight.setPegRevision(SVNRevision.fromNumber(localChanges[0][0].revisionCopiedFrom));
 					remoteBase.setSelectedRevision(remoteRight.getPegRevision());
 				}
 				else if (local.getRevision() != SVNRevision.INVALID_REVISION_NUMBER) {
@@ -118,7 +123,7 @@ public class CompareResourcesOperation extends AbstractNonLockingOperation {
 				}
 				
 				remoteRight.setSelectedRevision(this.revision);
-				final String baseUrl = local.isCopied() ? remoteRight.getUrl() : remoteBase.getUrl(); 
+				final String baseUrl = local.isCopied() ? remoteRight.getUrl() : remoteBase.getUrl();
 					
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(IProgressMonitor monitor) throws Exception {

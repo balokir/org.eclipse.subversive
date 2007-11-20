@@ -52,8 +52,7 @@ public class TwoWayResourceCompareInput extends ResourceCompareInput {
 	}
 
 	public void initialize(IProgressMonitor monitor) throws Exception {
-		super.initialize(monitor);
-		
+			
 		SVNUtility.reorder(this.statuses, true);
 		
 		HashMap path2node = new HashMap();
@@ -71,6 +70,8 @@ public class TwoWayResourceCompareInput extends ResourceCompareInput {
 		if (this.root == null) {
 			this.findRootNode(path2node, this.rootLeft, monitor);
 		}
+		
+		super.initialize(monitor);
 	}
 	
 	protected void findRootNode(Map path2node, IRepositoryResource resource, IProgressMonitor monitor) {

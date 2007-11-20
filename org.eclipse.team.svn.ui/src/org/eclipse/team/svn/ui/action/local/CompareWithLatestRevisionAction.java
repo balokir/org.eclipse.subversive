@@ -48,7 +48,9 @@ public class CompareWithLatestRevisionAction extends AbstractWorkingCopyAction {
 			
 			if (!this.runNow(correctOp, true).isCancelled()) {
 				this.runScheduled(new CompareResourcesOperation(left, resource.getSelectedRevision(), resource.getPegRevision()));
-				this.runBusy(new ShowHistoryViewOperation(resource, HistoryViewImpl.COMPARE_MODE, HistoryViewImpl.COMPARE_MODE));
+				if (!local.isCopied()) {
+					this.runBusy(new ShowHistoryViewOperation(resource, HistoryViewImpl.COMPARE_MODE, HistoryViewImpl.COMPARE_MODE));
+				}
 			}
 		}
 	}

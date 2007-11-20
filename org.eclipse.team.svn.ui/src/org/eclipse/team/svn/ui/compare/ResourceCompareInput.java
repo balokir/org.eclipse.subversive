@@ -141,6 +141,18 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 	}
 	
 	protected String getShortAncestorLabel() throws Exception { 
+		String ancestorName = this.getAncestorResourceElement().getName();
+		String rightName = this.getRightResourceElement().getName();
+		String leftName = this.getLeftResourceElement().getName();
+		if (!ancestorName.equals(rightName) && ancestorName.equals(leftName)) {
+			return " " + this.getRevisionPart(this.getAncestorResourceElement()) + "] ";
+		}
+		else if (ancestorName.equals(rightName) && !ancestorName.equals(leftName)) {
+			return " " + ancestorName + " [" + this.getRevisionPart(this.getAncestorResourceElement()) + " ";
+		}
+		else if (!ancestorName.equals(rightName) && !ancestorName.equals(leftName)) {
+			return " " + ancestorName + " [" + this.getRevisionPart(this.getAncestorResourceElement()) + "] ";
+		}
 		return " " + this.getRevisionPart(this.getAncestorResourceElement()) + " ";
 	}
 
@@ -155,10 +167,10 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 	protected String getShortLeftLabel() throws Exception {
 		String revisionPart = this.getRevisionPart(this.getLeftResourceElement());
 		String leftResourceName = this.getLeftResourceElement().getName();
-		if (leftResourceName.equals(this.getRightResourceElement().getName())) {
+		if (!this.isThreeWay() && leftResourceName.equals(this.getRightResourceElement().getName()) || this.isThreeWay() && leftResourceName.equals(this.getAncestorResourceElement().getName())) {
 			return leftResourceName + " [" + revisionPart + " ";
 		}
-		return leftResourceName + " [" + revisionPart + "]";
+		return leftResourceName + " [" + revisionPart + "] ";
 	}
 
 	protected String getLeftLabel() throws Exception {
@@ -172,10 +184,10 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 	protected String getShortRightLabel() throws Exception {
 		String rightResourceName = this.getRightResourceElement().getName();
 		String revisionPart = this.getRevisionPart(this.getRightResourceElement());
-		if (rightResourceName.equals(this.getLeftResourceElement().getName())) {
+		if (!this.isThreeWay() && rightResourceName.equals(this.getLeftResourceElement().getName()) || this.isThreeWay() && rightResourceName.equals(this.getAncestorResourceElement().getName())) {
 			return " " + revisionPart + "]";
 		}
-		return rightResourceName + " [" + revisionPart + "]";
+		return " " + rightResourceName + " [" + revisionPart + "]";
 	}
 	
 	protected String getRightLabel() throws Exception {
@@ -196,18 +208,6 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		if (selected == SVNRevision.INVALID_REVISION) {
 			return "";
 		}
-		int kind = selected.getKind();
-		ILocalResource local = element.getLocalResource();
-		
-		if (kind == Kind.WORKING || kind == Kind.BASE || (local != null && local.isCopied())) {
-			if (local == null || local.getRevision() == SVNRevision.INVALID_REVISION_NUMBER) {
-				return "";
-			}
-			if (kind == Kind.WORKING) {
-				return "Local";
-			}
-			return "Base:" + String.valueOf(local.getRevision());
-		}
 		return "Rev:" + String.valueOf(resource.getRevision());
 	}
 	
@@ -215,6 +215,9 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		DiffNode node = this.getSelectedNode();
 		if (node != null) {
 			return (ResourceElement)node.getLeft();
+		}
+		if (root != null) {
+			return (ResourceElement)this.root.getLeft();
 		}
 		return new ResourceElement(this.rootLeft, org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NORMAL);
 	}
@@ -224,6 +227,9 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		if (node != null) {
 			return (ResourceElement)node.getRight();
 		}
+		if (root != null) {
+			return (ResourceElement)this.root.getRight();
+		}
 		return new ResourceElement(this.rootRight, org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NORMAL);
 	}
 	
@@ -231,6 +237,9 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		DiffNode node = this.getSelectedNode();
 		if (node != null) {
 			return (ResourceElement)node.getAncestor();
+		}
+		if (root != null) {
+			return (ResourceElement)this.root.getAncestor();
 		}
 		return new ResourceElement(this.rootAncestor, org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NORMAL);
 	}

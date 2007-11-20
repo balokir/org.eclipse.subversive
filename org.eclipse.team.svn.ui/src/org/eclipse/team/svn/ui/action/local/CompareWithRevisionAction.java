@@ -73,7 +73,9 @@ public class CompareWithRevisionAction extends AbstractWorkingCopyAction {
 		DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
 		if (dialog.open() == 0) {
 			this.runScheduled(new CompareResourcesOperation(left, panel.getSelectedRevision(), right.getPegRevision()));
-			this.runBusy(new ShowHistoryViewOperation(left, HistoryViewImpl.COMPARE_MODE, HistoryViewImpl.COMPARE_MODE));
+			if (!localLeft.isCopied()) {
+				this.runBusy(new ShowHistoryViewOperation(left, HistoryViewImpl.COMPARE_MODE, HistoryViewImpl.COMPARE_MODE));
+			}
 		}
 	}
 
