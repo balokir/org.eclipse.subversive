@@ -86,8 +86,6 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 	}
 
 	public void initialize(IProgressMonitor monitor) throws Exception {
-		super.initialize(monitor);
-		
 		Map localChanges = new HashMap();
 		Map remoteChanges = new HashMap();
 		HashSet allChangesSet = new HashSet();
@@ -119,6 +117,36 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 			IRepositoryResource converted = op.getRepositoryResources()[0];
 			this.root = (CompareNode)path2node.get(new Path(converted.getUrl()));
 		}
+		
+		super.initialize(monitor);
+	}
+	
+	protected String getRevisionPart(ResourceElement element) throws Exception {
+		IRepositoryResource resource = element.getRepositoryResource();
+		SVNRevision selected = resource.getSelectedRevision();
+		if (selected == SVNRevision.INVALID_REVISION) {
+			return "None";
+		}
+		int kind = selected.getKind();
+		ILocalResource local = element.getLocalResource();
+		
+		if (kind == Kind.WORKING) {
+			return "Local";
+		}
+		else if (kind == Kind.BASE) {
+			if (local.isCopied()) {
+                long copiedFrom = -1;
+                for (int i = 0; i < this.localChanges.length; i++) {
+                     if (this.localChanges[i].path.toString().endsWith(local.getResource().getFullPath().toString())) {
+                          copiedFrom = this.localChanges[i].revisionCopiedFrom;
+                          break;
+                     }
+                }
+                return "Base:"  + String.valueOf(SVNRevision.fromNumber(copiedFrom));
+			}
+			return "Base:" + String.valueOf(local.getRevision());
+		}
+		return "Rev:" + String.valueOf(resource.getRevision());
 	}
 	
 	public Object getAdapter(Class adapter) {
@@ -186,8 +214,9 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		IRepositoryResource left = this.createResourceFor(location, leftNodeKind, oldUrl);
 		left.setSelectedRevision(SVNRevision.WORKING);
 		left.setPegRevision(null);
-		
-		IRepositoryResource ancestor = this.createResourceFor(location, ancestorNodeKind, oldUrl);
+
+		String ancestorUrl = stLeft != null && stLeft.isCopied ? stLeft.urlCopiedFrom : oldUrl;
+		IRepositoryResource ancestor = this.createResourceFor(location, ancestorNodeKind, ancestorUrl);
 		ancestor.setSelectedRevision(SVNRevision.BASE);
 		ancestor.setPegRevision(null);
 		
