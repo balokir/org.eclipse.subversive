@@ -5,11 +5,11 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 0.7.0 release date: 14 November 2007
+Version 0.7.0.v20071120 release date: 20 November 2007
 
 1. What's New
 
-   The version is 0.7.0 release. The main target of the release is 
+   The version is 0.7.0 release which build ID is v20071120. The main target of the release is 
    transferring Subversive development to Eclipse.org.
    
    Changes in compare with previous version are listed below. The full list of 
@@ -25,6 +25,9 @@ Version 0.7.0 release date: 14 November 2007
 	 * merge UI does not show any changes
 	   + special thanks to Chris West
 	
+	 * Compare after refactoring problems (bug 210272)
+	 * Fixing issues with "Migrate To Eclipse" action
+	 * Add "Migrate to Eclipse" action description into help
 	 * build.properties for UI localization plug-in was corrected
 	 * SVN client library connector interfaces reworked according to Eclipse guidelines (naming conventions etc.)
 	 * switched and svn:externals resources support enhancement
@@ -52,6 +55,6 @@ Version 0.7.0 release date: 14 November 2007
    
    Subversive supports Subversion versions 1.1-1.4
 
-2.2 Known bugs
+2.2 Known issues
 
-	* Compare does not work for moved but not committed resources
+	* Compare does not work for folders
