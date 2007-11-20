@@ -49,7 +49,9 @@ public class UILoggedOperation extends LoggedOperation {
 
     protected void handleError(IStatus errorStatus) {
     	super.handleError(errorStatus);
-    	UILoggedOperation.showError(SVNTeamPlugin.NATURE_ID, this.getOperationName(), errorStatus, true);
+    	if (errorStatus.matches(IStatus.ERROR)) {
+    		UILoggedOperation.showError(SVNTeamPlugin.NATURE_ID, this.getOperationName(), errorStatus, true);
+    	}
     }
     
     public static void showError(final String pluginID, final String operationName, final IStatus errorStatus, final boolean isReportingAllowed) {
