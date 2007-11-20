@@ -120,8 +120,8 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 			return null;
 		}
 		IRepositoryResource originator = this.scope.getMergeSet().from[0];
-		String decodedURL = SVNUtility.decodeURL(current.url);
-		originator = provider.getNodeKind() == NodeKind.DIR ? (IRepositoryResource)originator.asRepositoryContainer(decodedURL, false) : originator.asRepositoryFile(decodedURL, false);
+		String decodedUrl = SVNUtility.decodeURL(current.url);
+		originator = provider.getNodeKind() == NodeKind.DIR ? (IRepositoryResource)originator.asRepositoryContainer(decodedUrl, false) : originator.asRepositoryFile(decodedUrl, false);
 		originator.setSelectedRevision(SVNRevision.fromNumber(current.repositoryTextStatus == Kind.DELETED ? current.reposLastCmtRevision - 1 : current.reposLastCmtRevision));
 		resourceChange.setOriginator(originator);
 		resourceChange.setCommentProvider(new ICommentProvider() {
