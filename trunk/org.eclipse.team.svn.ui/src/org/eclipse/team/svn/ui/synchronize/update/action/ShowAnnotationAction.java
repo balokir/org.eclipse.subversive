@@ -69,11 +69,13 @@ public class ShowAnnotationAction extends AbstractSynchronizeModelAction {
 						if (local != null && IStateFilter.SF_ONREPOSITORY.accept(resource, local.getStatus(), local.getChangeMask())) {
 							UIMonitorUtility.doTaskBusyDefault(new LocalShowAnnotationOperation(resource, operation.getPart().getSite().getPage()));
 						}
-						IResourceChange change = ((IResourceChange)((ResourceVariant)operation.getSVNSyncInfo().getRemote()).getResource());
-						IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(resource);
-						remote.setPegRevision(change.getPegRevision());
-						remote.setSelectedRevision(SVNRevision.fromNumber(change.getRevision()));
-						UIMonitorUtility.doTaskBusyDefault(new RemoteShowAnnotationOperation(remote, operation.getPart().getSite().getPage()));
+						else {
+							IResourceChange change = ((IResourceChange)((ResourceVariant)operation.getSVNSyncInfo().getRemote()).getResource());
+							IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(resource);
+							remote.setPegRevision(change.getPegRevision());
+							remote.setSelectedRevision(SVNRevision.fromNumber(change.getRevision()));
+							UIMonitorUtility.doTaskBusyDefault(new RemoteShowAnnotationOperation(remote, operation.getPart().getSite().getPage()));
+						}
 					}
 				});
 			}

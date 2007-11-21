@@ -2,12 +2,13 @@
 <feature
       id="org.eclipse.team.svn"
       label="SVN Team Provider (Incubation)"
-      version="0.7.0.v20071120"
-      provider-name="Eclipse.org">
+      version="0.7.0.v20071121"
+      provider-name="Eclipse.org"
+      plugin="org.eclipse.team.svn">
    <install-handler/>
 
    <description>
-      The Eclipse Team Provider for the Subversion version control system. SVN client libraries should be installed separetely.
+      The Eclipse Team Provider for the Subversion version control system. For instructions about installing clients visit http://www.eclipse.org/subversive/downloads.php.
    </description>
 
    <license url="license.html">
@@ -129,28 +130,36 @@ Java and all Java-based trademarks are trademarks of Sun Microsystems, Inc. in t
       <import plugin="org.eclipse.osgi"/>
       <import plugin="org.eclipse.help"/>
       <import plugin="org.eclipse.ui.console"/>
+      <import plugin="org.polarion.eclipse.team.svn.client" version="2.0.0" match="compatible"/>
       <import plugin="org.polarion.eclipse.team.svn.client.svnkit" version="2.0.0" match="compatible"/>
    </requires>
+
+   <plugin
+         id="org.eclipse.team.svn"
+         download-size="0"
+         install-size="0"
+         version="0.7.0.v20071121"
+         unpack="false"/>
 
    <plugin
          id="org.eclipse.team.svn.core"
          download-size="0"
          install-size="0"
-         version="0.7.0.v20071120"
+         version="0.7.0.v20071121"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.team.svn.ui"
          download-size="0"
          install-size="0"
-         version="0.7.0.v20071120"
+         version="0.7.0.v20071121"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.team.svn.help"
          download-size="0"
          install-size="0"
-         version="0.7.0.v20071120"
+         version="0.7.0.v20071121"
          unpack="false"/>
 
 </feature>
