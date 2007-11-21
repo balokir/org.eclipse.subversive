@@ -215,12 +215,12 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		left.setSelectedRevision(SVNRevision.WORKING);
 		left.setPegRevision(null);
 
-		String ancestorUrl = stLeft != null && stLeft.isCopied ? stLeft.urlCopiedFrom : oldUrl;
+		String ancestorUrl = stLeft != null && stLeft.isCopied ? SVNUtility.decodeURL(stLeft.urlCopiedFrom) : oldUrl;
 		IRepositoryResource ancestor = this.createResourceFor(location, ancestorNodeKind, ancestorUrl);
 		ancestor.setSelectedRevision(SVNRevision.BASE);
 		ancestor.setPegRevision(null);
 		
-		String rightUrl = stRight != null ? stRight.url : (stLeft != null && stLeft.isCopied ? stLeft.urlCopiedFrom : oldUrl);
+		String rightUrl = stRight != null ? stRight.url : (stLeft != null && stLeft.isCopied ? SVNUtility.decodeURL(stLeft.urlCopiedFrom) : oldUrl);
 		IRepositoryResource right = this.createResourceFor(location, rightNodeKind, rightUrl);
 		right.setPegRevision(this.rootRight.getPegRevision());
 		right.setSelectedRevision(this.rootRight.getSelectedRevision());
