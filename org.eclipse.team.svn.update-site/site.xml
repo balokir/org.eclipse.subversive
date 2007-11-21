@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
    <description url="http://download.eclipse.org/technology/subversive/0.7/update-site/">
-      Eclipse SVN Team Provider
+      Eclipse Subversive - SVN Team Provider
    </description>
    <feature url="features/org.eclipse.team.svn_0.7.0.v20071121.jar" id="org.eclipse.team.svn" version="0.7.0.v20071121">
       <category name="Subversive (Incubation)"/>
@@ -23,17 +23,17 @@
    </feature>
    <category-def name="Subversive (Incubation)" label="Subversive SVN Team Provider Plugin (Incubation)">
       <description>
-         Subversive Team Provider for the Subversion version control system.
+         Eclipse Subversive Team Provider for the Subversion version control system.
       </description>
    </category-def>
    <category-def name="Subversive Integration (Incubation)" label="Subversive Integration Plug-in&apos;s (Incubation)">
       <description>
-         Subversive Team Provider integration for third party tools.
+         Eclipse Subversive Team Provider integration for third party tools.
       </description>
    </category-def>
    <category-def name="Subversive Sources (Incubation)" label="Subversive Sources (Incubation)">
       <description>
-         Subversive Team Provider development resources.
+         Eclipse Subversive Team Provider development resources.
       </description>
    </category-def>
 </site>

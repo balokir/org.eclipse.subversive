@@ -106,7 +106,7 @@ public class CompareResourcesOperation extends AbstractNonLockingOperation {
 			
 			if (this.revision.getKind() == Kind.HEAD || this.revision.getKind() == Kind.NUMBER) {
 				// all revisions should be set here because unversioned resources can be compared
-				IRepositoryResource tmpRight = local.isCopied() ? this.getRepositoryResourceFor(this.resource, localChanges[0][0].urlCopiedFrom, location) : storage.asRepositoryResource(this.resource);
+				IRepositoryResource tmpRight = local.isCopied() ? this.getRepositoryResourceFor(this.resource, SVNUtility.decodeURL(localChanges[0][0].urlCopiedFrom), location) : storage.asRepositoryResource(this.resource);
 				tmpRight.setSelectedRevision(this.revision);
 				tmpRight.setPegRevision(this.pegRevision);
 				LocateResourceURLInHistoryOperation op = new LocateResourceURLInHistoryOperation(new IRepositoryResource [] {tmpRight}, true);
