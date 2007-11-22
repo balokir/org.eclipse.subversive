@@ -28,7 +28,7 @@
 			In the <i>'Install/Update'</i> wizard select <i>'Search for new features to install'</i> option and click on the <i>'Next'</i> button.
 			<br/><br/><img border="0" src="../../images/feature_updates.png" alt="Feature updates"/><br/><br/>
 		</li>
-		<li>
+		<li id="new_update_sites">
 			The <i>'Install'</i> dialog shows a list of available update sites. Subversive has its own update site, so you need to add it to the list. You are provided a probability to install either from remote or local update site. Installation from remote update site is preferred, because the user just have to refer the site URL. If the user has downloaded local update site distribution as ZIP archive, he should refer it as local update site location.
 			Click on the <i>'New Remote Site...'</i> button to add Subversive update site.
 			<br/><br/><img border="0" src="../../images/update_sites.png" alt="Update sites"/><br/><br/>
@@ -40,7 +40,7 @@
 					<b>Name:</b> Subversive
 				</li>
 				<li>
-					<b>URL:</b> <a href="http://download.eclipse.org/technology/subversive/update-site/">http://download.eclipse.org/technology/subversive/update-site/</a>
+					<b>URL:</b> The proper URL can be found on <a href="http://www.eclipse.org/subversive/downloads.php">http://www.eclipse.org/subversive/downloads.php</a>
 				</li>
 			</ul>
 			<br/>Click on the <i>'OK'</i> button to store update site information.
@@ -49,10 +49,10 @@
 			On the <i>'New Update Site'</i> dialog enter the name of clients' update site and the URL. Use following values:
 			<ul>
 				<li>
-					<b>Name:</b> Subversive Clients
+					<b>Name:</b> Subversive SVN Connectors
 				</li>
 				<li>
-					<b>URL:</b> <a href="http://www.polarion.org/projects/subversive/download/eclipse/update-site/">http://www.polarion.org/projects/subversive/download/eclipse/update-site/</a>
+					<b>URL:</b> The proper URL can be found on <a href="http://www.eclipse.org/subversive/downloads.php">http://www.eclipse.org/subversive/downloads.php</a>
 				</li>
 				<li>
 					<i>Please note that the use of the software you are about to access may be subject to third party terms and conditions and you are responsible for abiding by such terms and conditions.</i>
@@ -60,7 +60,7 @@
 
 			</ul>
 			<br/>Click on the <i>'OK'</i> button to store update site information.
-			<br/><br/><img border="0" src="../../images/update_site_clients.png" alt="New update site"/><br/><br/>		
+			<br/><br/><img border="0" src="../../images/update_site_connectors.png" alt="New update site"/><br/><br/>		
 		</li>
 		<li>
 			To start features search in the list of the update sites the user should select <i>'Subversive'</i> and click on the <i>'Finish'</i> button.
@@ -107,7 +107,7 @@
 			To apply installation changes and restart Eclipse click on the <i>'Yes'</i> button.
 			<br/><br/><img border="0" src="../../images/restart_dialog.png" alt="Restart dialog"/><br/><br/>
 		</li>
-		<li>
+		<li id="migrate">
 			After Eclipse restart you are able to start using Subversive. So if you have had the older Polarion version of Subversive plug-in installed and you haven't uninstalled it, please click on <i>'Help > Subversive > Migrate Projects and Settings'</i> menu item for all workspaces which SVN settings should be saved.<br/><br/>
 			<img border="0" src="../../images/migrate.png" alt="Migrate Projects and Settings"/><br/><br/>
 		</li>
