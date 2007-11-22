@@ -15,7 +15,7 @@ import java.text.MessageFormat;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.SVNProperty;
 import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -64,7 +64,7 @@ public class GetRemotePropertiesOperation extends AbstractRepositoryOperation im
 		IRepositoryResource resource = this.operableData()[0];
 		this.properties = null;
 		IRepositoryLocation location = resource.getRepositoryLocation();
-		ISVNClient proxy = location.acquireSVNProxy();
+		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
 //			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn proplist " + url + "@" + resource.getPegRevision() + " --revprop -r " + resource.getSelectedRevision() + " --username \"" + location.getUsername() + "\"\n");
 			this.properties = SVNUtility.properties(proxy, SVNUtility.getEntryRevisionReference(resource), new SVNProgressMonitor(this, monitor, null));

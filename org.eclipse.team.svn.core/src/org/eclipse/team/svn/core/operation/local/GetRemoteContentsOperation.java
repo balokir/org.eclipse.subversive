@@ -18,8 +18,8 @@ import java.text.MessageFormat;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.team.svn.core.client.ISVNClient;
-import org.eclipse.team.svn.core.client.ISVNClient.Depth;
+import org.eclipse.team.svn.core.client.ISVNConnector;
+import org.eclipse.team.svn.core.client.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -50,7 +50,7 @@ public class GetRemoteContentsOperation extends AbstractActionOperation {
 	
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		IRepositoryLocation location = this.remote.getRepositoryLocation();
-		ISVNClient proxy = location.acquireSVNProxy();
+		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
 			String wcPath = FileUtility.getWorkingCopyPath(this.resource);
 			if (this.remote instanceof IRepositoryFile) {

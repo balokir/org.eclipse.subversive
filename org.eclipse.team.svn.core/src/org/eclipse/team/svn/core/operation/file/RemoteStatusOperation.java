@@ -19,7 +19,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.ISVNEntryStatusCallback;
 import org.eclipse.team.svn.core.client.ISVNNotificationCallback;
 import org.eclipse.team.svn.core.client.SVNNotification;
@@ -60,7 +60,7 @@ public class RemoteStatusOperation extends AbstractStatusOperation implements IS
     	}
     }
     
-	protected void reportStatuses(final ISVNClient proxy, final ISVNEntryStatusCallback cb, final File current, IProgressMonitor monitor, int tasks) {
+	protected void reportStatuses(final ISVNConnector proxy, final ISVNEntryStatusCallback cb, final File current, IProgressMonitor monitor, int tasks) {
 		SVNUtility.addSVNNotifyListener(proxy, this);
     	super.reportStatuses(proxy, cb, current, monitor, tasks);
 		SVNUtility.removeSVNNotifyListener(proxy, this);

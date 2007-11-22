@@ -43,12 +43,12 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.svn.core.IConnectedProjectInformation;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.ISVNClient;
-import org.eclipse.team.svn.core.client.SVNClientCancelException;
-import org.eclipse.team.svn.core.client.SVNClientException;
+import org.eclipse.team.svn.core.client.ISVNConnector;
+import org.eclipse.team.svn.core.client.SVNConnectorCancelException;
+import org.eclipse.team.svn.core.client.SVNConnectorException;
 import org.eclipse.team.svn.core.client.SVNEntryStatus;
 import org.eclipse.team.svn.core.client.SVNRevision;
-import org.eclipse.team.svn.core.client.ISVNClient.Depth;
+import org.eclipse.team.svn.core.client.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.client.SVNEntry.NodeKind;
 import org.eclipse.team.svn.core.client.SVNRevision.Kind;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
@@ -288,7 +288,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 						catch (RuntimeException ex) {
 							throw ex;
 						}
-						catch (SVNClientCancelException ex) {
+						catch (SVNConnectorCancelException ex) {
 							return null;
 						}
 						catch (Exception e) {
@@ -674,7 +674,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	}
 	
 	protected SVNEntryStatus []getStatuses(IRepositoryLocation location, String path, boolean recursively) throws Exception {
-		ISVNClient proxy = location.acquireSVNProxy();
+		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
 			SVNEntryStatus []statuses = SVNUtility.status(proxy, path, Depth.infinityOrImmediates(recursively), false, true, true, false, new SVNNullProgressMonitor());
 			SVNUtility.reorder(statuses, true);
@@ -685,7 +685,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		// empty .svn folders. May be due to using external tools.
 		// So, suppress throwing "Path is not a working copy directory" exception.
 		// 155007 is error code for "Path is not a working copy directory".
-		catch (SVNClientException cwe) {
+		catch (SVNConnectorException cwe) {
 			if (cwe.getErrorId() != 155007) {
 				throw cwe;
 			}

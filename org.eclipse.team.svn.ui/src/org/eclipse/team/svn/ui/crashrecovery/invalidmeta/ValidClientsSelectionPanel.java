@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
-import org.eclipse.team.svn.core.extension.factory.ISVNClientFactory;
+import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -39,9 +39,9 @@ import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
  * @author Alexander Gurov
  */
 public class ValidClientsSelectionPanel extends AbstractDialogPanel {
-	protected Combo svnClientField;
-	protected ISVNClientFactory []factories;
-	protected String svnClient;
+	protected Combo svnConnectorField;
+	protected ISVNConnectorFactory []factories;
+	protected String svnConnector;
 
 	public ValidClientsSelectionPanel(IProject project, List validClients) {
 		super();
@@ -49,7 +49,7 @@ public class ValidClientsSelectionPanel extends AbstractDialogPanel {
 		this.dialogDescription = SVNTeamUIPlugin.instance().getResource("ValidClientsSelectionPanel.Description");
 		this.defaultMessage = SVNTeamUIPlugin.instance().getResource("ValidClientsSelectionPanel.Message");
 		
-		this.factories = (ISVNClientFactory [])validClients.toArray(new ISVNClientFactory[validClients.size()]);
+		this.factories = (ISVNConnectorFactory [])validClients.toArray(new ISVNConnectorFactory[validClients.size()]);
 	}
 	
     public Point getPrefferedSize() {
@@ -58,7 +58,7 @@ public class ValidClientsSelectionPanel extends AbstractDialogPanel {
     
     public void postInit() {
     	super.postInit();
-		this.svnClient = this.factories[this.svnClientField.getSelectionIndex()].getId();
+		this.svnConnector = this.factories[this.svnConnectorField.getSelectionIndex()].getId();
     }
     
 	public void createControls(Composite parent) {
@@ -80,23 +80,23 @@ public class ValidClientsSelectionPanel extends AbstractDialogPanel {
 		label.setLayoutData(data);
 		label.setText(SVNTeamUIPlugin.instance().getResource("ValidClientsSelectionPanel.Clients"));
 		
-		this.svnClientField = new Combo(composite, SWT.READ_ONLY);
+		this.svnConnectorField = new Combo(composite, SWT.READ_ONLY);
 		data = new GridData(GridData.FILL_HORIZONTAL);
-		this.svnClientField.setLayoutData(data);
+		this.svnConnectorField.setLayoutData(data);
 		FileUtility.sort(this.factories, new Comparator() {
 			public int compare(Object o1, Object o2) {
-				return ((ISVNClientFactory)o1).getName().compareTo(((ISVNClientFactory)o2).getName());
+				return ((ISVNConnectorFactory)o1).getName().compareTo(((ISVNConnectorFactory)o2).getName());
 			}
 		});
 		String []items = new String[this.factories.length];
 		for (int i = 0; i < items.length; i++) {
 			items[i] = this.factories[i].getName() + " (" + this.factories[i].getClientVersion().replace('\n', ' ') + ")";
 		}
-		this.svnClientField.setItems(items);
-		this.svnClientField.select(0);
-		this.svnClientField.addSelectionListener(new SelectionAdapter() {
+		this.svnConnectorField.setItems(items);
+		this.svnConnectorField.select(0);
+		this.svnConnectorField.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				ValidClientsSelectionPanel.this.svnClient = ValidClientsSelectionPanel.this.factories[ValidClientsSelectionPanel.this.svnClientField.getSelectionIndex()].getId();
+				ValidClientsSelectionPanel.this.svnConnector = ValidClientsSelectionPanel.this.factories[ValidClientsSelectionPanel.this.svnConnectorField.getSelectionIndex()].getId();
 			}
 		});
 	}
@@ -106,9 +106,9 @@ public class ValidClientsSelectionPanel extends AbstractDialogPanel {
 	}
 
 	protected void saveChanges() {
-		String oldId = CoreExtensionsManager.instance().getSVNClientWrapperFactory().getId();
-		if (!oldId.equals(this.svnClient)) {
-			SVNTeamPreferences.setCoreString(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.CORE_SVNCLIENT_NAME, this.svnClient);
+		String oldId = CoreExtensionsManager.instance().getSVNConnectorFactory().getId();
+		if (!oldId.equals(this.svnConnector)) {
+			SVNTeamPreferences.setCoreString(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.CORE_SVNCONNECTOR_NAME, this.svnConnector);
 			SVNTeamUIPlugin.instance().savePluginPreferences();
 			// destroy all cached proxies
 			SVNRemoteStorage.instance().dispose();

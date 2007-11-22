@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.extension.crashrecovery.IResolutionHelper;
-import org.eclipse.team.svn.core.extension.factory.ISVNClientFactory;
+import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.extension.factory.ThreadNameModifierFactory;
 import org.eclipse.team.svn.core.extension.options.IIgnoreRecommendations;
 import org.eclipse.team.svn.core.extension.options.IOptionProvider;
@@ -39,13 +39,13 @@ import org.eclipse.team.svn.core.operation.LoggedOperation;
  */
 public class CoreExtensionsManager {
 	public static final String EXTENSION_NAMESPACE = "org.eclipse.team.svn.core";
-	public static final String CLIENT_LIBRARY = "svnclient";
+	public static final String SVN_CONNECTOR = "svnconnector";
 	public static final String CORE_OPTIONS = "coreoptions";
 	public static final String CRASH_RECOVERY = "crashrecovery";
 	public static final String IGNORE_RECOMMENDATIONS = "resourceIgnoreRules";
 
-	private HashMap clients;
-	private HashSet validClients;
+	private HashMap connectors;
+	private HashSet validConnectors;
 	private IOptionProvider optionProvider;
 	private IResolutionHelper []helpers;
 	private IIgnoreRecommendations []ignoreRecommendations;
@@ -87,36 +87,36 @@ public class CoreExtensionsManager {
 	}
 	
 	public Collection getAccessibleClientIds() {
-		return this.clients.keySet();
+		return this.connectors.keySet();
 	}
 	
 	public Collection getAccessibleClients() {
-		return this.clients.values();
+		return this.connectors.values();
 	}
 	
-	public ISVNClientFactory getSVNClientWrapperFactory() {
-		String id = SVNTeamPlugin.instance().getOptionProvider().getSVNClientId();
-		return this.getSVNClientWrapperFactory(id);
+	public ISVNConnectorFactory getSVNConnectorFactory() {
+		String id = SVNTeamPlugin.instance().getOptionProvider().getSVNConnectorId();
+		return this.getSVNConnectorFactory(id);
 	}
 	
-	public ISVNClientFactory getSVNClientWrapperFactory(String id) {
-		ISVNClientFactory retVal = this.getFirstValidClient(id);
+	public ISVNConnectorFactory getSVNConnectorFactory(String id) {
+		ISVNConnectorFactory retVal = this.getFirstValidConnector(id);
 		if (retVal == null) {
-			retVal = ISVNClientFactory.EMPTY;
+			retVal = ISVNConnectorFactory.EMPTY;
 		}
 		return retVal;
 	}
 	
-	private ISVNClientFactory getFirstValidClient(String id) {
-		if (this.validClients.contains(id)) {
-			return (ISVNClientFactory)this.clients.get(id);
+	private ISVNConnectorFactory getFirstValidConnector(String id) {
+		if (this.validConnectors.contains(id)) {
+			return (ISVNConnectorFactory)this.connectors.get(id);
 		}
-		else if (this.validClients.contains(ISVNClientFactory.DEFAULT_ID)) {
-			return (ISVNClientFactory)this.clients.get(ISVNClientFactory.DEFAULT_ID);
+		else if (this.validConnectors.contains(ISVNConnectorFactory.DEFAULT_ID)) {
+			return (ISVNConnectorFactory)this.connectors.get(ISVNConnectorFactory.DEFAULT_ID);
 		}
-		for (Iterator it = this.clients.values().iterator(); it.hasNext(); ) {
-			ISVNClientFactory client = (ISVNClientFactory)it.next(); 
-			if (this.validClients.contains(client.getId())) {
+		for (Iterator it = this.connectors.values().iterator(); it.hasNext(); ) {
+			ISVNConnectorFactory client = (ISVNConnectorFactory)it.next(); 
+			if (this.validConnectors.contains(client.getId())) {
 				return client;
 			}
 		}
@@ -125,21 +125,21 @@ public class CoreExtensionsManager {
 	
 	private CoreExtensionsManager() {
 		this.disableHelpers = false;
-		this.clients = new HashMap();
-		this.validClients = new HashSet();
-		Object []extensions = this.loadCoreExtensions(CoreExtensionsManager.CLIENT_LIBRARY);
+		this.connectors = new HashMap();
+		this.validConnectors = new HashSet();
+		Object []extensions = this.loadCoreExtensions(CoreExtensionsManager.SVN_CONNECTOR);
 		for (int i = 0; i < extensions.length; i++) {
-			ISVNClientFactory factory = new ThreadNameModifierFactory((ISVNClientFactory)extensions[i]);
+			ISVNConnectorFactory factory = new ThreadNameModifierFactory((ISVNConnectorFactory)extensions[i]);
 			try {
-				// extension point API changed and old clients will be declined due to version changes or AbstractMethodError.
-				if (factory.getCompatibilityVersion().compareTo(ISVNClientFactory.CURRENT_COMPATIBILITY_VERSION) != 0) {
+				// extension point API changed and old connectors will be declined due to version changes or AbstractMethodError.
+				if (factory.getCompatibilityVersion().compareTo(ISVNConnectorFactory.CURRENT_COMPATIBILITY_VERSION) != 0) {
 					continue;
 				}
 			}
 			catch (Throwable ex) {
 				continue;
 			}
-			this.clients.put(factory.getId(), factory);
+			this.connectors.put(factory.getId(), factory);
 			this.validateClient(factory);
 		}
 		extensions = this.loadCoreExtensions(CoreExtensionsManager.CORE_OPTIONS);
@@ -155,10 +155,10 @@ public class CoreExtensionsManager {
 		this.ignoreRecommendations = (IIgnoreRecommendations [])Arrays.asList(extensions).toArray(new IIgnoreRecommendations[extensions.length]);
 	}
 	
-	private void validateClient(ISVNClientFactory client) {
+	private void validateClient(ISVNConnectorFactory client) {
 		try {
 			client.newInstance().dispose();
-			this.validClients.add(client.getId());
+			this.validConnectors.add(client.getId());
 		}
 		catch (Throwable ex) {
 			// do nothing

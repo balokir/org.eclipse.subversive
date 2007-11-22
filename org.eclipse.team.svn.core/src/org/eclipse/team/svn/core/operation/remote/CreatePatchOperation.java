@@ -12,9 +12,9 @@
 package org.eclipse.team.svn.core.operation.remote;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
-import org.eclipse.team.svn.core.client.ISVNClient.Depth;
+import org.eclipse.team.svn.core.client.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -51,7 +51,7 @@ public class CreatePatchOperation extends AbstractRepositoryOperation {
 		IRepositoryResource first = this.operableData()[0];
 		IRepositoryResource second = this.operableData()[1];
 		IRepositoryLocation location = first.getRepositoryLocation();
-		ISVNClient proxy = location.acquireSVNProxy();
+		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
 			SVNEntryRevisionReference ref1 = SVNUtility.getEntryRevisionReference(first);
 			SVNEntryRevisionReference ref2 = SVNUtility.getEntryRevisionReference(second);

@@ -24,7 +24,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.SVNLogEntry;
 import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
@@ -99,9 +99,9 @@ public class BuiltInAnnotate {
 					}
 				}
 				IRepositoryResource resource = annotateOp.getRepositoryResource();
-				ISVNClient proxy = resource.getRepositoryLocation().acquireSVNProxy();
+				ISVNConnector proxy = resource.getRepositoryLocation().acquireSVNProxy();
 				try {
-					SVNLogEntry []msgs = GetLogMessagesOperation.getMessagesImpl(proxy, resource, SVNRevision.fromNumber(to), SVNRevision.fromNumber(from), ISVNClient.DEFAULT_LOG_ENTRY_PROPS, 0, false, this, monitor);
+					SVNLogEntry []msgs = GetLogMessagesOperation.getMessagesImpl(proxy, resource, SVNRevision.fromNumber(to), SVNRevision.fromNumber(from), ISVNConnector.DEFAULT_LOG_ENTRY_PROPS, 0, false, this, monitor);
 					for (int i = 0; i < msgs.length; i++) {
 						BuiltInAnnotateRevision revision = (BuiltInAnnotateRevision)revisions.get(String.valueOf(msgs[i].revision));
 						if (revision != null) {

@@ -11,17 +11,17 @@
 
 package org.eclipse.team.svn.core.extension.factory;
 
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 
 /**
  * Wraps real factories in order to produce wrapped SVN clients.
  * 
  * @author Alexander Gurov
  */
-public class ThreadNameModifierFactory implements ISVNClientFactory {
-	protected ISVNClientFactory factory;
+public class ThreadNameModifierFactory implements ISVNConnectorFactory {
+	protected ISVNConnectorFactory factory;
 
-	public ThreadNameModifierFactory(ISVNClientFactory factory) {
+	public ThreadNameModifierFactory(ISVNConnectorFactory factory) {
 		this.factory = factory;
 	}
 
@@ -53,7 +53,7 @@ public class ThreadNameModifierFactory implements ISVNClientFactory {
 		return this.factory.getSVNAPIVersion();
 	}
 
-	public ISVNClient newInstance() {
+	public ISVNConnector newInstance() {
 		return new ThreadNameModifier(this.factory.newInstance());
 	}
 

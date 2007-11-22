@@ -21,13 +21,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.ISVNEntryStatusCallback;
 import org.eclipse.team.svn.core.client.ISVNNotificationCallback;
 import org.eclipse.team.svn.core.client.SVNEntryStatus;
 import org.eclipse.team.svn.core.client.SVNNotification;
 import org.eclipse.team.svn.core.client.SVNRevision;
-import org.eclipse.team.svn.core.client.ISVNClient.Depth;
+import org.eclipse.team.svn.core.client.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRemoteStorage;
@@ -73,7 +73,7 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 		};
 		for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
 			IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(resources[i]);
-			final ISVNClient proxy = location.acquireSVNProxy();
+			final ISVNConnector proxy = location.acquireSVNProxy();
 
 			SVNUtility.addSVNNotifyListener(proxy, this);
 			final IResource current = resources[i];

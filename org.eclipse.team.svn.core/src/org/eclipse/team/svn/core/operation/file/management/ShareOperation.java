@@ -24,8 +24,8 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.ISVNClient;
-import org.eclipse.team.svn.core.client.ISVNClient.Depth;
+import org.eclipse.team.svn.core.client.ISVNConnector;
+import org.eclipse.team.svn.core.client.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.file.AbstractFileOperation;
@@ -96,7 +96,7 @@ public class ShareOperation extends AbstractFileOperation {
 			}
 		}
 		
-		final ISVNClient proxy = this.location.acquireSVNProxy();
+		final ISVNConnector proxy = this.location.acquireSVNProxy();
 		try {
 			IRepositoryResource []resourceSet = null;
 			switch (this.shareLayout) {
@@ -164,7 +164,7 @@ public class ShareOperation extends AbstractFileOperation {
 		}
 	}
 	
-	protected void mkdir(ISVNClient proxy, IRepositoryResource []resourceSet, IProgressMonitor monitor) throws Exception {
+	protected void mkdir(ISVNConnector proxy, IRepositoryResource []resourceSet, IProgressMonitor monitor) throws Exception {
 		ArrayList urlsList = new ArrayList();
 		for (int i = 0; i < resourceSet.length && !monitor.isCanceled(); i++) {
 			ProgressMonitorUtility.setTaskInfo(monitor, this, resourceSet[i].getUrl());

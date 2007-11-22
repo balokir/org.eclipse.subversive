@@ -16,7 +16,7 @@ import java.text.MessageFormat;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.ISVNNotificationCallback;
 import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.client.SVNNotification;
@@ -51,7 +51,7 @@ public class BranchTagOperation extends AbstractWorkingCopyOperation {
 		
 		ProgressMonitorUtility.setTaskInfo(monitor, this, FileUtility.getNamesListAsString(resources));
 		IRepositoryLocation location = this.destination.getRepositoryLocation();
-		final ISVNClient proxy = location.acquireSVNProxy();
+		final ISVNConnector proxy = location.acquireSVNProxy();
 		try {
 			final String destinationUrl = SVNUtility.encodeURL(this.destination.getUrl());
 			for (int i = 0; i < resources.length; i++) {

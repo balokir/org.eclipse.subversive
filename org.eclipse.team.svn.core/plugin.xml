@@ -2,7 +2,7 @@
 <?eclipse version="3.0"?>
 <plugin>
 
-	<extension-point id="svnclient" name="SVN Client Factory" schema="schema/svnclient.exsd"/>
+	<extension-point id="svnconnector" name="SVN Client Factory" schema="schema/svnconnector.exsd"/>
 	<extension-point id="coreoptions" name="SVN Team Core Options" schema="schema/coreoptions.exsd"/>
 	<extension-point id="crashrecovery" name="SVN Team Core Crash Recovery" schema="schema/crashrecovery.exsd"/>
 	<extension-point id="resourceIgnoreRules" name="SVN Team Core Ignore Recommendations" schema="schema/resourceIgnoreRules.exsd"/>

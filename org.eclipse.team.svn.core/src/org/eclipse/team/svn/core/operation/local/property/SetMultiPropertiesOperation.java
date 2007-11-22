@@ -16,9 +16,9 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.SVNProperty;
-import org.eclipse.team.svn.core.client.ISVNClient.Depth;
+import org.eclipse.team.svn.core.client.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.local.AbstractWorkingCopyOperation;
@@ -53,7 +53,7 @@ public class SetMultiPropertiesOperation extends AbstractWorkingCopyOperation {
 			final IResource current = resources[i];
 			
 			IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(current);
-			final ISVNClient proxy = location.acquireSVNProxy();
+			final ISVNConnector proxy = location.acquireSVNProxy();
 			try {
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(final IProgressMonitor monitor) throws Exception {
@@ -85,7 +85,7 @@ public class SetMultiPropertiesOperation extends AbstractWorkingCopyOperation {
 		
 	}
 
-	protected void processResource(final ISVNClient proxy, IResource current, SVNProperty []properties, IProgressMonitor monitor) {
+	protected void processResource(final ISVNConnector proxy, IResource current, SVNProperty []properties, IProgressMonitor monitor) {
 		ProgressMonitorUtility.setTaskInfo(monitor, this, current.getFullPath().toString());
 		final String wcPath = FileUtility.getWorkingCopyPath(current);
 		for (int i = 0; i < properties.length && !monitor.isCanceled(); i++) {

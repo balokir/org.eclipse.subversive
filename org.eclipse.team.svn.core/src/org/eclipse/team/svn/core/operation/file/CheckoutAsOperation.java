@@ -14,8 +14,8 @@ package org.eclipse.team.svn.core.operation.file;
 import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.ISVNClient;
-import org.eclipse.team.svn.core.client.ISVNClient.Depth;
+import org.eclipse.team.svn.core.client.ISVNConnector;
+import org.eclipse.team.svn.core.client.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -51,7 +51,7 @@ public class CheckoutAsOperation extends AbstractFileOperation {
 		to.mkdirs();
 		
 		IRepositoryLocation location = this.resource.getRepositoryLocation();
-		ISVNClient proxy = location.acquireSVNProxy();
+		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
 			String path = to.getAbsolutePath();
 			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn checkout \"" + this.resource.getUrl() + "@" + this.resource.getPegRevision() + "\" -r " + this.resource.getSelectedRevision() + (this.recursive ? "" : " -N") + " --ignore-externals \"" + FileUtility.normalizePath(path) + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n");

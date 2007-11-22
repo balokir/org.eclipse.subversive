@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -84,7 +84,7 @@ public class DeleteResourceOperation extends AbstractActionOperation {
 				wcPaths[i] = FileUtility.getWorkingCopyPath(resources[i]);
 				printedPath += "\"" + FileUtility.normalizePath(wcPaths[i]) + ((i < resources.length - 1) ? " " : "") + "\"";
 			}
-			ISVNClient proxy = location.acquireSVNProxy();
+			ISVNConnector proxy = location.acquireSVNProxy();
 			try {
 				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn delete " + printedPath + " --force\n");
 				proxy.remove(wcPaths, "", true, false, new SVNProgressMonitor(this, monitor, null));

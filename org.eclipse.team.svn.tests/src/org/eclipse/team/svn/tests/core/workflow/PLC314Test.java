@@ -16,7 +16,7 @@ import java.util.StringTokenizer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.SVNProperty;
 import org.eclipse.team.svn.core.client.SVNProperty.BuiltIn;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -57,7 +57,7 @@ public class PLC314Test extends TestWorkflow {
                         IResource parent = current.getParent();
                 		String name = current.getName();
                 		IRepositoryLocation location = storage.getRepositoryLocation(parent);
-                		ISVNClient proxy = location.acquireSVNProxy();
+                		ISVNConnector proxy = location.acquireSVNProxy();
 
                 		SVNProperty data = null;
                 		try {

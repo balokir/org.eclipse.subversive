@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.ISVNNotificationCallback;
 import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.client.SVNNotification;
@@ -56,7 +56,7 @@ public class BranchTagOperation extends AbstractRepositoryOperation implements I
 		
 		ProgressMonitorUtility.setTaskInfo(monitor, this, FileUtility.getNamesListAsString(resources));
 		final IRepositoryLocation location = resources[0].getRepositoryLocation();
-		final ISVNClient proxy = location.acquireSVNProxy();
+		final ISVNConnector proxy = location.acquireSVNProxy();
 		try {
 			for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
 				final IRepositoryResource current = resources[i];

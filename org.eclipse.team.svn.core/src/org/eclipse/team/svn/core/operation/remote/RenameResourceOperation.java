@@ -15,7 +15,7 @@ import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.ISVNNotificationCallback;
 import org.eclipse.team.svn.core.client.SVNNotification;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
@@ -50,7 +50,7 @@ public class RenameResourceOperation extends AbstractRepositoryOperation impleme
 		IRepositoryResource resource = this.operableData()[0];
 		this.revisionPair = new RevisionPair[1];
 		final IRepositoryLocation location = resource.getRepositoryLocation();
-		ISVNClient proxy = location.acquireSVNProxy();
+		ISVNConnector proxy = location.acquireSVNProxy();
 		final String newUrl = resource.getParent().getUrl() + "/" + this.newName;
 		ISVNNotificationCallback notify = new ISVNNotificationCallback() {
 			public void notify(SVNNotification info) {

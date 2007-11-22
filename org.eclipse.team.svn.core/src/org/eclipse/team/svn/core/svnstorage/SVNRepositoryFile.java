@@ -11,11 +11,11 @@
 
 package org.eclipse.team.svn.core.svnstorage;
 
-import org.eclipse.team.svn.core.client.ISVNClient;
-import org.eclipse.team.svn.core.client.SVNClientException;
+import org.eclipse.team.svn.core.client.ISVNConnector;
+import org.eclipse.team.svn.core.client.SVNConnectorException;
 import org.eclipse.team.svn.core.client.SVNEntry;
 import org.eclipse.team.svn.core.client.SVNRevision;
-import org.eclipse.team.svn.core.client.ISVNClient.Depth;
+import org.eclipse.team.svn.core.client.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.client.SVNEntry.Fields;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
@@ -35,7 +35,7 @@ public class SVNRepositoryFile extends SVNRepositoryResource implements IReposit
 		super(location, url, selectedRevision);
 	}
 	
-	protected void getRevisionImpl(ISVNClient proxy) throws SVNClientException {
+	protected void getRevisionImpl(ISVNConnector proxy) throws SVNConnectorException {
 		SVNEntry []entries = SVNUtility.list(proxy, SVNUtility.getEntryRevisionReference(this), Depth.EMPTY, Fields.ALL, true, new SVNNullProgressMonitor());
 		if (entries != null && entries.length > 0) {
 			this.lastRevision = (SVNRevision.Number)SVNRevision.fromNumber(entries[0].revision);

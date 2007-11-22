@@ -14,7 +14,7 @@ package org.eclipse.team.svn.core.operation.remote;
 import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.SVNLogEntry;
 import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -76,10 +76,10 @@ public class GetLogMessagesOperation extends AbstractRepositoryOperation {
 			this.selectedRevision = resource.getSelectedRevision();
 		}
 		IRepositoryLocation location = resource.getRepositoryLocation();
-		ISVNClient proxy = location.acquireSVNProxy();
+		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
 //			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn log " + SVNUtility.encodeURL(this.resource.getUrl()) + (this.limit != 0 ? (" --limit " + this.limit) : "") + (this.stopOnCopy ? " --stop-on-copy" : "") + " -r " + this.selectedRevision + ":0 --username \"" + location.getUsername() + "\"\n");
-			this.msg = GetLogMessagesOperation.getMessagesImpl(proxy, resource, this.selectedRevision, SVNRevision.fromNumber(0), ISVNClient.DEFAULT_LOG_ENTRY_PROPS, this.limit, this.stopOnCopy, this, monitor);
+			this.msg = GetLogMessagesOperation.getMessagesImpl(proxy, resource, this.selectedRevision, SVNRevision.fromNumber(0), ISVNConnector.DEFAULT_LOG_ENTRY_PROPS, this.limit, this.stopOnCopy, this, monitor);
 		}
 		finally {
 			location.releaseSVNProxy(proxy);
@@ -94,7 +94,7 @@ public class GetLogMessagesOperation extends AbstractRepositoryOperation {
 		return this.operableData()[0];
 	}
 	
-	public static SVNLogEntry []getMessagesImpl(ISVNClient proxy, IRepositoryResource resource, SVNRevision from, SVNRevision to, String[] revProps, long limit, boolean stopOnCopy, IActionOperation parent, IProgressMonitor monitor) throws Exception {
+	public static SVNLogEntry []getMessagesImpl(ISVNConnector proxy, IRepositoryResource resource, SVNRevision from, SVNRevision to, String[] revProps, long limit, boolean stopOnCopy, IActionOperation parent, IProgressMonitor monitor) throws Exception {
 		return SVNUtility.logEntries(proxy, SVNUtility.getEntryReference(resource), from, to, stopOnCopy, true, revProps, limit, new SVNProgressMonitor(parent, monitor, null));
 	}
 	

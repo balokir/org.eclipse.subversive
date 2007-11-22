@@ -99,7 +99,7 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 		// SVNTeamUIPlugin store and clear SVNTeamPlugin store
 		String client = corePreferences.getString(SVNTeamPlugin.CORE_SVNCLIENT_NAME).trim();
 		if (client.length() != 0) {
-			SVNTeamPreferences.setCoreString(this.getPreferenceStore(), SVNTeamPreferences.CORE_SVNCLIENT_NAME, client);
+			SVNTeamPreferences.setCoreString(this.getPreferenceStore(), SVNTeamPreferences.CORE_SVNCONNECTOR_NAME, client);
 			corePreferences.setValue(SVNTeamPlugin.CORE_SVNCLIENT_NAME, "");
 			SVNTeamPlugin.instance().savePluginPreferences();
 		}

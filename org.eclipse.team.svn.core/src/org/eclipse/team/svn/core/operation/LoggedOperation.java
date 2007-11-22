@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.SVNClientCancelException;
+import org.eclipse.team.svn.core.client.SVNConnectorCancelException;
 
 /**
  * Logged operation allow us to safelly write to log and show error messages
@@ -87,7 +87,7 @@ public class LoggedOperation implements IActionOperation {
 	protected void handleError(IStatus errorStatus) {
 		if (!errorStatus.isMultiStatus()) {
 			Throwable ex = errorStatus.getException();
-			if (!(ex instanceof SVNClientCancelException) && !(ex instanceof ActivityCancelledException)) {
+			if (!(ex instanceof SVNConnectorCancelException) && !(ex instanceof ActivityCancelledException)) {
 				LoggedOperation.logError(errorStatus);
 			}
 			return;
@@ -97,7 +97,7 @@ public class LoggedOperation implements IActionOperation {
 		ArrayList statusesWithoutCancel = new ArrayList(); 
         for (int i = 0; i < children.length; i++) {
             Throwable exception = children[i].getException();
-        	if (!(exception instanceof SVNClientCancelException) && !(exception instanceof ActivityCancelledException)) {
+        	if (!(exception instanceof SVNConnectorCancelException) && !(exception instanceof ActivityCancelledException)) {
         		statusesWithoutCancel.add(children[i]);
             }
         }

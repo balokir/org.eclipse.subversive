@@ -16,11 +16,11 @@ import java.text.MessageFormat;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.SVNEntryInfo;
 import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.client.SVNRevision;
-import org.eclipse.team.svn.core.client.ISVNClient.Depth;
+import org.eclipse.team.svn.core.client.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -58,7 +58,7 @@ public class InfoOperation extends AbstractNonLockingOperation {
         
         if (this.local != null && IStateFilter.SF_ONREPOSITORY.accept(this.resource, this.local.getStatus(), this.local.getChangeMask())) {
             IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(this.resource);
-            ISVNClient proxy = location.acquireSVNProxy();
+            ISVNConnector proxy = location.acquireSVNProxy();
             try {
 //    			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn info \"" + this.local.getWorkingCopyPath() + "\"\n");
                 SVNEntryInfo []infos = SVNUtility.info(proxy, new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(this.resource), null, SVNRevision.WORKING), Depth.EMPTY, new SVNProgressMonitor(this, monitor, null));

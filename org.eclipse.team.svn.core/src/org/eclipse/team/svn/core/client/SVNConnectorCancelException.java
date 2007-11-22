@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.core.client;
 
 /**
- * SVN client wrapper authentication exception
+ * SVN client wrapper cancel exception
  * 
  * The JavaHL API's is the only way to interact between SVN and Java-based tools. At the same time JavaHL client library
  * is not EPL compatible and we won't to pin plug-in with concrete client implementation. So, the only way to do this is
@@ -20,22 +20,22 @@ package org.eclipse.team.svn.core.client;
  * 
  * @author Alexander Gurov
  */
-public class SVNClientAuthenticationException extends SVNClientException {
-	private static final long serialVersionUID = 8879809662661620066L;
+public class SVNConnectorCancelException extends SVNConnectorException {
+	private static final long serialVersionUID = -1431358791852025035L;
 
-	public SVNClientAuthenticationException() {
+	public SVNConnectorCancelException() {
 		super();
 	}
 
-	public SVNClientAuthenticationException(String message) {
+	public SVNConnectorCancelException(String message) {
 		super(message);
 	}
 
-	public SVNClientAuthenticationException(Throwable cause) {
+	public SVNConnectorCancelException(Throwable cause) {
 		super(cause, false);
 	}
 
-	public SVNClientAuthenticationException(String message, Throwable cause) {
+	public SVNConnectorCancelException(String message, Throwable cause) {
 		super(message, cause, false);
 	}
 

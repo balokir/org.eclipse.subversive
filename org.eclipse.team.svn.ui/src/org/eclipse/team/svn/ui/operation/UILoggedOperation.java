@@ -19,9 +19,9 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.SVNClientAuthenticationException;
-import org.eclipse.team.svn.core.client.SVNClientCancelException;
-import org.eclipse.team.svn.core.client.SVNClientException;
+import org.eclipse.team.svn.core.client.SVNConnectorAuthenticationException;
+import org.eclipse.team.svn.core.client.SVNConnectorCancelException;
+import org.eclipse.team.svn.core.client.SVNConnectorException;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.ActivityCancelledException;
 import org.eclipse.team.svn.core.operation.HiddenException;
@@ -86,15 +86,15 @@ public class UILoggedOperation extends LoggedOperation {
     public static OperationErrorInfo formatMessage(IStatus status, boolean allowsCancelled) {
         if (!status.isMultiStatus()) {
         	Throwable ex = status.getException();
-        	if (!allowsCancelled && (ex instanceof SVNClientCancelException || ex instanceof ActivityCancelledException || ex instanceof OperationCanceledException) || 
+        	if (!allowsCancelled && (ex instanceof SVNConnectorCancelException || ex instanceof ActivityCancelledException || ex instanceof OperationCanceledException) || 
         		ex instanceof HiddenException) {
         		return null;
         	}
         	String simpleMsg = UILoggedOperation.getSimpleMessage(status);
-        	if (ex instanceof SVNClientCancelException || 
+        	if (ex instanceof SVNConnectorCancelException || 
         		ex instanceof ActivityCancelledException || 
         		ex instanceof OperationCanceledException || 
-        		ex instanceof SVNClientAuthenticationException) {
+        		ex instanceof SVNConnectorAuthenticationException) {
         		return new OperationErrorInfo(simpleMsg, simpleMsg, ex, 1);
         	}
         	String advancedMsg = UILoggedOperation.getSingleStatusMessage(status);
@@ -106,7 +106,7 @@ public class UILoggedOperation extends LoggedOperation {
         String simpleMess = "";
         for (int i = 0; i < children.length; i++) {
             Throwable exception = children[i].getException();
-        	if (!allowsCancelled && (exception instanceof SVNClientCancelException || exception instanceof ActivityCancelledException || exception instanceof OperationCanceledException) || 
+        	if (!allowsCancelled && (exception instanceof SVNConnectorCancelException || exception instanceof ActivityCancelledException || exception instanceof OperationCanceledException) || 
         		exception instanceof HiddenException) {
         		continue;
         	}
@@ -114,10 +114,10 @@ public class UILoggedOperation extends LoggedOperation {
         	String advancedMsg = UILoggedOperation.getSingleStatusMessage(children[i]);
         	advanceMess += advanceMess.length() == 0 ? advancedMsg : ("\n\n" + advancedMsg);
     		simpleMess += simpleMess.length() == 0 ? simpleMsg : ("\n" + simpleMsg);
-        	if (exception instanceof SVNClientCancelException || 
+        	if (exception instanceof SVNConnectorCancelException || 
         		exception instanceof ActivityCancelledException || 
         		exception instanceof OperationCanceledException || 
-        		exception instanceof SVNClientAuthenticationException) {
+        		exception instanceof SVNConnectorAuthenticationException) {
             	return new OperationErrorInfo(simpleMess, advanceMess, exception, i + 1);
             }
         }
@@ -126,13 +126,13 @@ public class UILoggedOperation extends LoggedOperation {
     }
     
     protected static String getSimpleMessage(IStatus status) {
-    	if (status.getException() instanceof SVNClientCancelException ||
+    	if (status.getException() instanceof SVNConnectorCancelException ||
     		status.getException() instanceof ActivityCancelledException ||
     		status.getException() instanceof OperationCanceledException) {
     		return SVNTeamUIPlugin.instance().getResource("UILoggedOperation.Cancelled");
     	}
     	
-    	if (status.getException() instanceof SVNClientAuthenticationException) {
+    	if (status.getException() instanceof SVNConnectorAuthenticationException) {
     		return SVNTeamUIPlugin.instance().getResource("UILoggedOperation.Authentication");
     	}
     	
@@ -147,7 +147,7 @@ public class UILoggedOperation extends LoggedOperation {
     		return SVNTeamUIPlugin.instance().getResource("UILoggedOperation.Unknown");
     	}
     	
-    	if (status.getException() instanceof SVNClientCancelException ||
+    	if (status.getException() instanceof SVNConnectorCancelException ||
     		status.getException() instanceof ActivityCancelledException) {
     		return SVNTeamUIPlugin.instance().getResource("UILoggedOperation.Cancelled");
     	}
@@ -228,12 +228,12 @@ public class UILoggedOperation extends LoggedOperation {
 			if (t == null || t instanceof OperationCanceledException) {
 				return false;
 			}
-			if (t instanceof SVNClientException) {
-				if (t instanceof SVNClientCancelException ||
-					t instanceof SVNClientAuthenticationException) {
+			if (t instanceof SVNConnectorException) {
+				if (t instanceof SVNConnectorCancelException ||
+					t instanceof SVNConnectorAuthenticationException) {
 					return false;
 				}
-				return ((SVNClientException)t).isRuntime();
+				return ((SVNConnectorException)t).isRuntime();
 			}
 			return !(t instanceof UnreportableException);
 		}

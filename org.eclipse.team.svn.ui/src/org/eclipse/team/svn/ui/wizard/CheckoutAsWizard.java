@@ -37,7 +37,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.client.SVNProperty;
 import org.eclipse.team.svn.core.client.SVNProperty.BuiltIn;
@@ -578,7 +578,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 		protected void runImpl(IProgressMonitor monitor) throws Exception {
 			final String wcPath = FileUtility.getWorkingCopyPath(resource);
 			IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(resource);
-			final ISVNClient proxy = location.acquireSVNProxy();
+			final ISVNConnector proxy = location.acquireSVNProxy();
 			SVNProperty existingProperty;
 			try {
 				existingProperty = proxy.propertyGet(new SVNEntryRevisionReference(wcPath), BuiltIn.EXTERNALS, new SVNProgressMonitor(CheckoutAsWizard.ConcatenateProperyDataOperation.this, monitor, null));

@@ -14,9 +14,9 @@ package org.eclipse.team.svn.core.operation.file;
 import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.ISVNNotificationCallback;
-import org.eclipse.team.svn.core.client.ISVNClient.Depth;
+import org.eclipse.team.svn.core.client.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -45,7 +45,7 @@ public class JavaHLMergeOperation extends AbstractFileOperation {
 		File file = this.operableData()[0];
 		
 		IRepositoryLocation location = this.from1.getRepositoryLocation();
-		ISVNClient proxy = location.acquireSVNProxy();
+		ISVNConnector proxy = location.acquireSVNProxy();
 		
 		proxy.setTouchUnresolved(true);
 		if (this.notify != null) {

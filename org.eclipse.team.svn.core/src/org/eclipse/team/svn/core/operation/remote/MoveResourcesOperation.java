@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.ISVNNotificationCallback;
 import org.eclipse.team.svn.core.client.SVNNotification;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
@@ -42,7 +42,7 @@ public class MoveResourcesOperation extends AbstractCopyMoveResourcesOperation {
 		final String dstUrl = this.destinationResource.getUrl();
 		IRepositoryResource []selectedResources = this.operableData();
 		final IRepositoryLocation location = selectedResources[0].getRepositoryLocation();
-		final ISVNClient proxy = location.acquireSVNProxy();
+		final ISVNConnector proxy = location.acquireSVNProxy();
 		try {
 			for (int i = 0; i < selectedResources.length && !monitor.isCanceled(); i++) {
 				final IRepositoryResource current = selectedResources[i];
@@ -74,7 +74,7 @@ public class MoveResourcesOperation extends AbstractCopyMoveResourcesOperation {
 		return new String [] {srcUrl, dstUrl};
 	}
 
-	protected void processEntry(ISVNClient proxy, String sourceUrl, String destinationUrl, IRepositoryResource current, IProgressMonitor monitor) throws Exception {
+	protected void processEntry(ISVNConnector proxy, String sourceUrl, String destinationUrl, IRepositoryResource current, IProgressMonitor monitor) throws Exception {
 		this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn move \"" + SVNUtility.decodeURL(sourceUrl) + "\" \"" + SVNUtility.decodeURL(destinationUrl) + "\" -m \"" + this.message + "\"" + FileUtility.getUsernameParam(current.getRepositoryLocation().getUsername()) + "\n");
 		proxy.move(new String[] {sourceUrl}, destinationUrl, this.message, false, true, false, true, new SVNProgressMonitor(this, monitor, null));
 	}

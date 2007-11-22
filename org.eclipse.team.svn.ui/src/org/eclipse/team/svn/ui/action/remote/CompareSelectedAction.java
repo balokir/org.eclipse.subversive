@@ -13,7 +13,7 @@ package org.eclipse.team.svn.ui.action.remote;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
-import org.eclipse.team.svn.core.extension.factory.ISVNClientFactory;
+import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.action.AbstractRepositoryTeamAction;
@@ -40,7 +40,7 @@ public class CompareSelectedAction extends AbstractRepositoryTeamAction {
 		if (resources.length != 2) {
 			return false;
 		}
-		boolean isCompareFoldersAllowed = (CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientFactory.OptionalFeatures.COMPARE_FOLDERS) != 0;
+		boolean isCompareFoldersAllowed = (CoreExtensionsManager.instance().getSVNConnectorFactory().getSupportedFeatures() & ISVNConnectorFactory.OptionalFeatures.COMPARE_FOLDERS) != 0;
 		return (isCompareFoldersAllowed || resources[0] instanceof IRepositoryFile) && !(resources[0] instanceof IRepositoryFile ^ resources[1] instanceof IRepositoryFile);
 	}
 

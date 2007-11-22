@@ -56,15 +56,15 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.SVNEntryInfo;
 import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.client.SVNLogEntry;
 import org.eclipse.team.svn.core.client.SVNRevision;
-import org.eclipse.team.svn.core.client.ISVNClient.Depth;
+import org.eclipse.team.svn.core.client.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.client.SVNEntry.NodeKind;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
-import org.eclipse.team.svn.core.extension.factory.ISVNClientFactory;
+import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
@@ -425,7 +425,7 @@ public class AffectedPathsComposite extends Composite {
 						AffectedPathsComposite.this.compareWithPreviousRevision(provider);
 					}
         		});
-        		boolean isCompareFoldersAllowed = (CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientFactory.OptionalFeatures.COMPARE_FOLDERS) != 0;
+        		boolean isCompareFoldersAllowed = (CoreExtensionsManager.instance().getSVNConnectorFactory().getSupportedFeatures() & ISVNConnectorFactory.OptionalFeatures.COMPARE_FOLDERS) != 0;
         		tAction.setEnabled(isCompareFoldersAllowed && AffectedPathsComposite.this.currentRevision != 0 && affectedTableSelection.size() == 1 && (node.getStatus() == null || node.getStatus().charAt(0) == 'M'));
             }
         });
@@ -533,7 +533,7 @@ public class AffectedPathsComposite extends Composite {
 		}
 
 		protected void runImpl(IProgressMonitor monitor) throws Exception {
-			ISVNClient proxy = AffectedPathsComposite.this.repositoryResource.getRepositoryLocation().acquireSVNProxy();
+			ISVNConnector proxy = AffectedPathsComposite.this.repositoryResource.getRepositoryLocation().acquireSVNProxy();
 			try {
 				SVNRevision rev = SVNRevision.fromNumber(this.revNum);
 				SVNEntryInfo []infos = SVNUtility.info(proxy, new SVNEntryRevisionReference(SVNUtility.encodeURL(this.url), rev, rev), Depth.EMPTY, new SVNProgressMonitor(this, monitor, null));

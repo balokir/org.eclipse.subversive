@@ -50,7 +50,7 @@ public class FilterManager implements IPropertyChangeListener, IResourceStatesLi
 	
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.DECORATION_COMPUTE_DEEP_NAME)) ||
-			event.getProperty().equals(SVNTeamPreferences.fullCoreName(SVNTeamPreferences.CORE_SVNCLIENT_NAME))) {
+			event.getProperty().equals(SVNTeamPreferences.fullCoreName(SVNTeamPreferences.CORE_SVNCONNECTOR_NAME))) {
 			this.clear();
 		}
 	}

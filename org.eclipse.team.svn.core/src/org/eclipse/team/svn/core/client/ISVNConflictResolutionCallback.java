@@ -27,9 +27,9 @@ public interface ISVNConflictResolutionCallback {
 	 * @param descriptor
 	 *            a conflict description
 	 * @return The conflict resolution method (see {@link SVNConflictResolution})
-	 * @throws SVNClientException
+	 * @throws SVNConnectorException
 	 *             If an error occurs.
 	 */
-	public SVNConflictResolution resolve(SVNConflictDescriptor descriptor) throws SVNClientException;
+	public SVNConflictResolution resolve(SVNConflictDescriptor descriptor) throws SVNConnectorException;
 
 }

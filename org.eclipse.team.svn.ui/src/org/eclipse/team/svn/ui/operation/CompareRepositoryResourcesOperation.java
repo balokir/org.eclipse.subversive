@@ -17,10 +17,10 @@ import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.compare.internal.CompareEditor;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.client.SVNEntryStatus;
-import org.eclipse.team.svn.core.client.ISVNClient.Depth;
+import org.eclipse.team.svn.core.client.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -68,7 +68,7 @@ public class CompareRepositoryResourcesOperation extends AbstractNonLockingOpera
     	}
     	
 		IRepositoryLocation location = this.left.getRepositoryLocation();
-		final ISVNClient proxy = location.acquireSVNProxy();
+		final ISVNConnector proxy = location.acquireSVNProxy();
 		final SVNEntryStatus [][]statuses = new SVNEntryStatus[1][];
 		
 		this.protectStep(new IUnprotectedOperation() {

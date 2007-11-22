@@ -47,7 +47,7 @@ public class SVNEntry {
 	}
 
 	/**
-	 * The (@link DirEntry} fields acquisition masks. Combined mask could be passed into the {@link ISVNClient#list}
+	 * The (@link DirEntry} fields acquisition masks. Combined mask could be passed into the {@link ISVNConnector#list}
 	 * method.
 	 */
 	public static class Fields {

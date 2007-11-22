@@ -15,11 +15,11 @@ import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.ISVNNotificationCallback;
 import org.eclipse.team.svn.core.client.SVNNotification;
 import org.eclipse.team.svn.core.client.SVNRevision;
-import org.eclipse.team.svn.core.client.ISVNClient.Depth;
+import org.eclipse.team.svn.core.client.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IRevisionProvider;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -54,7 +54,7 @@ public class ImportOperation extends AbstractRepositoryOperation implements IRev
 		final IRepositoryResource resource = this.operableData()[0];
 		final IRepositoryLocation location = resource.getRepositoryLocation();
 		this.revisionPair = new RevisionPair[1];
-		ISVNClient proxy = location.acquireSVNProxy();
+		ISVNConnector proxy = location.acquireSVNProxy();
 		ISVNNotificationCallback notify = new ISVNNotificationCallback() {
 			public void notify(SVNNotification info) {
 				if (info.revision != SVNRevision.INVALID_REVISION_NUMBER) {

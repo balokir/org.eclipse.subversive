@@ -24,9 +24,9 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.svn.core.IConnectedProjectInformation;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.SVNEntryStatus;
-import org.eclipse.team.svn.core.client.ISVNClient.Depth;
+import org.eclipse.team.svn.core.client.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -70,7 +70,7 @@ public class RelocateWorkingCopyOperation extends AbstractWorkingCopyOperation i
 		if (projects.length == 0) {
 			return;
 		}
-		final ISVNClient proxy = this.location.acquireSVNProxy();
+		final ISVNConnector proxy = this.location.acquireSVNProxy();
 		
 		try {
 			final IRepositoryResource []children = this.location.getRepositoryRoot().getChildren();

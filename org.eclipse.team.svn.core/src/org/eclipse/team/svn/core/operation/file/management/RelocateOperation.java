@@ -14,8 +14,8 @@ package org.eclipse.team.svn.core.operation.file.management;
 import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.ISVNClient;
-import org.eclipse.team.svn.core.client.ISVNClient.Depth;
+import org.eclipse.team.svn.core.client.ISVNConnector;
+import org.eclipse.team.svn.core.client.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -52,7 +52,7 @@ public class RelocateOperation extends AbstractFileOperation {
 			final File current = files[i];
 			final IRepositoryResource remote = SVNFileStorage.instance().asRepositoryResource(current, false);
 			final IRepositoryLocation location = remote.getRepositoryLocation();
-			final ISVNClient proxy = location.acquireSVNProxy();
+			final ISVNConnector proxy = location.acquireSVNProxy();
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
 					String path = current.getAbsolutePath();

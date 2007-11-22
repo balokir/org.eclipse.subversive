@@ -44,7 +44,7 @@ public class SVNLogEntry {
 
 	/**
 	 * The set of the items changed by this commit. Could be <code>null</code> when
-	 * {@link ISVNClient#logMessages} is called with discoverPaths set to false or if the user who requested the
+	 * {@link ISVNConnector#logMessages} is called with discoverPaths set to false or if the user who requested the
 	 * log has no access rights to the specified resource.
 	 */
 	public final SVNLogPath[] changedPaths;
