@@ -34,20 +34,20 @@ import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 
 /**
- * The panel allows us to acquire user solution about which valid client we should use in order to access the project.
+ * The panel allows us to acquire user solution about which valid connector we should use in order to access the project.
  * 
  * @author Alexander Gurov
  */
-public class ValidClientsSelectionPanel extends AbstractDialogPanel {
+public class ValidConnectorsSelectionPanel extends AbstractDialogPanel {
 	protected Combo svnConnectorField;
 	protected ISVNConnectorFactory []factories;
 	protected String svnConnector;
 
-	public ValidClientsSelectionPanel(IProject project, List validClients) {
+	public ValidConnectorsSelectionPanel(IProject project, List validClients) {
 		super();
-		this.dialogTitle = MessageFormat.format(SVNTeamUIPlugin.instance().getResource("ValidClientsSelectionPanel.Title"), new String[] {project.getName()});
-		this.dialogDescription = SVNTeamUIPlugin.instance().getResource("ValidClientsSelectionPanel.Description");
-		this.defaultMessage = SVNTeamUIPlugin.instance().getResource("ValidClientsSelectionPanel.Message");
+		this.dialogTitle = MessageFormat.format(SVNTeamUIPlugin.instance().getResource("ValidConnectorsSelectionPanel.Title"), new String[] {project.getName()});
+		this.dialogDescription = SVNTeamUIPlugin.instance().getResource("ValidConnectorsSelectionPanel.Description");
+		this.defaultMessage = SVNTeamUIPlugin.instance().getResource("ValidConnectorsSelectionPanel.Message");
 		
 		this.factories = (ISVNConnectorFactory [])validClients.toArray(new ISVNConnectorFactory[validClients.size()]);
 	}
@@ -78,7 +78,7 @@ public class ValidClientsSelectionPanel extends AbstractDialogPanel {
 		Label label = new Label(composite, SWT.NULL);
 		data = new GridData();
 		label.setLayoutData(data);
-		label.setText(SVNTeamUIPlugin.instance().getResource("ValidClientsSelectionPanel.Clients"));
+		label.setText(SVNTeamUIPlugin.instance().getResource("ValidConnectorsSelectionPanel.Clients"));
 		
 		this.svnConnectorField = new Combo(composite, SWT.READ_ONLY);
 		data = new GridData(GridData.FILL_HORIZONTAL);
@@ -96,7 +96,7 @@ public class ValidClientsSelectionPanel extends AbstractDialogPanel {
 		this.svnConnectorField.select(0);
 		this.svnConnectorField.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				ValidClientsSelectionPanel.this.svnConnector = ValidClientsSelectionPanel.this.factories[ValidClientsSelectionPanel.this.svnConnectorField.getSelectionIndex()].getId();
+				ValidConnectorsSelectionPanel.this.svnConnector = ValidConnectorsSelectionPanel.this.factories[ValidConnectorsSelectionPanel.this.svnConnectorField.getSelectionIndex()].getId();
 			}
 		});
 	}

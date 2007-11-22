@@ -94,12 +94,12 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 		
 		Preferences corePreferences = SVNTeamPlugin.instance().getPluginPreferences();
 		
-		// Earlier Subversive releases saved client id in SVNTeamPlugin store
+		// Earlier Subversive releases save connector id in SVNTeamPlugin store
 		// To be compatible with earlier releases copy saved preferences to
 		// SVNTeamUIPlugin store and clear SVNTeamPlugin store
-		String client = corePreferences.getString(SVNTeamPlugin.CORE_SVNCLIENT_NAME).trim();
-		if (client.length() != 0) {
-			SVNTeamPreferences.setCoreString(this.getPreferenceStore(), SVNTeamPreferences.CORE_SVNCONNECTOR_NAME, client);
+		String connector = corePreferences.getString(SVNTeamPlugin.CORE_SVNCLIENT_NAME).trim();
+		if (connector.length() != 0) {
+			SVNTeamPreferences.setCoreString(this.getPreferenceStore(), SVNTeamPreferences.CORE_SVNCONNECTOR_NAME, connector);
 			corePreferences.setValue(SVNTeamPlugin.CORE_SVNCLIENT_NAME, "");
 			SVNTeamPlugin.instance().savePluginPreferences();
 		}

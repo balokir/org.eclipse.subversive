@@ -26,7 +26,7 @@ import org.eclipse.team.svn.core.extension.crashrecovery.IResolutionHelper;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
 import org.eclipse.team.svn.core.utility.SVNUtility;
-import org.eclipse.team.svn.ui.crashrecovery.invalidmeta.ValidClientsSelectionPanel;
+import org.eclipse.team.svn.ui.crashrecovery.invalidmeta.ValidConnectorsSelectionPanel;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
@@ -50,9 +50,9 @@ public class InvalidMetaHelper implements IResolutionHelper {
 			if (this.isValid(current, path)) {
 				return true;
 			}
-			Collection clients = CoreExtensionsManager.instance().getAccessibleClients();
+			Collection connectors = CoreExtensionsManager.instance().getAccessibleClients();
 			final ArrayList valid = new ArrayList();
-			for (Iterator it = clients.iterator(); it.hasNext(); ) {
+			for (Iterator it = connectors.iterator(); it.hasNext(); ) {
 				ISVNConnectorFactory factory = (ISVNConnectorFactory)it.next();
 				if (this.isValid(factory, path)) {
 					valid.add(factory);
@@ -65,7 +65,7 @@ public class InvalidMetaHelper implements IResolutionHelper {
 			final boolean []solved = new boolean[] {false};
 			UIMonitorUtility.parallelSyncExec(new Runnable() {
 				public void run() {
-					DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getShell(), new ValidClientsSelectionPanel(project, valid));
+					DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getShell(), new ValidConnectorsSelectionPanel(project, valid));
 					solved[0] = dialog.open() == 0;
 				}
 			});

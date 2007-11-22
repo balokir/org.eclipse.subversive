@@ -115,9 +115,9 @@ public class CoreExtensionsManager {
 			return (ISVNConnectorFactory)this.connectors.get(ISVNConnectorFactory.DEFAULT_ID);
 		}
 		for (Iterator it = this.connectors.values().iterator(); it.hasNext(); ) {
-			ISVNConnectorFactory client = (ISVNConnectorFactory)it.next(); 
-			if (this.validConnectors.contains(client.getId())) {
-				return client;
+			ISVNConnectorFactory connector = (ISVNConnectorFactory)it.next(); 
+			if (this.validConnectors.contains(connector.getId())) {
+				return connector;
 			}
 		}
 		return null;
@@ -155,10 +155,10 @@ public class CoreExtensionsManager {
 		this.ignoreRecommendations = (IIgnoreRecommendations [])Arrays.asList(extensions).toArray(new IIgnoreRecommendations[extensions.length]);
 	}
 	
-	private void validateClient(ISVNConnectorFactory client) {
+	private void validateClient(ISVNConnectorFactory connector) {
 		try {
-			client.newInstance().dispose();
-			this.validConnectors.add(client.getId());
+			connector.newInstance().dispose();
+			this.validConnectors.add(connector.getId());
 		}
 		catch (Throwable ex) {
 			// do nothing

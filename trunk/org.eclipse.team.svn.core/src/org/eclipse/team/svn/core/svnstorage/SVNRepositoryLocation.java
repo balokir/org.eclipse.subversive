@@ -464,7 +464,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	public synchronized void dispose() {
 		this.reconfigureProxies(new IProxyVisitor() {
             public void visit(ISVNConnector proxy) {
-            	// When exiting Eclipse IDE client plug-in's can be stopped before Core. So, disallow error reporting in that case. 
+            	// When exiting Eclipse IDE connector plug-in's can be stopped before Core. So, disallow error reporting in that case. 
     	        try {proxy.dispose();} catch (Throwable ex) {}
             }
         });
@@ -665,7 +665,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		protected ISVNCredentialsPrompt prompt;
 		protected String tryRealm;
 		protected String threadName;
-		// Inadequate client library behaviour: correct client shouldn't ask for the same credentials twice for atomic operation if credentials are valid
+		// Inadequate connector library behaviour: correct connector shouldn't ask for the same credentials twice for atomic operation if credentials are valid
 		protected static final int MAX_ACCESS_COUNT = 5;
 		protected int accessCount;
 		

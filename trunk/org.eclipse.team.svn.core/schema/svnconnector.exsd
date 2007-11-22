@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.team.svn.core" id="svnconnector" name="SVN Client Factory"/>
       </appInfo>
       <documentation>
-         The extension point allows us to switch flexibly between SVN client implementations.
+         The extension point allows us to switch flexibly between SVN connector implementations.
       </documentation>
    </annotation>
 
@@ -28,7 +28,7 @@
    <element name="svnconnector">
       <annotation>
          <documentation>
-            SVN Team Core can be switched between client libraries on the fly.
+            SVN Team Core can be switched between connectors on the fly.
          </documentation>
       </annotation>
       <complexType>

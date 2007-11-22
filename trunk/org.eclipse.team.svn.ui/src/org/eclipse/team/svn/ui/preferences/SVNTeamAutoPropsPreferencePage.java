@@ -470,10 +470,10 @@ public class SVNTeamAutoPropsPreferencePage extends AbstractSVNTeamPreferencesPa
 	}
 	
 	public String findConfigFile(String dialogTitle) {
-		ISVNConnector client = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();
+		ISVNConnector connector = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();
 		String cfgDir;
 		try {
-			cfgDir = client.getConfigDirectory();
+			cfgDir = connector.getConfigDirectory();
 		}
 		catch (SVNConnectorException cwe) {
 			LoggedOperation.reportError(SVNTeamUIPlugin.instance().getResource("Error.FindConfigFile"), cwe);
