@@ -11,7 +11,7 @@
 
 package org.eclipse.team.svn.core.resource;
 
-import org.eclipse.team.svn.core.client.SVNConnectorException;
+import org.eclipse.team.svn.core.connector.SVNConnectorException;
 
 
 /**

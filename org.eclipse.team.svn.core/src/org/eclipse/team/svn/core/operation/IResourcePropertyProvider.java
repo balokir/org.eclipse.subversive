@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.core.operation;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.team.svn.core.client.SVNProperty;
+import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 
 /**

@@ -13,16 +13,16 @@ package org.eclipse.team.svn.core.svnstorage;
 
 import java.io.Serializable;
 
-import org.eclipse.team.svn.core.client.ISVNConnector;
-import org.eclipse.team.svn.core.client.SVNConnectorException;
-import org.eclipse.team.svn.core.client.SVNEntry;
-import org.eclipse.team.svn.core.client.SVNEntryInfo;
-import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
-import org.eclipse.team.svn.core.client.SVNProperty;
-import org.eclipse.team.svn.core.client.SVNRevision;
-import org.eclipse.team.svn.core.client.ISVNConnector.Depth;
-import org.eclipse.team.svn.core.client.SVNEntry.Fields;
-import org.eclipse.team.svn.core.client.SVNEntry.NodeKind;
+import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNConnectorException;
+import org.eclipse.team.svn.core.connector.SVNEntry;
+import org.eclipse.team.svn.core.connector.SVNEntryInfo;
+import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
+import org.eclipse.team.svn.core.connector.SVNProperty;
+import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNEntry.Fields;
+import org.eclipse.team.svn.core.connector.SVNEntry.NodeKind;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;

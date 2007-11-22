@@ -12,8 +12,8 @@
 package org.eclipse.team.svn.ui.synchronize.variant;
 
 import org.eclipse.team.core.variants.CachedResourceVariant;
-import org.eclipse.team.svn.core.client.SVNEntryStatus;
-import org.eclipse.team.svn.core.client.SVNRevision;
+import org.eclipse.team.svn.core.connector.SVNEntryStatus;
+import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.utility.SVNUtility;

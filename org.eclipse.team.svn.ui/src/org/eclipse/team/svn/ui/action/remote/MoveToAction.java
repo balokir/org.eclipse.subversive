@@ -11,7 +11,7 @@
 
 package org.eclipse.team.svn.ui.action.remote;
 
-import org.eclipse.team.svn.core.client.SVNRevision.Kind;
+import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
 import org.eclipse.team.svn.core.operation.remote.AbstractCopyMoveResourcesOperation;
 import org.eclipse.team.svn.core.operation.remote.MoveResourcesOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;

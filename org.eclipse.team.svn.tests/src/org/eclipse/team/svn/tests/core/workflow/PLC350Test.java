@@ -14,7 +14,7 @@ package org.eclipse.team.svn.tests.core.workflow;
 import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.SVNRevision;
+import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.PreparedBranchTagOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;

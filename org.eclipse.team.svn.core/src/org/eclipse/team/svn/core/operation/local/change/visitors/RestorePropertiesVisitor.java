@@ -14,7 +14,7 @@ package org.eclipse.team.svn.core.operation.local.change.visitors;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.client.SVNProperty;
+import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.operation.local.change.IActionOperationProcessor;
 import org.eclipse.team.svn.core.operation.local.change.IResourceChangeVisitor;
 import org.eclipse.team.svn.core.operation.local.change.ResourceChange;

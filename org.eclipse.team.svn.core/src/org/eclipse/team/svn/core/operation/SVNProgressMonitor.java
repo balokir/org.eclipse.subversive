@@ -15,10 +15,10 @@ import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.ISVNProgressMonitor;
-import org.eclipse.team.svn.core.client.SVNEntryStatus.Kind;
-import org.eclipse.team.svn.core.client.SVNNotification.NotifyAction;
-import org.eclipse.team.svn.core.client.SVNNotification.NotifyStatus;
+import org.eclipse.team.svn.core.connector.ISVNProgressMonitor;
+import org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind;
+import org.eclipse.team.svn.core.connector.SVNNotification.NotifyAction;
+import org.eclipse.team.svn.core.connector.SVNNotification.NotifyStatus;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 
 /**

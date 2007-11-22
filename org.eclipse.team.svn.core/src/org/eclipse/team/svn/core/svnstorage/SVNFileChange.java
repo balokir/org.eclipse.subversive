@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.core.svnstorage;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.team.svn.core.client.SVNRevision;
+import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.resource.ICommentProvider;
 import org.eclipse.team.svn.core.resource.IFileChange;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;

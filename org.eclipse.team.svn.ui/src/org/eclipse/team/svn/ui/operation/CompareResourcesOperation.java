@@ -24,12 +24,12 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.svn.core.client.ISVNConnector;
-import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
-import org.eclipse.team.svn.core.client.SVNEntryStatus;
-import org.eclipse.team.svn.core.client.SVNRevision;
-import org.eclipse.team.svn.core.client.ISVNConnector.Depth;
-import org.eclipse.team.svn.core.client.SVNRevision.Kind;
+import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
+import org.eclipse.team.svn.core.connector.SVNEntryStatus;
+import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -98,7 +98,7 @@ public class CompareResourcesOperation extends AbstractNonLockingOperation {
 			// Remove all folders that are mapped to external resources
 			ArrayList changesList = new ArrayList();
 			for (int i = 0; i < localChanges[0].length; i++) {
-				if (localChanges[0][i].textStatus != org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.EXTERNAL) {
+				if (localChanges[0][i].textStatus != org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.EXTERNAL) {
 					changesList.add(localChanges[0][i]);
 				}
 			}
