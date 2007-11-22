@@ -8,7 +8,7 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
-Version 0.7.0.v20071121 [21 November 2007]
+Version 0.7.0.v20071122 [22 November 2007]
 
 Features:
  * Add "ignore externals" option to "Find/Checkout As" wizard
@@ -20,6 +20,7 @@ Fixes:
  * merge UI does not show any changes
    + special thanks to Chris West
 
+ * Merge UI very slow and fails for projects which names on FS differs in compare to repository (bug 210643)
  * Error while representing the remote content of the folder with incorrect externals property. (bug 210387)
  * Rename does not work in SVN Repositories view
  * ClassCastException is logged when annotating resources from the Synchronize View
