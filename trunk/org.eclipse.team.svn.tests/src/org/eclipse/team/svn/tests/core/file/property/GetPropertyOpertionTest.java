@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.tests.core.file.property;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.SVNProperty;
+import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.file.AbstractFileOperation;
 import org.eclipse.team.svn.core.operation.file.property.GetPropertiesOperation;

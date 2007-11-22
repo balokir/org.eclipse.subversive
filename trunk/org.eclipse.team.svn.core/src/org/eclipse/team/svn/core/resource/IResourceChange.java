@@ -11,7 +11,7 @@
 
 package org.eclipse.team.svn.core.resource;
 
-import org.eclipse.team.svn.core.client.SVNRevision;
+import org.eclipse.team.svn.core.connector.SVNRevision;
 
 /**
  * Resource change descriptor interface

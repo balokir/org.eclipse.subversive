@@ -13,9 +13,9 @@ package org.eclipse.team.svn.core.svnstorage;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.team.svn.core.client.SVNLogEntry;
-import org.eclipse.team.svn.core.client.SVNRevision;
-import org.eclipse.team.svn.core.client.SVNRevision.Kind;
+import org.eclipse.team.svn.core.connector.SVNLogEntry;
+import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.GetLogMessagesOperation;
 import org.eclipse.team.svn.core.resource.ICommentProvider;

@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.history.provider.FileRevision;
-import org.eclipse.team.svn.core.client.SVNLogEntry;
+import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 
 /**

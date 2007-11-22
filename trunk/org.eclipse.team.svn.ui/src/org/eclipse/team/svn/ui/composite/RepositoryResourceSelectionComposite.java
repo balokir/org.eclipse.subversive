@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.team.svn.core.client.SVNRevision;
+import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;

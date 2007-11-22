@@ -16,7 +16,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.SVNTeamProjectMapper;
-import org.eclipse.team.svn.core.client.SVNEntryStatus;
+import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.operation.local.AbstractWorkingCopyOperation;

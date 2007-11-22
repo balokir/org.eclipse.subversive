@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.core.extension.factory;
 
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.ISVNConnector;
+import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.operation.UnreportableException;
 
 /**
@@ -21,7 +21,7 @@ import org.eclipse.team.svn.core.operation.UnreportableException;
  * @author Alexander Gurov
  */
 public interface ISVNConnectorFactory {
-	public static final String DEFAULT_ID = "org.eclipse.team.svn.client.svnkit";
+	public static final String DEFAULT_ID = "org.eclipse.team.svn.connector.svnkit";
 	public static final String CURRENT_COMPATIBILITY_VERSION = "0.7.0";
 	
 	/**

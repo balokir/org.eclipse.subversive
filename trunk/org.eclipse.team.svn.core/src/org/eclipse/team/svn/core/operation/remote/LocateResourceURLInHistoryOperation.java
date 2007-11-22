@@ -12,11 +12,11 @@
 package org.eclipse.team.svn.core.operation.remote;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.ISVNConnector;
-import org.eclipse.team.svn.core.client.SVNLogEntry;
-import org.eclipse.team.svn.core.client.SVNLogPath;
-import org.eclipse.team.svn.core.client.SVNRevision;
-import org.eclipse.team.svn.core.client.SVNRevision.Kind;
+import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNLogEntry;
+import org.eclipse.team.svn.core.connector.SVNLogPath;
+import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;

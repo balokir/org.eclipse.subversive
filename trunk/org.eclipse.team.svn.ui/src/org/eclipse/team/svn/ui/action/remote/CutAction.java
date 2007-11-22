@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.ui.action.remote;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.team.svn.core.client.SVNRevision.Kind;
+import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;

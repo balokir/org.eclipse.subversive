@@ -43,14 +43,14 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.svn.core.IConnectedProjectInformation;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.ISVNConnector;
-import org.eclipse.team.svn.core.client.SVNConnectorCancelException;
-import org.eclipse.team.svn.core.client.SVNConnectorException;
-import org.eclipse.team.svn.core.client.SVNEntryStatus;
-import org.eclipse.team.svn.core.client.SVNRevision;
-import org.eclipse.team.svn.core.client.ISVNConnector.Depth;
-import org.eclipse.team.svn.core.client.SVNEntry.NodeKind;
-import org.eclipse.team.svn.core.client.SVNRevision.Kind;
+import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNConnectorCancelException;
+import org.eclipse.team.svn.core.connector.SVNConnectorException;
+import org.eclipse.team.svn.core.connector.SVNEntryStatus;
+import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNEntry.NodeKind;
+import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.options.IIgnoreRecommendations;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
@@ -779,7 +779,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 				if (FileUtility.isLinked(tRes)) {
 				    status = IStateFilter.ST_LINKED;
 				}
-				else if (status != IStateFilter.ST_OBSTRUCTED && statuses[i].textStatus == org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.UNVERSIONED) {
+				else if (status != IStateFilter.ST_OBSTRUCTED && statuses[i].textStatus == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.UNVERSIONED) {
 				    status = this.getDelegatedStatus(tRes, IStateFilter.ST_NEW, changeMask);
 				}
 				
@@ -945,43 +945,43 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		String status = IStateFilter.ST_NORMAL;
 		
 		switch (textKind) {
-			case org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.IGNORED: {
+			case org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.IGNORED: {
 				status = IStateFilter.ST_IGNORED;
 				break;
 			}
-			case org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.UNVERSIONED: {
+			case org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.UNVERSIONED: {
 				status = isRemoteStatus ? IStateFilter.ST_NOTEXISTS : IStateFilter.ST_NEW;
 				break;
 			}
-			case org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.ADDED: {
+			case org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.ADDED: {
 				status = IStateFilter.ST_ADDED;
 				break;
 			}
-			case org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.DELETED: {
+			case org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.DELETED: {
 				status = IStateFilter.ST_DELETED;
 				break;
 			}
-			case org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.MISSING: {
+			case org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.MISSING: {
 				status = IStateFilter.ST_MISSING;
 				break;
 			}
-			case org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.CONFLICTED: {
+			case org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.CONFLICTED: {
 				status = isRemoteStatus ? IStateFilter.ST_MODIFIED : IStateFilter.ST_CONFLICTING;
 				break;
 			}
-			case org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.MODIFIED: {
+			case org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.MODIFIED: {
 				status = IStateFilter.ST_MODIFIED;
 				break;
 			}
-			case org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.OBSTRUCTED: {
+			case org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.OBSTRUCTED: {
 				status = IStateFilter.ST_OBSTRUCTED;
 				break;
 			}
-			case org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.REPLACED: {
+			case org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.REPLACED: {
 				status = IStateFilter.ST_REPLACED;
 				break;
 			}
-			case org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NONE: {
+			case org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NONE: {
 				if (!isRemoteStatus) {
 					status = IStateFilter.ST_NOTEXISTS;
 				}
@@ -989,7 +989,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 			}
 		}
 		if (status == IStateFilter.ST_NORMAL &&
-			(propKind == org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.MODIFIED || propKind == org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.CONFLICTED)) {
+			(propKind == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.MODIFIED || propKind == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.CONFLICTED)) {
 			status = IStateFilter.ST_MODIFIED;
 		}
 		
@@ -998,10 +998,10 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	
 	protected int getChangeMask(int textStatus, int propKind, boolean isCopied, boolean isSwitched) {
 		int changeMask = ILocalResource.NO_MODIFICATION;
-		if (propKind == org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.MODIFIED || propKind == org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.CONFLICTED) {
+		if (propKind == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.MODIFIED || propKind == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.CONFLICTED) {
 			changeMask |= ILocalResource.PROP_MODIFIED; 
 		}
-		if (textStatus != org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NORMAL) {
+		if (textStatus != org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NORMAL) {
 			changeMask |= ILocalResource.TEXT_MODIFIED;
 		}
 		if (isCopied) {

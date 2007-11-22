@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.history.provider.FileRevision;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.client.SVNRevision;
+import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractGetFileContentOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.GetLocalFileContentOperation;

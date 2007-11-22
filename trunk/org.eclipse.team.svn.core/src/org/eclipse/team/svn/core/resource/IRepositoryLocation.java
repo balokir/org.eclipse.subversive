@@ -13,7 +13,7 @@ package org.eclipse.team.svn.core.resource;
 
 import java.util.Collection;
 
-import org.eclipse.team.svn.core.client.ISVNConnector;
+import org.eclipse.team.svn.core.connector.ISVNConnector;
 
 
 /**

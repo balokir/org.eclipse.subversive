@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.core.resource;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.team.svn.core.client.SVNRevision;
+import org.eclipse.team.svn.core.connector.SVNRevision;
 
 /**
  * Deffered in time comment acquisition: SVN does not provide comment while synchronizing with repository

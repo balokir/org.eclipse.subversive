@@ -11,7 +11,7 @@
 
 package org.eclipse.team.svn.core.extension.factory;
 
-import org.eclipse.team.svn.core.client.ISVNConnector;
+import org.eclipse.team.svn.core.connector.ISVNConnector;
 
 /**
  * Wraps real factories in order to produce wrapped SVN clients.

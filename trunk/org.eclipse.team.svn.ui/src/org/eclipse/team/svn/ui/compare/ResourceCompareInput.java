@@ -47,10 +47,10 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.team.svn.core.client.SVNEntryStatus;
-import org.eclipse.team.svn.core.client.SVNRevision;
-import org.eclipse.team.svn.core.client.SVNEntry.NodeKind;
-import org.eclipse.team.svn.core.client.SVNRevision.Kind;
+import org.eclipse.team.svn.core.connector.SVNEntryStatus;
+import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.connector.SVNEntry.NodeKind;
+import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
 import org.eclipse.team.svn.core.operation.AbstractGetFileContentOperation;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -219,7 +219,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		if (root != null) {
 			return (ResourceElement)this.root.getLeft();
 		}
-		return new ResourceElement(this.rootLeft, org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NORMAL);
+		return new ResourceElement(this.rootLeft, org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NORMAL);
 	}
 	
 	protected ResourceElement getRightResourceElement() {
@@ -230,7 +230,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		if (root != null) {
 			return (ResourceElement)this.root.getRight();
 		}
-		return new ResourceElement(this.rootRight, org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NORMAL);
+		return new ResourceElement(this.rootRight, org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NORMAL);
 	}
 	
 	protected ResourceElement getAncestorResourceElement() {
@@ -241,7 +241,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		if (root != null) {
 			return (ResourceElement)this.root.getAncestor();
 		}
-		return new ResourceElement(this.rootAncestor, org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NORMAL);
+		return new ResourceElement(this.rootAncestor, org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NORMAL);
 	}
 	
 	protected ILocalResource getLocalResourceFor(IRepositoryResource base) {
@@ -275,21 +275,21 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 	protected abstract IDiffContainer makeStubNode(IDiffContainer parent, IRepositoryResource node);
 	
 	protected static int getDiffKind(int textStatus, int propStatus, int kindOverride) {
-		if (kindOverride == org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.REPLACED) {
+		if (kindOverride == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.REPLACED) {
 			return Differencer.CHANGE;
 		}
-		if (textStatus == org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.ADDED ||
-			textStatus == org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.UNVERSIONED) {
+		if (textStatus == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.ADDED ||
+			textStatus == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.UNVERSIONED) {
 			return Differencer.ADDITION;
 		}
-		if (textStatus == org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.DELETED) {
+		if (textStatus == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.DELETED) {
 			return Differencer.DELETION;
 		}
-		if (textStatus == org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.REPLACED) {
+		if (textStatus == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.REPLACED) {
 			return Differencer.CHANGE;
 		}
-		if (textStatus == org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.MODIFIED ||
-			propStatus == org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.MODIFIED) {
+		if (textStatus == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.MODIFIED ||
+			propStatus == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.MODIFIED) {
 			return Differencer.CHANGE;
 		}
 		return Differencer.NO_CHANGE;
@@ -334,7 +334,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 			this.kind = kind;
 			this.editable = false;
 			this.listenerList = new Vector();
-			if (kind == org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NONE) {
+			if (kind == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NONE) {
 				resource.setSelectedRevision(SVNRevision.INVALID_REVISION);
 			}
 		}
@@ -408,7 +408,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		}
 		
 		public void fetchContent(IProgressMonitor monitor) {
-			if (this.kind != org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NONE && this.resource instanceof IRepositoryFile && this.op == null) {
+			if (this.kind != org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NONE && this.resource instanceof IRepositoryFile && this.op == null) {
 				int revisionKind = this.resource.getSelectedRevision().getKind();
 				AbstractGetFileContentOperation op = 
 					revisionKind == Kind.WORKING || revisionKind == Kind.BASE ? 
@@ -422,7 +422,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		}
 	
 		public InputStream getContents() throws CoreException {
-			if (this.kind != org.eclipse.team.svn.core.client.SVNEntryStatus.Kind.NONE) {
+			if (this.kind != org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NONE) {
 				this.fetchContent(new NullProgressMonitor());
 				return this.op == null ? null : this.op.getContent();
 			}

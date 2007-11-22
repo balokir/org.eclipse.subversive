@@ -11,7 +11,7 @@
 
 package org.eclipse.team.svn.tests.core.file;
 
-import org.eclipse.team.svn.core.client.SVNRevision;
+import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.file.UpdateOperation;
 

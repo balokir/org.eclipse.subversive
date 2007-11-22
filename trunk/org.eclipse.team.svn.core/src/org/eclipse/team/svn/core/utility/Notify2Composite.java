@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.team.svn.core.client.ISVNNotificationCallback;
-import org.eclipse.team.svn.core.client.SVNNotification;
+import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
+import org.eclipse.team.svn.core.connector.SVNNotification;
 
 /**
  * Notify composite listener

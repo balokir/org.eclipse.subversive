@@ -15,8 +15,8 @@ import java.io.ByteArrayInputStream;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.svn.core.client.SVNRevision;
-import org.eclipse.team.svn.core.client.SVNRevision.Kind;
+import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.GetLocalFileContentOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;

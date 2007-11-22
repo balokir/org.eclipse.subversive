@@ -18,7 +18,7 @@ import java.util.Locale;
 import org.eclipse.jface.text.revisions.Revision;
 import org.eclipse.jface.text.source.LineRange;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.team.svn.core.client.SVNLogEntry;
+import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 
 /**

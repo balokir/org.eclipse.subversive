@@ -13,7 +13,7 @@ package org.eclipse.team.svn.core.svnstorage;
 
 import java.util.Collection;
 
-import org.eclipse.team.svn.core.client.ISVNConnector;
+import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;

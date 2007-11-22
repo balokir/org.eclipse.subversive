@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.SVNTeamProvider;
-import org.eclipse.team.svn.core.client.SVNEntryInfo;
+import org.eclipse.team.svn.core.connector.SVNEntryInfo;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;

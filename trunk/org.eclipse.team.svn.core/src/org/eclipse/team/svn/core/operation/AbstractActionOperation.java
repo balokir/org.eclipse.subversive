@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.SVNConnectorCancelException;
+import org.eclipse.team.svn.core.connector.SVNConnectorCancelException;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 

@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.team.svn.core.client.ISVNCredentialsPrompt;
+import org.eclipse.team.svn.core.connector.ISVNCredentialsPrompt;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;

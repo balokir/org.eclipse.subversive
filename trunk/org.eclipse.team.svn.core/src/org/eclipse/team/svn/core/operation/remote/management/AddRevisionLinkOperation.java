@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.core.operation.remote.management;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.SVNRevision;
+import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.remote.AbstractRepositoryOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;

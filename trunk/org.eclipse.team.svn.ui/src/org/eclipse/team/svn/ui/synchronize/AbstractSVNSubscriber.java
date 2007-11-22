@@ -33,7 +33,7 @@ import org.eclipse.team.core.subscribers.SubscriberChangeEvent;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.variants.IResourceVariantComparator;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.client.SVNEntryStatus;
+import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;

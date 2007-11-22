@@ -15,10 +15,10 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
-import org.eclipse.team.svn.core.client.ISVNConnector;
-import org.eclipse.team.svn.core.client.SVNProperty;
-import org.eclipse.team.svn.core.client.SVNProperty.BuiltIn;
+import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
+import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNProperty;
+import org.eclipse.team.svn.core.connector.SVNProperty.BuiltIn;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.local.AddToSVNIgnoreOperation;

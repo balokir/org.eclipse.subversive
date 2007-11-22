@@ -11,7 +11,7 @@
 
 package org.eclipse.team.svn.core.operation;
 
-import org.eclipse.team.svn.core.client.ISVNProgressMonitor;
+import org.eclipse.team.svn.core.connector.ISVNProgressMonitor;
 
 /**
  * Empty implementation of the IProgressMonitor interface

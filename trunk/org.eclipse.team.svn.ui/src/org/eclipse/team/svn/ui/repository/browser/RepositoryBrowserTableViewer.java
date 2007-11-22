@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.SVNLock;
+import org.eclipse.team.svn.core.connector.SVNLock;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource.Information;

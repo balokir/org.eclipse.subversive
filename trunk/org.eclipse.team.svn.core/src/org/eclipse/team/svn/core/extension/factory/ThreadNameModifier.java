@@ -13,25 +13,25 @@ package org.eclipse.team.svn.core.extension.factory;
 
 import java.io.OutputStream;
 
-import org.eclipse.team.svn.core.client.ISVNAnnotationCallback;
-import org.eclipse.team.svn.core.client.ISVNConnector;
-import org.eclipse.team.svn.core.client.ISVNConflictResolutionCallback;
-import org.eclipse.team.svn.core.client.ISVNCredentialsPrompt;
-import org.eclipse.team.svn.core.client.ISVNEntryCallback;
-import org.eclipse.team.svn.core.client.ISVNEntryInfoCallback;
-import org.eclipse.team.svn.core.client.ISVNEntryStatusCallback;
-import org.eclipse.team.svn.core.client.ISVNLogEntryCallback;
-import org.eclipse.team.svn.core.client.ISVNNotificationCallback;
-import org.eclipse.team.svn.core.client.ISVNProgressMonitor;
-import org.eclipse.team.svn.core.client.ISVNPropertyCallback;
-import org.eclipse.team.svn.core.client.SVNConnectorException;
-import org.eclipse.team.svn.core.client.SVNEntryReference;
-import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
-import org.eclipse.team.svn.core.client.SVNEntryStatus;
-import org.eclipse.team.svn.core.client.SVNMergeInfo;
-import org.eclipse.team.svn.core.client.SVNProperty;
-import org.eclipse.team.svn.core.client.SVNRevision;
-import org.eclipse.team.svn.core.client.SVNRevisionRange;
+import org.eclipse.team.svn.core.connector.ISVNAnnotationCallback;
+import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.ISVNConflictResolutionCallback;
+import org.eclipse.team.svn.core.connector.ISVNCredentialsPrompt;
+import org.eclipse.team.svn.core.connector.ISVNEntryCallback;
+import org.eclipse.team.svn.core.connector.ISVNEntryInfoCallback;
+import org.eclipse.team.svn.core.connector.ISVNEntryStatusCallback;
+import org.eclipse.team.svn.core.connector.ISVNLogEntryCallback;
+import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
+import org.eclipse.team.svn.core.connector.ISVNProgressMonitor;
+import org.eclipse.team.svn.core.connector.ISVNPropertyCallback;
+import org.eclipse.team.svn.core.connector.SVNConnectorException;
+import org.eclipse.team.svn.core.connector.SVNEntryReference;
+import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
+import org.eclipse.team.svn.core.connector.SVNEntryStatus;
+import org.eclipse.team.svn.core.connector.SVNMergeInfo;
+import org.eclipse.team.svn.core.connector.SVNProperty;
+import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.connector.SVNRevisionRange;
 import org.eclipse.team.svn.core.utility.StringId;
 
 /**

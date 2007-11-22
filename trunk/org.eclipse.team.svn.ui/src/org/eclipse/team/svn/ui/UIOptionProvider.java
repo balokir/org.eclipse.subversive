@@ -13,8 +13,8 @@ package org.eclipse.team.svn.ui;
 
 import org.eclipse.core.resources.team.FileModificationValidator;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.team.svn.core.client.ISVNCredentialsPrompt;
-import org.eclipse.team.svn.core.client.SVNProperty;
+import org.eclipse.team.svn.core.connector.ISVNCredentialsPrompt;
+import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.extension.options.IOptionProvider;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.utility.ILoggedOperationFactory;
