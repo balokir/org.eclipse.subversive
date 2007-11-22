@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.SVNClientCancelException;
+import org.eclipse.team.svn.core.client.SVNConnectorCancelException;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 
@@ -74,7 +74,7 @@ public abstract class AbstractActionOperation implements IActionOperation {
 				IStatus[] children = this.status.getChildren();
 				for (int i = 0; i < children.length; i++) {
 					Throwable exception = children[i].getException();
-					if (exception instanceof SVNClientCancelException || 
+					if (exception instanceof SVNConnectorCancelException || 
 						exception instanceof ActivityCancelledException) {
 						hasCanceledException = true;
 						break;
@@ -140,7 +140,7 @@ public abstract class AbstractActionOperation implements IActionOperation {
 	}
 	
 	protected void reportError(Throwable t) {
-		if (t instanceof SVNClientCancelException ||
+		if (t instanceof SVNConnectorCancelException ||
 			t instanceof ActivityCancelledException) {
 			this.writeCancelledToConsole();
 		}

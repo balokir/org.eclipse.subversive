@@ -16,10 +16,10 @@ import java.util.StringTokenizer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.client.SVNProperty;
-import org.eclipse.team.svn.core.client.ISVNClient.Depth;
+import org.eclipse.team.svn.core.client.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.client.SVNProperty.BuiltIn;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -74,7 +74,7 @@ public class AddToSVNOperation extends AbstractWorkingCopyOperation {
 		for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
 		    final IResource current = resources[i];
 			IRepositoryLocation location = storage.getRepositoryLocation(current);
-			final ISVNClient proxy = location.acquireSVNProxy();
+			final ISVNConnector proxy = location.acquireSVNProxy();
 			
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
@@ -85,7 +85,7 @@ public class AddToSVNOperation extends AbstractWorkingCopyOperation {
 		}
 	}
 	
-	public static void removeFromParentIgnore(ISVNClient proxy, String parentPath, String name) throws Exception {
+	public static void removeFromParentIgnore(ISVNConnector proxy, String parentPath, String name) throws Exception {
 		SVNProperty data = proxy.propertyGet(new SVNEntryRevisionReference(parentPath), BuiltIn.IGNORE, new SVNNullProgressMonitor());
 		String ignoreValue = data == null ? "" : data.value;
 		
@@ -113,7 +113,7 @@ public class AddToSVNOperation extends AbstractWorkingCopyOperation {
 		}
 	}
 	
-	protected void doAdd(IResource current, ISVNClient proxy, IProgressMonitor monitor) throws Exception {
+	protected void doAdd(IResource current, ISVNConnector proxy, IProgressMonitor monitor) throws Exception {
 		String wcPath = FileUtility.getWorkingCopyPath(current);
 
 		AddToSVNOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn add \"" + FileUtility.normalizePath(wcPath) + "\"" + (AddToSVNOperation.this.isRecursive ? "" : " -N") + "\n");

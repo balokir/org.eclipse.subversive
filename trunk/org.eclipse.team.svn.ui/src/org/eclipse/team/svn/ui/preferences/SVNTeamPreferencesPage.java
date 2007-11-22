@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
-import org.eclipse.team.svn.core.extension.factory.ISVNClientFactory;
+import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -69,8 +69,8 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected boolean commitSelectNewResources;
 	protected boolean detectDeletedProjects;
 	protected boolean useSubversionExternalsBehaviour;
-	protected String svnClient;
-	protected ISVNClientFactory []factories;
+	protected String svnConnector;
+	protected ISVNConnectorFactory []factories;
 	protected boolean useJavaHLMerge;
 	protected boolean checkoutUsingDotProjectName;
 	protected boolean branchTagConsiderStructure;
@@ -83,7 +83,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected Text branchesField;
 	protected Text tagsField;
 	protected Button showExternalsButton;
-	protected Combo svnClientField;
+	protected Combo svnConnectorField;
 	protected Button useInteractiveMergeButton;
 	protected Button reportRevisionChangeButton;
 	protected Button fastReportButton;
@@ -133,9 +133,9 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		SVNTeamPreferences.setResourceSelectionBoolean(store, SVNTeamPreferences.COMMIT_SELECT_NEW_RESOURCES_NAME, this.commitSelectNewResources);
 		SVNTeamPreferences.setResourceSelectionBoolean(store, SVNTeamPreferences.USE_SUBVERSION_EXTERNAL_BEHAVIOUR_NAME, this.useSubversionExternalsBehaviour);
 		
-		String oldId = CoreExtensionsManager.instance().getSVNClientWrapperFactory().getId();
-		if (!oldId.equals(this.svnClient)) {
-			SVNTeamPreferences.setCoreString(store, SVNTeamPlugin.CORE_SVNCLIENT_NAME, this.svnClient);
+		String oldId = CoreExtensionsManager.instance().getSVNConnectorFactory().getId();
+		if (!oldId.equals(this.svnConnector)) {
+			SVNTeamPreferences.setCoreString(store, SVNTeamPlugin.CORE_SVNCLIENT_NAME, this.svnConnector);
 			// destroy all cached proxies
 			SVNRemoteStorage.instance().dispose();
 		}
@@ -188,7 +188,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		
 		this.caseInsensitiveSorting = SVNTeamPreferences.TABLE_SORTING_CASE_INSENSITIVE_DEFAULT;
 		
-		this.svnClient = SVNTeamPreferences.CORE_SVNCLIENT_DEFAULT;
+		this.svnConnector = SVNTeamPreferences.CORE_SVNCONNECTOR_DEFAULT;
 	}
 	
 	protected void loadValues(IPreferenceStore store) {
@@ -227,7 +227,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.caseInsensitiveSorting = SVNTeamPreferences.getTableSortingBoolean(store, SVNTeamPreferences.TABLE_SORTING_CASE_INSENSITIVE_NAME);
 		
 		//Client specified in preferences currently may be uninstalled. So, request real used client instead of saved.
-		this.svnClient = CoreExtensionsManager.instance().getSVNClientWrapperFactory().getId();
+		this.svnConnector = CoreExtensionsManager.instance().getSVNConnectorFactory().getId();
 	}
 	
 	protected void initializeControls() {
@@ -236,7 +236,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.tagsField.setText(this.tags);
 		this.showExternalsButton.setSelection(this.showExternals);
 		
-		this.reportRevisionChangeButton.setEnabled((CoreExtensionsManager.instance().getSVNClientWrapperFactory(this.svnClient).getSupportedFeatures() & ISVNClientFactory.OptionalFeatures.REPORT_REVISION_CHANGE) != 0);
+		this.reportRevisionChangeButton.setEnabled((CoreExtensionsManager.instance().getSVNConnectorFactory(this.svnConnector).getSupportedFeatures() & ISVNConnectorFactory.OptionalFeatures.REPORT_REVISION_CHANGE) != 0);
 		this.reportRevisionChangeButton.setSelection(this.reportRevisionChange);
 		this.fastReportButton.setSelection(this.fastReport);
 		
@@ -257,7 +257,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.btnResourceSelectionExternal.setSelection(this.useSubversionExternalsBehaviour);
 		
 		List factoriesList = Arrays.asList(this.factories);
-		this.svnClientField.select(factoriesList.indexOf(CoreExtensionsManager.instance().getSVNClientWrapperFactory(this.svnClient)));
+		this.svnConnectorField.select(factoriesList.indexOf(CoreExtensionsManager.instance().getSVNConnectorFactory(this.svnConnector)));
 		
 		this.initializeClientSettings();
 		
@@ -289,7 +289,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		tabItem.setControl(this.createGeneralPage(tabFolder));
 		
 		tabItem = new TabItem(tabFolder, SWT.NONE);
-		tabItem.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.svnClientTabName"));
+		tabItem.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.svnConnectorTabName"));
 		tabItem.setControl(this.createSVNClientPage(tabFolder));
 		
 		tabItem = new TabItem(tabFolder, SWT.NONE);
@@ -326,33 +326,33 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		data.widthHint = 450;
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
-		label.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.svnClientPrompt"));
+		label.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.svnConnectorPrompt"));
 		
 		label = new Label(composite, SWT.NULL);
 		data = new GridData();
 		label.setLayoutData(data);
-		label.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.svnClient"));
+		label.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.svnConnector"));
 		
-		this.svnClientField = new Combo(composite, SWT.READ_ONLY);
+		this.svnConnectorField = new Combo(composite, SWT.READ_ONLY);
 		data = new GridData(GridData.FILL_HORIZONTAL);
-		this.svnClientField.setLayoutData(data);
+		this.svnConnectorField.setLayoutData(data);
 		Collection fullSet = CoreExtensionsManager.instance().getAccessibleClients();
-		this.factories = (ISVNClientFactory [])fullSet.toArray(new ISVNClientFactory[fullSet.size()]);
+		this.factories = (ISVNConnectorFactory [])fullSet.toArray(new ISVNConnectorFactory[fullSet.size()]);
 		FileUtility.sort(this.factories, new Comparator() {
 			public int compare(Object o1, Object o2) {
-				return ((ISVNClientFactory)o1).getName().compareTo(((ISVNClientFactory)o2).getName());
+				return ((ISVNConnectorFactory)o1).getName().compareTo(((ISVNConnectorFactory)o2).getName());
 			}
 		});
 		String []items = new String[fullSet.size()];
 		for (int i = 0; i < items.length; i++) {
 			items[i] = this.factories[i].getName() + " (" + this.factories[i].getClientVersion().replace('\n', ' ') + ")";
 		}
-		this.svnClientField.setItems(items);
-		this.svnClientField.addSelectionListener(new SelectionAdapter() {
+		this.svnConnectorField.setItems(items);
+		this.svnConnectorField.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				SVNTeamPreferencesPage.this.svnClient = SVNTeamPreferencesPage.this.factories[SVNTeamPreferencesPage.this.svnClientField.getSelectionIndex()].getId();
+				SVNTeamPreferencesPage.this.svnConnector = SVNTeamPreferencesPage.this.factories[SVNTeamPreferencesPage.this.svnConnectorField.getSelectionIndex()].getId();
 				SVNTeamPreferencesPage.this.initializeClientSettings();
-				SVNTeamPreferencesPage.this.reportRevisionChangeButton.setEnabled((CoreExtensionsManager.instance().getSVNClientWrapperFactory(SVNTeamPreferencesPage.this.svnClient).getSupportedFeatures() & ISVNClientFactory.OptionalFeatures.REPORT_REVISION_CHANGE) != 0);
+				SVNTeamPreferencesPage.this.reportRevisionChangeButton.setEnabled((CoreExtensionsManager.instance().getSVNConnectorFactory(SVNTeamPreferencesPage.this.svnConnector).getSupportedFeatures() & ISVNConnectorFactory.OptionalFeatures.REPORT_REVISION_CHANGE) != 0);
 			}
 		});
 		
@@ -549,7 +549,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 				SVNTeamPreferencesPage.this.reportRevisionChange = SVNTeamPreferencesPage.this.reportRevisionChangeButton.getSelection();
 			}
 		});
-		this.reportRevisionChangeButton.setEnabled((CoreExtensionsManager.instance().getSVNClientWrapperFactory().getSupportedFeatures() & ISVNClientFactory.OptionalFeatures.REPORT_REVISION_CHANGE) != 0);
+		this.reportRevisionChangeButton.setEnabled((CoreExtensionsManager.instance().getSVNConnectorFactory().getSupportedFeatures() & ISVNConnectorFactory.OptionalFeatures.REPORT_REVISION_CHANGE) != 0);
 		
 		this.fastReportButton = new Button(synchViewGroup, SWT.CHECK);
 		data = new GridData();

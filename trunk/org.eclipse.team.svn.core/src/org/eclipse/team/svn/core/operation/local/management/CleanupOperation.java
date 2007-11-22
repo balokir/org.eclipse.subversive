@@ -13,7 +13,7 @@ package org.eclipse.team.svn.core.operation.local.management;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -47,7 +47,7 @@ public class CleanupOperation extends AbstractWorkingCopyOperation {
 		for (int i = 0; i < resources.length; i++) {
 			IRepositoryLocation location = storage.getRepositoryLocation(resources[i]);
 			final String wcPath = FileUtility.getWorkingCopyPath(resources[i]);
-			final ISVNClient proxy = location.acquireSVNProxy();
+			final ISVNConnector proxy = location.acquireSVNProxy();
 			
 			ProgressMonitorUtility.setTaskInfo(monitor, this, resources[i].getName());
 

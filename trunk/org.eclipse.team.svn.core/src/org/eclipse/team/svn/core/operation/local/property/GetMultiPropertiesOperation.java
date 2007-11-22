@@ -19,7 +19,7 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.client.SVNProperty;
 import org.eclipse.team.svn.core.client.SVNRevision;
@@ -73,7 +73,7 @@ public class GetMultiPropertiesOperation extends AbstractNonLockingOperation imp
 		for (int i = 0; i < this.resources.length && !monitor.isCanceled(); i++) {
 			final IResource current = this.resources[i];
 			IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(current);
-			final ISVNClient proxy = location.acquireSVNProxy();
+			final ISVNConnector proxy = location.acquireSVNProxy();
 			try {
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(final IProgressMonitor monitor) throws Exception {
@@ -101,7 +101,7 @@ public class GetMultiPropertiesOperation extends AbstractNonLockingOperation imp
 		}
 	}
 
-	protected void processResource(final ISVNClient proxy, final IResource current, IProgressMonitor monitor) {
+	protected void processResource(final ISVNConnector proxy, final IResource current, IProgressMonitor monitor) {
 		ProgressMonitorUtility.setTaskInfo(monitor, this, current.getFullPath().toString());
 		this.protectStep(new IUnprotectedOperation() {
 			public void run(IProgressMonitor monitor) throws Exception {

@@ -17,11 +17,11 @@ import java.util.HashSet;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.ISVNEntryStatusCallback;
 import org.eclipse.team.svn.core.client.SVNEntryStatus;
 import org.eclipse.team.svn.core.client.SVNRevisionRange;
-import org.eclipse.team.svn.core.client.ISVNClient.Depth;
+import org.eclipse.team.svn.core.client.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -55,7 +55,7 @@ public class MergeStatusOperation extends AbstractWorkingCopyOperation implement
 		for (int i = 0; i < this.info.to.length && !monitor.isCanceled(); i++) {
 			if (resources.contains(this.info.to[i])) {
 				final IRepositoryResource from = this.info.from[i];
-				final ISVNClient proxy = from.getRepositoryLocation().acquireSVNProxy();
+				final ISVNConnector proxy = from.getRepositoryLocation().acquireSVNProxy();
 				final String wcPath = FileUtility.getWorkingCopyPath(this.info.to[i]);
 				
 				this.protectStep(new IUnprotectedOperation() {

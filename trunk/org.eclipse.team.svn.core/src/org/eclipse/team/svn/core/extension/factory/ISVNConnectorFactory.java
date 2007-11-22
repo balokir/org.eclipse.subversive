@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.core.extension.factory;
 
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.operation.UnreportableException;
 
 /**
@@ -20,7 +20,7 @@ import org.eclipse.team.svn.core.operation.UnreportableException;
  * 
  * @author Alexander Gurov
  */
-public interface ISVNClientFactory {
+public interface ISVNConnectorFactory {
 	public static final String DEFAULT_ID = "org.eclipse.team.svn.client.svnkit";
 	public static final String CURRENT_COMPATIBILITY_VERSION = "0.7.0";
 	
@@ -92,8 +92,8 @@ public interface ISVNClientFactory {
 		public static final int REPORT_REVISION_CHANGE = 0x10;
 	}
 	
-	public static final ISVNClientFactory EMPTY = new ISVNClientFactory() {
-		public ISVNClient newInstance() {
+	public static final ISVNConnectorFactory EMPTY = new ISVNConnectorFactory() {
+		public ISVNConnector newInstance() {
 			throw new UnreportableException(this.getName());
 		}
 		public int getSupportedFeatures() {
@@ -109,7 +109,7 @@ public interface ISVNClientFactory {
 			return "Error.NoSVNClient";
 		}
 		public String getCompatibilityVersion() {
-			return ISVNClientFactory.CURRENT_COMPATIBILITY_VERSION;
+			return ISVNConnectorFactory.CURRENT_COMPATIBILITY_VERSION;
 		}
 		public String getClientVersion() {
 			return "";
@@ -123,7 +123,7 @@ public interface ISVNClientFactory {
 	 * Makes new SVN Client Library instance
 	 * @return SVN Client Library instance
 	 */
-	public ISVNClient newInstance();
+	public ISVNConnector newInstance();
 	
 	/**
 	 * Returns unique SVN Client library plug-in id

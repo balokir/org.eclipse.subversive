@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.core.operation.remote;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.SVNLogEntry;
 import org.eclipse.team.svn.core.client.SVNLogPath;
 import org.eclipse.team.svn.core.client.SVNRevision;
@@ -72,15 +72,15 @@ public class LocateResourceURLInHistoryOperation extends AbstractRepositoryOpera
 
 	protected IRepositoryResource processEntry(IRepositoryResource current, IProgressMonitor monitor) throws Exception {
 		IRepositoryLocation location = current.getRepositoryLocation();
-		ISVNClient proxy = location.acquireSVNProxy();
+		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
 			SVNLogEntry []msgs;
 			int index = 0;
 			if (current.exists()) {
-				msgs = GetLogMessagesOperation.getMessagesImpl(proxy, current, SVNRevision.fromNumber(0), current.getPegRevision(), ISVNClient.EMPTY_LOG_ENTRY_PROPS, 1, true, this, monitor);
+				msgs = GetLogMessagesOperation.getMessagesImpl(proxy, current, SVNRevision.fromNumber(0), current.getPegRevision(), ISVNConnector.EMPTY_LOG_ENTRY_PROPS, 1, true, this, monitor);
 			}
 			else {
-				msgs = GetLogMessagesOperation.getMessagesImpl(proxy, current.getParent(), SVNRevision.fromNumber(0), current.getPegRevision(), ISVNClient.EMPTY_LOG_ENTRY_PROPS, 1, true, this, monitor);
+				msgs = GetLogMessagesOperation.getMessagesImpl(proxy, current.getParent(), SVNRevision.fromNumber(0), current.getPegRevision(), ISVNConnector.EMPTY_LOG_ENTRY_PROPS, 1, true, this, monitor);
 				if (msgs != null) {
 					for (int j = 0; j < msgs.length; j++) {
 						SVNLogPath []paths = msgs[j].changedPaths;

@@ -15,7 +15,7 @@ import java.io.File;
 import java.io.OutputStream;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.client.SVNRevision.Kind;
@@ -52,7 +52,7 @@ public class GetFileContentOperation extends AbstractFileOperation {
 		File file = this.operableData()[0];
 		
 	    IRepositoryResource remote = SVNFileStorage.instance().asRepositoryResource(file, false);
-		ISVNClient proxy = remote.getRepositoryLocation().acquireSVNProxy();
+		ISVNConnector proxy = remote.getRepositoryLocation().acquireSVNProxy();
 		try {
 			int kind = this.revision.getKind();
 			if (kind == Kind.BASE || kind == Kind.WORKING) {

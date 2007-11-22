@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.team.svn.core">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.team.svn.core" id="svnclient" name="SVN Client Factory"/>
+         <meta.schema plugin="org.eclipse.team.svn.core" id="svnconnector" name="SVN Client Factory"/>
       </appInfo>
       <documentation>
          The extension point allows us to switch flexibly between SVN client implementations.
@@ -13,19 +13,19 @@
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="svnclient"/>
+            <element ref="svnconnector"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
-                  org.eclipse.team.svn.core.svnclient
+                  org.eclipse.team.svn.core.svnconnector
                </documentation>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
-   <element name="svnclient">
+   <element name="svnconnector">
       <annotation>
          <documentation>
             SVN Team Core can be switched between client libraries on the fly.

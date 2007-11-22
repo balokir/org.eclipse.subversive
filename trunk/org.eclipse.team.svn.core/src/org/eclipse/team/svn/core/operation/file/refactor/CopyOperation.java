@@ -18,7 +18,7 @@ import java.text.MessageFormat;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -62,7 +62,7 @@ public class CopyOperation extends AbstractFileOperation {
 
 		IRepositoryResource remoteTo = SVNFileStorage.instance().asRepositoryResource(this.localTo, true);
 		IRepositoryLocation location = remoteTo == null ? null : remoteTo.getRepositoryLocation();
-		final ISVNClient proxy = location == null ? null : location.acquireSVNProxy();
+		final ISVNConnector proxy = location == null ? null : location.acquireSVNProxy();
 		
 		for (int i = 0; i < files.length && !monitor.isCanceled(); i++) {
 			final File current = files[i];

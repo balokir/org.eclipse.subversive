@@ -11,7 +11,7 @@
 
 package org.eclipse.team.svn.core.resource;
 
-import org.eclipse.team.svn.core.client.SVNClientException;
+import org.eclipse.team.svn.core.client.SVNConnectorException;
 import org.eclipse.team.svn.core.client.SVNLock;
 import org.eclipse.team.svn.core.client.SVNRevision;
 
@@ -50,13 +50,13 @@ public interface IRepositoryResource extends IRepositoryBase, IRepositoryResourc
 	
 	public void refresh();
 
-	public boolean exists() throws SVNClientException;
+	public boolean exists() throws SVNConnectorException;
 	
 	public String getName();
 	
 	public String getUrl();
 	
-	public long getRevision() throws SVNClientException;
+	public long getRevision() throws SVNConnectorException;
 	
 	public IRepositoryResource getParent();
 	

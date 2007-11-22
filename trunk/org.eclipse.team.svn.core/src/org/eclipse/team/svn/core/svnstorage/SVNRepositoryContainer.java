@@ -13,14 +13,14 @@ package org.eclipse.team.svn.core.svnstorage;
 
 import java.io.Serializable;
 
-import org.eclipse.team.svn.core.client.ISVNClient;
-import org.eclipse.team.svn.core.client.SVNClientException;
+import org.eclipse.team.svn.core.client.ISVNConnector;
+import org.eclipse.team.svn.core.client.SVNConnectorException;
 import org.eclipse.team.svn.core.client.SVNEntry;
 import org.eclipse.team.svn.core.client.SVNEntryInfo;
 import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.client.SVNProperty;
 import org.eclipse.team.svn.core.client.SVNRevision;
-import org.eclipse.team.svn.core.client.ISVNClient.Depth;
+import org.eclipse.team.svn.core.client.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.client.SVNEntry.Fields;
 import org.eclipse.team.svn.core.client.SVNEntry.NodeKind;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
@@ -57,7 +57,7 @@ public class SVNRepositoryContainer extends SVNRepositoryResource implements IRe
 		this.children = null;
 	}
 	
-	public IRepositoryResource []getChildren() throws SVNClientException {
+	public IRepositoryResource []getChildren() throws SVNConnectorException {
 		IRepositoryResource []retVal = this.children;
 		
 		// synchronize only assignment in order to avoid deadlock with this Sync and UI Sync locked from callback
@@ -66,7 +66,7 @@ public class SVNRepositoryContainer extends SVNRepositoryResource implements IRe
 			String thisUrl = this.getUrl();
 			SVNEntry []children = null;
 			
-			ISVNClient proxy = this.getRepositoryLocation().acquireSVNProxy();
+			ISVNConnector proxy = this.getRepositoryLocation().acquireSVNProxy();
 			try {
 				children = SVNUtility.list(proxy, SVNUtility.getEntryRevisionReference(this), Depth.IMMEDIATES, Fields.ALL, true, new SVNNullProgressMonitor());
 			}
@@ -92,7 +92,7 @@ public class SVNRepositoryContainer extends SVNRepositoryResource implements IRe
 		return retVal;
 	}
 	
-	protected void getRevisionImpl(ISVNClient proxy) throws SVNClientException {
+	protected void getRevisionImpl(ISVNConnector proxy) throws SVNConnectorException {
 		SVNEntryRevisionReference reference = SVNUtility.getEntryRevisionReference(this);
 		SVNEntryInfo []infos = SVNUtility.info(proxy, reference, Depth.EMPTY, new SVNNullProgressMonitor());
 		if (infos != null && infos.length > 0 && infos[0].lastChangedRevision != SVNRevision.INVALID_REVISION_NUMBER) {

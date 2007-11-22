@@ -14,7 +14,7 @@ package org.eclipse.team.svn.core.operation.file.property;
 import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.client.SVNProperty;
 import org.eclipse.team.svn.core.client.SVNRevision;
@@ -51,7 +51,7 @@ public class GetPropertiesOperation extends AbstractFileOperation {
 		File file = this.operableData()[0];
 		IRepositoryResource remote = SVNFileStorage.instance().asRepositoryResource(file, false);
 		IRepositoryLocation location = remote.getRepositoryLocation();
-		ISVNClient proxy = location.acquireSVNProxy();
+		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
 			this.properties = SVNUtility.properties(proxy, new SVNEntryRevisionReference(file.getAbsolutePath(), null, this.revision), new SVNProgressMonitor(this, monitor, null));
 		}

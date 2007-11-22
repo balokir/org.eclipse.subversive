@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.ISVNNotificationCallback;
 import org.eclipse.team.svn.core.client.SVNNotification;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
@@ -53,7 +53,7 @@ public abstract class AbstractCopyMoveResourcesOperation extends AbstractReposit
 		for (int i = 0; i < selectedResources.length && !monitor.isCanceled(); i++) {
 			final IRepositoryResource current = selectedResources[i];
 			final IRepositoryLocation location = current.getRepositoryLocation();
-			final ISVNClient proxy = location.acquireSVNProxy();
+			final ISVNConnector proxy = location.acquireSVNProxy();
 			ISVNNotificationCallback notify = new ISVNNotificationCallback() {
 				public void notify(SVNNotification info) {
 					String []paths = AbstractCopyMoveResourcesOperation.this.getRevisionPaths(current.getUrl(), dstUrl + "/" + current.getName());
@@ -76,5 +76,5 @@ public abstract class AbstractCopyMoveResourcesOperation extends AbstractReposit
 	}
 
 	protected abstract String []getRevisionPaths(String srcUrl, String dstUrl);
-	protected abstract void processEntry(ISVNClient proxy, String sourceUrl, String destinationUrl, IRepositoryResource current, IProgressMonitor monitor) throws Exception;
+	protected abstract void processEntry(ISVNConnector proxy, String sourceUrl, String destinationUrl, IRepositoryResource current, IProgressMonitor monitor) throws Exception;
 }

@@ -26,14 +26,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.ISVNCredentialsPrompt;
 import org.eclipse.team.svn.core.client.SVNEntryInfo;
 import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.client.SVNRevision;
-import org.eclipse.team.svn.core.client.ISVNClient.Depth;
+import org.eclipse.team.svn.core.client.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
-import org.eclipse.team.svn.core.extension.factory.ISVNClientFactory;
+import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.extension.options.IOptionProvider;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.ActivityCancelledException;
@@ -385,7 +385,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		}
 	}
 
-	public synchronized ISVNClient acquireSVNProxy() {
+	public synchronized ISVNConnector acquireSVNProxy() {
 		try {
 			this.waiters++;
 			
@@ -410,7 +410,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 				this.proxyConfigurationState = 1;
 			}
 		    
-			ISVNClient retVal = cache.size() == 0 ? this.newProxyInstance() : (ISVNClient)cache.remove(0);
+			ISVNConnector retVal = cache.size() == 0 ? this.newProxyInstance() : (ISVNConnector)cache.remove(0);
 		    this.usedProxies.add(retVal);
 		    this.thread2Proxy.put(current, new ProxyHolder(retVal));
 		    return retVal;
@@ -430,7 +430,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		}
 	}
 	
-	public synchronized void releaseSVNProxy(ISVNClient proxy) {
+	public synchronized void releaseSVNProxy(ISVNConnector proxy) {
 	    List proxies = this.getProxyCache();
 	    
 	    Thread current = Thread.currentThread();
@@ -463,7 +463,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	
 	public synchronized void dispose() {
 		this.reconfigureProxies(new IProxyVisitor() {
-            public void visit(ISVNClient proxy) {
+            public void visit(ISVNConnector proxy) {
             	// When exiting Eclipse IDE client plug-in's can be stopped before Core. So, disallow error reporting in that case. 
     	        try {proxy.dispose();} catch (Throwable ex) {}
             }
@@ -531,7 +531,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		final String []retVal = new String[2];
 		ProgressMonitorUtility.doTaskExternal(new AbstractNonLockingOperation("Operation.FetchRepositoryRoot") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
-			    ISVNClient proxy = CoreExtensionsManager.instance().getSVNClientWrapperFactory().newInstance();
+			    ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();
 				proxy.setCredentialsCacheEnabled(false);
 				SVNUtility.configureProxy(proxy, location);
 				
@@ -579,7 +579,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	protected void reconfigureImpl() {
 		final IOptionProvider optionProvider = SVNTeamPlugin.instance().getOptionProvider();
 		this.reconfigureProxies(new IProxyVisitor() {
-			public void visit(ISVNClient proxy) {
+			public void visit(ISVNConnector proxy) {
 			    SVNRepositoryLocation.this.configureProxy(proxy, optionProvider);
 			}
 		});
@@ -592,7 +592,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	
 	protected void visitProxies(IProxyVisitor visitor) {
 	    for (Iterator it = this.getProxyCache().iterator(); it.hasNext(); ) {
-		    ISVNClient proxy = (ISVNClient)it.next();
+		    ISVNConnector proxy = (ISVNConnector)it.next();
 		    visitor.visit(proxy);
 	    }
 	}
@@ -606,9 +606,9 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	    return this.proxyCache;
 	}
 	
-	protected ISVNClient newProxyInstance() {
+	protected ISVNConnector newProxyInstance() {
 		IOptionProvider optionProvider = SVNTeamPlugin.instance().getOptionProvider();
-	    ISVNClient proxy = CoreExtensionsManager.instance().getSVNClientWrapperFactory().newInstance();
+	    ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();
 	    
 		proxy.setCredentialsCacheEnabled(false);
 		proxy.setSSLCertificateCacheEnabled(true);
@@ -632,7 +632,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		return this.serializedRevisionLinks;
 	}
 	
-	protected void configureProxy(ISVNClient proxy, IOptionProvider optionProvider) {
+	protected void configureProxy(ISVNConnector proxy, IOptionProvider optionProvider) {
 		SVNUtility.configureProxy(proxy, this);
 		proxy.setReportRevisionChange(optionProvider.getReportRevisionChange());
 	}
@@ -658,7 +658,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	}
 	
 	protected interface IProxyVisitor {
-	    public void visit(ISVNClient proxy);
+	    public void visit(ISVNConnector proxy);
 	}
 
 	public static class BaseCredentialsPromptWrapper implements ISVNCredentialsPrompt {
@@ -795,7 +795,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		}
 		
 		protected boolean tryCachedRealm(String realm) {
-			if (!ISVNClientFactory.DEFAULT_ID.equals(CoreExtensionsManager.instance().getSVNClientWrapperFactory().getId())) {
+			if (!ISVNConnectorFactory.DEFAULT_ID.equals(CoreExtensionsManager.instance().getSVNConnectorFactory().getId())) {
 				return false;
 			}
 			String threadName = Thread.currentThread().getName();
@@ -922,10 +922,10 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	}
 	
 	protected static class ProxyHolder {
-		public final ISVNClient proxy;
+		public final ISVNConnector proxy;
 		public int referenceCounter;
 		
-		public ProxyHolder(ISVNClient proxy) {
+		public ProxyHolder(ISVNConnector proxy) {
 			this.proxy = proxy;
 			this.referenceCounter = 1;
 		}

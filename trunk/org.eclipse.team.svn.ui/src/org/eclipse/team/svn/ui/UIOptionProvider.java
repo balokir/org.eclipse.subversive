@@ -57,8 +57,8 @@ public class UIOptionProvider implements IOptionProvider {
 		return this.modificationValidator;
 	}
 	
-	public String getSVNClientId() {
-		return SVNTeamPreferences.getCoreString(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.CORE_SVNCLIENT_NAME);
+	public String getSVNConnectorId() {
+		return SVNTeamPreferences.getCoreString(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.CORE_SVNCONNECTOR_NAME);
 	}
 	
 	public String getDefaultBranchesName() {

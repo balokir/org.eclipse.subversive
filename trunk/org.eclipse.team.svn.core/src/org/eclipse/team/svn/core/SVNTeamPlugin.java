@@ -50,7 +50,7 @@ public class SVNTeamPlugin extends Plugin {
 	// all projects shared with subversion will have this nature
 	public static final String NATURE_ID = "org.eclipse.team.svn.core.svnnature";
 	
-	public static final String CORE_SVNCLIENT_NAME = "svnclient";
+	public static final String CORE_SVNCLIENT_NAME = "svnconnector";
 	
 	private volatile static SVNTeamPlugin instance = null;
 	

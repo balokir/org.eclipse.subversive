@@ -14,7 +14,7 @@ package org.eclipse.team.svn.core.operation.file.refactor;
 import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -52,7 +52,7 @@ public class DeleteOperation extends AbstractFileOperation {
 			}
 			else {
 				IRepositoryLocation location = remote.getRepositoryLocation();
-				final ISVNClient proxy = location.acquireSVNProxy();
+				final ISVNConnector proxy = location.acquireSVNProxy();
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(IProgressMonitor monitor) throws Exception {
 						DeleteOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn delete \"" + FileUtility.normalizePath(current.getAbsolutePath()) + "\" --force\n");

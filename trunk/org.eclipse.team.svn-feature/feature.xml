@@ -130,8 +130,8 @@ Java and all Java-based trademarks are trademarks of Sun Microsystems, Inc. in t
       <import plugin="org.eclipse.osgi"/>
       <import plugin="org.eclipse.help"/>
       <import plugin="org.eclipse.ui.console"/>
-      <import plugin="org.polarion.eclipse.team.svn.client" version="2.0.0" match="compatible"/>
-      <import plugin="org.polarion.eclipse.team.svn.client.svnkit" version="2.0.0" match="compatible"/>
+      <import plugin="org.polarion.eclipse.team.svn.connector" version="2.0.0" match="compatible"/>
+      <import plugin="org.polarion.eclipse.team.svn.connector.svnkit" version="2.0.0" match="compatible"/>
    </requires>
 
    <plugin

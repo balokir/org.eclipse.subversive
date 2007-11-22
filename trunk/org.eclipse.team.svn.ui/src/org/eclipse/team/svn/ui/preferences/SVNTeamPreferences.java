@@ -17,7 +17,7 @@ import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.team.svn.core.extension.factory.ISVNClientFactory;
+import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.ui.decorator.TextVariableSetProvider;
 import org.eclipse.team.svn.ui.repository.RepositoryPerspective;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -76,9 +76,9 @@ public final class SVNTeamPreferences {
 	public static final String CONSOLE_LIMIT_ENABLED_NAME = "limitEnabled";
 	public static final String CONSOLE_LIMIT_VALUE_NAME = "limitRange";
 	
-	public static final String CORE_SVNCLIENT_NAME = "svnclient";
+	public static final String CORE_SVNCONNECTOR_NAME = "svnconnector";
 	
-	public static final String CORE_SVNCLIENT_DEFAULT = ISVNClientFactory.DEFAULT_ID;
+	public static final String CORE_SVNCONNECTOR_DEFAULT = ISVNConnectorFactory.DEFAULT_ID;
 	
 	public static final String CONSOLE_ERR_COLOR_NAME = "error";
 	public static final String CONSOLE_WRN_COLOR_NAME = "warning";
@@ -437,7 +437,7 @@ public final class SVNTeamPreferences {
 	}
 	
 	public static void setDefaultCoreValues(IPreferenceStore store) {
-		store.setDefault(SVNTeamPreferences.fullCoreName(SVNTeamPreferences.CORE_SVNCLIENT_NAME), SVNTeamPreferences.CORE_SVNCLIENT_DEFAULT);
+		store.setDefault(SVNTeamPreferences.fullCoreName(SVNTeamPreferences.CORE_SVNCONNECTOR_NAME), SVNTeamPreferences.CORE_SVNCONNECTOR_DEFAULT);
 	}
 	
 	public static void resetToDefaultAutoPropsValues(IPreferenceStore store) {
@@ -449,7 +449,7 @@ public final class SVNTeamPreferences {
 	}
 	
 	public static void resetToDefaultCoreValues(IPreferenceStore store) {
-		store.setValue(SVNTeamPreferences.fullCoreName(SVNTeamPreferences.CORE_SVNCLIENT_NAME), SVNTeamPreferences.CORE_SVNCLIENT_DEFAULT);
+		store.setValue(SVNTeamPreferences.fullCoreName(SVNTeamPreferences.CORE_SVNCONNECTOR_NAME), SVNTeamPreferences.CORE_SVNCONNECTOR_DEFAULT);
 	}
 	
 	public static void resetToDefaultHistoryValues(IPreferenceStore store) {

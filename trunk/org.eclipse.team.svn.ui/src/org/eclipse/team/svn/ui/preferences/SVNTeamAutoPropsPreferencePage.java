@@ -45,8 +45,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.ISVNClient;
-import org.eclipse.team.svn.core.client.SVNClientException;
+import org.eclipse.team.svn.core.client.ISVNConnector;
+import org.eclipse.team.svn.core.client.SVNConnectorException;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.utility.FileUtility;
@@ -470,12 +470,12 @@ public class SVNTeamAutoPropsPreferencePage extends AbstractSVNTeamPreferencesPa
 	}
 	
 	public String findConfigFile(String dialogTitle) {
-		ISVNClient client = CoreExtensionsManager.instance().getSVNClientWrapperFactory().newInstance();
+		ISVNConnector client = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();
 		String cfgDir;
 		try {
 			cfgDir = client.getConfigDirectory();
 		}
-		catch (SVNClientException cwe) {
+		catch (SVNConnectorException cwe) {
 			LoggedOperation.reportError(SVNTeamUIPlugin.instance().getResource("Error.FindConfigFile"), cwe);
 			return null;
 		}

@@ -18,7 +18,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
@@ -63,7 +63,7 @@ public class CopyResourceWithHistoryOperation extends AbstractActionOperation {
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		IRemoteStorage storage = SVNRemoteStorage.instance();
 		IRepositoryLocation location = storage.getRepositoryLocation(this.source);
-        ISVNClient proxy = location.acquireSVNProxy();
+        ISVNConnector proxy = location.acquireSVNProxy();
         try {
 			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn copy \"" + FileUtility.normalizePath(FileUtility.getWorkingCopyPath(this.source)) + "\" \"" + FileUtility.getWorkingCopyPath(this.destination) + "\"\n");
 			proxy.copy(FileUtility.getWorkingCopyPath(this.source), FileUtility.getWorkingCopyPath(this.destination), SVNRevision.WORKING, new SVNProgressMonitor(this, monitor, null));

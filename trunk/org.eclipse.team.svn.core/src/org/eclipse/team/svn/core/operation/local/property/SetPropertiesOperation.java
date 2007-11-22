@@ -13,9 +13,9 @@ package org.eclipse.team.svn.core.operation.local.property;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.SVNProperty;
-import org.eclipse.team.svn.core.client.ISVNClient.Depth;
+import org.eclipse.team.svn.core.client.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -69,7 +69,7 @@ public class SetPropertiesOperation extends AbstractWorkingCopyOperation {
 			final IResource resource = resources[i];
 			
 			IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(resource);
-			final ISVNClient proxy = location.acquireSVNProxy();
+			final ISVNConnector proxy = location.acquireSVNProxy();
 
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
@@ -81,7 +81,7 @@ public class SetPropertiesOperation extends AbstractWorkingCopyOperation {
 		}
 	}
 	
-	protected void processResource(final ISVNClient proxy, IResource resource, IProgressMonitor monitor) {
+	protected void processResource(final ISVNConnector proxy, IResource resource, IProgressMonitor monitor) {
 		ProgressMonitorUtility.setTaskInfo(monitor, this, resource.getFullPath().toString());
 		final String wcPath = FileUtility.getWorkingCopyPath(resource);
 		

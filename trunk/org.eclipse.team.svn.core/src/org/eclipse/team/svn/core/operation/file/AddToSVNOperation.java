@@ -14,8 +14,8 @@ package org.eclipse.team.svn.core.operation.file;
 import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.client.ISVNClient;
-import org.eclipse.team.svn.core.client.ISVNClient.Depth;
+import org.eclipse.team.svn.core.client.ISVNConnector;
+import org.eclipse.team.svn.core.client.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -52,7 +52,7 @@ public class AddToSVNOperation extends AbstractFileOperation {
 		for (int i = 0; i < files.length && !monitor.isCanceled(); i++) {
 		    final File current = files[i];
 			IRepositoryLocation location = SVNFileStorage.instance().asRepositoryResource(current, false).getRepositoryLocation();
-			final ISVNClient proxy = location.acquireSVNProxy();
+			final ISVNConnector proxy = location.acquireSVNProxy();
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
 					AddToSVNOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn add \"" + FileUtility.normalizePath(current.getAbsolutePath()) + "\"" + (AddToSVNOperation.this.isRecursive ? "" : " -N") + "\n");

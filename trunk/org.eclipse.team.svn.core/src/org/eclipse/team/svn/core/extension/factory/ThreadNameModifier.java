@@ -14,7 +14,7 @@ package org.eclipse.team.svn.core.extension.factory;
 import java.io.OutputStream;
 
 import org.eclipse.team.svn.core.client.ISVNAnnotationCallback;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.ISVNConflictResolutionCallback;
 import org.eclipse.team.svn.core.client.ISVNCredentialsPrompt;
 import org.eclipse.team.svn.core.client.ISVNEntryCallback;
@@ -24,7 +24,7 @@ import org.eclipse.team.svn.core.client.ISVNLogEntryCallback;
 import org.eclipse.team.svn.core.client.ISVNNotificationCallback;
 import org.eclipse.team.svn.core.client.ISVNProgressMonitor;
 import org.eclipse.team.svn.core.client.ISVNPropertyCallback;
-import org.eclipse.team.svn.core.client.SVNClientException;
+import org.eclipse.team.svn.core.client.SVNConnectorException;
 import org.eclipse.team.svn.core.client.SVNEntryReference;
 import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.client.SVNEntryStatus;
@@ -39,14 +39,14 @@ import org.eclipse.team.svn.core.utility.StringId;
  * 
  * @author Alexander Gurov
  */
-public class ThreadNameModifier implements ISVNClient {
-	protected ISVNClient client;
+public class ThreadNameModifier implements ISVNConnector {
+	protected ISVNConnector client;
 
-	public ThreadNameModifier(ISVNClient client) {
+	public ThreadNameModifier(ISVNConnector client) {
 		this.client = client;
 	}
 
-	public void add(String path, int depth, boolean skipIgnores, boolean addParents, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void add(String path, int depth, boolean skipIgnores, boolean addParents, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.add(path, depth, skipIgnores, addParents, monitor);
@@ -56,7 +56,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void annotate(SVNEntryReference reference, SVNRevision revisionStart, SVNRevision revisionEnd, boolean ignoreMimeType, boolean includeMergedRevisions, ISVNAnnotationCallback callback, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void annotate(SVNEntryReference reference, SVNRevision revisionStart, SVNRevision revisionEnd, boolean ignoreMimeType, boolean includeMergedRevisions, ISVNAnnotationCallback callback, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.annotate(reference, revisionStart, revisionEnd, ignoreMimeType, includeMergedRevisions, callback, monitor);
@@ -66,7 +66,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public long checkout(SVNEntryRevisionReference fromReference, String destPath, int depth, boolean ignoreExternals, boolean allowUnverObstructions, ISVNProgressMonitor monitor) throws SVNClientException {
+	public long checkout(SVNEntryRevisionReference fromReference, String destPath, int depth, boolean ignoreExternals, boolean allowUnverObstructions, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			return this.client.checkout(fromReference, destPath, depth, ignoreExternals, allowUnverObstructions, monitor);
@@ -76,7 +76,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void cleanup(String path, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void cleanup(String path, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.cleanup(path, monitor);
@@ -86,7 +86,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public long []commit(String []path, String message, int depth, boolean noUnlock, boolean keepChangelist, String changelistName, ISVNProgressMonitor monitor) throws SVNClientException {
+	public long []commit(String []path, String message, int depth, boolean noUnlock, boolean keepChangelist, String changelistName, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			return this.client.commit(path, message, depth, noUnlock, keepChangelist, changelistName, monitor);
@@ -96,7 +96,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void copy(String srcPath, String destPath, SVNRevision revision, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void copy(String srcPath, String destPath, SVNRevision revision, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.copy(srcPath, destPath, revision, monitor);
@@ -106,7 +106,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void copy(SVNEntryRevisionReference []srcPath, String destPath, String message, boolean copyAsChild, boolean makeParents, boolean withMergeHistory, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void copy(SVNEntryRevisionReference []srcPath, String destPath, String message, boolean copyAsChild, boolean makeParents, boolean withMergeHistory, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.copy(srcPath, destPath, message, copyAsChild, makeParents, withMergeHistory, monitor);
@@ -116,7 +116,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void diff(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, String outFileName, int depth, boolean ignoreAncestry, boolean noDiffDeleted, boolean force, boolean diffUnversioned, boolean relativePath, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void diff(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, String outFileName, int depth, boolean ignoreAncestry, boolean noDiffDeleted, boolean force, boolean diffUnversioned, boolean relativePath, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.diff(reference1, reference2, outFileName, depth, ignoreAncestry, noDiffDeleted, force, diffUnversioned, relativePath, monitor);
@@ -126,7 +126,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void diff(SVNEntryReference reference, SVNRevision revision1, SVNRevision revision2, String outFileName, int depth, boolean ignoreAncestry, boolean noDiffDeleted, boolean force, boolean diffUnversioned, boolean relativePath, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void diff(SVNEntryReference reference, SVNRevision revision1, SVNRevision revision2, String outFileName, int depth, boolean ignoreAncestry, boolean noDiffDeleted, boolean force, boolean diffUnversioned, boolean relativePath, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.diff(reference, revision1, revision2, outFileName, depth, ignoreAncestry, noDiffDeleted, force, diffUnversioned, relativePath, monitor);
@@ -136,7 +136,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void diffStatus(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, int depth, boolean ignoreAncestry, ISVNEntryStatusCallback cb, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void diffStatus(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, int depth, boolean ignoreAncestry, ISVNEntryStatusCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.diffStatus(reference1, reference2, depth, ignoreAncestry, cb, monitor);
@@ -146,7 +146,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void diffStatus(SVNEntryReference reference, SVNRevision revision1, SVNRevision revision2, int depth, boolean ignoreAncestry, ISVNEntryStatusCallback cb, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void diffStatus(SVNEntryReference reference, SVNRevision revision1, SVNRevision revision2, int depth, boolean ignoreAncestry, ISVNEntryStatusCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.diffStatus(reference, revision1, revision2, depth, ignoreAncestry, cb, monitor);
@@ -166,7 +166,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public long doExport(SVNEntryRevisionReference fromReference, String destPath, boolean force, boolean ignoreExternals, int depth, String nativeEOL, ISVNProgressMonitor monitor) throws SVNClientException {
+	public long doExport(SVNEntryRevisionReference fromReference, String destPath, boolean force, boolean ignoreExternals, int depth, String nativeEOL, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			return this.client.doExport(fromReference, destPath, force, ignoreExternals, depth, nativeEOL, monitor);
@@ -176,7 +176,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void doImport(String path, String url, String message, int depth, boolean noIgnore, boolean ignoreUnknownNodeTypes, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void doImport(String path, String url, String message, int depth, boolean noIgnore, boolean ignoreUnknownNodeTypes, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.doImport(path, url, message, depth, noIgnore, ignoreUnknownNodeTypes, monitor);
@@ -186,7 +186,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public long doSwitch(String path, SVNEntryRevisionReference toReference, int depth, boolean ignoreExternals, boolean allowUnverObstructions, ISVNProgressMonitor monitor) throws SVNClientException {
+	public long doSwitch(String path, SVNEntryRevisionReference toReference, int depth, boolean ignoreExternals, boolean allowUnverObstructions, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			return this.client.doSwitch(path, toReference, depth, ignoreExternals, allowUnverObstructions, monitor);
@@ -196,7 +196,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public String getConfigDirectory() throws SVNClientException {
+	public String getConfigDirectory() throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			return this.client.getConfigDirectory();
@@ -276,7 +276,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void list(SVNEntryRevisionReference reference, int depth, int direntFields, boolean fetchLocks, ISVNEntryCallback cb, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void list(SVNEntryRevisionReference reference, int depth, int direntFields, boolean fetchLocks, ISVNEntryCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.list(reference, depth, direntFields, fetchLocks, cb, monitor);
@@ -286,7 +286,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void lock(String[] path, String comment, boolean force, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void lock(String[] path, String comment, boolean force, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.lock(path, comment, force, monitor);
@@ -296,7 +296,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void logEntries(SVNEntryReference reference, SVNRevision revisionStart, SVNRevision revisionEnd, boolean stopOnCopy, boolean discoverPath, boolean includeMergedRevisions, String[] revProps, long limit, ISVNLogEntryCallback cb, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void logEntries(SVNEntryReference reference, SVNRevision revisionStart, SVNRevision revisionEnd, boolean stopOnCopy, boolean discoverPath, boolean includeMergedRevisions, String[] revProps, long limit, ISVNLogEntryCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.logEntries(reference, revisionStart, revisionEnd, stopOnCopy, discoverPath, includeMergedRevisions, revProps, limit, cb, monitor);
@@ -306,7 +306,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void merge(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, String localPath, boolean force, int depth, boolean ignoreAncestry, boolean dryRun, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void merge(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, String localPath, boolean force, int depth, boolean ignoreAncestry, boolean dryRun, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.merge(reference1, reference2, localPath, force, depth, ignoreAncestry, dryRun, monitor);
@@ -316,7 +316,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void merge(SVNEntryReference reference, SVNRevisionRange []revisions, String localPath, boolean force, int depth, boolean ignoreAncestry, boolean dryRun, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void merge(SVNEntryReference reference, SVNRevisionRange []revisions, String localPath, boolean force, int depth, boolean ignoreAncestry, boolean dryRun, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.merge(reference, revisions, localPath, force, depth, ignoreAncestry, dryRun, monitor);
@@ -326,7 +326,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void merge(SVNEntryReference reference, SVNRevisionRange []revisions, String mergePath, SVNEntryStatus[] mergeStatus, boolean force, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void merge(SVNEntryReference reference, SVNRevisionRange []revisions, String mergePath, SVNEntryStatus[] mergeStatus, boolean force, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.merge(reference, revisions, mergePath, mergeStatus, force, monitor);
@@ -336,7 +336,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void mergeStatus(SVNEntryReference reference, SVNRevisionRange []revisions, String path, int depth, boolean ignoreAncestry, ISVNEntryStatusCallback cb, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void mergeStatus(SVNEntryReference reference, SVNRevisionRange []revisions, String path, int depth, boolean ignoreAncestry, ISVNEntryStatusCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.mergeStatus(reference, revisions, path, depth, ignoreAncestry, cb, monitor);
@@ -346,7 +346,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void mkdir(String []path, String message, boolean makeParents, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void mkdir(String []path, String message, boolean makeParents, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.mkdir(path, message, makeParents, monitor);
@@ -356,7 +356,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void move(String srcPath, String dstPath, boolean force, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void move(String srcPath, String dstPath, boolean force, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.move(srcPath, dstPath, force, monitor);
@@ -366,7 +366,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void move(String []srcPath, String dstPath, String message, boolean force, boolean moveAsChild, boolean makeParents, boolean withMergeHistory, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void move(String []srcPath, String dstPath, String message, boolean force, boolean moveAsChild, boolean makeParents, boolean withMergeHistory, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.move(srcPath, dstPath, message, force, moveAsChild, makeParents, withMergeHistory, monitor);
@@ -396,7 +396,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public SVNProperty propertyGet(SVNEntryRevisionReference reference, String name, ISVNProgressMonitor monitor) throws SVNClientException {
+	public SVNProperty propertyGet(SVNEntryRevisionReference reference, String name, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			return this.client.propertyGet(reference, name, monitor);
@@ -406,7 +406,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void propertyRemove(String path, String name, int depth, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void propertyRemove(String path, String name, int depth, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.propertyRemove(path, name, depth, monitor);
@@ -416,7 +416,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void propertySet(String path, String name, byte []value, int depth, boolean force, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void propertySet(String path, String name, byte []value, int depth, boolean force, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.propertySet(path, name, value, depth, force, monitor);
@@ -426,7 +426,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void propertySet(String path, String name, String value, int depth, boolean force, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void propertySet(String path, String name, String value, int depth, boolean force, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.propertySet(path, name, value, depth, force, monitor);
@@ -436,7 +436,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void relocate(String from, String to, String path, int depth, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void relocate(String from, String to, String path, int depth, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.relocate(from, to, path, depth, monitor);
@@ -446,7 +446,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void remove(String []path, String message, boolean force, boolean keepLocal, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void remove(String []path, String message, boolean force, boolean keepLocal, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.remove(path, message, force, keepLocal, monitor);
@@ -456,7 +456,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void resolved(String path, int depth, int conflictResult, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void resolved(String path, int depth, int conflictResult, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.resolved(path, depth, conflictResult, monitor);
@@ -466,7 +466,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void revert(String path, int depth, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void revert(String path, int depth, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.revert(path, depth, monitor);
@@ -576,7 +576,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void status(String path, int depth, boolean onServer, boolean getAll, boolean noIgnore, boolean ignoreExternals, ISVNEntryStatusCallback callback, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void status(String path, int depth, boolean onServer, boolean getAll, boolean noIgnore, boolean ignoreExternals, ISVNEntryStatusCallback callback, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.status(path, depth, onServer, getAll, noIgnore, ignoreExternals, callback, monitor);
@@ -586,7 +586,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void streamFileContent(SVNEntryRevisionReference reference, int bufferSize, OutputStream stream, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void streamFileContent(SVNEntryRevisionReference reference, int bufferSize, OutputStream stream, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.streamFileContent(reference, bufferSize, stream, monitor);
@@ -596,7 +596,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void unlock(String[] path, boolean force, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void unlock(String[] path, boolean force, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.unlock(path, force, monitor);
@@ -606,7 +606,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public long []update(String []path, SVNRevision revision, int depth, boolean ignoreExternals, boolean allowUnverObstructions, ISVNProgressMonitor monitor) throws SVNClientException {
+	public long []update(String []path, SVNRevision revision, int depth, boolean ignoreExternals, boolean allowUnverObstructions, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			return this.client.update(path, revision, depth, ignoreExternals, allowUnverObstructions, monitor);
@@ -626,7 +626,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void addToChangelist(String[] paths, String changelist, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void addToChangelist(String[] paths, String changelist, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.addToChangelist(paths, changelist, monitor);
@@ -636,7 +636,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public SVNRevisionRange[] getAvailableMerges(SVNEntryReference reference, String mergeSource, ISVNProgressMonitor monitor) throws SVNClientException {
+	public SVNRevisionRange[] getAvailableMerges(SVNEntryReference reference, String mergeSource, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			return this.client.getAvailableMerges(reference, mergeSource, monitor);
@@ -646,7 +646,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public String[] getChangelist(String changelist, String rootPath, ISVNProgressMonitor monitor) throws SVNClientException {
+	public String[] getChangelist(String changelist, String rootPath, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			return this.client.getChangelist(changelist, rootPath, monitor);
@@ -656,7 +656,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public SVNMergeInfo getMergeInfo(SVNEntryReference reference, ISVNProgressMonitor monitor) throws SVNClientException {
+	public SVNMergeInfo getMergeInfo(SVNEntryReference reference, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			return this.client.getMergeInfo(reference, monitor);
@@ -666,7 +666,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void info(SVNEntryRevisionReference reference, int depth, ISVNEntryInfoCallback cb, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void info(SVNEntryRevisionReference reference, int depth, ISVNEntryInfoCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.info(reference, depth, cb, monitor);
@@ -676,7 +676,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void properties(SVNEntryRevisionReference reference, int depth, ISVNPropertyCallback callback, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void properties(SVNEntryRevisionReference reference, int depth, ISVNPropertyCallback callback, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.properties(reference, depth, callback, monitor);
@@ -686,7 +686,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void removeFromChangelist(String[] paths, String changelist, ISVNProgressMonitor monitor) throws SVNClientException {
+	public void removeFromChangelist(String[] paths, String changelist, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.removeFromChangelist(paths, changelist, monitor);
@@ -696,7 +696,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public void setConfigDirectory(String configDir) throws SVNClientException {
+	public void setConfigDirectory(String configDir) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.client.setConfigDirectory(configDir);
@@ -716,7 +716,7 @@ public class ThreadNameModifier implements ISVNClient {
 		}
 	}
 
-	public String[] suggestMergeSources(SVNEntryReference reference, ISVNProgressMonitor monitor) throws SVNClientException {
+	public String[] suggestMergeSources(SVNEntryReference reference, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			return this.client.suggestMergeSources(reference, monitor);

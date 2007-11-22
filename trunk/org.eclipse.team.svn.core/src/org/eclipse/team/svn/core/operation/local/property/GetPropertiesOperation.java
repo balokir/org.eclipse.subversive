@@ -16,7 +16,7 @@ import java.text.MessageFormat;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.client.SVNProperty;
 import org.eclipse.team.svn.core.client.SVNRevision;
@@ -72,7 +72,7 @@ public class GetPropertiesOperation extends AbstractNonLockingOperation implemen
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		this.properties = null;
 		IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(this.resource);
-		ISVNClient proxy = location.acquireSVNProxy();
+		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
 //			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn proplist \"" + local.getWorkingCopyPath() + "\"\n");
 			this.properties = SVNUtility.properties(proxy, new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(this.resource), null, this.revision), new SVNProgressMonitor(this, monitor, null));

@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.core.client;
 
 /**
- * Basic SVN client wrapper exception
+ * SVN client wrapper unresolved conflict exception
  * 
  * The JavaHL API's is the only way to interact between SVN and Java-based tools. At the same time JavaHL client library
  * is not EPL compatible and we won't to pin plug-in with concrete client implementation. So, the only way to do this is
@@ -20,45 +20,23 @@ package org.eclipse.team.svn.core.client;
  * 
  * @author Alexander Gurov
  */
-public class SVNClientException extends Exception {
-	private static final long serialVersionUID = 6066882107735517763L;
+public class SVNConnectorUnresolvedConflictException extends SVNConnectorException {
+	private static final long serialVersionUID = 7591147418116040719L;
 
-	protected boolean runtime;
-
-	protected int errorId;
-
-	public SVNClientException() {
+	public SVNConnectorUnresolvedConflictException() {
 		super();
-		this.runtime = false;
 	}
 
-	public SVNClientException(String message) {
+	public SVNConnectorUnresolvedConflictException(String message) {
 		super(message);
-		this.runtime = false;
 	}
 
-	public SVNClientException(Throwable cause, boolean runtime) {
-		super(cause);
-		this.runtime = runtime;
+	public SVNConnectorUnresolvedConflictException(Throwable cause) {
+		super(cause, false);
 	}
 
-	public SVNClientException(String message, Throwable cause, boolean runtime) {
-		super(message, cause);
-		this.runtime = runtime;
-	}
-
-	public SVNClientException(String message, int errorId, Throwable cause, boolean runtime) {
-		super(message, cause);
-		this.runtime = runtime;
-		this.errorId = errorId;
-	}
-
-	public boolean isRuntime() {
-		return this.runtime;
-	}
-
-	public int getErrorId() {
-		return this.errorId;
+	public SVNConnectorUnresolvedConflictException(String message, Throwable cause) {
+		super(message, cause, false);
 	}
 
 }

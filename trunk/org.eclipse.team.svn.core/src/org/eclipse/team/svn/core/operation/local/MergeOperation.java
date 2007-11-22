@@ -18,7 +18,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.SVNEntryStatus;
 import org.eclipse.team.svn.core.client.SVNRevisionRange;
 import org.eclipse.team.svn.core.client.SVNNotification.NotifyStatus;
@@ -71,7 +71,7 @@ public class MergeOperation extends AbstractConflictDetectionOperation implement
 		
 		IRepositoryResource from = this.info.from[0];
 		IRepositoryLocation location = from.getRepositoryLocation();
-		ISVNClient proxy = location.acquireSVNProxy();
+		ISVNConnector proxy = location.acquireSVNProxy();
 		
 		try {
 			proxy.merge(SVNUtility.getEntryReference(from), new SVNRevisionRange [] {new SVNRevisionRange(this.info.start, from.getSelectedRevision())}, null, statuses, this.force, new ConflictDetectionProgressMonitor(this, monitor, null));

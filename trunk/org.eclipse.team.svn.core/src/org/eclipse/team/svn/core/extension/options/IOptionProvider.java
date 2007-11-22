@@ -15,7 +15,7 @@ import org.eclipse.core.resources.team.FileModificationValidator;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.client.ISVNCredentialsPrompt;
 import org.eclipse.team.svn.core.client.SVNProperty;
-import org.eclipse.team.svn.core.extension.factory.ISVNClientFactory;
+import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.utility.ILoggedOperationFactory;
 
@@ -46,8 +46,8 @@ public interface IOptionProvider {
 		public boolean isSVNCacheEnabled() {
 			return true;
 		}
-		public String getSVNClientId() {
-			return ISVNClientFactory.DEFAULT_ID;
+		public String getSVNConnectorId() {
+			return ISVNConnectorFactory.DEFAULT_ID;
 		}
 		public String getDefaultBranchesName() {
 			return "branches";
@@ -72,7 +72,7 @@ public interface IOptionProvider {
 	public ILoggedOperationFactory getLoggedOperationFactory();
 	public void addProjectSetCapabilityProcessing(CompositeOperation op);
 	public boolean isAutomaticProjectShareEnabled();
-	public String getSVNClientId();
+	public String getSVNConnectorId();
 	public SVNProperty[] getAutomaticProperties(String template);
 	
 	public boolean isSVNCacheEnabled();

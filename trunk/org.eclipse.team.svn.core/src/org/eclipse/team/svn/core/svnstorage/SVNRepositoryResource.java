@@ -13,9 +13,9 @@ package org.eclipse.team.svn.core.svnstorage;
 
 import java.io.Serializable;
 
-import org.eclipse.team.svn.core.client.ISVNClient;
-import org.eclipse.team.svn.core.client.SVNClientCancelException;
-import org.eclipse.team.svn.core.client.SVNClientException;
+import org.eclipse.team.svn.core.client.ISVNConnector;
+import org.eclipse.team.svn.core.client.SVNConnectorCancelException;
+import org.eclipse.team.svn.core.client.SVNConnectorException;
 import org.eclipse.team.svn.core.client.SVNRevision;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
@@ -88,10 +88,10 @@ public abstract class SVNRepositoryResource extends SVNRepositoryBase implements
 		this.lastRevision = SVNRevision.fromNumber(revisionNumber);
 	}
 	
-	public synchronized long getRevision() throws SVNClientException {
+	public synchronized long getRevision() throws SVNConnectorException {
 		if (this.lastRevision == null) {
 			this.lastRevision = SVNRevision.INVALID_REVISION;
-			ISVNClient proxy = this.getRepositoryLocation().acquireSVNProxy();
+			ISVNConnector proxy = this.getRepositoryLocation().acquireSVNProxy();
 			try {
 				this.getRevisionImpl(proxy);
 			}
@@ -102,11 +102,11 @@ public abstract class SVNRepositoryResource extends SVNRepositoryBase implements
 		return this.lastRevision.getNumber();
 	}
 	
-	public boolean exists() throws SVNClientException {
+	public boolean exists() throws SVNConnectorException {
 		try {
 			return this.getRevision() != SVNRevision.INVALID_REVISION_NUMBER;
 		}
-		catch (SVNClientException ex) {
+		catch (SVNConnectorException ex) {
 			//FIXME uncomment this when the WI is resolved ("Unknown node kind" exception instead of "Path not found" (PLC-1008)) 
 //			if (ex instanceof ClientExceptionEx) {
 //				if (((ClientExceptionEx)ex).getErrorMessage().getErrorCode().equals(SVNErrorCode.RA_DAV_PATH_NOT_FOUND)) {
@@ -114,7 +114,7 @@ public abstract class SVNRepositoryResource extends SVNRepositoryBase implements
 //				}
 //			}
 //			throw ex;
-			if (ex instanceof SVNClientCancelException) {
+			if (ex instanceof SVNConnectorCancelException) {
 				throw ex;
 			}
 			return false;
@@ -177,6 +177,6 @@ public abstract class SVNRepositoryResource extends SVNRepositoryBase implements
 		return retVal;
 	}
 	
-	protected abstract void getRevisionImpl(ISVNClient proxy) throws SVNClientException;
+	protected abstract void getRevisionImpl(ISVNConnector proxy) throws SVNConnectorException;
 	
 }

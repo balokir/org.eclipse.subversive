@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.client.SVNProperty;
 import org.eclipse.team.svn.core.client.SVNProperty.BuiltIn;
@@ -75,7 +75,7 @@ public class GetRemoteFolderChildrenOperation extends AbstractNonLockingOperatio
 		Information info = this.parent.getInfo();
 		if (info != null && info.hasProperties && SVNTeamPreferences.getRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.REPOSITORY_SHOW_EXTERNALS_NAME)) {
 			IRepositoryLocation location = this.parent.getRepositoryLocation();
-			ISVNClient proxy = location.acquireSVNProxy();
+			ISVNConnector proxy = location.acquireSVNProxy();
 			try {
 				SVNProperty data = proxy.propertyGet(SVNUtility.getEntryRevisionReference(this.parent), BuiltIn.EXTERNALS, new SVNProgressMonitor(this, monitor, null));
 				if (data != null) {

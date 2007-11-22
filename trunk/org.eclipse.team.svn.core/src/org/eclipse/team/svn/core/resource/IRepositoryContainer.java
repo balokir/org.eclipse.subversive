@@ -11,7 +11,7 @@
 
 package org.eclipse.team.svn.core.resource;
 
-import org.eclipse.team.svn.core.client.SVNClientException;
+import org.eclipse.team.svn.core.client.SVNConnectorException;
 
 
 /**
@@ -23,6 +23,6 @@ public interface IRepositoryContainer extends IRepositoryResource {
 
 	public boolean isChildrenCached();
 	
-	public IRepositoryResource []getChildren() throws SVNClientException;
+	public IRepositoryResource []getChildren() throws SVNConnectorException;
 
 }

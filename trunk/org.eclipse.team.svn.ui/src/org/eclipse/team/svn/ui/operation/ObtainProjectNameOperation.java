@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.team.svn.core.client.SVNClientException;
+import org.eclipse.team.svn.core.client.SVNConnectorException;
 import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.remote.GetFileContentOperation;
@@ -76,7 +76,7 @@ public class ObtainProjectNameOperation extends AbstractNonLockingOperation {
 					try {
 						name = doObtainFromDotProject ? ObtainProjectNameOperation.this.obtainProjectName(ObtainProjectNameOperation.this.resources[j], monitor) : null;
 					}
-					catch (SVNClientException ex) {
+					catch (SVNConnectorException ex) {
 						// do nothing
 					}
 					if (name == null) {

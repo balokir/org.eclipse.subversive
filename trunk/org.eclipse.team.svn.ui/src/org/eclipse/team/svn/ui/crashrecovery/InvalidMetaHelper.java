@@ -17,13 +17,13 @@ import java.util.Iterator;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.SVNEntryStatus;
-import org.eclipse.team.svn.core.client.ISVNClient.Depth;
+import org.eclipse.team.svn.core.client.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.crashrecovery.ErrorDescription;
 import org.eclipse.team.svn.core.extension.crashrecovery.IResolutionHelper;
-import org.eclipse.team.svn.core.extension.factory.ISVNClientFactory;
+import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.crashrecovery.invalidmeta.ValidClientsSelectionPanel;
@@ -44,7 +44,7 @@ public class InvalidMetaHelper implements IResolutionHelper {
 			if (location == null || !location.append(SVNUtility.getSVNFolderName()).toFile().exists()) {
 				return false;
 			}
-			ISVNClientFactory current = CoreExtensionsManager.instance().getSVNClientWrapperFactory();
+			ISVNConnectorFactory current = CoreExtensionsManager.instance().getSVNConnectorFactory();
 			String path = location.toString();
 			// check if already handled for any other project
 			if (this.isValid(current, path)) {
@@ -53,7 +53,7 @@ public class InvalidMetaHelper implements IResolutionHelper {
 			Collection clients = CoreExtensionsManager.instance().getAccessibleClients();
 			final ArrayList valid = new ArrayList();
 			for (Iterator it = clients.iterator(); it.hasNext(); ) {
-				ISVNClientFactory factory = (ISVNClientFactory)it.next();
+				ISVNConnectorFactory factory = (ISVNConnectorFactory)it.next();
 				if (this.isValid(factory, path)) {
 					valid.add(factory);
 				}
@@ -75,9 +75,9 @@ public class InvalidMetaHelper implements IResolutionHelper {
 		return false;
 	}
 
-	protected boolean isValid(ISVNClientFactory factory, String path) {
+	protected boolean isValid(ISVNConnectorFactory factory, String path) {
 		try {
-			ISVNClient proxy = factory.newInstance();
+			ISVNConnector proxy = factory.newInstance();
 			try {
 				SVNEntryStatus []st = SVNUtility.status(proxy, path, Depth.IMMEDIATES, false, true, false, false, new SVNNullProgressMonitor());
 				return st != null && st.length > 0;

@@ -19,7 +19,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.client.ISVNClient;
+import org.eclipse.team.svn.core.client.ISVNConnector;
 import org.eclipse.team.svn.core.client.ISVNNotificationCallback;
 import org.eclipse.team.svn.core.client.SVNNotification;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
@@ -66,7 +66,7 @@ public class DeleteResourcesOperation extends AbstractRepositoryOperation implem
 				}
 			});
 			
-			final ISVNClient proxy = location.acquireSVNProxy();
+			final ISVNConnector proxy = location.acquireSVNProxy();
 			ISVNNotificationCallback notify = new ISVNNotificationCallback() {
 				public void notify(SVNNotification info) {
 					DeleteResourcesOperation.this.revisionsPairs.add(new RevisionPair(info.revision, paths, location));
