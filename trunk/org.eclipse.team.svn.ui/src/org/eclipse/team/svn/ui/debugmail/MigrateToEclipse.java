@@ -22,6 +22,7 @@ import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
@@ -158,16 +159,25 @@ main:
 		}
 	
 		protected void runImpl(IProgressMonitor monitor) throws Exception {
-			InstanceScope ctx = new InstanceScope();
-			IEclipsePreferences prefs = ctx.getNode(MigrateToEclipse.OLD_PREFERENCES_LOCATION);
-			ByteArrayOutputStream output = new ByteArrayOutputStream();
-			Platform.getPreferencesService().exportPreferences(prefs, output, null);
-			
-			byte []data = output.toByteArray();
-			int dataLen = MigrateToEclipse.replaceBinaryEntries(data, data.length, MigrateToEclipse.OLD_ENTRY1, MigrateToEclipse.NEW_ENTRY1, false);
-			
-			ByteArrayInputStream input = new ByteArrayInputStream(data, 0, dataLen);
-			try {Platform.getPreferencesService().importPreferences(input);} catch (Exception ex) {}
+			UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+				public void run() {
+					InstanceScope ctx = new InstanceScope();
+					IEclipsePreferences prefs = ctx.getNode(MigrateToEclipse.OLD_PREFERENCES_LOCATION);
+					ByteArrayOutputStream output = new ByteArrayOutputStream();
+					try {
+						Platform.getPreferencesService().exportPreferences(prefs, output, null);
+					}
+					catch (CoreException ex) {
+						return;
+					}
+					
+					byte []data = output.toByteArray();
+					int dataLen = MigrateToEclipse.replaceBinaryEntries(data, data.length, MigrateToEclipse.OLD_ENTRY1, MigrateToEclipse.NEW_ENTRY1, false);
+					
+					ByteArrayInputStream input = new ByteArrayInputStream(data, 0, dataLen);
+					try {Platform.getPreferencesService().importPreferences(input);} catch (Exception ex) {}
+				}
+			});
 		}
 		
 	}

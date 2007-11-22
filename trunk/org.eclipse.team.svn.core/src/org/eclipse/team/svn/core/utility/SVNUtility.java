@@ -287,7 +287,7 @@ public final class SVNUtility {
 		IRepositoryLocation []locations = storage.getRepositoryLocations();
 		ArrayList roots = new ArrayList();
 		for (int i = 0; i < locations.length; i++) {
-			if (new Path(locations[i].getUrl()).isPrefixOf(url) && // performance optimization: repository root URL detection [if is not cached] requires interaction with a remote host
+			if (new Path(locations[i].getUrl()).isPrefixOf(url) || // performance optimization: repository root URL detection [if is not cached] requires interaction with a remote host
 				new Path(locations[i].getRepositoryRootUrl()).isPrefixOf(url)) {
 				SVNUtility.addRepositoryRoot(roots, (IRepositoryRoot)locations[i].asRepositoryContainer(resourceUrl, false).getRoot(), longestOnly);
 			}
