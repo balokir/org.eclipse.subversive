@@ -90,7 +90,7 @@ public class CompositeOperation extends AbstractActionOperation implements ICons
 			if (!errorFound) {
 				ProgressMonitorUtility.doTask(pair.operation, monitor, this.operations.size());
 				this.reportStatus(pair.operation.getStatus());
-				ProgressMonitorUtility.progress(monitor, j++, this.operations.size());
+				ProgressMonitorUtility.progress(monitor, ++j, this.operations.size());
 			}
 		}
 	}
