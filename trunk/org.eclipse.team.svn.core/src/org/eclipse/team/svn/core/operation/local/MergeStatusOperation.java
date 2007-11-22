@@ -12,6 +12,8 @@
 package org.eclipse.team.svn.core.operation.local;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -34,9 +36,10 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class MergeStatusOperation extends AbstractWorkingCopyOperation implements IRemoteStatusOperation {
 	protected MergeSet info;
+	protected SVNEntryStatus []retVal;
 	
-	public MergeStatusOperation(MergeSet info) {
-		super("Operation.MergeStatus", info.to);
+	public MergeStatusOperation(MergeSet info, IResource []resources) {
+		super("Operation.MergeStatus", resources == null ? info.to : resources);
 		this.info = info;
 	}
 	
@@ -45,35 +48,37 @@ public class MergeStatusOperation extends AbstractWorkingCopyOperation implement
 	}
 
     protected void runImpl(IProgressMonitor monitor) throws Exception {
-		this.info.setStatuses(new SVNEntryStatus[0]);
-		
 		final ArrayList st = new ArrayList();
 		
+		HashSet resources = new HashSet(Arrays.asList(this.operableData()));
+		
 		for (int i = 0; i < this.info.to.length && !monitor.isCanceled(); i++) {
-			final IRepositoryResource from = this.info.from[i];
-			final ISVNClient proxy = from.getRepositoryLocation().acquireSVNProxy();
-			final String wcPath = FileUtility.getWorkingCopyPath(this.info.to[i]);
-			
-			this.protectStep(new IUnprotectedOperation() {
-				public void run(IProgressMonitor monitor) throws Exception {
-					proxy.mergeStatus(SVNUtility.getEntryReference(from), new SVNRevisionRange [] {new SVNRevisionRange(MergeStatusOperation.this.info.start, from.getSelectedRevision())}, 
-					    	wcPath, 
-							Depth.INFINITY, false, new ISVNEntryStatusCallback() {
-								public void next(SVNEntryStatus status) {
-									st.add(status);
-								}
-							}, 
-							new SVNProgressMonitor(MergeStatusOperation.this, monitor, null));
-				}
-			}, monitor, this.info.to.length);
-			
-			from.getRepositoryLocation().releaseSVNProxy(proxy);
+			if (resources.contains(this.info.to[i])) {
+				final IRepositoryResource from = this.info.from[i];
+				final ISVNClient proxy = from.getRepositoryLocation().acquireSVNProxy();
+				final String wcPath = FileUtility.getWorkingCopyPath(this.info.to[i]);
+				
+				this.protectStep(new IUnprotectedOperation() {
+					public void run(IProgressMonitor monitor) throws Exception {
+						proxy.mergeStatus(SVNUtility.getEntryReference(from), new SVNRevisionRange [] {new SVNRevisionRange(MergeStatusOperation.this.info.start, from.getSelectedRevision())}, 
+						    	wcPath, 
+								Depth.INFINITY, false, new ISVNEntryStatusCallback() {
+									public void next(SVNEntryStatus status) {
+										st.add(status);
+									}
+								}, 
+								new SVNProgressMonitor(MergeStatusOperation.this, monitor, null));
+					}
+				}, monitor, this.info.to.length);
+				
+				from.getRepositoryLocation().releaseSVNProxy(proxy);
+			}
 		}
-		this.info.setStatuses((SVNEntryStatus [])st.toArray(new SVNEntryStatus[st.size()]));
+		this.info.addStatuses(retVal = (SVNEntryStatus [])st.toArray(new SVNEntryStatus[st.size()]));
     }
 
 	public SVNEntryStatus []getStatuses() {
-		return this.info.getStatuses();
+		return retVal;
 	}
 
     public void setPegRevision(IResourceChange change) {

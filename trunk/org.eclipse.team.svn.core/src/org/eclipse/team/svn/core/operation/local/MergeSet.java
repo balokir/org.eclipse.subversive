@@ -11,6 +11,9 @@
 
 package org.eclipse.team.svn.core.operation.local;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.svn.core.client.SVNEntryStatus;
 import org.eclipse.team.svn.core.client.SVNRevision;
@@ -26,20 +29,28 @@ public class MergeSet {
     public final IRepositoryResource []from;
     public final SVNRevision start;
     
-    protected SVNEntryStatus []statuses;
+    protected ArrayList statuses;
     
     public MergeSet(IResource []to, IRepositoryResource []from, SVNRevision start) {
     	this.to = to;
     	this.from = from;
     	this.start = start;
+    	this.statuses = new ArrayList();
     }
 
 	public SVNEntryStatus []getStatuses() {
-		return this.statuses;
+		return (SVNEntryStatus [])this.statuses.toArray(new SVNEntryStatus[this.statuses.size()]);
 	}
 
 	public void setStatuses(SVNEntryStatus []statuses) {
-		this.statuses = statuses;
+		this.statuses.clear();
+		this.addStatuses(statuses);
+	}
+    
+	public void addStatuses(SVNEntryStatus []statuses) {
+		if (statuses != null) {
+			this.statuses.addAll(Arrays.asList(statuses));
+		}
 	}
     
 }
