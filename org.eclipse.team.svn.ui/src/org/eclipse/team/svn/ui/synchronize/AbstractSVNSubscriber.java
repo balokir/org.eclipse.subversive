@@ -232,7 +232,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 					}
 				}
 			}, new IActionOperation[] {rStatusOp});
-			UIMonitorUtility.doTaskExternal(op, monitor, operationWrapperFactory);
+			ProgressMonitorUtility.doTaskExternal(op, monitor, operationWrapperFactory);
 		}
 		
 		return (IResource [])changes.toArray(new IResource[changes.size()]);
