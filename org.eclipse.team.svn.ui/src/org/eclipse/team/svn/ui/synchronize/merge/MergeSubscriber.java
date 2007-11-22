@@ -11,6 +11,8 @@
 
 package org.eclipse.team.svn.ui.synchronize.merge;
 
+import java.util.HashSet;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.client.SVNEntryStatus;
@@ -71,9 +73,16 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
     }
 
     protected IRemoteStatusOperation getStatusOperation(IResource[] resources, int depth) {
-        return this.mergeStatusOp = (this.scope == null ? null : new MergeStatusOperation(this.scope.getMergeSet()));
+        return this.mergeStatusOp = (this.scope == null ? null : new MergeStatusOperation(this.scope.getMergeSet(), resources));
     }
     
+	protected HashSet clearRemoteStatusesImpl(IResource []resources) {
+		if (this.scope != null) {
+			this.scope.getMergeSet().setStatuses(new SVNEntryStatus[0]);
+		}
+		return super.clearRemoteStatusesImpl(resources);
+	}
+	
 	protected IResourceChange handleResourceChange(IRemoteStorage storage, IRemoteStatusOperation rStatusOp, final SVNEntryStatus current) {
 		IChangeStateProvider provider = new IChangeStateProvider() {
 			public long getChangeDate() {

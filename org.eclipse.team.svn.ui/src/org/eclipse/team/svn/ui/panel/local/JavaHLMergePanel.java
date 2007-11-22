@@ -28,6 +28,7 @@ import org.eclipse.team.svn.core.client.SVNNotification.NotifyAction;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.JavaHLMergeOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.composite.RepositoryResourceSelectionComposite;
@@ -338,7 +339,7 @@ public class JavaHLMergePanel extends AbstractAdvancedDialogPanel {
 		IRepositoryResource []retVal = new IRepositoryResource[this.to.length];
 		String baseUrl = base.getUrl();
 		for (int i = 0; i < retVal.length; i++) {
-			String url = baseUrl + "/" + this.to[i].getName();
+			String url = baseUrl + "/" + SVNRemoteStorage.instance().asRepositoryResource(this.to[i]).getName();
 			retVal[i] = this.to[i].getType() == IResource.FILE ? (IRepositoryResource)base.asRepositoryFile(url, false) : base.asRepositoryContainer(url, false);
 		}
 		return retVal;

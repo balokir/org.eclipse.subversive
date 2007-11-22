@@ -16,6 +16,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.composite.RepositoryResourceSelectionComposite;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 
@@ -63,7 +64,7 @@ public abstract class AbstractRepositoryResourceSelectionPanel extends AbstractD
 		IRepositoryResource []retVal = new IRepositoryResource[to.length];
 		String baseUrl = base.getUrl();
 		for (int i = 0; i < retVal.length; i++) {
-			String url = baseUrl + "/" + to[i].getName();
+			String url = baseUrl + "/" + SVNRemoteStorage.instance().asRepositoryResource(to[i]).getName();
 			retVal[i] = to[i].getType() == IResource.FILE ? (IRepositoryResource)base.asRepositoryFile(url, false) : base.asRepositoryContainer(url, false);
 		}
 		return retVal;
