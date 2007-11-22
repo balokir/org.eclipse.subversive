@@ -22,7 +22,7 @@ import org.eclipse.team.svn.core.connector.SVNNotification.NotifyStatus;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 
 /**
- * Default implementation of the org.tmatesoft.svn.core.client.IProgressMonitor
+ * Default progress monitor implementation
  * 
  * @author Alexander Gurov
  */

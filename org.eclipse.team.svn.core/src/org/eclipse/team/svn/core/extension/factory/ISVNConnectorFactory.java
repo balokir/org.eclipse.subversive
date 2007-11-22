@@ -25,35 +25,35 @@ public interface ISVNConnectorFactory {
 	public static final String CURRENT_COMPATIBILITY_VERSION = "0.7.0";
 	
 	/**
-	 * Enumeration of client API compatibility levels
+	 * Enumeration of connector API compatibility levels
 	 */
 	public static class APICompatibility {
 		/**
-		 * Compatibility level for the client library is not specified
+		 * Compatibility level for the connector library is not specified
 		 */
 		public static final int SVNAPI_NOT_SPECIFIED = -1;
 		/**
-		 * SVN 1.0 compatible API is supported by the client
+		 * SVN 1.0 compatible API is supported by the connector
 		 */
 		public static final int SVNAPI_1_0_x = 0;
 		/**
-		 * SVN 1.1 compatible API is supported by the client
+		 * SVN 1.1 compatible API is supported by the connector
 		 */
 		public static final int SVNAPI_1_1_x = 1;
 		/**
-		 * SVN 1.2 compatible API is supported by the client
+		 * SVN 1.2 compatible API is supported by the connector
 		 */
 		public static final int SVNAPI_1_2_x = 2;
 		/**
-		 * SVN 1.3 compatible API is supported by the client
+		 * SVN 1.3 compatible API is supported by the connector
 		 */
 		public static final int SVNAPI_1_3_x = 3;
 		/**
-		 * SVN 1.4 compatible API is supported by the client
+		 * SVN 1.4 compatible API is supported by the connector
 		 */
 		public static final int SVNAPI_1_4_x = 4;
 		/**
-		 * SVN 1.5 compatible API is supported by the client
+		 * SVN 1.5 compatible API is supported by the connector
 		 */
 		public static final int SVNAPI_1_5_x = 5;
 	}
@@ -71,23 +71,23 @@ public interface ISVNConnectorFactory {
 		 */
 		public static final int ALL_OPTIONAL_FEATURES = ~NO_OPTIONAL_FEATURES;
 		/**
-		 * Direct SSH settings specification is supported by client
+		 * Direct SSH settings specification is supported by connector
 		 */
 		public static final int SSH_SETTINGS = 0x01;
 		/**
-		 * Direct PROXY settings specification is supported by client
+		 * Direct PROXY settings specification is supported by connector
 		 */
 		public static final int PROXY_SETTINGS = 0x02;
 		/**
-		 * Atomic cross-working copy commit is supported by client 
+		 * Atomic cross-working copy commit is supported by connector 
 		 */
 		public static final int ATOMIC_X_COMMIT = 0x04;
 		/**
-		 * Compare repository folders is supported by client 
+		 * Compare repository folders is supported by connector 
 		 */
 		public static final int COMPARE_FOLDERS = 0x08;
 		/**
-		 * Only revision change reporting is supported by client (makes sense for folders and synchronize view)
+		 * Only revision change reporting is supported by connector (makes sense for folders and synchronize view)
 		 */
 		public static final int REPORT_REVISION_CHANGE = 0x10;
 	}
@@ -150,7 +150,7 @@ public interface ISVNConnectorFactory {
 	
 	/**
 	 * Returns SVN Client library version
-	 * @return client version
+	 * @return connector version
 	 */
 	public String getClientVersion();
 	

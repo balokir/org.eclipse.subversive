@@ -226,7 +226,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		
 		this.caseInsensitiveSorting = SVNTeamPreferences.getTableSortingBoolean(store, SVNTeamPreferences.TABLE_SORTING_CASE_INSENSITIVE_NAME);
 		
-		//Client specified in preferences currently may be uninstalled. So, request real used client instead of saved.
+		//Client specified in preferences currently may be uninstalled. So, request real used connector instead of saved.
 		this.svnConnector = CoreExtensionsManager.instance().getSVNConnectorFactory().getId();
 	}
 	
