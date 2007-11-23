@@ -5,7 +5,7 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 0.7.0.v20071123 release date: 22 November 2007
+Version 0.7.0.v20071123 release date: 23 November 2007
 
 1. What's New
 
