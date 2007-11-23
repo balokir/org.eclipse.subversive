@@ -26,7 +26,7 @@ public interface IRemoteStorage extends ISVNStorage {
 	public void removeResourceStatesListener(Class eventClass, IResourceStatesListener listener);
     public void fireResourceStatesChangedEvent(ResourceStatesChangedEvent event);
 	
-	public IResourceChange asResourceChange(IChangeStateProvider changeState);
+	public IResourceChange asResourceChange(IChangeStateProvider changeState, boolean update);
 	public ILocalResource asLocalResource(IResource resource);
 	public ILocalResource asLocalResourceDirty(IResource resource);
 	public void refreshLocalResources(IResource []resources, int depth);

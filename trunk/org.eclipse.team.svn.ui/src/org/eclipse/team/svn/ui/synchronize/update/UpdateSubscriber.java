@@ -25,10 +25,10 @@ import org.eclipse.team.svn.core.operation.local.IRemoteStatusOperation;
 import org.eclipse.team.svn.core.operation.local.RemoteStatusOperation;
 import org.eclipse.team.svn.core.resource.IChangeStateProvider;
 import org.eclipse.team.svn.core.resource.ILocalResource;
-import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.svnstorage.CommentProvider;
+import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.synchronize.AbstractSVNSubscriber;
@@ -55,11 +55,11 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
         return new RemoteStatusOperation(resources);
     }
 
-    protected SyncInfo getSVNSyncInfo(IRemoteStorage storage, ILocalResource localStatus, IResourceChange remoteStatus) {
+    protected SyncInfo getSVNSyncInfo(ILocalResource localStatus, IResourceChange remoteStatus) {
         return new UpdateSyncInfo(localStatus, remoteStatus, this.getResourceComparator());
     }
 
-	protected IResourceChange handleResourceChange(IRemoteStorage storage, IRemoteStatusOperation rStatusOp, final SVNEntryStatus current) {
+	protected IResourceChange handleResourceChange(IRemoteStatusOperation rStatusOp, final SVNEntryStatus current) {
 		if (current.textStatus == Kind.EXTERNAL) {
 			return null;
 		}
@@ -104,12 +104,12 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 		if (provider.getNodeKind() == NodeKind.NONE) {
 			return null;
 		}
-		IResourceChange resourceChange = storage.asResourceChange(provider);
+		IResourceChange resourceChange = SVNRemoteStorage.instance().asResourceChange(provider, true);
 		if (resourceChange == null || resourceChange.getRevision() == SVNRevision.INVALID_REVISION_NUMBER) {
 			return null;
 		}
 		rStatusOp.setPegRevision(resourceChange);
-		IRepositoryResource originator = storage.asRepositoryResource(resourceChange.getResource());
+		IRepositoryResource originator = SVNRemoteStorage.instance().asRepositoryResource(resourceChange.getResource());
 		if (originator != null) {
 			originator.setSelectedRevision(SVNRevision.fromNumber(resourceChange.getRevision()));
 			originator.setPegRevision(resourceChange.getPegRevision());
