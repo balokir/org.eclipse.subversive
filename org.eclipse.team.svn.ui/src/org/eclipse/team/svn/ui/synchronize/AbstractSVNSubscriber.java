@@ -42,7 +42,6 @@ import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.operation.local.IRemoteStatusOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
-import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.resource.events.IResourceStatesListener;
 import org.eclipse.team.svn.core.resource.events.ResourceStatesChangedEvent;
@@ -114,12 +113,11 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 		if (!this.isSupervised(resource)) {
 			return null;
 		}
-		IRemoteStorage storage = SVNRemoteStorage.instance();
-		IResourceChange remoteStatus = storage.resourceChangeFromBytes(this.statusCache.getBytes(resource));
+		IResourceChange remoteStatus = SVNRemoteStorage.instance().resourceChangeFromBytes(this.statusCache.getBytes(resource));
     	// incoming additions shouldn't call WC access
-		ILocalResource localStatus = storage.asLocalResourceDirty(resource);
+		ILocalResource localStatus = SVNRemoteStorage.instance().asLocalResourceDirty(resource);
 		if (localStatus != null || remoteStatus != null) {
-			SyncInfo info = this.getSVNSyncInfo(storage, localStatus, remoteStatus);
+			SyncInfo info = this.getSVNSyncInfo(localStatus, remoteStatus);
 			if (info != null) {
 				info.init();
 				if (info.getKind() != SyncInfo.IN_SYNC) {
@@ -220,7 +218,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 					if (statuses != null) {
 						for (int i = 0; i < statuses.length && !monitor.isCanceled(); i++) {
 							if (statuses[i].repositoryPropStatus == SVNEntryStatus.Kind.MODIFIED || statuses[i].repositoryTextStatus != SVNEntryStatus.Kind.NONE) {
-								IResourceChange resourceChange = AbstractSVNSubscriber.this.handleResourceChange(SVNRemoteStorage.instance(), rStatusOp, statuses[i]);
+								IResourceChange resourceChange = AbstractSVNSubscriber.this.handleResourceChange(rStatusOp, statuses[i]);
 								if (resourceChange != null) {
 									ProgressMonitorUtility.setTaskInfo(monitor, this, resourceChange.getResource().getFullPath().toString());
 									ProgressMonitorUtility.progress(monitor, i, statuses.length);
@@ -238,8 +236,8 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 		return (IResource [])changes.toArray(new IResource[changes.size()]);
 	}
 	
-	protected abstract IResourceChange handleResourceChange(IRemoteStorage storage, IRemoteStatusOperation rStatusOp, final SVNEntryStatus current);
-    protected abstract SyncInfo getSVNSyncInfo(IRemoteStorage storage, ILocalResource localStatus, IResourceChange remoteStatus);
+	protected abstract IResourceChange handleResourceChange(IRemoteStatusOperation rStatusOp, final SVNEntryStatus current);
+    protected abstract SyncInfo getSVNSyncInfo(ILocalResource localStatus, IResourceChange remoteStatus);
     protected abstract IRemoteStatusOperation getStatusOperation(IResource []resources, int depth);
 
     public class UpdateStatusOperation extends AbstractNonLockingOperation {

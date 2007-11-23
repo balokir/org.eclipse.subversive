@@ -132,7 +132,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		this.initializeImpl(stateInfoLocation, SVNRemoteStorage.STATE_INFO_FILE_NAME);
 	}
 	
-	public IResourceChange asResourceChange(IChangeStateProvider changeState) {
+	public IResourceChange asResourceChange(IChangeStateProvider changeState, boolean update) {
 		IResource resource = null;
 	    IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IPath location = new Path(changeState.getLocalPath());
@@ -145,7 +145,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		long revision = remoteRevision != null ? remoteRevision.getNumber() : SVNRevision.INVALID_REVISION_NUMBER;
 		// repositoryTextStatus can be StatusKind::none in two cases: resource not modified and non versioned
 		// in the second case we should ignore repository status calculation
-		String statusStr = revision == SVNRevision.INVALID_REVISION_NUMBER ? IStateFilter.ST_NOTEXISTS : this.getStatusString(propKind, textKind, true);
+		String statusStr = revision == SVNRevision.INVALID_REVISION_NUMBER ? IStateFilter.ST_NOTEXISTS : this.getStatusString(propKind, textKind, update);
 		if (nodeKind == NodeKind.DIR) {
 		    if ((resource = changeState.getExact(root.findContainersForLocation(location))) == null) {
 		    	return null;

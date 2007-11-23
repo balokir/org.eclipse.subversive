@@ -44,7 +44,10 @@ public class ShowMergeViewOperation extends AbstractNonLockingOperation {
     }
 
     protected void runImpl(IProgressMonitor monitor) throws Exception {
-		MergeParticipant participant = (MergeParticipant)SubscriberParticipant.getMatchingParticipant(MergeParticipant.PARTICIPANT_ID, this.locals);
+    	//SubscriberParticipant.getMatchingParticipant silently changes resources order. So, make a copy...
+    	IResource []copy = new IResource[this.locals.length];
+    	System.arraycopy(this.locals, 0, copy, 0, this.locals.length);
+		MergeParticipant participant = (MergeParticipant)SubscriberParticipant.getMatchingParticipant(MergeParticipant.PARTICIPANT_ID, copy);
 		if (participant == null) {
 			participant = new MergeParticipant(new MergeScope(new MergeSet(this.locals, this.remoteResources, this.startRevision)));
 			TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[] {participant});

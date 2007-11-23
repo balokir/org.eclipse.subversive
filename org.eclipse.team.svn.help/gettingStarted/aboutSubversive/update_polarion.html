@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
 <head>
-	<title>Subversive installation instructions</title>
+	<title>Subversive update instructions</title>
 	<meta name="copyright"  content="Copyright (c) 2005-2007 Polarion Software. All rights reserved. This page is provided under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/epl-v10.html Contributors: Alexander Gurov."/>
 	<LINK REL="STYLESHEET" HREF="../../book.css" CHARSET="ISO-8859-1" TYPE="text/css"/>
 </head>
@@ -12,13 +12,13 @@
 			<td class="head_picture">
 				<img src="../../images/guide_1.gif"/>
 			</td>
-			<td class="head_picture" width="100%" align="right">
+			<td class="head_picture" width="100%"  align="right">
 				<img src="../../images/guide_2.gif"/>
 			</td>
 		</tr>
 	</table>
-<h3>Subversive installation instructions</h3>
-	<p>Subversive can be simply installed from within Eclipse using update manager. All what the user should do is just point update manager to the remote or local update site. To install Subversive:</p>
+<h3>Subversive update instructions (Polarion.org version installed)</h3>
+	<p>Subversive can be simply installed from within Eclipse using update manager. All what the user should do is just point update manager to the remote or local update site. Please note that if you want to save your workspace settings related to SVN you shouldn't uninstall this version before updating to the Eclipse one. To update Subversive:</p>
 	<ol>
 		<li>
 			Start Eclipse and select menu item <i>'Help > Software Updates > Find and Install...'</i>
@@ -67,28 +67,8 @@
 			<br/><br/><img border="0" src="../../images/update_site_subversive.png" alt="Check 'Subversive'"/><br/><br/>
 		</li>
 		<li>
-			Update manager checks update site and shows the list of available features. You can expand the tree and select features to install. Subversive provides following features list.
-			<ul>
-				Required feature, which should be installed unconditionally:
-				<li>
-					<b>SVN Team Provider</b> - The Eclipse Team Provider for the Subversion version control system.
-				</li>
-				<br/><br/>Optional integrations with other plug-ins, which can be installed if you use these plugins and want to have them integrated with Subversive:
-				<li>
-					<b>Subversive Integration for the Mylyn Project</b> - Integration with Mylyn (<a href="http://www.eclipse.org/mylyn/">http://www.eclipse.org/mylyn/</a>). Installation is possible only if Mylyn is already installed or installed in one step with Subversive.
-				</li>
-				<li>
-					<b>Subversive Integration for the CSC ProjectSet Project</b> - Integration with ProjectSet (<a href="http://vpms.de.csc.com/projectset/">http://vpms.de.csc.com/projectset/</a>). Installation is possible only if ProjectSet is already installed or installed in one step with Subversive.
-				</li>
-				<br/><br/>Other optional features:
-				<li>
-					<b>JDT Ignore Extensions</b> - The feature is useful for Java development because it allows to interpret output folders as ignored resources automatically.
-				</li>
-				<li>
-					<b>SVN Team Provider Sources</b> - The sources of the Eclipse Team Provider for Subversion.
-				</li>
-			</ul>
-			<br/>Select SVN Team Provider and other features if required and click on the <i>'Next >'</i> button.
+			Update manager checks update site and shows the list of available features.
+			<br/>Select the features to be updated and click on the <i>'Next >'</i> button.
 			<br/><br/><img border="0" src="../../images/install_search_res.png" alt="Feature Search Result"/><br/><br/>
 		</li>
 		<li>
@@ -108,20 +88,9 @@
 			<br/><br/><img border="0" src="../../images/restart_dialog.png" alt="Restart dialog"/><br/><br/>
 		</li>
 		<li>
-			After Eclipse restart you are able to start using Subversive.
-		</li>
-		<li> You can find Subversive perspective and views in correspondent dialogs, activated by menu items <i>'Window > Open Perspective > Other...'</i> and <i>'Window > Show View > Other...'</i>.
-			<br/><br/>
-			<table border="0" cellpadding="5" cellspacing="0">
-				<tr>
-					<td valign="center">
-						<img border="0" src="../../images/open_perspective.png" alt="Open Perspective"/>
-					</td>
-					<td valign="center">
-						<img border="0" src="../../images/show_view.png" alt="Show View"/>
-					</td>
-				</tr>
-			</table>
+			After Eclipse restart you should click on <i>'Help > Subversive > Migrate Projects and Settings'</i> menu item for all workspaces which SVN settings should be saved. Then you are able to start using the updated version of Subversive.<br/><br/>
+			<img border="0" src="../../images/migrate.png" alt="Migrate Projects and Settings"/><br/><br/>
+			<p><u><i>Please note, that it is highly recommended to uninstall the Polarion.org version of Subversive after performing the steps described above to avoid feather compatibility problems.</i></u></p>
 		</li>
 	</ol>
 </body>

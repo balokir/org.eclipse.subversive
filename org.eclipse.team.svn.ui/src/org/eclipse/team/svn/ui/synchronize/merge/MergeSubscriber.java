@@ -67,7 +67,8 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
         this.scope = scope;
     }
     
-    protected SyncInfo getSVNSyncInfo(IRemoteStorage storage, ILocalResource localStatus, IResourceChange remoteStatus) {
+    protected SyncInfo getSVNSyncInfo(ILocalResource localStatus, IResourceChange remoteStatus) {
+    	// provide correct base resource: same as right but with start revision specified
         return new MergeSyncInfo(localStatus, remoteStatus, this.getResourceComparator());
     }
 
@@ -82,7 +83,7 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
     	super.refresh(resources, depth, monitor);
     }
 	
-	protected IResourceChange handleResourceChange(IRemoteStorage storage, IRemoteStatusOperation rStatusOp, final SVNEntryStatus current) {
+	protected IResourceChange handleResourceChange(IRemoteStatusOperation rStatusOp, final SVNEntryStatus current) {
 		IChangeStateProvider provider = new IChangeStateProvider() {
 			public long getChangeDate() {
 				return current.reposLastCmtDate;
@@ -123,7 +124,7 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 		if (provider.getNodeKind() == NodeKind.NONE) {
 			return null;
 		}
-		IResourceChange resourceChange = storage.asResourceChange(provider);
+		IResourceChange resourceChange = SVNRemoteStorage.instance().asResourceChange(provider, false);
 		if (resourceChange == null || resourceChange.getRevision() == SVNRevision.INVALID_REVISION_NUMBER) {
 			return null;
 		}
