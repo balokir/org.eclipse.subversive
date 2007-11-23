@@ -6,7 +6,8 @@
 	<topic label="Subversive unique features" href="gettingStarted/aboutSubversive/features.html"/>
 	<topic label="Requirements" href="gettingStarted/aboutSubversive/requirements.html"/>
 	<topic label="Subversive installation instructions" href="gettingStarted/aboutSubversive/install.html"/>
-	<topic label="Subversive update instructions" href="gettingStarted/aboutSubversive/update.html"/>
+	<topic label="Subversive update instructions (Eclipse.org version installed)" href="gettingStarted/aboutSubversive/update_eclipse.html"/>
+	<topic label="Subversive update instructions (Polarion.org version installed)" href="gettingStarted/aboutSubversive/update_polarion.html"/>
 	<topic label="Subversive management instructions" href="gettingStarted/aboutSubversive/management.html"/>
 	<topic label="Subversive modules" href="gettingStarted/aboutSubversive/modules.html"/>
 	<topic label="Subversive architecture" href="gettingStarted/aboutSubversive/arch.html"/>
