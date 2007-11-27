@@ -22,7 +22,14 @@ import java.util.Set;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.source.AnnotationModel;
+import org.eclipse.jface.text.source.IAnnotationAccess;
+import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.text.Document;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionEvent;
@@ -43,6 +50,12 @@ import org.eclipse.team.svn.ui.utility.UserInputHistory;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifier;
 import org.eclipse.team.svn.ui.verifier.CommentVerifier;
 import org.eclipse.team.svn.ui.verifier.IValidationManager;
+import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
+import org.eclipse.ui.texteditor.AnnotationPreference;
+import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
+import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
+import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 
 /**
  * Operation comment composite
@@ -59,7 +72,7 @@ public class CommentComposite extends Composite  {
     protected static String TSVN_LOGTEMPLATE_HEADER;
     protected static String TSVN_LOGTEMPLATE_HINT;
 	
-	protected Text text;
+	protected StyledText text;
 	protected Text bugIdText;
 	protected String message;
 	protected String bugID;
@@ -78,7 +91,7 @@ public class CommentComposite extends Composite  {
     public CommentComposite(Composite parent, IValidationManager validationManager, Set logTemplates) {
     	this(parent, null, validationManager, logTemplates, null);
     }
-    
+        
     public CommentComposite(Composite parent, String message, IValidationManager validationManager, Set logTemplates, BugtraqModel bugtraqModel) {
     	super(parent, SWT.NONE);
     	
@@ -177,8 +190,32 @@ public class CommentComposite extends Composite  {
         	});
         }
         
-		this.text = new Text(this, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		data = new GridData(GridData.FILL_BOTH);
+        AnnotationModel annotationModel = new AnnotationModel();
+        IAnnotationAccess annotationAccess = new DefaultMarkerAnnotationAccess();
+        
+        SourceViewer sourceViewer = new SourceViewer(this, null, null, true, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.WRAP);
+        sourceViewer.getTextWidget().setIndent(2);
+        
+        final SourceViewerDecorationSupport support = new SourceViewerDecorationSupport(sourceViewer, null, annotationAccess, EditorsUI.getSharedTextColors());
+		Iterator e= new MarkerAnnotationPreferences().getAnnotationPreferences().iterator();
+		while (e.hasNext())
+			support.setAnnotationPreference((AnnotationPreference) e.next());
+		
+        support.install(EditorsUI.getPreferenceStore());
+        
+        sourceViewer.getTextWidget().addDisposeListener(new DisposeListener() {
+		
+			public void widgetDisposed(DisposeEvent e) {
+				support.uninstall();
+			}
+		
+		});
+        
+        Document document = new Document();
+        sourceViewer.configure(new TextSourceViewerConfiguration(EditorsUI.getPreferenceStore()));
+        sourceViewer.setDocument(document, annotationModel);
+        this.text = sourceViewer.getTextWidget();
+        data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = 80;
 		this.text.setLayoutData(data);
 		this.text.selectAll();

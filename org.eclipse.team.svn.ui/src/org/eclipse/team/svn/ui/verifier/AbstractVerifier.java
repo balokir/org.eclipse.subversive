@@ -15,6 +15,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
@@ -78,6 +79,9 @@ public abstract class AbstractVerifier {
     protected String getText(Control input) {
         if (input instanceof Text) {
             return ((Text)input).getText();
+        }
+        else if (input instanceof StyledText) {
+            return ((StyledText)input).getText();
         }
         else if (input instanceof Combo) {
             return ((Combo)input).getText();

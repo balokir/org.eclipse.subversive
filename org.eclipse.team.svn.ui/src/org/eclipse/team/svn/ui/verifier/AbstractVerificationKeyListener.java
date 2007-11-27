@@ -13,6 +13,7 @@ package org.eclipse.team.svn.ui.verifier;
 
 import java.util.Iterator;
 
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
@@ -46,6 +47,13 @@ public abstract class AbstractVerificationKeyListener extends KeyAdapter impleme
 			Control cmp = (Control)it.next();
 			if (cmp instanceof Text) {
 				((Text)cmp).addModifyListener(new ModifyListener() {
+					public void modifyText(ModifyEvent e) {
+						AbstractVerificationKeyListener.this.validateContent();
+					}
+				});
+			}
+			if (cmp instanceof StyledText) {
+				((StyledText)cmp).addModifyListener(new ModifyListener() {
 					public void modifyText(ModifyEvent e) {
 						AbstractVerificationKeyListener.this.validateContent();
 					}
