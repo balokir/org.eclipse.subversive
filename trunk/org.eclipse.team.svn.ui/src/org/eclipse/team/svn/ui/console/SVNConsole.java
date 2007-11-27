@@ -128,22 +128,22 @@ public class SVNConsole extends MessageConsole implements IPropertyChangeListene
 		this.enabled = SVNTeamPreferences.getConsoleBoolean(store, SVNTeamPreferences.CONSOLE_ENABLED_NAME);
 		
 		Color tmp = this.cmdStream.getColor();
-		this.cmdStream.setColor(SVNTeamPreferences.getConsoleColor(store, SVNTeamPreferences.CONSOLE_CMD_COLOR_NAME));
+		this.cmdStream.setColor(new Color(UIMonitorUtility.getDisplay(), SVNTeamPreferences.getConsoleRGB(store, SVNTeamPreferences.CONSOLE_CMD_COLOR_NAME)));
 		if (tmp != null && !tmp.equals(this.cmdStream.getColor())) {
 			tmp.dispose();
 		}
 		tmp = this.okStream.getColor();
-		this.okStream.setColor(SVNTeamPreferences.getConsoleColor(store, SVNTeamPreferences.CONSOLE_OK_COLOR_NAME));
+		this.okStream.setColor(new Color(UIMonitorUtility.getDisplay(), SVNTeamPreferences.getConsoleRGB(store, SVNTeamPreferences.CONSOLE_OK_COLOR_NAME)));
 		if (tmp != null && !tmp.equals(this.okStream.getColor())) {
 			tmp.dispose();
 		}
 		tmp = this.warningStream.getColor();
-		this.warningStream.setColor(SVNTeamPreferences.getConsoleColor(store, SVNTeamPreferences.CONSOLE_WRN_COLOR_NAME));
+		this.warningStream.setColor(new Color(UIMonitorUtility.getDisplay(), SVNTeamPreferences.getConsoleRGB(store, SVNTeamPreferences.CONSOLE_WRN_COLOR_NAME)));
 		if (tmp != null && !tmp.equals(this.warningStream.getColor())) {
 			tmp.dispose();
 		}
 		tmp = this.errorStream.getColor();
-		this.errorStream.setColor(SVNTeamPreferences.getConsoleColor(store, SVNTeamPreferences.CONSOLE_ERR_COLOR_NAME));
+		this.errorStream.setColor(new Color(UIMonitorUtility.getDisplay(), SVNTeamPreferences.getConsoleRGB(store, SVNTeamPreferences.CONSOLE_ERR_COLOR_NAME)));
 		if (tmp != null && !tmp.equals(this.errorStream.getColor())) {
 			tmp.dispose();
 		}
