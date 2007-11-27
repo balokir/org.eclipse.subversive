@@ -15,12 +15,10 @@ package org.eclipse.team.svn.ui.preferences;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.ui.decorator.TextVariableSetProvider;
 import org.eclipse.team.svn.ui.repository.RepositoryPerspective;
-import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
  * SVN Team plugin preference names
@@ -99,10 +97,10 @@ public final class SVNTeamPreferences {
 	public static final boolean CONSOLE_LIMIT_ENABLED_DEFAULT = true;
 	public static final int CONSOLE_LIMIT_VALUE_DEFAULT = 500000;
 	
-	public static final Color CONSOLE_ERR_COLOR_DEFAULT = new Color(null, 255, 0, 0);
-	public static final Color CONSOLE_WRN_COLOR_DEFAULT = new Color(null, 128, 0, 0);
-	public static final Color CONSOLE_OK_COLOR_DEFAULT = new Color(null, 0, 0, 255);
-	public static final Color CONSOLE_CMD_COLOR_DEFAULT = new Color(null, 0, 0, 0);
+	public static final RGB CONSOLE_ERR_COLOR_DEFAULT = new RGB(255, 0, 0);
+	public static final RGB CONSOLE_WRN_COLOR_DEFAULT = new RGB(128, 0, 0);
+	public static final RGB CONSOLE_OK_COLOR_DEFAULT = new RGB(0, 0, 255);
+	public static final RGB CONSOLE_CMD_COLOR_DEFAULT = new RGB(0, 0, 0);
 	
 	public static final String MAILREPORTER_ENABLED_NAME = "enabled";
 	public static final String MAILREPORTER_ERRORS_ENABLED_NAME = "errorsEnabled";
@@ -397,14 +395,10 @@ public final class SVNTeamPreferences {
 	}
 	
 	public static void setDefaultConsoleValues(final IPreferenceStore store) {
-		UIMonitorUtility.getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				PreferenceConverter.setDefault(store, SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_ERR_COLOR_NAME), SVNTeamPreferences.CONSOLE_ERR_COLOR_DEFAULT.getRGB());
-				PreferenceConverter.setDefault(store, SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_WRN_COLOR_NAME), SVNTeamPreferences.CONSOLE_WRN_COLOR_DEFAULT.getRGB());
-				PreferenceConverter.setDefault(store, SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_OK_COLOR_NAME), SVNTeamPreferences.CONSOLE_OK_COLOR_DEFAULT.getRGB());
-				PreferenceConverter.setDefault(store, SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_CMD_COLOR_NAME), SVNTeamPreferences.CONSOLE_CMD_COLOR_DEFAULT.getRGB());
-			}
-		});
+		PreferenceConverter.setDefault(store, SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_ERR_COLOR_NAME), SVNTeamPreferences.CONSOLE_ERR_COLOR_DEFAULT);
+		PreferenceConverter.setDefault(store, SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_WRN_COLOR_NAME), SVNTeamPreferences.CONSOLE_WRN_COLOR_DEFAULT);
+		PreferenceConverter.setDefault(store, SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_OK_COLOR_NAME), SVNTeamPreferences.CONSOLE_OK_COLOR_DEFAULT);
+		PreferenceConverter.setDefault(store, SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_CMD_COLOR_NAME), SVNTeamPreferences.CONSOLE_CMD_COLOR_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_AUTOSHOW_TYPE_NAME), SVNTeamPreferences.CONSOLE_AUTOSHOW_TYPE_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_ENABLED_NAME), SVNTeamPreferences.CONSOLE_ENABLED_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_HYPERLINKS_ENABLED_NAME), SVNTeamPreferences.CONSOLE_HYPERLINKS_ENABLED_DEFAULT);
@@ -542,10 +536,10 @@ public final class SVNTeamPreferences {
 	}
 	
 	public static void resetToDefaultConsoleValues(IPreferenceStore store) {
-		SVNTeamPreferences.setConsoleColor(store, SVNTeamPreferences.CONSOLE_ERR_COLOR_NAME, SVNTeamPreferences.CONSOLE_ERR_COLOR_DEFAULT);
-		SVNTeamPreferences.setConsoleColor(store, SVNTeamPreferences.CONSOLE_WRN_COLOR_NAME, SVNTeamPreferences.CONSOLE_WRN_COLOR_DEFAULT);
-		SVNTeamPreferences.setConsoleColor(store, SVNTeamPreferences.CONSOLE_OK_COLOR_NAME, SVNTeamPreferences.CONSOLE_OK_COLOR_DEFAULT);
-		SVNTeamPreferences.setConsoleColor(store, SVNTeamPreferences.CONSOLE_CMD_COLOR_NAME, SVNTeamPreferences.CONSOLE_CMD_COLOR_DEFAULT);
+		SVNTeamPreferences.setConsoleRGB(store, SVNTeamPreferences.CONSOLE_ERR_COLOR_NAME, SVNTeamPreferences.CONSOLE_ERR_COLOR_DEFAULT);
+		SVNTeamPreferences.setConsoleRGB(store, SVNTeamPreferences.CONSOLE_WRN_COLOR_NAME, SVNTeamPreferences.CONSOLE_WRN_COLOR_DEFAULT);
+		SVNTeamPreferences.setConsoleRGB(store, SVNTeamPreferences.CONSOLE_OK_COLOR_NAME, SVNTeamPreferences.CONSOLE_OK_COLOR_DEFAULT);
+		SVNTeamPreferences.setConsoleRGB(store, SVNTeamPreferences.CONSOLE_CMD_COLOR_NAME, SVNTeamPreferences.CONSOLE_CMD_COLOR_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_AUTOSHOW_TYPE_NAME), SVNTeamPreferences.CONSOLE_AUTOSHOW_TYPE_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_ENABLED_NAME), SVNTeamPreferences.CONSOLE_ENABLED_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_HYPERLINKS_ENABLED_NAME), SVNTeamPreferences.CONSOLE_HYPERLINKS_ENABLED_DEFAULT);
@@ -719,12 +713,12 @@ public final class SVNTeamPreferences {
 		store.setValue(SVNTeamPreferences.fullAutoPropertiesName(shortName), value);
 	}
 	
-	public static Color getConsoleColor(IPreferenceStore store, String shortName) {
-		return new Color(UIMonitorUtility.getDisplay(), PreferenceConverter.getColor(store, SVNTeamPreferences.fullConsoleName(shortName)));
+	public static RGB getConsoleRGB(IPreferenceStore store, String shortName) {
+		return PreferenceConverter.getColor(store, SVNTeamPreferences.fullConsoleName(shortName));
 	}
 	
-	public static void setConsoleColor(IPreferenceStore store, String shortName, Color value) {
-		PreferenceConverter.setValue(store, SVNTeamPreferences.fullConsoleName(shortName), value.getRGB());
+	public static void setConsoleRGB(IPreferenceStore store, String shortName, RGB value) {
+		PreferenceConverter.setValue(store, SVNTeamPreferences.fullConsoleName(shortName), value);
 	}
 	
 	public static int getConsoleInt(IPreferenceStore store, String shortName) {
