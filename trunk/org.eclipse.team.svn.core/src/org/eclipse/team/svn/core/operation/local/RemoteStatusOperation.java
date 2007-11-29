@@ -30,7 +30,6 @@ import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
-import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
@@ -99,17 +98,23 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 	
 	public void setPegRevision(IResourceChange change) {
 	    IPath resourcePath = FileUtility.getResourcePath(change.getResource());
+	    int prefixLength = 0;
+	    SVNRevision revision = SVNRevision.INVALID_REVISION;
 	    for (Iterator it = this.pegRevisions.entrySet().iterator(); it.hasNext(); ) {
 	        Map.Entry entry = (Map.Entry)it.next();
 	        IPath rootPath = new Path((String)entry.getKey());
-	        if (rootPath.isPrefixOf(resourcePath)) {
-	            change.setPegRevision((SVNRevision)entry.getValue());
+	        int segments = rootPath.segmentCount();
+	        if (rootPath.isPrefixOf(resourcePath) && segments > prefixLength) {
+	        	prefixLength = segments;
+	        	revision = (SVNRevision)entry.getValue();
 	            return;
 	        }
 	    }
-	    IRemoteStorage storage = SVNRemoteStorage.instance();
-	    if (change.getResource().getType() == IResource.PROJECT) {
-		    IRepositoryResource remote = storage.asRepositoryResource(change.getResource());
+	    if (revision != SVNRevision.INVALID_REVISION) {
+	        change.setPegRevision(revision);
+	    }
+	    else if (change.getResource().getType() == IResource.PROJECT) {
+		    IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(change.getResource());
 		    change.setPegRevision(remote.getPegRevision());
 	    }
 	}
