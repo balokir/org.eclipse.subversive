@@ -427,6 +427,13 @@ public final class SVNUtility {
 			}
 			String retVal = url.substring(0, idx);
 			StringTokenizer tok = new StringTokenizer(url.substring(idx), "/ ", true);
+			// user name should be never encoded
+			idx = retVal.indexOf('@');
+			if (idx != -1) {
+				String protocol = retVal.substring(0, retVal.indexOf("://") + 3);
+				String serverPart = retVal.substring(idx);
+				retVal = protocol + retVal.substring(protocol.length(), idx) + serverPart;
+			}
 			while (tok.hasMoreTokens()) {
 				String token = tok.nextToken();
 				if (token.equals("/")) {
@@ -456,12 +463,12 @@ public final class SVNUtility {
 			}
 			String retVal = url.substring(0, idx);
 			StringTokenizer tok = new StringTokenizer(url.substring(idx), "/+", true);
-			// user name should be never encoded
+			// user name should be never decoded
 			idx = retVal.indexOf('@');
 			if (idx != -1) {
 				String protocol = retVal.substring(0, retVal.indexOf("://") + 3);
 				String serverPart = retVal.substring(idx);
-				retVal = protocol + URLDecoder.decode(retVal.substring(protocol.length(), idx), "UTF-8") + serverPart;
+				retVal = protocol + retVal.substring(protocol.length(), idx) + serverPart;
 			}
 			while (tok.hasMoreTokens()) {
 				String token = tok.nextToken();
