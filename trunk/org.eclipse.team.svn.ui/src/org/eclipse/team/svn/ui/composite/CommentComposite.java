@@ -166,7 +166,7 @@ public class CommentComposite extends Composite  {
         	
         	this.validationManager.attachTo(this.bugIdText, new AbstractVerifier() {
 				protected String getErrorMessage(Control input) {
-					String logregex = CommentComposite.this.bugtraqModel.isNumber() ? "[0-9]+(,?[0-9]+)*" : CommentComposite.this.bugtraqModel.getLogregex();
+					String logregex = CommentComposite.this.bugtraqModel.isNumber() ? "[0-9]+(,?[0-9]+)*" : CommentComposite.this.bugtraqModel.getLogregex()[0];
 					if (logregex != null) {
 						String bugId = this.getText(input);
 						if (bugId.length() > 0 && !bugId.matches(logregex)) {
@@ -174,7 +174,7 @@ public class CommentComposite extends Composite  {
 								return MessageFormat.format(SVNTeamUIPlugin.instance().getResource("CommentComposite.BugID.Verifier.Error.Number"), new String[] {CommentComposite.this.bugtraqModel.getLabel()});
 							}
 							else {
-								return MessageFormat.format(SVNTeamUIPlugin.instance().getResource("CommentComposite.BugID.Verifier.Error.Text"), new String[] {CommentComposite.this.bugtraqModel.getLabel(), CommentComposite.this.bugtraqModel.getLogregex()});
+								return MessageFormat.format(SVNTeamUIPlugin.instance().getResource("CommentComposite.BugID.Verifier.Error.Text"), new String[] {CommentComposite.this.bugtraqModel.getLabel(), CommentComposite.this.bugtraqModel.getLogregex()[0]});
 							}
 						}
 					}

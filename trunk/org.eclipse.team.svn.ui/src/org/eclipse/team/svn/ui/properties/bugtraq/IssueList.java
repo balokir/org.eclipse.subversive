@@ -38,7 +38,7 @@ public class IssueList {
 
 		String prefix = "";
 		if (indexOfIssue > 0) {
-			prefix = template.substring(0, indexOfIssue);
+			prefix = this.maskRegExpEntries(template.substring(0, indexOfIssue));
 		}
 		return prefix;
 	}
@@ -48,15 +48,15 @@ public class IssueList {
 		
 		String suffix = "";
 		if (indexOfIssue != -1) {
-			final int indexOfSuffix = indexOfIssue + BugtraqModel.BUG_ID.length();
+			int indexOfSuffix = indexOfIssue + BugtraqModel.BUG_ID.length();
 			if (indexOfSuffix < template.length()) {
-				suffix = template.substring(indexOfSuffix);
+				suffix = this.maskRegExpEntries(template.substring(indexOfSuffix));
 			}
 		}
 		return suffix;
 	}
-
-	public void parseMessage(final String message, BugtraqModel model) {
+	
+	public void parseMessage(String message, BugtraqModel model) {
 		final String template = model.getMessage();
 		this.issues.clear();
 		if (template == null) {
@@ -69,39 +69,27 @@ public class IssueList {
 		int bugIdIndex = template.indexOf(BugtraqModel.BUG_ID);
 		
 		if (bugIdIndex != -1) {
-			String issueRegex = model.isNumber() ? "[0-9]+(,?[0-9]+)*" : model.getLogregex();
+			String issueRegex = model.isNumber() ? "[0-9]+(?:,[0-9]+)*" : model.getLogregex()[0];
 			if (issueRegex == null) {
 				issueRegex = "*";
 			}
-			
-			String regex = prefix + issueRegex + sufix;
+			String regex;
+			if (model.isDoubleLogRegexp()) {
+				regex = issueRegex;
+			}
+			else {
+				regex = prefix + issueRegex + sufix;
+			}
 			
 			Matcher matcher = Pattern.compile(regex, Pattern.MULTILINE).matcher(message);
 			if (matcher.find()) {
-				final String issuesPattern = matcher.group(0);
-				int startAllIssues = matcher.start(0);
-				boolean first = true;
-				for (int i = prefix.length(); i < issuesPattern.length(); i++) {				
-					if (issuesPattern.substring(i, i + 1).equals(",") || first) {
-						if (issuesPattern.substring(i, i + 1).equals(",")){
-							//skip first ","
-							first = true;
-							continue;
-						}
-						first = false;
-						int start = i;
-						i++;
-						int end = i;
-						boolean found = false;
-						for (; (i + 1) < issuesPattern.length() && !issuesPattern.substring(i + 1, i + 2).equals(","); i++) {
-							end++;
-							found = true;
-						}
-						if (found == true) {
-							end++; //to point on exclusive index of character after the end
-							this.issues.add(new Issue(startAllIssues + start, startAllIssues + end, message));
-						}
-					}
+				String group = matcher.group();
+				String innerRegExp = model.isNumber() ? "[0-9]+" : (model.isDoubleLogRegexp() ? model.getLogregex()[1] : issueRegex);
+				Matcher entryMatcher = Pattern.compile(innerRegExp).matcher(group);
+				int start = 0;
+				while (entryMatcher.find(start)) {
+					this.issues.add(new Issue(matcher.start() + entryMatcher.start(), matcher.start() + entryMatcher.end(), message));
+					start = entryMatcher.end();
 				}
 			} 
 		}		
@@ -128,7 +116,6 @@ public class IssueList {
 	}
 	
 	public class Issue {
-
 		protected int start;
 		protected int end;
 		protected String issue;
@@ -156,6 +143,29 @@ public class IssueList {
 		public String getURL() {
 			return this.issue;
 		}
+	}
+
+	protected String maskRegExpEntries(String original) {
+		String retVal = "";
+		for (int i = 0; i < original.length(); i++) {
+			if ("*\\/:.,?^&+()|".indexOf(original.charAt(i)) != -1) {
+				retVal = retVal + "\\" + original.charAt(i);
+			}
+			else if (original.charAt(i) == '\n') {
+				retVal = retVal + "(?:\r|\n|\r\n)";
+			}
+			else if (original.charAt(i) == '\r') {
+				if ((i + 1) < original.length() && original.charAt(i + 1) == '\n')
+				{
+					i++;
+				}
+				retVal = retVal + "(?:\r|\n|\r\n)";
+			}
+			else {
+				retVal = retVal + original.charAt(i);
+			}
+		}
+		return retVal;
 	}
 
 }
