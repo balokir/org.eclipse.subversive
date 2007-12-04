@@ -27,7 +27,7 @@ public class BugtraqModel {
 	protected String url;
 	protected String label;
 	protected String message;
-	protected String logregex;
+	protected String[] logregex;
 	protected boolean warnIfNoIssue;
 	protected boolean append = true;
 	protected boolean number = true;
@@ -80,12 +80,19 @@ public class BugtraqModel {
 		this.warnIfNoIssue = warnifnoissue;
 	}
 
-	public String getLogregex() {
+	public String[] getLogregex() {
 		return this.logregex;
 	}
 
 	public void setLogregex(String logregex) {
-		this.logregex = logregex;
+		this.logregex = logregex.split("\r\n|\r|\n");
+	}
+	
+	public boolean isDoubleLogRegexp() {
+		if (logregex != null) {
+			return (this.logregex.length == 2);
+		}
+		return false;
 	}
 	
 	public String getResultingURL(Issue issue) {

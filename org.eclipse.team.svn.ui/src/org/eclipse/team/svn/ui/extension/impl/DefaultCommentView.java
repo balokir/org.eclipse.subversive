@@ -14,6 +14,8 @@ package org.eclipse.team.svn.ui.extension.impl;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -58,6 +60,8 @@ public class DefaultCommentView implements ICommentView {
 	
 	protected BugtraqModel model;
 	protected IssueList linkList = new IssueList();
+	
+	protected final static String linkRegExp = "(?:http|https|file|svn|svn\\+[\\w]+)\\:/(?:/)?(?:/[^\\s]+)+";
 
 	public void createCommentView(Composite parent) {
 		this.createCommentView(parent, SWT.V_SCROLL | SWT.MULTI | SWT.BORDER | SWT.WRAP);
@@ -107,6 +111,13 @@ public class DefaultCommentView implements ICommentView {
 						if (url != null) {
 							Program.launch(url);
 						}
+						else
+						{
+							url = DefaultCommentView.this.linkList.getIssueAt(offset).getURL();
+							if (url != null) {
+								Program.launch(url);
+							}
+						}
 						text.setCursor(null);
 						text.getStyleRangeAtOffset(offset).background = DefaultCommentView.this.black;
 					}
@@ -147,9 +158,25 @@ public class DefaultCommentView implements ICommentView {
 			public void modifyText(ModifyEvent e) {
 				DefaultCommentView.this.linkList.getIssues().clear();
 				StyledText text = (StyledText)e.getSource();
+				Pattern linkPattern = Pattern.compile(DefaultCommentView.linkRegExp);
+				Matcher linkMatcher = linkPattern.matcher(text.getText());
+				int start = 0;
+				List styledRanges = new ArrayList();
+				while (linkMatcher.find(start)) {
+					int idx = linkMatcher.groupCount();
+					String group = linkMatcher.group(idx).trim();
+					StyleRange range = new StyleRange();
+					range.start  = linkMatcher.start(idx);
+					range.length = group.length();
+					range.foreground = DefaultCommentView.this.blue;
+					range.underline = true;
+					styledRanges.add(range);
+					start = linkMatcher.end(idx);
+					Issue issue = linkList.new Issue(range.start, range.start + range.length, text.getText());
+					DefaultCommentView.this.linkList.getIssues().add(issue);
+				}
 				if (DefaultCommentView.this.getModel().getMessage() != null) {
 					DefaultCommentView.this.linkList.parseMessage((text).getText(), DefaultCommentView.this.getModel());
-					List styledRanges = new ArrayList();
 					for (Iterator iter = DefaultCommentView.this.linkList.getIssues().iterator(); iter.hasNext();) {
 						Issue issue = (Issue)iter.next();
 						StyleRange range = new StyleRange();
@@ -161,6 +188,7 @@ public class DefaultCommentView implements ICommentView {
 					}
 					text.setStyleRanges((StyleRange[]) styledRanges.toArray(new StyleRange[styledRanges.size()]));
 				}
+				text.setStyleRanges((StyleRange[]) styledRanges.toArray(new StyleRange[styledRanges.size()]));
 			}
 		});
         
