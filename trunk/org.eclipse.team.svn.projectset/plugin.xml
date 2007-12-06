@@ -1,24 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-	id="org.eclipse.team.svn.projectset"
-	name="%pluginName"
-	version="0.7.0.v20071123"
-	provider-name="%providerName">
+<plugin>
 
-	<runtime>
-		<library name=".">
-			<export name="*"/>
-		</library>
-	</runtime>
-   
-	<requires>
-		<import plugin="org.eclipse.core.runtime"/>
-		<import plugin="org.eclipse.core.resources"/>
-		<import plugin="org.eclipse.team.core"/>
-		<import plugin="com.csc.dip.projectset" version="1.4.4" match="greaterOrEqual"/>
-	</requires>
-	
 	<extension 
 		id="SVNProjectReferenceAnalyser" 
 		name="SVN Project Reference Analyser" 

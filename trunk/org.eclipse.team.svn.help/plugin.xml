@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="org.eclipse.team.svn.help"
-   name="%pluginName"
-   version="0.7.0.v20071123"
-   provider-name="%providerName">
-
-   <requires>
-      <import plugin="org.eclipse.help"/>
-   </requires>
+<plugin>
 
    <extension 
 		id="org.eclipse.team.svn.help.toc"
@@ -32,4 +24,5 @@
             file="contexts.xml"
             plugin="org.eclipse.team.svn.help"/>
    </extension>
+   
 </plugin>

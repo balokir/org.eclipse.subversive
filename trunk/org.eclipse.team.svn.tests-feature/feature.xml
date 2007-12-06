@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.team.svn.tests"
       label="Subversive SVN Team Provider Tests (Incubation)"
-      version="0.0.1.01"
+      version="0.0.1"
       provider-name="Eclipse.org"
       colocation-affinity="org.eclipse.team.svn">
    <install-handler/>
