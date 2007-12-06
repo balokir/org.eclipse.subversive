@@ -685,7 +685,7 @@ public class HistoryViewImpl {
 		};
 		IActionOperation selectOp = new AbstractNonLockingOperation("Operation.HSaveTableSelection") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
-				HistoryViewImpl.this.getSite().getShell().getDisplay().syncExec(new Runnable() {
+				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 					public void run() {
 						if (HistoryViewImpl.this.historyForTheOtherResource(msgsOp)) {
 							return;
@@ -854,7 +854,7 @@ public class HistoryViewImpl {
 	
 	protected void handleCopy() {
 		String historyText = this.history.getSelectedMessagesAsString();
-		Clipboard clipboard = new Clipboard(this.getSite().getShell().getDisplay());
+		Clipboard clipboard = new Clipboard(UIMonitorUtility.getDisplay());
 		try {
 			clipboard.setContents(new Object[] {historyText}, new Transfer[] {TextTransfer.getInstance()});
 		}
@@ -1144,7 +1144,7 @@ public class HistoryViewImpl {
     }
     
     protected void disconnectView() {
-		this.getSite().getShell().getDisplay().syncExec(new Runnable() {
+    	UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 			public void run() {
 				HistoryViewImpl.this.showHistory((IResource)null, false);
 			}
