@@ -1,0 +1,26 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Subversive Test Plug-in (Incubation)
+Bundle-SymbolicName: org.eclipse.team.svn.tests;singleton:=true
+Bundle-Version: 0.0.1
+Bundle-Vendor: Polarion Software
+Bundle-Activator: org.eclipse.team.svn.tests.TestPlugin
+Bundle-Localization: plugin
+Bundle-ClassPath: .
+Export-Package: org.eclipse.team.svn.tests,
+ org.eclipse.team.svn.tests.ui,
+ org.eclipse.team.svn.tests.core,
+ org.eclipse.team.svn.tests.core.workflow,
+ org.eclipse.team.svn.tests.core.file,
+ org.eclipse.team.svn.tests.core.file.refactor,
+ org.eclipse.team.svn.tests.core.file.property,
+ org.eclipse.team.svn.tests.core.file.management
+Require-Bundle: org.eclipse.core.runtime, 
+ org.eclipse.team.svn.core,
+ org.eclipse.team.svn.ui,
+ org.junit,
+ org.eclipse.ui,
+ org.eclipse.core.resources,
+ org.eclipse.team.core,
+ org.eclipse.team.ui
+Eclipse-LazyStart: true
