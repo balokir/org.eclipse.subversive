@@ -708,6 +708,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 				continue;
 			}
 			
+			String fsNodePath = statuses[i].path;
 			String nodePath = statuses[i].path;
 			
 			nodePath = nodePath.length() >= subPathStart ? nodePath.substring(subPathStart) : "";
@@ -783,7 +784,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 				    status = this.getDelegatedStatus(tRes, IStateFilter.ST_NEW, changeMask);
 				}
 				
-				if (status == IStateFilter.ST_NEW && this.canFetchStatuses(tRes.getLocation())) {
+				if (status == IStateFilter.ST_NEW && this.canFetchStatuses(new Path(fsNodePath))) {
 					status = IStateFilter.ST_OBSTRUCTED;
 				}
 
