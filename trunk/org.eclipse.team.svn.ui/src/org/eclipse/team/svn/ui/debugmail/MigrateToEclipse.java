@@ -95,12 +95,13 @@ public class MigrateToEclipse extends AbstractMainMenuAction {
 main:
 		for (; start < len; start++) {
 			if (data[start] == oldEntry[0]) {
-				for (int i = 1; i < oldEntry.length && start + i < len; i++) {
+				int i = 1;
+				for (; i < oldEntry.length && start + i < len; i++) {
 					if (data[start + i] != oldEntry[i]) {
 						continue main;
 					}
 				}
-				return start;
+				return i < oldEntry.length ? len : start;
 			}
 		}
 		return len;
