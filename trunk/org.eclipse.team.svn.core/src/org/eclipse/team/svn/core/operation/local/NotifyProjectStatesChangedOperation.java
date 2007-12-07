@@ -13,7 +13,7 @@ package org.eclipse.team.svn.core.operation.local;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.resource.events.ProjectStatesChangedEvent;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 
@@ -22,7 +22,7 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
  * 
  * @author Alexander Gurov
  */
-public class NotifyProjectStatesChangedOperation extends AbstractNonLockingOperation {
+public class NotifyProjectStatesChangedOperation extends AbstractActionOperation {
 	protected IProject []projects;
 	protected int eventType;
 

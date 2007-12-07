@@ -32,7 +32,6 @@ import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.SVNTeamProvider;
 import org.eclipse.team.svn.core.connector.SVNEntryInfo;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.management.AddRepositoryLocationOperation;
@@ -233,7 +232,7 @@ public class AddRepositoryLocationPage extends AbstractVerifiedWizardPage {
 		
 		if (this.propertiesTabFolder.isValidateOnFinishRequested() && panel == null) {
 			final Exception []problem = new Exception[1];
-			UIMonitorUtility.doTaskNowDefault(this.getShell(), new AbstractNonLockingOperation("Operation.ValidateLocation") {
+			UIMonitorUtility.doTaskNowDefault(this.getShell(), new AbstractActionOperation("Operation.ValidateLocation") {
 				protected void runImpl(IProgressMonitor monitor) throws Exception {
 					problem[0] = SVNUtility.validateRepositoryLocation(AddRepositoryLocationPage.this.propertiesTabFolder.getRepositoryLocation());
 				}
@@ -251,7 +250,7 @@ public class AddRepositoryLocationPage extends AbstractVerifiedWizardPage {
 
 		AbstractActionOperation mainOp = 
 			shouldntBeAdded ?
-			new AbstractNonLockingOperation("Operation.CommitLocationChanges") {
+			new AbstractActionOperation("Operation.CommitLocationChanges") {
 				protected void runImpl(IProgressMonitor monitor) throws Exception {
 					AddRepositoryLocationPage.this.editable.reconfigure();
 				}

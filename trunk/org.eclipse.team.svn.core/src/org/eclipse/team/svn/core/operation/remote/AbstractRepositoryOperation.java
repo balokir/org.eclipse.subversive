@@ -11,7 +11,7 @@
 
 package org.eclipse.team.svn.core.operation.remote;
 
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
 
@@ -20,7 +20,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
  * 
  * @author Alexander Gurov
  */
-public abstract class AbstractRepositoryOperation extends AbstractNonLockingOperation {
+public abstract class AbstractRepositoryOperation extends AbstractActionOperation {
 	private IRepositoryResource []resources;
 	private IRepositoryResourceProvider provider;
 	

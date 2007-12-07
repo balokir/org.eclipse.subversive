@@ -14,7 +14,7 @@ package org.eclipse.team.svn.ui.operation;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.local.MergeSet;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.synchronize.merge.MergeParticipant;
@@ -29,7 +29,7 @@ import org.eclipse.ui.IWorkbenchPart;
  * 
  * @author Alexander Gurov
  */
-public class ShowMergeViewOperation extends AbstractNonLockingOperation {
+public class ShowMergeViewOperation extends AbstractActionOperation {
     protected IResource []locals;
     protected IRepositoryResource []remoteResources;
     protected IWorkbenchPart part;

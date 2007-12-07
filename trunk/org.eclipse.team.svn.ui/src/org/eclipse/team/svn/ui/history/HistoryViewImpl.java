@@ -55,7 +55,6 @@ import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
@@ -663,7 +662,7 @@ public class HistoryViewImpl {
 		final TableItem[] selected = table.getSelection();
 		final String selectedText = selected.length == 1 ? selected[0].getText(1) : "";
 		
-		IActionOperation showOp = new AbstractNonLockingOperation("Operation.HShowHistory") {
+		IActionOperation showOp = new AbstractActionOperation("Operation.HShowHistory") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 					public void run() {
@@ -683,7 +682,7 @@ public class HistoryViewImpl {
 				});
 			}
 		};
-		IActionOperation selectOp = new AbstractNonLockingOperation("Operation.HSaveTableSelection") {
+		IActionOperation selectOp = new AbstractActionOperation("Operation.HSaveTableSelection") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 					public void run() {

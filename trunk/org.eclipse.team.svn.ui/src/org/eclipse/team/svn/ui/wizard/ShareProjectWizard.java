@@ -26,7 +26,6 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -353,7 +352,7 @@ public class ShareProjectWizard extends AbstractSVNWizard implements IConfigurat
 		
 	}
 	
-	protected class PostShareCommitOperation extends AbstractNonLockingOperation {
+	protected class PostShareCommitOperation extends AbstractActionOperation {
 		protected IActionOperation mainOp;
 		
 		public PostShareCommitOperation(IActionOperation mainOp) {

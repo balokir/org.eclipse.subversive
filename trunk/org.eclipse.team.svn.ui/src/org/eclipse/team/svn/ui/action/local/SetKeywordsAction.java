@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNProperty.BuiltIn;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.local.property.GetMultiPropertiesOperation;
 import org.eclipse.team.svn.core.operation.local.property.IPropertyProvider;
@@ -54,7 +54,7 @@ public class SetKeywordsAction extends AbstractNonRecursiveTeamAction {
 			CompositeOperation composite = new CompositeOperation("Operation.SetKeywordsProperty");
 			final GetMultiPropertiesOperation getKeywordsOp = new GetMultiPropertiesOperation(resources, IResource.DEPTH_INFINITE, IStateFilter.SF_EXCLUDE_PREREPLACED_AND_DELETED_FILES, BuiltIn.KEYWORDS);
 			composite.add(getKeywordsOp);
-			composite.add(new AbstractNonLockingOperation(composite.getId()) {
+			composite.add(new AbstractActionOperation(composite.getId()) {
 				protected void runImpl(final IProgressMonitor monitor) throws Exception {
 					if (!monitor.isCanceled()) {
 						SetKeywordsAction.queryUser(resources, getKeywordsOp, getKeywordsOp);

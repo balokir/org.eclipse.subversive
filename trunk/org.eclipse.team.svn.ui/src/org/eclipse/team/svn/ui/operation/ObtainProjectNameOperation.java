@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.remote.GetFileContentOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -40,7 +40,7 @@ import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
  *
  * @author Sergiy Logvin
  */
-public class ObtainProjectNameOperation extends AbstractNonLockingOperation {
+public class ObtainProjectNameOperation extends AbstractActionOperation {
 	
 	protected IRepositoryResourceProvider resourceProvider;
 	protected IRepositoryResource []resources;

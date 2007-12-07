@@ -16,14 +16,14 @@ import junit.framework.TestCase;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.tests.TestPlugin;
 import org.eclipse.team.svn.ui.utility.DefaultOperationWrapperFactory;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.svn.ui.utility.WorkspaceModifyOperationWrapperFactory;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * UIMonitorUtility test
@@ -115,7 +115,7 @@ public class UIMonitorUtilityTest extends TestCase {
 	    });
 	}
 
-	protected class TestFailureOperation extends AbstractNonLockingOperation {
+	protected class TestFailureOperation extends AbstractActionOperation {
 		public TestFailureOperation() {
 			super("Test");
 		}

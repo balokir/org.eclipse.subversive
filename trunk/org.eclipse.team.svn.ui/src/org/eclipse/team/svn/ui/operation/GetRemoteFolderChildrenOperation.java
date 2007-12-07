@@ -24,7 +24,7 @@ import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNProperty.BuiltIn;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
@@ -43,7 +43,7 @@ import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
  * 
  * @author Alexander Gurov
  */
-public class GetRemoteFolderChildrenOperation extends AbstractNonLockingOperation {
+public class GetRemoteFolderChildrenOperation extends AbstractActionOperation {
 	protected IRepositoryContainer parent;
 	protected IRepositoryResource []children;
 	protected boolean sortChildren;

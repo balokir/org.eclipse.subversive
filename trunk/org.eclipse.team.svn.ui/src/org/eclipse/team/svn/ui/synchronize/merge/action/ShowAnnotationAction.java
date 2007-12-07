@@ -14,7 +14,7 @@ package org.eclipse.team.svn.ui.synchronize.merge.action;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.ILocalFile;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -51,7 +51,7 @@ public class ShowAnnotationAction extends AbstractSynchronizeModelAction {
 	}
 	
 	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {
-		return new AbstractNonLockingOperation("Operation.MShowAnnotation") {
+		return new AbstractActionOperation("Operation.MShowAnnotation") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				operation.getShell().getDisplay().syncExec(new Runnable() {
 					public void run() {

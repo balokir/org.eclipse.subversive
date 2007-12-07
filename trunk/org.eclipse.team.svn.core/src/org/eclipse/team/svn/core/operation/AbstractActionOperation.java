@@ -16,6 +16,7 @@ import java.text.MessageFormat;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.SVNConnectorCancelException;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
@@ -51,6 +52,11 @@ public abstract class AbstractActionOperation implements IActionOperation {
 		return this.status;
 	}
 
+	public ISchedulingRule getSchedulingRule() {
+		// do not lock anything by default 
+		return null;
+	}
+	
 	public int getExecutionState() {
 		if (this.status.isOK()) {
 			return this.isExecuted ? IActionOperation.OK : AbstractActionOperation.NOTEXECUTED;

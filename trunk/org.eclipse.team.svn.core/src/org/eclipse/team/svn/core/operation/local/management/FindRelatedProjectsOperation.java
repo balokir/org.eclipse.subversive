@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.svn.core.IConnectedProjectInformation;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
@@ -34,7 +34,7 @@ import org.eclipse.team.svn.core.resource.IResourceProvider;
  * 
  * @author Alexander Gurov
  */
-public class FindRelatedProjectsOperation extends AbstractNonLockingOperation implements IResourceProvider {
+public class FindRelatedProjectsOperation extends AbstractActionOperation implements IResourceProvider {
 	protected IRepositoryLocation location;
 	protected List resources;
 	protected Set exceptProjects;

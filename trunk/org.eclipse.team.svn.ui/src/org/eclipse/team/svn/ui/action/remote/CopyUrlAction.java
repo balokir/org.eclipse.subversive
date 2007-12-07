@@ -16,7 +16,8 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
+import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.action.AbstractRepositoryTeamAction;
@@ -35,7 +36,7 @@ public class CopyUrlAction extends AbstractRepositoryTeamAction {
 	}
 
 	public void runImpl(IAction action) {
-		AbstractNonLockingOperation op = new AbstractNonLockingOperation("Operation.CopyURL") {
+		IActionOperation op = new AbstractActionOperation("Operation.CopyURL") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				Clipboard clipboard = new Clipboard(CopyUrlAction.this.getShell().getDisplay());
 				try {

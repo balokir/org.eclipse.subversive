@@ -29,7 +29,7 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
  * 
  * @author Alexander Gurov
  */
-public abstract class AbstractGetFileContentOperation extends AbstractNonLockingOperation {
+public abstract class AbstractGetFileContentOperation extends AbstractActionOperation {
 	protected File tmpFile;
 
 	public AbstractGetFileContentOperation(String getOperationType) {
@@ -43,7 +43,7 @@ public abstract class AbstractGetFileContentOperation extends AbstractNonLocking
 	public InputStream getContent() {
 		final InputStream []retVal = new InputStream[] {new ByteArrayInputStream(new byte[0])};
 		if (this.tmpFile != null && this.tmpFile.exists()) {
-			ProgressMonitorUtility.doTaskExternal(new AbstractNonLockingOperation("Operation.GetFileContent.CreateStream") {
+			ProgressMonitorUtility.doTaskExternal(new AbstractActionOperation("Operation.GetFileContent.CreateStream") {
 				protected void runImpl(IProgressMonitor monitor) throws Exception {
 					retVal[0] = new FileInputStream(AbstractGetFileContentOperation.this.tmpFile);
 				}
@@ -53,7 +53,7 @@ public abstract class AbstractGetFileContentOperation extends AbstractNonLocking
 	}
 	
 	public void setContent(final byte []data) {
-		ProgressMonitorUtility.doTaskExternal(new AbstractNonLockingOperation("Operation.GetFileContent.SetContent") {
+		ProgressMonitorUtility.doTaskExternal(new AbstractActionOperation("Operation.GetFileContent.SetContent") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				if (AbstractGetFileContentOperation.this.tmpFile == null) {
 					AbstractGetFileContentOperation.this.tmpFile = AbstractGetFileContentOperation.this.createTempFile();

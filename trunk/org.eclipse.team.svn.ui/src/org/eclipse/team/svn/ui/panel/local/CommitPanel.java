@@ -52,7 +52,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNProperty;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
@@ -468,7 +468,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
     	SVNRemoteStorage.instance().removeResourceStatesListener(ResourceStatesChangedEvent.class, this.resourceStatesListener);
     }
     
-    public static class GetLogTemplatesOperation extends AbstractNonLockingOperation {
+    public static class GetLogTemplatesOperation extends AbstractActionOperation {
     	
     	protected HashSet logTemplates;
     	protected IResource []resources;
@@ -505,7 +505,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 		}
     }
     
-    public static class GetBugTraqPropertiesModelOperation extends AbstractNonLockingOperation {
+    public static class GetBugTraqPropertiesModelOperation extends AbstractActionOperation {
     	
     	protected IResource[] resources;
     	protected BugtraqModel model;

@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IRevisionProvider;
 import org.eclipse.team.svn.core.operation.remote.AbstractCopyMoveResourcesOperation;
@@ -31,7 +31,7 @@ import org.eclipse.team.svn.ui.RemoteResourceTransferrable;
  * 
  * @author Alexander Gurov
  */
-public class PasteRemoteResourcesOperation extends AbstractNonLockingOperation implements IRepositoryResourceProvider, IRevisionProvider {
+public class PasteRemoteResourcesOperation extends AbstractActionOperation implements IRepositoryResourceProvider, IRevisionProvider {
 	protected IRepositoryResource resource;
 	protected Display display;
 	protected String message;

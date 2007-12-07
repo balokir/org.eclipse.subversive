@@ -20,8 +20,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.AbstractGetFileContentOperation;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.GetFileContentOperation;
@@ -52,7 +52,7 @@ public class ResourceContentStorage implements IEncodedStorage {
 			this.op = this.getLoadContentOperation();
 	        CompositeOperation composite = new CompositeOperation(this.op.getId());
 	        composite.add(this.op);
-	        composite.add(new AbstractNonLockingOperation("Operation.DetectCharset") {
+	        composite.add(new AbstractActionOperation("Operation.DetectCharset") {
                 protected void runImpl(IProgressMonitor monitor) throws Exception {
                     ResourceContentStorage.this.detectCharset(ResourceContentStorage.this.op.getContent());
                 }

@@ -15,7 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
@@ -53,7 +53,7 @@ public class EditRepositoryLocationPropertiesAction extends AbstractRepositoryMo
 				CompositeOperation op = new CompositeOperation(mainOp.getId());
 				op.add(scannerOp);
 				op.add(mainOp);
-				op.add(new AbstractNonLockingOperation("Operation.CheckRelocationState") {
+				op.add(new AbstractActionOperation("Operation.CheckRelocationState") {
 					protected void runImpl(IProgressMonitor monitor) throws Exception {
 						if (mainOp.getExecutionState() != IActionOperation.OK) {
 							SVNRemoteStorage.instance().copyRepositoryLocation(locations[0], backup);

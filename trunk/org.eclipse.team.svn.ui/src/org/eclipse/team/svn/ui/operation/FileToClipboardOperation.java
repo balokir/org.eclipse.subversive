@@ -20,7 +20,7 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
@@ -28,7 +28,7 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  * 
  * @author Alexander Gurov
  */
-public class FileToClipboardOperation extends AbstractNonLockingOperation {
+public class FileToClipboardOperation extends AbstractActionOperation {
 	protected String fileName;
 	protected boolean deleteFile;
 	

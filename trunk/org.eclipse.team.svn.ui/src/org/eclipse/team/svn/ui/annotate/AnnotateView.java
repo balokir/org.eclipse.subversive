@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.GetResourceAnnotationOperation;
@@ -172,7 +172,7 @@ public class AnnotateView extends AbstractSVNView {
 		}
 		
 		final GetResourceAnnotationOperation annotateOp = new GetResourceAnnotationOperation(resource);
-		IActionOperation showOp = new AbstractNonLockingOperation("Operation.AShowAnnotation") {
+		IActionOperation showOp = new AbstractActionOperation("Operation.AShowAnnotation") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				AnnotateView.this.getSite().getShell().getDisplay().syncExec(new Runnable() {
 					public void run() {
@@ -240,7 +240,7 @@ public class AnnotateView extends AbstractSVNView {
 		IWorkbench workbench = SVNTeamUIPlugin.instance().getWorkbench();
 		final IWorkbenchPage page = workbench.getActiveWorkbenchWindow().getActivePage();
 		
-		UIMonitorUtility.doTaskBusyDefault(new AbstractNonLockingOperation("Operation.AShowHistoryPart") {
+		UIMonitorUtility.doTaskBusyDefault(new AbstractActionOperation("Operation.AShowHistoryPart") {
             protected void runImpl(IProgressMonitor monitor) throws Exception {
     			if (AnnotateView.this.historyView == null) {
     				IHistoryView view = (IHistoryView)page.showView(SVNHistoryPage.VIEW_ID);
@@ -308,7 +308,7 @@ public class AnnotateView extends AbstractSVNView {
 		final int selectedIdxStart = Integer.parseInt(entry.getFirstLine()) - 1;
 		final int selectedIdxStop = Integer.parseInt(entry.getLastLine()) - 1;
 		
-		UIMonitorUtility.doTaskBusyDefault(new AbstractNonLockingOperation("Operation.AChangeSelection") {
+		UIMonitorUtility.doTaskBusyDefault(new AbstractActionOperation("Operation.AChangeSelection") {
             protected void runImpl(IProgressMonitor monitor) throws Exception {
         		int start = document.getLineOffset(selectedIdxStart);
         		IRegion region = document.getLineInformation(selectedIdxStop);

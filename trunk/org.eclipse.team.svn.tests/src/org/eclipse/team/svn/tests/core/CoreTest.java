@@ -18,7 +18,6 @@ package org.eclipse.team.svn.tests.core;
  */
 public class CoreTest extends TestWorkflow {
 	public void testCore() {
-		new AbstractNonLockingOperationTest() {}.testGetSchedulingRule();
 		new AbstractGetFileContentOperationTest() {}.testGetSetContent();
 		new AbstractOperationTest() {}. allTests();
 		new RepositoryLocationsManagementTest() {}.testLocationsManagement();

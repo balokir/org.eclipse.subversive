@@ -32,7 +32,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.team.svn.core.connector.SVNLock;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
@@ -335,7 +335,7 @@ public abstract class RepositoryResource implements IWorkbenchAdapter, IWorkbenc
 
 	protected abstract ImageDescriptor getImageDescriptorImpl();
 	
-	protected class RefreshOperation extends AbstractNonLockingOperation {
+	protected class RefreshOperation extends AbstractActionOperation {
 		protected RepositoryTreeViewer viewer;
 		
 		public RefreshOperation(RepositoryTreeViewer viewer) {

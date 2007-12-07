@@ -49,7 +49,6 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
@@ -115,7 +114,7 @@ public class PropertiesComposite extends Composite {
 	}
 	
 	public IActionOperation getRefreshViewOperation() {
-		return new AbstractNonLockingOperation("Operation.PShowProperties") {
+		return new AbstractActionOperation("Operation.PShowProperties") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				synchronized (PropertiesComposite.this) {
 					if (PropertiesComposite.this.provider != null && PropertiesComposite.this.provider.getExecutionState() == IActionOperation.OK) {
@@ -412,7 +411,7 @@ public class PropertiesComposite extends Composite {
 		fileDialog.setFileName(data.name);
 		final String fileName = fileDialog.open();
 
-		AbstractActionOperation saveValue = new AbstractNonLockingOperation("Operation.PSaveValueToFile") {
+		AbstractActionOperation saveValue = new AbstractActionOperation("Operation.PSaveValueToFile") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				FileOutputStream output = null;
 				if (fileName != null) {

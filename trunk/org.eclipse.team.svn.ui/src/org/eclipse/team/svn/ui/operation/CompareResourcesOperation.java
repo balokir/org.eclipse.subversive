@@ -30,7 +30,7 @@ import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.remote.LocateResourceURLInHistoryOperation;
@@ -53,7 +53,7 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  * 
  * @author Alexander Gurov
  */
-public class CompareResourcesOperation extends AbstractNonLockingOperation {
+public class CompareResourcesOperation extends AbstractActionOperation {
 	protected IResource resource;
 	protected SVNRevision revision;
 	protected SVNRevision pegRevision;

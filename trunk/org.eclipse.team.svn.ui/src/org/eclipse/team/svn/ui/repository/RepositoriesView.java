@@ -30,7 +30,7 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.action.AbstractSVNTeamAction;
 import org.eclipse.team.svn.ui.action.remote.DeleteAction;
@@ -332,7 +332,7 @@ public class RepositoriesView extends ViewPart {
 
 	protected void showRepositoryBrowser(final boolean force) {
 		final IWorkbenchPage page = this.getSite().getPage();
-		UIMonitorUtility.doTaskBusyDefault(new AbstractNonLockingOperation("Operation.ShowBrowser") {
+		UIMonitorUtility.doTaskBusyDefault(new AbstractActionOperation("Operation.ShowBrowser") {
             protected void runImpl(IProgressMonitor monitor) throws Exception {
         		RepositoryBrowser browser = (RepositoryBrowser)page.showView(RepositoryBrowser.VIEW_ID);
     			ISelection selection = RepositoriesView.this.repositoryTree.getSelection();

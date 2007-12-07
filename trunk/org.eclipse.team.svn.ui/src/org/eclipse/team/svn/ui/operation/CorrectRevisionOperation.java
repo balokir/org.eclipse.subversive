@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.remote.GetLogMessagesOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -28,7 +28,7 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  * 
  * @author Alexander Gurov
  */
-public class CorrectRevisionOperation extends AbstractNonLockingOperation {
+public class CorrectRevisionOperation extends AbstractActionOperation {
 	protected IRepositoryResource []repositoryResources;
 	protected long []knownRevisions;
 	protected GetLogMessagesOperation []msgsOps;

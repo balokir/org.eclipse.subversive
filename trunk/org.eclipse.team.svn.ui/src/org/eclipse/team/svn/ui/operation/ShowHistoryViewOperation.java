@@ -13,7 +13,7 @@ package org.eclipse.team.svn.ui.operation;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.history.SVNHistoryPage;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -26,7 +26,7 @@ import org.eclipse.ui.PartInitException;
  * 
  * @author Alexander Gurov
  */
-public class ShowHistoryViewOperation extends AbstractNonLockingOperation {
+public class ShowHistoryViewOperation extends AbstractActionOperation {
 	protected IRepositoryResource remote;
 	protected IResource local;
 	protected int options;
