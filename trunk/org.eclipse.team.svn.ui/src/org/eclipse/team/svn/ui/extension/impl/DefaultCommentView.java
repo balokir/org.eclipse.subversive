@@ -62,7 +62,7 @@ public class DefaultCommentView implements ICommentView {
 	protected BugtraqModel model;
 	protected IssueList linkList = new IssueList();
 	
-	protected final static String linkRegExp = "(?:http|https|file|svn|svn\\+[\\w]+)\\:/(?:/)?(?:/[^\\s]+)+";
+	protected final static String linkRegExp = "(?:http|https|file|svn|svn\\+[\\w]+)\\:/(?:/)?(?:/[^\\s\\|\\{\\}\"><#\\^\\~\\[\\]`]+)+";
 
 	public void createCommentView(Composite parent) {
 		this.createCommentView(parent, SWT.V_SCROLL | SWT.MULTI | SWT.BORDER | SWT.WRAP);
