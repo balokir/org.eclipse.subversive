@@ -149,8 +149,7 @@ public class AlreadyConnectedPage extends AbstractVerifiedWizardPage {
 		table.setLinesVisible(true);
 		TableLayout tLayout = new TableLayout();
 		tLayout.addColumnData(new ColumnWeightData(30, true));
-		tLayout.addColumnData(new ColumnWeightData(55, true));
-		tLayout.addColumnData(new ColumnWeightData(15, true));
+		tLayout.addColumnData(new ColumnWeightData(70, true));
 		table.setLayout(tLayout);
 
 		this.repositoryRootsView = new TableViewer(table);
@@ -172,25 +171,8 @@ public class AlreadyConnectedPage extends AbstractVerifiedWizardPage {
 				if (columnIndex == 0) {
 					return root.getRepositoryLocation().getLabel();
 				}
-				else if (columnIndex == 1) {
-					return root.getUrl();
-				}
 				else {
-					switch (root.getKind()) {
-						case IRepositoryRoot.KIND_ROOT:
-						case IRepositoryRoot.KIND_LOCATION_ROOT: {
-							return SVNTeamUIPlugin.instance().getResource("AlreadyConnectedPage.KindNone");
-						}
-						case IRepositoryRoot.KIND_TRUNK: {
-							return SVNTeamUIPlugin.instance().getResource("AlreadyConnectedPage.KindTrunk");
-						}
-						case IRepositoryRoot.KIND_BRANCHES: {
-							return SVNTeamUIPlugin.instance().getResource("AlreadyConnectedPage.KindBranches");
-						}
-						default: {
-							return SVNTeamUIPlugin.instance().getResource("AlreadyConnectedPage.KindTags");
-						}
-					}
+					return root.getRepositoryLocation().getUrl();
 				}
 			}
 			public void addListener(ILabelProviderListener listener) {
@@ -228,11 +210,6 @@ public class AlreadyConnectedPage extends AbstractVerifiedWizardPage {
 		col = new TableColumn(table, SWT.LEFT);
 		col.setResizable(true);
 		col.setText(SVNTeamUIPlugin.instance().getResource("AlreadyConnectedPage.URL"));
-		col.addSelectionListener(sorter);
-		
-		col = new TableColumn(table, SWT.LEFT);
-		col.setResizable(true);
-		col.setText(SVNTeamUIPlugin.instance().getResource("AlreadyConnectedPage.Kind"));
 		col.addSelectionListener(sorter);
 
 		Composite btnComposite = new Composite(composite, SWT.NONE);
