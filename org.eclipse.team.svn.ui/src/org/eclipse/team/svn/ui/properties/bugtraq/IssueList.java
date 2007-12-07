@@ -11,9 +11,6 @@
 
 package org.eclipse.team.svn.ui.properties.bugtraq;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,49 +19,19 @@ import java.util.regex.Pattern;
  * 
  * @author Sergiy Logvin
  */
-public class IssueList {
-	protected ArrayList issues = new ArrayList();
-
+public class IssueList extends LinkList {
 	public IssueList() {
 		super();
 	}
 	
-	public List getIssues() {
-		return this.issues;
-	}
-
-	public String getTemplatePrefix(String template) {
-		int indexOfIssue = template.indexOf(BugtraqModel.BUG_ID);
-
-		String prefix = "";
-		if (indexOfIssue > 0) {
-			prefix = this.maskRegExpEntries(template.substring(0, indexOfIssue));
-		}
-		return prefix;
-	}
-
-	public String getTemplateSuffix(String template) {
-		int indexOfIssue = template.indexOf(BugtraqModel.BUG_ID);
-		
-		String suffix = "";
-		if (indexOfIssue != -1) {
-			int indexOfSuffix = indexOfIssue + BugtraqModel.BUG_ID.length();
-			if (indexOfSuffix < template.length()) {
-				suffix = this.maskRegExpEntries(template.substring(indexOfSuffix));
-			}
-		}
-		return suffix;
-	}
-	
 	public void parseMessage(String message, BugtraqModel model) {
-		final String template = model.getMessage();
-		this.issues.clear();
+		String template = model.getMessage();
 		if (template == null) {
 			return;
 		}
 
-		final String prefix = getTemplatePrefix(template);
-		final String sufix = getTemplateSuffix(template);
+		String prefix = getTemplatePrefix(template);
+		String sufix = getTemplateSuffix(template);
 		
 		int bugIdIndex = template.indexOf(BugtraqModel.BUG_ID);
 		
@@ -88,63 +55,36 @@ public class IssueList {
 				Matcher entryMatcher = Pattern.compile(innerRegExp).matcher(group);
 				int start = 0;
 				while (entryMatcher.find(start)) {
-					this.issues.add(new Issue(matcher.start() + entryMatcher.start(), matcher.start() + entryMatcher.end(), message));
+					this.links.add(new LinkPlacement(matcher.start() + entryMatcher.start(), matcher.start() + entryMatcher.end(), message));
 					start = entryMatcher.end();
 				}
 			} 
 		}		
 	}
 
-	public boolean isIssueAt(int offset) {
-		for (Iterator iter = this.issues.iterator(); iter.hasNext();) {
-			Issue issue = (Issue) iter.next();
-			if (issue.existAtOffset(offset)) {
-				return true;
-			}
+	protected String getTemplatePrefix(String template) {
+		int indexOfIssue = template.indexOf(BugtraqModel.BUG_ID);
+
+		String prefix = "";
+		if (indexOfIssue > 0) {
+			prefix = this.maskRegExpEntries(template.substring(0, indexOfIssue));
 		}
-		return false;
-	}
-	
-	public Issue getIssueAt(int offset) {
-		for (Iterator iter = this.issues.iterator(); iter.hasNext();) {
-			Issue issue = (Issue)iter.next();
-			if (issue.existAtOffset(offset)) {
-				return issue;
-			}
-		}
-		return null;
-	}
-	
-	public class Issue {
-		protected int start;
-		protected int end;
-		protected String issue;
-		
-		public Issue(int start, int end, String message) {
-			this.issue =  message.substring(start, end);
-			this.start = start;
-			this.end = end;
-		}	
-		protected boolean existAtOffset(int offset) {
-			return (this.start <= offset) && (offset < this.end);
-		}
-		public int getStart() {
-			return this.start;
-		}
-		public void setStart(int start) {
-			this.start = start;
-		}
-		public int getEnd() {
-			return this.end;
-		}
-		public void setEnd(int end) {
-			this.end = end;
-		}
-		public String getURL() {
-			return this.issue;
-		}
+		return prefix;
 	}
 
+	protected String getTemplateSuffix(String template) {
+		int indexOfIssue = template.indexOf(BugtraqModel.BUG_ID);
+		
+		String suffix = "";
+		if (indexOfIssue != -1) {
+			int indexOfSuffix = indexOfIssue + BugtraqModel.BUG_ID.length();
+			if (indexOfSuffix < template.length()) {
+				suffix = this.maskRegExpEntries(template.substring(indexOfSuffix));
+			}
+		}
+		return suffix;
+	}
+	
 	protected String maskRegExpEntries(String original) {
 		String retVal = "";
 		for (int i = 0; i < original.length(); i++) {

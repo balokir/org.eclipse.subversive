@@ -13,7 +13,6 @@
 package org.eclipse.team.svn.ui.properties.bugtraq;
 
 import org.eclipse.team.svn.core.utility.PatternProvider;
-import org.eclipse.team.svn.ui.properties.bugtraq.IssueList.Issue;
 
 /**
  * The model which represents bugtraq properties 
@@ -21,7 +20,6 @@ import org.eclipse.team.svn.ui.properties.bugtraq.IssueList.Issue;
  * @author Sergiy Logvin
  */
 public class BugtraqModel {
-	
 	public static final String BUG_ID = "%BUGID%";
 	
 	protected String url;
@@ -95,7 +93,7 @@ public class BugtraqModel {
 		return false;
 	}
 	
-	public String getResultingURL(Issue issue) {
+	public String getResultingURL(LinkList.LinkPlacement issue) {
 		if (this.url != null && issue != null && this.url.indexOf(BugtraqModel.BUG_ID) != -1) {
 			return PatternProvider.replaceAll(this.url, BugtraqModel.BUG_ID, issue.getURL());
 		}
