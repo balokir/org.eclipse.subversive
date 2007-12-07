@@ -5,58 +5,50 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 0.7.0.v20071123 release date: 23 November 2007
+Version 0.7.0.v20071207 release date: 07 December 2007
 
 1. What's New
 
-   The version is 0.7.0 release which build ID is v20071123. The main target of the release is 
+   The version is 0.7.0 release which build ID is v20071207. The main target of the release is 
    transferring Subversive development to Eclipse.org.
    
    Changes in compare with previous version are listed below. The full list of 
    changes you can find in Change Log.
     
 	Features:
-	 * Add "ignore externals" option to "Find/Checkout As" wizard
+	 * Spell checking support in Commit dialog and Add/edit commit template is absent (bug 210797) 
 	
 	Fixes:
-	 * Port changes in the connection window do not affect the connection (bug 208256) 
-	   + special thanks to Yaron Mazor
-	 
-	 * merge UI does not show any changes
-	   + special thanks to Chris West
+	 * Rework old-style plug-in manifests (bug 212125)
+	   + special thanks to Thomas Hallgren
+	   
+	 * NPE in SVNRemoteStorage (bug 211392)
+	   + special thanks to Mike Price
+	   
+	 * ClassCastException in LocalShowAnnotationOperation (bug 211275)
+	   + special thanks to Frank Bille
+	   
+	 * Handling % in svn+ssh URLs (bug 211418)
+	   + special thanks to Scott Riggins, Jack Newton
+	   
+	 * CPU hogging (bug 207953)
+	   + special thanks to Jorg von Frantzius
+	   
+	 * GUI hangs (bug 204038)
+	   + special thanks to Jappe
 	
-	 * Share Project(s) does not recognize SVN-meta if location with same repository root exists (bug 210683)
-	 * Merge UI very slow and fails for projects which names on FS differs in compare to repository (bug 210643)
-	 * Error while representing the remote content of the folder with incorrect externals property. (bug 210387)
-	 * Rename does not work in SVN Repositories view
-	 * ClassCastException is logged when annotating resources from the Synchronize View
-	 * Merge UI uses incorrectly encoded URL's (bug 210399)
-	 * Compare after refactoring problems (bug 210272)
-	 * Fixing issues with "Migrate To Eclipse" action
-	 * Add "Migrate to Eclipse" action description into help
-	 * build.properties for UI localization plug-in was corrected
-	 * SVN client library connector interfaces reworked according to Eclipse guidelines (naming conventions etc.)
-	 * switched and svn:externals resources support enhancement
-	 * issue in reconstruction URL and PEG pairs from history
-	 * incorrect labels in compare UI panels
-	 * not encoded URL in AffectedPathsComposite.java
-	 * branch operation works incorrectly for multiple project layout when called for working copies
-	 * history messages fetched for outgoing changes in context of Incoming Change Set's
-	 * file:// and file:/// protocol URL's also should be encoded
-	 * support of svn:externals which is not a direct children for the resource on which svn:externals is specified
-	 * LocateResourceURLInHistory now works for deleted resources also
-	 * incorrect log messages in Change Set mode of merge UI
-	 * Mylyn integration refers to incorrect class name
-	 * New resources inside new folder does not appear in the Synchronize View
-	 * merge UI does not work in "reverse" mode
-	 * Enhance compare editor titles readability
+	 * Incorrect peg revision used for incoming update on svn:externals resources in Synchronize View (bug 211439) 
+	 * Make an Hyperlink in the comment clickable (eg. in the history view) (bug 211244)
+	 * NPE in Show History (bug 211276)
+	 * ArrayIndexOutOfBoundsException in MigrateToEclipse operation (bug 211277)
+	 * Attempted to beginRule: P/..., does not match outer scope rule... (bug 211269)
 
 
 2. Information
 
 2.1. System Requirements
 
-   Subversive requires JDK 1.4, JDK 1.5 or JDK 1.6 and supports following versions of Eclipse:
+   Subversive requires JDK 1.5 or higher and supports following versions of Eclipse:
     * 3.3 (tested with 3.3, 3.3.1)
    
    Subversive supports Subversion versions 1.1-1.4

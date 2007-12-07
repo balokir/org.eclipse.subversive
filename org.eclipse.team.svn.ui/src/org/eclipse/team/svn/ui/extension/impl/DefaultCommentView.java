@@ -79,53 +79,39 @@ public class DefaultCommentView implements ICommentView {
 		this.blue = new Color(parent.getDisplay(), 0, 0, 192);
 		this.black = new Color(parent.getDisplay(), 2, 200, 30);
 		
-		parent.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				DefaultCommentView.this.blue.dispose();
-				DefaultCommentView.this.black.dispose();			
-			}
-		});
-		
 		this.multilineComment.addMouseListener(new MouseAdapter() {
 			public void mouseDown(MouseEvent e) {
-				if (e.button != 1) {
-					return;
+				if (e.button == 1) {
+					DefaultCommentView.this.mouseDown = true;
 				}
-				DefaultCommentView.this.mouseDown = true;
 			}
 			public void mouseUp(MouseEvent e) {
 				DefaultCommentView.this.mouseDown = false;
 				StyledText text = (StyledText)e.widget;
 				int offset = text.getCaretOffset();
+				Issue issue = DefaultCommentView.this.linkList.getIssueAt(offset);
 				if (DefaultCommentView.this.dragEvent) {
 					DefaultCommentView.this.dragEvent = false;
-					if (DefaultCommentView.this.linkList.isIssueAt(offset)) {
+					if (issue != null) {
 						text.setCursor(DefaultCommentView.this.handCursor);
 						text.getStyleRangeAtOffset(offset).background = DefaultCommentView.this.blue;
 					}
 				}
-				else {
-					if (DefaultCommentView.this.linkList.isIssueAt(offset)) {
-						text.setCursor(DefaultCommentView.this.busyCursor);
-						String url = DefaultCommentView.this.model.getResultingURL(DefaultCommentView.this.linkList.getIssueAt(offset));
-						if (url != null) {
-							Program.launch(url);
-						}
-						else
-						{
-							url = DefaultCommentView.this.linkList.getIssueAt(offset).getURL();
-							if (url != null) {
-								Program.launch(url);
-							}
-						}
-						text.setCursor(null);
-						text.getStyleRangeAtOffset(offset).background = DefaultCommentView.this.black;
+				else if (issue != null) {
+					text.setCursor(DefaultCommentView.this.busyCursor);
+					String url = DefaultCommentView.this.getModel().getResultingURL(issue);
+					if (url == null) {
+						url = issue.getURL();
 					}
+					if (url != null) {
+						Program.launch(url);
+					}
+					text.setCursor(null);
+					text.getStyleRangeAtOffset(offset).background = DefaultCommentView.this.black;
 				}
 			}
 		});
 		this.multilineComment.addMouseMoveListener(new MouseMoveListener() {
-
 			public void mouseMove(MouseEvent e) {
 				// Do not change cursor on drag events
 				if (DefaultCommentView.this.mouseDown) {
@@ -144,13 +130,14 @@ public class DefaultCommentView implements ICommentView {
 				catch (IllegalArgumentException ex) {
 					// ok
 				}
-				if (offset == -1) text.setCursor(null);
-				else if (DefaultCommentView.this.linkList.isIssueAt(offset)) {
+				if (offset != -1 && DefaultCommentView.this.linkList.isIssueAt(offset)) {
 					text.setCursor(DefaultCommentView.this.handCursor);
 					text.getStyleRangeAtOffset(offset).background = DefaultCommentView.this.blue;
 					DefaultCommentView.this.multilineComment.redraw();
 				}
-				else text.setCursor(null);
+				else {
+					text.setCursor(null);
+				}
 			}
 		});
 
@@ -191,12 +178,15 @@ public class DefaultCommentView implements ICommentView {
 				text.setStyleRanges((StyleRange[]) styledRanges.toArray(new StyleRange[styledRanges.size()]));
 			}
 		});
-        
-        this.multilineComment.addDisposeListener(new DisposeListener() {
-            public void widgetDisposed(DisposeEvent e) {
-                dispose();
-            }           
-        });
+		
+		this.multilineComment.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				DefaultCommentView.this.busyCursor.dispose();
+				DefaultCommentView.this.handCursor.dispose();
+				DefaultCommentView.this.blue.dispose();
+				DefaultCommentView.this.black.dispose();			
+			}
+		});
 	}
 
 	public void usedFor(IResource resource) {
@@ -211,15 +201,6 @@ public class DefaultCommentView implements ICommentView {
 
 	public void setComment(String comment) {
 		this.multilineComment.setText(comment);
-	}
-	
-	protected void dispose(){
-		if (this.busyCursor != null) {
-			this.busyCursor.dispose();
-		}
-		if (this.handCursor != null) {
-			this.handCursor.dispose();
-		}
 	}
 	
 	protected BugtraqModel getModel() {

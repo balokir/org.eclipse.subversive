@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.team.svn.nl1"
       label="SVN Team Provider Localization (Optional) (Incubation)"
-      version="0.7.0.v20071123"
+      version="0.7.0.v20071207"
       provider-name="Eclipse.org"
       colocation-affinity="org.eclipse.team.svn"
       plugin="org.eclipse.team.svn.nl1">
@@ -125,14 +125,14 @@ Java and all Java-based trademarks are trademarks of Sun Microsystems, Inc. in t
          id="org.eclipse.team.svn.nl1"
          download-size="0"
          install-size="0"
-         version="0.7.0.v20071123"
+         version="0.7.0.v20071207"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.team.svn.core.nl1"
          download-size="0"
          install-size="0"
-         version="0.7.0.v20071123"
+         version="0.7.0.v20071207"
          fragment="true"
          unpack="false"/>
 
@@ -140,7 +140,7 @@ Java and all Java-based trademarks are trademarks of Sun Microsystems, Inc. in t
          id="org.eclipse.team.svn.ui.nl1"
          download-size="0"
          install-size="0"
-         version="0.7.0.v20071123"
+         version="0.7.0.v20071207"
          fragment="true"
          unpack="false"/>
 

@@ -8,6 +8,38 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.0.v20071207 [07 December 2007]
+
+Features:
+ * Spell checking support in Commit dialog and Add/edit commit template is absent (bug 210797) 
+
+Fixes:
+ * Rework old-style plug-in manifests (bug 212125)
+   + special thanks to Thomas Hallgren
+   
+ * NPE in SVNRemoteStorage (bug 211392)
+   + special thanks to Mike Price
+   
+ * ClassCastException in LocalShowAnnotationOperation (bug 211275)
+   + special thanks to Frank Bille
+   
+ * Handling % in svn+ssh URLs (bug 211418)
+   + special thanks to Scott Riggins, Jack Newton
+   
+ * CPU hogging (bug 207953)
+   + special thanks to Jorg von Frantzius
+   
+ * GUI hangs (bug 204038)
+   + special thanks to Jappe
+
+ * Incorrect peg revision used for incoming update on svn:externals resources in Synchronize View (bug 211439) 
+ * Make an Hyperlink in the comment clickable (eg. in the history view) (bug 211244)
+ * NPE in Show History (bug 211276)
+ * ArrayIndexOutOfBoundsException in MigrateToEclipse operation (bug 211277)
+ * Attempted to beginRule: P/..., does not match outer scope rule... (bug 211269)
+
+--------------------------------------------------------------------------------
+
 Version 0.7.0.v20071123 [23 November 2007]
 
 Features:
