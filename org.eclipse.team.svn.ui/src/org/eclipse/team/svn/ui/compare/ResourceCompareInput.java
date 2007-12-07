@@ -51,8 +51,8 @@ import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNEntry.NodeKind;
 import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.AbstractGetFileContentOperation;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.GetLocalFileContentOperation;
 import org.eclipse.team.svn.core.operation.remote.GetFileContentOperation;
@@ -446,7 +446,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		
 		protected void handleOpen(final SelectionEvent event) {
 			final BaseCompareNode node = (BaseCompareNode)((TreeItem)event.item).getData();
-			IActionOperation fetchContent = new AbstractNonLockingOperation("Operation.FetchContent") {
+			IActionOperation fetchContent = new AbstractActionOperation("Operation.FetchContent") {
 				protected void runImpl(IProgressMonitor monitor) throws Exception {
 					node.fetchContent(monitor);
 					final Throwable []t = new Throwable[1];

@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.ui.operation;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.ui.repository.RepositoriesView;
@@ -24,7 +24,7 @@ import org.eclipse.team.svn.ui.repository.model.RepositoryLocation;
  * 
  * @author Alexander Gurov
  */
-public class RefreshRepositoryLocationsOperation extends AbstractNonLockingOperation {
+public class RefreshRepositoryLocationsOperation extends AbstractActionOperation {
 	protected IRepositoryLocation []resources;
 	protected boolean deep;
 	

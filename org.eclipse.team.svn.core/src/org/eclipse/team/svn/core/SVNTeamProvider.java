@@ -26,7 +26,7 @@ import org.eclipse.team.core.history.IFileHistoryProvider;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.extension.crashrecovery.ErrorDescription;
 import org.eclipse.team.svn.core.history.SVNFileHistoryProvider;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.HiddenException;
 import org.eclipse.team.svn.core.operation.SVNResourceRuleFactory;
@@ -219,7 +219,7 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
     	CompositeOperation op = new CompositeOperation(opName);
     	op.add(new DisconnectOperation(new IProject[] {this.getProject()}, false));
     	// notify user about the problem is happened
-    	op.add(new AbstractNonLockingOperation(opName) {
+    	op.add(new AbstractActionOperation(opName) {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				throw new UnreportableException(SVNTeamProvider.this.getAutoDisconnectMessage());
 			}

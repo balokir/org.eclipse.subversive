@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.ui.operation;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
@@ -33,7 +33,7 @@ import org.eclipse.ui.editors.text.EditorsUI;
  * 
  * @author Alexander Gurov
  */
-public class OpenRemoteFileOperation extends AbstractNonLockingOperation {
+public class OpenRemoteFileOperation extends AbstractActionOperation {
 	public static final int OPEN_DEFAULT = 0;
 	public static final int OPEN_EXTERNAL = 1;
 	public static final int OPEN_INPLACE = 2;

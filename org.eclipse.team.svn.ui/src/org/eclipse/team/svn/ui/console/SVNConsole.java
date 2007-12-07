@@ -21,7 +21,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -263,7 +263,7 @@ public class SVNConsole extends MessageConsole implements IPropertyChangeListene
 		protected void print(final MessageConsoleStream stream, final String data) {
 			// workaround for the Eclipse issue #136943 
 			if (UIMonitorUtility.getDisplay().getThread() == Thread.currentThread()) {
-				ProgressMonitorUtility.doTaskScheduledDefault(new AbstractNonLockingOperation("Operation.WriteToConsoleResources") {
+				ProgressMonitorUtility.doTaskScheduledDefault(new AbstractActionOperation("Operation.WriteToConsoleResources") {
 					protected void runImpl(IProgressMonitor monitor) throws Exception {
 						stream.print(data);
 					}

@@ -21,7 +21,7 @@ import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNProperty.BuiltIn;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -329,7 +329,7 @@ public interface IStateFilter {
 				return false;
 			}
 			final SVNProperty [][]propData = new SVNProperty[1][];
-			IActionOperation op = new AbstractNonLockingOperation("Operation.CheckProperty") {
+			IActionOperation op = new AbstractActionOperation("Operation.CheckProperty") {
 				protected void runImpl(IProgressMonitor monitor) throws Exception {
 					IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(resource);
 					ISVNConnector proxy = location.acquireSVNProxy();

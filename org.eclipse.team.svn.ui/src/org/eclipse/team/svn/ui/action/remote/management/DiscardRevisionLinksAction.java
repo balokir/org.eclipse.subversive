@@ -16,7 +16,6 @@ import java.util.HashSet;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.remote.management.SaveRepositoryLocationsOperation;
@@ -46,7 +45,7 @@ public class DiscardRevisionLinksAction extends AbstractRepositoryTeamAction {
 			for (int i = 0; i < revisions.length; i++) {
 				locations.add(revisions[i].getRepositoryResources()[0].getRepositoryLocation());
 			}
-			AbstractActionOperation mainOp = new AbstractNonLockingOperation("Operation.RemoveRevisionLinks") {
+			AbstractActionOperation mainOp = new AbstractActionOperation("Operation.RemoveRevisionLinks") {
 				protected void runImpl(IProgressMonitor monitor)
 						throws Exception {
 					for (int i = 0; i < revisions.length; i++) {

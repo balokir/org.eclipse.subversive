@@ -27,7 +27,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.GetLogMessagesOperation;
@@ -69,7 +69,7 @@ public class BuiltInAnnotate {
 	protected IActionOperation prepareBuiltInAnnotate(final GetResourceAnnotationOperation annotateOp, final IWorkbenchPage page, final IFile resource) {
 		CompositeOperation op = new CompositeOperation("Operation.BuiltInShowAnnotation");
 		final RevisionInformation info = new RevisionInformation();
-		IActionOperation prepareRevisions = new AbstractNonLockingOperation("Operation.PrepareRevisions") {
+		IActionOperation prepareRevisions = new AbstractActionOperation("Operation.PrepareRevisions") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				Map revisions = new HashMap();
 				String [][]lines = annotateOp.getAnnotatedLines();
@@ -115,7 +115,7 @@ public class BuiltInAnnotate {
 			}
 		};
 		op.add(prepareRevisions, new IActionOperation[] {annotateOp});
-		IActionOperation attachMessages = new AbstractNonLockingOperation("Operation.BuiltInShowView") {
+		IActionOperation attachMessages = new AbstractActionOperation("Operation.BuiltInShowView") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				page.getActivePart().getSite().getShell().getDisplay().syncExec(new Runnable() {
 					public void run() {

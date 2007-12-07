@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -75,7 +75,7 @@ public class LocalPathMatcher implements IPatternMatchListenerDelegate, IPropert
 		this.enabled = SVNTeamPreferences.getConsoleBoolean(store, SVNTeamPreferences.CONSOLE_HYPERLINKS_ENABLED_NAME);
 	}
 	
-	protected class AddConsoleHyperlinkOperation extends AbstractNonLockingOperation {
+	protected class AddConsoleHyperlinkOperation extends AbstractActionOperation {
 		protected PatternMatchEvent event;
 		
 		public AddConsoleHyperlinkOperation(PatternMatchEvent event) {

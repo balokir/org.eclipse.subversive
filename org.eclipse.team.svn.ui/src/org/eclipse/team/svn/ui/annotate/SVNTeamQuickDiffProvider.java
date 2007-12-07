@@ -25,7 +25,7 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.GetLocalFileContentOperation;
@@ -149,7 +149,7 @@ public class SVNTeamQuickDiffProvider implements IQuickDiffReferenceProvider, IR
 		if (this.updateJob != null && this.updateJob.getState() != Job.NONE) {
 			this.updateJob.cancel();
 		}
-		this.updateJob = ProgressMonitorUtility.doTaskScheduledDefault(new AbstractNonLockingOperation("Operation.QuickDiff") {
+		this.updateJob = ProgressMonitorUtility.doTaskScheduledDefault(new AbstractActionOperation("Operation.QuickDiff") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				SVNTeamQuickDiffProvider.this.readDocument(monitor);
 			}
@@ -170,7 +170,7 @@ public class SVNTeamQuickDiffProvider implements IQuickDiffReferenceProvider, IR
 				final GetLocalFileContentOperation contentOp = new GetLocalFileContentOperation(tmp.getResource(), Kind.BASE);
 				CompositeOperation op = new CompositeOperation("Operation.PrepareQuickDiff");
 				op.add(contentOp);
-				op.add(new AbstractNonLockingOperation("Operation.InitializeDocument") {
+				op.add(new AbstractActionOperation("Operation.InitializeDocument") {
 					protected void runImpl(IProgressMonitor monitor) throws Exception {
 						InputStream content = contentOp.getContent();
 						Reader in = null;

@@ -42,7 +42,6 @@ import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNProperty.BuiltIn;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
@@ -446,7 +445,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 	}
 	
 	protected AbstractActionOperation getCheckoutProjectOperation(final IRepositoryResource []resources, final ObtainProjectNameOperation obtainOperation, final boolean checkoutRecursively, final boolean ignoreExternals) {
-		return new AbstractNonLockingOperation("Operation.CheckoutProjects") {
+		return new AbstractActionOperation("Operation.CheckoutProjects") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 					public void run() {
@@ -560,7 +559,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 		
 	}
 	
-	protected class ConcatenateProperyDataOperation extends AbstractNonLockingOperation implements IResourcePropertyProvider {
+	protected class ConcatenateProperyDataOperation extends AbstractActionOperation implements IResourcePropertyProvider {
 		protected IResource resource;
 		protected String propertyName;
 		protected byte[] concatenatedData;

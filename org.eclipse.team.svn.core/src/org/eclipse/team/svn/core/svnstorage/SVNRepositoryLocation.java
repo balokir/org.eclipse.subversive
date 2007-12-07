@@ -35,7 +35,7 @@ import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.extension.options.IOptionProvider;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.ActivityCancelledException;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -529,7 +529,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	public static String []fetchRepoInfo(final IRepositoryLocation location, final boolean usePrompt) {
 		// completely disallow error reporting
 		final String []retVal = new String[2];
-		ProgressMonitorUtility.doTaskExternal(new AbstractNonLockingOperation("Operation.FetchRepositoryRoot") {
+		ProgressMonitorUtility.doTaskExternal(new AbstractActionOperation("Operation.FetchRepositoryRoot") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 			    ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();
 				proxy.setCredentialsCacheEnabled(false);

@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.core.operation.remote.management;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -23,7 +23,7 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
  * 
  * @author Alexander Gurov
  */
-public class DiscardRepositoryLocationsOperation extends AbstractNonLockingOperation {
+public class DiscardRepositoryLocationsOperation extends AbstractActionOperation {
 	protected IRepositoryLocation []locations;
 	
 	public DiscardRepositoryLocationsOperation(IRepositoryLocation []locations) {

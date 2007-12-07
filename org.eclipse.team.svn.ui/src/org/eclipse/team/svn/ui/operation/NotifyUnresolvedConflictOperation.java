@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.ui.operation;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.local.IUnresolvedConflictDetector;
 import org.eclipse.team.svn.ui.dialog.NotifyUnresolvedConflictDialog;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -22,7 +22,7 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  * 
  * @author Alexander Gurov
  */
-public class NotifyUnresolvedConflictOperation extends AbstractNonLockingOperation {
+public class NotifyUnresolvedConflictOperation extends AbstractActionOperation {
     protected IUnresolvedConflictDetector sign;
 
     public NotifyUnresolvedConflictOperation(IUnresolvedConflictDetector sign) {

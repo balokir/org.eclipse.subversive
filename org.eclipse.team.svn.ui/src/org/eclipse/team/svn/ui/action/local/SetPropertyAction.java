@@ -20,7 +20,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNProperty;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
@@ -65,7 +65,7 @@ public class SetPropertyAction extends AbstractNonRecursiveTeamAction {
 		IActionOperation loadOp = null;
 		if (isFileSelected) {
 			final File f = new File(fileName);
-	        loadOp = new AbstractNonLockingOperation("Operation.SLoadFileContent") {
+	        loadOp = new AbstractActionOperation("Operation.SLoadFileContent") {
 	            protected void runImpl(IProgressMonitor monitor) throws Exception {
 	                FileInputStream input = null;
 	                try {

@@ -14,7 +14,7 @@ package org.eclipse.team.svn.core.operation.local;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 
 /**
@@ -22,7 +22,7 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
  * 
  * @author Alexander Gurov
  */
-public class GetAllResourcesOperation extends AbstractNonLockingOperation {
+public class GetAllResourcesOperation extends AbstractActionOperation {
 	protected IContainer container;
 	protected IResource []children;
 

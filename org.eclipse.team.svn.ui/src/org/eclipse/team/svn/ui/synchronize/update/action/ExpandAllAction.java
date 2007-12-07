@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -35,7 +35,7 @@ public class ExpandAllAction extends AbstractSynchronizeModelAction {
 	}
 	
 	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {
-		return new AbstractNonLockingOperation("Operation.UExpandAll") {
+		return new AbstractActionOperation("Operation.UExpandAll") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				operation.getShell().getDisplay().syncExec(new Runnable() {
 					public void run() {

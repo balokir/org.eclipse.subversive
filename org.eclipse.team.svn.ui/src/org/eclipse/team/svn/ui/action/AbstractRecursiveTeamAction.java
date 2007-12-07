@@ -14,7 +14,7 @@ package org.eclipse.team.svn.ui.action;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
@@ -35,7 +35,7 @@ public abstract class AbstractRecursiveTeamAction extends AbstractNonRecursiveTe
 	
 	public IResource []getSelectedResourcesRecursive(final IStateFilter filter, final int depth) {
 		final IResource [][]retVal = new IResource[1][];
-		UIMonitorUtility.doTaskNowDefault(this.getShell(), new AbstractNonLockingOperation("Operation.CollectingResources") {
+		UIMonitorUtility.doTaskNowDefault(this.getShell(), new AbstractActionOperation("Operation.CollectingResources") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				retVal[0] = FileUtility.getResourcesRecursive(AbstractRecursiveTeamAction.this.getSelectedResources(), filter, depth, this, monitor);
 			}

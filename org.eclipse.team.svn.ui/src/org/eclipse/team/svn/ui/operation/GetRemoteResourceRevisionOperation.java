@@ -13,7 +13,7 @@ package org.eclipse.team.svn.ui.operation;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 
 /**
@@ -21,7 +21,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
  * 
  * @author Alexander Gurov
  */
-public class GetRemoteResourceRevisionOperation extends AbstractNonLockingOperation {
+public class GetRemoteResourceRevisionOperation extends AbstractActionOperation {
 	protected IRepositoryResource resource;
 	protected long revision;
 

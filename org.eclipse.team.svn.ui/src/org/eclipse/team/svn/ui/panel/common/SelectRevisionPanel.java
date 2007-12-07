@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.GetLogMessagesOperation;
@@ -344,7 +344,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
     protected void showMessages(final GetLogMessagesOperation msgsOp) {
     	Table table = this.history.getTableViewer().getTable();
 		final TableItem[] selected = table.getSelection();
-    	IActionOperation showOp = new AbstractNonLockingOperation("Operation.ShowMessages") {
+    	IActionOperation showOp = new AbstractActionOperation("Operation.ShowMessages") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				 SVNTeamUIPlugin.instance().getWorkbench().getDisplay().syncExec(new Runnable() {
 					 public void run() {
@@ -360,7 +360,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
 				 });
 			}
 		};
-		IActionOperation selectOp = new AbstractNonLockingOperation("Operation.SaveTableSelection") {
+		IActionOperation selectOp = new AbstractActionOperation("Operation.SaveTableSelection") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				SVNTeamUIPlugin.instance().getWorkbench().getDisplay().syncExec(new Runnable() {
 					public void run() {

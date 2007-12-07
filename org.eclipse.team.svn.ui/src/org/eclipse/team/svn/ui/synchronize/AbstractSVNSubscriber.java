@@ -35,7 +35,7 @@ import org.eclipse.team.core.variants.IResourceVariantComparator;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -212,7 +212,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 		if (rStatusOp != null) {
 			CompositeOperation op = new CompositeOperation(rStatusOp.getId());
 			op.add(rStatusOp);
-			op.add(new AbstractNonLockingOperation("Operation.FetchChanges") {
+			op.add(new AbstractActionOperation("Operation.FetchChanges") {
 				protected void runImpl(IProgressMonitor monitor) throws Exception {
 					SVNEntryStatus []statuses = rStatusOp.getStatuses();
 					if (statuses != null) {
@@ -240,7 +240,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
     protected abstract SyncInfo getSVNSyncInfo(ILocalResource localStatus, IResourceChange remoteStatus);
     protected abstract IRemoteStatusOperation getStatusOperation(IResource []resources, int depth);
 
-    public class UpdateStatusOperation extends AbstractNonLockingOperation {
+    public class UpdateStatusOperation extends AbstractActionOperation {
     	protected IResource []resources;
     	protected int depth;
     	

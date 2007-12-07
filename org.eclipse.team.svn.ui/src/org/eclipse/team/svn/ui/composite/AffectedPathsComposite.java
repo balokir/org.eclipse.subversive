@@ -66,7 +66,6 @@ import org.eclipse.team.svn.core.connector.SVNEntry.NodeKind;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
@@ -468,7 +467,7 @@ public class AffectedPathsComposite extends Composite {
 		UIMonitorUtility.doTaskScheduledActive(composite);
 	}
 	
-	protected class GetResourcesToCompareOperation extends AbstractNonLockingOperation implements IRepositoryResourceProvider {
+	protected class GetResourcesToCompareOperation extends AbstractActionOperation implements IRepositoryResourceProvider {
     	protected IRepositoryResourceProvider resourceProvider;
     	protected IRepositoryResource remoteResource;
     	protected GetLogMessagesOperation msgsOp;

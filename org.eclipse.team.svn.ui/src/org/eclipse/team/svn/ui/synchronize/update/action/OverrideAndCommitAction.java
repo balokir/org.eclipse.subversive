@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.AddToSVNWithPropertiesOperation;
@@ -128,7 +128,7 @@ public class OverrideAndCommitAction extends AbstractSynchronizeModelAction {
 		CommitOperation mainOp = new CommitOperation(mergeOp, msg[0], true, keepLocks[0]);
 		IActionOperation[] dependsOn = new IActionOperation[] {mergeOp};
 		op.add(mainOp, dependsOn);
-		op.add(new AbstractNonLockingOperation("Operation.UNodeKindChanged") {
+		op.add(new AbstractActionOperation("Operation.UNodeKindChanged") {
             protected void runImpl(IProgressMonitor monitor) throws Exception {
                 final IResource []diffNodeKind = mergeOp.getHavingDifferentNodeKind();
                 if (diffNodeKind.length > 0) {

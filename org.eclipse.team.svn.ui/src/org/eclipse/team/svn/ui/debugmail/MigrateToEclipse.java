@@ -34,7 +34,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.SVNTeamProvider;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.file.SVNFileStorage;
@@ -154,7 +154,7 @@ main:
 
 	}
 	
-	protected static class ConvertSettings extends AbstractNonLockingOperation {
+	protected static class ConvertSettings extends AbstractActionOperation {
 		public ConvertSettings() {
 			super("Operation.ConvertSettings");
 		}
@@ -183,7 +183,7 @@ main:
 		
 	}
 	
-	protected static class ConvertRepositoryFiles extends AbstractNonLockingOperation {
+	protected static class ConvertRepositoryFiles extends AbstractActionOperation {
 		public ConvertRepositoryFiles() {
 			super("Operation.ConvertRepositoryFiles");
 		}

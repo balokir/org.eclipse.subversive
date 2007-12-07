@@ -13,11 +13,9 @@ package org.eclipse.team.svn.ui.utility;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -32,7 +30,7 @@ public class WorkspaceModifyCancellableOperationWrapper extends WorkspaceModifyO
 	protected IActionOperation operation;
 	
 	public WorkspaceModifyCancellableOperationWrapper(IActionOperation operation) {
-		super(WorkspaceModifyCancellableOperationWrapper.getRule(operation));
+		super(operation.getSchedulingRule());
 		this.operation = operation;
 		this.attachedMonitor = new NullProgressMonitor();
 	}
@@ -58,11 +56,6 @@ public class WorkspaceModifyCancellableOperationWrapper extends WorkspaceModifyO
 		this.attachedMonitor = monitor;
 		// wrap external monitor and make instance of SubProgressMonitorWithInfo
 		ProgressMonitorUtility.doTaskExternal(this.operation, this.attachedMonitor, null);
-	}
-	
-	protected static ISchedulingRule getRule(IActionOperation operation) {
-		ISchedulingRule rule = operation.getSchedulingRule();
-		return rule == null ? ResourcesPlugin.getWorkspace().getRoot() : rule;
 	}
 	
 }

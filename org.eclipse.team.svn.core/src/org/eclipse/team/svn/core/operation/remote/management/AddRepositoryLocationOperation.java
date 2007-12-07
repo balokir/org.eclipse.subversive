@@ -15,7 +15,7 @@ import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 
@@ -24,7 +24,7 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
  * 
  * @author Alexander Gurov
  */
-public class AddRepositoryLocationOperation extends AbstractNonLockingOperation {
+public class AddRepositoryLocationOperation extends AbstractActionOperation {
 	protected IRepositoryLocation location;
 
 	public AddRepositoryLocationOperation(IRepositoryLocation location) {

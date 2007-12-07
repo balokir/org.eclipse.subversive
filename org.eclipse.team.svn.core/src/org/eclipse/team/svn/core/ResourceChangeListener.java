@@ -28,7 +28,7 @@ import org.eclipse.core.resources.ISavedState;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.resource.events.ResourceStatesChangedEvent;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
@@ -52,7 +52,7 @@ public class ResourceChangeListener implements IResourceChangeListener, ISavePar
 	}
 
 	public void resourceChanged(final IResourceChangeEvent event) {
-		ProgressMonitorUtility.doTaskScheduledDefault(new AbstractNonLockingOperation("Operation.ResourcesChanged") {
+		ProgressMonitorUtility.doTaskScheduledDefault(new AbstractActionOperation("Operation.ResourcesChanged") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				final Set modified = new HashSet();
 				event.getDelta().accept(new IResourceDeltaVisitor() {

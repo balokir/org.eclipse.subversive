@@ -20,7 +20,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ui.actions.TeamAction;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
@@ -55,7 +55,7 @@ public abstract class AbstractSVNTeamAction extends TeamAction {
 	}
 
 	public final void run(final IAction action) {
-		ProgressMonitorUtility.doTaskExternal(new AbstractNonLockingOperation("Operation.CallMenuAction") {
+		ProgressMonitorUtility.doTaskExternal(new AbstractActionOperation("Operation.CallMenuAction") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				if (AbstractSVNTeamAction.this.isEnabled()) {
 					AbstractSVNTeamAction.this.runImpl(action);

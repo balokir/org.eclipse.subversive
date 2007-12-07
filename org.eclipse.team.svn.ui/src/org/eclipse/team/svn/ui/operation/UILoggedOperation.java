@@ -22,7 +22,7 @@ import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.SVNConnectorAuthenticationException;
 import org.eclipse.team.svn.core.connector.SVNConnectorCancelException;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
-import org.eclipse.team.svn.core.operation.AbstractNonLockingOperation;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.ActivityCancelledException;
 import org.eclipse.team.svn.core.operation.HiddenException;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -187,7 +187,7 @@ public class UILoggedOperation extends LoggedOperation {
     	}
         AdvancedDialog dialog = new AdvancedDialog(shell, panel, sendReport ? 1 : 0);
         if (dialog.open() == 0 && sendReport) {
-			UIMonitorUtility.doTaskNowDefault(shell, new AbstractNonLockingOperation("Operation.MailSending") {
+			UIMonitorUtility.doTaskNowDefault(shell, new AbstractActionOperation("Operation.MailSending") {
 				protected void runImpl(IProgressMonitor monitor) throws Exception {
 					try {
 						Reporter.sendReport(panel.getMailSettingsProvider(), errorStatus, pluginID, operationName, panel.getComment(), panel.getEmail(), panel.getName(), panel.getReportId());	
