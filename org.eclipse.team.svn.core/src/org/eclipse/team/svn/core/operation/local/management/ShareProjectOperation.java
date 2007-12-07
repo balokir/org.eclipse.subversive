@@ -97,7 +97,7 @@ public class ShareProjectOperation extends AbstractWorkingCopyOperation {
 	
 	public static String getDefaultComment(IProject project, IRepositoryResource remote) {
 		String message = SVNTeamPlugin.instance().getResource("Operation.ShareProject.DefaultComment");
-		return MessageFormat.format(message, new String[] {project.getName(), remote.getUrl()});
+		return MessageFormat.format(message, new String[] {project.getName(), SVNUtility.encodeURL(remote.getUrl())});
 	}
 	
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
