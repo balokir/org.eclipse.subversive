@@ -40,7 +40,8 @@ import org.eclipse.team.svn.ui.panel.local.CommitPanel;
 import org.eclipse.team.svn.ui.panel.local.CommitPanel.GetBugTraqPropertiesModelOperation;
 import org.eclipse.team.svn.ui.properties.bugtraq.BugtraqModel;
 import org.eclipse.team.svn.ui.properties.bugtraq.IssueList;
-import org.eclipse.team.svn.ui.properties.bugtraq.IssueList.Issue;
+import org.eclipse.team.svn.ui.properties.bugtraq.LinkList;
+import org.eclipse.team.svn.ui.properties.bugtraq.LinkList.LinkPlacement;
 
 /**
  * Default implementation of history comment
@@ -89,7 +90,7 @@ public class DefaultCommentView implements ICommentView {
 				DefaultCommentView.this.mouseDown = false;
 				StyledText text = (StyledText)e.widget;
 				int offset = text.getCaretOffset();
-				Issue issue = DefaultCommentView.this.linkList.getIssueAt(offset);
+				LinkPlacement issue = DefaultCommentView.this.linkList.getLinkAt(offset);
 				if (DefaultCommentView.this.dragEvent) {
 					DefaultCommentView.this.dragEvent = false;
 					if (issue != null) {
@@ -130,7 +131,7 @@ public class DefaultCommentView implements ICommentView {
 				catch (IllegalArgumentException ex) {
 					// ok
 				}
-				if (offset != -1 && DefaultCommentView.this.linkList.isIssueAt(offset)) {
+				if (offset != -1 && DefaultCommentView.this.linkList.hasLinkAt(offset)) {
 					text.setCursor(DefaultCommentView.this.handCursor);
 					text.getStyleRangeAtOffset(offset).background = DefaultCommentView.this.blue;
 					DefaultCommentView.this.multilineComment.redraw();
@@ -143,39 +144,30 @@ public class DefaultCommentView implements ICommentView {
 
 		this.multilineComment.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				DefaultCommentView.this.linkList.getIssues().clear();
-				StyledText text = (StyledText)e.getSource();
+				DefaultCommentView.this.linkList.getLinks().clear();
+				StyledText textView = (StyledText)e.getSource();
+				String text = textView.getText();
 				Pattern linkPattern = Pattern.compile(DefaultCommentView.linkRegExp);
-				Matcher linkMatcher = linkPattern.matcher(text.getText());
+				Matcher linkMatcher = linkPattern.matcher(text);
 				int start = 0;
-				List styledRanges = new ArrayList();
 				while (linkMatcher.find(start)) {
-					int idx = linkMatcher.groupCount();
-					String group = linkMatcher.group(idx).trim();
+					start = linkMatcher.end();
+					DefaultCommentView.this.linkList.getLinks().add(new LinkList.LinkPlacement(linkMatcher.start(), start, text));
+				}
+				if (DefaultCommentView.this.getModel().getMessage() != null) {
+					DefaultCommentView.this.linkList.parseMessage(text, DefaultCommentView.this.getModel());
+				}
+				List styledRanges = new ArrayList();
+				for (Iterator iter = DefaultCommentView.this.linkList.getLinks().iterator(); iter.hasNext();) {
+					LinkList.LinkPlacement issue = (LinkList.LinkPlacement)iter.next();
 					StyleRange range = new StyleRange();
-					range.start  = linkMatcher.start(idx);
-					range.length = group.length();
+					range.start  = issue.getStart();
+					range.length = issue.getEnd() - issue.getStart();
 					range.foreground = DefaultCommentView.this.blue;
 					range.underline = true;
 					styledRanges.add(range);
-					start = linkMatcher.end(idx);
-					Issue issue = linkList.new Issue(range.start, range.start + range.length, text.getText());
-					DefaultCommentView.this.linkList.getIssues().add(issue);
 				}
-				if (DefaultCommentView.this.getModel().getMessage() != null) {
-					DefaultCommentView.this.linkList.parseMessage((text).getText(), DefaultCommentView.this.getModel());
-					for (Iterator iter = DefaultCommentView.this.linkList.getIssues().iterator(); iter.hasNext();) {
-						Issue issue = (Issue)iter.next();
-						StyleRange range = new StyleRange();
-						range.start  = issue.getStart();
-						range.length = issue.getEnd() - issue.getStart();
-						range.foreground = DefaultCommentView.this.blue;
-						range.underline = true;
-						styledRanges.add(range);
-					}
-					text.setStyleRanges((StyleRange[]) styledRanges.toArray(new StyleRange[styledRanges.size()]));
-				}
-				text.setStyleRanges((StyleRange[]) styledRanges.toArray(new StyleRange[styledRanges.size()]));
+				textView.setStyleRanges((StyleRange[]) styledRanges.toArray(new StyleRange[styledRanges.size()]));
 			}
 		});
 		
@@ -204,12 +196,7 @@ public class DefaultCommentView implements ICommentView {
 	}
 	
 	protected BugtraqModel getModel() {
-		if (this.model != null) {
-			return this.model;
-		}
-		else {
-			return new BugtraqModel();
-		}
+		return this.model != null ? this.model : new BugtraqModel();
 	}
 	
 }

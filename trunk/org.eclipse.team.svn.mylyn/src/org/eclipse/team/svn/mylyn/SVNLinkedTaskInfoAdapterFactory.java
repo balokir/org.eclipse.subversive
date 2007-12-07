@@ -100,9 +100,9 @@ public class SVNLinkedTaskInfoAdapterFactory implements IAdapterFactory {
 		BugtraqModel model = SVNLinkedTaskInfoAdapterFactory.getBugtraqModel(resource);
 		IssueList linkList = new IssueList();
 		linkList.parseMessage(comment, model);
-		List issues = linkList.getIssues();
+		List issues = linkList.getLinks();
 		if (issues.size() > 0) {
-			return ((IssueList.Issue)issues.get(0)).getURL();
+			return ((IssueList.LinkPlacement)issues.get(0)).getURL();
 		}
 		return null;
 	}
