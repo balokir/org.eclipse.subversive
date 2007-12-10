@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Localization (Incubation)
 Bundle-SymbolicName: org.eclipse.team.svn.core.nl1
-Bundle-Version: 0.7.0.v20071207
+Bundle-Version: 0.7.0.v20071210
 Fragment-Host: org.eclipse.team.svn.core;bundle-version="0.7.0"
 Bundle-Localization: plugin
 Bundle-Vendor: Eclipse.org

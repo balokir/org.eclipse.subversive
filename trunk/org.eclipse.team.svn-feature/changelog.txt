@@ -8,7 +8,7 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
-Version 0.7.0.v20071207 [07 December 2007]
+Version 0.7.0.v20071210 [10 December 2007]
 
 Features:
  * Spell checking support in Commit dialog and Add/edit commit template is absent (bug 210797) 
@@ -31,6 +31,9 @@ Fixes:
    
  * GUI hangs (bug 204038)
    + special thanks to Jappe
+   
+ * classes are packaged in jar files and not in the normal folders structure
+   + special thanks to Alon Peled
 
  * Incorrect peg revision used for incoming update on svn:externals resources in Synchronize View (bug 211439) 
  * Make an Hyperlink in the comment clickable (eg. in the history view) (bug 211244)
