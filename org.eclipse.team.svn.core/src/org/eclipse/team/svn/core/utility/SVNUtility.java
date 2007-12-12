@@ -689,7 +689,7 @@ public final class SVNUtility {
 		
 		if (oldInfo == null) {
 			String errMessage = SVNTeamPlugin.instance().getResource("Error.NonSVNPath");
-			throw new RuntimeException(MessageFormat.format(errMessage, new String[] {node.getAbsolutePath()}));
+			throw new RuntimeException(MessageFormat.format(errMessage, new String[] {oldRoot.getAbsolutePath()}));
 		}
 		return new Object[] {oldRoot, oldInfo};
 	}
