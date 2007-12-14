@@ -16,10 +16,6 @@
 		</factory>
 	</extension>
     
-	<extension point="org.eclipse.team.svn.ui.history">
-		<history class="org.eclipse.team.svn.mylyn.MylynHistoryViewFactory"/>
-	</extension>
-
 	<extension
 		point="org.eclipse.mylyn.tasks.ui.projectLinkProviders">
 		<linkProvider

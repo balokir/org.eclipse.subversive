@@ -303,17 +303,19 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		
 		Composite groups = new Composite(composite, SWT.NULL);
 		layout = new GridLayout();
-		layout.numColumns = 1;
+		layout.numColumns = 2;
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		groups.setLayout(layout);
-		groups.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		groups.setLayoutData(data);
 		
 		Group formatGroup = new Group(groups, SWT.NONE);
 		layout = new GridLayout();
 		layout.numColumns = 3;
 		layout.marginHeight = 5;
 		layout.marginWidth = 5;
+		layout.verticalSpacing = 1;
 		formatGroup.setLayout(layout);
 		formatGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		formatGroup.setText("Format");
@@ -373,6 +375,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		layout.numColumns = 3;
 		layout.marginHeight = 5;
 		layout.marginWidth = 5;
+		layout.verticalSpacing = 1;
 		prefixGroup.setLayout(layout);
 		prefixGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		prefixGroup.setText("Root Prefix");
@@ -398,18 +401,19 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 			}
 		});
 		
-		Group flagGroup = new Group(groups, SWT.NONE);
+		Composite outFlagComposite = new Composite(groups, SWT.NONE);
 		layout = new GridLayout();
-		layout.numColumns = 5;
-		flagGroup.setLayout(layout);
-		flagGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		flagGroup.setText("Flag");
+		layout.numColumns = 2;
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		outFlagComposite.setLayout(layout);
+		outFlagComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 				
-		label = new Label(flagGroup, SWT.NULL);
+		label = new Label(outFlagComposite, SWT.NONE);
 		label.setLayoutData(new GridData());
 		label.setText(SVNTeamUIPlugin.instance().getResource("PreferencePage.textOutgoingFlag"));
 
-		this.outgoingCharsField = new Text(flagGroup, SWT.SINGLE | SWT.BORDER);
+		this.outgoingCharsField = new Text(outFlagComposite, SWT.SINGLE | SWT.BORDER);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.grabExcessHorizontalSpace = true;
 		this.outgoingCharsField.setLayoutData(data);
@@ -420,15 +424,19 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 			}
 		});
 		
-		label = new Label(flagGroup, SWT.NULL);
-		label.setText(" ");
-		label.setVisible(false);
+		Composite addFlagComposite = new Composite(groups, SWT.NONE);
+		layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		addFlagComposite.setLayout(layout);
+		addFlagComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		label = new Label(flagGroup, SWT.NULL);
+		label = new Label(addFlagComposite, SWT.NULL);
 		label.setLayoutData(new GridData());
 		label.setText(SVNTeamUIPlugin.instance().getResource("PreferencePage.textAddedFlag"));
 		
-		this.addedCharsField = new Text(flagGroup, SWT.SINGLE | SWT.BORDER);
+		this.addedCharsField = new Text(addFlagComposite, SWT.SINGLE | SWT.BORDER);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.grabExcessHorizontalSpace = true;
 		this.addedCharsField.setLayoutData(data);
@@ -454,14 +462,14 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		
 		final Text format = new Text(parent, SWT.SINGLE | SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+		data.widthHint = 100;
 		data.grabExcessHorizontalSpace = true;
 		format.setLayoutData(data);
 		
 		Button addVariables = new Button(parent, SWT.PUSH);
 		addVariables.setText(SVNTeamUIPlugin.instance().getResource("PreferencePage.textAddVariables"));
 		data = new GridData();
-		data.widthHint = DefaultDialog.computeButtonWidth(addVariables);
+		data.widthHint = 25;
 		addVariables.setLayoutData(data);		
 		addVariables.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
@@ -843,6 +851,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 			label.setText(SVNTeamUIPlugin.instance().getResource("PreferencePage.preview"));
 			this.fViewer = new TreeViewer(composite);
 			data = new GridData(GridData.FILL_BOTH);
+			data.heightHint = 250;
 			this.fViewer.getControl().setLayoutData(data);
 			this.fViewer.setContentProvider(this);
 			this.fViewer.setLabelProvider(this);

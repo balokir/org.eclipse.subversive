@@ -11,6 +11,8 @@
 
 package org.eclipse.team.svn.ui.verifier;
 
+import java.text.MessageFormat;
+
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 
@@ -20,20 +22,23 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
  * @author Sergiy Logvin
  */
 public class CommentVerifier extends AbstractFormattedVerifier {
-    protected static String WARNING_MESSAGE = "Commit comment is empty.";
+    protected int logMinSize;
         
-    public CommentVerifier(String fieldName) {
+    public CommentVerifier(String fieldName, int logMinSize) {
         super(fieldName);
-        CommentVerifier.WARNING_MESSAGE = SVNTeamUIPlugin.instance().getResource("Verifier.Comment");
+        this.logMinSize = logMinSize;
     }
     
     protected String getErrorMessageImpl(Control input) {
+    	if (this.getText(input).trim().length() < this.logMinSize) {
+    		return MessageFormat.format(SVNTeamUIPlugin.instance().getResource("Verifier.Comment.Error"), this.logMinSize);
+    	}
         return null;
     }
 
     protected String getWarningMessageImpl(Control input) {
     	if (this.getText(input).trim().length() == 0) {
-    		return CommentVerifier.WARNING_MESSAGE;
+    		return SVNTeamUIPlugin.instance().getResource("Verifier.Comment.Warning");
     	}
         return null;
     }

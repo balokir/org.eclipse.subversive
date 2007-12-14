@@ -31,7 +31,8 @@ import org.eclipse.team.svn.ui.event.IResourceSelectionChangeListener;
 import org.eclipse.team.svn.ui.event.ResourceSelectionChangedEvent;
 import org.eclipse.team.svn.ui.extension.factory.ICommentDialogPanel;
 import org.eclipse.team.svn.ui.panel.common.CommentPanel;
-import org.eclipse.team.svn.ui.panel.local.CommitPanel.GetBugTraqPropertiesModelOperation;
+import org.eclipse.team.svn.ui.panel.local.CommitPanel.CollectPropertiesOperation;
+import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
 
 /**
@@ -102,12 +103,11 @@ public class CommitSetPanel extends CommentPanel implements ICommentDialogPanel 
 		group.setLayoutData(data);
 		group.setText(SVNTeamUIPlugin.instance().getResource("CommitSetPanel.Comment"));
 		
-		CommitPanel.GetLogTemplatesOperation logTemplatesOp = new CommitPanel.GetLogTemplatesOperation(this.resources);
-		CommitPanel.GetBugTraqPropertiesModelOperation bugtraqOp = new GetBugTraqPropertiesModelOperation(new IResource[0]);
-		CommitPanel.runPropertiesOperations(logTemplatesOp, bugtraqOp);
+		CommitPanel.CollectPropertiesOperation op = new CollectPropertiesOperation(this.resources);
+    	UIMonitorUtility.doTaskNowDefault(op, true);
 		
-		this.bugtraqModel = bugtraqOp.getBugtraqModel();
-    	this.comment = new CommentComposite(group, this.set.getComment(), this, logTemplatesOp.getLogTemplates(), null);
+		this.bugtraqModel = op.getBugtraqModel();
+    	this.comment = new CommentComposite(group, this.set.getComment(), this, op.getLogTemplates(), null, op.getMinLogSize());
 		data = new GridData(GridData.FILL_BOTH);
 		this.comment.setLayoutData(data);
     }

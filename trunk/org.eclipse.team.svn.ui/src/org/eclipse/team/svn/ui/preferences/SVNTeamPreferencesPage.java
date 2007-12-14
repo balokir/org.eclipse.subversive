@@ -335,6 +335,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		
 		this.svnConnectorField = new Combo(composite, SWT.READ_ONLY);
 		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.widthHint = 100;
 		this.svnConnectorField.setLayoutData(data);
 		Collection fullSet = CoreExtensionsManager.instance().getAccessibleClients();
 		this.factories = (ISVNConnectorFactory [])fullSet.toArray(new ISVNConnectorFactory[fullSet.size()]);
