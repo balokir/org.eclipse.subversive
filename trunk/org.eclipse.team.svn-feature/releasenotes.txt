@@ -5,46 +5,28 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 0.7.0.v20071210 release date: 10 December 2007
+Version 0.7.0.v20071214 release date: 14 December 2007
 
 1. What's New
 
-   The version is 0.7.0 release which build ID is v20071210. The main target of the release is 
+   The version is 0.7.0 release which build ID is v20071214. The main target of the release is 
    transferring Subversive development to Eclipse.org.
    
    Changes in compare with previous version are listed below. The full list of 
    changes you can find in Change Log.
     
-	Features:
-	 * Spell checking support in Commit dialog and Add/edit commit template is absent (bug 210797) 
-	
 	Fixes:
-	 * Rework old-style plug-in manifests (bug 212125)
-	   + special thanks to Thomas Hallgren
+	 * Subversive Preferences dialog is substantially too wide (Bug: 212033)
+	   + special thanks to Jonathan Amir
 	   
-	 * NPE in SVNRemoteStorage (bug 211392)
-	   + special thanks to Mike Price
+	 * Label Decorations preview widget in preferences window is too small (Bug: 212029)
+	   + special thanks to Jonathan Amir
 	   
-	 * ClassCastException in LocalShowAnnotationOperation (bug 211275)
-	   + special thanks to Frank Bille
-	   
-	 * Handling % in svn+ssh URLs (bug 211418)
-	   + special thanks to Scott Riggins, Jack Newton
-	   
-	 * CPU hogging (bug 207953)
-	   + special thanks to Jorg von Frantzius
-	   
-	 * GUI hangs (bug 204038)
-	   + special thanks to Jappe
+	 * bugtraq properties not read for new files (Bug: 211422)
+	   + special thanks to Ben Turner
 	
-	 * classes are packaged in jar files and not in the normal folders structure
-	   + special thanks to Alon Peled
-	
-	 * Incorrect peg revision used for incoming update on svn:externals resources in Synchronize View (bug 211439) 
-	 * Make an Hyperlink in the comment clickable (eg. in the history view) (bug 211244)
-	 * NPE in Show History (bug 211276)
-	 * ArrayIndexOutOfBoundsException in MigrateToEclipse operation (bug 211277)
-	 * Attempted to beginRule: P/..., does not match outer scope rule... (bug 211269)
+	 * Check compatibility with the Eclipse Ganymede version (Bug: 212732)
+	 * tsvn:logminsize is not handled (Bug: 212996)
 
 
 2. Information

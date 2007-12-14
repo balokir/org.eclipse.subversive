@@ -8,6 +8,23 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.0.v20071214 [14 December 2007]
+
+Fixes:
+ * Subversive Preferences dialog is substantially too wide (Bug: 212033)
+   + special thanks to Jonathan Amir
+   
+ * Label Decorations preview widget in preferences window is too small (Bug: 212029)
+   + special thanks to Jonathan Amir
+   
+ * bugtraq properties not read for new files (Bug: 211422)
+   + special thanks to Ben Turner
+
+ * Check compatibility with the Eclipse Ganymede version (Bug: 212732)
+ * tsvn:logminsize is not handled (Bug: 212996)
+ 
+--------------------------------------------------------------------------------
+
 Version 0.7.0.v20071210 [10 December 2007]
 
 Features:
