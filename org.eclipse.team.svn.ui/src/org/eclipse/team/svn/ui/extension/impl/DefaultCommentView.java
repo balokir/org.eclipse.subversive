@@ -37,7 +37,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.extension.factory.ICommentView;
 import org.eclipse.team.svn.ui.panel.local.CommitPanel;
-import org.eclipse.team.svn.ui.panel.local.CommitPanel.GetBugTraqPropertiesModelOperation;
 import org.eclipse.team.svn.ui.properties.bugtraq.BugtraqModel;
 import org.eclipse.team.svn.ui.properties.bugtraq.IssueList;
 import org.eclipse.team.svn.ui.properties.bugtraq.LinkList;
@@ -182,7 +181,7 @@ public class DefaultCommentView implements ICommentView {
 	}
 
 	public void usedFor(IResource resource) {
-		CommitPanel.GetBugTraqPropertiesModelOperation bugtraqOp = new GetBugTraqPropertiesModelOperation(new IResource[] {resource});
+		CommitPanel.CollectPropertiesOperation bugtraqOp = new CommitPanel.CollectPropertiesOperation(new IResource[] {resource});
 		bugtraqOp.run(new NullProgressMonitor());
 		this.model = bugtraqOp.getBugtraqModel();
 	}

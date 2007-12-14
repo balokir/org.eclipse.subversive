@@ -14,18 +14,14 @@ package org.eclipse.team.svn.ui.panel.local;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -77,6 +73,11 @@ import org.eclipse.team.svn.ui.extension.factory.ICommentDialogPanel;
 import org.eclipse.team.svn.ui.panel.common.CommentPanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.properties.bugtraq.BugtraqModel;
+import org.eclipse.team.svn.ui.propfind.BugtraqPropFindVisitor;
+import org.eclipse.team.svn.ui.propfind.CompositePropFindVisitor;
+import org.eclipse.team.svn.ui.propfind.IPropFindVisitor;
+import org.eclipse.team.svn.ui.propfind.LogTemplatesPropFindVisitor;
+import org.eclipse.team.svn.ui.propfind.MinLogSizePropFindVisitor;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifier;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -89,9 +90,6 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 	public static final int MSG_COMMIT = 0;
 	public static final int MSG_OVER_AND_COMMIT = 1;
-	// Restricting the size of log templates set in order to prevent prolonged commit operation execution.
-	// Set -1 as MAXIMUM_LOG_TEMPLATE_SIZE to refuse from restricting.
-	public static final int MAXIMUM_LOG_TEMPLATE_SIZE = 20;
 	public static final int MAXIMUM_CHECKS_SIZE = 100;
 	
 	protected Composite parent;
@@ -103,6 +101,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 	protected boolean keepLocks;
 	protected List changeListenerList;
 	protected IResource[] userSelectedResources;
+	protected int minLogSize;
 	
 	protected final String proposedComment;
 	
@@ -161,12 +160,12 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 		group.setLayoutData(data);
 		group.setText(SVNTeamUIPlugin.instance().getResource("CommitPanel.Comment"));
 		
-		CommitPanel.GetLogTemplatesOperation logTemplatesOp = new CommitPanel.GetLogTemplatesOperation(this.resources);
-		CommitPanel.GetBugTraqPropertiesModelOperation bugtraqOp = new GetBugTraqPropertiesModelOperation(this.resources);
-		CommitPanel.runPropertiesOperations(logTemplatesOp, bugtraqOp);
+		CommitPanel.CollectPropertiesOperation op = new CollectPropertiesOperation(this.resources);
+    	UIMonitorUtility.doTaskNowDefault(op, true);
 		
-		this.bugtraqModel = bugtraqOp.getBugtraqModel();
-    	this.comment = new CommentComposite(group, this.proposedComment, this, logTemplatesOp.getLogTemplates(), this.bugtraqModel);
+		this.bugtraqModel = op.getBugtraqModel();
+		this.minLogSize = op.getMinLogSize(); 
+    	this.comment = new CommentComposite(group, this.proposedComment, this, op.getLogTemplates(), this.bugtraqModel, this.minLogSize);
 		data = new GridData(GridData.FILL_BOTH);
 		this.comment.setLayoutData(data);
 		
@@ -418,179 +417,94 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 		SVNTeamPreferences.setCommitDialogInt(store, SVNTeamPreferences.COMMIT_DIALOG_HEIGHT_NAME, size.y);
 		SVNTeamPreferences.setCommitDialogInt(store, SVNTeamPreferences.COMMIT_DIALOG_WEIGHT_NAME, weights[0] / 10);
     }
-    
-    public static void runPropertiesOperations(CommitPanel.GetLogTemplatesOperation logOperation, CommitPanel.GetBugTraqPropertiesModelOperation bugtraqOp) {
-    	CompositeOperation composite = new CompositeOperation("Operation.ScanForProperties");
-    	if (SVNTeamPreferences.getCommentTemplatesBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.COMMENT_LOG_TEMPLATES_ENABLED_NAME)) {
-    		composite.add(logOperation);
-    	}
-    	composite.add(bugtraqOp);
-    	UIMonitorUtility.doTaskNowDefault(composite, true);
-    }
-    
-    protected static String getLogTemplateProperty(IResource resource, Map parentTemplates) {
-    	if (parentTemplates.containsKey(resource)) {
-    		// if resource already in the map this mean that:
-    		//	1) comment template already added and we do not need additional search
-    		//	2) comment template does not exist on all levels and search have no sense
-    		return (String)parentTemplates.get(resource);
-    	}
-    	
-		String value = null;
-    	GetPropertiesOperation op = new GetPropertiesOperation(resource);
-    	ProgressMonitorUtility.doTaskExternalDefault(op, new NullProgressMonitor());
-    	if (op.getExecutionState() == IStatus.OK) {
-    		SVNProperty []logTemplateProperties = op.getProperties();
-    		if (logTemplateProperties != null && logTemplateProperties.length > 0) {
-    			for (int i = 0; i < logTemplateProperties.length; i++) {
-					if (logTemplateProperties[i].name.equals("tsvn:logtemplate")) {
-						value = logTemplateProperties[i].value;
-						break;
-					}
-				}
-    		}
-    	}
-		parentTemplates.put(resource, value);
-		if (value != null) {
-			return value;
-		}
-    	
-    	IResource parent = resource.getParent();
-    	if (parent != null && !(parent instanceof IWorkspaceRoot)) {
-    		return CommitPanel.getLogTemplateProperty(parent, parentTemplates);
-    	}
-    	
-    	return null;
-    }
-    
+         
     public void dispose() {
     	super.dispose();
     	SVNRemoteStorage.instance().removeResourceStatesListener(ResourceStatesChangedEvent.class, this.resourceStatesListener);
     }
     
-    public static class GetLogTemplatesOperation extends AbstractActionOperation {
-    	
-    	protected HashSet logTemplates;
+    public static class CollectPropertiesOperation extends AbstractActionOperation {
     	protected IResource []resources;
+    	protected MinLogSizePropFindVisitor minLogVisitor;
+    	protected LogTemplatesPropFindVisitor logTemplateVisitor;
+    	protected BugtraqPropFindVisitor bugtraqVisitor;
+    	protected CompositePropFindVisitor compositeVisitor;
     	
-    	public GetLogTemplatesOperation(IResource []resources) {
-    		super("Operation.CollectLogTemplates");
-    		this.logTemplates = new HashSet();
+    	public CollectPropertiesOperation(IResource []resources) {
+    		super("Operation.CollectProperties");
     		this.resources = resources;
+    		this.logTemplateVisitor = new LogTemplatesPropFindVisitor();
+    		this.bugtraqVisitor = new BugtraqPropFindVisitor();
+    		this.minLogVisitor = new MinLogSizePropFindVisitor();
+    		if (SVNTeamPreferences.getCommentTemplatesBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.COMMENT_LOG_TEMPLATES_ENABLED_NAME)) {
+    			this.compositeVisitor = new CompositePropFindVisitor(new IPropFindVisitor [] {this.logTemplateVisitor, this.bugtraqVisitor, this.minLogVisitor});
+        	}
+    		else {
+    			this.compositeVisitor = new CompositePropFindVisitor(new IPropFindVisitor [] {this.bugtraqVisitor, this.minLogVisitor});
+    		}
     	}
-
-		protected void runImpl(IProgressMonitor monitor) throws Exception {
-			HashMap parentTemplates = new HashMap();
-			int length = resources.length < CommitPanel.MAXIMUM_CHECKS_SIZE ? resources.length : CommitPanel.MAXIMUM_CHECKS_SIZE;
+    	
+    	protected void runImpl(IProgressMonitor monitor) throws Exception {
+    		ArrayList parentProperties = new ArrayList();
+			
+			int length = this.resources.length < CommitPanel.MAXIMUM_CHECKS_SIZE ? this.resources.length : CommitPanel.MAXIMUM_CHECKS_SIZE;
 	    	for (int i = 0; i < length && !monitor.isCanceled(); i++) {
 	    		ProgressMonitorUtility.setTaskInfo(monitor, this, resources[i].getFullPath().toString());
 	    		
-	    		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resources[i]);
-	    		if (local != null && !IStateFilter.SF_UNVERSIONED.accept(resources[i], local.getStatus(), local.getChangeMask())) {
-	    			String logTemplate = CommitPanel.getLogTemplateProperty(resources[i], parentTemplates);
-	    			if (logTemplate != null) {
-	    				this.logTemplates.add(logTemplate);
-	    				if (this.logTemplates.size() == CommitPanel.MAXIMUM_LOG_TEMPLATE_SIZE) {
-	    					break;
-	    				}
+	    		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(this.resources[i]);
+	    		if (local != null) {
+	    			IResource resourceToProcess = this.resources[i];
+	    			while (IStateFilter.SF_UNVERSIONED.accept(resourceToProcess, local.getStatus(), local.getChangeMask())) {
+	    				resourceToProcess = resourceToProcess.getParent();
+	    				local = SVNRemoteStorage.instance().asLocalResource(resourceToProcess);
+	    			}
+	    			if (!this.processProperty(resourceToProcess, parentProperties, monitor)) {
+	    				break;
 	    			}
 	    		}
 	    		
 	    		ProgressMonitorUtility.progress(monitor, i, length);
 			}
 		}
-
+    	
+    	protected boolean processProperty(IResource resource, ArrayList parentProperties, IProgressMonitor monitor) {
+    		if (parentProperties.contains(resource) || monitor.isCanceled()) {
+				return true;
+			}
+    		
+    		GetPropertiesOperation op = new GetPropertiesOperation(resource);
+    		ProgressMonitorUtility.doTaskExternalDefault(op, monitor);
+        	if (op.getExecutionState() == IStatus.OK) {
+        		SVNProperty []properties = op.getProperties();
+        		if (properties != null) {
+        			for (int i = 0; i < properties.length; i++) {
+    					if (!this.compositeVisitor.visit(properties[i])) {
+    						return false;
+    					}
+    				}
+        		}
+        	}
+    		
+    		parentProperties.add(resource);
+    		
+    		IResource parent = resource.getParent();
+        	if (parent != null && !(parent instanceof IWorkspaceRoot) && !monitor.isCanceled()) {
+        		return this.processProperty(parent, parentProperties, monitor);
+        	}        	
+        	return true;
+    	}
+    	
 		public HashSet getLogTemplates() {
-			return this.logTemplates;
-		}
-    }
-    
-    public static class GetBugTraqPropertiesModelOperation extends AbstractActionOperation {
-    	
-    	protected IResource[] resources;
-    	protected BugtraqModel model;
-    	
-    	public GetBugTraqPropertiesModelOperation(IResource []resources) {
-    		super("Operation.CollectBugTraq");
-    		this.resources = resources;
-    		this.model = new BugtraqModel();
+			return this.logTemplateVisitor.getLogTemplates();
 		}
     	
     	public BugtraqModel getBugtraqModel() {
-    		return this.model;
+    		return this.bugtraqVisitor.getBugtraqModel();
     	}
-
-		protected void runImpl(IProgressMonitor monitor) throws Exception {
-			Set bugtraqProperties = new HashSet(
-					Arrays.asList(new String[] {"bugtraq:url",
-												 "bugtraq:logregex",
-												 "bugtraq:label",
-												 "bugtraq:message",
-												 "bugtraq:number",
-												 "bugtraq:warnifnoissue",
-												 "bugtraq:append"}));
-			IResource versionedResource = null;
-			for (int i = 0; i < this.resources.length && !monitor.isCanceled(); i++) {
-				ILocalResource local = SVNRemoteStorage.instance().asLocalResource(this.resources[i]);
-	    		if (local != null && !IStateFilter.SF_UNVERSIONED.accept(this.resources[i], local.getStatus(), local.getChangeMask())) {
-	    			versionedResource = this.resources[i];
-	    		}
-			}
-			if (versionedResource != null) {
-				this.getBugtraqProperties(bugtraqProperties, versionedResource);
-			}
-		}
-		
-		protected Set getBugtraqProperties(Set bugtraqProperties, IResource resource) {
-	    	GetPropertiesOperation op = new GetPropertiesOperation(resource);
-	    	ProgressMonitorUtility.doTaskExternalDefault(op, new NullProgressMonitor());
-	    	if (op.getExecutionState() == IStatus.OK) {
-	    		SVNProperty []resourceProperties = op.getProperties();
-	    		if (resourceProperties != null && resourceProperties.length > 0) {
-	    			for (int i = 0; i < resourceProperties.length; i++) {
-						if (bugtraqProperties.contains(resourceProperties[i].name)) {
-							this.processBugtraqProperty(resourceProperties[i].name, resourceProperties[i].value);
-							bugtraqProperties.remove(resourceProperties[i].name);
-						}
-					}
-	    		}
-	    	}
-	    	
-	    	IResource parent = resource.getParent();
-	    	if (parent != null && !(parent instanceof IWorkspaceRoot)) {
-	    		if (!bugtraqProperties.isEmpty()) {
-	    			return this.getBugtraqProperties(bugtraqProperties, parent);
-	    		}
-	    	}
-			return bugtraqProperties;
-		}
-		
-		protected void processBugtraqProperty(String name, String value) {
-			if (name.equals("bugtraq:url")) {
-				this.model.setUrl(value);
-			}
-			else if (name.equals("bugtraq:logregex")) {
-				this.model.setLogregex(value);
-			}
-			else if (name.equals("bugtraq:label")) {
-				this.model.setLabel(value);
-			}
-			else if (name.equals("bugtraq:message")) {
-				this.model.setMessage(value);
-			}
-			else if (name.equals("bugtraq:number")) {
-				boolean number = value == null || !(value.trim().equals("false") || value.trim().equals("no"));
-				this.model.setNumber(number);
-			}
-			else if (name.equals("bugtraq:warnifnoissue")) {
-				boolean warn = value != null && (value.trim().equals("yes") || value.trim().equals("true"));
-				this.model.setWarnIfNoIssue(warn);
-			}
-			else if (name.equals("bugtraq:append")) {
-				boolean append = value == null || !(value.trim().equals("false") || value.trim().equals("no"));
-				this.model.setAppend(append);
-			}
- 		}
+    	
+    	public int getMinLogSize() {
+    		return this.minLogVisitor.getMinLogSize();
+    	}
     }
     
 }

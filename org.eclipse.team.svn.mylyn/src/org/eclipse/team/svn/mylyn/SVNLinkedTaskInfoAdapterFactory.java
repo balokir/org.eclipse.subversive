@@ -28,7 +28,6 @@ import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.history.SVNHistoryPage;
 import org.eclipse.team.svn.ui.panel.local.CommitPanel;
-import org.eclipse.team.svn.ui.panel.local.CommitPanel.GetBugTraqPropertiesModelOperation;
 import org.eclipse.team.svn.ui.properties.bugtraq.BugtraqModel;
 import org.eclipse.team.svn.ui.properties.bugtraq.IssueList;
 import org.eclipse.team.svn.ui.synchronize.SVNChangeSetCollector;
@@ -108,7 +107,7 @@ public class SVNLinkedTaskInfoAdapterFactory implements IAdapterFactory {
 	}
 	
 	public static BugtraqModel getBugtraqModel(IResource resource) {
-		CommitPanel.GetBugTraqPropertiesModelOperation bugtraqOp = new GetBugTraqPropertiesModelOperation(new IResource[] {resource});
+		CommitPanel.CollectPropertiesOperation bugtraqOp = new CommitPanel.CollectPropertiesOperation(new IResource[] {resource});
 		bugtraqOp.run(new NullProgressMonitor());
 		return bugtraqOp.getBugtraqModel();
 	}

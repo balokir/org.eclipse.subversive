@@ -80,6 +80,7 @@ public class CommentComposite extends Composite  {
 	protected Set logTemplates;
 	protected Set ignoredStrings;
 	protected BugtraqModel bugtraqModel;
+	protected int minLogSize;
 	
 	protected IValidationManager validationManager;
 	protected IDialogManager dialogManager;
@@ -93,6 +94,10 @@ public class CommentComposite extends Composite  {
     }
         
     public CommentComposite(Composite parent, String message, IValidationManager validationManager, Set logTemplates, BugtraqModel bugtraqModel) {
+    	this(parent, null, validationManager, logTemplates, null, 0);
+    }
+    
+    public CommentComposite(Composite parent, String message, IValidationManager validationManager, Set logTemplates, BugtraqModel bugtraqModel, int minLogSize) {
     	super(parent, SWT.NONE);
     	
     	CommentComposite.PREVIOUS_COMMENTS_HEADER = SVNTeamUIPlugin.instance().getResource("CommentComposite.Previous");
@@ -107,6 +112,7 @@ public class CommentComposite extends Composite  {
         this.logTemplates = logTemplates;
         this.ignoredStrings = new HashSet();
         this.bugtraqModel = bugtraqModel;
+        this.minLogSize = minLogSize;
         this.createControls();
     }
 
@@ -219,7 +225,7 @@ public class CommentComposite extends Composite  {
 		data.heightHint = 80;
 		this.text.setLayoutData(data);
 		this.text.selectAll();
-		this.validationManager.attachTo(this.text, new CommentVerifier(SVNTeamUIPlugin.instance().getResource("CommentComposite.Comment.Verifier")));
+		this.validationManager.attachTo(this.text, new CommentVerifier(SVNTeamUIPlugin.instance().getResource("CommentComposite.Comment.Verifier"), this.minLogSize));
 				
 		Label label = new Label(this, SWT.NULL);
 		label.setLayoutData(new GridData());
@@ -267,6 +273,9 @@ public class CommentComposite extends Composite  {
         		}
         	}
 		});
+    	if (this.minLogSize > 0) {
+    		this.validationManager.validateContent();
+    	}
     }
     
     protected List getCommentsList() {
