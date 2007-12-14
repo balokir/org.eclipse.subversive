@@ -851,7 +851,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 			label.setText(SVNTeamUIPlugin.instance().getResource("PreferencePage.preview"));
 			this.fViewer = new TreeViewer(composite);
 			data = new GridData(GridData.FILL_BOTH);
-			data.heightHint = 250;
+			data.heightHint = Math.max(SVNTeamDecorationPreferencesPage.this.convertHeightInCharsToPixels(1), 16) * 13;
 			this.fViewer.getControl().setLayoutData(data);
 			this.fViewer.setContentProvider(this);
 			this.fViewer.setLabelProvider(this);
