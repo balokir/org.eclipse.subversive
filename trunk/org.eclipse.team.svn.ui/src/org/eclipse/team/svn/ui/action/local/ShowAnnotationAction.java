@@ -32,7 +32,7 @@ public class ShowAnnotationAction extends AbstractWorkingCopyAction {
 	public void runImpl(IAction action) {
     	IResource resource = this.getSelectedResources(IStateFilter.SF_ONREPOSITORY)[0];
     	// could be called by keyboard actions for any resource
-    	if (!(resource instanceof IFile)) {
+    	if (resource instanceof IFile) {
         	this.runBusy(new LocalShowAnnotationOperation(resource, this.getTargetPage()));
     	}
 	}
