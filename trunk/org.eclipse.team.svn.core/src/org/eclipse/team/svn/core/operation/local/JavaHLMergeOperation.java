@@ -83,11 +83,11 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 			SVNEntryRevisionReference ref2 = SVNUtility.getEntryRevisionReference(from2);
 			if (SVNUtility.useSingleReferenceSignature(ref1, ref2)) {
 				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn merge -r " + from1.getSelectedRevision() + ":" + from2.getSelectedRevision() + "\"" + from1.getUrl() + "@" + from1.getPegRevision() + "\" \"" + FileUtility.normalizePath(wcPath) + "\"" + (this.dryRun ? " --dry-run" : "") + (this.ignoreAncestry ? " --ignore-ancestry" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n");
-				proxy.merge(ref1, new SVNRevisionRange[] {new SVNRevisionRange(from1.getSelectedRevision(), from2.getSelectedRevision())}, wcPath, false, Depth.INFINITY, this.ignoreAncestry, this.dryRun, new MergeProgressMonitor(this, monitor, null));
+				proxy.merge(ref1, new SVNRevisionRange[] {new SVNRevisionRange(from1.getSelectedRevision(), from2.getSelectedRevision())}, wcPath, false, Depth.INFINITY, this.ignoreAncestry, this.dryRun, false, new MergeProgressMonitor(this, monitor, null));
 			}
 			else {
 				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn merge \"" + from1.getUrl() + "@" + from1.getSelectedRevision() + "\" \"" + from2.getUrl() + "@" + from2.getSelectedRevision() + "\" \"" + FileUtility.normalizePath(wcPath) + "\"" + (this.dryRun ? " --dry-run" : "") + (this.ignoreAncestry ? " --ignore-ancestry" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n");
-				proxy.merge(ref1, ref2, wcPath, false, Depth.INFINITY, this.ignoreAncestry, this.dryRun, new MergeProgressMonitor(this, monitor, null));
+				proxy.merge(ref1, ref2, wcPath, false, Depth.INFINITY, this.ignoreAncestry, this.dryRun, false, new MergeProgressMonitor(this, monitor, null));
 			}
 		}
 		finally {

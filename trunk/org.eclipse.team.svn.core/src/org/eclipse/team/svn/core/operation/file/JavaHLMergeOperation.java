@@ -55,7 +55,7 @@ public class JavaHLMergeOperation extends AbstractFileOperation {
 			proxy.merge(
 				SVNUtility.getEntryRevisionReference(this.from1), SVNUtility.getEntryRevisionReference(this.from2),
 				file.getAbsolutePath(), false,
-				Depth.INFINITY, false, this.dryRun, new SVNProgressMonitor(this, monitor, null));
+				Depth.INFINITY, false, this.dryRun, false, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 			if (this.notify != null) {

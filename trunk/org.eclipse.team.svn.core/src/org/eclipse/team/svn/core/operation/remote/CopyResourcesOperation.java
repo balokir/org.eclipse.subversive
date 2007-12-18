@@ -37,7 +37,7 @@ public class CopyResourcesOperation extends AbstractCopyMoveResourcesOperation {
 	protected void processEntry(ISVNConnector proxy, String sourceUrl, String destinationUrl, IRepositoryResource current, IProgressMonitor monitor) throws Exception {
 		this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn copy \"" + SVNUtility.decodeURL(sourceUrl) + "\" \"" + SVNUtility.decodeURL(destinationUrl) + "\" -r " + current.getSelectedRevision() + " -m \"" + this.message + "\"" + FileUtility.getUsernameParam(current.getRepositoryLocation().getUsername()) + "\n");
 		SVNEntryRevisionReference []src = new SVNEntryRevisionReference[] {new SVNEntryRevisionReference(sourceUrl, current.getPegRevision(), current.getSelectedRevision())};
-		proxy.copy(src, destinationUrl, this.message, true, false, true, new SVNProgressMonitor(this, monitor, null));
+		proxy.copy(src, destinationUrl, this.message, true, false, new SVNProgressMonitor(this, monitor, null));
 	}
 	
 }
