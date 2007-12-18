@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.core.connector;
 
-import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 
 /**
  * Interface that provide ability to ask user about repository credentials
@@ -24,19 +23,19 @@ import org.eclipse.team.svn.core.resource.IRepositoryLocation;
  */
 public interface ISVNCredentialsPrompt {
 	public static final ISVNCredentialsPrompt DEFAULT_PROMPT = new ISVNCredentialsPrompt() {
-		public boolean promptSSL(IRepositoryLocation location, String realm) {
+		public boolean promptSSL(Object context, String realm) {
 			return false;
 		}
 
-		public boolean promptSSH(IRepositoryLocation location, String realm) {
+		public boolean promptSSH(Object context, String realm) {
 			return false;
 		}
 
-		public boolean promptProxy(IRepositoryLocation location) {
+		public boolean promptProxy(Object context) {
 			return false;
 		}
 
-		public boolean prompt(IRepositoryLocation location, String realm) {
+		public boolean prompt(Object context, String realm) {
 			return false;
 		}
 
@@ -120,7 +119,7 @@ public interface ISVNCredentialsPrompt {
 			return null;
 		}
 
-		public int askTrustSSLServer(IRepositoryLocation location, String info, boolean allowPermanently) {
+		public int askTrustSSLServer(Object context, String info, boolean allowPermanently) {
 			return ISVNCredentialsPrompt.ACCEPT_TEMPORARY;
 		}
 	};
@@ -142,15 +141,15 @@ public interface ISVNCredentialsPrompt {
 
 	public static final String ROOT_LOCATION = "<Repository Location>";
 
-	public boolean prompt(IRepositoryLocation location, String realm);
+	public boolean prompt(Object context, String realm);
 
-	public boolean promptSSL(IRepositoryLocation location, String realm);
+	public boolean promptSSL(Object context, String realm);
 
-	public boolean promptSSH(IRepositoryLocation location, String realm);
+	public boolean promptSSH(Object context, String realm);
 
-	public boolean promptProxy(IRepositoryLocation location);
+	public boolean promptProxy(Object context);
 
-	public int askTrustSSLServer(IRepositoryLocation location, String info, boolean allowPermanently);
+	public int askTrustSSLServer(Object context, String info, boolean allowPermanently);
 
 	public String getSSHPrivateKeyPath();
 

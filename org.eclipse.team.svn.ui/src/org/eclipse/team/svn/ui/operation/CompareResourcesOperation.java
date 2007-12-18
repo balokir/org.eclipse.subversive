@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNDiffStatus;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNRevision;
@@ -81,7 +82,7 @@ public class CompareResourcesOperation extends AbstractActionOperation {
 		}
 
 		final SVNEntryStatus localChanges[][] = new SVNEntryStatus[1][];
-		final SVNEntryStatus remoteChanges[][] = new SVNEntryStatus[1][];
+		final SVNDiffStatus remoteChanges[][] = new SVNDiffStatus[1][];
 		
 		final IRepositoryLocation location = remoteBase.getRepositoryLocation();
 		final ISVNConnector proxy = location.acquireSVNProxy();
@@ -139,7 +140,7 @@ public class CompareResourcesOperation extends AbstractActionOperation {
 				}, monitor, 3);
 			}
 			else {
-				remoteChanges[0] = new SVNEntryStatus[0];
+				remoteChanges[0] = new SVNDiffStatus[0];
 			}
 		}
 		

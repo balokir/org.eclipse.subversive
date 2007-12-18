@@ -59,7 +59,8 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
         return new UpdateSyncInfo(localStatus, remoteStatus, this.getResourceComparator());
     }
 
-	protected IResourceChange handleResourceChange(IRemoteStatusOperation rStatusOp, final SVNEntryStatus current) {
+	protected IResourceChange handleResourceChange(IRemoteStatusOperation rStatusOp, final Object status) {
+		final SVNEntryStatus current = (SVNEntryStatus)status; 
 		if (current.textStatus == Kind.EXTERNAL) {
 			return null;
 		}
@@ -131,6 +132,11 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 	protected IResource[] findChanges(IResource[] resources, int depth, IProgressMonitor monitor, IOperationWrapperFactory operationWrapperFactory) {
 		this.comments.clear();
 		return super.findChanges(resources, depth, monitor, operationWrapperFactory);
+	}
+	
+	protected boolean isIncomig(Object status) {
+		SVNEntryStatus st = (SVNEntryStatus)status;
+		return st.repositoryPropStatus == SVNEntryStatus.Kind.MODIFIED || st.repositoryTextStatus != SVNEntryStatus.Kind.NONE;
 	}
 	
 	private UpdateSubscriber() {

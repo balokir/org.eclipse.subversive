@@ -24,9 +24,9 @@ package org.eclipse.team.svn.core.connector;
  * @author Alexander Gurov
  */
 public class SVNErrorCodes {
-	public static final int CATEGORY_SIZE = 5000;
+	public static final int categorySize = 5000;
 
-	public static final int BAD_CONTAINING_POOL = 125000;
+	public static final int badContainingPool = 125000;
 
 	public static final int badFilename = 125001;
 

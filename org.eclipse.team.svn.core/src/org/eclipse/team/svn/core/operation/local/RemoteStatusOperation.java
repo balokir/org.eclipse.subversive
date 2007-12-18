@@ -92,7 +92,7 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 		this.statuses = (SVNEntryStatus [])result.toArray(new SVNEntryStatus[result.size()]);
 	}
 
-	public SVNEntryStatus []getStatuses() {
+	public Object []getStatuses() {
 		return this.statuses;
 	}
 	

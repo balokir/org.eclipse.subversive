@@ -12,7 +12,6 @@
 package org.eclipse.team.svn.core.operation.local;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 
@@ -23,6 +22,6 @@ import org.eclipse.team.svn.core.resource.IResourceChange;
  */
 public interface IRemoteStatusOperation extends IActionOperation {
 	public IResource []getScope();
-    public SVNEntryStatus []getStatuses();
+    public Object []getStatuses();
     public void setPegRevision(IResourceChange change);
 }

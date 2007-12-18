@@ -37,6 +37,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.connector.SVNDiffStatus;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
@@ -63,10 +64,10 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 	protected IResource localLeft;
 	protected SVNEntryStatus []localChanges;
-	protected SVNEntryStatus []remoteChanges;
+	protected SVNDiffStatus []remoteChanges;
 	protected Map newUrl2OldUrl;
 	
-	public ThreeWayResourceCompareInput(CompareConfiguration configuration, IResource left, SVNRevision revision, SVNRevision pegRevision, SVNEntryStatus []localChanges, SVNEntryStatus []remoteChanges) {
+	public ThreeWayResourceCompareInput(CompareConfiguration configuration, IResource left, SVNRevision revision, SVNRevision pegRevision, SVNEntryStatus []localChanges, SVNDiffStatus []remoteChanges) {
 		super(configuration);
 		this.newUrl2OldUrl = new HashMap();
 		
@@ -95,7 +96,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 			localChanges.put(url, this.localChanges[i]);
 		}
 		for (int i = 0; i < this.remoteChanges.length; i++) {
-			String url = SVNUtility.decodeURL(this.remoteChanges[i].path);
+			String url = SVNUtility.decodeURL(this.remoteChanges[i].path1);
 			allChangesSet.add(url);
 			remoteChanges.put(url, this.remoteChanges[i]);
 		}
@@ -106,7 +107,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		String message = SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.CheckingDelta");
 		for (int i = 0; i < allChanges.length; i++) {
 			monitor.subTask(MessageFormat.format(message, new String[] {allChanges[i]}));
-			this.makeBranch(allChanges[i], (SVNEntryStatus)localChanges.get(allChanges[i]), (SVNEntryStatus)remoteChanges.get(allChanges[i]), path2node, monitor);
+			this.makeBranch(allChanges[i], (SVNEntryStatus)localChanges.get(allChanges[i]), (SVNDiffStatus)remoteChanges.get(allChanges[i]), path2node, monitor);
 			ProgressMonitorUtility.progress(monitor, i, allChanges.length);
 		}
 		
@@ -184,7 +185,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		}
 	}
 	
-	protected void makeBranch(String url, SVNEntryStatus stLocal, SVNEntryStatus stRemote, Map path2node, IProgressMonitor monitor) throws Exception {
+	protected void makeBranch(String url, SVNEntryStatus stLocal, SVNDiffStatus stRemote, Map path2node, IProgressMonitor monitor) throws Exception {
 		// skip all ignored resources that does not have real remote variants
 		if (stRemote == null) {
 			IProject project = this.localLeft.getProject();
@@ -204,7 +205,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		}
 	}
 	
-	protected CompareNode makeNode(String oldUrl, SVNEntryStatus stLeft, SVNEntryStatus stRight, Map path2node, IProgressMonitor monitor) throws Exception {
+	protected CompareNode makeNode(String oldUrl, SVNEntryStatus stLeft, SVNDiffStatus stRight, Map path2node, IProgressMonitor monitor) throws Exception {
 		int rightNodeKind = stRight == null ? this.getNodeKind(stLeft) : this.getNodeKind(stRight);
 		int leftNodeKind = stLeft == null ? this.getNodeKind(stRight) : this.getNodeKind(stLeft);
 		int ancestorNodeKind = this.getAncestorKind(stLeft, leftNodeKind, rightNodeKind);
@@ -220,7 +221,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		ancestor.setSelectedRevision(SVNRevision.BASE);
 		ancestor.setPegRevision(null);
 		
-		String rightUrl = stRight != null ? SVNUtility.decodeURL(stRight.url) : (stLeft != null && stLeft.isCopied ? SVNUtility.decodeURL(stLeft.urlCopiedFrom) : oldUrl);
+		String rightUrl = stRight != null ? SVNUtility.decodeURL(stRight.path1) : (stLeft != null && stLeft.isCopied ? SVNUtility.decodeURL(stLeft.urlCopiedFrom) : oldUrl);
 		IRepositoryResource right = this.createResourceFor(location, rightNodeKind, rightUrl);
 		right.setPegRevision(this.rootRight.getPegRevision());
 		right.setSelectedRevision(this.rootRight.getSelectedRevision());
