@@ -429,7 +429,7 @@ public class ResourceSelectionComposite extends Composite {
 					final IResource resource = (IResource) selection.getFirstElement();
 					UIMonitorUtility.getShell().getDisplay().syncExec(new Runnable() {
 						public void run() {
-							UIMonitorUtility.doTaskScheduledDefault(new CompareResourcesOperation(resource, SVNRevision.BASE, null, true));
+							UIMonitorUtility.doTaskScheduledDefault(new CompareResourcesOperation(resource, SVNRevision.HEAD, null, true));
 						}
 					});
 				}
