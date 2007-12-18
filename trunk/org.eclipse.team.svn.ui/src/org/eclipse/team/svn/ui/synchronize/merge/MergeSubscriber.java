@@ -14,7 +14,7 @@ package org.eclipse.team.svn.ui.synchronize.merge;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.svn.core.connector.SVNEntryStatus;
+import org.eclipse.team.svn.core.connector.SVNMergeStatus;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNEntry.NodeKind;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind;
@@ -78,30 +78,31 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
     
     public void refresh(final IResource []resources, final int depth, IProgressMonitor monitor) {
 		if (this.scope != null) {
-			this.scope.getMergeSet().setStatuses(new SVNEntryStatus[0]);
+			this.scope.getMergeSet().setStatuses(new SVNMergeStatus[0]);
 		}
     	super.refresh(resources, depth, monitor);
     }
 	
-	protected IResourceChange handleResourceChange(IRemoteStatusOperation rStatusOp, final SVNEntryStatus current) {
+	protected IResourceChange handleResourceChange(IRemoteStatusOperation rStatusOp, Object status) {
+		final SVNMergeStatus current = (SVNMergeStatus)status;
 		IChangeStateProvider provider = new IChangeStateProvider() {
 			public long getChangeDate() {
-				return current.reposLastCmtDate;
+				return current.date;
 			}
 			public String getChangeAuthor() {
-				return current.reposLastCmtAuthor;
+				return current.author;
 			}
 			public SVNRevision.Number getChangeRevision() {
-				return current.reposLastCmtRevision == SVNRevision.INVALID_REVISION_NUMBER ? null : SVNRevision.fromNumber(current.reposLastCmtRevision);
+				return current.revision == SVNRevision.INVALID_REVISION_NUMBER ? null : SVNRevision.fromNumber(current.revision);
 			}
 			public int getTextChangeType() {
-				return current.repositoryTextStatus;
+				return current.textStatus;
 			}
 			public int getPropertiesChangeType() {
-				return current.repositoryPropStatus;
+				return current.propStatus;
 			}
 			public int getNodeKind() {
-				int kind = SVNUtility.getNodeKind(current.path, current.reposKind, true);
+				int kind = SVNUtility.getNodeKind(current.path, current.nodeKind, true);
 				// if not exists on repository try to check it with WC kind...
 				return kind == NodeKind.NONE ? SVNUtility.getNodeKind(current.path, current.nodeKind, false) : kind;
 			}
@@ -131,14 +132,18 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 		IRepositoryResource originator = this.scope.getMergeSet().from[0];
 		String decodedUrl = SVNUtility.decodeURL(current.url);
 		originator = provider.getNodeKind() == NodeKind.DIR ? (IRepositoryResource)originator.asRepositoryContainer(decodedUrl, false) : originator.asRepositoryFile(decodedUrl, false);
-		originator.setSelectedRevision(SVNRevision.fromNumber(current.repositoryTextStatus == Kind.DELETED ? current.reposLastCmtRevision - 1 : current.reposLastCmtRevision));
+		originator.setSelectedRevision(SVNRevision.fromNumber(current.textStatus == Kind.DELETED ? current.revision - 1 : current.revision));
 		resourceChange.setOriginator(originator);
 		resourceChange.setCommentProvider(new ICommentProvider() {
 			public String getComment(IResource resource, SVNRevision rev, SVNRevision peg) {
-				return current.lockComment;
+				return current.comment;
 			}
 		});
 		return resourceChange;
+	}
+	
+	protected boolean isIncomig(Object status) {
+		return true;
 	}
 	
     private MergeSubscriber() {

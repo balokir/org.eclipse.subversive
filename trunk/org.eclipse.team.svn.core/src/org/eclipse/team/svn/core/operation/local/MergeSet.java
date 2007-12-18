@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.team.svn.core.connector.SVNEntryStatus;
+import org.eclipse.team.svn.core.connector.SVNMergeStatus;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 
@@ -38,16 +38,16 @@ public class MergeSet {
     	this.statuses = new ArrayList();
     }
 
-	public SVNEntryStatus []getStatuses() {
-		return (SVNEntryStatus [])this.statuses.toArray(new SVNEntryStatus[this.statuses.size()]);
+	public SVNMergeStatus []getStatuses() {
+		return (SVNMergeStatus [])this.statuses.toArray(new SVNMergeStatus[this.statuses.size()]);
 	}
 
-	public void setStatuses(SVNEntryStatus []statuses) {
+	public void setStatuses(SVNMergeStatus []statuses) {
 		this.statuses.clear();
 		this.addStatuses(statuses);
 	}
     
-	public void addStatuses(SVNEntryStatus []statuses) {
+	public void addStatuses(SVNMergeStatus []statuses) {
 		if (statuses != null) {
 			this.statuses.addAll(Arrays.asList(statuses));
 		}

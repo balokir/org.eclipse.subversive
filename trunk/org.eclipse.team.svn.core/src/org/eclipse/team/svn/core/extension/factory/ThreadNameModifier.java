@@ -14,21 +14,23 @@ package org.eclipse.team.svn.core.extension.factory;
 import java.io.OutputStream;
 
 import org.eclipse.team.svn.core.connector.ISVNAnnotationCallback;
-import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNConflictResolutionCallback;
+import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNCredentialsPrompt;
+import org.eclipse.team.svn.core.connector.ISVNDiffStatusCallback;
 import org.eclipse.team.svn.core.connector.ISVNEntryCallback;
 import org.eclipse.team.svn.core.connector.ISVNEntryInfoCallback;
 import org.eclipse.team.svn.core.connector.ISVNEntryStatusCallback;
 import org.eclipse.team.svn.core.connector.ISVNLogEntryCallback;
+import org.eclipse.team.svn.core.connector.ISVNMergeStatusCallback;
 import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
 import org.eclipse.team.svn.core.connector.ISVNProgressMonitor;
 import org.eclipse.team.svn.core.connector.ISVNPropertyCallback;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.connector.SVNEntryReference;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
-import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNMergeInfo;
+import org.eclipse.team.svn.core.connector.SVNMergeStatus;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNRevisionRange;
@@ -136,7 +138,7 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 
-	public void diffStatus(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, int depth, boolean ignoreAncestry, ISVNEntryStatusCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void diffStatus(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, int depth, boolean ignoreAncestry, ISVNDiffStatusCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.connector.diffStatus(reference1, reference2, depth, ignoreAncestry, cb, monitor);
@@ -146,7 +148,7 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 
-	public void diffStatus(SVNEntryReference reference, SVNRevision revision1, SVNRevision revision2, int depth, boolean ignoreAncestry, ISVNEntryStatusCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void diffStatus(SVNEntryReference reference, SVNRevision revision1, SVNRevision revision2, int depth, boolean ignoreAncestry, ISVNDiffStatusCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.connector.diffStatus(reference, revision1, revision2, depth, ignoreAncestry, cb, monitor);
@@ -326,7 +328,7 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 
-	public void merge(SVNEntryReference reference, SVNRevisionRange []revisions, String mergePath, SVNEntryStatus[] mergeStatus, boolean force, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void merge(SVNEntryReference reference, SVNRevisionRange []revisions, String mergePath, SVNMergeStatus[] mergeStatus, boolean force, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.connector.merge(reference, revisions, mergePath, mergeStatus, force, monitor);
@@ -336,7 +338,7 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 
-	public void mergeStatus(SVNEntryReference reference, SVNRevisionRange []revisions, String path, int depth, boolean ignoreAncestry, ISVNEntryStatusCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void mergeStatus(SVNEntryReference reference, SVNRevisionRange []revisions, String path, int depth, boolean ignoreAncestry, ISVNMergeStatusCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
 			this.connector.mergeStatus(reference, revisions, path, depth, ignoreAncestry, cb, monitor);

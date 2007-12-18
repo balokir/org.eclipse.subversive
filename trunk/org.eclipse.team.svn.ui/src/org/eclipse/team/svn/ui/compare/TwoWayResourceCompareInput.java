@@ -25,7 +25,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.team.svn.core.connector.SVNEntryStatus;
+import org.eclipse.team.svn.core.connector.SVNDiffStatus;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind;
 import org.eclipse.team.svn.core.operation.remote.LocateResourceURLInHistoryOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -41,9 +41,9 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  * @author Alexander Gurov
  */
 public class TwoWayResourceCompareInput extends ResourceCompareInput {
-	protected SVNEntryStatus []statuses;
+	protected SVNDiffStatus []statuses;
 	
-	public TwoWayResourceCompareInput(CompareConfiguration configuration, IRepositoryResource leftResource, IRepositoryResource rightResource, SVNEntryStatus []statuses) {
+	public TwoWayResourceCompareInput(CompareConfiguration configuration, IRepositoryResource leftResource, IRepositoryResource rightResource, SVNDiffStatus []statuses) {
 		super(configuration);
 		
 		this.rootLeft = SVNUtility.copyOf(leftResource);
@@ -52,13 +52,12 @@ public class TwoWayResourceCompareInput extends ResourceCompareInput {
 	}
 
 	public void initialize(IProgressMonitor monitor) throws Exception {
-			
 		SVNUtility.reorder(this.statuses, true);
 		
 		HashMap path2node = new HashMap();
 		String message = SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.CheckingDelta");
 		for (int i = 0; i < this.statuses.length; i++) {
-			monitor.subTask(MessageFormat.format(message, new String[] {SVNUtility.decodeURL(this.statuses[i].path)}));
+			monitor.subTask(MessageFormat.format(message, new String[] {SVNUtility.decodeURL(this.statuses[i].path1)}));
 			
 			CompareNode node = this.makeNode(this.statuses[i], path2node, monitor);
 			path2node.put(new Path(((ResourceElement)node.getRight()).getRepositoryResource().getUrl()), node);
@@ -84,9 +83,9 @@ public class TwoWayResourceCompareInput extends ResourceCompareInput {
 		}
 	}
 	
-	protected CompareNode makeNode(SVNEntryStatus st, Map path2node, IProgressMonitor monitor) throws Exception {
-		String urlLeft = SVNUtility.decodeURL(st.path);
-		String urlRight = SVNUtility.decodeURL(st.url);
+	protected CompareNode makeNode(SVNDiffStatus st, Map path2node, IProgressMonitor monitor) throws Exception {
+		String urlLeft = SVNUtility.decodeURL(st.path1);
+		String urlRight = SVNUtility.decodeURL(st.path2);
 		int nodeKind = this.getNodeKind(st);
 		
 		IRepositoryResource left = this.createResourceFor(this.rootLeft.getRepositoryLocation(), nodeKind, urlLeft);

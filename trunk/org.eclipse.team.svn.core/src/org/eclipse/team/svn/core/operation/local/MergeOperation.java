@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
-import org.eclipse.team.svn.core.connector.SVNEntryStatus;
+import org.eclipse.team.svn.core.connector.SVNMergeStatus;
 import org.eclipse.team.svn.core.connector.SVNRevisionRange;
 import org.eclipse.team.svn.core.connector.SVNNotification.NotifyStatus;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -62,12 +62,12 @@ public class MergeOperation extends AbstractConflictDetectionOperation implement
 		
 		ArrayList retVal = new ArrayList();
 		for (int i = 0; i < localTo.length && !monitor.isCanceled(); i++) {
-			SVNEntryStatus st = this.getStatusFor(localTo[i]);
+			SVNMergeStatus st = this.getStatusFor(localTo[i]);
 			if (st != null) {
 				retVal.add(st);
 			}
 		}
-		SVNEntryStatus []statuses = (SVNEntryStatus [])retVal.toArray(new SVNEntryStatus[retVal.size()]);
+		SVNMergeStatus []statuses = (SVNMergeStatus [])retVal.toArray(new SVNMergeStatus[retVal.size()]);
 		
 		IRepositoryResource from = this.info.from[0];
 		IRepositoryLocation location = from.getRepositoryLocation();
@@ -81,8 +81,8 @@ public class MergeOperation extends AbstractConflictDetectionOperation implement
 		}
 	}
 	
-	protected SVNEntryStatus getStatusFor(IResource resource) {
-		SVNEntryStatus []statuses = this.info.getStatuses();
+	protected SVNMergeStatus getStatusFor(IResource resource) {
+		SVNMergeStatus []statuses = this.info.getStatuses();
 		IPath target = FileUtility.getResourcePath(resource);
 		for (int i = 0; i < statuses.length; i++) {
 			if (target.equals(new Path(statuses[i].path))) {

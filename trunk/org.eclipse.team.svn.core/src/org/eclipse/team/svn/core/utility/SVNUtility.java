@@ -40,20 +40,24 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.ISVNDiffStatusCallback;
 import org.eclipse.team.svn.core.connector.ISVNEntryCallback;
 import org.eclipse.team.svn.core.connector.ISVNEntryInfoCallback;
 import org.eclipse.team.svn.core.connector.ISVNEntryStatusCallback;
 import org.eclipse.team.svn.core.connector.ISVNLogEntryCallback;
+import org.eclipse.team.svn.core.connector.ISVNMergeStatusCallback;
 import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
 import org.eclipse.team.svn.core.connector.ISVNProgressMonitor;
 import org.eclipse.team.svn.core.connector.ISVNPropertyCallback;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
+import org.eclipse.team.svn.core.connector.SVNDiffStatus;
 import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryInfo;
 import org.eclipse.team.svn.core.connector.SVNEntryReference;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
+import org.eclipse.team.svn.core.connector.SVNMergeStatus;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNRevisionRange;
@@ -164,34 +168,34 @@ public final class SVNUtility {
 		return (SVNEntryStatus [])statuses.toArray(new SVNEntryStatus[statuses.size()]);
 	}
 	
-	public static SVNEntryStatus []diffStatus(ISVNConnector proxy, SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, int depth, boolean ignoreAncestry, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public static SVNDiffStatus []diffStatus(ISVNConnector proxy, SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, int depth, boolean ignoreAncestry, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		final ArrayList statuses = new ArrayList();
-		proxy.diffStatus(reference1, reference2, depth, ignoreAncestry, new ISVNEntryStatusCallback() {
-			public void next(SVNEntryStatus status) {
+		proxy.diffStatus(reference1, reference2, depth, ignoreAncestry, new ISVNDiffStatusCallback() {
+			public void next(SVNDiffStatus status) {
 				statuses.add(status);
 			}
 		}, monitor);
-		return (SVNEntryStatus [])statuses.toArray(new SVNEntryStatus[statuses.size()]);
+		return (SVNDiffStatus [])statuses.toArray(new SVNDiffStatus[statuses.size()]);
 	}
 	
-	public static SVNEntryStatus []diffStatus(ISVNConnector proxy, SVNEntryReference reference, SVNRevision revision1, SVNRevision revision2, int depth, boolean ignoreAncestry, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public static SVNDiffStatus []diffStatus(ISVNConnector proxy, SVNEntryReference reference, SVNRevision revision1, SVNRevision revision2, int depth, boolean ignoreAncestry, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		final ArrayList statuses = new ArrayList();
-		proxy.diffStatus(reference, revision1, revision2, depth, ignoreAncestry, new ISVNEntryStatusCallback() {
-			public void next(SVNEntryStatus status) {
+		proxy.diffStatus(reference, revision1, revision2, depth, ignoreAncestry, new ISVNDiffStatusCallback() {
+			public void next(SVNDiffStatus status) {
 				statuses.add(status);
 			}
 		}, monitor);
-		return (SVNEntryStatus [])statuses.toArray(new SVNEntryStatus[statuses.size()]);
+		return (SVNDiffStatus [])statuses.toArray(new SVNDiffStatus[statuses.size()]);
 	}
 	
-	public static SVNEntryStatus[] mergeStatus(ISVNConnector proxy, SVNEntryReference reference, SVNRevisionRange []revisions, String path, int depth, boolean ignoreAncestry, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public static SVNMergeStatus[] mergeStatus(ISVNConnector proxy, SVNEntryReference reference, SVNRevisionRange []revisions, String path, int depth, boolean ignoreAncestry, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		final ArrayList statuses = new ArrayList();
-		proxy.mergeStatus(reference, revisions, path, depth, ignoreAncestry, new ISVNEntryStatusCallback() {
-			public void next(SVNEntryStatus status) {
+		proxy.mergeStatus(reference, revisions, path, depth, ignoreAncestry, new ISVNMergeStatusCallback() {
+			public void next(SVNMergeStatus status) {
 				statuses.add(status);
 			}
 		}, monitor);
-		return (SVNEntryStatus [])statuses.toArray(new SVNEntryStatus[statuses.size()]);
+		return (SVNMergeStatus [])statuses.toArray(new SVNMergeStatus[statuses.size()]);
 	}
 	
 	public static SVNEntry []list(ISVNConnector proxy, SVNEntryRevisionReference reference, int depth, int direntFields, boolean fetchLocks, ISVNProgressMonitor monitor) throws SVNConnectorException {
@@ -401,6 +405,20 @@ public final class SVNUtility {
 		if (composite != null) {
 			composite.remove(listener);
 		}
+	}
+	
+	public static void reorder(SVNDiffStatus []statuses, final boolean parent2Child) {
+		FileUtility.sort(statuses, new Comparator() {
+			public int compare(Object o1, Object o2) {
+				String s1 = ((SVNDiffStatus)o1).path1;
+				String s2 = ((SVNDiffStatus)o2).path1;
+				return parent2Child ? s1.compareTo(s2) : s2.compareTo(s1);
+			}
+			
+			public boolean equals(Object obj) {
+				return false;
+			}
+		});
 	}
 	
 	public static void reorder(SVNEntryStatus []statuses, final boolean parent2Child) {

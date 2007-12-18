@@ -47,6 +47,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.team.svn.core.connector.SVNDiffStatus;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNEntry.NodeKind;
@@ -298,6 +299,10 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 	protected int getNodeKind(SVNEntryStatus st) {
 		int kind = SVNUtility.getNodeKind(st.path, st.nodeKind, true);
 		return kind == NodeKind.NONE ? SVNUtility.getNodeKind(st.path, st.reposKind, false) : kind;
+	}
+	
+	protected int getNodeKind(SVNDiffStatus st) {
+		return SVNUtility.getNodeKind(st.path1, st.nodeKind, false);
 	}
 	
 	protected IRepositoryResource createResourceFor(IRepositoryLocation location, int kind, String url) {

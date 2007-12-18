@@ -52,7 +52,7 @@ public class ReportRootChangesTest extends TestWorkflow {
                         new DeleteResourcesOperation(new IRepositoryResource[] {remote}, "test").run(monitor);
                         RemoteStatusOperation rStatusOp = new RemoteStatusOperation(new IResource[] {getSecondProject()});
                         ProgressMonitorUtility.doTaskExternalDefault(rStatusOp, new NullProgressMonitor());
-                		SVNEntryStatus []statuses = rStatusOp.getStatuses();               		
+                		SVNEntryStatus []statuses = (SVNEntryStatus [])rStatusOp.getStatuses();               		
                 		int counter = 0;
                 		for (int i = 0; i < statuses.length; i++) {
                 		    if (statuses[i].path.equals(getSecondProject().getLocation().toString()) && 

@@ -418,28 +418,28 @@ public class PromptCredentialsPanel extends AbstractDialogPanel {
 			return this.realmToSave;
 		}
 		
-        public boolean prompt(IRepositoryLocation location, String realm) {
-            return this.showPanel(location, SVNRepositoryLocation.DEFAULT_CONNECTION, realm);
+        public boolean prompt(Object context, String realm) {
+            return this.showPanel((IRepositoryLocation)context, SVNRepositoryLocation.DEFAULT_CONNECTION, realm);
         }
         
-		public boolean promptSSL(IRepositoryLocation location, String realm) {
-			return this.showPanel(location, SVNRepositoryLocation.SSL_CONNECTION, realm);
+		public boolean promptSSL(Object context, String realm) {
+			return this.showPanel((IRepositoryLocation)context, SVNRepositoryLocation.SSL_CONNECTION, realm);
 		}
 
-	    public boolean promptSSH(IRepositoryLocation location, String realm) {
-	    	return this.showPanel(location, SVNRepositoryLocation.SSH_CONNECTION, realm);
+	    public boolean promptSSH(Object context, String realm) {
+	    	return this.showPanel((IRepositoryLocation)context, SVNRepositoryLocation.SSH_CONNECTION, realm);
 	    }
 	    
-		public boolean promptProxy(IRepositoryLocation location) {
-			return this.showPanel(location, SVNRepositoryLocation.PROXY_CONNECTION, location.getUrlAsIs());
+		public boolean promptProxy(Object context) {
+			return this.showPanel((IRepositoryLocation)context, SVNRepositoryLocation.PROXY_CONNECTION, ((IRepositoryLocation)context).getUrlAsIs());
 		}	
 	    
-		public int askTrustSSLServer(final IRepositoryLocation location, final String info, final boolean allowPermanently) {
+		public int askTrustSSLServer(final Object context, final String info, final boolean allowPermanently) {
 			final Shell shell = UIMonitorUtility.getShell();
             final int []retVal = new int[1];
             shell.getDisplay().syncExec(new Runnable() {
                 public void run() {
-                    AskTrustSSLServerPanel panel = new AskTrustSSLServerPanel(location.getUrlAsIs(), info, allowPermanently);
+                    AskTrustSSLServerPanel panel = new AskTrustSSLServerPanel(((IRepositoryLocation)context).getUrlAsIs(), info, allowPermanently);
                     DefaultDialog dlg = new DefaultDialog(shell, panel);
                 	retVal[0] = dlg.open();
 	            }

@@ -33,7 +33,6 @@ import org.eclipse.team.core.subscribers.SubscriberChangeEvent;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.variants.IResourceVariantComparator;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
@@ -214,10 +213,10 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 			op.add(rStatusOp);
 			op.add(new AbstractActionOperation("Operation.FetchChanges") {
 				protected void runImpl(IProgressMonitor monitor) throws Exception {
-					SVNEntryStatus []statuses = rStatusOp.getStatuses();
+					Object []statuses = rStatusOp.getStatuses();
 					if (statuses != null) {
 						for (int i = 0; i < statuses.length && !monitor.isCanceled(); i++) {
-							if (statuses[i].repositoryPropStatus == SVNEntryStatus.Kind.MODIFIED || statuses[i].repositoryTextStatus != SVNEntryStatus.Kind.NONE) {
+							if (AbstractSVNSubscriber.this.isIncomig(statuses[i])) {
 								IResourceChange resourceChange = AbstractSVNSubscriber.this.handleResourceChange(rStatusOp, statuses[i]);
 								if (resourceChange != null) {
 									ProgressMonitorUtility.setTaskInfo(monitor, this, resourceChange.getResource().getFullPath().toString());
@@ -236,7 +235,8 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 		return (IResource [])changes.toArray(new IResource[changes.size()]);
 	}
 	
-	protected abstract IResourceChange handleResourceChange(IRemoteStatusOperation rStatusOp, final SVNEntryStatus current);
+	protected abstract boolean isIncomig(Object status);
+	protected abstract IResourceChange handleResourceChange(IRemoteStatusOperation rStatusOp, Object status);
     protected abstract SyncInfo getSVNSyncInfo(ILocalResource localStatus, IResourceChange remoteStatus);
     protected abstract IRemoteStatusOperation getStatusOperation(IResource []resources, int depth);
 

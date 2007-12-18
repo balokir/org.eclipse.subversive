@@ -133,8 +133,8 @@ public interface ISVNConnector {
     public void removeFromChangelist(String[] paths, String changelist, ISVNProgressMonitor monitor) throws SVNConnectorException;
     public String[] getChangelist(String changelist, String rootPath, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void merge(SVNEntryReference reference, SVNRevisionRange []revisions, String mergePath, SVNEntryStatus[] mergeStatus, boolean force, ISVNProgressMonitor monitor) throws SVNConnectorException;
-	public void mergeStatus(SVNEntryReference reference, SVNRevisionRange []revisions, String path, int depth, boolean ignoreAncestry, ISVNEntryStatusCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void merge(SVNEntryReference reference, SVNRevisionRange []revisions, String mergePath, SVNMergeStatus[] mergeStatus, boolean force, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void mergeStatus(SVNEntryReference reference, SVNRevisionRange []revisions, String path, int depth, boolean ignoreAncestry, ISVNMergeStatusCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	
 	public void doImport(String path, String url, String message, int depth, boolean noIgnore, boolean ignoreUnknownNodeTypes, ISVNProgressMonitor monitor) throws SVNConnectorException;
@@ -142,8 +142,8 @@ public interface ISVNConnector {
 	
 	public void diff(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, String outFileName, int depth, boolean ignoreAncestry, boolean noDiffDeleted, boolean force, boolean diffUnversioned, boolean relativePath, ISVNProgressMonitor monitor) throws SVNConnectorException;
 	public void diff(SVNEntryReference reference, SVNRevision revision1, SVNRevision revision2, String outFileName, int depth, boolean ignoreAncestry, boolean noDiffDeleted, boolean force, boolean diffUnversioned, boolean relativePath, ISVNProgressMonitor monitor) throws SVNConnectorException;
-	public void diffStatus(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, int depth, boolean ignoreAncestry, ISVNEntryStatusCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException;
-	public void diffStatus(SVNEntryReference reference, SVNRevision revision1, SVNRevision revision2, int depth, boolean ignoreAncestry, ISVNEntryStatusCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void diffStatus(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, int depth, boolean ignoreAncestry, ISVNDiffStatusCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void diffStatus(SVNEntryReference reference, SVNRevision revision1, SVNRevision revision2, int depth, boolean ignoreAncestry, ISVNDiffStatusCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public void info(SVNEntryRevisionReference reference, int depth, ISVNEntryInfoCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException;
 	

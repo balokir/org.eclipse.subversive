@@ -677,7 +677,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 			this.location = location;
 		}
 
-		public int askTrustSSLServer(IRepositoryLocation location, String info, boolean allowPermanently) {
+		public int askTrustSSLServer(Object location, String info, boolean allowPermanently) {
         	return this.prompt.askTrustSSLServer(this.location, info, allowPermanently);
 		}
 
@@ -761,13 +761,13 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 			return this.prompt.isSaveProxyPassword();
 		}
 
-		public boolean promptProxy(IRepositoryLocation location) {
+		public boolean promptProxy(Object context) {
 			boolean retVal = this.prompt.promptProxy(this.location);
 			this.checkForSave(retVal, SVNRepositoryLocation.PROXY_CONNECTION);
 			return retVal;
 		}
 
-		public boolean prompt(IRepositoryLocation location, String realm) {
+		public boolean prompt(Object context, String realm) {
 			if (this.tryCachedRealm(realm)) {
 				return true;
 			}
@@ -776,7 +776,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 			return retVal;
 		}
 
-		public boolean promptSSH(IRepositoryLocation location, String realm) {
+		public boolean promptSSH(Object context, String realm) {
 			if (this.tryCachedRealm(realm)) {
 				return true;
 			}
@@ -785,7 +785,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 			return retVal;
 		}
 
-		public boolean promptSSL(IRepositoryLocation location, String realm) {
+		public boolean promptSSL(Object context, String realm) {
 			if (this.tryCachedRealm(realm)) {
 				return true;
 			}
