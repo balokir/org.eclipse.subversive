@@ -153,12 +153,10 @@ public abstract class AbstractDialogPanel implements IDialogPanel, IValidationMa
 	}
 	
 	protected void retainSize() {
-		if (parent != null) {
 		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
-			Point size = this.parent.getSize();
-			SVNTeamPreferences.setDialogInt(store, this.getClass().getName() + ".width", size.x);
-			SVNTeamPreferences.setDialogInt(store, this.getClass().getName() + ".height", size.y);
-		}
+		Point size = this.parent.getSize();
+		SVNTeamPreferences.setDialogInt(store, this.getClass().getName() + ".width", size.x);
+		SVNTeamPreferences.setDialogInt(store, this.getClass().getName() + ".height", size.y);
 	}
 	
 	protected void saveChanges() {
