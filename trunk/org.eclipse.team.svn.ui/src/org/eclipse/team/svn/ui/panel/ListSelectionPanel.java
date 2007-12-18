@@ -71,6 +71,7 @@ public class ListSelectionPanel extends AbstractDialogPanel {
 	}
 	
 	public void createControls(Composite parent) {
+		this.parent = parent;
 		this.listViewer = this.createViewer(parent);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = 120;
@@ -176,6 +177,7 @@ public class ListSelectionPanel extends AbstractDialogPanel {
 	}
 	
 	protected void saveChanges() {
+		this.retainSize();
 		Object[] children = this.contentProvider.getElements(this.inputElement);
 		if (children != null) {
 			ArrayList list = new ArrayList();
@@ -189,7 +191,7 @@ public class ListSelectionPanel extends AbstractDialogPanel {
 	}
 
 	protected void cancelChanges() {
-
+		this.retainSize();
 	}
 
 }

@@ -12,10 +12,13 @@
 package org.eclipse.team.svn.ui.panel;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.verifier.AbstractVerificationKeyListener;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifier;
 import org.eclipse.team.svn.ui.verifier.IValidationManager;
@@ -35,6 +38,8 @@ public abstract class AbstractDialogPanel implements IDialogPanel, IValidationMa
     protected String defaultMessage;
     protected String imagePath;
     protected String []buttonNames;
+    
+    protected Composite parent;
 
     public AbstractDialogPanel() {
         this(new String[] {IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL});
@@ -43,6 +48,7 @@ public abstract class AbstractDialogPanel implements IDialogPanel, IValidationMa
     public AbstractDialogPanel(String []buttonNames) {
         this.buttonNames = buttonNames;
         this.changeListener = new VerificationKeyListener();
+        parent = null;
     }
 
     public void initPanel(IDialogManager manager) {
@@ -78,9 +84,19 @@ public abstract class AbstractDialogPanel implements IDialogPanel, IValidationMa
         return this.imagePath;
     }
 
-    public Point getPrefferedSize() {
+    public Point getPrefferedSizeImpl() {
         return new Point(470, SWT.DEFAULT);
     }
+    
+    public Point getPrefferedSize() {
+		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
+		int width = SVNTeamPreferences.getDialogInt(store, this.getClass().getName() + ".width");
+		int height = SVNTeamPreferences.getDialogInt(store, this.getClass().getName() + ".height");
+		if ((width == 0) && (height == 0)) {
+			return this.getPrefferedSizeImpl();
+		}
+    	return new Point(width, height); 
+	}
     
     public String []getButtonNames() {
         return this.buttonNames;
@@ -129,6 +145,15 @@ public abstract class AbstractDialogPanel implements IDialogPanel, IValidationMa
 	
 	protected void setButtonsEnabled(boolean enabled) {
 	    
+	}
+	
+	protected void retainSize() {
+		if (parent != null) {
+		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
+			Point size = this.parent.getSize();
+			SVNTeamPreferences.setDialogInt(store, this.getClass().getName() + ".width", size.x);
+			SVNTeamPreferences.setDialogInt(store, this.getClass().getName() + ".height", size.y);
+		}
 	}
 	
     protected abstract void saveChanges();

@@ -87,7 +87,7 @@ public class LockPanel extends CommentPanel {
     	return "org.eclipse.team.svn.help.lockDialogContext";
     }
     
-    public Point getPrefferedSize() {
+    public Point getPrefferedSizeImpl() {
     	return new Point(525, SWT.DEFAULT);
     }
     
@@ -100,6 +100,7 @@ public class LockPanel extends CommentPanel {
     }
     
     protected void saveChanges() {
+    	this.retainSize();
     	super.saveChanges();
     	this.force = this.forceButton.getSelection();
     	this.recursive = this.isFile ? false : this.recursiveButton.getSelection();

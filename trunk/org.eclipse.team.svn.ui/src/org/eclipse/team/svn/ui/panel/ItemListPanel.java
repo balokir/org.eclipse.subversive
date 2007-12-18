@@ -51,14 +51,15 @@ public class ItemListPanel extends AbstractDialogPanel {
 	}	
 	
 	protected void saveChanges() {
-
+		this.retainSize();
 	}
 
     protected void cancelChanges() {
-
+    	this.retainSize();
     }
     
 	public void createControls(Composite parent) {
+		this.parent = parent;
 		this.table = new Table(parent, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.FULL_SELECTION);
 		this.table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		TableLayout layout = new TableLayout();

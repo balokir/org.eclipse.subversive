@@ -30,7 +30,7 @@ import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.debugmail.Reporter;
-import org.eclipse.team.svn.ui.dialog.AdvancedDialog;
+import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.extension.factory.IMailSettingsProvider;
 import org.eclipse.team.svn.ui.panel.reporting.ErrorCancelPanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
@@ -185,7 +185,7 @@ public class UILoggedOperation extends LoggedOperation {
     	else {
     		panel = new ErrorCancelPanel(operationName, errorInfo.numberOfErrors, errorInfo.simpleMessage, errorInfo.advancedMessage, sendReport, optionName, errorStatus, pluginID, originalReport);
     	}
-        AdvancedDialog dialog = new AdvancedDialog(shell, panel, sendReport ? 1 : 0);
+        DefaultDialog dialog = new DefaultDialog(shell, panel);
         if (dialog.open() == 0 && sendReport) {
 			UIMonitorUtility.doTaskNowDefault(shell, new AbstractActionOperation("Operation.MailSending") {
 				protected void runImpl(IProgressMonitor monitor) throws Exception {

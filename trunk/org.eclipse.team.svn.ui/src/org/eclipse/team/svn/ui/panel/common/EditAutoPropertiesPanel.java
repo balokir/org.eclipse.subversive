@@ -54,6 +54,7 @@ public class EditAutoPropertiesPanel extends AbstractDialogPanel {
 	}
 	
 	public void createControls(Composite parent) {
+		this.parent = parent;
 		GridLayout layout;
 		GridData layoutData;
 		Label label;
@@ -108,9 +109,11 @@ public class EditAutoPropertiesPanel extends AbstractDialogPanel {
 	}
 	
 	protected void cancelChanges() {
+		this.retainSize();
 	}
 
 	protected void saveChanges() {
+		this.retainSize();
 		this.fileName = this.txtFileName.getText().trim();
 		this.properties = PatternProvider.replaceAll(this.txtProperties.getText().trim(), SVNTeamAutoPropsPreferencePage.AUTO_PROPS_PROPS_SEPARATOR, System.getProperty("line.separator"));
 		this.properties = PatternProvider.replaceAll(this.properties.trim(), System.getProperty("line.separator"), SVNTeamAutoPropsPreferencePage.AUTO_PROPS_PROPS_SEPARATOR);

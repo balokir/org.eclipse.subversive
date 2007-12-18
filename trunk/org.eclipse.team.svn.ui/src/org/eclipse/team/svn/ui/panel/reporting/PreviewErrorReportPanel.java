@@ -24,7 +24,7 @@ public class PreviewErrorReportPanel extends PreviewReportPanel {
 		super(SVNTeamUIPlugin.instance().getResource("PreviewErrorReportPanel.Description"), report);
 	}
 	
-	public Point getPrefferedSize() {
+	public Point getPrefferedSizeImpl() {
 		return new Point(750, 700);
 	}
 	

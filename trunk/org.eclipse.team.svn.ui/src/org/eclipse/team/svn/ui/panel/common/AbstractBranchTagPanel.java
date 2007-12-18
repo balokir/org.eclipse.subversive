@@ -139,7 +139,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 		return this.startsWith;
 	}
 
-	public Point getPrefferedSize() {
+	public Point getPrefferedSizeImpl() {
 		return new Point(this.newResources != null && this.newResources.length > 0 ? 625 : 525, SWT.DEFAULT);
 	}
 
@@ -149,6 +149,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 	}
 
 	public void createControls(Composite parent) {
+		this.parent = parent;
 		GridData data = null;
 
 		GridLayout layout = new GridLayout();
@@ -366,6 +367,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 	}
 
 	protected void saveChanges() {
+		this.retainSize();
 		if (!this.considerStructure) {
 			this.destinationUrl = this.destinationCombo.getText();
 			this.resourceNameHistory.addLine(this.destinationUrl);
@@ -387,6 +389,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 	}
 
 	protected void cancelChanges() {
+		this.retainSize();
 		this.comment.cancelChanges();
 	}
 

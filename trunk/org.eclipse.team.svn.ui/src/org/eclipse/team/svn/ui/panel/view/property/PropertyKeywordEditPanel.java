@@ -110,6 +110,7 @@ public class PropertyKeywordEditPanel extends AbstractDialogPanel {
 	}
 	
 	public void createControls(Composite parent) {
+		this.parent = parent;
 		Composite composite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 0;
@@ -441,10 +442,11 @@ public class PropertyKeywordEditPanel extends AbstractDialogPanel {
 	   }
 	   
 	   protected void cancelChanges() {
-		   
+		   this.retainSize();
 	   }
 	   
 	   protected void saveChanges() {
+		   this.retainSize();
 		   this.useMask = this.useMaskCheckbox == null ? false : this.useMaskCheckbox.getSelection();
 		   this.mask = this.maskText == null ? "*" : this.maskText.getText().trim();
 		   this.setRecursively = this.setRecursivelyCheckbox == null ? false : this.setRecursivelyCheckbox.getSelection();
@@ -453,7 +455,7 @@ public class PropertyKeywordEditPanel extends AbstractDialogPanel {
 		   }
 	   }
 	   
-	   public Point getPrefferedSize() {
+	   public Point getPrefferedSizeImpl() {
 		   return new Point(670, SWT.DEFAULT);
 	   }
 		

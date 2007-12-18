@@ -68,6 +68,7 @@ public class IgnoreMethodPanel extends AbstractDialogPanel {
 	}
 
     public void createControls(Composite parent) {
+    	this.parent = parent;
         GridData data = null;
 
 		Button nameButton = new Button(parent, SWT.RADIO);
@@ -138,16 +139,17 @@ public class IgnoreMethodPanel extends AbstractDialogPanel {
     	return "org.eclipse.team.svn.help.addToIgnoreDialogContext";
     }
     
-	public Point getPrefferedSize() {
+	public Point getPrefferedSizeImpl() {
 		return new Point(470, 130);
 	}
     
     protected void saveChanges() {
+    	this.retainSize();
     	this.ignorePattern = this.patternButton.getSelection() ? this.ignorePatternField.getText() : null;
     }
 
     protected void cancelChanges() {
-
+    	this.retainSize();
     }
 	
 }

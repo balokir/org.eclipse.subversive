@@ -52,6 +52,7 @@ public class ImportPanel extends AbstractDialogPanel {
     }
 	
 	public void createControls(Composite parent) {
+		this.parent = parent;
 		GridLayout layout = null;
 		GridData data = null;
 		
@@ -104,7 +105,7 @@ public class ImportPanel extends AbstractDialogPanel {
     	return "org.eclipse.team.svn.help.remote_importDialogContext";
 	}
 	
-    public Point getPrefferedSize() {
+    public Point getPrefferedSizeImpl() {
     	return new Point(525, SWT.DEFAULT);
     }
     
@@ -114,12 +115,14 @@ public class ImportPanel extends AbstractDialogPanel {
 	}
 		
 	protected void saveChanges() {
+		this.retainSize();
 		this.location = this.locationField.getText();
 		this.comment.saveChanges();
 		this.isRecursive = this.recursiveButton.getSelection();
 	}
 
     protected void cancelChanges() {
+    	this.retainSize();
     	this.comment.cancelChanges();
     }
     

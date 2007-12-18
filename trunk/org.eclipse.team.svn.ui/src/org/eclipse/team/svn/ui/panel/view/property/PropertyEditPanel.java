@@ -120,6 +120,7 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 	}
 		
 	public void createControls (Composite parent) {
+		this.parent = parent;
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
@@ -292,6 +293,7 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 	}
 	
 	protected void saveChanges() {
+		this.retainSize();
 		this.propertyName = this.nameField.getText();
 		this.propertyValue = this.valueField.getText();
 		this.propertyFile = this.fileField.getText();
@@ -306,7 +308,7 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 	}
 
 	protected void cancelChanges() {		
-		
+		this.retainSize();
 	}
 	
 	protected void refreshControlsEnablement() {

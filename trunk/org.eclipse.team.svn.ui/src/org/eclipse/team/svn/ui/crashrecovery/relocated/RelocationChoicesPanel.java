@@ -51,6 +51,7 @@ public class RelocationChoicesPanel extends AbstractDialogPanel {
 	}
 
 	public void createControls(Composite parent) {
+		this.parent = parent;
 		super.createControls(parent);
 		
 		GridLayout layout = null;
@@ -106,11 +107,12 @@ public class RelocationChoicesPanel extends AbstractDialogPanel {
 	}
 	
 	protected void cancelChanges() {
+		this.retainSize();
 		this.recoveryAction = RelocationChoicesPanel.DISCONNECT_PROJECT;
 	}
 
 	protected void saveChanges() {
-
+		this.retainSize();
 	}
 
 }
