@@ -61,9 +61,8 @@ public class ValidConnectorsSelectionPanel extends AbstractDialogPanel {
 		this.svnConnector = this.factories[this.svnConnectorField.getSelectionIndex()].getId();
     }
     
-	public void createControls(Composite parent) {
-		this.parent = parent;
-		super.createControls(parent);
+	public void createControlsImpl(Composite parent) {
+		super.createControlsImpl(parent);
 		
 		GridLayout layout = null;
 		GridData data = null;
@@ -102,12 +101,10 @@ public class ValidConnectorsSelectionPanel extends AbstractDialogPanel {
 		});
 	}
 
-	protected void cancelChanges() {
-		this.retainSize();
+	protected void cancelChangesImpl() {
 	}
 
-	protected void saveChanges() {
-		this.retainSize();
+	protected void saveChangesImpl() {
 		String oldId = CoreExtensionsManager.instance().getSVNConnectorFactory().getId();
 		if (!oldId.equals(this.svnConnector)) {
 			SVNTeamPreferences.setCoreString(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.CORE_SVNCONNECTOR_NAME, this.svnConnector);

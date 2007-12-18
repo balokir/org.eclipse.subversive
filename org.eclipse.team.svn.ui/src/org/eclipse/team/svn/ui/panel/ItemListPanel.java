@@ -50,16 +50,13 @@ public class ItemListPanel extends AbstractDialogPanel {
 		this.itemIcon = imageDescriptor.createImage();
 	}	
 	
-	protected void saveChanges() {
-		this.retainSize();
+	protected void saveChangesImpl() {
 	}
 
-    protected void cancelChanges() {
-    	this.retainSize();
+    protected void cancelChangesImpl() {
     }
     
-	public void createControls(Composite parent) {
-		this.parent = parent;
+	public void createControlsImpl(Composite parent) {
 		this.table = new Table(parent, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.FULL_SELECTION);
 		this.table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		TableLayout layout = new TableLayout();

@@ -58,8 +58,7 @@ public class AskTrustSSLServerPanel extends AbstractDialogPanel {
         return new Point(530, 250);
     }
     
-	public void createControls(Composite parent) {
-		this.parent = parent;
+	public void createControlsImpl(Composite parent) {
 		String []baseLines = this.message.split("\n");
 		final String [][]tableData = new String[baseLines.length][];
 		for (int i = 0; i < baseLines.length; i++) {
@@ -160,12 +159,10 @@ public class AskTrustSSLServerPanel extends AbstractDialogPanel {
 		listener.widgetSelected(null);
 	}
 	
-	protected void saveChanges() {
-		retainSize();
+	protected void saveChangesImpl() {
 	}
 
-	protected void cancelChanges() {
-		retainSize();
+	protected void cancelChangesImpl() {
 	}
 
 }

@@ -119,8 +119,7 @@ public class ErrorCancelPanel extends AbstractDialogPanel {
     	return this.reportingComposite != null ? this.reportingComposite.isNotShowAgain() : false;
     }
     
-    public void createControls(Composite parent) {
-    	this.parent = parent;
+    public void createControlsImpl(Composite parent) {
     	GridData data = null;
     	this.errorTextField = new Text(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		data = new GridData(GridData.FILL_BOTH);
@@ -167,15 +166,13 @@ public class ErrorCancelPanel extends AbstractDialogPanel {
     	return "org.eclipse.team.svn.help.errorDialogContext";
 	}
     
-    protected void saveChanges() {
-    	this.retainSize();
+    protected void saveChangesImpl() {
     	if (this.sendMail) {
     		this.reportingComposite.saveChanges();
     	}
     }
 
-    protected void cancelChanges() {
-    	this.retainSize();
+    protected void cancelChangesImpl() {
     	if (this.sendMail) {
     		this.reportingComposite.cancelChanges();
     	}

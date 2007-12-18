@@ -49,7 +49,7 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
     	this.removeNonVersioned = this.disableRemoveNonVersionedChange;
     }
     
-    public void createControls(Composite parent) {
+    public void createControlsImpl(Composite parent) {
     	GridLayout layout;
     	GridData data;
     	
@@ -63,7 +63,7 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
     	composite.setLayout(layout);
     	composite.setLayoutData(data);
     	
-    	super.createControls(composite);
+    	super.createControlsImpl(composite);
     	
     	this.createVerticalStrut(composite, 4);
     	

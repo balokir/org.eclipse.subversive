@@ -27,8 +27,8 @@ public class RenameResourcePanel extends AbstractGetResourceNamePanel {
         this.disallowedName = originalName;
     }
 
-    public void createControls(Composite parent) {
-    	super.createControls(parent);
+    public void createControlsImpl(Composite parent) {
+    	super.createControlsImpl(parent);
     	
     	this.text.setText(this.disallowedName);
     	this.text.selectAll();

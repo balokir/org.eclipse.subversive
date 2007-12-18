@@ -127,7 +127,8 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 		this.userSelectedResources = userSelectedResources;
 	}
     
-	public void createControls(Composite parent) {
+	public void createControlsImpl(Composite parent) {
+		this.parent = parent;
     	GridData data = null;
     	GridLayout layout = null;
 
@@ -205,7 +206,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 		this.selectionComposite.setLayoutData(data);
 		
 		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
-		int first = SVNTeamPreferences.getDialogInt(store, this.getClass().getName() + ".weight");
+		int first = SVNTeamPreferences.getDialogInt(store, SVNTeamPreferences.COMMIT_DIALOG_WEIGHT_NAME);
 		this.sForm.setWeights(new int[] {first, 100 - first});
 		
 		this.selectionComposite.addResourcesSelectionChangedListener(new IResourceSelectionChangeListener() {
@@ -242,13 +243,13 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 		SVNRemoteStorage.instance().addResourceStatesListener(ResourceStatesChangedEvent.class, CommitPanel.this.resourceStatesListener);
 	}
 	
-	protected void saveChanges() {
-		super.saveChanges();
+	protected void saveChangesImpl() {
+		super.saveChangesImpl();
 		this.retainSizeAndWeights();
 	}
 	
-	protected void cancelChanges() {
-		super.cancelChanges();
+	protected void cancelChangesImpl() {
+		super.cancelChangesImpl();
 		this.retainSizeAndWeights();
 	}
 	
@@ -403,17 +404,17 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
     public Point getPrefferedSize() {
     	IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
     	
-    	return new Point(SVNTeamPreferences.getDialogInt(store, "CommitPanel.width"), 
-    			SVNTeamPreferences.getDialogInt(store, "CommitPanel.height"));
+    	return new Point(SVNTeamPreferences.getDialogInt(store, SVNTeamPreferences.COMMIT_DIALOG_WIDTH_NAME), 
+    			SVNTeamPreferences.getDialogInt(store, SVNTeamPreferences.COMMIT_DIALOG_HEIGHT_NAME));
     }
     
     protected void retainSizeAndWeights() {
     	int []weights = this.sForm.getWeights();
 		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
 		Point size = this.parent.getSize();
-		SVNTeamPreferences.setDialogInt(store, "CommitPanel.width", size.x);
-		SVNTeamPreferences.setDialogInt(store, "CommitPanel.height", size.y);
-		SVNTeamPreferences.setDialogInt(store, "CommitPanel.weight", weights[0] / 10);
+		SVNTeamPreferences.setDialogInt(store, SVNTeamPreferences.COMMIT_DIALOG_WIDTH_NAME, size.x);
+		SVNTeamPreferences.setDialogInt(store, SVNTeamPreferences.COMMIT_DIALOG_HEIGHT_NAME, size.y);
+		SVNTeamPreferences.setDialogInt(store, SVNTeamPreferences.COMMIT_DIALOG_WEIGHT_NAME, weights[0] / 10);
     }
          
     public void dispose() {

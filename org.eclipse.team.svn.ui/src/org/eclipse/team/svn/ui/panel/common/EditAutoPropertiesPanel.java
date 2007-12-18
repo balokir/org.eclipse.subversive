@@ -53,8 +53,7 @@ public class EditAutoPropertiesPanel extends AbstractDialogPanel {
 		this.defaultMessage = SVNTeamUIPlugin.instance().getResource("EditAutoPropertiesPanel.Message");
 	}
 	
-	public void createControls(Composite parent) {
-		this.parent = parent;
+	public void createControlsImpl(Composite parent) {
 		GridLayout layout;
 		GridData layoutData;
 		Label label;
@@ -108,12 +107,10 @@ public class EditAutoPropertiesPanel extends AbstractDialogPanel {
 		});
 	}
 	
-	protected void cancelChanges() {
-		this.retainSize();
+	protected void cancelChangesImpl() {
 	}
 
-	protected void saveChanges() {
-		this.retainSize();
+	protected void saveChangesImpl() {
 		this.fileName = this.txtFileName.getText().trim();
 		this.properties = PatternProvider.replaceAll(this.txtProperties.getText().trim(), SVNTeamAutoPropsPreferencePage.AUTO_PROPS_PROPS_SEPARATOR, System.getProperty("line.separator"));
 		this.properties = PatternProvider.replaceAll(this.properties.trim(), System.getProperty("line.separator"), SVNTeamAutoPropsPreferencePage.AUTO_PROPS_PROPS_SEPARATOR);

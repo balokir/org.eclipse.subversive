@@ -50,9 +50,8 @@ public class RelocationChoicesPanel extends AbstractDialogPanel {
 		return this.recoveryAction;
 	}
 
-	public void createControls(Composite parent) {
-		this.parent = parent;
-		super.createControls(parent);
+	public void createControlsImpl(Composite parent) {
+		super.createControlsImpl(parent);
 		
 		GridLayout layout = null;
 		GridData data = null;
@@ -106,13 +105,11 @@ public class RelocationChoicesPanel extends AbstractDialogPanel {
 		});
 	}
 	
-	protected void cancelChanges() {
-		this.retainSize();
+	protected void cancelChangesImpl() {
 		this.recoveryAction = RelocationChoicesPanel.DISCONNECT_PROJECT;
 	}
 
-	protected void saveChanges() {
-		this.retainSize();
+	protected void saveChangesImpl() {
 	}
 
 }

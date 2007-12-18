@@ -34,7 +34,7 @@ public class CreateProjectStructurePanel extends AbstractGetResourceNamePanel {
         this.dialogDescription = SVNTeamUIPlugin.instance().getResource("CreateProjectStructurePanel.Description");
 	}
 
-    public void createControls(Composite parent) {
+    public void createControlsImpl(Composite parent) {
         GridData data = null;
         GridLayout layout = null;
 
@@ -76,7 +76,7 @@ public class CreateProjectStructurePanel extends AbstractGetResourceNamePanel {
 		});
         otherButton.setSelection(true);
         
-    	super.createControls(projectComposite);
+    	super.createControlsImpl(projectComposite);
     	
     	this.text.setFocus();
     }

@@ -51,8 +51,7 @@ public class EditCommentTemplatePanel extends AbstractDialogPanel {
 		this.template = template;
 	}
 	
-	public void createControls(Composite parent) {
-		this.parent = parent;
+	public void createControlsImpl(Composite parent) {
 		AnnotationModel annotationModel = new AnnotationModel();
         IAnnotationAccess annotationAccess = new DefaultMarkerAnnotationAccess();
         
@@ -91,13 +90,11 @@ public class EditCommentTemplatePanel extends AbstractDialogPanel {
 		return this.template;
 	}
 
-	protected void saveChanges() {
-		this.retainSize();
+	protected void saveChangesImpl() {
 		this.template = this.templateText.getText().trim();
 	}
 
-	protected void cancelChanges() {
-		this.retainSize();
+	protected void cancelChangesImpl() {
 	}
 
 }

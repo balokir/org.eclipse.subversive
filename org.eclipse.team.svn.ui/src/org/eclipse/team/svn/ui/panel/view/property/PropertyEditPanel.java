@@ -119,8 +119,7 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 		return this.applyComposite == null ? false : this.applyComposite.useMask();
 	}
 		
-	public void createControls (Composite parent) {
-		this.parent = parent;
+	public void createControlsImpl (Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
@@ -292,8 +291,7 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 		}
 	}
 	
-	protected void saveChanges() {
-		this.retainSize();
+	protected void saveChangesImpl() {
 		this.propertyName = this.nameField.getText();
 		this.propertyValue = this.valueField.getText();
 		this.propertyFile = this.fileField.getText();
@@ -307,8 +305,7 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 		}
 	}
 
-	protected void cancelChanges() {		
-		this.retainSize();
+	protected void cancelChangesImpl() {		
 	}
 	
 	protected void refreshControlsEnablement() {

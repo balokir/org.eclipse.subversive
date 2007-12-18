@@ -65,8 +65,7 @@ public class MailReportPanel extends AbstractDialogPanel {
 		return this.reportingComposite.isNotShowAgain();
 	}
     
-    public void createControls(Composite parent) {
-    	this.parent = parent;
+    public void createControlsImpl(Composite parent) {
     	GridData data = null;
     	
     	this.reportingComposite = new ReportingComposite(parent, this.dialogTitle, SVNTeamPlugin.NATURE_ID, null, null, this.isError, this);
@@ -78,13 +77,11 @@ public class MailReportPanel extends AbstractDialogPanel {
         return new Point(570, SWT.DEFAULT);
     }
     
-	protected void saveChanges() {
-		this.retainSize();
+	protected void saveChangesImpl() {
 		this.reportingComposite.saveChanges();
 	}
 
-	protected void cancelChanges() {
-		this.retainSize();
+	protected void cancelChangesImpl() {
 		this.reportingComposite.cancelChanges();
 	}
 	

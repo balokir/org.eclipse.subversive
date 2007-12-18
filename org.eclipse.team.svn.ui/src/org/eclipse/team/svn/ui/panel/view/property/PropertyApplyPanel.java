@@ -45,17 +45,14 @@ public class PropertyApplyPanel extends AbstractDialogPanel {
 		return this.applyComposite.getFilterMask();
 	}
 	
-	public void createControls(Composite parent) {
-		this.parent = parent;
+	public void createControlsImpl(Composite parent) {
 		this.applyComposite = new ApplyPropertyMethodComposite(parent, SWT.NONE, this, PropertyEditPanel.MIXED_RESOURCES);
 	}
 	
-	protected void cancelChanges() {
-		this.retainSize();
+	protected void cancelChangesImpl() {
 	}
 	
-	protected void saveChanges() {
-		this.retainSize();
+	protected void saveChangesImpl() {
 		this.applyComposite.saveChanges();
 	}
 

@@ -67,8 +67,7 @@ public class CreateFilePanel extends AbstractDialogPanel {
 		this.defaultMessage = MessageFormat.format(this.defaultMessage, new String[] {importToUrl});
     }
 	
-	public void createControls(Composite parent) {
-		this.parent = parent;
+	public void createControlsImpl(Composite parent) {
 		GridLayout layout = null;
 		GridData data = null;
 		
@@ -146,8 +145,7 @@ public class CreateFilePanel extends AbstractDialogPanel {
 		this.comment.postInit(this.manager);
 	}
 		
-	protected void saveChanges() {
-		this.retainSize();
+	protected void saveChangesImpl() {
 		this.comment.saveChanges();
 		String text = CreateFilePanel.this.locationField.getText();
 		if (text.indexOf("\"") > -1) {
@@ -186,8 +184,7 @@ public class CreateFilePanel extends AbstractDialogPanel {
     	return "org.eclipse.team.svn.help.remote_createFileDialogContext";
 	}
 
-    protected void cancelChanges() {
-    	this.retainSize();
+    protected void cancelChangesImpl() {
     	this.comment.cancelChanges();
     }
     

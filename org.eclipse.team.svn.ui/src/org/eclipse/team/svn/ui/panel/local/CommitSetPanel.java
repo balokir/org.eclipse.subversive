@@ -71,7 +71,7 @@ public class CommitSetPanel extends CommentPanel implements ICommentDialogPanel 
 		this.changeListenerList = new ArrayList();
     }
     
-	public void createControls(Composite parent) {
+	public void createControlsImpl(Composite parent) {
     	GridData data = null;
     	GridLayout layout = null;
 
@@ -140,9 +140,8 @@ public class CommitSetPanel extends CommentPanel implements ICommentDialogPanel 
     	return new Point(525, SWT.DEFAULT);
     }
     
-    protected void saveChanges() {
-    	this.retainSize();
-    	super.saveChanges();
+    protected void saveChangesImpl() {
+    	super.saveChangesImpl();
     	this.set.setTitle(this.nameText.getText());
     	this.set.setComment(this.comment.getMessage());
     }

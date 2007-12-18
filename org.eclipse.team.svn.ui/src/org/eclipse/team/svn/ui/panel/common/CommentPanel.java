@@ -46,8 +46,7 @@ public class CommentPanel extends AbstractDialogPanel {
 		return this.appendBugtraqMessage(this.comment.getMessage());
 	}
 	
-    public void createControls(Composite parent) {
-    	this.parent = parent;
+    public void createControlsImpl(Composite parent) {
         this.comment = new CommentComposite(parent, this);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		this.comment.setLayoutData(data);
@@ -62,13 +61,11 @@ public class CommentPanel extends AbstractDialogPanel {
     	this.comment.postInit(this.manager);
     }
     
-    protected void saveChanges() {
-    	this.retainSize();
+    protected void saveChangesImpl() {
         this.comment.saveChanges();
     }
 
-    protected void cancelChanges() {
-    	this.retainSize();
+    protected void cancelChangesImpl() {
     	this.comment.cancelChanges();
     }
     

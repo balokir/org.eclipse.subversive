@@ -49,7 +49,7 @@ public class LockPanel extends CommentPanel {
 		}
 	}
 	
-    public void createControls(Composite parent) {
+    public void createControlsImpl(Composite parent) {
     	GridData data = null;
     	GridLayout layout = null;
 
@@ -99,9 +99,8 @@ public class LockPanel extends CommentPanel {
     	return this.recursive;
     }
     
-    protected void saveChanges() {
-    	this.retainSize();
-    	super.saveChanges();
+    protected void saveChangesImpl() {
+    	super.saveChangesImpl();
     	this.force = this.forceButton.getSelection();
     	this.recursive = this.isFile ? false : this.recursiveButton.getSelection();
     }

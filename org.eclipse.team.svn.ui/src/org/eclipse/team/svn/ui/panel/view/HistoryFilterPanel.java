@@ -82,8 +82,7 @@ public class HistoryFilterPanel extends AbstractDialogPanel {
         return new Point(470, 100);
     }
     
-    public void createControls(Composite parent) {
-    	this.parent = parent;
+    public void createControlsImpl(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
         layout.numColumns = 2;
@@ -174,8 +173,7 @@ public class HistoryFilterPanel extends AbstractDialogPanel {
     	return "org.eclipse.team.svn.help.historyDialogContext";
 	}
     
-    protected void saveChanges() {
-    	this.retainSize();
+    protected void saveChangesImpl() {
         if (this.authorButton.getSelection()) {
             this.authorInput = this.authorsCombo.getText();
             this.authorsHistory.addLine(this.authorInput);
@@ -186,8 +184,7 @@ public class HistoryFilterPanel extends AbstractDialogPanel {
         }
     }
 
-    protected void cancelChanges() {
-    	this.retainSize();
+    protected void cancelChangesImpl() {
     }
     
     protected String []mergeAuthorsList() {

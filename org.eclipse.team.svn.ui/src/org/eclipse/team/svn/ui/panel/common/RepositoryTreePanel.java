@@ -78,8 +78,7 @@ public class RepositoryTreePanel extends AbstractDialogPanel {
 		return this.selectedResource;
 	}
 	
-	public void createControls(Composite parent) {
-		this.parent = parent;
+	public void createControlsImpl(Composite parent) {
 		if (this.selectedResources.length > 0) {
 			this.repositoryTree = new RepositoryTreeComposite(parent, SWT.BORDER, false, new ProjectRoot(this.selectedResources[0]));
 		}
@@ -120,16 +119,14 @@ public class RepositoryTreePanel extends AbstractDialogPanel {
     	return "org.eclipse.team.svn.help.copyMoveToDialogContext";
 	}
 	
-	protected void saveChanges() {
-		this.retainSize();
+	protected void saveChangesImpl() {
 		IStructuredSelection selection = (IStructuredSelection)this.repositoryTree.getRepositoryTreeViewer().getSelection();
 		if (!selection.isEmpty() && selection.getFirstElement() instanceof RepositoryResource) {
 			this.selectedResource = ((RepositoryResource)selection.getFirstElement()).getRepositoryResource();
 		}
 	}
 	
-	protected void cancelChanges() {
-		this.retainSize();
+	protected void cancelChangesImpl() {
 	}
 	
 	protected boolean isSource(IRepositoryResource resource) {

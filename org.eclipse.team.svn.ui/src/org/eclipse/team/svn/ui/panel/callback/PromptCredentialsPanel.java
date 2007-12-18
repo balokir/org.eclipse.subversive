@@ -249,8 +249,7 @@ public class PromptCredentialsPanel extends AbstractDialogPanel {
 		this.proxyAuthenticationEnabled = proxyAuthenticationEnabled;
 	}
     
-    public void createControls(Composite parent) {
-    	this.parent = parent;
+    public void createControlsImpl(Composite parent) {
 		GridLayout layout = null;
 		GridData data = null;
 		
@@ -361,8 +360,7 @@ public class PromptCredentialsPanel extends AbstractDialogPanel {
 		this.credentialsComposite.initialize();
     }
     
-    protected void saveChanges() {
-    	this.retainSize();
+    protected void saveChangesImpl() {
     	if (this.connectionType != SVNRepositoryLocation.PROXY_CONNECTION) {
     		this.username = this.credentialsComposite.getUsername().getText().trim();
     		this.password = this.credentialsComposite.getPassword().getText().trim();
@@ -390,8 +388,7 @@ public class PromptCredentialsPanel extends AbstractDialogPanel {
 		}
     }
 
-    protected void cancelChanges() {
-    	this.retainSize();
+    protected void cancelChangesImpl() {
     }
 
     protected static class DefaultPrompt implements ISVNCredentialsPrompt {

@@ -50,8 +50,7 @@ public class PreviewPanel extends AbstractDialogPanel {
 		this.font = font;
 	}
 	
-	public void createControls(Composite parent) {
-		this.parent = parent;
+	public void createControlsImpl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 0;
@@ -86,12 +85,10 @@ public class PreviewPanel extends AbstractDialogPanel {
 		}
 	}
 	
-	protected void saveChanges() {
-		this.retainSize();
+	protected void saveChangesImpl() {
 	}
 	
-	protected void cancelChanges() {
-		this.retainSize();
+	protected void cancelChangesImpl() {
 	}
 	
 	protected List getStyleRanges() {

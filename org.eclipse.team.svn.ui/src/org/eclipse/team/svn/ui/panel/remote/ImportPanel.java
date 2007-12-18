@@ -51,8 +51,7 @@ public class ImportPanel extends AbstractDialogPanel {
 		this.isRecursive = true;
     }
 	
-	public void createControls(Composite parent) {
-		this.parent = parent;
+	public void createControlsImpl(Composite parent) {
 		GridLayout layout = null;
 		GridData data = null;
 		
@@ -114,15 +113,13 @@ public class ImportPanel extends AbstractDialogPanel {
 		this.comment.postInit(this.manager);
 	}
 		
-	protected void saveChanges() {
-		this.retainSize();
+	protected void saveChangesImpl() {
 		this.location = this.locationField.getText();
 		this.comment.saveChanges();
 		this.isRecursive = this.recursiveButton.getSelection();
 	}
 
-    protected void cancelChanges() {
-    	this.retainSize();
+    protected void cancelChangesImpl() {
     	this.comment.cancelChanges();
     }
     
