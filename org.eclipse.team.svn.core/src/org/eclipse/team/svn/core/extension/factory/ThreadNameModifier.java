@@ -108,30 +108,30 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 
-	public void copy(SVNEntryRevisionReference []srcPath, String destPath, String message, boolean copyAsChild, boolean makeParents, boolean withMergeHistory, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void copy(SVNEntryRevisionReference []srcPath, String destPath, String message, boolean copyAsChild, boolean makeParents, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.connector.copy(srcPath, destPath, message, copyAsChild, makeParents, withMergeHistory, monitor);
+			this.connector.copy(srcPath, destPath, message, copyAsChild, makeParents, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
 		}
 	}
 
-	public void diff(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, String outFileName, int depth, boolean ignoreAncestry, boolean noDiffDeleted, boolean force, boolean diffUnversioned, boolean relativePath, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void diff(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, String relativeToDir, String outFileName, int depth, boolean ignoreAncestry, boolean noDiffDeleted, boolean force, boolean diffUnversioned, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.connector.diff(reference1, reference2, outFileName, depth, ignoreAncestry, noDiffDeleted, force, diffUnversioned, relativePath, monitor);
+			this.connector.diff(reference1, reference2, relativeToDir, outFileName, depth, ignoreAncestry, noDiffDeleted, force, diffUnversioned, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
 		}
 	}
 
-	public void diff(SVNEntryReference reference, SVNRevision revision1, SVNRevision revision2, String outFileName, int depth, boolean ignoreAncestry, boolean noDiffDeleted, boolean force, boolean diffUnversioned, boolean relativePath, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void diff(SVNEntryReference reference, SVNRevision revision1, SVNRevision revision2, String relativeToDir, String outFileName, int depth, boolean ignoreAncestry, boolean noDiffDeleted, boolean force, boolean diffUnversioned, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.connector.diff(reference, revision1, revision2, outFileName, depth, ignoreAncestry, noDiffDeleted, force, diffUnversioned, relativePath, monitor);
+			this.connector.diff(reference, revision1, revision2, relativeToDir, outFileName, depth, ignoreAncestry, noDiffDeleted, force, diffUnversioned, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
@@ -308,30 +308,30 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 
-	public void merge(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, String localPath, boolean force, int depth, boolean ignoreAncestry, boolean dryRun, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void merge(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, String localPath, boolean force, int depth, boolean ignoreAncestry, boolean dryRun, boolean recordOnly, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.connector.merge(reference1, reference2, localPath, force, depth, ignoreAncestry, dryRun, monitor);
+			this.connector.merge(reference1, reference2, localPath, force, depth, ignoreAncestry, dryRun, recordOnly, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
 		}
 	}
 
-	public void merge(SVNEntryReference reference, SVNRevisionRange []revisions, String localPath, boolean force, int depth, boolean ignoreAncestry, boolean dryRun, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void merge(SVNEntryReference reference, SVNRevisionRange []revisions, String localPath, boolean force, int depth, boolean ignoreAncestry, boolean dryRun, boolean recordOnly, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.connector.merge(reference, revisions, localPath, force, depth, ignoreAncestry, dryRun, monitor);
+			this.connector.merge(reference, revisions, localPath, force, depth, ignoreAncestry, dryRun, recordOnly, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
 		}
 	}
 
-	public void merge(SVNEntryReference reference, SVNRevisionRange []revisions, String mergePath, SVNMergeStatus[] mergeStatus, boolean force, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void merge(SVNEntryReference reference, SVNRevisionRange []revisions, String mergePath, SVNMergeStatus[] mergeStatus, boolean force, boolean recordOnly, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.connector.merge(reference, revisions, mergePath, mergeStatus, force, monitor);
+			this.connector.merge(reference, revisions, mergePath, mergeStatus, force, recordOnly, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
@@ -368,10 +368,10 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 
-	public void move(String []srcPath, String dstPath, String message, boolean force, boolean moveAsChild, boolean makeParents, boolean withMergeHistory, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void move(String []srcPath, String dstPath, String message, boolean force, boolean moveAsChild, boolean makeParents, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.connector.move(srcPath, dstPath, message, force, moveAsChild, makeParents, withMergeHistory, monitor);
+			this.connector.move(srcPath, dstPath, message, force, moveAsChild, makeParents, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
