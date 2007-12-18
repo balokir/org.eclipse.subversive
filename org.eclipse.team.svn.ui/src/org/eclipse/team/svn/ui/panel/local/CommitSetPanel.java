@@ -136,11 +136,12 @@ public class CommitSetPanel extends CommentPanel implements ICommentDialogPanel 
 		}
 	}
         
-    public Point getPrefferedSize() {
+    public Point getPrefferedSizeImpl() {
     	return new Point(525, SWT.DEFAULT);
     }
     
     protected void saveChanges() {
+    	this.retainSize();
     	super.saveChanges();
     	this.set.setTitle(this.nameText.getText());
     	this.set.setComment(this.comment.getMessage());

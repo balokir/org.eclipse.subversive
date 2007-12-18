@@ -46,14 +46,16 @@ public class PropertyApplyPanel extends AbstractDialogPanel {
 	}
 	
 	public void createControls(Composite parent) {
+		this.parent = parent;
 		this.applyComposite = new ApplyPropertyMethodComposite(parent, SWT.NONE, this, PropertyEditPanel.MIXED_RESOURCES);
 	}
 	
 	protected void cancelChanges() {
-		
+		this.retainSize();
 	}
 	
 	protected void saveChanges() {
+		this.retainSize();
 		this.applyComposite.saveChanges();
 	}
 

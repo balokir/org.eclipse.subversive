@@ -60,6 +60,7 @@ public class ResourceListPanel extends AbstractDialogPanel {
 	}
 	
     public void createControls(Composite parent) {
+    	this.parent = parent;
 		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.SINGLE | SWT.BORDER);
 		TableLayout layout = new TableLayout();
 		table.setLayout(layout);
@@ -128,11 +129,11 @@ public class ResourceListPanel extends AbstractDialogPanel {
     }
     
     protected void saveChanges() {
-
+    	this.retainSize();
     }
 
     protected void cancelChanges() {
-
+    	this.retainSize();
     }
 
 }

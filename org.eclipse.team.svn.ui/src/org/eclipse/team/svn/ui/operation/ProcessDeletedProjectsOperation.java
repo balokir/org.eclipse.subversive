@@ -97,6 +97,7 @@ public class ProcessDeletedProjectsOperation extends AbstractWorkingCopyOperatio
 		}
 		
 	    public void createControls(Composite parent) {
+	    	this.parent = parent;
 	    	ProjectListComposite composite = new ProjectListComposite(parent, SWT.FILL, this.resources, false);
 	    	composite.initialize();
 	    	this.deleteSVNMetaButton = new Button(parent, SWT.CHECK);
@@ -110,11 +111,11 @@ public class ProcessDeletedProjectsOperation extends AbstractWorkingCopyOperatio
 	    }
 	    
 	    protected void saveChanges() {
-
+	    	this.retainSize();
 	    }
 
 	    protected void cancelChanges() {
-
+	    	this.retainSize();
 	    }
 		
 	}

@@ -84,7 +84,7 @@ public class JavaHLMergePanel extends AbstractAdvancedDialogPanel {
         this.currentRevision = currentRevision;
 	}
 	
-    public Point getPrefferedSize() {
+    public Point getPrefferedSizeImpl() {
         return new Point(550, 245);
     }
     
@@ -132,6 +132,7 @@ public class JavaHLMergePanel extends AbstractAdvancedDialogPanel {
 	}
 
 	public void createControls(Composite parent) {
+		this.parent = parent;
 		((GridLayout)parent.getLayout()).verticalSpacing = 0;
 		
 		this.simpleView = this.createSimpleModeView(parent);
@@ -305,6 +306,7 @@ public class JavaHLMergePanel extends AbstractAdvancedDialogPanel {
 	}
 	
 	protected void saveChanges() {
+		this.retainSize();
     	if (!this.advancedMode) {
         	this.firstSelectedResource = this.simpleSelectionComposite.getSelectedResource();
     		this.secondSelectedResource = SVNUtility.copyOf(this.firstSelectedResource);
@@ -322,7 +324,7 @@ public class JavaHLMergePanel extends AbstractAdvancedDialogPanel {
 	}
 
 	protected void cancelChanges() {
-
+		this.retainSize();
 	}
 
 	protected void setButtonsEnabled(boolean enabled) {

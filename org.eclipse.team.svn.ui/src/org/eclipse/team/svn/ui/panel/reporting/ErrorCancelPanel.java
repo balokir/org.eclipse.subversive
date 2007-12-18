@@ -18,6 +18,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -28,8 +29,7 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.composite.ReportingComposite;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.extension.factory.IMailSettingsProvider;
-import org.eclipse.team.svn.ui.panel.AbstractAdvancedDialogPanel;
-import org.eclipse.team.svn.ui.panel.IDialogManagerEx;
+import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
@@ -37,7 +37,7 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  *
  * @author Sergiy Logvin
  */
-public class ErrorCancelPanel extends AbstractAdvancedDialogPanel {
+public class ErrorCancelPanel extends AbstractDialogPanel {
 	protected static final int ERROR_PANEL_TYPE = 0;
 	protected static final int CANCEL_PANEL_TYPE = 1;
 	
@@ -47,7 +47,6 @@ public class ErrorCancelPanel extends AbstractAdvancedDialogPanel {
 	protected String optionName;
 	protected String simpleMessage;
 	protected String advancedMessage;
-	protected boolean isSimple;
 	protected int panelType;
 	protected boolean sendMail;
 	
@@ -78,7 +77,7 @@ public class ErrorCancelPanel extends AbstractAdvancedDialogPanel {
     }
     
     protected ErrorCancelPanel(int panelType, int numberOfErrors, String title, String simpleMessage, String advancedMessage, boolean sendMail, String optionName) {
-    	super(sendMail ? new String[] {SVNTeamUIPlugin.instance().getResource("ErrorCancelPanel.Send"), SVNTeamUIPlugin.instance().getResource("ErrorCancelPanel.DontSend")} : new String[] {IDialogConstants.OK_LABEL}, new String[] {SVNTeamUIPlugin.instance().getResource("Button.Advanced")});
+    	super(sendMail ? new String[] {SVNTeamUIPlugin.instance().getResource("ErrorCancelPanel.Send"), SVNTeamUIPlugin.instance().getResource("ErrorCancelPanel.DontSend")} : new String[] {IDialogConstants.OK_LABEL});
     	this.panelType = panelType;
     	this.sendMail = sendMail;
     	this.dialogTitle = SVNTeamUIPlugin.instance().getResource(panelType == ErrorCancelPanel.ERROR_PANEL_TYPE ? "ErrorCancelPanel.Title.Failed" : "ErrorCancelPanel.Title.Cancelled");
@@ -109,7 +108,6 @@ public class ErrorCancelPanel extends AbstractAdvancedDialogPanel {
 		
 		this.simpleMessage = simpleMessage == null ? SVNTeamUIPlugin.instance().getResource("ErrorCancelPanel.NoInfo") : simpleMessage;
 		this.advancedMessage = advancedMessage == null ? SVNTeamUIPlugin.instance().getResource("ErrorCancelPanel.NoAdvancedInfo") : advancedMessage;
-		this.isSimple = false;
 		this.optionName = optionName;
     }
     
@@ -122,13 +120,14 @@ public class ErrorCancelPanel extends AbstractAdvancedDialogPanel {
     }
     
     public void createControls(Composite parent) {
+    	this.parent = parent;
     	GridData data = null;
     	this.errorTextField = new Text(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = 100;
 		this.errorTextField.setLayoutData(data);
 		this.errorTextField.setEditable(false);
-		this.errorTextField.setText(this.simpleMessage);
+		this.errorTextField.setText(this.simpleMessage + "\n" + this.advancedMessage);
 		
 		if (this.sendMail) {
 	    	final Composite mailComposite = new Composite(parent, SWT.FILL);
@@ -169,12 +168,14 @@ public class ErrorCancelPanel extends AbstractAdvancedDialogPanel {
 	}
     
     protected void saveChanges() {
+    	this.retainSize();
     	if (this.sendMail) {
     		this.reportingComposite.saveChanges();
     	}
     }
 
     protected void cancelChanges() {
+    	this.retainSize();
     	if (this.sendMail) {
     		this.reportingComposite.cancelChanges();
     	}
@@ -186,24 +187,14 @@ public class ErrorCancelPanel extends AbstractAdvancedDialogPanel {
     
     public void postInit() {
     	super.postInit();
-        ((IDialogManagerEx)this.manager).setExtendedButtonEnabled(0, this.simpleMessage.equalsIgnoreCase(this.advancedMessage) ? false : true);
+    }
+    
+    public Point getPrefferedSizeImpl() {
+        return new Point(640, SWT.DEFAULT);
     }
     
     public String getImagePath() {
     	return "icons/dialogs/" + (this.panelType == ErrorCancelPanel.ERROR_PANEL_TYPE ? "operation_error.gif" : "select_revision.gif");
-    }
-       
-    public void extendedButtonPressed(int idx) {
-    	if (this.isSimple) {
-    		((IDialogManagerEx)this.manager).setExtendedButtonCaption(idx, SVNTeamUIPlugin.instance().getResource("Button.Advanced"));
-    		this.errorTextField.setText(this.simpleMessage);
-    		this.isSimple = false;
-    	}
-    	else {
-    		((IDialogManagerEx)this.manager).setExtendedButtonCaption(idx, SVNTeamUIPlugin.instance().getResource("Button.Simple"));
-    		this.errorTextField.setText(this.advancedMessage);
-    		this.isSimple = true;
-    	}
     }
     
     public String getComment() {

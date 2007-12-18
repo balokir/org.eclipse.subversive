@@ -17,7 +17,7 @@ import org.eclipse.team.svn.core.connector.SVNConnectorCancelException;
 import org.eclipse.team.svn.core.operation.ActivityCancelledException;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.action.AbstractRepositoryTeamAction;
-import org.eclipse.team.svn.ui.dialog.AdvancedDialog;
+import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.operation.UILoggedOperation;
 import org.eclipse.team.svn.ui.operation.UILoggedOperation.OperationErrorInfo;
 import org.eclipse.team.svn.ui.panel.reporting.ErrorCancelPanel;
@@ -46,7 +46,7 @@ public class ShowBrowsingErrorAction extends AbstractRepositoryTeamAction {
         else {
         	panel = new ErrorCancelPanel(SVNTeamUIPlugin.instance().getResource("ShowBrowsingErrorAction.Dialog.Title"), errorInfo.numberOfErrors, errorInfo.simpleMessage, errorInfo.advancedMessage, false, null);
         }
-		AdvancedDialog dialog = new AdvancedDialog(this.getShell(), panel);
+		DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
 		dialog.open();
 	}
 

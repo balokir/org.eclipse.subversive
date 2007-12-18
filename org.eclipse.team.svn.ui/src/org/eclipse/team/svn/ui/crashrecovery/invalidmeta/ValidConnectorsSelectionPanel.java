@@ -52,7 +52,7 @@ public class ValidConnectorsSelectionPanel extends AbstractDialogPanel {
 		this.factories = (ISVNConnectorFactory [])validClients.toArray(new ISVNConnectorFactory[validClients.size()]);
 	}
 	
-    public Point getPrefferedSize() {
+    public Point getPrefferedSizeImpl() {
         return new Point(500, 60);
     }
     
@@ -62,6 +62,7 @@ public class ValidConnectorsSelectionPanel extends AbstractDialogPanel {
     }
     
 	public void createControls(Composite parent) {
+		this.parent = parent;
 		super.createControls(parent);
 		
 		GridLayout layout = null;
@@ -102,10 +103,11 @@ public class ValidConnectorsSelectionPanel extends AbstractDialogPanel {
 	}
 
 	protected void cancelChanges() {
-
+		this.retainSize();
 	}
 
 	protected void saveChanges() {
+		this.retainSize();
 		String oldId = CoreExtensionsManager.instance().getSVNConnectorFactory().getId();
 		if (!oldId.equals(this.svnConnector)) {
 			SVNTeamPreferences.setCoreString(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.CORE_SVNCONNECTOR_NAME, this.svnConnector);

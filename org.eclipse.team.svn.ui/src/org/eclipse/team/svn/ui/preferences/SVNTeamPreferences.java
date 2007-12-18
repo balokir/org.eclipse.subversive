@@ -256,20 +256,14 @@ public final class SVNTeamPreferences {
 	public static final boolean COMMENT_LOG_TEMPLATES_ENABLED_DEFAULT = true;
 	public static final int COMMENT_SAVED_COMMENTS_COUNT_DEFAULT = 10;
 	
-	public static final String COMMIT_DIALOG_WEIGHT_NAME = "weight";
+	public static final String COMMIT_DIALOG_WEIGHT_NAME = "CommitPanel.weight";
 	public static final int COMMIT_DIALOG_WEIGHT_DEFAULT = 50;
 	
-	public static final String COMMIT_DIALOG_WIDTH_NAME = "width";
+	public static final String COMMIT_DIALOG_WIDTH_NAME = "CommitPanel.width";
 	public static final int COMMIT_DIALOG_WIDTH_DEFAULT = 600;
 	
-	public static final String COMMIT_DIALOG_HEIGHT_NAME = "height";
+	public static final String COMMIT_DIALOG_HEIGHT_NAME = "CommitPanel.height";
 	public static final int COMMIT_DIALOG_HEIGHT_DEFAULT = SWT.DEFAULT;
-	
-	public static final String COMPARE_DIALOG_WIDTH_NAME = "compare.width";
-	public static final int COMPARE_DIALOG_WIDTH_DEFAULT = 650;
-	
-	public static final String COMPARE_DIALOG_HEIGHT_NAME = "compare.height";
-	public static final int COMPARE_DIALOG_HEIGHT_DEFAULT = 500;
 	
 	public static final String TABLE_SORTING_CASE_INSENSITIVE_NAME = "case.insensitive";
 	public static final boolean TABLE_SORTING_CASE_INSENSITIVE_DEFAULT = true;
@@ -304,11 +298,9 @@ public final class SVNTeamPreferences {
 	}
 	
 	public static void setDefaultCommitDialogValues(IPreferenceStore store) {
-		store.setDefault(SVNTeamPreferences.fullCommitDialogName(SVNTeamPreferences.COMMIT_DIALOG_WEIGHT_NAME), SVNTeamPreferences.COMMIT_DIALOG_WEIGHT_DEFAULT);
-		store.setDefault(SVNTeamPreferences.fullCommitDialogName(SVNTeamPreferences.COMMIT_DIALOG_HEIGHT_NAME), SVNTeamPreferences.COMMIT_DIALOG_HEIGHT_DEFAULT);
-		store.setDefault(SVNTeamPreferences.fullCommitDialogName(SVNTeamPreferences.COMMIT_DIALOG_WIDTH_NAME), SVNTeamPreferences.COMMIT_DIALOG_WIDTH_DEFAULT);
-		store.setDefault(SVNTeamPreferences.fullCommitDialogName(SVNTeamPreferences.COMPARE_DIALOG_WIDTH_NAME), SVNTeamPreferences.COMPARE_DIALOG_WIDTH_DEFAULT);
-		store.setDefault(SVNTeamPreferences.fullCommitDialogName(SVNTeamPreferences.COMPARE_DIALOG_HEIGHT_NAME), SVNTeamPreferences.COMPARE_DIALOG_HEIGHT_DEFAULT);
+		store.setDefault(SVNTeamPreferences.COMMIT_DIALOG_WEIGHT_NAME, SVNTeamPreferences.COMMIT_DIALOG_WEIGHT_DEFAULT);
+		store.setDefault(SVNTeamPreferences.COMMIT_DIALOG_HEIGHT_NAME, SVNTeamPreferences.COMMIT_DIALOG_HEIGHT_DEFAULT);
+		store.setDefault(SVNTeamPreferences.COMMIT_DIALOG_WIDTH_NAME, SVNTeamPreferences.COMMIT_DIALOG_WIDTH_DEFAULT);
 	}
 	
 	public static void setDefaultTableSortingValues(IPreferenceStore store) {
@@ -561,8 +553,8 @@ public final class SVNTeamPreferences {
 		store.setValue(SVNTeamPreferences.fullShareName(SVNTeamPreferences.SHARE_ENABLE_AUTO_NAME), SVNTeamPreferences.SHARE_ENABLE_AUTO_DEFAULT);
 	}
 	
-	public static int getCommitDialogInt(IPreferenceStore store, String shortName) {
-		return store.getInt(SVNTeamPreferences.fullCommitDialogName(shortName));
+	public static int getDialogInt(IPreferenceStore store, String name) {
+		return store.getInt(name);
 	}
 	
 	public static boolean getTableSortingBoolean(IPreferenceStore store, String shortName) {
@@ -633,8 +625,8 @@ public final class SVNTeamPreferences {
 		return store.getString(SVNTeamPreferences.fullAutoPropertiesName(shortName));
 	}
 	
-	public static void setCommitDialogInt(IPreferenceStore store, String shortName, int value) {
-		store.setValue(SVNTeamPreferences.fullCommitDialogName(shortName), value);
+	public static void setDialogInt(IPreferenceStore store, String name, int value) {
+		store.setValue(name, value);
 	}
 	
 	public static void setTableSortingBoolean(IPreferenceStore store, String shortName, boolean value) {

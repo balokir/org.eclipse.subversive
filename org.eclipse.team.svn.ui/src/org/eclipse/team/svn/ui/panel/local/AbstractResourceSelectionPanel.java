@@ -51,11 +51,12 @@ public abstract class AbstractResourceSelectionPanel extends AbstractDialogPanel
 		return this.selectionComposite != null ? this.selectionComposite.getNotSelectedResources() : null;
 	}
 
-    public Point getPrefferedSize() {
+    public Point getPrefferedSizeImpl() {
         return new Point(600, SWT.DEFAULT);
     }
     
     public void createControls(Composite parent) {
+    	this.parent = parent;
     	this.selectionComposite = new ResourceSelectionComposite(parent, SWT.NONE, this.resources, false, this.userSelectedResources);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = 210;
@@ -80,11 +81,11 @@ public abstract class AbstractResourceSelectionPanel extends AbstractDialogPanel
     }
     
     protected void saveChanges() {
-
+    	retainSize();
     }
 
     protected void cancelChanges() {
-
+    	retainSize();
     }
 
 }

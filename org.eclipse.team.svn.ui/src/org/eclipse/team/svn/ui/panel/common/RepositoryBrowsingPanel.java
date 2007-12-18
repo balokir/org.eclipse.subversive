@@ -28,7 +28,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryBase;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.dialog.AdvancedDialog;
+import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.operation.UILoggedOperation;
 import org.eclipse.team.svn.ui.operation.UILoggedOperation.OperationErrorInfo;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
@@ -86,6 +86,7 @@ public class RepositoryBrowsingPanel extends AbstractDialogPanel {
 	}
 
     public void createControls(Composite parent) {
+    	this.parent = parent;
 		this.repositoryTree = new RepositoryTreeViewer(parent, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE);
 		if (this.autoExpandFirstLevel) {
 			this.repositoryTree.setAutoExpandLevel(2);
@@ -164,7 +165,7 @@ public class RepositoryBrowsingPanel extends AbstractDialogPanel {
 							RepositoryError error = (RepositoryError)tSelection.getFirstElement();
 							OperationErrorInfo errorInfo =  UILoggedOperation.formatMessage(error.getErrorStatus(), true);
 							ErrorCancelPanel panel = new ErrorCancelPanel(SVNTeamUIPlugin.instance().getResource("RepositoryBrowsingPanel.Details.Title"), errorInfo.numberOfErrors, errorInfo.simpleMessage, errorInfo.advancedMessage, false, null);
-							AdvancedDialog dialog = new AdvancedDialog(UIMonitorUtility.getDisplay().getActiveShell(), panel);
+							DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getDisplay().getActiveShell(), panel);
 							dialog.open();
 						}
 	        		});
@@ -176,6 +177,7 @@ public class RepositoryBrowsingPanel extends AbstractDialogPanel {
     }
     
     protected void saveChanges() {
+    	this.retainSize();
 		IStructuredSelection selection = (IStructuredSelection)this.repositoryTree.getSelection();
 		if (selection != null && !selection.isEmpty()) {
 			this.selectedResource = ((RepositoryResource)selection.getFirstElement()).getRepositoryResource();
@@ -183,7 +185,7 @@ public class RepositoryBrowsingPanel extends AbstractDialogPanel {
     }
 
     protected void cancelChanges() {
-
+    	this.retainSize();
     }
 
 }

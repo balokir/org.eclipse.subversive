@@ -61,6 +61,7 @@ public abstract class AbstractGetResourceNamePanel extends AbstractDialogPanel {
 	}
     
     public void createControls(Composite parent) {
+    	this.parent = parent;
         GridData data = null;
         GridLayout layout = null;
 
@@ -112,7 +113,7 @@ public abstract class AbstractGetResourceNamePanel extends AbstractDialogPanel {
 		this.comment.setLayoutData(data);
     }
     
-    public Point getPrefferedSize() {
+    public Point getPrefferedSizeImpl() {
     	return new Point(525, SWT.DEFAULT);
     }
     
@@ -122,11 +123,13 @@ public abstract class AbstractGetResourceNamePanel extends AbstractDialogPanel {
     }
     
     protected void saveChanges() {
+    	this.retainSize();
         this.resourceName = this.text.getText();
         this.comment.saveChanges();
     }
 
     protected void cancelChanges() {
+    	this.retainSize();
     	this.comment.cancelChanges();
     }
 

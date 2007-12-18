@@ -47,12 +47,13 @@ public class CommentPanel extends AbstractDialogPanel {
 	}
 	
     public void createControls(Composite parent) {
+    	this.parent = parent;
         this.comment = new CommentComposite(parent, this);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		this.comment.setLayoutData(data);
     }
     
-    public Point getPrefferedSize() {
+    public Point getPrefferedSizeImpl() {
     	return new Point(510, SWT.DEFAULT);
     }
     
@@ -62,10 +63,12 @@ public class CommentPanel extends AbstractDialogPanel {
     }
     
     protected void saveChanges() {
+    	this.retainSize();
         this.comment.saveChanges();
     }
 
     protected void cancelChanges() {
+    	this.retainSize();
     	this.comment.cancelChanges();
     }
     

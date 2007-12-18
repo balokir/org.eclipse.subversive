@@ -53,14 +53,16 @@ public class ExportPanel extends AbstractDialogPanel {
 	}
 	
 	protected void saveChanges() {
+		this.retainSize();
 		this.location = this.locationField.getText();
 	}
 
     protected void cancelChanges() {
-
+    	this.retainSize();
     }
     
 	public void createControls(Composite parent) {
+		this.parent = parent;
 		GridLayout layout = null;
 		GridData data = null;
 		

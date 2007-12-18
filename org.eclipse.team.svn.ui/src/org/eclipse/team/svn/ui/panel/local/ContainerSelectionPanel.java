@@ -94,6 +94,7 @@ public class ContainerSelectionPanel extends AbstractDialogPanel {
     }
     
     public void createControls(Composite parent) {
+    	this.parent = parent;
         GridData data = null;
         
         this.group = new SVNContainerSelectionGroup(parent, new Listener() {
@@ -171,6 +172,7 @@ public class ContainerSelectionPanel extends AbstractDialogPanel {
 	}
     
     protected void saveChanges() {
+    	this.retainSize();
     	this.selectedPath = this.group.getContainerFullPath();
     	this.copyWithHistorySelected = this.copyWithHistoryButton.getSelection();
     	this.name = this.nameBox.getText().trim();
@@ -178,7 +180,7 @@ public class ContainerSelectionPanel extends AbstractDialogPanel {
     }
 
     protected void cancelChanges() {
-
+    	this.retainSize();
     }
     
 	protected String getDefaultConflictMessage(HashSet conflicts) {

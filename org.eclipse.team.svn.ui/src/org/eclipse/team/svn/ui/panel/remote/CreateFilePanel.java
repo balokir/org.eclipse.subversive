@@ -68,6 +68,7 @@ public class CreateFilePanel extends AbstractDialogPanel {
     }
 	
 	public void createControls(Composite parent) {
+		this.parent = parent;
 		GridLayout layout = null;
 		GridData data = null;
 		
@@ -136,7 +137,7 @@ public class CreateFilePanel extends AbstractDialogPanel {
 		this.comment.setLayoutData(data);
     }
 	
-    public Point getPrefferedSize() {
+    public Point getPrefferedSizeImpl() {
     	return new Point(525, SWT.DEFAULT);
     }
     
@@ -146,16 +147,17 @@ public class CreateFilePanel extends AbstractDialogPanel {
 	}
 		
 	protected void saveChanges() {
-		 this.comment.saveChanges();
-		 String text = CreateFilePanel.this.locationField.getText();
-		 if (text.indexOf("\"") > -1) {
-			 this.fileNames = this.parseFileNames(text);
-		 }	
-		 else {
-			 Path path = new Path(text);
-			 this.location = path.removeLastSegments(1).toString();
-			 this.fileNames = new String[] {path.lastSegment()};
-		 }
+		this.retainSize();
+		this.comment.saveChanges();
+		String text = CreateFilePanel.this.locationField.getText();
+		if (text.indexOf("\"") > -1) {
+			this.fileNames = this.parseFileNames(text);
+		}	
+		else {
+			Path path = new Path(text);
+			this.location = path.removeLastSegments(1).toString();
+			this.fileNames = new String[] {path.lastSegment()};
+		}
 	}
 	
 	protected String[] parseFileNames(String text) {
@@ -185,6 +187,7 @@ public class CreateFilePanel extends AbstractDialogPanel {
 	}
 
     protected void cancelChanges() {
+    	this.retainSize();
     	this.comment.cancelChanges();
     }
     
