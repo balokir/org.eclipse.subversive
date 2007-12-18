@@ -148,8 +148,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 		this.comment.postInit(this.manager);
 	}
 
-	public void createControls(Composite parent) {
-		this.parent = parent;
+	public void createControlsImpl(Composite parent) {
 		GridData data = null;
 
 		GridLayout layout = new GridLayout();
@@ -366,8 +365,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 		return select;
 	}
 
-	protected void saveChanges() {
-		this.retainSize();
+	protected void saveChangesImpl() {
 		if (!this.considerStructure) {
 			this.destinationUrl = this.destinationCombo.getText();
 			this.resourceNameHistory.addLine(this.destinationUrl);
@@ -388,8 +386,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 		}
 	}
 
-	protected void cancelChanges() {
-		this.retainSize();
+	protected void cancelChangesImpl() {
 		this.comment.cancelChanges();
 	}
 

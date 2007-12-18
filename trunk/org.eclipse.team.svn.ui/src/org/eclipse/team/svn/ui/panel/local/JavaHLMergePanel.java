@@ -131,8 +131,7 @@ public class JavaHLMergePanel extends AbstractAdvancedDialogPanel {
 		return this.advancedMode;
 	}
 
-	public void createControls(Composite parent) {
-		this.parent = parent;
+	public void createControlsImpl(Composite parent) {
 		((GridLayout)parent.getLayout()).verticalSpacing = 0;
 		
 		this.simpleView = this.createSimpleModeView(parent);
@@ -229,7 +228,7 @@ public class JavaHLMergePanel extends AbstractAdvancedDialogPanel {
 	public void extendedButtonPressed(int idx) {
 		super.extendedButtonPressed(idx);
 		if (idx == 1) {
-			this.saveChanges();
+			this.saveChangesImpl();
 			JavaHLMergeOperation mergeOp = new JavaHLMergeOperation(this.to, this.getFirstSelection(), this.getSecondSelection(), true, this.getIgnoreAncestry());
 			final StringBuffer buf = new StringBuffer();
 			buf.append(SVNTeamUIPlugin.instance().getResource("JavaHLMergePanel.Preview.Header.Text"));
@@ -277,7 +276,7 @@ public class JavaHLMergePanel extends AbstractAdvancedDialogPanel {
 	}
 	
 	protected void setMode(boolean advanced) {
-		this.saveChanges();
+		this.saveChangesImpl();
 		
 		if (this.advancedMode = advanced) {
 			((GridData)this.simpleView.getLayoutData()).heightHint = 0;
@@ -305,8 +304,7 @@ public class JavaHLMergePanel extends AbstractAdvancedDialogPanel {
 		}
 	}
 	
-	protected void saveChanges() {
-		this.retainSize();
+	protected void saveChangesImpl() {
     	if (!this.advancedMode) {
         	this.firstSelectedResource = this.simpleSelectionComposite.getSelectedResource();
     		this.secondSelectedResource = SVNUtility.copyOf(this.firstSelectedResource);
@@ -323,8 +321,7 @@ public class JavaHLMergePanel extends AbstractAdvancedDialogPanel {
     	this.ignoreAncestry = this.ignoreAncestryButton.getSelection();
 	}
 
-	protected void cancelChanges() {
-		this.retainSize();
+	protected void cancelChangesImpl() {
 	}
 
 	protected void setButtonsEnabled(boolean enabled) {

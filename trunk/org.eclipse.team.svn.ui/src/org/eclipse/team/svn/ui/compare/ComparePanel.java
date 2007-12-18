@@ -46,8 +46,7 @@ public class ComparePanel extends AbstractDialogPanel {
 		this.defaultMessage = SVNTeamUIPlugin.instance().getResource("CompareLocalPanel.Message");
 	}
 	
-	public void createControls(Composite parent) {
-		this.parent = parent;
+	public void createControlsImpl(Composite parent) {
 		Control control = this.compareInput.createContents(parent);
 		control.setLayoutData(new GridData(GridData.FILL_BOTH));
 		Shell shell= control.getShell();
@@ -55,12 +54,11 @@ public class ComparePanel extends AbstractDialogPanel {
 		shell.setImage(this.compareInput.getTitleImage());
 	}
 
-	protected void cancelChanges() {
-		this.retainSize();
+	protected void cancelChangesImpl() {
+
 	}
 
-	protected void saveChanges() {
-		this.retainSize();
+	protected void saveChangesImpl() {
 		
 		RefreshResourcesOperation refreshOp = new RefreshResourcesOperation(new IResource[] {this.resource.getProject()});
 		AbstractWorkingCopyOperation mainOp = new AbstractWorkingCopyOperation("Operation.SaveChanges", new IResource[] {this.resource.getProject()}) {

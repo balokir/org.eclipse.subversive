@@ -74,8 +74,7 @@ public abstract class AbstractRepositoryResourceSelectionPanel extends AbstractD
 		return this.selectedResource;
 	}
 	
-    public void createControls(Composite parent) {
-    	this.parent = parent;
+    public void createControlsImpl(Composite parent) {
         GridData data = null;
 
         this.selectionComposite = new RepositoryResourceSelectionComposite(parent, SWT.NONE, this, this.historyKey, this.selectedResource, this.stopOnCopy, this.selectionTitle, this.selectionDescription, this.twoRevisions);
@@ -84,14 +83,12 @@ public abstract class AbstractRepositoryResourceSelectionPanel extends AbstractD
         this.selectionComposite.setCurrentRevision(this.currentRevision);
     }
     
-    protected void saveChanges() {
-    	this.retainSize();
+    protected void saveChangesImpl() {
     	this.selectedResource = this.selectionComposite.getSelectedResource();
     	this.selectionComposite.saveHistory();
     }
 
-    protected void cancelChanges() {
-    	this.retainSize();
+    protected void cancelChangesImpl() {
     }
 
 }

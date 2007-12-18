@@ -85,8 +85,7 @@ public class RepositoryBrowsingPanel extends AbstractDialogPanel {
 		return this.selectedResource;
 	}
 
-    public void createControls(Composite parent) {
-    	this.parent = parent;
+    public void createControlsImpl(Composite parent) {
 		this.repositoryTree = new RepositoryTreeViewer(parent, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE);
 		if (this.autoExpandFirstLevel) {
 			this.repositoryTree.setAutoExpandLevel(2);
@@ -176,16 +175,14 @@ public class RepositoryBrowsingPanel extends AbstractDialogPanel {
         this.repositoryTree.getTree().setMenu(menu);
     }
     
-    protected void saveChanges() {
-    	this.retainSize();
+    protected void saveChangesImpl() {
 		IStructuredSelection selection = (IStructuredSelection)this.repositoryTree.getSelection();
 		if (selection != null && !selection.isEmpty()) {
 			this.selectedResource = ((RepositoryResource)selection.getFirstElement()).getRepositoryResource();
 		}
     }
 
-    protected void cancelChanges() {
-    	this.retainSize();
+    protected void cancelChangesImpl() {
     }
 
 }

@@ -42,9 +42,8 @@ public class InputRevisionPanel extends AbstractDialogPanel {
 		return this.selectedRevision;
 	}
 	
-	public void createControls(Composite parent) {
-		this.parent = parent;
-		super.createControls(parent);
+	public void createControlsImpl(Composite parent) {
+		super.createControlsImpl(parent);
 		this.revComposite = new RevisionComposite(parent, this, false,  new String [] {SVNTeamUIPlugin.instance().getResource("InputRevisionPanel.Caption.First"), SVNTeamUIPlugin.instance().getResource("InputRevisionPanel.Caption.Second")}, SVNRevision.HEAD);
 		this.revComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		this.revComposite.setSelectedResource(this.resource);
@@ -54,14 +53,12 @@ public class InputRevisionPanel extends AbstractDialogPanel {
     	return "org.eclipse.team.svn.help.revisionDialogContext";
 	}
 	
-	protected void saveChanges() {
-		this.retainSize();
+	protected void saveChangesImpl() {
 		this.resource = this.revComposite.getSelectedResource();
 		this.selectedRevision = this.revComposite.getSelectedRevision();
 	}
 
-	protected void cancelChanges() {
-		this.retainSize();
+	protected void cancelChangesImpl() {
 	}
 
 }

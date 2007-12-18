@@ -107,7 +107,12 @@ public abstract class AbstractDialogPanel implements IDialogPanel, IValidationMa
     }
     
     public void createControls(Composite parent) {
-
+    	this.parent = parent;
+    	this.createControlsImpl(parent);
+    }
+    
+    public void createControlsImpl(Composite parent) {
+    	
     }
 
     public void buttonPressed(int idx) {
@@ -156,8 +161,18 @@ public abstract class AbstractDialogPanel implements IDialogPanel, IValidationMa
 		}
 	}
 	
-    protected abstract void saveChanges();
-    protected abstract void cancelChanges();
+	protected void saveChanges() {
+		this.retainSize();
+		this.saveChangesImpl();
+	}
+	
+	protected void cancelChanges() {
+		this.retainSize();
+		this.cancelChangesImpl();
+	}
+	
+    protected abstract void saveChangesImpl();
+    protected abstract void cancelChangesImpl();
     
     /*
      * return false if dialog should not be closed

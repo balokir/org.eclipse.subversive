@@ -60,8 +60,7 @@ public abstract class AbstractGetResourceNamePanel extends AbstractDialogPanel {
 		return this.comment.getMessage();
 	}
     
-    public void createControls(Composite parent) {
-    	this.parent = parent;
+    public void createControlsImpl(Composite parent) {
         GridData data = null;
         GridLayout layout = null;
 
@@ -122,14 +121,12 @@ public abstract class AbstractGetResourceNamePanel extends AbstractDialogPanel {
     	this.comment.postInit(this.manager);
     }
     
-    protected void saveChanges() {
-    	this.retainSize();
+    protected void saveChangesImpl() {
         this.resourceName = this.text.getText();
         this.comment.saveChanges();
     }
 
-    protected void cancelChanges() {
-    	this.retainSize();
+    protected void cancelChangesImpl() {
     	this.comment.cancelChanges();
     }
 

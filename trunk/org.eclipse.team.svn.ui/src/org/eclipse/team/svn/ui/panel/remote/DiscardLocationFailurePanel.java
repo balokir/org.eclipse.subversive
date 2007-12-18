@@ -38,8 +38,8 @@ public class DiscardLocationFailurePanel extends ItemListPanel {
 		this.projects = projects;
 	}
 	
-	public void createControls(Composite parent) {
-		super.createControls(parent);
+	public void createControlsImpl(Composite parent) {
+		super.createControlsImpl(parent);
 		
 		GridData data = (GridData)this.table.getLayoutData();
 		data.heightHint = 50;

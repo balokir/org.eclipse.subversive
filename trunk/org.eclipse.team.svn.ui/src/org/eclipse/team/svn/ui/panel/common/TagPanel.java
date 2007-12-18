@@ -34,8 +34,8 @@ public class TagPanel extends AbstractBranchTagPanel {
     	super(tagTo, showStartsWith, existingNames, "TagPanel", "tag", resources);
     }
 
-    public void createControls(Composite parent) {
-    	super.createControls(parent);
+    public void createControlsImpl(Composite parent) {
+    	super.createControlsImpl(parent);
     	if (this.startsWith && SVNTeamPreferences.getRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.REPOSITORY_FORCE_EXTERNALS_FREEZE_NAME)) {
     		this.freezeExternalsCheck.setSelection(true);
     		this.freezeExternalsCheck.setEnabled(false);

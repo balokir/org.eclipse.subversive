@@ -285,13 +285,13 @@ public class AddRepositoryLocationPage extends AbstractVerifiedWizardPage {
 			this.resources = input;
 		}
 		
-	    public void createControls(Composite parent) {
+	    public void createControlsImpl(Composite parent) {
 	    	ProjectListComposite composite = new ProjectListComposite(parent, SWT.FILL, this.resources, false);
 	    	composite.initialize();
 	    }	    
-	    protected void saveChanges() {
+	    protected void saveChangesImpl() {
 	    }
-	    protected void cancelChanges() {
+	    protected void cancelChangesImpl() {
 	    }		
 	}
 	

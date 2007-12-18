@@ -130,8 +130,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
         return new Point(700, SWT.DEFAULT);
     }
     
-    public void createControls(Composite parent) {
-    	this.parent = parent;
+    public void createControlsImpl(Composite parent) {
     	IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
     	
     	GridData data;
@@ -309,15 +308,13 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
 		this.resourceLabel.setText(resourceName);
 	}
 
-    protected void saveChanges() {
-    	this.retainSize();
+    protected void saveChangesImpl() {
 		this.selectedRevisions = this.history.getSelectedRevisions();
 		this.selectedMessage = this.history.getSelectedMessage();
 		this.selectedLogMessages = this.history.getSelectedLogMessages();
     }
     
-    protected void cancelChanges() {
-        this.retainSize();
+    protected void cancelChangesImpl() {
     }
 
     protected void addPage(SVNLogEntry[] newMessages) {

@@ -70,8 +70,7 @@ public class ListSelectionPanel extends AbstractDialogPanel {
 		this.multipleColumns = multipleColumns;
 	}
 	
-	public void createControls(Composite parent) {
-		this.parent = parent;
+	public void createControlsImpl(Composite parent) {
 		this.listViewer = this.createViewer(parent);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = 120;
@@ -176,8 +175,7 @@ public class ListSelectionPanel extends AbstractDialogPanel {
 		}
 	}
 	
-	protected void saveChanges() {
-		this.retainSize();
+	protected void saveChangesImpl() {
 		Object[] children = this.contentProvider.getElements(this.inputElement);
 		if (children != null) {
 			ArrayList list = new ArrayList();
@@ -190,8 +188,7 @@ public class ListSelectionPanel extends AbstractDialogPanel {
 		}
 	}
 
-	protected void cancelChanges() {
-		this.retainSize();
+	protected void cancelChangesImpl() {
 	}
 
 }

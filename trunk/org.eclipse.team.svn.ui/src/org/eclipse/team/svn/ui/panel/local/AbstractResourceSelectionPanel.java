@@ -55,7 +55,7 @@ public abstract class AbstractResourceSelectionPanel extends AbstractDialogPanel
         return new Point(600, SWT.DEFAULT);
     }
     
-    public void createControls(Composite parent) {
+    public void createControlsImpl(Composite parent) {
     	this.parent = parent;
     	this.selectionComposite = new ResourceSelectionComposite(parent, SWT.NONE, this.resources, false, this.userSelectedResources);
 		GridData data = new GridData(GridData.FILL_BOTH);
@@ -80,12 +80,10 @@ public abstract class AbstractResourceSelectionPanel extends AbstractDialogPanel
 		});
     }
     
-    protected void saveChanges() {
-    	retainSize();
+    protected void saveChangesImpl() {
     }
 
-    protected void cancelChanges() {
-    	retainSize();
+    protected void cancelChangesImpl() {
     }
 
 }
