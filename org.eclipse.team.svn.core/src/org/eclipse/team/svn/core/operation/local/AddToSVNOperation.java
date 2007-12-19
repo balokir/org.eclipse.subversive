@@ -123,7 +123,7 @@ public class AddToSVNOperation extends AbstractWorkingCopyOperation {
 			AddToSVNOperation.removeFromParentIgnore(proxy, FileUtility.getWorkingCopyPath(parent), current.getName());
 		}
 		
-		proxy.add(wcPath, Depth.infinityOrEmpty(AddToSVNOperation.this.isRecursive), ISVNConnector.Options.NONE, new SVNProgressMonitor(AddToSVNOperation.this, monitor, null));
+		proxy.add(wcPath, Depth.infinityOrEmpty(AddToSVNOperation.this.isRecursive), ISVNConnector.Options.FORCE | ISVNConnector.Options.INCLUDE_PARENTS, new SVNProgressMonitor(AddToSVNOperation.this, monitor, null));
 	}
 	
 }
