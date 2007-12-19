@@ -124,8 +124,8 @@ public class CommitOperation extends AbstractConflictDetectionOperation implemen
 				long revisionNumbers[] = proxy.commit(
 				    CommitOperation.this.paths, 
 					CommitOperation.this.message, 
-					Depth.infinityOrEmpty(CommitOperation.this.recursive),
-					CommitOperation.this.keepLocks ? ISVNConnector.Options.KEEP_LOCKS : ISVNConnector.Options.NONE, null, 
+					null,
+					Depth.infinityOrEmpty(CommitOperation.this.recursive), CommitOperation.this.keepLocks ? ISVNConnector.Options.KEEP_LOCKS : ISVNConnector.Options.NONE, 
 					new SVNProgressMonitor(CommitOperation.this, monitor, null));
 				if (revisionNumbers.length > 0) {
 					CommitOperation.this.revisionsPairs.add(new RevisionPair(revisionNumbers[0], CommitOperation.this.paths, location));	
