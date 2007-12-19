@@ -676,7 +676,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	protected SVNEntryStatus []getStatuses(IRepositoryLocation location, String path, boolean recursively) throws Exception {
 		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
-			SVNEntryStatus []statuses = SVNUtility.status(proxy, path, Depth.infinityOrImmediates(recursively), false, true, true, false, new SVNNullProgressMonitor());
+			SVNEntryStatus []statuses = SVNUtility.status(proxy, path, Depth.infinityOrImmediates(recursively), ISVNConnector.Options.INCLUDE_UNCHANGED | ISVNConnector.Options.INCLUDE_IGNORED, new SVNNullProgressMonitor());
 			SVNUtility.reorder(statuses, true);
 			return statuses;
 		}

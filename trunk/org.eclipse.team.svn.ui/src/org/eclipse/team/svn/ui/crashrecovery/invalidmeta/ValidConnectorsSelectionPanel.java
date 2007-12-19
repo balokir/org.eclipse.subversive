@@ -61,9 +61,7 @@ public class ValidConnectorsSelectionPanel extends AbstractDialogPanel {
 		this.svnConnector = this.factories[this.svnConnectorField.getSelectionIndex()].getId();
     }
     
-	public void createControlsImpl(Composite parent) {
-		super.createControlsImpl(parent);
-		
+	protected void createControlsImpl(Composite parent) {
 		GridLayout layout = null;
 		GridData data = null;
 		

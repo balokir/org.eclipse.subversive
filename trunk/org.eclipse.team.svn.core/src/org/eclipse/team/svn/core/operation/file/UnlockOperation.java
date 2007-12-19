@@ -65,7 +65,7 @@ public class UnlockOperation extends AbstractFileOperation {
 			final ISVNConnector proxy = location.acquireSVNProxy();
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-					proxy.unlock(paths, true, new SVNProgressMonitor(UnlockOperation.this, monitor, null));
+					proxy.unlock(paths, ISVNConnector.Options.FORCE, new SVNProgressMonitor(UnlockOperation.this, monitor, null));
 				}
 			}, monitor, wc2Resources.size());
 			

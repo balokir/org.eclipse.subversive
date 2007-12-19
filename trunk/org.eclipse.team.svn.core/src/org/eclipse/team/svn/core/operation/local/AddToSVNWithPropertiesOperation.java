@@ -80,7 +80,7 @@ public class AddToSVNWithPropertiesOperation extends AddToSVNOperation {
 		String path = FileUtility.getWorkingCopyPath(resource);
 		SVNProperty[] properties = CoreExtensionsManager.instance().getOptionProvider().getAutomaticProperties(resource.getName());
 		for (int pCount = 0; pCount < properties.length; pCount++) {
-			proxy.propertySet(path, properties[pCount].name, properties[pCount].value, Depth.EMPTY, false, new SVNProgressMonitor(this, monitor, null));
+			proxy.propertySet(path, properties[pCount].name, properties[pCount].value, Depth.EMPTY, ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null));
 		}
 		if (resource.getType() == IResource.FILE) {
 			this.processFile(resource, proxy, monitor);
@@ -96,10 +96,10 @@ public class AddToSVNWithPropertiesOperation extends AddToSVNOperation {
 			SVNProperty data = proxy.propertyGet(new SVNEntryRevisionReference(path), BuiltIn.MIME_TYPE, new SVNProgressMonitor(this, monitor, null));
 			if (data == null) {
 				if (type == Team.BINARY) {
-					proxy.propertySet(path, BuiltIn.MIME_TYPE, AddToSVNWithPropertiesOperation.BINARY_FILE, Depth.EMPTY, false, new SVNProgressMonitor(this, monitor, null));
+					proxy.propertySet(path, BuiltIn.MIME_TYPE, AddToSVNWithPropertiesOperation.BINARY_FILE, Depth.EMPTY, ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null));
 				}
 				else if (type == Team.TEXT) {
-					proxy.propertySet(path, BuiltIn.MIME_TYPE, AddToSVNWithPropertiesOperation.TEXT_FILE, Depth.EMPTY, false, new SVNProgressMonitor(this, monitor, null));
+					proxy.propertySet(path, BuiltIn.MIME_TYPE, AddToSVNWithPropertiesOperation.TEXT_FILE, Depth.EMPTY, ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null));
 				}
 			}
 		}

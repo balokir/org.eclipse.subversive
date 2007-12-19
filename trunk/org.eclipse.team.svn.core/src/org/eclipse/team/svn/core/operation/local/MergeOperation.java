@@ -74,7 +74,7 @@ public class MergeOperation extends AbstractConflictDetectionOperation implement
 		ISVNConnector proxy = location.acquireSVNProxy();
 		
 		try {
-			proxy.merge(SVNUtility.getEntryReference(from), new SVNRevisionRange [] {new SVNRevisionRange(this.info.start, from.getSelectedRevision())}, null, statuses, this.force, false, new ConflictDetectionProgressMonitor(this, monitor, null));
+			proxy.merge(SVNUtility.getEntryReference(from), new SVNRevisionRange [] {new SVNRevisionRange(this.info.start, from.getSelectedRevision())}, null, statuses, this.force ? ISVNConnector.Options.FORCE : ISVNConnector.Options.NONE, new ConflictDetectionProgressMonitor(this, monitor, null));
 		}
 		finally {
 			location.releaseSVNProxy(proxy);

@@ -79,8 +79,7 @@ public class CreateFileOperation extends AbstractRepositoryOperation implements 
 								SVNUtility.encodeURL(url), 
 								CreateFileOperation.this.message, 
 								Depth.FILES,
-								true, 
-								true, 
+								ISVNConnector.Options.INCLUDE_IGNORED | ISVNConnector.Options.IGNORE_UNKNOWN_NODE_TYPES, 
 								new SVNProgressMonitor(CreateFileOperation.this, monitor, null));		
 					}}, monitor, this.fileNames.length);
 			}

@@ -125,7 +125,7 @@ public abstract class TestWorkflow extends TestCase {
 				}
 				ISVNConnector proxy = this.location.acquireSVNProxy();
 				try {
-				    proxy.remove(toDelete, "Test Done", true, false, new SVNNullProgressMonitor());
+				    proxy.remove(toDelete, "Test Done", ISVNConnector.Options.FORCE, new SVNNullProgressMonitor());
 				}
 				finally {
 				    this.location.releaseSVNProxy(proxy);

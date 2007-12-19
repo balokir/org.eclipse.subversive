@@ -68,7 +68,7 @@ public class UnlockOperation extends AbstractWorkingCopyOperation {
 				public void run(IProgressMonitor monitor) throws Exception {
 					proxy.unlock(
 						paths, 
-						true, 
+						ISVNConnector.Options.FORCE, 
 						new SVNProgressMonitor(UnlockOperation.this, monitor, null));
 				}
 			}, monitor, wc2Resources.size());

@@ -63,8 +63,7 @@ public class GetResourceAnnotationOperation extends AbstractRepositoryOperation 
 				SVNUtility.getEntryReference(resource),
 				SVNRevision.fromNumber(0),
 				resource.getSelectedRevision(),
-				false,
-				false, new ISVNAnnotationCallback() {
+				ISVNConnector.Options.NONE, new ISVNAnnotationCallback() {
 					protected int lineNumber = 0;
 					protected String noAuthor = SVNTeamPlugin.instance().getResource("SVNInfo.NoAuthor");
 					

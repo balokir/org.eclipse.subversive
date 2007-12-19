@@ -106,7 +106,7 @@ public class UpdateOperation extends AbstractConflictDetectionOperation implemen
 					    paths, 
 					    UpdateOperation.this.selectedRevision, 
 						Depth.infinityOrFiles(UpdateOperation.this.doRecursiveUpdate),
-						false, false, 
+						ISVNConnector.Options.NONE, 
 						new ConflictDetectionProgressMonitor(UpdateOperation.this, monitor, null));
 				}
 			}, monitor, wc2Resources.size());

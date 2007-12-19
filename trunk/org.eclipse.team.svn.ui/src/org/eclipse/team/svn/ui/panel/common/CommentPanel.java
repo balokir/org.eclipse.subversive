@@ -52,7 +52,7 @@ public class CommentPanel extends AbstractDialogPanel {
 		this.comment.setLayoutData(data);
     }
     
-    public Point getPrefferedSizeImpl() {
+    protected Point getPrefferedSizeImpl() {
     	return new Point(510, SWT.DEFAULT);
     }
     

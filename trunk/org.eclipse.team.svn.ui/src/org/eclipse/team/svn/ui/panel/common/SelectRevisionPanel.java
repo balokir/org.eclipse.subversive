@@ -126,7 +126,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
         this.manager.setButtonEnabled(0, false);
     }
 
-    public Point getPrefferedSize() {
+    public Point getPrefferedSizeImpl() {
         return new Point(700, SWT.DEFAULT);
     }
     

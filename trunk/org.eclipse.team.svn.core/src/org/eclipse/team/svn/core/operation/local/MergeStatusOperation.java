@@ -61,8 +61,7 @@ public class MergeStatusOperation extends AbstractWorkingCopyOperation implement
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(IProgressMonitor monitor) throws Exception {
 						proxy.mergeStatus(SVNUtility.getEntryReference(from), new SVNRevisionRange [] {new SVNRevisionRange(MergeStatusOperation.this.info.start, from.getSelectedRevision())}, 
-						    	wcPath, 
-								Depth.INFINITY, false, new ISVNMergeStatusCallback() {
+						    	wcPath, Depth.INFINITY, ISVNConnector.Options.NONE, new ISVNMergeStatusCallback() {
 									public void next(SVNMergeStatus status) {
 										st.add(status);
 									}

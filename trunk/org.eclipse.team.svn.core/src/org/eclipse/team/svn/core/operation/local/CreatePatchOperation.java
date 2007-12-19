@@ -56,9 +56,13 @@ public class CreatePatchOperation extends AbstractActionOperation {
 		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
 			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn diff " + (this.recurse ? "" : " -N") + (this.ignoreDeleted ? " --no-diff-deleted" : "") + "\n");
+			long options = ISVNConnector.Options.IGNORE_ANCESTRY;
+			options |= this.ignoreDeleted ? ISVNConnector.Options.SKIP_DELETED : ISVNConnector.Options.NONE;
+			options |= this.processBinary ? ISVNConnector.Options.FORCE : ISVNConnector.Options.NONE;
+			options |= this.processUnversioned ? ISVNConnector.Options.INCLUDE_UNVERSIONED : ISVNConnector.Options.NONE;
 			proxy.diff(
-				new SVNEntryRevisionReference(wcPath, null, SVNRevision.BASE), new SVNEntryRevisionReference(wcPath, null, SVNRevision.WORKING), this.useRelativePath ? wcPath : null, this.fileName, Depth.infinityOrFiles(this.recurse), true, this.ignoreDeleted, 
-				this.processBinary, this.processUnversioned, new SVNProgressMonitor(this, monitor, null));
+				new SVNEntryRevisionReference(wcPath, null, SVNRevision.BASE), new SVNEntryRevisionReference(wcPath, null, SVNRevision.WORKING), this.useRelativePath ? wcPath : null, this.fileName, 
+				Depth.infinityOrFiles(this.recurse), options, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 			location.releaseSVNProxy(proxy);
