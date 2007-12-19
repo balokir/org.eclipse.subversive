@@ -86,7 +86,7 @@ public class UpdateOperation extends AbstractFileConflictDetectionOperation impl
 			proxy.setTouchUnresolved(this.updateUnresolved);
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-					proxy.update(paths, UpdateOperation.this.selectedRevision, Depth.infinityOrFiles(true), false, false, new ConflictDetectionProgressMonitor(UpdateOperation.this, monitor, null));
+					proxy.update(paths, UpdateOperation.this.selectedRevision, Depth.infinityOrFiles(true), ISVNConnector.Options.NONE, new ConflictDetectionProgressMonitor(UpdateOperation.this, monitor, null));
 				}
 			}, monitor, wc2Resources.size());
 			proxy.setTouchUnresolved(false);

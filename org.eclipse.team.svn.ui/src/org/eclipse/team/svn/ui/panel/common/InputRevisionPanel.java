@@ -42,8 +42,7 @@ public class InputRevisionPanel extends AbstractDialogPanel {
 		return this.selectedRevision;
 	}
 	
-	public void createControlsImpl(Composite parent) {
-		super.createControlsImpl(parent);
+	protected void createControlsImpl(Composite parent) {
 		this.revComposite = new RevisionComposite(parent, this, false,  new String [] {SVNTeamUIPlugin.instance().getResource("InputRevisionPanel.Caption.First"), SVNTeamUIPlugin.instance().getResource("InputRevisionPanel.Caption.Second")}, SVNRevision.HEAD);
 		this.revComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		this.revComposite.setSelectedResource(this.resource);

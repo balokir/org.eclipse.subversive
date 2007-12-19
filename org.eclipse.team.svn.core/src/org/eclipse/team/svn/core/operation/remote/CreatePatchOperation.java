@@ -55,19 +55,18 @@ public class CreatePatchOperation extends AbstractRepositoryOperation {
 		try {
 			SVNEntryRevisionReference ref1 = SVNUtility.getEntryRevisionReference(first);
 			SVNEntryRevisionReference ref2 = SVNUtility.getEntryRevisionReference(second);
+			long options = this.ignoreAncestry ? ISVNConnector.Options.IGNORE_ANCESTRY : ISVNConnector.Options.NONE;
+			options |= this.ignoreDeleted ? ISVNConnector.Options.SKIP_DELETED : ISVNConnector.Options.NONE;
+			options |= this.processBinary ? ISVNConnector.Options.FORCE : ISVNConnector.Options.NONE;
 			if (SVNUtility.useSingleReferenceSignature(ref1, ref2)) {
 				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn diff -r " + ref1.revision + ":" + ref2.revision + " \"" + first.getUrl() + "@" + ref1.pegRevision + "\"" + (this.recurse ? "" : " -N") + (this.ignoreDeleted ? " --no-diff-deleted" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n");
-				proxy.diff(
-						ref1, ref1.revision, ref2.revision, null, this.fileName, 
-						this.recurse ? Depth.INFINITY : Depth.IMMEDIATES, this.ignoreAncestry, this.ignoreDeleted, 
-						this.processBinary, false, new SVNProgressMonitor(this, monitor, null));
+				proxy.diff(ref1, ref1.revision, ref2.revision, null, this.fileName, 
+						this.recurse ? Depth.INFINITY : Depth.IMMEDIATES, options, new SVNProgressMonitor(this, monitor, null));
 			}
 			else {
 				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn diff \"" + first.getUrl() + "@" + first.getSelectedRevision() + "\" \"" + second.getUrl() + "@" + second.getSelectedRevision() + "\"" + (this.recurse ? "" : " -N") + (this.ignoreDeleted ? " --no-diff-deleted" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n");
-				proxy.diff(
-						ref1, ref2, null, this.fileName, 
-						this.recurse ? Depth.INFINITY : Depth.IMMEDIATES, this.ignoreAncestry, this.ignoreDeleted, 
-						this.processBinary, false, new SVNProgressMonitor(this, monitor, null));
+				proxy.diff(ref1, ref2, null, this.fileName, 
+						this.recurse ? Depth.INFINITY : Depth.IMMEDIATES, options, new SVNProgressMonitor(this, monitor, null));
 			}
 		}
 		finally {

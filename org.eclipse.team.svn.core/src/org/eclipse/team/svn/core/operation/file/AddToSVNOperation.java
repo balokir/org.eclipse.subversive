@@ -62,7 +62,7 @@ public class AddToSVNOperation extends AbstractFileOperation {
 						org.eclipse.team.svn.core.operation.local.AddToSVNOperation.removeFromParentIgnore(proxy, parent.getAbsolutePath(), current.getName());
 					}
 					
-					proxy.add(current.getAbsolutePath(), Depth.infinityOrEmpty(AddToSVNOperation.this.isRecursive), false, false, new SVNProgressMonitor(AddToSVNOperation.this, monitor, null));
+					proxy.add(current.getAbsolutePath(), Depth.infinityOrEmpty(AddToSVNOperation.this.isRecursive), ISVNConnector.Options.FORCE | ISVNConnector.Options.INCLUDE_PARENTS, new SVNProgressMonitor(AddToSVNOperation.this, monitor, null));
 				}
 			}, monitor, files.length);
 			location.releaseSVNProxy(proxy);

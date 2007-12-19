@@ -87,7 +87,7 @@ public class DeleteResourceOperation extends AbstractActionOperation {
 			ISVNConnector proxy = location.acquireSVNProxy();
 			try {
 				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn delete " + printedPath + " --force\n");
-				proxy.remove(wcPaths, "", true, false, new SVNProgressMonitor(this, monitor, null));
+				proxy.remove(wcPaths, "", ISVNConnector.Options.FORCE, new SVNProgressMonitor(this, monitor, null));
 			}
 			finally {
 			    location.releaseSVNProxy(proxy);

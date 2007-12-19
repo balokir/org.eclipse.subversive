@@ -74,7 +74,7 @@ public class LockOperation extends AbstractFileOperation {
 					proxy.lock(
 						paths, 
 						LockOperation.this.message, 
-						LockOperation.this.force, 
+						LockOperation.this.force ? ISVNConnector.Options.FORCE : ISVNConnector.Options.NONE, 
 						new SVNProgressMonitor(LockOperation.this, monitor, null));
 				}
 			}, monitor, wc2Resources.size());

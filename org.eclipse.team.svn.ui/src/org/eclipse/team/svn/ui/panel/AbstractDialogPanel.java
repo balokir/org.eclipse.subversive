@@ -84,11 +84,7 @@ public abstract class AbstractDialogPanel implements IDialogPanel, IValidationMa
         return this.imagePath;
     }
 
-    public Point getPrefferedSizeImpl() {
-        return new Point(470, SWT.DEFAULT);
-    }
-    
-    public Point getPrefferedSize() {
+    public final Point getPrefferedSize() {
 		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
 		int width = SVNTeamPreferences.getDialogInt(store, this.getClass().getName() + ".width");
 		int height = SVNTeamPreferences.getDialogInt(store, this.getClass().getName() + ".height");
@@ -106,15 +102,11 @@ public abstract class AbstractDialogPanel implements IDialogPanel, IValidationMa
     	return null;
     }
     
-    public void createControls(Composite parent) {
+    public final void createControls(Composite parent) {
     	this.parent = parent;
     	this.createControlsImpl(parent);
     }
     
-    public void createControlsImpl(Composite parent) {
-    	
-    }
-
     public void buttonPressed(int idx) {
         if (idx == 0) {
             this.saveChanges();
@@ -159,18 +151,23 @@ public abstract class AbstractDialogPanel implements IDialogPanel, IValidationMa
 		SVNTeamPreferences.setDialogInt(store, this.getClass().getName() + ".height", size.y);
 	}
 	
-	protected void saveChanges() {
+	protected final void saveChanges() {
 		this.retainSize();
 		this.saveChangesImpl();
 	}
 	
-	protected void cancelChanges() {
+	protected final void cancelChanges() {
 		this.retainSize();
 		this.cancelChangesImpl();
 	}
 	
+    protected Point getPrefferedSizeImpl() {
+        return new Point(470, SWT.DEFAULT);
+    }
+    
     protected abstract void saveChangesImpl();
     protected abstract void cancelChangesImpl();
+    protected abstract void createControlsImpl(Composite parent);
     
     /*
      * return false if dialog should not be closed

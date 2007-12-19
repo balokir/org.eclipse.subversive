@@ -52,10 +52,13 @@ public class CreatePatchOperation extends AbstractFileOperation {
 		try {
 			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn diff " + (this.recurse ? "" : " -N") + (this.ignoreDeleted ? " --no-diff-deleted" : "") + "\n");
 			String path = file.getAbsolutePath();
+			long options = ISVNConnector.Options.IGNORE_ANCESTRY;
+			options |= this.ignoreDeleted ? ISVNConnector.Options.SKIP_DELETED : ISVNConnector.Options.NONE;
+			options |= this.processBinary ? ISVNConnector.Options.FORCE : ISVNConnector.Options.NONE;
+			options |= this.processUnversioned ? ISVNConnector.Options.INCLUDE_UNVERSIONED : ISVNConnector.Options.NONE;
 			proxy.diff(
 				new SVNEntryRevisionReference(path, null, SVNRevision.BASE), new SVNEntryRevisionReference(path, null, SVNRevision.WORKING), this.useRelativePath ? path : null, this.fileName, 
-				Depth.infinityOrFiles(this.recurse), true, this.ignoreDeleted,
-				this.processBinary, this.processUnversioned, new SVNProgressMonitor(this, monitor, null));
+				Depth.infinityOrFiles(this.recurse), options, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 			remote.getRepositoryLocation().releaseSVNProxy(proxy);

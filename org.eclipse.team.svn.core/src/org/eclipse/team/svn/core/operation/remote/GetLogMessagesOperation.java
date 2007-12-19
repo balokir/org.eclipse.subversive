@@ -95,7 +95,9 @@ public class GetLogMessagesOperation extends AbstractRepositoryOperation {
 	}
 	
 	public static SVNLogEntry []getMessagesImpl(ISVNConnector proxy, IRepositoryResource resource, SVNRevision from, SVNRevision to, String[] revProps, long limit, boolean stopOnCopy, IActionOperation parent, IProgressMonitor monitor) throws Exception {
-		return SVNUtility.logEntries(proxy, SVNUtility.getEntryReference(resource), from, to, stopOnCopy, true, revProps, limit, new SVNProgressMonitor(parent, monitor, null));
+		long options = ISVNConnector.Options.DISCOVER_PATHS;
+		options |= stopOnCopy ? ISVNConnector.Options.STOP_ON_COPY : ISVNConnector.Options.NONE;
+		return SVNUtility.logEntries(proxy, SVNUtility.getEntryReference(resource), from, to, options, revProps, limit, new SVNProgressMonitor(parent, monitor, null));
 	}
 	
 	protected String getShortErrorMessage(Throwable t) {

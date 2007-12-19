@@ -68,7 +68,7 @@ public class SVNRepositoryContainer extends SVNRepositoryResource implements IRe
 			
 			ISVNConnector proxy = this.getRepositoryLocation().acquireSVNProxy();
 			try {
-				children = SVNUtility.list(proxy, SVNUtility.getEntryRevisionReference(this), Depth.IMMEDIATES, Fields.ALL, true, new SVNNullProgressMonitor());
+				children = SVNUtility.list(proxy, SVNUtility.getEntryRevisionReference(this), Depth.IMMEDIATES, Fields.ALL, ISVNConnector.Options.FETCH_LOCKS, new SVNNullProgressMonitor());
 			}
 			finally {
 			    this.getRepositoryLocation().releaseSVNProxy(proxy);

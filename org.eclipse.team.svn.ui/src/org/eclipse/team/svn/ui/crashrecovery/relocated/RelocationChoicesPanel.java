@@ -50,9 +50,7 @@ public class RelocationChoicesPanel extends AbstractDialogPanel {
 		return this.recoveryAction;
 	}
 
-	public void createControlsImpl(Composite parent) {
-		super.createControlsImpl(parent);
-		
+	protected void createControlsImpl(Composite parent) {
 		GridLayout layout = null;
 		GridData data = null;
 		

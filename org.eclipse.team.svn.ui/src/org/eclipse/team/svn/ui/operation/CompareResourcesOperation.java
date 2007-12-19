@@ -91,7 +91,7 @@ public class CompareResourcesOperation extends AbstractActionOperation {
 			public void run(IProgressMonitor monitor) throws Exception {
 				localChanges[0] = SVNUtility.status(proxy, 
 						FileUtility.getWorkingCopyPath(CompareResourcesOperation.this.resource),
-						Depth.INFINITY, false, false, false, true,
+						Depth.INFINITY, ISVNConnector.Options.IGNORE_EXTERNALS,
 						new SVNProgressMonitor(CompareResourcesOperation.this, monitor, null, false));
 			}
 		}, monitor, 3);
@@ -131,10 +131,10 @@ public class CompareResourcesOperation extends AbstractActionOperation {
 						SVNEntryRevisionReference ref1 = new SVNEntryRevisionReference(SVNUtility.encodeURL(baseUrl), remoteBase.getPegRevision(), remoteBase.getSelectedRevision());
 						SVNEntryRevisionReference ref2 = SVNUtility.getEntryRevisionReference(remoteRight);
 						if (SVNUtility.useSingleReferenceSignature(ref1, ref2)) {
-							remoteChanges[0] = SVNUtility.diffStatus(proxy, ref1, ref1.revision, ref2.revision, Depth.INFINITY, false, new SVNProgressMonitor(CompareResourcesOperation.this, monitor, null, false));
+							remoteChanges[0] = SVNUtility.diffStatus(proxy, ref1, ref1.revision, ref2.revision, Depth.INFINITY, ISVNConnector.Options.NONE, new SVNProgressMonitor(CompareResourcesOperation.this, monitor, null, false));
 						}
 						else {
-							remoteChanges[0] = SVNUtility.diffStatus(proxy, ref1, ref2, Depth.INFINITY, false, new SVNProgressMonitor(CompareResourcesOperation.this, monitor, null, false));
+							remoteChanges[0] = SVNUtility.diffStatus(proxy, ref1, ref2, Depth.INFINITY, ISVNConnector.Options.NONE, new SVNProgressMonitor(CompareResourcesOperation.this, monitor, null, false));
 						}
 					}
 				}, monitor, 3);

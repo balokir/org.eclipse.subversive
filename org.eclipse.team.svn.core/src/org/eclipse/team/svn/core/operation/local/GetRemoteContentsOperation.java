@@ -73,14 +73,7 @@ public class GetRemoteContentsOperation extends AbstractActionOperation {
 			else {
 				String url = SVNUtility.encodeURL(this.remote.getUrl());
 				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn export " + url + "@" + this.remote.getPegRevision() + " -r " + this.remote.getSelectedRevision() + " \"" + wcPath + "\" --force " + FileUtility.getUsernameParam(location.getUsername()) + "\n");
-				proxy.doExport(
-					SVNUtility.getEntryRevisionReference(this.remote), 
-					wcPath, 
-					true, 
-					false,
-					Depth.INFINITY, 	// force
-					null, 	// ignore externals 
-					new SVNProgressMonitor(this, monitor, null));
+				proxy.doExport(SVNUtility.getEntryRevisionReference(this.remote), wcPath, ISVNConnector.Options.FORCE, Depth.INFINITY, null, new SVNProgressMonitor(this, monitor, null));
 			}
 		}
 		finally {

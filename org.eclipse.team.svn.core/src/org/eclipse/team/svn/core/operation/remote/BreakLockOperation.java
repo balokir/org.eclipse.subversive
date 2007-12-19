@@ -59,7 +59,7 @@ public class BreakLockOperation extends AbstractRepositoryOperation {
 			final ISVNConnector proxy = location.acquireSVNProxy();
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-					proxy.unlock(paths, true, new SVNProgressMonitor(BreakLockOperation.this, monitor, null));
+					proxy.unlock(paths, ISVNConnector.Options.FORCE, new SVNProgressMonitor(BreakLockOperation.this, monitor, null));
 				}
 			}, monitor, splittedSet.size());
 			location.releaseSVNProxy(proxy);

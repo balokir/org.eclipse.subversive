@@ -14,7 +14,6 @@ package org.eclipse.team.svn.ui.preferences;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.ui.decorator.TextVariableSetProvider;
@@ -259,12 +258,6 @@ public final class SVNTeamPreferences {
 	public static final String COMMIT_DIALOG_WEIGHT_NAME = "CommitPanel.weight";
 	public static final int COMMIT_DIALOG_WEIGHT_DEFAULT = 50;
 	
-	public static final String COMMIT_DIALOG_WIDTH_NAME = "CommitPanel.width";
-	public static final int COMMIT_DIALOG_WIDTH_DEFAULT = 600;
-	
-	public static final String COMMIT_DIALOG_HEIGHT_NAME = "CommitPanel.height";
-	public static final int COMMIT_DIALOG_HEIGHT_DEFAULT = SWT.DEFAULT;
-	
 	public static final String TABLE_SORTING_CASE_INSENSITIVE_NAME = "case.insensitive";
 	public static final boolean TABLE_SORTING_CASE_INSENSITIVE_DEFAULT = true;
 	
@@ -299,8 +292,6 @@ public final class SVNTeamPreferences {
 	
 	public static void setDefaultCommitDialogValues(IPreferenceStore store) {
 		store.setDefault(SVNTeamPreferences.COMMIT_DIALOG_WEIGHT_NAME, SVNTeamPreferences.COMMIT_DIALOG_WEIGHT_DEFAULT);
-		store.setDefault(SVNTeamPreferences.COMMIT_DIALOG_HEIGHT_NAME, SVNTeamPreferences.COMMIT_DIALOG_HEIGHT_DEFAULT);
-		store.setDefault(SVNTeamPreferences.COMMIT_DIALOG_WIDTH_NAME, SVNTeamPreferences.COMMIT_DIALOG_WIDTH_DEFAULT);
 	}
 	
 	public static void setDefaultTableSortingValues(IPreferenceStore store) {

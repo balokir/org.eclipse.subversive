@@ -76,7 +76,7 @@ public class MoveResourcesOperation extends AbstractCopyMoveResourcesOperation {
 
 	protected void processEntry(ISVNConnector proxy, String sourceUrl, String destinationUrl, IRepositoryResource current, IProgressMonitor monitor) throws Exception {
 		this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn move \"" + SVNUtility.decodeURL(sourceUrl) + "\" \"" + SVNUtility.decodeURL(destinationUrl) + "\" -m \"" + this.message + "\"" + FileUtility.getUsernameParam(current.getRepositoryLocation().getUsername()) + "\n");
-		proxy.move(new String[] {sourceUrl}, destinationUrl, this.message, false, true, false, new SVNProgressMonitor(this, monitor, null));
+		proxy.move(new String[] {sourceUrl}, destinationUrl, this.message, ISVNConnector.Options.INTERPRET_AS_CHILD, new SVNProgressMonitor(this, monitor, null));
 	}
 
 }

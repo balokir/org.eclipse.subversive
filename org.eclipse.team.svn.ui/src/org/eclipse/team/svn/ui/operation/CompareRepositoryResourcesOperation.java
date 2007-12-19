@@ -76,10 +76,10 @@ public class CompareRepositoryResourcesOperation extends AbstractActionOperation
 				SVNEntryRevisionReference ref1 = SVNUtility.getEntryRevisionReference(CompareRepositoryResourcesOperation.this.right);
 				SVNEntryRevisionReference ref2 = SVNUtility.getEntryRevisionReference(CompareRepositoryResourcesOperation.this.left);
 				if (SVNUtility.useSingleReferenceSignature(ref1, ref2)) {
-					statuses[0] = SVNUtility.diffStatus(proxy, ref1, ref1.revision, ref2.revision, Depth.INFINITY, false, new SVNProgressMonitor(CompareRepositoryResourcesOperation.this, monitor, null, false));
+					statuses[0] = SVNUtility.diffStatus(proxy, ref1, ref1.revision, ref2.revision, Depth.INFINITY, ISVNConnector.Options.NONE, new SVNProgressMonitor(CompareRepositoryResourcesOperation.this, monitor, null, false));
 				}
 				else {
-					statuses[0] = SVNUtility.diffStatus(proxy, ref1, ref2, Depth.INFINITY, false, new SVNProgressMonitor(CompareRepositoryResourcesOperation.this, monitor, null, false));
+					statuses[0] = SVNUtility.diffStatus(proxy, ref1, ref2, Depth.INFINITY, ISVNConnector.Options.NONE, new SVNProgressMonitor(CompareRepositoryResourcesOperation.this, monitor, null, false));
 				}
 			}
 		}, monitor, 2);

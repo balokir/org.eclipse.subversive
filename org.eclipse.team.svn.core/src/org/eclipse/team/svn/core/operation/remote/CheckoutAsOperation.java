@@ -167,8 +167,7 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 					SVNUtility.getEntryRevisionReference(this.resource), 
 					path, 
 					Depth.infinityOrFiles(this.recursive), 
-					this.ignoreExternals, 
-					false,
+					this.ignoreExternals ? ISVNConnector.Options.IGNORE_EXTERNALS : ISVNConnector.Options.NONE, 
 					new SVNProgressMonitor(this, monitor, this.project.getFullPath()));
 		}
 		finally {

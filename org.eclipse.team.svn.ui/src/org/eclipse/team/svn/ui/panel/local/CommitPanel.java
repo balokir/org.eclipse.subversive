@@ -245,12 +245,12 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 	
 	protected void saveChangesImpl() {
 		super.saveChangesImpl();
-		this.retainSizeAndWeights();
+		this.retainWeights();
 	}
 	
 	protected void cancelChangesImpl() {
 		super.cancelChangesImpl();
-		this.retainSizeAndWeights();
+		this.retainWeights();
 	}
 	
 	public boolean canClose() {
@@ -401,19 +401,13 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
     	return this.keepLocks;
     }
     
-    public Point getPrefferedSize() {
-    	IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
-    	
-    	return new Point(SVNTeamPreferences.getDialogInt(store, SVNTeamPreferences.COMMIT_DIALOG_WIDTH_NAME), 
-    			SVNTeamPreferences.getDialogInt(store, SVNTeamPreferences.COMMIT_DIALOG_HEIGHT_NAME));
+    protected Point getPrefferedSizeImpl() {
+    	return new Point(600, SWT.DEFAULT);
     }
     
-    protected void retainSizeAndWeights() {
+    protected void retainWeights() {
     	int []weights = this.sForm.getWeights();
 		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
-		Point size = this.parent.getSize();
-		SVNTeamPreferences.setDialogInt(store, SVNTeamPreferences.COMMIT_DIALOG_WIDTH_NAME, size.x);
-		SVNTeamPreferences.setDialogInt(store, SVNTeamPreferences.COMMIT_DIALOG_HEIGHT_NAME, size.y);
 		SVNTeamPreferences.setDialogInt(store, SVNTeamPreferences.COMMIT_DIALOG_WEIGHT_NAME, weights[0] / 10);
     }
          

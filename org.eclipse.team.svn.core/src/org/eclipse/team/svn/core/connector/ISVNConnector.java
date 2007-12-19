@@ -16,9 +16,9 @@ import java.io.OutputStream;
 /**
  * SVN connector wrapper interface
  * 
- * The JavaHL API's is the only way to interact between SVN and Java-based tools. At the same time JavaHL connector library
- * is not EPL compatible and we won't to pin plug-in with concrete connector implementation. So, the only way to do this is
- * providing our own connector interface which will be covered by concrete connector implementation.
+ * The JavaHL API's is the only way to interact between SVN and Java-based tools. At the same time JavaHL connector
+ * library is not EPL compatible and we won't to pin plug-in with concrete connector implementation. So, the only way to
+ * do this is providing our own connector interface which will be covered by concrete connector implementation.
  * 
  * @author Alexander Gurov
  */
@@ -26,7 +26,7 @@ public interface ISVNConnector {
 	/**
 	 * Repository or working copy traversal depths enumeration
 	 */
-	public final class Depth {
+	public class Depth {
 		/**
 		 * Depth undetermined or ignored.
 		 */
@@ -70,103 +70,327 @@ public interface ISVNConnector {
 		}
 
 	}
-	
-	public static final String []EMPTY_LOG_ENTRY_PROPS = new String[] {};
-	public static final String []DEFAULT_LOG_ENTRY_PROPS = new String[] {SVNProperty.BuiltIn.REV_LOG, SVNProperty.BuiltIn.REV_DATE, SVNProperty.BuiltIn.REV_AUTHOR};
-	
+
+	public static final String[] EMPTY_LOG_ENTRY_PROPS = new String[] {};
+
+	public static final String[] DEFAULT_LOG_ENTRY_PROPS = new String[] { SVNProperty.BuiltIn.REV_LOG, SVNProperty.BuiltIn.REV_DATE, SVNProperty.BuiltIn.REV_AUTHOR };
+
+	/**
+	 * All available SVN commands options
+	 */
+	public class Options {
+		/**
+		 * No options specified for the SVN command.
+		 */
+		public static final long NONE = 0;
+
+		/**
+		 * Ignore svn:externals property.
+		 */
+		public static final long IGNORE_EXTERNALS = 0x01;
+
+		/**
+		 * Allow unversioned resources in the path where operation is performed.
+		 */
+		public static final long ALLOW_UNVERSIONED_OBSTRUCTIONS = 0x02;
+
+		/**
+		 * Force operation execution.
+		 */
+		public static final long FORCE = 0x04;
+
+		/**
+		 * Include related parents into operation context.
+		 */
+		public static final long INCLUDE_PARENTS = 0x08;
+
+		/**
+		 * Do not unlock resources after commit.
+		 */
+		public static final long KEEP_LOCKS = 0x10;
+
+		/**
+		 * Keep change list when commit is performed.
+		 */
+		public static final long KEEP_CHANGE_LIST = 0x20;
+
+		/**
+		 * Report server side changes.
+		 */
+		public static final long SERVER_SIDE = 0x40;
+
+		/**
+		 * Get statuses for versioned but not modified nodes also.
+		 */
+		public static final long INCLUDE_UNCHANGED = 0x80;
+
+		/**
+		 * Do not handle svn:ignore property and global ignores.
+		 */
+		public static final long INCLUDE_IGNORED = 0x100;
+
+		/**
+		 * Ignore resource ancestry.
+		 */
+		public static final long IGNORE_ANCESTRY = 0x200;
+
+		/**
+		 * Do not perform real operation.
+		 */
+		public static final long SIMULATE = 0x400;
+
+		/**
+		 * Do not perform merge itself, but write merge records.
+		 */
+		public static final long RECORD_ONLY = 0x800;
+
+		/**
+		 * Ignore resources which node type is unknown.
+		 */
+		public static final long IGNORE_UNKNOWN_NODE_TYPES = 0x1000;
+
+		/**
+		 * Do not include deleted resources into patch.
+		 */
+		public static final long SKIP_DELETED = 0x2000;
+
+		/**
+		 * Include unversioned resources into patch.
+		 */
+		public static final long INCLUDE_UNVERSIONED = 0x4000;
+
+		/**
+		 * Create moved or copied folder as child of the destination folder.
+		 */
+		public static final long INTERPRET_AS_CHILD = 0x8000;
+
+		/**
+		 * Keep local copies when resources are removed from the source control.
+		 */
+		public static final long KEEP_LOCAL = 0x10000;
+
+		/**
+		 * Do not fetch history after copy record found.
+		 */
+		public static final long STOP_ON_COPY = 0x20000;
+
+		/**
+		 * Extract changed paths from the history.
+		 */
+		public static final long DISCOVER_PATHS = 0x40000;
+
+		/**
+		 * Include information about merged revisions.
+		 */
+		public static final long INCLUDE_MERGED_REVISIONS = 0x80000;
+
+		/**
+		 * Ignore resource mime-type.
+		 */
+		public static final long IGNORE_MIME_TYPE = 0x100000;
+
+		/**
+		 * Fetch locks information also.
+		 */
+		public static final long FETCH_LOCKS = 0x200000;
+	}
+
+	/**
+	 * Command-related option masks
+	 */
+	public class CommandMasks {
+		public static final long CHECKOUT = Options.IGNORE_EXTERNALS | Options.ALLOW_UNVERSIONED_OBSTRUCTIONS;
+
+		public static final long LOCK = Options.FORCE;
+
+		public static final long UNLOCK = Options.FORCE;
+
+		public static final long ADD = Options.FORCE | Options.INCLUDE_IGNORED | Options.INCLUDE_PARENTS;
+
+		public static final long COMMIT = Options.KEEP_LOCKS | Options.KEEP_CHANGE_LIST;
+
+		public static final long UPDATE = Options.IGNORE_EXTERNALS | Options.ALLOW_UNVERSIONED_OBSTRUCTIONS;
+
+		public static final long SWITCH = Options.IGNORE_EXTERNALS | Options.ALLOW_UNVERSIONED_OBSTRUCTIONS;
+
+		public static final long STATUS = Options.SERVER_SIDE | Options.INCLUDE_UNCHANGED | Options.INCLUDE_IGNORED | Options.IGNORE_EXTERNALS;
+
+		public static final long MERGE = Options.FORCE | Options.IGNORE_ANCESTRY | Options.SIMULATE | Options.RECORD_ONLY;
+
+		public static final long MERGE_STATUS = Options.FORCE | Options.IGNORE_ANCESTRY;
+
+		public static final long IMPORT = Options.INCLUDE_IGNORED | Options.IGNORE_UNKNOWN_NODE_TYPES;
+
+		public static final long EXPORT = Options.FORCE | Options.IGNORE_EXTERNALS;
+
+		public static final long DIFF = Options.FORCE | Options.IGNORE_ANCESTRY | Options.SKIP_DELETED | Options.INCLUDE_UNVERSIONED;
+
+		public static final long DIFF_STATUS = Options.IGNORE_ANCESTRY;
+
+		public static final long MKDIR = Options.INCLUDE_PARENTS;
+
+		public static final long MOVE_LOCAL = Options.FORCE;
+
+		public static final long MOVE_SERVER = Options.FORCE | Options.INTERPRET_AS_CHILD | Options.INCLUDE_PARENTS;
+
+		public static final long COPY_SERVER = Options.INTERPRET_AS_CHILD | Options.INCLUDE_PARENTS;
+
+		public static final long REMOVE = Options.FORCE | Options.KEEP_LOCAL;
+
+		public static final long LOG = Options.STOP_ON_COPY | Options.DISCOVER_PATHS | Options.INCLUDE_MERGED_REVISIONS;
+
+		public static final long ANNOTATE = Options.IGNORE_MIME_TYPE | Options.INCLUDE_MERGED_REVISIONS;
+
+		public static final long LIST = Options.FETCH_LOCKS;
+
+		public static final long PROPERTY_SET = Options.FORCE;
+	}
+
 	public String getConfigDirectory() throws SVNConnectorException;
+
 	public void setConfigDirectory(String configDir) throws SVNConnectorException;
-	
-	
-    public void setUsername(String username);
-    public void setPassword(String password);
-    
-    public boolean isCredentialsCacheEnabled();
-    public void setCredentialsCacheEnabled(boolean cacheCredentials);
 
-    public void setPrompt(ISVNCredentialsPrompt prompt);
-    public ISVNCredentialsPrompt getPrompt();
-    
-    public void setProxy(String host, int port, String userName, String password);
-    
-    public void setClientSSLCertificate(String certPath, String passphrase);
-    public boolean isSSLCertificateCacheEnabled();
-    public void setSSLCertificateCacheEnabled(boolean enabled);
-    
-    public void setSSHCredentials(String userName, String privateKeyPath, String passphrase, int port);
-    public void setSSHCredentials(String userName, String password, int port);
+	public void setUsername(String username);
 
-    
-    public void setReportRevisionChange(boolean report); 
-    public boolean isReportRevisionChange();
-    
-    public void setCommitMissingFiles(boolean commitMissingFiles);
-    public boolean isCommitMissingFiles();
-    
-    public void setTouchUnresolved(boolean touchUnresolved);
-    public boolean isTouchUnresolved();
+	public void setPassword(String password);
 
-    public void setNotificationCallback(ISVNNotificationCallback notify);
-    public ISVNNotificationCallback getNotificationCallback();
-    
+	public boolean isCredentialsCacheEnabled();
 
-	public long checkout(SVNEntryRevisionReference fromReference, String destPath, int depth, boolean ignoreExternals, boolean allowUnverObstructions, ISVNProgressMonitor monitor) throws SVNConnectorException;
-    public void lock(String []path, String comment, boolean force, ISVNProgressMonitor monitor) throws SVNConnectorException;
-    public void unlock(String []path, boolean force, ISVNProgressMonitor monitor) throws SVNConnectorException;
-	public void add(String path, int depth, boolean skipIgnores, boolean addParents, ISVNProgressMonitor monitor) throws SVNConnectorException;
-	public long []commit(String []path, String message, int depth, boolean noUnlock, boolean keepChangelist, String changelistName, ISVNProgressMonitor monitor) throws SVNConnectorException;
-	public long []update(String []path, SVNRevision revision, int depth, boolean ignoreExternals, boolean allowUnverObstructions, ISVNProgressMonitor monitor) throws SVNConnectorException;
-	public long doSwitch(String path, SVNEntryRevisionReference toReference, int depth, boolean ignoreExternals, boolean allowUnverObstructions, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void setCredentialsCacheEnabled(boolean cacheCredentials);
+
+	public void setPrompt(ISVNCredentialsPrompt prompt);
+
+	public ISVNCredentialsPrompt getPrompt();
+
+	public void setProxy(String host, int port, String userName, String password);
+
+	public void setClientSSLCertificate(String certPath, String passphrase);
+
+	public boolean isSSLCertificateCacheEnabled();
+
+	public void setSSLCertificateCacheEnabled(boolean enabled);
+
+	public void setSSHCredentials(String userName, String privateKeyPath, String passphrase, int port);
+
+	public void setSSHCredentials(String userName, String password, int port);
+
+	public void setReportRevisionChange(boolean report);
+
+	public boolean isReportRevisionChange();
+
+	public void setCommitMissingFiles(boolean commitMissingFiles);
+
+	public boolean isCommitMissingFiles();
+
+	public void setTouchUnresolved(boolean touchUnresolved);
+
+	public boolean isTouchUnresolved();
+
+	public void setNotificationCallback(ISVNNotificationCallback notify);
+
+	public ISVNNotificationCallback getNotificationCallback();
+
+	public long checkout(SVNEntryRevisionReference fromReference, String destPath, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
+	public void lock(String[] path, String comment, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
+	public void unlock(String[] path, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
+	public void add(String path, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
+	public long[] commit(String[] path, String message, int depth, long options, String changelistName, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
+	public long[] update(String[] path, SVNRevision revision, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
+	public long doSwitch(String path, SVNEntryRevisionReference toReference, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
 	public void revert(String path, int depth, ISVNProgressMonitor monitor) throws SVNConnectorException;
-	public void status(String path, int depth, boolean onServer, boolean getAll, boolean noIgnore, boolean ignoreExternals, ISVNEntryStatusCallback callback, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
+	public void status(String path, int depth, long options, ISVNEntryStatusCallback callback, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
 	public void relocate(String from, String to, String path, int depth, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
 	public void cleanup(String path, ISVNProgressMonitor monitor) throws SVNConnectorException;
-	public void merge(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, String localPath, boolean force, int depth, boolean ignoreAncestry, boolean dryRun, boolean recordOnly, ISVNProgressMonitor monitor) throws SVNConnectorException;
-	public void merge(SVNEntryReference reference, SVNRevisionRange []revisions, String localPath, boolean force, int depth, boolean ignoreAncestry, boolean dryRun, boolean recordOnly, ISVNProgressMonitor monitor) throws SVNConnectorException;
-    public SVNMergeInfo getMergeInfo(SVNEntryReference reference, ISVNProgressMonitor monitor) throws SVNConnectorException;
-    public SVNRevisionRange []getAvailableMerges(SVNEntryReference reference, String mergeSource, ISVNProgressMonitor monitor) throws SVNConnectorException;
-    public String []suggestMergeSources(SVNEntryReference reference, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
+	public void merge(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, String localPath, int depth, long options, ISVNProgressMonitor monitor)
+			throws SVNConnectorException;
+
+	public void merge(SVNEntryReference reference, SVNRevisionRange[] revisions, String localPath, int depth, long options, ISVNProgressMonitor monitor)
+			throws SVNConnectorException;
+
+	public SVNMergeInfo getMergeInfo(SVNEntryReference reference, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
+	public SVNRevisionRange[] getAvailableMerges(SVNEntryReference reference, String mergeSource, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
+	public String[] suggestMergeSources(SVNEntryReference reference, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
 	public void resolved(String path, int depth, int conflictResult, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
 	public void setConflictResolver(ISVNConflictResolutionCallback listener);
-    
-    public void addToChangelist(String[] paths, String changelist, ISVNProgressMonitor monitor) throws SVNConnectorException;
-    public void removeFromChangelist(String[] paths, String changelist, ISVNProgressMonitor monitor) throws SVNConnectorException;
-    public String[] getChangelist(String changelist, String rootPath, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void merge(SVNEntryReference reference, SVNRevisionRange []revisions, String mergePath, SVNMergeStatus[] mergeStatus, boolean force, boolean recordOnly, ISVNProgressMonitor monitor) throws SVNConnectorException;
-	public void mergeStatus(SVNEntryReference reference, SVNRevisionRange []revisions, String path, int depth, boolean ignoreAncestry, ISVNMergeStatusCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void addToChangelist(String[] paths, String changelist, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void doImport(String path, String url, String message, int depth, boolean noIgnore, boolean ignoreUnknownNodeTypes, ISVNProgressMonitor monitor) throws SVNConnectorException;
-	public long doExport(SVNEntryRevisionReference fromReference, String destPath, boolean force, boolean ignoreExternals, int depth, String nativeEOL, ISVNProgressMonitor monitor) throws SVNConnectorException;
-	
-	public void diff(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, String relativeToDir, String outFileName, int depth, boolean ignoreAncestry, boolean noDiffDeleted, boolean force, boolean diffUnversioned, ISVNProgressMonitor monitor) throws SVNConnectorException;
-	public void diff(SVNEntryReference reference, SVNRevision revision1, SVNRevision revision2, String relativeToDir, String outFileName, int depth, boolean ignoreAncestry, boolean noDiffDeleted, boolean force, boolean diffUnversioned, ISVNProgressMonitor monitor) throws SVNConnectorException;
-	public void diffStatus(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, int depth, boolean ignoreAncestry, ISVNDiffStatusCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException;
-	public void diffStatus(SVNEntryReference reference, SVNRevision revision1, SVNRevision revision2, int depth, boolean ignoreAncestry, ISVNDiffStatusCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void removeFromChangelist(String[] paths, String changelist, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
+	public String[] getChangelist(String changelist, String rootPath, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
+	public void merge(SVNEntryReference reference, SVNRevisionRange[] revisions, String mergePath, SVNMergeStatus[] mergeStatus, long options, ISVNProgressMonitor monitor)
+			throws SVNConnectorException;
+
+	public void mergeStatus(SVNEntryReference reference, SVNRevisionRange[] revisions, String path, int depth, long options, ISVNMergeStatusCallback cb, ISVNProgressMonitor monitor)
+			throws SVNConnectorException;
+
+	public void doImport(String path, String url, String message, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
+	public long doExport(SVNEntryRevisionReference fromReference, String destPath, long options, int depth, String nativeEOL, ISVNProgressMonitor monitor)
+			throws SVNConnectorException;
+
+	public void diff(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, String relativeToDir, String outFileName, int depth, long options,
+			ISVNProgressMonitor monitor) throws SVNConnectorException;
+
+	public void diff(SVNEntryReference reference, SVNRevision revision1, SVNRevision revision2, String relativeToDir, String outFileName, int depth, long options,
+			ISVNProgressMonitor monitor) throws SVNConnectorException;
+
+	public void diffStatus(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, int depth, long options, ISVNDiffStatusCallback cb,
+			ISVNProgressMonitor monitor) throws SVNConnectorException;
+
+	public void diffStatus(SVNEntryReference reference, SVNRevision revision1, SVNRevision revision2, int depth, long options, ISVNDiffStatusCallback cb,
+			ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public void info(SVNEntryRevisionReference reference, int depth, ISVNEntryInfoCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException;
-	
-	public void streamFileContent(SVNEntryRevisionReference reference, int bufferSize, OutputStream stream, ISVNProgressMonitor monitor) throws SVNConnectorException;
-	
-	public void mkdir(String []path, String message, boolean makeParents, ISVNProgressMonitor monitor) throws SVNConnectorException;
-	public void move(String srcPath, String dstPath, boolean force, ISVNProgressMonitor monitor) throws SVNConnectorException;
-	public void move(String []srcPath, String dstPath, String message, boolean force, boolean moveAsChild, boolean makeParents, ISVNProgressMonitor monitor) throws SVNConnectorException;
-	public void copy(String srcPath, String destPath, SVNRevision revision, ISVNProgressMonitor monitor) throws SVNConnectorException;
-	public void copy(SVNEntryRevisionReference []srcPath, String destPath, String message, boolean copyAsChild, boolean makeParents, ISVNProgressMonitor monitor) throws SVNConnectorException;
-	public void remove(String []path, String message, boolean force, boolean keepLocal, ISVNProgressMonitor monitor) throws SVNConnectorException;
-	
-	public void logEntries(SVNEntryReference reference, SVNRevision revisionStart, SVNRevision revisionEnd, boolean stopOnCopy, boolean discoverPath, boolean includeMergedRevisions, String[] revProps, long limit, ISVNLogEntryCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException;
-	public void annotate(SVNEntryReference reference, SVNRevision revisionStart, SVNRevision revisionEnd, boolean ignoreMimeType, boolean includeMergedRevisions, ISVNAnnotationCallback callback, ISVNProgressMonitor monitor) throws SVNConnectorException;
-	
-	public void list(SVNEntryRevisionReference reference, int depth, int direntFields, boolean fetchLocks, ISVNEntryCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	
+	public void streamFileContent(SVNEntryRevisionReference reference, int bufferSize, OutputStream stream, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
+	public void mkdir(String[] path, String message, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
+	public void move(String srcPath, String dstPath, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
+	public void move(String[] srcPath, String dstPath, String message, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
+	public void copy(String srcPath, String destPath, SVNRevision revision, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
+	public void copy(SVNEntryRevisionReference[] srcPath, String destPath, String message, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
+	public void remove(String[] path, String message, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
+	public void logEntries(SVNEntryReference reference, SVNRevision revisionStart, SVNRevision revisionEnd, long options, String[] revProps, long limit, ISVNLogEntryCallback cb,
+			ISVNProgressMonitor monitor) throws SVNConnectorException;
+
+	public void annotate(SVNEntryReference reference, SVNRevision revisionStart, SVNRevision revisionEnd, long options, ISVNAnnotationCallback callback, ISVNProgressMonitor monitor)
+			throws SVNConnectorException;
+
+	public void list(SVNEntryRevisionReference reference, int depth, int direntFields, long options, ISVNEntryCallback cb, ISVNProgressMonitor monitor)
+			throws SVNConnectorException;
+
 	public void properties(SVNEntryRevisionReference reference, int depth, ISVNPropertyCallback callback, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
 	public SVNProperty propertyGet(SVNEntryRevisionReference reference, String name, ISVNProgressMonitor monitor) throws SVNConnectorException;
-	public void propertySet(String path, String name, byte []value, int depth, boolean force, ISVNProgressMonitor monitor) throws SVNConnectorException;
-	public void propertySet(String path, String name, String value, int depth, boolean force, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
+	public void propertySet(String path, String name, byte[] value, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
+	public void propertySet(String path, String name, String value, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
 	public void propertyRemove(String path, String name, int depth, ISVNProgressMonitor monitor) throws SVNConnectorException;
-	
-	
+
 	public void dispose();
 }

@@ -66,7 +66,7 @@ public class GetAllFilesOperation extends AbstractFileOperation implements IFile
 			IRepositoryLocation location = remote.getRepositoryLocation();
 			ISVNConnector proxy = location.acquireSVNProxy();
 			try {
-				proxy.status(file.getAbsolutePath(), Depth.IMMEDIATES, false, true, true, false, new ISVNEntryStatusCallback() {
+				proxy.status(file.getAbsolutePath(), Depth.IMMEDIATES, ISVNConnector.Options.INCLUDE_UNCHANGED | ISVNConnector.Options.INCLUDE_IGNORED, new ISVNEntryStatusCallback() {
 					public void next(SVNEntryStatus status) {
 						allFiles.add(new File(status.path));
 					}

@@ -105,7 +105,7 @@ public class AddToSVNOperation extends AbstractWorkingCopyOperation {
 		
 		if (ignoreValue.length() > 0)
 		{
-			proxy.propertySet(parentPath, BuiltIn.IGNORE, ignoreValue, Depth.EMPTY, false, new SVNNullProgressMonitor());
+			proxy.propertySet(parentPath, BuiltIn.IGNORE, ignoreValue, Depth.EMPTY, ISVNConnector.Options.NONE, new SVNNullProgressMonitor());
 		}
 		else
 		{
@@ -123,7 +123,7 @@ public class AddToSVNOperation extends AbstractWorkingCopyOperation {
 			AddToSVNOperation.removeFromParentIgnore(proxy, FileUtility.getWorkingCopyPath(parent), current.getName());
 		}
 		
-		proxy.add(wcPath, Depth.infinityOrEmpty(AddToSVNOperation.this.isRecursive), false, false, new SVNProgressMonitor(AddToSVNOperation.this, monitor, null));
+		proxy.add(wcPath, Depth.infinityOrEmpty(AddToSVNOperation.this.isRecursive), ISVNConnector.Options.NONE, new SVNProgressMonitor(AddToSVNOperation.this, monitor, null));
 	}
 	
 }

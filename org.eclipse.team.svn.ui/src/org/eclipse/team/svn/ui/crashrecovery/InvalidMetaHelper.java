@@ -79,7 +79,7 @@ public class InvalidMetaHelper implements IResolutionHelper {
 		try {
 			ISVNConnector proxy = factory.newInstance();
 			try {
-				SVNEntryStatus []st = SVNUtility.status(proxy, path, Depth.IMMEDIATES, false, true, false, false, new SVNNullProgressMonitor());
+				SVNEntryStatus []st = SVNUtility.status(proxy, path, Depth.IMMEDIATES, ISVNConnector.Options.INCLUDE_UNCHANGED, new SVNNullProgressMonitor());
 				return st != null && st.length > 0;
 			}
 			finally {
