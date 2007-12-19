@@ -210,7 +210,7 @@ public final class SVNUtility {
 	
 	public static SVNLogEntry []logEntries(ISVNConnector proxy, SVNEntryReference reference, SVNRevision revisionStart, SVNRevision revisionEnd, long options, String[] revProps, long limit, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		final ArrayList entries = new ArrayList();
-		proxy.logEntries(reference, revisionStart, revisionEnd, options, revProps, limit, new ISVNLogEntryCallback() {
+		proxy.logEntries(reference, revisionStart, revisionEnd, revProps, limit, options, new ISVNLogEntryCallback() {
 			public void next(SVNLogEntry log, boolean hasChildren) {
 				entries.add(log);
 			}

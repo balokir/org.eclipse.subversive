@@ -298,7 +298,7 @@ public interface ISVNConnector {
 
 	public void add(String path, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public long[] commit(String[] path, String message, int depth, long options, String changelistName, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public long[] commit(String[] path, String message, String changelistName, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public long[] update(String[] path, SVNRevision revision, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
@@ -324,7 +324,7 @@ public interface ISVNConnector {
 
 	public String[] suggestMergeSources(SVNEntryReference reference, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void resolved(String path, int depth, int conflictResult, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void resolved(String path, int conflictResult, int depth, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public void setConflictResolver(ISVNConflictResolutionCallback listener);
 
@@ -342,7 +342,7 @@ public interface ISVNConnector {
 
 	public void doImport(String path, String url, String message, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public long doExport(SVNEntryRevisionReference fromReference, String destPath, long options, int depth, String nativeEOL, ISVNProgressMonitor monitor)
+	public long doExport(SVNEntryRevisionReference fromReference, String destPath, String nativeEOL, int depth, long options, ISVNProgressMonitor monitor)
 			throws SVNConnectorException;
 
 	public void diff(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, String relativeToDir, String outFileName, int depth, long options,
@@ -373,7 +373,7 @@ public interface ISVNConnector {
 
 	public void remove(String[] path, String message, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void logEntries(SVNEntryReference reference, SVNRevision revisionStart, SVNRevision revisionEnd, long options, String[] revProps, long limit, ISVNLogEntryCallback cb,
+	public void logEntries(SVNEntryReference reference, SVNRevision revisionStart, SVNRevision revisionEnd, String[] revProps, long limit, long options, ISVNLogEntryCallback cb,
 			ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public void annotate(SVNEntryReference reference, SVNRevision revisionStart, SVNRevision revisionEnd, long options, ISVNAnnotationCallback callback, ISVNProgressMonitor monitor)
