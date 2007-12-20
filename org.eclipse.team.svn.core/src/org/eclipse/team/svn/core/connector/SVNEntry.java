@@ -24,7 +24,7 @@ public class SVNEntry {
 	/**
 	 * Entry node kind enumeration
 	 */
-	public class NodeKind {
+	public class Kind {
 		/**
 		 * The entry is absent.
 		 */
@@ -122,7 +122,7 @@ public class SVNEntry {
 	public final boolean hasProperties;
 
 	/**
-	 * {@link NodeKind#DIR} for directories or {@link NodeKind#FILE} for file. Undetermined if access mask does not
+	 * {@link Kind#DIR} for directories or {@link Kind#FILE} for file. Undetermined if access mask does not
 	 * specify the nodeKind field.
 	 */
 	public final int nodeKind;

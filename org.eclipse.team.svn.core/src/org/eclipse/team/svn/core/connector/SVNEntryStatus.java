@@ -107,7 +107,7 @@ public class SVNEntryStatus {
 	public final String path;
 
 	/**
-	 * The entry kind (see {@link NodeKind})
+	 * The entry kind (see {@link Kind})
 	 */
 	public final int nodeKind;
 
@@ -229,7 +229,7 @@ public class SVNEntryStatus {
 	public final long reposLastCmtDate;
 
 	/**
-	 * @since 1.3 Set to the node kind of the youngest commit, or {@link NodeKind#NONE} if not out of date.
+	 * @since 1.3 Set to the node kind of the youngest commit, or {@link Kind#NONE} if not out of date.
 	 */
 	public final int reposKind;
 

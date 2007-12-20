@@ -14,10 +14,10 @@ package org.eclipse.team.svn.ui.synchronize.merge;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNMergeStatus;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.connector.SVNEntry.NodeKind;
-import org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind;
+import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.operation.local.IRemoteStatusOperation;
 import org.eclipse.team.svn.core.operation.local.MergeStatusOperation;
 import org.eclipse.team.svn.core.resource.IChangeStateProvider;
@@ -104,7 +104,7 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 			public int getNodeKind() {
 				int kind = SVNUtility.getNodeKind(current.path, current.nodeKind, true);
 				// if not exists on repository try to check it with WC kind...
-				return kind == NodeKind.NONE ? SVNUtility.getNodeKind(current.path, current.nodeKind, false) : kind;
+				return kind == SVNEntry.Kind.NONE ? SVNUtility.getNodeKind(current.path, current.nodeKind, false) : kind;
 			}
 			public String getLocalPath() {
 				return current.path;
@@ -122,7 +122,7 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 				return FileUtility.selectOneOf(MergeSubscriber.this.scope.getRoots(), set);
 			}
 		};
-		if (provider.getNodeKind() == NodeKind.NONE) {
+		if (provider.getNodeKind() == SVNEntry.Kind.NONE) {
 			return null;
 		}
 		IResourceChange resourceChange = SVNRemoteStorage.instance().asResourceChange(provider, false);
@@ -131,8 +131,8 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 		}
 		IRepositoryResource originator = this.scope.getMergeSet().from[0];
 		String decodedUrl = SVNUtility.decodeURL(current.url);
-		originator = provider.getNodeKind() == NodeKind.DIR ? (IRepositoryResource)originator.asRepositoryContainer(decodedUrl, false) : originator.asRepositoryFile(decodedUrl, false);
-		originator.setSelectedRevision(SVNRevision.fromNumber(current.textStatus == Kind.DELETED ? current.revision - 1 : current.revision));
+		originator = provider.getNodeKind() == SVNEntry.Kind.DIR ? (IRepositoryResource)originator.asRepositoryContainer(decodedUrl, false) : originator.asRepositoryFile(decodedUrl, false);
+		originator.setSelectedRevision(SVNRevision.fromNumber(current.textStatus == SVNEntryStatus.Kind.DELETED ? current.revision - 1 : current.revision));
 		resourceChange.setOriginator(originator);
 		resourceChange.setCommentProvider(new ICommentProvider() {
 			public String getComment(IResource resource, SVNRevision rev, SVNRevision peg) {

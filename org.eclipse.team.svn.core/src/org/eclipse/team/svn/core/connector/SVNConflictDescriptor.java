@@ -97,7 +97,7 @@ public class SVNConflictDescriptor {
 	public final int conflictKind;
 
 	/**
-	 * The node kind (see {@link NodeKind}).
+	 * The node kind (see {@link Kind}).
 	 */
 	public final int nodeKind;
 

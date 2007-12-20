@@ -24,7 +24,7 @@ public class SVNEntryInfo {
 	/**
 	 * Enumeration of operation types which could be scheduled for the working copy entries
 	 */
-	public class ScheduleKind {
+	public class ScheduledOperation {
 		/**
 		 * No operation scheduled
 		 */
@@ -102,7 +102,7 @@ public class SVNEntryInfo {
 	public final boolean hasWcInfo;
 
 	/**
-	 * The operation scheduled at next commit (see {@link ScheduleKind})
+	 * The operation scheduled at next commit (see {@link ScheduledOperation})
 	 */
 	public final int schedule;
 

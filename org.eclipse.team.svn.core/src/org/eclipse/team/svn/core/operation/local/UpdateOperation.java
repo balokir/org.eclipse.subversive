@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
-import org.eclipse.team.svn.core.connector.SVNNotification.NotifyStatus;
+import org.eclipse.team.svn.core.connector.SVNNotification.NodeStatus;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -122,8 +122,8 @@ public class UpdateOperation extends AbstractConflictDetectionOperation implemen
 		
 		public void progress(int current, int total, ItemState state) {
 			super.progress(current, total, state);
-		    if (state.contentState == NotifyStatus.CONFLICTED || 
-		        state.propState == NotifyStatus.CONFLICTED) {
+		    if (state.contentState == NodeStatus.CONFLICTED || 
+		        state.propState == NodeStatus.CONFLICTED) {
 		        UpdateOperation.this.hasUnresolvedConflict = true;
 			    for (Iterator it = UpdateOperation.this.processed.iterator(); it.hasNext(); ) {
 			        IResource res = (IResource)it.next();

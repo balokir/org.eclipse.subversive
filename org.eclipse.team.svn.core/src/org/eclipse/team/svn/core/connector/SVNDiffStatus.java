@@ -33,7 +33,7 @@ public class SVNDiffStatus {
 	public final String path2;
 
 	/**
-	 * The entry kind (see {@link NodeKind})
+	 * The entry kind (see {@link Kind})
 	 */
 	public final int nodeKind;
 
@@ -55,7 +55,7 @@ public class SVNDiffStatus {
 	 * @param path2
 	 *            The second entry-related resource path or URL
 	 * @param nodeKind
-	 *            The entry kind (see {@link NodeKind})
+	 *            The entry kind (see {@link Kind})
 	 * @param textStatus
 	 *            The entries content diff status (see {@link SVNEntryStatus.Kind})
 	 * @param propStatus

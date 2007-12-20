@@ -48,10 +48,9 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.team.svn.core.connector.SVNDiffStatus;
+import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.connector.SVNEntry.NodeKind;
-import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.AbstractGetFileContentOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -298,7 +297,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 	
 	protected int getNodeKind(SVNEntryStatus st) {
 		int kind = SVNUtility.getNodeKind(st.path, st.nodeKind, true);
-		return kind == NodeKind.NONE ? SVNUtility.getNodeKind(st.path, st.reposKind, false) : kind;
+		return kind == SVNEntry.Kind.NONE ? SVNUtility.getNodeKind(st.path, st.reposKind, false) : kind;
 	}
 	
 	protected int getNodeKind(SVNDiffStatus st) {
@@ -307,10 +306,10 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 	
 	protected IRepositoryResource createResourceFor(IRepositoryLocation location, int kind, String url) {
 		IRepositoryResource retVal = null;
-		if (kind == NodeKind.FILE) {
+		if (kind == SVNEntry.Kind.FILE) {
 			retVal = location.asRepositoryFile(url, false);
 		}
-		else if (kind == NodeKind.DIR) {
+		else if (kind == SVNEntry.Kind.DIR) {
 			retVal = location.asRepositoryContainer(url, false);
 		}
 		if (retVal == null) {
@@ -416,7 +415,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 			if (this.kind != org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NONE && this.resource instanceof IRepositoryFile && this.op == null) {
 				int revisionKind = this.resource.getSelectedRevision().getKind();
 				AbstractGetFileContentOperation op = 
-					revisionKind == Kind.WORKING || revisionKind == Kind.BASE ? 
+					revisionKind == SVNRevision.Kind.WORKING || revisionKind == SVNRevision.Kind.BASE ? 
 					(AbstractGetFileContentOperation)new GetLocalFileContentOperation(this.localAlias.getResource(), revisionKind) : 
 					new GetFileContentOperation(this.resource);
 				UIMonitorUtility.doTaskExternalDefault(op, monitor);

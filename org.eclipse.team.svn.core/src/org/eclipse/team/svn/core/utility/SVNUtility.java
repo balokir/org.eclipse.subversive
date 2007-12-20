@@ -62,7 +62,7 @@ import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNRevisionRange;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
-import org.eclipse.team.svn.core.connector.SVNEntry.NodeKind;
+import org.eclipse.team.svn.core.connector.SVNEntry.Kind;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.options.IIgnoreRecommendations;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
@@ -794,17 +794,17 @@ public final class SVNUtility {
 	public static int getNodeKind(String path, int kind, boolean ignoreNone) {
 		File f = new File(path);
 		if (f.exists()) {
-			return f.isDirectory() ? NodeKind.DIR : NodeKind.FILE;
+			return f.isDirectory() ? Kind.DIR : Kind.FILE;
 		}
-		else if (kind == NodeKind.DIR) {
-			return NodeKind.DIR;
+		else if (kind == Kind.DIR) {
+			return Kind.DIR;
 		}
-		else if (kind == NodeKind.FILE) {
-			return NodeKind.FILE;
+		else if (kind == Kind.FILE) {
+			return Kind.FILE;
 		}
 		// ignore files absent in the WC base and WC working. But what is the reason why it is reported ?
 		if (ignoreNone) {
-			return NodeKind.NONE;
+			return Kind.NONE;
 		}
 		String errMessage = SVNTeamPlugin.instance().getResource("Error.UnrecognizedNodeKind");
 		throw new RuntimeException(MessageFormat.format(errMessage, new String[] {String.valueOf(kind), path}));
