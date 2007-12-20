@@ -12,12 +12,14 @@
 package org.eclipse.team.svn.ui.action.remote;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.action.AbstractRepositoryTeamAction;
 import org.eclipse.team.svn.ui.operation.CompareRepositoryResourcesOperation;
+import org.eclipse.team.svn.ui.operation.UILoggedOperation;
 
 /**
  * Compare two selected resources
@@ -32,6 +34,16 @@ public class CompareSelectedAction extends AbstractRepositoryTeamAction {
 
     public void runImpl(IAction action) {
     	IRepositoryResource []resources = this.getSelectedRepositoryResources();
+    	try {
+    		if (resources[1].getRevision() > resources[0].getRevision()) {
+    			IRepositoryResource tmp = resources[1];
+    			resources[1] = resources[0];
+    			resources[0] = tmp;
+    		}
+    	}
+    	catch (SVNConnectorException ex) {
+    		UILoggedOperation.reportError("Compare", ex);
+    	}
         this.runScheduled(new CompareRepositoryResourcesOperation(resources[0], resources[1]));
     }
 

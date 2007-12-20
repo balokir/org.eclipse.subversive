@@ -49,6 +49,8 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
@@ -101,6 +103,7 @@ import org.eclipse.team.svn.ui.operation.OpenRemoteFileOperation;
 import org.eclipse.team.svn.ui.operation.RefreshRepositoryLocationsOperation;
 import org.eclipse.team.svn.ui.operation.RemoteShowAnnotationOperation;
 import org.eclipse.team.svn.ui.operation.ShowPropertiesOperation;
+import org.eclipse.team.svn.ui.operation.UILoggedOperation;
 import org.eclipse.team.svn.ui.panel.view.HistoryFilterPanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFile;
@@ -265,7 +268,17 @@ public class HistoryViewImpl {
 						Object []selection = tSelection.toArray();
 						IRepositoryResource left = HistoryViewImpl.this.getResourceForSelectedRevision(selection[0]);
 						IRepositoryResource right = HistoryViewImpl.this.getResourceForSelectedRevision(selection[1]);
-						UIMonitorUtility.doTaskScheduledActive(new CompareRepositoryResourcesOperation(left, right));
+						try {
+							if (left.getRevision() < right.getRevision()) {
+								IRepositoryResource tmp = right;
+								right = left;
+								left = tmp;
+							}
+							UIMonitorUtility.doTaskScheduledActive(new CompareRepositoryResourcesOperation(left, right));
+						}
+						catch (SVNConnectorException ex) {
+							UILoggedOperation.reportError("Compare", ex);
+						}
 					}
 				});
         		boolean isCompareAllowed = 
@@ -832,6 +845,7 @@ public class HistoryViewImpl {
 		CreatePatchWizard wizard = new CreatePatchWizard(this.repositoryResource.getName(), false);
 		WizardDialog dialog = new WizardDialog(this.getSite().getShell(), wizard);
 		if (dialog.open() == DefaultDialog.OK) {
+			
 			Object []selected = selection.toArray();
 			IRepositoryResource left = this.getResourceForSelectedRevision(selected[0]);
 			IRepositoryResource right = null;
@@ -841,13 +855,23 @@ public class HistoryViewImpl {
 					left instanceof IRepositoryFile ? 
 					(IRepositoryResource)((IRepositoryRoot)left.getRoot()).asRepositoryFile(left.getUrl(), false) : 
 					((IRepositoryRoot)left.getRoot()).asRepositoryContainer(left.getUrl(), false);
-				right.setSelectedRevision(SVNRevision.fromNumber(revNum));
-				right.setPegRevision(left.getPegRevision());
+					right.setSelectedRevision(SVNRevision.fromNumber(revNum));
+					right.setPegRevision(left.getPegRevision());
 			}
 			else {
 				right = this.getResourceForSelectedRevision(selected[1]);
 			}
-			UIMonitorUtility.doTaskScheduledDefault(this.getSite().getPart(), CreatePatchAction.getCreatePatchOperation(left, right, wizard));
+			try {
+				if (left.getRevision() > right.getRevision()) {
+					IRepositoryResource tmp = right;
+					right = left;
+					left = tmp;
+				}
+				UIMonitorUtility.doTaskScheduledDefault(this.getSite().getPart(), CreatePatchAction.getCreatePatchOperation(left, right, wizard));
+			}
+			catch (SVNConnectorException ex) {
+				UILoggedOperation.reportError(SVNTeamPlugin.instance().getResource("Operation.CreatePatchRemote"), ex);
+			}
 		}
 	}
 	

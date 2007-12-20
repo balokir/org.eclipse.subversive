@@ -59,14 +59,6 @@ public class CompareRepositoryResourcesOperation extends AbstractActionOperation
 			this.right = toCompare[1];
 		}
 		
-    	long rev1 = this.left.getRevision();
-    	long rev2 = this.right.getRevision();
-    	if (rev2 > rev1) {
-    		IRepositoryResource tmp = this.left;
-    		this.left = this.right;
-    		this.right = tmp;
-    	}
-    	
 		IRepositoryLocation location = this.left.getRepositoryLocation();
 		final ISVNConnector proxy = location.acquireSVNProxy();
 		final SVNDiffStatus [][]statuses = new SVNDiffStatus[1][];

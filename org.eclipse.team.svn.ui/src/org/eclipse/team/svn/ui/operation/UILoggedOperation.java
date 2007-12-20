@@ -15,6 +15,7 @@ import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Shell;
@@ -46,6 +47,21 @@ public class UILoggedOperation extends LoggedOperation {
     public UILoggedOperation(IActionOperation op) {
         super(op);
     }
+    
+    public static void reportError(String where, Throwable t) {
+		String errMessage = SVNTeamPlugin.instance().getResource("Operation.Error.LogHeader");
+	    MultiStatus status = new MultiStatus(SVNTeamPlugin.NATURE_ID, IStatus.OK, MessageFormat.format(errMessage, new String[] {where}), null);
+		Status st = 
+			new Status(
+					IStatus.ERROR, 
+					SVNTeamPlugin.NATURE_ID, 
+					IStatus.OK, 
+					status.getMessage() + ": " + t.getMessage(), 
+					t);
+		status.merge(st);
+		UILoggedOperation.logError(st);
+		UILoggedOperation.showError(SVNTeamPlugin.NATURE_ID, where, st, true);
+	}
 
     protected void handleError(IStatus errorStatus) {
     	super.handleError(errorStatus);
