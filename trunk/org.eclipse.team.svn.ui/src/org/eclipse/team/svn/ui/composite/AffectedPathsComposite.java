@@ -62,7 +62,7 @@ import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
-import org.eclipse.team.svn.core.connector.SVNEntry.NodeKind;
+import org.eclipse.team.svn.core.connector.SVNEntry.Kind;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
@@ -590,7 +590,7 @@ public class AffectedPathsComposite extends Composite {
 				IRepositoryLocation location = (IRepositoryLocation)AffectedPathsComposite.this.repositoryResource.getRepositoryLocation();
 				
 				if (info != null) {
-					if (info.kind == NodeKind.DIR && this.filesOnly) {
+					if (info.kind == Kind.DIR && this.filesOnly) {
 						final String message = MessageFormat.format(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.Open.Message"), new String[] {SVNUtility.decodeURL(info.url)});
 						UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 							public void run() {
@@ -606,7 +606,7 @@ public class AffectedPathsComposite extends Composite {
 						});
 						return;					
 					} else {
-						this.repositoryResource = info.kind == NodeKind.FILE ?  
+						this.repositoryResource = info.kind == Kind.FILE ?  
 								(IRepositoryResource)(location).asRepositoryFile(resourceUrl, false) : 
 								(location).asRepositoryContainer(resourceUrl, false);
 						this.repositoryResource.setSelectedRevision(SVNRevision.fromNumber(revision));

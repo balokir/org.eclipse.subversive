@@ -46,11 +46,10 @@ import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNConnectorCancelException;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
+import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
-import org.eclipse.team.svn.core.connector.SVNEntry.NodeKind;
-import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.options.IIgnoreRecommendations;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
@@ -146,7 +145,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		// repositoryTextStatus can be StatusKind::none in two cases: resource not modified and non versioned
 		// in the second case we should ignore repository status calculation
 		String statusStr = revision == SVNRevision.INVALID_REVISION_NUMBER ? IStateFilter.ST_NOTEXISTS : this.getStatusString(propKind, textKind, update);
-		if (nodeKind == NodeKind.DIR) {
+		if (nodeKind == SVNEntry.Kind.DIR) {
 		    if ((resource = changeState.getExact(root.findContainersForLocation(location))) == null) {
 		    	return null;
 		    }
@@ -188,7 +187,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	/*4*/	resource.getAuthor() + ";" + 
 	/*5*/	(lastCommitDate == 0 ? "null" : String.valueOf(lastCommitDate)) + ";" +
 	/*6*/	String.valueOf(kind) + ";" + 
-	/*7*/	(kind == Kind.NUMBER ? String.valueOf(((SVNRevision.Number)resource.getPegRevision()).getNumber()) : String.valueOf(kind)) + ";" +
+	/*7*/	(kind == SVNRevision.Kind.NUMBER ? String.valueOf(((SVNRevision.Number)resource.getPegRevision()).getNumber()) : String.valueOf(kind)) + ";" +
 	/*8*/	(originatorData != null ? originatorData : "null") + ";" +
 	/*9*/	(comment == null ? "null" : new String(Base64.encode(comment.getBytes()))) + ";" +
 	/*10*/	resource.getChangeMask();
@@ -208,7 +207,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		long lastCommitDate = "null".equals(data[5]) ? 0 : Long.parseLong(data[5]);
 		int revisionKind = Integer.parseInt(data[6]);
 		SVNRevision pegRevision = null;
-		if (revisionKind == Kind.NUMBER) {
+		if (revisionKind == SVNRevision.Kind.NUMBER) {
 		    long pegNum = Long.parseLong(data[7]);
 		    pegRevision = pegNum == revision ? null : SVNRevision.fromNumber(pegNum);
 		}
@@ -653,7 +652,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 							for (int i = 0; i < st.length && !monitor.isCanceled() && CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled(); i++) {
 								ProgressMonitorUtility.progress(monitor, i, IProgressMonitor.UNKNOWN);
 								
-								if (st[i].nodeKind == NodeKind.DIR && st[i].path.length() > projectEnd) {
+								if (st[i].nodeKind == SVNEntry.Kind.DIR && st[i].path.length() > projectEnd) {
 									IResource folder = prj.getFolder(new Path(st[i].path.substring(projectEnd)));
 									ProgressMonitorUtility.setTaskInfo(monitor, this, folder.getFullPath().toString());
 									ILocalFolder local = (ILocalFolder)SVNRemoteStorage.this.asLocalResource(folder);
@@ -704,7 +703,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		for (int i = 0; i < statuses.length; i++) {
 			int nodeKind = SVNUtility.getNodeKind(statuses[i].path, statuses[i].nodeKind, true);
 			// ignore files absent in the WC base and WC working. But what is the reason why it is reported ?
-			if (nodeKind == NodeKind.NONE) {
+			if (nodeKind == SVNEntry.Kind.NONE) {
 				continue;
 			}
 			
@@ -725,7 +724,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 			    tRes = resource;
 			}
 			else {
-				if (nodeKind == NodeKind.DIR) {
+				if (nodeKind == SVNEntry.Kind.DIR) {
 					if (nodePath.length() == 0) {
 						tRes = project;
 					}
@@ -773,7 +772,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 					this.switchedToUrls.put(tRes.getFullPath(), SVNUtility.decodeURL(statuses[i].url));
 				}
 				
-				if (status == IStateFilter.ST_DELETED && nodeKind == NodeKind.FILE && new File(statuses[i].path).exists()) {
+				if (status == IStateFilter.ST_DELETED && nodeKind == SVNEntry.Kind.FILE && new File(statuses[i].path).exists()) {
 				    status = IStateFilter.ST_PREREPLACED;
 				}
 				

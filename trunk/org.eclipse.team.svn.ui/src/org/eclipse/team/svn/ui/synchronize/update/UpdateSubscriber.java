@@ -19,8 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.connector.SVNEntry.NodeKind;
-import org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind;
+import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.operation.local.IRemoteStatusOperation;
 import org.eclipse.team.svn.core.operation.local.RemoteStatusOperation;
 import org.eclipse.team.svn.core.resource.IChangeStateProvider;
@@ -61,7 +60,7 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 
 	protected IResourceChange handleResourceChange(IRemoteStatusOperation rStatusOp, final Object status) {
 		final SVNEntryStatus current = (SVNEntryStatus)status; 
-		if (current.textStatus == Kind.EXTERNAL) {
+		if (current.textStatus == SVNEntryStatus.Kind.EXTERNAL) {
 			return null;
 		}
 		final IResource []scope = rStatusOp.getScope();
@@ -84,7 +83,7 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 			}
 			public int getNodeKind() {
 				int kind = SVNUtility.getNodeKind(current.path, current.nodeKind, true);
-				return kind == NodeKind.NONE ? SVNUtility.getNodeKind(current.path, current.reposKind, true) : kind;
+				return kind == SVNEntry.Kind.NONE ? SVNUtility.getNodeKind(current.path, current.reposKind, true) : kind;
 			}
 			public String getLocalPath() {
 				return current.path;
@@ -102,7 +101,7 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 				return FileUtility.selectOneOf(scope, set);
 			}
 		};
-		if (provider.getNodeKind() == NodeKind.NONE) {
+		if (provider.getNodeKind() == SVNEntry.Kind.NONE) {
 			return null;
 		}
 		IResourceChange resourceChange = SVNRemoteStorage.instance().asResourceChange(provider, true);

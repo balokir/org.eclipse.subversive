@@ -22,7 +22,7 @@ import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.SVNEntry.Fields;
-import org.eclipse.team.svn.core.connector.SVNEntry.NodeKind;
+import org.eclipse.team.svn.core.connector.SVNEntry.Kind;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -79,7 +79,7 @@ public class SVNRepositoryContainer extends SVNRepositoryResource implements IRe
 				
 				for (int i = 0; i < children.length; i++) {
 					String childUrl = thisUrl + "/" + children[i].path;
-					SVNRepositoryResource resource = children[i].nodeKind == NodeKind.DIR ? (SVNRepositoryResource)this.asRepositoryContainer(childUrl, false) : (SVNRepositoryResource)this.asRepositoryFile(childUrl, false);
+					SVNRepositoryResource resource = children[i].nodeKind == Kind.DIR ? (SVNRepositoryResource)this.asRepositoryContainer(childUrl, false) : (SVNRepositoryResource)this.asRepositoryFile(childUrl, false);
 					resource.setRevision(children[i].revision);
 					resource.setInfo(new IRepositoryResource.Information(children[i].lock, children[i].size, children[i].author, children[i].date, children[i].hasProperties));
 					retVal[i] = resource;

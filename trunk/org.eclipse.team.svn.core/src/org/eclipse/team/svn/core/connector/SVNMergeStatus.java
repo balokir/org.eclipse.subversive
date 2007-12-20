@@ -32,7 +32,7 @@ public class SVNMergeStatus {
 	public final String path;
 
 	/**
-	 * The entry kind (see {@link NodeKind})
+	 * The entry kind (see {@link Kind})
 	 */
 	public final int nodeKind;
 
@@ -74,7 +74,7 @@ public class SVNMergeStatus {
 	 * @param path
 	 *            The working copy path of the entry
 	 * @param nodeKind
-	 *            The entry kind (see {@link NodeKind})
+	 *            The entry kind (see {@link Kind})
 	 * @param textStatus
 	 *            The entry content merge status (see {@link SVNEntryStatus.Kind})
 	 * @param propStatus

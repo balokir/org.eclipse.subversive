@@ -24,7 +24,7 @@ public class SVNNotification {
 	/**
 	 * Enumeration of possible working copy entry locking states
 	 */
-	public class LockStatus {
+	public class NodeLock {
 		/**
 		 * The operation does not require any locks
 		 */
@@ -55,7 +55,7 @@ public class SVNNotification {
 	/**
 	 * Notify statuses enumeration
 	 */
-	public static class NotifyStatus {
+	public static class NodeStatus {
 		/**
 		 * Not applicable
 		 */
@@ -111,7 +111,7 @@ public class SVNNotification {
 	/**
 	 * The connector library actions enumeration
 	 */
-	public static class NotifyAction {
+	public static class PerformedAction {
 		/**
 		 * Adding a path to revision control.
 		 */
@@ -281,12 +281,12 @@ public class SVNNotification {
 	public final String path;
 
 	/**
-	 * The action performed with the entry (see {@link NotifyAction}).
+	 * The action performed with the entry (see {@link PerformedAction}).
 	 */
 	public final int action;
 
 	/**
-	 * The entry kind (see {@link NodeKind}).
+	 * The entry kind (see {@link Kind}).
 	 */
 	public final int kind;
 
@@ -306,12 +306,12 @@ public class SVNNotification {
 	public final String errMsg;
 
 	/**
-	 * The entry content state (see {@link NotifyStatus}).
+	 * The entry content state (see {@link NodeStatus}).
 	 */
 	public final int contentState;
 
 	/**
-	 * The entry properties state (see {@link NotifyStatus}).
+	 * The entry properties state (see {@link NodeStatus}).
 	 */
 	public final int propState;
 
@@ -321,7 +321,7 @@ public class SVNNotification {
 	public final long revision;
 
 	/**
-	 * the state of the lock of the item (see {@link LockStatus}).
+	 * the state of the lock of the item (see {@link NodeLock}).
 	 */
 	public final int lockState;
 

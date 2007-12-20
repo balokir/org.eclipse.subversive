@@ -199,30 +199,30 @@ public class SVNRevision {
 	 */
 	public static SVNRevision fromKind(int kind) {
 		switch (kind) {
-		case Kind.BASE: {
-			return SVNRevision.BASE;
-		}
-		case Kind.WORKING: {
-			return SVNRevision.WORKING;
-		}
-		case Kind.HEAD: {
-			return SVNRevision.HEAD;
-		}
-		case Kind.PREVIOUS: {
-			return SVNRevision.PREVIOUS;
-		}
-		case Kind.START: {
-			return SVNRevision.START;
-		}
-		case Kind.COMMITTED: {
-			return SVNRevision.COMMITTED;
-		}
-		case Kind.DATE: {
-			throw new IllegalArgumentException("Use fromDate() method instead");
-		}
-		case Kind.NUMBER: {
-			throw new IllegalArgumentException("Use fromNumber() method instead");
-		}
+			case Kind.BASE: {
+				return SVNRevision.BASE;
+			}
+			case Kind.WORKING: {
+				return SVNRevision.WORKING;
+			}
+			case Kind.HEAD: {
+				return SVNRevision.HEAD;
+			}
+			case Kind.PREVIOUS: {
+				return SVNRevision.PREVIOUS;
+			}
+			case Kind.START: {
+				return SVNRevision.START;
+			}
+			case Kind.COMMITTED: {
+				return SVNRevision.COMMITTED;
+			}
+			case Kind.DATE: {
+				throw new IllegalArgumentException("Use fromDate() method instead");
+			}
+			case Kind.NUMBER: {
+				throw new IllegalArgumentException("Use fromNumber() method instead");
+			}
 		}
 		throw new IllegalArgumentException("Invalid revision kind: " + kind);
 	}
@@ -270,23 +270,22 @@ public class SVNRevision {
 
 	public String toString() {
 		switch (this.revKind) {
-		case Kind.BASE: {
-			return "BASE";
+			case Kind.BASE: {
+				return "BASE";
+			}
+			case Kind.COMMITTED: {
+				return "COMMITTED";
+			}
+			case Kind.HEAD: {
+				return "HEAD";
+			}
+			case Kind.PREVIOUS: {
+				return "PREV";
+			}
+			case Kind.WORKING: {
+				return "WORKING";
+			}
 		}
-		case Kind.COMMITTED: {
-			return "COMMITTED";
-		}
-		case Kind.HEAD: {
-			return "HEAD";
-		}
-		case Kind.PREVIOUS: {
-			return "PREV";
-		}
-		case Kind.WORKING: {
-			return "WORKING";
-		}
-		}
-		// Kind.UNSPECIFIED
 		return "UNSPECIFIED";
 	}
 

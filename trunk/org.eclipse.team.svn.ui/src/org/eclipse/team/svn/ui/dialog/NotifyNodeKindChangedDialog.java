@@ -22,7 +22,7 @@ import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 
 /**
- * NodeKind changed notification dialog
+ * Node Kind changed notification dialog
  * 
  * @author Alexander Gurov
  */

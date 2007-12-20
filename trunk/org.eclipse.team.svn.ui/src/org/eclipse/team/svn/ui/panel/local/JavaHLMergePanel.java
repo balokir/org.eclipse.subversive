@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.svn.core.connector.ISVNProgressMonitor;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.connector.SVNNotification.NotifyAction;
+import org.eclipse.team.svn.core.connector.SVNNotification.PerformedAction;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.JavaHLMergeOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -240,20 +240,20 @@ public class JavaHLMergePanel extends AbstractAdvancedDialogPanel {
 				public void progress(int current, int total, ItemState state) {
 					buf.append("<b>");
 					switch (state.action) {
-					case NotifyAction.UPDATE_ADD: {
+					case PerformedAction.UPDATE_ADD: {
 						buf.append(SVNTeamUIPlugin.instance().getResource("JavaHLMergePanel.Preview.Added"));
 						break;
 					}
-					case NotifyAction.UPDATE_DELETE: {
+					case PerformedAction.UPDATE_DELETE: {
 						buf.append(SVNTeamUIPlugin.instance().getResource("JavaHLMergePanel.Preview.Deleted"));
 						break;
 					}
-					case NotifyAction.UPDATE_UPDATE: {
+					case PerformedAction.UPDATE_UPDATE: {
 						buf.append(SVNTeamUIPlugin.instance().getResource("JavaHLMergePanel.Preview.Modified"));
 						break;
 					}
 					default: {
-						buf.append(NotifyAction.actionNames[state.action]);
+						buf.append(PerformedAction.actionNames[state.action]);
 						buf.append(SVNTeamUIPlugin.instance().getResource("JavaHLMergePanel.Preview.Default"));
 					}
 					}
