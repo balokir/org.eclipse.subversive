@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.ui.action.remote;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
@@ -19,6 +20,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.action.AbstractRepositoryTeamAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.operation.CompareRepositoryResourcesOperation;
+import org.eclipse.team.svn.ui.operation.UILoggedOperation;
 import org.eclipse.team.svn.ui.panel.remote.ComparePanel;
 
 /**
@@ -36,7 +38,18 @@ public class CompareAction extends AbstractRepositoryTeamAction {
         ComparePanel panel = new ComparePanel(first);
         DefaultDialog dlg = new DefaultDialog(this.getShell(), panel);
         if (dlg.open() == 0) {
-            this.runScheduled(new CompareRepositoryResourcesOperation(first, panel.getSelectedResource()));
+        	IRepositoryResource second = panel.getSelectedResource();
+        	try {
+        		if (second.getRevision() > first.getRevision()) {
+        			IRepositoryResource tmp = second;
+        			second = first;
+        			first = tmp;
+        		}
+        	}
+        	catch (SVNConnectorException ex) {
+        		UILoggedOperation.reportError("Compare", ex);
+        	}
+            this.runScheduled(new CompareRepositoryResourcesOperation(first, second));
         }
     }
 
