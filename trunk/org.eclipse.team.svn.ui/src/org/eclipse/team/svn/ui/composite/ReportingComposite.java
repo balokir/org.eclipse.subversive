@@ -72,6 +72,10 @@ public class ReportingComposite extends Composite {
 	protected IReporter reporter;
 	
 	public ReportingComposite(Composite parent, String reportType, String pluginId, IStatus status, String optionName, boolean isError, IValidationManager manager) {
+		this(parent, reportType, pluginId, status, optionName, isError, manager, false);
+	}
+	
+	public ReportingComposite(Composite parent, String reportType, String pluginId, IStatus status, String optionName, boolean isError, IValidationManager manager, boolean doNotValidateComment) {
 		super(parent, SWT.NONE);
 		this.isError = isError;
 		this.reportType = reportType;
@@ -79,7 +83,7 @@ public class ReportingComposite extends Composite {
 		this.status = status;
 		this.providers = ExtensionsManager.getInstance().getReportingDescriptors();
 		this.reporter = ReportingComposite.getDefaultReporter(isError, status);
-		this.createControls(optionName, manager);
+		this.createControls(optionName, manager, doNotValidateComment);
 	}
 	
 	public static IReporter getDefaultReporter(boolean isError, IStatus status) {
@@ -103,23 +107,32 @@ public class ReportingComposite extends Composite {
 	}
     
 	public void saveChanges() {
-    	String name = this.nameText.getText().trim();
-    	String email = this.emailText.getText().trim();
-		this.reporter.setUserName(name);
-		this.reporter.setUserEMail(email);
-		this.reporter.setUserComment(this.commentText.getText().trim());
-    	if (email.length() > 0) {
-			this.mailHistory.addLine(email);
-		} 
-		else {
-			this.mailHistory.clear();
+		if (this.commentText != null) {
+			this.reporter.setUserComment(this.commentText.getText().trim());
 		}
-		if (name.length() > 0) {
-			this.userNameHistory.addLine(name);	
+		
+		if (this.emailText != null) {
+	    	String email = this.emailText.getText().trim();
+			this.reporter.setUserEMail(email);
+	    	if (email.length() > 0) {
+				this.mailHistory.addLine(email);
+			} 
+			else {
+				this.mailHistory.clear();
+			}
 		}
-		else {
-			this.userNameHistory.clear();
-		}
+		
+    	if (this.nameText != null) {
+        	String name = this.nameText.getText().trim();
+    		this.reporter.setUserName(name);
+    		if (name.length() > 0) {
+    			this.userNameHistory.addLine(name);	
+    		}
+    		else {
+    			this.userNameHistory.clear();
+    		}
+    	}
+    	
 		this.doNotShowAgain = this.doNotShowAgainButton.getSelection();
 	}
 	
@@ -127,127 +140,114 @@ public class ReportingComposite extends Composite {
 		this.doNotShowAgain = this.doNotShowAgainButton.getSelection();
 	}
 
-	private void createControls(String optionName, IValidationManager manager) {
+	private void createControls(String optionName, IValidationManager manager, boolean doNotValidateComment) {
     	GridLayout layout = null;
     	GridData data = null;
     	
 		layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 0;
+		layout.numColumns = 2;
 		this.setLayout(layout);
 		
-		Composite composite = new Composite(this, SWT.NONE);
-		layout = new GridLayout();
-		layout.marginWidth = layout.marginHeight = 0;
-		layout.numColumns = 2;
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		composite.setLayout(layout);
-		composite.setLayoutData(data);
-		
-		Label description1 = new Label(composite, SWT.NONE);
-		data = new GridData();
-		description1.setLayoutData(data);
-		description1.setText(SVNTeamUIPlugin.instance().getResource("ReportingComposite.Product"));
-		
-		this.providersCombo = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		this.providersCombo.setLayoutData(data);
-		FileUtility.sort(this.providers, new Comparator() {
-			public int compare(Object arg0, Object arg1) {
-				IReportingDescriptor first = (IReportingDescriptor)arg0;
-				IReportingDescriptor second = (IReportingDescriptor)arg1;
-				return first.getProductName().compareTo(second.getProductName());
-			}
-		});
-		//FIXME verifier name
-		manager.attachTo(this.providersCombo, new AbstractVerifier() {
-			protected String getWarningMessage(Control input) {
-				return null;
-			}
-			protected String getErrorMessage(Control input) {
-				if (ReportingComposite.this.getReporter() == null) {
-					//String msg = SVNTeamUIPlugin.instance().getResource(AbstractBranchTagPanel.this.nationalizationId + ".NodeName.Verifier.Error.Exists");
-					return "No bug and tip reporters installed.";
+		if (this.providers.length > 1) {
+			Label description1 = new Label(this, SWT.NONE);
+			data = new GridData();
+			description1.setLayoutData(data);
+			description1.setText(SVNTeamUIPlugin.instance().getResource("ReportingComposite.Product"));
+			
+			this.providersCombo = new Combo(this, SWT.BORDER | SWT.READ_ONLY);
+			data = new GridData(GridData.FILL_HORIZONTAL);
+			this.providersCombo.setLayoutData(data);
+			FileUtility.sort(this.providers, new Comparator() {
+				public int compare(Object arg0, Object arg1) {
+					IReportingDescriptor first = (IReportingDescriptor)arg0;
+					IReportingDescriptor second = (IReportingDescriptor)arg1;
+					return first.getProductName().compareTo(second.getProductName());
 				}
-				return null;
+			});
+			String []names = new String[this.providers.length];
+			for (int i = 0; i < this.providers.length; i++) {
+				names[i] = this.providers[i].getProductName();
 			}
-		});
-		String []names = new String[this.providers.length];
-		for (int i = 0; i < this.providers.length; i++) {
-			names[i] = this.providers[i].getProductName();
+			this.providersCombo.setItems(names);
+			this.providersCombo.select(0);
+			this.providersCombo.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					int selectedProviderIdx = ReportingComposite.this.providersCombo.getSelectionIndex();
+					ReportingComposite.this.setReporter(selectedProviderIdx);
+				}
+			});
 		}
-		this.providersCombo.setItems(names);
-		this.providersCombo.select(0);
-		this.providersCombo.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				int selectedProviderIdx = ReportingComposite.this.providersCombo.getSelectionIndex();
-				ReportingComposite.this.setReporter(selectedProviderIdx);
-			}
-		});
     	
-		Label description = new Label(this, SWT.WRAP);
-		data = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
-		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
-		data.heightHint = DefaultDialog.convertHeightInCharsToPixels(this, this.isError ? 4 : 3);
-		description.setLayoutData(data);
-		description.setText(SVNTeamUIPlugin.instance().getResource(this.isError ? "ReportingComposite.ErrorHint" : "ReportingComposite.Hint"));
-		
-		composite = new Composite(this, SWT.NONE);
-		layout = new GridLayout();
-		layout.marginWidth = layout.marginHeight = 0;
-		layout.numColumns = 2;
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		composite.setLayout(layout);
-		composite.setLayoutData(data);
-		
 		this.mailHistory = new UserInputHistory(ReportingComposite.MAIL_HISTORY, 1);
 		this.userNameHistory = new UserInputHistory(ReportingComposite.USER_NAME_HISTORY, 1);
-		
-		Label description2 = new Label(composite, SWT.NONE);
-		data = new GridData();
-		description2.setLayoutData(data);
-		description2.setText(SVNTeamUIPlugin.instance().getResource("ReportingComposite.EMail"));
-		
-		this.emailText = new Text(composite, SWT.BORDER);			
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		this.emailText.setLayoutData(data);
-		this.emailText.setFocus();
 		String []mailName = this.mailHistory.getHistory();
-		if (mailName != null && mailName.length > 0) {
-			this.emailText.setText(mailName[0]);
-		}
 		
-		Label description3 = new Label(composite, SWT.NONE);
-		data = new GridData();
-		description3.setLayoutData(data);
-		description3.setText(SVNTeamUIPlugin.instance().getResource("ReportingComposite.Name"));
-		
-		int widthHint = Math.max(description1.computeSize(SWT.DEFAULT, SWT.DEFAULT).x, Math.max(description2.computeSize(SWT.DEFAULT, SWT.DEFAULT).x, description3.computeSize(SWT.DEFAULT, SWT.DEFAULT).x));
-		((GridData)description1.getLayoutData()).widthHint = widthHint;
-		((GridData)description2.getLayoutData()).widthHint = widthHint;
-		((GridData)description3.getLayoutData()).widthHint = widthHint;
-		
-		this.nameText = new Text(composite, SWT.BORDER);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		this.nameText.setLayoutData(data);
-		String []userName = this.userNameHistory.getHistory();
-		if (userName != null && userName.length > 0) {
-			this.nameText.setText(userName[0]);
-		}
-		
-		Label commentLabel = new Label(this, SWT.LEFT);
-		data = new GridData();
-		commentLabel.setLayoutData(data);
-		commentLabel.setText(SVNTeamUIPlugin.instance().getResource("ReportingComposite.Comment"));
-		
-		this.commentText = new Text(this, SWT.MULTI | SWT.V_SCROLL | SWT.BORDER | SWT.WRAP);
-		data = new GridData(GridData.FILL_BOTH);
-		data.heightHint = 100;
-		this.commentText.setLayoutData(data);
-		if (mailName != null && mailName.length > 0) {
-			this.commentText.setFocus();
-		}
-		if (manager != null) {
-			manager.attachTo(this.commentText, new NonEmptyFieldVerifier(SVNTeamUIPlugin.instance().getResource("ReportingComposite.Comment.Verifier")));
+		if (this.providers.length > 1 || this.reporter != null && !this.reporter.isCustomEditorSupported()) {
+			Label description = new Label(this, SWT.WRAP);
+			data = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
+			data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+			data.heightHint = DefaultDialog.convertHeightInCharsToPixels(this, this.isError ? 4 : 3);
+			data.horizontalSpan = 2;
+			description.setLayoutData(data);
+			description.setText(SVNTeamUIPlugin.instance().getResource(this.isError ? "ReportingComposite.ErrorHint" : "ReportingComposite.Hint"));
+			
+			Label description2 = new Label(this, SWT.NONE);
+			data = new GridData();
+			description2.setLayoutData(data);
+			description2.setText(SVNTeamUIPlugin.instance().getResource("ReportingComposite.EMail"));
+			
+			this.emailText = new Text(this, SWT.BORDER);			
+			data = new GridData(GridData.FILL_HORIZONTAL);
+			this.emailText.setLayoutData(data);
+			this.emailText.setFocus();
+			if (mailName != null && mailName.length > 0) {
+				this.emailText.setText(mailName[0]);
+			}
+			
+			Label description3 = new Label(this, SWT.NONE);
+			data = new GridData();
+			description3.setLayoutData(data);
+			description3.setText(SVNTeamUIPlugin.instance().getResource("ReportingComposite.Name"));
+			
+			this.nameText = new Text(this, SWT.BORDER);
+			data = new GridData(GridData.FILL_HORIZONTAL);
+			this.nameText.setLayoutData(data);
+			String []userName = this.userNameHistory.getHistory();
+			if (userName != null && userName.length > 0) {
+				this.nameText.setText(userName[0]);
+			}
+			
+			Label commentLabel = new Label(this, SWT.LEFT);
+			data = new GridData();
+			data.horizontalSpan = 2;
+			commentLabel.setLayoutData(data);
+			commentLabel.setText(SVNTeamUIPlugin.instance().getResource("ReportingComposite.Comment"));
+			
+			this.commentText = new Text(this, SWT.MULTI | SWT.V_SCROLL | SWT.BORDER | SWT.WRAP);
+			data = new GridData(GridData.FILL_BOTH);
+			data.heightHint = 100;
+			data.horizontalSpan = 2;
+			this.commentText.setLayoutData(data);
+			if (mailName != null && mailName.length > 0) {
+				this.commentText.setFocus();
+			}
+			if (manager != null) {
+				if (!doNotValidateComment) {
+					manager.attachTo(this.commentText, new NonEmptyFieldVerifier(SVNTeamUIPlugin.instance().getResource("ReportingComposite.Comment.Verifier")));
+				}
+				manager.attachTo(this.commentText, new AbstractVerifier() {
+					protected String getWarningMessage(Control input) {
+						return null;
+					}
+					protected String getErrorMessage(Control input) {
+						if (ReportingComposite.this.getReporter() == null) {
+							return SVNTeamUIPlugin.instance().getResource("ReportingComposite.Product.Verifier");
+						}
+						return null;
+					}
+				});
+			}
 		}
 		
 		Composite buttonsComposite = new Composite(this, SWT.NONE);
@@ -257,6 +257,7 @@ public class ReportingComposite extends Composite {
 		layout.numColumns = 2;
 		buttonsComposite.setLayout(layout);
 		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 2;
 		buttonsComposite.setLayoutData(data);
 		
 		this.doNotShowAgainButton = new Button(buttonsComposite, SWT.CHECK);
@@ -270,33 +271,35 @@ public class ReportingComposite extends Composite {
 			this.doNotShowAgainButton.setVisible(false);
 		}
 		
-		this.previewButton = new Button(buttonsComposite, SWT.PUSH);
-		data = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.FILL_HORIZONTAL);
-		this.previewButton.setText(SVNTeamUIPlugin.instance().getResource("ReportingComposite.Preview"));
-		data.widthHint = DefaultDialog.computeButtonWidth(previewButton);
-		this.previewButton.setLayoutData(data);
-				
-		this.previewButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-		    	String name = ReportingComposite.this.nameText.getText().trim();
-		    	String email = ReportingComposite.this.emailText.getText().trim();
-		    	ReportingComposite.this.reporter.setUserName(name);
-				ReportingComposite.this.reporter.setUserEMail(email);
-				ReportingComposite.this.reporter.setUserComment(ReportingComposite.this.commentText.getText().trim());
-				ReportingComposite.this.reporter.buildReport();
-				
-				PreviewReportPanel panel = null;
-				if (ReportingComposite.this.isError) {
-					panel = new PreviewErrorReportPanel(ReportingComposite.this.reporter.buildReport());
+		if (this.providers.length > 1 || this.reporter != null && !this.reporter.isCustomEditorSupported()) {
+			this.previewButton = new Button(buttonsComposite, SWT.PUSH);
+			data = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.FILL_HORIZONTAL);
+			this.previewButton.setText(SVNTeamUIPlugin.instance().getResource("ReportingComposite.Preview"));
+			data.widthHint = DefaultDialog.computeButtonWidth(previewButton);
+			this.previewButton.setLayoutData(data);
+					
+			this.previewButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+			    	String name = ReportingComposite.this.nameText.getText().trim();
+			    	String email = ReportingComposite.this.emailText.getText().trim();
+			    	ReportingComposite.this.reporter.setUserName(name);
+					ReportingComposite.this.reporter.setUserEMail(email);
+					ReportingComposite.this.reporter.setUserComment(ReportingComposite.this.commentText.getText().trim());
+					ReportingComposite.this.reporter.buildReport();
+					
+					PreviewReportPanel panel = null;
+					if (ReportingComposite.this.isError) {
+						panel = new PreviewErrorReportPanel(ReportingComposite.this.reporter.buildReport());
+					}
+					else {
+						String msg = SVNTeamUIPlugin.instance().getResource("ReportingComposite.Preview.Title");
+						panel = new PreviewReportPanel(MessageFormat.format(msg, new String[] {ReportingComposite.this.reportType}), ReportingComposite.this.reporter.buildReport());
+					}
+					DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getDisplay().getActiveShell(), panel);
+					dialog.open();
 				}
-				else {
-					String msg = SVNTeamUIPlugin.instance().getResource("ReportingComposite.Preview.Title");
-					panel = new PreviewReportPanel(MessageFormat.format(msg, new String[] {ReportingComposite.this.reportType}), ReportingComposite.this.reporter.buildReport());
-				}
-				DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getDisplay().getActiveShell(), panel);
-				dialog.open();
-			}
-		});
+			});
+		}
 	}
 	
 	protected void setReporter(int selectedProviderIdx) {
