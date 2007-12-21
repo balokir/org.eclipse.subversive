@@ -12,30 +12,21 @@
 package org.eclipse.team.svn.ui.extension.impl;
 
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.extension.factory.IMailSettingsProvider;
+import org.eclipse.team.svn.ui.extension.factory.IReportingDescriptor;
 
 /**
- * Default IMailSettingsProvider implementation
+ * Default IReportingDescriptor implementation
  *
  * @author Sergiy Logvin
  */
 
-public class DefaultMailSettingsProvider implements IMailSettingsProvider {
-
+public class DefaultReportingDescriptor implements IReportingDescriptor {
 	public String getEmailTo() {
 		return "subversive-bugs@polarion.org";
 	}
 	
 	public String getEmailFrom() {
 		return "subversive-bugs@polarion.org";
-	}
-
-	public String getPluginName() {
-		return "Subversive";
-	}
-
-	public String getProductVersion() {
-		return SVNTeamUIPlugin.instance().getVersionString();
 	}
 
 	public String getHost() {
@@ -45,5 +36,21 @@ public class DefaultMailSettingsProvider implements IMailSettingsProvider {
 	public String getPort() {
 		return "25";
 	}	
+
+	public String getProductName() {
+		return "Subversive";
+	}
+
+	public String getProductVersion() {
+		return SVNTeamUIPlugin.instance().getVersionString();
+	}
+
+	public String getTrackerUrl() {
+		return "https://bugs.eclipse.org/bugs";
+	}
+	
+	public boolean isTrackerSupportsHTML() {
+		return false;
+	}
 
 }

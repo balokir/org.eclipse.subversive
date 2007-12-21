@@ -30,8 +30,8 @@ public class ProblemListener implements ILogListener {
 
 	public void logging(IStatus status, String plugin) {
 		// our problems should be handled in the UILoggedOperation in order to suppress two sequential dialogs 
-		Reporter.IStatusVisitor visitor = Reporter.checkStatus(status, ProblemListener.idVisitor) ? (Reporter.IStatusVisitor)null : ProblemListener.stackVisitor;
-		if (visitor != null && Reporter.checkStatus(status, visitor)) {
+		ReportPartsFactory.IStatusVisitor visitor = ReportPartsFactory.checkStatus(status, ProblemListener.idVisitor) ? (ReportPartsFactory.IStatusVisitor)null : ProblemListener.stackVisitor;
+		if (visitor != null && ReportPartsFactory.checkStatus(status, visitor)) {
 			this.sendReport(status, plugin);
 		}
 	}

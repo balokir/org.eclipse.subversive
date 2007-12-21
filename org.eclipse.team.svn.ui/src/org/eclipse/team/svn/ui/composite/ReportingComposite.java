@@ -24,19 +24,21 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.utility.FileUtility;
-import org.eclipse.team.svn.core.utility.StringId;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.debugmail.Reporter;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
-import org.eclipse.team.svn.ui.extension.factory.IMailSettingsProvider;
+import org.eclipse.team.svn.ui.extension.factory.IReporter;
+import org.eclipse.team.svn.ui.extension.factory.IReportingDescriptor;
+import org.eclipse.team.svn.ui.extension.factory.IReporterFactory.ReportType;
 import org.eclipse.team.svn.ui.panel.reporting.PreviewErrorReportPanel;
 import org.eclipse.team.svn.ui.panel.reporting.PreviewReportPanel;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.svn.ui.utility.UserInputHistory;
+import org.eclipse.team.svn.ui.verifier.AbstractVerifier;
 import org.eclipse.team.svn.ui.verifier.IValidationManager;
 import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
 
@@ -57,20 +59,17 @@ public class ReportingComposite extends Composite {
 	protected Text nameText;
 	protected Text commentText;
 	protected Button doNotShowAgainButton;
+	protected Button previewButton;
 	
 	protected boolean doNotShowAgain;
-	protected String comment;
-	protected String email;
-	protected String name;
-	protected String reportId;
-	protected String report;
 	
 	protected String reportType;
 	protected boolean isError;
 	protected String pluginId;
 	protected IStatus status;
-	protected IMailSettingsProvider []providers;
-	protected int selectedProviderIdx;
+	protected IReportingDescriptor []providers;
+	
+	protected IReporter reporter;
 	
 	public ReportingComposite(Composite parent, String reportType, String pluginId, IStatus status, String optionName, boolean isError, IValidationManager manager) {
 		super(parent, SWT.NONE);
@@ -78,54 +77,50 @@ public class ReportingComposite extends Composite {
 		this.reportType = reportType;
 		this.pluginId = pluginId;
 		this.status = status;
-		this.reportId = StringId.generateRandom("Report ID", 5);
-		this.providers = ExtensionsManager.getInstance().getMailSettingsProviders();
-		this.selectedProviderIdx = 0;
+		this.providers = ExtensionsManager.getInstance().getReportingDescriptors();
+		this.reporter = ReportingComposite.getDefaultReporter(isError, status);
 		this.createControls(optionName, manager);
 	}
 	
-	public IMailSettingsProvider getMailSettingsProvider() {
-		return this.providers[this.selectedProviderIdx];
+	public static IReporter getDefaultReporter(boolean isError, IStatus status) {
+		IReportingDescriptor []providers = ExtensionsManager.getInstance().getReportingDescriptors();
+		if (providers.length > 0) {
+			IReporter reporter = ExtensionsManager.getInstance().getReporter(providers[0], isError ? ReportType.BUG : ReportType.TIP);
+			if (reporter != null) {
+				reporter.setProblemStatus(status);
+				return reporter;
+			}
+		}
+		return null;
+	}
+	
+	public IReporter getReporter() {
+		return this.reporter;
 	}
 
-    public String getComment() {
-    	return this.comment;
-    }
-    
-    public String getEmail() {
-    	return this.email;
-    }
-    
-    public String getUserName() {
-    	return this.name;
-    }
-
-	public String getReportId() {
-		return this.reportId;
-	}
-    
 	public boolean isNotShowAgain() {
 		return this.doNotShowAgain;
 	}
     
 	public void saveChanges() {
-    	this.comment = this.commentText.getText().trim();
-    	this.name = this.nameText.getText().trim();
-    	this.email = this.emailText.getText().trim();
-    	if (this.email.length() > 0) {
-			this.mailHistory.addLine(this.email);
+    	String name = this.nameText.getText().trim();
+    	String email = this.emailText.getText().trim();
+		this.reporter.setUserName(name);
+		this.reporter.setUserEMail(email);
+		this.reporter.setUserComment(this.commentText.getText().trim());
+    	if (email.length() > 0) {
+			this.mailHistory.addLine(email);
 		} 
 		else {
 			this.mailHistory.clear();
 		}
-		if (this.name.length() > 0) {
-			this.userNameHistory.addLine(this.name);	
+		if (name.length() > 0) {
+			this.userNameHistory.addLine(name);	
 		}
 		else {
 			this.userNameHistory.clear();
 		}
 		this.doNotShowAgain = this.doNotShowAgainButton.getSelection();
-		this.report = this.saveReport();
 	}
 	
 	public void cancelChanges() {
@@ -158,20 +153,34 @@ public class ReportingComposite extends Composite {
 		this.providersCombo.setLayoutData(data);
 		FileUtility.sort(this.providers, new Comparator() {
 			public int compare(Object arg0, Object arg1) {
-				IMailSettingsProvider first = (IMailSettingsProvider)arg0;
-				IMailSettingsProvider second = (IMailSettingsProvider)arg1;
-				return first.getPluginName().compareTo(second.getPluginName());
+				IReportingDescriptor first = (IReportingDescriptor)arg0;
+				IReportingDescriptor second = (IReportingDescriptor)arg1;
+				return first.getProductName().compareTo(second.getProductName());
+			}
+		});
+		//FIXME verifier name
+		manager.attachTo(this.providersCombo, new AbstractVerifier() {
+			protected String getWarningMessage(Control input) {
+				return null;
+			}
+			protected String getErrorMessage(Control input) {
+				if (ReportingComposite.this.getReporter() == null) {
+					//String msg = SVNTeamUIPlugin.instance().getResource(AbstractBranchTagPanel.this.nationalizationId + ".NodeName.Verifier.Error.Exists");
+					return "No bug and tip reporters installed.";
+				}
+				return null;
 			}
 		});
 		String []names = new String[this.providers.length];
 		for (int i = 0; i < this.providers.length; i++) {
-			names[i] = this.providers[i].getPluginName();
+			names[i] = this.providers[i].getProductName();
 		}
 		this.providersCombo.setItems(names);
 		this.providersCombo.select(0);
 		this.providersCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				ReportingComposite.this.selectedProviderIdx = ReportingComposite.this.providersCombo.getSelectionIndex();
+				int selectedProviderIdx = ReportingComposite.this.providersCombo.getSelectionIndex();
+				ReportingComposite.this.setReporter(selectedProviderIdx);
 			}
 		});
     	
@@ -261,34 +270,28 @@ public class ReportingComposite extends Composite {
 			this.doNotShowAgainButton.setVisible(false);
 		}
 		
-		Button previewButton = new Button(buttonsComposite, SWT.PUSH);
+		this.previewButton = new Button(buttonsComposite, SWT.PUSH);
 		data = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.FILL_HORIZONTAL);
-		previewButton.setText(SVNTeamUIPlugin.instance().getResource("ReportingComposite.Preview"));
+		this.previewButton.setText(SVNTeamUIPlugin.instance().getResource("ReportingComposite.Preview"));
 		data.widthHint = DefaultDialog.computeButtonWidth(previewButton);
-		previewButton.setLayoutData(data);
+		this.previewButton.setLayoutData(data);
 				
-		previewButton.addSelectionListener(new SelectionAdapter() {
+		this.previewButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+		    	String name = ReportingComposite.this.nameText.getText().trim();
+		    	String email = ReportingComposite.this.emailText.getText().trim();
+		    	ReportingComposite.this.reporter.setUserName(name);
+				ReportingComposite.this.reporter.setUserEMail(email);
+				ReportingComposite.this.reporter.setUserComment(ReportingComposite.this.commentText.getText().trim());
+				ReportingComposite.this.reporter.buildReport();
+				
 				PreviewReportPanel panel = null;
 				if (ReportingComposite.this.isError) {
-					String report = Reporter.formReport(ReportingComposite.this.getMailSettingsProvider(), 
-							ReportingComposite.this.status, 
-							ReportingComposite.this.pluginId, 
-							ReportingComposite.this.commentText.getText(), 
-							ReportingComposite.this.emailText.getText(), 
-							ReportingComposite.this.nameText.getText(),
-							ReportingComposite.this.reportId);
-					panel = new PreviewErrorReportPanel(report);
+					panel = new PreviewErrorReportPanel(ReportingComposite.this.reporter.buildReport());
 				}
 				else {
-					String report = Reporter.formReport(ReportingComposite.this.getMailSettingsProvider(),
-							ReportingComposite.this.commentText.getText(), 
-							ReportingComposite.this.emailText.getText(), 
-							ReportingComposite.this.nameText.getText(),
-							ReportingComposite.this.reportId, 
-							ReportingComposite.this.isError);
 					String msg = SVNTeamUIPlugin.instance().getResource("ReportingComposite.Preview.Title");
-					panel = new PreviewReportPanel(MessageFormat.format(msg, new String[] {ReportingComposite.this.reportType}), report);
+					panel = new PreviewReportPanel(MessageFormat.format(msg, new String[] {ReportingComposite.this.reportType}), ReportingComposite.this.reporter.buildReport());
 				}
 				DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getDisplay().getActiveShell(), panel);
 				dialog.open();
@@ -296,30 +299,13 @@ public class ReportingComposite extends Composite {
 		});
 	}
 	
-	public String saveReport() {
-		String report = null;
-		if (ReportingComposite.this.isError) {
-			report = Reporter.formReport(ReportingComposite.this.getMailSettingsProvider(), 
-					ReportingComposite.this.status, 
-					ReportingComposite.this.pluginId, 
-					ReportingComposite.this.commentText.getText(), 
-					ReportingComposite.this.emailText.getText(), 
-					ReportingComposite.this.nameText.getText(),
-					ReportingComposite.this.reportId);
+	protected void setReporter(int selectedProviderIdx) {
+		if (this.providers.length > selectedProviderIdx) {
+			this.reporter = ExtensionsManager.getInstance().getReporter(this.providers[selectedProviderIdx], this.isError ? ReportType.BUG : ReportType.TIP);
+			if (this.reporter != null) {
+				this.reporter.setProblemStatus(this.status);
+			}
 		}
-		else {
-			report = Reporter.formReport(ReportingComposite.this.getMailSettingsProvider(),
-					ReportingComposite.this.commentText.getText(), 
-					ReportingComposite.this.emailText.getText(), 
-					ReportingComposite.this.nameText.getText(),
-					ReportingComposite.this.reportId, 
-					ReportingComposite.this.isError);
-		}
-		return report;
-	}
-	
-	public String getReport() {
-		return this.report;
 	}
 	
 }

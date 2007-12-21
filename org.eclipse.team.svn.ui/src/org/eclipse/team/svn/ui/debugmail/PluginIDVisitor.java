@@ -19,7 +19,7 @@ import org.eclipse.team.svn.core.SVNTeamPlugin;
  * 
  * @author Alexander Gurov
  */
-public class PluginIDVisitor implements Reporter.IStatusVisitor {
+public class PluginIDVisitor implements ReportPartsFactory.IStatusVisitor {
 	public boolean visit(IStatus status) {
 		return status.getPlugin().equals(SVNTeamPlugin.NATURE_ID);
 	}

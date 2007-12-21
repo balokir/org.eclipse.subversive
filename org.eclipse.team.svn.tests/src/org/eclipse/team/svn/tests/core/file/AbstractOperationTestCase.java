@@ -24,7 +24,7 @@ import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.file.SVNFileStorage;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.utility.SVNUtility;
-import org.eclipse.team.svn.ui.debugmail.Reporter;
+import org.eclipse.team.svn.ui.debugmail.ReportPartsFactory;
 
 /**
  * Abstract file operation test
@@ -87,7 +87,7 @@ public abstract class AbstractOperationTestCase extends TestCase {
 			assertTrue(op.getOperationName(), true);
 		}
 		else {
-			String trace = Reporter.getStackTrace(operationStatus);
+			String trace = ReportPartsFactory.getStackTrace(operationStatus);
 			assertTrue(operationStatus.getMessage() + trace, false);
 		}		
 	}

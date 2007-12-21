@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.team.svn.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.team.svn.ui" id="maildelivery" name="Mail Reporting Provider"/>
+         <meta.schema plugin="org.eclipse.team.svn.ui" id="reporterfactory" name="Reporter Factory"/>
       </appInfo>
       <documentation>
          [Enter description of this extension point.]
@@ -13,7 +13,7 @@
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="maildelivery" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="reporterfactory" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -25,7 +25,7 @@
       </complexType>
    </element>
 
-   <element name="maildelivery">
+   <element name="reporterfactory">
       <complexType>
          <attribute name="class" type="string">
             <annotation>
@@ -33,7 +33,7 @@
                   Must implement org.eclipse.team.svn.ui.extension.IMailSettingsProvider
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.team.svn.ui.extension.factory.IMailSettingsProvider"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.team.svn.ui.extension.factory.IReportingDescriptor"/>
                </appInfo>
             </annotation>
          </attribute>

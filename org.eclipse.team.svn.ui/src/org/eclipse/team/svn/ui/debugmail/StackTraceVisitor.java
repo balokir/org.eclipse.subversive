@@ -18,11 +18,11 @@ import org.eclipse.core.runtime.IStatus;
  * 
  * @author Alexander Gurov
  */
-public class StackTraceVisitor implements Reporter.IStatusVisitor {
+public class StackTraceVisitor implements ReportPartsFactory.IStatusVisitor {
 	public boolean visit(IStatus status) {
-		String output = Reporter.getOutput(status);
+		String output = ReportPartsFactory.getOutput(status);
 		return 
-			output.indexOf(".team.svn.") != -1 && 
+			output.indexOf(".eclipse.team.svn.") != -1 && 
 			output.indexOf("Could not instantiate provider") == -1 &&
 			output.indexOf("Java Model Exception: Java Model Status [") == -1 &&
 			output.indexOf("org.eclipse.team.svn.ui.operation.OpenRemoteFileOperation.openEditor") == -1;

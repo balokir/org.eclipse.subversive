@@ -26,4 +26,8 @@
 		</linkProvider>
 	</extension>
 
+	<extension point="org.eclipse.team.svn.ui.reporterfactory">
+		<reporterfactory class="org.eclipse.team.svn.mylyn.MylynReporterFactory"/>
+	</extension>
+
 </plugin>

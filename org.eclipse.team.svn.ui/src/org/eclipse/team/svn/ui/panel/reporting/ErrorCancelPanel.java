@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.composite.ReportingComposite;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
-import org.eclipse.team.svn.ui.extension.factory.IMailSettingsProvider;
+import org.eclipse.team.svn.ui.extension.factory.IReporter;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
@@ -111,8 +111,8 @@ public class ErrorCancelPanel extends AbstractDialogPanel {
 		this.optionName = optionName;
     }
     
-    public IMailSettingsProvider getMailSettingsProvider() {
-    	return this.reportingComposite.getMailSettingsProvider();
+    public IReporter getReporter() {
+    	return this.reportingComposite == null ? ReportingComposite.getDefaultReporter(this.panelType == ErrorCancelPanel.ERROR_PANEL_TYPE, this.errorStatus) : this.reportingComposite.getReporter();
     }
 
     public boolean doNotShowAgain() {
@@ -140,7 +140,7 @@ public class ErrorCancelPanel extends AbstractDialogPanel {
 			data = new GridData(GridData.FILL_HORIZONTAL);
 			separator.setLayoutData(data);
 			
-	    	this.reportingComposite = new ReportingComposite(parent, this.dialogTitle, this.plugin, this.errorStatus, this.optionName, true, null);
+	    	this.reportingComposite = new ReportingComposite(parent, this.dialogTitle, this.plugin, this.errorStatus, this.optionName, true, this);
 			data = new GridData(GridData.FILL_BOTH);
 			this.reportingComposite.setLayoutData(data);
 		}
@@ -193,25 +193,5 @@ public class ErrorCancelPanel extends AbstractDialogPanel {
     public String getImagePath() {
     	return "icons/dialogs/" + (this.panelType == ErrorCancelPanel.ERROR_PANEL_TYPE ? "operation_error.gif" : "select_revision.gif");
     }
-    
-    public String getComment() {
-    	return this.reportingComposite.getComment();
-    }
-    
-    public String getEmail() {
-    	return this.reportingComposite.getEmail();
-    }
-    
-    public String getName() {
-    	return this.reportingComposite.getUserName();
-    }
-
-	public String getReportId() {
-		return this.reportingComposite.getReportId();
-	}
-	
-	public String getReport() {
-		return this.reportingComposite.getReport();
-	}
     
 }

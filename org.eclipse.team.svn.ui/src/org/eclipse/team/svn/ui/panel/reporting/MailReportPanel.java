@@ -17,7 +17,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.ui.composite.ReportingComposite;
-import org.eclipse.team.svn.ui.extension.factory.IMailSettingsProvider;
+import org.eclipse.team.svn.ui.extension.factory.IReporter;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 
 /**
@@ -37,30 +37,10 @@ public class MailReportPanel extends AbstractDialogPanel {
 		this.defaultMessage = defaultMessage;
 	}
 	
-	public IMailSettingsProvider getMailSettingsProvider() {
-		return this.reportingComposite.getMailSettingsProvider();
+	public IReporter getReporter() {
+		return this.reportingComposite == null ? ReportingComposite.getDefaultReporter(this.isError, null) : this.reportingComposite.getReporter();
 	}
 
-    public String getComment() {
-    	return this.reportingComposite.getComment();
-    }
-    
-    public String getEmail() {
-    	return this.reportingComposite.getEmail();
-    }
-    
-    public String getName() {
-    	return this.reportingComposite.getUserName();
-    }
-
-	public String getReportId() {
-		return this.reportingComposite.getReportId();
-	}
-	
-	public String getReport() {
-		return this.reportingComposite.getReport();
-	}
-    
 	public boolean isNotShowAgain() {
 		return this.reportingComposite.isNotShowAgain();
 	}
