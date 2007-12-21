@@ -8,6 +8,23 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.0.v20071221 [21 December 2007]
+
+Fixes:
+ * Subversive 1.1.7 Bugreport broken (bug 204970)
+   + special thanks to Werner Keil
+   
+ * Create Unified Diff action handles direction incorrectly (bug 211272)
+   + special thanks to Artem Tikhomirov
+   
+ * Imporve "Problem Dialog" (bug 211398)
+   + special thanks to Joern Zaefferer
+ 
+ * Show the difference between the modified version and the current SVN revision (bug 211250)
+ * SVN 1.5 support changes (bug 213289)
+ 
+--------------------------------------------------------------------------------
+
 Version 0.7.0.v20071214 [14 December 2007]
 
 Fixes:

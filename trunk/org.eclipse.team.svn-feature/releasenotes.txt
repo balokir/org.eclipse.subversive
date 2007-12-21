@@ -5,29 +5,28 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 0.7.0.v20071214 release date: 14 December 2007
+Version 0.7.0.v20071221 release date: 21 December 2007
 
 1. What's New
 
-   The version is 0.7.0 release which build ID is v20071214. The main target of the release is 
+   The version is 0.7.0 release which build ID is v20071221. The main target of the release is 
    transferring Subversive development to Eclipse.org.
    
    Changes in compare with previous version are listed below. The full list of 
    changes you can find in Change Log.
     
 	Fixes:
-	 * Subversive Preferences dialog is substantially too wide (Bug: 212033)
-	   + special thanks to Jonathan Amir
+	 * Subversive 1.1.7 Bugreport broken (bug 204970)
+	   + special thanks to Werner Keil
 	   
-	 * Label Decorations preview widget in preferences window is too small (Bug: 212029)
-	   + special thanks to Jonathan Amir
+	 * Create Unified Diff action handles direction incorrectly (bug 211272)
+	   + special thanks to Artem Tikhomirov
 	   
-	 * bugtraq properties not read for new files (Bug: 211422)
-	   + special thanks to Ben Turner
-	
-	 * Check compatibility with the Eclipse Ganymede version (Bug: 212732)
-	 * tsvn:logminsize is not handled (Bug: 212996)
-
+	 * Imporve "Problem Dialog" (bug 211398)
+	   + special thanks to Joern Zaefferer
+	 
+	 * Show the difference between the modified version and the current SVN revision (bug 211250)
+	 * SVN 1.5 support changes (bug 213289)
 
 2. Information
 
