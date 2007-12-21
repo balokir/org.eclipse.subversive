@@ -60,6 +60,7 @@ public class DefaultCommentView implements ICommentView {
 	
 	protected BugtraqModel model;
 	protected IssueList linkList = new IssueList();
+	protected IssueList hyperList = new IssueList();
 	
 	protected final static String linkRegExp = "(?:http|https|file|svn|svn\\+[\\w]+)\\:/(?:/)?(?:/[^\\s\\|\\{\\}\"><#\\^\\~\\[\\]`]+)+";
 
@@ -90,19 +91,30 @@ public class DefaultCommentView implements ICommentView {
 				StyledText text = (StyledText)e.widget;
 				int offset = text.getCaretOffset();
 				LinkPlacement issue = DefaultCommentView.this.linkList.getLinkAt(offset);
+				LinkPlacement hIssue = DefaultCommentView.this.hyperList.getLinkAt(offset);
 				if (DefaultCommentView.this.dragEvent) {
 					DefaultCommentView.this.dragEvent = false;
 					if (issue != null) {
 						text.setCursor(DefaultCommentView.this.handCursor);
 						text.getStyleRangeAtOffset(offset).background = DefaultCommentView.this.blue;
 					}
+					else if (hIssue != null) {
+						text.setCursor(DefaultCommentView.this.handCursor);
+						text.getStyleRangeAtOffset(offset).background = DefaultCommentView.this.blue;
+					} 
 				}
 				else if (issue != null) {
 					text.setCursor(DefaultCommentView.this.busyCursor);
 					String url = DefaultCommentView.this.getModel().getResultingURL(issue);
-					if (url == null) {
-						url = issue.getURL();
+					if (url != null) {
+						Program.launch(url);
 					}
+					text.setCursor(null);
+					text.getStyleRangeAtOffset(offset).background = DefaultCommentView.this.black;
+				}
+				else if (hIssue != null) {
+					text.setCursor(DefaultCommentView.this.busyCursor);
+					String url = hIssue.getURL();
 					if (url != null) {
 						Program.launch(url);
 					}
@@ -135,6 +147,11 @@ public class DefaultCommentView implements ICommentView {
 					text.getStyleRangeAtOffset(offset).background = DefaultCommentView.this.blue;
 					DefaultCommentView.this.multilineComment.redraw();
 				}
+				else if (offset != -1 && DefaultCommentView.this.hyperList.hasLinkAt(offset)) {
+					text.setCursor(DefaultCommentView.this.handCursor);
+					text.getStyleRangeAtOffset(offset).background = DefaultCommentView.this.blue;
+					DefaultCommentView.this.multilineComment.redraw();
+				}
 				else {
 					text.setCursor(null);
 				}
@@ -144,6 +161,7 @@ public class DefaultCommentView implements ICommentView {
 		this.multilineComment.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				DefaultCommentView.this.linkList.getLinks().clear();
+				DefaultCommentView.this.hyperList.getLinks().clear();
 				StyledText textView = (StyledText)e.getSource();
 				String text = textView.getText();
 				Pattern linkPattern = Pattern.compile(DefaultCommentView.linkRegExp);
@@ -151,7 +169,7 @@ public class DefaultCommentView implements ICommentView {
 				int start = 0;
 				while (linkMatcher.find(start)) {
 					start = linkMatcher.end();
-					DefaultCommentView.this.linkList.getLinks().add(new LinkList.LinkPlacement(linkMatcher.start(), start, text));
+					DefaultCommentView.this.hyperList.getLinks().add(new LinkList.LinkPlacement(linkMatcher.start(), start, text));
 				}
 				if (DefaultCommentView.this.getModel().getMessage() != null) {
 					DefaultCommentView.this.linkList.parseMessage(text, DefaultCommentView.this.getModel());
@@ -166,7 +184,26 @@ public class DefaultCommentView implements ICommentView {
 					range.underline = true;
 					styledRanges.add(range);
 				}
-				textView.setStyleRanges((StyleRange[]) styledRanges.toArray(new StyleRange[styledRanges.size()]));
+				for (Iterator iter = DefaultCommentView.this.hyperList.getLinks().iterator(); iter.hasNext();) {
+					LinkList.LinkPlacement issue = (LinkList.LinkPlacement)iter.next();
+					StyleRange range = new StyleRange();
+					range.start  = issue.getStart();
+					range.length = issue.getEnd() - issue.getStart();
+					range.foreground = DefaultCommentView.this.blue;
+					range.underline = true;
+					styledRanges.add(range);
+				}
+				StyleRange[] sorted = (StyleRange[]) styledRanges.toArray(new StyleRange[styledRanges.size()]);
+				for (int i = 0; i < sorted.length-1; i++){
+					for (int j = sorted.length-1; j > i; j--) {
+						if (sorted[j].start < sorted[j-1].start) {
+							StyleRange tmp = sorted[j];
+							sorted[j] = sorted[j-1];
+							sorted[j-1] = tmp;
+						}
+					}
+				}
+				textView.setStyleRanges(sorted);
 			}
 		});
 		
