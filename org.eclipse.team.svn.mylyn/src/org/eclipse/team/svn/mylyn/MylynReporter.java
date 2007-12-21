@@ -94,7 +94,9 @@ public class MylynReporter extends AbstractActionOperation implements IReporter 
 
 	public String buildReport() {
 		String report = ReportPartsFactory.getVersionPart(this.settings);
-		report += ReportPartsFactory.getUserCommentPart(this.userComment);
+		if (this.userComment != null) {
+			report += ReportPartsFactory.getUserCommentPart(this.userComment);
+		}
 		report += ReportPartsFactory.getSVNClientPart();
 		
 		if (this.type == ReportType.BUG) {

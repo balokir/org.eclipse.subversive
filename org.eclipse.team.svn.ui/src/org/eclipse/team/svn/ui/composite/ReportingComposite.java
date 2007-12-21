@@ -299,6 +299,7 @@ public class ReportingComposite extends Composite {
 					dialog.open();
 				}
 			});
+			this.previewButton.setEnabled(this.reporter != null);
 		}
 	}
 	
@@ -308,6 +309,7 @@ public class ReportingComposite extends Composite {
 			if (this.reporter != null) {
 				this.reporter.setProblemStatus(this.status);
 			}
+			this.previewButton.setEnabled(this.reporter != null);
 		}
 	}
 	
