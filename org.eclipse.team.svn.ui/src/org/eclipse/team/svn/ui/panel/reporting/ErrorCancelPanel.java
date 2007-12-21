@@ -23,7 +23,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.composite.ReportingComposite;
@@ -129,19 +128,16 @@ public class ErrorCancelPanel extends AbstractDialogPanel {
 		this.errorTextField.setText(this.simpleMessage + "\n" + this.advancedMessage);
 		
 		if (this.sendMail) {
-	    	final Composite mailComposite = new Composite(parent, SWT.FILL);
+	    	Composite mailComposite = new Composite(parent, SWT.NONE);
 	    	GridLayout layout = new GridLayout();
 	    	layout.marginWidth = 0;
-	    	data = new GridData(GridData.FILL_BOTH);
+	    	layout.marginHeight = 1;
 	    	mailComposite.setLayout(layout);
+	    	data = new GridData(GridData.FILL_HORIZONTAL);
 	    	mailComposite.setLayoutData(data);
 	    	
-	    	Label separator = new Label(mailComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
+	    	this.reportingComposite = new ReportingComposite(parent, this.dialogTitle, this.plugin, this.errorStatus, this.optionName, true, this, true);
 			data = new GridData(GridData.FILL_HORIZONTAL);
-			separator.setLayoutData(data);
-			
-	    	this.reportingComposite = new ReportingComposite(parent, this.dialogTitle, this.plugin, this.errorStatus, this.optionName, true, this);
-			data = new GridData(GridData.FILL_BOTH);
 			this.reportingComposite.setLayoutData(data);
 		}
 		else {
