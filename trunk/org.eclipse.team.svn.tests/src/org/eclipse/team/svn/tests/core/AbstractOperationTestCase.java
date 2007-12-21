@@ -30,7 +30,7 @@ import org.eclipse.team.svn.core.resource.events.IResourceStatesListener;
 import org.eclipse.team.svn.core.resource.events.ResourceStatesChangedEvent;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.tests.TestPlugin;
-import org.eclipse.team.svn.ui.debugmail.Reporter;
+import org.eclipse.team.svn.ui.debugmail.ReportPartsFactory;
 
 /**
  * Abstract operation test
@@ -96,7 +96,7 @@ public abstract class AbstractOperationTestCase extends TestCase {
 			assertTrue(op.getOperationName(), true);
 		}
 		else {
-			String trace = Reporter.getStackTrace(operationStatus);
+			String trace = ReportPartsFactory.getStackTrace(operationStatus);
 			assertTrue(operationStatus.getMessage() + trace, false);
 		}		
 	}

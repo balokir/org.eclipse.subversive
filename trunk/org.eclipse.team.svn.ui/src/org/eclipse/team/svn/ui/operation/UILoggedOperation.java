@@ -13,7 +13,6 @@ package org.eclipse.team.svn.ui.operation;
 
 import java.text.MessageFormat;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -23,18 +22,19 @@ import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.SVNConnectorAuthenticationException;
 import org.eclipse.team.svn.core.connector.SVNConnectorCancelException;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
-import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.ActivityCancelledException;
 import org.eclipse.team.svn.core.operation.HiddenException;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.debugmail.Reporter;
+import org.eclipse.team.svn.ui.debugmail.ReportPartsFactory;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
-import org.eclipse.team.svn.ui.extension.factory.IMailSettingsProvider;
+import org.eclipse.team.svn.ui.extension.factory.IReporter;
+import org.eclipse.team.svn.ui.extension.factory.IReportingDescriptor;
 import org.eclipse.team.svn.ui.panel.reporting.ErrorCancelPanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
+import org.eclipse.team.svn.ui.utility.DefaultOperationWrapperFactory;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
@@ -191,10 +191,14 @@ public class UILoggedOperation extends LoggedOperation {
     
     protected static boolean showErrorImpl(final Shell shell, final String pluginID, final String operationName, final IStatus errorStatus, boolean isReportingAllowed, String optionName, String originalReport) {
     	OperationErrorInfo errorInfo = UILoggedOperation.formatMessage(errorStatus, false);
+    	if (errorInfo == null) {
+    		// cancelled
+    		return true;
+    	}
     	final ErrorCancelPanel panel;
     	//For example, if there is an NPE in the JavaSVN code or in our code - add option "Send Report" to the ErrorDialog
         //also interesting problems can be located before/after ClientCancelException, we shouldn't ignore that
-    	boolean sendReport = isReportingAllowed && SVNTeamPreferences.getMailReporterBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MAILREPORTER_ENABLED_NAME) && Reporter.checkStatus(errorStatus, new ErrorReasonVisitor());
+    	boolean sendReport = isReportingAllowed && SVNTeamPreferences.getMailReporterBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MAILREPORTER_ENABLED_NAME) && ReportPartsFactory.checkStatus(errorStatus, new ErrorReasonVisitor());
     	if (originalReport == null) {
             panel = new ErrorCancelPanel(operationName, errorInfo.numberOfErrors, errorInfo.simpleMessage, errorInfo.advancedMessage, sendReport, optionName, errorStatus, pluginID);
     	}
@@ -203,30 +207,32 @@ public class UILoggedOperation extends LoggedOperation {
     	}
         DefaultDialog dialog = new DefaultDialog(shell, panel);
         if (dialog.open() == 0 && sendReport) {
-			UIMonitorUtility.doTaskNowDefault(shell, new AbstractActionOperation("Operation.MailSending") {
-				protected void runImpl(IProgressMonitor monitor) throws Exception {
-					try {
-						Reporter.sendReport(panel.getMailSettingsProvider(), errorStatus, pluginID, operationName, panel.getComment(), panel.getEmail(), panel.getName(), panel.getReportId());	
-					}
-					catch (Exception ex) {
-						UILoggedOperation.showSendingError(ex, shell, panel.getMailSettingsProvider(), panel.getReport());
-					}
+			IReporter reporter = panel.getReporter();
+			UIMonitorUtility.doTaskNow(shell, reporter, true, new DefaultOperationWrapperFactory() {
+				protected IActionOperation wrappedOperation(IActionOperation operation) {
+					return new LoggedOperation(operation);
 				}
-			}, false);
+			});
+			if (reporter.getExecutionState() != IActionOperation.OK) {
+				UILoggedOperation.showSendingError(reporter.getStatus(), shell, reporter.getReportingDescriptor(), reporter.buildReport());
+			}
 		}
 		return panel.doNotShowAgain();
     }
     
-    public static void showSendingError(final Throwable ex, final Shell shell, final IMailSettingsProvider provider, final String originalReport) {
+    public static void showSendingError(Throwable ex, Shell shell, IReportingDescriptor provider, String originalReport) {
+    	UILoggedOperation.showSendingError(new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID, IStatus.OK, MessageFormat.format(SVNTeamUIPlugin.instance().getResource("UILoggedOperation.SendReport.Error.Message"), new String[] {provider.getEmailTo()}), ex), shell, provider, originalReport);
+	}
+    
+    public static void showSendingError(final IStatus st, final Shell shell, IReportingDescriptor provider, final String originalReport) {
 		if (SVNTeamPreferences.getMailReporterBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MAILREPORTER_ERRORS_ENABLED_NAME)) {
 			shell.getDisplay().syncExec(new Runnable() {
 				public void run() {
-					String email = provider.getEmailTo();
 					boolean doNotShowAgain = UILoggedOperation.showErrorImpl(
 							shell, 
 							SVNTeamPlugin.NATURE_ID, 
 							SVNTeamUIPlugin.instance().getResource("UILoggedOperation.SendReport.Error.Title"), 
-							new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID, IStatus.OK, MessageFormat.format(SVNTeamUIPlugin.instance().getResource("UILoggedOperation.SendReport.Error.Message"), new String[] {email}), ex), 
+							st, 
 							false, 
 							SVNTeamUIPlugin.instance().getResource("UILoggedOperation.SendReport.Error.DontShow"),
 							originalReport);
@@ -238,7 +244,7 @@ public class UILoggedOperation extends LoggedOperation {
 		}
 	}
     
-	protected static class ErrorReasonVisitor implements Reporter.IStatusVisitor {
+	protected static class ErrorReasonVisitor implements ReportPartsFactory.IStatusVisitor {
 		public boolean visit(IStatus status) {
 			Throwable t = status.getException();
 			if (t == null || t instanceof OperationCanceledException) {

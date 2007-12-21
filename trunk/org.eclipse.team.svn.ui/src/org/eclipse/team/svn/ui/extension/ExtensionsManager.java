@@ -13,6 +13,7 @@ package org.eclipse.team.svn.ui.extension;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -25,10 +26,13 @@ import org.eclipse.team.svn.ui.decorator.IDecorationFilter;
 import org.eclipse.team.svn.ui.extension.factory.ICheckoutFactory;
 import org.eclipse.team.svn.ui.extension.factory.ICommitActionFactory;
 import org.eclipse.team.svn.ui.extension.factory.IHistoryViewFactory;
-import org.eclipse.team.svn.ui.extension.factory.IMailSettingsProvider;
+import org.eclipse.team.svn.ui.extension.factory.IReporter;
+import org.eclipse.team.svn.ui.extension.factory.IReporterFactory;
+import org.eclipse.team.svn.ui.extension.factory.IReportingDescriptor;
 import org.eclipse.team.svn.ui.extension.factory.IPredefinedPropertySet;
 import org.eclipse.team.svn.ui.extension.factory.IShareProjectFactory;
 import org.eclipse.team.svn.ui.extension.factory.ISynchronizeViewActionContributor;
+import org.eclipse.team.svn.ui.extension.factory.IReporterFactory.ReportType;
 import org.eclipse.team.svn.ui.extension.impl.DefaultCheckoutFactory;
 import org.eclipse.team.svn.ui.extension.impl.DefaultCommitActionFactory;
 import org.eclipse.team.svn.ui.extension.impl.DefaultDecorationFilter;
@@ -53,7 +57,8 @@ public class ExtensionsManager {
 	private IPredefinedPropertySet predefinedPropertySet;
 	private ISynchronizeViewActionContributor currentActionContributor;
 
-	private IMailSettingsProvider []mailSettingsProviders;
+	private IReportingDescriptor []reportingDescriptors;
+	private IReporterFactory []reporterFactories;
 
 	private static ExtensionsManager instance;
 
@@ -108,8 +113,18 @@ public class ExtensionsManager {
 		this.currentShareProjectFactory = factory;
 	}
 	
-	public IMailSettingsProvider []getMailSettingsProviders() {
-		return this.mailSettingsProviders;
+	public IReportingDescriptor []getReportingDescriptors() {
+		return this.reportingDescriptors;
+	}
+	
+	public IReporter getReporter(IReportingDescriptor descriptor, ReportType type) {
+		for (int i = 0; i < this.reporterFactories.length; i++) {
+			IReporter reporter = this.reporterFactories[i].newReporter(descriptor, type);
+			if (reporter != null) {
+				return reporter;
+			}
+		}
+		return null;
 	}
 	
 	public ICommitActionFactory getCurrentCommitFactory() {
@@ -174,8 +189,17 @@ public class ExtensionsManager {
 		this.currentCheckoutFactory = (ICheckoutFactory)this.loadUIExtension("checkout");
 		this.currentShareProjectFactory = (IShareProjectFactory)this.loadUIExtension("shareproject");
 		this.currentActionContributor = (ISynchronizeViewActionContributor)this.loadUIExtension("synchronizeActionContribution");
-		Object []extensions = this.loadUIExtensions("maildelivery");
-		this.mailSettingsProviders = (IMailSettingsProvider [])Arrays.asList(extensions).toArray(new IMailSettingsProvider[extensions.length]);
+		Object []extensions = this.loadUIExtensions("reportingdescriptor");
+		this.reportingDescriptors = (IReportingDescriptor [])Arrays.asList(extensions).toArray(new IReportingDescriptor[extensions.length]);
+		extensions = this.loadUIExtensions("reporterfactory");
+		this.reporterFactories = (IReporterFactory [])Arrays.asList(extensions).toArray(new IReporterFactory[extensions.length]);
+		Arrays.sort(this.reporterFactories, new Comparator() {
+			public int compare(Object o1, Object o2) {
+				IReporterFactory f1 = (IReporterFactory)o1;
+				IReporterFactory f2 = (IReporterFactory)o2;
+				return f1.isCustomEditorSupported() ^ f2.isCustomEditorSupported() ? (f1.isCustomEditorSupported() ? -1 : 1) : 0;
+			}
+		});
 	}
 
 	private Object loadUIExtension(String extensionPoint) {

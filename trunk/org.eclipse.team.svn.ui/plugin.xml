@@ -7,11 +7,12 @@
    <extension-point id="decoration" name="Decoration Behaviour" schema="schema/decoration.exsd"/>
    <extension-point id="history" name="Multiline Comment View" schema="schema/history.exsd"/>
    <extension-point id="commit" name="Commit Dialog" schema="schema/commit.exsd"/>
-   <extension-point id="maildelivery" name="Mail Reporting Provider" schema="schema/maildelivery.exsd"/>
+   <extension-point id="reportingdescriptor" name="Reporting Descriptor" schema="schema/reportingdescriptor.exsd"/>
+   <extension-point id="reporterfactory" name="Reporter Factory" schema="schema/reporterfactory.exsd"/>
    <extension-point id="synchronizeActionContribution" name="Synchronize Action Contributions" schema="schema/synchronizeActionContribution.exsd"/>
    
-	<extension point="org.eclipse.team.svn.ui.maildelivery">
-		<maildelivery class="org.eclipse.team.svn.ui.extension.impl.DefaultMailSettingsProvider"/>
+	<extension point="org.eclipse.team.svn.ui.reportingdescriptor">
+		<reportingdescriptor class="org.eclipse.team.svn.ui.extension.impl.DefaultReportingDescriptor"/>
 	</extension>
 
 	<extension point="org.eclipse.team.svn.core.coreoptions">
