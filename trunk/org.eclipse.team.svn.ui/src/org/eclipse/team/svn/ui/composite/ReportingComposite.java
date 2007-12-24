@@ -149,7 +149,7 @@ public class ReportingComposite extends Composite {
 		layout.numColumns = 2;
 		this.setLayout(layout);
 		
-		if (this.providers.length > 1) {
+		if (this.providers.length > 1 || this.reporter == null) {
 			Label description1 = new Label(this, SWT.NONE);
 			data = new GridData();
 			description1.setLayoutData(data);
@@ -183,7 +183,7 @@ public class ReportingComposite extends Composite {
 		this.userNameHistory = new UserInputHistory(ReportingComposite.USER_NAME_HISTORY, 1);
 		String []mailName = this.mailHistory.getHistory();
 		
-		if (this.providers.length > 1 || this.reporter != null && !this.reporter.isCustomEditorSupported()) {
+		if (this.providers.length > 1 || this.reporter != null && !this.reporter.isCustomEditorSupported() || this.reporter == null) {
 			Label description = new Label(this, SWT.WRAP);
 			data = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
 			data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
@@ -233,9 +233,6 @@ public class ReportingComposite extends Composite {
 				this.commentText.setFocus();
 			}
 			if (manager != null) {
-				if (!doNotValidateComment) {
-					manager.attachTo(this.commentText, new NonEmptyFieldVerifier(SVNTeamUIPlugin.instance().getResource("ReportingComposite.Comment.Verifier")));
-				}
 				manager.attachTo(this.commentText, new AbstractVerifier() {
 					protected String getWarningMessage(Control input) {
 						return null;
@@ -247,6 +244,9 @@ public class ReportingComposite extends Composite {
 						return null;
 					}
 				});
+				if (!doNotValidateComment) {
+					manager.attachTo(this.commentText, new NonEmptyFieldVerifier(SVNTeamUIPlugin.instance().getResource("ReportingComposite.Comment.Verifier")));
+				}
 			}
 		}
 		
@@ -271,7 +271,7 @@ public class ReportingComposite extends Composite {
 			this.doNotShowAgainButton.setVisible(false);
 		}
 		
-		if (this.providers.length > 1 || this.reporter != null && !this.reporter.isCustomEditorSupported()) {
+		if (this.providers.length > 1 || this.reporter != null && !this.reporter.isCustomEditorSupported() || this.reporter == null) {
 			this.previewButton = new Button(buttonsComposite, SWT.PUSH);
 			data = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.FILL_HORIZONTAL);
 			this.previewButton.setText(SVNTeamUIPlugin.instance().getResource("ReportingComposite.Preview"));
@@ -299,8 +299,8 @@ public class ReportingComposite extends Composite {
 					dialog.open();
 				}
 			});
-			this.previewButton.setEnabled(this.reporter != null);
 		}
+		this.setEnablement();
 	}
 	
 	protected void setReporter(int selectedProviderIdx) {
@@ -309,7 +309,20 @@ public class ReportingComposite extends Composite {
 			if (this.reporter != null) {
 				this.reporter.setProblemStatus(this.status);
 			}
-			this.previewButton.setEnabled(this.reporter != null);
+		}
+		this.setEnablement();
+	}
+	
+	protected void setEnablement() {
+		boolean enabled = this.reporter != null && !this.reporter.isCustomEditorSupported();
+		if (this.previewButton != null) {
+			this.previewButton.setEnabled(enabled);
+		}
+		if (this.nameText != null) {
+			this.nameText.setEnabled(enabled);
+		}
+		if (this.emailText != null) {
+			this.emailText.setEnabled(enabled);
 		}
 	}
 	

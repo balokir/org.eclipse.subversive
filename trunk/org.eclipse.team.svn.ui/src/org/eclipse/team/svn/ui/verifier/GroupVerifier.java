@@ -11,8 +11,8 @@
 
 package org.eclipse.team.svn.ui.verifier;
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.swt.widgets.Control;
@@ -27,7 +27,7 @@ public class GroupVerifier extends CompositeVerifier {
     
     public GroupVerifier() {
         super();
-        this.componentsMap = new HashMap();
+        this.componentsMap = new LinkedHashMap();
     }
 
 	public boolean verify() {
