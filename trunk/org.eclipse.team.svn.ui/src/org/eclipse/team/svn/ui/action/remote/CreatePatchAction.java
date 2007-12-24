@@ -14,6 +14,8 @@ package org.eclipse.team.svn.ui.action.remote;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
@@ -21,6 +23,7 @@ import org.eclipse.team.svn.core.operation.remote.CreatePatchOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.action.AbstractRepositoryModifyWorkspaceAction;
 import org.eclipse.team.svn.ui.operation.FileToClipboardOperation;
+import org.eclipse.team.svn.ui.operation.UILoggedOperation;
 import org.eclipse.team.svn.ui.wizard.CreatePatchRemoteWizard;
 import org.eclipse.team.svn.ui.wizard.CreatePatchWizard;
 
@@ -47,7 +50,17 @@ public class CreatePatchAction extends AbstractRepositoryModifyWorkspaceAction {
 		WizardDialog dialog = new WizardDialog(this.getShell(), wizard);
 		if (dialog.open() == 0) {
 			IRepositoryResource second = resources.length == 1 ? ((CreatePatchRemoteWizard)wizard).getSelectedResource() : resources[1];
-			this.runScheduled(CreatePatchAction.getCreatePatchOperation(resources[0], second, wizard));
+			try {
+				if (resources[0].getRevision() > second.getRevision()) {
+					IRepositoryResource tmp = second;
+					second = resources[0];
+					resources[0] = tmp;
+				}
+				this.runScheduled(CreatePatchAction.getCreatePatchOperation(resources[0], second, wizard));
+			}
+			catch (SVNConnectorException ex) {
+				UILoggedOperation.reportError(SVNTeamPlugin.instance().getResource("Operation.CreatePatchRemote"), ex);
+			}
 		}
 	}
 	
