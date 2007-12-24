@@ -179,7 +179,7 @@ public class ErrorCancelPanel extends AbstractDialogPanel {
     }
     
     public void postInit() {
-    	super.postInit();
+		this.validateContent();
     }
     
     public Point getPrefferedSizeImpl() {

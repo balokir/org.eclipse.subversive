@@ -57,6 +57,15 @@ public class MailReportPanel extends AbstractDialogPanel {
         return new Point(570, SWT.DEFAULT);
     }
     
+    public void postInit() {
+    	if (this.getReporter() != null) {
+        	super.postInit();
+    	}
+    	else {
+    		this.validateContent();
+    	}
+    }
+    
 	protected void saveChangesImpl() {
 		this.reportingComposite.saveChanges();
 	}
