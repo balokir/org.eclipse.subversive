@@ -74,7 +74,7 @@ public class CopyOperation extends AbstractFileOperation {
 						CopyOperation.this.nonSVNCopy(current, monitor);
 					}
 					else {
-						proxy.copy(current.getAbsolutePath(), checked.getAbsolutePath(), SVNRevision.WORKING, new SVNProgressMonitor(CopyOperation.this, monitor, null));
+						proxy.copy(new String[] {current.getAbsolutePath()}, checked.getAbsolutePath(), SVNRevision.WORKING, new SVNProgressMonitor(CopyOperation.this, monitor, null));
 					}
 				}
 			}, monitor, files.length);

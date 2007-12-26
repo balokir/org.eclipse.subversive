@@ -274,7 +274,7 @@ public class HistoryViewImpl {
 								right = left;
 								left = tmp;
 							}
-							UIMonitorUtility.doTaskScheduledActive(new CompareRepositoryResourcesOperation(left, right));
+							UIMonitorUtility.doTaskScheduledActive(new CompareRepositoryResourcesOperation(right, left));
 						}
 						catch (SVNConnectorException ex) {
 							UILoggedOperation.reportError("Compare", ex);
@@ -837,7 +837,7 @@ public class HistoryViewImpl {
 			UIMonitorUtility.doTaskScheduledActive(new CompareResourcesOperation(this.wcResource, resource.getSelectedRevision(), resource.getPegRevision()));
 		}
 		else {
-			UIMonitorUtility.doTaskScheduledActive(new CompareRepositoryResourcesOperation(resource, this.getResourceForHeadRevision()));
+			UIMonitorUtility.doTaskScheduledActive(new CompareRepositoryResourcesOperation(this.getResourceForHeadRevision(), resource));
 		}
 	}
 	

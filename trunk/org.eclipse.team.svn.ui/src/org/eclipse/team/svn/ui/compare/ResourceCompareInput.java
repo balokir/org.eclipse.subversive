@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.ui.compare;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
@@ -32,12 +31,10 @@ import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.DiffTreeViewer;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
-import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -53,6 +50,7 @@ import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.AbstractGetFileContentOperation;
+import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.GetLocalFileContentOperation;
 import org.eclipse.team.svn.core.operation.remote.GetFileContentOperation;
@@ -74,7 +72,7 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  */
 public abstract class ResourceCompareInput extends CompareEditorInput {
 	protected ResourceCompareViewer viewer;
-	protected DiffNode root;
+	protected BaseCompareNode root;
 	
 	protected IRepositoryResource rootLeft;
 	protected IRepositoryResource rootAncestor;
@@ -92,8 +90,6 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		return this.viewer = this.createDiffViewerImpl(parent, this.getCompareConfiguration());
 	}
 	
-	protected abstract boolean isThreeWay();
-	
 	protected ResourceCompareViewer createDiffViewerImpl(Composite parent, CompareConfiguration config) {
 		return new ResourceCompareViewer(parent, config);
 	}
@@ -103,12 +99,15 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 			ResourceElement left = (ResourceElement)this.root.getLeft();
 			ResourceElement ancestor = (ResourceElement)this.root.getAncestor();
 			ResourceElement right = (ResourceElement)this.root.getRight();
+			
+			//TODO additionally decorate resources in order to show property changes
 			if ((left.getType() == ITypedElement.FOLDER_TYPE || 
 				ancestor != null && ancestor.getType() == ITypedElement.FOLDER_TYPE || 
 				right.getType() == ITypedElement.FOLDER_TYPE) &&
 				(this.root.getKind() & Differencer.CHANGE_TYPE_MASK) != 0) {
-				this.root = (DiffNode)this.root.getParent();
+				this.root = (BaseCompareNode)this.root.getParent();
 			}
+			ProgressMonitorUtility.doTaskExternal(this.root.getFetcher(), monitor);
 		}
 		monitor.done();
 		return this.root;
@@ -123,39 +122,68 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		cc.setRightLabel(this.getRightLabel());
 		cc.setRightImage(this.getRightImage());
 		
-		String leftLabel = this.getShortLeftLabel();
-		String rightLabel = this.getShortRightLabel();
-
+		ResourceElement left = this.getLeftResourceElement();
+		String leftRevisionPart = this.getRevisionPart(left);
+		String leftResourceName = left.getName();
+		ResourceElement right = this.getRightResourceElement();
+		String rightRevisionPart = this.getRevisionPart(right);
+		String rightResourceName = right.getName();
+		
 		if (this.isThreeWay()) {
 			cc.setAncestorLabel(this.getAncestorLabel());
 			cc.setAncestorImage(this.getAncestorImage());
 			
+			ResourceElement ancestor = this.getAncestorResourceElement();
+			String ancestorRevisionPart = this.getRevisionPart(ancestor);
+			String ancestorResourceName = ancestor.getName();
+			
+			String leftPart = leftResourceName + " [" + leftRevisionPart;
+			String ancestorPart = " ";
+			String rightPart = " ";
+			boolean leftEquals = leftResourceName.equals(ancestorResourceName);
+			boolean rightEquals = rightResourceName.equals(ancestorResourceName);
+			if (leftEquals) {
+				leftPart += " ";
+				if (rightEquals) {
+					ancestorPart += ancestorRevisionPart + " ";
+					rightPart += rightRevisionPart + "]";
+				}
+				else {
+					ancestorPart += ancestorRevisionPart + "] ";
+					rightPart += rightResourceName + " [" + rightRevisionPart + "]";
+				}
+			}
+			else if (rightEquals) {
+				leftPart += "] ";
+				ancestorPart += ancestorResourceName + " [" + ancestorRevisionPart + " ";
+				rightPart += rightRevisionPart + "]";
+			}
+			else {
+				leftPart += "] ";
+				ancestorPart += ancestorResourceName + " [" + ancestorRevisionPart + "] ";
+				rightPart += rightResourceName + " [" + rightRevisionPart + "]";
+			}
+
 			String format = CompareUI.getResourceBundle().getString("ResourceCompare.threeWay.title");
-			String ancestorLabel = this.getShortAncestorLabel();
-			this.setTitle(MessageFormat.format(format, new String[] {leftLabel, ancestorLabel, rightLabel}));	
+			this.setTitle(MessageFormat.format(format, new String[] {leftPart, ancestorPart, rightPart}));	
 		} 
 		else {
+			String leftPart = leftResourceName + " [" + leftRevisionPart;
+			String rightPart = " ";
+			if (leftResourceName.equals(rightResourceName)){
+				leftPart += " ";
+				rightPart += rightRevisionPart + "]";
+			}
+			else {
+				leftPart += "] ";
+				rightPart += rightResourceName + " [" + rightRevisionPart + "]";
+			}
+			
 			String format = CompareUI.getResourceBundle().getString("ResourceCompare.twoWay.title");
-			this.setTitle(MessageFormat.format(format, new String[] {leftLabel, rightLabel}));
+			this.setTitle(MessageFormat.format(format, new String[] {leftPart, rightPart}));
 		}
 	}
 	
-	protected String getShortAncestorLabel() throws Exception { 
-		String ancestorName = this.getAncestorResourceElement().getName();
-		String rightName = this.getRightResourceElement().getName();
-		String leftName = this.getLeftResourceElement().getName();
-		if (!ancestorName.equals(rightName) && ancestorName.equals(leftName)) {
-			return " " + this.getRevisionPart(this.getAncestorResourceElement()) + "] ";
-		}
-		else if (ancestorName.equals(rightName) && !ancestorName.equals(leftName)) {
-			return " " + ancestorName + " [" + this.getRevisionPart(this.getAncestorResourceElement()) + " ";
-		}
-		else if (!ancestorName.equals(rightName) && !ancestorName.equals(leftName)) {
-			return " " + ancestorName + " [" + this.getRevisionPart(this.getAncestorResourceElement()) + "] ";
-		}
-		return " " + this.getRevisionPart(this.getAncestorResourceElement()) + " ";
-	}
-
 	protected String getAncestorLabel() throws Exception {
 		return this.getLabel(this.getAncestorResourceElement());
 	}
@@ -164,30 +192,12 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		return CompareUI.getImage(RepositoryFolder.wrapChild(null, this.getAncestorResourceElement().getRepositoryResource()));
 	}
 
-	protected String getShortLeftLabel() throws Exception {
-		String revisionPart = this.getRevisionPart(this.getLeftResourceElement());
-		String leftResourceName = this.getLeftResourceElement().getName();
-		if (!this.isThreeWay() && leftResourceName.equals(this.getRightResourceElement().getName()) || this.isThreeWay() && leftResourceName.equals(this.getAncestorResourceElement().getName())) {
-			return leftResourceName + " [" + revisionPart + " ";
-		}
-		return leftResourceName + " [" + revisionPart + "] ";
-	}
-
 	protected String getLeftLabel() throws Exception {
 		return this.getLabel(this.getLeftResourceElement());
 	}
 	
 	protected Image getLeftImage() throws Exception {
 		return CompareUI.getImage(RepositoryFolder.wrapChild(null, this.getLeftResourceElement().getRepositoryResource()));
-	}
-	
-	protected String getShortRightLabel() throws Exception {
-		String rightResourceName = this.getRightResourceElement().getName();
-		String revisionPart = this.getRevisionPart(this.getRightResourceElement());
-		if (!this.isThreeWay() && rightResourceName.equals(this.getLeftResourceElement().getName()) || this.isThreeWay() && rightResourceName.equals(this.getAncestorResourceElement().getName())) {
-			return " " + revisionPart + "]";
-		}
-		return " " + rightResourceName + " [" + revisionPart + "]";
 	}
 	
 	protected String getRightLabel() throws Exception {
@@ -206,9 +216,10 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		IRepositoryResource resource = element.getRepositoryResource();
 		SVNRevision selected = resource.getSelectedRevision();
 		if (selected == SVNRevision.INVALID_REVISION) {
-			return "";
+			return SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.ResourceIsNotAvailable");
 		}
-		return "Rev:" + String.valueOf(resource.getRevision());
+		String msg = SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.RevisionSign");
+		return MessageFormat.format(msg, new String[] {String.valueOf(resource.getRevision())});
 	}
 	
 	protected ResourceElement getLeftResourceElement() {
@@ -216,7 +227,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		if (node != null) {
 			return (ResourceElement)node.getLeft();
 		}
-		if (root != null) {
+		if (this.root != null) {
 			return (ResourceElement)this.root.getLeft();
 		}
 		return new ResourceElement(this.rootLeft, org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NORMAL);
@@ -227,7 +238,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		if (node != null) {
 			return (ResourceElement)node.getRight();
 		}
-		if (root != null) {
+		if (this.root != null) {
 			return (ResourceElement)this.root.getRight();
 		}
 		return new ResourceElement(this.rootRight, org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NORMAL);
@@ -238,14 +249,10 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		if (node != null) {
 			return (ResourceElement)node.getAncestor();
 		}
-		if (root != null) {
+		if (this.root != null) {
 			return (ResourceElement)this.root.getAncestor();
 		}
 		return new ResourceElement(this.rootAncestor, org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NORMAL);
-	}
-	
-	protected ILocalResource getLocalResourceFor(IRepositoryResource base) {
-		return null;
 	}
 	
 	protected DiffNode getSelectedNode() {
@@ -271,8 +278,6 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		}
 		return node;
 	}
-	
-	protected abstract IDiffContainer makeStubNode(IDiffContainer parent, IRepositoryResource node);
 	
 	protected static int getDiffKind(int textStatus, int propStatus, int kindOverride) {
 		if (kindOverride == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.REPLACED) {
@@ -301,7 +306,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 	}
 	
 	protected int getNodeKind(SVNDiffStatus st) {
-		return SVNUtility.getNodeKind(st.path1, st.nodeKind, false);
+		return SVNUtility.getNodeKind(st.pathPrev, st.nodeKind, false);
 	}
 	
 	protected IRepositoryResource createResourceFor(IRepositoryLocation location, int kind, String url) {
@@ -317,6 +322,10 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		}
 		return retVal;
 	}
+	
+	protected abstract boolean isThreeWay();
+	protected abstract IDiffContainer makeStubNode(IDiffContainer parent, IRepositoryResource node);
+	protected abstract ILocalResource getLocalResourceFor(IRepositoryResource base);
 	
 	public class ResourceElement implements ITypedElement, IStreamContentAccessor, IContentChangeNotifier, IEditableContent {
 		protected Vector listenerList;
@@ -377,8 +386,6 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 
 		public void setContent(byte[] newContent) {
 			if (this.isEditable()) {
-				// ensure content is accessible
-				this.fetchContent(new NullProgressMonitor());
 				if (this.op != null) {
 					this.op.setContent(newContent);
 					this.fireContentChanged();
@@ -410,27 +417,20 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 			int dotIdx = fileName.lastIndexOf('.');
 			return dotIdx == -1 ? ITypedElement.UNKNOWN_TYPE : fileName.substring(dotIdx + 1);
 		}
-		
-		public void fetchContent(IProgressMonitor monitor) {
-			if (this.kind != org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NONE && this.resource instanceof IRepositoryFile && this.op == null) {
+
+		public AbstractGetFileContentOperation getFetcher() {
+			if (this.kind != org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NONE && this.resource instanceof IRepositoryFile && 
+				(this.op == null || this.op.getExecutionState() != IActionOperation.OK)) {
 				int revisionKind = this.resource.getSelectedRevision().getKind();
-				AbstractGetFileContentOperation op = 
-					revisionKind == SVNRevision.Kind.WORKING || revisionKind == SVNRevision.Kind.BASE ? 
+				return this.op = revisionKind == SVNRevision.Kind.WORKING || revisionKind == SVNRevision.Kind.BASE ? 
 					(AbstractGetFileContentOperation)new GetLocalFileContentOperation(this.localAlias.getResource(), revisionKind) : 
 					new GetFileContentOperation(this.resource);
-				UIMonitorUtility.doTaskExternalDefault(op, monitor);
-				if (op.getExecutionState() == IActionOperation.OK) {
-					this.op = op;
-				}
 			}
+			return this.op = null;
 		}
 	
 		public InputStream getContents() throws CoreException {
-			if (this.kind != org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NONE) {
-				this.fetchContent(new NullProgressMonitor());
-				return this.op == null ? null : this.op.getContent();
-			}
-			return new ByteArrayInputStream(new byte[0]);
+			return this.op == null || this.op.getExecutionState() != IActionOperation.OK ? null : this.op.getContent();
 		}
 	
 		protected void fireContentChanged() {
@@ -450,9 +450,9 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		
 		protected void handleOpen(final SelectionEvent event) {
 			final BaseCompareNode node = (BaseCompareNode)((TreeItem)event.item).getData();
-			IActionOperation fetchContent = new AbstractActionOperation("Operation.FetchContent") {
+			CompositeOperation fetchContent = node.getFetcher();
+			fetchContent.add(new AbstractActionOperation("Operation.FetchContent") {
 				protected void runImpl(IProgressMonitor monitor) throws Exception {
-					node.fetchContent(monitor);
 					final Throwable []t = new Throwable[1];
 					UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 						public void run() {
@@ -469,7 +469,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 						this.reportError(t[0]);
 					}
 				}
-			};
+			});
 			UIMonitorUtility.doTaskNowDefault(fetchContent, true);
 		}
 		
@@ -513,31 +513,35 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 	}
 	
 	protected class BaseCompareNode extends DiffNode {
-		protected IDiffElement []ordered;
-		
 		public BaseCompareNode(IDiffContainer parent, int kind) {
 			super(parent, kind);
 		}
 		
-		public void fetchContent(IProgressMonitor monitor) {
+		public CompositeOperation getFetcher() {
 			ResourceElement left = (ResourceElement)this.getLeft();
 			ResourceElement ancestor = (ResourceElement)this.getAncestor();
 			ResourceElement right = (ResourceElement)this.getRight();
-			if (left != null && !monitor.isCanceled()) {
-				monitor.subTask(MessageFormat.format(SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.FetchLeft"), new String[] {left.getRepositoryResource().getUrl()}));
-				left.fetchContent(monitor);
-				ProgressMonitorUtility.progress(monitor, 0, 3);
+			CompositeOperation op = new CompositeOperation(SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.Fetch"));
+			
+			if (left != null && left.getType() != ITypedElement.FOLDER_TYPE) {
+				AbstractGetFileContentOperation fetchOp = left.getFetcher();
+				if (fetchOp != null) {
+					op.add(fetchOp);
+				}
 			}
-			if (ancestor != null && !monitor.isCanceled()) {
-				monitor.subTask(MessageFormat.format(SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.FetchAncestor"), new String[] {ancestor.getRepositoryResource().getUrl()}));
-				ancestor.fetchContent(monitor);
-				ProgressMonitorUtility.progress(monitor, 1, 3);
+			if (ancestor != null && ancestor.getType() != ITypedElement.FOLDER_TYPE) {
+				AbstractGetFileContentOperation fetchOp = ancestor.getFetcher();
+				if (fetchOp != null) {
+					op.add(fetchOp);
+				}
 			}
-			if (right != null && !monitor.isCanceled()) {
-				monitor.subTask(MessageFormat.format(SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.FetchRight"), new String[] {right.getRepositoryResource().getUrl()}));
-				right.fetchContent(monitor);
-				ProgressMonitorUtility.progress(monitor, 2, 3);
+			if (right != null && right.getType() != ITypedElement.FOLDER_TYPE) {
+				AbstractGetFileContentOperation fetchOp = right.getFetcher();
+				if (fetchOp != null) {
+					op.add(fetchOp);
+				}
 			}
+			return op;
 		}
 		
 	}

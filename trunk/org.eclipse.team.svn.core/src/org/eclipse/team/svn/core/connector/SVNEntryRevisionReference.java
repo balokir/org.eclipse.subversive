@@ -51,4 +51,17 @@ public class SVNEntryRevisionReference extends SVNEntryReference {
 		this.revision = revision;
 	}
 
+	/**
+	 * The {@link SVNEntryRevisionReference} instance could be initialized only once because all fields are final
+	 * 
+	 * @param reference
+	 *            the entry reference
+	 * @param revision
+	 *            the source revision.
+	 */
+	public SVNEntryRevisionReference(SVNEntryReference reference, SVNRevision revision) {
+		super(reference.path, reference.pegRevision);
+		this.revision = revision;
+	}
+
 }

@@ -66,7 +66,7 @@ public class MoveResourceOperation extends AbstractActionOperation {
 		try {
 			// FIXME JavaSVN does not provide any statuses in time of extended API move
 //			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn move \"" + FileUtility.normalizePath(localSource.getWorkingCopyPath()) + "\" \"" + FileUtility.normalizePath(localDestination.getWorkingCopyPath()) + "\" --force\n");
-			proxy.move(srcPath, dstPath, ISVNConnector.Options.FORCE, new SVNProgressMonitor(this, monitor, null));
+			proxy.move(new String[] {srcPath}, dstPath, ISVNConnector.Options.FORCE, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 		    location.releaseSVNProxy(proxy);

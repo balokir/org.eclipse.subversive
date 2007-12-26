@@ -345,16 +345,16 @@ public interface ISVNConnector {
 	public long doExport(SVNEntryRevisionReference fromReference, String destPath, String nativeEOL, int depth, long options, ISVNProgressMonitor monitor)
 			throws SVNConnectorException;
 
-	public void diff(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, String relativeToDir, String outFileName, int depth, long options,
+	public void diff(SVNEntryRevisionReference refPrev, SVNEntryRevisionReference refNext, String relativeToDir, String outFileName, int depth, long options,
 			ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void diff(SVNEntryReference reference, SVNRevision revision1, SVNRevision revision2, String relativeToDir, String outFileName, int depth, long options,
+	public void diff(SVNEntryReference reference, SVNRevision revPrev, SVNRevision revNext, String relativeToDir, String outFileName, int depth, long options,
 			ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void diffStatus(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, int depth, long options, ISVNDiffStatusCallback cb,
+	public void diffStatus(SVNEntryRevisionReference refPrev, SVNEntryRevisionReference refNext, int depth, long options, ISVNDiffStatusCallback cb,
 			ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void diffStatus(SVNEntryReference reference, SVNRevision revision1, SVNRevision revision2, int depth, long options, ISVNDiffStatusCallback cb,
+	public void diffStatus(SVNEntryReference reference, SVNRevision revPrev, SVNRevision revNext, int depth, long options, ISVNDiffStatusCallback cb,
 			ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public void info(SVNEntryRevisionReference reference, int depth, ISVNEntryInfoCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException;
@@ -363,11 +363,11 @@ public interface ISVNConnector {
 
 	public void mkdir(String[] path, String message, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void move(String srcPath, String dstPath, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void move(String[] srcPaths, String dstPath, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public void move(String[] srcPath, String dstPath, String message, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void copy(String srcPath, String destPath, SVNRevision revision, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void copy(String[] srcPaths, String destPath, SVNRevision revision, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public void copy(SVNEntryRevisionReference[] srcPath, String destPath, String message, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 

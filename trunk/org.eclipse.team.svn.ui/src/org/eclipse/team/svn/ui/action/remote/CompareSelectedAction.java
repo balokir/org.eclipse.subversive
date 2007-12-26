@@ -44,7 +44,7 @@ public class CompareSelectedAction extends AbstractRepositoryTeamAction {
     	catch (SVNConnectorException ex) {
     		UILoggedOperation.reportError("Compare", ex);
     	}
-        this.runScheduled(new CompareRepositoryResourcesOperation(resources[0], resources[1]));
+        this.runScheduled(new CompareRepositoryResourcesOperation(resources[1], resources[0]));
     }
 
 	public boolean isEnabled() {

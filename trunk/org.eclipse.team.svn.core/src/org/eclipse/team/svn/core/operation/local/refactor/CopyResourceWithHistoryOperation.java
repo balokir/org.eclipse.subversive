@@ -66,7 +66,7 @@ public class CopyResourceWithHistoryOperation extends AbstractActionOperation {
         ISVNConnector proxy = location.acquireSVNProxy();
         try {
 			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn copy \"" + FileUtility.normalizePath(FileUtility.getWorkingCopyPath(this.source)) + "\" \"" + FileUtility.getWorkingCopyPath(this.destination) + "\"\n");
-			proxy.copy(FileUtility.getWorkingCopyPath(this.source), FileUtility.getWorkingCopyPath(this.destination), SVNRevision.WORKING, new SVNProgressMonitor(this, monitor, null));
+			proxy.copy(new String[] {FileUtility.getWorkingCopyPath(this.source)}, FileUtility.getWorkingCopyPath(this.destination), SVNRevision.WORKING, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 		    location.releaseSVNProxy(proxy);
