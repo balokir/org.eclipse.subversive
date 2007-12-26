@@ -49,7 +49,7 @@ public class CompareAction extends AbstractRepositoryTeamAction {
         	catch (SVNConnectorException ex) {
         		UILoggedOperation.reportError("Compare", ex);
         	}
-            this.runScheduled(new CompareRepositoryResourcesOperation(first, second));
+            this.runScheduled(new CompareRepositoryResourcesOperation(second, first));
         }
     }
 

@@ -37,14 +37,14 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  * @author Alexander Gurov
  */
 public class CompareRepositoryResourcesOperation extends AbstractActionOperation {
-	protected IRepositoryResource left;
-	protected IRepositoryResource right;
+	protected IRepositoryResource next;
+	protected IRepositoryResource prev;
 	protected IRepositoryResourceProvider provider;
 
-	public CompareRepositoryResourcesOperation(IRepositoryResource left, IRepositoryResource right) {
+	public CompareRepositoryResourcesOperation(IRepositoryResource prev, IRepositoryResource next) {
 		super("Operation.CompareRepository");
-		this.left = left;
-		this.right = right;
+		this.prev = prev;
+		this.next = next;
 	}
 	
 	public CompareRepositoryResourcesOperation(IRepositoryResourceProvider provider) {
@@ -55,23 +55,23 @@ public class CompareRepositoryResourcesOperation extends AbstractActionOperation
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		if (this.provider != null) {
 			IRepositoryResource []toCompare = this.provider.getRepositoryResources(); 
-			this.left = toCompare[0];
-			this.right = toCompare[1];
+			this.prev = toCompare[0];
+			this.next = toCompare[1];
 		}
 		
-		IRepositoryLocation location = this.left.getRepositoryLocation();
+		IRepositoryLocation location = this.prev.getRepositoryLocation();
 		final ISVNConnector proxy = location.acquireSVNProxy();
 		final SVNDiffStatus [][]statuses = new SVNDiffStatus[1][];
 		
 		this.protectStep(new IUnprotectedOperation() {
 			public void run(IProgressMonitor monitor) throws Exception {
-				SVNEntryRevisionReference ref1 = SVNUtility.getEntryRevisionReference(CompareRepositoryResourcesOperation.this.right);
-				SVNEntryRevisionReference ref2 = SVNUtility.getEntryRevisionReference(CompareRepositoryResourcesOperation.this.left);
-				if (SVNUtility.useSingleReferenceSignature(ref1, ref2)) {
-					statuses[0] = SVNUtility.diffStatus(proxy, ref1, ref1.revision, ref2.revision, Depth.INFINITY, ISVNConnector.Options.NONE, new SVNProgressMonitor(CompareRepositoryResourcesOperation.this, monitor, null, false));
+				SVNEntryRevisionReference refPrev = SVNUtility.getEntryRevisionReference(CompareRepositoryResourcesOperation.this.prev);
+				SVNEntryRevisionReference refNext = SVNUtility.getEntryRevisionReference(CompareRepositoryResourcesOperation.this.next);
+				if (SVNUtility.useSingleReferenceSignature(refPrev, refNext)) {
+					statuses[0] = SVNUtility.diffStatus(proxy, refPrev, refPrev.revision, refNext.revision, Depth.INFINITY, ISVNConnector.Options.NONE, new SVNProgressMonitor(CompareRepositoryResourcesOperation.this, monitor, null, false));
 				}
 				else {
-					statuses[0] = SVNUtility.diffStatus(proxy, ref1, ref2, Depth.INFINITY, ISVNConnector.Options.NONE, new SVNProgressMonitor(CompareRepositoryResourcesOperation.this, monitor, null, false));
+					statuses[0] = SVNUtility.diffStatus(proxy, refPrev, refNext, Depth.INFINITY, ISVNConnector.Options.NONE, new SVNProgressMonitor(CompareRepositoryResourcesOperation.this, monitor, null, false));
 				}
 			}
 		}, monitor, 2);
@@ -83,7 +83,7 @@ public class CompareRepositoryResourcesOperation extends AbstractActionOperation
 				public void run(IProgressMonitor monitor) throws Exception {
 					CompareConfiguration cc = new CompareConfiguration();
 					cc.setProperty(CompareEditor.CONFIRM_SAVE_PROPERTY, Boolean.FALSE);
-					final TwoWayResourceCompareInput compare = new TwoWayResourceCompareInput(cc, CompareRepositoryResourcesOperation.this.left, CompareRepositoryResourcesOperation.this.right, statuses[0]);
+					final TwoWayResourceCompareInput compare = new TwoWayResourceCompareInput(cc, CompareRepositoryResourcesOperation.this.next, CompareRepositoryResourcesOperation.this.prev, statuses[0]);
 					compare.initialize(monitor);
 					UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 						public void run() {
@@ -96,7 +96,7 @@ public class CompareRepositoryResourcesOperation extends AbstractActionOperation
 	}
 	
     protected String getShortErrorMessage(Throwable t) {
-		return MessageFormat.format(super.getShortErrorMessage(t), new String[] {this.left.getName(), this.right.getName()});
+		return MessageFormat.format(super.getShortErrorMessage(t), new String[] {this.next.getName(), this.prev.getName()});
 	}
 
 }

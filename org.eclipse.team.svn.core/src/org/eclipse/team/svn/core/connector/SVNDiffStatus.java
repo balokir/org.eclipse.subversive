@@ -25,12 +25,12 @@ public class SVNDiffStatus {
 	/**
 	 * The first entry-related resource path or URL
 	 */
-	public final String path1;
+	public final String pathPrev;
 
 	/**
 	 * The second entry-related resource path or URL
 	 */
-	public final String path2;
+	public final String pathNext;
 
 	/**
 	 * The entry kind (see {@link Kind})
@@ -50,9 +50,9 @@ public class SVNDiffStatus {
 	/**
 	 * The {@link SVNDiffStatus} instance could be initialized only once because all fields are final
 	 * 
-	 * @param path1
+	 * @param pathPrev
 	 *            The first entry-related resource path or URL
-	 * @param path2
+	 * @param pathNext
 	 *            The second entry-related resource path or URL
 	 * @param nodeKind
 	 *            The entry kind (see {@link Kind})
@@ -62,8 +62,8 @@ public class SVNDiffStatus {
 	 *            The entries properties diff status (see {@link SVNEntryStatus.Kind})
 	 */
 	public SVNDiffStatus(String path1, String path2, int nodeKind, int textStatus, int propStatus) {
-		this.path1 = path1;
-		this.path2 = path2;
+		this.pathPrev = path1;
+		this.pathNext = path2;
 		this.nodeKind = nodeKind;
 		this.textStatus = textStatus;
 		this.propStatus = propStatus;

@@ -506,7 +506,7 @@ public class AffectedPathsComposite extends Composite {
 		}
 		
 		public IRepositoryResource []getRepositoryResources() {
-			return new IRepositoryResource[] {this.remoteResource, this.right};
+			return new IRepositoryResource[] {this.right, this.remoteResource};
 		}
 		
     }

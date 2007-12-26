@@ -96,7 +96,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 			localChanges.put(url, this.localChanges[i]);
 		}
 		for (int i = 0; i < this.remoteChanges.length; i++) {
-			String url = SVNUtility.decodeURL(this.remoteChanges[i].path1);
+			String url = SVNUtility.decodeURL(this.remoteChanges[i].pathPrev);
 			allChangesSet.add(url);
 			remoteChanges.put(url, this.remoteChanges[i]);
 		}
@@ -221,7 +221,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		ancestor.setSelectedRevision(SVNRevision.BASE);
 		ancestor.setPegRevision(null);
 		
-		String rightUrl = stRight != null ? SVNUtility.decodeURL(stRight.path1) : (stLeft != null && stLeft.isCopied ? SVNUtility.decodeURL(stLeft.urlCopiedFrom) : oldUrl);
+		String rightUrl = stRight != null ? SVNUtility.decodeURL(stRight.pathPrev) : (stLeft != null && stLeft.isCopied ? SVNUtility.decodeURL(stLeft.urlCopiedFrom) : oldUrl);
 		IRepositoryResource right = this.createResourceFor(location, rightNodeKind, rightUrl);
 		right.setPegRevision(this.rootRight.getPegRevision());
 		right.setSelectedRevision(this.rootRight.getSelectedRevision());
