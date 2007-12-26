@@ -14,6 +14,7 @@ package org.eclipse.team.svn.core.extension.factory;
 import java.io.OutputStream;
 
 import org.eclipse.team.svn.core.connector.ISVNAnnotationCallback;
+import org.eclipse.team.svn.core.connector.ISVNChangeListCallback;
 import org.eclipse.team.svn.core.connector.ISVNConflictResolutionCallback;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNCredentialsPrompt;
@@ -628,10 +629,10 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 
-	public void addToChangelist(String[] paths, String changelist, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void addToChangeList(String[] paths, String changelist, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.connector.addToChangelist(paths, changelist, monitor);
+			this.connector.addToChangeList(paths, changelist, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
@@ -648,10 +649,10 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 
-	public String[] getChangelist(String changelist, String rootPath, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void dumpChangeLists(String[] changeLists, String rootPath, int depth, ISVNChangeListCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			return this.connector.getChangelist(changelist, rootPath, monitor);
+			this.connector.dumpChangeLists(changeLists, rootPath, depth, cb, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
@@ -688,10 +689,10 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 
-	public void removeFromChangelist(String[] paths, String changelist, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void removeFromChangeList(String[] paths, String changelist, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.connector.removeFromChangelist(paths, changelist, monitor);
+			this.connector.removeFromChangeList(paths, changelist, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);

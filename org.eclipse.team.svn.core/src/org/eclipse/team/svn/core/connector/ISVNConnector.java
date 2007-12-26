@@ -328,11 +328,11 @@ public interface ISVNConnector {
 
 	public void setConflictResolver(ISVNConflictResolutionCallback listener);
 
-	public void addToChangelist(String[] paths, String changelist, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void addToChangeList(String[] paths, String changelist, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void removeFromChangelist(String[] paths, String changelist, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void removeFromChangeList(String[] paths, String changelist, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public String[] getChangelist(String changelist, String rootPath, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void dumpChangeLists(String[] changeLists, String rootPath, int depth, ISVNChangeListCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public void merge(SVNEntryReference reference, SVNRevisionRange[] revisions, String mergePath, SVNMergeStatus[] mergeStatus, long options, ISVNProgressMonitor monitor)
 			throws SVNConnectorException;
