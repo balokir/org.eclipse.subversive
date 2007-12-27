@@ -12,16 +12,20 @@
 package org.eclipse.team.svn.ui.panel.view.property;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -41,11 +45,14 @@ import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.extension.factory.PredefinedProperty;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
+import org.eclipse.team.svn.ui.verifier.AbstractFormattedVerifier;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifierProxy;
+import org.eclipse.team.svn.ui.verifier.CompositePropertiesVerifier;
 import org.eclipse.team.svn.ui.verifier.CompositeVerifier;
 import org.eclipse.team.svn.ui.verifier.ExistingResourceVerifier;
 import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
 import org.eclipse.team.svn.ui.verifier.PropertyNameVerifier;
+import org.eclipse.team.svn.ui.verifier.PropertyVerifier;
 
 /**
  * Edit property panel
@@ -60,6 +67,7 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 	protected Combo nameField;
 	protected Text valueField;
 	protected Text fileField;
+	protected Text descriptionField;
 	protected Button recursiveButton;
 	protected ApplyPropertyMethodComposite applyComposite;
 	protected SVNProperty source;
@@ -74,6 +82,8 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 	protected boolean applyToFiles;
 	protected boolean applyToFolders;
 	protected List predefinedProperties;
+	protected HashMap<String, String> predefinedPropertiesRegexps;
+	protected HashMap<String, AbstractFormattedVerifier> verifiers;
 	protected IResource []selectedResources;
 
 	public PropertyEditPanel(SVNProperty data, IResource []selectedResources) {
@@ -84,7 +94,18 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 		this.selectedResources = selectedResources;
 		this.resourcesType = this.computeResourcesType();
 		this.predefinedProperties = ExtensionsManager.getInstance().getPredefinedPropertySet().getPredefinedProperties(this.selectedResources);
+		this.predefinedPropertiesRegexps = ExtensionsManager.getInstance().getPredefinedPropertySet().getPredefinedPropertiesRegexps(this.selectedResources);
+		this.createVerifiersMap();
 		this.dialogDescription = SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.Description");
+	}
+	
+	private void createVerifiersMap() {
+		this.verifiers = new HashMap<String, AbstractFormattedVerifier>();
+		String [] properties = {};
+		properties = this.predefinedPropertiesRegexps.keySet().toArray(properties);
+		for (int i = 0; i <  properties.length; i++) {
+			this.verifiers.put(properties[i], new PropertyVerifier("EditPropertiesInputField", this.predefinedPropertiesRegexps.get(properties[i]), properties[i]));
+		}
 	}
 	
 	public boolean isFileSelected() {
@@ -139,7 +160,8 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 			public void widgetSelected(SelectionEvent e) {
 				String selected = PropertyEditPanel.this.nameField.getItem(PropertyEditPanel.this.nameField.getSelectionIndex());
 				PredefinedProperty prop = PropertyEditPanel.this.getPredefinedProperty(selected);
-				PropertyEditPanel.this.valueField.setText(prop.value);				
+				PropertyEditPanel.this.valueField.setText(prop.value);
+				PropertyEditPanel.this.descriptionField.setText(PropertyEditPanel.this.getDescriptionText());
 			}
 			public void widgetDefaultSelected(SelectionEvent e) {				
 			}			
@@ -150,8 +172,43 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 				if (prop != null) {
 					PropertyEditPanel.this.valueField.setText(prop.value);	
 				}
+				PropertyEditPanel.this.descriptionField.setText(PropertyEditPanel.this.getDescriptionText());
 			}
 		});
+		
+		Composite descriptionComposite = new Composite(composite, SWT.NULL | SWT.BORDER);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		descriptionComposite.setLayoutData(data);
+		GridLayout descriptionLayout = new GridLayout();
+		descriptionLayout.horizontalSpacing = 5;
+		descriptionLayout.numColumns = 2;
+		descriptionComposite.setLayout(descriptionLayout);
+
+		Label bulb = new Label(descriptionComposite, SWT.NULL);
+		bulb.setImage(SVNTeamUIPlugin.instance().getImageDescriptor("icons/dialogs/bulb.png").createImage());
+		data = new GridData();
+		data.verticalAlignment = SWT.TOP;
+		bulb.setLayoutData(data);
+		
+		this.descriptionField = new Text(descriptionComposite, SWT.WRAP);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.verticalAlignment = SWT.TOP;
+		data.grabExcessVerticalSpace = true;
+		data.heightHint = 50;
+		
+		this.descriptionField.setLayoutData(data);
+		this.descriptionField.setText(this.getDescriptionText());
+		this.descriptionField.setBackground(this.descriptionField.getBackground());
+		this.descriptionField.addFocusListener(new FocusAdapter() {
+			   public void focusGained(FocusEvent e) {
+				    ((Text)e.widget).traverse(SWT.TRAVERSE_TAB_NEXT);
+			   }
+		});
+		descriptionComposite.setBackground(this.descriptionField.getBackground());
+		bulb.setBackground(this.descriptionField.getBackground());
+		this.descriptionField.setEditable(false);
+		
+		
 		CompositeVerifier verifier = new CompositeVerifier();
 		String name = SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.Name.Verifier");
 		verifier.add(new NonEmptyFieldVerifier(name));
@@ -161,6 +218,8 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 		Button editManual = new Button(composite, SWT.RADIO);
 		
 		this.valueField = new Text(composite, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		CompositePropertiesVerifier valueVerifier = new CompositePropertiesVerifier(this.nameField, this.verifiers);
+		this.attachTo(valueField, valueVerifier);
 
 		data = new GridData();
 		editManual.setLayoutData(data);
@@ -264,9 +323,10 @@ public class PropertyEditPanel extends AbstractDialogPanel {
     }
 
 	public String getDefaultMessage() {
-		if (this.nameField == null) {
-			return super.getDefaultMessage();
-		}
+		return SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.DefaultMessage");
+	}
+	
+	protected String getDescriptionText() {
 		PredefinedProperty prop = this.getPredefinedProperty(this.nameField.getText());
 		if (prop == null) {
 			return SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.UserDefined");
@@ -329,4 +389,7 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 		return null;
 	}
 	
+	protected Point getPrefferedSizeImpl() {
+        return new Point(590, SWT.DEFAULT);
+    }	
 }

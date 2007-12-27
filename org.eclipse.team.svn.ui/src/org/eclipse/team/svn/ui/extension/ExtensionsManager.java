@@ -154,7 +154,7 @@ public class ExtensionsManager {
 	}
 	
 	public IPredefinedPropertySet getPredefinedPropertySet() {		
-		return this.predefinedPropertySet;		
+		return this.predefinedPropertySet;	
 	}
 
 	public static ICommitActionFactory getDefaultTeamCommitFactory() {
