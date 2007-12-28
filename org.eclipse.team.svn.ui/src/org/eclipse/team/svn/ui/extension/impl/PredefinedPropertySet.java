@@ -53,13 +53,11 @@ public class PredefinedPropertySet implements IPredefinedPropertySet {
 		
 		HashMap<String, String> regexpmap = new HashMap();
 		
-		regexpmap.put("svn:eol-style", "((native)|(LF)|(CR)|(CRLF))?");
+		regexpmap.put("svn:eol-style", "((native)|(LF)|(CR)|(CRLF))");
 		regexpmap.put("svn:executable", null);
 		regexpmap.put("svn:externals", "");
-		//TODO write a regExp for ignore
-		regexpmap.put("svn:ignore", null);
-		//TODO write a regExp for keywords
-		regexpmap.put("svn:keywords", null);
+		regexpmap.put("svn:ignore", "((\\?+)|(\\*+)|(\\w+)|(\\.+)|(\\s+))+");
+		regexpmap.put("svn:keywords", "((Date)|(Revision)|(Author)|(HeadURL)|(Id)|(LastChangedDate)|(Rev)|(LastChangedBy)|(URL)|(\\s))+");
 		regexpmap.put("svn:needs-lock", null);
 		regexpmap.put("svn:mime-type", null);
 		this.getBugtrackRegExps(regexpmap);
@@ -95,9 +93,7 @@ public class PredefinedPropertySet implements IPredefinedPropertySet {
 		regexpmap.put("bugtraq:url", "((http:\\/\\/)|(https:\\/\\/))(\\S+)?((\\%BUGID\\%))(\\S+)?");
 		regexpmap.put("bugtraq:logregex", "");
 		regexpmap.put("bugtraq:label", null);
-		//TODO write a regExp for message
-		//regexpmap.put("bugtraq:message", "((.+)|(\\s+)|(\\n+)|(\\r+)|(\\r\\n+))?(\\%BUGID\\%)((.+)|(\\s+)|(\\n+)|(\\r+)|(\\r\\n+))?");
-		regexpmap.put("bugtraq:message", null);
+		regexpmap.put("bugtraq:message", "");
 		regexpmap.put("bugtraq:number", "((true)|(false))");
 		regexpmap.put("bugtraq:warnifnoissue", "((true)|(false))");
 		regexpmap.put("bugtraq:append", "((true)|(false))");
