@@ -63,6 +63,12 @@ public class PropertyVerifier extends AbstractFormattedVerifier {
 			}
 			return null;
 		}
+		if (this.propName.equals("bugtraqmessage")) {
+			if (!inputText.contains("%BUGID%")) {
+				return SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.Verifier." + this.propName);
+			}
+			return null;
+		}
 		if (this.propName.equals("svnexternals")) {
 			try {
 				SVNUtility.parseSVNExternalsProperty(inputText);
