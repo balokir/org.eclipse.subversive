@@ -168,10 +168,10 @@ public class PropertiesComposite extends Composite {
 		table.setLayout(tableLayout);
 
 		this.propertyText = new Text(innerSashForm, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		this.propertyText.setEditable(false);
 		this.propertyText.setBackground(this.propertyText.getBackground());
+		this.propertyText.setEditable(false);
 		data = new GridData(GridData.FILL_BOTH);
-		propertyText.setLayoutData(data);
+		this.propertyText.setLayoutData(data);
 
 		innerSashForm.setWeights(new int[] {70, 30});
 		

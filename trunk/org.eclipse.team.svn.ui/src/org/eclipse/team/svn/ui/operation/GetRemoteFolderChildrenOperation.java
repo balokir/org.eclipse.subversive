@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.ui.operation;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -33,7 +34,6 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.core.resource.IRepositoryResource.Information;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
-import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
@@ -106,7 +106,7 @@ public class GetRemoteFolderChildrenOperation extends AbstractActionOperation {
 		}
 		
 		if (this.sortChildren) {
-			FileUtility.sort(tmp, new Comparator() {
+			Arrays.sort(tmp, new Comparator() {
 				public int compare(Object o1, Object o2) {
 					IRepositoryResource first = (IRepositoryResource)o1;
 					IRepositoryResource second = (IRepositoryResource)o2;

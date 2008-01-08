@@ -120,7 +120,7 @@ public class CheckoutAction extends AbstractRepositoryModifyWorkspaceAction {
 					existingSet.addAll(existingResources.keySet());
 					existingSet.addAll(existingFolders.keySet());
 					String []retVal = (String [])existingSet.toArray(new String[existingSet.size()]);
-					FileUtility.sort(retVal);
+					Arrays.sort(retVal);
 					return retVal;
 				}
 				public void dispose() {

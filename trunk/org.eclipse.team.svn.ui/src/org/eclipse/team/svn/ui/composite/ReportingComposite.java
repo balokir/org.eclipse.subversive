@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.ui.composite;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Comparator;
 
 import org.eclipse.core.runtime.IStatus;
@@ -27,7 +28,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
@@ -158,7 +158,7 @@ public class ReportingComposite extends Composite {
 			this.providersCombo = new Combo(this, SWT.BORDER | SWT.READ_ONLY);
 			data = new GridData(GridData.FILL_HORIZONTAL);
 			this.providersCombo.setLayoutData(data);
-			FileUtility.sort(this.providers, new Comparator() {
+			Arrays.sort(this.providers, new Comparator() {
 				public int compare(Object arg0, Object arg1) {
 					IReportingDescriptor first = (IReportingDescriptor)arg0;
 					IReportingDescriptor second = (IReportingDescriptor)arg1;

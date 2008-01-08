@@ -239,7 +239,7 @@ public class ShareProjectOperation extends AbstractWorkingCopyOperation {
 	
 	protected IRepositoryResource []getOrderedSet(Set fullSet) {
 		IRepositoryResource [] resources = (IRepositoryResource [])fullSet.toArray(new IRepositoryResource[fullSet.size()]);
-		FileUtility.sort(resources, new Comparator() {
+		Arrays.sort(resources, new Comparator() {
 			public int compare(Object arg0, Object arg1) {
 				IRepositoryResource first = (IRepositoryResource)arg0;
 				IRepositoryResource second = (IRepositoryResource)arg1;

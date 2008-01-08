@@ -63,7 +63,7 @@ public class CreateFolderOperation extends AbstractRepositoryOperation implement
 		IRepositoryResource []toBeCreated = (IRepositoryResource [])fullSet.toArray(new IRepositoryResource[fullSet.size()]);
 		
 		final String []childUrls = SVNUtility.asURLArray(toBeCreated, true);
-		FileUtility.sort(childUrls);
+		Arrays.sort(childUrls);
 		
 		ISVNNotificationCallback notify = new ISVNNotificationCallback() {
 			public void notify(SVNNotification info) {

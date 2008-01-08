@@ -19,12 +19,12 @@ import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.compare.internal.CompareEditor;
 import org.eclipse.compare.internal.Utilities;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.ISVNEntryStatusCallback;
 import org.eclipse.team.svn.core.connector.SVNDiffStatus;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
@@ -35,8 +35,6 @@ import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.remote.LocateResourceURLInHistoryOperation;
-import org.eclipse.team.svn.core.resource.ILocalResource;
-import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -55,109 +53,79 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  * @author Alexander Gurov
  */
 public class CompareResourcesOperation extends AbstractActionOperation {
-	protected IResource resource;
-	protected SVNRevision revision;
-	protected SVNRevision pegRevision;
-	protected boolean useDialog = false;
+	protected IResource local;
+	protected IRepositoryResource ancestor;
+	protected IRepositoryResource remote;
+	protected boolean showInDialog;
 	
-	public CompareResourcesOperation(IResource resource, SVNRevision revision, SVNRevision pegRevision) {
-		super("Operation.CompareLocal");
-		this.resource = resource;
-		this.revision = revision;
-		this.pegRevision = pegRevision;
+	public CompareResourcesOperation(IResource local, IRepositoryResource ancestor, IRepositoryResource remote) {
+		this(local, ancestor, remote, false);
 	}
 	
-	public CompareResourcesOperation(IResource resource, SVNRevision revision, SVNRevision pegRevision, boolean useDialog) {
-		this(resource, revision, pegRevision);
-		this.useDialog = useDialog;
+	public CompareResourcesOperation(IResource local, IRepositoryResource ancestor, IRepositoryResource remote, boolean showInDialog) {
+		super("Operation.CompareLocal");
+		this.local = local;
+		this.ancestor = ancestor;
+		this.remote = remote;//null if BASE
+		this.showInDialog = showInDialog;
 	}
 
 	protected void runImpl(final IProgressMonitor monitor) throws Exception {
-		IRemoteStorage storage = SVNRemoteStorage.instance();
+		final ArrayList<SVNDiffStatus> localChanges = new ArrayList<SVNDiffStatus>();
+		final ArrayList<SVNDiffStatus> remoteChanges = new ArrayList<SVNDiffStatus>();
 		
-		final IRepositoryResource remoteBase = storage.asRepositoryResource(this.resource);
-		final ILocalResource local = storage.asLocalResource(this.resource);
-		if (local == null) {
-			return;
-		}
-
-		final SVNEntryStatus localChanges[][] = new SVNEntryStatus[1][];
-		final SVNDiffStatus remoteChanges[][] = new SVNDiffStatus[1][];
-		
-		final IRepositoryLocation location = remoteBase.getRepositoryLocation();
+		final IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(this.local);
 		final ISVNConnector proxy = location.acquireSVNProxy();
 		
 		this.protectStep(new IUnprotectedOperation() {
 			public void run(IProgressMonitor monitor) throws Exception {
-				localChanges[0] = SVNUtility.status(proxy, 
-						FileUtility.getWorkingCopyPath(CompareResourcesOperation.this.resource),
-						Depth.INFINITY, ISVNConnector.Options.IGNORE_EXTERNALS,
-						new SVNProgressMonitor(CompareResourcesOperation.this, monitor, null, false));
+				proxy.status(FileUtility.getWorkingCopyPath(CompareResourcesOperation.this.local), Depth.INFINITY, ISVNConnector.Options.IGNORE_EXTERNALS, new ISVNEntryStatusCallback() {
+					public void next(SVNEntryStatus status) {
+						localChanges.add(new SVNDiffStatus(status.path, status.path, status.nodeKind, status.textStatus, status.propStatus));
+					}
+				}, new SVNProgressMonitor(CompareResourcesOperation.this, monitor, null, false));
 			}
 		}, monitor, 3);
-		if (localChanges[0] != null && !monitor.isCanceled()) {
-			// Remove all folders that are mapped to external resources
-			ArrayList changesList = new ArrayList();
-			for (int i = 0; i < localChanges[0].length; i++) {
-				if (localChanges[0][i].textStatus != org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.EXTERNAL) {
-					changesList.add(localChanges[0][i]);
-				}
-			}
-			localChanges[0] = (SVNEntryStatus[])changesList.toArray(new SVNEntryStatus[changesList.size()]);
-			
-			if (this.revision.getKind() == Kind.HEAD || this.revision.getKind() == Kind.NUMBER) {
-				// all revisions should be set here because unversioned resources can be compared
-				IRepositoryResource tmpRight = local.isCopied() ? this.getRepositoryResourceFor(this.resource, SVNUtility.decodeURL(localChanges[0][0].urlCopiedFrom), location) : storage.asRepositoryResource(this.resource);
-				tmpRight.setSelectedRevision(this.revision);
-				tmpRight.setPegRevision(this.pegRevision);
-				LocateResourceURLInHistoryOperation op = new LocateResourceURLInHistoryOperation(new IRepositoryResource [] {tmpRight}, true);
-				ProgressMonitorUtility.doTaskExternal(op, monitor);
-				final IRepositoryResource remoteRight = op.getRepositoryResources() [0];
-				remoteBase.setPegRevision(this.pegRevision);
-				// status order may be inconsistent for next lines
-				SVNUtility.reorder(localChanges[0], true);
-				if (local.isCopied()) {
-					remoteBase.setSelectedRevision(remoteRight.getPegRevision());
-				}
-				else if (local.getRevision() != SVNRevision.INVALID_REVISION_NUMBER) {
-					remoteBase.setSelectedRevision(SVNRevision.fromNumber(local.getRevision()));
-				}
+		
+		final IRepositoryResource []diffPair = new IRepositoryResource[] {
+				this.ancestor == null ? SVNRemoteStorage.instance().asRepositoryResource(this.local) : this.ancestor, 
+				this.remote == null ? SVNRemoteStorage.instance().asRepositoryResource(this.local) : this.remote
+				};
+		SVNRevision revision = this.remote == null ? SVNRevision.BASE : this.remote.getSelectedRevision();
+		if (!monitor.isCanceled() && (revision.getKind() == Kind.HEAD || revision.getKind() == Kind.NUMBER)) {
+			LocateResourceURLInHistoryOperation op = new LocateResourceURLInHistoryOperation(diffPair, true);
+			ProgressMonitorUtility.doTaskExternal(op, monitor);
+			diffPair[0] = op.getRepositoryResources()[0];
+			diffPair[1] = op.getRepositoryResources()[1];
 				
-				remoteRight.setSelectedRevision(this.revision);
-				final String baseUrl = local.isCopied() ? remoteRight.getUrl() : remoteBase.getUrl();
-					
-				this.protectStep(new IUnprotectedOperation() {
-					public void run(IProgressMonitor monitor) throws Exception {
-						SVNEntryRevisionReference ref1 = new SVNEntryRevisionReference(SVNUtility.encodeURL(baseUrl), remoteBase.getPegRevision(), remoteBase.getSelectedRevision());
-						SVNEntryRevisionReference ref2 = SVNUtility.getEntryRevisionReference(remoteRight);
-						if (SVNUtility.useSingleReferenceSignature(ref1, ref2)) {
-							remoteChanges[0] = SVNUtility.diffStatus(proxy, ref1, ref1.revision, ref2.revision, Depth.INFINITY, ISVNConnector.Options.NONE, new SVNProgressMonitor(CompareResourcesOperation.this, monitor, null, false));
-						}
-						else {
-							remoteChanges[0] = SVNUtility.diffStatus(proxy, ref1, ref2, Depth.INFINITY, ISVNConnector.Options.NONE, new SVNProgressMonitor(CompareResourcesOperation.this, monitor, null, false));
-						}
+			this.protectStep(new IUnprotectedOperation() {
+				public void run(IProgressMonitor monitor) throws Exception {
+					SVNEntryRevisionReference refPrev = SVNUtility.getEntryRevisionReference(diffPair[0]);
+					SVNEntryRevisionReference refNext = SVNUtility.getEntryRevisionReference(diffPair[1]);
+					if (SVNUtility.useSingleReferenceSignature(refPrev, refNext)) {
+						SVNUtility.diffStatus(proxy, remoteChanges, refPrev, refPrev.revision, refNext.revision, Depth.INFINITY, ISVNConnector.Options.NONE, new SVNProgressMonitor(CompareResourcesOperation.this, monitor, null, false));
 					}
-				}, monitor, 3);
-			}
-			else {
-				remoteChanges[0] = new SVNDiffStatus[0];
-			}
+					else {
+						SVNUtility.diffStatus(proxy, remoteChanges, refPrev, refNext, Depth.INFINITY, ISVNConnector.Options.NONE, new SVNProgressMonitor(CompareResourcesOperation.this, monitor, null, false));
+					}
+				}
+			}, monitor, 3);
 		}
 		
 		location.releaseSVNProxy(proxy);
 		
-		if (remoteChanges[0] != null && !monitor.isCanceled()) {
+		if (!monitor.isCanceled()) {
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
 					CompareConfiguration cc = new CompareConfiguration();
 					cc.setProperty(CompareEditor.CONFIRM_SAVE_PROPERTY, Boolean.TRUE);
-					final ThreeWayResourceCompareInput compare = new ThreeWayResourceCompareInput(cc, CompareResourcesOperation.this.resource, CompareResourcesOperation.this.revision, CompareResourcesOperation.this.pegRevision, localChanges[0], remoteChanges[0]);
+					final ThreeWayResourceCompareInput compare = new ThreeWayResourceCompareInput(cc, CompareResourcesOperation.this.local, diffPair[1], localChanges, remoteChanges);
 					compare.initialize(monitor);
 					UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 						public void run() {
-							if (CompareResourcesOperation.this.useDialog) {
+							if (CompareResourcesOperation.this.showInDialog) {
 								if (CompareResourcesOperation.this.compareResultOK(compare)) {
-									ComparePanel panel = new ComparePanel(compare, CompareResourcesOperation.this.resource);
+									ComparePanel panel = new ComparePanel(compare, CompareResourcesOperation.this.local);
 									DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getShell(), panel);
 									dialog.open();
 								}
@@ -172,17 +140,13 @@ public class CompareResourcesOperation extends AbstractActionOperation {
 		}
 	}
 	
-	protected IRepositoryResource getRepositoryResourceFor(IResource resource, String url, IRepositoryLocation location) {
-		return resource instanceof IFile ? (IRepositoryResource)location.asRepositoryFile(url, false) : location.asRepositoryContainer(url, false);
-	}
-	
 	protected boolean compareResultOK(CompareEditorInput input) {
 		final Shell shell = UIMonitorUtility.getShell();
 		
 		try {
 			SVNTeamUIPlugin.instance().getWorkbench().getProgressService().run(true, true, input);
 						
-			String message= input.getMessage();
+			String message = input.getMessage();
 			if (message != null) {
 				MessageDialog.openError(shell, Utilities.getString("CompareUIPlugin.compareFailed"), message);
 				return false;

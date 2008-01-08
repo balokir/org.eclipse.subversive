@@ -58,6 +58,7 @@ import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRemoteStorage;
+import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
@@ -429,7 +430,9 @@ public class ResourceSelectionComposite extends Composite {
 					final IResource resource = (IResource) selection.getFirstElement();
 					UIMonitorUtility.getShell().getDisplay().syncExec(new Runnable() {
 						public void run() {
-							UIMonitorUtility.doTaskScheduledDefault(new CompareResourcesOperation(resource, SVNRevision.HEAD, null, true));
+							IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(resource);
+							remote.setSelectedRevision(SVNRevision.HEAD);
+							UIMonitorUtility.doTaskScheduledDefault(new CompareResourcesOperation(resource, null, remote, true));
 						}
 					});
 				}

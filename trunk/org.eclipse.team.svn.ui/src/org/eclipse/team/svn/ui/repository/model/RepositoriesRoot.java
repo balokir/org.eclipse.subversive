@@ -11,13 +11,13 @@
 
 package org.eclipse.team.svn.ui.repository.model;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
-import org.eclipse.team.svn.core.utility.FileUtility;
 
 /**
  * All repositories node representation 
@@ -58,7 +58,7 @@ public class RepositoriesRoot extends RepositoryFictiveNode implements IParentTr
 			}
 			
 			IRepositoryLocation []locations = SVNRemoteStorage.instance().getRepositoryLocations();
-			FileUtility.sort(locations, new Comparator() {
+			Arrays.sort(locations, new Comparator() {
 				public int compare(Object o1, Object o2) {
 					IRepositoryLocation first = (IRepositoryLocation)o1;
 					IRepositoryLocation second = (IRepositoryLocation)o2;

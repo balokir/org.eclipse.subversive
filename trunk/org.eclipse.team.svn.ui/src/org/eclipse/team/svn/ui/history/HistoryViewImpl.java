@@ -73,7 +73,6 @@ import org.eclipse.team.svn.core.operation.remote.PreparedBranchTagOperation;
 import org.eclipse.team.svn.core.operation.remote.management.AddRevisionLinkOperation;
 import org.eclipse.team.svn.core.operation.remote.management.SaveRepositoryLocationsOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
-import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -570,18 +569,20 @@ public class HistoryViewImpl {
 	public void showHistory(IResource resource, boolean background) {
 		this.wcResource = resource;
 		
-		//must be called first, to initialize backtrack model
+		//must be called first, to initialize bug-track model
 		this.history.getCommentView().usedFor(resource);
 		
 	    long currentRevision = SVNRevision.INVALID_REVISION_NUMBER;
 	    IRepositoryResource remote = null;
 		if (resource != null) {
-			IRemoteStorage storage = SVNRemoteStorage.instance();
-			ILocalResource local = storage.asLocalResource(resource);
+			remote = SVNRemoteStorage.instance().asRepositoryResource(resource);
+			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
 			if (local != null) {
 				currentRevision = local.getRevision();
+				if (local.isCopied()) {
+					remote = SVNUtility.getCopiedFrom(resource);
+				}
 			}
-			remote = storage.asRepositoryResource(resource);
 		}
 		this.showHistoryImpl(currentRevision, remote, background);
 	}
@@ -834,7 +835,7 @@ public class HistoryViewImpl {
 	protected void compareWithCurrent(Object item) {
 		IRepositoryResource resource = this.getResourceForSelectedRevision(item);
 		if (this.wcResource != null) {
-			UIMonitorUtility.doTaskScheduledActive(new CompareResourcesOperation(this.wcResource, resource.getSelectedRevision(), resource.getPegRevision()));
+			UIMonitorUtility.doTaskScheduledActive(new CompareResourcesOperation(this.wcResource, null, resource));
 		}
 		else {
 			UIMonitorUtility.doTaskScheduledActive(new CompareRepositoryResourcesOperation(this.getResourceForHeadRevision(), resource));
