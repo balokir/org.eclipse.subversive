@@ -573,7 +573,7 @@ public final class FileUtility {
 	}
 	
 	public static void reorder(IResource []resources, final boolean parent2Child) {
-		FileUtility.sort(resources, new Comparator() {
+		Arrays.sort(resources, new Comparator() {
 			public int compare(Object o1, Object o2) {
 				String first = ((IResource)o1).getFullPath().toString();
 				String second = ((IResource)o2).getFullPath().toString();
@@ -583,7 +583,7 @@ public final class FileUtility {
 	}
 	
 	public static void reorder(File []files, final boolean parent2Child) {
-		FileUtility.sort(files, new Comparator() {
+		Arrays.sort(files, new Comparator() {
 			public int compare(Object o1, Object o2) {
 				String first = ((File)o1).getAbsolutePath();
 				String second = ((File)o2).getAbsolutePath();
@@ -650,15 +650,6 @@ public final class FileUtility {
 		}
 		
 		return resourcesNames;
-	}
-	
-	public static void sort(Object []array) {
-		Arrays.sort(array);
-	}
-	
-	public static void sort(Object []array, Comparator cmp) {
-    	// mergeSort is very optimal in that case due to System.arraycopy() used for exchanges and we do not need to use qSort instead of default mergeSort
-		Arrays.sort(array, cmp);
 	}
 	
 	public static boolean hasNature(IResource resource, String natureId) throws CoreException {

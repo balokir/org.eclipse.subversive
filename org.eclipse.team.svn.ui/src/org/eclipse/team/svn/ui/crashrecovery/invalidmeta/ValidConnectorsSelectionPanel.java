@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.ui.crashrecovery.invalidmeta;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -28,7 +29,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
-import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
@@ -81,7 +81,7 @@ public class ValidConnectorsSelectionPanel extends AbstractDialogPanel {
 		this.svnConnectorField = new Combo(composite, SWT.READ_ONLY);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.svnConnectorField.setLayoutData(data);
-		FileUtility.sort(this.factories, new Comparator() {
+		Arrays.sort(this.factories, new Comparator() {
 			public int compare(Object o1, Object o2) {
 				return ((ISVNConnectorFactory)o1).getName().compareTo(((ISVNConnectorFactory)o2).getName());
 			}

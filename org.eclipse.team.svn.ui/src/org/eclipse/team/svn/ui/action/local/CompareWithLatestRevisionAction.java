@@ -19,6 +19,7 @@ import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.action.AbstractWorkingCopyAction;
 import org.eclipse.team.svn.ui.history.HistoryViewImpl;
 import org.eclipse.team.svn.ui.operation.CompareResourcesOperation;
@@ -37,20 +38,19 @@ public class CompareWithLatestRevisionAction extends AbstractWorkingCopyAction {
 	}
 	
 	public void runImpl(IAction action) {
-		IResource left = this.getSelectedResources(CompareWithWorkingCopyAction.COMPARE_FILTER)[0];
+		IResource local = this.getSelectedResources()[0];
 		
-		IRepositoryResource resource = SVNRemoteStorage.instance().asRepositoryResource(left);
-		resource.setSelectedRevision(SVNRevision.HEAD);
-		
-		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(left);
-		if (local != null) {
-			CorrectRevisionOperation correctOp = new CorrectRevisionOperation(null, resource, local.getRevision(), left);
+		ILocalResource wcInfo = SVNRemoteStorage.instance().asLocalResource(local);
+		if (wcInfo != null) {
+			IRepositoryResource ancestor = wcInfo.isCopied() ? SVNUtility.getCopiedFrom(local) : SVNRemoteStorage.instance().asRepositoryResource(local);
+			IRepositoryResource remote = SVNUtility.copyOf(ancestor);
+			remote.setSelectedRevision(SVNRevision.HEAD);
+			
+			CorrectRevisionOperation correctOp = new CorrectRevisionOperation(null, remote, wcInfo.getRevision(), local);
 			
 			if (!this.runNow(correctOp, true).isCancelled()) {
-				this.runScheduled(new CompareResourcesOperation(left, resource.getSelectedRevision(), resource.getPegRevision()));
-				if (!local.isCopied()) {
-					this.runBusy(new ShowHistoryViewOperation(resource, HistoryViewImpl.COMPARE_MODE, HistoryViewImpl.COMPARE_MODE));
-				}
+				this.runScheduled(new CompareResourcesOperation(local, ancestor, remote));
+				this.runBusy(new ShowHistoryViewOperation(local, HistoryViewImpl.COMPARE_MODE, HistoryViewImpl.COMPARE_MODE));
 			}
 		}
 	}

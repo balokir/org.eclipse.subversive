@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.ui.utility;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -26,7 +27,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 
@@ -185,7 +185,7 @@ public class TableViewerSorter extends ViewerSorter implements SelectionListener
     }
     
     public void sort(final Viewer viewer, Object []elements) {
-        FileUtility.sort(elements, new Comparator() {
+    	Arrays.sort(elements, new Comparator() {
             public int compare(Object a, Object b) {
                 return TableViewerSorter.this.compare(viewer, a, b);
             }

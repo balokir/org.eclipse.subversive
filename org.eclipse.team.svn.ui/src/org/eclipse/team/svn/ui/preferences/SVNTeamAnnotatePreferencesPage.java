@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.ui.preferences;
 
+import java.util.Arrays;
 import java.util.Comparator;
 
 import org.eclipse.jface.preference.ColorFieldEditor;
@@ -28,7 +29,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.PlatformUI;
@@ -208,7 +208,7 @@ public class SVNTeamAnnotatePreferencesPage extends AbstractSVNTeamPreferencesPa
 		});
 		
 		this.perspectives = PlatformUI.getWorkbench().getPerspectiveRegistry().getPerspectives(); 
-		FileUtility.sort(this.perspectives, new Comparator() {
+		Arrays.sort(this.perspectives, new Comparator() {
 			public int compare(Object o1, Object o2) {
 				IPerspectiveDescriptor first = (IPerspectiveDescriptor)o1;
 				IPerspectiveDescriptor second = (IPerspectiveDescriptor)o2;

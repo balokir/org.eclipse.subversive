@@ -39,7 +39,6 @@ import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
-import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.verifier.CompositeVerifier;
 import org.eclipse.team.svn.ui.verifier.IntegerFieldVerifier;
@@ -339,7 +338,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.svnConnectorField.setLayoutData(data);
 		Collection fullSet = CoreExtensionsManager.instance().getAccessibleClients();
 		this.factories = (ISVNConnectorFactory [])fullSet.toArray(new ISVNConnectorFactory[fullSet.size()]);
-		FileUtility.sort(this.factories, new Comparator() {
+		Arrays.sort(this.factories, new Comparator() {
 			public int compare(Object o1, Object o2) {
 				return ((ISVNConnectorFactory)o1).getName().compareTo(((ISVNConnectorFactory)o2).getName());
 			}

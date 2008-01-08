@@ -16,8 +16,9 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.resource.ILocalResource;
-import org.eclipse.team.svn.core.resource.IRemoteStorage;
+import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.action.AbstractWorkingCopyAction;
 import org.eclipse.team.svn.ui.operation.CompareResourcesOperation;
 
@@ -33,8 +34,14 @@ public class CompareWithWorkingCopyAction extends AbstractWorkingCopyAction {
 	}
 
 	public void runImpl(IAction action) {
-		IResource left = this.getSelectedResources()[0];
-		this.runScheduled(new CompareResourcesOperation(left, SVNRevision.BASE, null));
+		IResource local = this.getSelectedResources()[0];
+		ILocalResource wcInfo = SVNRemoteStorage.instance().asLocalResource(local);
+		if (wcInfo != null) {
+			IRepositoryResource ancestor = wcInfo.isCopied() ? SVNUtility.getCopiedFrom(local) : SVNRemoteStorage.instance().asRepositoryResource(local);
+			IRepositoryResource remote = SVNUtility.copyOf(ancestor);
+			remote.setSelectedRevision(SVNRevision.BASE);
+			this.runScheduled(new CompareResourcesOperation(local, ancestor, remote));
+		}
 	}
 
 	public boolean isEnabled() {
@@ -45,15 +52,9 @@ public class CompareWithWorkingCopyAction extends AbstractWorkingCopyAction {
 	
 	public static final IStateFilter COMPARE_FILTER = new IStateFilter() {
 		public boolean accept(IResource resource, String state, int mask) {
-			if (!IStateFilter.SF_EXCLUDE_DELETED.accept(resource, state, mask)) {
-				IRemoteStorage storage = SVNRemoteStorage.instance();
-				ILocalResource local = storage.asLocalResource(resource);
-				if (local == null || !local.isCopied()) {
-					return false;
-				}
-			}
-			return true;
+			return IStateFilter.SF_EXCLUDE_DELETED.accept(resource, state, mask) | (mask & ILocalResource.IS_COPIED) != 0;
 		}
+		
 		public boolean allowsRecursion(IResource resource, String state, int mask) {
 			return IStateFilter.SF_EXCLUDE_DELETED.accept(resource, state, mask);
 		}

@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.ui.operation;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareUI;
@@ -61,29 +62,29 @@ public class CompareRepositoryResourcesOperation extends AbstractActionOperation
 		
 		IRepositoryLocation location = this.prev.getRepositoryLocation();
 		final ISVNConnector proxy = location.acquireSVNProxy();
-		final SVNDiffStatus [][]statuses = new SVNDiffStatus[1][];
+		final ArrayList<SVNDiffStatus> statuses = new ArrayList<SVNDiffStatus>();
 		
 		this.protectStep(new IUnprotectedOperation() {
 			public void run(IProgressMonitor monitor) throws Exception {
 				SVNEntryRevisionReference refPrev = SVNUtility.getEntryRevisionReference(CompareRepositoryResourcesOperation.this.prev);
 				SVNEntryRevisionReference refNext = SVNUtility.getEntryRevisionReference(CompareRepositoryResourcesOperation.this.next);
 				if (SVNUtility.useSingleReferenceSignature(refPrev, refNext)) {
-					statuses[0] = SVNUtility.diffStatus(proxy, refPrev, refPrev.revision, refNext.revision, Depth.INFINITY, ISVNConnector.Options.NONE, new SVNProgressMonitor(CompareRepositoryResourcesOperation.this, monitor, null, false));
+					SVNUtility.diffStatus(proxy, statuses, refPrev, refPrev.revision, refNext.revision, Depth.INFINITY, ISVNConnector.Options.NONE, new SVNProgressMonitor(CompareRepositoryResourcesOperation.this, monitor, null, false));
 				}
 				else {
-					statuses[0] = SVNUtility.diffStatus(proxy, refPrev, refNext, Depth.INFINITY, ISVNConnector.Options.NONE, new SVNProgressMonitor(CompareRepositoryResourcesOperation.this, monitor, null, false));
+					SVNUtility.diffStatus(proxy, statuses, refPrev, refNext, Depth.INFINITY, ISVNConnector.Options.NONE, new SVNProgressMonitor(CompareRepositoryResourcesOperation.this, monitor, null, false));
 				}
 			}
 		}, monitor, 2);
 		
 		location.releaseSVNProxy(proxy);
 		
-		if (statuses[0] != null && !monitor.isCanceled()) {
+		if (!monitor.isCanceled()) {
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
 					CompareConfiguration cc = new CompareConfiguration();
 					cc.setProperty(CompareEditor.CONFIRM_SAVE_PROPERTY, Boolean.FALSE);
-					final TwoWayResourceCompareInput compare = new TwoWayResourceCompareInput(cc, CompareRepositoryResourcesOperation.this.next, CompareRepositoryResourcesOperation.this.prev, statuses[0]);
+					final TwoWayResourceCompareInput compare = new TwoWayResourceCompareInput(cc, CompareRepositoryResourcesOperation.this.next, CompareRepositoryResourcesOperation.this.prev, statuses);
 					compare.initialize(monitor);
 					UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 						public void run() {

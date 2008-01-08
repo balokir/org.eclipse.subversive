@@ -11,16 +11,11 @@
 
 package org.eclipse.team.svn.ui.action.local;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.team.svn.core.connector.ISVNConnector;
-import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.resource.ILocalResource;
-import org.eclipse.team.svn.core.resource.IRemoteStorage;
-import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.SVNUtility;
@@ -44,37 +39,18 @@ public class CompareWithRevisionAction extends AbstractWorkingCopyAction {
 	}
 	
 	public void runImpl(IAction action) {
-		IRemoteStorage storage = SVNRemoteStorage.instance();
-		IResource left = this.getSelectedResources()[0];
-		IRepositoryResource right = null;
-		
-		ILocalResource localLeft = storage.asLocalResource(left);
-		if (localLeft == null) {
-			return;
-		}
-		if (localLeft.isCopied()) {
-			IRepositoryLocation location = storage.getRepositoryLocation(left);
-			ISVNConnector proxy = location.acquireSVNProxy();
-			try {
-				SVNEntryStatus status = SVNUtility.getSVNInfoForNotConnected(left);
-				if (status == null) {
-					return;
-				}
-				right = left instanceof IFile ? (IRepositoryResource)location.asRepositoryFile(status.urlCopiedFrom, false) : location.asRepositoryContainer(status.urlCopiedFrom, false);
-			}
-			finally {
-				location.releaseSVNProxy(proxy);
-			}
-		}
-		else {
-			right = storage.asRepositoryResource(left);
-		}
-		InputRevisionPanel panel = new InputRevisionPanel(right, SVNTeamUIPlugin.instance().getResource("CompareWithRevisionAction.InputRevisionPanel.Title"));
-		DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
-		if (dialog.open() == 0) {
-			this.runScheduled(new CompareResourcesOperation(left, panel.getSelectedRevision(), right.getPegRevision()));
-			if (!localLeft.isCopied()) {
-				this.runBusy(new ShowHistoryViewOperation(left, HistoryViewImpl.COMPARE_MODE, HistoryViewImpl.COMPARE_MODE));
+		IResource local = this.getSelectedResources()[0];
+		ILocalResource wcInfo = SVNRemoteStorage.instance().asLocalResource(local);
+		if (wcInfo != null) {
+			IRepositoryResource ancestor = wcInfo.isCopied() ? SVNUtility.getCopiedFrom(local) : SVNRemoteStorage.instance().asRepositoryResource(local);
+			IRepositoryResource remote = SVNUtility.copyOf(ancestor);
+			
+			InputRevisionPanel panel = new InputRevisionPanel(remote, SVNTeamUIPlugin.instance().getResource("CompareWithRevisionAction.InputRevisionPanel.Title"));
+			DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
+			if (dialog.open() == 0) {
+				remote.setSelectedRevision(panel.getSelectedRevision());
+				this.runScheduled(new CompareResourcesOperation(local, ancestor, remote));
+				this.runBusy(new ShowHistoryViewOperation(local, HistoryViewImpl.COMPARE_MODE, HistoryViewImpl.COMPARE_MODE));
 			}
 		}
 	}

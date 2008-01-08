@@ -21,6 +21,7 @@ import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -62,12 +63,14 @@ import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNRevisionRange;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.ISVNConnector.Options;
 import org.eclipse.team.svn.core.connector.SVNEntry.Kind;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.options.IIgnoreRecommendations;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
 import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.operation.file.SVNFileStorage;
+import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
@@ -86,6 +89,51 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
  */
 public final class SVNUtility {
 	private static String svnFolderName = null;
+	
+	public static IRepositoryResource getCopiedFrom(IResource resource) {
+		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
+		if (local != null && local.isCopied()) {
+			IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(resource);
+			ISVNConnector proxy = location.acquireSVNProxy();
+			final SVNEntryStatus []st = new SVNEntryStatus[1];
+			try {
+				final String path = FileUtility.getWorkingCopyPath(resource);
+				proxy.status(path, ISVNConnector.Depth.EMPTY, ISVNConnector.Options.INCLUDE_UNCHANGED | Options.IGNORE_EXTERNALS, new ISVNEntryStatusCallback() {
+					public void next(SVNEntryStatus status) {
+						if (path.equals(status.path)) {
+							st[0] = status;
+						}
+					}
+				}, new SVNNullProgressMonitor());
+			}
+			catch (SVNConnectorException ex) {
+				return null;
+			}
+			finally {
+				location.releaseSVNProxy(proxy);
+			}
+			
+			if (st[0] != null) {
+				String url = st[0].urlCopiedFrom;
+				if (url == null) {
+					IResource parent = resource.getParent();
+					if (parent != null && parent.getType() != IResource.ROOT) {
+						IRepositoryResource tmp = SVNUtility.getCopiedFrom(parent);
+						if (tmp != null) {
+							url = tmp.getUrl() + "/" + resource.getName();
+						}
+					}
+				}
+				else {
+					url = SVNUtility.decodeURL(url);
+				}
+				IRepositoryResource retVal = SVNRemoteStorage.instance().asRepositoryResource(location, url, resource.getType() == IResource.FILE);
+				retVal.setSelectedRevision(SVNRevision.fromNumber(st[0].revisionCopiedFrom == SVNRevision.INVALID_REVISION_NUMBER ? st[0].revision : st[0].revisionCopiedFrom));
+				return retVal;
+			}
+		}
+		return null;
+	}
 	
 	public static Map parseSVNExternalsProperty(String property) {
 		if (property == null) {
@@ -168,24 +216,20 @@ public final class SVNUtility {
 		return (SVNEntryStatus [])statuses.toArray(new SVNEntryStatus[statuses.size()]);
 	}
 	
-	public static SVNDiffStatus []diffStatus(ISVNConnector proxy, SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
-		final ArrayList statuses = new ArrayList();
+	public static void diffStatus(ISVNConnector proxy, final Collection<SVNDiffStatus> statuses, SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		proxy.diffStatus(reference1, reference2, depth, options, new ISVNDiffStatusCallback() {
 			public void next(SVNDiffStatus status) {
 				statuses.add(status);
 			}
 		}, monitor);
-		return (SVNDiffStatus [])statuses.toArray(new SVNDiffStatus[statuses.size()]);
 	}
 	
-	public static SVNDiffStatus []diffStatus(ISVNConnector proxy, SVNEntryReference reference, SVNRevision revision1, SVNRevision revision2, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
-		final ArrayList statuses = new ArrayList();
+	public static void diffStatus(ISVNConnector proxy, final Collection<SVNDiffStatus> statuses, SVNEntryReference reference, SVNRevision revision1, SVNRevision revision2, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		proxy.diffStatus(reference, revision1, revision2, depth, options, new ISVNDiffStatusCallback() {
 			public void next(SVNDiffStatus status) {
 				statuses.add(status);
 			}
 		}, monitor);
-		return (SVNDiffStatus [])statuses.toArray(new SVNDiffStatus[statuses.size()]);
 	}
 	
 	public static SVNMergeStatus[] mergeStatus(ISVNConnector proxy, SVNEntryReference reference, SVNRevisionRange []revisions, String path, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
@@ -298,7 +342,7 @@ public final class SVNUtility {
 		}
 		IRepositoryRoot []repositoryRoots = (IRepositoryRoot [])roots.toArray(new IRepositoryRoot[roots.size()]);
 		if (!longestOnly) {
-			FileUtility.sort(repositoryRoots, new Comparator() {
+			Arrays.sort(repositoryRoots, new Comparator() {
 				public int compare(Object o1, Object o2) {
 					IRepositoryRoot first = (IRepositoryRoot)o1;
 					IRepositoryRoot second = (IRepositoryRoot)o2;
@@ -408,7 +452,7 @@ public final class SVNUtility {
 	}
 	
 	public static void reorder(SVNDiffStatus []statuses, final boolean parent2Child) {
-		FileUtility.sort(statuses, new Comparator() {
+		Arrays.sort(statuses, new Comparator() {
 			public int compare(Object o1, Object o2) {
 				String s1 = ((SVNDiffStatus)o1).pathPrev;
 				String s2 = ((SVNDiffStatus)o2).pathPrev;
@@ -422,7 +466,7 @@ public final class SVNUtility {
 	}
 	
 	public static void reorder(SVNEntryStatus []statuses, final boolean parent2Child) {
-		FileUtility.sort(statuses, new Comparator() {
+		Arrays.sort(statuses, new Comparator() {
 			public int compare(Object o1, Object o2) {
 				String s1 = ((SVNEntryStatus)o1).path;
 				String s2 = ((SVNEntryStatus)o2).path;

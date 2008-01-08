@@ -46,7 +46,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.team.svn.core.connector.SVNDiffStatus;
 import org.eclipse.team.svn.core.connector.SVNEntry;
-import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.AbstractGetFileContentOperation;
@@ -54,6 +53,8 @@ import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.GetLocalFileContentOperation;
 import org.eclipse.team.svn.core.operation.remote.GetFileContentOperation;
+import org.eclipse.team.svn.core.operation.remote.LocateResourceURLInHistoryOperation;
+import org.eclipse.team.svn.core.resource.ILocalFile;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
@@ -113,6 +114,16 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		return this.root;
 	}
 
+	protected void findRootNode(Map path2node, IRepositoryResource resource, IProgressMonitor monitor) {
+		this.root = (BaseCompareNode)path2node.get(new Path(resource.getUrl()));
+		if (this.root == null && !path2node.isEmpty()) {
+			LocateResourceURLInHistoryOperation op = new LocateResourceURLInHistoryOperation(new IRepositoryResource[] {resource}, false);
+			UIMonitorUtility.doTaskExternalDefault(op, monitor);
+			IRepositoryResource converted = op.getRepositoryResources()[0];
+			this.root = (BaseCompareNode)path2node.get(new Path(converted.getUrl()));
+		}
+	}
+	
 	protected void refreshTitles() throws Exception {
 		CompareConfiguration cc = this.getCompareConfiguration();
 		
@@ -227,10 +238,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		if (node != null) {
 			return (ResourceElement)node.getLeft();
 		}
-		if (this.root != null) {
-			return (ResourceElement)this.root.getLeft();
-		}
-		return new ResourceElement(this.rootLeft, org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NORMAL);
+		return (ResourceElement)this.root.getLeft();
 	}
 	
 	protected ResourceElement getRightResourceElement() {
@@ -238,10 +246,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		if (node != null) {
 			return (ResourceElement)node.getRight();
 		}
-		if (this.root != null) {
-			return (ResourceElement)this.root.getRight();
-		}
-		return new ResourceElement(this.rootRight, org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NORMAL);
+		return (ResourceElement)this.root.getRight();
 	}
 	
 	protected ResourceElement getAncestorResourceElement() {
@@ -249,10 +254,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		if (node != null) {
 			return (ResourceElement)node.getAncestor();
 		}
-		if (this.root != null) {
-			return (ResourceElement)this.root.getAncestor();
-		}
-		return new ResourceElement(this.rootAncestor, org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NORMAL);
+		return (ResourceElement)this.root.getAncestor();
 	}
 	
 	protected DiffNode getSelectedNode() {
@@ -300,11 +302,6 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		return Differencer.NO_CHANGE;
 	}
 	
-	protected int getNodeKind(SVNEntryStatus st) {
-		int kind = SVNUtility.getNodeKind(st.path, st.nodeKind, true);
-		return kind == SVNEntry.Kind.NONE ? SVNUtility.getNodeKind(st.path, st.reposKind, false) : kind;
-	}
-	
 	protected int getNodeKind(SVNDiffStatus st) {
 		return SVNUtility.getNodeKind(st.pathPrev, st.nodeKind, false);
 	}
@@ -325,7 +322,6 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 	
 	protected abstract boolean isThreeWay();
 	protected abstract IDiffContainer makeStubNode(IDiffContainer parent, IRepositoryResource node);
-	protected abstract ILocalResource getLocalResourceFor(IRepositoryResource base);
 	
 	public class ResourceElement implements ITypedElement, IStreamContentAccessor, IContentChangeNotifier, IEditableContent {
 		protected Vector listenerList;
@@ -336,10 +332,6 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		protected ILocalResource localAlias;
 		protected int kind;
 		protected boolean editable;
-		
-		public ResourceElement(IRepositoryResource resource, int kind) {
-			this(resource, ResourceCompareInput.this.getLocalResourceFor(resource), kind);
-		}
 		
 		public ResourceElement(IRepositoryResource resource, ILocalResource alias, int kind) {
 			this.resource = resource;
@@ -365,7 +357,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		}
 		
 		public boolean isEditable() {
-			return this.editable && this.localAlias != null && this.localAlias.getResource() instanceof IFile;
+			return this.editable && this.localAlias instanceof ILocalFile;
 		}
 
 		public void setEditable(boolean editable) {

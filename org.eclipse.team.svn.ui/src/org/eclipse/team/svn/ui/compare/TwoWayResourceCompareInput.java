@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.ui.compare;
 
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,13 +29,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.svn.core.connector.SVNDiffStatus;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind;
 import org.eclipse.team.svn.core.operation.remote.LocateResourceURLInHistoryOperation;
-import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
-import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
  * Two way resource compare input
@@ -44,12 +43,12 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 public class TwoWayResourceCompareInput extends ResourceCompareInput {
 	protected SVNDiffStatus []statuses;
 	
-	public TwoWayResourceCompareInput(CompareConfiguration configuration, IRepositoryResource next, IRepositoryResource prev, SVNDiffStatus []statuses) {
+	public TwoWayResourceCompareInput(CompareConfiguration configuration, IRepositoryResource next, IRepositoryResource prev, Collection<SVNDiffStatus> statuses) {
 		super(configuration);
 		
 		this.rootLeft = SVNUtility.copyOf(next);
 		this.rootRight = SVNUtility.copyOf(prev);
-		this.statuses = statuses;
+		this.statuses = statuses.toArray(new SVNDiffStatus[statuses.size()]);
 	}
 
 	public void initialize(IProgressMonitor monitor) throws Exception {
@@ -72,16 +71,6 @@ public class TwoWayResourceCompareInput extends ResourceCompareInput {
 		}
 		
 		super.initialize(monitor);
-	}
-	
-	protected void findRootNode(Map path2node, IRepositoryResource resource, IProgressMonitor monitor) {
-		this.root = (CompareNode)path2node.get(new Path(resource.getUrl()));
-		if (this.root == null && !path2node.isEmpty()) {
-			LocateResourceURLInHistoryOperation op = new LocateResourceURLInHistoryOperation(new IRepositoryResource[] {resource}, false);
-			UIMonitorUtility.doTaskExternalDefault(op, monitor);
-			IRepositoryResource converted = op.getRepositoryResources()[0];
-			this.root = (CompareNode)path2node.get(new Path(converted.getUrl()));
-		}
 	}
 	
 	protected CompareNode makeNode(SVNDiffStatus st, Map path2node, IProgressMonitor monitor) throws Exception {
@@ -119,10 +108,6 @@ public class TwoWayResourceCompareInput extends ResourceCompareInput {
 		return false;
 	}
 
-	protected ILocalResource getLocalResourceFor(IRepositoryResource base) {
-		return null;
-	}
-	
 	protected ResourceCompareViewer createDiffViewerImpl(Composite parent, CompareConfiguration config) {
 		return new ResourceCompareViewer(parent, config) {
 			public void setLabelProvider(IBaseLabelProvider labelProvider) {
@@ -149,8 +134,8 @@ public class TwoWayResourceCompareInput extends ResourceCompareInput {
 		public CompareNode(IDiffContainer parent, int kind, IRepositoryResource next, IRepositoryResource prev, int changeType) {
 			super(parent, kind);
 			this.changeType = changeType;
-			this.setRight(new ResourceElement(prev, changeType == Kind.ADDED ? Kind.NONE : Kind.NORMAL));
-			this.setLeft(new ResourceElement(next, changeType == Kind.DELETED ? Kind.NONE : Kind.NORMAL));
+			this.setRight(new ResourceElement(prev, null, changeType == Kind.ADDED ? Kind.NONE : Kind.NORMAL));
+			this.setLeft(new ResourceElement(next, null, changeType == Kind.DELETED ? Kind.NONE : Kind.NORMAL));
 		}
 
 		public int getChangeType() {

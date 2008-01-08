@@ -14,6 +14,8 @@ package org.eclipse.team.svn.ui.wizard.shareproject;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -314,10 +316,15 @@ public class SelectProjectNamePage extends AbstractVerifiedWizardPage {
 		
 		this.targetUrlField = new Text(urlComposite, SWT.SINGLE);
 		this.targetUrlField.setLayoutData(this.makeGridData());
-		this.targetUrlField.setEditable(false);
 		this.targetUrlField.setBackground(this.targetUrlField.getBackground());
 		label.setBackground(this.targetUrlField.getBackground());
 		urlComposite.setBackground(this.targetUrlField.getBackground());
+		this.targetUrlField.setEditable(false);
+		this.targetUrlField.addFocusListener(new FocusAdapter() {
+			public void focusGained(FocusEvent e) {
+				((Text)e.widget).traverse(SWT.TRAVERSE_TAB_NEXT);
+			}
+		});
 
 		useEmptyNameButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

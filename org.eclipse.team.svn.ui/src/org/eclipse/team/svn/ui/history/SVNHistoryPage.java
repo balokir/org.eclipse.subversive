@@ -101,8 +101,7 @@ public class SVNHistoryPage extends HistoryPage implements IViewInfoProvider, IR
 			return SVNHistoryPage.isValidData(this.getInput());
 		}
 		if (this.getInput() instanceof IResource) {
-			IResource resource = this.isInputValid() ? (IResource)this.getInput() : null;
-			this.viewImpl.showHistory(resource, true);
+			this.viewImpl.showHistory((IResource)this.getInput(), true);
 			return true;
 		}
 		else if (this.getInput() instanceof IRepositoryResource) {
@@ -120,17 +119,6 @@ public class SVNHistoryPage extends HistoryPage implements IViewInfoProvider, IR
 		return false;
 	}
 	
-	private boolean isInputValid() {
-		Object object = this.getInput();
-		if (object == null) {
-			return false;
-		}
-		if (object instanceof IResource) {
-			return FileUtility.checkForResourcesPresence(new IResource[] {(IResource)object}, IStateFilter.SF_ONREPOSITORY, IResource.DEPTH_ZERO);
-		}
-		return object instanceof IRepositoryResource || object instanceof RepositoryResource || object instanceof RepositoryLocation;
-	}
-
 	public void createControl(Composite parent) {
 		this.viewImpl = new HistoryViewImpl(null, null, this);
 	    IActionBars actionBars = this.getActionBars();
@@ -164,10 +152,10 @@ public class SVNHistoryPage extends HistoryPage implements IViewInfoProvider, IR
 	public String getName() {
 		if (this.viewImpl != null) {
 			if (this.viewImpl.getResource() != null) {
-				return this.viewImpl.getResource().getName();
+				return this.viewImpl.getResource().getFullPath().toString().substring(1);
 			}
 			if (this.viewImpl.getRepositoryResource() != null) {
-				return this.viewImpl.getRepositoryResource().getName();
+				return this.viewImpl.getRepositoryResource().getUrl();
 			}
 		}
 		return null;
