@@ -1425,9 +1425,9 @@
 		point="org.eclipse.ui.preferencePages">
 		<page
 			category="org.eclipse.team.svn.ui.SVNTeamPreferences"
-			class="org.eclipse.team.svn.ui.preferences.SVNTeamAutoPropsPreferencePage"
-			id="org.eclipse.team.svn.ui.SVNTeamAutoPropsPreferences"
-			name="%AutoPropsPreferencePage.name"/>
+			class="org.eclipse.team.svn.ui.preferences.SVNTeamPropsPreferencePage"
+			id="org.eclipse.team.svn.ui.SVNTeamPropsPreferences"
+			name="%PropsPreferencePage.name"/>
 	</extension>
 
 <!-- ********** Quick-diff Provider ************** -->

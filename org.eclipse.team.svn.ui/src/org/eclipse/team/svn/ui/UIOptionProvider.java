@@ -21,7 +21,7 @@ import org.eclipse.team.svn.core.utility.ILoggedOperationFactory;
 import org.eclipse.team.svn.core.utility.StringMatcher;
 import org.eclipse.team.svn.ui.operation.RefreshRepositoryLocationsOperation;
 import org.eclipse.team.svn.ui.panel.callback.PromptCredentialsPanel;
-import org.eclipse.team.svn.ui.preferences.SVNTeamAutoPropsPreferencePage;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPropsPreferencePage;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
@@ -91,10 +91,10 @@ public class UIOptionProvider implements IOptionProvider {
 	
 	public SVNProperty[] getAutomaticProperties(String template) {
 		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
-		Object[] autoProperties = SVNTeamAutoPropsPreferencePage.loadProperties(SVNTeamPreferences.getAutoPropertiesList(store, SVNTeamPreferences.AUTO_PROPERTIES_LIST_NAME));
+		Object[] autoProperties = SVNTeamPropsPreferencePage.loadProperties(SVNTeamPreferences.getAutoPropertiesList(store, SVNTeamPreferences.AUTO_PROPERTIES_LIST_NAME));
 		for (int i = 0; i < autoProperties.length; i++) {
-			SVNTeamAutoPropsPreferencePage.AutoProperty autoProperty =
-				(SVNTeamAutoPropsPreferencePage.AutoProperty)autoProperties[i];
+			SVNTeamPropsPreferencePage.AutoProperty autoProperty =
+				(SVNTeamPropsPreferencePage.AutoProperty)autoProperties[i];
 			if (!autoProperty.enabled) {
 				continue;
 			}
