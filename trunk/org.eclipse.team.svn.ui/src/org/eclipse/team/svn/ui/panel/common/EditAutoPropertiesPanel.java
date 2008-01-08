@@ -24,7 +24,7 @@ import org.eclipse.team.svn.core.utility.PatternProvider;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
-import org.eclipse.team.svn.ui.preferences.SVNTeamAutoPropsPreferencePage;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPropsPreferencePage;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifierProxy;
 import org.eclipse.team.svn.ui.verifier.CompositeVerifier;
 import org.eclipse.team.svn.ui.verifier.FileNameTemplateVerifier;
@@ -39,13 +39,13 @@ import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
  */
 public class EditAutoPropertiesPanel extends AbstractDialogPanel {
 
-	protected SVNTeamAutoPropsPreferencePage.AutoProperty property;
+	protected SVNTeamPropsPreferencePage.AutoProperty property;
 	protected Text txtFileName;
 	protected Text txtProperties;
 	protected String fileName;
 	protected String properties;
 	
-	public EditAutoPropertiesPanel(SVNTeamAutoPropsPreferencePage.AutoProperty property) {
+	public EditAutoPropertiesPanel(SVNTeamPropsPreferencePage.AutoProperty property) {
 		super();
 		this.property = property;
 		this.dialogTitle = SVNTeamUIPlugin.instance().getResource(property == null ? "EditAutoPropertiesPanel.Title.Add" : "EditAutoPropertiesPanel.Title.Edit");
@@ -96,7 +96,7 @@ public class EditAutoPropertiesPanel extends AbstractDialogPanel {
 		label.setText(SVNTeamUIPlugin.instance().getResource("EditAutoPropertiesPanel.Properties.Hint"));
 		
 		this.txtProperties = new Text(group, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
-		this.txtProperties.setText((this.property == null) ? "" : PatternProvider.replaceAll(this.property.properties, SVNTeamAutoPropsPreferencePage.AUTO_PROPS_PROPS_SEPARATOR, System.getProperty("line.separator")).trim());
+		this.txtProperties.setText((this.property == null) ? "" : PatternProvider.replaceAll(this.property.properties, SVNTeamPropsPreferencePage.AUTO_PROPS_PROPS_SEPARATOR, System.getProperty("line.separator")).trim());
 		layoutData = new GridData(GridData.FILL_BOTH);
 		layoutData.heightHint = DefaultDialog.convertHeightInCharsToPixels(this.txtProperties, 7);
 		this.txtProperties.setLayoutData(layoutData);
@@ -112,9 +112,9 @@ public class EditAutoPropertiesPanel extends AbstractDialogPanel {
 
 	protected void saveChangesImpl() {
 		this.fileName = this.txtFileName.getText().trim();
-		this.properties = PatternProvider.replaceAll(this.txtProperties.getText().trim(), SVNTeamAutoPropsPreferencePage.AUTO_PROPS_PROPS_SEPARATOR, System.getProperty("line.separator"));
-		this.properties = PatternProvider.replaceAll(this.properties.trim(), System.getProperty("line.separator"), SVNTeamAutoPropsPreferencePage.AUTO_PROPS_PROPS_SEPARATOR);
-		this.properties = PatternProvider.replaceAll(this.properties, SVNTeamAutoPropsPreferencePage.AUTO_PROPS_PROPS_SEPARATOR + "{2,}", SVNTeamAutoPropsPreferencePage.AUTO_PROPS_PROPS_SEPARATOR);
+		this.properties = PatternProvider.replaceAll(this.txtProperties.getText().trim(), SVNTeamPropsPreferencePage.AUTO_PROPS_PROPS_SEPARATOR, System.getProperty("line.separator"));
+		this.properties = PatternProvider.replaceAll(this.properties.trim(), System.getProperty("line.separator"), SVNTeamPropsPreferencePage.AUTO_PROPS_PROPS_SEPARATOR);
+		this.properties = PatternProvider.replaceAll(this.properties, SVNTeamPropsPreferencePage.AUTO_PROPS_PROPS_SEPARATOR + "{2,}", SVNTeamPropsPreferencePage.AUTO_PROPS_PROPS_SEPARATOR);
 	}
 	
 	public String getFileName() {
