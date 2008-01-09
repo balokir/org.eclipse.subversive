@@ -31,6 +31,7 @@ public class PredefinedPropertySet implements IPredefinedPropertySet {
 		
 		List properties = new ArrayList();
 		
+		properties.add(new PredefinedProperty(SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.svn_description"), "", ""));
 		properties.add(new PredefinedProperty("svn:eol-style", this.getDescription("SVN.EOL"), ""));		
 		properties.add(new PredefinedProperty("svn:executable", this.getDescription("SVN.Executable"), ""));
 		properties.add(new PredefinedProperty("svn:externals", this.getDescription("SVN.Externals"), ""));
@@ -39,6 +40,7 @@ public class PredefinedPropertySet implements IPredefinedPropertySet {
 		properties.add(new PredefinedProperty("svn:needs-lock", this.getDescription("SVN.NeedsLock"), ""));
 		properties.add(new PredefinedProperty("svn:mime-type", this.getDescription("SVN.Mimetype"), ""));
 		this.getBugtrackProperties(properties);
+		properties.add(new PredefinedProperty(SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.tsvn_description"), "", ""));
 		properties.add(new PredefinedProperty("tsvn:logtemplate", this.getDescription("TSVN.LogTemplate"), ""));
 		properties.add(new PredefinedProperty("tsvn:logwidthmarker", this.getDescription("TSVN.LogWidthMarker"), ""));
 		properties.add(new PredefinedProperty("tsvn:logminsize", this.getDescription("TSVN.LogMinSize"), ""));
@@ -76,6 +78,7 @@ public class PredefinedPropertySet implements IPredefinedPropertySet {
 	 * @param properties
 	 */
 	protected void getBugtrackProperties(List properties) {
+		properties.add(new PredefinedProperty(SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.bugtraq_description"), "", ""));
 		properties.add(new PredefinedProperty("bugtraq:url", this.getDescription("Bugtraq.URL"), "%BUGID%"));
 		properties.add(new PredefinedProperty("bugtraq:logregex", this.getDescription("Bugtraq.LogRegex"), ""));
 		properties.add(new PredefinedProperty("bugtraq:label", this.getDescription("Bugtraq.Label"), ""));
