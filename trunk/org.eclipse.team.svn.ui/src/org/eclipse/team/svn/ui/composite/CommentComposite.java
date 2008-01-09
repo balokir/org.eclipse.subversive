@@ -161,7 +161,7 @@ public class CommentComposite extends Composite  {
         	
         	this.validationManager.attachTo(this.bugIdText, new AbstractVerifier() {
 				protected String getErrorMessage(Control input) {
-					String logregex = CommentComposite.this.bugtraqModel.isNumber() ? "[0-9]+(,?[0-9]+)*" : CommentComposite.this.bugtraqModel.getLogregex()[0];
+					String logregex = CommentComposite.this.bugtraqModel.isNumber() ? "[0-9]+(,?[0-9]+)*" : ((CommentComposite.this.bugtraqModel.getLogregex() != null) ? CommentComposite.this.bugtraqModel.getLogregex()[0] : null);
 					if (logregex != null) {
 						String bugId = this.getText(input);
 						if (bugId.length() > 0 && !bugId.matches(logregex)) {
