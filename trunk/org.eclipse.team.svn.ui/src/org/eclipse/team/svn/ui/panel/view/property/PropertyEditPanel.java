@@ -155,13 +155,14 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		Label label = new Label(composite, SWT.NULL);
+		Label label = new Label(composite, SWT.NONE);
 		label.setLayoutData(new GridData());
 		label.setText(SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.Name"));
 		
-		this.nameField = new Combo(composite, SWT.NULL);
+		this.nameField = new Combo(composite, SWT.NONE);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		this.nameField.setLayoutData(data);
+		this.nameField.setVisibleItemCount(10);
 		this.nameField.setItems(this.getPropertyNames(this.predefinedProperties, this.customProps));
 		this.nameField.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
@@ -185,7 +186,7 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 			}
 		});
 		
-		Composite descriptionComposite = new Composite(composite, SWT.NULL | SWT.BORDER);
+		Composite descriptionComposite = new Composite(composite, SWT.BORDER);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		descriptionComposite.setLayoutData(data);
 		GridLayout descriptionLayout = new GridLayout();
@@ -193,7 +194,7 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 		descriptionLayout.numColumns = 2;
 		descriptionComposite.setLayout(descriptionLayout);
 
-		Label bulb = new Label(descriptionComposite, SWT.NULL);
+		Label bulb = new Label(descriptionComposite, SWT.NONE);
 		bulb.setImage(SVNTeamUIPlugin.instance().getImageDescriptor("icons/dialogs/bulb.png").createImage());
 		data = new GridData();
 		data.verticalAlignment = SWT.TOP;
