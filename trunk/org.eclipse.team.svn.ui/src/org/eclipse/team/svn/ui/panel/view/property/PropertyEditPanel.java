@@ -391,8 +391,12 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 		for (Iterator it = predefinedProperties.iterator(); it.hasNext(); ) {
 			names.add(((PredefinedProperty) it.next()).name);
 		}
+		names.add(SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.custom_description"));
 		for (int i = 0; i < customProperties.length; i++) {
 			names.add(customProperties[i].propName);
+		}
+		if (this.customProps.length == 0) {
+			names.add("    " + SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.custom_hint"));
 		}
 		String[] propertyNames = (String[]) names.toArray(new String[names.size()]);
 		return propertyNames;

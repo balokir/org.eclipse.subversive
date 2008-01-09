@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.ui.verifier;
 
 import java.text.MessageFormat;
+import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,6 +27,7 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 public class PropertyNameVerifier extends AbstractFormattedVerifier {
     protected static String ERROR_MESSAGE_LETTER;
     protected static String ERROR_MESSAGE_SYMBOLS;
+    protected HashSet<String> ignoreStrings;
         
     public PropertyNameVerifier(String fieldName) {
         super(fieldName);
@@ -33,12 +35,21 @@ public class PropertyNameVerifier extends AbstractFormattedVerifier {
         PropertyNameVerifier.ERROR_MESSAGE_LETTER = MessageFormat.format(PropertyNameVerifier.ERROR_MESSAGE_LETTER, new String[] {AbstractFormattedVerifier.FIELD_NAME});
         PropertyNameVerifier.ERROR_MESSAGE_SYMBOLS = SVNTeamUIPlugin.instance().getResource("Verifier.PropertyName.Symbols");
         PropertyNameVerifier.ERROR_MESSAGE_SYMBOLS = MessageFormat.format(PropertyNameVerifier.ERROR_MESSAGE_SYMBOLS, new String[] {AbstractFormattedVerifier.FIELD_NAME});
+        this.ignoreStrings = new HashSet<String>();
+        this.ignoreStrings.add(SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.svn_description"));
+        this.ignoreStrings.add(SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.tsvn_description"));
+        this.ignoreStrings.add(SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.bugtraq_description"));
+        this.ignoreStrings.add(SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.custom_description"));
+        this.ignoreStrings.add("    "  + SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.custom_hint"));
     }
 
     protected String getErrorMessageImpl(Control input) {
         String property = this.getText(input);
         if (property.trim().length() == 0) {
             return null;
+        }
+        if (ignoreStrings.contains(property)) {
+        	return SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.Name.Verifier.IgnoreStrings");
         }
         Pattern pattern = Pattern.compile("[a-zA-Z].*");
         Matcher matcher = pattern.matcher(property);
