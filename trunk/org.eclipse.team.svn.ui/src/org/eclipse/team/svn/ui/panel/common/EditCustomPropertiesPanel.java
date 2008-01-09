@@ -19,6 +19,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -50,6 +51,7 @@ public class EditCustomPropertiesPanel extends AbstractDialogPanel {
 	protected void createControlsImpl(Composite parent) {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
+		layout.verticalSpacing = 10;
 		parent.setLayout(layout);
 		Label propNameLabel = new Label(parent, SWT.NONE);
 		propNameLabel.setText(SVNTeamUIPlugin.instance().getResource("EditCustomPropertiesPanel.PropName"));
@@ -72,9 +74,18 @@ public class EditCustomPropertiesPanel extends AbstractDialogPanel {
 			}
 		});
 		
-		Label propRegexpLabel = new Label(parent, SWT.NONE);
+		Group optional = new Group(parent, SWT.NONE);
+		optional.setText(SVNTeamUIPlugin.instance().getResource("EditCustomPropertiesPanel.Optional"));
+		layoutData = new GridData(GridData.FILL_BOTH);
+		layoutData.horizontalSpan = 2;
+		optional.setLayoutData(layoutData);
+		layout = new GridLayout();
+		layout.numColumns = 1;
+		optional.setLayout(layout);
+		
+		Label propRegexpLabel = new Label(optional, SWT.NONE);
 		propRegexpLabel.setText(SVNTeamUIPlugin.instance().getResource("EditCustomPropertiesPanel.PropRegExp"));
-		this.propRegexp = new Text(parent, SWT.BORDER);
+		this.propRegexp = new Text(optional, SWT.BORDER);
 		this.propRegexp.setText((this.property == null) ? "" : this.property.regExp);
 		layoutData = new GridData(GridData.FILL_HORIZONTAL);
 		this.propRegexp.setLayoutData(layoutData);
@@ -93,16 +104,14 @@ public class EditCustomPropertiesPanel extends AbstractDialogPanel {
 			}
 		});
 		
-		Label propDescriptionLabel = new Label(parent, SWT.NONE);
+		Label propDescriptionLabel = new Label(optional, SWT.NONE);
 		propDescriptionLabel.setText(SVNTeamUIPlugin.instance().getResource("EditCustomPropertiesPanel.PropDescription"));
 		layoutData = new GridData();
-		layoutData.horizontalSpan = 2;
 		propDescriptionLabel.setLayoutData(layoutData);
-        this.propDescription = SpellcheckedTextProvider.getTextWidget(parent, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.WRAP);
+        this.propDescription = SpellcheckedTextProvider.getTextWidget(optional, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.WRAP);
 		this.propDescription.setText((this.property == null) ? "" : this.property.descriprion);
 		layoutData = new GridData(GridData.FILL_BOTH);
-		layoutData.horizontalSpan = 2;
-		layoutData.heightHint = 50;
+		layoutData.heightHint = 80;
 		layoutData.widthHint = 0;
 		this.propDescription.setLayoutData(layoutData);
 	}
