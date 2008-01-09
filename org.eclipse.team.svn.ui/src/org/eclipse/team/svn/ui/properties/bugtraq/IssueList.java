@@ -36,9 +36,9 @@ public class IssueList extends LinkList {
 		int bugIdIndex = template.indexOf(BugtraqModel.BUG_ID);
 		
 		if (bugIdIndex != -1) {
-			String issueRegex = model.isNumber() ? "[0-9]+(?:,[0-9]+)*" : model.getLogregex()[0];
+			String issueRegex = model.isNumber() ? "[0-9]+(?:,[0-9]+)*" : ((model.getLogregex() != null) ? model.getLogregex()[0] : null);
 			if (issueRegex == null) {
-				issueRegex = "*";
+				return;
 			}
 			String regex;
 			if (model.isDoubleLogRegexp()) {
