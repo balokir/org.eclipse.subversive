@@ -80,6 +80,7 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 	protected Button autopropBtnImport;
 	
 	protected String autoPropsValue;
+	protected String customPropsValue;
 	
 	protected TableViewer custompropTableViewer;
 	protected Button custompropBtnAdd;
@@ -131,19 +132,33 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 		}
 		this.autoPropsValue = FileUtility.encodeArrayToString(props);
 		SVNTeamPreferences.setAutoPropertiesList(store, SVNTeamPreferences.AUTO_PROPERTIES_LIST_NAME, this.autoPropsValue);
+		
+		propsCount = this.custompropTableViewer.getTable().getItemCount();
+		props = new String[3 * propsCount];
+		for (int i = 0; i < propsCount; i++) {
+			SVNTeamPropsPreferencePage.CustomProperty property = (SVNTeamPropsPreferencePage.CustomProperty)this.custompropTableViewer.getElementAt(i);
+			props[3 * i] = property.propName;
+			props[3 * i + 1] = property.regExp;
+			props[3 * i + 2] = property.descriprion;
+		}
+		this.customPropsValue = FileUtility.encodeArrayToString(props);
+		SVNTeamPreferences.setCustomPropertiesList(store, SVNTeamPreferences.CUSTOM_PROPERTIES_LIST_NAME, this.customPropsValue);
 	}
 	
 	protected void loadDefaultValues(IPreferenceStore store) {
 		this.autoPropsValue = SVNTeamPreferences.AUTO_PROPERTIES_LIST_DEFAULT;
+		this.customPropsValue = SVNTeamPreferences.CUSTOM_PROPERTIES_LIST_DEFAULT;
 	}
 	
 	protected void loadValues(IPreferenceStore store) {
 		this.autoPropsValue = SVNTeamPreferences.getAutoPropertiesList(store, SVNTeamPreferences.AUTO_PROPERTIES_LIST_NAME);
+		this.customPropsValue = SVNTeamPreferences.getCustomPropertiesList(store, SVNTeamPreferences.CUSTOM_PROPERTIES_LIST_NAME);
 	}
 	
 	protected void initializeControls() {
 		this.removeAllProperties();
-		this.populateAutopropTable(SVNTeamPropsPreferencePage.loadProperties(this.autoPropsValue));
+		this.populateAutopropTable(SVNTeamPropsPreferencePage.loadAutoProperties(this.autoPropsValue));
+		this.populateCustompropTable(SVNTeamPropsPreferencePage.loadCustomProperties(this.customPropsValue));
 	}
 	
 	protected Control createContentsImpl(Composite parent) {
@@ -354,6 +369,8 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 	public void removeAllProperties() {
 		this.autopropTableViewer.getTable().clearAll();
 		this.autopropTableViewer.refresh();
+		this.custompropTableViewer.getTable().clearAll();
+		this.custompropTableViewer.refresh();
 	}
 	
 	public void exportAutoProperties() {
@@ -495,6 +512,12 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 		for (int i = 0; i < items.length; i++) {
 			this.autopropTableViewer.add(items[i]);
 			this.autopropTableViewer.setChecked(items[i], ((SVNTeamPropsPreferencePage.AutoProperty)items[i]).enabled);
+		}
+	}
+	
+	public void populateCustompropTable(Object[] items) {
+		for (int i = 0; i < items.length; i++) {
+			this.custompropTableViewer.add(items[i]);
 		}
 	}
 	
@@ -671,7 +694,22 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 		this.refreshDescription();
 	}
 	
-	public static Object[] loadProperties(String encodedProps) {
+	public static SVNTeamPropsPreferencePage.CustomProperty [] loadCustomProperties(String encodedProps) {
+		ArrayList<SVNTeamPropsPreferencePage.CustomProperty> propsList = new ArrayList();
+		String[] props = FileUtility.decodeStringToArray(encodedProps);
+		for (int i = 0; i < props.length; i += 3) {
+			String propName = props[i];
+			String regexp =  (i + 1 == props.length) ? "" : props[i + 1];
+			String description =  (i + 2 >= props.length) ? "" :  props[i + 2];
+			SVNTeamPropsPreferencePage.CustomProperty property = 
+				new SVNTeamPropsPreferencePage.CustomProperty(propName, regexp, description);
+			propsList.add(property);
+		}
+		SVNTeamPropsPreferencePage.CustomProperty [] propArr = {};
+		return propsList.toArray(propArr);
+	}
+	
+	public static Object[] loadAutoProperties(String encodedProps) {
 		ArrayList propsList = new ArrayList();
 		String[] props = FileUtility.decodeStringToArray(encodedProps);
 		for (int i = 0; i < props.length; i += 3) {

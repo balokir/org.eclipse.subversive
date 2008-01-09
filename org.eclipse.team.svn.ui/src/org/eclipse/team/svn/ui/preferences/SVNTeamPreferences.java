@@ -42,6 +42,7 @@ public final class SVNTeamPreferences {
 	public static final String ANNOTATE_BASE = "preference.annotate.";
 	public static final String TABLE_SORTING_BASE = "preference.sorting.";
 	public static final String AUTO_PROPERTIES_BASE = "preference.autoproperties";
+	public static final String CUSTOM_PROPERTIES_BASE = "preference.customproperties";
 	public static final String RESOURCE_SELECTION_BASE = "preference.resourceSelection";
 	
 	public static final String ANNOTATE_CHANGE_PERSPECTIVE_NAME = "changePerspective";
@@ -264,6 +265,9 @@ public final class SVNTeamPreferences {
 	public static final String AUTO_PROPERTIES_LIST_NAME = "autoproperties";
 	public static final String AUTO_PROPERTIES_LIST_DEFAULT = "";
 	
+	public static final String CUSTOM_PROPERTIES_LIST_NAME = "customproperties";
+	public static final String CUSTOM_PROPERTIES_LIST_DEFAULT = "";
+	
 	public static void setDefaultValues(IPreferenceStore store) {
 		SVNTeamPreferences.setDefaultRepositoryValues(store);
 		SVNTeamPreferences.setDefaultDecorationValues(store);
@@ -284,10 +288,15 @@ public final class SVNTeamPreferences {
 		SVNTeamPreferences.setDefaultTableSortingValues(store);
 		SVNTeamPreferences.setDefaultCommitDialogValues(store);
 		SVNTeamPreferences.setDefaultAutoPropertiesValues(store);
+		SVNTeamPreferences.setDefaultCustomPropertiesValues(store);
 	}
 	
 	public static void setDefaultAutoPropertiesValues(IPreferenceStore store) {
 		store.setDefault(SVNTeamPreferences.fullAutoPropertiesName(SVNTeamPreferences.AUTO_PROPERTIES_LIST_NAME), SVNTeamPreferences.AUTO_PROPERTIES_LIST_DEFAULT);
+	}
+	
+	public static void setDefaultCustomPropertiesValues(IPreferenceStore store) {
+		store.setDefault(SVNTeamPreferences.fullCustomPropertiesName(SVNTeamPreferences.CUSTOM_PROPERTIES_LIST_NAME), SVNTeamPreferences.AUTO_PROPERTIES_LIST_DEFAULT);
 	}
 	
 	public static void setDefaultCommitDialogValues(IPreferenceStore store) {
@@ -419,6 +428,10 @@ public final class SVNTeamPreferences {
 	
 	public static void resetToDefaultAutoPropsValues(IPreferenceStore store) {
 		store.setValue(SVNTeamPreferences.fullAutoPropertiesName(SVNTeamPreferences.AUTO_PROPERTIES_LIST_NAME), SVNTeamPreferences.AUTO_PROPERTIES_LIST_DEFAULT);
+	}
+	
+	public static void resetToDefaultCustomoPropsValues(IPreferenceStore store) {
+		store.setValue(SVNTeamPreferences.fullCustomPropertiesName(SVNTeamPreferences.CUSTOM_PROPERTIES_LIST_NAME), SVNTeamPreferences.AUTO_PROPERTIES_LIST_DEFAULT);
 	}
 	
 	public static void resetToDefaultTableSortingValues(IPreferenceStore store) {
@@ -616,6 +629,10 @@ public final class SVNTeamPreferences {
 		return store.getString(SVNTeamPreferences.fullAutoPropertiesName(shortName));
 	}
 	
+	public static String getCustomPropertiesList(IPreferenceStore store, String shortName) {
+		return store.getString(SVNTeamPreferences.fullCustomPropertiesName(shortName));
+	}
+	
 	public static void setDialogInt(IPreferenceStore store, String name, int value) {
 		store.setValue(name, value);
 	}
@@ -694,6 +711,10 @@ public final class SVNTeamPreferences {
 	
 	public static void setAutoPropertiesList(IPreferenceStore store, String shortName, String value) {
 		store.setValue(SVNTeamPreferences.fullAutoPropertiesName(shortName), value);
+	}
+	
+	public static void setCustomPropertiesList(IPreferenceStore store, String shortName, String value) {
+		store.setValue(SVNTeamPreferences.fullCustomPropertiesName(shortName), value);
 	}
 	
 	public static RGB getConsoleRGB(IPreferenceStore store, String shortName) {
@@ -842,6 +863,10 @@ public final class SVNTeamPreferences {
 	
 	public static String fullAutoPropertiesName(String shortName) {
 		return SVNTeamPreferences.AUTO_PROPERTIES_BASE + shortName;
+	}
+	
+	public static String fullCustomPropertiesName(String shortName) {
+		return SVNTeamPreferences.CUSTOM_PROPERTIES_BASE + shortName;
 	}
 	
 	private SVNTeamPreferences() {

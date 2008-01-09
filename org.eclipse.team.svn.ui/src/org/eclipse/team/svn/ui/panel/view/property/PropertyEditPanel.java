@@ -45,6 +45,8 @@ import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.extension.factory.PredefinedProperty;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPropsPreferencePage;
 import org.eclipse.team.svn.ui.verifier.AbstractFormattedVerifier;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifierProxy;
 import org.eclipse.team.svn.ui.verifier.CompositePropertiesVerifier;
@@ -85,6 +87,7 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 	protected HashMap<String, String> predefinedPropertiesRegexps;
 	protected HashMap<String, AbstractFormattedVerifier> verifiers;
 	protected IResource []selectedResources;
+	protected SVNTeamPropsPreferencePage.CustomProperty [] customProps;
 
 	public PropertyEditPanel(SVNProperty data, IResource []selectedResources) {
 		super();
@@ -95,6 +98,7 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 		this.resourcesType = this.computeResourcesType();
 		this.predefinedProperties = ExtensionsManager.getInstance().getPredefinedPropertySet().getPredefinedProperties(this.selectedResources);
 		this.predefinedPropertiesRegexps = ExtensionsManager.getInstance().getPredefinedPropertySet().getPredefinedPropertiesRegexps(this.selectedResources);
+		this.customProps = SVNTeamPropsPreferencePage.loadCustomProperties(SVNTeamPreferences.getCustomPropertiesList(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.CUSTOM_PROPERTIES_LIST_NAME));
 		this.createVerifiersMap();
 		this.dialogDescription = SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.Description");
 	}
@@ -105,6 +109,9 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 		properties = this.predefinedPropertiesRegexps.keySet().toArray(properties);
 		for (int i = 0; i <  properties.length; i++) {
 			this.verifiers.put(properties[i], new PropertyVerifier("EditPropertiesInputField", this.predefinedPropertiesRegexps.get(properties[i]), properties[i]));
+		}
+		for (int i = 0; i < this.customProps.length; i++) {
+			this.verifiers.put(this.customProps[i].propName, new PropertyVerifier("EditPropertiesInputField", this.customProps[i].regExp.equals("") ? null : this.customProps[i].regExp, this.customProps[i].propName));
 		}
 	}
 	
@@ -155,12 +162,14 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 		this.nameField = new Combo(composite, SWT.NULL);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		this.nameField.setLayoutData(data);
-		this.nameField.setItems(this.getPropertyNames(this.predefinedProperties));
+		this.nameField.setItems(this.getPropertyNames(this.predefinedProperties, this.customProps));
 		this.nameField.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				String selected = PropertyEditPanel.this.nameField.getItem(PropertyEditPanel.this.nameField.getSelectionIndex());
 				PredefinedProperty prop = PropertyEditPanel.this.getPredefinedProperty(selected);
-				PropertyEditPanel.this.valueField.setText(prop.value);
+				if (prop != null) {
+					PropertyEditPanel.this.valueField.setText(prop.value);
+				}
 				PropertyEditPanel.this.descriptionField.setText(PropertyEditPanel.this.getDescriptionText());
 			}
 			public void widgetDefaultSelected(SelectionEvent e) {				
@@ -327,11 +336,16 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 	}
 	
 	protected String getDescriptionText() {
-		PredefinedProperty prop = this.getPredefinedProperty(this.nameField.getText());
-		if (prop == null) {
-			return SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.UserDefined");
+		String propName = this.nameField.getText();
+		PredefinedProperty prop = this.getPredefinedProperty(propName);
+		if (prop != null) {
+			return (prop.description != null && prop.description.trim().length() > 0) ? prop.description : SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.NoDescription");			
 		}
-		return (prop.description != null && prop.description.trim().length() > 0) ? prop.description : SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.NoDescription");
+		SVNTeamPropsPreferencePage.CustomProperty customProp = this.getCustomProperty(propName);
+		if (customProp != null && !customProp.descriprion.equals("")) {
+			return customProp.descriprion;
+		}
+		return SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.UserDefined");
 	}
 	
 	protected int computeResourcesType() {
@@ -372,10 +386,13 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 		this.applyComposite.setEnabled(this.recursiveButton.getSelection());
 	}
 	
-	protected String[] getPropertyNames(List predefinedProperties) {
+	protected String[] getPropertyNames(List predefinedProperties, SVNTeamPropsPreferencePage.CustomProperty [] customProperties) {
 		List names = new ArrayList();
 		for (Iterator it = predefinedProperties.iterator(); it.hasNext(); ) {
 			names.add(((PredefinedProperty) it.next()).name);
+		}
+		for (int i = 0; i < customProperties.length; i++) {
+			names.add(customProperties[i].propName);
 		}
 		String[] propertyNames = (String[]) names.toArray(new String[names.size()]);
 		return propertyNames;
@@ -385,6 +402,15 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 		int idx = this.predefinedProperties.indexOf(new PredefinedProperty(name));
 		if (idx >= 0) {
 			return (PredefinedProperty)this.predefinedProperties.get(idx);
+		}
+		return null;
+	}
+	
+	protected SVNTeamPropsPreferencePage.CustomProperty getCustomProperty(String name) {
+		for (int i = 0; i < this.customProps.length; i++) {
+			if (this.customProps[i].propName.equals(name)) {
+				return this.customProps[i];
+			}
 		}
 		return null;
 	}
