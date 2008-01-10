@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.SVNTeamProvider;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
@@ -133,25 +134,21 @@ main:
 		}
 		
 		protected void processProject(IProject current) throws Exception {
-			if (RepositoryProvider.isShared(current)) {
-				RepositoryProvider p = RepositoryProvider.getProvider(current);
-				// check for old provider Id
-				if (p != null && p.getID().equals(MigrateToEclipse.OLD_PROVIDER_ID)) {
-					String resourceProperty = current.getPersistentProperty(MigrateToEclipse.OLD_RESOURCE_PROPERTY);
-					String locationProperty = current.getPersistentProperty(MigrateToEclipse.OLD_LOCATION_PROPERTY);
-					
-					try {RepositoryProvider.unmap(current);} catch (Exception ex) {}
-					
-					current.setPersistentProperty(SVNTeamProvider.RESOURCE_PROPERTY, resourceProperty);
-					current.setPersistentProperty(SVNTeamProvider.LOCATION_PROPERTY, locationProperty);
-					
-					RepositoryProvider.map(current, SVNTeamPlugin.NATURE_ID);
-					
-					this.processed.add(current);
-				}
+			String id = current.getPersistentProperty(TeamPlugin.PROVIDER_PROP_KEY);
+			if (MigrateToEclipse.OLD_PROVIDER_ID.equals(id)) {
+				String resourceProperty = current.getPersistentProperty(MigrateToEclipse.OLD_RESOURCE_PROPERTY);
+				String locationProperty = current.getPersistentProperty(MigrateToEclipse.OLD_LOCATION_PROPERTY);
+				
+				try {RepositoryProvider.unmap(current);} catch (Exception ex) {}
+				
+				current.setPersistentProperty(SVNTeamProvider.RESOURCE_PROPERTY, resourceProperty);
+				current.setPersistentProperty(SVNTeamProvider.LOCATION_PROPERTY, locationProperty);
+				
+				RepositoryProvider.map(current, SVNTeamPlugin.NATURE_ID);
+	
+				this.processed.add(current);
 			}
 		}
-
 	}
 	
 	protected static class ConvertSettings extends AbstractActionOperation {
