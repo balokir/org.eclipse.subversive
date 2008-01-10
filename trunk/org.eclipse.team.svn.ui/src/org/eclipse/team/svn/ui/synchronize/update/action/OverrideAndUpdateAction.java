@@ -29,6 +29,7 @@ import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.RevertOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.UpdateOperation;
+import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
@@ -106,16 +107,15 @@ public class OverrideAndUpdateAction extends AbstractSynchronizeModelAction {
 		op.add(new ClearLocalStatusesOperation(resources[0]));
 		op.add(new UpdateOperation(new IResourceProvider() {
 			public IResource[] getResources() {
-				return FileUtility.getResourcesRecursive(
-						detectOp.getResources(), 
-						new IStateFilter() {
-							public boolean accept(IResource resource, String state, int mask) {
-								return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask) || IStateFilter.SF_NOTEXISTS.accept(resource, state, mask);
-							}
-							public boolean allowsRecursion(IResource resource, String state, int mask) {
-								return true;
-							}},
-						IResource.DEPTH_ZERO);
+				return 
+					FileUtility.getResourcesRecursive(detectOp.getResources(), new IStateFilter.AbstractStateFilter() {
+						protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
+							return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask) || IStateFilter.SF_NOTEXISTS.accept(resource, state, mask);
+						}
+						protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
+							return true;
+						}
+					}, IResource.DEPTH_ZERO);
 			}
 		}, true), new IActionOperation[] {revertOp, revertOp1, removeNonVersionedResourcesOp});
 		op.add(new RestoreProjectMetaOperation(saveOp));

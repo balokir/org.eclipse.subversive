@@ -37,7 +37,7 @@ public abstract class RemoteResourceVariant extends ResourceVariant {
 	}
 	
     public String getContentIdentifier() {
-        if (IStateFilter.SF_PREREPLACED.accept(this.local.getResource(), this.local.getStatus(), this.local.getChangeMask())) {
+        if (IStateFilter.SF_PREREPLACED.accept(this.local)) {
         	return "";
         }
     	String retVal = super.getContentIdentifier();

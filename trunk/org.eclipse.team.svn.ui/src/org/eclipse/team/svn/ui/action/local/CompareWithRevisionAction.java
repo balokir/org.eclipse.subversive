@@ -13,6 +13,7 @@ package org.eclipse.team.svn.ui.action.local;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -39,18 +40,20 @@ public class CompareWithRevisionAction extends AbstractWorkingCopyAction {
 	}
 	
 	public void runImpl(IAction action) {
-		IResource local = this.getSelectedResources()[0];
-		ILocalResource wcInfo = SVNRemoteStorage.instance().asLocalResource(local);
-		if (wcInfo != null) {
-			IRepositoryResource ancestor = wcInfo.isCopied() ? SVNUtility.getCopiedFrom(local) : SVNRemoteStorage.instance().asRepositoryResource(local);
+		IResource resource = this.getSelectedResources()[0];
+		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
+		if (local != null) {
+			IRepositoryResource ancestor = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
 			IRepositoryResource remote = SVNUtility.copyOf(ancestor);
-			
+			ancestor.setSelectedRevision(SVNRevision.BASE);
+
+			// TODO: replace to Compare with URL
 			InputRevisionPanel panel = new InputRevisionPanel(remote, SVNTeamUIPlugin.instance().getResource("CompareWithRevisionAction.InputRevisionPanel.Title"));
 			DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
 			if (dialog.open() == 0) {
 				remote.setSelectedRevision(panel.getSelectedRevision());
 				this.runScheduled(new CompareResourcesOperation(local, ancestor, remote));
-				this.runBusy(new ShowHistoryViewOperation(local, HistoryViewImpl.COMPARE_MODE, HistoryViewImpl.COMPARE_MODE));
+				this.runBusy(new ShowHistoryViewOperation(resource, HistoryViewImpl.COMPARE_MODE, HistoryViewImpl.COMPARE_MODE));
 			}
 		}
 	}

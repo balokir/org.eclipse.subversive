@@ -298,7 +298,7 @@ public interface ISVNConnector {
 
 	public void add(String path, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public long[] commit(String[] path, String message, String changelistName, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public long[] commit(String[] path, String message, String[] changelistNames, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public long[] update(String[] path, SVNRevision revision, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 

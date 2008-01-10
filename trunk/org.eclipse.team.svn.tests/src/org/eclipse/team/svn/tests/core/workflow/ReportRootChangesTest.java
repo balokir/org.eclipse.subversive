@@ -14,8 +14,8 @@ package org.eclipse.team.svn.tests.core.workflow;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
-import org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -52,11 +52,11 @@ public class ReportRootChangesTest extends TestWorkflow {
                         new DeleteResourcesOperation(new IRepositoryResource[] {remote}, "test").run(monitor);
                         RemoteStatusOperation rStatusOp = new RemoteStatusOperation(new IResource[] {getSecondProject()});
                         ProgressMonitorUtility.doTaskExternalDefault(rStatusOp, new NullProgressMonitor());
-                		SVNEntryStatus []statuses = (SVNEntryStatus [])rStatusOp.getStatuses();               		
+                		SVNChangeStatus []statuses = (SVNChangeStatus [])rStatusOp.getStatuses();               		
                 		int counter = 0;
                 		for (int i = 0; i < statuses.length; i++) {
                 		    if (statuses[i].path.equals(getSecondProject().getLocation().toString()) && 
-                		            statuses[i].repositoryTextStatus == Kind.DELETED) {           		        
+                		            statuses[i].repositoryTextStatus == SVNEntryStatus.Kind.DELETED) {           		        
                 		        counter = -1;
                 		        break;          		        
                 		    }

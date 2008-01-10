@@ -18,7 +18,6 @@ import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.UnlockOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
-import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.action.AbstractRecursiveTeamAction;
 import org.eclipse.team.svn.ui.dialog.UnlockResourcesDialog;
 
@@ -59,18 +58,18 @@ public class UnlockAction extends AbstractRecursiveTeamAction {
         return this.checkForResourcesPresenceRecursive(UnlockAction.SF_LOCKED);
     }
 
-    protected static final IStateFilter SF_LOCKED = new IStateFilter() {
-        public boolean accept(IResource resource, String state, int mask) {
+    protected static final IStateFilter SF_LOCKED = new IStateFilter.AbstractStateFilter() {
+        protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
             if (IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask)) {
                 if (resource != null) {
-                    ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
+                    local = this.takeLocal(local, resource);
                     return local != null && local.isLocked();
                 }
                 return true;
             }
             return false;
         }
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+        protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask);
 		}
     };

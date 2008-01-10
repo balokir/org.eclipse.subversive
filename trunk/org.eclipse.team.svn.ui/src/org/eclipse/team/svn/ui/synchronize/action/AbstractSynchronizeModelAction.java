@@ -96,8 +96,7 @@ public abstract class AbstractSynchronizeModelAction extends SynchronizeModelAct
 		        AbstractSVNSyncInfo info = (AbstractSVNSyncInfo)infos[i];
 		        ILocalResource local = info.getLocalResource();
 		        ResourceVariant resource = (ResourceVariant)info.getRemote();
-		        if (filter.acceptRemote(resource.getResource().getResource(), resource.getStatus(), resource.getResource().getChangeMask()) ||
-		            filter.accept(local.getResource(), local.getStatus(), local.getChangeMask())) {
+		        if (filter.acceptRemote(resource.getResource().getResource(), resource.getStatus(), resource.getResource().getChangeMask()) || filter.accept(local)) {
 		            retVal.add(local.getResource());
 		        }
 		    }

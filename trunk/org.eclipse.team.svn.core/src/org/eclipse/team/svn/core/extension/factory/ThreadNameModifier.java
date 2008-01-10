@@ -89,10 +89,10 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 
-	public long []commit(String []path, String message, String changelistName, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public long []commit(String []path, String message, String[] changelistNames, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			return this.connector.commit(path, message, changelistName, depth, options, monitor);
+			return this.connector.commit(path, message, changelistNames, depth, options, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);

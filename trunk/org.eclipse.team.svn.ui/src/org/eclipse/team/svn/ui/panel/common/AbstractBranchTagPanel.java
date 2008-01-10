@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.core.utility.FileUtility;
@@ -84,15 +85,13 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 		this.historyName = historyName;
 
 		this.newResources = FileUtility.getResourcesRecursive(resources, IStateFilter.SF_NEW, IResource.DEPTH_INFINITE);
-		this.disableSwitch = FileUtility.checkForResourcesPresence(resources, new IStateFilter() {
-			public boolean accept(IResource resource, String state, int mask) {
+		this.disableSwitch = FileUtility.checkForResourcesPresence(resources, new IStateFilter.AbstractStateFilter() {
+			protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 				return state == IStateFilter.ST_ADDED;
 			}
-
-			public boolean allowsRecursion(IResource resource, String state, int mask) {
+			protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 				return true;
 			}
-
 		}, IResource.DEPTH_INFINITE);
 
 		this.dialogTitle = SVNTeamUIPlugin.instance().getResource(this.nationalizationId + ".Title");

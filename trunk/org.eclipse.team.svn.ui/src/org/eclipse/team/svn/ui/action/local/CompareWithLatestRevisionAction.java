@@ -38,19 +38,20 @@ public class CompareWithLatestRevisionAction extends AbstractWorkingCopyAction {
 	}
 	
 	public void runImpl(IAction action) {
-		IResource local = this.getSelectedResources()[0];
+		IResource resource = this.getSelectedResources()[0];
 		
-		ILocalResource wcInfo = SVNRemoteStorage.instance().asLocalResource(local);
-		if (wcInfo != null) {
-			IRepositoryResource ancestor = wcInfo.isCopied() ? SVNUtility.getCopiedFrom(local) : SVNRemoteStorage.instance().asRepositoryResource(local);
+		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
+		if (local != null) {
+			IRepositoryResource ancestor = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
+			ancestor.setSelectedRevision(SVNRevision.BASE);
 			IRepositoryResource remote = SVNUtility.copyOf(ancestor);
 			remote.setSelectedRevision(SVNRevision.HEAD);
 			
-			CorrectRevisionOperation correctOp = new CorrectRevisionOperation(null, remote, wcInfo.getRevision(), local);
+			CorrectRevisionOperation correctOp = new CorrectRevisionOperation(null, remote, local.getRevision(), resource);
 			
 			if (!this.runNow(correctOp, true).isCancelled()) {
 				this.runScheduled(new CompareResourcesOperation(local, ancestor, remote));
-				this.runBusy(new ShowHistoryViewOperation(local, HistoryViewImpl.COMPARE_MODE, HistoryViewImpl.COMPARE_MODE));
+				this.runBusy(new ShowHistoryViewOperation(resource, HistoryViewImpl.COMPARE_MODE, HistoryViewImpl.COMPARE_MODE));
 			}
 		}
 	}

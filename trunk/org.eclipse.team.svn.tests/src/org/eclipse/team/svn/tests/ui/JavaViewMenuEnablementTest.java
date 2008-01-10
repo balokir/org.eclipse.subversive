@@ -22,10 +22,10 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.ui.IActionDelegate;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.local.AddToSVNOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
+import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.tests.TestPlugin;
 import org.eclipse.team.svn.tests.core.AddOperationTest;
@@ -50,6 +50,7 @@ import org.eclipse.team.svn.ui.action.local.SwitchAction;
 import org.eclipse.team.svn.ui.action.local.SynchronizeAction;
 import org.eclipse.team.svn.ui.action.local.TagAction;
 import org.eclipse.team.svn.ui.action.local.UpdateAction;
+import org.eclipse.ui.IActionDelegate;
 
 /**
  * Menu enablement test for the Subversive menus in Java View
@@ -175,8 +176,8 @@ public class JavaViewMenuEnablementTest extends TestWorkflow {
     
     public void testEditPropertiesAction() throws Exception {
         IActionDelegate action = (IActionDelegate) new EditPropertiesAction();
-        this.assertEnablement(action, this.getExludePrereplacedResources(), false);
-        this.assertEnablement(action, new IResource[] {this.getExludePrereplacedResources()[0]}, true);
+        this.assertEnablement(action, this.getExcludePrereplacedResources(), false);
+        this.assertEnablement(action, new IResource[] {this.getExcludePrereplacedResources()[0]}, true);
         this.assertEnablement(action, this.getVersionedResources(), false);
         this.assertEnablement(action, new IResource[] {this.getVersionedResources()[0]}, true);
         this.assertEnablement(action, this.getIgnoredResources(), false);
@@ -375,17 +376,21 @@ public class JavaViewMenuEnablementTest extends TestWorkflow {
         return replacedResources;
     }
     
-    protected IResource[] getExludePrereplacedResources() {
-        IResource []exludePrereplacedResources = FileUtility.getResourcesRecursive(new IResource[] {this.getFirstProject(), this.getSecondProject()}, 
-                new IStateFilter() {
-            		public boolean accept(IResource resource, String state, int mask) {
-            		    return IStateFilter.SF_VERSIONED.accept(resource, state, mask) && !IStateFilter.SF_PREREPLACED.accept(resource, state, mask);
-            		}
-            		public boolean allowsRecursion(IResource resource, String state, int mask) {
-            			return true;
-            		}
+    protected IResource[] getExcludePrereplacedResources() {
+    	return FileUtility.getResourcesRecursive(new IResource[] {this.getFirstProject(), this.getSecondProject()}, new IStateFilter() {
+    		public boolean accept(IResource resource, String state, int mask) {
+    		    return IStateFilter.SF_VERSIONED.accept(resource, state, mask) && !IStateFilter.SF_PREREPLACED.accept(resource, state, mask);
+    		}
+    		public boolean allowsRecursion(IResource resource, String state, int mask) {
+    			return true;
+    		}
+    		public boolean accept(ILocalResource resource) {
+    		    return IStateFilter.SF_VERSIONED.accept(resource) && !IStateFilter.SF_PREREPLACED.accept(resource);
+    		}
+    		public boolean allowsRecursion(ILocalResource resource) {
+    			return true;
+    		}
         });
-        return exludePrereplacedResources;
     }
     
     protected IResource[] getRevertableResources() {

@@ -50,11 +50,11 @@ public class RestoreContentVisitor implements IResourceChangeVisitor {
 	        
 			real.delete();
 	        
-	    	if (IStateFilter.SF_DELETED.accept(local.getResource(), local.getStatus(), local.getChangeMask())) {
-	    		if (exists && !IStateFilter.SF_MISSING.accept(local.getResource(), local.getStatus(), local.getChangeMask())) {
+	    	if (IStateFilter.SF_DELETED.accept(local)) {
+	    		if (exists && !IStateFilter.SF_MISSING.accept(local)) {
 	    			processor.doOperation(new DeleteResourceOperation(local.getResource()), monitor);
 	    		}
-	    		if (!IStateFilter.SF_PREREPLACEDREPLACED.accept(local.getResource(), local.getStatus(), local.getChangeMask())) {
+	    		if (!IStateFilter.SF_PREREPLACEDREPLACED.accept(local)) {
 	        		return;//skip save file content for deleted files
 	    		}
         	}
@@ -68,9 +68,7 @@ public class RestoreContentVisitor implements IResourceChangeVisitor {
 				change.getTemporary().delete();
 	    	}
 	    	
-			if (!this.nodeKindChanged &&
-				(IStateFilter.SF_REPLACED.accept(local.getResource(), local.getStatus(), local.getChangeMask()) ||	
-				!exists && IStateFilter.SF_VERSIONED.accept(local.getResource(), local.getStatus(), local.getChangeMask()))) { 
+			if (!this.nodeKindChanged && (IStateFilter.SF_REPLACED.accept(local) || !exists && IStateFilter.SF_VERSIONED.accept(local))) { 
 			    processor.doOperation(new AddToSVNOperation(new IResource[] {local.getResource()}, false), monitor);
 			}
 		}

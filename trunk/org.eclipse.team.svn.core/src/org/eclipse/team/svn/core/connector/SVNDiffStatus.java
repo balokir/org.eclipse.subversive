@@ -20,7 +20,7 @@ package org.eclipse.team.svn.core.connector;
  * 
  * @author Alexander Gurov
  */
-public class SVNDiffStatus {
+public class SVNDiffStatus extends SVNEntryStatus {
 
 	/**
 	 * The first entry-related resource path or URL
@@ -31,21 +31,6 @@ public class SVNDiffStatus {
 	 * The second entry-related resource path or URL
 	 */
 	public final String pathNext;
-
-	/**
-	 * The entry kind (see {@link Kind})
-	 */
-	public final int nodeKind;
-
-	/**
-	 * The entries content diff status (see {@link SVNEntryStatus.Kind})
-	 */
-	public final int textStatus;
-
-	/**
-	 * The entries properties diff status (see {@link SVNEntryStatus.Kind})
-	 */
-	public final int propStatus;
 
 	/**
 	 * The {@link SVNDiffStatus} instance could be initialized only once because all fields are final
@@ -62,11 +47,9 @@ public class SVNDiffStatus {
 	 *            The entries properties diff status (see {@link SVNEntryStatus.Kind})
 	 */
 	public SVNDiffStatus(String path1, String path2, int nodeKind, int textStatus, int propStatus) {
+		super(nodeKind, textStatus, propStatus);
 		this.pathPrev = path1;
 		this.pathNext = path2;
-		this.nodeKind = nodeKind;
-		this.textStatus = textStatus;
-		this.propStatus = propStatus;
 	}
 
 }

@@ -24,15 +24,11 @@ import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -46,9 +42,8 @@ import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
 import org.eclipse.team.svn.core.operation.remote.LocateResourceURLInHistoryOperation;
+import org.eclipse.team.svn.core.resource.ILocalFile;
 import org.eclipse.team.svn.core.resource.ILocalResource;
-import org.eclipse.team.svn.core.resource.IRemoteStorage;
-import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -65,31 +60,21 @@ import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
  * @author Alexander Gurov
  */
 public class ThreeWayResourceCompareInput extends ResourceCompareInput {
-	protected IResource local;
+	protected ILocalResource local;
 	protected Collection<SVNDiffStatus> localChanges;
 	protected Collection<SVNDiffStatus> remoteChanges;
 	
-	protected Map newUrl2OldUrl;
-	protected boolean compareWithCopySource;
-	protected IRepositoryResource copiedFrom;
-	
-	public ThreeWayResourceCompareInput(CompareConfiguration configuration, IResource local, IRepositoryResource remote, Collection<SVNDiffStatus> localChanges, Collection<SVNDiffStatus> remoteChanges) {
+	public ThreeWayResourceCompareInput(CompareConfiguration configuration, ILocalResource local, IRepositoryResource ancestor, IRepositoryResource remote, Collection<SVNDiffStatus> localChanges, Collection<SVNDiffStatus> remoteChanges) {
 		super(configuration);
 
 		this.local = local;
 		this.localChanges = localChanges;
 		this.remoteChanges = remoteChanges;
 
-		IRemoteStorage storage = SVNRemoteStorage.instance();
-		this.rootLeft = storage.asRepositoryResource(this.local);
+		this.rootLeft = SVNRemoteStorage.instance().asRepositoryResource(this.local.getResource());
 		this.rootLeft.setSelectedRevision(SVNRevision.WORKING);
-		this.rootAncestor = storage.asRepositoryResource(this.local);
-		this.rootAncestor.setSelectedRevision(SVNRevision.BASE);
-		this.rootRight = remote == null ? this.rootAncestor : remote;
-		
-		this.newUrl2OldUrl = new HashMap();
-		this.copiedFrom = SVNUtility.getCopiedFrom(this.local);
-		this.compareWithCopySource = this.copiedFrom != null;
+		this.rootAncestor = ancestor;
+		this.rootRight = remote;
 	}
 
 	public void initialize(IProgressMonitor monitor) throws Exception {
@@ -98,15 +83,14 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		HashSet<String> allChangesSet = new HashSet<String>();
 		for (Iterator<SVNDiffStatus> it = this.localChanges.iterator(); it.hasNext(); ) {
 			SVNDiffStatus status = it.next();
-			String url = this.getUrl(status.pathPrev);
-			allChangesSet.add(url);
-			localChanges.put(url, status);
+			allChangesSet.add(status.pathPrev);
+			localChanges.put(status.pathPrev, status);
 		}
 		for (Iterator<SVNDiffStatus> it = this.remoteChanges.iterator(); it.hasNext(); ) {
 			SVNDiffStatus status = it.next();
-			String url = SVNUtility.decodeURL(status.pathPrev);
-			allChangesSet.add(url);
-			remoteChanges.put(url, status);
+			String localPath = this.getLocalPath(SVNUtility.decodeURL(status.pathPrev));
+			allChangesSet.add(localPath);
+			remoteChanges.put(localPath, status);
 		}
 		String []allChanges = allChangesSet.toArray(new String[allChangesSet.size()]);
 		Arrays.sort(allChanges);
@@ -119,79 +103,97 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 			ProgressMonitorUtility.progress(monitor, i, allChanges.length);
 		}
 		
-		this.findRootNode(path2node, this.rootRight, monitor);
-		if (this.root == null) {
-			this.findRootNode(path2node, this.rootLeft, monitor);
-		}
+		this.findRootNode(path2node, this.rootLeft, monitor);
 		
 		super.initialize(monitor);
 	}
 	
-	protected void makeBranch(String url, SVNDiffStatus stLocal, SVNDiffStatus stRemote, Map path2node, IProgressMonitor monitor) throws Exception {
-		// skip all ignored resources that does not have real remote variants
-		if (stRemote == null) {
-			IProject project = this.local.getProject();
-			String relative = stLocal.pathPrev.substring(FileUtility.getWorkingCopyPath(project).length());
-			IResource resource = relative.length() == 0 ? project : project.findMember(relative);
-			
-			ILocalResource local;
-			if (resource == null || 
-				(local = SVNRemoteStorage.instance().asLocalResource(resource)) == null || 
-				IStateFilter.SF_IGNORED.accept(resource, local.getStatus(), local.getChangeMask())) {
-				return;
-			}
-		}
+	protected void makeBranch(String localPath, SVNDiffStatus stLocal, SVNDiffStatus stRemote, final Map path2node, final IProgressMonitor monitor) throws Exception {
 		// 1) take local statuses
-		// 2) create node
-		// 3) if node is moved and is not a root node traverse all children
-		// 4) for each found children create locally "added" node
-		CompareNode node = this.makeNode(url, stLocal, stRemote, path2node, monitor);
-		if (node != null) {
-			path2node.put(new Path(url), node);
+		int nodeKind = stLocal == null ? this.getNodeKind(stRemote) : this.getNodeKind(stLocal);
+		ILocalResource local = this.getLocalResource(localPath, nodeKind == SVNEntry.Kind.FILE);
+		// 2) skip all ignored resources that does not have real remote variants
+		if (stRemote != null || !IStateFilter.SF_IGNORED.accept(local)) {
+			if (local.isCopied() && IStateFilter.SF_ADDED.accept(local) && !local.getResource().equals(this.local.getResource())) {
+				// 3) if node is moved and is not a root node traverse all children
+				FileUtility.checkForResourcesPresenceRecursive(new IResource[] {local.getResource()}, new IStateFilter.AbstractStateFilter() {
+					protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
+						// do not traverse through ignored resources
+						return !IStateFilter.SF_IGNORED.accept(resource, state, mask);
+					}
+					protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
+						// 4) for each found children create locally "added" node
+						local = this.takeLocal(local, resource);
+						String path = FileUtility.getWorkingCopyPath(resource);
+						SVNDiffStatus stLocal = new SVNDiffStatus(path, path, resource.getType() == IResource.FILE ? SVNEntry.Kind.FILE : SVNEntry.Kind.DIR, SVNEntryStatus.Kind.ADDED, SVNEntryStatus.Kind.NONE);
+						try {
+							CompareNode node = ThreeWayResourceCompareInput.this.makeNode(local, stLocal, null, path2node, monitor);
+							if (node != null) {
+								IRepositoryResource remote = ((ResourceElement)node.getLeft()).getRepositoryResource();
+								path2node.put(new Path(remote.getUrl()), node);
+							}
+						}
+						catch (RuntimeException ex) {
+							throw ex;
+						}
+						catch (Exception ex) {
+							throw new RuntimeException(ex);
+						}
+						return false;
+					}
+				});
+			}
+			else {
+				// 3) create node
+				CompareNode node = this.makeNode(local, stLocal, stRemote, path2node, monitor);
+				if (node != null) {
+					IRepositoryResource resource = ((ResourceElement)node.getLeft()).getRepositoryResource();
+					path2node.put(new Path(resource.getUrl()), node);
+				}
+			}
 		}
 	}
 	
-	protected CompareNode makeNode(String localUrl, SVNDiffStatus stLocal, SVNDiffStatus stRemote, Map path2node, IProgressMonitor monitor) throws Exception {
+	protected CompareNode makeNode(ILocalResource local, SVNDiffStatus stLocal, SVNDiffStatus stRemote, Map path2node, IProgressMonitor monitor) throws Exception {
 		IRepositoryLocation location = this.rootLeft.getRepositoryLocation();
+		int localNodeKind = local instanceof ILocalFile ? SVNEntry.Kind.FILE : SVNEntry.Kind.DIR;
+		int remoteNodeKind = stRemote == null ? localNodeKind : this.getNodeKind(stRemote);
 		
-		int localNodeKind = stLocal == null ? this.getNodeKind(stRemote) : this.getNodeKind(stLocal);
-		IRepositoryResource left = this.createResourceFor(location, localNodeKind, localUrl);
+		IRepositoryResource left = SVNRemoteStorage.instance().asRepositoryResource(local.getResource());
 		left.setSelectedRevision(SVNRevision.WORKING);
 		left.setPegRevision(null);
-		ILocalResource local = this.getLocalResourceFor(left);
 		
-		IRepositoryResource ancestor = this.createResourceFor(location, localNodeKind, localUrl);
+		boolean useOriginator = this.local.isCopied() && (stLocal.textStatus != SVNEntryStatus.Kind.ADDED || local.getResource().equals(this.local.getResource()));
+		IRepositoryResource ancestor = useOriginator ? SVNUtility.getCopiedFrom(local.getResource()) : SVNUtility.copyOf(left);
+		IRepositoryResource right = useOriginator ? SVNUtility.getCopiedFrom(local.getResource()) : SVNUtility.copyOf(left);
+		if (stRemote != null) {
+			ancestor = this.createResourceFor(location, remoteNodeKind, stRemote.pathPrev);
+			right = this.createResourceFor(location, remoteNodeKind, stRemote.pathNext);
+		}
 		ancestor.setSelectedRevision(SVNRevision.BASE);
 		ancestor.setPegRevision(null);
-
-		int rightNodeKind = stRemote == null ? this.getNodeKind(stLocal) : this.getNodeKind(stRemote);
-		IRepositoryResource copiedFrom = SVNUtility.getCopiedFrom(local.getResource());
-		String rightUrl = stRemote != null ? SVNUtility.decodeURL(stRemote.pathNext) : (this.compareWithCopySource && copiedFrom != null ? copiedFrom.getUrl() : (this.rootRight.getUrl() + localUrl.substring(this.rootLeft.getUrl().length())));
-		IRepositoryResource right = this.createResourceFor(location, rightNodeKind, rightUrl);
 		right.setPegRevision(this.rootRight.getPegRevision());
 		right.setSelectedRevision(this.rootRight.getSelectedRevision());
-		
-		local = this.getLocalResourceFor(right);
 		
 		if (right.exists()) {
 			LocateResourceURLInHistoryOperation op = new LocateResourceURLInHistoryOperation(new IRepositoryResource[] {right}, true);
 			ProgressMonitorUtility.doTaskExternalDefault(op, monitor);
 			right = op.getRepositoryResources()[0];
 		}
-		else if (local == null || IStateFilter.SF_NOTEXISTS.accept(local.getResource(), local.getStatus(), local.getChangeMask())) {
+		else if (IStateFilter.SF_NOTEXISTS.accept(local)) {
 			return null;
 		}
 		
-		int statusLeft = !this.compareWithCopySource & local.isCopied() ? SVNEntryStatus.Kind.ADDED : (stLocal == null ? SVNEntryStatus.Kind.NORMAL : (stLocal.textStatus == SVNEntryStatus.Kind.NORMAL ? stLocal.propStatus : stLocal.textStatus));
-		if (statusLeft == SVNEntryStatus.Kind.DELETED && localNodeKind == SVNEntry.Kind.FILE && new File(stLocal.pathPrev).exists()) {
+		int statusLeft = stLocal == null ? SVNEntryStatus.Kind.NORMAL : (stLocal.textStatus == SVNEntryStatus.Kind.NORMAL ? stLocal.propStatus : stLocal.textStatus);
+		if (statusLeft == SVNEntryStatus.Kind.DELETED && localNodeKind == SVNEntry.Kind.FILE && new File(FileUtility.getWorkingCopyPath(local.getResource())).exists()) {
 			statusLeft = SVNEntryStatus.Kind.REPLACED;
 		}
-		int statusRight = stRemote == null ? (statusLeft == SVNEntryStatus.Kind.ADDED || statusLeft == SVNEntryStatus.Kind.IGNORED || statusLeft == SVNEntryStatus.Kind.NONE || statusLeft == SVNEntryStatus.Kind.UNVERSIONED ? SVNEntryStatus.Kind.NONE :  SVNEntryStatus.Kind.NORMAL) : (stRemote.textStatus == SVNEntryStatus.Kind.NORMAL ? stRemote.propStatus : stRemote.textStatus);
+		int fictiveStatusRight = useOriginator || statusLeft != SVNEntryStatus.Kind.ADDED && statusLeft != SVNEntryStatus.Kind.IGNORED && statusLeft != SVNEntryStatus.Kind.NONE && statusLeft != SVNEntryStatus.Kind.UNVERSIONED ? SVNEntryStatus.Kind.NORMAL :  SVNEntryStatus.Kind.NONE;
+		int statusRight = stRemote != null ? (stRemote.textStatus == SVNEntryStatus.Kind.NORMAL ? stRemote.propStatus : stRemote.textStatus) : fictiveStatusRight;
 		
 		// skip resources that already up-to-date
-		if (stRemote != null && local != null) {
-			ILocalResource tmp = SVNRemoteStorage.instance().asLocalResource(this.local);
-			if (this.rootRight.getSelectedRevision().getKind() == Kind.NUMBER && tmp != null && tmp.getRevision() >= ((SVNRevision.Number)this.rootRight.getSelectedRevision()).getNumber()) {
+		if (stRemote != null) {
+			if (this.rootRight.getSelectedRevision().getKind() == Kind.NUMBER && this.local.getRevision() >= ((SVNRevision.Number)this.rootRight.getSelectedRevision()).getNumber()) {
 				if (!local.getResource().exists() && statusRight == SVNEntryStatus.Kind.DELETED || statusRight != SVNEntryStatus.Kind.DELETED && local.getRevision() == right.getRevision()) {
 					return null;
 				}
@@ -200,56 +202,43 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 				if (stLocal == null) {
 					return null;
 				}
-				else {
-					stRemote = null;
-					statusRight = statusLeft == SVNEntryStatus.Kind.ADDED || statusLeft == SVNEntryStatus.Kind.IGNORED || statusLeft == SVNEntryStatus.Kind.NONE || statusLeft == SVNEntryStatus.Kind.UNVERSIONED ? SVNEntryStatus.Kind.NONE : SVNEntryStatus.Kind.NORMAL;
-				}
+				stRemote = null;
+				statusRight = fictiveStatusRight;
 			}
 		}
 		
-		this.newUrl2OldUrl.put(right.getUrl(), localUrl);
-		
-		int diffKindLeft = ResourceCompareInput.getDiffKind(statusLeft, stLocal == null ? SVNEntryStatus.Kind.NONE : stLocal.propStatus, SVNEntryStatus.Kind.NORMAL);
+		int diffKindLeft = ResourceCompareInput.getDiffKind(statusLeft, stLocal == null ? SVNEntryStatus.Kind.NONE : stLocal.propStatus);
 		if (diffKindLeft != Differencer.NO_CHANGE) {
 			diffKindLeft |= Differencer.LEFT;
 		}
-		int diffKindRight = ResourceCompareInput.getDiffKind(statusRight, stRemote == null ? SVNEntryStatus.Kind.NONE : stRemote.propStatus, SVNEntryStatus.Kind.NORMAL);
+		int diffKindRight = ResourceCompareInput.getDiffKind(statusRight, stRemote == null ? SVNEntryStatus.Kind.NONE : stRemote.propStatus);
 		if (diffKindRight != Differencer.NO_CHANGE) {
 			diffKindRight |= Differencer.RIGHT;
 		}
-		IDiffContainer parent = this.getParentCompareNode(right, path2node);
-		return new CompareNode(parent, diffKindLeft | diffKindRight, left, ancestor, right, statusLeft, statusRight);
+		IDiffContainer parent = this.getParentCompareNode(left, path2node);
+		return new CompareNode(parent, diffKindLeft | diffKindRight, local, left, ancestor, right, statusLeft, statusRight);
 	}
 	
-	protected String getUrl(String localPath) {
-		// Try to find resource using provided path.
-		IResource resource = this.getResourceForPath(localPath);
-		if (resource != null) {
-			return SVNRemoteStorage.instance().asRepositoryResource(resource).getUrl();
+	protected ILocalResource getLocalResource(String path, boolean isFile) {
+		IProject project = this.local.getResource().getProject();
+		String relative = path.substring(FileUtility.getWorkingCopyPath(project).length());
+		IResource resource = relative.length() == 0 ? project : project.findMember(relative);
+		
+		if (resource == null) {
+			resource = isFile ? project.getFile(relative) : project.getFolder(relative);
 		}
-		// If the resource is not found make up the URL using project URL and relative path
-		IProject project = this.local.getProject();
-		String relativePath = localPath.substring(FileUtility.getWorkingCopyPath(project).length());
-		IRemoteStorage storage = SVNRemoteStorage.instance();
-		return storage.asRepositoryResource(project).getUrl() + relativePath;
+		
+		return SVNRemoteStorage.instance().asLocalResource(resource);
 	}
 	
-	protected IResource getResourceForPath(String pathString) {
-		Path path = new Path(pathString);
-		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-		IFile[] files = workspaceRoot.findFilesForLocation(path);
-		if (files != null && files.length != 0 && files[0] != null) {
-			return (IResource)files[0];
-		}
-		IContainer[] containers = workspaceRoot.findContainersForLocation(path);
-		if (containers != null && containers.length != 0 && containers[0] != null) {
-			return (IResource)containers[0];
-		}
-		return null;
+	protected String getLocalPath(String url) {
+		String delta = url.substring(this.rootAncestor.getUrl().length());
+		String projectPath = FileUtility.getWorkingCopyPath(this.local.getResource().getProject());
+		return projectPath + delta;
 	}
-
+	
 	protected IDiffContainer makeStubNode(IDiffContainer parent, IRepositoryResource node) {
-		return new CompareNode(parent, Differencer.NO_CHANGE, node, node, node, SVNEntryStatus.Kind.NORMAL, SVNEntryStatus.Kind.NORMAL);
+		return new CompareNode(parent, Differencer.NO_CHANGE, null, node, node, node, SVNEntryStatus.Kind.NORMAL, SVNEntryStatus.Kind.NORMAL);
 	}
 	
 	protected boolean isThreeWay() {
@@ -278,17 +267,6 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		}
 
 		return super.getRevisionPart(element);
-	}
-	
-	protected ILocalResource getLocalResourceFor(IRepositoryResource base) {
-		String url = base.getUrl();
-		if (this.compareWithCopySource && this.copiedFrom != null && new Path(this.copiedFrom.getUrl()).isPrefixOf(new Path(url))) {
-			url = this.rootLeft.getUrl() + url.substring(this.copiedFrom.getUrl().length());
-		}
-		else if (this.newUrl2OldUrl.containsKey(url)) {
-			url = (String)this.newUrl2OldUrl.get(url);
-		}
-		return SVNRemoteStorage.instance().asLocalResource(this.local.getProject(), url, base instanceof IRepositoryContainer ? IResource.FOLDER : IResource.FILE);
 	}
 	
 	protected ResourceCompareViewer createDiffViewerImpl(Composite parent, CompareConfiguration config) {
@@ -335,7 +313,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		if (this.root != null) {
 			try {
 				pm.beginTask(SVNTeamUIPlugin.instance().getResource("ThreeWayResourceCompareInput.SaveChanges"), -1);
-				this.saveChanges((CompareNode)this.root);
+				this.saveChanges((CompareNode)this.root, pm);
 			}
 			finally {
 				pm.done();
@@ -343,15 +321,15 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		}
 	}
 	
-	protected void saveChanges(CompareNode node) throws CoreException {
+	protected void saveChanges(CompareNode node, IProgressMonitor pm) throws CoreException {
 		ResourceElement left = (ResourceElement)node.getLeft();
 		if (left.isEditable() && left.isDirty()) {
-			left.commit(new NullProgressMonitor());
+			left.commit(pm);
 		}
 		IDiffElement []children = node.getChildren();
 		if (children != null) {
-			for (int i = 0; i < children.length; i++) {
-				this.saveChanges((CompareNode)children[i]);
+			for (int i = 0; i < children.length && !pm.isCanceled(); i++) {
+				this.saveChanges((CompareNode)children[i], pm);
 			}
 		}
 	}
@@ -360,20 +338,17 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		protected int localChangeType;
 		protected int remoteChangeType;
 		
-		public CompareNode(IDiffContainer parent, int kind, IRepositoryResource local, IRepositoryResource ancestor, IRepositoryResource remote, int localChangeType, int remoteChangeType) {
+		public CompareNode(IDiffContainer parent, int kind, ILocalResource workingVersion, IRepositoryResource local, IRepositoryResource ancestor, IRepositoryResource remote, int localChangeType, int remoteChangeType) {
 			super(parent, kind);
 			
 			this.localChangeType = localChangeType;
 			this.remoteChangeType = remoteChangeType;
 			
-			ILocalResource wcInfo = ThreeWayResourceCompareInput.this.getLocalResourceFor(local);
-			
-
-			ResourceElement leftElt = new ResourceElement(local, wcInfo, localChangeType == SVNEntryStatus.Kind.NONE || localChangeType == SVNEntryStatus.Kind.DELETED ? SVNEntryStatus.Kind.NONE : SVNEntryStatus.Kind.NORMAL);
+			ResourceElement leftElt = new ResourceElement(local, workingVersion, localChangeType != SVNEntryStatus.Kind.NONE && localChangeType != SVNEntryStatus.Kind.DELETED);
 			leftElt.setEditable(local instanceof IRepositoryFile);
 			this.setLeft(leftElt);
-			this.setAncestor(new ResourceElement(ancestor, wcInfo, localChangeType == SVNEntryStatus.Kind.UNVERSIONED || remoteChangeType == SVNEntryStatus.Kind.ADDED ? SVNEntryStatus.Kind.NONE : SVNEntryStatus.Kind.NORMAL));
-			this.setRight(new ResourceElement(remote, wcInfo, remoteChangeType == SVNEntryStatus.Kind.DELETED || remoteChangeType == SVNEntryStatus.Kind.NONE ? SVNEntryStatus.Kind.NONE : SVNEntryStatus.Kind.NORMAL));
+			this.setAncestor(new ResourceElement(ancestor, workingVersion, localChangeType != SVNEntryStatus.Kind.UNVERSIONED && remoteChangeType != SVNEntryStatus.Kind.ADDED));
+			this.setRight(new ResourceElement(remote, workingVersion, remoteChangeType != SVNEntryStatus.Kind.DELETED && remoteChangeType != SVNEntryStatus.Kind.NONE));
 		}
 
 		public int getLocalChangeType() {

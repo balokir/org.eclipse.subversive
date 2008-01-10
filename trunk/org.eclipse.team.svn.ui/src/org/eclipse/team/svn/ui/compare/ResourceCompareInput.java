@@ -102,9 +102,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 			ResourceElement right = (ResourceElement)this.root.getRight();
 			
 			//TODO additionally decorate resources in order to show property changes
-			if ((left.getType() == ITypedElement.FOLDER_TYPE || 
-				ancestor != null && ancestor.getType() == ITypedElement.FOLDER_TYPE || 
-				right.getType() == ITypedElement.FOLDER_TYPE) &&
+			if ((left.getType() == ITypedElement.FOLDER_TYPE || ancestor != null && ancestor.getType() == ITypedElement.FOLDER_TYPE || right.getType() == ITypedElement.FOLDER_TYPE) && 
 				(this.root.getKind() & Differencer.CHANGE_TYPE_MASK) != 0) {
 				this.root = (BaseCompareNode)this.root.getParent();
 			}
@@ -125,6 +123,9 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 	}
 	
 	protected void refreshTitles() throws Exception {
+		if (this.root == null) {
+			return;
+		}
 		CompareConfiguration cc = this.getCompareConfiguration();
 		
 		cc.setLeftLabel(this.getLeftLabel());
@@ -281,10 +282,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		return node;
 	}
 	
-	protected static int getDiffKind(int textStatus, int propStatus, int kindOverride) {
-		if (kindOverride == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.REPLACED) {
-			return Differencer.CHANGE;
-		}
+	protected static int getDiffKind(int textStatus, int propStatus) {
 		if (textStatus == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.ADDED ||
 			textStatus == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.UNVERSIONED) {
 			return Differencer.ADDITION;
@@ -330,17 +328,15 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		protected IRepositoryResource resource;
 		protected AbstractGetFileContentOperation op;
 		protected ILocalResource localAlias;
-		protected int kind;
 		protected boolean editable;
 		
-		public ResourceElement(IRepositoryResource resource, ILocalResource alias, int kind) {
+		public ResourceElement(IRepositoryResource resource, ILocalResource alias, boolean showContent) {
 			this.resource = resource;
 			this.localAlias = alias;
-			this.kind = kind;
 			this.editable = false;
 			this.listenerList = new Vector();
-			if (kind == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NONE) {
-				resource.setSelectedRevision(SVNRevision.INVALID_REVISION);
+			if (!showContent) {
+				this.resource.setSelectedRevision(SVNRevision.INVALID_REVISION);
 			}
 		}
 		
@@ -411,7 +407,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		}
 
 		public AbstractGetFileContentOperation getFetcher() {
-			if (this.kind != org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NONE && this.resource instanceof IRepositoryFile && 
+			if (this.resource.getSelectedRevision() != SVNRevision.INVALID_REVISION && this.resource instanceof IRepositoryFile && 
 				(this.op == null || this.op.getExecutionState() != IActionOperation.OK)) {
 				int revisionKind = this.resource.getSelectedRevision().getKind();
 				return this.op = revisionKind == SVNRevision.Kind.WORKING || revisionKind == SVNRevision.Kind.BASE ? 

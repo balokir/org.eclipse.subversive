@@ -83,10 +83,10 @@ public class SVNContainerSelectionGroup extends ContainerSelectionGroup {
     		if (localDest == null) {
     			return this.isNonSVNCheckDisabled() ? SVNContainerSelectionVerifier.DESTINATION_IS_DETACHED_FROM_SVN : null;
     		}
-        	if (IStateFilter.SF_DELETED.accept(destinationRoot, localDest.getStatus(), localDest.getChangeMask())) {
+        	if (IStateFilter.SF_DELETED.accept(localDest)) {
         		return SVNContainerSelectionVerifier.DESTINATION_DIRECTORY_IS_DELETED;
         	}
-        	if (IStateFilter.SF_OBSTRUCTED.accept(destinationRoot, localDest.getStatus(), localDest.getChangeMask())) {
+        	if (IStateFilter.SF_OBSTRUCTED.accept(localDest)) {
         		return SVNContainerSelectionVerifier.DESTINATION_DIRECTORY_IS_OBSTRUCTED;
         	}
             return null;

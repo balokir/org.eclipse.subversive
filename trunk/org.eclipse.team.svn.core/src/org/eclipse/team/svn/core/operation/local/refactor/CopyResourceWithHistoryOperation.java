@@ -54,10 +54,7 @@ public class CopyResourceWithHistoryOperation extends AbstractActionOperation {
 		IRepositoryLocation locationDestination = storage.getRepositoryLocation(this.destination);
 		ILocalResource localSource =  storage.asLocalResource(this.source);
 		
-		return 
-			localSource != null &&
-			IStateFilter.SF_ONREPOSITORY.accept(this.source, localSource.getStatus(), localSource.getChangeMask()) &&
-			locationSource.equals(locationDestination);
+		return localSource != null && IStateFilter.SF_ONREPOSITORY.accept(localSource) && locationSource.equals(locationDestination);
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {

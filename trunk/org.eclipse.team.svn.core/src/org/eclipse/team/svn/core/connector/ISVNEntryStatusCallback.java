@@ -25,7 +25,7 @@ public interface ISVNEntryStatusCallback {
 	 * This method will be called by the connector library for each status entry
 	 * 
 	 * @param status
-	 *            the {@link SVNEntryStatus} entry instance
+	 *            the {@link SVNChangeStatus} entry instance
 	 */
-	public void next(SVNEntryStatus status);
+	public void next(SVNChangeStatus status);
 }

@@ -86,10 +86,10 @@ public class GetMultiPropertiesOperation extends AbstractActionOperation impleme
 								if (local == null) {
 									return false;
 								}
-								if (GetMultiPropertiesOperation.this.filter.accept(resource, local.getStatus(), local.getChangeMask())) {
+								if (GetMultiPropertiesOperation.this.filter.accept(local)) {
 									GetMultiPropertiesOperation.this.processResource(proxy, resource, monitor);
 								}
-								return GetMultiPropertiesOperation.this.filter.allowsRecursion(resource, local.getStatus(), local.getChangeMask());
+								return GetMultiPropertiesOperation.this.filter.allowsRecursion(local);
 							}
 						}, GetMultiPropertiesOperation.this.depth);
 					}

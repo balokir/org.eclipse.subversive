@@ -20,7 +20,7 @@ package org.eclipse.team.svn.core.connector;
  * 
  * @author Alexander Gurov
  */
-public class SVNMergeStatus {
+public class SVNMergeStatus extends SVNEntryStatus {
 	/**
 	 * The repository URL of the entry
 	 */
@@ -30,21 +30,6 @@ public class SVNMergeStatus {
 	 * The working copy path of the entry
 	 */
 	public final String path;
-
-	/**
-	 * The entry kind (see {@link Kind})
-	 */
-	public final int nodeKind;
-
-	/**
-	 * The entry content merge status (see {@link SVNEntryStatus.Kind})
-	 */
-	public final int textStatus;
-
-	/**
-	 * The entry properties merge status (see {@link SVNEntryStatus.Kind})
-	 */
-	public final int propStatus;
 
 	/**
 	 * The revision of the last change in the merged repository resource.
@@ -89,11 +74,9 @@ public class SVNMergeStatus {
 	 *            The comment entered for the last change in the merged repository resource. Could be <code>null</code>.
 	 */
 	public SVNMergeStatus(String url, String path, int nodeKind, int textStatus, int propStatus, long revision, long date, String author, String comment) {
+		super(nodeKind, textStatus, propStatus);
 		this.url = url;
 		this.path = path;
-		this.nodeKind = nodeKind;
-		this.textStatus = textStatus;
-		this.propStatus = propStatus;
 		this.revision = revision;
 		this.date = date;
 		this.author = author;

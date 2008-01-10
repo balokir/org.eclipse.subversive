@@ -41,7 +41,7 @@ public class SavePropertiesVisitor implements IResourceChangeVisitor {
 			return;
 		}
 		ILocalResource local = change.getLocal();
-    	if (IStateFilter.SF_VERSIONED.accept(local.getResource(), local.getStatus(), local.getChangeMask())) {
+    	if (IStateFilter.SF_VERSIONED.accept(local)) {
 			GetPropertiesOperation getProp = new GetPropertiesOperation(local.getResource());
     		processor.doOperation(getProp, monitor);
     		change.setProperties(getProp.getProperties());

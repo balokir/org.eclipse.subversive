@@ -22,6 +22,7 @@ import org.eclipse.team.svn.core.operation.local.RemoveNonVersionedResourcesOper
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.RevertOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
+import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.svnstorage.ResourcesParentsProvider;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.action.AbstractRecursiveTeamAction;
@@ -81,13 +82,13 @@ public class RevertAction extends AbstractRecursiveTeamAction {
 		return null;
 	}
 	
-	public static IStateFilter SF_REVERTABLE_OR_NEW = new IStateFilter() {
+	public static IStateFilter SF_REVERTABLE_OR_NEW = new IStateFilter.AbstractStateFilter() {
 
-		public boolean accept(IResource resource, String state, int mask) {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_REVERTABLE.accept(resource, state, mask) || IStateFilter.SF_NEW.accept(resource, state, mask);
 		}
 
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_REVERTABLE.allowsRecursion(resource, state, mask) || IStateFilter.SF_NEW.allowsRecursion(resource, state, mask);
 		}
 		

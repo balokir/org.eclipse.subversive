@@ -52,7 +52,7 @@ public class UpdateAction extends AbstractSynchronizeModelAction {
             public boolean select(SyncInfo info) {
                 if (super.select(info)) {
                     UpdateSyncInfo sync = (UpdateSyncInfo)info;
-                    return !IStateFilter.SF_OBSTRUCTED.accept(sync.getLocal(), sync.getLocalResource().getStatus(), sync.getLocalResource().getChangeMask());
+                    return !IStateFilter.SF_OBSTRUCTED.accept(sync.getLocalResource());
                 }
                 return false;
             }

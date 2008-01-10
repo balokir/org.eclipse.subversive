@@ -19,7 +19,7 @@ import java.util.HashSet;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNEntryStatusCallback;
-import org.eclipse.team.svn.core.connector.SVNEntryStatus;
+import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -67,7 +67,7 @@ public class GetAllFilesOperation extends AbstractFileOperation implements IFile
 			ISVNConnector proxy = location.acquireSVNProxy();
 			try {
 				proxy.status(file.getAbsolutePath(), Depth.IMMEDIATES, ISVNConnector.Options.INCLUDE_UNCHANGED | ISVNConnector.Options.INCLUDE_IGNORED, new ISVNEntryStatusCallback() {
-					public void next(SVNEntryStatus status) {
+					public void next(SVNChangeStatus status) {
 						allFiles.add(new File(status.path));
 					}
 				}, new SVNProgressMonitor(this, monitor, null));

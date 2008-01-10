@@ -48,7 +48,7 @@ public class UnacceptableOperationNotificator {
 			IResource []parents = FileUtility.getOperableParents(new IResource[] {resources[i]}, IStateFilter.SF_NOTONREPOSITORY, true);
 			
 			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resources[i]);
-			if (local == null || parents.length > 0 && IStateFilter.SF_ONREPOSITORY.accept(resources[i], local.getStatus(), local.getChangeMask())) {
+			if (local == null || parents.length > 0 && IStateFilter.SF_ONREPOSITORY.accept(local)) {
 				unsupportedResources.put(resources[i], parents);
 			}
 			else {

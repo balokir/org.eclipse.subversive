@@ -18,7 +18,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNEntryStatusCallback;
-import org.eclipse.team.svn.core.connector.SVNEntryStatus;
+import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -31,7 +31,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
  * @author Alexander Gurov
  */
 public abstract class AbstractStatusOperation extends AbstractFileOperation {
-	protected SVNEntryStatus []statuses;
+	protected SVNChangeStatus []statuses;
 	protected boolean recursive;
 
 	public AbstractStatusOperation(String operationName, File []files, boolean recursive) {
@@ -44,7 +44,7 @@ public abstract class AbstractStatusOperation extends AbstractFileOperation {
 		this.recursive = recursive;
 	}
 
-	public SVNEntryStatus []getStatuses() {
+	public SVNChangeStatus []getStatuses() {
 		return this.statuses;
 	}
 
@@ -53,7 +53,7 @@ public abstract class AbstractStatusOperation extends AbstractFileOperation {
 
 		final List result = new ArrayList();
 		ISVNEntryStatusCallback cb = new ISVNEntryStatusCallback() {
-			public void next(SVNEntryStatus status) {
+			public void next(SVNChangeStatus status) {
 				result.add(status);
 			}
 		};
@@ -67,7 +67,7 @@ public abstract class AbstractStatusOperation extends AbstractFileOperation {
 			
 			location.releaseSVNProxy(proxy);
 		}
-		this.statuses = (SVNEntryStatus [])result.toArray(new SVNEntryStatus[result.size()]);
+		this.statuses = (SVNChangeStatus [])result.toArray(new SVNChangeStatus[result.size()]);
 	}
 
 	protected void reportStatuses(final ISVNConnector proxy, final ISVNEntryStatusCallback cb, final File current, IProgressMonitor monitor, int tasks) {

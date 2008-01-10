@@ -56,7 +56,7 @@ public class InfoOperation extends AbstractActionOperation {
         this.info = null;
         this.local = SVNRemoteStorage.instance().asLocalResource(this.resource);
         
-        if (this.local != null && IStateFilter.SF_ONREPOSITORY.accept(this.resource, this.local.getStatus(), this.local.getChangeMask())) {
+        if (this.local != null && IStateFilter.SF_ONREPOSITORY.accept(this.local)) {
             IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(this.resource);
             ISVNConnector proxy = location.acquireSVNProxy();
             try {

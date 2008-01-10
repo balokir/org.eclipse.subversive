@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNMergeStatusCallback;
+import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNMergeStatus;
 import org.eclipse.team.svn.core.connector.SVNRevisionRange;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
@@ -76,7 +77,7 @@ public class MergeStatusOperation extends AbstractWorkingCopyOperation implement
 		this.info.addStatuses(retVal = (SVNMergeStatus [])st.toArray(new SVNMergeStatus[st.size()]));
     }
 
-	public Object []getStatuses() {
+	public SVNEntryStatus[]getStatuses() {
 		return this.retVal;
 	}
 

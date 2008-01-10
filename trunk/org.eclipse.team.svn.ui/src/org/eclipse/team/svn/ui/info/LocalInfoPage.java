@@ -90,7 +90,7 @@ public class LocalInfoPage extends PropertyPage {
 		content.setText(SVNUtility.getStatusText(local.getStatus()));
 		
 		SVNEntryInfo info = op.getInfo();
-		if (IStateFilter.SF_ONREPOSITORY.accept(resource, local.getStatus(), local.getChangeMask()) && info != null) {
+		if (IStateFilter.SF_ONREPOSITORY.accept(local) && info != null) {
 		    // add space
 		    new Label(composite, SWT.WRAP);
 		    new Label(composite, SWT.WRAP);
@@ -186,7 +186,7 @@ public class LocalInfoPage extends PropertyPage {
 				}
 			}
 		}
-		if (IStateFilter.SF_VERSIONED.accept(resource, local.getStatus(), local.getChangeMask())) {
+		if (IStateFilter.SF_VERSIONED.accept(local)) {
 			//add space
 			new Label(composite, SWT.WRAP);
 		    new Label(composite, SWT.WRAP);

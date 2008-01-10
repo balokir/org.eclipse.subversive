@@ -447,7 +447,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 	    		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(this.resources[i]);
 	    		if (local != null) {
 	    			IResource resourceToProcess = this.resources[i];
-	    			while (IStateFilter.SF_UNVERSIONED.accept(resourceToProcess, local.getStatus(), local.getChangeMask())) {
+	    			while (IStateFilter.SF_UNVERSIONED.accept(local)) {
 	    				resourceToProcess = resourceToProcess.getParent();
 	    				local = SVNRemoteStorage.instance().asLocalResource(resourceToProcess);
 	    			}

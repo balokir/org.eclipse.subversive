@@ -48,6 +48,7 @@ import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.property.IPropertyProvider;
 import org.eclipse.team.svn.core.operation.local.property.SetMultiPropertiesOperation;
+import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.StringMatcher;
@@ -94,11 +95,11 @@ public class PropertyKeywordEditPanel extends AbstractDialogPanel {
 		this.selectedResources = selection;
 		this.properties = properties;
 		this.alreadyWithProperties = alreadyWithProperties == null ? new IResource[0] : alreadyWithProperties.getResources();
-		this.recursionEnabled = FileUtility.checkForResourcesPresence(selection, new IStateFilter() {
-			public boolean allowsRecursion(IResource resource, String state, int mask) {
+		this.recursionEnabled = FileUtility.checkForResourcesPresence(selection, new IStateFilter.AbstractStateFilter() {
+			protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 				return false;
 			}
-			public boolean accept(IResource resource, String state, int mask) {
+			protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 				return resource instanceof IContainer;
 			}
 		}, IResource.DEPTH_ZERO);
@@ -293,13 +294,13 @@ public class PropertyKeywordEditPanel extends AbstractDialogPanel {
 		//if filtration by mask is enabled - remove all non-matching resources from the operable map
 		IStateFilter filter = IStateFilter.SF_EXCLUDE_PREREPLACED_AND_DELETED_FILES;
 		if (this.useMask) {
-			filter = new IStateFilter() {
+			filter = new IStateFilter.AbstractStateFilter() {
 				private StringMatcher fileNameMatcher = new StringMatcher(PropertyKeywordEditPanel.this.mask);
 				
-				public boolean allowsRecursion(IResource resource, String state, int mask) {
+				protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 					return IStateFilter.SF_EXCLUDE_PREREPLACED_AND_DELETED.allowsRecursion(resource, state, mask);
 				}
-				public boolean accept(IResource resource, String state, int mask) {
+				protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 					if (!IStateFilter.SF_EXCLUDE_PREREPLACED_AND_DELETED_FILES.accept(resource, state, mask)) {
 						return false;
 					}

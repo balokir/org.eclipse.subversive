@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNEntry;
@@ -58,8 +59,8 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
         return new UpdateSyncInfo(localStatus, remoteStatus, this.getResourceComparator());
     }
 
-	protected IResourceChange handleResourceChange(IRemoteStatusOperation rStatusOp, final Object status) {
-		final SVNEntryStatus current = (SVNEntryStatus)status; 
+	protected IResourceChange handleResourceChange(IRemoteStatusOperation rStatusOp, final SVNEntryStatus status) {
+		final SVNChangeStatus current = (SVNChangeStatus)status; 
 		if (current.textStatus == SVNEntryStatus.Kind.EXTERNAL) {
 			return null;
 		}
@@ -133,8 +134,8 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 		return super.findChanges(resources, depth, monitor, operationWrapperFactory);
 	}
 	
-	protected boolean isIncomig(Object status) {
-		SVNEntryStatus st = (SVNEntryStatus)status;
+	protected boolean isIncomig(SVNEntryStatus status) {
+		SVNChangeStatus st = (SVNChangeStatus)status;
 		return st.repositoryPropStatus == SVNEntryStatus.Kind.MODIFIED || st.repositoryTextStatus != SVNEntryStatus.Kind.NONE;
 	}
 	

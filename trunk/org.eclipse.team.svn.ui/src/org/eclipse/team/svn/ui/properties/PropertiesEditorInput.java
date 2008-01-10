@@ -60,7 +60,7 @@ public class PropertiesEditorInput implements IEditorInput {
 			if (local == null) {
 				return this.localResource.getName();
 			}
-			return local.getName() + (IStateFilter.SF_ADDED.accept(local.getResource(), local.getStatus(), local.getChangeMask()) ? "" : (" " + local.getRevision()));
+			return local.getName() + (IStateFilter.SF_ADDED.accept(local) ? "" : (" " + local.getRevision()));
 		}
 		
 		String name = SVNTeamUIPlugin.instance().getResource("PropertiesEditor.Name");

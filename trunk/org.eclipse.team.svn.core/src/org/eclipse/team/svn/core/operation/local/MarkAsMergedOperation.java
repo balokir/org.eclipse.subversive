@@ -94,8 +94,7 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 			if (local == null) {
 				continue;
 			}
-			if (IStateFilter.SF_DELETED.accept(local.getResource(), local.getStatus(), local.getChangeMask()) &&
-			    !IStateFilter.SF_PREREPLACEDREPLACED.accept(local.getResource(), local.getStatus(), local.getChangeMask())) {
+			if (IStateFilter.SF_DELETED.accept(local) && !IStateFilter.SF_PREREPLACEDREPLACED.accept(local)) {
 				this.markDeleted(local, new NullProgressMonitor());
 				committables.add(local.getResource());
 			}
@@ -174,7 +173,7 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 	    boolean nodeKindChanged = false;
 	    if (real.exists()) {
 		    nodeKindChanged = nodeKindBeforeUpdate != real.isDirectory();
-		    if (IStateFilter.SF_NOTONREPOSITORY.accept(local.getResource(), local.getStatus(), local.getChangeMask()) || nodeKindChanged) {
+		    if (IStateFilter.SF_NOTONREPOSITORY.accept(local) || nodeKindChanged) {
 		        this.doOperation(new DeleteResourceOperation(local.getResource()), monitor);
 		    }
 	    }

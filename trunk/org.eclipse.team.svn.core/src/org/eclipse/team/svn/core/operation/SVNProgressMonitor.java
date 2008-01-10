@@ -16,9 +16,9 @@ import java.text.MessageFormat;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNProgressMonitor;
-import org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind;
-import org.eclipse.team.svn.core.connector.SVNNotification.PerformedAction;
+import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNNotification.NodeStatus;
+import org.eclipse.team.svn.core.connector.SVNNotification.PerformedAction;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 
 /**
@@ -124,10 +124,10 @@ public class SVNProgressMonitor implements ISVNProgressMonitor {
 						break;
 					}
 					default: {
-						int resourceState = contentState == Kind.NORMAL ? propState : contentState;
+						int resourceState = contentState == SVNEntryStatus.Kind.NORMAL ? propState : contentState;
 						status = SVNProgressMonitor.getStatus(resourceState);
 						severity = 
-							resourceState == Kind.CONFLICTED || resourceState == Kind.OBSTRUCTED ?
+							resourceState == SVNEntryStatus.Kind.CONFLICTED || resourceState == SVNEntryStatus.Kind.OBSTRUCTED ?
 							IConsoleStream.LEVEL_WARNING : 
 							IConsoleStream.LEVEL_OK;
 						break;
@@ -147,28 +147,28 @@ public class SVNProgressMonitor implements ISVNProgressMonitor {
 	
 	protected static String getStatus(int resourceState) {
 		switch (resourceState) {
-			case Kind.ADDED: {
+			case SVNEntryStatus.Kind.ADDED: {
 				return SVNTeamPlugin.instance().getResource("Console.Status.Added");
 			}
-			case Kind.MODIFIED: {
+			case SVNEntryStatus.Kind.MODIFIED: {
 				return SVNTeamPlugin.instance().getResource("Console.Status.Modified");
 			}
-			case Kind.DELETED: {
+			case SVNEntryStatus.Kind.DELETED: {
 				return SVNTeamPlugin.instance().getResource("Console.Status.Deleted");
 			}
-			case Kind.MISSING: {
+			case SVNEntryStatus.Kind.MISSING: {
 				return SVNTeamPlugin.instance().getResource("Console.Status.Missing");
 			}
-			case Kind.REPLACED: {
+			case SVNEntryStatus.Kind.REPLACED: {
 				return SVNTeamPlugin.instance().getResource("Console.Status.Replaced");
 			}
-			case Kind.MERGED: {
+			case SVNEntryStatus.Kind.MERGED: {
 				return SVNTeamPlugin.instance().getResource("Console.Status.Merged");
 			}
-			case Kind.CONFLICTED: {
+			case SVNEntryStatus.Kind.CONFLICTED: {
 				return SVNTeamPlugin.instance().getResource("Console.Status.Conflicted");
 			}
-			case Kind.OBSTRUCTED: {
+			case SVNEntryStatus.Kind.OBSTRUCTED: {
 				return SVNTeamPlugin.instance().getResource("Console.Status.Obstructed");
 			}
 			default: {
