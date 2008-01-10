@@ -18,7 +18,9 @@ import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.LockOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
+import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
+import org.eclipse.team.svn.ui.panel.local.CommitPanel;
 import org.eclipse.team.svn.ui.panel.local.LockPanel;
 
 /**
@@ -29,7 +31,9 @@ import org.eclipse.team.svn.ui.panel.local.LockPanel;
 public class LockProposeUtility {
 	public static boolean proposeLock(final IResource[] resources, final Shell shell) {
 		final boolean []success = new boolean[1];
-		final LockPanel panel = new LockPanel(true, true);
+		CommitPanel.CollectPropertiesOperation op = new CommitPanel.CollectPropertiesOperation(resources);
+		ProgressMonitorUtility.doTaskExternal(op, null);
+		final LockPanel panel = new LockPanel(true, true, op.getMinLockSize());
 		UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 			public void run() {
 				DefaultDialog dialog = new DefaultDialog(shell, panel);
