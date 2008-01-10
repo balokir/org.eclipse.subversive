@@ -52,7 +52,7 @@ public class OverrideAndUpdateAction extends AbstractSynchronizeModelAction {
 	}
 
 	protected FastSyncInfoFilter getSyncInfoFilter() {
-		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.OUTGOING, SyncInfo.CONFLICTING});
+		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.OUTGOING, SyncInfo.INCOMING, SyncInfo.CONFLICTING});
 	}
 
 	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {
@@ -68,6 +68,7 @@ public class OverrideAndUpdateAction extends AbstractSynchronizeModelAction {
 					changedResources = FileUtility.addOperableParents(changedResources, IStateFilter.SF_NOTONREPOSITORY);
 					allResources.addAll(Arrays.asList(changedResources));
 				}
+				
 				if (allResources.size() > 0) {
 					IResource []fullSet = (IResource [])allResources.toArray(new IResource[allResources.size()]);
 					OverrideResourcesPanel panel = new OverrideResourcesPanel(fullSet, fullSet, OverrideResourcesPanel.MSG_UPDATE);
