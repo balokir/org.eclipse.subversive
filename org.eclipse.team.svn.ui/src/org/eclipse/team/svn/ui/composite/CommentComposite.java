@@ -70,6 +70,7 @@ public class CommentComposite extends Composite  {
 	protected Set ignoredStrings;
 	protected BugtraqModel bugtraqModel;
 	protected int minLogSize;
+	protected int maxLogWidth;
 	
 	protected IValidationManager validationManager;
 	protected IDialogManager dialogManager;
@@ -87,6 +88,9 @@ public class CommentComposite extends Composite  {
     }
     
     public CommentComposite(Composite parent, String message, IValidationManager validationManager, Set logTemplates, BugtraqModel bugtraqModel, int minLogSize) {
+    	this(parent, null, validationManager, logTemplates, null, minLogSize, 0);
+    }
+    public CommentComposite(Composite parent, String message, IValidationManager validationManager, Set logTemplates, BugtraqModel bugtraqModel, int minLogSize, int maxLogWidth){
     	super(parent, SWT.NONE);
     	
     	CommentComposite.PREVIOUS_COMMENTS_HEADER = SVNTeamUIPlugin.instance().getResource("CommentComposite.Previous");
@@ -102,6 +106,7 @@ public class CommentComposite extends Composite  {
         this.ignoredStrings = new HashSet();
         this.bugtraqModel = bugtraqModel;
         this.minLogSize = minLogSize;
+        this.maxLogWidth = maxLogWidth;
         this.createControls();
     }
 
@@ -184,7 +189,7 @@ public class CommentComposite extends Composite  {
 				}
         	});
         }
-        this.text = SpellcheckedTextProvider.getTextWidget(this, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.WRAP);
+        this.text = SpellcheckedTextProvider.getTextWidget(this, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.WRAP, this.maxLogWidth);
         data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = 80;
 		this.text.setLayoutData(data);

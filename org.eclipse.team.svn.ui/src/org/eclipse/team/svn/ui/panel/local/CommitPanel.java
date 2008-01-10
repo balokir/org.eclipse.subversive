@@ -77,6 +77,8 @@ import org.eclipse.team.svn.ui.propfind.BugtraqPropFindVisitor;
 import org.eclipse.team.svn.ui.propfind.CompositePropFindVisitor;
 import org.eclipse.team.svn.ui.propfind.IPropFindVisitor;
 import org.eclipse.team.svn.ui.propfind.LogTemplatesPropFindVisitor;
+import org.eclipse.team.svn.ui.propfind.MaxLogWidthPropFindVisitor;
+import org.eclipse.team.svn.ui.propfind.MinLockSizePropFindVisitor;
 import org.eclipse.team.svn.ui.propfind.MinLogSizePropFindVisitor;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifier;
@@ -101,6 +103,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 	protected List changeListenerList;
 	protected IResource[] userSelectedResources;
 	protected int minLogSize;
+	protected int maxLogWidth;
 	
 	protected final String proposedComment;
 	
@@ -163,8 +166,9 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
     	UIMonitorUtility.doTaskNowDefault(op, true);
 		
 		this.bugtraqModel = op.getBugtraqModel();
-		this.minLogSize = op.getMinLogSize(); 
-    	this.comment = new CommentComposite(group, this.proposedComment, this, op.getLogTemplates(), this.bugtraqModel, this.minLogSize);
+		this.minLogSize = op.getMinLogSize();
+		this.maxLogWidth = op.getMaxLogWidth();
+    	this.comment = new CommentComposite(group, this.proposedComment, this, op.getLogTemplates(), this.bugtraqModel, this.minLogSize, this.maxLogWidth);
 		data = new GridData(GridData.FILL_BOTH);
 		this.comment.setLayoutData(data);
 		
@@ -421,6 +425,8 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
     	protected MinLogSizePropFindVisitor minLogVisitor;
     	protected LogTemplatesPropFindVisitor logTemplateVisitor;
     	protected BugtraqPropFindVisitor bugtraqVisitor;
+    	protected MaxLogWidthPropFindVisitor maxWidthVisitor;
+    	protected MinLockSizePropFindVisitor minLockVisitor;
     	protected CompositePropFindVisitor compositeVisitor;
     	
     	public CollectPropertiesOperation(IResource []resources) {
@@ -429,11 +435,13 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
     		this.logTemplateVisitor = new LogTemplatesPropFindVisitor();
     		this.bugtraqVisitor = new BugtraqPropFindVisitor();
     		this.minLogVisitor = new MinLogSizePropFindVisitor();
+    		this.maxWidthVisitor = new MaxLogWidthPropFindVisitor();
+    		this.minLockVisitor = new MinLockSizePropFindVisitor();
     		if (SVNTeamPreferences.getCommentTemplatesBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.COMMENT_LOG_TEMPLATES_ENABLED_NAME)) {
-    			this.compositeVisitor = new CompositePropFindVisitor(new IPropFindVisitor [] {this.logTemplateVisitor, this.bugtraqVisitor, this.minLogVisitor});
+    			this.compositeVisitor = new CompositePropFindVisitor(new IPropFindVisitor [] {this.logTemplateVisitor, this.bugtraqVisitor, this.minLogVisitor, this.maxWidthVisitor, this.minLockVisitor});
         	}
     		else {
-    			this.compositeVisitor = new CompositePropFindVisitor(new IPropFindVisitor [] {this.bugtraqVisitor, this.minLogVisitor});
+    			this.compositeVisitor = new CompositePropFindVisitor(new IPropFindVisitor [] {this.bugtraqVisitor, this.minLogVisitor, this.maxWidthVisitor, this.minLockVisitor});
     		}
     	}
     	
@@ -497,6 +505,14 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
     	
     	public int getMinLogSize() {
     		return this.minLogVisitor.getMinLogSize();
+    	}
+    	
+    	public int getMinLockSize() {
+    		return this.minLockVisitor.getMinLockSize();
+    	}
+    	
+    	public int getMaxLogWidth() {
+    		return this.maxWidthVisitor.getMaxLogWidth();
     	}
     }
     

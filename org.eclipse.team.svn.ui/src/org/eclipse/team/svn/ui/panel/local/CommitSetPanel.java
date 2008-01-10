@@ -107,7 +107,7 @@ public class CommitSetPanel extends CommentPanel implements ICommentDialogPanel 
     	UIMonitorUtility.doTaskNowDefault(op, true);
 		
 		this.bugtraqModel = op.getBugtraqModel();
-    	this.comment = new CommentComposite(group, this.set.getComment(), this, op.getLogTemplates(), null, op.getMinLogSize());
+    	this.comment = new CommentComposite(group, this.set.getComment(), this, op.getLogTemplates(), null, op.getMinLogSize(), op.getMaxLogWidth());
 		data = new GridData(GridData.FILL_BOTH);
 		this.comment.setLayoutData(data);
     }

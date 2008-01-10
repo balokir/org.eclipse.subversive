@@ -34,15 +34,18 @@ public class LockPanel extends CommentPanel {
 	protected boolean force;
 	protected boolean recursive;
 	protected boolean isFile;
+	protected int minLockSize;
 	
-	public LockPanel(boolean isFile) {
+	
+	public LockPanel(boolean isFile, int minLockSize) {
         super(SVNTeamUIPlugin.instance().getResource("LockPanel.Title"));
         this.isFile = isFile;
+        this.minLockSize = minLockSize;
         this.dialogDescription = SVNTeamUIPlugin.instance().getResource("LockPanel.Description.Default");
     }
 	
-	public LockPanel(boolean isFile, boolean needsLock) {
-		this(isFile);
+	public LockPanel(boolean isFile, boolean needsLock, int minLockSize) {
+		this(isFile, minLockSize);
 		if (needsLock) {
 			 this.dialogDescription = SVNTeamUIPlugin.instance().getResource("LockPanel.Description.NeedsLock");
 			 this.defaultMessage = SVNTeamUIPlugin.instance().getResource("LockPanel.Message.NeedsLock");
@@ -62,7 +65,7 @@ public class LockPanel extends CommentPanel {
 		data = new GridData(GridData.FILL_BOTH);
 		group.setLayoutData(data);
 		group.setText(SVNTeamUIPlugin.instance().getResource("LockPanel.Comment"));
-    	this.comment = new CommentComposite(group, this);
+    	this.comment = new CommentComposite(group, null, this, null, null, this.minLockSize);
 		data = new GridData(GridData.FILL_BOTH);
 		this.comment.setLayoutData(data);
 		

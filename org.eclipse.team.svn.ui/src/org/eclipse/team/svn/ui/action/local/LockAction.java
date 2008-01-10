@@ -20,8 +20,10 @@ import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.local.LockOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
+import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.ui.action.AbstractRecursiveTeamAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
+import org.eclipse.team.svn.ui.panel.local.CommitPanel;
 import org.eclipse.team.svn.ui.panel.local.LockPanel;
 
 /**
@@ -44,7 +46,9 @@ public class LockAction extends AbstractRecursiveTeamAction {
 				break;
 			}
 		}
-		LockPanel commentPanel = new LockPanel(!containsFolder);
+		CommitPanel.CollectPropertiesOperation cop = new CommitPanel.CollectPropertiesOperation(selectedResources);
+		ProgressMonitorUtility.doTaskExternal(cop, null);
+		LockPanel commentPanel = new LockPanel(!containsFolder, cop.getMinLockSize());
 		DefaultDialog dialog = new DefaultDialog(this.getShell(), commentPanel);
 		if (dialog.open() == 0) {
 		    IResource []resources = this.getSelectedResourcesRecursive(SF_NONLOCKED, commentPanel.isRecursive() ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE);
