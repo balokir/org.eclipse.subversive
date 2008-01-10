@@ -83,21 +83,20 @@ public class AddToSVNIgnoreAction extends AbstractNonRecursiveTeamAction {
 		return this.checkForResourcesPresence(AddToSVNIgnoreAction.SF_NEW_AND_PARENT_VERSIONED);
 	}
 	
-	protected static IStateFilter SF_NEW_AND_PARENT_VERSIONED = new IStateFilter() {
-        public boolean accept(IResource resource, String state, int mask) {
+	protected static IStateFilter SF_NEW_AND_PARENT_VERSIONED = new IStateFilter.AbstractStateFilter() {
+        protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
             if (state == IStateFilter.ST_NEW) {
             	IContainer parent = resource.getParent();
             	if (resource != null && parent != null) {
-            		SVNRemoteStorage storage = SVNRemoteStorage.instance();
-            		ILocalResource localParent = storage.asLocalResource(parent);
+            		ILocalResource localParent = SVNRemoteStorage.instance().asLocalResource(parent);
             		if (localParent != null) {
-            			return IStateFilter.SF_VERSIONED.accept(parent, localParent.getStatus(), localParent.getChangeMask());	
+            			return IStateFilter.SF_VERSIONED.accept(localParent);	
             		}
                 }
             }
             return false;
         }
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return state != IStateFilter.ST_IGNORED && state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
 		}
     };

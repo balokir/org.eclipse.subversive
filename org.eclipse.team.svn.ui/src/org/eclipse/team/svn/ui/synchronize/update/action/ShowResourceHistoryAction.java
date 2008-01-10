@@ -48,16 +48,13 @@ public class ShowResourceHistoryAction extends AbstractSynchronizeModelAction {
 		UpdateSyncInfo sync = (UpdateSyncInfo)element.getSyncInfo();
 		ILocalResource outgoing = sync.getLocalResource();
 		ResourceVariant incoming = (ResourceVariant)sync.getRemote();
-		return 
-			(ISyncStateFilter.SF_ONREPOSITORY.accept(outgoing.getResource(), outgoing.getStatus(), outgoing.getChangeMask()) ||
-			!IStateFilter.SF_NOTEXISTS.accept(incoming.getResource().getResource(), incoming.getStatus(), incoming.getResource().getChangeMask())) &&
-					!IStateFilter.SF_DELETED.accept(incoming.getResource().getResource(), incoming.getStatus(), incoming.getResource().getChangeMask());
+		return (ISyncStateFilter.SF_ONREPOSITORY.accept(outgoing) || !IStateFilter.SF_NOTEXISTS.accept(incoming.getResource())) && !IStateFilter.SF_DELETED.accept(incoming.getResource());
 	}
 	
 	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {
 		IResource resource = operation.getSelectedResource();
 		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-		if (local != null && IStateFilter.SF_ONREPOSITORY.accept(resource, local.getStatus(), local.getChangeMask())) {
+		if (local != null && IStateFilter.SF_ONREPOSITORY.accept(local)) {
 			return new ShowHistoryViewOperation(operation.getSelectedResource(), 0, 0);
 		}
 		IResourceChange change = ((IResourceChange)((ResourceVariant)operation.getSVNSyncInfo().getRemote()).getResource());

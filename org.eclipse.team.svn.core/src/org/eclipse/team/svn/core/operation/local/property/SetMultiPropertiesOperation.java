@@ -66,13 +66,13 @@ public class SetMultiPropertiesOperation extends AbstractWorkingCopyOperation {
 								if (local == null) {
 									return false;
 								}
-								if (SetMultiPropertiesOperation.this.filter.accept(resource, local.getStatus(), local.getChangeMask())) {
+								if (SetMultiPropertiesOperation.this.filter.accept(local)) {
 									SVNProperty []properties = SetMultiPropertiesOperation.this.propertyProvider.getProperties(resource);
 									if (properties != null) {
 										SetMultiPropertiesOperation.this.processResource(proxy, resource, properties, monitor);
 									}
 								}
-								return SetMultiPropertiesOperation.this.filter.allowsRecursion(resource, local.getStatus(), local.getChangeMask());
+								return SetMultiPropertiesOperation.this.filter.allowsRecursion(local);
 							}
 						}, SetMultiPropertiesOperation.this.depth);
 					}

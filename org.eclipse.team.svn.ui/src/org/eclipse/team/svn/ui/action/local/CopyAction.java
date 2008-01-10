@@ -32,6 +32,7 @@ import org.eclipse.team.svn.core.operation.local.AddToSVNOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.refactor.CopyResourceOperation;
 import org.eclipse.team.svn.core.operation.local.refactor.CopyResourceWithHistoryOperation;
+import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.action.AbstractWorkingCopyAction;
@@ -150,14 +151,14 @@ public class CopyAction extends AbstractWorkingCopyAction {
 		return this.checkForResourcesPresence(CopyAction.SF_EXCLUDE_DELETED_AND_PROJECTS); 
 	}
 	
-	protected static final IStateFilter SF_EXCLUDE_DELETED_AND_PROJECTS = new IStateFilter() {
-        public boolean accept(IResource resource, String state, int mask) {
+	protected static final IStateFilter SF_EXCLUDE_DELETED_AND_PROJECTS = new IStateFilter.AbstractStateFilter() {
+        protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
         	if (!IStateFilter.SF_LINKED.accept(resource, state, mask) && !IStateFilter.SF_OBSTRUCTED.accept(resource, state, mask)) {
         		return ((resource instanceof IFolder || resource instanceof IFile) && state != IStateFilter.ST_DELETED && state != IStateFilter.ST_MISSING);	
         	}
         	return false;
         }
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return state != IStateFilter.ST_LINKED && state != IStateFilter.ST_OBSTRUCTED;
 		}
     };

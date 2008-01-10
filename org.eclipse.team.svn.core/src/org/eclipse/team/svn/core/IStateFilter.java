@@ -63,268 +63,289 @@ public interface IStateFilter {
 	public static final String ST_REPLACED = "Replaced";
 
 	public static final String ST_LINKED = "Linked";
-
-	public static final IStateFilter SF_EXTERNAL = new IStateFilter() {
 	
-		public boolean accept(IResource resource, String state, int mask) {
-			if ((mask & ILocalResource.IS_EXTERNAL) != 0) {
-				return true;
-			}
-			
-			return false;
-		}
-	
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
-			return true;
-		}
-		
-	};
+	public boolean accept(ILocalResource resource);
 	
 	public boolean accept(IResource resource, String state, int mask);
 	
+	public boolean allowsRecursion(ILocalResource resource);
+	
 	public boolean allowsRecursion(IResource resource, String state, int mask);
 	
-	public static final IStateFilter SF_LINKED = new IStateFilter() {
+	public abstract class AbstractStateFilter implements IStateFilter {
+		public boolean accept(ILocalResource resource) {
+			return this.acceptImpl(resource, resource.getResource(), resource.getStatus(), resource.getChangeMask());
+		}
 		public boolean accept(IResource resource, String state, int mask) {
+			return this.acceptImpl(null, resource, state, mask);
+		}
+		public boolean allowsRecursion(ILocalResource resource) {
+			return this.allowsRecursionImpl(null, resource.getResource(), resource.getStatus(), resource.getChangeMask());
+		}
+		public boolean allowsRecursion(IResource resource, String state, int mask) {
+			return this.allowsRecursionImpl(null, resource, state, mask);
+		}
+		
+		protected abstract boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask);
+		protected abstract boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask);
+		
+		protected ILocalResource takeLocal(ILocalResource local, IResource resource) {
+			return local != null ? local : SVNRemoteStorage.instance().asLocalResource(resource);
+		}
+	}
+
+	public static final IStateFilter SF_EXTERNAL = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
+			return (mask & ILocalResource.IS_EXTERNAL) != 0;
+		}
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
+			return true;
+		}
+	};
+	
+	public static final IStateFilter SF_LINKED = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return state == IStateFilter.ST_LINKED;
 		}
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return true;
 		}
 	};
 	
-	public static final IStateFilter SF_ALL = new IStateFilter() {
-		public boolean accept(IResource resource, String state, int mask) {
+	public static final IStateFilter SF_ALL = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return true;
 		}
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return true;
 		}
 	};
 	
-	public static final IStateFilter SF_NOTEXISTS = new IStateFilter() {
-		public boolean accept(IResource resource, String state, int mask) {
+	public static final IStateFilter SF_NOTEXISTS = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return state == IStateFilter.ST_NOTEXISTS || state == IStateFilter.ST_LINKED;
 		}
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return true;
 		}
 	};
 	
-	public static final IStateFilter SF_OBSTRUCTED = new IStateFilter() {
-		public boolean accept(IResource resource, String state, int mask) {
+	public static final IStateFilter SF_OBSTRUCTED = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return state == IStateFilter.ST_OBSTRUCTED;
 		}
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return true;
 		}
 	};
 	
-	public static final IStateFilter SF_VALID = new IStateFilter() {
-		public boolean accept(IResource resource, String state, int mask) {
+	public static final IStateFilter SF_VALID = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
 		}
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return this.accept(resource, state, mask);
 		}
 	};
 	
-	public static final IStateFilter SF_REPLACED = new IStateFilter() {
-		public boolean accept(IResource resource, String state, int mask) {
+	public static final IStateFilter SF_REPLACED = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return state == IStateFilter.ST_REPLACED;
 		}
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_VERSIONED.accept(resource, state, mask);
 		}
 	};
 	
-	public static final IStateFilter SF_PREREPLACED = new IStateFilter() {
-		public boolean accept(IResource resource, String state, int mask) {
+	public static final IStateFilter SF_PREREPLACED = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return state == IStateFilter.ST_PREREPLACED;
 		}
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_VERSIONED.accept(resource, state, mask);
 		}
 	};
 	
-	public static final IStateFilter SF_PREREPLACEDREPLACED = new IStateFilter() {
-		public boolean accept(IResource resource, String state, int mask) {
+	public static final IStateFilter SF_PREREPLACEDREPLACED = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return state == IStateFilter.ST_PREREPLACED || state == IStateFilter.ST_REPLACED;
 		}
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_VERSIONED.accept(resource, state, mask);
 		}
 	};
 	
-	public static final IStateFilter SF_IGNORED = new IStateFilter() {
-		public boolean accept(IResource resource, String state, int mask) {
+	public static final IStateFilter SF_IGNORED = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return state == IStateFilter.ST_IGNORED;
 		}
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return true;
 		}
 	};
 	
-	public static final IStateFilter SF_UNVERSIONED = new IStateFilter() {
-		public boolean accept(IResource resource, String state, int mask) {
+	public static final IStateFilter SF_UNVERSIONED = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return 
 				state == IStateFilter.ST_PREREPLACED || state == IStateFilter.ST_NEW || 
 				state == IStateFilter.ST_IGNORED || state == IStateFilter.ST_NOTEXISTS;
 		}
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return true;
 		}
 	};
 	
-	public static final IStateFilter SF_VERSIONED = new IStateFilter() {
-		public boolean accept(IResource resource, String state, int mask) {
+	public static final IStateFilter SF_VERSIONED = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return 
 				state == IStateFilter.ST_REPLACED || state == IStateFilter.ST_PREREPLACED ||
 				state == IStateFilter.ST_ADDED || state == IStateFilter.ST_NORMAL || 
 				state == IStateFilter.ST_MODIFIED || state == IStateFilter.ST_CONFLICTING || state == IStateFilter.ST_DELETED || state == IStateFilter.ST_MISSING;
 		}
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return this.accept(resource, state, mask);
 		}
 	};
 	
-	public static final IStateFilter SF_NOTONREPOSITORY = new IStateFilter() {
-		public boolean accept(IResource resource, String state, int mask) {
+	public static final IStateFilter SF_NOTONREPOSITORY = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return 
 				state == IStateFilter.ST_PREREPLACED || state == IStateFilter.ST_NEW || 
 				state == IStateFilter.ST_IGNORED || state == IStateFilter.ST_NOTEXISTS ||
 				state == IStateFilter.ST_ADDED;
 		}
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return true;
 		}
 	};
 	
-	public static final IStateFilter SF_ONREPOSITORY = new IStateFilter() {
-		public boolean accept(IResource resource, String state, int mask) {
+	public static final IStateFilter SF_ONREPOSITORY = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return 
 				state == IStateFilter.ST_PREREPLACED || state == IStateFilter.ST_REPLACED || 
 				state == IStateFilter.ST_NORMAL || state == IStateFilter.ST_MODIFIED || 
 				state == IStateFilter.ST_CONFLICTING || state == IStateFilter.ST_DELETED || state == IStateFilter.ST_MISSING;
 		}
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_VERSIONED.accept(resource, state, mask);
 		}
 	};
 	
-	public static final IStateFilter SF_NEW = new IStateFilter() {
-		public boolean accept(IResource resource, String state, int mask) {
+	public static final IStateFilter SF_NEW = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return state == IStateFilter.ST_PREREPLACED || state == IStateFilter.ST_NEW;
 		}
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return state != IStateFilter.ST_IGNORED && state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
 		}
 	};
 	
-	public static final IStateFilter SF_ADDED = new IStateFilter() {
-		public boolean accept(IResource resource, String state, int mask) {
+	public static final IStateFilter SF_ADDED = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return 
 				state == IStateFilter.ST_PREREPLACED || state == IStateFilter.ST_REPLACED || 
 				state == IStateFilter.ST_NEW || state == IStateFilter.ST_ADDED;
 		}
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_VERSIONED.accept(resource, state, mask);
 		}
 	};
 	
-	public static final IStateFilter SF_NOTMODIFIED = new IStateFilter() {
-		public boolean accept(IResource resource, String state, int mask) {
+	public static final IStateFilter SF_NOTMODIFIED = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return state == IStateFilter.ST_NORMAL || state == IStateFilter.ST_NOTEXISTS || state == IStateFilter.ST_LINKED;
 		}
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return true;
 		}
 	};
 	
-	public static final IStateFilter SF_MODIFIED = new IStateFilter() {
-		public boolean accept(IResource resource, String state, int mask) {
+	public static final IStateFilter SF_MODIFIED = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return state == IStateFilter.ST_MODIFIED || state == IStateFilter.ST_CONFLICTING;
 		}
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask);
 		}
 	};
 	
-	public static final IStateFilter SF_CONFLICTING = new IStateFilter() {
-		public boolean accept(IResource resource, String state, int mask) {
+	public static final IStateFilter SF_CONFLICTING = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return state == IStateFilter.ST_CONFLICTING;
 		}
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask);
 		}
 	};
 	
-	public static final IStateFilter SF_DELETED = new IStateFilter() {
-		public boolean accept(IResource resource, String state, int mask) {
-			return state == IStateFilter.ST_PREREPLACED || state == IStateFilter.ST_REPLACED || state == IStateFilter.ST_DELETED || state == IStateFilter.ST_MISSING;
+	public static final IStateFilter SF_DELETED = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
+			return 
+				state == IStateFilter.ST_PREREPLACED || state == IStateFilter.ST_REPLACED || 
+				state == IStateFilter.ST_DELETED || state == IStateFilter.ST_MISSING;
 		}
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask);
 		}
 	};
 	
-	public static final IStateFilter SF_MISSING = new IStateFilter() {
-		public boolean accept(IResource resource, String state, int mask) {
+	public static final IStateFilter SF_MISSING = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return state == IStateFilter.ST_MISSING;
 		}
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask);
 		}
 	};
 	
-	public static final IStateFilter SF_COMMITABLE = new IStateFilter() {
-		public boolean accept(IResource resource, String state, int mask) {
+	public static final IStateFilter SF_COMMITABLE = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return 
 				state == IStateFilter.ST_REPLACED || state == IStateFilter.ST_ADDED || 
 				state == IStateFilter.ST_MODIFIED || state == IStateFilter.ST_DELETED || state == IStateFilter.ST_MISSING;
 		}
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_VERSIONED.accept(resource, state, mask);
 		}
 	};
 	
-	public static final IStateFilter SF_REVERTABLE = new IStateFilter() {
-		public boolean accept(IResource resource, String state, int mask) {
+	public static final IStateFilter SF_REVERTABLE = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return 
 				state == IStateFilter.ST_PREREPLACED || state == IStateFilter.ST_CONFLICTING || 
 				state == IStateFilter.ST_REPLACED || state == IStateFilter.ST_ADDED || 
 				state == IStateFilter.ST_MODIFIED || state == IStateFilter.ST_DELETED || state == IStateFilter.ST_MISSING;
 		}
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_VERSIONED.accept(resource, state, mask);
 		}
 	};
 	
-	public static final IStateFilter SF_ANY_CHANGE = new IStateFilter() {
-		public boolean accept(IResource resource, String state, int mask) {
+	public static final IStateFilter SF_ANY_CHANGE = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return 
 				state != IStateFilter.ST_IGNORED && state != IStateFilter.ST_NORMAL && 
 				state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
 		}
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return state != IStateFilter.ST_IGNORED && state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
 		}
 	};
 
-	public static final IStateFilter SF_EXCLUDE_DELETED = new IStateFilter() {
-        public boolean accept(IResource resource, String state, int mask) {
+	public static final IStateFilter SF_EXCLUDE_DELETED = new AbstractStateFilter() {
+        protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
         	if (IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask)) {
                 return state != IStateFilter.ST_DELETED && state != IStateFilter.ST_MISSING;
             }
             return false;
         }
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return this.accept(resource, state, mask);
 		}
     };
     
-    public static final IStateFilter SF_NEEDS_LOCK = new IStateFilter() {		
-		public boolean accept(final IResource resource, String state, int mask) {
+    public static final IStateFilter SF_NEEDS_LOCK = new AbstractStateFilter() {		
+		protected boolean acceptImpl(ILocalResource local, final IResource resource, String state, int mask) {
 			if (!(resource instanceof IFile) || IStateFilter.SF_UNVERSIONED.accept(resource, state, mask) || !resource.isAccessible()) {
 				return false;
 			}
@@ -354,54 +375,48 @@ public interface IStateFilter {
 			}
 			return false;
 		}
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_VERSIONED.accept(resource, state, mask);
 		}
 	};
 	
-	public static final IStateFilter SF_MODIFIED_NOT_IGNORED = new IStateFilter() {
-		public boolean accept(IResource resource, String state, int mask) {
+	public static final IStateFilter SF_MODIFIED_NOT_IGNORED = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return !IStateFilter.SF_IGNORED.accept(resource, state, mask) &&
 					!IStateFilter.SF_NOTMODIFIED.accept(resource, state, mask);
 		}
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return state != IStateFilter.ST_IGNORED && state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
 		}
 	};
 	
-	public static final IStateFilter SF_EXCLUDE_PREREPLACED_AND_DELETED = new IStateFilter() {
-        public boolean accept(IResource resource, String state, int mask) {
+	public static final IStateFilter SF_EXCLUDE_PREREPLACED_AND_DELETED = new AbstractStateFilter() {
+        protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
         	if (IStateFilter.SF_VERSIONED.accept(resource, state, mask) &&
                 !IStateFilter.SF_PREREPLACED.accept(resource, state, mask)) {
                 return state != IStateFilter.ST_DELETED && state != IStateFilter.ST_MISSING;
             }
             return false;
         }
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_EXCLUDE_DELETED.accept(resource, state, mask);
 		}
     };
 	
-	public static final IStateFilter SF_EXCLUDE_PREREPLACED_AND_DELETED_FILES = new IStateFilter() {
-		public boolean accept(IResource resource, String state, int mask) {
-			if (resource instanceof IFile) {
-				return IStateFilter.SF_EXCLUDE_PREREPLACED_AND_DELETED.accept(resource, state, mask);
-			}
-			return false;
+	public static final IStateFilter SF_EXCLUDE_PREREPLACED_AND_DELETED_FILES = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
+			return resource instanceof IFile && IStateFilter.SF_EXCLUDE_PREREPLACED_AND_DELETED.accept(resource, state, mask);
 		}
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_EXCLUDE_DELETED.accept(resource, state, mask);
 		}
 	};
 	
-	public static final IStateFilter SF_VERSIONED_FOLDERS = new IStateFilter() {
-		public boolean accept(IResource resource, String state, int mask) {
-			if (resource instanceof IContainer) {
-				return IStateFilter.SF_VERSIONED.accept(resource, state, mask);
-			}
-			return false;
+	public static final IStateFilter SF_VERSIONED_FOLDERS = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
+			return resource instanceof IContainer && IStateFilter.SF_VERSIONED.accept(resource, state, mask);
 		}
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_VERSIONED.accept(resource, state, mask);
 		}
 	};

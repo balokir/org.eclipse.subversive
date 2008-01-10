@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.team.svn.core.connector.SVNEntryStatus;
+import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -74,7 +74,7 @@ public class AlreadyConnectedPage extends AbstractVerifiedWizardPage {
 	public void setProjects(IProject []projects) {
 		this.url = null;
 		for (int i = 0; i < projects.length; i++) {
-			SVNEntryStatus info = SVNUtility.getSVNInfoForNotConnected(projects[i]);
+			SVNChangeStatus info = SVNUtility.getSVNInfoForNotConnected(projects[i]);
 			String tmp = SVNUtility.decodeURL(info.url);
 			if (this.url == null) {
 				this.url = tmp;

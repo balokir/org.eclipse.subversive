@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.history.IFileHistoryProvider;
-import org.eclipse.team.svn.core.connector.SVNEntryStatus;
+import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.extension.crashrecovery.ErrorDescription;
 import org.eclipse.team.svn.core.history.SVNFileHistoryProvider;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
@@ -241,7 +241,7 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 		
 		IProject project = this.getProject();
 		
-		SVNEntryStatus st = SVNUtility.getSVNInfoForNotConnected(project);
+		SVNChangeStatus st = SVNUtility.getSVNInfoForNotConnected(project);
 		if (st != null) {
 			this.relocatedTo = SVNUtility.decodeURL(st.url);
 			if (this.location != null) {

@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
+import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.ui.action.AbstractRecursiveTeamAction;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.extension.factory.ICommitDialog;
@@ -52,11 +53,11 @@ public class CommitAction extends AbstractRecursiveTeamAction {
 		return this.checkForResourcesPresenceRecursive(CommitAction.SF_ANY_CHANGE);
 	}
 	
-	public static final IStateFilter SF_ANY_CHANGE = new IStateFilter() {
-		public boolean accept(IResource resource, String state, int mask) {
+	public static final IStateFilter SF_ANY_CHANGE = new IStateFilter.AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_ANY_CHANGE.accept(resource, state, mask) && state != IStateFilter.ST_CONFLICTING;
 		}
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return true;
 		}
 	};

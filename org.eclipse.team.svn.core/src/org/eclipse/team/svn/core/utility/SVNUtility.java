@@ -56,7 +56,7 @@ import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryInfo;
 import org.eclipse.team.svn.core.connector.SVNEntryReference;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
-import org.eclipse.team.svn.core.connector.SVNEntryStatus;
+import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNMergeStatus;
 import org.eclipse.team.svn.core.connector.SVNProperty;
@@ -95,11 +95,11 @@ public final class SVNUtility {
 		if (local != null && local.isCopied()) {
 			IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(resource);
 			ISVNConnector proxy = location.acquireSVNProxy();
-			final SVNEntryStatus []st = new SVNEntryStatus[1];
+			final SVNChangeStatus []st = new SVNChangeStatus[1];
 			try {
 				final String path = FileUtility.getWorkingCopyPath(resource);
 				proxy.status(path, ISVNConnector.Depth.EMPTY, ISVNConnector.Options.INCLUDE_UNCHANGED | Options.IGNORE_EXTERNALS, new ISVNEntryStatusCallback() {
-					public void next(SVNEntryStatus status) {
+					public void next(SVNChangeStatus status) {
 						if (path.equals(status.path)) {
 							st[0] = status;
 						}
@@ -206,14 +206,14 @@ public final class SVNUtility {
 		return retVal[0];
 	}
 	
-	public static SVNEntryStatus []status(ISVNConnector proxy, String path, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public static SVNChangeStatus []status(ISVNConnector proxy, String path, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		final ArrayList statuses = new ArrayList();
 		proxy.status(path, depth, options, new ISVNEntryStatusCallback() {
-			public void next(SVNEntryStatus status) {
+			public void next(SVNChangeStatus status) {
 				statuses.add(status);
 			}
 		}, monitor);
-		return (SVNEntryStatus [])statuses.toArray(new SVNEntryStatus[statuses.size()]);
+		return (SVNChangeStatus [])statuses.toArray(new SVNChangeStatus[statuses.size()]);
 	}
 	
 	public static void diffStatus(ISVNConnector proxy, final Collection<SVNDiffStatus> statuses, SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
@@ -465,11 +465,11 @@ public final class SVNUtility {
 		});
 	}
 	
-	public static void reorder(SVNEntryStatus []statuses, final boolean parent2Child) {
+	public static void reorder(SVNChangeStatus []statuses, final boolean parent2Child) {
 		Arrays.sort(statuses, new Comparator() {
 			public int compare(Object o1, Object o2) {
-				String s1 = ((SVNEntryStatus)o1).path;
-				String s2 = ((SVNEntryStatus)o2).path;
+				String s1 = ((SVNChangeStatus)o1).path;
+				String s2 = ((SVNChangeStatus)o2).path;
 				return parent2Child ? s1.compareTo(s2) : s2.compareTo(s1);
 			}
 			
@@ -609,7 +609,7 @@ public final class SVNUtility {
 	    }
 	}
 	
-	public static SVNEntryStatus getSVNInfoForNotConnected(IResource root) {
+	public static SVNChangeStatus getSVNInfoForNotConnected(IResource root) {
 		IPath location = FileUtility.getResourcePath(root);
 		IPath checkedPath = root.getType() == IResource.FILE ? location.removeLastSegments(1) : location;
 		if (!checkedPath.append(SVNUtility.getSVNFolderName()).toFile().exists()) {
@@ -617,7 +617,7 @@ public final class SVNUtility {
 		}
 		ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();
 		try {
-			SVNEntryStatus []st = SVNUtility.status(proxy, location.toString(), Depth.IMMEDIATES, ISVNConnector.Options.INCLUDE_UNCHANGED, new SVNNullProgressMonitor());
+			SVNChangeStatus []st = SVNUtility.status(proxy, location.toString(), Depth.IMMEDIATES, ISVNConnector.Options.INCLUDE_UNCHANGED, new SVNNullProgressMonitor());
 			if (st != null && st.length > 0) {
 				SVNUtility.reorder(st, true);
 				return st[0].url == null ? null : st[0];

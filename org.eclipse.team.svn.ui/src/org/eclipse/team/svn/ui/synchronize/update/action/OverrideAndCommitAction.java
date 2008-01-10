@@ -29,6 +29,7 @@ import org.eclipse.team.svn.core.operation.local.ClearLocalStatusesOperation;
 import org.eclipse.team.svn.core.operation.local.CommitOperation;
 import org.eclipse.team.svn.core.operation.local.MarkAsMergedOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
+import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.dialog.NotifyNodeKindChangedDialog;
@@ -59,7 +60,7 @@ public class OverrideAndCommitAction extends AbstractSynchronizeModelAction {
             public boolean select(SyncInfo info) {
                 if (super.select(info)) {
                     UpdateSyncInfo sync = (UpdateSyncInfo)info;
-                    return !(IStateFilter.SF_OBSTRUCTED.accept(sync.getLocal(), sync.getLocalResource().getStatus(), sync.getLocalResource().getChangeMask()));
+                    return !(IStateFilter.SF_OBSTRUCTED.accept(sync.getLocalResource()));
                 }
                 return false;
             }
@@ -146,11 +147,11 @@ public class OverrideAndCommitAction extends AbstractSynchronizeModelAction {
 		return op;
 	}
 	
-	public static final IStateFilter SF_NEW = new IStateFilter() {
-		public boolean accept(IResource resource, String state, int mask) {
+	public static final IStateFilter SF_NEW = new IStateFilter.AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return state == IStateFilter.ST_NEW;
 		}
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return true;
 		}
 	};

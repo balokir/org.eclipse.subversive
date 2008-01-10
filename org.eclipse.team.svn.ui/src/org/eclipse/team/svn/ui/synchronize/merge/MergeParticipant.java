@@ -103,7 +103,7 @@ public class MergeParticipant extends AbstractSVNParticipant {
 		    MergeSyncInfo info = (MergeSyncInfo)this.getSyncInfo(element);
 			if (info != null && (info.getKind() & LabelDecorator.CONFLICTING_REPLACEMENT_MASK) == LabelDecorator.CONFLICTING_REPLACEMENT_MASK) {
 				ILocalResource local = info.getLocalResource();
-		        if (IStateFilter.SF_PREREPLACEDREPLACED.accept(local.getResource(), local.getStatus(), local.getChangeMask())) {
+		        if (IStateFilter.SF_PREREPLACEDREPLACED.accept(local)) {
 				    return this.registerImageDescriptor(new OverlayedImageDescriptor(image, AbstractSVNParticipant.OVR_REPLACED_CONF, new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V));
 		        }
 			}

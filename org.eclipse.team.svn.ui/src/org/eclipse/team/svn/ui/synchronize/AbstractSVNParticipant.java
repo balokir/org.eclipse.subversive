@@ -202,20 +202,19 @@ public abstract class AbstractSVNParticipant extends ScopableSubscriberParticipa
 			    ILocalResource left = info.getLocalResource();
 			    ILocalResource right = ((ResourceVariant)info.getRemote()).getResource();
 			    OverlayedImageDescriptor imgDescr = null;
-			    if (IStateFilter.SF_OBSTRUCTED.accept(left.getResource(), left.getStatus(), left.getChangeMask())) {
+			    if (IStateFilter.SF_OBSTRUCTED.accept(left)) {
 				    imgDescr = new OverlayedImageDescriptor(image, AbstractSVNParticipant.OVR_OBSTRUCTED, new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V);
 			    }
 			    else if ((info.getKind() & LabelDecorator.CONFLICTING_REPLACEMENT_MASK) == LabelDecorator.CONFLICTING_REPLACEMENT_MASK) {
-				    if (IStateFilter.SF_PREREPLACEDREPLACED.accept(left.getResource(), left.getStatus(), left.getChangeMask()) ||
-				        IStateFilter.SF_PREREPLACEDREPLACED.accept(right.getResource(), right.getStatus(), right.getChangeMask())) {
+				    if (IStateFilter.SF_PREREPLACEDREPLACED.accept(left) || IStateFilter.SF_PREREPLACEDREPLACED.accept(right)) {
 					    imgDescr = new OverlayedImageDescriptor(image, AbstractSVNParticipant.OVR_REPLACED_CONF, new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V);
 				    }
 			    }
 			    else if ((info.getKind() & LabelDecorator.REPLACEMENT_MASK) == LabelDecorator.REPLACEMENT_MASK) {
-				    if (IStateFilter.SF_PREREPLACEDREPLACED.accept(left.getResource(), left.getStatus(), left.getChangeMask())) {
+				    if (IStateFilter.SF_PREREPLACEDREPLACED.accept(left)) {
 					    imgDescr = new OverlayedImageDescriptor(image, AbstractSVNParticipant.OVR_REPLACED_OUT, new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V);
 				    }
-				    else if (IStateFilter.SF_PREREPLACEDREPLACED.accept(right.getResource(), right.getStatus(), right.getChangeMask())) {
+				    else if (IStateFilter.SF_PREREPLACEDREPLACED.accept(right)) {
 					    imgDescr = new OverlayedImageDescriptor(image, AbstractSVNParticipant.OVR_REPLACED_IN, new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V);
 				    }
 			    }

@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.events.IResourceStatesListener;
 import org.eclipse.team.svn.core.resource.events.ResourceStatesChangedEvent;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -127,7 +128,7 @@ public class FilterManager implements IPropertyChangeListener, IResourceStatesLi
 		SVNRemoteStorage.instance().addResourceStatesListener(ResourceStatesChangedEvent.class, this);
 	}
 
-	protected static class MapChecker implements IStateFilter {
+	protected static class MapChecker extends IStateFilter.AbstractStateFilter {
 		protected Map filterMap;
 		
 		public MapChecker(Map filterMap) {
@@ -146,13 +147,13 @@ public class FilterManager implements IPropertyChangeListener, IResourceStatesLi
 			}
 		}
 		
-		public boolean accept(IResource resource, String state, int mask) {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			boolean retVal = true;
 			for (Iterator it = this.filterMap.entrySet().iterator(); it.hasNext(); ) {
 				Map.Entry entry = (Map.Entry)it.next();
 				if (entry.getValue() == null) {
 					IStateFilter filter = (IStateFilter)entry.getKey();
-					boolean value = filter.accept(resource, state, mask);
+					boolean value = local == null ? filter.accept(resource, state, mask) : filter.accept(local);
 					retVal &= value;
 					if (value) {
 						this.filterMap.put(filter, Boolean.TRUE);
@@ -171,9 +172,10 @@ public class FilterManager implements IPropertyChangeListener, IResourceStatesLi
 			}
 		}
 
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return true;
 		}
+
 	}
 	
 }

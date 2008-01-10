@@ -40,7 +40,7 @@ public class RevertAction extends AbstractSynchronizeModelAction {
 		return new FastSyncInfoFilter() {
 			public boolean select(SyncInfo info) {
 				AbstractSVNSyncInfo sync = (AbstractSVNSyncInfo)info;
-				return IStateFilter.SF_REVERTABLE.accept(sync.getLocal(), sync.getLocalResource().getStatus(), sync.getLocalResource().getChangeMask());
+				return IStateFilter.SF_REVERTABLE.accept(sync.getLocalResource());
 			}
 		};
 	}

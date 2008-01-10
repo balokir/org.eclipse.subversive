@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNEntryStatusCallback;
 import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
+import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNNotification;
 import org.eclipse.team.svn.core.connector.SVNRevision;
@@ -44,7 +45,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * @author Alexander Gurov
  */
 public class RemoteStatusOperation extends AbstractWorkingCopyOperation implements IRemoteStatusOperation, ISVNNotificationCallback {
-	protected SVNEntryStatus []statuses;
+	protected SVNChangeStatus []statuses;
 	protected Map pegRevisions;
 
 	public RemoteStatusOperation(IResource []resources) {
@@ -66,7 +67,7 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 
 		final List result = new ArrayList();
 		final ISVNEntryStatusCallback cb = new ISVNEntryStatusCallback() {
-			public void next(SVNEntryStatus status) {
+			public void next(SVNChangeStatus status) {
 				result.add(status);
 			}
 		};
@@ -89,10 +90,10 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 			
 			location.releaseSVNProxy(proxy);
 		}
-		this.statuses = (SVNEntryStatus [])result.toArray(new SVNEntryStatus[result.size()]);
+		this.statuses = (SVNChangeStatus [])result.toArray(new SVNChangeStatus[result.size()]);
 	}
 
-	public Object []getStatuses() {
+	public SVNEntryStatus[]getStatuses() {
 		return this.statuses;
 	}
 	

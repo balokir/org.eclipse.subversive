@@ -33,6 +33,7 @@ import org.eclipse.team.core.subscribers.SubscriberChangeEvent;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.variants.IResourceVariantComparator;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
@@ -89,9 +90,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 
     public IResource []members(IResource resource) {
     	ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-    	if (local == null || 
-    		IStateFilter.SF_IGNORED.accept(resource, local.getStatus(), local.getChangeMask()) || 
-    		IStateFilter.SF_NOTEXISTS.accept(resource, local.getStatus(), local.getChangeMask())) {
+    	if (local == null || IStateFilter.SF_IGNORED.accept(local) || IStateFilter.SF_NOTEXISTS.accept(local)) {
     		return FileUtility.NO_CHILDREN;
     	}
     	return this.statusCache.allMembers(resource);
@@ -213,7 +212,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 			op.add(rStatusOp);
 			op.add(new AbstractActionOperation("Operation.FetchChanges") {
 				protected void runImpl(IProgressMonitor monitor) throws Exception {
-					Object []statuses = rStatusOp.getStatuses();
+					SVNEntryStatus []statuses = rStatusOp.getStatuses();
 					if (statuses != null) {
 						for (int i = 0; i < statuses.length && !monitor.isCanceled(); i++) {
 							if (AbstractSVNSubscriber.this.isIncomig(statuses[i])) {
@@ -235,8 +234,8 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 		return (IResource [])changes.toArray(new IResource[changes.size()]);
 	}
 	
-	protected abstract boolean isIncomig(Object status);
-	protected abstract IResourceChange handleResourceChange(IRemoteStatusOperation rStatusOp, Object status);
+	protected abstract boolean isIncomig(SVNEntryStatus status);
+	protected abstract IResourceChange handleResourceChange(IRemoteStatusOperation rStatusOp, SVNEntryStatus status);
     protected abstract SyncInfo getSVNSyncInfo(ILocalResource localStatus, IResourceChange remoteStatus);
     protected abstract IRemoteStatusOperation getStatusOperation(IResource []resources, int depth);
 

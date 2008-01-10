@@ -30,7 +30,7 @@ public abstract class VirtualRemoteResourceVariant extends RemoteResourceVariant
 	}
 	
     protected boolean isNotOnRepository() {
-        return !IStateFilter.SF_ONREPOSITORY.accept(this.local.getResource(), this.local.getStatus(), this.local.getChangeMask());
+        return !IStateFilter.SF_ONREPOSITORY.accept(this.local);
     }
     
 }

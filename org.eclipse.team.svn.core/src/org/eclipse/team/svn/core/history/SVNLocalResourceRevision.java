@@ -43,7 +43,7 @@ public class SVNLocalResourceRevision extends FileRevision {
 
 	public SVNLocalResourceRevision(ILocalResource local, SVNRevision rev) {
 		this.local = local;
-		this.onServer = IStateFilter.SF_ONREPOSITORY.accept(this.local.getResource(), this.local.getStatus(), this.local.getChangeMask());
+		this.onServer = IStateFilter.SF_ONREPOSITORY.accept(this.local);
 	}
 
 	public URI getURI() {
@@ -78,8 +78,7 @@ public class SVNLocalResourceRevision extends FileRevision {
 		if (this.local instanceof ILocalFolder) {
 			return null;
 		}
-		if (IStateFilter.SF_UNVERSIONED.accept(this.local.getResource(), this.local.getStatus(), this.local.getChangeMask()) &&
-			!IStateFilter.SF_PREREPLACED.accept(this.local.getResource(), this.local.getStatus(), this.local.getChangeMask())) {
+		if (IStateFilter.SF_UNVERSIONED.accept(this.local) && !IStateFilter.SF_PREREPLACED.accept(this.local)) {
 			return (IStorage)this.local.getResource();
 		}
 		return new LocalStorage();

@@ -32,8 +32,7 @@ public class SaveContentVisitor implements IResourceChangeVisitor {
 	public void preVisit(ResourceChange change, IActionOperationProcessor processor, IProgressMonitor monitor) throws Exception {
 		ILocalResource local = change.getLocal();
 		if (local instanceof ILocalFile) {
-	    	if (IStateFilter.SF_DELETED.accept(local.getResource(), local.getStatus(), local.getChangeMask()) &&
-        		!IStateFilter.SF_PREREPLACEDREPLACED.accept(local.getResource(), local.getStatus(), local.getChangeMask())) {
+	    	if (IStateFilter.SF_DELETED.accept(local) && !IStateFilter.SF_PREREPLACEDREPLACED.accept(local)) {
         		return;//skip save file content for deleted files
         	}
 	    	File real = new File(FileUtility.getWorkingCopyPath(local.getResource()));

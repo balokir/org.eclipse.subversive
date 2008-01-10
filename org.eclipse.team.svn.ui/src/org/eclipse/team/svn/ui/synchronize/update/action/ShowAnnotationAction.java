@@ -53,10 +53,7 @@ public class ShowAnnotationAction extends AbstractSynchronizeModelAction {
 		UpdateSyncInfo sync = (UpdateSyncInfo)element.getSyncInfo();
 		ILocalResource outgoing = sync.getLocalResource();
 		ResourceVariant incoming = (ResourceVariant)sync.getRemote();
-		return 
-			outgoing instanceof ILocalFile && 
-			(ISyncStateFilter.SF_ONREPOSITORY.accept(outgoing.getResource(), outgoing.getStatus(), outgoing.getChangeMask()) ||
-			!IStateFilter.SF_NOTEXISTS.accept(incoming.getResource().getResource(), incoming.getStatus(), incoming.getResource().getChangeMask()));
+		return outgoing instanceof ILocalFile && (ISyncStateFilter.SF_ONREPOSITORY.accept(outgoing) || !IStateFilter.SF_NOTEXISTS.accept(incoming.getResource()));
 	}
 	
 	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {
@@ -66,7 +63,7 @@ public class ShowAnnotationAction extends AbstractSynchronizeModelAction {
 					public void run() {
 					    IResource resource = operation.getSelectedResource();
 						ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-						if (local != null && IStateFilter.SF_ONREPOSITORY.accept(resource, local.getStatus(), local.getChangeMask())) {
+						if (local != null && IStateFilter.SF_ONREPOSITORY.accept(local)) {
 							UIMonitorUtility.doTaskBusyDefault(new LocalShowAnnotationOperation(resource, operation.getPart().getSite().getPage()));
 						}
 						else {

@@ -100,7 +100,7 @@ public class DeleteResourceOperation extends AbstractActionOperation {
 			IResource resource = (IResource)it.next();
 			ILocalResource local = storage.asLocalResource(resource);
 			String wcPath = FileUtility.getWorkingCopyPath(resource);
-			if (local != null && filter.accept(resource, local.getStatus(), local.getChangeMask())) {
+			if (local != null && filter.accept(local)) {
 				it.remove();
 				FileUtility.deleteRecursive(new File(wcPath));
 			}
@@ -115,18 +115,13 @@ public class DeleteResourceOperation extends AbstractActionOperation {
 		return MessageFormat.format(super.getShortErrorMessage(t), wcPaths);
 	}
 	
-	protected static final IStateFilter SF_OBSTRUCTED_OR_NEW = new IStateFilter() {
-
-		public boolean accept(IResource resource, String state, int mask) {
-			return IStateFilter.SF_OBSTRUCTED.accept(resource, state, mask) ||
-					IStateFilter.SF_NEW.accept(resource, state, mask);
+	protected static final IStateFilter SF_OBSTRUCTED_OR_NEW = new IStateFilter.AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
+			return IStateFilter.SF_OBSTRUCTED.accept(resource, state, mask) || IStateFilter.SF_NEW.accept(resource, state, mask);
 		}
-
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
-			return IStateFilter.SF_OBSTRUCTED.allowsRecursion(resource, state, mask) ||
-					IStateFilter.SF_NEW.allowsRecursion(resource, state, mask);
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
+			return IStateFilter.SF_OBSTRUCTED.allowsRecursion(resource, state, mask) || IStateFilter.SF_NEW.allowsRecursion(resource, state, mask);
 		}
-		
 	};
 	
 }

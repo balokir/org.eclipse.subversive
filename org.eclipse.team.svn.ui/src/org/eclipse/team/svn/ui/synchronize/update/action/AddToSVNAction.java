@@ -39,9 +39,7 @@ public class AddToSVNAction extends AbstractSynchronizeModelAction {
 		return new FastSyncInfoFilter() {
 			public boolean select(SyncInfo info) {
 				UpdateSyncInfo sync = (UpdateSyncInfo)info;
-				return 
-					IStateFilter.SF_NEW.accept(sync.getLocal(), sync.getLocalResource().getStatus(), sync.getLocalResource().getChangeMask()) ||
-					IStateFilter.SF_IGNORED.accept(sync.getLocal(), sync.getLocalResource().getStatus(), sync.getLocalResource().getChangeMask());
+				return IStateFilter.SF_NEW.accept(sync.getLocalResource()) || IStateFilter.SF_IGNORED.accept(sync.getLocalResource());
 			}
 		};
 	}

@@ -83,7 +83,7 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
     	super.refresh(resources, depth, monitor);
     }
 	
-	protected IResourceChange handleResourceChange(IRemoteStatusOperation rStatusOp, Object status) {
+	protected IResourceChange handleResourceChange(IRemoteStatusOperation rStatusOp, SVNEntryStatus status) {
 		final SVNMergeStatus current = (SVNMergeStatus)status;
 		IChangeStateProvider provider = new IChangeStateProvider() {
 			public long getChangeDate() {
@@ -142,7 +142,7 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 		return resourceChange;
 	}
 	
-	protected boolean isIncomig(Object status) {
+	protected boolean isIncomig(SVNEntryStatus status) {
 		return true;
 	}
 	

@@ -77,16 +77,11 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 	protected boolean doMove(IResourceTree tree, IResource source, IResource destination, IProgressMonitor monitor) {
 	    IRemoteStorage storage = SVNRemoteStorage.instance();
 		ILocalResource local = storage.asLocalResource(source);
-		if (local == null || 
-		    IStateFilter.SF_NOTEXISTS.accept(source, local.getStatus(), local.getChangeMask()) ||
-		    IStateFilter.SF_UNVERSIONED.accept(source, local.getStatus(), local.getChangeMask()) ||
-		    IStateFilter.SF_OBSTRUCTED.accept(source, local.getStatus(), local.getChangeMask())) {
+		if (local == null || IStateFilter.SF_NOTEXISTS.accept(local) || IStateFilter.SF_UNVERSIONED.accept(local) || IStateFilter.SF_OBSTRUCTED.accept(local)) {
 			return FileUtility.isSVNInternals(source);
 		}
 		local = storage.asLocalResource(destination.getParent());
-		if (local == null || 
-		    IStateFilter.SF_LINKED.accept(destination, local.getStatus(), local.getChangeMask()) ||
-		    IStateFilter.SF_OBSTRUCTED.accept(destination, local.getStatus(), local.getChangeMask())) {
+		if (local == null || IStateFilter.SF_LINKED.accept(local) || IStateFilter.SF_OBSTRUCTED.accept(local)) {
 		    return false;
 		}
 		
@@ -102,7 +97,7 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 			op.add(new RestoreProjectMetaOperation(saveOp));
 		    op.add(new RefreshResourcesOperation(new IResource[] {source, destination}, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
 		}
-    	else if (IStateFilter.SF_UNVERSIONED.accept(destination, local.getStatus(), local.getChangeMask())) {
+    	else if (IStateFilter.SF_UNVERSIONED.accept(local)) {
 	        IResource []scheduledForAddition = FileUtility.getOperableParents(new IResource[] {destination}, IStateFilter.SF_UNVERSIONED, true);
 	        AbstractActionOperation addToSVNOp = new AddToSVNWithPropertiesOperation(scheduledForAddition, false); 
 	        op.add(addToSVNOp);
@@ -126,9 +121,7 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 	
 	protected boolean doDelete(IResourceTree tree, IResource resource, IProgressMonitor monitor) {
 		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-		if (local == null || 
-		    IStateFilter.SF_NOTEXISTS.accept(resource, local.getStatus(), local.getChangeMask()) ||
-		    IStateFilter.SF_UNVERSIONED.accept(resource, local.getStatus(), local.getChangeMask())) {
+		if (local == null || IStateFilter.SF_NOTEXISTS.accept(local) || IStateFilter.SF_UNVERSIONED.accept(local)) {
 			return FileUtility.isSVNInternals(resource);
 		}
 		

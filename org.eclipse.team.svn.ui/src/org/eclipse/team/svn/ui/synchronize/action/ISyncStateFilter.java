@@ -13,6 +13,7 @@ package org.eclipse.team.svn.ui.synchronize.action;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.resource.ILocalResource;
 
 /**
  * Synchronize view state filter interface with predefined filter set
@@ -21,31 +22,37 @@ import org.eclipse.team.svn.core.IStateFilter;
  */
 public interface ISyncStateFilter extends IStateFilter {
     public boolean acceptRemote(IResource resource, String state, int mask);
+    
+    public abstract class AbstractSyncStateFilter extends IStateFilter.AbstractStateFilter implements ISyncStateFilter {
+    	
+    }
 
-    public static ISyncStateFilter SF_ONREPOSITORY = new ISyncStateFilter() {
-        public boolean accept(IResource resource, String state, int mask) {
-            return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask);
-        }
-
+    public static ISyncStateFilter SF_ONREPOSITORY = new AbstractSyncStateFilter() {
         public boolean acceptRemote(IResource resource, String state, int mask) {
             return !IStateFilter.SF_NOTEXISTS.accept(resource, state, mask);
         }
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+        
+        protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
+            return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask);
+        }
+        
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return true;
 		}
     };
 
-    public static ISyncStateFilter SF_OVERRIDE = new ISyncStateFilter() {
-        public boolean accept(IResource resource, String state, int mask) {
+    public static ISyncStateFilter SF_OVERRIDE = new AbstractSyncStateFilter() {
+        public boolean acceptRemote(IResource resource, String state, int mask) {
+            return !IStateFilter.SF_NOTEXISTS.accept(resource, state, mask);
+        }
+        
+        protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
             return 
             	IStateFilter.SF_REVERTABLE.accept(resource, state, mask) || 
             	IStateFilter.SF_UNVERSIONED.accept(resource, state, mask);
         }
 
-        public boolean acceptRemote(IResource resource, String state, int mask) {
-            return !IStateFilter.SF_NOTEXISTS.accept(resource, state, mask);
-        }
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return true;
 		}
     };
@@ -57,15 +64,23 @@ public interface ISyncStateFilter extends IStateFilter {
             this.filter = filter;
         }
         
-        public boolean accept(IResource resource, String state, int mask) {
-            return this.filter.accept(resource, state, mask);
-        }
-        
         public boolean acceptRemote(IResource resource, String state, int mask) {
             return false;
         }
         
+        public boolean accept(IResource resource, String state, int mask) {
+            return this.filter.accept(resource, state, mask);
+        }
+        
 		public boolean allowsRecursion(IResource resource, String state, int mask) {
+			return true;
+		}
+
+		public boolean accept(ILocalResource resource) {
+            return this.filter.accept(resource);
+		}
+
+		public boolean allowsRecursion(ILocalResource resource) {
 			return true;
 		}
     }

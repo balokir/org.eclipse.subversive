@@ -27,6 +27,7 @@ import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.property.IPropertyProvider;
 import org.eclipse.team.svn.core.operation.local.property.SetMultiPropertiesOperation;
 import org.eclipse.team.svn.core.operation.local.property.SetPropertiesOperation;
+import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.utility.StringMatcher;
 import org.eclipse.team.svn.ui.action.AbstractNonRecursiveTeamAction;
@@ -102,11 +103,11 @@ public class SetPropertyAction extends AbstractNonRecursiveTeamAction {
 					return data;
 				}
 			};
-			IStateFilter filter = new IStateFilter() {
-				public boolean allowsRecursion(IResource resource, String state, int mask) {
+			IStateFilter filter = new IStateFilter.AbstractStateFilter() {
+				protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 					return IStateFilter.SF_EXCLUDE_PREREPLACED_AND_DELETED.allowsRecursion(resource, state, mask) || state == IStateFilter.ST_ADDED;
 				}
-				public boolean accept(IResource resource, String state, int mask) {
+				protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 					if (applyMethod == PropertiesComposite.APPLY_TO_FILES && resource.getType() != IResource.FILE ||
 						applyMethod == PropertiesComposite.APPLY_TO_FOLDERS && resource.getType() == IResource.FILE ||
 						!IStateFilter.SF_EXCLUDE_PREREPLACED_AND_DELETED.accept(resource, state, mask) || 

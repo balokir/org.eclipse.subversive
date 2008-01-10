@@ -304,7 +304,7 @@ public class RepositoryPropertiesComposite extends Composite implements IPropert
 		this.urlVerifier.removeAll();
 		this.urlVerifier.add(new URLVerifier(name));
 		this.urlVerifier.add(new AbsolutePathVerifier(name));
-		if (this.rootUrl != null) {
+		if (this.rootUrl != null && SVNRemoteStorage.instance().getRepositoryLocation(this.repositoryLocation.getId()) != null) {
 			this.urlVerifier.add(new AbstractFormattedVerifier(name) {
 				protected Boolean relatedProjects;
 				

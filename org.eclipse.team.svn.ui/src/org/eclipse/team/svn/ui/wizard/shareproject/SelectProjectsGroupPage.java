@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.team.svn.core.connector.SVNEntryStatus;
+import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -91,7 +91,7 @@ public class SelectProjectsGroupPage extends AbstractVerifiedWizardPage implemen
 	protected void performAnalysis() {
 		this.projectGroups = new LinkedHashMap();
 		for (int i = 0; i < this.allProjects.length; i++) {
-			SVNEntryStatus info = SVNUtility.getSVNInfoForNotConnected(this.allProjects[i]);
+			SVNChangeStatus info = SVNUtility.getSVNInfoForNotConnected(this.allProjects[i]);
 			if (info == null) {
 				this.getProjectsGroup(null).add(this.allProjects[i]);
 			}

@@ -134,7 +134,7 @@ public class SVNTeamQuickDiffProvider implements IQuickDiffReferenceProvider, IR
 	
 	protected boolean isShared() {
 		ILocalResource local = this.getLocalResource();
-		return local != null && IStateFilter.SF_VERSIONED.accept(local.getResource(), local.getStatus(), local.getChangeMask());
+		return local != null && IStateFilter.SF_VERSIONED.accept(local);
 	}
 	
 	protected ILocalResource getLocalResource() {

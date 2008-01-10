@@ -25,7 +25,7 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.svn.core.IConnectedProjectInformation;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
-import org.eclipse.team.svn.core.connector.SVNEntryStatus;
+import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -84,7 +84,7 @@ public class RelocateWorkingCopyOperation extends AbstractWorkingCopyOperation i
 						IPath fsLocation = current.getLocation();
 						if (fsLocation != null) {
 							String path = fsLocation.toString();
-							SVNEntryStatus st = SVNUtility.getSVNInfoForNotConnected(current);
+							SVNChangeStatus st = SVNUtility.getSVNInfoForNotConnected(current);
 							if (st != null) {
 								String url = SVNUtility.decodeURL(st.url);
 								String oldRoot = SVNUtility.getOldRoot(url, children);

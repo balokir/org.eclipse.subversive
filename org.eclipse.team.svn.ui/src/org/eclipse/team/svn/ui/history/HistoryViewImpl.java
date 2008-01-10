@@ -630,7 +630,7 @@ public class HistoryViewImpl {
 		if (resource != null) {
 			SVNRemoteStorage storage = SVNRemoteStorage.instance();
 			ILocalResource local = storage.asLocalResource(resource);
-			if (local != null && IStateFilter.SF_ONREPOSITORY.accept(local.getResource(), local.getStatus(), local.getChangeMask())) {
+			if (local != null && IStateFilter.SF_ONREPOSITORY.accept(local)) {
 				if (local.getResource().equals(this.wcResource)) {
 					IRepositoryResource remote = storage.asRepositoryResource(local.getResource());
 					if (this.repositoryResource != null && !this.repositoryResource.equals(remote)) {
@@ -751,7 +751,7 @@ public class HistoryViewImpl {
 		
 		if (this.wcResource != null && this.wcResource instanceof IFile) {
 			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(this.wcResource);
-			if (local != null && !local.isLocked() && IStateFilter.SF_NEEDS_LOCK.accept(this.wcResource, local.getStatus(), local.getChangeMask())) {
+			if (local != null && !local.isLocked() && IStateFilter.SF_NEEDS_LOCK.accept(local)) {
 				canWrite = LockProposeUtility.proposeLock(new IResource[] {this.wcResource}, this.getSite().getShell());
 			}
 		}
@@ -835,7 +835,9 @@ public class HistoryViewImpl {
 	protected void compareWithCurrent(Object item) {
 		IRepositoryResource resource = this.getResourceForSelectedRevision(item);
 		if (this.wcResource != null) {
-			UIMonitorUtility.doTaskScheduledActive(new CompareResourcesOperation(this.wcResource, null, resource));
+			IRepositoryResource ancestor = SVNUtility.copyOf(resource);
+			ancestor.setSelectedRevision(SVNRevision.BASE);
+			UIMonitorUtility.doTaskScheduledActive(new CompareResourcesOperation(SVNRemoteStorage.instance().asLocalResource(this.wcResource), ancestor, resource));
 		}
 		else {
 			UIMonitorUtility.doTaskScheduledActive(new CompareRepositoryResourcesOperation(this.getResourceForHeadRevision(), resource));

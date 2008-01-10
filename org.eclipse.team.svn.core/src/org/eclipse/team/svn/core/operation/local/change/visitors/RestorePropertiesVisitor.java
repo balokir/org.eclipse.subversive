@@ -35,7 +35,7 @@ public class RestorePropertiesVisitor implements IResourceChangeVisitor {
 
 	public void postVisit(ResourceChange change, IActionOperationProcessor processor, IProgressMonitor monitor) throws Exception {
 		ILocalResource local = change.getLocal();
-    	if (IStateFilter.SF_VERSIONED.accept(local.getResource(), local.getStatus(), local.getChangeMask())) {
+    	if (IStateFilter.SF_VERSIONED.accept(local)) {
 			//remove remote properties
 			GetPropertiesOperation getProp = new GetPropertiesOperation(local.getResource());
 			processor.doOperation(getProp, monitor);

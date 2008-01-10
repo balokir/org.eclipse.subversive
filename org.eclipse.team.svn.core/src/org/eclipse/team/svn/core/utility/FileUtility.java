@@ -321,10 +321,10 @@ public final class FileUtility {
 			
 			ILocalResource local = storage.asLocalResource(roots[i]);
 			if (local != null) {
-				if (filter.accept(roots[i], local.getStatus(), local.getChangeMask())) {
+				if (filter.accept(local)) {
 					return true;
 				}
-				else if (roots[i] instanceof IContainer && depth != IResource.DEPTH_ZERO && filter.allowsRecursion(roots[i], local.getStatus(), local.getChangeMask())) {
+				else if (roots[i] instanceof IContainer && depth != IResource.DEPTH_ZERO && filter.allowsRecursion(local)) {
 					recursiveCheck.add(roots[i]);
 				}
 			}
@@ -378,7 +378,7 @@ public final class FileUtility {
 		}
 		for (int i = 0; i < parents.length; i++) {
 			ILocalResource parent = SVNRemoteStorage.instance().asLocalResource(parents[i]);
-			if (parent != null && stateFilter.accept(parents[i], parent.getStatus(), parent.getChangeMask())) {
+			if (parent != null && stateFilter.accept(parent)) {
 				tmp.add(parents[i]);
 			}
 			else if (!through) {
@@ -718,12 +718,11 @@ public final class FileUtility {
 				continue;
 			}
 			
-			if (filter.accept(roots[i], local.getStatus(), local.getChangeMask())) {
+			if (filter.accept(local)) {
 				resources.add(roots[i]);
 			}
 			
-			if (roots[i] instanceof IContainer && depth != IResource.DEPTH_ZERO &&
-				filter.allowsRecursion(roots[i], local.getStatus(), local.getChangeMask())) {
+			if (roots[i] instanceof IContainer && depth != IResource.DEPTH_ZERO && filter.allowsRecursion(local)) {
 				FileUtility.addChildren(resources, FileUtility.getAllMembers((IContainer)roots[i]), filter, nextDepth, calledFrom, monitor);
 			}
 		}

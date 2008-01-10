@@ -34,12 +34,12 @@ public class CompareWithWorkingCopyAction extends AbstractWorkingCopyAction {
 	}
 
 	public void runImpl(IAction action) {
-		IResource local = this.getSelectedResources()[0];
-		ILocalResource wcInfo = SVNRemoteStorage.instance().asLocalResource(local);
-		if (wcInfo != null) {
-			IRepositoryResource ancestor = wcInfo.isCopied() ? SVNUtility.getCopiedFrom(local) : SVNRemoteStorage.instance().asRepositoryResource(local);
+		IResource resource = this.getSelectedResources()[0];
+		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
+		if (local != null) {
+			IRepositoryResource ancestor = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
+			ancestor.setSelectedRevision(SVNRevision.BASE);
 			IRepositoryResource remote = SVNUtility.copyOf(ancestor);
-			remote.setSelectedRevision(SVNRevision.BASE);
 			this.runScheduled(new CompareResourcesOperation(local, ancestor, remote));
 		}
 	}
@@ -50,12 +50,12 @@ public class CompareWithWorkingCopyAction extends AbstractWorkingCopyAction {
 			this.checkForResourcesPresence(CompareWithWorkingCopyAction.COMPARE_FILTER);
 	}
 	
-	public static final IStateFilter COMPARE_FILTER = new IStateFilter() {
-		public boolean accept(IResource resource, String state, int mask) {
+	public static final IStateFilter COMPARE_FILTER = new IStateFilter.AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_EXCLUDE_DELETED.accept(resource, state, mask) | (mask & ILocalResource.IS_COPIED) != 0;
 		}
 		
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_EXCLUDE_DELETED.accept(resource, state, mask);
 		}
 	};
