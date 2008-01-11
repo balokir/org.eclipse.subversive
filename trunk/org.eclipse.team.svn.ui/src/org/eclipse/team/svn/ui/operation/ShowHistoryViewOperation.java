@@ -14,7 +14,9 @@ package org.eclipse.team.svn.ui.operation;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
+import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.ui.history.HistoryViewImpl;
 import org.eclipse.team.svn.ui.history.SVNHistoryPage;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.ui.history.IHistoryView;
@@ -28,6 +30,7 @@ import org.eclipse.ui.PartInitException;
  */
 public class ShowHistoryViewOperation extends AbstractActionOperation {
 	protected IRepositoryResource remote;
+	protected ILocalResource compareWith;
 	protected IResource local;
 	protected int options;
 	protected int mask;
@@ -46,6 +49,14 @@ public class ShowHistoryViewOperation extends AbstractActionOperation {
 		this.remote = remote;
 	}
 
+	public ShowHistoryViewOperation(ILocalResource compareWith, IRepositoryResource remote, int mask, int options) {
+		super("Operation.ShowHistory");
+		this.mask = mask | HistoryViewImpl.COMPARE_MODE;
+		this.options = options | HistoryViewImpl.COMPARE_MODE;
+		this.remote = remote;
+		this.compareWith = compareWith;
+	}
+
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 			public void run() {
@@ -58,6 +69,7 @@ public class ShowHistoryViewOperation extends AbstractActionOperation {
 							SVNHistoryPage hPage = (SVNHistoryPage)historyView.showHistoryFor(ShowHistoryViewOperation.this.local != null ? (Object)ShowHistoryViewOperation.this.local : ShowHistoryViewOperation.this.remote);
 							if (hPage != null) {
 								hPage.setOptions(ShowHistoryViewOperation.this.mask, ShowHistoryViewOperation.this.options);
+								hPage.setCompareWith(ShowHistoryViewOperation.this.compareWith);
 							}
 						}
 					}

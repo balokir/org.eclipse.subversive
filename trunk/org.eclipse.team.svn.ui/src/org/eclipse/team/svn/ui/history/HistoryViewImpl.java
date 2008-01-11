@@ -160,6 +160,7 @@ public class HistoryViewImpl {
 	protected boolean isCommentFilterEnabled = false;
 	protected int options = 0;
 	protected long currentRevision = 0;
+	protected ILocalResource compareWith;
 	
 	protected IPropertyChangeListener configurationListener;
 
@@ -194,6 +195,10 @@ public class HistoryViewImpl {
 
 	public int getOptions() {
 		return this.options;
+	}
+	
+	public void setCompareWith(ILocalResource compareWith) {
+		this.compareWith = compareWith;
 	}
 	
 	public void setOptions(int mask, int values) {
@@ -834,8 +839,8 @@ public class HistoryViewImpl {
 	
 	protected void compareWithCurrent(Object item) {
 		IRepositoryResource resource = this.getResourceForSelectedRevision(item);
-		if (this.wcResource != null) {
-			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(this.wcResource);
+		if (this.wcResource != null || this.compareWith != null) {
+			ILocalResource local = this.compareWith == null ? SVNRemoteStorage.instance().asLocalResource(this.wcResource) : this.compareWith;
 			UIMonitorUtility.doTaskScheduledActive(new CompareResourcesOperation(local, resource));
 		}
 		else {
