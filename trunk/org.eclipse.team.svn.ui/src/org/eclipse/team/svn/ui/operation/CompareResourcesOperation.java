@@ -116,6 +116,7 @@ public class CompareResourcesOperation extends AbstractActionOperation {
 				public void run(IProgressMonitor monitor) throws Exception {
 					CompareConfiguration cc = new CompareConfiguration();
 					cc.setProperty(CompareEditor.CONFIRM_SAVE_PROPERTY, Boolean.TRUE);
+					diffPair[0].setSelectedRevision(SVNRevision.BASE);
 					final ThreeWayResourceCompareInput compare = new ThreeWayResourceCompareInput(cc, CompareResourcesOperation.this.local, diffPair[0], diffPair[1], localChanges, remoteChanges);
 					compare.initialize(monitor);
 					UIMonitorUtility.getDisplay().syncExec(new Runnable() {

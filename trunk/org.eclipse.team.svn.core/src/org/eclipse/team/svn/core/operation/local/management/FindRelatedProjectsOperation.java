@@ -52,7 +52,7 @@ public class FindRelatedProjectsOperation extends AbstractActionOperation implem
 	}
 
 	public IResource []getResources() {
-		return this.resources == null ? new IResource[0] : (IResource [])this.resources.toArray(new IResource[this.resources.size()]);
+		return this.resources == null ? new IProject[0] : (IProject [])this.resources.toArray(new IProject[this.resources.size()]);
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {

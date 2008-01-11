@@ -740,6 +740,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 			
 			ILocalResource local = (ILocalResource)this.localResources.get(tRes.getFullPath());
 			if (local == null) {
+				ILocalResource parent = this.getFirstExistingParentLocal(tRes);
 				int externalMask = statuses[i].textStatus == SVNEntryStatus.Kind.EXTERNAL ? ILocalResource.IS_EXTERNAL : 0;
 				if (externalMask != 0) {
 					statuses[i] = SVNUtility.getSVNInfoForNotConnected(tRes);
@@ -751,14 +752,13 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 						continue;
 					}
 				}
-				else {
-					ILocalResource parent = this.getFirstExistingParentLocal(tRes);
-					if (parent != null && (parent.getChangeMask() & ILocalResource.IS_EXTERNAL) != 0) {
-						externalMask = ILocalResource.IS_EXTERNAL;
-					}
+				else if (parent != null && (parent.getChangeMask() & ILocalResource.IS_EXTERNAL) != 0) {
+					externalMask = ILocalResource.IS_EXTERNAL;
 				}
 				
-				int changeMask = this.getChangeMask(statuses[i].textStatus, statuses[i].propStatus, statuses[i].isCopied, statuses[i].isSwitched);
+				 // get the IS_COPIED flag by parent node (it is not fetched for deletions)
+				boolean forceCopied = parent != null && parent.isCopied();
+				int changeMask = this.getChangeMask(statuses[i].textStatus, statuses[i].propStatus, forceCopied | statuses[i].isCopied, statuses[i].isSwitched);
 				if (statuses[i].lockToken != null) {
 					changeMask |= ILocalResource.IS_LOCKED;
 				}

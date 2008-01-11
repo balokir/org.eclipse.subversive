@@ -43,7 +43,6 @@ public class CompareWithLatestRevisionAction extends AbstractWorkingCopyAction {
 		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
 		if (local != null) {
 			IRepositoryResource ancestor = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
-			ancestor.setSelectedRevision(SVNRevision.BASE);
 			IRepositoryResource remote = SVNUtility.copyOf(ancestor);
 			remote.setSelectedRevision(SVNRevision.HEAD);
 			

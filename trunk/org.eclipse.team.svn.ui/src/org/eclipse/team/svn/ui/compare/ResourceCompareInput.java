@@ -407,8 +407,10 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		}
 
 		public AbstractGetFileContentOperation getFetcher() {
-			if (this.resource.getSelectedRevision() != SVNRevision.INVALID_REVISION && this.resource instanceof IRepositoryFile && 
-				(this.op == null || this.op.getExecutionState() != IActionOperation.OK)) {
+			if (this.op != null && this.op.getExecutionState() == IActionOperation.OK) {
+				return null;
+			}
+			if (this.resource.getSelectedRevision() != SVNRevision.INVALID_REVISION && this.resource instanceof IRepositoryFile) {
 				int revisionKind = this.resource.getSelectedRevision().getKind();
 				return this.op = revisionKind == SVNRevision.Kind.WORKING || revisionKind == SVNRevision.Kind.BASE ? 
 					(AbstractGetFileContentOperation)new GetLocalFileContentOperation(this.localAlias.getResource(), revisionKind) : 

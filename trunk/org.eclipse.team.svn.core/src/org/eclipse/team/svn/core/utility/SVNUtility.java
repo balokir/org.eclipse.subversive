@@ -883,18 +883,6 @@ public final class SVNUtility {
 		return retVal;
 	}
 	
-	public static SVNEntryInfo getLocationInfo(IRepositoryLocation location) throws Exception {
-		ISVNConnector proxy = location.acquireSVNProxy();
-		SVNEntryInfo []infos = null;
-		try {
-		    infos = SVNUtility.info(proxy, SVNUtility.getEntryRevisionReference(location.getRoot()), Depth.EMPTY, new SVNNullProgressMonitor());
-		}
-		finally {
-		    location.releaseSVNProxy(proxy);
-		}
-		return infos != null && infos.length > 0 ? infos[0] : null;
-	}
-	
 	public static String getAscendant(IRepositoryResource resource) {
 		String pathUpToRoot = SVNUtility.getPathUpToRoot(resource);
 		int idx = pathUpToRoot.indexOf('/');
