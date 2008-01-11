@@ -835,9 +835,8 @@ public class HistoryViewImpl {
 	protected void compareWithCurrent(Object item) {
 		IRepositoryResource resource = this.getResourceForSelectedRevision(item);
 		if (this.wcResource != null) {
-			IRepositoryResource ancestor = SVNUtility.copyOf(resource);
-			ancestor.setSelectedRevision(SVNRevision.BASE);
-			UIMonitorUtility.doTaskScheduledActive(new CompareResourcesOperation(SVNRemoteStorage.instance().asLocalResource(this.wcResource), ancestor, resource));
+			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(this.wcResource);
+			UIMonitorUtility.doTaskScheduledActive(new CompareResourcesOperation(local, resource));
 		}
 		else {
 			UIMonitorUtility.doTaskScheduledActive(new CompareRepositoryResourcesOperation(this.getResourceForHeadRevision(), resource));

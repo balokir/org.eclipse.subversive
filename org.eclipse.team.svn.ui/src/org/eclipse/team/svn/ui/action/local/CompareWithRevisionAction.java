@@ -19,13 +19,12 @@ import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.SVNUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.action.AbstractWorkingCopyAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.history.HistoryViewImpl;
 import org.eclipse.team.svn.ui.operation.CompareResourcesOperation;
 import org.eclipse.team.svn.ui.operation.ShowHistoryViewOperation;
-import org.eclipse.team.svn.ui.panel.common.InputRevisionPanel;
+import org.eclipse.team.svn.ui.panel.remote.ComparePanel;
 
 /**
  * Compare menu "compare with selected revision" action implementation
@@ -42,15 +41,13 @@ public class CompareWithRevisionAction extends AbstractWorkingCopyAction {
 		IResource resource = this.getSelectedResources()[0];
 		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
 		if (local != null) {
-			IRepositoryResource ancestor = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
-			IRepositoryResource remote = SVNUtility.copyOf(ancestor);
+			IRepositoryResource remote = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
 
-			// TODO: replace to Compare with URL
-			InputRevisionPanel panel = new InputRevisionPanel(remote, SVNTeamUIPlugin.instance().getResource("CompareWithRevisionAction.InputRevisionPanel.Title"));
+			ComparePanel panel = new ComparePanel(remote, local.getRevision());
 			DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
 			if (dialog.open() == 0) {
-				remote.setSelectedRevision(panel.getSelectedRevision());
-				this.runScheduled(new CompareResourcesOperation(local, ancestor, remote));
+				remote = panel.getSelectedResource();
+				this.runScheduled(new CompareResourcesOperation(local, remote));
 				this.runBusy(new ShowHistoryViewOperation(resource, HistoryViewImpl.COMPARE_MODE, HistoryViewImpl.COMPARE_MODE));
 			}
 		}

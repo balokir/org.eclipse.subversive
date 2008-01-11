@@ -42,14 +42,13 @@ public class CompareWithLatestRevisionAction extends AbstractWorkingCopyAction {
 		
 		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
 		if (local != null) {
-			IRepositoryResource ancestor = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
-			IRepositoryResource remote = SVNUtility.copyOf(ancestor);
+			IRepositoryResource remote = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
 			remote.setSelectedRevision(SVNRevision.HEAD);
 			
 			CorrectRevisionOperation correctOp = new CorrectRevisionOperation(null, remote, local.getRevision(), resource);
 			
 			if (!this.runNow(correctOp, true).isCancelled()) {
-				this.runScheduled(new CompareResourcesOperation(local, ancestor, remote));
+				this.runScheduled(new CompareResourcesOperation(local, remote));
 				this.runBusy(new ShowHistoryViewOperation(resource, HistoryViewImpl.COMPARE_MODE, HistoryViewImpl.COMPARE_MODE));
 			}
 		}
