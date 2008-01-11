@@ -12,10 +12,8 @@
 package org.eclipse.team.svn.ui.wizard.shareproject;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -27,13 +25,14 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.SVNTeamProvider;
+import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryInfo;
+import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
+import org.eclipse.team.svn.core.operation.local.management.FindRelatedProjectsOperation;
 import org.eclipse.team.svn.core.operation.remote.management.AddRepositoryLocationOperation;
 import org.eclipse.team.svn.core.operation.remote.management.SaveRepositoryLocationsOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -66,7 +65,6 @@ public class AddRepositoryLocationPage extends AbstractVerifiedWizardPage {
 	protected String initialUrl;
 	protected String oldUrl;
 	protected String oldLabel;
-	protected String oldUuid;
 		
 	public AddRepositoryLocationPage() {
 		this(null);
@@ -82,7 +80,6 @@ public class AddRepositoryLocationPage extends AbstractVerifiedWizardPage {
 		if (editable != null) {
 			this.oldUrl = editable.getUrl();
 			this.oldLabel = editable.getLabel();
-			this.oldUuid = null;
 		}
 		this.alreadyConnected = false;
 		this.createNew = true;
@@ -150,30 +147,16 @@ public class AddRepositoryLocationPage extends AbstractVerifiedWizardPage {
 	
 	public boolean performFinish() {
 		String newUrl = this.propertiesTabFolder.getLocationUrl();
-		ProjectListPanel panel = null;
-		ArrayList connectedProjects = new ArrayList();
-		IProject []projectsArray = null;
-		if (this.editable != null && !newUrl.equals(this.oldUrl) && this.oldUuid == null) {
-			IProject []projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-			for (int i = 0; i < projects.length; i++) {
-				RepositoryProvider tmp = RepositoryProvider.getProvider(projects[i]);
-				if (tmp != null && SVNTeamPlugin.NATURE_ID.equals(tmp.getID())) {
-					SVNTeamProvider provider = (SVNTeamProvider)tmp;
-					if (AddRepositoryLocationPage.this.editable.equals(provider.getRepositoryLocation())) {
-						connectedProjects.add(projects[i]);
-					}
-				}
-			}
-			if (connectedProjects.size() > 0) {
-				projectsArray = (IProject [])connectedProjects.toArray(new IProject[connectedProjects.size()]);
+		String oldUuid = null;
+		IProject []projectsArray = new IProject[0];
+		if (this.editable != null && SVNRemoteStorage.instance().getRepositoryLocation(this.editable.getId()) != null && !newUrl.equals(this.oldUrl)) {
+			FindRelatedProjectsOperation op = new FindRelatedProjectsOperation(this.editable);
+			UIMonitorUtility.doTaskBusyDefault(op);
+			projectsArray = (IProject [])op.getResources();
+			
+			if (projectsArray.length > 0) {
 				SVNEntryInfo info = this.getLocationInfo(this.editable);
-				this.oldUuid = info == null ? null : info.reposUUID;
-//				if (info == null) {
-//					panel = new ProjectListPanel(projectsArray, false);
-//				}
-//				else {
-//					this.oldUuid = info.getUuid();
-//				}
+				oldUuid = info == null ? null : info.reposUUID;
 			}
 		}
 		this.propertiesTabFolder.saveChanges();	
@@ -211,16 +194,15 @@ public class AddRepositoryLocationPage extends AbstractVerifiedWizardPage {
 			}
 		}
 		
-		if (connectedProjects.size() > 0) {
-			if (panel == null) {
-				this.editable.reconfigure();
-				SVNEntryInfo newInfo = this.getLocationInfo(this.editable);
-				if (newInfo == null) {
-					panel = new ProjectListPanel(projectsArray, false);
-				}
-				else if (this.oldUuid != null && !this.oldUuid.equals(newInfo.reposUUID)) {
-					panel = new ProjectListPanel(projectsArray, true);
-				}
+		ProjectListPanel panel = null;
+		if (projectsArray.length > 0) {
+			this.editable.reconfigure();
+			SVNEntryInfo newInfo = this.getLocationInfo(this.editable);
+			if (newInfo == null) {
+				panel = new ProjectListPanel(projectsArray, false);
+			}
+			else if (oldUuid != null && !oldUuid.equals(newInfo.reposUUID)) {
+				panel = new ProjectListPanel(projectsArray, true);
 			}
 			if (panel != null) {
 				this.editable.setUrl(this.oldUrl);
@@ -245,7 +227,7 @@ public class AddRepositoryLocationPage extends AbstractVerifiedWizardPage {
 				}
 			}
 		}
-		
+
 		boolean shouldntBeAdded = this.editable == null ? false : (SVNRemoteStorage.instance().getRepositoryLocation(this.editable.getId()) != null);
 
 		AbstractActionOperation mainOp = 
@@ -296,12 +278,18 @@ public class AddRepositoryLocationPage extends AbstractVerifiedWizardPage {
 	}
 	
 	protected SVNEntryInfo getLocationInfo(IRepositoryLocation location) {
+		ISVNConnector proxy = location.acquireSVNProxy();
+		SVNEntryInfo []infos = null;
 		try {
-			return SVNUtility.getLocationInfo(location);
+		    infos = SVNUtility.info(proxy, SVNUtility.getEntryRevisionReference(location.getRoot()), Depth.EMPTY, new SVNNullProgressMonitor());
 		}
 		catch (Exception ex) {
 			return null;
 		}
+		finally {
+		    location.releaseSVNProxy(proxy);
+		}
+		return infos != null && infos.length > 0 ? infos[0] : null;
 	}
 	
 }

@@ -13,7 +13,6 @@ package org.eclipse.team.svn.ui.action.local;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -45,7 +44,6 @@ public class CompareWithRevisionAction extends AbstractWorkingCopyAction {
 		if (local != null) {
 			IRepositoryResource ancestor = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
 			IRepositoryResource remote = SVNUtility.copyOf(ancestor);
-			ancestor.setSelectedRevision(SVNRevision.BASE);
 
 			// TODO: replace to Compare with URL
 			InputRevisionPanel panel = new InputRevisionPanel(remote, SVNTeamUIPlugin.instance().getResource("CompareWithRevisionAction.InputRevisionPanel.Title"));
