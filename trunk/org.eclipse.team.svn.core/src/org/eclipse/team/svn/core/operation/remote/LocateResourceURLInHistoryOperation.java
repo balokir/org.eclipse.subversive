@@ -103,10 +103,8 @@ public class LocateResourceURLInHistoryOperation extends AbstractRepositoryOpera
 				String pattern = current.getUrl().substring(location.getRepositoryRootUrl().length());
 				int idx = -1;
 				for (int i = 0; i < paths.length; i++) {
-					if (paths[i].action != 'D' && pattern.startsWith(paths[i].path)) {
-						if (paths[i].copiedFromPath != null) {
-							idx = i;
-						}
+					if (pattern.startsWith(paths[i].path) && paths[i].copiedFromPath != null) {
+						idx = i;
 						break;
 					}
 				}
