@@ -28,7 +28,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.svn.core.connector.SVNDiffStatus;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
-import org.eclipse.team.svn.core.operation.remote.LocateResourceURLInHistoryOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
@@ -88,11 +87,6 @@ public class TwoWayResourceCompareInput extends ResourceCompareInput {
 		
 		IDiffContainer parent = this.getParentCompareNode(prev, path2node);
 		
-		LocateResourceURLInHistoryOperation op = new LocateResourceURLInHistoryOperation(new IRepositoryResource[] {next, prev}, true);
-		ProgressMonitorUtility.doTaskExternal(op, monitor);
-		next = op.getRepositoryResources()[0];
-		prev = op.getRepositoryResources()[1];
-
 		// invert diffKind in order to make compare view the same as Eclipse "Compare Each Other"
 		int diffKind = ResourceCompareInput.getDiffKind(st.textStatus, st.propStatus);
 		diffKind = diffKind == Differencer.DELETION ? Differencer.ADDITION : (diffKind == Differencer.ADDITION ? Differencer.DELETION : diffKind);

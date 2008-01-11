@@ -5,28 +5,36 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 0.7.0.v20071221 release date: 21 December 2007
+Version 0.7.0.v20080111 release date: 11 January 2008
 
 1. What's New
 
-   The version is 0.7.0 release which build ID is v20071221. The main target of the release is 
+   The version is 0.7.0 release which build ID is v20080111. The main target of the release is 
    transferring Subversive development to Eclipse.org.
    
    Changes in compare with previous version are listed below. The full list of 
    changes you can find in Change Log.
     
+	Features:
+	 * Improve SVN properties support (bug 211403)
+	   + special thanks to Olavo Lira
+	
+	 * Improve validation in SVN Properties dialog (bug 211402)
+	 * Allow to work with non-conflicting resources for "Override and ..." operations (bug 211239)
+	 * Implement full tsvn properties support (bug 214894)
+	
 	Fixes:
-	 * Subversive 1.1.7 Bugreport broken (bug 204970)
-	   + special thanks to Werner Keil
-	   
-	 * Create Unified Diff action handles direction incorrectly (bug 211272)
-	   + special thanks to Artem Tikhomirov
-	   
-	 * Imporve "Problem Dialog" (bug 211398)
-	   + special thanks to Joern Zaefferer
-	 
-	 * Show the difference between the modified version and the current SVN revision (bug 211250)
-	 * SVN 1.5 support changes (bug 213289)
+	 * Project migration from polarion to eclipse didn't work (bug 213727)
+	   + special thanks to George Lindholm
+	
+	 * error when trying to commit with enabled bugtraq properties (bug 214609)
+	   + special thanks to Steve Ulrich
+	
+	 * Comparing remote files in SVN Repositories view doesn't work (bug 207923)
+	   + special thanks to Matthias Erche
+	
+	 * Compare: client library returns null value (bug 211260)
+	   + special thanks to Samyem
 
 2. Information
 
