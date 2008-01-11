@@ -53,7 +53,6 @@ import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.GetLocalFileContentOperation;
 import org.eclipse.team.svn.core.operation.remote.GetFileContentOperation;
-import org.eclipse.team.svn.core.operation.remote.LocateResourceURLInHistoryOperation;
 import org.eclipse.team.svn.core.resource.ILocalFile;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
@@ -114,12 +113,6 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 
 	protected void findRootNode(Map path2node, IRepositoryResource resource, IProgressMonitor monitor) {
 		this.root = (BaseCompareNode)path2node.get(new Path(resource.getUrl()));
-		if (this.root == null && !path2node.isEmpty()) {
-			LocateResourceURLInHistoryOperation op = new LocateResourceURLInHistoryOperation(new IRepositoryResource[] {resource}, false);
-			UIMonitorUtility.doTaskExternalDefault(op, monitor);
-			IRepositoryResource converted = op.getRepositoryResources()[0];
-			this.root = (BaseCompareNode)path2node.get(new Path(converted.getUrl()));
-		}
 	}
 	
 	protected void refreshTitles() throws Exception {

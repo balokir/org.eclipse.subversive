@@ -8,6 +8,31 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.0.v20080111 [11 January 2008]
+
+Features:
+ * Improve SVN properties support (bug 211403)
+   + special thanks to Olavo Lira
+
+ * Improve validation in SVN Properties dialog (bug 211402)
+ * Allow to work with non-conflicting resources for "Override and ..." operations (bug 211239)
+ * Implement full tsvn properties support (bug 214894)
+
+Fixes:
+ * Project migration from polarion to eclipse didn't work (bug 213727)
+   + special thanks to George Lindholm
+
+ * error when trying to commit with enabled bugtraq properties (bug 214609)
+   + special thanks to Steve Ulrich
+
+ * Comparing remote files in SVN Repositories view doesn't work (bug 207923)
+   + special thanks to Matthias Erche
+
+ * Compare: client library returns null value (bug 211260)
+   + special thanks to Samyem
+
+--------------------------------------------------------------------------------
+
 Version 0.7.0.v20071221 [21 December 2007]
 
 Fixes:

@@ -41,7 +41,6 @@ import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
-import org.eclipse.team.svn.core.operation.remote.LocateResourceURLInHistoryOperation;
 import org.eclipse.team.svn.core.resource.ILocalFile;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
@@ -170,12 +169,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		IRepositoryResource ancestor = triplet[1];
 		IRepositoryResource right = triplet[2];
 		
-		if (right.exists()) {
-			LocateResourceURLInHistoryOperation op = new LocateResourceURLInHistoryOperation(new IRepositoryResource[] {right}, true);
-			ProgressMonitorUtility.doTaskExternalDefault(op, monitor);
-			right = op.getRepositoryResources()[0];
-		}
-		else if (IStateFilter.SF_NOTEXISTS.accept(local)) {
+		if (!right.exists() && IStateFilter.SF_NOTEXISTS.accept(local)) {
 			return null;
 		}
 		
