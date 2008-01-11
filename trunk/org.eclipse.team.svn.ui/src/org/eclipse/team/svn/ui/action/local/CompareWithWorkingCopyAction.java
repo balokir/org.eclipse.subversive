@@ -37,10 +37,9 @@ public class CompareWithWorkingCopyAction extends AbstractWorkingCopyAction {
 		IResource resource = this.getSelectedResources()[0];
 		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
 		if (local != null) {
-			IRepositoryResource ancestor = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
-			ancestor.setSelectedRevision(SVNRevision.BASE);
-			IRepositoryResource remote = SVNUtility.copyOf(ancestor);
-			this.runScheduled(new CompareResourcesOperation(local, ancestor, remote));
+			IRepositoryResource remote = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
+			remote.setSelectedRevision(SVNRevision.BASE);
+			this.runScheduled(new CompareResourcesOperation(local, remote));
 		}
 	}
 

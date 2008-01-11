@@ -58,14 +58,14 @@ public class CompareResourcesOperation extends AbstractActionOperation {
 	protected IRepositoryResource remote;
 	protected boolean showInDialog;
 	
-	public CompareResourcesOperation(ILocalResource local, IRepositoryResource ancestor, IRepositoryResource remote) {
-		this(local, ancestor, remote, false);
+	public CompareResourcesOperation(ILocalResource local, IRepositoryResource remote) {
+		this(local, remote, false);
 	}
 	
-	public CompareResourcesOperation(ILocalResource local, IRepositoryResource ancestor, IRepositoryResource remote, boolean showInDialog) {
+	public CompareResourcesOperation(ILocalResource local, IRepositoryResource remote, boolean showInDialog) {
 		super("Operation.CompareLocal");
 		this.local = local;
-		this.ancestor = ancestor;
+		this.ancestor = local.isCopied() ? SVNUtility.getCopiedFrom(local.getResource()) : SVNRemoteStorage.instance().asRepositoryResource(local.getResource());
 		this.remote = remote;
 		this.showInDialog = showInDialog;
 	}
