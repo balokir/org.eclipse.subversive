@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.core.operation.remote;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNLogPath;
@@ -100,10 +101,10 @@ public class LocateResourceURLInHistoryOperation extends AbstractRepositoryOpera
 				if (paths == null) {
 					return current;
 				}
-				String pattern = current.getUrl().substring(location.getRepositoryRootUrl().length());
+				Path pattern = new Path(current.getUrl().substring(location.getRepositoryRootUrl().length()));
 				int idx = -1;
 				for (int i = 0; i < paths.length; i++) {
-					if (pattern.startsWith(paths[i].path) && paths[i].copiedFromPath != null) {
+					if (new Path(paths[i].path).isPrefixOf(pattern) && paths[i].copiedFromPath != null) {
 						idx = i;
 						break;
 					}
@@ -111,7 +112,7 @@ public class LocateResourceURLInHistoryOperation extends AbstractRepositoryOpera
 				if (idx == -1) {
 					return current;
 				}
-				String copiedFrom = location.getRepositoryRootUrl() + paths[idx].copiedFromPath + pattern.substring(paths[idx].path.length());
+				String copiedFrom = location.getRepositoryRootUrl() + paths[idx].copiedFromPath + pattern.toString().substring(paths[idx].path.length());
 				
 				long rev = paths[idx].copiedFromRevision;
 				SVNRevision searchRevision = current.getSelectedRevision();

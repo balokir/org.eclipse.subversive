@@ -78,6 +78,10 @@ public class SVNRepositoryContainer extends SVNRepositoryResource implements IRe
 				retVal = new IRepositoryResource[children.length];
 				
 				for (int i = 0; i < children.length; i++) {
+					if (children[i].revision == SVNRevision.INVALID_REVISION_NUMBER) {
+						//FIXME -1 for SVN Kit 1.2.0 if resource is not exists
+						throw new SVNConnectorException("-1 for SVN Kit 1.2.0 if resource is not exists");
+					}
 					String childUrl = thisUrl + "/" + children[i].path;
 					SVNRepositoryResource resource = children[i].nodeKind == Kind.DIR ? (SVNRepositoryResource)this.asRepositoryContainer(childUrl, false) : (SVNRepositoryResource)this.asRepositoryFile(childUrl, false);
 					resource.setRevision(children[i].revision);
