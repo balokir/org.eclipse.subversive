@@ -197,6 +197,10 @@ public class ShareProjectWizard extends AbstractSVNWizard implements IConfigurat
 		}
 		
 		boolean reconnect = this.connectedPage == null || (!this.connectedPage.useProjectSettings() && !this.connectedPage.createUsingProjectSettings());
+		if (this.selectName.getRootProjectName() == null && currentPage instanceof AddRepositoryLocationPage) {
+			this.selectName.setProjectsAndLocation(this.getProjects(), this.addLocation.getRepositoryLocation());
+		}
+		
 		final IShareProjectWrapper mainOp = 
 			reconnect ? 
 			this.getFreshConnectOperation() :
