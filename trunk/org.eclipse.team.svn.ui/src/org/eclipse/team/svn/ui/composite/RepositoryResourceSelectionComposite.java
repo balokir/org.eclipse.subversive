@@ -29,7 +29,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
-import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -220,7 +219,7 @@ public class RepositoryResourceSelectionComposite extends Composite {
 			        	SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.Select.Title"), 
 						RepositoryResourceSelectionComposite.this.selectionTitle,
 						RepositoryResourceSelectionComposite.this.selectionDescription,
-						new IRepositoryResource[] {RepositoryResourceSelectionComposite.this.baseResource}, 
+						new IRepositoryResource[] {RepositoryResourceSelectionComposite.this.selectedResource == null ? RepositoryResourceSelectionComposite.this.baseResource : RepositoryResourceSelectionComposite.this.selectedResource}, 
 						true);
 				panel.setAllowFiles(RepositoryResourceSelectionComposite.this.baseResource instanceof IRepositoryFile);
 				DefaultDialog browser = new DefaultDialog(RepositoryResourceSelectionComposite.this.getShell(), panel);
@@ -264,33 +263,41 @@ public class RepositoryResourceSelectionComposite extends Composite {
 			data = new GridData(GridData.FILL_HORIZONTAL);
 			this.secondRevisionComposite.setLayoutData(data);
 			this.secondRevisionComposite.setSelectedResource(this.secondSelectedResource);
-//			this.validationManager.attachTo(this.secondRevisionComposite, new AbstractVerifier() {
-//
-//				protected String getErrorMessage(Control input) {
-//					Revision startRevision = RepositoryResourceSelectionComposite.this.revisionComposite.getSelectedRevision();
-//					Revision stopRevision = RepositoryResourceSelectionComposite.this.secondRevisionComposite.getSelectedRevision();
-//					if (startRevision != null && startRevision.getKind() == RevisionKind.number && stopRevision.getKind() == RevisionKind.number &&
-//							((Revision.Number)startRevision).getNumber() > ((Revision.Number)stopRevision).getNumber()) {
-//						return "Stop revision cannot be less than start revision.";
-//					}
-//					return null;
-//				}
-//
-//				protected String getWarningMessage(Control input) {
-//					return null;
-//				}
-//			});
 		}
 	}
 	
 	protected void checkUrl() {
+		//FIXME allow to work with peg in the full volume in the future
 		String url = this.urlText.getText().trim();
+		int idx = url.lastIndexOf('@');
+		SVNRevision peg = null;
+		if (idx != -1) {
+			String text = url.substring(idx + 1);
+			try {
+				peg = SVNRevision.fromNumber(Long.parseLong(text));
+				url = url.substring(0, idx);
+			}
+			catch (NumberFormatException ex) {
+				if (text.toLowerCase().equals("head")) {
+					peg = SVNRevision.HEAD;
+					url = url.substring(0, idx);
+				}
+			}
+		}
+		
+		
 		IRepositoryResource tmp = this.getDestination(url);
 		if (tmp != null) {
 			tmp.setSelectedRevision(this.selectedResource.getSelectedRevision());
+			if (peg != null) {
+//				tmp.setPegRevision(peg);
+			}
 			this.selectedResource = tmp;
 			tmp = this.getDestination(url);
 			tmp.setSelectedRevision(this.secondSelectedResource.getSelectedRevision());
+			if (peg != null) {
+//				tmp.setPegRevision(peg);
+			}
 			this.secondSelectedResource = tmp;
 			this.revisionComposite.setEnabled(true);
 			if (this.secondRevisionComposite != null) {
@@ -306,10 +313,9 @@ public class RepositoryResourceSelectionComposite extends Composite {
 	}
 	
 	protected IRepositoryResource getDestination(String url) {
-		IRepositoryLocation location = this.baseResource.getRepositoryLocation();
 		url = SVNUtility.normalizeURL(url);
 		try {
-			return this.baseResource instanceof IRepositoryContainer ? (IRepositoryResource)location.asRepositoryContainer(url, true) : location.asRepositoryFile(url, true);
+			return this.baseResource instanceof IRepositoryContainer ? (IRepositoryResource)this.baseResource.asRepositoryContainer(url, true) : this.baseResource.asRepositoryFile(url, true);
 		}
 		catch (IllegalArgumentException ex) {
 			return null;

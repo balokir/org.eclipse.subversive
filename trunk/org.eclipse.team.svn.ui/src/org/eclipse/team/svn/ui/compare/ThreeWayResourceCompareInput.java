@@ -180,8 +180,8 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		int fictiveStatusRight = useOriginator || statusLeft != SVNEntryStatus.Kind.ADDED && statusLeft != SVNEntryStatus.Kind.IGNORED && statusLeft != SVNEntryStatus.Kind.NONE && statusLeft != SVNEntryStatus.Kind.UNVERSIONED ? SVNEntryStatus.Kind.NORMAL :  SVNEntryStatus.Kind.NONE;
 		int statusRight = stRemote != null ? (stRemote.textStatus == SVNEntryStatus.Kind.NORMAL ? stRemote.propStatus : stRemote.textStatus) : fictiveStatusRight;
 		
-		// skip resources that already up-to-date
-		if (stRemote != null) {
+		// skip resources that already up-to-date: only in case if URL's are same
+		if (stRemote != null && this.rootRight.getUrl().equals(this.rootAncestor.getUrl())) {
 			if (this.rootRight.getSelectedRevision().getKind() == Kind.NUMBER && this.local.getRevision() >= ((SVNRevision.Number)this.rootRight.getSelectedRevision()).getNumber()) {
 				if (!local.getResource().exists() && statusRight == SVNEntryStatus.Kind.DELETED || statusRight != SVNEntryStatus.Kind.DELETED && local.getRevision() == right.getRevision()) {
 					return null;
