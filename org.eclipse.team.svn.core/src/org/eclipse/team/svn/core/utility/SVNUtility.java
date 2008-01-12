@@ -90,6 +90,28 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 public final class SVNUtility {
 	private static String svnFolderName = null;
 	
+	public static SVNEntryReference asEntryReference(String url) {
+		if (url == null) {
+			return null;
+		}
+		int idx = url.lastIndexOf('@');
+		SVNRevision peg = null;
+		if (idx != -1) {
+			String text = url.substring(idx + 1);
+			try {
+				peg = SVNRevision.fromNumber(Long.parseLong(text));
+				url = url.substring(0, idx);
+			}
+			catch (NumberFormatException ex) {
+				if (text.toLowerCase().equals("head")) {
+					peg = SVNRevision.HEAD;
+					url = url.substring(0, idx);
+				}
+			}
+		}
+		return new SVNEntryReference(url, peg);
+	}
+	
 	public static IRepositoryResource getCopiedFrom(IResource resource) {
 		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
 		if (local != null && local.isCopied()) {
