@@ -27,7 +27,9 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.svn.core.connector.SVNDiffStatus;
+import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
+import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
@@ -95,7 +97,19 @@ public class TwoWayResourceCompareInput extends ResourceCompareInput {
 	}
 	
 	protected IDiffContainer makeStubNode(IDiffContainer parent, IRepositoryResource node) {
-		return new CompareNode(parent, Differencer.NO_CHANGE, node, node, SVNEntryStatus.Kind.NORMAL);
+		IRepositoryResource next = node;
+		
+		String prevUrl = node.getUrl();
+		if (prevUrl.length() > this.rootRight.getUrl().length()) {
+			String urlPart = prevUrl.substring(this.rootRight.getUrl().length());
+			String urlNext = this.rootLeft.getUrl() + urlPart;
+			
+			next = this.createResourceFor(this.rootLeft.getRepositoryLocation(), node instanceof IRepositoryFile ? SVNEntry.Kind.FILE : SVNEntry.Kind.DIR, urlNext);
+			next.setSelectedRevision(this.rootLeft.getSelectedRevision());
+			next.setPegRevision(this.rootLeft.getPegRevision());
+		}
+		
+		return new CompareNode(parent, Differencer.NO_CHANGE, next, node, SVNEntryStatus.Kind.NORMAL);
 	}
 	
 	protected boolean isThreeWay() {
