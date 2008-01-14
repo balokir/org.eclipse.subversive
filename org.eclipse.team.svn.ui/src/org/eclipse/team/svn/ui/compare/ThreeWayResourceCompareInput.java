@@ -163,11 +163,11 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		int remoteNodeKind = stRemote == null ? localNodeKind : this.getNodeKind(stRemote);
 		
 		boolean useOriginator = this.local.isCopied() && (stLocal != null && stLocal.textStatus != SVNEntryStatus.Kind.ADDED || local.getResource().equals(this.local.getResource()));
-		IRepositoryResource []triplet = this.getRepositoryTriplet(local, remoteNodeKind, stLocal, stRemote);
+		IRepositoryResource []entries = this.getRepositoryEntries(local, remoteNodeKind, stLocal, stRemote);
 		
-		IRepositoryResource left = triplet[0];
-		IRepositoryResource ancestor = triplet[1];
-		IRepositoryResource right = triplet[2];
+		IRepositoryResource left = entries[0];
+		IRepositoryResource ancestor = entries[1];
+		IRepositoryResource right = entries[2];
 		
 		if (!right.exists() && IStateFilter.SF_NOTEXISTS.accept(local)) {
 			return null;
@@ -238,14 +238,14 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		IRepositoryResource ancestor = node;
 		IRepositoryResource remote = node;
 		if (local != null) {
-			IRepositoryResource []triplet = this.getRepositoryTriplet(local, SVNEntry.Kind.DIR, null, null);
-			ancestor = triplet[1];
-			remote = triplet[2];
+			IRepositoryResource []entries = this.getRepositoryEntries(local, SVNEntry.Kind.DIR, null, null);
+			ancestor = entries[1];
+			remote = entries[2];
 		}
 		return new CompareNode(parent, Differencer.NO_CHANGE, local, node, ancestor, remote, SVNEntryStatus.Kind.NORMAL, SVNEntryStatus.Kind.NORMAL);
 	}
 	
-	protected IRepositoryResource []getRepositoryTriplet(ILocalResource local, int remoteNodeKind, SVNDiffStatus stLocal, SVNDiffStatus stRemote) {
+	protected IRepositoryResource []getRepositoryEntries(ILocalResource local, int remoteNodeKind, SVNDiffStatus stLocal, SVNDiffStatus stRemote) {
 		IRepositoryLocation location = this.rootLeft.getRepositoryLocation();
 		
 		IRepositoryResource left = SVNRemoteStorage.instance().asRepositoryResource(local.getResource());
