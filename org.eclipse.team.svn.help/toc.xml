@@ -3,6 +3,7 @@
 <?eclipse version="3.0"?>
 
 <toc label="Subversive User Guide">
+	<topic label="Subversive overview" href="overview.html"/>
 	<topic label="Getting started" href="gettingStarted.html">
 		<link toc="getting_started.xml" />
 	</topic>
