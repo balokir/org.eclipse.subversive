@@ -1,0 +1,5 @@
+
+a#subversive-overview img { background-image : url(graphics/Subversive.png); }
+a#subversive-overview:hover img { background-image : url(graphics/Subversive_hover.png); }
+a#subversive-firststeps img { background-image : url(graphics/Subversive.png); }
+a#subversive-firststeps:hover img { background-image : url(graphics/Subversive_hover.png); }
