@@ -15,6 +15,10 @@
             configId="org.eclipse.ui.intro.universalConfig"
             content="$nl$/intro/tutorials.xml">
       </configExtension>
+      <configExtension
+            configId="org.eclipse.ui.intro.universalConfig"
+            content="$nl$/intro/firststeps.xml">
+      </configExtension>
    </extension>
 
 </plugin>
