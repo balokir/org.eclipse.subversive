@@ -34,9 +34,9 @@
    <includes
          id="org.eclipse.team.svn.mylyn.source"
          version="0.7.0.v20071221"/>
-
+<!--
    <includes
          id="org.eclipse.team.svn.projectset.source"
          version="0.7.0.v20071221"/>
-
+-->
 </feature>
