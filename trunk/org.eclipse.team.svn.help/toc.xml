@@ -15,6 +15,7 @@
 		<link toc="svn_team.xml" />
 	</topic>
 	<anchor id="subversive_team" />
+	<topic label="Installation and migration" href="install_migrate.html"/>
 	<topic label="FAQ" href="faq.html"/>
 	<topic label="Special Thanks" href="thanks.html"/>
 	<topic label="Legal" href="notices.html"/>
