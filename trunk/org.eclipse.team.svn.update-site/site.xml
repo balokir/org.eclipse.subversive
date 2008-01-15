@@ -15,9 +15,6 @@
    <feature url="features/org.eclipse.team.svn.mylyn_0.7.0.v20071221.jar" id="org.eclipse.team.svn.mylyn" version="0.7.0.v20071221">
       <category name="Subversive Integration (Incubation)"/>
    </feature>
-   <feature url="features/org.eclipse.team.svn.projectset_0.7.0.v20071221.jar" id="org.eclipse.team.svn.projectset" version="0.7.0.v20071221">
-      <category name="Subversive Integration (Incubation)"/>
-   </feature>
    <feature url="features/org.eclipse.team.svn.source_0.7.0.v20080111.jar" id="org.eclipse.team.svn.source" version="0.7.0.v20080111">
       <category name="Subversive Sources (Incubation)"/>
    </feature>
