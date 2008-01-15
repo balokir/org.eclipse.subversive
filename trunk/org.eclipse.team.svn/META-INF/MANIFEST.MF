@@ -6,7 +6,6 @@ Bundle-SymbolicName: org.eclipse.team.svn;singleton:=true
 Bundle-Version: 0.7.0.v20080111
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Eclipse-LazyStart: true
 Require-Bundle: org.eclipse.ui.intro,
  org.eclipse.ui.intro.universal,
  org.eclipse.ui

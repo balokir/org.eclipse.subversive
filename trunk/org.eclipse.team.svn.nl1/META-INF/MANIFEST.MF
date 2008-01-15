@@ -6,4 +6,3 @@ Bundle-SymbolicName: org.eclipse.team.svn.nl1;singleton:=true
 Bundle-Version: 0.7.0.v20071221
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Eclipse-LazyStart: true
