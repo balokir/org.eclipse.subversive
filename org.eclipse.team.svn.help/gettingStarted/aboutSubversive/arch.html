@@ -115,18 +115,11 @@ public class ExportOperation extends AbstractRepositoryOperation {
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		IRepositoryResource resource = this.operableData()[0];
 		IRepositoryLocation location = resource.getRepositoryLocation();
-		ISVNClientWrapper proxy = location.acquireSVNProxy();
+		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
 			String path = this.path + "/" + resource.getName();
-			proxy.doExport(SVNUtility.encodeURL(resource.getUrl()),
-			path,
-			resource.getSelectedRevision(),
-			resource.getPegRevision(),
-			true, // force
-			false, // ignore externals
-			true, // recurse
-			null, // native EOL
-			new SVNProgressMonitor(this, monitor, null));
+			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn export \"" + resource.getUrl() + "@" + resource.getPegRevision() + "\" -r " + resource.getSelectedRevision() + " \"" + FileUtility.normalizePath(path) + "\" --force" + FileUtility.getUsernameParam(location.getUsername()) + "\n");
+			proxy.doExport(SVNUtility.getEntryRevisionReference(resource), path, null, Depth.INFINITY, ISVNConnector.Options.FORCE, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 			location.releaseSVNProxy(proxy);
