@@ -8,7 +8,7 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
-Version 0.7.0.v20080111 [11 January 2008]
+Version 0.7.0.v20080116 [16 January 2008]
 
 Features:
  * Improve SVN properties support (bug 211403)
@@ -19,6 +19,9 @@ Features:
  * Implement full tsvn properties support (bug 214894)
 
 Fixes:
+ * Subversive feature not installable from Ganymede Staging Update Site (bug 213975)
+   + special thanks to Markus Knauer
+   
  * Project migration from polarion to eclipse didn't work (bug 213727)
    + special thanks to George Lindholm
 
@@ -30,6 +33,9 @@ Fixes:
 
  * Compare: client library returns null value (bug 211260)
    + special thanks to Samyem
+   
+ * Initial project share to a new repository URL is shared to path "null" under certain circumstances (bug 214839)
+   + special thanks to Daniel M. Zimmerman
 
 --------------------------------------------------------------------------------
 
