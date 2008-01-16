@@ -59,7 +59,7 @@ public class PredefinedPropertySet implements IPredefinedPropertySet {
 		regexpmap.put("svn:executable", null);
 		regexpmap.put("svn:externals", "");
 		regexpmap.put("svn:ignore", "((\\?+)|(\\*+)|(\\w+)|(\\.+)|(\\s+))+");
-		regexpmap.put("svn:keywords", "((Date)|(Revision)|(Author)|(HeadURL)|(Id)|(LastChangedDate)|(Rev)|(LastChangedBy)|(URL)|(\\s))+");
+		regexpmap.put("svn:keywords", "((Date)|(Revision)|(Author)|(HeadURL)|(Id)|(LastChangedDate)|(Rev)|(LastChangedRevision)|(LastChangedBy)|(URL)|(\\s))+");
 		regexpmap.put("svn:needs-lock", null);
 		regexpmap.put("svn:mime-type", null);
 		this.getBugtrackRegExps(regexpmap);
