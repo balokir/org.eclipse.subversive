@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.team.svn.source"
       label="%featureName"
-      version="0.7.0.v20080111"
+      version="0.7.0.v20080116"
       provider-name="%providerName"
       colocation-affinity="org.eclipse.team.svn">
 
@@ -21,15 +21,15 @@
 
    <includes
          id="org.eclipse.team.svn.sources"
-         version="0.7.0.v20080111"/>
+         version="0.7.0.v20080116"/>
 
    <includes
          id="org.eclipse.team.svn.nl1.sources"
-         version="0.7.0.v20080111"/>
+         version="0.7.0.v20080116"/>
 
    <includes
          id="org.eclipse.team.svn.resource.ignore.rules.jdt.source"
-         version="0.7.0.v20071221"/>
+         version="0.7.0.v20080116"/>
 
    <includes
          id="org.eclipse.team.svn.mylyn.source"
@@ -37,6 +37,6 @@
 <!--
    <includes
          id="org.eclipse.team.svn.projectset.source"
-         version="0.7.0.v20071221"/>
+         version="0.7.0.v20080116"/>
 -->
 </feature>
