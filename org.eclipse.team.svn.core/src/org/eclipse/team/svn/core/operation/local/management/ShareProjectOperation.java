@@ -158,7 +158,7 @@ public class ShareProjectOperation extends AbstractWorkingCopyOperation {
 		}			
 		
 		if (existingProjects.size() > 0 && this.shareProjectPrompt != null && !this.shareProjectPrompt.prompt((IProject [])existingProjects.toArray(new IProject[existingProjects.size()]))) {
-			throw new SVNConnectorCancelException(this.getNationalizedString("Error.ShareCancelled"));
+			throw new SVNConnectorCancelException(this.getNationalizedString("Error.ShareCanceled"));
 		}
 		
 		final ISVNConnector proxy = this.location.acquireSVNProxy();

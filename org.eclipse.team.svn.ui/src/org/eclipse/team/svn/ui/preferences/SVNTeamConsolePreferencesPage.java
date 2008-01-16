@@ -66,7 +66,6 @@ public class SVNTeamConsolePreferencesPage extends AbstractSVNTeamPreferencesPag
 
 	public SVNTeamConsolePreferencesPage() {
 		super();
-		this.setDescription(SVNTeamUIPlugin.instance().getResource("ConsolePreferencePage.desc"));
 	}
 	
 	protected void saveValues(IPreferenceStore store) {

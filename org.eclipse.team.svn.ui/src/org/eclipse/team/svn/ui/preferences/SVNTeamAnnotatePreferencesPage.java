@@ -59,7 +59,6 @@ public class SVNTeamAnnotatePreferencesPage extends AbstractSVNTeamPreferencesPa
 	
 	public SVNTeamAnnotatePreferencesPage() {
 		super();
-		this.setDescription(SVNTeamUIPlugin.instance().getResource("AnnotatePreferencePage.desc"));
 	}
 	
 	protected void saveValues(IPreferenceStore store) {
