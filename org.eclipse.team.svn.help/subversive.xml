@@ -13,6 +13,7 @@
 	<topic label="Subversive architecture" href="gettingStarted/aboutSubversive/arch.html"/>
 	<topic label="Subversive extension points" href="gettingStarted/aboutSubversive/extensions.html"/>
 	<topic label="Subversive supported protocols" href="gettingStarted/aboutSubversive/protocols.html"/>
+	<topic label="Note for Linux users" href="gettingStarted/aboutSubversive/linux.html"/>
 	<topic label="FastTrack integration" href="gettingStarted/aboutSubversive/fast_track.html"/>
 	<topic label="Buckminster integration" href="gettingStarted/aboutSubversive/buckminster.html"/>
 	<topic label="Mylyn (former Mylar) integration" href="gettingStarted/aboutSubversive/mylyn.html"/>
