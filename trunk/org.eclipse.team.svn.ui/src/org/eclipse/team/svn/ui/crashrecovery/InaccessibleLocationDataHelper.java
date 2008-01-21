@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.ui.crashrecovery;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -59,7 +57,7 @@ public class InaccessibleLocationDataHelper implements IResolutionHelper {
 							UIMonitorUtility.getShell(), 
 							SVNTeamUIPlugin.instance().getResource("InaccessibleLocationDataHelper.Dialog.Title"), 
 							null, 
-							MessageFormat.format(SVNTeamUIPlugin.instance().getResource("InaccessibleLocationDataHelper.Dialog.Message"), new String[] {project.getName()}), 
+							SVNTeamUIPlugin.instance().getResource("InaccessibleLocationDataHelper.Dialog.Message", new String[] {project.getName()}), 
 							MessageDialog.WARNING, 
 							new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 
 							0);

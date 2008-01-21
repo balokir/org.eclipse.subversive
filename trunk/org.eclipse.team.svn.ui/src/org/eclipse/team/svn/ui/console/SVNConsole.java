@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.ui.console;
 
-import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -204,7 +203,7 @@ public class SVNConsole extends MessageConsole implements IPropertyChangeListene
 				else {
 					this.write(IConsoleStream.LEVEL_CMD, this.cancelled ? SVNTeamUIPlugin.instance().getResource("SVNConsole.Cancelled") : SVNTeamUIPlugin.instance().getResource("SVNConsole.Ok"));
 				}
-				this.write(IConsoleStream.LEVEL_CMD, " " + MessageFormat.format(SVNTeamUIPlugin.instance().getResource("SVNConsole.Took"), new String[] {new SimpleDateFormat("mm:ss.SSS").format(new Date(System.currentTimeMillis() - this.start))}) + "\n\n");
+				this.write(IConsoleStream.LEVEL_CMD, " " + SVNTeamUIPlugin.instance().getResource("SVNConsole.Took", new String[] {new SimpleDateFormat("mm:ss.SSS").format(new Date(System.currentTimeMillis() - this.start))}) + "\n\n");
 			}
 		}
 

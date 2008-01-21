@@ -89,7 +89,7 @@ public class CopyOperation extends AbstractFileOperation {
 		File checked = new File(this.localTo.getAbsolutePath() + "/" + what.getName());
 		if (checked.exists()) {
 			String message = this.getNationalizedString("Error.AlreadyExists");
-			throw new UnreportableException(MessageFormat.format(message, new String[] {checked.getAbsolutePath()}));
+			throw new UnreportableException(MessageFormat.format(message, new Object[] {checked.getAbsolutePath()}));
 		}
 		return checked;
 	}

@@ -14,6 +14,7 @@ package org.eclipse.team.svn.ui;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.MessageFormat;
 
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IWorkspace;
@@ -69,6 +70,11 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
     
     public String getResource(String key) {
         return FileUtility.getResource(Platform.getResourceBundle(this.getBundle()), key);
+    }
+    
+    public String getResource(String key, Object []args) {
+        String message = this.getResource(key);
+        return MessageFormat.format(message, args);
     }
     
     public ImageDescriptor getImageDescriptor(String path) {

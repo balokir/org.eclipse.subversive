@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.ui.dialog;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -40,7 +38,7 @@ public class DisconnectDialog extends MessageDialog {
 		super(parentShell, 
 			SVNTeamUIPlugin.instance().getResource("DisconnectDialog.Title"), 
 			null, 
-			MessageFormat.format(SVNTeamUIPlugin.instance().getResource("DisconnectDialog.Message"), new String[] {FileUtility.getNamesListAsString(projects)}),
+			SVNTeamUIPlugin.instance().getResource("DisconnectDialog.Message", new String[] {FileUtility.getNamesListAsString(projects)}),
 			MessageDialog.QUESTION, 
 			new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 
 			0);

@@ -91,7 +91,7 @@ public abstract class AbstractGetResourceNamePanel extends AbstractDialogPanel {
 				String text = this.getText(input);
 				if (AbstractGetResourceNamePanel.this.disallowedName != null &&
 					AbstractGetResourceNamePanel.this.disallowedName.equals(text)) {
-					return MessageFormat.format(this.msg, new String[] {AbstractFormattedVerifier.FIELD_NAME, text});
+					return MessageFormat.format(this.msg, new Object[] {AbstractFormattedVerifier.FIELD_NAME, text});
 				}
 				return null;
 			}

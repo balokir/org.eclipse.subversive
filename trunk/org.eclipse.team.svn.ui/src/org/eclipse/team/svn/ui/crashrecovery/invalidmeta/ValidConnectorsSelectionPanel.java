@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.ui.crashrecovery.invalidmeta;
 
-import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -45,7 +44,7 @@ public class ValidConnectorsSelectionPanel extends AbstractDialogPanel {
 
 	public ValidConnectorsSelectionPanel(IProject project, List validClients) {
 		super();
-		this.dialogTitle = MessageFormat.format(SVNTeamUIPlugin.instance().getResource("ValidConnectorsSelectionPanel.Title"), new String[] {project.getName()});
+		this.dialogTitle = SVNTeamUIPlugin.instance().getResource("ValidConnectorsSelectionPanel.Title", new String[] {project.getName()});
 		this.dialogDescription = SVNTeamUIPlugin.instance().getResource("ValidConnectorsSelectionPanel.Description");
 		this.defaultMessage = SVNTeamUIPlugin.instance().getResource("ValidConnectorsSelectionPanel.Message");
 		

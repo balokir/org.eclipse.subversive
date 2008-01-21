@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.ui.composite;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -444,8 +443,7 @@ public class ResourceSelectionComposite extends Composite {
 	}
 	
 	protected String resourceNumberToString(int value) {
-		String msg = SVNTeamUIPlugin.instance().getResource("ResourceSelectionComposite.Info");
-		return MessageFormat.format(msg, new String[] {String.valueOf(value), String.valueOf(this.resources.length)});
+		return SVNTeamUIPlugin.instance().getResource("ResourceSelectionComposite.Info", new String[] {String.valueOf(value), String.valueOf(this.resources.length)});
 	}
 	
 	protected String statusAsString(String status, int changeMask) {

@@ -69,8 +69,8 @@ public class CreateFolderOperation extends AbstractRepositoryOperation implement
 			public void notify(SVNNotification info) {
 				String [] path = childUrls;
 				CreateFolderOperation.this.revisionPair[0] = new RevisionPair(info.revision, path, location);
-				String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision");
-				CreateFolderOperation.this.writeToConsole(IConsoleStream.LEVEL_OK, MessageFormat.format(message, new String[] {String.valueOf(info.revision)}));
+				String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision", new String[] {String.valueOf(info.revision)});
+				CreateFolderOperation.this.writeToConsole(IConsoleStream.LEVEL_OK, message);
 			}
 		};
 		
@@ -103,7 +103,7 @@ public class CreateFolderOperation extends AbstractRepositoryOperation implement
 	
 	
 	protected String getShortErrorMessage(Throwable t) {
-		return MessageFormat.format(super.getShortErrorMessage(t), new String[] {this.name});
+		return MessageFormat.format(super.getShortErrorMessage(t), new Object[] {this.name});
 	}
 	
 }

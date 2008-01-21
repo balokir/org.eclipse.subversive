@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.ui.annotate;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IResource;
@@ -203,7 +202,7 @@ public class AnnotateView extends AbstractSVNView {
 									AnnotateView.this.getSite().getShell(),
 									SVNTeamUIPlugin.instance().getResource("SVNAnnotateView.NoContent.Title"), 
 									null, 
-									MessageFormat.format(SVNTeamUIPlugin.instance().getResource("SVNAnnotateView.NoContent.Message"), new String[] {AnnotateView.this.repositoryResource.getName()}),
+									SVNTeamUIPlugin.instance().getResource("SVNAnnotateView.NoContent.Message", new String[] {AnnotateView.this.repositoryResource.getName()}),
 									MessageDialog.INFORMATION, 
 									new String[] {IDialogConstants.OK_LABEL}, 
 									0);
@@ -458,10 +457,10 @@ public class AnnotateView extends AbstractSVNView {
 			if (this.data[3] != null) {
 				if (this.data[4] != null) {
 					int lines = Integer.parseInt(this.data[4]) - Integer.parseInt(this.data[3]) + 1;
-					this.data[2] = MessageFormat.format(SVNTeamUIPlugin.instance().getResource("SVNAnnotateView.MultiLine"), new String[] {String.valueOf(lines), this.data[3], this.data[4]});
+					this.data[2] = SVNTeamUIPlugin.instance().getResource("SVNAnnotateView.MultiLine", new String[] {String.valueOf(lines), this.data[3], this.data[4]});
 				}
 				else {
-					this.data[2] = MessageFormat.format(SVNTeamUIPlugin.instance().getResource("SVNAnnotateView.OneLine"), new String[] {this.data[3]});
+					this.data[2] = SVNTeamUIPlugin.instance().getResource("SVNAnnotateView.OneLine", new String[] {this.data[3]});
 				}
 			}
 			else {

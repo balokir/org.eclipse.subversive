@@ -196,8 +196,7 @@ public class ContainerSelectionPanel extends AbstractDialogPanel {
 		if (numberOfConflicts >= 4) {
 			message += "...";
     	}
-		String msg = SVNTeamUIPlugin.instance().getResource("ContainerSelectionPanel.ConflictMessage");
-		return MessageFormat.format(msg, new String[] {message});
+		return SVNTeamUIPlugin.instance().getResource("ContainerSelectionPanel.ConflictMessage", new String[] {message});
 	}
 	
     public class ContainerSelectionVerifier extends SVNContainerSelectionGroup.SVNContainerSelectionVerifier {
@@ -228,10 +227,10 @@ public class ContainerSelectionPanel extends AbstractDialogPanel {
         	SVNContainerSelectionGroup control = (SVNContainerSelectionGroup)input;
         	int numberconflicts = this.findConflicts(control);
         	if (numberconflicts == 1) {
-        		return MessageFormat.format(this.SOME_RESOURCE_IN_CONFLICT_MESSAGE, new String[] {this.conflictedResources});
+        		return MessageFormat.format(this.SOME_RESOURCE_IN_CONFLICT_MESSAGE, new Object[] {this.conflictedResources});
         	}
         	if (numberconflicts > 1) {
-        		return MessageFormat.format(this.SOME_RESOURCES_IN_CONFLICT_MESSAGE, new String[] {this.conflictedResources});
+        		return MessageFormat.format(this.SOME_RESOURCES_IN_CONFLICT_MESSAGE, new Object[] {this.conflictedResources});
         	}
         	if (this.defaultConflictingResourcesNames != null) {
         		return this.defaultConflictingResourcesNames;

@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.core.operation.remote;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -65,8 +64,8 @@ public class BranchTagOperation extends AbstractRepositoryOperation implements I
 				ISVNNotificationCallback notify = new ISVNNotificationCallback() {
 					public void notify(SVNNotification info) {
 						BranchTagOperation.this.revisionsPairs.add(new RevisionPair(info.revision, new String[] {url2}, location));
-						String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision");
-						BranchTagOperation.this.writeToConsole(IConsoleStream.LEVEL_OK, MessageFormat.format(message, new String[] {String.valueOf(info.revision)}));
+						String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision", new String[] {String.valueOf(info.revision)});
+						BranchTagOperation.this.writeToConsole(IConsoleStream.LEVEL_OK, message);
 					}
 				};
 				SVNUtility.addSVNNotifyListener(proxy, notify);

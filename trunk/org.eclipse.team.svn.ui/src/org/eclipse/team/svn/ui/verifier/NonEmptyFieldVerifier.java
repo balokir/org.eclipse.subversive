@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.ui.verifier;
 
-import java.text.MessageFormat;
-
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 
@@ -26,8 +24,7 @@ public class NonEmptyFieldVerifier extends AbstractFormattedVerifier {
         
     public NonEmptyFieldVerifier(String fieldName) {
         super(fieldName);
-        NonEmptyFieldVerifier.ERROR_MESSAGE = SVNTeamUIPlugin.instance().getResource("Verifier.NonEmpty");
-        NonEmptyFieldVerifier.ERROR_MESSAGE = MessageFormat.format(NonEmptyFieldVerifier.ERROR_MESSAGE, new String[] {AbstractFormattedVerifier.FIELD_NAME});
+        NonEmptyFieldVerifier.ERROR_MESSAGE = SVNTeamUIPlugin.instance().getResource("Verifier.NonEmpty", new String[] {AbstractFormattedVerifier.FIELD_NAME});
     }
     
     protected String getErrorMessageImpl(Control input) {

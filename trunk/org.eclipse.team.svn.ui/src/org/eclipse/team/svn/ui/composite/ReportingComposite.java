@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.ui.composite;
 
-import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -292,8 +291,8 @@ public class ReportingComposite extends Composite {
 						panel = new PreviewErrorReportPanel(ReportingComposite.this.reporter.buildReport());
 					}
 					else {
-						String msg = SVNTeamUIPlugin.instance().getResource("ReportingComposite.Preview.Title");
-						panel = new PreviewReportPanel(MessageFormat.format(msg, new String[] {ReportingComposite.this.reportType}), ReportingComposite.this.reporter.buildReport());
+						String msg = SVNTeamUIPlugin.instance().getResource("ReportingComposite.Preview.Title", new String[] {ReportingComposite.this.reportType});
+						panel = new PreviewReportPanel(msg, ReportingComposite.this.reporter.buildReport());
 					}
 					DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getDisplay().getActiveShell(), panel);
 					dialog.open();

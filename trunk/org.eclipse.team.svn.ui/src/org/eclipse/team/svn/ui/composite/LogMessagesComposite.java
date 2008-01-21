@@ -13,7 +13,6 @@
 package org.eclipse.team.svn.ui.composite;
 
 import java.text.DateFormat;
-import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -393,7 +392,7 @@ public class LogMessagesComposite extends SashForm {
 			}
 		}
 		
-		throw new RuntimeException(MessageFormat.format(SVNTeamUIPlugin.instance().getResource("Error.InvalidLogAction"), new String[] {String.valueOf(action)}));
+		throw new RuntimeException(SVNTeamUIPlugin.instance().getResource("Error.InvalidLogAction", new String[] {String.valueOf(action)}));
 	}
 	
 	private void setDefaults() {

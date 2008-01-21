@@ -289,7 +289,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		
 		tabItem = new TabItem(tabFolder, SWT.NONE);
 		tabItem.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.svnConnectorTabName"));
-		tabItem.setControl(this.createSVNClientPage(tabFolder));
+		tabItem.setControl(this.createSVNConnectorsPage(tabFolder));
 		
 		tabItem = new TabItem(tabFolder, SWT.NONE);
 		tabItem.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.repositoryTabName"));
@@ -309,7 +309,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		return tabFolder;
 	}
 	
-	protected Control createSVNClientPage(Composite parent) {
+	protected Control createSVNConnectorsPage(Composite parent) {
 		GridLayout layout = null;
 		GridData data = null;
 		
@@ -348,6 +348,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 			items[i] = this.factories[i].getName() + " (" + this.factories[i].getClientVersion().replace('\n', ' ') + ")";
 		}
 		this.svnConnectorField.setItems(items);
+		this.svnConnectorField.setVisibleItemCount(items.length);
 		this.svnConnectorField.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				SVNTeamPreferencesPage.this.svnConnector = SVNTeamPreferencesPage.this.factories[SVNTeamPreferencesPage.this.svnConnectorField.getSelectionIndex()].getId();

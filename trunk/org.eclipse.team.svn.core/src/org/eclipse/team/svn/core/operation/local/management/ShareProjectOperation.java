@@ -96,8 +96,7 @@ public class ShareProjectOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	public static String getDefaultComment(IProject project, IRepositoryResource remote) {
-		String message = SVNTeamPlugin.instance().getResource("Operation.ShareProject.DefaultComment");
-		return MessageFormat.format(message, new String[] {project.getName(), SVNUtility.encodeURL(remote.getUrl())});
+		return SVNTeamPlugin.instance().getResource("Operation.ShareProject.DefaultComment", new String[] {project.getName(), SVNUtility.encodeURL(remote.getUrl())});
 	}
 	
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
@@ -135,7 +134,7 @@ public class ShareProjectOperation extends AbstractWorkingCopyOperation {
 			}
 			default: {
 				String message = this.getNationalizedString("Error.UnknownProjectLayoutType");
-				throw new Exception(MessageFormat.format(message, new String[] {String.valueOf(this.shareLayout)}));
+				throw new Exception(MessageFormat.format(message, new Object[] {String.valueOf(this.shareLayout)}));
 			}
 		}
 		
@@ -274,8 +273,8 @@ public class ShareProjectOperation extends AbstractWorkingCopyOperation {
 			return tempDirectory;
 		}
 		catch (IOException ex) {
-			String message = SVNTeamPlugin.instance().getResource("Error.CannotCheckOutMeta");
-			throw new UnreportableException(MessageFormat.format(message, new String[] {String.valueOf(project.getName())}), ex);
+			String message = SVNTeamPlugin.instance().getResource("Error.CannotCheckOutMeta", new String[] {String.valueOf(project.getName())});
+			throw new UnreportableException(message, ex);
 		}
 	}
 	
@@ -310,8 +309,8 @@ public class ShareProjectOperation extends AbstractWorkingCopyOperation {
 				return location.getUrl() + "/" + rootName + trunkName + "/" + projectName;
 			}
 			default: {
-				String message = SVNTeamPlugin.instance().getResource("Error.UnknownProjectLayoutType");
-				throw new RuntimeException(MessageFormat.format(message, new String[] {String.valueOf(shareLayout)}));
+				String message = SVNTeamPlugin.instance().getResource("Error.UnknownProjectLayoutType", new String[] {String.valueOf(shareLayout)});
+				throw new RuntimeException(message);
 			}
 		}
 	}

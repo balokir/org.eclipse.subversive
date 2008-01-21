@@ -104,7 +104,7 @@ public class CompareRepositoryResourcesOperation extends AbstractActionOperation
 	}
 	
     protected String getShortErrorMessage(Throwable t) {
-		return MessageFormat.format(super.getShortErrorMessage(t), new String[] {this.next.getName(), this.prev.getName()});
+		return MessageFormat.format(super.getShortErrorMessage(t), new Object[] {this.next.getName(), this.prev.getName()});
 	}
 
 }

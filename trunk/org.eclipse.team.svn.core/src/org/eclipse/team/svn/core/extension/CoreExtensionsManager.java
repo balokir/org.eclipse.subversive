@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.core.extension;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -172,8 +171,8 @@ public class CoreExtensionsManager {
 	private Object []loadExtensions(String namespace, String extensionPoint) {
 		IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(namespace, extensionPoint);
 		if (extension == null) {
-			String errMessage = SVNTeamPlugin.instance().getResource("Error.InvalidExtensionPoint");
-			throw new RuntimeException(MessageFormat.format(errMessage, new String[] {namespace, extensionPoint}));
+			String errMessage = SVNTeamPlugin.instance().getResource("Error.InvalidExtensionPoint", new String[] {namespace, extensionPoint});
+			throw new RuntimeException(errMessage);
 		}
 		IExtension []extensions = extension.getExtensions();
 		ArrayList retVal = new ArrayList();

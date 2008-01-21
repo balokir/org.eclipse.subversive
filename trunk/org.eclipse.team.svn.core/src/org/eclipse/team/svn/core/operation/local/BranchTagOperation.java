@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.core.operation.local;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
@@ -60,8 +58,8 @@ public class BranchTagOperation extends AbstractWorkingCopyOperation {
 				ISVNNotificationCallback notify = new ISVNNotificationCallback() {
 					public void notify(SVNNotification info) {
 						if (info.revision != -1) {
-							String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision");
-							BranchTagOperation.this.writeToConsole(IConsoleStream.LEVEL_OK, MessageFormat.format(message, new String[] {String.valueOf(info.revision)}));
+							String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision", new String[] {String.valueOf(info.revision)});
+							BranchTagOperation.this.writeToConsole(IConsoleStream.LEVEL_OK, message);
 						}
 					}
 				};

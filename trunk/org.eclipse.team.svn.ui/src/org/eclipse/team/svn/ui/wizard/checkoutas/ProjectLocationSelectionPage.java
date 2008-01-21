@@ -12,7 +12,6 @@
 
 package org.eclipse.team.svn.ui.wizard.checkoutas;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -258,8 +257,7 @@ public class ProjectLocationSelectionPage extends AbstractVerifiedWizardPage {
 			for (int i = 0; i < projects.length; i++) {
 				IPath location = projects[i].getLocation();
 				if (location != null && location.isPrefixOf(new Path(inputLocation + parent))) {
-					String message = SVNTeamUIPlugin.instance().getResource("ProjectLocationSelectionPage.Location.Verifier.Error.ExistingProject");
-					return MessageFormat.format(message, new String[] {location.toString()});
+					return SVNTeamUIPlugin.instance().getResource("ProjectLocationSelectionPage.Location.Verifier.Error.ExistingProject", new String[] {location.toString()});
 				}
 			}
 			return null;

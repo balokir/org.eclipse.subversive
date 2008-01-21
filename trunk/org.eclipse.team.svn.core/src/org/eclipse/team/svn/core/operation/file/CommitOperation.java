@@ -12,7 +12,6 @@
 package org.eclipse.team.svn.core.operation.file;
 
 import java.io.File;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -121,8 +120,8 @@ public class CommitOperation extends AbstractFileConflictDetectionOperation impl
 					new SVNProgressMonitor(CommitOperation.this, monitor, null));
 				if (revisionNumbers.length > 0) {
 					CommitOperation.this.revisionsPairs.add(new RevisionPair(revisionNumbers[0], CommitOperation.this.paths, location));	
-					String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision");
-					CommitOperation.this.writeToConsole(IConsoleStream.LEVEL_OK, MessageFormat.format(message, new String[] {String.valueOf(revisionNumbers[0])}));
+					String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision", new String[] {String.valueOf(revisionNumbers[0])});
+					CommitOperation.this.writeToConsole(IConsoleStream.LEVEL_OK, message);
 				}
 			}
 		}, monitor, total);

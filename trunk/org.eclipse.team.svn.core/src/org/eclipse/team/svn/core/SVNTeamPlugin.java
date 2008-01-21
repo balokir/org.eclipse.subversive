@@ -14,6 +14,7 @@ package org.eclipse.team.svn.core;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.text.MessageFormat;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -81,6 +82,11 @@ public class SVNTeamPlugin extends Plugin {
     
     public String getResource(String key) {
         return FileUtility.getResource(Platform.getResourceBundle(this.getBundle()), key);
+    }
+    
+    public String getResource(String key, Object []args) {
+        String message = this.getResource(key);
+        return MessageFormat.format(message, args);
     }
     
 	public IOptionProvider getOptionProvider() {

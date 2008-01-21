@@ -98,7 +98,7 @@ public class MultiLinePropertyVerifier extends AbstractFormattedVerifier {
 	}
 
 	protected String formatMainMessage(int line) {
-		return MessageFormat.format(MultiLinePropertyVerifier.ERROR_MESSAGE_INVALID_FORMAT, new String[] {AbstractFormattedVerifier.FIELD_NAME, String.valueOf(line + 1)});
+		return MessageFormat.format(MultiLinePropertyVerifier.ERROR_MESSAGE_INVALID_FORMAT, new Object[] {AbstractFormattedVerifier.FIELD_NAME, String.valueOf(line + 1)});
 	}
 	
 }

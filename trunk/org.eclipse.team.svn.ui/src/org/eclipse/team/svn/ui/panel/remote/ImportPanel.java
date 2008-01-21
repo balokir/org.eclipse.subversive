@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.ui.panel.remote;
 
-import java.text.MessageFormat;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -46,8 +44,7 @@ public class ImportPanel extends AbstractDialogPanel {
 		super();
 		this.dialogTitle = SVNTeamUIPlugin.instance().getResource("ImportPanel.Title");
 		this.dialogDescription = SVNTeamUIPlugin.instance().getResource("ImportPanel.Description");
-		this.defaultMessage = SVNTeamUIPlugin.instance().getResource("ImportPanel.Message");
-		this.defaultMessage = MessageFormat.format(this.defaultMessage, new String[] {importToUrl});
+		this.defaultMessage = SVNTeamUIPlugin.instance().getResource("ImportPanel.Message", new String[] {importToUrl});
 		this.isRecursive = true;
     }
 	

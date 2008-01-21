@@ -72,7 +72,7 @@ public class LocateProjectsOperation extends AbstractRepositoryOperation impleme
 					public void run(IProgressMonitor monitor) throws Exception {
 						if (current instanceof IRepositoryContainer) {
 							String message = LocateProjectsOperation.this.getOperationResource("Scanning");
-							ProgressMonitorUtility.setTaskInfo(monitor, LocateProjectsOperation.this, MessageFormat.format(message, new String[] {current.getUrl()}));
+							ProgressMonitorUtility.setTaskInfo(monitor, LocateProjectsOperation.this, MessageFormat.format(message, new Object[] {current.getUrl()}));
 							IRepositoryResource []children = ((IRepositoryContainer)current).getChildren();
 							if (LocateProjectsOperation.this.filter.isProject(current, children)) {
 								found.add(current);

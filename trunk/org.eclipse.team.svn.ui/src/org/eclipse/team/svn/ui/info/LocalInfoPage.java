@@ -37,6 +37,7 @@ import org.eclipse.team.svn.ui.composite.PropertiesComposite;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * This page allows to view working copy information for local resource
@@ -62,8 +63,9 @@ public class LocalInfoPage extends PropertyPage {
 		this.noDefaultAndApplyButton();
 		
 		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.getDefault());
+
 		
-		IResource resource = (IResource)this.getElement();
+		IResource resource = (IResource)Util.getAdapter(this.getElement(), IResource.class);
 		InfoOperation op = new InfoOperation(resource);
 		UIMonitorUtility.doTaskBusyDefault(op);
 		

@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.ui;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
@@ -174,12 +172,10 @@ public abstract class AbstractSVNView extends ViewPart implements IResourceState
 		    if (path.startsWith("/")) {
 		    	path = path.substring(1);
 		    }
-			String message = SVNTeamUIPlugin.instance().getResource("SVNView.ResourceSelected");
-			resourceName = MessageFormat.format(message, new String[] {this.viewDescription, path});
+			resourceName = SVNTeamUIPlugin.instance().getResource("SVNView.ResourceSelected", new String[] {this.viewDescription, path});
 		}
 		else if (this.repositoryResource != null) {
-			String message = SVNTeamUIPlugin.instance().getResource("SVNView.ResourceSelected");
-			resourceName = MessageFormat.format(message, new String[] {this.viewDescription, this.repositoryResource.getUrl()});
+			resourceName = SVNTeamUIPlugin.instance().getResource("SVNView.ResourceSelected", new String[] {this.viewDescription, this.repositoryResource.getUrl()});
 		}
 		else {
 			resourceName = SVNTeamUIPlugin.instance().getResource("SVNView.ResourceNotSelected");

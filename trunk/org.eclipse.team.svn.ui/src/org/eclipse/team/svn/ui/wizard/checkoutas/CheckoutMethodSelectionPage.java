@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.ui.wizard.checkoutas;
 
-import java.text.MessageFormat;
-
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -112,8 +110,7 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		data.heightHint = this.convertHeightInCharsToPixels(this.checkoutType == CheckoutMethodSelectionPage.USE_NEW_PROJECT_WIZARD ? 1 : 2);
 		description.setLayoutData(data);
-		String message = SVNTeamUIPlugin.instance().getResource("CheckoutMethodSelectionPage.HintHead");
-		message = MessageFormat.format(message, new String[] {this.defaultName});
+		String message = SVNTeamUIPlugin.instance().getResource("CheckoutMethodSelectionPage.HintHead", new String[] {this.defaultName});
 		description.setText(message + (this.checkoutType != CheckoutMethodSelectionPage.USE_NEW_PROJECT_WIZARD ?
 				" " + SVNTeamUIPlugin.instance().getResource("CheckoutMethodSelectionPage.HintTail") : ""));
 		this.projectName = this.defaultName = FileUtility.formatResourceName(this.defaultName);

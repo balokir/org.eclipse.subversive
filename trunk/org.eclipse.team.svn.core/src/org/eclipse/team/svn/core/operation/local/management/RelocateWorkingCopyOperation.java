@@ -106,7 +106,7 @@ public class RelocateWorkingCopyOperation extends AbstractWorkingCopyOperation i
 	}
 	
 	protected String getShortErrorMessage(Throwable t) {
-		return MessageFormat.format(super.getShortErrorMessage(t), new String[] {this.location.getUrl()});
+		return MessageFormat.format(super.getShortErrorMessage(t), new Object[] {this.location.getUrl()});
 	}
 
 }

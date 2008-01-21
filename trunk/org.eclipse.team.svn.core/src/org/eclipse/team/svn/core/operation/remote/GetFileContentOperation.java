@@ -67,7 +67,7 @@ public class GetFileContentOperation extends AbstractGetFileContentOperation {
 	}
 	
 	protected String getShortErrorMessage(Throwable t) {
-		return MessageFormat.format(super.getShortErrorMessage(t), new String[] {this.resource.getUrl()});
+		return MessageFormat.format(super.getShortErrorMessage(t), new Object[] {this.resource.getUrl()});
 	}
 
 }

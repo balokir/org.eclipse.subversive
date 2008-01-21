@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.ui.synchronize.merge.action;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -77,8 +75,7 @@ public class UpdateAction extends AbstractSynchronizeModelAction {
 				message = SVNTeamUIPlugin.instance().getResource("UpdateAll.Message.Single");
 			}
 			else {
-				message = SVNTeamUIPlugin.instance().getResource("UpdateAll.Message.Multi");
-				message = MessageFormat.format(message, new String[] {String.valueOf(resources.length)});
+				message = SVNTeamUIPlugin.instance().getResource("UpdateAll.Message.Multi", new String[] {String.valueOf(resources.length)});
 			}
 			final MessageDialog dlg = new MessageDialog(operation.getShell(), SVNTeamUIPlugin.instance().getResource("UpdateAll.Title"), null, message, MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 0);
 			operation.getShell().getDisplay().syncExec(new Runnable() {

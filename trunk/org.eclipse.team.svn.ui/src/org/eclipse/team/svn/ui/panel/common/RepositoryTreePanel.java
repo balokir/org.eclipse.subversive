@@ -12,8 +12,6 @@
 
 package org.eclipse.team.svn.ui.panel.common;
 
-import java.text.MessageFormat;
-
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -143,16 +141,15 @@ public class RepositoryTreePanel extends AbstractDialogPanel {
 	private static String formatMessage(IRepositoryResource []resources) {
 		String message;
 		if (resources.length == 1) {
-			message = SVNTeamUIPlugin.instance().getResource("RepositoryTreePanel.Message.Single");
+			message = "RepositoryTreePanel.Message.Single";
 		}
 		else if (resources.length < 5) {
-			message = SVNTeamUIPlugin.instance().getResource("RepositoryTreePanel.Message.UpTo4");
+			message = "RepositoryTreePanel.Message.UpTo4";
 		}
 		else {
-			message = SVNTeamUIPlugin.instance().getResource("RepositoryTreePanel.Message.Multi");
+			message = "RepositoryTreePanel.Message.Multi";
 		}
-		message = MessageFormat.format(message, new String[] {FileUtility.getNamesListAsString(resources)});
-		return message;
+		return SVNTeamUIPlugin.instance().getResource(message, new String[] {FileUtility.getNamesListAsString(resources)});
 	}
 	
 	protected class ProjectRoot extends RepositoryFictiveNode implements IParentTreeNode {

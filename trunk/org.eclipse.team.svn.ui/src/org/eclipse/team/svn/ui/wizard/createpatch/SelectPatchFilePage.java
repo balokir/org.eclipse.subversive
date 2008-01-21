@@ -13,7 +13,6 @@ package org.eclipse.team.svn.ui.wizard.createpatch;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.MessageFormat;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -173,8 +172,7 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 		    protected String getWarningMessageImpl(Control input) {
 		        String text = this.getText(input);
 		        if (new File(text).exists()) {
-		        	String message = SVNTeamUIPlugin.instance().getResource("SelectPatchFilePage.SaveInFS.Verifier.Warning");
-		            return MessageFormat.format(message, new String[] {AbstractFormattedVerifier.FIELD_NAME});
+		            return SVNTeamUIPlugin.instance().getResource("SelectPatchFilePage.SaveInFS.Verifier.Warning", new String[] {AbstractFormattedVerifier.FIELD_NAME});
 		        }
 		        return null;
 		    }
@@ -291,8 +289,7 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 		    protected String getWarningMessageImpl(Control input) {
 		    	IResource file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(new Path(SelectPatchFilePage.this.getComposedFileName()));
 		        if (file != null && file.exists()) {
-		        	String message = SVNTeamUIPlugin.instance().getResource("SelectPatchFilePage.FileName.Verifier.Warning");
-		            return MessageFormat.format(message, new String[] {AbstractFormattedVerifier.FIELD_NAME});
+		            return SVNTeamUIPlugin.instance().getResource("SelectPatchFilePage.FileName.Verifier.Warning", new String[] {AbstractFormattedVerifier.FIELD_NAME});
 		        }
 		        return null;
 		    }

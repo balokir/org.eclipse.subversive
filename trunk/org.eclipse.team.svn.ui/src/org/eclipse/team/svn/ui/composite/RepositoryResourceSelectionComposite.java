@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.ui.composite;
 
-import java.text.MessageFormat;
-
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -194,7 +192,7 @@ public class RepositoryResourceSelectionComposite extends Composite {
 				if (error == null) {
 					String url = this.getText(input);
 					if (RepositoryResourceSelectionComposite.this.getDestination(SVNUtility.asEntryReference(url), true) == null) {
-						error = MessageFormat.format(SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.URL.Verifier.Error"), new String[] {url, RepositoryResourceSelectionComposite.this.baseResource.getRepositoryLocation().getUrl()});
+						error = SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.URL.Verifier.Error", new String[] {url, RepositoryResourceSelectionComposite.this.baseResource.getRepositoryLocation().getUrl()});
 					}
 				}
 				RepositoryResourceSelectionComposite.this.revisionComposite.setEnabled(error == null);

@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.core;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceRuleFactory;
@@ -232,8 +230,7 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 	}
 	
 	protected String getAutoDisconnectMessage() {
-		String errMessage = SVNTeamPlugin.instance().getResource("Error.AutoDisconnect");
-		return MessageFormat.format(errMessage, new String[] {this.getProject().getName()});
+		return SVNTeamPlugin.instance().getResource("Error.AutoDisconnect", new String[] {this.getProject().getName()});
 	}
 	
 	protected int uploadRepositoryResource() {

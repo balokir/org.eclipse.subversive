@@ -170,7 +170,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 			}
 
 			String format = CompareUI.getResourceBundle().getString("ResourceCompare.threeWay.title");
-			this.setTitle(MessageFormat.format(format, new String[] {leftPart, ancestorPart, rightPart}));	
+			this.setTitle(MessageFormat.format(format, new Object[] {leftPart, ancestorPart, rightPart}));
 		} 
 		else {
 			String leftPart = leftResourceName + " [" + leftRevisionPart;
@@ -185,7 +185,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 			}
 			
 			String format = CompareUI.getResourceBundle().getString("ResourceCompare.twoWay.title");
-			this.setTitle(MessageFormat.format(format, new String[] {leftPart, rightPart}));
+			this.setTitle(MessageFormat.format(format, new Object[] {leftPart, rightPart}));
 		}
 	}
 	
@@ -223,8 +223,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		if (selected == SVNRevision.INVALID_REVISION) {
 			return SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.ResourceIsNotAvailable");
 		}
-		String msg = SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.RevisionSign");
-		return MessageFormat.format(msg, new String[] {String.valueOf(resource.getRevision())});
+		return SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.RevisionSign", new String[] {String.valueOf(resource.getRevision())});
 	}
 	
 	protected ResourceElement getLeftResourceElement() {

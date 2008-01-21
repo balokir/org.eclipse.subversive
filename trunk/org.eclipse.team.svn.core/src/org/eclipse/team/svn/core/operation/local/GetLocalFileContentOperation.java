@@ -73,7 +73,7 @@ public class GetLocalFileContentOperation extends AbstractGetFileContentOperatio
 	}
 	
 	protected String getShortErrorMessage(Throwable t) {
-		return MessageFormat.format(super.getShortErrorMessage(t), new String[] {this.resource.getName()});
+		return MessageFormat.format(super.getShortErrorMessage(t), new Object[] {this.resource.getName()});
 	}
 	
 }

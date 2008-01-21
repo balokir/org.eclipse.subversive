@@ -12,8 +12,6 @@
 
 package org.eclipse.team.svn.ui.panel.callback;
 
-import java.text.MessageFormat;
-
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -49,8 +47,7 @@ public class AskTrustSSLServerPanel extends AbstractDialogPanel {
         super(allowPermanently ? new String[] {SVNTeamUIPlugin.instance().getResource("AskTrustSSLServerPanel.Trust"), SVNTeamUIPlugin.instance().getResource("AskTrustSSLServerPanel.TrustAlways"), IDialogConstants.NO_LABEL} : new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL});
         this.dialogTitle = SVNTeamUIPlugin.instance().getResource("AskTrustSSLServerPanel.Title");
         this.dialogDescription = SVNTeamUIPlugin.instance().getResource("AskTrustSSLServerPanel.Description");
-        this.defaultMessage = SVNTeamUIPlugin.instance().getResource("AskTrustSSLServerPanel.Message");
-        this.defaultMessage = MessageFormat.format(this.defaultMessage, new String[] {location});
+        this.defaultMessage = SVNTeamUIPlugin.instance().getResource("AskTrustSSLServerPanel.Message", new String[] {location});
         this.message = message;
 	}
 

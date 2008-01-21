@@ -12,7 +12,6 @@
 package org.eclipse.team.svn.ui.verifier;
 
 import java.net.URL;
-import java.text.MessageFormat;
 
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.svn.core.utility.SVNUtility;
@@ -30,10 +29,8 @@ public class URLVerifier extends AbstractFormattedVerifier {
 
     public URLVerifier(String fieldName) {
         super(fieldName);
-        URLVerifier.ERROR_MESSAGE_SHORT = SVNTeamUIPlugin.instance().getResource("Verifier.URL.Short");
-        URLVerifier.ERROR_MESSAGE_SHORT = MessageFormat.format(URLVerifier.ERROR_MESSAGE_SHORT, new String[] {AbstractFormattedVerifier.FIELD_NAME});
-        URLVerifier.ERROR_MESSAGE_FULL = SVNTeamUIPlugin.instance().getResource("Verifier.URL.Full");
-        URLVerifier.ERROR_MESSAGE_FULL = MessageFormat.format(URLVerifier.ERROR_MESSAGE_FULL, new String[] {AbstractFormattedVerifier.FIELD_NAME, URLVerifier.ERROR_REASON});
+        URLVerifier.ERROR_MESSAGE_SHORT = SVNTeamUIPlugin.instance().getResource("Verifier.URL.Short", new String[] {AbstractFormattedVerifier.FIELD_NAME});
+        URLVerifier.ERROR_MESSAGE_FULL = SVNTeamUIPlugin.instance().getResource("Verifier.URL.Full", new String[] {AbstractFormattedVerifier.FIELD_NAME, URLVerifier.ERROR_REASON});
     }
 
     protected String getErrorMessageImpl(Control input) {

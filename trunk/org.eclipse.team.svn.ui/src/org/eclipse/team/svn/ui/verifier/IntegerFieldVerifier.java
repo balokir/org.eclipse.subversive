@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.ui.verifier;
 
-import java.text.MessageFormat;
-
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 
@@ -30,10 +28,8 @@ public class IntegerFieldVerifier extends AbstractFormattedVerifier {
     public IntegerFieldVerifier(String fieldName, boolean positive) {
         super(fieldName);
         this.positive = positive;
-        IntegerFieldVerifier.ERROR_NAN = SVNTeamUIPlugin.instance().getResource("Verifier.IntegerField.NaN");
-        IntegerFieldVerifier.ERROR_NAN = MessageFormat.format(IntegerFieldVerifier.ERROR_NAN, new String[] {AbstractFormattedVerifier.FIELD_NAME});
-        IntegerFieldVerifier.ERROR_NEGATIVE = SVNTeamUIPlugin.instance().getResource("Verifier.IntegerField.Negative");
-        IntegerFieldVerifier.ERROR_NEGATIVE = MessageFormat.format(IntegerFieldVerifier.ERROR_NEGATIVE, new String[] {AbstractFormattedVerifier.FIELD_NAME});
+        IntegerFieldVerifier.ERROR_NAN = SVNTeamUIPlugin.instance().getResource("Verifier.IntegerField.NaN", new String[] {AbstractFormattedVerifier.FIELD_NAME});
+        IntegerFieldVerifier.ERROR_NEGATIVE = SVNTeamUIPlugin.instance().getResource("Verifier.IntegerField.Negative", new String[] {AbstractFormattedVerifier.FIELD_NAME});
     }
     
     protected String getErrorMessageImpl(Control input) {

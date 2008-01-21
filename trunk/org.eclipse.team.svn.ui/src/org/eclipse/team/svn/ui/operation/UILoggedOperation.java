@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.ui.operation;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -49,8 +47,8 @@ public class UILoggedOperation extends LoggedOperation {
     }
     
     public static void reportError(String where, Throwable t) {
-		String errMessage = SVNTeamPlugin.instance().getResource("Operation.Error.LogHeader");
-	    MultiStatus status = new MultiStatus(SVNTeamPlugin.NATURE_ID, IStatus.OK, MessageFormat.format(errMessage, new String[] {where}), null);
+		String errMessage = SVNTeamPlugin.instance().getResource("Operation.Error.LogHeader", new String[] {where});
+	    MultiStatus status = new MultiStatus(SVNTeamPlugin.NATURE_ID, IStatus.OK, errMessage, null);
 		Status st = 
 			new Status(
 					IStatus.ERROR, 
@@ -221,7 +219,7 @@ public class UILoggedOperation extends LoggedOperation {
     }
     
     public static void showSendingError(Throwable ex, Shell shell, IReportingDescriptor provider, String originalReport) {
-    	UILoggedOperation.showSendingError(new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID, IStatus.OK, MessageFormat.format(SVNTeamUIPlugin.instance().getResource("UILoggedOperation.SendReport.Error.Message"), new String[] {provider.getEmailTo()}), ex), shell, provider, originalReport);
+    	UILoggedOperation.showSendingError(new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID, IStatus.OK, SVNTeamUIPlugin.instance().getResource("UILoggedOperation.SendReport.Error.Message", new String[] {provider.getEmailTo()}), ex), shell, provider, originalReport);
 	}
     
     public static void showSendingError(final IStatus st, final Shell shell, IReportingDescriptor provider, final String originalReport) {

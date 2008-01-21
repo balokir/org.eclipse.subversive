@@ -20,7 +20,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -115,16 +114,16 @@ public final class FileUtility {
 	public static IPath getResourcePath(IResource resource) {
 		IPath location = resource.getLocation();
 		if (location == null) {
-			String errMessage = SVNTeamPlugin.instance().getResource("Error.InaccessibleResource");
-			throw new UnreportableException(MessageFormat.format(errMessage, new String[] {resource.getFullPath().toString()}));
+			String errMessage = SVNTeamPlugin.instance().getResource("Error.InaccessibleResource", new String[] {resource.getFullPath().toString()});
+			throw new UnreportableException(errMessage);
 		}
 		return location;
 	}
 	
 	public static Map getEnvironmentVariables() {
 		try {
-			Method getenv = System.class.getMethod("getenv", null);
-			return (Map)getenv.invoke(null, null);
+			Method getenv = System.class.getMethod("getenv", (Class [])null);
+			return (Map)getenv.invoke(null, (Object [])null);
 		}
 		catch (Exception ex) {
 			try {
@@ -472,8 +471,8 @@ public final class FileUtility {
 				return;
 			}
 			if (!to.mkdirs() && ((options & FileUtility.COPY_IGNORE_EXISTING_FOLDERS) == 0)) {
-				String errMessage = SVNTeamPlugin.instance().getResource("Error.CreateDirectory");
-				throw new Exception(MessageFormat.format(errMessage, new String[] {to.getAbsolutePath()}));
+				String errMessage = SVNTeamPlugin.instance().getResource("Error.CreateDirectory", new String[] {to.getAbsolutePath()});
+				throw new Exception(errMessage);
 			}
 			File []files = what.listFiles(filter);
 			if (files != null) {

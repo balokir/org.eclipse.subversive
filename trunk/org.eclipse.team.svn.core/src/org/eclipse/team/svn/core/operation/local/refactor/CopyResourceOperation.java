@@ -53,7 +53,7 @@ public class CopyResourceOperation extends AbstractActionOperation {
 	}
 	
 	protected String getShortErrorMessage(Throwable t) {
-		return MessageFormat.format(super.getShortErrorMessage(t), new String[] {this.source.getName(), this.destination.toString()});
+		return MessageFormat.format(super.getShortErrorMessage(t), new Object[] {this.source.getName(), this.destination.toString()});
 	}
 
 }
