@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.core.operation;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -71,8 +70,8 @@ public class LoggedOperation implements IActionOperation {
 	}
 	
 	public static void reportError(String where, Throwable t) {
-		String errMessage = SVNTeamPlugin.instance().getResource("Operation.Error.LogHeader");
-	    MultiStatus status = new MultiStatus(SVNTeamPlugin.NATURE_ID, IStatus.OK, MessageFormat.format(errMessage, new String[] {where}), null);
+		String errMessage = SVNTeamPlugin.instance().getResource("Operation.Error.LogHeader", new String[] {where});
+	    MultiStatus status = new MultiStatus(SVNTeamPlugin.NATURE_ID, IStatus.OK, errMessage, null);
 		Status st = 
 			new Status(
 					IStatus.ERROR, 

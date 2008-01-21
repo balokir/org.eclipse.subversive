@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.core.operation;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNProgressMonitor;
@@ -65,8 +63,8 @@ public class SVNProgressMonitor implements ISVNProgressMonitor {
 	public static void writeToConsole(IConsoleStream stream, int contentState, int propState, int action, String path, long revision) {
 		if (stream != null && path != null && path.length() > 0) {
 			if (action == PerformedAction.UPDATE_COMPLETED || action == PerformedAction.STATUS_COMPLETED) {
-				String message = SVNTeamPlugin.instance().getResource("Console.AtRevision");
-				stream.write(IConsoleStream.LEVEL_OK, MessageFormat.format(message, new String[] {String.valueOf(revision)}));
+				String message = SVNTeamPlugin.instance().getResource("Console.AtRevision", new String[] {String.valueOf(revision)});
+				stream.write(IConsoleStream.LEVEL_OK, message);
 			}
 			else {
 				int severity = IConsoleStream.LEVEL_OK;
@@ -134,12 +132,12 @@ public class SVNProgressMonitor implements ISVNProgressMonitor {
 					}
 				}
 				if (action == PerformedAction.COMMIT_POSTFIX_TXDELTA) {
-					String message = SVNTeamPlugin.instance().getResource("Console.TransmittingData");
-					stream.write(severity, MessageFormat.format(message, new String[] {path}));
+					String message = SVNTeamPlugin.instance().getResource("Console.TransmittingData", new String[] {path});
+					stream.write(severity, message);
 				}
 				else if (status != null) {
-					String message = SVNTeamPlugin.instance().getResource("Console.Status");
-					stream.write(severity, MessageFormat.format(message, new String[] {status, path}));
+					String message = SVNTeamPlugin.instance().getResource("Console.Status", new String[] {status, path});
+					stream.write(severity, message);
 				}
 			}
 		}
