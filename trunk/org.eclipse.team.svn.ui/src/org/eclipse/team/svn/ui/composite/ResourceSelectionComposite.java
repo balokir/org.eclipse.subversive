@@ -425,8 +425,9 @@ public class ResourceSelectionComposite extends Composite {
 		this.tableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-				if (selection.size() == 1) {
-					final IResource resource = (IResource) selection.getFirstElement();
+				final IResource resource = (IResource) selection.getFirstElement();
+				IResource [] resources = {resource};
+				if (selection.size() == 1 && !FileUtility.checkForResourcesPresence(resources, IStateFilter.SF_NOTONREPOSITORY, IResource.DEPTH_ZERO)) {
 					UIMonitorUtility.getShell().getDisplay().syncExec(new Runnable() {
 						public void run() {
 							ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
