@@ -80,9 +80,7 @@ public class CheckoutOperation extends AbstractActionOperation implements IResou
 		if (location != null && location.trim().length() > 0) {
 			return new CheckoutAsOperation(name, currentResource, respectHierarchy, location, checkoutRecursively, ignoreExternals);
 		}
-		else {
-			return new CheckoutAsOperation(name, currentResource, checkoutRecursively);
-		}
+		return new CheckoutAsOperation(name, currentResource, checkoutRecursively);
 	}
 	
 }

@@ -48,9 +48,7 @@ public class ShowResourceHistoryAction extends AbstractSynchronizeModelAction {
 			// merge info always contains originator
 			return new ShowHistoryViewOperation(((IResourceChange)local).getOriginator(), 0, 0);
 		}
-		else {
-			return new ShowHistoryViewOperation(local.getResource(), 0, 0);
-		}
+		return new ShowHistoryViewOperation(local.getResource(), 0, 0);
 	}
 
 }

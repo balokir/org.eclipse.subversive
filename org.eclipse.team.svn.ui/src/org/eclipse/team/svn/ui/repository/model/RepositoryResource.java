@@ -209,7 +209,7 @@ public abstract class RepositoryResource implements IWorkbenchAdapter, IWorkbenc
 	}
 	
 	public String getValue(IVariable var) {
-		IRepositoryResource resource = (IRepositoryResource)this.getRepositoryResource();
+		IRepositoryResource resource = this.getRepositoryResource();
 		Information info = resource.getInfo();
 		SVNLock lock = info == null ? null : info.lock;
 		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.getDefault());

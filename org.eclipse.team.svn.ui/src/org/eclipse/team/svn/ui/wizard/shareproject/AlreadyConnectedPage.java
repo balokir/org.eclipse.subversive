@@ -171,9 +171,7 @@ public class AlreadyConnectedPage extends AbstractVerifiedWizardPage {
 				if (columnIndex == 0) {
 					return root.getRepositoryLocation().getLabel();
 				}
-				else {
-					return root.getRepositoryLocation().getUrl();
-				}
+				return root.getRepositoryLocation().getUrl();
 			}
 			public void addListener(ILabelProviderListener listener) {
 			}

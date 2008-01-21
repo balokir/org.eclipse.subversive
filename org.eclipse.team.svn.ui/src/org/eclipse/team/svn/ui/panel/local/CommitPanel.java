@@ -322,7 +322,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 			public void menuAboutToShow(IMenuManager manager) {
 				manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 				final IStructuredSelection tSelection = (IStructuredSelection)tableViewer.getSelection();
-				final IResource[] selectedResources = (IResource[])((List)tSelection.toList()).toArray(new IResource[tSelection.size()]);
+				final IResource[] selectedResources = (IResource[])tSelection.toList().toArray(new IResource[tSelection.size()]);
 				Action tAction = null;
 				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("CommitPanel.PasteNames.Action")) {
 					public void run() {
@@ -597,7 +597,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 		this.validateContent();
 		IResourceSelectionChangeListener []listeners = (IResourceSelectionChangeListener [])this.changeListenerList.toArray(new IResourceSelectionChangeListener[this.changeListenerList.size()]);
 		for (int i = 0; i < listeners.length; i++) {
-			((IResourceSelectionChangeListener)listeners[i]).resourcesSelectionChanged(event);
+			listeners[i].resourcesSelectionChanged(event);
 		}
 	}
     

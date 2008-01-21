@@ -50,7 +50,7 @@ public class AddToSVNIgnoreAction extends AbstractSynchronizeModelAction {
         protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
             if (state == IStateFilter.ST_NEW) {
             	IContainer parent = resource.getParent();
-            	if (resource != null && parent != null) {
+            	if (parent != null) {
             		ILocalResource localParent = SVNRemoteStorage.instance().asLocalResource(parent);
             		if (localParent != null) {
             			return IStateFilter.SF_VERSIONED.accept(localParent);

@@ -38,7 +38,7 @@ public abstract class AbstractRepositoryTeamAction extends AbstractSVNTeamAction
 	}
 	
 	protected void checkSelection(IStructuredSelection selection) {
-		this.selection = (IStructuredSelection)selection;
+		this.selection = selection;
 	}
 	
 	protected IRepositoryLocation []getSelectedRepositoryLocations() {
@@ -51,7 +51,7 @@ public abstract class AbstractRepositoryTeamAction extends AbstractSVNTeamAction
 	}
 	
 	protected IRepositoryResource []getSelectedRepositoryResources() {
-		Object []wrappers = (Object [])this.getSelectedResources(IResourceTreeNode.class);
+		Object []wrappers = this.getSelectedResources(IResourceTreeNode.class);
 		IRepositoryResource []resources = new IRepositoryResource[wrappers.length];
 		for (int i = 0; i < resources.length; i++) {
 			resources[i] = ((IResourceTreeNode)wrappers[i]).getRepositoryResource();

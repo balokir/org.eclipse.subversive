@@ -93,9 +93,7 @@ public class QueryResourceAddition {
 			retVal[2] = FileUtility.shrinkChildNodes(tRes);
 	        return retVal;
 		}
-		else {
-			return null;
-		}
+		return null;
     }
     
 	public static IResource []getSelectedForAddition(IResourceSelector selector) {

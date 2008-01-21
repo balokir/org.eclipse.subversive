@@ -190,9 +190,9 @@ public class ExtensionsManager {
 		this.currentShareProjectFactory = (IShareProjectFactory)this.loadUIExtension("shareproject");
 		this.currentActionContributor = (ISynchronizeViewActionContributor)this.loadUIExtension("synchronizeActionContribution");
 		Object []extensions = this.loadUIExtensions("reportingdescriptor");
-		this.reportingDescriptors = (IReportingDescriptor [])Arrays.asList(extensions).toArray(new IReportingDescriptor[extensions.length]);
+		this.reportingDescriptors = Arrays.asList(extensions).toArray(new IReportingDescriptor[extensions.length]);
 		extensions = this.loadUIExtensions("reporterfactory");
-		this.reporterFactories = (IReporterFactory [])Arrays.asList(extensions).toArray(new IReporterFactory[extensions.length]);
+		this.reporterFactories = Arrays.asList(extensions).toArray(new IReporterFactory[extensions.length]);
 		Arrays.sort(this.reporterFactories, new Comparator() {
 			public int compare(Object o1, Object o2) {
 				IReporterFactory f1 = (IReporterFactory)o1;

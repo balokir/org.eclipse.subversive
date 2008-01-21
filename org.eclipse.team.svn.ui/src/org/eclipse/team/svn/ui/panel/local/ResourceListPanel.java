@@ -95,10 +95,8 @@ public class ResourceListPanel extends AbstractDialogPanel {
 				if (ResourceListPanel.this.showLocalNames) {
 					return resource.getFullPath().toString().substring(1);
 				}
-				else {
-					IRepositoryResource node = SVNRemoteStorage.instance().asRepositoryResource(resource);
-					return node.getUrl();
-				}
+				IRepositoryResource node = SVNRemoteStorage.instance().asRepositoryResource(resource);
+				return node.getUrl();
 			}
 
 			public void addListener(ILabelProviderListener listener) {

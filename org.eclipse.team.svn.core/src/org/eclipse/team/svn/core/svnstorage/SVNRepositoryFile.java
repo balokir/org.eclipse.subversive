@@ -38,7 +38,7 @@ public class SVNRepositoryFile extends SVNRepositoryResource implements IReposit
 	protected void getRevisionImpl(ISVNConnector proxy) throws SVNConnectorException {
 		SVNEntry []entries = SVNUtility.list(proxy, SVNUtility.getEntryRevisionReference(this), Depth.EMPTY, Fields.ALL, ISVNConnector.Options.FETCH_LOCKS, new SVNNullProgressMonitor());
 		if (entries != null && entries.length > 0 && entries[0].revision != SVNRevision.INVALID_REVISION_NUMBER) {//FIXME -1 for SVN Kit 1.2.0 if resource is not exists
-			this.lastRevision = (SVNRevision.Number)SVNRevision.fromNumber(entries[0].revision);
+			this.lastRevision = SVNRevision.fromNumber(entries[0].revision);
 			this.setInfo(new IRepositoryResource.Information(entries[0].lock, entries[0].size, entries[0].author, entries[0].date, entries[0].hasProperties));
 		}
 	}

@@ -361,9 +361,7 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 		if (allFiles) {
 			return singleResource ? PropertyEditPanel.SINGLE_FILE : PropertyEditPanel.MULTIPLE_FILES; 
 		}
-		else {
-			return PropertyEditPanel.MIXED_RESOURCES;
-		}
+		return PropertyEditPanel.MIXED_RESOURCES;
 	}
 	
 	protected void saveChangesImpl() {

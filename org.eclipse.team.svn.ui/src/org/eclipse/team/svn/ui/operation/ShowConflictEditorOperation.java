@@ -71,7 +71,7 @@ public class ShowConflictEditorOperation extends AbstractWorkingCopyOperation {
 			SVNChangeStatus []status = SVNUtility.status(proxy, FileUtility.getWorkingCopyPath(resource), Depth.IMMEDIATES, ISVNConnector.Options.NONE, new SVNNullProgressMonitor());
 			if (status.length == 1) {
 				IContainer parent = resource.getParent();
-				this.openEditor((IFile)resource, status[0].conflictWorking == null || status[0].conflictWorking.length() == 0 ? resource : (IFile)parent.findMember(status[0].conflictWorking), (IFile)parent.findMember(status[0].conflictNew), (IFile)parent.findMember(status[0].conflictOld));
+				this.openEditor(resource, status[0].conflictWorking == null || status[0].conflictWorking.length() == 0 ? resource : (IFile)parent.findMember(status[0].conflictWorking), (IFile)parent.findMember(status[0].conflictNew), (IFile)parent.findMember(status[0].conflictOld));
 			}
 		}
 		finally {

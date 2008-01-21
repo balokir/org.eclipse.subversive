@@ -149,9 +149,9 @@ public class CoreExtensionsManager {
 			this.optionProvider = IOptionProvider.DEFAULT;
 		}
 		extensions = this.loadCoreExtensions(CoreExtensionsManager.CRASH_RECOVERY);
-		this.helpers = (IResolutionHelper [])Arrays.asList(extensions).toArray(new IResolutionHelper[extensions.length]);
+		this.helpers = Arrays.asList(extensions).toArray(new IResolutionHelper[extensions.length]);
 		extensions = this.loadCoreExtensions(CoreExtensionsManager.IGNORE_RECOMMENDATIONS);
-		this.ignoreRecommendations = (IIgnoreRecommendations [])Arrays.asList(extensions).toArray(new IIgnoreRecommendations[extensions.length]);
+		this.ignoreRecommendations = Arrays.asList(extensions).toArray(new IIgnoreRecommendations[extensions.length]);
 	}
 	
 	private void validateClient(ISVNConnectorFactory connector) {

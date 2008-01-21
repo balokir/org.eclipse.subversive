@@ -50,7 +50,7 @@ public class ShowPropertiesAction extends AbstractRepositoryTeamAction {
 		else {
 			ShowPropertiesOperation op = new ShowPropertiesOperation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), resource, provider);
 			CompositeOperation composite = new CompositeOperation(op.getId());
-			composite.add((IActionOperation)provider);
+			composite.add(provider);
 			composite.add(op, new IActionOperation[] {provider});
 			if (!op.isEditorOpened()) {
 				this.runScheduled(composite);

@@ -246,7 +246,7 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 			public void widgetSelected(SelectionEvent e) {
 				int idx = RepositoryPropertiesTabFolder.this.cachedRealms.getSelectionIndex();
 				if (idx != 0) {
-					String item = (String)RepositoryPropertiesTabFolder.this.cachedRealms.getItem(idx);
+					String item = RepositoryPropertiesTabFolder.this.cachedRealms.getItem(idx);
 					itemSet.remove(item);
 					RepositoryPropertiesTabFolder.this.cachedRealms.setItems((String [])itemSet.toArray(new String[itemSet.size()]));
 					RepositoryPropertiesTabFolder.this.cachedRealms.select(idx - 1);

@@ -80,18 +80,14 @@ public class PropertiesEditorInput implements IEditorInput {
 		if (this.localResource == null) {
 			return this.remoteResource;
 		}
-		else {
-			return this.localResource;
-		}
+		return this.localResource;
 	}
 	
 	public boolean equals(Object obj) {
 		if (obj instanceof PropertiesEditorInput) {
 			return this.getResource().equals(((PropertiesEditorInput)obj).getResource());
 		}
-		else {
-			return false;
-		}
+		return false;
 	}
 
 	public IResourcePropertyProvider getPropertyProvider() {

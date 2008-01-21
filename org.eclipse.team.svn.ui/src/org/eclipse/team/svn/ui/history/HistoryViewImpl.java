@@ -317,7 +317,7 @@ public class HistoryViewImpl {
 						IResourcePropertyProvider provider = new GetRemotePropertiesOperation(resource);
 						ShowPropertiesOperation op = new ShowPropertiesOperation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), resource, provider);
 						CompositeOperation composite = new CompositeOperation(op.getId());
-						composite.add((IActionOperation)provider);
+						composite.add(provider);
 						composite.add(op, new IActionOperation[] {provider});
 						if (!op.isEditorOpened()) {
 							UIMonitorUtility.doTaskScheduledActive(composite);
@@ -825,7 +825,7 @@ public class HistoryViewImpl {
 		}
 		boolean isCompareAllowed = 
 			(CoreExtensionsManager.instance().getSVNConnectorFactory().getSupportedFeatures() & ISVNConnectorFactory.OptionalFeatures.COMPARE_FOLDERS) != 0 ||
-			HistoryViewImpl.this.repositoryResource instanceof IRepositoryResource;
+			HistoryViewImpl.this.repositoryResource instanceof IRepositoryFile;
 		if ((this.options & HistoryViewImpl.COMPARE_MODE) != 0 && doubleClick && isCompareAllowed) {
 			this.compareWithCurrent(item);
 		}

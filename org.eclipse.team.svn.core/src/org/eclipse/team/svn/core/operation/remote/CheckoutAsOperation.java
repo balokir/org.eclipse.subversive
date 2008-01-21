@@ -157,7 +157,7 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 		this.deleteFolderContent(destination.toString(), monitor);
 		
 		// check out files from the repository
-		IRepositoryLocation location = (IRepositoryLocation)this.resource.getRepositoryLocation();
+		IRepositoryLocation location = this.resource.getRepositoryLocation();
 		// using parent because deleted project does not have any location (null value returned)
 		ISVNConnector proxy = location.acquireSVNProxy();
 		try {

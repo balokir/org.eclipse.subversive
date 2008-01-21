@@ -70,7 +70,7 @@ public class ItemListPanel extends AbstractDialogPanel {
                
         viewer.setContentProvider(new IStructuredContentProvider() {
 			public Object[] getElements(Object inputElement) {
-				return (Object[])ItemListPanel.this.items;
+				return ItemListPanel.this.items;
 			}
 
 			public void dispose() {

@@ -106,9 +106,7 @@ public class UnacceptableOperationNotificator {
 			if (isCanceled[0]) {
 				return null;
 			}
-			else {
-				resultResources.addAll(parents);
-			}
+			resultResources.addAll(parents);
 		}
 		return (IResource [])resultResources.toArray(new IResource[resultResources.size()]);
 	}

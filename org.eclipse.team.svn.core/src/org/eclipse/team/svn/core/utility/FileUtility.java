@@ -255,9 +255,7 @@ public final class FileUtility {
 			if (text.substring(idx).trim().length() != 0) {
 				return text.substring(0, idx) + "...";
 			}
-			else {
-				return text.substring(0, idx);
-			}
+			return text.substring(0, idx);
 		}
 		return text;
 	}

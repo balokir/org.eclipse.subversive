@@ -56,8 +56,8 @@ public abstract class SVNUtilityTest extends AbstractOperationTestCase {
 				IRepositoryResource []remoteProjectSet = new IRepositoryResource[] {remote1, remote2};				
 				assertTrue("SVNUtility.asURLArray", (SVNUtility.asURLArray(remoteProjectSet, false)).length == remoteProjectSet.length);
 				
-				IResource local1 = (IResource) prj1;
-				IResource local2 = (IResource) prj2;
+				IResource local1 = prj1;
+				IResource local2 = prj2;
 				IResource []localProjectSet = new IResource[] {local1, local2};				
 				assertTrue("SVNUtility.splitWorkingCopies", SVNUtility.splitWorkingCopies(localProjectSet).size() == localProjectSet.length);
 				

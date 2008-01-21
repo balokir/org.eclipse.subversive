@@ -172,9 +172,7 @@ public class CommentComposite extends Composite  {
 							if (CommentComposite.this.bugtraqModel.isNumber()) {
 								return SVNTeamUIPlugin.instance().getResource("CommentComposite.BugID.Verifier.Error.Number", new String[] {CommentComposite.this.bugtraqModel.getLabel()});
 							}
-							else {
-								return SVNTeamUIPlugin.instance().getResource("CommentComposite.BugID.Verifier.Error.Text", new String[] {CommentComposite.this.bugtraqModel.getLabel(), CommentComposite.this.bugtraqModel.getLogregex()[0]});
-							}
+							return SVNTeamUIPlugin.instance().getResource("CommentComposite.BugID.Verifier.Error.Text", new String[] {CommentComposite.this.bugtraqModel.getLabel(), CommentComposite.this.bugtraqModel.getLogregex()[0]});
 						}
 					}
 					return null;

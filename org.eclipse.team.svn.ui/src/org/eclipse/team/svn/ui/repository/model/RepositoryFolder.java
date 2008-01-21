@@ -53,37 +53,33 @@ public class RepositoryFolder extends RepositoryResource implements IParentTreeN
 			Object []retVal = RepositoryFolder.wrapChildren(this, this.childrenOp.getChildren(), this.childrenOp);
 			return retVal == null ? new Object[] {this.childrenOp.getExecutionState() != IActionOperation.ERROR ? (Object)new RepositoryPending(this) : new RepositoryError(this.childrenOp.getStatus())} : retVal;
 		}
-		else {
-			this.childrenOp = new GetRemoteFolderChildrenOperation(container);
-			
-			if (!((IRepositoryContainer)this.resource).isChildrenCached()) {
-				CompositeOperation op = new CompositeOperation(this.childrenOp.getId());
-				op.add(this.childrenOp);
-				op.add(this.getRefreshOperation(this.getViewer()));
+		this.childrenOp = new GetRemoteFolderChildrenOperation(container);
+		
+		if (!((IRepositoryContainer)this.resource).isChildrenCached()) {
+			CompositeOperation op = new CompositeOperation(this.childrenOp.getId());
+			op.add(this.childrenOp);
+			op.add(this.getRefreshOperation(this.getViewer()));
 
-				UIMonitorUtility.doTaskScheduled(op, new DefaultOperationWrapperFactory() {
-	                public IActionOperation getLogged(IActionOperation operation) {
-	            		return new LoggedOperation(operation);
-	                }
-	            });
-				
-				return new Object[] {new RepositoryPending(this)};
-			}
+			UIMonitorUtility.doTaskScheduled(op, new DefaultOperationWrapperFactory() {
+                public IActionOperation getLogged(IActionOperation operation) {
+            		return new LoggedOperation(operation);
+                }
+            });
 			
-			UIMonitorUtility.doTaskBusyDefault(this.childrenOp);
-			
-			return RepositoryFolder.wrapChildren(this, this.childrenOp.getChildren(), this.childrenOp);
+			return new Object[] {new RepositoryPending(this)};
 		}
+		
+		UIMonitorUtility.doTaskBusyDefault(this.childrenOp);
+		
+		return RepositoryFolder.wrapChildren(this, this.childrenOp.getChildren(), this.childrenOp);
 	}
 	
 	public Object []peekChildren(Object o) {
 		if (this.childrenOp == null) {
 			return this.getChildren(o);
 		}
-		else  {
-			Object []retVal = RepositoryFolder.wrapChildren(this, this.childrenOp.getChildren(), this.childrenOp);
-			return retVal == null ? new Object[] {this.childrenOp.getExecutionState() != IActionOperation.ERROR ? (Object)new RepositoryPending(this) : new RepositoryError(this.childrenOp.getStatus())} : retVal;
-		}
+		Object []retVal = RepositoryFolder.wrapChildren(this, this.childrenOp.getChildren(), this.childrenOp);
+		return retVal == null ? new Object[] {this.childrenOp.getExecutionState() != IActionOperation.ERROR ? (Object)new RepositoryPending(this) : new RepositoryError(this.childrenOp.getStatus())} : retVal;
 	}
 	
 	public static RepositoryResource []wrapChildren(RepositoryResource parent, IRepositoryResource []resources, GetRemoteFolderChildrenOperation childrenOp) {
@@ -122,9 +118,7 @@ public class RepositoryFolder extends RepositoryResource implements IParentTreeN
 				}
 			}
 		}
-		else {
-			return resource instanceof IRepositoryFile ? (RepositoryResource)new RepositoryFile(parent, resource) : new RepositoryFolder(parent, resource);
-		}
+		return resource instanceof IRepositoryFile ? (RepositoryResource)new RepositoryFile(parent, resource) : new RepositoryFolder(parent, resource);
 	}
 	
 	protected ImageDescriptor getImageDescriptorImpl() {

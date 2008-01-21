@@ -70,11 +70,8 @@ public class LockAction extends AbstractRecursiveTeamAction {
         protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
             if (resource instanceof IFile && 
                 IStateFilter.SF_EXCLUDE_DELETED.accept(resource, state, mask)) {
-                if (resource != null) {
-                    local = this.takeLocal(local, resource);
-                    return local != null && !local.isLocked();
-                }
-                return true;
+                local = this.takeLocal(local, resource);
+                return local != null && !local.isLocked();
             }
             return false;
         }

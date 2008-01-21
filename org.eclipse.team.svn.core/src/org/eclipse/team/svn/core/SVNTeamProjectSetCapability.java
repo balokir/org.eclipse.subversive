@@ -119,9 +119,7 @@ public class SVNTeamProjectSetCapability extends ProjectSetCapability {
 			op.add(mainOp);
 			return mainOp.getProject();
 		}
-		else {
-			return null;
-		}
+		return null;
 	}
 	
 	protected IRepositoryLocation getLocationForReference(IRemoteStorage storage, String []parts) {
