@@ -44,6 +44,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
@@ -53,6 +54,7 @@ import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.local.AddToSVNIgnoreOperation;
+import org.eclipse.team.svn.core.operation.local.CreatePatchOperation;
 import org.eclipse.team.svn.core.operation.local.LockOperation;
 import org.eclipse.team.svn.core.operation.local.MarkAsMergedOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
@@ -321,6 +323,20 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				});
 				tAction.setEnabled(tSelection.size() > 0);
 				
+				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("CommitPanel.CreatePatchFile.Action")) {
+					public void run() {
+						FileDialog dlg = new FileDialog(UIMonitorUtility.getShell(), SWT.PRIMARY_MODAL | SWT.SAVE);
+						dlg.setText(SVNTeamUIPlugin.instance().getResource("SelectPatchFilePage.SavePatchAs"));
+						dlg.setFileName(selectedResources[0].getName() + ".patch");
+						dlg.setFilterExtensions(new String[] {"patch", "*.*"});
+						String file = dlg.open();
+						if (file != null) {
+							CreatePatchOperation mainOp = new CreatePatchOperation(selectedResources[0], file, true, true, true, true, true);
+							UIMonitorUtility.doTaskNowDefault(mainOp, false);
+						}
+					}
+				});
+				tAction.setEnabled(tSelection.size() == 1 && FileUtility.checkForResourcesPresence(selectedResources, IStateFilter.SF_VERSIONED, IResource.DEPTH_ONE));
 				manager.add(new Separator());
 				
 				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("CommitPanel.Revert.Action")) {
