@@ -29,6 +29,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -53,18 +54,23 @@ import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
+import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.AddToSVNIgnoreOperation;
 import org.eclipse.team.svn.core.operation.local.CreatePatchOperation;
 import org.eclipse.team.svn.core.operation.local.LockOperation;
 import org.eclipse.team.svn.core.operation.local.MarkAsMergedOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
+import org.eclipse.team.svn.core.operation.local.RemoveNonVersionedResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
+import org.eclipse.team.svn.core.operation.local.RevertOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.UnlockOperation;
+import org.eclipse.team.svn.core.operation.local.UpdateOperation;
 import org.eclipse.team.svn.core.operation.local.property.GetPropertiesOperation;
 import org.eclipse.team.svn.core.operation.local.refactor.DeleteResourceOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRemoteStorage;
+import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.events.IResourceStatesListener;
 import org.eclipse.team.svn.core.resource.events.ResourceStatesChangedEvent;
 import org.eclipse.team.svn.core.svnstorage.ResourcesParentsProvider;
@@ -80,12 +86,14 @@ import org.eclipse.team.svn.ui.composite.CommentComposite;
 import org.eclipse.team.svn.ui.composite.ResourceSelectionComposite;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.dialog.DiscardConfirmationDialog;
+import org.eclipse.team.svn.ui.dialog.ReplaceWarningDialog;
 import org.eclipse.team.svn.ui.dialog.UnlockResourcesDialog;
 import org.eclipse.team.svn.ui.event.IResourceSelectionChangeListener;
 import org.eclipse.team.svn.ui.event.ResourceSelectionChangedEvent;
 import org.eclipse.team.svn.ui.extension.factory.ICommentDialogPanel;
 import org.eclipse.team.svn.ui.operation.ShowConflictEditorOperation;
 import org.eclipse.team.svn.ui.panel.common.CommentPanel;
+import org.eclipse.team.svn.ui.panel.common.InputRevisionPanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.properties.bugtraq.BugtraqModel;
 import org.eclipse.team.svn.ui.propfind.BugtraqPropFindVisitor;
@@ -336,7 +344,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 						}
 					}
 				});
-				tAction.setEnabled(tSelection.size() == 1 && FileUtility.checkForResourcesPresence(selectedResources, IStateFilter.SF_VERSIONED, IResource.DEPTH_ONE));
+				tAction.setEnabled(tSelection.size() == 1 && FileUtility.checkForResourcesPresence(selectedResources, IStateFilter.SF_VERSIONED, IResource.DEPTH_ZERO));
 				manager.add(new Separator());
 				
 				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("CommitPanel.Revert.Action")) {
@@ -465,6 +473,55 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				});
 				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/unlock.gif"));
 				tAction.setEnabled(FileUtility.checkForResourcesPresenceRecursive(selectedResources, UnlockAction.SF_LOCKED));
+				manager.add(new Separator());
+				MenuManager subMenu = new MenuManager(SVNTeamUIPlugin.instance().getResource("CommitPanel.ReplaceWith.Group"));
+				subMenu.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("ReplaceWithRevisionAction.label")) {
+					public void run() {
+						IRemoteStorage storage = SVNRemoteStorage.instance();
+						IResource resource = selectedResources[0];
+						IRepositoryResource remote = storage.asRepositoryResource(resource);
+						InputRevisionPanel panel = new InputRevisionPanel(remote, SVNTeamUIPlugin.instance().getResource("ReplaceWithRevisionAction.InputRevisionPanel.Title"));
+						DefaultDialog selectionDialog = new DefaultDialog(UIMonitorUtility.getShell(), panel);
+						if (selectionDialog.open() == Dialog.OK) {
+							ReplaceWarningDialog dialog = new ReplaceWarningDialog(UIMonitorUtility.getShell());
+							if (dialog.open() == 0) {
+								CompositeOperation op = new CompositeOperation("Operation.ReplaceWithRevision");
+								SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(selectedResources);
+								op.add(saveOp);
+								IActionOperation revertOp = new RevertOperation(selectedResources, true);
+								op.add(revertOp);
+								IActionOperation removeOp = new RemoveNonVersionedResourcesOperation(selectedResources, true);
+								op.add(removeOp, new IActionOperation[] {revertOp});
+								op.add(new UpdateOperation(selectedResources, panel.getSelectedRevision(), true), new IActionOperation[] {revertOp, removeOp});
+								op.add(new RestoreProjectMetaOperation(saveOp));
+								op.add(new RefreshResourcesOperation(selectedResources));
+								UIMonitorUtility.doTaskNowDefault(op, true);
+							}
+						}
+					}
+				});
+				tAction.setEnabled(tSelection.size() == 1 && FileUtility.checkForResourcesPresence(selectedResources, IStateFilter.SF_ONREPOSITORY, IResource.DEPTH_ZERO));
+				subMenu.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("ReplaceWithLatestRevisionAction.label")) {
+					public void run() {
+						ReplaceWarningDialog dialog = new ReplaceWarningDialog(UIMonitorUtility.getShell());
+						if (dialog.open() == 0) {
+							IResource []resources = FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_ONREPOSITORY);
+							CompositeOperation op = new CompositeOperation("Operation.ReplaceWithLatest");					
+							SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
+							op.add(saveOp);
+							IActionOperation revertOp = new RevertOperation(resources, true);
+							op.add(revertOp);
+							IActionOperation removeOp = new RemoveNonVersionedResourcesOperation(resources, true);
+							op.add(removeOp, new IActionOperation[] {revertOp});
+							op.add(new UpdateOperation(resources, true), new IActionOperation[] {revertOp, removeOp});
+							op.add(new RestoreProjectMetaOperation(saveOp));
+							op.add(new RefreshResourcesOperation(resources));
+							UIMonitorUtility.doTaskNowDefault(op, true);
+						}
+					}
+				});
+				tAction.setEnabled(FileUtility.checkForResourcesPresenceRecursive(selectedResources, IStateFilter.SF_ONREPOSITORY));
+				manager.add(subMenu);
 				
 				manager.add(new Separator());
 				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("CommitPanel.Delete.Action")) {
