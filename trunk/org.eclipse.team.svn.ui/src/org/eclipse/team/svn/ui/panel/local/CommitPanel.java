@@ -52,6 +52,7 @@ import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.local.AddToSVNIgnoreOperation;
+import org.eclipse.team.svn.core.operation.local.MarkAsMergedOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
@@ -74,6 +75,7 @@ import org.eclipse.team.svn.ui.dialog.DiscardConfirmationDialog;
 import org.eclipse.team.svn.ui.event.IResourceSelectionChangeListener;
 import org.eclipse.team.svn.ui.event.ResourceSelectionChangedEvent;
 import org.eclipse.team.svn.ui.extension.factory.ICommentDialogPanel;
+import org.eclipse.team.svn.ui.operation.ShowConflictEditorOperation;
 import org.eclipse.team.svn.ui.panel.common.CommentPanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.properties.bugtraq.BugtraqModel;
@@ -375,6 +377,23 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 					}
 					manager.add(subMenu);
 				}
+				manager.add (tAction = new Action(SVNTeamUIPlugin.instance().getResource("EditConflictsAction.label")) {
+					public void run() {
+						UIMonitorUtility.doTaskNowDefault(new ShowConflictEditorOperation(FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_CONFLICTING)), true);
+					}
+				});
+				tAction.setEnabled(FileUtility.checkForResourcesPresenceRecursive(selectedResources, IStateFilter.SF_CONFLICTING));
+				
+				manager.add (tAction = new Action(SVNTeamUIPlugin.instance().getResource("MergeActionGroup.MarkAsMerged")) {
+					public void run() {
+						MarkAsMergedOperation mainOp = new MarkAsMergedOperation(selectedResources, false, null);
+						CompositeOperation op = new CompositeOperation(mainOp.getId());
+						op.add(mainOp);
+						op.add(new RefreshResourcesOperation(FileUtility.getParents(selectedResources, false)));
+						UIMonitorUtility.doTaskNowDefault(op, false);
+					}
+				});
+				tAction.setEnabled(FileUtility.checkForResourcesPresenceRecursive(selectedResources, IStateFilter.SF_CONFLICTING) && selectedResources.length == 1);
 				manager.add(new Separator());
 				
 				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("CommitPanel.Delete.Action")) {
@@ -395,7 +414,6 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				});
 				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/delete.gif"));
 				tAction.setEnabled(tSelection.size() > 0);
-				
 			}
 		});
         menuMgr.setRemoveAllWhenShown(true);
