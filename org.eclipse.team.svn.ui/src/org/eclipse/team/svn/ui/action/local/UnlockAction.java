@@ -58,7 +58,7 @@ public class UnlockAction extends AbstractRecursiveTeamAction {
         return this.checkForResourcesPresenceRecursive(UnlockAction.SF_LOCKED);
     }
 
-    protected static final IStateFilter SF_LOCKED = new IStateFilter.AbstractStateFilter() {
+    public static final IStateFilter SF_LOCKED = new IStateFilter.AbstractStateFilter() {
         protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
             if (IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask)) {
                 if (resource != null) {
