@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.ui.composite;
 
-import java.text.MessageFormat;
 import java.util.Collection;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -500,8 +499,8 @@ public class AffectedPathsComposite extends Composite {
 //				this.right.setPegRevision(this.remoteResource.getPegRevision());
 			}
 			else {
-				String message = SVNTeamUIPlugin.instance().getResource("Error.ResourceDoesNotExists");
-				this.reportStatus(new Status (IStatus.ERROR, SVNTeamPlugin.NATURE_ID, IStatus.OK, message = MessageFormat.format(message, new String[] {this.remoteResource.getUrl()}), null));
+				String message = SVNTeamUIPlugin.instance().getResource("Error.ResourceDoesNotExists", new String[] {this.remoteResource.getUrl()});
+				this.reportStatus(new Status (IStatus.ERROR, SVNTeamPlugin.NATURE_ID, IStatus.OK, message, null));
 			}
 		}
 		
@@ -591,7 +590,7 @@ public class AffectedPathsComposite extends Composite {
 				
 				if (info != null) {
 					if (info.kind == Kind.DIR && this.filesOnly) {
-						final String message = MessageFormat.format(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.Open.Message"), new String[] {SVNUtility.decodeURL(info.url)});
+						final String message = SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.Open.Message", new String[] {SVNUtility.decodeURL(info.url)});
 						UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 							public void run() {
 								MessageDialog dialog = new MessageDialog(UIMonitorUtility.getDisplay().getActiveShell(), 

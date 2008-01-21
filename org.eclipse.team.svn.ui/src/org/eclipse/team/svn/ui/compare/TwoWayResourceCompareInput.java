@@ -58,7 +58,7 @@ public class TwoWayResourceCompareInput extends ResourceCompareInput {
 		HashMap path2node = new HashMap();
 		String message = SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.CheckingDelta");
 		for (int i = 0; i < this.statuses.length; i++) {
-			monitor.subTask(MessageFormat.format(message, new String[] {SVNUtility.decodeURL(this.statuses[i].pathPrev)}));
+			monitor.subTask(MessageFormat.format(message, new Object[] {SVNUtility.decodeURL(this.statuses[i].pathPrev)}));
 			
 			CompareNode node = this.makeNode(this.statuses[i], path2node, monitor);
 			path2node.put(new Path(((ResourceElement)node.getRight()).getRepositoryResource().getUrl()), node);

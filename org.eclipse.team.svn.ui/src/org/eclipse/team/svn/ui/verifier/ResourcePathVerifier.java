@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.ui.verifier;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.runtime.Path;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -27,8 +25,7 @@ public class ResourcePathVerifier extends AbstractFormattedVerifier {
         
     public ResourcePathVerifier(String fieldName) {
         super(fieldName);
-        ResourcePathVerifier.ERROR_MESSAGE = SVNTeamUIPlugin.instance().getResource("Verifier.ResourcePath");
-        ResourcePathVerifier.ERROR_MESSAGE = MessageFormat.format(ResourcePathVerifier.ERROR_MESSAGE, new String[] {AbstractFormattedVerifier.FIELD_NAME});
+        ResourcePathVerifier.ERROR_MESSAGE = SVNTeamUIPlugin.instance().getResource("Verifier.ResourcePath", new String[] {AbstractFormattedVerifier.FIELD_NAME});
     }
     
     protected String getErrorMessageImpl(Control input) {

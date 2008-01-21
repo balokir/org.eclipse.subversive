@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.ui.panel.local;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -73,8 +71,7 @@ public class IgnoreMethodPanel extends AbstractDialogPanel {
 		Button nameButton = new Button(parent, SWT.RADIO);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		nameButton.setLayoutData(data);
-		String text = SVNTeamUIPlugin.instance().getResource(this.resources.length == 1 ? "IgnoreMethodPanel.Name.Single" : "IgnoreMethodPanel.Name.Multi");
-		text = MessageFormat.format(text, new String[] {this.resources[0].getName()});
+		String text = SVNTeamUIPlugin.instance().getResource(this.resources.length == 1 ? "IgnoreMethodPanel.Name.Single" : "IgnoreMethodPanel.Name.Multi", new String[] {this.resources[0].getName()});
 		nameButton.setText(text);
 		nameButton.setSelection(true);
 		nameButton.addSelectionListener(new SelectionAdapter() {
@@ -96,8 +93,7 @@ public class IgnoreMethodPanel extends AbstractDialogPanel {
 		        break;
 		    }
 		}
-		text = SVNTeamUIPlugin.instance().getResource(this.resources.length == 1 ? "IgnoreMethodPanel.Extension.Single" : "IgnoreMethodPanel.Extension.Multi");
-		text = MessageFormat.format(text, new String[] {extension == null ? "" : extension});
+		text = SVNTeamUIPlugin.instance().getResource(this.resources.length == 1 ? "IgnoreMethodPanel.Extension.Single" : "IgnoreMethodPanel.Extension.Multi", new String[] {extension == null ? "" : extension});
 		extensionButton.setText(text);
 		extensionButton.setSelection(false);
 		extensionButton.setEnabled(extension != null);
@@ -111,8 +107,7 @@ public class IgnoreMethodPanel extends AbstractDialogPanel {
 		this.patternButton = new Button(parent, SWT.RADIO);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.patternButton.setLayoutData(data);
-		text = SVNTeamUIPlugin.instance().getResource("IgnoreMethodPanel.Pattern");
-		text = MessageFormat.format(text, new String[] {this.resources[0].getName().substring(1)});
+		text = SVNTeamUIPlugin.instance().getResource("IgnoreMethodPanel.Pattern", new String[] {this.resources[0].getName().substring(1)});
 		this.patternButton.setText(text);
 		this.patternButton.setSelection(false);
 		this.patternButton.addSelectionListener(new SelectionAdapter() {

@@ -93,7 +93,7 @@ public class GetResourceAnnotationOperation extends AbstractRepositoryOperation 
 	}
 	
 	protected String getShortErrorMessage(Throwable t) {
-		return MessageFormat.format(super.getShortErrorMessage(t), new String[] {this.operableData()[0].getUrl()});
+		return MessageFormat.format(super.getShortErrorMessage(t), new Object[] {this.operableData()[0].getUrl()});
 	}
 
 }

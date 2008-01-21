@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.ui.panel.reporting;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -84,8 +82,7 @@ public class ErrorCancelPanel extends AbstractDialogPanel {
     		this.dialogDescription = SVNTeamUIPlugin.instance().getResource(panelType == ErrorCancelPanel.ERROR_PANEL_TYPE ? "ErrorCancelPanel.Description.Failed.Empty" : "ErrorCancelPanel.Description.Cancelled.Empty");
     	}
     	else {
-    		this.dialogDescription = SVNTeamUIPlugin.instance().getResource(panelType == ErrorCancelPanel.ERROR_PANEL_TYPE ? "ErrorCancelPanel.Description.Failed" : "ErrorCancelPanel.Description.Cancelled");
-    		this.dialogDescription = MessageFormat.format(this.dialogDescription, new String[] {title});
+    		this.dialogDescription = SVNTeamUIPlugin.instance().getResource(panelType == ErrorCancelPanel.ERROR_PANEL_TYPE ? "ErrorCancelPanel.Description.Failed" : "ErrorCancelPanel.Description.Cancelled", new String[] {title});
     	}
 		if (sendMail) {
 			this.defaultMessage = SVNTeamUIPlugin.instance().getResource("ErrorCancelPanel.Message.Send");
@@ -96,8 +93,7 @@ public class ErrorCancelPanel extends AbstractDialogPanel {
 					this.defaultMessage = SVNTeamUIPlugin.instance().getResource("ErrorCancelPanel.Message.DontSend.Single");
 				}
 				else {
-					this.defaultMessage = SVNTeamUIPlugin.instance().getResource("ErrorCancelPanel.Message.DontSend.Multi");
-					this.defaultMessage = MessageFormat.format(this.defaultMessage, new String[] {String.valueOf(numberOfErrors)});
+					this.defaultMessage = SVNTeamUIPlugin.instance().getResource("ErrorCancelPanel.Message.DontSend.Multi", new String[] {String.valueOf(numberOfErrors)});
 				}
 			}
 			else {

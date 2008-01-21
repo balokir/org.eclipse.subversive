@@ -12,8 +12,6 @@
 
 package org.eclipse.team.svn.ui.wizard;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -254,14 +252,12 @@ public class ShareProjectWizard extends AbstractSVNWizard implements IConfigurat
 		mainOp.setSharePrompt(new IShareProjectPrompt() {
 			public boolean prompt(IProject []projects) {
 				String projectNames = FileUtility.getNamesListAsString(projects);
-				String message = SVNTeamUIPlugin.instance().getResource(projects.length == 1 ? "ShareProject.Confirmation.Description.Single" : "ShareProject.Confirmation.Description.Multiple");
+				String message = SVNTeamUIPlugin.instance().getResource(projects.length == 1 ? "ShareProject.Confirmation.Description.Single" : "ShareProject.Confirmation.Description.Multiple", new String[] {projectNames});
 				final int []result = new int[1];
 				final MessageDialog dialog = new MessageDialog(
 						ShareProjectWizard.this.getShell(),
 						SVNTeamUIPlugin.instance().getResource(projects.length == 1 ? "ShareProject.Confirmation.Title.Single" : "ShareProject.Confirmation.Title.Multiple"), 
-						null,
-						MessageFormat.format(message, new String[] {projectNames}),
-						MessageDialog.WARNING,
+						null, message, MessageDialog.WARNING,
 						new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL},
 						0);
 				ShareProjectWizard.this.getShell().getDisplay().syncExec(new Runnable() {

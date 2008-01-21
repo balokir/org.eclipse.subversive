@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.ui.verifier;
 
-import java.text.MessageFormat;
-
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 
@@ -28,8 +26,7 @@ public class ResourceNameVerifier extends AbstractFormattedVerifier {
     
     public ResourceNameVerifier(String fieldName, boolean allowMultipart) {
         super(fieldName);
-        ResourceNameVerifier.ERROR_MESSAGE = SVNTeamUIPlugin.instance().getResource("Verifier.ResourceName");
-        ResourceNameVerifier.ERROR_MESSAGE = MessageFormat.format(ResourceNameVerifier.ERROR_MESSAGE, new String[] {AbstractFormattedVerifier.FIELD_NAME});
+        ResourceNameVerifier.ERROR_MESSAGE = SVNTeamUIPlugin.instance().getResource("Verifier.ResourceName", new String[] {AbstractFormattedVerifier.FIELD_NAME});
         this.allowMultipart = allowMultipart;
     }
 

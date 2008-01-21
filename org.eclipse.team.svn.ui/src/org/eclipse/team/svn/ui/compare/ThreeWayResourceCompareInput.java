@@ -97,7 +97,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		
 		String message = SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.CheckingDelta");
 		for (int i = 0; i < allChanges.length; i++) {
-			monitor.subTask(MessageFormat.format(message, new String[] {allChanges[i]}));
+			monitor.subTask(MessageFormat.format(message, new Object[] {allChanges[i]}));
 			this.makeBranch(allChanges[i], localChanges.get(allChanges[i]), remoteChanges.get(allChanges[i]), path2node, monitor);
 			ProgressMonitorUtility.progress(monitor, i, allChanges.length);
 		}
@@ -289,8 +289,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 			if (revision == SVNRevision.INVALID_REVISION_NUMBER) {
 				return SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.ResourceIsNotAvailable");
 			}
-			String msg = SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.BaseSign");
-			return MessageFormat.format(msg, new String[] {String.valueOf(revision)});
+			return SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.BaseSign", new String[] {String.valueOf(revision)});
 		}
 
 		return super.getRevisionPart(element);

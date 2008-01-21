@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.core.operation.remote;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
@@ -61,8 +59,8 @@ public class CreateFileOperation extends AbstractRepositoryOperation implements 
 				if (info.revision != SVNRevision.INVALID_REVISION_NUMBER) {
 					String []path = new String[] {resource.getUrl()};
 					CreateFileOperation.this.revisionPair[0] = new RevisionPair(info.revision, path, location);
-					String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision");
-					CreateFileOperation.this.writeToConsole(IConsoleStream.LEVEL_OK, MessageFormat.format(message, new String[] {String.valueOf(info.revision)}));
+					String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision", new String[] {String.valueOf(info.revision)});
+					CreateFileOperation.this.writeToConsole(IConsoleStream.LEVEL_OK, message);
 				}
 			}
 		};

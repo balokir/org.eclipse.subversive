@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.core.operation.remote;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -58,8 +57,8 @@ public abstract class AbstractCopyMoveResourcesOperation extends AbstractReposit
 				public void notify(SVNNotification info) {
 					String []paths = AbstractCopyMoveResourcesOperation.this.getRevisionPaths(current.getUrl(), dstUrl + "/" + current.getName());
 					AbstractCopyMoveResourcesOperation.this.revisionsPairs.add(new RevisionPair(info.revision, paths, location));
-					String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision");
-					AbstractCopyMoveResourcesOperation.this.writeToConsole(IConsoleStream.LEVEL_OK, MessageFormat.format(message, new String[] {String.valueOf(info.revision)}));
+					String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision", new String[] {String.valueOf(info.revision)});
+					AbstractCopyMoveResourcesOperation.this.writeToConsole(IConsoleStream.LEVEL_OK, message);
 				}
 			};
 			SVNUtility.addSVNNotifyListener(proxy, notify);

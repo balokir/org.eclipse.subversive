@@ -38,7 +38,7 @@ public class PatternVerifier extends AbstractFormattedVerifier {
 		StringMatcher matcher = new StringMatcher(pattern, true, false);
 		for (int i = 0; i < this.resources.length; i++) {
 			if (!matcher.match(this.resources[i].getName())) {
-				return MessageFormat.format(PatternVerifier.message, new String[] {this.resources[i].getName()});
+				return MessageFormat.format(PatternVerifier.message, new Object[] {this.resources[i].getName()});
 			}				
 		}
 		return null;

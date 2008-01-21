@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.ui.synchronize.merge;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.svn.core.operation.local.MergeSet;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -46,8 +44,7 @@ public class MergeScope extends AbstractSynchronizeScope {
     		String path = this.info.to[i].getFullPath().toString();
     		names = names == null ? path : (names + ", " + path);
     	}
-    	String message = SVNTeamUIPlugin.instance().getResource("MergeScope.Name");
-        return MessageFormat.format(message, new String[] {url, names});
+        return SVNTeamUIPlugin.instance().getResource("MergeScope.Name", new String[] {url, names});
     }
 
     public IResource []getRoots() {

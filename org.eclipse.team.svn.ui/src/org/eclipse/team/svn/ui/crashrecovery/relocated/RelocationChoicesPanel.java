@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.ui.crashrecovery.relocated;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -42,7 +40,7 @@ public class RelocationChoicesPanel extends AbstractDialogPanel {
 	public RelocationChoicesPanel(IProject project) {
 		super();
 		this.dialogTitle = SVNTeamUIPlugin.instance().getResource("RelocationChoicesPanel.Title");
-		this.dialogDescription = MessageFormat.format(SVNTeamUIPlugin.instance().getResource("RelocationChoicesPanel.Description"), new String[] {project.getName()});
+		this.dialogDescription = SVNTeamUIPlugin.instance().getResource("RelocationChoicesPanel.Description", new String[] {project.getName()});
 		this.defaultMessage = SVNTeamUIPlugin.instance().getResource("RelocationChoicesPanel.Message");
 	}
 	

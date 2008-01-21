@@ -71,7 +71,7 @@ public class RepositoryRevision extends RepositoryFictiveNode implements IParent
 	}
 	
 	public String getLabel(Object o) {
-		return MessageFormat.format(RepositoryRevision.REVISION_NAME, new String[] {this.revision.toString()});
+		return MessageFormat.format(RepositoryRevision.REVISION_NAME, new Object[] {this.revision.toString()});
 	}
 
 	public Object[] getChildren(Object o) {

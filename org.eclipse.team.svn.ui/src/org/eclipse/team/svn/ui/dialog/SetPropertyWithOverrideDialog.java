@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.ui.dialog;
 
-import java.text.MessageFormat;
-
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -29,7 +27,7 @@ public class SetPropertyWithOverrideDialog extends MessageDialog {
 		super(parentShell,
 			SVNTeamUIPlugin.instance().getResource("SetPropertyWithOverrideDialog.Title"), 
 			null, 
-			MessageFormat.format(SVNTeamUIPlugin.instance().getResource("SetPropertyWithOverrideDialog.Message"), new String[] {existingName}),
+			SVNTeamUIPlugin.instance().getResource("SetPropertyWithOverrideDialog.Message", new String[] {existingName}),
 			MessageDialog.QUESTION, 
 			new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 
 			0);

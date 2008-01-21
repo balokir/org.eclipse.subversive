@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.ui.verifier;
 
-import java.text.MessageFormat;
-
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 
@@ -27,10 +25,8 @@ public class ProxyPortVerifier extends AbstractFormattedVerifier {
 
     public ProxyPortVerifier(String fieldName) {
         super(fieldName);
-        ProxyPortVerifier.ERROR_RANGE = SVNTeamUIPlugin.instance().getResource("Verifier.ProxyPort.Range");
-        ProxyPortVerifier.ERROR_RANGE = MessageFormat.format(ProxyPortVerifier.ERROR_RANGE, new String[] {AbstractFormattedVerifier.FIELD_NAME});
-        ProxyPortVerifier.ERROR_NAN = SVNTeamUIPlugin.instance().getResource("Verifier.ProxyPort.NaN");
-        ProxyPortVerifier.ERROR_NAN = MessageFormat.format(ProxyPortVerifier.ERROR_NAN, new String[] {AbstractFormattedVerifier.FIELD_NAME});
+        ProxyPortVerifier.ERROR_RANGE = SVNTeamUIPlugin.instance().getResource("Verifier.ProxyPort.Range", new String[] {AbstractFormattedVerifier.FIELD_NAME});
+        ProxyPortVerifier.ERROR_NAN = SVNTeamUIPlugin.instance().getResource("Verifier.ProxyPort.NaN", new String[] {AbstractFormattedVerifier.FIELD_NAME});
     }
 
     protected String getErrorMessageImpl(Control hostField) {

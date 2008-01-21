@@ -75,8 +75,8 @@ public class SVNChangeSetCollector extends SyncInfoSetChangeSetCollector {
 				}
 				String name = 
 					String.valueOf(resource.getRevision()) + " " + 
-					(set.date == null ? svnNoDate : MessageFormat.format(svnDate, new String[] {dateTimeFormat.format(set.date)})) + " " + 
-					(resource.getAuthor() == null ? svnNoAuthor : MessageFormat.format(svnAuthor, new String[] {resource.getAuthor()}));
+					(set.date == null ? svnNoDate : MessageFormat.format(svnDate, new Object[] {dateTimeFormat.format(set.date)})) + " " + 
+					(resource.getAuthor() == null ? svnNoAuthor : MessageFormat.format(svnAuthor, new Object[] {resource.getAuthor()}));
 				if (set.comment != null) {
 					name += " " + set.comment;
 				}

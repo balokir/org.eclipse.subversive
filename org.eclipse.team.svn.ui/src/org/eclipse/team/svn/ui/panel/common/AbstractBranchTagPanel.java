@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.ui.panel.common;
 
-import java.text.MessageFormat;
 import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
@@ -272,8 +271,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 				protected String getErrorMessage(Control input) {
 					String url = AbstractBranchTagPanel.this.root.getRepositoryLocation().getUrl();
 					if (!AbstractBranchTagPanel.this.destinationCombo.getText().startsWith(url)) {
-						String msg = SVNTeamUIPlugin.instance().getResource(AbstractBranchTagPanel.this.nationalizationId + ".Location.Verifier.DoesNotCorresponds");
-						return MessageFormat.format(msg, new String[] { AbstractBranchTagPanel.this.destinationCombo.getText(), url });
+						return SVNTeamUIPlugin.instance().getResource(AbstractBranchTagPanel.this.nationalizationId + ".Location.Verifier.DoesNotCorresponds", new String[] {AbstractBranchTagPanel.this.destinationCombo.getText(), url});
 					}
 					if (AbstractBranchTagPanel.this.startsWith) {
 						if (!AbstractBranchTagPanel.this.destinationCombo.getText().startsWith(AbstractBranchTagPanel.this.root.getUrl())) {
@@ -330,8 +328,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 				protected String getErrorMessage(Control input) {
 					String name = AbstractBranchTagPanel.this.destinationCombo.getText();
 					if (AbstractBranchTagPanel.this.existingNodesNamesSet != null && AbstractBranchTagPanel.this.existingNodesNamesSet.contains(name)) {
-						String msg = SVNTeamUIPlugin.instance().getResource(AbstractBranchTagPanel.this.nationalizationId + ".NodeName.Verifier.Error.Exists");
-						return MessageFormat.format(msg, new String[] { name });
+						return SVNTeamUIPlugin.instance().getResource(AbstractBranchTagPanel.this.nationalizationId + ".NodeName.Verifier.Error.Exists", new String[] {name});
 					}
 					return null;
 				}

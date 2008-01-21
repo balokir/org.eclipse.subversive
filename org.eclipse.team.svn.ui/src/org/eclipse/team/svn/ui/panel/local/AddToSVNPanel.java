@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.ui.panel.local;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -36,8 +34,7 @@ public class AddToSVNPanel extends AbstractResourceSelectionPanel {
         	this.defaultMessage = SVNTeamUIPlugin.instance().getResource("AddToSVNPanel.Message.Single");
         }
         else {
-        	this.defaultMessage = SVNTeamUIPlugin.instance().getResource("AddToSVNPanel.Message.Multi");
-        	this.defaultMessage = MessageFormat.format(this.defaultMessage, new String[] {String.valueOf(resources.length)});
+        	this.defaultMessage = SVNTeamUIPlugin.instance().getResource("AddToSVNPanel.Message.Multi", new String[] {String.valueOf(resources.length)});
         }
     }
     

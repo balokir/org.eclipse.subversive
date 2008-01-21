@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.ui.dialog;
 
-import java.text.MessageFormat;
 import java.util.HashSet;
 
 import org.eclipse.core.resources.IResource;
@@ -32,7 +31,7 @@ public class NotifyNodeKindChangedDialog extends MessageDialog {
 		super(parentShell, 
 			SVNTeamUIPlugin.instance().getResource("NotifyNodeKindChangedDialog.Title"), 
 			null, 
-			MessageFormat.format(SVNTeamUIPlugin.instance().getResource("NotifyNodeKindChangedDialog.Message"), new String[] {NotifyNodeKindChangedDialog.enumerateParents(resources)}),
+			SVNTeamUIPlugin.instance().getResource("NotifyNodeKindChangedDialog.Message", new String[] {NotifyNodeKindChangedDialog.enumerateParents(resources)}),
 			MessageDialog.WARNING, 
 			new String[] {IDialogConstants.OK_LABEL}, 
 			0);

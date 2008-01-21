@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.ui.history;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -99,7 +97,7 @@ public class RepositoryFileEditorInput extends PlatformObject implements IWorkbe
 	}
 
 	public String getName() {
-		return MessageFormat.format(SVNTeamUIPlugin.instance().getResource("RepositoryFileViewer.Name"), new String[] {this.resource.getRepositoryResource().getName(), String.valueOf(this.resource.getRepositoryResource().getSelectedRevision())});
+		return SVNTeamUIPlugin.instance().getResource("RepositoryFileViewer.Name", new String[] {this.resource.getRepositoryResource().getName(), String.valueOf(this.resource.getRepositoryResource().getSelectedRevision())});
 	}
 
 	public IPersistableElement getPersistable() {

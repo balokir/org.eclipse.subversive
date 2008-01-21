@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.ui.properties;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.layout.GridData;
@@ -121,8 +119,7 @@ public class PropertiesEditor extends EditorPart implements IResourceStatesListe
 	}
 	
 	protected String getPartTitle() {
-		String title = SVNTeamUIPlugin.instance().getResource("PropertiesEditor.PartTitle");
-		return MessageFormat.format(title, new String[] {this.input.getName()});
+		return SVNTeamUIPlugin.instance().getResource("PropertiesEditor.PartTitle", new String[] {this.input.getName()});
 	}
 
 } 

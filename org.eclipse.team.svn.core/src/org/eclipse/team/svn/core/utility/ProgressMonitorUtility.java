@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.core.utility;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -141,8 +139,8 @@ public final class ProgressMonitorUtility {
 	}
 
 	public static void setTaskInfo(IProgressMonitor monitor, IActionOperation op, String subTask) {
-		String message = SVNTeamPlugin.instance().getResource("Progress.SubTask");
-		monitor.subTask(MessageFormat.format(message, new String[] {op.getOperationName(), subTask == null || subTask.length() == 0 ? SVNTeamPlugin.instance().getResource("Progress.Running") : subTask}));
+		String message = SVNTeamPlugin.instance().getResource("Progress.SubTask", new String[] {op.getOperationName(), subTask == null || subTask.length() == 0 ? SVNTeamPlugin.instance().getResource("Progress.Running") : subTask});
+		monitor.subTask(message);
 	}
 
 	private ProgressMonitorUtility() {

@@ -66,7 +66,7 @@ public class ObtainProjectNameOperation extends AbstractActionOperation {
 			this.resources = this.resourceProvider.getRepositoryResources();
 		}
 		for (int i = 0; i < this.resources.length && !monitor.isCanceled(); i++) {
-			ProgressMonitorUtility.setTaskInfo(monitor, this, MessageFormat.format(this.getOperationResource("Scanning"), new String[] {this.resources[i].getName()}));
+			ProgressMonitorUtility.setTaskInfo(monitor, this, MessageFormat.format(this.getOperationResource("Scanning"), new Object[] {this.resources[i].getName()}));
 			
 			final int j = i;
 			this.protectStep(new IUnprotectedOperation() {

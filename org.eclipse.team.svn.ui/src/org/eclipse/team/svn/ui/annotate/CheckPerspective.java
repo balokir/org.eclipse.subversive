@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.ui.annotate;
 
-import java.text.MessageFormat;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.dialog.PromptOptionDialog;
@@ -45,7 +43,7 @@ public class CheckPerspective {
 	    		new PromptOptionDialog(
 	    				window.getShell(), 
 	    				SVNTeamUIPlugin.instance().getResource("CheckPerspective.ConfirmOpenPerspective.Title"),
-	    				MessageFormat.format(SVNTeamUIPlugin.instance().getResource("CheckPerspective.ConfirmOpenPerspective.Message"), new String[] {viewDescriptor.getLabel(), descriptor.getLabel(), descriptor.getDescription()}), 
+	    				SVNTeamUIPlugin.instance().getResource("CheckPerspective.ConfirmOpenPerspective.Message", new String[] {viewDescriptor.getLabel(), descriptor.getLabel(), descriptor.getDescription()}), 
 	    				SVNTeamUIPlugin.instance().getResource("CheckPerspective.ConfirmOpenPerspective.Remember"), 
 	    				new PromptOptionDialog.AbstractOptionManager() {
 							public void buttonPressed(IPreferenceStore store, int idx, boolean toggle) {

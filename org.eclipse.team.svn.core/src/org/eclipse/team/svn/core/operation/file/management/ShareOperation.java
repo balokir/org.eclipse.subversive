@@ -114,7 +114,7 @@ public class ShareOperation extends AbstractFileOperation {
 				}
 				default: {
 					String message = this.getNationalizedString("Error.UnknownProjectLayoutType");
-					throw new Exception(MessageFormat.format(message, new String[] {String.valueOf(this.shareLayout)}));
+					throw new Exception(MessageFormat.format(message, new Object[] {String.valueOf(this.shareLayout)}));
 				}
 			}
 			
@@ -137,8 +137,7 @@ public class ShareOperation extends AbstractFileOperation {
 	}
 
 	public static String getDefaultComment(File folder, IRepositoryResource remote) {
-		String message = SVNTeamPlugin.instance().getResource("Operation.ShareFile.DefaultComment");
-		return MessageFormat.format(message, new String[] {folder.getName(), remote.getUrl()});
+		return SVNTeamPlugin.instance().getResource("Operation.ShareFile.DefaultComment", new String[] {folder.getName(), remote.getUrl()});
 	}
 	
 	public String getTargetUrl(String projectName, boolean managementFoldersEnabled) {
@@ -159,7 +158,7 @@ public class ShareOperation extends AbstractFileOperation {
 			}
 			default: {
 				String message = this.getNationalizedString("Error.UnknownProjectLayoutType");
-				throw new RuntimeException(MessageFormat.format(message, new String[] {String.valueOf(this.shareLayout)}));
+				throw new RuntimeException(MessageFormat.format(message, new Object[] {String.valueOf(this.shareLayout)}));
 			}
 		}
 	}

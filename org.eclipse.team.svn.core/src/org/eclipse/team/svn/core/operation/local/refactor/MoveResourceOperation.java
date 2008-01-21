@@ -74,7 +74,7 @@ public class MoveResourceOperation extends AbstractActionOperation {
 	}
 	
 	protected String getShortErrorMessage(Throwable t) {
-		return MessageFormat.format(super.getShortErrorMessage(t), new String[] {this.source.getName(), this.destination.getParent().getFullPath().toString()});
+		return MessageFormat.format(super.getShortErrorMessage(t), new Object[] {this.source.getName(), this.destination.getParent().getFullPath().toString()});
 	}
 
 }

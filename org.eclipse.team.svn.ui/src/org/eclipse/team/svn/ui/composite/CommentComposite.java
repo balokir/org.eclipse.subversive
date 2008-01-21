@@ -12,7 +12,6 @@
 
 package org.eclipse.team.svn.ui.composite;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -171,10 +170,10 @@ public class CommentComposite extends Composite  {
 						String bugId = this.getText(input);
 						if (bugId.length() > 0 && !bugId.matches(logregex)) {
 							if (CommentComposite.this.bugtraqModel.isNumber()) {
-								return MessageFormat.format(SVNTeamUIPlugin.instance().getResource("CommentComposite.BugID.Verifier.Error.Number"), new String[] {CommentComposite.this.bugtraqModel.getLabel()});
+								return SVNTeamUIPlugin.instance().getResource("CommentComposite.BugID.Verifier.Error.Number", new String[] {CommentComposite.this.bugtraqModel.getLabel()});
 							}
 							else {
-								return MessageFormat.format(SVNTeamUIPlugin.instance().getResource("CommentComposite.BugID.Verifier.Error.Text"), new String[] {CommentComposite.this.bugtraqModel.getLabel(), CommentComposite.this.bugtraqModel.getLogregex()[0]});
+								return SVNTeamUIPlugin.instance().getResource("CommentComposite.BugID.Verifier.Error.Text", new String[] {CommentComposite.this.bugtraqModel.getLabel(), CommentComposite.this.bugtraqModel.getLogregex()[0]});
 							}
 						}
 					}

@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StreamTokenizer;
-import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -63,8 +62,7 @@ public class CreateFilePanel extends AbstractDialogPanel {
 		super();
 		this.dialogTitle = SVNTeamUIPlugin.instance().getResource("CreateFilePanel.Title");
 		this.dialogDescription = SVNTeamUIPlugin.instance().getResource("CreateFilePanel.Description");
-		this.defaultMessage = SVNTeamUIPlugin.instance().getResource("CreateFilePanel.Message");
-		this.defaultMessage = MessageFormat.format(this.defaultMessage, new String[] {importToUrl});
+		this.defaultMessage = SVNTeamUIPlugin.instance().getResource("CreateFilePanel.Message", new String[] {importToUrl});
     }
 	
 	public void createControlsImpl(Composite parent) {
@@ -206,10 +204,8 @@ public class CreateFilePanel extends AbstractDialogPanel {
 
 		public ExistingResourceMultiVerifier(String fieldName) {
 			super(fieldName, true);
-	    	this.ERROR_MESSAGE_DOES_NOT_EXIST_MULTIPLE = SVNTeamUIPlugin.instance().getResource("CreateFilePanel.FilePath.Verifier.Error.Exists");
-	    	this.ERROR_MESSAGE_DOES_NOT_EXIST_MULTIPLE = MessageFormat.format(this.ERROR_MESSAGE_DOES_NOT_EXIST_MULTIPLE, new String[] {AbstractFormattedVerifier.FIELD_NAME});
-	    	this.ERROR_MESSAGE_IS_NOT_A_FILE_MULTIPLE = SVNTeamUIPlugin.instance().getResource("CreateFilePanel.FilePath.Verifier.Error.NotAFile");
-	    	this.ERROR_MESSAGE_IS_NOT_A_FILE_MULTIPLE = MessageFormat.format(this.ERROR_MESSAGE_IS_NOT_A_FILE_MULTIPLE, new String[] {AbstractFormattedVerifier.FIELD_NAME});
+	    	this.ERROR_MESSAGE_DOES_NOT_EXIST_MULTIPLE = SVNTeamUIPlugin.instance().getResource("CreateFilePanel.FilePath.Verifier.Error.Exists", new String[] {AbstractFormattedVerifier.FIELD_NAME});
+	    	this.ERROR_MESSAGE_IS_NOT_A_FILE_MULTIPLE = SVNTeamUIPlugin.instance().getResource("CreateFilePanel.FilePath.Verifier.Error.NotAFile", new String[] {AbstractFormattedVerifier.FIELD_NAME});
 		}
     	
 		protected String getErrorMessageImpl(Control input) {

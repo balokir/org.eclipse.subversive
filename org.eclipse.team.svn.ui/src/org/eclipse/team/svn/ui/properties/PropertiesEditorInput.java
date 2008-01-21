@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.ui.properties;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -63,8 +61,7 @@ public class PropertiesEditorInput implements IEditorInput {
 			return local.getName() + (IStateFilter.SF_ADDED.accept(local) ? "" : (" " + local.getRevision()));
 		}
 		
-		String name = SVNTeamUIPlugin.instance().getResource("PropertiesEditor.Name");
-		return MessageFormat.format(name, new String[] {remoteResource.getName(), String.valueOf(remoteResource.getSelectedRevision())});
+		return SVNTeamUIPlugin.instance().getResource("PropertiesEditor.Name", new String[] {this.remoteResource.getName(), String.valueOf(remoteResource.getSelectedRevision())});
 	}
 	
 	public IPersistableElement getPersistable() {

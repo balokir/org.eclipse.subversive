@@ -12,7 +12,6 @@
 package org.eclipse.team.svn.core.svnstorage;
 
 import java.io.Serializable;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -509,11 +508,11 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
     	if (!rootPath.isPrefixOf(urlPath)) {
     		if (!allowsNull) {
         		if (!urlPath.isPrefixOf(rootPath)) {
-        			String message = SVNTeamPlugin.instance().getResource("Error.NotRelatedURL");
-        			throw new IllegalArgumentException(MessageFormat.format(message, new String[] {url, rootPath.toString()}));
+        			String message = SVNTeamPlugin.instance().getResource("Error.NotRelatedURL", new String[] {url, rootPath.toString()});
+        			throw new IllegalArgumentException(message);
         		}
-    			String message = SVNTeamPlugin.instance().getResource("Error.ShorterURL");
-        		throw new UnreportableException(MessageFormat.format(message, new String[] {url, rootPath.toString()}));
+    			String message = SVNTeamPlugin.instance().getResource("Error.ShorterURL", new String[] {url, rootPath.toString()});
+        		throw new UnreportableException(message);
     		}
     		return false;
     	}

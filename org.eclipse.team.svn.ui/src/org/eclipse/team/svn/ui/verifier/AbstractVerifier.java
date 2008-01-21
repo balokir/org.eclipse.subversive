@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.ui.verifier;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,8 +85,8 @@ public abstract class AbstractVerifier {
         else if (input instanceof Combo) {
             return ((Combo)input).getText();
         }
-        String message = SVNTeamUIPlugin.instance().getResource("Verifier.Abstract");
-        throw new RuntimeException(MessageFormat.format(message, new String[] {this.getClass().getName()}));
+        String message = SVNTeamUIPlugin.instance().getResource("Verifier.Abstract", new String[] {this.getClass().getName()});
+        throw new RuntimeException(message);
     }
     
 	protected void fireError(String errorReason) {

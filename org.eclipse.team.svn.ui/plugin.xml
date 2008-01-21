@@ -1567,8 +1567,6 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            adaptable="true"
-            objectClass="org.eclipse.core.resources.IResource"
             class="org.eclipse.team.svn.ui.info.LocalInfoPage"
             name="%LocalInfoPage.name"
             id="org.eclipse.team.svn.ui.info.LocalInfoPage">
@@ -1576,6 +1574,9 @@
                name="projectPersistentProperty"
                value="org.eclipse.team.core.repository=org.eclipse.team.svn.core.svnnature">
          </filter>
+         <enabledWhen>
+         	<adapt type="org.eclipse.core.resources.IResource"/>
+         </enabledWhen>
       </page>
    </extension>
 

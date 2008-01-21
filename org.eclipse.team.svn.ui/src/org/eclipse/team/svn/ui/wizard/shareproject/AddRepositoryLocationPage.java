@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.ui.wizard.shareproject;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -113,8 +111,7 @@ public class AddRepositoryLocationPage extends AbstractVerifiedWizardPage {
 		    protected String getErrorMessageImpl(Control input) {
 				String url = this.getText(input);
 				if (!new Path(url).isPrefixOf(new Path(SVNUtility.decodeURL(AddRepositoryLocationPage.this.initialUrl)))) {
-					String message = SVNTeamUIPlugin.instance().getResource("AddRepositoryLocationPage.FixedURL.Verifier.Error");
-					return MessageFormat.format(message, new String[] {AbstractFormattedVerifier.FIELD_NAME, AddRepositoryLocationPage.this.initialUrl});
+					return SVNTeamUIPlugin.instance().getResource("AddRepositoryLocationPage.FixedURL.Verifier.Error", new String[] {AbstractFormattedVerifier.FIELD_NAME, AddRepositoryLocationPage.this.initialUrl});
 				}
 				return null;
 			}

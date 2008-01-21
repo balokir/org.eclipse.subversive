@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.ui.panel.common;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -223,8 +222,8 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
     	
     	if (SVNTeamPreferences.getHistoryBoolean(store, SVNTeamPreferences.HISTORY_PAGING_ENABLE_NAME)) {
     		this.limit = SVNTeamPreferences.getHistoryInt(store, SVNTeamPreferences.HISTORY_PAGE_SIZE_NAME);
-    		String msg = SVNTeamUIPlugin.instance().getResource("SelectRevisionPanel.ShowNextX");
-    	    this.pagingItem.setToolTipText(MessageFormat.format(msg, new String[] {String.valueOf(this.limit)}));
+    		String msg = SVNTeamUIPlugin.instance().getResource("SelectRevisionPanel.ShowNextX", new String[] {String.valueOf(this.limit)});
+    	    this.pagingItem.setToolTipText(msg);
     	    this.pagingEnabled = true;
         }
         else {

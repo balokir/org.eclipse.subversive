@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.ui.crashrecovery;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -59,7 +57,7 @@ public class DiscardedLocationHelper implements IResolutionHelper {
 							UIMonitorUtility.getShell(), 
 							SVNTeamUIPlugin.instance().getResource("DiscardedLocationHelper.Dialog.Title"), 
 							null, 
-							MessageFormat.format(SVNTeamUIPlugin.instance().getResource("DiscardedLocationHelper.Dialog.Message"), new String[] {project.getName(), location.getLabel()}), 
+							SVNTeamUIPlugin.instance().getResource("DiscardedLocationHelper.Dialog.Message", new String[] {project.getName(), location.getLabel()}), 
 							MessageDialog.WARNING, 
 							new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 
 							0);

@@ -42,7 +42,7 @@ public abstract class RemoteResourceVariant extends ResourceVariant {
         }
     	String retVal = super.getContentIdentifier();
 	    if (!this.isNotOnRepository() || this.local.isCopied()) {
-	        retVal += " " + (this.local.getAuthor() == null ? RemoteResourceVariant.svnNoAuthor : MessageFormat.format(RemoteResourceVariant.svnAuthor, new String[] {this.local.getAuthor()}));
+	        retVal += " " + (this.local.getAuthor() == null ? RemoteResourceVariant.svnNoAuthor : MessageFormat.format(RemoteResourceVariant.svnAuthor, new Object[] {this.local.getAuthor()}));
 	    }
         return retVal;
     }

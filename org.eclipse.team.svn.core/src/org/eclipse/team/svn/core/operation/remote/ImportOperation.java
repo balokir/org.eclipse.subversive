@@ -60,8 +60,8 @@ public class ImportOperation extends AbstractRepositoryOperation implements IRev
 				if (info.revision != SVNRevision.INVALID_REVISION_NUMBER) {
 					String []path = new String[] {resource.getUrl()};
 					ImportOperation.this.revisionPair[0] = new RevisionPair(info.revision, path, location);
-					String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision");
-					ImportOperation.this.writeToConsole(IConsoleStream.LEVEL_OK, MessageFormat.format(message, new String[] {String.valueOf(info.revision)}));
+					String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision", new String[] {String.valueOf(info.revision)});
+					ImportOperation.this.writeToConsole(IConsoleStream.LEVEL_OK, message);
 				}
 			}
 		};
@@ -77,7 +77,7 @@ public class ImportOperation extends AbstractRepositoryOperation implements IRev
 	}
 	
 	protected String getShortErrorMessage(Throwable t) {
-		return MessageFormat.format(super.getShortErrorMessage(t), new String[] {this.operableData()[0].getUrl()});
+		return MessageFormat.format(super.getShortErrorMessage(t), new Object[] {this.operableData()[0].getUrl()});
 	}
 
 }

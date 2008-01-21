@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
-import java.text.MessageFormat;
 
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 
@@ -49,8 +48,8 @@ public class SVNURLStreamHandler extends URLStreamHandler {
             !protocol.equals("http") &&
             !protocol.equals("https") &&
             !protocol.equals("svn+ssh")) {
-    		String errMessage = SVNTeamPlugin.instance().getResource("Error.UnknownProtocol");
-            throw new RuntimeException(MessageFormat.format(errMessage, new String[] {protocol}));
+    		String errMessage = SVNTeamPlugin.instance().getResource("Error.UnknownProtocol", new String[] {protocol});
+            throw new RuntimeException(errMessage);
         }
     	this.url = u;
         super.parseURL(u, spec, start, limit);

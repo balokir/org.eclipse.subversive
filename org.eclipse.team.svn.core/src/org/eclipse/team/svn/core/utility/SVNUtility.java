@@ -18,7 +18,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -50,13 +49,13 @@ import org.eclipse.team.svn.core.connector.ISVNMergeStatusCallback;
 import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
 import org.eclipse.team.svn.core.connector.ISVNProgressMonitor;
 import org.eclipse.team.svn.core.connector.ISVNPropertyCallback;
+import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.connector.SVNDiffStatus;
 import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryInfo;
 import org.eclipse.team.svn.core.connector.SVNEntryReference;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
-import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNMergeStatus;
 import org.eclipse.team.svn.core.connector.SVNProperty;
@@ -772,8 +771,8 @@ public final class SVNUtility {
 		}
 		
 		if (oldInfo == null) {
-			String errMessage = SVNTeamPlugin.instance().getResource("Error.NonSVNPath");
-			throw new RuntimeException(MessageFormat.format(errMessage, new String[] {oldRoot.getAbsolutePath()}));
+			String errMessage = SVNTeamPlugin.instance().getResource("Error.NonSVNPath", new String[] {oldRoot.getAbsolutePath()});
+			throw new RuntimeException(errMessage);
 		}
 		return new Object[] {oldRoot, oldInfo};
 	}
@@ -872,8 +871,8 @@ public final class SVNUtility {
 		if (ignoreNone) {
 			return Kind.NONE;
 		}
-		String errMessage = SVNTeamPlugin.instance().getResource("Error.UnrecognizedNodeKind");
-		throw new RuntimeException(MessageFormat.format(errMessage, new String[] {String.valueOf(kind), path}));
+		String errMessage = SVNTeamPlugin.instance().getResource("Error.UnrecognizedNodeKind", new String[] {String.valueOf(kind), path});
+		throw new RuntimeException(errMessage);
 	}
 	
 	public static IRepositoryResource []shrinkChildNodes(IRepositoryResource []resources) {

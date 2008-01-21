@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.core.operation.remote;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -70,8 +69,8 @@ public class DeleteResourcesOperation extends AbstractRepositoryOperation implem
 			ISVNNotificationCallback notify = new ISVNNotificationCallback() {
 				public void notify(SVNNotification info) {
 					DeleteResourcesOperation.this.revisionsPairs.add(new RevisionPair(info.revision, paths, location));
-					String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision");
-					DeleteResourcesOperation.this.writeToConsole(IConsoleStream.LEVEL_OK, MessageFormat.format(message, new String[] {String.valueOf(info.revision)}));
+					String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision", new String[] {String.valueOf(info.revision)});
+					DeleteResourcesOperation.this.writeToConsole(IConsoleStream.LEVEL_OK, message);
 				}
 			};
 			SVNUtility.addSVNNotifyListener(proxy, notify);

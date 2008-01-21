@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.ui.history;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -293,7 +292,7 @@ public class HistoryViewImpl {
 					final Object []selection = tSelection.toArray();
 					String revision = HistoryViewImpl.this.wcResource != null ? String.valueOf(((SVNLogEntry)selection[0]).revision) : SVNTeamUIPlugin.instance().getResource("HistoryView.HEAD");
 					
-					String msg = MessageFormat.format(SVNTeamUIPlugin.instance().getResource("HistoryView.CompareCurrentWith"), new String[] {revision});
+					String msg = SVNTeamUIPlugin.instance().getResource("HistoryView.CompareCurrentWith", new String[] {revision});
 					manager.add(tAction = new Action(msg) {
 						public void run() {
 							HistoryViewImpl.this.compareWithCurrent(selection[0]);
@@ -364,10 +363,8 @@ public class HistoryViewImpl {
 				String tagFrom = SVNTeamUIPlugin.instance().getResource("HistoryView.TagFromRevision");
 				if (tSelection.size() == 1) {
 					String revision = String.valueOf(((SVNLogEntry)tSelection.getFirstElement()).revision);
-					branchFrom = SVNTeamUIPlugin.instance().getResource("HistoryView.BranchFrom");
-					tagFrom = SVNTeamUIPlugin.instance().getResource("HistoryView.TagFrom");
-					branchFrom = MessageFormat.format(branchFrom, new String[] {revision});
-					tagFrom = MessageFormat.format(tagFrom, new String[] {revision});
+					branchFrom = SVNTeamUIPlugin.instance().getResource("HistoryView.BranchFrom", new String[] {revision});
+					tagFrom = SVNTeamUIPlugin.instance().getResource("HistoryView.TagFrom", new String[] {revision});
 				}
 				manager.add(tAction = new Action(branchFrom) {
 					public void run() {
@@ -1068,7 +1065,7 @@ public class HistoryViewImpl {
 	    		HistoryViewImpl.this.showHistoryImpl(msgOp, false);
 	        }
 	    };
-	    String msg = this.limit > 0 ? MessageFormat.format(SVNTeamUIPlugin.instance().getResource("HistoryView.ShowNextX"), new String[] {String.valueOf(this.limit)}) : SVNTeamUIPlugin.instance().getResource("HistoryView.ShowNextPage");
+	    String msg = this.limit > 0 ? SVNTeamUIPlugin.instance().getResource("HistoryView.ShowNextX", new String[] {String.valueOf(this.limit)}) : SVNTeamUIPlugin.instance().getResource("HistoryView.ShowNextPage");
 	    this.getNextPageAction.setToolTipText(msg);
 	    this.getNextPageAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/paging.gif"));
 	    return this.getNextPageAction;
@@ -1217,12 +1214,10 @@ public class HistoryViewImpl {
 		    if (path.startsWith("/")) {
 		    	path = path.substring(1);
 		    }
-			String message = SVNTeamUIPlugin.instance().getResource("SVNView.ResourceSelected");
-			resourceName = MessageFormat.format(message, new String[] {viewDescription, path});
+			resourceName = SVNTeamUIPlugin.instance().getResource("SVNView.ResourceSelected", new String[] {viewDescription, path});
 		}
 		else if (this.repositoryResource != null) {
-			String message = SVNTeamUIPlugin.instance().getResource("SVNView.ResourceSelected");
-			resourceName = MessageFormat.format(message, new String[] {viewDescription, this.repositoryResource.getUrl()});
+			resourceName = SVNTeamUIPlugin.instance().getResource("SVNView.ResourceSelected", new String[] {viewDescription, this.repositoryResource.getUrl()});
 		}
 		else {
 			resourceName = SVNTeamUIPlugin.instance().getResource("SVNView.ResourceNotSelected");

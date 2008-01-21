@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.ui.dialog;
 
-import java.text.MessageFormat;
-
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -29,7 +27,7 @@ public class NonValidLocationErrorDialog extends MessageDialog {
 		super(parentShell, 
 			SVNTeamUIPlugin.instance().getResource("NonValidLocationErrorDialog.Title"), 
 			null, 
-			MessageFormat.format(SVNTeamUIPlugin.instance().getResource("NonValidLocationErrorDialog.Message"), new String[] {message == null ? "" : message + "\n\n"}),
+			SVNTeamUIPlugin.instance().getResource("NonValidLocationErrorDialog.Message", new String[] {message == null ? "" : message + "\n\n"}),
 			MessageDialog.QUESTION, 
 			new String[] {IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL}, 
 			0);

@@ -189,13 +189,13 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 			File []children = target.listFiles();
 			if (children != null && children.length > 0) {
 				String message = this.getNationalizedString("Error.LockedExternally");
-				throw new UnreportableException(MessageFormat.format(message, new String[] {children[0].getAbsolutePath()}));
+				throw new UnreportableException(MessageFormat.format(message, new Object[] {children[0].getAbsolutePath()}));
 			}
 		}
 	}
 	
 	protected String getShortErrorMessage(Throwable t) {
-		return MessageFormat.format(super.getShortErrorMessage(t), new String[] {this.resource.getUrl()});
+		return MessageFormat.format(super.getShortErrorMessage(t), new Object[] {this.resource.getUrl()});
 	}
 	
 }

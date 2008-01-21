@@ -56,8 +56,8 @@ public class RenameResourceOperation extends AbstractRepositoryOperation impleme
 			public void notify(SVNNotification info) {
 				String []path = new String[] {newUrl};
 				RenameResourceOperation.this.revisionPair[0] = new RevisionPair(info.revision, path, location);
-				String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision");
-				RenameResourceOperation.this.writeToConsole(IConsoleStream.LEVEL_OK, MessageFormat.format(message, new String[] {String.valueOf(info.revision)}));
+				String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision", new String[] {String.valueOf(info.revision)});
+				RenameResourceOperation.this.writeToConsole(IConsoleStream.LEVEL_OK, message);
 			}
 		};
 		try {
@@ -72,7 +72,7 @@ public class RenameResourceOperation extends AbstractRepositoryOperation impleme
 	}
 
 	protected String getShortErrorMessage(Throwable t) {
-		return MessageFormat.format(super.getShortErrorMessage(t), new String[] {this.operableData()[0].getName(), this.newName});
+		return MessageFormat.format(super.getShortErrorMessage(t), new Object[] {this.operableData()[0].getName(), this.newName});
 	}
 	
 }

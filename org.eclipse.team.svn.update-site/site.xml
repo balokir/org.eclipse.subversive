@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<site associateSitesURL="http://download.eclipse.org/technology/subversive/0.7/update-site/associates.xml">
+<site associateSitesURL="http://download.eclipse.org/technology/subversive/0.7/update-site/associates.xml" pack200="true">
    <description url="http://download.eclipse.org/technology/subversive/0.7/update-site/">
       Eclipse Subversive - SVN Team Provider
    </description>

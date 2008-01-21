@@ -13,7 +13,6 @@
 package org.eclipse.team.svn.core.svnstorage;
 
 import java.io.File;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,10 +43,10 @@ import org.eclipse.team.svn.core.IConnectedProjectInformation;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.SVNConnectorCancelException;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.connector.SVNEntry;
-import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
@@ -412,12 +411,12 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	protected IConnectedProjectInformation getConnectedProjectInformation(IProject project) {
 		RepositoryProvider provider = RepositoryProvider.getProvider(project);
 		if (provider == null) {
-			String errMessage = SVNTeamPlugin.instance().getResource("Error.NotConnectedProject");
-			throw new UnreportableException(MessageFormat.format(errMessage, new String[] {project.getName()}));
+			String errMessage = SVNTeamPlugin.instance().getResource("Error.NotConnectedProject", new String[] {project.getName()});
+			throw new UnreportableException(errMessage);
 		}
 		if (!(provider instanceof IConnectedProjectInformation)) {
-			String errMessage = SVNTeamPlugin.instance().getResource("Error.AnotherProvider");
-			throw new UnreportableException(MessageFormat.format(errMessage, new String[] {project.getName(), provider.getID()}));
+			String errMessage = SVNTeamPlugin.instance().getResource("Error.AnotherProvider", new String[] {project.getName(), provider.getID()});
+			throw new UnreportableException(errMessage);
 		}
 		
 		return (IConnectedProjectInformation)provider;

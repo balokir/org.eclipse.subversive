@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.ui.verifier;
 
-import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,10 +30,8 @@ public class PropertyNameVerifier extends AbstractFormattedVerifier {
         
     public PropertyNameVerifier(String fieldName) {
         super(fieldName);
-        PropertyNameVerifier.ERROR_MESSAGE_LETTER = SVNTeamUIPlugin.instance().getResource("Verifier.PropertyName.Letter");
-        PropertyNameVerifier.ERROR_MESSAGE_LETTER = MessageFormat.format(PropertyNameVerifier.ERROR_MESSAGE_LETTER, new String[] {AbstractFormattedVerifier.FIELD_NAME});
-        PropertyNameVerifier.ERROR_MESSAGE_SYMBOLS = SVNTeamUIPlugin.instance().getResource("Verifier.PropertyName.Symbols");
-        PropertyNameVerifier.ERROR_MESSAGE_SYMBOLS = MessageFormat.format(PropertyNameVerifier.ERROR_MESSAGE_SYMBOLS, new String[] {AbstractFormattedVerifier.FIELD_NAME});
+        PropertyNameVerifier.ERROR_MESSAGE_LETTER = SVNTeamUIPlugin.instance().getResource("Verifier.PropertyName.Letter", new String[] {AbstractFormattedVerifier.FIELD_NAME});
+        PropertyNameVerifier.ERROR_MESSAGE_SYMBOLS = SVNTeamUIPlugin.instance().getResource("Verifier.PropertyName.Symbols", new String[] {AbstractFormattedVerifier.FIELD_NAME});
         this.ignoreStrings = new HashSet<String>();
         this.ignoreStrings.add(SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.svn_description"));
         this.ignoreStrings.add(SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.tsvn_description"));
