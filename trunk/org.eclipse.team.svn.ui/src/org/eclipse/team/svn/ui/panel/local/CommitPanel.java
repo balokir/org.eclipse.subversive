@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -52,10 +53,12 @@ import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.local.AddToSVNIgnoreOperation;
+import org.eclipse.team.svn.core.operation.local.LockOperation;
 import org.eclipse.team.svn.core.operation.local.MarkAsMergedOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
+import org.eclipse.team.svn.core.operation.local.UnlockOperation;
 import org.eclipse.team.svn.core.operation.local.property.GetPropertiesOperation;
 import org.eclipse.team.svn.core.operation.local.refactor.DeleteResourceOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -68,10 +71,14 @@ import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.action.local.AddToSVNIgnoreAction;
+import org.eclipse.team.svn.ui.action.local.LockAction;
 import org.eclipse.team.svn.ui.action.local.RevertAction;
+import org.eclipse.team.svn.ui.action.local.UnlockAction;
 import org.eclipse.team.svn.ui.composite.CommentComposite;
 import org.eclipse.team.svn.ui.composite.ResourceSelectionComposite;
+import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.dialog.DiscardConfirmationDialog;
+import org.eclipse.team.svn.ui.dialog.UnlockResourcesDialog;
 import org.eclipse.team.svn.ui.event.IResourceSelectionChangeListener;
 import org.eclipse.team.svn.ui.event.ResourceSelectionChangedEvent;
 import org.eclipse.team.svn.ui.extension.factory.ICommentDialogPanel;
@@ -383,7 +390,6 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 					}
 				});
 				tAction.setEnabled(FileUtility.checkForResourcesPresenceRecursive(selectedResources, IStateFilter.SF_CONFLICTING));
-				
 				manager.add (tAction = new Action(SVNTeamUIPlugin.instance().getResource("MergeActionGroup.MarkAsMerged")) {
 					public void run() {
 						MarkAsMergedOperation mainOp = new MarkAsMergedOperation(selectedResources, false, null);
@@ -395,7 +401,56 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				});
 				tAction.setEnabled(FileUtility.checkForResourcesPresenceRecursive(selectedResources, IStateFilter.SF_CONFLICTING) && selectedResources.length == 1);
 				manager.add(new Separator());
+				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("LockAction.label")) {
+					public void run() {
+						boolean containsFolder = false;
+						for (int i = 0; i < selectedResources.length; i++) {
+							if (selectedResources[i] instanceof IContainer) {
+								containsFolder = true;
+								break;
+							}
+						}
+						CommitPanel.CollectPropertiesOperation cop = new CommitPanel.CollectPropertiesOperation(selectedResources);
+						ProgressMonitorUtility.doTaskExternal(cop, null);
+						LockPanel commentPanel = new LockPanel(!containsFolder, cop.getMinLockSize());
+						DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getShell(), commentPanel);
+						if (dialog.open() == 0) {
+						    IResource []resources = FileUtility.getResourcesRecursive(selectedResources, LockAction.SF_NONLOCKED, commentPanel.isRecursive() ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE); 
+						    LockOperation mainOp = new LockOperation(resources, commentPanel.getMessage(), commentPanel.getForce());
+						    CompositeOperation op = new CompositeOperation(mainOp.getId());
+							op.add(mainOp);
+							op.add(new RefreshResourcesOperation(resources));
+							UIMonitorUtility.doTaskNowDefault(op, false);
+						}
+					}
+				});
+				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/lock.gif"));
+				tAction.setEnabled(FileUtility.checkForResourcesPresenceRecursive(selectedResources, LockAction.SF_NONLOCKED));
 				
+				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("UnlockAction.label")) {
+					public void run() {
+						boolean recursive = false;
+						for (int i = 0; i < selectedResources.length; i++) {
+							if (selectedResources[i].getType() != IResource.FILE) {
+								recursive = true;
+								break;
+							}
+						}
+						UnlockResourcesDialog dialog = new UnlockResourcesDialog(UIMonitorUtility.getShell(), recursive);
+						if (dialog.open() == 0) {
+							IResource []resources = FileUtility.getResourcesRecursive(selectedResources, UnlockAction.SF_LOCKED, dialog.isRecursive() ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE);
+						    UnlockOperation mainOp = new UnlockOperation(resources);
+							CompositeOperation op = new CompositeOperation(mainOp.getId());
+							op.add(mainOp);
+							op.add(new RefreshResourcesOperation(resources));
+							UIMonitorUtility.doTaskNowDefault(op, false);
+						}
+					}
+				});
+				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/unlock.gif"));
+				tAction.setEnabled(FileUtility.checkForResourcesPresenceRecursive(selectedResources, UnlockAction.SF_LOCKED));
+				
+				manager.add(new Separator());
 				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("CommitPanel.Delete.Action")) {
 					public void run() {
 						DiscardConfirmationDialog dialog = new DiscardConfirmationDialog(UIMonitorUtility.getShell(), selectedResources.length == 1, DiscardConfirmationDialog.MSG_RESOURCE);

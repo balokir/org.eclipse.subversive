@@ -66,7 +66,7 @@ public class LockAction extends AbstractRecursiveTeamAction {
         return this.checkForResourcesPresenceRecursive(LockAction.SF_NONLOCKED);
     }
 
-    protected static IStateFilter SF_NONLOCKED = new IStateFilter.AbstractStateFilter() {
+    public static IStateFilter SF_NONLOCKED = new IStateFilter.AbstractStateFilter() {
         protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
             if (resource instanceof IFile && 
                 IStateFilter.SF_EXCLUDE_DELETED.accept(resource, state, mask)) {
