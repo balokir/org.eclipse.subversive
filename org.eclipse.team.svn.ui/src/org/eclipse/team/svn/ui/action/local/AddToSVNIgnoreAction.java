@@ -83,7 +83,7 @@ public class AddToSVNIgnoreAction extends AbstractNonRecursiveTeamAction {
 		return this.checkForResourcesPresence(AddToSVNIgnoreAction.SF_NEW_AND_PARENT_VERSIONED);
 	}
 	
-	protected static IStateFilter SF_NEW_AND_PARENT_VERSIONED = new IStateFilter.AbstractStateFilter() {
+	public static IStateFilter SF_NEW_AND_PARENT_VERSIONED = new IStateFilter.AbstractStateFilter() {
         protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
             if (state == IStateFilter.ST_NEW) {
             	IContainer parent = resource.getParent();

@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -50,12 +51,14 @@ import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
+import org.eclipse.team.svn.core.operation.local.AddToSVNIgnoreOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.property.GetPropertiesOperation;
 import org.eclipse.team.svn.core.operation.local.refactor.DeleteResourceOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
+import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.resource.events.IResourceStatesListener;
 import org.eclipse.team.svn.core.resource.events.ResourceStatesChangedEvent;
 import org.eclipse.team.svn.core.svnstorage.ResourcesParentsProvider;
@@ -63,6 +66,7 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.action.local.AddToSVNIgnoreAction;
 import org.eclipse.team.svn.ui.action.local.RevertAction;
 import org.eclipse.team.svn.ui.composite.CommentComposite;
 import org.eclipse.team.svn.ui.composite.ResourceSelectionComposite;
@@ -322,6 +326,56 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				});
 				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/revert.gif"));
 				tAction.setEnabled(tSelection.size() > 0);
+				
+				if (tSelection.size() > 0 && selectedResources.length == FileUtility.getResourcesRecursive(selectedResources, AddToSVNIgnoreAction.SF_NEW_AND_PARENT_VERSIONED).length) {				
+					MenuManager subMenu = new MenuManager(SVNTeamUIPlugin.instance().getResource("CommitPanel.Ignore.Group"));
+					if (tSelection.size() > 1) {
+						subMenu.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("CommitPanel.IgnoreByName.Multiple.Action")) {
+							public void run() {
+								CompositeOperation op = new CompositeOperation("AddToIgnore");
+								op.add(new AddToSVNIgnoreOperation(selectedResources, IRemoteStorage.IGNORE_NAME, null));
+								op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(CommitPanel.this.resources), IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
+								UIMonitorUtility.doTaskNowDefault(op, true);
+							}
+						});
+						tAction.setEnabled(true);
+						subMenu.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("CommitPanel.IgnoreByExtension.Multiple.Action")) {
+							public void run() {
+								CompositeOperation op = new CompositeOperation("AddToIgnore");
+								op.add(new AddToSVNIgnoreOperation(selectedResources, IRemoteStorage.IGNORE_EXTENSION, null));
+								op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(CommitPanel.this.resources), IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
+								UIMonitorUtility.doTaskNowDefault(op, true);							
+							}
+						});
+						tAction.setEnabled(true);
+					}
+					else {
+						subMenu.add(tAction = new Action(selectedResources[0].getName()) {
+							public void run() {
+								CompositeOperation op = new CompositeOperation("AddToIgnore");
+								op.add(new AddToSVNIgnoreOperation(selectedResources, IRemoteStorage.IGNORE_NAME, null));
+								op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(CommitPanel.this.resources), IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
+								UIMonitorUtility.doTaskNowDefault(op, true);							
+							}
+						});
+						tAction.setEnabled(true);
+						String name = selectedResources[0].getName();
+						String [] parts = name.split("\\.");
+						if ((parts.length != 0)) {
+							subMenu.add(tAction = new Action("*." + parts[parts.length-1]) {
+								public void run() {
+									CompositeOperation op = new CompositeOperation("AddToIgnore");
+									op.add(new AddToSVNIgnoreOperation(selectedResources, IRemoteStorage.IGNORE_EXTENSION, null));
+									op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(CommitPanel.this.resources), IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
+									UIMonitorUtility.doTaskNowDefault(op, true);
+								}
+							});
+							tAction.setEnabled(true);
+						}
+					}
+					manager.add(subMenu);
+				}
+				manager.add(new Separator());
 				
 				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("CommitPanel.Delete.Action")) {
 					public void run() {
