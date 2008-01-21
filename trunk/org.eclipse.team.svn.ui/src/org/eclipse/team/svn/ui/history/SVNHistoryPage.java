@@ -174,13 +174,7 @@ public class SVNHistoryPage extends HistoryPage implements IViewInfoProvider, IR
 	public static boolean isValidData(Object object) {
 		if (object instanceof IResource && FileUtility.isConnected((IResource)object)){
 			ILocalResource local = SVNRemoteStorage.instance().asLocalResource((IResource)object);
-			boolean flag = IStateFilter.SF_NOTONREPOSITORY.accept(local);
-			if (flag) {
-				return false;
-			}
-			else {
-				return true;
-			}
+			return !IStateFilter.SF_NOTONREPOSITORY.accept(local);
 		}
 		return 
 			object instanceof IRepositoryResource || 

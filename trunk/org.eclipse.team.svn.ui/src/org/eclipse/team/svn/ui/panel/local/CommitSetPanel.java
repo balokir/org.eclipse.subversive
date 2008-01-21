@@ -132,7 +132,7 @@ public class CommitSetPanel extends CommentPanel implements ICommentDialogPanel 
 		this.validateContent();
 		IResourceSelectionChangeListener []listeners = (IResourceSelectionChangeListener [])this.changeListenerList.toArray(new IResourceSelectionChangeListener[this.changeListenerList.size()]);
 		for (int i = 0; i < listeners.length; i++) {
-			((IResourceSelectionChangeListener)listeners[i]).resourcesSelectionChanged(event);
+			listeners[i].resourcesSelectionChanged(event);
 		}
 	}
         

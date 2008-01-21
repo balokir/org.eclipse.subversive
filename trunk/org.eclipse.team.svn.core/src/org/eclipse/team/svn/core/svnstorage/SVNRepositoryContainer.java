@@ -100,7 +100,7 @@ public class SVNRepositoryContainer extends SVNRepositoryResource implements IRe
 		SVNEntryRevisionReference reference = SVNUtility.getEntryRevisionReference(this);
 		SVNEntryInfo []infos = SVNUtility.info(proxy, reference, Depth.EMPTY, new SVNNullProgressMonitor());
 		if (infos != null && infos.length > 0 && infos[0].lastChangedRevision != SVNRevision.INVALID_REVISION_NUMBER) {
-			this.lastRevision = (SVNRevision.Number)SVNRevision.fromNumber(infos[0].lastChangedRevision);
+			this.lastRevision = SVNRevision.fromNumber(infos[0].lastChangedRevision);
 			SVNProperty []data = SVNUtility.properties(proxy, reference, new SVNNullProgressMonitor());
 			this.setInfo(new IRepositoryResource.Information(infos[0].lock, 0, infos[0].lastChangedAuthor, infos[0].lastChangedDate, data != null && data.length > 0));
 		}

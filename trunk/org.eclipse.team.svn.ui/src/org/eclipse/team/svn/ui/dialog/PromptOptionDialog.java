@@ -15,7 +15,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 
@@ -47,7 +46,7 @@ public class PromptOptionDialog extends MessageDialogWithToggle {
 	protected void buttonPressed(int buttonId) {
 		int idx = -1;
 		for (int i = 0; i < this.getButtonLabels().length; i++) {
-			int id = ((Integer)((Button)this.getButton(i)).getData()).intValue();
+			int id = ((Integer)(this.getButton(i)).getData()).intValue();
 			if (id == buttonId) {
 				idx = i;
 				break;

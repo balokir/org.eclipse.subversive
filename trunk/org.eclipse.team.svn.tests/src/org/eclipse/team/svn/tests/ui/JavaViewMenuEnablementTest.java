@@ -79,7 +79,7 @@ public class JavaViewMenuEnablementTest extends TestWorkflow {
     }
     
     public void testIgnoreAction() throws Exception {
-		IActionDelegate action = (IActionDelegate) new AddToSVNIgnoreAction();		
+		IActionDelegate action = new AddToSVNIgnoreAction();		
 		this.assertEnablement(action, this.getModifiedResources(), false);
 		this.assertEnablement(action, this.getVersionedResources(), false);
 		this.assertEnablement(action, this.getIgnoredResources(), false);
@@ -89,7 +89,7 @@ public class JavaViewMenuEnablementTest extends TestWorkflow {
     }
     
     public void testAddToSVNAction() throws Exception {
-		IActionDelegate action = (IActionDelegate) new AddToSVNAction();		
+		IActionDelegate action = new AddToSVNAction();		
 		this.assertEnablement(action, this.getModifiedResources(), false);
 		this.assertEnablement(action, this.getVersionedResources(), true);
 		this.assertEnablement(action, this.getNonversionedResources(), true);
@@ -100,7 +100,7 @@ public class JavaViewMenuEnablementTest extends TestWorkflow {
     }
     
     public void testBranchAction() throws Exception {
-		IActionDelegate action = (IActionDelegate) new BranchAction();		
+		IActionDelegate action = new BranchAction();		
 		this.assertEnablement(action, this.getOnRepositoryResources(), true);
 		this.assertEnablement(action, new IResource[] {this.getOnRepositoryResources()[0]}, true);		
 		this.assertEnablement(action, this.getVersionedResources(), true);
@@ -113,7 +113,7 @@ public class JavaViewMenuEnablementTest extends TestWorkflow {
     }  
     
     public void testCommitAction() throws Exception {
-		IActionDelegate action = (IActionDelegate) new CommitAction();		
+		IActionDelegate action = new CommitAction();		
 		this.assertEnablement(action, this.getChangedResources(), true);
 		this.assertEnablement(action, new IResource[] {this.getChangedResources()[0]}, true);
 		this.assertEnablement(action, this.getVersionedResources(), true);
@@ -123,7 +123,7 @@ public class JavaViewMenuEnablementTest extends TestWorkflow {
     }
     
     public void testCompareWithLatestRevisionAction() throws Exception {
-		IActionDelegate action = (IActionDelegate) new CompareWithLatestRevisionAction();		
+		IActionDelegate action = new CompareWithLatestRevisionAction();		
 		this.assertEnablement(action, this.getOnRepositoryResources(), false);
 		this.assertEnablement(action, new IResource[] {this.getOnRepositoryResources()[0]}, true);
 		this.assertEnablement(action, this.getVersionedResources(), false);
@@ -136,7 +136,7 @@ public class JavaViewMenuEnablementTest extends TestWorkflow {
     }
     
     public void testCompareWithRevisionAction() throws Exception {
-		IActionDelegate action = (IActionDelegate) new CompareWithRevisionAction();		
+		IActionDelegate action = new CompareWithRevisionAction();		
 		this.assertEnablement(action, this.getOnRepositoryResources(), false);
 		this.assertEnablement(action, new IResource[] {this.getOnRepositoryResources()[0]}, true);
 		this.assertEnablement(action, this.getVersionedResources(), false);
@@ -149,7 +149,7 @@ public class JavaViewMenuEnablementTest extends TestWorkflow {
     }
     
     public void testReplaceWithRevisionAction() throws Exception {
-		IActionDelegate action = (IActionDelegate) new ReplaceWithRevisionAction();		
+		IActionDelegate action = new ReplaceWithRevisionAction();		
 		this.assertEnablement(action, this.getOnRepositoryResources(), false);
 		this.assertEnablement(action, new IResource[] {this.getOnRepositoryResources()[0]}, true);
 		this.assertEnablement(action, this.getVersionedResources(), false);
@@ -162,7 +162,7 @@ public class JavaViewMenuEnablementTest extends TestWorkflow {
     }
     
     public void testCompareWithWorkingCopyAction() throws Exception {
-		IActionDelegate action = (IActionDelegate) new CompareWithWorkingCopyAction();		
+		IActionDelegate action = new CompareWithWorkingCopyAction();		
 		this.assertEnablement(action, this.getOnRepositoryResources(), false);
 		this.assertEnablement(action, new IResource[] {this.getOnRepositoryResources()[0]}, true);
 		this.assertEnablement(action, this.getVersionedResources(), false);
@@ -175,7 +175,7 @@ public class JavaViewMenuEnablementTest extends TestWorkflow {
     } 
     
     public void testEditPropertiesAction() throws Exception {
-        IActionDelegate action = (IActionDelegate) new EditPropertiesAction();
+        IActionDelegate action = new EditPropertiesAction();
         this.assertEnablement(action, this.getExcludePrereplacedResources(), false);
         this.assertEnablement(action, new IResource[] {this.getExcludePrereplacedResources()[0]}, true);
         this.assertEnablement(action, this.getVersionedResources(), false);
@@ -188,7 +188,7 @@ public class JavaViewMenuEnablementTest extends TestWorkflow {
     }
     
     public void testReplaceWithLatestRevisionAction() throws Exception {
-		IActionDelegate action = (IActionDelegate) new ReplaceWithLatestRevisionAction();		
+		IActionDelegate action = new ReplaceWithLatestRevisionAction();		
 		this.assertEnablement(action, this.getOnRepositoryResources(), true);
 		this.assertEnablement(action, new IResource[] {this.getOnRepositoryResources()[0]}, true);		
 		this.assertEnablement(action, this.getVersionedResources(), true);			
@@ -198,7 +198,7 @@ public class JavaViewMenuEnablementTest extends TestWorkflow {
     }
     
     public void testRevertAction() throws Exception {
-		IActionDelegate action = (IActionDelegate) new RevertAction();		
+		IActionDelegate action = new RevertAction();		
 		this.assertEnablement(action, this.getRevertableResources(), true);
 		this.assertEnablement(action, new IResource[] {this.getRevertableResources()[0]}, true);		
 		this.assertEnablement(action, this.getVersionedResources(), true);			
@@ -208,7 +208,7 @@ public class JavaViewMenuEnablementTest extends TestWorkflow {
     }
     
     public void testShowAnnotationAction() throws Exception {
-		IActionDelegate action = (IActionDelegate) new ShowAnnotationAction();		
+		IActionDelegate action = new ShowAnnotationAction();		
 		this.assertEnablement(action, this.getOnRepositoryResources(), false);
 		this.assertEnablement(action, new IResource[] {this.getOnRepositoryResources()[0]}, true);		
 		this.assertEnablement(action, this.getVersionedResources(), false);
@@ -221,7 +221,7 @@ public class JavaViewMenuEnablementTest extends TestWorkflow {
     }
     
     public void testShowResourceHistoryAction() throws Exception {
-		IActionDelegate action = (IActionDelegate) new ShowHistoryAction();		
+		IActionDelegate action = new ShowHistoryAction();		
 		this.assertEnablement(action, this.getOnRepositoryResources(), false);
 		this.assertEnablement(action, new IResource[] {this.getOnRepositoryResources()[0]}, true);		
 		this.assertEnablement(action, this.getVersionedResources(), false);
@@ -234,7 +234,7 @@ public class JavaViewMenuEnablementTest extends TestWorkflow {
     }    
     
     public void testSwitchAction() throws Exception {
-		IActionDelegate action = (IActionDelegate) new SwitchAction();		
+		IActionDelegate action = new SwitchAction();		
 		this.assertEnablement(action, this.getOnRepositoryResources(), false);
 		this.assertEnablement(action, new IResource[] {this.getOnRepositoryResources()[0]}, true);		
 		this.assertEnablement(action, this.getVersionedResources(), false);
@@ -247,7 +247,7 @@ public class JavaViewMenuEnablementTest extends TestWorkflow {
     }
     
     public void testSynchronizeAction() throws Exception {
-		IActionDelegate action = (IActionDelegate) new SynchronizeAction();		
+		IActionDelegate action = new SynchronizeAction();		
 		this.assertEnablement(action, this.getValidResources(), true);
 		this.assertEnablement(action, new IResource[] {this.getValidResources()[0]}, true);		
 		this.assertEnablement(action, this.getVersionedResources(), true);			
@@ -257,7 +257,7 @@ public class JavaViewMenuEnablementTest extends TestWorkflow {
     }
     
     public void testTagAction() throws Exception {
-		IActionDelegate action = (IActionDelegate) new TagAction();		
+		IActionDelegate action = new TagAction();		
 		this.assertEnablement(action, this.getOnRepositoryResources(), true);
 		this.assertEnablement(action, new IResource[] {this.getOnRepositoryResources()[0]}, true);		
 		this.assertEnablement(action, this.getVersionedResources(), true);
@@ -270,7 +270,7 @@ public class JavaViewMenuEnablementTest extends TestWorkflow {
     }
     
     public void testUpdateAction() throws Exception {
-		IActionDelegate action = (IActionDelegate) new UpdateAction();		
+		IActionDelegate action = new UpdateAction();		
 		this.assertEnablement(action, this.getOnRepositoryResources(), true);
 		this.assertEnablement(action, new IResource[] {this.getOnRepositoryResources()[0]}, true);		
 		this.assertEnablement(action, this.getVersionedResources(), true);

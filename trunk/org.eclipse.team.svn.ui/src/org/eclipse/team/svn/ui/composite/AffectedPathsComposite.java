@@ -586,7 +586,7 @@ public class AffectedPathsComposite extends Composite {
 			if (infoOp.getStatus().isOK()) {
 				SVNEntryInfo info = infoOp.getResourceInfo();
 				
-				IRepositoryLocation location = (IRepositoryLocation)AffectedPathsComposite.this.repositoryResource.getRepositoryLocation();
+				IRepositoryLocation location = AffectedPathsComposite.this.repositoryResource.getRepositoryLocation();
 				
 				if (info != null) {
 					if (info.kind == Kind.DIR && this.filesOnly) {
@@ -604,13 +604,12 @@ public class AffectedPathsComposite extends Composite {
 							}
 						});
 						return;					
-					} else {
-						this.repositoryResource = info.kind == Kind.FILE ?  
-								(IRepositoryResource)(location).asRepositoryFile(resourceUrl, false) : 
-								(location).asRepositoryContainer(resourceUrl, false);
-						this.repositoryResource.setSelectedRevision(SVNRevision.fromNumber(revision));
-						this.repositoryResource.setPegRevision(SVNRevision.fromNumber(revision));
-					}
+					} 
+					this.repositoryResource = info.kind == Kind.FILE ?  
+							(IRepositoryResource)location.asRepositoryFile(resourceUrl, false) : 
+							location.asRepositoryContainer(resourceUrl, false);
+					this.repositoryResource.setSelectedRevision(SVNRevision.fromNumber(revision));
+					this.repositoryResource.setPegRevision(SVNRevision.fromNumber(revision));
 				}
 			}
 		}

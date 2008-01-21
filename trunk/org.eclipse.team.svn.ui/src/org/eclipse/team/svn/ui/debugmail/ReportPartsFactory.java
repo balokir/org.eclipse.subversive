@@ -33,12 +33,10 @@ public class ReportPartsFactory {
 		if (!status.isMultiStatus()) {
 			return visitor.visit(status);
 		}
-		else {
-			IStatus []children = status.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				if (ReportPartsFactory.checkStatus(children[i], visitor)) {
-					return true;
-				}
+		IStatus []children = status.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			if (ReportPartsFactory.checkStatus(children[i], visitor)) {
+				return true;
 			}
 		}
 		return false;

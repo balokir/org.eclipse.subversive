@@ -205,9 +205,7 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 				}
     			return ErrorDescription.SUCCESS;
     		}
-    		else {
-    			return this.errorCode;
-    		}
+			return this.errorCode;
 		}
 	}
 

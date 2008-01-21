@@ -155,16 +155,14 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 			}
 			return new SVNFolderChange(resource, revision, statusStr, changeMask, changeState.getChangeAuthor(), changeState.getChangeDate(), null, changeState.getComment());
 		}
-		else {
-		    if ((resource = changeState.getExact(root.findFilesForLocation(location))) == null) {
-		    	return null;
-		    }
-		    int changeMask = this.getChangeMask(textKind, propKind, isCopied, isSwitched);
-		    if (IStateFilter.SF_NOTEXISTS.accept(resource, statusStr, changeMask)) {
-				revision = SVNRevision.INVALID_REVISION_NUMBER;
-			}			    
-			return new SVNFileChange(resource, revision, statusStr, changeMask, changeState.getChangeAuthor(), changeState.getChangeDate(), null, changeState.getComment());
-		}
+	    if ((resource = changeState.getExact(root.findFilesForLocation(location))) == null) {
+	    	return null;
+	    }
+	    int changeMask = this.getChangeMask(textKind, propKind, isCopied, isSwitched);
+	    if (IStateFilter.SF_NOTEXISTS.accept(resource, statusStr, changeMask)) {
+			revision = SVNRevision.INVALID_REVISION_NUMBER;
+		}			    
+		return new SVNFileChange(resource, revision, statusStr, changeMask, changeState.getChangeAuthor(), changeState.getChangeDate(), null, changeState.getComment());
 	}
 	
 	public byte []resourceChangeAsBytes(IResourceChange resource) {
@@ -439,7 +437,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		for (Iterator it = this.localResources.values().iterator(); it.hasNext(); ) {
 			ILocalResource local = (ILocalResource)it.next();
 		    IResource current = local.getResource();
-		    IPath currentPath = (IPath)current.getFullPath();
+		    IPath currentPath = current.getFullPath();
 	        if (resource.getFullPath().isPrefixOf(currentPath) || IStateFilter.SF_NOTEXISTS.accept(local)) {
 	            int cachedSegmentsCount = currentPath.segmentCount();
 	            int matchingSegmentsCount = resource.getFullPath().matchingFirstSegments(currentPath);

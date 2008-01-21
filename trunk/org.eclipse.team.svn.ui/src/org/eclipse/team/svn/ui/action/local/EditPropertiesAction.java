@@ -57,7 +57,7 @@ public class EditPropertiesAction extends AbstractWorkingCopyAction {
 		else {
 			ShowPropertiesOperation op = new ShowPropertiesOperation(page, resources[0], provider);
 			CompositeOperation composite = new CompositeOperation(op.getId());
-			composite.add((IActionOperation)provider);
+			composite.add(provider);
 			composite.add(op, new IActionOperation[] {provider});
 			if (usePropertiesView || !op.isEditorOpened()) {
 				this.runScheduled(composite);

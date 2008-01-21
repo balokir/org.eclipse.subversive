@@ -150,29 +150,27 @@ public class ListSelectionPanel extends AbstractDialogPanel {
 		if (!this.multipleColumns) {
 			return CheckboxTableViewer.newCheckList(parent, SWT.BORDER);
 		}
-		else {
-			Table table = new Table(parent, SWT.CHECK | SWT.BORDER);
-			table.setLinesVisible(true);
-			GridData data = new GridData(GridData.FILL_BOTH);
-			table.setLayoutData(data);
+		Table table = new Table(parent, SWT.CHECK | SWT.BORDER);
+		table.setLinesVisible(true);
+		GridData data = new GridData(GridData.FILL_BOTH);
+		table.setLayoutData(data);
+	
+		TableLayout layout = new TableLayout();
+		table.setLayout(layout);
 		
-			TableLayout layout = new TableLayout();
-			table.setLayout(layout);
-			
-			// resource name
-			TableColumn col = new TableColumn(table, SWT.NONE);
-			col.setResizable(true);
-			col.setText(SVNTeamUIPlugin.instance().getResource("ListSelectionPanel.Resource"));
-			layout.addColumnData(new ColumnWeightData(60, true));
+		// resource name
+		TableColumn col = new TableColumn(table, SWT.NONE);
+		col.setResizable(true);
+		col.setText(SVNTeamUIPlugin.instance().getResource("ListSelectionPanel.Resource"));
+		layout.addColumnData(new ColumnWeightData(60, true));
+	
+		// local presentation
+		col = new TableColumn(table, SWT.NONE);
+		col.setResizable(true);
+		col.setText(SVNTeamUIPlugin.instance().getResource("ListSelectionPanel.LocalPresentation"));
+		layout.addColumnData(new ColumnWeightData(40, true));
 		
-			// local presentation
-			col = new TableColumn(table, SWT.NONE);
-			col.setResizable(true);
-			col.setText(SVNTeamUIPlugin.instance().getResource("ListSelectionPanel.LocalPresentation"));
-			layout.addColumnData(new ColumnWeightData(40, true));
-			
-			return new CheckboxTableViewer(table); 
-		}
+		return new CheckboxTableViewer(table); 
 	}
 	
 	protected void saveChangesImpl() {

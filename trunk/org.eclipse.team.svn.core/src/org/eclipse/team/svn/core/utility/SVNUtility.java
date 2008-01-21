@@ -643,9 +643,7 @@ public final class SVNUtility {
 				SVNUtility.reorder(st, true);
 				return st[0].url == null ? null : st[0];
 			}
-			else {
-				return null;
-			}
+			return null;
 		}
 		catch (Exception ex) {
 			return null;
@@ -1019,7 +1017,7 @@ public final class SVNUtility {
 		for (Iterator it = locationUtility2Resources.entrySet().iterator(); it.hasNext(); ) {
 			Map.Entry entry = (Map.Entry)it.next();
 			RepositoryLocationUtility locationUtility = (RepositoryLocationUtility)entry.getKey();
-			repository2Resources.put(locationUtility.location, (List)entry.getValue());
+			repository2Resources.put(locationUtility.location, entry.getValue());
 		}	
 	    return repository2Resources;
 	}
@@ -1049,9 +1047,7 @@ public final class SVNUtility {
 			if (startsCnt == resources.length) {
 				break;
 			}
-			else {
-				base = base.getParent();
-			}
+			base = base.getParent();
 		}
 		return base;
 	}

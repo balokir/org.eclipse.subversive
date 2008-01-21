@@ -281,9 +281,7 @@ public abstract class AbstractResourceDecorator extends LabelProvider implements
 							String shortURL = SVNUtility.decodeURL(remote.getUrl()).substring(remote.getRepositoryLocation().getRepositoryRootUrl().length());
 							return shortURL.startsWith("/") ? shortURL.substring(1) : shortURL;
 						}
-						else {
-							return "";
-						}
+						return "";
 					}
 					else if (var.equals(TextVariableSetProvider.VAR_LOCATION_URL)) {
 						return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask) ? remote.getRepositoryLocation().getUrlAsIs() : "";

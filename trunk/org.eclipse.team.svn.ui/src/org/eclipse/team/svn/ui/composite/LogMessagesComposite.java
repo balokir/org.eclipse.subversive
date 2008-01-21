@@ -152,7 +152,7 @@ public class LogMessagesComposite extends SashForm {
 			}
 		}
 		if (newSelection != null) {
-			this.historyTable.setSelection(new StructuredSelection((Object)newSelection), true);
+			this.historyTable.setSelection(new StructuredSelection(newSelection), true);
 		}
 		else {
 			this.historyTable.setSelection(new StructuredSelection());

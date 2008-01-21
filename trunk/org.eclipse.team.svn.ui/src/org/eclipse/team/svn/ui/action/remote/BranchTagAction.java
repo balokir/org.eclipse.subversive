@@ -84,15 +84,13 @@ public class BranchTagAction extends AbstractRepositoryTeamAction {
 			if (parent instanceof IRepositoryRoot && ((IRepositoryRoot)parent).getKind() == IRepositoryRoot.KIND_TRUNK) {
 				return !BranchTagAction.isSingleProjectLayout((IRepositoryRoot)parent);
 			}
-			else {
-				IRepositoryResource []children = BranchTagAction.getRemoteChildren((IRepositoryContainer)resources[0]);
-				if (children != null) {
-					for (int i = 0; i < children.length; i++) {
-						if (children[i] instanceof IRepositoryRoot && 
-							((IRepositoryRoot)children[i]).getKind() == IRepositoryRoot.KIND_TRUNK) {
-							resources[0] = (IRepositoryRoot)children[i];
-							break;
-						}
+			IRepositoryResource []children = BranchTagAction.getRemoteChildren((IRepositoryContainer)resources[0]);
+			if (children != null) {
+				for (int i = 0; i < children.length; i++) {
+					if (children[i] instanceof IRepositoryRoot && 
+						((IRepositoryRoot)children[i]).getKind() == IRepositoryRoot.KIND_TRUNK) {
+						resources[0] = children[i];
+						break;
 					}
 				}
 			}

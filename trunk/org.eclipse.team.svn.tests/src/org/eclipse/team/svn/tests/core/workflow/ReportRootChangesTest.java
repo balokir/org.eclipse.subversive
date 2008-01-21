@@ -56,13 +56,11 @@ public class ReportRootChangesTest extends TestWorkflow {
                 		int counter = 0;
                 		for (int i = 0; i < statuses.length; i++) {
                 		    if (statuses[i].path.equals(getSecondProject().getLocation().toString()) && 
-                		            statuses[i].repositoryTextStatus == SVNEntryStatus.Kind.DELETED) {           		        
+               		            statuses[i].repositoryTextStatus == SVNEntryStatus.Kind.DELETED) {           		        
                 		        counter = -1;
                 		        break;          		        
                 		    }
-                		    else {
-                		        counter++;
-                		    }                		    
+            		        counter++;
                 		}
                 		if (counter == statuses.length) {
                 		    assertTrue("ReportRootChangesTest", false);

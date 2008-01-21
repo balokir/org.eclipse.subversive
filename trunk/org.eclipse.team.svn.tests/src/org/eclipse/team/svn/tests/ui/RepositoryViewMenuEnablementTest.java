@@ -88,7 +88,7 @@ public class RepositoryViewMenuEnablementTest extends TestWorkflow {
                 RemoteResourceTransferrable.OP_COPY,
                 TestPlugin.instance().getWorkbench().getDisplay()
         ).run(new NullProgressMonitor());
-        IActionDelegate action = (IActionDelegate) new PasteAction();
+        IActionDelegate action = new PasteAction();
         this.assertEnablement(action, this.getAllRepositoryResources(), false);
         this.assertEnablement(action, this.getOneRepositoryContainer(), true);
         this.assertEnablement(action, this.getNotHeadRevisionFiles(), false);
@@ -96,25 +96,25 @@ public class RepositoryViewMenuEnablementTest extends TestWorkflow {
     }
     
     public void testBranchRemoteAction() {
-        IActionDelegate action = (IActionDelegate) new BranchAction();
+        IActionDelegate action = new BranchAction();
         this.assertEnablement(action, this.getAllRepositoryResources(), true);
         this.assertEnablement(action, new RepositoryResource[] {this.getAllRepositoryResources()[0]}, true);        
     }
     
     public void testTagRemoteAction() {
-        IActionDelegate action = (IActionDelegate) new TagAction();
+        IActionDelegate action = new TagAction();
         this.assertEnablement(action, this.getAllRepositoryResources(), true);
         this.assertEnablement(action, new RepositoryResource[] {this.getAllRepositoryResources()[0]}, true);        
     }
     
     public void testCleanupAction() {
-        IActionDelegate action = (IActionDelegate) new CleanupAction();
+        IActionDelegate action = new CleanupAction();
         this.assertEnablement(action, this.getSelectedProjects(), true);
         this.assertEnablement(action, new IResource[] {this.getSelectedProjects()[0]}, true);        
     }
     
     public void testCompareTwoRepositoryResourcesAction() {
-        IActionDelegate action = (IActionDelegate) new CompareAction();
+        IActionDelegate action = new CompareAction();
         this.assertEnablement(action, new IResource[] {this.getSelectedProjects()[0]}, false);
         this.assertEnablement(action, this.getOneRepositoryContainer(), true);
         this.assertEnablement(action, this.getOneRepositoryFile(), true);
@@ -122,27 +122,27 @@ public class RepositoryViewMenuEnablementTest extends TestWorkflow {
     }
     
     public void testCopyRemoteResourceAction() {
-        IActionDelegate action = (IActionDelegate) new CopyAction();
+        IActionDelegate action = new CopyAction();
         this.assertEnablement(action, this.getTwoRepositoryContainers(), true);
         this.assertEnablement(action, this.getAllRepositoryResources(), true);
         this.assertEnablement(action, new RepositoryResource[] {this.getAllRepositoryResources()[0]}, true);
     }
     
     public void testCreateProjectStructureAction() {
-        IActionDelegate action = (IActionDelegate) new CreateProjectStructureAction();
+        IActionDelegate action = new CreateProjectStructureAction();
         this.assertEnablement(action, this.getOneRepositoryContainer(), true);
         this.assertEnablement(action, this.getRepositoryLocation(), true);
     }
     
     public void testCreateRemoteFolderAction() {
-        IActionDelegate action = (IActionDelegate) new CreateFolderAction();
+        IActionDelegate action = new CreateFolderAction();
         this.assertEnablement(action, this.getTwoRepositoryContainers(), false);
         this.assertEnablement(action, new RepositoryResource[] {this.getTwoRepositoryContainers()[0]}, true);
         this.assertEnablement(action, new RepositoryResource[] {this.getNotHeadRevisionFiles()[0]}, false);        
     }
     
     public void testCutRemoteResourceAction() {
-        IActionDelegate action = (IActionDelegate) new CutAction();
+        IActionDelegate action = new CutAction();
         this.assertEnablement(action, this.getTwoRepositoryContainers(), true);
         this.assertEnablement(action, this.getAllRepositoryResources(), true);
         this.assertEnablement(action, this.getNotHeadRevisionFiles(), false);
@@ -152,7 +152,7 @@ public class RepositoryViewMenuEnablementTest extends TestWorkflow {
     }
     
     public void testDeleteRemoteResourceAction() {
-        IActionDelegate action = (IActionDelegate) new DeleteAction();
+        IActionDelegate action = new DeleteAction();
         this.assertEnablement(action, this.getTwoRepositoryContainers(), true);
         this.assertEnablement(action, this.getAllRepositoryResources(), true);
         this.assertEnablement(action, new RepositoryResource[] {this.getNotHeadRevisionFiles()[0]}, false);
@@ -162,14 +162,14 @@ public class RepositoryViewMenuEnablementTest extends TestWorkflow {
     }
     
     public void testEditRepositoryLocationPropertiesAction() {
-        IActionDelegate action = (IActionDelegate) new EditRepositoryLocationPropertiesAction();
+        IActionDelegate action = new EditRepositoryLocationPropertiesAction();
         this.assertEnablement(action, this.getTwoRepositoryContainers(), false);
         this.assertEnablement(action, this.getRepositoryLocation(), true);
         this.assertEnablement(action, new RepositoryResource[] {this.getAllRepositoryResources()[0]}, false);
     }
     
     public void testRefreshRemoteAction() {
-        IActionDelegate action = (IActionDelegate) new RefreshAction();
+        IActionDelegate action = new RefreshAction();
         this.assertEnablement(action, this.getTwoRepositoryContainers(), true);
         this.assertEnablement(action, this.getNotHeadRevisionFiles(), true);
         this.assertEnablement(action, this.getRepositoryLocation(), true);
@@ -177,7 +177,7 @@ public class RepositoryViewMenuEnablementTest extends TestWorkflow {
     }
     
     public void testRenameRemoteResourceAction() {
-        IActionDelegate action = (IActionDelegate) new RenameAction();
+        IActionDelegate action = new RenameAction();
         this.assertEnablement(action, this.getTwoRepositoryContainers(), false);
         this.assertEnablement(action, this.getAllRepositoryResources(), false);
         this.assertEnablement(action, new RepositoryResource[] {this.getNotHeadRevisionFiles()[0]}, false);
@@ -187,13 +187,13 @@ public class RepositoryViewMenuEnablementTest extends TestWorkflow {
     }
     
     public void testShowRemoteAnnotationAction() {
-        IActionDelegate action = (IActionDelegate) new ShowAnnotationAction();
+        IActionDelegate action = new ShowAnnotationAction();
         this.assertEnablement(action, this.getAllRepositoryResources(), false);
         this.assertEnablement(action, new RepositoryResource[] {this.getAllRepositoryResources()[0]}, true);        
     }
 
     public void testShowRemoteResourceHistoryAction() {
-        IActionDelegate action = (IActionDelegate) new ShowHistoryAction();
+        IActionDelegate action = new ShowHistoryAction();
         this.assertEnablement(action, this.getAllRepositoryResources(), false);
         this.assertEnablement(action, new RepositoryResource[] {this.getAllRepositoryResources()[0]}, true);        
     } 

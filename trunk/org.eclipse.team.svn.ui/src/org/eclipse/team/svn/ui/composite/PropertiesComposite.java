@@ -189,9 +189,7 @@ public class PropertiesComposite extends Composite {
 							TableViewerSorter.compare(data1.name, data2.name) :
 							TableViewerSorter.compare(data1.value, data2.value);
 					}
-					else {
-						return 0;
-					}
+					return 0;
 				}
 			});
 		this.propertyViewer.setSorter(sorter);
@@ -241,10 +239,7 @@ public class PropertiesComposite extends Composite {
 				if (columnIndex == 0) {
 					return data.name;
 				}
-				else {
-					String value = data.value;
-					return FileUtility.formatMultilineText(value);
-				}
+				return FileUtility.formatMultilineText(data.value);
 			}
 			public void addListener(ILabelProviderListener listener) {
 			}

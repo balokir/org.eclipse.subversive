@@ -390,7 +390,7 @@ public class ResourceSelectionComposite extends Composite {
 				ResourceSelectionComposite.this.tableViewer.setAllChecked(true);
 				Object []elements = ResourceSelectionComposite.this.tableViewer.getCheckedElements();
 				ResourceSelectionComposite.this.selectionListener.selectionChanged(null);
-				ResourceSelectionComposite.this.fireResourcesSelectionChanged(new ResourceSelectionChangedEvent((IResource [])Arrays.asList(elements).toArray(new IResource[elements.length])));
+				ResourceSelectionComposite.this.fireResourcesSelectionChanged(new ResourceSelectionChangedEvent(Arrays.asList(elements).toArray(new IResource[elements.length])));
 			}
 		};
 		selectButton.addSelectionListener(listener);
@@ -487,7 +487,7 @@ public class ResourceSelectionComposite extends Composite {
 				}
 			}
 			elements = this.tableViewer.getCheckedElements();
-			this.fireResourcesSelectionChanged(new ResourceSelectionChangedEvent((IResource [])Arrays.asList(elements).toArray(new IResource[elements.length])));
+			this.fireResourcesSelectionChanged(new ResourceSelectionChangedEvent(Arrays.asList(elements).toArray(new IResource[elements.length])));
 			this.selectionListener.selectionChanged(null);
 		}
 	}

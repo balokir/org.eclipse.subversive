@@ -98,7 +98,7 @@ public class CommitActionUtility {
 			}
 		}
 		
-		CommitOperation mainOp = new CommitOperation(selectedResources, message, allowsRecursiveAdd && notSelectedNew.length == notSelectedResources.length, keepLocks);
+		CommitOperation mainOp = new CommitOperation(notSelectedResources.length == 0 ? this.selector.getSelectedResources() : selectedResources, message, allowsRecursiveAdd && notSelectedNew.length == notSelectedResources.length, keepLocks);
 		
 		CompositeOperation op = new CompositeOperation(mainOp.getId());
 		

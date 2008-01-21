@@ -45,7 +45,7 @@ public abstract class AbstractLocalTeamAction extends AbstractSVNTeamAction {
 		HashSet newSel = new HashSet(Arrays.asList(this.getSelectedResources()));
 		AbstractLocalTeamAction.selection = oldSelection;
 		if (!newSel.equals(oldSel)) {
-			AbstractLocalTeamAction.selection = (IStructuredSelection)selection;
+			AbstractLocalTeamAction.selection = selection;
 			FilterManager.instance().clear();
 		}
 	}

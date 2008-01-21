@@ -117,7 +117,7 @@ public class SVNTeamPasswordManagementPreferencesPage extends AbstractSVNTeamPre
 							repositories.add(locations[i]);
 					}
 				}
-				return (SVNRepositoryLocation[])repositories.toArray(new SVNRepositoryLocation[repositories.size()]);
+				return repositories.toArray(new SVNRepositoryLocation[repositories.size()]);
 			}
 		});
 		TableLayout tLayout = new TableLayout();
@@ -166,7 +166,7 @@ public class SVNTeamPasswordManagementPreferencesPage extends AbstractSVNTeamPre
 	protected void remove() {
 		IStructuredSelection selection = (IStructuredSelection)this.viewer.getSelection();
 		for (Iterator it = selection.iterator(); it.hasNext();) {
-			this.forRemove.add((IRepositoryLocation)it.next());
+			this.forRemove.add(it.next());
 		}
 		this.viewer.refresh();
 		this.handleSelection();
