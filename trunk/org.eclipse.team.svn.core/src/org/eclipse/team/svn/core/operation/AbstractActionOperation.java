@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.core.operation;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -185,11 +183,11 @@ public abstract class AbstractActionOperation implements IActionOperation {
 	}
 	
 	private void updateStatusMessage() {
-		String errMessage = SVNTeamPlugin.instance().getResource("Operation.Error.LogHeader");
 		String key = this.nameId + ".Id";
 		String prefix = this.getNationalizedString(key);
 		prefix = prefix.equals(key) ? "" : (prefix + ": ");
-		this.status.setMessage(MessageFormat.format(errMessage, new String[] {prefix + this.name}));
+		String errMessage = SVNTeamPlugin.instance().getResource("Operation.Error.LogHeader", new String[] {prefix + this.name});
+		this.status.setMessage(errMessage);
 	}
 	
 	/**
