@@ -79,7 +79,7 @@ public class QueryResourceAddition {
 				if (tRes.length == 0) {
 				    tRes = null;
 				}
-				else if (panel.getNotSelectedResources().length > 0) {
+				else if (panel.ifActionTookEffect() || panel.getNotSelectedResources().length > 0) {
 					nonRecursive = new HashSet(Arrays.asList(tRes));
 					nonRecursive.addAll(Arrays.asList(FileUtility.addOperableParents(tRes, IStateFilter.SF_UNVERSIONED)));
 					recursive.clear();
