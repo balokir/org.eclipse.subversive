@@ -78,6 +78,7 @@ public abstract class AbstractResourceSelectionPanel extends AbstractDialogPanel
 				return null;
 			}
 		});
+		this.addContextMenu();
     }
     
     protected void saveChangesImpl() {
@@ -85,5 +86,7 @@ public abstract class AbstractResourceSelectionPanel extends AbstractDialogPanel
 
     protected void cancelChangesImpl() {
     }
-
+    
+    protected void addContextMenu() {
+    }
 }
