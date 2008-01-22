@@ -8,7 +8,7 @@
    <install-handler/>
 
    <description>
-      Integration with ProjectSet (http://vpms.de.csc.com/projectset/). Installation is possible only if ProjectSet is already installed or installed in one step with Eclipse Subversive.
+      Integration with ProjectSet http://vpms.de.csc.com/projectset Installation is possible only if ProjectSet is already installed or installed in one step with Eclipse Subversive.
    </description>
 
    <license url="license.html">
