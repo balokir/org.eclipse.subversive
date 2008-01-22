@@ -18,12 +18,14 @@ import org.eclipse.team.svn.ui.synchronize.update.action.AddToSVNIgnoreAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.CommitAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.CreatePatchFileAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.ExpandAllAction;
+import org.eclipse.team.svn.ui.synchronize.update.action.LockAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.MarkAsMergedAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.OverrideAndCommitAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.OverrideAndUpdateAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.RevertAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.ShowAnnotationAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.ShowResourceHistoryAction;
+import org.eclipse.team.svn.ui.synchronize.update.action.UnlockAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.UpdateAction;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -128,6 +130,20 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				UpdateActionGroup.GROUP_MANAGE_LOCALS,
 				addToSVNIgnoreAction);
+		
+		/*LockAction lockAction = new LockAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.Lock"), configuration);
+		lockAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/lock.gif"));
+		this.appendToGroup(
+				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+				UpdateActionGroup.GROUP_MANAGE_LOCALS,
+				lockAction);
+		
+		UnlockAction unlockAction = new UnlockAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.Unlock"), configuration);
+		unlockAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/unlock.gif"));
+		this.appendToGroup(
+				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+				UpdateActionGroup.GROUP_MANAGE_LOCALS,
+				unlockAction);*/
 		
 		ShowResourceHistoryAction showResourceHistoryAction = new ShowResourceHistoryAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.ShowResourceHistory"), configuration);
 		showResourceHistoryAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/showhistory.gif"));
