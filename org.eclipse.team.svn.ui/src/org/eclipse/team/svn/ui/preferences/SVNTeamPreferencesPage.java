@@ -56,7 +56,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected String branches;
 	protected String tags;
 	protected boolean showExternals;
-	protected boolean reportRevisionChange;
 	protected boolean fastReport;
 	protected boolean showMultilineComment;
 	protected boolean showAffectedPaths;
@@ -84,7 +83,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected Button showExternalsButton;
 	protected Combo svnConnectorField;
 	protected Button useInteractiveMergeButton;
-	protected Button reportRevisionChangeButton;
 	protected Button fastReportButton;
 	protected Button showMultilineCommentButton;
 	protected Button showAffectedPathsButton;
@@ -117,7 +115,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		SVNTeamPreferences.setRepositoryBoolean(store, SVNTeamPreferences.REPOSITORY_FORCE_EXTERNALS_FREEZE_NAME, this.forceExternalsFreeze);
 		SVNTeamPreferences.setRepositoryBoolean(store, SVNTeamPreferences.REPOSITORY_SHOW_EXTERNALS_NAME, this.showExternals);
 		
-		SVNTeamPreferences.setSynchronizeBoolean(store, SVNTeamPreferences.SYNCHRONIZE_REPORT_REVISION_CHANGE_NAME, this.reportRevisionChange);
 		SVNTeamPreferences.setSynchronizeBoolean(store, SVNTeamPreferences.SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_NAME, this.fastReport);
 
 		SVNTeamPreferences.setHistoryBoolean(store, SVNTeamPreferences.HISTORY_SHOW_MULTILINE_COMMENT_NAME, this.showMultilineComment);
@@ -158,7 +155,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.tags = SVNTeamPreferences.REPOSITORY_TAGS_DEFAULT;
 		this.showExternals = SVNTeamPreferences.REPOSITORY_SHOW_EXTERNALS_DEFAULT;
 		
-		this.reportRevisionChange = SVNTeamPreferences.SYNCHRONIZE_REPORT_REVISION_CHANGE_DEFAULT;
 		this.fastReport = SVNTeamPreferences.SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_DEFAULT;
 		
 		this.showMultilineComment = SVNTeamPreferences.HISTORY_SHOW_MULTILINE_COMMENT_DEFAULT;
@@ -196,7 +192,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.tags = SVNTeamPreferences.getRepositoryString(store, SVNTeamPreferences.REPOSITORY_TAGS_NAME);
 		this.showExternals = SVNTeamPreferences.getRepositoryBoolean(store, SVNTeamPreferences.REPOSITORY_SHOW_EXTERNALS_NAME);
 		
-		this.reportRevisionChange = SVNTeamPreferences.getSynchronizeBoolean(store, SVNTeamPreferences.SYNCHRONIZE_REPORT_REVISION_CHANGE_NAME);
 		this.fastReport = SVNTeamPreferences.getSynchronizeBoolean(store, SVNTeamPreferences.SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_NAME);
 		
 		this.showMultilineComment = SVNTeamPreferences.getHistoryBoolean(store, SVNTeamPreferences.HISTORY_SHOW_MULTILINE_COMMENT_NAME);
@@ -235,8 +230,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.tagsField.setText(this.tags);
 		this.showExternalsButton.setSelection(this.showExternals);
 		
-		this.reportRevisionChangeButton.setEnabled((CoreExtensionsManager.instance().getSVNConnectorFactory(this.svnConnector).getSupportedFeatures() & ISVNConnectorFactory.OptionalFeatures.REPORT_REVISION_CHANGE) != 0);
-		this.reportRevisionChangeButton.setSelection(this.reportRevisionChange);
 		this.fastReportButton.setSelection(this.fastReport);
 		
 		this.showMultilineCommentButton.setSelection(this.showMultilineComment);
@@ -353,7 +346,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 			public void widgetSelected(SelectionEvent e) {
 				SVNTeamPreferencesPage.this.svnConnector = SVNTeamPreferencesPage.this.factories[SVNTeamPreferencesPage.this.svnConnectorField.getSelectionIndex()].getId();
 				SVNTeamPreferencesPage.this.initializeClientSettings();
-				SVNTeamPreferencesPage.this.reportRevisionChangeButton.setEnabled((CoreExtensionsManager.instance().getSVNConnectorFactory(SVNTeamPreferencesPage.this.svnConnector).getSupportedFeatures() & ISVNConnectorFactory.OptionalFeatures.REPORT_REVISION_CHANGE) != 0);
 			}
 		});
 		
@@ -540,17 +532,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		Label label = new Label(synchViewGroup, SWT.NULL);
 		label.setLayoutData(new GridData());
 		label.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.synchronizePrompt"));
-		
-		this.reportRevisionChangeButton = new Button(synchViewGroup, SWT.CHECK);
-		data = new GridData();
-		this.reportRevisionChangeButton.setLayoutData(data);
-		this.reportRevisionChangeButton.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.synchronizeReportRevisionChangeName"));
-		this.reportRevisionChangeButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				SVNTeamPreferencesPage.this.reportRevisionChange = SVNTeamPreferencesPage.this.reportRevisionChangeButton.getSelection();
-			}
-		});
-		this.reportRevisionChangeButton.setEnabled((CoreExtensionsManager.instance().getSVNConnectorFactory().getSupportedFeatures() & ISVNConnectorFactory.OptionalFeatures.REPORT_REVISION_CHANGE) != 0);
 		
 		this.fastReportButton = new Button(synchViewGroup, SWT.CHECK);
 		data = new GridData();

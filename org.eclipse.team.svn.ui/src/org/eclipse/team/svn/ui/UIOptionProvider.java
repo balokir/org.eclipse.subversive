@@ -33,10 +33,6 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 public class UIOptionProvider implements IOptionProvider {
 	private SVNTeamModificationValidator modificationValidator = new SVNTeamModificationValidator();
 	
-	public boolean getReportRevisionChange() {
-		return SVNTeamPreferences.getSynchronizeBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.SYNCHRONIZE_REPORT_REVISION_CHANGE_NAME);
-	}
-	
 	public ISVNCredentialsPrompt getCredentialsPrompt() {
 		return PromptCredentialsPanel.DEFAULT_PROMPT;
 	}

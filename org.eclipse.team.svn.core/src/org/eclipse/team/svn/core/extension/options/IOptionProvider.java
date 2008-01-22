@@ -26,9 +26,6 @@ import org.eclipse.team.svn.core.utility.ILoggedOperationFactory;
  */
 public interface IOptionProvider {
 	public static final IOptionProvider DEFAULT = new IOptionProvider() {
-		public boolean getReportRevisionChange() {
-			return false;
-		}
 		public ISVNCredentialsPrompt getCredentialsPrompt() {
 			return null;
 		}
@@ -68,7 +65,6 @@ public interface IOptionProvider {
 	
 	public FileModificationValidator getFileModificationValidator();
 	public ISVNCredentialsPrompt getCredentialsPrompt();
-	public boolean getReportRevisionChange();
 	public ILoggedOperationFactory getLoggedOperationFactory();
 	public void addProjectSetCapabilityProcessing(CompositeOperation op);
 	public boolean isAutomaticProjectShareEnabled();
