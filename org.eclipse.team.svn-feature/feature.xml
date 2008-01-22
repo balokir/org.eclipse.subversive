@@ -8,7 +8,7 @@
    <install-handler/>
 
    <description>
-      The Eclipse Team Provider for the Subversion version control system. For instructions about installing SVN connectors visit http://www.eclipse.org/subversive/downloads.php.
+      The Eclipse Team Provider for the Subversion version control system. For instructions about installing SVN connectors visit http://www.eclipse.org/subversive/downloads.php
    </description>
 
    <license url="license.html">

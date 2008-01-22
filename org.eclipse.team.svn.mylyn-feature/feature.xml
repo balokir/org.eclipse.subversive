@@ -8,7 +8,7 @@
    <install-handler/>
 
    <description>
-      Integration with Mylyn (http://www.eclipse.org/mylyn/). Installation is possible only if Mylyn is already installed or installed in one step with Eclipse Subversive.
+      Integration with Mylyn http://www.eclipse.org/mylyn Installation is possible only if Mylyn is already installed or installed in one step with Eclipse Subversive.
    </description>
 
    <license url="license.html">
