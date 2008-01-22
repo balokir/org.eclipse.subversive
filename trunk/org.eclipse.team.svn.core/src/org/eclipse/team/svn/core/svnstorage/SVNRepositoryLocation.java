@@ -576,10 +576,9 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	}
 	
 	protected void reconfigureImpl() {
-		final IOptionProvider optionProvider = SVNTeamPlugin.instance().getOptionProvider();
 		this.reconfigureProxies(new IProxyVisitor() {
 			public void visit(ISVNConnector proxy) {
-			    SVNRepositoryLocation.this.configureProxy(proxy, optionProvider);
+				SVNUtility.configureProxy(proxy, SVNRepositoryLocation.this);
 			}
 		});
 	}
@@ -614,7 +613,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		proxy.setTouchUnresolved(false);
 		proxy.setCommitMissingFiles(true);
 		
-	    this.configureProxy(proxy, optionProvider);
+		SVNUtility.configureProxy(proxy, this);
 	    
 	    ISVNCredentialsPrompt externalPrompt = optionProvider.getCredentialsPrompt();
 	    if (externalPrompt != null) {
@@ -629,11 +628,6 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 			this.serializedRevisionLinks = new ArrayList();
 		}
 		return this.serializedRevisionLinks;
-	}
-	
-	protected void configureProxy(ISVNConnector proxy, IOptionProvider optionProvider) {
-		SVNUtility.configureProxy(proxy, this);
-		proxy.setReportRevisionChange(optionProvider.getReportRevisionChange());
 	}
 	
 	protected String getUrlImpl(String url) {

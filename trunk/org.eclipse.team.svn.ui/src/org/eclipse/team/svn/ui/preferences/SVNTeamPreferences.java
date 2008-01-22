@@ -158,10 +158,8 @@ public final class SVNTeamPreferences {
 	public static final boolean PROPERTY_USE_VIEW_DEFAULT = true;
 	public static final boolean PROPERTY_LINK_WITH_EDITOR_DEFAULT = false;
 	
-	public static final String SYNCHRONIZE_REPORT_REVISION_CHANGE_NAME = "reportRevisionChange";
 	public static final String SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_NAME = "fastReport";
 	
-	public static final boolean SYNCHRONIZE_REPORT_REVISION_CHANGE_DEFAULT = false;
 	public static final boolean SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_DEFAULT = true;
 	
 	public static final String REPOSITORY_SHOW_BROWSER_NAME = "repositoryBrowser";
@@ -326,7 +324,6 @@ public final class SVNTeamPreferences {
 	}
 	
 	public static void setDefaultSynchronizeValues(IPreferenceStore store) {
-		store.setDefault(SVNTeamPreferences.fullSynchronizeName(SVNTeamPreferences.SYNCHRONIZE_REPORT_REVISION_CHANGE_NAME), SVNTeamPreferences.SYNCHRONIZE_REPORT_REVISION_CHANGE_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullSynchronizeName(SVNTeamPreferences.SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_NAME), SVNTeamPreferences.SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_DEFAULT);
 	}
 	
@@ -477,7 +474,6 @@ public final class SVNTeamPreferences {
 	}
 	
 	public static void resetToDefaultSynchronizeValues(IPreferenceStore store) {
-		store.setValue(SVNTeamPreferences.fullSynchronizeName(SVNTeamPreferences.SYNCHRONIZE_REPORT_REVISION_CHANGE_NAME), SVNTeamPreferences.SYNCHRONIZE_REPORT_REVISION_CHANGE_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullSynchronizeName(SVNTeamPreferences.SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_NAME), SVNTeamPreferences.SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_DEFAULT);
 	}
 	

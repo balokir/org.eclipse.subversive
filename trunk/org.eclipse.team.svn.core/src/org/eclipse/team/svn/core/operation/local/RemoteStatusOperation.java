@@ -11,10 +11,10 @@
 
 package org.eclipse.team.svn.core.operation.local;
 
-import java.util.ArrayList;
+import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IResource;
@@ -25,6 +25,7 @@ import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNEntryStatusCallback;
 import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
+import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNNotification;
 import org.eclipse.team.svn.core.connector.SVNRevision;
@@ -64,11 +65,32 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 	
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		IResource []resources = FileUtility.shrinkChildNodes(this.operableData());
-
-		final List result = new ArrayList();
+		
+		final HashSet<Path> projectPaths = new HashSet<Path>();
+		for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
+			projectPaths.add(new Path(FileUtility.getWorkingCopyPath(resources[i].getProject())));
+		}
+		final HashMap result = new HashMap();
 		final ISVNEntryStatusCallback cb = new ISVNEntryStatusCallback() {
+			protected void processStatus(SVNChangeStatus status) {
+				result.put(status.path, status);
+				String parent = new File(status.path).getParent();
+				boolean found = false;
+				for (Path projectPath : projectPaths) {
+					if (projectPath.isPrefixOf(new Path(parent))) {
+						found = true;
+						break;
+					}
+				}
+				if (found) {
+					SVNChangeStatus st = (SVNChangeStatus)result.get(parent);
+					if (st == null || st.reposLastCmtRevision < status.reposLastCmtRevision) {
+						this.processStatus(new SVNChangeStatus(parent, status.url != null ? new Path(status.url).removeLastSegments(1).toString() : null, SVNEntry.Kind.DIR, SVNRevision.INVALID_REVISION_NUMBER, SVNRevision.INVALID_REVISION_NUMBER, 0, null, SVNEntryStatus.Kind.NORMAL, SVNEntryStatus.Kind.NONE, SVNEntryStatus.Kind.NORMAL, SVNEntryStatus.Kind.MODIFIED, false, false, null, null, null, null, SVNRevision.INVALID_REVISION_NUMBER, false, null, null, null, 0, null, status.reposLastCmtRevision, status.reposLastCmtDate, SVNEntry.Kind.DIR, status.reposLastCmtAuthor));
+					}
+				}
+			}
 			public void next(SVNChangeStatus status) {
-				result.add(status);
+				this.processStatus(status);
 			}
 		};
 		for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
@@ -90,7 +112,7 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 			
 			location.releaseSVNProxy(proxy);
 		}
-		this.statuses = (SVNChangeStatus [])result.toArray(new SVNChangeStatus[result.size()]);
+		this.statuses = (SVNChangeStatus [])result.values().toArray(new SVNChangeStatus[result.size()]);
 	}
 
 	public SVNEntryStatus[]getStatuses() {
