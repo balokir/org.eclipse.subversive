@@ -16,6 +16,7 @@ import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
 import org.eclipse.team.svn.ui.synchronize.update.action.AddToSVNAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.AddToSVNIgnoreAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.CommitAction;
+import org.eclipse.team.svn.ui.synchronize.update.action.CreatePatchFileAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.ExpandAllAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.MarkAsMergedAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.OverrideAndCommitAction;
@@ -88,6 +89,12 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				UpdateActionGroup.GROUP_SYNC_NORMAL,
 				commitAction);
+		
+		CreatePatchFileAction patchAction = new CreatePatchFileAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.Patch"), configuration);
+		this.appendToGroup(
+				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+				UpdateActionGroup.GROUP_SYNC_NORMAL,
+				patchAction);
 
 		OverrideAndUpdateAction overrideUpdateAction = new OverrideAndUpdateAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.OverrideAndUpdate"), configuration);
 		this.appendToGroup(
