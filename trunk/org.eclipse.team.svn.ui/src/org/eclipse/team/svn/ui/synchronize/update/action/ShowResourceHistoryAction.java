@@ -48,7 +48,7 @@ public class ShowResourceHistoryAction extends AbstractSynchronizeModelAction {
 		UpdateSyncInfo sync = (UpdateSyncInfo)element.getSyncInfo();
 		ILocalResource outgoing = sync.getLocalResource();
 		ResourceVariant incoming = (ResourceVariant)sync.getRemote();
-		return (ISyncStateFilter.SF_ONREPOSITORY.accept(outgoing) || !IStateFilter.SF_NOTEXISTS.accept(incoming.getResource())) && !IStateFilter.SF_DELETED.accept(incoming.getResource()) && incoming.getResource().getRevision() != -1;
+		return !(ISyncStateFilter.SF_NOTONREPOSITORY.accept(outgoing) || IStateFilter.SF_NOTEXISTS.accept(incoming.getResource())) && !IStateFilter.SF_DELETED.accept(incoming.getResource());
 	}
 	
 	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {
