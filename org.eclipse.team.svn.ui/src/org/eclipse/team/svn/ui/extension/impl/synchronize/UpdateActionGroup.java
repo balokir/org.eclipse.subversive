@@ -11,6 +11,8 @@
 
 package org.eclipse.team.svn.ui.extension.impl.synchronize;
 
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
 import org.eclipse.team.svn.ui.synchronize.update.action.AddToSVNAction;
@@ -41,8 +43,10 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 	public static final String GROUP_SYNC_NORMAL = "syncIncomingOutgoing";
 	public static final String GROUP_SYNC_CONFLICTS = "syncConflicting";
 	public static final String GROUP_MANAGE_LOCALS = "manageLocalChanges";
-	public static final String GROUP_CHANGES_AUDIT = "changesAudit";
+	public static final String GROUP_TEAM = "team";
 	public static final String GROUP_PROCESS_ALL = "processAllItems";
+	
+	protected MenuManager addOns;
 	
 	public void configureMenuGroups(ISynchronizePageConfiguration configuration) {
 		configuration.addMenuGroup(
@@ -56,10 +60,17 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 				UpdateActionGroup.GROUP_MANAGE_LOCALS);
 		configuration.addMenuGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-				UpdateActionGroup.GROUP_CHANGES_AUDIT);
+				UpdateActionGroup.GROUP_TEAM);
 		configuration.addMenuGroup(
 				ISynchronizePageConfiguration.P_TOOLBAR_MENU, 
 				UpdateActionGroup.GROUP_PROCESS_ALL);
+	}
+	
+	public void dispose() {
+		this.addOns.removeAll();
+		this.addOns.dispose();
+		
+		super.dispose();
 	}
 	
 	protected void configureActions(ISynchronizePageConfiguration configuration) {
@@ -94,12 +105,6 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				UpdateActionGroup.GROUP_SYNC_NORMAL,
 				commitAction);
-		
-		CreatePatchFileAction patchAction = new CreatePatchFileAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.Patch"), configuration);
-		this.appendToGroup(
-				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-				UpdateActionGroup.GROUP_SYNC_NORMAL,
-				patchAction);
 
 		OverrideAndUpdateAction overrideUpdateAction = new OverrideAndUpdateAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.OverrideAndUpdate"), configuration);
 		this.appendToGroup(
@@ -133,46 +138,42 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				UpdateActionGroup.GROUP_MANAGE_LOCALS,
 				addToSVNIgnoreAction);
-		SetPropertyAction setPropAction = new SetPropertyAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.SetProperty"), configuration);
-		this.appendToGroup(
-				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-				UpdateActionGroup.GROUP_MANAGE_LOCALS,
-				setPropAction);
-		SetKeywordsAction setKeywordsAction = new SetKeywordsAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.SetKeywords"), configuration);
-		this.appendToGroup(
-				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-				UpdateActionGroup.GROUP_MANAGE_LOCALS,
-				setKeywordsAction);
-		LockAction lockAction = new LockAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.Lock"), configuration);
-		lockAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/lock.gif"));
-		this.appendToGroup(
-				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-				UpdateActionGroup.GROUP_MANAGE_LOCALS,
-				lockAction);
 		
-		UnlockAction unlockAction = new UnlockAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.Unlock"), configuration);
-		unlockAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/unlock.gif"));
+		this.addOns = new MenuManager(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.Team"));
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-				UpdateActionGroup.GROUP_MANAGE_LOCALS,
-				unlockAction);
+				UpdateActionGroup.GROUP_TEAM, 
+				this.addOns);
+		
+		CreatePatchFileAction patchAction = new CreatePatchFileAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.Patch"), configuration);
+		this.addOns.add(patchAction);
+		
+		this.addOns.add(new Separator());
+		
 		ShowResourceHistoryAction showResourceHistoryAction = new ShowResourceHistoryAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.ShowResourceHistory"), configuration);
 		showResourceHistoryAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/showhistory.gif"));
-		this.appendToGroup(
-				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-				UpdateActionGroup.GROUP_CHANGES_AUDIT,
-				showResourceHistoryAction);
+		this.addOns.add(showResourceHistoryAction);
 		ShowAnnotationAction showAnnotationAction = new ShowAnnotationAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.ShowAnnotation"), configuration);
-		this.appendToGroup(
-				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-				UpdateActionGroup.GROUP_CHANGES_AUDIT,
-				showAnnotationAction);
+		this.addOns.add(showAnnotationAction);
+		
+		this.addOns.add(new Separator());
+		
 		ShowPropertiesAction showPropertiesAction = new ShowPropertiesAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.ShowProperties"), configuration);
 		showPropertiesAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/propertiesedit.gif"));
-		this.appendToGroup(
-				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-				UpdateActionGroup.GROUP_CHANGES_AUDIT,
-				showPropertiesAction);
+		this.addOns.add(showPropertiesAction);
+		SetPropertyAction setPropAction = new SetPropertyAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.SetProperty"), configuration);
+		this.addOns.add(setPropAction);
+		SetKeywordsAction setKeywordsAction = new SetKeywordsAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.SetKeywords"), configuration);
+		this.addOns.add(setKeywordsAction);
+		
+		this.addOns.add(new Separator());
+		
+		LockAction lockAction = new LockAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.Lock"), configuration);
+		lockAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/lock.gif"));
+		this.addOns.add(lockAction);
+		UnlockAction unlockAction = new UnlockAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.Unlock"), configuration);
+		unlockAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/unlock.gif"));
+		this.addOns.add(unlockAction);
 	}
 	
 }
