@@ -23,6 +23,8 @@ import org.eclipse.team.svn.ui.synchronize.update.action.MarkAsMergedAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.OverrideAndCommitAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.OverrideAndUpdateAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.RevertAction;
+import org.eclipse.team.svn.ui.synchronize.update.action.SetKeywordsAction;
+import org.eclipse.team.svn.ui.synchronize.update.action.SetPropertyAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.ShowAnnotationAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.ShowPropertiesAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.ShowResourceHistoryAction;
@@ -131,7 +133,16 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				UpdateActionGroup.GROUP_MANAGE_LOCALS,
 				addToSVNIgnoreAction);
-		
+		SetPropertyAction setPropAction = new SetPropertyAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.SetProperty"), configuration);
+		this.appendToGroup(
+				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+				UpdateActionGroup.GROUP_MANAGE_LOCALS,
+				setPropAction);
+		SetKeywordsAction setKeywordsAction = new SetKeywordsAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.SetKeywords"), configuration);
+		this.appendToGroup(
+				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+				UpdateActionGroup.GROUP_MANAGE_LOCALS,
+				setKeywordsAction);
 		LockAction lockAction = new LockAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.Lock"), configuration);
 		lockAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/lock.gif"));
 		this.appendToGroup(
@@ -145,7 +156,6 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				UpdateActionGroup.GROUP_MANAGE_LOCALS,
 				unlockAction);
-		
 		ShowResourceHistoryAction showResourceHistoryAction = new ShowResourceHistoryAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.ShowResourceHistory"), configuration);
 		showResourceHistoryAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/showhistory.gif"));
 		this.appendToGroup(
