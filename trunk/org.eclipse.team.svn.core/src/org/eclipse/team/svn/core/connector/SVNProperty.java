@@ -96,12 +96,12 @@ public class SVNProperty {
 	public final String name;
 
 	/**
-	 * The textual property value. Could be <code>null</code>.
+	 * The textual property value. Not <code>null</code>.
 	 */
 	public final String value;
 
 	/**
-	 * The binary property value. Could be <code>null</code>.
+	 * The binary property value. Not <code>null</code>.
 	 */
 	public final byte[] data;
 

@@ -786,7 +786,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 				}
 
 				// fetch revision for "copied from"
-				long revision = statuses[i].lastChangedRevision == SVNRevision.INVALID_REVISION_NUMBER ? statuses[i].revision : statuses[i].lastChangedRevision;
+				long revision = statuses[i].lastChangedRevision == SVNRevision.INVALID_REVISION_NUMBER && (changeMask & ILocalResource.IS_COPIED) != 0 ? statuses[i].revision : statuses[i].lastChangedRevision;
 				local = this.registerResource(tRes, revision, status, changeMask, statuses[i].lastCommitAuthor, statuses[i].lastChangedDate);
 			}
 			else {

@@ -50,8 +50,7 @@ public class CreatePatchOperation extends AbstractActionOperation {
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		SVNRemoteStorage storage = SVNRemoteStorage.instance();
-		IRepositoryLocation location = storage.getRepositoryLocation(this.resource);
+		IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(this.resource);
 		String wcPath = FileUtility.getWorkingCopyPath(this.resource);
 		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
