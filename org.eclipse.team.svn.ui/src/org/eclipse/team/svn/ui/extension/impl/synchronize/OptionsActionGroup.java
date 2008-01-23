@@ -14,7 +14,6 @@ package org.eclipse.team.svn.ui.extension.impl.synchronize;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
@@ -29,15 +28,6 @@ public class OptionsActionGroup extends AbstractSynchronizeActionGroup {
 	public static final String GROUP_SYNCH_OPTIONS = "synchronizeViewOptions";
 	
 	protected IAction contiguousOptionAction;
-
-	protected IPropertyChangeListener configurationListener;
-	
-	public void dispose() {
-		if (this.configurationListener != null) {
-			SVNTeamUIPlugin.instance().getPreferenceStore().removePropertyChangeListener(this.configurationListener);
-		}
-		super.dispose();
-	}
 
 	public void configureMenuGroups(ISynchronizePageConfiguration configuration) {
 		configuration.addMenuGroup(
@@ -59,8 +49,6 @@ public class OptionsActionGroup extends AbstractSynchronizeActionGroup {
 				ISynchronizePageConfiguration.P_VIEW_MENU, 
 				OptionsActionGroup.GROUP_SYNCH_OPTIONS,
 				this.contiguousOptionAction);
-		
-		SVNTeamUIPlugin.instance().getPreferenceStore().addPropertyChangeListener(this.configurationListener);
 	}
 	
     protected void refreshOptionButtons() {

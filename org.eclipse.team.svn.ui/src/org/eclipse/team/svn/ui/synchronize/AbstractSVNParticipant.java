@@ -115,33 +115,6 @@ public abstract class AbstractSVNParticipant extends ScopableSubscriberParticipa
 
 		configuration.setSupportedModes(this.getSupportedModes());
 		configuration.setMode(this.getDefaultMode());
-
-//		String description = Platform.getProduct().getDescription();
-//		int idx = description.indexOf("Version:");
-//		if (idx != -1) {
-//			idx += "Version:".length() + 1;
-//			if (idx + 5 < description.length()) {
-//				description = description.substring(idx, idx + 5);
-//				if ("3.2.1".compareTo(description) > 0) {
-//		    		// fix for Synchronize View refresh problem with versioned trees
-//		    		this.getSyncInfoSet().addSyncSetChangedListener(new ISyncInfoSetChangeListener() {
-//		                public void syncInfoSetReset(SyncInfoSet set, IProgressMonitor monitor) {
-//		                }
-//		                public void syncInfoChanged(ISyncInfoSetChangeEvent event, IProgressMonitor monitor) {
-//		                	IResource []resources = event.getSet().getResources();
-//		                	for (int i = 0; i < resources.length; i++) {
-//		                		if (resources[i] instanceof IProject) {
-//		                            AbstractSVNParticipant.this.refresh();
-//		                			break;
-//		                		}
-//		                	}
-//		                }
-//		                public void syncInfoSetErrors(SyncInfoSet set, ITeamStatus[] errors, IProgressMonitor monitor) {
-//		                }
-//		            });
-//				}
-//			}
-//		}
 	}
 	
 	protected ILabelDecorator createLabelDecorator() {
