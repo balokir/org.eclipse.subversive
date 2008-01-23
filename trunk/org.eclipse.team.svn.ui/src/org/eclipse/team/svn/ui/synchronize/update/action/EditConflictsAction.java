@@ -23,7 +23,7 @@ import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
- * TODO insert type description here
+ * Edit conflicts action implementation for Synchronize view
  * 
  * @author Alexei Goncharov
  */
