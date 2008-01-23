@@ -53,7 +53,7 @@ public class ShowAnnotationAction extends AbstractSynchronizeModelAction {
 		UpdateSyncInfo sync = (UpdateSyncInfo)element.getSyncInfo();
 		ILocalResource outgoing = sync.getLocalResource();
 		ResourceVariant incoming = (ResourceVariant)sync.getRemote();
-		return outgoing instanceof ILocalFile && (ISyncStateFilter.SF_ONREPOSITORY.accept(outgoing) || !IStateFilter.SF_NOTEXISTS.accept(incoming.getResource())) && incoming.getResource().getRevision() != -1;
+		return outgoing instanceof ILocalFile && !(ISyncStateFilter.SF_NOTONREPOSITORY.accept(outgoing) || IStateFilter.SF_NOTEXISTS.accept(incoming.getResource()));
 	}
 	
 	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {
