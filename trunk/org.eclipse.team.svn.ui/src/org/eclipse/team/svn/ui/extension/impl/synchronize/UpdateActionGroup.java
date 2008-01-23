@@ -19,6 +19,7 @@ import org.eclipse.team.svn.ui.synchronize.update.action.AddToSVNAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.AddToSVNIgnoreAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.CommitAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.CreatePatchFileAction;
+import org.eclipse.team.svn.ui.synchronize.update.action.EditConflictsAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.ExpandAllAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.LockAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.MarkAsMergedAction;
@@ -116,6 +117,11 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				UpdateActionGroup.GROUP_SYNC_CONFLICTS,
 				overrideCommitAction);
+		EditConflictsAction editConflictsAction = new EditConflictsAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.EditConflicts"), configuration);
+		this.appendToGroup(
+				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+				UpdateActionGroup.GROUP_SYNC_CONFLICTS,
+				editConflictsAction);									
 		MarkAsMergedAction markMergedAction = new MarkAsMergedAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.MarkAsMerged"), configuration);
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
