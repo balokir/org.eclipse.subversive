@@ -24,6 +24,7 @@ import org.eclipse.team.svn.ui.synchronize.update.action.OverrideAndCommitAction
 import org.eclipse.team.svn.ui.synchronize.update.action.OverrideAndUpdateAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.RevertAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.ShowAnnotationAction;
+import org.eclipse.team.svn.ui.synchronize.update.action.ShowPropertiesAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.ShowResourceHistoryAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.UnlockAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.UpdateAction;
@@ -156,6 +157,12 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				UpdateActionGroup.GROUP_CHANGES_AUDIT,
 				showAnnotationAction);
+		ShowPropertiesAction showPropertiesAction = new ShowPropertiesAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.ShowProperties"), configuration);
+		showPropertiesAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/propertiesedit.gif"));
+		this.appendToGroup(
+				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+				UpdateActionGroup.GROUP_CHANGES_AUDIT,
+				showPropertiesAction);
 	}
 	
 }

@@ -1,0 +1,88 @@
+/*******************************************************************************
+ * Copyright (c) 2005-2006 Polarion Software.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Alexei Goncharov (Polarion Software) - initial API and implementation
+ *******************************************************************************/
+
+package org.eclipse.team.svn.ui.synchronize.update.action;
+
+import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
+import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.operation.CompositeOperation;
+import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
+import org.eclipse.team.svn.core.operation.local.property.GetPropertiesOperation;
+import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.operation.ShowPropertiesOperation;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
+import org.eclipse.team.svn.ui.properties.PropertiesView;
+import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+
+/**
+ * Show properties action implementation for Synchronize view.
+ * 
+ * @author Alexei Goncharov
+ */
+public class ShowPropertiesAction extends AbstractSynchronizeModelAction {
+
+	public ShowPropertiesAction(String text, ISynchronizePageConfiguration configuration) {
+		super(text, configuration);
+	}
+
+	public ShowPropertiesAction(String text, ISynchronizePageConfiguration configuration, ISelectionProvider selectionProvider) {
+		super(text, configuration, selectionProvider);
+	}
+	
+	protected boolean updateSelection(IStructuredSelection selection) {
+		super.updateSelection(selection);
+		if (selection.size() != 1 || !(selection.getFirstElement() instanceof SyncInfoModelElement)) {
+		    return false;
+		}
+		return !FileUtility.checkForResourcesPresence(new IResource [] {((SyncInfoModelElement)selection.getFirstElement()).getResource()}, IStateFilter.SF_UNVERSIONED, IResource.DEPTH_ZERO);
+	}
+
+	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {		
+		final IActionOperation [] op = new IActionOperation[1];
+		operation.getShell().getDisplay().syncExec(new Runnable() {
+			public void run() {
+				IResource selectedResource = operation.getSelectedResource();
+				IResourcePropertyProvider provider = new GetPropertiesOperation(selectedResource);
+				IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
+				boolean usePropertiesView = SVNTeamPreferences.getPropertiesBoolean(store, SVNTeamPreferences.PROPERTY_USE_VIEW_NAME);
+				if (usePropertiesView) {
+					try {
+						PropertiesView view = (PropertiesView)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(PropertiesView.VIEW_ID);
+						view.setResource(selectedResource, provider, false);
+					}
+					catch (PartInitException ex) {
+						//unreachable code
+					}
+				}
+				else {
+					ShowPropertiesOperation showOp = new ShowPropertiesOperation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), selectedResource, provider);
+					CompositeOperation composite = new CompositeOperation(showOp.getId());
+					composite.add(provider);
+					composite.add(showOp, new IActionOperation[] {provider});
+					if (!showOp.isEditorOpened()) {
+						op[0] = composite;
+					}
+				}
+			}
+		});
+		return null;
+	}
+
+}
