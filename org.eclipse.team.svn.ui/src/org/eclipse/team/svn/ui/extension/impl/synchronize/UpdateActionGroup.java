@@ -17,6 +17,7 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
 import org.eclipse.team.svn.ui.synchronize.update.action.AddToSVNAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.AddToSVNIgnoreAction;
+import org.eclipse.team.svn.ui.synchronize.update.action.CleanUpAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.CommitAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.CreatePatchFileAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.EditConflictsAction;
@@ -180,6 +181,9 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 		UnlockAction unlockAction = new UnlockAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.Unlock"), configuration);
 		unlockAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/unlock.gif"));
 		this.addOns.add(unlockAction);
+		this.addOns.add(new Separator());
+		CleanUpAction cleanUpAction = new CleanUpAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.Cleanup"), configuration);
+		this.addOns.add(cleanUpAction);
 	}
 	
 }
