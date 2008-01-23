@@ -19,6 +19,7 @@ import org.eclipse.team.svn.ui.synchronize.update.action.AddToSVNAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.AddToSVNIgnoreAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.CleanUpAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.CommitAction;
+import org.eclipse.team.svn.ui.synchronize.update.action.CreateBranchAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.CreatePatchFileAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.EditConflictsAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.ExpandAllAction;
@@ -154,9 +155,10 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 		
 		CreatePatchFileAction patchAction = new CreatePatchFileAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.Patch"), configuration);
 		this.addOns.add(patchAction);
-		
+		CreateBranchAction branchAction = new CreateBranchAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.Branch"), configuration);
+		branchAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/branch.gif"));
+		this.addOns.add(branchAction);
 		this.addOns.add(new Separator());
-		
 		ShowResourceHistoryAction showResourceHistoryAction = new ShowResourceHistoryAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.ShowResourceHistory"), configuration);
 		showResourceHistoryAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/showhistory.gif"));
 		this.addOns.add(showResourceHistoryAction);
