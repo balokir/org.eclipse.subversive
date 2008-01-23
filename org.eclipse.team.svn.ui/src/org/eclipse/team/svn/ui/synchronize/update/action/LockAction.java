@@ -49,7 +49,7 @@ public class LockAction extends AbstractSynchronizeModelAction {
 	}
 	
 	protected FastSyncInfoFilter getSyncInfoFilter() {
-		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.IN_SYNC}) {
+		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.INCOMING, SyncInfo.OUTGOING, SyncInfo.CONFLICTING}) {
             public boolean select(SyncInfo info) {
                 if (super.select(info)) {
                     UpdateSyncInfo sync = (UpdateSyncInfo)info;
@@ -64,7 +64,7 @@ public class LockAction extends AbstractSynchronizeModelAction {
 		final IActionOperation [] op = new IActionOperation[1];
 		operation.getShell().getDisplay().syncExec(new Runnable() {
 			public void run() {
-			    IResource [] selectedResources = operation.getSelectedResources();
+				IResource [] selectedResources = operation.getSelectedResources();
 			    boolean containsFolder = false;
 			    for (int i = 0; i < selectedResources.length; i++) {
 			    	if (selectedResources[i] instanceof IContainer) {
