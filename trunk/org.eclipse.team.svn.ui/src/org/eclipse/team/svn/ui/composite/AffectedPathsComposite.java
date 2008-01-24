@@ -74,6 +74,7 @@ import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.remote.GetLogMessagesOperation;
 import org.eclipse.team.svn.core.operation.remote.GetRemotePropertiesOperation;
+import org.eclipse.team.svn.core.operation.remote.PreparedBranchTagOperation;
 import org.eclipse.team.svn.core.operation.remote.management.AddRevisionLinkOperation;
 import org.eclipse.team.svn.core.operation.remote.management.SaveRepositoryLocationsOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
@@ -84,6 +85,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.action.remote.BranchTagAction;
 import org.eclipse.team.svn.ui.action.remote.CreatePatchAction;
 import org.eclipse.team.svn.ui.annotate.AnnotateView;
 import org.eclipse.team.svn.ui.annotate.CheckPerspective;
@@ -93,10 +95,12 @@ import org.eclipse.team.svn.ui.history.AffectedPathsContentProvider;
 import org.eclipse.team.svn.ui.history.AffectedPathsLabelProvider;
 import org.eclipse.team.svn.ui.operation.CompareRepositoryResourcesOperation;
 import org.eclipse.team.svn.ui.operation.OpenRemoteFileOperation;
+import org.eclipse.team.svn.ui.operation.RefreshRemoteResourcesOperation;
 import org.eclipse.team.svn.ui.operation.RefreshRepositoryLocationsOperation;
 import org.eclipse.team.svn.ui.operation.ShowHistoryViewOperation;
 import org.eclipse.team.svn.ui.operation.ShowPropertiesOperation;
 import org.eclipse.team.svn.ui.operation.UILoggedOperation;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFolder;
 import org.eclipse.team.svn.ui.utility.TableViewerSorter;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -441,14 +445,18 @@ public class AffectedPathsComposite extends Composite {
 				String tagFrom = SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.TagFrom", new String [] {String.valueOf(AffectedPathsComposite.this.currentRevision)});
 				manager.add(tAction = new Action(branchFrom) {
 					public void run() {
-						//TODO Branch implementation
+						AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(affectedTableSelection.getFirstElement(), false);
+						ProgressMonitorUtility.doTaskExternal(provider, new NullProgressMonitor());
+						AffectedPathsComposite.this.createBranchTag(provider, BranchTagAction.BRANCH_ACTION);
 					}
 				});
 				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/branch.gif"));
 				tAction.setEnabled(enabled);
 				manager.add(tAction = new Action(tagFrom) {
 					public void run() {
-						//TODO Tag implementation
+						AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(affectedTableSelection.getFirstElement(), false);
+						ProgressMonitorUtility.doTaskExternal(provider, new NullProgressMonitor());
+						AffectedPathsComposite.this.createBranchTag(provider, BranchTagAction.TAG_ACTION);
 					}
 				});
 				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/tag.gif"));
@@ -522,14 +530,18 @@ public class AffectedPathsComposite extends Composite {
         		manager.add(new Separator());
         		manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.BranchFrom", new String [] {String.valueOf(AffectedPathsComposite.this.currentRevision)})) {
         			public void run() {
-        				//TODO implement Branch From
+        				GetSelectedTreeResource provider = new GetSelectedTreeResource(AffectedPathsComposite.this.repositoryResource, AffectedPathsComposite.this.currentRevision, affectedTableSelection.getFirstElement());
+						ProgressMonitorUtility.doTaskExternalDefault(provider, new NullProgressMonitor());
+						AffectedPathsComposite.this.createBranchTag(provider, BranchTagAction.BRANCH_ACTION);
         			}
         		});
         		tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/branch.gif"));
         		tAction.setEnabled(affectedTableSelection.size() > 0);
         		manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.TagFrom", new String [] {String.valueOf(AffectedPathsComposite.this.currentRevision)})) {
         			public void run() {
-        				//TODO implement Tag From
+        				GetSelectedTreeResource provider = new GetSelectedTreeResource(AffectedPathsComposite.this.repositoryResource, AffectedPathsComposite.this.currentRevision, affectedTableSelection.getFirstElement());
+						ProgressMonitorUtility.doTaskExternalDefault(provider, new NullProgressMonitor());
+						AffectedPathsComposite.this.createBranchTag(provider, BranchTagAction.TAG_ACTION);
         			}
         		});
         		tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/tag.gif"));
@@ -615,6 +627,21 @@ public class AffectedPathsComposite extends Composite {
 		op.add(new SaveRepositoryLocationsOperation());
 		op.add(new RefreshRepositoryLocationsOperation(new IRepositoryLocation [] {this.repositoryResource.getRepositoryLocation()}, true));
 		UIMonitorUtility.doTaskScheduledDefault(op);
+	}
+	
+	protected void createBranchTag(IRepositoryResourceProvider provider, int type) {
+		boolean respectProjectStructure = SVNTeamPreferences.getRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_NAME);
+		
+		IRepositoryResource []resources = provider.getRepositoryResources();
+		PreparedBranchTagOperation op = BranchTagAction.getBranchTagOperation(resources, this.getShell(), type, respectProjectStructure);
+
+		if (op != null) {
+			CompositeOperation composite = new CompositeOperation(op.getId());
+			composite.add(op);
+			RefreshRemoteResourcesOperation refreshOp = new RefreshRemoteResourcesOperation(new IRepositoryResource[] {op.getDestination().getParent()});
+			composite.add(refreshOp, new IActionOperation[] {op});
+			UIMonitorUtility.doTaskNowDefault(op, false);
+		}
 	}
 	
 	protected void compareWithPreviousRevision(AbstractActionOperation provider) {
