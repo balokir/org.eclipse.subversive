@@ -15,6 +15,7 @@ import java.util.Collection;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.action.Action;
@@ -39,6 +40,7 @@ import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.MouseEvent;
@@ -76,16 +78,21 @@ import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
+import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.action.remote.CreatePatchAction;
+import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.history.AffectedPathNode;
 import org.eclipse.team.svn.ui.history.AffectedPathsContentProvider;
 import org.eclipse.team.svn.ui.history.AffectedPathsLabelProvider;
 import org.eclipse.team.svn.ui.operation.CompareRepositoryResourcesOperation;
 import org.eclipse.team.svn.ui.operation.OpenRemoteFileOperation;
 import org.eclipse.team.svn.ui.operation.ShowPropertiesOperation;
+import org.eclipse.team.svn.ui.repository.model.RepositoryFolder;
 import org.eclipse.team.svn.ui.utility.TableViewerSorter;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
+import org.eclipse.team.svn.ui.wizard.CreatePatchWizard;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
@@ -389,10 +396,11 @@ public class AffectedPathsComposite extends Composite {
 				tAction.setEnabled(enabled);
 				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.CreatePatch")) {
 					public void run() {
-						// TODO Create Patch implementation
+						AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(affectedTableSelection.getFirstElement(), false);
+						AffectedPathsComposite.this.createPatchToPrevious(provider);
 					}
 				});
-				tAction.setEnabled(affectedTableSelection.size() == 1);
+				tAction.setEnabled(enabled);
 				manager.add(new Separator());
 				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.ShowProperties")) {
 					public void run() {
@@ -466,14 +474,24 @@ public class AffectedPathsComposite extends Composite {
 						AffectedPathsComposite.this.compareWithPreviousRevision(provider);
 					}
         		});
-        		manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.CreatePatch")) {
-					public void run() {
-						// TODO Create Patch implementation
-					}
-				});
-				tAction.setEnabled(affectedTableSelection.size() == 1);
         		boolean isCompareFoldersAllowed = (CoreExtensionsManager.instance().getSVNConnectorFactory().getSupportedFeatures() & ISVNConnectorFactory.OptionalFeatures.COMPARE_FOLDERS) != 0;
         		tAction.setEnabled(isCompareFoldersAllowed && AffectedPathsComposite.this.currentRevision != 0 && affectedTableSelection.size() == 1 && (node.getStatus() == null || node.getStatus().charAt(0) == 'M'));
+        		manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.CreatePatch")) {
+					public void run() {					
+						GetSelectedTreeResource op = new GetSelectedTreeResource(AffectedPathsComposite.this.repositoryResource, AffectedPathsComposite.this.currentRevision, affectedTableSelection.getFirstElement());
+						ProgressMonitorUtility.doTaskExternalDefault(op, new NullProgressMonitor());
+						IRepositoryResource current = op.getRepositoryResources()[0];
+						CreatePatchWizard wizard = new CreatePatchWizard(current.getName(), false);
+						WizardDialog dialog = new WizardDialog(UIMonitorUtility.getShell(), wizard);
+						if (dialog.open() == DefaultDialog.OK) {
+							IRepositoryResource previous = (current instanceof RepositoryFolder) ? current.asRepositoryContainer(current.getUrl(), false) : current.asRepositoryFile(current.getUrl(), false);
+							previous.setSelectedRevision(SVNRevision.fromNumber(AffectedPathsComposite.this.currentRevision - 1));
+							previous.setPegRevision(SVNRevision.fromNumber(AffectedPathsComposite.this.currentRevision));
+							UIMonitorUtility.doTaskNowDefault(CreatePatchAction.getCreatePatchOperation(previous, current, wizard), false);
+						}
+					}
+				});
+        		tAction.setEnabled(affectedTableSelection.size() == 1 && AffectedPathsComposite.this.currentRevision != 0 && affectedTableSelection.size() == 1 && (node.getStatus() == null || node.getStatus().startsWith("M")));
         		manager.add(new Separator());
         		manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.ShowProperties")) {
 					public void run() {
@@ -537,6 +555,19 @@ public class AffectedPathsComposite extends Composite {
 		composite.add(propertyProvider, new IActionOperation[] {(AbstractActionOperation)provider});
 		composite.add(showOp, new IActionOperation[] {(AbstractActionOperation)provider, propertyProvider});
 		UIMonitorUtility.doTaskScheduledActive(composite);
+	}
+	
+	protected void createPatchToPrevious(AffectedRepositoryResourceProvider provider) {
+		ProgressMonitorUtility.doTaskExternal(provider, new NullProgressMonitor());
+		IRepositoryResource current = provider.getRepositoryResources()[0];
+		CreatePatchWizard wizard = new CreatePatchWizard(current.getName(), false);
+		WizardDialog dialog = new WizardDialog(UIMonitorUtility.getShell(), wizard);
+		if (dialog.open() == DefaultDialog.OK) {
+			IRepositoryResource previous = (current instanceof RepositoryFolder) ? current.asRepositoryContainer(current.getUrl(), false) : current.asRepositoryFile(current.getUrl(), false);
+			previous.setSelectedRevision(SVNRevision.fromNumber(AffectedPathsComposite.this.currentRevision - 1));
+			previous.setPegRevision(SVNRevision.fromNumber(AffectedPathsComposite.this.currentRevision));
+			UIMonitorUtility.doTaskNowDefault(CreatePatchAction.getCreatePatchOperation(previous, current, wizard), false);
+		}
 	}
 	
 	protected void compareWithPreviousRevision(AbstractActionOperation provider) {
