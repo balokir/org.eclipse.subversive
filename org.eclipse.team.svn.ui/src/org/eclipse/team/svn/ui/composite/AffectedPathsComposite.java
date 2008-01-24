@@ -94,6 +94,7 @@ import org.eclipse.team.svn.ui.history.AffectedPathsLabelProvider;
 import org.eclipse.team.svn.ui.operation.CompareRepositoryResourcesOperation;
 import org.eclipse.team.svn.ui.operation.OpenRemoteFileOperation;
 import org.eclipse.team.svn.ui.operation.RefreshRepositoryLocationsOperation;
+import org.eclipse.team.svn.ui.operation.ShowHistoryViewOperation;
 import org.eclipse.team.svn.ui.operation.ShowPropertiesOperation;
 import org.eclipse.team.svn.ui.operation.UILoggedOperation;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFolder;
@@ -419,6 +420,15 @@ public class AffectedPathsComposite extends Composite {
 				});
 				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/propertiesedit.gif"));
 				tAction.setEnabled(affectedTableSelection.size() == 1);
+				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.ShowHistory")) {
+					public void run() {
+						AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(affectedTableSelection.getFirstElement(), false);
+						ProgressMonitorUtility.doTaskExternal(provider, new NullProgressMonitor());
+						AffectedPathsComposite.this.showHistory(provider);
+					}
+				});
+				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history.gif"));
+				tAction.setEnabled(affectedTableSelection.size() == 1);
 				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.ShowAnnotation")) {
 					public void run() {
 						AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(affectedTableSelection.getFirstElement(), false);
@@ -500,6 +510,15 @@ public class AffectedPathsComposite extends Composite {
         		});
         		tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/propertiesedit.gif"));
         		tAction.setEnabled(AffectedPathsComposite.this.currentRevision != 0 && affectedTableSelection.size() == 1 /*&& (node.getStatus() == null || node.getStatus().charAt(0) == 'M')*/);
+        		manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.ShowHistory")) {
+					public void run() {
+						GetSelectedTreeResource provider = new GetSelectedTreeResource(AffectedPathsComposite.this.repositoryResource, AffectedPathsComposite.this.currentRevision, affectedTableSelection.getFirstElement());
+						ProgressMonitorUtility.doTaskExternalDefault(provider, new NullProgressMonitor());
+						AffectedPathsComposite.this.showHistory(provider);
+					}
+        		});
+        		tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history.gif"));
+        		tAction.setEnabled(AffectedPathsComposite.this.currentRevision != 0 && affectedTableSelection.size() == 1);
         		manager.add(new Separator());
         		manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.BranchFrom", new String [] {String.valueOf(AffectedPathsComposite.this.currentRevision)})) {
         			public void run() {
@@ -549,6 +568,10 @@ public class AffectedPathsComposite extends Composite {
 		composite.add(propertyProvider, new IActionOperation[] {(AbstractActionOperation)provider});
 		composite.add(showOp, new IActionOperation[] {(AbstractActionOperation)provider, propertyProvider});
 		UIMonitorUtility.doTaskScheduledActive(composite);
+	}
+	
+	protected void showHistory(IRepositoryResourceProvider provider) {
+		UIMonitorUtility.doTaskBusyDefault(new ShowHistoryViewOperation(provider.getRepositoryResources()[0], 0, 0));
 	}
 	
 	protected void showAnnotation(AffectedRepositoryResourceProvider provider) {
