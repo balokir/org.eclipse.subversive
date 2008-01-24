@@ -65,6 +65,7 @@ import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.RevertOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.UpdateOperation;
+import org.eclipse.team.svn.core.operation.remote.ExportOperation;
 import org.eclipse.team.svn.core.operation.remote.GetLogMessagesOperation;
 import org.eclipse.team.svn.core.operation.remote.GetRemotePropertiesOperation;
 import org.eclipse.team.svn.core.operation.remote.LocateResourceURLInHistoryOperation;
@@ -102,6 +103,7 @@ import org.eclipse.team.svn.ui.operation.RefreshRepositoryLocationsOperation;
 import org.eclipse.team.svn.ui.operation.RemoteShowAnnotationOperation;
 import org.eclipse.team.svn.ui.operation.ShowPropertiesOperation;
 import org.eclipse.team.svn.ui.operation.UILoggedOperation;
+import org.eclipse.team.svn.ui.panel.remote.ExportPanel;
 import org.eclipse.team.svn.ui.panel.view.HistoryFilterPanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFile;
@@ -357,6 +359,13 @@ public class HistoryViewImpl {
 					});
 					tAction.setEnabled(tSelection.size() == 1);
 				}
+				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.Export")) {
+					public void run() {
+						HistoryViewImpl.this.doExport(tSelection.getFirstElement());
+					}
+				});
+				tAction.setEnabled(tSelection.size() == 1);
+				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/export.gif"));
 				manager.add(new Separator());
 
 				String branchFrom = SVNTeamUIPlugin.instance().getResource("HistoryView.BranchFromRevision");
@@ -393,7 +402,14 @@ public class HistoryViewImpl {
 					}
 				});
 				tAction.setEnabled(tSelection.size() > 0);
-				
+				manager.add(new Separator());
+				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CopyHistory")) {
+					public void run() {
+						HistoryViewImpl.this.handleCopy();
+					}
+				});
+				tAction.setEnabled(tSelection.size() > 0);
+				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/copy.gif"));
 				manager.add(new Separator());
 				if (HistoryViewImpl.this.wcResource != null) {
 				    manager.add(tAction = new Action (SVNTeamUIPlugin.instance().getResource("HistoryView.QuickFilter")) {
@@ -415,16 +431,6 @@ public class HistoryViewImpl {
 				    tAction.setHoverImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/clear_filter.gif"));
 				    tAction.setEnabled(isFilterEnabled());
 				}
-
-				manager.add(new Separator());
-				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CopyHistory")) {
-					public void run() {
-						HistoryViewImpl.this.handleCopy();
-					}
-				});
-				tAction.setEnabled(tSelection.size() > 0);
-				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/copy.gif"));
-
 				manager.add(new Separator()); 
 				manager.add(HistoryViewImpl.this.getRefreshAction());
 			}
@@ -775,6 +781,17 @@ public class HistoryViewImpl {
 			this.wcResource != null ? 
 			(IActionOperation)new LocalShowAnnotationOperation(this.wcResource, page, remote.getSelectedRevision()) :
 			new RemoteShowAnnotationOperation(remote, page));
+	}
+	
+	protected void doExport(Object item) {
+		IRepositoryResource resource = this.getResourceForSelectedRevision(item);
+		ExportPanel panel = new ExportPanel(resource);
+		DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getShell(), panel);
+		if (dialog.open() == 0) {
+			resource = SVNUtility.copyOf(resource);
+			resource.setSelectedRevision(panel.getSelectedRevision());
+	    	UIMonitorUtility.doTaskScheduledDefault(new ExportOperation(resource, panel.getLocation()));
+	    }
 	}
 	
 	protected void addRevisionLinks(IStructuredSelection tSelection) {
