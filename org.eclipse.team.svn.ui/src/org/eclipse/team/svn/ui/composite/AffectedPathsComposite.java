@@ -427,19 +427,6 @@ public class AffectedPathsComposite extends Composite {
 				});
 				tAction.setEnabled(affectedTableSelection.size() == 1);
 				manager.add(new Separator());
-				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.GetContents")) {
-					public void run() {
-						//TODO Get Contents implementation
-					}
-				});
-				tAction.setEnabled(enabled);
-				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.UpdateTo")) {
-					public void run() {
-						//TODO Update To implementation
-					}
-				});
-				tAction.setEnabled(enabled);
-				manager.add(new Separator());				
 				String branchFrom = SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.BranchFrom", new String [] {String.valueOf(AffectedPathsComposite.this.currentRevision)});
 				String tagFrom = SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.TagFrom", new String [] {String.valueOf(AffectedPathsComposite.this.currentRevision)});
 				manager.add(tAction = new Action(branchFrom) {
@@ -513,13 +500,6 @@ public class AffectedPathsComposite extends Composite {
         		});
         		tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/propertiesedit.gif"));
         		tAction.setEnabled(AffectedPathsComposite.this.currentRevision != 0 && affectedTableSelection.size() == 1 /*&& (node.getStatus() == null || node.getStatus().charAt(0) == 'M')*/);
-        		manager.add(new Separator());
-        		manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.UpdateTo")) {
-					public void run() {
-						//TODO implement Update To
-					}
-        		});
-        		tAction.setEnabled(true);
         		manager.add(new Separator());
         		manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.BranchFrom", new String [] {String.valueOf(AffectedPathsComposite.this.currentRevision)})) {
         			public void run() {
