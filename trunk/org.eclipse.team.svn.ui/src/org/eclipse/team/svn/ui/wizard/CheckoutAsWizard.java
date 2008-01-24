@@ -571,7 +571,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 			this.resource = resource;
 			this.propertyName = propertyName;
 			this.concatenatedData = concatenatedData;
-			this.property = new SVNProperty(propertyName, null, concatenatedData);
+			this.property = new SVNProperty(propertyName, new String(concatenatedData));
 		}
 
 		protected void runImpl(IProgressMonitor monitor) throws Exception {
@@ -585,12 +585,12 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 			finally {
 				location.releaseSVNProxy(proxy);
 			}
-			if (existingProperty != null && (existingProperty.value != null || existingProperty.data != null)) {
-				byte[] existingData = existingProperty.value != null ? existingProperty.value.getBytes() : existingProperty.data;
+			if (existingProperty != null && existingProperty.value != null) {
+				byte[] existingData = existingProperty.value.getBytes();
 				byte[] newData = new byte[existingData.length + this.concatenatedData.length];
 				System.arraycopy(existingData, 0, newData, 0, existingData.length);
 				System.arraycopy(this.concatenatedData, 0, newData, existingData.length, this.concatenatedData.length);
-				this.property = new SVNProperty(this.propertyName, null, newData);
+				this.property = new SVNProperty(this.propertyName, new String(newData));
 			}
 		}
 

@@ -79,7 +79,7 @@ public class CompareResourcesOperation extends AbstractActionOperation {
 		
 		this.protectStep(new IUnprotectedOperation() {
 			public void run(IProgressMonitor monitor) throws Exception {
-				proxy.status(FileUtility.getWorkingCopyPath(CompareResourcesOperation.this.local.getResource()), Depth.INFINITY, ISVNConnector.Options.IGNORE_EXTERNALS, new ISVNEntryStatusCallback() {
+				proxy.status(FileUtility.getWorkingCopyPath(CompareResourcesOperation.this.local.getResource()), Depth.INFINITY, ISVNConnector.Options.IGNORE_EXTERNALS, null, new ISVNEntryStatusCallback() {
 					public void next(SVNChangeStatus status) {
 						localChanges.add(new SVNDiffStatus(status.path, status.path, status.nodeKind, status.textStatus, status.propStatus));
 					}

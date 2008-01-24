@@ -37,7 +37,7 @@ public class SetPropertiesOperation extends AbstractWorkingCopyOperation {
 	protected IResourcePropertyProvider propertyProvider;
 	
 	public SetPropertiesOperation(IResource []resources, String name, byte []data, boolean isRecursive) {
-		this(resources, new SVNProperty[] {new SVNProperty(name, null, data)}, isRecursive);
+		this(resources, new SVNProperty[] {new SVNProperty(name, new String(data))}, isRecursive);
 	}
 	
 	public SetPropertiesOperation(IResource []resources, SVNProperty []data, boolean isRecursive) {
@@ -91,7 +91,7 @@ public class SetPropertiesOperation extends AbstractWorkingCopyOperation {
 		    final SVNProperty current = properties[i];
 		    this.protectStep(new IUnprotectedOperation() {
                 public void run(IProgressMonitor monitor) throws Exception {
-					proxy.propertySet(wcPath, current.name, current.data == null ? current.value.getBytes() : current.data, Depth.infinityOrEmpty(SetPropertiesOperation.this.isRecursive), ISVNConnector.Options.NONE, new SVNProgressMonitor(SetPropertiesOperation.this, monitor, null));
+					proxy.propertySet(wcPath, current.name, current.value, Depth.infinityOrEmpty(SetPropertiesOperation.this.isRecursive), ISVNConnector.Options.NONE, null, new SVNProgressMonitor(SetPropertiesOperation.this, monitor, null));
                 }
             }, monitor, properties.length);
 		}

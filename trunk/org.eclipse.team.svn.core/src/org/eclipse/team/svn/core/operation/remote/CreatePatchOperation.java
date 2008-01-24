@@ -61,12 +61,12 @@ public class CreatePatchOperation extends AbstractRepositoryOperation {
 			if (SVNUtility.useSingleReferenceSignature(ref1, ref2)) {
 				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn diff -r " + ref1.revision + ":" + ref2.revision + " \"" + first.getUrl() + "@" + ref1.pegRevision + "\"" + (this.recurse ? "" : " -N") + (this.ignoreDeleted ? " --no-diff-deleted" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n");
 				proxy.diff(ref1, ref1.revision, ref2.revision, null, this.fileName, 
-						this.recurse ? Depth.INFINITY : Depth.IMMEDIATES, options, new SVNProgressMonitor(this, monitor, null));
+						this.recurse ? Depth.INFINITY : Depth.IMMEDIATES, options, null, new SVNProgressMonitor(this, monitor, null));
 			}
 			else {
 				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn diff \"" + first.getUrl() + "@" + first.getSelectedRevision() + "\" \"" + second.getUrl() + "@" + second.getSelectedRevision() + "\"" + (this.recurse ? "" : " -N") + (this.ignoreDeleted ? " --no-diff-deleted" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n");
 				proxy.diff(ref1, ref2, null, this.fileName, 
-						this.recurse ? Depth.INFINITY : Depth.IMMEDIATES, options, new SVNProgressMonitor(this, monitor, null));
+						this.recurse ? Depth.INFINITY : Depth.IMMEDIATES, options, null, new SVNProgressMonitor(this, monitor, null));
 			}
 		}
 		finally {

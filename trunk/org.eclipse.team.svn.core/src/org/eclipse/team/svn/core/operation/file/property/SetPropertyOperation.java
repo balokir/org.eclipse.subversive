@@ -37,7 +37,7 @@ public class SetPropertyOperation extends AbstractFileOperation {
 	protected boolean isRecursive;
 	
 	public SetPropertyOperation(File []files, String name, byte []data, boolean isRecursive) {
-		this(files, new SVNProperty[] {new SVNProperty(name, null, data)}, isRecursive);
+		this(files, new SVNProperty[] {new SVNProperty(name, new String(data))}, isRecursive);
 	}
 
 	public SetPropertyOperation(File []files, SVNProperty []data, boolean isRecursive) {
@@ -47,7 +47,7 @@ public class SetPropertyOperation extends AbstractFileOperation {
 	}
 
 	public SetPropertyOperation(IFileProvider provider, String name, byte []data, boolean isRecursive) {
-		this(provider, new SVNProperty[] {new SVNProperty(name, null, data)}, isRecursive);
+		this(provider, new SVNProperty[] {new SVNProperty(name, new String(data))}, isRecursive);
 	}
 
 	public SetPropertyOperation(IFileProvider provider, SVNProperty []data, boolean isRecursive) {
@@ -73,7 +73,7 @@ public class SetPropertyOperation extends AbstractFileOperation {
 					    final SVNProperty property = SetPropertyOperation.this.propertyData[i];
 					    SetPropertyOperation.this.protectStep(new IUnprotectedOperation() {
 	                        public void run(IProgressMonitor monitor) throws Exception {
-	        					proxy.propertySet(current.getAbsolutePath(), property.name, property.data, Depth.infinityOrEmpty(SetPropertyOperation.this.isRecursive), ISVNConnector.Options.NONE, new SVNProgressMonitor(SetPropertyOperation.this, monitor, null));
+	        					proxy.propertySet(current.getAbsolutePath(), property.name, property.value, Depth.infinityOrEmpty(SetPropertyOperation.this.isRecursive), ISVNConnector.Options.NONE, null, new SVNProgressMonitor(SetPropertyOperation.this, monitor, null));
 	                        }
 	                    }, monitor, SetPropertyOperation.this.propertyData.length);
 					}

@@ -58,7 +58,7 @@ public class CreatePatchOperation extends AbstractFileOperation {
 			options |= this.processUnversioned ? ISVNConnector.Options.INCLUDE_UNVERSIONED : ISVNConnector.Options.NONE;
 			proxy.diff(
 				new SVNEntryRevisionReference(path, null, SVNRevision.BASE), new SVNEntryRevisionReference(path, null, SVNRevision.WORKING), this.useRelativePath ? path : null, this.fileName, 
-				Depth.infinityOrFiles(this.recurse), options, new SVNProgressMonitor(this, monitor, null));
+				Depth.infinityOrFiles(this.recurse), options, null, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 			remote.getRepositoryLocation().releaseSVNProxy(proxy);

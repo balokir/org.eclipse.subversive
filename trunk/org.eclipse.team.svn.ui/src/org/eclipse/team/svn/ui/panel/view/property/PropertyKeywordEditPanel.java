@@ -323,7 +323,7 @@ public class PropertyKeywordEditPanel extends AbstractDialogPanel {
 				}
 				SVNKeywordProperty keyProperty = new SVNKeywordProperty(retVal[0] == null ? null : retVal[0].value);
 				PropertyKeywordEditPanel.this.configureProperty(keyProperty);
-				retVal[0] = new SVNProperty(BuiltIn.KEYWORDS, keyProperty.toString(), null);
+				retVal[0] = new SVNProperty(BuiltIn.KEYWORDS, keyProperty.toString());
 				return retVal;
 			}
 		};

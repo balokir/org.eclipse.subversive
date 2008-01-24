@@ -105,11 +105,11 @@ public class AddToSVNOperation extends AbstractWorkingCopyOperation {
 		
 		if (ignoreValue.length() > 0)
 		{
-			proxy.propertySet(parentPath, BuiltIn.IGNORE, ignoreValue, Depth.EMPTY, ISVNConnector.Options.NONE, new SVNNullProgressMonitor());
+			proxy.propertySet(parentPath, BuiltIn.IGNORE, ignoreValue, Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNNullProgressMonitor());
 		}
 		else
 		{
-			proxy.propertyRemove(parentPath, BuiltIn.IGNORE, Depth.EMPTY, new SVNNullProgressMonitor());
+			proxy.propertyRemove(parentPath, BuiltIn.IGNORE, Depth.EMPTY, null, new SVNNullProgressMonitor());
 		}
 	}
 	
