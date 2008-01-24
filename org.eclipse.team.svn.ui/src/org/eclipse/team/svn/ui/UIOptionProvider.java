@@ -104,9 +104,7 @@ public class UIOptionProvider implements IOptionProvider {
 				SVNProperty[] propertyData = new SVNProperty[props.length];
 				for (int j = 0; j < props.length; j++) {
 					String[] propsNameValue = props[j].split("=");
-					propertyData[j] = new SVNProperty(propsNameValue[0],
-							propsNameValue.length == 1 ? "" : propsNameValue[1],
-							new byte[0]);
+					propertyData[j] = new SVNProperty(propsNameValue[0], propsNameValue.length == 1 ? "" : propsNameValue[1]);
 				}
 				return propertyData;
 			}

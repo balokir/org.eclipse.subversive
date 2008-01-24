@@ -62,7 +62,7 @@ public class SetPropertyAction extends AbstractNonRecursiveTeamAction {
 	}
 	
 	public static void doSetProperty(final IResource []resources, String propertyName, String value, String fileName, boolean isFileSelected, boolean isRecursive, final int applyMethod, boolean useMask, String filterMask, boolean strict, IActionOperation addOn) {
-		final SVNProperty []data = SetPropertyAction.getPropertyData(propertyName, isFileSelected ? fileName : value, isFileSelected);
+		final SVNProperty []data = new SVNProperty[] {new SVNProperty(propertyName, value)};
 		IActionOperation loadOp = null;
 		if (isFileSelected) {
 			final File f = new File(fileName);
@@ -71,7 +71,9 @@ public class SetPropertyAction extends AbstractNonRecursiveTeamAction {
 	                FileInputStream input = null;
 	                try {
 	                    input = new FileInputStream(f);
-	                    input.read(data[0].data);
+	                    byte []binary = new byte[(int)f.length()];
+	                    input.read(binary);
+	                    data[0] = new SVNProperty(data[0].name, new String(binary));
 	                }
 	                finally {
 	                    if (input != null) {
@@ -134,11 +136,6 @@ public class SetPropertyAction extends AbstractNonRecursiveTeamAction {
 		UIMonitorUtility.doTaskScheduledWorkspaceModify(composite);
 	}
 	
-	protected static SVNProperty []getPropertyData(String name, String data, boolean isFileSelected) {
-		SVNProperty retVal = isFileSelected ? new SVNProperty(name, null, new byte[(int)new File(data).length()]) : new SVNProperty(name, data, null);
-		return new SVNProperty[] {retVal};
-	}
-
 	public boolean isEnabled() {
 		return this.checkForResourcesPresence(IStateFilter.SF_EXCLUDE_PREREPLACED_AND_DELETED);
 	}

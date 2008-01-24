@@ -101,24 +101,16 @@ public class SVNProperty {
 	public final String value;
 
 	/**
-	 * The binary property value. Not <code>null</code>.
-	 */
-	public final byte[] data;
-
-	/**
 	 * The {@link SVNProperty} instance could be initialized only once because all fields are final
 	 * 
 	 * @param name
 	 *            the property name
 	 * @param value
 	 *            the value of the textual property
-	 * @param data
-	 *            the value of the binary property
 	 */
-	public SVNProperty(String name, String value, byte[] data) {
+	public SVNProperty(String name, String value) {
 		this.name = name;
 		this.value = value;
-		this.data = data;
 	}
 
 }

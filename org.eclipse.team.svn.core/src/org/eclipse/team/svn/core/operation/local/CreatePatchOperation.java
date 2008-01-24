@@ -61,7 +61,7 @@ public class CreatePatchOperation extends AbstractActionOperation {
 			options |= this.processUnversioned ? ISVNConnector.Options.INCLUDE_UNVERSIONED : ISVNConnector.Options.NONE;
 			proxy.diff(
 				new SVNEntryRevisionReference(wcPath, null, SVNRevision.BASE), new SVNEntryRevisionReference(wcPath, null, SVNRevision.WORKING), this.useRelativePath ? wcPath : null, this.fileName, 
-				Depth.infinityOrFiles(this.recurse), options, new SVNProgressMonitor(this, monitor, null));
+				Depth.infinityOrFiles(this.recurse), options, null, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 			location.releaseSVNProxy(proxy);

@@ -193,6 +193,11 @@ public interface ISVNConnector {
 		 * Fetch locks information also.
 		 */
 		public static final long FETCH_LOCKS = 0x200000;
+
+		/**
+		 * Indicate the depth value is ambient.
+		 */
+		public static final long DEPTH_IS_STICKY = 0x400000;
 	}
 
 	/**
@@ -216,6 +221,8 @@ public interface ISVNConnector {
 		public static final long STATUS = Options.SERVER_SIDE | Options.INCLUDE_UNCHANGED | Options.INCLUDE_IGNORED | Options.IGNORE_EXTERNALS;
 
 		public static final long MERGE = Options.FORCE | Options.IGNORE_ANCESTRY | Options.SIMULATE | Options.RECORD_ONLY;
+
+		public static final long MERGE_REINTEGRATE = Options.FORCE | Options.SIMULATE;
 
 		public static final long MERGE_STATUS = Options.FORCE | Options.IGNORE_ANCESTRY;
 
@@ -304,9 +311,9 @@ public interface ISVNConnector {
 
 	public long doSwitch(String path, SVNEntryRevisionReference toReference, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void revert(String path, int depth, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void revert(String path, int depth, String[] changelistNames, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void status(String path, int depth, long options, ISVNEntryStatusCallback callback, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void status(String path, int depth, long options, String[] changelistNames, ISVNEntryStatusCallback callback, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public void relocate(String from, String to, String path, int depth, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
@@ -317,6 +324,8 @@ public interface ISVNConnector {
 
 	public void merge(SVNEntryReference reference, SVNRevisionRange[] revisions, String localPath, int depth, long options, ISVNProgressMonitor monitor)
 			throws SVNConnectorException;
+	
+	public void mergeReintegrate(SVNEntryReference reference, String localPath, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public SVNMergeInfo getMergeInfo(SVNEntryReference reference, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
@@ -328,9 +337,9 @@ public interface ISVNConnector {
 
 	public void setConflictResolver(ISVNConflictResolutionCallback listener);
 
-	public void addToChangeList(String[] paths, String changelist, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void addToChangeList(String[] paths, String changelist, int depth, String[] changelistNames, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void removeFromChangeList(String[] paths, String changelist, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void removeFromChangeLists(String[] paths, int depth, String[] changelistNames, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public void dumpChangeLists(String[] changeLists, String rootPath, int depth, ISVNChangeListCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
@@ -346,18 +355,18 @@ public interface ISVNConnector {
 			throws SVNConnectorException;
 
 	public void diff(SVNEntryRevisionReference refPrev, SVNEntryRevisionReference refNext, String relativeToDir, String outFileName, int depth, long options,
-			ISVNProgressMonitor monitor) throws SVNConnectorException;
+			String[] changelistNames, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public void diff(SVNEntryReference reference, SVNRevision revPrev, SVNRevision revNext, String relativeToDir, String outFileName, int depth, long options,
-			ISVNProgressMonitor monitor) throws SVNConnectorException;
+			String[] changelistNames, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void diffStatus(SVNEntryRevisionReference refPrev, SVNEntryRevisionReference refNext, int depth, long options, ISVNDiffStatusCallback cb,
-			ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void diffStatus(SVNEntryRevisionReference refPrev, SVNEntryRevisionReference refNext, int depth, long options, String[] changelistNames, 
+			ISVNDiffStatusCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void diffStatus(SVNEntryReference reference, SVNRevision revPrev, SVNRevision revNext, int depth, long options, ISVNDiffStatusCallback cb,
-			ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void diffStatus(SVNEntryReference reference, SVNRevision revPrev, SVNRevision revNext, int depth, long options, String[] changelistNames, 
+			ISVNDiffStatusCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void info(SVNEntryRevisionReference reference, int depth, ISVNEntryInfoCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void info(SVNEntryRevisionReference reference, int depth, String[] changelistNames, ISVNEntryInfoCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public void streamFileContent(SVNEntryRevisionReference reference, int bufferSize, OutputStream stream, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
@@ -382,15 +391,13 @@ public interface ISVNConnector {
 	public void list(SVNEntryRevisionReference reference, int depth, int direntFields, long options, ISVNEntryCallback cb, ISVNProgressMonitor monitor)
 			throws SVNConnectorException;
 
-	public void properties(SVNEntryRevisionReference reference, int depth, ISVNPropertyCallback callback, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void properties(SVNEntryRevisionReference reference, int depth, String[] changelistNames, ISVNPropertyCallback callback, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public SVNProperty propertyGet(SVNEntryRevisionReference reference, String name, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void propertySet(String path, String name, byte[] value, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void propertySet(String path, String name, String value, int depth, long options, String[] changelistNames, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void propertySet(String path, String name, String value, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
-
-	public void propertyRemove(String path, String name, int depth, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void propertyRemove(String path, String name, int depth, String[] changelistNames, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public void dispose();
 }

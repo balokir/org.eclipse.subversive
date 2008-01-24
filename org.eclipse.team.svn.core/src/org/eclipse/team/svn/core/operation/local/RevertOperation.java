@@ -62,7 +62,7 @@ public class RevertOperation extends AbstractWorkingCopyOperation {
 				public void run(IProgressMonitor monitor) throws Exception {
 					proxy.revert(wcPath, 
 								 Depth.infinityOrEmpty(RevertOperation.this.doRecursiveRevert), 
-								 new SVNProgressMonitor(RevertOperation.this, monitor, null));
+								 null, new SVNProgressMonitor(RevertOperation.this, monitor, null));
 				}
 			}, monitor, resources.length);
 			location.releaseSVNProxy(proxy);

@@ -59,7 +59,7 @@ public class RevertOperation extends AbstractFileOperation {
 			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn revert \"" + FileUtility.normalizePath(current.getAbsolutePath()) + "\"" + (this.recursive ? " -R" : "") + "\n");
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-					proxy.revert(current.getAbsolutePath(), Depth.infinityOrEmpty(RevertOperation.this.recursive), new SVNProgressMonitor(RevertOperation.this, monitor, null));
+					proxy.revert(current.getAbsolutePath(), Depth.infinityOrEmpty(RevertOperation.this.recursive), null, new SVNProgressMonitor(RevertOperation.this, monitor, null));
 				}
 			}, monitor, files.length);
 			location.releaseSVNProxy(proxy);
