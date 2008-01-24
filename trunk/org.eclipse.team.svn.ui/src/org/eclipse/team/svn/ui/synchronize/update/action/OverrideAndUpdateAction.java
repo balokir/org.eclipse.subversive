@@ -60,10 +60,10 @@ public class OverrideAndUpdateAction extends AbstractSynchronizeModelAction {
 		final IResource [][]resources = new IResource[1][];
 		operation.getShell().getDisplay().syncExec(new Runnable() {
 			public void run() {
-				IResource []obstructedResources = operation.getSelectedResources(IStateFilter.SF_OBSTRUCTED);
+				IResource []obstructedResources = operation.getSelectedResourcesRecursive(IStateFilter.SF_OBSTRUCTED);
 				obstructedResources = FileUtility.addOperableParents(obstructedResources, IStateFilter.SF_OBSTRUCTED);
 				HashSet allResources = new HashSet(Arrays.asList(obstructedResources));
-				IResource []changedResources = operation.getSelectedResources(ISyncStateFilter.SF_OVERRIDE);
+				IResource []changedResources = operation.getSelectedResourcesRecursive(ISyncStateFilter.SF_OVERRIDE);
 				changedResources = UnacceptableOperationNotificator.shrinkResourcesWithNotOnRespositoryParents(operation.getShell(), changedResources);
 				if (changedResources != null) {
 					changedResources = FileUtility.addOperableParents(changedResources, IStateFilter.SF_NOTONREPOSITORY);

@@ -43,6 +43,12 @@ public class SVNFileChange extends SVNLocalFile implements IFileChange {
 	}
 
 	public IRepositoryResource getOriginator() {
+		if (this.originator == null) {
+			IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(this.resource);
+			remote.setPegRevision(this.getPegRevision());
+			remote.setSelectedRevision(SVNRevision.fromNumber(this.getRevision()));
+			return remote;
+		}
 		return this.originator;
 	}
 

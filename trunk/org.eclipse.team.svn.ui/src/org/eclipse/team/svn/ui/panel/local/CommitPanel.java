@@ -84,9 +84,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.action.local.AddToSVNIgnoreAction;
 import org.eclipse.team.svn.ui.action.local.CompareWithWorkingCopyAction;
-import org.eclipse.team.svn.ui.action.local.LockAction;
 import org.eclipse.team.svn.ui.action.local.RevertAction;
-import org.eclipse.team.svn.ui.action.local.UnlockAction;
 import org.eclipse.team.svn.ui.composite.CommentComposite;
 import org.eclipse.team.svn.ui.composite.ResourceSelectionComposite;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
@@ -329,7 +327,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 			public void menuAboutToShow(IMenuManager manager) {
 				manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 				final IStructuredSelection tSelection = (IStructuredSelection)tableViewer.getSelection();
-				final IResource[] selectedResources = (IResource[])((List)tSelection.toList()).toArray(new IResource[tSelection.size()]);
+				final IResource[] selectedResources = (IResource[])tSelection.toList().toArray(new IResource[tSelection.size()]);
 				Action tAction = null;
 				
 				//paste selected names action
@@ -461,7 +459,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 						LockPanel commentPanel = new LockPanel(!containsFolder, cop.getMinLockSize());
 						DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getShell(), commentPanel);
 						if (dialog.open() == 0) {
-						    IResource []resources = FileUtility.getResourcesRecursive(selectedResources, LockAction.SF_NONLOCKED, commentPanel.isRecursive() ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE); 
+						    IResource []resources = FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_READY_TO_LOCK, commentPanel.isRecursive() ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE); 
 						    LockOperation mainOp = new LockOperation(resources, commentPanel.getMessage(), commentPanel.getForce());
 						    CompositeOperation op = new CompositeOperation(mainOp.getId());
 							op.add(mainOp);
@@ -471,7 +469,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 					}
 				});
 				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/lock.gif"));
-				tAction.setEnabled(FileUtility.checkForResourcesPresenceRecursive(selectedResources, LockAction.SF_NONLOCKED));
+				tAction.setEnabled(FileUtility.checkForResourcesPresenceRecursive(selectedResources, IStateFilter.SF_READY_TO_LOCK));
 				
 				//Unlock action
 				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("UnlockAction.label")) {
@@ -485,7 +483,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 						}
 						UnlockResourcesDialog dialog = new UnlockResourcesDialog(UIMonitorUtility.getShell(), recursive);
 						if (dialog.open() == 0) {
-							IResource []resources = FileUtility.getResourcesRecursive(selectedResources, UnlockAction.SF_LOCKED, dialog.isRecursive() ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE);
+							IResource []resources = FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_LOCKED, dialog.isRecursive() ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE);
 						    UnlockOperation mainOp = new UnlockOperation(resources);
 							CompositeOperation op = new CompositeOperation(mainOp.getId());
 							op.add(mainOp);
@@ -495,7 +493,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 					}
 				});
 				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/unlock.gif"));
-				tAction.setEnabled(FileUtility.checkForResourcesPresenceRecursive(selectedResources, UnlockAction.SF_LOCKED));
+				tAction.setEnabled(FileUtility.checkForResourcesPresenceRecursive(selectedResources, IStateFilter.SF_LOCKED));
 				manager.add(new Separator());
 				
 				//Compare With group 

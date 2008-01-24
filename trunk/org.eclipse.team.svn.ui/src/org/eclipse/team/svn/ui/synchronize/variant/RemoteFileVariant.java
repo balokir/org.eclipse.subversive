@@ -56,14 +56,14 @@ public class RemoteFileVariant extends RemoteResourceVariant {
 		}
 		else {
 			remote = SVNRemoteStorage.instance().asRepositoryResource(this.local.getResource());
+			remote.setSelectedRevision(SVNRevision.fromNumber(this.local.getRevision()));
+			remote.setPegRevision(((IResourceChange)this.local).getPegRevision());
 			if (this.local instanceof IResourceChange) {
 				IRepositoryResource originator = ((IResourceChange)this.local).getOriginator();
 				if (originator != null) {
 					remote = originator;
 				}
 			}
-			remote.setSelectedRevision(SVNRevision.fromNumber(this.local.getRevision()));
-			remote.setPegRevision(((IResourceChange)this.local).getPegRevision());
 		}
 		
 		GetFileContentOperation op = new GetFileContentOperation(remote);

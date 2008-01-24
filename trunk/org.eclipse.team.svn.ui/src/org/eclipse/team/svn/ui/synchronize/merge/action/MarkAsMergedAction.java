@@ -17,6 +17,7 @@ import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.ui.operation.ClearMergeStatusesOperation;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
+import org.eclipse.team.svn.ui.synchronize.action.ISyncStateFilter;
 import org.eclipse.team.svn.ui.synchronize.merge.MergeSyncInfo;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -44,7 +45,7 @@ public class MarkAsMergedAction extends AbstractSynchronizeModelAction {
 	}
 
 	protected IActionOperation execute(FilteredSynchronizeModelOperation operation) {
-		return new ClearMergeStatusesOperation(operation.getSelectedResources());
+		return new ClearMergeStatusesOperation(operation.getSelectedResourcesRecursive(new ISyncStateFilter.StateFilterWrapper(IStateFilter.SF_ALL, false)));
 	}
 
 }

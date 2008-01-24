@@ -12,14 +12,12 @@
 package org.eclipse.team.svn.ui.action.local;
 
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.local.LockOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
-import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.ui.action.AbstractRecursiveTeamAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
@@ -51,7 +49,7 @@ public class LockAction extends AbstractRecursiveTeamAction {
 		LockPanel commentPanel = new LockPanel(!containsFolder, cop.getMinLockSize());
 		DefaultDialog dialog = new DefaultDialog(this.getShell(), commentPanel);
 		if (dialog.open() == 0) {
-		    IResource []resources = this.getSelectedResourcesRecursive(SF_NONLOCKED, commentPanel.isRecursive() ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE);
+		    IResource []resources = this.getSelectedResourcesRecursive(IStateFilter.SF_READY_TO_LOCK, commentPanel.isRecursive() ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE);
 		    LockOperation mainOp = new LockOperation(resources, commentPanel.getMessage(), commentPanel.getForce());
 		    
 			CompositeOperation op = new CompositeOperation(mainOp.getId());
@@ -63,21 +61,7 @@ public class LockAction extends AbstractRecursiveTeamAction {
 	}
 	
     public boolean isEnabled() {
-        return this.checkForResourcesPresenceRecursive(LockAction.SF_NONLOCKED);
+        return this.checkForResourcesPresenceRecursive(IStateFilter.SF_READY_TO_LOCK);
     }
-
-    public static IStateFilter SF_NONLOCKED = new IStateFilter.AbstractStateFilter() {
-        protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
-            if (resource instanceof IFile && 
-                IStateFilter.SF_EXCLUDE_DELETED.accept(resource, state, mask)) {
-                local = this.takeLocal(local, resource);
-                return local != null && !local.isLocked();
-            }
-            return false;
-        }
-		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return IStateFilter.SF_EXCLUDE_DELETED.accept(resource, state, mask);
-		}
-    };
     
 }

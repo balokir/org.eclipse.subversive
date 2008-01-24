@@ -30,7 +30,6 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
  * @author Alexander Gurov
  */
 public class AddToSVNAction extends AbstractSynchronizeModelAction {
-
 	public AddToSVNAction(String text, ISynchronizePageConfiguration configuration) {
 		super(text, configuration);
 	}

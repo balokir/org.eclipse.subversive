@@ -88,9 +88,11 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 	protected HashMap<String, AbstractFormattedVerifier> verifiers;
 	protected IResource []selectedResources;
 	protected SVNTeamPropsPreferencePage.CustomProperty [] customProps;
+	protected boolean strict;
 
-	public PropertyEditPanel(SVNProperty data, IResource []selectedResources) {
+	public PropertyEditPanel(SVNProperty data, IResource []selectedResources, boolean strict) {
 		super();
+		this.strict = strict;
 		this.dialogTitle = SVNTeamUIPlugin.instance().getResource(data != null ? "PropertyEditPanel.Title.Edit" : "PropertyEditPanel.Title.Add");	
 		this.fileSelected = false;
 		this.source = data;
@@ -101,6 +103,10 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 		this.customProps = SVNTeamPropsPreferencePage.loadCustomProperties(SVNTeamPreferences.getCustomPropertiesList(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.CUSTOM_PROPERTIES_LIST_NAME));
 		this.createVerifiersMap();
 		this.dialogDescription = SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.Description");
+	}
+	
+	public boolean isStrict() {
+		return this.strict;
 	}
 	
 	private void createVerifiersMap() {
@@ -301,7 +307,7 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 			}
 		});
 		if (this.resourcesType != PropertyEditPanel.SINGLE_FILE) {
-			if (this.resourcesType == PropertyEditPanel.MIXED_RESOURCES) {
+			if (this.resourcesType == PropertyEditPanel.MIXED_RESOURCES && !this.strict) {
 				this.recursiveButton = new Button(subComposite, SWT.CHECK);
 				this.recursiveButton.setText(SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.Recursively"));
 			
@@ -323,7 +329,7 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 			this.valueField.setText(this.source.value);
 		}		
 		this.nameField.setFocus();
-		if (this.resourcesType == PropertyEditPanel.MIXED_RESOURCES) {
+		if (this.resourcesType == PropertyEditPanel.MIXED_RESOURCES && !this.strict) {
 			this.refreshControlsEnablement();
 		}
 	}

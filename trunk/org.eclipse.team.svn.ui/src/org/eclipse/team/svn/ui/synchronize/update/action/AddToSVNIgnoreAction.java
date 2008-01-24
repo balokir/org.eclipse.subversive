@@ -41,7 +41,6 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
  * @author Alexander Gurov
  */
 public class AddToSVNIgnoreAction extends AbstractSynchronizeModelAction {
-
 	public AddToSVNIgnoreAction(String text, ISynchronizePageConfiguration configuration) {
 		super(text, configuration);
 	}
@@ -74,7 +73,7 @@ public class AddToSVNIgnoreAction extends AbstractSynchronizeModelAction {
 	}
 
 	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {
-		final IResource [][]resources = new IResource[][] {FileUtility.shrinkChildNodes(operation.getSelectedResources(AddToSVNIgnoreAction.SF_NEW_AND_PARENT_VERSIONED))};
+		final IResource [][]resources = new IResource[][] {FileUtility.shrinkChildNodes(operation.getSelectedResourcesRecursive(AddToSVNIgnoreAction.SF_NEW_AND_PARENT_VERSIONED))};
 		
 		final IResource [][]operableParents = new IResource[][] {FileUtility.getOperableParents(resources[0], IStateFilter.SF_UNVERSIONED)};
 		if (operableParents[0].length > 0) {

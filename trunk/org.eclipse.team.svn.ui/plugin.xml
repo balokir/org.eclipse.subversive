@@ -457,7 +457,7 @@
                label="%UnlockAction.label"
                tooltip="%UnlockAction.tooltip"
                class="org.eclipse.team.svn.ui.action.local.UnlockAction"
-               menubarPath="team.main/group3"
+               menubarPath="team.main/group5"
                definitionId="org.eclipse.team.svn.ui.command.UnlockCommand"
                id="org.eclipse.team.svn.ui.action.local.UnlockAction"
                icon="icons/common/actions/unlock.gif">
@@ -467,7 +467,7 @@
                label="%LockAction.label"
                tooltip="%LockAction.tooltip"
                class="org.eclipse.team.svn.ui.action.local.LockAction"
-               menubarPath="team.main/group3"
+               menubarPath="team.main/group5"
                id="org.eclipse.team.svn.ui.action.local.LockAction"
                definitionId="org.eclipse.team.svn.ui.command.LockCommand"
                icon="icons/common/actions/lock.gif">
@@ -478,7 +478,7 @@
                helpContextId="org.eclipse.team.svn.ui.team_switch_action_context"
                class="org.eclipse.team.svn.ui.action.local.SwitchAction"
                tooltip="%SwitchAction.tooltip"
-               menubarPath="team.main/group4"
+               menubarPath="team.main/group3"
                id="org.eclipse.team.svn.ui.action.local.SwitchAction"
                definitionId="org.eclipse.team.svn.ui.command.SwitchCommand"
                icon="icons/common/actions/switch.gif">
@@ -488,7 +488,7 @@
                label="%MergeAction.label"
                tooltip="%MergeAction.tooltip"
                class="org.eclipse.team.svn.ui.action.local.MergeAction"
-               menubarPath="team.main/group4"
+               menubarPath="team.main/group3"
                enablesFor="1"
                id="org.eclipse.team.svn.ui.action.local.MergeAction"
                definitionId="org.eclipse.team.svn.ui.command.MergeCommand"
@@ -499,7 +499,7 @@
                label="%BranchAction.label"
                tooltip="%BranchAction.tooltip"
                class="org.eclipse.team.svn.ui.action.local.BranchAction"
-               menubarPath="team.main/group4"
+               menubarPath="team.main/group3"
                enablesFor="1"
                definitionId="org.eclipse.team.svn.ui.command.BranchCommand"
                id="org.eclipse.team.svn.ui.action.local.BranchAction"
@@ -510,7 +510,7 @@
                label="%TagAction.label"
                tooltip="%TagAction.tooltip"
                class="org.eclipse.team.svn.ui.action.local.TagAction"
-               menubarPath="team.main/group4"
+               menubarPath="team.main/group3"
                enablesFor="1"
                id="org.eclipse.team.svn.ui.action.local.TagAction"
                definitionId="org.eclipse.team.svn.ui.command.TagCommand"
@@ -522,17 +522,18 @@
               label="%ShowResourceHistoryAction.label"
               tooltip="%ShowResourceHistoryAction.tooltip"
               class="org.eclipse.team.svn.ui.action.local.ShowHistoryAction"
-              menubarPath="team.main/group6"
+              menubarPath="team.main/group4"
               id="org.eclipse.team.svn.ui.action.local.ShowHistoryAction"
               definitionId="org.eclipse.team.svn.ui.command.ShowResourceHistoryCommand"
               icon="icons/common/actions/showhistory.gif">
          </action>
+         
          <action
 			   label="%SetKeywordsAction.label"
                helpContextId="org.eclipse.team.svn.ui.team_set_keywords_action_context"
                class="org.eclipse.team.svn.ui.action.local.SetKeywordsAction"
                tooltip="%SetKeywordsAction.tooltip"
-               menubarPath="team.main/group5"
+               menubarPath="team.main/group6"
                definitionId="org.eclipse.team.svn.ui.command.SetKeywordsCommand"
                id="org.eclipse.team.svn.ui.action.local.SetKeywordsAction">               
          </action>
@@ -541,7 +542,7 @@
                helpContextId="org.eclipse.team.svn.ui.team_set_property_action_context"
                class="org.eclipse.team.svn.ui.action.local.SetPropertyAction"
                tooltip="%SetPropertyAction.tooltip"
-               menubarPath="team.main/group5"
+               menubarPath="team.main/group6"
                definitionId="org.eclipse.team.svn.ui.command.SetPropertyCommand"
                id="org.eclipse.team.svn.ui.action.local.SetPropertyAction">               
          </action>
@@ -550,7 +551,7 @@
                helpContextId="org.eclipse.team.svn.ui.team_edit_properties_action_context"
                class="org.eclipse.team.svn.ui.action.local.EditPropertiesAction"
                tooltip="%EditPropertiesAction.tooltip"
-               menubarPath="team.main/group5"
+               menubarPath="team.main/group6"
                id="org.eclipse.team.svn.ui.action.local.EditPropertiesAction"
                definitionId="org.eclipse.team.svn.ui.command.EditPropertiesCommand"
                icon="icons/views/propertiesedit.gif">               
@@ -602,7 +603,7 @@
                helpContextId="org.eclipse.team.svn.ui.show_annotation_action_context"
                tooltip="%ShowAnnotationAction.tooltip"
                class="org.eclipse.team.svn.ui.action.local.ShowAnnotationAction"
-               menubarPath="team.main/group6"
+               menubarPath="team.main/group4"
                definitionId="org.eclipse.team.svn.ui.command.ShowAnnotationCommand"
                id="org.eclipse.team.svn.ui.action.local.ShowAnnotationAction">
          </action>               

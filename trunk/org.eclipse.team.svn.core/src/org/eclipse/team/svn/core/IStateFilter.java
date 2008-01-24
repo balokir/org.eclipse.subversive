@@ -63,7 +63,7 @@ public interface IStateFilter {
 	public static final String ST_REPLACED = "Replaced";
 
 	public static final String ST_LINKED = "Linked";
-	
+
 	public boolean accept(ILocalResource resource);
 	
 	public boolean accept(IResource resource, String state, int mask);
@@ -93,6 +93,25 @@ public interface IStateFilter {
 			return local != null ? local : SVNRemoteStorage.instance().asLocalResource(resource);
 		}
 	}
+
+	public static final IStateFilter SF_LOCKED = new AbstractStateFilter() {
+	    protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
+	        return (mask & ILocalResource.IS_LOCKED) != 0;
+	    }
+	    protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
+			return SF_ONREPOSITORY.accept(resource, state, mask);
+		}
+	};
+	
+	public static final IStateFilter SF_READY_TO_LOCK = new AbstractStateFilter() {
+	    protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
+	        return resource instanceof IFile && (mask & ILocalResource.IS_LOCKED) == 0 && IStateFilter.SF_EXCLUDE_DELETED.accept(resource, state, mask);
+	    }
+	    
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
+			return IStateFilter.SF_EXCLUDE_DELETED.accept(resource, state, mask);
+		}
+	};
 
 	public static final IStateFilter SF_EXTERNAL = new AbstractStateFilter() {
 		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
@@ -415,6 +434,15 @@ public interface IStateFilter {
 	public static final IStateFilter SF_VERSIONED_FOLDERS = new AbstractStateFilter() {
 		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return resource instanceof IContainer && IStateFilter.SF_VERSIONED.accept(resource, state, mask);
+		}
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
+			return IStateFilter.SF_VERSIONED.accept(resource, state, mask);
+		}
+	};
+
+	public static final IStateFilter SF_VERSIONED_FILES = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
+			return resource instanceof IFile && IStateFilter.SF_VERSIONED.accept(resource, state, mask);
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_VERSIONED.accept(resource, state, mask);

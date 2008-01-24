@@ -50,7 +50,7 @@ public class SetPropertyAction extends AbstractNonRecursiveTeamAction {
 	public void runImpl(IAction action) {
 		final IResource []resources = this.getSelectedResources(IStateFilter.SF_EXCLUDE_PREREPLACED_AND_DELETED);
 		
-		PropertyEditPanel panel = new PropertyEditPanel(null, resources);
+		PropertyEditPanel panel = new PropertyEditPanel(null, resources, false);
 		DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
 		if (dialog.open() == Dialog.OK) {
 			SetPropertyAction.doSetProperty(resources, panel, null);
@@ -58,10 +58,10 @@ public class SetPropertyAction extends AbstractNonRecursiveTeamAction {
 	}
 	
 	public static void doSetProperty(final IResource []resources, PropertyEditPanel panel, IActionOperation addOn) {
-		SetPropertyAction.doSetProperty(resources, panel.getPropertyName(), panel.getPropertyValue(), panel.getPropertyFile(), panel.isFileSelected(), panel.isRecursiveSelected(), panel.getApplyMethod(), panel.useMask(), panel.getFilterMask(), addOn);
+		SetPropertyAction.doSetProperty(resources, panel.getPropertyName(), panel.getPropertyValue(), panel.getPropertyFile(), panel.isFileSelected(), panel.isRecursiveSelected(), panel.getApplyMethod(), panel.useMask(), panel.getFilterMask(), panel.isStrict(), addOn);
 	}
 	
-	public static void doSetProperty(final IResource []resources, String propertyName, String value, String fileName, boolean isFileSelected, boolean isRecursive, final int applyMethod, boolean useMask, String filterMask, IActionOperation addOn) {
+	public static void doSetProperty(final IResource []resources, String propertyName, String value, String fileName, boolean isFileSelected, boolean isRecursive, final int applyMethod, boolean useMask, String filterMask, boolean strict, IActionOperation addOn) {
 		final SVNProperty []data = SetPropertyAction.getPropertyData(propertyName, isFileSelected ? fileName : value, isFileSelected);
 		IActionOperation loadOp = null;
 		if (isFileSelected) {
@@ -81,10 +81,10 @@ public class SetPropertyAction extends AbstractNonRecursiveTeamAction {
 	            }
 	        };
 		}
-		SetPropertyAction.doSetProperty(resources, data, loadOp, isRecursive, applyMethod, useMask, filterMask, addOn);
+		SetPropertyAction.doSetProperty(resources, data, loadOp, isRecursive, applyMethod, useMask, filterMask, strict, addOn);
 	}
 	
-	public static void doSetProperty(final IResource []resources, final SVNProperty []data, IActionOperation loadOp, boolean isRecursive, final int applyMethod, boolean useMask, String filterMask, IActionOperation addOn) {
+	public static void doSetProperty(final IResource []resources, final SVNProperty []data, IActionOperation loadOp, boolean isRecursive, final int applyMethod, boolean useMask, String filterMask, boolean strict, IActionOperation addOn) {
 		IResourceProvider resourceProvider = new IResourceProvider() {
 			public IResource []getResources() {
 				return resources;
@@ -93,7 +93,7 @@ public class SetPropertyAction extends AbstractNonRecursiveTeamAction {
 		IActionOperation mainOp;
 		if (!isRecursive || applyMethod == PropertiesComposite.APPLY_TO_ALL && !useMask) {
 			// use faster version
-			mainOp = new SetPropertiesOperation(resourceProvider, data, isRecursive);
+			mainOp = new SetPropertiesOperation(resourceProvider, data, isRecursive & !strict);
 		}
 		else {
 			final StringMatcher matcher = useMask ? new StringMatcher(filterMask) : null; 
@@ -117,7 +117,7 @@ public class SetPropertyAction extends AbstractNonRecursiveTeamAction {
 					return true;
 				}
 			};
-			mainOp = new SetMultiPropertiesOperation(resourceProvider, propertyProvider, filter, isRecursive ? IResource.DEPTH_INFINITE : IResource.DEPTH_ZERO);
+			mainOp = new SetMultiPropertiesOperation(resourceProvider, propertyProvider, filter, isRecursive && !strict ? IResource.DEPTH_INFINITE : IResource.DEPTH_ZERO);
 		}
 		CompositeOperation composite = new CompositeOperation(mainOp.getId());
 		if (loadOp != null) {

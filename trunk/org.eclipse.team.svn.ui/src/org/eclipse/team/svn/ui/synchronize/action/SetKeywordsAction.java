@@ -9,43 +9,40 @@
  *    Alexei Goncharov (Polarion Software) - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.svn.ui.synchronize.update.action;
+package org.eclipse.team.svn.ui.synchronize.action;
 
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.ui.operation.ShowConflictEditorOperation;
-import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
-import org.eclipse.team.svn.ui.synchronize.update.UpdateSyncInfo;
+import org.eclipse.team.svn.ui.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
- * Edit conflicts action implementation for Synchronize view
+ * Set keywords action implementation for Synchronize view
  * 
  * @author Alexei Goncharov
  */
-public class EditConflictsAction extends AbstractSynchronizeModelAction {
-	public EditConflictsAction(String text, ISynchronizePageConfiguration configuration) {
+public class SetKeywordsAction extends AbstractSynchronizeModelAction {
+	public SetKeywordsAction(String text, ISynchronizePageConfiguration configuration) {
 		super(text, configuration);
 	}
 
 	protected FastSyncInfoFilter getSyncInfoFilter() {
-		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.CONFLICTING}) {
-			public boolean select(SyncInfo info) {
-				return super.select(info) && IStateFilter.SF_CONFLICTING.accept(((UpdateSyncInfo)info).getLocalResource());
-			}
-		};
+		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.OUTGOING, SyncInfo.CONFLICTING}) {
+            public boolean select(SyncInfo info) {
+                return super.select(info) && IStateFilter.SF_VERSIONED_FILES.accept(((AbstractSVNSyncInfo)info).getLocalResource());
+            }
+        };
 	}
 
 	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {
-		final IActionOperation [] op = new IActionOperation[1];
 		operation.getShell().getDisplay().syncExec(new Runnable() {
 			public void run() {
-				op[0] = new ShowConflictEditorOperation(operation.getSelectedResourcesRecursive(IStateFilter.SF_CONFLICTING));
+				org.eclipse.team.svn.ui.action.local.SetKeywordsAction.doSetKeywords(operation.getSelectedResourcesRecursive(IStateFilter.SF_VERSIONED_FILES));
 			}
 		});
-		return op[0];
+		return null;
 	}
-	
+
 }

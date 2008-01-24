@@ -9,24 +9,24 @@
  *    Alexei Goncharov (Polarion Software) - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.svn.ui.synchronize.update.action;
+package org.eclipse.team.svn.ui.synchronize.action;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
 import org.eclipse.team.svn.core.operation.local.property.GetPropertiesOperation;
-import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.core.resource.ILocalResource;
+import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.operation.ShowPropertiesOperation;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.properties.PropertiesView;
-import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
+import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -36,24 +36,27 @@ import org.eclipse.ui.PlatformUI;
  * 
  * @author Alexei Goncharov
  */
-public class ShowPropertiesAction extends AbstractSynchronizeModelAction {
+public class ShowOutgoingPropertiesAction extends AbstractSynchronizeModelAction {
 
-	public ShowPropertiesAction(String text, ISynchronizePageConfiguration configuration) {
+	public ShowOutgoingPropertiesAction(String text, ISynchronizePageConfiguration configuration) {
 		super(text, configuration);
 	}
 
-	public ShowPropertiesAction(String text, ISynchronizePageConfiguration configuration, ISelectionProvider selectionProvider) {
+	public ShowOutgoingPropertiesAction(String text, ISynchronizePageConfiguration configuration, ISelectionProvider selectionProvider) {
 		super(text, configuration, selectionProvider);
 	}
 	
 	protected boolean updateSelection(IStructuredSelection selection) {
 		super.updateSelection(selection);
-		if (selection.size() != 1 || !(selection.getFirstElement() instanceof SyncInfoModelElement)) {
-		    return false;
+		if (selection.size() == 1) {
+			ISynchronizeModelElement element = (ISynchronizeModelElement)selection.getFirstElement();
+			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(element.getResource());
+			// null for change set nodes
+			return local != null && IStateFilter.SF_VERSIONED.accept(local);
 		}
-		return !FileUtility.checkForResourcesPresence(new IResource [] {((SyncInfoModelElement)selection.getFirstElement()).getResource()}, IStateFilter.SF_UNVERSIONED, IResource.DEPTH_ZERO);
+	    return false;
 	}
-
+	
 	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {		
 		final IActionOperation [] op = new IActionOperation[1];
 		operation.getShell().getDisplay().syncExec(new Runnable() {
