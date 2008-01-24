@@ -34,7 +34,6 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
  * @author Alexander Gurov
  */
 public class CommitAction extends AbstractSynchronizeModelAction {
-
 	public CommitAction(String text, ISynchronizePageConfiguration configuration) {
 		super(text, configuration);
 	}

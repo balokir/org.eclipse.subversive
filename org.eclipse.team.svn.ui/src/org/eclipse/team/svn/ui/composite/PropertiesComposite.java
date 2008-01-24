@@ -369,7 +369,7 @@ public class PropertiesComposite extends Composite {
 	    DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
 		
 		if (dialog.open() == 0) {
-			SetPropertyAction.doSetProperty(new IResource[] {this.wcResource}, data, null, true, panel.getApplyMethod(), panel.useMask(), panel.getFilterMask(), this.getRefreshViewOperation());
+			SetPropertyAction.doSetProperty(new IResource[] {this.wcResource}, data, null, true, panel.getApplyMethod(), panel.useMask(), panel.getFilterMask(), false, this.getRefreshViewOperation());
 		}
 	}
 
@@ -377,7 +377,7 @@ public class PropertiesComposite extends Composite {
 		boolean propertyAlreadyExists = false;
 		boolean override = true;
 		IResource []resources = new IResource[] {this.wcResource};
-		final PropertyEditPanel panel = new PropertyEditPanel(data, resources);
+		final PropertyEditPanel panel = new PropertyEditPanel(data, resources, false);
 	    DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
 		
 		if (dialog.open() != 0) {

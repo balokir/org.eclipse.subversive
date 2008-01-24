@@ -22,6 +22,7 @@ import org.eclipse.team.svn.core.resource.ILocalResource;
  */
 public interface ISyncStateFilter extends IStateFilter {
     public boolean acceptRemote(IResource resource, String state, int mask);
+    public boolean acceptGroupNodes();
     
     public abstract class AbstractSyncStateFilter extends IStateFilter.AbstractStateFilter implements ISyncStateFilter {
     	
@@ -30,6 +31,10 @@ public interface ISyncStateFilter extends IStateFilter {
     public static ISyncStateFilter SF_ONREPOSITORY = new AbstractSyncStateFilter() {
         public boolean acceptRemote(IResource resource, String state, int mask) {
             return !IStateFilter.SF_NOTEXISTS.accept(resource, state, mask);
+        }
+        
+        public boolean acceptGroupNodes() {
+        	return true;
         }
         
         protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
@@ -46,6 +51,10 @@ public interface ISyncStateFilter extends IStateFilter {
             return !IStateFilter.SF_NOTEXISTS.accept(resource, state, mask);
         }
         
+        public boolean acceptGroupNodes() {
+        	return true;
+        }
+        
         protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
             return 
             	IStateFilter.SF_REVERTABLE.accept(resource, state, mask) || 
@@ -59,9 +68,15 @@ public interface ISyncStateFilter extends IStateFilter {
 
     public static class StateFilterWrapper implements ISyncStateFilter {
         protected IStateFilter filter;
+        protected boolean acceptGroupNodes;
         
-        public StateFilterWrapper(IStateFilter filter) {
+        public StateFilterWrapper(IStateFilter filter, boolean acceptGroupNodes) {
             this.filter = filter;
+            this.acceptGroupNodes = acceptGroupNodes;
+        }
+        
+        public boolean acceptGroupNodes() {
+        	return this.acceptGroupNodes;
         }
         
         public boolean acceptRemote(IResource resource, String state, int mask) {

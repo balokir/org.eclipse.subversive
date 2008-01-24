@@ -9,20 +9,20 @@
  *    Alexei Goncharov (Polarion Software) - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.svn.ui.synchronize.update.action;
+package org.eclipse.team.svn.ui.synchronize.action;
 
-import org.eclipse.core.resources.IProject;
+import java.util.Iterator;
+
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.management.CleanupOperation;
-import org.eclipse.team.svn.core.utility.FileUtility;
-import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
+import org.eclipse.team.svn.core.resource.ILocalResource;
+import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
@@ -31,17 +31,25 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
  * @author Alexei Goncharov
  */
 public class CleanUpAction extends AbstractSynchronizeModelAction {
-
 	public CleanUpAction(String text, ISynchronizePageConfiguration configuration) {
 		super(text, configuration);
 	}
 
-	public CleanUpAction(String text, ISynchronizePageConfiguration configuration, ISelectionProvider selectionProvider) {
-		super(text, configuration, selectionProvider);
+	protected boolean updateSelection(IStructuredSelection selection) {
+		super.updateSelection(selection);
+		for (Iterator it = selection.iterator(); it.hasNext(); ) {
+			ISynchronizeModelElement element = (ISynchronizeModelElement)it.next();
+			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(element.getResource());
+			// null for change set nodes
+			if (local != null && IStateFilter.SF_VERSIONED_FOLDERS.accept(local)) {
+				return true;
+			}
+		}
+	    return false;
 	}
-
+	
 	protected IActionOperation execute(FilteredSynchronizeModelOperation operation) {
-		IResource []resources = FileUtility.getResourcesRecursive(operation.getSelectedResources(), IStateFilter.SF_VERSIONED_FOLDERS, IResource.DEPTH_INFINITE);
+		IResource []resources = operation.getSelectedResources(IStateFilter.SF_VERSIONED_FOLDERS);
 		CleanupOperation mainOp = new CleanupOperation(resources);
 		CompositeOperation op = new CompositeOperation(mainOp.getId());
 		op.add(mainOp);
@@ -49,22 +57,4 @@ public class CleanUpAction extends AbstractSynchronizeModelAction {
 		return op;
 	}
 	
-	protected boolean updateSelection(IStructuredSelection selection) {
-		super.updateSelection(selection);
-		Object [] selectionArr = selection.toArray();
-		if (selection.size() > 0) {
-			for (int i = 0; i < selection.size(); i++) {
-				if (!(selectionArr[i] instanceof SyncInfoModelElement)) {
-					return false;
-				}
-				SyncInfoModelElement element = (SyncInfoModelElement)selectionArr[i];
-				IResource[] resource = {element.getResource()};
-				if (!FileUtility.checkForResourcesPresence(resource, IStateFilter.SF_VERSIONED_FOLDERS, IResource.DEPTH_ZERO) || !(element.getResource() instanceof IProject)) {
-					return false;
-				}
-			}
-			return true;
-		}
-		return false;
-	}
 }

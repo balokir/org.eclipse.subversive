@@ -9,7 +9,7 @@
  *    Alexander Gurov - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.svn.ui.synchronize.update.action;
+package org.eclipse.team.svn.ui.synchronize.action;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
@@ -22,7 +22,6 @@ import org.eclipse.team.svn.core.operation.local.RevertOperation;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.local.RevertPanel;
 import org.eclipse.team.svn.ui.synchronize.AbstractSVNSyncInfo;
-import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
@@ -31,7 +30,6 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
  * @author Alexander Gurov
  */
 public class RevertAction extends AbstractSynchronizeModelAction {
-
 	public RevertAction(String text, ISynchronizePageConfiguration configuration) {
 		super(text, configuration);
 	}
@@ -39,8 +37,7 @@ public class RevertAction extends AbstractSynchronizeModelAction {
 	protected FastSyncInfoFilter getSyncInfoFilter() {
 		return new FastSyncInfoFilter() {
 			public boolean select(SyncInfo info) {
-				AbstractSVNSyncInfo sync = (AbstractSVNSyncInfo)info;
-				return IStateFilter.SF_REVERTABLE.accept(sync.getLocalResource());
+				return IStateFilter.SF_REVERTABLE.accept(((AbstractSVNSyncInfo)info).getLocalResource());
 			}
 		};
 	}
@@ -50,7 +47,7 @@ public class RevertAction extends AbstractSynchronizeModelAction {
 		operation.getShell().getDisplay().syncExec(new Runnable() {
 			public void run() {
 				IResource []changedResources = operation.getSelectedResourcesRecursive(IStateFilter.SF_REVERTABLE);
-				IResource []userSelectedResources = operation.getSelectedResources();
+				IResource []userSelectedResources = operation.getSelectedResourcesRecursive();
 				RevertPanel panel = new RevertPanel(changedResources, userSelectedResources);
 				DefaultDialog rDlg = new DefaultDialog(operation.getShell(), panel);
 				if (rDlg.open() == 0) {

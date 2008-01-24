@@ -17,7 +17,6 @@ import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.UnlockOperation;
-import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.ui.action.AbstractRecursiveTeamAction;
 import org.eclipse.team.svn.ui.dialog.UnlockResourcesDialog;
 
@@ -43,7 +42,7 @@ public class UnlockAction extends AbstractRecursiveTeamAction {
 		}
 		UnlockResourcesDialog dialog = new UnlockResourcesDialog(this.getShell(), recursive);
 		if (dialog.open() == 0) {
-			IResource []resources = this.getSelectedResourcesRecursive(UnlockAction.SF_LOCKED, dialog.isRecursive() ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE);
+			IResource []resources = this.getSelectedResourcesRecursive(IStateFilter.SF_LOCKED, dialog.isRecursive() ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE);
 		    UnlockOperation mainOp = new UnlockOperation(resources);
 		    
 			CompositeOperation op = new CompositeOperation(mainOp.getId());
@@ -55,23 +54,7 @@ public class UnlockAction extends AbstractRecursiveTeamAction {
 	}
 	
     public boolean isEnabled() {
-        return this.checkForResourcesPresenceRecursive(UnlockAction.SF_LOCKED);
+        return this.checkForResourcesPresenceRecursive(IStateFilter.SF_LOCKED);
     }
-
-    public static final IStateFilter SF_LOCKED = new IStateFilter.AbstractStateFilter() {
-        protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
-            if (IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask)) {
-                if (resource != null) {
-                    local = this.takeLocal(local, resource);
-                    return local != null && local.isLocked();
-                }
-                return true;
-            }
-            return false;
-        }
-        protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask);
-		}
-    };
     
 }

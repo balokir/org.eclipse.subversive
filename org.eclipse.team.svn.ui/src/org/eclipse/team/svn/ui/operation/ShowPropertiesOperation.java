@@ -30,22 +30,21 @@ import org.eclipse.ui.IWorkbenchPage;
  * @author Sergiy Logvin
  */
 public class ShowPropertiesOperation extends AbstractActionOperation {
-	
 	protected IAdaptable resource;
 	protected IRepositoryResourceProvider provider;
 	protected IWorkbenchPage page;
 	protected IResourcePropertyProvider propertyProvider;
 
+	public ShowPropertiesOperation(IWorkbenchPage page, IRepositoryResourceProvider provider, IResourcePropertyProvider propertyProvider) {
+		this(page, (IRepositoryResource)null, propertyProvider);
+		this.provider = provider;
+	}
+	
 	public ShowPropertiesOperation(IWorkbenchPage page, IAdaptable resource, IResourcePropertyProvider propertyProvider) {
 		super("Operation.ShowProperties");
 		this.resource = resource;
 		this.page = page;
 		this.propertyProvider = propertyProvider;
-	}
-	
-	public ShowPropertiesOperation(IWorkbenchPage page, IRepositoryResourceProvider provider, IResourcePropertyProvider propertyProvider) {
-		this(page, (IRepositoryResource)null, propertyProvider);
-		this.provider = provider;
 	}
 	
 	public boolean isEditorOpened() {
@@ -63,7 +62,6 @@ public class ShowPropertiesOperation extends AbstractActionOperation {
 			}
 		});
 		return editor != null;
-		
 	}
 
 	protected void runImpl(final IProgressMonitor monitor) throws Exception {

@@ -12,22 +12,27 @@
 package org.eclipse.team.svn.ui.synchronize.action;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
+import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.action.IResourceSelector;
 import org.eclipse.team.svn.ui.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.ui.synchronize.variant.ResourceVariant;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
+import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.SynchronizeModelAction;
 import org.eclipse.team.ui.synchronize.SynchronizeModelOperation;
@@ -72,8 +77,8 @@ public abstract class AbstractSynchronizeModelAction extends SynchronizeModelAct
 		}
 		
 		public IResource getSelectedResource() {
-			AbstractSVNSyncInfo info = this.getSVNSyncInfo();
-			return info != null ? info.getLocal() : null;
+			ISynchronizeModelElement element = (ISynchronizeModelElement)AbstractSynchronizeModelAction.this.getStructuredSelection().getFirstElement();
+			return element.getResource();
 		}
 		
 		public AbstractSVNSyncInfo getSVNSyncInfo() {
@@ -86,12 +91,50 @@ public abstract class AbstractSynchronizeModelAction extends SynchronizeModelAct
 		}
 		
 		public IResource []getSelectedResources() {
-		    return this.getSelectedResources(new ISyncStateFilter.StateFilterWrapper(IStateFilter.SF_ALL));
+		    return this.getSelectedResources(new ISyncStateFilter.StateFilterWrapper(IStateFilter.SF_ALL, true));
 		}
 		
+        public IResource[] getSelectedResources(IStateFilter filter) {
+            if (filter instanceof ISyncStateFilter) {
+    			return this.getSelectedResources((ISyncStateFilter)filter);
+            }
+			return this.getSelectedResources(new ISyncStateFilter.StateFilterWrapper(filter, true));
+        }
+		
 		public IResource []getSelectedResources(ISyncStateFilter filter) {
+		    HashSet retVal = new HashSet();
+		    IStructuredSelection selection = AbstractSynchronizeModelAction.this.getStructuredSelection();
+		    for (Iterator it = selection.iterator(); it.hasNext(); ) {
+		    	ISynchronizeModelElement node = (ISynchronizeModelElement)it.next();
+		    	if (filter.acceptGroupNodes() || node instanceof SyncInfoModelElement) {
+		    		IResource resource = node.getResource();
+		    		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
+		    		if (filter.accept(local)) {
+		    			retVal.add(resource);
+		    		}
+		    	}
+		    }
+			return (IResource [])retVal.toArray(new IResource[retVal.size()]);
+		}
+
+		public IResource []getSelectedResourcesRecursive() {
+		    return this.getSelectedResourcesRecursive(new ISyncStateFilter.StateFilterWrapper(IStateFilter.SF_ALL, true));
+		}
+		
+		public IResource []getSelectedResourcesRecursive(IStateFilter filter) {
+            if (filter instanceof ISyncStateFilter) {
+    			return this.getSelectedResourcesRecursive((ISyncStateFilter)filter);
+            }
+			return this.getSelectedResourcesRecursive(new ISyncStateFilter.StateFilterWrapper(filter, true));
+		}
+		
+		public IResource []getSelectedResourcesRecursive(IStateFilter filter, int depth) {
+			return this.getSelectedResourcesRecursive(filter);
+		}
+		
+		public IResource []getSelectedResourcesRecursive(ISyncStateFilter filter) {
 		    SyncInfo []infos = this.getSyncInfoSet().getSyncInfos();
-		    ArrayList retVal = new ArrayList();
+		    HashSet retVal = new HashSet();
 		    for (int i = 0; i < infos.length; i++) {
 		        AbstractSVNSyncInfo info = (AbstractSVNSyncInfo)infos[i];
 		        ILocalResource local = info.getLocalResource();
@@ -100,31 +143,37 @@ public abstract class AbstractSynchronizeModelAction extends SynchronizeModelAct
 		            retVal.add(local.getResource());
 		        }
 		    }
+		    if (filter.acceptGroupNodes()) {
+			    IStructuredSelection selection = AbstractSynchronizeModelAction.this.getStructuredSelection();
+			    for (Iterator it = selection.iterator(); it.hasNext(); ) {
+			    	ISynchronizeModelElement node = (ISynchronizeModelElement)it.next();
+			    	this.fetchSelectedNodes(retVal, node, filter);
+			    }
+		    }
 			return (IResource [])retVal.toArray(new IResource[retVal.size()]);
 		}
 
-		// recursiveness should be managed by the view
-        public IResource[] getSelectedResources(IStateFilter filter) {
-            if (filter instanceof ISyncStateFilter) {
-    			return this.getSelectedResources((ISyncStateFilter)filter);
-            }
-			return this.getSelectedResources(new ISyncStateFilter.StateFilterWrapper(filter));
-        }
-		
-		public IResource []getSelectedResourcesRecursive(IStateFilter filter) {
-			return this.getSelectedResources(filter);
-		}
-		
-		public IResource []getSelectedResourcesRecursive(IStateFilter filter, int depth) {
-			return this.getSelectedResources(filter);
-		}
-		
 		public Shell getShell() {
 			return super.getShell();
 		}
 		
 		protected boolean canRunAsJob() {
 			return true;
+		}
+		
+		protected void fetchSelectedNodes(Set nodes, ISynchronizeModelElement node, ISyncStateFilter filter) {
+    		IResource resource = node.getResource();
+    		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
+    		if (local != null && filter.accept(local)) {
+    			nodes.add(resource);
+    		}
+    		IDiffElement []children = node.getChildren();
+    		if (children != null) {
+        		for (int i = 0; i < children.length; i++) {
+        			ISynchronizeModelElement element = (ISynchronizeModelElement)children[i];
+        			this.fetchSelectedNodes(nodes, element, filter);
+        		}
+    		}
 		}
 		
 		protected String getJobName() {

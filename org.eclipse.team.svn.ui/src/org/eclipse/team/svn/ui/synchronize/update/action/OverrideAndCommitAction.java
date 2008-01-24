@@ -74,7 +74,7 @@ public class OverrideAndCommitAction extends AbstractSynchronizeModelAction {
 
 		operation.getShell().getDisplay().syncExec(new Runnable() {
 			public void run() {
-				IResource []changedResources = operation.getSelectedResources(ISyncStateFilter.SF_OVERRIDE);
+				IResource []changedResources = operation.getSelectedResourcesRecursive(ISyncStateFilter.SF_OVERRIDE);
 				IResource []overrideResources = UnacceptableOperationNotificator.shrinkResourcesWithNotOnRespositoryParents(operation.getShell(), changedResources);
 				if (overrideResources != null && overrideResources.length > 0) {
 					overrideResources = FileUtility.addOperableParents(overrideResources, IStateFilter.SF_NOTONREPOSITORY);

@@ -79,7 +79,7 @@ public class AddToSVNPanel extends AbstractResourceSelectionPanel {
 			public void menuAboutToShow(IMenuManager manager) {
 				manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 				final IStructuredSelection tSelection = (IStructuredSelection)tableViewer.getSelection();
-				final IResource[] selectedResources = (IResource[])((List)tSelection.toList()).toArray(new IResource[tSelection.size()]);
+				final IResource[] selectedResources = (IResource[])tSelection.toList().toArray(new IResource[tSelection.size()]);
 				Action tAction = null;
 				if (selectedResources.length == 1) {
 					manager.add(tAction = new Action(MessageFormat.format(SVNTeamUIPlugin.instance().getResource("AddToSVNPanel.Ignore.Single"), selectedResources[0].getName())) {

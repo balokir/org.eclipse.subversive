@@ -9,7 +9,7 @@
  *    Alexei Goncharov (Polarion Software) - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.svn.ui.synchronize.update.action;
+package org.eclipse.team.svn.ui.synchronize.action;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -19,7 +19,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -46,7 +46,7 @@ import org.eclipse.team.svn.ui.dialog.OperationErrorDialog;
 import org.eclipse.team.svn.ui.panel.common.AbstractBranchTagPanel;
 import org.eclipse.team.svn.ui.panel.common.BranchPanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
-import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
+import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
@@ -55,20 +55,28 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
  * @author Alexei Goncharov
  */
 public class CreateBranchAction extends AbstractSynchronizeModelAction {
-
 	public CreateBranchAction(String text, ISynchronizePageConfiguration configuration) {
 		super(text, configuration);
 	}
 
-	public CreateBranchAction(String text, ISynchronizePageConfiguration configuration, ISelectionProvider selectionProvider) {
-		super(text, configuration, selectionProvider);
+	protected boolean updateSelection(IStructuredSelection selection) {
+		super.updateSelection(selection);
+		for (Iterator it = selection.iterator(); it.hasNext(); ) {
+			ISynchronizeModelElement element = (ISynchronizeModelElement)it.next();
+			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(element.getResource());
+			// null for change set nodes
+			if (local == null || IStateFilter.SF_NOTONREPOSITORY.accept(local)) {
+				return false;
+			}
+		}
+	    return selection.size() > 0;
 	}
-
+	
 	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {
 		final IActionOperation [] retOp = new IActionOperation[1];
 		operation.getShell().getDisplay().syncExec(new Runnable() {
 			public void run() {
-				IResource []resources = FileUtility.getResourcesRecursive(operation.getSelectedResources(), IStateFilter.SF_EXCLUDE_DELETED);
+				IResource []resources = FileUtility.getResourcesRecursive(operation.getSelectedResources(), IStateFilter.SF_EXCLUDE_DELETED, IResource.DEPTH_ZERO);
 				ArrayList localOperateResources = new ArrayList();
 				ArrayList remoteOperateResources = new ArrayList();
 				ArrayList operateResources = new ArrayList();
