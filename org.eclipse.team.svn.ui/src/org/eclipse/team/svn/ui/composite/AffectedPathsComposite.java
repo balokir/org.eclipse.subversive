@@ -380,17 +380,67 @@ public class AffectedPathsComposite extends Composite {
 					}
 				});
 				tAction.setEnabled(affectedTableSelection.size() == 1);
+				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.CompareWithPreviousRevision")) {
+					public void run() {
+						AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(affectedTableSelection.getFirstElement(), false);
+						AffectedPathsComposite.this.compareWithPreviousRevision(provider);
+					}
+				});
+				tAction.setEnabled(enabled);
+				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.CreatePatch")) {
+					public void run() {
+						// TODO Create Patch implementation
+					}
+				});
+				tAction.setEnabled(affectedTableSelection.size() == 1);
+				manager.add(new Separator());
 				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.ShowProperties")) {
 					public void run() {
 						AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(affectedTableSelection.getFirstElement(), false);
 						AffectedPathsComposite.this.showProperties(provider);
 					}
 				});
+				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/propertiesedit.gif"));
 				tAction.setEnabled(affectedTableSelection.size() == 1);
-				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.CompareWithPreviousRevision")) {
+				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.ShowAnnotation")) {
 					public void run() {
-						AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(affectedTableSelection.getFirstElement(), false);
-						AffectedPathsComposite.this.compareWithPreviousRevision(provider);
+						//TODO Show Annotation implementation
+					}
+				});
+				tAction.setEnabled(affectedTableSelection.size() == 1);
+				manager.add(new Separator());
+				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.GetContents")) {
+					public void run() {
+						//TODO Get Contents implementation
+					}
+				});
+				tAction.setEnabled(enabled);
+				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.UpdateTo")) {
+					public void run() {
+						//TODO Update To implementation
+					}
+				});
+				tAction.setEnabled(enabled);
+				manager.add(new Separator());				
+				String branchFrom = SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.BranchFrom", new String [] {String.valueOf(AffectedPathsComposite.this.currentRevision)});
+				String tagFrom = SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.TagFrom", new String [] {String.valueOf(AffectedPathsComposite.this.currentRevision)});
+				manager.add(tAction = new Action(branchFrom) {
+					public void run() {
+						//TODO Branch implementation
+					}
+				});
+				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/branch.gif"));
+				tAction.setEnabled(enabled);
+				manager.add(tAction = new Action(tagFrom) {
+					public void run() {
+						//TODO Tag implementation
+					}
+				});
+				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/tag.gif"));
+				tAction.setEnabled(enabled);
+				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.RevLink")) {
+					public void run() {
+						//TODO Revision link implementation
 					}
 				});
 				tAction.setEnabled(enabled);
@@ -410,21 +460,57 @@ public class AffectedPathsComposite extends Composite {
         		final IStructuredSelection affectedTableSelection = (IStructuredSelection)AffectedPathsComposite.this.treeViewer.getSelection();
         		AffectedPathNode node = (AffectedPathNode)affectedTableSelection.getFirstElement();
         		Action tAction = null;
-        		manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.ShowProperties")) {
-					public void run() {
-						GetSelectedTreeResource provider = new GetSelectedTreeResource(AffectedPathsComposite.this.repositoryResource, AffectedPathsComposite.this.currentRevision, affectedTableSelection.getFirstElement());
-						AffectedPathsComposite.this.showProperties(provider);
-					}
-        		});
-        		tAction.setEnabled(AffectedPathsComposite.this.currentRevision != 0 && affectedTableSelection.size() == 1 /*&& (node.getStatus() == null || node.getStatus().charAt(0) == 'M')*/);
         		manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.CompareWithPreviousRevision")) {
 					public void run() {
 						GetSelectedTreeResource provider = new GetSelectedTreeResource(AffectedPathsComposite.this.repositoryResource, AffectedPathsComposite.this.currentRevision, affectedTableSelection.getFirstElement());
 						AffectedPathsComposite.this.compareWithPreviousRevision(provider);
 					}
         		});
+        		manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.CreatePatch")) {
+					public void run() {
+						// TODO Create Patch implementation
+					}
+				});
+				tAction.setEnabled(affectedTableSelection.size() == 1);
         		boolean isCompareFoldersAllowed = (CoreExtensionsManager.instance().getSVNConnectorFactory().getSupportedFeatures() & ISVNConnectorFactory.OptionalFeatures.COMPARE_FOLDERS) != 0;
         		tAction.setEnabled(isCompareFoldersAllowed && AffectedPathsComposite.this.currentRevision != 0 && affectedTableSelection.size() == 1 && (node.getStatus() == null || node.getStatus().charAt(0) == 'M'));
+        		manager.add(new Separator());
+        		manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.ShowProperties")) {
+					public void run() {
+						GetSelectedTreeResource provider = new GetSelectedTreeResource(AffectedPathsComposite.this.repositoryResource, AffectedPathsComposite.this.currentRevision, affectedTableSelection.getFirstElement());
+						AffectedPathsComposite.this.showProperties(provider);
+					}
+        		});
+        		tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/propertiesedit.gif"));
+        		tAction.setEnabled(AffectedPathsComposite.this.currentRevision != 0 && affectedTableSelection.size() == 1 /*&& (node.getStatus() == null || node.getStatus().charAt(0) == 'M')*/);
+        		manager.add(new Separator());
+        		manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.UpdateTo")) {
+					public void run() {
+						//TODO implement Update To
+					}
+        		});
+        		tAction.setEnabled(true);
+        		manager.add(new Separator());
+        		manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.BranchFrom", new String [] {String.valueOf(AffectedPathsComposite.this.currentRevision)})) {
+        			public void run() {
+        				//TODO implement Branch From
+        			}
+        		});
+        		tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/branch.gif"));
+        		tAction.setEnabled(affectedTableSelection.size() > 0);
+        		manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.TagFrom", new String [] {String.valueOf(AffectedPathsComposite.this.currentRevision)})) {
+        			public void run() {
+        				//TODO implement Tag From
+        			}
+        		});
+        		tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/tag.gif"));
+        		tAction.setEnabled(affectedTableSelection.size() > 0);
+        		manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.RevLink")) {
+					public void run() {
+						//TODO Revision link implementation
+					}
+				});
+				tAction.setEnabled(affectedTableSelection.size() > 0);
             }
         });
         menuMgr.setRemoveAllWhenShown(true);
