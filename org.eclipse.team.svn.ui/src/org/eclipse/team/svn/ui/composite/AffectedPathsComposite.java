@@ -52,6 +52,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -82,6 +83,8 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.action.remote.CreatePatchAction;
+import org.eclipse.team.svn.ui.annotate.AnnotateView;
+import org.eclipse.team.svn.ui.annotate.CheckPerspective;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.history.AffectedPathNode;
 import org.eclipse.team.svn.ui.history.AffectedPathsContentProvider;
@@ -89,12 +92,15 @@ import org.eclipse.team.svn.ui.history.AffectedPathsLabelProvider;
 import org.eclipse.team.svn.ui.operation.CompareRepositoryResourcesOperation;
 import org.eclipse.team.svn.ui.operation.OpenRemoteFileOperation;
 import org.eclipse.team.svn.ui.operation.ShowPropertiesOperation;
+import org.eclipse.team.svn.ui.operation.UILoggedOperation;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFolder;
 import org.eclipse.team.svn.ui.utility.TableViewerSorter;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.svn.ui.wizard.CreatePatchWizard;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -412,7 +418,8 @@ public class AffectedPathsComposite extends Composite {
 				tAction.setEnabled(affectedTableSelection.size() == 1);
 				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.ShowAnnotation")) {
 					public void run() {
-						//TODO Show Annotation implementation
+						AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(affectedTableSelection.getFirstElement(), false);
+						AffectedPathsComposite.this.showAnnotation(provider);
 					}
 				});
 				tAction.setEnabled(affectedTableSelection.size() == 1);
@@ -555,6 +562,28 @@ public class AffectedPathsComposite extends Composite {
 		composite.add(propertyProvider, new IActionOperation[] {(AbstractActionOperation)provider});
 		composite.add(showOp, new IActionOperation[] {(AbstractActionOperation)provider, propertyProvider});
 		UIMonitorUtility.doTaskScheduledActive(composite);
+	}
+	
+	protected void showAnnotation(AffectedRepositoryResourceProvider provider) {
+		ProgressMonitorUtility.doTaskExternal(provider, new NullProgressMonitor());
+		IRepositoryResource selected = provider.getRepositoryResources()[0];
+		if (!(selected instanceof IRepositoryFile)) {
+				MessageBox err = new MessageBox(UIMonitorUtility.getShell());
+				err.setText(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.ShowAnnotation.Title"));
+				err.setMessage(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.ShowAnnotation.Message", new String [] {provider.getRepositoryResources()[0].getUrl()}));
+				err.open();
+				return;
+			}
+			CheckPerspective.run(UIMonitorUtility.getActivePage().getWorkbenchWindow());
+			try {
+				IViewPart viewPart = UIMonitorUtility.getActivePage().showView(AnnotateView.VIEW_ID);
+			    if (viewPart != null && viewPart instanceof AnnotateView) {
+			    	((AnnotateView)viewPart).showEditor(selected);
+			    }
+			}
+			catch (PartInitException ex) {
+				UILoggedOperation.reportError("Show annotate view", ex);
+			}
 	}
 	
 	protected void createPatchToPrevious(AffectedRepositoryResourceProvider provider) {
