@@ -72,6 +72,7 @@ import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
+import org.eclipse.team.svn.core.operation.remote.ExportOperation;
 import org.eclipse.team.svn.core.operation.remote.GetLogMessagesOperation;
 import org.eclipse.team.svn.core.operation.remote.GetRemotePropertiesOperation;
 import org.eclipse.team.svn.core.operation.remote.PreparedBranchTagOperation;
@@ -100,6 +101,7 @@ import org.eclipse.team.svn.ui.operation.RefreshRepositoryLocationsOperation;
 import org.eclipse.team.svn.ui.operation.ShowHistoryViewOperation;
 import org.eclipse.team.svn.ui.operation.ShowPropertiesOperation;
 import org.eclipse.team.svn.ui.operation.UILoggedOperation;
+import org.eclipse.team.svn.ui.panel.remote.ExportPanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFolder;
 import org.eclipse.team.svn.ui.utility.TableViewerSorter;
@@ -460,7 +462,7 @@ public class AffectedPathsComposite extends Composite {
 					}
 				});
 				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/tag.gif"));
-				tAction.setEnabled(enabled);
+				tAction.setEnabled(affectedTableSelection.size() > 0);
 				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.RevLink")) {
 					public void run() {
 						AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(affectedTableSelection.getFirstElement(), false);
@@ -468,7 +470,17 @@ public class AffectedPathsComposite extends Composite {
 						AffectedPathsComposite.this.addRevisionLink(provider);
 					}
 				});
-				tAction.setEnabled(enabled);
+				tAction.setEnabled(affectedTableSelection.size() > 0);
+				manager.add(new Separator());
+				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.Export")) {
+					public void run() {
+						AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(affectedTableSelection.getFirstElement(), false);
+						ProgressMonitorUtility.doTaskExternal(provider, new NullProgressMonitor());
+						AffectedPathsComposite.this.doExport(provider);
+					}
+				});
+				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/export.gif"));
+				tAction.setEnabled(affectedTableSelection.size() > 0);
 			}
 		});
 		menuMgr.setRemoveAllWhenShown(true);
@@ -554,6 +566,16 @@ public class AffectedPathsComposite extends Composite {
 					}
 				});
 				tAction.setEnabled(affectedTableSelection.size() > 0);
+				manager.add(new Separator());
+				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.Export")) {
+					public void run() {
+						GetSelectedTreeResource provider = new GetSelectedTreeResource(AffectedPathsComposite.this.repositoryResource, AffectedPathsComposite.this.currentRevision, affectedTableSelection.getFirstElement());
+						ProgressMonitorUtility.doTaskExternal(provider, new NullProgressMonitor());
+						AffectedPathsComposite.this.doExport(provider);
+					}
+				});
+				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/export.gif"));
+				tAction.setEnabled(affectedTableSelection.size() > 0);
             }
         });
         menuMgr.setRemoveAllWhenShown(true);
@@ -584,6 +606,17 @@ public class AffectedPathsComposite extends Composite {
 	
 	protected void showHistory(IRepositoryResourceProvider provider) {
 		UIMonitorUtility.doTaskBusyDefault(new ShowHistoryViewOperation(provider.getRepositoryResources()[0], 0, 0));
+	}
+	
+	protected void doExport(IRepositoryResourceProvider provider) {
+		IRepositoryResource resource = provider.getRepositoryResources()[0];
+		ExportPanel panel = new ExportPanel(resource);
+		DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
+		if (dialog.open() == 0) {
+			resource = SVNUtility.copyOf(resource);
+			resource.setSelectedRevision(panel.getSelectedRevision());
+	    	UIMonitorUtility.doTaskScheduledDefault(new ExportOperation(resource, panel.getLocation()));
+	    }
 	}
 	
 	protected void showAnnotation(AffectedRepositoryResourceProvider provider) {
