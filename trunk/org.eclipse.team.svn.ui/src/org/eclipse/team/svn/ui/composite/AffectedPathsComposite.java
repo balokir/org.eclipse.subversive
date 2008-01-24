@@ -74,6 +74,8 @@ import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.remote.GetLogMessagesOperation;
 import org.eclipse.team.svn.core.operation.remote.GetRemotePropertiesOperation;
+import org.eclipse.team.svn.core.operation.remote.management.AddRevisionLinkOperation;
+import org.eclipse.team.svn.core.operation.remote.management.SaveRepositoryLocationsOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -91,6 +93,7 @@ import org.eclipse.team.svn.ui.history.AffectedPathsContentProvider;
 import org.eclipse.team.svn.ui.history.AffectedPathsLabelProvider;
 import org.eclipse.team.svn.ui.operation.CompareRepositoryResourcesOperation;
 import org.eclipse.team.svn.ui.operation.OpenRemoteFileOperation;
+import org.eclipse.team.svn.ui.operation.RefreshRepositoryLocationsOperation;
 import org.eclipse.team.svn.ui.operation.ShowPropertiesOperation;
 import org.eclipse.team.svn.ui.operation.UILoggedOperation;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFolder;
@@ -455,7 +458,9 @@ public class AffectedPathsComposite extends Composite {
 				tAction.setEnabled(enabled);
 				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.RevLink")) {
 					public void run() {
-						//TODO Revision link implementation
+						AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(affectedTableSelection.getFirstElement(), false);
+						ProgressMonitorUtility.doTaskExternal(provider, new NullProgressMonitor());
+						AffectedPathsComposite.this.addRevisionLink(provider);
 					}
 				});
 				tAction.setEnabled(enabled);
@@ -532,7 +537,9 @@ public class AffectedPathsComposite extends Composite {
         		tAction.setEnabled(affectedTableSelection.size() > 0);
         		manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.RevLink")) {
 					public void run() {
-						//TODO Revision link implementation
+						GetSelectedTreeResource provider = new GetSelectedTreeResource(AffectedPathsComposite.this.repositoryResource, AffectedPathsComposite.this.currentRevision, affectedTableSelection.getFirstElement());
+						ProgressMonitorUtility.doTaskExternal(provider, new NullProgressMonitor());
+						AffectedPathsComposite.this.addRevisionLink(provider);
 					}
 				});
 				tAction.setEnabled(affectedTableSelection.size() > 0);
@@ -597,6 +604,14 @@ public class AffectedPathsComposite extends Composite {
 			previous.setPegRevision(SVNRevision.fromNumber(AffectedPathsComposite.this.currentRevision));
 			UIMonitorUtility.doTaskNowDefault(CreatePatchAction.getCreatePatchOperation(previous, current, wizard), false);
 		}
+	}
+	
+	protected void addRevisionLink(IRepositoryResourceProvider provider) {
+		CompositeOperation op = new CompositeOperation("Operation.HAddSelectedRevision");
+		op.add(new AddRevisionLinkOperation(provider, this.currentRevision));
+		op.add(new SaveRepositoryLocationsOperation());
+		op.add(new RefreshRepositoryLocationsOperation(new IRepositoryLocation [] {this.repositoryResource.getRepositoryLocation()}, true));
+		UIMonitorUtility.doTaskScheduledDefault(op);
 	}
 	
 	protected void compareWithPreviousRevision(AbstractActionOperation provider) {
