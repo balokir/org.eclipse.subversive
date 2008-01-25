@@ -13,6 +13,7 @@ package org.eclipse.team.svn.ui.debugmail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
+import java.util.Properties;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
@@ -128,7 +129,11 @@ public class ReportPartsFactory {
 	}
 	
 	public static String getJVMPropertiesPart() {
-		return "<b>JVM Properties:</b><br>" + System.getProperties().toString().replace('\n', ' ') + "<br><br>";
+		Properties props = (Properties)System.getProperties().clone();
+		props.remove("org.osgi.framework.system.packages");
+		props.remove("sun.boot.class.path");
+		props.remove("osgi.bundles");
+		return "<b>JVM Properties:</b><br>" + props.toString().replace('\n', ' ') + "<br><br>";
 	}
 	
 }
