@@ -107,11 +107,7 @@ public abstract class AbstractSynchronizeModelAction extends SynchronizeModelAct
 		    for (Iterator it = selection.iterator(); it.hasNext(); ) {
 		    	ISynchronizeModelElement node = (ISynchronizeModelElement)it.next();
 		    	if (filter.acceptGroupNodes() || node instanceof SyncInfoModelElement) {
-		    		IResource resource = node.getResource();
-		    		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-		    		if (local != null && filter.accept(local)) {
-		    			retVal.add(resource);
-		    		}
+		    		this.fetchSelectedNodes(retVal, node, filter, node.getResource().getType() == IResource.ROOT ? IResource.DEPTH_ONE : IResource.DEPTH_ZERO);
 		    	}
 		    }
 			return (IResource [])retVal.toArray(new IResource[retVal.size()]);
@@ -147,7 +143,7 @@ public abstract class AbstractSynchronizeModelAction extends SynchronizeModelAct
 			    IStructuredSelection selection = AbstractSynchronizeModelAction.this.getStructuredSelection();
 			    for (Iterator it = selection.iterator(); it.hasNext(); ) {
 			    	ISynchronizeModelElement node = (ISynchronizeModelElement)it.next();
-			    	this.fetchSelectedNodes(retVal, node, filter);
+			    	this.fetchSelectedNodes(retVal, node, filter, IResource.DEPTH_INFINITE);
 			    }
 		    }
 			return (IResource [])retVal.toArray(new IResource[retVal.size()]);
@@ -161,17 +157,17 @@ public abstract class AbstractSynchronizeModelAction extends SynchronizeModelAct
 			return true;
 		}
 		
-		protected void fetchSelectedNodes(Set nodes, ISynchronizeModelElement node, ISyncStateFilter filter) {
+		protected void fetchSelectedNodes(Set nodes, ISynchronizeModelElement node, ISyncStateFilter filter, int depth) {
     		IResource resource = node.getResource();
     		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
     		if (local != null && filter.accept(local)) {
     			nodes.add(resource);
     		}
     		IDiffElement []children = node.getChildren();
-    		if (children != null) {
+    		if (children != null && depth != IResource.DEPTH_ZERO) {
         		for (int i = 0; i < children.length; i++) {
         			ISynchronizeModelElement element = (ISynchronizeModelElement)children[i];
-        			this.fetchSelectedNodes(nodes, element, filter);
+        			this.fetchSelectedNodes(nodes, element, filter, depth == IResource.DEPTH_INFINITE ? IResource.DEPTH_INFINITE : IResource.DEPTH_ZERO);
         		}
     		}
 		}
