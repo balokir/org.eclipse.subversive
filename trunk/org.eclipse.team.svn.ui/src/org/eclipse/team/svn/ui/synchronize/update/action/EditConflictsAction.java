@@ -42,7 +42,7 @@ public class EditConflictsAction extends AbstractSynchronizeModelAction {
 		final IActionOperation [] op = new IActionOperation[1];
 		operation.getShell().getDisplay().syncExec(new Runnable() {
 			public void run() {
-				op[0] = new ShowConflictEditorOperation(operation.getSelectedResourcesRecursive(IStateFilter.SF_CONFLICTING));
+				op[0] = new ShowConflictEditorOperation(operation.getSelectedResourcesRecursive(IStateFilter.SF_CONFLICTING), false);
 			}
 		});
 		return op[0];
