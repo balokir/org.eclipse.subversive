@@ -62,6 +62,7 @@ public class CommitActionUtility {
 		
 		this.allResourcesSet = new HashSet(fullSet);
 		this.allResourcesSet.addAll(Arrays.asList(this.selector.getSelectedResourcesRecursive(IStateFilter.SF_COMMITABLE)));
+		this.allResourcesSet.addAll(Arrays.asList(this.selector.getSelectedResourcesRecursive(IStateFilter.SF_CONFLICTING)));
 		this.allResources = (IResource [])this.allResourcesSet.toArray(new IResource[this.allResourcesSet.size()]);
 		this.allResourcesSet.addAll(Arrays.asList(FileUtility.addOperableParents(this.allResources, IStateFilter.SF_ADDED, true)));
 		this.allResources = (IResource [])this.allResourcesSet.toArray(new IResource[this.allResourcesSet.size()]);

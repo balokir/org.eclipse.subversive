@@ -30,7 +30,9 @@ import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
+import org.eclipse.team.svn.ui.compare.ComparePanel;
 import org.eclipse.team.svn.ui.compare.ConflictingFileEditorInput;
+import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
@@ -40,12 +42,16 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  */
 public class ShowConflictEditorOperation extends AbstractWorkingCopyOperation {
 
-	public ShowConflictEditorOperation(IResource []resources) {
+	protected boolean showInDialog;
+	
+	public ShowConflictEditorOperation(IResource []resources, boolean showInDialog) {
 		super("Operation.ShowConflictEditor", resources);
+		this.showInDialog = showInDialog;
 	}
 
-	public ShowConflictEditorOperation(IResourceProvider provider) {
+	public ShowConflictEditorOperation(IResourceProvider provider, boolean showInDialog) {
 		super("Operation.ShowConflictEditor", provider);
+		this.showInDialog = showInDialog;
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
@@ -55,13 +61,13 @@ public class ShowConflictEditorOperation extends AbstractWorkingCopyOperation {
 			final IResource current = conflictingResources[i];
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-					ShowConflictEditorOperation.this.showEditorFor((IFile)current);
+					ShowConflictEditorOperation.this.showEditorFor((IFile)current, monitor);
 				}
 			}, monitor, conflictingResources.length);
 		}
 	}
 
-	protected void showEditorFor(IFile resource) throws Exception {
+	protected void showEditorFor(IFile resource, IProgressMonitor monitor) throws Exception {
 		IRemoteStorage storage = SVNRemoteStorage.instance();
 		
 		IRepositoryLocation location = storage.getRepositoryLocation(resource);
@@ -71,7 +77,7 @@ public class ShowConflictEditorOperation extends AbstractWorkingCopyOperation {
 			SVNChangeStatus []status = SVNUtility.status(proxy, FileUtility.getWorkingCopyPath(resource), Depth.IMMEDIATES, ISVNConnector.Options.NONE, new SVNNullProgressMonitor());
 			if (status.length == 1) {
 				IContainer parent = resource.getParent();
-				this.openEditor(resource, status[0].conflictWorking == null || status[0].conflictWorking.length() == 0 ? resource : (IFile)parent.findMember(status[0].conflictWorking), (IFile)parent.findMember(status[0].conflictNew), (IFile)parent.findMember(status[0].conflictOld));
+				this.openEditor(resource, status[0].conflictWorking == null || status[0].conflictWorking.length() == 0 ? resource : (IFile)parent.findMember(status[0].conflictWorking), (IFile)parent.findMember(status[0].conflictNew), (IFile)parent.findMember(status[0].conflictOld), monitor);
 			}
 		}
 		finally {
@@ -79,13 +85,22 @@ public class ShowConflictEditorOperation extends AbstractWorkingCopyOperation {
 		}
 	}
 	
-	protected void openEditor(IFile target, IFile left, IFile right, IFile ancestor) throws Exception {
+	protected void openEditor(final IFile target, IFile left, IFile right, IFile ancestor, IProgressMonitor monitor) throws Exception {
 		CompareConfiguration cc = new CompareConfiguration();
 		cc.setProperty(CompareEditor.CONFIRM_SAVE_PROPERTY, Boolean.TRUE);
 		final ConflictingFileEditorInput compare = new ConflictingFileEditorInput(cc, target, left, right, ancestor);
+		compare.run(monitor);
 		UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 			public void run() {
-				CompareUI.openCompareEditor(compare);
+				if (ShowConflictEditorOperation.this.showInDialog) {
+					ComparePanel panel = new ComparePanel(compare, target);
+					DefaultDialog dlg = new DefaultDialog(UIMonitorUtility.getShell(), panel);
+					dlg.open();
+					//CompareUI.openCompareDialog(compare);
+				}
+				else {
+					CompareUI.openCompareEditor(compare);
+				}
 			}
 		});
 	}

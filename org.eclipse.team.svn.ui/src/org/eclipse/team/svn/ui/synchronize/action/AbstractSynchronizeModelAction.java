@@ -109,7 +109,7 @@ public abstract class AbstractSynchronizeModelAction extends SynchronizeModelAct
 		    	if (filter.acceptGroupNodes() || node instanceof SyncInfoModelElement) {
 		    		IResource resource = node.getResource();
 		    		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-		    		if (filter.accept(local)) {
+		    		if (local != null && filter.accept(local)) {
 		    			retVal.add(resource);
 		    		}
 		    	}

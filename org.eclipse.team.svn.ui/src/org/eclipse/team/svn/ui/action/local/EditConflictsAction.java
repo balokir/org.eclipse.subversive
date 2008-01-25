@@ -27,7 +27,7 @@ public class EditConflictsAction extends AbstractRecursiveTeamAction {
 	}
 
 	public void runImpl(IAction action) {
-		this.runScheduled(new ShowConflictEditorOperation(this.getSelectedResourcesRecursive(IStateFilter.SF_CONFLICTING)));
+		this.runScheduled(new ShowConflictEditorOperation(this.getSelectedResourcesRecursive(IStateFilter.SF_CONFLICTING), false));
 	}
 	
 	public boolean isEnabled() {
