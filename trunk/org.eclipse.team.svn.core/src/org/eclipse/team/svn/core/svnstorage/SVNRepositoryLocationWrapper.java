@@ -225,6 +225,22 @@ public class SVNRepositoryLocationWrapper implements IRepositoryLocation {
 	public String getName() {
 		return this.location.getName();
 	}
+	
+	public boolean isAuthorNameEnabled() {
+		return this.location.isAuthorNameEnabled();
+	}
+	
+	public String getAuthorName() {
+		return this.location.getAuthorName();
+	}
+	
+	public void setAuthorNameEnabled(boolean isEnabled) {
+		this.location.setAuthorNameEnabled(isEnabled);
+	}
+	
+	public void setAuthorName(String name) {
+		this.location.setAuthorName(name);
+	}
 
 	public Object getAdapter(Class adapter) {
 		return this.location.getAdapter(adapter);

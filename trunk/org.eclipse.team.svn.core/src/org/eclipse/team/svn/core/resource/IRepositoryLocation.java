@@ -76,4 +76,10 @@ public interface IRepositoryLocation extends IRepositoryBase, IRepositoryResourc
 	public void removeRealm(String realm);
 	public Collection getRealmLocations();
 	public IRepositoryLocation getLocationForRealm(String realm);
+	
+	public boolean isAuthorNameEnabled();
+	public String getAuthorName();
+	
+	public void setAuthorNameEnabled(boolean isEnabled);
+	public void setAuthorName(String name);
 }
