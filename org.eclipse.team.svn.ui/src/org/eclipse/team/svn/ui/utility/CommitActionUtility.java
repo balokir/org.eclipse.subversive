@@ -17,11 +17,13 @@ import java.util.HashSet;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.connector.ISVNConnector.Options;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.local.AddToSVNWithPropertiesOperation;
 import org.eclipse.team.svn.core.operation.local.ClearLocalStatusesOperation;
 import org.eclipse.team.svn.core.operation.local.CommitOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
+import org.eclipse.team.svn.core.operation.remote.SetRevisionAuthorNameOperation;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.action.IResourceSelector;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
@@ -124,6 +126,7 @@ public class CommitActionUtility {
 		}
 		
 		this.addCommonPart(selectedResources, op, mainOp, shell, part);
+		op.add(new SetRevisionAuthorNameOperation(mainOp, Options.FORCE));
 		
 		return op;
 	}
@@ -140,6 +143,7 @@ public class CommitActionUtility {
 		}
 		
 		this.addCommonPart(selectedResources, op, mainOp, shell, part);
+		op.add(new SetRevisionAuthorNameOperation(mainOp, Options.FORCE));
 		
 		return op;
 	}

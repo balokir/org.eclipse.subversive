@@ -23,11 +23,13 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.TabFolder;
@@ -44,7 +46,9 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
+import org.eclipse.team.svn.ui.verifier.AbstractFormattedVerifier;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifier;
+import org.eclipse.team.svn.ui.verifier.AbstractVerifierProxy;
 import org.eclipse.team.svn.ui.verifier.IValidationManager;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
@@ -70,6 +74,10 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 	protected boolean forceDisableRoots;
 	protected boolean createNew;
 	protected Combo cachedRealms;
+	protected boolean isAuthorNameEnabled;
+	protected String authorName;
+	protected Text authorInput;
+	protected Button authorEnabled;
 	
 	protected TabItem sshTab;
 	protected TabItem sslTab;
@@ -161,7 +169,45 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 		
 		tabItem = new TabItem(tabFolder, SWT.NONE);
 		tabItem.setText(SVNTeamUIPlugin.instance().getResource("RepositoryPropertiesTabFolder.Advanced"));
+		Composite rootsComposite = this.createRepositoryRootsComposite(tabFolder);
 		tabItem.setControl(this.createRepositoryRootsComposite(tabFolder));
+		GridData data = new GridData();
+		data.verticalIndent = 10;	
+		authorEnabled = new Button(rootsComposite, SWT.CHECK);
+		authorEnabled.setText(SVNTeamUIPlugin.instance().getResource("NewRepositoryLocationWizard.OverrideAuthor")); 
+		authorEnabled.setSelection(this.repositoryLocation.isAuthorNameEnabled());
+		authorEnabled.setLayoutData(data);
+		String name = (this.repositoryLocation.getAuthorName() == null) ? "" : this.repositoryLocation.getAuthorName();
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		authorInput = new Text(rootsComposite, SWT.BORDER);
+		authorInput.setText(name);
+		authorInput.setEnabled(this.repositoryLocation.isAuthorNameEnabled());
+		authorInput.setLayoutData(data);
+		AbstractFormattedVerifier verifier = new AbstractFormattedVerifier("AuthorNameVerifier") {
+		    protected String getErrorMessageImpl(Control input) {
+		    	if (this.getText(input).equals("")) {
+		    		return SVNTeamUIPlugin.instance().getResource(SVNTeamUIPlugin.instance().getResource("NewRepositoryLocationWizard.AuthorName.Verifier"));
+		    	}
+		    	return null;
+		    }
+		    protected String getWarningMessageImpl(Control input)		    {
+		    	return null;
+		    }
+		}; 
+		this.validationManager.attachTo(authorInput, new AbstractVerifierProxy(verifier){
+			protected boolean isVerificationEnabled(Control input) {
+				return RepositoryPropertiesTabFolder.this.authorEnabled.getSelection();
+			}
+		});
+		authorEnabled.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent event) {
+				authorInput.setEnabled(((Button)event.widget).getSelection());
+				RepositoryPropertiesTabFolder.this.validationManager.validateContent();
+			}
+			public void widgetDefaultSelected(SelectionEvent e) {			
+			}	
+		});
+		
 		
 		this.unavailableSSHComposite = this.createUnavailableComposite(tabFolder);
 		this.unavailableSSHComposite.setVisible(false);
@@ -193,10 +239,8 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 		}
 		else {
 			this.proxyTab.setControl(this.unavailableProxyComposite);
-		}
-		
-		GridData data = null;
-		
+		}	
+
 		Composite bottomPart = new Composite(this, SWT.NONE);
 		layout = new GridLayout();
 		layout.marginHeight = 0; 
@@ -435,6 +479,7 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 	}
 	
 	public void saveChanges() {
+		
 		this.repositoryPropertiesPanel.saveChanges();
 		if ((CoreExtensionsManager.instance().getSVNConnectorFactory().getSupportedFeatures() & ISVNConnectorFactory.OptionalFeatures.SSH_SETTINGS) != 0) {
 			this.sshComposite.saveChanges();
@@ -455,6 +500,9 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 			proxySettings.setPassword(this.proxyComposite.getPassword());
 			proxySettings.setPasswordSaved(this.proxyComposite.isSavePassword());
 		}
+		
+		this.repositoryLocation.setAuthorName(this.authorInput.getText());
+		this.repositoryLocation.setAuthorNameEnabled(this.authorEnabled.getSelection());
 		
 		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
 		boolean enabled = this.rootsComposite.isStructureEnabled();

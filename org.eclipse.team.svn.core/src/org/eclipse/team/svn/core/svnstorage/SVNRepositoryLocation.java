@@ -92,6 +92,9 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
     protected transient int proxyConfigurationState;
     protected transient int waiters;
     
+    protected boolean authorNameEnabled;
+    protected String authorName;
+    
     private Map additionalRealms;
 
 	public SVNRepositoryLocation() {
@@ -198,6 +201,14 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 
 	public String getTagsLocation() {
 		return (this.tags == null || !this.isStructureEnabled()) ? "" : this.tags;
+	}
+	
+	public boolean isAuthorNameEnabled() {
+		return this.authorNameEnabled;
+	}
+	
+	public String getAuthorName() {
+		return this.authorName;
 	}
 
     public IRepositoryContainer asRepositoryContainer(String url, boolean allowsNull) {
@@ -359,6 +370,14 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 
 	public void setUsername(String username) {
 		this.username = username;
+	}
+	
+	public void setAuthorNameEnabled(boolean isEnabled) {
+		this.authorNameEnabled = isEnabled;
+	}
+
+	public void setAuthorName(String name) {
+		this.authorName = name;
 	}
 
 	public void setPassword(String password) {
