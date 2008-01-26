@@ -73,7 +73,7 @@ public class SetPropertyOperation extends AbstractFileOperation {
 					    final SVNProperty property = SetPropertyOperation.this.propertyData[i];
 					    SetPropertyOperation.this.protectStep(new IUnprotectedOperation() {
 	                        public void run(IProgressMonitor monitor) throws Exception {
-	        					proxy.propertySet(current.getAbsolutePath(), property.name, property.value, Depth.infinityOrEmpty(SetPropertyOperation.this.isRecursive), ISVNConnector.Options.NONE, null, new SVNProgressMonitor(SetPropertyOperation.this, monitor, null));
+	        					proxy.setProperty(current.getAbsolutePath(), property.name, property.value, Depth.infinityOrEmpty(SetPropertyOperation.this.isRecursive), ISVNConnector.Options.NONE, null, new SVNProgressMonitor(SetPropertyOperation.this, monitor, null));
 	                        }
 	                    }, monitor, SetPropertyOperation.this.propertyData.length);
 					}

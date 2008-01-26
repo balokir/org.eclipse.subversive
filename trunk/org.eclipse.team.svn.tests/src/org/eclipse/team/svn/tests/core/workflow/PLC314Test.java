@@ -61,7 +61,7 @@ public class PLC314Test extends TestWorkflow {
 
                 		SVNProperty data = null;
                 		try {
-                    		data = proxy.propertyGet(new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(parent)), BuiltIn.IGNORE, new SVNProgressMonitor(this, monitor, null));
+                    		data = proxy.getProperty(new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(parent)), BuiltIn.IGNORE, new SVNProgressMonitor(this, monitor, null));
                 		}
                 		finally {
                 		    location.releaseSVNProxy(proxy);

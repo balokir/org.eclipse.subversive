@@ -107,7 +107,7 @@ public class GetMultiPropertiesOperation extends AbstractActionOperation impleme
 			public void run(IProgressMonitor monitor) throws Exception {
 				String wcPath = FileUtility.getWorkingCopyPath(current);
 				if (GetMultiPropertiesOperation.this.propertyName != null) {
-					SVNProperty data = proxy.propertyGet(new SVNEntryRevisionReference(wcPath, null, SVNRevision.WORKING), GetMultiPropertiesOperation.this.propertyName, new SVNProgressMonitor(GetMultiPropertiesOperation.this, monitor, null));
+					SVNProperty data = proxy.getProperty(new SVNEntryRevisionReference(wcPath, null, SVNRevision.WORKING), GetMultiPropertiesOperation.this.propertyName, new SVNProgressMonitor(GetMultiPropertiesOperation.this, monitor, null));
 					if (data != null) {
 						GetMultiPropertiesOperation.this.properties.put(current, new SVNProperty[] {data});
 					}

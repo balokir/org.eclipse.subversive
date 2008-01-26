@@ -580,7 +580,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 			final ISVNConnector proxy = location.acquireSVNProxy();
 			SVNProperty existingProperty;
 			try {
-				existingProperty = proxy.propertyGet(new SVNEntryRevisionReference(wcPath), BuiltIn.EXTERNALS, new SVNProgressMonitor(CheckoutAsWizard.ConcatenateProperyDataOperation.this, monitor, null));
+				existingProperty = proxy.getProperty(new SVNEntryRevisionReference(wcPath), BuiltIn.EXTERNALS, new SVNProgressMonitor(CheckoutAsWizard.ConcatenateProperyDataOperation.this, monitor, null));
 			}
 			finally {
 				location.releaseSVNProxy(proxy);

@@ -219,7 +219,7 @@ public final class SVNUtility {
 	
 	public static SVNProperty []properties(ISVNConnector proxy, SVNEntryRevisionReference reference, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		final SVNProperty[][] retVal = new SVNProperty[1][];
-		proxy.properties(reference, Depth.EMPTY, null, new ISVNPropertyCallback() {
+		proxy.getProperties(reference, Depth.EMPTY, null, new ISVNPropertyCallback() {
 			public void next(String path, SVNProperty[] data) {
 				retVal[0] = data;
 			}
@@ -657,7 +657,7 @@ public final class SVNUtility {
 		String location = FileUtility.getWorkingCopyPath(root);
 		ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();
 		try {
-			SVNProperty data = proxy.propertyGet(new SVNEntryRevisionReference(location, null, SVNRevision.WORKING), propertyName, new SVNNullProgressMonitor());
+			SVNProperty data = proxy.getProperty(new SVNEntryRevisionReference(location, null, SVNRevision.WORKING), propertyName, new SVNNullProgressMonitor());
 			return data == null ? null : data.value;
 		}
 		catch (Exception ex) {

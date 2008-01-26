@@ -82,7 +82,7 @@ public class AddToSVNIgnoreOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	public static void changeIgnoreProperty(ISVNConnector proxy, int ignoreType, String pattern, String path, String name) throws Exception {
-		SVNProperty data = proxy.propertyGet(new SVNEntryRevisionReference(path), BuiltIn.IGNORE, new SVNNullProgressMonitor());
+		SVNProperty data = proxy.getProperty(new SVNEntryRevisionReference(path), BuiltIn.IGNORE, new SVNNullProgressMonitor());
 		String ignoreValue = data == null ? "" : data.value;
 		String mask = null;
 		switch (ignoreType) {
@@ -103,7 +103,7 @@ public class AddToSVNIgnoreOperation extends AbstractWorkingCopyOperation {
 			}
 		}
 		ignoreValue = AddToSVNIgnoreOperation.addMask(ignoreValue, mask);
-		proxy.propertySet(path, BuiltIn.IGNORE, ignoreValue, Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNNullProgressMonitor());
+		proxy.setProperty(path, BuiltIn.IGNORE, ignoreValue, Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNNullProgressMonitor());
 	}
 	
 	protected static String addMask(String ignore, String mask) {
