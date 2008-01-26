@@ -86,7 +86,7 @@ public class AddToSVNOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	public static void removeFromParentIgnore(ISVNConnector proxy, String parentPath, String name) throws Exception {
-		SVNProperty data = proxy.propertyGet(new SVNEntryRevisionReference(parentPath), BuiltIn.IGNORE, new SVNNullProgressMonitor());
+		SVNProperty data = proxy.getProperty(new SVNEntryRevisionReference(parentPath), BuiltIn.IGNORE, new SVNNullProgressMonitor());
 		String ignoreValue = data == null ? "" : data.value;
 		
 		StringTokenizer tok = new StringTokenizer(ignoreValue, "\n", true);
@@ -105,11 +105,11 @@ public class AddToSVNOperation extends AbstractWorkingCopyOperation {
 		
 		if (ignoreValue.length() > 0)
 		{
-			proxy.propertySet(parentPath, BuiltIn.IGNORE, ignoreValue, Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNNullProgressMonitor());
+			proxy.setProperty(parentPath, BuiltIn.IGNORE, ignoreValue, Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNNullProgressMonitor());
 		}
 		else
 		{
-			proxy.propertyRemove(parentPath, BuiltIn.IGNORE, Depth.EMPTY, null, new SVNNullProgressMonitor());
+			proxy.removeProperty(parentPath, BuiltIn.IGNORE, Depth.EMPTY, null, new SVNNullProgressMonitor());
 		}
 	}
 	

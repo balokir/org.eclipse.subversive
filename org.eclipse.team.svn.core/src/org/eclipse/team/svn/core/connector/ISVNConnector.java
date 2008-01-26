@@ -251,6 +251,8 @@ public interface ISVNConnector {
 		public static final long LIST = Options.FETCH_LOCKS;
 
 		public static final long PROPERTY_SET = Options.FORCE;
+
+		public static final long REVISION_PROPERTY_SET = Options.FORCE;
 	}
 
 	public String getConfigDirectory() throws SVNConnectorException;
@@ -391,13 +393,19 @@ public interface ISVNConnector {
 	public void list(SVNEntryRevisionReference reference, int depth, int direntFields, long options, ISVNEntryCallback cb, ISVNProgressMonitor monitor)
 			throws SVNConnectorException;
 
-	public void properties(SVNEntryRevisionReference reference, int depth, String[] changelistNames, ISVNPropertyCallback callback, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void getProperties(SVNEntryRevisionReference reference, int depth, String[] changelistNames, ISVNPropertyCallback callback, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public SVNProperty propertyGet(SVNEntryRevisionReference reference, String name, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public SVNProperty getProperty(SVNEntryRevisionReference reference, String name, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void propertySet(String path, String name, String value, int depth, long options, String[] changelistNames, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void setProperty(String path, String name, String value, int depth, long options, String[] changelistNames, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void propertyRemove(String path, String name, int depth, String[] changelistNames, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void removeProperty(String path, String name, int depth, String[] changelistNames, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
+	public SVNProperty []getRevisionProperties(SVNEntryReference reference, ISVNPropertyCallback callback, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
+	public SVNProperty getRevisionProperty(SVNEntryReference reference, String name, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
+	public void setRevisionProperty(SVNEntryReference reference, String name, String value, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public void dispose();
 }
