@@ -8,6 +8,46 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.0.v20080129 [29 January 2008]
+
+Features:
+ * Add "Create patch file" action to the synchronize view drop-down. (bug 216141)
+   + special thanks to Felix Berger
+
+ * Show conflicting resources in Commit dialog (bug 211404)
+   + special thanks to Gabor Liptak
+
+ * Allows to override committer name for different protocols (bug 211417)
+   + special thanks to Mark
+
+ * Allow to select resources for Create Patch action (bug 211413)
+   + special thanks to Kaneider Daniel, Konstantine Kirenko
+
+ * Add Ignore action to Commit dialog (bug 211407)
+ * Add "Resolve conflicts" and "Mark as merged" actions to Commit dialog (bug 215963)
+ * Add 'Lock" and "Unlock" actions to Commit dialog (bug 215968)
+ * Add "Create patch file" action to Commit dialog (bug 215962)
+ * Add "Replace With" action to Commit dialog (bug 215966)
+ * Add "Compare With" action to a Commit dialog (bug 215964)
+ * "Add to svn:ignore" action in "Add to version control" dialog drop down (bug 216004)
+ * Add "Lock" and "Unlock" actions to synchronize view drop-down menu. (bug 216142)
+ * Add "Show Properties" action to a synchronize view drop down. (bug 216144)
+ * Add "Set properties" and "Set keywords" actions to synchronize view drop-down menu. (bug 216143)
+ * Improve drop-down menu in SynchronizeView (bug 216140)
+ * Improve History View Affected Path Composite drop-down menu. (bug 216264)
+ * Support latest SVN 1.5 API changes (bug 216473)
+
+Fixes:
+ * Commit errors seems to not be shown in console (bug 215188)
+   + special thanks to Kristoffer Peterhansel
+   
+ * It is impossible to install connectors sources on Linux (bug 216699)
+   + special thanks to Ilya Klyuchnikov
+
+ * "Report revision change" option does not work (bug 216090)
+
+--------------------------------------------------------------------------------
+
 Version 0.7.0.v20080116 [16 January 2008]
 
 Features:
