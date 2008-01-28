@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.connector.ISVNConnector.Options;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.UnreportableException;
@@ -84,6 +85,7 @@ public class PreparedBranchTagOperation extends CompositeOperation implements IR
 			if (this.resources.length != 1 || !cutPath.isEmpty() || this.forceCreate) {
 				String folderName = this.resources.length == 1 && !cutPath.isEmpty() && !this.forceCreate ? cutPath.toString() : newFolderPath.toString();
 				this.add(op = new CreateFolderOperation(parent, folderName, this.message));
+				this.add(new SetRevisionAuthorNameOperation(op, Options.FORCE));
 			}
 		}
 		for (int i = 0; i < this.targets.length; i++) {
@@ -98,7 +100,9 @@ public class PreparedBranchTagOperation extends CompositeOperation implements IR
 		}
 		
 		if (this.wcResources == null) {
-			this.add(new BranchTagOperation(this.operationName, this.resources, this.destination, this.message), op == null ? null : new IActionOperation[] {op});
+			BranchTagOperation branchtagOp = new BranchTagOperation(this.operationName, this.resources, this.destination, this.message);
+			this.add(branchtagOp, op == null ? null : new IActionOperation[] {op});
+			this.add(new SetRevisionAuthorNameOperation(branchtagOp, Options.FORCE));
 		}
 		super.runImpl(monitor);
 	}

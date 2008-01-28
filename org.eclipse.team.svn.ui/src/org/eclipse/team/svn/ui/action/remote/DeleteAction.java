@@ -14,10 +14,12 @@ package org.eclipse.team.svn.ui.action.remote;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.team.svn.core.connector.ISVNConnector.Options;
 import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.remote.DeleteResourcesOperation;
+import org.eclipse.team.svn.core.operation.remote.SetRevisionAuthorNameOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
@@ -70,6 +72,7 @@ public class DeleteAction extends AbstractRepositoryTeamAction {
 					return null;
 				}
 			});
+			op.add(new SetRevisionAuthorNameOperation(mainOp, Options.FORCE));
 			
 			this.runScheduled(op);
 		}		

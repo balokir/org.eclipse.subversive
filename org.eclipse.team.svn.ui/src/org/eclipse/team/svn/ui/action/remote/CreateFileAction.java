@@ -12,9 +12,11 @@
 package org.eclipse.team.svn.ui.action.remote;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.team.svn.core.connector.ISVNConnector.Options;
 import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.remote.CreateFileOperation;
+import org.eclipse.team.svn.core.operation.remote.SetRevisionAuthorNameOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.action.AbstractRepositoryTeamAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
@@ -41,6 +43,7 @@ public class CreateFileAction extends AbstractRepositoryTeamAction {
 			CompositeOperation op = new CompositeOperation(mainOp.getId());
 			op.add(mainOp);
 			op.add(new RefreshRemoteResourcesOperation(this.getSelectedRepositoryResources()));
+			op.add(new SetRevisionAuthorNameOperation(mainOp, Options.FORCE));
 			this.runScheduled(op);
 	    }
 	}
