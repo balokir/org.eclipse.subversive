@@ -42,6 +42,8 @@ public class SVNErrorCodes {
 
 	public static final int badRelativePath = 125007;
 
+	public static final int badUuid = 125008;
+
 	public static final int xmlAttribNotFound = 130000;
 
 	public static final int xmlMissingAncestry = 130001;
@@ -238,11 +240,7 @@ public class SVNErrorCodes {
 
 	public static final int fsTxnNameTooLong = 160045;
 
-	public static final int fsSqliteError = 160046;
-
-	public static final int fsNoSuchNodeOrigin = 160047;
-
-	public static final int fsSqliteReadonly = 160048;
+	public static final int fsNoSuchNodeOrigin = 160046;
 
 	public static final int reposLocked = 165000;
 
@@ -281,6 +279,8 @@ public class SVNErrorCodes {
 	public static final int raNotLocked = 170007;
 
 	public static final int raUnknownCapability = 170008;
+
+	public static final int raPartialReplayNotSupported = 170009;
 
 	public static final int raDavSockInit = 175000;
 
@@ -364,6 +364,8 @@ public class SVNErrorCodes {
 
 	public static final int clientNoVersionedParent = 195015;
 
+	public static final int clientNotReadyToMerge = 195016;
+
 	public static final int base = 200000;
 
 	public static final int pluginLoadFailure = 200001;
@@ -404,7 +406,7 @@ public class SVNErrorCodes {
 
 	public static final int versionMismatch = 200019;
 
-	public static final int mergeInfoParseError = 200020;
+	public static final int mergeinfoParseError = 200020;
 
 	public static final int ceaseInvocation = 200021;
 
