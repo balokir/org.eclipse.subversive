@@ -375,7 +375,7 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 		this.propertyValue = this.valueField.getText();
 		this.propertyFile = this.fileField.getText();
 		if (this.resourcesType != PropertyEditPanel.SINGLE_FILE) {
-			if (this.resourcesType == PropertyEditPanel.MIXED_RESOURCES) {
+			if (this.resourcesType == PropertyEditPanel.MIXED_RESOURCES && !this.strict) {
 				this.recursiveSelected = this.recursiveButton.getSelection();
 			}
 			if (this.recursiveSelected || this.resourcesType == PropertyEditPanel.MULTIPLE_FILES) {
