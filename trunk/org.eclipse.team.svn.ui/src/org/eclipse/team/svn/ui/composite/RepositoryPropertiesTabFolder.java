@@ -46,6 +46,7 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
+import org.eclipse.team.svn.ui.utility.UserInputHistory;
 import org.eclipse.team.svn.ui.verifier.AbstractFormattedVerifier;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifier;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifierProxy;
@@ -58,6 +59,8 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
  * @author Sergiy Logvin
  */
 public class RepositoryPropertiesTabFolder extends Composite implements IPropertiesPanel, ISecurityInfoProvider {
+	
+	protected static final String AUTHOR_HISTORY_NAME = "authorName";
 	
 	protected RepositoryPropertiesComposite repositoryPropertiesPanel;
 	protected SSHComposite sshComposite;
@@ -75,9 +78,9 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 	protected boolean createNew;
 	protected Combo cachedRealms;
 	protected boolean isAuthorNameEnabled;
-	protected String authorName;
-	protected Text authorInput;
+	protected Combo authorInput;
 	protected Button authorEnabled;
+	protected UserInputHistory authorNameHistory;
 	
 	protected TabItem sshTab;
 	protected TabItem sslTab;
@@ -178,7 +181,10 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 		authorEnabled.setLayoutData(data);
 		String name = (this.repositoryLocation.getAuthorName() == null) ? "" : this.repositoryLocation.getAuthorName();
 		data = new GridData(GridData.FILL_HORIZONTAL);
-		authorInput = new Text(rootsComposite, SWT.BORDER);
+		authorInput = new Combo(rootsComposite, SWT.BORDER);
+		this.authorNameHistory = new UserInputHistory(RepositoryPropertiesTabFolder.AUTHOR_HISTORY_NAME);
+		this.authorInput.setVisibleItemCount(this.authorNameHistory.getDepth());
+		this.authorInput.setItems(this.authorNameHistory.getHistory());
 		authorInput.setText(name);
 		authorInput.setEnabled(this.repositoryLocation.isAuthorNameEnabled());
 		authorInput.setLayoutData(data);
@@ -502,6 +508,7 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 		
 		this.repositoryLocation.setAuthorName(this.authorInput.getText());
 		this.repositoryLocation.setAuthorNameEnabled(this.authorEnabled.getSelection());
+		this.authorNameHistory.addLine(this.authorInput.getText());
 		
 		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
 		boolean enabled = this.rootsComposite.isStructureEnabled();
