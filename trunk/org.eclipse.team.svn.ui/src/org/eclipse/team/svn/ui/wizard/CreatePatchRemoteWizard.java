@@ -29,7 +29,7 @@ public class CreatePatchRemoteWizard extends CreatePatchWizard {
 	}
 	
 	public CreatePatchRemoteWizard(IRepositoryResource targetResource, boolean showIgnoreAncestry) {
-		super(targetResource.getName(), false, showIgnoreAncestry);
+		super(targetResource.getName(), null, showIgnoreAncestry);
 		this.targetResource = targetResource;
 	}
 

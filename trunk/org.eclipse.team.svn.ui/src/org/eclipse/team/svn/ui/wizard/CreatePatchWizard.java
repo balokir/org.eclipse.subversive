@@ -14,6 +14,8 @@ package org.eclipse.team.svn.ui.wizard;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.wizard.createpatch.PatchOptionsPage;
 import org.eclipse.team.svn.ui.wizard.createpatch.SelectPatchFilePage;
@@ -29,26 +31,30 @@ public class CreatePatchWizard extends AbstractSVNWizard {
 	public static final int WRITE_TO_WORKSPACE_FILE = 2;
 	
 	protected String targetName;
-	protected boolean localMode;
 	protected boolean showIgnoreAncestry;
 	
 	protected SelectPatchFilePage selectFile;
 	protected PatchOptionsPage options;
+	protected IResource []roots;
 
 	public CreatePatchWizard(String targetName) {
-		this(targetName, true);
+		this(targetName, null);
 	}
 	
-	public CreatePatchWizard(String targetName, boolean localMode) {
-		this(targetName, localMode, false);
+	public CreatePatchWizard(String targetName, IResource []roots) {
+		this(targetName, roots, false);
 	}
 	
-	public CreatePatchWizard(String targetName, boolean localMode, boolean showIgnoreAncestry) {
+	public CreatePatchWizard(String targetName, IResource []roots, boolean showIgnoreAncestry) {
 		super();
 		this.setWindowTitle(SVNTeamUIPlugin.instance().getResource("CreatePatchWizard.Title"));
 		this.targetName = targetName;
-		this.localMode = localMode;
+		this.roots = roots;
 		this.showIgnoreAncestry = showIgnoreAncestry;
+	}
+	
+	public int getRootPoint() {
+		return this.options.getRootPoint();
 	}
 	
 	public IResource getTargetFolder() {
@@ -76,7 +82,11 @@ public class CreatePatchWizard extends AbstractSVNWizard {
 	}
 
 	public boolean isRecursive() {
-		return this.options.isRecursive();
+		return this.options.isRecursive() & this.selectFile.isRecursive();
+	}
+	
+	public IResource []getSelection() {
+		return this.selectFile.isRecursive() ? this.roots : this.selectFile.getSelection();
 	}
 	
 	public boolean isIgnoreAncestry() {
@@ -84,8 +94,13 @@ public class CreatePatchWizard extends AbstractSVNWizard {
 	}
 
 	public void addPages() {
-		this.addPage(this.selectFile = new SelectPatchFilePage(this.targetName));
-		this.addPage(this.options = new PatchOptionsPage(this.localMode, this.showIgnoreAncestry));
+		this.addPage(this.selectFile = new SelectPatchFilePage(this.targetName, this.roots));
+		this.addPage(this.options = new PatchOptionsPage(this.roots != null, this.showIgnoreAncestry));
+	}
+	
+	public IWizardPage getNextPage(IWizardPage page) {
+		this.options.setMultiSelect(SVNUtility.splitWorkingCopies(this.getSelection()).size() > 1);
+		return super.getNextPage(page);
 	}
 	
 	public boolean performFinish() {
