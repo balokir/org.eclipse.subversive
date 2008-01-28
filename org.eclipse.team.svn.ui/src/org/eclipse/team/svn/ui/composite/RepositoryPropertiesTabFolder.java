@@ -170,7 +170,6 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 		tabItem = new TabItem(tabFolder, SWT.NONE);
 		tabItem.setText(SVNTeamUIPlugin.instance().getResource("RepositoryPropertiesTabFolder.Advanced"));
 		Composite rootsComposite = this.createRepositoryRootsComposite(tabFolder);
-		tabItem.setControl(this.createRepositoryRootsComposite(tabFolder));
 		GridData data = new GridData();
 		data.verticalIndent = 10;	
 		authorEnabled = new Button(rootsComposite, SWT.CHECK);
@@ -208,7 +207,7 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 			}	
 		});
 		
-		
+		tabItem.setControl(rootsComposite);
 		this.unavailableSSHComposite = this.createUnavailableComposite(tabFolder);
 		this.unavailableSSHComposite.setVisible(false);
 		this.createSSHHostComposite(tabFolder);
