@@ -46,6 +46,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.core.Team;
 import org.eclipse.team.svn.core.IConnectedProjectInformation;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
@@ -64,6 +65,14 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
  */
 public final class FileUtility {
 	public static final IResource []NO_CHILDREN = new IResource[0];
+	
+	public static int getMIMEType(IResource resource) {
+		int type = Team.getFileContentManager().getTypeForExtension(resource.getFileExtension() == null ? "" : resource.getFileExtension());
+		if (type == Team.UNKNOWN) {
+			type = Team.getFileContentManager().getTypeForName(resource.getName());
+		}
+		return type;
+	}
 	
 	public static IResource selectOneOf(IResource []scope, IResource []set) {
 		for (int i = 0; i < set.length; i++) {
@@ -337,6 +346,16 @@ public final class FileUtility {
 			}
 		}
 		return false;
+	}
+	
+	public static IResource []filterResources(IResource []resources, IStateFilter filter) {
+		HashSet<IResource> retVal = new HashSet<IResource>(Arrays.asList(resources));
+		for (int i = 0; i < resources.length; i++) {
+			if (!FileUtility.checkForResourcesPresenceRecursive(new IResource[] {resources[i]}, filter)) {
+				retVal.remove(resources[i]);
+			}
+		}
+		return retVal.toArray(new IResource[retVal.size()]);
 	}
 	
 	public static IResource []getResourcesRecursive(IResource []roots, IStateFilter filter) {

@@ -89,18 +89,14 @@ public class AddToSVNWithPropertiesOperation extends AddToSVNOperation {
 	
 	protected void processFile(IResource resource, ISVNConnector proxy, IProgressMonitor monitor) throws SVNConnectorException {
 		String path = FileUtility.getWorkingCopyPath(resource);
-		for (int i = 0; i < 2; i++) {
-			int type = (i == 0) ?
-					Team.getFileContentManager().getTypeForExtension(resource.getFileExtension() == null ? "" : resource.getFileExtension()) :
-					Team.getFileContentManager().getTypeForName(resource.getName());
-			SVNProperty data = proxy.getProperty(new SVNEntryRevisionReference(path), BuiltIn.MIME_TYPE, new SVNProgressMonitor(this, monitor, null));
-			if (data == null) {
-				if (type == Team.BINARY) {
-					proxy.setProperty(path, BuiltIn.MIME_TYPE, AddToSVNWithPropertiesOperation.BINARY_FILE, Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNProgressMonitor(this, monitor, null));
-				}
-				else if (type == Team.TEXT) {
-					proxy.setProperty(path, BuiltIn.MIME_TYPE, AddToSVNWithPropertiesOperation.TEXT_FILE, Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNProgressMonitor(this, monitor, null));
-				}
+		int type = FileUtility.getMIMEType(resource);
+		SVNProperty data = proxy.getProperty(new SVNEntryRevisionReference(path), BuiltIn.MIME_TYPE, new SVNProgressMonitor(this, monitor, null));
+		if (data == null) {
+			if (type == Team.BINARY) {
+				proxy.setProperty(path, BuiltIn.MIME_TYPE, AddToSVNWithPropertiesOperation.BINARY_FILE, Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNProgressMonitor(this, monitor, null));
+			}
+			else if (type == Team.TEXT) {
+				proxy.setProperty(path, BuiltIn.MIME_TYPE, AddToSVNWithPropertiesOperation.TEXT_FILE, Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNProgressMonitor(this, monitor, null));
 			}
 		}
 	}

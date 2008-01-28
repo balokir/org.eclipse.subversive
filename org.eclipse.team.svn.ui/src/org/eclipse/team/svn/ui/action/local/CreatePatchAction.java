@@ -19,6 +19,7 @@ import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.CreatePatchOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
+import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.action.AbstractWorkingCopyAction;
 import org.eclipse.team.svn.ui.operation.FileToClipboardOperation;
 import org.eclipse.team.svn.ui.wizard.CreatePatchWizard;
@@ -34,11 +35,11 @@ public class CreatePatchAction extends AbstractWorkingCopyAction {
 	}
 	
 	public void runImpl(IAction action) {
-		IResource target = this.getSelectedResources()[0];
-		CreatePatchWizard wizard = new CreatePatchWizard(target.getName());
+		IResource []targets = FileUtility.filterResources(this.getSelectedResources(), IStateFilter.SF_ANY_CHANGE);
+		CreatePatchWizard wizard = new CreatePatchWizard(targets[0].getName(), targets);
 		WizardDialog dialog = new WizardDialog(this.getShell(), wizard);
 		if (dialog.open() == 0) {
-			CreatePatchOperation mainOp = new CreatePatchOperation(target, wizard.getFileName(), wizard.isRecursive(), wizard.isIgnoreDeleted(), wizard.isProcessBinary(), wizard.isProcessUnversioned(), true);
+			CreatePatchOperation mainOp = new CreatePatchOperation(wizard.getSelection(), wizard.getFileName(), wizard.isRecursive(), wizard.isIgnoreDeleted(), wizard.isProcessBinary(), wizard.isProcessUnversioned(), wizard.getRootPoint());
 			CompositeOperation op = new CompositeOperation(mainOp.getId());
 			op.add(mainOp);
 			switch (wizard.getWriteMode()) {
@@ -56,10 +57,7 @@ public class CreatePatchAction extends AbstractWorkingCopyAction {
 	}
 
 	public boolean isEnabled() {
-		return 
-			this.getSelectedResources().length == 1 &&
-			this.checkForResourcesPresence(IStateFilter.SF_VERSIONED) &&
-			this.checkForResourcesPresenceRecursive(IStateFilter.SF_ANY_CHANGE);
+		return this.checkForResourcesPresenceRecursive(IStateFilter.SF_ANY_CHANGE);
 	}
 
 }

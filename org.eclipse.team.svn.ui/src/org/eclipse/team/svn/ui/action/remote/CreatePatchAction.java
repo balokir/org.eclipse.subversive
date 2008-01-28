@@ -44,7 +44,7 @@ public class CreatePatchAction extends AbstractRepositoryModifyWorkspaceAction {
 			wizard = new CreatePatchRemoteWizard(resources[0], true);
 		}
 		else {
-			wizard = new CreatePatchWizard(resources[0].getName(), false, true);
+			wizard = new CreatePatchWizard(resources[0].getName(), null, true);
 		}
 		
 		WizardDialog dialog = new WizardDialog(this.getShell(), wizard);

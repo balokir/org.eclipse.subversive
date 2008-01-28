@@ -863,7 +863,7 @@ public class HistoryViewImpl {
 	}
 	
 	protected void createUnifiedDiff(IStructuredSelection selection) {
-		CreatePatchWizard wizard = new CreatePatchWizard(this.repositoryResource.getName(), false);
+		CreatePatchWizard wizard = new CreatePatchWizard(this.repositoryResource.getName());
 		WizardDialog dialog = new WizardDialog(this.getSite().getShell(), wizard);
 		if (dialog.open() == DefaultDialog.OK) {
 			

@@ -57,7 +57,7 @@ public class CreatePatchFileAction extends AbstractSynchronizeModelAction {
 				dlg.setFilterExtensions(new String[] {"patch", "*.*"});
 				String file = dlg.open();
 				if (file != null) {
-					op[0] = new CreatePatchOperation(resource, file, true, true, true, true, true);
+					op[0] = new CreatePatchOperation(new IResource[] {resource}, file, true, true, true, true);
 				}
 			}
 		});

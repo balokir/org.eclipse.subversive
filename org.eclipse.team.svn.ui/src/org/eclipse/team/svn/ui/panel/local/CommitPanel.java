@@ -350,7 +350,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 						dlg.setFilterExtensions(new String[] {"patch", "*.*"});
 						String file = dlg.open();
 						if (file != null) {
-							CreatePatchOperation mainOp = new CreatePatchOperation(selectedResources[0], file, true, true, true, true, true);
+							CreatePatchOperation mainOp = new CreatePatchOperation(new IResource[] {selectedResources[0]}, file, true, true, true, true);
 							UIMonitorUtility.doTaskNowDefault(mainOp, false);
 						}
 					}

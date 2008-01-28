@@ -510,7 +510,7 @@ public class AffectedPathsComposite extends Composite {
 						GetSelectedTreeResource op = new GetSelectedTreeResource(AffectedPathsComposite.this.repositoryResource, AffectedPathsComposite.this.currentRevision, affectedTableSelection.getFirstElement());
 						ProgressMonitorUtility.doTaskExternalDefault(op, new NullProgressMonitor());
 						IRepositoryResource current = op.getRepositoryResources()[0];
-						CreatePatchWizard wizard = new CreatePatchWizard(current.getName(), false);
+						CreatePatchWizard wizard = new CreatePatchWizard(current.getName());
 						WizardDialog dialog = new WizardDialog(UIMonitorUtility.getShell(), wizard);
 						if (dialog.open() == DefaultDialog.OK) {
 							IRepositoryResource previous = (current instanceof RepositoryFolder) ? current.asRepositoryContainer(current.getUrl(), false) : current.asRepositoryFile(current.getUrl(), false);
@@ -644,7 +644,7 @@ public class AffectedPathsComposite extends Composite {
 	protected void createPatchToPrevious(AffectedRepositoryResourceProvider provider) {
 		ProgressMonitorUtility.doTaskExternal(provider, new NullProgressMonitor());
 		IRepositoryResource current = provider.getRepositoryResources()[0];
-		CreatePatchWizard wizard = new CreatePatchWizard(current.getName(), false);
+		CreatePatchWizard wizard = new CreatePatchWizard(current.getName());
 		WizardDialog dialog = new WizardDialog(UIMonitorUtility.getShell(), wizard);
 		if (dialog.open() == DefaultDialog.OK) {
 			IRepositoryResource previous = (current instanceof RepositoryFolder) ? current.asRepositoryContainer(current.getUrl(), false) : current.asRepositoryFile(current.getUrl(), false);
