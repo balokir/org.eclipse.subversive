@@ -99,7 +99,9 @@ public class CreatePatchWizard extends AbstractSVNWizard {
 	}
 	
 	public IWizardPage getNextPage(IWizardPage page) {
-		this.options.setMultiSelect(SVNUtility.splitWorkingCopies(this.getSelection()).size() > 1);
+		if (this.roots != null) {
+			this.options.setMultiSelect(SVNUtility.splitWorkingCopies(this.getSelection()).size() > 1);
+		}
 		return super.getNextPage(page);
 	}
 	
