@@ -14,6 +14,7 @@ package org.eclipse.team.svn.core.operation.remote;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryReference;
+import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IRevisionProvider;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -52,14 +53,18 @@ public class SetRevisionAuthorNameOperation extends AbstractActionOperation {
 			return;
 		}
 		for (int i = 0; i < revisions.length; i++) {
+			if (revisions[i] == null) {
+				continue;
+			}
 			final IRepositoryLocation location = revisions[i].location;
 			if (!location.isAuthorNameEnabled()) {
 				continue;
 			}
 			final ISVNConnector proxy =  location.acquireSVNProxy();
+			final SVNRevision rev =  SVNRevision.fromNumber(revisions[i].revision);
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-					proxy.setRevisionProperty(new SVNEntryReference(location.getUrl()), "svn:author", location.getAuthorName(), options, new SVNProgressMonitor(SetRevisionAuthorNameOperation.this, monitor, null));
+					proxy.setRevisionProperty(new SVNEntryReference(location.getUrl(), rev) , "svn:author", location.getAuthorName(), options, new SVNProgressMonitor(SetRevisionAuthorNameOperation.this, monitor, null));
 				}
 			}
 			, monitor, 1);			

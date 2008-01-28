@@ -17,8 +17,10 @@ import java.util.HashSet;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.team.svn.core.connector.ISVNConnector.Options;
 import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
+import org.eclipse.team.svn.core.operation.remote.SetRevisionAuthorNameOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
@@ -66,6 +68,7 @@ public class PasteAction extends AbstractRepositoryTeamAction {
 						return SVNUtility.getCommonParents((IRepositoryResource [])fullSet.toArray(new IRepositoryResource[fullSet.size()]));
 					}
 				}));
+			op.add(new SetRevisionAuthorNameOperation(pasteOp, Options.FORCE));
 			
 			this.runScheduled(op);
 		}
