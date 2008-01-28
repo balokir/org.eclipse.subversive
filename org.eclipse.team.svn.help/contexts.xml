@@ -155,6 +155,10 @@
 		<description>This dialog provides a probability to import a resource from the file system to repository location and enter a commit comment.</description>
 		<topic label="Refactoring" href="teamSupport/refactor.html"/>
 	</context>
+	<context id="savePatchInWorkspaceContext">
+		<description>This dialog provides a probability to select a file inside a workspace in which patch will be saved.</description>
+		<topic label="Patching" href="teamSupport/SVNaction/patch.html"/>
+	</context>
 	<context id="remote_compareDialogContext">
 		<description>Select a resource URL and the revision number to compare with.</description>
 		<topic label="Working with compare editor" href="teamSupport/compare.html"/>
