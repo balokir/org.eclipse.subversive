@@ -52,6 +52,12 @@
 				<td class="header" align ="center" valign="center">Default</td>
 			</tr>
 			<tr>
+				<td align ="center" valign="center">Detect deleted projects before update</td>
+				<td align ="center" valign="center">Specifies if the plug-in should detect if the project the user is trying to update have been
+				removed from the repository.</td>
+				<td align ="center" valign="center">Enabled</td>
+			</tr>
+			<tr>
 				<td align ="center" valign="center">Check the new resources in the commit dialog</td>
 				<td align ="center" valign="center">Specifies if the plug-in should check the new resources in the commit dialog.</td>
 				<td align ="center" valign="center">Enabled</td>
@@ -79,8 +85,8 @@
 		</table><br/>
 		This is how <i>'General'</i> tab group looks like:
 		<br/><br/><img border="0" src="../images/pref_general.png" alt="General tab group"/><br/><br/>
-		<b>SVN Client</b><br/>
-		<p>Here the user can choose the SVN&reg; client he wants to use.</p>
+		<b>SVN Connector</b><br/>
+		<p>Here the user can choose the SVN&reg; connector he wants to use.</p>
 		<table cellpadding="5" cellspacing="0" border="1" width="100%">
 			<tr>
 				<td class="header" align ="center" valign="center">Option</td>
@@ -88,18 +94,18 @@
 				<td class="header" align ="center" valign="center">Default</td>
 			</tr>
 			<tr>
-				<td align ="center" valign="center">SVN Client</td>
-				<td align ="center" valign="center">Allows to choose witch SVN client to use.</td>
+				<td align ="center" valign="center">SVN Connector</td>
+				<td align ="center" valign="center">Allows to choose witch SVN connector to use.</td>
 				<td align ="center" valign="center">Subversive Default</td>
 			</tr>
 			<tr>
-				<td align ="center" valign="center">Use interactive merge</td>
-				<td align ="center" valign="center">When chosen Subversive allows to use Synchronize View features during the merging (experimental feature).</td>
+				<td align ="center" valign="center">Use SVN Merge View</td>
+				<td align ="center" valign="center">When chosen Subversive allows to use Synchronize View features during the merging.</td>
 				<td align ="center" valign="center">Disabled</td>
 			</tr>
 		</table><br/>
-		This is how <i>'SVN Client'</i> tab group looks like:
-		<br/><br/><img border="0" src="../images/pref_client.png" alt="SVN Client tab group"/><br/><br/>
+		This is how <i>'SVN Connector'</i> tab group looks like:
+		<br/><br/><img border="0" src="../images/pref_client.png" alt="SVN Connector tab group"/><br/><br/>
 		<b>Repository</b><br/>
 		<p>Here the user can configure repository structure.</p>
 		<table cellpadding="1" cellspacing="0" border="0">
@@ -186,18 +192,8 @@
 				<td class="header" align ="center" valign="center">Default</td>
 			</tr>
 			<tr>
-				<td align ="center" valign="center">Report revision change for folders</td>
-				<td align ="center" valign="center">Allows plug-into notify user about folder's revision change in 'Synchronize View'.</td>
-				<td align ="center" valign="center">Disabled</td>
-			</tr>
-			<tr>
 				<td align ="center" valign="center">Show synchronize info contiguous</td>
 				<td align ="center" valign="center">Specifies if the synchronization info will be get in series (Enabled) or in whole (Disabled).</td>
-				<td align ="center" valign="center">branches</td>
-			</tr>
-			<tr>
-				<td align ="center" valign="center">Tags</td>
-				<td align ="center" valign="center">Default repository root name for tags.</td>
 				<td align ="center" valign="center">Enabled</td>
 			</tr>
 			<tr>

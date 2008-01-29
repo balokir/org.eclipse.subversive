@@ -83,9 +83,9 @@
 			<td class="header" align ="center" valign="center">Default</td>
 		</tr>
 		<tr>
-			<td align ="center" valign="center">Enable Structure  Detection</td>
+			<td align ="center" valign="center">Enable Structure Detection</td>
 			<td align ="center" valign="center">Specifies if the Subversion&reg; should detect the structure of repository.</td>
-			<td align ="center" valign="center">Enable</td>
+			<td align ="center" valign="center">Enabled</td>
 		</tr>
 		<tr>
 			<td align ="center" valign="center">Trunk</td>
@@ -101,6 +101,31 @@
 			<td align ="center" valign="center">Tags</td>
 			<td align ="center" valign="center">Specifies tags name to use for structure detection.</td>
 			<td align ="center" valign="center">tags</td>
+		</tr>
+		<tr>
+			<td align ="center" valign="center">Override author name with represented below</td>
+			<td align ="center" valign="center">Specifies if the author name should be overridden for repository affecting operations.</td>
+			<td align ="center" valign="center">Disabled</td>
+		</tr>
+	</table>
+	</br>
+	<table cellpadding="1" cellspacing="0" border="0">
+		<tr>
+			<td valign="top" align="left">
+				<p align="left">
+					<i>
+						<b>Note:</b>
+					</i>
+				</p>
+			</td>
+			<td valign="top">
+				<p>
+					<i>
+						Please pay special attention that <b>pre-revprop-change</b> hook should be implemented for the repository and should allow to change
+						"svn:author" revision property. 
+					</i>
+				</p>
+			</td>
 		</tr>
 	</table>
 	<p>This is how <i>'Advanced'</i> tab group looks like:</p>
