@@ -107,7 +107,7 @@ public abstract class AbstractSynchronizeModelAction extends SynchronizeModelAct
 		    for (Iterator it = selection.iterator(); it.hasNext(); ) {
 		    	ISynchronizeModelElement node = (ISynchronizeModelElement)it.next();
 		    	if (filter.acceptGroupNodes() || node instanceof SyncInfoModelElement) {
-		    		this.fetchSelectedNodes(retVal, node, filter, node.getResource().getType() == IResource.ROOT ? IResource.DEPTH_ONE : IResource.DEPTH_ZERO);
+		    		this.fetchSelectedNodes(retVal, node, filter, node.getResource() == null || node.getResource().getType() == IResource.ROOT ? IResource.DEPTH_ONE : IResource.DEPTH_ZERO);
 		    	}
 		    }
 			return (IResource [])retVal.toArray(new IResource[retVal.size()]);
