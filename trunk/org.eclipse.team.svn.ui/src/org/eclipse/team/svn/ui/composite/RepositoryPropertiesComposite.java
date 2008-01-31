@@ -25,7 +25,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.local.management.FindRelatedProjectsOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.ProxySettings;
@@ -35,7 +34,7 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
-import org.eclipse.team.svn.ui.panel.common.RepositoryBrowsingPanel;
+import org.eclipse.team.svn.ui.panel.common.RepositoryTreePanel;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.svn.ui.utility.UserInputHistory;
 import org.eclipse.team.svn.ui.verifier.AbsolutePathVerifier;
@@ -188,8 +187,14 @@ public class RepositoryPropertiesComposite extends Composite implements IPropert
 				proxyNew.setPort(proxyOriginal.getPort());
 				proxyNew.setUsername(proxyOriginal.getUsername());
 				
-				RepositoryBrowsingPanel panel = new RepositoryBrowsingPanel(SVNTeamUIPlugin.instance().getResource("RepositoryPropertiesComposite.SelectNewURL"), location, SVNRevision.HEAD);
-				panel.setAutoexpandFirstLevel(true);
+				RepositoryTreePanel panel = new RepositoryTreePanel(
+						SVNTeamUIPlugin.instance().getResource("RepositoryPropertiesComposite.SelectNewURL"),
+						SVNTeamUIPlugin.instance().getResource("RepositoryBrowsingPanel.Description"),
+						SVNTeamUIPlugin.instance().getResource("RepositoryBrowsingPanel.Message"),
+						null,
+						true,
+						location);
+				panel.setAutoExpandFirstLevel(true);
 				DefaultDialog browser = new DefaultDialog(RepositoryPropertiesComposite.this.getShell(), panel);
 				if (browser.open() == 0) {
 					if (panel.getSelectedResource() != null) {
