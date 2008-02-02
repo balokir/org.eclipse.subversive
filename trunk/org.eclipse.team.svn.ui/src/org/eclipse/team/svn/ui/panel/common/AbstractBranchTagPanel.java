@@ -295,8 +295,6 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 
 			browse.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					/*RepositoryBrowsingPanel panel = new RepositoryBrowsingPanel(SVNTeamUIPlugin.instance().getResource(
-							AbstractBranchTagPanel.this.nationalizationId + ".SelectionProposal"), AbstractBranchTagPanel.this.root.getRepositoryLocation());*/
 					RepositoryTreePanel panel = new RepositoryTreePanel(SVNTeamUIPlugin.instance().getResource(
 							AbstractBranchTagPanel.this.nationalizationId + ".SelectionProposal"),
 							SVNTeamUIPlugin.instance().getResource("RepositoryBrowsingPanel.Description"),
@@ -347,17 +345,13 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 
 			browse.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					/*RepositoryBrowsingPanel panel = new RepositoryBrowsingPanel(SVNTeamUIPlugin.instance().getResource(
-							AbstractBranchTagPanel.this.nationalizationId + ".SelectionProposal"), AbstractBranchTagPanel.this.root);*/
 					RepositoryTreePanel panel = new RepositoryTreePanel(SVNTeamUIPlugin.instance().getResource(
 							AbstractBranchTagPanel.this.nationalizationId + ".SelectionProposal"),
 							SVNTeamUIPlugin.instance().getResource("RepositoryBrowsingPanel.Description"),
 							SVNTeamUIPlugin.instance().getResource("RepositoryBrowsingPanel.Message"),
-							//new IRepositoryResource[] {AbstractBranchTagPanel.this.root.getRoot()},
-							new IRepositoryResource[] {AbstractBranchTagPanel.this.root},
+							null,
 							true,
 							AbstractBranchTagPanel.this.root.getRoot());
-							//null);
 					DefaultDialog browser = new DefaultDialog(AbstractBranchTagPanel.this.manager.getShell(), panel);
 					if (browser.open() == 0) {
 						IRepositoryResource selected = panel.getSelectedResource();

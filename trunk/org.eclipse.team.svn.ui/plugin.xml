@@ -642,7 +642,24 @@
                name="projectPersistentProperty"
                value="org.eclipse.team.core.repository=org.eclipse.team.svn.core.svnnature">
          </filter>
-         
+         <action
+               label="%Compare.Tag.Action.Label"
+               helpContextId="org.eclipse.team.svn.ui.compare_with_tag_action_context"
+               class="org.eclipse.team.svn.ui.action.local.CompareWithTagAction"
+               tooltip="%Compare.Tag.Action.Tooltip"
+               menubarPath="compareWithMenu/compareWithGroup"
+               definitionId="org.eclipse.team.svn.ui.command.CompareWithTagCommand"
+               id="org.eclipse.team.svn.ui.action.local.CompareWithTagAction">
+         </action>
+         <action
+               label="%Compare.Branch.Action.Label"
+               helpContextId="org.eclipse.team.svn.ui.compare_with_branch_action_context"
+               class="org.eclipse.team.svn.ui.action.local.CompareWithBranchAction"
+               tooltip="%Compare.Branch.Action.Tooltip"
+               menubarPath="compareWithMenu/compareWithGroup"
+               definitionId="org.eclipse.team.svn.ui.command.CompareWithBranchCommand"
+               id="org.eclipse.team.svn.ui.action.local.CompareWithBranchAction">
+         </action>
          <action
                label="%CompareWithRevisionAction.label"
                helpContextId="org.eclipse.team.svn.ui.compare_with_revision_action_context"
@@ -683,16 +700,23 @@
                name="projectPersistentProperty"
                value="org.eclipse.team.core.repository=org.eclipse.team.svn.core.svnnature">
          </filter>
-         
-         <action
-               helpContextId="org.eclipse.team.svn.ui.replace_with_latest_revision_action_context"
-               label="%ReplaceWithLatestRevisionAction.label"
-               tooltip="%ReplaceWithLatestRevisionAction.tooltip"
-               class="org.eclipse.team.svn.ui.action.local.ReplaceWithLatestRevisionAction"
+
+		<action
+               helpContextId="org.eclipse.team.svn.ui.replace_tag_action_context"
+               label="%ReplaceWithTagAction.label"
+               tooltip="%ReplaceWithTagAction.tooltip"
+               class="org.eclipse.team.svn.ui.action.local.ReplaceWithTagAction"
                menubarPath="replaceWithMenu/replaceWithGroup"
-               definitionId="org.eclipse.team.svn.ui.command.ReplaceWithLatestRevisionCommand"
-               id="org.eclipse.team.svn.ui.action.local.ReplaceWithLatestRevisionAction"/>
-		 
+               definitionId="org.eclipse.team.svn.ui.command.ReplaceWithTagCommand"
+               id="org.eclipse.team.svn.ui.action.local.ReplaceWithTagAction"/>
+		<action
+               helpContextId="org.eclipse.team.svn.ui.replace_branch_action_context"
+               label="%ReplaceWithBranchAction.label"
+               tooltip="%ReplaceWithBranchAction.tooltip"
+               class="org.eclipse.team.svn.ui.action.local.ReplaceWithBranchAction"
+               menubarPath="replaceWithMenu/replaceWithGroup"
+               definitionId="org.eclipse.team.svn.ui.command.ReplaceWithBranchCommand"
+               id="org.eclipse.team.svn.ui.action.local.ReplaceWithBranchAction"/>                   
 		 <action
                helpContextId="org.eclipse.team.svn.ui.replace_revision_action_context"
                label="%ReplaceWithRevisionAction.label"
@@ -700,7 +724,15 @@
                class="org.eclipse.team.svn.ui.action.local.ReplaceWithRevisionAction"
                menubarPath="replaceWithMenu/replaceWithGroup"
                definitionId="org.eclipse.team.svn.ui.command.ReplaceWithRevisionCommand"
-               id="org.eclipse.team.svn.ui.action.local.ReplaceWithRevisionAction"/>	
+               id="org.eclipse.team.svn.ui.action.local.ReplaceWithRevisionAction"/>      
+         <action
+               helpContextId="org.eclipse.team.svn.ui.replace_with_latest_revision_action_context"
+               label="%ReplaceWithLatestRevisionAction.label"
+               tooltip="%ReplaceWithLatestRevisionAction.tooltip"
+               class="org.eclipse.team.svn.ui.action.local.ReplaceWithLatestRevisionAction"
+               menubarPath="replaceWithMenu/replaceWithGroup"
+               definitionId="org.eclipse.team.svn.ui.command.ReplaceWithLatestRevisionCommand"
+               id="org.eclipse.team.svn.ui.action.local.ReplaceWithLatestRevisionAction"/>	
                
                
       </objectContribution>
@@ -1658,6 +1690,16 @@
            definitionId="org.eclipse.team.svn.ui.command.CompareWithRevisionCommand"
            id="org.eclipse.team.svn.ui.action.local.CompareWithRevisionAction"
            label="%CompareWithRevisionAction.label"/>
+	<action
+           class="org.eclipse.team.svn.ui.action.local.CompareWithBranchAction"
+           definitionId="org.eclipse.team.svn.ui.command.CompareWithBranchCommand"
+           id="org.eclipse.team.svn.ui.action.local.CompareWithBranchAction"
+           label="%CompareWithBranchAction.label"/>
+	<action
+           class="org.eclipse.team.svn.ui.action.local.CompareWithTagAction"
+           definitionId="org.eclipse.team.svn.ui.command.CompareWithTagCommand"
+           id="org.eclipse.team.svn.ui.action.local.CompareWithTagAction"
+           label="%CompareWithTagAction.label"/>
      <action
            class="org.eclipse.team.svn.ui.action.local.CompareWithWorkingCopyAction"
            definitionId="org.eclipse.team.svn.ui.command.CompareWithWorkingCopyCommand"
@@ -1678,6 +1720,16 @@
            definitionId="org.eclipse.team.svn.ui.command.ReplaceWithRevisionCommand"
            id="org.eclipse.team.svn.ui.action.local.ReplaceWithRevisionAction"
            label="%ReplaceWithRevisionAction.label"/>
+     <action
+           class="org.eclipse.team.svn.ui.action.local.ReplaceWithBrnahcAction"
+           definitionId="org.eclipse.team.svn.ui.command.ReplaceWithBranchCommand"
+           id="org.eclipse.team.svn.ui.action.local.ReplaceWithBranchAction"
+           label="%ReplaceWithBranchAction.label"/>
+	<action
+           class="org.eclipse.team.svn.ui.action.local.ReplaceWithTagAction"
+           definitionId="org.eclipse.team.svn.ui.command.ReplaceWithTagCommand"
+           id="org.eclipse.team.svn.ui.action.local.ReplaceWithTagAction"
+           label="%ReplaceWithTagAction.label"/>
            
      <action
            class="org.eclipse.team.svn.ui.action.local.management.ShareProjectsAction"
@@ -1994,6 +2046,14 @@
           name="%CompareWithRevisionCommand.label"/>
     <command
           categoryId="org.eclipse.team.svn.ui.command.category"
+          id="org.eclipse.team.svn.ui.command.CompareWithBranchCommand"
+          name="%CompareWithBranchCommand.label"/>
+	<command
+          categoryId="org.eclipse.team.svn.ui.command.category"
+          id="org.eclipse.team.svn.ui.command.CompareWithTagCommand"
+          name="%CompareWithTagCommand.label"/>
+    <command
+          categoryId="org.eclipse.team.svn.ui.command.category"
           id="org.eclipse.team.svn.ui.command.CompareWithWorkingCopyCommand"
           name="%CompareWithWorkingCopyCommand.label"/>
     <command
@@ -2036,6 +2096,14 @@
           categoryId="org.eclipse.team.svn.ui.command.category"
           id="org.eclipse.team.svn.ui.command.ReplaceWithRevisionCommand"
           name="%ReplaceWithRevisionCommand.label"/>
+    <command
+          categoryId="org.eclipse.team.svn.ui.command.category"
+          id="org.eclipse.team.svn.ui.command.ReplaceWithBranchCommand"
+          name="%ReplaceWithBranchCommand.label"/>
+    <command
+          categoryId="org.eclipse.team.svn.ui.command.category"
+          id="org.eclipse.team.svn.ui.command.ReplaceWithTagCommand"
+          name="%ReplaceWithTagCommand.label"/>
     <command
           categoryId="org.eclipse.team.svn.ui.command.category"
           id="org.eclipse.team.svn.ui.command.RevertCommand"
