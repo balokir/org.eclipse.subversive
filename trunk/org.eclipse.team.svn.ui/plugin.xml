@@ -1721,7 +1721,7 @@
            id="org.eclipse.team.svn.ui.action.local.ReplaceWithRevisionAction"
            label="%ReplaceWithRevisionAction.label"/>
      <action
-           class="org.eclipse.team.svn.ui.action.local.ReplaceWithBrnahcAction"
+           class="org.eclipse.team.svn.ui.action.local.ReplaceWithBranchAction"
            definitionId="org.eclipse.team.svn.ui.command.ReplaceWithBranchCommand"
            id="org.eclipse.team.svn.ui.action.local.ReplaceWithBranchAction"
            label="%ReplaceWithBranchAction.label"/>

@@ -89,10 +89,10 @@ public class BranchTagSelectionComposite extends Composite {
 		Label resourceLabel = new Label(this, SWT.NONE);
 		resourceLabel.setLayoutData(new GridData());
 		if (this.type == CompareWithBranchTagAction.BRANCH_OPERATED) {
-			resourceLabel.setText(SVNTeamUIPlugin.instance().getResource("Compare.Branch.Label"));
+			resourceLabel.setText(SVNTeamUIPlugin.instance().getResource("Select.Branch.Label"));
 		}
 		else {
-			resourceLabel.setText(SVNTeamUIPlugin.instance().getResource("Compare.Tag.Label"));
+			resourceLabel.setText(SVNTeamUIPlugin.instance().getResource("Select.Tag.Label"));
 		}
 		
 		Composite select = new Composite(this, SWT.NONE);	
