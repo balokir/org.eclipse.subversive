@@ -26,6 +26,7 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.action.AbstractWorkingCopyAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
+import org.eclipse.team.svn.ui.dialog.ReplaceWarningDialog;
 import org.eclipse.team.svn.ui.panel.local.ReplaceBranchTagPanel;
 
 /**
@@ -55,16 +56,19 @@ public class ReplaceWithBranchTagAction extends AbstractWorkingCopyAction {
 		ReplaceBranchTagPanel panel = new ReplaceBranchTagPanel(remote, local.getRevision(), type, true);
 		DefaultDialog dlg = new DefaultDialog(this.getShell(), panel);
 		if (dlg.open() == 0){
-			IResource [] wcResources = new IResource[] {resource};
-			SwitchOperation mainOp = new SwitchOperation(wcResources, new IRepositoryResource [] {panel.getSelectedResoure()});
-			CompositeOperation op = new CompositeOperation(mainOp.getId());
-			SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(wcResources);
-			op.add(saveOp);
-			op.add(mainOp);
-			op.add(new RestoreProjectMetaOperation(saveOp));
-			op.add(new ClearLocalStatusesOperation(wcResources));
-			op.add(new RefreshResourcesOperation(wcResources));
-			this.runScheduled(op);
+			ReplaceWarningDialog dialog = new ReplaceWarningDialog(this.getShell());
+			if (dialog.open() == 0) {
+				IResource [] wcResources = new IResource[] {resource};
+				SwitchOperation mainOp = new SwitchOperation(wcResources, new IRepositoryResource [] {panel.getSelectedResoure()});
+				CompositeOperation op = new CompositeOperation(mainOp.getId());
+				SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(wcResources);
+				op.add(saveOp);
+				op.add(mainOp);
+				op.add(new RestoreProjectMetaOperation(saveOp));
+				op.add(new ClearLocalStatusesOperation(wcResources));
+				op.add(new RefreshResourcesOperation(wcResources));
+				this.runScheduled(op);
+			}
 		}
 	}
 

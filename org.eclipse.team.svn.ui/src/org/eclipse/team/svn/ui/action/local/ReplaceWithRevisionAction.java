@@ -16,21 +16,19 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
-import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.operation.local.ClearLocalStatusesOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
-import org.eclipse.team.svn.core.operation.local.RemoveNonVersionedResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
-import org.eclipse.team.svn.core.operation.local.RevertOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
-import org.eclipse.team.svn.core.operation.local.UpdateOperation;
+import org.eclipse.team.svn.core.operation.local.SwitchOperation;
+import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.action.AbstractNonRecursiveTeamAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.dialog.ReplaceWarningDialog;
-import org.eclipse.team.svn.ui.panel.common.InputRevisionPanel;
+import org.eclipse.team.svn.ui.panel.local.ReplaceWithUrlPanel;
 
 /**
  * Team services menu "replace with revision" action implementation
@@ -47,24 +45,23 @@ public class ReplaceWithRevisionAction extends AbstractNonRecursiveTeamAction {
 	    IRemoteStorage storage = SVNRemoteStorage.instance();
 		IResource resource = this.getSelectedResources(IStateFilter.SF_ONREPOSITORY)[0];
 		IRepositoryResource remote = storage.asRepositoryResource(resource);
+		ILocalResource local = storage.asLocalResource(resource);
 		
-		InputRevisionPanel panel = new InputRevisionPanel(remote, SVNTeamUIPlugin.instance().getResource("ReplaceWithRevisionAction.InputRevisionPanel.Title"));
+		ReplaceWithUrlPanel panel = new ReplaceWithUrlPanel(remote, local.getRevision());
 		DefaultDialog selectionDialog = new DefaultDialog(this.getShell(), panel);
 		
 		if (selectionDialog.open() == Dialog.OK) {
 			ReplaceWarningDialog dialog = new ReplaceWarningDialog(this.getShell());
 			if (dialog.open() == 0) {
-				IResource []resources = this.getSelectedResources(IStateFilter.SF_ONREPOSITORY);
-				CompositeOperation op = new CompositeOperation("Operation.ReplaceWithRevision");
-				SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
+				IResource [] wcResources = new IResource[] {resource};
+				SwitchOperation mainOp = new SwitchOperation(wcResources, new IRepositoryResource [] {panel.getSelectedResource()});
+				CompositeOperation op = new CompositeOperation(mainOp.getId());
+				SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(wcResources);
 				op.add(saveOp);
-				IActionOperation revertOp = new RevertOperation(resources, true);
-				op.add(revertOp);
-				IActionOperation removeOp = new RemoveNonVersionedResourcesOperation(resources, true);
-				op.add(removeOp, new IActionOperation[] {revertOp});
-				op.add(new UpdateOperation(resources, panel.getSelectedRevision(), true), new IActionOperation[] {revertOp, removeOp});
+				op.add(mainOp);
 				op.add(new RestoreProjectMetaOperation(saveOp));
-				op.add(new RefreshResourcesOperation(resources));
+				op.add(new ClearLocalStatusesOperation(wcResources));
+				op.add(new RefreshResourcesOperation(wcResources));
 				this.runScheduled(op);
 			}
 		}
