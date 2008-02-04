@@ -54,9 +54,9 @@ public class CompareWithBranchTagAction extends AbstractWorkingCopyAction {
 				SVNTeamPreferences.getRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_NAME) &&
 				remote.getRepositoryLocation().isStructureEnabled();
 			return 
-				isCompareFoldersAllowed &&
-				recommendedLayoutUsed &&
-				this.getSelectedResources()[0].getType() == IResource.PROJECT;
+				(isCompareFoldersAllowed ||
+				this.getSelectedResources()[0].getType() == IResource.FILE)
+				&& recommendedLayoutUsed;
 		}
 		return false;
 	}
