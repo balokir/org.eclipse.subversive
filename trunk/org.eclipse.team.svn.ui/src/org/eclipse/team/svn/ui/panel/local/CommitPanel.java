@@ -59,6 +59,7 @@ import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.AddToSVNIgnoreOperation;
+import org.eclipse.team.svn.core.operation.local.ClearLocalStatusesOperation;
 import org.eclipse.team.svn.core.operation.local.CreatePatchOperation;
 import org.eclipse.team.svn.core.operation.local.LockOperation;
 import org.eclipse.team.svn.core.operation.local.MarkAsMergedOperation;
@@ -67,6 +68,7 @@ import org.eclipse.team.svn.core.operation.local.RemoveNonVersionedResourcesOper
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.RevertOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
+import org.eclipse.team.svn.core.operation.local.SwitchOperation;
 import org.eclipse.team.svn.core.operation.local.UnlockOperation;
 import org.eclipse.team.svn.core.operation.local.UpdateOperation;
 import org.eclipse.team.svn.core.operation.local.property.GetPropertiesOperation;
@@ -97,7 +99,6 @@ import org.eclipse.team.svn.ui.extension.factory.ICommentDialogPanel;
 import org.eclipse.team.svn.ui.operation.CompareResourcesOperation;
 import org.eclipse.team.svn.ui.operation.ShowConflictEditorOperation;
 import org.eclipse.team.svn.ui.panel.common.CommentPanel;
-import org.eclipse.team.svn.ui.panel.common.InputRevisionPanel;
 import org.eclipse.team.svn.ui.panel.remote.ComparePanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.properties.bugtraq.BugtraqModel;
@@ -570,21 +571,21 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 						IRemoteStorage storage = SVNRemoteStorage.instance();
 						IResource resource = selectedResources[0];
 						IRepositoryResource remote = storage.asRepositoryResource(resource);
-						InputRevisionPanel panel = new InputRevisionPanel(remote, SVNTeamUIPlugin.instance().getResource("ReplaceWithRevisionAction.InputRevisionPanel.Title"));
+						ILocalResource local = storage.asLocalResource(resource);
+						ReplaceWithUrlPanel panel = new ReplaceWithUrlPanel(remote, local.getRevision());
 						DefaultDialog selectionDialog = new DefaultDialog(UIMonitorUtility.getShell(), panel);
 						if (selectionDialog.open() == Dialog.OK) {
 							ReplaceWarningDialog dialog = new ReplaceWarningDialog(UIMonitorUtility.getShell());
 							if (dialog.open() == 0) {
-								CompositeOperation op = new CompositeOperation("Operation.ReplaceWithRevision");
-								SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(selectedResources);
+								IResource [] wcResources = new IResource[] {resource};
+								SwitchOperation mainOp = new SwitchOperation(wcResources, new IRepositoryResource [] {panel.getSelectedResource()});
+								CompositeOperation op = new CompositeOperation(mainOp.getId());
+								SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(wcResources);
 								op.add(saveOp);
-								IActionOperation revertOp = new RevertOperation(selectedResources, true);
-								op.add(revertOp);
-								IActionOperation removeOp = new RemoveNonVersionedResourcesOperation(selectedResources, true);
-								op.add(removeOp, new IActionOperation[] {revertOp});
-								op.add(new UpdateOperation(selectedResources, panel.getSelectedRevision(), true), new IActionOperation[] {revertOp, removeOp});
+								op.add(mainOp);
 								op.add(new RestoreProjectMetaOperation(saveOp));
-								op.add(new RefreshResourcesOperation(selectedResources));
+								op.add(new ClearLocalStatusesOperation(wcResources));
+								op.add(new RefreshResourcesOperation(wcResources));
 								UIMonitorUtility.doTaskNowDefault(op, true);
 							}
 						}
