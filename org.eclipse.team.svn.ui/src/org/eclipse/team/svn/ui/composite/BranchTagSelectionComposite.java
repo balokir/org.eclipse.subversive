@@ -23,7 +23,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.connector.SVNEntryReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
@@ -34,8 +33,10 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.action.local.CompareWithBranchTagAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
+import org.eclipse.team.svn.ui.operation.GetRemoteFolderChildrenOperation;
 import org.eclipse.team.svn.ui.panel.common.RepositoryTreePanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
+import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.svn.ui.utility.UserInputHistory;
 import org.eclipse.team.svn.ui.verifier.CompositeVerifier;
 import org.eclipse.team.svn.ui.verifier.IValidationManager;
@@ -112,18 +113,15 @@ public class BranchTagSelectionComposite extends Composite {
 		this.urlText.setLayoutData(data);
 		this.urlText.setVisibleItemCount(this.inputHistory.getDepth() * 2);
 		this.urlText.setItems(this.inputHistory.getHistory());
-		
+						
 		IRepositoryResource [] children = new IRepositoryResource [0];
 		if (this.considerStructure) {
 			IRepositoryRoot root = (this.type == CompareWithBranchTagAction.BRANCH_OPERATED) ?
 						SVNUtility.getBranchesLocation(location.asRepositoryContainer(location.getUrl(), false)):
 						SVNUtility.getTagsLocation(location.asRepositoryContainer(location.getUrl(), false));
-			try {
-				children = root.getChildren();
-			}
-			catch (SVNConnectorException ex) {
-				//TODO add handler
-			}
+			GetRemoteFolderChildrenOperation op = new GetRemoteFolderChildrenOperation(root, true);
+			UIMonitorUtility.doTaskNowDefault(op, false);
+			children = op.getChildren();
 		}
 		if (children.length > 0) {
 			this.urlText.add(SVNTeamUIPlugin.instance().getResource("BranchTag.Read.Separator"));
