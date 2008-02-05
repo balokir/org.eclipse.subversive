@@ -25,7 +25,7 @@ import org.eclipse.compare.CompareUI;
 import org.eclipse.compare.IContentChangeListener;
 import org.eclipse.compare.IContentChangeNotifier;
 import org.eclipse.compare.IEditableContent;
-import org.eclipse.compare.IStreamContentAccessor;
+import org.eclipse.compare.IEncodedStreamContentAccessor;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.DiffTreeViewer;
@@ -36,6 +36,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -73,6 +75,7 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 public abstract class ResourceCompareInput extends CompareEditorInput {
 	protected ResourceCompareViewer viewer;
 	protected BaseCompareNode root;
+	protected String charset;
 	
 	protected IRepositoryResource rootLeft;
 	protected IRepositoryResource rootAncestor;
@@ -313,7 +316,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 	protected abstract boolean isThreeWay();
 	protected abstract IDiffContainer makeStubNode(IDiffContainer parent, IRepositoryResource node);
 	
-	public class ResourceElement implements ITypedElement, IStreamContentAccessor, IContentChangeNotifier, IEditableContent {
+	public class ResourceElement implements ITypedElement, IEncodedStreamContentAccessor, IContentChangeNotifier, IEditableContent {
 		protected Vector listenerList;
 		protected boolean dirty;
 		
@@ -330,6 +333,10 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 			if (!showContent) {
 				this.resource.setSelectedRevision(SVNRevision.INVALID_REVISION);
 			}
+		}
+		
+		public String getCharset() {
+			return ResourceCompareInput.this.charset;
 		}
 		
 		public void addContentChangeListener(IContentChangeListener listener) {
@@ -499,6 +506,16 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 			super(parent, kind);
 		}
 		
+		protected void detectCharset(InputStream stream) throws Exception {
+			try {
+				IContentDescription description = Platform.getContentTypeManager().getDescriptionFor(stream, this.getName(), IContentDescription.ALL);
+				ResourceCompareInput.this.charset = description == null ? null : description.getCharset();
+			} 
+			finally {
+				try {stream.close();} catch (Exception ex) {}
+			}
+		}
+		
 		public CompositeOperation getFetcher() {
 			ResourceElement left = (ResourceElement)this.getLeft();
 			ResourceElement ancestor = (ResourceElement)this.getAncestor();
@@ -506,21 +523,36 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 			CompositeOperation op = new CompositeOperation(SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.Fetch"));
 			
 			if (left != null && left.getType() != ITypedElement.FOLDER_TYPE) {
-				AbstractGetFileContentOperation fetchOp = left.getFetcher();
+				final AbstractGetFileContentOperation fetchOp = left.getFetcher();
 				if (fetchOp != null) {
 					op.add(fetchOp);
+					op.add(new AbstractActionOperation("Operation.DetectCharset") {
+		                protected void runImpl(IProgressMonitor monitor) throws Exception {
+		                	BaseCompareNode.this.detectCharset(fetchOp.getContent());
+		                }
+			        }, new IActionOperation[] {fetchOp});
 				}
 			}
 			if (ancestor != null && ancestor.getType() != ITypedElement.FOLDER_TYPE) {
-				AbstractGetFileContentOperation fetchOp = ancestor.getFetcher();
+				final AbstractGetFileContentOperation fetchOp = ancestor.getFetcher();
 				if (fetchOp != null) {
 					op.add(fetchOp);
+					op.add(new AbstractActionOperation("Operation.DetectCharset") {
+		                protected void runImpl(IProgressMonitor monitor) throws Exception {
+		                	BaseCompareNode.this.detectCharset(fetchOp.getContent());
+		                }
+			        }, new IActionOperation[] {fetchOp});
 				}
 			}
 			if (right != null && right.getType() != ITypedElement.FOLDER_TYPE) {
-				AbstractGetFileContentOperation fetchOp = right.getFetcher();
+				final AbstractGetFileContentOperation fetchOp = right.getFetcher();
 				if (fetchOp != null) {
 					op.add(fetchOp);
+					op.add(new AbstractActionOperation("Operation.DetectCharset") {
+		                protected void runImpl(IProgressMonitor monitor) throws Exception {
+		                	BaseCompareNode.this.detectCharset(fetchOp.getContent());
+		                }
+			        }, new IActionOperation[] {fetchOp});
 				}
 			}
 			return op;

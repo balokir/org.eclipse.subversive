@@ -259,6 +259,11 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 			ancestor = this.createResourceFor(location, remoteNodeKind, SVNUtility.decodeURL(stRemote.pathPrev));
 			right = this.createResourceFor(location, remoteNodeKind, SVNUtility.decodeURL(stRemote.pathNext));
 		}
+		else if (!this.rootLeft.getUrl().equals(this.rootRight.getUrl()) && left.getUrl().length() >= this.rootLeft.getUrl().length()) {
+			String delta = left.getUrl().substring(this.rootLeft.getUrl().length());
+			ancestor = this.createResourceFor(location, remoteNodeKind, this.rootAncestor.getUrl() + delta);
+			right = this.createResourceFor(location, remoteNodeKind, this.rootRight.getUrl() + delta);
+		}
 		ancestor.setSelectedRevision(SVNRevision.BASE);
 		ancestor.setPegRevision(null);
 		right.setPegRevision(this.rootRight.getPegRevision());
