@@ -167,7 +167,6 @@ public class CreatePatchOperation extends AbstractActionOperation {
 			long options = ISVNConnector.Options.IGNORE_ANCESTRY;
 			options |= this.ignoreDeleted ? ISVNConnector.Options.SKIP_DELETED : ISVNConnector.Options.NONE;
 			options |= this.processBinary ? ISVNConnector.Options.FORCE : ISVNConnector.Options.NONE;
-			options |= this.processUnversioned ? ISVNConnector.Options.INCLUDE_UNVERSIONED : ISVNConnector.Options.NONE;
 			
 			try {
 				proxy.diff(new SVNEntryRevisionReference(wcPath, null, SVNRevision.BASE), new SVNEntryRevisionReference(wcPath, null, SVNRevision.WORKING), projectPath, 

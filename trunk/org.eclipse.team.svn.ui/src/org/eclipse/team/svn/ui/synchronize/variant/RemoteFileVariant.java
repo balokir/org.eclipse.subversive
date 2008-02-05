@@ -40,7 +40,6 @@ public class RemoteFileVariant extends RemoteResourceVariant {
 	}
 
 	protected void fetchContents(IProgressMonitor monitor) throws TeamException {
-		SVNRemoteStorage storage = SVNRemoteStorage.instance();
 		if ((!this.local.isCopied() && this.local.getRevision() == SVNRevision.INVALID_REVISION_NUMBER) || 
 		    IStateFilter.SF_DELETED.accept(this.local) && !IStateFilter.SF_REPLACED.accept(this.local)) {
 			this.setContents(new ByteArrayInputStream(new byte[0]), monitor);
@@ -48,7 +47,7 @@ public class RemoteFileVariant extends RemoteResourceVariant {
 		}
 		IRepositoryResource remote = null;
 		if (this.local.isCopied()) {
-			IRepositoryLocation location = storage.getRepositoryLocation(local.getResource());
+			IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(local.getResource());
 			SVNChangeStatus st = SVNUtility.getSVNInfoForNotConnected(this.local.getResource());
 			remote = location.asRepositoryFile(st.urlCopiedFrom, false);
 			remote.setSelectedRevision(SVNRevision.fromNumber(st.revisionCopiedFrom));

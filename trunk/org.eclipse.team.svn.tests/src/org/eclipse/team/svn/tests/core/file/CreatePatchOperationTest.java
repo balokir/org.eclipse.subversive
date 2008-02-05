@@ -24,7 +24,7 @@ public class CreatePatchOperationTest extends AbstractOperationTestCase {
 	protected IActionOperation getOperation() {
 		return new CreatePatchOperation(this.getFirstFolder(), 
 										this.getSecondFolder() + "/test.patch",
-										true, true, true, true, true);
+										true, true, true, true);
 	}
 
 }

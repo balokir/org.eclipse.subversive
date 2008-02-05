@@ -24,6 +24,9 @@ package org.eclipse.team.svn.core.connector;
  * @author Alexander Gurov
  */
 public class SVNErrorCodes {
+	public static final int NO_ERROR_CODE = 0;
+	
+	// SVN error codes
 	public static final int categorySize = 5000;
 
 	public static final int badContainingPool = 125000;

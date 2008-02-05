@@ -56,6 +56,11 @@ public class RemoteStatusCache extends ResourceVariantByteStore {
 	public void dispose() {
 
 	}
+	
+	public synchronized void clearAll() {
+		this.resourceChildrenMap.clear();
+		this.resourceStateMap.clear();
+	}
 
 	public synchronized byte []getBytes(IResource resource) {
 		return (byte [])this.resourceStateMap.get(resource.getFullPath());

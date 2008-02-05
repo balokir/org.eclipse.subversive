@@ -17,6 +17,7 @@ import org.eclipse.team.core.variants.IResourceVariantComparator;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.resource.ILocalFolder;
 import org.eclipse.team.svn.core.resource.ILocalResource;
+import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.ui.synchronize.variant.BaseFileVariant;
 import org.eclipse.team.svn.ui.synchronize.variant.BaseFolderVariant;
 import org.eclipse.team.svn.ui.synchronize.variant.RemoteFileVariant;
@@ -33,11 +34,8 @@ public abstract class AbstractSVNSyncInfo extends SyncInfo {
 
 	protected ILocalResource local;
 
-	public AbstractSVNSyncInfo(ILocalResource local, ILocalResource remote, IResourceVariantComparator comparator) {
-		this(local, 
-			AbstractSVNSyncInfo.makeBaseVariant(local),
-			AbstractSVNSyncInfo.makeRemoteVariant(local, remote),
-			comparator);
+	public AbstractSVNSyncInfo(ILocalResource local, IResourceChange remote, IResourceVariantComparator comparator) {
+		this(local, AbstractSVNSyncInfo.makeBaseVariant(local), AbstractSVNSyncInfo.makeRemoteVariant(local, remote), comparator);
 	}
 	
 	protected AbstractSVNSyncInfo(ILocalResource local, IResourceVariant base, IResourceVariant remote, IResourceVariantComparator comparator) {

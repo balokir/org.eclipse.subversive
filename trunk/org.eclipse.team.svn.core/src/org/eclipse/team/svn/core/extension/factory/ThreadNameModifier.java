@@ -249,16 +249,6 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 
-	public boolean isReportRevisionChange() {
-		String oldName = this.overrideThreadName();
-		try {
-			return this.connector.isReportRevisionChange();
-		}
-		finally {
-			this.restoreThreadName(oldName);
-		}
-	}
-
 	public boolean isSSLCertificateCacheEnabled() {
 		String oldName = this.overrideThreadName();
 		try {
@@ -349,6 +339,16 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 
+	public void merge(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, String mergePath, SVNMergeStatus[] mergeStatus, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
+		String oldName = this.overrideThreadName();
+		try {
+			this.connector.merge(reference1, reference2, mergePath, mergeStatus, options, monitor);
+		}
+		finally {
+			this.restoreThreadName(oldName);
+		}
+	}
+
 	public void mergeStatus(SVNEntryReference reference, SVNRevisionRange []revisions, String path, int depth, long options, ISVNMergeStatusCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
@@ -359,6 +359,16 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 
+	public void mergeStatus(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, String path, int depth, long options, ISVNMergeStatusCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
+		String oldName = this.overrideThreadName();
+		try {
+			this.connector.mergeStatus(reference1, reference2, path, depth, options, cb, monitor);
+		}
+		finally {
+			this.restoreThreadName(oldName);
+		}
+	}
+	
 	public void mkdir(String []path, String message, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
@@ -523,16 +533,6 @@ public class ThreadNameModifier implements ISVNConnector {
 		String oldName = this.overrideThreadName();
 		try {
 			this.connector.setProxy(host, port, userName, password);
-		}
-		finally {
-			this.restoreThreadName(oldName);
-		}
-	}
-
-	public void setReportRevisionChange(boolean report) {
-		String oldName = this.overrideThreadName();
-		try {
-			this.connector.setReportRevisionChange(report);
 		}
 		finally {
 			this.restoreThreadName(oldName);

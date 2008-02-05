@@ -245,17 +245,7 @@ public class UILoggedOperation extends LoggedOperation {
 	protected static class ErrorReasonVisitor implements ReportPartsFactory.IStatusVisitor {
 		public boolean visit(IStatus status) {
 			Throwable t = status.getException();
-			if (t == null || t instanceof OperationCanceledException) {
-				return false;
-			}
-			if (t instanceof SVNConnectorException) {
-				if (t instanceof SVNConnectorCancelException ||
-					t instanceof SVNConnectorAuthenticationException) {
-					return false;
-				}
-				return ((SVNConnectorException)t).isRuntime();
-			}
-			return !(t instanceof UnreportableException);
+			return !(t == null || t instanceof OperationCanceledException || t instanceof SVNConnectorException || t instanceof UnreportableException);
 		}
 	}
 	

@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.SWT;
@@ -43,7 +42,6 @@ import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.dialog.NonValidLocationErrorDialog;
 import org.eclipse.team.svn.ui.operation.RefreshRepositoryLocationsOperation;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
-import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.svn.ui.verifier.AbstractFormattedVerifier;
 import org.eclipse.team.svn.ui.wizard.AbstractVerifiedWizardPage;
@@ -159,11 +157,10 @@ public class AddRepositoryLocationPage extends AbstractVerifiedWizardPage {
 		this.propertiesTabFolder.saveChanges();	
 		
 		if (this.propertiesTabFolder.isStructureEnabled()) {
-			IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
-
-			if (newUrl.endsWith(SVNTeamPreferences.getRepositoryString(store, SVNTeamPreferences.REPOSITORY_HEAD_NAME)) ||
-					newUrl.endsWith(SVNTeamPreferences.getRepositoryString(store, SVNTeamPreferences.REPOSITORY_BRANCHES_NAME)) ||
-					newUrl.endsWith(SVNTeamPreferences.getRepositoryString(store, SVNTeamPreferences.REPOSITORY_TAGS_NAME))) {
+			String endsPart = new Path(newUrl).lastSegment();
+			if (endsPart.equals(this.propertiesTabFolder.getRepositoryLocation().getTrunkLocation()) ||
+				endsPart.equals(this.propertiesTabFolder.getRepositoryLocation().getBranchesLocation()) ||
+				endsPart.equals(this.propertiesTabFolder.getRepositoryLocation().getTagsLocation())) {
 				final int []result = new int[1];
 				final MessageDialog dialog = new MessageDialog(this.getShell(), 
 														SVNTeamUIPlugin.instance().getResource("AddRepositoryLocationPage.Normalize.Title"),

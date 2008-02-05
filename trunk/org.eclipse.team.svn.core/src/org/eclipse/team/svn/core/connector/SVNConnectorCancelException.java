@@ -23,20 +23,16 @@ package org.eclipse.team.svn.core.connector;
 public class SVNConnectorCancelException extends SVNConnectorException {
 	private static final long serialVersionUID = -1431358791852025035L;
 
-	public SVNConnectorCancelException() {
-		super();
-	}
-
 	public SVNConnectorCancelException(String message) {
-		super(message);
+		super(message, SVNErrorCodes.cancelled, null);
 	}
 
 	public SVNConnectorCancelException(Throwable cause) {
-		super(cause, false);
+		super(cause == null ? null : cause.getMessage(), SVNErrorCodes.cancelled, cause);
 	}
 
 	public SVNConnectorCancelException(String message, Throwable cause) {
-		super(message, cause, false);
+		super(message, SVNErrorCodes.cancelled, cause);
 	}
 
 }

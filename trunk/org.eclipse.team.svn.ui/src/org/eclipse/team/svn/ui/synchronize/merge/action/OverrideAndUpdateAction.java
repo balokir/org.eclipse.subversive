@@ -97,15 +97,12 @@ public class OverrideAndUpdateAction extends AbstractSynchronizeModelAction {
         //FIXME: This temporary solution allows us to fix one of JavaSVN problems. Thanks to Tobias Bosch
         CompositeOperation getRemoteContentOp = new CompositeOperation("Operation.MGetRemoteContent");
     	//FIXME works incorrectly for multi-project merge
-        final IRepositoryResource fromProject = MergeSubscriber.instance().getMergeScope().getMergeSet().from[0];
+        final IRepositoryResource fromProject = MergeSubscriber.instance().getMergeScope().getMergeSet().fromEnd[0];
         final IRepositoryRoot fromRoot = (IRepositoryRoot)fromProject.getRoot();
         for (int i = 0; i < resources[0].length; i++) {
             IResource res = resources[0][i];
             String path = fromProject.getUrl() + "/" + res.getProjectRelativePath().toString();
-            IRepositoryResource from = 
-            	res instanceof IContainer ? 
-            	(IRepositoryResource)fromRoot.asRepositoryContainer(path, false) : 
-            	fromRoot.asRepositoryFile(path, false);
+            IRepositoryResource from = res instanceof IContainer ? (IRepositoryResource)fromRoot.asRepositoryContainer(path, false) : fromRoot.asRepositoryFile(path, false);
             getRemoteContentOp.add(new GetRemoteContentsOperation(res, from));
         }
         op.add(getRemoteContentOp, new IActionOperation[] { revertOp,

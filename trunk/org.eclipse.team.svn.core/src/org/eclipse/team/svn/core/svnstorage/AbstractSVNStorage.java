@@ -252,11 +252,13 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		    return null;
 		}
 		int revisionKind = Integer.parseInt(data[3]);
-		SVNRevision selectedRevision = revisionKind == Kind.NUMBER ? (SVNRevision)SVNRevision.fromNumber(Long.parseLong(data[4])) : SVNRevision.fromKind(revisionKind);
+		long revNum = Long.parseLong(data[4]);
+		SVNRevision selectedRevision = revisionKind == Kind.NUMBER ? (revNum == SVNRevision.INVALID_REVISION_NUMBER ? SVNRevision.INVALID_REVISION : (SVNRevision)SVNRevision.fromNumber(revNum)) : SVNRevision.fromKind(revisionKind);
 		SVNRevision pegRevision = null;
 		if (data.length > 6) {
 			int pegKind = Integer.parseInt(data[6]);
-			pegRevision = pegKind == Kind.NUMBER ? (SVNRevision)SVNRevision.fromNumber(Long.parseLong(data[7])) : SVNRevision.fromKind(pegKind);
+			long pegNum = Long.parseLong(data[7]);
+			pegRevision = pegKind == Kind.NUMBER ? (pegNum == SVNRevision.INVALID_REVISION_NUMBER ? null : (SVNRevision)SVNRevision.fromNumber(pegNum)) : SVNRevision.fromKind(pegKind);
 		}
 		
 		String urlPart = base64Label ? new String(Base64.decode(data[2].getBytes())) : data[2];

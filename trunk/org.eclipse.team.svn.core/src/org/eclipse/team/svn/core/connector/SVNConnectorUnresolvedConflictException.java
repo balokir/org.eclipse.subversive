@@ -23,20 +23,16 @@ package org.eclipse.team.svn.core.connector;
 public class SVNConnectorUnresolvedConflictException extends SVNConnectorException {
 	private static final long serialVersionUID = 7591147418116040719L;
 
-	public SVNConnectorUnresolvedConflictException() {
-		super();
-	}
-
 	public SVNConnectorUnresolvedConflictException(String message) {
-		super(message);
+		super(message, SVNErrorCodes.fsConflict, null);
 	}
 
 	public SVNConnectorUnresolvedConflictException(Throwable cause) {
-		super(cause, false);
+		super(cause == null ? null : cause.getMessage(), SVNErrorCodes.fsConflict, cause);
 	}
 
 	public SVNConnectorUnresolvedConflictException(String message, Throwable cause) {
-		super(message, cause, false);
+		super(message, SVNErrorCodes.fsConflict, cause);
 	}
 
 }

@@ -207,7 +207,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		SVNRevision pegRevision = null;
 		if (revisionKind == SVNRevision.Kind.NUMBER) {
 		    long pegNum = Long.parseLong(data[7]);
-		    pegRevision = pegNum == revision ? null : SVNRevision.fromNumber(pegNum);
+		    pegRevision = pegNum == revision || revision == SVNRevision.INVALID_REVISION_NUMBER ? null : SVNRevision.fromNumber(pegNum);
 		}
 		else {
 		    pegRevision = SVNRevision.fromKind(revisionKind);
@@ -982,7 +982,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 				break;
 			}
 			case org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NONE: {
-				if (!isRemoteStatus) {
+				if (!isRemoteStatus && propKind == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.NONE) {
 					status = IStateFilter.ST_NOTEXISTS;
 				}
 				break;
