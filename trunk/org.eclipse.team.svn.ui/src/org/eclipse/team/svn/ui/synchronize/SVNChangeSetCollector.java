@@ -59,7 +59,7 @@ public class SVNChangeSetCollector extends SyncInfoSetChangeSetCollector {
 		String svnNoAuthor = SVNTeamPlugin.instance().getResource("SVNInfo.NoAuthor");
 		String svnNoDate = SVNTeamPlugin.instance().getResource("SVNInfo.NoDate");
 		for (int i = 0; i < infos.length; i++) {
-			if ((infos[i].getKind() & SyncInfo.OUTGOING) != 0) {
+			if ((infos[i].getKind() & SyncInfo.INCOMING) == 0) {
 				continue;
 			}
 			ResourceVariant remote = (ResourceVariant) infos[i].getRemote();
