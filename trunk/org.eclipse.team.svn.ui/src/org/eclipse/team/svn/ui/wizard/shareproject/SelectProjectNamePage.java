@@ -14,8 +14,6 @@ package org.eclipse.team.svn.ui.wizard.shareproject;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -55,7 +53,7 @@ public class SelectProjectNamePage extends AbstractVerifiedWizardPage {
 	
 	protected Text projectNameField;
 	protected Text rootProjectNameField;
-	protected Text targetUrlField;
+	protected Label targetUrlField;
 	protected Button managementFoldersEnabledButton;
 	protected IRepositoryLocation location;
 	protected boolean multiProject;
@@ -314,17 +312,13 @@ public class SelectProjectNamePage extends AbstractVerifiedWizardPage {
 		label.setLayoutData(new GridData());
 		label.setImage(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER).createImage());
 		
-		this.targetUrlField = new Text(urlComposite, SWT.SINGLE);
+		this.targetUrlField = new Label(urlComposite, SWT.SINGLE);
 		this.targetUrlField.setLayoutData(this.makeGridData());
-		this.targetUrlField.setBackground(this.targetUrlField.getBackground());
-		label.setBackground(this.targetUrlField.getBackground());
-		urlComposite.setBackground(this.targetUrlField.getBackground());
-		this.targetUrlField.setEditable(false);
-		this.targetUrlField.addFocusListener(new FocusAdapter() {
-			public void focusGained(FocusEvent e) {
-				((Text)e.widget).traverse(SWT.TRAVERSE_TAB_NEXT);
-			}
-		});
+		this.projectNameField.setEditable(true);
+		this.targetUrlField.setBackground(this.projectNameField.getBackground());
+		label.setBackground(this.projectNameField.getBackground());
+		urlComposite.setBackground(this.projectNameField.getBackground());
+		this.projectNameField.setEditable(false);
 
 		useEmptyNameButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

@@ -37,8 +37,6 @@ import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -51,7 +49,6 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
@@ -69,7 +66,8 @@ import org.eclipse.ui.PlatformUI;
  * Auto-props preferences page
  *
  * @author Alexey Mikoyan
- *
+ * 
+ * @since 0.7.0 - Properties configuration preference page
  */
 public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 	protected CheckboxTableViewer autopropTableViewer;
@@ -540,11 +538,6 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 		this.customPropDescription.setLayoutData(data);
 		this.customPropDescription.setText(SVNTeamUIPlugin.instance().getResource("CustomPropsPreferencePage.description"));
 		this.customPropDescription.setBackground(this.customPropDescription.getBackground());
-		this.customPropDescription.addFocusListener(new FocusAdapter() {
-			   public void focusGained(FocusEvent e) {
-				    ((Text)e.widget).traverse(SWT.TRAVERSE_TAB_NEXT);
-			   }
-		});
 		this.customPropDescription.setEditable(false);
 		
 		this.custompropTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {

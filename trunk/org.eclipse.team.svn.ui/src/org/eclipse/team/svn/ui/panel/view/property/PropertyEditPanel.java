@@ -19,8 +19,6 @@ import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -69,7 +67,7 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 	protected Combo nameField;
 	protected Text valueField;
 	protected Text fileField;
-	protected Text descriptionField;
+	protected Label descriptionField;
 	protected Button recursiveButton;
 	protected ApplyPropertyMethodComposite applyComposite;
 	protected SVNProperty source;
@@ -206,24 +204,16 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 		data.verticalAlignment = SWT.TOP;
 		bulb.setLayoutData(data);
 		
-		this.descriptionField = new Text(descriptionComposite, SWT.WRAP);
+		this.descriptionField = new Label(descriptionComposite, SWT.WRAP);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.verticalAlignment = SWT.TOP;
 		data.grabExcessVerticalSpace = true;
 		data.heightHint = 50;
-		
 		this.descriptionField.setLayoutData(data);
 		this.descriptionField.setText(this.getDescriptionText());
-		this.descriptionField.setBackground(this.descriptionField.getBackground());
-		this.descriptionField.addFocusListener(new FocusAdapter() {
-			   public void focusGained(FocusEvent e) {
-				    ((Text)e.widget).traverse(SWT.TRAVERSE_TAB_NEXT);
-			   }
-		});
-		descriptionComposite.setBackground(this.descriptionField.getBackground());
-		bulb.setBackground(this.descriptionField.getBackground());
-		this.descriptionField.setEditable(false);
-		
+		this.descriptionField.setBackground(this.nameField.getBackground());
+		descriptionComposite.setBackground(this.nameField.getBackground());
+		bulb.setBackground(this.nameField.getBackground());
 		
 		CompositeVerifier verifier = new CompositeVerifier();
 		String name = SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.Name.Verifier");
