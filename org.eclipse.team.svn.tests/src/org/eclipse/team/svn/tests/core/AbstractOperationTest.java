@@ -79,7 +79,7 @@ public abstract class AbstractOperationTest extends TestCase {
 					}
 
 					public Throwable getException() {
-						return new SVNConnectorCancelException();
+						return new SVNConnectorCancelException("Cancelled");
 					}
 
 					public String getMessage() {

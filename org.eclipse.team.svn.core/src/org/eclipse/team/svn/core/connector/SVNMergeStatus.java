@@ -22,62 +22,78 @@ package org.eclipse.team.svn.core.connector;
  */
 public class SVNMergeStatus extends SVNEntryStatus {
 	/**
-	 * The repository URL of the entry
+	 * The repository URL of the first merged entry.
 	 */
-	public final String url;
+	public final String startUrl;
 
 	/**
-	 * The working copy path of the entry
+	 * The repository URL of the last merged entry.
+	 */
+	public final String endUrl;
+
+	/**
+	 * The working copy path of the entry.
 	 */
 	public final String path;
 
 	/**
-	 * The revision of the last change in the merged repository resource.
+	 * The revision of the first merged change.
 	 */
-	public final long revision;
+	public final long startRevision;
 
 	/**
-	 * The date of the last change in the merged repository resource.
+	 * The revision of the last merged change.
+	 */
+	public final long endRevision;
+
+	/**
+	 * The date of the last merged change in the merged repository resource.
 	 */
 	public final long date;
 
 	/**
-	 * The author of the last change in the merged repository resource.
+	 * The author of the last merged change in the merged repository resource.
 	 */
 	public final String author;
 
 	/**
-	 * The comment entered for the last change in the merged repository resource. Could be <code>null</code>.
+	 * The comment entered for the last merged change in the merged repository resource. Could be <code>null</code>.
 	 */
 	public final String comment;
 
 	/**
 	 * The {@link SVNMergeStatus} instance could be initialized only once because all fields are final
 	 * 
-	 * @param url
-	 *            The repository URL of the entry
+	 * @param startUrl
+	 *            The repository URL of the first merged entry.
+	 * @param endUrl
+	 *            The repository URL of the last merged entry.
 	 * @param path
-	 *            The working copy path of the entry
+	 *            The working copy path of the entry.
 	 * @param nodeKind
-	 *            The entry kind (see {@link Kind})
+	 *            The entry kind (see {@link Kind}).
 	 * @param textStatus
-	 *            The entry content merge status (see {@link SVNEntryStatus.Kind})
+	 *            The entry content merge status (see {@link SVNEntryStatus.Kind}).
 	 * @param propStatus
-	 *            The entry properties merge status (see {@link SVNEntryStatus.Kind})
-	 * @param revision
-	 *            The revision of the last change in the merged repository resource.
+	 *            The entry properties merge status (see {@link SVNEntryStatus.Kind}).
+	 * @param startRevision
+	 *            The revision of the first merged change.
+	 * @param endRevision
+	 *            The revision of the last merged change.
 	 * @param date
-	 *            The date of the last change in the merged repository resource.
+	 *            The date of the last merged change. Could be <code>0</code>.
 	 * @param author
-	 *            The author of the last change in the merged repository resource.
+	 *            The author of the last merged change. Could be <code>null</code>.
 	 * @param comment
-	 *            The comment entered for the last change in the merged repository resource. Could be <code>null</code>.
+	 *            The comment entered for the last merged change. Could be <code>null</code>.
 	 */
-	public SVNMergeStatus(String url, String path, int nodeKind, int textStatus, int propStatus, long revision, long date, String author, String comment) {
+	public SVNMergeStatus(String startUrl, String endUrl, String path, int nodeKind, int textStatus, int propStatus, long startRevision, long endRevision, long date, String author, String comment) {
 		super(nodeKind, textStatus, propStatus);
-		this.url = url;
+		this.startUrl = startUrl;
+		this.endUrl = endUrl;
 		this.path = path;
-		this.revision = revision;
+		this.startRevision = startRevision;
+		this.endRevision = endRevision;
 		this.date = date;
 		this.author = author;
 		this.comment = comment;

@@ -29,7 +29,7 @@ import org.eclipse.team.svn.ui.action.AbstractNonRecursiveTeamAction;
 import org.eclipse.team.svn.ui.dialog.AdvancedDialog;
 import org.eclipse.team.svn.ui.dialog.OperationErrorDialog;
 import org.eclipse.team.svn.ui.operation.ShowMergeViewOperation;
-import org.eclipse.team.svn.ui.panel.local.JavaHLMergePanel;
+import org.eclipse.team.svn.ui.panel.local.MergePanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 
 /**
@@ -62,11 +62,10 @@ public class MergeAction extends AbstractNonRecursiveTeamAction {
 			remote = remote.getRoot();
 		}
 
-		JavaHLMergePanel panel = new JavaHLMergePanel(resources, remote, revision);
+		MergePanel panel = new MergePanel(resources, remote, revision);
 	    AdvancedDialog dialog = new AdvancedDialog(this.getShell(), panel);
 	    if (dialog.open() == 0) {
-	    	if (panel.isAdvancedMode() ||
-		    	SVNTeamPreferences.getMergeBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MERGE_USE_JAVAHL_NAME)) {
+	    	if (SVNTeamPreferences.getMergeBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MERGE_USE_JAVAHL_NAME)) {
 		    	JavaHLMergeOperation mainOp = new JavaHLMergeOperation(resources, panel.getFirstSelection(), panel.getSecondSelection(), false, panel.getIgnoreAncestry());
 		    	CompositeOperation op = new CompositeOperation(mainOp.getId());
 	    		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
@@ -77,7 +76,7 @@ public class MergeAction extends AbstractNonRecursiveTeamAction {
 		    	this.runScheduled(op);
 	    	}
 	    	else {
-	    		this.runScheduled(new ShowMergeViewOperation(resources, panel.getSelection(), this.getTargetPart(), panel.getStartRevision()));
+	    		this.runScheduled(new ShowMergeViewOperation(resources, panel.getFirstSelection(), panel.getSecondSelection(), panel.getIgnoreAncestry(), this.getTargetPart()));
 	    	}
 	    }
 	}

@@ -17,6 +17,7 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.variants.IResourceVariantComparator;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.resource.ILocalResource;
+import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.ui.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.ui.synchronize.variant.ResourceVariant;
 
@@ -26,8 +27,8 @@ import org.eclipse.team.svn.ui.synchronize.variant.ResourceVariant;
  * @author Alexander Gurov
  */
 public class MergeSyncInfo extends AbstractSVNSyncInfo {
-	public MergeSyncInfo(ILocalResource local, ILocalResource remote, IResourceVariantComparator comparator) {
-		super(local, remote, comparator);
+	public MergeSyncInfo(ILocalResource local, IResourceChange base, IResourceChange remote, IResourceVariantComparator comparator) {
+		super(local, base == null ? AbstractSVNSyncInfo.makeBaseVariant(local) : AbstractSVNSyncInfo.makeRemoteVariant(local, base), AbstractSVNSyncInfo.makeRemoteVariant(local, remote), comparator);
 	}
 	
     protected int calculateKind() throws TeamException {

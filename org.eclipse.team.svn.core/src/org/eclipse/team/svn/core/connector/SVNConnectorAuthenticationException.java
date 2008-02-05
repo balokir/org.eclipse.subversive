@@ -23,20 +23,16 @@ package org.eclipse.team.svn.core.connector;
 public class SVNConnectorAuthenticationException extends SVNConnectorException {
 	private static final long serialVersionUID = 8879809662661620066L;
 
-	public SVNConnectorAuthenticationException() {
-		super();
-	}
-
 	public SVNConnectorAuthenticationException(String message) {
-		super(message);
+		super(message, SVNErrorCodes.raNotAuthorized, null);
 	}
 
 	public SVNConnectorAuthenticationException(Throwable cause) {
-		super(cause, false);
+		super(cause == null ? null : cause.getMessage(), SVNErrorCodes.raNotAuthorized, cause);
 	}
 
 	public SVNConnectorAuthenticationException(String message, Throwable cause) {
-		super(message, cause, false);
+		super(message, SVNErrorCodes.raNotAuthorized, cause);
 	}
 
 }

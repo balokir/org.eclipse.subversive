@@ -82,4 +82,8 @@ public class SVNLogPath {
 		this.action = action;
 	}
 
+	public String toString() {
+		return String.valueOf(this.action) + ":" + this.path;
+	}
+	
 }

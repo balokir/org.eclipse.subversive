@@ -19,13 +19,13 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNMergeStatus;
 import org.eclipse.team.svn.core.connector.SVNRevisionRange;
 import org.eclipse.team.svn.core.connector.SVNNotification.NodeStatus;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
-import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
@@ -69,12 +69,20 @@ public class MergeOperation extends AbstractConflictDetectionOperation implement
 		}
 		SVNMergeStatus []statuses = (SVNMergeStatus [])retVal.toArray(new SVNMergeStatus[retVal.size()]);
 		
-		IRepositoryResource from = this.info.from[0];
-		IRepositoryLocation location = from.getRepositoryLocation();
+		SVNEntryRevisionReference startRef = SVNUtility.getEntryRevisionReference(this.info.fromStart[0]);
+		SVNEntryRevisionReference endRef = SVNUtility.getEntryRevisionReference(this.info.fromEnd[0]);
+		IRepositoryLocation location = this.info.fromEnd[0].getRepositoryLocation();
 		ISVNConnector proxy = location.acquireSVNProxy();
 		
+		long options = this.force ? ISVNConnector.Options.FORCE : ISVNConnector.Options.NONE;
+		options = this.info.ignoreAncestry ? ISVNConnector.Options.IGNORE_ANCESTRY : ISVNConnector.Options.NONE;
 		try {
-			proxy.merge(SVNUtility.getEntryReference(from), new SVNRevisionRange [] {new SVNRevisionRange(this.info.start, from.getSelectedRevision())}, null, statuses, this.force ? ISVNConnector.Options.FORCE : ISVNConnector.Options.NONE, new ConflictDetectionProgressMonitor(this, monitor, null));
+			if (SVNUtility.useSingleReferenceSignature(startRef, endRef)) {
+				proxy.merge(endRef, new SVNRevisionRange [] {new SVNRevisionRange(startRef.revision, endRef.revision)}, null, statuses, options, new ConflictDetectionProgressMonitor(this, monitor, null));
+			}
+			else {
+				proxy.merge(startRef, endRef, null, statuses, options, new ConflictDetectionProgressMonitor(this, monitor, null));
+			}
 		}
 		finally {
 			location.releaseSVNProxy(proxy);
@@ -99,8 +107,7 @@ public class MergeOperation extends AbstractConflictDetectionOperation implement
 		
 		public void progress(int current, int total, ItemState state) {
 			super.progress(current, total, state);
-		    if (state.contentState == NodeStatus.CONFLICTED ||
-		        state.propState == NodeStatus.CONFLICTED) {
+		    if (state.contentState == NodeStatus.CONFLICTED || state.propState == NodeStatus.CONFLICTED) {
 		        MergeOperation.this.hasUnresolvedConflict = true;
 			    for (Iterator it = MergeOperation.this.processed.iterator(); it.hasNext(); ) {
 			        IResource res = (IResource)it.next();

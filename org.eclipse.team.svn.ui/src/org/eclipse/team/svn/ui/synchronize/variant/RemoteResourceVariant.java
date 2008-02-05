@@ -24,12 +24,10 @@ import org.eclipse.team.svn.core.resource.ILocalResource;
  */
 public abstract class RemoteResourceVariant extends ResourceVariant {
 	protected static String svnAuthor;
-	protected static String svnNoAuthor;
 
 	public RemoteResourceVariant(ILocalResource local) {
 		super(local);
 		RemoteResourceVariant.svnAuthor = SVNTeamPlugin.instance().getResource("SVNInfo.Author");
-		RemoteResourceVariant.svnNoAuthor = SVNTeamPlugin.instance().getResource("SVNInfo.NoAuthor");
 	}
 
 	protected String getCacheId() {
@@ -41,8 +39,8 @@ public abstract class RemoteResourceVariant extends ResourceVariant {
         	return "";
         }
     	String retVal = super.getContentIdentifier();
-	    if (!this.isNotOnRepository() || this.local.isCopied()) {
-	        retVal += " " + (this.local.getAuthor() == null ? RemoteResourceVariant.svnNoAuthor : MessageFormat.format(RemoteResourceVariant.svnAuthor, new Object[] {this.local.getAuthor()}));
+	    if ((!this.isNotOnRepository() || this.local.isCopied()) && this.local.getAuthor() != null) {
+	        retVal += " " + MessageFormat.format(RemoteResourceVariant.svnAuthor, new Object[] {this.local.getAuthor()});
 	    }
         return retVal;
     }

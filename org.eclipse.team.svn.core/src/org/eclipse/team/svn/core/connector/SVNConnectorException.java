@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.core.connector;
 
 /**
- * Basic SVN connector wrapper exception
+ * Basic SVN connector exception wrapper
  * 
  * The JavaHL API's is the only way to interact between SVN and Java-based tools. At the same time JavaHL connector library
  * is not EPL compatible and we won't to pin plug-in with concrete connector implementation. So, the only way to do this is
@@ -23,38 +23,26 @@ package org.eclipse.team.svn.core.connector;
 public class SVNConnectorException extends Exception {
 	private static final long serialVersionUID = 6066882107735517763L;
 
-	protected boolean runtime;
-
 	protected int errorId;
-
-	public SVNConnectorException() {
-		super();
-		this.runtime = false;
-	}
 
 	public SVNConnectorException(String message) {
 		super(message);
-		this.runtime = false;
+		this.errorId = SVNErrorCodes.NO_ERROR_CODE;
 	}
 
-	public SVNConnectorException(Throwable cause, boolean runtime) {
+	public SVNConnectorException(Throwable cause) {
 		super(cause);
-		this.runtime = runtime;
+		this.errorId = SVNErrorCodes.NO_ERROR_CODE;
 	}
 
-	public SVNConnectorException(String message, Throwable cause, boolean runtime) {
+	public SVNConnectorException(String message, Throwable cause) {
 		super(message, cause);
-		this.runtime = runtime;
+		this.errorId = SVNErrorCodes.NO_ERROR_CODE;
 	}
 
-	public SVNConnectorException(String message, int errorId, Throwable cause, boolean runtime) {
+	public SVNConnectorException(String message, int errorId, Throwable cause) {
 		super(message, cause);
-		this.runtime = runtime;
 		this.errorId = errorId;
-	}
-
-	public boolean isRuntime() {
-		return this.runtime;
 	}
 
 	public int getErrorId() {

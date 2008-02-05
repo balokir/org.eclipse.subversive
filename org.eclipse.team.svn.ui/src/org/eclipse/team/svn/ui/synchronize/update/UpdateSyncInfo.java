@@ -16,6 +16,7 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.variants.IResourceVariantComparator;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.resource.ILocalResource;
+import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.ui.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.ui.synchronize.variant.ResourceVariant;
 
@@ -26,7 +27,7 @@ import org.eclipse.team.svn.ui.synchronize.variant.ResourceVariant;
  */
 public class UpdateSyncInfo extends AbstractSVNSyncInfo {
 	
-	public UpdateSyncInfo(ILocalResource local, ILocalResource remote, IResourceVariantComparator comparator) {
+	public UpdateSyncInfo(ILocalResource local, IResourceChange remote, IResourceVariantComparator comparator) {
 		super(local, remote, comparator);
 	}
 	

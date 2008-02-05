@@ -35,10 +35,10 @@ public class MergeScope extends AbstractSynchronizeScope {
     }
 
     public String getName() {
-    	if (this.info.to == null || this.info.from == null) {
+    	if (this.info.to == null || this.info.fromEnd == null) {
     		return "";
     	}
-    	String url = (this.info.from.length > 1 ? this.info.from[0].getRoot() : this.info.from[0]).getUrl();
+    	String url = (this.info.fromEnd.length > 1 ? this.info.fromEnd[0].getRoot() : this.info.fromEnd[0]).getUrl();
     	String names = null;
     	for (int i = 0; i < this.info.to.length; i++) {
     		String path = this.info.to[i].getFullPath().toString();

@@ -155,9 +155,9 @@ public interface ISVNConnector {
 		public static final long SKIP_DELETED = 0x2000;
 
 		/**
-		 * Include unversioned resources into patch.
+		 * Indicate the depth value is ambient.
 		 */
-		public static final long INCLUDE_UNVERSIONED = 0x4000;
+		public static final long DEPTH_IS_STICKY = 0x4000;
 
 		/**
 		 * Create moved or copied folder as child of the destination folder.
@@ -193,11 +193,6 @@ public interface ISVNConnector {
 		 * Fetch locks information also.
 		 */
 		public static final long FETCH_LOCKS = 0x200000;
-
-		/**
-		 * Indicate the depth value is ambient.
-		 */
-		public static final long DEPTH_IS_STICKY = 0x400000;
 	}
 
 	/**
@@ -214,9 +209,9 @@ public interface ISVNConnector {
 
 		public static final long COMMIT = Options.KEEP_LOCKS | Options.KEEP_CHANGE_LIST;
 
-		public static final long UPDATE = Options.IGNORE_EXTERNALS | Options.ALLOW_UNVERSIONED_OBSTRUCTIONS;
+		public static final long UPDATE = Options.IGNORE_EXTERNALS | Options.ALLOW_UNVERSIONED_OBSTRUCTIONS | Options.DEPTH_IS_STICKY;
 
-		public static final long SWITCH = Options.IGNORE_EXTERNALS | Options.ALLOW_UNVERSIONED_OBSTRUCTIONS;
+		public static final long SWITCH = Options.IGNORE_EXTERNALS | Options.ALLOW_UNVERSIONED_OBSTRUCTIONS | Options.DEPTH_IS_STICKY;
 
 		public static final long STATUS = Options.SERVER_SIDE | Options.INCLUDE_UNCHANGED | Options.INCLUDE_IGNORED | Options.IGNORE_EXTERNALS;
 
@@ -230,7 +225,7 @@ public interface ISVNConnector {
 
 		public static final long EXPORT = Options.FORCE | Options.IGNORE_EXTERNALS;
 
-		public static final long DIFF = Options.FORCE | Options.IGNORE_ANCESTRY | Options.SKIP_DELETED | Options.INCLUDE_UNVERSIONED;
+		public static final long DIFF = Options.FORCE | Options.IGNORE_ANCESTRY | Options.SKIP_DELETED;
 
 		public static final long DIFF_STATUS = Options.IGNORE_ANCESTRY;
 
@@ -282,10 +277,6 @@ public interface ISVNConnector {
 	public void setSSHCredentials(String userName, String privateKeyPath, String passphrase, int port);
 
 	public void setSSHCredentials(String userName, String password, int port);
-
-	public void setReportRevisionChange(boolean report);
-
-	public boolean isReportRevisionChange();
 
 	public void setCommitMissingFiles(boolean commitMissingFiles);
 
@@ -350,6 +341,12 @@ public interface ISVNConnector {
 
 	public void mergeStatus(SVNEntryReference reference, SVNRevisionRange[] revisions, String path, int depth, long options, ISVNMergeStatusCallback cb, ISVNProgressMonitor monitor)
 			throws SVNConnectorException;
+
+	public void merge(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, String mergePath, SVNMergeStatus[] mergeStatus, long options, ISVNProgressMonitor monitor)
+		throws SVNConnectorException;
+	
+	public void mergeStatus(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, String path, int depth, long options, ISVNMergeStatusCallback cb, ISVNProgressMonitor monitor)
+		throws SVNConnectorException;
 
 	public void doImport(String path, String url, String message, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 

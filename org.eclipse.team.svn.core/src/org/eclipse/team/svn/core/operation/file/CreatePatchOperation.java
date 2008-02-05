@@ -32,16 +32,14 @@ public class CreatePatchOperation extends AbstractFileOperation {
 	protected boolean recurse;
 	protected boolean ignoreDeleted;
 	protected boolean processBinary;
-	protected boolean processUnversioned;
 	protected boolean useRelativePath;
 
-	public CreatePatchOperation(File file, String fileName, boolean recurse, boolean ignoreDeleted, boolean processBinary, boolean processUnversioned, boolean useRelativePath) {
+	public CreatePatchOperation(File file, String fileName, boolean recurse, boolean ignoreDeleted, boolean processBinary, boolean useRelativePath) {
 		super("Operation.CreatePatchFile", new File[] {file});
 		this.fileName = fileName;
 		this.recurse = recurse;
 		this.ignoreDeleted = ignoreDeleted;
 		this.processBinary = processBinary;
-		this.processUnversioned = processUnversioned;
 		this.useRelativePath = useRelativePath;
 	}
 
@@ -55,7 +53,6 @@ public class CreatePatchOperation extends AbstractFileOperation {
 			long options = ISVNConnector.Options.IGNORE_ANCESTRY;
 			options |= this.ignoreDeleted ? ISVNConnector.Options.SKIP_DELETED : ISVNConnector.Options.NONE;
 			options |= this.processBinary ? ISVNConnector.Options.FORCE : ISVNConnector.Options.NONE;
-			options |= this.processUnversioned ? ISVNConnector.Options.INCLUDE_UNVERSIONED : ISVNConnector.Options.NONE;
 			proxy.diff(
 				new SVNEntryRevisionReference(path, null, SVNRevision.BASE), new SVNEntryRevisionReference(path, null, SVNRevision.WORKING), this.useRelativePath ? path : null, this.fileName, 
 				Depth.infinityOrFiles(this.recurse), options, null, new SVNProgressMonitor(this, monitor, null));

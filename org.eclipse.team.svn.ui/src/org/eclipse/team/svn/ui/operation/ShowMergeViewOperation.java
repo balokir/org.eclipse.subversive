@@ -13,7 +13,6 @@ package org.eclipse.team.svn.ui.operation;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.local.MergeSet;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -30,30 +29,26 @@ import org.eclipse.ui.IWorkbenchPart;
  * @author Alexander Gurov
  */
 public class ShowMergeViewOperation extends AbstractActionOperation {
-    protected IResource []locals;
-    protected IRepositoryResource []remoteResources;
+    protected MergeSet mergeSet;
     protected IWorkbenchPart part;
-    protected SVNRevision startRevision;
 
-    public ShowMergeViewOperation(IResource []locals, IRepositoryResource []remoteResources, IWorkbenchPart part, SVNRevision startRevision) {
+    public ShowMergeViewOperation(IResource []locals, IRepositoryResource []fromStart, IRepositoryResource []fromEnd, boolean ignoreAncestry, IWorkbenchPart part) {
         super("Operation.ShowMergeView");
-        this.locals = locals;
-        this.remoteResources = remoteResources;
+        this.mergeSet = new MergeSet(locals, fromStart, fromEnd, ignoreAncestry);
         this.part = part;
-        this.startRevision = startRevision;
     }
 
     protected void runImpl(IProgressMonitor monitor) throws Exception {
     	//SubscriberParticipant.getMatchingParticipant silently changes resources order. So, make a copy...
-    	IResource []copy = new IResource[this.locals.length];
-    	System.arraycopy(this.locals, 0, copy, 0, this.locals.length);
+    	IResource []copy = new IResource[this.mergeSet.to.length];
+    	System.arraycopy(this.mergeSet.to, 0, copy, 0, this.mergeSet.to.length);
 		MergeParticipant participant = (MergeParticipant)SubscriberParticipant.getMatchingParticipant(MergeParticipant.PARTICIPANT_ID, copy);
 		if (participant == null) {
-			participant = new MergeParticipant(new MergeScope(new MergeSet(this.locals, this.remoteResources, this.startRevision)));
+			participant = new MergeParticipant(new MergeScope(this.mergeSet));
 			TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[] {participant});
 		}
 		else {
-		    ((MergeScope)participant.getScope()).setMergeSet(new MergeSet(this.locals, this.remoteResources, this.startRevision));
+		    ((MergeScope)participant.getScope()).setMergeSet(this.mergeSet);
 		}
 
 		participant.run(this.part);
