@@ -331,14 +331,14 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 			verifier.add(new AbsolutePathVerifier(name));
 			verifier.add(new AbstractVerifier() {
 				protected String getErrorMessage(Control input) {
+					return null;
+				}
+				
+				protected String getWarningMessage(Control input) {
 					String name = AbstractBranchTagPanel.this.destinationCombo.getText();
 					if (AbstractBranchTagPanel.this.existingNodesNamesSet != null && AbstractBranchTagPanel.this.existingNodesNamesSet.contains(name)) {
 						return SVNTeamUIPlugin.instance().getResource(AbstractBranchTagPanel.this.nationalizationId + ".NodeName.Verifier.Error.Exists", new String[] {name});
 					}
-					return null;
-				}
-
-				protected String getWarningMessage(Control input) {
 					return null;
 				}
 			});
