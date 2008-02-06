@@ -27,7 +27,6 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.action.AbstractRepositoryTeamAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
-import org.eclipse.team.svn.ui.dialog.TagModifyWarningDialog;
 import org.eclipse.team.svn.ui.operation.RefreshRemoteResourcesOperation;
 import org.eclipse.team.svn.ui.panel.common.CommentPanel;
 import org.eclipse.team.svn.ui.repository.RepositoriesView;
@@ -44,12 +43,6 @@ public class DeleteAction extends AbstractRepositoryTeamAction {
 	}
 	
 	public void runImpl(IAction action) {
-		if (SVNUtility.isTagOperated(this.getSelectedRepositoryResources())) {
-			TagModifyWarningDialog dlg = new TagModifyWarningDialog(this.getShell());
-        	if (dlg.open() != 0) {
-        		return;
-        	}
-		}
 	    CommentPanel commentPanel = new CommentPanel(SVNTeamUIPlugin.instance().getResource("DeleteAction.Comment.Title"));
 		DefaultDialog dialog = new DefaultDialog(this.getShell(), commentPanel);
 		if (dialog.open() == 0) {
