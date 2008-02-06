@@ -124,7 +124,12 @@ public class BranchTagSelectionComposite extends Composite {
 			children = op.getChildren();
 		}
 		if (children.length > 0) {
-			this.urlText.add(SVNTeamUIPlugin.instance().getResource("BranchTag.Read.Separator"));
+			if (this.type == CompareWithBranchTagAction.BRANCH_OPERATED) {
+				this.urlText.add(SVNTeamUIPlugin.instance().getResource("Branch.Read.Separator"));
+			}
+			else {
+				this.urlText.add(SVNTeamUIPlugin.instance().getResource("Tag.Read.Separator"));
+			}
 		}
 		for (int i = 0; i < children.length; i++) {
 			this.urlText.add(children[i].getName());
