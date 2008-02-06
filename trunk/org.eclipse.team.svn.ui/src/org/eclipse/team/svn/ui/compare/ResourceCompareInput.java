@@ -75,7 +75,6 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 public abstract class ResourceCompareInput extends CompareEditorInput {
 	protected ResourceCompareViewer viewer;
 	protected BaseCompareNode root;
-	protected String charset;
 	
 	protected IRepositoryResource rootLeft;
 	protected IRepositoryResource rootAncestor;
@@ -319,6 +318,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 	public class ResourceElement implements ITypedElement, IEncodedStreamContentAccessor, IContentChangeNotifier, IEditableContent {
 		protected Vector listenerList;
 		protected boolean dirty;
+		String charset;
 		
 		protected IRepositoryResource resource;
 		protected AbstractGetFileContentOperation op;
@@ -336,7 +336,11 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		}
 		
 		public String getCharset() {
-			return ResourceCompareInput.this.charset;
+			return this.charset;
+		}
+		
+		public void setCharset(String charset){
+			this.charset = charset;
 		}
 		
 		public void addContentChangeListener(IContentChangeListener listener) {
@@ -506,10 +510,10 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 			super(parent, kind);
 		}
 		
-		protected void detectCharset(InputStream stream) throws Exception {
+		protected String detectCharset(InputStream stream) throws Exception {
 			try {
 				IContentDescription description = Platform.getContentTypeManager().getDescriptionFor(stream, this.getName(), IContentDescription.ALL);
-				ResourceCompareInput.this.charset = description == null ? null : description.getCharset();
+				return description == null ? null : description.getCharset();
 			} 
 			finally {
 				try {stream.close();} catch (Exception ex) {}
@@ -517,9 +521,9 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		}
 		
 		public CompositeOperation getFetcher() {
-			ResourceElement left = (ResourceElement)this.getLeft();
-			ResourceElement ancestor = (ResourceElement)this.getAncestor();
-			ResourceElement right = (ResourceElement)this.getRight();
+			final ResourceElement left = (ResourceElement)this.getLeft();
+			final ResourceElement ancestor = (ResourceElement)this.getAncestor();
+			final ResourceElement right = (ResourceElement)this.getRight();
 			CompositeOperation op = new CompositeOperation(SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.Fetch"));
 			
 			if (left != null && left.getType() != ITypedElement.FOLDER_TYPE) {
@@ -528,7 +532,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 					op.add(fetchOp);
 					op.add(new AbstractActionOperation("Operation.DetectCharset") {
 		                protected void runImpl(IProgressMonitor monitor) throws Exception {
-		                	BaseCompareNode.this.detectCharset(fetchOp.getContent());
+		                	left.setCharset(BaseCompareNode.this.detectCharset(fetchOp.getContent()));
 		                }
 			        }, new IActionOperation[] {fetchOp});
 				}
@@ -539,7 +543,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 					op.add(fetchOp);
 					op.add(new AbstractActionOperation("Operation.DetectCharset") {
 		                protected void runImpl(IProgressMonitor monitor) throws Exception {
-		                	BaseCompareNode.this.detectCharset(fetchOp.getContent());
+		                	ancestor.setCharset(BaseCompareNode.this.detectCharset(fetchOp.getContent()));
 		                }
 			        }, new IActionOperation[] {fetchOp});
 				}
@@ -550,7 +554,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 					op.add(fetchOp);
 					op.add(new AbstractActionOperation("Operation.DetectCharset") {
 		                protected void runImpl(IProgressMonitor monitor) throws Exception {
-		                	BaseCompareNode.this.detectCharset(fetchOp.getContent());
+		                	right.setCharset(BaseCompareNode.this.detectCharset(fetchOp.getContent()));
 		                }
 			        }, new IActionOperation[] {fetchOp});
 				}
