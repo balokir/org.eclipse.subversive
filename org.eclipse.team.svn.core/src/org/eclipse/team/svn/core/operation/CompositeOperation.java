@@ -72,7 +72,6 @@ public class CompositeOperation extends AbstractActionOperation implements ICons
 	}
 	
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		int j = 0;
 		for (Iterator it = this.operations.iterator(); it.hasNext() && !monitor.isCanceled(); ) {
 			Pair pair = (Pair)it.next();
 			
@@ -90,7 +89,6 @@ public class CompositeOperation extends AbstractActionOperation implements ICons
 			if (!errorFound) {
 				ProgressMonitorUtility.doTask(pair.operation, monitor, this.operations.size());
 				this.reportStatus(pair.operation.getStatus());
-				ProgressMonitorUtility.progress(monitor, ++j, this.operations.size());
 			}
 		}
 	}
