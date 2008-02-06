@@ -318,7 +318,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 	public class ResourceElement implements ITypedElement, IEncodedStreamContentAccessor, IContentChangeNotifier, IEditableContent {
 		protected Vector listenerList;
 		protected boolean dirty;
-		String charset;
+		protected String charset;
 		
 		protected IRepositoryResource resource;
 		protected AbstractGetFileContentOperation op;
