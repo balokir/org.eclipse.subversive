@@ -63,26 +63,40 @@ public class SVNChangeSetCollector extends SyncInfoSetChangeSetCollector {
 				continue;
 			}
 			ResourceVariant remote = (ResourceVariant) infos[i].getRemote();
-			String id = remote.getContentIdentifier();
+			ILocalResource resource = remote.getResource();
+			String id = String.valueOf(resource.getRevision());
 			SVNCheckedInChangeSet set = (SVNCheckedInChangeSet)sets.get(id);
+			boolean updateName = false;
 			if (set == null) {
-				ILocalResource resource = remote.getResource();
 				set = new SVNCheckedInChangeSet();
 				set.author = resource.getAuthor();
-				set.date = resource.getLastCommitDate() == 0 ? null : new Date(resource.getLastCommitDate());
+				set.date = new Date(resource.getLastCommitDate());
 				if (resource instanceof IResourceChange) {
 					set.comment = ((IResourceChange)resource).getComment();
 				}
+				updateName = true;
+				sets.put(id, set);
+			}
+			else if (set.date.getTime() == 0) {
+				updateName = true;
+				set.date = new Date(resource.getLastCommitDate());
+			}
+			else if (set.author == null) {
+				updateName = true;
+				set.author = resource.getAuthor();
+			}
+			if (updateName) {
+				// rebuild name
 				String name = 
-					String.valueOf(resource.getRevision()) + " " + 
-					(set.date == null ? svnNoDate : MessageFormat.format(svnDate, new Object[] {dateTimeFormat.format(set.date)})) + " " + 
+					id + " " + 
+					(resource.getLastCommitDate() == 0 ? svnNoDate : MessageFormat.format(svnDate, new Object[] {dateTimeFormat.format(set.date)})) + " " + 
 					(resource.getAuthor() == null ? svnNoAuthor : MessageFormat.format(svnAuthor, new Object[] {resource.getAuthor()}));
 				if (set.comment != null) {
 					name += " " + set.comment;
 				}
 				set.setName(name);
-				sets.put(id, set);
 			}
+			
 			set.add(infos[i]);
 		}
 		
