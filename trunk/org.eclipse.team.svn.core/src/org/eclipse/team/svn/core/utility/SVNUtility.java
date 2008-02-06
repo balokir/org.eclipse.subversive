@@ -1088,15 +1088,6 @@ public final class SVNUtility {
 		return false;
 	}
 	
-	public static boolean isTagOperated(IRepositoryResource [] resources) {
-		for (int i = 0; i < resources.length; i++) {
-        	if (((IRepositoryRoot)resources[i].getRoot()).getKind() == IRepositoryRoot.KIND_TAGS) {
-        		return true;
-        	}
-        }
-		return false;
-	}
-	
 	private SVNUtility() {
 		
 	}
