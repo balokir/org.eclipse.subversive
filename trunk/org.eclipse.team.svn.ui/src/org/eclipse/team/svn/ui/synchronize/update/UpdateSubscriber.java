@@ -18,9 +18,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
+import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.operation.local.IRemoteStatusOperation;
 import org.eclipse.team.svn.core.operation.local.RemoteStatusOperation;
 import org.eclipse.team.svn.core.resource.IChangeStateProvider;
@@ -30,9 +30,9 @@ import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.svnstorage.CommentProvider;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.core.utility.ILoggedOperationFactory;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.synchronize.AbstractSVNSubscriber;
-import org.eclipse.team.svn.ui.utility.IOperationWrapperFactory;
 
 /**
  * Synchronize view data provider
@@ -129,7 +129,7 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 		return resourceChange;
 	}
 	
-	protected IResource[] findChanges(IResource[] resources, int depth, IProgressMonitor monitor, IOperationWrapperFactory operationWrapperFactory) {
+	protected IResource[] findChanges(IResource[] resources, int depth, IProgressMonitor monitor, ILoggedOperationFactory operationWrapperFactory) {
 		this.comments.clear();
 		return super.findChanges(resources, depth, monitor, operationWrapperFactory);
 	}
