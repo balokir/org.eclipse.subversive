@@ -47,12 +47,11 @@ import org.eclipse.team.svn.core.resource.events.IResourceStatesListener;
 import org.eclipse.team.svn.core.resource.events.ResourceStatesChangedEvent;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.core.utility.ILoggedOperationFactory;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
-import org.eclipse.team.svn.ui.utility.DefaultOperationWrapperFactory;
-import org.eclipse.team.svn.ui.utility.IOperationWrapperFactory;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
@@ -82,10 +81,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
     }
 
     public boolean isSupervised(IResource resource) {
-		return 
-			FileUtility.isConnected(resource) && 
-			!FileUtility.isSVNInternals(resource) &&
-			!FileUtility.isLinked(resource);
+		return FileUtility.isConnected(resource) && !FileUtility.isSVNInternals(resource) && !FileUtility.isLinked(resource);
     }
 
     public IResource []members(IResource resource) {
@@ -138,14 +134,14 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 		boolean contiguousReportMode = SVNTeamPreferences.getSynchronizeBoolean(store, SVNTeamPreferences.SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_NAME);
 
 		HashSet refreshScope = this.clearRemoteStatusesImpl(resources);
+		AbstractSVNSubscriber.this.resourcesStateChangedImpl((IResource [])refreshScope.toArray(new IResource[refreshScope.size()]));
+		
 		if (contiguousReportMode) {
-			AbstractSVNSubscriber.this.resourcesStateChangedImpl((IResource [])refreshScope.toArray(new IResource[refreshScope.size()]));
 			IActionOperation op = new UpdateStatusOperation(resources, depth);
 	        UIMonitorUtility.doTaskExternalDefault(op, monitor);
 		}
 		else {
-		    refreshScope.addAll(Arrays.asList(this.findChanges(resources, depth, monitor, new DefaultOperationWrapperFactory())));
-			this.resourcesStateChangedImpl((IResource [])refreshScope.toArray(new IResource[refreshScope.size()]));
+			this.resourcesStateChangedImpl(this.findChanges(resources, depth, monitor, UIMonitorUtility.DEFAULT_FACTORY));
 		}
     }
 
@@ -203,33 +199,34 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
     	}
   	}
     
-	protected IResource []findChanges(IResource []resources, int depth, IProgressMonitor monitor, IOperationWrapperFactory operationWrapperFactory) {
+	protected IResource []findChanges(IResource []resources, int depth, IProgressMonitor monitor, ILoggedOperationFactory operationWrapperFactory) {
+		final IRemoteStatusOperation rStatusOp = this.getStatusOperation(resources, depth);
+		if (rStatusOp == null) {
+    		return FileUtility.NO_CHILDREN;
+		}
 		final ArrayList changes = new ArrayList();
 		
-		final IRemoteStatusOperation rStatusOp = this.getStatusOperation(resources, depth);
-		if (rStatusOp != null) {
-			CompositeOperation op = new CompositeOperation(rStatusOp.getId());
-			op.add(rStatusOp);
-			op.add(new AbstractActionOperation("Operation.FetchChanges") {
-				protected void runImpl(IProgressMonitor monitor) throws Exception {
-					SVNEntryStatus []statuses = rStatusOp.getStatuses();
-					if (statuses != null) {
-						for (int i = 0; i < statuses.length && !monitor.isCanceled(); i++) {
-							if (AbstractSVNSubscriber.this.isIncomig(statuses[i])) {
-								IResourceChange resourceChange = AbstractSVNSubscriber.this.handleResourceChange(rStatusOp, statuses[i]);
-								if (resourceChange != null) {
-									ProgressMonitorUtility.setTaskInfo(monitor, this, resourceChange.getResource().getFullPath().toString());
-									ProgressMonitorUtility.progress(monitor, i, statuses.length);
-									AbstractSVNSubscriber.this.statusCache.setBytes(resourceChange.getResource(), SVNRemoteStorage.instance().resourceChangeAsBytes(resourceChange));
-									changes.add(resourceChange.getResource());
-								}
+		CompositeOperation op = new CompositeOperation(rStatusOp.getId());
+		op.add(rStatusOp);
+		op.add(new AbstractActionOperation("Operation.FetchChanges") {
+			protected void runImpl(IProgressMonitor monitor) throws Exception {
+				SVNEntryStatus []statuses = rStatusOp.getStatuses();
+				if (statuses != null) {
+					for (int i = 0; i < statuses.length && !monitor.isCanceled(); i++) {
+						if (AbstractSVNSubscriber.this.isIncomig(statuses[i])) {
+							IResourceChange resourceChange = AbstractSVNSubscriber.this.handleResourceChange(rStatusOp, statuses[i]);
+							if (resourceChange != null) {
+								ProgressMonitorUtility.setTaskInfo(monitor, this, resourceChange.getResource().getFullPath().toString());
+								AbstractSVNSubscriber.this.statusCache.setBytes(resourceChange.getResource(), SVNRemoteStorage.instance().resourceChangeAsBytes(resourceChange));
+								changes.add(resourceChange.getResource());
 							}
 						}
+						ProgressMonitorUtility.progress(monitor, i, statuses.length);
 					}
 				}
-			}, new IActionOperation[] {rStatusOp});
-			ProgressMonitorUtility.doTaskExternal(op, monitor, operationWrapperFactory);
-		}
+			}
+		}, new IActionOperation[] {rStatusOp});
+		ProgressMonitorUtility.doTaskExternal(op, monitor, operationWrapperFactory);
 		
 		return (IResource [])changes.toArray(new IResource[changes.size()]);
 	}
@@ -239,7 +236,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
     protected abstract SyncInfo getSVNSyncInfo(ILocalResource localStatus, IResourceChange remoteStatus);
     protected abstract IRemoteStatusOperation getStatusOperation(IResource []resources, int depth);
 
-    public class UpdateStatusOperation extends AbstractActionOperation {
+    public class UpdateStatusOperation extends AbstractActionOperation implements ILoggedOperationFactory {
     	protected IResource []resources;
     	protected int depth;
     	
@@ -249,24 +246,24 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
     		this.depth = depth;
     	}
     	
+		public IActionOperation getLogged(IActionOperation operation) {
+			return new LoggedOperation(operation) {
+				protected void handleError(IStatus errorStatus) {
+					UpdateStatusOperation.this.reportStatus(errorStatus);
+				}
+			};
+		}
+		
     	protected void runImpl(IProgressMonitor monitor) throws Exception {
     		Map project2Resources = SVNUtility.splitWorkingCopies(this.resources);
             for (Iterator it = project2Resources.values().iterator(); it.hasNext() && !monitor.isCanceled(); ) {
             	List entry = (List)it.next();
     			final IResource []wcResources = (IResource [])entry.toArray(new IResource[entry.size()]);
-                this.protectStep(new IUnprotectedOperation() {
-    				public void run(IProgressMonitor monitor) throws Exception {
-    					AbstractSVNSubscriber.this.resourcesStateChangedImpl(AbstractSVNSubscriber.this.findChanges(wcResources, depth, monitor, new DefaultOperationWrapperFactory() {
-    						protected IActionOperation wrappedOperation(IActionOperation operation) {
-    							return new LoggedOperation(operation) {
-    								protected void handleError(IStatus errorStatus) {
-    									UpdateStatusOperation.this.reportStatus(errorStatus);
-    								}
-    							};
-    						}
-    					})); 
-    				}
-    			}, monitor, project2Resources.size());
+    			this.protectStep(new IUnprotectedOperation() {
+					public void run(IProgressMonitor monitor) throws Exception {
+						AbstractSVNSubscriber.this.resourcesStateChangedImpl(AbstractSVNSubscriber.this.findChanges(wcResources, depth, monitor, UpdateStatusOperation.this)); 
+					}
+				}, monitor, project2Resources.size());
             }                
         }
       	
