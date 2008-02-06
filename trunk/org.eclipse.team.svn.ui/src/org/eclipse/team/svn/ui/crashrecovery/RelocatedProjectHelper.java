@@ -111,7 +111,7 @@ public class RelocatedProjectHelper implements IResolutionHelper {
 				try {
 					IConnectedProjectInformation provider = (IConnectedProjectInformation)RepositoryProvider.getProvider(project, SVNTeamPlugin.NATURE_ID);
 					IRepositoryRoot []roots = SVNUtility.findRoots(relocatedTo, true);
-					if (roots != null && roots.length == 1) {
+					if (roots.length == 1) {
 						provider.switchResource(roots[0].asRepositoryContainer(relocatedTo, false));
 					}
 					else {

@@ -25,9 +25,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
+import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.operation.local.management.ReconnectProjectOperation;
+import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
+import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
@@ -68,10 +71,37 @@ public class SVNFolderListener implements IResourceChangeListener {
 								if (info != null && info.url != null) {
 									String url = SVNUtility.decodeURL(info.url);
 									IRepositoryRoot []roots = SVNUtility.findRoots(url, true);
-									if (roots != null && roots.length == 1) {
-										ProgressMonitorUtility.doTaskExternalDefault(new ReconnectProjectOperation(new IProject[] {(IProject)resource}, roots[0].getRepositoryLocation()), monitor);
-										return false;
+									IRepositoryLocation location = null;
+									if (roots.length == 0) {
+										String rootNode = "/" + CoreExtensionsManager.instance().getOptionProvider().getDefaultTrunkName();
+										int idx = url.lastIndexOf(rootNode);
+										if (idx == -1 || !url.endsWith(rootNode) && url.charAt(idx + rootNode.length()) != '/') {
+											rootNode = "/" + CoreExtensionsManager.instance().getOptionProvider().getDefaultBranchesName();
+											idx = url.lastIndexOf(rootNode);
+											if (idx == -1 || !url.endsWith(rootNode) && url.charAt(idx + rootNode.length()) != '/') {
+												rootNode = "/" + CoreExtensionsManager.instance().getOptionProvider().getDefaultTagsName();
+												idx = url.lastIndexOf(rootNode);
+												if (idx != -1 && !url.endsWith(rootNode) && url.charAt(idx + rootNode.length()) != '/') {
+													idx = -1;
+												}
+											}
+										}
+										if (idx != -1) {
+											url = url.substring(0, idx);
+										}
+										location = SVNRemoteStorage.instance().newRepositoryLocation();
+										location.setUrl(url);
+										location.setStructureEnabled(true);
+										location.setTrunkLocation(CoreExtensionsManager.instance().getOptionProvider().getDefaultTrunkName());
+										location.setBranchesLocation(CoreExtensionsManager.instance().getOptionProvider().getDefaultBranchesName());
+										location.setTagsLocation(CoreExtensionsManager.instance().getOptionProvider().getDefaultTagsName());
+										SVNRemoteStorage.instance().addRepositoryLocation(location);
 									}
+									else {
+										location = roots[0].getRepositoryLocation();
+									}
+									ProgressMonitorUtility.doTaskExternalDefault(new ReconnectProjectOperation(new IProject[] {(IProject)resource}, location), monitor);
+									return false;
 								}
 							}
 							
