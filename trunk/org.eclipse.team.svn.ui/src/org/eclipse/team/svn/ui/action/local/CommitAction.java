@@ -17,7 +17,9 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.action.AbstractRecursiveTeamAction;
+import org.eclipse.team.svn.ui.dialog.TagModifyWarningDialog;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.extension.factory.ICommitDialog;
 import org.eclipse.team.svn.ui.panel.local.CommitPanel;
@@ -35,11 +37,17 @@ public class CommitAction extends AbstractRecursiveTeamAction {
 	}
 
 	public void runImpl(IAction action) {
-		CommitActionUtility commitUtility = new CommitActionUtility(this);	
+		CommitActionUtility commitUtility = new CommitActionUtility(this);
+        IResource [] allResources = commitUtility.getAllResources();
+        if (SVNUtility.isTagOperated(allResources)) {
+        	TagModifyWarningDialog dlg = new TagModifyWarningDialog(this.getShell());
+        	if (dlg.open() != 0) {
+        		return;
+        	}
+        }
 	    String proposedComment = SVNChangeSetCapability.getProposedComment(commitUtility.getAllResources());
-        CommitPanel commitPanel = new CommitPanel(commitUtility.getAllResources(), this.getSelectedResources(), CommitPanel.MSG_COMMIT, proposedComment);
+        CommitPanel commitPanel = new CommitPanel(allResources, this.getSelectedResources(), CommitPanel.MSG_COMMIT, proposedComment);
         ICommitDialog commitDialog = ExtensionsManager.getInstance().getCurrentCommitFactory().getCommitDialog(this.getShell(), commitUtility.getAllResourcesSet(), commitPanel);
-		
         if (commitDialog.open() == 0) {
 			if (commitPanel.getResourcesChanged()) {
 				commitUtility.initialize(this);
