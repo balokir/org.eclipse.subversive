@@ -19,6 +19,8 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.utility.SVNUtility;
+import org.eclipse.team.svn.ui.dialog.TagModifyWarningDialog;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.extension.factory.ICommitDialog;
 import org.eclipse.team.svn.ui.panel.local.CommitPanel;
@@ -61,8 +63,14 @@ public class CommitAction extends AbstractSynchronizeModelAction {
 		final IResource [][]selectedResources = new IResource[1][];
 		operation.getShell().getDisplay().syncExec(new Runnable() {
 			public void run() {
-			    String proposedComment = SVNChangeSetCapability.getProposedComment(commitUtility.getAllResources());
-                IResource[] resources = commitUtility.getAllResources();
+				IResource[] resources = commitUtility.getAllResources();
+				if (SVNUtility.isTagOperated(resources)) {
+					TagModifyWarningDialog dlg = new TagModifyWarningDialog(operation.getShell());
+		        	if (dlg.open() != 0) {
+		        		return;
+		        	}
+				}
+			    String proposedComment = SVNChangeSetCapability.getProposedComment(resources);                
 			    CommitPanel commitPanel = new CommitPanel(resources, resources, CommitPanel.MSG_COMMIT, proposedComment); 
                 ICommitDialog dialog = ExtensionsManager.getInstance().getCurrentCommitFactory().getCommitDialog(operation.getShell(), commitUtility.getAllResourcesSet(), commitPanel);				
 				if (dialog.open() != 0) {

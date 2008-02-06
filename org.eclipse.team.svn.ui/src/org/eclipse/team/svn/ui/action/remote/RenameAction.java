@@ -23,6 +23,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.action.AbstractRepositoryTeamAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
+import org.eclipse.team.svn.ui.dialog.TagModifyWarningDialog;
 import org.eclipse.team.svn.ui.operation.RefreshRemoteResourcesOperation;
 import org.eclipse.team.svn.ui.panel.remote.RenameResourcePanel;
 
@@ -39,6 +40,12 @@ public class RenameAction extends AbstractRepositoryTeamAction {
 
 	public void runImpl(IAction action) {
 		IRepositoryResource []resources = this.getSelectedRepositoryResources();
+		if (SVNUtility.isTagOperated(this.getSelectedRepositoryResources())) {
+			TagModifyWarningDialog dlg = new TagModifyWarningDialog(this.getShell());
+        	if (dlg.open() != 0) {
+        		return;
+        	}
+		}
 		RenameResourcePanel panel = new RenameResourcePanel(resources[0].getName());
 		DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
 		
