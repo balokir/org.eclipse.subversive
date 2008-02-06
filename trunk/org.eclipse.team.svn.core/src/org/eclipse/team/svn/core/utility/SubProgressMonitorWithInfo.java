@@ -12,68 +12,84 @@
 package org.eclipse.team.svn.core.utility;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.ProgressMonitorWrapper;
 
 /**
  * This subprogress monitor allow us to get current progress state
  * 
  * @author Alexander Gurov
  */
-public class SubProgressMonitorWithInfo extends SubProgressMonitor {
-	protected int currentProgress;
+public class SubProgressMonitorWithInfo extends ProgressMonitorWrapper {
+	protected double currentProgress;
 	protected double unknownProgress;
-	protected int total;
 	protected long lastTime;
 	
-	public SubProgressMonitorWithInfo(IProgressMonitor monitor, int ticks) {
-		super(monitor, ticks);
-		this.total = ticks;
-		this.lastTime = 0;
+	protected double parentTicks;
+	protected double scale;
+	protected int totalWork;
+	protected String subTaskOp;
+	
+	public SubProgressMonitorWithInfo(IProgressMonitor monitor, double parentTicks) {
+		super(monitor);
+		this.parentTicks = parentTicks;
 	}
 
-	public SubProgressMonitorWithInfo(IProgressMonitor monitor, int ticks, int style) {
-		super(monitor, ticks, style);
-		this.total = ticks;
-		this.lastTime = 0;
-	}
-	
 	public void beginTask(String name, int totalWork) {
+		this.lastTime = 0;
 		this.currentProgress = 0;
 		this.unknownProgress = 0;
-		super.beginTask(name, totalWork);
+		this.totalWork = totalWork > 0 ? totalWork : ProgressMonitorUtility.TOTAL_WORK;
+		this.scale = this.parentTicks / this.totalWork;
 	}
 
-	public void setTaskName(String name) {
-		long time = System.currentTimeMillis();
-		// redraw four times per second
-		if (this.lastTime == 0 || (time - this.lastTime) >= 250) {
-			this.lastTime = time;
-			super.setTaskName(name);
-		}
+	public void done() {
+		this.subTaskOp = null;
+		this.internalWorked(this.totalWork - this.currentProgress);
 	}
 	
-	public void subTask(String name) {
-		long time = System.currentTimeMillis();
-		// redraw four times per second
-		if (this.lastTime == 0 || (time - this.lastTime) >= 250) {
-			this.lastTime = time;
-			super.subTask(name);
+	public void internalWorked(double work) {
+		if (this.currentProgress + work > this.totalWork) {
+			work = this.totalWork - this.currentProgress;
+		}
+		if (this.currentProgress < this.totalWork) {
+			this.currentProgress += work;
+			super.internalWorked(work * this.scale);
 		}
 	}
 	
 	public void worked(int work) {
-		this.currentProgress += work;
-		super.worked(work);
+		if (work == IProgressMonitor.UNKNOWN) {
+			double delta = (this.totalWork - this.currentProgress) / this.totalWork;
+			delta /= this.unknownProgress < 30 ? 1 : (this.unknownProgress < 50 ? 2 : (this.unknownProgress < 70 ? 6 : (this.unknownProgress < 85 ? 12 : 25)));
+			this.unknownProgress += delta;
+			int offset = (int)(this.unknownProgress - this.currentProgress);
+			this.internalWorked(offset);
+		}
+		else {
+			this.internalWorked(work);
+		}
 	}
 	
 	public void unknownProgress(int current) {
-		this.unknownProgress += 1f / ((this.unknownProgress + 1) * (this.unknownProgress > 75 ? this.unknownProgress : 1));
-		int offset = (int)(this.unknownProgress - this.currentProgress);
-		this.worked(offset);
+		this.worked(IProgressMonitor.UNKNOWN);
+	}
+	
+	public void subTask(String name) {
+		long time = System.currentTimeMillis();
+		// redraw four times per second or if operation was changed
+		boolean operationChanged = this.subTaskOp == null || !name.startsWith(this.subTaskOp) || name.charAt(this.subTaskOp.length()) != ':';
+		if (this.lastTime == 0 || (time - this.lastTime) >= 250 || operationChanged) {
+			this.lastTime = time;
+			int idx = name.indexOf(':');
+			if (idx != -1) {
+				this.subTaskOp = name.substring(0, idx);
+			}
+			super.subTask(name);
+		}
 	}
 	
 	public int getCurrentProgress() {
-		return this.currentProgress;
+		return (int)this.currentProgress;
 	}
 	
 }

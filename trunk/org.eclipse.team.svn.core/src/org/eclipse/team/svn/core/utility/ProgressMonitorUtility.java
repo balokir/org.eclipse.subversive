@@ -103,14 +103,14 @@ public final class ProgressMonitorUtility {
 			runnable.run(monitor);
 		}
 		finally {
-			ProgressMonitorUtility.setTaskInfo(monitor, runnable, SVNTeamPlugin.instance().getResource("Progress.Done"));
 			monitor.done();
+			ProgressMonitorUtility.setTaskInfo(monitor, runnable, SVNTeamPlugin.instance().getResource("Progress.Done"));
 		}
 	}
 	
 	public static void doSubTask(IActionOperation runnable, IUnprotectedOperation op, IProgressMonitor monitor, int subTasksCount) throws Exception {
 		if (subTasksCount > 0) {
-			monitor = new SubProgressMonitorWithInfo(monitor, ProgressMonitorUtility.TOTAL_WORK / subTasksCount);
+			monitor = new SubProgressMonitorWithInfo(monitor, ((double)ProgressMonitorUtility.TOTAL_WORK) / subTasksCount);
 		}
 		monitor.beginTask(runnable.getOperationName(), ProgressMonitorUtility.TOTAL_WORK);
 		try {
@@ -124,14 +124,7 @@ public final class ProgressMonitorUtility {
 	public static void progress(IProgressMonitor monitor, int current, int total) {
 		if (monitor instanceof SubProgressMonitorWithInfo) {
 			SubProgressMonitorWithInfo info = (SubProgressMonitorWithInfo)monitor;
-			if (total != IProgressMonitor.UNKNOWN) {
-				int real = ProgressMonitorUtility.TOTAL_WORK * current / total;
-				real -= info.getCurrentProgress();
-				info.worked(real);
-			}
-			else {
-				info.unknownProgress(current);
-			}
+			info.worked(total == IProgressMonitor.UNKNOWN ? IProgressMonitor.UNKNOWN : (ProgressMonitorUtility.TOTAL_WORK * current / total - info.getCurrentProgress()));
 		}
 		else {
 			monitor.worked(1);
