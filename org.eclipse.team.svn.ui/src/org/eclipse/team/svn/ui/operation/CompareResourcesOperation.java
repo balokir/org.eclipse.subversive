@@ -90,13 +90,13 @@ public class CompareResourcesOperation extends AbstractActionOperation {
 		final IRepositoryResource []diffPair = new IRepositoryResource[] {this.ancestor, this.remote};
 		SVNRevision revision = this.remote.getSelectedRevision();
 		if (!monitor.isCanceled() && (revision.getKind() == Kind.HEAD || revision.getKind() == Kind.NUMBER)) {
-			LocateResourceURLInHistoryOperation op = new LocateResourceURLInHistoryOperation(diffPair, true);
-			ProgressMonitorUtility.doTaskExternal(op, monitor);
-			diffPair[0] = op.getRepositoryResources()[0];
-			diffPair[1] = op.getRepositoryResources()[1];
-				
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
+					LocateResourceURLInHistoryOperation op = new LocateResourceURLInHistoryOperation(diffPair, true);
+					ProgressMonitorUtility.doTaskExternal(op, monitor);
+					diffPair[0] = op.getRepositoryResources()[0];
+					diffPair[1] = op.getRepositoryResources()[1];
+					
 					SVNEntryRevisionReference refPrev = SVNUtility.getEntryRevisionReference(diffPair[0]);
 					SVNEntryRevisionReference refNext = SVNUtility.getEntryRevisionReference(diffPair[1]);
 					if (SVNUtility.useSingleReferenceSignature(refPrev, refNext)) {
