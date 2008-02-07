@@ -890,6 +890,23 @@
          </action>
          
          <action
+              helpContextId="org.eclipse.team.svn.ui.compare_selected_resources_action_context"
+              label="%CompareTwoSelectedRepositoryResourcesAction.label"
+              tooltip="%CompareTwoSelectedRepositoryResourcesAction.tooltip"
+              class="org.eclipse.team.svn.ui.action.remote.CompareSelectedAction"
+              menubarPath="compareMenu/mainGroup"
+              id="org.eclipse.team.svn.ui.action.remote.CompareSelectedAction">
+         </action>
+         <action
+              helpContextId="org.eclipse.team.svn.ui.compare_resources_action_context"
+              label="%CompareTwoRepositoryResourcesAction.label"
+              tooltip="%CompareTwoRepositoryResourcesAction.tooltip"
+              class="org.eclipse.team.svn.ui.action.remote.CompareAction"
+              menubarPath="compareMenu/mainGroup"
+              id="org.eclipse.team.svn.ui.action.remote.CompareAction">
+         </action>
+         
+         <action
                helpContextId="org.eclipse.team.svn.ui.import_action_context"
                label="%ImportAction.label"
                tooltip="%ImportAction.tooltip"
@@ -922,22 +939,6 @@
               class="org.eclipse.team.svn.ui.action.remote.CreatePatchAction"
               menubarPath="importExportGroup"
               id="org.eclipse.team.svn.ui.action.remote.CreatePatchAction">
-         </action>
-         <action
-              helpContextId="org.eclipse.team.svn.ui.compare_selected_resources_action_context"
-              label="%CompareTwoSelectedRepositoryResourcesAction.label"
-              tooltip="%CompareTwoSelectedRepositoryResourcesAction.tooltip"
-              class="org.eclipse.team.svn.ui.action.remote.CompareSelectedAction"
-              menubarPath="importExportGroup"
-              id="org.eclipse.team.svn.ui.action.remote.CompareSelectedAction">
-         </action>
-         <action
-              helpContextId="org.eclipse.team.svn.ui.compare_resources_action_context"
-              label="%CompareTwoRepositoryResourcesAction.label"
-              tooltip="%CompareTwoRepositoryResourcesAction.tooltip"
-              class="org.eclipse.team.svn.ui.action.remote.CompareAction"
-              menubarPath="importExportGroup"
-              id="org.eclipse.team.svn.ui.action.remote.CompareAction">
          </action>
 
       </objectContribution>
@@ -1027,6 +1028,25 @@
          </action>
             
          <action
+              helpContextId="org.eclipse.team.svn.ui.compare_selected_resources_action_context"
+              label="%CompareTwoSelectedRepositoryResourcesAction.label"
+              tooltip="%CompareTwoSelectedRepositoryResourcesAction.tooltip"
+              class="org.eclipse.team.svn.ui.action.remote.CompareSelectedAction"
+              menubarPath="compareMenu/mainGroup"
+              definitionId="org.eclipse.team.svn.ui.command.CompareTwoSelectedRepositoryResourcesCommand"
+              id="org.eclipse.team.svn.ui.action.remote.CompareSelectedAction">
+         </action>
+         <action
+              helpContextId="org.eclipse.team.svn.ui.compare_resources_action_context"
+              label="%CompareTwoRepositoryResourcesAction.label"
+              tooltip="%CompareTwoRepositoryResourcesAction.tooltip"
+              class="org.eclipse.team.svn.ui.action.remote.CompareAction"
+              menubarPath="compareMenu/mainGroup"
+              definitionId="org.eclipse.team.svn.ui.command.CompareTwoRepositoryResourcesCommand"
+              id="org.eclipse.team.svn.ui.action.remote.CompareAction">
+         </action>
+         
+         <action
                helpContextId="org.eclipse.team.svn.ui.export_action_context"
                label="%ExportAction.label"
                tooltip="%ExportAction.tooltip"
@@ -1050,24 +1070,6 @@
               class="org.eclipse.team.svn.ui.action.remote.CreatePatchAction"
               menubarPath="importExportGroup"
               id="org.eclipse.team.svn.ui.action.remote.CreatePatchAction">
-         </action>
-         <action
-              helpContextId="org.eclipse.team.svn.ui.compare_selected_resources_action_context"
-              label="%CompareTwoSelectedRepositoryResourcesAction.label"
-              tooltip="%CompareTwoSelectedRepositoryResourcesAction.tooltip"
-              class="org.eclipse.team.svn.ui.action.remote.CompareSelectedAction"
-              menubarPath="importExportGroup"
-              definitionId="org.eclipse.team.svn.ui.command.CompareTwoSelectedRepositoryResourcesCommand"
-              id="org.eclipse.team.svn.ui.action.remote.CompareSelectedAction">
-         </action>
-         <action
-              helpContextId="org.eclipse.team.svn.ui.compare_resources_action_context"
-              label="%CompareTwoRepositoryResourcesAction.label"
-              tooltip="%CompareTwoRepositoryResourcesAction.tooltip"
-              class="org.eclipse.team.svn.ui.action.remote.CompareAction"
-              menubarPath="importExportGroup"
-              definitionId="org.eclipse.team.svn.ui.command.CompareTwoRepositoryResourcesCommand"
-              id="org.eclipse.team.svn.ui.action.remote.CompareAction">
          </action>
       </objectContribution>
       
@@ -1347,6 +1349,14 @@
          </action>
          
          <action
+              helpContextId="org.eclipse.team.svn.ui.compare_resources_action_context"
+              label="%CompareTwoRepositoryResourcesActionEditor.label"
+              tooltip="%CompareTwoRepositoryResourcesActionEditor.tooltip"
+              class="org.eclipse.team.svn.ui.action.remote.CompareAction"
+              menubarPath="importExportGroup"
+              id="org.eclipse.team.svn.ui.action.remote.CompareAction">
+         </action>
+         <action
               helpContextId="org.eclipse.team.svn.ui.break_remote_lock_action_context"
               label="%BreakLockAction.label"
               tooltip="%BreakLockAction.tooltip"
@@ -1378,14 +1388,6 @@
               class="org.eclipse.team.svn.ui.action.remote.CreatePatchAction"
               menubarPath="importExportGroup"
               id="org.eclipse.team.svn.ui.action.remote.CreatePatchAction">
-         </action>
-         <action
-              helpContextId="org.eclipse.team.svn.ui.compare_resources_action_context"
-              label="%CompareTwoRepositoryResourcesAction.label"
-              tooltip="%CompareTwoRepositoryResourcesAction.tooltip"
-              class="org.eclipse.team.svn.ui.action.remote.CompareAction"
-              menubarPath="importExportGroup"
-              id="org.eclipse.team.svn.ui.action.remote.CompareAction">
          </action>
       </objectContribution>
       
