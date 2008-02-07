@@ -62,8 +62,12 @@ public class CompareRepositoryResourcesOperation extends AbstractActionOperation
 			this.next = toCompare[1];
 		}
 		
-		LocateResourceURLInHistoryOperation op = new LocateResourceURLInHistoryOperation(new IRepositoryResource[] {this.next, this.prev}, true);
-		ProgressMonitorUtility.doTaskExternal(op, monitor);
+		final LocateResourceURLInHistoryOperation op = new LocateResourceURLInHistoryOperation(new IRepositoryResource[] {this.next, this.prev}, true);
+		this.protectStep(new IUnprotectedOperation() {
+			public void run(IProgressMonitor monitor) throws Exception {
+				ProgressMonitorUtility.doTaskExternal(op, monitor);
+			}
+		}, monitor, 3);
 		this.next = op.getRepositoryResources()[0];
 		this.prev = op.getRepositoryResources()[1];
 		
@@ -82,7 +86,7 @@ public class CompareRepositoryResourcesOperation extends AbstractActionOperation
 					SVNUtility.diffStatus(proxy, statuses, refPrev, refNext, Depth.INFINITY, ISVNConnector.Options.NONE, new SVNProgressMonitor(CompareRepositoryResourcesOperation.this, monitor, null, false));
 				}
 			}
-		}, monitor, 2);
+		}, monitor, 3);
 		
 		location.releaseSVNProxy(proxy);
 		
@@ -99,7 +103,7 @@ public class CompareRepositoryResourcesOperation extends AbstractActionOperation
 						}
 					});
 				}
-			}, monitor, 2);
+			}, monitor, 3);
 		}
 	}
 	
