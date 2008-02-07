@@ -898,6 +898,22 @@
               id="org.eclipse.team.svn.ui.action.remote.CompareSelectedAction">
          </action>
          <action
+              helpContextId="org.eclipse.team.svn.ui.compare_remote_with_tag_action_context"
+              label="%CompareRemoteWithTagAction.label"
+              tooltip="%CompareRemoteWithTagAction.tooltip"
+              class="org.eclipse.team.svn.ui.action.remote.CompareWithTagAction"
+              menubarPath="compareMenu/mainGroup"
+              id="org.eclipse.team.svn.ui.action.remote.CompareWithTagAction">
+         </action>
+         <action
+              helpContextId="org.eclipse.team.svn.ui.compare_remote_with_branch_action_context"
+              label="%CompareRemoteWithBranchAction.label"
+              tooltip="%CompareRemoteWithBranchAction.tooltip"
+              class="org.eclipse.team.svn.ui.action.remote.CompareWithBranchAction"
+              menubarPath="compareMenu/mainGroup"
+              id="org.eclipse.team.svn.ui.action.remote.CompareWithBranchAction">
+         </action>
+         <action
               helpContextId="org.eclipse.team.svn.ui.compare_resources_action_context"
               label="%CompareTwoRepositoryResourcesAction.label"
               tooltip="%CompareTwoRepositoryResourcesAction.tooltip"
@@ -1035,6 +1051,24 @@
               menubarPath="compareMenu/mainGroup"
               definitionId="org.eclipse.team.svn.ui.command.CompareTwoSelectedRepositoryResourcesCommand"
               id="org.eclipse.team.svn.ui.action.remote.CompareSelectedAction">
+         </action>
+         <action
+              helpContextId="org.eclipse.team.svn.ui.compare_remote_with_tag_action_context"
+              label="%CompareRemoteWithTagAction.label"
+              tooltip="%CompareRemoteWithTagAction.tooltip"
+              class="org.eclipse.team.svn.ui.action.remote.CompareWithTagAction"
+              menubarPath="compareMenu/mainGroup"
+              definitionId="org.eclipse.team.svn.ui.command.CompareRepositoryWithTagCommand"
+              id="org.eclipse.team.svn.ui.action.remote.CompareWithTagAction">
+         </action>
+         <action
+              helpContextId="org.eclipse.team.svn.ui.compare_remote_with_branch_action_context"
+              label="%CompareRemoteWithBranchAction.label"
+              tooltip="%CompareRemoteWithBranchAction.tooltip"
+              class="org.eclipse.team.svn.ui.action.remote.CompareWithBranchAction"
+              menubarPath="compareMenu/mainGroup"
+           	  definitionId="org.eclipse.team.svn.ui.command.CompareRepositoryWithBranchCommand"
+              id="org.eclipse.team.svn.ui.action.remote.CompareWithBranchAction">
          </action>
          <action
               helpContextId="org.eclipse.team.svn.ui.compare_resources_action_context"
@@ -1678,6 +1712,16 @@
            id="org.eclipse.team.svn.ui.action.remote.CompareAction"
            label="%CompareTwoRepositoryResourcesAction.label"/>
      <action
+           class="org.eclipse.team.svn.ui.action.remote.CompareWithBranchAction"
+           definitionId="org.eclipse.team.svn.ui.command.CompareRepositoryWithBranchCommand"
+           id="org.eclipse.team.svn.ui.action.remote.CompareWithBranchAction"
+           label="%CompareRemoteWithBranchAction.label"/>
+     <action
+           class="org.eclipse.team.svn.ui.action.remote.CompareWithTagAction"
+           definitionId="org.eclipse.team.svn.ui.command.CompareRepositoryWithTagCommand"
+           id="org.eclipse.team.svn.ui.action.remote.CompareWithTagAction"
+           label="%CompareRemoteWithTagAction.label"/>
+     <action
            class="org.eclipse.team.svn.ui.action.remote.CompareSelectedAction"
            definitionId="org.eclipse.team.svn.ui.command.CompareTwoSelectedRepositoryResourcesCommand"
            id="org.eclipse.team.svn.ui.action.remote.CompareSelectedAction"
@@ -2034,6 +2078,14 @@
           categoryId="org.eclipse.team.svn.ui.command.category"
           id="org.eclipse.team.svn.ui.command.CompareTwoRepositoryResourcesCommand"
           name="%CompareTwoRepositoryResourcesCommand.label"/>
+    <command
+          categoryId="org.eclipse.team.svn.ui.command.category"
+          id="org.eclipse.team.svn.ui.command.CompareRepositoryWithBranchCommand"
+          name="%CompareRepositoryWithBranchCommand.label"/>
+    <command
+          categoryId="org.eclipse.team.svn.ui.command.category"
+          id="org.eclipse.team.svn.ui.command.CompareRepositoryWithTagCommand"
+          name="%CompareRepositoryWithTagCommand.label"/>
     <command
           categoryId="org.eclipse.team.svn.ui.command.category"
           id="org.eclipse.team.svn.ui.command.CompareTwoSelectedRepositoryResourcesCommand"

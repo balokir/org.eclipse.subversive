@@ -16,7 +16,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.action.local.CompareWithBranchTagAction;
 import org.eclipse.team.svn.ui.composite.BranchTagSelectionComposite;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 
@@ -26,7 +25,6 @@ import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
  * @author Alexei Goncharov
  */
 public class ReplaceBranchTagPanel extends AbstractDialogPanel {
-	
 	protected IRepositoryResource selectedResource;
 	protected int type;
 	protected long currentRevision;
@@ -39,7 +37,7 @@ public class ReplaceBranchTagPanel extends AbstractDialogPanel {
 		this.selectedResource = baseResource;
 		this.type = type;
 		this.stopOnCopy = stopOnCopy;
-		if (type == CompareWithBranchTagAction.BRANCH_OPERATED) {
+		if (type == BranchTagSelectionComposite.BRANCH_OPERATED) {
 			this.dialogTitle = SVNTeamUIPlugin.instance().getResource("Replace.Branch.Title");
 			this.dialogDescription = SVNTeamUIPlugin.instance().getResource("Replace.Branch.Description");
 			this.defaultMessage = SVNTeamUIPlugin.instance().getResource("Replace.Branch.Message");

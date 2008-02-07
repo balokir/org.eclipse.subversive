@@ -11,6 +11,8 @@
 
 package org.eclipse.team.svn.ui.action.local;
 
+import org.eclipse.team.svn.ui.composite.BranchTagSelectionComposite;
+
 /**
  * Replace with tag action implementation
  * 
@@ -19,6 +21,6 @@ package org.eclipse.team.svn.ui.action.local;
 public class ReplaceWithTagAction extends ReplaceWithBranchTagAction {
 	
 	public ReplaceWithTagAction() {
-		super(CompareWithBranchTagAction.TAG_OPERATED);
+		super(BranchTagSelectionComposite.TAG_OPERATED);
 	}
 }

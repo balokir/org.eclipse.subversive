@@ -16,7 +16,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.action.local.CompareWithBranchTagAction;
 import org.eclipse.team.svn.ui.composite.BranchTagSelectionComposite;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 
@@ -26,7 +25,6 @@ import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
  * @author Alexei Goncharov
  */
 public class CompareBranchTagPanel extends AbstractDialogPanel {
-	
 	protected IRepositoryResource selectedResource;
 	protected int type;
 	protected long currentRevision;
@@ -34,12 +32,12 @@ public class CompareBranchTagPanel extends AbstractDialogPanel {
 	protected String historyKey;
 	protected BranchTagSelectionComposite selectionComposite;
 	
-	public CompareBranchTagPanel(IRepositoryResource baseResource, long currentRevision, int type, boolean stopOnCopy) {
+	public CompareBranchTagPanel(IRepositoryResource baseResource, int type, boolean stopOnCopy) {
 		super();
 		this.selectedResource = baseResource;
 		this.type = type;
 		this.stopOnCopy = stopOnCopy;
-		if (type == CompareWithBranchTagAction.BRANCH_OPERATED) {
+		if (type == BranchTagSelectionComposite.BRANCH_OPERATED) {
 			this.dialogTitle = SVNTeamUIPlugin.instance().getResource("Compare.Branch.Title");
 			this.dialogDescription = SVNTeamUIPlugin.instance().getResource("Compare.Branch.Description");
 			this.defaultMessage = SVNTeamUIPlugin.instance().getResource("Compare.Branch.Message");
