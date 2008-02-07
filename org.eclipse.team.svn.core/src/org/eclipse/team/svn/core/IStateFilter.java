@@ -94,6 +94,89 @@ public interface IStateFilter {
 		}
 	}
 
+	public abstract class CompositeStateFilter implements IStateFilter {
+		protected IStateFilter []filters;
+		
+		public CompositeStateFilter(IStateFilter []filters) {
+			this.filters = filters;
+		}
+		
+		public boolean accept(ILocalResource resource) {
+			for (int i = 0; i < this.filters.length; i++) {
+				if (this.haveQuickDecision(this.filters[i].accept(resource))) {
+					return this.getQuickDecision();
+				}
+			}
+			return this.getFinalDecision();
+		}
+		public boolean accept(IResource resource, String state, int mask) {
+			for (int i = 0; i < this.filters.length; i++) {
+				if (this.haveQuickDecision(this.filters[i].accept(resource, state, mask))) {
+					return this.getQuickDecision();
+				}
+			}
+			return this.getFinalDecision();
+		}
+		public boolean allowsRecursion(ILocalResource resource) {
+			for (int i = 0; i < this.filters.length; i++) {
+				if (this.haveQuickDecision(this.filters[i].accept(resource))) {
+					return this.getQuickDecision();
+				}
+			}
+			return this.getFinalDecision();
+		}
+		public boolean allowsRecursion(IResource resource, String state, int mask) {
+			for (int i = 0; i < this.filters.length; i++) {
+				if (this.haveQuickDecision(this.filters[i].accept(resource, state, mask))) {
+					return this.getQuickDecision();
+				}
+			}
+			return this.getFinalDecision();
+		}
+		
+		protected abstract boolean getFinalDecision();
+		protected abstract boolean getQuickDecision();
+		protected abstract boolean haveQuickDecision(boolean current);
+	};
+	
+	public static class OrStateFilter extends CompositeStateFilter {
+		public OrStateFilter(IStateFilter []filters) {
+			super(filters);
+		}
+		
+		protected boolean getFinalDecision() {
+			return false;
+		}
+		
+		protected boolean getQuickDecision() {
+			return true;
+		}
+		
+		protected boolean haveQuickDecision(boolean current) {
+			return current;
+		}
+		
+	};
+	
+	public static class AndStateFilter extends CompositeStateFilter {
+		public AndStateFilter(IStateFilter []filters) {
+			super(filters);
+		}
+		
+		protected boolean getFinalDecision() {
+			return true;
+		}
+		
+		protected boolean haveQuickDecision(boolean current) {
+			return !current;
+		}
+		
+		protected boolean getQuickDecision() {
+			return false;
+		}
+		
+	};
+	
 	public static final IStateFilter SF_LOCKED = new AbstractStateFilter() {
 	    protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 	        return (mask & ILocalResource.IS_LOCKED) != 0;

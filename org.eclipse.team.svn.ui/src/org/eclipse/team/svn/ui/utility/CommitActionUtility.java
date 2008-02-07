@@ -53,8 +53,11 @@ public class CommitActionUtility {
 	public void initialize(IResourceSelector selector) {
 		this.selector = selector;
 		
+		this.allResourcesSet = new HashSet();
+		this.allResourcesSet.addAll(Arrays.asList(this.selector.getSelectedResourcesRecursive(new IStateFilter.OrStateFilter(new IStateFilter[] {IStateFilter.SF_COMMITABLE, IStateFilter.SF_CONFLICTING, IStateFilter.SF_NEW}))));
+		
 		this.newNonRecursive = new HashSet(Arrays.asList(this.selector.getSelectedResources(IStateFilter.SF_IGNORED)));
-		this.newRecursive = new HashSet(Arrays.asList(this.selector.getSelectedResourcesRecursive(IStateFilter.SF_NEW)));
+		this.newRecursive = new HashSet(Arrays.asList(FileUtility.getResourcesRecursive((IResource [])this.allResourcesSet.toArray(new IResource[this.allResourcesSet.size()]), IStateFilter.SF_NEW, IResource.DEPTH_ZERO)));
 		
 		HashSet fullSet = new HashSet(this.newNonRecursive);
 		fullSet.addAll(this.newRecursive);
@@ -62,9 +65,8 @@ public class CommitActionUtility {
 		this.newNonRecursive.addAll(this.parents);
 		fullSet.addAll(this.parents);
 		
-		this.allResourcesSet = new HashSet(fullSet);
-		this.allResourcesSet.addAll(Arrays.asList(this.selector.getSelectedResourcesRecursive(IStateFilter.SF_COMMITABLE)));
-		this.allResourcesSet.addAll(Arrays.asList(this.selector.getSelectedResourcesRecursive(IStateFilter.SF_CONFLICTING)));
+		this.allResourcesSet.addAll(fullSet);
+		
 		this.allResources = (IResource [])this.allResourcesSet.toArray(new IResource[this.allResourcesSet.size()]);
 		this.allResourcesSet.addAll(Arrays.asList(FileUtility.addOperableParents(this.allResources, IStateFilter.SF_ADDED, true)));
 		this.allResources = (IResource [])this.allResourcesSet.toArray(new IResource[this.allResourcesSet.size()]);
