@@ -38,18 +38,7 @@ public class CompareAction extends AbstractRepositoryTeamAction {
         ComparePanel panel = new ComparePanel(first);
         DefaultDialog dlg = new DefaultDialog(this.getShell(), panel);
         if (dlg.open() == 0) {
-        	IRepositoryResource second = panel.getSelectedResource();
-        	try {
-        		if (second.getRevision() > first.getRevision()) {
-        			IRepositoryResource tmp = second;
-        			second = first;
-        			first = tmp;
-        		}
-        	}
-        	catch (SVNConnectorException ex) {
-        		UILoggedOperation.reportError("Compare", ex);
-        	}
-            this.runScheduled(new CompareRepositoryResourcesOperation(second, first));
+        	this.doCompare(first, panel.getSelectedResource());
         }
     }
 
@@ -60,6 +49,20 @@ public class CompareAction extends AbstractRepositoryTeamAction {
 		}
 		boolean isCompareFoldersAllowed = (CoreExtensionsManager.instance().getSVNConnectorFactory().getSupportedFeatures() & ISVNConnectorFactory.OptionalFeatures.COMPARE_FOLDERS) != 0;
         return isCompareFoldersAllowed || resources[0] instanceof IRepositoryFile;
+    }
+    
+    protected void doCompare(IRepositoryResource first, IRepositoryResource second) {
+    	try {
+    		if (second.getRevision() > first.getRevision()) {
+    			IRepositoryResource tmp = second;
+    			second = first;
+    			first = tmp;
+    		}
+    	}
+    	catch (SVNConnectorException ex) {
+    		UILoggedOperation.reportError("Compare", ex);
+    	}
+        this.runScheduled(new CompareRepositoryResourcesOperation(second, first));
     }
 
 }

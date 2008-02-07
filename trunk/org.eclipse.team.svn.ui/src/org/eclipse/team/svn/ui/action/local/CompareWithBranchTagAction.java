@@ -34,10 +34,6 @@ import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
  * @author Alexei Goncharov
  */
 public class CompareWithBranchTagAction extends AbstractWorkingCopyAction {
-
-	public static final int BRANCH_OPERATED = 0;
-	public static final int TAG_OPERATED = 1;
-	
 	protected int type;
 	
 	public CompareWithBranchTagAction(int type) {
@@ -53,10 +49,7 @@ public class CompareWithBranchTagAction extends AbstractWorkingCopyAction {
 			boolean recommendedLayoutUsed = 
 				SVNTeamPreferences.getRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_NAME) &&
 				remote.getRepositoryLocation().isStructureEnabled();
-			return 
-				(isCompareFoldersAllowed ||
-				this.getSelectedResources()[0].getType() == IResource.FILE)
-				&& recommendedLayoutUsed;
+			return (isCompareFoldersAllowed || this.getSelectedResources()[0].getType() == IResource.FILE) && recommendedLayoutUsed;
 		}
 		return false;
 	}
@@ -65,7 +58,7 @@ public class CompareWithBranchTagAction extends AbstractWorkingCopyAction {
 		IResource resource = this.getSelectedResources()[0];
 		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
 		IRepositoryResource remote = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
-		CompareBranchTagPanel panel = new CompareBranchTagPanel(remote, local.getRevision(), type, true);
+		CompareBranchTagPanel panel = new CompareBranchTagPanel(remote, this.type, true);
 		DefaultDialog dlg = new DefaultDialog(this.getShell(), panel);
 		if (dlg.open() == 0){
 			remote = panel.getSelectedResoure();

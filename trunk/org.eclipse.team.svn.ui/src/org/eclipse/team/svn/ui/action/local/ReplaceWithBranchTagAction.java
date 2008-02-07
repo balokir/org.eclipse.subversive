@@ -56,7 +56,7 @@ public class ReplaceWithBranchTagAction extends AbstractWorkingCopyAction {
 		IResource resource = this.getSelectedResources()[0];
 		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
 		IRepositoryResource remote = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
-		ReplaceBranchTagPanel panel = new ReplaceBranchTagPanel(remote, local.getRevision(), type, true);
+		ReplaceBranchTagPanel panel = new ReplaceBranchTagPanel(remote, local.getRevision(), this.type, true);
 		DefaultDialog dlg = new DefaultDialog(this.getShell(), panel);
 		if (dlg.open() == 0){
 			ReplaceWarningDialog dialog = new ReplaceWarningDialog(this.getShell());
