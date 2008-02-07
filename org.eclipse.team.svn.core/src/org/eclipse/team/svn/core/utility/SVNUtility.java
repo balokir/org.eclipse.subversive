@@ -475,9 +475,9 @@ public final class SVNUtility {
 	public static void reorder(SVNDiffStatus []statuses, final boolean parent2Child) {
 		Arrays.sort(statuses, new Comparator() {
 			public int compare(Object o1, Object o2) {
-				String s1 = ((SVNDiffStatus)o1).pathPrev;
-				String s2 = ((SVNDiffStatus)o2).pathPrev;
-				return parent2Child ? s1.compareTo(s2) : s2.compareTo(s1);
+				SVNDiffStatus d1 = (SVNDiffStatus)o1;
+				SVNDiffStatus d2 = (SVNDiffStatus)o2;
+				return parent2Child ? d1.pathPrev.compareTo(d2.pathPrev) : d2.pathPrev.compareTo(d1.pathPrev);
 			}
 			
 			public boolean equals(Object obj) {

@@ -82,7 +82,7 @@ public class RepositoriesView extends ViewPart {
 	public static MenuManager newMenuInstance(final ISelectionProvider provider) {
 		MenuManager menuMgr = new MenuManager();
         menuMgr.addMenuListener(new IMenuListener() {
-            public void menuAboutToShow(IMenuManager manager) {
+            public void menuAboutToShow(final IMenuManager manager) {
         		MenuManager sub = new MenuManager(SVNTeamUIPlugin.instance().getResource("RepositoriesView.New"), "addMenu");
         		sub.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
         		sub.add(new Separator("mainGroup"));
@@ -137,10 +137,15 @@ public class RepositoriesView extends ViewPart {
 				manager.add(new Separator("locationGroup"));
 				
                 manager.add(new Separator("propertiesGroup"));
-                
-                manager.add(new Separator("refreshGroup"));
 
                 manager.add(new Separator("importExportGroup"));
+                
+				sub = new MenuManager(SVNTeamUIPlugin.instance().getResource("RepositoriesView.CompareWith"), "compareMenu");
+        		sub.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+        		sub.add(new Separator("mainGroup"));
+        		manager.prependToGroup("importExportGroup", sub);
+                
+                manager.add(new Separator("refreshGroup"));
             }
 
         });

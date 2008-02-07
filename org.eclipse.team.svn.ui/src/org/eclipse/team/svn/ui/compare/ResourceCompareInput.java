@@ -31,6 +31,7 @@ import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.DiffTreeViewer;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -42,6 +43,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -441,6 +443,14 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 			super(parent, configuration);
 		}
 		
+		public void setComparator(ViewerComparator comparator) {
+			super.setComparator(new ViewerComparator() {
+				public int category(Object element) {
+					return ((IDiffElement)element).getType() == ITypedElement.FOLDER_TYPE ? 0 : 1;
+				}
+			});
+		}
+		
 		protected void handleOpen(final SelectionEvent event) {
 			final BaseCompareNode node = (BaseCompareNode)((TreeItem)event.item).getData();
 			CompositeOperation fetchContent = node.getFetcher();
@@ -561,7 +571,6 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 			}
 			return op;
 		}
-		
 	}
 	
 }
