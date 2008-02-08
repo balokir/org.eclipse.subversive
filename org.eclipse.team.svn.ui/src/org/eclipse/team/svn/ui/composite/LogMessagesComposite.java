@@ -211,7 +211,7 @@ public class LogMessagesComposite extends SashForm {
 	
 	public String getSelectedMessage() {
 		IStructuredSelection tSelection = (IStructuredSelection)this.historyTable.getSelection();
-		if (tSelection.size() > 0 &&  (tSelection.getFirstElement() instanceof HistoryCategory)) {
+		if (tSelection.size() > 0 &&  (tSelection.getFirstElement() instanceof SVNLogEntry)) {
 			String message = ((SVNLogEntry)tSelection.getFirstElement()).message;
 			return message == null ? "" : message;
 		}
