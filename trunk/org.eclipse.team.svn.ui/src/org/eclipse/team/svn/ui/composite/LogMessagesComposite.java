@@ -393,8 +393,6 @@ public class LogMessagesComposite extends SashForm {
 			Object rowItems = selectedItems[i];
 			if (rowItems instanceof HistoryCategory) {
 				SVNLogEntry [] entries = ((HistoryCategory)rowItems).getLogEntries();
-				historyText += ((HistoryCategory)rowItems).getName();
-				historyText += System.getProperty("line.separator");
 				for (int j = 0; j < entries.length; j++) {
 					historyText += String.valueOf(entries[j].revision);
 					historyText += "\t";
