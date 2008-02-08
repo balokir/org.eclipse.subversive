@@ -40,8 +40,12 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
@@ -62,6 +66,7 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.extension.factory.ICommentView;
 import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
+import org.eclipse.team.svn.ui.utility.TableViewerSorter;
 
 /**
  * LogMessage's viewer implementation
@@ -206,7 +211,7 @@ public class LogMessagesComposite extends SashForm {
 	
 	public String getSelectedMessage() {
 		IStructuredSelection tSelection = (IStructuredSelection)this.historyTable.getSelection();
-		if (tSelection.size() > 0 && (tSelection.getFirstElement() instanceof SVNLogEntry)) {
+		if (tSelection.size() > 0 &&  (tSelection.getFirstElement() instanceof HistoryCategory)) {
 			String message = ((SVNLogEntry)tSelection.getFirstElement()).message;
 			return message == null ? "" : message;
 		}
@@ -214,6 +219,10 @@ public class LogMessagesComposite extends SashForm {
 	}
 	
 	public String getSelectedMessageNoComment() {
+		IStructuredSelection tSelection = (IStructuredSelection)this.historyTable.getSelection();
+		if (tSelection.size() > 0 && (tSelection.getFirstElement() instanceof HistoryCategory)) {
+			return "";
+		}
 		String message = this.getSelectedMessage();
 		return message.length() == 0 ? SVNTeamPlugin.instance().getResource("SVNInfo.NoComment") : message;
 	}
@@ -538,43 +547,24 @@ public class LogMessagesComposite extends SashForm {
 		this.setWeights(new int[] {logPercent, 100 - logPercent});		
 		
 		this.historyTable = new TreeViewer(treeTable);
-	
-		/*ViewerSorter sorter = new ViewerSorter(new RuleBasedCollator(null) {
-            public int compare(Object row1, Object row2, int column) {
-                SVNLogEntry rowData1 = (SVNLogEntry)row1;
-                SVNLogEntry rowData2 = (SVNLogEntry)row2;
-                if (column == 1) {
-                    return new Long(rowData1.revision).compareTo(new Long(rowData2.revision));
-                }
-                if (column == 2) {
-					return new Long(rowData1.date).compareTo(new Long(rowData2.date));
-                }
-                if (column == 3) {
-                	int files1 = rowData1.changedPaths == null ? 0 : rowData1.changedPaths.length;
-                	int files2 = rowData2.changedPaths == null ? 0 : rowData2.changedPaths.length;
-                	return new Integer(files1).compareTo(new Integer(files2));
-                }
-                if (column == 4) {
-                    return TableViewerSorter.compare(rowData1.author == null ? "" : rowData1.author, rowData2.author == null ? "" : rowData2.author);
-                }
-                return TableViewerSorter.compare(rowData1.message == null ? "" : rowData1.message, rowData2.message == null ? "" : rowData2.message);
-            }
-        });
-		this.historyTable.setSorter(sorter);*/
+				
+		HistoryComparator comparator = new HistoryComparator(0);
+		comparator.setReversed(true);
+		this.historyTable.setComparator(comparator);
 		
 		//revision
 		TreeColumn col = new TreeColumn(treeTable, SWT.NONE);
 		col.setResizable(true);
 		col.setAlignment(SWT.RIGHT);
 		col.setText(SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Revision"));
-		//col.addSelectionListener(sorter);
+		col.addSelectionListener(this.getColumnListener(this.historyTable));
 		layout.addColumnData(new ColumnWeightData(14, true));
 	
 		// creation date
 		col = new TreeColumn(treeTable, SWT.NONE);
 		col.setResizable(true);
 		col.setText(SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Date"));
-		//col.addSelectionListener(sorter);
+		col.addSelectionListener(this.getColumnListener(this.historyTable));
 		layout.addColumnData(new ColumnWeightData(18, true));
 	
 		//file count
@@ -582,21 +572,21 @@ public class LogMessagesComposite extends SashForm {
 		col.setResizable(true);
 		col.setAlignment(SWT.RIGHT);
 		col.setText(SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Changes"));
-		//col.addSelectionListener(sorter);
+		col.addSelectionListener(this.getColumnListener(this.historyTable));
 		layout.addColumnData(new ColumnWeightData(8, true));
 		
 		// author
 		col = new TreeColumn(treeTable, SWT.NONE);
 		col.setResizable(true);
 		col.setText(SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Author"));
-		//col.addSelectionListener(sorter);
+		col.addSelectionListener(this.getColumnListener(this.historyTable));
 		layout.addColumnData(new ColumnWeightData(13, true));
 	
 		//comment
 		col = new TreeColumn(treeTable, SWT.NONE);
 		col.setResizable(true);
 		col.setText(SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Comment"));
-		//col.addSelectionListener(sorter);
+		col.addSelectionListener(this.getColumnListener(this.historyTable));
 		layout.addColumnData(new ColumnWeightData(46, true));
 		this.historyTable.setContentProvider(new ITreeContentProvider() {
 			public void dispose () {
@@ -657,6 +647,27 @@ public class LogMessagesComposite extends SashForm {
 		this.setTableInput();
 		this.historyTable.refresh();
 		this.historyTable.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
+	}
+	
+	private SelectionListener getColumnListener(final TreeViewer treeViewer) {
+		return new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				int column = treeViewer.getTree().indexOf((TreeColumn) e.widget);
+				HistoryComparator oldSorter = (HistoryComparator) treeViewer.getComparator();
+				TreeColumn treeColumn = ((TreeColumn)e.widget);
+				if (oldSorter != null && column == oldSorter.getColumnNumber()) {
+					oldSorter.setReversed(!oldSorter.isReversed());
+					
+					treeViewer.getTree().setSortColumn(treeColumn);
+					treeViewer.getTree().setSortDirection(oldSorter.isReversed() ? SWT.DOWN : SWT.UP);
+					treeViewer.refresh();
+				} else {
+				    treeViewer.getTree().setSortColumn(treeColumn);
+                    treeViewer.getTree().setSortDirection(SWT.UP);
+					treeViewer.setComparator(new HistoryComparator(column));
+				}
+			}
+		};
 	}
 	
 	private Collection getRelatedPathPrefixes() {
@@ -768,6 +779,68 @@ public class LogMessagesComposite extends SashForm {
 		
 	}
     
+	public class HistoryComparator extends ViewerComparator {
+        protected int column;
+        protected boolean reversed;
+		
+		HistoryComparator(int column) {
+			super();
+			this.reversed = false;
+			this.column = column;
+		}
+		
+		public boolean isReversed() {
+			return this.reversed;
+		}
+
+		public void setReversed(boolean reversed) {
+			this.reversed = reversed;
+		}
+		
+		public int getColumnNumber() {
+			return this.column;
+		}
+
+		
+		public int compare(Viewer viewer, Object row1, Object row2) {
+			if ((row1 instanceof HistoryCategory) || (row2 instanceof HistoryCategory)) {
+				return 0;
+			}
+            SVNLogEntry rowData1 = (SVNLogEntry)row1;
+            SVNLogEntry rowData2 = (SVNLogEntry)row2;
+            if (this.column == LogMessagesComposite.COLUMN_REVISION) {
+            	if (this.reversed) {
+            		return new Long(rowData2.revision).compareTo(new Long(rowData1.revision));
+            	}
+            	return new Long(rowData1.revision).compareTo(new Long(rowData2.revision));
+            }
+            if (this.column == LogMessagesComposite.COLUMN_DATE) {
+            	if (this.reversed) {
+            		return new Long(rowData2.date).compareTo(new Long(rowData1.date));
+            	}
+				return new Long(rowData1.date).compareTo(new Long(rowData2.date));
+            }
+            if (this.column == LogMessagesComposite.COLUMN_CHANGES) {
+            	int files1 = rowData1.changedPaths == null ? 0 : rowData1.changedPaths.length;
+            	int files2 = rowData2.changedPaths == null ? 0 : rowData2.changedPaths.length;
+            	if (this.reversed) {
+            		return new Integer(files2).compareTo(new Integer(files1));
+            	}
+            	return new Integer(files1).compareTo(new Integer(files2));
+            }
+            if (this.column == LogMessagesComposite.COLUMN_AUTHOR) {
+            	if (this.reversed) {
+            		return TableViewerSorter.compare(rowData2.author == null ? "" : rowData2.author, rowData1.author == null ? "" : rowData1.author);
+            	}
+            	return TableViewerSorter.compare(rowData1.author == null ? "" : rowData1.author, rowData2.author == null ? "" : rowData2.author);
+            }
+            if (this.reversed) {
+            	return TableViewerSorter.compare(rowData2.message == null ? "" : rowData2.message, rowData1.message == null ? "" : rowData1.message);
+            }
+            return TableViewerSorter.compare(rowData1.message == null ? "" : rowData1.message, rowData2.message == null ? "" : rowData2.message);
+        }
+    }
+	
     public class HistoryCategory {
     	final public static int CATEGORY_TODAY = 1;
     	final public static int CATEGORY_YESTERDAY = 2;
