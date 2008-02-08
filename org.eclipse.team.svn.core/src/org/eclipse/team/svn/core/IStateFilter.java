@@ -119,7 +119,7 @@ public interface IStateFilter {
 		}
 		public boolean allowsRecursion(ILocalResource resource) {
 			for (int i = 0; i < this.filters.length; i++) {
-				if (this.haveQuickDecision(this.filters[i].accept(resource))) {
+				if (this.haveQuickDecision(this.filters[i].allowsRecursion(resource))) {
 					return this.getQuickDecision();
 				}
 			}
@@ -127,7 +127,7 @@ public interface IStateFilter {
 		}
 		public boolean allowsRecursion(IResource resource, String state, int mask) {
 			for (int i = 0; i < this.filters.length; i++) {
-				if (this.haveQuickDecision(this.filters[i].accept(resource, state, mask))) {
+				if (this.haveQuickDecision(this.filters[i].allowsRecursion(resource, state, mask))) {
 					return this.getQuickDecision();
 				}
 			}
