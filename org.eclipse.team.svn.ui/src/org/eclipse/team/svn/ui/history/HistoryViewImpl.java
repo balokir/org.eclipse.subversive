@@ -712,7 +712,8 @@ public class HistoryViewImpl {
 	
 	protected void showHistoryImpl(final GetLogMessagesOperation msgsOp, boolean background) {
 		TreeViewer treeTable = this.history.getTreeViewer();
-		final IStructuredSelection selected = (IStructuredSelection)treeTable.getSelection();
+		//final IStructuredSelection selected = (IStructuredSelection)treeTable.getSelection();
+		final ISelection selected = treeTable.getSelection();
 		IActionOperation showOp = new AbstractActionOperation("Operation.HShowHistory") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
@@ -742,13 +743,13 @@ public class HistoryViewImpl {
 						}
 					    TreeViewer treeTable = HistoryViewImpl.this.history.getTreeViewer();
 					    if (!treeTable.getTree().isDisposed()) {
-						    if (selected.size() == 0) {
+						   /* if (selected.size() == 0) {
 						    	treeTable.getTree().setSelection(treeTable.getTree().getItem(0));
 						    }
-						    else {
+						    else {*/
 						        treeTable.setSelection(selected, true);
 						        HistoryViewImpl.this.history.getHistoryTableListener().selectionChanged(null);
-						    }
+						    //}
 					    }
 					}
 				});
@@ -927,10 +928,6 @@ public class HistoryViewImpl {
 				UILoggedOperation.reportError(SVNTeamPlugin.instance().getResource("Operation.CreatePatchRemote"), ex);
 			}
 		}
-	}
-	
-	protected void handleCopyGroup() {
-		
 	}
 	
 	protected void handleCopy() {
