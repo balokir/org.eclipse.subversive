@@ -28,11 +28,11 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
@@ -213,12 +213,12 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
 						SelectRevisionPanel.this.manager.setButtonEnabled(0, !event.getSelection().isEmpty());
 					}
 					else {
-						SelectRevisionPanel.this.manager.setButtonEnabled(0, !SelectRevisionPanel.this.history.getTableViewer().getSelection().isEmpty());
+						SelectRevisionPanel.this.manager.setButtonEnabled(0, !SelectRevisionPanel.this.history.getTreeViewer().getSelection().isEmpty());
 					}
 				}
 			}
 		};
-		this.history.getTableViewer().addSelectionChangedListener(this.tableViewerListener);
+		this.history.getTreeViewer().addSelectionChangedListener(this.tableViewerListener);
     	
     	if (SVNTeamPreferences.getHistoryBoolean(store, SVNTeamPreferences.HISTORY_PAGING_ENABLE_NAME)) {
     		this.limit = SVNTeamPreferences.getHistoryInt(store, SVNTeamPreferences.HISTORY_PAGE_SIZE_NAME);
@@ -340,8 +340,8 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
     }
     
     protected void showMessages(final GetLogMessagesOperation msgsOp) {
-    	Table table = this.history.getTableViewer().getTable();
-		final TableItem[] selected = table.getSelection();
+    	Tree table = this.history.getTreeViewer().getTree();
+		final TreeItem[] selected = table.getSelection();
     	IActionOperation showOp = new AbstractActionOperation("Operation.ShowMessages") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				 SVNTeamUIPlugin.instance().getWorkbench().getDisplay().syncExec(new Runnable() {
@@ -362,7 +362,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				SVNTeamUIPlugin.instance().getWorkbench().getDisplay().syncExec(new Runnable() {
 					public void run() {
-						Table table = SelectRevisionPanel.this.history.getTableViewer().getTable();
+						Tree table = SelectRevisionPanel.this.history.getTreeViewer().getTree();
 					    if (table.getItems().length > 0) {
 					        if (selected.length != 0) {
 					        	table.setSelection(selected);
