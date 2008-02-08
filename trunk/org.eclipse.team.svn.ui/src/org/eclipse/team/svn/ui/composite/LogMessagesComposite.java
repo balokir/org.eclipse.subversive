@@ -403,22 +403,17 @@ public class LogMessagesComposite extends SashForm {
 			if (rowItems instanceof HistoryCategory) {
 				SVNLogEntry [] entries = ((HistoryCategory)rowItems).getLogEntries();
 				for (int j = 0; j < entries.length; j++) {
-					historyText += String.valueOf(entries[j].revision);
-					historyText += "\t";
-					historyText += new Date(entries[j].date).toString();
-					historyText += "\t";
-					historyText += String.valueOf(entries[j].changedPaths.length);
-					historyText += "\t";
-					historyText += entries[j].author;
-					historyText += "\t";
-					historyText += entries[j].message;
+					for (int k = 0; k < 5; k++) {
+						historyText += provider.getColumnText(entries[j], k);
+						historyText += (k < 5 ? "\t" : "");
+					}
 					historyText += System.getProperty("line.separator");
 				}
 			}
 			else {
 				for (int j = 0; j < 5; j++) {
 					historyText += provider.getColumnText(rowItems, j);
-					historyText += (j < 6 ? "\t" : "");
+					historyText += (j < 5 ? "\t" : "");
 				}
 				historyText += System.getProperty("line.separator");
 			}
@@ -565,7 +560,7 @@ public class LogMessagesComposite extends SashForm {
 		col.setResizable(true);
 		col.setText(SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Date"));
 		col.addSelectionListener(this.getColumnListener(this.historyTable));
-		layout.addColumnData(new ColumnWeightData(18, true));
+		layout.addColumnData(new ColumnWeightData(15, true));
 	
 		//file count
 		col = new TreeColumn(treeTable, SWT.NONE);
@@ -573,7 +568,7 @@ public class LogMessagesComposite extends SashForm {
 		col.setAlignment(SWT.RIGHT);
 		col.setText(SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Changes"));
 		col.addSelectionListener(this.getColumnListener(this.historyTable));
-		layout.addColumnData(new ColumnWeightData(8, true));
+		layout.addColumnData(new ColumnWeightData(11, true));
 		
 		// author
 		col = new TreeColumn(treeTable, SWT.NONE);
