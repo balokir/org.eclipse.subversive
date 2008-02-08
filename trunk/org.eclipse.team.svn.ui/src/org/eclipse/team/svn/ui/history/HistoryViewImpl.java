@@ -413,7 +413,7 @@ public class HistoryViewImpl {
 							HistoryViewImpl.this.addRevisionLinks(tSelection);
 						}
 					});
-					tAction.setEnabled(tSelection.size() > 0);
+					tAction.setEnabled(tSelection.size() == 1);
 					manager.add(new Separator());
 					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CopyHistory")) {
 						public void run() {
