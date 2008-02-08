@@ -62,7 +62,6 @@ import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
 import org.eclipse.team.svn.core.operation.local.GetRemoteContentsOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
-import org.eclipse.team.svn.core.operation.local.RevertOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.UpdateOperation;
 import org.eclipse.team.svn.core.operation.remote.ExportOperation;
@@ -814,11 +813,9 @@ public class HistoryViewImpl {
 	protected void updateTo(final Object item) {	    
 		IResource []resources = new IResource[] {this.wcResource};
 	    CompositeOperation op = new CompositeOperation("Operation.HUpdateTo");
-	    AbstractActionOperation revertOp = new RevertOperation(resources, true);
 		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
 		op.add(saveOp);
-	    op.add(revertOp);
-	    op.add(new UpdateOperation(resources, SVNRevision.fromNumber(this.history.getSelectedRevision()), true), new IActionOperation[] {revertOp});
+	    op.add(new UpdateOperation(resources, SVNRevision.fromNumber(this.history.getSelectedRevision()), true));
 		op.add(new RestoreProjectMetaOperation(saveOp));
 	    op.add(new RefreshResourcesOperation(resources));
 	    op.add(new AbstractActionOperation("Operation.HRefreshView") {

@@ -220,9 +220,12 @@ public class CommentComposite extends Composite  {
 		previousCommentsCombo.setItems((String[])flattenCommentsList.toArray(new String[flattenCommentsList.size()]));
 		previousCommentsCombo.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
-            	String comboText = (String)commentsList.get(previousCommentsCombo.getSelectionIndex());
-                CommentComposite.this.text.setText(CommentComposite.this.ignoredStrings.contains(comboText) ? 
-                		CommentComposite.this.text.getText() : comboText);
+            	int idx = previousCommentsCombo.getSelectionIndex();
+            	if (idx != -1) {
+                	String comboText = (String)commentsList.get(idx);
+                    CommentComposite.this.text.setText(CommentComposite.this.ignoredStrings.contains(comboText) ? 
+                    		CommentComposite.this.text.getText() : comboText);
+            	}
             }
             public void widgetDefaultSelected(SelectionEvent e) {
             }

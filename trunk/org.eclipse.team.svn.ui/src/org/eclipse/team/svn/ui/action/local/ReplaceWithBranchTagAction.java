@@ -47,9 +47,7 @@ public class ReplaceWithBranchTagAction extends AbstractWorkingCopyAction {
 	}
 	
 	public boolean isEnabled() {
-		return 
-		this.getSelectedResources().length == 1 && 
-		this.checkForResourcesPresence(IStateFilter.SF_ONREPOSITORY);
+		return this.getSelectedResources().length == 1 && this.checkForResourcesPresence(IStateFilter.SF_ONREPOSITORY);
 	}
 
 	public void runImpl(IAction action) {
