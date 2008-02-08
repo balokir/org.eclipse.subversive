@@ -114,7 +114,8 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 			SyncInfo info = this.getSVNSyncInfo(localStatus, remoteStatus);
 			if (info != null) {
 				info.init();
-				if (info.getKind() != SyncInfo.IN_SYNC) {
+				int kind = info.getKind();
+				if (SyncInfo.getChange(kind) == SyncInfo.DELETION && (SyncInfo.getDirection(kind) & SyncInfo.OUTGOING) != 0) {
 					synchronized (this.oldResources) {
 						this.oldResources.add(resource);
 					}
@@ -151,7 +152,9 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 	}
 	
     public void resourcesStateChanged(ResourceStatesChangedEvent event) {
-		this.resourcesStateChangedImpl(event.getResourcesRecursivelly());
+    	if (event.type == ResourceStatesChangedEvent.CHANGED_NODES) {
+    		this.resourcesStateChangedImpl(event.getResourcesRecursivelly());
+    	}
     }
     
 	protected HashSet clearRemoteStatusesImpl(IResource []resources) {

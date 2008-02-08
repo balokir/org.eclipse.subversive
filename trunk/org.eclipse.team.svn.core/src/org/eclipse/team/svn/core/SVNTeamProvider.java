@@ -96,7 +96,7 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 	}
 
 	public void configureProject() {
-		SVNRemoteStorage.instance().fireResourceStatesChangedEvent(new ResourceStatesChangedEvent(new IResource[] {this.getProject()}, IResource.DEPTH_ZERO));		
+		SVNRemoteStorage.instance().fireResourceStatesChangedEvent(new ResourceStatesChangedEvent(new IResource[] {this.getProject()}, IResource.DEPTH_ZERO, ResourceStatesChangedEvent.CHANGED_NODES));		
 	}
 
 	public void deconfigure() throws CoreException {
@@ -136,7 +136,7 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 			// compatibility with previous versions
 			try {project.setPersistentProperty(SVNTeamProvider.RESOURCE_PROPERTY, null);} catch (Exception ex) {}
 		}
-		SVNRemoteStorage.instance().fireResourceStatesChangedEvent(new ResourceStatesChangedEvent(new IResource[] {this.getProject()}, IResource.DEPTH_ZERO));		
+		SVNRemoteStorage.instance().fireResourceStatesChangedEvent(new ResourceStatesChangedEvent(new IResource[] {this.getProject()}, IResource.DEPTH_ZERO, ResourceStatesChangedEvent.CHANGED_NODES));		
 		super.deconfigured();
 	}
 	

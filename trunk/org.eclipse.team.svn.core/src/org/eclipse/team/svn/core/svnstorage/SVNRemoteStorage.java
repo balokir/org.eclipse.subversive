@@ -114,17 +114,19 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
     }
     
     public void fireResourceStatesChangedEvent(ResourceStatesChangedEvent event) {
-    	IResourceStatesListener []listeners = null;
-    	synchronized (this.resourceStateListeners) {
-    		List listenersArray = (List)this.resourceStateListeners.get(event.getClass());
-    		if (listenersArray == null) {
-    			return;
-    		}
-        	listeners = (IResourceStatesListener [])listenersArray.toArray(new IResourceStatesListener[listenersArray.size()]);
-    	}
-    	for (int i = 0; i < listeners.length; i++) {
-    		listeners[i].resourcesStateChanged(event);
-    	}
+		if (event.resources.length > 0) {
+	    	IResourceStatesListener []listeners = null;
+	    	synchronized (this.resourceStateListeners) {
+	    		List listenersArray = (List)this.resourceStateListeners.get(event.getClass());
+	    		if (listenersArray == null) {
+	    			return;
+	    		}
+	        	listeners = (IResourceStatesListener [])listenersArray.toArray(new IResourceStatesListener[listenersArray.size()]);
+	    	}
+	    	for (int i = 0; i < listeners.length; i++) {
+	    		listeners[i].resourcesStateChanged(event);
+	    	}
+		}
     }
     
 	public void initialize(IPath stateInfoLocation) throws Exception {

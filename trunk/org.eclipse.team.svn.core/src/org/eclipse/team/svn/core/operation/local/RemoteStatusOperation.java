@@ -72,25 +72,39 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 		}
 		final HashMap result = new HashMap();
 		final ISVNEntryStatusCallback cb = new ISVNEntryStatusCallback() {
-			protected void processStatus(SVNChangeStatus status) {
+			public void next(SVNChangeStatus status) {
 				result.put(status.path, status);
 				String parent = new File(status.path).getParent();
-				boolean found = false;
-				for (Path projectPath : projectPaths) {
-					if (projectPath.isPrefixOf(new Path(parent))) {
-						found = true;
-						break;
-					}
-				}
-				if (found) {
-					SVNChangeStatus st = (SVNChangeStatus)result.get(parent);
-					if (st == null || st.reposLastCmtRevision < status.reposLastCmtRevision) {
-						this.processStatus(new SVNChangeStatus(parent, status.url != null ? new Path(status.url).removeLastSegments(1).toString() : null, SVNEntry.Kind.DIR, SVNRevision.INVALID_REVISION_NUMBER, SVNRevision.INVALID_REVISION_NUMBER, 0, null, SVNEntryStatus.Kind.NORMAL, SVNEntryStatus.Kind.NONE, SVNEntryStatus.Kind.NORMAL, SVNEntryStatus.Kind.MODIFIED, false, false, null, null, null, null, SVNRevision.INVALID_REVISION_NUMBER, false, null, null, null, 0, null, status.reposLastCmtRevision, status.reposLastCmtDate, SVNEntry.Kind.DIR, status.reposLastCmtAuthor));
+				if (parent != null) {// can be null for drive roots
+					Path projectPath = this.getProjectPath(parent);
+					if (projectPath != null) {
+						this.postStatus(parent, status);
+						this.postStatus(projectPath.toString(), status);
 					}
 				}
 			}
-			public void next(SVNChangeStatus status) {
-				this.processStatus(status);
+			
+			private void postStatus(String path, SVNChangeStatus baseStatus) {
+				SVNChangeStatus st = (SVNChangeStatus)result.get(path);
+				if (st == null || st.reposLastCmtRevision < baseStatus.reposLastCmtRevision) {
+					SVNChangeStatus status = this.makeStatus(path, baseStatus);
+					result.put(status.path, status);
+				}
+			}
+			
+			private SVNChangeStatus makeStatus(String path, SVNChangeStatus status) {
+				int deltaSegments = new Path(status.path).segmentCount() - new Path(path).segmentCount();
+				return new SVNChangeStatus(path, status.url != null ? new Path(status.url).removeLastSegments(deltaSegments).toString() : null, SVNEntry.Kind.DIR, SVNRevision.INVALID_REVISION_NUMBER, SVNRevision.INVALID_REVISION_NUMBER, 0, null, SVNEntryStatus.Kind.NORMAL, SVNEntryStatus.Kind.NONE, SVNEntryStatus.Kind.NORMAL, SVNEntryStatus.Kind.MODIFIED, false, false, null, null, null, null, SVNRevision.INVALID_REVISION_NUMBER, false, null, null, null, 0, null, status.reposLastCmtRevision, status.reposLastCmtDate, SVNEntry.Kind.DIR, status.reposLastCmtAuthor);
+			}
+			
+			private Path getProjectPath(String path) {
+				Path tPath = new Path(path);
+				for (Path projectPath : projectPaths) {
+					if (projectPath.isPrefixOf(tPath)) {
+						return projectPath;
+					}
+				}
+				return null;
 			}
 		};
 		for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
