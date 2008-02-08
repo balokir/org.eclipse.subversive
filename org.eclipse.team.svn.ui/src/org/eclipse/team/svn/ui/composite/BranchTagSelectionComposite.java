@@ -65,6 +65,8 @@ public class BranchTagSelectionComposite extends Composite {
 	protected CompositeVerifier verifier;
 	protected String selectionTitle;
 	protected String selectionDescription;
+	
+	protected String ignored;
 		
 	public BranchTagSelectionComposite(Composite parent, int style, IRepositoryResource baseResource, String historyKey, IValidationManager validationManager, int type, boolean stopOnCopy) {
 		super(parent, style);
@@ -73,6 +75,7 @@ public class BranchTagSelectionComposite extends Composite {
 		this.validationManager = validationManager;
 		this.type = type;
 		this.stopOnCopy = stopOnCopy;
+		this.ignored = SVNTeamUIPlugin.instance().getResource(this.type == BranchTagSelectionComposite.BRANCH_OPERATED ? "Branch.Read.Separator" : "Tag.Read.Separator");
 		this.considerStructure = 
 			baseResource.getRepositoryLocation().isStructureEnabled() &&
 			SVNTeamPreferences.getRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_NAME);
@@ -125,12 +128,7 @@ public class BranchTagSelectionComposite extends Composite {
 			children = op.getChildren();
 		}
 		if (children.length > 0) {
-			if (this.type == BranchTagSelectionComposite.BRANCH_OPERATED) {
-				this.urlText.add(SVNTeamUIPlugin.instance().getResource("Branch.Read.Separator"));
-			}
-			else {
-				this.urlText.add(SVNTeamUIPlugin.instance().getResource("Tag.Read.Separator"));
-			}
+			this.urlText.add(this.ignored);
 		}
 		for (int i = 0; i < children.length; i++) {
 			this.urlText.add(children[i].getName());
@@ -139,6 +137,17 @@ public class BranchTagSelectionComposite extends Composite {
 			public void modifyText(ModifyEvent e) {
 				BranchTagSelectionComposite.this.url = ((Combo)e.widget).getText();
 				BranchTagSelectionComposite.this.revisionComposite.setSelectedResource(BranchTagSelectionComposite.this.getSelectedResource());
+			}
+		});
+		this.urlText.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				int idx = BranchTagSelectionComposite.this.urlText.getSelectionIndex();
+				if (idx != -1) {
+	            	String comboText = BranchTagSelectionComposite.this.urlText.getItem(idx);
+	            	if (comboText.equals(BranchTagSelectionComposite.this.ignored)) {
+	            		BranchTagSelectionComposite.this.urlText.setText("");
+	            	}
+				}
 			}
 		});
 		this.validationManager.attachTo(urlText, new ResourceNameVerifier(resourceLabel.getText(), true));
