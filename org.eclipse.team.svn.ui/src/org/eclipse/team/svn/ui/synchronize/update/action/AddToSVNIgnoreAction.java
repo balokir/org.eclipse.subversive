@@ -118,7 +118,7 @@ public class AddToSVNIgnoreAction extends AbstractSynchronizeModelAction {
 			tmp.add(resources[0][i].getParent());
 		}
 		IResource []resourcesAndParents = (IResource [])tmp.toArray(new IResource[tmp.size()]);
-		op.add(new RefreshResourcesOperation(resourcesAndParents/*, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL*/));
+		op.add(new RefreshResourcesOperation(resourcesAndParents, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
 
 		return op;
 	}

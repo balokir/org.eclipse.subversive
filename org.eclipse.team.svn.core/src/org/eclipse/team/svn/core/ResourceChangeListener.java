@@ -95,10 +95,8 @@ public class ResourceChangeListener implements IResourceChangeListener, ISavePar
 				SVNRemoteStorage.instance().refreshLocalResources(resources, IResource.DEPTH_INFINITE);
 				
 				// but notify including parents
-				modified.addAll(Arrays.asList(FileUtility.getPathNodes(resources)));
-				resources = (IResource [])modified.toArray(new IResource[modified.size()]);
-				
-				SVNRemoteStorage.instance().fireResourceStatesChangedEvent(new ResourceStatesChangedEvent(resources, IResource.DEPTH_ZERO));
+				SVNRemoteStorage.instance().fireResourceStatesChangedEvent(new ResourceStatesChangedEvent(FileUtility.getPathNodes(resources), IResource.DEPTH_ZERO, ResourceStatesChangedEvent.PATH_NODES));
+				SVNRemoteStorage.instance().fireResourceStatesChangedEvent(new ResourceStatesChangedEvent(resources, IResource.DEPTH_ZERO, ResourceStatesChangedEvent.CHANGED_NODES));
 			}
 		});
 	}

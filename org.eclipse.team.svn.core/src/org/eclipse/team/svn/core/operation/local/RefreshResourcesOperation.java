@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNResourceRuleFactory;
-import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.resource.events.ResourceStatesChangedEvent;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -84,7 +83,7 @@ public class RefreshResourcesOperation extends AbstractWorkingCopyOperation {
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		IResource []resources = this.operableData();
 		IResource []original = resources;
-		if (this.depth != IResource.DEPTH_ZERO) {
+		if (this.depth == IResource.DEPTH_INFINITE) {
 			resources = FileUtility.shrinkChildNodes(resources);
 		}
 		
@@ -110,12 +109,11 @@ public class RefreshResourcesOperation extends AbstractWorkingCopyOperation {
 		}
 		
 		if (RefreshResourcesOperation.this.refreshType != RefreshResourcesOperation.REFRESH_CHANGES) {
-			IRemoteStorage storage = SVNRemoteStorage.instance();
-			storage.refreshLocalResources(resources, this.depth);
+			SVNRemoteStorage.instance().refreshLocalResources(resources, this.depth);
 			
 			IResource []roots = FileUtility.getPathNodes(resources);
-			storage.fireResourceStatesChangedEvent(new ResourceStatesChangedEvent(roots, IResource.DEPTH_ZERO));
-			storage.fireResourceStatesChangedEvent(new ResourceStatesChangedEvent(original, this.depth));
+			SVNRemoteStorage.instance().fireResourceStatesChangedEvent(new ResourceStatesChangedEvent(roots, IResource.DEPTH_ZERO, ResourceStatesChangedEvent.PATH_NODES));
+			SVNRemoteStorage.instance().fireResourceStatesChangedEvent(new ResourceStatesChangedEvent(original, this.depth, ResourceStatesChangedEvent.CHANGED_NODES));
 		}
 	}
 	

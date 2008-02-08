@@ -11,8 +11,7 @@
 
 package org.eclipse.team.svn.core.resource.events;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
@@ -26,15 +25,19 @@ import org.eclipse.team.svn.core.utility.FileUtility;
  * @author Alexander Gurov
  */
 public class ResourceStatesChangedEvent {
+	public static final int CHANGED_NODES = 0;
+	public static final int PATH_NODES = 1;
 	public final IResource []resources;
 	public final int depth;
+	public final int type;
 	
 	private IResource []fullSet;
 
-	public ResourceStatesChangedEvent(IResource []resources, int depth) {
+	public ResourceStatesChangedEvent(IResource []resources, int depth, int type) {
     	// notify in parent to child order
 		FileUtility.reorder(this.resources = resources, true);
 		this.depth = depth;
+		this.type = type;
 		if (this.depth == IResource.DEPTH_ZERO) {
 			this.fullSet = this.resources;
 		}
@@ -78,7 +81,7 @@ public class ResourceStatesChangedEvent {
     		return resources;
     	}
     	
-		final List fullList = new ArrayList();
+		final HashSet fullList = new HashSet();
 		for (int i = 0; i < resources.length; i++) {
     		FileUtility.visitNodes(resources[i], new IResourceVisitor() {
 				public boolean visit(IResource resource) throws CoreException {

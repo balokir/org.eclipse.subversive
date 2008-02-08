@@ -31,7 +31,7 @@ public class ProjectStatesChangedEvent extends ResourceStatesChangedEvent {
 	public final int newState;
 
 	public ProjectStatesChangedEvent(IProject []projects, int newState) {
-		super(projects, IResource.DEPTH_ZERO);
+		super(projects, IResource.DEPTH_ZERO, ResourceStatesChangedEvent.CHANGED_NODES);
 		this.newState = newState;
 	}
 
