@@ -69,6 +69,12 @@ import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
  * @author Alexander Gurov
  */
 public class LogMessagesComposite extends SashForm {
+	final public static int COLUMN_REVISION = 0;
+	final public static int COLUMN_DATE = 1;
+	final public static int COLUMN_CHANGES = 2;
+	final public static int COLUMN_AUTHOR = 3;
+	final public static int COLUMN_LOG_MESSGE = 4;
+	
 	protected static Image FILE_IMAGE;
 	protected static Image FOLDER_IMAGE;
 	protected static Image ADDED_FILE_IMAGE;
@@ -385,12 +391,30 @@ public class LogMessagesComposite extends SashForm {
 		Object[] selectedItems = ((IStructuredSelection)this.historyTable.getSelection()).toArray();
 		for (int i = 0; i < selectedItems.length; i++) {
 			Object rowItems = selectedItems[i];
-			// The first column is never shown
-			for (int j = 1; j < 6; j++) {
-				historyText += provider.getColumnText(rowItems, j);
-				historyText += (j < 6 ? "\t" : "");
+			if (rowItems instanceof HistoryCategory) {
+				SVNLogEntry [] entries = ((HistoryCategory)rowItems).getLogEntries();
+				historyText += ((HistoryCategory)rowItems).getName();
+				historyText += System.getProperty("line.separator");
+				for (int j = 0; j < entries.length; j++) {
+					historyText += String.valueOf(entries[j].revision);
+					historyText += "\t";
+					historyText += new Date(entries[j].date).toString();
+					historyText += "\t";
+					historyText += String.valueOf(entries[j].changedPaths.length);
+					historyText += "\t";
+					historyText += entries[j].author;
+					historyText += "\t";
+					historyText += entries[j].message;
+					historyText += System.getProperty("line.separator");
+				}
 			}
-			historyText += System.getProperty("line.separator");
+			else {
+				for (int j = 0; j < 5; j++) {
+					historyText += provider.getColumnText(rowItems, j);
+					historyText += (j < 6 ? "\t" : "");
+				}
+				historyText += System.getProperty("line.separator");
+			}
 		}
 		return historyText;
 	}
@@ -686,19 +710,19 @@ public class LogMessagesComposite extends SashForm {
 			if (element instanceof SVNLogEntry) {
 				SVNLogEntry row = (SVNLogEntry)element;
 					switch (columnIndex) {
-						case 0: {
+						case LogMessagesComposite.COLUMN_REVISION: {
 							return LogMessagesComposite.this.revisionToString(row.revision);
 						}
-						case 1: {
+						case LogMessagesComposite.COLUMN_DATE: {
 							return row.date == 0 ? SVNTeamPlugin.instance().getResource("SVNInfo.NoDate") : this.dateTimeFormat.format(new Date(row.date));
 						}
-						case 2: {
+						case LogMessagesComposite.COLUMN_CHANGES: {
 							return String.valueOf(row.changedPaths != null ? row.changedPaths.length : 0);
 						}
-						case 3: {
+						case LogMessagesComposite.COLUMN_AUTHOR: {
 							return row.author == null || row.author.length() == 0 ? SVNTeamPlugin.instance().getResource("SVNInfo.NoAuthor") : row.author;
 						}
-						case 4: {
+						case LogMessagesComposite.COLUMN_LOG_MESSGE: {
 							return row.message == null || row.message.length() == 0 ? SVNTeamPlugin.instance().getResource("SVNInfo.NoComment") : (this.fullMessage ? LogMessagesComposite.flattenMultiLineText(row.message, " ") : FileUtility.formatMultilineText(row.message));
 						}
 						default: {
@@ -706,7 +730,7 @@ public class LogMessagesComposite extends SashForm {
 						}
 					}
 				}
-				else if (columnIndex == 0) {
+				else if (columnIndex == LogMessagesComposite.COLUMN_REVISION) {
 					return ((HistoryCategory)element).getName();
 				}
 				return "";
@@ -762,11 +786,11 @@ public class LogMessagesComposite extends SashForm {
     	
     	public String getName() {
     		switch (this.categoryType) {
-    			case HistoryCategory.CATEGORY_TODAY: return "Today";
-    			case HistoryCategory.CATEGORY_YESTERDAY: return "Yesterday";
-    			case HistoryCategory.CATEGORY_THIS_WEEK : return "Lastr Week";
-    			case HistoryCategory.CATEGORY_THIS_MONTH : return "This Month";
-    			case HistoryCategory.CATEGORY_EARLIER : return "Earlier";
+    			case HistoryCategory.CATEGORY_TODAY: return SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Group.Today");
+    			case HistoryCategory.CATEGORY_YESTERDAY: return SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Group.Yesterday");
+    			case HistoryCategory.CATEGORY_THIS_WEEK : return SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Group.Week");
+    			case HistoryCategory.CATEGORY_THIS_MONTH : return SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Group.Month");
+    			case HistoryCategory.CATEGORY_EARLIER : return SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Group.Earlier");
     		}
     		return null;
     	}

@@ -444,6 +444,15 @@ public class HistoryViewImpl {
 					    tAction.setEnabled(isFilterEnabled());
 					}
 				}
+				if (!onlyLogEntries) {
+					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CopyHistory")) {
+						public void run() {
+							HistoryViewImpl.this.handleCopy();
+						}
+					});
+					tAction.setEnabled(tSelection.size() > 0);
+					tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/copy.gif"));
+				}
 				manager.add(new Separator()); 
 				manager.add(HistoryViewImpl.this.getRefreshAction());
 			}
@@ -918,6 +927,10 @@ public class HistoryViewImpl {
 				UILoggedOperation.reportError(SVNTeamPlugin.instance().getResource("Operation.CreatePatchRemote"), ex);
 			}
 		}
+	}
+	
+	protected void handleCopyGroup() {
+		
 	}
 	
 	protected void handleCopy() {
