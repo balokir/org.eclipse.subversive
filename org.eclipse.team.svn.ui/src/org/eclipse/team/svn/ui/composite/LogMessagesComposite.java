@@ -700,12 +700,10 @@ public class LogMessagesComposite extends SashForm {
 					}
 					return this.remoteRevisionImage;
 				}
-				else {
-					if (this.groupImage == null) {
-						this.groupImage = SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/group_by_date.gif").createImage();
-					}
-					return this.groupImage;
+				else if (this.groupImage == null) {
+					this.groupImage = SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/group_by_date.gif").createImage();
 				}
+				return this.groupImage;
 			}
 			return null;
 		}
@@ -864,6 +862,18 @@ public class LogMessagesComposite extends SashForm {
     	public SVNLogEntry[] getLogEntries() {
     		return this.entries;
     	}
+    	
+    	public int hashCode() {
+    		return this.categoryType;
+    	}
+    	
+    	public boolean equals(Object obj) {
+    		if (obj instanceof HistoryCategory) {
+    			return this.categoryType == ((HistoryCategory)obj).categoryType;
+    		}
+    		return false;
+    	}
+    	
     }
     
 }
