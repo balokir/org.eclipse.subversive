@@ -503,6 +503,9 @@ public class HistoryViewImpl {
 	    		HistoryViewImpl.this.groupByDateAction.setChecked((HistoryViewImpl.this.options & HistoryViewImpl.GROUP_BY_DATE) != 0);
 	    		HistoryViewImpl.this.history.setGroupByDate((HistoryViewImpl.this.options & HistoryViewImpl.GROUP_BY_DATE) != 0);
 	    		HistoryViewImpl.this.history.setTableInput();
+				IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
+				int type = SVNTeamPreferences.getHistoryInt(store, SVNTeamPreferences.HISTORY_GROUPING_TYPE_NAME);
+				SVNTeamPreferences.setHistoryInt(store, SVNTeamPreferences.HISTORY_GROUPING_TYPE_NAME, type == SVNTeamPreferences.HISTORY_GROUPING_TYPE_DATE ? SVNTeamPreferences.HISTORY_GROUPING_TYPE_NONE : SVNTeamPreferences.HISTORY_GROUPING_TYPE_DATE);
 	        }
 	    };	    
 	    this.filterDropDownAction = new Action (SVNTeamUIPlugin.instance().getResource("HistoryView.QuickFilter")) {
@@ -727,6 +730,7 @@ public class HistoryViewImpl {
 						}
 						SVNLogEntry[] toShow = HistoryViewImpl.this.isFilterEnabled() && HistoryViewImpl.this.logMessages != null ? HistoryViewImpl.this.filterMessages(HistoryViewImpl.this.logMessages) : HistoryViewImpl.this.logMessages;
 						SVNRevision current = HistoryViewImpl.this.currentRevision != -1 ? SVNRevision.fromNumber(HistoryViewImpl.this.currentRevision) : null;
+			    		HistoryViewImpl.this.history.setGroupByDate((HistoryViewImpl.this.options & HistoryViewImpl.GROUP_BY_DATE) != 0);
 						HistoryViewImpl.this.history.setLogMessages(current, toShow, HistoryViewImpl.this.repositoryResource);
 						HistoryViewImpl.this.setPagingEnabled();
 //						HistoryViewImpl.this.viewInfoProvider.setDescription(HistoryViewImpl.this.getResourceLabel());
@@ -1098,6 +1102,9 @@ public class HistoryViewImpl {
 	        	HistoryViewImpl.this.groupByDateDropDownAction.setChecked((HistoryViewImpl.this.options & HistoryViewImpl.GROUP_BY_DATE) != 0);
 	        	HistoryViewImpl.this.history.setGroupByDate((HistoryViewImpl.this.options & HistoryViewImpl.GROUP_BY_DATE) != 0);
 	        	HistoryViewImpl.this.history.setTableInput();
+				IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
+				int type = SVNTeamPreferences.getHistoryInt(store, SVNTeamPreferences.HISTORY_GROUPING_TYPE_NAME);
+				SVNTeamPreferences.setHistoryInt(store, SVNTeamPreferences.HISTORY_GROUPING_TYPE_NAME, type == SVNTeamPreferences.HISTORY_GROUPING_TYPE_DATE ? SVNTeamPreferences.HISTORY_GROUPING_TYPE_NONE : SVNTeamPreferences.HISTORY_GROUPING_TYPE_DATE);
 	        }
 	    };
 	    this.groupByDateAction.setToolTipText(SVNTeamUIPlugin.instance().getResource("HistoryView.GroupByDate"));
@@ -1189,6 +1196,7 @@ public class HistoryViewImpl {
 		boolean showMultiline = SVNTeamPreferences.getHistoryBoolean(store, SVNTeamPreferences.HISTORY_SHOW_MULTILINE_COMMENT_NAME);
 		boolean showAffected = SVNTeamPreferences.getHistoryBoolean(store, SVNTeamPreferences.HISTORY_SHOW_AFFECTED_PATHS_NAME);
 		boolean hierarchicalAffectedView = SVNTeamPreferences.getHistoryBoolean(store, SVNTeamPreferences.HISTORY_HIERARCHICAL_LAYOUT);
+		int groupingType = SVNTeamPreferences.getHistoryInt(store, SVNTeamPreferences.HISTORY_GROUPING_TYPE_NAME);
 		
 		this.showCommentViewerAction.setChecked(showMultiline);
         this.history.setCommentViewerVisible(showMultiline);	          
@@ -1200,6 +1208,7 @@ public class HistoryViewImpl {
         this.hideUnrelatedAction.setChecked((this.options & HistoryViewImpl.HIDE_UNRELATED) != 0);
         this.stopOnCopyDropDownAction.setChecked((this.options & HistoryViewImpl.STOP_ON_COPY) != 0);
         this.stopOnCopyAction.setChecked((this.options & HistoryViewImpl.STOP_ON_COPY) != 0);
+        this.options |= groupingType == SVNTeamPreferences.HISTORY_GROUPING_TYPE_DATE ? HistoryViewImpl.GROUP_BY_DATE : 0;
         this.groupByDateAction.setChecked((this.options & HistoryViewImpl.GROUP_BY_DATE) != 0);
         this.groupByDateDropDownAction.setChecked((this.options & HistoryViewImpl.GROUP_BY_DATE) != 0);
         this.compareModeDropDownAction.setChecked((this.options & HistoryViewImpl.COMPARE_MODE) != 0);

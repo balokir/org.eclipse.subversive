@@ -22,8 +22,8 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -75,7 +75,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
 	protected ToolItem filterItem;
 	protected ToolItem clearFilterItem;
 	protected ToolItem refreshItem;
-	protected ToolItem separator;
+	protected ToolItem groupByDateItem;
 	
 	protected boolean isCommentFilterEnabled = false;
 	protected String filterByComment;
@@ -167,16 +167,20 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
         data.horizontalAlignment = GridData.END;
         toolBar.setLayoutData(data);
          
+    	this.groupByDateItem = new ToolItem(toolBar, SWT.FLAT | SWT.CHECK);
+    	new ToolItem(toolBar, SWT.SEPARATOR);
     	this.hideUnrelatedItem = new ToolItem(toolBar, SWT.FLAT | SWT.CHECK);
     	this.stopOnCopyItem = new ToolItem(toolBar, SWT.FLAT | SWT.CHECK);
+    	new ToolItem(toolBar, SWT.SEPARATOR);
         this.filterItem = new ToolItem(toolBar, SWT.FLAT);
     	this.clearFilterItem = new ToolItem(toolBar, SWT.FLAT);
-    	this.separator = new ToolItem(toolBar, SWT.SEPARATOR);
+    	new ToolItem(toolBar, SWT.SEPARATOR);
     	this.pagingItem = new ToolItem(toolBar, SWT.FLAT);
     	this.pagingAllItem = new ToolItem(toolBar, SWT.FLAT);
-    	this.separator = new ToolItem(toolBar, SWT.SEPARATOR);
+    	new ToolItem(toolBar, SWT.SEPARATOR);
     	this.refreshItem = new ToolItem(toolBar, SWT.FLAT);
     	
+    	this.groupByDateItem.setImage(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/group_by_date.gif").createImage());
     	this.hideUnrelatedItem.setImage(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/hide_unrelated.gif").createImage());
     	this.stopOnCopyItem.setImage(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/stop_on_copy.gif").createImage());
     	this.stopOnCopyItem.setSelection(this.initialStopOnCopy);
@@ -237,60 +241,55 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
         this.setPagingEnabled();
         this.clearFilterItem.setEnabled(false);
     	
-    	this.hideUnrelatedItem.addSelectionListener(new SelectionListener() {
+    	this.groupByDateItem.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				SelectRevisionPanel.this.history.setGroupByDate(((ToolItem)e.widget).getSelection());
+				SelectRevisionPanel.this.history.setTableInput();
+			}
+    	});
+		int type = SVNTeamPreferences.getHistoryInt(store, SVNTeamPreferences.HISTORY_GROUPING_TYPE_NAME);
+    	this.groupByDateItem.setSelection(type == SVNTeamPreferences.HISTORY_GROUPING_TYPE_DATE);
+    	
+    	this.hideUnrelatedItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				SelectRevisionPanel.this.history.setShowRelatedPathsOnly(SelectRevisionPanel.this.hideUnrelatedItem.getSelection());
 			}
-			public void widgetDefaultSelected(SelectionEvent e) {			
-			}    		
     	});
-    	this.stopOnCopyItem.addSelectionListener(new SelectionListener() {
+    	this.stopOnCopyItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				SelectRevisionPanel.this.refresh();
 			}
-			public void widgetDefaultSelected(SelectionEvent e) {			
-			}    		
     	});
     	
-        this.filterItem.addSelectionListener(new SelectionListener() {
+        this.filterItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {				
 				if (SelectRevisionPanel.this.quickFilter()) {
 					SelectRevisionPanel.this.showMessages(null);
 				}
 			}
-			public void widgetDefaultSelected(SelectionEvent e) {			
-			}    		
     	});
-        this.clearFilterItem.addSelectionListener(new SelectionListener() {
+        this.clearFilterItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {				
 				SelectRevisionPanel.this.clearFilter();
 				SelectRevisionPanel.this.showMessages(null);
 			}
-			public void widgetDefaultSelected(SelectionEvent e) {			
-			}    		
     	});
         
-    	this.pagingItem.addSelectionListener(new SelectionListener() {
+    	this.pagingItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {				
 				SelectRevisionPanel.this.showNextPage(false);
 			}
-			public void widgetDefaultSelected(SelectionEvent e) {			
-			}    		
     	});    	
-    	this.pagingAllItem.addSelectionListener(new SelectionListener() {
+    	this.pagingAllItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {				
 				SelectRevisionPanel.this.showNextPage(true);
 			}
-			public void widgetDefaultSelected(SelectionEvent e) {			
-			}    		
     	});
     	
-    	this.refreshItem.addSelectionListener(new SelectionListener() {
+    	this.refreshItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {				
 				SelectRevisionPanel.this.refresh();
 			}
-			public void widgetDefaultSelected(SelectionEvent e) {			
-			}    		
     	});
         this.showResourceLabel();
     }
@@ -346,14 +345,16 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				 SVNTeamUIPlugin.instance().getWorkbench().getDisplay().syncExec(new Runnable() {
 					 public void run() {
-						 if (msgsOp != null && msgsOp.getExecutionState() == IActionOperation.OK) {
-							 SelectRevisionPanel.this.pagingEnabled = SelectRevisionPanel.this.limit > 0 && SelectRevisionPanel.this.logMessages == null ? msgsOp.getMessages().length == SelectRevisionPanel.this.limit : msgsOp.getMessages().length == SelectRevisionPanel.this.limit + 1;
-							 SelectRevisionPanel.this.addPage(msgsOp.getMessages());
-						 }
-						 SVNLogEntry[] toShow = SelectRevisionPanel.this.isFilterEnabled() && SelectRevisionPanel.this.logMessages != null ? SelectRevisionPanel.this.filterMessages(SelectRevisionPanel.this.logMessages) : SelectRevisionPanel.this.logMessages;
-						 SVNRevision current = SelectRevisionPanel.this.currentRevision != -1 ? SVNRevision.fromNumber(SelectRevisionPanel.this.currentRevision) : null;
-						 SelectRevisionPanel.this.history.setLogMessages(current, toShow, SelectRevisionPanel.this.resource);
-						 SelectRevisionPanel.this.setPagingEnabled();
+						if (msgsOp != null && msgsOp.getExecutionState() == IActionOperation.OK) {
+							SelectRevisionPanel.this.pagingEnabled = SelectRevisionPanel.this.limit > 0 && SelectRevisionPanel.this.logMessages == null ? msgsOp.getMessages().length == SelectRevisionPanel.this.limit : msgsOp.getMessages().length == SelectRevisionPanel.this.limit + 1;
+							SelectRevisionPanel.this.addPage(msgsOp.getMessages());
+						}
+						SVNLogEntry[] toShow = SelectRevisionPanel.this.isFilterEnabled() && SelectRevisionPanel.this.logMessages != null ? SelectRevisionPanel.this.filterMessages(SelectRevisionPanel.this.logMessages) : SelectRevisionPanel.this.logMessages;
+						SVNRevision current = SelectRevisionPanel.this.currentRevision != -1 ? SVNRevision.fromNumber(SelectRevisionPanel.this.currentRevision) : null;
+						int type = SVNTeamPreferences.getHistoryInt(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.HISTORY_GROUPING_TYPE_NAME);
+						SelectRevisionPanel.this.history.setGroupByDate(type == SVNTeamPreferences.HISTORY_GROUPING_TYPE_DATE);
+						SelectRevisionPanel.this.history.setLogMessages(current, toShow, SelectRevisionPanel.this.resource);
+						SelectRevisionPanel.this.setPagingEnabled();
 					 }
 				 });
 			}
