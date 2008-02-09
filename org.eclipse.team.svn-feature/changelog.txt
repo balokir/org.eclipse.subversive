@@ -8,6 +8,46 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.0.v20080214 [14 February 2008]
+
+Features:
+ * Implement compare and replace actions for branches and tags. (Bug 217553)
+   + special thanks to Andrea Polci
+   
+ * Enhance automatic project share (bug 211399)
+   + special thanks to Max Rydahl Andersen
+   
+ * Two URLs merge mode also should use Merge View (bug 217856)
+ * Add revision folding ability to History view (bug 211410)
+
+Fixes:
+ * Team Synchronization reset "remove from view" after each file change (bug 207026)
+   + special thanks to Pawel Piskunowicz
+   
+ * Reported progress is incorrect almost always (it is doubled) (bug 216883)
+   + special thanks to Ilya Klyuchnikov
+   
+ * Conflicts are not shown in Incoming Mode with ChangeSets (bug 189094)
+   + special thanks to Marko Schulz
+   
+ * Some jsp files which have utf-8 encoded characters don't displayed correctly in compare window (bug 211568)
+   + special thanks to YounJung Park
+   
+ * Add warnings for operations, which modify tags. (bug 217844)
+   + special thanks to Edoardo Comar
+   
+ * Replace errors in creating tags and branches with warnings. (bug 217845)
+   + special thanks to Chris Velevitch
+   
+ * java.lang.StackOverflowError when trying to share a new project to SVN (bug 217529)
+   + special thanks to Leo Dos Santos
+   
+ * UI blinks when commit window is called from Package explorer (bug 218136)
+ * Change sets commit fails (NPE) (bug 217291)
+ * Merge two repository browsers for dialogs into one. (bug 217289)
+
+--------------------------------------------------------------------------------
+
 Version 0.7.0.v20080129 [29 January 2008]
 
 Features:

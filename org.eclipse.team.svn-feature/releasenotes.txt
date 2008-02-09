@@ -5,51 +5,51 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 0.7.0.v20080129 release date: 29 January 2008
+Version 0.7.0.v20080214 release date: 14 February 2008
 
 1. What's New
 
-   The version is 0.7.0 release which build ID is v20080129. The main target of the release is 
+   The version is 0.7.0 release which build ID is v20080214. The main target of the release is 
    transferring Subversive development to Eclipse.org.
    
    Changes in compare with previous version are listed below. The full list of 
    changes you can find in Change Log.
     
 	Features:
-	 * Add "Create patch file" action to the synchronize view drop-down. (bug 216141)
-	   + special thanks to Felix Berger
-	
-	 * Show conflicting resources in Commit dialog (bug 211404)
-	   + special thanks to Gabor Liptak
-	
-	 * Allows to override committer name for different protocols (bug 211417)
-	   + special thanks to Mark
-	
-	 * Allow to select resources for Create Patch action (bug 211413)
-	   + special thanks to Kaneider Daniel, Konstantine Kirenko
-	
-	 * Add Ignore action to Commit dialog (bug 211407)
-	 * Add "Resolve conflicts" and "Mark as merged" actions to Commit dialog (bug 215963)
-	 * Add 'Lock" and "Unlock" actions to Commit dialog (bug 215968)
-	 * Add "Create patch file" action to Commit dialog (bug 215962)
-	 * Add "Replace With" action to Commit dialog (bug 215966)
-	 * Add "Compare With" action to a Commit dialog (bug 215964)
-	 * "Add to svn:ignore" action in "Add to version control" dialog drop down (bug 216004)
-	 * Add "Lock" and "Unlock" actions to synchronize view drop-down menu. (bug 216142)
-	 * Add "Show Properties" action to a synchronize view drop down. (bug 216144)
-	 * Add "Set properties" and "Set keywords" actions to synchronize view drop-down menu. (bug 216143)
-	 * Improve drop-down menu in SynchronizeView (bug 216140)
-	 * Improve History View Affected Path Composite drop-down menu. (bug 216264)
-	 * Support latest SVN 1.5 API changes (bug 216473)
+	 * Implement compare and replace actions for branches and tags. (Bug 217553)
+	   + special thanks to Andrea Polci
+	   
+	 * Enhance automatic project share (bug 211399)
+	   + special thanks to Max Rydahl Andersen
+	   
+	 * Two URLs merge mode also should use Merge View (bug 217856)
+	 * Add revision folding ability to History view (bug 211410)
 	
 	Fixes:
-	 * Commit errors seems to not be shown in console (bug 215188)
-	   + special thanks to Kristoffer Peterhansel
-   
-	 * It is impossible to install connectors sources on Linux (bug 216699)
+	 * Team Synchronization reset "remove from view" after each file change (bug 207026)
+	   + special thanks to Pawel Piskunowicz
+	   
+	 * Reported progress is incorrect almost always (it is doubled) (bug 216883)
 	   + special thanks to Ilya Klyuchnikov
-	
-	 * "Report revision change" option does not work (bug 216090)
+	   
+	 * Conflicts are not shown in Incoming Mode with ChangeSets (bug 189094)
+	   + special thanks to Marko Schulz
+	   
+	 * Some jsp files which have utf-8 encoded characters don't displayed correctly in compare window (bug 211568)
+	   + special thanks to YounJung Park
+	   
+	 * Add warnings for operations, which modify tags. (bug 217844)
+	   + special thanks to Edoardo Comar
+	   
+	 * Replace errors in creating tags and branches with warnings. (bug 217845)
+	   + special thanks to Chris Velevitch
+	   
+	 * java.lang.StackOverflowError when trying to share a new project to SVN (bug 217529)
+	   + special thanks to Leo Dos Santos
+	   
+	 * UI blinks when commit window is called from Package explorer (bug 218136)
+	 * Change sets commit fails (NPE) (bug 217291)
+	 * Merge two repository browsers for dialogs into one. (bug 217289)
 
 2. Information
 
