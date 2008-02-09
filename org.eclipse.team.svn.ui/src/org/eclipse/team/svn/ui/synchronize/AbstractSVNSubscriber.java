@@ -63,7 +63,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 	protected static final IResourceVariantComparator RV_COMPARATOR = new ResourceVariantComparator();
 	
     protected RemoteStatusCache statusCache;
-    protected Set oldResources;
+    protected Set<IResource> oldResources;
     
     public AbstractSVNSubscriber() {
         super();
@@ -115,7 +115,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 			if (info != null) {
 				info.init();
 				int kind = info.getKind();
-				if (SyncInfo.getChange(kind) == SyncInfo.DELETION && (SyncInfo.getDirection(kind) & SyncInfo.OUTGOING) != 0) {
+				if (SyncInfo.getChange(kind) == SyncInfo.DELETION && (SyncInfo.getDirection(kind) & SyncInfo.OUTGOING) != 0 && !resource.exists()) {
 					synchronized (this.oldResources) {
 						this.oldResources.add(resource);
 					}
@@ -183,8 +183,13 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
     		allResources.addAll(Arrays.asList(this.statusCache.allMembers(resources[i])));
     	}
     	synchronized (this.oldResources) {
-    		allResources.addAll(this.oldResources);
-        	this.oldResources.clear();
+    		for (Iterator it = this.oldResources.iterator(); it.hasNext(); ) {
+    			IResource resource = (IResource)it.next();
+    			if (IStateFilter.SF_NOTEXISTS.accept(SVNRemoteStorage.instance().asLocalResource(resource))) {
+    				it.remove();
+    				allResources.add(resource);
+    			}
+    		}
         	IResource []refreshSet = (IResource [])allResources.toArray(new IResource[allResources.size()]);
         	// ensure we cached all locally-known resources
         	if (CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled()) {
