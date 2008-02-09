@@ -270,6 +270,7 @@ public class LogMessagesComposite extends SashForm {
 		
 		if (msgs == null || msgs.length == 0) {
 			this.msgs = new SVNLogEntry[0];
+			this.categories = null;
 			this.setTableInput();
 			this.historyTableListener.selectionChanged(null);
 			return;
