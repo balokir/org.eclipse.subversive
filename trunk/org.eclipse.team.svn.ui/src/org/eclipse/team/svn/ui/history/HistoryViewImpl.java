@@ -1014,8 +1014,7 @@ public class HistoryViewImpl {
 				filteredMessages.add(msgs[i]);
 			}
 	    }
-	    SVNLogEntry []result = (SVNLogEntry [])filteredMessages.toArray(new SVNLogEntry[filteredMessages.size()]);
-	    return result.length > 0 ? result : null;	    
+	    return (SVNLogEntry [])filteredMessages.toArray(new SVNLogEntry[filteredMessages.size()]);
 	}
 	
 	protected Action getFilterAction() {
