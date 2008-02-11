@@ -150,9 +150,7 @@ public class HistoryViewImpl {
 	protected Action groupByDateDropDownAction;
 	protected Action getNextPageAction;
 	protected Action getAllPagesAction;
-	protected Action clearFilterAction;
 	protected Action clearFilterDropDownAction;
-	protected Action filterAction;
 	protected Action filterDropDownAction;
 	protected Action hierarchicalAction;
 	protected Action flatAction;
@@ -515,6 +513,7 @@ public class HistoryViewImpl {
 	        	HistoryViewImpl.this.hideUnrelatedAction.setChecked((HistoryViewImpl.this.options & HistoryViewImpl.HIDE_UNRELATED) != 0);
 	        }	        
 	    };
+	    this.hideUnrelatedDropDownAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/hide_unrelated.gif"));
 	    this.stopOnCopyDropDownAction = new Action (SVNTeamUIPlugin.instance().getResource("HistoryView.StopOnCopy")) {
 	    	public void run() {
 	    		HistoryViewImpl.this.options ^= HistoryViewImpl.STOP_ON_COPY;
@@ -522,6 +521,7 @@ public class HistoryViewImpl {
 	    		HistoryViewImpl.this.refresh();
 	        }
 	    };
+	    this.stopOnCopyDropDownAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/stop_on_copy.gif"));
 	    this.groupByDateDropDownAction = new Action (SVNTeamUIPlugin.instance().getResource("HistoryView.GroupByDate")) {
 	    	public void run() {
 	    		HistoryViewImpl.this.options ^= HistoryViewImpl.GROUP_BY_DATE;
@@ -533,6 +533,8 @@ public class HistoryViewImpl {
 				SVNTeamPreferences.setHistoryInt(store, SVNTeamPreferences.HISTORY_GROUPING_TYPE_NAME, type == SVNTeamPreferences.HISTORY_GROUPING_TYPE_DATE ? SVNTeamPreferences.HISTORY_GROUPING_TYPE_NONE : SVNTeamPreferences.HISTORY_GROUPING_TYPE_DATE);
 	        }
 	    };	    
+	    this.groupByDateDropDownAction.setToolTipText(SVNTeamUIPlugin.instance().getResource("HistoryView.GroupByDate"));
+	    this.groupByDateDropDownAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/group_by_date.gif"));
 	    this.filterDropDownAction = new Action (SVNTeamUIPlugin.instance().getResource("HistoryView.QuickFilter")) {
 	    	public void run() {
 	    		if (HistoryViewImpl.this.quickFilter()) {
@@ -540,12 +542,16 @@ public class HistoryViewImpl {
 	        	}
 	        }
 	    };
+	    this.filterDropDownAction.setToolTipText(SVNTeamUIPlugin.instance().getResource("HistoryView.QuickFilter"));
+	    this.filterDropDownAction.setHoverImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/filter.gif"));
 	    this.clearFilterDropDownAction = new Action (SVNTeamUIPlugin.instance().getResource("HistoryView.ClearFilter")) {
 	    	public void run() {
 	    		HistoryViewImpl.this.clearFilter();
 	    		HistoryViewImpl.this.showHistoryImpl(null, false);
 	        }
 	    };
+	    this.clearFilterDropDownAction.setDisabledImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/clear.gif"));
+	    this.clearFilterDropDownAction.setHoverImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/clear_filter.gif"));
 	    this.compareModeDropDownAction = new Action (SVNTeamUIPlugin.instance().getResource("HistoryView.CompareMode")) {
 	    	public void run() {
 	    		HistoryViewImpl.this.options ^= HistoryViewImpl.COMPARE_MODE;
@@ -554,6 +560,7 @@ public class HistoryViewImpl {
 	            HistoryViewImpl.this.compareModeAction.setChecked((HistoryViewImpl.this.options & HistoryViewImpl.COMPARE_MODE) != 0);
 	        }
 	    };
+	    this.compareModeDropDownAction.setHoverImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/compare_mode.gif"));
 	    actionBarsMenu.add(this.showCommentViewerAction);
 	    actionBarsMenu.add(this.showAffectedPathsViewerAction);
 	    MenuManager sub = new MenuManager(SVNTeamUIPlugin.instance().getResource("HistoryView.AffectedPathLayout"), IWorkbenchActionConstants.GROUP_MANAGING);
@@ -1042,32 +1049,6 @@ public class HistoryViewImpl {
 	    return (SVNLogEntry [])filteredMessages.toArray(new SVNLogEntry[filteredMessages.size()]);
 	}
 	
-	protected Action getFilterAction() {
-	    this.filterAction = new Action (SVNTeamUIPlugin.instance().getResource("HistoryView.QuickFilter")) {
-	        public void run() {
-	        	if (HistoryViewImpl.this.quickFilter()) {
-	        		HistoryViewImpl.this.showHistoryImpl(null, false);
-	        	}
-	        }
-	    };
-	    this.filterAction.setToolTipText(SVNTeamUIPlugin.instance().getResource("HistoryView.QuickFilter"));
-	    this.filterAction.setHoverImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/filter.gif"));
-	    return this.filterAction;
-	}
-	
-	protected Action getClearFilterAction() {
-		this.clearFilterAction = new Action (SVNTeamUIPlugin.instance().getResource("HistoryView.ClearFilter")) {
-	        public void run() {
-	        	HistoryViewImpl.this.clearFilter();
-	        	HistoryViewImpl.this.showHistoryImpl(null, false);
-	        }
-	    };
-	    this.clearFilterAction.setToolTipText(SVNTeamUIPlugin.instance().getResource("HistoryView.ClearFilter"));
-	    this.clearFilterAction.setDisabledImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/clear.gif"));
-	    this.clearFilterAction.setHoverImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/clear_filter.gif"));
-	    return this.clearFilterAction;
-	}
-	
 	protected Action getCompareModeAction() {
 		this.compareModeAction = new Action (SVNTeamUIPlugin.instance().getResource("HistoryView.CompareMode"), IAction.AS_CHECK_BOX) {
 	        public void run() {
@@ -1078,7 +1059,6 @@ public class HistoryViewImpl {
 	        }
 	    };
 	    this.compareModeAction.setToolTipText(SVNTeamUIPlugin.instance().getResource("HistoryView.CompareMode"));
-	    this.compareModeAction.setDisabledImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/compare_mode_disabled.gif"));
 	    this.compareModeAction.setHoverImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/compare_mode.gif"));
 	    
 	    IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
@@ -1205,11 +1185,9 @@ public class HistoryViewImpl {
         tbm.add(this.getHideUnrelatedAction());           
         tbm.add(this.getStopOnCopyAction());           
         tbm.add(new Separator());
-        tbm.add(this.getFilterAction());           
-        tbm.add(this.getClearFilterAction());
-        tbm.add(new Separator());
         tbm.add(this.getPagingAction());
         tbm.add(this.getPagingAllAction());
+        tbm.add(new Separator());
         tbm.add(this.getCompareModeAction());
                 
         tbm.update(true);
@@ -1259,15 +1237,13 @@ public class HistoryViewImpl {
     }
     
     protected void setPagingEnabled() {
-	    this.filterAction.setEnabled(this.repositoryResource != null && this.logMessages != null);
-	    this.clearFilterAction.setEnabled(this.isFilterEnabled());
+	    this.filterDropDownAction.setEnabled(this.repositoryResource != null && this.logMessages != null);
+	    this.clearFilterDropDownAction.setEnabled(this.isFilterEnabled());
 	    this.getNextPageAction.setEnabled(this.pagingEnabled & ((this.options & HistoryViewImpl.PAGING_ENABLED) != 0));
 	    this.getAllPagesAction.setEnabled(this.pagingEnabled & ((this.options & HistoryViewImpl.PAGING_ENABLED) != 0));
     }
     
     protected void setPagingDisabled() {
-	    this.filterAction.setEnabled(false);
-	    this.clearFilterAction.setEnabled(false);
 	    this.getNextPageAction.setEnabled(false);
 	    this.getAllPagesAction.setEnabled(false);
     }
