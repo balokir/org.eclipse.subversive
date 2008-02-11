@@ -12,6 +12,8 @@
 package org.eclipse.team.svn.ui.operation;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
@@ -138,7 +140,17 @@ public class OpenRemoteFileOperation extends AbstractActionOperation {
 				}
 			}
 			else {
-				IEditorDescriptor descriptor = registry.getDefaultEditor(input.getRepositoryResource().getName());
+				String fileName = input.getRepositoryResource().getName();
+				IContentType type = Platform.getContentTypeManager().findContentTypeFor(input.getStorage().getContents(), fileName);
+				IEditorDescriptor descriptor = registry.getDefaultEditor(fileName, type);
+				if (descriptor == null) {
+					if (registry.isSystemInPlaceEditorAvailable(fileName)) {
+						descriptor = registry.findEditor(IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID);
+					}
+					else if (registry.isSystemExternalEditorAvailable(fileName)) {
+						descriptor = registry.findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
+					}
+				}
 				String editorId = descriptor == null ? EditorsUI.DEFAULT_TEXT_EDITOR_ID : descriptor.getId();
 
 				IEditorReference []refs = page.findEditors(input, editorId, IWorkbenchPage.MATCH_INPUT | IWorkbenchPage.MATCH_ID);

@@ -258,6 +258,7 @@ public class HistoryViewImpl {
 							}
 						});
 						tAction.setEnabled(tSelection.size() == 1);
+						tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getWorkbench().getEditorRegistry().getImageDescriptor(HistoryViewImpl.this.repositoryResource.getName()));
 						
 						//FIXME: "Open with" submenu shouldn't be hardcoded after reworking of
 						//       the HistoryView. Should be made like the RepositoriesView menu.
