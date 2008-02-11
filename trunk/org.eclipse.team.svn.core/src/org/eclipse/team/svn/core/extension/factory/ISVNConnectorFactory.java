@@ -22,7 +22,7 @@ import org.eclipse.team.svn.core.operation.UnreportableException;
  */
 public interface ISVNConnectorFactory {
 	public static final String DEFAULT_ID = "org.eclipse.team.svn.connector.svnkit";
-	public static final String CURRENT_COMPATIBILITY_VERSION = "0.7.0.v20080116";
+	public static final String CURRENT_COMPATIBILITY_VERSION = "0.7.0.v20080214";
 	
 	/**
 	 * Enumeration of connector API compatibility levels
@@ -82,14 +82,6 @@ public interface ISVNConnectorFactory {
 		 * Atomic cross-working copy commit is supported by connector 
 		 */
 		public static final int ATOMIC_X_COMMIT = 0x04;
-		/**
-		 * Compare repository folders is supported by connector 
-		 */
-		public static final int COMPARE_FOLDERS = 0x08;
-		/**
-		 * Only revision change reporting is supported by connector (makes sense for folders and synchronize view)
-		 */
-		public static final int REPORT_REVISION_CHANGE = 0x10;
 	}
 	
 	public static final ISVNConnectorFactory EMPTY = new ISVNConnectorFactory() {

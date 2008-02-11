@@ -27,7 +27,6 @@ import org.eclipse.team.svn.tests.core.workflow.PLC375Test;
 import org.eclipse.team.svn.tests.core.workflow.PLC378Test;
 import org.eclipse.team.svn.tests.core.workflow.PLC379Test;
 import org.eclipse.team.svn.tests.core.workflow.PLC380Test;
-import org.eclipse.team.svn.tests.core.workflow.ReportRootChangesTest;
 import org.eclipse.team.svn.tests.ui.JavaViewMenuEnablementTest;
 import org.eclipse.team.svn.tests.ui.RepositoryViewMenuEnablementTest;
 import org.eclipse.team.svn.tests.ui.SVNTeamMoveDeleteHookTest;
@@ -46,7 +45,6 @@ public class AllTests extends TestCase {
 
 		suite.addTestSuite(CoreTest.class);
 		suite.addTestSuite(CommitUpdateTest.class);
-		suite.addTestSuite(ReportRootChangesTest.class);
 		suite.addTestSuite(SVNTeamMoveDeleteHookTest.class);
 		if (workbenchEnabled) {
 			suite.addTestSuite(RepositoryViewMenuEnablementTest.class);
