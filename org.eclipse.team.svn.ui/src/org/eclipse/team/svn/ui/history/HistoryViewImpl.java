@@ -299,7 +299,7 @@ public class HistoryViewImpl {
 						}
 					});
 	        		boolean isCompareAllowed = 
-	        			(CoreExtensionsManager.instance().getSVNConnectorFactory().getSupportedFeatures() & ISVNConnectorFactory.OptionalFeatures.COMPARE_FOLDERS) != 0 ||
+	        			CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() == ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x ||
 	        			HistoryViewImpl.this.repositoryResource instanceof IRepositoryFile;
 					tAction.setEnabled(tSelection.size() == 2 && isCompareAllowed);
 					if (tSelection.size() == 1) {
@@ -879,7 +879,7 @@ public class HistoryViewImpl {
 			return;
 		}
 		boolean isCompareAllowed = 
-			(CoreExtensionsManager.instance().getSVNConnectorFactory().getSupportedFeatures() & ISVNConnectorFactory.OptionalFeatures.COMPARE_FOLDERS) != 0 ||
+			CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() == ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x ||
 			HistoryViewImpl.this.repositoryResource instanceof IRepositoryFile;
 		if ((this.options & HistoryViewImpl.COMPARE_MODE) != 0 && doubleClick && isCompareAllowed) {
 			this.compareWithCurrent(item);

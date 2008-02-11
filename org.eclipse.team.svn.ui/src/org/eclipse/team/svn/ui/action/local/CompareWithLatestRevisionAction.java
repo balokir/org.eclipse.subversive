@@ -55,7 +55,7 @@ public class CompareWithLatestRevisionAction extends AbstractWorkingCopyAction {
 	}
 
 	public boolean isEnabled() {
-		boolean isCompareFoldersAllowed = (CoreExtensionsManager.instance().getSVNConnectorFactory().getSupportedFeatures() & ISVNConnectorFactory.OptionalFeatures.COMPARE_FOLDERS) != 0;
+		boolean isCompareFoldersAllowed = CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() == ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x;
 		return
 			this.getSelectedResources().length == 1 && 
 			(isCompareFoldersAllowed || this.getSelectedResources()[0].getType() == IResource.FILE) && 
