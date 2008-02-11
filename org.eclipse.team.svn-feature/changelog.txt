@@ -20,6 +20,7 @@ Features:
  * Two URLs merge mode also should use Merge View (bug 217856)
  * Add revision folding ability to History view (bug 211410)
  * Use latest SVN 1.5 binaries (bug 218472)
+ * Open external editor if no built-in editors exists for this file type (bug 218485)
 
 Fixes:
  * Team Synchronization reset "remove from view" after each file change (bug 207026)

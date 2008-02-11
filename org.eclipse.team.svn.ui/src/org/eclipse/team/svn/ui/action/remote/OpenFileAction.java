@@ -19,7 +19,6 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.action.AbstractRepositoryTeamAction;
 import org.eclipse.team.svn.ui.operation.OpenRemoteFileOperation;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFile;
-import org.eclipse.ui.IEditorDescriptor;
 
 /**
  * Open remote file action implementation
@@ -44,8 +43,7 @@ public class OpenFileAction extends AbstractRepositoryTeamAction {
 		super.selectionChanged(action, selection);
 		if (this.isEnabled()) {
 			IRepositoryResource []resources = this.getSelectedRepositoryResources();
-			IEditorDescriptor descriptor = SVNTeamUIPlugin.instance().getWorkbench().getEditorRegistry().getDefaultEditor(resources[0].getName());
-			action.setImageDescriptor(descriptor == null ? null : descriptor.getImageDescriptor());
+			action.setImageDescriptor(SVNTeamUIPlugin.instance().getWorkbench().getEditorRegistry().getImageDescriptor(resources[0].getName()));
 		}
 		else {
 			action.setImageDescriptor(null);

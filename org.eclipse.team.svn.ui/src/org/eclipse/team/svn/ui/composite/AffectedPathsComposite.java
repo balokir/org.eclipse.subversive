@@ -402,6 +402,8 @@ public class AffectedPathsComposite extends Composite {
 						AffectedPathsComposite.this.openRemoteResource(affectedTableSelection);
 					}
 				});
+				String name = ((String [])affectedTableSelection.getFirstElement())[1];
+				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getWorkbench().getEditorRegistry().getImageDescriptor(name));
 				tAction.setEnabled(affectedTableSelection.size() == 1);
 				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.CompareWithPreviousRevision")) {
 					public void run() {
