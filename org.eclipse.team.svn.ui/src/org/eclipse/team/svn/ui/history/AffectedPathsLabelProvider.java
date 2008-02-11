@@ -15,6 +15,7 @@ import org.eclipse.compare.CompareUI;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.team.svn.core.connector.SVNLogPath;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
 
@@ -73,18 +74,18 @@ public class AffectedPathsLabelProvider extends LabelProvider {
 		String status = ((AffectedPathNode)element).getStatus();
 		if (status != null) {
 			switch (status.charAt(0)) {
-			case 'A': {
-				return AffectedPathsLabelProvider.addedFolderIcon;
-			}
-			case 'M': {
-				return AffectedPathsLabelProvider.modifiedFolderIcon;
-			}
-			case 'D': {
-				return AffectedPathsLabelProvider.deletedFolderIcon;
-			}
-			case 'R': {
-				return AffectedPathsLabelProvider.replacedFolderIcon;
-			}
+				case SVNLogPath.ChangeType.ADDED: {
+					return AffectedPathsLabelProvider.addedFolderIcon;
+				}
+				case SVNLogPath.ChangeType.MODIFIED: {
+					return AffectedPathsLabelProvider.modifiedFolderIcon;
+				}
+				case SVNLogPath.ChangeType.DELETED: {
+					return AffectedPathsLabelProvider.deletedFolderIcon;
+				}
+				case SVNLogPath.ChangeType.REPLACED: {
+					return AffectedPathsLabelProvider.replacedFolderIcon;
+				}
 			}
 		}
 		return AffectedPathsLabelProvider.overlayedFolderIcon;
