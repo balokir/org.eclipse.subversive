@@ -24,7 +24,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.compare.CompareUI;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
@@ -49,7 +48,6 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
@@ -65,7 +63,6 @@ import org.eclipse.team.svn.core.utility.PatternProvider;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.extension.factory.ICommentView;
-import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
 import org.eclipse.team.svn.ui.utility.TableViewerSorter;
 
 /**
@@ -79,13 +76,6 @@ public class LogMessagesComposite extends SashForm {
 	final public static int COLUMN_CHANGES = 2;
 	final public static int COLUMN_AUTHOR = 3;
 	final public static int COLUMN_LOG_MESSGE = 4;
-	
-	protected static Image FILE_IMAGE;
-	protected static Image FOLDER_IMAGE;
-	protected static Image ADDED_FILE_IMAGE;
-	protected static Image MODIFIED_FILE_IMAGE;
-	protected static Image DELETED_FILE_IMAGE;
-	protected static Image REPLACED_FILE_IMAGE;
 	
     protected SashForm innerSashForm;
     protected boolean commentVisible;
@@ -120,7 +110,6 @@ public class LogMessagesComposite extends SashForm {
 		
 		this.initializeTableView(style, logPercent);
 		this.initializeFont();
-		this.setDefaults();
 	}
 	
 	public void setGroupByDate(boolean groupByDate) {
@@ -500,22 +489,6 @@ public class LogMessagesComposite extends SashForm {
 		}
 		
 		throw new RuntimeException(SVNTeamUIPlugin.instance().getResource("Error.InvalidLogAction", new String[] {String.valueOf(action)}));
-	}
-	
-	private void setDefaults() {
-		SVNTeamUIPlugin instance = SVNTeamUIPlugin.instance();
-		LogMessagesComposite.FILE_IMAGE = instance.getImageDescriptor("icons/views/history/file.gif").createImage();
-		LogMessagesComposite.FOLDER_IMAGE = instance.getImageDescriptor("icons/views/history/affected_folder.gif").createImage();
-		LogMessagesComposite.ADDED_FILE_IMAGE = (new OverlayedImageDescriptor(LogMessagesComposite.FILE_IMAGE, instance.getImageDescriptor("icons/overlays/addition.gif"), new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V)).createImage();
-		LogMessagesComposite.MODIFIED_FILE_IMAGE = (new OverlayedImageDescriptor(LogMessagesComposite.FILE_IMAGE, instance.getImageDescriptor("icons/overlays/change.gif"), new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V)).createImage();
-		LogMessagesComposite.DELETED_FILE_IMAGE = (new OverlayedImageDescriptor(LogMessagesComposite.FILE_IMAGE, instance.getImageDescriptor("icons/overlays/deletion.gif"), new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V)).createImage();
-		LogMessagesComposite.REPLACED_FILE_IMAGE = (new OverlayedImageDescriptor(LogMessagesComposite.FILE_IMAGE, instance.getImageDescriptor("icons/overlays/replacement.gif"), new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V)).createImage();
-		CompareUI.disposeOnShutdown(LogMessagesComposite.FILE_IMAGE);
-		CompareUI.disposeOnShutdown(LogMessagesComposite.FOLDER_IMAGE);
-		CompareUI.disposeOnShutdown(LogMessagesComposite.ADDED_FILE_IMAGE);
-		CompareUI.disposeOnShutdown(LogMessagesComposite.MODIFIED_FILE_IMAGE);
-		CompareUI.disposeOnShutdown(LogMessagesComposite.DELETED_FILE_IMAGE);
-		CompareUI.disposeOnShutdown(LogMessagesComposite.REPLACED_FILE_IMAGE);
 	}
 	
 	private void initializeTableView(int style, int logPercent) {

@@ -12,7 +12,10 @@
 package org.eclipse.team.svn.ui.composite;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.eclipse.compare.CompareUI;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -25,6 +28,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -62,6 +66,7 @@ import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryInfo;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
+import org.eclipse.team.svn.core.connector.SVNLogPath;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.SVNEntry.Kind;
@@ -104,6 +109,7 @@ import org.eclipse.team.svn.ui.operation.UILoggedOperation;
 import org.eclipse.team.svn.ui.panel.remote.ExportPanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFolder;
+import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
 import org.eclipse.team.svn.ui.utility.TableViewerSorter;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.svn.ui.wizard.CreatePatchWizard;
@@ -119,6 +125,10 @@ import org.eclipse.ui.PlatformUI;
  * @author Sergiy Logvin
  */
 public class AffectedPathsComposite extends Composite {
+	protected static ImageDescriptor ADDITION_OVERLAY;
+	protected static ImageDescriptor MODIFICATION_OVERLAY;
+	protected static ImageDescriptor DELETION_OVERLAY;
+	protected static ImageDescriptor REPLACEMENT_OVERLAY;
 	
 	protected SashForm sashForm;
 	
@@ -134,6 +144,7 @@ public class AffectedPathsComposite extends Composite {
 
 	public AffectedPathsComposite(Composite parent, int style) {
 		super(parent, style);
+		this.setDefaults();
 		this.createControls();
 	}
 	
@@ -264,23 +275,44 @@ public class AffectedPathsComposite extends Composite {
 			}
 		});
 		ITableLabelProvider labelProvider = new ITableLabelProvider() {
+			protected Map<ImageDescriptor, Image> images = new HashMap<ImageDescriptor, Image>();
+		    
 			public Image getColumnImage(Object element, int columnIndex) {
 				if (columnIndex == 0) {
-					String action = ((String [])element)[columnIndex];
+					String action = ((String [])element)[0];
+					String fileName = ((String [])element)[1];
+					ImageDescriptor descr = SVNTeamUIPlugin.instance().getWorkbench().getEditorRegistry().getImageDescriptor(fileName);
+					Image img = this.images.get(descr);
+					if (img == null) {
+						img = descr.createImage();
+			            CompareUI.disposeOnShutdown(img);
+						this.images.put(descr, img);
+					}
 					switch (action.charAt(0)) {
-					case 'A': {
-						return LogMessagesComposite.ADDED_FILE_IMAGE;
+						case SVNLogPath.ChangeType.ADDED: {
+							descr = new OverlayedImageDescriptor(img, AffectedPathsComposite.ADDITION_OVERLAY, new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V);
+							break;
+						}
+						case SVNLogPath.ChangeType.MODIFIED: {
+							descr = new OverlayedImageDescriptor(img, AffectedPathsComposite.MODIFICATION_OVERLAY, new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V);
+							break;
+						}
+						case SVNLogPath.ChangeType.DELETED: {
+							descr = new OverlayedImageDescriptor(img, AffectedPathsComposite.DELETION_OVERLAY, new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V);
+							break;
+						}
+						case SVNLogPath.ChangeType.REPLACED: {
+							descr = new OverlayedImageDescriptor(img, AffectedPathsComposite.REPLACEMENT_OVERLAY, new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V);
+							break;
+						}
 					}
-					case 'M': {
-						return LogMessagesComposite.MODIFIED_FILE_IMAGE;
+					img = this.images.get(descr);
+					if (img == null) {
+						img = descr.createImage();
+			            CompareUI.disposeOnShutdown(img);
+						this.images.put(descr, img);
 					}
-					case 'D': {
-						return LogMessagesComposite.DELETED_FILE_IMAGE;
-					}
-					case 'R': {
-						return LogMessagesComposite.REPLACED_FILE_IMAGE;
-					}
-					}
+					return img;
 				}
 				return null;
 			}
@@ -742,6 +774,15 @@ public class AffectedPathsComposite extends Composite {
 
 	public void setRepositoryResource(IRepositoryResource repositoryResource) {
 		this.repositoryResource = repositoryResource;
+	}
+	
+	private void setDefaults() {
+		if (AffectedPathsComposite.ADDITION_OVERLAY == null) {
+			AffectedPathsComposite.ADDITION_OVERLAY = SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/addition.gif");
+			AffectedPathsComposite.MODIFICATION_OVERLAY = SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/change.gif");
+			AffectedPathsComposite.DELETION_OVERLAY = SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/deletion.gif");
+			AffectedPathsComposite.REPLACEMENT_OVERLAY = SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/replacement.gif");
+		}
 	}
 	
 	protected class GetInfoOperation extends AbstractActionOperation {
