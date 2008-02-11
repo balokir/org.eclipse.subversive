@@ -46,6 +46,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
@@ -279,6 +280,7 @@ public class HistoryViewImpl {
 						HistoryViewImpl.this.addMenuItem(sub, SVNTeamUIPlugin.instance().getResource("HistoryView.DefaultEditor"), new OpenFileAction());
 							
 			        	manager.add(sub);
+			        	manager.add(new Separator());
 					}
 					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CompareEachOther")) {
 						public void run() {
@@ -314,6 +316,28 @@ public class HistoryViewImpl {
 						});
 						tAction.setEnabled(tSelection.size() == 1 && isCompareAllowed);
 					}
+					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CompareWithPrevious")) {
+						public void run() {
+							try {
+								Object []selection = tSelection.toArray();
+								IRepositoryResource left = HistoryViewImpl.this.getResourceForSelectedRevision(selection[0]);
+								IRepositoryResource right = HistoryViewImpl.this.getResourceForSelectedRevision(new SVNLogEntry(((SVNLogEntry)selection[0]).revision - 1, 0, null, null, null));
+								if (!right.exists()) {
+									MessageBox err = new MessageBox(UIMonitorUtility.getShell());
+									err.setText(SVNTeamUIPlugin.instance().getResource("HistoryView.CompareWithPrevious.Title"));
+									err.setMessage(SVNTeamUIPlugin.instance().getResource("HistoryView.CompareWithPrevious.Message", new String [] {String.valueOf(((SVNLogEntry)selection[0]).revision - 1)}));
+									err.open();
+									return;
+								}
+								UIMonitorUtility.doTaskScheduledActive(new CompareRepositoryResourcesOperation(right, left));
+							}
+							catch (SVNConnectorException ex) {
+								UILoggedOperation.reportError("Compare", ex);
+							}
+						}
+					});
+					tAction.setEnabled(tSelection.size() == 1 && isCompareAllowed && ((SVNLogEntry)tSelection.getFirstElement()).revision > 0);
+					manager.add(new Separator());
 					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CreateUnifiedDiff")) {
 						public void run() {
 							HistoryViewImpl.this.createUnifiedDiff(tSelection);
