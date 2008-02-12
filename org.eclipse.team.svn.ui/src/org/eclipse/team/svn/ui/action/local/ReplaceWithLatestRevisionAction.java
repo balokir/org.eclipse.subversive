@@ -11,18 +11,31 @@
 
 package org.eclipse.team.svn.ui.action.local;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.core.operation.local.GetRemoteContentsOperation;
+import org.eclipse.team.svn.core.operation.local.AbstractWorkingCopyOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
+import org.eclipse.team.svn.core.operation.local.RemoveNonVersionedResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
+import org.eclipse.team.svn.core.operation.local.RevertOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
-import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.operation.local.UpdateOperation;
+import org.eclipse.team.svn.core.operation.local.change.IActionOperationProcessor;
+import org.eclipse.team.svn.core.operation.local.change.IResourceChangeVisitor;
+import org.eclipse.team.svn.core.operation.local.change.ResourceChange;
+import org.eclipse.team.svn.core.resource.ILocalFile;
+import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.action.AbstractNonRecursiveTeamAction;
 import org.eclipse.team.svn.ui.dialog.ReplaceWarningDialog;
 
@@ -55,17 +68,97 @@ public class ReplaceWithLatestRevisionAction extends AbstractNonRecursiveTeamAct
 			
 			SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
 			op.add(saveOp);
-			IRepositoryResource []remote = new IRepositoryResource[resources.length];
-			for (int i = 0; i < resources.length; i++) {
-				remote[i] = SVNRemoteStorage.instance().asRepositoryResource(resources[i]);
-			}
-			op.add(new GetRemoteContentsOperation(resources, remote));
+			
+			SaveUnversionedOperation saveUnversioned = new SaveUnversionedOperation(resources);
+			op.add(saveUnversioned);
+			
+			IActionOperation revertOp = new RevertOperation(resources, true);
+			op.add(revertOp);
+			IActionOperation removeOp = new RemoveNonVersionedResourcesOperation(resources, true);
+			op.add(removeOp, new IActionOperation[] {revertOp});
+			op.add(new UpdateOperation(resources, true), new IActionOperation[] {revertOp, removeOp});
+			
+			op.add(new RestoreUnversionedOperation(resources, saveUnversioned));
+			
 			op.add(new RestoreProjectMetaOperation(saveOp));
 			op.add(new RefreshResourcesOperation(resources));
 
 			return op;
 		}
 		return null;
+	}
+	
+	protected static class SaveUnversionedOperation extends AbstractWorkingCopyOperation implements IActionOperationProcessor {
+		public List changes;
+		
+		public SaveUnversionedOperation(IResource[] resources) {
+			super("Operation.SaveUnversioned", resources);
+			this.changes = new ArrayList();
+		}
+		
+		public void doOperation(IActionOperation op, IProgressMonitor monitor) {
+		    this.reportStatus(op.run(monitor).getStatus());
+		}
+		
+		protected void runImpl(IProgressMonitor monitor) throws Exception {
+			IResource []resources = this.operableData();
+			for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
+				ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resources[i]);
+				ResourceChange change = ResourceChange.wrapLocalResource(null, local, true);
+				change.traverse(new IResourceChangeVisitor() {
+					public void preVisit(ResourceChange change, IActionOperationProcessor processor, IProgressMonitor monitor) throws Exception {
+						ILocalResource local = change.getLocal();
+						if (local instanceof ILocalFile && IStateFilter.SF_UNVERSIONED.accept(local)) {
+					    	File real = new File(FileUtility.getWorkingCopyPath(local.getResource()));
+						    // optimize operation performance using "move on FS" if possible
+							if (real.exists() && !real.renameTo(change.getTemporary())) {
+								FileUtility.copyFile(change.getTemporary(), real, monitor);
+								real.delete();
+							}
+						}
+					}
+					public void postVisit(ResourceChange change, IActionOperationProcessor processor, IProgressMonitor monitor) throws Exception {
+					}
+				}, IResource.DEPTH_INFINITE, this, monitor);
+				this.changes.add(change);
+			}
+		}
+		
+	}
+	
+	protected static class RestoreUnversionedOperation extends AbstractWorkingCopyOperation implements IActionOperationProcessor {
+		public SaveUnversionedOperation changes;
+		
+		public RestoreUnversionedOperation(IResource[] resources, SaveUnversionedOperation changes) {
+			super("Operation.RestoreUnversioned", resources);
+			this.changes = changes;
+		}
+		
+		public void doOperation(IActionOperation op, IProgressMonitor monitor) {
+		    this.reportStatus(op.run(monitor).getStatus());
+		}
+		
+		protected void runImpl(IProgressMonitor monitor) throws Exception {
+			ResourceChange []changes = (ResourceChange [])this.changes.changes.toArray(new ResourceChange[0]);
+			for (int i = 0; i < changes.length && !monitor.isCanceled(); i++) {
+				changes[i].traverse(new IResourceChangeVisitor() {
+					public void preVisit(ResourceChange change, IActionOperationProcessor processor, IProgressMonitor monitor) throws Exception {
+					}
+					public void postVisit(ResourceChange change, IActionOperationProcessor processor, IProgressMonitor monitor) throws Exception {
+						ILocalResource local = change.getLocal();
+						if (local instanceof ILocalFile && IStateFilter.SF_UNVERSIONED.accept(local)) {
+					    	File real = new File(FileUtility.getWorkingCopyPath(local.getResource()));
+						    // optimize operation performance using "move on FS" if possible
+							if (!real.exists() && !change.getTemporary().renameTo(real)) {
+								FileUtility.copyFile(real, change.getTemporary(), monitor);
+								change.getTemporary().delete();
+							}
+						}
+					}
+				}, IResource.DEPTH_INFINITE, this, monitor);
+			}
+		}
+		
 	}
 	
 }
