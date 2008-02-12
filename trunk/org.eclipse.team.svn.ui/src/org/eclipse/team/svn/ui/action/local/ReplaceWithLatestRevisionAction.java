@@ -13,15 +13,16 @@ package org.eclipse.team.svn.ui.action.local;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.operation.local.GetRemoteContentsOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
-import org.eclipse.team.svn.core.operation.local.RemoveNonVersionedResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
-import org.eclipse.team.svn.core.operation.local.RevertOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
-import org.eclipse.team.svn.core.operation.local.UpdateOperation;
+import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.action.AbstractNonRecursiveTeamAction;
 import org.eclipse.team.svn.ui.dialog.ReplaceWarningDialog;
 
@@ -31,28 +32,14 @@ import org.eclipse.team.svn.ui.dialog.ReplaceWarningDialog;
  * @author Alexander Gurov
  */
 public class ReplaceWithLatestRevisionAction extends AbstractNonRecursiveTeamAction {
-
 	public ReplaceWithLatestRevisionAction() {
 		super();
 	}
 	
 	public void runImpl(IAction action) {
-		ReplaceWarningDialog dialog = new ReplaceWarningDialog(this.getShell());
-		if (dialog.open() == 0) {
-			IResource []resources = this.getSelectedResources(IStateFilter.SF_ONREPOSITORY);
-
-			CompositeOperation op = new CompositeOperation("Operation.ReplaceWithLatest");
-			
-			SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
-			op.add(saveOp);
-			IActionOperation revertOp = new RevertOperation(resources, true);
-			op.add(revertOp);
-			IActionOperation removeOp = new RemoveNonVersionedResourcesOperation(resources, true);
-			op.add(removeOp, new IActionOperation[] {revertOp});
-			op.add(new UpdateOperation(resources, true), new IActionOperation[] {revertOp, removeOp});
-			op.add(new RestoreProjectMetaOperation(saveOp));
-			op.add(new RefreshResourcesOperation(resources));
-
+		IResource []resources = this.getSelectedResources(IStateFilter.SF_ONREPOSITORY);
+		IActionOperation op = ReplaceWithLatestRevisionAction.getReplaceOperation(resources, this.getShell());
+		if (op != null) {
 			this.runScheduled(op);
 		}
 	}
@@ -61,4 +48,24 @@ public class ReplaceWithLatestRevisionAction extends AbstractNonRecursiveTeamAct
 		return this.checkForResourcesPresence(IStateFilter.SF_ONREPOSITORY);
 	}
 
+	public static IActionOperation getReplaceOperation(IResource []resources, Shell shell) {
+		ReplaceWarningDialog dialog = new ReplaceWarningDialog(shell);
+		if (dialog.open() == 0) {
+			CompositeOperation op = new CompositeOperation("Operation.ReplaceWithLatest");
+			
+			SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
+			op.add(saveOp);
+			IRepositoryResource []remote = new IRepositoryResource[resources.length];
+			for (int i = 0; i < resources.length; i++) {
+				remote[i] = SVNRemoteStorage.instance().asRepositoryResource(resources[i]);
+			}
+			op.add(new GetRemoteContentsOperation(resources, remote));
+			op.add(new RestoreProjectMetaOperation(saveOp));
+			op.add(new RefreshResourcesOperation(resources));
+
+			return op;
+		}
+		return null;
+	}
+	
 }

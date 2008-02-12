@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -29,7 +28,6 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -59,18 +57,13 @@ import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.AddToSVNIgnoreOperation;
-import org.eclipse.team.svn.core.operation.local.ClearLocalStatusesOperation;
 import org.eclipse.team.svn.core.operation.local.CreatePatchOperation;
 import org.eclipse.team.svn.core.operation.local.LockOperation;
 import org.eclipse.team.svn.core.operation.local.MarkAsMergedOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
-import org.eclipse.team.svn.core.operation.local.RemoveNonVersionedResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
-import org.eclipse.team.svn.core.operation.local.RevertOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
-import org.eclipse.team.svn.core.operation.local.SwitchOperation;
 import org.eclipse.team.svn.core.operation.local.UnlockOperation;
-import org.eclipse.team.svn.core.operation.local.UpdateOperation;
 import org.eclipse.team.svn.core.operation.local.property.GetPropertiesOperation;
 import org.eclipse.team.svn.core.operation.local.refactor.DeleteResourceOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -86,12 +79,13 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.action.local.AddToSVNIgnoreAction;
 import org.eclipse.team.svn.ui.action.local.CompareWithWorkingCopyAction;
+import org.eclipse.team.svn.ui.action.local.ReplaceWithLatestRevisionAction;
+import org.eclipse.team.svn.ui.action.local.ReplaceWithRevisionAction;
 import org.eclipse.team.svn.ui.action.local.RevertAction;
 import org.eclipse.team.svn.ui.composite.CommentComposite;
 import org.eclipse.team.svn.ui.composite.ResourceSelectionComposite;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.dialog.DiscardConfirmationDialog;
-import org.eclipse.team.svn.ui.dialog.ReplaceWarningDialog;
 import org.eclipse.team.svn.ui.dialog.UnlockResourcesDialog;
 import org.eclipse.team.svn.ui.event.IResourceSelectionChangeListener;
 import org.eclipse.team.svn.ui.event.ResourceSelectionChangedEvent;
@@ -548,19 +542,9 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				subMenu = new MenuManager(SVNTeamUIPlugin.instance().getResource("CommitPanel.ReplaceWith.Group"));
 				subMenu.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("ReplaceWithLatestRevisionAction.label")) {
 					public void run() {
-						ReplaceWarningDialog dialog = new ReplaceWarningDialog(UIMonitorUtility.getShell());
-						if (dialog.open() == 0) {
-							IResource []resources = FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_ONREPOSITORY);
-							CompositeOperation op = new CompositeOperation("Operation.ReplaceWithLatest");					
-							SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
-							op.add(saveOp);
-							IActionOperation revertOp = new RevertOperation(resources, true);
-							op.add(revertOp);
-							IActionOperation removeOp = new RemoveNonVersionedResourcesOperation(resources, true);
-							op.add(removeOp, new IActionOperation[] {revertOp});
-							op.add(new UpdateOperation(resources, true), new IActionOperation[] {revertOp, removeOp});
-							op.add(new RestoreProjectMetaOperation(saveOp));
-							op.add(new RefreshResourcesOperation(resources));
+						IResource []resources = FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_ONREPOSITORY, IResource.DEPTH_ZERO);
+						IActionOperation op = ReplaceWithLatestRevisionAction.getReplaceOperation(resources, UIMonitorUtility.getShell());
+						if (op != null) {
 							UIMonitorUtility.doTaskNowDefault(op, true);
 						}
 					}
@@ -568,26 +552,9 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				tAction.setEnabled(FileUtility.checkForResourcesPresenceRecursive(selectedResources, IStateFilter.SF_ONREPOSITORY));
 				subMenu.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("ReplaceWithRevisionAction.label")) {
 					public void run() {
-						IRemoteStorage storage = SVNRemoteStorage.instance();
-						IResource resource = selectedResources[0];
-						IRepositoryResource remote = storage.asRepositoryResource(resource);
-						ILocalResource local = storage.asLocalResource(resource);
-						ReplaceWithUrlPanel panel = new ReplaceWithUrlPanel(remote, local.getRevision());
-						DefaultDialog selectionDialog = new DefaultDialog(UIMonitorUtility.getShell(), panel);
-						if (selectionDialog.open() == Dialog.OK) {
-							ReplaceWarningDialog dialog = new ReplaceWarningDialog(UIMonitorUtility.getShell());
-							if (dialog.open() == 0) {
-								IResource [] wcResources = new IResource[] {resource};
-								SwitchOperation mainOp = new SwitchOperation(wcResources, new IRepositoryResource [] {panel.getSelectedResource()});
-								CompositeOperation op = new CompositeOperation(mainOp.getId());
-								SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(wcResources);
-								op.add(saveOp);
-								op.add(mainOp);
-								op.add(new RestoreProjectMetaOperation(saveOp));
-								op.add(new ClearLocalStatusesOperation(wcResources));
-								op.add(new RefreshResourcesOperation(wcResources));
-								UIMonitorUtility.doTaskNowDefault(op, true);
-							}
+						IActionOperation op = ReplaceWithRevisionAction.getReplaceOperation(selectedResources, UIMonitorUtility.getShell());
+						if (op != null) {
+							UIMonitorUtility.doTaskNowDefault(op, true);
 						}
 					}
 				});

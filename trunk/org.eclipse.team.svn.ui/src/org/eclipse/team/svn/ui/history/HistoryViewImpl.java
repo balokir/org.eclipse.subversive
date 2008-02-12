@@ -827,7 +827,7 @@ public class HistoryViewImpl {
 			}
 		}
 		if (canWrite) {
-			GetRemoteContentsOperation mainOp = new GetRemoteContentsOperation(this.wcResource, remote);
+			GetRemoteContentsOperation mainOp = new GetRemoteContentsOperation(new IResource[] {this.wcResource}, new IRepositoryResource[] {remote});
 			
 			CompositeOperation op = new CompositeOperation(mainOp.getId());
 			op.add(mainOp);

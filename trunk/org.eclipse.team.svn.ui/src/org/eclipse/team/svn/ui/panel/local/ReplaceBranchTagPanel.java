@@ -59,7 +59,7 @@ public class ReplaceBranchTagPanel extends AbstractDialogPanel {
         this.selectionComposite.setCurrentRevision(this.currentRevision);
 	}
 	
-	public IRepositoryResource getSelectedResoure() {
+	public IRepositoryResource getSelectedResource() {
 		return this.selectionComposite.getSelectedResource();
 	}
 

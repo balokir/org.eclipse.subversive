@@ -59,7 +59,7 @@ public class SelectRepositoryResourcePage extends AbstractVerifiedWizardPage {
 		this.selectComposite = new RepositoryResourceSelectionComposite(
 				composite, SWT.NONE, this, "patchUrl", this.baseResource, true, 
 				SVNTeamUIPlugin.instance().getResource("SelectRepositoryResourcePage.Select.Title"),
-				SVNTeamUIPlugin.instance().getResource("SelectRepositoryResourcePage.Select.Description"), RepositoryResourceSelectionComposite.MODE_DEFAULT);
+				SVNTeamUIPlugin.instance().getResource("SelectRepositoryResourcePage.Select.Description"), RepositoryResourceSelectionComposite.MODE_DEFAULT, RepositoryResourceSelectionComposite.TEXT_BASE);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = 550;
 		this.selectComposite.setLayoutData(data);

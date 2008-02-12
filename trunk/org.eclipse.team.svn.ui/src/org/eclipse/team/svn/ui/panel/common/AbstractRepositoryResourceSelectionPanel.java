@@ -37,8 +37,9 @@ public abstract class AbstractRepositoryResourceSelectionPanel extends AbstractD
 	protected String selectionTitle;
 	protected String selectionDescription;
 	protected int twoRevisions;
+	protected int defaultTextType;
 	
-    public AbstractRepositoryResourceSelectionPanel(IRepositoryResource baseResource, long currentRevision, String title, String proposal, String historyKey, boolean stopOnCopy, String selectionTitle, String selectionDescription) {
+    public AbstractRepositoryResourceSelectionPanel(IRepositoryResource baseResource, long currentRevision, String title, String proposal, String historyKey, boolean stopOnCopy, String selectionTitle, String selectionDescription, int defaultTextType) {
         super();
         this.dialogTitle = title;
         this.dialogDescription = proposal;
@@ -49,10 +50,11 @@ public abstract class AbstractRepositoryResourceSelectionPanel extends AbstractD
 		this.currentRevision = currentRevision;
 		this.selectionTitle = selectionTitle;
 		this.selectionDescription = selectionDescription;
+		this.defaultTextType = defaultTextType;
     }
     
-    public AbstractRepositoryResourceSelectionPanel(IRepositoryResource baseResource, long currentRevision, String title, String proposal, String historyKey, boolean stopOnCopy, String selectionTitle, String selectionDescription, int twoRevisions) {
-    	this(baseResource, currentRevision, title, proposal, historyKey, stopOnCopy, selectionTitle, selectionDescription);
+    public AbstractRepositoryResourceSelectionPanel(IRepositoryResource baseResource, long currentRevision, String title, String proposal, String historyKey, boolean stopOnCopy, String selectionTitle, String selectionDescription, int twoRevisions, int defaultTextType) {
+    	this(baseResource, currentRevision, title, proposal, historyKey, stopOnCopy, selectionTitle, selectionDescription, defaultTextType);
     	this.twoRevisions = twoRevisions;
     }
 
@@ -77,7 +79,7 @@ public abstract class AbstractRepositoryResourceSelectionPanel extends AbstractD
     public void createControlsImpl(Composite parent) {
         GridData data = null;
 
-        this.selectionComposite = new RepositoryResourceSelectionComposite(parent, SWT.NONE, this, this.historyKey, this.selectedResource, this.stopOnCopy, this.selectionTitle, this.selectionDescription, this.twoRevisions);
+        this.selectionComposite = new RepositoryResourceSelectionComposite(parent, SWT.NONE, this, this.historyKey, this.selectedResource, this.stopOnCopy, this.selectionTitle, this.selectionDescription, this.twoRevisions, this.defaultTextType);
         data = new GridData(GridData.FILL_HORIZONTAL);
         this.selectionComposite.setLayoutData(data);
         this.selectionComposite.setCurrentRevision(this.currentRevision);

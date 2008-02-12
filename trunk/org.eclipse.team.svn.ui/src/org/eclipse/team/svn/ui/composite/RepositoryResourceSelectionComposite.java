@@ -51,6 +51,9 @@ public class RepositoryResourceSelectionComposite extends Composite {
 	public static final int MODE_TWO = 1;
 	public static final int MODE_AUTO = 2;
 	
+	public static final int TEXT_NONE = 0;
+	public static final int TEXT_BASE = 1;
+	
 	protected Combo urlText;
 	protected Button browse;
 	protected UserInputHistory urlHistory;
@@ -69,11 +72,11 @@ public class RepositoryResourceSelectionComposite extends Composite {
 	protected String selectionDescription;
 	protected String comboId;
 
-	public RepositoryResourceSelectionComposite(Composite parent, int style, IValidationManager validationManager, String historyKey, IRepositoryResource baseResource, boolean stopOnCopy, String selectionTitle, String selectionDescription, int twoRevisions) {
-		this(parent, style, validationManager, historyKey, "RepositoryResourceSelectionComposite.URL", baseResource, stopOnCopy, selectionTitle, selectionDescription, twoRevisions);
+	public RepositoryResourceSelectionComposite(Composite parent, int style, IValidationManager validationManager, String historyKey, IRepositoryResource baseResource, boolean stopOnCopy, String selectionTitle, String selectionDescription, int twoRevisions, int defaultTextType) {
+		this(parent, style, validationManager, historyKey, "RepositoryResourceSelectionComposite.URL", baseResource, stopOnCopy, selectionTitle, selectionDescription, twoRevisions, defaultTextType);
 	}
 	
-	public RepositoryResourceSelectionComposite(Composite parent, int style, IValidationManager validationManager, String historyKey, String comboId, IRepositoryResource baseResource, boolean stopOnCopy, String selectionTitle, String selectionDescription, int twoRevisions) {
+	public RepositoryResourceSelectionComposite(Composite parent, int style, IValidationManager validationManager, String historyKey, String comboId, IRepositoryResource baseResource, boolean stopOnCopy, String selectionTitle, String selectionDescription, int twoRevisions, int defaultTextType) {
 		super(parent, style);
 		this.stopOnCopy = stopOnCopy;
 		this.urlHistory = new UserInputHistory(historyKey);
@@ -83,7 +86,7 @@ public class RepositoryResourceSelectionComposite extends Composite {
 		this.selectionDescription = selectionDescription;
 		this.twoRevisions = twoRevisions;
 		this.comboId = comboId;
-		this.createControls();
+		this.createControls(defaultTextType);
 	}
 
 	public IRepositoryResource getSelectedResource() {
@@ -146,7 +149,7 @@ public class RepositoryResourceSelectionComposite extends Composite {
 		}
 	}
 	
-	private void createControls() {
+	private void createControls(int defaultTextType) {
 		GridLayout layout = null;
 		GridData data = null;
 		
@@ -174,10 +177,7 @@ public class RepositoryResourceSelectionComposite extends Composite {
 		this.urlText.setLayoutData(data);
 		this.urlText.setVisibleItemCount(this.urlHistory.getDepth());
 		this.urlText.setItems(this.urlHistory.getHistory());
-		if (this.urlText.getItemCount() > 0) {
-			this.urlText.setText(this.url = this.urlText.getItem(0));
-		}
-		else {
+		if (defaultTextType == RepositoryResourceSelectionComposite.TEXT_BASE) {
 			this.urlText.setText(this.baseResource.getUrl());
 		}
 		this.urlText.addModifyListener(new ModifyListener() {

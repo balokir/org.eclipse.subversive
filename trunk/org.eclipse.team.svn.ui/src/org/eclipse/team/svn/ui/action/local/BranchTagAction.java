@@ -24,7 +24,6 @@ import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.AddToSVNOperation;
-import org.eclipse.team.svn.core.operation.local.ClearLocalStatusesOperation;
 import org.eclipse.team.svn.core.operation.local.FreezeExternalsOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreExternalsOperation;
@@ -143,7 +142,6 @@ public class BranchTagAction extends AbstractNonRecursiveTeamAction {
 					op.add(saveOp);
 				    op.add(new SwitchOperation(switchedResources, mainOp), new IActionOperation[] {mainOp});
 					op.add(new RestoreProjectMetaOperation(saveOp));
-					op.add(new ClearLocalStatusesOperation(operateResourcesArr));
 					op.add(new RefreshResourcesOperation(operateResourcesArr));
 				}
 				this.runNow(op, false);
