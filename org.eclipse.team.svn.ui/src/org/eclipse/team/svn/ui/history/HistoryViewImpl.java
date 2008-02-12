@@ -50,6 +50,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.history.FileRevisionEditorInput;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
@@ -118,6 +120,7 @@ import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
 
@@ -249,11 +252,14 @@ public class HistoryViewImpl {
 				final IStructuredSelection tSelection = (IStructuredSelection)HistoryViewImpl.this.history.getTreeViewer().getSelection();
 				Action tAction = null;
 				boolean onlyLogEntries = true;
+				boolean onlyLocalEntries = true;
 				Object []selected = tSelection.toArray();
 				for (int i = 0; i < selected.length; i++) {
-					if (selected[i] instanceof HistoryCategory || selected[i] instanceof IFileState) {
+					if (!(selected[i] instanceof SVNLogEntry)) {
 						onlyLogEntries = false;
-						break;
+					}
+					else if (!(selected[i] instanceof SVNLocalFileRevision)) {
+						onlyLocalEntries = false;
 					}
 				}
 				if (onlyLogEntries) {
@@ -475,6 +481,16 @@ public class HistoryViewImpl {
 					    tAction.setEnabled(isFilterEnabled());
 					}
 				}
+				if (onlyLocalEntries) {
+					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.Open")) {
+						public void run() {
+							HistoryViewImpl.this.handleDoubleClick(tSelection.getFirstElement(), false);
+						}
+					});
+					tAction.setEnabled(tSelection.size() == 1);
+					tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getWorkbench().getEditorRegistry().getImageDescriptor(((SVNLocalFileRevision)tSelection.getFirstElement()).getName()));
+					manager.add(new Separator());
+				}
 				if (!onlyLogEntries) {
 					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CopyHistory")) {
 						public void run() {
@@ -658,7 +674,13 @@ public class HistoryViewImpl {
 			try {
 				this.showBothAction.setEnabled(true);
 				this.showLocalAction.setEnabled(true);
-				this.history.setLocalHistory(((IFile)resource).getHistory(null));
+				ArrayList<SVNLocalFileRevision> history = new ArrayList<SVNLocalFileRevision>();
+				history.add(new SVNLocalFileRevision((IFile)resource));
+				IFileState [] states = ((IFile)resource).getHistory(null);
+				for (int i = 0; i < states.length; i++) {
+					history.add(new SVNLocalFileRevision(states[i]));
+				}
+				this.history.setLocalHistory(history.toArray(new SVNLocalFileRevision [0]));
 				
 			} catch (CoreException ex) {		
 				UILoggedOperation.reportError("Get Local History", ex);
@@ -666,7 +688,7 @@ public class HistoryViewImpl {
 		}
 		else {
 			this.setOnlyRemoteRevs();
-			this.history.setLocalHistory(new IFileState [0]);
+			this.history.setLocalHistory(new SVNLocalFileRevision [0]);
 		}
 	    long currentRevision = SVNRevision.INVALID_REVISION_NUMBER;
 	    IRepositoryResource remote = null;
@@ -947,7 +969,19 @@ public class HistoryViewImpl {
 			CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() == ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x ||
 			HistoryViewImpl.this.repositoryResource instanceof IRepositoryFile;
 		if ((this.options & HistoryViewImpl.COMPARE_MODE) != 0 && doubleClick && isCompareAllowed) {
-			this.compareWithCurrent(item);
+			if (item instanceof SVNLogEntry) {
+				this.compareWithCurrent(item);
+			}
+		}
+		else if (item instanceof SVNLocalFileRevision) {
+			try {
+				Utils.openEditor(SVNTeamUIPlugin.instance().getWorkbench().getActiveWorkbenchWindow().getActivePage(),
+								new FileRevisionEditorInput((SVNLocalFileRevision)item, ((SVNLocalFileRevision)item).getStorage(null))
+								);
+			}
+			catch (PartInitException ex) {
+				UILoggedOperation.reportError("Open Editor", ex);
+			}
 		}
 		else if (!(this.repositoryResource instanceof IRepositoryContainer)) {
 			UIMonitorUtility.doTaskScheduledActive(new OpenRemoteFileOperation(new IRepositoryFile[] {(IRepositoryFile)this.getResourceForSelectedRevision(item)}, OpenRemoteFileOperation.OPEN_DEFAULT));

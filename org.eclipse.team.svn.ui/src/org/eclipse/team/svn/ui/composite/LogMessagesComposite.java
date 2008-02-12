@@ -24,7 +24,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.resources.IFileState;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
@@ -65,6 +64,7 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.extension.factory.ICommentView;
 import org.eclipse.team.svn.ui.history.HistoryViewImpl;
+import org.eclipse.team.svn.ui.history.SVNLocalFileRevision;
 import org.eclipse.team.svn.ui.utility.TableViewerSorter;
 
 /**
@@ -101,7 +101,7 @@ public class LogMessagesComposite extends SashForm {
 	protected IRepositoryResource repositoryResource;
 	
 	protected SVNLogEntry []msgs = new SVNLogEntry[0];
-	protected IFileState [] localHistory = new IFileState[0];
+	protected SVNLocalFileRevision [] localHistory = new SVNLocalFileRevision[0];
 	protected Object [] allHystory = new Object[0];
 	protected HistoryCategory[] categoriesBoth = new HistoryCategory[0];
 	protected HistoryCategory[] categoriesRemote = new HistoryCategory[0];
@@ -136,7 +136,7 @@ public class LogMessagesComposite extends SashForm {
 	    }
 	}
 	
-	public void setLocalHistory (IFileState [] localHistory) {
+	public void setLocalHistory (SVNLocalFileRevision [] localHistory) {
 		this.localHistory = localHistory;
 	}
 	
@@ -226,7 +226,7 @@ public class LogMessagesComposite extends SashForm {
 	
 	public String getSelectedMessageNoComment() {
 		IStructuredSelection tSelection = (IStructuredSelection)this.historyTable.getSelection();
-		if (tSelection.size() > 0 && ((tSelection.getFirstElement() instanceof HistoryCategory)|| (tSelection.getFirstElement() instanceof IFileState))) {
+		if (tSelection.size() > 0 && ((tSelection.getFirstElement() instanceof HistoryCategory)|| (tSelection.getFirstElement() instanceof SVNLocalFileRevision))) {
 			return "";
 		}
 		String message = this.getSelectedMessage();
@@ -342,11 +342,11 @@ public class LogMessagesComposite extends SashForm {
 		ArrayList<Object> weekEntriesAll = new ArrayList<Object>();
 		ArrayList<Object> monthEntriesAll = new ArrayList<Object>();
 		ArrayList<Object> earlierEntriesAll = new ArrayList<Object>();
-		ArrayList<IFileState> todayEntriesLocal = new ArrayList<IFileState>();
-		ArrayList<IFileState> yesterdayEntriesLocal = new ArrayList<IFileState>();
-		ArrayList<IFileState> weekEntriesLocal = new ArrayList<IFileState>();
-		ArrayList<IFileState> monthEntriesLocal = new ArrayList<IFileState>();
-		ArrayList<IFileState> earlierEntriesLocal = new ArrayList<IFileState>();
+		ArrayList<SVNLocalFileRevision> todayEntriesLocal = new ArrayList<SVNLocalFileRevision>();
+		ArrayList<SVNLocalFileRevision> yesterdayEntriesLocal = new ArrayList<SVNLocalFileRevision>();
+		ArrayList<SVNLocalFileRevision> weekEntriesLocal = new ArrayList<SVNLocalFileRevision>();
+		ArrayList<SVNLocalFileRevision> monthEntriesLocal = new ArrayList<SVNLocalFileRevision>();
+		ArrayList<SVNLocalFileRevision> earlierEntriesLocal = new ArrayList<SVNLocalFileRevision>();
 		ArrayList<SVNLogEntry> todayEntriesRemote = new ArrayList<SVNLogEntry>();
 		ArrayList<SVNLogEntry> yesterdayEntriesRemote = new ArrayList<SVNLogEntry>();
 		ArrayList<SVNLogEntry> weekEntriesRemote = new ArrayList<SVNLogEntry>();
@@ -399,19 +399,19 @@ public class LogMessagesComposite extends SashForm {
 			allEntries.add(entries[i]);
 		}
 		for (int i = 0; i < localHistory.length; i++) {
-			if (localHistory[i].getModificationTime() > yesterdayDate) {
+			if (localHistory[i].getTimestamp() > yesterdayDate) {
 				todayEntriesAll.add(localHistory[i]);
 				todayEntriesLocal.add(localHistory[i]);
 			}
-			else if (localHistory[i].getModificationTime() < yesterdayDate && localHistory[i].getModificationTime() > beforeYesterdayDate) {
+			else if (localHistory[i].getTimestamp() < yesterdayDate && localHistory[i].getTimestamp() > beforeYesterdayDate) {
 				yesterdayEntriesAll.add(localHistory[i]);
 				yesterdayEntriesLocal.add(localHistory[i]);
 			}
-			else if  (localHistory[i].getModificationTime() < beforeYesterdayDate && localHistory[i].getModificationTime() > lastWeekDate) {
+			else if  (localHistory[i].getTimestamp() < beforeYesterdayDate && localHistory[i].getTimestamp() > lastWeekDate) {
 				weekEntriesAll.add(localHistory[i]);
 				weekEntriesLocal.add(localHistory[i]);
 			}
-			else if  (localHistory[i].getModificationTime() < lastWeekDate && localHistory[i].getModificationTime() > lastMonthDate) {
+			else if  (localHistory[i].getTimestamp() < lastWeekDate && localHistory[i].getTimestamp() > lastMonthDate) {
 				monthEntriesAll.add(localHistory[i]);
 				monthEntriesLocal.add(localHistory[i]);
 			}
@@ -807,7 +807,7 @@ public class LogMessagesComposite extends SashForm {
 					}
 					return this.groupImage;
 				}
-				else if (element instanceof IFileState) {
+				else if (element instanceof SVNLocalFileRevision) {
 					if (this.localRevisionImage == null) {
 						this.localRevisionImage = SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/local_rev.gif").createImage();
 					}
@@ -841,23 +841,20 @@ public class LogMessagesComposite extends SashForm {
 					}
 				}
 			}
-			else if (element instanceof IFileState) {
-				IFileState row = (IFileState)element;
+			else if (element instanceof SVNLocalFileRevision) {
+				SVNLocalFileRevision row = (SVNLocalFileRevision)element;
 				switch (columnIndex) {
 					case LogMessagesComposite.COLUMN_DATE: {
-						return this.dateTimeFormat.format(new Date(row.getModificationTime()));
+						return this.dateTimeFormat.format(new Date(row.getTimestamp()));
 					}
 					case LogMessagesComposite.COLUMN_REVISION: {
-						if (row.equals(LogMessagesComposite.this.localHistory[0])) {
+						if (row.isCurrentState()) {
 							return SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.CurrentRevision", new String [] {String.valueOf(LogMessagesComposite.this.currentRevision)});
 						}
 						return "";
 					}
 					case LogMessagesComposite.COLUMN_LOG_MESSGE: {
-						if (row.equals(LogMessagesComposite.this.localHistory[0])) {
-							return SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.CurrentVersion");
-						}
-						return "";
+						return row.getComment();
 					}
 					default: {
 						return "";
@@ -902,7 +899,7 @@ public class LogMessagesComposite extends SashForm {
 				}
 				return null;
 			}
-			if (element instanceof IFileState) {
+			if (element instanceof SVNLocalFileRevision) {
 				if (element.equals(LogMessagesComposite.this.localHistory[0]) && !LogMessagesComposite.this.currentRevisionFont.isDisposed()) {
 					return LogMessagesComposite.this.currentRevisionFont;
 				}
@@ -943,28 +940,28 @@ public class LogMessagesComposite extends SashForm {
 		public int compare(Viewer viewer, Object row1, Object row2) {
 			
 			//One entry is from local history and another is from log entry
-			if ((row1 instanceof SVNLogEntry) && (row2 instanceof IFileState)) {
+			if ((row1 instanceof SVNLogEntry) && (row2 instanceof SVNLocalFileRevision)) {
 				SVNLogEntry rowData1 = (SVNLogEntry)row1;
-				IFileState rowData2 = (IFileState)row2;
+				SVNLocalFileRevision rowData2 = (SVNLocalFileRevision)row2;
 				if (this.column == LogMessagesComposite.COLUMN_DATE) {
 	            	if (this.reversed) {
-	            		return new Long(rowData2.getModificationTime()).compareTo(new Long(rowData1.date));
+	            		return new Long(rowData2.getTimestamp()).compareTo(new Long(rowData1.date));
 	            	}
-					return new Long(rowData1.date).compareTo(new Long(rowData2.getModificationTime()));
+					return new Long(rowData1.date).compareTo(new Long(rowData2.getTimestamp()));
 	            }
 				if (this.column == LogMessagesComposite.COLUMN_REVISION) {
-					if (rowData2.equals(LogMessagesComposite.this.localHistory[0])) {
+					if (rowData2.isCurrentState()) {
 						int retVal = 0;
 						if (this.reversed) {
 							retVal = new Long(LogMessagesComposite.this.currentRevision).compareTo(new Long(rowData1.revision));
 							if (retVal == 0) {
-								return new Long(rowData2.getModificationTime()).compareTo(new Long(rowData1.date));
+								return new Long(rowData2.getTimestamp()).compareTo(new Long(rowData1.date));
 							}
 	            			return retVal; 
 	            		}
 						retVal = new Long(rowData1.revision).compareTo(new Long(LogMessagesComposite.this.currentRevision));
 						if (retVal == 0) {
-							return new Long(rowData1.date).compareTo(new Long(rowData2.getModificationTime()));
+							return new Long(rowData1.date).compareTo(new Long(rowData2.getTimestamp()));
 						}
             			return retVal;
 					}
@@ -974,28 +971,28 @@ public class LogMessagesComposite extends SashForm {
 				}
 				return 1;
 			}
-			if ((row2 instanceof SVNLogEntry) && (row1 instanceof IFileState)) {
-				IFileState rowData1 = (IFileState)row1;
+			if ((row2 instanceof SVNLogEntry) && (row1 instanceof SVNLocalFileRevision)) {
+				SVNLocalFileRevision rowData1 = (SVNLocalFileRevision)row1;
 				SVNLogEntry rowData2 = (SVNLogEntry)row2;
 				if (this.column == LogMessagesComposite.COLUMN_DATE) {
 	            	if (this.reversed) {
-	            		return new Long(rowData2.date).compareTo(new Long(rowData1.getModificationTime()));
+	            		return new Long(rowData2.date).compareTo(new Long(rowData1.getTimestamp()));
 	            	}
-					return new Long(rowData1.getModificationTime()).compareTo(new Long(rowData2.date));
+					return new Long(rowData1.getTimestamp()).compareTo(new Long(rowData2.date));
 	            }
 				if (this.column == LogMessagesComposite.COLUMN_REVISION) {
 					int retVal = 0;
-					if (rowData1.equals(LogMessagesComposite.this.localHistory[0])) {
+					if (rowData1.isCurrentState()) {
 						if (this.reversed) {
 							retVal = new Long(rowData2.revision).compareTo(new Long(LogMessagesComposite.this.currentRevision));
 							if (retVal == 0) {
-								return new Long(rowData2.date).compareTo(new Long(rowData1.getModificationTime()));
+								return new Long(rowData2.date).compareTo(new Long(rowData1.getTimestamp()));
 							}
 							return retVal;
 	            		}
 						retVal = new Long(LogMessagesComposite.this.currentRevision).compareTo(new Long(rowData2.revision));
 						if (retVal == 0) {
-							return new Long(rowData1.getModificationTime()).compareTo(new Long(rowData2.date));
+							return new Long(rowData1.getTimestamp()).compareTo(new Long(rowData2.date));
 						}
 						return retVal;
 					}
@@ -1043,17 +1040,17 @@ public class LogMessagesComposite extends SashForm {
 			}
 			
 			//Both are from local history
-			if ((row1 instanceof IFileState) && (row2 instanceof IFileState)) {
-				IFileState rowData1 = (IFileState)row1;
-	            IFileState rowData2 = (IFileState)row2;
+			if ((row1 instanceof SVNLocalFileRevision) && (row2 instanceof SVNLocalFileRevision)) {
+				SVNLocalFileRevision rowData1 = (SVNLocalFileRevision)row1;
+				SVNLocalFileRevision rowData2 = (SVNLocalFileRevision)row2;
 	            if (this.column == LogMessagesComposite.COLUMN_REVISION) {
-					if (rowData1.equals(LogMessagesComposite.this.localHistory[0])) {
+					if (rowData1.isCurrentState()) {
 						if (this.reversed) {
 							return -1;
 	            		}
 						return 1;
 					}
-					if (rowData2.equals(LogMessagesComposite.this.localHistory[0])) {
+					if (rowData2.isCurrentState()) {
 						if (this.reversed) {
 							return 1;
 	            		}
@@ -1061,9 +1058,9 @@ public class LogMessagesComposite extends SashForm {
 					}
 	            }
 	            if (this.reversed) {
-            		return new Long(rowData2.getModificationTime()).compareTo(new Long(rowData1.getModificationTime()));
+            		return new Long(rowData2.getTimestamp()).compareTo(new Long(rowData1.getTimestamp()));
             	}
-				return new Long(rowData1.getModificationTime()).compareTo(new Long(rowData2.getModificationTime()));
+				return new Long(rowData1.getTimestamp()).compareTo(new Long(rowData2.getTimestamp()));
 			}
 			
 			//One of the rows is a category.
