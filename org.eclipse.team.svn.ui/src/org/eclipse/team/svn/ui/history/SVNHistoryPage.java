@@ -138,7 +138,7 @@ public class SVNHistoryPage extends HistoryPage implements IViewInfoProvider, IR
 	}
 
 	public Control getControl() {
-		if (this.viewImpl != null) {
+		if (this.viewImpl != null && !this.viewImpl.getControl().isDisposed()) {
 			return this.viewImpl.getControl();
 		}
 		return null;
