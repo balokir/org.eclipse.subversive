@@ -156,6 +156,7 @@ public class LogMessagesComposite extends SashForm {
 	public void dispose() {
 		this.historyTable.removeSelectionChangedListener(this.historyTableListener);
 		this.currentRevisionFont.dispose();
+		super.dispose();
 	}
 	
 	public TreeViewer getTreeViewer() {
