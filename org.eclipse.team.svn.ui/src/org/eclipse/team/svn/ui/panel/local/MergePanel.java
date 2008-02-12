@@ -135,7 +135,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 						};
 					}
 				}, MergePanel.FIRST_URL_HISTORY, this.firstSelectedResource, true, 
-				SVNTeamUIPlugin.instance().getResource("MergePanel.Selection.Title"), SVNTeamUIPlugin.instance().getResource("MergePanel.Selection.Description"), RepositoryResourceSelectionComposite.MODE_TWO);
+				SVNTeamUIPlugin.instance().getResource("MergePanel.Selection.Title"), SVNTeamUIPlugin.instance().getResource("MergePanel.Selection.Description"), RepositoryResourceSelectionComposite.MODE_TWO, RepositoryResourceSelectionComposite.TEXT_NONE);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.simpleSelectionComposite.setLayoutData(data);
 		this.simpleSelectionComposite.setCurrentRevision(this.currentRevision);
@@ -168,7 +168,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 		
 		this.firstSelectionComposite = new RepositoryResourceSelectionComposite(
 				parent, SWT.NONE, proxy, MergePanel.FIRST_URL_HISTORY, "MergePanel.SourceURL1", this.firstSelectedResource, true, 
-				SVNTeamUIPlugin.instance().getResource("MergePanel.Selection.Title"), SVNTeamUIPlugin.instance().getResource("MergePanel.Selection.Description"), RepositoryResourceSelectionComposite.MODE_DEFAULT);
+				SVNTeamUIPlugin.instance().getResource("MergePanel.Selection.Title"), SVNTeamUIPlugin.instance().getResource("MergePanel.Selection.Description"), RepositoryResourceSelectionComposite.MODE_DEFAULT, RepositoryResourceSelectionComposite.TEXT_NONE);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.firstSelectionComposite.setLayoutData(data);
 		this.firstSelectionComposite.setCurrentRevision(this.currentRevision);
@@ -180,7 +180,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 		
 		this.secondSelectionComposite = new RepositoryResourceSelectionComposite(
 				parent, SWT.NONE, proxy, MergePanel.SECOND_URL_HISTORY, "MergePanel.SourceURL2", this.secondSelectedResource, true, 
-				SVNTeamUIPlugin.instance().getResource("MergePanel.Selection.Title"), SVNTeamUIPlugin.instance().getResource("MergePanel.Selection.Description"), RepositoryResourceSelectionComposite.MODE_DEFAULT);
+				SVNTeamUIPlugin.instance().getResource("MergePanel.Selection.Title"), SVNTeamUIPlugin.instance().getResource("MergePanel.Selection.Description"), RepositoryResourceSelectionComposite.MODE_DEFAULT, RepositoryResourceSelectionComposite.TEXT_NONE);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.secondSelectionComposite.setLayoutData(data);
 		this.secondSelectionComposite.setCurrentRevision(this.currentRevision);

@@ -13,6 +13,7 @@ package org.eclipse.team.svn.ui.panel.local;
 
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.composite.RepositoryResourceSelectionComposite;
 import org.eclipse.team.svn.ui.panel.common.AbstractRepositoryResourceSelectionPanel;
 
 /**
@@ -22,7 +23,7 @@ import org.eclipse.team.svn.ui.panel.common.AbstractRepositoryResourceSelectionP
  */
 public class SwitchPanel extends AbstractRepositoryResourceSelectionPanel {
     public SwitchPanel(IRepositoryResource baseResource, long currentRevision) {    	
-    	super(baseResource, currentRevision, SVNTeamUIPlugin.instance().getResource("SwitchPanel.Title"), SVNTeamUIPlugin.instance().getResource("SwitchPanel.Description"), "SwitchPanel.URL_HISTORY_NAME", false, SVNTeamUIPlugin.instance().getResource("SwitchPanel.Selection.Title"), SVNTeamUIPlugin.instance().getResource("SwitchPanel.Selection.Description"));
+    	super(baseResource, currentRevision, SVNTeamUIPlugin.instance().getResource("SwitchPanel.Title"), SVNTeamUIPlugin.instance().getResource("SwitchPanel.Description"), "SwitchPanel.URL_HISTORY_NAME", false, SVNTeamUIPlugin.instance().getResource("SwitchPanel.Selection.Title"), SVNTeamUIPlugin.instance().getResource("SwitchPanel.Selection.Description"), RepositoryResourceSelectionComposite.TEXT_NONE);
     	this.defaultMessage = SVNTeamUIPlugin.instance().getResource("SwitchPanel.Message");
     }
     

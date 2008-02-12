@@ -13,16 +13,14 @@ package org.eclipse.team.svn.ui.action.local;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.core.operation.local.ClearLocalStatusesOperation;
+import org.eclipse.team.svn.core.operation.local.GetRemoteContentsOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
-import org.eclipse.team.svn.core.operation.local.RemoveNonVersionedResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
-import org.eclipse.team.svn.core.operation.local.RevertOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
-import org.eclipse.team.svn.core.operation.local.SwitchOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -38,7 +36,6 @@ import org.eclipse.team.svn.ui.panel.local.ReplaceBranchTagPanel;
  * @author Alexei Goncharov
  */
 public class ReplaceWithBranchTagAction extends AbstractWorkingCopyAction {
-
 	protected int type;
 	
 	public ReplaceWithBranchTagAction(int type) {
@@ -51,30 +48,31 @@ public class ReplaceWithBranchTagAction extends AbstractWorkingCopyAction {
 	}
 
 	public void runImpl(IAction action) {
-		IResource resource = this.getSelectedResources()[0];
-		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-		IRepositoryResource remote = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
-		ReplaceBranchTagPanel panel = new ReplaceBranchTagPanel(remote, local.getRevision(), this.type, true);
-		DefaultDialog dlg = new DefaultDialog(this.getShell(), panel);
-		if (dlg.open() == 0){
-			ReplaceWarningDialog dialog = new ReplaceWarningDialog(this.getShell());
-			if (dialog.open() == 0) {
-				IResource [] wcResources = new IResource[] {resource};
-				SwitchOperation mainOp = new SwitchOperation(wcResources, new IRepositoryResource [] {panel.getSelectedResoure()});
-				CompositeOperation op = new CompositeOperation(mainOp.getId());
-				SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(wcResources);
-				op.add(saveOp);
-				IActionOperation revertOp = new RevertOperation(wcResources, true);
-				op.add(revertOp);
-				IActionOperation removeOp = new RemoveNonVersionedResourcesOperation(wcResources, true);
-				op.add(removeOp, new IActionOperation[] {revertOp});
-				op.add(mainOp);
-				op.add(new RestoreProjectMetaOperation(saveOp));
-				op.add(new ClearLocalStatusesOperation(wcResources));
-				op.add(new RefreshResourcesOperation(wcResources));
-				this.runScheduled(op);
-			}
+		IResource []resources = this.getSelectedResources(IStateFilter.SF_ONREPOSITORY);
+		IActionOperation op = ReplaceWithBranchTagAction.getReplaceOperation(resources, this.getShell(), this.type);
+		if (op != null) {
+			this.runScheduled(op);
 		}
 	}
 
+	public static IActionOperation getReplaceOperation(IResource []resources, Shell shell, int type) {
+		ReplaceWarningDialog dialog = new ReplaceWarningDialog(shell);
+		if (dialog.open() == 0) {
+			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resources[0]);
+			IRepositoryResource remote = local.isCopied() ? SVNUtility.getCopiedFrom(resources[0]) : SVNRemoteStorage.instance().asRepositoryResource(resources[0]);
+			ReplaceBranchTagPanel panel = new ReplaceBranchTagPanel(remote, local.getRevision(), type, true);
+			DefaultDialog dlg = new DefaultDialog(shell, panel);
+			if (dlg.open() == 0){
+				CompositeOperation op = new CompositeOperation("Operation.ReplaceWithRevision");
+				SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
+				op.add(saveOp);
+				op.add(new GetRemoteContentsOperation(resources, new IRepositoryResource [] {panel.getSelectedResource()}));
+				op.add(new RestoreProjectMetaOperation(saveOp));
+				op.add(new RefreshResourcesOperation(resources));
+				return op;
+			}
+		}
+		return null;
+	}
+	
 }

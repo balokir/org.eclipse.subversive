@@ -32,10 +32,12 @@ import org.eclipse.team.svn.core.operation.local.UpdateOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.operation.ClearUpdateStatusesOperation;
 import org.eclipse.team.svn.ui.operation.ProcessDeletedProjectsOperation;
 import org.eclipse.team.svn.ui.panel.local.OverrideResourcesPanel;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
 import org.eclipse.team.svn.ui.synchronize.action.ISyncStateFilter;
 import org.eclipse.team.svn.ui.utility.UnacceptableOperationNotificator;
@@ -87,8 +89,16 @@ public class OverrideAndUpdateAction extends AbstractSynchronizeModelAction {
 		
 		CompositeOperation op = new CompositeOperation("Operation.UOverrideAndUpdate");
 
-		final DetectDeletedProjectsOperation detectOp = new DetectDeletedProjectsOperation(resources[0]);
-		op.add(detectOp);
+		boolean detectDeleted = SVNTeamPreferences.getResourceSelectionBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.DETECT_DELETED_PROJECTS_NAME);
+		final IResourceProvider detectOp = detectDeleted ? new DetectDeletedProjectsOperation(resources[0]) : new IResourceProvider() {
+			public IResource[] getResources() {
+				return resources[0];
+			}
+		};
+		
+		if (detectDeleted) {
+			op.add((IActionOperation)detectOp);
+		}
 		
 		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(detectOp);
 		op.add(saveOp);
@@ -97,9 +107,9 @@ public class OverrideAndUpdateAction extends AbstractSynchronizeModelAction {
 				return FileUtility.getResourcesRecursive(detectOp.getResources(), IStateFilter.SF_REVERTABLE, IResource.DEPTH_ZERO);
 			}
 		}, true);
-		AbstractActionOperation removeNonVersionedResourcesOp = new RemoveNonVersionedResourcesOperation(detectOp, true);
 		op.add(revertOp);
 		op.add(new ClearLocalStatusesOperation(resources[0]));
+		AbstractActionOperation removeNonVersionedResourcesOp = new RemoveNonVersionedResourcesOperation(detectOp, true);
 		op.add(removeNonVersionedResourcesOp);
 		// Obstructed resources are deleted now. So, try to revert all corresponding entries
 		RevertOperation revertOp1 = new RevertOperation(FileUtility.getResourcesRecursive(resources[0], IStateFilter.SF_OBSTRUCTED, IResource.DEPTH_ZERO), true);
@@ -119,7 +129,9 @@ public class OverrideAndUpdateAction extends AbstractSynchronizeModelAction {
 			}
 		}, true), new IActionOperation[] {revertOp, revertOp1, removeNonVersionedResourcesOp});
 		op.add(new RestoreProjectMetaOperation(saveOp));
-		op.add(new ProcessDeletedProjectsOperation(detectOp));
+		if (detectDeleted) {
+			op.add(new ProcessDeletedProjectsOperation((DetectDeletedProjectsOperation)detectOp));
+		}
 		op.add(new ClearUpdateStatusesOperation(resources[0]));
 		op.add(new RefreshResourcesOperation(resources[0]/*, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL*/));
 

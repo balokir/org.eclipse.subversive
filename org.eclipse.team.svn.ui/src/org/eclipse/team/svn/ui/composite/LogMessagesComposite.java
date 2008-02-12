@@ -173,8 +173,9 @@ public class LogMessagesComposite extends SashForm {
 			long []revisions = new long[tSelection.size()];
 			int i = 0;
 			for (Iterator it = tSelection.iterator(); it.hasNext(); ) {
-				if (it.next() instanceof SVNLogEntry) {
-					revisions[i++] = ((SVNLogEntry)it.next()).revision;
+				Object entry = it.next();
+				if (entry instanceof SVNLogEntry) {
+					revisions[i++] = ((SVNLogEntry)entry).revision;
 				}
 			}
 			return revisions;
