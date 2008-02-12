@@ -895,8 +895,11 @@ public class LogMessagesComposite extends SashForm {
 		}
 
 		public Font getFont(Object element) {
-			if (element instanceof HistoryCategory && !LogMessagesComposite.this.currentRevisionFont.isDisposed()) {
-				return LogMessagesComposite.this.currentRevisionFont;
+			if (element instanceof HistoryCategory) {
+				if (!LogMessagesComposite.this.currentRevisionFont.isDisposed()) {
+					return LogMessagesComposite.this.currentRevisionFont;
+				}
+				return null;
 			}
 			if (element instanceof IFileState) {
 				if (element.equals(LogMessagesComposite.this.localHistory[0]) && !LogMessagesComposite.this.currentRevisionFont.isDisposed()) {
