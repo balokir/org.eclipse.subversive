@@ -1151,7 +1151,7 @@ public class HistoryViewImpl {
 	}
 	
 	protected Action getShowBothAction() {
-		this.showBothAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.GroupByDate"), IAction.AS_RADIO_BUTTON) {
+		this.showBothAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.ShowBoth"), IAction.AS_RADIO_BUTTON) {
 	        public void run() {
 	        	HistoryViewImpl.this.options = HistoryViewImpl.this.options & ~(HistoryViewImpl.SHOW_LOCAL | HistoryViewImpl.SHOW_REMOTE) | HistoryViewImpl.SHOW_BOTH;
 	        	HistoryViewImpl.this.showLocalAction.setChecked(false);
@@ -1160,13 +1160,13 @@ public class HistoryViewImpl {
 		        HistoryViewImpl.this.history.setTableInput();
 	        }
 	    };
-	    this.showBothAction.setToolTipText(SVNTeamUIPlugin.instance().getResource("HistoryView.GroupByDate"));
+	    this.showBothAction.setToolTipText(SVNTeamUIPlugin.instance().getResource("HistoryView.ShowBoth"));
 	    this.showBothAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/both_history_mode.gif"));
 	    return this.showBothAction;		
 	}
 	
 	protected Action getShowRemoteAction() {
-		this.showRemoteAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.GroupByDate"), IAction.AS_RADIO_BUTTON) {
+		this.showRemoteAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.ShowRemote"), IAction.AS_RADIO_BUTTON) {
 	        public void run() {
 	        	HistoryViewImpl.this.options = HistoryViewImpl.this.options & ~(HistoryViewImpl.SHOW_LOCAL | HistoryViewImpl.SHOW_BOTH) | HistoryViewImpl.SHOW_REMOTE;
 	        	HistoryViewImpl.this.showLocalAction.setChecked(false);
@@ -1175,13 +1175,13 @@ public class HistoryViewImpl {
 		        HistoryViewImpl.this.history.setTableInput();
 	        }
 	    };
-	    this.showRemoteAction.setToolTipText(SVNTeamUIPlugin.instance().getResource("HistoryView.GroupByDate"));
+	    this.showRemoteAction.setToolTipText(SVNTeamUIPlugin.instance().getResource("HistoryView.HistoryView.ShowRemote"));
 	    this.showRemoteAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/remote_history_mode.gif"));
 	    return this.showRemoteAction;		
 	}
 	
 	protected Action getShowLocalAction() {
-		this.showLocalAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.GroupByDate"), IAction.AS_RADIO_BUTTON) {
+		this.showLocalAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.ShowLocal"), IAction.AS_RADIO_BUTTON) {
 	        public void run() {
 	        	HistoryViewImpl.this.options = HistoryViewImpl.this.options & ~(HistoryViewImpl.SHOW_REMOTE | HistoryViewImpl.SHOW_BOTH) | HistoryViewImpl.SHOW_LOCAL;
 	        	HistoryViewImpl.this.showRemoteAction.setChecked(false);
@@ -1190,7 +1190,7 @@ public class HistoryViewImpl {
 		        HistoryViewImpl.this.history.setTableInput();
 	        }
 	    };
-	    this.showLocalAction.setToolTipText(SVNTeamUIPlugin.instance().getResource("HistoryView.GroupByDate"));
+	    this.showLocalAction.setToolTipText(SVNTeamUIPlugin.instance().getResource("HistoryView.ShowLocal"));
 	    this.showLocalAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/local_history_mode.gif"));
 	    return this.showLocalAction;		
 	}
