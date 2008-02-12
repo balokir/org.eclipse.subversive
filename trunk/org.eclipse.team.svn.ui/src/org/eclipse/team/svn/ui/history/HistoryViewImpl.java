@@ -17,7 +17,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFileState;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.action.Action;
@@ -130,6 +132,9 @@ public class HistoryViewImpl {
 	public static final int HIDE_UNRELATED = 0x04;
 	public static final int STOP_ON_COPY = 0x08;
 	public static final int GROUP_BY_DATE = 0x10;
+	public static final int SHOW_BOTH = 0x20;
+	public static final int SHOW_LOCAL = 0x40;
+	public static final int SHOW_REMOTE = 0x80;
 	
 	protected IResource wcResource;
 	protected IRepositoryResource repositoryResource;
@@ -157,6 +162,9 @@ public class HistoryViewImpl {
 	protected Action compareModeAction;
 	protected Action compareModeDropDownAction;
 	protected Action groupByDateAction;
+	protected Action showLocalAction;
+	protected Action showRemoteAction;
+	protected Action showBothAction;
 	
 	protected long limit = 25;
 	protected boolean pagingEnabled = false;
@@ -243,7 +251,7 @@ public class HistoryViewImpl {
 				boolean onlyLogEntries = true;
 				Object []selected = tSelection.toArray();
 				for (int i = 0; i < selected.length; i++) {
-					if (selected[i] instanceof HistoryCategory) {
+					if (selected[i] instanceof HistoryCategory || selected[i] instanceof IFileState) {
 						onlyLogEntries = false;
 						break;
 					}
@@ -467,7 +475,8 @@ public class HistoryViewImpl {
 					    tAction.setEnabled(isFilterEnabled());
 					}
 				}
-				if (!onlyLogEntries) {
+				//TODO uncomment
+				/*if (!onlyLogEntries) {
 					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CopyHistory")) {
 						public void run() {
 							HistoryViewImpl.this.handleCopy();
@@ -475,7 +484,7 @@ public class HistoryViewImpl {
 					});
 					tAction.setEnabled(tSelection.size() > 0);
 					tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/copy.gif"));
-				}
+				}*/
 				manager.add(new Separator()); 
 				manager.add(HistoryViewImpl.this.getRefreshAction());
 			}
@@ -646,6 +655,20 @@ public class HistoryViewImpl {
 		//must be called first, to initialize bug-track model
 		this.history.getCommentView().usedFor(resource);
 		
+		if (resource instanceof IFile) {
+			try {
+				this.showBothAction.setEnabled(true);
+				this.showLocalAction.setEnabled(true);
+				this.history.setLocalHistory(((IFile)resource).getHistory(null));
+				
+			} catch (CoreException ex) {		
+				UILoggedOperation.reportError("Get Local History", ex);
+			};
+		}
+		else {
+			this.setOnlyRemoteRevs();
+			this.history.setLocalHistory(new IFileState [0]);
+		}
 	    long currentRevision = SVNRevision.INVALID_REVISION_NUMBER;
 	    IRepositoryResource remote = null;
 		if (resource != null) {
@@ -667,7 +690,8 @@ public class HistoryViewImpl {
 	
 	public void showHistory(IRepositoryResource remoteResource, boolean background) {
 		this.wcResource = null;
-		
+		this.setOnlyRemoteRevs();
+		        		
 		//must be called first, to initialize backtrack model
 		this.history.getCommentView().usedFor(remoteResource);
 		long currentRevision = SVNRevision.INVALID_REVISION_NUMBER;
@@ -804,6 +828,16 @@ public class HistoryViewImpl {
 		else {
 			UIMonitorUtility.doTaskScheduledDefault(this.getSite().getPart(), op);
 		}
+	}
+	
+	protected void setOnlyRemoteRevs() {
+		this.showBothAction.setEnabled(false);
+		this.showLocalAction.setEnabled(false);
+		this.options = HistoryViewImpl.this.options & ~(HistoryViewImpl.SHOW_LOCAL | HistoryViewImpl.SHOW_BOTH) | HistoryViewImpl.SHOW_REMOTE;
+    	this.showLocalAction.setChecked(false);
+    	this.showBothAction.setChecked(false);
+    	this.showRemoteAction.setChecked(true);
+    	this.setRevMode();
 	}
 	
 	/*
@@ -1116,6 +1150,67 @@ public class HistoryViewImpl {
 	    return this.groupByDateAction;		
 	}
 	
+	protected Action getShowBothAction() {
+		this.showBothAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.GroupByDate"), IAction.AS_RADIO_BUTTON) {
+	        public void run() {
+	        	HistoryViewImpl.this.options = HistoryViewImpl.this.options & ~(HistoryViewImpl.SHOW_LOCAL | HistoryViewImpl.SHOW_REMOTE) | HistoryViewImpl.SHOW_BOTH;
+	        	HistoryViewImpl.this.showLocalAction.setChecked(false);
+	        	HistoryViewImpl.this.showRemoteAction.setChecked(false);
+	        	HistoryViewImpl.this.setRevMode();
+		        HistoryViewImpl.this.history.setTableInput();
+	        }
+	    };
+	    this.showBothAction.setToolTipText(SVNTeamUIPlugin.instance().getResource("HistoryView.GroupByDate"));
+	    this.showBothAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/both_history_mode.gif"));
+	    return this.showBothAction;		
+	}
+	
+	protected Action getShowRemoteAction() {
+		this.showRemoteAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.GroupByDate"), IAction.AS_RADIO_BUTTON) {
+	        public void run() {
+	        	HistoryViewImpl.this.options = HistoryViewImpl.this.options & ~(HistoryViewImpl.SHOW_LOCAL | HistoryViewImpl.SHOW_BOTH) | HistoryViewImpl.SHOW_REMOTE;
+	        	HistoryViewImpl.this.showLocalAction.setChecked(false);
+	        	HistoryViewImpl.this.showBothAction.setChecked(false);
+	        	HistoryViewImpl.this.setRevMode();
+		        HistoryViewImpl.this.history.setTableInput();
+	        }
+	    };
+	    this.showRemoteAction.setToolTipText(SVNTeamUIPlugin.instance().getResource("HistoryView.GroupByDate"));
+	    this.showRemoteAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/remote_history_mode.gif"));
+	    return this.showRemoteAction;		
+	}
+	
+	protected Action getShowLocalAction() {
+		this.showLocalAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.GroupByDate"), IAction.AS_RADIO_BUTTON) {
+	        public void run() {
+	        	HistoryViewImpl.this.options = HistoryViewImpl.this.options & ~(HistoryViewImpl.SHOW_REMOTE | HistoryViewImpl.SHOW_BOTH) | HistoryViewImpl.SHOW_LOCAL;
+	        	HistoryViewImpl.this.showRemoteAction.setChecked(false);
+	        	HistoryViewImpl.this.showBothAction.setChecked(false);
+	        	HistoryViewImpl.this.setRevMode();
+		        HistoryViewImpl.this.history.setTableInput();
+	        }
+	    };
+	    this.showLocalAction.setToolTipText(SVNTeamUIPlugin.instance().getResource("HistoryView.GroupByDate"));
+	    this.showLocalAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/local_history_mode.gif"));
+	    return this.showLocalAction;		
+	}
+	
+	protected void setRevMode() {
+		this.history.setRevisionMode(HistoryViewImpl.this.options & (HistoryViewImpl.SHOW_BOTH | HistoryViewImpl.SHOW_LOCAL | HistoryViewImpl.SHOW_REMOTE));
+		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
+		int prefToSet;
+		if ((this.options & HistoryViewImpl.SHOW_BOTH) != 0) {
+			prefToSet = SVNTeamPreferences.HISTORY_REVISION_MODE_BOTH;
+		}
+		else if ((this.options & HistoryViewImpl.SHOW_LOCAL) != 0) {
+			prefToSet = SVNTeamPreferences.HISTORY_REVISION_MODE_LOCAL;
+		}
+		else {
+			prefToSet = SVNTeamPreferences.HISTORY_REVISION_MODE_REMOTE;
+		}
+		SVNTeamPreferences.setHistoryInt(store, SVNTeamPreferences.HISTORY_REVISION_MODE_NAME, prefToSet);
+	}
+	
 	protected Action getHideUnrelatedAction() {
 		this.hideUnrelatedAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.HideUnrelatedPaths"), IAction.AS_CHECK_BOX) {
 	        public void run() {
@@ -1181,6 +1276,10 @@ public class HistoryViewImpl {
 	    IToolBarManager tbm = actionBars.getToolBarManager();
 	    tbm.add(new Separator());
 	    tbm.add(this.getGroupByDateAction());
+	    tbm.add(new Separator());
+	    tbm.add(this.getShowBothAction());
+	    tbm.add(this.getShowLocalAction());
+	    tbm.add(this.getShowRemoteAction());
         tbm.add(new Separator());
         tbm.add(this.getHideUnrelatedAction());           
         tbm.add(this.getStopOnCopyAction());           
@@ -1199,6 +1298,16 @@ public class HistoryViewImpl {
 		boolean showAffected = SVNTeamPreferences.getHistoryBoolean(store, SVNTeamPreferences.HISTORY_SHOW_AFFECTED_PATHS_NAME);
 		boolean hierarchicalAffectedView = SVNTeamPreferences.getHistoryBoolean(store, SVNTeamPreferences.HISTORY_HIERARCHICAL_LAYOUT);
 		int groupingType = SVNTeamPreferences.getHistoryInt(store, SVNTeamPreferences.HISTORY_GROUPING_TYPE_NAME);
+		int revisionMode = SVNTeamPreferences.getHistoryInt(store, SVNTeamPreferences.HISTORY_REVISION_MODE_NAME);
+		if (revisionMode == 0) {
+			revisionMode = HistoryViewImpl.SHOW_BOTH;
+		}
+		else if (revisionMode == 1) {
+			revisionMode = HistoryViewImpl.SHOW_REMOTE;
+		}
+		else {
+			revisionMode = HistoryViewImpl.SHOW_LOCAL;
+		}
 		
 		this.showCommentViewerAction.setChecked(showMultiline);
         this.history.setCommentViewerVisible(showMultiline);	          
@@ -1211,7 +1320,12 @@ public class HistoryViewImpl {
         this.stopOnCopyDropDownAction.setChecked((this.options & HistoryViewImpl.STOP_ON_COPY) != 0);
         this.stopOnCopyAction.setChecked((this.options & HistoryViewImpl.STOP_ON_COPY) != 0);
         this.options |= groupingType == SVNTeamPreferences.HISTORY_GROUPING_TYPE_DATE ? HistoryViewImpl.GROUP_BY_DATE : 0;
+        this.options = this.options & ~(HistoryViewImpl.SHOW_BOTH | HistoryViewImpl.SHOW_LOCAL | HistoryViewImpl.SHOW_REMOTE) | revisionMode;
+        this.setRevMode();
         this.groupByDateAction.setChecked((this.options & HistoryViewImpl.GROUP_BY_DATE) != 0);
+        this.showBothAction.setChecked((this.options & HistoryViewImpl.SHOW_BOTH) != 0);
+        this.showLocalAction.setChecked((this.options & HistoryViewImpl.SHOW_LOCAL) != 0);
+        this.showRemoteAction.setChecked((this.options & HistoryViewImpl.SHOW_REMOTE) != 0);
         this.groupByDateDropDownAction.setChecked((this.options & HistoryViewImpl.GROUP_BY_DATE) != 0);
         this.compareModeDropDownAction.setChecked((this.options & HistoryViewImpl.COMPARE_MODE) != 0);
         this.compareModeAction.setChecked((this.options & HistoryViewImpl.COMPARE_MODE) != 0);
