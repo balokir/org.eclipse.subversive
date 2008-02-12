@@ -846,6 +846,18 @@ public class LogMessagesComposite extends SashForm {
 					case LogMessagesComposite.COLUMN_DATE: {
 						return this.dateTimeFormat.format(new Date(row.getModificationTime()));
 					}
+					case LogMessagesComposite.COLUMN_REVISION: {
+						if (row.equals(LogMessagesComposite.this.localHistory[0])) {
+							return SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.CurrentRevision", new String [] {String.valueOf(LogMessagesComposite.this.currentRevision)});
+						}
+						return "";
+					}
+					case LogMessagesComposite.COLUMN_LOG_MESSGE: {
+						if (row.equals(LogMessagesComposite.this.localHistory[0])) {
+							return SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.CurrentVersion");
+						}
+						return "";
+					}
 					default: {
 						return "";
 					}
@@ -883,10 +895,13 @@ public class LogMessagesComposite extends SashForm {
 		}
 
 		public Font getFont(Object element) {
-			if (element instanceof HistoryCategory) {
+			if (element instanceof HistoryCategory && !LogMessagesComposite.this.currentRevisionFont.isDisposed()) {
 				return LogMessagesComposite.this.currentRevisionFont;
 			}
 			if (element instanceof IFileState) {
+				if (element.equals(LogMessagesComposite.this.localHistory[0]) && !LogMessagesComposite.this.currentRevisionFont.isDisposed()) {
+					return LogMessagesComposite.this.currentRevisionFont;
+				}
 				return null;
 			}
 			SVNLogEntry row = (SVNLogEntry)element;
@@ -933,8 +948,16 @@ public class LogMessagesComposite extends SashForm {
 	            	}
 					return new Long(rowData1.date).compareTo(new Long(rowData2.getModificationTime()));
 	            }
+				if (this.column == LogMessagesComposite.COLUMN_REVISION) {
+					if (rowData2.equals(LogMessagesComposite.this.localHistory[0])) {
+						if (this.reversed) {
+	            			return new Long(LogMessagesComposite.this.currentRevision).compareTo(new Long(rowData1.revision));
+	            		}
+						return new Long(rowData1.revision).compareTo(new Long(LogMessagesComposite.this.currentRevision));
+					}
+	            }
 				if (reversed) {
-					return 0;
+					return -1;
 				}
 				return 1;
 			}
@@ -947,10 +970,18 @@ public class LogMessagesComposite extends SashForm {
 	            	}
 					return new Long(rowData1.getModificationTime()).compareTo(new Long(rowData2.date));
 	            }
+				if (this.column == LogMessagesComposite.COLUMN_REVISION) {
+					if (rowData1.equals(LogMessagesComposite.this.localHistory[0])) {
+						if (this.reversed) {
+							return new Long(rowData2.revision).compareTo(new Long(LogMessagesComposite.this.currentRevision));
+	            		}
+						return new Long(LogMessagesComposite.this.currentRevision).compareTo(new Long(rowData2.revision));
+					}
+	            }
 				if (reversed) {
 					return 1;
 				}
-				return 0;
+				return -1;
 			}
 			
 			//Both are log entries
@@ -998,6 +1029,20 @@ public class LogMessagesComposite extends SashForm {
 	            		return new Long(rowData2.getModificationTime()).compareTo(new Long(rowData1.getModificationTime()));
 	            	}
 					return new Long(rowData1.getModificationTime()).compareTo(new Long(rowData2.getModificationTime()));
+	            }
+	            if (this.column == LogMessagesComposite.COLUMN_REVISION) {
+					if (rowData1.equals(LogMessagesComposite.this.localHistory[0])) {
+						if (this.reversed) {
+							return -1;
+	            		}
+						return 1;
+					}
+					if (rowData2.equals(LogMessagesComposite.this.localHistory[0])) {
+						if (this.reversed) {
+							return 1;
+	            		}
+						return -1;
+					}
 	            }
 	            return 0;
 			}
