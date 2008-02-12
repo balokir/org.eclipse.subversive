@@ -30,7 +30,6 @@ import org.eclipse.team.svn.core.operation.local.change.visitors.SaveContentVisi
 import org.eclipse.team.svn.core.operation.local.change.visitors.SavePropertiesVisitor;
 import org.eclipse.team.svn.core.operation.local.refactor.DeleteResourceOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
-import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
@@ -88,9 +87,8 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 		this.committables = new IResource[0];
 		this.withDifferentNodeKind = new IResource[0];
 
-		IRemoteStorage storage = SVNRemoteStorage.instance();
 		for (int i = 0; i < resources.length; i++) {
-			ILocalResource local = storage.asLocalResource(resources[i]);
+			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resources[i]);
 			if (local == null) {
 				continue;
 			}
