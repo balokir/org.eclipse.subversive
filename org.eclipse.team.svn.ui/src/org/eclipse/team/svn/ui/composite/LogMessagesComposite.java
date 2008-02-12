@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.resources.IFileState;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
@@ -63,6 +64,7 @@ import org.eclipse.team.svn.core.utility.PatternProvider;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.extension.factory.ICommentView;
+import org.eclipse.team.svn.ui.history.HistoryViewImpl;
 import org.eclipse.team.svn.ui.utility.TableViewerSorter;
 
 /**
@@ -82,6 +84,7 @@ public class LogMessagesComposite extends SashForm {
     protected boolean affectedVisible;
     protected boolean hierarchicalAffected;
     protected boolean groupByDate;
+    protected int revisionMode;
     
 	protected TreeViewer historyTable;
 	protected ISelectionChangedListener historyTableListener;
@@ -98,7 +101,11 @@ public class LogMessagesComposite extends SashForm {
 	protected IRepositoryResource repositoryResource;
 	
 	protected SVNLogEntry []msgs = new SVNLogEntry[0];
-	protected HistoryCategory[] categories = new HistoryCategory[0];
+	protected IFileState [] localHistory = new IFileState[0];
+	protected Object [] allHystory = new Object[0];
+	protected HistoryCategory[] categoriesBoth = new HistoryCategory[0];
+	protected HistoryCategory[] categoriesRemote = new HistoryCategory[0];
+	protected HistoryCategory[] categoriesLocal = new HistoryCategory[0];
 	
 	public LogMessagesComposite(Composite parent, int logPercent, int style) {
 	    super(parent, SWT.VERTICAL);
@@ -116,6 +123,10 @@ public class LogMessagesComposite extends SashForm {
 		this.groupByDate = groupByDate;
 	}
 	
+	public void setRevisionMode(int revisionMode) {
+		this.revisionMode = revisionMode;
+	}
+	
 	public void setCommentViewerVisible(boolean visible) {
 	    if (visible) {
 	    	this.innerSashForm.setMaximizedControl(null);
@@ -123,6 +134,10 @@ public class LogMessagesComposite extends SashForm {
 	    else {
 	    	this.innerSashForm.setMaximizedControl(this.historyTable.getControl());
 	    }
+	}
+	
+	public void setLocalHistory (IFileState [] localHistory) {
+		this.localHistory = localHistory;
 	}
 	
 	public void setAffectedPathsViewerVisible(boolean visible) {
@@ -210,7 +225,7 @@ public class LogMessagesComposite extends SashForm {
 	
 	public String getSelectedMessageNoComment() {
 		IStructuredSelection tSelection = (IStructuredSelection)this.historyTable.getSelection();
-		if (tSelection.size() > 0 && (tSelection.getFirstElement() instanceof HistoryCategory)) {
+		if (tSelection.size() > 0 && ((tSelection.getFirstElement() instanceof HistoryCategory)|| (tSelection.getFirstElement() instanceof IFileState))) {
 			return "";
 		}
 		String message = this.getSelectedMessage();
@@ -260,7 +275,7 @@ public class LogMessagesComposite extends SashForm {
 		
 		if (msgs == null || msgs.length == 0) {
 			this.msgs = new SVNLogEntry[0];
-			this.categories = null;
+			this.categoriesBoth = new HistoryCategory[0];
 			this.setTableInput();
 			this.historyTableListener.selectionChanged(null);
 			return;
@@ -317,12 +332,25 @@ public class LogMessagesComposite extends SashForm {
 	}
 	
 	public void collectCategoriesAndMapData(SVNLogEntry [] entries) {
-		ArrayList<HistoryCategory> categories = new ArrayList <HistoryCategory>();
-		ArrayList<SVNLogEntry> todayEntries = new ArrayList<SVNLogEntry>();
-		ArrayList<SVNLogEntry> yesterdayEntries = new ArrayList<SVNLogEntry>();
-		ArrayList<SVNLogEntry> weekEntries = new ArrayList<SVNLogEntry>();
-		ArrayList<SVNLogEntry> monthEntries = new ArrayList<SVNLogEntry>();
-		ArrayList<SVNLogEntry> earlierEntries = new ArrayList<SVNLogEntry>();
+		ArrayList<HistoryCategory> categoriesAll = new ArrayList <HistoryCategory>();
+		ArrayList<HistoryCategory> categoriesLocal = new ArrayList <HistoryCategory>();
+		ArrayList<HistoryCategory> categoriesRemote = new ArrayList <HistoryCategory>();
+		ArrayList<Object> allEntries = new ArrayList<Object>();
+		ArrayList<Object> todayEntriesAll = new ArrayList<Object>();
+		ArrayList<Object> yesterdayEntriesAll = new ArrayList<Object>();
+		ArrayList<Object> weekEntriesAll = new ArrayList<Object>();
+		ArrayList<Object> monthEntriesAll = new ArrayList<Object>();
+		ArrayList<Object> earlierEntriesAll = new ArrayList<Object>();
+		ArrayList<IFileState> todayEntriesLocal = new ArrayList<IFileState>();
+		ArrayList<IFileState> yesterdayEntriesLocal = new ArrayList<IFileState>();
+		ArrayList<IFileState> weekEntriesLocal = new ArrayList<IFileState>();
+		ArrayList<IFileState> monthEntriesLocal = new ArrayList<IFileState>();
+		ArrayList<IFileState> earlierEntriesLocal = new ArrayList<IFileState>();
+		ArrayList<SVNLogEntry> todayEntriesRemote = new ArrayList<SVNLogEntry>();
+		ArrayList<SVNLogEntry> yesterdayEntriesRemote = new ArrayList<SVNLogEntry>();
+		ArrayList<SVNLogEntry> weekEntriesRemote = new ArrayList<SVNLogEntry>();
+		ArrayList<SVNLogEntry> monthEntriesRemote = new ArrayList<SVNLogEntry>();
+		ArrayList<SVNLogEntry> earlierEntriesRemote = new ArrayList<SVNLogEntry>();
 		Calendar yesterdayCal = Calendar.getInstance();
 		yesterdayCal.set(Calendar.HOUR_OF_DAY, 0);
 		yesterdayCal.set(Calendar.MINUTE, 0);
@@ -343,46 +371,126 @@ public class LogMessagesComposite extends SashForm {
 		Calendar monthCal = Calendar.getInstance();
 		monthCal.set(Calendar.DAY_OF_MONTH, 1);
 		long lastMonthDate = monthCal.getTimeInMillis();
+		
+		//Filling timing ArrayLists
 		for (int i = 0; i < entries.length; i++) {
 			this.mapPathData(entries[i], entries[i].changedPaths);
 			if (entries[i].date > yesterdayDate) {
-				todayEntries.add(msgs[i]);
+				todayEntriesAll.add(entries[i]);
+				todayEntriesRemote.add(entries[i]);
 			}
 			else if (entries[i].date < yesterdayDate && entries[i].date > beforeYesterdayDate) {
-				yesterdayEntries.add(entries[i]);
+				yesterdayEntriesAll.add(entries[i]);
+				yesterdayEntriesRemote.add(entries[i]);
 			}
 			else if  (entries[i].date < beforeYesterdayDate && entries[i].date > lastWeekDate) {
-				weekEntries.add(entries[i]);
+				weekEntriesAll.add(entries[i]);
+				weekEntriesRemote.add(entries[i]);
 			}
 			else if  (entries[i].date < lastWeekDate && entries[i].date > lastMonthDate) {
-				monthEntries.add(entries[i]);
+				monthEntriesAll.add(entries[i]);
+				monthEntriesRemote.add(entries[i]);
 			}
 			else {
-				earlierEntries.add(entries[i]);
+				earlierEntriesAll.add(entries[i]);
+				earlierEntriesRemote.add(entries[i]);
 			}
+			allEntries.add(entries[i]);
+		}
+		for (int i = 0; i < localHistory.length; i++) {
+			if (localHistory[i].getModificationTime() > yesterdayDate) {
+				todayEntriesAll.add(localHistory[i]);
+				todayEntriesLocal.add(localHistory[i]);
+			}
+			else if (localHistory[i].getModificationTime() < yesterdayDate && localHistory[i].getModificationTime() > beforeYesterdayDate) {
+				yesterdayEntriesAll.add(localHistory[i]);
+				yesterdayEntriesLocal.add(localHistory[i]);
+			}
+			else if  (localHistory[i].getModificationTime() < beforeYesterdayDate && localHistory[i].getModificationTime() > lastWeekDate) {
+				weekEntriesAll.add(localHistory[i]);
+				weekEntriesLocal.add(localHistory[i]);
+			}
+			else if  (localHistory[i].getModificationTime() < lastWeekDate && localHistory[i].getModificationTime() > lastMonthDate) {
+				monthEntriesAll.add(localHistory[i]);
+				monthEntriesLocal.add(localHistory[i]);
+			}
+			else {
+				earlierEntriesAll.add(localHistory[i]);
+				earlierEntriesLocal.add(localHistory[i]);
+			}
+			allEntries.add(localHistory[i]);
 		}
 		HistoryCategory cat = null;
-		if (todayEntries.size() > 0) {
-			cat = new HistoryCategory(HistoryCategory.CATEGORY_TODAY, todayEntries.toArray(new SVNLogEntry[0]));
-			categories.add(cat);
+
+		//Fill both local and remote 
+		if (todayEntriesAll.size() > 0) {
+			cat = new HistoryCategory(HistoryCategory.CATEGORY_TODAY, todayEntriesAll.toArray());
+			categoriesAll.add(cat);
 		}
-		if (yesterdayEntries.size() > 0) {
-			cat = new HistoryCategory(HistoryCategory.CATEGORY_YESTERDAY, yesterdayEntries.toArray(new SVNLogEntry[0]));
-			categories.add(cat);
+		if (yesterdayEntriesAll.size() > 0) {
+			cat = new HistoryCategory(HistoryCategory.CATEGORY_YESTERDAY, yesterdayEntriesAll.toArray());
+			categoriesAll.add(cat);
 		}
-		if (weekEntries.size() > 0) {
-			cat = new HistoryCategory(HistoryCategory.CATEGORY_THIS_WEEK, weekEntries.toArray(new SVNLogEntry[0]));
-			categories.add(cat);
+		if (weekEntriesAll.size() > 0) {
+			cat = new HistoryCategory(HistoryCategory.CATEGORY_THIS_WEEK, weekEntriesAll.toArray());
+			categoriesAll.add(cat);
 		}
-		if (monthEntries.size() > 0) {
-			cat = new HistoryCategory(HistoryCategory.CATEGORY_THIS_MONTH, monthEntries.toArray(new SVNLogEntry[0]));
-			categories.add(cat);
+		if (monthEntriesAll.size() > 0) {
+			cat = new HistoryCategory(HistoryCategory.CATEGORY_THIS_MONTH, monthEntriesAll.toArray());
+			categoriesAll.add(cat);
 		}
-		if (earlierEntries.size() > 0) {
-			cat = new HistoryCategory(HistoryCategory.CATEGORY_EARLIER, earlierEntries.toArray(new SVNLogEntry[0]));
-			categories.add(cat);
+		if (earlierEntriesAll.size() > 0) {
+			cat = new HistoryCategory(HistoryCategory.CATEGORY_EARLIER, earlierEntriesAll.toArray());
+			categoriesAll.add(cat);
 		}
-		this.categories = categories.toArray(new HistoryCategory[0]);
+		
+		//Fill local
+		if (todayEntriesLocal.size() > 0) {
+			cat = new HistoryCategory(HistoryCategory.CATEGORY_TODAY, todayEntriesLocal.toArray());
+			categoriesLocal.add(cat);
+		}
+		if (yesterdayEntriesLocal.size() > 0) {
+			cat = new HistoryCategory(HistoryCategory.CATEGORY_YESTERDAY, yesterdayEntriesLocal.toArray());
+			categoriesLocal.add(cat);
+		}
+		if (weekEntriesLocal.size() > 0) {
+			cat = new HistoryCategory(HistoryCategory.CATEGORY_THIS_WEEK, weekEntriesLocal.toArray());
+			categoriesLocal.add(cat);
+		}
+		if (monthEntriesLocal.size() > 0) {
+			cat = new HistoryCategory(HistoryCategory.CATEGORY_THIS_MONTH, monthEntriesLocal.toArray());
+			categoriesLocal.add(cat);
+		}
+		if (earlierEntriesLocal.size() > 0) {
+			cat = new HistoryCategory(HistoryCategory.CATEGORY_EARLIER, earlierEntriesLocal.toArray());
+			categoriesLocal.add(cat);
+		}
+		
+		//Fill remote
+		if (todayEntriesRemote.size() > 0) {
+			cat = new HistoryCategory(HistoryCategory.CATEGORY_TODAY, todayEntriesRemote.toArray());
+			categoriesRemote.add(cat);
+		}
+		if (yesterdayEntriesRemote.size() > 0) {
+			cat = new HistoryCategory(HistoryCategory.CATEGORY_YESTERDAY, yesterdayEntriesRemote.toArray());
+			categoriesRemote.add(cat);
+		}
+		if (weekEntriesRemote.size() > 0) {
+			cat = new HistoryCategory(HistoryCategory.CATEGORY_THIS_WEEK, weekEntriesRemote.toArray());
+			categoriesRemote.add(cat);
+		}
+		if (monthEntriesRemote.size() > 0) {
+			cat = new HistoryCategory(HistoryCategory.CATEGORY_THIS_MONTH, monthEntriesRemote.toArray());
+			categoriesRemote.add(cat);
+		}
+		if (earlierEntriesRemote.size() > 0) {
+			cat = new HistoryCategory(HistoryCategory.CATEGORY_EARLIER, earlierEntriesRemote.toArray());
+			categoriesRemote.add(cat);
+		}
+		this.categoriesBoth = categoriesAll.toArray(new HistoryCategory[0]);
+		this.categoriesLocal = categoriesLocal.toArray(new HistoryCategory[0]);
+		this.categoriesRemote = categoriesRemote.toArray(new HistoryCategory[0]);
+		this.allHystory = allEntries.toArray();
 	}
 	
 	public String getSelectedMessagesAsString() {
@@ -392,7 +500,7 @@ public class LogMessagesComposite extends SashForm {
 		for (int i = 0; i < selectedItems.length; i++) {
 			Object rowItems = selectedItems[i];
 			if (rowItems instanceof HistoryCategory) {
-				SVNLogEntry [] entries = ((HistoryCategory)rowItems).getLogEntries();
+				Object [] entries = ((HistoryCategory)rowItems).getEntries();
 				for (int j = 0; j < entries.length; j++) {
 					for (int k = 0; k < 5; k++) {
 						historyText += provider.getColumnText(entries[j], k);
@@ -447,10 +555,26 @@ public class LogMessagesComposite extends SashForm {
 	public void setTableInput() {
 		if (!this.historyTable.getTree().isDisposed()) {
 			if (this.groupByDate) {
-				this.historyTable.setInput(this.categories);
+				if (this.revisionMode == HistoryViewImpl.SHOW_BOTH) {
+					this.historyTable.setInput(this.categoriesBoth);
+				}
+				else if (this.revisionMode == HistoryViewImpl.SHOW_REMOTE) {
+					this.historyTable.setInput(this.categoriesRemote);
+				}
+				else {
+					this.historyTable.setInput(this.categoriesLocal);
+				}
 			}
 			else {
-				this.historyTable.setInput(this.msgs);
+				if (this.revisionMode == HistoryViewImpl.SHOW_BOTH) {
+					this.historyTable.setInput(this.allHystory);
+				}
+				else if (this.revisionMode == HistoryViewImpl.SHOW_REMOTE) {
+					this.historyTable.setInput(this.msgs);
+				}
+				else {
+					this.historyTable.setInput(this.localHistory);
+				}
 			}
 		}
 	}
@@ -518,7 +642,7 @@ public class LogMessagesComposite extends SashForm {
 		
 		this.historyTable = new TreeViewer(treeTable);
 				
-		HistoryComparator comparator = new HistoryComparator(0);
+		HistoryComparator comparator = new HistoryComparator(LogMessagesComposite.COLUMN_DATE);
 		comparator.setReversed(true);
 		this.historyTable.setComparator(comparator);
 		
@@ -559,11 +683,14 @@ public class LogMessagesComposite extends SashForm {
 		col.addSelectionListener(this.getColumnListener(this.historyTable));
 		layout.addColumnData(new ColumnWeightData(46, true));
 		this.historyTable.setContentProvider(new ITreeContentProvider() {
+			
+			protected Object input;
+			
 			public void dispose () {
 			}
 			public Object[] getChildren(Object parentElement) {
 				if (parentElement instanceof HistoryCategory) {
-					return ((HistoryCategory)parentElement).getLogEntries();
+					return ((HistoryCategory)parentElement).getEntries();
 				}
 				return null;
 			}
@@ -574,12 +701,10 @@ public class LogMessagesComposite extends SashForm {
 				return (element instanceof HistoryCategory);
 			}
 			public Object[] getElements(Object inputElement) {
-				if (LogMessagesComposite.this.groupByDate) {
-					return LogMessagesComposite.this.categories;
-				}
-				return LogMessagesComposite.this.msgs;
+				return (Object [])this.input;
 			}
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+				this.input = newInput;
 			}
 		});
 		this.historyTable.setLabelProvider(new HistoryLabelProvider(false));
@@ -627,7 +752,6 @@ public class LogMessagesComposite extends SashForm {
 				TreeColumn treeColumn = ((TreeColumn)e.widget);
 				if (oldSorter != null && column == oldSorter.getColumnNumber()) {
 					oldSorter.setReversed(!oldSorter.isReversed());
-					
 					treeViewer.getTree().setSortColumn(treeColumn);
 					treeViewer.getTree().setSortDirection(oldSorter.isReversed() ? SWT.DOWN : SWT.UP);
 					treeViewer.refresh();
@@ -661,6 +785,7 @@ public class LogMessagesComposite extends SashForm {
 		private DateFormat dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.getDefault());
 		private boolean fullMessage;
 		private Image remoteRevisionImage = null;
+		private Image localRevisionImage = null;
 		private Image groupImage = null;
 		
 		public HistoryLabelProvider(boolean fullMessage) {
@@ -675,10 +800,18 @@ public class LogMessagesComposite extends SashForm {
 					}
 					return this.remoteRevisionImage;
 				}
-				else if (this.groupImage == null) {
-					this.groupImage = SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/group_by_date.gif").createImage();
+				else if (element instanceof HistoryCategory) {
+					if (this.groupImage == null) {
+						this.groupImage = SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/group_by_date.gif").createImage();
+					}
+					return this.groupImage;
 				}
-				return this.groupImage;
+				else if (element instanceof IFileState) {
+					if (this.localRevisionImage == null) {
+						this.localRevisionImage = SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/local_rev.gif").createImage();
+					}
+					return this.localRevisionImage;
+				}
 			}
 			return null;
 		}
@@ -686,31 +819,42 @@ public class LogMessagesComposite extends SashForm {
 		public String getColumnText(Object element, int columnIndex) {
 			if (element instanceof SVNLogEntry) {
 				SVNLogEntry row = (SVNLogEntry)element;
-					switch (columnIndex) {
-						case LogMessagesComposite.COLUMN_REVISION: {
-							return LogMessagesComposite.this.revisionToString(row.revision);
-						}
-						case LogMessagesComposite.COLUMN_DATE: {
-							return row.date == 0 ? SVNTeamPlugin.instance().getResource("SVNInfo.NoDate") : this.dateTimeFormat.format(new Date(row.date));
-						}
-						case LogMessagesComposite.COLUMN_CHANGES: {
-							return String.valueOf(row.changedPaths != null ? row.changedPaths.length : 0);
-						}
-						case LogMessagesComposite.COLUMN_AUTHOR: {
-							return row.author == null || row.author.length() == 0 ? SVNTeamPlugin.instance().getResource("SVNInfo.NoAuthor") : row.author;
-						}
-						case LogMessagesComposite.COLUMN_LOG_MESSGE: {
-							return row.message == null || row.message.length() == 0 ? SVNTeamPlugin.instance().getResource("SVNInfo.NoComment") : (this.fullMessage ? LogMessagesComposite.flattenMultiLineText(row.message, " ") : FileUtility.formatMultilineText(row.message));
-						}
-						default: {
-							return "";
-						}
+				switch (columnIndex) {
+					case LogMessagesComposite.COLUMN_REVISION: {
+						return LogMessagesComposite.this.revisionToString(row.revision);
+					}
+					case LogMessagesComposite.COLUMN_DATE: {
+						return row.date == 0 ? SVNTeamPlugin.instance().getResource("SVNInfo.NoDate") : this.dateTimeFormat.format(new Date(row.date));
+					}
+					case LogMessagesComposite.COLUMN_CHANGES: {
+						return String.valueOf(row.changedPaths != null ? row.changedPaths.length : 0);
+					}
+					case LogMessagesComposite.COLUMN_AUTHOR: {
+						return row.author == null || row.author.length() == 0 ? SVNTeamPlugin.instance().getResource("SVNInfo.NoAuthor") : row.author;
+					}
+					case LogMessagesComposite.COLUMN_LOG_MESSGE: {
+						return row.message == null || row.message.length() == 0 ? SVNTeamPlugin.instance().getResource("SVNInfo.NoComment") : (this.fullMessage ? LogMessagesComposite.flattenMultiLineText(row.message, " ") : FileUtility.formatMultilineText(row.message));
+					}
+					default: {
+						return "";
 					}
 				}
-				else if (columnIndex == LogMessagesComposite.COLUMN_REVISION) {
-					return ((HistoryCategory)element).getName();
+			}
+			else if (element instanceof IFileState) {
+				IFileState row = (IFileState)element;
+				switch (columnIndex) {
+					case LogMessagesComposite.COLUMN_DATE: {
+						return this.dateTimeFormat.format(new Date(row.getModificationTime()));
+					}
+					default: {
+						return "";
+					}
 				}
-				return "";
+			}
+			else if (columnIndex == LogMessagesComposite.COLUMN_REVISION) {
+				return ((HistoryCategory)element).getName();
+			}
+			return "";
 		}
 
 		public void addListener(ILabelProviderListener listener) {
@@ -725,6 +869,10 @@ public class LogMessagesComposite extends SashForm {
 				this.groupImage.dispose();
 				this.groupImage = null;
 			}
+			if (this.localRevisionImage != null) {
+				this.localRevisionImage.dispose();
+				this.localRevisionImage = null;
+			}
 		}
 
 		public boolean isLabelProperty(Object element, String property) {
@@ -737,6 +885,9 @@ public class LogMessagesComposite extends SashForm {
 		public Font getFont(Object element) {
 			if (element instanceof HistoryCategory) {
 				return LogMessagesComposite.this.currentRevisionFont;
+			}
+			if (element instanceof IFileState) {
+				return null;
 			}
 			SVNLogEntry row = (SVNLogEntry)element;
 			if (LogMessagesComposite.this.currentRevision == row.revision && !LogMessagesComposite.this.currentRevisionFont.isDisposed()) {
@@ -771,41 +922,88 @@ public class LogMessagesComposite extends SashForm {
 
 		
 		public int compare(Viewer viewer, Object row1, Object row2) {
-			if ((row1 instanceof HistoryCategory) || (row2 instanceof HistoryCategory)) {
+			
+			//One entry is from local history and another is from log entry
+			if ((row1 instanceof SVNLogEntry) && (row2 instanceof IFileState)) {
+				SVNLogEntry rowData1 = (SVNLogEntry)row1;
+				IFileState rowData2 = (IFileState)row2;
+				if (this.column == LogMessagesComposite.COLUMN_DATE) {
+	            	if (this.reversed) {
+	            		return new Long(rowData2.getModificationTime()).compareTo(new Long(rowData1.date));
+	            	}
+					return new Long(rowData1.date).compareTo(new Long(rowData2.getModificationTime()));
+	            }
+				if (reversed) {
+					return 0;
+				}
+				return 1;
+			}
+			if ((row2 instanceof SVNLogEntry) && (row1 instanceof IFileState)) {
+				IFileState rowData1 = (IFileState)row1;
+				SVNLogEntry rowData2 = (SVNLogEntry)row2;
+				if (this.column == LogMessagesComposite.COLUMN_DATE) {
+	            	if (this.reversed) {
+	            		return new Long(rowData2.date).compareTo(new Long(rowData1.getModificationTime()));
+	            	}
+					return new Long(rowData1.getModificationTime()).compareTo(new Long(rowData2.date));
+	            }
+				if (reversed) {
+					return 1;
+				}
 				return 0;
 			}
-            SVNLogEntry rowData1 = (SVNLogEntry)row1;
-            SVNLogEntry rowData2 = (SVNLogEntry)row2;
-            if (this.column == LogMessagesComposite.COLUMN_REVISION) {
-            	if (this.reversed) {
-            		return new Long(rowData2.revision).compareTo(new Long(rowData1.revision));
-            	}
-            	return new Long(rowData1.revision).compareTo(new Long(rowData2.revision));
-            }
-            if (this.column == LogMessagesComposite.COLUMN_DATE) {
-            	if (this.reversed) {
-            		return new Long(rowData2.date).compareTo(new Long(rowData1.date));
-            	}
-				return new Long(rowData1.date).compareTo(new Long(rowData2.date));
-            }
-            if (this.column == LogMessagesComposite.COLUMN_CHANGES) {
-            	int files1 = rowData1.changedPaths == null ? 0 : rowData1.changedPaths.length;
-            	int files2 = rowData2.changedPaths == null ? 0 : rowData2.changedPaths.length;
-            	if (this.reversed) {
-            		return new Integer(files2).compareTo(new Integer(files1));
-            	}
-            	return new Integer(files1).compareTo(new Integer(files2));
-            }
-            if (this.column == LogMessagesComposite.COLUMN_AUTHOR) {
-            	if (this.reversed) {
-            		return TableViewerSorter.compare(rowData2.author == null ? "" : rowData2.author, rowData1.author == null ? "" : rowData1.author);
-            	}
-            	return TableViewerSorter.compare(rowData1.author == null ? "" : rowData1.author, rowData2.author == null ? "" : rowData2.author);
-            }
-            if (this.reversed) {
-            	return TableViewerSorter.compare(rowData2.message == null ? "" : rowData2.message, rowData1.message == null ? "" : rowData1.message);
-            }
-            return TableViewerSorter.compare(rowData1.message == null ? "" : rowData1.message, rowData2.message == null ? "" : rowData2.message);
+			
+			//Both are log entries
+			if ((row1 instanceof SVNLogEntry) && (row2 instanceof SVNLogEntry)) {
+	            SVNLogEntry rowData1 = (SVNLogEntry)row1;
+	            SVNLogEntry rowData2 = (SVNLogEntry)row2;
+	            if (this.column == LogMessagesComposite.COLUMN_REVISION) {
+	            	if (this.reversed) {
+	            		return new Long(rowData2.revision).compareTo(new Long(rowData1.revision));
+	            	}
+	            	return new Long(rowData1.revision).compareTo(new Long(rowData2.revision));
+	            }
+	            if (this.column == LogMessagesComposite.COLUMN_DATE) {
+	            	if (this.reversed) {
+	            		return new Long(rowData2.date).compareTo(new Long(rowData1.date));
+	            	}
+					return new Long(rowData1.date).compareTo(new Long(rowData2.date));
+	            }
+	            if (this.column == LogMessagesComposite.COLUMN_CHANGES) {
+	            	int files1 = rowData1.changedPaths == null ? 0 : rowData1.changedPaths.length;
+	            	int files2 = rowData2.changedPaths == null ? 0 : rowData2.changedPaths.length;
+	            	if (this.reversed) {
+	            		return new Integer(files2).compareTo(new Integer(files1));
+	            	}
+	            	return new Integer(files1).compareTo(new Integer(files2));
+	            }
+	            if (this.column == LogMessagesComposite.COLUMN_AUTHOR) {
+	            	if (this.reversed) {
+	            		return TableViewerSorter.compare(rowData2.author == null ? "" : rowData2.author, rowData1.author == null ? "" : rowData1.author);
+	            	}
+	            	return TableViewerSorter.compare(rowData1.author == null ? "" : rowData1.author, rowData2.author == null ? "" : rowData2.author);
+	            }
+	            if (this.reversed) {
+	            	return TableViewerSorter.compare(rowData2.message == null ? "" : rowData2.message, rowData1.message == null ? "" : rowData1.message);
+	            }
+	            return TableViewerSorter.compare(rowData1.message == null ? "" : rowData1.message, rowData2.message == null ? "" : rowData2.message);
+			}
+			
+			//Both are from local history
+			if ((row1 instanceof IFileState) && (row2 instanceof IFileState)) {
+				IFileState rowData1 = (IFileState)row1;
+	            IFileState rowData2 = (IFileState)row2;
+	            if (this.column == LogMessagesComposite.COLUMN_DATE) {
+	            	if (this.reversed) {
+	            		return new Long(rowData2.getModificationTime()).compareTo(new Long(rowData1.getModificationTime()));
+	            	}
+					return new Long(rowData1.getModificationTime()).compareTo(new Long(rowData2.getModificationTime()));
+	            }
+	            return 0;
+			}
+			
+			//One of the rows is a category.
+			return 0;
         }
     }
 	
@@ -816,9 +1014,9 @@ public class LogMessagesComposite extends SashForm {
     	final public static int CATEGORY_THIS_MONTH = 4;
     	final public static int CATEGORY_EARLIER = 5;
     	protected int categoryType;
-    	protected SVNLogEntry[] entries;
+    	protected Object[] entries;
     	
-    	public HistoryCategory(int categoryType, SVNLogEntry[] entries) {
+    	public HistoryCategory(int categoryType, Object[] entries) {
     		this.entries = entries;
     		this.categoryType = categoryType;
     	}
@@ -834,7 +1032,7 @@ public class LogMessagesComposite extends SashForm {
     		return null;
     	}
     	
-    	public SVNLogEntry[] getLogEntries() {
+    	public Object[] getEntries() {
     		return this.entries;
     	}
     	

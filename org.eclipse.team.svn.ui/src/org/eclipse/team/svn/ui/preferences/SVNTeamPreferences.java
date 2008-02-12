@@ -141,6 +141,7 @@ public final class SVNTeamPreferences {
 	public static final String HISTORY_SHOW_MULTILINE_COMMENT_NAME = "multilineComment";
 	public static final String HISTORY_SHOW_AFFECTED_PATHS_NAME = "affectedPaths";
 	public static final String HISTORY_GROUPING_TYPE_NAME = "groupingType";
+	public static final String HISTORY_REVISION_MODE_NAME = "revisionMode";
 	public static final String HISTORY_HIERARCHICAL_LAYOUT = "hierarchicalLayout";
 	public static final String HISTORY_COMPARE_MODE = "compareMode";
 	public static final String HISTORY_LINK_WITH_EDITOR_NAME = "linkWithEditor";
@@ -148,8 +149,13 @@ public final class SVNTeamPreferences {
 	public static final int HISTORY_GROUPING_TYPE_NONE = 0;
 	public static final int HISTORY_GROUPING_TYPE_DATE = 1;
 	
+	public static final int HISTORY_REVISION_MODE_BOTH = 0;
+	public static final int HISTORY_REVISION_MODE_REMOTE = 1;
+	public static final int HISTORY_REVISION_MODE_LOCAL = 2;
+	
 	public static final int HISTORY_PAGE_SIZE_DEFAULT = 25;
 	public static final int HISTORY_GROUPING_TYPE_DEFAULT = SVNTeamPreferences.HISTORY_GROUPING_TYPE_NONE;
+	public static final int HISTORY_REVISION_MODE_DEFAULT = SVNTeamPreferences.HISTORY_REVISION_MODE_REMOTE;
 	public static final boolean HISTORY_PAGING_ENABLE_DEFAULT = true;
 	public static final boolean HISTORY_SHOW_MULTILINE_COMMENT_DEFAULT = true;
 	public static final boolean HISTORY_SHOW_AFFECTED_PATHS_DEFAULT = true;
@@ -324,6 +330,7 @@ public final class SVNTeamPreferences {
 		store.setDefault(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_SHOW_MULTILINE_COMMENT_NAME), SVNTeamPreferences.HISTORY_SHOW_MULTILINE_COMMENT_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_SHOW_AFFECTED_PATHS_NAME), SVNTeamPreferences.HISTORY_SHOW_AFFECTED_PATHS_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_GROUPING_TYPE_NAME), SVNTeamPreferences.HISTORY_GROUPING_TYPE_DEFAULT);
+		store.setDefault(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_REVISION_MODE_NAME), SVNTeamPreferences.HISTORY_REVISION_MODE_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_HIERARCHICAL_LAYOUT), SVNTeamPreferences.HISTORY_HIERARCHICAL_LAYOUT_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_COMPARE_MODE), SVNTeamPreferences.HISTORY_COMPARE_MODE_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_LINK_WITH_EDITOR_NAME), SVNTeamPreferences.HISTORY_LINK_WITH_EDITOR_DEFAULT);
