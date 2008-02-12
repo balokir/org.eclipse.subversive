@@ -475,8 +475,7 @@ public class HistoryViewImpl {
 					    tAction.setEnabled(isFilterEnabled());
 					}
 				}
-				//TODO uncomment
-				/*if (!onlyLogEntries) {
+				if (!onlyLogEntries) {
 					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CopyHistory")) {
 						public void run() {
 							HistoryViewImpl.this.handleCopy();
@@ -484,7 +483,7 @@ public class HistoryViewImpl {
 					});
 					tAction.setEnabled(tSelection.size() > 0);
 					tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/copy.gif"));
-				}*/
+				}
 				manager.add(new Separator()); 
 				manager.add(HistoryViewImpl.this.getRefreshAction());
 			}

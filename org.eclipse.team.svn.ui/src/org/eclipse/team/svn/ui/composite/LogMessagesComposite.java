@@ -954,10 +954,19 @@ public class LogMessagesComposite extends SashForm {
 	            }
 				if (this.column == LogMessagesComposite.COLUMN_REVISION) {
 					if (rowData2.equals(LogMessagesComposite.this.localHistory[0])) {
+						int retVal = 0;
 						if (this.reversed) {
-	            			return new Long(LogMessagesComposite.this.currentRevision).compareTo(new Long(rowData1.revision));
+							retVal = new Long(LogMessagesComposite.this.currentRevision).compareTo(new Long(rowData1.revision));
+							if (retVal == 0) {
+								return new Long(rowData2.getModificationTime()).compareTo(new Long(rowData1.date));
+							}
+	            			return retVal; 
 	            		}
-						return new Long(rowData1.revision).compareTo(new Long(LogMessagesComposite.this.currentRevision));
+						retVal = new Long(rowData1.revision).compareTo(new Long(LogMessagesComposite.this.currentRevision));
+						if (retVal == 0) {
+							return new Long(rowData1.date).compareTo(new Long(rowData2.getModificationTime()));
+						}
+            			return retVal;
 					}
 	            }
 				if (reversed) {
@@ -975,11 +984,20 @@ public class LogMessagesComposite extends SashForm {
 					return new Long(rowData1.getModificationTime()).compareTo(new Long(rowData2.date));
 	            }
 				if (this.column == LogMessagesComposite.COLUMN_REVISION) {
+					int retVal = 0;
 					if (rowData1.equals(LogMessagesComposite.this.localHistory[0])) {
 						if (this.reversed) {
-							return new Long(rowData2.revision).compareTo(new Long(LogMessagesComposite.this.currentRevision));
+							retVal = new Long(rowData2.revision).compareTo(new Long(LogMessagesComposite.this.currentRevision));
+							if (retVal == 0) {
+								return new Long(rowData2.date).compareTo(new Long(rowData1.getModificationTime()));
+							}
+							return retVal;
 	            		}
-						return new Long(LogMessagesComposite.this.currentRevision).compareTo(new Long(rowData2.revision));
+						retVal = new Long(LogMessagesComposite.this.currentRevision).compareTo(new Long(rowData2.revision));
+						if (retVal == 0) {
+							return new Long(rowData1.getModificationTime()).compareTo(new Long(rowData2.date));
+						}
+						return retVal;
 					}
 	            }
 				if (reversed) {
@@ -1028,12 +1046,6 @@ public class LogMessagesComposite extends SashForm {
 			if ((row1 instanceof IFileState) && (row2 instanceof IFileState)) {
 				IFileState rowData1 = (IFileState)row1;
 	            IFileState rowData2 = (IFileState)row2;
-	            if (this.column == LogMessagesComposite.COLUMN_DATE) {
-	            	if (this.reversed) {
-	            		return new Long(rowData2.getModificationTime()).compareTo(new Long(rowData1.getModificationTime()));
-	            	}
-					return new Long(rowData1.getModificationTime()).compareTo(new Long(rowData2.getModificationTime()));
-	            }
 	            if (this.column == LogMessagesComposite.COLUMN_REVISION) {
 					if (rowData1.equals(LogMessagesComposite.this.localHistory[0])) {
 						if (this.reversed) {
@@ -1048,7 +1060,10 @@ public class LogMessagesComposite extends SashForm {
 						return -1;
 					}
 	            }
-	            return 0;
+	            if (this.reversed) {
+            		return new Long(rowData2.getModificationTime()).compareTo(new Long(rowData1.getModificationTime()));
+            	}
+				return new Long(rowData1.getModificationTime()).compareTo(new Long(rowData2.getModificationTime()));
 			}
 			
 			//One of the rows is a category.
