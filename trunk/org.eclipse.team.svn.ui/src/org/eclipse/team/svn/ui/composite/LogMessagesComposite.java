@@ -559,22 +559,22 @@ public class LogMessagesComposite extends SashForm {
 				if (this.revisionMode == HistoryViewImpl.SHOW_BOTH) {
 					this.historyTable.setInput(this.categoriesBoth);
 				}
-				else if (this.revisionMode == HistoryViewImpl.SHOW_REMOTE) {
-					this.historyTable.setInput(this.categoriesRemote);
+				else if (this.revisionMode == HistoryViewImpl.SHOW_LOCAL) {
+					this.historyTable.setInput(this.categoriesLocal);
 				}
 				else {
-					this.historyTable.setInput(this.categoriesLocal);
+					this.historyTable.setInput(this.categoriesRemote);
 				}
 			}
 			else {
 				if (this.revisionMode == HistoryViewImpl.SHOW_BOTH) {
 					this.historyTable.setInput(this.allHystory);
 				}
-				else if (this.revisionMode == HistoryViewImpl.SHOW_REMOTE) {
-					this.historyTable.setInput(this.msgs);
+				else if (this.revisionMode == HistoryViewImpl.SHOW_LOCAL) {
+					this.historyTable.setInput(this.localHistory);
 				}
 				else {
-					this.historyTable.setInput(this.localHistory);
+					this.historyTable.setInput(this.msgs);
 				}
 			}
 		}
