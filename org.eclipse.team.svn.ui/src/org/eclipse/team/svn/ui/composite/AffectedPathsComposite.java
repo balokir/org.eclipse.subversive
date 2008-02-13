@@ -113,11 +113,14 @@ import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
 import org.eclipse.team.svn.ui.utility.TableViewerSorter;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.svn.ui.wizard.CreatePatchWizard;
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.editors.text.EditorsUI;
 
 /**
  * Affected paths composite, contains tree and table viewers of affected paths
@@ -410,7 +413,7 @@ public class AffectedPathsComposite extends Composite {
 				if (selection instanceof IStructuredSelection) {
 					IStructuredSelection structured = (IStructuredSelection)selection;
 					if (structured.size() == 1) {
-						AffectedPathsComposite.this.openRemoteResource(structured);
+						AffectedPathsComposite.this.openRemoteResource(structured, OpenRemoteFileOperation.OPEN_DEFAULT, null);
 					}
 				}
 			}
@@ -429,14 +432,82 @@ public class AffectedPathsComposite extends Composite {
 					enabled = status.charAt(0) == 'M';
 				}
 				Action tAction = null;
+				
+				IEditorRegistry editorRegistry = SVNTeamUIPlugin.instance().getWorkbench().getEditorRegistry();
 				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.Open")) {
 					public void run() {
-						AffectedPathsComposite.this.openRemoteResource(affectedTableSelection);
+						AffectedPathsComposite.this.openRemoteResource(affectedTableSelection, OpenRemoteFileOperation.OPEN_DEFAULT, null);
 					}
 				});
 				String name = ((String [])affectedTableSelection.getFirstElement())[1];
-				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getWorkbench().getEditorRegistry().getImageDescriptor(name));
+				tAction.setImageDescriptor(editorRegistry.getImageDescriptor(name));
 				tAction.setEnabled(affectedTableSelection.size() == 1);
+				
+				//FIXME: "Open with" submenu shouldn't be hardcoded after reworking of
+				//       the HistoryView. Should be made like the RepositoriesView menu.
+				MenuManager sub = new MenuManager(SVNTeamUIPlugin.instance().getResource("HistoryView.OpenWith"), "historyOpenWithMenu");
+				sub.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+				
+				sub.add(new Separator("nonDefaultTextEditors"));
+				IEditorDescriptor[] editors = editorRegistry.getEditors(name);
+				for (int i = 0; i < editors.length; i++) {
+					final String id = editors[i].getId();
+    				if (!id.equals(EditorsUI.DEFAULT_TEXT_EDITOR_ID)) {
+    					sub.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource(editors[i].getLabel())) {
+    						public void run() {
+    							AffectedPathsComposite.this.openRemoteResource(affectedTableSelection, OpenRemoteFileOperation.OPEN_SPECIFIED, id);
+    						}
+    					});
+    					tAction.setImageDescriptor(editors[i].getImageDescriptor());
+    					tAction.setEnabled(affectedTableSelection.size() == 1);
+    				}
+    			}
+					
+				sub.add(new Separator("variousEditors"));
+				IEditorDescriptor descriptor = null;
+				sub.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.TextEditor")) {
+					public void run() {
+						AffectedPathsComposite.this.openRemoteResource(affectedTableSelection, OpenRemoteFileOperation.OPEN_SPECIFIED, EditorsUI.DEFAULT_TEXT_EDITOR_ID);
+					}
+				});
+				descriptor = editorRegistry.findEditor(EditorsUI.DEFAULT_TEXT_EDITOR_ID);
+				tAction.setImageDescriptor(descriptor.getImageDescriptor());
+				tAction.setEnabled(affectedTableSelection.size() == 1);
+				sub.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.SystemEditor")) {
+					public void run() {
+						AffectedPathsComposite.this.openRemoteResource(affectedTableSelection, OpenRemoteFileOperation.OPEN_EXTERNAL, null);
+					}
+				});
+				if (editorRegistry.isSystemExternalEditorAvailable(name)) {
+					tAction.setImageDescriptor(editorRegistry.getSystemExternalEditorImageDescriptor(name));
+					tAction.setEnabled(affectedTableSelection.size() == 1);
+				}
+				else {
+					tAction.setEnabled(false);
+				}
+				sub.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.InplaceEditor")) {
+					public void run() {
+						AffectedPathsComposite.this.openRemoteResource(affectedTableSelection, OpenRemoteFileOperation.OPEN_INPLACE, null);
+					}
+				});
+				if (editorRegistry.isSystemInPlaceEditorAvailable(name)) {
+					tAction.setImageDescriptor(editorRegistry.getSystemExternalEditorImageDescriptor(name));
+					tAction.setEnabled(affectedTableSelection.size() == 1);
+				}
+				else {
+					tAction.setEnabled(false);
+				}
+				sub.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.DefaultEditor")) {
+					public void run() {
+						AffectedPathsComposite.this.openRemoteResource(affectedTableSelection, OpenRemoteFileOperation.OPEN_DEFAULT, null);
+					}
+				});
+				tAction.setImageDescriptor(editorRegistry.getImageDescriptor(name));
+				tAction.setEnabled(affectedTableSelection.size() == 1);
+				
+	        	manager.add(sub);
+	        	manager.add(new Separator());
+	        	
 				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.CompareWithPreviousRevision")) {
 					public void run() {
 						AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(affectedTableSelection.getFirstElement(), false);
@@ -617,9 +688,9 @@ public class AffectedPathsComposite extends Composite {
         site.registerContextMenu(menuMgr, this.treeViewer);
 	}
 	
-	protected void openRemoteResource(IStructuredSelection affectedTableSelection) {
+	protected void openRemoteResource(IStructuredSelection affectedTableSelection, int openType, String openWith) {
 		AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(affectedTableSelection.getFirstElement(), true);
-		OpenRemoteFileOperation openOp = new OpenRemoteFileOperation(provider, OpenRemoteFileOperation.OPEN_DEFAULT);
+		OpenRemoteFileOperation openOp = new OpenRemoteFileOperation(provider, openType, openWith);
 		
 		CompositeOperation composite = new CompositeOperation(openOp.getId());
 		composite.add(provider);

@@ -21,6 +21,8 @@ Features:
  * Add revision folding ability to History view (bug 211410)
  * Use latest SVN 1.5 binaries (bug 218472)
  * Open external editor if no built-in editors exists for this file type (bug 218485)
+ * Improve History View (new actions in Affected Paths) (bug 218480)
+ * Add local history to History View (bug 218468)
 
 Fixes:
  * Team Synchronization reset "remove from view" after each file change (bug 207026)
@@ -44,6 +46,13 @@ Fixes:
  * java.lang.StackOverflowError when trying to share a new project to SVN (bug 217529)
    + special thanks to Leo Dos Santos
    
+ * Replace With > Revision... should mark replaced files dirty (bug 218600)
+   + special thanks to Daniel Hirscher
+   
+ * Problematic configuration in build 20080129 (bug 218647)
+   + special thanks to Alon Peled
+    
+ * Keep ignored resources for "Replace With..." actions (bug 211241)
  * UI blinks when commit window is called from Package explorer (bug 218136)
  * Change sets commit fails (NPE) (bug 217291)
  * Merge two repository browsers for dialogs into one. (bug 217289)
