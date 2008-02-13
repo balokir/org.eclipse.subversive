@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IFileState;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -51,7 +52,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.internal.ui.history.FileRevisionEditorInput;
+import org.eclipse.team.internal.ui.actions.CompareRevisionAction;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
@@ -115,12 +116,12 @@ import org.eclipse.team.svn.ui.repository.model.RepositoryFile;
 import org.eclipse.team.svn.ui.utility.LockProposeUtility;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.svn.ui.wizard.CreatePatchWizard;
+import org.eclipse.team.ui.history.HistoryPage;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
 
@@ -674,14 +675,7 @@ public class HistoryViewImpl {
 			try {
 				this.showBothAction.setEnabled(true);
 				this.showLocalAction.setEnabled(true);
-				ArrayList<SVNLocalFileRevision> history = new ArrayList<SVNLocalFileRevision>();
-				history.add(new SVNLocalFileRevision((IFile)resource));
-				IFileState [] states = ((IFile)resource).getHistory(null);
-				for (int i = 0; i < states.length; i++) {
-					history.add(new SVNLocalFileRevision(states[i]));
-				}
-				this.history.setLocalHistory(history.toArray(new SVNLocalFileRevision [0]));
-				
+				this.refreshLocalHistory((IFile)resource);
 			} catch (CoreException ex) {		
 				UILoggedOperation.reportError("Get Local History", ex);
 			};
@@ -972,14 +966,20 @@ public class HistoryViewImpl {
 			if (item instanceof SVNLogEntry) {
 				this.compareWithCurrent(item);
 			}
+			if (item instanceof SVNLocalFileRevision) {
+				CompareRevisionAction compare = new CompareRevisionAction();
+				compare.selectionChanged(new StructuredSelection(new Object[] {item}));
+				compare.setPage((HistoryPage)SVNTeamUIPlugin.instance().getWorkbench().getActiveWorkbenchWindow().getActivePage());
+				compare.setCurrentFileRevision(new SVNLocalFileRevision((IFile)this.wcResource));
+				compare.run();
+			}
 		}
 		else if (item instanceof SVNLocalFileRevision) {
 			try {
-				Utils.openEditor(SVNTeamUIPlugin.instance().getWorkbench().getActiveWorkbenchWindow().getActivePage(),
-								new FileRevisionEditorInput((SVNLocalFileRevision)item, ((SVNLocalFileRevision)item).getStorage(null))
-								);
+				SVNLocalFileRevision selected = (SVNLocalFileRevision)item;
+				Utils.openEditor(SVNTeamUIPlugin.instance().getWorkbench().getActiveWorkbenchWindow().getActivePage(), selected, new NullProgressMonitor());
 			}
-			catch (PartInitException ex) {
+			catch (CoreException ex) {
 				UILoggedOperation.reportError("Open Editor", ex);
 			}
 		}
@@ -1429,6 +1429,16 @@ public class HistoryViewImpl {
 			}
 		}
 		return true;
+	}
+	
+	protected void refreshLocalHistory(IFile resource) throws CoreException {
+		ArrayList<SVNLocalFileRevision> history = new ArrayList<SVNLocalFileRevision>();
+		history.add(new SVNLocalFileRevision(resource));
+		IFileState [] states = resource.getHistory(null);
+		for (int i = 0; i < states.length; i++) {
+			history.add(new SVNLocalFileRevision(states[i]));
+		}
+		this.history.setLocalHistory(history.toArray(new SVNLocalFileRevision [0]));
 	}
 	
 	public String getResourceLabel() {
