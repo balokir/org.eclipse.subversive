@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.resource.ILocalFile;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.operation.ShowHistoryViewOperation;
@@ -38,7 +39,7 @@ public class ShowOutgoingHistoryAction extends AbstractSynchronizeModelAction {
 			ISynchronizeModelElement element = (ISynchronizeModelElement)selection.getFirstElement();
 			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(element.getResource());
 			// null for change set nodes
-			return local != null && IStateFilter.SF_ONREPOSITORY.accept(local);
+			return local != null && (IStateFilter.SF_ONREPOSITORY.accept(local) || local instanceof ILocalFile);
 		}
 	    return false;
 	}
