@@ -283,7 +283,7 @@ public class LogMessagesComposite extends SashForm {
 		
 		if (msgs == null || msgs.length == 0) {
 			this.msgs = new SVNLogEntry[0];
-			this.categoriesBoth = new HistoryCategory[0];
+			this.collectCategoriesAndMapData(new SVNLogEntry[0]);
 			this.setTableInput();
 			this.historyTableListener.selectionChanged(null);
 			return;
@@ -856,7 +856,10 @@ public class LogMessagesComposite extends SashForm {
 					}
 					case LogMessagesComposite.COLUMN_REVISION: {
 						if (row.isCurrentState()) {
-							return SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.CurrentRevision", new String [] {String.valueOf(LogMessagesComposite.this.currentRevision)});
+							if (LogMessagesComposite.this.currentRevision != -1) {
+								return SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.CurrentRevision", new String [] {String.valueOf(LogMessagesComposite.this.currentRevision)});
+							}
+							return "*";
 						}
 						return "";
 					}

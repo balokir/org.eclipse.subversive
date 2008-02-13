@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.ui.action.local;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.svn.core.IStateFilter;
@@ -29,14 +30,15 @@ public class ShowHistoryAction extends AbstractWorkingCopyAction {
 	}
 	
 	public void runImpl(IAction action) {
-		IResource resource = this.getSelectedResources(IStateFilter.SF_ONREPOSITORY)[0];
+		IResource resource = this.getSelectedResources()[0];
 		this.runBusy(new ShowHistoryViewOperation(resource, 0, 0));
 	}
 
 	public boolean isEnabled() {
 		return 
 			this.getSelectedResources().length == 1 && 
-			this.checkForResourcesPresence(IStateFilter.SF_ONREPOSITORY);
+			(this.checkForResourcesPresence(IStateFilter.SF_ONREPOSITORY) ||
+			this.getSelectedResources()[0] instanceof IFile);
 	}
 
 }
