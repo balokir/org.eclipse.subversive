@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Vladimir Bykov - Initial API and implementation
+ *    Sergiy Logvin - Initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.team.svn.core.operation.remote;
@@ -31,7 +31,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 /**
  * Operation organize import repository resources to file sistem
  * 
- * @author Vladimir Bykov
+ * @author Sergiy Logvin
  */
 public class ImportOperation extends AbstractRepositoryOperation implements IRevisionProvider {
 	protected String path;

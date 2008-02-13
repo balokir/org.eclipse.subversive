@@ -29,6 +29,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -227,11 +228,6 @@ public class AffectedPathsComposite extends Composite {
             public int compare(Object row1, Object row2, int column) {
             	String []rowData1 = (String [])row1;
                 String []rowData2 = (String [])row2;
-                if (column == 4) {
-                	Long rData1 =  new Long(rowData1[column] == "" ? "0" : rowData1[column]);
-                	Long rData2 =  new Long(rowData2[column] == "" ? "0" : rowData2[column]);
-                	return rData1.compareTo(rData2);
-                }
                 return TableViewerSorter.compare(rowData1[column], rowData2[column]);
             }
         });
@@ -242,7 +238,7 @@ public class AffectedPathsComposite extends Composite {
 		col.setResizable(false);
 		col.addSelectionListener(sorter);
 		col.setAlignment(SWT.CENTER);
-        layout.addColumnData(new ColumnWeightData(0, 26, false));        
+        layout.addColumnData(new ColumnPixelData(26, false));        
         //1.name
         col = new TableColumn(this.table, SWT.NONE);
         col.setText(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.Name"));
@@ -252,18 +248,12 @@ public class AffectedPathsComposite extends Composite {
         col = new TableColumn(this.table, SWT.NONE);
         col.setText(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.Path"));
 		col.addSelectionListener(sorter);
-        layout.addColumnData(new ColumnWeightData(35, true));
+        layout.addColumnData(new ColumnWeightData(40, true));
         //3.source path
         col = new TableColumn(this.table, SWT.NONE);
         col.setText(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.CopiedFrom"));
 		col.addSelectionListener(sorter);
-        layout.addColumnData(new ColumnWeightData(25, true));
-        //4.source revision
-        col = new TableColumn(this.table, SWT.NONE);
-        col.setText(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.CopiedFromRevision"));
-        col.setAlignment(SWT.RIGHT);
-        col.addSelectionListener(sorter);
-        layout.addColumnData(new ColumnWeightData(23, true));
+        layout.addColumnData(new ColumnWeightData(40, true));
         
         this.tableViewer.setContentProvider(new IStructuredContentProvider() {
 			public Object[] getElements(Object inputElement) {
@@ -320,11 +310,13 @@ public class AffectedPathsComposite extends Composite {
 				return null;
 			}
 			public String getColumnText(Object element, int columnIndex) {
+				String []data = (String [])element;
 				if (columnIndex == 3) {
-					String copiedFrom = ((String [])element)[columnIndex];
-					return (copiedFrom.length() > 1 && copiedFrom.startsWith("/")) ? copiedFrom.substring(1) : copiedFrom;
+					String copiedFrom = data[columnIndex];
+					copiedFrom = (copiedFrom.length() > 1 && copiedFrom.startsWith("/")) ? copiedFrom.substring(1) : copiedFrom;
+					return data[4].length() > 0 ? (copiedFrom + '@' + data[4]) : copiedFrom;
 				}
-				return columnIndex != 0 ? ((String [])element)[columnIndex] : "";
+				return columnIndex != 0 ? data[columnIndex] : "";
 			}
 
 			public void addListener(ILabelProviderListener listener) {

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Vladimir Bykov - Initial API and implementation
+ *    Sergiy Logvin - Initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.team.svn.ui.action.remote;
@@ -26,7 +26,7 @@ import org.eclipse.team.svn.ui.repository.model.RepositoryError;
 /**
  * Show repository error action implementation
  * 
- * @author Vladimir Bykov
+ * @author Sergiy Logvin
  */
 public class ShowBrowsingErrorAction extends AbstractRepositoryTeamAction {
 	

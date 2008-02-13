@@ -508,7 +508,10 @@ public class LogMessagesComposite extends SashForm {
 		for (int i = 0; i < selectedItems.length; i++) {
 			Object rowItems = selectedItems[i];
 			if (rowItems instanceof HistoryCategory) {
-				Object [] entries = ((HistoryCategory)rowItems).getEntries();
+				HistoryCategory category = (HistoryCategory)rowItems;
+				historyText += provider.getColumnText(category, 0);
+				historyText += System.getProperty("line.separator");
+				Object [] entries = category.getEntries();
 				for (int j = 0; j < entries.length; j++) {
 					for (int k = 0; k < 5; k++) {
 						historyText += provider.getColumnText(entries[j], k);
@@ -675,21 +678,21 @@ public class LogMessagesComposite extends SashForm {
 		col.setAlignment(SWT.RIGHT);
 		col.setText(SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Changes"));
 		col.addSelectionListener(this.getColumnListener(this.historyTable));
-		layout.addColumnData(new ColumnWeightData(11, true));
+		layout.addColumnData(new ColumnWeightData(7, true));
 		
 		// author
 		col = new TreeColumn(treeTable, SWT.NONE);
 		col.setResizable(true);
 		col.setText(SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Author"));
 		col.addSelectionListener(this.getColumnListener(this.historyTable));
-		layout.addColumnData(new ColumnWeightData(13, true));
+		layout.addColumnData(new ColumnWeightData(14, true));
 	
 		//comment
 		col = new TreeColumn(treeTable, SWT.NONE);
 		col.setResizable(true);
 		col.setText(SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Comment"));
 		col.addSelectionListener(this.getColumnListener(this.historyTable));
-		layout.addColumnData(new ColumnWeightData(46, true));
+		layout.addColumnData(new ColumnWeightData(50, true));
 		this.historyTable.setContentProvider(new ITreeContentProvider() {
 			
 			protected Object input;

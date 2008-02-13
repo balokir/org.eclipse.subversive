@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Vladimir Bykov - Initial API and implementation
+ *    Sergiy Logvin - Initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.team.svn.ui.panel;
@@ -14,7 +14,7 @@ package org.eclipse.team.svn.ui.panel;
 /**
  * Extended Dialog Manager interface
  * 
- * @author Bykov Vladimir
+ * @author Sergiy Logvin
  */
 public interface IDialogManagerEx extends IDialogManager {
     public void setExtendedButtonCaption(int idx, String Caption);

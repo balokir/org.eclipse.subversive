@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Vladimir Bykov - Initial API and implementation
+ *    Sergiy Logvin - Initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.team.svn.core.operation.local.refactor;
@@ -32,7 +32,7 @@ import org.eclipse.team.svn.core.utility.FileUtility;
 /**
  * Copies versioned resource with the history preserved  
  * 
- * @author Vladimir Bykov
+ * @author Sergiy Logvin
  */
 public class CopyResourceWithHistoryOperation extends AbstractActionOperation {
 	protected IResource source;

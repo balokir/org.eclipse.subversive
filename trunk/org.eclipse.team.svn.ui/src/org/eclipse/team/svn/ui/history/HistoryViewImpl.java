@@ -346,7 +346,7 @@ public class HistoryViewImpl {
 								IRepositoryResource right = HistoryViewImpl.this.getResourceForSelectedRevision(new SVNLogEntry(((SVNLogEntry)selection[0]).revision - 1, 0, null, null, null));
 								if (!right.exists()) {
 									MessageBox err = new MessageBox(UIMonitorUtility.getShell());
-									err.setText(SVNTeamUIPlugin.instance().getResource("HistoryView.CompareWithPrevious.Title"));
+									err.setText(SVNTeamUIPlugin.instance().getResource("HistoryView.CompareWithPrevious"));
 									err.setMessage(SVNTeamUIPlugin.instance().getResource("HistoryView.CompareWithPrevious.Message", new String [] {String.valueOf(((SVNLogEntry)selection[0]).revision - 1)}));
 									err.open();
 									return;
@@ -512,7 +512,7 @@ public class HistoryViewImpl {
 						}
 					});
 					tAction.setEnabled(tSelection.size() == 1);
-					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CompareWithPrevious.State")) {
+					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CompareWithPrevious")) {
 						public void run() {
 							SVNLocalFileRevision [] localHistory = HistoryViewImpl.this.history.getLocalHistory();
 							SVNLocalFileRevision currentSelected = (SVNLocalFileRevision)tSelection.getFirstElement();
@@ -789,16 +789,7 @@ public class HistoryViewImpl {
 		        		
 		//must be called first, to initialize backtrack model
 		this.history.getCommentView().usedFor(remoteResource);
-		long currentRevision = SVNRevision.INVALID_REVISION_NUMBER;
-		try {
-			if (remoteResource != null) {
-				currentRevision = remoteResource.getRevision();
-			}
-		} 
-		catch (Exception e){
-
-		} 
-		this.showHistoryImpl(currentRevision, remoteResource, background);
+		this.showHistoryImpl(SVNRevision.INVALID_REVISION_NUMBER, remoteResource, background);
 	}
 	
 	public void updateViewInput(IRepositoryResource resource) {
@@ -881,6 +872,15 @@ public class HistoryViewImpl {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 					public void run() {
+						if (HistoryViewImpl.this.getResource() == null) {
+							try {
+								HistoryViewImpl.this.currentRevision = HistoryViewImpl.this.getRepositoryResource().getRevision();
+							} 
+							catch (Exception e){
+
+							} 
+						}
+						
 						if (HistoryViewImpl.this.historyForTheOtherResource(msgsOp)) {
 							return;
 						}
@@ -889,7 +889,7 @@ public class HistoryViewImpl {
 							HistoryViewImpl.this.addPage(msgsOp.getMessages());
 						}
 						SVNLogEntry[] toShow = HistoryViewImpl.this.isFilterEnabled() && HistoryViewImpl.this.logMessages != null ? HistoryViewImpl.this.filterMessages(HistoryViewImpl.this.logMessages) : HistoryViewImpl.this.logMessages;
-						SVNRevision current = HistoryViewImpl.this.currentRevision != -1 ? SVNRevision.fromNumber(HistoryViewImpl.this.currentRevision) : null;
+						SVNRevision current = HistoryViewImpl.this.currentRevision != SVNRevision.INVALID_REVISION_NUMBER ? SVNRevision.fromNumber(HistoryViewImpl.this.currentRevision) : null;
 						HistoryViewImpl.this.history.setLogMessages(current, toShow, HistoryViewImpl.this.repositoryResource);
 						HistoryViewImpl.this.setPagingEnabled();
 //						HistoryViewImpl.this.viewInfoProvider.setDescription(HistoryViewImpl.this.getResourceLabel());
