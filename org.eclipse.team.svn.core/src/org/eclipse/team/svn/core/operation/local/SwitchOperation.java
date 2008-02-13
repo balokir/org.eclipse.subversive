@@ -78,7 +78,7 @@ public class SwitchOperation extends AbstractRepositoryOperation {
 						provider.switchResource(destination);
 					}
 				}
-			}, monitor, 0);
+			}, monitor, this.resources.length);
 			
 			location.releaseSVNProxy(proxy);		
 		}
