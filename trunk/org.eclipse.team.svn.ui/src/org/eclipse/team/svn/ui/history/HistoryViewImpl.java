@@ -752,6 +752,7 @@ public class HistoryViewImpl {
 			try {
 				this.showBothAction.setEnabled(true);
 				this.showLocalAction.setEnabled(true);
+				this.showRemoteAction.setEnabled(true);
 				this.refreshLocalHistory((IFile)resource);
 			} catch (CoreException ex) {		
 				UILoggedOperation.reportError("Get Local History", ex);
@@ -844,10 +845,19 @@ public class HistoryViewImpl {
 				this.clearFilter();	
 			}
 		}
-		this.repositoryResource = remote;
+		
+		if (IStateFilter.SF_ONREPOSITORY.accept(SVNRemoteStorage.instance().asLocalResource(this.wcResource))) {
+			this.repositoryResource = remote;
+		}
+		else {
+			this.disableRemoteRevs();
+			this.repositoryResource = null;
+		}
+		
 		this.currentRevision = currentRevision;
 
 		this.viewInfoProvider.setDescription(this.getResourceLabel());
+		HistoryViewImpl.this.history.setGroupByDate((HistoryViewImpl.this.options & HistoryViewImpl.GROUP_BY_DATE) != 0);
 		
 		if (this.repositoryResource == null) {
 			this.history.setLogMessages(null, null, null);
@@ -878,7 +888,6 @@ public class HistoryViewImpl {
 						}
 						SVNLogEntry[] toShow = HistoryViewImpl.this.isFilterEnabled() && HistoryViewImpl.this.logMessages != null ? HistoryViewImpl.this.filterMessages(HistoryViewImpl.this.logMessages) : HistoryViewImpl.this.logMessages;
 						SVNRevision current = HistoryViewImpl.this.currentRevision != -1 ? SVNRevision.fromNumber(HistoryViewImpl.this.currentRevision) : null;
-			    		HistoryViewImpl.this.history.setGroupByDate((HistoryViewImpl.this.options & HistoryViewImpl.GROUP_BY_DATE) != 0);
 						HistoryViewImpl.this.history.setLogMessages(current, toShow, HistoryViewImpl.this.repositoryResource);
 						HistoryViewImpl.this.setPagingEnabled();
 //						HistoryViewImpl.this.viewInfoProvider.setDescription(HistoryViewImpl.this.getResourceLabel());
@@ -922,9 +931,21 @@ public class HistoryViewImpl {
 		}
 	}
 	
+	protected void disableRemoteRevs() {
+		this.showBothAction.setEnabled(false);
+		this.showRemoteAction.setEnabled(false);
+		this.showLocalAction.setEnabled(true);
+		this.options = HistoryViewImpl.this.options & ~(LogMessagesComposite.SHOW_REMOTE | LogMessagesComposite.SHOW_BOTH) | LogMessagesComposite.SHOW_LOCAL;
+    	this.showRemoteAction.setChecked(false);
+    	this.showBothAction.setChecked(false);
+    	this.showLocalAction.setChecked(true);
+    	this.setRevMode();
+	}
+	
 	protected void setOnlyRemoteRevs() {
 		this.showBothAction.setEnabled(false);
 		this.showLocalAction.setEnabled(false);
+		this.showRemoteAction.setEnabled(true);
 		this.options = HistoryViewImpl.this.options & ~(LogMessagesComposite.SHOW_LOCAL | LogMessagesComposite.SHOW_BOTH) | LogMessagesComposite.SHOW_REMOTE;
     	this.showLocalAction.setChecked(false);
     	this.showBothAction.setChecked(false);
@@ -1058,7 +1079,7 @@ public class HistoryViewImpl {
 	}
 	
 	protected void handleDoubleClick(Object item, boolean doubleClick) {
-		if (this.repositoryResource == null) {
+		if (this.repositoryResource == null && (this.options & LogMessagesComposite.SHOW_LOCAL) == 0) {
 			return;
 		}
 		if (item instanceof HistoryCategory) {
