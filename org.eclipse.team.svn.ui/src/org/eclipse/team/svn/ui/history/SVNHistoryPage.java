@@ -66,7 +66,7 @@ public class SVNHistoryPage extends HistoryPage implements IViewInfoProvider, IR
 			}
 			else {
 				ILocalResource local = SVNRemoteStorage.instance().asLocalResource(this.getResource());
-				if (local == null || IStateFilter.SF_UNVERSIONED.accept(local)) {
+				if (local == null || IStateFilter.SF_UNVERSIONED.accept(local) && !(resource instanceof IFile)) {
 					this.disconnectView();
 				}
 			}
@@ -187,11 +187,12 @@ public class SVNHistoryPage extends HistoryPage implements IViewInfoProvider, IR
 	public static boolean isValidData(Object object) {
 		if (object instanceof IResource && FileUtility.isConnected((IResource)object)){
 			ILocalResource local = SVNRemoteStorage.instance().asLocalResource((IResource)object);
-			return !IStateFilter.SF_NOTONREPOSITORY.accept(local);
+			return !IStateFilter.SF_NOTONREPOSITORY.accept(local) || object instanceof IFile;
 		}
 		return 
 			object instanceof IRepositoryResource || 
-			object instanceof RepositoryResource || object instanceof RepositoryLocation;
+			object instanceof RepositoryResource ||
+			object instanceof RepositoryLocation;
 	}
 
 	public void refresh() {
