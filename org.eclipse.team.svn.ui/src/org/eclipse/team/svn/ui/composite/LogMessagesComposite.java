@@ -63,7 +63,6 @@ import org.eclipse.team.svn.core.utility.PatternProvider;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.extension.factory.ICommentView;
-import org.eclipse.team.svn.ui.history.HistoryViewImpl;
 import org.eclipse.team.svn.ui.history.SVNLocalFileRevision;
 import org.eclipse.team.svn.ui.utility.TableViewerSorter;
 
@@ -78,6 +77,10 @@ public class LogMessagesComposite extends SashForm {
 	final public static int COLUMN_CHANGES = 2;
 	final public static int COLUMN_AUTHOR = 3;
 	final public static int COLUMN_LOG_MESSGE = 4;
+	
+	public static final int SHOW_BOTH = 0x20;
+	public static final int SHOW_LOCAL = 0x40;
+	public static final int SHOW_REMOTE = 0x80;
 	
     protected SashForm innerSashForm;
     protected boolean commentVisible;
@@ -556,10 +559,10 @@ public class LogMessagesComposite extends SashForm {
 	public void setTableInput() {
 		if (!this.historyTable.getTree().isDisposed()) {
 			if (this.groupByDate) {
-				if (this.revisionMode == HistoryViewImpl.SHOW_BOTH) {
+				if (this.revisionMode == LogMessagesComposite.SHOW_BOTH) {
 					this.historyTable.setInput(this.categoriesBoth);
 				}
-				else if (this.revisionMode == HistoryViewImpl.SHOW_LOCAL) {
+				else if (this.revisionMode == LogMessagesComposite.SHOW_LOCAL) {
 					this.historyTable.setInput(this.categoriesLocal);
 				}
 				else {
@@ -567,10 +570,10 @@ public class LogMessagesComposite extends SashForm {
 				}
 			}
 			else {
-				if (this.revisionMode == HistoryViewImpl.SHOW_BOTH) {
+				if (this.revisionMode == LogMessagesComposite.SHOW_BOTH) {
 					this.historyTable.setInput(this.allHystory);
 				}
-				else if (this.revisionMode == HistoryViewImpl.SHOW_LOCAL) {
+				else if (this.revisionMode == LogMessagesComposite.SHOW_LOCAL) {
 					this.historyTable.setInput(this.localHistory);
 				}
 				else {
