@@ -136,12 +136,11 @@ public class HistoryViewImpl {
 	public static final int HIDE_UNRELATED = 0x04;
 	public static final int STOP_ON_COPY = 0x08;
 	public static final int GROUP_BY_DATE = 0x10;
-	public static final int SHOW_BOTH = 0x20;
-	public static final int SHOW_LOCAL = 0x40;
-	public static final int SHOW_REMOTE = 0x80;
+	/*0x20, 0x40, 0x80 are reserved. Used from LogMessagesComposite*/
 	
 	protected IResource wcResource;
 	protected IRepositoryResource repositoryResource;
+	protected HistoryPage page;
 	
 	protected IViewInfoProvider viewInfoProvider;
 	
@@ -259,7 +258,7 @@ public class HistoryViewImpl {
 					if (!(selected[i] instanceof SVNLogEntry)) {
 						onlyLogEntries = false;
 					}
-					else if (!(selected[i] instanceof SVNLocalFileRevision)) {
+					if (!(selected[i] instanceof SVNLocalFileRevision)) {
 						onlyLocalEntries = false;
 					}
 				}
@@ -490,9 +489,34 @@ public class HistoryViewImpl {
 					});
 					tAction.setEnabled(tSelection.size() == 1);
 					tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getWorkbench().getEditorRegistry().getImageDescriptor(((SVNLocalFileRevision)tSelection.getFirstElement()).getName()));
+					//TODO compare current with local
+					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CompareCurrentWith", new String[] {"Local"})) {
+						public void run() {
+							HistoryViewImpl.this.runCompareForLocal(tSelection);
+						}
+					});
+					tAction.setEnabled(tSelection.size() == 1);
+					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CompareEachOther")) {
+						public void run() {
+							HistoryViewImpl.this.runCompareForLocal(tSelection);
+						}
+					});
+					tAction.setEnabled(tSelection.size() == 2);
+					manager.add(new Separator());
+					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.GetContents")) {
+						public void run() {
+							try {
+								((IFile)HistoryViewImpl.this.wcResource).setContents(((SVNLocalFileRevision)tSelection.getFirstElement()).getState(), true, true, new NullProgressMonitor());
+							}
+							catch (CoreException ex) {
+								UILoggedOperation.reportError(this.getText(), ex);
+							}
+						}
+					});
+					tAction.setEnabled(tSelection.size() == 1 && (!((SVNLocalFileRevision)tSelection.getFirstElement()).isCurrentState()));
 					manager.add(new Separator());
 				}
-				if (!onlyLogEntries) {
+				if (!onlyLogEntries && !onlyLocalEntries) {
 					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CopyHistory")) {
 						public void run() {
 							HistoryViewImpl.this.handleCopy();
@@ -848,7 +872,7 @@ public class HistoryViewImpl {
 	protected void setOnlyRemoteRevs() {
 		this.showBothAction.setEnabled(false);
 		this.showLocalAction.setEnabled(false);
-		this.options = HistoryViewImpl.this.options & ~(HistoryViewImpl.SHOW_LOCAL | HistoryViewImpl.SHOW_BOTH) | HistoryViewImpl.SHOW_REMOTE;
+		this.options = HistoryViewImpl.this.options & ~(LogMessagesComposite.SHOW_LOCAL | LogMessagesComposite.SHOW_BOTH) | LogMessagesComposite.SHOW_REMOTE;
     	this.showLocalAction.setChecked(false);
     	this.showBothAction.setChecked(false);
     	this.showRemoteAction.setChecked(true);
@@ -967,17 +991,13 @@ public class HistoryViewImpl {
 				this.compareWithCurrent(item);
 			}
 			if (item instanceof SVNLocalFileRevision) {
-				CompareRevisionAction compare = new CompareRevisionAction();
-				compare.selectionChanged(new StructuredSelection(new Object[] {item}));
-				compare.setPage((HistoryPage)SVNTeamUIPlugin.instance().getWorkbench().getActiveWorkbenchWindow().getActivePage());
-				compare.setCurrentFileRevision(new SVNLocalFileRevision((IFile)this.wcResource));
-				compare.run();
+				this.runCompareForLocal(new StructuredSelection(new Object[] {item}));
 			}
 		}
 		else if (item instanceof SVNLocalFileRevision) {
 			try {
 				SVNLocalFileRevision selected = (SVNLocalFileRevision)item;
-				Utils.openEditor(SVNTeamUIPlugin.instance().getWorkbench().getActiveWorkbenchWindow().getActivePage(), selected, new NullProgressMonitor());
+				Utils.openEditor(this.page.getSite().getPage(), selected, new NullProgressMonitor());
 			}
 			catch (CoreException ex) {
 				UILoggedOperation.reportError("Open Editor", ex);
@@ -986,6 +1006,14 @@ public class HistoryViewImpl {
 		else if (!(this.repositoryResource instanceof IRepositoryContainer)) {
 			UIMonitorUtility.doTaskScheduledActive(new OpenRemoteFileOperation(new IRepositoryFile[] {(IRepositoryFile)this.getResourceForSelectedRevision(item)}, OpenRemoteFileOperation.OPEN_DEFAULT));
 		}
+	}
+	
+	protected void runCompareForLocal(IStructuredSelection selection) {
+		CompareRevisionAction compare = new CompareRevisionAction();
+		compare.selectionChanged(selection);
+		compare.setPage(this.page);
+		compare.setCurrentFileRevision(new SVNLocalFileRevision((IFile)this.wcResource));
+		compare.run();
 	}
 	
 	protected void compareWithCurrent(Object item) {
@@ -1186,7 +1214,7 @@ public class HistoryViewImpl {
 	protected Action getShowBothAction() {
 		this.showBothAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.ShowBoth"), IAction.AS_RADIO_BUTTON) {
 	        public void run() {
-	        	HistoryViewImpl.this.options = HistoryViewImpl.this.options & ~(HistoryViewImpl.SHOW_LOCAL | HistoryViewImpl.SHOW_REMOTE) | HistoryViewImpl.SHOW_BOTH;
+	        	HistoryViewImpl.this.options = HistoryViewImpl.this.options & ~(LogMessagesComposite.SHOW_LOCAL | LogMessagesComposite.SHOW_REMOTE) | LogMessagesComposite.SHOW_BOTH;
 	        	HistoryViewImpl.this.showLocalAction.setChecked(false);
 	        	HistoryViewImpl.this.showRemoteAction.setChecked(false);
 	        	HistoryViewImpl.this.setRevMode();
@@ -1201,7 +1229,7 @@ public class HistoryViewImpl {
 	protected Action getShowRemoteAction() {
 		this.showRemoteAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.ShowRemote"), IAction.AS_RADIO_BUTTON) {
 	        public void run() {
-	        	HistoryViewImpl.this.options = HistoryViewImpl.this.options & ~(HistoryViewImpl.SHOW_LOCAL | HistoryViewImpl.SHOW_BOTH) | HistoryViewImpl.SHOW_REMOTE;
+	        	HistoryViewImpl.this.options = HistoryViewImpl.this.options & ~(LogMessagesComposite.SHOW_LOCAL | LogMessagesComposite.SHOW_BOTH) | LogMessagesComposite.SHOW_REMOTE;
 	        	HistoryViewImpl.this.showLocalAction.setChecked(false);
 	        	HistoryViewImpl.this.showBothAction.setChecked(false);
 	        	HistoryViewImpl.this.setRevMode();
@@ -1216,7 +1244,7 @@ public class HistoryViewImpl {
 	protected Action getShowLocalAction() {
 		this.showLocalAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.ShowLocal"), IAction.AS_RADIO_BUTTON) {
 	        public void run() {
-	        	HistoryViewImpl.this.options = HistoryViewImpl.this.options & ~(HistoryViewImpl.SHOW_REMOTE | HistoryViewImpl.SHOW_BOTH) | HistoryViewImpl.SHOW_LOCAL;
+	        	HistoryViewImpl.this.options = HistoryViewImpl.this.options & ~(LogMessagesComposite.SHOW_REMOTE | LogMessagesComposite.SHOW_BOTH) | LogMessagesComposite.SHOW_LOCAL;
 	        	HistoryViewImpl.this.showRemoteAction.setChecked(false);
 	        	HistoryViewImpl.this.showBothAction.setChecked(false);
 	        	HistoryViewImpl.this.setRevMode();
@@ -1229,13 +1257,13 @@ public class HistoryViewImpl {
 	}
 	
 	protected void setRevMode() {
-		this.history.setRevisionMode(HistoryViewImpl.this.options & (HistoryViewImpl.SHOW_BOTH | HistoryViewImpl.SHOW_LOCAL | HistoryViewImpl.SHOW_REMOTE));
+		this.history.setRevisionMode(HistoryViewImpl.this.options & (LogMessagesComposite.SHOW_BOTH | LogMessagesComposite.SHOW_LOCAL | LogMessagesComposite.SHOW_REMOTE));
 		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
 		int prefToSet;
-		if ((this.options & HistoryViewImpl.SHOW_BOTH) != 0) {
+		if ((this.options & LogMessagesComposite.SHOW_BOTH) != 0) {
 			prefToSet = SVNTeamPreferences.HISTORY_REVISION_MODE_BOTH;
 		}
-		else if ((this.options & HistoryViewImpl.SHOW_LOCAL) != 0) {
+		else if ((this.options & LogMessagesComposite.SHOW_LOCAL) != 0) {
 			prefToSet = SVNTeamPreferences.HISTORY_REVISION_MODE_LOCAL;
 		}
 		else {
@@ -1333,13 +1361,13 @@ public class HistoryViewImpl {
 		int groupingType = SVNTeamPreferences.getHistoryInt(store, SVNTeamPreferences.HISTORY_GROUPING_TYPE_NAME);
 		int revisionMode = SVNTeamPreferences.getHistoryInt(store, SVNTeamPreferences.HISTORY_REVISION_MODE_NAME);
 		if (revisionMode == 0) {
-			revisionMode = HistoryViewImpl.SHOW_BOTH;
+			revisionMode = LogMessagesComposite.SHOW_BOTH;
 		}
 		else if (revisionMode == 1) {
-			revisionMode = HistoryViewImpl.SHOW_REMOTE;
+			revisionMode = LogMessagesComposite.SHOW_REMOTE;
 		}
 		else {
-			revisionMode = HistoryViewImpl.SHOW_LOCAL;
+			revisionMode = LogMessagesComposite.SHOW_LOCAL;
 		}
 		
 		this.showCommentViewerAction.setChecked(showMultiline);
@@ -1353,12 +1381,12 @@ public class HistoryViewImpl {
         this.stopOnCopyDropDownAction.setChecked((this.options & HistoryViewImpl.STOP_ON_COPY) != 0);
         this.stopOnCopyAction.setChecked((this.options & HistoryViewImpl.STOP_ON_COPY) != 0);
         this.options |= groupingType == SVNTeamPreferences.HISTORY_GROUPING_TYPE_DATE ? HistoryViewImpl.GROUP_BY_DATE : 0;
-        this.options = this.options & ~(HistoryViewImpl.SHOW_BOTH | HistoryViewImpl.SHOW_LOCAL | HistoryViewImpl.SHOW_REMOTE) | revisionMode;
+        this.options = this.options & ~(LogMessagesComposite.SHOW_BOTH | LogMessagesComposite.SHOW_LOCAL | LogMessagesComposite.SHOW_REMOTE) | revisionMode;
         this.setRevMode();
         this.groupByDateAction.setChecked((this.options & HistoryViewImpl.GROUP_BY_DATE) != 0);
-        this.showBothAction.setChecked((this.options & HistoryViewImpl.SHOW_BOTH) != 0);
-        this.showLocalAction.setChecked((this.options & HistoryViewImpl.SHOW_LOCAL) != 0);
-        this.showRemoteAction.setChecked((this.options & HistoryViewImpl.SHOW_REMOTE) != 0);
+        this.showBothAction.setChecked((this.options & LogMessagesComposite.SHOW_BOTH) != 0);
+        this.showLocalAction.setChecked((this.options & LogMessagesComposite.SHOW_LOCAL) != 0);
+        this.showRemoteAction.setChecked((this.options & LogMessagesComposite.SHOW_REMOTE) != 0);
         this.groupByDateDropDownAction.setChecked((this.options & HistoryViewImpl.GROUP_BY_DATE) != 0);
         this.compareModeDropDownAction.setChecked((this.options & HistoryViewImpl.COMPARE_MODE) != 0);
         this.compareModeAction.setChecked((this.options & HistoryViewImpl.COMPARE_MODE) != 0);
@@ -1381,6 +1409,10 @@ public class HistoryViewImpl {
     	    this.options &= ~HistoryViewImpl.PAGING_ENABLED;
     	}
         this.setPagingEnabled();
+    }
+    
+    public void setHistoryPage(HistoryPage page) {
+    	this.page = page;
     }
     
     protected void setPagingEnabled() {
@@ -1438,7 +1470,14 @@ public class HistoryViewImpl {
 		for (int i = 0; i < states.length; i++) {
 			history.add(new SVNLocalFileRevision(states[i]));
 		}
-		this.history.setLocalHistory(history.toArray(new SVNLocalFileRevision [0]));
+		HistoryViewImpl.this.history.setLocalHistory(history.toArray(new SVNLocalFileRevision [0]));
+		UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+			public void run() {
+				SVNLogEntry[] toShow = HistoryViewImpl.this.isFilterEnabled() && HistoryViewImpl.this.logMessages != null ? HistoryViewImpl.this.filterMessages(HistoryViewImpl.this.logMessages) : HistoryViewImpl.this.logMessages;
+				SVNRevision current = HistoryViewImpl.this.currentRevision != -1 ? SVNRevision.fromNumber(HistoryViewImpl.this.currentRevision) : null;
+				HistoryViewImpl.this.history.setLogMessages(current, toShow, HistoryViewImpl.this.repositoryResource);
+			}
+		});
 	}
 	
 	public String getResourceLabel() {

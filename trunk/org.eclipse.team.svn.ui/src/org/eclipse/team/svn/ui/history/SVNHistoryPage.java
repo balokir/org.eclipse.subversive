@@ -11,7 +11,9 @@
 
 package org.eclipse.team.svn.ui.history;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.widgets.Composite;
@@ -23,6 +25,7 @@ import org.eclipse.team.svn.core.resource.events.IResourceStatesListener;
 import org.eclipse.team.svn.core.resource.events.ResourceStatesChangedEvent;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.ui.operation.UILoggedOperation;
 import org.eclipse.team.svn.ui.repository.model.RepositoryLocation;
 import org.eclipse.team.svn.ui.repository.model.RepositoryResource;
 import org.eclipse.team.ui.history.HistoryPage;
@@ -45,8 +48,17 @@ public class SVNHistoryPage extends HistoryPage implements IViewInfoProvider, IR
 	}
 	
 	public void resourcesStateChanged(ResourceStatesChangedEvent event) {
-		if (this.getResource() == null) {
+		IResource resource = this.getResource();
+		if (resource == null) {
 			return;
+		}
+		if (resource instanceof IFile) {
+			try {
+				this.viewImpl.refreshLocalHistory((IFile)resource);
+			}
+			catch (CoreException ex) {
+				UILoggedOperation.reportError("Refresh Local History", ex);
+			}
 		}
 		if (event.contains(this.getResource()) || event.contains(this.getResource().getProject())) {
 			if (!this.getResource().exists() || !FileUtility.isConnected(this.getResource())) {
@@ -127,6 +139,7 @@ public class SVNHistoryPage extends HistoryPage implements IViewInfoProvider, IR
 	
 	public void createControl(Composite parent) {
 		this.viewImpl = new HistoryViewImpl(null, null, this);
+		this.viewImpl.setHistoryPage(this);
 	    IActionBars actionBars = this.getActionBars();
 	    IToolBarManager tbm = actionBars.getToolBarManager();
         tbm.add(new Separator("MainGroup"));
