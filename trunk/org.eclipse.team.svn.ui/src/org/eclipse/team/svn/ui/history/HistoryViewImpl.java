@@ -61,6 +61,7 @@ import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
+import org.eclipse.team.svn.core.history.SVNRemoteResourceRevision;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -253,6 +254,7 @@ public class HistoryViewImpl {
 				Action tAction = null;
 				boolean onlyLogEntries = true;
 				boolean onlyLocalEntries = true;
+				boolean containsCategory = false;
 				Object []selected = tSelection.toArray();
 				for (int i = 0; i < selected.length; i++) {
 					if (!(selected[i] instanceof SVNLogEntry)) {
@@ -260,6 +262,9 @@ public class HistoryViewImpl {
 					}
 					if (!(selected[i] instanceof SVNLocalFileRevision)) {
 						onlyLocalEntries = false;
+					}
+					if (selected[i] instanceof HistoryCategory) {
+						containsCategory = true;
 					}
 				}
 				if (onlyLogEntries) {
@@ -490,7 +495,8 @@ public class HistoryViewImpl {
 					tAction.setEnabled(tSelection.size() == 1);
 					tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getWorkbench().getEditorRegistry().getImageDescriptor(((SVNLocalFileRevision)tSelection.getFirstElement()).getName()));
 					//TODO compare current with local
-					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CompareCurrentWith", new String[] {"Local"})) {
+					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CompareCurrentWith",
+							new String[] {SVNTeamUIPlugin.instance().getResource("HistoryView.RevisionLocal")})) {
 						public void run() {
 							HistoryViewImpl.this.runCompareForLocal(tSelection);
 						}
@@ -517,6 +523,28 @@ public class HistoryViewImpl {
 					manager.add(new Separator());
 				}
 				if (!onlyLogEntries && !onlyLocalEntries) {
+					if (!containsCategory) {
+						manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CompareEachOther")) {
+							public void run() {
+								ArrayList<Object> selected = new ArrayList<Object>();
+								for (Iterator it = tSelection.iterator(); it.hasNext();) {
+									Object item = it.next();
+									if (item instanceof SVNLocalFileRevision) {
+										selected.add(item);
+									}
+									else {
+										selected.add(new SVNRemoteResourceRevision(
+												HistoryViewImpl.this.getResourceForSelectedRevision(item),
+												(SVNLogEntry)item));
+									}
+								}
+								IStructuredSelection selection = new StructuredSelection(selected);
+								HistoryViewImpl.this.runCompareForLocal(selection);
+							}
+						});
+						tAction.setEnabled(tSelection.size() == 2);
+						manager.add(new Separator());
+					}
 					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CopyHistory")) {
 						public void run() {
 							HistoryViewImpl.this.handleCopy();
