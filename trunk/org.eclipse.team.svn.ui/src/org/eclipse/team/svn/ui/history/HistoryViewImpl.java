@@ -494,7 +494,13 @@ public class HistoryViewImpl {
 					});
 					tAction.setEnabled(tSelection.size() == 1);
 					tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getWorkbench().getEditorRegistry().getImageDescriptor(((SVNLocalFileRevision)tSelection.getFirstElement()).getName()));
-					//TODO compare current with local
+					manager.add(new Separator());
+					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CompareEachOther")) {
+						public void run() {
+							HistoryViewImpl.this.runCompareForLocal(tSelection);
+						}
+					});
+					tAction.setEnabled(tSelection.size() == 2);
 					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CompareCurrentWith",
 							new String[] {SVNTeamUIPlugin.instance().getResource("HistoryView.RevisionLocal")})) {
 						public void run() {
@@ -502,12 +508,22 @@ public class HistoryViewImpl {
 						}
 					});
 					tAction.setEnabled(tSelection.size() == 1);
-					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CompareEachOther")) {
+					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CompareWithPrevious.State")) {
 						public void run() {
-							HistoryViewImpl.this.runCompareForLocal(tSelection);
+							SVNLocalFileRevision [] localHistory = HistoryViewImpl.this.history.getLocalHistory();
+							SVNLocalFileRevision currentSelected = (SVNLocalFileRevision)tSelection.getFirstElement();
+							ArrayList<SVNLocalFileRevision> toOperate = new ArrayList<SVNLocalFileRevision>();
+							toOperate.add(currentSelected);
+							for (int i = 0; i < localHistory.length -1; i++) {
+								if (currentSelected.equals(localHistory[i])) {
+									toOperate.add(localHistory[i + 1]);
+								}
+							}
+							HistoryViewImpl.this.runCompareForLocal(new StructuredSelection(toOperate));
 						}
 					});
-					tAction.setEnabled(tSelection.size() == 2);
+					tAction.setEnabled(tSelection.size() == 1 &&
+							!((SVNLocalFileRevision)tSelection.getFirstElement()).equals(HistoryViewImpl.this.history.getLocalHistory()[HistoryViewImpl.this.history.getLocalHistory().length - 1]));
 					manager.add(new Separator());
 					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.GetContents")) {
 						public void run() {
@@ -522,37 +538,35 @@ public class HistoryViewImpl {
 					tAction.setEnabled(tSelection.size() == 1 && (!((SVNLocalFileRevision)tSelection.getFirstElement()).isCurrentState()));
 					manager.add(new Separator());
 				}
-				if (!onlyLogEntries && !onlyLocalEntries) {
-					if (!containsCategory) {
-						manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CompareEachOther")) {
-							public void run() {
-								ArrayList<Object> selected = new ArrayList<Object>();
-								for (Iterator it = tSelection.iterator(); it.hasNext();) {
-									Object item = it.next();
-									if (item instanceof SVNLocalFileRevision) {
-										selected.add(item);
-									}
-									else {
-										selected.add(new SVNRemoteResourceRevision(
-												HistoryViewImpl.this.getResourceForSelectedRevision(item),
-												(SVNLogEntry)item));
-									}
-								}
-								IStructuredSelection selection = new StructuredSelection(selected);
-								HistoryViewImpl.this.runCompareForLocal(selection);
-							}
-						});
-						tAction.setEnabled(tSelection.size() == 2);
-						manager.add(new Separator());
-					}
-					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CopyHistory")) {
+				if (!onlyLogEntries && !onlyLocalEntries && !containsCategory) {
+					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CompareEachOther")) {
 						public void run() {
-							HistoryViewImpl.this.handleCopy();
+							ArrayList<Object> selected = new ArrayList<Object>();
+							for (Iterator it = tSelection.iterator(); it.hasNext();) {
+								Object item = it.next();
+								if (item instanceof SVNLocalFileRevision) {
+									selected.add(item);
+								}
+								else {
+									selected.add(new SVNRemoteResourceRevision(
+											HistoryViewImpl.this.getResourceForSelectedRevision(item),
+											(SVNLogEntry)item));
+								}
+							}
+							IStructuredSelection selection = new StructuredSelection(selected);
+							HistoryViewImpl.this.runCompareForLocal(selection);
 						}
 					});
-					tAction.setEnabled(tSelection.size() > 0);
-					tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/copy.gif"));
+					tAction.setEnabled(tSelection.size() == 2);
+					manager.add(new Separator());
 				}
+				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CopyHistory")) {
+					public void run() {
+						HistoryViewImpl.this.handleCopy();
+					}
+				});
+				tAction.setEnabled(tSelection.size() > 0);
+				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/copy.gif"));
 				manager.add(new Separator()); 
 				manager.add(HistoryViewImpl.this.getRefreshAction());
 			}
