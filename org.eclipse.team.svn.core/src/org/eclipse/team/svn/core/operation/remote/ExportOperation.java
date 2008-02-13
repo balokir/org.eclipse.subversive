@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Vladimir Bykov - Initial API and implementation
+ *    Sergiy Logvin - Initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.team.svn.core.operation.remote;
@@ -26,7 +26,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 /**
  * Operation organize export local folder to repository
  * 
- * @author Vladimir Bykov
+ * @author Sergiy Logvin
  */
 public class ExportOperation extends AbstractRepositoryOperation {
 	protected String path;

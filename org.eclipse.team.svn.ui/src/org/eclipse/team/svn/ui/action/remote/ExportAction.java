@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Vladimir Bykov - Initial API and implementation
+ *    Sergiy Logvin - Initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.team.svn.ui.action.remote;
@@ -21,7 +21,7 @@ import org.eclipse.team.svn.ui.panel.remote.ExportPanel;
 /**
  * Export Action implementation
  * 
- * @author Vladimir Bykov
+ * @author Sergiy Logvin
  */
 public class ExportAction extends AbstractRepositoryTeamAction {
 	

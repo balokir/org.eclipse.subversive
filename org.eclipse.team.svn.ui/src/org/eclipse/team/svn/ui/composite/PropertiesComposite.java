@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Vladimir Bykov - Initial API and implementation
+ *    Sergiy Logvin - Initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.team.svn.ui.composite;
@@ -73,7 +73,7 @@ import org.eclipse.ui.part.ViewPart;
 /**
  * Property viewer composite 
  * 
- * @author Vladimir Bykov
+ * @author Sergiy Logvin
  */
 public class PropertiesComposite extends Composite {
 	public static final int APPLY_TO_ALL = 0;

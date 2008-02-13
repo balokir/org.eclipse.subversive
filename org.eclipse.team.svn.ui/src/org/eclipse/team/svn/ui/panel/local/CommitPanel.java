@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Vladimir Bykov - Initial API and implementation
+ *    Sergiy Logvin - Initial API and implementation
  *    Alessandro Nistico - [patch] Change Set's implementation
  *******************************************************************************/
 
@@ -110,7 +110,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 /**
  * Commit panel 
  * 
- * @author Bykov Vladimir
+ * @author Sergiy Logvin
  */
 public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 	public static final int MSG_COMMIT = 0;

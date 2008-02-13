@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Vladimir Bykov - Initial API and implementation
+ *    Sergiy Logvin - Initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.team.svn.ui.utility;
@@ -32,7 +32,7 @@ import org.eclipse.team.svn.ui.panel.local.ResourceListPanel;
 /**
  * Unacceptable Operation class verifier implementation
  * 
- * @author Vladimir Bykov
+ * @author Sergiy Logvin
  */
 public class UnacceptableOperationNotificator {
 	protected static final String PARENT_NOT_ON_REPOSITORY_CONFLICT_DESCRIPTION_MESSAGE = "The parent{0} of the following resource{1} {2} not on the repository. Do you want to continue?";

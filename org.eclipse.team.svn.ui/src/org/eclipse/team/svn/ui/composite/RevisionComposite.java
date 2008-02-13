@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Vladimir Bykov - Initial API and implementation
+ *    Sergiy Logvin - Initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.team.svn.ui.composite;
@@ -45,7 +45,7 @@ import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
 /**
  * Select revision panel
  * 
- * @author Vladimir Bykov
+ * @author Sergiy Logvin
  */
 public class RevisionComposite extends Composite {
 	protected IRepositoryResource selectedResource;

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Vladimir Bykov - Initial API and implementation
+ *    Sergiy Logvin - Initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.team.svn.core.operation.local.property;
@@ -29,7 +29,7 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 /**
  * Set resource property operation
  * 
- * @author Vladimir Bykov
+ * @author Sergiy Logvin
  */
 public class SetPropertiesOperation extends AbstractWorkingCopyOperation {
 	protected SVNProperty []propertyData;

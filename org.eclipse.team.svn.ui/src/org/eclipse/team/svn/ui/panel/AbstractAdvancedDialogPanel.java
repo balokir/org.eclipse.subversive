@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Vladimir Bykov - Initial API and implementation
+ *    Sergiy Logvin - Initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.team.svn.ui.panel;
@@ -16,7 +16,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 /**
  * Abstract advanced dialog panel
  * 
- * @author Bykov Vladimir
+ * @author Sergiy Logvin
  */
 public abstract class AbstractAdvancedDialogPanel extends AbstractDialogPanel {
 	protected String []buttonNamesEx;

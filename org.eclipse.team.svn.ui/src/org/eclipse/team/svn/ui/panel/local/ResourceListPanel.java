@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Vladimir Bykov - Initial API and implementation
+ *    Sergiy Logvin - Initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.team.svn.ui.panel.local;
@@ -36,7 +36,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 /**
  * Resource List Panel implementation
  * 
- * @author Vladimir Bykov
+ * @author Sergiy Logvin
  */
 public class ResourceListPanel extends AbstractDialogPanel {
 	protected IResource []resources;

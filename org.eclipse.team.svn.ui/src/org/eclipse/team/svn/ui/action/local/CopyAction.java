@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Vladimir Bykov - Initial API and implementation
+ *    Sergiy Logvin - Initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.team.svn.ui.action.local;
@@ -42,7 +42,7 @@ import org.eclipse.team.svn.ui.panel.local.ContainerSelectionPanel;
 /**
  * Copy local resource from one location to enother with history if resource is versioned
  * 
- * @author Vladimir Bykov
+ * @author Sergiy Logvin
  */
 public class CopyAction extends AbstractWorkingCopyAction {
 	
