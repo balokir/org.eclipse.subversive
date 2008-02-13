@@ -86,9 +86,7 @@ public class SwitchAction extends AbstractNonRecursiveTeamAction {
 	}
 
 	public boolean isEnabled() {
-		return 
-//			this.getSelectedResources().length == 1 && 
-			this.checkForResourcesPresence(IStateFilter.SF_EXCLUDE_DELETED);
+		return this.checkForResourcesPresence(IStateFilter.SF_EXCLUDE_DELETED);
 	}
 	
 }
