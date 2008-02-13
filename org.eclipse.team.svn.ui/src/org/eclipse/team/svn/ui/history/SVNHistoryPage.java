@@ -177,7 +177,7 @@ public class SVNHistoryPage extends HistoryPage implements IViewInfoProvider, IR
 				return this.viewImpl.getRepositoryResource().getUrl();
 			}
 		}
-		return null;
+		return "";
 	}
 
 	public boolean isValidInput(Object object) {

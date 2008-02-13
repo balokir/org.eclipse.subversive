@@ -744,7 +744,7 @@ public class HistoryViewImpl {
 
 	public void showHistory(IResource resource, boolean background) {
 		this.wcResource = resource;
-		
+		this.history.setLogMessages(null, null, null);
 		//must be called first, to initialize bug-track model
 		this.history.getCommentView().usedFor(resource);
 		
@@ -753,6 +753,7 @@ public class HistoryViewImpl {
 				this.showBothAction.setEnabled(true);
 				this.showLocalAction.setEnabled(true);
 				this.showRemoteAction.setEnabled(true);
+				this.logMessages = new SVNLogEntry[0];
 				this.refreshLocalHistory((IFile)resource);
 			} catch (CoreException ex) {		
 				UILoggedOperation.reportError("Get Local History", ex);
@@ -784,6 +785,7 @@ public class HistoryViewImpl {
 	public void showHistory(IRepositoryResource remoteResource, boolean background) {
 		this.wcResource = null;
 		this.setOnlyRemoteRevs();
+		this.history.setLogMessages(null, null, null);
 		        		
 		//must be called first, to initialize backtrack model
 		this.history.getCommentView().usedFor(remoteResource);
@@ -846,7 +848,7 @@ public class HistoryViewImpl {
 			}
 		}
 		
-		if (IStateFilter.SF_ONREPOSITORY.accept(SVNRemoteStorage.instance().asLocalResource(this.wcResource))) {
+		if (this.wcResource == null || IStateFilter.SF_ONREPOSITORY.accept(SVNRemoteStorage.instance().asLocalResource(this.wcResource))) {
 			this.repositoryResource = remote;
 		}
 		else {
