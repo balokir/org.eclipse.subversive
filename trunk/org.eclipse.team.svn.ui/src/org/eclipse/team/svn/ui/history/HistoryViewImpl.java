@@ -11,6 +11,8 @@
 
 package org.eclipse.team.svn.ui.history;
 
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -19,6 +21,7 @@ import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFileState;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -48,6 +51,7 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Tree;
@@ -536,6 +540,13 @@ public class HistoryViewImpl {
 						}
 					});
 					tAction.setEnabled(tSelection.size() == 1 && (!((SVNLocalFileRevision)tSelection.getFirstElement()).isCurrentState()));
+					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.Export")) {
+						public void run() {
+							HistoryViewImpl.this.doExport(tSelection.getFirstElement());
+						}
+					});
+					tAction.setEnabled(tSelection.size() == 1);
+					tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/export.gif"));
 					manager.add(new Separator());
 				}
 				if (!onlyLogEntries && !onlyLocalEntries && !containsCategory) {
@@ -962,14 +973,48 @@ public class HistoryViewImpl {
 	}
 	
 	protected void doExport(Object item) {
-		IRepositoryResource resource = this.getResourceForSelectedRevision(item);
-		ExportPanel panel = new ExportPanel(resource);
-		DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getShell(), panel);
-		if (dialog.open() == 0) {
-			resource = SVNUtility.copyOf(resource);
-			resource.setSelectedRevision(panel.getSelectedRevision());
-	    	UIMonitorUtility.doTaskScheduledDefault(new ExportOperation(resource, panel.getLocation()));
-	    }
+		if (item instanceof SVNLocalFileRevision) {
+			final SVNLocalFileRevision revision = (SVNLocalFileRevision)item;
+		    FileDialog dlg = new FileDialog(UIMonitorUtility.getShell(), SWT.PRIMARY_MODAL | SWT.SAVE);
+			dlg.setText(SVNTeamUIPlugin.instance().getResource("ExportPanel.Title"));
+			dlg.setFileName(revision.getName());
+			dlg.setFilterExtensions(new String[] {"*.*"});
+			final String file = dlg.open();
+			if (file != null) {
+				IActionOperation op = new AbstractActionOperation("Operation.ExportLocalHistory") {
+					protected void runImpl(IProgressMonitor monitor) throws Exception {
+						FileOutputStream output = new FileOutputStream(file);
+						InputStream input = null;
+						try {
+							IStorage storage = revision.getStorage(monitor);
+							input = storage.getContents();
+							byte []data = new byte[2048];
+							int len = 0;
+							while ((len = input.read(data)) > 0) {
+								output.write(data, 0, len);
+							}
+						}
+						finally {
+							output.close();
+							if (input != null) {
+								input.close();
+							}
+						}
+					}
+				};
+		    	UIMonitorUtility.doTaskScheduledDefault(op);
+			}
+		}
+		else {
+			IRepositoryResource resource = this.getResourceForSelectedRevision(item);
+			ExportPanel panel = new ExportPanel(resource);
+			DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getShell(), panel);
+			if (dialog.open() == 0) {
+				resource = SVNUtility.copyOf(resource);
+				resource.setSelectedRevision(panel.getSelectedRevision());
+		    	UIMonitorUtility.doTaskScheduledDefault(new ExportOperation(resource, panel.getLocation()));
+		    }
+		}
 	}
 	
 	protected void addRevisionLinks(IStructuredSelection tSelection) {
