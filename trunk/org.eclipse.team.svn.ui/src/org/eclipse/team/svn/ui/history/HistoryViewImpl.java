@@ -269,13 +269,14 @@ public class HistoryViewImpl {
 				}
 				if (onlyLogEntries) {
 					if (HistoryViewImpl.this.repositoryResource instanceof IRepositoryFile) {
+						String name = HistoryViewImpl.this.repositoryResource.getName();
 						manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.Open")) {
 							public void run() {
 								HistoryViewImpl.this.handleDoubleClick(tSelection.getFirstElement(), false);
 							}
 						});
 						tAction.setEnabled(tSelection.size() == 1);
-						tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getWorkbench().getEditorRegistry().getImageDescriptor(HistoryViewImpl.this.repositoryResource.getName()));
+						tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getWorkbench().getEditorRegistry().getImageDescriptor(name));
 						
 						//FIXME: "Open with" submenu shouldn't be hardcoded after reworking of
 						//       the HistoryView. Should be made like the RepositoriesView menu.
@@ -283,7 +284,6 @@ public class HistoryViewImpl {
 						sub.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 						
 						sub.add(new Separator("nonDefaultTextEditors"));
-						String name = HistoryViewImpl.this.repositoryResource.getName();
 						IEditorDescriptor[] editors = SVNTeamUIPlugin.instance().getWorkbench().getEditorRegistry().getEditors(name);
 						for (int i = 0; i < editors.length; i++) {
 		    				if (!editors[i].getId().equals(EditorsUI.DEFAULT_TEXT_EDITOR_ID)) {
