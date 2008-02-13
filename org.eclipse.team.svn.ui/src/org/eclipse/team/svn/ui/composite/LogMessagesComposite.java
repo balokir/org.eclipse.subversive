@@ -143,6 +143,10 @@ public class LogMessagesComposite extends SashForm {
 		this.localHistory = localHistory;
 	}
 	
+	public SVNLocalFileRevision [] getLocalHistory () {
+		return this.localHistory;
+	}
+	
 	public void setAffectedPathsViewerVisible(boolean visible) {
 	    if (visible) {
 	    	this.setMaximizedControl(null);
