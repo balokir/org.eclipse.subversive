@@ -869,7 +869,6 @@ public class HistoryViewImpl {
 	
 	protected void showHistoryImpl(final GetLogMessagesOperation msgsOp, boolean background) {
 		TreeViewer treeTable = this.history.getTreeViewer();
-		//final IStructuredSelection selected = (IStructuredSelection)treeTable.getSelection();
 		final ISelection selected = treeTable.getSelection();
 		IActionOperation showOp = new AbstractActionOperation("Operation.HShowHistory") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
@@ -909,13 +908,8 @@ public class HistoryViewImpl {
 						}
 					    TreeViewer treeTable = HistoryViewImpl.this.history.getTreeViewer();
 					    if (!treeTable.getTree().isDisposed()) {
-						   /* if (selected.size() == 0) {
-						    	treeTable.getTree().setSelection(treeTable.getTree().getItem(0));
-						    }
-						    else {*/
 						        treeTable.setSelection(selected, true);
 						        HistoryViewImpl.this.history.getHistoryTableListener().selectionChanged(null);
-						    //}
 					    }
 					}
 				});
