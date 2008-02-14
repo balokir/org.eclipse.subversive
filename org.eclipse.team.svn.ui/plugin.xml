@@ -559,7 +559,7 @@
 
          <action
               helpContextId="org.eclipse.team.svn.ui.export_working_copy"
-              label="%ExportAction.label"
+              label="%ExportCommand.label"
               tooltip="%ExportAction.tooltip"
               class="org.eclipse.team.svn.ui.action.local.ExportAction"
               menubarPath="team.main/group7"
@@ -933,7 +933,7 @@
          </action>
          <action
                helpContextId="org.eclipse.team.svn.ui.export_action_context"
-               label="%ExportAction.label"
+               label="%ExportCommand.label"
                tooltip="%ExportAction.tooltip"
                class="org.eclipse.team.svn.ui.action.remote.ExportAction"
                menubarPath="importExportGroup"
@@ -950,7 +950,7 @@
          </action>
          <action
               helpContextId="org.eclipse.team.svn.ui.create_remote_patch_action_context"
-              label="%CreateRemotePatchAction.label"
+              label="%CreatePatchCommand.label"
               tooltip="%CreateRemotePatchAction.tooltip"
               class="org.eclipse.team.svn.ui.action.remote.CreatePatchAction"
               menubarPath="importExportGroup"
@@ -1082,7 +1082,7 @@
          
          <action
                helpContextId="org.eclipse.team.svn.ui.export_action_context"
-               label="%ExportAction.label"
+               label="%ExportCommand.label"
                tooltip="%ExportAction.tooltip"
                class="org.eclipse.team.svn.ui.action.remote.ExportAction"
                menubarPath="importExportGroup"
@@ -1099,7 +1099,7 @@
          </action>
          <action
               helpContextId="org.eclipse.team.svn.ui.create_remote_patch_action_context"
-              label="%CreateRemotePatchAction.label"
+              label="%CreatePatchCommand.label"
               tooltip="%CreateRemotePatchAction.tooltip"
               class="org.eclipse.team.svn.ui.action.remote.CreatePatchAction"
               menubarPath="importExportGroup"
@@ -1400,7 +1400,7 @@
          </action>
          <action
                helpContextId="org.eclipse.team.svn.ui.export_action_context"
-               label="%ExportAction.label"
+               label="%ExportCommand.label"
                tooltip="%ExportAction.tooltip"
                class="org.eclipse.team.svn.ui.action.remote.ExportAction"
                menubarPath="importExportGroup"
@@ -1417,7 +1417,7 @@
          </action>
          <action
               helpContextId="org.eclipse.team.svn.ui.create_remote_patch_action_context"
-              label="%CreateRemotePatchAction.label"
+              label="%CreatePatchCommand.label"
               tooltip="%CreateRemotePatchAction.tooltip"
               class="org.eclipse.team.svn.ui.action.remote.CreatePatchAction"
               menubarPath="importExportGroup"
@@ -1810,7 +1810,7 @@
            helpContextId="org.eclipse.team.svn.ui.export_working_copy"
            tooltip="%ExportAction.tooltip"
            icon="icons/common/export.gif"
-           label="%ExportAction.label"/>
+           label="%ExportCommand.label"/>
      <action
            class="org.eclipse.team.svn.ui.action.local.CopyAction"
            definitionId="org.eclipse.team.svn.ui.command.CopyCommand"
