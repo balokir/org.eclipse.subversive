@@ -55,6 +55,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.actions.CompareRevisionAction;
 import org.eclipse.team.svn.core.IStateFilter;
@@ -857,6 +858,7 @@ public class HistoryViewImpl {
 		
 		if (this.repositoryResource == null) {
 			this.history.setLogMessages(null, null, null);
+			this.showHistoryImpl(null, background);
 			this.setPagingDisabled();
 		}
 		else {
@@ -869,7 +871,7 @@ public class HistoryViewImpl {
 	
 	protected void showHistoryImpl(final GetLogMessagesOperation msgsOp, boolean background) {
 		TreeViewer treeTable = this.history.getTreeViewer();
-		final ISelection selected = treeTable.getSelection();
+		final IStructuredSelection selected = (IStructuredSelection)treeTable.getSelection();
 		IActionOperation showOp = new AbstractActionOperation("Operation.HShowHistory") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
@@ -903,13 +905,22 @@ public class HistoryViewImpl {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 					public void run() {
-						if (HistoryViewImpl.this.historyForTheOtherResource(msgsOp)) {
+						if (HistoryViewImpl.this.historyForTheOtherResource(msgsOp) && msgsOp != null) {
 							return;
 						}
 					    TreeViewer treeTable = HistoryViewImpl.this.history.getTreeViewer();
 					    if (!treeTable.getTree().isDisposed()) {
+					    	if (selected.size() != 0) {
 						        treeTable.setSelection(selected, true);
-						        HistoryViewImpl.this.history.getHistoryTableListener().selectionChanged(null);
+						    }
+					    	else {
+					    		TreeItem firstItem = treeTable.getTree().getItem(0);
+					    		if (firstItem.getData() instanceof HistoryCategory) {
+					    			firstItem = firstItem.getItem(0);
+					    		}
+					    		treeTable.getTree().setSelection(firstItem);
+					    	}
+						    HistoryViewImpl.this.history.getHistoryTableListener().selectionChanged(null);
 					    }
 					}
 				});
