@@ -20,7 +20,9 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -31,8 +33,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
@@ -339,8 +339,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
     }
     
     protected void showMessages(final GetLogMessagesOperation msgsOp) {
-    	Tree table = this.history.getTreeViewer().getTree();
-		final TreeItem[] selected = table.getSelection();
+		final IStructuredSelection selected = (IStructuredSelection)this.history.getTreeViewer().getSelection();
     	IActionOperation showOp = new AbstractActionOperation("Operation.ShowMessages") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				 SVNTeamUIPlugin.instance().getWorkbench().getDisplay().syncExec(new Runnable() {
@@ -363,10 +362,10 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				SVNTeamUIPlugin.instance().getWorkbench().getDisplay().syncExec(new Runnable() {
 					public void run() {
-						Tree table = SelectRevisionPanel.this.history.getTreeViewer().getTree();
-					    if (table.getItems().length > 0) {
-					        if (selected.length != 0) {
-					        	table.setSelection(selected);
+						TreeViewer treeTable = SelectRevisionPanel.this.history.getTreeViewer();
+					    if (treeTable.getTree().getItems().length > 0) {
+					        if (selected.size() != 0) {
+					        	treeTable.setSelection(selected);
 					        }
 					        SelectRevisionPanel.this.history.getHistoryTableListener().selectionChanged(null);
 					        ISelectionChangedListener listener = SelectRevisionPanel.this.tableViewerListener;
