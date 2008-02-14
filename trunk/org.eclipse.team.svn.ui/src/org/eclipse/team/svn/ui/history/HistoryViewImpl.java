@@ -309,17 +309,13 @@ public class HistoryViewImpl {
 							Object []selection = tSelection.toArray();
 							IRepositoryResource left = HistoryViewImpl.this.getResourceForSelectedRevision(selection[0]);
 							IRepositoryResource right = HistoryViewImpl.this.getResourceForSelectedRevision(selection[1]);
-							try {
-								if (left.getRevision() < right.getRevision()) {
-									IRepositoryResource tmp = right;
-									right = left;
-									left = tmp;
-								}
-								UIMonitorUtility.doTaskScheduledActive(new CompareRepositoryResourcesOperation(right, left));
+							if (((SVNLogEntry)selection[0]).revision < ((SVNLogEntry)selection[1]).revision) {
+								IRepositoryResource tmp = right;
+								right = left;
+								left = tmp;
 							}
-							catch (SVNConnectorException ex) {
-								UILoggedOperation.reportError("Compare", ex);
-							}
+							UIMonitorUtility.doTaskScheduledActive(new CompareRepositoryResourcesOperation(right, left));
+
 						}
 					});
 	        		boolean isCompareAllowed = 
@@ -574,11 +570,13 @@ public class HistoryViewImpl {
 					tAction.setEnabled(tSelection.size() == 2);
 					manager.add(new Separator());
 				}
-				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CopyHistory")) {
-					public void run() {
-						HistoryViewImpl.this.handleCopy();
-					}
-				});
+				if (!onlyLogEntries) {
+					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CopyHistory")) {
+						public void run() {
+							HistoryViewImpl.this.handleCopy();
+						}
+					});
+				}
 				tAction.setEnabled(tSelection.size() > 0);
 				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/copy.gif"));
 				manager.add(new Separator()); 
