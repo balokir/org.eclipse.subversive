@@ -1027,6 +1027,12 @@ public class LogMessagesComposite extends SashForm {
 	            	return new Long(rowData1.revision).compareTo(new Long(rowData2.revision));
 	            }
 	            if (this.column == LogMessagesComposite.COLUMN_DATE) {
+	            	if (rowData1.date == 0 || rowData2.date == 0) {
+	            		if (this.reversed) {
+		            		return new Long(rowData2.revision).compareTo(new Long(rowData1.revision));
+		            	}
+		            	return new Long(rowData1.revision).compareTo(new Long(rowData2.revision));
+	            	}
 	            	if (this.reversed) {
 	            		return new Long(rowData2.date).compareTo(new Long(rowData1.date));
 	            	}
