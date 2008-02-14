@@ -29,14 +29,10 @@
 
    <includes
          id="org.eclipse.team.svn.resource.ignore.rules.jdt.source"
-         version="0.7.0.v20080116"/>
+         version="0.7.0.v20080214"/>
 
    <includes
          id="org.eclipse.team.svn.mylyn.source"
-         version="0.7.0.v20080129"/>
-<!--
-   <includes
-         id="org.eclipse.team.svn.projectset.source"
-         version="0.7.0.v20080129"/>
--->
+         version="0.7.0.v20080214"/>
+
 </feature>
