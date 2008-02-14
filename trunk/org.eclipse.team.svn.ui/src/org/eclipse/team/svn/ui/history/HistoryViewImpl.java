@@ -763,6 +763,7 @@ public class HistoryViewImpl {
 		else {
 			this.setOnlyRemoteRevs();
 			this.history.setLocalHistory(new SVNLocalFileRevision [0]);
+			this.history.setLogMessages(null, null, null);
 		}
 	    long currentRevision = SVNRevision.INVALID_REVISION_NUMBER;
 	    IRepositoryResource remote = null;
@@ -786,6 +787,7 @@ public class HistoryViewImpl {
 	public void showHistory(IRepositoryResource remoteResource, boolean background) {
 		this.wcResource = null;
 		this.setOnlyRemoteRevs();
+		this.history.setLocalHistory(new SVNLocalFileRevision[0]);
 		this.history.setLogMessages(null, null, null);
 		        		
 		//must be called first, to initialize backtrack model
