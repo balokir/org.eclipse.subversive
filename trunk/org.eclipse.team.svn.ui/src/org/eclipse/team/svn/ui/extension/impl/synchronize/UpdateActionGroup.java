@@ -206,7 +206,7 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 		ShowIncomingHistoryAction showIncomingHistoryAction = new ShowIncomingHistoryAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.ShowResourceHistory"), configuration);
 		showIncomingHistoryAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/showhistory.gif"));
 		this.incoming.add(showIncomingHistoryAction);
-		ShowIncomingAnnotationAction showIncomingAnnotationAction = new ShowIncomingAnnotationAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.ShowAnnotation"), configuration);
+		ShowIncomingAnnotationAction showIncomingAnnotationAction = new ShowIncomingAnnotationAction(SVNTeamUIPlugin.instance().getResource("ShowAnnotationAction.label"), configuration);
 		this.incoming.add(showIncomingAnnotationAction);
 		
 		this.incoming.add(new Separator());
