@@ -340,11 +340,18 @@ public class HistoryViewImpl {
 					}
 					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CompareWithPrevious")) {
 						public void run() {
-							try {
 								Object []selection = tSelection.toArray();
 								IRepositoryResource left = HistoryViewImpl.this.getResourceForSelectedRevision(selection[0]);
-								IRepositoryResource right = HistoryViewImpl.this.getResourceForSelectedRevision(new SVNLogEntry(((SVNLogEntry)selection[0]).revision - 1, 0, null, null, null));
-								if (!right.exists()) {
+								SVNLogEntry current = (SVNLogEntry)selection[0];
+								IRepositoryResource right = HistoryViewImpl.this.getResourceForSelectedRevision(new SVNLogEntry(current.revision - 1, 0, null, null, null));
+								boolean exists = true;
+								for (int i = 0; i < current.changedPaths.length; i++) {
+									if (right.getUrl().endsWith(current.changedPaths[i].path) && current.changedPaths[i].action == 'A') {
+										exists = false;
+										break;
+									}
+								}
+								if (!exists) {
 									MessageBox err = new MessageBox(UIMonitorUtility.getShell());
 									err.setText(SVNTeamUIPlugin.instance().getResource("HistoryView.CompareWithPrevious"));
 									err.setMessage(SVNTeamUIPlugin.instance().getResource("HistoryView.CompareWithPrevious.Message", new String [] {String.valueOf(((SVNLogEntry)selection[0]).revision - 1)}));
@@ -352,10 +359,6 @@ public class HistoryViewImpl {
 									return;
 								}
 								UIMonitorUtility.doTaskScheduledActive(new CompareRepositoryResourcesOperation(right, left));
-							}
-							catch (SVNConnectorException ex) {
-								UILoggedOperation.reportError("Compare", ex);
-							}
 						}
 					});
 					tAction.setEnabled(tSelection.size() == 1 && isCompareAllowed && ((SVNLogEntry)tSelection.getFirstElement()).revision > 0);
