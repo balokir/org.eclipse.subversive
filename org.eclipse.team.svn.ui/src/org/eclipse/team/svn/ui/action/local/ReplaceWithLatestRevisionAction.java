@@ -97,7 +97,7 @@ public class ReplaceWithLatestRevisionAction extends AbstractNonRecursiveTeamAct
 		}
 		
 		public void doOperation(IActionOperation op, IProgressMonitor monitor) {
-		    this.reportStatus(op.run(monitor).getStatus());
+		    op.run(monitor).getStatus();
 		}
 		
 		protected void runImpl(IProgressMonitor monitor) throws Exception {
@@ -108,7 +108,7 @@ public class ReplaceWithLatestRevisionAction extends AbstractNonRecursiveTeamAct
 				change.traverse(new IResourceChangeVisitor() {
 					public void preVisit(ResourceChange change, IActionOperationProcessor processor, IProgressMonitor monitor) throws Exception {
 						ILocalResource local = change.getLocal();
-						if (local instanceof ILocalFile && IStateFilter.SF_UNVERSIONED.accept(local)) {
+						if (local instanceof ILocalFile && IStateFilter.SF_UNVERSIONED.accept(local) && !local.getResource().isDerived()) {
 					    	File real = new File(FileUtility.getWorkingCopyPath(local.getResource()));
 						    // optimize operation performance using "move on FS" if possible
 							if (real.exists() && !real.renameTo(change.getTemporary())) {
@@ -135,7 +135,7 @@ public class ReplaceWithLatestRevisionAction extends AbstractNonRecursiveTeamAct
 		}
 		
 		public void doOperation(IActionOperation op, IProgressMonitor monitor) {
-		    this.reportStatus(op.run(monitor).getStatus());
+		    op.run(monitor).getStatus();
 		}
 		
 		protected void runImpl(IProgressMonitor monitor) throws Exception {
@@ -146,7 +146,7 @@ public class ReplaceWithLatestRevisionAction extends AbstractNonRecursiveTeamAct
 					}
 					public void postVisit(ResourceChange change, IActionOperationProcessor processor, IProgressMonitor monitor) throws Exception {
 						ILocalResource local = change.getLocal();
-						if (local instanceof ILocalFile && IStateFilter.SF_UNVERSIONED.accept(local)) {
+						if (local instanceof ILocalFile && IStateFilter.SF_UNVERSIONED.accept(local) && !local.getResource().isDerived()) {
 					    	File real = new File(FileUtility.getWorkingCopyPath(local.getResource()));
 						    // optimize operation performance using "move on FS" if possible
 							if (!real.exists() && !change.getTemporary().renameTo(real)) {
