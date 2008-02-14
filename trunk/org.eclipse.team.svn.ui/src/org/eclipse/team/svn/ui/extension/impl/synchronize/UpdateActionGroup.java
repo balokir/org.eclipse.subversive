@@ -168,12 +168,12 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 		ShowOutgoingHistoryAction showResourceHistoryAction = new ShowOutgoingHistoryAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.ShowResourceHistory"), configuration);
 		showResourceHistoryAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/showhistory.gif"));
 		this.outgoing.add(showResourceHistoryAction);
-		ShowOutgoingAnnotationAction showAnnotationAction = new ShowOutgoingAnnotationAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.ShowAnnotation"), configuration);
+		ShowOutgoingAnnotationAction showAnnotationAction = new ShowOutgoingAnnotationAction(SVNTeamUIPlugin.instance().getResource("ShowAnnotationCommand.label"), configuration);
 		this.outgoing.add(showAnnotationAction);
 		
 		this.outgoing.add(new Separator());
 		
-		ShowOutgoingPropertiesAction showPropertiesAction = new ShowOutgoingPropertiesAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.ShowProperties"), configuration);
+		ShowOutgoingPropertiesAction showPropertiesAction = new ShowOutgoingPropertiesAction(SVNTeamUIPlugin.instance().getResource("ShowPropertiesAction.label"), configuration);
 		showPropertiesAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/propertiesedit.gif"));
 		this.outgoing.add(showPropertiesAction);
 		SetPropertyAction setPropAction = new SetPropertyAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.SetProperty"), configuration);
@@ -192,7 +192,7 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 		
 		this.outgoing.add(new Separator());
 		
-		CreatePatchFileAction patchAction = new CreatePatchFileAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Patch"), configuration);
+		CreatePatchFileAction patchAction = new CreatePatchFileAction(SVNTeamUIPlugin.instance().getResource("CreatePatchCommand.label"), configuration);
 		this.outgoing.add(patchAction);
 		CreateBranchAction branchAction = new CreateBranchAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Branch"), configuration);
 		branchAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/branch.gif"));
@@ -211,7 +211,7 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 		
 		this.incoming.add(new Separator());
 		
-		ShowIncomingPropertiesAction showIncomingPropertiesAction = new ShowIncomingPropertiesAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.ShowProperties"), configuration);
+		ShowIncomingPropertiesAction showIncomingPropertiesAction = new ShowIncomingPropertiesAction(SVNTeamUIPlugin.instance().getResource("ShowPropertiesAction.label"), configuration);
 		showIncomingPropertiesAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/propertiesedit.gif"));
 		this.incoming.add(showIncomingPropertiesAction);
 	}

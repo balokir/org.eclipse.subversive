@@ -90,7 +90,6 @@ import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
-import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.core.utility.StringMatcher;
@@ -360,7 +359,7 @@ public class HistoryViewImpl {
 					});
 					tAction.setEnabled(tSelection.size() == 1 && isCompareAllowed && ((SVNLogEntry)tSelection.getFirstElement()).revision > 0);
 					manager.add(new Separator());
-					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CreateUnifiedDiff")) {
+					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("CreatePatchCommand.label")) {
 						public void run() {
 							HistoryViewImpl.this.createUnifiedDiff(tSelection);
 						}
@@ -370,7 +369,7 @@ public class HistoryViewImpl {
 					if (HistoryViewImpl.this.repositoryResource instanceof IRepositoryFile) {
 						manager.add(new Separator());
 					}
-					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.ShowProperties")) {
+					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("ShowPropertiesAction.label")) {
 						public void run() {
 							Object []selection = tSelection.toArray();
 							IRepositoryResource resource = HistoryViewImpl.this.getResourceForSelectedRevision(selection[0]);
@@ -387,7 +386,7 @@ public class HistoryViewImpl {
 					tAction.setEnabled(tSelection.size() == 1);
 					tAction.setHoverImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/propertiesedit.gif"));
 					if (HistoryViewImpl.this.repositoryResource instanceof IRepositoryFile) {
-						manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.ShowAnnotation")) {
+						manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("ShowAnnotationCommand.label")) {
 							public void run() {
 								HistoryViewImpl.this.showRepositoryResourceAnnotation(tSelection.getFirstElement());
 							}
@@ -417,7 +416,7 @@ public class HistoryViewImpl {
 						});
 						tAction.setEnabled(tSelection.size() == 1);
 					}
-					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.Export")) {
+					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("ExportCommand.label")) {
 						public void run() {
 							HistoryViewImpl.this.doExport(tSelection.getFirstElement());
 						}
@@ -454,7 +453,7 @@ public class HistoryViewImpl {
 					tAction.setEnabled(tSelection.size() == 1);
 					tAction.setHoverImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/tag.gif"));
 					
-					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.AddRevisionLink")) {
+					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AddRevisionLinkAction.label")) {
 						public void run() {
 							HistoryViewImpl.this.addRevisionLinks(tSelection);
 						}
@@ -1572,11 +1571,9 @@ public class HistoryViewImpl {
 	}
 	
 	protected boolean isIgnoreReplaceWarning() {
-		if (FileUtility.checkForResourcesPresenceRecursive(new IResource[] {this.wcResource}, IStateFilter.SF_COMMITABLE)) {
-			ReplaceWarningDialog dialog = new ReplaceWarningDialog(this.getSite().getShell());
-			if (dialog.open() != 0) {
-				return false;
-			}
+		ReplaceWarningDialog dialog = new ReplaceWarningDialog(this.getSite().getShell());
+		if (dialog.open() != 0) {
+			return false;
 		}
 		return true;
 	}
