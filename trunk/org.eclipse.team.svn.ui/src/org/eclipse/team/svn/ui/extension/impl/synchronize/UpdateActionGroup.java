@@ -165,14 +165,6 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 				UpdateActionGroup.GROUP_TEAM, 
 				this.incoming);
 		
-		CreatePatchFileAction patchAction = new CreatePatchFileAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Patch"), configuration);
-		this.outgoing.add(patchAction);
-		CreateBranchAction branchAction = new CreateBranchAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Branch"), configuration);
-		branchAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/branch.gif"));
-		this.outgoing.add(branchAction);
-		
-		this.outgoing.add(new Separator());
-		
 		ShowOutgoingHistoryAction showResourceHistoryAction = new ShowOutgoingHistoryAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.ShowResourceHistory"), configuration);
 		showResourceHistoryAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/showhistory.gif"));
 		this.outgoing.add(showResourceHistoryAction);
@@ -197,6 +189,14 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 		UnlockAction unlockAction = new UnlockAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.Unlock"), configuration);
 		unlockAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/unlock.gif"));
 		this.outgoing.add(unlockAction);
+		
+		this.outgoing.add(new Separator());
+		
+		CreatePatchFileAction patchAction = new CreatePatchFileAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Patch"), configuration);
+		this.outgoing.add(patchAction);
+		CreateBranchAction branchAction = new CreateBranchAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Branch"), configuration);
+		branchAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/branch.gif"));
+		this.outgoing.add(branchAction);
 		
 		this.outgoing.add(new Separator());
 		

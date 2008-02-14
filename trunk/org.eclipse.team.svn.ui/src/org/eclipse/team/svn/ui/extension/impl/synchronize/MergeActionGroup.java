@@ -121,14 +121,6 @@ public class MergeActionGroup extends AbstractSynchronizeActionGroup {
 				MergeActionGroup.GROUP_TEAM, 
 				this.incoming);
 		
-		CreatePatchFileAction patchAction = new CreatePatchFileAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Patch"), configuration);
-		this.outgoing.add(patchAction);
-		CreateBranchAction branchAction = new CreateBranchAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Branch"), configuration);
-		branchAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/branch.gif"));
-		this.outgoing.add(branchAction);
-		
-		this.outgoing.add(new Separator());
-		
 		ShowOutgoingHistoryAction showResourceHistoryAction = new ShowOutgoingHistoryAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.ShowResourceHistory"), configuration);
 		showResourceHistoryAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/showhistory.gif"));
 		this.outgoing.add(showResourceHistoryAction);
@@ -144,6 +136,14 @@ public class MergeActionGroup extends AbstractSynchronizeActionGroup {
 		this.outgoing.add(setPropAction);
 		SetKeywordsAction setKeywordsAction = new SetKeywordsAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.SetKeywords"), configuration);
 		this.outgoing.add(setKeywordsAction);
+		
+		this.outgoing.add(new Separator());
+		
+		CreatePatchFileAction patchAction = new CreatePatchFileAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Patch"), configuration);
+		this.outgoing.add(patchAction);
+		CreateBranchAction branchAction = new CreateBranchAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Branch"), configuration);
+		branchAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/branch.gif"));
+		this.outgoing.add(branchAction);
 		
 		this.outgoing.add(new Separator());
 		
