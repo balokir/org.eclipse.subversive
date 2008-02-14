@@ -157,9 +157,12 @@ public class ReplaceWithLatestRevisionAction extends AbstractNonRecursiveTeamAct
 								if (local instanceof ILocalFile && IStateFilter.SF_UNVERSIONED.accept(local) && !local.getResource().isDerived()) {
 							    	File real = new File(FileUtility.getWorkingCopyPath(local.getResource()));
 								    // optimize operation performance using "move on FS" if possible
-									if (!real.exists() && !change.getTemporary().renameTo(real)) {
-										FileUtility.copyFile(real, change.getTemporary(), monitor);
-										change.getTemporary().delete();
+									if (!real.exists()) {
+										real.getParentFile().mkdirs();
+										if (!change.getTemporary().renameTo(real)) {
+											FileUtility.copyFile(real, change.getTemporary(), monitor);
+											change.getTemporary().delete();
+										}
 									}
 								}
 							}
