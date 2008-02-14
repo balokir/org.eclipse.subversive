@@ -47,7 +47,7 @@ public class SVNFolderChange extends SVNLocalFolder implements IFolderChange {
 		return new ILocalResource[0];
 	}
 	public IRepositoryResource getOriginator() {
-		if (this.originator == null) {
+		if (this.originator == null && this.getRevision() != SVNRevision.INVALID_REVISION_NUMBER) {
 			IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(this.resource);
 			remote.setPegRevision(this.getPegRevision());
 			remote.setSelectedRevision(SVNRevision.fromNumber(this.getRevision()));

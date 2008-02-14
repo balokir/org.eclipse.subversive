@@ -15,15 +15,17 @@ import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.internal.core.subscribers.ChangeSet;
 import org.eclipse.team.internal.core.subscribers.CheckedInChangeSet;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoSetChangeSetCollector;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
@@ -51,31 +53,38 @@ public class SVNChangeSetCollector extends SyncInfoSetChangeSetCollector {
 		if (infos == null || infos.length == 0) {
 			return;
 		}
-		final Map sets = new HashMap();
+		Map<Long, SVNCheckedInChangeSet> sets = new HashMap<Long, SVNCheckedInChangeSet>();
+		final Set<SVNCheckedInChangeSet> added = new HashSet<SVNCheckedInChangeSet>();
+		for (ChangeSet set : this.getSets()) {
+			SVNCheckedInChangeSet svnSet = (SVNCheckedInChangeSet)set;
+			sets.put(svnSet.getRevision(), svnSet);
+		}
 		// change set name format is: revisionNum (date) [author] ...comment...
 		DateFormat dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.getDefault());
 		String svnAuthor = SVNTeamPlugin.instance().getResource("SVNInfo.Author");
 		String svnDate = SVNTeamPlugin.instance().getResource("SVNInfo.Date");
 		String svnNoAuthor = SVNTeamPlugin.instance().getResource("SVNInfo.NoAuthor");
 		String svnNoDate = SVNTeamPlugin.instance().getResource("SVNInfo.NoDate");
-		for (int i = 0; i < infos.length; i++) {
-			if ((infos[i].getKind() & SyncInfo.INCOMING) == 0) {
+		for (SyncInfo info : infos) {
+			if ((info.getKind() & SyncInfo.INCOMING) == 0) {
 				continue;
 			}
-			ResourceVariant remote = (ResourceVariant) infos[i].getRemote();
+			ResourceVariant remote = (ResourceVariant) info.getRemote();
 			ILocalResource resource = remote.getResource();
-			String id = String.valueOf(resource.getRevision());
-			SVNCheckedInChangeSet set = (SVNCheckedInChangeSet)sets.get(id);
+			long revision = resource.getRevision();
+			SVNCheckedInChangeSet set = sets.get(revision);
 			boolean updateName = false;
 			if (set == null) {
 				set = new SVNCheckedInChangeSet();
 				set.author = resource.getAuthor();
 				set.date = new Date(resource.getLastCommitDate());
+				set.revision = revision;
 				if (resource instanceof IResourceChange) {
 					set.comment = ((IResourceChange)resource).getComment();
 				}
 				updateName = true;
-				sets.put(id, set);
+				sets.put(revision, set);
+				added.add(set);
 			}
 			else if (set.date.getTime() == 0) {
 				updateName = true;
@@ -88,7 +97,7 @@ public class SVNChangeSetCollector extends SyncInfoSetChangeSetCollector {
 			if (updateName) {
 				// rebuild name
 				String name = 
-					id + " " + 
+					String.valueOf(revision) + " " + 
 					(resource.getLastCommitDate() == 0 ? svnNoDate : MessageFormat.format(svnDate, new Object[] {dateTimeFormat.format(set.date)})) + " " + 
 					(resource.getAuthor() == null ? svnNoAuthor : MessageFormat.format(svnAuthor, new Object[] {resource.getAuthor()}));
 				if (set.comment != null) {
@@ -97,14 +106,13 @@ public class SVNChangeSetCollector extends SyncInfoSetChangeSetCollector {
 				set.setName(name);
 			}
 			
-			set.add(infos[i]);
+			set.add(info);
 		}
 		
 		// lesser UI blinking and thread safe...
 		this.performUpdate(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				for (Iterator it = sets.values().iterator(); it.hasNext(); ) {
-					SVNCheckedInChangeSet set = (SVNCheckedInChangeSet)it.next();
+				for (SVNCheckedInChangeSet set : added) {
 					SVNChangeSetCollector.this.add(set);
 				}
 			}
@@ -120,6 +128,12 @@ public class SVNChangeSetCollector extends SyncInfoSetChangeSetCollector {
 		private String comment;
 
 		private Date date;
+		
+		private long revision;
+
+		public long getRevision() {
+			return this.revision;
+		}
 
 		public String getAuthor() {
 			return this.author;
