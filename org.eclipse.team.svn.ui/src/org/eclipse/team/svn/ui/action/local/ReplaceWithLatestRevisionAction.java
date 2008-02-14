@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.local.AbstractWorkingCopyOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RemoveNonVersionedResourcesOperation;
@@ -97,29 +98,33 @@ public class ReplaceWithLatestRevisionAction extends AbstractNonRecursiveTeamAct
 		}
 		
 		public void doOperation(IActionOperation op, IProgressMonitor monitor) {
-		    op.run(monitor).getStatus();
+		    this.reportStatus(op.run(monitor).getStatus());
 		}
 		
 		protected void runImpl(IProgressMonitor monitor) throws Exception {
 			IResource []resources = this.operableData();
 			for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
 				ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resources[i]);
-				ResourceChange change = ResourceChange.wrapLocalResource(null, local, true);
-				change.traverse(new IResourceChangeVisitor() {
-					public void preVisit(ResourceChange change, IActionOperationProcessor processor, IProgressMonitor monitor) throws Exception {
-						ILocalResource local = change.getLocal();
-						if (local instanceof ILocalFile && IStateFilter.SF_UNVERSIONED.accept(local) && !local.getResource().isDerived()) {
-					    	File real = new File(FileUtility.getWorkingCopyPath(local.getResource()));
-						    // optimize operation performance using "move on FS" if possible
-							if (real.exists() && !real.renameTo(change.getTemporary())) {
-								FileUtility.copyFile(change.getTemporary(), real, monitor);
-								real.delete();
+				final ResourceChange change = ResourceChange.wrapLocalResource(null, local, true);
+				this.protectStep(new IUnprotectedOperation() {
+					public void run(IProgressMonitor monitor) throws Exception {
+						change.traverse(new IResourceChangeVisitor() {
+							public void preVisit(ResourceChange change, IActionOperationProcessor processor, IProgressMonitor monitor) throws Exception {
+								ILocalResource local = change.getLocal();
+								if (local instanceof ILocalFile && IStateFilter.SF_UNVERSIONED.accept(local) && !local.getResource().isDerived()) {
+							    	File real = new File(FileUtility.getWorkingCopyPath(local.getResource()));
+								    // optimize operation performance using "move on FS" if possible
+									if (real.exists() && !real.renameTo(change.getTemporary())) {
+										FileUtility.copyFile(change.getTemporary(), real, monitor);
+										real.delete();
+									}
+								}
 							}
-						}
+							public void postVisit(ResourceChange change, IActionOperationProcessor processor, IProgressMonitor monitor) throws Exception {
+							}
+						}, IResource.DEPTH_INFINITE, SaveUnversionedOperation.this, monitor);
 					}
-					public void postVisit(ResourceChange change, IActionOperationProcessor processor, IProgressMonitor monitor) throws Exception {
-					}
-				}, IResource.DEPTH_INFINITE, this, monitor);
+				}, monitor, resources.length);
 				this.changes.add(change);
 			}
 		}
@@ -135,27 +140,32 @@ public class ReplaceWithLatestRevisionAction extends AbstractNonRecursiveTeamAct
 		}
 		
 		public void doOperation(IActionOperation op, IProgressMonitor monitor) {
-		    op.run(monitor).getStatus();
+		    this.reportStatus(op.run(monitor).getStatus());
 		}
 		
 		protected void runImpl(IProgressMonitor monitor) throws Exception {
 			ResourceChange []changes = (ResourceChange [])this.changes.changes.toArray(new ResourceChange[0]);
 			for (int i = 0; i < changes.length && !monitor.isCanceled(); i++) {
-				changes[i].traverse(new IResourceChangeVisitor() {
-					public void preVisit(ResourceChange change, IActionOperationProcessor processor, IProgressMonitor monitor) throws Exception {
-					}
-					public void postVisit(ResourceChange change, IActionOperationProcessor processor, IProgressMonitor monitor) throws Exception {
-						ILocalResource local = change.getLocal();
-						if (local instanceof ILocalFile && IStateFilter.SF_UNVERSIONED.accept(local) && !local.getResource().isDerived()) {
-					    	File real = new File(FileUtility.getWorkingCopyPath(local.getResource()));
-						    // optimize operation performance using "move on FS" if possible
-							if (!real.exists() && !change.getTemporary().renameTo(real)) {
-								FileUtility.copyFile(real, change.getTemporary(), monitor);
-								change.getTemporary().delete();
+				final ResourceChange change = changes[i];
+				this.protectStep(new IUnprotectedOperation() {
+					public void run(IProgressMonitor monitor) throws Exception {
+						change.traverse(new IResourceChangeVisitor() {
+							public void preVisit(ResourceChange change, IActionOperationProcessor processor, IProgressMonitor monitor) throws Exception {
 							}
-						}
+							public void postVisit(ResourceChange change, IActionOperationProcessor processor, IProgressMonitor monitor) throws Exception {
+								ILocalResource local = change.getLocal();
+								if (local instanceof ILocalFile && IStateFilter.SF_UNVERSIONED.accept(local) && !local.getResource().isDerived()) {
+							    	File real = new File(FileUtility.getWorkingCopyPath(local.getResource()));
+								    // optimize operation performance using "move on FS" if possible
+									if (!real.exists() && !change.getTemporary().renameTo(real)) {
+										FileUtility.copyFile(real, change.getTemporary(), monitor);
+										change.getTemporary().delete();
+									}
+								}
+							}
+						}, IResource.DEPTH_INFINITE, RestoreUnversionedOperation.this, monitor);
 					}
-				}, IResource.DEPTH_INFINITE, this, monitor);
+				}, monitor, changes.length);
 			}
 		}
 		
