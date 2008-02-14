@@ -121,11 +121,13 @@ public class BranchTagSelectionComposite extends Composite {
 		IRepositoryResource [] children = new IRepositoryResource [0];
 		if (this.considerStructure) {
 			IRepositoryRoot root = (this.type == BranchTagSelectionComposite.BRANCH_OPERATED) ?
-						SVNUtility.getBranchesLocation(location.asRepositoryContainer(location.getUrl(), false)):
-						SVNUtility.getTagsLocation(location.asRepositoryContainer(location.getUrl(), false));
+						SVNUtility.getBranchesLocation(this.baseResource) :
+						SVNUtility.getTagsLocation(this.baseResource);
 			GetRemoteFolderChildrenOperation op = new GetRemoteFolderChildrenOperation(root, true);
 			UIMonitorUtility.doTaskNowDefault(op, false);
-			children = op.getChildren();
+			if (op.getChildren() != null) {
+				children = op.getChildren();
+			}
 		}
 		if (children.length > 0) {
 			this.urlText.add(this.ignored);
