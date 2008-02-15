@@ -808,6 +808,7 @@ public class HistoryViewImpl {
 			else {
 				this.history.setLocalHistory(new SVNLocalFileRevision [0]);
 			}
+			HistoryViewImpl.this.setPagingEnabled();
 		}
 	    long currentRevision = SVNRevision.INVALID_REVISION_NUMBER;
 	    IRepositoryResource remote = null;
@@ -1698,7 +1699,6 @@ public class HistoryViewImpl {
 		SVNLogEntry[] toShow = HistoryViewImpl.this.isFilterEnabled() && HistoryViewImpl.this.logMessages != null ? HistoryViewImpl.this.filterMessages(HistoryViewImpl.this.logMessages) : HistoryViewImpl.this.logMessages;
 		SVNRevision current = HistoryViewImpl.this.currentRevision != -1 ? SVNRevision.fromNumber(HistoryViewImpl.this.currentRevision) : null;
 		HistoryViewImpl.this.history.setLogMessages(current, toShow, HistoryViewImpl.this.repositoryResource);
-		HistoryViewImpl.this.setPagingEnabled();
 	}
 	
 	public SVNLogEntry [] getEntries() {
