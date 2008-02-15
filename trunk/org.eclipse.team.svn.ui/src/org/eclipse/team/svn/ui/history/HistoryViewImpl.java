@@ -1609,8 +1609,8 @@ public class HistoryViewImpl {
 	    
 	    this.filterDropDownAction.setEnabled(enableRepo && this.repositoryResource != null && this.logMessages != null);
 	    this.clearFilterDropDownAction.setEnabled(this.isFilterEnabled());
-	    this.getNextPageAction.setEnabled(this.pagingEnabled & ((this.options & HistoryViewImpl.PAGING_ENABLED) != 0));
-	    this.getAllPagesAction.setEnabled(this.pagingEnabled & ((this.options & HistoryViewImpl.PAGING_ENABLED) != 0));
+	    this.getNextPageAction.setEnabled(enableRepo && this.pagingEnabled & ((this.options & HistoryViewImpl.PAGING_ENABLED) != 0));
+	    this.getAllPagesAction.setEnabled(enableRepo && this.pagingEnabled & ((this.options & HistoryViewImpl.PAGING_ENABLED) != 0));
 	    
 	    this.stopOnCopyAction.setEnabled(enableRepo);
 	    this.stopOnCopyDropDownAction.setEnabled(enableRepo);
