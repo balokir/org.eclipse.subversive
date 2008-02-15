@@ -56,11 +56,15 @@ public abstract class AbstractSynchronizeModelAction extends SynchronizeModelAct
 		this.setToolTipText(text);
 	}
 
-	protected SynchronizeModelOperation getSubscriberOperation(
-			ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+	protected SynchronizeModelOperation getSubscriberOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
 		return new FilteredSynchronizeModelOperation(configuration, elements);
 	}
 
+	public IResource getSelectedResource() {
+		ISynchronizeModelElement element = (ISynchronizeModelElement)this.getStructuredSelection().getFirstElement();
+		return element.getResource();
+	}
+	
 	protected abstract IActionOperation execute(FilteredSynchronizeModelOperation operation);
 
 	protected class FilteredSynchronizeModelOperation extends SynchronizeModelOperation implements IResourceSelector {
@@ -74,11 +78,6 @@ public abstract class AbstractSynchronizeModelAction extends SynchronizeModelAct
 			if (op != null) {
 			    UIMonitorUtility.doTaskExternalDefault(op, monitor);
 			}
-		}
-		
-		public IResource getSelectedResource() {
-			ISynchronizeModelElement element = (ISynchronizeModelElement)AbstractSynchronizeModelAction.this.getStructuredSelection().getFirstElement();
-			return element.getResource();
 		}
 		
 		public AbstractSVNSyncInfo getSVNSyncInfo() {

@@ -18,7 +18,6 @@ import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.local.LockOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
-import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.ui.action.AbstractRecursiveTeamAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
@@ -37,8 +36,6 @@ public class LockAction extends AbstractRecursiveTeamAction {
     }
 
 	public void runImpl(IAction action) {
-		IRepositoryResourceProvider forException = null;
-		forException.getRepositoryResources();
 		IResource []selectedResources = this.getSelectedResources();
 		boolean containsFolder = false;
 		for (int i = 0; i < selectedResources.length; i++) {

@@ -412,6 +412,7 @@ public class AffectedPathsComposite extends Composite {
 		});
 		
 		//register context menu for the table viewer
+		//FIXME works only with single selection
 		MenuManager menuMgr = new MenuManager();
 		Menu menu = menuMgr.createContextMenu(this.tableViewer.getTable());
 		menuMgr.addMenuListener(new IMenuListener() {
@@ -421,7 +422,7 @@ public class AffectedPathsComposite extends Composite {
 				final IStructuredSelection affectedTableSelection = (IStructuredSelection)AffectedPathsComposite.this.tableViewer.getSelection();
 				if (affectedTableSelection.size() == 1) {
 					String status = ((String [])affectedTableSelection.getFirstElement())[0];
-					enabled = status.charAt(0) == 'M';
+					enabled = status.charAt(0) == SVNLogPath.ChangeType.MODIFIED;
 				}
 				Action tAction = null;
 				

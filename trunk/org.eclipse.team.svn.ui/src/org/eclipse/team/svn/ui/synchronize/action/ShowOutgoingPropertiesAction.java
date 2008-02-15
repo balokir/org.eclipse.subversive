@@ -57,11 +57,11 @@ public class ShowOutgoingPropertiesAction extends AbstractSynchronizeModelAction
 	    return false;
 	}
 	
-	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {		
+	protected IActionOperation execute(FilteredSynchronizeModelOperation operation) {		
 		final IActionOperation [] op = new IActionOperation[1];
 		operation.getShell().getDisplay().syncExec(new Runnable() {
 			public void run() {
-				IResource selectedResource = operation.getSelectedResource();
+				IResource selectedResource = ShowOutgoingPropertiesAction.this.getSelectedResource();
 				IResourcePropertyProvider provider = new GetPropertiesOperation(selectedResource);
 				IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
 				boolean usePropertiesView = SVNTeamPreferences.getPropertiesBoolean(store, SVNTeamPreferences.PROPERTY_USE_VIEW_NAME);

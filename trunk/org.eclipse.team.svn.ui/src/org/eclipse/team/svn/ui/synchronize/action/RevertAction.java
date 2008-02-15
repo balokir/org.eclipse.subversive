@@ -14,13 +14,8 @@ package org.eclipse.team.svn.ui.synchronize.action;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
-import org.eclipse.team.svn.core.operation.local.RevertOperation;
-import org.eclipse.team.svn.ui.dialog.DefaultDialog;
-import org.eclipse.team.svn.ui.panel.local.RevertPanel;
 import org.eclipse.team.svn.ui.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -37,37 +32,26 @@ public class RevertAction extends AbstractSynchronizeModelAction {
 	protected FastSyncInfoFilter getSyncInfoFilter() {
 		return new FastSyncInfoFilter() {
 			public boolean select(SyncInfo info) {
-				return IStateFilter.SF_REVERTABLE.accept(((AbstractSVNSyncInfo)info).getLocalResource());
+				return org.eclipse.team.svn.ui.action.local.RevertAction.SF_REVERTABLE_OR_NEW.accept(((AbstractSVNSyncInfo)info).getLocalResource());
 			}
 		};
 	}
 
 	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {
-		final IResource [][]resources = new IResource[1][];
+		final CompositeOperation []op = new CompositeOperation[1];
 		operation.getShell().getDisplay().syncExec(new Runnable() {
 			public void run() {
-				IResource []changedResources = operation.getSelectedResourcesRecursive(IStateFilter.SF_REVERTABLE);
+				IResource []changedResources = operation.getSelectedResourcesRecursive(org.eclipse.team.svn.ui.action.local.RevertAction.SF_REVERTABLE_OR_NEW);
 				IResource []userSelectedResources = operation.getSelectedResourcesRecursive();
-				RevertPanel panel = new RevertPanel(changedResources, userSelectedResources);
-				DefaultDialog rDlg = new DefaultDialog(operation.getShell(), panel);
-				if (rDlg.open() == 0) {
-					resources[0] = panel.getSelectedResources();
-				}
+				op[0] = org.eclipse.team.svn.ui.action.local.RevertAction.getRevertOperation(operation.getShell(), changedResources, userSelectedResources);
 			}
 		});
 		
-		if (resources[0] == null) {
+		if (op[0] == null) {
 			return null;
 		}
-		
-		RevertOperation mainOp =  new RevertOperation(resources[0], false);
-		
-		CompositeOperation op = new CompositeOperation(mainOp.getId());
 
-		op.add(mainOp);
-		op.add(new RefreshResourcesOperation(resources[0]/*, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL*/));
-
-		return op;
+		return op[0];
 	}
 
 }

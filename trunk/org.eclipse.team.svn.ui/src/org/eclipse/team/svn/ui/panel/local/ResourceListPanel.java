@@ -42,8 +42,13 @@ public class ResourceListPanel extends AbstractDialogPanel {
 	protected IResource []resources;
 	protected TableViewer tableViewer;
 	protected boolean showLocalNames;
+	protected String helpId;
 	
 	public ResourceListPanel(IResource []resources, String dialogTitle, String dialogDescription, String defaultMessage, String[] buttons) {
+		this(resources, dialogTitle, dialogDescription, defaultMessage, buttons, null);
+	}
+    
+	public ResourceListPanel(IResource []resources, String dialogTitle, String dialogDescription, String defaultMessage, String[] buttons, String helpId) {
 		super(buttons);
 		this.dialogTitle = dialogTitle;
 		this.dialogDescription = dialogDescription;
@@ -59,6 +64,10 @@ public class ResourceListPanel extends AbstractDialogPanel {
 		this.showLocalNames = showLocalNames;
 	}
 	
+    public String getHelpId() {
+    	return this.helpId;
+    }
+    
     public void createControlsImpl(Composite parent) {
 		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.SINGLE | SWT.BORDER);
 		TableLayout layout = new TableLayout();

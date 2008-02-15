@@ -65,6 +65,7 @@ public class BranchTagSelectionComposite extends Composite {
 	protected CompositeVerifier verifier;
 	protected String selectionTitle;
 	protected String selectionDescription;
+	protected IRepositoryRoot root;
 	
 	protected String ignored;
 		
@@ -79,6 +80,7 @@ public class BranchTagSelectionComposite extends Composite {
 		this.considerStructure = 
 			baseResource.getRepositoryLocation().isStructureEnabled() &&
 			SVNTeamPreferences.getRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_NAME);
+		this.root = (this.type == BranchTagSelectionComposite.BRANCH_OPERATED) ? SVNUtility.getBranchesLocation(this.baseResource) : SVNUtility.getTagsLocation(this.baseResource);
 		this.createControls(parent);
 	}
 	
@@ -120,10 +122,7 @@ public class BranchTagSelectionComposite extends Composite {
 						
 		IRepositoryResource [] children = new IRepositoryResource [0];
 		if (this.considerStructure) {
-			IRepositoryRoot root = (this.type == BranchTagSelectionComposite.BRANCH_OPERATED) ?
-						SVNUtility.getBranchesLocation(this.baseResource) :
-						SVNUtility.getTagsLocation(this.baseResource);
-			GetRemoteFolderChildrenOperation op = new GetRemoteFolderChildrenOperation(root, true);
+			GetRemoteFolderChildrenOperation op = new GetRemoteFolderChildrenOperation(this.root, true);
 			UIMonitorUtility.doTaskNowDefault(op, false);
 			if (op.getChildren() != null) {
 				children = op.getChildren();
@@ -152,8 +151,8 @@ public class BranchTagSelectionComposite extends Composite {
 				}
 			}
 		});
-		this.validationManager.attachTo(urlText, new ResourceNameVerifier(resourceLabel.getText(), true));
-		this.validationManager.attachTo(urlText, new NonEmptyFieldVerifier(resourceLabel.getText()));
+		this.validationManager.attachTo(this.urlText, new ResourceNameVerifier(resourceLabel.getText(), true));
+		this.validationManager.attachTo(this.urlText, new NonEmptyFieldVerifier(resourceLabel.getText()));
 		
 		this.browse = new Button(select, SWT.PUSH);
 		this.browse.setText(SVNTeamUIPlugin.instance().getResource("Button.Browse"));
@@ -164,14 +163,11 @@ public class BranchTagSelectionComposite extends Composite {
 			public void widgetSelected(SelectionEvent e) {
 				RepositoryTreePanel panel;
 				String part = (BranchTagSelectionComposite.this.type == BranchTagSelectionComposite.BRANCH_OPERATED) ? "Branch" : "Tag";
-				IRepositoryResource root = (BranchTagSelectionComposite.this.type == BranchTagSelectionComposite.BRANCH_OPERATED) ?
-						SVNUtility.getBranchesLocation(location.asRepositoryContainer(location.getUrl(), false)):
-						SVNUtility.getTagsLocation(location.asRepositoryContainer(location.getUrl(), false));
 				if (BranchTagSelectionComposite.this.considerStructure) {
 					panel = new RepositoryTreePanel(SVNTeamUIPlugin.instance().getResource("Select." + part + ".Title"),
 							SVNTeamUIPlugin.instance().getResource("RepositoryBrowsingPanel.Description"),
 							SVNTeamUIPlugin.instance().getResource("RepositoryBrowsingPanel.Message"),
-							null, true, root);
+							null, true, BranchTagSelectionComposite.this.root);
 				}
 				else {
 					panel = new RepositoryTreePanel(SVNTeamUIPlugin.instance().getResource("Select." + part + ".Title"),
@@ -183,10 +179,8 @@ public class BranchTagSelectionComposite extends Composite {
 				if (browser.open() == 0) {
 					IRepositoryResource selectedResource = panel.getSelectedResource();
 					boolean samePeg = selectedResource.getPegRevision().equals(BranchTagSelectionComposite.this.baseResource.getPegRevision());
-					if (considerStructure) {
-						String toTrim = (BranchTagSelectionComposite.this.type == BranchTagSelectionComposite.BRANCH_OPERATED) ? 
-								SVNUtility.getBranchesLocation(BranchTagSelectionComposite.this.baseResource).getUrl() :
-								SVNUtility.getTagsLocation(BranchTagSelectionComposite.this.baseResource).getUrl();
+					if (BranchTagSelectionComposite.this.considerStructure) {
+						String toTrim = BranchTagSelectionComposite.this.root.getUrl();
 						BranchTagSelectionComposite.this.urlText.setText(samePeg ? selectedResource.getUrl().substring(toTrim.length() + 1) : SVNUtility.getEntryReference(selectedResource).toString());
 					}
 					else {
@@ -226,7 +220,7 @@ public class BranchTagSelectionComposite extends Composite {
 	}
 	
 	public IRepositoryResource getSelectedResource() {
-		String url = this.considerStructure ? ((this.type == BranchTagSelectionComposite.BRANCH_OPERATED) ? SVNUtility.getBranchesLocation(this.baseResource) : SVNUtility.getTagsLocation(this.baseResource)) + "/" + this.url : this.url;
+		String url = this.considerStructure ? (this.root.getUrl() + "/" + this.url) : this.url;
 		IRepositoryResource resource = this.getDestination(SVNUtility.asEntryReference(url), false);
 		resource.setSelectedRevision(this.revisionComposite.getSelectedRevision());
 		return resource;
