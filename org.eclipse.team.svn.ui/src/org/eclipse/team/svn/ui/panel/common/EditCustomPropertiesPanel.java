@@ -27,6 +27,9 @@ import org.eclipse.team.svn.ui.SpellcheckedTextProvider;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPropsPreferencePage;
 import org.eclipse.team.svn.ui.verifier.AbstractFormattedVerifier;
+import org.eclipse.team.svn.ui.verifier.CompositeVerifier;
+import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
+import org.eclipse.team.svn.ui.verifier.PropertyNameVerifier;
 
 /**
  * Panel to be used in a dialog for entering user defined property and description.
@@ -59,20 +62,12 @@ public class EditCustomPropertiesPanel extends AbstractDialogPanel {
 		this.propName.setText((this.property == null) ? "" : this.property.propName);
 		GridData layoutData = new GridData(GridData.FILL_HORIZONTAL);
 		this.propName.setLayoutData(layoutData);
-		this.attachTo(this.propName, new AbstractFormattedVerifier("EditCustomProperty.Name") {			
-			protected String getErrorMessageImpl(Control input) {
-				if (this.getText(input).contains(" ")) {
-					return SVNTeamUIPlugin.instance().getResource("EditCustomPropertiesPanel.Validator.Name");
-				}
-				else if (this.getText(input).equals("")) {
-					return SVNTeamUIPlugin.instance().getResource("EditCustomPropertiesPanel.Validator.NameEmpty");
-				}
-				return null;
-			}
-			protected String getWarningMessageImpl(Control input) {
-				return null;
-			}
-		});
+		
+		CompositeVerifier verifier = new CompositeVerifier();
+		String name = SVNTeamUIPlugin.instance().getResource("EditCustomPropertiesPanel.PropName.Verifier");
+		verifier.add(new NonEmptyFieldVerifier(name));
+		verifier.add(new PropertyNameVerifier(name));
+		this.attachTo(this.propName, verifier);
 		
 		Group optional = new Group(parent, SWT.NONE);
 		optional.setText(SVNTeamUIPlugin.instance().getResource("EditCustomPropertiesPanel.Optional"));

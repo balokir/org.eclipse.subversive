@@ -496,7 +496,9 @@ public class HistoryViewImpl {
 						}
 					});
 					tAction.setEnabled(tSelection.size() == 1);
-					tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getWorkbench().getEditorRegistry().getImageDescriptor(((SVNLocalFileRevision)tSelection.getFirstElement()).getName()));
+					if (tSelection.size() == 1) {
+						tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getWorkbench().getEditorRegistry().getImageDescriptor(((SVNLocalFileRevision)tSelection.getFirstElement()).getName()));
+					}
 					manager.add(new Separator());
 					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CompareEachOther")) {
 						public void run() {
@@ -908,7 +910,7 @@ public class HistoryViewImpl {
 							return;
 						}
 					    TreeViewer treeTable = HistoryViewImpl.this.history.getTreeViewer();
-					    if (!treeTable.getTree().isDisposed()) {
+					    if (!treeTable.getTree().isDisposed() && treeTable.getTree().getItems().length > 0) {
 					    	if (selected.size() != 0) {
 						        treeTable.setSelection(selected, true);
 						    }

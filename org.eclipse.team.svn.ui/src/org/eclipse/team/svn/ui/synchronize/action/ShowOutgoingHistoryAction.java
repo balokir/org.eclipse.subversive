@@ -45,7 +45,7 @@ public class ShowOutgoingHistoryAction extends AbstractSynchronizeModelAction {
 	}
 	
 	protected IActionOperation execute(FilteredSynchronizeModelOperation operation) {
-		IResource resource = operation.getSelectedResource();
+		IResource resource = this.getSelectedResource();
 		return new ShowHistoryViewOperation(resource, 0, 0);
 	}
 

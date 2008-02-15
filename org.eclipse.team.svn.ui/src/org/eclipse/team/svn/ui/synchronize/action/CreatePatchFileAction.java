@@ -46,11 +46,11 @@ public class CreatePatchFileAction extends AbstractSynchronizeModelAction {
 	    return false;
 	}
 	
-	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {
+	protected IActionOperation execute(FilteredSynchronizeModelOperation operation) {
 		final IActionOperation [] op = new IActionOperation[1];
 		operation.getShell().getDisplay().syncExec(new Runnable() {
 			public void run() {
-			    IResource resource = operation.getSelectedResource();
+			    IResource resource = CreatePatchFileAction.this.getSelectedResource();
 			    FileDialog dlg = new FileDialog(UIMonitorUtility.getShell(), SWT.PRIMARY_MODAL | SWT.SAVE);
 				dlg.setText(SVNTeamUIPlugin.instance().getResource("SelectPatchFilePage.SavePatchAs"));
 				dlg.setFileName(resource.getName() + ".patch");

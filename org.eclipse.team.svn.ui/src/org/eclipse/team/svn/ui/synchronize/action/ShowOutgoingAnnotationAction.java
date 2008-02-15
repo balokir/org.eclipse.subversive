@@ -52,7 +52,7 @@ public class ShowOutgoingAnnotationAction extends AbstractSynchronizeModelAction
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				operation.getShell().getDisplay().syncExec(new Runnable() {
 					public void run() {
-					    IResource resource = operation.getSelectedResource();
+					    IResource resource = ShowOutgoingAnnotationAction.this.getSelectedResource();
 						UIMonitorUtility.doTaskBusyDefault(new LocalShowAnnotationOperation(resource, operation.getPart().getSite().getPage()));
 					}
 				});

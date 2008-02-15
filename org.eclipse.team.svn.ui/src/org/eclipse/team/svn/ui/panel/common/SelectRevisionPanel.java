@@ -363,7 +363,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
 				SVNTeamUIPlugin.instance().getWorkbench().getDisplay().syncExec(new Runnable() {
 					public void run() {
 						TreeViewer treeTable = SelectRevisionPanel.this.history.getTreeViewer();
-					    if (treeTable.getTree().getItems().length > 0) {
+					    if (!treeTable.getTree().isDisposed() && treeTable.getTree().getItems().length > 0) {
 					        if (selected.size() != 0) {
 					        	treeTable.setSelection(selected);
 					        }

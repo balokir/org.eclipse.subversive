@@ -20,6 +20,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNAnnotationCallback;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNConnectorException;
+import org.eclipse.team.svn.core.connector.SVNErrorCodes;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -63,7 +65,7 @@ public class GetResourceAnnotationOperation extends AbstractRepositoryOperation 
 				SVNUtility.getEntryReference(resource),
 				SVNRevision.fromNumber(0),
 				resource.getSelectedRevision(),
-				ISVNConnector.Options.NONE, new ISVNAnnotationCallback() {
+				ISVNConnector.Options.IGNORE_MIME_TYPE, new ISVNAnnotationCallback() {
 					protected int lineNumber = 0;
 					protected String noAuthor = SVNTeamPlugin.instance().getResource("SVNInfo.NoAuthor");
 					
@@ -93,7 +95,11 @@ public class GetResourceAnnotationOperation extends AbstractRepositoryOperation 
 	}
 	
 	protected String getShortErrorMessage(Throwable t) {
-		return MessageFormat.format(super.getShortErrorMessage(t), new Object[] {this.operableData()[0].getUrl()});
+		if (t instanceof SVNConnectorException && ((SVNConnectorException)t).getErrorId() == SVNErrorCodes.clientIsBinaryFile) {
+			return this.getOperationResource("Error.IsBinary");
+		}
+		return MessageFormat.format(super.getShortErrorMessage(t), new Object[] {this.operableData()[0].getName()});
 	}
+	
 
 }

@@ -143,7 +143,7 @@ public abstract class AbstractOperationTest extends TestCase {
 			public ISchedulingRule getSchedulingRule() {
 				return null;
 			}			
-			protected String getShortErrorMessage(Throwable t) {
+			public String getShortErrorMessage(Throwable t) {
 				return super.getShortErrorMessage(t);
 			}
 		};
