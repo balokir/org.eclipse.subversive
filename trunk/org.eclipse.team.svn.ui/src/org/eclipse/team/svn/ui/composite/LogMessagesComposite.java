@@ -209,7 +209,14 @@ public class LogMessagesComposite extends SashForm {
 	public SVNLogEntry []getSelectedLogMessages() {
 		IStructuredSelection tSelection = (IStructuredSelection)this.historyTable.getSelection();
 		if (tSelection.size() > 0) {
-			return (SVNLogEntry [])tSelection.toList().toArray(new SVNLogEntry[0]);
+			ArrayList<SVNLogEntry> entries = new ArrayList<SVNLogEntry>();
+			for (Iterator it = tSelection.iterator(); it.hasNext(); ) {
+				Object node = it.next();
+				if (node instanceof SVNLogEntry) {
+					entries.add((SVNLogEntry)node);
+				}
+			}
+			return entries.toArray(new SVNLogEntry[0]);
 		}
 		return new SVNLogEntry[0];
 	}
@@ -275,6 +282,11 @@ public class LogMessagesComposite extends SashForm {
 		}
 	}
     
+	public void clear() {
+		this.historyTable.setInput(null);
+		this.historyTableListener.selectionChanged(null);
+	}
+	
 	public void setLogMessages(SVNRevision currentRevision, SVNLogEntry []msgs, IRepositoryResource repositoryResource) {
 		this.msgs = msgs;
 		this.repositoryResource = repositoryResource;
