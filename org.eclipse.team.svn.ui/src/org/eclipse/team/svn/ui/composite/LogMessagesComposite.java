@@ -233,7 +233,7 @@ public class LogMessagesComposite extends SashForm {
 	
 	public String getSelectedMessageNoComment() {
 		IStructuredSelection tSelection = (IStructuredSelection)this.historyTable.getSelection();
-		if (tSelection.size() > 0 && ((tSelection.getFirstElement() instanceof HistoryCategory)|| (tSelection.getFirstElement() instanceof SVNLocalFileRevision))) {
+		if (tSelection.size() > 0 && (!(tSelection.getFirstElement() instanceof SVNLogEntry))) {
 			return "";
 		}
 		String message = this.getSelectedMessage();
@@ -565,26 +565,71 @@ public class LogMessagesComposite extends SashForm {
 	
 	public void setTableInput() {
 		if (!this.historyTable.getTree().isDisposed()) {
+			String noRemote = SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.NoRemote");
+			String noLocal = SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.NoLocal");
+			String noRevs = SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.NoRevs");
 			if (this.groupByDate) {
 				if (this.revisionMode == LogMessagesComposite.SHOW_BOTH) {
-					this.historyTable.setInput(this.categoriesBoth);
+					if (this.localHistory.length == 0 && this.msgs.length == 0) {
+						this.historyTable.setInput(new Object [] {new HistoryText(noRevs)});
+						this.historyTable.getTree().setLinesVisible(false);
+					}
+					else {
+						this.historyTable.setInput(this.categoriesBoth);
+						this.historyTable.getTree().setLinesVisible(true);
+					}
 				}
 				else if (this.revisionMode == LogMessagesComposite.SHOW_LOCAL) {
-					this.historyTable.setInput(this.categoriesLocal);
+					if (this.localHistory.length > 0) {
+						this.historyTable.setInput(this.categoriesLocal);
+						this.historyTable.getTree().setLinesVisible(true);
+					}
+					else {
+						this.historyTable.setInput(new Object [] {new HistoryText(noLocal)});
+						this.historyTable.getTree().setLinesVisible(false);
+					}
 				}
 				else {
-					this.historyTable.setInput(this.categoriesRemote);
+					if (this.msgs.length > 0) {
+						this.historyTable.setInput(this.categoriesRemote);
+						this.historyTable.getTree().setLinesVisible(true);
+					}
+					else {
+						this.historyTable.setInput(new Object [] {new HistoryText(noRemote)});
+						this.historyTable.getTree().setLinesVisible(false);
+					}
 				}
 			}
 			else {
 				if (this.revisionMode == LogMessagesComposite.SHOW_BOTH) {
-					this.historyTable.setInput(this.allHystory);
+					if (this.localHistory.length == 0 && this.msgs.length == 0) {
+						this.historyTable.setInput(new Object [] {new HistoryText(noRevs)});
+						this.historyTable.getTree().setLinesVisible(false);
+					}
+					else {
+						this.historyTable.setInput(this.allHystory);
+						this.historyTable.getTree().setLinesVisible(true);
+					}
 				}
 				else if (this.revisionMode == LogMessagesComposite.SHOW_LOCAL) {
-					this.historyTable.setInput(this.localHistory);
+					if (this.localHistory.length > 0) {
+						this.historyTable.setInput(this.localHistory);
+						this.historyTable.getTree().setLinesVisible(true);
+					}
+					else {
+						this.historyTable.setInput(new Object [] {new HistoryText(noLocal)});
+						this.historyTable.getTree().setLinesVisible(false);
+					}
 				}
 				else {
-					this.historyTable.setInput(this.msgs);
+					if (this.msgs.length > 0) {
+						this.historyTable.setInput(this.msgs);
+						this.historyTable.getTree().setLinesVisible(true);
+					}
+					else {
+						this.historyTable.setInput(new Object [] {new HistoryText(noRemote)});
+						this.historyTable.getTree().setLinesVisible(false);
+					}
 				}
 			}
 		}
@@ -874,6 +919,9 @@ public class LogMessagesComposite extends SashForm {
 					}
 				}
 			}
+			else if (element instanceof HistoryText && columnIndex == LogMessagesComposite.COLUMN_REVISION) {
+				return ((HistoryText)element).getText();
+			}
 			else if (columnIndex == LogMessagesComposite.COLUMN_REVISION) {
 				return ((HistoryCategory)element).getName();
 			}
@@ -918,6 +966,9 @@ public class LogMessagesComposite extends SashForm {
 				}
 				return null;
 			}
+			if (element instanceof HistoryText) {
+				return LogMessagesComposite.this.currentRevisionFont;
+			}
 			SVNLogEntry row = (SVNLogEntry)element;
 			if (LogMessagesComposite.this.currentRevision == row.revision && !LogMessagesComposite.this.currentRevisionFont.isDisposed()) {
 				return LogMessagesComposite.this.currentRevisionFont;
@@ -951,6 +1002,10 @@ public class LogMessagesComposite extends SashForm {
 
 		
 		public int compare(Viewer viewer, Object row1, Object row2) {
+			//just text
+			if ((row1 instanceof HistoryText) || (row2 instanceof HistoryText)) {
+				
+			}
 			
 			//One entry is from local history and another is from log entry
 			if ((row1 instanceof SVNLogEntry) && (row2 instanceof SVNLocalFileRevision)) {
@@ -1129,4 +1184,25 @@ public class LogMessagesComposite extends SashForm {
     	
     }
     
-}
+    public class HistoryText {
+    	protected String text;
+    	protected Image icon;
+    	
+    	public HistoryText(String text) {
+    		this.text = text;
+    	}
+    	
+    	public String getText() {
+    		return this.text;
+				
+			}
+    	}
+    	
+    	public void getImage() {
+    		
+    	}
+    	
+    	public void disposeImage() {
+    		
+    	}
+    }
