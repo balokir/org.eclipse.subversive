@@ -539,7 +539,7 @@ public class HistoryViewImpl {
 						}
 					});
 					tAction.setEnabled(tSelection.size() == 1 && (!((SVNLocalFileRevision)tSelection.getFirstElement()).isCurrentState()));
-					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.Export")) {
+					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("ExportCommand.label")) {
 						public void run() {
 							HistoryViewImpl.this.doExport(tSelection.getFirstElement());
 						}
