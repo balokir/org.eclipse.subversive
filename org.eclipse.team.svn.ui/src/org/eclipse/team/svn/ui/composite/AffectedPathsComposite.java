@@ -420,6 +420,9 @@ public class AffectedPathsComposite extends Composite {
 				boolean enabled = false;
 				manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 				final IStructuredSelection affectedTableSelection = (IStructuredSelection)AffectedPathsComposite.this.tableViewer.getSelection();
+				if (affectedTableSelection.size() == 0) {
+					return;
+				}
 				if (affectedTableSelection.size() == 1) {
 					String status = ((String [])affectedTableSelection.getFirstElement())[0];
 					enabled = status.charAt(0) == SVNLogPath.ChangeType.MODIFIED;
@@ -542,7 +545,7 @@ public class AffectedPathsComposite extends Composite {
 				tAction.setEnabled(affectedTableSelection.size() == 1);
 				manager.add(new Separator());
 				String branchFrom = SVNTeamUIPlugin.instance().getResource("HistoryView.BranchFrom", new String [] {String.valueOf(AffectedPathsComposite.this.currentRevision)});
-				String tagFrom = SVNTeamUIPlugin.instance().getResource("HistoryView.BranchFrom", new String [] {String.valueOf(AffectedPathsComposite.this.currentRevision)});
+				String tagFrom = SVNTeamUIPlugin.instance().getResource("HistoryView.TagFrom", new String [] {String.valueOf(AffectedPathsComposite.this.currentRevision)});
 				manager.add(tAction = new Action(branchFrom) {
 					public void run() {
 						AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(affectedTableSelection.getFirstElement(), false);
@@ -593,6 +596,9 @@ public class AffectedPathsComposite extends Composite {
             public void menuAboutToShow(IMenuManager manager) {
                 manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
         		final IStructuredSelection affectedTableSelection = (IStructuredSelection)AffectedPathsComposite.this.treeViewer.getSelection();
+				if (affectedTableSelection.size() == 0) {
+					return;
+				}
         		AffectedPathNode node = (AffectedPathNode)affectedTableSelection.getFirstElement();
         		Action tAction = null;
         		manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.CompareWithPreviousRevision")) {

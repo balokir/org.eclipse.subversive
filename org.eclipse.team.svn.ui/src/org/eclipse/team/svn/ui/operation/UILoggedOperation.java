@@ -198,6 +198,7 @@ public class UILoggedOperation extends LoggedOperation {
         //also interesting problems can be located before/after ClientCancelException, we shouldn't ignore that
     	boolean sendReport = isReportingAllowed && SVNTeamPreferences.getMailReporterBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MAILREPORTER_ENABLED_NAME);
     	boolean isPlugInError = ReportPartsFactory.checkStatus(errorStatus, new ErrorReasonVisitor());
+    	sendReport &= isPlugInError;
     	if (originalReport == null) {
             panel = new ErrorCancelPanel(operationName, errorInfo.numberOfErrors, errorInfo.simpleMessage, errorInfo.advancedMessage, sendReport, isPlugInError, optionName, errorStatus, pluginID);
     	}

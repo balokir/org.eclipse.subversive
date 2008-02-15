@@ -25,6 +25,7 @@ import org.eclipse.team.svn.core.resource.events.IResourceStatesListener;
 import org.eclipse.team.svn.core.resource.events.ResourceStatesChangedEvent;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.operation.UILoggedOperation;
 import org.eclipse.team.svn.ui.repository.model.RepositoryLocation;
 import org.eclipse.team.svn.ui.repository.model.RepositoryResource;
@@ -53,29 +54,35 @@ public class SVNHistoryPage extends HistoryPage implements IViewInfoProvider, IR
 		if (resource == null) {
 			return;
 		}
-		if (IStateFilter.SF_ONREPOSITORY.accept(SVNRemoteStorage.instance().asLocalResource(resource)) &&
+		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
+		if (local != null) {
+			if (IStateFilter.SF_ONREPOSITORY.accept(local) &&
 				(SVNHistoryPage.this.viewImpl.getEntries() == null || SVNHistoryPage.this.viewImpl.getEntries().length == 0)){
-			UIMonitorUtility.getDisplay().syncExec(new Runnable() {
-				public void run() {
-					SVNHistoryPage.this.viewImpl.refresh();
-				}
-			});
-		}
-		else if (resource instanceof IFile) {
-			UIMonitorUtility.getDisplay().syncExec(new Runnable() {
-				public void run() {
-					try {
-						SVNHistoryPage.this.viewImpl.refreshLocalHistory((IFile)resource);
+				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+					public void run() {
+						SVNHistoryPage.this.viewImpl.refresh();
 					}
-					catch (CoreException ex) {
-						UILoggedOperation.reportError("Refresh Local History", ex);
+				});
+			}
+			else if (resource instanceof IFile) {
+				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+					public void run() {
+						try {
+							SVNHistoryPage.this.viewImpl.refreshLocalHistory((IFile)resource);
+						}
+						catch (CoreException ex) {
+							UILoggedOperation.reportError("Refresh Local History", ex);
+						}
 					}
-				}
-			});
-		}
-		if ((event.contains(this.getResource()) || event.contains(this.getResource().getProject())) &&
-			(!this.getResource().exists() || !FileUtility.isConnected(this.getResource()))) {
+				});
+			}
+			if ((event.contains(this.getResource()) || event.contains(this.getResource().getProject())) &&
+				(!this.getResource().exists() || !FileUtility.isConnected(this.getResource()))) {
 				this.disconnectView();
+			}
+		}
+		else {
+			this.disconnectView();
 		}
 	}
 
@@ -183,7 +190,7 @@ public class SVNHistoryPage extends HistoryPage implements IViewInfoProvider, IR
 				return this.viewImpl.getRepositoryResource().getUrl();
 			}
 		}
-		return "";
+		return SVNTeamUIPlugin.instance().getResource("SVNView.ResourceNotSelected");
 	}
 
 	public boolean isValidInput(Object object) {
@@ -248,7 +255,7 @@ public class SVNHistoryPage extends HistoryPage implements IViewInfoProvider, IR
     	if (this.viewImpl != null) {
     		this.getSite().getShell().getDisplay().syncExec(new Runnable() {
     			public void run() {
-    				SVNHistoryPage.this.viewImpl.showHistory((IResource)null, false);
+    				SVNHistoryPage.this.viewImpl.clear();
     			}
     		});
     	}
