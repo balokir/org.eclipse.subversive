@@ -554,7 +554,7 @@ public class AffectedPathsComposite extends Composite {
 					}
 				});
 				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/branch.gif"));
-				tAction.setEnabled(enabled);
+				tAction.setEnabled(affectedTableSelection.size() > 0);
 				manager.add(tAction = new Action(tagFrom) {
 					public void run() {
 						AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(affectedTableSelection.getFirstElement(), false);
@@ -653,7 +653,7 @@ public class AffectedPathsComposite extends Composite {
         		});
         		tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/branch.gif"));
         		tAction.setEnabled(affectedTableSelection.size() > 0);
-        		manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.BranchFrom", new String [] {String.valueOf(AffectedPathsComposite.this.currentRevision)})) {
+        		manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.TagFrom", new String [] {String.valueOf(AffectedPathsComposite.this.currentRevision)})) {
         			public void run() {
         				GetSelectedTreeResource provider = new GetSelectedTreeResource(AffectedPathsComposite.this.repositoryResource, AffectedPathsComposite.this.currentRevision, affectedTableSelection.getFirstElement());
 						ProgressMonitorUtility.doTaskExternalDefault(provider, new NullProgressMonitor());
