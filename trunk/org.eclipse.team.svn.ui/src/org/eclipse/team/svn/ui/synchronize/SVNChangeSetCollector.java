@@ -31,6 +31,7 @@ import org.eclipse.team.internal.ui.synchronize.SyncInfoSetChangeSetCollector;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
+import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.synchronize.variant.ResourceVariant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -101,7 +102,11 @@ public class SVNChangeSetCollector extends SyncInfoSetChangeSetCollector {
 					(resource.getLastCommitDate() == 0 ? svnNoDate : MessageFormat.format(svnDate, new Object[] {dateTimeFormat.format(set.date)})) + " " + 
 					(resource.getAuthor() == null ? svnNoAuthor : MessageFormat.format(svnAuthor, new Object[] {resource.getAuthor()}));
 				if (set.comment != null) {
-					name += " " + set.comment;
+					String comment = set.comment;
+					if (FileUtility.isWindows()) {
+						comment = comment.replaceAll("\r\n|\r|\n", " ");
+					}
+					name += " " + comment;
 				}
 				set.setName(name);
 			}
