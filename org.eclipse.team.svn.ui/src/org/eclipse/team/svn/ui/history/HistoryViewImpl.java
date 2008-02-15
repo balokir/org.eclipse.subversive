@@ -1134,9 +1134,6 @@ public class HistoryViewImpl {
 	}
 	
 	protected void handleDoubleClick(Object item, boolean doubleClick) {
-		if (this.repositoryResource == null && (this.options & LogMessagesComposite.SHOW_LOCAL) == 0) {
-			return;
-		}
 		if (item instanceof HistoryCategory) {
 			if (this.history.getTreeViewer().getExpandedState(item)) {
 				this.history.getTreeViewer().collapseToLevel(item, TreeViewer.ALL_LEVELS);
