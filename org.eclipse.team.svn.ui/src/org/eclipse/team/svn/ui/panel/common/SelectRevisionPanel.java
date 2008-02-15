@@ -166,7 +166,9 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
         data = new GridData();
         data.horizontalAlignment = GridData.END;
         toolBar.setLayoutData(data);
-         
+        
+        this.refreshItem = new ToolItem(toolBar, SWT.FLAT);
+        new ToolItem(toolBar, SWT.SEPARATOR);
     	this.groupByDateItem = new ToolItem(toolBar, SWT.FLAT | SWT.CHECK);
     	new ToolItem(toolBar, SWT.SEPARATOR);
     	this.hideUnrelatedItem = new ToolItem(toolBar, SWT.FLAT | SWT.CHECK);
@@ -177,8 +179,6 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
     	new ToolItem(toolBar, SWT.SEPARATOR);
     	this.pagingItem = new ToolItem(toolBar, SWT.FLAT);
     	this.pagingAllItem = new ToolItem(toolBar, SWT.FLAT);
-    	new ToolItem(toolBar, SWT.SEPARATOR);
-    	this.refreshItem = new ToolItem(toolBar, SWT.FLAT);
     	
     	this.groupByDateItem.setImage(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/group_by_date.gif").createImage());
     	this.hideUnrelatedItem.setImage(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/hide_unrelated.gif").createImage());
@@ -349,7 +349,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
 							SelectRevisionPanel.this.addPage(msgsOp.getMessages());
 						}
 						SVNLogEntry[] toShow = SelectRevisionPanel.this.isFilterEnabled() && SelectRevisionPanel.this.logMessages != null ? SelectRevisionPanel.this.filterMessages(SelectRevisionPanel.this.logMessages) : SelectRevisionPanel.this.logMessages;
-						SVNRevision current = SelectRevisionPanel.this.currentRevision != -1 ? SVNRevision.fromNumber(SelectRevisionPanel.this.currentRevision) : null;
+						SVNRevision current = SelectRevisionPanel.this.currentRevision > 0 ? SVNRevision.fromNumber(SelectRevisionPanel.this.currentRevision) : SVNRevision.fromKind(SVNRevision.HEAD.getKind());
 						int type = SVNTeamPreferences.getHistoryInt(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.HISTORY_GROUPING_TYPE_NAME);
 						SelectRevisionPanel.this.history.setGroupByDate(type == SVNTeamPreferences.HISTORY_GROUPING_TYPE_DATE);
 						SelectRevisionPanel.this.history.setLogMessages(current, toShow, SelectRevisionPanel.this.resource);

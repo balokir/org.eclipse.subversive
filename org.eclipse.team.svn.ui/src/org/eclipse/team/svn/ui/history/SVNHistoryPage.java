@@ -28,6 +28,7 @@ import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.operation.UILoggedOperation;
 import org.eclipse.team.svn.ui.repository.model.RepositoryLocation;
 import org.eclipse.team.svn.ui.repository.model.RepositoryResource;
+import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.ui.history.HistoryPage;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchPart;
@@ -48,28 +49,33 @@ public class SVNHistoryPage extends HistoryPage implements IViewInfoProvider, IR
 	}
 	
 	public void resourcesStateChanged(ResourceStatesChangedEvent event) {
-		IResource resource = this.getResource();
+		final IResource resource = this.getResource();
 		if (resource == null) {
 			return;
 		}
-		if (resource instanceof IFile) {
-			try {
-				this.viewImpl.refreshLocalHistory((IFile)resource);
-			}
-			catch (CoreException ex) {
-				UILoggedOperation.reportError("Refresh Local History", ex);
-			}
-		}
-		if (event.contains(this.getResource()) || event.contains(this.getResource().getProject())) {
-			if (!this.getResource().exists() || !FileUtility.isConnected(this.getResource())) {
-				this.disconnectView();
-			}
-			else {
-				ILocalResource local = SVNRemoteStorage.instance().asLocalResource(this.getResource());
-				if (local == null || IStateFilter.SF_UNVERSIONED.accept(local) && !(resource instanceof IFile)) {
-					this.disconnectView();
+		if (IStateFilter.SF_ONREPOSITORY.accept(SVNRemoteStorage.instance().asLocalResource(resource)) &&
+				(SVNHistoryPage.this.viewImpl.getEntries() == null || SVNHistoryPage.this.viewImpl.getEntries().length == 0)){
+			UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+				public void run() {
+					SVNHistoryPage.this.viewImpl.refresh();
 				}
-			}
+			});
+		}
+		else if (resource instanceof IFile) {
+			UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+				public void run() {
+					try {
+						SVNHistoryPage.this.viewImpl.refreshLocalHistory((IFile)resource);
+					}
+					catch (CoreException ex) {
+						UILoggedOperation.reportError("Refresh Local History", ex);
+					}
+				}
+			});
+		}
+		if ((event.contains(this.getResource()) || event.contains(this.getResource().getProject())) &&
+			(!this.getResource().exists() || !FileUtility.isConnected(this.getResource()))) {
+				this.disconnectView();
 		}
 	}
 
@@ -185,14 +191,11 @@ public class SVNHistoryPage extends HistoryPage implements IViewInfoProvider, IR
 	}
 
 	public static boolean isValidData(Object object) {
-		if (object instanceof IResource && FileUtility.isConnected((IResource)object)){
-			ILocalResource local = SVNRemoteStorage.instance().asLocalResource((IResource)object);
-			return !IStateFilter.SF_NOTONREPOSITORY.accept(local) || object instanceof IFile;
-		}
 		return 
 			object instanceof IRepositoryResource || 
 			object instanceof RepositoryResource ||
-			object instanceof RepositoryLocation;
+			object instanceof RepositoryLocation ||
+			object instanceof IResource && FileUtility.isConnected((IResource)object);
 	}
 
 	public void refresh() {
