@@ -13,13 +13,10 @@ package org.eclipse.team.svn.ui.synchronize.action;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
+import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.core.resource.ILocalFile;
-import org.eclipse.team.svn.core.resource.ILocalResource;
-import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.operation.ShowHistoryViewOperation;
-import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
@@ -34,16 +31,13 @@ public class ShowOutgoingHistoryAction extends AbstractSynchronizeModelAction {
 	}
 
 	protected boolean updateSelection(IStructuredSelection selection) {
-		super.updateSelection(selection);
-		if (selection.size() == 1) {
-			ISynchronizeModelElement element = (ISynchronizeModelElement)selection.getFirstElement();
-			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(element.getResource());
-			// null for change set nodes
-			return local != null && (IStateFilter.SF_ONREPOSITORY.accept(local) || local instanceof ILocalFile);
-		}
-	    return false;
+	    return super.updateSelection(selection) && selection.size() == 1;
 	}
 	
+	protected FastSyncInfoFilter getSyncInfoFilter() {
+		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.OUTGOING, SyncInfo.CONFLICTING});
+	}
+
 	protected IActionOperation execute(FilteredSynchronizeModelOperation operation) {
 		IResource resource = this.getSelectedResource();
 		return new ShowHistoryViewOperation(resource, 0, 0);
