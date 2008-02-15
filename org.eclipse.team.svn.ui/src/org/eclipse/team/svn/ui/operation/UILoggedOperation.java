@@ -196,12 +196,13 @@ public class UILoggedOperation extends LoggedOperation {
     	final ErrorCancelPanel panel;
     	//For example, if there is an NPE in the JavaSVN code or in our code - add option "Send Report" to the ErrorDialog
         //also interesting problems can be located before/after ClientCancelException, we shouldn't ignore that
-    	boolean sendReport = isReportingAllowed && SVNTeamPreferences.getMailReporterBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MAILREPORTER_ENABLED_NAME) && ReportPartsFactory.checkStatus(errorStatus, new ErrorReasonVisitor());
+    	boolean sendReport = isReportingAllowed && SVNTeamPreferences.getMailReporterBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MAILREPORTER_ENABLED_NAME);
+    	boolean isPlugInError = ReportPartsFactory.checkStatus(errorStatus, new ErrorReasonVisitor());
     	if (originalReport == null) {
-            panel = new ErrorCancelPanel(operationName, errorInfo.numberOfErrors, errorInfo.simpleMessage, errorInfo.advancedMessage, sendReport, optionName, errorStatus, pluginID);
+            panel = new ErrorCancelPanel(operationName, errorInfo.numberOfErrors, errorInfo.simpleMessage, errorInfo.advancedMessage, sendReport, isPlugInError, optionName, errorStatus, pluginID);
     	}
     	else {
-    		panel = new ErrorCancelPanel(operationName, errorInfo.numberOfErrors, errorInfo.simpleMessage, errorInfo.advancedMessage, sendReport, optionName, errorStatus, pluginID, originalReport);
+    		panel = new ErrorCancelPanel(operationName, errorInfo.numberOfErrors, errorInfo.simpleMessage, errorInfo.advancedMessage, sendReport, isPlugInError, optionName, errorStatus, pluginID, originalReport);
     	}
         DefaultDialog dialog = new DefaultDialog(shell, panel);
         if (dialog.open() == 0 && sendReport) {

@@ -46,35 +46,38 @@ public class ErrorCancelPanel extends AbstractDialogPanel {
 	protected String advancedMessage;
 	protected int panelType;
 	protected boolean sendMail;
+	protected boolean isPluginError;
 	
 	protected IStatus errorStatus;
 	protected String plugin;
 	
 	protected String originalReport;
 	
-    public ErrorCancelPanel(String title, int numberOfErrors, String simpleMessage, String advancedMessage, boolean sendMail, String optionName) {
-    	this(ErrorCancelPanel.ERROR_PANEL_TYPE, numberOfErrors, title, simpleMessage, advancedMessage, sendMail, optionName);
+    public ErrorCancelPanel(String title, int numberOfErrors, String simpleMessage, String advancedMessage, boolean sendMail, boolean isPlugInError, String optionName) {
+    	this(ErrorCancelPanel.ERROR_PANEL_TYPE, numberOfErrors, title, simpleMessage, advancedMessage, sendMail, isPlugInError, optionName);
     }
     
     public ErrorCancelPanel(String title, String simpleMessage, String advancedMessage, boolean sendMail, String optionName) {
-    	this(ErrorCancelPanel.CANCEL_PANEL_TYPE, 0, title, simpleMessage, advancedMessage, sendMail, optionName);
+    	this(ErrorCancelPanel.CANCEL_PANEL_TYPE, 0, title, simpleMessage, advancedMessage, sendMail, false, optionName);
     }
     
-    public ErrorCancelPanel(String title, int numberOfErrors, String simpleMessage, String advancedMessage, boolean sendMail, String optionName, IStatus errorStatus, String plugin) {
-    	this(ErrorCancelPanel.ERROR_PANEL_TYPE, numberOfErrors, title, simpleMessage, advancedMessage, sendMail, optionName);
+    public ErrorCancelPanel(String title, int numberOfErrors, String simpleMessage, String advancedMessage, boolean sendMail,  boolean isPlugInError, String optionName, IStatus errorStatus, String plugin) {
+    	this(ErrorCancelPanel.ERROR_PANEL_TYPE, numberOfErrors, title, simpleMessage, advancedMessage, sendMail, isPlugInError, optionName);
     	this.errorStatus = errorStatus;
     	this.plugin = plugin;
+    	this.isPluginError = isPlugInError;
     }
     
-    public ErrorCancelPanel(String title, int numberOfErrors, String simpleMessage, String advancedMessage, boolean sendMail, String optionName, IStatus errorStatus, String plugin, String originalReport) {
-    	this(ErrorCancelPanel.ERROR_PANEL_TYPE, numberOfErrors, title, simpleMessage, advancedMessage, sendMail, optionName);
+    public ErrorCancelPanel(String title, int numberOfErrors, String simpleMessage, String advancedMessage, boolean sendMail, boolean isPlugInError, String optionName, IStatus errorStatus, String plugin, String originalReport) {
+    	this(ErrorCancelPanel.ERROR_PANEL_TYPE, numberOfErrors, title, simpleMessage, advancedMessage, sendMail, isPlugInError, optionName);
     	this.errorStatus = errorStatus;
     	this.plugin = plugin;
     	this.originalReport = originalReport;
     }
     
-    protected ErrorCancelPanel(int panelType, int numberOfErrors, String title, String simpleMessage, String advancedMessage, boolean sendMail, String optionName) {
+    protected ErrorCancelPanel(int panelType, int numberOfErrors, String title, String simpleMessage, String advancedMessage, boolean sendMail, boolean isPlugInError, String optionName) {
     	super(sendMail ? new String[] {SVNTeamUIPlugin.instance().getResource("ErrorCancelPanel.Send"), SVNTeamUIPlugin.instance().getResource("ErrorCancelPanel.DontSend")} : new String[] {IDialogConstants.OK_LABEL});
+    	this.isPluginError = isPlugInError;
     	this.panelType = panelType;
     	this.sendMail = sendMail;
     	this.dialogTitle = SVNTeamUIPlugin.instance().getResource(panelType == ErrorCancelPanel.ERROR_PANEL_TYPE ? "ErrorCancelPanel.Title.Failed" : "ErrorCancelPanel.Title.Cancelled");
@@ -183,7 +186,7 @@ public class ErrorCancelPanel extends AbstractDialogPanel {
     }
     
     public String getImagePath() {
-    	return "icons/dialogs/" + (this.panelType == ErrorCancelPanel.ERROR_PANEL_TYPE ? "operation_error.gif" : "select_revision.gif");
+    	return "icons/dialogs/" + (this.panelType == ErrorCancelPanel.ERROR_PANEL_TYPE && this.isPluginError ? "operation_error.gif" : "select_revision.gif");
     }
     
 }
