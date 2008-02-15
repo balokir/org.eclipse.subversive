@@ -183,13 +183,6 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
     		allResources.addAll(Arrays.asList(this.statusCache.allMembers(resources[i])));
     	}
     	synchronized (this.oldResources) {
-    		for (Iterator it = this.oldResources.iterator(); it.hasNext(); ) {
-    			IResource resource = (IResource)it.next();
-    			if (IStateFilter.SF_NOTEXISTS.accept(SVNRemoteStorage.instance().asLocalResource(resource))) {
-    				it.remove();
-    				allResources.add(resource);
-    			}
-    		}
         	IResource []refreshSet = (IResource [])allResources.toArray(new IResource[allResources.size()]);
         	// ensure we cached all locally-known resources
         	if (CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled()) {
@@ -203,6 +196,14 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
     				}
             	}
         	}
+    		for (Iterator it = this.oldResources.iterator(); it.hasNext(); ) {
+				IResource resource = (IResource)it.next();
+				ILocalResource local = SVNRemoteStorage.instance().asLocalResourceDirty(resource);
+				if (local == null || IStateFilter.SF_NOTEXISTS.accept(local)) {
+					it.remove();
+					allResources.add(resource);
+				}
+			}
         	this.fireTeamResourceChange(SubscriberChangeEvent.asSyncChangedDeltas(this, refreshSet));
     	}
   	}
