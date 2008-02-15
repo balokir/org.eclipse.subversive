@@ -1147,7 +1147,7 @@ public class HistoryViewImpl {
 				UILoggedOperation.reportError("Open Editor", ex);
 			}
 		}
-		else if (!(this.repositoryResource instanceof IRepositoryContainer)) {
+		else if (!(this.repositoryResource instanceof IRepositoryContainer) && (item instanceof SVNLogEntry)) {
 			UIMonitorUtility.doTaskScheduledActive(new OpenRemoteFileOperation(new IRepositoryFile[] {(IRepositoryFile)this.getResourceForSelectedRevision(item)}, OpenRemoteFileOperation.OPEN_DEFAULT));
 		}
 	}
