@@ -44,7 +44,7 @@ public class ShowBrowsingErrorAction extends AbstractRepositoryTeamAction {
         	panel = new ErrorCancelPanel(SVNTeamUIPlugin.instance().getResource("ShowBrowsingErrorAction.Dialog.Title"), errorInfo.simpleMessage, errorInfo.advancedMessage, false, null);
         } 
         else {
-        	panel = new ErrorCancelPanel(SVNTeamUIPlugin.instance().getResource("ShowBrowsingErrorAction.Dialog.Title"), errorInfo.numberOfErrors, errorInfo.simpleMessage, errorInfo.advancedMessage, false, null);
+        	panel = new ErrorCancelPanel(SVNTeamUIPlugin.instance().getResource("ShowBrowsingErrorAction.Dialog.Title"), errorInfo.numberOfErrors, errorInfo.simpleMessage, errorInfo.advancedMessage, false, false, null);
         }
 		DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
 		dialog.open();
