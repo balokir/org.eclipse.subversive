@@ -576,9 +576,9 @@ public class HistoryViewImpl {
 							HistoryViewImpl.this.handleCopy();
 						}
 					});
+					tAction.setEnabled(tSelection.size() > 0);
+					tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/copy.gif"));
 				}
-				tAction.setEnabled(tSelection.size() > 0);
-				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/copy.gif"));
 				manager.add(new Separator()); 
 				manager.add(HistoryViewImpl.this.getRefreshAction());
 			}
