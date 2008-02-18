@@ -15,56 +15,14 @@ Version 0.7.0.v20080218 release date: 18 February 2008
    Changes in compare with previous version are listed below. The full list of 
    changes you can find in Change Log.
     
-	Features:
-	 * Implement compare and replace actions for branches and tags. (Bug 217553)
-	   + special thanks to Andrea Polci
-	   
-	 * Enhance automatic project share (bug 211399)
-	   + special thanks to Max Rydahl Andersen
-	   
-	 * Two URLs merge mode also should use Merge View (bug 217856)
-	 * Add revision folding ability to History view (bug 211410)
-	 * Use latest SVN 1.5 binaries (bug 218472)
-	 * Open external editor if no built-in editors exists for this file type (bug 218485)
-	 * Improve History View (new actions in Affected Paths) (bug 218480)
-	 * Add local history to History View (bug 218468)
-	
 	Fixes:
-	 * Team Synchronization reset "remove from view" after each file change (bug 207026)
-	   + special thanks to Pawel Piskunowicz
-	   
-	 * Reported progress is incorrect almost always (it is doubled) (bug 216883)
-	   + special thanks to Ilya Klyuchnikov
-	   
-	 * Conflicts are not shown in Incoming Mode with ChangeSets (bug 189094)
-	   + special thanks to Marko Schulz
-	   
-	 * Some jsp files which have utf-8 encoded characters don't displayed correctly in compare window (bug 211568)
-	   + special thanks to YounJung Park
-	   
-	 * Add warnings for operations, which modify tags. (bug 217844)
-	   + special thanks to Edoardo Comar
-	   
-	 * Replace errors in creating tags and branches with warnings. (bug 217845)
-	   + special thanks to Chris Velevitch
-	   
-	 * java.lang.StackOverflowError when trying to share a new project to SVN (bug 217529)
-	   + special thanks to Leo Dos Santos
-	   
-	 * Replace With > Revision... should mark replaced files dirty (bug 218600)
-	   + special thanks to Daniel Hirscher
-	    
-	 * Problematic configuration in build 20080129 (bug 218647)
-	   + special thanks to Alon Peled
-	    
 	 * Change sets on an unavailable Subversive repository disappear (bug 219212)
 	   + special thanks to Pim Broekhof
-	    
-	 * Keep ignored resources for "Replace With..." actions (bug 211241)
-	 * UI blinks when commit window is called from Package explorer (bug 218136)
-	 * Change sets commit fails (NPE) (bug 217291)
-	 * Merge two repository browsers for dialogs into one. (bug 217289)
+	   
 	 * Buttons works incorrectly in history view
+	 * Deleted files stay present in synchronize view after commit
+	 * NPE when deleting resource inside commit dialog
+	 * Invalid date ranges for revision folding in history view 
 
 2. Information
 
