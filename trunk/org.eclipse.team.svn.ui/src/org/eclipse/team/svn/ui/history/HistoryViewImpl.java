@@ -808,7 +808,6 @@ public class HistoryViewImpl {
 			else {
 				this.history.setLocalHistory(new SVNLocalFileRevision [0]);
 			}
-			HistoryViewImpl.this.setPagingEnabled();
 		}
 	    long currentRevision = SVNRevision.INVALID_REVISION_NUMBER;
 	    IRepositoryResource remote = null;
@@ -900,6 +899,7 @@ public class HistoryViewImpl {
 			this.repositoryResource = null;
 		}
 		
+		this.setPagingEnabled();
 		this.currentRevision = currentRevision;
 
 		this.viewInfoProvider.setDescription(this.getResourceLabel());
