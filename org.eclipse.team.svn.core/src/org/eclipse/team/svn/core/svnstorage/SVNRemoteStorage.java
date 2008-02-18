@@ -113,7 +113,8 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
     	}
     }
     
-    public void fireResourceStatesChangedEvent(ResourceStatesChangedEvent event) {
+    // events should be serialized
+    public synchronized void fireResourceStatesChangedEvent(ResourceStatesChangedEvent event) {
 		if (event.resources.length > 0) {
 	    	IResourceStatesListener []listeners = null;
 	    	synchronized (this.resourceStateListeners) {
