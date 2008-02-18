@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
@@ -24,6 +25,7 @@ import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.local.IRemoteStatusOperation;
 import org.eclipse.team.svn.core.operation.local.RemoteStatusOperation;
 import org.eclipse.team.svn.core.resource.IChangeStateProvider;
+import org.eclipse.team.svn.core.resource.IFileChange;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
@@ -109,9 +111,21 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 		if (resourceChange == null || resourceChange.getRevision() == SVNRevision.INVALID_REVISION_NUMBER) {
 			return null;
 		}
+		IResourceChange checkForReplacement = SVNRemoteStorage.instance().resourceChangeFromBytes(this.statusCache.getBytes(resourceChange.getResource()));
+		if (checkForReplacement != null && IStateFilter.SF_ADDED.accept(checkForReplacement))
+		{
+			checkForReplacement.treatAsReplacement();
+			return checkForReplacement;
+		}
+		
 		rStatusOp.setPegRevision(resourceChange);
 		IRepositoryResource originator = SVNRemoteStorage.instance().asRepositoryResource(resourceChange.getResource());
 		if (originator != null) {
+			// for case sensitive name changes, nulls allowed for externals roots
+			IRepositoryResource tOriginator = originator instanceof IFileChange ? (IRepositoryResource)originator.asRepositoryFile(current.url, true) : (IRepositoryResource)originator.asRepositoryContainer(current.url, true);
+			if (tOriginator != null) {
+				originator = tOriginator;
+			}
 			originator.setSelectedRevision(SVNRevision.fromNumber(resourceChange.getRevision()));
 			originator.setPegRevision(resourceChange.getPegRevision());
 			resourceChange.setOriginator(originator);
