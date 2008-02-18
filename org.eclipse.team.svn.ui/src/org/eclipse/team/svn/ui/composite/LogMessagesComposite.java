@@ -396,24 +396,27 @@ public class LogMessagesComposite extends SashForm {
 		long lastWeekDate = weekCal.getTimeInMillis();
 		Calendar monthCal = Calendar.getInstance();
 		monthCal.set(Calendar.DAY_OF_MONTH, 1);
+		monthCal.set(Calendar.HOUR_OF_DAY, 0);
+		monthCal.set(Calendar.MINUTE, 0);
+		monthCal.set(Calendar.SECOND, 0);
 		long lastMonthDate = monthCal.getTimeInMillis();
 		
 		//Filling timing ArrayLists
 		for (int i = 0; i < entries.length; i++) {
 			this.mapPathData(entries[i], entries[i].changedPaths);
-			if (entries[i].date > yesterdayDate) {
+			if (entries[i].date >= yesterdayDate) {
 				todayEntriesAll.add(entries[i]);
 				todayEntriesRemote.add(entries[i]);
 			}
-			else if (entries[i].date < yesterdayDate && entries[i].date > beforeYesterdayDate) {
+			else if (entries[i].date < yesterdayDate && entries[i].date >= beforeYesterdayDate) {
 				yesterdayEntriesAll.add(entries[i]);
 				yesterdayEntriesRemote.add(entries[i]);
 			}
-			else if  (entries[i].date < beforeYesterdayDate && entries[i].date > lastWeekDate) {
+			else if (entries[i].date < beforeYesterdayDate && entries[i].date >= lastWeekDate) {
 				weekEntriesAll.add(entries[i]);
 				weekEntriesRemote.add(entries[i]);
 			}
-			else if  (entries[i].date < lastWeekDate && entries[i].date > lastMonthDate) {
+			else if (entries[i].date < lastWeekDate && entries[i].date >= lastMonthDate) {
 				monthEntriesAll.add(entries[i]);
 				monthEntriesRemote.add(entries[i]);
 			}
@@ -423,28 +426,28 @@ public class LogMessagesComposite extends SashForm {
 			}
 			allEntries.add(entries[i]);
 		}
-		for (int i = 0; i < localHistory.length; i++) {
-			if (localHistory[i].getTimestamp() > yesterdayDate) {
-				todayEntriesAll.add(localHistory[i]);
-				todayEntriesLocal.add(localHistory[i]);
+		for (int i = 0; i < this.localHistory.length; i++) {
+			if (this.localHistory[i].getTimestamp() >= yesterdayDate) {
+				todayEntriesAll.add(this.localHistory[i]);
+				todayEntriesLocal.add(this.localHistory[i]);
 			}
-			else if (localHistory[i].getTimestamp() < yesterdayDate && localHistory[i].getTimestamp() > beforeYesterdayDate) {
-				yesterdayEntriesAll.add(localHistory[i]);
-				yesterdayEntriesLocal.add(localHistory[i]);
+			else if (this.localHistory[i].getTimestamp() < yesterdayDate && this.localHistory[i].getTimestamp() >= beforeYesterdayDate) {
+				yesterdayEntriesAll.add(this.localHistory[i]);
+				yesterdayEntriesLocal.add(this.localHistory[i]);
 			}
-			else if  (localHistory[i].getTimestamp() < beforeYesterdayDate && localHistory[i].getTimestamp() > lastWeekDate) {
-				weekEntriesAll.add(localHistory[i]);
-				weekEntriesLocal.add(localHistory[i]);
+			else if  (this.localHistory[i].getTimestamp() < beforeYesterdayDate && this.localHistory[i].getTimestamp() >= lastWeekDate) {
+				weekEntriesAll.add(this.localHistory[i]);
+				weekEntriesLocal.add(this.localHistory[i]);
 			}
-			else if  (localHistory[i].getTimestamp() < lastWeekDate && localHistory[i].getTimestamp() > lastMonthDate) {
-				monthEntriesAll.add(localHistory[i]);
-				monthEntriesLocal.add(localHistory[i]);
+			else if  (this.localHistory[i].getTimestamp() < lastWeekDate && this.localHistory[i].getTimestamp() >= lastMonthDate) {
+				monthEntriesAll.add(this.localHistory[i]);
+				monthEntriesLocal.add(this.localHistory[i]);
 			}
 			else {
-				earlierEntriesAll.add(localHistory[i]);
-				earlierEntriesLocal.add(localHistory[i]);
+				earlierEntriesAll.add(this.localHistory[i]);
+				earlierEntriesLocal.add(this.localHistory[i]);
 			}
-			allEntries.add(localHistory[i]);
+			allEntries.add(this.localHistory[i]);
 		}
 		HistoryCategory cat = null;
 
