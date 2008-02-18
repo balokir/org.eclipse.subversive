@@ -51,6 +51,9 @@ Fixes:
    
  * Problematic configuration in build 20080129 (bug 218647)
    + special thanks to Alon Peled
+   
+ * Change sets on an unavailable Subversive repository disappear (bug 219212)
+   + special thanks to Pim Broekhof
     
  * Keep ignored resources for "Replace With..." actions (bug 211241)
  * UI blinks when commit window is called from Package explorer (bug 218136)
