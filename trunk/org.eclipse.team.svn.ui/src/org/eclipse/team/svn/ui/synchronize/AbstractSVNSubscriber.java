@@ -110,7 +110,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 		}
 		IResourceChange remoteStatus = SVNRemoteStorage.instance().resourceChangeFromBytes(this.statusCache.getBytes(resource));
     	// incoming additions shouldn't call WC access
-		ILocalResource localStatus = SVNRemoteStorage.instance().asLocalResourceDirty(resource);
+		ILocalResource localStatus = this.statusCache.containsData() ? SVNRemoteStorage.instance().asLocalResourceDirty(resource) : SVNRemoteStorage.instance().asLocalResource(resource);
 		if (localStatus != null || remoteStatus != null) {
 			SyncInfo info = this.getSVNSyncInfo(localStatus, remoteStatus);
 			if (info != null) {
