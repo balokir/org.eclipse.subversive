@@ -43,7 +43,8 @@ public class ShowIncomingHistoryAction extends AbstractSynchronizeModelAction {
 			if (element instanceof SyncInfoModelElement) {
 				AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo)((SyncInfoModelElement)element).getSyncInfo();
 				ILocalResource incoming = ((ResourceVariant)syncInfo.getRemote()).getResource();
-				if (!(syncInfo.getRemote() instanceof VirtualRemoteResourceVariant) && !IStateFilter.SF_NOTEXISTS.accept(incoming) && !IStateFilter.SF_DELETED.accept(incoming)) {
+				if (!(syncInfo.getRemote() instanceof VirtualRemoteResourceVariant) && !IStateFilter.SF_NOTEXISTS.accept(incoming) && 
+					(!IStateFilter.SF_DELETED.accept(incoming) || IStateFilter.SF_REPLACED.accept(incoming))) {
 					return true;
 				}
 			}

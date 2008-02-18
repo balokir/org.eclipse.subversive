@@ -144,7 +144,6 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 	        if (rootPath.isPrefixOf(resourcePath) && segments > prefixLength) {
 	        	prefixLength = segments;
 	        	revision = (SVNRevision)entry.getValue();
-	            break;
 	        }
 	    }
 	    if (revision != SVNRevision.INVALID_REVISION) {

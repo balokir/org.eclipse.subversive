@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.core.svnstorage;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.resource.ICommentProvider;
 import org.eclipse.team.svn.core.resource.IFileChange;
@@ -32,6 +33,11 @@ public class SVNFileChange extends SVNLocalFile implements IFileChange {
 		super(resource, revision, status, changeMask, author, lastCommitDate);
 		this.comment = comment;
 		this.pegRevision = pegRevision;
+	}
+	
+	public void treatAsReplacement()
+	{
+		this.status = IStateFilter.ST_REPLACED;
 	}
 	
 	public SVNRevision getPegRevision() {

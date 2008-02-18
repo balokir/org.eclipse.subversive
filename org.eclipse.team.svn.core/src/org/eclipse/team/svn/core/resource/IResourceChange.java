@@ -25,4 +25,5 @@ public interface IResourceChange extends ILocalResource {
 	public IRepositoryResource getOriginator();
 	public void setOriginator(IRepositoryResource originator);
 	public void setCommentProvider(ICommentProvider provider);
+	public void treatAsReplacement();
 }
