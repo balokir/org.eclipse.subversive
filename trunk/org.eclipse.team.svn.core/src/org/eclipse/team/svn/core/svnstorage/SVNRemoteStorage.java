@@ -84,6 +84,8 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	protected Map parent2Children;
 	protected Map resourceStateListeners;
 	protected LinkedList fetchQueue;
+	
+	protected Integer notifyLock = new Integer(0);
 
 	public static SVNRemoteStorage instance() {
 		return SVNRemoteStorage.instance;
@@ -114,19 +116,21 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
     }
     
     // events should be serialized
-    public synchronized void fireResourceStatesChangedEvent(ResourceStatesChangedEvent event) {
-		if (event.resources.length > 0) {
-	    	IResourceStatesListener []listeners = null;
-	    	synchronized (this.resourceStateListeners) {
-	    		List listenersArray = (List)this.resourceStateListeners.get(event.getClass());
-	    		if (listenersArray == null) {
-	    			return;
-	    		}
-	        	listeners = (IResourceStatesListener [])listenersArray.toArray(new IResourceStatesListener[listenersArray.size()]);
-	    	}
-	    	for (int i = 0; i < listeners.length; i++) {
-	    		listeners[i].resourcesStateChanged(event);
-	    	}
+    public void fireResourceStatesChangedEvent(ResourceStatesChangedEvent event) {
+    	synchronized (this.notifyLock) {
+    		if (event.resources.length > 0) {
+    	    	IResourceStatesListener []listeners = null;
+    	    	synchronized (this.resourceStateListeners) {
+    	    		List listenersArray = (List)this.resourceStateListeners.get(event.getClass());
+    	    		if (listenersArray == null) {
+    	    			return;
+    	    		}
+    	        	listeners = (IResourceStatesListener [])listenersArray.toArray(new IResourceStatesListener[listenersArray.size()]);
+    	    	}
+    	    	for (int i = 0; i < listeners.length; i++) {
+    	    		listeners[i].resourcesStateChanged(event);
+    	    	}
+    		}
 		}
     }
     

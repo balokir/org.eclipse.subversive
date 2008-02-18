@@ -283,6 +283,12 @@ public class LogMessagesComposite extends SashForm {
 	}
     
 	public void clear() {
+		this.msgs = new SVNLogEntry[0];
+		this.localHistory = new SVNLocalFileRevision[0];
+		this.allHystory = new Object[0];
+		this.categoriesBoth = new HistoryCategory[0];
+		this.categoriesRemote = new HistoryCategory[0];
+		this.categoriesLocal = new HistoryCategory[0];
 		this.historyTable.setInput(null);
 		this.historyTableListener.selectionChanged(null);
 	}

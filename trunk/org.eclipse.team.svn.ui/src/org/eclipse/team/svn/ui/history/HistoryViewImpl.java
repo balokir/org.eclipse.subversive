@@ -879,7 +879,7 @@ public class HistoryViewImpl {
 		this.repositoryResource = null;
 		this.wcResource = null;
 		this.history.clear();
-		this.setPagingDisabled();
+		this.disableButtons();
 	}
 	
 	protected void showHistoryImpl(long currentRevision, IRepositoryResource remote, boolean background) {
@@ -899,7 +899,7 @@ public class HistoryViewImpl {
 			this.repositoryResource = null;
 		}
 		
-		this.setPagingEnabled();
+		this.enableButtons();
 		this.currentRevision = currentRevision;
 
 		this.viewInfoProvider.setDescription(this.getResourceLabel());
@@ -945,7 +945,7 @@ public class HistoryViewImpl {
 						SVNLogEntry[] toShow = HistoryViewImpl.this.isFilterEnabled() && HistoryViewImpl.this.logMessages != null ? HistoryViewImpl.this.filterMessages(HistoryViewImpl.this.logMessages) : HistoryViewImpl.this.logMessages;
 						SVNRevision current = HistoryViewImpl.this.currentRevision != SVNRevision.INVALID_REVISION_NUMBER ? SVNRevision.fromNumber(HistoryViewImpl.this.currentRevision) : null;
 						HistoryViewImpl.this.history.setLogMessages(current, toShow, HistoryViewImpl.this.repositoryResource);
-						HistoryViewImpl.this.setPagingEnabled();
+						HistoryViewImpl.this.enableButtons();
 //						HistoryViewImpl.this.viewInfoProvider.setDescription(HistoryViewImpl.this.getResourceLabel());
 					}
 				});
@@ -1609,15 +1609,16 @@ public class HistoryViewImpl {
     	    this.getNextPageAction.setToolTipText("Show Next Page");
     	    this.options &= ~HistoryViewImpl.PAGING_ENABLED;
     	}
-        this.setPagingEnabled();
+        this.enableButtons();
     }
     
     public void setHistoryPage(HistoryPage page) {
     	this.page = page;
     }
     
-    protected void setPagingEnabled() {
+    protected void enableButtons() {
 	    ILocalResource local = SVNRemoteStorage.instance().asLocalResource(this.wcResource);
+	    boolean isConnected = this.wcResource != null || this.repositoryResource != null;
 	    boolean enableRepo = local != null && IStateFilter.SF_ONREPOSITORY.accept(local) || this.repositoryResource != null;
 	    
 	    this.filterDropDownAction.setEnabled(enableRepo && this.repositoryResource != null && this.logMessages != null);
@@ -1629,20 +1630,20 @@ public class HistoryViewImpl {
 	    this.stopOnCopyDropDownAction.setEnabled(enableRepo);
 	    this.hideUnrelatedAction.setEnabled(enableRepo);
 	    this.hideUnrelatedDropDownAction.setEnabled(enableRepo);
-	    this.collapseAllAction.setEnabled(true);
-	    this.compareModeAction.setEnabled(true);
-	    this.compareModeDropDownAction.setEnabled(true);
-	    this.showBothAction.setEnabled(true);
-	    this.showBothActionDropDown.setEnabled(true);
-	    this.showLocalAction.setEnabled(true);
-	    this.showLocalActionDropDown.setEnabled(true);
-	    this.showRemoteAction.setEnabled(true);
-	    this.showRemoteActionDropDown.setEnabled(true);
-	    this.groupByDateAction.setEnabled(true);
-	    this.groupByDateDropDownAction.setEnabled(true);
+	    this.collapseAllAction.setEnabled(isConnected);
+	    this.compareModeAction.setEnabled(isConnected);
+	    this.compareModeDropDownAction.setEnabled(isConnected);
+	    this.showBothAction.setEnabled(isConnected);
+	    this.showBothActionDropDown.setEnabled(isConnected);
+	    this.showLocalAction.setEnabled(isConnected);
+	    this.showLocalActionDropDown.setEnabled(isConnected);
+	    this.showRemoteAction.setEnabled(isConnected);
+	    this.showRemoteActionDropDown.setEnabled(isConnected);
+	    this.groupByDateAction.setEnabled(isConnected);
+	    this.groupByDateDropDownAction.setEnabled(isConnected);
     }
     
-    protected void setPagingDisabled() {
+    protected void disableButtons() {
 	    this.filterDropDownAction.setEnabled(false);
 	    this.clearFilterDropDownAction.setEnabled(false);
 	    this.getNextPageAction.setEnabled(false);
