@@ -10,6 +10,19 @@ Change Log's for older versions still present in this file.
 
 Version 0.7.0.v20080218 [18 February 2008]
 
+Fixes:
+ * Change sets on an unavailable Subversive repository disappear (bug 219212)
+   + special thanks to Pim Broekhof
+   
+ * Buttons works incorrectly in history view
+ * Deleted files stay present in synchronize view after commit
+ * NPE when deleting resource inside commit dialog
+ * Invalid date ranges for revision folding in history view 
+
+--------------------------------------------------------------------------------
+
+Version 0.7.0.v20080214 [14 February 2008]
+
 Features:
  * Implement compare and replace actions for branches and tags. (Bug 217553)
    + special thanks to Andrea Polci
@@ -51,15 +64,11 @@ Fixes:
    
  * Problematic configuration in build 20080129 (bug 218647)
    + special thanks to Alon Peled
-   
- * Change sets on an unavailable Subversive repository disappear (bug 219212)
-   + special thanks to Pim Broekhof
     
  * Keep ignored resources for "Replace With..." actions (bug 211241)
  * UI blinks when commit window is called from Package explorer (bug 218136)
  * Change sets commit fails (NPE) (bug 217291)
  * Merge two repository browsers for dialogs into one. (bug 217289)
- * Buttons works incorrectly in history view
 
 --------------------------------------------------------------------------------
 
