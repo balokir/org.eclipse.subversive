@@ -1169,9 +1169,24 @@ public class HistoryViewImpl {
 	}
 	
 	protected void runCompareForLocal(IStructuredSelection selection) {
-		CompareRevisionAction compare = new CompareRevisionAction();
+		//FIXME reimplement without internals usage
+		CompareRevisionAction compare = null;
+		try {
+			compare = CompareRevisionAction.class.getConstructor((Class [])null).newInstance((Object [])null);
+			compare.getClass().getMethod("setPage", new Class[] {HistoryPage.class}).invoke(compare, this.page);
+		}
+		catch (Exception ex) {
+			try {
+				compare = CompareRevisionAction.class.getConstructor(new Class[] {String.class, HistoryPage.class}).newInstance(new Object[] {"", this.page});
+			}
+			catch (RuntimeException ex1) {
+				throw ex1;
+			}
+			catch (Exception ex1) {
+				throw new RuntimeException(ex1);
+			}
+		}
 		compare.selectionChanged(selection);
-		compare.setPage(this.page);
 		compare.setCurrentFileRevision(new SVNLocalFileRevision((IFile)this.wcResource));
 		compare.run();
 	}
@@ -1603,7 +1618,7 @@ public class HistoryViewImpl {
     
     protected void setPagingEnabled() {
 	    ILocalResource local = SVNRemoteStorage.instance().asLocalResource(this.wcResource);
-	    boolean enableRepo = local != null && IStateFilter.SF_ONREPOSITORY.accept(local);
+	    boolean enableRepo = local != null && IStateFilter.SF_ONREPOSITORY.accept(local) || this.repositoryResource != null;
 	    
 	    this.filterDropDownAction.setEnabled(enableRepo && this.repositoryResource != null && this.logMessages != null);
 	    this.clearFilterDropDownAction.setEnabled(this.isFilterEnabled());
