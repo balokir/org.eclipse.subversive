@@ -5,11 +5,11 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 0.7.0.v20080214 release date: 14 February 2008
+Version 0.7.0.v20080218 release date: 18 February 2008
 
 1. What's New
 
-   The version is 0.7.0 release which build ID is v20080214. The main target of the release is 
+   The version is 0.7.0 release which build ID is v20080218. The main target of the release is 
    transferring Subversive development to Eclipse.org.
    
    Changes in compare with previous version are listed below. The full list of 
@@ -64,6 +64,7 @@ Version 0.7.0.v20080214 release date: 14 February 2008
 	 * UI blinks when commit window is called from Package explorer (bug 218136)
 	 * Change sets commit fails (NPE) (bug 217291)
 	 * Merge two repository browsers for dialogs into one. (bug 217289)
+	 * Buttons works incorrectly in history view
 
 2. Information
 
