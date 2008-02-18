@@ -33,6 +33,7 @@ import org.eclipse.team.core.subscribers.SubscriberChangeEvent;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.variants.IResourceVariantComparator;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
@@ -183,6 +184,13 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
     		allResources.addAll(Arrays.asList(this.statusCache.allMembers(resources[i])));
     	}
     	synchronized (this.oldResources) {
+    		for (Iterator it = this.oldResources.iterator(); it.hasNext(); ) {
+				IResource resource = (IResource)it.next();
+				SVNChangeStatus status = SVNUtility.getSVNInfoForNotConnected(resource);
+				if (status == null || (status.textStatus != SVNEntryStatus.Kind.DELETED && status.textStatus != SVNEntryStatus.Kind.MISSING)) {
+					allResources.add(resource);
+				}
+			}
         	IResource []refreshSet = (IResource [])allResources.toArray(new IResource[allResources.size()]);
         	// ensure we cached all locally-known resources
         	if (CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled()) {
@@ -196,14 +204,6 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
     				}
             	}
         	}
-    		for (Iterator it = this.oldResources.iterator(); it.hasNext(); ) {
-				IResource resource = (IResource)it.next();
-				ILocalResource local = SVNRemoteStorage.instance().asLocalResourceDirty(resource);
-				if (local == null || IStateFilter.SF_NOTEXISTS.accept(local)) {
-					it.remove();
-					allResources.add(resource);
-				}
-			}
         	this.fireTeamResourceChange(SubscriberChangeEvent.asSyncChangedDeltas(this, refreshSet));
     	}
   	}
