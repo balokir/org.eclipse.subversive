@@ -63,6 +63,7 @@ import org.eclipse.team.svn.core.utility.PatternProvider;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.extension.factory.ICommentView;
+import org.eclipse.team.svn.ui.history.SVNChangedPathData;
 import org.eclipse.team.svn.ui.history.SVNLocalFileRevision;
 import org.eclipse.team.svn.ui.utility.TableViewerSorter;
 
@@ -76,7 +77,7 @@ public class LogMessagesComposite extends SashForm {
 	final public static int COLUMN_DATE = 1;
 	final public static int COLUMN_CHANGES = 2;
 	final public static int COLUMN_AUTHOR = 3;
-	final public static int COLUMN_LOG_MESSGE = 4;
+	final public static int COLUMN_LOG_MESSAGE = 4;
 	
 	public static final int SHOW_BOTH = 0x20;
 	public static final int SHOW_LOCAL = 0x40;
@@ -247,7 +248,7 @@ public class LogMessagesComposite extends SashForm {
 		return message.length() == 0 ? SVNTeamPlugin.instance().getResource("SVNInfo.NoComment") : message;
 	}
 	
-	public String [][]getSelectedPathData() {
+	public SVNChangedPathData [] getSelectedPathData() {
 	    Object selected = null;
 	    if (this.historyTable != null) {
 			IStructuredSelection tSelection = (IStructuredSelection)this.historyTable.getSelection();
@@ -256,7 +257,7 @@ public class LogMessagesComposite extends SashForm {
 			}
 	    }
 	    
-		return (selected != null ? (String [][])this.pathData.get(selected) : null);
+		return (selected != null ? (SVNChangedPathData [])this.pathData.get(selected) : null);
 	}
 	
 	public ICommentView getCommentView() {
@@ -657,19 +658,19 @@ public class LogMessagesComposite extends SashForm {
 	}
 	
 	protected void mapPathData(Object key, SVNLogPath []paths) {
-		String [][]pathData = new String[paths == null ? 0 : paths.length][];
-		for (int i = 0; i < pathData.length; i++) {
+		SVNChangedPathData [] pathData = new SVNChangedPathData[paths == null ? 0 : paths.length];
+		for (int i = 0; i < paths.length; i++) {
 			String path = paths[i].path;
 			path = path.startsWith("/") ? path.substring(1) : path;
 			int idx = path.lastIndexOf("/");
 			pathData[i] = 
-				new String[] {
+				new SVNChangedPathData (
 					this.getAction(paths[i].action), 
 					idx != -1 ? path.substring(idx + 1) : path,
 					idx != -1 ? path.substring(0, idx) : "",
 					paths[i].copiedFromRevision != SVNRevision.INVALID_REVISION_NUMBER ?  paths[i].copiedFromPath : "",
-					paths[i].copiedFromRevision != SVNRevision.INVALID_REVISION_NUMBER ?  "" + paths[i].copiedFromRevision : ""
-				};
+					paths[i].copiedFromRevision
+				);
 		}
 		this.pathData.put(key, pathData);
 	}
@@ -689,7 +690,6 @@ public class LogMessagesComposite extends SashForm {
 				return SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Replace");
 			}
 		}
-		
 		throw new RuntimeException(SVNTeamUIPlugin.instance().getResource("Error.InvalidLogAction", new String[] {String.valueOf(action)}));
 	}
 	
@@ -718,11 +718,7 @@ public class LogMessagesComposite extends SashForm {
 		this.setWeights(new int[] {logPercent, 100 - logPercent});		
 		
 		this.historyTable = new TreeViewer(treeTable);
-				
-		HistoryComparator comparator = new HistoryComparator(LogMessagesComposite.COLUMN_DATE);
-		comparator.setReversed(true);
-		this.historyTable.setComparator(comparator);
-		
+						
 		//revision
 		TreeColumn col = new TreeColumn(treeTable, SWT.NONE);
 		col.setResizable(true);
@@ -759,6 +755,14 @@ public class LogMessagesComposite extends SashForm {
 		col.setText(SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Comment"));
 		col.addSelectionListener(this.getColumnListener(this.historyTable));
 		layout.addColumnData(new ColumnWeightData(50, true));
+		
+		//adding a comparator and initializing default sort column and direction
+		HistoryComparator comparator = new HistoryComparator(LogMessagesComposite.COLUMN_DATE);
+		this.historyTable.setComparator(comparator);
+		comparator.setReversed(true);
+		this.historyTable.getTree().setSortColumn(this.historyTable.getTree().getColumn(LogMessagesComposite.COLUMN_DATE));
+		this.historyTable.getTree().setSortDirection(SWT.DOWN);
+		
 		this.historyTable.setContentProvider(new ITreeContentProvider() {
 			
 			protected Object input;
@@ -909,7 +913,7 @@ public class LogMessagesComposite extends SashForm {
 					case LogMessagesComposite.COLUMN_AUTHOR: {
 						return row.author == null || row.author.length() == 0 ? SVNTeamPlugin.instance().getResource("SVNInfo.NoAuthor") : row.author;
 					}
-					case LogMessagesComposite.COLUMN_LOG_MESSGE: {
+					case LogMessagesComposite.COLUMN_LOG_MESSAGE: {
 						return row.message == null || row.message.length() == 0 ? SVNTeamPlugin.instance().getResource("SVNInfo.NoComment") : (this.fullMessage ? LogMessagesComposite.flattenMultiLineText(row.message, " ") : FileUtility.formatMultilineText(row.message));
 					}
 					default: {
@@ -932,7 +936,7 @@ public class LogMessagesComposite extends SashForm {
 						}
 						return "";
 					}
-					case LogMessagesComposite.COLUMN_LOG_MESSGE: {
+					case LogMessagesComposite.COLUMN_LOG_MESSAGE: {
 						return row.getComment();
 					}
 					default: {

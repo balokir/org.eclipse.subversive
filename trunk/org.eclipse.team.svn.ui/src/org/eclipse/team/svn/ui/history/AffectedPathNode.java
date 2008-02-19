@@ -23,15 +23,15 @@ import java.util.List;
 public class AffectedPathNode {
 	
 	protected String name;
-	protected List children = new ArrayList(); 
+	protected ArrayList<AffectedPathNode> children = new ArrayList<AffectedPathNode>(); 
 	protected AffectedPathNode parent;
-	protected List data = null;
+	protected ArrayList<SVNChangedPathData> data = null;
 	protected String status;
 	
 	public AffectedPathNode(String name, AffectedPathNode parent, String status) {
 		this.name = name;
 		this.parent = parent;
-		this.data = new ArrayList();
+		this.data = new ArrayList<SVNChangedPathData>();
 		this.status = status;
 	}
 	
@@ -62,7 +62,7 @@ public class AffectedPathNode {
 		return this.parent;
 	}
 	
-	public List getChildren() {		
+	public ArrayList<AffectedPathNode> getChildren() {		
 		return this.children;
 	}
 	
@@ -110,8 +110,8 @@ public class AffectedPathNode {
         return h;		
 	}
 
-	public String [][]getData() {
-		return (String [][])this.data.toArray(new String[this.data.size()][]);
+	public SVNChangedPathData [] getData() {
+		return (SVNChangedPathData [])this.data.toArray(new SVNChangedPathData[this.data.size()]);
 	}
 	
 	protected List getPathDataImpl(List result) {
@@ -125,15 +125,15 @@ public class AffectedPathNode {
 		return result;
 	}
 
-	public void addData(String []data) {
+	public void addData(SVNChangedPathData data) {
 		if (!this.data.contains(data)) {
 			this.data.add(data);
 		}
 	}
 
-	public String [][]getPathData() {
+	public SVNChangedPathData [] getPathData() {
     	List tmp = this.getPathDataImpl(new ArrayList());
-    	return (String [][])tmp.toArray(new String[tmp.size()][]);
+    	return (SVNChangedPathData [])tmp.toArray(new SVNChangedPathData[tmp.size()]);
 	}
 	
 	public void setName(String name) {
@@ -144,7 +144,7 @@ public class AffectedPathNode {
 		this.parent = parent;
 	}
 
-	public void setChildren(List children) {
+	public void setChildren(ArrayList<AffectedPathNode> children) {
 		this.children = children;
 	}
 	
