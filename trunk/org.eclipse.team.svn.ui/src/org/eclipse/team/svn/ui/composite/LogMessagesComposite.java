@@ -665,7 +665,7 @@ public class LogMessagesComposite extends SashForm {
 			int idx = path.lastIndexOf("/");
 			pathData[i] = 
 				new SVNChangedPathData (
-					this.getAction(paths[i].action), 
+					paths[i].action, 
 					idx != -1 ? path.substring(idx + 1) : path,
 					idx != -1 ? path.substring(0, idx) : "",
 					paths[i].copiedFromRevision != SVNRevision.INVALID_REVISION_NUMBER ?  paths[i].copiedFromPath : "",
@@ -673,24 +673,6 @@ public class LogMessagesComposite extends SashForm {
 				);
 		}
 		this.pathData.put(key, pathData);
-	}
-	
-	protected String getAction(char action) {
-		switch (action) {
-			case 'A': {
-				return SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Add");
-			}
-			case 'M': {
-				return SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Modify");
-			}
-			case 'D': {
-				return SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Delete");
-			}
-			case 'R': {
-				return SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Replace");
-			}
-		}
-		throw new RuntimeException(SVNTeamUIPlugin.instance().getResource("Error.InvalidLogAction", new String[] {String.valueOf(action)}));
 	}
 	
 	private void initializeTableView(int style, int logPercent) {

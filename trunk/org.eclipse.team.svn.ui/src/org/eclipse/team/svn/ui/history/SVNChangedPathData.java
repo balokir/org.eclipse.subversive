@@ -24,7 +24,7 @@ public class SVNChangedPathData {
 	/**
 	 * Action performed to resource.
 	 */
-	public final String action;
+	public final char action;
 	
 	/**
 	 * Name of the resource in changed path.
@@ -36,13 +36,7 @@ public class SVNChangedPathData {
 	 * Can be empty for ROOT.
 	 */
 	public final String resourcePath;
-	
-	/**
-	 * Path of the resource, containing resource name.
-	 * Can be empty for ROOT.
-	 */
-	public final String fullResourcePath;
-	
+			
 	/**
 	 * Previous resource path, if it had been copied.
 	 * Can be empty if the resource hadn't changed its destination.
@@ -69,7 +63,7 @@ public class SVNChangedPathData {
 	 * @param copiedFromRevision
 	 *            - previous resource revision, if it had been copied
 	 */
-	public SVNChangedPathData(String action,
+	public SVNChangedPathData(char action,
 						String resourceName,
 						String resourcePath,
 						String copiedFromPath,
@@ -79,6 +73,14 @@ public class SVNChangedPathData {
 		this.resourcePath = resourcePath;
 		this.copiedFromPath = copiedFromPath;
 		this.copiedFromRevision = copiedFromRevision;
-		this.fullResourcePath = this.resourcePath + (this.resourcePath.length() > 0 ? "/" : "") + this.resourceName;
+	}
+	
+	/**
+	 * Method to get full path of the resource. Used in tree building.
+	 * 
+	 * @return full resource path
+	 */
+	public String getFullResourcePath() {
+		return this.resourcePath + (this.resourcePath.length() > 0 ? "/" : "") + this.resourceName;
 	}
 }

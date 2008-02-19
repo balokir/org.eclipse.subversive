@@ -23,12 +23,12 @@ import java.util.List;
 public class AffectedPathNode {
 	
 	protected String name;
-	protected ArrayList<AffectedPathNode> children = new ArrayList<AffectedPathNode>(); 
+	protected List<AffectedPathNode> children = new ArrayList<AffectedPathNode>(); 
 	protected AffectedPathNode parent;
 	protected ArrayList<SVNChangedPathData> data = null;
-	protected String status;
+	protected char status;
 	
-	public AffectedPathNode(String name, AffectedPathNode parent, String status) {
+	public AffectedPathNode(String name, AffectedPathNode parent, char status) {
 		this.name = name;
 		this.parent = parent;
 		this.data = new ArrayList<SVNChangedPathData>();
@@ -62,7 +62,7 @@ public class AffectedPathNode {
 		return this.parent;
 	}
 	
-	public ArrayList<AffectedPathNode> getChildren() {		
+	public List<AffectedPathNode> getChildren() {		
 		return this.children;
 	}
 	
@@ -144,7 +144,7 @@ public class AffectedPathNode {
 		this.parent = parent;
 	}
 
-	public void setChildren(ArrayList<AffectedPathNode> children) {
+	public void setChildren(List<AffectedPathNode> children) {
 		this.children = children;
 	}
 	
@@ -156,11 +156,11 @@ public class AffectedPathNode {
 		return path;
 	}
 
-	public String getStatus() {
+	public char getStatus() {
 		return this.status;
 	}
 	
-	public void setStatus(String status) {
+	public void setStatus(char status) {
 		this.status = status;
 	}
 	
