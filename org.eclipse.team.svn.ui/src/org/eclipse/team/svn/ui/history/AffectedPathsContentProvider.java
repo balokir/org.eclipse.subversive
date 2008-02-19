@@ -74,7 +74,6 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 		if (!this.isRelatedPath(affectedPath.fullResourcePath, relatedPathPrefixes) && !this.isRelatedParent(affectedPath.fullResourcePath, relatedParents)) {
 			return;
 		}
-		//FIXME to model
 		StringTokenizer st = new StringTokenizer(affectedPath.fullResourcePath, "/");
 		AffectedPathNode node = null;
 		AffectedPathNode parent = this.root;

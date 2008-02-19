@@ -947,7 +947,7 @@ public class LogMessagesComposite extends SashForm {
 			else if (element instanceof HistoryText && columnIndex == LogMessagesComposite.COLUMN_REVISION) {
 				return ((HistoryText)element).getText();
 			}
-			else if (columnIndex == LogMessagesComposite.COLUMN_REVISION) {
+			else if (element instanceof HistoryCategory && columnIndex == LogMessagesComposite.COLUMN_REVISION) {
 				return ((HistoryCategory)element).getName();
 			}
 			return "";
@@ -994,9 +994,11 @@ public class LogMessagesComposite extends SashForm {
 			if (element instanceof HistoryText) {
 				return LogMessagesComposite.this.currentRevisionFont;
 			}
-			SVNLogEntry row = (SVNLogEntry)element;
-			if (LogMessagesComposite.this.currentRevision == row.revision && !LogMessagesComposite.this.currentRevisionFont.isDisposed()) {
-				return LogMessagesComposite.this.currentRevisionFont;
+			if (element instanceof SVNLogEntry) {
+				SVNLogEntry row = (SVNLogEntry)element;
+				if (LogMessagesComposite.this.currentRevision == row.revision && !LogMessagesComposite.this.currentRevisionFont.isDisposed()) {
+					return LogMessagesComposite.this.currentRevisionFont;
+				}
 			}
 			return null;
 		}

@@ -237,28 +237,30 @@ public class AffectedPathsComposite extends Composite {
                 return TableViewerSorter.compare(rowData1[column], rowData2[column]);
             }
         });
-		this.tableViewer.setSorter(sorter);
+		//TODO revise sorting
+		
+		//this.tableViewer.setSorter(sorter);
 		//0.image        
         TableColumn col = new TableColumn(this.table, SWT.NONE);
 		col.setText("");
 		col.setResizable(false);
-		col.addSelectionListener(sorter);
+		//col.addSelectionListener(sorter);
 		col.setAlignment(SWT.CENTER);
         layout.addColumnData(new ColumnPixelData(26, false));        
         //1.name
         col = new TableColumn(this.table, SWT.NONE);
         col.setText(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.Name"));
-        col.addSelectionListener(sorter);
+        //col.addSelectionListener(sorter);
         layout.addColumnData(new ColumnWeightData(20, true));
         //2.path
         col = new TableColumn(this.table, SWT.NONE);
         col.setText(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.Path"));
-		col.addSelectionListener(sorter);
+		//col.addSelectionListener(sorter);
         layout.addColumnData(new ColumnWeightData(40, true));
         //3.source path
         col = new TableColumn(this.table, SWT.NONE);
         col.setText(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.CopiedFrom"));
-		col.addSelectionListener(sorter);
+		//col.addSelectionListener(sorter);
         layout.addColumnData(new ColumnWeightData(40, true));
         
         this.tableViewer.setContentProvider(new IStructuredContentProvider() {
