@@ -45,11 +45,15 @@ import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackAdapter;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -229,39 +233,38 @@ public class AffectedPathsComposite extends Composite {
         
         this.tableViewer = new TableViewer(this.table);
         this.sashForm.setWeights(new int[] {25, 75});
-
-		TableViewerSorter sorter = new TableViewerSorter(this.tableViewer, new TableViewerSorter.IColumnComparator() {
-            public int compare(Object row1, Object row2, int column) {
-            	String []rowData1 = (String [])row1;
-                String []rowData2 = (String [])row2;
-                return TableViewerSorter.compare(rowData1[column], rowData2[column]);
-            }
-        });
-		//TODO revise sorting
 		
-		//this.tableViewer.setSorter(sorter);
+        AffectedPathTableComparator tableComparator = new AffectedPathTableComparator(AffectedPathsComposite.COLUMN_PATH);
+        tableComparator.setReversed(false);
+		this.tableViewer.setComparator(tableComparator);
+		
 		//0.image        
         TableColumn col = new TableColumn(this.table, SWT.NONE);
 		col.setText("");
 		col.setResizable(false);
-		//col.addSelectionListener(sorter);
 		col.setAlignment(SWT.CENTER);
         layout.addColumnData(new ColumnPixelData(26, false));        
+        
         //1.name
         col = new TableColumn(this.table, SWT.NONE);
         col.setText(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.Name"));
-        //col.addSelectionListener(sorter);
+        col.addSelectionListener(this.getColumnListener(this.tableViewer));
         layout.addColumnData(new ColumnWeightData(20, true));
+        
         //2.path
         col = new TableColumn(this.table, SWT.NONE);
         col.setText(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.Path"));
-		//col.addSelectionListener(sorter);
+        col.addSelectionListener(this.getColumnListener(this.tableViewer));
         layout.addColumnData(new ColumnWeightData(40, true));
+        
         //3.source path
         col = new TableColumn(this.table, SWT.NONE);
         col.setText(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.CopiedFrom"));
-		//col.addSelectionListener(sorter);
+        col.addSelectionListener(this.getColumnListener(this.tableViewer));
         layout.addColumnData(new ColumnWeightData(40, true));
+        
+        this.tableViewer.getTable().setSortColumn(this.tableViewer.getTable().getColumn(AffectedPathsComposite.COLUMN_PATH));
+        this.tableViewer.getTable().setSortDirection(SWT.UP);
         
         this.tableViewer.setContentProvider(new IStructuredContentProvider() {
 			public Object[] getElements(Object inputElement) {
@@ -275,7 +278,7 @@ public class AffectedPathsComposite extends Composite {
 					Object newInput) {
 			}
 		});
-		ITableLabelProvider labelProvider = new ITableLabelProvider() {
+		ITableLabelProvider tableLabelProvider = new ITableLabelProvider() {
 			protected Map<ImageDescriptor, Image> images = new HashMap<ImageDescriptor, Image>();
 		    
 			public Image getColumnImage(Object element, int columnIndex) {
@@ -346,7 +349,7 @@ public class AffectedPathsComposite extends Composite {
 			public void removeListener(ILabelProviderListener listener) {
 			}		
 		};
-		this.tableViewer.setLabelProvider(labelProvider);
+		this.tableViewer.setLabelProvider(tableLabelProvider);
     }
 	
 	protected SVNChangedPathData [] getSelectedTreeItemPathData() {
@@ -806,6 +809,79 @@ public class AffectedPathsComposite extends Composite {
 		composite.add(new CompareRepositoryResourcesOperation(getResourcesOp), new IActionOperation[] {getResourcesOp});
 		UIMonitorUtility.doTaskScheduledActive(composite);
 	}
+	
+	private SelectionListener getColumnListener(final TableViewer table) {
+		return new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				int column = table.getTable().indexOf((TableColumn)e.widget);
+				AffectedPathTableComparator oldSorter = (AffectedPathTableComparator)table.getComparator();
+				TableColumn tableColumn = ((TableColumn)e.widget);
+				if (oldSorter != null && column == oldSorter.getColumnNumber()) {
+					oldSorter.setReversed(!oldSorter.isReversed());
+					table.getTable().setSortColumn(tableColumn);
+					table.getTable().setSortDirection(oldSorter.isReversed() ? SWT.DOWN : SWT.UP);
+					table.refresh();
+				} else {
+					table.getTable().setSortColumn(tableColumn);
+					table.getTable().setSortDirection(SWT.UP);
+					table.setComparator(new AffectedPathTableComparator(column));
+				}
+			}
+		};
+	} 
+	
+	protected class AffectedPathTableComparator extends ViewerComparator {
+        protected int column;
+        protected boolean reversed;
+		
+        AffectedPathTableComparator(int column) {
+			super();
+			this.reversed = false;
+			this.column = column;
+		}
+		
+		public boolean isReversed() {
+			return this.reversed;
+		}
+
+		public void setReversed(boolean reversed) {
+			this.reversed = reversed;
+		}
+		
+		public int getColumnNumber() {
+			return this.column;
+		}
+		
+		public int compare(Viewer viewer, Object row1, Object row2) {
+			if (row1 instanceof SVNChangedPathData && row2 instanceof SVNChangedPathData) {
+				SVNChangedPathData data1 = (SVNChangedPathData)row1;
+				SVNChangedPathData data2 = (SVNChangedPathData)row2;
+				switch (this.column) {
+					case AffectedPathsComposite.COLUMN_NAME : {
+						if (this.reversed) { 
+							return TableViewerSorter.compare(data2.resourceName, data1.resourceName);
+						}
+						return TableViewerSorter.compare(data1.resourceName, data2.resourceName);
+					}
+					case AffectedPathsComposite.COLUMN_PATH : {
+						if (this.reversed) { 
+							return TableViewerSorter.compare(data2.resourcePath, data1.resourcePath);
+						}
+						return TableViewerSorter.compare(data1.resourcePath, data2.resourcePath);
+					}
+					case AffectedPathsComposite.COLUMN_COPIED_FROM : {
+						String copied1 = data1.copiedFromPath + ((data1.copiedFromRevision == SVNRevision.INVALID_REVISION_NUMBER) ? "" : '@' + String.valueOf(data1.copiedFromRevision));
+						String copied2 = data2.copiedFromPath + ((data2.copiedFromRevision == SVNRevision.INVALID_REVISION_NUMBER) ? "" : '@' + String.valueOf(data2.copiedFromRevision));
+						if (this.reversed) {
+							return TableViewerSorter.compare(copied2, copied1);
+						}
+						return TableViewerSorter.compare(copied1, copied2);
+					}
+				}
+			}
+			return 0;
+        }
+    }
 	
 	protected class GetResourcesToCompareOperation extends AbstractActionOperation implements IRepositoryResourceProvider {
     	protected IRepositoryResourceProvider resourceProvider;
