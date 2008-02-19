@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.ui.history;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -30,7 +29,7 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 	protected AffectedPathNode root;
 	
 	public void initialize(SVNChangedPathData [] affectedPaths, Collection relatedPathPrefixes, Collection relatedParents, long currentRevision) {
-		this.root = new AffectedPathNode(SVNTeamUIPlugin.instance().getResource("AffectedPathsContentProvider.RootName"), null, null);
+		this.root = new AffectedPathNode(SVNTeamUIPlugin.instance().getResource("AffectedPathsContentProvider.RootName"), null, '\0');
 		if (affectedPaths == null) {
 			return;
 		}
@@ -71,10 +70,11 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 	}
 	
 	protected void processPath(SVNChangedPathData affectedPath, Collection relatedPathPrefixes, Collection relatedParents) {
-		if (!this.isRelatedPath(affectedPath.fullResourcePath, relatedPathPrefixes) && !this.isRelatedParent(affectedPath.fullResourcePath, relatedParents)) {
+		String fullResourcePath = affectedPath.getFullResourcePath();
+		if (!this.isRelatedPath(fullResourcePath, relatedPathPrefixes) && !this.isRelatedParent(fullResourcePath, relatedParents)) {
 			return;
 		}
-		StringTokenizer st = new StringTokenizer(affectedPath.fullResourcePath, "/");
+		StringTokenizer st = new StringTokenizer(fullResourcePath, "/");
 		AffectedPathNode node = null;
 		AffectedPathNode parent = this.root;
 		// also handle changes for repository root
@@ -83,7 +83,7 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 			String name = st.nextToken();
 			node = parent.findByName(name);
 			if (node == null) {
-				node = new AffectedPathNode(name, parent, name.equals(affectedPath.resourceName) ? affectedPath.action : null);
+				node = new AffectedPathNode(name, parent, name.equals(affectedPath.resourceName) ? affectedPath.action : '\0');
 				parent.addChild(node);
 			} 
 			else if (name.equals(affectedPath.resourceName)) {
@@ -119,7 +119,7 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 	}
 	
 	protected void doCompress(AffectedPathNode node) {
-		ArrayList<AffectedPathNode> children = node.getChildren();
+		List<AffectedPathNode> children = node.getChildren();
 		if (node.getParent() == null) {
 			for (Iterator it = children.iterator(); it.hasNext(); ) {
 				this.doCompress((AffectedPathNode)it.next());
@@ -136,7 +136,7 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 				return;
 			}
 			node.setName(node.getName() + "/" + nodeChild.getName());
-			ArrayList<AffectedPathNode> lowerChildren = nodeChild.getChildren();
+			List<AffectedPathNode> lowerChildren = nodeChild.getChildren();
 			for (Iterator it = lowerChildren.iterator(); it.hasNext(); ) {
 				((AffectedPathNode)it.next()).setParent(node);
 			}

@@ -71,21 +71,18 @@ public class AffectedPathsLabelProvider extends LabelProvider {
 		if (((AffectedPathNode)element).getParent() == null) {
 			return this.currentRevision == 0 ? AffectedPathsLabelProvider.rootAdditionIcon : AffectedPathsLabelProvider.overlayedRootIcon;
 		}
-		String status = ((AffectedPathNode)element).getStatus();
-		if (status != null) {
-			switch (status.charAt(0)) {
-				case SVNLogPath.ChangeType.ADDED: {
-					return AffectedPathsLabelProvider.addedFolderIcon;
-				}
-				case SVNLogPath.ChangeType.MODIFIED: {
-					return AffectedPathsLabelProvider.modifiedFolderIcon;
-				}
-				case SVNLogPath.ChangeType.DELETED: {
-					return AffectedPathsLabelProvider.deletedFolderIcon;
-				}
-				case SVNLogPath.ChangeType.REPLACED: {
-					return AffectedPathsLabelProvider.replacedFolderIcon;
-				}
+		switch (((AffectedPathNode)element).getStatus()) {
+			case SVNLogPath.ChangeType.ADDED: {
+				return AffectedPathsLabelProvider.addedFolderIcon;
+			}
+			case SVNLogPath.ChangeType.MODIFIED: {
+				return AffectedPathsLabelProvider.modifiedFolderIcon;
+			}
+			case SVNLogPath.ChangeType.DELETED: {
+				return AffectedPathsLabelProvider.deletedFolderIcon;
+			}
+			case SVNLogPath.ChangeType.REPLACED: {
+				return AffectedPathsLabelProvider.replacedFolderIcon;
 			}
 		}
 		return AffectedPathsLabelProvider.overlayedFolderIcon;

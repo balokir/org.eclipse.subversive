@@ -221,7 +221,29 @@ public class AffectedPathsComposite extends Composite {
 				TableItem item = AffectedPathsComposite.this.table.getItem(new Point(e.x, e.y));
 				if (item != null) {
 					Rectangle rect = item.getBounds(0);
-					AffectedPathsComposite.this.table.setToolTipText(rect.contains(e.x, e.y) ? (String)((Object [])item.getData())[0] : "");
+					String tooltip = "";
+					if (rect.contains(e.x, e.y)){
+						SVNChangedPathData data = (SVNChangedPathData)item.getData();
+						switch (data.action) {
+							case 'A': {
+								tooltip = SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Add");
+								break;
+			    			}
+			    			case 'M': {
+			    				tooltip = SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Modify");
+			    				break;
+			    			}
+			    			case 'D': {
+			    				tooltip = SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Delete");
+			    				break;
+			    			}
+			    			case 'R': {
+			    				tooltip = SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Replace");
+			    				break;
+			    			}
+						}
+					}
+					AffectedPathsComposite.this.table.setToolTipText(rect.contains(e.x, e.y) ? tooltip : "");
 				}
 			}
 		});
@@ -230,7 +252,7 @@ public class AffectedPathsComposite extends Composite {
 	
         TableLayout layout = new TableLayout();
         this.table.setLayout(layout);
-        
+                
         this.tableViewer = new TableViewer(this.table);
         this.sashForm.setWeights(new int[] {25, 75});
 		
@@ -283,7 +305,6 @@ public class AffectedPathsComposite extends Composite {
 		    
 			public Image getColumnImage(Object element, int columnIndex) {
 				if (columnIndex == AffectedPathsComposite.COLUMN_ICON) {
-					String action = ((SVNChangedPathData)element).action;
 					String fileName = ((SVNChangedPathData)element).resourceName;
 					ImageDescriptor descr = SVNTeamUIPlugin.instance().getWorkbench().getEditorRegistry().getImageDescriptor(fileName);
 					Image img = this.images.get(descr);
@@ -292,7 +313,7 @@ public class AffectedPathsComposite extends Composite {
 			            CompareUI.disposeOnShutdown(img);
 						this.images.put(descr, img);
 					}
-					switch (action.charAt(0)) {
+					switch (((SVNChangedPathData)element).action) {
 						case SVNLogPath.ChangeType.ADDED: {
 							descr = new OverlayedImageDescriptor(img, AffectedPathsComposite.ADDITION_OVERLAY, new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V);
 							break;
@@ -624,7 +645,7 @@ public class AffectedPathsComposite extends Composite {
 					}
         		});
         		boolean isCompareFoldersAllowed = CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() == ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x;
-        		tAction.setEnabled(isCompareFoldersAllowed && AffectedPathsComposite.this.currentRevision != 0 && affectedTableSelection.size() == 1 && (node.getStatus() == null || node.getStatus().charAt(0) == 'M'));
+        		tAction.setEnabled(isCompareFoldersAllowed && AffectedPathsComposite.this.currentRevision != 0 && affectedTableSelection.size() == 1 && (node.getStatus() == '\0' || node.getStatus() == SVNLogPath.ChangeType.MODIFIED));
         		manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("CreatePatchCommand.label")) {
 					public void run() {					
 						GetSelectedTreeResource op = new GetSelectedTreeResource(AffectedPathsComposite.this.repositoryResource, AffectedPathsComposite.this.currentRevision, affectedTableSelection.getFirstElement());
@@ -640,7 +661,7 @@ public class AffectedPathsComposite extends Composite {
 						}
 					}
 				});
-        		tAction.setEnabled(affectedTableSelection.size() == 1 && AffectedPathsComposite.this.currentRevision != 0 && affectedTableSelection.size() == 1 && (node.getStatus() == null || node.getStatus().startsWith("M")));
+        		tAction.setEnabled(affectedTableSelection.size() == 1 && AffectedPathsComposite.this.currentRevision != 0 && affectedTableSelection.size() == 1 && (node.getStatus() == '\0' || node.getStatus() == SVNLogPath.ChangeType.MODIFIED));
         		manager.add(new Separator());
         		manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("ShowPropertiesAction.label")) {
 					public void run() {
