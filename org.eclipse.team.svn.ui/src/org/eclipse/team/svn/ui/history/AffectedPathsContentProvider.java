@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.ui.history;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -28,13 +29,13 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 public class AffectedPathsContentProvider implements ITreeContentProvider {
 	protected AffectedPathNode root;
 	
-	public void initialize(String[][] affectedPaths, Collection relatedPathPrefixes, Collection relatedParents, long currentRevision) {
+	public void initialize(SVNChangedPathData [] affectedPaths, Collection relatedPathPrefixes, Collection relatedParents, long currentRevision) {
 		this.root = new AffectedPathNode(SVNTeamUIPlugin.instance().getResource("AffectedPathsContentProvider.RootName"), null, null);
 		if (affectedPaths == null) {
 			return;
 		}
 		for (int i = 0; i < affectedPaths.length; i++) {
-			String[] row = affectedPaths[i];
+			SVNChangedPathData row = affectedPaths[i];
 			this.processPath(row, relatedPathPrefixes, relatedParents);
 		}
 		this.doCompress(this.root);
@@ -69,12 +70,12 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 		return this.root;
 	}
 	
-	protected void processPath(String []affectedPath, Collection relatedPathPrefixes, Collection relatedParents) {
-		String fullPath = affectedPath[2] + (affectedPath[2].length() > 0 ? "/" : "") + affectedPath[1];
-		if (!this.isRelatedPath(fullPath, relatedPathPrefixes) && !this.isRelatedParent(fullPath, relatedParents)) {
+	protected void processPath(SVNChangedPathData affectedPath, Collection relatedPathPrefixes, Collection relatedParents) {
+		if (!this.isRelatedPath(affectedPath.fullResourcePath, relatedPathPrefixes) && !this.isRelatedParent(affectedPath.fullResourcePath, relatedParents)) {
 			return;
 		}
-		StringTokenizer st = new StringTokenizer(fullPath, "/");
+		//FIXME to model
+		StringTokenizer st = new StringTokenizer(affectedPath.fullResourcePath, "/");
 		AffectedPathNode node = null;
 		AffectedPathNode parent = this.root;
 		// also handle changes for repository root
@@ -83,11 +84,11 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 			String name = st.nextToken();
 			node = parent.findByName(name);
 			if (node == null) {
-				node = new AffectedPathNode(name, parent, name.equals(affectedPath[1]) ? affectedPath[0] : null);
+				node = new AffectedPathNode(name, parent, name.equals(affectedPath.resourceName) ? affectedPath.action : null);
 				parent.addChild(node);
 			} 
-			else if (name.equals(affectedPath[1])) {
-				node.setStatus(affectedPath[0]);
+			else if (name.equals(affectedPath.resourceName)) {
+				node.setStatus(affectedPath.action);
 			}
 			nextToLast = parent;
 			parent = node;
@@ -119,7 +120,7 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 	}
 	
 	protected void doCompress(AffectedPathNode node) {
-		List children = node.getChildren();
+		ArrayList<AffectedPathNode> children = node.getChildren();
 		if (node.getParent() == null) {
 			for (Iterator it = children.iterator(); it.hasNext(); ) {
 				this.doCompress((AffectedPathNode)it.next());
@@ -136,12 +137,12 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 				return;
 			}
 			node.setName(node.getName() + "/" + nodeChild.getName());
-			List lowerChildren = nodeChild.getChildren();
+			ArrayList<AffectedPathNode> lowerChildren = nodeChild.getChildren();
 			for (Iterator it = lowerChildren.iterator(); it.hasNext(); ) {
 				((AffectedPathNode)it.next()).setParent(node);
 			}
 			node.setChildren(lowerChildren);
-			String [][]data = nodeChild.getData();
+			SVNChangedPathData [] data = nodeChild.getData();
 			for (int i = 0; i < data.length; i++) {
 				node.addData(data[i]);
 			}
@@ -163,14 +164,14 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 		if (children.size() == 0) {
 			return;
 		}
-		String [][]affectedPathData = node.getData();
+		SVNChangedPathData [] affectedPathData = node.getData();
 		if (affectedPathData != null && affectedPathData.length > 0) {
 			for (Iterator iter = children.iterator(); iter.hasNext();) {
 				AffectedPathNode currentNode = (AffectedPathNode)iter.next();
 				for (int i = 0; i < affectedPathData.length; i++) {
-					String []affectedPath = affectedPathData[i];
-					if (currentNode.getName().equals(affectedPath[1])) {
-						currentNode.setStatus(affectedPath[0]);
+					SVNChangedPathData affectedPath = affectedPathData[i];
+					if (currentNode.getName().equals(affectedPath.resourceName)) {
+						currentNode.setStatus(affectedPath.action);
 						break;
 					}
 				}

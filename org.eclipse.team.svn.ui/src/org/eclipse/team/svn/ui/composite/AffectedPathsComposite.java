@@ -100,6 +100,7 @@ import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.history.AffectedPathNode;
 import org.eclipse.team.svn.ui.history.AffectedPathsContentProvider;
 import org.eclipse.team.svn.ui.history.AffectedPathsLabelProvider;
+import org.eclipse.team.svn.ui.history.SVNChangedPathData;
 import org.eclipse.team.svn.ui.operation.CompareRepositoryResourcesOperation;
 import org.eclipse.team.svn.ui.operation.OpenRemoteFileOperation;
 import org.eclipse.team.svn.ui.operation.RefreshRemoteResourcesOperation;
@@ -133,6 +134,11 @@ public class AffectedPathsComposite extends Composite {
 	protected static ImageDescriptor MODIFICATION_OVERLAY;
 	protected static ImageDescriptor DELETION_OVERLAY;
 	protected static ImageDescriptor REPLACEMENT_OVERLAY;
+	
+	final public static int COLUMN_ICON = 0;
+	final public static int COLUMN_NAME = 1;
+	final public static int COLUMN_PATH = 2;
+	final public static int COLUMN_COPIED_FROM = 3;
 	
 	protected SashForm sashForm;
 	
@@ -271,9 +277,9 @@ public class AffectedPathsComposite extends Composite {
 			protected Map<ImageDescriptor, Image> images = new HashMap<ImageDescriptor, Image>();
 		    
 			public Image getColumnImage(Object element, int columnIndex) {
-				if (columnIndex == 0) {
-					String action = ((String [])element)[0];
-					String fileName = ((String [])element)[1];
+				if (columnIndex == AffectedPathsComposite.COLUMN_ICON) {
+					String action = ((SVNChangedPathData)element).action;
+					String fileName = ((SVNChangedPathData)element).resourceName;
 					ImageDescriptor descr = SVNTeamUIPlugin.instance().getWorkbench().getEditorRegistry().getImageDescriptor(fileName);
 					Image img = this.images.get(descr);
 					if (img == null) {
@@ -310,13 +316,19 @@ public class AffectedPathsComposite extends Composite {
 				return null;
 			}
 			public String getColumnText(Object element, int columnIndex) {
-				String []data = (String [])element;
-				if (columnIndex == 3) {
-					String copiedFrom = data[columnIndex];
-					copiedFrom = (copiedFrom.length() > 1 && copiedFrom.startsWith("/")) ? copiedFrom.substring(1) : copiedFrom;
-					return data[4].length() > 0 ? (copiedFrom + '@' + data[4]) : copiedFrom;
+				SVNChangedPathData data = (SVNChangedPathData)element;
+				switch (columnIndex) {
+					case AffectedPathsComposite.COLUMN_NAME : {
+						return data.resourceName;
+					}
+					case AffectedPathsComposite.COLUMN_PATH : {
+						return data.resourcePath;
+					}
+					case AffectedPathsComposite.COLUMN_COPIED_FROM : {
+						return data.copiedFromPath + ((data.copiedFromRevision == SVNRevision.INVALID_REVISION_NUMBER) ? "" : '@' + String.valueOf(data.copiedFromRevision)); 
+					}
 				}
-				return columnIndex != 0 ? data[columnIndex] : "";
+				return "";
 			}
 
 			public void addListener(ILabelProviderListener listener) {
@@ -335,7 +347,7 @@ public class AffectedPathsComposite extends Composite {
 		this.tableViewer.setLabelProvider(labelProvider);
     }
 	
-	protected String [][]getSelectedTreeItemPathData() {
+	protected SVNChangedPathData [] getSelectedTreeItemPathData() {
 		Object selected = null;
 	    if (this.treeViewer != null) {
 			IStructuredSelection tSelection = (IStructuredSelection)this.treeViewer.getSelection();
@@ -343,11 +355,10 @@ public class AffectedPathsComposite extends Composite {
 				selected = tSelection.getFirstElement();
 			}
 	    }
-
 	    return (selected != null ? ((AffectedPathNode)selected).getPathData() : null);
 	}
 	
-	public void setInput(String [][]input, Collection relatedPathPrefixes, Collection relatedParents, long currentRevision) {
+	public void setInput(SVNChangedPathData [] input, Collection relatedPathPrefixes, Collection relatedParents, long currentRevision) {
 		this.currentRevision = currentRevision;
 		this.labelProvider.setCurrentRevision(currentRevision);
 		AffectedPathsContentProvider provider = (AffectedPathsContentProvider)this.treeViewer.getContentProvider();
