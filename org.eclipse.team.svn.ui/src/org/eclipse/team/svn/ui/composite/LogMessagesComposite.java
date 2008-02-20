@@ -39,7 +39,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -65,7 +64,7 @@ import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.extension.factory.ICommentView;
 import org.eclipse.team.svn.ui.history.SVNChangedPathData;
 import org.eclipse.team.svn.ui.history.SVNLocalFileRevision;
-import org.eclipse.team.svn.ui.utility.TableViewerSorter;
+import org.eclipse.team.svn.ui.utility.ColumnedViewerComparator;
 
 /**
  * LogMessage's viewer implementation
@@ -739,7 +738,7 @@ public class LogMessagesComposite extends SashForm {
 		layout.addColumnData(new ColumnWeightData(50, true));
 		
 		//adding a comparator and initializing default sort column and direction
-		HistoryComparator comparator = new HistoryComparator(LogMessagesComposite.COLUMN_DATE);
+		HistoryComparator comparator = new HistoryComparator(this.historyTable, LogMessagesComposite.COLUMN_DATE);
 		this.historyTable.setComparator(comparator);
 		comparator.setReversed(true);
 		this.historyTable.getTree().setSortColumn(this.historyTable.getTree().getColumn(LogMessagesComposite.COLUMN_DATE));
@@ -821,7 +820,7 @@ public class LogMessagesComposite extends SashForm {
 				} else {
 				    treeViewer.getTree().setSortColumn(treeColumn);
                     treeViewer.getTree().setSortDirection(SWT.UP);
-					treeViewer.setComparator(new HistoryComparator(column));
+					treeViewer.setComparator(new HistoryComparator(treeViewer, column));
 				}
 			}
 		};
@@ -987,28 +986,11 @@ public class LogMessagesComposite extends SashForm {
 		
 	}
     
-	public class HistoryComparator extends ViewerComparator {
-        protected int column;
-        protected boolean reversed;
+	public class HistoryComparator extends ColumnedViewerComparator {
 		
-		HistoryComparator(int column) {
-			super();
-			this.reversed = false;
-			this.column = column;
+		HistoryComparator(TreeViewer treeViewer, int column) {
+			super(treeViewer, column);
 		}
-		
-		public boolean isReversed() {
-			return this.reversed;
-		}
-
-		public void setReversed(boolean reversed) {
-			this.reversed = reversed;
-		}
-		
-		public int getColumnNumber() {
-			return this.column;
-		}
-
 		
 		public int compare(Viewer viewer, Object row1, Object row2) {
 			//just text
@@ -1112,14 +1094,14 @@ public class LogMessagesComposite extends SashForm {
 	            }
 	            if (this.column == LogMessagesComposite.COLUMN_AUTHOR) {
 	            	if (this.reversed) {
-	            		return TableViewerSorter.compare(rowData2.author == null ? "" : rowData2.author, rowData1.author == null ? "" : rowData1.author);
+	            		return ColumnedViewerComparator.compare(rowData2.author == null ? "" : rowData2.author, rowData1.author == null ? "" : rowData1.author);
 	            	}
-	            	return TableViewerSorter.compare(rowData1.author == null ? "" : rowData1.author, rowData2.author == null ? "" : rowData2.author);
+	            	return ColumnedViewerComparator.compare(rowData1.author == null ? "" : rowData1.author, rowData2.author == null ? "" : rowData2.author);
 	            }
 	            if (this.reversed) {
-	            	return TableViewerSorter.compare(rowData2.message == null ? "" : rowData2.message, rowData1.message == null ? "" : rowData1.message);
+	            	return ColumnedViewerComparator.compare(rowData2.message == null ? "" : rowData2.message, rowData1.message == null ? "" : rowData1.message);
 	            }
-	            return TableViewerSorter.compare(rowData1.message == null ? "" : rowData1.message, rowData2.message == null ? "" : rowData2.message);
+	            return ColumnedViewerComparator.compare(rowData1.message == null ? "" : rowData1.message, rowData2.message == null ? "" : rowData2.message);
 			}
 			
 			//Both are from local history
