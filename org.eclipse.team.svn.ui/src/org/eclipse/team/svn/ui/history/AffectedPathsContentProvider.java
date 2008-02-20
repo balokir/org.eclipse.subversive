@@ -130,7 +130,7 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 			return;
 		}
 		else if (children.size() == 1) {
-			AffectedPathNode nodeChild = (AffectedPathNode)children.get(0);
+			AffectedPathNode nodeChild = children.get(0);
 			if (node.getData() != null && node.getData().length > 0) {
 				this.doCompress(nodeChild);
 				return;

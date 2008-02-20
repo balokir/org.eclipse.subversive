@@ -89,7 +89,7 @@ public class OverrideAndUpdateAction extends AbstractSynchronizeModelAction {
 		
 		CompositeOperation op = new CompositeOperation("Operation.UOverrideAndUpdate");
 
-		boolean detectDeleted = SVNTeamPreferences.getResourceSelectionBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.DETECT_DELETED_PROJECTS_NAME);
+		boolean detectDeleted = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_DETECT_DELETED_PROJECTS_NAME);
 		final IResourceProvider detectOp = detectDeleted ? new DetectDeletedProjectsOperation(resources[0]) : new IResourceProvider() {
 			public IResource[] getResources() {
 				return resources[0];

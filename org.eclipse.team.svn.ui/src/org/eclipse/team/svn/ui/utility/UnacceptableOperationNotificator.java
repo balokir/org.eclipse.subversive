@@ -35,9 +35,6 @@ import org.eclipse.team.svn.ui.panel.local.ResourceListPanel;
  * @author Sergiy Logvin
  */
 public class UnacceptableOperationNotificator {
-	protected static final String PARENT_NOT_ON_REPOSITORY_CONFLICT_DESCRIPTION_MESSAGE = "The parent{0} of the following resource{1} {2} not on the repository. Do you want to continue?";
-	protected static final String PARENT_NOT_ON_REPOSITORY_CONFLICT_DEFAULT_MESSAGE = "The operation will be applied to the parent{0} of {1} resource{2} as well.";
-	
 	public static IResource[] shrinkResourcesWithNotOnRespositoryParents(final Shell shell, IResource []resources) {
 		HashSet resultResources = new HashSet();
 		final Map unsupportedResources = new HashMap();

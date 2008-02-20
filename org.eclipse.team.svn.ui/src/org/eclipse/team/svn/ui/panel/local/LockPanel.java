@@ -56,9 +56,8 @@ public class LockPanel extends CommentPanel {
     	GridData data = null;
     	GridLayout layout = null;
 
-    	layout = new GridLayout();
-		layout.marginHeight = 0;
-		parent.setLayout(layout);
+    	layout = (GridLayout)parent.getLayout();
+    	layout.marginHeight = 3;
 		
     	Group group = new Group(parent, SWT.NULL);
 		group.setLayout(new GridLayout());

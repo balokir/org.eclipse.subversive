@@ -56,7 +56,6 @@ public abstract class AbstractResourceSelectionPanel extends AbstractDialogPanel
     }
     
     public void createControlsImpl(Composite parent) {
-    	this.parent = parent;
     	this.selectionComposite = new ResourceSelectionComposite(parent, SWT.NONE, this.resources, false, this.userSelectedResources);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = 210;

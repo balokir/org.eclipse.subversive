@@ -125,9 +125,12 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		SVNTeamPreferences.setMailReporterBoolean(store, SVNTeamPreferences.MAILREPORTER_ENABLED_NAME, this.mailReporterEnabled);
 		SVNTeamPreferences.setMailReporterBoolean(store, SVNTeamPreferences.MAILREPORTER_ERRORS_ENABLED_NAME, this.mailReporterErrorsEnabled);
 		
-		SVNTeamPreferences.setResourceSelectionBoolean(store, SVNTeamPreferences.DETECT_DELETED_PROJECTS_NAME, this.detectDeletedProjects);
-		SVNTeamPreferences.setResourceSelectionBoolean(store, SVNTeamPreferences.COMMIT_SELECT_NEW_RESOURCES_NAME, this.commitSelectNewResources);
-		SVNTeamPreferences.setResourceSelectionBoolean(store, SVNTeamPreferences.USE_SUBVERSION_EXTERNAL_BEHAVIOUR_NAME, this.useSubversionExternalsBehaviour);
+		SVNTeamPreferences.setBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_DETECT_DELETED_PROJECTS_NAME, this.detectDeletedProjects);
+		SVNTeamPreferences.setBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_COMMIT_SELECT_NEW_RESOURCES_NAME, this.commitSelectNewResources);
+		SVNTeamPreferences.setBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_EXTERNALS_NAME, this.useSubversionExternalsBehaviour);
+		SVNTeamPreferences.setBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_ENABLE_AUTO_SHARE_NAME, this.enableAutoShare);
+		SVNTeamPreferences.setBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_COMPUTE_KEYWORDS_NAME, this.computeKeywordsValues);
+		SVNTeamPreferences.setBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_NAME, this.caseInsensitiveSorting);
 		
 		String oldId = CoreExtensionsManager.instance().getSVNConnectorFactory().getId();
 		if (!oldId.equals(this.svnConnector)) {
@@ -140,13 +143,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		
 		SVNTeamPreferences.setCheckoutBoolean(store, SVNTeamPreferences.CHECKOUT_USE_DOT_PROJECT_NAME, this.checkoutUsingDotProjectName);
 		
-		SVNTeamPreferences.setKeywordsBoolean(store, SVNTeamPreferences.COMPUTE_KEYWORDS_NAME, this.computeKeywordsValues);
-		
-		SVNTeamPreferences.setShareBoolean(store, SVNTeamPreferences.SHARE_ENABLE_AUTO_NAME, this.enableAutoShare);
-		
 		SVNTeamPreferences.setPropertiesBoolean(store, SVNTeamPreferences.PROPERTY_USE_VIEW_NAME, this.usePropertiesView);
-		
-		SVNTeamPreferences.setTableSortingBoolean(store, SVNTeamPreferences.TABLE_SORTING_CASE_INSENSITIVE_NAME, this.caseInsensitiveSorting);
 	}
 	
 	protected void loadDefaultValues(IPreferenceStore store) {
@@ -166,9 +163,9 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.mailReporterEnabled = SVNTeamPreferences.MAILREPORTER_ENABLED_DEFAULT;
 		this.mailReporterErrorsEnabled = SVNTeamPreferences.MAILREPORTER_ERRORS_ENABLED_DEFAULT;
 		
-		this.commitSelectNewResources = SVNTeamPreferences.COMMIT_SELECT_NEW_RESOURCES_DEFAULT;
-		this.detectDeletedProjects = SVNTeamPreferences.DETECT_DELETED_PROJECTS_DEFAULT;
-		this.useSubversionExternalsBehaviour = SVNTeamPreferences.USE_SUBVERSION_EXTERNAL_BEHAVIOUR_DEFAULT;
+		this.commitSelectNewResources = SVNTeamPreferences.BEHAVIOUR_COMMIT_SELECT_NEW_RESOURCES_DEFAULT;
+		this.detectDeletedProjects = SVNTeamPreferences.BEHAVIOUR_DETECT_DELETED_PROJECTS_DEFAULT;
+		this.useSubversionExternalsBehaviour = SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_EXTERNAL_DEFAULT;
 		
 		this.useJavaHLMerge = SVNTeamPreferences.MERGE_USE_JAVAHL_DEFAULT;
 		
@@ -177,11 +174,11 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.branchTagConsiderStructure = SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_DEFAULT;
 		this.forceExternalsFreeze = SVNTeamPreferences.REPOSITORY_FORCE_EXTERNALS_FREEZE_DEFAULT;
 		
-		this.computeKeywordsValues = SVNTeamPreferences.COMPUTE_KEYWORDS_DEFAULT;
+		this.computeKeywordsValues = SVNTeamPreferences.BEHAVIOUR_COMPUTE_KEYWORDS_DEFAULT;
 		
-		this.enableAutoShare = SVNTeamPreferences.SHARE_ENABLE_AUTO_DEFAULT;
+		this.enableAutoShare = SVNTeamPreferences.BEHAVIOUR_ENABLE_AUTO_SHARE_DEFAULT;
 		
-		this.caseInsensitiveSorting = SVNTeamPreferences.TABLE_SORTING_CASE_INSENSITIVE_DEFAULT;
+		this.caseInsensitiveSorting = SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_DEFAULT;
 		
 		this.svnConnector = SVNTeamPreferences.CORE_SVNCONNECTOR_DEFAULT;
 	}
@@ -203,9 +200,12 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.mailReporterEnabled = SVNTeamPreferences.getMailReporterBoolean(store, SVNTeamPreferences.MAILREPORTER_ENABLED_NAME);
 		this.mailReporterErrorsEnabled = SVNTeamPreferences.getMailReporterBoolean(store, SVNTeamPreferences.MAILREPORTER_ERRORS_ENABLED_NAME);
 		
-		this.detectDeletedProjects = SVNTeamPreferences.getResourceSelectionBoolean(store, SVNTeamPreferences.DETECT_DELETED_PROJECTS_NAME);
-		this.commitSelectNewResources = SVNTeamPreferences.getResourceSelectionBoolean(store, SVNTeamPreferences.COMMIT_SELECT_NEW_RESOURCES_NAME);
-		this.useSubversionExternalsBehaviour = SVNTeamPreferences.getResourceSelectionBoolean(store, SVNTeamPreferences.USE_SUBVERSION_EXTERNAL_BEHAVIOUR_NAME);
+		this.detectDeletedProjects = SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_DETECT_DELETED_PROJECTS_NAME);
+		this.commitSelectNewResources = SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_COMMIT_SELECT_NEW_RESOURCES_NAME);
+		this.useSubversionExternalsBehaviour = SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_EXTERNALS_NAME);
+		this.enableAutoShare = SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_ENABLE_AUTO_SHARE_NAME);
+		this.computeKeywordsValues = SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_COMPUTE_KEYWORDS_NAME);
+		this.caseInsensitiveSorting = SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_NAME);
 		
 		this.useJavaHLMerge = SVNTeamPreferences.getMergeBoolean(store, SVNTeamPreferences.MERGE_USE_JAVAHL_NAME);
 		
@@ -213,12 +213,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		
 		this.branchTagConsiderStructure = SVNTeamPreferences.getRepositoryBoolean(store, SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_NAME);
 		this.forceExternalsFreeze = SVNTeamPreferences.getRepositoryBoolean(store, SVNTeamPreferences.REPOSITORY_FORCE_EXTERNALS_FREEZE_NAME);
-		
-		this.computeKeywordsValues = SVNTeamPreferences.getKeywordsBoolean(store, SVNTeamPreferences.COMPUTE_KEYWORDS_NAME);
-		
-		this.enableAutoShare = SVNTeamPreferences.getShareBoolean(store, SVNTeamPreferences.SHARE_ENABLE_AUTO_NAME);
-		
-		this.caseInsensitiveSorting = SVNTeamPreferences.getTableSortingBoolean(store, SVNTeamPreferences.TABLE_SORTING_CASE_INSENSITIVE_NAME);
 		
 		//Client specified in preferences currently may be uninstalled. So, request real used connector instead of saved.
 		this.svnConnector = CoreExtensionsManager.instance().getSVNConnectorFactory().getId();

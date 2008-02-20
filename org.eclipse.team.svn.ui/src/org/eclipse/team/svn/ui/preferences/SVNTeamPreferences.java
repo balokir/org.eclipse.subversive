@@ -36,14 +36,25 @@ public final class SVNTeamPreferences {
 	public static final String MERGE_BASE = "preference.merge.";
 	public static final String CHECKOUT_BASE = "preference.checkout.";
 	public static final String CONSOLE_BASE = "preference.console.";
-	public static final String KEYWORDS_BASE = "preference.keywords.";
-	public static final String SHARE_BASE = "preference.share.";
 	public static final String CORE_BASE = "preference.core.";
 	public static final String ANNOTATE_BASE = "preference.annotate.";
-	public static final String TABLE_SORTING_BASE = "preference.sorting.";
 	public static final String AUTO_PROPERTIES_BASE = "preference.autoproperties";
 	public static final String CUSTOM_PROPERTIES_BASE = "preference.customproperties";
-	public static final String RESOURCE_SELECTION_BASE = "preference.resourceSelection";
+	public static final String BEHAVIOUR_BASE = "preference.";
+	
+	public static final String BEHAVIOUR_DETECT_DELETED_PROJECTS_NAME = "resourceSelection.detectDeleted";
+	public static final String BEHAVIOUR_COMMIT_SELECT_NEW_RESOURCES_NAME = "resourceSelection.selectNew";
+	public static final String BEHAVIOUR_DO_NOT_SELECT_EXTERNALS_NAME = "resourceSelection.treatExternalAsLocal";
+	public static final String BEHAVIOUR_ENABLE_AUTO_SHARE_NAME = "share.enableAuto";
+	public static final String BEHAVIOUR_COMPUTE_KEYWORDS_NAME = "keywords.computeValues";
+	public static final String BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_NAME = "sorting.case.insensitive";
+	
+	public static final boolean BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_DEFAULT = true;
+	public static final boolean BEHAVIOUR_COMPUTE_KEYWORDS_DEFAULT = true;
+	public static final boolean BEHAVIOUR_ENABLE_AUTO_SHARE_DEFAULT = true;
+	public static final boolean BEHAVIOUR_DO_NOT_SELECT_EXTERNAL_DEFAULT = true;
+	public static final boolean BEHAVIOUR_COMMIT_SELECT_NEW_RESOURCES_DEFAULT = true;
+	public static final boolean BEHAVIOUR_DETECT_DELETED_PROJECTS_DEFAULT = true;
 	
 	public static final String ANNOTATE_CHANGE_PERSPECTIVE_NAME = "changePerspective";
 	public static final String ANNOTATE_PERSPECTIVE_NAME = "perspective";
@@ -111,26 +122,6 @@ public final class SVNTeamPreferences {
 	public static final String MERGE_USE_JAVAHL_NAME = "useJavaHL";
 	
 	public static final boolean MERGE_USE_JAVAHL_DEFAULT = false;
-	
-	public static final String SHARE_ENABLE_AUTO_NAME = "enableAuto";
-	
-	public static final boolean SHARE_ENABLE_AUTO_DEFAULT = true;
-	
-	public static final String COMMIT_SELECT_NEW_RESOURCES_NAME = "selectNew";
-	
-	public static final boolean COMMIT_SELECT_NEW_RESOURCES_DEFAULT = true;
-	
-	public static final String USE_SUBVERSION_EXTERNAL_BEHAVIOUR_NAME = "treatExternalAsLocal";
-	
-	public static final boolean USE_SUBVERSION_EXTERNAL_BEHAVIOUR_DEFAULT = true;
-	
-	public static final String DETECT_DELETED_PROJECTS_NAME = "detectDeleted";
-	
-	public static final boolean DETECT_DELETED_PROJECTS_DEFAULT = true;
-	
-	public static final String COMPUTE_KEYWORDS_NAME = "computeValues";
-	
-	public static final boolean COMPUTE_KEYWORDS_DEFAULT = true;
 	
 	public static final String CHECKOUT_USE_DOT_PROJECT_NAME = "useDotProject";
 	
@@ -268,9 +259,6 @@ public final class SVNTeamPreferences {
 	public static final String COMMIT_DIALOG_WEIGHT_NAME = "CommitPanel.weight";
 	public static final int COMMIT_DIALOG_WEIGHT_DEFAULT = 50;
 	
-	public static final String TABLE_SORTING_CASE_INSENSITIVE_NAME = "case.insensitive";
-	public static final boolean TABLE_SORTING_CASE_INSENSITIVE_DEFAULT = true;
-	
 	public static final String AUTO_PROPERTIES_LIST_NAME = "autoproperties";
 	public static final String AUTO_PROPERTIES_LIST_DEFAULT = "";
 	
@@ -286,15 +274,12 @@ public final class SVNTeamPreferences {
 		SVNTeamPreferences.setDefaultHistoryValues(store);
 		SVNTeamPreferences.setDefaultPropertiesValues(store);
 		SVNTeamPreferences.setDefaultCommentTemplatesValues(store);
-		SVNTeamPreferences.setDefaultResourceSelectionValues(store);
+		SVNTeamPreferences.setDefaultBehaviourValues(store);
 		SVNTeamPreferences.setDefaultMergeValues(store);
 		SVNTeamPreferences.setDefaultCheckoutValues(store);
 		SVNTeamPreferences.setDefaultConsoleValues(store);
-		SVNTeamPreferences.setDefaultKeywordsValues(store);
-		SVNTeamPreferences.setDefaultShareValues(store);
 		SVNTeamPreferences.setDefaultCoreValues(store);
 		SVNTeamPreferences.setDefaultAnnotateValues(store);
-		SVNTeamPreferences.setDefaultTableSortingValues(store);
 		SVNTeamPreferences.setDefaultCommitDialogValues(store);
 		SVNTeamPreferences.setDefaultAutoPropertiesValues(store);
 		SVNTeamPreferences.setDefaultCustomPropertiesValues(store);
@@ -310,10 +295,6 @@ public final class SVNTeamPreferences {
 	
 	public static void setDefaultCommitDialogValues(IPreferenceStore store) {
 		store.setDefault(SVNTeamPreferences.COMMIT_DIALOG_WEIGHT_NAME, SVNTeamPreferences.COMMIT_DIALOG_WEIGHT_DEFAULT);
-	}
-	
-	public static void setDefaultTableSortingValues(IPreferenceStore store) {
-		store.setDefault(SVNTeamPreferences.fullTableSortingName(SVNTeamPreferences.TABLE_SORTING_CASE_INSENSITIVE_NAME), SVNTeamPreferences.TABLE_SORTING_CASE_INSENSITIVE_DEFAULT);
 	}
 	
 	public static void setDefaultCheckoutValues(IPreferenceStore store) {
@@ -418,18 +399,13 @@ public final class SVNTeamPreferences {
 		store.setDefault(SVNTeamPreferences.fullAnnotateName(SVNTeamPreferences.ANNOTATE_PERSPECTIVE_NAME), SVNTeamPreferences.ANNOTATE_PERSPECTIVE_DEFAULT);
 	}
 	
-	public static void setDefaultResourceSelectionValues(IPreferenceStore store) {
-		store.setDefault(SVNTeamPreferences.fullResourceSelectionName(SVNTeamPreferences.DETECT_DELETED_PROJECTS_NAME), SVNTeamPreferences.DETECT_DELETED_PROJECTS_DEFAULT);
-		store.setDefault(SVNTeamPreferences.fullResourceSelectionName(SVNTeamPreferences.COMMIT_SELECT_NEW_RESOURCES_NAME), SVNTeamPreferences.COMMIT_SELECT_NEW_RESOURCES_DEFAULT);
-		store.setDefault(SVNTeamPreferences.fullResourceSelectionName(SVNTeamPreferences.USE_SUBVERSION_EXTERNAL_BEHAVIOUR_NAME), SVNTeamPreferences.USE_SUBVERSION_EXTERNAL_BEHAVIOUR_DEFAULT);
-	}
-	
-	public static void setDefaultKeywordsValues(IPreferenceStore store) {
-		store.setDefault(SVNTeamPreferences.fullKeywordsName(SVNTeamPreferences.COMPUTE_KEYWORDS_NAME), SVNTeamPreferences.COMPUTE_KEYWORDS_DEFAULT);
-	}
-	
-	public static void setDefaultShareValues(IPreferenceStore store) {
-		store.setDefault(SVNTeamPreferences.fullShareName(SVNTeamPreferences.SHARE_ENABLE_AUTO_NAME), SVNTeamPreferences.SHARE_ENABLE_AUTO_DEFAULT);
+	public static void setDefaultBehaviourValues(IPreferenceStore store) {
+		store.setDefault(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_DETECT_DELETED_PROJECTS_NAME), SVNTeamPreferences.BEHAVIOUR_DETECT_DELETED_PROJECTS_DEFAULT);
+		store.setDefault(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_COMMIT_SELECT_NEW_RESOURCES_NAME), SVNTeamPreferences.BEHAVIOUR_COMMIT_SELECT_NEW_RESOURCES_DEFAULT);
+		store.setDefault(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_EXTERNALS_NAME), SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_EXTERNAL_DEFAULT);
+		store.setDefault(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_ENABLE_AUTO_SHARE_NAME), SVNTeamPreferences.BEHAVIOUR_ENABLE_AUTO_SHARE_DEFAULT);
+		store.setDefault(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_COMPUTE_KEYWORDS_NAME), SVNTeamPreferences.BEHAVIOUR_COMPUTE_KEYWORDS_DEFAULT);
+		store.setDefault(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_NAME), SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_DEFAULT);
 	}
 	
 	public static void setDefaultCoreValues(IPreferenceStore store) {
@@ -442,10 +418,6 @@ public final class SVNTeamPreferences {
 	
 	public static void resetToDefaultCustomoPropsValues(IPreferenceStore store) {
 		store.setValue(SVNTeamPreferences.fullCustomPropertiesName(SVNTeamPreferences.CUSTOM_PROPERTIES_LIST_NAME), SVNTeamPreferences.AUTO_PROPERTIES_LIST_DEFAULT);
-	}
-	
-	public static void resetToDefaultTableSortingValues(IPreferenceStore store) {
-		store.setValue(SVNTeamPreferences.fullTableSortingName(SVNTeamPreferences.TABLE_SORTING_CASE_INSENSITIVE_NAME), SVNTeamPreferences.TABLE_SORTING_CASE_INSENSITIVE_DEFAULT);
 	}
 	
 	public static void resetToDefaultCoreValues(IPreferenceStore store) {
@@ -477,14 +449,13 @@ public final class SVNTeamPreferences {
 		store.setValue(SVNTeamPreferences.fullMergeName(SVNTeamPreferences.MERGE_USE_JAVAHL_NAME), SVNTeamPreferences.MERGE_USE_JAVAHL_DEFAULT);
 	}
 	
-	public static void resetToDefaultResourceSelectionValues(IPreferenceStore store) {
-		store.setValue(SVNTeamPreferences.fullResourceSelectionName(SVNTeamPreferences.DETECT_DELETED_PROJECTS_NAME), SVNTeamPreferences.DETECT_DELETED_PROJECTS_DEFAULT);
-		store.setValue(SVNTeamPreferences.fullResourceSelectionName(SVNTeamPreferences.COMMIT_SELECT_NEW_RESOURCES_NAME), SVNTeamPreferences.COMMIT_SELECT_NEW_RESOURCES_DEFAULT);
-		store.setValue(SVNTeamPreferences.fullResourceSelectionName(SVNTeamPreferences.USE_SUBVERSION_EXTERNAL_BEHAVIOUR_NAME), SVNTeamPreferences.USE_SUBVERSION_EXTERNAL_BEHAVIOUR_DEFAULT);
-	}
-	
-	public static void resetToDefaultKeywordsValues(IPreferenceStore store) {
-		store.setValue(SVNTeamPreferences.fullKeywordsName(SVNTeamPreferences.COMPUTE_KEYWORDS_NAME), SVNTeamPreferences.COMPUTE_KEYWORDS_DEFAULT);
+	public static void resetToDefaultBehaviourValues(IPreferenceStore store) {
+		store.setValue(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_DETECT_DELETED_PROJECTS_NAME), SVNTeamPreferences.BEHAVIOUR_DETECT_DELETED_PROJECTS_DEFAULT);
+		store.setValue(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_COMMIT_SELECT_NEW_RESOURCES_NAME), SVNTeamPreferences.BEHAVIOUR_COMMIT_SELECT_NEW_RESOURCES_DEFAULT);
+		store.setValue(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_EXTERNALS_NAME), SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_EXTERNAL_DEFAULT);
+		store.setValue(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_ENABLE_AUTO_SHARE_NAME), SVNTeamPreferences.BEHAVIOUR_ENABLE_AUTO_SHARE_DEFAULT);
+		store.setValue(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_COMPUTE_KEYWORDS_NAME), SVNTeamPreferences.BEHAVIOUR_COMPUTE_KEYWORDS_DEFAULT);
+		store.setValue(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_NAME), SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_DEFAULT);
 	}
 	
 	public static void resetToDefaultSynchronizeValues(IPreferenceStore store) {
@@ -563,16 +534,8 @@ public final class SVNTeamPreferences {
 		store.setValue(SVNTeamPreferences.fullAnnotateName(SVNTeamPreferences.ANNOTATE_PERSPECTIVE_NAME), SVNTeamPreferences.ANNOTATE_PERSPECTIVE_DEFAULT);
 	}
 	
-	public static void resetToDefaultShareValues(IPreferenceStore store) {
-		store.setValue(SVNTeamPreferences.fullShareName(SVNTeamPreferences.SHARE_ENABLE_AUTO_NAME), SVNTeamPreferences.SHARE_ENABLE_AUTO_DEFAULT);
-	}
-	
 	public static int getDialogInt(IPreferenceStore store, String name) {
 		return store.getInt(name);
-	}
-	
-	public static boolean getTableSortingBoolean(IPreferenceStore store, String shortName) {
-		return store.getBoolean(SVNTeamPreferences.fullTableSortingName(shortName));
 	}
 	
 	public static boolean getCheckoutBoolean(IPreferenceStore store, String shortName) {
@@ -611,12 +574,8 @@ public final class SVNTeamPreferences {
 		return store.getBoolean(SVNTeamPreferences.fullHistoryName(shortName));
 	}
 	
-	public static boolean getResourceSelectionBoolean(IPreferenceStore store, String shortName) {
-		return store.getBoolean(SVNTeamPreferences.fullResourceSelectionName(shortName));
-	}
-	
-	public static boolean getKeywordsBoolean(IPreferenceStore store, String shortName) {
-		return store.getBoolean(SVNTeamPreferences.fullKeywordsName(shortName));
+	public static boolean getBehaviourBoolean(IPreferenceStore store, String shortName) {
+		return store.getBoolean(SVNTeamPreferences.fullBehaviourName(shortName));
 	}
 	
 	public static boolean getDecorationBoolean(IPreferenceStore store, String shortName) {
@@ -645,10 +604,6 @@ public final class SVNTeamPreferences {
 	
 	public static void setDialogInt(IPreferenceStore store, String name, int value) {
 		store.setValue(name, value);
-	}
-	
-	public static void setTableSortingBoolean(IPreferenceStore store, String shortName, boolean value) {
-		store.setValue(SVNTeamPreferences.fullTableSortingName(shortName), value);
 	}
 	
 	public static void setCheckoutBoolean(IPreferenceStore store, String shortName, boolean value) {
@@ -687,12 +642,8 @@ public final class SVNTeamPreferences {
 		store.setValue(SVNTeamPreferences.fullHistoryName(shortName), value);
 	}
 	
-	public static void setResourceSelectionBoolean(IPreferenceStore store, String shortName, boolean value) {
-		store.setValue(SVNTeamPreferences.fullResourceSelectionName(shortName), value);
-	}
-	
-	public static void setKeywordsBoolean(IPreferenceStore store, String shortName, boolean value) {
-		store.setValue(SVNTeamPreferences.fullKeywordsName(shortName), value);
+	public static void setBehaviourBoolean(IPreferenceStore store, String shortName, boolean value) {
+		store.setValue(SVNTeamPreferences.fullBehaviourName(shortName), value);
 	}
 	
 	public static void setHistoryInt(IPreferenceStore store, String shortName, int value) {
@@ -751,14 +702,6 @@ public final class SVNTeamPreferences {
 		store.setValue(SVNTeamPreferences.fullConsoleName(shortName), value);
 	}
 	
-	public static boolean getShareBoolean(IPreferenceStore store, String shortName) {
-		return store.getBoolean(SVNTeamPreferences.fullShareName(shortName));
-	}
-	
-	public static void setShareBoolean(IPreferenceStore store, String shortName, boolean value) {
-		store.setValue(SVNTeamPreferences.fullShareName(shortName), value);
-	}
-	
 	public static String getCoreString(IPreferenceStore store, String shortName) {
 		return store.getString(SVNTeamPreferences.fullCoreName(shortName));
 	}
@@ -803,10 +746,6 @@ public final class SVNTeamPreferences {
 		return SVNTeamPreferences.COMMIT_DIALOG_BASE + shortName;
 	}
 	
-	public static String fullTableSortingName(String shortName) {
-		return SVNTeamPreferences.TABLE_SORTING_BASE + shortName;
-	}
-	
 	public static String fullCheckoutName(String shortName) {
 		return SVNTeamPreferences.CHECKOUT_BASE + shortName;
 	}
@@ -835,8 +774,8 @@ public final class SVNTeamPreferences {
 		return SVNTeamPreferences.HISTORY_BASE + shortName;
 	}
 	
-	public static String fullResourceSelectionName(String shortName) {
-		return SVNTeamPreferences.RESOURCE_SELECTION_BASE + shortName;
+	public static String fullBehaviourName(String shortName) {
+		return SVNTeamPreferences.BEHAVIOUR_BASE + shortName;
 	}
 	
 	public static String fullMailReporterName(String shortName) {
@@ -851,16 +790,8 @@ public final class SVNTeamPreferences {
 		return SVNTeamPreferences.COMMENT_TEMPLATES_BASE + shortName;
 	}
 	
-	public static String fullKeywordsName(String shortName) {
-		return SVNTeamPreferences.KEYWORDS_BASE + shortName;
-	}
-	
 	public static String fullConsoleName(String shortName) {
 		return SVNTeamPreferences.CONSOLE_BASE + shortName;
-	}
-	
-	public static String fullShareName(String shortName) {
-		return SVNTeamPreferences.SHARE_BASE + shortName;
 	}
 	
 	public static String fullCoreName(String shortName) {

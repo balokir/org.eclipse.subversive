@@ -68,6 +68,10 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFolder;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IReusableEditor;
+import org.eclipse.ui.IWorkbenchPage;
 
 /**
  * Compare editor input for the versioned trees
@@ -82,8 +86,39 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 	protected IRepositoryResource rootAncestor;
 	protected IRepositoryResource rootRight;
 	
+	protected String forceId;
+
+	public static void openCompareEditor(ResourceCompareInput compare, boolean forceReuse) {
+		IWorkbenchPage page = UIMonitorUtility.getActivePage();
+		IEditorReference []editorRefs = page.getEditorReferences();	
+		for (int i = 0; i < editorRefs.length; i++) {
+			IEditorPart part = editorRefs[i].getEditor(false);
+			if (part instanceof IReusableEditor && !part.isDirty() && compare.getClass().equals(part.getEditorInput().getClass())) {
+				ResourceCompareInput existing = (ResourceCompareInput)part.getEditorInput();
+				if (compare.equals(existing)) {
+					page.activate(part);
+					return;
+				}
+				else if (forceReuse || existing.getForceId() != null && existing.getForceId().equals(compare.getForceId())) {
+					CompareUI.reuseCompareEditor(compare, (IReusableEditor)part);
+					page.activate(part);
+					return;
+				}
+			}
+		}
+		CompareUI.openCompareEditor(compare);
+	}
+	
 	public ResourceCompareInput(CompareConfiguration configuration) {
 		super(configuration);
+	}
+	
+	public void setForceId(String forceId) {
+		this.forceId = forceId;
+	}
+
+	public String getForceId() {
+		return this.forceId;
 	}
 
 	public void initialize(IProgressMonitor monitor) throws Exception {
@@ -92,6 +127,14 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 	
 	public final Viewer createDiffViewer(Composite parent) {
 		return this.viewer = this.createDiffViewerImpl(parent, this.getCompareConfiguration());
+	}
+	
+	public boolean equals(Object obj) {
+		if (obj != null && obj.getClass().equals(this.getClass())) {
+			ResourceCompareInput other = (ResourceCompareInput)obj;
+			return this.rootLeft.equals(other.rootLeft) && this.rootRight.equals(other.rootRight) && (this.rootAncestor == other.rootAncestor || this.rootAncestor != null && this.rootAncestor.equals(other.rootAncestor));
+		}
+		return false;
 	}
 	
 	protected ResourceCompareViewer createDiffViewerImpl(Composite parent, CompareConfiguration config) {

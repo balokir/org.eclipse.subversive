@@ -74,14 +74,16 @@ public class LocateResourceURLInHistoryOperation extends AbstractRepositoryOpera
 	protected IRepositoryResource processEntry(IRepositoryResource current, IProgressMonitor monitor) throws Exception {
 		IRepositoryLocation location = current.getRepositoryLocation();
 		ISVNConnector proxy = location.acquireSVNProxy();
+		SVNLogEntry []msgs;
+		int index = 0;
 		try {
-			SVNLogEntry []msgs;
-			int index = 0;
-			if (current.exists()) {
-				msgs = GetLogMessagesOperation.getMessagesImpl(proxy, current, SVNRevision.fromNumber(0), current.getPegRevision(), ISVNConnector.EMPTY_LOG_ENTRY_PROPS, 1, true, this, monitor);
+			IRepositoryResource pegNode = SVNUtility.copyOf(current);
+			pegNode.setSelectedRevision(pegNode.getPegRevision());
+			if (pegNode.exists()) {
+				msgs = GetLogMessagesOperation.getMessagesImpl(proxy, pegNode, SVNRevision.fromNumber(0), pegNode.getPegRevision(), ISVNConnector.EMPTY_LOG_ENTRY_PROPS, 1, true, this, monitor);
 			}
 			else {
-				msgs = GetLogMessagesOperation.getMessagesImpl(proxy, current.getParent(), SVNRevision.fromNumber(0), current.getPegRevision(), ISVNConnector.EMPTY_LOG_ENTRY_PROPS, 1, true, this, monitor);
+				msgs = GetLogMessagesOperation.getMessagesImpl(proxy, pegNode.getParent(), SVNRevision.fromNumber(0), pegNode.getPegRevision(), ISVNConnector.EMPTY_LOG_ENTRY_PROPS, 1, true, this, monitor);
 				if (msgs != null) {
 					for (int j = 0; j < msgs.length; j++) {
 						SVNLogPath []paths = msgs[j].changedPaths;
@@ -96,42 +98,46 @@ public class LocateResourceURLInHistoryOperation extends AbstractRepositoryOpera
 					}
 				}
 			}
-			if (msgs != null && msgs.length > index && msgs[index] != null) {
-				SVNLogPath []paths = msgs[index].changedPaths;
-				if (paths == null) {
-					return current;
-				}
-				Path pattern = new Path(current.getUrl().substring(location.getRepositoryRootUrl().length()));
-				int idx = -1;
-				for (int i = 0; i < paths.length; i++) {
-					if (new Path(paths[i].path).isPrefixOf(pattern) && paths[i].copiedFromPath != null) {
-						idx = i;
-						break;
-					}
-				}
-				if (idx == -1) {
-					return current;
-				}
-				String copiedFrom = location.getRepositoryRootUrl() + paths[idx].copiedFromPath + pattern.toString().substring(paths[idx].path.length());
-				
-				long rev = paths[idx].copiedFromRevision;
-				SVNRevision searchRevision = current.getSelectedRevision();
-				long searchRev = ((SVNRevision.Number)searchRevision).getNumber();
-				if (rev < searchRev) {
-					return current;
-				}
-				
-				SVNRevision revison = SVNRevision.fromNumber(rev);
-				IRepositoryResource retVal = current instanceof IRepositoryFile ? (IRepositoryResource)location.asRepositoryFile(copiedFrom, false) : location.asRepositoryContainer(copiedFrom, false);
-				retVal.setPegRevision(revison);
-				retVal.setSelectedRevision(searchRevision);
-				return this.processEntry(retVal, monitor);
-			}
-			return current;
 		}
 		finally {
 			location.releaseSVNProxy(proxy);
 		}
+		if (msgs != null && msgs.length > index && msgs[index] != null) {
+			SVNLogPath []paths = msgs[index].changedPaths;
+			if (paths == null) {
+				return current;
+			}
+			Path pattern = new Path(current.getUrl().substring(location.getRepositoryRootUrl().length()));
+			int idx = -1;
+			int prefLen = 0;
+			for (int i = 0; i < paths.length; i++) {
+				Path path = new Path(paths[i].path);
+				int tLen = path.segmentCount();
+				if (path.isPrefixOf(pattern) && paths[i].copiedFromPath != null && tLen > prefLen) {
+					idx = i;
+				}
+			}
+			if (idx == -1) {
+				return current;
+			}
+			String copiedFrom = location.getRepositoryRootUrl() + paths[idx].copiedFromPath + pattern.toString().substring(paths[idx].path.length());
+			
+			long rev = paths[idx].copiedFromRevision;
+			SVNRevision searchRevision = current.getSelectedRevision();
+			long searchRev = ((SVNRevision.Number)searchRevision).getNumber();
+			if (rev < searchRev) {
+				if (msgs[index].revision <= searchRev) {
+					return current;
+				}
+				searchRevision = SVNRevision.fromNumber(rev);
+			}
+			
+			IRepositoryResource retVal = current instanceof IRepositoryFile ? (IRepositoryResource)location.asRepositoryFile(copiedFrom, false) : location.asRepositoryContainer(copiedFrom, false);
+			retVal.setPegRevision(SVNRevision.fromNumber(rev));
+			retVal.setSelectedRevision(searchRevision);
+			return rev <= searchRev ? retVal : this.processEntry(retVal, monitor);
+		}
+		return current;
 	}
 
 }

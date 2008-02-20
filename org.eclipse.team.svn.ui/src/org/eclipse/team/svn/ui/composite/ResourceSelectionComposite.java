@@ -426,7 +426,7 @@ public class ResourceSelectionComposite extends Composite {
 	
 	public void refreshSelection() {
 		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
-		boolean isSelectNewResources = SVNTeamPreferences.getResourceSelectionBoolean(store, SVNTeamPreferences.COMMIT_SELECT_NEW_RESOURCES_NAME);
+		boolean isSelectNewResources = SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_COMMIT_SELECT_NEW_RESOURCES_NAME);
 		if (this.deselectNewl && !isSelectNewResources) {
 			Object []elements = this.tableViewer.getCheckedElements();
 			for (int i = 0; i < elements.length; i++) {
@@ -466,7 +466,7 @@ public class ResourceSelectionComposite extends Composite {
 		}
 		
 		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
-		if (!SVNTeamPreferences.getResourceSelectionBoolean(store, SVNTeamPreferences.USE_SUBVERSION_EXTERNAL_BEHAVIOUR_NAME)) {
+		if (!SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_EXTERNALS_NAME)) {
 			return true;
 		}
 

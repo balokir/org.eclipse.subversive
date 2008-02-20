@@ -75,7 +75,7 @@ public class UpdateAction extends AbstractRecursiveTeamAction {
 	}
 
 	public static CompositeOperation getUpdateOperation(Shell shell, IResource []updateSet) {
-		if (SVNTeamPreferences.getResourceSelectionBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.DETECT_DELETED_PROJECTS_NAME)) {
+		if (SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_DETECT_DELETED_PROJECTS_NAME)) {
 			final DetectDeletedProjectsOperation detectOp = new DetectDeletedProjectsOperation(updateSet);
 			final UpdateOperation mainOp = new UpdateOperation(detectOp, true);
 			

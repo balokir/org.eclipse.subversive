@@ -46,7 +46,7 @@ public class UIOptionProvider implements IOptionProvider {
 	}
 	
 	public boolean isAutomaticProjectShareEnabled() {
-		return SVNTeamPreferences.getShareBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.SHARE_ENABLE_AUTO_NAME);
+		return SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_ENABLE_AUTO_SHARE_NAME);
 	}
 	
 	public FileModificationValidator getFileModificationValidator() {

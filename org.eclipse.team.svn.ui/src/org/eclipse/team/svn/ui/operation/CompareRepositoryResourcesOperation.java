@@ -15,7 +15,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 
 import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.compare.CompareUI;
 import org.eclipse.compare.internal.CompareEditor;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
@@ -31,6 +30,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
+import org.eclipse.team.svn.ui.compare.ResourceCompareInput;
 import org.eclipse.team.svn.ui.compare.TwoWayResourceCompareInput;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
@@ -43,16 +43,36 @@ public class CompareRepositoryResourcesOperation extends AbstractActionOperation
 	protected IRepositoryResource next;
 	protected IRepositoryResource prev;
 	protected IRepositoryResourceProvider provider;
+	protected boolean forceReuse;
+	protected String forceId;
 
 	public CompareRepositoryResourcesOperation(IRepositoryResource prev, IRepositoryResource next) {
+		this(prev, next, false);
+	}
+	
+	public CompareRepositoryResourcesOperation(IRepositoryResource prev, IRepositoryResource next, boolean forceReuse) {
 		super("Operation.CompareRepository");
 		this.prev = prev;
 		this.next = next;
+		this.forceReuse = forceReuse;
 	}
 	
 	public CompareRepositoryResourcesOperation(IRepositoryResourceProvider provider) {
-		this(null, null);
+		this(null, null, false);
 		this.provider = provider;
+	}
+
+	public CompareRepositoryResourcesOperation(IRepositoryResourceProvider provider, boolean forceReuse) {
+		this(null, null, forceReuse);
+		this.provider = provider;
+	}
+
+	public void setForceId(String forceId) {
+		this.forceId = forceId;
+	}
+
+	public String getForceId() {
+		return this.forceId;
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
@@ -96,10 +116,11 @@ public class CompareRepositoryResourcesOperation extends AbstractActionOperation
 					CompareConfiguration cc = new CompareConfiguration();
 					cc.setProperty(CompareEditor.CONFIRM_SAVE_PROPERTY, Boolean.FALSE);
 					final TwoWayResourceCompareInput compare = new TwoWayResourceCompareInput(cc, CompareRepositoryResourcesOperation.this.next, CompareRepositoryResourcesOperation.this.prev, statuses);
+					compare.setForceId(CompareRepositoryResourcesOperation.this.forceId);
 					compare.initialize(monitor);
 					UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 						public void run() {
-							CompareUI.openCompareEditor(compare);
+							ResourceCompareInput.openCompareEditor(compare, CompareRepositoryResourcesOperation.this.forceReuse);
 						}
 					});
 				}

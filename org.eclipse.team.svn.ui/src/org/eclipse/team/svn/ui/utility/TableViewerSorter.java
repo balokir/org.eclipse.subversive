@@ -60,11 +60,11 @@ public class TableViewerSorter extends ViewerSorter implements SelectionListener
         this.order = new ArrayList();
         this.enabledColumns = -1L;
         final IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
-        TableViewerSorter.CASE_INSENSITIVE = SVNTeamPreferences.getTableSortingBoolean(store, SVNTeamPreferences.TABLE_SORTING_CASE_INSENSITIVE_NAME);
+        TableViewerSorter.CASE_INSENSITIVE = SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_NAME);
         this.configurationListener = new IPropertyChangeListener() {
         	public void propertyChange(PropertyChangeEvent event) {
-        		if (event.getProperty().equals(SVNTeamPreferences.fullTableSortingName(SVNTeamPreferences.TABLE_SORTING_CASE_INSENSITIVE_NAME))) {
-        			TableViewerSorter.CASE_INSENSITIVE = SVNTeamPreferences.getTableSortingBoolean(store, SVNTeamPreferences.TABLE_SORTING_CASE_INSENSITIVE_NAME);
+        		if (event.getProperty().equals(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_NAME))) {
+        			TableViewerSorter.CASE_INSENSITIVE = SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_NAME);
         			if (!TableViewerSorter.this.basedOn.getControl().isDisposed()) {
         				TableViewerSorter.this.basedOn.refresh();
         			}

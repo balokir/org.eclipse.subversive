@@ -63,7 +63,7 @@ public class RepositoryBrowserLabelProvider implements ITableLabelProvider {
 				iDescr = ((RepositoryFictiveNode)element).getImageDescriptor(null);
 			}
 			if (iDescr != null) {
-				Image img = (Image)this.images.get(iDescr);
+				Image img = this.images.get(iDescr);
 				if (img == null) {
 					this.images.put(iDescr, img = iDescr.createImage());
 				}

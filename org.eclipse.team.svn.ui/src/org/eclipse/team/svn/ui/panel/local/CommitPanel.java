@@ -154,7 +154,6 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 	}
     
 	public void createControlsImpl(Composite parent) {
-		this.parent = parent;
     	GridData data = null;
     	GridLayout layout = null;
 
@@ -499,7 +498,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 						if (local != null) {
 							IRepositoryResource remote = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
 							remote.setSelectedRevision(SVNRevision.BASE);
-							UIMonitorUtility.doTaskScheduledDefault(new CompareResourcesOperation(local, remote, true));
+							UIMonitorUtility.doTaskScheduledDefault(new CompareResourcesOperation(local, remote, false, true));
 						}
 					}
 				});
@@ -511,7 +510,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 						if (local != null) {
 							IRepositoryResource remote = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
 							remote.setSelectedRevision(SVNRevision.HEAD);
-							UIMonitorUtility.doTaskScheduledDefault(new CompareResourcesOperation(local, remote, true));
+							UIMonitorUtility.doTaskScheduledDefault(new CompareResourcesOperation(local, remote, false, true));
 						}
 					}
 				});
@@ -528,7 +527,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 							DefaultDialog dlg = new DefaultDialog(UIMonitorUtility.getShell(), panel);
 							if (dlg.open() == 0) {
 								remote = panel.getSelectedResource();
-								UIMonitorUtility.doTaskScheduledDefault(new CompareResourcesOperation(local, remote, true));
+								UIMonitorUtility.doTaskScheduledDefault(new CompareResourcesOperation(local, remote, false, true));
 							}
 						}
 					}

@@ -103,12 +103,11 @@ public class EditCustomPropertiesPanel extends AbstractDialogPanel {
 		propDescriptionLabel.setText(SVNTeamUIPlugin.instance().getResource("EditCustomPropertiesPanel.PropDescription"));
 		layoutData = new GridData();
 		propDescriptionLabel.setLayoutData(layoutData);
-        this.propDescription = SpellcheckedTextProvider.getTextWidget(optional, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.WRAP);
-		this.propDescription.setText((this.property == null) ? "" : this.property.descriprion);
 		layoutData = new GridData(GridData.FILL_BOTH);
 		layoutData.heightHint = 80;
 		layoutData.widthHint = 0;
-		this.propDescription.setLayoutData(layoutData);
+        this.propDescription = SpellcheckedTextProvider.getTextWidget(optional, layoutData, SWT.MULTI | SWT.V_SCROLL | SWT.WRAP);
+		this.propDescription.setText((this.property == null) ? "" : this.property.descriprion);
 	}
 	
 	public SVNTeamPropsPreferencePage.CustomProperty getProperty() {

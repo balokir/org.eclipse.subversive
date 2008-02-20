@@ -531,13 +531,12 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 		
 		this.createCustompropTable(composite);
 		this.createCustompropButtons(composite);
-        this.customPropDescription = SpellcheckedTextProvider.getTextWidget(composite, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.WRAP);
+		
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.heightHint = 80;
 		data.widthHint = 0;
-		this.customPropDescription.setLayoutData(data);
+        this.customPropDescription = SpellcheckedTextProvider.getTextWidget(composite, data, SWT.MULTI | SWT.V_SCROLL | SWT.WRAP);
 		this.customPropDescription.setText(SVNTeamUIPlugin.instance().getResource("CustomPropsPreferencePage.description"));
-		this.customPropDescription.setBackground(this.customPropDescription.getBackground());
 		this.customPropDescription.setEditable(false);
 		
 		this.custompropTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
