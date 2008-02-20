@@ -22,6 +22,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
@@ -37,14 +39,28 @@ import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
  */
 public class SpellcheckedTextProvider {
 	
-	public static StyledText getTextWidget(Composite parent, int style) {
-		return SpellcheckedTextProvider.getTextWidget(parent, style, 0);
+	public static StyledText getTextWidget(Composite parent, Object layoutData, int style) {
+		return SpellcheckedTextProvider.getTextWidget(parent, style, layoutData, 0);
 	}
 	
-	public static StyledText getTextWidget(Composite parent, int style, int widthMarker){
+	public static StyledText getTextWidget(Composite parent, int style, Object layoutData, int widthMarker) {
+        Composite offset = new Composite(parent, SWT.BORDER);
+        GridLayout layout = new GridLayout();
+        layout.marginHeight = 0;
+        layout.marginWidth = 0;
+        layout.marginRight = 0;
+        layout.marginLeft = 4;
+        layout.horizontalSpacing = 0;
+        offset.setLayout(layout);
+        offset.setLayoutData(layoutData);
+        
+        SourceViewer sourceViewer = new SourceViewer(offset, null, null, true, style & ~SWT.BORDER);
+        GridData data = new GridData(GridData.FILL_BOTH);
+        sourceViewer.getTextWidget().setLayoutData(data);
+        offset.setBackground(sourceViewer.getTextWidget().getBackground());
+        
 		AnnotationModel annotationModel = new AnnotationModel();
         IAnnotationAccess annotationAccess = new DefaultMarkerAnnotationAccess();
-        SourceViewer sourceViewer = new SourceViewer(parent, null, null, true, style);
         final SourceViewerDecorationSupport support = new SourceViewerDecorationSupport(sourceViewer, null, annotationAccess, EditorsUI.getSharedTextColors());
 		Iterator e= new MarkerAnnotationPreferences().getAnnotationPreferences().iterator();
 		while (e.hasNext()) {

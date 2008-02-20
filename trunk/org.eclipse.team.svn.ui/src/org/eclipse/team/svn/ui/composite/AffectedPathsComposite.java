@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -401,7 +400,6 @@ public class AffectedPathsComposite extends Composite {
 	}
 	
 	protected class GetSelectedTreeResource extends AbstractActionOperation implements IRepositoryResourceProvider {
-		
 		protected IRepositoryResource repositoryResource;
 		protected long currentRevision;
 		protected Object affectedPathsItem;
@@ -424,9 +422,6 @@ public class AffectedPathsComposite extends Composite {
 			//FIXME check peg revision
 			this.returnResource.setSelectedRevision(SVNRevision.fromNumber(this.currentRevision));
 			this.returnResource.setPegRevision(SVNRevision.fromNumber(this.currentRevision));
-		}		
-		public ISchedulingRule getSchedulingRule() {
-			return null;
 		}
 		public IRepositoryResource[] getRepositoryResources() {
 			return new IRepositoryResource[] {this.returnResource};
@@ -441,7 +436,7 @@ public class AffectedPathsComposite extends Composite {
 				if (selection instanceof IStructuredSelection) {
 					IStructuredSelection structured = (IStructuredSelection)selection;
 					if (structured.size() == 1) {
-						AffectedPathsComposite.this.openRemoteResource(structured, OpenRemoteFileOperation.OPEN_DEFAULT, null);
+						AffectedPathsComposite.this.openRemoteResource((SVNChangedPathData)structured.getFirstElement(), OpenRemoteFileOperation.OPEN_DEFAULT, null);
 					}
 				}
 			}
@@ -453,25 +448,21 @@ public class AffectedPathsComposite extends Composite {
 		Menu menu = menuMgr.createContextMenu(this.tableViewer.getTable());
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
-				boolean enabled = false;
 				manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 				final IStructuredSelection affectedTableSelection = (IStructuredSelection)AffectedPathsComposite.this.tableViewer.getSelection();
 				if (affectedTableSelection.size() == 0) {
 					return;
 				}
-				if (affectedTableSelection.size() == 1) {
-					String status = ((String [])affectedTableSelection.getFirstElement())[0];
-					enabled = status.charAt(0) == SVNLogPath.ChangeType.MODIFIED;
-				}
+				final SVNChangedPathData firstData = (SVNChangedPathData)affectedTableSelection.getFirstElement();
 				Action tAction = null;
 				
 				IEditorRegistry editorRegistry = SVNTeamUIPlugin.instance().getWorkbench().getEditorRegistry();
 				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.Open")) {
 					public void run() {
-						AffectedPathsComposite.this.openRemoteResource(affectedTableSelection, OpenRemoteFileOperation.OPEN_DEFAULT, null);
+						AffectedPathsComposite.this.openRemoteResource(firstData, OpenRemoteFileOperation.OPEN_DEFAULT, null);
 					}
 				});
-				String name = ((String [])affectedTableSelection.getFirstElement())[1];
+				String name = firstData.resourceName;
 				tAction.setImageDescriptor(editorRegistry.getImageDescriptor(name));
 				tAction.setEnabled(affectedTableSelection.size() == 1);
 				
@@ -487,7 +478,7 @@ public class AffectedPathsComposite extends Composite {
     				if (!id.equals(EditorsUI.DEFAULT_TEXT_EDITOR_ID)) {
     					sub.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource(editors[i].getLabel())) {
     						public void run() {
-    							AffectedPathsComposite.this.openRemoteResource(affectedTableSelection, OpenRemoteFileOperation.OPEN_SPECIFIED, id);
+    							AffectedPathsComposite.this.openRemoteResource(firstData, OpenRemoteFileOperation.OPEN_SPECIFIED, id);
     						}
     					});
     					tAction.setImageDescriptor(editors[i].getImageDescriptor());
@@ -499,7 +490,7 @@ public class AffectedPathsComposite extends Composite {
 				IEditorDescriptor descriptor = null;
 				sub.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.TextEditor")) {
 					public void run() {
-						AffectedPathsComposite.this.openRemoteResource(affectedTableSelection, OpenRemoteFileOperation.OPEN_SPECIFIED, EditorsUI.DEFAULT_TEXT_EDITOR_ID);
+						AffectedPathsComposite.this.openRemoteResource(firstData, OpenRemoteFileOperation.OPEN_SPECIFIED, EditorsUI.DEFAULT_TEXT_EDITOR_ID);
 					}
 				});
 				descriptor = editorRegistry.findEditor(EditorsUI.DEFAULT_TEXT_EDITOR_ID);
@@ -507,7 +498,7 @@ public class AffectedPathsComposite extends Composite {
 				tAction.setEnabled(affectedTableSelection.size() == 1);
 				sub.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.SystemEditor")) {
 					public void run() {
-						AffectedPathsComposite.this.openRemoteResource(affectedTableSelection, OpenRemoteFileOperation.OPEN_EXTERNAL, null);
+						AffectedPathsComposite.this.openRemoteResource(firstData, OpenRemoteFileOperation.OPEN_EXTERNAL, null);
 					}
 				});
 				if (editorRegistry.isSystemExternalEditorAvailable(name)) {
@@ -519,7 +510,7 @@ public class AffectedPathsComposite extends Composite {
 				}
 				sub.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.InplaceEditor")) {
 					public void run() {
-						AffectedPathsComposite.this.openRemoteResource(affectedTableSelection, OpenRemoteFileOperation.OPEN_INPLACE, null);
+						AffectedPathsComposite.this.openRemoteResource(firstData, OpenRemoteFileOperation.OPEN_INPLACE, null);
 					}
 				});
 				if (editorRegistry.isSystemInPlaceEditorAvailable(name)) {
@@ -531,7 +522,7 @@ public class AffectedPathsComposite extends Composite {
 				}
 				sub.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.DefaultEditor")) {
 					public void run() {
-						AffectedPathsComposite.this.openRemoteResource(affectedTableSelection, OpenRemoteFileOperation.OPEN_DEFAULT, null);
+						AffectedPathsComposite.this.openRemoteResource(firstData, OpenRemoteFileOperation.OPEN_DEFAULT, null);
 					}
 				});
 				tAction.setImageDescriptor(editorRegistry.getImageDescriptor(name));
@@ -540,24 +531,30 @@ public class AffectedPathsComposite extends Composite {
 	        	manager.add(sub);
 	        	manager.add(new Separator());
 	        	
+				boolean isPreviousExists = false;
+				if (affectedTableSelection.size() == 1) {
+					//FIXME copied resources also must be handled
+//					isPreviousExists = !(firstData.action == SVNLogPath.ChangeType.ADDED && firstData.copiedFromRevision == SVNRevision.INVALID_REVISION_NUMBER);
+					isPreviousExists = firstData.action == SVNLogPath.ChangeType.MODIFIED || firstData.action == SVNLogPath.ChangeType.REPLACED;
+				}
 				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.CompareWithPreviousRevision")) {
 					public void run() {
-						AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(affectedTableSelection.getFirstElement(), false);
+						AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(firstData, false);
 						AffectedPathsComposite.this.compareWithPreviousRevision(provider);
 					}
 				});
-				tAction.setEnabled(enabled);
+				tAction.setEnabled(isPreviousExists);
 				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("CreatePatchCommand.label")) {
 					public void run() {
-						AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(affectedTableSelection.getFirstElement(), false);
+						AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(firstData, false);
 						AffectedPathsComposite.this.createPatchToPrevious(provider);
 					}
 				});
-				tAction.setEnabled(enabled);
+				tAction.setEnabled(isPreviousExists);
 				manager.add(new Separator());
 				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("ShowPropertiesAction.label")) {
 					public void run() {
-						AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(affectedTableSelection.getFirstElement(), false);
+						AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(firstData, false);
 						AffectedPathsComposite.this.showProperties(provider);
 					}
 				});
@@ -565,7 +562,7 @@ public class AffectedPathsComposite extends Composite {
 				tAction.setEnabled(affectedTableSelection.size() == 1);
 				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("ShowResourceHistoryCommand.label")) {
 					public void run() {
-						AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(affectedTableSelection.getFirstElement(), false);
+						AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(firstData, false);
 						ProgressMonitorUtility.doTaskExternal(provider, new NullProgressMonitor());
 						AffectedPathsComposite.this.showHistory(provider);
 					}
@@ -574,7 +571,7 @@ public class AffectedPathsComposite extends Composite {
 				tAction.setEnabled(affectedTableSelection.size() == 1);
 				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("ShowAnnotationCommand.label")) {
 					public void run() {
-						AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(affectedTableSelection.getFirstElement(), false);
+						AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(firstData, false);
 						AffectedPathsComposite.this.showAnnotation(provider);
 					}
 				});
@@ -584,7 +581,7 @@ public class AffectedPathsComposite extends Composite {
 				String tagFrom = SVNTeamUIPlugin.instance().getResource("HistoryView.TagFrom", new String [] {String.valueOf(AffectedPathsComposite.this.currentRevision)});
 				manager.add(tAction = new Action(branchFrom) {
 					public void run() {
-						AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(affectedTableSelection.getFirstElement(), false);
+						AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(firstData, false);
 						ProgressMonitorUtility.doTaskExternal(provider, new NullProgressMonitor());
 						AffectedPathsComposite.this.createBranchTag(provider, BranchTagAction.BRANCH_ACTION);
 					}
@@ -593,7 +590,7 @@ public class AffectedPathsComposite extends Composite {
 				tAction.setEnabled(affectedTableSelection.size() > 0);
 				manager.add(tAction = new Action(tagFrom) {
 					public void run() {
-						AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(affectedTableSelection.getFirstElement(), false);
+						AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(firstData, false);
 						ProgressMonitorUtility.doTaskExternal(provider, new NullProgressMonitor());
 						AffectedPathsComposite.this.createBranchTag(provider, BranchTagAction.TAG_ACTION);
 					}
@@ -602,7 +599,7 @@ public class AffectedPathsComposite extends Composite {
 				tAction.setEnabled(affectedTableSelection.size() > 0);
 				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AddRevisionLinkAction.label")) {
 					public void run() {
-						AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(affectedTableSelection.getFirstElement(), false);
+						AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(firstData, false);
 						ProgressMonitorUtility.doTaskExternal(provider, new NullProgressMonitor());
 						AffectedPathsComposite.this.addRevisionLink(provider);
 					}
@@ -611,7 +608,7 @@ public class AffectedPathsComposite extends Composite {
 				manager.add(new Separator());
 				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("ExportCommand.label")) {
 					public void run() {
-						AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(affectedTableSelection.getFirstElement(), false);
+						AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(firstData, false);
 						ProgressMonitorUtility.doTaskExternal(provider, new NullProgressMonitor());
 						AffectedPathsComposite.this.doExport(provider);
 					}
@@ -723,8 +720,8 @@ public class AffectedPathsComposite extends Composite {
         site.registerContextMenu(menuMgr, this.treeViewer);
 	}
 	
-	protected void openRemoteResource(IStructuredSelection affectedTableSelection, int openType, String openWith) {
-		AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(affectedTableSelection.getFirstElement(), true);
+	protected void openRemoteResource(SVNChangedPathData selectedPath, int openType, String openWith) {
+		AffectedRepositoryResourceProvider provider = new AffectedRepositoryResourceProvider(selectedPath, true);
 		OpenRemoteFileOperation openOp = new OpenRemoteFileOperation(provider, openType, openWith);
 		
 		CompositeOperation composite = new CompositeOperation(openOp.getId());
@@ -763,22 +760,22 @@ public class AffectedPathsComposite extends Composite {
 		ProgressMonitorUtility.doTaskExternal(provider, new NullProgressMonitor());
 		IRepositoryResource selected = provider.getRepositoryResources()[0];
 		if (!(selected instanceof IRepositoryFile)) {
-				MessageBox err = new MessageBox(UIMonitorUtility.getShell());
-				err.setText(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.ShowAnnotation.Title"));
-				err.setMessage(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.ShowAnnotation.Message", new String [] {provider.getRepositoryResources()[0].getUrl()}));
-				err.open();
-				return;
-			}
-			CheckPerspective.run(UIMonitorUtility.getActivePage().getWorkbenchWindow());
-			try {
-				IViewPart viewPart = UIMonitorUtility.getActivePage().showView(AnnotateView.VIEW_ID);
-			    if (viewPart != null && viewPart instanceof AnnotateView) {
-			    	((AnnotateView)viewPart).showEditor(selected);
-			    }
-			}
-			catch (PartInitException ex) {
-				UILoggedOperation.reportError("Show annotate view", ex);
-			}
+			MessageBox err = new MessageBox(UIMonitorUtility.getShell());
+			err.setText(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.ShowAnnotation.Title"));
+			err.setMessage(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.ShowAnnotation.Message", new String [] {provider.getRepositoryResources()[0].getUrl()}));
+			err.open();
+			return;
+		}
+		CheckPerspective.run(UIMonitorUtility.getActivePage().getWorkbenchWindow());
+		try {
+			IViewPart viewPart = UIMonitorUtility.getActivePage().showView(AnnotateView.VIEW_ID);
+		    if (viewPart != null && viewPart instanceof AnnotateView) {
+		    	((AnnotateView)viewPart).showEditor(selected);
+		    }
+		}
+		catch (PartInitException ex) {
+			UILoggedOperation.reportError("Show annotate view", ex);
+		}
 	}
 	
 	protected void createPatchToPrevious(AffectedRepositoryResourceProvider provider) {
@@ -818,7 +815,7 @@ public class AffectedPathsComposite extends Composite {
 	}
 	
 	protected void compareWithPreviousRevision(AbstractActionOperation provider) {
-		final GetLogMessagesOperation msgsOp = new GetLogMessagesOperation((IRepositoryResourceProvider)provider);
+		GetLogMessagesOperation msgsOp = new GetLogMessagesOperation((IRepositoryResourceProvider)provider);
 		msgsOp.setLimit(2);
 		
 		GetResourcesToCompareOperation getResourcesOp = new GetResourcesToCompareOperation("Operation.GetResourcesToCompare", msgsOp, (IRepositoryResourceProvider)provider);
@@ -852,7 +849,7 @@ public class AffectedPathsComposite extends Composite {
 	
 	protected class AffectedPathTableComparator extends ColumnedViewerComparator {
 		
-        AffectedPathTableComparator(TableViewer tableViewer, int column) {
+        public AffectedPathTableComparator(TableViewer tableViewer, int column) {
 			super(tableViewer, column);
 		}
 		
@@ -965,10 +962,6 @@ public class AffectedPathsComposite extends Composite {
 			}   
 		}
 
-		public ISchedulingRule getSchedulingRule() {
-			return null;
-		}
-
 		public SVNEntryInfo getResourceInfo() {
 			return this.resourceInfo;
 		}
@@ -977,32 +970,26 @@ public class AffectedPathsComposite extends Composite {
 	
 	protected class AffectedRepositoryResourceProvider extends AbstractActionOperation implements IRepositoryResourceProvider {
 		protected IRepositoryResource repositoryResource;
-		protected Object affectedPathsItem;
+		protected SVNChangedPathData affectedPathsItem;
 		protected boolean filesOnly;
 		
-		public AffectedRepositoryResourceProvider(Object affectedPathsItem, boolean filesOnly) {
+		public AffectedRepositoryResourceProvider(SVNChangedPathData affectedPathsItem, boolean filesOnly) {
 			super("Operation.GetRepositoryResource");
 			this.affectedPathsItem = affectedPathsItem;
 			this.filesOnly = filesOnly;
 		}
 		
 		protected void runImpl(IProgressMonitor monitor) throws Exception {
-			String path = ((String [])this.affectedPathsItem)[2];
-			String name = ((String [])this.affectedPathsItem)[1];
-			if (path.trim().length() == 0 && name.equals("ROOT")) {
-				name = "";
-			}
-			// FIXME should be encoded or not?
-			String affectedPath = path + "/" + name;
+			String affectedPath = this.affectedPathsItem.getFullResourcePath();
 			String rootUrl = AffectedPathsComposite.this.repositoryResource.getRepositoryLocation().getRepositoryRootUrl();
 			String resourceUrl = rootUrl + "/" + affectedPath;
 			long revision = AffectedPathsComposite.this.currentRevision;
-			if (((String [])affectedPathsItem)[0].charAt(0) == 'D') {
+			if (this.affectedPathsItem.action == SVNLogPath.ChangeType.DELETED) {
 				revision = AffectedPathsComposite.this.currentRevision - 1;
 			}
 			
 			GetInfoOperation infoOp = new GetInfoOperation(resourceUrl, revision);
-			UIMonitorUtility.doTaskBusyDefault(infoOp);
+			ProgressMonitorUtility.doTaskExternalDefault(infoOp, monitor);
 			this.reportStatus(infoOp.getStatus());
 			if (infoOp.getStatus().isOK()) {
 				SVNEntryInfo info = infoOp.getResourceInfo();
@@ -1033,10 +1020,6 @@ public class AffectedPathsComposite extends Composite {
 					this.repositoryResource.setPegRevision(SVNRevision.fromNumber(revision));
 				}
 			}
-		}
-
-		public ISchedulingRule getSchedulingRule() {
-			return null;
 		}
 		
 		public IRepositoryResource[] getRepositoryResources() {

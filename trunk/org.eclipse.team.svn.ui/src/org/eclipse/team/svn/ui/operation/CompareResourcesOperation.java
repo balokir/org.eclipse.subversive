@@ -16,7 +16,6 @@ import java.util.ArrayList;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareEditorInput;
-import org.eclipse.compare.CompareUI;
 import org.eclipse.compare.internal.CompareEditor;
 import org.eclipse.compare.internal.Utilities;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -24,9 +23,9 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNEntryStatusCallback;
+import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.SVNDiffStatus;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
-import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
@@ -43,6 +42,7 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.compare.ComparePanel;
+import org.eclipse.team.svn.ui.compare.ResourceCompareInput;
 import org.eclipse.team.svn.ui.compare.ThreeWayResourceCompareInput;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -57,18 +57,33 @@ public class CompareResourcesOperation extends AbstractActionOperation {
 	protected IRepositoryResource ancestor;
 	protected IRepositoryResource remote;
 	protected boolean showInDialog;
+	protected boolean forceReuse;
+	protected String forceId;
 	
 	public CompareResourcesOperation(ILocalResource local, IRepositoryResource remote) {
-		this(local, remote, false);
+		this(local, remote, false, false);
 	}
 	
-	public CompareResourcesOperation(ILocalResource local, IRepositoryResource remote, boolean showInDialog) {
+	public CompareResourcesOperation(ILocalResource local, IRepositoryResource remote, boolean forceReuse) {
+		this(local, remote, forceReuse, false);
+	}
+	
+	public CompareResourcesOperation(ILocalResource local, IRepositoryResource remote, boolean forceReuse, boolean showInDialog) {
 		super("Operation.CompareLocal");
 		this.local = local;
 		this.ancestor = local.isCopied() ? SVNUtility.getCopiedFrom(local.getResource()) : SVNRemoteStorage.instance().asRepositoryResource(local.getResource());
 		this.ancestor.setSelectedRevision(SVNRevision.fromNumber(local.getRevision()));
 		this.remote = remote;
 		this.showInDialog = showInDialog;
+		this.forceReuse = forceReuse;
+	}
+
+	public void setForceId(String forceId) {
+		this.forceId = forceId;
+	}
+
+	public String getForceId() {
+		return this.forceId;
 	}
 
 	protected void runImpl(final IProgressMonitor monitor) throws Exception {
@@ -119,6 +134,7 @@ public class CompareResourcesOperation extends AbstractActionOperation {
 					cc.setProperty(CompareEditor.CONFIRM_SAVE_PROPERTY, Boolean.TRUE);
 					diffPair[0].setSelectedRevision(SVNRevision.BASE);
 					final ThreeWayResourceCompareInput compare = new ThreeWayResourceCompareInput(cc, CompareResourcesOperation.this.local, diffPair[0], diffPair[1], localChanges, remoteChanges);
+					compare.setForceId(CompareResourcesOperation.this.forceId);
 					compare.initialize(monitor);
 					UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 						public void run() {
@@ -130,7 +146,7 @@ public class CompareResourcesOperation extends AbstractActionOperation {
 								}
 							}
 							else {
-								CompareUI.openCompareEditor(compare);
+								ResourceCompareInput.openCompareEditor(compare, CompareResourcesOperation.this.forceReuse);
 							}
 						}
 					});

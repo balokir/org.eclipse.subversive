@@ -211,7 +211,7 @@ public abstract class AbstractSVNParticipant extends ScopableSubscriberParticipa
 		
 		protected Image registerImageDescriptor(OverlayedImageDescriptor imgDescr) {
 		    if (imgDescr != null) {
-		        Image img = (Image)this.images.get(imgDescr);
+		        Image img = this.images.get(imgDescr);
 		        if (img == null) {
 		            this.images.put(imgDescr, img = imgDescr.createImage());
 		        }

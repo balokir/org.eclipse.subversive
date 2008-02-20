@@ -43,7 +43,7 @@ public class SetKeywordsAction extends AbstractNonRecursiveTeamAction {
 	}
 	
 	public static void doSetKeywords(final IResource []resources) {
-		if (!SVNTeamPreferences.getKeywordsBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.COMPUTE_KEYWORDS_NAME)) {
+		if (!SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_COMPUTE_KEYWORDS_NAME)) {
 			SetKeywordsAction.queryUser(resources, new IResourceProvider() {
 				public IResource[] getResources() {
 					return resources;

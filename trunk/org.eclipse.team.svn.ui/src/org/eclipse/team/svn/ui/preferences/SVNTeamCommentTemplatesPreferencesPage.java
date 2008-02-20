@@ -23,6 +23,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -39,6 +40,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SpellcheckedTextProvider;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.common.EditCommentTemplatePanel;
 import org.eclipse.team.svn.ui.verifier.CompositeVerifier;
@@ -52,7 +54,7 @@ import org.eclipse.ui.PlatformUI;
  * @author Sergiy Logvin
  */
 public class SVNTeamCommentTemplatesPreferencesPage extends AbstractSVNTeamPreferencesPage implements ISelectionChangedListener {
-	protected Text previewText;
+	protected StyledText previewText;
 	protected ListViewer listViewer;
 	protected Button newButton;
 	protected Button editButton;
@@ -173,15 +175,7 @@ public class SVNTeamCommentTemplatesPreferencesPage extends AbstractSVNTeamPrefe
 		Label templatesLabel = new Label(composite, SWT.NONE);
 		templatesLabel.setText(SVNTeamUIPlugin.instance().getResource("CommentTemplatesPreferencePage.EditHint"));
 
-		this.createListAndButtons(composite);
-
-		Label previewLabel = new Label(composite, SWT.NONE);
-		previewLabel.setText(SVNTeamUIPlugin.instance().getResource("CommentTemplatesPreferencePage.ViewHint"));
-		
-		this.previewText = new Text(composite, SWT.MULTI | SWT.READ_ONLY | SWT.BORDER);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.heightHint = this.convertHeightInCharsToPixels(5);
-		this.previewText.setLayoutData(data);
+		this.createTemplatesList(composite);
 		
 		Dialog.applyDialogFont(parent);
 
@@ -191,7 +185,7 @@ public class SVNTeamCommentTemplatesPreferencesPage extends AbstractSVNTeamPrefe
 		return composite;
 	}
 
-	protected Composite createListAndButtons(Composite parent) {
+	protected Composite createTemplatesList(Composite parent) {
 		Composite listAndButtons = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = layout.marginHeight = 0;
@@ -234,6 +228,18 @@ public class SVNTeamCommentTemplatesPreferencesPage extends AbstractSVNTeamPrefe
 		}
 
 		this.createButtons(listAndButtons);
+
+		Label previewLabel = new Label(listAndButtons, SWT.NONE);
+		data = new GridData();
+		data.horizontalSpan = 2;
+		previewLabel.setLayoutData(data);
+		previewLabel.setText(SVNTeamUIPlugin.instance().getResource("CommentTemplatesPreferencePage.ViewHint"));
+		
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.heightHint = this.convertHeightInCharsToPixels(5);
+		this.previewText = SpellcheckedTextProvider.getTextWidget(listAndButtons, data, SWT.MULTI | SWT.V_SCROLL | SWT.WRAP);
+		this.previewText.setEditable(false);
+		
 		return listAndButtons;
 	}
 

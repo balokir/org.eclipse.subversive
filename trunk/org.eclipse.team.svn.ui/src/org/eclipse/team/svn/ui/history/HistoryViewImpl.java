@@ -33,8 +33,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -63,7 +61,6 @@ import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
-import org.eclipse.team.svn.core.connector.SVNLogPath;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
@@ -324,7 +321,9 @@ public class HistoryViewImpl {
 								right = left;
 								left = tmp;
 							}
-							UIMonitorUtility.doTaskScheduledActive(new CompareRepositoryResourcesOperation(right, left));
+							CompareRepositoryResourcesOperation op = new CompareRepositoryResourcesOperation(right, left);
+							op.setForceId(HistoryViewImpl.this.getCompareForceId());
+							UIMonitorUtility.doTaskScheduledActive(op);
 
 						}
 					});
@@ -346,23 +345,23 @@ public class HistoryViewImpl {
 					}
 					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.CompareWithPrevious")) {
 						public void run() {
-							Object []selection = tSelection.toArray();
-							IRepositoryResource left = HistoryViewImpl.this.getResourceForSelectedRevision(selection[0]);
-							SVNLogEntry current = (SVNLogEntry)selection[0];
+							SVNLogEntry current = (SVNLogEntry)tSelection.getFirstElement();
+							IRepositoryResource left = HistoryViewImpl.this.getResourceForSelectedRevision(current);
 							IRepositoryResource right = HistoryViewImpl.this.getResourceForSelectedRevision(new SVNLogEntry(current.revision - 1, 0, null, null, null));
-							if (HistoryViewImpl.this.isPreviousRevisionExist(right.getUrl(), current)) {
-								UIMonitorUtility.doTaskScheduledActive(new CompareRepositoryResourcesOperation(right, left));
-							}
+							CompareRepositoryResourcesOperation op = new CompareRepositoryResourcesOperation(right, left);
+							op.setForceId(HistoryViewImpl.this.getCompareForceId());
+							UIMonitorUtility.doTaskScheduledActive(op);
 						}
 					});
-					tAction.setEnabled(tSelection.size() == 1 && isCompareAllowed && ((SVNLogEntry)tSelection.getFirstElement()).revision > 0);
+					boolean existsInPrevious = HistoryViewImpl.this.logMessages[HistoryViewImpl.this.logMessages.length - 1] != (SVNLogEntry)tSelection.getFirstElement() || HistoryViewImpl.this.getNextPageAction.isEnabled();
+					tAction.setEnabled(tSelection.size() == 1 && isCompareAllowed && existsInPrevious);
 					manager.add(new Separator());
 					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("CreatePatchCommand.label")) {
 						public void run() {
 							HistoryViewImpl.this.createUnifiedDiff(tSelection);
 						}
 					});
-					tAction.setEnabled(tSelection.size() == 1 || tSelection.size() == 2);
+					tAction.setEnabled(tSelection.size() == 1 && existsInPrevious || tSelection.size() == 2);
 					
 					if (HistoryViewImpl.this.repositoryResource instanceof IRepositoryFile) {
 						manager.add(new Separator());
@@ -1031,23 +1030,6 @@ public class HistoryViewImpl {
 			new RemoteShowAnnotationOperation(remote, page));
 	}
 	
-	protected boolean isPreviousRevisionExist(String url, SVNLogEntry current) {
-		for (int i = 0; i < current.changedPaths.length; i++) {
-			if (url.endsWith(current.changedPaths[i].path) && current.changedPaths[i].action == SVNLogPath.ChangeType.ADDED) {
-				MessageDialog err = new MessageDialog(
-						UIMonitorUtility.getShell(), 
-						SVNTeamUIPlugin.instance().getResource("HistoryView.CompareWithPrevious"), 
-						null, 
-						SVNTeamUIPlugin.instance().getResource("HistoryView.CompareWithPrevious.Message", new String [] {String.valueOf(current.revision - 1)}), 
-						MessageDialog.INFORMATION, 
-						new String[] {IDialogConstants.OK_LABEL}, 0);
-				err.open();
-				return false;
-			}
-		}
-		return true;
-	}
-	
 	protected void doExport(Object item) {
 		if (item instanceof SVNLocalFileRevision) {
 			final SVNLocalFileRevision revision = (SVNLocalFileRevision)item;
@@ -1195,17 +1177,18 @@ public class HistoryViewImpl {
 		IRepositoryResource resource = this.getResourceForSelectedRevision(item);
 		if (this.wcResource != null || this.compareWith != null) {
 			ILocalResource local = this.compareWith == null ? SVNRemoteStorage.instance().asLocalResource(this.wcResource) : this.compareWith;
-			UIMonitorUtility.doTaskScheduledActive(new CompareResourcesOperation(local, resource));
+			CompareResourcesOperation op = new CompareResourcesOperation(local, resource);
+			op.setForceId(this.getCompareForceId());
+			UIMonitorUtility.doTaskScheduledActive(op);
 		}
 		else {
-			UIMonitorUtility.doTaskScheduledActive(new CompareRepositoryResourcesOperation(this.getResourceForHeadRevision(), resource));
+			CompareRepositoryResourcesOperation op = new CompareRepositoryResourcesOperation(this.getResourceForHeadRevision(), resource);
+			op.setForceId(this.getCompareForceId());
+			UIMonitorUtility.doTaskScheduledActive(op);
 		}
 	}
 	
 	protected void createUnifiedDiff(IStructuredSelection selection) {
-		if (selection.size() == 1 && !this.isPreviousRevisionExist(this.repositoryResource.getUrl(), (SVNLogEntry)selection.getFirstElement())) {
-			return;
-		}
 		CreatePatchWizard wizard = new CreatePatchWizard(this.repositoryResource.getName());
 		WizardDialog dialog = new WizardDialog(this.getSite().getShell(), wizard);
 		if (dialog.open() == DefaultDialog.OK) {
@@ -1549,6 +1532,10 @@ public class HistoryViewImpl {
         tbm.add(this.getCompareModeAction());
                 
         tbm.update(true);
+	}
+	
+	protected String getCompareForceId() {
+		return this.toString();
 	}
 	
     protected void refreshOptionButtons() {

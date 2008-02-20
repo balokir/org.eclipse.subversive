@@ -111,7 +111,7 @@ public class AffectedPathNode {
 	}
 
 	public SVNChangedPathData [] getData() {
-		return (SVNChangedPathData [])this.data.toArray(new SVNChangedPathData[this.data.size()]);
+		return this.data.toArray(new SVNChangedPathData[this.data.size()]);
 	}
 	
 	protected List getPathDataImpl(List result) {

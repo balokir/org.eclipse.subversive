@@ -39,10 +39,9 @@ public class EditCommentTemplatePanel extends AbstractDialogPanel {
 	}
 	
 	public void createControlsImpl(Composite parent) {
-		this.templateText = SpellcheckedTextProvider.getTextWidget(parent, SWT.BORDER | SWT.MULTI);
 		GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_BOTH);
 		data.heightHint = 180;
-		this.templateText.setLayoutData(data);
+		this.templateText = SpellcheckedTextProvider.getTextWidget(parent, data, SWT.MULTI);
 		this.templateText.setText(this.template == null ? "" : this.template);
 		this.templateText.selectAll();
 		this.attachTo(this.templateText, new NonEmptyFieldVerifier(SVNTeamUIPlugin.instance().getResource("EditCommentTemplatePanel.Tempalte.Verifier")));

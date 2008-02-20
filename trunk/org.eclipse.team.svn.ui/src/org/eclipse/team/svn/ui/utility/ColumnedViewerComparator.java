@@ -37,11 +37,11 @@ public abstract class ColumnedViewerComparator extends ViewerComparator {
 		this.reversed = false;
 		this.column = column;
 		 final IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
-		 ColumnedViewerComparator.CASE_INSENSITIVE = SVNTeamPreferences.getTableSortingBoolean(store, SVNTeamPreferences.TABLE_SORTING_CASE_INSENSITIVE_NAME);
+		 ColumnedViewerComparator.CASE_INSENSITIVE = SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_NAME);
 	        this.configurationListener = new IPropertyChangeListener() {
 	        	public void propertyChange(PropertyChangeEvent event) {
-	        		if (event.getProperty().equals(SVNTeamPreferences.fullTableSortingName(SVNTeamPreferences.TABLE_SORTING_CASE_INSENSITIVE_NAME))) {
-	        			ColumnedViewerComparator.CASE_INSENSITIVE = SVNTeamPreferences.getTableSortingBoolean(store, SVNTeamPreferences.TABLE_SORTING_CASE_INSENSITIVE_NAME);
+	        		if (event.getProperty().equals(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_NAME))) {
+	        			ColumnedViewerComparator.CASE_INSENSITIVE = SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_NAME);
 	        			if (!ColumnedViewerComparator.this.basedOn.getControl().isDisposed()) {
 	        				ColumnedViewerComparator.this.basedOn.refresh();
 	        			}

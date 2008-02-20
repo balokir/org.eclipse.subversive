@@ -51,7 +51,7 @@ public class AffectedPathsLabelProvider extends LabelProvider {
 				AffectedPathsLabelProvider.deletedFolderIcon = (new OverlayedImageDescriptor(AffectedPathsLabelProvider.folderIcon, instance.getImageDescriptor("icons/overlays/deletion.gif"), new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V)).createImage();
 				AffectedPathsLabelProvider.replacedFolderIcon = (new OverlayedImageDescriptor(AffectedPathsLabelProvider.folderIcon, instance.getImageDescriptor("icons/overlays/replacement.gif"), new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V)).createImage();
 				CompareUI.disposeOnShutdown(AffectedPathsLabelProvider.folderIcon);
-				CompareUI.disposeOnShutdown(AffectedPathsLabelProvider.rootAdditionIcon);
+				CompareUI.disposeOnShutdown(AffectedPathsLabelProvider.overlayedFolderIcon);
 				CompareUI.disposeOnShutdown(AffectedPathsLabelProvider.rootIcon);
 				CompareUI.disposeOnShutdown(AffectedPathsLabelProvider.rootAdditionIcon);
 				CompareUI.disposeOnShutdown(AffectedPathsLabelProvider.overlayedRootIcon);
