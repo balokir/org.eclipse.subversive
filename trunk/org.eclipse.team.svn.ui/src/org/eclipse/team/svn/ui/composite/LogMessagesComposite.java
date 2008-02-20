@@ -738,7 +738,7 @@ public class LogMessagesComposite extends SashForm {
 		layout.addColumnData(new ColumnWeightData(50, true));
 		
 		//adding a comparator and initializing default sort column and direction
-		HistoryComparator comparator = new HistoryComparator(this.historyTable, LogMessagesComposite.COLUMN_DATE);
+		HistoryTableComparator comparator = new HistoryTableComparator(this.historyTable, LogMessagesComposite.COLUMN_DATE);
 		this.historyTable.setComparator(comparator);
 		comparator.setReversed(true);
 		this.historyTable.getTree().setSortColumn(this.historyTable.getTree().getColumn(LogMessagesComposite.COLUMN_DATE));
@@ -810,7 +810,7 @@ public class LogMessagesComposite extends SashForm {
 		return new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				int column = treeViewer.getTree().indexOf((TreeColumn) e.widget);
-				HistoryComparator oldSorter = (HistoryComparator) treeViewer.getComparator();
+				HistoryTableComparator oldSorter = (HistoryTableComparator) treeViewer.getComparator();
 				TreeColumn treeColumn = ((TreeColumn)e.widget);
 				if (oldSorter != null && column == oldSorter.getColumnNumber()) {
 					oldSorter.setReversed(!oldSorter.isReversed());
@@ -820,7 +820,7 @@ public class LogMessagesComposite extends SashForm {
 				} else {
 				    treeViewer.getTree().setSortColumn(treeColumn);
                     treeViewer.getTree().setSortDirection(SWT.UP);
-					treeViewer.setComparator(new HistoryComparator(treeViewer, column));
+					treeViewer.setComparator(new HistoryTableComparator(treeViewer, column));
 				}
 			}
 		};
@@ -986,9 +986,9 @@ public class LogMessagesComposite extends SashForm {
 		
 	}
     
-	public class HistoryComparator extends ColumnedViewerComparator {
+	protected class HistoryTableComparator extends ColumnedViewerComparator {
 		
-		HistoryComparator(TreeViewer treeViewer, int column) {
+		public HistoryTableComparator(TreeViewer treeViewer, int column) {
 			super(treeViewer, column);
 		}
 		
@@ -1093,15 +1093,9 @@ public class LogMessagesComposite extends SashForm {
 	            	return new Integer(files1).compareTo(new Integer(files2));
 	            }
 	            if (this.column == LogMessagesComposite.COLUMN_AUTHOR) {
-	            	if (this.reversed) {
-	            		return ColumnedViewerComparator.compare(rowData2.author == null ? "" : rowData2.author, rowData1.author == null ? "" : rowData1.author);
-	            	}
-	            	return ColumnedViewerComparator.compare(rowData1.author == null ? "" : rowData1.author, rowData2.author == null ? "" : rowData2.author);
+	            	return ColumnedViewerComparator.compare(rowData1.author == null ? "" : rowData1.author, rowData2.author == null ? "" : rowData2.author, this.isReversed());
 	            }
-	            if (this.reversed) {
-	            	return ColumnedViewerComparator.compare(rowData2.message == null ? "" : rowData2.message, rowData1.message == null ? "" : rowData1.message);
-	            }
-	            return ColumnedViewerComparator.compare(rowData1.message == null ? "" : rowData1.message, rowData2.message == null ? "" : rowData2.message);
+	            return ColumnedViewerComparator.compare(rowData1.message == null ? "" : rowData1.message, rowData2.message == null ? "" : rowData2.message, this.isReversed());
 			}
 			
 			//Both are from local history

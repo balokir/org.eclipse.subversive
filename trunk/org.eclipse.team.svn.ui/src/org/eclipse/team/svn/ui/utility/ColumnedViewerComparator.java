@@ -20,7 +20,7 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 
 /**
- * Universal columned viewer comparator
+ * Abstract columned viewer comparator
  * 
  * @author Alexei Goncharov
  */
@@ -37,11 +37,11 @@ public abstract class ColumnedViewerComparator extends ViewerComparator {
 		this.reversed = false;
 		this.column = column;
 		 final IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
-	        TableViewerSorter.CASE_INSENSITIVE = SVNTeamPreferences.getTableSortingBoolean(store, SVNTeamPreferences.TABLE_SORTING_CASE_INSENSITIVE_NAME);
+		 ColumnedViewerComparator.CASE_INSENSITIVE = SVNTeamPreferences.getTableSortingBoolean(store, SVNTeamPreferences.TABLE_SORTING_CASE_INSENSITIVE_NAME);
 	        this.configurationListener = new IPropertyChangeListener() {
 	        	public void propertyChange(PropertyChangeEvent event) {
 	        		if (event.getProperty().equals(SVNTeamPreferences.fullTableSortingName(SVNTeamPreferences.TABLE_SORTING_CASE_INSENSITIVE_NAME))) {
-	        			TableViewerSorter.CASE_INSENSITIVE = SVNTeamPreferences.getTableSortingBoolean(store, SVNTeamPreferences.TABLE_SORTING_CASE_INSENSITIVE_NAME);
+	        			ColumnedViewerComparator.CASE_INSENSITIVE = SVNTeamPreferences.getTableSortingBoolean(store, SVNTeamPreferences.TABLE_SORTING_CASE_INSENSITIVE_NAME);
 	        			if (!ColumnedViewerComparator.this.basedOn.getControl().isDisposed()) {
 	        				ColumnedViewerComparator.this.basedOn.refresh();
 	        			}
@@ -69,8 +69,11 @@ public abstract class ColumnedViewerComparator extends ViewerComparator {
 	
 	public abstract int compare(Viewer viewer, Object row1, Object row2);
 	
-	public static int compare(String first, String second) {
-    	return ColumnedViewerComparator.CASE_INSENSITIVE ? first.compareToIgnoreCase(second) : first.compareTo(second);
+	public static int compare(String first, String second, boolean reversed) {
+		if (reversed) {
+			return ColumnedViewerComparator.CASE_INSENSITIVE ? second.compareToIgnoreCase(first) : second.compareTo(first);
+		}
+		return ColumnedViewerComparator.CASE_INSENSITIVE ? first.compareToIgnoreCase(second) : first.compareTo(second);
     }
 	
 }
