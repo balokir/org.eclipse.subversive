@@ -13,7 +13,6 @@ package org.eclipse.team.svn.ui.composite;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -302,7 +301,7 @@ public class AffectedPathsComposite extends Composite {
 		});
 		ITableLabelProvider tableLabelProvider = new ITableLabelProvider() {
 			protected Map<ImageDescriptor, Image> images = new HashMap<ImageDescriptor, Image>();
-		    
+			
 			public Image getColumnImage(Object element, int columnIndex) {
 				if (columnIndex == AffectedPathsComposite.COLUMN_ICON) {
 					String fileName = ((SVNChangedPathData)element).resourceName;
@@ -359,9 +358,8 @@ public class AffectedPathsComposite extends Composite {
 			}
 
 			public void dispose() {
-				Iterator<ImageDescriptor> it = this.images.keySet().iterator();
-				while (it.hasNext()) {
-					this.images.get(it.next()).dispose();
+				for (Image img : this.images.values()) {
+					img.dispose();
 				}
 			}
 
