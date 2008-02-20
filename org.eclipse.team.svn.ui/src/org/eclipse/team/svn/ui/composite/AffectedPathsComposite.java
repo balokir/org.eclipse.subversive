@@ -115,7 +115,6 @@ import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFolder;
 import org.eclipse.team.svn.ui.utility.ColumnedViewerComparator;
 import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
-import org.eclipse.team.svn.ui.utility.TableViewerSorter;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.svn.ui.wizard.CreatePatchWizard;
 import org.eclipse.ui.IEditorDescriptor;
@@ -863,24 +862,15 @@ public class AffectedPathsComposite extends Composite {
 				SVNChangedPathData data2 = (SVNChangedPathData)row2;
 				switch (this.column) {
 					case AffectedPathsComposite.COLUMN_NAME : {
-						if (this.reversed) { 
-							return TableViewerSorter.compare(data2.resourceName, data1.resourceName);
-						}
-						return TableViewerSorter.compare(data1.resourceName, data2.resourceName);
+						return ColumnedViewerComparator.compare(data1.resourceName, data2.resourceName, this.isReversed());
 					}
 					case AffectedPathsComposite.COLUMN_PATH : {
-						if (this.reversed) { 
-							return TableViewerSorter.compare(data2.resourcePath, data1.resourcePath);
-						}
-						return TableViewerSorter.compare(data1.resourcePath, data2.resourcePath);
+						return ColumnedViewerComparator.compare(data1.resourcePath, data2.resourcePath, this.isReversed());
 					}
 					case AffectedPathsComposite.COLUMN_COPIED_FROM : {
 						String copied1 = data1.copiedFromPath + ((data1.copiedFromRevision == SVNRevision.INVALID_REVISION_NUMBER) ? "" : '@' + String.valueOf(data1.copiedFromRevision));
 						String copied2 = data2.copiedFromPath + ((data2.copiedFromRevision == SVNRevision.INVALID_REVISION_NUMBER) ? "" : '@' + String.valueOf(data2.copiedFromRevision));
-						if (this.reversed) {
-							return TableViewerSorter.compare(copied2, copied1);
-						}
-						return TableViewerSorter.compare(copied1, copied2);
+						return ColumnedViewerComparator.compare(copied1, copied2, this.isReversed());
 					}
 				}
 			}

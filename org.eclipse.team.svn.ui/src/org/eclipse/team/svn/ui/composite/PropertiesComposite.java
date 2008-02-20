@@ -38,6 +38,9 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -65,7 +68,7 @@ import org.eclipse.team.svn.ui.dialog.SetPropertyWithOverrideDialog;
 import org.eclipse.team.svn.ui.panel.view.property.PropertyApplyPanel;
 import org.eclipse.team.svn.ui.panel.view.property.PropertyEditPanel;
 import org.eclipse.team.svn.ui.properties.RemovePropertyDialog;
-import org.eclipse.team.svn.ui.utility.TableViewerSorter;
+import org.eclipse.team.svn.ui.utility.ColumnedViewerComparator;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ViewPart;
@@ -176,24 +179,6 @@ public class PropertiesComposite extends Composite {
 		innerSashForm.setWeights(new int[] {70, 30});
 		
 		this.propertyViewer = new TableViewer(table);
-
-		TableViewerSorter sorter = new TableViewerSorter(
-			this.propertyViewer, 
-			new TableViewerSorter.IColumnComparator() {
-				public int compare(Object row1, Object row2, int column) {
-					if (row1 instanceof SVNProperty) {
-						SVNProperty data1 = (SVNProperty) row1;
-						SVNProperty data2 = (SVNProperty) row2;
-						return
-							column == 0 ?
-							TableViewerSorter.compare(data1.name, data2.name) :
-							TableViewerSorter.compare(data1.value, data2.value);
-					}
-					return 0;
-				}
-			});
-		this.propertyViewer.setSorter(sorter);
-		
 		this.propertyViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				if (event.getSelection() instanceof IStructuredSelection) {
@@ -208,14 +193,19 @@ public class PropertiesComposite extends Composite {
 		TableColumn col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
 		col.setText(SVNTeamUIPlugin.instance().getResource("PropertiesComposite.Name"));
-		col.addSelectionListener(sorter);
+		col.addSelectionListener(this.getColumnListener(propertyViewer));
 		tableLayout.addColumnData(new ColumnWeightData(30, true));
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
 		col.setText(SVNTeamUIPlugin.instance().getResource("PropertiesComposite.Value"));
-		col.addSelectionListener(sorter);
+		col.addSelectionListener(this.getColumnListener(propertyViewer));
 		tableLayout.addColumnData(new ColumnWeightData(70, true));
-		sorter.setDefaultColumn(0);
+		
+		//adding a comparator and selecting a default sort column
+		PropertiesTableComparator comparator = new PropertiesTableComparator(this.propertyViewer, 0);
+		this.propertyViewer.setComparator(comparator);
+		this.propertyViewer.getTable().setSortColumn(this.propertyViewer.getTable().getColumn(0));
+		this.propertyViewer.getTable().setSortDirection(SWT.UP);
 
 		this.propertyViewer.setContentProvider(new IStructuredContentProvider() {
 			public Object[] getElements(Object inputElement) {
@@ -441,6 +431,45 @@ public class PropertiesComposite extends Composite {
 		this.wcResource = null;
 		this.properties = null;
 		this.provider = null;
+	}
+	
+	private SelectionListener getColumnListener(final TableViewer table) {
+		return new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				int column = table.getTable().indexOf((TableColumn)e.widget);
+				PropertiesTableComparator oldSorter = (PropertiesTableComparator)table.getComparator();
+				TableColumn tableColumn = ((TableColumn)e.widget);
+				if (oldSorter != null && column == oldSorter.getColumnNumber()) {
+					oldSorter.setReversed(!oldSorter.isReversed());
+					table.getTable().setSortColumn(tableColumn);
+					table.getTable().setSortDirection(oldSorter.isReversed() ? SWT.DOWN : SWT.UP);
+					table.refresh();
+				} else {
+					table.getTable().setSortColumn(tableColumn);
+					table.getTable().setSortDirection(SWT.UP);
+					table.setComparator(new PropertiesTableComparator(table, column));
+				}
+			}
+		};
+	}
+	
+	protected class PropertiesTableComparator extends ColumnedViewerComparator {
+		
+		public PropertiesTableComparator(TableViewer tableViewer, int column) {
+			super(tableViewer, column);
+		}
+		
+		public int compare(Viewer table, Object row1, Object row2) {
+			if (row1 instanceof SVNProperty) {
+				SVNProperty data1 = (SVNProperty) row1;
+				SVNProperty data2 = (SVNProperty) row2;
+				return
+					this.column == 0 ?
+					ColumnedViewerComparator.compare(data1.name, data2.name, this.isReversed()) :
+					ColumnedViewerComparator.compare(data1.value, data2.value, this.isReversed());
+			}
+			return 0;
+		}
 	}
 	
 }
