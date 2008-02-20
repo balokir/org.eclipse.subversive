@@ -13,9 +13,9 @@ package org.eclipse.team.svn.ui.composite;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.compare.CompareUI;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -310,7 +310,6 @@ public class AffectedPathsComposite extends Composite {
 					Image img = this.images.get(descr);
 					if (img == null) {
 						img = descr.createImage();
-			            CompareUI.disposeOnShutdown(img);
 						this.images.put(descr, img);
 					}
 					switch (((SVNChangedPathData)element).action) {
@@ -334,7 +333,6 @@ public class AffectedPathsComposite extends Composite {
 					img = this.images.get(descr);
 					if (img == null) {
 						img = descr.createImage();
-			            CompareUI.disposeOnShutdown(img);
 						this.images.put(descr, img);
 					}
 					return img;
@@ -361,6 +359,10 @@ public class AffectedPathsComposite extends Composite {
 			}
 
 			public void dispose() {
+				Iterator<ImageDescriptor> it = this.images.keySet().iterator();
+				while (it.hasNext()) {
+					this.images.get(it.next()).dispose();
+				}
 			}
 
 			public boolean isLabelProperty(Object element, String property) {
