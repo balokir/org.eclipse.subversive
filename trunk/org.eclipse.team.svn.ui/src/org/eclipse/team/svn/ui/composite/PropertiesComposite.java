@@ -83,6 +83,9 @@ public class PropertiesComposite extends Composite {
 	public static final int APPLY_TO_FILES = 1;
 	public static final int APPLY_TO_FOLDERS = 2;
 	
+	protected static final int COLUMN_NAME = 0;
+	protected static final int COLUMN_VALUE = 1;
+	
 	protected SVNProperty[] properties;
 	protected TableViewer propertyViewer;
 	protected Text propertyText;
@@ -202,9 +205,9 @@ public class PropertiesComposite extends Composite {
 		tableLayout.addColumnData(new ColumnWeightData(70, true));
 		
 		//adding a comparator and selecting a default sort column
-		PropertiesTableComparator comparator = new PropertiesTableComparator(this.propertyViewer, 0);
+		PropertiesTableComparator comparator = new PropertiesTableComparator(this.propertyViewer, PropertiesComposite.COLUMN_NAME);
 		this.propertyViewer.setComparator(comparator);
-		this.propertyViewer.getTable().setSortColumn(this.propertyViewer.getTable().getColumn(0));
+		this.propertyViewer.getTable().setSortColumn(this.propertyViewer.getTable().getColumn(PropertiesComposite.COLUMN_NAME));
 		this.propertyViewer.getTable().setSortDirection(SWT.UP);
 
 		this.propertyViewer.setContentProvider(new IStructuredContentProvider() {
@@ -464,7 +467,7 @@ public class PropertiesComposite extends Composite {
 				SVNProperty data1 = (SVNProperty) row1;
 				SVNProperty data2 = (SVNProperty) row2;
 				return
-					this.column == 0 ?
+					this.column == PropertiesComposite.COLUMN_NAME ?
 					ColumnedViewerComparator.compare(data1.name, data2.name, this.isReversed()) :
 					ColumnedViewerComparator.compare(data1.value, data2.value, this.isReversed());
 			}

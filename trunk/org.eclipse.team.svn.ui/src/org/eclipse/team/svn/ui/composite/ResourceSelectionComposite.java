@@ -67,8 +67,8 @@ import org.eclipse.team.svn.ui.event.IResourceSelectionChangeListener;
 import org.eclipse.team.svn.ui.event.ResourceSelectionChangedEvent;
 import org.eclipse.team.svn.ui.operation.CompareResourcesOperation;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
+import org.eclipse.team.svn.ui.utility.ColumnedViewerComparator;
 import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
-import org.eclipse.team.svn.ui.utility.TableViewerSorter;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamImages;
@@ -86,6 +86,11 @@ public class ResourceSelectionComposite extends Composite {
 	protected static final ImageDescriptor EMPTY_IMAGE_DESC = new OverlayedImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/problem_underlay.gif").createImage(), SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/empty_error.gif"), new Point(9, 9), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.TOP);
 	protected static final ImageDescriptor SWITCHED_IMAGE_DESC = new OverlayedImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/problem_underlay.gif").createImage(), SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/switched.gif"), new Point(9, 9), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.TOP);
 	
+	protected static final int COLUMN_CHECKBOX = 0;
+	protected static final int COLUMN_NAME = 1;
+	protected static final int COLUMN_STATUS = 2;
+	protected static final int COLUMN_PROPSTATUS = 3;
+	
 	protected CheckboxTableViewer tableViewer;
 	protected ISelectionChangedListener selectionListener;
 	protected IResource []resources;
@@ -93,7 +98,7 @@ public class ResourceSelectionComposite extends Composite {
 	protected IResource []notSelectedResources;
 	protected List selectionChangedListeners;
 	protected boolean deselectNewl;
-	protected boolean noCache;
+	protected boolean cacheEnabled;
 	protected HashSet externalResources = new HashSet();
 	protected HashSet userSelectedResources = new HashSet();
 	
@@ -116,9 +121,9 @@ public class ResourceSelectionComposite extends Composite {
 		for (int i = 0; i < externals.length; i++) {
 			this.externalResources.add(externals[i]);
 		}
+		this.cacheEnabled = CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled();
 		this.createControls();
 		this.refreshSelection();
-		this.noCache = !CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled();
 	}
 	
 	public IResource []getSelectedResources() {
@@ -155,102 +160,45 @@ public class ResourceSelectionComposite extends Composite {
 		this.tableViewer = new CheckboxTableViewer(table);
 		data = new GridData(GridData.FILL_BOTH);
 		this.tableViewer.getTable().setLayoutData(data);
-
-		TableViewerSorter sorter = new TableViewerSorter(this.tableViewer, new TableViewerSorter.IColumnComparator() {
-            public int compare(Object row1, Object row2, int column) {
-            	if (column == 0) {
-            		return 0;
-            	}
-                IResource rowData1 = (IResource)row1;
-                IResource rowData2 = (IResource)row2;
-                if (column == 1) {
-                    return this.compareNames(rowData1, rowData2);
-                }
-                if (ResourceSelectionComposite.this.noCache) {
-                	return 0;
-                }
-                IRemoteStorage storage = SVNRemoteStorage.instance();
-                ILocalResource local1 = storage.asLocalResource(rowData1);
-                ILocalResource local2 = storage.asLocalResource(rowData2);
-                if (local1 == null || local2 == null) {
-                	return 0;
-                }
-                int changeMask1 = local1.getChangeMask();
-                int changeMask2 = local2.getChangeMask();
-                if (column == 2) {
-                    String status1 = ResourceSelectionComposite.this.statusAsString(local1.getStatus(), changeMask1);
-                    String status2 = ResourceSelectionComposite.this.statusAsString(local2.getStatus(), changeMask2);
-                    int retVal = this.compareStatuses(status1, status2);
-                    return retVal != 0 ? retVal : this.compareNames(rowData1, rowData2);
-                }
-                if (column == 3) {
-                	String propStatus1 = changeMaskAsString(changeMask1);
-                	String propStatus2 = changeMaskAsString(changeMask2);
-                	return TableViewerSorter.compare(propStatus1, propStatus2);
-                }
-                return 0;
-            }
-            
-            protected int compareStatuses(String status1, String status2) {
-            	if (status1 == status2) {
-            		return 0;
-            	}
-            	if (status1 == IStateFilter.ST_NEW || status1 == IStateFilter.ST_IGNORED) {
-            		return 1;
-            	}
-            	if (status2 == IStateFilter.ST_NEW || status2 == IStateFilter.ST_IGNORED) {
-            		return -1;
-            	}
-            	return TableViewerSorter.compare(status1, status2);
-            }
-            
-            protected int compareNames(IResource rowData1 , IResource rowData2) {
-                boolean cnd1 = rowData1 instanceof IContainer;
-                boolean cnd2 = rowData2 instanceof IContainer;
-                if (cnd1 && !cnd2) {
-                    return -1;
-                }
-                else if (cnd2 && !cnd1) {
-                    return 1;
-                }
-				String path1 = rowData1.getFullPath().toString();
-				String path2 = rowData2.getFullPath().toString();
-                return TableViewerSorter.compare(path1, path2);
-            }
-        });
-        if (this.noCache) {
-        	// bit mask, really one column enabled with index 1
-        	sorter.setEnabledColumns(2);
-        }
-		this.tableViewer.setSorter(sorter);
-		
+        	
+		//checkbox
 		TableColumn col = new TableColumn(table, SWT.NONE);
 		col.setResizable(false);
 		layout.addColumnData(new ColumnPixelData(20, false));
 		
+		//resource name
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
 		col.setText(SVNTeamUIPlugin.instance().getResource("ResourceSelectionComposite.Resource"));
 		layout.addColumnData(new ColumnWeightData(56, true));
-		col.addSelectionListener(sorter);
+		col.addSelectionListener(this.getColumnListener(this.tableViewer));
 		
+		//status
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
 		col.setText(SVNTeamUIPlugin.instance().getResource("ResourceSelectionComposite.Content"));
 		layout.addColumnData(new ColumnWeightData(12, true));
-		col.addSelectionListener(sorter);
+		if (this.cacheEnabled) {
+			col.addSelectionListener(this.getColumnListener(this.tableViewer));
+		}
 		
+		//propstatus
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
 		col.setText(SVNTeamUIPlugin.instance().getResource("ResourceSelectionComposite.Properties"));
 		layout.addColumnData(new ColumnWeightData(12, true));
-		col.addSelectionListener(sorter);
+		if (this.cacheEnabled) {
+			col.addSelectionListener(this.getColumnListener(this.tableViewer));
+		}
 		
-		sorter.setDefaultColumn(2);
+		//adding comparator and selection default sorting column and direction
+		this.tableViewer.setComparator(new ResourcesTableComparator(this.tableViewer, ResourceSelectionComposite.COLUMN_NAME));
+		this.tableViewer.getTable().setSortColumn(this.tableViewer.getTable().getColumn(ResourceSelectionComposite.COLUMN_NAME));
+		this.tableViewer.getTable().setSortDirection(SWT.UP);
 		
 		this.tableViewer.setLabelProvider(new ITableLabelProvider() {
 			public Image getColumnImage(Object element, int columnIndex) {
-				if (columnIndex == 1 && element instanceof IAdaptable) {
+				if (columnIndex == ResourceSelectionComposite.COLUMN_NAME && element instanceof IAdaptable) {
 					IWorkbenchAdapter adapter = (IWorkbenchAdapter)((IAdaptable)element).getAdapter(IWorkbenchAdapter.class);
 					if (adapter == null) {
 						return null;
@@ -313,11 +261,11 @@ public class ResourceSelectionComposite extends Composite {
 			}
 
 			public String getColumnText(Object element, int columnIndex) {
-				if (columnIndex == 0) {
+				if (columnIndex == ResourceSelectionComposite.COLUMN_CHECKBOX) {
 					return "";
 				}
 				IResource resource = (IResource)element;
-				if (columnIndex == 1) {
+				if (columnIndex == ResourceSelectionComposite.COLUMN_NAME) {
 					String path = resource.getFullPath().toString();
 					return path.startsWith("/") ? path.substring(1) : path;
 				}
@@ -326,7 +274,7 @@ public class ResourceSelectionComposite extends Composite {
 					return SVNTeamUIPlugin.instance().getResource("ResourceSelectionComposite.InvalidResource");
 				}
 				int changeMask = local.getChangeMask();
-				if (columnIndex == 2) {
+				if (columnIndex == ResourceSelectionComposite.COLUMN_STATUS) {
 					return ResourceSelectionComposite.this.statusAsString(local.getStatus(), changeMask);
 				}
 				return ResourceSelectionComposite.this.changeMaskAsString(changeMask);
@@ -538,6 +486,106 @@ public class ResourceSelectionComposite extends Composite {
 		}
 		
 		return false;
+	}
+	
+	private SelectionListener getColumnListener(final CheckboxTableViewer table) {
+		return new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				int column = table.getTable().indexOf((TableColumn)e.widget);
+				ResourcesTableComparator oldSorter = (ResourcesTableComparator)table.getComparator();
+				TableColumn tableColumn = ((TableColumn)e.widget);
+				if (oldSorter != null && column == oldSorter.getColumnNumber()) {
+					oldSorter.setReversed(!oldSorter.isReversed());
+					table.getTable().setSortColumn(tableColumn);
+					table.getTable().setSortDirection(oldSorter.isReversed() ? SWT.DOWN : SWT.UP);
+					table.refresh();
+				} else {
+					table.getTable().setSortColumn(tableColumn);
+					table.getTable().setSortDirection(SWT.UP);
+					table.setComparator(new ResourcesTableComparator(table, column));
+				}
+			}
+		};
+	}
+	
+	protected class ResourcesTableComparator extends ColumnedViewerComparator {
+		
+		public ResourcesTableComparator(CheckboxTableViewer tableViewer, int column) {
+			super(tableViewer, column);
+		}
+		
+		public int compare(Viewer viewer, Object row1, Object row2) {
+         	if (column == ResourceSelectionComposite.COLUMN_CHECKBOX) {
+         		return 0;
+         	}
+             IResource rowData1 = (IResource)row1;
+             IResource rowData2 = (IResource)row2;
+             if (column == ResourceSelectionComposite.COLUMN_NAME) {
+                 return this.compareNames(rowData1, rowData2);
+             }
+             if (ResourceSelectionComposite.this.cacheEnabled) {
+             	return 0;
+             }
+             IRemoteStorage storage = SVNRemoteStorage.instance();
+             ILocalResource local1 = storage.asLocalResource(rowData1);
+             ILocalResource local2 = storage.asLocalResource(rowData2);
+             if (local1 == null || local2 == null) {
+             	return 0;
+             }
+             int changeMask1 = local1.getChangeMask();
+             int changeMask2 = local2.getChangeMask();
+             if (column == ResourceSelectionComposite.COLUMN_STATUS) {
+                 String status1 = ResourceSelectionComposite.this.statusAsString(local1.getStatus(), changeMask1);
+                 String status2 = ResourceSelectionComposite.this.statusAsString(local2.getStatus(), changeMask2);
+                 int retVal = this.compareStatuses(status1, status2);
+                 return retVal != 0 ? retVal : this.compareNames(rowData1, rowData2);
+             }
+             if (column == ResourceSelectionComposite.COLUMN_PROPSTATUS) {
+             	String propStatus1 = changeMaskAsString(changeMask1);
+             	String propStatus2 = changeMaskAsString(changeMask2);
+             	return ColumnedViewerComparator.compare(propStatus1, propStatus2, this.isReversed());
+             }
+             return 0;
+         }
+         
+         protected int compareStatuses(String status1, String status2) {
+         	if (status1 == status2) {
+         		return 0;
+         	}
+         	if (status1 == IStateFilter.ST_NEW || status1 == IStateFilter.ST_IGNORED) {
+         		if (this.isReversed()) {
+         			return -1;
+         		}
+         		return 1;
+         	}
+         	if (status2 == IStateFilter.ST_NEW || status2 == IStateFilter.ST_IGNORED) {
+         		if (this.isReversed()) {
+         			return 1;
+         		}
+         		return -1;
+         	}
+         	return ColumnedViewerComparator.compare(status1, status2, this.isReversed());
+         }
+         
+         protected int compareNames(IResource rowData1 , IResource rowData2) {
+             boolean cnd1 = rowData1 instanceof IContainer;
+             boolean cnd2 = rowData2 instanceof IContainer;
+             if (cnd1 && !cnd2) {
+            	 if (this.isReversed()) {
+            		 return 1;
+            	 }
+                 return -1;
+             }
+             else if (cnd2 && !cnd1) {
+            	 if (this.isReversed()) {
+            		 return -1;
+            	 }
+                 return 1;
+             }
+				String path1 = rowData1.getFullPath().toString();
+				String path2 = rowData2.getFullPath().toString();
+             return ColumnedViewerComparator.compare(path1, path2, this.isReversed());
+         }
 	}
 	
 }
