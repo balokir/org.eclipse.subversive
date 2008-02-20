@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.compare.CompareUI;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -162,11 +161,11 @@ public abstract class AbstractSVNParticipant extends ScopableSubscriberParticipa
 		public static final int CONFLICTING_REPLACEMENT_MASK = SyncInfo.CONFLICTING | SyncInfo.CHANGE;
 		public static final int REPLACEMENT_MASK = SyncInfo.CHANGE;
 
-		protected Map images;
+		protected Map<ImageDescriptor, Image> images;
 	    
 	    public LabelDecorator() {
 	        super();
-	        this.images = new HashMap();
+	        this.images = new HashMap<ImageDescriptor, Image>();
 	    }
 
 		public Image decorateImage(Image image, Object element) {
@@ -215,11 +214,17 @@ public abstract class AbstractSVNParticipant extends ScopableSubscriberParticipa
 		        Image img = (Image)this.images.get(imgDescr);
 		        if (img == null) {
 		            this.images.put(imgDescr, img = imgDescr.createImage());
-		            CompareUI.disposeOnShutdown(img);
 		        }
 				return img;
 		    }
 		    return null;
+		}
+		
+		public void dispose() {
+			Iterator<ImageDescriptor> it = this.images.keySet().iterator();
+			while (it.hasNext()) {
+				this.images.get(it.next()).dispose();
+			}
 		}
 		
 		protected AbstractSVNSyncInfo getSyncInfo(Object element) {

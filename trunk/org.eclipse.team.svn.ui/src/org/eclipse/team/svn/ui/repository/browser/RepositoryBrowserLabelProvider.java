@@ -14,10 +14,10 @@ package org.eclipse.team.svn.ui.repository.browser;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
-import org.eclipse.compare.CompareUI;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -40,7 +40,7 @@ import org.eclipse.team.svn.ui.repository.model.RepositoryResource;
  */
 public class RepositoryBrowserLabelProvider implements ITableLabelProvider {
 	protected RepositoryBrowserTableViewer tableViewer;
-	protected Map images;
+	protected Map<ImageDescriptor, Image> images;
 	
 	protected static String hasProps;
 	protected static String noAuthor;
@@ -48,7 +48,7 @@ public class RepositoryBrowserLabelProvider implements ITableLabelProvider {
 
 	public RepositoryBrowserLabelProvider(RepositoryBrowserTableViewer tableViewer) {
 		this.tableViewer = tableViewer;
-		this.images = new HashMap();
+		this.images = new HashMap<ImageDescriptor, Image>();
 		RepositoryBrowserLabelProvider.noAuthor = SVNTeamPlugin.instance().getResource("SVNInfo.NoAuthor");
 		RepositoryBrowserLabelProvider.noDate = SVNTeamPlugin.instance().getResource("SVNInfo.NoDate");
 		RepositoryBrowserLabelProvider.hasProps = SVNTeamUIPlugin.instance().getResource("RepositoriesView.Browser.HasProps");
@@ -67,7 +67,6 @@ public class RepositoryBrowserLabelProvider implements ITableLabelProvider {
 				Image img = (Image)this.images.get(iDescr);
 				if (img == null) {
 					this.images.put(iDescr, img = iDescr.createImage());
-					CompareUI.disposeOnShutdown(img);
 				}
 				return img;
 			}
@@ -94,6 +93,10 @@ public class RepositoryBrowserLabelProvider implements ITableLabelProvider {
 	}
 
 	public void dispose() {
+		Iterator<ImageDescriptor> it = this.images.keySet().iterator();
+		while (it.hasNext()) {
+			this.images.get(it.next()).dispose();
+		}
 	}
 
 	public boolean isLabelProperty(Object element, String property) {
