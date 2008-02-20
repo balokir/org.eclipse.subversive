@@ -44,7 +44,6 @@ import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -114,6 +113,7 @@ import org.eclipse.team.svn.ui.operation.UILoggedOperation;
 import org.eclipse.team.svn.ui.panel.remote.ExportPanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFolder;
+import org.eclipse.team.svn.ui.utility.ColumnedViewerComparator;
 import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
 import org.eclipse.team.svn.ui.utility.TableViewerSorter;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -255,7 +255,7 @@ public class AffectedPathsComposite extends Composite {
         this.tableViewer = new TableViewer(this.table);
         this.sashForm.setWeights(new int[] {25, 75});
 		
-        AffectedPathTableComparator tableComparator = new AffectedPathTableComparator(AffectedPathsComposite.COLUMN_PATH);
+        AffectedPathTableComparator tableComparator = new AffectedPathTableComparator(this.tableViewer, AffectedPathsComposite.COLUMN_PATH);
         tableComparator.setReversed(false);
 		this.tableViewer.setComparator(tableComparator);
 		
@@ -845,32 +845,16 @@ public class AffectedPathsComposite extends Composite {
 				} else {
 					table.getTable().setSortColumn(tableColumn);
 					table.getTable().setSortDirection(SWT.UP);
-					table.setComparator(new AffectedPathTableComparator(column));
+					table.setComparator(new AffectedPathTableComparator(table, column));
 				}
 			}
 		};
 	} 
 	
-	protected class AffectedPathTableComparator extends ViewerComparator {
-        protected int column;
-        protected boolean reversed;
+	protected class AffectedPathTableComparator extends ColumnedViewerComparator {
 		
-        AffectedPathTableComparator(int column) {
-			super();
-			this.reversed = false;
-			this.column = column;
-		}
-		
-		public boolean isReversed() {
-			return this.reversed;
-		}
-
-		public void setReversed(boolean reversed) {
-			this.reversed = reversed;
-		}
-		
-		public int getColumnNumber() {
-			return this.column;
+        AffectedPathTableComparator(TableViewer tableViewer, int column) {
+			super(tableViewer, column);
 		}
 		
 		public int compare(Viewer viewer, Object row1, Object row2) {
