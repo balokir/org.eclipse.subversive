@@ -221,9 +221,8 @@ public abstract class AbstractSVNParticipant extends ScopableSubscriberParticipa
 		}
 		
 		public void dispose() {
-			Iterator<ImageDescriptor> it = this.images.keySet().iterator();
-			while (it.hasNext()) {
-				this.images.get(it.next()).dispose();
+			for (Image img : this.images.values()) {
+				img.dispose();
 			}
 		}
 		

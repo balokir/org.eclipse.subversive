@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.ui.history;
 
+import org.eclipse.compare.CompareUI;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -49,27 +50,21 @@ public class AffectedPathsLabelProvider extends LabelProvider {
 				AffectedPathsLabelProvider.modifiedFolderIcon = (new OverlayedImageDescriptor(AffectedPathsLabelProvider.folderIcon, instance.getImageDescriptor("icons/overlays/change.gif"), new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V)).createImage();
 				AffectedPathsLabelProvider.deletedFolderIcon = (new OverlayedImageDescriptor(AffectedPathsLabelProvider.folderIcon, instance.getImageDescriptor("icons/overlays/deletion.gif"), new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V)).createImage();
 				AffectedPathsLabelProvider.replacedFolderIcon = (new OverlayedImageDescriptor(AffectedPathsLabelProvider.folderIcon, instance.getImageDescriptor("icons/overlays/replacement.gif"), new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V)).createImage();
+				CompareUI.disposeOnShutdown(AffectedPathsLabelProvider.folderIcon);
+				CompareUI.disposeOnShutdown(AffectedPathsLabelProvider.rootAdditionIcon);
+				CompareUI.disposeOnShutdown(AffectedPathsLabelProvider.rootIcon);
+				CompareUI.disposeOnShutdown(AffectedPathsLabelProvider.rootAdditionIcon);
+				CompareUI.disposeOnShutdown(AffectedPathsLabelProvider.overlayedRootIcon);
+				CompareUI.disposeOnShutdown(AffectedPathsLabelProvider.addedFolderIcon);
+				CompareUI.disposeOnShutdown(AffectedPathsLabelProvider.modifiedFolderIcon);
+				CompareUI.disposeOnShutdown(AffectedPathsLabelProvider.deletedFolderIcon);
+				CompareUI.disposeOnShutdown(AffectedPathsLabelProvider.replacedFolderIcon);
 			}
 		}
 	}
 	
 	public void setCurrentRevision(long currentRevision) {
 		this.currentRevision = currentRevision;
-	}
-	
-	public void dispose() {
-		super.dispose();
-		if (this.folderIcon != null) {
-			AffectedPathsLabelProvider.folderIcon.dispose();
-			AffectedPathsLabelProvider.overlayedFolderIcon.dispose();
-			AffectedPathsLabelProvider.rootIcon.dispose();
-			AffectedPathsLabelProvider.rootAdditionIcon.dispose();
-			AffectedPathsLabelProvider.overlayedRootIcon.dispose();
-			AffectedPathsLabelProvider.addedFolderIcon.dispose();
-			AffectedPathsLabelProvider.modifiedFolderIcon.dispose();
-			AffectedPathsLabelProvider.deletedFolderIcon.dispose();
-			AffectedPathsLabelProvider.replacedFolderIcon.dispose();
-		}
 	}
 	
 	public Image getImage(Object element) {

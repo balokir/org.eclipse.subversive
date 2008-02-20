@@ -14,7 +14,6 @@ package org.eclipse.team.svn.ui.repository.browser;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
@@ -93,9 +92,8 @@ public class RepositoryBrowserLabelProvider implements ITableLabelProvider {
 	}
 
 	public void dispose() {
-		Iterator<ImageDescriptor> it = this.images.keySet().iterator();
-		while (it.hasNext()) {
-			this.images.get(it.next()).dispose();
+		for (Image img : this.images.values()) {
+			img.dispose();
 		}
 	}
 
