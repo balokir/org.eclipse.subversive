@@ -65,6 +65,7 @@ import org.eclipse.team.svn.ui.dialog.SetPropertyWithOverrideDialog;
 import org.eclipse.team.svn.ui.panel.view.property.PropertyApplyPanel;
 import org.eclipse.team.svn.ui.panel.view.property.PropertyEditPanel;
 import org.eclipse.team.svn.ui.properties.RemovePropertyDialog;
+import org.eclipse.team.svn.ui.repository.model.RepositoryPending;
 import org.eclipse.team.svn.ui.utility.ColumnedViewerComparator;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -86,6 +87,7 @@ public class PropertiesComposite extends Composite {
 	protected SVNProperty[] properties;
 	protected TableViewer propertyViewer;
 	protected Text propertyText;
+	protected boolean isProcessing;
 	
 	protected IResourcePropertyProvider provider;
 	
@@ -97,6 +99,7 @@ public class PropertiesComposite extends Composite {
 	
 	public PropertiesComposite(Composite parent,  ViewPart workbenchPart) {
 		super(parent, SWT.NONE);
+		this.isProcessing = false;
 		this.workbenchPart = workbenchPart; 
 		this.createControls(parent);
 	}
@@ -140,6 +143,9 @@ public class PropertiesComposite extends Composite {
 				if (!PropertiesComposite.this.isDisposed()) {
 					PropertiesComposite.this.getDisplay().syncExec(new Runnable() {
 						public void run() {
+							if (PropertiesComposite.this.properties != null) {
+								PropertiesComposite.this.setPending(false);
+							}
 							PropertiesComposite.this.initializeComposite();
 						}
 					});
@@ -212,6 +218,9 @@ public class PropertiesComposite extends Composite {
 
 		this.propertyViewer.setContentProvider(new IStructuredContentProvider() {
 			public Object[] getElements(Object inputElement) {
+				if (PropertiesComposite.this.isProcessing) {
+					return (Object [])inputElement;
+				}
 				if (PropertiesComposite.this.wcResource == null && PropertiesComposite.this.repositoryResource == null) {
 					return new SVNProperty[0];
 				}
@@ -224,16 +233,24 @@ public class PropertiesComposite extends Composite {
 		});
 
 		this.propertyViewer.setLabelProvider(new ITableLabelProvider() {
+			
 			public Image getColumnImage(Object element, int columnIndex) {
 				return null;
 			}
 			public String getColumnText(Object element, int columnIndex) {
+				if (PropertiesComposite.this.isProcessing) {
+					if (columnIndex == 0) {
+						return SVNTeamUIPlugin.instance().getResource(RepositoryPending.PENDING);
+					}
+					return "";
+				}
 				SVNProperty data = (SVNProperty) element;
 				if (columnIndex == 0) {
 					return data.name;
 				}
 				return FileUtility.formatMultilineText(data.value);
 			}
+			
 			public void addListener(ILabelProviderListener listener) {
 			}
 			public void dispose() {
@@ -425,9 +442,19 @@ public class PropertiesComposite extends Composite {
 	}
 	
 	public void initializeComposite() {
-		this.propertyViewer.setInput(this.properties);
-		this.propertyViewer.getTable().setLinesVisible(true);
+		if (this.isProcessing) {
+			this.propertyViewer.setInput(new String[] {""});
+			this.propertyViewer.getTable().setLinesVisible(false);
+		}
+		else {
+			this.propertyViewer.setInput(this.properties);
+			this.propertyViewer.getTable().setLinesVisible(true);
+		}
 		this.propertyText.setText("");
+	}
+	
+	public void setPending(boolean isProcessing) {
+		this.isProcessing = isProcessing;
 	}
 	
 	public synchronized void disconnectComposite() {
