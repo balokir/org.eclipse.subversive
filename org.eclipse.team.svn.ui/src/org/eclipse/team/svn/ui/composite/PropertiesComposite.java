@@ -38,9 +38,6 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -191,22 +188,25 @@ public class PropertiesComposite extends Composite {
 					}
 				}	
 			}
-		}); 
+		});
+		
+		//creating a comparator right now to get column listeners
+		PropertiesTableComparator comparator = new PropertiesTableComparator(this.propertyViewer);
 		
 		TableColumn col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
 		col.setText(SVNTeamUIPlugin.instance().getResource("PropertiesComposite.Name"));
-		col.addSelectionListener(this.getColumnListener(propertyViewer));
+		col.addSelectionListener(comparator);
 		tableLayout.addColumnData(new ColumnWeightData(30, true));
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
 		col.setText(SVNTeamUIPlugin.instance().getResource("PropertiesComposite.Value"));
-		col.addSelectionListener(this.getColumnListener(propertyViewer));
+		col.addSelectionListener(comparator);
 		tableLayout.addColumnData(new ColumnWeightData(70, true));
 		
 		//adding a comparator and selecting a default sort column
-		PropertiesTableComparator comparator = new PropertiesTableComparator(this.propertyViewer, PropertiesComposite.COLUMN_NAME);
 		this.propertyViewer.setComparator(comparator);
+		comparator.setColumnNumber(PropertiesComposite.COLUMN_NAME);
 		this.propertyViewer.getTable().setSortColumn(this.propertyViewer.getTable().getColumn(PropertiesComposite.COLUMN_NAME));
 		this.propertyViewer.getTable().setSortDirection(SWT.UP);
 
@@ -436,30 +436,10 @@ public class PropertiesComposite extends Composite {
 		this.provider = null;
 	}
 	
-	private SelectionListener getColumnListener(final TableViewer table) {
-		return new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				int column = table.getTable().indexOf((TableColumn)e.widget);
-				PropertiesTableComparator oldSorter = (PropertiesTableComparator)table.getComparator();
-				TableColumn tableColumn = ((TableColumn)e.widget);
-				if (oldSorter != null && column == oldSorter.getColumnNumber()) {
-					oldSorter.setReversed(!oldSorter.isReversed());
-					table.getTable().setSortColumn(tableColumn);
-					table.getTable().setSortDirection(oldSorter.isReversed() ? SWT.DOWN : SWT.UP);
-					table.refresh();
-				} else {
-					table.getTable().setSortColumn(tableColumn);
-					table.getTable().setSortDirection(SWT.UP);
-					table.setComparator(new PropertiesTableComparator(table, column));
-				}
-			}
-		};
-	}
-	
 	protected class PropertiesTableComparator extends ColumnedViewerComparator {
 		
-		public PropertiesTableComparator(TableViewer tableViewer, int column) {
-			super(tableViewer, column);
+		public PropertiesTableComparator(Viewer tableViewer) {
+			super(tableViewer);
 		}
 		
 		public int compare(Viewer table, Object row1, Object row2) {
@@ -473,6 +453,7 @@ public class PropertiesComposite extends Composite {
 			}
 			return 0;
 		}
+
 	}
 	
 }

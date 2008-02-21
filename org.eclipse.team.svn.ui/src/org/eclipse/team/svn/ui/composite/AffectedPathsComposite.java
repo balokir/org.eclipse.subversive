@@ -48,9 +48,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackAdapter;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -253,9 +250,7 @@ public class AffectedPathsComposite extends Composite {
         this.tableViewer = new TableViewer(this.table);
         this.sashForm.setWeights(new int[] {25, 75});
 		
-        AffectedPathTableComparator tableComparator = new AffectedPathTableComparator(this.tableViewer, AffectedPathsComposite.COLUMN_PATH);
-        tableComparator.setReversed(false);
-		this.tableViewer.setComparator(tableComparator);
+        AffectedPathTableComparator tableComparator = new AffectedPathTableComparator(this.tableViewer);
 		
 		//0.image        
         TableColumn col = new TableColumn(this.table, SWT.NONE);
@@ -267,21 +262,24 @@ public class AffectedPathsComposite extends Composite {
         //1.name
         col = new TableColumn(this.table, SWT.NONE);
         col.setText(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.Name"));
-        col.addSelectionListener(this.getColumnListener(this.tableViewer));
+        col.addSelectionListener(tableComparator);
         layout.addColumnData(new ColumnWeightData(20, true));
         
         //2.path
         col = new TableColumn(this.table, SWT.NONE);
         col.setText(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.Path"));
-        col.addSelectionListener(this.getColumnListener(this.tableViewer));
+        col.addSelectionListener(tableComparator);
         layout.addColumnData(new ColumnWeightData(40, true));
         
         //3.source path
         col = new TableColumn(this.table, SWT.NONE);
         col.setText(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.CopiedFrom"));
-        col.addSelectionListener(this.getColumnListener(this.tableViewer));
+        col.addSelectionListener(tableComparator);
         layout.addColumnData(new ColumnWeightData(40, true));
         
+        tableComparator.setReversed(false);
+        tableComparator.setColumnNumber(AffectedPathsComposite.COLUMN_PATH);
+		this.tableViewer.setComparator(tableComparator);
         this.tableViewer.getTable().setSortColumn(this.tableViewer.getTable().getColumn(AffectedPathsComposite.COLUMN_PATH));
         this.tableViewer.getTable().setSortDirection(SWT.UP);
         
@@ -827,32 +825,12 @@ public class AffectedPathsComposite extends Composite {
 		UIMonitorUtility.doTaskScheduledActive(composite);
 	}
 	
-	private SelectionListener getColumnListener(final TableViewer table) {
-		return new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				int column = table.getTable().indexOf((TableColumn)e.widget);
-				AffectedPathTableComparator oldSorter = (AffectedPathTableComparator)table.getComparator();
-				TableColumn tableColumn = ((TableColumn)e.widget);
-				if (oldSorter != null && column == oldSorter.getColumnNumber()) {
-					oldSorter.setReversed(!oldSorter.isReversed());
-					table.getTable().setSortColumn(tableColumn);
-					table.getTable().setSortDirection(oldSorter.isReversed() ? SWT.DOWN : SWT.UP);
-					table.refresh();
-				} else {
-					table.getTable().setSortColumn(tableColumn);
-					table.getTable().setSortDirection(SWT.UP);
-					table.setComparator(new AffectedPathTableComparator(table, column));
-				}
-			}
-		};
-	} 
-	
 	protected class AffectedPathTableComparator extends ColumnedViewerComparator {
 		
-        public AffectedPathTableComparator(TableViewer tableViewer, int column) {
-			super(tableViewer, column);
+        public AffectedPathTableComparator(Viewer tableViewer) {
+			super(tableViewer);
 		}
-		
+        
 		public int compare(Viewer viewer, Object row1, Object row2) {
 			if (row1 instanceof SVNChangedPathData && row2 instanceof SVNChangedPathData) {
 				SVNChangedPathData data1 = (SVNChangedPathData)row1;
@@ -873,6 +851,7 @@ public class AffectedPathsComposite extends Composite {
 			}
 			return 0;
         }
+		
     }
 	
 	protected class GetResourcesToCompareOperation extends AbstractActionOperation implements IRepositoryResourceProvider {

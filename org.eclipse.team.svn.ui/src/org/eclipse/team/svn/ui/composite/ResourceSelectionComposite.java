@@ -160,7 +160,10 @@ public class ResourceSelectionComposite extends Composite {
 		this.tableViewer = new CheckboxTableViewer(table);
 		data = new GridData(GridData.FILL_BOTH);
 		this.tableViewer.getTable().setLayoutData(data);
-        	
+        
+		//creating a comparator right now to get column listeners
+		ResourcesTableComparator comparator = new ResourcesTableComparator(this.tableViewer);
+		
 		//checkbox
 		TableColumn col = new TableColumn(table, SWT.NONE);
 		col.setResizable(false);
@@ -171,7 +174,7 @@ public class ResourceSelectionComposite extends Composite {
 		col.setResizable(true);
 		col.setText(SVNTeamUIPlugin.instance().getResource("ResourceSelectionComposite.Resource"));
 		layout.addColumnData(new ColumnWeightData(56, true));
-		col.addSelectionListener(this.getColumnListener(this.tableViewer));
+		col.addSelectionListener(comparator);
 		
 		//status
 		col = new TableColumn(table, SWT.NONE);
@@ -179,7 +182,7 @@ public class ResourceSelectionComposite extends Composite {
 		col.setText(SVNTeamUIPlugin.instance().getResource("ResourceSelectionComposite.Content"));
 		layout.addColumnData(new ColumnWeightData(12, true));
 		if (this.cacheEnabled) {
-			col.addSelectionListener(this.getColumnListener(this.tableViewer));
+			col.addSelectionListener(comparator);
 		}
 		
 		//propstatus
@@ -188,11 +191,12 @@ public class ResourceSelectionComposite extends Composite {
 		col.setText(SVNTeamUIPlugin.instance().getResource("ResourceSelectionComposite.Properties"));
 		layout.addColumnData(new ColumnWeightData(12, true));
 		if (this.cacheEnabled) {
-			col.addSelectionListener(this.getColumnListener(this.tableViewer));
+			col.addSelectionListener(comparator);
 		}
 		
 		//adding comparator and selection default sorting column and direction
-		this.tableViewer.setComparator(new ResourcesTableComparator(this.tableViewer, ResourceSelectionComposite.COLUMN_NAME));
+		this.tableViewer.setComparator(comparator);
+		comparator.setColumnNumber(ResourceSelectionComposite.COLUMN_NAME);
 		this.tableViewer.getTable().setSortColumn(this.tableViewer.getTable().getColumn(ResourceSelectionComposite.COLUMN_NAME));
 		this.tableViewer.getTable().setSortDirection(SWT.UP);
 		
@@ -487,32 +491,13 @@ public class ResourceSelectionComposite extends Composite {
 		
 		return false;
 	}
-	
-	private SelectionListener getColumnListener(final CheckboxTableViewer table) {
-		return new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				int column = table.getTable().indexOf((TableColumn)e.widget);
-				ResourcesTableComparator oldSorter = (ResourcesTableComparator)table.getComparator();
-				TableColumn tableColumn = ((TableColumn)e.widget);
-				if (oldSorter != null && column == oldSorter.getColumnNumber()) {
-					oldSorter.setReversed(!oldSorter.isReversed());
-					table.getTable().setSortColumn(tableColumn);
-					table.getTable().setSortDirection(oldSorter.isReversed() ? SWT.DOWN : SWT.UP);
-					table.refresh();
-				} else {
-					table.getTable().setSortColumn(tableColumn);
-					table.getTable().setSortDirection(SWT.UP);
-					table.setComparator(new ResourcesTableComparator(table, column));
-				}
-			}
-		};
-	}
-	
+		
 	protected class ResourcesTableComparator extends ColumnedViewerComparator {
 		
-		public ResourcesTableComparator(CheckboxTableViewer tableViewer, int column) {
-			super(tableViewer, column);
+		public ResourcesTableComparator(Viewer tableViewer) {
+			super(tableViewer);
 		}
+		
 		
 		public int compare(Viewer viewer, Object row1, Object row2) {
          	if (column == ResourceSelectionComposite.COLUMN_CHECKBOX) {
@@ -586,6 +571,7 @@ public class ResourceSelectionComposite extends Composite {
 				String path2 = rowData2.getFullPath().toString();
              return ColumnedViewerComparator.compare(path1, path2, this.isReversed());
          }
+
 	}
 	
 }
