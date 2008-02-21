@@ -585,7 +585,7 @@ public class HistoryViewImpl {
         table.setMenu(menu);
         this.getSite().registerContextMenu(menuMgr, this.history.getTreeViewer());
         
-        this.history.getAffectedPathsComposite().registerMenuManager(this.getSite());
+        this.history.registerActionManager(this.getSite());
         
         //drop-down menu
         IActionBars actionBars = this.getActionBars();	    

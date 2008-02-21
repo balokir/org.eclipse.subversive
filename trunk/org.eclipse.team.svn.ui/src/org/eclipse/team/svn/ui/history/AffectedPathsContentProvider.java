@@ -26,10 +26,10 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
  * @author Sergiy Logvin
  */
 public class AffectedPathsContentProvider implements ITreeContentProvider {
-	protected AffectedPathNode root;
+	protected AffectedPathsNode root;
 	
 	public void initialize(SVNChangedPathData [] affectedPaths, Collection relatedPathPrefixes, Collection relatedParents, long currentRevision) {
-		this.root = new AffectedPathNode(SVNTeamUIPlugin.instance().getResource("AffectedPathsContentProvider.RootName"), null, '\0');
+		this.root = new AffectedPathsNode(SVNTeamUIPlugin.instance().getResource("AffectedPathsContentProvider.RootName"), null, '\0');
 		if (affectedPaths == null) {
 			return;
 		}
@@ -42,13 +42,13 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 	}
 
 	public boolean hasChildren(Object element) {
-		AffectedPathNode node = (AffectedPathNode)element;
+		AffectedPathsNode node = (AffectedPathsNode)element;
 		return node.hasChildren();
 	}
 	
 	public Object[] getChildren(Object parentElement) {
-		AffectedPathNode parentNode = (AffectedPathNode)parentElement;
-		return parentNode.getChildren().toArray(new AffectedPathNode[parentNode.getChildren().size()]);		
+		AffectedPathsNode parentNode = (AffectedPathsNode)parentElement;
+		return parentNode.getChildren().toArray(new AffectedPathsNode[parentNode.getChildren().size()]);		
 	}
 	
 	public void dispose() {
@@ -58,14 +58,14 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 	}
 
 	public Object getParent(Object element) {
-		return ((AffectedPathNode)element).getParent();
+		return ((AffectedPathsNode)element).getParent();
 	}
 	
 	public Object[] getElements(Object inputElement) {
 		return new Object[] {this.root};
 	}
 	
-	public AffectedPathNode getRoot() {
+	public AffectedPathsNode getRoot() {
 		return this.root;
 	}
 	
@@ -75,15 +75,15 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 			return;
 		}
 		StringTokenizer st = new StringTokenizer(fullResourcePath, "/");
-		AffectedPathNode node = null;
-		AffectedPathNode parent = this.root;
+		AffectedPathsNode node = null;
+		AffectedPathsNode parent = this.root;
 		// also handle changes for repository root
-		AffectedPathNode nextToLast = this.root;
+		AffectedPathsNode nextToLast = this.root;
 		while (st.hasMoreTokens()) {
 			String name = st.nextToken();
 			node = parent.findByName(name);
 			if (node == null) {
-				node = new AffectedPathNode(name, parent, name.equals(affectedPath.resourceName) ? affectedPath.action : '\0');
+				node = new AffectedPathsNode(name, parent, name.equals(affectedPath.resourceName) ? affectedPath.action : '\0');
 				parent.addChild(node);
 			} 
 			else if (name.equals(affectedPath.resourceName)) {
@@ -118,11 +118,11 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 		return false;
 	}
 	
-	protected void doCompress(AffectedPathNode node) {
-		List<AffectedPathNode> children = node.getChildren();
+	protected void doCompress(AffectedPathsNode node) {
+		List<AffectedPathsNode> children = node.getChildren();
 		if (node.getParent() == null) {
 			for (Iterator it = children.iterator(); it.hasNext(); ) {
-				this.doCompress((AffectedPathNode)it.next());
+				this.doCompress((AffectedPathsNode)it.next());
 			}
 			return;
 		}
@@ -130,15 +130,15 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 			return;
 		}
 		else if (children.size() == 1) {
-			AffectedPathNode nodeChild = children.get(0);
+			AffectedPathsNode nodeChild = children.get(0);
 			if (node.getData() != null && node.getData().length > 0) {
 				this.doCompress(nodeChild);
 				return;
 			}
 			node.setName(node.getName() + "/" + nodeChild.getName());
-			List<AffectedPathNode> lowerChildren = nodeChild.getChildren();
+			List<AffectedPathsNode> lowerChildren = nodeChild.getChildren();
 			for (Iterator it = lowerChildren.iterator(); it.hasNext(); ) {
-				((AffectedPathNode)it.next()).setParent(node);
+				((AffectedPathsNode)it.next()).setParent(node);
 			}
 			node.setChildren(lowerChildren);
 			SVNChangedPathData [] data = nodeChild.getData();
@@ -147,18 +147,18 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 			}
 			this.doCompress(node);
 			for (Iterator it = lowerChildren.iterator(); it.hasNext(); ) {
-				this.doCompress((AffectedPathNode)it.next());
+				this.doCompress((AffectedPathsNode)it.next());
 			}
 		}
 		else {
 			for (Iterator it = children.iterator(); it.hasNext(); ) {
-				this.doCompress((AffectedPathNode)it.next());
+				this.doCompress((AffectedPathsNode)it.next());
 			}
 		}
 		
 	}
 	
-	protected void refreshStatuses(AffectedPathNode node) {
+	protected void refreshStatuses(AffectedPathsNode node) {
 		List children = node.getChildren();
 		if (children.size() == 0) {
 			return;
@@ -166,7 +166,7 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 		SVNChangedPathData [] affectedPathData = node.getData();
 		if (affectedPathData != null && affectedPathData.length > 0) {
 			for (Iterator iter = children.iterator(); iter.hasNext();) {
-				AffectedPathNode currentNode = (AffectedPathNode)iter.next();
+				AffectedPathsNode currentNode = (AffectedPathsNode)iter.next();
 				for (int i = 0; i < affectedPathData.length; i++) {
 					SVNChangedPathData affectedPath = affectedPathData[i];
 					if (currentNode.getName().equals(affectedPath.resourceName)) {
@@ -179,7 +179,7 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 		}
 		else {
 			for (Iterator iter = children.iterator(); iter.hasNext();) {
-				this.refreshStatuses((AffectedPathNode)iter.next());
+				this.refreshStatuses((AffectedPathsNode)iter.next());
 			}
 		}
 	}

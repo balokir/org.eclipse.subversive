@@ -59,9 +59,11 @@ import org.eclipse.team.svn.core.utility.PatternProvider;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.extension.factory.ICommentView;
+import org.eclipse.team.svn.ui.history.HistoryActionManager;
 import org.eclipse.team.svn.ui.history.SVNChangedPathData;
 import org.eclipse.team.svn.ui.history.SVNLocalFileRevision;
 import org.eclipse.team.svn.ui.utility.ColumnedViewerComparator;
+import org.eclipse.ui.IWorkbenchPartSite;
 
 /**
  * LogMessage's viewer implementation
@@ -107,8 +109,12 @@ public class LogMessagesComposite extends SashForm {
 	protected HistoryCategory[] categoriesRemote = new HistoryCategory[0];
 	protected HistoryCategory[] categoriesLocal = new HistoryCategory[0];
 	
+	protected HistoryActionManager actionManager;
+
 	public LogMessagesComposite(Composite parent, int logPercent, int style) {
 	    super(parent, SWT.VERTICAL);
+		
+		this.actionManager = new HistoryActionManager();
 	    
 	    this.commentVisible = true;
 	    this.affectedVisible = true;
@@ -167,8 +173,8 @@ public class LogMessagesComposite extends SashForm {
 	    return this.historyTable;
 	}
 	
-	public AffectedPathsComposite getAffectedPathsComposite() {
-		return this.affectedPathsComposite;
+	public void registerActionManager(IWorkbenchPartSite site) {
+		this.affectedPathsComposite.registerActionManager(this.actionManager, site);
 	}
 	
 	public void setSelectedRevision(long revision) {
@@ -293,6 +299,7 @@ public class LogMessagesComposite extends SashForm {
 	public void setLogMessages(SVNRevision currentRevision, SVNLogEntry []msgs, IRepositoryResource repositoryResource) {
 		this.msgs = msgs;
 		this.repositoryResource = repositoryResource;
+		this.actionManager.setRepositoryResource(repositoryResource);
 		this.currentRevision = SVNRevision.INVALID_REVISION_NUMBER;
 		this.pathData.clear();
 		
@@ -786,8 +793,9 @@ public class LogMessagesComposite extends SashForm {
 					{
 						String message = LogMessagesComposite.this.getSelectedMessageNoComment();
 						LogMessagesComposite.this.viewManager.setComment(message);
-						LogMessagesComposite.this.affectedPathsComposite.setRepositoryResource(LogMessagesComposite.this.repositoryResource);
-						LogMessagesComposite.this.affectedPathsComposite.setInput(LogMessagesComposite.this.getSelectedPathData(), LogMessagesComposite.this.getRelatedPathPrefixes(), LogMessagesComposite.this.getRelatedParents(), LogMessagesComposite.this.getSelectedRevision());
+						long revision = LogMessagesComposite.this.getSelectedRevision();
+						LogMessagesComposite.this.actionManager.setSelectedRevision(revision);
+						LogMessagesComposite.this.affectedPathsComposite.setInput(LogMessagesComposite.this.getSelectedPathData(), LogMessagesComposite.this.getRelatedPathPrefixes(), LogMessagesComposite.this.getRelatedParents(), revision);
 						this.oldSelection = selection;
 						this.hideUnrelated = LogMessagesComposite.this.showRelatedPathsOnly;
 					}
