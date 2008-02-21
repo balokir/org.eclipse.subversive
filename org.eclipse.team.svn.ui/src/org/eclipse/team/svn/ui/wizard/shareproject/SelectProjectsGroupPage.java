@@ -43,7 +43,7 @@ import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.utility.TableViewerSorter;
+import org.eclipse.team.svn.ui.utility.ColumnedViewerComparator;
 import org.eclipse.team.svn.ui.wizard.AbstractVerifiedWizardPage;
 import org.eclipse.ui.PlatformUI;
 
@@ -262,22 +262,22 @@ public class SelectProjectsGroupPage extends AbstractVerifiedWizardPage implemen
 			}
 		});
 
-		TableViewerSorter sorter = new TableViewerSorter(this.viewer, new TableViewerSorter.IColumnComparator() {
-			public int compare(Object row1, Object row2, int column) {
-				return TableViewerSorter.compare(row1.toString(), row2.toString());
+		ColumnedViewerComparator comparator = new ColumnedViewerComparator(this.viewer) {
+			public int compare(Viewer viewer, Object row1, Object row2) {
+				return ColumnedViewerComparator.compare(row1.toString(), row2.toString(), this.isReversed());
 			}
-		});
-		this.viewer.setSorter(sorter);
+		};
 		
 		TableColumn col = new TableColumn(table, SWT.NONE);
 		col.setResizable(false);
 		col.setText(SVNTeamUIPlugin.instance().getResource("SelectProjectsGroupPage.ProjectName"));
-		col.addSelectionListener(sorter);
+		col.addSelectionListener(comparator);
 		TableLayout tLayout = new TableLayout();
 		tLayout.addColumnData(new ColumnWeightData(100));
 		table.setLayout(tLayout);
 		
-		sorter.setDefaultColumn(0);
+		this.viewer.getTable().setSortDirection(SWT.UP);
+		this.viewer.getTable().setSortColumn(this.viewer.getTable().getColumn(0));
 		
 		this.selectedGroup = this.projectGroups.get(null) != null ? null : (String)this.projectGroups.keySet().iterator().next();
 		this.viewer.setInput(this.projectGroups);

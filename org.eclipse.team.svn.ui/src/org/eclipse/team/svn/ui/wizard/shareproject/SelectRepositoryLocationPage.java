@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.utility.TableViewerSorter;
+import org.eclipse.team.svn.ui.utility.ColumnedViewerComparator;
 import org.eclipse.team.svn.ui.wizard.AbstractVerifiedWizardPage;
 import org.eclipse.ui.PlatformUI;
 
@@ -118,29 +118,30 @@ public class SelectRepositoryLocationPage extends AbstractVerifiedWizardPage {
 		table.setLayout(tLayout);
 
 		this.repositoriesView = new TableViewer(table);
-		TableViewerSorter sorter = new TableViewerSorter(this.repositoriesView, new TableViewerSorter.IColumnComparator() {
-            public int compare(Object row1, Object row2, int column) {
-            	IRepositoryLocation location1 = (IRepositoryLocation)row1;
+		
+		ColumnedViewerComparator comparator = new ColumnedViewerComparator(this.repositoriesView) {
+			public int compare(Viewer viewer, Object row1, Object row2) {
+				IRepositoryLocation location1 = (IRepositoryLocation)row1;
             	IRepositoryLocation location2 = (IRepositoryLocation)row2;
-            	if (column == 0) {
-            		return TableViewerSorter.compare(location1.getLabel(), location2.getLabel());
+            	if (this.column == 0) {
+            		return ColumnedViewerComparator.compare(location1.getLabel(), location2.getLabel(), this.isReversed());
             	}
-        		return TableViewerSorter.compare(location1.getUrl(), location2.getUrl());
-            }
-        });
-		this.repositoriesView.setSorter(sorter);
+        		return ColumnedViewerComparator.compare(location1.getUrl(), location2.getUrl(), this.isReversed());
+			}
+		};
 		
 		TableColumn col = new TableColumn(table, SWT.LEFT);
 		col.setResizable(true);
 		col.setText("Label");
-		col.addSelectionListener(sorter);
+		col.addSelectionListener(comparator);
 
 		col = new TableColumn(table, SWT.LEFT);
 		col.setResizable(true);
 		col.setText("URL");
-		col.addSelectionListener(sorter);
-		
-		sorter.setDefaultColumn(0);
+		col.addSelectionListener(comparator);
+
+		this.repositoriesView.getTable().setSortDirection(SWT.UP);
+		this.repositoriesView.getTable().setSortColumn(this.repositoriesView.getTable().getColumn(0));
 		
 		this.repositoriesView.setContentProvider(new IStructuredContentProvider() {
 			public Object[] getElements(Object inputElement) {

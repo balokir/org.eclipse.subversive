@@ -41,7 +41,7 @@ import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.utility.TableViewerSorter;
+import org.eclipse.team.svn.ui.utility.ColumnedViewerComparator;
 import org.eclipse.team.svn.ui.wizard.AbstractVerifiedWizardPage;
 import org.eclipse.ui.PlatformUI;
 
@@ -184,14 +184,15 @@ public class AlreadyConnectedPage extends AbstractVerifiedWizardPage {
 			}
 		};
 		this.repositoryRootsView.setLabelProvider(labelProvider);
-		TableViewerSorter sorter = new TableViewerSorter(this.repositoryRootsView, new TableViewerSorter.IColumnComparator() {
-			public int compare(Object row1, Object row2, int column) {
-				String val1 = labelProvider.getColumnText(row1, column);
-				String val2 = labelProvider.getColumnText(row2, column);
-				return TableViewerSorter.compare(val1, val2);
+		
+		ColumnedViewerComparator comparator = new ColumnedViewerComparator(this.repositoryRootsView) {
+			public int compare(Viewer viewer, Object row1, Object row2) {
+				String val1 = labelProvider.getColumnText(row1, this.column);
+				String val2 = labelProvider.getColumnText(row2, this.column);
+				return ColumnedViewerComparator.compare(val1, val2, this.isReversed());
 			}
-		});
-		this.repositoryRootsView.setSorter(sorter);
+			
+		};
 		this.repositoryRootsView.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection selection = (IStructuredSelection)AlreadyConnectedPage.this.repositoryRootsView.getSelection();
@@ -203,12 +204,15 @@ public class AlreadyConnectedPage extends AbstractVerifiedWizardPage {
 		TableColumn col = new TableColumn(table, SWT.LEFT);
 		col.setResizable(true);
 		col.setText(SVNTeamUIPlugin.instance().getResource("AlreadyConnectedPage.LocationLabel"));
-		col.addSelectionListener(sorter);
+		col.addSelectionListener(comparator);
 		
 		col = new TableColumn(table, SWT.LEFT);
 		col.setResizable(true);
 		col.setText(SVNTeamUIPlugin.instance().getResource("AlreadyConnectedPage.URL"));
-		col.addSelectionListener(sorter);
+		col.addSelectionListener(comparator);
+		
+		this.repositoryRootsView.getTable().setSortDirection(SWT.UP);
+		this.repositoryRootsView.getTable().setSortColumn(this.repositoryRootsView.getTable().getColumn(0));
 
 		Composite btnComposite = new Composite(composite, SWT.NONE);
 		layout = new GridLayout();
