@@ -38,7 +38,6 @@ import org.eclipse.team.svn.ui.repository.model.RepositoryResource;
  * @author Sergiy Logvin
  */
 public class RepositoryBrowserLabelProvider implements ITableLabelProvider {
-	protected RepositoryBrowserTableViewer tableViewer;
 	protected Map<ImageDescriptor, Image> images;
 	
 	protected static String hasProps;
@@ -46,7 +45,6 @@ public class RepositoryBrowserLabelProvider implements ITableLabelProvider {
 	protected static String noDate;
 
 	public RepositoryBrowserLabelProvider(RepositoryBrowserTableViewer tableViewer) {
-		this.tableViewer = tableViewer;
 		this.images = new HashMap<ImageDescriptor, Image>();
 		RepositoryBrowserLabelProvider.noAuthor = SVNTeamPlugin.instance().getResource("SVNInfo.NoAuthor");
 		RepositoryBrowserLabelProvider.noDate = SVNTeamPlugin.instance().getResource("SVNInfo.NoDate");
@@ -54,7 +52,7 @@ public class RepositoryBrowserLabelProvider implements ITableLabelProvider {
 	}
 	
 	public Image getColumnImage(Object element, int columnIndex) {
-		if (columnIndex == tableViewer.getNameColumnIndex()) {
+		if (columnIndex == RepositoryBrowserTableViewer.COLUMN_NAME) {
 			ImageDescriptor iDescr = null;
 			if (element instanceof RepositoryResource) {
 				iDescr = ((RepositoryResource)element).getImageDescriptor(null);
@@ -78,7 +76,7 @@ public class RepositoryBrowserLabelProvider implements ITableLabelProvider {
 			return this.getColumnTextForElement(element, columnIndex);
 		}
 		else if (element instanceof RepositoryFictiveNode) {
-			if (columnIndex == tableViewer.getNameColumnIndex()) {
+			if (columnIndex == RepositoryBrowserTableViewer.COLUMN_NAME) {
 				return ((RepositoryFictiveNode)element).getLabel(null);
 			}
 			if (element instanceof RepositoryFictiveWorkingDirectory) {
@@ -109,10 +107,10 @@ public class RepositoryBrowserLabelProvider implements ITableLabelProvider {
 		if (element instanceof RepositoryResource) {
 			IRepositoryResource resource = ((RepositoryResource)element).getRepositoryResource();
 			IRepositoryResource.Information resourceInfo = resource.getInfo();
-			if (columnIndex == tableViewer.getNameColumnIndex()) {
+			if (columnIndex == RepositoryBrowserTableViewer.COLUMN_NAME) {
 				return ((RepositoryResource)element).getLabel();
 			}
-			else if (columnIndex == tableViewer.getRevisionColumnIndex()) {
+			else if (columnIndex == RepositoryBrowserTableViewer.COLUMN_REVISION) {
 				String revision = "";
 				try {
 					if (resource.isInfoCached()) {
@@ -128,23 +126,23 @@ public class RepositoryBrowserLabelProvider implements ITableLabelProvider {
 				return revision;
 			}
 			else if (resourceInfo != null) {			
-				if (columnIndex == tableViewer.getDateColumnIndex()) {
+				if (columnIndex == RepositoryBrowserTableViewer.COLUMN_LAST_CHANGE_DATE) {
 					return (resourceInfo.lastChangedDate != 0) ? dateTimeFormat.format(new Date(resourceInfo.lastChangedDate)) : RepositoryBrowserLabelProvider.noDate;
 				}
-				else if (columnIndex == tableViewer.getAuthorColumnIndex()) {
+				else if (columnIndex == RepositoryBrowserTableViewer.COLUMN_LAST_CHANGE_AUTHOR) {
 					String author = resourceInfo.lastAuthor;
 					return (author != null) ? author : RepositoryBrowserLabelProvider.noAuthor;
 				}
-				else if (columnIndex == tableViewer.getLockOwnerColumnIndex()) {
+				else if (columnIndex == RepositoryBrowserTableViewer.COLUMN_LOCK_OWNER) {
 					SVNLock lock = resourceInfo.lock;
 					String lockOwner = (lock == null) ? "" : lock.owner;
 					return lockOwner;
 				}
-				else if (columnIndex == tableViewer.getSizeColumnIndex()) {
+				else if (columnIndex == RepositoryBrowserTableViewer.COLUMN_SIZE) {
 					long size = resourceInfo.fileSize;
 					return (resource instanceof IRepositoryFile) ? String.valueOf(size) : "";
 				}
-				else if (columnIndex == tableViewer.getPropertiesColumnIndex()) {
+				else if (columnIndex == RepositoryBrowserTableViewer.COLUMN_HAS_PROPS) {
 					boolean hasProps = resourceInfo.hasProperties;
 					return (hasProps) ? RepositoryBrowserLabelProvider.hasProps : "";
 				}
