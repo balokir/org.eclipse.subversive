@@ -41,6 +41,7 @@ public abstract class ColumnedViewerComparator extends ViewerComparator implemen
 	
 	public ColumnedViewerComparator(Viewer basedOn) {
 		super();
+		this.basedOn = basedOn;
 		this.reversed = false;
 		this.column = 0;
 		 final IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
@@ -94,9 +95,11 @@ public abstract class ColumnedViewerComparator extends ViewerComparator implemen
 				treeViewer.refresh();
 			}
 			else {
+				oldSorter.setColumnNumber(column);
+				oldSorter.setReversed(false);
 				treeViewer.getTree().setSortColumn(treeColumn);
 				treeViewer.getTree().setSortDirection(SWT.UP);
-				oldSorter.setColumnNumber(column);
+				treeViewer.refresh();
 			}
 		}
 		else if (this.basedOn instanceof TableViewer) {
@@ -114,9 +117,11 @@ public abstract class ColumnedViewerComparator extends ViewerComparator implemen
 				tableViewer.refresh();
 			}
 			else {
+				oldSorter.setColumnNumber(column);
+				oldSorter.setReversed(false);
 				tableViewer.getTable().setSortColumn(tableColumn);
 				tableViewer.getTable().setSortDirection(SWT.UP);
-				oldSorter.setColumnNumber(column);
+				tableViewer.refresh();
 			}
 		}
 	}
