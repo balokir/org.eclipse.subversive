@@ -27,14 +27,9 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.connector.SVNLock;
-import org.eclipse.team.svn.core.resource.IRepositoryContainer;
-import org.eclipse.team.svn.core.resource.IRepositoryResource;
-import org.eclipse.team.svn.core.resource.IRepositoryResource.Information;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.repository.model.IToolTipProvider;
 import org.eclipse.team.svn.ui.repository.model.RepositoryBranches;
-import org.eclipse.team.svn.ui.repository.model.RepositoryFictiveWorkingDirectory;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFile;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFolder;
 import org.eclipse.team.svn.ui.repository.model.RepositoryResource;
@@ -42,7 +37,7 @@ import org.eclipse.team.svn.ui.repository.model.RepositoryRoot;
 import org.eclipse.team.svn.ui.repository.model.RepositoryTags;
 import org.eclipse.team.svn.ui.repository.model.RepositoryTrunk;
 import org.eclipse.team.svn.ui.repository.model.ToolTipVariableSetProvider;
-import org.eclipse.team.svn.ui.utility.TableViewerSorter;
+import org.eclipse.team.svn.ui.utility.ColumnedViewerComparator;
 
 /**
  * Repository browser table viewer
@@ -60,6 +55,14 @@ public class RepositoryBrowserTableViewer extends TableViewer {
 	public static final String FMT_REPOSITORY_ROOT = RepositoryBrowserTableViewer.FMT_REPOSITORY_FOLDER;
 	public static final String FMT_REPOSITORY_TAGS = RepositoryBrowserTableViewer.FMT_REPOSITORY_FOLDER;
 	public static final String FMT_REPOSITORY_TRUNK = RepositoryBrowserTableViewer.FMT_REPOSITORY_FOLDER;
+	
+	public static final int COLUMN_NAME = 0;
+	public static final int COLUMN_REVISION = 1;
+	public static final int COLUMN_LAST_CHANGE_DATE = 2;
+	public static final int COLUMN_LAST_CHANGE_AUTHOR = 3;
+	public static final int COLUMN_SIZE = 4;
+	public static final int COLUMN_HAS_PROPS = 5;
+	public static final int COLUMN_LOCK_OWNER = 6;
 
 	private static final Map class2Format = new HashMap();
 
@@ -76,24 +79,13 @@ public class RepositoryBrowserTableViewer extends TableViewer {
 	protected static String hasProps;
 	protected static String noProps;
 	protected static String noAuthor;
-
-	protected int nameColumnIdx;
-	protected int revisionColumnIdx;
-	protected int dateColumnIdx;
-	protected int authorColumnIdx;
-	protected int lockOwnerColumnIdx;
-	protected int propertiesColumnIdx;
-	protected int sizeColumnIdx;
-	
-	protected int columnIndexCounter;
 	
 	public RepositoryBrowserTableViewer(Table contentsTable) {
 		super(contentsTable);
 	}
 	
-	public RepositoryBrowserTableViewer (Composite parent, int style) {
-		super(new Table(parent, style));
-		this.columnIndexCounter = 0;		
+	public RepositoryBrowserTableViewer(Composite parent, int style) {
+		super(parent, style);
 	}
 
 	public void initialize() {
@@ -125,141 +117,30 @@ public class RepositoryBrowserTableViewer extends TableViewer {
 				RepositoryBrowserTableViewer.this.getTable().setToolTipText("");
 			}
 		});	
-			
-		TableViewerSorter sorter = new TableViewerSorter(this, new TableViewerSorter.IColumnComparator() {
-			public int compare(Object row1, Object row2, int column) {
-				int ordering = ((TableViewerSorter)RepositoryBrowserTableViewer.this.getSorter()).getOrdering(column);
-				if (row1 instanceof RepositoryFictiveWorkingDirectory) {
-					return (ordering != TableViewerSorter.ORDER_REVERSED) ? -1 : 1;
-				}
-				if (row2 instanceof RepositoryFictiveWorkingDirectory) {
-					return (ordering != TableViewerSorter.ORDER_REVERSED) ? 1 : -1;
-				}
-				IRepositoryResource rowData1 = ((RepositoryResource)row1).getRepositoryResource();
-				IRepositoryResource rowData2 = ((RepositoryResource)row2).getRepositoryResource();
-				Information info1 = (rowData1).getInfo();
-				Information info2 = (rowData2).getInfo();
-				if (column == RepositoryBrowserTableViewer.this.getNameColumnIndex()) {
-					boolean cnd1 = rowData1 instanceof IRepositoryContainer;
-                    boolean cnd2 = rowData2 instanceof IRepositoryContainer;
-                    if (cnd1 && !cnd2) {
-                        return -1;
-                    }
-                    else if (cnd2 && !cnd1) {
-                        return 1;
-                    }
-    				String name1 = rowData1.getName();
-    				String name2 = rowData2.getName();
-                    return TableViewerSorter.compare(name1, name2);
-				}
-				else if (column == RepositoryBrowserTableViewer.this.getRevisionColumnIndex()) {
-					try {
-						Long c1 = new Long(rowData1.getRevision()); 
-						Long c2 = new Long(rowData2.getRevision());
-						return c1.compareTo(c2);
-					}
-					catch (Exception ex) {
-						// not interesting in this context, will never happen
-					}
-				} else if (info1 != null && info2 != null) {
-					if (column == RepositoryBrowserTableViewer.this.getDateColumnIndex()) {
-						Long c1 = new Long(info1.lastChangedDate); 
-						Long c2 = new Long(info2.lastChangedDate);
-						return c1.compareTo(c2);
-					} else if (column == RepositoryBrowserTableViewer.this.getAuthorColumnIndex()) {
-						String author1 = info1.lastAuthor;
-						String author2 = info2.lastAuthor;
-						author1 = (author1 != null) ? author1 : RepositoryBrowserTableViewer.noAuthor;
-						author2 = (author2 != null) ? author2 : RepositoryBrowserTableViewer.noAuthor;
-						return TableViewerSorter.compare(author1, author2);
-					} else if (column == RepositoryBrowserTableViewer.this.getLockOwnerColumnIndex()) {
-						SVNLock lock1 = info1.lock;
-						SVNLock lock2 = info2.lock;
-						String lockOwner1 = (lock1 == null) ? "" : lock1.owner;
-						String lockOwner2 = (lock2 == null) ? "" : lock2.owner;
-						return TableViewerSorter.compare(lockOwner1, lockOwner2);
-					} else if (column == RepositoryBrowserTableViewer.this.getPropertiesColumnIndex()) {
-						boolean hasProps1 = info1.hasProperties;
-						boolean hasProps2 = info2.hasProperties;
-						String c1 = (hasProps1) ? RepositoryBrowserTableViewer.hasProps : RepositoryBrowserTableViewer.noProps;
-						String c2 = (hasProps2) ? RepositoryBrowserTableViewer.hasProps : RepositoryBrowserTableViewer.noProps;
-						return TableViewerSorter.compare(c1, c2);
-					} else if (column == RepositoryBrowserTableViewer.this.getSizeColumnIndex()) {
-						Long c1 = new Long (info1.fileSize);
-						Long c2 = new Long (info2.fileSize);
-						return c1.compareTo(c2);
-					}					
-				}
-				return 0;
-			}
-		});
+
+		RepositoryBrowserTableComparator comparator = new RepositoryBrowserTableComparator(this);
 		
-		this.setSorter(sorter);
+		this.createColumn(comparator, SVNTeamUIPlugin.instance().getResource("RepositoriesView.Browser.Name"), SWT.NONE, SWT.LEFT, true, new ColumnWeightData(18, true));
+		this.createColumn(comparator, SVNTeamUIPlugin.instance().getResource("RepositoriesView.Browser.Revision"), SWT.NONE, SWT.RIGHT, true, new ColumnWeightData(9, true));
+		this.createColumn(comparator, SVNTeamUIPlugin.instance().getResource("RepositoriesView.Browser.LastChangedAt"), SWT.NONE, SWT.LEFT, true, new ColumnWeightData(17, true));
+		this.createColumn(comparator, SVNTeamUIPlugin.instance().getResource("RepositoriesView.Browser.LastChangedBy"), SWT.NONE, SWT.LEFT, true, new ColumnWeightData(14, true));
+		this.createColumn(comparator, SVNTeamUIPlugin.instance().getResource("RepositoriesView.Browser.Size"), SWT.NONE, SWT.RIGHT, true, new ColumnWeightData(10, true));
+		this.createColumn(comparator, SVNTeamUIPlugin.instance().getResource("RepositoriesView.Browser.HasProperties"), SWT.NONE, SWT.LEFT, true, new ColumnWeightData(12, true));
+		this.createColumn(comparator, SVNTeamUIPlugin.instance().getResource("RepositoriesView.Browser.LockOwner"), SWT.NONE, SWT.LEFT, true, new ColumnWeightData(13, true));
 		
-		//0. name
-		this.nameColumnIdx = this.createColumn(sorter, SVNTeamUIPlugin.instance().getResource("RepositoriesView.Browser.Name"), SWT.NONE, SWT.LEFT, true, new ColumnWeightData(18, true), this.columnIndexCounter++);
-		
-		//1. revision
-		this.revisionColumnIdx = this.createColumn(sorter, SVNTeamUIPlugin.instance().getResource("RepositoriesView.Browser.Revision"), SWT.NONE, SWT.RIGHT, true, new ColumnWeightData(9, true), this.columnIndexCounter++);
-		
-		//2. last changed date
-		this.dateColumnIdx = this.createColumn(sorter, SVNTeamUIPlugin.instance().getResource("RepositoriesView.Browser.LastChangedAt"), SWT.NONE, SWT.LEFT, true, new ColumnWeightData(17, true), this.columnIndexCounter++);
-			
-		//3. last changed author
-		this.authorColumnIdx = this.createColumn(sorter, SVNTeamUIPlugin.instance().getResource("RepositoriesView.Browser.LastChangedBy"), SWT.NONE, SWT.LEFT, true, new ColumnWeightData(14, true), this.columnIndexCounter++);
-		
-		//4. size
-		this.sizeColumnIdx = this.createColumn(sorter, SVNTeamUIPlugin.instance().getResource("RepositoriesView.Browser.Size"), SWT.NONE, SWT.RIGHT, true, new ColumnWeightData(10, true), this.columnIndexCounter++);
-		
-		//5. has properties
-		this.propertiesColumnIdx = this.createColumn(sorter, SVNTeamUIPlugin.instance().getResource("RepositoriesView.Browser.HasProperties"), SWT.NONE, SWT.LEFT, true, new ColumnWeightData(12, true), this.columnIndexCounter++);
-		
-		//6. lock owner
-		this.lockOwnerColumnIdx = this.createColumn(sorter, SVNTeamUIPlugin.instance().getResource("RepositoriesView.Browser.LockOwner"), SWT.NONE, SWT.LEFT, true, new ColumnWeightData(13, true), this.columnIndexCounter++);
+		this.setComparator(comparator);
+		comparator.setColumnNumber(RepositoryBrowserTableViewer.COLUMN_NAME);
+		comparator.setReversed(false);
+		this.getTable().setSortDirection(SWT.UP);
+		this.getTable().setSortColumn(this.getTable().getColumn(RepositoryBrowserTableViewer.COLUMN_NAME));
 	}
 	
-	protected int createColumn(TableViewerSorter sorter, String name, int style, int alignment, boolean resizable, ColumnWeightData data, int index) {
+	protected void createColumn(ColumnedViewerComparator comparator, String name, int style, int alignment, boolean resizable, ColumnWeightData data) {
 		TableColumn column = new TableColumn(this.getTable(), style);
 		column.setText(name);
 		column.setResizable(resizable);
 		column.setAlignment(alignment);
 		((TableLayout)this.getTable().getLayout()).addColumnData(data);
-		if (sorter != null) {
-			column.addSelectionListener(sorter);
-		}
-		return index++;
+		column.addSelectionListener(comparator);
 	}
-	
-	public int getAuthorColumnIndex() {
-		return this.authorColumnIdx;
-	}
-	
-	public int getColumnIndexCounter() {
-		return this.columnIndexCounter;
-	}
-	
-	public int getLockOwnerColumnIndex() {
-		return this.lockOwnerColumnIdx;
-	}
-
-	public int getNameColumnIndex() {
-		return this.nameColumnIdx;
-	}
-	
-	public int getRevisionColumnIndex() {
-		return this.revisionColumnIdx;
-	}
-
-	public int getPropertiesColumnIndex() {
-		return this.propertiesColumnIdx;
-	}
-
-	public int getSizeColumnIndex() {
-		return this.sizeColumnIdx;
-	}
-
-	public int getDateColumnIndex() {
-		return this.dateColumnIdx;
-	}
-	
 }
