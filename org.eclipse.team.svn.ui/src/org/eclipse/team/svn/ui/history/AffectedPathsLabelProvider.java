@@ -68,10 +68,10 @@ public class AffectedPathsLabelProvider extends LabelProvider {
 	}
 	
 	public Image getImage(Object element) {
-		if (((AffectedPathNode)element).getParent() == null) {
+		if (((AffectedPathsNode)element).getParent() == null) {
 			return this.currentRevision == 0 ? AffectedPathsLabelProvider.rootAdditionIcon : AffectedPathsLabelProvider.overlayedRootIcon;
 		}
-		switch (((AffectedPathNode)element).getStatus()) {
+		switch (((AffectedPathsNode)element).getStatus()) {
 			case SVNLogPath.ChangeType.ADDED: {
 				return AffectedPathsLabelProvider.addedFolderIcon;
 			}

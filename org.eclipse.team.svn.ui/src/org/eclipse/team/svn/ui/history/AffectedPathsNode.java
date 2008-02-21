@@ -20,15 +20,15 @@ import java.util.List;
  *
  * @author Sergiy Logvin
  */
-public class AffectedPathNode {
+public class AffectedPathsNode {
 	
 	protected String name;
-	protected List<AffectedPathNode> children = new ArrayList<AffectedPathNode>(); 
-	protected AffectedPathNode parent;
+	protected List<AffectedPathsNode> children = new ArrayList<AffectedPathsNode>(); 
+	protected AffectedPathsNode parent;
 	protected ArrayList<SVNChangedPathData> data = null;
 	protected char status;
 	
-	public AffectedPathNode(String name, AffectedPathNode parent, char status) {
+	public AffectedPathsNode(String name, AffectedPathsNode parent, char status) {
 		this.name = name;
 		this.parent = parent;
 		this.data = new ArrayList<SVNChangedPathData>();
@@ -39,9 +39,9 @@ public class AffectedPathNode {
 		return this.name;
 	}
 	
-	public AffectedPathNode findByName(String name) {
+	public AffectedPathsNode findByName(String name) {
 		for (Iterator it = this.children.iterator(); it.hasNext(); ) {
-			AffectedPathNode node = (AffectedPathNode)it.next();
+			AffectedPathsNode node = (AffectedPathsNode)it.next();
 			if ((node).getName().equals(name)) {
 				return node;
 			}
@@ -58,15 +58,15 @@ public class AffectedPathNode {
 		return this.children.size() > 0;
 	}
 	
-	public AffectedPathNode getParent() {
+	public AffectedPathsNode getParent() {
 		return this.parent;
 	}
 	
-	public List<AffectedPathNode> getChildren() {		
+	public List<AffectedPathsNode> getChildren() {		
 		return this.children;
 	}
 	
-	public boolean addChild(AffectedPathNode child) {		
+	public boolean addChild(AffectedPathsNode child) {		
 		if (this.children.contains(child)) {
 			return false;
 		}
@@ -75,11 +75,11 @@ public class AffectedPathNode {
 	
 	public void addChildren(List children) {
 		for (Iterator it = children.iterator(); it.hasNext(); ) {
-			this.addChild((AffectedPathNode)it.next());
+			this.addChild((AffectedPathsNode)it.next());
 		}		
 	}
 	
-	public boolean removeChild(AffectedPathNode child) {
+	public boolean removeChild(AffectedPathsNode child) {
 		if (this.children.contains(child)) {
 			return this.children.remove(child);
 		}
@@ -87,10 +87,10 @@ public class AffectedPathNode {
 	}
 	
 	public boolean equals(Object arg0) {
-		if (!(arg0 instanceof AffectedPathNode)) {
+		if (!(arg0 instanceof AffectedPathsNode)) {
 			return false;
 		}
-		AffectedPathNode node2 = (AffectedPathNode)arg0;
+		AffectedPathsNode node2 = (AffectedPathsNode)arg0;
 		if (this.parent == null) {
 			return node2.parent == null;
 		}		
@@ -119,7 +119,7 @@ public class AffectedPathNode {
 			result.addAll(this.data);
 		}
 		for (Iterator it = this.children.iterator(); it.hasNext(); ) {
-			((AffectedPathNode)it.next()).getPathDataImpl(result);
+			((AffectedPathsNode)it.next()).getPathDataImpl(result);
 		}
 
 		return result;
@@ -140,11 +140,11 @@ public class AffectedPathNode {
 		this.name = name;
 	}
 	
-	public void setParent(AffectedPathNode parent) {
+	public void setParent(AffectedPathsNode parent) {
 		this.parent = parent;
 	}
 
-	public void setChildren(List<AffectedPathNode> children) {
+	public void setChildren(List<AffectedPathsNode> children) {
 		this.children = children;
 	}
 	
