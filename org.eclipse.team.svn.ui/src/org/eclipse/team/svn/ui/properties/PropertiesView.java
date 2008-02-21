@@ -78,9 +78,12 @@ public class PropertiesView extends AbstractSVNView {
 	}
 	
 	public void refreshView() {
+		boolean operationToFollow = this.propertyProvider != null && this.propertyProvider.getExecutionState() != IStatus.OK;
+		this.propertiesComposite.setPending(operationToFollow);
 		this.getSite().getShell().getDisplay().syncExec(new Runnable() {
 			public void run() {
 				PropertiesView.this.showResourceLabel();
+				PropertiesView.this.propertiesComposite.initializeComposite();
 			}
 		});
 		CompositeOperation composite = new CompositeOperation("Operation.ShowProperties");
