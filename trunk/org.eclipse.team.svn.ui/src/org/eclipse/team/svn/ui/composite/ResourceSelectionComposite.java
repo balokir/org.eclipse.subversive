@@ -376,7 +376,7 @@ public class ResourceSelectionComposite extends Composite {
 							if (local != null) {
 								IRepositoryResource remote = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
 								remote.setSelectedRevision(SVNRevision.HEAD);
-								UIMonitorUtility.doTaskScheduledDefault(new CompareResourcesOperation(local, remote, true));
+								UIMonitorUtility.doTaskScheduledDefault(new CompareResourcesOperation(local, remote, true, true));
 							}
 						}
 					});
