@@ -18,7 +18,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -41,6 +40,7 @@ import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.utility.ArrayStructuredContentProvider;
 import org.eclipse.team.svn.ui.utility.ColumnedViewerComparator;
 import org.eclipse.team.svn.ui.wizard.AbstractVerifiedWizardPage;
 import org.eclipse.ui.PlatformUI;
@@ -153,15 +153,7 @@ public class AlreadyConnectedPage extends AbstractVerifiedWizardPage {
 		table.setLayout(tLayout);
 
 		this.repositoryRootsView = new TableViewer(table);
-		this.repositoryRootsView.setContentProvider(new IStructuredContentProvider() {
-			public Object[] getElements(Object inputElement) {
-				return AlreadyConnectedPage.this.repositoryRoots;
-			}
-			public void dispose() {
-			}
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			}
-		});
+		this.repositoryRootsView.setContentProvider(new ArrayStructuredContentProvider());
 		final ITableLabelProvider labelProvider = new ITableLabelProvider() {
 			public Image getColumnImage(Object element, int columnIndex) {
 				return null;
@@ -191,7 +183,6 @@ public class AlreadyConnectedPage extends AbstractVerifiedWizardPage {
 				String val2 = labelProvider.getColumnText(row2, this.column);
 				return ColumnedViewerComparator.compare(val1, val2, this.isReversed());
 			}
-			
 		};
 		this.repositoryRootsView.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {

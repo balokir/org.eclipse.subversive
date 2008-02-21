@@ -12,16 +12,13 @@
 package org.eclipse.team.svn.ui.synchronize.action;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.ILocalFile;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.operation.LocalShowAnnotationOperation;
-import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -48,16 +45,8 @@ public class ShowOutgoingAnnotationAction extends AbstractSynchronizeModelAction
 	}
 	
 	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {
-		return new AbstractActionOperation("Operation.UShowAnnotation") {
-			protected void runImpl(IProgressMonitor monitor) throws Exception {
-				operation.getShell().getDisplay().syncExec(new Runnable() {
-					public void run() {
-					    IResource resource = ShowOutgoingAnnotationAction.this.getSelectedResource();
-						UIMonitorUtility.doTaskBusyDefault(new LocalShowAnnotationOperation(resource, operation.getPart().getSite().getPage()));
-					}
-				});
-			}
-		};
+	    IResource resource = ShowOutgoingAnnotationAction.this.getSelectedResource();
+		return new LocalShowAnnotationOperation(resource);
 	}
 
 }

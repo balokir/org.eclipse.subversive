@@ -17,12 +17,12 @@ import java.util.List;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.action.remote.CheckoutAction;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
+import org.eclipse.team.svn.ui.utility.ArrayStructuredContentProvider;
 import org.eclipse.team.svn.ui.wizard.checkoutas.CheckoutAsFolderPage;
 import org.eclipse.team.svn.ui.wizard.checkoutas.ProjectLocationSelectionPage;
 import org.eclipse.team.svn.ui.wizard.checkoutas.ProjectsSelectionPage;
@@ -83,15 +83,7 @@ public class CheckoutProjectsWizard extends AbstractSVNWizard {
 	}
 	
 	public void postInit() {
-		IStructuredContentProvider contentProvider = new IStructuredContentProvider() {
-			public Object []getElements(Object inputElement) {
-				return (Object [])inputElement;
-			}
-			public void dispose() {
-			}
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			}
-		};
+		IStructuredContentProvider contentProvider = new ArrayStructuredContentProvider();
 		HashMap resource2name = CheckoutAction.getResources2Names(this.name2resources);
 		ITableLabelProvider labelProvider = ExtensionsManager.getInstance().getCurrentCheckoutFactory().getLabelProvider(resource2name);
 		this.projectsSelectionPage.postInit(this.locationSelectionPage, (IRepositoryResource[])resource2name.keySet().toArray(new IRepositoryResource[resource2name.keySet().size()]), labelProvider, contentProvider);

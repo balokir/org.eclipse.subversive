@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
 import org.eclipse.team.svn.ui.history.HistoryViewImpl;
 import org.eclipse.team.svn.ui.history.SVNHistoryPage;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -30,6 +31,7 @@ import org.eclipse.ui.PartInitException;
  */
 public class ShowHistoryViewOperation extends AbstractActionOperation {
 	protected IRepositoryResource remote;
+	protected IRepositoryResourceProvider provider;
 	protected ILocalResource compareWith;
 	protected IResource local;
 	protected int options;
@@ -49,6 +51,13 @@ public class ShowHistoryViewOperation extends AbstractActionOperation {
 		this.remote = remote;
 	}
 
+	public ShowHistoryViewOperation(IRepositoryResourceProvider provider, int mask, int options) {
+		super("Operation.ShowHistory");
+		this.mask = mask;
+		this.options = options;
+		this.provider = provider;
+	}
+
 	public ShowHistoryViewOperation(ILocalResource compareWith, IRepositoryResource remote, int mask, int options) {
 		super("Operation.ShowHistory");
 		this.mask = mask | HistoryViewImpl.COMPARE_MODE;
@@ -58,6 +67,9 @@ public class ShowHistoryViewOperation extends AbstractActionOperation {
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
+		if (this.provider != null) {
+			this.remote = this.provider.getRepositoryResources()[0];
+		}
 		UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 			public void run() {
 				IWorkbenchPage page = UIMonitorUtility.getActivePage();

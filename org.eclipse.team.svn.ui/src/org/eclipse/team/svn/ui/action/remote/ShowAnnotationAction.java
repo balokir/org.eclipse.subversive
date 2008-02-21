@@ -27,7 +27,7 @@ public class ShowAnnotationAction extends AbstractRepositoryTeamAction {
 	}
 	
 	public void runImpl(IAction action) {
-		this.runBusy(new RemoteShowAnnotationOperation(this.getSelectedRepositoryResources()[0], this.getTargetPage()));
+		this.runScheduled(new RemoteShowAnnotationOperation(this.getSelectedRepositoryResources()[0]));
 	}
 
 	public boolean isEnabled() {

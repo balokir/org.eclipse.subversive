@@ -186,13 +186,12 @@ public class CommentComposite extends Composite  {
 				}
         	});
         }
-        this.text = SpellcheckedTextProvider.getTextWidget(this, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.WRAP, this.maxLogWidth);
         data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = 80;
-		this.text.setLayoutData(data);
+        this.text = SpellcheckedTextProvider.getTextWidget(this, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.WRAP, data, this.maxLogWidth);
 		this.text.selectAll();
 		this.validationManager.attachTo(this.text, new CommentVerifier(SVNTeamUIPlugin.instance().getResource("CommentComposite.Comment.Verifier"), this.minLogSize));
-				
+		
 		Label label = new Label(this, SWT.NULL);
 		label.setLayoutData(new GridData());
 		label.setText(SVNTeamUIPlugin.instance().getResource("CommentComposite.ChooseComment"));

@@ -15,11 +15,9 @@ package org.eclipse.team.svn.ui.panel.callback;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionEvent;
@@ -34,6 +32,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.utility.PatternProvider;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
+import org.eclipse.team.svn.ui.utility.ArrayStructuredContentProvider;
 
 /**
  * This panel allows us to ask user about trust to SSL server
@@ -108,15 +107,7 @@ public class AskTrustSSLServerPanel extends AbstractDialogPanel {
 		col.setText(SVNTeamUIPlugin.instance().getResource("AskTrustSSLServerPanel.Value"));
 
 		TableViewer view = new TableViewer(table);
-		view.setContentProvider(new IStructuredContentProvider() {
-			public Object[] getElements(Object inputElement) {
-				return tableData;
-			}
-			public void dispose() {
-			}
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			}
-		});
+		view.setContentProvider(new ArrayStructuredContentProvider());
 		view.setLabelProvider(new ITableLabelProvider() {
 			public Image getColumnImage(Object element, int columnIndex) {
 				return null;

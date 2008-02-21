@@ -11,11 +11,9 @@
 
 package org.eclipse.team.svn.ui.synchronize.action;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.ILocalFile;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -25,10 +23,8 @@ import org.eclipse.team.svn.ui.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.ui.synchronize.variant.RemoteResourceVariant;
 import org.eclipse.team.svn.ui.synchronize.variant.ResourceVariant;
 import org.eclipse.team.svn.ui.synchronize.variant.VirtualRemoteResourceVariant;
-import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.ui.IWorkbenchPage;
 
 /**
  * Show annotation action
@@ -58,17 +54,8 @@ public class ShowIncomingAnnotationAction extends AbstractSynchronizeModelAction
 	}
 
 	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {
-		return new AbstractActionOperation("Operation.MShowAnnotation") {
-			protected void runImpl(IProgressMonitor monitor) throws Exception {
-				operation.getShell().getDisplay().syncExec(new Runnable() {
-					public void run() {
-					    IResourceChange change = (IResourceChange)((RemoteResourceVariant)operation.getSVNSyncInfo().getRemote()).getResource();
-						IWorkbenchPage page = operation.getPart().getSite().getPage();
-						UIMonitorUtility.doTaskBusyDefault(new RemoteShowAnnotationOperation(change.getOriginator(), page));
-					}
-				});
-			}
-		};
+	    IResourceChange change = (IResourceChange)((RemoteResourceVariant)operation.getSVNSyncInfo().getRemote()).getResource();
+		return new RemoteShowAnnotationOperation(change.getOriginator());
 	}
 
 }

@@ -51,6 +51,7 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Tree;
@@ -114,7 +115,6 @@ import org.eclipse.team.svn.ui.operation.RefreshRepositoryLocationsOperation;
 import org.eclipse.team.svn.ui.operation.RemoteShowAnnotationOperation;
 import org.eclipse.team.svn.ui.operation.ShowPropertiesOperation;
 import org.eclipse.team.svn.ui.operation.UILoggedOperation;
-import org.eclipse.team.svn.ui.panel.remote.ExportPanel;
 import org.eclipse.team.svn.ui.panel.view.HistoryFilterPanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFile;
@@ -125,7 +125,6 @@ import org.eclipse.team.ui.history.HistoryPage;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
@@ -1022,12 +1021,11 @@ public class HistoryViewImpl {
 	}
 	
 	protected void showRepositoryResourceAnnotation(final Object item) {
-		IWorkbenchPage page = this.getSite().getPage();
         IRepositoryResource remote = this.getResourceForSelectedRevision(item);
-		UIMonitorUtility.doTaskBusyDefault(
+		UIMonitorUtility.doTaskScheduledDefault(
 			this.wcResource != null ? 
-			(IActionOperation)new LocalShowAnnotationOperation(this.wcResource, page, remote.getSelectedRevision()) :
-			new RemoteShowAnnotationOperation(remote, page));
+			(IActionOperation)new LocalShowAnnotationOperation(this.wcResource, remote.getSelectedRevision()) :
+			new RemoteShowAnnotationOperation(remote));
 	}
 	
 	protected void doExport(Object item) {
@@ -1064,13 +1062,13 @@ public class HistoryViewImpl {
 			}
 		}
 		else {
-			IRepositoryResource resource = this.getResourceForSelectedRevision(item);
-			ExportPanel panel = new ExportPanel(resource);
-			DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getShell(), panel);
-			if (dialog.open() == 0) {
-				resource = SVNUtility.copyOf(resource);
-				resource.setSelectedRevision(panel.getSelectedRevision());
-		    	UIMonitorUtility.doTaskScheduledDefault(new ExportOperation(resource, panel.getLocation()));
+			DirectoryDialog fileDialog = new DirectoryDialog(UIMonitorUtility.getShell());
+			fileDialog.setText(SVNTeamUIPlugin.instance().getResource("ExportPanel.ExportFolder"));
+			fileDialog.setMessage(SVNTeamUIPlugin.instance().getResource("ExportPanel.ExportFolder.Msg"));
+			String path = fileDialog.open();
+			if (path != null) {
+				IRepositoryResource resource = this.getResourceForSelectedRevision(item);
+		    	UIMonitorUtility.doTaskScheduledDefault(new ExportOperation(resource, path));
 		    }
 		}
 	}
