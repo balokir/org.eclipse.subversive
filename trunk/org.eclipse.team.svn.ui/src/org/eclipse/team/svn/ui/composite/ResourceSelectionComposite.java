@@ -30,7 +30,6 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -67,6 +66,7 @@ import org.eclipse.team.svn.ui.event.IResourceSelectionChangeListener;
 import org.eclipse.team.svn.ui.event.ResourceSelectionChangedEvent;
 import org.eclipse.team.svn.ui.operation.CompareResourcesOperation;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
+import org.eclipse.team.svn.ui.utility.ArrayStructuredContentProvider;
 import org.eclipse.team.svn.ui.utility.ColumnedViewerComparator;
 import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -295,17 +295,7 @@ public class ResourceSelectionComposite extends Composite {
 			}
 		});
 		
-		this.tableViewer.setContentProvider(new IStructuredContentProvider() {
-			public void dispose() {
-			}
-
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			}
-
-			public Object[] getElements(Object inputElement) {
-				return ResourceSelectionComposite.this.resources;
-			}
-		});
+		this.tableViewer.setContentProvider(new ArrayStructuredContentProvider());
 		
 		this.tableViewer.setInput(this.resources);
 		for (int i = 0; i < this.resources.length; i++) {

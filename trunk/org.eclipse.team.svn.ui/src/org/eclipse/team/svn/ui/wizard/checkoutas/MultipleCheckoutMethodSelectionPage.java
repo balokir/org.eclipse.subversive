@@ -15,11 +15,9 @@ import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -35,6 +33,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.utility.ArrayStructuredContentProvider;
 import org.eclipse.team.svn.ui.wizard.AbstractVerifiedWizardPage;
 import org.eclipse.team.svn.ui.wizard.CheckoutAsWizard;
 import org.eclipse.ui.PlatformUI;
@@ -172,17 +171,7 @@ public class MultipleCheckoutMethodSelectionPage extends AbstractVerifiedWizardP
 			}
 		});
 		
-		tableViewer.setContentProvider(new IStructuredContentProvider() {
-			public void dispose() {
-			}
-
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			}
-
-			public Object[] getElements(Object inputElement) {
-				return MultipleCheckoutMethodSelectionPage.this.selectedResources;
-			}
-		});
+		tableViewer.setContentProvider(new ArrayStructuredContentProvider());
 		
 		tableViewer.setInput(this.selectedResources);
 		

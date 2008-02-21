@@ -20,6 +20,7 @@ import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 
@@ -33,6 +34,11 @@ public class ExportOperation extends AbstractRepositoryOperation {
 	
 	public ExportOperation(IRepositoryResource resource, String path) {
 		super("Operation.ExportRevision", new IRepositoryResource[] {resource});
+		this.path = path;
+	}
+	
+	public ExportOperation(IRepositoryResourceProvider provider, String path) {
+		super("Operation.ExportRevision", provider);
 		this.path = path;
 	}
 	

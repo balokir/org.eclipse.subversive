@@ -15,17 +15,16 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.team.svn.ui.utility.ArrayStructuredContentProvider;
 
 /**
  * Item List Panel implementation
@@ -68,18 +67,7 @@ public class ItemListPanel extends AbstractDialogPanel {
 		col.setAlignment(SWT.CENTER);
         layout.addColumnData(new ColumnWeightData(0, 60, true));        
                
-        viewer.setContentProvider(new IStructuredContentProvider() {
-			public Object[] getElements(Object inputElement) {
-				return ItemListPanel.this.items;
-			}
-
-			public void dispose() {
-			}
-
-			public void inputChanged(Viewer viewer, Object oldInput,
-					Object newInput) {
-			}
-		});
+        viewer.setContentProvider(new ArrayStructuredContentProvider());
 		ITableLabelProvider labelProvider = new ITableLabelProvider() {
 			public Image getColumnImage(Object element, int columnIndex) {
 				return ItemListPanel.this.itemIcon;
@@ -102,7 +90,7 @@ public class ItemListPanel extends AbstractDialogPanel {
 			}		
 		};
 		viewer.setLabelProvider(labelProvider);	
-		viewer.setInput("");
+		viewer.setInput(this.items);
 	}
 
 }
