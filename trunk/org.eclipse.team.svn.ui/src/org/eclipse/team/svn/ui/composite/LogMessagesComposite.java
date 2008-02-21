@@ -41,9 +41,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
@@ -699,20 +696,23 @@ public class LogMessagesComposite extends SashForm {
 		this.setWeights(new int[] {logPercent, 100 - logPercent});		
 		
 		this.historyTable = new TreeViewer(treeTable);
-						
+
+		//creating a comparator now to get listeners for columns
+		HistoryTableComparator comparator = new HistoryTableComparator(this.historyTable);
+		
 		//revision
 		TreeColumn col = new TreeColumn(treeTable, SWT.NONE);
 		col.setResizable(true);
 		col.setAlignment(SWT.RIGHT);
 		col.setText(SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Revision"));
-		col.addSelectionListener(this.getColumnListener(this.historyTable));
+		col.addSelectionListener(comparator);
 		layout.addColumnData(new ColumnWeightData(14, true));
 	
 		// creation date
 		col = new TreeColumn(treeTable, SWT.NONE);
 		col.setResizable(true);
 		col.setText(SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Date"));
-		col.addSelectionListener(this.getColumnListener(this.historyTable));
+		col.addSelectionListener(comparator);
 		layout.addColumnData(new ColumnWeightData(15, true));
 	
 		//file count
@@ -720,26 +720,26 @@ public class LogMessagesComposite extends SashForm {
 		col.setResizable(true);
 		col.setAlignment(SWT.RIGHT);
 		col.setText(SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Changes"));
-		col.addSelectionListener(this.getColumnListener(this.historyTable));
+		col.addSelectionListener(comparator);
 		layout.addColumnData(new ColumnWeightData(7, true));
 		
 		// author
 		col = new TreeColumn(treeTable, SWT.NONE);
 		col.setResizable(true);
 		col.setText(SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Author"));
-		col.addSelectionListener(this.getColumnListener(this.historyTable));
+		col.addSelectionListener(comparator);
 		layout.addColumnData(new ColumnWeightData(14, true));
 	
 		//comment
 		col = new TreeColumn(treeTable, SWT.NONE);
 		col.setResizable(true);
 		col.setText(SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Comment"));
-		col.addSelectionListener(this.getColumnListener(this.historyTable));
+		col.addSelectionListener(comparator);
 		layout.addColumnData(new ColumnWeightData(50, true));
 		
 		//adding a comparator and initializing default sort column and direction
-		HistoryTableComparator comparator = new HistoryTableComparator(this.historyTable, LogMessagesComposite.COLUMN_DATE);
 		this.historyTable.setComparator(comparator);
+		comparator.setColumnNumber(LogMessagesComposite.COLUMN_DATE);
 		comparator.setReversed(true);
 		this.historyTable.getTree().setSortColumn(this.historyTable.getTree().getColumn(LogMessagesComposite.COLUMN_DATE));
 		this.historyTable.getTree().setSortDirection(SWT.DOWN);
@@ -804,26 +804,6 @@ public class LogMessagesComposite extends SashForm {
 		this.setTableInput();
 		this.historyTable.refresh();
 		this.historyTable.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
-	}
-	
-	private SelectionListener getColumnListener(final TreeViewer treeViewer) {
-		return new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				int column = treeViewer.getTree().indexOf((TreeColumn) e.widget);
-				HistoryTableComparator oldSorter = (HistoryTableComparator) treeViewer.getComparator();
-				TreeColumn treeColumn = ((TreeColumn)e.widget);
-				if (oldSorter != null && column == oldSorter.getColumnNumber()) {
-					oldSorter.setReversed(!oldSorter.isReversed());
-					treeViewer.getTree().setSortColumn(treeColumn);
-					treeViewer.getTree().setSortDirection(oldSorter.isReversed() ? SWT.DOWN : SWT.UP);
-					treeViewer.refresh();
-				} else {
-				    treeViewer.getTree().setSortColumn(treeColumn);
-                    treeViewer.getTree().setSortDirection(SWT.UP);
-					treeViewer.setComparator(new HistoryTableComparator(treeViewer, column));
-				}
-			}
-		};
 	}
 	
 	private Collection getRelatedPathPrefixes() {
@@ -988,8 +968,8 @@ public class LogMessagesComposite extends SashForm {
     
 	protected class HistoryTableComparator extends ColumnedViewerComparator {
 		
-		public HistoryTableComparator(TreeViewer treeViewer, int column) {
-			super(treeViewer, column);
+		public HistoryTableComparator(Viewer treeViewer) {
+			super(treeViewer);
 		}
 		
 		public int compare(Viewer viewer, Object row1, Object row2) {
