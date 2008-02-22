@@ -47,20 +47,12 @@ public final class UIMonitorUtility {
 	}
 	
 	public static Shell getShell() {
-		final Shell []retVal = new Shell[1];
-		final Display display = UIMonitorUtility.getDisplay();
-		display.syncExec(new Runnable() {
-			public void run() {
-				retVal[0] = display.getActiveShell();
-				while (retVal[0] != null && retVal[0].getParent() != null && retVal[0].getParent() instanceof Shell) {
-					retVal[0] = (Shell)retVal[0].getParent();
-				}
-				if (retVal[0] == null) {
-					retVal[0] = new Shell(display, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-				}
-			}
-		});
-		return retVal[0];
+		Display display = UIMonitorUtility.getDisplay();
+		Shell retVal = display.getActiveShell();
+		if (retVal == null) {
+			retVal = new Shell(display, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
+		}
+		return retVal;
 	}
 	
 	public static ICancellableOperationWrapper doTaskScheduledWorkspaceModify(IWorkbenchPart part, IActionOperation op) {

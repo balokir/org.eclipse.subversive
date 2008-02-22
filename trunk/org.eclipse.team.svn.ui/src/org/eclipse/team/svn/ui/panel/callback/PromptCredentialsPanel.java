@@ -20,7 +20,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.team.svn.core.connector.ISVNCredentialsPrompt;
@@ -434,12 +433,11 @@ public class PromptCredentialsPanel extends AbstractDialogPanel {
 		}	
 	    
 		public int askTrustSSLServer(final Object context, final String info, final boolean allowPermanently) {
-			final Shell shell = UIMonitorUtility.getShell();
             final int []retVal = new int[1];
-            shell.getDisplay().syncExec(new Runnable() {
+            UIMonitorUtility.getDisplay().syncExec(new Runnable() {
                 public void run() {
                     AskTrustSSLServerPanel panel = new AskTrustSSLServerPanel(((IRepositoryLocation)context).getUrlAsIs(), info, allowPermanently);
-                    DefaultDialog dlg = new DefaultDialog(shell, panel);
+                    DefaultDialog dlg = new DefaultDialog(UIMonitorUtility.getShell(), panel);
                 	retVal[0] = dlg.open();
 	            }
 	        });
@@ -524,12 +522,11 @@ public class PromptCredentialsPanel extends AbstractDialogPanel {
 	    
 	    protected boolean showPanel(IRepositoryLocation inputLocation, final int connectionType, final String realm) {
 	    	final IRepositoryLocation location = inputLocation.getLocationForRealm(realm) != null ? inputLocation.getLocationForRealm(realm) : inputLocation;
-	    	final Shell shell = UIMonitorUtility.getShell();
             final int []retVal = new int[1];
-            shell.getDisplay().syncExec(new Runnable() {
+            UIMonitorUtility.getDisplay().syncExec(new Runnable() {
                 public void run() {
                     PromptCredentialsPanel panel = new PromptCredentialsPanel(realm, connectionType);
-                    DefaultDialog dialog = new DefaultDialog(shell, panel);
+                    DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getShell(), panel);
                     if (connectionType != SVNRepositoryLocation.PROXY_CONNECTION) {
                     	 panel.setUsername(location.getUsername());
                          panel.setPassword(location.getPassword());

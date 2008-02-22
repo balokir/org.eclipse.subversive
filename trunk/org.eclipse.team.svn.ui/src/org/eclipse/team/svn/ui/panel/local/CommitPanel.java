@@ -47,7 +47,6 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNRevision;
@@ -356,8 +355,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("CommitPanel.Revert.Action")) {
 					public void run() {
 						IResource[] changedResources = FileUtility.getResourcesRecursive(selectedResources, RevertAction.SF_REVERTABLE_OR_NEW);
-						Shell shell = UIMonitorUtility.getShell();
-						CompositeOperation revertOp = RevertAction.getRevertOperation(shell, changedResources, selectedResources);
+						CompositeOperation revertOp = RevertAction.getRevertOperation(UIMonitorUtility.getShell(), changedResources, selectedResources);
 						if (revertOp != null) {
 							UIMonitorUtility.doTaskNowDefault(revertOp, true);
 						}
