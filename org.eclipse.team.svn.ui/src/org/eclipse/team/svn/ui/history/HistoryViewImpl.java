@@ -1006,7 +1006,7 @@ public class HistoryViewImpl {
 		if (this.wcResource != null && this.wcResource instanceof IFile) {
 			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(this.wcResource);
 			if (local != null && !local.isLocked() && IStateFilter.SF_NEEDS_LOCK.accept(local)) {
-				canWrite = LockProposeUtility.proposeLock(new IResource[] {this.wcResource}, this.getSite().getShell());
+				canWrite = LockProposeUtility.proposeLock(new IResource[] {this.wcResource});
 			}
 		}
 		if (canWrite) {

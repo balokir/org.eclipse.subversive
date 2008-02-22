@@ -370,7 +370,7 @@ public class ResourceSelectionComposite extends Composite {
 				final IResource resource = (IResource) selection.getFirstElement();
 				IResource [] resources = {resource};
 				if (selection.size() == 1 && !FileUtility.checkForResourcesPresence(resources, IStateFilter.SF_NOTONREPOSITORY, IResource.DEPTH_ZERO)) {
-					UIMonitorUtility.getShell().getDisplay().syncExec(new Runnable() {
+					UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 						public void run() {
 							ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
 							if (local != null) {

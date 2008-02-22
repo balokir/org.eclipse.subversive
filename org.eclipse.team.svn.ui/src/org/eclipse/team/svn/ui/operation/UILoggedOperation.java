@@ -76,12 +76,11 @@ public class UILoggedOperation extends LoggedOperation {
     	// release calling thread
     	new Thread() {
     		public void run() {
-    			final Shell shell = UIMonitorUtility.getShell();
-    			shell.getDisplay().syncExec(new Runnable() {
+    			UIMonitorUtility.getDisplay().syncExec(new Runnable() {
     	            public void run() {
     	            	boolean showCheckBox = SVNTeamPreferences.getMailReporterBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MAILREPORTER_ENABLED_NAME);
     	            	boolean doNotShowAgain = UILoggedOperation.showErrorImpl(
-    	            			shell, 
+    	            			UIMonitorUtility.getShell(), 
     	            			pluginID, 
     	            			operationName, 
     	            			errorStatus, 
