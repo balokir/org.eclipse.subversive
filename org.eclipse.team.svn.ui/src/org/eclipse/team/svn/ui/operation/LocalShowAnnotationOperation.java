@@ -82,13 +82,12 @@ public class LocalShowAnnotationOperation extends AbstractWorkingCopyOperation {
     	
     	final IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(resource);
 	    remote.setSelectedRevision(revision);
-		CorrectRevisionOperation correctOp = new CorrectRevisionOperation(null, remote, local.getRevision(), resource);
+		final CorrectRevisionOperation correctOp = new CorrectRevisionOperation(null, remote, local.getRevision(), resource);
 		
-		if (!UIMonitorUtility.doTaskNowDefault(correctOp, true).isCancelled()) {
-			UIMonitorUtility.getDisplay().syncExec(new Runnable() {
-				public void run() {
+		UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+			public void run() {
+				if (!UIMonitorUtility.doTaskNowDefault(correctOp, true).isCancelled()) {
 					IWorkbenchPage page = UIMonitorUtility.getActivePage();
-					
 					if (page != null) {
 				    	if (viewType[0] == SVNTeamPreferences.ANNOTATE_DEFAULT_VIEW) {
 				    		CheckPerspective.run(page.getWorkbenchWindow());
@@ -107,8 +106,8 @@ public class LocalShowAnnotationOperation extends AbstractWorkingCopyOperation {
 				    	}
 					}
 				}
-			});
-		}
+			}
+		});
 	}
 	
 }
