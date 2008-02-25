@@ -27,7 +27,7 @@ import org.eclipse.team.svn.core.utility.FileUtility;
 
 /**
  * Extract selected resources to location
- * Used from synchronize view ExpandTo action
+ * Used from synchronize view ExtractTo action
  * 
  * @author Alexei Goncharov
  */
