@@ -9,12 +9,9 @@
  *    Alexei Goncharov (Polarion Software) - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.svn.ui.history;
+package org.eclipse.team.svn.ui.history.data;
 
 import java.io.ByteArrayInputStream;
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 import org.eclipse.compare.IEditableContent;
 import org.eclipse.compare.ITypedElement;
@@ -25,6 +22,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.internal.core.history.LocalFileRevision;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.operation.UILoggedOperation;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 
 /**
  * Local file revision representation.
@@ -33,9 +31,6 @@ import org.eclipse.team.svn.ui.operation.UILoggedOperation;
  * @author Alexei Goncharov
  */
 public class SVNLocalFileRevision extends LocalFileRevision implements IEditableContent {
-
-	protected DateFormat dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.getDefault());
-	
 	public SVNLocalFileRevision (IFile file) {
 		super(file);
 	}
@@ -55,7 +50,7 @@ public class SVNLocalFileRevision extends LocalFileRevision implements IEditable
 		if (this.getFile() != null) {
 			return "";
 		}
-		return "[" + dateTimeFormat.format(new Date(this.getTimestamp())) + "]"; 
+		return "[" + SVNTeamPreferences.formatDate(this.getTimestamp()) + "]"; 
 	}
 	
 	public boolean isEditable() {

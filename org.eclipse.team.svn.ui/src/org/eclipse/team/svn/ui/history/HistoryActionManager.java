@@ -60,6 +60,8 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.action.remote.BranchTagAction;
 import org.eclipse.team.svn.ui.action.remote.CreatePatchAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
+import org.eclipse.team.svn.ui.history.data.AffectedPathsNode;
+import org.eclipse.team.svn.ui.history.data.SVNChangedPathData;
 import org.eclipse.team.svn.ui.operation.CompareRepositoryResourcesOperation;
 import org.eclipse.team.svn.ui.operation.OpenRemoteFileOperation;
 import org.eclipse.team.svn.ui.operation.RefreshRemoteResourcesOperation;

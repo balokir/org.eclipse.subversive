@@ -11,10 +11,7 @@
 
 package org.eclipse.team.svn.ui.repository.browser;
 
-import java.text.DateFormat;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -27,6 +24,7 @@ import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFictiveNode;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFictiveWorkingDirectory;
 import org.eclipse.team.svn.ui.repository.model.RepositoryPending;
@@ -103,7 +101,6 @@ public class RepositoryBrowserLabelProvider implements ITableLabelProvider {
 	}
 
 	protected String getColumnTextForElement(Object element, int columnIndex) {
-		DateFormat dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.getDefault());
 		if (element instanceof RepositoryResource) {
 			IRepositoryResource resource = ((RepositoryResource)element).getRepositoryResource();
 			IRepositoryResource.Information resourceInfo = resource.getInfo();
@@ -127,7 +124,7 @@ public class RepositoryBrowserLabelProvider implements ITableLabelProvider {
 			}
 			else if (resourceInfo != null) {			
 				if (columnIndex == RepositoryBrowserTableViewer.COLUMN_LAST_CHANGE_DATE) {
-					return (resourceInfo.lastChangedDate != 0) ? dateTimeFormat.format(new Date(resourceInfo.lastChangedDate)) : RepositoryBrowserLabelProvider.noDate;
+					return (resourceInfo.lastChangedDate != 0) ? SVNTeamPreferences.formatDate(resourceInfo.lastChangedDate) : RepositoryBrowserLabelProvider.noDate;
 				}
 				else if (columnIndex == RepositoryBrowserTableViewer.COLUMN_LAST_CHANGE_AUTHOR) {
 					String author = resourceInfo.lastAuthor;

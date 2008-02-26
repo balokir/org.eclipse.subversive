@@ -42,8 +42,8 @@ import org.eclipse.team.svn.core.operation.remote.GetLogMessagesOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.StringMatcher;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.composite.LogMessagesComposite;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
+import org.eclipse.team.svn.ui.history.LogMessagesComposite;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.panel.view.HistoryFilterPanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
@@ -59,9 +59,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
 	protected SVNLogEntry []logMessages;
 	protected IRepositoryResource resource;
 	protected long currentRevision;
-	protected long []selectedRevisions;
-	protected String selectedMessage;
-	protected int selectionStyle;
+	protected boolean multiSelect;
 	protected long limit;
 	protected boolean pagingEnabled;
 	protected SVNLogEntry[] selectedLogMessages;
@@ -84,17 +82,16 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
 	protected IPropertyChangeListener configurationListener;
 	protected boolean initialStopOnCopy;
 
-	public SelectRevisionPanel(GetLogMessagesOperation msgOp, int selectionStyle) {
-		this(msgOp, selectionStyle, SVNRevision.INVALID_REVISION_NUMBER);
+	public SelectRevisionPanel(GetLogMessagesOperation msgOp, boolean multiSelect) {
+		this(msgOp, multiSelect, SVNRevision.INVALID_REVISION_NUMBER);
     }
 
-    public SelectRevisionPanel(GetLogMessagesOperation msgOp, int selectionStyle, long currentRevision) {
-    	this.selectionStyle = selectionStyle;
+    public SelectRevisionPanel(GetLogMessagesOperation msgOp, boolean multiSelect, long currentRevision) {
+    	this.multiSelect = multiSelect;
         this.dialogTitle = SVNTeamUIPlugin.instance().getResource("SelectRevisionPanel.Title");
         this.dialogDescription = SVNTeamUIPlugin.instance().getResource("SelectRevisionPanel.Description");
         this.defaultMessage = SVNTeamUIPlugin.instance().getResource("SelectRevisionPanel.Message");
 		this.resource = msgOp.getResource();
-		this.selectedRevisions = null;
 		this.currentRevision = currentRevision;
 		this.filterByAuthor = "";
 		this.filterByComment = "";
@@ -106,17 +103,14 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
     	return "org.eclipse.team.svn.help.revisionLinkDialogContext";
 	}
 
-	public long []getSelectedRevisions() {
-		return this.selectedRevisions;
-	}
 	public long getSelectedRevision() {
-		return this.selectedRevisions[0];
+		return this.selectedLogMessages[0].revision;
 	}
 
-	public String getSelectedMessage() {
-		return this.selectedMessage;
-	}
-
+    public SVNLogEntry[] getSelectedLogMessages() {
+        return this.selectedLogMessages;
+    }
+    
     public String getImagePath() {
         return "icons/dialogs/select_revision.gif";
     }
@@ -205,7 +199,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
         group.setLayout(layout);
         group.setLayoutData(new GridData(GridData.FILL_BOTH));
     	
-    	this.history = new LogMessagesComposite(group, 75, this.selectionStyle);
+    	this.history = new LogMessagesComposite(group, this.multiSelect);
     	data = new GridData(GridData.FILL_BOTH);
     	data.heightHint = 350;
     	this.history.setLayoutData(data);
@@ -295,10 +289,6 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
         this.showResourceLabel();
     }
     
-    public SVNLogEntry[] getSelectedLogMessages() {
-        return this.selectedLogMessages;
-    }
-    
     protected void showResourceLabel() {
 		String resourceName = SVNTeamUIPlugin.instance().getResource("SelectRevisionPanel.NotSelected");
 		if (this.resource != null) {
@@ -308,8 +298,6 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
 	}
 
     protected void saveChangesImpl() {
-		this.selectedRevisions = this.history.getSelectedRevisions();
-		this.selectedMessage = this.history.getSelectedMessage();
 		this.selectedLogMessages = this.history.getSelectedLogMessages();
     }
     

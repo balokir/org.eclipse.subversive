@@ -9,7 +9,7 @@
  *    Alexei Goncharov (Polarion Software) - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.svn.ui.history;
+package org.eclipse.team.svn.ui.history.data;
 
 import org.eclipse.team.svn.core.connector.SVNRevision;
 

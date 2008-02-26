@@ -12,6 +12,10 @@
 
 package org.eclipse.team.svn.ui.preferences;
 
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.RGB;
@@ -264,6 +268,16 @@ public final class SVNTeamPreferences {
 	
 	public static final String CUSTOM_PROPERTIES_LIST_NAME = "customproperties";
 	public static final String CUSTOM_PROPERTIES_LIST_DEFAULT = "";
+	
+	public static String formatDate(long date) {
+		return SVNTeamPreferences.formatDate(new Date(date));
+	}
+	
+	public static String formatDate(Date date) {
+		// we can introduce option to override date format
+		DateFormat dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.getDefault());
+		return dateTimeFormat.format(date);
+	}
 	
 	public static void setDefaultValues(IPreferenceStore store) {
 		SVNTeamPreferences.setDefaultRepositoryValues(store);

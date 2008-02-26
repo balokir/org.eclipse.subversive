@@ -11,15 +11,14 @@
 
 package org.eclipse.team.svn.ui.annotate;
 
-import java.text.DateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 import org.eclipse.jface.text.revisions.Revision;
 import org.eclipse.jface.text.source.LineRange;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 
 /**
  * Built-in annotate revision model 
@@ -78,8 +77,7 @@ public class BuiltInAnnotateRevision extends Revision {
 				this.info += "<b>" + SVNTeamUIPlugin.instance().getResource("BuiltInAnnotateRevision.Author") + " </b>" + this.author;
 			}
 			if (this.getDate() != null) {
-				DateFormat dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.getDefault());
-				this.info += "<br><b>" + SVNTeamUIPlugin.instance().getResource("BuiltInAnnotateRevision.Date") + " </b>" + dateTimeFormat.format(this.getDate());
+				this.info += "<br><b>" + SVNTeamUIPlugin.instance().getResource("BuiltInAnnotateRevision.Date") + " </b>" + SVNTeamPreferences.formatDate(this.getDate());
 			}
 			String message = this.msg == null ? null : this.msg.message;
 			if (message != null && message.length() > 0) {

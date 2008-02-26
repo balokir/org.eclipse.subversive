@@ -229,7 +229,7 @@ public class RevisionComposite extends Composite {
 					msgsOp.setLimit(SVNTeamPreferences.getHistoryInt(store, SVNTeamPreferences.HISTORY_PAGE_SIZE_NAME));
 				}
 				if (!UIMonitorUtility.doTaskNowDefault(RevisionComposite.this.getShell(), msgsOp, true).isCancelled() && msgsOp.getExecutionState() == IActionOperation.OK) {
-				    SelectRevisionPanel panel = new SelectRevisionPanel(msgsOp, SWT.SINGLE, RevisionComposite.this.currentRevision);
+				    SelectRevisionPanel panel = new SelectRevisionPanel(msgsOp, false, RevisionComposite.this.currentRevision);
 					DefaultDialog dialog = new DefaultDialog(RevisionComposite.this.getShell(), panel);
 					if (dialog.open() == 0) {
 					    long selectedRevisionNum = panel.getSelectedRevision();

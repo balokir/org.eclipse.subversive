@@ -9,11 +9,12 @@
  *    Sergiy Logvin - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.svn.ui.history;
+package org.eclipse.team.svn.ui.history.data;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 
 /**
  * Node for the tree of the affected paths 
@@ -21,7 +22,6 @@ import java.util.List;
  * @author Sergiy Logvin
  */
 public class AffectedPathsNode {
-	
 	protected String name;
 	protected List<AffectedPathsNode> children = new ArrayList<AffectedPathsNode>(); 
 	protected AffectedPathsNode parent;

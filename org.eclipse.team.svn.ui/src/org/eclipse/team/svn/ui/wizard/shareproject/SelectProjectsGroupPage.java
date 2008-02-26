@@ -263,8 +263,8 @@ public class SelectProjectsGroupPage extends AbstractVerifiedWizardPage implemen
 		});
 
 		ColumnedViewerComparator comparator = new ColumnedViewerComparator(this.viewer) {
-			public int compare(Viewer viewer, Object row1, Object row2) {
-				return ColumnedViewerComparator.compare(row1.toString(), row2.toString(), this.isReversed());
+			public int compareImpl(Viewer viewer, Object row1, Object row2) {
+				return ColumnedViewerComparator.compare(row1.toString(), row2.toString());
 			}
 		};
 		

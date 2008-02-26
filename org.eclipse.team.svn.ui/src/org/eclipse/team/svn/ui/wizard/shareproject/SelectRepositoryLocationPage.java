@@ -120,13 +120,13 @@ public class SelectRepositoryLocationPage extends AbstractVerifiedWizardPage {
 		this.repositoriesView = new TableViewer(table);
 		
 		ColumnedViewerComparator comparator = new ColumnedViewerComparator(this.repositoriesView) {
-			public int compare(Viewer viewer, Object row1, Object row2) {
+			public int compareImpl(Viewer viewer, Object row1, Object row2) {
 				IRepositoryLocation location1 = (IRepositoryLocation)row1;
             	IRepositoryLocation location2 = (IRepositoryLocation)row2;
             	if (this.column == 0) {
-            		return ColumnedViewerComparator.compare(location1.getLabel(), location2.getLabel(), this.isReversed());
+            		return ColumnedViewerComparator.compare(location1.getLabel(), location2.getLabel());
             	}
-        		return ColumnedViewerComparator.compare(location1.getUrl(), location2.getUrl(), this.isReversed());
+        		return ColumnedViewerComparator.compare(location1.getUrl(), location2.getUrl());
 			}
 		};
 		

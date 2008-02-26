@@ -19,6 +19,8 @@ import java.util.StringTokenizer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.history.data.AffectedPathsNode;
+import org.eclipse.team.svn.ui.history.data.SVNChangedPathData;
 
 /**
  * Content provider for the affected paths tree

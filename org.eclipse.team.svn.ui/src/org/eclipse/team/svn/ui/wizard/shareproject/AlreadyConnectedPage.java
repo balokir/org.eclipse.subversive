@@ -178,10 +178,10 @@ public class AlreadyConnectedPage extends AbstractVerifiedWizardPage {
 		this.repositoryRootsView.setLabelProvider(labelProvider);
 		
 		ColumnedViewerComparator comparator = new ColumnedViewerComparator(this.repositoryRootsView) {
-			public int compare(Viewer viewer, Object row1, Object row2) {
+			public int compareImpl(Viewer viewer, Object row1, Object row2) {
 				String val1 = labelProvider.getColumnText(row1, this.column);
 				String val2 = labelProvider.getColumnText(row2, this.column);
-				return ColumnedViewerComparator.compare(val1, val2, this.isReversed());
+				return ColumnedViewerComparator.compare(val1, val2);
 			}
 		};
 		this.repositoryRootsView.addSelectionChangedListener(new ISelectionChangedListener() {

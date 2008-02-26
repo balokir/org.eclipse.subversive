@@ -9,7 +9,7 @@
  *    Sergiy Logvin - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.svn.ui.composite;
+package org.eclipse.team.svn.ui.history;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -45,11 +45,8 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.team.svn.core.connector.SVNLogPath;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.history.AffectedPathsContentProvider;
-import org.eclipse.team.svn.ui.history.AffectedPathsLabelProvider;
-import org.eclipse.team.svn.ui.history.AffectedPathsNode;
-import org.eclipse.team.svn.ui.history.HistoryActionManager;
-import org.eclipse.team.svn.ui.history.SVNChangedPathData;
+import org.eclipse.team.svn.ui.history.data.AffectedPathsNode;
+import org.eclipse.team.svn.ui.history.data.SVNChangedPathData;
 import org.eclipse.team.svn.ui.utility.ArrayStructuredContentProvider;
 import org.eclipse.team.svn.ui.utility.ColumnedViewerComparator;
 import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
@@ -312,20 +309,20 @@ public class AffectedPathsComposite extends Composite {
 			super(tableViewer);
 		}
         
-		public int compare(Viewer viewer, Object row1, Object row2) {
+		public int compareImpl(Viewer viewer, Object row1, Object row2) {
 			SVNChangedPathData data1 = (SVNChangedPathData)row1;
 			SVNChangedPathData data2 = (SVNChangedPathData)row2;
 			switch (this.column) {
 				case AffectedPathsComposite.COLUMN_NAME : {
-					return ColumnedViewerComparator.compare(data1.resourceName, data2.resourceName, this.isReversed());
+					return ColumnedViewerComparator.compare(data1.resourceName, data2.resourceName);
 				}
 				case AffectedPathsComposite.COLUMN_PATH : {
-					return ColumnedViewerComparator.compare(data1.resourcePath, data2.resourcePath, this.isReversed());
+					return ColumnedViewerComparator.compare(data1.resourcePath, data2.resourcePath);
 				}
 				case AffectedPathsComposite.COLUMN_COPIED_FROM : {
 					String copied1 = data1.copiedFromPath + ((data1.copiedFromRevision == SVNRevision.INVALID_REVISION_NUMBER) ? "" : '@' + String.valueOf(data1.copiedFromRevision));
 					String copied2 = data2.copiedFromPath + ((data2.copiedFromRevision == SVNRevision.INVALID_REVISION_NUMBER) ? "" : '@' + String.valueOf(data2.copiedFromRevision));
-					return ColumnedViewerComparator.compare(copied1, copied2, this.isReversed());
+					return ColumnedViewerComparator.compare(copied1, copied2);
 				}
 			}
 			return 0;
