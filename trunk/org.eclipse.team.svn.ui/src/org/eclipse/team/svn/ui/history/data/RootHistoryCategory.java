@@ -94,7 +94,7 @@ public class RootHistoryCategory extends HistoryCategory {
 	}
 	
 	public void setLocalHistory(SVNLocalFileRevision []localHistory) {
-		this.localHistory = localHistory;
+		this.localHistory = localHistory == null || localHistory.length == 0 ? null : localHistory;
 		this.fillModel();
 	}
 	
@@ -103,7 +103,7 @@ public class RootHistoryCategory extends HistoryCategory {
 	}
 	
 	public void setRemoteHistory(SVNLogEntry []msgs) {
-		this.remoteHistory = msgs;
+		this.remoteHistory = msgs == null || msgs.length == 0 ? null : msgs;
 		this.fillModel();
 	}
 	
