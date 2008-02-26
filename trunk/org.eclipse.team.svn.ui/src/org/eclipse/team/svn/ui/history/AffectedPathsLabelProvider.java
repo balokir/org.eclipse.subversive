@@ -17,6 +17,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.team.svn.core.connector.SVNLogPath;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.history.data.AffectedPathsNode;
 import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
 
 /**

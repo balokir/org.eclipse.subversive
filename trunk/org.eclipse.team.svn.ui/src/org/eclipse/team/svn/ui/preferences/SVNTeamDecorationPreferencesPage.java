@@ -13,7 +13,6 @@
  
 package org.eclipse.team.svn.ui.preferences;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,7 +21,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -753,8 +751,6 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 	}
 	
 	protected class DemoVariableContentProvider implements IVariableContentProvider {
-		private DateFormat dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.getDefault());
-		
 		protected PreviewFile preview;
 		protected String demoRevision;
 		
@@ -819,7 +815,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 				return SVNTeamUIPlugin.instance().getResource("PreferencePage.demoRemoteName");
 			}
 			else if (var.equals(TextVariableSetProvider.VAR_DATE)) {
-				return this.dateTimeFormat.format(new Date());
+				return SVNTeamPreferences.formatDate(new Date());
 			}
 			else if (var.equals(TextVariableSetProvider.VAR_REVISION)) {
 				return this.demoRevision;

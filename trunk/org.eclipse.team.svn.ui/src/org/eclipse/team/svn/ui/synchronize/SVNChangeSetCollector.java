@@ -11,12 +11,10 @@
 
 package org.eclipse.team.svn.ui.synchronize;
 
-import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,6 +30,7 @@ import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.synchronize.variant.ResourceVariant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -61,7 +60,6 @@ public class SVNChangeSetCollector extends SyncInfoSetChangeSetCollector {
 			sets.put(svnSet.getRevision(), svnSet);
 		}
 		// change set name format is: revisionNum (date) [author] ...comment...
-		DateFormat dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.getDefault());
 		String svnAuthor = SVNTeamPlugin.instance().getResource("SVNInfo.Author");
 		String svnDate = SVNTeamPlugin.instance().getResource("SVNInfo.Date");
 		String svnNoAuthor = SVNTeamPlugin.instance().getResource("SVNInfo.NoAuthor");
@@ -99,7 +97,7 @@ public class SVNChangeSetCollector extends SyncInfoSetChangeSetCollector {
 				// rebuild name
 				String name = 
 					String.valueOf(revision) + " " + 
-					(resource.getLastCommitDate() == 0 ? svnNoDate : MessageFormat.format(svnDate, new Object[] {dateTimeFormat.format(set.date)})) + " " + 
+					(resource.getLastCommitDate() == 0 ? svnNoDate : MessageFormat.format(svnDate, new Object[] {SVNTeamPreferences.formatDate(set.date)})) + " " + 
 					(resource.getAuthor() == null ? svnNoAuthor : MessageFormat.format(svnAuthor, new Object[] {resource.getAuthor()}));
 				if (set.comment != null) {
 					String comment = set.comment;

@@ -128,12 +128,13 @@ public abstract class ColumnedViewerComparator extends ViewerComparator implemen
 	
 	public void widgetDefaultSelected(SelectionEvent e) {};
 	
-	public abstract int compare(Viewer viewer, Object row1, Object row2);
+	public final int compare(Viewer viewer, Object row1, Object row2) {
+		return this.compareImpl(viewer, this.reversed ? row2 : row1, this.reversed ? row1 : row2);
+	}
 	
-	public static int compare(String first, String second, boolean reversed) {
-		if (reversed) {
-			return ColumnedViewerComparator.CASE_INSENSITIVE ? second.compareToIgnoreCase(first) : second.compareTo(first);
-		}
+	public abstract int compareImpl(Viewer viewer, Object row1, Object row2);
+	
+	public static int compare(String first, String second) {
 		return ColumnedViewerComparator.CASE_INSENSITIVE ? first.compareToIgnoreCase(second) : first.compareTo(second);
     }
 	

@@ -31,7 +31,7 @@ public class RepositoryBrowserTableComparator extends ColumnedViewerComparator {
 		super(basedOn);
 	}
 	
-	public int compare(Viewer viewer, Object row1, Object row2) {
+	public int compareImpl(Viewer viewer, Object row1, Object row2) {
 		if (row1 instanceof RepositoryFictiveWorkingDirectory) {
 			return -1;
 		}
@@ -53,44 +53,44 @@ public class RepositoryBrowserTableComparator extends ColumnedViewerComparator {
 		if (column == RepositoryBrowserTableViewer.COLUMN_NAME) {
 			String name1 = rowData1.getName();
 			String name2 = rowData2.getName();
-            return ColumnedViewerComparator.compare(name1, name2, this.isReversed());
+            return ColumnedViewerComparator.compare(name1, name2);
 		}
 		else if (column == RepositoryBrowserTableViewer.COLUMN_REVISION) {
 			try {
-				Long c1 = new Long(rowData1.getRevision()); 
-				Long c2 = new Long(rowData2.getRevision());
-				return (this.isReversed()) ? c2.compareTo(c1) : c1.compareTo(c2);
+				long rev1 = rowData1.getRevision(); 
+				long rev2 = rowData2.getRevision();
+				return rev1 < rev2 ? -1 : rev1 > rev2 ? 1 : 0;
 			}
 			catch (Exception ex) {
 				// not interesting in this context, will never happen
 			}
 		} else if (info1 != null && info2 != null) {
 			if (column == RepositoryBrowserTableViewer.COLUMN_LAST_CHANGE_DATE) {
-				Long c1 = new Long(info1.lastChangedDate); 
-				Long c2 = new Long(info2.lastChangedDate);
-				return (this.isReversed()) ? c2.compareTo(c1) : c1.compareTo(c2);
+				long d1 = info1.lastChangedDate; 
+				long d2 = info2.lastChangedDate;
+				return d1 < d2 ? -1 : d1 > d2 ? 1 : 0;
 			} else if (column == RepositoryBrowserTableViewer.COLUMN_LAST_CHANGE_AUTHOR) {
 				String author1 = info1.lastAuthor;
 				String author2 = info2.lastAuthor;
 				author1 = (author1 != null) ? author1 : RepositoryBrowserTableViewer.noAuthor;
 				author2 = (author2 != null) ? author2 : RepositoryBrowserTableViewer.noAuthor;
-				return ColumnedViewerComparator.compare(author1, author2, this.isReversed());
+				return ColumnedViewerComparator.compare(author1, author2);
 			} else if (column == RepositoryBrowserTableViewer.COLUMN_LOCK_OWNER) {
 				SVNLock lock1 = info1.lock;
 				SVNLock lock2 = info2.lock;
 				String lockOwner1 = (lock1 == null) ? "" : lock1.owner;
 				String lockOwner2 = (lock2 == null) ? "" : lock2.owner;
-				return ColumnedViewerComparator.compare(lockOwner1, lockOwner2, this.isReversed());
+				return ColumnedViewerComparator.compare(lockOwner1, lockOwner2);
 			} else if (column == RepositoryBrowserTableViewer.COLUMN_HAS_PROPS) {
 				boolean hasProps1 = info1.hasProperties;
 				boolean hasProps2 = info2.hasProperties;
 				String c1 = (hasProps1) ? RepositoryBrowserTableViewer.hasProps : RepositoryBrowserTableViewer.noProps;
 				String c2 = (hasProps2) ? RepositoryBrowserTableViewer.hasProps : RepositoryBrowserTableViewer.noProps;
-				return ColumnedViewerComparator.compare(c1, c2, this.isReversed());
+				return ColumnedViewerComparator.compare(c1, c2);
 			} else if (column == RepositoryBrowserTableViewer.COLUMN_SIZE) {
-				Long c1 = new Long (info1.fileSize);
-				Long c2 = new Long (info2.fileSize);
-				return (this.isReversed()) ? c2.compareTo(c1) : c1.compareTo(c2);
+				long s1 = info1.fileSize;
+				long s2 = info2.fileSize;
+				return s1 < s2 ? -1 : s1 > s2 ? 1 : 0;
 			}					
 		}
 		return 0;

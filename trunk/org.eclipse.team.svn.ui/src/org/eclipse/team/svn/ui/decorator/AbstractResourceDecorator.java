@@ -12,10 +12,6 @@
 
 package org.eclipse.team.svn.ui.decorator;
 
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -56,8 +52,6 @@ import org.eclipse.ui.themes.ITheme;
  * @author Alexander Gurov
  */
 public abstract class AbstractResourceDecorator extends LabelProvider implements ILightweightLabelDecorator {
-	private static DateFormat dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.getDefault());
-	 
 	protected static final ImageDescriptor OVR_VERSIONED = TeamImages.getImageDescriptor(ISharedImages.IMG_CHECKEDIN_OVR);
 
 	protected static final ImageDescriptor OVR_ADDED = TeamImages.getImageDescriptor(ISharedImages.IMG_HOURGLASS_OVR);
@@ -271,7 +265,7 @@ public abstract class AbstractResourceDecorator extends LabelProvider implements
 						if (date == 0) {
 							return SVNTeamPlugin.instance().getResource("SVNInfo.NoDate");
 						}
-						return AbstractResourceDecorator.dateTimeFormat.format(new Date(date));
+						return SVNTeamPreferences.formatDate(date);
 					}
 					else if (var.equals(TextVariableSetProvider.VAR_RESOURCE_URL)) {
 						return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask) ? SVNUtility.decodeURL(remote.getUrl()) : "";

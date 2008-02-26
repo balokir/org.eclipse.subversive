@@ -50,17 +50,17 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
     }
     
     public void createControlsImpl(Composite parent) {
-    	GridLayout layout;
-    	GridData data;
+    	GridLayout layout = null;
+    	GridData data = null;
     	
+    	Composite composite = new Composite(parent, SWT.NONE);
     	layout = new GridLayout();
     	layout.horizontalSpacing = 0;
     	layout.verticalSpacing = 0;
     	layout.marginWidth = 0;
     	layout.marginHeight = 0;
-    	data = new GridData(GridData.FILL_HORIZONTAL);
-    	Composite composite = new Composite(parent, SWT.NONE);
     	composite.setLayout(layout);
+    	data = new GridData(GridData.FILL_BOTH);
     	composite.setLayoutData(data);
     	
     	super.createControlsImpl(composite);

@@ -11,10 +11,7 @@
 
 package org.eclipse.team.svn.ui.repository.model;
 
-import java.text.DateFormat;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import org.eclipse.compare.CompareUI;
@@ -212,7 +209,6 @@ public abstract class RepositoryResource implements IWorkbenchAdapter, IWorkbenc
 		IRepositoryResource resource = this.getRepositoryResource();
 		Information info = resource.getInfo();
 		SVNLock lock = info == null ? null : info.lock;
-		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.getDefault());
 		if (var.equals(ToolTipVariableSetProvider.VAR_NAME)) {
 			return RepositoryResource.this.formatToolTipLine(var, resource.getName());
 		}
@@ -221,7 +217,7 @@ public abstract class RepositoryResource implements IWorkbenchAdapter, IWorkbenc
 		}
 		else if (var.equals(ToolTipVariableSetProvider.VAR_LAST_CHANGE_DATE)) {
 			if (info != null && info.lastChangedDate != 0) {
-				return RepositoryResource.this.formatToolTipLine(var, dateFormat.format(new Date(info.lastChangedDate)));
+				return RepositoryResource.this.formatToolTipLine(var, SVNTeamPreferences.formatDate(info.lastChangedDate));
 			}
 		}
 		else if (var.equals(ToolTipVariableSetProvider.VAR_LAST_AUTHOR)) {
@@ -241,12 +237,12 @@ public abstract class RepositoryResource implements IWorkbenchAdapter, IWorkbenc
 		}
 		else if (var.equals(ToolTipVariableSetProvider.VAR_LOCK_CREATION_DATE)) {
 			if (lock != null && lock.creationDate != 0) {
-				return RepositoryResource.this.formatToolTipLine(var, dateFormat.format(new Date(lock.creationDate)));
+				return RepositoryResource.this.formatToolTipLine(var, SVNTeamPreferences.formatDate(lock.creationDate));
 			}
 		}
 		else if (var.equals(ToolTipVariableSetProvider.VAR_LOCK_EXPIRATION_DATE)) {
 			if (lock != null && lock.expirationDate != 0) {
-				return RepositoryResource.this.formatToolTipLine(var, dateFormat.format(new Date(lock.expirationDate)));
+				return RepositoryResource.this.formatToolTipLine(var, SVNTeamPreferences.formatDate(lock.expirationDate));
 			}
 		}
 		else if (var.equals(ToolTipVariableSetProvider.VAR_LOCK_COMMENT)) {

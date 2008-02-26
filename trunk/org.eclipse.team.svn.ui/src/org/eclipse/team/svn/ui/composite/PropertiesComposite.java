@@ -469,14 +469,14 @@ public class PropertiesComposite extends Composite {
 			super(tableViewer);
 		}
 		
-		public int compare(Viewer table, Object row1, Object row2) {
+		public int compareImpl(Viewer viewer, Object row1, Object row2) {
 			if (row1 instanceof SVNProperty) {
 				SVNProperty data1 = (SVNProperty) row1;
 				SVNProperty data2 = (SVNProperty) row2;
 				return
 					this.column == PropertiesComposite.COLUMN_NAME ?
-					ColumnedViewerComparator.compare(data1.name, data2.name, this.isReversed()) :
-					ColumnedViewerComparator.compare(data1.value, data2.value, this.isReversed());
+					ColumnedViewerComparator.compare(data1.name, data2.name) :
+					ColumnedViewerComparator.compare(data1.value, data2.value);
 			}
 			return 0;
 		}
