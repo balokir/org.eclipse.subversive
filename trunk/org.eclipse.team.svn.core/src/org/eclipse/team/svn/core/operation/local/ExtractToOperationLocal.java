@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
+import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
@@ -41,7 +42,7 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 	private boolean delitionAllowed;
 	
 	public ExtractToOperationLocal(IResource [] outgoingResources, IResource [] allSelected, String path, boolean delitionAllowed) {
-		super(SVNTeamPlugin.instance().getResource("Operation.ExpandTo"));
+		super(SVNTeamPlugin.instance().getResource("Operation.ExtractTo"));
 		this.outgoingResources = outgoingResources;
 		this.allResources = new ArrayList<IResource>();
 		for (int i = 0; i < allSelected.length; i++) {
@@ -52,12 +53,13 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		HashSet<IResource> operable = new HashSet<IResource>();
+		HashSet<IResource> operableFiles = new HashSet<IResource>();
+		HashSet<IResource> operableFolders = new HashSet<IResource>();
 		HashMap<IProject, Integer> firstNeededSegments = new HashMap<IProject, Integer>();
 		IResource [] parents = FileUtility.getParents(this.outgoingResources, false);
 		for (int i = 0; i < parents.length; i++) {
 			if (allResources.contains(parents[i])) {
-				operable.add(parents[i]);
+				operableFolders.add(parents[i]);
 				int preSegmentsCount = parents[i].getFullPath().segmentCount() - 1;
 				Integer firstNeededSegment = firstNeededSegments.get(parents[i].getProject());
 				if (firstNeededSegment == null || preSegmentsCount < firstNeededSegment) {
@@ -66,54 +68,70 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 			}
 		}
 		for (int i = 0; i < this.outgoingResources.length; i++) {
-			operable.add(this.outgoingResources[i]);
+			if (SVNRemoteStorage.instance().asRepositoryResource(outgoingResources[i]) instanceof IRepositoryContainer) {
+				operableFolders.add(this.outgoingResources[i]);
+			}
+			else {
+				operableFiles.add(this.outgoingResources[i]);
+			}
 			int preSegmentsCount = this.outgoingResources[i].getFullPath().segmentCount() - 1;
 			Integer firstNeededSegment = firstNeededSegments.get(this.outgoingResources[i].getProject());
 			if (firstNeededSegment == null || preSegmentsCount < firstNeededSegment) {
 				firstNeededSegments.put(this.outgoingResources[i].getProject(), preSegmentsCount);
 			}
 		}
-		this.outgoingResources = operable.toArray(new IResource[0]);
-		for (int i = 0; i < this.outgoingResources.length; i++) {
-			ProgressMonitorUtility.progress(monitor, i, this.outgoingResources.length);
-			IPath resourcePath = this.outgoingResources[i].getFullPath();
-			File what = new File(FileUtility.getWorkingCopyPath(this.outgoingResources[i]));
-			if (what.isDirectory()) {
-				String toOperate = "";
-				int firstNeededSegment = firstNeededSegments.get(this.outgoingResources[i].getProject());
-				for (int j = firstNeededSegment; j < resourcePath.segmentCount(); j++) {
-					toOperate = toOperate + "\\" + resourcePath.segment(j);
-				}
-				File fileToOperate = new File(this.path + toOperate);
-				if (IStateFilter.SF_DELETED.accept(SVNRemoteStorage.instance().asLocalResource(this.outgoingResources[i]))) {
-					if (fileToOperate.exists() && this.delitionAllowed) {
-						fileToOperate.delete();
-					}
-				}
-				else {
-					fileToOperate.mkdirs();
+		
+		//progressReporter
+		int processed = 0;
+		
+		//process folders first to create hierarchical structure
+		IResource [] toOperateFurhter = operableFolders.toArray(new IResource[0]);
+	
+		for (int i = 0; i < toOperateFurhter.length; i++) {
+			ProgressMonitorUtility.progress(monitor, processed++, this.outgoingResources.length);
+			monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.Folders", new String [] {FileUtility.getWorkingCopyPath(toOperateFurhter[i])}));
+			IPath resourcePath = toOperateFurhter[i].getFullPath();
+			String toOperate = "";
+			int firstNeededSegment = firstNeededSegments.get(toOperateFurhter[i].getProject());
+			for (int j = firstNeededSegment; j < resourcePath.segmentCount(); j++) {
+				toOperate = toOperate + "\\" + resourcePath.segment(j);
+			}
+			File fileToOperate = new File(this.path + toOperate);
+			if (IStateFilter.SF_DELETED.accept(SVNRemoteStorage.instance().asLocalResource(toOperateFurhter[i]))) {
+				if (fileToOperate.exists() && this.delitionAllowed) {
+					fileToOperate.delete();
 				}
 			}
 			else {
-				String pathToOperate = this.path;
-				File to = new File(pathToOperate);
-				for (int j = 0; j < resourcePath.segmentCount() - 1; j++) {
-					pathToOperate = pathToOperate + "\\" + resourcePath.segment(j);
-					to = new File(pathToOperate);
-					if (!to.exists()) {
-						pathToOperate = this.path;
-					}
+				fileToOperate.mkdirs();
+			}
+		}
+		
+		//now processing files
+		toOperateFurhter = operableFiles.toArray(new IResource[0]);
+		
+		for (int i = 0; i < toOperateFurhter.length; i++) {
+			ProgressMonitorUtility.progress(monitor, i, toOperateFurhter.length);
+			monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.LocalFile", new String [] {FileUtility.getWorkingCopyPath(toOperateFurhter[i])}));
+			IPath resourcePath = toOperateFurhter[i].getFullPath();
+			String pathToOperate = this.path;
+			File to = new File(pathToOperate);
+			for (int j = 0; j < resourcePath.segmentCount() - 1; j++) {
+				pathToOperate = pathToOperate + "\\" + resourcePath.segment(j);
+				to = new File(pathToOperate);
+				if (!to.exists()) {
+					pathToOperate = this.path;
 				}
-				if (IStateFilter.SF_DELETED.accept(SVNRemoteStorage.instance().asLocalResource(outgoingResources[i]))) {
-					to = new File(pathToOperate + "\\" + this.outgoingResources[i].getName());
-					if (to.exists() && this.delitionAllowed) {
-						to.delete();
-					}
+			}
+			if (IStateFilter.SF_DELETED.accept(SVNRemoteStorage.instance().asLocalResource(toOperateFurhter[i]))) {
+				to = new File(pathToOperate + "\\" + toOperateFurhter[i].getName());
+				if (to.exists() && this.delitionAllowed) {
+					to.delete();
 				}
-				else {
-					to = new File(pathToOperate);
-					FileUtility.copyAll(to, new File(FileUtility.getWorkingCopyPath(this.outgoingResources[i])), monitor);
-				}
+			}
+			else {
+				to = new File(pathToOperate);
+				FileUtility.copyAll(to, new File(FileUtility.getWorkingCopyPath(toOperateFurhter[i])), monitor);
 			}
 		}
 	}
