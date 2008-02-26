@@ -21,13 +21,15 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 
 /**
- * Extract selected resources to location
- * Used from synchronize view ExtractTo action
+ * Extract selected resources to location (only local resources)
+ * Used from synchronize view ExtractTo outgoing action
  * 
  * @author Alexei Goncharov
  */
@@ -39,7 +41,7 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 	private boolean delitionAllowed;
 	
 	public ExtractToOperationLocal(IResource [] outgoingResources, IResource [] allSelected, String path, boolean delitionAllowed) {
-		super("Expand To Operation");
+		super(SVNTeamPlugin.instance().getResource("Operation.ExpandTo"));
 		this.outgoingResources = outgoingResources;
 		this.allResources = new ArrayList<IResource>();
 		for (int i = 0; i < allSelected.length; i++) {
@@ -73,6 +75,7 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 		}
 		this.outgoingResources = operable.toArray(new IResource[0]);
 		for (int i = 0; i < this.outgoingResources.length; i++) {
+			ProgressMonitorUtility.progress(monitor, i, this.outgoingResources.length);
 			IPath resourcePath = this.outgoingResources[i].getFullPath();
 			File what = new File(FileUtility.getWorkingCopyPath(this.outgoingResources[i]));
 			if (what.isDirectory()) {
@@ -82,7 +85,7 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 					toOperate = toOperate + "\\" + resourcePath.segment(j);
 				}
 				File fileToOperate = new File(this.path + toOperate);
-				if (IStateFilter.SF_DELETED.accept(SVNRemoteStorage.instance().asLocalResource(outgoingResources[i]))) {
+				if (IStateFilter.SF_DELETED.accept(SVNRemoteStorage.instance().asLocalResource(this.outgoingResources[i]))) {
 					if (fileToOperate.exists() && this.delitionAllowed) {
 						fileToOperate.delete();
 					}

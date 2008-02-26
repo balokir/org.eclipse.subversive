@@ -36,6 +36,7 @@ public class ExtractToActionOutgoing extends AbstractSynchronizeModelAction {
 	protected FastSyncInfoFilter getSyncInfoFilter() {
 		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.OUTGOING, SyncInfo.CONFLICTING});
 	}
+	
 	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {
 		IResource [] outgoingResources = operation.getSelectedResourcesRecursive(new IStateFilter.AbstractStateFilter() {
 

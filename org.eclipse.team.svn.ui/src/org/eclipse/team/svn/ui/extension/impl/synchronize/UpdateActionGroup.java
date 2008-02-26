@@ -19,6 +19,7 @@ import org.eclipse.team.svn.ui.synchronize.action.CleanUpAction;
 import org.eclipse.team.svn.ui.synchronize.action.CreateBranchAction;
 import org.eclipse.team.svn.ui.synchronize.action.CreatePatchFileAction;
 import org.eclipse.team.svn.ui.synchronize.action.ExpandAllAction;
+import org.eclipse.team.svn.ui.synchronize.action.ExtractToActionIncoming;
 import org.eclipse.team.svn.ui.synchronize.action.ExtractToActionOutgoing;
 import org.eclipse.team.svn.ui.synchronize.action.RevertAction;
 import org.eclipse.team.svn.ui.synchronize.action.SetKeywordsAction;
@@ -218,6 +219,12 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 		ShowIncomingPropertiesAction showIncomingPropertiesAction = new ShowIncomingPropertiesAction(SVNTeamUIPlugin.instance().getResource("ShowPropertiesAction.label"), configuration);
 		showIncomingPropertiesAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/propertiesedit.gif"));
 		this.incoming.add(showIncomingPropertiesAction);
+		
+		this.incoming.add(new Separator());
+		
+		ExtractToActionIncoming extractActionIncoming = new ExtractToActionIncoming(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Label"), configuration);
+		extractActionIncoming.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/export.gif"));
+		this.incoming.add(extractActionIncoming);
 	}
 	
 }
