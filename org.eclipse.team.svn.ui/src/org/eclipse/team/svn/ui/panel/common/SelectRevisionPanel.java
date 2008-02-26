@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -43,7 +44,9 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.StringMatcher;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
+import org.eclipse.team.svn.ui.history.ISVNHistoryViewInfo;
 import org.eclipse.team.svn.ui.history.LogMessagesComposite;
+import org.eclipse.team.svn.ui.history.data.SVNLocalFileRevision;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.panel.view.HistoryFilterPanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
@@ -54,7 +57,7 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  * 
  * @author Alexander Gurov
  */
-public class SelectRevisionPanel extends AbstractDialogPanel {
+public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHistoryViewInfo {
 	protected LogMessagesComposite history;
 	protected SVNLogEntry []logMessages;
 	protected IRepositoryResource resource;
@@ -121,6 +124,38 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
 
     public Point getPrefferedSizeImpl() {
         return new Point(700, SWT.DEFAULT);
+    }
+    
+    public boolean isGrouped() {
+    	return this.groupByDateItem.getSelection();
+    }
+    
+    public SVNRevision getCurrentRevision() {
+		return this.currentRevision == SVNRevision.INVALID_REVISION_NUMBER ? SVNRevision.HEAD : SVNRevision.fromNumber(this.currentRevision);
+    }
+
+    public IRepositoryResource getRepositoryResource() {
+    	return this.resource;
+    }
+    
+	public SVNLogEntry[] getRemoteHistory() {
+		return this.filterMessages(this.logMessages);
+	}
+
+	public SVNLocalFileRevision[] getLocalHistory() {
+		return null;
+	}
+	
+	public IResource getResource() {
+		return null;
+	}
+	
+    public int getMode() {
+    	return ISVNHistoryViewInfo.MODE_REMOTE;
+    }
+    
+    public boolean isRelatedPathsOnly() {
+    	return this.hideUnrelatedItem.getSelection();
     }
     
     public void createControlsImpl(Composite parent) {
@@ -199,7 +234,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
         group.setLayout(layout);
         group.setLayoutData(new GridData(GridData.FILL_BOTH));
     	
-    	this.history = new LogMessagesComposite(group, this.multiSelect);
+    	this.history = new LogMessagesComposite(group, this.multiSelect, this);
     	data = new GridData(GridData.FILL_BOTH);
     	data.heightHint = 350;
     	this.history.setLayoutData(data);
@@ -218,7 +253,6 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
 		};
 		this.history.getTreeViewer().addSelectionChangedListener(this.tableViewerListener);
 		int type = SVNTeamPreferences.getHistoryInt(store, SVNTeamPreferences.HISTORY_GROUPING_TYPE_NAME);
-		SelectRevisionPanel.this.history.setGroupByDate(type == SVNTeamPreferences.HISTORY_GROUPING_TYPE_DATE);
     	
     	if (SVNTeamPreferences.getHistoryBoolean(store, SVNTeamPreferences.HISTORY_PAGING_ENABLE_NAME)) {
     		this.limit = SVNTeamPreferences.getHistoryInt(store, SVNTeamPreferences.HISTORY_PAGE_SIZE_NAME);
@@ -239,15 +273,14 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
     	
     	this.groupByDateItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				SelectRevisionPanel.this.history.setGroupByDate(((ToolItem)e.widget).getSelection());
-				SelectRevisionPanel.this.history.setTableInput();
+				SelectRevisionPanel.this.history.refresh(LogMessagesComposite.REFRESH_UI_ALL);
 			}
     	});
     	this.groupByDateItem.setSelection(type == SVNTeamPreferences.HISTORY_GROUPING_TYPE_DATE);
     	
     	this.hideUnrelatedItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				SelectRevisionPanel.this.history.setShowRelatedPathsOnly(SelectRevisionPanel.this.hideUnrelatedItem.getSelection());
+				SelectRevisionPanel.this.history.refresh(LogMessagesComposite.REFRESH_UI_AFFECTED);
 			}
     	});
     	this.stopOnCopyItem.addSelectionListener(new SelectionAdapter() {
@@ -286,6 +319,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
 				SelectRevisionPanel.this.refresh();
 			}
     	});
+    	this.history.refresh(LogMessagesComposite.REFRESH_UI_AND_MODEL);
         this.showResourceLabel();
     }
     
@@ -337,9 +371,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
 							SelectRevisionPanel.this.pagingEnabled = SelectRevisionPanel.this.limit > 0 && SelectRevisionPanel.this.logMessages == null ? msgsOp.getMessages().length == SelectRevisionPanel.this.limit : msgsOp.getMessages().length == SelectRevisionPanel.this.limit + 1;
 							SelectRevisionPanel.this.addPage(msgsOp.getMessages());
 						}
-						SVNLogEntry[] toShow = SelectRevisionPanel.this.isFilterEnabled() && SelectRevisionPanel.this.logMessages != null ? SelectRevisionPanel.this.filterMessages(SelectRevisionPanel.this.logMessages) : SelectRevisionPanel.this.logMessages;
-						SVNRevision current = SelectRevisionPanel.this.currentRevision > 0 ? SVNRevision.fromNumber(SelectRevisionPanel.this.currentRevision) : SVNRevision.fromKind(SVNRevision.HEAD.getKind());
-						SelectRevisionPanel.this.history.setLogMessages(current, toShow, SelectRevisionPanel.this.resource);
+						SelectRevisionPanel.this.history.refresh(LogMessagesComposite.REFRESH_UI_AND_MODEL);
 						SelectRevisionPanel.this.setPagingEnabled();
 					 }
 				 });
@@ -354,7 +386,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel {
 					        if (selected.size() != 0) {
 					        	treeTable.setSelection(selected);
 					        }
-					        SelectRevisionPanel.this.history.getHistoryTableListener().selectionChanged(null);
+					        SelectRevisionPanel.this.history.refresh(LogMessagesComposite.REFRESH_UI_ALL);
 					        ISelectionChangedListener listener = SelectRevisionPanel.this.tableViewerListener;
 					        if (listener != null) {
 					        	SelectRevisionPanel.this.tableViewerListener.selectionChanged(null);

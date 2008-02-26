@@ -23,8 +23,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNLogPath;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.history.ISVNHistoryViewInfo;
 import org.eclipse.team.svn.ui.history.model.ILogNode;
 
 /**
@@ -33,23 +33,14 @@ import org.eclipse.team.svn.ui.history.model.ILogNode;
  * @author Alexander Gurov
  */
 public class RootHistoryCategory extends HistoryCategory {
-	public static final int SHOW_BOTH = 0x20;
-	public static final int SHOW_LOCAL = 0x40;
-	public static final int SHOW_REMOTE = 0x80;
-	
 	public static String []NO_REMOTE;
 	public static String []NO_LOCAL;
 	public static String []NO_REVS;
 	
-	protected int mode;
-	protected boolean grouped;
-	
-	protected IRepositoryResource repositoryResource;
+	protected Object []allHistory;
 	
 	protected SVNLocalFileRevision []localHistory;
 	protected SVNLogEntry []remoteHistory;
-	
-	protected Object []allHistory;
 	
 	protected HistoryCategory[] categoriesBoth;
 	protected HistoryCategory[] categoriesRemote;
@@ -59,70 +50,33 @@ public class RootHistoryCategory extends HistoryCategory {
 	protected Set<String> relatedPathsPrefixes;
 	protected Set<String> relatedParents;
 	
-	public RootHistoryCategory() {
+	protected ISVNHistoryViewInfo info;
+	
+	public RootHistoryCategory(ISVNHistoryViewInfo info) {
 		super(HistoryCategory.CATEGORY_ROOT, null);
 		if (RootHistoryCategory.NO_REMOTE == null) {
 			RootHistoryCategory.NO_REMOTE = new String[] {SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.NoRemote")};
 			RootHistoryCategory.NO_LOCAL = new String[] {SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.NoLocal")};
 			RootHistoryCategory.NO_REVS = new String[] {SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.NoRevs")};
 		}
+		this.info = info;
 	    this.pathData = new HashMap<Object, SVNChangedPathData []>();
 	}
-
-	public void setMode(int mode) {
-		this.mode = mode;
-	}
-
-	public int getMode() {
-		return this.mode;
-	}
-
-	public void setGrouped(boolean grouped) {
-		this.grouped = grouped;
-	}
 	
-	public boolean isGrouped() {
-		return this.grouped;
-	}
-	
-	public IRepositoryResource getRepositoryResource() {
-		return this.repositoryResource;
-	}
-	
-	public void setRepositoryResource(IRepositoryResource repositoryResource) {
-		this.repositoryResource = repositoryResource;
-	}
-	
-	public void setLocalHistory(SVNLocalFileRevision []localHistory) {
-		this.localHistory = localHistory == null || localHistory.length == 0 ? null : localHistory;
-		this.fillModel();
-	}
-	
-	public SVNLocalFileRevision []getLocalHistory() {
-		return this.localHistory;
-	}
-	
-	public void setRemoteHistory(SVNLogEntry []msgs) {
-		this.remoteHistory = msgs == null || msgs.length == 0 ? null : msgs;
-		this.fillModel();
-	}
-	
-	public SVNLogEntry []getRemoteHistory() {
+	public SVNLogEntry[] getRemoteHistory() {
 		return this.remoteHistory;
 	}
 	
-	public void clear() {
-		this.remoteHistory = null;
-		this.localHistory = null;
-		this.fillModel();
+	public SVNLocalFileRevision[] getLocalHistory() {
+		return this.localHistory;
 	}
-	
+
 	public Object[] getEntries() {
-		switch (this.mode) {
-			case RootHistoryCategory.SHOW_LOCAL: {
+		switch (this.info.getMode()) {
+			case ISVNHistoryViewInfo.MODE_LOCAL: {
 				return this.getLocalHistoryInternal();
 			}
-			case RootHistoryCategory.SHOW_REMOTE: {
+			case ISVNHistoryViewInfo.MODE_REMOTE: {
 				return this.getRemoteHistoryInternal();
 			}
 		}
@@ -141,7 +95,9 @@ public class RootHistoryCategory extends HistoryCategory {
 		return this.pathData.get(key == null ? null : key.getEntity());
 	}
 	
-	protected void fillModel() {
+	public void refreshModel() {
+		this.localHistory = this.info.getLocalHistory();
+		this.remoteHistory = this.info.getRemoteHistory();
 		if (this.localHistory == null) {
 			this.allHistory = this.remoteHistory;
 		}
@@ -172,7 +128,7 @@ public class RootHistoryCategory extends HistoryCategory {
 			}
 			
 			if (changes != null) {
-				String baseUrl = this.repositoryResource.getUrl();
+				String baseUrl = this.info.getRepositoryResource().getUrl();
 				String changePath = changes[0].path;
 				int idx = -1;
 				// find root trim point for the URL specified
@@ -409,21 +365,21 @@ public class RootHistoryCategory extends HistoryCategory {
 		if (this.localHistory == null) {
 			return RootHistoryCategory.NO_LOCAL;
 		}
-		return this.grouped ? this.categoriesLocal : this.localHistory;
+		return this.info.isGrouped() ? this.categoriesLocal : this.localHistory;
 	}
 	
 	protected Object []getRemoteHistoryInternal() {
 		if (this.remoteHistory == null) {
 			return RootHistoryCategory.NO_REMOTE;
 		}
-		return this.grouped ? this.categoriesRemote : this.remoteHistory;
+		return this.info.isGrouped() ? this.categoriesRemote : this.remoteHistory;
 	}
 	
 	protected Object []getAllHistoryInternal() {
 		if (this.allHistory == null) {
 			return RootHistoryCategory.NO_REVS;
 		}
-		return this.grouped && this.categoriesBoth != null ? this.categoriesBoth : this.allHistory;
+		return this.info.isGrouped() && this.categoriesBoth != null ? this.categoriesBoth : this.allHistory;
 	}
 	
 }

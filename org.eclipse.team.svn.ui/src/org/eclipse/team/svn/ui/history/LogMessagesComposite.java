@@ -15,7 +15,6 @@ package org.eclipse.team.svn.ui.history;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -46,13 +45,11 @@ import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
-import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.extension.factory.ICommentView;
 import org.eclipse.team.svn.ui.history.data.RootHistoryCategory;
 import org.eclipse.team.svn.ui.history.data.SVNChangedPathData;
-import org.eclipse.team.svn.ui.history.data.SVNLocalFileRevision;
 import org.eclipse.team.svn.ui.history.model.CategoryLogNode;
 import org.eclipse.team.svn.ui.history.model.ILogNode;
 import org.eclipse.team.svn.ui.history.model.SVNLogNode;
@@ -65,59 +62,39 @@ import org.eclipse.ui.IWorkbenchPartSite;
  * @author Alexander Gurov
  */
 public class LogMessagesComposite extends SashForm {
+	public static final int REFRESH_UI_AFFECTED = 1;
+	public static final int REFRESH_UI_ALL = 2;
+	public static final int REFRESH_UI_AND_MODEL = 3;
+	
 	protected SashForm innerSashForm;
     
 	protected TreeViewer historyTable;
 	protected ISelectionChangedListener historyTableListener;
-	protected long currentRevision;
 	protected Font currentRevisionFont;
 	protected AffectedPathsComposite affectedPathsComposite;
 	
-	protected ICommentView viewManager;
-	
-	protected boolean showRelatedPathsOnly;
-	
-	protected HistoryActionManager actionManager;
+	protected ICommentView commentViewManager;
 	
 	protected RootHistoryCategory rootCategory;
 
-	public LogMessagesComposite(Composite parent, boolean multiSelect) {
+	protected HistoryActionManager actionManager;
+	protected long currentRevision;
+	protected ISVNHistoryViewInfo info;
+	
+	public LogMessagesComposite(Composite parent, boolean multiSelect, ISVNHistoryViewInfo info) {
 	    super(parent, SWT.VERTICAL);
 		
-		this.actionManager = new HistoryActionManager();
-		this.rootCategory = new RootHistoryCategory();
+	    this.info = info;
+		this.rootCategory = new RootHistoryCategory(info);
 	    
 		this.initializeFont();
 		this.initializeTableView(multiSelect ? SWT.MULTI : SWT.SINGLE);
 	}
 	
-	public void setGroupByDate(boolean groupByDate) {
-		this.rootCategory.setGrouped(groupByDate);
+	public TreeViewer getTreeViewer() {
+	    return this.historyTable;
 	}
 	
-	public void setRevisionMode(int revisionMode) {
-		this.rootCategory.setMode(revisionMode);
-	}
-	
-	public void setLocalHistory(SVNLocalFileRevision []localHistory) {
-		this.rootCategory.setLocalHistory(localHistory);
-	}
-	
-	public SVNLocalFileRevision []getLocalHistory () {
-		return this.rootCategory.getLocalHistory();
-	}
-	
-	public boolean isShowRelatedPathsOnly() {
-		return this.showRelatedPathsOnly;
-	}
-
-	public void setShowRelatedPathsOnly(boolean showRelatedPathsOnly) {
-		this.showRelatedPathsOnly = showRelatedPathsOnly;
-		if (this.historyTableListener != null) {
-			this.historyTableListener.selectionChanged(null);
-		}
-	}
-    
 	public void setCommentViewerVisible(boolean visible) {
 	    if (visible) {
 	    	this.innerSashForm.setMaximizedControl(null);
@@ -140,26 +117,28 @@ public class LogMessagesComposite extends SashForm {
 		this.affectedPathsComposite.setResourceTreeVisible(visible);
 	}
 	
-	public void dispose() {
-		this.historyTable.removeSelectionChangedListener(this.historyTableListener);
-		if (this.historyTable.getContentProvider() != null) {
-			this.historyTable.setInput(null);
-		}
-		this.currentRevisionFont.dispose();
-		super.dispose();
+	public void collapseAll() {
+	    this.historyTable.collapseAll();
 	}
 	
-	public TreeViewer getTreeViewer() {
-	    return this.historyTable;
+	public void expandAll() {
+	    this.historyTable.expandAll();
 	}
 	
-	public void registerActionManager(IWorkbenchPartSite site) {
-		this.affectedPathsComposite.registerActionManager(this.actionManager, site);
+	public void registerActionManager(HistoryActionManager manager, IWorkbenchPartSite site) {
+		this.actionManager = manager;
+		
+		this.affectedPathsComposite.registerActionManager(manager, site);
+		
+		manager.logMessagesManager.installKeyBindings(this.historyTable);
+		manager.logMessagesManager.installDefaultAction(this.historyTable);
+		manager.logMessagesManager.installMenuActions(this.historyTable, site);
 	}
 	
 	public void setSelectedRevision(long revision) {
-		if (this.rootCategory.getRemoteHistory() != null) {
-			for (SVNLogEntry msg : this.rootCategory.getRemoteHistory()) {
+		SVNLogEntry []msgs = this.rootCategory.getRemoteHistory();
+		if (msgs != null) {
+			for (SVNLogEntry msg : msgs) {
 				if (msg.revision == revision) {
 					this.historyTable.setSelection(new StructuredSelection(new SVNLogNode(msg, null)), true);
 					return;
@@ -192,78 +171,53 @@ public class LogMessagesComposite extends SashForm {
 		return SVNRevision.INVALID_REVISION_NUMBER;
 	}
 	
-	public ICommentView getCommentView() {
-		return this.viewManager;
-	}
-	
-	public ISelectionChangedListener getHistoryTableListener() {
-		return this.historyTableListener;
-	}
-
-	public void setTableInput() {
-		if (!this.historyTable.getTree().isDisposed()) {
-			Object []entries = this.rootCategory.getEntries();
-			this.historyTable.getTree().setLinesVisible(entries != RootHistoryCategory.NO_REMOTE && entries != RootHistoryCategory.NO_LOCAL && entries != RootHistoryCategory.NO_REVS);
-	        this.historyTable.setInput(new CategoryLogNode(this.rootCategory));
-		}
-	}
-	
-	public void clear() {
-		this.rootCategory.clear();
-		this.historyTableListener.selectionChanged(null);
-	}
-	
-	public void setLogMessages(SVNRevision currentRevision, SVNLogEntry []msgs, IRepositoryResource repositoryResource) {
-		this.rootCategory.setRepositoryResource(repositoryResource);
-		this.rootCategory.setRemoteHistory(msgs);
-		this.actionManager.setRepositoryResource(repositoryResource);
-		this.currentRevision = SVNRevision.INVALID_REVISION_NUMBER;
-		
-		if (msgs == null || msgs.length == 0) {
-			this.setTableInput();
-			this.historyTableListener.selectionChanged(null);
-			return;
-		}
-		
-		if (currentRevision != null && currentRevision != SVNRevision.INVALID_REVISION) {
-			if (currentRevision.getKind() == Kind.HEAD) {
-				this.currentRevision = Math.max(msgs[0].revision, msgs[msgs.length - 1].revision);
+	public void refresh(int refreshType) {
+		if (refreshType == LogMessagesComposite.REFRESH_UI_AND_MODEL) {
+			if (this.info.getResource() != null) {
+				this.commentViewManager.usedFor(this.info.getResource());
 			}
-			else if (currentRevision.getKind() == Kind.NUMBER) {
-				this.currentRevision = ((SVNRevision.Number)currentRevision).getNumber();
+			else {
+				this.commentViewManager.usedFor(this.info.getRepositoryResource());
 			}
-		}
-		
-		this.setTableInput();
-	}
-	
-	public String getSelectedMessagesAsString() {
-		String historyText = "";
-		HistoryLabelProvider provider = new HistoryLabelProvider(true);
-		HashSet<ILogNode> processed = new HashSet<ILogNode>();
-		for (Iterator it = ((IStructuredSelection)this.historyTable.getSelection()).iterator(); it.hasNext(); ) {
-			ILogNode node = (ILogNode)it.next();
-			historyText += this.toString(processed, node, provider);
-			if (node.hasChildren()) {
-				ILogNode []children = node.getChildren();
-				for (int j = 0; j < children.length; j++) {
-					historyText += this.toString(processed, children[j], provider);
+			this.currentRevision = SVNRevision.INVALID_REVISION_NUMBER;
+			SVNLogEntry []msgs = this.info.getRemoteHistory();
+			
+			if (msgs != null && msgs.length > 0) {
+				SVNRevision currentRevision = this.info.getCurrentRevision();
+				if (currentRevision != null && currentRevision != SVNRevision.INVALID_REVISION) {
+					if (currentRevision.getKind() == Kind.HEAD) {
+						this.currentRevision = Math.max(msgs[0].revision, msgs[msgs.length - 1].revision);
+					}
+					else if (currentRevision.getKind() == Kind.NUMBER) {
+						this.currentRevision = ((SVNRevision.Number)currentRevision).getNumber();
+					}
 				}
 			}
+			
+			this.rootCategory.refreshModel();
 		}
-		return historyText;
+		
+		this.refreshImpl(refreshType);
 	}
 	
-	protected String toString(HashSet<ILogNode> processed, ILogNode node, HistoryLabelProvider provider) {
-		if (processed.contains(node)) {
-			return "";
+	public void dispose() {
+		this.historyTable.removeSelectionChangedListener(this.historyTableListener);
+		if (this.historyTable.getContentProvider() != null) {
+			this.historyTable.setInput(null);
 		}
-		processed.add(node);
-		String historyText = provider.getColumnText(node, 0);
-		for (int i = 1; i < ILogNode.NUM_OF_COLUMNS; i++) {
-			historyText += "\t" + provider.getColumnText(node, i);
+		this.currentRevisionFont.dispose();
+		super.dispose();
+	}
+	
+	protected void refreshImpl(int refreshType) {
+		if (!this.historyTable.getTree().isDisposed()) {
+			if (refreshType != LogMessagesComposite.REFRESH_UI_AFFECTED) {
+				Object []entries = this.rootCategory.getEntries();
+				this.historyTable.getTree().setLinesVisible(entries != RootHistoryCategory.NO_REMOTE && entries != RootHistoryCategory.NO_LOCAL && entries != RootHistoryCategory.NO_REVS);
+		        this.historyTable.setInput(new CategoryLogNode(this.rootCategory));
+			}
+			this.historyTableListener.selectionChanged(null);
 		}
-		return historyText + System.getProperty("line.separator");
 	}
 	
 	private void initializeTableView(int style) {
@@ -275,8 +229,8 @@ public class LogMessagesComposite extends SashForm {
 		TableLayout layout = new TableLayout();
 		treeTable.setLayout(layout);
 		
-		this.viewManager = ExtensionsManager.getInstance().getCurrentMessageFactory().getCommentView();
-		this.viewManager.createCommentView(this.innerSashForm, SWT.V_SCROLL | SWT.MULTI | SWT.WRAP);
+		this.commentViewManager = ExtensionsManager.getInstance().getCurrentMessageFactory().getCommentView();
+		this.commentViewManager.createCommentView(this.innerSashForm, SWT.V_SCROLL | SWT.MULTI | SWT.WRAP);
 		
 		this.affectedPathsComposite = new AffectedPathsComposite(this, SWT.NONE);
 		
@@ -350,11 +304,11 @@ public class LogMessagesComposite extends SashForm {
 			public void dispose () {
 			}
 		});
-		this.historyTable.setLabelProvider(new HistoryLabelProvider(false));
+		this.historyTable.setLabelProvider(new HistoryLabelProvider());
 		
 		this.historyTableListener = new ISelectionChangedListener() {
         	protected ILogNode oldSelection;
-        	protected boolean hideUnrelated = LogMessagesComposite.this.showRelatedPathsOnly;
+        	protected boolean hideUnrelated = LogMessagesComposite.this.info.isRelatedPathsOnly();
         	
 			public void selectionChanged(SelectionChangedEvent event) {
 				if (LogMessagesComposite.this.isDisposed()) {
@@ -363,26 +317,27 @@ public class LogMessagesComposite extends SashForm {
 				IStructuredSelection tSelection = (IStructuredSelection)LogMessagesComposite.this.historyTable.getSelection();
 				if (tSelection.size() > 0) {
 					ILogNode selection = (ILogNode)tSelection.getFirstElement();
-					if (this.oldSelection != selection || this.hideUnrelated != LogMessagesComposite.this.showRelatedPathsOnly)
-					{
+					if (this.oldSelection != selection || this.hideUnrelated != LogMessagesComposite.this.info.isRelatedPathsOnly()) {
 						String message = selection.getComment();
 						message = message == null || message.length() == 0 ? SVNTeamPlugin.instance().getResource("SVNInfo.NoComment") : message;
-						LogMessagesComposite.this.viewManager.setComment(message);
+						LogMessagesComposite.this.commentViewManager.setComment(message);
+						
+						Collection<String> relatedPrefixes = LogMessagesComposite.this.info.isRelatedPathsOnly() ? LogMessagesComposite.this.rootCategory.getRelatedPathPrefixes() : null;
+						Collection<String> relatedParents = LogMessagesComposite.this.info.isRelatedPathsOnly() ? LogMessagesComposite.this.rootCategory.getRelatedParents() : null;
+						SVNChangedPathData []pathData = LogMessagesComposite.this.rootCategory.getPathData(selection);
 						long revision = LogMessagesComposite.this.getSelectedRevision();
 						
-						Collection<String> relatedPrefixes = LogMessagesComposite.this.showRelatedPathsOnly ? LogMessagesComposite.this.rootCategory.getRelatedPathPrefixes() : null;
-						Collection<String> relatedParents = LogMessagesComposite.this.showRelatedPathsOnly ? LogMessagesComposite.this.rootCategory.getRelatedParents() : null;
-						SVNChangedPathData []pathData = LogMessagesComposite.this.rootCategory.getPathData(selection);
-						
-						LogMessagesComposite.this.actionManager.setSelectedRevision(revision);
+						if (LogMessagesComposite.this.actionManager != null) {
+							LogMessagesComposite.this.actionManager.setSelectedRevision(revision);
+						}
 						LogMessagesComposite.this.affectedPathsComposite.setInput(pathData, relatedPrefixes, relatedParents, revision);
 						
 						this.oldSelection = selection;
-						this.hideUnrelated = LogMessagesComposite.this.showRelatedPathsOnly;
+						this.hideUnrelated = LogMessagesComposite.this.info.isRelatedPathsOnly();
 					}
 				}
 				else {
-					LogMessagesComposite.this.viewManager.setComment("");
+					LogMessagesComposite.this.commentViewManager.setComment("");
 					LogMessagesComposite.this.affectedPathsComposite.setInput(null, null, null, -1);
 					this.oldSelection = null;
 				}
@@ -403,12 +358,10 @@ public class LogMessagesComposite extends SashForm {
 		this.currentRevisionFont = new Font(this.getDisplay(), data);
 	}
 	
-	private class HistoryLabelProvider implements ITableLabelProvider, IFontProvider {
-		private boolean fullMessage;
+	protected class HistoryLabelProvider implements ITableLabelProvider, IFontProvider {
 		private Map<ImageDescriptor, Image> images;
 		
-		public HistoryLabelProvider(boolean fullMessage) {
-			this.fullMessage = fullMessage;
+		public HistoryLabelProvider() {
 			this.images = new HashMap<ImageDescriptor, Image>();
 		}
 		
@@ -426,7 +379,7 @@ public class LogMessagesComposite extends SashForm {
 		}
 
 		public String getColumnText(Object element, int columnIndex) {
-			return ((ILogNode)element).getLabel(columnIndex, this.fullMessage ? ILogNode.LABEL_FLAT : ILogNode.LABEL_TRIM, LogMessagesComposite.this.currentRevision);
+			return ((ILogNode)element).getLabel(columnIndex, ILogNode.LABEL_TRIM, LogMessagesComposite.this.currentRevision);
 		}
 
 		public Font getFont(Object element) {
