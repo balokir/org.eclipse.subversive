@@ -345,7 +345,7 @@ public class RootHistoryCategory extends HistoryCategory {
 	
 	protected void mapPathData(SVNLogEntry key) {
 		SVNChangedPathData [] pathData = new SVNChangedPathData[key.changedPaths == null ? 0 : key.changedPaths.length];
-		for (int i = 0; i < key.changedPaths.length; i++) {
+		for (int i = 0; i < pathData.length; i++) {
 			String path = key.changedPaths[i].path;
 			path = path.startsWith("/") ? path.substring(1) : path;
 			int idx = path.lastIndexOf("/");

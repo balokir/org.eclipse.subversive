@@ -13,7 +13,6 @@ package org.eclipse.team.svn.ui.history;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.widgets.Composite;
@@ -26,7 +25,6 @@ import org.eclipse.team.svn.core.resource.events.ResourceStatesChangedEvent;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.operation.UILoggedOperation;
 import org.eclipse.team.svn.ui.repository.model.RepositoryLocation;
 import org.eclipse.team.svn.ui.repository.model.RepositoryResource;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -54,25 +52,20 @@ public class SVNHistoryPage extends HistoryPage implements IViewInfoProvider, IR
 		if (resource == null) {
 			return;
 		}
-		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
+		final ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
 		if (local != null) {
 			if (IStateFilter.SF_ONREPOSITORY.accept(local) &&
-				(SVNHistoryPage.this.viewImpl.getEntries() == null || SVNHistoryPage.this.viewImpl.getEntries().length == 0)){
+				(SVNHistoryPage.this.viewImpl.getFullRemoteHistory() == null || SVNHistoryPage.this.viewImpl.getFullRemoteHistory().length == 0)){
 				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 					public void run() {
-						SVNHistoryPage.this.viewImpl.refresh();
+						SVNHistoryPage.this.viewImpl.refresh(ISVNHistoryView.REFRESH_ALL);
 					}
 				});
 			}
 			else if (resource instanceof IFile) {
 				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 					public void run() {
-						try {
-							SVNHistoryPage.this.viewImpl.refreshLocalHistory((IFile)resource);
-						}
-						catch (CoreException ex) {
-							UILoggedOperation.reportError("Refresh Local History", ex);
-						}
+						SVNHistoryPage.this.viewImpl.refresh(ISVNHistoryView.REFRESH_LOCAL);
 					}
 				});
 			}
@@ -132,26 +125,26 @@ public class SVNHistoryPage extends HistoryPage implements IViewInfoProvider, IR
 			return SVNHistoryPage.isValidData(this.getInput());
 		}
 		if (this.getInput() instanceof IResource) {
-			this.viewImpl.showHistory((IResource)this.getInput(), true);
+			this.viewImpl.showHistory((IResource)this.getInput());
 			return true;
 		}
 		else if (this.getInput() instanceof IRepositoryResource) {
-			this.viewImpl.showHistory((IRepositoryResource)this.getInput(), true);
+			this.viewImpl.showHistory((IRepositoryResource)this.getInput());
 			return true;
 		}
 		else if (this.getInput() instanceof RepositoryResource) {
-			this.viewImpl.showHistory(((RepositoryResource)this.getInput()).getRepositoryResource(), true);
+			this.viewImpl.showHistory(((RepositoryResource)this.getInput()).getRepositoryResource());
 			return true;
 		}
 		else if (this.getInput() instanceof RepositoryLocation) {
-			this.viewImpl.showHistory(((RepositoryLocation)this.getInput()).getRepositoryResource(), true);
+			this.viewImpl.showHistory(((RepositoryLocation)this.getInput()).getRepositoryResource());
 			return true;
 		}
 		return false;
 	}
 	
 	public void createControl(Composite parent) {
-		this.viewImpl = new HistoryViewImpl(null, null, this);
+		this.viewImpl = new HistoryViewImpl(this);
 		this.viewImpl.setHistoryPage(this);
 	    IActionBars actionBars = this.getActionBars();
 	    IToolBarManager tbm = actionBars.getToolBarManager();
@@ -207,7 +200,7 @@ public class SVNHistoryPage extends HistoryPage implements IViewInfoProvider, IR
 
 	public void refresh() {
 		if (this.viewImpl != null) {
-			this.viewImpl.refresh();
+			this.viewImpl.refresh(ISVNHistoryView.REFRESH_ALL);
 		}
 	}
 
@@ -236,13 +229,6 @@ public class SVNHistoryPage extends HistoryPage implements IViewInfoProvider, IR
 			site = part.getSite();
 		}
 		return site;
-	}
-
-	public void setDescription(String description) {
-//		IWorkbenchPart part = this.getHistoryPageSite().getPart();
-//		if (part instanceof GenericHistoryView) {
-//			((GenericHistoryView)part).updateContentDescription(description);
-//		}
 	}
 
 	public void selectRevision(long revision) {

@@ -41,9 +41,9 @@ import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.GetLogMessagesOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
-import org.eclipse.team.svn.core.utility.StringMatcher;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
+import org.eclipse.team.svn.ui.history.HistoryViewImpl;
 import org.eclipse.team.svn.ui.history.ISVNHistoryViewInfo;
 import org.eclipse.team.svn.ui.history.LogMessagesComposite;
 import org.eclipse.team.svn.ui.history.data.SVNLocalFileRevision;
@@ -78,7 +78,6 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
 	protected ToolItem refreshItem;
 	protected ToolItem groupByDateItem;
 	
-	protected boolean isCommentFilterEnabled = false;
 	protected String filterByComment;
 	protected String filterByAuthor;
 	protected ISelectionChangedListener tableViewerListener;
@@ -96,8 +95,6 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
         this.defaultMessage = SVNTeamUIPlugin.instance().getResource("SelectRevisionPanel.Message");
 		this.resource = msgOp.getResource();
 		this.currentRevision = currentRevision;
-		this.filterByAuthor = "";
-		this.filterByComment = "";
     	this.logMessages = msgOp.getMessages();
     	this.initialStopOnCopy = msgOp.getStopOnCopy();
 	}
@@ -130,8 +127,8 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
     	return this.groupByDateItem.getSelection();
     }
     
-    public SVNRevision getCurrentRevision() {
-		return this.currentRevision == SVNRevision.INVALID_REVISION_NUMBER ? SVNRevision.HEAD : SVNRevision.fromNumber(this.currentRevision);
+    public long getCurrentRevision() {
+		return this.currentRevision;
     }
 
     public IRepositoryResource getRepositoryResource() {
@@ -139,7 +136,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
     }
     
 	public SVNLogEntry[] getRemoteHistory() {
-		return this.filterMessages(this.logMessages);
+		return HistoryViewImpl.filterMessages(this.logMessages, this.filterByAuthor, this.filterByComment);
 	}
 
 	public SVNLocalFileRevision[] getLocalHistory() {
@@ -266,7 +263,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
     	    this.pagingEnabled = false;
         }
     	this.pagingEnabled = SelectRevisionPanel.this.limit > 0 && this.logMessages.length == SelectRevisionPanel.this.limit;
-		this.showMessages(null);
+		this.fetchHistory(null);
 		
         this.setPagingEnabled();
         this.clearFilterItem.setEnabled(false);
@@ -291,15 +288,12 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
     	
         this.filterItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {				
-				if (SelectRevisionPanel.this.quickFilter()) {
-					SelectRevisionPanel.this.showMessages(null);
-				}
+				SelectRevisionPanel.this.setFilter();
 			}
     	});
         this.clearFilterItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {				
 				SelectRevisionPanel.this.clearFilter();
-				SelectRevisionPanel.this.showMessages(null);
 			}
     	});
         
@@ -319,7 +313,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
 				SelectRevisionPanel.this.refresh();
 			}
     	});
-    	this.history.refresh(LogMessagesComposite.REFRESH_UI_AND_MODEL);
+    	this.history.refresh(LogMessagesComposite.REFRESH_ALL);
         this.showResourceLabel();
     }
     
@@ -340,16 +334,12 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
 
     protected void addPage(SVNLogEntry[] newMessages) {
     	if (this.logMessages == null) {
-			this.logMessages = newMessages;
+			this.logMessages = newMessages.length > 0 ? newMessages : null;
 		}
-		else {
-			List oldList = new ArrayList(Arrays.asList(this.logMessages));
-			List newList = Arrays.asList(newMessages);
-			if (newList.size() > 1) {
-				newList = newList.subList(1, newList.size());
-				oldList.addAll(newList);
-			}		
-			this.logMessages = (SVNLogEntry [])oldList.toArray(new SVNLogEntry[oldList.size()]);		
+		else if (newMessages.length > 1) {
+			List<SVNLogEntry> fullList = new ArrayList<SVNLogEntry>(Arrays.asList(this.logMessages));
+			fullList.addAll(Arrays.asList(newMessages).subList(1, newMessages.length));
+			this.logMessages = fullList.toArray(new SVNLogEntry[fullList.size()]);		
 		}
     }
     
@@ -361,26 +351,17 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
 	    this.clearFilterItem.setEnabled(this.isFilterEnabled() && this.logMessages != null);
     }
     
-    protected void showMessages(final GetLogMessagesOperation msgsOp) {
+    protected void fetchHistory(final GetLogMessagesOperation msgsOp) {
 		final IStructuredSelection selected = (IStructuredSelection)this.history.getTreeViewer().getSelection();
     	IActionOperation showOp = new AbstractActionOperation("Operation.ShowMessages") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
-				 SVNTeamUIPlugin.instance().getWorkbench().getDisplay().syncExec(new Runnable() {
-					 public void run() {
-						if (msgsOp != null && msgsOp.getExecutionState() == IActionOperation.OK) {
-							SelectRevisionPanel.this.pagingEnabled = SelectRevisionPanel.this.limit > 0 && SelectRevisionPanel.this.logMessages == null ? msgsOp.getMessages().length == SelectRevisionPanel.this.limit : msgsOp.getMessages().length == SelectRevisionPanel.this.limit + 1;
-							SelectRevisionPanel.this.addPage(msgsOp.getMessages());
-						}
-						SelectRevisionPanel.this.history.refresh(LogMessagesComposite.REFRESH_UI_AND_MODEL);
-						SelectRevisionPanel.this.setPagingEnabled();
-					 }
-				 });
-			}
-		};
-		IActionOperation selectOp = new AbstractActionOperation("Operation.SaveTableSelection") {
-			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				SVNTeamUIPlugin.instance().getWorkbench().getDisplay().syncExec(new Runnable() {
 					public void run() {
+						SelectRevisionPanel.this.pagingEnabled = SelectRevisionPanel.this.limit > 0 && SelectRevisionPanel.this.logMessages == null ? msgsOp.getMessages().length == SelectRevisionPanel.this.limit : msgsOp.getMessages().length == SelectRevisionPanel.this.limit + 1;
+						SelectRevisionPanel.this.addPage(msgsOp.getMessages());
+						SelectRevisionPanel.this.history.refresh(LogMessagesComposite.REFRESH_ALL);
+						SelectRevisionPanel.this.setPagingEnabled();
+						
 						TreeViewer treeTable = SelectRevisionPanel.this.history.getTreeViewer();
 					    if (!treeTable.getTree().isDisposed() && treeTable.getTree().getItems().length > 0) {
 					        if (selected.size() != 0) {
@@ -397,11 +378,8 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
 			}
 		};
 		CompositeOperation op = new CompositeOperation(showOp.getId());
-		if (msgsOp != null) {
-			op.add(msgsOp);
-		}
-		op.add(showOp);
-		op.add(selectOp, new IActionOperation[] {showOp});
+		op.add(msgsOp);
+		op.add(showOp, new IActionOperation[] {msgsOp});
 		UIMonitorUtility.doTaskNowDefault(op, true);
     }
     
@@ -415,47 +393,28 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
     			revision = SVNRevision.fromNumber(lm.revision);
     		}    		
     		msgsOp.setSelectedRevision(revision);
-    		this.showMessages(msgsOp);
+    		this.fetchHistory(msgsOp);
     	}
     }
-    protected boolean quickFilter() {
-	    boolean okPressed = false;
-	    HistoryFilterPanel panel = new HistoryFilterPanel(this.filterByAuthor, this.filterByComment, this.getSelectedAuthors(), this.isCommentFilterEnabled);
+    
+    protected void setFilter() {
+	    HistoryFilterPanel panel = new HistoryFilterPanel(this.filterByAuthor, this.filterByComment, this.getSelectedAuthors());
 	    DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getDisplay().getActiveShell(), panel);
 	    if (dialog.open() == 0) {
-	    	okPressed = true;
 	        this.filterByAuthor = panel.getAuthor(); 
 	        this.filterByComment = panel.getComment();
-	        this.isCommentFilterEnabled = panel.isCommentFilterEnabled();
+			SelectRevisionPanel.this.history.refresh(LogMessagesComposite.REFRESH_ALL);
 	    }
-	    return okPressed;
 	}
     
     protected void clearFilter() {
-	    this.filterByAuthor = ""; 
-	    this.filterByComment = "";
-        this.isCommentFilterEnabled = false;
+	    this.filterByAuthor = null;
+	    this.filterByComment = null;
+		SelectRevisionPanel.this.history.refresh(LogMessagesComposite.REFRESH_ALL);
 	}
 	
 	protected boolean isFilterEnabled() {
-	    return this.filterByAuthor.length() > 0 || this.isCommentFilterEnabled; 
-	}
-	
-	protected SVNLogEntry[] filterMessages(SVNLogEntry[] msgs) {
-	    ArrayList filteredMessages = new ArrayList();
-	    for (int i = 0; i < msgs.length; i++) {
-			String author = msgs[i].author;
-			String message = msgs[i].message;
-			StringMatcher authorMatcher = new StringMatcher(this.filterByAuthor);
-			StringMatcher commentMatcher = new StringMatcher(this.filterByComment);
-			if (this.filterByAuthor.length() > 0 ? authorMatcher.match(author) : true) {
-				if (this.isCommentFilterEnabled ? commentMatcher.match(message) : true) {
-			        filteredMessages.add(msgs[i]);
-			    }
-			}
-	    }
-	    SVNLogEntry []result = (SVNLogEntry [])filteredMessages.toArray(new SVNLogEntry[filteredMessages.size()]);
-	    return result.length > 0 ? result : null;	    
+	    return this.filterByAuthor != null || this.filterByComment != null; 
 	}
 	
 	protected String[] getSelectedAuthors() {

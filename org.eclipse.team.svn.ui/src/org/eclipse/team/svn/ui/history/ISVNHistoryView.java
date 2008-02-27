@@ -21,13 +21,18 @@ import org.eclipse.team.ui.history.HistoryPage;
  * @author Alexander Gurov
  */
 public interface ISVNHistoryView extends ISVNHistoryViewInfo {
+	public static final int REFRESH_VIEW = 0;
+	public static final int REFRESH_LOCAL = 1;
+	public static final int REFRESH_REMOTE = 2;
+	public static final int REFRESH_ALL = 3;
+	
 	public HistoryPage getHistoryPage();
 	public ILocalResource getCompareWith();
 	public SVNLogEntry []getFullRemoteHistory();
 	public boolean isAllRemoteHistoryFetched();
 	public void clearFilter();
 	public void setFilter();
-	public void refresh();
+	public void refresh(int refreshType);
 	public boolean isFilterEnabled();
 	public int getOptions();
 }
