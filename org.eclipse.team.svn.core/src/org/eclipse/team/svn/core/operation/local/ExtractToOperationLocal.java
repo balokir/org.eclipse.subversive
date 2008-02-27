@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -55,16 +54,11 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		HashSet<IResource> operableFiles = new HashSet<IResource>();
 		HashSet<IResource> operableFolders = new HashSet<IResource>();
-		HashMap<IProject, Integer> firstNeededSegments = new HashMap<IProject, Integer>();
+		
 		IResource [] parents = FileUtility.getParents(this.outgoingResources, false);
 		for (int i = 0; i < parents.length; i++) {
 			if (allResources.contains(parents[i])) {
 				operableFolders.add(parents[i]);
-				int preSegmentsCount = parents[i].getFullPath().segmentCount() - 1;
-				Integer firstNeededSegment = firstNeededSegments.get(parents[i].getProject());
-				if (firstNeededSegment == null || preSegmentsCount < firstNeededSegment) {
-					firstNeededSegments.put(parents[i].getProject(), preSegmentsCount);
-				}
 			}
 		}
 		for (int i = 0; i < this.outgoingResources.length; i++) {
@@ -74,11 +68,6 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 			else {
 				operableFiles.add(this.outgoingResources[i]);
 			}
-			int preSegmentsCount = this.outgoingResources[i].getFullPath().segmentCount() - 1;
-			Integer firstNeededSegment = firstNeededSegments.get(this.outgoingResources[i].getProject());
-			if (firstNeededSegment == null || preSegmentsCount < firstNeededSegment) {
-				firstNeededSegments.put(this.outgoingResources[i].getProject(), preSegmentsCount);
-			}
 		}
 		
 		//progressReporter
@@ -86,32 +75,38 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 		
 		//process folders first to create hierarchical structure
 		IResource [] toOperateFurhter = operableFolders.toArray(new IResource[0]);
-	
-		for (int i = 0; i < toOperateFurhter.length; i++) {
-			ProgressMonitorUtility.progress(monitor, processed++, this.outgoingResources.length);
-			monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.Folders", new String [] {FileUtility.getWorkingCopyPath(toOperateFurhter[i])}));
-			IPath resourcePath = toOperateFurhter[i].getFullPath();
+		FileUtility.reorder(toOperateFurhter, true);
+		
+		HashMap<IPath, String> previous = new HashMap<IPath, String>();
+		for (IResource current : toOperateFurhter) {
+			monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.Folders", new String [] {FileUtility.getWorkingCopyPath(current)}));
+			IPath currentPath = current.getFullPath();
 			String toOperate = "";
-			int firstNeededSegment = firstNeededSegments.get(toOperateFurhter[i].getProject());
-			for (int j = firstNeededSegment; j < resourcePath.segmentCount(); j++) {
-				toOperate = toOperate + "\\" + resourcePath.segment(j);
-			}
-			File fileToOperate = new File(this.path + toOperate);
-			if (IStateFilter.SF_DELETED.accept(SVNRemoteStorage.instance().asLocalResource(toOperateFurhter[i]))) {
-				if (fileToOperate.exists() && this.delitionAllowed) {
-					fileToOperate.delete();
-				}
+			File operatingDirectory = null;
+			if (current.getParent() == null
+					|| !previous.keySet().contains(current.getParent().getFullPath())) {
+				toOperate = this.path + "\\" + current.getName();
 			}
 			else {
-				fileToOperate.mkdirs();
+				toOperate = previous.get(current.getParent().getFullPath()) + "\\" + current.getName();
 			}
+			operatingDirectory = new File(toOperate);
+			if (IStateFilter.SF_DELETED.accept(SVNRemoteStorage.instance().asLocalResource(current))
+					&& operatingDirectory.exists()
+					&& this.delitionAllowed) {
+				this.deleteFolderRecoursively(operatingDirectory);
+			}
+			else {
+				operatingDirectory.mkdir();
+				previous.put(currentPath, toOperate);
+			}
+			ProgressMonitorUtility.progress(monitor, processed++, this.outgoingResources.length);
 		}
 		
 		//now processing files
 		toOperateFurhter = operableFiles.toArray(new IResource[0]);
 		
 		for (int i = 0; i < toOperateFurhter.length; i++) {
-			ProgressMonitorUtility.progress(monitor, i, toOperateFurhter.length);
 			monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.LocalFile", new String [] {FileUtility.getWorkingCopyPath(toOperateFurhter[i])}));
 			IPath resourcePath = toOperateFurhter[i].getFullPath();
 			String pathToOperate = this.path;
@@ -132,6 +127,16 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 			else {
 				to = new File(pathToOperate);
 				FileUtility.copyAll(to, new File(FileUtility.getWorkingCopyPath(toOperateFurhter[i])), monitor);
+			}
+			ProgressMonitorUtility.progress(monitor, processed++, this.outgoingResources.length);
+		}
+	}
+	
+	protected void deleteFolderRecoursively(File toDelete) {
+		File [] children = toDelete.listFiles();
+		if (children != null) {
+			for (File child : children) {
+				this.deleteFolderRecoursively(child);
 			}
 		}
 	}
