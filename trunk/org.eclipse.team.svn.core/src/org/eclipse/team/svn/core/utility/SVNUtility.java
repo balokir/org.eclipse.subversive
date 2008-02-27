@@ -500,6 +500,20 @@ public final class SVNUtility {
 		});
 	}
 	
+	public static void reorder(IRepositoryResource []resources, final boolean parent2Child) {
+		Arrays.sort(resources, new Comparator() {
+			public int compare(Object o1, Object o2) {
+				String s1 = ((IRepositoryResource)o1).getUrl();
+				String s2 = ((IRepositoryResource)o2).getUrl();
+				return parent2Child ? s1.compareTo(s2) : s2.compareTo(s1);
+			}
+			
+			public boolean equals(Object obj) {
+				return false;
+			}
+		});
+	}
+	
 	public static String encodeURL(String url) {
 		try {
 			url = SVNUtility.normalizeURL(url);

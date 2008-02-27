@@ -16,7 +16,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
@@ -24,6 +23,8 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.ExtractToOperationRemote;
+import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.synchronize.update.UpdateSyncInfo;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -35,8 +36,8 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
  */
 public class ExtractToActionIncoming extends AbstractSynchronizeModelAction {
 
-	private ArrayList<IResource> incomingResources;
-	private HashSet<IResource> markedForDelition;
+	private ArrayList<IRepositoryResource> incomingResources;
+	private HashSet<String> markedForDelition;
 	
 	public ExtractToActionIncoming(String text, ISynchronizePageConfiguration configuration) {
 		super(text, configuration);
@@ -47,8 +48,8 @@ public class ExtractToActionIncoming extends AbstractSynchronizeModelAction {
 	}
 
 	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {
-		this.incomingResources = new ArrayList<IResource>();
-		this.markedForDelition = new HashSet<IResource>();
+		this.incomingResources = new ArrayList<IRepositoryResource>();
+		this.markedForDelition = new HashSet<String>();
 		IStructuredSelection selection = this.getStructuredSelection();
 		for (Iterator it = selection.iterator(); it.hasNext();) {
 			Object obj = it.next();
@@ -66,7 +67,7 @@ public class ExtractToActionIncoming extends AbstractSynchronizeModelAction {
 			}
 		});
 		if (path[0] != null) {
-			return new ExtractToOperationRemote(incomingResources.toArray(new IResource[0]), this.markedForDelition, path[0], true);
+			return new ExtractToOperationRemote(incomingResources.toArray(new IRepositoryResource[0]), this.markedForDelition, path[0], true);
 		}
 		return null;
 	}
@@ -75,10 +76,10 @@ public class ExtractToActionIncoming extends AbstractSynchronizeModelAction {
 		UpdateSyncInfo info = (UpdateSyncInfo)(element.getSyncInfo());
 		if (SyncInfo.getDirection(info.getKind()) == SyncInfo.INCOMING
 				|| SyncInfo.getDirection(info.getKind()) == SyncInfo.CONFLICTING) {
-			IResource toAdd = info.getLocalResource().getResource();
+			IRepositoryResource toAdd = SVNRemoteStorage.instance().asRepositoryResource(info.getLocalResource().getResource());
 			if (!this.incomingResources.contains(toAdd)) {
 				if (info.getChange(info.getKind()) == SyncInfo.DELETION) {
-					this.markedForDelition.add(toAdd);
+					this.markedForDelition.add(toAdd.getUrl());
 				}
 				this.incomingResources.add(toAdd);
 			}
