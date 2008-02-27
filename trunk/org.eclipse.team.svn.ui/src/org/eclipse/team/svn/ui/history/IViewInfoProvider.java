@@ -22,5 +22,4 @@ import org.eclipse.ui.IWorkbenchPartSite;
 public interface IViewInfoProvider {
 	public IWorkbenchPartSite getPartSite();
 	public IActionBars getActionBars();
-	public void setDescription(String description);
 }

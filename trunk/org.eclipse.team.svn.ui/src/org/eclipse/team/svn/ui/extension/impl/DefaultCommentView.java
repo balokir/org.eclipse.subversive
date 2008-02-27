@@ -224,7 +224,7 @@ public class DefaultCommentView implements ICommentView {
 	}
 
 	public void usedFor(IRepositoryResource resource) {
-
+		//FIXME implement support of Bugtraq properties
 	}
 
 	public void setComment(String comment) {

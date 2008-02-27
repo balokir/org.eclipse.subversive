@@ -171,7 +171,7 @@ public class HistoryActionManager {
 			viewer.getControl().addKeyListener(new KeyAdapter() {
 	        	public void keyPressed(KeyEvent event) {
 	        		if (event.keyCode == SWT.F5) {
-	        			HistoryActionManager.this.view.refresh();
+	        			HistoryActionManager.this.view.refresh(ISVNHistoryView.REFRESH_ALL);
 	        		}
 	        		if (event.stateMask == SWT.CTRL && (event.keyCode == 'c' || event.keyCode == 'C')) {
 	        			HistoryActionManager.this.handleCopy(viewer);
@@ -411,7 +411,7 @@ public class HistoryActionManager {
 						tAction.setEnabled(tSelection.size() > 0);
 						tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/copy.gif"));
 						manager.add(new Separator());
-						if (HistoryActionManager.this.view.getResource() != null) {
+						if (HistoryActionManager.this.view.getRepositoryResource() != null) {
 						    manager.add(tAction = new Action (SVNTeamUIPlugin.instance().getResource("HistoryView.QuickFilter")) {
 						        public void run() {
 						            HistoryActionManager.this.view.setFilter();
@@ -534,7 +534,7 @@ public class HistoryActionManager {
 	public Action getRefreshAction() {
 	    Action refreshAction = new Action(SVNTeamUIPlugin.instance().getResource("HistoryView.Refresh")) {
 			public void run() {
-				HistoryActionManager.this.view.refresh();
+				HistoryActionManager.this.view.refresh(ISVNHistoryView.REFRESH_ALL);
 			}
 		};
         refreshAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/refresh.gif"));
@@ -665,7 +665,7 @@ public class HistoryActionManager {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 					public void run() {
-						HistoryActionManager.this.view.refresh();
+						HistoryActionManager.this.view.refresh(ISVNHistoryView.REFRESH_VIEW);
 					}
 				});
 			}
@@ -727,17 +727,7 @@ public class HistoryActionManager {
 	public String getSelectedMessagesAsString(StructuredViewer viewer) {
 		String historyText = "";
 		HashSet<ILogNode> processed = new HashSet<ILogNode>();
-		long revision = SVNRevision.INVALID_REVISION_NUMBER;
-		SVNRevision rev = this.view.getCurrentRevision();
-		if (rev.getKind() == SVNRevision.Kind.NUMBER) {
-			revision = ((SVNRevision.Number)rev).getNumber();
-		}
-		else if (rev.getKind() == SVNRevision.Kind.HEAD) {
-			SVNLogEntry []msgs = this.view.getFullRemoteHistory();
-			if (msgs != null) {
-				revision = Math.max(msgs[0].revision, msgs[msgs.length - 1].revision);
-			}
-		}
+		long revision = this.view.getCurrentRevision();
 		for (Iterator it = ((IStructuredSelection)viewer.getSelection()).iterator(); it.hasNext(); ) {
 			ILogNode node = (ILogNode)it.next();
 			historyText += this.toString(processed, node, revision);

@@ -112,12 +112,12 @@ public class SVNLogNode extends AbstractLogNode {
 	}
 	
 	public int hashCode() {
-		return this.entry.hashCode();
+		return (int)this.entry.revision;
 	}
 	
 	public boolean equals(Object obj) {
 		if (obj instanceof SVNLogNode) {
-			return this.entry.equals(((SVNLogNode)obj).entry);
+			return this.entry.revision == ((SVNLogNode)obj).entry.revision;
 		}
 		return false;
 	}

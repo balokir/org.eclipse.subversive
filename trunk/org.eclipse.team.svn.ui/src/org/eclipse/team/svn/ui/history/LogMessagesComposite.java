@@ -44,7 +44,6 @@ import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.extension.factory.ICommentView;
@@ -64,7 +63,7 @@ import org.eclipse.ui.IWorkbenchPartSite;
 public class LogMessagesComposite extends SashForm {
 	public static final int REFRESH_UI_AFFECTED = 1;
 	public static final int REFRESH_UI_ALL = 2;
-	public static final int REFRESH_UI_AND_MODEL = 3;
+	public static final int REFRESH_ALL = 3;
 	
 	protected SashForm innerSashForm;
     
@@ -78,7 +77,6 @@ public class LogMessagesComposite extends SashForm {
 	protected RootHistoryCategory rootCategory;
 
 	protected HistoryActionManager actionManager;
-	protected long currentRevision;
 	protected ISVNHistoryViewInfo info;
 	
 	public LogMessagesComposite(Composite parent, boolean multiSelect, ISVNHistoryViewInfo info) {
@@ -172,26 +170,12 @@ public class LogMessagesComposite extends SashForm {
 	}
 	
 	public void refresh(int refreshType) {
-		if (refreshType == LogMessagesComposite.REFRESH_UI_AND_MODEL) {
+		if (refreshType == LogMessagesComposite.REFRESH_ALL) {
 			if (this.info.getResource() != null) {
 				this.commentViewManager.usedFor(this.info.getResource());
 			}
 			else {
 				this.commentViewManager.usedFor(this.info.getRepositoryResource());
-			}
-			this.currentRevision = SVNRevision.INVALID_REVISION_NUMBER;
-			SVNLogEntry []msgs = this.info.getRemoteHistory();
-			
-			if (msgs != null && msgs.length > 0) {
-				SVNRevision currentRevision = this.info.getCurrentRevision();
-				if (currentRevision != null && currentRevision != SVNRevision.INVALID_REVISION) {
-					if (currentRevision.getKind() == Kind.HEAD) {
-						this.currentRevision = Math.max(msgs[0].revision, msgs[msgs.length - 1].revision);
-					}
-					else if (currentRevision.getKind() == Kind.NUMBER) {
-						this.currentRevision = ((SVNRevision.Number)currentRevision).getNumber();
-					}
-				}
 			}
 			
 			this.rootCategory.refreshModel();
@@ -379,11 +363,11 @@ public class LogMessagesComposite extends SashForm {
 		}
 
 		public String getColumnText(Object element, int columnIndex) {
-			return ((ILogNode)element).getLabel(columnIndex, ILogNode.LABEL_TRIM, LogMessagesComposite.this.currentRevision);
+			return ((ILogNode)element).getLabel(columnIndex, ILogNode.LABEL_TRIM, LogMessagesComposite.this.info.getCurrentRevision());
 		}
 
 		public Font getFont(Object element) {
-			if (((ILogNode)element).requiresBoldFont(LogMessagesComposite.this.currentRevision)) {
+			if (((ILogNode)element).requiresBoldFont(LogMessagesComposite.this.info.getCurrentRevision())) {
 				return LogMessagesComposite.this.currentRevisionFont;
 			}
 			return null;

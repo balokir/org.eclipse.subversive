@@ -13,7 +13,6 @@ package org.eclipse.team.svn.ui.history;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
-import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.history.data.SVNLocalFileRevision;
 
@@ -31,7 +30,7 @@ public interface ISVNHistoryViewInfo {
 	
 	public IResource getResource();
 	public IRepositoryResource getRepositoryResource();
-	public SVNRevision getCurrentRevision();
+	public long getCurrentRevision();
 	
 	public boolean isRelatedPathsOnly();
 	public boolean isGrouped();
