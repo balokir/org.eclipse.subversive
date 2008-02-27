@@ -94,7 +94,7 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 			if (IStateFilter.SF_DELETED.accept(SVNRemoteStorage.instance().asLocalResource(current))
 					&& operatingDirectory.exists()
 					&& this.delitionAllowed) {
-				this.deleteFolderRecoursively(operatingDirectory);
+				FileUtility.deleteRecursive(operatingDirectory);
 			}
 			else {
 				operatingDirectory.mkdir();
@@ -106,38 +106,24 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 		//now processing files
 		toOperateFurhter = operableFiles.toArray(new IResource[0]);
 		
-		for (int i = 0; i < toOperateFurhter.length; i++) {
-			monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.LocalFile", new String [] {FileUtility.getWorkingCopyPath(toOperateFurhter[i])}));
-			IPath resourcePath = toOperateFurhter[i].getFullPath();
-			String pathToOperate = this.path;
-			File to = new File(pathToOperate);
-			for (int j = 0; j < resourcePath.segmentCount() - 1; j++) {
-				pathToOperate = pathToOperate + "\\" + resourcePath.segment(j);
-				to = new File(pathToOperate);
-				if (!to.exists()) {
-					pathToOperate = this.path;
-				}
-			}
-			if (IStateFilter.SF_DELETED.accept(SVNRemoteStorage.instance().asLocalResource(toOperateFurhter[i]))) {
-				to = new File(pathToOperate + "\\" + toOperateFurhter[i].getName());
+		for (IResource current : toOperateFurhter) {
+			monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.LocalFile", new String [] {FileUtility.getWorkingCopyPath(current)}));
+			String pathToOperate = previous.keySet().contains(current.getParent().getFullPath())
+								   ? previous.get(current.getParent().getFullPath())
+								   : this.path;
+			File to = null;
+			
+			if (IStateFilter.SF_DELETED.accept(SVNRemoteStorage.instance().asLocalResource(current))) {
+				to = new File(pathToOperate + "\\" + current.getName());
 				if (to.exists() && this.delitionAllowed) {
 					to.delete();
 				}
 			}
 			else {
 				to = new File(pathToOperate);
-				FileUtility.copyAll(to, new File(FileUtility.getWorkingCopyPath(toOperateFurhter[i])), monitor);
+				FileUtility.copyAll(to, new File(FileUtility.getWorkingCopyPath(current)), monitor);
 			}
 			ProgressMonitorUtility.progress(monitor, processed++, this.outgoingResources.length);
-		}
-	}
-	
-	protected void deleteFolderRecoursively(File toDelete) {
-		File [] children = toDelete.listFiles();
-		if (children != null) {
-			for (File child : children) {
-				this.deleteFolderRecoursively(child);
-			}
 		}
 	}
 
