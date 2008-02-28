@@ -330,49 +330,6 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		super.dispose();
 	}
 
-	public static String[] getSelectedAuthors(SVNLogEntry []logMessages) {
-		HashSet<String> authors = new HashSet<String>();
-		if (logMessages != null) {
-			for (SVNLogEntry entry : logMessages) {
-				if (entry.author != null) {
-					authors.add(entry.author);
-				}
-			}
-		}
-		return authors.toArray(new String[authors.size()]);
-	}
-
-	public static SVNLogEntry[] filterMessages(SVNLogEntry[] msgs, String filterByAuthor, String filterByComment) {
-		if (msgs == null) {
-			return null;
-		}
-		ArrayList<SVNLogEntry> filteredMessages = new ArrayList<SVNLogEntry>();
-		StringMatcher authorMatcher = filterByAuthor == null ? null : new StringMatcher(filterByAuthor);
-		StringMatcher commentMatcher = filterByComment == null ? null : new StringMatcher(filterByComment);
-		for (int i = 0; i < msgs.length; i++) {
-			String author = msgs[i].author == null ? "" : msgs[i].author;
-			String message = msgs[i].message == null ? "" : msgs[i].message;
-			if ((authorMatcher == null || authorMatcher.match(author)) && (commentMatcher == null || commentMatcher.match(message))) {
-				filteredMessages.add(msgs[i]);
-			}
-		}
-		if (filteredMessages.size() == 0) {
-			return null;
-		}
-		return filteredMessages.toArray(new SVNLogEntry[filteredMessages.size()]);
-	}
-
-	public void createControl(Composite parent) {
-	    IActionBars actionBars = this.getActionBars();
-	    IToolBarManager tbm = actionBars.getToolBarManager();
-        tbm.add(new Separator("MainGroup"));
-        tbm.add(new Separator("SecondGroup"));
-        
-		this.createPartControl(parent);
-		
-		this.inputSet();
-	}
-
 	public boolean inputSet() {
 		if (this.getInput() instanceof IResource) {
 			this.showHistory((IResource)this.getInput());
@@ -419,14 +376,6 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		return SVNHistoryPage.isValidData(object);
 	}
 
-	public static boolean isValidData(Object object) {
-		return 
-			object instanceof IRepositoryResource || 
-			object instanceof RepositoryResource ||
-			object instanceof RepositoryLocation ||
-			object instanceof IResource && FileUtility.isConnected((IResource)object);
-	}
-
 	public void refresh() {
 		this.refresh(ISVNHistoryView.REFRESH_ALL);
 	}
@@ -435,7 +384,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		return null;
 	}
 
-	protected void createPartControl(Composite parent) {
+	public void createControl(Composite parent) {
 		IActionBars actionBars = this.getActionBars();
 		
 		this.groupByDateAction = new HistoryAction("HistoryView.GroupByDate", "icons/views/history/group_by_date.gif", IAction.AS_CHECK_BOX) {
@@ -695,6 +644,48 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 
 		// Setting context help
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.historyViewContext");
+		
+		this.inputSet();
+	}
+
+	public static String[] getSelectedAuthors(SVNLogEntry []logMessages) {
+		HashSet<String> authors = new HashSet<String>();
+		if (logMessages != null) {
+			for (SVNLogEntry entry : logMessages) {
+				if (entry.author != null) {
+					authors.add(entry.author);
+				}
+			}
+		}
+		return authors.toArray(new String[authors.size()]);
+	}
+
+	public static SVNLogEntry[] filterMessages(SVNLogEntry[] msgs, String filterByAuthor, String filterByComment) {
+		if (msgs == null) {
+			return null;
+		}
+		ArrayList<SVNLogEntry> filteredMessages = new ArrayList<SVNLogEntry>();
+		StringMatcher authorMatcher = filterByAuthor == null ? null : new StringMatcher(filterByAuthor);
+		StringMatcher commentMatcher = filterByComment == null ? null : new StringMatcher(filterByComment);
+		for (int i = 0; i < msgs.length; i++) {
+			String author = msgs[i].author == null ? "" : msgs[i].author;
+			String message = msgs[i].message == null ? "" : msgs[i].message;
+			if ((authorMatcher == null || authorMatcher.match(author)) && (commentMatcher == null || commentMatcher.match(message))) {
+				filteredMessages.add(msgs[i]);
+			}
+		}
+		if (filteredMessages.size() == 0) {
+			return null;
+		}
+		return filteredMessages.toArray(new SVNLogEntry[filteredMessages.size()]);
+	}
+
+	public static boolean isValidData(Object object) {
+		return 
+			object instanceof IRepositoryResource || 
+			object instanceof RepositoryResource ||
+			object instanceof RepositoryLocation ||
+			object instanceof IResource && FileUtility.isConnected((IResource)object);
 	}
 
 	protected IActionBars getActionBars() {
