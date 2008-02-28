@@ -24,6 +24,7 @@ import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
@@ -36,6 +37,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class ExtractToOperationRemote extends AbstractActionOperation {
 
+	private IRepositoryResourceProvider incomingResourcesProvider;
 	private IRepositoryResource [] incomingResources;
 	private HashSet<String> toDelete;
 	private String path;
@@ -44,6 +46,19 @@ public class ExtractToOperationRemote extends AbstractActionOperation {
 	public ExtractToOperationRemote(IRepositoryResource [] incomingResources, HashSet<String> markedForDelition, String path, boolean delitionAllowed) {
 		super(SVNTeamPlugin.instance().getResource("Operation.ExtractTo"));
 		this.incomingResources = incomingResources;
+		this.incomingResourcesProvider = new IRepositoryResourceProvider() {
+			public IRepositoryResource[] getRepositoryResources() {
+				return ExtractToOperationRemote.this.incomingResources;
+			}
+		};
+		this.path = path;
+		this.delitionAllowed = delitionAllowed;
+		this.toDelete = markedForDelition;
+	}
+	
+	public ExtractToOperationRemote(IRepositoryResourceProvider incomingResourcesProvider, HashSet<String> markedForDelition, String path, boolean delitionAllowed) {
+		super(SVNTeamPlugin.instance().getResource("Operation.ExtractTo"));
+		this.incomingResourcesProvider = incomingResourcesProvider;
 		this.path = path;
 		this.delitionAllowed = delitionAllowed;
 		this.toDelete = markedForDelition;
@@ -52,6 +67,7 @@ public class ExtractToOperationRemote extends AbstractActionOperation {
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		HashSet<IRepositoryResource> operableFolders = new HashSet<IRepositoryResource>();
 		HashSet<IRepositoryResource> operableFiles = new HashSet<IRepositoryResource>();
+		this.incomingResources = this.incomingResourcesProvider.getRepositoryResources();
 		for (int i = 0; i < this.incomingResources.length; i++) {
 			if (this.incomingResources[i] instanceof IRepositoryContainer) {
 				operableFolders.add(this.incomingResources[i]);

@@ -200,7 +200,6 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 		branchAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/branch.gif"));
 		this.outgoing.add(branchAction);
 		ExtractToActionOutgoing extractActionOutgoing = new ExtractToActionOutgoing(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Label"), configuration);
-		extractActionOutgoing.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/export.gif"));
 		this.outgoing.add(extractActionOutgoing);
 		
 		this.outgoing.add(new Separator());
@@ -214,7 +213,6 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 		ShowIncomingAnnotationAction showIncomingAnnotationAction = new ShowIncomingAnnotationAction(SVNTeamUIPlugin.instance().getResource("ShowAnnotationAction.label"), configuration);
 		this.incoming.add(showIncomingAnnotationAction);
 		
-		this.incoming.add(new Separator());
 		
 		ShowIncomingPropertiesAction showIncomingPropertiesAction = new ShowIncomingPropertiesAction(SVNTeamUIPlugin.instance().getResource("ShowPropertiesAction.label"), configuration);
 		showIncomingPropertiesAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/propertiesedit.gif"));
@@ -223,7 +221,6 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 		this.incoming.add(new Separator());
 		
 		ExtractToActionIncoming extractActionIncoming = new ExtractToActionIncoming(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Label"), configuration);
-		extractActionIncoming.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/export.gif"));
 		this.incoming.add(extractActionIncoming);
 	}
 	
