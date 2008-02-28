@@ -1353,7 +1353,7 @@
       </objectContribution>
       
       <objectContribution
-            objectClass="org.eclipse.team.svn.ui.history.RepositoryFileEditorInput"
+            objectClass="org.eclipse.team.svn.ui.repository.RepositoryFileEditorInput"
             id="org.eclipse.team.svn.ui.RepositoryFileEditorInputContributions">
             
          <action

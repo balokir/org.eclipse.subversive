@@ -9,7 +9,7 @@
  *    Alexander Gurov - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.svn.ui.history;
+package org.eclipse.team.svn.ui.repository;
 
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IPath;
@@ -21,7 +21,7 @@ import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.repository.RepositoryTreeViewer;
+import org.eclipse.team.svn.ui.history.IRepositoryEditorInput;
 import org.eclipse.team.svn.ui.repository.model.IResourceTreeNode;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFile;
 import org.eclipse.ui.IPersistableElement;

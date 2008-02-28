@@ -20,7 +20,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.history.IRepositoryEditorInput;
-import org.eclipse.team.svn.ui.history.RepositoryFileEditorInput;
+import org.eclipse.team.svn.ui.repository.RepositoryFileEditorInput;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
