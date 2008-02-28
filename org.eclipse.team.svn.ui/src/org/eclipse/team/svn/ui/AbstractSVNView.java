@@ -25,7 +25,7 @@ import org.eclipse.team.svn.core.resource.events.ResourceStatesChangedEvent;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.annotate.AnnotateEditorInput;
-import org.eclipse.team.svn.ui.history.RepositoryFileEditorInput;
+import org.eclipse.team.svn.ui.repository.RepositoryFileEditorInput;
 import org.eclipse.team.svn.ui.repository.model.IResourceTreeNode;
 import org.eclipse.team.ui.synchronize.SyncInfoCompareInput;
 import org.eclipse.ui.IEditorInput;

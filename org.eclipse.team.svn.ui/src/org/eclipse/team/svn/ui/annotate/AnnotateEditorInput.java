@@ -20,7 +20,7 @@ import org.eclipse.team.svn.core.history.ResourceContentStorage;
 import org.eclipse.team.svn.core.operation.AbstractGetFileContentOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
-import org.eclipse.team.svn.ui.history.RepositoryFileEditorInput;
+import org.eclipse.team.svn.ui.repository.RepositoryFileEditorInput;
 
 /**
  * Annotate view editor input
