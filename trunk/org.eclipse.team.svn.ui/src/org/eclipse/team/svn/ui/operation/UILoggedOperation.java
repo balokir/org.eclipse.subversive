@@ -11,10 +11,12 @@
 
 package org.eclipse.team.svn.ui.operation;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.SVNConnectorAuthenticationException;
@@ -74,8 +76,8 @@ public class UILoggedOperation extends LoggedOperation {
         	return;
         }
     	// release calling thread
-    	new Thread() {
-    		public void run() {
+		Job job = new Job("") {
+			protected IStatus run(IProgressMonitor monitor) {
     			UIMonitorUtility.getDisplay().syncExec(new Runnable() {
     	            public void run() {
     	            	boolean showCheckBox = SVNTeamPreferences.getMailReporterBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MAILREPORTER_ENABLED_NAME);
@@ -92,8 +94,11 @@ public class UILoggedOperation extends LoggedOperation {
     					}
     	            }
     	        });
-    		}
-    	}.start();
+				return Status.OK_STATUS;
+			}
+		};
+		job.setSystem(true);
+		job.schedule();
     }
     
     public static OperationErrorInfo formatMessage(IStatus status, boolean allowsCancelled) {

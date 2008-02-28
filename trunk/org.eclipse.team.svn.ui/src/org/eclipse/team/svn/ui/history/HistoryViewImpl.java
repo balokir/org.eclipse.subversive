@@ -116,7 +116,7 @@ public class HistoryViewImpl implements ISVNHistoryView, IPropertyChangeListener
 	protected boolean pagingEnabled = false;
 	protected int options = 0;
 	protected long currentRevision = 0;
-	protected ILocalResource compareWith;
+	protected IResource compareWith;
 	
 	protected SVNLogEntry []logMessages;
 	protected SVNLocalFileRevision []localHistory;
@@ -137,7 +137,7 @@ public class HistoryViewImpl implements ISVNHistoryView, IPropertyChangeListener
 		}
 	}
 	
-	public void setCompareWith(ILocalResource compareWith) {
+	public void setCompareWith(IResource compareWith) {
 		this.compareWith = compareWith;
 	}
 	
@@ -195,8 +195,8 @@ public class HistoryViewImpl implements ISVNHistoryView, IPropertyChangeListener
 		return this.repositoryResource;
 	}
 
-	public ILocalResource getCompareWith() {
-		return this.compareWith;
+	public IResource getCompareWith() {
+		return this.compareWith == null ? this.wcResource : this.compareWith;
 	}
 
 	public HistoryPage getHistoryPage() {

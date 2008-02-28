@@ -14,7 +14,6 @@ package org.eclipse.team.svn.ui.operation;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
-import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
 import org.eclipse.team.svn.ui.history.HistoryViewImpl;
@@ -32,7 +31,7 @@ import org.eclipse.ui.PartInitException;
 public class ShowHistoryViewOperation extends AbstractActionOperation {
 	protected IRepositoryResource remote;
 	protected IRepositoryResourceProvider provider;
-	protected ILocalResource compareWith;
+	protected IResource compareWith;
 	protected IResource local;
 	protected int options;
 	protected int mask;
@@ -58,7 +57,7 @@ public class ShowHistoryViewOperation extends AbstractActionOperation {
 		this.provider = provider;
 	}
 
-	public ShowHistoryViewOperation(ILocalResource compareWith, IRepositoryResource remote, int mask, int options) {
+	public ShowHistoryViewOperation(IResource compareWith, IRepositoryResource remote, int mask, int options) {
 		super("Operation.ShowHistory");
 		this.mask = mask | HistoryViewImpl.COMPARE_MODE;
 		this.options = options | HistoryViewImpl.COMPARE_MODE;

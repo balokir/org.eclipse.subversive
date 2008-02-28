@@ -100,7 +100,7 @@ public class SVNHistoryPage extends HistoryPage implements IViewInfoProvider, IR
 		}
 	}
 	
-	public void setCompareWith(ILocalResource compareWith) {
+	public void setCompareWith(IResource compareWith) {
 		if (this.viewImpl != null) {
 			this.viewImpl.setCompareWith(compareWith);
 		}

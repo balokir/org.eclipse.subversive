@@ -11,8 +11,8 @@
 
 package org.eclipse.team.svn.ui.history;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
-import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.ui.history.HistoryPage;
 
 /**
@@ -27,7 +27,7 @@ public interface ISVNHistoryView extends ISVNHistoryViewInfo {
 	public static final int REFRESH_ALL = 3;
 	
 	public HistoryPage getHistoryPage();
-	public ILocalResource getCompareWith();
+	public IResource getCompareWith();
 	public SVNLogEntry []getFullRemoteHistory();
 	public boolean isAllRemoteHistoryFetched();
 	public void clearFilter();

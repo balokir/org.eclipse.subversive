@@ -49,7 +49,7 @@ public class CompareWithLatestRevisionAction extends AbstractWorkingCopyAction {
 			
 			if (!this.runNow(correctOp, true).isCancelled()) {
 				this.runScheduled(new CompareResourcesOperation(local, remote));
-				this.runBusy(new ShowHistoryViewOperation(local, remote, HistoryViewImpl.COMPARE_MODE, HistoryViewImpl.COMPARE_MODE));
+				this.runBusy(new ShowHistoryViewOperation(resource, remote, HistoryViewImpl.COMPARE_MODE, HistoryViewImpl.COMPARE_MODE));
 			}
 		}
 	}
