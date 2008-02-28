@@ -57,8 +57,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected String tags;
 	protected boolean showExternals;
 	protected boolean fastReport;
-	protected boolean showMultilineComment;
-	protected boolean showAffectedPaths;
 	protected boolean pagingEnable;
 	protected int pageSize;
 	protected boolean usePropertiesView;
@@ -84,8 +82,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected Combo svnConnectorField;
 	protected Button useInteractiveMergeButton;
 	protected Button fastReportButton;
-	protected Button showMultilineCommentButton;
-	protected Button showAffectedPathsButton;
 	protected Button enablePagingButton;
 	protected Text pageSizeField;
 	protected Button usePropertiesViewButton;
@@ -117,8 +113,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		
 		SVNTeamPreferences.setSynchronizeBoolean(store, SVNTeamPreferences.SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_NAME, this.fastReport);
 
-		SVNTeamPreferences.setHistoryBoolean(store, SVNTeamPreferences.HISTORY_SHOW_MULTILINE_COMMENT_NAME, this.showMultilineComment);
-		SVNTeamPreferences.setHistoryBoolean(store, SVNTeamPreferences.HISTORY_SHOW_AFFECTED_PATHS_NAME, this.showAffectedPaths);
 		SVNTeamPreferences.setHistoryInt(store, SVNTeamPreferences.HISTORY_PAGE_SIZE_NAME, this.pageSize);
 		SVNTeamPreferences.setHistoryBoolean(store, SVNTeamPreferences.HISTORY_PAGING_ENABLE_NAME, this.pagingEnable);
 		
@@ -154,8 +148,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		
 		this.fastReport = SVNTeamPreferences.SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_DEFAULT;
 		
-		this.showMultilineComment = SVNTeamPreferences.HISTORY_SHOW_MULTILINE_COMMENT_DEFAULT;
-		this.showAffectedPaths = SVNTeamPreferences.HISTORY_SHOW_AFFECTED_PATHS_DEFAULT;
 		this.pagingEnable = SVNTeamPreferences.HISTORY_PAGING_ENABLE_DEFAULT;
 		this.pageSize = SVNTeamPreferences.HISTORY_PAGE_SIZE_DEFAULT;
 		
@@ -191,8 +183,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		
 		this.fastReport = SVNTeamPreferences.getSynchronizeBoolean(store, SVNTeamPreferences.SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_NAME);
 		
-		this.showMultilineComment = SVNTeamPreferences.getHistoryBoolean(store, SVNTeamPreferences.HISTORY_SHOW_MULTILINE_COMMENT_NAME);
-		this.showAffectedPaths = SVNTeamPreferences.getHistoryBoolean(store, SVNTeamPreferences.HISTORY_SHOW_AFFECTED_PATHS_NAME);
 		this.pagingEnable = SVNTeamPreferences.getHistoryBoolean(store, SVNTeamPreferences.HISTORY_PAGING_ENABLE_NAME);
 		this.pageSize = SVNTeamPreferences.getHistoryInt(store, SVNTeamPreferences.HISTORY_PAGE_SIZE_NAME);
 		
@@ -226,8 +216,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		
 		this.fastReportButton.setSelection(this.fastReport);
 		
-		this.showMultilineCommentButton.setSelection(this.showMultilineComment);
-		this.showAffectedPathsButton.setSelection(this.showAffectedPaths);
 		this.pageSizeField.setText(String.valueOf(this.pageSize));
 		this.enablePagingButton.setSelection(this.pagingEnable);
 		this.pageSizeField.setEnabled(this.pagingEnable);
@@ -545,28 +533,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
 		label.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.historyPrompt"));
-		
-		this.showMultilineCommentButton = new Button(historyViewGroup, SWT.CHECK);
-		data = new GridData();
-		data.horizontalSpan = 2;
-		this.showMultilineCommentButton.setLayoutData(data);
-		this.showMultilineCommentButton.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.historyShowMultilineComment"));
-		this.showMultilineCommentButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				SVNTeamPreferencesPage.this.showMultilineComment = SVNTeamPreferencesPage.this.showMultilineCommentButton.getSelection();
-			}
-		});
-		
-		this.showAffectedPathsButton = new Button(historyViewGroup, SWT.CHECK);
-		data = new GridData();
-		data.horizontalSpan = 2;
-		this.showAffectedPathsButton.setLayoutData(data);
-		this.showAffectedPathsButton.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.historyShowAffectedPaths"));
-		this.showAffectedPathsButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				SVNTeamPreferencesPage.this.showAffectedPaths = SVNTeamPreferencesPage.this.showAffectedPathsButton.getSelection();
-			}
-		});
 		
 		this.enablePagingButton = new Button(historyViewGroup, SWT.CHECK);
 		data = new GridData();
