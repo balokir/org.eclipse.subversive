@@ -76,10 +76,10 @@ public class ExtractToOperationRemote extends AbstractActionOperation {
 			File operatingDirectory = null;
 			if (current.getParent() == null
 					|| !previous.keySet().contains(current.getParent().getUrl())) {
-				toOperate = this.path + "\\" + current.getName();
+				toOperate = this.path + "/" + current.getName();
 			}
 			else {
-				toOperate = previous.get(current.getParent().getUrl()) + "\\" + current.getName();
+				toOperate = previous.get(current.getParent().getUrl()) + "/" + current.getName();
 			}
 			operatingDirectory = new File(toOperate);
 			if (toDelete.contains(current.getUrl())
@@ -104,7 +104,7 @@ public class ExtractToOperationRemote extends AbstractActionOperation {
 									: this.path;
 			
 			if (this.toDelete.contains(current.getUrl())) {
-				File to = new File(pathToOperate + "\\" + current.getName());
+				File to = new File(pathToOperate + "/" + current.getName());
 				if (to.exists() && this.delitionAllowed) {
 					to.delete();
 				}
@@ -121,7 +121,7 @@ public class ExtractToOperationRemote extends AbstractActionOperation {
 		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
 			try {
-				stream = new FileOutputStream(downloadTo + "\\" + remote.getName());
+				stream = new FileOutputStream(downloadTo + "/" + remote.getName());
 				proxy.streamFileContent(SVNUtility.getEntryRevisionReference(remote), 2048, stream, new SVNProgressMonitor(this, monitor, null));
 			}
 			finally {
