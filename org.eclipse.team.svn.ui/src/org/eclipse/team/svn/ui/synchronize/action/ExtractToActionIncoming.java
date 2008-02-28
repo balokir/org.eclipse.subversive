@@ -26,10 +26,12 @@ import org.eclipse.team.internal.ui.synchronize.SynchronizeModelElement;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.ExtractToOperationRemote;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.synchronize.update.UpdateSyncInfo;
+import org.eclipse.team.svn.ui.synchronize.variant.ResourceVariant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
@@ -94,7 +96,7 @@ public class ExtractToActionIncoming extends AbstractSynchronizeModelAction {
 		UpdateSyncInfo info = (UpdateSyncInfo)(((SyncInfoModelElement)element).getSyncInfo());
 			if (SyncInfo.getDirection(info.getKind()) == SyncInfo.INCOMING
 					|| SyncInfo.getDirection(info.getKind()) == SyncInfo.CONFLICTING) {
-				IRepositoryResource toAdd = SVNRemoteStorage.instance().asRepositoryResource(info.getLocalResource().getResource());
+				IRepositoryResource toAdd = ((IResourceChange)((ResourceVariant)info.getRemote()).getResource()).getOriginator();
 				if (!this.incomingResourcesToOperate.contains(toAdd)) {
 					if (info.getChange(info.getKind()) == SyncInfo.DELETION) {
 						this.markedForDelition.add(toAdd.getUrl());
