@@ -89,10 +89,10 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 			File operatingDirectory = null;
 			if (current.getParent() == null
 					|| !previous.keySet().contains(current.getParent().getFullPath())) {
-				toOperate = this.path + "\\" + current.getName();
+				toOperate = this.path + "/" + current.getName();
 			}
 			else {
-				toOperate = previous.get(current.getParent().getFullPath()) + "\\" + current.getName();
+				toOperate = previous.get(current.getParent().getFullPath()) + "/" + current.getName();
 			}
 			operatingDirectory = new File(toOperate);
 			if (IStateFilter.SF_DELETED.accept(SVNRemoteStorage.instance().asLocalResource(current))
@@ -118,7 +118,7 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 			File to = null;
 			
 			if (IStateFilter.SF_DELETED.accept(SVNRemoteStorage.instance().asLocalResource(current))) {
-				to = new File(pathToOperate + "\\" + current.getName());
+				to = new File(pathToOperate + "/" + current.getName());
 				if (to.exists() && this.delitionAllowed) {
 					to.delete();
 				}
