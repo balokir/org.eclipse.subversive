@@ -441,13 +441,6 @@ public final class SVNTeamPreferences {
 	public static void resetToDefaultHistoryValues(IPreferenceStore store) {
 		store.setValue(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_PAGE_SIZE_NAME), SVNTeamPreferences.HISTORY_PAGE_SIZE_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_PAGING_ENABLE_NAME), SVNTeamPreferences.HISTORY_PAGING_ENABLE_DEFAULT);
-		store.setValue(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_SHOW_MULTILINE_COMMENT_NAME), SVNTeamPreferences.HISTORY_SHOW_MULTILINE_COMMENT_DEFAULT);
-		store.setValue(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_SHOW_AFFECTED_PATHS_NAME), SVNTeamPreferences.HISTORY_SHOW_AFFECTED_PATHS_DEFAULT);
-		//FIXME uncomment this line when this options are added to plugin preferences 
-		//store.setValue(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_GROUPING_TYPE_NAME), SVNTeamPreferences.HISTORY_GROUPING_TYPE_DATE);
-		//store.setValue(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_HIERARCHICAL_LAYOUT), SVNTeamPreferences.HISTORY_HIERARCHICAL_LAYOUT_DEFAULT);
-		//store.setValue(SVNTeamPreferences.fullRepositoryName(SVNTeamPreferences.REPOSITORY_SHOW_BROWSER_NAME), SVNTeamPreferences.REPOSITORY_SHOW_BROWSER_DEFAULT);
-		//store.setValue(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_COMPARE_MODE), SVNTeamPreferences.HISTORY_COMPARE_MODE_DEFAULT);
 	}
 	
 	public static void resetToDefaultMailReporterValues(IPreferenceStore store) {

@@ -43,9 +43,9 @@ import org.eclipse.team.svn.core.operation.remote.GetLogMessagesOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
-import org.eclipse.team.svn.ui.history.HistoryViewImpl;
 import org.eclipse.team.svn.ui.history.ISVNHistoryViewInfo;
 import org.eclipse.team.svn.ui.history.LogMessagesComposite;
+import org.eclipse.team.svn.ui.history.SVNHistoryPage;
 import org.eclipse.team.svn.ui.history.data.SVNLocalFileRevision;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.panel.view.HistoryFilterPanel;
@@ -136,7 +136,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
     }
     
 	public SVNLogEntry[] getRemoteHistory() {
-		return HistoryViewImpl.filterMessages(this.logMessages, this.filterByAuthor, this.filterByComment);
+		return SVNHistoryPage.filterMessages(this.logMessages, this.filterByAuthor, this.filterByComment);
 	}
 
 	public SVNLocalFileRevision[] getLocalHistory() {
@@ -398,7 +398,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
     }
     
     protected void setFilter() {
-	    HistoryFilterPanel panel = new HistoryFilterPanel(this.filterByAuthor, this.filterByComment, this.getSelectedAuthors());
+	    HistoryFilterPanel panel = new HistoryFilterPanel(this.filterByAuthor, this.filterByComment, SVNHistoryPage.getSelectedAuthors(this.logMessages));
 	    DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getDisplay().getActiveShell(), panel);
 	    if (dialog.open() == 0) {
 	        this.filterByAuthor = panel.getAuthor(); 
@@ -415,19 +415,6 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
 	
 	protected boolean isFilterEnabled() {
 	    return this.filterByAuthor != null || this.filterByComment != null; 
-	}
-	
-	protected String[] getSelectedAuthors() {
-		List authors = new ArrayList();
-		if (this.logMessages != null) {
-			for (int i = 0; i < logMessages.length; i++) {
-				String current = logMessages[i].author;
-				if (current != null && !authors.contains(current)) {
-					authors.add(current);
-				}
-			}
-		}
-		return (String[])authors.toArray(new String[authors.size()]);
 	}
 	
 	protected void refresh() {
