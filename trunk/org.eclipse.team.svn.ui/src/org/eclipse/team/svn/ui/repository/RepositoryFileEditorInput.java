@@ -21,7 +21,6 @@ import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.history.IRepositoryEditorInput;
 import org.eclipse.team.svn.ui.repository.model.IResourceTreeNode;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFile;
 import org.eclipse.ui.IPersistableElement;

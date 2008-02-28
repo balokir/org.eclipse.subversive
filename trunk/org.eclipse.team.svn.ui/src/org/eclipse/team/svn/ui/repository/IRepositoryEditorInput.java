@@ -9,7 +9,7 @@
  *    Alexander Gurov - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.svn.ui.history;
+package org.eclipse.team.svn.ui.repository;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
