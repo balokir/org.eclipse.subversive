@@ -50,6 +50,10 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 		this.path = path;
 		this.delitionAllowed = delitionAllowed;
 	}
+	
+	public ExtractToOperationLocal(IResource [] outgoingResources, String path, boolean delitionAllowed) {
+		this(outgoingResources, new IResource[0], path, delitionAllowed);
+	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		HashSet<IResource> operableFiles = new HashSet<IResource>();
