@@ -63,7 +63,7 @@ public class CompareWithBranchTagAction extends AbstractWorkingCopyAction {
 		if (dlg.open() == 0){
 			remote = panel.getSelectedResoure();
 			this.runScheduled(new CompareResourcesOperation(local, remote));
-			this.runBusy(new ShowHistoryViewOperation(local, remote, HistoryViewImpl.COMPARE_MODE, HistoryViewImpl.COMPARE_MODE));
+			this.runBusy(new ShowHistoryViewOperation(resource, remote, HistoryViewImpl.COMPARE_MODE, HistoryViewImpl.COMPARE_MODE));
 		}
 	}
 

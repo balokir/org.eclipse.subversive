@@ -48,7 +48,7 @@ public class CompareWithRevisionAction extends AbstractWorkingCopyAction {
 			if (dialog.open() == 0) {
 				remote = panel.getSelectedResource();
 				this.runScheduled(new CompareResourcesOperation(local, remote));
-				this.runBusy(new ShowHistoryViewOperation(local, remote, HistoryViewImpl.COMPARE_MODE, HistoryViewImpl.COMPARE_MODE));
+				this.runBusy(new ShowHistoryViewOperation(resource, remote, HistoryViewImpl.COMPARE_MODE, HistoryViewImpl.COMPARE_MODE));
 			}
 		}
 	}

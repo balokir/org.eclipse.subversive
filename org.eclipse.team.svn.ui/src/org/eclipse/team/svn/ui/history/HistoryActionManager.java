@@ -792,7 +792,7 @@ public class HistoryActionManager {
 	protected void compareWithCurrent(SVNLogEntry item) {
 		IRepositoryResource resource = this.getResourceForSelectedRevision(item);
 		if (this.view.getResource() != null || this.view.getCompareWith() != null) {
-			ILocalResource local = this.view.getCompareWith() == null ? SVNRemoteStorage.instance().asLocalResource(this.view.getResource()) : this.view.getCompareWith();
+			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(this.view.getCompareWith());
 			CompareResourcesOperation op = new CompareResourcesOperation(local, resource);
 			op.setForceId(this.getCompareForceId());
 			UIMonitorUtility.doTaskScheduledActive(op);

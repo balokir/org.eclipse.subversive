@@ -112,17 +112,24 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 			return null;
 		}
 		IResourceChange checkForReplacement = SVNRemoteStorage.instance().resourceChangeFromBytes(this.statusCache.getBytes(resourceChange.getResource()));
-		if (checkForReplacement != null && IStateFilter.SF_ADDED.accept(checkForReplacement))
+		if (checkForReplacement != null)
 		{
-			checkForReplacement.treatAsReplacement();
-			return checkForReplacement;
+			if (IStateFilter.SF_ADDED.accept(checkForReplacement)) {
+				if (IStateFilter.SF_DELETED.accept(resourceChange)) {
+					checkForReplacement.treatAsReplacement();
+				}
+				return checkForReplacement;
+			}
+			if (IStateFilter.SF_DELETED.accept(checkForReplacement) && IStateFilter.SF_ADDED.accept(resourceChange)) {
+				resourceChange.treatAsReplacement();
+			}
 		}
 		
 		rStatusOp.setPegRevision(resourceChange);
 		IRepositoryResource originator = SVNRemoteStorage.instance().asRepositoryResource(resourceChange.getResource());
 		if (originator != null) {
 			// for case sensitive name changes, nulls allowed for externals roots
-			IRepositoryResource tOriginator = originator instanceof IFileChange ? (IRepositoryResource)originator.asRepositoryFile(current.url, true) : (IRepositoryResource)originator.asRepositoryContainer(current.url, true);
+			IRepositoryResource tOriginator = resourceChange instanceof IFileChange ? (IRepositoryResource)originator.asRepositoryFile(current.url, true) : (IRepositoryResource)originator.asRepositoryContainer(current.url, true);
 			if (tOriginator != null) {
 				originator = tOriginator;
 			}

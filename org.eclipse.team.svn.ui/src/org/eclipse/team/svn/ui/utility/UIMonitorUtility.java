@@ -48,11 +48,13 @@ public final class UIMonitorUtility {
 	
 	public static Shell getShell() {
 		Display display = UIMonitorUtility.getDisplay();
-		Shell retVal = display.getActiveShell();
-		if (retVal == null) {
-			retVal = new Shell(display, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
+		// NEVER ! use the active shell it could be disposed asynchronously by external thread
+		for (Shell shell : display.getShells()) {
+			if (shell.getParent() == null) {
+				return shell;
+			}
 		}
-		return retVal;
+		return new Shell(display, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
 	}
 	
 	public static ICancellableOperationWrapper doTaskScheduledWorkspaceModify(IWorkbenchPart part, IActionOperation op) {
