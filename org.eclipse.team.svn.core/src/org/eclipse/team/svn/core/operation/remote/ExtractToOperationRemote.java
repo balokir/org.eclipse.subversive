@@ -13,6 +13,7 @@ package org.eclipse.team.svn.core.operation.remote;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -35,18 +36,18 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * @author Alexei Goncharov
  */
 public class ExtractToOperationRemote extends AbstractRepositoryOperation {
-	private HashSet<String> toDelete;
+	private Collection<String> toDelete;
 	private String path;
 	private boolean delitionAllowed;
 	
-	public ExtractToOperationRemote(IRepositoryResource []incomingResources, HashSet<String> markedForDelition, String path, boolean delitionAllowed) {
+	public ExtractToOperationRemote(IRepositoryResource []incomingResources, Collection<String> markedForDelition, String path, boolean delitionAllowed) {
 		super("Operation.ExtractTo", incomingResources);
 		this.path = path;
 		this.delitionAllowed = delitionAllowed;
 		this.toDelete = markedForDelition;
 	}
 	
-	public ExtractToOperationRemote(IRepositoryResourceProvider incomingResourcesProvider, HashSet<String> markedForDelition, String path, boolean delitionAllowed) {
+	public ExtractToOperationRemote(IRepositoryResourceProvider incomingResourcesProvider, Collection<String> markedForDelition, String path, boolean delitionAllowed) {
 		super("Operation.ExtractTo", incomingResourcesProvider);
 		this.path = path;
 		this.delitionAllowed = delitionAllowed;
