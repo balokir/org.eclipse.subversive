@@ -87,11 +87,12 @@ public class ExtractToOperationRemote extends AbstractRepositoryOperation {
 				toOperate = previous.get(current.getParent().getUrl()) + "/" + current.getName();
 			}
 			operatingDirectory = new File(toOperate);
-			if (toDelete.contains(current.getUrl()))
+			if (toDelete.contains(current.getUrl())) {
 				if (operatingDirectory.exists() && this.delitionAllowed)
 				{
 					FileUtility.deleteRecursive(operatingDirectory);
 				}
+			}
 			else {
 				operatingDirectory.mkdir();
 				previous.put(currentURL, toOperate);
