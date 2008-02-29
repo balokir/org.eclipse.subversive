@@ -858,6 +858,9 @@ public class HistoryActionManager {
 			if (current.revision <= selectedLogs[0].revision
 					&& current.revision > selectedLogs[1].revision) {
 				SVNLogPath[] changedPaths = current.changedPaths;
+				if (changedPaths == null) {
+					continue;
+				}
 				for (SVNLogPath operable : changedPaths) {
 					if ((rootUrl + operable.path).startsWith(selectedUrl)) {
 						operablePaths.put(operable, current.revision);
