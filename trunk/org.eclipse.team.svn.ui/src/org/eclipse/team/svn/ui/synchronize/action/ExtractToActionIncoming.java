@@ -108,7 +108,7 @@ public class ExtractToActionIncoming extends AbstractSynchronizeModelAction {
 		}
 		IDiffElement [] children = element.getChildren();
 		for (IDiffElement diffElement : children) {
-			this.collectIncomingRecoursively((SyncInfoModelElement)diffElement);
+			this.collectIncomingRecoursively((SynchronizeModelElement)diffElement);
 		}
 	}
 
