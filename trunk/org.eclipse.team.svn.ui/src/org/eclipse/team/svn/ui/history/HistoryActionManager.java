@@ -13,7 +13,9 @@ package org.eclipse.team.svn.ui.history;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -56,6 +58,8 @@ import org.eclipse.team.internal.ui.actions.CompareRevisionAction;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNDiffStatus;
+import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryInfo;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
@@ -63,6 +67,7 @@ import org.eclipse.team.svn.core.connector.SVNLogPath;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.SVNEntry.Kind;
+import org.eclipse.team.svn.core.connector.SVNLogPath.ChangeType;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.history.SVNRemoteResourceRevision;
@@ -70,6 +75,7 @@ import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
+import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.local.GetRemoteContentsOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
@@ -77,6 +83,7 @@ import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.UpdateOperation;
 import org.eclipse.team.svn.core.operation.remote.ExportOperation;
+import org.eclipse.team.svn.core.operation.remote.ExtractToOperationRemote;
 import org.eclipse.team.svn.core.operation.remote.GetRemotePropertiesOperation;
 import org.eclipse.team.svn.core.operation.remote.LocateResourceURLInHistoryOperation;
 import org.eclipse.team.svn.core.operation.remote.PreparedBranchTagOperation;
@@ -90,6 +97,8 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.svn.core.svnstorage.SVNRepositoryFolder;
+import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.action.AbstractRepositoryTeamAction;
@@ -427,6 +436,13 @@ public class HistoryActionManager {
 				});
 				tAction.setEnabled(selection.length == 1);
 			}
+			
+			manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Label")) {
+				public void run() {
+					HistoryActionManager.this.runExtractTo(selection);
+				}
+			});
+			tAction.setEnabled(selection.length == 2);
 			
 			manager.add(new Separator());
 
@@ -813,6 +829,54 @@ public class HistoryActionManager {
 			op.setForceId(this.getCompareForceId());
 			UIMonitorUtility.doTaskScheduledActive(op);
 		}
+	}
+	
+	protected void runExtractTo(ILogNode [] selection) {
+		String path = null;
+		DirectoryDialog fileDialog = new DirectoryDialog(UIMonitorUtility.getShell());
+		fileDialog.setText(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Select.Title"));
+		fileDialog.setMessage(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Select.Description"));
+		path = fileDialog.open();
+		if (path == null) {
+			return;
+		}
+		SVNLogEntry [] selectedLogs = new SVNLogEntry [selection.length];
+		selectedLogs[0] = (SVNLogEntry)selection[0].getEntity();
+		selectedLogs[1] = (SVNLogEntry)selection[1].getEntity();
+		if (selectedLogs[0].revision < selectedLogs[1].revision) {
+			SVNLogEntry tmp = selectedLogs[0];
+			selectedLogs[0] = selectedLogs[1];
+			selectedLogs[1] = tmp;
+		}
+		SVNLogEntry [] allLogs = this.view.getFullRemoteHistory();
+		HashMap<String, Character> changesMapping = new HashMap<String, Character>();
+		String rootUrl = this.view.getRepositoryResource().getRepositoryLocation().getRepositoryRootUrl();
+		String selectedUrl = this.view.getRepositoryResource().getUrl();
+		HashMap<SVNLogPath, Long> operablePaths = new HashMap<SVNLogPath, Long>();
+		for (int i = allLogs.length -1; i > -1; i--) {
+			SVNLogEntry current = allLogs[i];
+			if (current.revision <= selectedLogs[0].revision
+					&& current.revision > selectedLogs[1].revision) {
+				SVNLogPath[] changedPaths = current.changedPaths;
+				for (SVNLogPath operable : changedPaths) {
+					if ((rootUrl + operable.path).startsWith(selectedUrl)) {
+						operablePaths.put(operable, current.revision);
+						changesMapping.put(rootUrl + operable.path, operable.action);
+					}
+				}
+			}
+		}
+		HashSet<String> toDelete = new HashSet<String>();
+		for (String url : changesMapping.keySet()) {
+			if (changesMapping.get(url).equals(new Character(ChangeType.DELETED))) {
+				toDelete.add(url);
+			}
+		}
+		CompositeOperation op = new CompositeOperation(SVNTeamPlugin.instance().getResource("Operation.ExtractTo"));
+		FromDifferenceRepositoryResourceProvider provider = new FromDifferenceRepositoryResourceProvider(selectedLogs);
+		op.add(provider);
+		op.add(new ExtractToOperationRemote(provider, toDelete, path, true), new IActionOperation [] {provider});
+		UIMonitorUtility.doTaskNowDefault(UIMonitorUtility.getShell(), op, true);
 	}
 	
 	protected void runCompareForLocal(Object []selection) {
@@ -1389,5 +1453,101 @@ public class HistoryActionManager {
 		}
 		
 	}
+	
+	protected class FromDifferenceRepositoryResourceProvider extends AbstractActionOperation implements IRepositoryResourceProvider {
+		protected IRepositoryResource [] repositoryResources;
+		protected IRepositoryResource newer;
+		protected IRepositoryResource older;
+		protected IRepositoryLocation location;
+		protected SVNDiffStatus [] statuses;
+		
+		public FromDifferenceRepositoryResourceProvider(SVNLogEntry [] logEntries) {//(HashMap<SVNLogPath, Long> paths, SVNLogEntry selectedLogEntry) {
+			super("Operation.GetRepositoryResource");
+			this.newer = HistoryActionManager.this.getResourceForSelectedRevision(logEntries[0]);
+			this.older = HistoryActionManager.this.getResourceForSelectedRevision(logEntries[1]);
+			this.location = this.newer.getRepositoryLocation();
+		}
+		
+		protected IRepositoryResource createResourceFor(int kind, String url) {
+			IRepositoryResource retVal = null;
+			if (kind == SVNEntry.Kind.FILE) {
+				retVal = location.asRepositoryFile(url, false);
+			}
+			else if (kind == SVNEntry.Kind.DIR) {
+				retVal = location.asRepositoryContainer(url, false);
+			}
+			if (retVal == null) {
+				throw new RuntimeException(SVNTeamUIPlugin.instance().getResource("Error.CompareUnknownNodeKind"));
+			}
+			return retVal;
+		}
+		
+		protected IRepositoryResource getResourceForStatus(SVNDiffStatus status) {
+			String url = SVNUtility.decodeURL(status.pathNext);
+			return this.createResourceFor(SVNUtility.getNodeKind(status.pathPrev, status.nodeKind, false), url);
+		}
+		
+		protected void runImpl(IProgressMonitor monitor) throws Exception {
+			HashSet<IRepositoryResource> resourcesToReturn = new HashSet<IRepositoryResource>();
+			resourcesToReturn.add(this.newer);
+			ISVNConnector proxy = this.location.acquireSVNProxy();
+			ArrayList<SVNDiffStatus> statusesList = new ArrayList<SVNDiffStatus>();
+			
+			final LocateResourceURLInHistoryOperation op = new LocateResourceURLInHistoryOperation(new IRepositoryResource[] {this.older, this.newer}, true);
+			this.protectStep(new IUnprotectedOperation() {
+				public void run(IProgressMonitor monitor) throws Exception {
+					ProgressMonitorUtility.doTaskExternal(op, monitor);
+				}
+			}, monitor, 3);
+			this.older = op.getRepositoryResources()[0];
+			this.newer = op.getRepositoryResources()[1];
+			
+			SVNEntryRevisionReference refPrev = SVNUtility.getEntryRevisionReference(this.older);
+			SVNEntryRevisionReference refNext = SVNUtility.getEntryRevisionReference(this.newer);
+			try {
+				if (SVNUtility.useSingleReferenceSignature(refPrev, refNext)) {
+					SVNUtility.diffStatus(proxy, statusesList, refPrev, refPrev.revision, refNext.revision, Depth.INFINITY, ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null, false));
+				}
+				else {
+					SVNUtility.diffStatus(proxy, statusesList, refPrev, refNext, Depth.INFINITY, ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null, false));
+				}
+			}
+			finally {
+				location.releaseSVNProxy(proxy);
+			}
+			
+			this.statuses = statusesList.toArray(new SVNDiffStatus [0]);
+			
+			String message = SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.CheckingDelta");
+			for (int i = 0; i < this.statuses.length; i++) {
+				monitor.subTask(MessageFormat.format(message, new Object[] {SVNUtility.decodeURL(this.statuses[i].pathPrev)}));
+				IRepositoryResource resourceToAdd = this.getResourceForStatus(this.statuses[i]);
+				resourceToAdd.setSelectedRevision(SVNRevision.fromNumber(newer.getRevision()));
+				resourceToAdd.setPegRevision(SVNRevision.fromNumber(newer.getRevision()));
+				resourcesToReturn.add(resourceToAdd);
+			}
+			HashSet<IRepositoryResource> parentsToAdd = new HashSet<IRepositoryResource>();
+			for (IRepositoryResource current : resourcesToReturn) {
+				String name = current.getName();
+				String url = current.getUrl();
+				url = url.substring(0, url.lastIndexOf("/")); 
+				while (!name.equals(this.newer.getName())) {
+					IRepositoryResource toAdd = new SVNRepositoryFolder(this.location, url, current.getSelectedRevision());
+					toAdd.setPegRevision(current.getPegRevision());
+					parentsToAdd.add(toAdd);
+					name = toAdd.getName();
+					url = url.substring(0, url.lastIndexOf("/"));
+				}
+			}
+			resourcesToReturn.addAll(parentsToAdd);
+			this.repositoryResources = resourcesToReturn.toArray(new IRepositoryResource[0]);
+		}
+		
+		public IRepositoryResource[] getRepositoryResources() {
+			return this.repositoryResources;
+		}
+		
+	}
+	
 
 }
