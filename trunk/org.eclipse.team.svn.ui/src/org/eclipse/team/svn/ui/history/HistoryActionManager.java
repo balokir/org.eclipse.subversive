@@ -778,7 +778,7 @@ public class HistoryActionManager {
 		boolean isCompareAllowed = 
 			CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() == ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x ||
 			this.view.getRepositoryResource() instanceof IRepositoryFile;
-		if ((this.view.getOptions() & SVNHistoryPage.COMPARE_MODE) != 0 && doubleClick && isCompareAllowed) {
+		if ((this.view.getOptions() & ISVNHistoryView.COMPARE_MODE) != 0 && doubleClick && isCompareAllowed) {
 			if (type == ILogNode.TYPE_SVN) {
 				this.compareWithCurrent((SVNLogEntry)item.getEntity());
 			}
@@ -885,10 +885,31 @@ public class HistoryActionManager {
 			//add double click listener for the table viewer
 			viewer.addDoubleClickListener(new IDoubleClickListener() {
 				public void doubleClick(DoubleClickEvent e) {
-					ISelection selection = e.getSelection();
-					if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
-						IStructuredSelection structured = (IStructuredSelection)selection;
-						HistoryActionManager.this.openRemoteResource((SVNChangedPathData)structured.getFirstElement(), OpenRemoteFileOperation.OPEN_DEFAULT, null);
+					if (e.getSelection() instanceof IStructuredSelection) {
+						IStructuredSelection selection = (IStructuredSelection)e.getSelection();
+						if (selection.size() == 1) {
+							SVNChangedPathData data = (SVNChangedPathData)selection.getFirstElement();
+							if ((HistoryActionManager.this.view.getOptions() & ISVNHistoryView.COMPARE_MODE) != 0) {
+								boolean isPreviousExists = data.action == SVNLogPath.ChangeType.MODIFIED || data.action == SVNLogPath.ChangeType.REPLACED;
+								if (isPreviousExists) {
+									FromChangedPathDataProvider provider = new FromChangedPathDataProvider(data, false);
+									HistoryActionManager.this.compareWithPreviousRevision(provider, provider);
+								}
+								else {
+									MessageDialog dialog = new MessageDialog(e.getViewer().getControl().getShell(), 
+											SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.NoPreviousRevision.Title"), 
+											null, 
+											SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.NoPreviousRevision.Message"),
+											MessageDialog.INFORMATION, 
+											new String[] {IDialogConstants.OK_LABEL}, 
+											0);
+									dialog.open();								
+								}
+							}
+							else {
+								HistoryActionManager.this.openRemoteResource(data, OpenRemoteFileOperation.OPEN_DEFAULT, null);
+							}
+						}
 					}
 				}
 			});

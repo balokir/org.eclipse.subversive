@@ -26,6 +26,13 @@ public interface ISVNHistoryView extends ISVNHistoryViewInfo {
 	public static final int REFRESH_REMOTE = 2;
 	public static final int REFRESH_ALL = 3;
 	
+	public static final int PAGING_ENABLED = 0x01;
+	public static final int COMPARE_MODE = 0x02;
+	public static final int HIDE_UNRELATED = 0x04;
+	public static final int STOP_ON_COPY = 0x08;
+	public static final int GROUP_BY_DATE = 0x10;
+	/* 0x20, 0x40 and 0x80 are reserved for LogMessagesComposite */
+	
 	public HistoryPage getHistoryPage();
 	public IResource getCompareWith();
 	public SVNLogEntry []getFullRemoteHistory();

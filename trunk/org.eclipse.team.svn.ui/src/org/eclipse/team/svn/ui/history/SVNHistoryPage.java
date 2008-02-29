@@ -78,13 +78,6 @@ import org.eclipse.ui.PlatformUI;
 public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IResourceStatesListener {
 	public static final String VIEW_ID = "org.eclipse.team.ui.GenericHistoryView";
 	
-	public static final int GROUP_BY_DATE = 0x10;
-	public static final int STOP_ON_COPY = 0x08;
-	public static final int HIDE_UNRELATED = 0x04;
-	public static final int COMPARE_MODE = 0x02;
-	public static final int PAGING_ENABLED = 0x01;
-	/* 0x20, 0x40 and 0x80 are reserved for LogMessagesComposite */
-	
 	protected IResource wcResource;
 	protected IRepositoryResource repositoryResource;
 
@@ -378,9 +371,9 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		
 		this.groupByDateAction = new HistoryAction("HistoryView.GroupByDate", "icons/views/history/group_by_date.gif", IAction.AS_CHECK_BOX) {
 			public void run() {
-				SVNHistoryPage.this.options ^= SVNHistoryPage.GROUP_BY_DATE;
-				SVNHistoryPage.this.groupByDateDropDownAction.setChecked((SVNHistoryPage.this.options & SVNHistoryPage.GROUP_BY_DATE) != 0);
-				SVNHistoryPage.saveInt(SVNTeamPreferences.HISTORY_GROUPING_TYPE_NAME, (SVNHistoryPage.this.options & SVNHistoryPage.GROUP_BY_DATE) == 0 ? SVNTeamPreferences.HISTORY_GROUPING_TYPE_NONE : SVNTeamPreferences.HISTORY_GROUPING_TYPE_DATE);
+				SVNHistoryPage.this.options ^= ISVNHistoryView.GROUP_BY_DATE;
+				SVNHistoryPage.this.groupByDateDropDownAction.setChecked((SVNHistoryPage.this.options & ISVNHistoryView.GROUP_BY_DATE) != 0);
+				SVNHistoryPage.saveInt(SVNTeamPreferences.HISTORY_GROUPING_TYPE_NAME, (SVNHistoryPage.this.options & ISVNHistoryView.GROUP_BY_DATE) == 0 ? SVNTeamPreferences.HISTORY_GROUPING_TYPE_NONE : SVNTeamPreferences.HISTORY_GROUPING_TYPE_DATE);
 				SVNHistoryPage.this.history.refresh(LogMessagesComposite.REFRESH_UI_ALL);
 			}
 		};
@@ -418,15 +411,15 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		
 		this.hideUnrelatedAction = new HistoryAction("HistoryView.HideUnrelatedPaths", "icons/views/history/hide_unrelated.gif", IAction.AS_CHECK_BOX) {
 			public void run() {
-				SVNHistoryPage.this.options ^= SVNHistoryPage.HIDE_UNRELATED;
-				SVNHistoryPage.this.hideUnrelatedDropDownAction.setChecked((SVNHistoryPage.this.options & SVNHistoryPage.HIDE_UNRELATED) != 0);
+				SVNHistoryPage.this.options ^= ISVNHistoryView.HIDE_UNRELATED;
+				SVNHistoryPage.this.hideUnrelatedDropDownAction.setChecked((SVNHistoryPage.this.options & ISVNHistoryView.HIDE_UNRELATED) != 0);
 				SVNHistoryPage.this.history.refresh(LogMessagesComposite.REFRESH_UI_AFFECTED);
 			}
 		};
 		this.stopOnCopyAction = new HistoryAction("HistoryView.StopOnCopy", "icons/views/history/stop_on_copy.gif", IAction.AS_CHECK_BOX) {
 			public void run() {
-				SVNHistoryPage.this.options ^= SVNHistoryPage.STOP_ON_COPY;
-				SVNHistoryPage.this.stopOnCopyDropDownAction.setChecked((SVNHistoryPage.this.options & SVNHistoryPage.STOP_ON_COPY) != 0);
+				SVNHistoryPage.this.options ^= ISVNHistoryView.STOP_ON_COPY;
+				SVNHistoryPage.this.stopOnCopyDropDownAction.setChecked((SVNHistoryPage.this.options & ISVNHistoryView.STOP_ON_COPY) != 0);
 				SVNHistoryPage.this.refresh(ISVNHistoryView.REFRESH_REMOTE);
 			}
 		};
@@ -464,9 +457,9 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		};
 		this.compareModeAction = new HistoryAction("HistoryView.CompareMode", "icons/views/history/compare_mode.gif", IAction.AS_CHECK_BOX) {
 			public void run() {
-				SVNHistoryPage.this.options ^= SVNHistoryPage.COMPARE_MODE;
-				SVNHistoryPage.this.compareModeDropDownAction.setChecked((SVNHistoryPage.this.options & SVNHistoryPage.COMPARE_MODE) != 0);
-				SVNHistoryPage.saveBoolean(SVNTeamPreferences.HISTORY_COMPARE_MODE, (SVNHistoryPage.this.options & SVNHistoryPage.COMPARE_MODE) != 0);
+				SVNHistoryPage.this.options ^= ISVNHistoryView.COMPARE_MODE;
+				SVNHistoryPage.this.compareModeDropDownAction.setChecked((SVNHistoryPage.this.options & ISVNHistoryView.COMPARE_MODE) != 0);
+				SVNHistoryPage.saveBoolean(SVNTeamPreferences.HISTORY_COMPARE_MODE, (SVNHistoryPage.this.options & ISVNHistoryView.COMPARE_MODE) != 0);
 			}
 		};
 		
@@ -506,24 +499,24 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 
 		this.hideUnrelatedDropDownAction = new HistoryAction("HistoryView.HideUnrelatedPaths", "icons/views/history/hide_unrelated.gif") {
 			public void run() {
-				SVNHistoryPage.this.options ^= SVNHistoryPage.HIDE_UNRELATED;
-				SVNHistoryPage.this.hideUnrelatedAction.setChecked((SVNHistoryPage.this.options & SVNHistoryPage.HIDE_UNRELATED) != 0);
+				SVNHistoryPage.this.options ^= ISVNHistoryView.HIDE_UNRELATED;
+				SVNHistoryPage.this.hideUnrelatedAction.setChecked((SVNHistoryPage.this.options & ISVNHistoryView.HIDE_UNRELATED) != 0);
 				SVNHistoryPage.this.history.refresh(LogMessagesComposite.REFRESH_UI_AFFECTED);
 			}
 		};
 		this.stopOnCopyDropDownAction = new HistoryAction("HistoryView.StopOnCopy", "icons/views/history/stop_on_copy.gif") {
 			public void run() {
-				SVNHistoryPage.this.options ^= SVNHistoryPage.STOP_ON_COPY;
-				SVNHistoryPage.this.stopOnCopyAction.setChecked((SVNHistoryPage.this.options & SVNHistoryPage.STOP_ON_COPY) != 0);
+				SVNHistoryPage.this.options ^= ISVNHistoryView.STOP_ON_COPY;
+				SVNHistoryPage.this.stopOnCopyAction.setChecked((SVNHistoryPage.this.options & ISVNHistoryView.STOP_ON_COPY) != 0);
 				SVNHistoryPage.this.refresh(ISVNHistoryView.REFRESH_REMOTE);
 			}
 		};
 
 		this.groupByDateDropDownAction = new HistoryAction("HistoryView.GroupByDate", "icons/views/history/group_by_date.gif") {
 			public void run() {
-				SVNHistoryPage.this.options ^= SVNHistoryPage.GROUP_BY_DATE;
-				SVNHistoryPage.this.groupByDateAction.setChecked((SVNHistoryPage.this.options & SVNHistoryPage.GROUP_BY_DATE) != 0);
-				SVNHistoryPage.saveInt(SVNTeamPreferences.HISTORY_GROUPING_TYPE_NAME, (SVNHistoryPage.this.options & SVNHistoryPage.GROUP_BY_DATE) == 0 ? SVNTeamPreferences.HISTORY_GROUPING_TYPE_NONE : SVNTeamPreferences.HISTORY_GROUPING_TYPE_DATE);
+				SVNHistoryPage.this.options ^= ISVNHistoryView.GROUP_BY_DATE;
+				SVNHistoryPage.this.groupByDateAction.setChecked((SVNHistoryPage.this.options & ISVNHistoryView.GROUP_BY_DATE) != 0);
+				SVNHistoryPage.saveInt(SVNTeamPreferences.HISTORY_GROUPING_TYPE_NAME, (SVNHistoryPage.this.options & ISVNHistoryView.GROUP_BY_DATE) == 0 ? SVNTeamPreferences.HISTORY_GROUPING_TYPE_NONE : SVNTeamPreferences.HISTORY_GROUPING_TYPE_DATE);
 				SVNHistoryPage.this.history.refresh(LogMessagesComposite.REFRESH_UI_ALL);
 			}
 		};
@@ -572,9 +565,9 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 
 		this.compareModeDropDownAction = new HistoryAction("HistoryView.CompareMode", "icons/views/history/compare_mode.gif") {
 			public void run() {
-				SVNHistoryPage.this.options ^= SVNHistoryPage.COMPARE_MODE;
-				SVNHistoryPage.this.compareModeAction.setChecked((SVNHistoryPage.this.options & SVNHistoryPage.COMPARE_MODE) != 0);
-				SVNHistoryPage.saveBoolean(SVNTeamPreferences.HISTORY_COMPARE_MODE, (SVNHistoryPage.this.options & SVNHistoryPage.COMPARE_MODE) != 0);
+				SVNHistoryPage.this.options ^= ISVNHistoryView.COMPARE_MODE;
+				SVNHistoryPage.this.compareModeAction.setChecked((SVNHistoryPage.this.options & ISVNHistoryView.COMPARE_MODE) != 0);
+				SVNHistoryPage.saveBoolean(SVNTeamPreferences.HISTORY_COMPARE_MODE, (SVNHistoryPage.this.options & ISVNHistoryView.COMPARE_MODE) != 0);
 			}
 		};
 
@@ -787,26 +780,26 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 			revisionMode = ISVNHistoryViewInfo.MODE_LOCAL;
 		}
 
-		this.hideUnrelatedDropDownAction.setChecked((this.options & SVNHistoryPage.HIDE_UNRELATED) != 0);
-		this.hideUnrelatedAction.setChecked((this.options & SVNHistoryPage.HIDE_UNRELATED) != 0);
-		this.stopOnCopyDropDownAction.setChecked((this.options & SVNHistoryPage.STOP_ON_COPY) != 0);
-		this.stopOnCopyAction.setChecked((this.options & SVNHistoryPage.STOP_ON_COPY) != 0);
-		this.options |= groupingType == SVNTeamPreferences.HISTORY_GROUPING_TYPE_DATE ? SVNHistoryPage.GROUP_BY_DATE : 0;
+		this.hideUnrelatedDropDownAction.setChecked((this.options & ISVNHistoryView.HIDE_UNRELATED) != 0);
+		this.hideUnrelatedAction.setChecked((this.options & ISVNHistoryView.HIDE_UNRELATED) != 0);
+		this.stopOnCopyDropDownAction.setChecked((this.options & ISVNHistoryView.STOP_ON_COPY) != 0);
+		this.stopOnCopyAction.setChecked((this.options & ISVNHistoryView.STOP_ON_COPY) != 0);
+		this.options |= groupingType == SVNTeamPreferences.HISTORY_GROUPING_TYPE_DATE ? ISVNHistoryView.GROUP_BY_DATE : 0;
 		this.options = this.options & ~(ISVNHistoryViewInfo.MODE_BOTH | ISVNHistoryViewInfo.MODE_LOCAL | ISVNHistoryViewInfo.MODE_REMOTE) | revisionMode;
-		this.groupByDateAction.setChecked((this.options & SVNHistoryPage.GROUP_BY_DATE) != 0);
+		this.groupByDateAction.setChecked((this.options & ISVNHistoryView.GROUP_BY_DATE) != 0);
 		this.showBothAction.setChecked((this.options & ISVNHistoryViewInfo.MODE_BOTH) != 0);
 		this.showBothActionDropDown.setChecked((this.options & ISVNHistoryViewInfo.MODE_BOTH) != 0);
 		this.showLocalAction.setChecked((this.options & ISVNHistoryViewInfo.MODE_LOCAL) != 0);
 		this.showLocalActionDropDown.setChecked((this.options & ISVNHistoryViewInfo.MODE_LOCAL) != 0);
 		this.showRemoteAction.setChecked((this.options & ISVNHistoryViewInfo.MODE_REMOTE) != 0);
 		this.showRemoteActionDropDown.setChecked((this.options & ISVNHistoryViewInfo.MODE_REMOTE) != 0);
-		this.groupByDateDropDownAction.setChecked((this.options & SVNHistoryPage.GROUP_BY_DATE) != 0);
+		this.groupByDateDropDownAction.setChecked((this.options & ISVNHistoryView.GROUP_BY_DATE) != 0);
 		boolean compareMode = SVNTeamPreferences.getHistoryBoolean(store, SVNTeamPreferences.HISTORY_COMPARE_MODE);
 		if (compareMode) {
-			this.options |= SVNHistoryPage.COMPARE_MODE;
+			this.options |= ISVNHistoryView.COMPARE_MODE;
 		}
-		this.compareModeDropDownAction.setChecked((this.options & SVNHistoryPage.COMPARE_MODE) != 0);
-		this.compareModeAction.setChecked((this.options & SVNHistoryPage.COMPARE_MODE) != 0);
+		this.compareModeDropDownAction.setChecked((this.options & ISVNHistoryView.COMPARE_MODE) != 0);
+		this.compareModeAction.setChecked((this.options & ISVNHistoryView.COMPARE_MODE) != 0);
 
 		this.flatAction.setChecked(!hierarchicalAffectedView);
 		this.hierarchicalAction.setChecked(hierarchicalAffectedView);
@@ -815,12 +808,12 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		if (SVNTeamPreferences.getHistoryBoolean(store, SVNTeamPreferences.HISTORY_PAGING_ENABLE_NAME)) {
 			this.limit = SVNTeamPreferences.getHistoryInt(store, SVNTeamPreferences.HISTORY_PAGE_SIZE_NAME);
 			this.getNextPageAction.setToolTipText("Show Next " + this.limit);
-			this.options |= SVNHistoryPage.PAGING_ENABLED;
+			this.options |= ISVNHistoryView.PAGING_ENABLED;
 		}
 		else {
 			this.limit = 0;
 			this.getNextPageAction.setToolTipText("Show Next Page");
-			this.options &= ~SVNHistoryPage.PAGING_ENABLED;
+			this.options &= ~ISVNHistoryView.PAGING_ENABLED;
 		}
 		this.setButtonsEnablement();
 	}
@@ -832,8 +825,8 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 
 		this.filterDropDownAction.setEnabled(enableRepo && this.repositoryResource != null && this.logMessages != null);
 		this.clearFilterDropDownAction.setEnabled(this.isFilterEnabled());
-		this.getNextPageAction.setEnabled(enableRepo && this.pagingEnabled & ((this.options & SVNHistoryPage.PAGING_ENABLED) != 0));
-		this.getAllPagesAction.setEnabled(enableRepo && this.pagingEnabled & ((this.options & SVNHistoryPage.PAGING_ENABLED) != 0));
+		this.getNextPageAction.setEnabled(enableRepo && this.pagingEnabled & ((this.options & ISVNHistoryView.PAGING_ENABLED) != 0));
+		this.getAllPagesAction.setEnabled(enableRepo && this.pagingEnabled & ((this.options & ISVNHistoryView.PAGING_ENABLED) != 0));
 
 		this.stopOnCopyAction.setEnabled(enableRepo);
 		this.stopOnCopyDropDownAction.setEnabled(enableRepo);
