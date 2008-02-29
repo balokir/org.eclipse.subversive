@@ -21,7 +21,7 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.action.AbstractWorkingCopyAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
-import org.eclipse.team.svn.ui.history.SVNHistoryPage;
+import org.eclipse.team.svn.ui.history.ISVNHistoryView;
 import org.eclipse.team.svn.ui.operation.CompareResourcesOperation;
 import org.eclipse.team.svn.ui.operation.ShowHistoryViewOperation;
 import org.eclipse.team.svn.ui.panel.remote.ComparePanel;
@@ -48,7 +48,7 @@ public class CompareWithRevisionAction extends AbstractWorkingCopyAction {
 			if (dialog.open() == 0) {
 				remote = panel.getSelectedResource();
 				this.runScheduled(new CompareResourcesOperation(local, remote));
-				this.runBusy(new ShowHistoryViewOperation(resource, remote, SVNHistoryPage.COMPARE_MODE, SVNHistoryPage.COMPARE_MODE));
+				this.runBusy(new ShowHistoryViewOperation(resource, remote, ISVNHistoryView.COMPARE_MODE, ISVNHistoryView.COMPARE_MODE));
 			}
 		}
 	}
