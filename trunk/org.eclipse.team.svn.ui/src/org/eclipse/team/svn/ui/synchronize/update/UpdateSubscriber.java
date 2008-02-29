@@ -129,7 +129,8 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 		IRepositoryResource originator = SVNRemoteStorage.instance().asRepositoryResource(resourceChange.getResource());
 		if (originator != null) {
 			// for case sensitive name changes, nulls allowed for externals roots
-			IRepositoryResource tOriginator = resourceChange instanceof IFileChange ? (IRepositoryResource)originator.asRepositoryFile(current.url, true) : (IRepositoryResource)originator.asRepositoryContainer(current.url, true);
+			String url = SVNUtility.decodeURL(current.url);
+			IRepositoryResource tOriginator = resourceChange instanceof IFileChange ? (IRepositoryResource)originator.asRepositoryFile(url, true) : (IRepositoryResource)originator.asRepositoryContainer(url, true);
 			if (tOriginator != null) {
 				originator = tOriginator;
 			}

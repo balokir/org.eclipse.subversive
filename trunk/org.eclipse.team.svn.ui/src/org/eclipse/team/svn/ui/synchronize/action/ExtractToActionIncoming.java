@@ -98,7 +98,7 @@ public class ExtractToActionIncoming extends AbstractSynchronizeModelAction {
 					|| SyncInfo.getDirection(info.getKind()) == SyncInfo.CONFLICTING) {
 				IRepositoryResource toAdd = ((IResourceChange)((ResourceVariant)info.getRemote()).getResource()).getOriginator();
 				if (!this.incomingResourcesToOperate.contains(toAdd)) {
-					if (info.getChange(info.getKind()) == SyncInfo.DELETION) {
+					if (SyncInfo.getChange(info.getKind()) == SyncInfo.DELETION) {
 						this.markedForDelition.add(toAdd.getUrl());
 					}
 					this.incomingResourcesToOperate.add(toAdd);
