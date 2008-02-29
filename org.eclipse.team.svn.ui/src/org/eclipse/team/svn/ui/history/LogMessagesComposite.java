@@ -126,11 +126,11 @@ public class LogMessagesComposite extends SashForm {
 	public void registerActionManager(HistoryActionManager manager, IWorkbenchPartSite site) {
 		this.actionManager = manager;
 		
-		this.affectedPathsComposite.registerActionManager(manager, site);
-		
 		manager.logMessagesManager.installKeyBindings(this.historyTable);
 		manager.logMessagesManager.installDefaultAction(this.historyTable);
 		manager.logMessagesManager.installMenuActions(this.historyTable, site);
+		
+		this.affectedPathsComposite.registerActionManager(manager, site);
 	}
 	
 	public void setSelectedRevision(long revision) {

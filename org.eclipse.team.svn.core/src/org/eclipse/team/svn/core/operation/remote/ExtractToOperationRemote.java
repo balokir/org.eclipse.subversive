@@ -19,7 +19,6 @@ import java.util.HashSet;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
-import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -35,30 +34,20 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * 
  * @author Alexei Goncharov
  */
-public class ExtractToOperationRemote extends AbstractActionOperation {
-
-	private IRepositoryResourceProvider incomingResourcesProvider;
-	private IRepositoryResource [] incomingResources;
+public class ExtractToOperationRemote extends AbstractRepositoryOperation {
 	private HashSet<String> toDelete;
 	private String path;
 	private boolean delitionAllowed;
 	
-	public ExtractToOperationRemote(IRepositoryResource [] incomingResources, HashSet<String> markedForDelition, String path, boolean delitionAllowed) {
-		super(SVNTeamPlugin.instance().getResource("Operation.ExtractTo"));
-		this.incomingResources = incomingResources;
-		this.incomingResourcesProvider = new IRepositoryResourceProvider() {
-			public IRepositoryResource[] getRepositoryResources() {
-				return ExtractToOperationRemote.this.incomingResources;
-			}
-		};
+	public ExtractToOperationRemote(IRepositoryResource []incomingResources, HashSet<String> markedForDelition, String path, boolean delitionAllowed) {
+		super("Operation.ExtractTo", incomingResources);
 		this.path = path;
 		this.delitionAllowed = delitionAllowed;
 		this.toDelete = markedForDelition;
 	}
 	
 	public ExtractToOperationRemote(IRepositoryResourceProvider incomingResourcesProvider, HashSet<String> markedForDelition, String path, boolean delitionAllowed) {
-		super(SVNTeamPlugin.instance().getResource("Operation.ExtractTo"));
-		this.incomingResourcesProvider = incomingResourcesProvider;
+		super("Operation.ExtractTo", incomingResourcesProvider);
 		this.path = path;
 		this.delitionAllowed = delitionAllowed;
 		this.toDelete = markedForDelition;
@@ -67,13 +56,13 @@ public class ExtractToOperationRemote extends AbstractActionOperation {
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		HashSet<IRepositoryResource> operableFolders = new HashSet<IRepositoryResource>();
 		HashSet<IRepositoryResource> operableFiles = new HashSet<IRepositoryResource>();
-		this.incomingResources = this.incomingResourcesProvider.getRepositoryResources();
-		for (int i = 0; i < this.incomingResources.length; i++) {
-			if (this.incomingResources[i] instanceof IRepositoryContainer) {
-				operableFolders.add(this.incomingResources[i]);
+		IRepositoryResource []resources = this.operableData();
+		for (int i = 0; i < resources.length; i++) {
+			if (resources[i] instanceof IRepositoryContainer) {
+				operableFolders.add(resources[i]);
 			}
 			else {
-				operableFiles.add(this.incomingResources[i]);
+				operableFiles.add(resources[i]);
 			}
 		}
 		
@@ -107,13 +96,13 @@ public class ExtractToOperationRemote extends AbstractActionOperation {
 				operatingDirectory.mkdir();
 				previous.put(currentURL, toOperate);
 			}
-			ProgressMonitorUtility.progress(monitor, processed++, this.incomingResources.length);
+			ProgressMonitorUtility.progress(monitor, processed++, resources.length);
 		}
 
 		//then files
 		toOperateFurhter = operableFiles.toArray(new IRepositoryResource[0]);
 		for (IRepositoryResource current : toOperateFurhter) {
-			ProgressMonitorUtility.progress(monitor, processed++, this.incomingResources.length);
+			ProgressMonitorUtility.progress(monitor, processed++, resources.length);
 			monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.RemoteFile", new String [] {current.getUrl()}));
 			String pathToOperate = previous.keySet().contains(current.getParent().getUrl()) 
 									? previous.get(current.getParent().getUrl())

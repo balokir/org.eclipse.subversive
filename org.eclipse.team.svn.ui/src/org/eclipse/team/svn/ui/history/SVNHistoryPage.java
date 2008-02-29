@@ -88,8 +88,6 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 	protected IResource wcResource;
 	protected IRepositoryResource repositoryResource;
 
-	protected HistoryPage page;
-
 	protected LogMessagesComposite history;
 
 	protected String filterByAuthor;
@@ -144,18 +142,10 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(this.wcResource);
 		if (local != null) {
 			if (IStateFilter.SF_ONREPOSITORY.accept(local) && this.logMessages == null){
-				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
-					public void run() {
-						SVNHistoryPage.this.refresh(ISVNHistoryView.REFRESH_ALL);
-					}
-				});
+				this.refreshChanges(ISVNHistoryView.REFRESH_ALL);
 			}
 			else if (this.wcResource instanceof IFile) {
-				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
-					public void run() {
-						SVNHistoryPage.this.refresh(ISVNHistoryView.REFRESH_LOCAL);
-					}
-				});
+				this.refreshChanges(ISVNHistoryView.REFRESH_LOCAL);
 			}
 			if ((event.contains(this.wcResource) || event.contains(this.wcResource.getProject())) &&
 				(!this.wcResource.exists() || !FileUtility.isConnected(this.wcResource))) {
@@ -188,8 +178,6 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 	}
 
 	public void clear() {
-		this.setButtonsEnablement();
-
 		this.currentRevision = SVNRevision.INVALID_REVISION_NUMBER;
 		this.repositoryResource = null;
 		this.wcResource = null;
@@ -198,6 +186,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		this.filterByAuthor = null;
 		this.filterByComment = null;
 
+		this.setButtonsEnablement();
 		this.history.refresh(LogMessagesComposite.REFRESH_ALL);
 	}
 
@@ -227,15 +216,15 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 	}
 
 	public HistoryPage getHistoryPage() {
-		return this.page;
-	}
-
-	public SVNLogEntry[] getFullRemoteHistory() {
-		return this.logMessages;
+		return this;
 	}
 
 	public SVNLogEntry[] getRemoteHistory() {
 		return SVNHistoryPage.filterMessages(this.logMessages, this.filterByAuthor, this.filterByComment);
+	}
+
+	public SVNLogEntry[] getFullRemoteHistory() {
+		return this.logMessages;
 	}
 
 	public SVNLocalFileRevision[] getLocalHistory() {
@@ -326,7 +315,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 
 	public void dispose() {
 		SVNRemoteStorage.instance().removeResourceStatesListener(ResourceStatesChangedEvent.class, this);
-		this.history.dispose();
+		// log messages composite is disposed by HistoryPage.dispose()
 		super.dispose();
 	}
 
@@ -385,7 +374,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 	}
 
 	public void createControl(Composite parent) {
-		IActionBars actionBars = this.getActionBars();
+		IActionBars actionBars = this.getHistoryPageSite().getWorkbenchPageSite().getActionBars();
 		
 		this.groupByDateAction = new HistoryAction("HistoryView.GroupByDate", "icons/views/history/group_by_date.gif", IAction.AS_CHECK_BOX) {
 			public void run() {
@@ -398,9 +387,6 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 
 		this.showBothAction = new HistoryAction("HistoryView.ShowBoth", "icons/views/history/both_history_mode.gif", IAction.AS_RADIO_BUTTON) {
 			public void run() {
-				if (!SVNHistoryPage.this.showBothAction.isChecked()) {
-					return;
-				}
 				SVNHistoryPage.this.options = SVNHistoryPage.this.options & ~(ISVNHistoryViewInfo.MODE_LOCAL | ISVNHistoryViewInfo.MODE_REMOTE) | ISVNHistoryViewInfo.MODE_BOTH;
 				SVNHistoryPage.this.showBothActionDropDown.setChecked(true);
 				SVNHistoryPage.this.showLocalActionDropDown.setChecked(false);
@@ -411,9 +397,6 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		};
 		this.showLocalAction = new HistoryAction("HistoryView.ShowLocal", "icons/views/history/local_history_mode.gif", IAction.AS_RADIO_BUTTON) {
 			public void run() {
-				if (!SVNHistoryPage.this.showLocalAction.isChecked()) {
-					return;
-				}
 				SVNHistoryPage.this.options = SVNHistoryPage.this.options & ~(ISVNHistoryViewInfo.MODE_REMOTE | ISVNHistoryViewInfo.MODE_BOTH) | ISVNHistoryViewInfo.MODE_LOCAL;
 				SVNHistoryPage.this.showLocalActionDropDown.setChecked(true);
 				SVNHistoryPage.this.showRemoteActionDropDown.setChecked(false);
@@ -424,9 +407,6 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		};
 		this.showRemoteAction = new HistoryAction("HistoryView.ShowRemote", "icons/views/history/remote_history_mode.gif", IAction.AS_RADIO_BUTTON) {
 			public void run() {
-				if (!SVNHistoryPage.this.showRemoteAction.isChecked()) {
-					return;
-				}
 				SVNHistoryPage.this.options = SVNHistoryPage.this.options & ~(ISVNHistoryViewInfo.MODE_LOCAL | ISVNHistoryViewInfo.MODE_BOTH) | ISVNHistoryViewInfo.MODE_REMOTE;
 				SVNHistoryPage.this.showRemoteActionDropDown.setChecked(true);
 				SVNHistoryPage.this.showLocalActionDropDown.setChecked(false);
@@ -640,12 +620,10 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 
 		this.history.registerActionManager(this.actionManager, this.getPartSite());
 
-		this.refreshOptionButtons();
-
 		// Setting context help
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.historyViewContext");
-		
-		this.inputSet();
+
+		this.refreshOptionButtons();
 	}
 
 	public static String[] getSelectedAuthors(SVNLogEntry []logMessages) {
@@ -686,10 +664,6 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 			object instanceof RepositoryResource ||
 			object instanceof RepositoryLocation ||
 			object instanceof IResource && FileUtility.isConnected((IResource)object);
-	}
-
-	protected IActionBars getActionBars() {
-		return this.getHistoryPageSite().getWorkbenchPageSite().getActionBars();
 	}
 
 	protected IWorkbenchPartSite getPartSite() {
@@ -903,6 +877,14 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 			public void run() {
 				SVNHistoryPage.this.clear();
+			}
+		});
+    }
+    
+    protected void refreshChanges(final int refreshType) {
+		UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+			public void run() {
+				SVNHistoryPage.this.refresh(refreshType);
 			}
 		});
     }
