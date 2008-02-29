@@ -40,6 +40,14 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 	private String path;
 	private boolean delitionAllowed;
 	
+	/**
+	 * Operation for extracting local resources to a location
+	 * 
+	 * @param outgoingResources - the resources to extract array
+	 * @param allSelected - also selected resources (for SynchView only)
+	 * @param path - path to extract to
+	 * @param delitionAllowed - specifies if delition allowed if the resource is marked for delition
+	 */
 	public ExtractToOperationLocal(IResource [] outgoingResources, IResource [] allSelected, String path, boolean delitionAllowed) {
 		super(SVNTeamPlugin.instance().getResource("Operation.ExtractTo"));
 		this.outgoingResources = outgoingResources;
@@ -51,6 +59,13 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 		this.delitionAllowed = delitionAllowed;
 	}
 	
+	/**
+	 * Operation for extracting local resources to a location
+	 * 
+	 * @param outgoingResources - the resources to extract array
+	 * @param path - path to extract to
+	 * @param delitionAllowed - specifies if delition allowed if the resource is marked for delition
+	 */
 	public ExtractToOperationLocal(IResource [] outgoingResources, String path, boolean delitionAllowed) {
 		this(outgoingResources, new IResource[0], path, delitionAllowed);
 	}

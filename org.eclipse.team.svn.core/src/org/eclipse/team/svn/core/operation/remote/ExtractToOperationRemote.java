@@ -40,6 +40,14 @@ public class ExtractToOperationRemote extends AbstractRepositoryOperation {
 	private String path;
 	private boolean delitionAllowed;
 	
+	/**
+	 * Operation for extracting remote resources to a specified location
+	 * 
+	 * @param incomingResources - the resources to extract array
+	 * @param markedForDelition - the collection of the resource URLs to delete (can be empty but must not be null)
+	 * @param path - path to extract to
+	 * @param delitionAllowed - specifies if delition allowed if the resource is marked for delition
+	 */
 	public ExtractToOperationRemote(IRepositoryResource []incomingResources, Collection<String> markedForDelition, String path, boolean delitionAllowed) {
 		super("Operation.ExtractTo", incomingResources);
 		this.path = path;
@@ -47,6 +55,14 @@ public class ExtractToOperationRemote extends AbstractRepositoryOperation {
 		this.toDelete = markedForDelition;
 	}
 	
+	/**
+	 * Operation for extracting remote resources to a specified location
+	 * 
+	 * @param incomingResourcesProvider - incoming resources to extract provider
+	 * @param markedForDelition - the collection of the resource URLs to delete (can be empty but must not be null)
+	 * @param path - path to extract to
+	 * @param delitionAllowed - specifies if delition allowed if the resource is marked for delition
+	 */
 	public ExtractToOperationRemote(IRepositoryResourceProvider incomingResourcesProvider, Collection<String> markedForDelition, String path, boolean delitionAllowed) {
 		super("Operation.ExtractTo", incomingResourcesProvider);
 		this.path = path;
