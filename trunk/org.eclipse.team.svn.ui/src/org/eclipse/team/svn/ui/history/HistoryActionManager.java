@@ -144,6 +144,32 @@ public class HistoryActionManager {
 		public void installMenuActions(StructuredViewer viewer, IWorkbenchPartSite site);
 	}
 	
+	public static class HistoryAction extends Action {
+		protected HistoryAction(String text) {
+			super(SVNTeamUIPlugin.instance().getResource(text));
+		}
+		
+		protected HistoryAction(String text, Object []args) {
+			this(text, args, null);
+		}
+		
+		protected HistoryAction(String text, Object []args, String imageDescriptor) {
+			super(SVNTeamUIPlugin.instance().getResource(text, args));
+			this.setHoverImageDescriptor(imageDescriptor == null ? null : SVNTeamUIPlugin.instance().getImageDescriptor(imageDescriptor));
+		}
+		
+		protected HistoryAction(String text, String imageDescriptor) {
+			this(text);
+			this.setHoverImageDescriptor(imageDescriptor == null ? null : SVNTeamUIPlugin.instance().getImageDescriptor(imageDescriptor));
+		}
+		
+		protected HistoryAction(String text, String imageDescriptor, int style) {
+			super(SVNTeamUIPlugin.instance().getResource(text), style);
+			this.setHoverImageDescriptor(imageDescriptor == null ? null : SVNTeamUIPlugin.instance().getImageDescriptor(imageDescriptor));
+		}
+		
+	}
+	
 	protected ISVNHistoryView view;
 	protected long selectedRevision;
 	
@@ -291,12 +317,12 @@ public class HistoryActionManager {
 						}
 						manager.add(tAction = new HistoryAction("HistoryView.CompareWithPrevious") {
 							public void run() {
-								SVNLogEntry current = (SVNLogEntry)((ILogNode)tSelection.getFirstElement()).getEntity();
-								IRepositoryResource left = HistoryActionManager.this.getResourceForSelectedRevision(current);
-								IRepositoryResource right = HistoryActionManager.this.getResourceForSelectedRevision(new SVNLogEntry(current.revision - 1, 0, null, null, null));
-								CompareRepositoryResourcesOperation op = new CompareRepositoryResourcesOperation(right, left);
-								op.setForceId(HistoryActionManager.this.getCompareForceId());
-								UIMonitorUtility.doTaskScheduledActive(op);
+								HistoryActionManager.this.compareWithPreviousRevision(null, new IRepositoryResourceProvider() {
+									public IRepositoryResource[] getRepositoryResources() {
+										SVNLogEntry current = (SVNLogEntry)((ILogNode)tSelection.getFirstElement()).getEntity();
+										return new IRepositoryResource[] {HistoryActionManager.this.getResourceForSelectedRevision(current)};
+									}
+								});
 							}
 						});
 						boolean existsInPrevious = HistoryActionManager.this.view.getFullRemoteHistory()[HistoryActionManager.this.view.getFullRemoteHistory().length - 1] != ((ILogNode)tSelection.getFirstElement()).getEntity() || !HistoryActionManager.this.view.isAllRemoteHistoryFetched();
@@ -1225,10 +1251,16 @@ public class HistoryActionManager {
 				return new IRepositoryResource[] {prev, next};
 			}
 		});
-		CompositeOperation op = new CompositeOperation(mainOp.getId());
-		op.add(preOp);
-		op.add(mainOp, new IActionOperation[] {preOp});
-		UIMonitorUtility.doTaskScheduledActive(op);
+		mainOp.setForceId(this.getCompareForceId());
+		if (preOp != null) {
+			CompositeOperation op = new CompositeOperation(mainOp.getId());
+			op.add(preOp);
+			op.add(mainOp, new IActionOperation[] {preOp});
+			UIMonitorUtility.doTaskScheduledActive(op);
+		}
+		else {
+			UIMonitorUtility.doTaskScheduledActive(mainOp);
+		}
 	}
 	
 	protected class FromAffectedPathsNodeProvider extends AbstractActionOperation implements IRepositoryResourceProvider {
@@ -1317,30 +1349,4 @@ public class HistoryActionManager {
 		
 	}
 
-	public static class HistoryAction extends Action {
-		protected HistoryAction(String text) {
-			super(SVNTeamUIPlugin.instance().getResource(text));
-		}
-		
-		protected HistoryAction(String text, Object []args) {
-			this(text, args, null);
-		}
-		
-		protected HistoryAction(String text, Object []args, String imageDescriptor) {
-			super(SVNTeamUIPlugin.instance().getResource(text, args));
-			this.setHoverImageDescriptor(imageDescriptor == null ? null : SVNTeamUIPlugin.instance().getImageDescriptor(imageDescriptor));
-		}
-		
-		protected HistoryAction(String text, String imageDescriptor) {
-			this(text);
-			this.setHoverImageDescriptor(imageDescriptor == null ? null : SVNTeamUIPlugin.instance().getImageDescriptor(imageDescriptor));
-		}
-		
-		protected HistoryAction(String text, String imageDescriptor, int style) {
-			super(SVNTeamUIPlugin.instance().getResource(text), style);
-			this.setHoverImageDescriptor(imageDescriptor == null ? null : SVNTeamUIPlugin.instance().getImageDescriptor(imageDescriptor));
-		}
-		
-	}
-	
 }

@@ -58,15 +58,16 @@ import org.eclipse.ui.IWorkbenchPartSite;
  * @author Sergiy Logvin
  */
 public class AffectedPathsComposite extends Composite {
+	public final static int COLUMN_ICON = 0;
+	public final static int COLUMN_NAME = 1;
+	public final static int COLUMN_PATH = 2;
+	public final static int COLUMN_COPIED_FROM = 3;
+	public final static int NUM_COLUMNS = 4;
+	
 	protected static ImageDescriptor ADDITION_OVERLAY;
 	protected static ImageDescriptor MODIFICATION_OVERLAY;
 	protected static ImageDescriptor DELETION_OVERLAY;
 	protected static ImageDescriptor REPLACEMENT_OVERLAY;
-	
-	final public static int COLUMN_ICON = 0;
-	final public static int COLUMN_NAME = 1;
-	final public static int COLUMN_PATH = 2;
-	final public static int COLUMN_COPIED_FROM = 3;
 	
 	protected SashForm sashForm;
 	
@@ -119,8 +120,12 @@ public class AffectedPathsComposite extends Composite {
 	}
 	
 	public void registerActionManager(HistoryActionManager manager, IWorkbenchPartSite site) {
+		manager.affectedTableManager.installKeyBindings(this.tableViewer);
 		manager.affectedTableManager.installDefaultAction(this.tableViewer);
 		manager.affectedTableManager.installMenuActions(this.tableViewer, site);
+		
+		manager.affectedTreeManager.installKeyBindings(this.treeViewer);
+		manager.affectedTreeManager.installDefaultAction(this.treeViewer);
 		manager.affectedTreeManager.installMenuActions(this.treeViewer, site);
 	}
 	
@@ -271,6 +276,7 @@ public class AffectedPathsComposite extends Composite {
 			}
 			return null;
 		}
+		
 		public String getColumnText(Object element, int columnIndex) {
 			SVNChangedPathData data = (SVNChangedPathData)element;
 			switch (columnIndex) {
@@ -287,9 +293,6 @@ public class AffectedPathsComposite extends Composite {
 			return "";
 		}
 
-		public void addListener(ILabelProviderListener listener) {
-		}
-
 		public void dispose() {
 			for (Image img : this.images.values()) {
 				img.dispose();
@@ -300,8 +303,12 @@ public class AffectedPathsComposite extends Composite {
 			return true;
 		}
 
+		public void addListener(ILabelProviderListener listener) {
+		}
+
 		public void removeListener(ILabelProviderListener listener) {
 		}
+		
 	}
 	
 	protected class AffectedPathsTableComparator extends ColumnedViewerComparator {
