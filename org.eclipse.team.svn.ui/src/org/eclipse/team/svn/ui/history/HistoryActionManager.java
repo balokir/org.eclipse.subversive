@@ -876,7 +876,7 @@ public class HistoryActionManager {
 		FromDifferenceRepositoryResourceProvider provider = new FromDifferenceRepositoryResourceProvider(selectedLogs);
 		op.add(provider);
 		op.add(new ExtractToOperationRemote(provider, toDelete, path, true), new IActionOperation [] {provider});
-		UIMonitorUtility.doTaskNowDefault(UIMonitorUtility.getShell(), op, true);
+		UIMonitorUtility.doTaskScheduledActive(op);
 	}
 	
 	protected void runCompareForLocal(Object []selection) {
