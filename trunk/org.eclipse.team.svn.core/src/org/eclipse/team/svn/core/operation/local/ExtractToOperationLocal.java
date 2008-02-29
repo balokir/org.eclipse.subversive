@@ -95,10 +95,10 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 				toOperate = previous.get(current.getParent().getFullPath()) + "/" + current.getName();
 			}
 			operatingDirectory = new File(toOperate);
-			if (IStateFilter.SF_DELETED.accept(SVNRemoteStorage.instance().asLocalResource(current))
-					&& operatingDirectory.exists()
-					&& this.delitionAllowed) {
-				FileUtility.deleteRecursive(operatingDirectory);
+			if (IStateFilter.SF_DELETED.accept(SVNRemoteStorage.instance().asLocalResource(current))) {
+				if (operatingDirectory.exists() && this.delitionAllowed) {
+					FileUtility.deleteRecursive(operatingDirectory);
+				}
 			}
 			else {
 				operatingDirectory.mkdir();
