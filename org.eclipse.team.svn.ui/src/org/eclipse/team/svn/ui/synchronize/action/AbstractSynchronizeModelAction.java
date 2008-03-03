@@ -29,6 +29,7 @@ import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
+import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.ui.action.IResourceSelector;
@@ -107,7 +108,7 @@ public abstract class AbstractSynchronizeModelAction extends SynchronizeModelAct
 			    for (int i = 0; i < infos.length; i++) {
 			        ILocalResource local = infos[i].getLocalResource();
 			        ILocalResource remote = ((ResourceVariant)infos[i].getRemote()).getResource();
-			        if (filter.acceptRemote(remote.getResource(), remote.getStatus(), remote.getChangeMask()) || filter.accept(local)) {
+			        if (remote instanceof IResourceChange && filter.acceptRemote(remote.getResource(), remote.getStatus(), remote.getChangeMask()) || filter.accept(local)) {
 			            retVal.add(local.getResource());
 			        }
 			    }
@@ -168,7 +169,7 @@ public abstract class AbstractSynchronizeModelAction extends SynchronizeModelAct
 				}
 				else if (node instanceof SyncInfoModelElement) {
 					ILocalResource change = ((ResourceVariant)((AbstractSVNSyncInfo)((SyncInfoModelElement)node).getSyncInfo()).getRemote()).getResource();
-					if (filter.acceptRemote(change.getResource(), change.getStatus(), change.getChangeMask())) {
+					if (change instanceof IResourceChange && filter.acceptRemote(change.getResource(), change.getStatus(), change.getChangeMask())) {
 						nodes.add(resource);
 					}
 				}

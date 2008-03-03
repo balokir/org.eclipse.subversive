@@ -46,6 +46,10 @@ public class AddToSVNIgnoreAction extends AbstractSynchronizeModelAction {
 		super(text, configuration);
 	}
 
+	protected boolean needsToSaveDirtyEditors() {
+		return false;
+	}
+	
 	protected static IStateFilter SF_NEW_AND_PARENT_VERSIONED = new IStateFilter.AbstractStateFilter() {
         protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
             if (state == IStateFilter.ST_NEW) {

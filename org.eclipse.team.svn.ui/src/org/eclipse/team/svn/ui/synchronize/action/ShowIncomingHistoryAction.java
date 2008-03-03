@@ -37,6 +37,10 @@ public class ShowIncomingHistoryAction extends AbstractSynchronizeModelAction {
 		super(text, configuration);
 	}
 
+	protected boolean needsToSaveDirtyEditors() {
+		return false;
+	}
+	
 	protected boolean updateSelection(IStructuredSelection selection) {
 		super.updateSelection(selection);
 		if (selection.size() == 1) {

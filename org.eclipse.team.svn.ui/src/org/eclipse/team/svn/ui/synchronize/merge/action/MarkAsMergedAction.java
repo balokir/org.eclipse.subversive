@@ -17,9 +17,8 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.ui.operation.ClearMergeStatusesOperation;
+import org.eclipse.team.svn.ui.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
-import org.eclipse.team.svn.ui.synchronize.action.ISyncStateFilter;
-import org.eclipse.team.svn.ui.synchronize.merge.MergeSyncInfo;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
@@ -28,25 +27,24 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
  * @author Alexander Gurov
  */
 public class MarkAsMergedAction extends AbstractSynchronizeModelAction {
-
 	public MarkAsMergedAction(String text, ISynchronizePageConfiguration configuration) {
 		super(text, configuration);
 	}
 
+	protected boolean needsToSaveDirtyEditors() {
+		return false;
+	}
+	
 	protected FastSyncInfoFilter getSyncInfoFilter() {
 		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.CONFLICTING, SyncInfo.INCOMING}) {
             public boolean select(SyncInfo info) {
-                if (super.select(info)) {
-                    MergeSyncInfo sync = (MergeSyncInfo)info;
-                    return !IStateFilter.SF_OBSTRUCTED.accept(sync.getLocalResource());
-                }
-                return false;
+                return super.select(info) && !IStateFilter.SF_OBSTRUCTED.accept(((AbstractSVNSyncInfo)info).getLocalResource());
             }
         };
 	}
 
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
-		return new ClearMergeStatusesOperation(this.syncInfoSelector.getSelectedResourcesRecursive(new ISyncStateFilter.StateFilterWrapper(IStateFilter.SF_ALL, false)));
+		return new ClearMergeStatusesOperation(this.syncInfoSelector.getSelectedResources());
 	}
 
 }
