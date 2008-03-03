@@ -96,27 +96,28 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 		IResource [] toOperateFurhter = operableFolders.toArray(new IResource[0]);
 		FileUtility.reorder(toOperateFurhter, true);
 		
+		IPath previousPref = null;
 		HashMap<IPath, String> previous = new HashMap<IPath, String>();
 		for (IResource current : toOperateFurhter) {
 			monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.Folders", new String [] {FileUtility.getWorkingCopyPath(current)}));
 			IPath currentPath = current.getFullPath();
 			String toOperate = "";
-			File operatingDirectory = null;
-			if (current.getParent() == null
-					|| !previous.keySet().contains(current.getParent().getFullPath())) {
+			if (previousPref == null
+					|| !previousPref.isPrefixOf(currentPath)) {
 				toOperate = this.path + "/" + current.getName();
+				previousPref = current.getFullPath();
 			}
 			else {
-				toOperate = previous.get(current.getParent().getFullPath()) + "/" + current.getName();
+				toOperate = this.path + previousPref + (currentPath.toString()).substring(previousPref.toString().length());
 			}
-			operatingDirectory = new File(toOperate);
+			File operatingDirectory = new File(toOperate);
 			if (IStateFilter.SF_DELETED.accept(SVNRemoteStorage.instance().asLocalResource(current))) {
 				if (operatingDirectory.exists() && this.delitionAllowed) {
 					FileUtility.deleteRecursive(operatingDirectory);
 				}
 			}
 			else {
-				operatingDirectory.mkdir();
+				operatingDirectory.mkdirs();
 				previous.put(currentPath, toOperate);
 			}
 			ProgressMonitorUtility.progress(monitor, processed++, this.outgoingResources.length);
