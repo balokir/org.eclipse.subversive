@@ -36,10 +36,10 @@ public class AddToSVNAction extends AbstractSynchronizeModelAction {
 	}
 
 	protected FastSyncInfoFilter getSyncInfoFilter() {
-		return new FastSyncInfoFilter() {
-			public boolean select(SyncInfo info) {
+		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.OUTGOING, SyncInfo.CONFLICTING}) {
+            public boolean select(SyncInfo info) {
 				UpdateSyncInfo sync = (UpdateSyncInfo)info;
-				return IStateFilter.SF_NEW.accept(sync.getLocalResource()) || IStateFilter.SF_IGNORED.accept(sync.getLocalResource());
+				return super.select(info) && (IStateFilter.SF_NEW.accept(sync.getLocalResource()) || IStateFilter.SF_IGNORED.accept(sync.getLocalResource()));
 			}
 		};
 	}

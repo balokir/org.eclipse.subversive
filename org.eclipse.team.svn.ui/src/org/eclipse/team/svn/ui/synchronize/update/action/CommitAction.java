@@ -47,11 +47,8 @@ public class CommitAction extends AbstractSynchronizeModelAction {
 	protected FastSyncInfoFilter getSyncInfoFilter() {
 		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.OUTGOING}) {
             public boolean select(SyncInfo info) {
-                if (super.select(info)) {
-                    UpdateSyncInfo sync = (UpdateSyncInfo)info;
-                    return !IStateFilter.SF_OBSTRUCTED.accept(sync.getLocalResource());
-                }
-                return false;
+                UpdateSyncInfo sync = (UpdateSyncInfo)info;
+                return super.select(info) && !IStateFilter.SF_OBSTRUCTED.accept(sync.getLocalResource());
             }		    
 		};
 	}

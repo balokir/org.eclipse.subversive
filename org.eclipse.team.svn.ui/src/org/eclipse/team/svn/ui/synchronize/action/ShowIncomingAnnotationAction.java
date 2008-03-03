@@ -16,15 +16,12 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.core.resource.ILocalFile;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.ui.operation.RemoteShowAnnotationOperation;
 import org.eclipse.team.svn.ui.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.ui.synchronize.variant.RemoteResourceVariant;
 import org.eclipse.team.svn.ui.synchronize.variant.ResourceVariant;
-import org.eclipse.team.svn.ui.synchronize.variant.VirtualRemoteResourceVariant;
-import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
@@ -44,22 +41,16 @@ public class ShowIncomingAnnotationAction extends AbstractSynchronizeModelAction
 	
 	protected boolean updateSelection(IStructuredSelection selection) {
 		super.updateSelection(selection);
-		if (selection.size() == 1) {
-			ISynchronizeModelElement element = (ISynchronizeModelElement)selection.getFirstElement();
-			if (element instanceof SyncInfoModelElement) {
-				AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo)((SyncInfoModelElement)element).getSyncInfo();
-				ILocalResource incoming = ((ResourceVariant)syncInfo.getRemote()).getResource();
-				if (incoming instanceof ILocalFile && !(syncInfo.getRemote() instanceof VirtualRemoteResourceVariant) && !IStateFilter.SF_NOTEXISTS.accept(incoming) && 
-					(!IStateFilter.SF_DELETED.accept(incoming) || IStateFilter.SF_REPLACED.accept(incoming))) {
-					return true;
-				}
-			}
+		if (selection.size() == 1 && selection.getFirstElement() instanceof SyncInfoModelElement) {
+			AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo)((SyncInfoModelElement)selection.getFirstElement()).getSyncInfo();
+			ILocalResource incoming = ((ResourceVariant)syncInfo.getRemote()).getResource();
+			return incoming instanceof IResourceChange && IStateFilter.ST_DELETED != incoming.getStatus();
 		}
 		return false;
 	}
 
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
-	    IResourceChange change = (IResourceChange)((RemoteResourceVariant)this.getSVNSyncInfo().getRemote()).getResource();
+	    IResourceChange change = (IResourceChange)((RemoteResourceVariant)this.getSelectedSVNSyncInfo().getRemote()).getResource();
 		return new RemoteShowAnnotationOperation(change.getOriginator());
 	}
 

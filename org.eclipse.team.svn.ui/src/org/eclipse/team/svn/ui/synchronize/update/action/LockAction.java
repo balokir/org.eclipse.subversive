@@ -24,8 +24,8 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.local.CommitPanel;
 import org.eclipse.team.svn.ui.panel.local.LockPanel;
+import org.eclipse.team.svn.ui.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
-import org.eclipse.team.svn.ui.synchronize.update.UpdateSyncInfo;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
@@ -45,13 +45,13 @@ public class LockAction extends AbstractSynchronizeModelAction {
 	protected FastSyncInfoFilter getSyncInfoFilter() {
 		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.OUTGOING, SyncInfo.CONFLICTING}) {
             public boolean select(SyncInfo info) {
-                return super.select(info) && IStateFilter.SF_READY_TO_LOCK.accept(((UpdateSyncInfo)info).getLocalResource());
+                return super.select(info) && IStateFilter.SF_READY_TO_LOCK.accept(((AbstractSVNSyncInfo)info).getLocalResource());
             }
         };
 	}
 
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
-		IResource [] selectedResources = LockAction.this.syncInfoSelector.getSelectedResources();
+		IResource [] selectedResources = this.syncInfoSelector.getSelectedResources();
 		CommitPanel.CollectPropertiesOperation cop = new CommitPanel.CollectPropertiesOperation(selectedResources);
 		ProgressMonitorUtility.doTaskExternal(cop, null);
 		LockPanel commentPanel = new LockPanel(true, cop.getMinLockSize());

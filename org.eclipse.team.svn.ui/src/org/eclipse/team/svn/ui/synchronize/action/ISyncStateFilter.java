@@ -67,11 +67,17 @@ public interface ISyncStateFilter extends IStateFilter {
     };
 
     public static class StateFilterWrapper implements ISyncStateFilter {
-        protected IStateFilter filter;
+        protected IStateFilter local;
+        protected IStateFilter remote;
         protected boolean acceptGroupNodes;
         
         public StateFilterWrapper(IStateFilter filter, boolean acceptGroupNodes) {
-            this.filter = filter;
+        	this(filter, null, acceptGroupNodes);
+        }
+        
+        public StateFilterWrapper(IStateFilter local, IStateFilter remote, boolean acceptGroupNodes) {
+            this.local = local;
+            this.remote = remote;
             this.acceptGroupNodes = acceptGroupNodes;
         }
         
@@ -80,19 +86,19 @@ public interface ISyncStateFilter extends IStateFilter {
         }
         
         public boolean acceptRemote(IResource resource, String state, int mask) {
-            return false;
+            return this.remote != null && this.remote.accept(resource, state, mask);
         }
         
         public boolean accept(IResource resource, String state, int mask) {
-            return this.filter.accept(resource, state, mask);
+            return this.local != null && this.local.accept(resource, state, mask);
         }
         
-		public boolean allowsRecursion(IResource resource, String state, int mask) {
-			return true;
+		public boolean accept(ILocalResource resource) {
+            return this.local != null && this.local.accept(resource);
 		}
 
-		public boolean accept(ILocalResource resource) {
-            return this.filter.accept(resource);
+		public boolean allowsRecursion(IResource resource, String state, int mask) {
+			return true;
 		}
 
 		public boolean allowsRecursion(ILocalResource resource) {

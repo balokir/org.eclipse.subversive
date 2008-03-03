@@ -65,11 +65,11 @@ public class CreateBranchAction extends AbstractSynchronizeModelAction {
 			ISynchronizeModelElement element = (ISynchronizeModelElement)it.next();
 			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(element.getResource());
 			// null for change set nodes
-			if (local == null || IStateFilter.SF_NOTONREPOSITORY.accept(local) || IStateFilter.SF_DELETED.accept(local)) {
-				return false;
+			if (local != null && IStateFilter.SF_EXCLUDE_DELETED.accept(local)) {
+				return true;
 			}
 		}
-	    return selection.size() > 0;
+	    return false;
 	}
 	
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {

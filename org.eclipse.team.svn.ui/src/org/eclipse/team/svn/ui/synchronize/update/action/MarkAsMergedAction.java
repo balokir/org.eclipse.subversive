@@ -25,7 +25,6 @@ import org.eclipse.team.svn.core.resource.ILocalFile;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.operation.ClearUpdateStatusesOperation;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
-import org.eclipse.team.svn.ui.synchronize.action.ISyncStateFilter;
 import org.eclipse.team.svn.ui.synchronize.update.UpdateSyncInfo;
 import org.eclipse.team.svn.ui.synchronize.variant.ResourceVariant;
 import org.eclipse.team.svn.ui.utility.UnacceptableOperationNotificator;
@@ -57,7 +56,7 @@ public class MarkAsMergedAction extends AbstractSynchronizeModelAction {
 	}
 
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
-		IResource []resources = UnacceptableOperationNotificator.shrinkResourcesWithNotOnRespositoryParents(configuration.getSite().getShell(), this.syncInfoSelector.getSelectedResourcesRecursive(new ISyncStateFilter.StateFilterWrapper(IStateFilter.SF_ALL, false)));
+		IResource []resources = UnacceptableOperationNotificator.shrinkResourcesWithNotOnRespositoryParents(configuration.getSite().getShell(), this.syncInfoSelector.getSelectedResources());
 		if (resources == null || resources.length == 0) {
 			return null;
 		}
