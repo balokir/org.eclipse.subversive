@@ -14,8 +14,6 @@ package org.eclipse.team.svn.core.operation.remote;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
@@ -71,31 +69,14 @@ public class ExtractToOperationRemote extends AbstractRepositoryOperation {
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		HashSet<IRepositoryResource> operableFolders = new HashSet<IRepositoryResource>();
-		HashSet<IRepositoryResource> operableFiles = new HashSet<IRepositoryResource>();
 		IRepositoryResource []resources = this.operableData();
-		for (int i = 0; i < resources.length; i++) {
-			if (resources[i] instanceof IRepositoryContainer) {
-				operableFolders.add(resources[i]);
-			}
-			else {
-				operableFiles.add(resources[i]);
-			}
-		}
-		
 		//to report progress
 		int processed = 0;
-		
-		//folders first - to create all needed
-		IRepositoryResource [] toOperateFurhter = operableFolders.toArray(new IRepositoryResource[0]);
-		SVNUtility.reorder(toOperateFurhter, true);
-		
-		HashMap<String, String> previous = new HashMap<String, String>();
+		SVNUtility.reorder(resources, true);
 		String previousPref = null;
 		String previousPath = null;
-		for (IRepositoryResource current : toOperateFurhter) {
+		for (IRepositoryResource current : resources) {
 			String currentURL = current.getUrl();
-			monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.Folders", new String [] {currentURL}));
 			String toOperate = "";
 			if (previousPref == null
 					|| !currentURL.startsWith(previousPref)) {
@@ -114,40 +95,26 @@ public class ExtractToOperationRemote extends AbstractRepositoryOperation {
 				}
 			}
 			else {
-				operatingDirectory.mkdirs();
-				previous.put(currentURL, toOperate);
-			}
-			ProgressMonitorUtility.progress(monitor, processed++, resources.length);
-		}
-
-		//then files
-		toOperateFurhter = operableFiles.toArray(new IRepositoryResource[0]);
-		for (IRepositoryResource current : toOperateFurhter) {
-			ProgressMonitorUtility.progress(monitor, processed++, resources.length);
-			monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.RemoteFile", new String [] {current.getUrl()}));
-			String pathToOperate = previous.keySet().contains(current.getParent().getUrl()) 
-									? previous.get(current.getParent().getUrl())
-									: this.path;
-			
-			if (this.toDelete.contains(current.getUrl())) {
-				File to = new File(pathToOperate + "/" + current.getName());
-				if (to.exists() && this.delitionAllowed) {
-					to.delete();
+				if (current instanceof IRepositoryContainer) {
+					monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.Folders", new String [] {currentURL}));
+					operatingDirectory.mkdirs();
+				}
+				else {
+					monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.RemoteFile", new String [] {currentURL}));
+					this.downloadFile(current, toOperate, monitor);
 				}
 			}
-			else {					
-				this.downloadFile(current, pathToOperate, monitor);
-			}
+			ProgressMonitorUtility.progress(monitor, processed++, resources.length);
 		}
 	}
 	
-	protected void downloadFile(IRepositoryResource remote, String downloadTo, IProgressMonitor monitor) throws Exception {
+	protected void downloadFile(IRepositoryResource remote, String downloadPath, IProgressMonitor monitor) throws Exception {
 		FileOutputStream stream = null;
 		IRepositoryLocation location = remote.getRepositoryLocation();
 		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
 			try {
-				stream = new FileOutputStream(downloadTo + "/" + remote.getName());
+				stream = new FileOutputStream(downloadPath);
 				proxy.streamFileContent(SVNUtility.getEntryRevisionReference(remote), 2048, stream, new SVNProgressMonitor(this, monitor, null));
 			}
 			finally {
