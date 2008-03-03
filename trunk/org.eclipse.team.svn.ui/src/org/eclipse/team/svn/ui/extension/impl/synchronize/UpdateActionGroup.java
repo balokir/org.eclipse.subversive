@@ -21,6 +21,7 @@ import org.eclipse.team.svn.ui.synchronize.action.CreatePatchFileAction;
 import org.eclipse.team.svn.ui.synchronize.action.ExpandAllAction;
 import org.eclipse.team.svn.ui.synchronize.action.ExtractIncomingToAction;
 import org.eclipse.team.svn.ui.synchronize.action.ExtractOutgoingToAction;
+import org.eclipse.team.svn.ui.synchronize.action.ExtractToAction;
 import org.eclipse.team.svn.ui.synchronize.action.RevertAction;
 import org.eclipse.team.svn.ui.synchronize.action.SetKeywordsAction;
 import org.eclipse.team.svn.ui.synchronize.action.SetPropertyAction;
@@ -155,6 +156,11 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				UpdateActionGroup.GROUP_MANAGE_LOCALS,
 				addToSVNIgnoreAction);
+		ExtractToAction extractTo = new ExtractToAction(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Label"), configuration);
+		this.appendToGroup(
+				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+				UpdateActionGroup.GROUP_MANAGE_LOCALS,
+				extractTo);
 				
 		this.outgoing = new MenuManager(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Outgoing"));
 		this.appendToGroup(
