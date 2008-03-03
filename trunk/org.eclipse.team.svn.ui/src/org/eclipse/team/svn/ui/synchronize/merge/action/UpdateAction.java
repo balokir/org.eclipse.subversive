@@ -30,7 +30,6 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.operation.ClearMergeStatusesOperation;
 import org.eclipse.team.svn.ui.operation.NotifyUnresolvedConflictOperation;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
-import org.eclipse.team.svn.ui.synchronize.action.ISyncStateFilter;
 import org.eclipse.team.svn.ui.synchronize.merge.MergeSubscriber;
 import org.eclipse.team.svn.ui.synchronize.merge.MergeSyncInfo;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -56,17 +55,13 @@ public class UpdateAction extends AbstractSynchronizeModelAction {
 	protected FastSyncInfoFilter getSyncInfoFilter() {
 		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.INCOMING, SyncInfo.CONFLICTING}) {
             public boolean select(SyncInfo info) {
-                if (super.select(info)) {
-                    MergeSyncInfo sync = (MergeSyncInfo)info;
-                    return !IStateFilter.SF_OBSTRUCTED.accept(sync.getLocalResource());
-                }
-                return false;
+                return super.select(info) && !IStateFilter.SF_OBSTRUCTED.accept(((MergeSyncInfo)info).getLocalResource());
             }
         };
 	}
 
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
-		IResource []resources = this.syncInfoSelector.getSelectedResourcesRecursive(ISyncStateFilter.SF_ONREPOSITORY);
+		IResource []resources = this.syncInfoSelector.getSelectedResources();
 		// IStateFilter.SF_NONVERSIONED not versioned locally
 		resources = FileUtility.addOperableParents(resources, IStateFilter.SF_UNVERSIONED);
 		

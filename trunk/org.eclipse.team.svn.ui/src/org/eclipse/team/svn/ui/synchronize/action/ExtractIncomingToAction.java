@@ -22,7 +22,6 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.ExtractToOperationRemote;
-import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -45,31 +44,7 @@ public class ExtractIncomingToAction extends AbstractSynchronizeModelAction {
 
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
 		IResource []incomingChanges = this.syncInfoSelector.getSelectedResources(new ISyncStateFilter.StateFilterWrapper(IStateFilter.SF_ALL, true));
-		HashSet<IResource> deletionsOnly = new HashSet<IResource>(Arrays.asList(this.syncInfoSelector.getSelectedResources(new ISyncStateFilter() {
-			public boolean allowsRecursion(IResource resource, String state, int mask) {
-				return true;
-			}
-		
-			public boolean allowsRecursion(ILocalResource resource) {
-				return true;
-			}
-		
-			public boolean accept(IResource resource, String state, int mask) {
-				return false;
-			}
-		
-			public boolean accept(ILocalResource resource) {
-				return false;
-			}
-		
-			public boolean acceptRemote(IResource resource, String state, int mask) {
-				return IStateFilter.SF_DELETED.accept(resource, state, mask);
-			}
-		
-			public boolean acceptGroupNodes() {
-				return false;
-			}
-		})));
+		HashSet<IResource> deletionsOnly = new HashSet<IResource>(Arrays.asList(this.syncInfoSelector.getSelectedResources(new ISyncStateFilter.StateFilterWrapper(null, IStateFilter.SF_DELETED, false))));
 		HashSet<IRepositoryResource> incomingResourcesToOperate = new HashSet<IRepositoryResource>();
 		HashSet<String> markedForDelition = new HashSet<String>();
 		for (IResource current : incomingChanges) {

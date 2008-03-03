@@ -12,7 +12,6 @@
 package org.eclipse.team.svn.ui.synchronize.action;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -49,8 +48,7 @@ public class ShowOutgoingHistoryAction extends AbstractSynchronizeModelAction {
 	}
 	
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
-		IResource resource = this.getSelectedResource();
-		return new ShowHistoryViewOperation(resource, 0, 0);
+		return new ShowHistoryViewOperation(this.getSelectedResource(), 0, 0);
 	}
 
 }

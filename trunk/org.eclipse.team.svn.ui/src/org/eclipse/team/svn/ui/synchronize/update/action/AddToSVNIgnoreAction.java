@@ -78,7 +78,8 @@ public class AddToSVNIgnoreAction extends AbstractSynchronizeModelAction {
 	}
 
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
-		IResource []resources = FileUtility.shrinkChildNodes(this.syncInfoSelector.getSelectedResourcesRecursive(AddToSVNIgnoreAction.SF_NEW_AND_PARENT_VERSIONED));
+		//FIXME add unversioned parents if required
+		IResource []resources = FileUtility.shrinkChildNodes(this.syncInfoSelector.getSelectedResources());
 		IResource []operableParents = FileUtility.getOperableParents(resources, IStateFilter.SF_UNVERSIONED);
 		if (operableParents.length > 0) {
 		    final AddToSVNPanel panel = new AddToSVNPanel(operableParents);

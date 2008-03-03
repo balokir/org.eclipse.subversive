@@ -42,15 +42,15 @@ public class CleanUpAction extends AbstractSynchronizeModelAction {
 			ISynchronizeModelElement element = (ISynchronizeModelElement)it.next();
 			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(element.getResource());
 			// null for change set nodes
-			if (local == null || !IStateFilter.SF_VERSIONED_FOLDERS.accept(local)) {
-				return false;
+			if (local != null && IStateFilter.SF_VERSIONED_FOLDERS.accept(local)) {
+				return true;
 			}
 		}
-	    return true;
+	    return false;
 	}
 	
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
-		IResource []resources = this.treeNodeSelector.getSelectedResources();
+		IResource []resources = this.treeNodeSelector.getSelectedResources(IStateFilter.SF_VERSIONED_FOLDERS);
 		CleanupOperation mainOp = new CleanupOperation(resources);
 		CompositeOperation op = new CompositeOperation(mainOp.getId());
 		op.add(mainOp);

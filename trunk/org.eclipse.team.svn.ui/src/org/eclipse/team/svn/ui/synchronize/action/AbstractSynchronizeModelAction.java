@@ -103,7 +103,7 @@ public abstract class AbstractSynchronizeModelAction extends SynchronizeModelAct
 			}
 			
 			private IResource []getSelectedResources(ISyncStateFilter filter) {
-				AbstractSVNSyncInfo []infos = AbstractSynchronizeModelAction.this.getSyncInfos();
+				AbstractSVNSyncInfo []infos = AbstractSynchronizeModelAction.this.getSVNSyncInfos();
 			    HashSet<IResource> retVal = new HashSet<IResource>();
 			    for (int i = 0; i < infos.length; i++) {
 			        ILocalResource local = infos[i].getLocalResource();
@@ -187,15 +187,19 @@ public abstract class AbstractSynchronizeModelAction extends SynchronizeModelAct
 	}
 	
 	protected IResource getSelectedResource() {
-		return this.treeNodeSelector.getSelectedResources()[0];
+		ISynchronizeModelElement []selection = this.getSelectedElements();
+		return selection.length == 0 ? null : this.getSelectedElements()[0].getResource();
 	}
 	
-	protected AbstractSVNSyncInfo getSVNSyncInfo() {
-		AbstractSVNSyncInfo []infos = this.getSyncInfos();
-		return infos.length == 0 ? null : infos[0];
+	protected AbstractSVNSyncInfo getSelectedSVNSyncInfo() {
+		ISynchronizeModelElement []selection = this.getSelectedElements();
+		if (selection.length == 0 || !(selection[0] instanceof SyncInfoModelElement)) {
+			return null;
+		}
+		return (AbstractSVNSyncInfo)((SyncInfoModelElement)selection[0]).getSyncInfo();
 	}
 	
-	protected AbstractSVNSyncInfo[] getSyncInfos() {
+	protected AbstractSVNSyncInfo[] getSVNSyncInfos() {
 		List<AbstractSVNSyncInfo> filtered = new ArrayList<AbstractSVNSyncInfo>();
 		for (IDiffElement e : this.getFilteredDiffElements()) {
 			filtered.add((AbstractSVNSyncInfo)((SyncInfoModelElement)e).getSyncInfo());

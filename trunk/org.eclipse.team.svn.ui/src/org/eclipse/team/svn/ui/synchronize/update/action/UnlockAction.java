@@ -21,8 +21,8 @@ import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.UnlockOperation;
 import org.eclipse.team.svn.ui.dialog.UnlockResourcesDialog;
+import org.eclipse.team.svn.ui.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
-import org.eclipse.team.svn.ui.synchronize.update.UpdateSyncInfo;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
@@ -42,7 +42,7 @@ public class UnlockAction extends AbstractSynchronizeModelAction {
 	protected FastSyncInfoFilter getSyncInfoFilter() {
 		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.OUTGOING, SyncInfo.CONFLICTING}) {
             public boolean select(SyncInfo info) {
-                return super.select(info) && IStateFilter.SF_LOCKED.accept(((UpdateSyncInfo)info).getLocalResource());
+                return super.select(info) && IStateFilter.SF_LOCKED.accept(((AbstractSVNSyncInfo)info).getLocalResource());
             }
         };
 	}

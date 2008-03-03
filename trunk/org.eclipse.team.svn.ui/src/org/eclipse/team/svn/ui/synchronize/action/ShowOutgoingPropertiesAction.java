@@ -63,7 +63,7 @@ public class ShowOutgoingPropertiesAction extends AbstractSynchronizeModelAction
 	}
 	
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
-		IResource selectedResource = ShowOutgoingPropertiesAction.this.getSelectedResource();
+		IResource selectedResource = this.getSelectedResource();
 		IResourcePropertyProvider provider = new GetPropertiesOperation(selectedResource);
 		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
 		boolean usePropertiesView = SVNTeamPreferences.getPropertiesBoolean(store, SVNTeamPreferences.PROPERTY_USE_VIEW_NAME);

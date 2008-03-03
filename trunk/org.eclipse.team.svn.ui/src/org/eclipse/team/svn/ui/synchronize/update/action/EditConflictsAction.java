@@ -40,7 +40,7 @@ public class EditConflictsAction extends AbstractSynchronizeModelAction {
 	}
 
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
-		return new ShowConflictEditorOperation(EditConflictsAction.this.syncInfoSelector.getSelectedResourcesRecursive(IStateFilter.SF_CONFLICTING), false);
+		return new ShowConflictEditorOperation(EditConflictsAction.this.syncInfoSelector.getSelectedResources(), false);
 	}
 	
 }

@@ -31,7 +31,6 @@ import org.eclipse.team.svn.ui.properties.PropertiesView;
 import org.eclipse.team.svn.ui.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.ui.synchronize.variant.RemoteResourceVariant;
 import org.eclipse.team.svn.ui.synchronize.variant.ResourceVariant;
-import org.eclipse.team.svn.ui.synchronize.variant.VirtualRemoteResourceVariant;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.PartInitException;
@@ -58,22 +57,19 @@ public class ShowIncomingPropertiesAction extends AbstractSynchronizeModelAction
 	
 	protected boolean updateSelection(IStructuredSelection selection) {
 		super.updateSelection(selection);
-		if (selection.size() == 1) {
+		if (selection.size() == 1 && selection.getFirstElement() instanceof SyncInfoModelElement) {
 			ISynchronizeModelElement element = (ISynchronizeModelElement)selection.getFirstElement();
 			if (element instanceof SyncInfoModelElement) {
-				AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo)((SyncInfoModelElement)element).getSyncInfo();
+				AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo)((SyncInfoModelElement)selection.getFirstElement()).getSyncInfo();
 				ILocalResource incoming = ((ResourceVariant)syncInfo.getRemote()).getResource();
-				if (!(syncInfo.getRemote() instanceof VirtualRemoteResourceVariant) && !IStateFilter.SF_NOTEXISTS.accept(incoming) && 
-					(!IStateFilter.SF_DELETED.accept(incoming) || IStateFilter.SF_REPLACED.accept(incoming))) {
-					return true;
-				}
+				return incoming instanceof IResourceChange && IStateFilter.ST_DELETED != incoming.getStatus();
 			}
 		}
 		return false;
 	}
 
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
-	    IResourceChange change = (IResourceChange)((RemoteResourceVariant)ShowIncomingPropertiesAction.this.getSVNSyncInfo().getRemote()).getResource();
+	    IResourceChange change = (IResourceChange)((RemoteResourceVariant)ShowIncomingPropertiesAction.this.getSelectedSVNSyncInfo().getRemote()).getResource();
 	    IRepositoryResource remote = change.getOriginator();
 		
 		IResourcePropertyProvider provider = new GetRemotePropertiesOperation(remote);
