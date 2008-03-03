@@ -13,8 +13,7 @@ package org.eclipse.team.svn.core.operation.local;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Arrays;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -22,7 +21,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
-import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
@@ -71,35 +69,22 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		HashSet<IResource> operableFiles = new HashSet<IResource>();
-		HashSet<IResource> operableFolders = new HashSet<IResource>();
-		
+		ArrayList<IResource> operableResources = new ArrayList<IResource>(Arrays.asList(this.outgoingResources));
 		IResource [] parents = FileUtility.getParents(this.outgoingResources, false);
 		for (int i = 0; i < parents.length; i++) {
-			if (allResources.contains(parents[i])) {
-				operableFolders.add(parents[i]);
+			if (this.allResources.contains(parents[i])) {
+				operableResources.add(parents[i]);
 			}
 		}
-		for (int i = 0; i < this.outgoingResources.length; i++) {
-			if (SVNRemoteStorage.instance().asRepositoryResource(outgoingResources[i]) instanceof IRepositoryContainer) {
-				operableFolders.add(this.outgoingResources[i]);
-			}
-			else {
-				operableFiles.add(this.outgoingResources[i]);
-			}
-		}
+		this.outgoingResources = operableResources.toArray(new IResource[operableResources.size()]);		
 		
 		//progressReporter
 		int processed = 0;
 		
-		//process folders first to create hierarchical structure
-		IResource [] toOperateFurhter = operableFolders.toArray(new IResource[0]);
-		FileUtility.reorder(toOperateFurhter, true);
+		FileUtility.reorder(this.outgoingResources, true);
 		
 		IPath previousPref = null;
-		HashMap<IPath, String> previous = new HashMap<IPath, String>();
-		for (IResource current : toOperateFurhter) {
-			monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.Folders", new String [] {FileUtility.getWorkingCopyPath(current)}));
+		for (IResource current : this.outgoingResources) {
 			IPath currentPath = current.getFullPath();
 			String toOperate = "";
 			if (previousPref == null
@@ -117,34 +102,20 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 				}
 			}
 			else {
-				operatingDirectory.mkdirs();
-				previous.put(currentPath, toOperate);
-			}
-			ProgressMonitorUtility.progress(monitor, processed++, this.outgoingResources.length);
-		}
-		
-		//now processing files
-		toOperateFurhter = operableFiles.toArray(new IResource[0]);
-		
-		for (IResource current : toOperateFurhter) {
-			monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.LocalFile", new String [] {FileUtility.getWorkingCopyPath(current)}));
-			String pathToOperate = previous.keySet().contains(current.getParent().getFullPath())
-								   ? previous.get(current.getParent().getFullPath())
-								   : this.path;
-			File to = null;
-			
-			if (IStateFilter.SF_DELETED.accept(SVNRemoteStorage.instance().asLocalResource(current))) {
-				to = new File(pathToOperate + "/" + current.getName());
-				if (to.exists() && this.delitionAllowed) {
-					to.delete();
+				if (new File(FileUtility.getWorkingCopyPath(current)).isDirectory()) {
+					monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.Folders", new String [] {FileUtility.getWorkingCopyPath(current)}));
+					operatingDirectory.mkdirs();
+				}
+				else {
+					toOperate = this.path + previousPref + (current.getParent().getFullPath().toString()).substring(previousPref.toString().length());
+					monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.Folders", new String [] {FileUtility.getWorkingCopyPath(current)}));
+					operatingDirectory = new File(toOperate);
+					operatingDirectory.mkdirs();
+					monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.LocalFile", new String [] {FileUtility.getWorkingCopyPath(current)}));
+					FileUtility.copyAll(operatingDirectory, new File(FileUtility.getWorkingCopyPath(current)), monitor);
 				}
 			}
-			else {
-				to = new File(pathToOperate);
-				FileUtility.copyAll(to, new File(FileUtility.getWorkingCopyPath(current)), monitor);
-			}
 			ProgressMonitorUtility.progress(monitor, processed++, this.outgoingResources.length);
 		}
-	}
-
+	}	
 }
