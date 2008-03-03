@@ -100,6 +100,9 @@ public class ExtractToOperationRemote extends AbstractRepositoryOperation {
 					operatingDirectory.mkdirs();
 				}
 				else {
+					monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.Folders", new String [] {currentURL}));
+					String parentUrl = current.getParent().getUrl();
+					new File(this.path + previousPath + parentUrl.substring(previousPref.length())).mkdirs();
 					monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.RemoteFile", new String [] {currentURL}));
 					this.downloadFile(current, toOperate, monitor);
 				}
