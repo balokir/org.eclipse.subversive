@@ -31,6 +31,10 @@ public class ExpandAllAction extends AbstractSynchronizeModelAction {
 		super(text, configuration, selectionProvider);
 	}
 	
+	protected boolean needsToSaveDirtyEditors() {
+		return false;
+	}
+	
 	protected IActionOperation getOperation(final ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
 		return new AbstractActionOperation("Operation.UExpandAll") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {

@@ -38,6 +38,10 @@ public class LockAction extends AbstractSynchronizeModelAction {
 		super(text, configuration);
 	}
 	
+	protected boolean needsToSaveDirtyEditors() {
+		return false;
+	}
+	
 	protected FastSyncInfoFilter getSyncInfoFilter() {
 		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.OUTGOING, SyncInfo.CONFLICTING}) {
             public boolean select(SyncInfo info) {
