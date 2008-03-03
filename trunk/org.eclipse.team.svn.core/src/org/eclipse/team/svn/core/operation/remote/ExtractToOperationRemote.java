@@ -80,9 +80,11 @@ public class ExtractToOperationRemote extends AbstractRepositoryOperation {
 			String toOperate = "";
 			if (previousPref == null
 					|| !currentURL.startsWith(previousPref)) {
+				if (current instanceof IRepositoryContainer) {
+					previousPref = current.getUrl();
+				}
 				previousPath = "/" + current.getName();
 				toOperate = this.path + previousPath;
-				previousPref = current.getUrl();
 			}
 			else {
 				toOperate = this.path + previousPath + currentURL.substring(previousPref.length());
@@ -102,7 +104,9 @@ public class ExtractToOperationRemote extends AbstractRepositoryOperation {
 				else {
 					monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.Folders", new String [] {currentURL}));
 					String parentUrl = current.getParent().getUrl();
-					new File(this.path + previousPath + parentUrl.substring(previousPref.length())).mkdirs();
+					if (previousPref != null) {
+						new File(this.path + previousPath + parentUrl.substring(previousPref.length())).mkdirs();
+					}
 					monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.RemoteFile", new String [] {currentURL}));
 					this.downloadFile(current, toOperate, monitor);
 				}
