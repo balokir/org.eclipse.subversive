@@ -33,7 +33,7 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
  * Extract To action for Synchronize View (both incoming and outgoing - 
- * the conflictiong resources are ignored)
+ * the conflicting resources are ignored)
  * 
  * @author Alexei Goncharov
  */
