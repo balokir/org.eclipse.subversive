@@ -140,7 +140,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 		
 		if (contiguousReportMode) {
 			IActionOperation op = new UpdateStatusOperation(resources, depth);
-	        UIMonitorUtility.doTaskExternalDefault(op, monitor);
+			ProgressMonitorUtility.doTaskExternal(op, monitor);
 		}
 		else {
 			this.resourcesStateChangedImpl(this.findChanges(resources, depth, monitor, UIMonitorUtility.DEFAULT_FACTORY));

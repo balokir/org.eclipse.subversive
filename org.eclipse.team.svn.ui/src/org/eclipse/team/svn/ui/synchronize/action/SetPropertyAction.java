@@ -13,6 +13,7 @@ package org.eclipse.team.svn.ui.synchronize.action;
 
 import java.util.Iterator;
 
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -48,17 +49,13 @@ public class SetPropertyAction extends AbstractSynchronizeModelAction {
 	    return selection.size() > 0;
 	}
 	
-	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {
-		operation.getShell().getDisplay().syncExec(new Runnable() {
-			public void run() {
-				IResource [] resources = operation.getSelectedResourcesRecursive(IStateFilter.SF_VERSIONED);
-				PropertyEditPanel panel = new PropertyEditPanel(null, resources, true);
-				DefaultDialog dialog = new DefaultDialog(operation.getShell(), panel);
-				if (dialog.open() == Dialog.OK) {
-					org.eclipse.team.svn.ui.action.local.SetPropertyAction.doSetProperty(resources, panel, null);
-				}
-			}
-		});
+	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+		IResource [] resources = SetPropertyAction.this.treeNodeSelector.getSelectedResourcesRecursive(IStateFilter.SF_VERSIONED);
+		PropertyEditPanel panel = new PropertyEditPanel(null, resources, true);
+		DefaultDialog dialog = new DefaultDialog(configuration.getSite().getShell(), panel);
+		if (dialog.open() == Dialog.OK) {
+			org.eclipse.team.svn.ui.action.local.SetPropertyAction.doSetProperty(resources, panel, null);
+		}
 		return null;
 	}
 

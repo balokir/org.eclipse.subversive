@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.ui.synchronize.action;
 
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.svn.core.IStateFilter;
@@ -53,8 +54,8 @@ public class ShowIncomingAnnotationAction extends AbstractSynchronizeModelAction
 		return false;
 	}
 
-	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {
-	    IResourceChange change = (IResourceChange)((RemoteResourceVariant)operation.getSVNSyncInfo().getRemote()).getResource();
+	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+	    IResourceChange change = (IResourceChange)((RemoteResourceVariant)this.getSVNSyncInfo().getRemote()).getResource();
 		return new RemoteShowAnnotationOperation(change.getOriginator());
 	}
 

@@ -14,6 +14,7 @@ package org.eclipse.team.svn.ui.synchronize.update.action;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
@@ -72,50 +73,37 @@ public class AddToSVNIgnoreAction extends AbstractSynchronizeModelAction {
 		};
 	}
 
-	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {
-		final IResource [][]resources = new IResource[][] {FileUtility.shrinkChildNodes(operation.getSelectedResourcesRecursive(AddToSVNIgnoreAction.SF_NEW_AND_PARENT_VERSIONED))};
-		
-		final IResource [][]operableParents = new IResource[][] {FileUtility.getOperableParents(resources[0], IStateFilter.SF_UNVERSIONED)};
-		if (operableParents[0].length > 0) {
-		    final AddToSVNPanel panel = new AddToSVNPanel(operableParents[0]);
-			final DefaultDialog dialog1 = new DefaultDialog(operation.getShell(), panel);
-			operation.getShell().getDisplay().syncExec(new Runnable() {
-				public void run() {
-				    operableParents[0] = dialog1.open() != 0 ? null : panel.getSelectedResources();
-				}
-			});
-		    if (operableParents[0] == null) {
+	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+		IResource []resources = FileUtility.shrinkChildNodes(this.syncInfoSelector.getSelectedResourcesRecursive(AddToSVNIgnoreAction.SF_NEW_AND_PARENT_VERSIONED));
+		IResource []operableParents = FileUtility.getOperableParents(resources, IStateFilter.SF_UNVERSIONED);
+		if (operableParents.length > 0) {
+		    final AddToSVNPanel panel = new AddToSVNPanel(operableParents);
+			final DefaultDialog dialog1 = new DefaultDialog(configuration.getSite().getShell(), panel);
+		    if (dialog1.open() != 0) {
 		        return null;
 		    }
+		    operableParents = panel.getSelectedResources();
 		}
 
-		IgnoreMethodPanel panel = new IgnoreMethodPanel(resources[0]);
-		final DefaultDialog dialog = new DefaultDialog(operation.getShell(), panel);
-		operation.getShell().getDisplay().syncExec(new Runnable() {
-			public void run() {
-				if (dialog.open() != 0) {
-					resources[0] = null;
-				}
-			}
-		});
-		
-		if (resources[0] == null) {
+		IgnoreMethodPanel panel = new IgnoreMethodPanel(resources);
+		DefaultDialog dialog = new DefaultDialog(configuration.getSite().getShell(), panel);
+		if (dialog.open() != 0) {
 			return null;
 		}
 		
-		AddToSVNIgnoreOperation mainOp = new AddToSVNIgnoreOperation(resources[0], panel.getIgnoreType(), panel.getIgnorePattern());
+		AddToSVNIgnoreOperation mainOp = new AddToSVNIgnoreOperation(resources, panel.getIgnoreType(), panel.getIgnorePattern());
 		
 		CompositeOperation op = new CompositeOperation(mainOp.getId());
 
-		if (operableParents[0].length > 0) {
-			op.add(new AddToSVNOperation(operableParents[0]));
-			op.add(new ClearLocalStatusesOperation(operableParents[0]));
+		if (operableParents.length > 0) {
+			op.add(new AddToSVNOperation(operableParents));
+			op.add(new ClearLocalStatusesOperation(operableParents));
 		}
 
 		op.add(mainOp);
-		HashSet tmp = new HashSet(Arrays.asList(resources[0]));
-		for (int i = 0; i < resources[0].length; i++) {
-			tmp.add(resources[0][i].getParent());
+		HashSet tmp = new HashSet(Arrays.asList(resources));
+		for (int i = 0; i < resources.length; i++) {
+			tmp.add(resources[i].getParent());
 		}
 		IResource []resourcesAndParents = (IResource [])tmp.toArray(new IResource[tmp.size()]);
 		op.add(new RefreshResourcesOperation(resourcesAndParents, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));

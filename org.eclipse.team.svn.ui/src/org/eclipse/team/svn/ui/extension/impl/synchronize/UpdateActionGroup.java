@@ -19,8 +19,8 @@ import org.eclipse.team.svn.ui.synchronize.action.CleanUpAction;
 import org.eclipse.team.svn.ui.synchronize.action.CreateBranchAction;
 import org.eclipse.team.svn.ui.synchronize.action.CreatePatchFileAction;
 import org.eclipse.team.svn.ui.synchronize.action.ExpandAllAction;
-import org.eclipse.team.svn.ui.synchronize.action.ExtractToActionIncoming;
-import org.eclipse.team.svn.ui.synchronize.action.ExtractToActionOutgoing;
+import org.eclipse.team.svn.ui.synchronize.action.ExtractIncomingToAction;
+import org.eclipse.team.svn.ui.synchronize.action.ExtractOutgoingToAction;
 import org.eclipse.team.svn.ui.synchronize.action.RevertAction;
 import org.eclipse.team.svn.ui.synchronize.action.SetKeywordsAction;
 import org.eclipse.team.svn.ui.synchronize.action.SetPropertyAction;
@@ -172,9 +172,6 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 		this.outgoing.add(showResourceHistoryAction);
 		ShowOutgoingAnnotationAction showAnnotationAction = new ShowOutgoingAnnotationAction(SVNTeamUIPlugin.instance().getResource("ShowAnnotationCommand.label"), configuration);
 		this.outgoing.add(showAnnotationAction);
-		
-		this.outgoing.add(new Separator());
-		
 		ShowOutgoingPropertiesAction showPropertiesAction = new ShowOutgoingPropertiesAction(SVNTeamUIPlugin.instance().getResource("ShowPropertiesAction.label"), configuration);
 		showPropertiesAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/propertiesedit.gif"));
 		this.outgoing.add(showPropertiesAction);
@@ -199,7 +196,7 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 		CreateBranchAction branchAction = new CreateBranchAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Branch"), configuration);
 		branchAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/branch.gif"));
 		this.outgoing.add(branchAction);
-		ExtractToActionOutgoing extractActionOutgoing = new ExtractToActionOutgoing(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Label"), configuration);
+		ExtractOutgoingToAction extractActionOutgoing = new ExtractOutgoingToAction(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Label"), configuration);
 		this.outgoing.add(extractActionOutgoing);
 		
 		this.outgoing.add(new Separator());
@@ -220,7 +217,7 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 		
 		this.incoming.add(new Separator());
 		
-		ExtractToActionIncoming extractActionIncoming = new ExtractToActionIncoming(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Label"), configuration);
+		ExtractIncomingToAction extractActionIncoming = new ExtractIncomingToAction(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Label"), configuration);
 		this.incoming.add(extractActionIncoming);
 	}
 	

@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.ui.synchronize.merge.action;
 
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
@@ -44,8 +45,8 @@ public class MarkAsMergedAction extends AbstractSynchronizeModelAction {
         };
 	}
 
-	protected IActionOperation execute(FilteredSynchronizeModelOperation operation) {
-		return new ClearMergeStatusesOperation(operation.getSelectedResourcesRecursive(new ISyncStateFilter.StateFilterWrapper(IStateFilter.SF_ALL, false)));
+	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+		return new ClearMergeStatusesOperation(this.syncInfoSelector.getSelectedResourcesRecursive(new ISyncStateFilter.StateFilterWrapper(IStateFilter.SF_ALL, false)));
 	}
 
 }

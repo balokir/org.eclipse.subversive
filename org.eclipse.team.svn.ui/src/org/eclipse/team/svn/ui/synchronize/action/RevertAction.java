@@ -11,10 +11,10 @@
 
 package org.eclipse.team.svn.ui.synchronize.action;
 
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.ui.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -37,21 +37,9 @@ public class RevertAction extends AbstractSynchronizeModelAction {
 		};
 	}
 
-	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {
-		final CompositeOperation []op = new CompositeOperation[1];
-		operation.getShell().getDisplay().syncExec(new Runnable() {
-			public void run() {
-				IResource []changedResources = operation.getSelectedResourcesRecursive(org.eclipse.team.svn.ui.action.local.RevertAction.SF_REVERTABLE_OR_NEW);
-				IResource []userSelectedResources = operation.getSelectedResourcesRecursive();
-				op[0] = org.eclipse.team.svn.ui.action.local.RevertAction.getRevertOperation(operation.getShell(), changedResources, userSelectedResources);
-			}
-		});
-		
-		if (op[0] == null) {
-			return null;
-		}
-
-		return op[0];
+	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+		IResource []changedResources = this.syncInfoSelector.getSelectedResources();
+		return org.eclipse.team.svn.ui.action.local.RevertAction.getRevertOperation(configuration.getSite().getShell(), changedResources, changedResources);
 	}
 
 }

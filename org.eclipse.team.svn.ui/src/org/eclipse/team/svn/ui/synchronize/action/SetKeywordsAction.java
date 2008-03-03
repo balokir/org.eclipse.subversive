@@ -11,11 +11,15 @@
 
 package org.eclipse.team.svn.ui.synchronize.action;
 
-import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
-import org.eclipse.team.core.synchronize.SyncInfo;
+import java.util.Iterator;
+
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.ui.synchronize.AbstractSVNSyncInfo;
+import org.eclipse.team.svn.core.resource.ILocalResource;
+import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
@@ -28,20 +32,21 @@ public class SetKeywordsAction extends AbstractSynchronizeModelAction {
 		super(text, configuration);
 	}
 
-	protected FastSyncInfoFilter getSyncInfoFilter() {
-		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.OUTGOING, SyncInfo.CONFLICTING}) {
-            public boolean select(SyncInfo info) {
-                return super.select(info) && IStateFilter.SF_VERSIONED_FILES.accept(((AbstractSVNSyncInfo)info).getLocalResource());
-            }
-        };
-	}
-
-	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {
-		operation.getShell().getDisplay().syncExec(new Runnable() {
-			public void run() {
-				org.eclipse.team.svn.ui.action.local.SetKeywordsAction.doSetKeywords(operation.getSelectedResourcesRecursive(IStateFilter.SF_VERSIONED_FILES));
+	protected boolean updateSelection(IStructuredSelection selection) {
+		super.updateSelection(selection);
+		for (Iterator it = selection.iterator(); it.hasNext(); ) {
+			ISynchronizeModelElement element = (ISynchronizeModelElement)it.next();
+			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(element.getResource());
+			// null for change set nodes
+			if (local == null || IStateFilter.SF_UNVERSIONED.accept(local)) {
+				return false;
 			}
-		});
+		}
+	    return selection.size() > 0;
+	}
+	
+	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+		org.eclipse.team.svn.ui.action.local.SetKeywordsAction.doSetKeywords(SetKeywordsAction.this.treeNodeSelector.getSelectedResourcesRecursive(IStateFilter.SF_VERSIONED_FILES));
 		return null;
 	}
 

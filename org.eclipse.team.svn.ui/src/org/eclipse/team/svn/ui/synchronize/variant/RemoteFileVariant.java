@@ -25,8 +25,8 @@ import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
-import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
  * Remote file revision variant
@@ -66,7 +66,7 @@ public class RemoteFileVariant extends RemoteResourceVariant {
 		}
 		
 		GetFileContentOperation op = new GetFileContentOperation(remote);
-		UIMonitorUtility.doTaskExternalDefault(op, monitor);
+		ProgressMonitorUtility.doTaskExternal(op, monitor);
 		if (op.getExecutionState() == IActionOperation.OK) {
 			this.setContents(op.getContent(), monitor);
 		}

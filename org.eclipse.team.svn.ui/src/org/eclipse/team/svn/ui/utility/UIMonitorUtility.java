@@ -13,7 +13,6 @@ package org.eclipse.team.svn.ui.utility;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.SWT;
@@ -48,7 +47,7 @@ public final class UIMonitorUtility {
 	
 	public static Shell getShell() {
 		Display display = UIMonitorUtility.getDisplay();
-		// NEVER ! use the active shell it could be disposed asynchronously by external thread
+		// NEVER ! use the active shell because it could be disposed asynchronously by external thread
 		for (Shell shell : display.getShells()) {
 			if (shell.getParent() == null) {
 				return shell;
@@ -172,31 +171,6 @@ public final class UIMonitorUtility {
 				}
 			}
 		});
-		return runnable;
-	}
-	
-	public static ICancellableOperationWrapper doTaskExternalDefault(IActionOperation op, IProgressMonitor monitor) {
-		return UIMonitorUtility.doTaskExternal(op, monitor, UIMonitorUtility.DEFAULT_FACTORY);
-	}
-	
-	public static ICancellableOperationWrapper doTaskExternalWorkspaceModify(IActionOperation op, IProgressMonitor monitor) {
-		return UIMonitorUtility.doTaskExternal(op, monitor, UIMonitorUtility.WORKSPACE_MODIFY_FACTORY);
-	}
-	
-	public static ICancellableOperationWrapper doTaskExternal(IActionOperation op, IProgressMonitor monitor, IOperationWrapperFactory factory) {
-		if (monitor == null) {
-			monitor = new NullProgressMonitor();
-		}
-		ICancellableOperationWrapper runnable = factory.getCancellable(factory.getLogged(op));
-		try {
-			runnable.run(monitor);
-		} 
-		catch (InterruptedException e) {
-			runnable.setCancelled(true);
-		} 
-		catch (InvocationTargetException e) {
-			throw new RuntimeException(e);
-		}
 		return runnable;
 	}
 	

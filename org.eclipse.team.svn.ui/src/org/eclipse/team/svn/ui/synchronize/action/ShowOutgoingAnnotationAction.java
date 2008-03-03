@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.ui.synchronize.action;
 
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.svn.core.IStateFilter;
@@ -44,7 +45,7 @@ public class ShowOutgoingAnnotationAction extends AbstractSynchronizeModelAction
 	    return false;
 	}
 	
-	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {
+	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
 	    IResource resource = ShowOutgoingAnnotationAction.this.getSelectedResource();
 		return new LocalShowAnnotationOperation(resource);
 	}

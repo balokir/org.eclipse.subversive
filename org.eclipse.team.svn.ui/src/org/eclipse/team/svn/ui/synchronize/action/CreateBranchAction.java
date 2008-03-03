@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -71,97 +72,91 @@ public class CreateBranchAction extends AbstractSynchronizeModelAction {
 	    return selection.size() > 0;
 	}
 	
-	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {
-		final IActionOperation [] retOp = new IActionOperation[1];
-		operation.getShell().getDisplay().syncExec(new Runnable() {
-			public void run() {
-				IResource []resources = FileUtility.getResourcesRecursive(operation.getSelectedResources(), IStateFilter.SF_EXCLUDE_DELETED, IResource.DEPTH_ZERO);
-				ArrayList localOperateResources = new ArrayList();
-				ArrayList remoteOperateResources = new ArrayList();
-				ArrayList operateResources = new ArrayList();
-				IRepositoryLocation first = SVNRemoteStorage.instance().asRepositoryResource(resources[0]).getRepositoryLocation();
-				for (int i = 0; i < resources.length; i++) {
-					ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resources[i]);
-					IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(resources[i]);
-					if (local == null || remote == null) {
-						continue;
-					}
-					
-					// prevent branch or tag operation for the resources from the different repositories
-					if (remote.getRepositoryLocation() != first) {
-						new OperationErrorDialog(operation.getShell(), SVNTeamUIPlugin.instance().getResource("BranchTagAction.Error.Branch"), OperationErrorDialog.ERR_DIFFREPOSITORIES).open();
-						return;
-					}
-					operateResources.add(resources[i]);
-					localOperateResources.add(local);
-					remoteOperateResources.add(remote);
-				}
-				if (remoteOperateResources.size() > 0) {
-					IRepositoryResource []remoteResources = (IRepositoryResource[])remoteOperateResources.toArray(new IRepositoryResource[remoteOperateResources.size()]);
-					
-					if (!OperationErrorDialog.isAcceptableAtOnce(remoteResources, SVNTeamUIPlugin.instance().getResource("BranchTagAction.Error.Branch"), operation.getShell())) {
-						return;
-					}
-					
-					AbstractBranchTagPanel panel = null;
-					Set nodeNames = new HashSet();
-					boolean respectProjectStructure = SVNTeamPreferences.getRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_NAME);
-					if (respectProjectStructure && remoteResources[0].getRepositoryLocation().isStructureEnabled()) {
-						nodeNames = org.eclipse.team.svn.ui.action.remote.BranchTagAction.getExistingNodeNames(SVNUtility.getBranchesLocation(remoteResources[0]));
-					}
-					panel = new BranchPanel(SVNUtility.getBranchesLocation(remoteResources[0]), true, nodeNames, resources);
-					DefaultDialog dialog = new DefaultDialog(operation.getShell(), panel);
-					
-					if (dialog.open() == 0) {
-						IRepositoryResource destination = panel.getDestination();
-						IResource []operateResourcesArr = (IResource[])operateResources.toArray(new IResource[operateResources.size()]);
-						IResource []newResources = panel.getSelectedResources();
-						
-						boolean multipleLayout = this.isMultipleLayout(resources, remoteOperateResources);
-						PreparedBranchTagOperation mainOp = new PreparedBranchTagOperation("Branch", operateResourcesArr, remoteResources, destination, panel.getMessage(), multipleLayout);
-						CompositeOperation op = new CompositeOperation(mainOp.getId());
-						if (newResources != null && newResources.length > 0) {
-							op.add(new AddToSVNOperation(newResources, false));
-						}
-						if (panel.isFreezeExternals()) {
-							FreezeExternalsOperation freezeOp = new FreezeExternalsOperation(resources);
-							op.add(freezeOp);
-							op.add(mainOp, new IActionOperation[] {freezeOp});
-							op.add(new RestoreExternalsOperation(freezeOp));
-						}
-						else {
-							op.add(mainOp);
-						}
-						if (newResources != null && newResources.length > 0) {
-							op.add(new RevertOperation(newResources, false));
-						}
-						if (panel.isStartWithSelected()) {
-							IResource []switchedResources = new IResource[localOperateResources.size()];
-							int i = 0;
-							for (Iterator iter = localOperateResources.iterator(); iter.hasNext(); i++) {
-								switchedResources[i] = ((ILocalResource)iter.next()).getResource();
-							}
-							SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(switchedResources);
-							op.add(saveOp);
-						    op.add(new SwitchOperation(switchedResources, mainOp), new IActionOperation[] {mainOp});
-							op.add(new RestoreProjectMetaOperation(saveOp));
-							op.add(new RefreshResourcesOperation(operateResourcesArr));
-						}
-						retOp[0] = op;
-					}
-				}
+	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+		IResource []resources = FileUtility.getResourcesRecursive(this.treeNodeSelector.getSelectedResources(), IStateFilter.SF_EXCLUDE_DELETED, IResource.DEPTH_ZERO);
+		ArrayList localOperateResources = new ArrayList();
+		ArrayList remoteOperateResources = new ArrayList();
+		ArrayList operateResources = new ArrayList();
+		IRepositoryLocation first = SVNRemoteStorage.instance().asRepositoryResource(resources[0]).getRepositoryLocation();
+		for (int i = 0; i < resources.length; i++) {
+			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resources[i]);
+			IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(resources[i]);
+			if (local == null || remote == null) {
+				continue;
 			}
 			
-			protected boolean isMultipleLayout(IResource []resources, List remoteOperateResources) {
-				boolean multipleLayout = false;
-				if (resources.length == 1 && resources[0] instanceof IProject) {
-					IRepositoryResource remote = (IRepositoryResource)remoteOperateResources.get(0);
-					return !(remote instanceof IRepositoryRoot) || ((IRepositoryRoot)remote).getKind() != IRepositoryRoot.KIND_TRUNK;
-				}
-				return multipleLayout;
+			// prevent branch or tag operation for the resources from the different repositories
+			if (remote.getRepositoryLocation() != first) {
+				new OperationErrorDialog(configuration.getSite().getShell(), SVNTeamUIPlugin.instance().getResource("BranchTagAction.Error.Branch"), OperationErrorDialog.ERR_DIFFREPOSITORIES).open();
+				return null;
 			}
-		});
-		return retOp[0];
+			operateResources.add(resources[i]);
+			localOperateResources.add(local);
+			remoteOperateResources.add(remote);
+		}
+		if (remoteOperateResources.size() > 0) {
+			IRepositoryResource []remoteResources = (IRepositoryResource[])remoteOperateResources.toArray(new IRepositoryResource[remoteOperateResources.size()]);
+			
+			if (!OperationErrorDialog.isAcceptableAtOnce(remoteResources, SVNTeamUIPlugin.instance().getResource("BranchTagAction.Error.Branch"), configuration.getSite().getShell())) {
+				return null;
+			}
+			
+			AbstractBranchTagPanel panel = null;
+			Set nodeNames = new HashSet();
+			boolean respectProjectStructure = SVNTeamPreferences.getRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_NAME);
+			if (respectProjectStructure && remoteResources[0].getRepositoryLocation().isStructureEnabled()) {
+				nodeNames = org.eclipse.team.svn.ui.action.remote.BranchTagAction.getExistingNodeNames(SVNUtility.getBranchesLocation(remoteResources[0]));
+			}
+			panel = new BranchPanel(SVNUtility.getBranchesLocation(remoteResources[0]), true, nodeNames, resources);
+			DefaultDialog dialog = new DefaultDialog(configuration.getSite().getShell(), panel);
+			
+			if (dialog.open() == 0) {
+				IRepositoryResource destination = panel.getDestination();
+				IResource []operateResourcesArr = (IResource[])operateResources.toArray(new IResource[operateResources.size()]);
+				IResource []newResources = panel.getSelectedResources();
+				
+				boolean multipleLayout = this.isMultipleLayout(resources, remoteOperateResources);
+				PreparedBranchTagOperation mainOp = new PreparedBranchTagOperation("Branch", operateResourcesArr, remoteResources, destination, panel.getMessage(), multipleLayout);
+				CompositeOperation op = new CompositeOperation(mainOp.getId());
+				if (newResources != null && newResources.length > 0) {
+					op.add(new AddToSVNOperation(newResources, false));
+				}
+				if (panel.isFreezeExternals()) {
+					FreezeExternalsOperation freezeOp = new FreezeExternalsOperation(resources);
+					op.add(freezeOp);
+					op.add(mainOp, new IActionOperation[] {freezeOp});
+					op.add(new RestoreExternalsOperation(freezeOp));
+				}
+				else {
+					op.add(mainOp);
+				}
+				if (newResources != null && newResources.length > 0) {
+					op.add(new RevertOperation(newResources, false));
+				}
+				if (panel.isStartWithSelected()) {
+					IResource []switchedResources = new IResource[localOperateResources.size()];
+					int i = 0;
+					for (Iterator iter = localOperateResources.iterator(); iter.hasNext(); i++) {
+						switchedResources[i] = ((ILocalResource)iter.next()).getResource();
+					}
+					SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(switchedResources);
+					op.add(saveOp);
+				    op.add(new SwitchOperation(switchedResources, mainOp), new IActionOperation[] {mainOp});
+					op.add(new RestoreProjectMetaOperation(saveOp));
+					op.add(new RefreshResourcesOperation(operateResourcesArr));
+				}
+				return op;
+			}
+		}
+		return null;
 	}
 
+	protected boolean isMultipleLayout(IResource []resources, List remoteOperateResources) {
+		boolean multipleLayout = false;
+		if (resources.length == 1 && resources[0] instanceof IProject) {
+			IRepositoryResource remote = (IRepositoryResource)remoteOperateResources.get(0);
+			return !(remote instanceof IRepositoryRoot) || ((IRepositoryRoot)remote).getKind() != IRepositoryRoot.KIND_TRUNK;
+		}
+		return multipleLayout;
+	}
 }

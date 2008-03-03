@@ -12,8 +12,6 @@
 package org.eclipse.team.svn.core.operation.local;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -32,30 +30,9 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
  * @author Alexei Goncharov
  */
 public class ExtractToOperationLocal extends AbstractActionOperation {
-
 	private IResource [] outgoingResources;
-	private ArrayList<IResource> allResources;
 	private String path;
 	private boolean delitionAllowed;
-	
-	/**
-	 * Operation for extracting local resources to a location
-	 * 
-	 * @param outgoingResources - the resources to extract array
-	 * @param allSelected - also selected resources (for SynchView only)
-	 * @param path - path to extract to
-	 * @param delitionAllowed - specifies if delition allowed if the resource is marked for delition
-	 */
-	public ExtractToOperationLocal(IResource [] outgoingResources, IResource [] allSelected, String path, boolean delitionAllowed) {
-		super(SVNTeamPlugin.instance().getResource("Operation.ExtractTo"));
-		this.outgoingResources = outgoingResources;
-		this.allResources = new ArrayList<IResource>();
-		for (int i = 0; i < allSelected.length; i++) {
-			this.allResources.add(allSelected[i]);
-		}
-		this.path = path;
-		this.delitionAllowed = delitionAllowed;
-	}
 	
 	/**
 	 * Operation for extracting local resources to a location
@@ -65,19 +42,13 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 	 * @param delitionAllowed - specifies if delition allowed if the resource is marked for delition
 	 */
 	public ExtractToOperationLocal(IResource [] outgoingResources, String path, boolean delitionAllowed) {
-		this(outgoingResources, new IResource[0], path, delitionAllowed);
+		super(SVNTeamPlugin.instance().getResource("Operation.ExtractTo"));
+		this.outgoingResources = outgoingResources;
+		this.path = path;
+		this.delitionAllowed = delitionAllowed;
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		ArrayList<IResource> operableResources = new ArrayList<IResource>(Arrays.asList(this.outgoingResources));
-		IResource [] parents = FileUtility.getParents(this.outgoingResources, false);
-		for (int i = 0; i < parents.length; i++) {
-			if (this.allResources.contains(parents[i])) {
-				operableResources.add(parents[i]);
-			}
-		}
-		this.outgoingResources = operableResources.toArray(new IResource[operableResources.size()]);		
-		
 		//progressReporter
 		int processed = 0;
 		

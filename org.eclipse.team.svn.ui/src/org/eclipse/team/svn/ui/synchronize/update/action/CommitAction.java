@@ -12,12 +12,12 @@
 
 package org.eclipse.team.svn.ui.synchronize.update.action;
 
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.dialog.TagModifyWarningDialog;
@@ -56,44 +56,25 @@ public class CommitAction extends AbstractSynchronizeModelAction {
 		};
 	}
 
-	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {
-		final CommitActionUtility commitUtility = new CommitActionUtility(operation);
-		final String []msg = new String[1];
-		final boolean []keepLocks = new boolean[1];
-		final IResource [][]selectedResources = new IResource[1][];
-		operation.getShell().getDisplay().syncExec(new Runnable() {
-			public void run() {
-				IResource[] resources = commitUtility.getAllResources();
-				if (SVNUtility.isTagOperated(resources)) {
-					TagModifyWarningDialog dlg = new TagModifyWarningDialog(operation.getShell());
-		        	if (dlg.open() != 0) {
-		        		return;
-		        	}
-				}
-			    String proposedComment = SVNChangeSetCapability.getProposedComment(resources);                
-			    CommitPanel commitPanel = new CommitPanel(resources, resources, CommitPanel.MSG_COMMIT, proposedComment); 
-                ICommitDialog dialog = ExtensionsManager.getInstance().getCurrentCommitFactory().getCommitDialog(operation.getShell(), commitUtility.getAllResourcesSet(), commitPanel);				
-				if (dialog.open() != 0) {
-					msg[0] = null;
-					keepLocks[0] = false;
-					selectedResources[0] = null;
-				}
-				else {
-					msg[0] = dialog.getMessage();
-					keepLocks[0] = commitPanel.getKeepLocks();
-					selectedResources[0] = commitPanel.getSelectedResources();
-				}
-			}
-			
-		});
+	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+		CommitActionUtility commitUtility = new CommitActionUtility(this.syncInfoSelector);
 		
-		if (msg[0] == null) {
-		    return null;
+		IResource[] resources = commitUtility.getAllResources();
+		if (SVNUtility.isTagOperated(resources)) {
+			TagModifyWarningDialog dlg = new TagModifyWarningDialog(configuration.getSite().getShell());
+        	if (dlg.open() != 0) {
+        		return null;
+        	}
 		}
 		
-		CompositeOperation op = commitUtility.getCompositeCommitOperation(selectedResources[0], msg[0], keepLocks[0], operation.getShell(), operation.getPart());
+	    String proposedComment = SVNChangeSetCapability.getProposedComment(resources);                
+	    CommitPanel commitPanel = new CommitPanel(resources, resources, CommitPanel.MSG_COMMIT, proposedComment); 
+        ICommitDialog dialog = ExtensionsManager.getInstance().getCurrentCommitFactory().getCommitDialog(configuration.getSite().getShell(), commitUtility.getAllResourcesSet(), commitPanel);				
+		if (dialog.open() != 0) {
+			return null;
+		}
 		
-		return op;
+		return commitUtility.getCompositeCommitOperation(commitPanel.getSelectedResources(), dialog.getMessage(), commitPanel.getKeepLocks(), configuration.getSite().getShell(), configuration.getSite().getPart());
 	}
 	
 }
