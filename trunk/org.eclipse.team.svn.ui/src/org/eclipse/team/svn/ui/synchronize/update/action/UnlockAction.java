@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.ui.synchronize.update.action;
 
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
@@ -42,22 +43,17 @@ public class UnlockAction extends AbstractSynchronizeModelAction {
         };
 	}
 
-	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {
-		final IActionOperation [] op = new IActionOperation[1];
-		operation.getShell().getDisplay().syncExec(new Runnable() {
-			public void run() {
-				IResource [] selectedResources = operation.getSelectedResourcesRecursive();
-				UnlockResourcesDialog dialog = new UnlockResourcesDialog(operation.getShell(), false);
-				if (dialog.open() == 0) {
-				    UnlockOperation mainOp = new UnlockOperation(selectedResources);
-					CompositeOperation unlockOp = new CompositeOperation(mainOp.getId());
-					unlockOp.add(mainOp);
-					unlockOp.add(new RefreshResourcesOperation(selectedResources));
-					op[0] = unlockOp;
-				}
-			}
-		});
-		return op[0];
+	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+		IResource [] selectedResources = this.syncInfoSelector.getSelectedResources();
+		UnlockResourcesDialog dialog = new UnlockResourcesDialog(configuration.getSite().getShell(), false);
+		if (dialog.open() == 0) {
+		    UnlockOperation mainOp = new UnlockOperation(selectedResources);
+			CompositeOperation unlockOp = new CompositeOperation(mainOp.getId());
+			unlockOp.add(mainOp);
+			unlockOp.add(new RefreshResourcesOperation(selectedResources));
+			return unlockOp;
+		}
+		return null;
 	}
 
 }

@@ -13,6 +13,7 @@ package org.eclipse.team.svn.ui.synchronize.action;
 
 import java.util.Iterator;
 
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.svn.core.IStateFilter;
@@ -41,15 +42,15 @@ public class CleanUpAction extends AbstractSynchronizeModelAction {
 			ISynchronizeModelElement element = (ISynchronizeModelElement)it.next();
 			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(element.getResource());
 			// null for change set nodes
-			if (local != null && IStateFilter.SF_VERSIONED_FOLDERS.accept(local)) {
-				return true;
+			if (local == null || !IStateFilter.SF_VERSIONED_FOLDERS.accept(local)) {
+				return false;
 			}
 		}
-	    return false;
+	    return true;
 	}
 	
-	protected IActionOperation execute(FilteredSynchronizeModelOperation operation) {
-		IResource []resources = operation.getSelectedResources(IStateFilter.SF_VERSIONED_FOLDERS);
+	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+		IResource []resources = this.treeNodeSelector.getSelectedResources();
 		CleanupOperation mainOp = new CleanupOperation(resources);
 		CompositeOperation op = new CompositeOperation(mainOp.getId());
 		op.add(mainOp);

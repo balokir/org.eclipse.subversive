@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.ui.synchronize.update.action;
 
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
@@ -45,25 +46,20 @@ public class LockAction extends AbstractSynchronizeModelAction {
         };
 	}
 
-	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {
-		final IActionOperation [] op = new IActionOperation[1];
-		operation.getShell().getDisplay().syncExec(new Runnable() {
-			public void run() {
-				IResource [] selectedResources = operation.getSelectedResourcesRecursive();
-				CommitPanel.CollectPropertiesOperation cop = new CommitPanel.CollectPropertiesOperation(selectedResources);
-				ProgressMonitorUtility.doTaskExternal(cop, null);
-				LockPanel commentPanel = new LockPanel(true, cop.getMinLockSize());
-				DefaultDialog dialog = new DefaultDialog(operation.getShell(), commentPanel);
-				if (dialog.open() == 0) {
-				    LockOperation mainOp = new LockOperation(selectedResources, commentPanel.getMessage(), commentPanel.getForce());
-				    CompositeOperation lockOp = new CompositeOperation(mainOp.getId());
-				    lockOp.add(mainOp);
-				    lockOp.add(new RefreshResourcesOperation(selectedResources));
-				    op[0] = lockOp;
-				}
-			}
-		});
-		return op[0];
+	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+		IResource [] selectedResources = LockAction.this.syncInfoSelector.getSelectedResources();
+		CommitPanel.CollectPropertiesOperation cop = new CommitPanel.CollectPropertiesOperation(selectedResources);
+		ProgressMonitorUtility.doTaskExternal(cop, null);
+		LockPanel commentPanel = new LockPanel(true, cop.getMinLockSize());
+		DefaultDialog dialog = new DefaultDialog(configuration.getSite().getShell(), commentPanel);
+		if (dialog.open() == 0) {
+		    LockOperation mainOp = new LockOperation(selectedResources, commentPanel.getMessage(), commentPanel.getForce());
+		    CompositeOperation lockOp = new CompositeOperation(mainOp.getId());
+		    lockOp.add(mainOp);
+		    lockOp.add(new RefreshResourcesOperation(selectedResources));
+		    return lockOp;
+		}
+		return null;
 	}
 
 }

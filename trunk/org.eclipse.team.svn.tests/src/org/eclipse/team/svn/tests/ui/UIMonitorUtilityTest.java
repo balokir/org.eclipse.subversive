@@ -14,7 +14,6 @@ package org.eclipse.team.svn.tests.ui;
 import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -97,22 +96,6 @@ public class UIMonitorUtilityTest extends TestCase {
                 return new LoggedOperation(operation);
             }
         });
-	}
-
-	public void testDoTaskExternalDefault() {
-		UIMonitorUtility.doTaskExternal(new TestFailureOperation(), new NullProgressMonitor(), new DefaultOperationWrapperFactory() {
-            public IActionOperation getLogged(IActionOperation operation) {
-                return new LoggedOperation(operation);
-            }
-        });
-	}
-
-	public void testDoTaskExternalWorkspaceModify() {
-		UIMonitorUtility.doTaskExternal(new TestFailureOperation(), new NullProgressMonitor(), new WorkspaceModifyOperationWrapperFactory() {
-	        public IActionOperation getLogged(IActionOperation operation) {
-	            return new LoggedOperation(operation);
-	        }
-	    });
 	}
 
 	protected class TestFailureOperation extends AbstractActionOperation {

@@ -15,6 +15,7 @@ package org.eclipse.team.svn.ui.synchronize.update.action;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -41,6 +42,7 @@ import org.eclipse.team.svn.ui.synchronize.SVNChangeSetCapability;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
 import org.eclipse.team.svn.ui.synchronize.action.ISyncStateFilter;
 import org.eclipse.team.svn.ui.synchronize.update.UpdateSyncInfo;
+import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.svn.ui.utility.UnacceptableOperationNotificator;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -67,37 +69,30 @@ public class OverrideAndCommitAction extends AbstractSynchronizeModelAction {
         };
 	}
 
-	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {
-		final String []msg = new String[1];
-		final boolean []keepLocks = new boolean[1];
+	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+		String msg = null;
+		boolean keepLocks = false;
 		final IResource [][]resources = new IResource[1][];
 
-		operation.getShell().getDisplay().syncExec(new Runnable() {
-			public void run() {
-				IResource []changedResources = operation.getSelectedResourcesRecursive(ISyncStateFilter.SF_OVERRIDE);
-				IResource []overrideResources = UnacceptableOperationNotificator.shrinkResourcesWithNotOnRespositoryParents(operation.getShell(), changedResources);
-				if (overrideResources != null && overrideResources.length > 0) {
-					overrideResources = FileUtility.addOperableParents(overrideResources, IStateFilter.SF_NOTONREPOSITORY);
-					HashSet allResourcesSet = new HashSet(Arrays.asList(overrideResources));
-				    String proposedComment = SVNChangeSetCapability.getProposedComment(overrideResources);
-					CommitPanel commitPanel = new CommitPanel(overrideResources, overrideResources, CommitPanel.MSG_OVER_AND_COMMIT, proposedComment);
-					ICommitDialog commitDialog = ExtensionsManager.getInstance().getCurrentCommitFactory().getCommitDialog(operation.getShell(), allResourcesSet, commitPanel);
-					if (commitDialog.open() == 0) {
-						resources[0] = commitPanel.getSelectedResources().length == 0 ? null : commitPanel.getSelectedResources();
-						msg[0] = commitDialog.getMessage();
-						keepLocks[0] = commitPanel.getKeepLocks();
-					}
-				}
+		IResource []changedResources = OverrideAndCommitAction.this.syncInfoSelector.getSelectedResourcesRecursive(ISyncStateFilter.SF_OVERRIDE);
+		IResource []overrideResources = UnacceptableOperationNotificator.shrinkResourcesWithNotOnRespositoryParents(configuration.getSite().getShell(), changedResources);
+		if (overrideResources != null && overrideResources.length > 0) {
+			overrideResources = FileUtility.addOperableParents(overrideResources, IStateFilter.SF_NOTONREPOSITORY);
+			HashSet allResourcesSet = new HashSet(Arrays.asList(overrideResources));
+		    String proposedComment = SVNChangeSetCapability.getProposedComment(overrideResources);
+			CommitPanel commitPanel = new CommitPanel(overrideResources, overrideResources, CommitPanel.MSG_OVER_AND_COMMIT, proposedComment);
+			ICommitDialog commitDialog = ExtensionsManager.getInstance().getCurrentCommitFactory().getCommitDialog(configuration.getSite().getShell(), allResourcesSet, commitPanel);
+			if (commitDialog.open() != 0) {
+				return null;
 			}
-		});
-		
-		if (resources[0] == null) {
-			return null;
+			resources[0] = commitPanel.getSelectedResources().length == 0 ? null : commitPanel.getSelectedResources();
+			msg = commitDialog.getMessage();
+			keepLocks = commitPanel.getKeepLocks();
 		}
 		
 		CompositeOperation op = new CompositeOperation("Operation.UOverrideAndCommit");
 
-		final MarkAsMergedOperation mergeOp = new MarkAsMergedOperation(resources[0], true, msg[0], keepLocks[0]);
+		final MarkAsMergedOperation mergeOp = new MarkAsMergedOperation(resources[0], true, msg, keepLocks);
 		op.add(mergeOp);
 		final IResource []addition = FileUtility.getResourcesRecursive(resources[0], OverrideAndCommitAction.SF_NEW);
 		if (addition.length != 0) {
@@ -126,16 +121,16 @@ public class OverrideAndCommitAction extends AbstractSynchronizeModelAction {
             op.add(new AddToSVNWithPropertiesOperation(additionProvider, false), new IActionOperation[] {mergeOp});
 			op.add(new ClearLocalStatusesOperation(additionProvider));
 		}
-		CommitOperation mainOp = new CommitOperation(mergeOp, msg[0], true, keepLocks[0]);
+		CommitOperation mainOp = new CommitOperation(mergeOp, msg, true, keepLocks);
 		IActionOperation[] dependsOn = new IActionOperation[] {mergeOp};
 		op.add(mainOp, dependsOn);
 		op.add(new AbstractActionOperation("Operation.UNodeKindChanged") {
             protected void runImpl(IProgressMonitor monitor) throws Exception {
                 final IResource []diffNodeKind = mergeOp.getHavingDifferentNodeKind();
                 if (diffNodeKind.length > 0) {
-                    operation.getShell().getDisplay().syncExec(new Runnable() {
+                    UIMonitorUtility.getDisplay().syncExec(new Runnable() {
                         public void run() {
-                            new NotifyNodeKindChangedDialog(operation.getShell(), diffNodeKind).open();
+                            new NotifyNodeKindChangedDialog(UIMonitorUtility.getShell(), diffNodeKind).open();
                         }
                     });
                 }
@@ -143,7 +138,7 @@ public class OverrideAndCommitAction extends AbstractSynchronizeModelAction {
 		});
 		op.add(new ClearUpdateStatusesOperation(resources[0]));
 		op.add(new RefreshResourcesOperation(resources[0]));
-		ExtensionsManager.getInstance().getCurrentCommitFactory().performAfterCommitTasks(op, mainOp, dependsOn, operation.getPart());
+		ExtensionsManager.getInstance().getCurrentCommitFactory().performAfterCommitTasks(op, mainOp, dependsOn, configuration.getSite().getPart());
 		return op;
 	}
 	

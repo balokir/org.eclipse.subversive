@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.ui.synchronize.update.action;
 
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
@@ -55,8 +56,8 @@ public class MarkAsMergedAction extends AbstractSynchronizeModelAction {
         };
 	}
 
-	protected IActionOperation execute(FilteredSynchronizeModelOperation operation) {
-		IResource []resources = UnacceptableOperationNotificator.shrinkResourcesWithNotOnRespositoryParents(operation.getShell(), operation.getSelectedResourcesRecursive(new ISyncStateFilter.StateFilterWrapper(IStateFilter.SF_ALL, false)));
+	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+		IResource []resources = UnacceptableOperationNotificator.shrinkResourcesWithNotOnRespositoryParents(configuration.getSite().getShell(), this.syncInfoSelector.getSelectedResourcesRecursive(new ISyncStateFilter.StateFilterWrapper(IStateFilter.SF_ALL, false)));
 		if (resources == null || resources.length == 0) {
 			return null;
 		}

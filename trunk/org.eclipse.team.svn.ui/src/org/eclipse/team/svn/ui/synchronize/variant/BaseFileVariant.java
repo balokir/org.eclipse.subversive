@@ -20,7 +20,7 @@ import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.GetLocalFileContentOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
-import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
+import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 
 
 /**
@@ -29,7 +29,6 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  * @author Alexander Gurov
  */
 public class BaseFileVariant extends ResourceVariant {
-
 	public BaseFileVariant(ILocalResource local) {
 		super(local);
 	}
@@ -40,7 +39,7 @@ public class BaseFileVariant extends ResourceVariant {
 			return;
 		}
 		GetLocalFileContentOperation op = new GetLocalFileContentOperation(this.local.getResource(), Kind.BASE);
-		UIMonitorUtility.doTaskExternalDefault(op, monitor);
+		ProgressMonitorUtility.doTaskExternal(op, monitor);
 		if (op.getExecutionState() == IActionOperation.OK) {
 			this.setContents(op.getContent(), monitor);
 		}

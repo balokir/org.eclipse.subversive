@@ -14,6 +14,7 @@ package org.eclipse.team.svn.ui.synchronize.update.action;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
@@ -58,33 +59,26 @@ public class OverrideAndUpdateAction extends AbstractSynchronizeModelAction {
 		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.OUTGOING, SyncInfo.INCOMING, SyncInfo.CONFLICTING});
 	}
 
-	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {
+	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
 		final IResource [][]resources = new IResource[1][];
-		operation.getShell().getDisplay().syncExec(new Runnable() {
-			public void run() {
-				IResource []obstructedResources = operation.getSelectedResourcesRecursive(IStateFilter.SF_OBSTRUCTED);
-				obstructedResources = FileUtility.addOperableParents(obstructedResources, IStateFilter.SF_OBSTRUCTED);
-				HashSet allResources = new HashSet(Arrays.asList(obstructedResources));
-				IResource []changedResources = operation.getSelectedResourcesRecursive(ISyncStateFilter.SF_OVERRIDE);
-				changedResources = UnacceptableOperationNotificator.shrinkResourcesWithNotOnRespositoryParents(operation.getShell(), changedResources);
-				if (changedResources != null) {
-					changedResources = FileUtility.addOperableParents(changedResources, IStateFilter.SF_NOTONREPOSITORY);
-					allResources.addAll(Arrays.asList(changedResources));
-				}
-				
-				if (allResources.size() > 0) {
-					IResource []fullSet = (IResource [])allResources.toArray(new IResource[allResources.size()]);
-					OverrideResourcesPanel panel = new OverrideResourcesPanel(fullSet, fullSet, OverrideResourcesPanel.MSG_UPDATE);
-					DefaultDialog dialog = new DefaultDialog(operation.getShell(), panel);
-					if (dialog.open() == 0) {
-						resources[0] = panel.getSelectedResources();
-					}
-				}
-			}
-		});
+		IResource []obstructedResources = OverrideAndUpdateAction.this.syncInfoSelector.getSelectedResourcesRecursive(IStateFilter.SF_OBSTRUCTED);
+		obstructedResources = FileUtility.addOperableParents(obstructedResources, IStateFilter.SF_OBSTRUCTED);
+		HashSet allResources = new HashSet(Arrays.asList(obstructedResources));
+		IResource []changedResources = OverrideAndUpdateAction.this.syncInfoSelector.getSelectedResourcesRecursive(ISyncStateFilter.SF_OVERRIDE);
+		changedResources = UnacceptableOperationNotificator.shrinkResourcesWithNotOnRespositoryParents(configuration.getSite().getShell(), changedResources);
+		if (changedResources != null) {
+			changedResources = FileUtility.addOperableParents(changedResources, IStateFilter.SF_NOTONREPOSITORY);
+			allResources.addAll(Arrays.asList(changedResources));
+		}
 		
-		if (resources[0] == null) {
-			return null;
+		if (allResources.size() > 0) {
+			IResource []fullSet = (IResource [])allResources.toArray(new IResource[allResources.size()]);
+			OverrideResourcesPanel panel = new OverrideResourcesPanel(fullSet, fullSet, OverrideResourcesPanel.MSG_UPDATE);
+			DefaultDialog dialog = new DefaultDialog(configuration.getSite().getShell(), panel);
+			if (dialog.open() != 0) {
+				return null;
+			}
+			resources[0] = panel.getSelectedResources();
 		}
 		
 		CompositeOperation op = new CompositeOperation("Operation.UOverrideAndUpdate");

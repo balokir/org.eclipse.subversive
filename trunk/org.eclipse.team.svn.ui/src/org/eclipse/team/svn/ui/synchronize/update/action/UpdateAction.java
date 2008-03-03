@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.ui.synchronize.update.action;
 
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -46,6 +47,10 @@ public class UpdateAction extends AbstractSynchronizeModelAction {
 	}
 
 	protected FastSyncInfoFilter getSyncInfoFilter() {
+		//FastSyncInfoFilter.AndSyncInfoFilter()
+		//FastSyncInfoFilter.OrSyncInfoFilter()
+		//FastSyncInfoFilter.SyncInfoDirectionFilter()
+		//FastSyncInfoFilter.SyncInfoChangeTypeFilter()
 		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.INCOMING, SyncInfo.CONFLICTING}) {
             public boolean select(SyncInfo info) {
                 return super.select(info) && !IStateFilter.SF_OBSTRUCTED.accept(((UpdateSyncInfo)info).getLocalResource());
@@ -53,9 +58,9 @@ public class UpdateAction extends AbstractSynchronizeModelAction {
         };
 	}
 
-	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {
+	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
 		// IStateFilter.SF_NONVERSIONED not versioned locally
-		IResource []resources = UnacceptableOperationNotificator.shrinkResourcesWithNotOnRespositoryParents(operation.getShell(), operation.getSelectedResourcesRecursive(ISyncStateFilter.SF_ONREPOSITORY));
+		IResource []resources = UnacceptableOperationNotificator.shrinkResourcesWithNotOnRespositoryParents(configuration.getSite().getShell(), this.syncInfoSelector.getSelectedResourcesRecursive(ISyncStateFilter.SF_ONREPOSITORY));
 		if (resources == null || resources.length == 0) {
 			return null;
 		}
@@ -64,13 +69,7 @@ public class UpdateAction extends AbstractSynchronizeModelAction {
 		
 		final IResource []missing = FileUtility.getResourcesRecursive(resources, IStateFilter.SF_MISSING);//, IResource.DEPTH_ZERO
 		if (missing.length > 0) {
-			final boolean []retVal = new boolean[1];
-			operation.getShell().getDisplay().syncExec(new Runnable() {
-				public void run() {
-					retVal[0] = org.eclipse.team.svn.ui.action.local.UpdateAction.updateMissing(operation.getShell(), missing);
-				}
-			});
-			if (!retVal[0]) {
+			if (!org.eclipse.team.svn.ui.action.local.UpdateAction.updateMissing(configuration.getSite().getShell(), missing)) {
 				return null;
 			}
 		}
@@ -82,18 +81,13 @@ public class UpdateAction extends AbstractSynchronizeModelAction {
 			else {
 				message = SVNTeamUIPlugin.instance().getResource("UpdateAll.Message.Multi", new String[] {String.valueOf(resources.length)});
 			}
-			final MessageDialog dlg = new MessageDialog(operation.getShell(), SVNTeamUIPlugin.instance().getResource("UpdateAll.Title"), null, message, MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 0);
-			operation.getShell().getDisplay().syncExec(new Runnable() {
-				public void run() {
-					dlg.open();
-				}
-			});
-			if (dlg.getReturnCode() != 0) {
+			MessageDialog dlg = new MessageDialog(configuration.getSite().getShell(), SVNTeamUIPlugin.instance().getResource("UpdateAll.Title"), null, message, MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 0);
+			if (dlg.open() != 0) {
 				return null;
 			}
 		}
 
-		return org.eclipse.team.svn.ui.action.local.UpdateAction.getUpdateOperation(operation.getShell(), resources);
+		return org.eclipse.team.svn.ui.action.local.UpdateAction.getUpdateOperation(configuration.getSite().getShell(), resources);
 	}
 
 }

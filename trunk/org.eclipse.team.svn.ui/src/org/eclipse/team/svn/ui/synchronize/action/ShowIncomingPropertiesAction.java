@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.ui.synchronize.action;
 
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -67,36 +68,31 @@ public class ShowIncomingPropertiesAction extends AbstractSynchronizeModelAction
 		return false;
 	}
 
-	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {		
-		final IActionOperation [] op = new IActionOperation[1];
-		operation.getShell().getDisplay().syncExec(new Runnable() {
-			public void run() {
-			    IResourceChange change = (IResourceChange)((RemoteResourceVariant)operation.getSVNSyncInfo().getRemote()).getResource();
-			    IRepositoryResource remote = change.getOriginator();
-				
-				IResourcePropertyProvider provider = new GetRemotePropertiesOperation(remote);
-				IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
-				boolean usePropertiesView = SVNTeamPreferences.getPropertiesBoolean(store, SVNTeamPreferences.PROPERTY_USE_VIEW_NAME);
-				if (usePropertiesView) {
-					try {
-						PropertiesView view = (PropertiesView)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(PropertiesView.VIEW_ID);
-						view.setResource(remote, provider, false);
-					}
-					catch (PartInitException ex) {
-						//unreachable code
-					}
-				}
-				else {
-					ShowPropertiesOperation showOp = new ShowPropertiesOperation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), remote, provider);
-					CompositeOperation composite = new CompositeOperation(showOp.getId());
-					composite.add(provider);
-					composite.add(showOp, new IActionOperation[] {provider});
-					if (!showOp.isEditorOpened()) {
-						op[0] = composite;
-					}
-				}
+	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+	    IResourceChange change = (IResourceChange)((RemoteResourceVariant)ShowIncomingPropertiesAction.this.getSVNSyncInfo().getRemote()).getResource();
+	    IRepositoryResource remote = change.getOriginator();
+		
+		IResourcePropertyProvider provider = new GetRemotePropertiesOperation(remote);
+		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
+		boolean usePropertiesView = SVNTeamPreferences.getPropertiesBoolean(store, SVNTeamPreferences.PROPERTY_USE_VIEW_NAME);
+		if (usePropertiesView) {
+			try {
+				PropertiesView view = (PropertiesView)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(PropertiesView.VIEW_ID);
+				view.setResource(remote, provider, false);
 			}
-		});
+			catch (PartInitException ex) {
+				//unreachable code
+			}
+		}
+		else {
+			ShowPropertiesOperation showOp = new ShowPropertiesOperation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), remote, provider);
+			CompositeOperation composite = new CompositeOperation(showOp.getId());
+			composite.add(provider);
+			composite.add(showOp, new IActionOperation[] {provider});
+			if (!showOp.isEditorOpened()) {
+				return composite;
+			}
+		}
 		return null;
 	}
 

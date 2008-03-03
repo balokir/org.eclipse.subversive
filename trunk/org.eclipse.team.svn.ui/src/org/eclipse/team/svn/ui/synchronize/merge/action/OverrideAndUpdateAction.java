@@ -15,6 +15,7 @@ package org.eclipse.team.svn.ui.synchronize.merge.action;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
@@ -53,49 +54,44 @@ public class OverrideAndUpdateAction extends AbstractSynchronizeModelAction {
 		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.CONFLICTING, SyncInfo.INCOMING});
 	}
 
-	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {
-		final IResource [][]resources = new IResource[1][];
-		operation.getShell().getDisplay().syncExec(new Runnable() {
-			public void run() {
-				IResource []obstructedResources = operation.getSelectedResourcesRecursive(IStateFilter.SF_OBSTRUCTED);
-				obstructedResources = FileUtility.addOperableParents(obstructedResources, IStateFilter.SF_OBSTRUCTED);
-				HashSet allResources = new HashSet(Arrays.asList(obstructedResources));
-				IResource []changedResources = operation.getSelectedResourcesRecursive(ISyncStateFilter.SF_OVERRIDE);
-				changedResources = FileUtility.addOperableParents(changedResources, IStateFilter.SF_NOTONREPOSITORY);
-				allResources.addAll(Arrays.asList(changedResources));
-				IResource []fullSet = (IResource [])allResources.toArray(new IResource[allResources.size()]);
-				OverrideResourcesPanel panel = new OverrideResourcesPanel(fullSet, fullSet, OverrideResourcesPanel.MSG_UPDATE);
-				DefaultDialog dialog = new DefaultDialog(operation.getShell(), panel);
-				if (dialog.open() == 0) {
-					resources[0] = panel.getSelectedResources();
-				}
-			}
-		});
-		
-		if (resources[0] == null) {
+	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+		IResource []obstructedResources = OverrideAndUpdateAction.this.syncInfoSelector.getSelectedResourcesRecursive(IStateFilter.SF_OBSTRUCTED);
+		obstructedResources = FileUtility.addOperableParents(obstructedResources, IStateFilter.SF_OBSTRUCTED);
+		HashSet allResources = new HashSet(Arrays.asList(obstructedResources));
+		IResource []changedResources = OverrideAndUpdateAction.this.syncInfoSelector.getSelectedResourcesRecursive(ISyncStateFilter.SF_OVERRIDE);
+		changedResources = FileUtility.addOperableParents(changedResources, IStateFilter.SF_NOTONREPOSITORY);
+		allResources.addAll(Arrays.asList(changedResources));
+		IResource []fullSet = (IResource [])allResources.toArray(new IResource[allResources.size()]);
+		OverrideResourcesPanel panel = new OverrideResourcesPanel(fullSet, fullSet, OverrideResourcesPanel.MSG_UPDATE);
+		DefaultDialog dialog = new DefaultDialog(configuration.getSite().getShell(), panel);
+		IResource []resources = null;
+		if (dialog.open() == 0) {
+			resources = panel.getSelectedResources();
+		}
+		else {
 			return null;
 		}
 		
 		CompositeOperation op = new CompositeOperation("Operation.MOverrideAndUpdate");
 
-		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources[0]);
+		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
 		op.add(saveOp);
-		RevertOperation revertOp = new RevertOperation(FileUtility.getResourcesRecursive(resources[0], IStateFilter.SF_REVERTABLE, IResource.DEPTH_ZERO), true);
+		RevertOperation revertOp = new RevertOperation(FileUtility.getResourcesRecursive(resources, IStateFilter.SF_REVERTABLE, IResource.DEPTH_ZERO), true);
 		op.add(revertOp);
-		op.add(new ClearLocalStatusesOperation(resources[0]));
-		RemoveNonVersionedResourcesOperation removeNonVersionedResourcesOp = new RemoveNonVersionedResourcesOperation(resources[0], true);
+		op.add(new ClearLocalStatusesOperation(resources));
+		RemoveNonVersionedResourcesOperation removeNonVersionedResourcesOp = new RemoveNonVersionedResourcesOperation(resources, true);
 		op.add(removeNonVersionedResourcesOp);
 		// Obstructed resources are deleted now. So, try to revert all corresponding entries
-		RevertOperation revertOp1 = new RevertOperation(FileUtility.getResourcesRecursive(resources[0], IStateFilter.SF_OBSTRUCTED, IResource.DEPTH_ZERO), true);
+		RevertOperation revertOp1 = new RevertOperation(FileUtility.getResourcesRecursive(resources, IStateFilter.SF_OBSTRUCTED, IResource.DEPTH_ZERO), true);
 		op.add(revertOp1);
-		op.add(new ClearLocalStatusesOperation(resources[0]));
-		op.add(new UpdateOperation(FileUtility.getResourcesRecursive(resources[0], IStateFilter.SF_OBSTRUCTED, IResource.DEPTH_ZERO), true));
+		op.add(new ClearLocalStatusesOperation(resources));
+		op.add(new UpdateOperation(FileUtility.getResourcesRecursive(resources, IStateFilter.SF_OBSTRUCTED, IResource.DEPTH_ZERO), true));
 		
-		op.add(new MergeOperation(resources[0], MergeSubscriber.instance().getMergeScope().getMergeSet(), true));
+		op.add(new MergeOperation(resources, MergeSubscriber.instance().getMergeScope().getMergeSet(), true));
         
 		op.add(new RestoreProjectMetaOperation(saveOp));
-		op.add(new ClearMergeStatusesOperation(resources[0]));
-		op.add(new RefreshResourcesOperation(resources[0]));
+		op.add(new ClearMergeStatusesOperation(resources));
+		op.add(new RefreshResourcesOperation(resources));
 		
 		return op;
 	}

@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.ui.synchronize.merge.action;
 
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -64,8 +65,8 @@ public class UpdateAction extends AbstractSynchronizeModelAction {
         };
 	}
 
-	protected IActionOperation execute(FilteredSynchronizeModelOperation operation) {
-		IResource []resources = operation.getSelectedResourcesRecursive(ISyncStateFilter.SF_ONREPOSITORY);
+	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+		IResource []resources = this.syncInfoSelector.getSelectedResourcesRecursive(ISyncStateFilter.SF_ONREPOSITORY);
 		// IStateFilter.SF_NONVERSIONED not versioned locally
 		resources = FileUtility.addOperableParents(resources, IStateFilter.SF_UNVERSIONED);
 		
@@ -77,13 +78,8 @@ public class UpdateAction extends AbstractSynchronizeModelAction {
 			else {
 				message = SVNTeamUIPlugin.instance().getResource("UpdateAll.Message.Multi", new String[] {String.valueOf(resources.length)});
 			}
-			final MessageDialog dlg = new MessageDialog(operation.getShell(), SVNTeamUIPlugin.instance().getResource("UpdateAll.Title"), null, message, MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 0);
-			operation.getShell().getDisplay().syncExec(new Runnable() {
-				public void run() {
-					dlg.open();
-				}
-			});
-			if (dlg.getReturnCode() != 0) {
+			final MessageDialog dlg = new MessageDialog(configuration.getSite().getShell(), SVNTeamUIPlugin.instance().getResource("UpdateAll.Title"), null, message, MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 0);
+			if (dlg.open() != 0) {
 				return null;
 			}
 		}

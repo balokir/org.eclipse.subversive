@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.ui.synchronize.update.action;
 
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
@@ -43,23 +44,18 @@ public class AddToSVNAction extends AbstractSynchronizeModelAction {
 		};
 	}
 
-	protected IActionOperation execute(final FilteredSynchronizeModelOperation operation) {
-		final IResource [][]resources = new IResource[1][];
-		operation.getShell().getDisplay().syncExec(new Runnable() {
-			public void run() {
-			    QueryResourceAddition query = new QueryResourceAddition(operation, operation.getShell());
-			    resources[0] = query.queryAddition();
-			}
-		});
-		if (resources[0] == null) {
+	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+	    QueryResourceAddition query = new QueryResourceAddition(this.syncInfoSelector, configuration.getSite().getShell());
+	    IResource []resources = query.queryAddition();
+		if (resources == null) {
 			return null;
 		}
-		AddToSVNWithPropertiesOperation mainOp = new AddToSVNWithPropertiesOperation(resources[0], false);
+		AddToSVNWithPropertiesOperation mainOp = new AddToSVNWithPropertiesOperation(resources, false);
 		
 		CompositeOperation op = new CompositeOperation(mainOp.getId());
 
 		op.add(mainOp);
-		op.add(new RefreshResourcesOperation(resources[0]/*, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL*/));
+		op.add(new RefreshResourcesOperation(resources/*, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL*/));
 
 		return op;
 	}
