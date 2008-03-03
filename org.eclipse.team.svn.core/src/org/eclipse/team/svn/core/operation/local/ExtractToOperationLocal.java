@@ -13,6 +13,7 @@ package org.eclipse.team.svn.core.operation.local;
 
 import java.io.File;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -73,7 +74,7 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 				}
 			}
 			else {
-				if (new File(FileUtility.getWorkingCopyPath(current)).isDirectory()) {
+				if (current instanceof IContainer) {
 					monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.Folders", new String [] {FileUtility.getWorkingCopyPath(current)}));
 					operatingDirectory.mkdirs();
 				}
