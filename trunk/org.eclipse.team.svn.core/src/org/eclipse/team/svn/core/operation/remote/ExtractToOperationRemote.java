@@ -88,22 +88,25 @@ public class ExtractToOperationRemote extends AbstractRepositoryOperation {
 		
 		//folders first - to create all needed
 		IRepositoryResource [] toOperateFurhter = operableFolders.toArray(new IRepositoryResource[0]);
-		HashMap<String, String> previous = new HashMap<String, String>();
 		SVNUtility.reorder(toOperateFurhter, true);
 		
+		HashMap<String, String> previous = new HashMap<String, String>();
+		String previousPref = null;
+		String previousPath = null;
 		for (IRepositoryResource current : toOperateFurhter) {
 			String currentURL = current.getUrl();
 			monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.Folders", new String [] {currentURL}));
 			String toOperate = "";
-			File operatingDirectory = null;
-			if (current.getParent() == null
-					|| !previous.keySet().contains(current.getParent().getUrl())) {
-				toOperate = this.path + "/" + current.getName();
+			if (previousPref == null
+					|| !currentURL.startsWith(previousPref)) {
+				previousPath = "/" + current.getName();
+				toOperate = this.path + previousPath;
+				previousPref = current.getUrl();
 			}
 			else {
-				toOperate = previous.get(current.getParent().getUrl()) + "/" + current.getName();
+				toOperate = this.path + previousPath + currentURL.substring(previousPref.length());
 			}
-			operatingDirectory = new File(toOperate);
+			File operatingDirectory = new File(toOperate);
 			if (toDelete.contains(current.getUrl())) {
 				if (operatingDirectory.exists() && this.delitionAllowed)
 				{
@@ -111,7 +114,7 @@ public class ExtractToOperationRemote extends AbstractRepositoryOperation {
 				}
 			}
 			else {
-				operatingDirectory.mkdir();
+				operatingDirectory.mkdirs();
 				previous.put(currentURL, toOperate);
 			}
 			ProgressMonitorUtility.progress(monitor, processed++, resources.length);
