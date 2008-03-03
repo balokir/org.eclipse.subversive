@@ -62,7 +62,9 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 			if (previousPref == null
 					|| !previousPref.isPrefixOf(currentPath)) {
 				toOperate = this.path + "/" + current.getName();
-				previousPref = current.getFullPath();
+				if (current instanceof IContainer) {
+					previousPref = current.getFullPath();
+				}
 			}
 			else {
 				toOperate = this.path + previousPref + (currentPath.toString()).substring(previousPref.toString().length());
@@ -79,10 +81,12 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 					operatingDirectory.mkdirs();
 				}
 				else {
-					toOperate = this.path + previousPref + (current.getParent().getFullPath().toString()).substring(previousPref.toString().length());
-					monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.Folders", new String [] {FileUtility.getWorkingCopyPath(current)}));
-					operatingDirectory = new File(toOperate);
-					operatingDirectory.mkdirs();
+					if (previousPref != null) {
+						toOperate = this.path + previousPref + (current.getParent().getFullPath().toString()).substring(previousPref.toString().length());
+						monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.Folders", new String [] {FileUtility.getWorkingCopyPath(current)}));
+						operatingDirectory = new File(toOperate);
+						operatingDirectory.mkdirs();
+					}
 					monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.LocalFile", new String [] {FileUtility.getWorkingCopyPath(current)}));
 					FileUtility.copyAll(operatingDirectory, new File(FileUtility.getWorkingCopyPath(current)), monitor);
 				}

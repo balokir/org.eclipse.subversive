@@ -156,7 +156,7 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				UpdateActionGroup.GROUP_MANAGE_LOCALS,
 				addToSVNIgnoreAction);
-		ExtractToAction extractTo = new ExtractToAction(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Label"), configuration);
+		ExtractToAction extractTo = new ExtractToAction(SVNTeamUIPlugin.instance().getResource("ExtractAllToAction.Label"), configuration);
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				UpdateActionGroup.GROUP_MANAGE_LOCALS,
