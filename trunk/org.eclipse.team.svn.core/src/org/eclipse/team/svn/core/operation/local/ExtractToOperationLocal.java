@@ -88,7 +88,7 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 						operatingDirectory.mkdirs();
 					}
 					monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.LocalFile", new String [] {FileUtility.getWorkingCopyPath(current)}));
-					FileUtility.copyAll(operatingDirectory, new File(FileUtility.getWorkingCopyPath(current)), monitor);
+					FileUtility.copyAll(operatingDirectory, new File(FileUtility.getWorkingCopyPath(current)), FileUtility.COPY_OVERRIDE_EXISTING_FILES, null, monitor);
 				}
 			}
 			ProgressMonitorUtility.progress(monitor, processed++, this.outgoingResources.length);
