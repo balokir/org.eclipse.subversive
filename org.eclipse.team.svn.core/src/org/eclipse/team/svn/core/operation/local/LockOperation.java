@@ -22,7 +22,6 @@ import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
-import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -53,11 +52,10 @@ public class LockOperation extends AbstractWorkingCopyOperation {
     protected void runImpl(final IProgressMonitor monitor) throws Exception {
 		IResource []resources = this.operableData();
 
-		IRemoteStorage storage = SVNRemoteStorage.instance();
 		Map wc2Resources = SVNUtility.splitWorkingCopies(resources);
 		for (Iterator it = wc2Resources.entrySet().iterator(); it.hasNext() && !monitor.isCanceled(); ) {
 			Map.Entry entry = (Map.Entry)it.next();
-			final IRepositoryLocation location = storage.getRepositoryLocation((IProject)entry.getKey());
+			final IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation((IProject)entry.getKey());
 			final String []paths = FileUtility.asPathArray((IResource [])((List)entry.getValue()).toArray(new IResource[0]));
 			
 			this.complexWriteToConsole(new Runnable() {

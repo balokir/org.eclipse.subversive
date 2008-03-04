@@ -46,7 +46,7 @@ public class SetPropertyAction extends AbstractSynchronizeModelAction {
 			ISynchronizeModelElement element = (ISynchronizeModelElement)it.next();
 			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(element.getResource());
 			// null for change set nodes
-			if (local != null || IStateFilter.SF_VERSIONED.accept(local)) {
+			if (local != null && IStateFilter.SF_VERSIONED.accept(local)) {
 				return true;
 			}
 		}

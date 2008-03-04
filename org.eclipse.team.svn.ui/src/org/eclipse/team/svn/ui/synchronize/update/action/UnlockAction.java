@@ -40,7 +40,7 @@ public class UnlockAction extends AbstractSynchronizeModelAction {
 	}
 	
 	protected FastSyncInfoFilter getSyncInfoFilter() {
-		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.OUTGOING, SyncInfo.CONFLICTING}) {
+		return new FastSyncInfoFilter() {
             public boolean select(SyncInfo info) {
                 return super.select(info) && IStateFilter.SF_LOCKED.accept(((AbstractSVNSyncInfo)info).getLocalResource());
             }

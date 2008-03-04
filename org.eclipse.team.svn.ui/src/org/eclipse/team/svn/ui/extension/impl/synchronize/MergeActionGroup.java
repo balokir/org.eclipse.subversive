@@ -22,11 +22,10 @@ import org.eclipse.team.svn.ui.synchronize.action.ExpandAllAction;
 import org.eclipse.team.svn.ui.synchronize.action.RevertAction;
 import org.eclipse.team.svn.ui.synchronize.action.SetKeywordsAction;
 import org.eclipse.team.svn.ui.synchronize.action.SetPropertyAction;
+import org.eclipse.team.svn.ui.synchronize.action.ShowHistoryAction;
 import org.eclipse.team.svn.ui.synchronize.action.ShowIncomingAnnotationAction;
-import org.eclipse.team.svn.ui.synchronize.action.ShowIncomingHistoryAction;
 import org.eclipse.team.svn.ui.synchronize.action.ShowIncomingPropertiesAction;
 import org.eclipse.team.svn.ui.synchronize.action.ShowOutgoingAnnotationAction;
-import org.eclipse.team.svn.ui.synchronize.action.ShowOutgoingHistoryAction;
 import org.eclipse.team.svn.ui.synchronize.action.ShowOutgoingPropertiesAction;
 import org.eclipse.team.svn.ui.synchronize.merge.action.MarkAsMergedAction;
 import org.eclipse.team.svn.ui.synchronize.merge.action.OverrideAndUpdateAction;
@@ -109,6 +108,12 @@ public class MergeActionGroup extends AbstractSynchronizeActionGroup {
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				MergeActionGroup.GROUP_MANAGE_LOCALS,
 				revertAction);
+		ShowHistoryAction showHistoryAction = new ShowHistoryAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.ShowResourceHistory"), configuration);
+		showHistoryAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/showhistory.gif"));
+		this.appendToGroup(
+				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+				MergeActionGroup.GROUP_MANAGE_LOCALS,
+				showHistoryAction);
 
 		this.outgoing = new MenuManager(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Outgoing"));
 		this.appendToGroup(
@@ -121,14 +126,6 @@ public class MergeActionGroup extends AbstractSynchronizeActionGroup {
 				MergeActionGroup.GROUP_TEAM, 
 				this.incoming);
 		
-		ShowOutgoingHistoryAction showResourceHistoryAction = new ShowOutgoingHistoryAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.ShowResourceHistory"), configuration);
-		showResourceHistoryAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/showhistory.gif"));
-		this.outgoing.add(showResourceHistoryAction);
-		ShowOutgoingAnnotationAction showAnnotationAction = new ShowOutgoingAnnotationAction(SVNTeamUIPlugin.instance().getResource("ShowAnnotationCommand.label"), configuration);
-		this.outgoing.add(showAnnotationAction);
-		
-		this.outgoing.add(new Separator());
-		
 		ShowOutgoingPropertiesAction showPropertiesAction = new ShowOutgoingPropertiesAction(SVNTeamUIPlugin.instance().getResource("ShowPropertiesAction.label"), configuration);
 		showPropertiesAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/propertiesedit.gif"));
 		this.outgoing.add(showPropertiesAction);
@@ -136,6 +133,8 @@ public class MergeActionGroup extends AbstractSynchronizeActionGroup {
 		this.outgoing.add(setPropAction);
 		SetKeywordsAction setKeywordsAction = new SetKeywordsAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.SetKeywords"), configuration);
 		this.outgoing.add(setKeywordsAction);
+		ShowOutgoingAnnotationAction showAnnotationAction = new ShowOutgoingAnnotationAction(SVNTeamUIPlugin.instance().getResource("ShowAnnotationCommand.label"), configuration);
+		this.outgoing.add(showAnnotationAction);
 		
 		this.outgoing.add(new Separator());
 		
@@ -150,17 +149,13 @@ public class MergeActionGroup extends AbstractSynchronizeActionGroup {
 		CleanUpAction cleanUpAction = new CleanUpAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Cleanup"), configuration);
 		this.outgoing.add(cleanUpAction);
 		
-		ShowIncomingHistoryAction showIncomingHistoryAction = new ShowIncomingHistoryAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.ShowResourceHistory"), configuration);
-		showIncomingHistoryAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/showhistory.gif"));
-		this.incoming.add(showIncomingHistoryAction);
+		ShowIncomingPropertiesAction showIncomingPropertiesAction = new ShowIncomingPropertiesAction(SVNTeamUIPlugin.instance().getResource("ShowPropertiesAction.label"), configuration);
+		showIncomingPropertiesAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/propertiesedit.gif"));
+		this.incoming.add(showIncomingPropertiesAction);
 		ShowIncomingAnnotationAction showIncomingAnnotationAction = new ShowIncomingAnnotationAction(SVNTeamUIPlugin.instance().getResource("ShowAnnotationAction.label"), configuration);
 		this.incoming.add(showIncomingAnnotationAction);
 		
 		this.incoming.add(new Separator());
-		
-		ShowIncomingPropertiesAction showIncomingPropertiesAction = new ShowIncomingPropertiesAction(SVNTeamUIPlugin.instance().getResource("ShowPropertiesAction.label"), configuration);
-		showIncomingPropertiesAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/propertiesedit.gif"));
-		this.incoming.add(showIncomingPropertiesAction);
 	}
 	
 }
