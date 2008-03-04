@@ -36,7 +36,7 @@ public abstract class AbstractRecursiveTeamAction extends AbstractNonRecursiveTe
 	}
 	
 	public IResource []getSelectedResourcesRecursive(final IStateFilter filter, final int depth) {
-		final IResource [][]retVal = new IResource[1][];
+		final IResource [][]retVal = new IResource[][] {new IResource[0]};
 		IActionOperation op = new AbstractActionOperation("Operation.CollectingResources") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				retVal[0] = FileUtility.getResourcesRecursive(AbstractRecursiveTeamAction.this.getSelectedResources(), filter, depth, this, monitor);
