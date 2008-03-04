@@ -14,7 +14,7 @@ package org.eclipse.team.svn.ui.history;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
+import java.util.LinkedHashSet;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFileState;
@@ -112,6 +112,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 	
 	protected long limit = 25;
 	protected boolean pagingEnabled = false;
+	protected boolean pending;
 	protected int options = 0;
 
 	protected IResource compareWith;
@@ -273,14 +274,16 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 					catch (CoreException ex) {
 						UILoggedOperation.reportError(SVNTeamUIPlugin.instance().getResource("HistoryView.Name"), ex);
 					}
+					this.setButtonsEnablement();
 				}
 			}
 		}
 
-		this.setButtonsEnablement();
-
 		if (this.repositoryResource != null && (refreshType == ISVNHistoryView.REFRESH_ALL || refreshType == ISVNHistoryView.REFRESH_REMOTE)) {
 			this.logMessages = null;
+			this.pending = true;
+			this.setButtonsEnablement();
+			this.history.refresh(LogMessagesComposite.REFRESH_ALL);
 			GetLogMessagesOperation msgOp = new GetLogMessagesOperation(this.repositoryResource, this.stopOnCopyAction.isChecked());
 			msgOp.setLimit(this.limit);
 			this.fetchRemoteHistory(msgOp);
@@ -296,6 +299,10 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 
 	public boolean isGrouped() {
 		return this.groupByDateAction.isChecked();
+	}
+	
+	public boolean isPending() {
+		return this.pending;
 	}
 
 	public int getMode() {
@@ -693,8 +700,6 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 				}
 
 				SVNHistoryPage.this.currentRevision = revision;
-				SVNHistoryPage.this.pagingEnabled = SVNHistoryPage.this.limit > 0 && SVNHistoryPage.this.logMessages == null ? msgsOp.getMessages().length == SVNHistoryPage.this.limit
-						: msgsOp.getMessages().length == SVNHistoryPage.this.limit + 1;
 				SVNHistoryPage.this.addPage(msgsOp.getMessages());
 
 				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
@@ -743,16 +748,17 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 	protected void addPage(SVNLogEntry[] newMessages) {
 		if (this.logMessages == null) {
 			if (newMessages.length > 0) {
+				this.pending = false;
 				this.logMessages = newMessages;
+				this.pagingEnabled = this.limit > 0 && newMessages.length == this.limit;
 			}
 		}
 		else if (newMessages.length > 1) {
-			if (newMessages[1].revision == this.logMessages[0].revision) {
-				return;
-			}
-			List<SVNLogEntry> fullList = new ArrayList<SVNLogEntry>(Arrays.asList(this.logMessages));
-			fullList.addAll(Arrays.asList(newMessages).subList(1, newMessages.length));
-			this.logMessages = fullList.toArray(new SVNLogEntry[fullList.size()]);
+			LinkedHashSet<SVNLogEntry> entries = new LinkedHashSet<SVNLogEntry>(Arrays.asList(this.logMessages));
+			int oldSize = entries.size();
+			entries.addAll(Arrays.asList(newMessages));
+			this.logMessages = entries.toArray(new SVNLogEntry[entries.size()]);
+			this.pagingEnabled = this.limit > 0 && (newMessages.length == this.limit + 1 || entries.size() - oldSize < newMessages.length - 1);
 		}
 	}
 
@@ -821,7 +827,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 	protected void setButtonsEnablement() {
 		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(this.wcResource);
 		boolean isConnected = this.wcResource != null || this.repositoryResource != null;
-		boolean enableRepo = local != null && IStateFilter.SF_ONREPOSITORY.accept(local) || this.repositoryResource != null;
+		boolean enableRepo = (local != null && IStateFilter.SF_ONREPOSITORY.accept(local) || this.repositoryResource != null) && !this.pending;
 
 		this.filterDropDownAction.setEnabled(enableRepo && this.repositoryResource != null && this.logMessages != null);
 		this.clearFilterDropDownAction.setEnabled(this.isFilterEnabled());

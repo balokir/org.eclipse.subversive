@@ -32,6 +32,7 @@ public interface ISVNHistoryViewInfo {
 	public IRepositoryResource getRepositoryResource();
 	public long getCurrentRevision();
 	
+	public boolean isPending();
 	public boolean isRelatedPathsOnly();
 	public boolean isGrouped();
 	public int getMode();
