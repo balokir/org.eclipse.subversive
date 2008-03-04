@@ -365,6 +365,11 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				SVNTeamUIPlugin.instance().getWorkbench().getDisplay().syncExec(new Runnable() {
 					public void run() {
+						if (msgsOp.getExecutionState() != IActionOperation.OK) {
+							SelectRevisionPanel.this.pending = false;
+							SelectRevisionPanel.this.history.refresh(LogMessagesComposite.REFRESH_ALL);
+							return;
+						}
 						SelectRevisionPanel.this.addPage(msgsOp.getMessages());
 						SelectRevisionPanel.this.history.refresh(LogMessagesComposite.REFRESH_ALL);
 						SelectRevisionPanel.this.setPagingEnabled();
@@ -386,7 +391,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
 		};
 		CompositeOperation op = new CompositeOperation(showOp.getId());
 		op.add(msgsOp);
-		op.add(showOp, new IActionOperation[] {msgsOp});
+		op.add(showOp);
 		UIMonitorUtility.doTaskNowDefault(op, true);
     }
     

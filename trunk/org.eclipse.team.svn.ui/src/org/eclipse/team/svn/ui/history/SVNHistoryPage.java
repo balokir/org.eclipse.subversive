@@ -691,6 +691,15 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 			private long revision = SVNHistoryPage.this.currentRevision;
 
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
+				if (msgsOp.getExecutionState() != IActionOperation.OK) {
+					SVNHistoryPage.this.pending = false;
+					UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+						public void run() {
+							SVNHistoryPage.this.history.refresh(LogMessagesComposite.REFRESH_ALL);
+						}
+					});
+					return;
+				}
 				if (SVNHistoryPage.this.wcResource == null) {
 					this.revision = SVNHistoryPage.this.getRepositoryResource().getRevision();
 				}
@@ -727,7 +736,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		CompositeOperation op = new CompositeOperation(showOp.getId(), true);
 		op.add(new CorrectRevisionOperation(msgsOp, this.repositoryResource, this.currentRevision, this.wcResource));
 		op.add(msgsOp);
-		op.add(showOp, new IActionOperation[] { msgsOp });
+		op.add(showOp);
 
 		ProgressMonitorUtility.doTaskScheduled(op, false);
 	}
