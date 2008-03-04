@@ -117,7 +117,10 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 	}
 	
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		final IPath destination = new Path(this.projectLocation).append(this.project.getName());
+		String projectName = this.project.isAccessible() ?
+				this.project.getLocation().toString().substring(this.project.getLocation().toString().lastIndexOf("/") + 1)
+				: this.project.getName();
+		final IPath destination = new Path(this.projectLocation).append(projectName);
 
 		ProgressMonitorUtility.doSubTask(this, new IUnprotectedOperation() {
 			public void run(IProgressMonitor monitor) throws Exception {
