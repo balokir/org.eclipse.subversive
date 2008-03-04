@@ -43,7 +43,7 @@ public class LockAction extends AbstractSynchronizeModelAction {
 	}
 	
 	protected FastSyncInfoFilter getSyncInfoFilter() {
-		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.OUTGOING, SyncInfo.CONFLICTING}) {
+		return new FastSyncInfoFilter() {
             public boolean select(SyncInfo info) {
                 return super.select(info) && IStateFilter.SF_READY_TO_LOCK.accept(((AbstractSVNSyncInfo)info).getLocalResource());
             }
