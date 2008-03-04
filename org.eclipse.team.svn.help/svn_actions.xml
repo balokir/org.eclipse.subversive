@@ -19,5 +19,5 @@
 	<topic label="Setting keywords" href="teamSupport/SVNaction/set_keys.html"/>
 	<topic label="Patching" href="teamSupport/SVNaction/patch.html"/>
 	<topic label="Reverting changes" href="teamSupport/SVNaction/revert.html"/>
-	<topic label="Exporting" href="teamSupport/SVNaction/export.html"/>
+	<topic label="Extracting changes" href="teamSupport/SVNaction/extract.html"/>
 </toc>
