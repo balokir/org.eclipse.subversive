@@ -19,7 +19,7 @@
 	<topic label="SVN Toolbar" href="teamSupport/svn_toolbar.html"/>
 	<topic label="SVN Label Decorations" href="teamSupport/svn_label_decor.html"/>
 	<topic label="'SVN' main menu group" href="teamSupport/svn_main_menu.html"/>
-	<topic label="SVN® actions" href="teamSupport/actions.html">
+	<topic label="Actions" href="teamSupport/actions.html">
 		<link toc="svn_actions.xml" />
 	</topic>
 	<anchor id="subversive_actions" />

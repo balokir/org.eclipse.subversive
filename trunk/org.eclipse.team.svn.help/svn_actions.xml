@@ -2,7 +2,7 @@
 <?NLS TYPE="org.eclipse.help.toc"?>
 <?eclipse version="3.0"?>
 
-<toc label="SVN® action" href="teamSupport/actions.html">
+<toc label="Actions" href="teamSupport/actions.html">
 	<topic label="Sharing a project" href="teamSupport/SVNaction/share.html"/>
 	<topic label="Checking out" href="teamSupport/SVNaction/check_out.html"/>
 	<topic label="Commiting" href="teamSupport/SVNaction/commit.html"/>
