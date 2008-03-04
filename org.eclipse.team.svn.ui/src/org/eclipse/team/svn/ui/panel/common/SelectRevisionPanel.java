@@ -11,9 +11,8 @@
 
 package org.eclipse.team.svn.ui.panel.common;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.LinkedHashSet;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -83,6 +82,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
 	protected ISelectionChangedListener tableViewerListener;
 	protected IPropertyChangeListener configurationListener;
 	protected boolean initialStopOnCopy;
+	protected boolean pending;
 
 	public SelectRevisionPanel(GetLogMessagesOperation msgOp, boolean multiSelect) {
 		this(msgOp, multiSelect, SVNRevision.INVALID_REVISION_NUMBER);
@@ -153,6 +153,10 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
     
     public boolean isRelatedPathsOnly() {
     	return this.hideUnrelatedItem.getSelection();
+    }
+    
+    public boolean isPending() {
+    	return this.pending;
     }
     
     public void createControlsImpl(Composite parent) {
@@ -263,7 +267,6 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
     	    this.pagingEnabled = false;
         }
     	this.pagingEnabled = SelectRevisionPanel.this.limit > 0 && this.logMessages.length == SelectRevisionPanel.this.limit;
-		this.fetchHistory(null);
 		
         this.setPagingEnabled();
         this.clearFilterItem.setEnabled(false);
@@ -313,6 +316,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
 				SelectRevisionPanel.this.refresh();
 			}
     	});
+    	this.pending = true;
     	this.history.refresh(LogMessagesComposite.REFRESH_ALL);
         this.showResourceLabel();
     }
@@ -334,12 +338,16 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
 
     protected void addPage(SVNLogEntry[] newMessages) {
     	if (this.logMessages == null) {
+    		this.pending = false;
 			this.logMessages = newMessages.length > 0 ? newMessages : null;
+			this.pagingEnabled = this.limit > 0 && newMessages.length == this.limit;
 		}
 		else if (newMessages.length > 1) {
-			List<SVNLogEntry> fullList = new ArrayList<SVNLogEntry>(Arrays.asList(this.logMessages));
-			fullList.addAll(Arrays.asList(newMessages).subList(1, newMessages.length));
-			this.logMessages = fullList.toArray(new SVNLogEntry[fullList.size()]);		
+			LinkedHashSet<SVNLogEntry> entries = new LinkedHashSet<SVNLogEntry>(Arrays.asList(this.logMessages));
+			int oldSize = entries.size();
+			entries.addAll(Arrays.asList(newMessages));
+			this.logMessages = entries.toArray(new SVNLogEntry[entries.size()]);
+			this.pagingEnabled = this.limit > 0 && (newMessages.length == this.limit + 1 || entries.size() - oldSize < newMessages.length - 1);
 		}
     }
     
@@ -357,7 +365,6 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				SVNTeamUIPlugin.instance().getWorkbench().getDisplay().syncExec(new Runnable() {
 					public void run() {
-						SelectRevisionPanel.this.pagingEnabled = SelectRevisionPanel.this.limit > 0 && SelectRevisionPanel.this.logMessages == null ? msgsOp.getMessages().length == SelectRevisionPanel.this.limit : msgsOp.getMessages().length == SelectRevisionPanel.this.limit + 1;
 						SelectRevisionPanel.this.addPage(msgsOp.getMessages());
 						SelectRevisionPanel.this.history.refresh(LogMessagesComposite.REFRESH_ALL);
 						SelectRevisionPanel.this.setPagingEnabled();
@@ -421,6 +428,8 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
 		long revision = this.history.getSelectedRevision();
 		this.pagingEnabled = true;
 		this.logMessages = null;
+		this.pending = true;
+		this.history.refresh(LogMessagesComposite.REFRESH_ALL);
 		this.showNextPage(false);
 		this.history.setSelectedRevision(revision);
 	}

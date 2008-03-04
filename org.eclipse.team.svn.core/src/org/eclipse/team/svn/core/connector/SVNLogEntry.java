@@ -70,5 +70,16 @@ public class SVNLogEntry {
 		this.author = author;
 		this.changedPaths = changedPaths;
 	}
+	
+	public int hashCode() {
+		return (int)this.revision;
+	}
 
+	public boolean equals(Object obj) {
+		if (obj instanceof SVNLogEntry) {
+			return this.revision == ((SVNLogEntry)obj).revision;
+		}
+		return false;
+	}
+	
 }

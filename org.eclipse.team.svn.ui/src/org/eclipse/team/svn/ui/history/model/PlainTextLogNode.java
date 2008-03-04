@@ -13,6 +13,8 @@ package org.eclipse.team.svn.ui.history.model;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.history.data.RootHistoryCategory;
 
 /**
  * Plain text nodes for History View
@@ -40,6 +42,9 @@ public class PlainTextLogNode extends AbstractLogNode {
 	}
 	
 	public ImageDescriptor getImageDescriptor() {
+		if (this.label.equals(RootHistoryCategory.PENDING[0])) {
+			return SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/repositories/browser_pending.gif");
+		}
 		return null;
 	}
 	

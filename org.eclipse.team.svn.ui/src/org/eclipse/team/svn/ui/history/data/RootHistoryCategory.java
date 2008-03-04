@@ -36,6 +36,7 @@ public class RootHistoryCategory extends HistoryCategory {
 	public static String []NO_REMOTE;
 	public static String []NO_LOCAL;
 	public static String []NO_REVS;
+	public static String []PENDING;
 	
 	protected Object []allHistory;
 	
@@ -58,6 +59,7 @@ public class RootHistoryCategory extends HistoryCategory {
 			RootHistoryCategory.NO_REMOTE = new String[] {SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.NoRemote")};
 			RootHistoryCategory.NO_LOCAL = new String[] {SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.NoLocal")};
 			RootHistoryCategory.NO_REVS = new String[] {SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.NoRevs")};
+			RootHistoryCategory.PENDING = new String[] {SVNTeamUIPlugin.instance().getResource("RepositoriesView.Model.Pending")};
 		}
 		this.info = info;
 	    this.pathData = new HashMap<Object, SVNChangedPathData []>();
@@ -370,14 +372,14 @@ public class RootHistoryCategory extends HistoryCategory {
 	
 	protected Object []getRemoteHistoryInternal() {
 		if (this.remoteHistory == null) {
-			return RootHistoryCategory.NO_REMOTE;
+			return this.info.isPending() ? RootHistoryCategory.PENDING : RootHistoryCategory.NO_REMOTE;
 		}
 		return this.info.isGrouped() ? this.categoriesRemote : this.remoteHistory;
 	}
 	
 	protected Object []getAllHistoryInternal() {
 		if (this.allHistory == null) {
-			return RootHistoryCategory.NO_REVS;
+			return this.info.isPending() ? RootHistoryCategory.PENDING : RootHistoryCategory.NO_REVS;
 		}
 		return this.info.isGrouped() && this.categoriesBoth != null ? this.categoriesBoth : this.allHistory;
 	}
