@@ -303,9 +303,11 @@ public class LogMessagesComposite extends SashForm {
 					ILogNode selection = (ILogNode)tSelection.getFirstElement();
 					if (this.oldSelection != selection || this.hideUnrelated != LogMessagesComposite.this.info.isRelatedPathsOnly()) {
 						String message = selection.getComment();
-						message = message == null || message.length() == 0 ? SVNTeamPlugin.instance().getResource("SVNInfo.NoComment") : message;
+						if (message == null || message.length() == 0) {
+							message = selection.getType() == ILogNode.TYPE_SVN ? SVNTeamPlugin.instance().getResource("SVNInfo.NoComment") : "";
+						}
 						LogMessagesComposite.this.commentViewManager.setComment(message);
-						
+
 						Collection<String> relatedPrefixes = LogMessagesComposite.this.info.isRelatedPathsOnly() ? LogMessagesComposite.this.rootCategory.getRelatedPathPrefixes() : null;
 						Collection<String> relatedParents = LogMessagesComposite.this.info.isRelatedPathsOnly() ? LogMessagesComposite.this.rootCategory.getRelatedParents() : null;
 						SVNChangedPathData []pathData = LogMessagesComposite.this.rootCategory.getPathData(selection);
