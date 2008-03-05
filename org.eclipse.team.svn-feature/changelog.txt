@@ -16,6 +16,7 @@ Features:
  * Add "Extract Changes..." action to log messages presentation in History View (bug 220540)
  * Reuse compare editor when comparing same resource revisions or compare called for revisions from the History View (bug 219628)
  * Improve History View (new actions in Affected Paths) (bug 218480)
+ * Update JavaHL 1.5.0 connector binaries to alpha2 version (bug 221506)
 
 Fixes:
  * Compare window opens behind Revert dialog (bug 219775)
