@@ -14,6 +14,7 @@ package org.eclipse.team.svn.ui.extension.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -27,7 +28,7 @@ import org.eclipse.team.svn.ui.extension.factory.PredefinedProperty;
  */
 public class PredefinedPropertySet implements IPredefinedPropertySet {
 	
-	public List getPredefinedProperties(IResource []resources) {
+	public List<PredefinedProperty> getPredefinedProperties(IResource []resources) {
 		
 		List properties = new ArrayList();
 		
@@ -51,14 +52,14 @@ public class PredefinedPropertySet implements IPredefinedPropertySet {
 		return properties;
 	}
 	
-	public HashMap<String, String> getPredefinedPropertiesRegexps(IResource []resources) {
+	public Map<String, String> getPredefinedPropertiesRegexps(IResource []resources) {
 		
 		HashMap<String, String> regexpmap = new HashMap();
 		
 		regexpmap.put("svn:eol-style", "((native)|(LF)|(CR)|(CRLF))");
 		regexpmap.put("svn:executable", null);
 		regexpmap.put("svn:externals", "");
-		regexpmap.put("svn:ignore", "((\\?+)|(\\*+)|(\\w+)|(\\.+)|(\\s+))+");
+		regexpmap.put("svn:ignore", "([^\\\\/\\:])+");
 		regexpmap.put("svn:keywords", "((Date)|(Revision)|(Author)|(HeadURL)|(Id)|(LastChangedDate)|(Rev)|(LastChangedRevision)|(LastChangedBy)|(URL)|(\\s))+");
 		regexpmap.put("svn:needs-lock", null);
 		regexpmap.put("svn:mime-type", null);
