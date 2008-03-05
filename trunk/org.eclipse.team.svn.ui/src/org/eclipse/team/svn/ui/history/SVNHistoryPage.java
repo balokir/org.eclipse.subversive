@@ -76,8 +76,6 @@ import org.eclipse.ui.PlatformUI;
  * @author Alexander Gurov
  */
 public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IResourceStatesListener {
-	public static final String VIEW_ID = "org.eclipse.team.ui.GenericHistoryView";
-	
 	protected IResource wcResource;
 	protected IRepositoryResource repositoryResource;
 

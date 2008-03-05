@@ -172,7 +172,7 @@ public class BuiltInAnnotate {
 	    	this.textEditor.showRevisionInformation(info, SVNTeamQuickDiffProvider.class.getName());
 	    }
 	    
-	    IHistoryView view = (IHistoryView)page.showView((SVNHistoryPage.VIEW_ID));
+	    IHistoryView view = (IHistoryView)page.showView(IHistoryView.VIEW_ID);
 		if (view != null) {
 			this.historyPage = (SVNHistoryPage)view.showHistoryFor(resource);
 			//FIXME enqueue selection event
