@@ -98,21 +98,23 @@ public class RootHistoryCategory extends HistoryCategory {
 	}
 	
 	public void refreshModel() {
-		this.localHistory = this.info.getLocalHistory();
-		this.remoteHistory = this.info.getRemoteHistory();
-		if (this.localHistory == null) {
-			this.allHistory = this.remoteHistory;
+		synchronized (this.info) {
+			this.localHistory = this.info.getLocalHistory();
+			this.remoteHistory = this.info.getRemoteHistory();
+			if (this.localHistory == null) {
+				this.allHistory = this.remoteHistory;
+			}
+			else if (this.remoteHistory == null) {
+				this.allHistory = this.localHistory;
+			}
+			else {
+				this.allHistory = new Object[this.localHistory.length + this.remoteHistory.length];
+				System.arraycopy(this.localHistory, 0, this.allHistory, 0, this.localHistory.length);
+				System.arraycopy(this.remoteHistory, 0, this.allHistory, this.localHistory.length, this.remoteHistory.length);
+			}
+			this.collectRelatedNodes();
+			this.collectCategoriesAndMapData();
 		}
-		else if (this.remoteHistory == null) {
-			this.allHistory = this.localHistory;
-		}
-		else {
-			this.allHistory = new Object[this.localHistory.length + this.remoteHistory.length];
-			System.arraycopy(this.localHistory, 0, this.allHistory, 0, this.localHistory.length);
-			System.arraycopy(this.remoteHistory, 0, this.allHistory, this.localHistory.length, this.remoteHistory.length);
-		}
-		this.collectRelatedNodes();
-		this.collectCategoriesAndMapData();
 	}
 	
 	protected void collectRelatedNodes() {
