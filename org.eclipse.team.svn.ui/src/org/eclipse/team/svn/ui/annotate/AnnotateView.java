@@ -242,7 +242,7 @@ public class AnnotateView extends AbstractSVNView {
 		UIMonitorUtility.doTaskBusyDefault(new AbstractActionOperation("Operation.AShowHistoryPart") {
             protected void runImpl(IProgressMonitor monitor) throws Exception {
     			if (AnnotateView.this.historyView == null) {
-    				IHistoryView view = (IHistoryView)page.showView(SVNHistoryPage.VIEW_ID);
+    				IHistoryView view = (IHistoryView)page.showView(IHistoryView.VIEW_ID);
     				if (view != null) {
     					AnnotateView.this.historyView = (SVNHistoryPage)view.showHistoryFor(AnnotateView.this.wcResource != null ? (Object)AnnotateView.this.wcResource : AnnotateView.this.repositoryResource);
     				}

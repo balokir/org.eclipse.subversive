@@ -75,12 +75,17 @@ public class ShowHistoryViewOperation extends AbstractActionOperation {
 				
 				if (page != null) {
 					try {
-						IHistoryView historyView = (IHistoryView)page.showView(SVNHistoryPage.VIEW_ID);
+						IHistoryView historyView = (IHistoryView)page.showView(IHistoryView.VIEW_ID);
 						if (historyView != null) {
 							SVNHistoryPage hPage = (SVNHistoryPage)historyView.showHistoryFor(ShowHistoryViewOperation.this.local != null ? (Object)ShowHistoryViewOperation.this.local : ShowHistoryViewOperation.this.remote);
 							if (hPage != null) {
 								hPage.setOptions(ShowHistoryViewOperation.this.mask, ShowHistoryViewOperation.this.options);
 								hPage.setCompareWith(ShowHistoryViewOperation.this.compareWith);
+								if (hPage.getResource() != ShowHistoryViewOperation.this.local)
+								{
+									// view is disconnected
+									hPage.showHistory(ShowHistoryViewOperation.this.local);
+								}
 							}
 						}
 					}

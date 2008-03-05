@@ -12,9 +12,9 @@
 package org.eclipse.team.svn.ui.repository;
 
 import org.eclipse.team.svn.ui.annotate.AnnotateView;
-import org.eclipse.team.svn.ui.history.SVNHistoryPage;
 import org.eclipse.team.svn.ui.properties.PropertiesView;
 import org.eclipse.team.svn.ui.repository.browser.RepositoryBrowser;
+import org.eclipse.team.ui.history.IHistoryView;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
@@ -39,8 +39,7 @@ public class RepositoryPerspective implements IPerspectiveFactory {
 		layout.addShowViewShortcut(RepositoriesView.VIEW_ID);
 		layout.addShowViewShortcut(RepositoryBrowser.VIEW_ID);
 		layout.addShowViewShortcut(AnnotateView.VIEW_ID);
-		layout.addShowViewShortcut(SVNHistoryPage.VIEW_ID);
-//		layout.addShowViewShortcut(HistoryView.VIEW_ID);
+		layout.addShowViewShortcut(IHistoryView.VIEW_ID);
 		layout.addShowViewShortcut(PropertiesView.VIEW_ID);
 		
 		// Add  "perspective short cut". They will be present in "open perspective" menu
@@ -58,8 +57,7 @@ public class RepositoryPerspective implements IPerspectiveFactory {
 		
 		IFolderLayout bottom = layout.createFolder("bottom", IPageLayout.BOTTOM, 0.66f, editorArea);
 		bottom.addView(RepositoryBrowser.VIEW_ID);
-		bottom.addView(SVNHistoryPage.VIEW_ID);
-//		bottom.addView(HistoryView.VIEW_ID);
+		bottom.addView(IHistoryView.VIEW_ID);
 		bottom.addView(PropertiesView.VIEW_ID);
 	}
 
