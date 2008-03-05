@@ -476,7 +476,7 @@ public class HistoryActionManager {
 					HistoryActionManager.this.addRevisionLinks(selection);
 				}
 			});
-			tAction.setEnabled(selection.length == 1);
+			tAction.setEnabled(selection.length > 0);
 			
 			manager.add(new Separator());
 			
