@@ -34,17 +34,27 @@ public class SVNConflictResolution {
 	/**
 	 * Resolve the conflict by choosing the repository version.
 	 */
-	public static final int CHOOSE_REMOTE = 2;
+	public static final int CHOOSE_REMOTE_FULL = 2;
 
 	/**
 	 * Resolve the conflict by choosing local version.
 	 */
-	public static final int CHOOSE_LOCAL = 3;
+	public static final int CHOOSE_LOCAL_FULL = 3;
 
 	/**
-	 * Resolve the conflict by choosing the [manually] merged version.
+	 * Resolve the conflict by choosing the incoming (repository) version of the object (for conflicted hunks only).
 	 */
-	public static final int CHOOSE_MERGED = 4;
+	public static final int CHOOSE_REMOTE = 4;
+
+	/**
+	 * Resolve the conflict by choosing own (local) version of the object (for conflicted hunks only).
+	 */
+	public static final int CHOOSE_LOCAL = 5;
+
+	/**
+	 * Resolve the conflict by choosing the merged object (potentially manually edited).
+	 */
+	public static final int CHOOSE_MERGED = 6;
 
 	/**
 	 * The acceptable choice.
