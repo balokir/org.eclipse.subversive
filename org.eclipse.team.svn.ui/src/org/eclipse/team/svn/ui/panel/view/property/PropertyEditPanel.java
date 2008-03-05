@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -82,7 +83,7 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 	protected boolean applyToFiles;
 	protected boolean applyToFolders;
 	protected List predefinedProperties;
-	protected HashMap<String, String> predefinedPropertiesRegexps;
+	protected Map<String, String> predefinedPropertiesRegexps;
 	protected HashMap<String, AbstractFormattedVerifier> verifiers;
 	protected IResource []selectedResources;
 	protected SVNTeamPropsPreferencePage.CustomProperty [] customProps;

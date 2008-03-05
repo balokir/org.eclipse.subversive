@@ -11,8 +11,8 @@
 
 package org.eclipse.team.svn.ui.extension.factory;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IResource;
 
@@ -22,6 +22,6 @@ import org.eclipse.core.resources.IResource;
  * @author Sergiy Logvin
  */
 public interface IPredefinedPropertySet {
-	public List getPredefinedProperties(IResource []resources);
-	public HashMap<String, String> getPredefinedPropertiesRegexps(IResource []resources);	
+	public List<PredefinedProperty> getPredefinedProperties(IResource []resources);
+	public Map<String, String> getPredefinedPropertiesRegexps(IResource []resources);	
 }
