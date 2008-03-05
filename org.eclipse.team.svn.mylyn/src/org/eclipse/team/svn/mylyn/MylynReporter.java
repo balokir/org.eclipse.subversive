@@ -11,13 +11,14 @@
 
 package org.eclipse.team.svn.mylyn;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.mylyn.internal.bugzilla.core.BugzillaReportElement;
-import org.eclipse.mylyn.internal.bugzilla.core.BugzillaRepositoryConnector;
 import org.eclipse.mylyn.tasks.core.AbstractAttributeFactory;
 import org.eclipse.mylyn.tasks.core.AbstractTask;
 import org.eclipse.mylyn.tasks.core.AbstractTaskDataHandler;
+import org.eclipse.mylyn.tasks.core.RepositoryStatus;
 import org.eclipse.mylyn.tasks.core.RepositoryTaskAttribute;
 import org.eclipse.mylyn.tasks.core.RepositoryTaskData;
 import org.eclipse.mylyn.tasks.core.TaskRepository;
@@ -70,13 +71,11 @@ public class MylynReporter extends AbstractActionOperation implements IReporter 
 		taskData.setNew(true);
 		taskData.setAttributeValue(RepositoryTaskAttribute.PRODUCT, this.settings.getProductName());
 		
-		//FIXME Remove Bugzilla dependency when Mylyn API is improved
-		BugzillaRepositoryConnector.setupNewBugAttributes(MylynReporter.this.repository, taskData);
-//		if (!MylynReporter.this.taskDataHandler.initializeTaskData(MylynReporter.this.repository, taskData, monitor)) {
-//			throw new CoreException(new RepositoryStatus(IStatus.ERROR, TasksUiPlugin.ID_PLUGIN,
-//					RepositoryStatus.ERROR_REPOSITORY,
-//					"The selected repository does not support creating new tasks."));
-//		}
+		if (!this.taskDataHandler.initializeTaskData(MylynReporter.this.repository, taskData, monitor)) {
+			throw new CoreException(new RepositoryStatus(IStatus.ERROR, TasksUiPlugin.ID_PLUGIN,
+					RepositoryStatus.ERROR_REPOSITORY,
+					"The selected repository does not support creating new tasks."));
+		}
 		
 		taskData.setSummary(this.buildSubject());
 		taskData.setDescription(this.buildReport());
