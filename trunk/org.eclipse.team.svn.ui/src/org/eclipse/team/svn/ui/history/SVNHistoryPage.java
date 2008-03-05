@@ -171,7 +171,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		}
 	}
 
-	public void clear() {
+	public synchronized void clear() {
 		this.currentRevision = SVNRevision.INVALID_REVISION_NUMBER;
 		this.repositoryResource = null;
 		this.wcResource = null;
@@ -179,6 +179,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		this.localHistory = null;
 		this.filterByAuthor = null;
 		this.filterByComment = null;
+		this.pending = false;
 
 		this.setButtonsEnablement();
 		this.history.refresh(LogMessagesComposite.REFRESH_ALL);
