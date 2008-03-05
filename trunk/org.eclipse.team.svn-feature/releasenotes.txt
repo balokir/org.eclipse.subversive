@@ -21,6 +21,7 @@ Version 0.7.0.v20080307 release date: 07 March 2008
 	 * Add "Extract Changes..." action to log messages presentation in History View (bug 220540)
 	 * Reuse compare editor when comparing same resource revisions or compare called for revisions from the History View (bug 219628)
 	 * Improve History View (new actions in Affected Paths) (bug 218480)
+	 * Update JavaHL 1.5.0 connector binaries to alpha2 version (bug 221506)
 	
 	Fixes:
 	 * Compare window opens behind Revert dialog (bug 219775)
@@ -43,7 +44,7 @@ Version 0.7.0.v20080307 release date: 07 March 2008
 
    Subversive requires JDK 1.5 or higher and supports following versions of Eclipse:
     * 3.3 (tested with 3.3, 3.3.1)
-    * 3.4 (tested with 3.4M4)
+    * 3.4 (tested with 3.4M5)
    
    Subversive supports Subversion versions 1.1-1.4 with SVN Kit 1.1.4 and JavaHL 1.4.5, 
    Subversion version 1.5 with SVN Kit 1.2.0 and JavaHL 1.5.0
