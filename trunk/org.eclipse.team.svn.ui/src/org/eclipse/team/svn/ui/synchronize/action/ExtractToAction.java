@@ -16,6 +16,7 @@ import java.util.HashSet;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
@@ -25,10 +26,10 @@ import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.ExtractToOperationLocal;
 import org.eclipse.team.svn.core.operation.remote.ExtractToOperationRemote;
-import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
@@ -44,77 +45,28 @@ public class ExtractToAction extends AbstractSynchronizeModelAction {
 	}
 
 	protected FastSyncInfoFilter getSyncInfoFilter() {
-		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.INCOMING, SyncInfo.OUTGOING});
+		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.INCOMING, SyncInfo.OUTGOING, SyncInfo.CONFLICTING});
 	}
-
+	
+	protected boolean updateSelection(IStructuredSelection selection) {
+		super.updateSelection(selection);
+		AbstractSVNSyncInfo [] infos = this.getSVNSyncInfos();
+		for (int i = 0; i < infos.length; i++) {
+			if (SyncInfo.getDirection(infos[i].getKind()) == SyncInfo.CONFLICTING) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
-		IResource []outgoingChanges = this.syncInfoSelector.getSelectedResources(new ISyncStateFilter.StateFilterWrapper(IStateFilter.SF_ALL, true) {
-			public boolean allowsRecursion(IResource resource, String state, int mask) {
-				return true;
-			}
-		
-			public boolean allowsRecursion(ILocalResource resource) {
-				return true;
-			}
-		
-			public boolean accept(IResource resource, String state, int mask) {
-				return false;
-			}
-		
-			public boolean accept(ILocalResource resource) {
-				return IStateFilter.SF_COMMITABLE.accept(resource) || IStateFilter.SF_NEW.accept(resource);
-			}
-		
-			public boolean acceptRemote(IResource resource, String state, int mask) {
-				return false;
-			}
-		});
-		IResource []incomingChanges = this.syncInfoSelector.getSelectedResources(new ISyncStateFilter.StateFilterWrapper(IStateFilter.SF_ALL, true) {
-			public boolean allowsRecursion(IResource resource, String state, int mask) {
-				return true;
-			}
-		
-			public boolean allowsRecursion(ILocalResource resource) {
-				return true;
-			}
-		
-			public boolean accept(IResource resource, String state, int mask) {
-				return false;
-			}
-		
-			public boolean accept(ILocalResource resource) {
-				return false;
-			}
-		
-			public boolean acceptRemote(IResource resource, String state, int mask) {
-				return !IStateFilter.SF_NOTMODIFIED.accept(resource, state, mask);
-			}
-		});
-		HashSet<IResource> deletionsOnly = new HashSet<IResource>(Arrays.asList(this.syncInfoSelector.getSelectedResources(new ISyncStateFilter() {
-			public boolean allowsRecursion(IResource resource, String state, int mask) {
-				return true;
-			}
-		
-			public boolean allowsRecursion(ILocalResource resource) {
-				return true;
-			}
-		
-			public boolean accept(IResource resource, String state, int mask) {
-				return false;
-			}
-		
-			public boolean accept(ILocalResource resource) {
-				return false;
-			}
-		
-			public boolean acceptRemote(IResource resource, String state, int mask) {
-				return IStateFilter.SF_DELETED.accept(resource, state, mask);
-			}
-		
-			public boolean acceptGroupNodes() {
-				return false;
-			}
-		})));
+		IResource []outgoingChanges = this.syncInfoSelector.getSelectedResources(
+				new ISyncStateFilter.StateFilterWrapper(new IStateFilter.OrStateFilter(
+						new IStateFilter[] {IStateFilter.SF_COMMITABLE, IStateFilter.SF_NEW}), null, true));
+		IResource []incomingChanges = this.syncInfoSelector.getSelectedResources(
+				new ISyncStateFilter.StateFilterWrapper(null, IStateFilter.SF_NOTMODIFIED, true));
+		HashSet<IResource> deletionsOnly = new HashSet<IResource>(Arrays.asList(this.syncInfoSelector.getSelectedResources(
+				new ISyncStateFilter.StateFilterWrapper(null, IStateFilter.SF_DELETED, false))));
 		HashSet<IRepositoryResource> incomingResourcesToOperate = new HashSet<IRepositoryResource>();
 		HashSet<String> markedForDelition = new HashSet<String>();
 		for (IResource current : incomingChanges) {
