@@ -98,7 +98,6 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
-import org.eclipse.team.svn.core.svnstorage.SVNRepositoryFolder;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -860,6 +859,7 @@ public class HistoryActionManager {
 			resource2project.put(remote.getUrl(), local.getName());
 		}
 		HashMap<SVNLogPath, Long> operablePaths = new HashMap<SVNLogPath, Long>();
+		HashSet<String> toDelete = new HashSet<String>();
 		for (int i = allLogs.length -1; i > -1; i--) {
 			SVNLogEntry current = allLogs[i];
 			if (current.revision <= selectedLogs[0].revision
@@ -873,10 +873,13 @@ public class HistoryActionManager {
 						operablePaths.put(operable, current.revision);
 						changesMapping.put(rootUrl + operable.path, operable.action);
 					}
+					else if ((rootUrl + operable.path).startsWith(selectedUrl.substring(0, selectedUrl.lastIndexOf("/")))
+							&& operable.action == ChangeType.DELETED) {
+						toDelete.add(rootUrl + operable.path);
+					}
 				}
 			}
 		}
-		HashSet<String> toDelete = new HashSet<String>();
 		for (String url : changesMapping.keySet()) {
 			if (changesMapping.get(url).equals(new Character(ChangeType.DELETED))) {
 				toDelete.add(url);
@@ -1499,10 +1502,8 @@ public class HistoryActionManager {
 		
 		protected void runImpl(IProgressMonitor monitor) throws Exception {
 			HashSet<IRepositoryResource> resourcesToReturn = new HashSet<IRepositoryResource>();
-			resourcesToReturn.add(this.newer);
-			ISVNConnector proxy = this.location.acquireSVNProxy();
 			ArrayList<SVNDiffStatus> statusesList = new ArrayList<SVNDiffStatus>();
-			
+			ISVNConnector proxy = this.location.acquireSVNProxy();
 			final LocateResourceURLInHistoryOperation op = new LocateResourceURLInHistoryOperation(new IRepositoryResource[] {this.older, this.newer}, true);
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
@@ -1511,7 +1512,8 @@ public class HistoryActionManager {
 			}, monitor, 3);
 			this.older = op.getRepositoryResources()[0];
 			this.newer = op.getRepositoryResources()[1];
-			
+			resourcesToReturn.add(this.newer);
+			resourcesToReturn.add(this.older);
 			SVNEntryRevisionReference refPrev = SVNUtility.getEntryRevisionReference(this.older);
 			SVNEntryRevisionReference refNext = SVNUtility.getEntryRevisionReference(this.newer);
 			try {
@@ -1536,20 +1538,6 @@ public class HistoryActionManager {
 				resourceToAdd.setPegRevision(SVNRevision.fromNumber(newer.getRevision()));
 				resourcesToReturn.add(resourceToAdd);
 			}
-			HashSet<IRepositoryResource> parentsToAdd = new HashSet<IRepositoryResource>();
-			for (IRepositoryResource current : resourcesToReturn) {
-				String name = current.getName();
-				String url = current.getUrl();
-				url = url.substring(0, url.lastIndexOf("/")); 
-				while (!name.equals(this.newer.getName())) {
-					IRepositoryResource toAdd = new SVNRepositoryFolder(this.location, url, current.getSelectedRevision());
-					toAdd.setPegRevision(current.getPegRevision());
-					parentsToAdd.add(toAdd);
-					name = toAdd.getName();
-					url = url.substring(0, url.lastIndexOf("/"));
-				}
-			}
-			resourcesToReturn.addAll(parentsToAdd);
 			this.repositoryResources = resourcesToReturn.toArray(new IRepositoryResource[0]);
 		}
 		
