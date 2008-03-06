@@ -46,7 +46,7 @@ public class ExtractToOperationRemote extends AbstractRepositoryOperation {
 	 * @param incomingResources - the resources to extract array
 	 * @param markedForDelition - the collection of the resource URLs to delete (can be empty but must not be null)
 	 * @param path - path to extract to
-	 * @param resource2projectNames - resource name to project name mapping (can be empty but must not be null)
+	 * @param resource2projectNames - resource URL to project name mapping (can be empty but must not be null)
 	 * @param delitionAllowed - specifies if deletion allowed if the resource is marked for deletion
 	 */
 	public ExtractToOperationRemote(IRepositoryResource []incomingResources, Collection<String> markedForDelition, String path, HashMap<String, String> resource2projectNames, boolean delitionAllowed) {
@@ -63,7 +63,7 @@ public class ExtractToOperationRemote extends AbstractRepositoryOperation {
 	 * @param incomingResourcesProvider - incoming resources to extract provider
 	 * @param markedForDelition - the collection of the resource URLs to delete (can be empty but must not be null)
 	 * @param path - path to extract to
-	 * @param resource2projectNames - resource name to project name mapping (can be empty but must not be null)
+	 * @param resource2projectNames - resource URL to project name mapping (can be empty but must not be null)
 	 * @param delitionAllowed - specifies if deletion allowed if the resource is marked for deletion
 	 */
 	public ExtractToOperationRemote(IRepositoryResourceProvider incomingResourcesProvider, Collection<String> markedForDelition, String path, HashMap<String, String> resource2projectNames, boolean delitionAllowed) {
@@ -95,10 +95,11 @@ public class ExtractToOperationRemote extends AbstractRepositoryOperation {
 			else {
 				toOperate = this.path + previousPath + currentURL.substring(previousPref.length());
 			}
-			for (String name : this.resource2projectNames.keySet()) {
-				if (toOperate.contains(name)) {
-					String [] parts = toOperate.split(name);
-					toOperate = parts[0] + this.resource2projectNames.get(name);
+			for (String url : this.resource2projectNames.keySet()) {
+				if (currentURL.contains(url)) {
+					String projectRepoName = url.substring(url.lastIndexOf("/") + 1);
+					String [] parts = toOperate.split(projectRepoName);
+					toOperate = parts[0] + this.resource2projectNames.get(url);
 					for (int i = 1; i < parts.length; i++) {
 						toOperate += parts[i];
 					}
@@ -121,10 +122,11 @@ public class ExtractToOperationRemote extends AbstractRepositoryOperation {
 					String parentUrl = current.getParent().getUrl();
 					if (previousPref != null) {
 						String dirsToMake = this.path + previousPath + parentUrl.substring(previousPref.length());
-						for (String name : this.resource2projectNames.keySet()) {
-							if (dirsToMake.contains(name)) {
-								String [] parts = dirsToMake.split(name);
-								dirsToMake = parts[0] + this.resource2projectNames.get(name);
+						for (String url : this.resource2projectNames.keySet()) {
+							if (parentUrl.contains(url)) {
+								String projectRepoName = url.substring(url.lastIndexOf("/") + 1);
+								String [] parts = dirsToMake.split(projectRepoName);
+								dirsToMake = parts[0] + this.resource2projectNames.get(url);
 								for (int i = 1; i < parts.length; i++) {
 									dirsToMake += parts[i];
 								}

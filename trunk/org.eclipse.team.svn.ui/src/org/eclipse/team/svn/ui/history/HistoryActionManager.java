@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
@@ -852,6 +853,12 @@ public class HistoryActionManager {
 		HashMap<String, Character> changesMapping = new HashMap<String, Character>();
 		String rootUrl = this.view.getRepositoryResource().getRepositoryLocation().getRepositoryRootUrl();
 		String selectedUrl = this.view.getRepositoryResource().getUrl();
+		HashMap<String, String> resource2project = new HashMap<String, String>();
+		IResource local = this.view.getResource();
+		if (local != null && local instanceof IProject) {
+			IRepositoryResource remote = this.view.getRepositoryResource();
+			resource2project.put(remote.getUrl(), local.getName());
+		}
 		HashMap<SVNLogPath, Long> operablePaths = new HashMap<SVNLogPath, Long>();
 		for (int i = allLogs.length -1; i > -1; i--) {
 			SVNLogEntry current = allLogs[i];
@@ -878,7 +885,7 @@ public class HistoryActionManager {
 		CompositeOperation op = new CompositeOperation(SVNTeamPlugin.instance().getResource("Operation.ExtractTo"));
 		FromDifferenceRepositoryResourceProvider provider = new FromDifferenceRepositoryResourceProvider(selectedLogs);
 		op.add(provider);
-		op.add(new ExtractToOperationRemote(provider, toDelete, path, new HashMap<String, String>(), true), new IActionOperation [] {provider});
+		op.add(new ExtractToOperationRemote(provider, toDelete, path, resource2project, true), new IActionOperation [] {provider});
 		UIMonitorUtility.doTaskScheduledActive(op);
 	}
 	
