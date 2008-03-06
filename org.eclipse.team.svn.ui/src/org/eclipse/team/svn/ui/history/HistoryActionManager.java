@@ -682,10 +682,34 @@ public class HistoryActionManager {
 			fileDialog.setMessage(SVNTeamUIPlugin.instance().getResource("ExportPanel.ExportFolder.Msg"));
 			String path = fileDialog.open();
 			if (path != null) {
-				IRepositoryResource resource = this.getResourceForSelectedRevision((SVNLogEntry)item.getEntity());
+				IRepositoryResource resource = this.traceUrlToRevision((SVNLogEntry)item.getEntity());
 		    	UIMonitorUtility.doTaskScheduledDefault(new ExportOperation(resource, path));
 		    }
 		}
+	}
+	
+	protected IRepositoryResource traceUrlToRevision(SVNLogEntry to) {
+		IRepositoryResource resource = this.getResourceForSelectedRevision(to);
+		String rootUrl = resource.getRepositoryLocation().getRepositoryRootUrl();
+		IRepositoryResource retVal = SVNUtility.copyOf(resource);
+		retVal.setPegRevision(SVNRevision.fromNumber(to.revision));
+		SVNLogEntry []entries = this.view.getFullRemoteHistory();
+		for (SVNLogEntry entry : entries) {
+			if (entry.revision == to.revision) {
+				break;
+			}
+			if (entry.changedPaths == null) {
+				return resource;
+			}
+			for (SVNLogPath path : entry.changedPaths) {
+				if (path.copiedFromPath != null && retVal.getUrl().endsWith(path.path)) {
+					String url = rootUrl + "/" + path.copiedFromPath;
+					retVal = retVal instanceof IRepositoryFile ? (IRepositoryResource)retVal.asRepositoryFile(url, false) : retVal.asRepositoryContainer(url, false);
+					break;
+				}
+			}
+		}
+		return retVal;
 	}
 	
 	protected void addRevisionLinks(ILogNode []tSelection) {
@@ -940,10 +964,7 @@ public class HistoryActionManager {
 	
 	protected IRepositoryResource getResourceForSelectedRevision(SVNLogEntry item) {
 		long revNum = item.revision;
-		IRepositoryResource res =
-			this.view.getRepositoryResource() instanceof IRepositoryFile ? 
-			(IRepositoryResource)((IRepositoryRoot)this.view.getRepositoryResource().getRoot()).asRepositoryFile(this.view.getRepositoryResource().getUrl(), false) : 
-			((IRepositoryRoot)this.view.getRepositoryResource().getRoot()).asRepositoryContainer(this.view.getRepositoryResource().getUrl(), false);
+		IRepositoryResource res = SVNUtility.copyOf(this.view.getRepositoryResource());
 		res.setSelectedRevision(SVNRevision.fromNumber(revNum));
 		res.setPegRevision(this.view.getRepositoryResource().getPegRevision());
 		return res;
