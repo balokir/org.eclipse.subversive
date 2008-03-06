@@ -30,9 +30,11 @@
 	<p>In Synchronize View you have a probability to extract local changes, remote changes or both.
 	<br/>Using local extracting will apply your local changes comparatively to the base revision to the specified location.
 	Using the remote one will apply the incoming changes to the specified location. 'Extract All' action provides a probability
-	to apply both local and incoming changes, but the resources marked as conflicted will be ignored.</p>
+	to apply both local and incoming changes, but it is disabled if the selection contains conflicting changes. To enable it you
+	should merge the conflicts before extracting.</p>
 	<b>History View 'Extract...' action</b>
 	<p>In History View extracting is possible when two remote revisions are selected. The changes are gathered between the selected
-	revisions and applied to the specified location.</p>
+	revisions and applied to the specified location. Pay special attention to the fact, that while viewing history of the
+	remote resource	the remote container name is used for extract, but not local one.</p>
 </body>
 </html>
