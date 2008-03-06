@@ -12,9 +12,11 @@
 package org.eclipse.team.svn.ui.synchronize.action;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.DirectoryDialog;
@@ -69,8 +71,12 @@ public class ExtractToAction extends AbstractSynchronizeModelAction {
 				new ISyncStateFilter.StateFilterWrapper(null, IStateFilter.SF_DELETED, false))));
 		HashSet<IRepositoryResource> incomingResourcesToOperate = new HashSet<IRepositoryResource>();
 		HashSet<String> markedForDelition = new HashSet<String>();
+		HashMap<String, String> resource2project = new HashMap<String, String>();
 		for (IResource current : incomingChanges) {
 			IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(current);
+			if (current instanceof IProject) {
+				resource2project.put(remote.getName(), current.getName());
+			}
 			incomingResourcesToOperate.add(remote);
 			if (deletionsOnly.contains(current)) {
 				markedForDelition.add(remote.getUrl());
@@ -85,7 +91,7 @@ public class ExtractToAction extends AbstractSynchronizeModelAction {
 		}
 		CompositeOperation op = new CompositeOperation(SVNTeamPlugin.instance().getResource("Operation.ExtractTo"));
 		op.add(new ExtractToOperationLocal(outgoingChanges, path, true));
-		op.add(new ExtractToOperationRemote(incomingResourcesToOperate.toArray(new IRepositoryResource[incomingResourcesToOperate.size()]), markedForDelition, path, true));
+		op.add(new ExtractToOperationRemote(incomingResourcesToOperate.toArray(new IRepositoryResource[incomingResourcesToOperate.size()]), markedForDelition, path, resource2project, true));
 		return op;
 	}
 

@@ -12,9 +12,11 @@
 package org.eclipse.team.svn.ui.synchronize.action;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
@@ -47,8 +49,12 @@ public class ExtractIncomingToAction extends AbstractSynchronizeModelAction {
 		HashSet<IResource> deletionsOnly = new HashSet<IResource>(Arrays.asList(this.syncInfoSelector.getSelectedResources(new ISyncStateFilter.StateFilterWrapper(null, IStateFilter.SF_DELETED, false))));
 		HashSet<IRepositoryResource> incomingResourcesToOperate = new HashSet<IRepositoryResource>();
 		HashSet<String> markedForDelition = new HashSet<String>();
+		HashMap<String, String> resource2project = new HashMap<String, String>();
 		for (IResource current : incomingChanges) {
 			IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(current);
+			if (current instanceof IProject) {
+				resource2project.put(remote.getName(), current.getName());
+			}
 			incomingResourcesToOperate.add(remote);
 			if (deletionsOnly.contains(current)) {
 				markedForDelition.add(remote.getUrl());
@@ -58,7 +64,7 @@ public class ExtractIncomingToAction extends AbstractSynchronizeModelAction {
 		fileDialog.setText(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Select.Title"));
 		fileDialog.setMessage(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Select.Description"));
 		String path = fileDialog.open();
-		return path == null ? null : new ExtractToOperationRemote(incomingResourcesToOperate.toArray(new IRepositoryResource[incomingResourcesToOperate.size()]), markedForDelition, path, true);
+		return path == null ? null : new ExtractToOperationRemote(incomingResourcesToOperate.toArray(new IRepositoryResource[incomingResourcesToOperate.size()]), markedForDelition, path,  resource2project, true);
 	}
 	
 }

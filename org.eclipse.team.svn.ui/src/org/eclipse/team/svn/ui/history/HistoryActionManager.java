@@ -878,7 +878,7 @@ public class HistoryActionManager {
 		CompositeOperation op = new CompositeOperation(SVNTeamPlugin.instance().getResource("Operation.ExtractTo"));
 		FromDifferenceRepositoryResourceProvider provider = new FromDifferenceRepositoryResourceProvider(selectedLogs);
 		op.add(provider);
-		op.add(new ExtractToOperationRemote(provider, toDelete, path, true), new IActionOperation [] {provider});
+		op.add(new ExtractToOperationRemote(provider, toDelete, path, new HashMap<String, String>(), true), new IActionOperation [] {provider});
 		UIMonitorUtility.doTaskScheduledActive(op);
 	}
 	
