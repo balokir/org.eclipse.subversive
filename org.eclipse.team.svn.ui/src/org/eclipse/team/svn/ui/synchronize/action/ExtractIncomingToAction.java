@@ -53,7 +53,7 @@ public class ExtractIncomingToAction extends AbstractSynchronizeModelAction {
 		for (IResource current : incomingChanges) {
 			IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(current);
 			if (current instanceof IProject) {
-				resource2project.put(remote.getName(), current.getName());
+				resource2project.put(remote.getUrl(), current.getName());
 			}
 			incomingResourcesToOperate.add(remote);
 			if (deletionsOnly.contains(current)) {
