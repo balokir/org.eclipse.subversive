@@ -74,7 +74,7 @@ public class LocateResourceURLInHistoryOperation extends AbstractRepositoryOpera
 	protected IRepositoryResource processEntry(IRepositoryResource current, IProgressMonitor monitor) throws Exception {
 		IRepositoryLocation location = current.getRepositoryLocation();
 		ISVNConnector proxy = location.acquireSVNProxy();
-		SVNLogEntry []msgs;
+		SVNLogEntry []msgs = null;
 		int index = 0;
 		try {
 			IRepositoryResource pegNode = SVNUtility.copyOf(current);
@@ -82,7 +82,7 @@ public class LocateResourceURLInHistoryOperation extends AbstractRepositoryOpera
 			if (pegNode.exists()) {
 				msgs = GetLogMessagesOperation.getMessagesImpl(proxy, pegNode, SVNRevision.fromNumber(0), pegNode.getPegRevision(), ISVNConnector.EMPTY_LOG_ENTRY_PROPS, 1, true, this, monitor);
 			}
-			else {
+			else if (pegNode.getParent() != null) {
 				msgs = GetLogMessagesOperation.getMessagesImpl(proxy, pegNode.getParent(), SVNRevision.fromNumber(0), pegNode.getPegRevision(), ISVNConnector.EMPTY_LOG_ENTRY_PROPS, 1, true, this, monitor);
 				if (msgs != null) {
 					for (int j = 0; j < msgs.length; j++) {
