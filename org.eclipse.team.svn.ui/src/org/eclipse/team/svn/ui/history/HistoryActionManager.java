@@ -351,17 +351,16 @@ public class HistoryActionManager {
 				}
 			});
 			tAction.setEnabled(selection.length == 2 && isCompareAllowed);
-			if (selection.length == 1) {
-				final SVNLogEntry current = (SVNLogEntry)selection[0].getEntity();
-				String revision = HistoryActionManager.this.view.getResource() != null ? String.valueOf(current.revision) : SVNTeamUIPlugin.instance().getResource("HistoryView.HEAD");
-				
-				manager.add(tAction = new HistoryAction("HistoryView.CompareCurrentWith", new String[] {revision}) {
-					public void run() {
-						HistoryActionManager.this.compareWithCurrent(current);
-					}
-				});
-				tAction.setEnabled(isCompareAllowed);
-			}
+			final SVNLogEntry current = (SVNLogEntry)selection[0].getEntity();
+			String revision = HistoryActionManager.this.view.getResource() != null ? String.valueOf(current.revision) : SVNTeamUIPlugin.instance().getResource("HistoryView.HEAD");
+			
+			manager.add(tAction = new HistoryAction("HistoryView.CompareCurrentWith", new String[] {revision}) {
+				public void run() {
+					HistoryActionManager.this.compareWithCurrent(current);
+				}
+			});
+			tAction.setEnabled(selection.length == 1 && isCompareAllowed);
+			
 			manager.add(tAction = new HistoryAction("HistoryView.CompareWithPrevious") {
 				public void run() {
 					HistoryActionManager.this.compareWithPreviousRevision(null, new IRepositoryResourceProvider() {
@@ -449,7 +448,7 @@ public class HistoryActionManager {
 			String branchFrom = SVNTeamUIPlugin.instance().getResource("HistoryView.BranchFromRevision");
 			String tagFrom = SVNTeamUIPlugin.instance().getResource("HistoryView.TagFromRevision");
 			if (selection.length == 1) {
-				String revision = String.valueOf(((SVNLogEntry)selection[0].getEntity()).revision);
+				revision = String.valueOf(((SVNLogEntry)selection[0].getEntity()).revision);
 				branchFrom = SVNTeamUIPlugin.instance().getResource("HistoryView.BranchFrom", new String[] {revision});
 				tagFrom = SVNTeamUIPlugin.instance().getResource("HistoryView.TagFrom", new String[] {revision});
 			}
@@ -1108,7 +1107,7 @@ public class HistoryActionManager {
 //						isPreviousExists = !(firstData.action == SVNLogPath.ChangeType.ADDED && firstData.copiedFromRevision == SVNRevision.INVALID_REVISION_NUMBER);
 						isPreviousExists = firstData.action == SVNLogPath.ChangeType.MODIFIED || firstData.action == SVNLogPath.ChangeType.REPLACED;
 					}
-					manager.add(tAction = new HistoryAction("AffectedPathsComposite.CompareWithPreviousRevision") {
+					manager.add(tAction = new HistoryAction("HistoryView.CompareWithPrevious") {
 						public void run() {
 							FromChangedPathDataProvider provider = new FromChangedPathDataProvider(firstData, false);
 							HistoryActionManager.this.compareWithPreviousRevision(provider, provider);
@@ -1210,7 +1209,7 @@ public class HistoryActionManager {
 	        		final AffectedPathsNode node = (AffectedPathsNode)affectedTableSelection.getFirstElement();
 	        		
 	        		Action tAction = null;
-	        		manager.add(tAction = new HistoryAction("AffectedPathsComposite.CompareWithPreviousRevision") {
+	        		manager.add(tAction = new HistoryAction("HistoryView.CompareWithPrevious") {
 						public void run() {
 							FromAffectedPathsNodeProvider provider = new FromAffectedPathsNodeProvider(node);
 							HistoryActionManager.this.compareWithPreviousRevision(provider, provider);

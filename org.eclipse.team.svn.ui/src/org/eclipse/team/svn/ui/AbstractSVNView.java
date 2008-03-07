@@ -172,10 +172,10 @@ public abstract class AbstractSVNView extends ViewPart implements IResourceState
 		    if (path.startsWith("/")) {
 		    	path = path.substring(1);
 		    }
-			resourceName = SVNTeamUIPlugin.instance().getResource("SVNView.ResourceSelected", new String[] {this.viewDescription, path});
+			resourceName = path;
 		}
 		else if (this.repositoryResource != null) {
-			resourceName = SVNTeamUIPlugin.instance().getResource("SVNView.ResourceSelected", new String[] {this.viewDescription, this.repositoryResource.getUrl()});
+			resourceName = this.repositoryResource.getUrl();
 		}
 		else {
 			resourceName = SVNTeamUIPlugin.instance().getResource("SVNView.ResourceNotSelected");

@@ -81,8 +81,7 @@ public class ShowHistoryViewOperation extends AbstractActionOperation {
 							if (hPage != null) {
 								hPage.setOptions(ShowHistoryViewOperation.this.mask, ShowHistoryViewOperation.this.options);
 								hPage.setCompareWith(ShowHistoryViewOperation.this.compareWith);
-								if (!ShowHistoryViewOperation.this.local.equals(hPage.getResource()))
-								{
+								if (ShowHistoryViewOperation.this.local != null && !ShowHistoryViewOperation.this.local.equals(hPage.getResource())) {
 									// view is disconnected
 									hPage.showHistory(ShowHistoryViewOperation.this.local);
 								}
