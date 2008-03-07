@@ -48,7 +48,7 @@ public abstract class AbstractDialogPanel implements IDialogPanel, IValidationMa
     public AbstractDialogPanel(String []buttonNames) {
         this.buttonNames = buttonNames;
         this.changeListener = new VerificationKeyListener();
-        parent = null;
+        this.parent = null;
     }
 
     public void initPanel(IDialogManager manager) {

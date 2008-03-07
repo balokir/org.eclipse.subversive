@@ -164,6 +164,13 @@ public class ResourceSelectionComposite extends Composite {
 		return this.tableViewer;
 	}
 
+	public void setResources(IResource[] resources) {
+		this.resources = resources;
+		this.tableViewer.setInput(this.resources);
+		this.updateSelectedResources();
+		this.tableViewer.refresh();
+	}
+
 	public void createControls() {
 		GridLayout gridLayout = null;
 		GridData data = null;
@@ -462,10 +469,6 @@ public class ResourceSelectionComposite extends Composite {
 			this.fireResourcesSelectionChanged(new ResourceSelectionChangedEvent(Arrays.asList(elements).toArray(new IResource[elements.length])));
 			this.selectionListener.selectionChanged(null);
 		}
-	}
-
-	public void setResources(IResource[] resources) {
-		this.resources = resources;
 	}
 
 	public void fireSelectionChanged() {
