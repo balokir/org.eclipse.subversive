@@ -135,6 +135,8 @@ public abstract class ColumnedViewerComparator extends ViewerComparator implemen
 	public abstract int compareImpl(Viewer viewer, Object row1, Object row2);
 	
 	public static int compare(String first, String second) {
+		first = first == null ? "" : first;
+		second = second == null ? "" : second;
 		return ColumnedViewerComparator.CASE_INSENSITIVE ? first.compareToIgnoreCase(second) : first.compareTo(second);
     }
 	

@@ -265,7 +265,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 		super.postInit();
 		this.resourceStatesListener = new IResourceStatesListener() {
 			public void resourcesStateChanged(ResourceStatesChangedEvent event) {
-				CommitPanel.this.updateResources();
+				CommitPanel.this.updateResources(event);
 			}
 		};
 		SVNRemoteStorage.instance().addResourceStatesListener(ResourceStatesChangedEvent.class, CommitPanel.this.resourceStatesListener);
@@ -584,28 +584,28 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
         tableViewer.getTable().setMenu(menu);
 	}
 	
-	protected void updateResources() {
-		final TableViewer tableViewer = this.selectionComposite.getTableViewer();
+	protected void updateResources(ResourceStatesChangedEvent event) {
+		HashSet<IResource> allResources = new HashSet<IResource>(Arrays.asList(this.resources));
+		
 		HashSet toDeleteSet = new HashSet();
-		toDeleteSet.addAll(Arrays.asList(this.resources));
-		HashSet newResourcesSet = new HashSet();
-		newResourcesSet.addAll(Arrays.asList(FileUtility.getResourcesRecursive(this.resources, IStateFilter.SF_COMMITABLE, IResource.DEPTH_ZERO)));
-		newResourcesSet.addAll(Arrays.asList(FileUtility.getResourcesRecursive(this.resources, IStateFilter.SF_CONFLICTING, IResource.DEPTH_ZERO)));
-		newResourcesSet.addAll(Arrays.asList(FileUtility.getResourcesRecursive(this.resources, IStateFilter.SF_ADDED, IResource.DEPTH_ZERO)));
-		final IResource[] newResources = (IResource[])newResourcesSet.toArray(new IResource[newResourcesSet.size()]);
-		toDeleteSet.removeAll(newResourcesSet);
-		final IResource[] toDeleteResources = (IResource[])toDeleteSet.toArray(new IResource[toDeleteSet.size()]);
+		toDeleteSet.addAll(Arrays.asList(FileUtility.getResourcesRecursive(event.resources, IStateFilter.SF_NOTMODIFIED, IResource.DEPTH_ZERO)));
+		toDeleteSet.addAll(Arrays.asList(FileUtility.getResourcesRecursive(event.resources, IStateFilter.SF_NOTEXISTS, IResource.DEPTH_ZERO)));
+		toDeleteSet.addAll(Arrays.asList(FileUtility.getResourcesRecursive(event.resources, IStateFilter.SF_IGNORED, IResource.DEPTH_ZERO)));
+		
+		allResources.removeAll(toDeleteSet);
+		
+		final IResource[] newResources = allResources.toArray(new IResource[allResources.size()]);
+		
 		UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 			public void run() {
-				CommitPanel.this.selectionComposite.setResources(newResources);
 				//FIXME isDisposed() test is necessary as dispose() method is not called from FastTrack Commit Dialog
-				if (!tableViewer.getTable().isDisposed()) {
-					tableViewer.remove(toDeleteResources);
-					tableViewer.refresh();
+				if (!CommitPanel.this.selectionComposite.isDisposed()) {
+					CommitPanel.this.selectionComposite.setResources(newResources);
 					CommitPanel.this.selectionComposite.fireSelectionChanged();
 				}
 			}
 		});
+		
 		this.resources = newResources;
 		this.resourcesChanged = true;
 	}

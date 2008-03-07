@@ -117,7 +117,7 @@ public abstract class AbstractSynchronizeModelAction extends SynchronizeModelAct
 			    	for (IDiffElement element : AbstractSynchronizeModelAction.this.getFilteredDiffElements()) {
 			    		IDiffContainer parent = element.getParent();
 			    		ArrayList<IResource> parents = new ArrayList<IResource>();
-			    		while (parent != null && parent instanceof ISynchronizeModelElement) {
+			    		while (parent != null && parent instanceof ISynchronizeModelElement && ((ISynchronizeModelElement)parent).getResource() != null) {
 			    			parents.add(((ISynchronizeModelElement)parent).getResource());
 			    			if (selection.contains(parent)) {
 			    				retVal.addAll(parents);

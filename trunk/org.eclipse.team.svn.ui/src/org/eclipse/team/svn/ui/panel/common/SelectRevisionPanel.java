@@ -243,12 +243,8 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
         this.tableViewerListener = new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				if (SelectRevisionPanel.this.manager != null) {
-					if (event != null) {
-						SelectRevisionPanel.this.manager.setButtonEnabled(0, !event.getSelection().isEmpty());
-					}
-					else {
-						SelectRevisionPanel.this.manager.setButtonEnabled(0, !SelectRevisionPanel.this.history.getTreeViewer().getSelection().isEmpty());
-					}
+					SVNLogEntry []messages = SelectRevisionPanel.this.history.getSelectedLogMessages();
+					SelectRevisionPanel.this.manager.setButtonEnabled(0, messages != null && messages.length > 0);
 				}
 			}
 		};
