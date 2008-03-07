@@ -239,7 +239,7 @@ public class PropertiesComposite extends Composite {
 			}
 			public String getColumnText(Object element, int columnIndex) {
 				if (PropertiesComposite.this.isProcessing) {
-					if (columnIndex == 0) {
+					if (columnIndex == 0 && PropertiesComposite.this.wcResource != null) {
 						return SVNTeamUIPlugin.instance().getResource(RepositoryPending.PENDING);
 					}
 					return "";
@@ -268,8 +268,10 @@ public class PropertiesComposite extends Composite {
 			public void menuAboutToShow(IMenuManager manager) {
 				synchronized (PropertiesComposite.this) {
 					manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-					final IStructuredSelection tSelection = 
-						(IStructuredSelection) PropertiesComposite.this.propertyViewer.getSelection();
+					final IStructuredSelection tSelection = (IStructuredSelection) PropertiesComposite.this.propertyViewer.getSelection();
+					if (tSelection.size() == 0 || tSelection.size() == 1 && tSelection.getFirstElement() instanceof String) {
+						return;
+					}
 					Action tAction = null;
 					boolean isEditAllowed = PropertiesComposite.this.provider != null && PropertiesComposite.this.provider.isEditAllowed();
 					if (PropertiesComposite.this.wcResource != null && PropertiesComposite.this.repositoryResource == null) {
