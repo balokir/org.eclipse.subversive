@@ -6,7 +6,7 @@
    <feature url="features/org.eclipse.team.svn_0.7.0.v20080311.jar" id="org.eclipse.team.svn" version="0.7.0.v20080311">
       <category name="Subversive (Incubation)"/>
    </feature>
-   <feature url="features/org.eclipse.team.svn.nl1_0.7.0.v20080311.jar" id="org.eclipse.team.svn.nl1" version="0.7.0.vv20080311">
+   <feature url="features/org.eclipse.team.svn.nl1_0.7.0.v20080311.jar" id="org.eclipse.team.svn.nl1" version="0.7.0.v20080311">
       <category name="Subversive (Incubation)"/>
    </feature>
    <feature url="features/org.eclipse.team.svn.resource.ignore.rules.jdt_0.7.0.v20080311.jar" id="org.eclipse.team.svn.resource.ignore.rules.jdt" version="0.7.0.v20080311">
