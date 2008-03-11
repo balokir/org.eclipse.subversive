@@ -5,38 +5,18 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 0.7.0.v20080307 release date: 07 March 2008
+Version 0.7.0.v20080311 release date: 11 March 2008
 
 1. What's New
 
-   The version is 0.7.0 release which build ID is v20080307. The main target of the release is 
+   The version is 0.7.0 release which build ID is v20080311. The main target of the release is 
    transferring Subversive development to Eclipse.org.
    
    Changes in compare with previous version are listed below. The full list of 
    changes you can find in Change Log.
     
-	Features:
-	 * Add "Extract Changes..." actions to Synchronize View. (bug 219985)
-	 * Add Extract changes action description to Subversive User Guide (bug 221293)
-	 * Add "Extract Changes..." action to log messages presentation in History View (bug 220540)
-	 * Reuse compare editor when comparing same resource revisions or compare called for revisions from the History View (bug 219628)
-	 * Improve History View (new actions in Affected Paths) (bug 218480)
-	 * Update JavaHL 1.5.0 connector binaries to alpha2 version (bug 221506)
-	
 	Fixes:
-	 * Compare window opens behind Revert dialog (bug 219775)
-	   + special thanks to Steve Streeting
-	
-	 * Importing folder from SVN using New Project Wizard - strange behaviour (bug 212746)
-	   + special thanks to Michael Spector, Gadi Goldbarg
-	
-	 * Check compatibility with Mylyn 2.3.0 task creation API (bug 221498)
-	 * The '~' sign is not accepted while defining svn:ignore property (bug 221472)
-	 * Revise and simplify History View code (bug 219793)
-	 * In Synchronize View operation starts before dialogs (bug 221133)
-	 * Properties View has old data, while reading new props. (bug 219572)
-	 * Update base table sorter (bug 219583)
-	 * Fix images disposing (bug 219455)
+	 * Fixed incorrect update URL's
 
 2. Information
 

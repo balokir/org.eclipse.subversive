@@ -25,24 +25,28 @@ import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 
 /**
- * Extract selected resources to location (only local resources)
- * Used from synchronize view ExtractTo outgoing action
+ * Extract selected resources to location (only local resources) Used from synchronize view ExtractTo outgoing action
  * 
  * @author Alexei Goncharov
  */
 public class ExtractToOperationLocal extends AbstractActionOperation {
-	private IResource [] outgoingResources;
+	private IResource[] outgoingResources;
+
 	private String path;
+
 	private boolean delitionAllowed;
-	
+
 	/**
 	 * Operation for extracting local resources to a location
 	 * 
-	 * @param outgoingResources - the resources to extract array
-	 * @param path - path to extract to
-	 * @param delitionAllowed - specifies if delition allowed if the resource is marked for delition
+	 * @param outgoingResources -
+	 *            the resources to extract array
+	 * @param path -
+	 *            path to extract to
+	 * @param delitionAllowed -
+	 *            specifies if delition allowed if the resource is marked for delition
 	 */
-	public ExtractToOperationLocal(IResource [] outgoingResources, String path, boolean delitionAllowed) {
+	public ExtractToOperationLocal(IResource[] outgoingResources, String path, boolean delitionAllowed) {
 		super(SVNTeamPlugin.instance().getResource("Operation.ExtractTo"));
 		this.outgoingResources = outgoingResources;
 		this.path = path;
@@ -50,25 +54,29 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		//progressReporter
+		// progressReporter
 		int processed = 0;
-		
+
 		FileUtility.reorder(this.outgoingResources, true);
-		
+
 		IPath previousPref = null;
 		for (IResource current : this.outgoingResources) {
 			IPath currentPath = current.getFullPath();
 			String toOperate = "";
-			if (previousPref == null
-					|| !previousPref.isPrefixOf(currentPath)) {
+			if (previousPref == null || !previousPref.isPrefixOf(currentPath)) {
 				toOperate = this.path + "/" + current.getName();
 				if (current instanceof IContainer) {
 					previousPref = current.getFullPath();
 				}
 			}
 			else {
-				toOperate = this.path + (currentPath.toString()).substring(previousPref.removeLastSegments(1).toString().length());
+				int toRemove = previousPref.removeLastSegments(1).toString().length();
+				if (toRemove < 2) {
+					toRemove = 0;
+				}
+				toOperate = this.path + (currentPath.toString()).substring(toRemove);
 			}
+
 			File operatingDirectory = new File(toOperate);
 			if (IStateFilter.SF_DELETED.accept(SVNRemoteStorage.instance().asLocalResource(current))) {
 				if (operatingDirectory.exists() && this.delitionAllowed) {
@@ -77,23 +85,23 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 			}
 			else {
 				if (current instanceof IContainer) {
-					monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.Folders", new String [] {FileUtility.getWorkingCopyPath(current)}));
+					monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.Folders", new String[] { FileUtility.getWorkingCopyPath(current) }));
 					operatingDirectory.mkdirs();
 				}
 				else {
 					if (previousPref != null) {
 						File parent = operatingDirectory.getParentFile();
 						if (parent != null) {
-							monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.Folders", new String [] {FileUtility.getWorkingCopyPath(current)}));
+							monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.Folders", new String[] { FileUtility.getWorkingCopyPath(current) }));
 							parent.mkdirs();
 							operatingDirectory = parent;
 						}
 					}
-					monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.LocalFile", new String [] {FileUtility.getWorkingCopyPath(current)}));
+					monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.LocalFile", new String[] { FileUtility.getWorkingCopyPath(current) }));
 					FileUtility.copyAll(operatingDirectory, new File(FileUtility.getWorkingCopyPath(current)), FileUtility.COPY_OVERRIDE_EXISTING_FILES, null, monitor);
 				}
 			}
 			ProgressMonitorUtility.progress(monitor, processed++, this.outgoingResources.length);
 		}
-	}	
+	}
 }
