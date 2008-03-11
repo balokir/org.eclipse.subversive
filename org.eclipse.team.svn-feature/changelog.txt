@@ -8,6 +8,13 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.0.v20080311 [11 March 2008]
+
+Fixes:
+ * Fixed incorrect update URL's
+
+--------------------------------------------------------------------------------
+
 Version 0.7.0.v20080307 [07 March 2008]
 
 Features:
