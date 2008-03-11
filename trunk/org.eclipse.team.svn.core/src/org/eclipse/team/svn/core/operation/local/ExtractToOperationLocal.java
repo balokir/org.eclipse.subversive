@@ -67,7 +67,7 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 				}
 			}
 			else {
-				toOperate = this.path + previousPref + (currentPath.toString()).substring(previousPref.toString().length());
+				toOperate = this.path + (currentPath.toString()).substring(previousPref.removeLastSegments(1).toString().length());
 			}
 			File operatingDirectory = new File(toOperate);
 			if (IStateFilter.SF_DELETED.accept(SVNRemoteStorage.instance().asLocalResource(current))) {
@@ -82,10 +82,12 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 				}
 				else {
 					if (previousPref != null) {
-						toOperate = this.path + previousPref + (current.getParent().getFullPath().toString()).substring(previousPref.toString().length());
-						monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.Folders", new String [] {FileUtility.getWorkingCopyPath(current)}));
-						operatingDirectory = new File(toOperate);
-						operatingDirectory.mkdirs();
+						File parent = operatingDirectory.getParentFile();
+						if (parent != null) {
+							monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.Folders", new String [] {FileUtility.getWorkingCopyPath(current)}));
+							parent.mkdirs();
+							operatingDirectory = parent;
+						}
 					}
 					monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.LocalFile", new String [] {FileUtility.getWorkingCopyPath(current)}));
 					FileUtility.copyAll(operatingDirectory, new File(FileUtility.getWorkingCopyPath(current)), FileUtility.COPY_OVERRIDE_EXISTING_FILES, null, monitor);
