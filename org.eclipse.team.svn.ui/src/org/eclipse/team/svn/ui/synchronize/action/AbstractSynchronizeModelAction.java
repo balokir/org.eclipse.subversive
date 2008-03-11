@@ -115,15 +115,17 @@ public abstract class AbstractSynchronizeModelAction extends SynchronizeModelAct
 			    if (filter.acceptGroupNodes()) {
 			    	HashSet<ISynchronizeModelElement> selection = new HashSet<ISynchronizeModelElement>(Arrays.asList(AbstractSynchronizeModelAction.this.getSelectedElements()));
 			    	for (IDiffElement element : AbstractSynchronizeModelAction.this.getFilteredDiffElements()) {
-			    		IDiffContainer parent = element.getParent();
-			    		ArrayList<IResource> parents = new ArrayList<IResource>();
-			    		while (parent != null && parent instanceof ISynchronizeModelElement && ((ISynchronizeModelElement)parent).getResource() != null) {
-			    			parents.add(((ISynchronizeModelElement)parent).getResource());
-			    			if (selection.contains(parent)) {
-			    				retVal.addAll(parents);
-			    				break;
-			    			}
-				    		parent = parent.getParent();
+			    		if (element instanceof ISynchronizeModelElement && retVal.contains(((ISynchronizeModelElement)element).getResource())) {
+				    		IDiffContainer parent = element.getParent();
+				    		ArrayList<IResource> parents = new ArrayList<IResource>();
+				    		while (parent != null && parent instanceof ISynchronizeModelElement && ((ISynchronizeModelElement)parent).getResource() != null) {
+				    			parents.add(((ISynchronizeModelElement)parent).getResource());
+				    			if (selection.contains(parent)) {
+				    				retVal.addAll(parents);
+				    				break;
+				    			}
+					    		parent = parent.getParent();
+				    		}
 			    		}
 			    	}
 			    }
