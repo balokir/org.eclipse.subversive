@@ -335,7 +335,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				tAction.setEnabled(tSelection.size() > 0);
 				
 				//Create Patch File action
-				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("CommitPanel.CreatePatchFile.Action")) {
+				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("CreatePatchCommand.label")) {
 					public void run() {
 						FileDialog dlg = new FileDialog(UIMonitorUtility.getShell(), SWT.PRIMARY_MODAL | SWT.SAVE);
 						dlg.setText(SVNTeamUIPlugin.instance().getResource("SelectPatchFilePage.SavePatchAs"));
