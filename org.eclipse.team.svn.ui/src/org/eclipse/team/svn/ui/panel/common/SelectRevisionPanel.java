@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
@@ -46,6 +47,7 @@ import org.eclipse.team.svn.ui.history.ISVNHistoryViewInfo;
 import org.eclipse.team.svn.ui.history.LogMessagesComposite;
 import org.eclipse.team.svn.ui.history.SVNHistoryPage;
 import org.eclipse.team.svn.ui.history.data.SVNLocalFileRevision;
+import org.eclipse.team.svn.ui.history.model.ILogNode;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.panel.view.HistoryFilterPanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
@@ -312,8 +314,17 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
 				SelectRevisionPanel.this.refresh();
 			}
     	});
-    	this.pending = true;
+    	
+    	this.pending = false;
     	this.history.refresh(LogMessagesComposite.REFRESH_ALL);
+		TreeViewer treeTable = SelectRevisionPanel.this.history.getTreeViewer();
+		TreeItem firstItem = treeTable.getTree().getItem(0);
+		if (((ILogNode) firstItem.getData()).getType() == ILogNode.TYPE_CATEGORY) {
+			firstItem = firstItem.getItem(0);
+		}
+		treeTable.getTree().setSelection(firstItem);
+    	this.history.refresh(LogMessagesComposite.REFRESH_UI_AFFECTED);
+    	
         this.showResourceLabel();
     }
     
@@ -375,7 +386,14 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
 					        if (selected.size() != 0) {
 					        	treeTable.setSelection(selected);
 					        }
-					        SelectRevisionPanel.this.history.refresh(LogMessagesComposite.REFRESH_UI_ALL);
+							else {
+								TreeItem firstItem = treeTable.getTree().getItem(0);
+								if (((ILogNode) firstItem.getData()).getType() == ILogNode.TYPE_CATEGORY) {
+									firstItem = firstItem.getItem(0);
+								}
+								treeTable.getTree().setSelection(firstItem);
+							}
+					        SelectRevisionPanel.this.history.refresh(LogMessagesComposite.REFRESH_UI_AFFECTED);
 					        ISelectionChangedListener listener = SelectRevisionPanel.this.tableViewerListener;
 					        if (listener != null) {
 					        	SelectRevisionPanel.this.tableViewerListener.selectionChanged(null);

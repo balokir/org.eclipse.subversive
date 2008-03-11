@@ -738,6 +738,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 								}
 								treeTable.getTree().setSelection(firstItem);
 							}
+							SVNHistoryPage.this.history.refresh(LogMessagesComposite.REFRESH_UI_AFFECTED);
 						}
 					}
 				});
