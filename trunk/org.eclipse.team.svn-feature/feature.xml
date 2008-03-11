@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.team.svn"
       label="SVN Team Provider (Incubation)"
-      version="0.7.0.v20080307"
+      version="0.7.0.v20080311"
       provider-name="Eclipse.org"
       plugin="org.eclipse.team.svn">
    <install-handler/>
@@ -111,8 +111,8 @@ Java and all Java-based trademarks are trademarks of Sun Microsystems, Inc. in t
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://www.eclipse.org/downloads/download.php?file=/technology/subversive/0.7/update-site/"/>
-      <discovery label="%discoverySiteName" url="http://www.eclipse.org/downloads/download.php?file=/technology/subversive/0.7/update-site/"/>
+      <update label="%updateSiteName" url="http://download.eclipse.org/technology/subversive/0.7/update-site/"/>
+      <discovery label="%discoverySiteName" url="http://download.eclipse.org/technology/subversive/0.7/update-site/"/>
    </url>
 
    <requires>
@@ -150,7 +150,7 @@ Java and all Java-based trademarks are trademarks of Sun Microsystems, Inc. in t
          id="org.eclipse.team.svn.ui"
          download-size="1600"
          install-size="1600"
-         version="0.7.0.v20080307"
+         version="0.7.0.v20080311"
          unpack="false"/>
 
    <plugin
