@@ -82,7 +82,7 @@ public class RemoteResourceTransfer extends ByteArrayTransfer {
 		}
 		
     	IRemoteStorage storage = SVNRemoteStorage.instance();
-		List retVal = new ArrayList();
+		List<IRepositoryResource> retVal = new ArrayList<IRepositoryResource>();
 		int operation = RemoteResourceTransferrable.OP_COPY;
     	ByteArrayInputStream stream = new ByteArrayInputStream(bytes);
     	try {
@@ -115,7 +115,7 @@ public class RemoteResourceTransfer extends ByteArrayTransfer {
     	
     	return 
 			new RemoteResourceTransferrable(
-				(IRepositoryResource [])retVal.toArray(new IRepositoryResource[retVal.size()]),
+				retVal.toArray(new IRepositoryResource[retVal.size()]),
 				operation);
     }
     

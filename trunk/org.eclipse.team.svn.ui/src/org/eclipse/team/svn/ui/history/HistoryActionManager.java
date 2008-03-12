@@ -381,13 +381,8 @@ public class HistoryActionManager {
 					SVNLogEntry current = (SVNLogEntry)selection[0].getEntity();
 					IRepositoryResource resource = HistoryActionManager.this.getResourceForSelectedRevision(current);
 					IResourcePropertyProvider provider = new GetRemotePropertiesOperation(resource);
-					ShowPropertiesOperation mainOp = new ShowPropertiesOperation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), resource, provider);
-					CompositeOperation op = new CompositeOperation(mainOp.getId());
-					op.add(provider);
-					op.add(mainOp, new IActionOperation[] {provider});
-					if (!mainOp.isEditorOpened()) {
-						UIMonitorUtility.doTaskScheduledActive(op);
-					}
+					ShowPropertiesOperation op = new ShowPropertiesOperation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), resource, provider);
+					UIMonitorUtility.doTaskScheduledActive(op);
 				}
 			});
 			tAction.setEnabled(selection.length == 1);
@@ -1362,11 +1357,7 @@ public class HistoryActionManager {
 	
 	protected void showProperties(IActionOperation preOp, IRepositoryResourceProvider provider) {
 		IResourcePropertyProvider propertyProvider = new GetRemotePropertiesOperation(provider);
-		ShowPropertiesOperation showOp = new ShowPropertiesOperation(UIMonitorUtility.getActivePage(), provider, propertyProvider);
-		CompositeOperation op = new CompositeOperation(showOp.getId());
-		op.add(preOp);
-		op.add(propertyProvider, new IActionOperation[] {preOp});
-		op.add(showOp, new IActionOperation[] {preOp, propertyProvider});
+		ShowPropertiesOperation op = new ShowPropertiesOperation(UIMonitorUtility.getActivePage(), provider, propertyProvider);
 		UIMonitorUtility.doTaskScheduledActive(op);
 	}
 	
@@ -1504,10 +1495,10 @@ public class HistoryActionManager {
 		protected IRepositoryResource createResourceFor(int kind, String url) {
 			IRepositoryResource retVal = null;
 			if (kind == SVNEntry.Kind.FILE) {
-				retVal = location.asRepositoryFile(url, false);
+				retVal = this.location.asRepositoryFile(url, false);
 			}
 			else if (kind == SVNEntry.Kind.DIR) {
-				retVal = location.asRepositoryContainer(url, false);
+				retVal = this.location.asRepositoryContainer(url, false);
 			}
 			if (retVal == null) {
 				throw new RuntimeException(SVNTeamUIPlugin.instance().getResource("Error.CompareUnknownNodeKind"));
@@ -1545,7 +1536,7 @@ public class HistoryActionManager {
 				}
 			}
 			finally {
-				location.releaseSVNProxy(proxy);
+				this.location.releaseSVNProxy(proxy);
 			}
 			
 			this.statuses = statusesList.toArray(new SVNDiffStatus [0]);
@@ -1554,8 +1545,8 @@ public class HistoryActionManager {
 			for (int i = 0; i < this.statuses.length; i++) {
 				monitor.subTask(MessageFormat.format(message, new Object[] {SVNUtility.decodeURL(this.statuses[i].pathPrev)}));
 				IRepositoryResource resourceToAdd = this.getResourceForStatus(this.statuses[i]);
-				resourceToAdd.setSelectedRevision(SVNRevision.fromNumber(newer.getRevision()));
-				resourceToAdd.setPegRevision(SVNRevision.fromNumber(newer.getRevision()));
+				resourceToAdd.setSelectedRevision(SVNRevision.fromNumber(this.newer.getRevision()));
+				resourceToAdd.setPegRevision(SVNRevision.fromNumber(this.newer.getRevision()));
 				resourcesToReturn.add(resourceToAdd);
 			}
 			this.repositoryResources = resourcesToReturn.toArray(new IRepositoryResource[0]);

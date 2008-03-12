@@ -827,14 +827,14 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 
 	protected class Preview extends LabelProvider implements Observer, ITreeContentProvider {
 		
-		protected Map images;
+		protected Map<ImageDescriptor, Image> images;
 		private final TreeViewer fViewer;
 		
 		protected DecoratorVariables decoratorVariables;
 
 		public Preview(Composite parent) {
 			this.decoratorVariables = new DecoratorVariables(TextVariableSetProvider.instance);
-			this.images = new HashMap();
+			this.images = new HashMap<ImageDescriptor, Image>();
 			Composite composite = new Composite(parent, SWT.FILL);
 			GridLayout layout = new GridLayout();
 			layout.marginHeight = layout.marginWidth = 0;
@@ -859,7 +859,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		}
 		
 		public void refresh() {
-			fViewer.refresh(true);
+			this.fViewer.refresh(true);
 		}
 		
 		public void update(Observable o, Object arg) {
@@ -883,8 +883,8 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		}
 
 		public void dispose() {
-            for (Iterator iter = images.values().iterator(); iter.hasNext();) {
-				Image image = (Image) iter.next();
+            for (Iterator<Image> iter = this.images.values().iterator(); iter.hasNext();) {
+				Image image = iter.next();
 				image.dispose();
 			}
 		}
@@ -899,15 +899,15 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 			switch (previewFile.type) {
 			case IResource.PROJECT:
 				provider = new DemoVariableContentProvider(previewFile,	SVNTeamUIPlugin.instance().getResource("PreferencePage.demoProjectRevision"));
-				realVars = this.decoratorVariables.parseFormatLine(projectFormatField.getText());
+				realVars = this.decoratorVariables.parseFormatLine(SVNTeamDecorationPreferencesPage.this.projectFormatField.getText());
 				break;
 			case IResource.FOLDER:
 				provider = new DemoVariableContentProvider(previewFile, SVNTeamUIPlugin.instance().getResource("PreferencePage.demoFolderRevision"));
-				realVars = this.decoratorVariables.parseFormatLine(folderFormatField.getText());
+				realVars = this.decoratorVariables.parseFormatLine(SVNTeamDecorationPreferencesPage.this.folderFormatField.getText());
 				break;
 			default:
 				provider = new DemoVariableContentProvider(previewFile,	SVNTeamUIPlugin.instance().getResource("PreferencePage.demoFileRevision"));
-				realVars = this.decoratorVariables.parseFormatLine(fileFormatField.getText());
+				realVars = this.decoratorVariables.parseFormatLine(SVNTeamDecorationPreferencesPage.this.fileFormatField.getText());
 				break;
 			}
 			DemoDecoration decoration = new DemoDecoration(previewFile.name);
@@ -989,7 +989,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 			}
 			try {
 				ImageDescriptor imgDescr = new OverlayedImageDescriptor(image, overlay, new Point(image.getBounds().width, image.getBounds().height), OverlayedImageDescriptor.BOTTOM | OverlayedImageDescriptor.RIGHT);
-				Image overlayedImg = (Image)this.images.get(imgDescr);
+				Image overlayedImg = this.images.get(imgDescr);
 				if (overlayedImg == null) {
 					overlayedImg = imgDescr.createImage();
 					this.images.put(imgDescr, overlayedImg);
