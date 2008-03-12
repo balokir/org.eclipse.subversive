@@ -41,7 +41,7 @@ public class OpenFileWithAction extends AbstractRepositoryTeamAction {
 	}
 
 	public void runImpl(IAction action) {
-		RepositoryFile []resources = (RepositoryFile [])this.getSelectedResources(RepositoryFile.class);
+		RepositoryFile []resources = (RepositoryFile [])this.getAdaptedSelection(RepositoryFile.class);
 	    IRepositoryFile []files = new IRepositoryFile[resources.length];
 	    for (int i = 0; i < resources.length; i++) {
 	    	files[i] = (IRepositoryFile)resources[i].getRepositoryResource();
@@ -58,7 +58,7 @@ public class OpenFileWithAction extends AbstractRepositoryTeamAction {
 	}
 	
 	public boolean isEnabled() {
-		Object []items = this.getSelectedResources(RepositoryFile.class);
+		Object []items = this.getAdaptedSelection(RepositoryFile.class);
 		return this.allowsMultiple ? items.length > 0 : items.length == 1;
 	}
 

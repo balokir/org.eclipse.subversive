@@ -25,7 +25,7 @@ public class SelectRootRevisionAction extends SelectResourceRevisionAction {
 	}
 
 	public void runImpl(IAction action) {
-		RepositoryRevisions root = ((RepositoryRevisions [])this.getSelectedResources(RepositoryRevisions.class))[0];
+		RepositoryRevisions root = ((RepositoryRevisions [])this.getAdaptedSelection(RepositoryRevisions.class))[0];
 		this.runImpl(root.getRepositoryLocation().getRoot());
 	}
 	

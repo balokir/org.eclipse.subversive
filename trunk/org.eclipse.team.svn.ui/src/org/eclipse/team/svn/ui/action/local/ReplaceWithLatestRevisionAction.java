@@ -90,11 +90,11 @@ public class ReplaceWithLatestRevisionAction extends AbstractNonRecursiveTeamAct
 	}
 	
 	protected static class SaveUnversionedOperation extends AbstractWorkingCopyOperation implements IActionOperationProcessor {
-		public List changes;
+		public List<ResourceChange> changes;
 		
 		public SaveUnversionedOperation(IResource[] resources) {
 			super("Operation.SaveUnversioned", resources);
-			this.changes = new ArrayList();
+			this.changes = new ArrayList<ResourceChange>();
 		}
 		
 		public void doOperation(IActionOperation op, IProgressMonitor monitor) {
@@ -144,7 +144,7 @@ public class ReplaceWithLatestRevisionAction extends AbstractNonRecursiveTeamAct
 		}
 		
 		protected void runImpl(IProgressMonitor monitor) throws Exception {
-			ResourceChange []changes = (ResourceChange [])this.changes.changes.toArray(new ResourceChange[0]);
+			ResourceChange []changes = this.changes.changes.toArray(new ResourceChange[0]);
 			for (int i = 0; i < changes.length && !monitor.isCanceled(); i++) {
 				final ResourceChange change = changes[i];
 				this.protectStep(new IUnprotectedOperation() {

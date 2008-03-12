@@ -43,14 +43,14 @@ public class ShareProjectsAction extends AbstractLocalTeamAction {
 	}
 
 	protected IProject []getProjectsToShare() {
-		HashSet projects = new HashSet(Arrays.asList(this.getSelectedProjects()));
-		for (Iterator it = projects.iterator(); it.hasNext(); ) {
-			IProject project = (IProject)it.next();
+		HashSet<IProject> projects = new HashSet<IProject>(Arrays.asList(this.getSelectedProjects()));
+		for (Iterator<IProject> it = projects.iterator(); it.hasNext(); ) {
+			IProject project = it.next();
 			if (!project.isAccessible() || RepositoryProvider.getProvider(project) != null) {
 				it.remove();
 			}
 		}
-		return (IProject [])projects.toArray(new IProject[projects.size()]);
+		return projects.toArray(new IProject[projects.size()]);
 	}
 	
 	public boolean isEnabled() {

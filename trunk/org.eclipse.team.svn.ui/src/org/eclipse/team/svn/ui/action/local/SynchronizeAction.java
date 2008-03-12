@@ -45,7 +45,7 @@ public class SynchronizeAction extends AbstractWorkingCopyAction {
 	}
 	
 	protected IWorkingSet []getSelectedWorkingSets() {
-		return (IWorkingSet [])this.getSelectedResources(IWorkingSet.class);
+		return (IWorkingSet [])this.getAdaptedSelection(IWorkingSet.class);
 	}
 	
 	public boolean isEnabled() {

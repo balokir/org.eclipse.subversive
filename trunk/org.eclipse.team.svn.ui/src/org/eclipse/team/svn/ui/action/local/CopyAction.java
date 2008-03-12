@@ -40,7 +40,7 @@ import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.local.ContainerSelectionPanel;
 
 /**
- * Copy local resource from one location to enother with history if resource is versioned
+ * Copy local resource from one location to another with history if resource is versioned
  * 
  * @author Sergiy Logvin
  */
@@ -53,8 +53,8 @@ public class CopyAction extends AbstractWorkingCopyAction {
 	public void runImpl(IAction action) {
 		IResource []AllResources = this.getSelectedResources(CopyAction.SF_EXCLUDE_DELETED_AND_PROJECTS);
 		
-		HashMap resourcesWithoutEqualsNames = new HashMap();
-		HashSet conflictedResources = excludeResourcesWithEqualNames(resourcesWithoutEqualsNames, AllResources);
+		HashMap<String, IResource> resourcesWithoutEqualsNames = new HashMap<String, IResource>();
+		HashSet<String> conflictedResources = this.excludeResourcesWithEqualNames(resourcesWithoutEqualsNames, AllResources);
 		
 		if (resourcesWithoutEqualsNames.isEmpty()) {
 			MessageDialog dialog = new MessageDialog(this.getShell(), SVNTeamUIPlugin.instance().getResource("CopyAction.Conflict.Title"), null, 
@@ -66,7 +66,7 @@ public class CopyAction extends AbstractWorkingCopyAction {
 			return;
 		}
 		//make new filtered resources list without resources with equal names
-		final IResource []resources = (IResource[])resourcesWithoutEqualsNames.values().toArray(new IResource[resourcesWithoutEqualsNames.values().size()]);
+		final IResource []resources = resourcesWithoutEqualsNames.values().toArray(new IResource[resourcesWithoutEqualsNames.values().size()]);
 
 		ContainerSelectionPanel panel = new ContainerSelectionPanel(resources, conflictedResources);
 		DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
@@ -163,8 +163,8 @@ public class CopyAction extends AbstractWorkingCopyAction {
 		}
     };
 
-    protected HashSet excludeResourcesWithEqualNames(HashMap map, IResource []resources) {
-    	HashSet conflicts = new HashSet();
+    protected HashSet<String> excludeResourcesWithEqualNames(HashMap<String, IResource> map, IResource []resources) {
+    	HashSet<String> conflicts = new HashSet<String>();
     	for (int i = 0; i < resources.length; i++) {
 			if (map.containsKey(resources[i].getName())) {
 				conflicts.add(resources[i].getName());
@@ -174,8 +174,8 @@ public class CopyAction extends AbstractWorkingCopyAction {
 			}
 		}
 		//delete all conflicts from resources set 
-		for (Iterator iter = conflicts.iterator(); iter.hasNext();) {
-			String element = (String) iter.next();
+		for (Iterator<String> iter = conflicts.iterator(); iter.hasNext();) {
+			String element = iter.next();
 			map.remove(element);
 		}
 		return conflicts;

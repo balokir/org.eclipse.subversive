@@ -68,11 +68,11 @@ public class AddToSVNIgnoreAction extends AbstractNonRecursiveTeamAction {
 			}
 
 			op.add(mainOp);
-			HashSet tmp = new HashSet(Arrays.asList(resources));
+			HashSet<IResource> tmp = new HashSet<IResource>(Arrays.asList(resources));
 			for (int i = 0; i < resources.length; i++) {
 				tmp.add(resources[i].getParent());
 			}
-			IResource []resourcesAndParents = (IResource [])tmp.toArray(new IResource[tmp.size()]);
+			IResource []resourcesAndParents = tmp.toArray(new IResource[tmp.size()]);
 			op.add(new RefreshResourcesOperation(resourcesAndParents, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
 
 			this.runScheduled(op);

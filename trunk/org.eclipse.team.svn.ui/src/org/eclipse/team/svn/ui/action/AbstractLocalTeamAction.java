@@ -14,6 +14,7 @@ package org.eclipse.team.svn.ui.action;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.team.svn.core.IStateFilter;
@@ -39,10 +40,10 @@ public abstract class AbstractLocalTeamAction extends AbstractSVNTeamAction {
 	}
 	
 	protected void checkSelection(IStructuredSelection selection) {
-		HashSet oldSel = new HashSet(Arrays.asList(this.getSelectedResources()));
+		HashSet<IResource> oldSel = new HashSet<IResource>(Arrays.asList(this.getSelectedResources()));
 		IStructuredSelection oldSelection = this.getSelection();
 		AbstractLocalTeamAction.selection = selection;
-		HashSet newSel = new HashSet(Arrays.asList(this.getSelectedResources()));
+		HashSet<IResource> newSel = new HashSet<IResource>(Arrays.asList(this.getSelectedResources()));
 		AbstractLocalTeamAction.selection = oldSelection;
 		if (!newSel.equals(oldSel)) {
 			AbstractLocalTeamAction.selection = selection;
