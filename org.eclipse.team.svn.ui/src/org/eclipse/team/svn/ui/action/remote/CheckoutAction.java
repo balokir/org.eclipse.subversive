@@ -62,10 +62,10 @@ public class CheckoutAction extends AbstractRepositoryModifyWorkspaceAction {
 	
 	public static class NameSet {
 		public final boolean caseInsensitiveOS;
-		public final HashMap existing;
+		public final HashMap<String, String> existing;
 		
 		public NameSet() {
-			this.existing = new HashMap();
+			this.existing = new HashMap<String, String>();
 			this.caseInsensitiveOS = FileUtility.isCaseInsensitiveOS();
 		}
 		

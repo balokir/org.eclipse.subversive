@@ -42,7 +42,7 @@ public abstract class AbstractRepositoryTeamAction extends AbstractSVNTeamAction
 	}
 	
 	protected IRepositoryLocation []getSelectedRepositoryLocations() {
-		Object []locationWrappers = this.getSelectedResources(RepositoryLocation.class);
+		Object []locationWrappers = this.getAdaptedSelection(RepositoryLocation.class);
 		IRepositoryLocation []locations = new IRepositoryLocation[locationWrappers.length];
 		for (int i = 0; i < locations.length; i++) {
 			locations[i] = ((RepositoryLocation)locationWrappers[i]).getRepositoryLocation();
@@ -51,7 +51,7 @@ public abstract class AbstractRepositoryTeamAction extends AbstractSVNTeamAction
 	}
 	
 	protected IRepositoryResource []getSelectedRepositoryResources() {
-		Object []wrappers = this.getSelectedResources(IResourceTreeNode.class);
+		Object []wrappers = this.getAdaptedSelection(IResourceTreeNode.class);
 		IRepositoryResource []resources = new IRepositoryResource[wrappers.length];
 		for (int i = 0; i < resources.length; i++) {
 			resources[i] = ((IResourceTreeNode)wrappers[i]).getRepositoryResource();

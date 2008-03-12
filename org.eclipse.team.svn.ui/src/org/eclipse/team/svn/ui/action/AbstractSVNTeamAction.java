@@ -106,12 +106,7 @@ public abstract class AbstractSVNTeamAction extends TeamAction {
 			LoggedOperation.reportError(SVNTeamUIPlugin.instance().getResource("Error.MenuEnablement"), ex);
 		}
 	}
-	
-	public Object []getSelectedResources(Class c) {
-		// This method is created in order to provide fix for Eclipse 3.1.0 where identical method is removed from TeamAction 
-		return TeamAction.getSelectedAdaptables(this.getSelection(), c);
-	}
-	
+
 	protected Shell getShell() {
 		return this.shell != null ? this.shell : super.getShell();
 	}

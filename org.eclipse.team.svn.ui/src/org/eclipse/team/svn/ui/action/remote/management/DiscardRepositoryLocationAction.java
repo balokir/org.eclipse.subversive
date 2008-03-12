@@ -55,11 +55,10 @@ public class DiscardRepositoryLocationAction extends AbstractRepositoryTeamActio
 	
 	public void runImpl(IAction action) {
 		IRepositoryLocation []locations = this.getSelectedRepositoryLocations();
-		List selection = Arrays.asList(locations);
-		List operateLocations = new ArrayList();
-		operateLocations.addAll(Arrays.asList(locations));
-		ArrayList connectedProjects = new ArrayList();
-		HashSet connectedLocations = new HashSet();
+		List<IRepositoryLocation> selection = Arrays.asList(locations);
+		List<IRepositoryLocation> operateLocations = new ArrayList<IRepositoryLocation>(Arrays.asList(locations));
+		ArrayList<IProject> connectedProjects = new ArrayList<IProject>();
+		HashSet<IRepositoryLocation> connectedLocations = new HashSet<IRepositoryLocation>();
 		IProject []projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {
 			RepositoryProvider tmp = RepositoryProvider.getProvider(projects[i]);
@@ -74,20 +73,20 @@ public class DiscardRepositoryLocationAction extends AbstractRepositoryTeamActio
 		}
 		
 		if (operateLocations.size() > 0) {
-			locations = (IRepositoryLocation [])operateLocations.toArray(new IRepositoryLocation[operateLocations.size()]);
+			locations = operateLocations.toArray(new IRepositoryLocation[operateLocations.size()]);
 			DiscardConfirmationDialog dialog = new DiscardConfirmationDialog(this.getShell(), locations.length == 1, DiscardConfirmationDialog.MSG_LOCATION);
 			if (dialog.open() == 0) {
 				this.doDiscard(locations, null);
 			}
 		}
 		if (connectedProjects.size() > 0) {
-			ArrayList locationsList = new ArrayList();
-			for (Iterator iter = connectedLocations.iterator(); iter.hasNext();) {
-				IRepositoryLocation location = (IRepositoryLocation)iter.next();
+			ArrayList<String> locationsList = new ArrayList<String>();
+			for (Iterator<IRepositoryLocation> iter = connectedLocations.iterator(); iter.hasNext();) {
+				IRepositoryLocation location = iter.next();
 				locationsList.add(location.getLabel());
 			}
-			IProject []tmp = (IProject [])connectedProjects.toArray(new IProject[connectedProjects.size()]);
-			DiscardLocationFailurePanel panel = new DiscardLocationFailurePanel((String [])locationsList.toArray(new String[locationsList.size()]), tmp);
+			IProject []tmp = connectedProjects.toArray(new IProject[connectedProjects.size()]);
+			DiscardLocationFailurePanel panel = new DiscardLocationFailurePanel(locationsList.toArray(new String[locationsList.size()]), tmp);
 			int retVal = new DefaultDialog(this.getShell(), panel).open();
 			if (retVal == 0 || retVal == 1) {
 				DisconnectOperation disconnectOp = new DisconnectOperation(tmp, false);

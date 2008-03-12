@@ -63,9 +63,9 @@ public class PasteAction extends AbstractRepositoryTeamAction {
 						if (pasteOp.getOperationType() == RemoteResourceTransferrable.OP_COPY) {
 							return resources;
 						}
-						HashSet fullSet = new HashSet(Arrays.asList(pasteOp.getRepositoryResources()));
+						HashSet<IRepositoryResource> fullSet = new HashSet<IRepositoryResource>(Arrays.asList(pasteOp.getRepositoryResources()));
 						fullSet.addAll(Arrays.asList(resources));
-						return SVNUtility.getCommonParents((IRepositoryResource [])fullSet.toArray(new IRepositoryResource[fullSet.size()]));
+						return SVNUtility.getCommonParents(fullSet.toArray(new IRepositoryResource[fullSet.size()]));
 					}
 				}));
 			op.add(new SetRevisionAuthorNameOperation(pasteOp, Options.FORCE));

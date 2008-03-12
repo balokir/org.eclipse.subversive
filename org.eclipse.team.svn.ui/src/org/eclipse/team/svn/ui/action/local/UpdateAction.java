@@ -81,9 +81,9 @@ public class UpdateAction extends AbstractRecursiveTeamAction {
 			
 			IResourceProvider refreshProvider = new IResourceProvider() {
 				public IResource []getResources() {
-					HashSet fullSet = new HashSet(Arrays.asList(mainOp.getResources()));
+					HashSet<IResource> fullSet = new HashSet<IResource>(Arrays.asList(mainOp.getResources()));
 					fullSet.addAll(Arrays.asList(detectOp.getDeleted()));
-					return (IResource [])fullSet.toArray(new IResource[fullSet.size()]);
+					return fullSet.toArray(new IResource[fullSet.size()]);
 				}
 			};
 			

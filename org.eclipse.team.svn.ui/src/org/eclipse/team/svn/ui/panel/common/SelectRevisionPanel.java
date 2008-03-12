@@ -47,6 +47,10 @@ import org.eclipse.team.svn.ui.history.ISVNHistoryViewInfo;
 import org.eclipse.team.svn.ui.history.LogMessagesComposite;
 import org.eclipse.team.svn.ui.history.SVNHistoryPage;
 import org.eclipse.team.svn.ui.history.data.SVNLocalFileRevision;
+import org.eclipse.team.svn.ui.history.filter.AuthorNameLogEntryFilter;
+import org.eclipse.team.svn.ui.history.filter.CommentLogEntryFilter;
+import org.eclipse.team.svn.ui.history.filter.CompositeLogEntryFilter;
+import org.eclipse.team.svn.ui.history.filter.ILogEntryFilter;
 import org.eclipse.team.svn.ui.history.model.ILogNode;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.panel.view.HistoryFilterPanel;
@@ -78,9 +82,11 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
 	protected ToolItem clearFilterItem;
 	protected ToolItem refreshItem;
 	protected ToolItem groupByDateItem;
-	
-	protected String filterByComment;
-	protected String filterByAuthor;
+
+	protected CommentLogEntryFilter commentFilter;
+	protected AuthorNameLogEntryFilter authorFilter;
+	protected CompositeLogEntryFilter logEntriesFilter;
+
 	protected ISelectionChangedListener tableViewerListener;
 	protected IPropertyChangeListener configurationListener;
 	protected boolean initialStopOnCopy;
@@ -99,8 +105,11 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
 		this.currentRevision = currentRevision;
     	this.logMessages = msgOp.getMessages();
     	this.initialStopOnCopy = msgOp.getStopOnCopy();
+    	this.authorFilter = new AuthorNameLogEntryFilter();
+		this.commentFilter = new CommentLogEntryFilter();
+		this.logEntriesFilter = new CompositeLogEntryFilter(new ILogEntryFilter [] {this.authorFilter, this.commentFilter});
 	}
-    
+        
 	public String getHelpId() {
     	return "org.eclipse.team.svn.help.revisionLinkDialogContext";
 	}
@@ -138,7 +147,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
     }
     
 	public SVNLogEntry[] getRemoteHistory() {
-		return SVNHistoryPage.filterMessages(this.logMessages, this.filterByAuthor, this.filterByComment);
+		return SVNHistoryPage.filterMessages(this.logMessages, this.logEntriesFilter);
 	}
 
 	public SVNLocalFileRevision[] getLocalHistory() {
@@ -160,6 +169,14 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
     public boolean isPending() {
     	return this.pending;
     }
+    
+    public void addFilter(ILogEntryFilter filter) {
+		this.logEntriesFilter.addFilter(filter);
+	}
+	
+	public void removeFilter(ILogEntryFilter filter) {
+		this.logEntriesFilter.removeFilter(filter);
+	}
     
     public void createControlsImpl(Composite parent) {
     	IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
@@ -424,23 +441,28 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
     }
     
     protected void setFilter() {
-	    HistoryFilterPanel panel = new HistoryFilterPanel(this.filterByAuthor, this.filterByComment, SVNHistoryPage.getSelectedAuthors(this.logMessages));
+	    HistoryFilterPanel panel = new HistoryFilterPanel(this.authorFilter.getAuthorNameToAccept(),
+	    													this.commentFilter.getCommentToAccept(),
+	    													SVNHistoryPage.getSelectedAuthors(this.logMessages));
 	    DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getDisplay().getActiveShell(), panel);
 	    if (dialog.open() == 0) {
-	        this.filterByAuthor = panel.getAuthor(); 
-	        this.filterByComment = panel.getComment();
+	        this.authorFilter.setAuthorNameToAccept(panel.getAuthor()); 
+	        this.commentFilter.setCommentToAccept(panel.getComment());
+	        this.clearFilterItem.setEnabled(isFilterEnabled());
 			SelectRevisionPanel.this.history.refresh(LogMessagesComposite.REFRESH_ALL);
 	    }
 	}
     
     protected void clearFilter() {
-	    this.filterByAuthor = null;
-	    this.filterByComment = null;
+	    this.authorFilter.setAuthorNameToAccept(null);
+	    this.commentFilter.setCommentToAccept(null);
+	    this.clearFilterItem.setEnabled(false);
 		SelectRevisionPanel.this.history.refresh(LogMessagesComposite.REFRESH_ALL);
 	}
 	
 	protected boolean isFilterEnabled() {
-	    return this.filterByAuthor != null || this.filterByComment != null; 
+	    return this.authorFilter.getAuthorNameToAccept() != null
+	    		|| this.commentFilter.getCommentToAccept() != null; 
 	}
 	
 	protected void refresh() {

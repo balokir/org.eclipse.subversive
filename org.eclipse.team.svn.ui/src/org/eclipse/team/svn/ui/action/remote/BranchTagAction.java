@@ -98,8 +98,8 @@ public class BranchTagAction extends AbstractRepositoryTeamAction {
 		return false;
 	}
 	
-	public static Set getExistingNodeNames(IRepositoryContainer parent) {
-		HashSet nodeNames = new HashSet();
+	public static Set<String> getExistingNodeNames(IRepositoryContainer parent) {
+		HashSet<String> nodeNames = new HashSet<String>();
 		IRepositoryResource []existentNodes = BranchTagAction.getRemoteChildren(parent);
 		if (existentNodes != null) {
 			for (int i = 0; i < existentNodes.length; i++) {
@@ -114,12 +114,12 @@ public class BranchTagAction extends AbstractRepositoryTeamAction {
 		if (!OperationErrorDialog.isAcceptableAtOnce(resources, SVNTeamUIPlugin.instance().getResource(nodeType == BranchTagAction.BRANCH_ACTION ? "BranchTagAction.Error.Branch" : "BranchTagAction.Error.Tag"), shell)) {
 			return null;
 		}
-		Set nodeNames = null;
+		Set<String> nodeNames = null;
 		if (respectProjectStructure && resources[0].getRepositoryLocation().isStructureEnabled()) {
 			nodeNames = BranchTagAction.getExistingNodeNames(nodeType == BranchTagAction.BRANCH_ACTION ? SVNUtility.getBranchesLocation(resources[0]) : SVNUtility.getTagsLocation(resources[0]));
 		}
 		else {
-			nodeNames = new HashSet();
+			nodeNames = new HashSet<String>();
 		}
 		
 		AbstractBranchTagPanel panel = nodeType == BranchTagAction.BRANCH_ACTION ? (AbstractBranchTagPanel)new BranchPanel(SVNUtility.getBranchesLocation(resources[0]), false, nodeNames) : new TagPanel(SVNUtility.getTagsLocation(resources[0]), false, nodeNames);

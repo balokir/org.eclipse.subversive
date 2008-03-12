@@ -51,11 +51,14 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
-import org.eclipse.team.svn.core.utility.StringMatcher;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.history.HistoryActionManager.HistoryAction;
 import org.eclipse.team.svn.ui.history.data.SVNLocalFileRevision;
+import org.eclipse.team.svn.ui.history.filter.AuthorNameLogEntryFilter;
+import org.eclipse.team.svn.ui.history.filter.CommentLogEntryFilter;
+import org.eclipse.team.svn.ui.history.filter.CompositeLogEntryFilter;
+import org.eclipse.team.svn.ui.history.filter.ILogEntryFilter;
 import org.eclipse.team.svn.ui.history.model.ILogNode;
 import org.eclipse.team.svn.ui.operation.CorrectRevisionOperation;
 import org.eclipse.team.svn.ui.operation.UILoggedOperation;
@@ -82,8 +85,9 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 
 	protected LogMessagesComposite history;
 
-	protected String filterByAuthor;
-	protected String filterByComment;
+	protected CommentLogEntryFilter commentFilter;
+	protected AuthorNameLogEntryFilter authorFilter;
+	protected CompositeLogEntryFilter logEntriesFilter;
 
 	protected Action showCommentViewerAction;
 	protected Action showAffectedPathsViewerAction;
@@ -124,9 +128,11 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 
 	public SVNHistoryPage(Object input) {
 		SVNRemoteStorage.instance().addResourceStatesListener(ResourceStatesChangedEvent.class, this);
-		
 		this.actionManager = new HistoryActionManager(this);
 		SVNTeamUIPlugin.instance().getPreferenceStore().addPropertyChangeListener(this);
+		this.authorFilter = new AuthorNameLogEntryFilter();
+		this.commentFilter = new CommentLogEntryFilter();
+		this.logEntriesFilter = new CompositeLogEntryFilter(new ILogEntryFilter [] {this.authorFilter, this.commentFilter});
 	}
 	
 	public void propertyChange(PropertyChangeEvent event) {
@@ -157,6 +163,14 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 			this.disconnectView();
 		}
 	}
+	
+	public void addFilter(ILogEntryFilter filter) {
+		this.logEntriesFilter.addFilter(filter);
+	}
+	
+	public void removeFilter(ILogEntryFilter filter) {
+		this.logEntriesFilter.removeFilter(filter);
+	}
 
 	public void showHistory(IResource resource) {
 		if (!resource.equals(this.wcResource)) {
@@ -184,8 +198,8 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		this.wcResource = null;
 		this.logMessages = null;
 		this.localHistory = null;
-		this.filterByAuthor = null;
-		this.filterByComment = null;
+		this.authorFilter.setAuthorNameToAccept(null);
+		this.commentFilter.setCommentToAccept(null);
 		this.pending = false;
 
 		this.setButtonsEnablement();
@@ -222,7 +236,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 	}
 
 	public SVNLogEntry[] getRemoteHistory() {
-		return SVNHistoryPage.filterMessages(this.logMessages, this.filterByAuthor, this.filterByComment);
+		return SVNHistoryPage.filterMessages(this.logMessages, this.logEntriesFilter);
 	}
 
 	public SVNLogEntry[] getFullRemoteHistory() {
@@ -238,7 +252,8 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 	}
 
 	public boolean isFilterEnabled() {
-		return this.filterByAuthor != null || this.filterByComment != null;
+		return this.authorFilter.getAuthorNameToAccept() != null ||
+				this.commentFilter.getCommentToAccept() != null;
 	}
 
 	public int getOptions() {
@@ -246,19 +261,21 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 	}
 
 	public void clearFilter() {
-		this.filterByAuthor = null;
-		this.filterByComment = null;
+		this.authorFilter.setAuthorNameToAccept(null);
+		this.commentFilter.setCommentToAccept(null);
 		this.clearFilterDropDownAction.setEnabled(false);
 		this.history.refresh(LogMessagesComposite.REFRESH_ALL);
 	}
 
 	public void setFilter() {
-		HistoryFilterPanel panel = new HistoryFilterPanel(this.filterByAuthor, this.filterByComment, SVNHistoryPage.getSelectedAuthors(this.logMessages));
+		HistoryFilterPanel panel = new HistoryFilterPanel(this.authorFilter.getAuthorNameToAccept(),
+															this.commentFilter.getCommentToAccept(),
+															SVNHistoryPage.getSelectedAuthors(this.logMessages));
 		DefaultDialog dialog = new DefaultDialog(this.getPartSite().getShell(), panel);
 		if (dialog.open() == 0) {
-			this.filterByAuthor = panel.getAuthor();
-			this.filterByComment = panel.getComment();
-			this.clearFilterDropDownAction.setEnabled(true);
+			this.authorFilter.setAuthorNameToAccept(panel.getAuthor());
+			this.commentFilter.setCommentToAccept(panel.getComment());
+			this.clearFilterDropDownAction.setEnabled(this.isFilterEnabled());
 			this.history.refresh(LogMessagesComposite.REFRESH_ALL);
 		}
 	}
@@ -647,17 +664,13 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		return authors.toArray(new String[authors.size()]);
 	}
 
-	public static SVNLogEntry[] filterMessages(SVNLogEntry[] msgs, String filterByAuthor, String filterByComment) {
+	public static SVNLogEntry[] filterMessages(SVNLogEntry[] msgs, ILogEntryFilter filter) {
 		if (msgs == null) {
 			return null;
 		}
 		ArrayList<SVNLogEntry> filteredMessages = new ArrayList<SVNLogEntry>();
-		StringMatcher authorMatcher = filterByAuthor == null ? null : new StringMatcher(filterByAuthor);
-		StringMatcher commentMatcher = filterByComment == null ? null : new StringMatcher(filterByComment);
 		for (int i = 0; i < msgs.length; i++) {
-			String author = msgs[i].author == null ? "" : msgs[i].author;
-			String message = msgs[i].message == null ? "" : msgs[i].message;
-			if ((authorMatcher == null || authorMatcher.match(author)) && (commentMatcher == null || commentMatcher.match(message))) {
+			if (filter.accept(msgs[i])) {
 				filteredMessages.add(msgs[i]);
 			}
 		}
@@ -718,7 +731,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 					return;
 				}
 
-				SVNHistoryPage.this.currentRevision = revision;
+				SVNHistoryPage.this.currentRevision = this.revision;
 				SVNHistoryPage.this.addPage(msgsOp.getMessages());
 
 				UIMonitorUtility.getDisplay().syncExec(new Runnable() {

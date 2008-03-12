@@ -57,7 +57,7 @@ public abstract class AbstractActionOperation implements IActionOperation {
 	
 	public int getExecutionState() {
 		if (this.status.isOK()) {
-			return this.isExecuted ? IActionOperation.OK : AbstractActionOperation.NOTEXECUTED;
+			return this.isExecuted ? IActionOperation.OK : IActionOperation.NOTEXECUTED;
 		}
 		return AbstractActionOperation.ERROR;
 	}
