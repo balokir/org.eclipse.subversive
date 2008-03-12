@@ -59,7 +59,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected boolean fastReport;
 	protected boolean pagingEnable;
 	protected int pageSize;
-	protected boolean usePropertiesView;
 	protected boolean mailReporterEnabled;
 	protected boolean mailReporterErrorsEnabled;
 	protected boolean commitSelectNewResources;
@@ -84,8 +83,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected Button fastReportButton;
 	protected Button enablePagingButton;
 	protected Text pageSizeField;
-	protected Button usePropertiesViewButton;
-	protected Button usePropertiesEditorButton;
 	protected Button mailReporterEnabledButton;
 	protected Button mailReporterErrorsEnabledButton;
 	protected Button btnResourceSelectionNew;
@@ -136,8 +133,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		SVNTeamPreferences.setMergeBoolean(store, SVNTeamPreferences.MERGE_USE_JAVAHL_NAME, this.useJavaHLMerge);
 		
 		SVNTeamPreferences.setCheckoutBoolean(store, SVNTeamPreferences.CHECKOUT_USE_DOT_PROJECT_NAME, this.checkoutUsingDotProjectName);
-		
-		SVNTeamPreferences.setPropertiesBoolean(store, SVNTeamPreferences.PROPERTY_USE_VIEW_NAME, this.usePropertiesView);
 	}
 	
 	protected void loadDefaultValues(IPreferenceStore store) {
@@ -151,7 +146,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.pagingEnable = SVNTeamPreferences.HISTORY_PAGING_ENABLE_DEFAULT;
 		this.pageSize = SVNTeamPreferences.HISTORY_PAGE_SIZE_DEFAULT;
 		
-		this.usePropertiesView = SVNTeamPreferences.PROPERTY_USE_VIEW_DEFAULT;
 		this.mailReporterEnabled = SVNTeamPreferences.MAILREPORTER_ENABLED_DEFAULT;
 		this.mailReporterErrorsEnabled = SVNTeamPreferences.MAILREPORTER_ERRORS_ENABLED_DEFAULT;
 		
@@ -186,7 +180,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.pagingEnable = SVNTeamPreferences.getHistoryBoolean(store, SVNTeamPreferences.HISTORY_PAGING_ENABLE_NAME);
 		this.pageSize = SVNTeamPreferences.getHistoryInt(store, SVNTeamPreferences.HISTORY_PAGE_SIZE_NAME);
 		
-		this.usePropertiesView = SVNTeamPreferences.getPropertiesBoolean(store, SVNTeamPreferences.PROPERTY_USE_VIEW_NAME);
 		this.mailReporterEnabled = SVNTeamPreferences.getMailReporterBoolean(store, SVNTeamPreferences.MAILREPORTER_ENABLED_NAME);
 		this.mailReporterErrorsEnabled = SVNTeamPreferences.getMailReporterBoolean(store, SVNTeamPreferences.MAILREPORTER_ERRORS_ENABLED_NAME);
 		
@@ -220,8 +213,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.enablePagingButton.setSelection(this.pagingEnable);
 		this.pageSizeField.setEnabled(this.pagingEnable);
 		
-		this.usePropertiesViewButton.setSelection(this.usePropertiesView);
-		this.usePropertiesEditorButton.setSelection(!this.usePropertiesViewButton.getSelection());
 		
 		this.mailReporterEnabledButton.setSelection(this.mailReporterEnabled);
 		this.mailReporterErrorsEnabledButton.setSelection(this.mailReporterErrorsEnabled);
@@ -502,12 +493,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		historyViewGroup.setLayoutData(data);
 		
-		Group propertiesViewGroup = new Group(composite, SWT.NONE);
-		layout = new GridLayout();
-		propertiesViewGroup.setLayout(layout);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		propertiesViewGroup.setLayoutData(data);		
-		
 		//Synchronize View group
 		synchViewGroup.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.synchronizeGroupName"));
 		
@@ -572,32 +557,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 				catch (Exception ex) {
 
 				}
-			}
-		});
-		
-		//Properties View group
-		propertiesViewGroup.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.propertiesGroupName"));
-		
-		label = new Label(propertiesViewGroup, SWT.WRAP);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		label.setLayoutData(data);
-		label.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.propertiesPrompt"));
-		
-		this.usePropertiesViewButton = new Button(propertiesViewGroup, SWT.RADIO);
-		this.usePropertiesViewButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		this.usePropertiesViewButton.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.propertiesUseView"));
-		this.usePropertiesViewButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				SVNTeamPreferencesPage.this.usePropertiesView = SVNTeamPreferencesPage.this.usePropertiesViewButton.getSelection();
-			}
-		});
-		
-		this.usePropertiesEditorButton = new Button(propertiesViewGroup, SWT.RADIO);
-		this.usePropertiesEditorButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		this.usePropertiesEditorButton.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.propertiesUseEditor"));
-		this.usePropertiesEditorButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				SVNTeamPreferencesPage.this.usePropertiesView = SVNTeamPreferencesPage.this.usePropertiesViewButton.getSelection();
 			}
 		});
 		

@@ -254,7 +254,7 @@ public class SVNTeamCommentTemplatesPreferencesPage extends AbstractSVNTeamPrefe
 		this.newButton.setText(SVNTeamUIPlugin.instance().getResource("Button.New"));
 		GridData data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
-		data.widthHint = DefaultDialog.computeButtonWidth(newButton);
+		data.widthHint = DefaultDialog.computeButtonWidth(this.newButton);
 		this.newButton.setLayoutData(data);
 		this.newButton.setEnabled(true);
 		this.newButton.addListener(SWT.Selection, new Listener() {

@@ -18,11 +18,10 @@ import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
-import org.eclipse.team.svn.ui.properties.PropertiesEditor;
-import org.eclipse.team.svn.ui.properties.PropertiesEditorInput;
+import org.eclipse.team.svn.ui.properties.PropertiesView;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
 
 /**
  * Show properties operation
@@ -46,45 +45,21 @@ public class ShowPropertiesOperation extends AbstractActionOperation {
 		this.page = page;
 		this.propertyProvider = propertyProvider;
 	}
-	
-	public boolean isEditorOpened() {
-		if (this.provider != null) {
-			return false;
-		}
-		
-		PropertiesEditorInput input = new PropertiesEditorInput(this.resource, this.propertyProvider);
-		final IEditorPart editor = this.page.findEditor(input);
-		UIMonitorUtility.getDisplay().syncExec(new Runnable() {
-			public void run() {
-				if (editor != null) {
-					ShowPropertiesOperation.this.page.activate(editor);
-				}
-			}
-		});
-		return editor != null;
-	}
 
 	protected void runImpl(final IProgressMonitor monitor) throws Exception {
 		if (this.provider != null) {
-			this.resource = provider.getRepositoryResources()[0];
+			this.resource = this.provider.getRepositoryResources()[0];
 		}
-		
-		final PropertiesEditorInput input = new PropertiesEditorInput(this.resource, this.propertyProvider);
-		
-		final IEditorPart editor = this.page.findEditor(input);
-		
+				
 		UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 			public void run() {
-				if (editor == null) {
-					ShowPropertiesOperation.this.protectStep(new IUnprotectedOperation() {
-						public void run(IProgressMonitor monitor) throws Exception {
-							ShowPropertiesOperation.this.page.openEditor(input, PropertiesEditor.PROPERTIES_EDITOR_ID);
-						}
-					}, monitor, 2);
-				}
-				else {
-					ShowPropertiesOperation.this.page.activate(editor);
-				}
+				ShowPropertiesOperation.this.protectStep(new IUnprotectedOperation() {
+					public void run(IProgressMonitor monitor) throws PartInitException {
+						PropertiesView view = (PropertiesView)ShowPropertiesOperation.this.page.showView(PropertiesView.VIEW_ID);
+						view.setResource(ShowPropertiesOperation.this.resource, ShowPropertiesOperation.this.propertyProvider, false);
+					}
+				}, monitor, 1);
+				
 			}
 		});
 	}

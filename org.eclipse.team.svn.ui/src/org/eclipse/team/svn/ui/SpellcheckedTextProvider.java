@@ -33,7 +33,7 @@ import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 
 /**
- * Standart spellchecked text widget used in plug-in provider.
+ * Standard spell checked text widget used in plug-in provider.
  * 
  * @author Alexei Goncharov
  */

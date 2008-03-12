@@ -48,7 +48,7 @@ public class SVNTeamModificationValidator extends FileModificationValidator {
 	}
 	
 	protected IResource[] getNeedsLockResources(IResource []files) {
-		List returnResources = new ArrayList();
+		List<IResource> returnResources = new ArrayList<IResource>();
 		SVNRemoteStorage storage = SVNRemoteStorage.instance();
 		IResource[] needsLockResources = FileUtility.getResourcesRecursive(files, IStateFilter.SF_NEEDS_LOCK, IResource.DEPTH_ZERO);
 		for (int i = 0; i < needsLockResources.length; i++) {
@@ -57,7 +57,7 @@ public class SVNTeamModificationValidator extends FileModificationValidator {
 				returnResources.add(needsLockResources[i]);
 			}
 		}
-		return (IResource[])returnResources.toArray(new IResource[returnResources.size()]);
+		return returnResources.toArray(new IResource[returnResources.size()]);
 	}
 
 }

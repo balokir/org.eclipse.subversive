@@ -158,10 +158,8 @@ public final class SVNTeamPreferences {
 	public static final boolean HISTORY_COMPARE_MODE_DEFAULT = false;
 	public static final boolean HISTORY_LINK_WITH_EDITOR_DEFAULT = false;
 	
-	public static final String PROPERTY_USE_VIEW_NAME = "useView";
 	public static final String PROPERTY_LINK_WITH_EDITOR_NAME = "linkWithEditor";
 	
-	public static final boolean PROPERTY_USE_VIEW_DEFAULT = true;
 	public static final boolean PROPERTY_LINK_WITH_EDITOR_DEFAULT = false;
 	
 	public static final String SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_NAME = "fastReport";
@@ -336,7 +334,6 @@ public final class SVNTeamPreferences {
 	}
 	
 	public static void setDefaultPropertiesValues(IPreferenceStore store) {
-		store.setDefault(SVNTeamPreferences.fullPropertiesName(SVNTeamPreferences.PROPERTY_USE_VIEW_NAME), SVNTeamPreferences.PROPERTY_USE_VIEW_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullPropertiesName(SVNTeamPreferences.PROPERTY_LINK_WITH_EDITOR_NAME), SVNTeamPreferences.PROPERTY_LINK_WITH_EDITOR_DEFAULT);
 	}
 	
@@ -467,10 +464,6 @@ public final class SVNTeamPreferences {
 	
 	public static void resetToDefaultSynchronizeValues(IPreferenceStore store) {
 		store.setValue(SVNTeamPreferences.fullSynchronizeName(SVNTeamPreferences.SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_NAME), SVNTeamPreferences.SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_DEFAULT);
-	}
-	
-	public static void resetToDefaultPropertiesValues(IPreferenceStore store) {
-		store.setValue(SVNTeamPreferences.fullPropertiesName(SVNTeamPreferences.PROPERTY_USE_VIEW_NAME), SVNTeamPreferences.PROPERTY_USE_VIEW_DEFAULT);
 	}
 	
 	public static void resetToDefaultRepositoryValues(IPreferenceStore store) {
