@@ -187,14 +187,14 @@ public abstract class AbstractResourceDecorator extends LabelProvider implements
 		else if (this.indicateNeedsLock && IStateFilter.SF_NEEDS_LOCK.accept(resource, state, mask)) {
 			decoration.addOverlay(AbstractResourceDecorator.OVR_NEEDS_LOCK);
 		}
-		else if (IStateFilter.SF_DELETED.accept(resource, state, mask)) {
-			decoration.addOverlay(AbstractResourceDecorator.OVR_DELETED);
-		}
 		else if (IStateFilter.SF_ADDED.accept(resource, state, mask)) {
 //			new state also recognized as added, then it should be before added
 			if (this.indicateAdded) {
 				decoration.addOverlay(AbstractResourceDecorator.OVR_ADDED);
 			}
+		}
+		else if (IStateFilter.SF_DELETED.accept(resource, state, mask)) {
+			decoration.addOverlay(AbstractResourceDecorator.OVR_DELETED);
 		}
 		else if (IStateFilter.SF_CONFLICTING.accept(resource, state, mask)) {
 			if (this.indicateConflicted) {

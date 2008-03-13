@@ -60,6 +60,9 @@ public class MergeSyncInfo extends AbstractSVNSyncInfo {
     		return SyncInfo.CONFLICTING | SyncInfo.CHANGE;
     	}
     	if (this.isModified(remoteKind, remoteMask)) {
+    		if (this.isNotExists(localKind, localMask)) {
+        		return SyncInfo.CONFLICTING | SyncInfo.DELETION;
+    		}
             if (this.isNotModified(localKind, localMask)) {
             	return SyncInfo.INCOMING | SyncInfo.CHANGE;
             }
@@ -72,6 +75,9 @@ public class MergeSyncInfo extends AbstractSVNSyncInfo {
             if (this.isNotModified(localKind, localMask)) {
         		return SyncInfo.INCOMING | SyncInfo.DELETION;
             }
+    		if (this.isNotExists(localKind, localMask) || this.isDeleted(localKind, localMask)) {
+        		return SyncInfo.IN_SYNC;
+    		}
     		return SyncInfo.CONFLICTING | SyncInfo.DELETION;
     	}
         

@@ -184,6 +184,51 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 			}
 			this.baseStatusCache.setBytes(startResourceChange.getResource(), SVNRemoteStorage.instance().resourceChangeAsBytes(startResourceChange));
 		}
+		else {
+			//FIXME show correct resource as common ancestor (base of local but at revision "merge-start")
+			IChangeStateProvider startProvider = new IChangeStateProvider() {
+				public long getChangeDate() {
+					return current.date;
+				}
+				public String getChangeAuthor() {
+					return null;
+				}
+				public SVNRevision.Number getChangeRevision() {
+					return current.startRevision == SVNRevision.INVALID_REVISION_NUMBER ? null : SVNRevision.fromNumber(current.startRevision);
+				}
+				public int getTextChangeType() {
+					return current.startRevision == SVNRevision.INVALID_REVISION_NUMBER ? SVNEntryStatus.Kind.NONE : SVNEntryStatus.Kind.NORMAL;
+				}
+				public int getPropertiesChangeType() {
+					return SVNEntryStatus.Kind.NONE;
+				}
+				public int getNodeKind() {
+					int kind = SVNUtility.getNodeKind(current.path, current.nodeKind, true);
+					// if not exists on repository try to check it with WC kind...
+					return kind == SVNEntry.Kind.NONE ? SVNUtility.getNodeKind(current.path, current.nodeKind, false) : kind;
+				}
+				public String getLocalPath() {
+					return current.path;
+				}
+				public String getComment() {
+					return null;
+				}
+				public boolean isCopied() {
+					return false;
+				}
+				public boolean isSwitched() {
+					return false;
+				}
+				public IResource getExact(IResource []set) {
+					return FileUtility.selectOneOf(MergeSubscriber.this.scope.getRoots(), set);
+				}
+			};
+			IResourceChange startResourceChange = SVNRemoteStorage.instance().asResourceChange(startProvider, false);
+			IRepositoryResource base = SVNRemoteStorage.instance().asRepositoryResource(endResourceChange.getResource());
+			base.setSelectedRevision(this.scope.getMergeSet().fromStart[0].getSelectedRevision());
+			startResourceChange.setOriginator(base);
+			this.baseStatusCache.setBytes(startResourceChange.getResource(), SVNRemoteStorage.instance().resourceChangeAsBytes(startResourceChange));
+		}
 		
 		return endResourceChange;
 	}
