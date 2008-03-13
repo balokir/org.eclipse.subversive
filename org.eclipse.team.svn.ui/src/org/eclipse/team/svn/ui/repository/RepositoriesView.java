@@ -84,10 +84,10 @@ public class RepositoriesView extends ViewPart {
         menuMgr.addMenuListener(new IMenuListener() {
             public void menuAboutToShow(final IMenuManager manager) {
         		MenuManager sub = new MenuManager(SVNTeamUIPlugin.instance().getResource("RepositoriesView.New"), "addMenu");
-        		sub.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
         		sub.add(new Separator("mainGroup"));
         		sub.add(new Separator("managementGroup"));
         		sub.add(new Separator("repositoryGroup"));
+        		sub.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
         		Action newRepositoryLocation = new Action(SVNTeamUIPlugin.instance().getResource("RepositoriesView.RepositoryLocation")) {
 					public void run() {
 						new NewRepositoryLocationAction().run(this);
@@ -97,12 +97,9 @@ public class RepositoriesView extends ViewPart {
         		sub.add(newRepositoryLocation);
         		manager.add(sub);
         		
-				manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-
 				manager.add(new Separator("checkoutGroup"));
                 
         		sub = new MenuManager(SVNTeamUIPlugin.instance().getResource("RepositoriesView.OpenWith"), "openWithMenu");
-        		sub.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
         		sub.add(new Separator("dynamicGroup"));
         		IStructuredSelection selection = (IStructuredSelection)provider.getSelection();
         		if (selection.size() == 1) {
@@ -125,13 +122,14 @@ public class RepositoriesView extends ViewPart {
         			}
         		}
         		sub.add(new Separator("fixedGroup"));
+        		sub.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
         		manager.add(sub);
                 
                 manager.add(new Separator("miscGroup"));
                 
         		sub = new MenuManager(SVNTeamUIPlugin.instance().getResource("RepositoriesView.Refactor"), "refactorMenu");
-        		sub.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
         		sub.add(new Separator("mainGroup"));
+        		sub.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
         		manager.add(sub);
         		
 				manager.add(new Separator("locationGroup"));
@@ -141,11 +139,13 @@ public class RepositoriesView extends ViewPart {
                 manager.add(new Separator("importExportGroup"));
                 
 				sub = new MenuManager(SVNTeamUIPlugin.instance().getResource("RepositoriesView.CompareWith"), "compareMenu");
-        		sub.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
         		sub.add(new Separator("mainGroup"));
+        		sub.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
         		manager.prependToGroup("importExportGroup", sub);
                 
                 manager.add(new Separator("refreshGroup"));
+                
+				manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
             }
 
         });

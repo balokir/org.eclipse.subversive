@@ -30,7 +30,7 @@
          <attribute name="class" type="string">
             <annotation>
                <documentation>
-                  Must implement org.eclipse.team.svn.ui.extension.IMailSettingsProvider
+                  Must implement org.eclipse.team.svn.ui.factory.IReportingDescriptor
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.team.svn.ui.extension.factory.IReportingDescriptor"/>

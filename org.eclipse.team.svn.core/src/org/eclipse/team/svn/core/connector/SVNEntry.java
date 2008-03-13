@@ -169,4 +169,8 @@ public class SVNEntry {
 		this.lock = lock;
 	}
 
+	public String toString() {
+		return this.path;
+	}
+	
 }
