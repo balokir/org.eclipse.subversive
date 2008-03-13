@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -33,6 +34,7 @@ import org.eclipse.team.svn.core.operation.remote.GetLogMessagesOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
+import org.eclipse.team.svn.ui.history.filter.RevisionLogEntryFilter;
 import org.eclipse.team.svn.ui.panel.common.SelectRevisionPanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -49,10 +51,12 @@ import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
  */
 public class RevisionComposite extends Composite {
 	protected IRepositoryResource selectedResource;
+	protected IRepositoryResource baseResource;
 	protected SVNRevision defaultRevision;
 	protected long currentRevision;
 	protected long lastSelectedRevision;
 	protected boolean stopOnCopy;
+	protected boolean toFilterCurrent;
 	protected String []captions;
 
 	protected SVNRevision selectedRevision;
@@ -67,11 +71,20 @@ public class RevisionComposite extends Composite {
 	public RevisionComposite(Composite parent, IValidationManager validationManager, boolean stopOnCopy, String []captions, SVNRevision defaultRevision) {
 		super(parent, SWT.NONE);
 		this.stopOnCopy = stopOnCopy;
+		this.toFilterCurrent = false;
 		this.validationManager = validationManager;
 		this.lastSelectedRevision = SVNRevision.INVALID_REVISION_NUMBER;
 		this.captions = captions;
 		this.defaultRevision = defaultRevision;
 		this.createControls();
+	}
+	
+	public void setBaseResource(IRepositoryResource baseResource) {
+		this.baseResource = baseResource;
+	}
+	
+	public void setFilterCurrent(boolean toFilter) {
+		this.toFilterCurrent = toFilter;
 	}
 	
 	public SVNRevision getSelectedRevision() {
@@ -142,7 +155,7 @@ public class RevisionComposite extends Composite {
 		group.setLayoutData(data);
 
 		this.headRevisionRadioButton = new Button(group, SWT.RADIO);
-		this.headRevisionRadioButton.setText(captions == null ? SVNTeamUIPlugin.instance().getResource("RevisionComposite.HeadRevision") : captions[1]);
+		this.headRevisionRadioButton.setText(this.captions == null ? SVNTeamUIPlugin.instance().getResource("RevisionComposite.HeadRevision") : this.captions[1]);
 		this.headRevisionRadioButton.setLayoutData(new GridData());
 		this.headRevisionRadioButton.setSelection(true);
 
@@ -230,6 +243,16 @@ public class RevisionComposite extends Composite {
 				}
 				if (!UIMonitorUtility.doTaskNowDefault(RevisionComposite.this.getShell(), msgsOp, true).isCancelled() && msgsOp.getExecutionState() == IActionOperation.OK) {
 				    SelectRevisionPanel panel = new SelectRevisionPanel(msgsOp, false, RevisionComposite.this.currentRevision);
+				    if (RevisionComposite.this.toFilterCurrent) {
+				    	RevisionLogEntryFilter revFilter = new RevisionLogEntryFilter();
+				    	long revNum = -1;
+				    	try {
+				    		revNum = RevisionComposite.this.baseResource.getRevision(); 
+				    	}
+				    	catch (SVNConnectorException ex){}
+				    	revFilter.setRevisionstoHide(revNum, revNum);
+				    	panel.addFilter(revFilter);
+				    }
 					DefaultDialog dialog = new DefaultDialog(RevisionComposite.this.getShell(), panel);
 					if (dialog.open() == 0) {
 					    long selectedRevisionNum = panel.getSelectedRevision();
