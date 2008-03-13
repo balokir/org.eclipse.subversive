@@ -30,6 +30,9 @@ public abstract class AbstractRepositoryResourceSelectionPanel extends AbstractD
 	
 	protected long currentRevision;
 	protected boolean stopOnCopy;
+	protected boolean filterCurrentRevision;
+	
+	protected boolean toFilterCurrent;
 	
 	protected String historyKey;
 	protected RepositoryResourceSelectionComposite selectionComposite;
@@ -51,7 +54,12 @@ public abstract class AbstractRepositoryResourceSelectionPanel extends AbstractD
 		this.selectionTitle = selectionTitle;
 		this.selectionDescription = selectionDescription;
 		this.defaultTextType = defaultTextType;
+		this.toFilterCurrent = false;
     }
+    
+	public void setFilterCurrent(boolean toFilter) {
+		this.toFilterCurrent = toFilter;
+	}
     
     public AbstractRepositoryResourceSelectionPanel(IRepositoryResource baseResource, long currentRevision, String title, String proposal, String historyKey, boolean stopOnCopy, String selectionTitle, String selectionDescription, int twoRevisions, int defaultTextType) {
     	this(baseResource, currentRevision, title, proposal, historyKey, stopOnCopy, selectionTitle, selectionDescription, defaultTextType);
@@ -80,6 +88,7 @@ public abstract class AbstractRepositoryResourceSelectionPanel extends AbstractD
         GridData data = null;
 
         this.selectionComposite = new RepositoryResourceSelectionComposite(parent, SWT.NONE, this, this.historyKey, this.selectedResource, this.stopOnCopy, this.selectionTitle, this.selectionDescription, this.twoRevisions, this.defaultTextType);
+        this.selectionComposite.setFilterCurrent(this.toFilterCurrent);
         data = new GridData(GridData.FILL_HORIZONTAL);
         this.selectionComposite.setLayoutData(data);
         this.selectionComposite.setCurrentRevision(this.currentRevision);

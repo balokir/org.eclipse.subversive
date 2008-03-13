@@ -62,6 +62,7 @@ public class RepositoryResourceSelectionComposite extends Composite {
 	protected IValidationManager validationManager;
 	protected IRepositoryResource baseResource;
 	protected boolean stopOnCopy;
+	protected boolean toFilterCurrent;
 	protected int twoRevisions;
 	
 	protected String url;
@@ -79,6 +80,7 @@ public class RepositoryResourceSelectionComposite extends Composite {
 	public RepositoryResourceSelectionComposite(Composite parent, int style, IValidationManager validationManager, String historyKey, String comboId, IRepositoryResource baseResource, boolean stopOnCopy, String selectionTitle, String selectionDescription, int twoRevisions, int defaultTextType) {
 		super(parent, style);
 		this.stopOnCopy = stopOnCopy;
+		this.toFilterCurrent = false;
 		this.urlHistory = new UserInputHistory(historyKey);
 		this.validationManager = validationManager;
 		this.baseResource = baseResource;
@@ -87,6 +89,11 @@ public class RepositoryResourceSelectionComposite extends Composite {
 		this.twoRevisions = twoRevisions;
 		this.comboId = comboId;
 		this.createControls(defaultTextType);
+	}
+	
+	public void setFilterCurrent(boolean toFilter) {
+		this.toFilterCurrent = toFilter;
+		this.revisionComposite.setFilterCurrent(this.toFilterCurrent);
 	}
 
 	public IRepositoryResource getSelectedResource() {
@@ -184,6 +191,10 @@ public class RepositoryResourceSelectionComposite extends Composite {
 			public void modifyText(ModifyEvent e) {
 				RepositoryResourceSelectionComposite.this.url = ((Combo)e.widget).getText();
 				RepositoryResourceSelectionComposite.this.revisionComposite.setSelectedResource(RepositoryResourceSelectionComposite.this.getSelectedResource());
+				boolean toFilter = RepositoryResourceSelectionComposite.this.toFilterCurrent 
+									&& (RepositoryResourceSelectionComposite.this.getSelectedResource().getUrl().equals(RepositoryResourceSelectionComposite.this.baseResource.getUrl())
+									|| RepositoryResourceSelectionComposite.this.getSelectedResource().getUrl().equals(RepositoryResourceSelectionComposite.this.baseResource.getUrl() + "/"));
+				RepositoryResourceSelectionComposite.this.revisionComposite.setFilterCurrent(toFilter);
 				if (RepositoryResourceSelectionComposite.this.secondRevisionComposite != null) {
 					RepositoryResourceSelectionComposite.this.secondRevisionComposite.setSelectedResource(RepositoryResourceSelectionComposite.this.getSecondSelectedResource());
 				}
@@ -252,6 +263,7 @@ public class RepositoryResourceSelectionComposite extends Composite {
 				RepositoryResourceSelectionComposite.this.validateRevisions();
 			}
 		};
+		this.revisionComposite.setBaseResource(this.baseResource);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = (this.twoRevisions & MODE_TWO) != 0 ? 1 : 2;
 		this.revisionComposite.setLayoutData(data);

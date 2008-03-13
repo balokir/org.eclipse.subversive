@@ -36,6 +36,7 @@ public class CompareAction extends AbstractRepositoryTeamAction {
     public void runImpl(IAction action) {
         IRepositoryResource first = this.getSelectedRepositoryResources()[0];
         ComparePanel panel = new ComparePanel(first);
+        panel.setFilterCurrent(true);
         DefaultDialog dlg = new DefaultDialog(this.getShell(), panel);
         if (dlg.open() == 0) {
         	this.doCompare(first, panel.getSelectedResource());
