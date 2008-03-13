@@ -9,7 +9,7 @@
  *    Alexei Goncharov (Polarion Software) - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.svn.ui.synchronize.update.action;
+package org.eclipse.team.svn.ui.synchronize.action;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
@@ -17,8 +17,7 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.ui.operation.ShowConflictEditorOperation;
-import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
-import org.eclipse.team.svn.ui.synchronize.update.UpdateSyncInfo;
+import org.eclipse.team.svn.ui.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
@@ -34,7 +33,7 @@ public class EditConflictsAction extends AbstractSynchronizeModelAction {
 	protected FastSyncInfoFilter getSyncInfoFilter() {
 		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.CONFLICTING}) {
 			public boolean select(SyncInfo info) {
-				return super.select(info) && IStateFilter.SF_CONFLICTING.accept(((UpdateSyncInfo)info).getLocalResource());
+				return super.select(info) && IStateFilter.SF_CONFLICTING.accept(((AbstractSVNSyncInfo)info).getLocalResource());
 			}
 		};
 	}

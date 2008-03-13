@@ -11,18 +11,25 @@
 
 package org.eclipse.team.svn.ui.operation;
 
+import java.util.HashSet;
+
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.compare.internal.CompareEditor;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
+import org.eclipse.team.svn.core.operation.SVNResourceRuleFactory;
 import org.eclipse.team.svn.core.operation.local.AbstractWorkingCopyOperation;
 import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -54,6 +61,19 @@ public class ShowConflictEditorOperation extends AbstractWorkingCopyOperation {
 		this.showInDialog = showInDialog;
 	}
 
+    public ISchedulingRule getSchedulingRule() {
+    	ISchedulingRule rule = super.getSchedulingRule();
+    	if (rule instanceof IWorkspaceRoot) {
+    		return rule;
+    	}
+    	IResource []resources = this.operableData();
+    	HashSet ruleSet = new HashSet();
+    	for (int i = 0; i < resources.length; i++) {
+			ruleSet.add(SVNResourceRuleFactory.INSTANCE.refreshRule(resources[i]));
+    	}
+    	return new MultiRule((IResource [])ruleSet.toArray(new IResource[ruleSet.size()]));
+    }
+
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		IResource []conflictingResources = this.operableData();
 		
@@ -74,10 +94,14 @@ public class ShowConflictEditorOperation extends AbstractWorkingCopyOperation {
 		ISVNConnector proxy = location.acquireSVNProxy();
 		
 		try {
-			SVNChangeStatus []status = SVNUtility.status(proxy, FileUtility.getWorkingCopyPath(resource), Depth.IMMEDIATES, ISVNConnector.Options.NONE, new SVNNullProgressMonitor());
+			SVNChangeStatus []status = SVNUtility.status(proxy, FileUtility.getWorkingCopyPath(resource), Depth.EMPTY, ISVNConnector.Options.NONE, new SVNNullProgressMonitor());
 			if (status.length == 1) {
 				IContainer parent = resource.getParent();
-				this.openEditor(resource, status[0].conflictWorking == null || status[0].conflictWorking.length() == 0 ? resource : (IFile)parent.findMember(status[0].conflictWorking), (IFile)parent.findMember(status[0].conflictNew), (IFile)parent.findMember(status[0].conflictOld), monitor);
+				parent.refreshLocal(IResource.DEPTH_ONE, monitor);
+				IFile local = parent.getFile(new Path(status[0].conflictWorking));
+				IFile remote = parent.getFile(new Path(status[0].conflictNew));
+				IFile ancestor = parent.getFile(new Path(status[0].conflictOld));
+				this.openEditor(resource, local, remote, ancestor, monitor);
 			}
 		}
 		finally {

@@ -63,19 +63,68 @@ public interface IOptionProvider {
 		}
 	};
 	
+	/**
+	 * Returns read-only files modification validator
+	 * @return read-only files modification validator
+	 */
 	public FileModificationValidator getFileModificationValidator();
+	/**
+	 * Provides credentials prompt call-back
+	 * @return credentials prompt call-back
+	 */
 	public ISVNCredentialsPrompt getCredentialsPrompt();
+	/**
+	 * Provide logged operation factory which allows to override exceptions handling
+	 * @return logged operation factory instance
+	 */
 	public ILoggedOperationFactory getLoggedOperationFactory();
+	/**
+	 * Installs additional handlers into project set processing workflow
+	 * @param op project set processing workflow
+	 */
 	public void addProjectSetCapabilityProcessing(CompositeOperation op);
+	/**
+	 * Returns <code>true</code> if auto-share is enabled
+	 * @return <code>true</code> if auto-share is enabled, false otherwise
+	 */
 	public boolean isAutomaticProjectShareEnabled();
+	/**
+	 * Returns preferred SVN connector plug-in id
+	 * @return preferred SVN connector plug-in id
+	 */
 	public String getSVNConnectorId();
+	/**
+	 * Returns set of automatic properties
+	 * @param template resource name template
+	 * @return set of properties
+	 */
 	public SVNProperty[] getAutomaticProperties(String template);
 	
+	/**
+	 * Tells if SVN meta-information cache is enabled
+	 * @return <code>true</code> if cache is enabled, <code>false</code> otherwise
+	 */
 	public boolean isSVNCacheEnabled();
 	
+	/**
+	 * Returns default trunk name
+	 * @return default trunk name
+	 */
 	public String getDefaultTrunkName();
+	/**
+	 * Returns default branches name
+	 * @return default branches name
+	 */
 	public String getDefaultBranchesName();
+	/**
+	 * Returns default tags name
+	 * @return default tags name
+	 */
 	public String getDefaultTagsName();
 	
+	/**
+	 * Provides access to internationalization strings
+	 * @return nationalized value
+	 */
 	public String getResource(String key);
 }

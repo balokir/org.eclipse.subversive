@@ -16,6 +16,8 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
+import org.eclipse.team.svn.core.operation.CompositeOperation;
+import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -48,8 +50,11 @@ public class CompareWithLatestRevisionAction extends AbstractWorkingCopyAction {
 			CorrectRevisionOperation correctOp = new CorrectRevisionOperation(null, remote, local.getRevision(), resource);
 			
 			if (!this.runNow(correctOp, true).isCancelled()) {
-				this.runScheduled(new CompareResourcesOperation(local, remote));
-				this.runBusy(new ShowHistoryViewOperation(resource, remote, ISVNHistoryView.COMPARE_MODE, ISVNHistoryView.COMPARE_MODE));
+				CompareResourcesOperation mainOp = new CompareResourcesOperation(local, remote);
+				CompositeOperation op = new CompositeOperation(mainOp.getId());
+				op.add(mainOp);
+				op.add(new ShowHistoryViewOperation(resource, remote, ISVNHistoryView.COMPARE_MODE, ISVNHistoryView.COMPARE_MODE), new IActionOperation[] {mainOp});
+				this.runScheduled(op);
 			}
 		}
 	}
