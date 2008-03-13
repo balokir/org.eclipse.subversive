@@ -88,7 +88,7 @@ public class UpdateAction extends AbstractSynchronizeModelAction {
 		op.add(mainOp);
 		op.add(new RestoreProjectMetaOperation(saveOp));
 		op.add(new ClearMergeStatusesOperation(mainOp));
-		op.add(new RefreshResourcesOperation(mainOp));
+		op.add(new RefreshResourcesOperation(resources));
 		op.add(new NotifyUnresolvedConflictOperation(mainOp));
 
 		return op;
