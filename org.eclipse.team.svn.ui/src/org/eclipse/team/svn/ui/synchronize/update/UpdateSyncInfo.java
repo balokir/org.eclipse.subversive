@@ -41,6 +41,10 @@ public class UpdateSyncInfo extends AbstractSVNSyncInfo {
         int remoteMask = this.getRemote() == null ? 0 : ((ResourceVariant)this.getRemote()).getResource().getChangeMask();
         	
         if (this.isLinked(localKind, localMask)) {
+        	// Corresponding resource can be added at remote site
+			if (this.isAdded(remoteKind, remoteMask)) {
+				return SyncInfo.CONFLICTING | SyncInfo.ADDITION;
+			}
     		return SyncInfo.IN_SYNC;
         }
         
