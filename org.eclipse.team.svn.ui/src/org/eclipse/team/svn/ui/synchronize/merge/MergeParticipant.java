@@ -19,6 +19,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.resource.ILocalResource;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.synchronize.AbstractSVNParticipant;
 import org.eclipse.team.svn.ui.synchronize.AbstractSVNSubscriber;
@@ -53,21 +54,10 @@ public class MergeParticipant extends AbstractSVNParticipant {
 
     protected void initializeConfiguration(ISynchronizePageConfiguration configuration) {
     	super.initializeConfiguration(configuration);
-    	
-		//FIXME close merge view here...
-//		this.configurationListener = new IPropertyChangeListener() {
-//			public void propertyChange(PropertyChangeEvent event) {
-//				if (event.getProperty().startsWith(SVNTeamPreferences.CORE_BASE) && 
-//					!CoreExtensionsManager.instance().getSVNClientWrapperFactory().isInteractiveMergeAllowed()) {
-//				}
-//			}
-//		};
-//		SVNTeamUIPlugin.instance().getPreferenceStore().addPropertyChangeListener(this.configurationListener);
     }
     
     public void dispose() {
     	super.dispose();
-//		SVNTeamUIPlugin.instance().getPreferenceStore().removePropertyChangeListener(this.configurationListener);
     }
     
     protected String getParticipantId() {
@@ -87,7 +77,7 @@ public class MergeParticipant extends AbstractSVNParticipant {
     }
 
     protected String getShortTaskName() {
-        return "Merge";
+        return SVNTeamUIPlugin.instance().getResource("MergeView.TaskName");
     }
     
     protected ILabelDecorator createLabelDecorator() {
