@@ -185,7 +185,6 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 			this.baseStatusCache.setBytes(startResourceChange.getResource(), SVNRemoteStorage.instance().resourceChangeAsBytes(startResourceChange));
 		}
 		else {
-			//FIXME show correct resource as common ancestor (base of local but at revision "merge-start")
 			IChangeStateProvider startProvider = new IChangeStateProvider() {
 				public long getChangeDate() {
 					return current.date;
