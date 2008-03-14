@@ -217,7 +217,7 @@ public interface ISVNConnector {
 
 		public static final long MERGE = Options.FORCE | Options.IGNORE_ANCESTRY | Options.SIMULATE | Options.RECORD_ONLY;
 
-		public static final long MERGE_REINTEGRATE = Options.FORCE | Options.SIMULATE;
+		public static final long MERGE_REINTEGRATE = Options.SIMULATE;
 
 		public static final long MERGE_STATUS = Options.FORCE | Options.IGNORE_ANCESTRY;
 
