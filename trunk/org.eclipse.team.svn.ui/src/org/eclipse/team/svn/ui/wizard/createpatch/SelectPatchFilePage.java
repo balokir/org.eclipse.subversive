@@ -16,7 +16,10 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -42,6 +45,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
@@ -320,7 +324,19 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 			data.heightHint = 200;
 			data.widthHint = 600;
 			this.changeViewer.getControl().setLayoutData(data);
-			this.changeViewer.setContentProvider(new WorkbenchContentProvider()); 
+			this.changeViewer.setContentProvider(new WorkbenchContentProvider() {
+				public Object[] getChildren(Object element) {
+					if (element instanceof IProject || element instanceof IFolder) {
+						try {
+							return SVNRemoteStorage.instance().getRegisteredChildren((IContainer)element);
+						}
+						catch (Exception e) {
+							// do nothing
+						}
+					}
+					return super.getChildren(element);
+				}
+			}); 
 			this.changeViewer.setLabelProvider(new WorkbenchLabelProvider()); 
 			this.changeViewer.addCheckStateListener(new ICheckStateListener() {
 				public void checkStateChanged(CheckStateChangedEvent event) {

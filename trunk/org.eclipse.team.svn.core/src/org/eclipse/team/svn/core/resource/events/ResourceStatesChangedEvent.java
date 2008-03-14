@@ -49,7 +49,7 @@ public class ResourceStatesChangedEvent {
 				this.fullSet = ResourceStatesChangedEvent.collectResources(this.resources, this.depth);
 				FileUtility.reorder(this.fullSet, true);
 			} 
-			catch (CoreException e) {
+			catch (Exception e) {
 				this.fullSet = this.resources;
 			}
 		}
@@ -76,7 +76,7 @@ public class ResourceStatesChangedEvent {
 		return false;
 	}
 
-	public static IResource []collectResources(IResource []resources, int depth) throws CoreException {
+	public static IResource []collectResources(IResource []resources, int depth) throws Exception {
     	if (depth == IResource.DEPTH_ZERO) {
     		return resources;
     	}
