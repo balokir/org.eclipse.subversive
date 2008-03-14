@@ -20,6 +20,7 @@ import org.eclipse.team.svn.core.operation.local.JavaHLMergeOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
+import org.eclipse.team.svn.core.operation.remote.LocateResourceURLInHistoryOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.ResourcesParentsProvider;
@@ -65,9 +66,13 @@ public class MergeAction extends AbstractNonRecursiveTeamAction {
 		MergePanel panel = new MergePanel(resources, remote, revision);
 	    AdvancedDialog dialog = new AdvancedDialog(this.getShell(), panel);
 	    if (dialog.open() == 0) {
+	    	LocateResourceURLInHistoryOperation locateFirst = new LocateResourceURLInHistoryOperation(panel.getFirstSelection(), true);
+	    	LocateResourceURLInHistoryOperation locateSecond = new LocateResourceURLInHistoryOperation(panel.getSecondSelection(), true);
 	    	if (SVNTeamPreferences.getMergeBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MERGE_USE_JAVAHL_NAME)) {
-		    	JavaHLMergeOperation mainOp = new JavaHLMergeOperation(resources, panel.getFirstSelection(), panel.getSecondSelection(), false, panel.getIgnoreAncestry());
+		    	JavaHLMergeOperation mainOp = new JavaHLMergeOperation(resources, locateFirst, locateSecond, false, panel.getIgnoreAncestry());
 		    	CompositeOperation op = new CompositeOperation(mainOp.getId());
+		    	op.add(locateFirst);
+		    	op.add(locateSecond);
 	    		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
 	    		op.add(saveOp);
 		    	op.add(mainOp);
@@ -76,7 +81,12 @@ public class MergeAction extends AbstractNonRecursiveTeamAction {
 		    	this.runScheduled(op);
 	    	}
 	    	else {
-	    		this.runScheduled(new ShowMergeViewOperation(resources, panel.getFirstSelection(), panel.getSecondSelection(), panel.getIgnoreAncestry(), this.getTargetPart()));
+	    		ShowMergeViewOperation mainOp = new ShowMergeViewOperation(resources, locateFirst, locateSecond, panel.getIgnoreAncestry(), this.getTargetPart());
+		    	CompositeOperation op = new CompositeOperation(mainOp.getId());
+		    	op.add(locateFirst);
+		    	op.add(locateSecond);
+		    	op.add(mainOp);
+	    		this.runScheduled(op);
 	    	}
 	    }
 	}

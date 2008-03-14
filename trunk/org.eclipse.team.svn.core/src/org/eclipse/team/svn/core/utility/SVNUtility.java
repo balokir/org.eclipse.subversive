@@ -939,21 +939,6 @@ public final class SVNUtility {
 	 * @return: 0 if equal, -1 if less, 1 if more
 	 */
 	public static int compareRevisions(SVNRevision first, SVNRevision second, SVNEntryRevisionReference referenceFirst, SVNEntryRevisionReference referenceSecond, ISVNConnector proxy)  throws SVNConnectorException {
-		if ((first.getKind() == SVNRevision.Kind.HEAD) && (second.getKind() != SVNRevision.Kind.HEAD)) {
-			return 1;
-		}
-		if ((first.getKind() != SVNRevision.Kind.START) && (second.getKind() == SVNRevision.Kind.START)) {
-			return 1;
-		}
-		if ((first.getKind() == SVNRevision.Kind.HEAD) && (second.getKind() == SVNRevision.Kind.HEAD) || (first.getKind() == SVNRevision.Kind.START) && (second.getKind() == SVNRevision.Kind.START)) {
-			return 0;
-		}
-		if ((first.getKind() != SVNRevision.Kind.HEAD) && (second.getKind() == SVNRevision.Kind.HEAD)) {
-			return -1;
-		}
-		if ((first.getKind() == SVNRevision.Kind.START) && (second.getKind() != SVNRevision.Kind.START)) {
-			return -1;
-		}
 		if (first.getKind() == SVNRevision.Kind.NUMBER && second.getKind() == SVNRevision.Kind.NUMBER) {
 			SVNRevision.Number fromNumber = (SVNRevision.Number)first;
 			SVNRevision.Number toNumber = (SVNRevision.Number)second;
@@ -967,46 +952,31 @@ public final class SVNUtility {
 				return -1;
 			}
 		}
-		else if (first.getKind() == SVNRevision.Kind.DATE && second.getKind() == SVNRevision.Kind.DATE) {
-			SVNRevision.Date fromDate = (SVNRevision.Date)first;
-			SVNRevision.Date toDate = (SVNRevision.Date)second;
-			if (fromDate.getDate() > toDate.getDate()){
-				return 1;
-			}
-			else if (fromDate.getDate() == toDate.getDate()){
-				return 0;
-			}
-			else {
-				return -1;
-			}
+		SVNRevision.Date fromDate = null;
+		SVNRevision.Date toDate = null;
+		if (first.getKind() == SVNRevision.Kind.DATE) {
+			fromDate = (SVNRevision.Date)first;
 		}
-		else if (first.getKind() == SVNRevision.Kind.DATE && second.getKind() == SVNRevision.Kind.NUMBER) {
-			SVNRevision.Date fromDate = (SVNRevision.Date)first;
-			SVNEntryInfo [] entryInfo =  SVNUtility.info(proxy, referenceSecond, Depth.UNKNOWN, null);
-			if (fromDate.getDate() > entryInfo[0].lastChangedDate) {
-				return 1;
-			}
-			else if (fromDate.getDate() == entryInfo[0].lastChangedDate) {
-				return 0;
-			}
-			else {
-				return -1;
-			}
+		else {
+			SVNEntryInfo []entryInfo = SVNUtility.info(proxy, referenceFirst, Depth.UNKNOWN, new SVNNullProgressMonitor());
+			fromDate = SVNRevision.fromDate(entryInfo[0].lastChangedDate);
 		}
-		else if (first.getKind() == SVNRevision.Kind.NUMBER && second.getKind() == SVNRevision.Kind.DATE) {
-			SVNRevision.Date toDate = (SVNRevision.Date)second;
-			SVNEntryInfo [] entryInfo =  SVNUtility.info(proxy, referenceFirst, Depth.UNKNOWN, null);
-			if (toDate.getDate() < entryInfo[0].lastChangedDate) {
-				return 1;
-			}
-			else if (toDate.getDate() == entryInfo[0].lastChangedDate) {
-				return 0;
-			}
-			else {
-				return -1;
-			}
+		if (second.getKind() == SVNRevision.Kind.DATE) {
+			toDate = (SVNRevision.Date)second;
 		}
-		return 0;
+		else {
+			SVNEntryInfo []entryInfo = SVNUtility.info(proxy, referenceSecond, Depth.UNKNOWN, new SVNNullProgressMonitor());
+			toDate = SVNRevision.fromDate(entryInfo[0].lastChangedDate);
+		}
+		if (fromDate.getDate() > toDate.getDate()){
+			return 1;
+		}
+		else if (fromDate.getDate() == toDate.getDate()){
+			return 0;
+		}
+		else {
+			return -1;
+		}
 	}
 
 	private static boolean isMergeParts(IResource resource) {

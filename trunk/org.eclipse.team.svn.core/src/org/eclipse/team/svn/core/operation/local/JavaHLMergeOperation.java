@@ -25,6 +25,7 @@ import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 
@@ -34,21 +35,21 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * @author Alexander Gurov
  */
 public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
-	protected IRepositoryResource []from1;
-	protected IRepositoryResource []from2;
+	protected IRepositoryResourceProvider fromStart;
+	protected IRepositoryResourceProvider fromEnd;
 	protected boolean dryRun;
 	protected boolean ignoreAncestry;
 	
 	protected ISVNProgressMonitor externalMonitor;
 	
-	public JavaHLMergeOperation(IResource []localTo, IRepositoryResource []from1, IRepositoryResource []from2, boolean dryRun) {
-		this(localTo, from1, from2, dryRun, false);
+	public JavaHLMergeOperation(IResource []localTo, IRepositoryResource []fromStart, IRepositoryResource []fromEnd, boolean dryRun, boolean ignoreAncestry) {
+		this(localTo, new IRepositoryResourceProvider.DefaultRepositoryResourceProvider(fromStart), new IRepositoryResourceProvider.DefaultRepositoryResourceProvider(fromEnd), dryRun, ignoreAncestry);
 	}
 	
-	public JavaHLMergeOperation(IResource []localTo, IRepositoryResource []from1, IRepositoryResource []from2, boolean dryRun, boolean ignoreAncestry) {
+	public JavaHLMergeOperation(IResource []localTo, IRepositoryResourceProvider fromStart, IRepositoryResourceProvider fromEnd, boolean dryRun, boolean ignoreAncestry) {
 		super("Operation.JavaHLMerge", localTo);
-		this.from1 = from1;
-		this.from2 = from2;
+		this.fromStart = fromStart;
+		this.fromEnd = fromEnd;
 		this.dryRun = dryRun;
 		this.ignoreAncestry = ignoreAncestry;
 	}
@@ -59,11 +60,13 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		IResource []resources = this.operableData();
+		IRepositoryResource []fromStart = this.fromStart.getRepositoryResources();
+		IRepositoryResource []fromEnd = this.fromEnd.getRepositoryResources();
 
 		for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
 			final IResource resource = resources[i];
-			final IRepositoryResource from1 = this.from1[i];
-			final IRepositoryResource from2 = this.from2[i];
+			final IRepositoryResource from1 = fromStart[i];
+			final IRepositoryResource from2 = fromEnd[i];
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
 					JavaHLMergeOperation.this.doMerge(resource, from1, from2, monitor);
