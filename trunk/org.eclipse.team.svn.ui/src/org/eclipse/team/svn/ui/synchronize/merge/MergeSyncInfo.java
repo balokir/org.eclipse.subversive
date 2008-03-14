@@ -30,59 +30,67 @@ public class MergeSyncInfo extends AbstractSVNSyncInfo {
 	public MergeSyncInfo(ILocalResource local, IResourceChange base, IResourceChange remote, IResourceVariantComparator comparator) {
 		super(local, base == null ? AbstractSVNSyncInfo.makeBaseVariant(local) : AbstractSVNSyncInfo.makeRemoteVariant(local, base), AbstractSVNSyncInfo.makeRemoteVariant(local, remote), comparator);
 	}
-	
-    protected int calculateKind() throws TeamException {
-        String localKind = this.local == null ? IStateFilter.ST_NOTEXISTS : this.local.getStatus();
-        int localMask = this.local == null ? 0 : this.local.getChangeMask();
-        String remoteKind = 
-        	this.getRemote() == null ? 
-        	(this.isNonVersioned(localKind, localMask) ? IStateFilter.ST_NOTEXISTS : IStateFilter.ST_NORMAL) : 
-        	((ResourceVariant)this.getRemote()).getStatus();
-        int remoteMask = this.getRemote() == null ? 0 : ((ResourceVariant)this.getRemote()).getResource().getChangeMask();
-        	
-        if (this.isLinked(localKind, localMask)) {
-    		return SyncInfo.IN_SYNC;
-        }
-        
-        if (this.isReplaced(remoteKind, remoteMask)) {
-            if (this.isNotModified(localKind, localMask)) {
-            	return SyncInfo.INCOMING | SyncInfo.CHANGE;
-            }
-    		return SyncInfo.CONFLICTING | SyncInfo.CHANGE;
-        }
-    	if (this.isAdded(remoteKind, remoteMask)) {
-    		if (this.isNotExists(localKind, localMask)) {
-        		return SyncInfo.INCOMING | SyncInfo.ADDITION;
-    		}
-    		return SyncInfo.CONFLICTING | SyncInfo.ADDITION;
-    	}
-    	if (this.isConflicted(remoteKind, remoteMask)) {
-    		return SyncInfo.CONFLICTING | SyncInfo.CHANGE;
-    	}
-    	if (this.isModified(remoteKind, remoteMask)) {
-    		if (this.isNotExists(localKind, localMask)) {
-        		return SyncInfo.CONFLICTING | SyncInfo.DELETION;
-    		}
-            if (this.isNotModified(localKind, localMask)) {
-            	return SyncInfo.INCOMING | SyncInfo.CHANGE;
-            }
-        	if (this.isDeleted(localKind, localMask)) {
-        		return SyncInfo.CONFLICTING | SyncInfo.DELETION;
-        	}
-    		return SyncInfo.CONFLICTING | SyncInfo.CHANGE;
-    	}
-    	if (this.isDeleted(remoteKind, remoteMask)) {
-            if (this.isNotModified(localKind, localMask)) {
-        		return SyncInfo.INCOMING | SyncInfo.DELETION;
-            }
-    		if (this.isNotExists(localKind, localMask) || this.isDeleted(localKind, localMask)) {
-        		return SyncInfo.IN_SYNC;
-    		}
-    		return SyncInfo.CONFLICTING | SyncInfo.DELETION;
-    	}
-        
-    	//if (this.isNotModified(remoteKind)) {...
+
+	protected int calculateKind() throws TeamException {
+		String localKind = this.local == null ? IStateFilter.ST_NOTEXISTS : this.local.getStatus();
+		int localMask = this.local == null ? 0 : this.local.getChangeMask();
+		String remoteKind = this.getRemote() == null ? (this.isNonVersioned(localKind, localMask) ? IStateFilter.ST_NOTEXISTS : IStateFilter.ST_NORMAL) : ((ResourceVariant) this
+				.getRemote()).getStatus();
+		int remoteMask = this.getRemote() == null ? 0 : ((ResourceVariant) this.getRemote()).getResource().getChangeMask();
+
+		if (this.isLinked(localKind, localMask)) {
+        	// Corresponding resource at remote site can produce a change
+			if (this.isAdded(remoteKind, remoteMask)) {
+				return SyncInfo.CONFLICTING | SyncInfo.ADDITION;
+			}
+			if (this.isModified(remoteKind, remoteMask) || this.isReplaced(remoteKind, remoteMask)) {
+				return SyncInfo.CONFLICTING | SyncInfo.CHANGE;
+			}
+			if (this.isDeleted(remoteKind, remoteMask)) {
+				return SyncInfo.CONFLICTING | SyncInfo.DELETION;
+			}
+			return SyncInfo.IN_SYNC;
+		}
+
+		if (this.isReplaced(remoteKind, remoteMask)) {
+			if (this.isNotModified(localKind, localMask)) {
+				return SyncInfo.INCOMING | SyncInfo.CHANGE;
+			}
+			return SyncInfo.CONFLICTING | SyncInfo.CHANGE;
+		}
+		if (this.isAdded(remoteKind, remoteMask)) {
+			if (this.isNotExists(localKind, localMask)) {
+				return SyncInfo.INCOMING | SyncInfo.ADDITION;
+			}
+			return SyncInfo.CONFLICTING | SyncInfo.ADDITION;
+		}
+		if (this.isConflicted(remoteKind, remoteMask)) {
+			return SyncInfo.CONFLICTING | SyncInfo.CHANGE;
+		}
+		if (this.isModified(remoteKind, remoteMask)) {
+			if (this.isNotExists(localKind, localMask)) {
+				return SyncInfo.CONFLICTING | SyncInfo.DELETION;
+			}
+			if (this.isNotModified(localKind, localMask)) {
+				return SyncInfo.INCOMING | SyncInfo.CHANGE;
+			}
+			if (this.isDeleted(localKind, localMask)) {
+				return SyncInfo.CONFLICTING | SyncInfo.DELETION;
+			}
+			return SyncInfo.CONFLICTING | SyncInfo.CHANGE;
+		}
+		if (this.isDeleted(remoteKind, remoteMask)) {
+			if (this.isNotModified(localKind, localMask)) {
+				return SyncInfo.INCOMING | SyncInfo.DELETION;
+			}
+			if (this.isNotExists(localKind, localMask) || this.isDeleted(localKind, localMask)) {
+				return SyncInfo.IN_SYNC;
+			}
+			return SyncInfo.CONFLICTING | SyncInfo.DELETION;
+		}
+
+		// if (this.isNotModified(remoteKind)) {...
 		return SyncInfo.IN_SYNC;
-    }
-    
+	}
+
 }
