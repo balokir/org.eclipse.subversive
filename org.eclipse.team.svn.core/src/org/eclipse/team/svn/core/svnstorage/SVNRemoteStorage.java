@@ -490,7 +490,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		return retVal == null || IStateFilter.SF_UNVERSIONED.accept(retVal) ? this.loadUnversionedSubtree(resource, isLinked, recurse) : retVal;
 	}
 	
-	protected ILocalResource loadUnversionedSubtree(final IResource resource, boolean isLinked, boolean recurse) throws CoreException {
+	protected ILocalResource loadUnversionedSubtree(final IResource resource, boolean isLinked, boolean recurse) throws Exception {
 	    // if resource has unversioned parents it cannot be wrapped directly and it status should be calculated in other way
 		String status = this.calculateUnversionedStatus(resource, isLinked);
 		
@@ -517,7 +517,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
                 }
                 return true;
             }
-        }, recurse ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE);
+        }, recurse ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE, false);
         
 		return tmp[0];
 	}

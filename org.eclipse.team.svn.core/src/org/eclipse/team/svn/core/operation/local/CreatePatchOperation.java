@@ -185,7 +185,18 @@ public class CreatePatchOperation extends AbstractActionOperation {
 					String diff = new String(data);
 					int idx = diff.indexOf(this.contentSeparator);
 					if (idx != -1) {
-						diff = this.indexEntry + fileName + diff.substring(idx);
+						String diffTail = diff.substring(idx);
+						idx = diffTail.indexOf(this.removeSign);
+						int idx1 = diffTail.indexOf('\t', idx);
+						if (idx != -1 && idx1 != -1) {
+							diffTail = diffTail.substring(0, idx + this.removeSign.length()) + fileName + diffTail.substring(idx1);
+						}
+						idx = diffTail.indexOf(this.addSign);
+						idx1 = diffTail.indexOf('\t', idx);
+						if (idx != -1 && idx1 != -1) {
+							diffTail = diffTail.substring(0, idx + this.addSign.length()) + fileName + diffTail.substring(idx1);
+						}
+						diff = this.indexEntry + fileName + diffTail;
 					}
 					stream.write(diff.getBytes());
 				}

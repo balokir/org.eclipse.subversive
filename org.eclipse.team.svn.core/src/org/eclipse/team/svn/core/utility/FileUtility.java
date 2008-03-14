@@ -289,7 +289,11 @@ public final class FileUtility {
         return result;
     }
 	
-	public static void visitNodes(IResource resource, IResourceVisitor visitor, int depth) throws CoreException {
+	public static void visitNodes(IResource resource, IResourceVisitor visitor, int depth) throws Exception {
+		FileUtility.visitNodes(resource, visitor, depth, true);
+	}
+	
+	public static void visitNodes(IResource resource, IResourceVisitor visitor, int depth, boolean useCache) throws Exception {
 		boolean stepInside = visitor.visit(resource);
 		if (stepInside &&
 			resource instanceof IContainer && 
@@ -297,10 +301,10 @@ public final class FileUtility {
 			resource.isAccessible()) {
 			
 			IContainer container = (IContainer)resource;
-			IResource []children = FileUtility.resourceMembers(container, true);
+			IResource []children = useCache ? SVNRemoteStorage.instance().getRegisteredChildren(container) : FileUtility.resourceMembers(container, true);
 			int nextDepth = depth == IResource.DEPTH_ONE ? IResource.DEPTH_ZERO : depth;
 			for (int i = 0; i < children.length; i++) {
-				FileUtility.visitNodes(children[i], visitor, nextDepth);
+				FileUtility.visitNodes(children[i], visitor, nextDepth, useCache);
 			}
 		}
 	}
