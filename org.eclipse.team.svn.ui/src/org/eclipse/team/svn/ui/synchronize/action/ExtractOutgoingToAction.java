@@ -11,6 +11,9 @@
 
 package org.eclipse.team.svn.ui.synchronize.action;
 
+import java.util.Arrays;
+import java.util.HashSet;
+
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.widgets.DirectoryDialog;
@@ -37,12 +40,16 @@ public class ExtractOutgoingToAction extends AbstractSynchronizeModelAction {
 	}
 	
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
-		IResource []outgoingResources = this.syncInfoSelector.getSelectedResources(new ISyncStateFilter.StateFilterWrapper(IStateFilter.SF_ANY_CHANGE, true));
+		IResource []selectedOutgoingResources = this.syncInfoSelector.getSelectedResources(new ISyncStateFilter.StateFilterWrapper(IStateFilter.SF_ANY_CHANGE, true));
+		HashSet<IResource> outgoingResources = new HashSet<IResource>(Arrays.asList(selectedOutgoingResources));
+		for (IResource current : selectedOutgoingResources) {
+			outgoingResources.add(current.getProject());
+		}
 		DirectoryDialog fileDialog = new DirectoryDialog(configuration.getSite().getShell());
 		fileDialog.setText(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Select.Title"));
 		fileDialog.setMessage(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Select.Description"));
 		String path = fileDialog.open();
-		return path == null ? null : new ExtractToOperationLocal(outgoingResources, path, true);
+		return path == null ? null : new ExtractToOperationLocal(outgoingResources.toArray(new IResource[outgoingResources.size()]), path, true);
 	}
 	
 }

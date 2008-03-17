@@ -65,8 +65,18 @@ public class ExtractToAction extends AbstractSynchronizeModelAction {
 		IResource []outgoingChanges = this.syncInfoSelector.getSelectedResources(
 				new ISyncStateFilter.StateFilterWrapper(new IStateFilter.OrStateFilter(
 						new IStateFilter[] {IStateFilter.SF_COMMITABLE, IStateFilter.SF_NEW}), null, true));
+		HashSet<IResource> outgoingResources = new HashSet<IResource>(Arrays.asList(outgoingChanges));
+		for (IResource current : outgoingChanges) {
+			outgoingResources.add(current.getProject());
+		}
+		outgoingChanges = outgoingResources.toArray(new IResource[outgoingResources.size()]);
 		IResource []incomingChanges = this.syncInfoSelector.getSelectedResources(
 				new ISyncStateFilter.StateFilterWrapper(null, IStateFilter.SF_ANY_CHANGE, true));
+		HashSet<IResource> incomingWithProjects = new HashSet<IResource>(Arrays.asList(incomingChanges));
+		for (IResource current : incomingChanges) {
+			incomingWithProjects.add(current.getProject());
+		}
+		incomingChanges = incomingWithProjects.toArray(new IResource[incomingWithProjects.size()]);
 		HashSet<IResource> deletionsOnly = new HashSet<IResource>(Arrays.asList(this.syncInfoSelector.getSelectedResources(
 				new ISyncStateFilter.StateFilterWrapper(null, IStateFilter.SF_DELETED, false))));
 		HashSet<IRepositoryResource> incomingResourcesToOperate = new HashSet<IRepositoryResource>();
