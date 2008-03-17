@@ -27,7 +27,7 @@ import org.eclipse.team.svn.core.operation.file.AddToSVNOperation;
 public class AddToSVNOperationTest extends AbstractOperationTestCase {
 
 	protected IActionOperation getOperation() {
-		List toCommit = new ArrayList();
+		List<File> toCommit = new ArrayList<File>();
 		File []files = this.getFirstFolder().listFiles();
 		for (int i = 0; i < files.length; i++) {
 			if (!CommitOperationTest.isSVNInternals(files[i])) {
@@ -41,7 +41,7 @@ public class AddToSVNOperationTest extends AbstractOperationTestCase {
 			}
 		}
 		
-		AddToSVNOperation mainOp = new AddToSVNOperation((File[])toCommit.toArray(new File[toCommit.size()]), true);
+		AddToSVNOperation mainOp = new AddToSVNOperation(toCommit.toArray(new File[toCommit.size()]), true);
         CompositeOperation op = new CompositeOperation(mainOp.getId());
         op.add(mainOp);
         return op;

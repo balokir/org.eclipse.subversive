@@ -55,7 +55,7 @@ public class GetResourceAnnotationOperation extends AbstractRepositoryOperation 
 	
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		final ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		final ArrayList lines = new ArrayList();
+		final ArrayList<String []> lines = new ArrayList<String []>();
 		IRepositoryResource resource = this.operableData()[0];
 		IRepositoryLocation location = resource.getRepositoryLocation();
 		ISVNConnector proxy = location.acquireSVNProxy();
@@ -90,7 +90,7 @@ public class GetResourceAnnotationOperation extends AbstractRepositoryOperation 
 		finally {
 			location.releaseSVNProxy(proxy);
 		}
-		this.annotatedLines = (String [][])lines.toArray(new String[lines.size()][]);
+		this.annotatedLines = lines.toArray(new String[lines.size()][]);
 		this.content = stream.toByteArray();
 	}
 	

@@ -52,7 +52,7 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 	protected IProject project;
 	protected IRepositoryResource resource;
 	protected String projectLocation;
-	protected List overlappingProjects;
+	protected List<IProject> overlappingProjects;
 	protected boolean recursive;
 	protected boolean ignoreExternals;
 	protected RestoreProjectMetaOperation restoreOp;
@@ -89,7 +89,7 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 		this.projectLocation = projectLocation;
 		this.recursive = recursive;
 		this.ignoreExternals = ignoreExternals;
-		this.overlappingProjects = new ArrayList();
+		this.overlappingProjects = new ArrayList<IProject>();
 		IProject []projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {
 			if (new Path(this.projectLocation).append(this.project.getName()).isPrefixOf(projects[i].getLocation())) {
@@ -100,8 +100,8 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 	}
 	
 	public ISchedulingRule getSchedulingRule() {
-		IProject []projects = (IProject[])this.overlappingProjects.toArray(new IProject[this.overlappingProjects.size()]);
-		ISchedulingRule []rules = new ISchedulingRule[overlappingProjects.size()];
+		IProject []projects = this.overlappingProjects.toArray(new IProject[this.overlappingProjects.size()]);
+		ISchedulingRule []rules = new ISchedulingRule[this.overlappingProjects.size()];
 		for (int i = 0; i < projects.length; i++) {
 			rules[i] = SVNResourceRuleFactory.INSTANCE.modifyRule(projects[i]);
 		}
@@ -153,8 +153,8 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 		// prepare workspace...
 		ProgressMonitorUtility.setTaskInfo(monitor, this, this.getOperationResource("PrepareFS"));
 		
-		for (Iterator it = this.overlappingProjects.iterator(); it.hasNext() && !monitor.isCanceled(); ) {
-			IProject overlappingProject = (IProject)it.next();
+		for (Iterator<IProject> it = this.overlappingProjects.iterator(); it.hasNext() && !monitor.isCanceled(); ) {
+			IProject overlappingProject = it.next();
 			this.deleteProject(overlappingProject, monitor);
 		}	
 		this.deleteFolderContent(destination.toString(), monitor);

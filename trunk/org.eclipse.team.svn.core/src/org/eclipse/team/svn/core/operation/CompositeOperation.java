@@ -27,7 +27,7 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
  * @author Alexander Gurov
  */
 public class CompositeOperation extends AbstractActionOperation implements IConsoleStream {
-	protected List operations;
+	protected List<Pair> operations;
 	protected boolean checkWarnings;
 
 	public CompositeOperation(String operationName) {
@@ -36,7 +36,7 @@ public class CompositeOperation extends AbstractActionOperation implements ICons
 	
 	public CompositeOperation(String operationName, boolean checkWarnings) {
 		super(operationName);
-		this.operations = new ArrayList();
+		this.operations = new ArrayList<Pair>();
 		this.checkWarnings = checkWarnings;
 	}
 	
@@ -50,8 +50,8 @@ public class CompositeOperation extends AbstractActionOperation implements ICons
 	}
 			
 	public void remove(IActionOperation operation) {
-		for (Iterator it = this.operations.iterator(); it.hasNext();) {
-			Pair pair = (Pair)it.next();
+		for (Iterator<Pair> it = this.operations.iterator(); it.hasNext();) {
+			Pair pair = it.next();
 			if (pair.operation == operation) {
 				if (operation.getConsoleStream() == this) {
 					operation.setConsoleStream(null);
@@ -64,16 +64,16 @@ public class CompositeOperation extends AbstractActionOperation implements ICons
 	
 	public ISchedulingRule getSchedulingRule() {
 		ISchedulingRule retVal = null;
-		for (Iterator it = this.operations.iterator(); it.hasNext(); ) {
-			Pair pair = (Pair)it.next();
+		for (Iterator<Pair> it = this.operations.iterator(); it.hasNext(); ) {
+			Pair pair = it.next();
 			retVal = MultiRule.combine(retVal, pair.operation.getSchedulingRule());
 		}
 		return retVal;
 	}
 	
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		for (Iterator it = this.operations.iterator(); it.hasNext() && !monitor.isCanceled(); ) {
-			Pair pair = (Pair)it.next();
+		for (Iterator<Pair> it = this.operations.iterator(); it.hasNext() && !monitor.isCanceled(); ) {
+			Pair pair = it.next();
 			
 			boolean errorFound = false;
 			if (pair.dependsOnOperation != null) {

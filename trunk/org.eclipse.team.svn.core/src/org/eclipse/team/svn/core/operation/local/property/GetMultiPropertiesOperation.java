@@ -41,7 +41,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class GetMultiPropertiesOperation extends AbstractActionOperation implements IResourceProvider, IPropertyProvider {
 	protected IResource []resources;
-	protected HashMap properties;
+	protected HashMap<IResource, SVNProperty []> properties;
 	protected String propertyName;
 	protected int depth;
 	protected IStateFilter filter;
@@ -56,17 +56,17 @@ public class GetMultiPropertiesOperation extends AbstractActionOperation impleme
 		this.resources = resources;
 		this.propertyName = propertyName;
 		this.filter = filter != null ? filter : IStateFilter.SF_VERSIONED;
-		this.properties = new HashMap();
+		this.properties = new HashMap<IResource, SVNProperty []>();
 		this.depth = depth;
 	}
 	
 	public IResource []getResources() {
-		Set resources = this.properties.keySet();
-		return (IResource [])resources.toArray(new IResource[resources.size()]);
+		Set<IResource> resources = this.properties.keySet();
+		return resources.toArray(new IResource[resources.size()]);
 	}
 	
 	public SVNProperty []getProperties(IResource resource) {
-		return (SVNProperty [])this.properties.get(resource);
+		return this.properties.get(resource);
 	}
 	
 	protected void runImpl(IProgressMonitor monitor) throws Exception {

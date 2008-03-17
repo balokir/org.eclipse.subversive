@@ -31,33 +31,33 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
  * @author Alexander Gurov
  */
 public class CheckoutOperation extends AbstractActionOperation implements IResourceProvider {
-	protected HashMap checkoutMap;
+	protected HashMap<String, IRepositoryResource> checkoutMap;
 	protected IProject []projects;
 	protected CheckoutAsOperation []operations;
 	protected ISchedulingRule rule;
 	
-	public CheckoutOperation(HashMap checkoutMap, boolean respectHierarchy, String location, boolean checkoutRecursively) {
+	public CheckoutOperation(HashMap<String, IRepositoryResource> checkoutMap, boolean respectHierarchy, String location, boolean checkoutRecursively) {
 		this(checkoutMap, respectHierarchy, location, checkoutRecursively, false);
 	}
 
-	public CheckoutOperation(HashMap checkoutMap, boolean respectHierarchy, String location, boolean checkoutRecursively, boolean ignoreExternals) {
+	public CheckoutOperation(HashMap<String, IRepositoryResource> checkoutMap, boolean respectHierarchy, String location, boolean checkoutRecursively, boolean ignoreExternals) {
 		super("Operation.CheckOut");
 		this.checkoutMap = checkoutMap;
 		
-		ArrayList projects = new ArrayList();
-		ArrayList operations = new ArrayList();
-		ArrayList rules = new ArrayList();
-		for (Iterator iter = this.checkoutMap.keySet().iterator(); iter.hasNext(); ) {
-			String name = (String)iter.next();
-			IRepositoryResource currentResource = (IRepositoryResource)this.checkoutMap.get(name);
+		ArrayList<IProject> projects = new ArrayList<IProject>();
+		ArrayList<CheckoutAsOperation> operations = new ArrayList<CheckoutAsOperation>();
+		ArrayList<ISchedulingRule> rules = new ArrayList<ISchedulingRule>();
+		for (Iterator<String> iter = this.checkoutMap.keySet().iterator(); iter.hasNext(); ) {
+			String name = iter.next();
+			IRepositoryResource currentResource = this.checkoutMap.get(name);
 			CheckoutAsOperation coOp = CheckoutOperation.getCheckoutAsOperation(name, currentResource, respectHierarchy, location, checkoutRecursively, ignoreExternals);
 			operations.add(coOp);
 			projects.add(coOp.getProject());
 			rules.add(coOp.getSchedulingRule());
 		}
-		this.rule = new MultiRule((ISchedulingRule [])rules.toArray(new ISchedulingRule[rules.size()]));
-		this.projects = (IProject [])projects.toArray(new IProject[projects.size()]);
-		this.operations = (CheckoutAsOperation [])operations.toArray(new CheckoutAsOperation[operations.size()]);
+		this.rule = new MultiRule(rules.toArray(new ISchedulingRule[rules.size()]));
+		this.projects = projects.toArray(new IProject[projects.size()]);
+		this.operations = operations.toArray(new CheckoutAsOperation[operations.size()]);
 	}
 	
 	public IResource []getResources() {

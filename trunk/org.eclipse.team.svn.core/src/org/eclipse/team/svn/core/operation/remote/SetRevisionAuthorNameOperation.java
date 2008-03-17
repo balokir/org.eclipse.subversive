@@ -64,7 +64,7 @@ public class SetRevisionAuthorNameOperation extends AbstractActionOperation {
 			final SVNRevision rev =  SVNRevision.fromNumber(revisions[i].revision);
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-					proxy.setRevisionProperty(new SVNEntryReference(location.getUrl(), rev) , "svn:author", location.getAuthorName(), options, new SVNProgressMonitor(SetRevisionAuthorNameOperation.this, monitor, null));
+					proxy.setRevisionProperty(new SVNEntryReference(location.getUrl(), rev) , "svn:author", location.getAuthorName(), SetRevisionAuthorNameOperation.this.options, new SVNProgressMonitor(SetRevisionAuthorNameOperation.this, monitor, null));
 				}
 			}
 			, monitor, 1);			

@@ -59,12 +59,12 @@ public class LocateProjectsOperation extends AbstractRepositoryOperation impleme
 		for (int i = 0; i < baseFolders.length; i++) {
 			baseFolders[i] = baseFolders[i].getRepositoryLocation().asRepositoryContainer(baseFolders[i].getUrl(), false);
 		}
-		ArrayList found = new ArrayList();
+		ArrayList<IRepositoryResource> found = new ArrayList<IRepositoryResource>();
 		this.findProjects(monitor, found, baseFolders, 0);
-		this.foundProjects = (IRepositoryResource [])found.toArray(new IRepositoryResource[found.size()]);
+		this.foundProjects = found.toArray(new IRepositoryResource[found.size()]);
 	}
 	
-	protected void findProjects(final IProgressMonitor monitor, final List found, IRepositoryResource []baseFolders, final int level) throws Exception {
+	protected void findProjects(final IProgressMonitor monitor, final List<IRepositoryResource> found, IRepositoryResource []baseFolders, final int level) throws Exception {
 		for (int i = 0; i < baseFolders.length && !monitor.isCanceled(); i++) {
 			final IRepositoryResource current = baseFolders[i];
 			if (this.isCheckEnabled(level, current)) {

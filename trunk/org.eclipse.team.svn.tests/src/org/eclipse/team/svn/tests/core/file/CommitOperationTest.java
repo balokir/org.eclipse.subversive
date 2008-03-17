@@ -27,7 +27,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 public class CommitOperationTest extends AbstractOperationTestCase {
 
 	protected IActionOperation getOperation() {
-		List toCommit = new ArrayList();
+		List<File> toCommit = new ArrayList<File>();
 		File []files = this.getFirstFolder().listFiles();
 		for (int i = 0; i < files.length; i++) {
 			if (!CommitOperationTest.isSVNInternals(files[i])) {
@@ -41,7 +41,7 @@ public class CommitOperationTest extends AbstractOperationTestCase {
 			}
 		}
 		
-		return new CommitOperation((File[])toCommit.toArray(new File[toCommit.size()]), "test commit", true, false);
+		return new CommitOperation(toCommit.toArray(new File[toCommit.size()]), "test commit", true, false);
 	}
 	
 	public static boolean isSVNInternals(File file) {

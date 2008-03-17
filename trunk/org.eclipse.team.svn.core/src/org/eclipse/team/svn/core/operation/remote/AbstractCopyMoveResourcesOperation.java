@@ -33,7 +33,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 public abstract class AbstractCopyMoveResourcesOperation extends AbstractRepositoryOperation implements IRevisionProvider {
 	protected IRepositoryResource destinationResource;
 	protected String message;
-	protected ArrayList revisionsPairs;
+	protected ArrayList<RevisionPair> revisionsPairs;
 	
 	public AbstractCopyMoveResourcesOperation(String operationName, IRepositoryResource destinationResource, IRepositoryResource []selectedResources, String message) {
 		super(operationName, selectedResources);
@@ -42,11 +42,11 @@ public abstract class AbstractCopyMoveResourcesOperation extends AbstractReposit
 	}
 	
 	public RevisionPair []getRevisions() {
-		return this.revisionsPairs == null ? null : (RevisionPair [])this.revisionsPairs.toArray(new RevisionPair[this.revisionsPairs.size()]);
+		return this.revisionsPairs == null ? null : this.revisionsPairs.toArray(new RevisionPair[this.revisionsPairs.size()]);
 	}
 	
 	protected void runImpl(final IProgressMonitor monitor) throws Exception {
-		this.revisionsPairs = new ArrayList();
+		this.revisionsPairs = new ArrayList<RevisionPair>();
 		final String dstUrl = this.destinationResource.getUrl();
 		IRepositoryResource []selectedResources = this.operableData();
 		for (int i = 0; i < selectedResources.length && !monitor.isCanceled(); i++) {

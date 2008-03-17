@@ -37,7 +37,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 public class BranchTagOperation extends AbstractRepositoryOperation implements IRevisionProvider {
 	protected String destinationUrl;
 	protected String message;
-	protected ArrayList revisionsPairs;
+	protected ArrayList<RevisionPair> revisionsPairs;
 
 	public BranchTagOperation(String operationName, IRepositoryResource []resources, IRepositoryResource destination, String message) {
 		super("Operation." + operationName, resources);
@@ -46,11 +46,11 @@ public class BranchTagOperation extends AbstractRepositoryOperation implements I
 	}
 
 	public RevisionPair []getRevisions() {
-		return this.revisionsPairs == null ? null : (RevisionPair [])this.revisionsPairs.toArray(new RevisionPair[this.revisionsPairs.size()]);
+		return this.revisionsPairs == null ? null : this.revisionsPairs.toArray(new RevisionPair[this.revisionsPairs.size()]);
 	}
 	
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		this.revisionsPairs = new ArrayList();
+		this.revisionsPairs = new ArrayList<RevisionPair>();
 		IRepositoryResource []resources = this.operableData();
 		
 		ProgressMonitorUtility.setTaskInfo(monitor, this, FileUtility.getNamesListAsString(resources));

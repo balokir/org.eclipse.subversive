@@ -233,12 +233,12 @@ public class RepositoryViewMenuEnablementTest extends TestWorkflow {
     
     protected RepositoryResource []getAllRepositoryResources() {
         SVNRemoteStorage storage = SVNRemoteStorage.instance();
-        List remoteResources = new ArrayList();
+        List<RepositoryResource> remoteResources = new ArrayList<RepositoryResource>();
         IResource[] resources = FileUtility.getResourcesRecursive(new IResource[] {this.getFirstProject(), this.getSecondProject()}, IStateFilter.SF_ONREPOSITORY);
         for (int i = 0; i < resources.length; i++) {
             remoteResources.add(RepositoryFolder.wrapChild(null, storage.asRepositoryResource(resources[i])));
         }
-        return (RepositoryResource []) remoteResources.toArray(new RepositoryResource[remoteResources.size()]);
+        return remoteResources.toArray(new RepositoryResource[remoteResources.size()]);
     }
     
     protected RepositoryResource []getOneRepositoryFile() {
@@ -246,32 +246,32 @@ public class RepositoryViewMenuEnablementTest extends TestWorkflow {
     }
     
     protected RepositoryResource []getTwoRepositoryFiles() {
-        List twoRemoteFiles = new ArrayList();
+        List<RepositoryResource> twoRemoteFiles = new ArrayList<RepositoryResource>();
         RepositoryResource []resources = this.getAllRepositoryResources();
         for (int i = 0; i < resources.length; i++) {
             if (resources[i] instanceof RepositoryFile) {
                 twoRemoteFiles.add(resources[i]);
                 if (twoRemoteFiles.size() == 2) {
-                    return (RepositoryResource [])twoRemoteFiles.toArray(new RepositoryResource[twoRemoteFiles.size()]);
+                    return twoRemoteFiles.toArray(new RepositoryResource[twoRemoteFiles.size()]);
                 }
             }            
         }
-        return (RepositoryResource []) twoRemoteFiles.toArray(new RepositoryResource[twoRemoteFiles.size()]);
+        return twoRemoteFiles.toArray(new RepositoryResource[twoRemoteFiles.size()]);
     }
     
     protected RepositoryResource []getNotHeadRevisionFiles() {
-        List twoRemoteFiles = new ArrayList();
+        List<RepositoryResource> twoRemoteFiles = new ArrayList<RepositoryResource>();
         RepositoryResource []resources = this.getAllRepositoryResources();
         for(int i = 0; i < resources.length; i++) {
             if (resources[i] instanceof RepositoryFile) {
                 resources[i].getRepositoryResource().setSelectedRevision(SVNRevision.fromNumber(123));
                 twoRemoteFiles.add(resources[i]);
                 if (twoRemoteFiles.size() == 2) {
-                    return (RepositoryResource [])twoRemoteFiles.toArray(new RepositoryResource[twoRemoteFiles.size()]);
+                    return twoRemoteFiles.toArray(new RepositoryResource[twoRemoteFiles.size()]);
                 }
             }            
         }
-        return (RepositoryResource [])twoRemoteFiles.toArray(new RepositoryResource[twoRemoteFiles.size()]);
+        return twoRemoteFiles.toArray(new RepositoryResource[twoRemoteFiles.size()]);
     }
     
     protected RepositoryResource []getOneRepositoryContainer() {
@@ -279,40 +279,40 @@ public class RepositoryViewMenuEnablementTest extends TestWorkflow {
     }
     
     protected RepositoryResource[] getTwoRepositoryContainers() {
-        List twoRemoteFolders = new ArrayList();
+        List<RepositoryResource> twoRemoteFolders = new ArrayList<RepositoryResource>();
         RepositoryResource []resources = this.getAllRepositoryResources();
         for(int i = 0; i < resources.length; i++) {
             if (resources[i] instanceof RepositoryFolder) {
                 twoRemoteFolders.add(resources[i]);
                 if (twoRemoteFolders.size() == 2) {
-                    return (RepositoryResource [])twoRemoteFolders.toArray(new RepositoryResource[twoRemoteFolders.size()]);
+                    return twoRemoteFolders.toArray(new RepositoryResource[twoRemoteFolders.size()]);
                 }
             }            
         }
-        return (RepositoryResource [])twoRemoteFolders.toArray(new RepositoryResource[twoRemoteFolders.size()]);
+        return twoRemoteFolders.toArray(new RepositoryResource[twoRemoteFolders.size()]);
     }
     
     protected IResource[] getSelectedProjects() {
         IResource[] selectedResources = FileUtility.getResourcesRecursive(new IResource[] {this.getFirstProject(), this.getSecondProject()}, IStateFilter.SF_ONREPOSITORY);;
-		ArrayList projects = new ArrayList();
+		ArrayList<IResource> projects = new ArrayList<IResource>();
 		for (int i = 0; i < selectedResources.length; i++) {
 		    IResource resource = selectedResources[i];
 			if (resource.getType() == IResource.PROJECT) {
 				projects.add(resource);
 			}
 		}
-		return (IResource[])projects.toArray(new IResource[projects.size()]);
+		return projects.toArray(new IResource[projects.size()]);
 	}
     
     protected RepositoryResource []getRepositoryRoots() {
-        List roots = new ArrayList();
+        List<RepositoryResource> roots = new ArrayList<RepositoryResource>();
         RepositoryResource []resources = this.getAllRepositoryResources();
         for(int i = 0; i < resources.length; i++) {
             if (resources[0].getRepositoryResource() instanceof IRepositoryRoot) {
                 roots.add(resources[i]);
             }
         }
-        return (RepositoryResource [])roots.toArray(new RepositoryResource[roots.size()]);
+        return roots.toArray(new RepositoryResource[roots.size()]);
 	}
     
 	protected IProject getFirstProject() {

@@ -45,7 +45,7 @@ public class CommitOperation extends AbstractConflictDetectionOperation implemen
 	protected boolean recursive;
 	protected boolean keepLocks;
 	protected String message;
-	protected ArrayList revisionsPairs;
+	protected ArrayList<RevisionPair> revisionsPairs;
 	
 	protected String []paths;
 
@@ -72,7 +72,7 @@ public class CommitOperation extends AbstractConflictDetectionOperation implemen
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		this.revisionsPairs = new ArrayList();
+		this.revisionsPairs = new ArrayList<RevisionPair>();
 		IResource []resources = this.operableData();
 		
 		this.defineInitialResourceSet(resources);

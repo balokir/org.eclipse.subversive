@@ -36,8 +36,8 @@ import org.eclipse.team.svn.core.resource.IResourceProvider;
  */
 public class FindRelatedProjectsOperation extends AbstractActionOperation implements IResourceProvider {
 	protected IRepositoryLocation location;
-	protected List resources;
-	protected Set exceptProjects;
+	protected List<IProject> resources;
+	protected Set<IProject> exceptProjects;
 	
 	public FindRelatedProjectsOperation(IRepositoryLocation location) {
 		this(location, null);
@@ -47,16 +47,16 @@ public class FindRelatedProjectsOperation extends AbstractActionOperation implem
 		super("Operation.FindRelatedProjects");
 		this.location = location;
 		if (exceptProjects != null) {
-			this.exceptProjects = new HashSet(Arrays.asList(exceptProjects));
+			this.exceptProjects = new HashSet<IProject>(Arrays.asList(exceptProjects));
 		}
 	}
 
 	public IResource []getResources() {
-		return this.resources == null ? new IProject[0] : (IProject [])this.resources.toArray(new IProject[this.resources.size()]);
+		return this.resources == null ? new IProject[0] : this.resources.toArray(new IProject[this.resources.size()]);
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		this.resources = new ArrayList();
+		this.resources = new ArrayList<IProject>();
 		IProject []projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projects.length && !monitor.isCanceled(); i++) {
 			final IProject current = projects[i];
