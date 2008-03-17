@@ -35,19 +35,24 @@ import org.eclipse.team.svn.ui.utility.UserInputHistory;
 public class HistoryFilterPanel extends AbstractDialogPanel {
     protected static final String FILTER_AUTHOR_HISTORY_NAME = "filterAuthor";
     protected static final String FILTER_COMMENT_HISTORY_NAME = "filterComment";
+    protected static final String FILTER_PATH_HISTORY_NAME = "filterPath";
     
     protected String filter;
     protected Button authorButton;
     protected Button commentButton;
+    protected Button pathButton;
     protected Combo authorsCombo;
     protected Combo commentsCombo;
+    protected Combo pathCombo;
     protected String authorInput;
     protected String commentInput;
+    protected String pathInput;
     protected String[] selectedAuthors;
     protected UserInputHistory authorsHistory;
     protected UserInputHistory commentsHistory;
+    protected UserInputHistory pathHistory;
     
-    public HistoryFilterPanel(String authorInput, String commentInput, String[] selectedAuthors) {
+    public HistoryFilterPanel(String authorInput, String commentInput, String pathInput, String[] selectedAuthors) {
         super();
         this.dialogTitle = SVNTeamUIPlugin.instance().getResource("HistoryFilterPanel.Title");
         this.dialogDescription = SVNTeamUIPlugin.instance().getResource("HistoryFilterPanel.Description");
@@ -56,6 +61,7 @@ public class HistoryFilterPanel extends AbstractDialogPanel {
         this.selectedAuthors = selectedAuthors;
         this.authorInput = authorInput;
         this.commentInput = commentInput;
+        this.pathInput = pathInput;
     }
 
     public String getAuthor() {
@@ -64,6 +70,10 @@ public class HistoryFilterPanel extends AbstractDialogPanel {
     
     public String getComment() {
         return this.commentInput;
+    }
+    
+    public String getChangedPath() {
+    	return this.pathInput;
     }
     
     public Point getPrefferedSizeImpl() {
@@ -121,6 +131,27 @@ public class HistoryFilterPanel extends AbstractDialogPanel {
 		this.commentsCombo.setVisibleItemCount(this.commentsHistory.getDepth());
 		this.commentsCombo.setItems(this.commentsHistory.getHistory());
 		this.commentsCombo.setText(this.commentInput == null ? "" : this.commentInput);
+		
+		this.pathButton = new Button(composite, SWT.CHECK);
+		this.pathButton.setText(SVNTeamUIPlugin.instance().getResource("HistoryFilterPanel.Path"));
+		data = new GridData();
+		this.pathButton.setLayoutData(data);
+		boolean enabledPath = this.pathInput != null;
+		this.pathButton.setSelection(enabledPath);
+		this.pathButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+			    HistoryFilterPanel.this.pathCombo.setEnabled(((Button)e.widget).getSelection());
+			}
+		});
+		
+		this.pathHistory = new UserInputHistory(HistoryFilterPanel.FILTER_PATH_HISTORY_NAME);
+		this.pathCombo = new Combo(composite, SWT.NONE);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		this.pathCombo.setLayoutData(data);
+		this.pathCombo.setEnabled(enabledPath);
+		this.pathCombo.setVisibleItemCount(this.pathHistory.getDepth());
+		this.pathCombo.setItems(this.commentsHistory.getHistory());
+		this.pathCombo.setText(this.pathInput == null ? "" : this.pathInput);
     }
     
 	public String getHelpId() {
@@ -141,6 +172,13 @@ public class HistoryFilterPanel extends AbstractDialogPanel {
         }
         else {
         	this.commentInput = null;
+        }
+        if (this.pathButton.getSelection()) {
+            this.pathInput = this.pathCombo.getText();
+            this.pathHistory.addLine(this.pathInput);
+        }
+        else {
+        	this.pathInput = null;
         }
     }
 

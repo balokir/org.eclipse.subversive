@@ -40,9 +40,9 @@ public class AffectedPathsNode {
 	}
 	
 	public AffectedPathsNode findByName(String name) {
-		for (Iterator it = this.children.iterator(); it.hasNext(); ) {
-			AffectedPathsNode node = (AffectedPathsNode)it.next();
-			if ((node).getName().equals(name)) {
+		for (Iterator<AffectedPathsNode> it = this.children.iterator(); it.hasNext(); ) {
+			AffectedPathsNode node = it.next();
+			if (node.getName().equals(name)) {
 				return node;
 			}
 		}
@@ -73,9 +73,9 @@ public class AffectedPathsNode {
 		return this.children.add(child);
 	}
 	
-	public void addChildren(List children) {
-		for (Iterator it = children.iterator(); it.hasNext(); ) {
-			this.addChild((AffectedPathsNode)it.next());
+	public void addChildren(List<AffectedPathsNode> children) {
+		for (Iterator<AffectedPathsNode> it = children.iterator(); it.hasNext(); ) {
+			this.addChild(it.next());
 		}		
 	}
 	
@@ -114,12 +114,12 @@ public class AffectedPathsNode {
 		return this.data.toArray(new SVNChangedPathData[this.data.size()]);
 	}
 	
-	protected List getPathDataImpl(List result) {
+	protected List<SVNChangedPathData> getPathDataImpl(List<SVNChangedPathData> result) {
 		if (this.data != null) {
 			result.addAll(this.data);
 		}
-		for (Iterator it = this.children.iterator(); it.hasNext(); ) {
-			((AffectedPathsNode)it.next()).getPathDataImpl(result);
+		for (Iterator<AffectedPathsNode> it = this.children.iterator(); it.hasNext(); ) {
+			it.next().getPathDataImpl(result);
 		}
 
 		return result;
@@ -132,8 +132,8 @@ public class AffectedPathsNode {
 	}
 
 	public SVNChangedPathData [] getPathData() {
-    	List tmp = this.getPathDataImpl(new ArrayList());
-    	return (SVNChangedPathData [])tmp.toArray(new SVNChangedPathData[tmp.size()]);
+    	List<SVNChangedPathData> tmp = this.getPathDataImpl(new ArrayList<SVNChangedPathData>());
+    	return tmp.toArray(new SVNChangedPathData[tmp.size()]);
 	}
 	
 	public void setName(String name) {

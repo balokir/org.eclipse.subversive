@@ -30,7 +30,7 @@ import org.eclipse.team.svn.ui.history.data.SVNChangedPathData;
 public class AffectedPathsContentProvider implements ITreeContentProvider {
 	protected AffectedPathsNode root;
 	
-	public void initialize(SVNChangedPathData [] affectedPaths, Collection relatedPathPrefixes, Collection relatedParents, long currentRevision) {
+	public void initialize(SVNChangedPathData [] affectedPaths, Collection<String> relatedPathPrefixes, Collection<String> relatedParents, long currentRevision) {
 		this.root = new AffectedPathsNode(SVNTeamUIPlugin.instance().getResource("AffectedPathsContentProvider.RootName"), null, '\0');
 		if (affectedPaths == null) {
 			return;
@@ -71,7 +71,7 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 		return this.root;
 	}
 	
-	protected void processPath(SVNChangedPathData affectedPath, Collection relatedPathPrefixes, Collection relatedParents) {
+	protected void processPath(SVNChangedPathData affectedPath, Collection<String> relatedPathPrefixes, Collection<String> relatedParents) {
 		String fullResourcePath = affectedPath.getFullResourcePath();
 		if (!this.isRelatedPath(fullResourcePath, relatedPathPrefixes) && !this.isRelatedParent(fullResourcePath, relatedParents)) {
 			return;
@@ -100,19 +100,19 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 		}
 	}
 	
-	protected boolean isRelatedParent(String fullPath, Collection relatedParents) {
+	protected boolean isRelatedParent(String fullPath, Collection<String> relatedParents) {
 		if (relatedParents == null || relatedParents.contains(fullPath)) {
 			return true;
 		}
 		return false;
 	}
 
-	protected boolean isRelatedPath(String fullPath, Collection relatedPathPrefixes) {
+	protected boolean isRelatedPath(String fullPath, Collection<String> relatedPathPrefixes) {
 		if (relatedPathPrefixes == null) {
 			return true;
 		}
-		for (Iterator it = relatedPathPrefixes.iterator(); it.hasNext(); ) {
-			String prefix = (String)it.next();
+		for (Iterator<String> it = relatedPathPrefixes.iterator(); it.hasNext(); ) {
+			String prefix = it.next();
 			if (fullPath.startsWith(prefix)) {
 				return true;
 			}
@@ -123,8 +123,8 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 	protected void doCompress(AffectedPathsNode node) {
 		List<AffectedPathsNode> children = node.getChildren();
 		if (node.getParent() == null) {
-			for (Iterator it = children.iterator(); it.hasNext(); ) {
-				this.doCompress((AffectedPathsNode)it.next());
+			for (Iterator<AffectedPathsNode> it = children.iterator(); it.hasNext(); ) {
+				this.doCompress(it.next());
 			}
 			return;
 		}
@@ -139,8 +139,8 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 			}
 			node.setName(node.getName() + "/" + nodeChild.getName());
 			List<AffectedPathsNode> lowerChildren = nodeChild.getChildren();
-			for (Iterator it = lowerChildren.iterator(); it.hasNext(); ) {
-				((AffectedPathsNode)it.next()).setParent(node);
+			for (Iterator<AffectedPathsNode> it = lowerChildren.iterator(); it.hasNext(); ) {
+				it.next().setParent(node);
 			}
 			node.setChildren(lowerChildren);
 			SVNChangedPathData [] data = nodeChild.getData();
@@ -148,27 +148,27 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 				node.addData(data[i]);
 			}
 			this.doCompress(node);
-			for (Iterator it = lowerChildren.iterator(); it.hasNext(); ) {
-				this.doCompress((AffectedPathsNode)it.next());
+			for (Iterator<AffectedPathsNode> it = lowerChildren.iterator(); it.hasNext(); ) {
+				this.doCompress(it.next());
 			}
 		}
 		else {
-			for (Iterator it = children.iterator(); it.hasNext(); ) {
-				this.doCompress((AffectedPathsNode)it.next());
+			for (Iterator<AffectedPathsNode> it = children.iterator(); it.hasNext(); ) {
+				this.doCompress(it.next());
 			}
 		}
 		
 	}
 	
 	protected void refreshStatuses(AffectedPathsNode node) {
-		List children = node.getChildren();
+		List<AffectedPathsNode> children = node.getChildren();
 		if (children.size() == 0) {
 			return;
 		}
 		SVNChangedPathData [] affectedPathData = node.getData();
 		if (affectedPathData != null && affectedPathData.length > 0) {
-			for (Iterator iter = children.iterator(); iter.hasNext();) {
-				AffectedPathsNode currentNode = (AffectedPathsNode)iter.next();
+			for (Iterator<AffectedPathsNode> iter = children.iterator(); iter.hasNext();) {
+				AffectedPathsNode currentNode = iter.next();
 				for (int i = 0; i < affectedPathData.length; i++) {
 					SVNChangedPathData affectedPath = affectedPathData[i];
 					if (currentNode.getName().equals(affectedPath.resourceName)) {
@@ -180,8 +180,8 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 			}
 		}
 		else {
-			for (Iterator iter = children.iterator(); iter.hasNext();) {
-				this.refreshStatuses((AffectedPathsNode)iter.next());
+			for (Iterator<AffectedPathsNode> iter = children.iterator(); iter.hasNext();) {
+				this.refreshStatuses(iter.next());
 			}
 		}
 	}
