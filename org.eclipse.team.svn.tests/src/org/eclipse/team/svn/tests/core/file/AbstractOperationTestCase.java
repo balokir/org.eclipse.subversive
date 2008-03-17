@@ -59,12 +59,12 @@ public abstract class AbstractOperationTestCase extends TestCase {
 	}
 	
 	protected File[] getListFilesRecursive() {
-		List allFiles = new ArrayList();
+		List<File> allFiles = new ArrayList<File>();
 		this.getFilesRecursiveImpl(this.getListFiles(), allFiles);
-		return (File[])allFiles.toArray(new File[allFiles.size()]);
+		return allFiles.toArray(new File[allFiles.size()]);
 	}
 	
-	protected void getFilesRecursiveImpl(File[] roots, List allFiles) {
+	protected void getFilesRecursiveImpl(File[] roots, List<File> allFiles) {
 		for (int i = 0; i < roots.length; i++) {
 			allFiles.add(roots[i]);
 			if (roots[i].isDirectory()) {

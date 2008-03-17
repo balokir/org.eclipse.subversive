@@ -39,11 +39,11 @@ public class DisconnectOperation extends AbstractActionOperation {
 	}
 
 	public ISchedulingRule getSchedulingRule() {
-		HashSet rules = new HashSet();
+		HashSet<ISchedulingRule> rules = new HashSet<ISchedulingRule>();
 		for (int i = 0; i < this.projects.length; i++) {
 			rules.add(SVNResourceRuleFactory.INSTANCE.modifyRule(this.projects[i]));
 		}
-		return new MultiRule((ISchedulingRule [])rules.toArray(new ISchedulingRule[rules.size()]));
+		return new MultiRule(rules.toArray(new ISchedulingRule[rules.size()]));
 	}
 	
 	protected void runImpl(IProgressMonitor monitor) throws Exception {

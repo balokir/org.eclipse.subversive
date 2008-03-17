@@ -56,11 +56,11 @@ public class CreateFolderOperation extends AbstractRepositoryOperation implement
 		final IRepositoryLocation location = parent.getRepositoryLocation();
 		ProgressMonitorUtility.setTaskInfo(monitor, this, parent.getUrl() + "/" + this.names[0]);
 		
-		Set fullSet = new HashSet();
+		Set<IRepositoryResource> fullSet = new HashSet<IRepositoryResource>();
 		for (int i = 0; i < this.names.length; i++) {
 			fullSet.addAll(Arrays.asList(SVNUtility.makeResourceSet(parent, this.names[i], false)));
 		}
-		IRepositoryResource []toBeCreated = (IRepositoryResource [])fullSet.toArray(new IRepositoryResource[fullSet.size()]);
+		IRepositoryResource []toBeCreated = fullSet.toArray(new IRepositoryResource[fullSet.size()]);
 		
 		final String []childUrls = SVNUtility.asURLArray(toBeCreated, true);
 		Arrays.sort(childUrls);

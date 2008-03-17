@@ -33,9 +33,9 @@ public class CompositeVisitor implements IResourceChangeVisitor {
 	}
 	
 	public void add(IResourceChangeVisitor visitor) {
-		LinkedHashSet visitors = new LinkedHashSet(Arrays.asList(this.visitors));
+		LinkedHashSet<IResourceChangeVisitor> visitors = new LinkedHashSet<IResourceChangeVisitor>(Arrays.asList(this.visitors));
 		visitors.add(visitor);
-		this.visitors = (IResourceChangeVisitor [])visitors.toArray(new IResourceChangeVisitor[visitors.size()]);
+		this.visitors = visitors.toArray(new IResourceChangeVisitor[visitors.size()]);
 	}
 
 	public void postVisit(ResourceChange change, IActionOperationProcessor processor, IProgressMonitor monitor) throws Exception {

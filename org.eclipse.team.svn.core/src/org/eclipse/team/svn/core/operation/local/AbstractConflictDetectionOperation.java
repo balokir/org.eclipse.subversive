@@ -24,8 +24,8 @@ import org.eclipse.team.svn.core.resource.IResourceProvider;
  * @author Alexander Gurov
  */
 public abstract class AbstractConflictDetectionOperation extends AbstractWorkingCopyOperation implements IUnresolvedConflictDetector {
-    protected Set processed;
-    protected Set unprocessed;
+    protected Set<IResource> processed;
+    protected Set<IResource> unprocessed;
 	protected boolean hasUnresolvedConflict;
 	protected String conflictMessage;
 
@@ -46,17 +46,17 @@ public abstract class AbstractConflictDetectionOperation extends AbstractWorking
     }
     
     public IResource []getUnprocessed() {
-		return this.unprocessed == null ? null : (IResource [])this.unprocessed.toArray(new IResource[this.unprocessed.size()]);
+		return this.unprocessed == null ? null : this.unprocessed.toArray(new IResource[this.unprocessed.size()]);
     }
 
 	public IResource []getProcessed() {
-		return this.processed == null ? null : (IResource [])this.processed.toArray(new IResource[this.processed.size()]);
+		return this.processed == null ? null : this.processed.toArray(new IResource[this.processed.size()]);
 	}
 	
 	protected void defineInitialResourceSet(IResource []resources) {
         this.hasUnresolvedConflict = false;
-        this.unprocessed = new HashSet();
-        this.processed = new HashSet();
+        this.unprocessed = new HashSet<IResource>();
+        this.processed = new HashSet<IResource>();
 		this.processed.addAll(Arrays.asList(resources));
 	}
 	

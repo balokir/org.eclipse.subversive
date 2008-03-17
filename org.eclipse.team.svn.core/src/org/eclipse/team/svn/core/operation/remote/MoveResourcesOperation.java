@@ -37,7 +37,7 @@ public class MoveResourcesOperation extends AbstractCopyMoveResourcesOperation {
 	}
 
 	protected void runImpl(final IProgressMonitor monitor) throws Exception {
-		this.revisionsPairs = new ArrayList();
+		this.revisionsPairs = new ArrayList<RevisionPair>();
 		final String dstUrl = this.destinationResource.getUrl();
 		IRepositoryResource []selectedResources = this.operableData();
 		final IRepositoryLocation location = selectedResources[0].getRepositoryLocation();

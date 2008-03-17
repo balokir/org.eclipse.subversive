@@ -37,7 +37,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class DeleteResourcesOperation extends AbstractRepositoryOperation implements IRevisionProvider {
 	protected String message;
-	protected ArrayList revisionsPairs;
+	protected ArrayList<RevisionPair> revisionsPairs;
 	
 	public DeleteResourcesOperation(IRepositoryResource []resources, String message) {
 		super("Operation.DeleteRemote", resources);
@@ -45,7 +45,7 @@ public class DeleteResourcesOperation extends AbstractRepositoryOperation implem
 	}
 
 	protected void runImpl(final IProgressMonitor monitor) throws Exception {
-		this.revisionsPairs = new ArrayList();
+		this.revisionsPairs = new ArrayList<RevisionPair>();
 		IRepositoryResource []resources = SVNUtility.shrinkChildNodes(this.operableData());
 		
 		Map repository2Resources = SVNUtility.splitRepositoryLocations(resources);
@@ -86,7 +86,7 @@ public class DeleteResourcesOperation extends AbstractRepositoryOperation implem
 	}
 	
 	public RevisionPair[] getRevisions() {
-	 	return this.revisionsPairs == null ? null : (RevisionPair[])this.revisionsPairs.toArray(new RevisionPair [this.revisionsPairs.size()]);
+	 	return this.revisionsPairs == null ? null : this.revisionsPairs.toArray(new RevisionPair [this.revisionsPairs.size()]);
 	}
 	
 }

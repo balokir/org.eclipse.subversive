@@ -93,7 +93,7 @@ public class LoggedOperation implements IActionOperation {
         }
 		
 		IStatus []children = errorStatus.getChildren();
-		ArrayList statusesWithoutCancel = new ArrayList(); 
+		ArrayList <IStatus>statusesWithoutCancel = new ArrayList<IStatus>(); 
         for (int i = 0; i < children.length; i++) {
             Throwable exception = children[i].getException();
         	if (!(exception instanceof SVNConnectorCancelException) && !(exception instanceof ActivityCancelledException)) {
@@ -103,7 +103,7 @@ public class LoggedOperation implements IActionOperation {
         if (statusesWithoutCancel.size() > 0) {
 		    IStatus newStatus = new MultiStatus(errorStatus.getPlugin(), 
 		    		errorStatus.getCode(), 
-		    		(IStatus[])statusesWithoutCancel.toArray(new IStatus[statusesWithoutCancel.size()]),
+		    		statusesWithoutCancel.toArray(new IStatus[statusesWithoutCancel.size()]),
 		    		errorStatus.getMessage(),
 		    		errorStatus.getException());
 		    LoggedOperation.logError(newStatus);

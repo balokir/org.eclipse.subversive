@@ -44,7 +44,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class RelocateWorkingCopyOperation extends AbstractWorkingCopyOperation implements IResourceProvider {
 	protected IRepositoryLocation location;
-	protected List resources;
+	protected List<IProject> resources;
 
 	public RelocateWorkingCopyOperation(IResource []resources, IRepositoryLocation location) {
 		super("Operation.RelocateResources", resources);
@@ -57,7 +57,7 @@ public class RelocateWorkingCopyOperation extends AbstractWorkingCopyOperation i
 	}
 
 	public IResource []getResources() {
-		return this.resources == null ? new IResource[0] : (IResource [])this.resources.toArray(new IResource[this.resources.size()]);
+		return this.resources == null ? new IResource[0] : this.resources.toArray(new IResource[this.resources.size()]);
 	}
 	
 	public ISchedulingRule getSchedulingRule() {
@@ -65,7 +65,7 @@ public class RelocateWorkingCopyOperation extends AbstractWorkingCopyOperation i
 	}
 	
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		this.resources = new ArrayList();
+		this.resources = new ArrayList<IProject>();
 		IResource []projects = this.operableData();
 		if (projects.length == 0) {
 			return;
