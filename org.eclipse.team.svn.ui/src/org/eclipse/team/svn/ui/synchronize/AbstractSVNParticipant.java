@@ -99,14 +99,14 @@ public abstract class AbstractSVNParticipant extends ScopableSubscriberParticipa
 		
 		this.configuration = configuration;
 
-		Collection actionGroups = this.getActionGroups();
+		Collection<AbstractSynchronizeActionGroup> actionGroups = this.getActionGroups();
 		// menu groups should be configured before actionGroups is added
-		for (Iterator it = actionGroups.iterator(); it.hasNext(); ) {
-			AbstractSynchronizeActionGroup actionGroup = (AbstractSynchronizeActionGroup)it.next();
+		for (Iterator<AbstractSynchronizeActionGroup> it = actionGroups.iterator(); it.hasNext(); ) {
+			AbstractSynchronizeActionGroup actionGroup = it.next();
 			actionGroup.configureMenuGroups(configuration);
 		}
-		for (Iterator it = actionGroups.iterator(); it.hasNext(); ) {
-			AbstractSynchronizeActionGroup actionGroup = (AbstractSynchronizeActionGroup)it.next();
+		for (Iterator<AbstractSynchronizeActionGroup> it = actionGroups.iterator(); it.hasNext(); ) {
+			AbstractSynchronizeActionGroup actionGroup = it.next();
 			configuration.addActionContribution(actionGroup);
 		}
 		
@@ -153,7 +153,7 @@ public abstract class AbstractSVNParticipant extends ScopableSubscriberParticipa
     
     public abstract AbstractSVNSubscriber getMatchingSubscriber();
     protected abstract String getParticipantId();
-    protected abstract Collection getActionGroups();
+    protected abstract Collection<AbstractSynchronizeActionGroup> getActionGroups();
     protected abstract int getSupportedModes();
     protected abstract int getDefaultMode();
 	

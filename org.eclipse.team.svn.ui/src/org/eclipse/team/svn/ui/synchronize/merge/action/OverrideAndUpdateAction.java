@@ -57,11 +57,11 @@ public class OverrideAndUpdateAction extends AbstractSynchronizeModelAction {
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
 		IResource []obstructedResources = OverrideAndUpdateAction.this.syncInfoSelector.getSelectedResourcesRecursive(IStateFilter.SF_OBSTRUCTED);
 		obstructedResources = FileUtility.addOperableParents(obstructedResources, IStateFilter.SF_OBSTRUCTED);
-		HashSet allResources = new HashSet(Arrays.asList(obstructedResources));
+		HashSet<IResource> allResources = new HashSet<IResource>(Arrays.asList(obstructedResources));
 		IResource []changedResources = OverrideAndUpdateAction.this.syncInfoSelector.getSelectedResourcesRecursive(ISyncStateFilter.SF_OVERRIDE);
 		changedResources = FileUtility.addOperableParents(changedResources, IStateFilter.SF_NOTONREPOSITORY);
 		allResources.addAll(Arrays.asList(changedResources));
-		IResource []fullSet = (IResource [])allResources.toArray(new IResource[allResources.size()]);
+		IResource []fullSet = allResources.toArray(new IResource[allResources.size()]);
 		OverrideResourcesPanel panel = new OverrideResourcesPanel(fullSet, fullSet, OverrideResourcesPanel.MSG_UPDATE);
 		DefaultDialog dialog = new DefaultDialog(configuration.getSite().getShell(), panel);
 		IResource []resources = null;

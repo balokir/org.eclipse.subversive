@@ -70,7 +70,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
         super();
 		this.statusCache = new RemoteStatusCache();
 		SVNRemoteStorage.instance().addResourceStatesListener(ResourceStatesChangedEvent.class, this);
-		this.oldResources = new HashSet();
+		this.oldResources = new HashSet<IResource>();
     }
 
     public boolean isSynchronizedWithRepository() {
@@ -94,14 +94,14 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
     }
 
     public IResource []roots() {
-        ArrayList roots = new ArrayList();
+        ArrayList<IResource> roots = new ArrayList<IResource>();
 		IProject []projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {
 			if (FileUtility.isConnected(projects[i])) {
 				roots.add(projects[i]);
 			}
 		}
-		return (IResource [])roots.toArray(new IResource[roots.size()]);
+		return roots.toArray(new IResource[roots.size()]);
     }
 
     public SyncInfo getSyncInfo(IResource resource) throws TeamException {
@@ -135,8 +135,8 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
 		boolean contiguousReportMode = SVNTeamPreferences.getSynchronizeBoolean(store, SVNTeamPreferences.SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_NAME);
 
-		HashSet refreshScope = this.clearRemoteStatusesImpl(resources);
-		AbstractSVNSubscriber.this.resourcesStateChangedImpl((IResource [])refreshScope.toArray(new IResource[refreshScope.size()]));
+		HashSet<IResource> refreshScope = this.clearRemoteStatusesImpl(resources);
+		AbstractSVNSubscriber.this.resourcesStateChangedImpl(refreshScope.toArray(new IResource[refreshScope.size()]));
 		
 		if (contiguousReportMode) {
 			IActionOperation op = new UpdateStatusOperation(resources, depth);
@@ -148,8 +148,8 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
     }
 
 	public void clearRemoteStatuses(IResource []resources) {
-	    HashSet refreshScope = this.clearRemoteStatusesImpl(resources);
-		this.resourcesStateChangedImpl((IResource [])refreshScope.toArray(new IResource[refreshScope.size()]));
+	    HashSet<IResource> refreshScope = this.clearRemoteStatusesImpl(resources);
+		this.resourcesStateChangedImpl(refreshScope.toArray(new IResource[refreshScope.size()]));
 	}
 	
     public void resourcesStateChanged(ResourceStatesChangedEvent event) {
@@ -158,12 +158,12 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
     	}
     }
     
-	protected HashSet clearRemoteStatusesImpl(IResource []resources) {
+	protected HashSet<IResource> clearRemoteStatusesImpl(IResource []resources) {
 		return this.clearRemoteStatusesImpl(this.statusCache, resources);
 	}
 	
-	protected HashSet clearRemoteStatusesImpl(RemoteStatusCache cache, IResource []resources) {
-		final HashSet refreshSet = new HashSet();
+	protected HashSet<IResource> clearRemoteStatusesImpl(RemoteStatusCache cache, IResource []resources) {
+		final HashSet<IResource> refreshSet = new HashSet<IResource>();
 		cache.traverse(resources, IResource.DEPTH_INFINITE, new RemoteStatusCache.ICacheVisitor() {
 			public void visit(IPath current, byte []data) {
 				IResource resource = SVNRemoteStorage.instance().resourceChangeFromBytes(data).getResource();
@@ -179,19 +179,19 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 	}
 	
     protected void resourcesStateChangedImpl(IResource []resources) {
-    	Set allResources = new HashSet(Arrays.asList(resources));
+    	Set<IResource> allResources = new HashSet<IResource>(Arrays.asList(resources));
     	for (int i = 0; i < resources.length; i++) {
     		allResources.addAll(Arrays.asList(this.statusCache.allMembers(resources[i])));
     	}
     	synchronized (this.oldResources) {
-    		for (Iterator it = this.oldResources.iterator(); it.hasNext(); ) {
-				IResource resource = (IResource)it.next();
+    		for (Iterator<IResource> it = this.oldResources.iterator(); it.hasNext(); ) {
+				IResource resource = it.next();
 				SVNChangeStatus status = SVNUtility.getSVNInfoForNotConnected(resource);
 				if (status == null || (status.textStatus != SVNEntryStatus.Kind.DELETED && status.textStatus != SVNEntryStatus.Kind.MISSING)) {
 					allResources.add(resource);
 				}
 			}
-        	IResource []refreshSet = (IResource [])allResources.toArray(new IResource[allResources.size()]);
+        	IResource []refreshSet = allResources.toArray(new IResource[allResources.size()]);
         	// ensure we cached all locally-known resources
         	if (CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled()) {
         		IResource []parents = FileUtility.getParents(refreshSet, false);
@@ -213,7 +213,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 		if (rStatusOp == null) {
     		return FileUtility.NO_CHILDREN;
 		}
-		final ArrayList changes = new ArrayList();
+		final ArrayList<IResource> changes = new ArrayList<IResource>();
 		
 		CompositeOperation op = new CompositeOperation(rStatusOp.getId());
 		op.add(rStatusOp);
@@ -237,7 +237,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 		}, new IActionOperation[] {rStatusOp});
 		ProgressMonitorUtility.doTaskExternal(op, monitor, operationWrapperFactory);
 		
-		return (IResource [])changes.toArray(new IResource[changes.size()]);
+		return changes.toArray(new IResource[changes.size()]);
 	}
 	
 	protected abstract boolean isIncomig(SVNEntryStatus status);
@@ -264,13 +264,13 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 		}
 		
     	protected void runImpl(IProgressMonitor monitor) throws Exception {
-    		Map project2Resources = SVNUtility.splitWorkingCopies(this.resources);
-            for (Iterator it = project2Resources.values().iterator(); it.hasNext() && !monitor.isCanceled(); ) {
-            	List entry = (List)it.next();
-    			final IResource []wcResources = (IResource [])entry.toArray(new IResource[entry.size()]);
+    		Map<IProject, List<IResource>> project2Resources = SVNUtility.splitWorkingCopies(this.resources);
+            for (Iterator<List<IResource>> it = project2Resources.values().iterator(); it.hasNext() && !monitor.isCanceled(); ) {
+            	List<IResource> entry = it.next();
+    			final IResource []wcResources = entry.toArray(new IResource[entry.size()]);
     			this.protectStep(new IUnprotectedOperation() {
 					public void run(IProgressMonitor monitor) throws Exception {
-						AbstractSVNSubscriber.this.resourcesStateChangedImpl(AbstractSVNSubscriber.this.findChanges(wcResources, depth, monitor, UpdateStatusOperation.this)); 
+						AbstractSVNSubscriber.this.resourcesStateChangedImpl(AbstractSVNSubscriber.this.findChanges(wcResources, UpdateStatusOperation.this.depth, monitor, UpdateStatusOperation.this)); 
 					}
 				}, monitor, project2Resources.size());
             }                

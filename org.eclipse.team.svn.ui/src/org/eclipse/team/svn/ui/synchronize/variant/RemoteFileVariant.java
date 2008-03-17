@@ -47,7 +47,7 @@ public class RemoteFileVariant extends RemoteResourceVariant {
 		}
 		IRepositoryResource remote = null;
 		if (this.local.isCopied()) {
-			IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(local.getResource());
+			IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(this.local.getResource());
 			SVNChangeStatus st = SVNUtility.getSVNInfoForNotConnected(this.local.getResource());
 			remote = location.asRepositoryFile(st.urlCopiedFrom, false);
 			remote.setSelectedRevision(SVNRevision.fromNumber(st.revisionCopiedFrom));

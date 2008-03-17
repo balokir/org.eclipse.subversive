@@ -74,9 +74,9 @@ public class CreateBranchAction extends AbstractSynchronizeModelAction {
 	
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
 		IResource []resources = FileUtility.getResourcesRecursive(this.treeNodeSelector.getSelectedResources(), IStateFilter.SF_EXCLUDE_DELETED, IResource.DEPTH_ZERO);
-		ArrayList localOperateResources = new ArrayList();
-		ArrayList remoteOperateResources = new ArrayList();
-		ArrayList operateResources = new ArrayList();
+		ArrayList<ILocalResource> localOperateResources = new ArrayList<ILocalResource>();
+		ArrayList<IRepositoryResource> remoteOperateResources = new ArrayList<IRepositoryResource>();
+		ArrayList<IResource> operateResources = new ArrayList<IResource>();
 		IRepositoryLocation first = SVNRemoteStorage.instance().asRepositoryResource(resources[0]).getRepositoryLocation();
 		for (int i = 0; i < resources.length; i++) {
 			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resources[i]);
@@ -95,14 +95,14 @@ public class CreateBranchAction extends AbstractSynchronizeModelAction {
 			remoteOperateResources.add(remote);
 		}
 		if (remoteOperateResources.size() > 0) {
-			IRepositoryResource []remoteResources = (IRepositoryResource[])remoteOperateResources.toArray(new IRepositoryResource[remoteOperateResources.size()]);
+			IRepositoryResource []remoteResources = remoteOperateResources.toArray(new IRepositoryResource[remoteOperateResources.size()]);
 			
 			if (!OperationErrorDialog.isAcceptableAtOnce(remoteResources, SVNTeamUIPlugin.instance().getResource("BranchTagAction.Error.Branch"), configuration.getSite().getShell())) {
 				return null;
 			}
 			
 			AbstractBranchTagPanel panel = null;
-			Set nodeNames = new HashSet();
+			Set<String> nodeNames = new HashSet<String>();
 			boolean respectProjectStructure = SVNTeamPreferences.getRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_NAME);
 			if (respectProjectStructure && remoteResources[0].getRepositoryLocation().isStructureEnabled()) {
 				nodeNames = org.eclipse.team.svn.ui.action.remote.BranchTagAction.getExistingNodeNames(SVNUtility.getBranchesLocation(remoteResources[0]));
@@ -112,7 +112,7 @@ public class CreateBranchAction extends AbstractSynchronizeModelAction {
 			
 			if (dialog.open() == 0) {
 				IRepositoryResource destination = panel.getDestination();
-				IResource []operateResourcesArr = (IResource[])operateResources.toArray(new IResource[operateResources.size()]);
+				IResource []operateResourcesArr = operateResources.toArray(new IResource[operateResources.size()]);
 				IResource []newResources = panel.getSelectedResources();
 				
 				boolean multipleLayout = this.isMultipleLayout(resources, remoteOperateResources);
@@ -136,8 +136,8 @@ public class CreateBranchAction extends AbstractSynchronizeModelAction {
 				if (panel.isStartWithSelected()) {
 					IResource []switchedResources = new IResource[localOperateResources.size()];
 					int i = 0;
-					for (Iterator iter = localOperateResources.iterator(); iter.hasNext(); i++) {
-						switchedResources[i] = ((ILocalResource)iter.next()).getResource();
+					for (Iterator<ILocalResource> iter = localOperateResources.iterator(); iter.hasNext(); i++) {
+						switchedResources[i] = iter.next().getResource();
 					}
 					SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(switchedResources);
 					op.add(saveOp);
@@ -151,10 +151,10 @@ public class CreateBranchAction extends AbstractSynchronizeModelAction {
 		return null;
 	}
 
-	protected boolean isMultipleLayout(IResource []resources, List remoteOperateResources) {
+	protected boolean isMultipleLayout(IResource []resources, List<IRepositoryResource> remoteOperateResources) {
 		boolean multipleLayout = false;
 		if (resources.length == 1 && resources[0] instanceof IProject) {
-			IRepositoryResource remote = (IRepositoryResource)remoteOperateResources.get(0);
+			IRepositoryResource remote = remoteOperateResources.get(0);
 			return !(remote instanceof IRepositoryRoot) || ((IRepositoryRoot)remote).getKind() != IRepositoryRoot.KIND_TRUNK;
 		}
 		return multipleLayout;

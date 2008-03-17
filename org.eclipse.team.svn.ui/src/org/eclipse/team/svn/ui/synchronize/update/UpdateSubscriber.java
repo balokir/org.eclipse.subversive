@@ -44,7 +44,7 @@ import org.eclipse.team.svn.ui.synchronize.AbstractSVNSubscriber;
 public class UpdateSubscriber extends AbstractSVNSubscriber {
 	private static UpdateSubscriber instance = null;
 	
-	protected Map comments;
+	protected Map<SVNRevision, String> comments;
 	
 	public static synchronized UpdateSubscriber instance() {
 		if (UpdateSubscriber.instance == null) {
@@ -141,7 +141,7 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 		
 		resourceChange.setCommentProvider(new CommentProvider() {
 			public String getComment(IResource resource, SVNRevision rev, SVNRevision peg) {
-				String comment = (String)UpdateSubscriber.this.comments.get(rev);
+				String comment = UpdateSubscriber.this.comments.get(rev);
 				if (comment == null) {
 					UpdateSubscriber.this.comments.put(rev, comment = super.getComment(resource, rev, peg));
 				}
@@ -163,7 +163,7 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 	
 	private UpdateSubscriber() {
 		super();
-		this.comments = new HashMap();
+		this.comments = new HashMap<SVNRevision, String>();
 	}
 
 }
