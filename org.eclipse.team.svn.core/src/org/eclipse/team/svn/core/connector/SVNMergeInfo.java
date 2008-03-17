@@ -28,10 +28,10 @@ import java.util.Set;
  * @author Alexander Gurov
  */
 public class SVNMergeInfo {
-	private Map mergeSources;
+	private Map<String, List<SVNRevisionRange>> mergeSources;
 
 	public SVNMergeInfo() {
-		this.mergeSources = new HashMap();
+		this.mergeSources = new HashMap<String, List<SVNRevisionRange>>();
 	}
 
 	/**
@@ -43,7 +43,7 @@ public class SVNMergeInfo {
 	 *            List of RevisionRange objects to add.
 	 */
 	public void addRevisions(String mergeSrc, SVNRevisionRange[] ranges) {
-		List revisions = this.getRevisionList(mergeSrc);
+		List<SVNRevisionRange> revisions = this.getRevisionList(mergeSrc);
 		revisions.addAll(Arrays.asList(ranges));
 	}
 
@@ -56,7 +56,7 @@ public class SVNMergeInfo {
 	 *            The revision range to add.
 	 */
 	public void addRevisionRange(String mergeSrc, SVNRevisionRange range) {
-		List revisions = this.getRevisionList(mergeSrc);
+		List<SVNRevisionRange> revisions = this.getRevisionList(mergeSrc);
 		revisions.add(range);
 	}
 
@@ -66,8 +66,8 @@ public class SVNMergeInfo {
 	 * @return The merge source URLs.
 	 */
 	public String[] getPaths() {
-		Set pathSet = this.mergeSources.keySet();
-		return pathSet == null ? null : (String[]) pathSet.toArray(new String[pathSet.size()]);
+		Set<String> pathSet = this.mergeSources.keySet();
+		return pathSet == null ? null : pathSet.toArray(new String[pathSet.size()]);
 	}
 
 	/**
@@ -78,14 +78,14 @@ public class SVNMergeInfo {
 	 * @return Array of RevisionRange objects, or <code>null</code>.
 	 */
 	public SVNRevisionRange[] getRevisions(String mergeSrc) {
-		List revisions = (List) this.mergeSources.get(mergeSrc);
-		return revisions == null ? null : (SVNRevisionRange[]) revisions.toArray(new SVNRevisionRange[revisions.size()]);
+		List<SVNRevisionRange> revisions = this.mergeSources.get(mergeSrc);
+		return revisions == null ? null : revisions.toArray(new SVNRevisionRange[revisions.size()]);
 	}
 
-	protected List getRevisionList(String mergeSrc) {
-		List revisions = (List) this.mergeSources.get(mergeSrc);
+	protected List<SVNRevisionRange> getRevisionList(String mergeSrc) {
+		List<SVNRevisionRange> revisions = this.mergeSources.get(mergeSrc);
 		if (revisions == null) {
-			this.mergeSources.put(mergeSrc, revisions = new ArrayList());
+			this.mergeSources.put(mergeSrc, revisions = new ArrayList<SVNRevisionRange>());
 		}
 		return revisions;
 	}

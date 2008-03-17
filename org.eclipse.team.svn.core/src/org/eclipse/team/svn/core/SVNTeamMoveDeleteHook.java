@@ -103,9 +103,9 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 	        op.add(addToSVNOp);
 	       	op.add(moveOp, new IActionOperation[] {addToSVNOp});
 			op.add(new RestoreProjectMetaOperation(saveOp));
-	       	ArrayList fullSet = new ArrayList(Arrays.asList(scheduledForAddition));
+	       	ArrayList<IResource> fullSet = new ArrayList<IResource>(Arrays.asList(scheduledForAddition));
 	       	fullSet.addAll(Arrays.asList(new IResource[] {source, destination}));
-		    op.add(new RefreshResourcesOperation((IResource [])fullSet.toArray(new IResource[fullSet.size()]), IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
+		    op.add(new RefreshResourcesOperation(fullSet.toArray(new IResource[fullSet.size()]), IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
 	    }
 	    else {
 	    	op.add(moveOp);

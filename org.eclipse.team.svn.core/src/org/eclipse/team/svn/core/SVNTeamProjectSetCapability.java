@@ -67,30 +67,30 @@ public class SVNTeamProjectSetCapability extends ProjectSetCapability {
 	
 	public IProject[] addToWorkspace(String []referenceStrings, ProjectSetSerializationContext context, IProgressMonitor monitor) throws TeamException {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		Map project2reference = new HashMap();
+		Map<IProject, String> project2reference = new HashMap<IProject, String>();
 		for (int i = 0; i < referenceStrings.length; i++) {
 			String name = this.getNameForReference(referenceStrings[i]);
 			if (name != null) {
 				project2reference.put(root.getProject(name), referenceStrings[i]);
 			}
 		}
-		Set allProjects = project2reference.keySet();
-		IProject []projects = this.confirmOverwrite(context, (IProject [])allProjects.toArray(new IProject[allProjects.size()]));
+		Set<IProject> allProjects = project2reference.keySet();
+		IProject []projects = this.confirmOverwrite(context, allProjects.toArray(new IProject[allProjects.size()]));
 
 		if (projects != null && projects.length > 0) {
 			final CompositeOperation op = new CompositeOperation("Operation.ImportProjectSet");
 			
 			op.add(new SaveRepositoryLocationsOperation());
 			
-			ArrayList retVal = new ArrayList();
+			ArrayList<IProject> retVal = new ArrayList<IProject>();
 			for (int i = 0; i < projects.length; i++) {
-				String fullReference = (String)project2reference.get(projects[i]);
+				String fullReference = project2reference.get(projects[i]);
 				IProject project = this.configureCheckoutOperation(op, projects[i], fullReference);
 				if (project != null) {
 					retVal.add(project);
 				}
 			}
-			projects = (IProject [])retVal.toArray(new IProject[retVal.size()]);
+			projects = retVal.toArray(new IProject[retVal.size()]);
 			
 			op.add(new RefreshResourcesOperation(projects));
 			SVNTeamPlugin.instance().getOptionProvider().addProjectSetCapabilityProcessing(op);

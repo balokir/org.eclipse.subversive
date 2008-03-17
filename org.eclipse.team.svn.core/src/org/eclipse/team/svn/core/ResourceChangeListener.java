@@ -54,7 +54,7 @@ public class ResourceChangeListener implements IResourceChangeListener, ISavePar
 	public void resourceChanged(final IResourceChangeEvent event) {
 		ProgressMonitorUtility.doTaskScheduledDefault(new AbstractActionOperation("Operation.ResourcesChanged") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
-				final Set modified = new HashSet();
+				final Set<IResource> modified = new HashSet<IResource>();
 				event.getDelta().accept(new IResourceDeltaVisitor() {
 					public boolean visit(IResourceDelta delta) throws CoreException {
 						IResource resource = delta.getResource();
@@ -91,7 +91,7 @@ public class ResourceChangeListener implements IResourceChangeListener, ISavePar
 				}, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
 
 				// reset statuses only for changed resources
-				IResource []resources = (IResource [])modified.toArray(new IResource[modified.size()]);
+				IResource []resources = modified.toArray(new IResource[modified.size()]);
 				SVNRemoteStorage.instance().refreshLocalResources(resources, IResource.DEPTH_INFINITE);
 				
 				// but notify including parents
