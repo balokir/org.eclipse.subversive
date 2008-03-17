@@ -80,7 +80,7 @@ public class SSHSettings implements Serializable {
 	}
 
 	public boolean isPassPhraseSaved() {
-		return passPhraseSaved;
+		return this.passPhraseSaved;
 	}
 
 	public void setPassPhraseSaved(boolean passPhraseSaved) {
