@@ -150,7 +150,7 @@ public class HistoryFilterPanel extends AbstractDialogPanel {
 		this.pathCombo.setLayoutData(data);
 		this.pathCombo.setEnabled(enabledPath);
 		this.pathCombo.setVisibleItemCount(this.pathHistory.getDepth());
-		this.pathCombo.setItems(this.commentsHistory.getHistory());
+		this.pathCombo.setItems(this.pathHistory.getHistory());
 		this.pathCombo.setText(this.pathInput == null ? "" : this.pathInput);
     }
     
