@@ -23,6 +23,7 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.synchronize.AbstractSVNParticipant;
 import org.eclipse.team.svn.ui.synchronize.AbstractSVNSubscriber;
+import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
 import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ISynchronizeScope;
@@ -64,7 +65,7 @@ public class MergeParticipant extends AbstractSVNParticipant {
         return MergeParticipant.PARTICIPANT_ID;
     }
 
-	protected Collection getActionGroups() {
+	protected Collection<AbstractSynchronizeActionGroup> getActionGroups() {
 		return ExtensionsManager.getInstance().getCurrentSynchronizeActionContributor().getMergeContributions();
 	}
 

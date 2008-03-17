@@ -69,7 +69,7 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
         return this.mergeStatusOp = (this.scope == null ? null : new MergeStatusOperation(this.scope.getMergeSet(), resources));
     }
     
-	protected HashSet clearRemoteStatusesImpl(IResource []resources) {
+	protected HashSet<IResource> clearRemoteStatusesImpl(IResource []resources) {
 		this.clearRemoteStatusesImpl(this.baseStatusCache, resources);
 		return super.clearRemoteStatusesImpl(resources);
 	}

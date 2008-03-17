@@ -702,15 +702,15 @@ public final class SVNUtility {
         return false;
     }
 
-	public static Map splitWorkingCopies(IResource []resources) {
-		Map wc2Resources = new HashMap();
+	public static Map<IProject, List<IResource>> splitWorkingCopies(IResource []resources) {
+		Map<IProject, List<IResource>> wc2Resources = new HashMap<IProject, List<IResource>>();
 		
 		for (int i = 0; i < resources.length; i++) {
 			IProject wcRoot = resources[i].getProject();
 
-			List wcResources = (List)wc2Resources.get(wcRoot);
+			List<IResource> wcResources = wc2Resources.get(wcRoot);
 			if (wcResources == null) {
-				wc2Resources.put(wcRoot, wcResources = new ArrayList());
+				wc2Resources.put(wcRoot, wcResources = new ArrayList<IResource>());
 			}
 			wcResources.add(resources[i]);
 		}

@@ -83,7 +83,7 @@ public class SVNChangeSetCapability extends ChangeSetCapability {
 	}
 
     private IResource[] getResources(IDiff[] diffs) {
-    	Set result = new HashSet();
+    	Set<IResource> result = new HashSet<IResource>();
     	for (int i = 0; i < diffs.length; i++) {
 			IDiff diff = diffs[i];
 			IResource resource = ResourceDiffTree.getResourceFor(diff);
@@ -91,7 +91,7 @@ public class SVNChangeSetCapability extends ChangeSetCapability {
 				result.add(resource);
 			}
 		}
-        return (IResource [])result.toArray(new IResource[result.size()]);
+        return result.toArray(new IResource[result.size()]);
     }
 
 	public void editChangeSet(ISynchronizePageConfiguration configuration, ActiveChangeSet set) {

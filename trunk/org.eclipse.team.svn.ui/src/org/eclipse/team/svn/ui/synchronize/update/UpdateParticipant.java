@@ -16,6 +16,7 @@ import java.util.Collection;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.synchronize.AbstractSVNParticipant;
 import org.eclipse.team.svn.ui.synchronize.AbstractSVNSubscriber;
+import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ISynchronizeScope;
 
@@ -43,7 +44,7 @@ public class UpdateParticipant extends AbstractSVNParticipant {
         return UpdateParticipant.PARTICIPANT_ID;
     }
 
-	protected Collection getActionGroups() {
+	protected Collection<AbstractSynchronizeActionGroup> getActionGroups() {
 		return ExtensionsManager.getInstance().getCurrentSynchronizeActionContributor().getUpdateContributions();
 	}
 

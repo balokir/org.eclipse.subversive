@@ -13,6 +13,8 @@ package org.eclipse.team.svn.ui.extension.factory;
 
 import java.util.Collection;
 
+import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
+
 /**
  * Synchronize action contributor
  * 
@@ -23,10 +25,10 @@ public interface ISynchronizeViewActionContributor {
      * This method returns synchronize view action contributions for update mode
      * @return collection of AbstractSynchronizeActionGroup
      */
-	public Collection getUpdateContributions();
+	public Collection<AbstractSynchronizeActionGroup> getUpdateContributions();
     /**
      * This method returns synchronize view action contributions for merge mode
      * @return collection of AbstractSynchronizeActionGroup
      */
-	public Collection getMergeContributions();
+	public Collection<AbstractSynchronizeActionGroup> getMergeContributions();
 }
