@@ -143,8 +143,8 @@ public class RootHistoryCategory extends HistoryCategory {
 					// cut root URL from related path
 					String relatedPathsPrefix = baseUrl.substring(idx + 1, baseUrl.length());
 					
-				    this.relatedPathsPrefixes = new HashSet();
-				    this.relatedParents = new HashSet();
+				    this.relatedPathsPrefixes = new HashSet<String>();
+				    this.relatedParents = new HashSet<String>();
 				    
 				    // collect copiedFrom entries
 					for (SVNLogEntry msg : this.remoteHistory) {

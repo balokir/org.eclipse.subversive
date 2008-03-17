@@ -103,7 +103,7 @@ public class AffectedPathsComposite extends Composite {
 		}
 	}
 	
-	public void setInput(SVNChangedPathData []input, Collection relatedPathPrefixes, Collection relatedParents, long currentRevision) {
+	public void setInput(SVNChangedPathData []input, Collection<String> relatedPathPrefixes, Collection<String> relatedParents, long currentRevision) {
 		this.labelProvider.setCurrentRevision(currentRevision);
 		AffectedPathsContentProvider provider = (AffectedPathsContentProvider)this.treeViewer.getContentProvider();
 		provider.initialize(input, relatedPathPrefixes, relatedParents, currentRevision);

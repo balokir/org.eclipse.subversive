@@ -56,6 +56,7 @@ import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.history.HistoryActionManager.HistoryAction;
 import org.eclipse.team.svn.ui.history.data.SVNLocalFileRevision;
 import org.eclipse.team.svn.ui.history.filter.AuthorNameLogEntryFilter;
+import org.eclipse.team.svn.ui.history.filter.ChangeNameLogEntryFilter;
 import org.eclipse.team.svn.ui.history.filter.CommentLogEntryFilter;
 import org.eclipse.team.svn.ui.history.filter.CompositeLogEntryFilter;
 import org.eclipse.team.svn.ui.history.filter.ILogEntryFilter;
@@ -87,6 +88,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 
 	protected CommentLogEntryFilter commentFilter;
 	protected AuthorNameLogEntryFilter authorFilter;
+	protected ChangeNameLogEntryFilter changeFilter;
 	protected CompositeLogEntryFilter logEntriesFilter;
 
 	protected Action showCommentViewerAction;
@@ -132,7 +134,8 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		SVNTeamUIPlugin.instance().getPreferenceStore().addPropertyChangeListener(this);
 		this.authorFilter = new AuthorNameLogEntryFilter();
 		this.commentFilter = new CommentLogEntryFilter();
-		this.logEntriesFilter = new CompositeLogEntryFilter(new ILogEntryFilter [] {this.authorFilter, this.commentFilter});
+		this.changeFilter = new ChangeNameLogEntryFilter();
+		this.logEntriesFilter = new CompositeLogEntryFilter(new ILogEntryFilter [] {this.authorFilter, this.commentFilter, this.changeFilter});
 	}
 	
 	public void propertyChange(PropertyChangeEvent event) {
@@ -253,7 +256,8 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 
 	public boolean isFilterEnabled() {
 		return this.authorFilter.getAuthorNameToAccept() != null ||
-				this.commentFilter.getCommentToAccept() != null;
+				this.commentFilter.getCommentToAccept() != null ||
+				this.changeFilter.getGangedPathToAccept() != null;
 	}
 
 	public int getOptions() {
@@ -263,6 +267,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 	public void clearFilter() {
 		this.authorFilter.setAuthorNameToAccept(null);
 		this.commentFilter.setCommentToAccept(null);
+		this.changeFilter.setGangedPathToAccept(null);
 		this.clearFilterDropDownAction.setEnabled(false);
 		this.history.refresh(LogMessagesComposite.REFRESH_ALL);
 	}
@@ -270,11 +275,13 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 	public void setFilter() {
 		HistoryFilterPanel panel = new HistoryFilterPanel(this.authorFilter.getAuthorNameToAccept(),
 															this.commentFilter.getCommentToAccept(),
+															this.changeFilter.getGangedPathToAccept(),
 															SVNHistoryPage.getSelectedAuthors(this.logMessages));
 		DefaultDialog dialog = new DefaultDialog(this.getPartSite().getShell(), panel);
 		if (dialog.open() == 0) {
 			this.authorFilter.setAuthorNameToAccept(panel.getAuthor());
 			this.commentFilter.setCommentToAccept(panel.getComment());
+			this.changeFilter.setGangedPathToAccept(panel.getChangedPath());
 			this.clearFilterDropDownAction.setEnabled(this.isFilterEnabled());
 			this.history.refresh(LogMessagesComposite.REFRESH_ALL);
 		}

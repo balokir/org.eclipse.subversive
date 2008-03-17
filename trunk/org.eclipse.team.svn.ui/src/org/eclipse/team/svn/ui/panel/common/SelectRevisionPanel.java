@@ -48,6 +48,7 @@ import org.eclipse.team.svn.ui.history.LogMessagesComposite;
 import org.eclipse.team.svn.ui.history.SVNHistoryPage;
 import org.eclipse.team.svn.ui.history.data.SVNLocalFileRevision;
 import org.eclipse.team.svn.ui.history.filter.AuthorNameLogEntryFilter;
+import org.eclipse.team.svn.ui.history.filter.ChangeNameLogEntryFilter;
 import org.eclipse.team.svn.ui.history.filter.CommentLogEntryFilter;
 import org.eclipse.team.svn.ui.history.filter.CompositeLogEntryFilter;
 import org.eclipse.team.svn.ui.history.filter.ILogEntryFilter;
@@ -85,6 +86,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
 
 	protected CommentLogEntryFilter commentFilter;
 	protected AuthorNameLogEntryFilter authorFilter;
+	protected ChangeNameLogEntryFilter changeFilter;
 	protected CompositeLogEntryFilter logEntriesFilter;
 
 	protected ISelectionChangedListener tableViewerListener;
@@ -107,7 +109,8 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
     	this.initialStopOnCopy = msgOp.getStopOnCopy();
     	this.authorFilter = new AuthorNameLogEntryFilter();
 		this.commentFilter = new CommentLogEntryFilter();
-		this.logEntriesFilter = new CompositeLogEntryFilter(new ILogEntryFilter [] {this.authorFilter, this.commentFilter});
+		this.changeFilter = new ChangeNameLogEntryFilter();
+		this.logEntriesFilter = new CompositeLogEntryFilter(new ILogEntryFilter [] {this.authorFilter, this.commentFilter, this.changeFilter});
 	}
         
 	public String getHelpId() {
@@ -443,6 +446,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
     protected void setFilter() {
 	    HistoryFilterPanel panel = new HistoryFilterPanel(this.authorFilter.getAuthorNameToAccept(),
 	    													this.commentFilter.getCommentToAccept(),
+	    													this.changeFilter.getGangedPathToAccept(),
 	    													SVNHistoryPage.getSelectedAuthors(this.logMessages));
 	    DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getDisplay().getActiveShell(), panel);
 	    if (dialog.open() == 0) {
@@ -456,13 +460,15 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
     protected void clearFilter() {
 	    this.authorFilter.setAuthorNameToAccept(null);
 	    this.commentFilter.setCommentToAccept(null);
+	    this.changeFilter.setGangedPathToAccept(null);
 	    this.clearFilterItem.setEnabled(false);
 		SelectRevisionPanel.this.history.refresh(LogMessagesComposite.REFRESH_ALL);
 	}
 	
 	protected boolean isFilterEnabled() {
 	    return this.authorFilter.getAuthorNameToAccept() != null
-	    		|| this.commentFilter.getCommentToAccept() != null; 
+	    		|| this.commentFilter.getCommentToAccept() != null
+	    		|| this.changeFilter.getGangedPathToAccept() != null; 
 	}
 	
 	protected void refresh() {
