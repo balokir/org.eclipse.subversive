@@ -687,7 +687,7 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 	}
 	
 	public static SVNTeamPropsPreferencePage.CustomProperty [] loadCustomProperties(String encodedProps) {
-		ArrayList<SVNTeamPropsPreferencePage.CustomProperty> propsList = new ArrayList();
+		ArrayList<SVNTeamPropsPreferencePage.CustomProperty> propsList = new ArrayList<SVNTeamPropsPreferencePage.CustomProperty>();
 		String[] props = FileUtility.decodeStringToArray(encodedProps);
 		for (int i = 0; i < props.length; i += 3) {
 			String propName = props[i];
@@ -697,8 +697,7 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 				new SVNTeamPropsPreferencePage.CustomProperty(propName, regexp, description);
 			propsList.add(property);
 		}
-		SVNTeamPropsPreferencePage.CustomProperty [] propArr = {};
-		return propsList.toArray(propArr);
+		return propsList.toArray(new SVNTeamPropsPreferencePage.CustomProperty [propsList.size()]);
 	}
 	
 	public static Object[] loadAutoProperties(String encodedProps) {
