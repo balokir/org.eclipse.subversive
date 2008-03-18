@@ -13,6 +13,7 @@ package org.eclipse.team.svn.core.utility;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ProgressMonitorWrapper;
+import org.eclipse.team.svn.core.SVNTeamPlugin;
 
 /**
  * This subprogress monitor allow us to get current progress state
@@ -77,12 +78,12 @@ public class SubProgressMonitorWithInfo extends ProgressMonitorWrapper {
 	public void subTask(String name) {
 		long time = System.currentTimeMillis();
 		// redraw four times per second or if operation was changed
-		boolean operationChanged = this.subTaskOp == null || !name.startsWith(this.subTaskOp) || name.charAt(this.subTaskOp.length()) != ':';
+		boolean operationChanged = this.subTaskOp == null || !name.startsWith(this.subTaskOp) || name.charAt(this.subTaskOp.length()) != ':' || name.endsWith(SVNTeamPlugin.instance().getResource("Progress.Done"));
 		if (this.lastTime == 0 || (time - this.lastTime) >= 250 || operationChanged) {
 			this.lastTime = time;
 			int idx = name.indexOf(':');
 			if (idx != -1) {
-				this.subTaskOp = name.substring(0, idx);
+				this.subTaskOp = name.endsWith(SVNTeamPlugin.instance().getResource("Progress.Running")) ? name.substring(0, idx) : null;
 			}
 			super.subTask(name);
 		}
