@@ -82,7 +82,7 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 	protected boolean applyToAll;
 	protected boolean applyToFiles;
 	protected boolean applyToFolders;
-	protected List predefinedProperties;
+	protected List<PredefinedProperty> predefinedProperties;
 	protected Map<String, String> predefinedPropertiesRegexps;
 	protected HashMap<String, AbstractFormattedVerifier> verifiers;
 	protected IResource []selectedResources;
@@ -382,10 +382,10 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 		this.applyComposite.setEnabled(this.recursiveButton.getSelection());
 	}
 	
-	protected String[] getPropertyNames(List predefinedProperties, SVNTeamPropsPreferencePage.CustomProperty [] customProperties) {
-		List names = new ArrayList();
-		for (Iterator it = predefinedProperties.iterator(); it.hasNext(); ) {
-			names.add(((PredefinedProperty) it.next()).name);
+	protected String[] getPropertyNames(List<PredefinedProperty> predefinedProperties, SVNTeamPropsPreferencePage.CustomProperty [] customProperties) {
+		List<String> names = new ArrayList<String>();
+		for (Iterator<PredefinedProperty> it = predefinedProperties.iterator(); it.hasNext(); ) {
+			names.add(it.next().name);
 		}
 		names.add(SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.custom_description"));
 		for (int i = 0; i < customProperties.length; i++) {
@@ -394,14 +394,14 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 		if (this.customProps.length == 0) {
 			names.add("    " + SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.custom_hint"));
 		}
-		String[] propertyNames = (String[]) names.toArray(new String[names.size()]);
+		String[] propertyNames = names.toArray(new String[names.size()]);
 		return propertyNames;
 	}
 	
 	protected PredefinedProperty getPredefinedProperty(String name) {
 		int idx = this.predefinedProperties.indexOf(new PredefinedProperty(name));
 		if (idx >= 0) {
-			return (PredefinedProperty)this.predefinedProperties.get(idx);
+			return this.predefinedProperties.get(idx);
 		}
 		return null;
 	}
