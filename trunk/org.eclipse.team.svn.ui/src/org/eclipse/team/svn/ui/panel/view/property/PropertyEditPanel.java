@@ -226,7 +226,7 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 		
 		this.valueField = new Text(composite, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		CompositePropertiesVerifier valueVerifier = new CompositePropertiesVerifier(this.nameField, this.verifiers);
-		this.attachTo(valueField, valueVerifier);
+		this.attachTo(this.valueField, valueVerifier);
 
 		data = new GridData();
 		editManual.setLayoutData(data);
@@ -369,7 +369,7 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 			if (this.resourcesType == PropertyEditPanel.MIXED_RESOURCES && !this.strict) {
 				this.recursiveSelected = this.recursiveButton.getSelection();
 			}
-			if (this.recursiveSelected || this.resourcesType == PropertyEditPanel.MULTIPLE_FILES) {
+			if (this.applyComposite.isEnabled()) {
 				this.applyComposite.saveChanges();
 			}
 		}

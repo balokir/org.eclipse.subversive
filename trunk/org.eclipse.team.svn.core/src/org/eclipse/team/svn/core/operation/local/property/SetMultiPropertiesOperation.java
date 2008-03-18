@@ -45,6 +45,13 @@ public class SetMultiPropertiesOperation extends AbstractWorkingCopyOperation {
 		this.depth = depth;
 		this.filter = filter != null ? filter : IStateFilter.SF_VERSIONED;
 	}
+	
+	public SetMultiPropertiesOperation(IResource[] resources, IPropertyProvider propertyProvider, IStateFilter filter, int depth) {
+		super("Operation.SetMultiProperties", resources);
+		this.propertyProvider = propertyProvider;
+		this.depth = depth;
+		this.filter = filter != null ? filter : IStateFilter.SF_VERSIONED;
+	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		IResource []resources = this.operableData();

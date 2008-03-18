@@ -28,7 +28,7 @@ import org.eclipse.team.svn.core.operation.local.property.IPropertyProvider;
 import org.eclipse.team.svn.core.operation.local.property.SetMultiPropertiesOperation;
 import org.eclipse.team.svn.core.operation.local.property.SetPropertiesOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
-import org.eclipse.team.svn.core.resource.IResourceProvider;
+import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.StringMatcher;
 import org.eclipse.team.svn.ui.action.AbstractNonRecursiveTeamAction;
 import org.eclipse.team.svn.ui.composite.PropertiesComposite;
@@ -87,39 +87,34 @@ public class SetPropertyAction extends AbstractNonRecursiveTeamAction {
 	}
 	
 	public static void doSetProperty(final IResource []resources, final SVNProperty []data, IActionOperation loadOp, boolean isRecursive, final int applyMethod, boolean useMask, String filterMask, boolean strict, IActionOperation addOn) {
-		IResourceProvider resourceProvider = new IResourceProvider() {
-			public IResource []getResources() {
-				return resources;
+		final StringMatcher matcher = useMask ? new StringMatcher(filterMask) : null;
+		IStateFilter filter = new IStateFilter.AbstractStateFilter() {
+			protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
+				return IStateFilter.SF_EXCLUDE_PREREPLACED_AND_DELETED.allowsRecursion(resource, state, mask) || state == IStateFilter.ST_ADDED;
+			}
+			protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
+				if (applyMethod == PropertiesComposite.APPLY_TO_FILES && resource.getType() != IResource.FILE ||
+					applyMethod == PropertiesComposite.APPLY_TO_FOLDERS && resource.getType() == IResource.FILE ||
+					!IStateFilter.SF_EXCLUDE_PREREPLACED_AND_DELETED.accept(resource, state, mask) || 
+					matcher != null && !matcher.match(resource.getName())) {
+					return false;
+				}
+				return true;
 			}
 		};
+				
 		IActionOperation mainOp;
 		if (!isRecursive || applyMethod == PropertiesComposite.APPLY_TO_ALL && !useMask) {
 			// use faster version
-			mainOp = new SetPropertiesOperation(resourceProvider, data, isRecursive & !strict);
+			mainOp = new SetPropertiesOperation(FileUtility.getResourcesRecursive(resources, filter, IResource.DEPTH_ZERO), data, isRecursive & !strict);
 		}
 		else {
-			final StringMatcher matcher = useMask ? new StringMatcher(filterMask) : null; 
-
 			IPropertyProvider propertyProvider = new IPropertyProvider() {
 				public SVNProperty []getProperties(IResource resource) {
 					return data;
 				}
 			};
-			IStateFilter filter = new IStateFilter.AbstractStateFilter() {
-				protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-					return IStateFilter.SF_EXCLUDE_PREREPLACED_AND_DELETED.allowsRecursion(resource, state, mask) || state == IStateFilter.ST_ADDED;
-				}
-				protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
-					if (applyMethod == PropertiesComposite.APPLY_TO_FILES && resource.getType() != IResource.FILE ||
-						applyMethod == PropertiesComposite.APPLY_TO_FOLDERS && resource.getType() == IResource.FILE ||
-						!IStateFilter.SF_EXCLUDE_PREREPLACED_AND_DELETED.accept(resource, state, mask) || 
-						matcher != null && !matcher.match(resource.getName())) {
-						return false;
-					}
-					return true;
-				}
-			};
-			mainOp = new SetMultiPropertiesOperation(resourceProvider, propertyProvider, filter, isRecursive && !strict ? IResource.DEPTH_INFINITE : IResource.DEPTH_ZERO);
+			mainOp = new SetMultiPropertiesOperation(resources, propertyProvider, filter, isRecursive && !strict ? IResource.DEPTH_INFINITE : IResource.DEPTH_ZERO);
 		}
 		CompositeOperation composite = new CompositeOperation(mainOp.getId());
 		if (loadOp != null) {
@@ -132,7 +127,7 @@ public class SetPropertyAction extends AbstractNonRecursiveTeamAction {
 		if (addOn != null) {
 			composite.add(addOn);
 		}
-		composite.add(new RefreshResourcesOperation(resourceProvider, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL), new IActionOperation[] {mainOp});
+		composite.add(new RefreshResourcesOperation(resources, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL), new IActionOperation[] {mainOp});
 		UIMonitorUtility.doTaskScheduledWorkspaceModify(composite);
 	}
 	
