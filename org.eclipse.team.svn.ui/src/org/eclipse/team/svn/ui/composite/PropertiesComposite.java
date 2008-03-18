@@ -125,7 +125,8 @@ public class PropertiesComposite extends Composite {
 				synchronized (PropertiesComposite.this) {
 					if (PropertiesComposite.this.provider != null && PropertiesComposite.this.provider.getExecutionState() == IActionOperation.OK) {
 						if (PropertiesComposite.this.resource != null && 
-								!(PropertiesComposite.this.resource.equals(provider.getLocal()) || PropertiesComposite.this.resource.equals(provider.getRemote()))) {
+								!(PropertiesComposite.this.resource.equals(PropertiesComposite.this.provider.getLocal())
+									|| PropertiesComposite.this.resource.equals(PropertiesComposite.this.provider.getRemote()))) {
 							//do nothing if by this moment resource selected in Properties Composite is different 
 							//from the resource for which the Get(Remote)PropertiesOperation was executed
 							return;
