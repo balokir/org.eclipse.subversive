@@ -193,7 +193,7 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 		return endResourceChange;
 	}
 	
-	protected boolean isIncomig(SVNEntryStatus status) {
+	protected boolean isIncoming(SVNEntryStatus status) {
 		return true;
 	}
 	

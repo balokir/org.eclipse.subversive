@@ -132,13 +132,11 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
     }
 
     public void refresh(final IResource []resources, final int depth, IProgressMonitor monitor) {
-		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
-		boolean contiguousReportMode = SVNTeamPreferences.getSynchronizeBoolean(store, SVNTeamPreferences.SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_NAME);
-
 		HashSet<IResource> refreshScope = this.clearRemoteStatusesImpl(resources);
 		AbstractSVNSubscriber.this.resourcesStateChangedImpl(refreshScope.toArray(new IResource[refreshScope.size()]));
 		
-		if (contiguousReportMode) {
+		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
+		if (SVNTeamPreferences.getSynchronizeBoolean(store, SVNTeamPreferences.SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_NAME)) {
 			IActionOperation op = new UpdateStatusOperation(resources, depth);
 			ProgressMonitorUtility.doTaskExternal(op, monitor);
 		}
@@ -222,10 +220,10 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 				SVNEntryStatus []statuses = rStatusOp.getStatuses();
 				if (statuses != null) {
 					for (int i = 0; i < statuses.length && !monitor.isCanceled(); i++) {
-						if (AbstractSVNSubscriber.this.isIncomig(statuses[i])) {
+						if (AbstractSVNSubscriber.this.isIncoming(statuses[i])) {
 							IResourceChange resourceChange = AbstractSVNSubscriber.this.handleResourceChange(rStatusOp, statuses[i]);
 							if (resourceChange != null) {
-								ProgressMonitorUtility.setTaskInfo(monitor, this, resourceChange.getResource().getFullPath().toString());
+								ProgressMonitorUtility.setTaskInfo(monitor, this, String.valueOf(resourceChange.getRevision()));
 								AbstractSVNSubscriber.this.statusCache.setBytes(resourceChange.getResource(), SVNRemoteStorage.instance().resourceChangeAsBytes(resourceChange));
 								changes.add(resourceChange.getResource());
 							}
@@ -240,7 +238,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 		return changes.toArray(new IResource[changes.size()]);
 	}
 	
-	protected abstract boolean isIncomig(SVNEntryStatus status);
+	protected abstract boolean isIncoming(SVNEntryStatus status);
 	protected abstract IResourceChange handleResourceChange(IRemoteStatusOperation rStatusOp, SVNEntryStatus status);
     protected abstract SyncInfo getSVNSyncInfo(ILocalResource localStatus, IResourceChange remoteStatus);
     protected abstract IRemoteStatusOperation getStatusOperation(IResource []resources, int depth);

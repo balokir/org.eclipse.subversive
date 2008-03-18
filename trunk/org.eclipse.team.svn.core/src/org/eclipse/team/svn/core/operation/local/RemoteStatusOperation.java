@@ -38,6 +38,7 @@ import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
@@ -113,6 +114,7 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 
 			SVNUtility.addSVNNotifyListener(proxy, this);
 			final IResource current = resources[i];
+			ProgressMonitorUtility.setTaskInfo(monitor, this, current.getFullPath().toString());
 //			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn status -u \"" + FileUtility.normalizePath(current.getLocation().toString()) + "\\"" + FileUtility.getUsernameParam(location.getUsername()) + "\\n"
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {

@@ -16,23 +16,27 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
+import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.IRemoteStatusOperation;
 import org.eclipse.team.svn.core.operation.local.RemoteStatusOperation;
+import org.eclipse.team.svn.core.operation.remote.GetLogMessagesOperation;
 import org.eclipse.team.svn.core.resource.IChangeStateProvider;
+import org.eclipse.team.svn.core.resource.ICommentProvider;
 import org.eclipse.team.svn.core.resource.IFileChange;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
-import org.eclipse.team.svn.core.svnstorage.CommentProvider;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
-import org.eclipse.team.svn.core.utility.ILoggedOperationFactory;
+import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.synchronize.AbstractSVNSubscriber;
 
@@ -51,6 +55,11 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 			UpdateSubscriber.instance = new UpdateSubscriber();
 		}
 		return UpdateSubscriber.instance;
+	}
+	
+	public void refresh(IResource[] resources, int depth, IProgressMonitor monitor) {
+		this.comments.clear();
+		super.refresh(resources, depth, monitor);
 	}
 
     protected IRemoteStatusOperation getStatusOperation(IResource[] resources, int depth) {
@@ -139,24 +148,38 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 			resourceChange.setOriginator(originator);
 		}
 		
-		resourceChange.setCommentProvider(new CommentProvider() {
+		resourceChange.setCommentProvider(new ICommentProvider() {
 			public String getComment(IResource resource, SVNRevision rev, SVNRevision peg) {
-				String comment = UpdateSubscriber.this.comments.get(rev);
-				if (comment == null) {
-					UpdateSubscriber.this.comments.put(rev, comment = super.getComment(resource, rev, peg));
+				//Null is also valid value if no comment was specified for revision. So, check for key presence.
+				if (!UpdateSubscriber.this.comments.containsKey(rev)) {
+					this.cacheComments(resource, rev, peg);
 				}
-				return comment;
+				return UpdateSubscriber.this.comments.get(rev);
+			}
+			
+			public void cacheComments(IResource resource, SVNRevision rev, SVNRevision peg) {
+				if (rev == SVNRevision.INVALID_REVISION || peg != null && peg == SVNRevision.INVALID_REVISION) {
+					return;
+				}
+				// we optimized comment fetching by speed regarding to fact that only number revision used by this implementation of ICommentProvider
+				// and select messages for project root (helpful in case of multiple-project layouts)...
+				IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(resource.getProject()).getRoot();
+				remote.setSelectedRevision(rev);
+				remote.setPegRevision(peg);
+				GetLogMessagesOperation op = new GetLogMessagesOperation(remote);
+				op.setLimit(20);
+				ProgressMonitorUtility.doTaskExternalDefault(op, new NullProgressMonitor());
+				if (op.getExecutionState() == IActionOperation.OK) {
+					for (SVNLogEntry entry : op.getMessages()) {
+						UpdateSubscriber.this.comments.put(SVNRevision.fromNumber(entry.revision), entry.message);
+					}
+				}
 			}
 		});
 		return resourceChange;
 	}
 	
-	protected IResource[] findChanges(IResource[] resources, int depth, IProgressMonitor monitor, ILoggedOperationFactory operationWrapperFactory) {
-		this.comments.clear();
-		return super.findChanges(resources, depth, monitor, operationWrapperFactory);
-	}
-	
-	protected boolean isIncomig(SVNEntryStatus status) {
+	protected boolean isIncoming(SVNEntryStatus status) {
 		SVNChangeStatus st = (SVNChangeStatus)status;
 		return st.repositoryPropStatus == SVNEntryStatus.Kind.MODIFIED || st.repositoryTextStatus != SVNEntryStatus.Kind.NONE;
 	}
