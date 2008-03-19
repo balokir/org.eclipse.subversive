@@ -63,7 +63,7 @@ public class UpdateAction extends AbstractSynchronizeModelAction {
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
 		IResource []resources = this.syncInfoSelector.getSelectedResources();
 		// IStateFilter.SF_NONVERSIONED not versioned locally
-		resources = FileUtility.addOperableParents(resources, IStateFilter.SF_UNVERSIONED);
+		IResource []refreshResources = FileUtility.addOperableParents(resources, IStateFilter.SF_UNVERSIONED);
 		
 		if (this.advancedMode) {
 			String message;
@@ -83,12 +83,12 @@ public class UpdateAction extends AbstractSynchronizeModelAction {
 		
 		CompositeOperation op = new CompositeOperation(mainOp.getId());
 		
-		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
+		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(refreshResources);
 		op.add(saveOp);
 		op.add(mainOp);
 		op.add(new RestoreProjectMetaOperation(saveOp));
 		op.add(new ClearMergeStatusesOperation(mainOp));
-		op.add(new RefreshResourcesOperation(resources));
+		op.add(new RefreshResourcesOperation(refreshResources));
 		op.add(new NotifyUnresolvedConflictOperation(mainOp));
 
 		return op;
