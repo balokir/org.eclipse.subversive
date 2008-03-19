@@ -42,11 +42,7 @@ public class URLVerifier extends AbstractFormattedVerifier {
         		host.length() == 0 && !"file".equals(svnUrl.getProtocol())) {
         		this.setPlaceHolder(URLVerifier.ERROR_REASON, SVNTeamUIPlugin.instance().getResource("Verifier.URL.NoHost"));
                 return URLVerifier.ERROR_MESSAGE_FULL;
-        	}
-        	
-        	//try to decode url - if there is any exception thrown - it should be displayed
-        	SVNUtility.decodeURL(url);
-        	
+        	}      	
             return null;
         }
         catch (Exception ex) {
