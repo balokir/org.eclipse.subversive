@@ -11,7 +11,9 @@
 
 package org.eclipse.team.svn.ui.history;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.ui.history.IHistoryPageSource;
 
 /**
@@ -20,7 +22,7 @@ import org.eclipse.team.ui.history.IHistoryPageSource;
  * @author Alexander Gurov
  */
 public class SVNHistoryAdapterFactory implements IAdapterFactory {
-	private static final Class []ADAPTED_TYPES = new Class[] {IHistoryPageSource.class};
+	private static final Class []ADAPTED_TYPES = new Class[] {IHistoryPageSource.class, SVNLogEntry.class};
 	
 	private SVNHistoryPageSource pageSource = new SVNHistoryPageSource();
 	
@@ -31,6 +33,9 @@ public class SVNHistoryAdapterFactory implements IAdapterFactory {
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (IHistoryPageSource.class.equals(adapterType)) {
 			return this.pageSource;
+		}
+		if (SVNLogEntry.class.equals(adapterType) && adaptableObject instanceof IAdaptable) {
+			return ((IAdaptable)adaptableObject).getAdapter(SVNLogEntry.class);
 		}
 		return null;
 	}

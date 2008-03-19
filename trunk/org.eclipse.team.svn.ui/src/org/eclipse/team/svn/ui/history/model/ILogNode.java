@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.ui.history.model;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 
@@ -19,7 +20,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * 
  * @author Alexander Gurov
  */
-public interface ILogNode {
+public interface ILogNode extends IAdaptable {
 	public static final int TYPE_NONE = 0;
 	public static final int TYPE_CATEGORY = 1;
 	public static final int TYPE_SVN = 2;

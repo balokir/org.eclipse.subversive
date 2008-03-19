@@ -31,6 +31,13 @@ public class SVNLogNode extends AbstractLogNode {
 		super(parent);
 		this.entry = entry;
 	}
+	
+	public Object getAdapter(Class adapter) {
+		if (adapter.equals(SVNLogEntry.class)) {
+			return this.entry;
+		}
+		return null;
+	}
 
 	public ILogNode[] getChildren() {
 		return null;
