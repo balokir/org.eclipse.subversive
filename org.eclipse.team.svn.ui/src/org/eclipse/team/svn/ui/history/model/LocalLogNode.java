@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.ui.history.model;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -29,6 +30,13 @@ public class LocalLogNode extends AbstractLogNode {
 	public LocalLogNode(SVNLocalFileRevision entry, ILogNode parent) {
 		super(parent);
 		this.entry = entry;
+	}
+	
+	public Object getAdapter(Class adapter) {
+		if (adapter.equals(IFileRevision.class)) {
+			return this.entry;
+		}
+		return null;
 	}
 	
 	public ILogNode[] getChildren() {

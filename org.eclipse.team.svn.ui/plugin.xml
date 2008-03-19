@@ -42,6 +42,9 @@
 		<factory adaptableType="org.eclipse.team.svn.core.resource.IRepositoryResource" class="org.eclipse.team.svn.ui.history.SVNHistoryAdapterFactory">
 			<adapter type="org.eclipse.team.ui.history.IHistoryPageSource"/>
 		</factory>
+		<factory adaptableType="org.eclipse.team.svn.ui.history.model.ILogNode" class="org.eclipse.team.svn.ui.history.SVNHistoryAdapterFactory">
+			<adapter type="org.eclipse.team.svn.core.connector.SVNLogEntry"/>
+		</factory>
 	</extension>
     
 <!-- ************** Property Merge Viewer ********************** -->

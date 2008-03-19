@@ -36,6 +36,13 @@ public class CategoryLogNode extends AbstractLogNode {
 		this.category = category;
 	}
 
+	public Object getAdapter(Class adapter) {
+		if (adapter.equals(HistoryCategory.class)) {
+			return this.category;
+		}
+		return null;
+	}
+	
 	public ILogNode[] getChildren() {
 		Object []entries = this.category.getEntries();
 		ILogNode []children = new ILogNode[entries.length];

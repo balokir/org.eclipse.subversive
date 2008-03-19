@@ -29,6 +29,13 @@ public class PlainTextLogNode extends AbstractLogNode {
 		this.label = label;
 	}
 	
+	public Object getAdapter(Class adapter) {
+		if (adapter.equals(String.class)) {
+			return this.label;
+		}
+		return null;
+	}
+	
 	public int getType() {
 		return ILogNode.TYPE_NONE;
 	}

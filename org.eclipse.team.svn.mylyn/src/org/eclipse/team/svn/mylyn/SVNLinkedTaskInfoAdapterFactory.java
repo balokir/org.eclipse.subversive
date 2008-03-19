@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.mylyn.tasks.core.ILinkedTaskInfo;
 import org.eclipse.mylyn.tasks.core.TaskRepository;
 import org.eclipse.mylyn.tasks.ui.TasksUiPlugin;
@@ -53,8 +54,9 @@ public class SVNLinkedTaskInfoAdapterFactory implements IAdapterFactory {
 			return this.createFromCheckedInChangeSet((SVNChangeSetCollector.SVNCheckedInChangeSet)adaptableObject);
 		}
 		
-		if (adaptableObject instanceof SVNLogEntry) {
-			SVNLogEntry historyEntry = (SVNLogEntry)adaptableObject;
+		Object adapted =  Platform.getAdapterManager().getAdapter(adaptableObject, SVNLogEntry.class);
+		if (adapted instanceof SVNLogEntry) {
+			SVNLogEntry historyEntry = (SVNLogEntry)adapted;
 			String comment = historyEntry.message == null ? "" : historyEntry.message;
 			IWorkbenchWindow window = SVNTeamUIPlugin.instance().getWorkbench().getActiveWorkbenchWindow();
 			if (window != null) {
