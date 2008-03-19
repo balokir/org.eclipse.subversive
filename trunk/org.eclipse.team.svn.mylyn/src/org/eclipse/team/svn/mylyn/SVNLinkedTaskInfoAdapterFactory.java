@@ -21,17 +21,16 @@ import org.eclipse.mylyn.tasks.core.ILinkedTaskInfo;
 import org.eclipse.mylyn.tasks.core.TaskRepository;
 import org.eclipse.mylyn.tasks.ui.TasksUiPlugin;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.history.SVNHistoryPage;
 import org.eclipse.team.svn.ui.panel.local.CommitPanel;
 import org.eclipse.team.svn.ui.properties.bugtraq.BugtraqModel;
 import org.eclipse.team.svn.ui.properties.bugtraq.IssueList;
 import org.eclipse.team.svn.ui.synchronize.SVNChangeSetCollector;
+import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.ui.history.IHistoryPage;
 import org.eclipse.team.ui.history.IHistoryView;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * LinkedTaskInfo adapter factory
@@ -55,20 +54,18 @@ public class SVNLinkedTaskInfoAdapterFactory implements IAdapterFactory {
 		}
 		
 		Object adapted =  Platform.getAdapterManager().getAdapter(adaptableObject, SVNLogEntry.class);
-		if (adapted instanceof SVNLogEntry) {
+		if (adapted != null) {
 			SVNLogEntry historyEntry = (SVNLogEntry)adapted;
 			String comment = historyEntry.message == null ? "" : historyEntry.message;
-			IWorkbenchWindow window = SVNTeamUIPlugin.instance().getWorkbench().getActiveWorkbenchWindow();
-			if (window != null) {
-				IWorkbenchPage page = window.getActivePage();
-				if (page != null) {
-					IViewPart view = page.findView(IHistoryView.VIEW_ID);
-					if (view instanceof IHistoryView) {
-						IHistoryPage historyPage = ((IHistoryView)view).getHistoryPage();
-						if (historyPage instanceof SVNHistoryPage) {
-							IResource resource = ((SVNHistoryPage)historyPage).getResource();
-							return new SVNLinkedTaskInfo(null, this.getTaskRepositoryUrl(resource), null, this.getTaskFullUrl(resource, comment), comment);
-						}
+			
+			IWorkbenchPage page = UIMonitorUtility.getActivePage();
+			if (page != null) {
+				IViewPart view = page.findView(IHistoryView.VIEW_ID);
+				if (view instanceof IHistoryView) {
+					IHistoryPage historyPage = ((IHistoryView)view).getHistoryPage();
+					if (historyPage instanceof SVNHistoryPage) {
+						IResource resource = ((SVNHistoryPage)historyPage).getResource();
+						return new SVNLinkedTaskInfo(null, this.getTaskRepositoryUrl(resource), null, this.getTaskFullUrl(resource, comment), comment);
 					}
 				}
 			}
