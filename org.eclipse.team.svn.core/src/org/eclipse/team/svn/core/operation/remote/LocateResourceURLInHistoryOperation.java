@@ -23,6 +23,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
+import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
@@ -55,6 +56,7 @@ public class LocateResourceURLInHistoryOperation extends AbstractRepositoryOpera
 		
 		for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
 			final int idx = i;
+			ProgressMonitorUtility.setTaskInfo(monitor, this, resources[i].getUrl());
 			if (this.converted[i].getSelectedRevision().getKind() == Kind.NUMBER) {
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(IProgressMonitor monitor) throws Exception {

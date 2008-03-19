@@ -29,6 +29,7 @@ import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
@@ -67,6 +68,8 @@ public class MergeStatusOperation extends AbstractWorkingCopyOperation implement
 				final IRepositoryResource fromEnd = this.info.fromEnd[i];
 				final ISVNConnector proxy = fromEnd.getRepositoryLocation().acquireSVNProxy();
 				final String wcPath = FileUtility.getWorkingCopyPath(this.info.to[i]);
+				
+				ProgressMonitorUtility.setTaskInfo(monitor, this, this.info.to[i].getFullPath().toString());
 				
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(IProgressMonitor monitor) throws Exception {
