@@ -136,6 +136,10 @@ public abstract class AbstractDialogPanel implements IDialogPanel, IValidationMa
 		this.changeListener.validateContent();
 	}
 	
+	public boolean validateControl(Control cmp) {
+		return this.changeListener.validateControl(cmp);
+	}
+
 	protected void setMessage(int level, String message) {
 		this.manager.setMessage(level, message);		
 	}

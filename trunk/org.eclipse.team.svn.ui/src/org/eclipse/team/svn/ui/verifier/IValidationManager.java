@@ -26,5 +26,6 @@ public interface IValidationManager {
 
 	public boolean isFilledRight();
 	public void validateContent();
+	public boolean validateControl(Control cmp);
 	
 }
