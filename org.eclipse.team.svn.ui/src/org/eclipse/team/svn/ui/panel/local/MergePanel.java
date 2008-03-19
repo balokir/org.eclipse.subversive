@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.svn.core.connector.ISVNProgressMonitor;
+import org.eclipse.team.svn.core.connector.SVNNotification;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNNotification.PerformedAction;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -214,22 +215,27 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 				public void progress(int current, int total, ItemState state) {
 					buf.append("<b>");
 					switch (state.action) {
-					case PerformedAction.UPDATE_ADD: {
-						buf.append(SVNTeamUIPlugin.instance().getResource("MergePanel.Preview.Added"));
-						break;
-					}
-					case PerformedAction.UPDATE_DELETE: {
-						buf.append(SVNTeamUIPlugin.instance().getResource("MergePanel.Preview.Deleted"));
-						break;
-					}
-					case PerformedAction.UPDATE_UPDATE: {
-						buf.append(SVNTeamUIPlugin.instance().getResource("MergePanel.Preview.Modified"));
-						break;
-					}
-					default: {
-						buf.append(PerformedAction.actionNames[state.action]);
-						buf.append(SVNTeamUIPlugin.instance().getResource("MergePanel.Preview.Default"));
-					}
+						case PerformedAction.UPDATE_ADD: {
+							buf.append(SVNTeamUIPlugin.instance().getResource("MergePanel.Preview.Added"));
+							break;
+						}
+						case PerformedAction.UPDATE_DELETE: {
+							buf.append(SVNTeamUIPlugin.instance().getResource("MergePanel.Preview.Deleted"));
+							break;
+						}
+						case PerformedAction.UPDATE_UPDATE: {
+							buf.append(SVNTeamUIPlugin.instance().getResource("MergePanel.Preview.Modified"));
+							break;
+						}
+						default: {
+							if (SVNNotification.PerformedAction.isKnownAction(state.action)) {
+								buf.append(PerformedAction.actionNames[state.action]);
+							}
+							else {
+								buf.append("\t");
+							}
+							buf.append(SVNTeamUIPlugin.instance().getResource("MergePanel.Preview.Default"));
+						}
 					}
 					buf.append(state.path);
 					buf.append("\n");

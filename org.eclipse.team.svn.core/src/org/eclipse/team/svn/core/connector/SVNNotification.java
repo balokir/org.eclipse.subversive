@@ -266,11 +266,18 @@ public class SVNNotification {
 		 */
 		public static final int MERGE_BEGIN = 29;
 
+		/*
+		 * Sometime native JavaHL client returns -1 as action (for example when file is replaced in branch then merged into trunk)...
+		 */
+		public static boolean isKnownAction(int action) {
+			return action >= PerformedAction.ADD /*0*/ && action <= PerformedAction.MERGE_BEGIN /*29*/;
+		}
+		
 		/**
 		 * Textual representation of the action types
 		 */
 		public static final String[] actionNames = { "add", "copy", "delete", "restore", "revert", "failed revert", "resolved", "skip", "update delete", "update add",
-				"update modified", "update completed", "update external", "status completed", "status external", "sending modified", "sending added   ", "sending deleted ",
+				"update modified", "update completed", "update external", "status completed", "status external", "sending modified", "sending added", "sending deleted",
 				"sending replaced", "transfer", "blame revision processed", "locked", "unlocked", "locking failed", "unlocking failed", "path exists", "changelist set",
 				"changelist cleared", "changelist failed", "merge begin", };
 	}
