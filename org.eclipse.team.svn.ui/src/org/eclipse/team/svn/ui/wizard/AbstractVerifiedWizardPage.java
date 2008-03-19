@@ -69,6 +69,10 @@ public abstract class AbstractVerifiedWizardPage extends WizardPage implements I
 		this.changeListener.validateContent();
 	}
 	
+	public boolean validateControl(Control cmp) {
+		return this.changeListener.validateControl(cmp);
+	}
+	
     public void setPageComplete(boolean complete) {
         super.setPageComplete(complete && this.isFilledRight() && this.isPageCompleteImpl());
     }

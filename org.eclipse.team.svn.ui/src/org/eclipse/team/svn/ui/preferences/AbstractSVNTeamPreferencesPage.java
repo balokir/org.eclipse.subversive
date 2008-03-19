@@ -103,6 +103,10 @@ public abstract class AbstractSVNTeamPreferencesPage extends PreferencePage impl
 		this.changeListener.validateContent();
 	}
 	
+	public boolean validateControl(Control cmp) {
+		return this.changeListener.validateControl(cmp);
+	}
+	
     protected class VerificationKeyListener extends AbstractVerificationKeyListener {
         public VerificationKeyListener() {
             super();

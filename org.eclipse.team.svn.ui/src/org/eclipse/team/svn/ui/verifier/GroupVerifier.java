@@ -43,7 +43,18 @@ public class GroupVerifier extends CompositeVerifier {
 		}
 		return true;
 	}
-
+	
+	public boolean verify(Control input) {
+		// could be used as workaround for situations when control validation is required in any case
+		for (Iterator it = this.componentsMap.entrySet().iterator(); it.hasNext(); ) {
+			Map.Entry entry = (Map.Entry)it.next();
+			if (entry.getValue().equals(input)) {
+				return ((AbstractVerifier)entry.getKey()).verify(input);
+			}
+		}
+		return true;
+	}
+	
 	public void add(Control cmp, AbstractVerifier verifier) {
 		super.add(verifier);
 		this.componentsMap.put(verifier, cmp);

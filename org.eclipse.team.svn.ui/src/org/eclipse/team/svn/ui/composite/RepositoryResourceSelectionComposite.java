@@ -53,6 +53,7 @@ public class RepositoryResourceSelectionComposite extends Composite {
 	
 	public static final int TEXT_NONE = 0;
 	public static final int TEXT_BASE = 1;
+	public static final int TEXT_LAST = 2;
 	
 	protected Combo urlText;
 	protected Button browse;
@@ -187,6 +188,9 @@ public class RepositoryResourceSelectionComposite extends Composite {
 		if (defaultTextType == RepositoryResourceSelectionComposite.TEXT_BASE) {
 			this.urlText.setText(this.baseResource.getUrl());
 		}
+		else if (defaultTextType == RepositoryResourceSelectionComposite.TEXT_LAST && this.urlText.getItemCount() > 0) {
+			this.urlText.select(0);
+		}
 		this.urlText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				RepositoryResourceSelectionComposite.this.url = ((Combo)e.widget).getText();
@@ -197,10 +201,27 @@ public class RepositoryResourceSelectionComposite extends Composite {
 				RepositoryResourceSelectionComposite.this.revisionComposite.setFilterCurrent(toFilter);
 				if (RepositoryResourceSelectionComposite.this.secondRevisionComposite != null) {
 					RepositoryResourceSelectionComposite.this.secondRevisionComposite.setSelectedResource(RepositoryResourceSelectionComposite.this.getSecondSelectedResource());
+					RepositoryResourceSelectionComposite.this.secondRevisionComposite.setFilterCurrent(toFilter);
 				}
 			}
 		});
-		this.verifier = new CompositeVerifier();
+		this.verifier = new CompositeVerifier() {
+			protected void fireError(String errorReason) {
+				RepositoryResourceSelectionComposite.this.revisionComposite.setEnabled(false);
+				if (RepositoryResourceSelectionComposite.this.secondRevisionComposite != null) {
+					RepositoryResourceSelectionComposite.this.secondRevisionComposite.setEnabled(false);
+				}
+				super.fireError(errorReason);
+			}
+			
+			protected void fireOk() {
+				RepositoryResourceSelectionComposite.this.revisionComposite.setEnabled(true);
+				if (RepositoryResourceSelectionComposite.this.secondRevisionComposite != null) {
+					RepositoryResourceSelectionComposite.this.secondRevisionComposite.setEnabled(true);
+				}
+				super.fireOk();
+			}
+		};
 		this.verifier.add(new NonEmptyFieldVerifier(SVNTeamUIPlugin.instance().getResource(this.comboId + ".Verifier")));
 		this.verifier.add(new URLVerifier(SVNTeamUIPlugin.instance().getResource(this.comboId + ".Verifier")) {
 			protected String getErrorMessage(Control input) {
@@ -210,10 +231,6 @@ public class RepositoryResourceSelectionComposite extends Composite {
 					if (RepositoryResourceSelectionComposite.this.getDestination(SVNUtility.asEntryReference(url), true) == null) {
 						error = SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.URL.Verifier.Error", new String[] {url, RepositoryResourceSelectionComposite.this.baseResource.getRepositoryLocation().getUrl()});
 					}
-				}
-				RepositoryResourceSelectionComposite.this.revisionComposite.setEnabled(error == null);
-				if (RepositoryResourceSelectionComposite.this.secondRevisionComposite != null) {
-					RepositoryResourceSelectionComposite.this.secondRevisionComposite.setEnabled(error == null);
 				}
 				return error;
 			}

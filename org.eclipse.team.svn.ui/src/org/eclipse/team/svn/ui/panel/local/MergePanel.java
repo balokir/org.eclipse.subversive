@@ -11,6 +11,9 @@
 
 package org.eclipse.team.svn.ui.panel.local;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -44,7 +47,7 @@ import org.eclipse.team.svn.ui.verifier.AbstractVerifierProxy;
 import org.eclipse.team.svn.ui.verifier.IValidationManager;
 
 /**
- * JavaHL-mode merge panel
+ * Merge panel implementation
  * 
  * @author Alexander Gurov
  */
@@ -136,7 +139,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 						};
 					}
 				}, MergePanel.FIRST_URL_HISTORY, this.firstSelectedResource, true, 
-				SVNTeamUIPlugin.instance().getResource("MergePanel.Selection.Title"), SVNTeamUIPlugin.instance().getResource("MergePanel.Selection.Description"), RepositoryResourceSelectionComposite.MODE_TWO, RepositoryResourceSelectionComposite.TEXT_NONE);
+				SVNTeamUIPlugin.instance().getResource("MergePanel.Selection.Title"), SVNTeamUIPlugin.instance().getResource("MergePanel.Selection.Description"), RepositoryResourceSelectionComposite.MODE_TWO, RepositoryResourceSelectionComposite.TEXT_LAST);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.simpleSelectionComposite.setLayoutData(data);
 		this.simpleSelectionComposite.setCurrentRevision(this.currentRevision);
@@ -157,7 +160,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		parent.setLayoutData(data);
 		
-		ValidationManagerProxy proxy = new ValidationManagerProxy() {
+		final ValidationManagerProxy proxy2 = new ValidationManagerProxy() {
 			protected AbstractVerifier wrapVerifier(AbstractVerifier verifier) {
 				return new AbstractVerifierProxy(verifier) {
 					protected boolean isVerificationEnabled(Control input) {
@@ -167,9 +170,26 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 			}
 		};
 		
+		ValidationManagerProxy proxy = new ValidationManagerProxy() {
+			protected AbstractVerifier wrapVerifier(AbstractVerifier verifier) {
+				return new AbstractVerifierProxy(verifier) {
+					protected boolean isVerificationEnabled(Control input) {
+						return MergePanel.this.advancedMode;
+					}
+					
+					public boolean verify(Control input) {
+						for (Control cmp : proxy2.getControls()) {
+							proxy2.validateControl(cmp);
+						}
+						return super.verify(input);
+					}
+				};
+			}
+		};
+		
 		this.firstSelectionComposite = new RepositoryResourceSelectionComposite(
 				parent, SWT.NONE, proxy, MergePanel.FIRST_URL_HISTORY, "MergePanel.SourceURL1", this.firstSelectedResource, true, 
-				SVNTeamUIPlugin.instance().getResource("MergePanel.Selection.Title"), SVNTeamUIPlugin.instance().getResource("MergePanel.Selection.Description"), RepositoryResourceSelectionComposite.MODE_DEFAULT, RepositoryResourceSelectionComposite.TEXT_NONE);
+				SVNTeamUIPlugin.instance().getResource("MergePanel.Selection.Title"), SVNTeamUIPlugin.instance().getResource("MergePanel.Selection.Description"), RepositoryResourceSelectionComposite.MODE_DEFAULT, RepositoryResourceSelectionComposite.TEXT_LAST);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.firstSelectionComposite.setLayoutData(data);
 		this.firstSelectionComposite.setCurrentRevision(this.currentRevision);
@@ -180,8 +200,8 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 		strut.setLayoutData(data);
 		
 		this.secondSelectionComposite = new RepositoryResourceSelectionComposite(
-				parent, SWT.NONE, proxy, MergePanel.SECOND_URL_HISTORY, "MergePanel.SourceURL2", this.secondSelectedResource, true, 
-				SVNTeamUIPlugin.instance().getResource("MergePanel.Selection.Title"), SVNTeamUIPlugin.instance().getResource("MergePanel.Selection.Description"), RepositoryResourceSelectionComposite.MODE_DEFAULT, RepositoryResourceSelectionComposite.TEXT_NONE);
+				parent, SWT.NONE, proxy2, MergePanel.SECOND_URL_HISTORY, "MergePanel.SourceURL2", this.secondSelectedResource, true, 
+				SVNTeamUIPlugin.instance().getResource("MergePanel.Selection.Title"), SVNTeamUIPlugin.instance().getResource("MergePanel.Selection.Description"), RepositoryResourceSelectionComposite.MODE_DEFAULT, RepositoryResourceSelectionComposite.TEXT_LAST);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.secondSelectionComposite.setLayoutData(data);
 		this.secondSelectionComposite.setCurrentRevision(this.currentRevision);
@@ -321,11 +341,15 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 	}
 
 	protected abstract class ValidationManagerProxy implements IValidationManager {
+		protected Set<Control> controls = new HashSet<Control>();
+		
 		public void attachTo(Control cmp, AbstractVerifier verifier) {
+			this.controls.add(cmp);
 			MergePanel.this.attachTo(cmp, this.wrapVerifier(verifier));
 		}
 		
 		public void detachFrom(Control cmp) {
+			this.controls.remove(cmp);
 			MergePanel.this.detachFrom(cmp);
 		}
 
@@ -339,6 +363,14 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 
 		public void validateContent() {
 			MergePanel.this.validateContent();
+		}
+		
+		public boolean validateControl(Control cmp) {
+			return MergePanel.this.validateControl(cmp);
+		}
+		
+		public Set<Control> getControls() {
+			return this.controls;
 		}
 		
 		protected abstract AbstractVerifier wrapVerifier(AbstractVerifier verifier);

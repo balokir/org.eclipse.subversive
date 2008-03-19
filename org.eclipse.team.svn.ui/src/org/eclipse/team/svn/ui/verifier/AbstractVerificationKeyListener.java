@@ -96,6 +96,10 @@ public abstract class AbstractVerificationKeyListener extends KeyAdapter impleme
 	public void validateContent() {
 		this.verifier.verify();
 	}
+	
+	public boolean validateControl(Control cmp) {
+		return this.verifier.verify(cmp);
+	}
 
 	public boolean isFilledRight() {
 		return this.verifier.isFilledRight();
