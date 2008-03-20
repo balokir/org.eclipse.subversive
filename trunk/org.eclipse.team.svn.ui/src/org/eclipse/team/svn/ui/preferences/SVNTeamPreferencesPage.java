@@ -62,7 +62,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected boolean mailReporterEnabled;
 	protected boolean mailReporterErrorsEnabled;
 	protected boolean commitSelectNewResources;
-	protected boolean detectDeletedProjects;
 	protected boolean useSubversionExternalsBehaviour;
 	protected String svnConnector;
 	protected ISVNConnectorFactory []factories;
@@ -86,7 +85,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected Button mailReporterEnabledButton;
 	protected Button mailReporterErrorsEnabledButton;
 	protected Button btnResourceSelectionNew;
-	protected Button btnDetectDeletedProjects;
 	protected Button btnResourceSelectionExternal;
 	protected Button checkoutUsingDotProjectNameButton;
 	protected Button branchTagConsiderStructureButton;
@@ -116,7 +114,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		SVNTeamPreferences.setMailReporterBoolean(store, SVNTeamPreferences.MAILREPORTER_ENABLED_NAME, this.mailReporterEnabled);
 		SVNTeamPreferences.setMailReporterBoolean(store, SVNTeamPreferences.MAILREPORTER_ERRORS_ENABLED_NAME, this.mailReporterErrorsEnabled);
 		
-		SVNTeamPreferences.setBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_DETECT_DELETED_PROJECTS_NAME, this.detectDeletedProjects);
 		SVNTeamPreferences.setBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_COMMIT_SELECT_NEW_RESOURCES_NAME, this.commitSelectNewResources);
 		SVNTeamPreferences.setBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_EXTERNALS_NAME, this.useSubversionExternalsBehaviour);
 		SVNTeamPreferences.setBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_ENABLE_AUTO_SHARE_NAME, this.enableAutoShare);
@@ -150,7 +147,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.mailReporterErrorsEnabled = SVNTeamPreferences.MAILREPORTER_ERRORS_ENABLED_DEFAULT;
 		
 		this.commitSelectNewResources = SVNTeamPreferences.BEHAVIOUR_COMMIT_SELECT_NEW_RESOURCES_DEFAULT;
-		this.detectDeletedProjects = SVNTeamPreferences.BEHAVIOUR_DETECT_DELETED_PROJECTS_DEFAULT;
 		this.useSubversionExternalsBehaviour = SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_EXTERNAL_DEFAULT;
 		
 		this.useJavaHLMerge = SVNTeamPreferences.MERGE_USE_JAVAHL_DEFAULT;
@@ -183,7 +179,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.mailReporterEnabled = SVNTeamPreferences.getMailReporterBoolean(store, SVNTeamPreferences.MAILREPORTER_ENABLED_NAME);
 		this.mailReporterErrorsEnabled = SVNTeamPreferences.getMailReporterBoolean(store, SVNTeamPreferences.MAILREPORTER_ERRORS_ENABLED_NAME);
 		
-		this.detectDeletedProjects = SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_DETECT_DELETED_PROJECTS_NAME);
 		this.commitSelectNewResources = SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_COMMIT_SELECT_NEW_RESOURCES_NAME);
 		this.useSubversionExternalsBehaviour = SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_EXTERNALS_NAME);
 		this.enableAutoShare = SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_ENABLE_AUTO_SHARE_NAME);
@@ -217,7 +212,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.mailReporterEnabledButton.setSelection(this.mailReporterEnabled);
 		this.mailReporterErrorsEnabledButton.setSelection(this.mailReporterErrorsEnabled);
 		
-		this.btnDetectDeletedProjects.setSelection(this.detectDeletedProjects);
 		this.btnResourceSelectionNew.setSelection(this.commitSelectNewResources);
 		this.btnResourceSelectionExternal.setSelection(this.useSubversionExternalsBehaviour);
 		
@@ -370,16 +364,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		data.widthHint = 450;
 		label.setLayoutData(data);
 		label.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.resourceSelectionPrompt"));
-		
-		this.btnDetectDeletedProjects = new Button(group, SWT.CHECK);
-		data = new GridData();
-		this.btnDetectDeletedProjects.setLayoutData(data);
-		this.btnDetectDeletedProjects.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.detectDeletedProjects"));
-		this.btnDetectDeletedProjects.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				SVNTeamPreferencesPage.this.detectDeletedProjects = SVNTeamPreferencesPage.this.btnDetectDeletedProjects.getSelection();
-			}
-		});
 		
 		this.btnResourceSelectionNew = new Button(group, SWT.CHECK);
 		data = new GridData();
