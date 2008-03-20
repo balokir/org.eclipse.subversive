@@ -86,16 +86,16 @@ public final class ProgressMonitorUtility {
 		}
 		monitor.beginTask(null, ProgressMonitorUtility.TOTAL_WORK);
 		try {
-			ProgressMonitorUtility.doTask(factory == null ? runnable : factory.getLogged(runnable), monitor, 1);
+			ProgressMonitorUtility.doTask(factory == null ? runnable : factory.getLogged(runnable), monitor, IActionOperation.DEFAULT_WEIGHT, IActionOperation.DEFAULT_WEIGHT);
 		}
 		finally {
 			monitor.done();
 		}
 	}
 	
-	public static void doTask(IActionOperation runnable, IProgressMonitor monitor, int subTasksCount) {
-		if (subTasksCount > 0) {
-			monitor = new SubProgressMonitorWithInfo(monitor, ProgressMonitorUtility.TOTAL_WORK / subTasksCount);
+	public static void doTask(IActionOperation runnable, IProgressMonitor monitor, int totalWeight, int currentWeight) {
+		if (totalWeight > 0) {
+			monitor = new SubProgressMonitorWithInfo(monitor, ProgressMonitorUtility.TOTAL_WORK * currentWeight / totalWeight);
 		}
 		monitor.beginTask(runnable.getOperationName(), ProgressMonitorUtility.TOTAL_WORK);
 		ProgressMonitorUtility.setTaskInfo(monitor, runnable, SVNTeamPlugin.instance().getResource("Progress.Running"));
@@ -108,9 +108,9 @@ public final class ProgressMonitorUtility {
 		}
 	}
 	
-	public static void doSubTask(IActionOperation runnable, IUnprotectedOperation op, IProgressMonitor monitor, int subTasksCount) throws Exception {
-		if (subTasksCount > 0) {
-			monitor = new SubProgressMonitorWithInfo(monitor, ((double)ProgressMonitorUtility.TOTAL_WORK) / subTasksCount);
+	public static void doSubTask(IActionOperation runnable, IUnprotectedOperation op, IProgressMonitor monitor, int totalWeight, int currentWeight) throws Exception {
+		if (totalWeight > 0) {
+			monitor = new SubProgressMonitorWithInfo(monitor, ((double)ProgressMonitorUtility.TOTAL_WORK) * currentWeight / totalWeight);
 		}
 		monitor.beginTask(runnable.getOperationName(), ProgressMonitorUtility.TOTAL_WORK);
 		try {

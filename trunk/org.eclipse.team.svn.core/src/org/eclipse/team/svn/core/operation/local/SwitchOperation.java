@@ -50,6 +50,10 @@ public class SwitchOperation extends AbstractRepositoryOperation {
 		this.resources = resources;
 	}
 	
+	public int getOperationWeight() {
+		return 3;
+	}
+	
 	public ISchedulingRule getSchedulingRule() {
     	HashSet ruleSet = new HashSet();
     	for (int i = 0; i < this.resources.length; i++) {

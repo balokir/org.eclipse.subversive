@@ -54,6 +54,10 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 		this.ignoreAncestry = ignoreAncestry;
 	}
 	
+	public int getOperationWeight() {
+		return 3;
+	}
+	
 	public void setExternalMonitor(ISVNProgressMonitor externalMonitor) {
 		this.externalMonitor = externalMonitor;
 	}

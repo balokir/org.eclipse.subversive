@@ -38,6 +38,10 @@ public abstract class AbstractActionOperation implements IActionOperation {
 		this.updateStatusMessage();
 	}
 	
+	public int getOperationWeight() {
+		return IActionOperation.DEFAULT_WEIGHT;
+	}
+	
 	public IConsoleStream getConsoleStream() {
 		return this.consoleStream;
 	}
@@ -134,7 +138,7 @@ public abstract class AbstractActionOperation implements IActionOperation {
 	
 	protected void protectStep(IUnprotectedOperation step, IProgressMonitor monitor, int subTaskCnt) {
 		try {
-			ProgressMonitorUtility.doSubTask(this, step, monitor, subTaskCnt);
+			ProgressMonitorUtility.doSubTask(this, step, monitor, IActionOperation.DEFAULT_WEIGHT * subTaskCnt, IActionOperation.DEFAULT_WEIGHT);
 		}
 		catch (Throwable t) {
 			this.reportError(t);
