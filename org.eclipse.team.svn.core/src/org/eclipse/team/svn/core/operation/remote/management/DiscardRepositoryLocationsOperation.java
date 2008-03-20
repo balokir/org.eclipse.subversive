@@ -30,6 +30,10 @@ public class DiscardRepositoryLocationsOperation extends AbstractActionOperation
 		super("Operation.DiscardRepositoryLocation");
 		this.locations = locations;
 	}
+	
+	public int getOperationWeight() {
+		return 0;
+	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		final IRemoteStorage storage = SVNRemoteStorage.instance();

@@ -48,6 +48,10 @@ public class ShowMergeViewOperation extends AbstractActionOperation {
         this.fromEnd = fromEnd;
         this.ignoreAncestry = ignoreAncestry;
     }
+    
+    public int getOperationWeight() {
+		return 0;
+	}
 
     protected void runImpl(IProgressMonitor monitor) throws Exception {
     	MergeSet mergeSet = new MergeSet(this.locals, this.fromStart.getRepositoryResources(), this.fromEnd.getRepositoryResources(), this.ignoreAncestry);

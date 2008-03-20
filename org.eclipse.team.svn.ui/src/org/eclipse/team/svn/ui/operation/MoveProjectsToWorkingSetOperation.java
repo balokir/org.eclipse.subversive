@@ -41,6 +41,10 @@ public class MoveProjectsToWorkingSetOperation extends AbstractWorkingCopyOperat
 		super("Operation.MoveToWorkingSet", provider);
 		this.workingSetName = workingSetName;
 	}
+	
+	public int getOperationWeight() {
+		return 0;
+	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		IResource []projects = this.operableData();

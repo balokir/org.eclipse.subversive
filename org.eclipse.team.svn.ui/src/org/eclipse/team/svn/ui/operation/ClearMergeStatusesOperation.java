@@ -36,6 +36,10 @@ public class ClearMergeStatusesOperation extends AbstractWorkingCopyOperation {
 		return null;
 	}
 	
+	public int getOperationWeight() {
+		return 0;
+	}
+	
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		MergeSubscriber.instance().clearRemoteStatuses(this.operableData());
 	}

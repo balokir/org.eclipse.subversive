@@ -37,6 +37,10 @@ public class RefreshRepositoryLocationsOperation extends AbstractActionOperation
 		this.resources = resources;
 		this.deep = deep;
 	}
+	
+	public int getOperationWeight() {
+		return 0;
+	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		if (this.resources == null) {

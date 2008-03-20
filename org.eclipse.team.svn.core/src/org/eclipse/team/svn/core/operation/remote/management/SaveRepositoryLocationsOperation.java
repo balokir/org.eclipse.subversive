@@ -24,6 +24,10 @@ public class SaveRepositoryLocationsOperation extends AbstractActionOperation {
 	public SaveRepositoryLocationsOperation() {
 		super("Operation.SaveRepositoryLocations");
 	}
+	
+	public int getOperationWeight() {
+		return 0;
+	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		SVNRemoteStorage.instance().saveConfiguration();

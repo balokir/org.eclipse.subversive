@@ -55,7 +55,7 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	public int getOperationWeight() {
-		return 3;
+		return 19;
 	}
 	
 	public void setExternalMonitor(ISVNProgressMonitor externalMonitor) {

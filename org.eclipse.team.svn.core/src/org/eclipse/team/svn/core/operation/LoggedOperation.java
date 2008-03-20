@@ -22,7 +22,7 @@ import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.SVNConnectorCancelException;
 
 /**
- * Logged operation allow us to safelly write to log and show error messages
+ * Logged operation allow us to safely write to log and show error messages
  * 
  * @author Alexander Gurov
  */

@@ -66,7 +66,7 @@ public class UpdateOperation extends AbstractConflictDetectionOperation implemen
 	}
 	
 	public int getOperationWeight() {
-		return 4;
+		return 19;
 	}
 	
 	public IResource []getResources() {

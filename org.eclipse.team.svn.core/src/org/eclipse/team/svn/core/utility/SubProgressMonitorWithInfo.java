@@ -61,7 +61,7 @@ public class SubProgressMonitorWithInfo extends ProgressMonitorWrapper {
 	public void worked(int work) {
 		if (work == IProgressMonitor.UNKNOWN) {
 			double delta = (this.totalWork - this.currentProgress) / this.totalWork;
-			delta /= this.unknownProgress < 30 ? 1 : (this.unknownProgress < 50 ? 2 : (this.unknownProgress < 70 ? 6 : (this.unknownProgress < 85 ? 12 : 25)));
+			delta /= this.unknownProgress < 25 ? 0.5 : (this.unknownProgress < 50 ? 1 : (this.unknownProgress < 75 ? 2 : (this.unknownProgress < 85 ? 8 : (this.unknownProgress < 95 ? 25 : 100))));
 			this.unknownProgress += delta;
 			int offset = (int)(this.unknownProgress - this.currentProgress);
 			this.internalWorked(offset);

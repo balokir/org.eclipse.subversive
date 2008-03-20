@@ -43,6 +43,10 @@ public class RestoreProjectMetaOperation extends AbstractActionOperation {
 	public ISchedulingRule getSchedulingRule() {
 		return this.saveOp.getSchedulingRule();
 	}
+	
+	public int getOperationWeight() {
+		return 0;
+	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		Map container = this.saveOp.getSavedMetas();

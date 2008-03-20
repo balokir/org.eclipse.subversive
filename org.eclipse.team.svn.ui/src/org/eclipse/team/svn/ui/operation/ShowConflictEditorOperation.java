@@ -74,6 +74,10 @@ public class ShowConflictEditorOperation extends AbstractWorkingCopyOperation {
     	return new MultiRule((IResource [])ruleSet.toArray(new IResource[ruleSet.size()]));
     }
 
+    public int getOperationWeight() {
+		return 0;
+	}
+    
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		IResource []conflictingResources = this.operableData();
 		

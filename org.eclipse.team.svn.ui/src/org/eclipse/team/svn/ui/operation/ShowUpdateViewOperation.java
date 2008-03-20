@@ -53,6 +53,10 @@ public class ShowUpdateViewOperation extends AbstractWorkingCopyOperation {
 		return null;
 	}
 	
+	public int getOperationWeight() {
+		return 0;
+	}
+	
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		IResource []resources;
 		if (this.scope == null) {
