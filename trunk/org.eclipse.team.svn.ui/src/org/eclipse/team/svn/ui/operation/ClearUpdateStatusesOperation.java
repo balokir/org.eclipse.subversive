@@ -36,6 +36,10 @@ public class ClearUpdateStatusesOperation extends AbstractWorkingCopyOperation {
 		return null;
 	}
 	
+	public int getOperationWeight() {
+		return 0;
+	}
+	
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		UpdateSubscriber.instance().clearRemoteStatuses(this.operableData());
 	}

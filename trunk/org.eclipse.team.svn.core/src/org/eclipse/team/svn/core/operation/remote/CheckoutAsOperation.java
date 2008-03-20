@@ -31,7 +31,6 @@ import org.eclipse.team.svn.core.SVNTeamProjectMapper;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
-import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -71,7 +70,7 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 	}
 	
 	public int getOperationWeight() {
-		return 3;
+		return 19;
 	}
 	
 	public CheckoutAsOperation(String projectName, IRepositoryResource resource, String projectLocation, boolean recursive, boolean ignoreExternals) {
@@ -131,13 +130,13 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 			public void run(IProgressMonitor monitor) throws Exception {
 				CheckoutAsOperation.this.doCheckout(monitor, destination);
 			}
-		}, monitor, IActionOperation.DEFAULT_WEIGHT * 2, IActionOperation.DEFAULT_WEIGHT);
+		}, monitor, 20, 19);
 		
 		ProgressMonitorUtility.doSubTask(this, new IUnprotectedOperation() {
 			public void run(IProgressMonitor monitor) throws Exception {
 				CheckoutAsOperation.this.doOpen(monitor, destination);
 			}
-		}, monitor, IActionOperation.DEFAULT_WEIGHT * 2, IActionOperation.DEFAULT_WEIGHT);
+		}, monitor, 20, 1);
 	}
 	
 	protected void doOpen(IProgressMonitor monitor, IPath destination) throws Exception {

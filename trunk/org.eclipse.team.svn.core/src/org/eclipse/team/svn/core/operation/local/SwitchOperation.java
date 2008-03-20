@@ -51,7 +51,7 @@ public class SwitchOperation extends AbstractRepositoryOperation {
 	}
 	
 	public int getOperationWeight() {
-		return 3;
+		return 19;
 	}
 	
 	public ISchedulingRule getSchedulingRule() {

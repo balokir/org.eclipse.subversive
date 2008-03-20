@@ -62,7 +62,7 @@ public class CheckoutOperation extends AbstractActionOperation implements IResou
 	}
 	
 	public int getOperationWeight() {
-		return 3;
+		return 19;
 	}
 	
 	public IResource []getResources() {

@@ -29,6 +29,10 @@ public class NotifyUnresolvedConflictOperation extends AbstractActionOperation {
         super("Operation.NotifyConflicts");
         this.sign = sign;
     }
+    
+    public int getOperationWeight() {
+		return 0;
+	}
 
     protected void runImpl(IProgressMonitor monitor) throws Exception {
         if (this.sign.hasUnresolvedConflicts()) {

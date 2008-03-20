@@ -31,6 +31,10 @@ public class NotifyProjectStatesChangedOperation extends AbstractActionOperation
 		this.projects = projects;
 		this.eventType = eventType;
 	}
+	
+	public int getOperationWeight() {
+		return 0;
+	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		SVNRemoteStorage.instance().fireResourceStatesChangedEvent(new ProjectStatesChangedEvent(this.projects, this.eventType));		

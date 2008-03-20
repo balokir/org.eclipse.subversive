@@ -35,6 +35,10 @@ public class RefreshRemoteResourcesOperation extends AbstractRepositoryOperation
 	public RefreshRemoteResourcesOperation(IRepositoryResourceProvider provider) {
 		super("Operation.RefreshRemote", provider);
 	}
+	
+	public int getOperationWeight() {
+		return 0;
+	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		IRepositoryResource []resources = this.operableData();

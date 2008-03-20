@@ -45,6 +45,10 @@ public class ShowPropertiesOperation extends AbstractActionOperation {
 		this.page = page;
 		this.propertyProvider = propertyProvider;
 	}
+	
+	public int getOperationWeight() {
+		return 0;
+	}
 
 	protected void runImpl(final IProgressMonitor monitor) throws Exception {
 		if (this.provider != null) {

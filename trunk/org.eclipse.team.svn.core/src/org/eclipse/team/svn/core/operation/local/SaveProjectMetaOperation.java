@@ -65,6 +65,10 @@ public class SaveProjectMetaOperation extends AbstractWorkingCopyOperation imple
 	public Map getSavedMetas() {
 		return this.savedMetas;
 	}
+	
+	public int getOperationWeight() {
+		return 0;
+	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		IResource []changeSet = this.operableData();

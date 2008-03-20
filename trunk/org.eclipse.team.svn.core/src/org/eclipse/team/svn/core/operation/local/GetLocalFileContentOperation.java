@@ -41,6 +41,10 @@ public class GetLocalFileContentOperation extends AbstractGetFileContentOperatio
 		this.resource = resource;
 		this.revision = revisionKind == Kind.BASE ? SVNRevision.BASE : SVNRevision.WORKING;
 	}
+	
+	public int getOperationWeight() {
+		return 0;
+	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		if (this.revision.getKind() == Kind.BASE) {

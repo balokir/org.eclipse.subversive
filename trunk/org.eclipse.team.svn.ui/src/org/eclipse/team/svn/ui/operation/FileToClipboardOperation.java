@@ -41,6 +41,10 @@ public class FileToClipboardOperation extends AbstractActionOperation {
 		this.fileName = fileName;
 		this.deleteFile = deleteFile;
 	}
+	
+	public int getOperationWeight() {
+		return 0;
+	}
 
 	protected void runImpl(final IProgressMonitor monitor) throws Exception {
 		final ByteArrayOutputStream data = new ByteArrayOutputStream();

@@ -65,6 +65,10 @@ public class ShowHistoryViewOperation extends AbstractActionOperation {
 		this.compareWith = compareWith;
 	}
 
+	public int getOperationWeight() {
+		return 0;
+	}
+	
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		if (this.provider != null) {
 			this.remote = this.provider.getRepositoryResources()[0];

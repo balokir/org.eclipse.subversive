@@ -36,6 +36,10 @@ public class PrepareRemoteResourcesTransferrableOperation extends AbstractAction
 		this.display = display;
 		this.operation = operation;
 	}
+	
+	public int getOperationWeight() {
+		return 0;
+	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		Clipboard clipboard = new Clipboard(this.display);
