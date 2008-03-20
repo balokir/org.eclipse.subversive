@@ -46,7 +46,6 @@ public final class SVNTeamPreferences {
 	public static final String CUSTOM_PROPERTIES_BASE = "preference.customproperties";
 	public static final String BEHAVIOUR_BASE = "preference.";
 	
-	public static final String BEHAVIOUR_DETECT_DELETED_PROJECTS_NAME = "resourceSelection.detectDeleted";
 	public static final String BEHAVIOUR_COMMIT_SELECT_NEW_RESOURCES_NAME = "resourceSelection.selectNew";
 	public static final String BEHAVIOUR_DO_NOT_SELECT_EXTERNALS_NAME = "resourceSelection.treatExternalAsLocal";
 	public static final String BEHAVIOUR_ENABLE_AUTO_SHARE_NAME = "share.enableAuto";
@@ -58,7 +57,6 @@ public final class SVNTeamPreferences {
 	public static final boolean BEHAVIOUR_ENABLE_AUTO_SHARE_DEFAULT = true;
 	public static final boolean BEHAVIOUR_DO_NOT_SELECT_EXTERNAL_DEFAULT = true;
 	public static final boolean BEHAVIOUR_COMMIT_SELECT_NEW_RESOURCES_DEFAULT = true;
-	public static final boolean BEHAVIOUR_DETECT_DELETED_PROJECTS_DEFAULT = true;
 	
 	public static final String ANNOTATE_CHANGE_PERSPECTIVE_NAME = "changePerspective";
 	public static final String ANNOTATE_PERSPECTIVE_NAME = "perspective";
@@ -411,7 +409,6 @@ public final class SVNTeamPreferences {
 	}
 	
 	public static void setDefaultBehaviourValues(IPreferenceStore store) {
-		store.setDefault(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_DETECT_DELETED_PROJECTS_NAME), SVNTeamPreferences.BEHAVIOUR_DETECT_DELETED_PROJECTS_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_COMMIT_SELECT_NEW_RESOURCES_NAME), SVNTeamPreferences.BEHAVIOUR_COMMIT_SELECT_NEW_RESOURCES_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_EXTERNALS_NAME), SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_EXTERNAL_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_ENABLE_AUTO_SHARE_NAME), SVNTeamPreferences.BEHAVIOUR_ENABLE_AUTO_SHARE_DEFAULT);
@@ -454,7 +451,6 @@ public final class SVNTeamPreferences {
 	}
 	
 	public static void resetToDefaultBehaviourValues(IPreferenceStore store) {
-		store.setValue(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_DETECT_DELETED_PROJECTS_NAME), SVNTeamPreferences.BEHAVIOUR_DETECT_DELETED_PROJECTS_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_COMMIT_SELECT_NEW_RESOURCES_NAME), SVNTeamPreferences.BEHAVIOUR_COMMIT_SELECT_NEW_RESOURCES_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_EXTERNALS_NAME), SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_EXTERNAL_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_ENABLE_AUTO_SHARE_NAME), SVNTeamPreferences.BEHAVIOUR_ENABLE_AUTO_SHARE_DEFAULT);

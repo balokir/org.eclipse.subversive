@@ -86,23 +86,6 @@ public class UpdateAction extends AbstractSynchronizeModelAction {
 		
 		resources = FileUtility.addOperableParents(resources, IStateFilter.SF_UNVERSIONED);
 		
-		Map<SVNRevision, Set<IResource>> splitted = new HashMap<SVNRevision, Set<IResource>>();
-		for (IResource resource : resources) {
-			try {
-				AbstractSVNSyncInfo info = (AbstractSVNSyncInfo)UpdateSubscriber.instance().getSyncInfo(resource);
-				SVNRevision pegRev = ((IResourceChange)((RemoteResourceVariant)info.getRemote()).getResource()).getPegRevision();
-				Set<IResource> list = splitted.get(pegRev);
-				if (list == null) {
-					splitted.put(pegRev, list = new HashSet<IResource>());
-				}
-				list.add(resource);
-			}
-			catch (TeamException ex) {
-				UILoggedOperation.reportError(this.getText(), ex);
-				return null;
-			}
-		}
-		
 		final IResource []missing = FileUtility.getResourcesRecursive(resources, IStateFilter.SF_MISSING);//, IResource.DEPTH_ZERO
 		if (missing.length > 0) {
 			if (!org.eclipse.team.svn.ui.action.local.UpdateAction.updateMissing(configuration.getSite().getShell(), missing)) {
@@ -128,6 +111,8 @@ public class UpdateAction extends AbstractSynchronizeModelAction {
 		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
 		op.add(saveOp);
 		
+		Map<SVNRevision, Set<IResource>> splitted = UpdateAction.splitByPegRevision(this, resources);
+		
 		for (Map.Entry<SVNRevision, Set<IResource>> entry : splitted.entrySet()) {
 			UpdateOperation mainOp = new UpdateOperation(entry.getValue().toArray(new IResource[0]), entry.getKey(), true);
 			op.add(mainOp);
@@ -139,6 +124,26 @@ public class UpdateAction extends AbstractSynchronizeModelAction {
 		op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(resources)/*, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL*/));
 		
 		return op;
+	}
+	
+	public static Map<SVNRevision, Set<IResource>> splitByPegRevision(AbstractSynchronizeModelAction action, IResource []resources) {
+		Map<SVNRevision, Set<IResource>> splitted = new HashMap<SVNRevision, Set<IResource>>();
+		for (IResource resource : resources) {
+			try {
+				AbstractSVNSyncInfo info = (AbstractSVNSyncInfo)UpdateSubscriber.instance().getSyncInfo(resource);
+				SVNRevision pegRev = ((IResourceChange)((RemoteResourceVariant)info.getRemote()).getResource()).getPegRevision();
+				Set<IResource> list = splitted.get(pegRev);
+				if (list == null) {
+					splitted.put(pegRev, list = new HashSet<IResource>());
+				}
+				list.add(resource);
+			}
+			catch (TeamException ex) {
+				UILoggedOperation.reportError(action.getText(), ex);
+				return null;
+			}
+		}
+		return splitted;
 	}
 
 }

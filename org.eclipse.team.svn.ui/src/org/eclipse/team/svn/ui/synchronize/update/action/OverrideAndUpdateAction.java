@@ -13,17 +13,18 @@ package org.eclipse.team.svn.ui.synchronize.update.action;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.operation.AbstractActionOperation;
+import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.ClearLocalStatusesOperation;
-import org.eclipse.team.svn.core.operation.local.DetectDeletedProjectsOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RemoveNonVersionedResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
@@ -33,12 +34,10 @@ import org.eclipse.team.svn.core.operation.local.UpdateOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.utility.FileUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.operation.ClearUpdateStatusesOperation;
-import org.eclipse.team.svn.ui.operation.ProcessDeletedProjectsOperation;
+import org.eclipse.team.svn.ui.operation.NotifyUnresolvedConflictOperation;
 import org.eclipse.team.svn.ui.panel.local.OverrideResourcesPanel;
-import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
 import org.eclipse.team.svn.ui.synchronize.action.ISyncStateFilter;
 import org.eclipse.team.svn.ui.utility.UnacceptableOperationNotificator;
@@ -83,50 +82,40 @@ public class OverrideAndUpdateAction extends AbstractSynchronizeModelAction {
 		
 		CompositeOperation op = new CompositeOperation("Operation.UOverrideAndUpdate");
 
-		boolean detectDeleted = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_DETECT_DELETED_PROJECTS_NAME);
-		final IResourceProvider detectOp = detectDeleted ? new DetectDeletedProjectsOperation(resources[0]) : new IResourceProvider() {
-			public IResource[] getResources() {
-				return resources[0];
-			}
-		};
-		
-		if (detectDeleted) {
-			op.add((IActionOperation)detectOp);
-		}
-		
-		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(detectOp);
+		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources[0]);
 		op.add(saveOp);
-		AbstractActionOperation revertOp = new RevertOperation(new IResourceProvider() {
-			public IResource[] getResources() {
-				return FileUtility.getResourcesRecursive(detectOp.getResources(), IStateFilter.SF_REVERTABLE, IResource.DEPTH_ZERO);
-			}
-		}, true);
+		RevertOperation revertOp = new RevertOperation(FileUtility.getResourcesRecursive(resources[0], IStateFilter.SF_REVERTABLE, IResource.DEPTH_ZERO), true);
 		op.add(revertOp);
 		op.add(new ClearLocalStatusesOperation(resources[0]));
-		AbstractActionOperation removeNonVersionedResourcesOp = new RemoveNonVersionedResourcesOperation(detectOp, true);
+		RemoveNonVersionedResourcesOperation removeNonVersionedResourcesOp = new RemoveNonVersionedResourcesOperation(resources[0], true);
 		op.add(removeNonVersionedResourcesOp);
 		// Obstructed resources are deleted now. So, try to revert all corresponding entries
 		RevertOperation revertOp1 = new RevertOperation(FileUtility.getResourcesRecursive(resources[0], IStateFilter.SF_OBSTRUCTED, IResource.DEPTH_ZERO), true);
 		op.add(revertOp1);
 		op.add(new ClearLocalStatusesOperation(resources[0]));
-		op.add(new UpdateOperation(new IResourceProvider() {
-			public IResource[] getResources() {
-				return 
-					FileUtility.getResourcesRecursive(detectOp.getResources(), new IStateFilter.AbstractStateFilter() {
-						protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
-							return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask) || IStateFilter.SF_NOTEXISTS.accept(resource, state, mask);
-						}
-						protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-							return true;
-						}
-					}, IResource.DEPTH_ZERO);
-			}
-		}, true), new IActionOperation[] {revertOp, revertOp1, removeNonVersionedResourcesOp});
-		op.add(new RestoreProjectMetaOperation(saveOp));
-		if (detectDeleted) {
-			op.add(new ProcessDeletedProjectsOperation((DetectDeletedProjectsOperation)detectOp));
+		
+		Map<SVNRevision, Set<IResource>> splitted = UpdateAction.splitByPegRevision(this, resources[0]);
+		
+		for (Map.Entry<SVNRevision, Set<IResource>> entry : splitted.entrySet()) {
+			final IResource []toUpdate = entry.getValue().toArray(new IResource[0]);
+			UpdateOperation mainOp = new UpdateOperation(new IResourceProvider() {
+				public IResource[] getResources() {
+					return 
+						FileUtility.getResourcesRecursive(toUpdate, new IStateFilter.AbstractStateFilter() {
+							protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
+								return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask) || IStateFilter.SF_NOTEXISTS.accept(resource, state, mask);
+							}
+							protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
+								return true;
+							}
+						}, IResource.DEPTH_ZERO);
+				}
+			}, entry.getKey(), true);
+			op.add(mainOp, new IActionOperation[] {revertOp, revertOp1, removeNonVersionedResourcesOp});
+			op.add(new ClearUpdateStatusesOperation(mainOp));
 		}
-		op.add(new ClearUpdateStatusesOperation(resources[0]));
+		
+		op.add(new RestoreProjectMetaOperation(saveOp));
 		op.add(new RefreshResourcesOperation(resources[0]/*, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL*/));
 
 		return op;
