@@ -29,6 +29,7 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 public class CompositeOperation extends AbstractActionOperation implements IConsoleStream {
 	protected List<Pair> operations;
 	protected boolean checkWarnings;
+	protected int totalWeight;
 
 	public CompositeOperation(String operationName) {
 		this(operationName, false);
@@ -38,6 +39,7 @@ public class CompositeOperation extends AbstractActionOperation implements ICons
 		super(operationName);
 		this.operations = new ArrayList<Pair>();
 		this.checkWarnings = checkWarnings;
+		this.totalWeight = 0;
 	}
 	
 	public void add(IActionOperation operation) {
@@ -47,6 +49,7 @@ public class CompositeOperation extends AbstractActionOperation implements ICons
 	public void add(IActionOperation operation, IActionOperation []dependsOnOperation) {
 		operation.setConsoleStream(this);
 		this.operations.add(new Pair(operation, dependsOnOperation));
+		this.totalWeight += operation.getOperationWeight();
 	}
 			
 	public void remove(IActionOperation operation) {
@@ -57,6 +60,7 @@ public class CompositeOperation extends AbstractActionOperation implements ICons
 					operation.setConsoleStream(null);
 				}
 				it.remove();
+				this.totalWeight -= operation.getOperationWeight();
 				break;
 			}
 		}
@@ -87,7 +91,7 @@ public class CompositeOperation extends AbstractActionOperation implements ICons
 				}
 			}
 			if (!errorFound) {
-				ProgressMonitorUtility.doTask(pair.operation, monitor, this.operations.size());
+				ProgressMonitorUtility.doTask(pair.operation, monitor, this.totalWeight, pair.operation.getOperationWeight());
 				this.reportStatus(pair.operation.getStatus());
 			}
 		}

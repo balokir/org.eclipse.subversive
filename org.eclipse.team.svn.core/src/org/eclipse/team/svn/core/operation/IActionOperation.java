@@ -25,6 +25,8 @@ public interface IActionOperation {
 	public static final int ERROR = 1;
 	public static final int NOTEXECUTED = 2;
 	
+	public static final int DEFAULT_WEIGHT = 1;
+	
 	public IActionOperation run(IProgressMonitor monitor);
 	
 	public IStatus getStatus();
@@ -32,6 +34,8 @@ public interface IActionOperation {
 	public int getExecutionState();
 	
 	public String getOperationName();
+	
+	public int getOperationWeight();
 	
 	public String getId();
 	

@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
+import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
@@ -60,6 +61,10 @@ public class CheckoutOperation extends AbstractActionOperation implements IResou
 		this.operations = operations.toArray(new CheckoutAsOperation[operations.size()]);
 	}
 	
+	public int getOperationWeight() {
+		return 3;
+	}
+	
 	public IResource []getResources() {
 		return this.projects;
 	}
@@ -71,7 +76,7 @@ public class CheckoutOperation extends AbstractActionOperation implements IResou
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		for (int i = 0; i < this.operations.length && !monitor.isCanceled(); i++) {
 			this.operations[i].setConsoleStream(this.getConsoleStream());
-			ProgressMonitorUtility.doTask(this.operations[i], monitor, this.checkoutMap.keySet().size());
+			ProgressMonitorUtility.doTask(this.operations[i], monitor, IActionOperation.DEFAULT_WEIGHT * this.checkoutMap.keySet().size(), IActionOperation.DEFAULT_WEIGHT);
 			this.reportStatus(this.operations[i].getStatus());
 		}
 	}

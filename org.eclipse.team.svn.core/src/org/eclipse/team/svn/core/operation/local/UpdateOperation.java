@@ -65,6 +65,10 @@ public class UpdateOperation extends AbstractConflictDetectionOperation implemen
 		this.doRecursiveUpdate = doRecursiveUpdate;
 	}
 	
+	public int getOperationWeight() {
+		return 4;
+	}
+	
 	public IResource []getResources() {
 	    return this.getProcessed();
 	}

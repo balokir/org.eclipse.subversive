@@ -31,6 +31,7 @@ import org.eclipse.team.svn.core.SVNTeamProjectMapper;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
+import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -67,6 +68,10 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 	
 	public CheckoutAsOperation(String projectName, IRepositoryResource resource, boolean respectHierarchy, String location, boolean recursive, boolean ignoreExternals) {
 		this(projectName, resource, location == null ? Platform.getLocation().toString() : location + (respectHierarchy ? SVNUtility.getResourceParent(resource) : ""), recursive, ignoreExternals);
+	}
+	
+	public int getOperationWeight() {
+		return 3;
 	}
 	
 	public CheckoutAsOperation(String projectName, IRepositoryResource resource, String projectLocation, boolean recursive, boolean ignoreExternals) {
@@ -126,13 +131,13 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 			public void run(IProgressMonitor monitor) throws Exception {
 				CheckoutAsOperation.this.doCheckout(monitor, destination);
 			}
-		}, monitor, 2);
+		}, monitor, IActionOperation.DEFAULT_WEIGHT * 2, IActionOperation.DEFAULT_WEIGHT);
 		
 		ProgressMonitorUtility.doSubTask(this, new IUnprotectedOperation() {
 			public void run(IProgressMonitor monitor) throws Exception {
 				CheckoutAsOperation.this.doOpen(monitor, destination);
 			}
-		}, monitor, 2);
+		}, monitor, IActionOperation.DEFAULT_WEIGHT * 2, IActionOperation.DEFAULT_WEIGHT);
 	}
 	
 	protected void doOpen(IProgressMonitor monitor, IPath destination) throws Exception {

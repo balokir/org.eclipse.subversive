@@ -41,6 +41,10 @@ public class LoggedOperation implements IActionOperation {
 		return this.op;
 	}
 	
+	public int getOperationWeight() {
+		return IActionOperation.DEFAULT_WEIGHT;
+	}
+	
 	public IConsoleStream getConsoleStream() {
 		return this.op.getConsoleStream();
 	}
