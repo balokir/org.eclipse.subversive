@@ -162,4 +162,7 @@ public class ExtractToOperationRemote extends AbstractRepositoryOperation {
 		}
 	}
 
+	public int getOperationWeight() {
+		return 4;
+	}
 }
