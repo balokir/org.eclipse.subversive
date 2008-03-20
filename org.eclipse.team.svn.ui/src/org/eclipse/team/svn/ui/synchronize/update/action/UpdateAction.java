@@ -11,19 +11,39 @@
 
 package org.eclipse.team.svn.ui.synchronize.update.action;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
+import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
+import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
+import org.eclipse.team.svn.core.operation.local.UpdateOperation;
+import org.eclipse.team.svn.core.resource.IResourceChange;
+import org.eclipse.team.svn.core.svnstorage.ResourcesParentsProvider;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.operation.ClearUpdateStatusesOperation;
+import org.eclipse.team.svn.ui.operation.NotifyUnresolvedConflictOperation;
+import org.eclipse.team.svn.ui.operation.UILoggedOperation;
+import org.eclipse.team.svn.ui.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
+import org.eclipse.team.svn.ui.synchronize.update.UpdateSubscriber;
 import org.eclipse.team.svn.ui.synchronize.update.UpdateSyncInfo;
+import org.eclipse.team.svn.ui.synchronize.variant.RemoteResourceVariant;
 import org.eclipse.team.svn.ui.utility.UnacceptableOperationNotificator;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -66,6 +86,23 @@ public class UpdateAction extends AbstractSynchronizeModelAction {
 		
 		resources = FileUtility.addOperableParents(resources, IStateFilter.SF_UNVERSIONED);
 		
+		Map<SVNRevision, Set<IResource>> splitted = new HashMap<SVNRevision, Set<IResource>>();
+		for (IResource resource : resources) {
+			try {
+				AbstractSVNSyncInfo info = (AbstractSVNSyncInfo)UpdateSubscriber.instance().getSyncInfo(resource);
+				SVNRevision pegRev = ((IResourceChange)((RemoteResourceVariant)info.getRemote()).getResource()).getPegRevision();
+				Set<IResource> list = splitted.get(pegRev);
+				if (list == null) {
+					splitted.put(pegRev, list = new HashSet<IResource>());
+				}
+				list.add(resource);
+			}
+			catch (TeamException ex) {
+				UILoggedOperation.reportError(this.getText(), ex);
+				return null;
+			}
+		}
+		
 		final IResource []missing = FileUtility.getResourcesRecursive(resources, IStateFilter.SF_MISSING);//, IResource.DEPTH_ZERO
 		if (missing.length > 0) {
 			if (!org.eclipse.team.svn.ui.action.local.UpdateAction.updateMissing(configuration.getSite().getShell(), missing)) {
@@ -86,7 +123,22 @@ public class UpdateAction extends AbstractSynchronizeModelAction {
 			}
 		}
 
-		return org.eclipse.team.svn.ui.action.local.UpdateAction.getUpdateOperation(configuration.getSite().getShell(), resources);
+		CompositeOperation op = new CompositeOperation("Operation.Update");
+		
+		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
+		op.add(saveOp);
+		
+		for (Map.Entry<SVNRevision, Set<IResource>> entry : splitted.entrySet()) {
+			UpdateOperation mainOp = new UpdateOperation(entry.getValue().toArray(new IResource[0]), entry.getKey(), true);
+			op.add(mainOp);
+			op.add(new ClearUpdateStatusesOperation(mainOp));
+			op.add(new NotifyUnresolvedConflictOperation(mainOp));
+		}
+		
+		op.add(new RestoreProjectMetaOperation(saveOp));
+		op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(resources)/*, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL*/));
+		
+		return op;
 	}
 
 }

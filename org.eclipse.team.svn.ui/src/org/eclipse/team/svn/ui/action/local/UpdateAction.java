@@ -61,7 +61,7 @@ public class UpdateAction extends AbstractRecursiveTeamAction {
 			}
 		}
 		
-		this.runScheduled(UpdateAction.getUpdateOperation(this.getShell(), resources));
+		this.runScheduled(UpdateAction.getUpdateOperation(resources));
 	}
 	
 	public boolean isEnabled() {
@@ -74,7 +74,7 @@ public class UpdateAction extends AbstractRecursiveTeamAction {
 		return new DefaultDialog(shell, panel).open() == 0;
 	}
 
-	public static CompositeOperation getUpdateOperation(Shell shell, IResource []updateSet) {
+	public static CompositeOperation getUpdateOperation(IResource []updateSet) {
 		if (SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_DETECT_DELETED_PROJECTS_NAME)) {
 			final DetectDeletedProjectsOperation detectOp = new DetectDeletedProjectsOperation(updateSet);
 			final UpdateOperation mainOp = new UpdateOperation(detectOp, true);
@@ -101,7 +101,7 @@ public class UpdateAction extends AbstractRecursiveTeamAction {
 			
 			return op;
 		}
-		final UpdateOperation mainOp = new UpdateOperation(updateSet, true);
+		UpdateOperation mainOp = new UpdateOperation(updateSet, true);
 		
 		CompositeOperation op = new CompositeOperation(mainOp.getId());
 		
