@@ -80,12 +80,12 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		Map<String, SVNDiffStatus> localChanges = new HashMap<String, SVNDiffStatus>();
 		Map<String, SVNDiffStatus> remoteChanges = new HashMap<String, SVNDiffStatus>();
 		HashSet<String> allChangesSet = new HashSet<String>();
-		for (Iterator<SVNDiffStatus> it = this.localChanges.iterator(); it.hasNext(); ) {
+		for (Iterator<SVNDiffStatus> it = this.localChanges.iterator(); it.hasNext() && !monitor.isCanceled(); ) {
 			SVNDiffStatus status = it.next();
 			allChangesSet.add(status.pathPrev);
 			localChanges.put(status.pathPrev, status);
 		}
-		for (Iterator<SVNDiffStatus> it = this.remoteChanges.iterator(); it.hasNext(); ) {
+		for (Iterator<SVNDiffStatus> it = this.remoteChanges.iterator(); it.hasNext() && !monitor.isCanceled(); ) {
 			SVNDiffStatus status = it.next();
 			String localPath = this.getLocalPath(SVNUtility.decodeURL(status.pathPrev), this.rootAncestor);
 			allChangesSet.add(localPath);
@@ -96,13 +96,15 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		HashMap path2node = new HashMap();
 		
 		String message = SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.CheckingDelta");
-		for (int i = 0; i < allChanges.length; i++) {
+		for (int i = 0; i < allChanges.length && !monitor.isCanceled(); i++) {
 			monitor.subTask(MessageFormat.format(message, new Object[] {allChanges[i]}));
 			this.makeBranch(allChanges[i], localChanges.get(allChanges[i]), remoteChanges.get(allChanges[i]), path2node, monitor);
 			ProgressMonitorUtility.progress(monitor, i, allChanges.length);
 		}
 		
-		this.findRootNode(path2node, this.rootLeft, monitor);
+		if (!monitor.isCanceled()) {
+			this.findRootNode(path2node, this.rootLeft, monitor);
+		}
 		
 		super.initialize(monitor);
 	}
