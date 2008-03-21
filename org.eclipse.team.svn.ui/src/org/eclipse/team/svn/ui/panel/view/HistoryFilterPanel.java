@@ -23,9 +23,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.utility.UserInputHistory;
+import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
 
 /**
  * History filter modification dialog
@@ -141,6 +143,7 @@ public class HistoryFilterPanel extends AbstractDialogPanel {
 		this.pathButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 			    HistoryFilterPanel.this.pathCombo.setEnabled(((Button)e.widget).getSelection());
+			    HistoryFilterPanel.this.validateContent();
 			}
 		});
 		
@@ -152,6 +155,14 @@ public class HistoryFilterPanel extends AbstractDialogPanel {
 		this.pathCombo.setVisibleItemCount(this.pathHistory.getDepth());
 		this.pathCombo.setItems(this.pathHistory.getHistory());
 		this.pathCombo.setText(this.pathInput == null ? "" : this.pathInput);
+		this.attachTo(this.pathCombo, new NonEmptyFieldVerifier(SVNTeamUIPlugin.instance().getResource("HistoryFilterPanel.Path")) {
+			protected String getErrorMessageImpl(Control input) {
+				if (HistoryFilterPanel.this.pathCombo.isEnabled()) {
+					return super.getErrorMessageImpl(input);
+				}
+				return null;
+			}
+		});
     }
     
 	public String getHelpId() {
