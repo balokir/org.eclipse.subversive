@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.ui.preferences;
 
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -23,6 +22,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -39,6 +39,10 @@ public class SVNTeamPerformancePage extends AbstractSVNTeamPreferencesPage {
 
 	public SVNTeamPerformancePage() {
 		super();
+	}
+	
+	public void init(IWorkbench workbench) {
+		setDescription(SVNTeamUIPlugin.instance().getResource("PerformancePreferencePage.optionsDesc"));
 	}
 
 	protected void saveValues(IPreferenceStore store) {
@@ -78,13 +82,6 @@ public class SVNTeamPerformancePage extends AbstractSVNTeamPreferencesPage {
 		layout.marginWidth = 0;
 		noteComposite.setLayout(layout);
 		noteComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		Label noteLabel = new Label(noteComposite, SWT.WRAP);
-		data = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
-		data.heightHint = this.convertHeightInCharsToPixels(8);
-		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;		
-		noteLabel.setLayoutData(data);
-		noteLabel.setText(SVNTeamUIPlugin.instance().getResource("PerformancePreferencePage.optionsDesc"));
 		
 		Label separator = new Label(noteComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		data = new GridData(GridData.FILL_HORIZONTAL);
