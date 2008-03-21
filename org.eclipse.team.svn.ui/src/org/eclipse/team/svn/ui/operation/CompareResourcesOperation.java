@@ -21,6 +21,7 @@ import org.eclipse.compare.internal.Utilities;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNEntryStatusCallback;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
@@ -30,6 +31,7 @@ import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
+import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.remote.LocateResourceURLInHistoryOperation;
@@ -93,6 +95,10 @@ public class CompareResourcesOperation extends AbstractActionOperation {
 		final IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(this.local.getResource());
 		final ISVNConnector proxy = location.acquireSVNProxy();
 		
+		final IRepositoryResource []diffPair = new IRepositoryResource[] {this.ancestor, this.remote};
+		SVNRevision revision = this.remote.getSelectedRevision();
+		boolean fetchRemote = revision.getKind() == Kind.HEAD || revision.getKind() == Kind.NUMBER;
+		
 		this.protectStep(new IUnprotectedOperation() {
 			public void run(IProgressMonitor monitor) throws Exception {
 				proxy.status(FileUtility.getWorkingCopyPath(CompareResourcesOperation.this.local.getResource()), Depth.INFINITY, ISVNConnector.Options.IGNORE_EXTERNALS, null, new ISVNEntryStatusCallback() {
@@ -101,17 +107,27 @@ public class CompareResourcesOperation extends AbstractActionOperation {
 					}
 				}, new SVNProgressMonitor(CompareResourcesOperation.this, monitor, null, false));
 			}
-		}, monitor, 3);
+		}, monitor, 100, fetchRemote ? 5 : 60);
 		
-		final IRepositoryResource []diffPair = new IRepositoryResource[] {this.ancestor, this.remote};
-		SVNRevision revision = this.remote.getSelectedRevision();
-		if (!monitor.isCanceled() && (revision.getKind() == Kind.HEAD || revision.getKind() == Kind.NUMBER)) {
+		if (!monitor.isCanceled() && fetchRemote) {
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
 					LocateResourceURLInHistoryOperation op = new LocateResourceURLInHistoryOperation(diffPair, true);
 					ProgressMonitorUtility.doTaskExternal(op, monitor);
+					if (op.getExecutionState() != IActionOperation.OK) {
+						CompareResourcesOperation.this.reportStatus(op.getStatus());
+						return;
+					}
 					diffPair[0] = op.getRepositoryResources()[0];
 					diffPair[1] = op.getRepositoryResources()[1];
+				}
+			}, monitor, 100, 55);
+			if (this.getExecutionState() == IActionOperation.ERROR) {
+				return;
+			}
+			this.protectStep(new IUnprotectedOperation() {
+				public void run(IProgressMonitor monitor) throws Exception {
+					ProgressMonitorUtility.setTaskInfo(monitor, CompareResourcesOperation.this, SVNTeamPlugin.instance().getResource("Progress.Running"));
 					
 					SVNEntryRevisionReference refPrev = SVNUtility.getEntryRevisionReference(diffPair[0]);
 					SVNEntryRevisionReference refNext = SVNUtility.getEntryRevisionReference(diffPair[1]);
@@ -122,7 +138,7 @@ public class CompareResourcesOperation extends AbstractActionOperation {
 						SVNUtility.diffStatus(proxy, remoteChanges, refPrev, refNext, Depth.INFINITY, ISVNConnector.Options.NONE, new SVNProgressMonitor(CompareResourcesOperation.this, monitor, null, false));
 					}
 				}
-			}, monitor, 3);
+			}, monitor, 100, 5);
 		}
 		
 		location.releaseSVNProxy(proxy);
@@ -151,7 +167,7 @@ public class CompareResourcesOperation extends AbstractActionOperation {
 						}
 					});
 				}
-			}, monitor, 3);
+			}, monitor, 100, 40);
 		}
 	}
 	

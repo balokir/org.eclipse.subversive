@@ -137,8 +137,12 @@ public abstract class AbstractActionOperation implements IActionOperation {
 	}
 	
 	protected void protectStep(IUnprotectedOperation step, IProgressMonitor monitor, int subTaskCnt) {
+		this.protectStep(step, monitor, IActionOperation.DEFAULT_WEIGHT * subTaskCnt, IActionOperation.DEFAULT_WEIGHT);
+	}
+	
+	protected void protectStep(IUnprotectedOperation step, IProgressMonitor monitor, int totalWeight, int currentWeight) {
 		try {
-			ProgressMonitorUtility.doSubTask(this, step, monitor, IActionOperation.DEFAULT_WEIGHT * subTaskCnt, IActionOperation.DEFAULT_WEIGHT);
+			ProgressMonitorUtility.doSubTask(this, step, monitor, totalWeight, currentWeight);
 		}
 		catch (Throwable t) {
 			this.reportError(t);
