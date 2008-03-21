@@ -35,7 +35,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -46,6 +45,7 @@ import org.eclipse.team.svn.core.svnstorage.SVNRepositoryLocation;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -63,16 +63,12 @@ public class SVNTeamPasswordManagementPreferencesPage extends AbstractSVNTeamPre
 		super();
 	}
 	
+	public void init(IWorkbench workbench) {
+		setDescription(SVNTeamUIPlugin.instance().getResource("PasswordManagementPreferencePage.Hint"));
+	}
+	
 	protected Control createContentsImpl(Composite parent) {
 		GridData data = null;
-		
-		Label label = new Label(parent, SWT.WRAP);
-		String text = SVNTeamUIPlugin.instance().getResource("PasswordManagementPreferencePage.Hint");
-		label.setText(text);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.widthHint = label.computeSize(SWT.DEFAULT, SWT.DEFAULT).x / 4;
-		data.heightHint = DefaultDialog.convertHeightInCharsToPixels(label, 4);
-		label.setLayoutData(data);
 		
 		Composite composite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -99,6 +95,8 @@ public class SVNTeamPasswordManagementPreferencesPage extends AbstractSVNTeamPre
 		
 		TableColumn column = new TableColumn(table, SWT.NULL);
 		column.setText(SVNTeamUIPlugin.instance().getResource("PasswordManagementPreferencePage.Location"));
+		column = new TableColumn(table, SWT.NULL);
+		column.setText(SVNTeamUIPlugin.instance().getResource("PasswordManagementPreferencePage.Username"));
 		this.viewer.setLabelProvider(new TableLabelProvider());
 		this.viewer.setContentProvider(new IStructuredContentProvider() {
 			public void dispose() {
@@ -121,7 +119,8 @@ public class SVNTeamPasswordManagementPreferencesPage extends AbstractSVNTeamPre
 			}
 		});
 		TableLayout tLayout = new TableLayout();
-        tLayout.addColumnData(new ColumnWeightData(100));
+        tLayout.addColumnData(new ColumnWeightData(70));
+        tLayout.addColumnData(new ColumnWeightData(30));
 		table.setLayout(tLayout);
 		
 		Composite buttons = new Composite(composite, SWT.NULL);
