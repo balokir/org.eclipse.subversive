@@ -243,6 +243,12 @@ public class HistoryActionManager {
 					
 					ILogNode []selection = LogMessagesActionManager.this.getSelection(viewer);
 					if (selection.length == 0 || selection[0].getType() == ILogNode.TYPE_NONE) {
+						if (!HistoryActionManager.this.view.isPending()
+								&& HistoryActionManager.this.view.isFilterEnabled()
+								&& HistoryActionManager.this.view.getMode() != SVNHistoryPage.MODE_LOCAL) {
+							LogMessagesActionManager.this.addFilterPart(viewer, manager);
+						}
+						manager.add(new Separator());
 						manager.add(refreshAction);
 						return;
 					}
@@ -267,12 +273,12 @@ public class HistoryActionManager {
 					
 					if (onlyLogEntries) {
 						LogMessagesActionManager.this.addRemotePart(viewer, manager, selection);
-						
+						LogMessagesActionManager.this.addFilterPart(viewer, manager);
 						manager.add(new Separator());
 					}
 					if (onlyLocalEntries) {
 						LogMessagesActionManager.this.addLocalPart(viewer, manager, selection);
-						
+
 						manager.add(new Separator());
 					}
 					if (!onlyLogEntries && !onlyLocalEntries && !containsCategory) {
@@ -481,8 +487,11 @@ public class HistoryActionManager {
 			});
 			tAction.setEnabled(selection.length > 0);
 			
+		}
+		
+		protected void addFilterPart(final StructuredViewer viewer, IMenuManager manager) {
 			manager.add(new Separator());
-			
+			Action tAction = null;
 		    manager.add(tAction = new HistoryAction("HistoryView.QuickFilter", "icons/views/history/filter.gif") {
 		        public void run() {
 		            HistoryActionManager.this.view.setFilter();
