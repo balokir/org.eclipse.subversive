@@ -436,7 +436,7 @@ public class HistoryActionManager {
 					HistoryActionManager.this.runExtractTo(selection);
 				}
 			});
-			tAction.setEnabled(selection.length == 2);
+			tAction.setEnabled((selection.length == 1 && existsInPrevious) || selection.length == 2);
 			
 			manager.add(new Separator());
 
@@ -858,13 +858,18 @@ public class HistoryActionManager {
 		if (path == null) {
 			return;
 		}
-		SVNLogEntry [] selectedLogs = new SVNLogEntry [selection.length];
+		SVNLogEntry [] selectedLogs = new SVNLogEntry[2];
 		selectedLogs[0] = (SVNLogEntry)selection[0].getEntity();
-		selectedLogs[1] = (SVNLogEntry)selection[1].getEntity();
-		if (selectedLogs[0].revision < selectedLogs[1].revision) {
-			SVNLogEntry tmp = selectedLogs[0];
-			selectedLogs[0] = selectedLogs[1];
-			selectedLogs[1] = tmp;
+		if (selection.length == 2) {
+			selectedLogs[1] = (SVNLogEntry)selection[1].getEntity();
+			if (selectedLogs[0].revision < selectedLogs[1].revision) {
+				SVNLogEntry tmp = selectedLogs[0];
+				selectedLogs[0] = selectedLogs[1];
+				selectedLogs[1] = tmp;
+			}
+		}
+		else {
+			selectedLogs[1] = new SVNLogEntry(selectedLogs[0].revision - 1, 0, null, null, null);
 		}
 		SVNLogEntry [] allLogs = this.view.getFullRemoteHistory();
 		HashMap<String, Character> changesMapping = new HashMap<String, Character>();
