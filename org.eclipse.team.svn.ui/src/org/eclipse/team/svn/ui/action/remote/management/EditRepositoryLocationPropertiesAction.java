@@ -63,7 +63,7 @@ public class EditRepositoryLocationPropertiesAction extends AbstractRepositoryMo
 				op.add(wizard.getOperationToPerform());
 				op.add(new RefreshResourcesOperation(mainOp));
 				
-				this.runNow(op, false); 
+				this.runScheduled(op); 
 			}
 			else {
 				CompositeOperation op = (CompositeOperation)wizard.getOperationToPerform();
@@ -71,7 +71,7 @@ public class EditRepositoryLocationPropertiesAction extends AbstractRepositoryMo
 				op.add(findOp);
 				op.add(new RefreshResourcesOperation(findOp, IResource.DEPTH_ZERO, RefreshResourcesOperation.REFRESH_CACHE));
 				
-				this.runNow(op, false);
+				this.runScheduled(op);
 			}
 		}
 	}

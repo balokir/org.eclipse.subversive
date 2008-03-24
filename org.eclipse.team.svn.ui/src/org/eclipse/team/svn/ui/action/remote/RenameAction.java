@@ -51,7 +51,7 @@ public class RenameAction extends AbstractRepositoryTeamAction {
 			op.add(new RefreshRemoteResourcesOperation(SVNUtility.getCommonParents(resources)));
 			op.add(new SetRevisionAuthorNameOperation(mainOp, Options.FORCE));
 			
-			this.runNow(op, false);
+			this.runScheduled(op);
 		}
 	}
 	

@@ -133,7 +133,7 @@ public class DiscardRepositoryLocationAction extends AbstractRepositoryTeamActio
 		op.add(new SaveRepositoryLocationsOperation());
 		op.add(new RefreshRepositoryLocationsOperation(false));
 		
-		this.runNow(op, false);
+		this.runScheduled(op);
 	}
 
 	public boolean isEnabled() {

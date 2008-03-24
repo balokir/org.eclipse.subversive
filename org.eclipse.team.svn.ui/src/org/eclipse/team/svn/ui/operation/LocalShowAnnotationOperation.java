@@ -86,7 +86,7 @@ public class LocalShowAnnotationOperation extends AbstractWorkingCopyOperation {
 		
 		UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 			public void run() {
-				if (!UIMonitorUtility.doTaskNowDefault(correctOp, true).isCancelled()) {
+				if (!UIMonitorUtility.doTaskScheduledDefault(correctOp).isCancelled()) {
 					IWorkbenchPage page = UIMonitorUtility.getActivePage();
 					if (page != null) {
 				    	if (viewType[0] == SVNTeamPreferences.ANNOTATE_DEFAULT_VIEW) {

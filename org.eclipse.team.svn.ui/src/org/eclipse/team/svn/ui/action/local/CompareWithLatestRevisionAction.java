@@ -49,7 +49,7 @@ public class CompareWithLatestRevisionAction extends AbstractWorkingCopyAction {
 			
 			CorrectRevisionOperation correctOp = new CorrectRevisionOperation(null, remote, local.getRevision(), resource);
 			
-			if (!this.runNow(correctOp, true).isCancelled()) {
+			if (!this.runScheduled(correctOp).isCancelled()) {
 				CompareResourcesOperation mainOp = new CompareResourcesOperation(local, remote);
 				CompositeOperation op = new CompositeOperation(mainOp.getId());
 				op.add(mainOp);

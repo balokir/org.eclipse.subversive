@@ -52,7 +52,7 @@ public class CreatePatchAction extends AbstractWorkingCopyAction {
 					break;
 				}
 			}
-			this.runNow(op, true);
+			this.runScheduled(op);
 		}
 	}
 

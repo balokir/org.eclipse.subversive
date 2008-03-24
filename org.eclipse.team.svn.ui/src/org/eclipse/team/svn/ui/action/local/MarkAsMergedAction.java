@@ -38,7 +38,7 @@ public class MarkAsMergedAction extends AbstractNonRecursiveTeamAction {
 		op.add(mainOp);
 		op.add(new RefreshResourcesOperation(FileUtility.getParents(resources, false)));
 		
-		this.runNow(op, false);
+		this.runScheduled(op);
 	}
 	
 	public boolean isEnabled() {

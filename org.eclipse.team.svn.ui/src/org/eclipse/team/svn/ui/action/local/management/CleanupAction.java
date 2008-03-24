@@ -38,8 +38,7 @@ public class CleanupAction extends AbstractWorkingCopyAction {
 
 		op.add(mainOp);
 		op.add(new RefreshResourcesOperation(resources));
-		
-		this.runNow(op, false);
+		this.runScheduled(op);
 	}
 
 	public boolean isEnabled() {
