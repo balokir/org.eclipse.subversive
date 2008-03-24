@@ -577,7 +577,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 					}
 				});
 				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/delete.gif"));
-				tAction.setEnabled(tSelection.size() > 0);
+				tAction.setEnabled(tSelection.size() > 0 && !FileUtility.checkForResourcesPresence(selectedResources, IStateFilter.SF_DELETED, IResource.DEPTH_ZERO));
 			}
 		});
         menuMgr.setRemoveAllWhenShown(true);
@@ -587,7 +587,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 	protected void updateResources(ResourceStatesChangedEvent event) {
 		HashSet<IResource> allResources = new HashSet<IResource>(Arrays.asList(this.resources));
 		
-		HashSet toDeleteSet = new HashSet();
+		HashSet<IResource> toDeleteSet = new HashSet<IResource>();
 		toDeleteSet.addAll(Arrays.asList(FileUtility.getResourcesRecursive(event.resources, IStateFilter.SF_NOTMODIFIED, IResource.DEPTH_ZERO)));
 		toDeleteSet.addAll(Arrays.asList(FileUtility.getResourcesRecursive(event.resources, IStateFilter.SF_NOTEXISTS, IResource.DEPTH_ZERO)));
 		toDeleteSet.addAll(Arrays.asList(FileUtility.getResourcesRecursive(event.resources, IStateFilter.SF_IGNORED, IResource.DEPTH_ZERO)));
