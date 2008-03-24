@@ -52,7 +52,7 @@ public class DisconnectAction extends AbstractLocalTeamAction {
 			op.add(new RefreshResourcesOperation(projects, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
 			op.add(new NotifyProjectStatesChangedOperation(projects, ProjectStatesChangedEvent.ST_POST_DISCONNECTED));
 			
-			this.runNow(op, false);
+			this.runScheduled(op);
 		}
 	}
 

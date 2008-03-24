@@ -50,7 +50,7 @@ public class CreateFolderAction extends AbstractRepositoryTeamAction {
 			op.add(new RefreshRemoteResourcesOperation(resources));
 			op.add(new SetRevisionAuthorNameOperation(mainOp, Options.FORCE));
 			
-			this.runNow(op, false);
+			this.runScheduled(op);
 		}
 	}
 

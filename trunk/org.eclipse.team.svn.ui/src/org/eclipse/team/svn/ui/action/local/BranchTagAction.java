@@ -144,7 +144,7 @@ public class BranchTagAction extends AbstractNonRecursiveTeamAction {
 					op.add(new RestoreProjectMetaOperation(saveOp));
 					op.add(new RefreshResourcesOperation(operateResourcesArr));
 				}
-				this.runNow(op, false);
+				this.runScheduled(op);
 			}
 		} 
 	}

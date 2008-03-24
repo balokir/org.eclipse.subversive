@@ -75,10 +75,6 @@ public abstract class AbstractSVNTeamAction extends TeamAction {
 		return UIMonitorUtility.doTaskBusy(operation, this.getOperationWrapperFactory());
 	}
 	
-	protected ICancellableOperationWrapper runNow(IActionOperation operation, boolean cancellable) {
-		return UIMonitorUtility.doTaskNow(this.getShell(), operation, cancellable, this.getOperationWrapperFactory());
-	}
-	
 	protected ICancellableOperationWrapper runScheduled(IActionOperation operation) {
 		return UIMonitorUtility.doTaskScheduled(this.getTargetPart(), operation, this.getOperationWrapperFactory());
 	}
