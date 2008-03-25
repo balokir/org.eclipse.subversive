@@ -25,6 +25,7 @@ import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 
@@ -34,18 +35,27 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * @author Alexander Gurov
  */
 public class GetRemoteContentsOperation extends AbstractWorkingCopyOperation {
-	protected IRepositoryResource []remoteResources;
+	protected IRepositoryResourceProvider provider;
 
-	public GetRemoteContentsOperation(IResource []resources, IRepositoryResource []remoteResources) {
+	public GetRemoteContentsOperation(IResource []resources, final IRepositoryResource []remoteResources) {
+		this (resources, new IRepositoryResourceProvider() {
+			public IRepositoryResource[] getRepositoryResources() {
+				return remoteResources;
+			}
+		});
+	}
+	
+	public GetRemoteContentsOperation(IResource []resources, IRepositoryResourceProvider provider) {
 		super("Operation.GetContent", resources);
-		this.remoteResources = remoteResources;
+		this.provider = provider;
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		IResource []resources = this.operableData();
+		IResource [] resources = this.operableData();
+		IRepositoryResource [] remoteResources = this.provider.getRepositoryResources();
 		for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
 			final IResource local = resources[i];
-			final IRepositoryResource remote = this.remoteResources[i];
+			final IRepositoryResource remote = remoteResources[i];
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
 					GetRemoteContentsOperation.this.doGet(local, remote, monitor);

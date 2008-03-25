@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
@@ -1168,6 +1169,17 @@ public class HistoryActionManager {
 					});
 					tAction.setEnabled(isPreviousExists);
 					
+					if (HistoryActionManager.this.view.getResource() != null) {
+						final String fullRemotePath = SVNRemoteStorage.instance().asRepositoryResource(HistoryActionManager.this.view.getResource()).getRepositoryLocation().getUrl() + "/" + firstData.getFullResourcePath();
+						manager.add(tAction = new HistoryAction("HistoryView.GetContents") {
+							public void run() {
+								FromChangedPathDataProvider provider = new FromChangedPathDataProvider(firstData, false);
+								HistoryActionManager.this.getContentAffected(provider, provider, fullRemotePath);
+							}
+						});
+						tAction.setEnabled(affectedTableSelection.size() > 0
+							&& fullRemotePath.startsWith(SVNRemoteStorage.instance().asRepositoryResource(HistoryActionManager.this.view.getResource().getProject()).getUrl()));
+					}
 					manager.add(new Separator());
 					
 					String branchFrom = SVNTeamUIPlugin.instance().getResource("HistoryView.BranchFrom", new String [] {String.valueOf(HistoryActionManager.this.selectedRevision)});
@@ -1381,6 +1393,17 @@ public class HistoryActionManager {
 	protected void showProperties(IActionOperation preOp, IRepositoryResourceProvider provider) {
 		IResourcePropertyProvider propertyProvider = new GetRemotePropertiesOperation(provider);
 		ShowPropertiesOperation mainOp = new ShowPropertiesOperation(UIMonitorUtility.getActivePage(), provider, propertyProvider);
+		CompositeOperation op = new CompositeOperation(mainOp.getId());
+		op.add(preOp);
+		op.add(mainOp, new IActionOperation[] {preOp});
+		op.add(new RefreshResourcesOperation(new IResource [] {this.view.getResource().getProject()}));
+		UIMonitorUtility.doTaskScheduledActive(op);
+	}
+	
+	protected void getContentAffected(IActionOperation preOp, IRepositoryResourceProvider provider, String fullRemotePath) {
+		String remoteProjectUrl = SVNRemoteStorage.instance().asRepositoryResource(this.view.getResource().getProject()).getUrl();
+		IResource resource = this.view.getResource().getProject().findMember(new Path(fullRemotePath.substring(remoteProjectUrl.length()))); 
+		GetRemoteContentsOperation mainOp = new GetRemoteContentsOperation(new IResource [] {resource}, provider);
 		CompositeOperation op = new CompositeOperation(mainOp.getId());
 		op.add(preOp);
 		op.add(mainOp, new IActionOperation[] {preOp});
