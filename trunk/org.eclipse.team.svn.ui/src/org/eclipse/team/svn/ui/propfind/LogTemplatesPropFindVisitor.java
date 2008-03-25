@@ -26,10 +26,10 @@ public class LogTemplatesPropFindVisitor implements IPropFindVisitor {
 	// Restricting the size of log templates set in order to prevent prolonged commit operation execution.
 	public static final int MAXIMUM_LOG_TEMPLATE_SIZE = 20;
 	
-	protected HashSet logTemplates;
+	protected HashSet<String> logTemplates;
 	
 	public LogTemplatesPropFindVisitor() {
-		this.logTemplates = new HashSet();
+		this.logTemplates = new HashSet<String>();
 	}
 	
 	public boolean visit(SVNProperty propertyParam) {
@@ -42,7 +42,7 @@ public class LogTemplatesPropFindVisitor implements IPropFindVisitor {
 		return true;
 	}
 	
-	public HashSet getLogTemplates() {
+	public HashSet<String> getLogTemplates() {
 		return this.logTemplates;
 	}
 

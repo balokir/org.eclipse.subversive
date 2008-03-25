@@ -996,7 +996,9 @@ public class HistoryActionManager {
 						if (selection.size() == 1) {
 							SVNChangedPathData data = (SVNChangedPathData)selection.getFirstElement();
 							if ((HistoryActionManager.this.view.getOptions() & ISVNHistoryView.COMPARE_MODE) != 0) {
-								boolean isPreviousExists = data.action == SVNLogPath.ChangeType.MODIFIED || data.action == SVNLogPath.ChangeType.REPLACED;
+								boolean isPreviousExists = data.action == SVNLogPath.ChangeType.MODIFIED
+									|| data.action == SVNLogPath.ChangeType.REPLACED
+									|| data.copiedFromPath != null && !data.copiedFromPath.equals("");
 								if (isPreviousExists) {
 									FromChangedPathDataProvider provider = new FromChangedPathDataProvider(data, false);
 									HistoryActionManager.this.compareWithPreviousRevision(provider, provider);
@@ -1114,7 +1116,9 @@ public class HistoryActionManager {
 					if (affectedTableSelection.size() == 1) {
 						//FIXME copied resources also must be handled
 //						isPreviousExists = !(firstData.action == SVNLogPath.ChangeType.ADDED && firstData.copiedFromRevision == SVNRevision.INVALID_REVISION_NUMBER);
-						isPreviousExists = firstData.action == SVNLogPath.ChangeType.MODIFIED || firstData.action == SVNLogPath.ChangeType.REPLACED;
+						isPreviousExists = firstData.action == SVNLogPath.ChangeType.MODIFIED
+											|| firstData.action == SVNLogPath.ChangeType.REPLACED
+											|| (firstData.copiedFromPath != null && !firstData.copiedFromPath.equals(""));
 					}
 					manager.add(tAction = new HistoryAction("HistoryView.CompareWithPrevious") {
 						public void run() {
@@ -1225,7 +1229,12 @@ public class HistoryActionManager {
 						}
 	        		});
 	        		boolean isCompareFoldersAllowed = CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() == ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x;
-	        		tAction.setEnabled(isCompareFoldersAllowed && HistoryActionManager.this.selectedRevision != 0 && affectedTableSelection.size() == 1 && (node.getStatus() == '\0' || node.getStatus() == SVNLogPath.ChangeType.MODIFIED));
+	        		tAction.setEnabled(isCompareFoldersAllowed
+	        				 && HistoryActionManager.this.selectedRevision != 0
+	        				 && affectedTableSelection.size() == 1 &&
+	        				 (node.getStatus() == '\0'
+	        				 || node.getStatus() == SVNLogPath.ChangeType.MODIFIED
+	        				 || node.getStatus() == SVNLogPath.ChangeType.REPLACED));
 	        		
 	        		manager.add(new Separator());
 	        		
@@ -1371,7 +1380,10 @@ public class HistoryActionManager {
 	
 	protected void showProperties(IActionOperation preOp, IRepositoryResourceProvider provider) {
 		IResourcePropertyProvider propertyProvider = new GetRemotePropertiesOperation(provider);
-		ShowPropertiesOperation op = new ShowPropertiesOperation(UIMonitorUtility.getActivePage(), provider, propertyProvider);
+		ShowPropertiesOperation mainOp = new ShowPropertiesOperation(UIMonitorUtility.getActivePage(), provider, propertyProvider);
+		CompositeOperation op = new CompositeOperation(mainOp.getId());
+		op.add(preOp);
+		op.add(mainOp, new IActionOperation[] {preOp});
 		UIMonitorUtility.doTaskScheduledActive(op);
 	}
 	

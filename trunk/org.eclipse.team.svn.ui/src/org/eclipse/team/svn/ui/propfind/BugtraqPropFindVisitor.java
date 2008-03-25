@@ -26,11 +26,11 @@ import org.eclipse.team.svn.ui.properties.bugtraq.BugtraqModel;
  */
 public class BugtraqPropFindVisitor implements IPropFindVisitor {
 	protected BugtraqModel model;
-	protected Set bugtraqProperties;
+	protected Set<String> bugtraqProperties;
 	
 	public BugtraqPropFindVisitor() {
 		this.model = new BugtraqModel();
-		bugtraqProperties = new HashSet(
+		this.bugtraqProperties = new HashSet<String>(
 				Arrays.asList(new String[] {"bugtraq:url",
 											 "bugtraq:logregex",
 											 "bugtraq:label",
@@ -41,9 +41,9 @@ public class BugtraqPropFindVisitor implements IPropFindVisitor {
 	}
 	
 	public boolean visit(SVNProperty propertyParam) {
-		if (bugtraqProperties.contains(propertyParam.name)) {
+		if (this.bugtraqProperties.contains(propertyParam.name)) {
 			this.processBugtraqProperty(propertyParam.name, propertyParam.value);
-			bugtraqProperties.remove(propertyParam.name);
+			this.bugtraqProperties.remove(propertyParam.name);
 		}
 		return true;
 	}

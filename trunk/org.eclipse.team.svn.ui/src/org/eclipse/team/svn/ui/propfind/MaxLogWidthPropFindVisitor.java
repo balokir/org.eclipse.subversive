@@ -22,7 +22,7 @@ public class MaxLogWidthPropFindVisitor implements IPropFindVisitor {
 	protected int width;
 	
 	public MaxLogWidthPropFindVisitor() {
-		width = 0;
+		this.width = 0;
 	}
 	
 	public boolean visit(SVNProperty propertyParam) {

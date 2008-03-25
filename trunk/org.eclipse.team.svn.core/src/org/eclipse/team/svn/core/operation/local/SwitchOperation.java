@@ -55,17 +55,17 @@ public class SwitchOperation extends AbstractRepositoryOperation {
 	}
 	
 	public ISchedulingRule getSchedulingRule() {
-    	HashSet ruleSet = new HashSet();
+    	HashSet<IResource> ruleSet = new HashSet<IResource>();
     	for (int i = 0; i < this.resources.length; i++) {
 			ruleSet.add(this.resources[i] instanceof IProject ? this.resources[i] : this.resources[i].getParent());
     	}
-    	return new MultiRule((IResource [])ruleSet.toArray(new IResource[ruleSet.size()]));
+    	return new MultiRule(ruleSet.toArray(new IResource[ruleSet.size()]));
 	}
 	
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		IRepositoryResource []destinations = this.operableData();
 		for (int i = 0; i < this.resources.length; i++) {
-			final IResource resource = resources[i];
+			final IResource resource = this.resources[i];
 			final IRepositoryResource destination = destinations[i];
 			final IRepositoryLocation location = destination.getRepositoryLocation();
 			final ISVNConnector proxy = location.acquireSVNProxy();
