@@ -28,7 +28,7 @@ public class CompositePropFindVisitor implements IPropFindVisitor {
 	public boolean visit(SVNProperty propertyParam) {
 		boolean retVal = false;
 		for (int i = 0; i < this.visitorsList.length; i++) {
-			retVal |= visitorsList[i].visit(propertyParam);
+			retVal |= this.visitorsList[i].visit(propertyParam);
 		}
 		return retVal;
 	}
