@@ -11,9 +11,7 @@
 
 package org.eclipse.team.svn.ui.history;
 
-import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -693,33 +691,18 @@ public class HistoryActionManager {
 			fileDialog.setMessage(SVNTeamUIPlugin.instance().getResource("ExportPanel.ExportFolder.Msg"));
 			String path = fileDialog.open();
 			if (path != null) {
-				IRepositoryResource resource = this.traceUrlToRevision((SVNLogEntry)item.getEntity());
+				IRepositoryResource resource = this.traceResourceToRevision((SVNLogEntry)item.getEntity());
 		    	UIMonitorUtility.doTaskScheduledDefault(new ExportOperation(resource, path));
 		    }
 		}
 	}
 	
-	protected IRepositoryResource traceUrlToRevision(SVNLogEntry to) {
+	protected IRepositoryResource traceResourceToRevision(SVNLogEntry to) {
 		IRepositoryResource resource = this.getResourceForSelectedRevision(to);
-		String rootUrl = resource.getRepositoryLocation().getRepositoryRootUrl();
-		IRepositoryResource retVal = SVNUtility.copyOf(resource);
+		String rootUrl = resource.getRepositoryLocation().getRepositoryRootUrl();	
+		String url = this.traceUrlToRevision(rootUrl, resource.getUrl().substring(rootUrl.length()), this.view.getCurrentRevision(), to.revision);		
+		IRepositoryResource retVal = resource instanceof IRepositoryFile ? resource.asRepositoryFile(url, false) : resource.asRepositoryContainer(url, false);
 		retVal.setPegRevision(SVNRevision.fromNumber(to.revision));
-		SVNLogEntry []entries = this.view.getFullRemoteHistory();
-		for (SVNLogEntry entry : entries) {
-			if (entry.revision == to.revision) {
-				break;
-			}
-			if (entry.changedPaths == null) {
-				return resource;
-			}
-			for (SVNLogPath path : entry.changedPaths) {
-				if (path.copiedFromPath != null && retVal.getUrl().endsWith(path.path)) {
-					String url = rootUrl + "/" + path.copiedFromPath;
-					retVal = retVal instanceof IRepositoryFile ? (IRepositoryResource)retVal.asRepositoryFile(url, false) : retVal.asRepositoryContainer(url, false);
-					break;
-				}
-			}
-		}
 		return retVal;
 	}
 	
@@ -1287,6 +1270,16 @@ public class HistoryActionManager {
 					});
 	        		tAction.setEnabled(affectedTableSelection.size() == 1 && HistoryActionManager.this.selectedRevision != 0 && affectedTableSelection.size() == 1 && (node.getStatus() == '\0' || node.getStatus() == SVNLogPath.ChangeType.MODIFIED));
 	        		
+	        		if (HistoryActionManager.this.view.getResource() != null) {
+	        			manager.add(tAction = new HistoryAction("HistoryView.GetContents") {
+							public void run() {
+								FromAffectedPathsNodeProvider provider = new FromAffectedPathsNodeProvider(node);
+								HistoryActionManager.this.getContentAffected(provider, provider, node.getFullPath());
+							}
+						});
+						tAction.setEnabled(affectedTableSelection.size() > 0 && node.getStatus() != SVNLogPath.ChangeType.DELETED);
+	        		}
+	        		
 	        		manager.add(new Separator());
 	        		
 	        		manager.add(tAction = new HistoryAction("HistoryView.BranchFrom", new String [] {String.valueOf(HistoryActionManager.this.selectedRevision)}, "icons/common/actions/branch.gif") {
@@ -1410,8 +1403,15 @@ public class HistoryActionManager {
 		String remoteViewedResourceUrl = SVNRemoteStorage.instance().asRepositoryResource(this.view.getResource()).getUrl();
 		String remoteFoundPath = this.traceUrlToRevision(rootUrl, remotePath, this.view.getCurrentRevision(), this.selectedRevision);
 		if (!remoteFoundPath.startsWith(remoteViewedResourceUrl)) {
+			MessageDialog dialog = new MessageDialog(UIMonitorUtility.getShell(), 
+					SVNTeamUIPlugin.instance().getResource("AffectedPathsActions.CantGetContent.Title"), 
+					null, 
+					SVNTeamUIPlugin.instance().getResource("AffectedPathsActions.CantGetContent.Message"),
+					MessageDialog.INFORMATION, 
+					new String[] {IDialogConstants.OK_LABEL}, 
+					0);
+			dialog.open();
 			return;
-			//TODO message box;
 		}
 		IPath resourcePath = new Path(remoteFoundPath.substring(remoteViewedResourceUrl.length()));
 		IResource resourceToLock;
@@ -1427,6 +1427,7 @@ public class HistoryActionManager {
 		}
 		else {
 			IFile viewedResource = (IFile)this.view.getResource();
+			remote2local.put(SVNUtility.encodeURL(rootUrl + remotePath), FileUtility.getWorkingCopyPath(viewedResource).concat(resourcePath.toString()));
 			resourceToLock = viewedResource.getParent();
 		}
 		GetRemoteContentsOperation mainOp = new GetRemoteContentsOperation(new IResource [] {resourceToLock}, provider, remote2local);
@@ -1457,8 +1458,8 @@ public class HistoryActionManager {
 					return url;
 				}
 				for (SVNLogPath path : entry.changedPaths) {
-					if (path.copiedFromPath != null && url.endsWith(path.path)) {
-						url = rootUrl + "/" + path.copiedFromPath;
+					if (path.copiedFromPath != null && url.endsWith(path.copiedFromPath)) {
+						url = rootUrl + "/" + path.path;
 						break;
 					}
 				}
@@ -1476,8 +1477,8 @@ public class HistoryActionManager {
 					return url;
 				}
 				for (SVNLogPath path : entry.changedPaths) {
-					if (path.copiedFromPath != null && url.endsWith(path.copiedFromPath)) {
-						url = rootUrl + "/" + path.path;
+					if (path.copiedFromPath != null && url.endsWith(path.path)) {
+						url = rootUrl + "/" + path.copiedFromPath;
 						break;
 					}
 				}
