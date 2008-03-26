@@ -232,7 +232,7 @@ public class CreatePatchOperation extends AbstractActionOperation {
 			return this.getEmptyNewContentDiff(fileName);
 		}
 		ArrayList<String> tLines = new ArrayList<String>();
-		for (int i = 0, lineStart = 0, m = content.length(); i < m; i++) {
+		for (int i = 0, lineStart = 0, m = content.length(); i < m; ) {
 			if (content.charAt(i) == '\n') {
 				tLines.add(content.substring(lineStart, ++i));
 				lineStart = i;
@@ -244,6 +244,9 @@ public class CreatePatchOperation extends AbstractActionOperation {
 				}
 				tLines.add(content.substring(lineStart, i));
 				lineStart = i;
+			}
+			else {
+				i++;
 			}
 		}
 		String []lines = tLines.toArray(new String[tLines.size()]);
