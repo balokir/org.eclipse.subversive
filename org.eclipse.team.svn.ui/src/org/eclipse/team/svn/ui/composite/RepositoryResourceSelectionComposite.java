@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.svn.core.connector.SVNEntryReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.SVNUtility;
@@ -73,6 +72,10 @@ public class RepositoryResourceSelectionComposite extends Composite {
 	protected String selectionTitle;
 	protected String selectionDescription;
 	protected String comboId;
+	
+	protected boolean foldersOnly;
+	
+	protected int defaultTextType;
 
 	public RepositoryResourceSelectionComposite(Composite parent, int style, IValidationManager validationManager, String historyKey, IRepositoryResource baseResource, boolean stopOnCopy, String selectionTitle, String selectionDescription, int twoRevisions, int defaultTextType) {
 		this(parent, style, validationManager, historyKey, "RepositoryResourceSelectionComposite.URL", baseResource, stopOnCopy, selectionTitle, selectionDescription, twoRevisions, defaultTextType);
@@ -89,7 +92,26 @@ public class RepositoryResourceSelectionComposite extends Composite {
 		this.selectionDescription = selectionDescription;
 		this.twoRevisions = twoRevisions;
 		this.comboId = comboId;
+		this.foldersOnly = !(baseResource instanceof IRepositoryFile);
+		this.defaultTextType = defaultTextType;
 		this.createControls(defaultTextType);
+	}
+	
+	public void setBaseResource(IRepositoryResource baseResource) {
+		this.baseResource = baseResource;
+		if (this.revisionComposite != null) {
+			this.revisionComposite.setBaseResource(this.baseResource);
+		}
+		if (this.secondRevisionComposite != null) {
+			this.secondRevisionComposite.setBaseResource(this.baseResource);
+		}
+		if (this.defaultTextType == RepositoryResourceSelectionComposite.TEXT_BASE && this.baseResource != null) {
+			this.urlText.setText(this.baseResource.getUrl());
+		}
+	}
+	
+	public void setFoldersOnly(boolean foldersOnly) {
+		this.foldersOnly = foldersOnly;
 	}
 	
 	public void setFilterCurrent(boolean toFilter) {
@@ -97,6 +119,10 @@ public class RepositoryResourceSelectionComposite extends Composite {
 		this.revisionComposite.setFilterCurrent(this.toFilterCurrent);
 	}
 
+	public boolean isSelectionAvailable() {
+		return this.getDestination(SVNUtility.asEntryReference(this.url), true) != null;
+	}
+	
 	public IRepositoryResource getSelectedResource() {
 		IRepositoryResource resource = this.getDestination(SVNUtility.asEntryReference(this.url), false);
 		resource.setSelectedRevision(this.revisionComposite.getSelectedRevision());
@@ -185,7 +211,7 @@ public class RepositoryResourceSelectionComposite extends Composite {
 		this.urlText.setLayoutData(data);
 		this.urlText.setVisibleItemCount(this.urlHistory.getDepth());
 		this.urlText.setItems(this.urlHistory.getHistory());
-		if (defaultTextType == RepositoryResourceSelectionComposite.TEXT_BASE) {
+		if (defaultTextType == RepositoryResourceSelectionComposite.TEXT_BASE && this.baseResource != null) {
 			this.urlText.setText(this.baseResource.getUrl());
 		}
 		else if (defaultTextType == RepositoryResourceSelectionComposite.TEXT_LAST && this.urlText.getItemCount() > 0) {
@@ -194,14 +220,17 @@ public class RepositoryResourceSelectionComposite extends Composite {
 		this.urlText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				RepositoryResourceSelectionComposite.this.url = ((Combo)e.widget).getText();
-				RepositoryResourceSelectionComposite.this.revisionComposite.setSelectedResource(RepositoryResourceSelectionComposite.this.getSelectedResource());
-				boolean toFilter = RepositoryResourceSelectionComposite.this.toFilterCurrent 
-									&& (RepositoryResourceSelectionComposite.this.getSelectedResource().getUrl().equals(RepositoryResourceSelectionComposite.this.baseResource.getUrl())
-									|| RepositoryResourceSelectionComposite.this.getSelectedResource().getUrl().equals(RepositoryResourceSelectionComposite.this.baseResource.getUrl() + "/"));
-				RepositoryResourceSelectionComposite.this.revisionComposite.setFilterCurrent(toFilter);
-				if (RepositoryResourceSelectionComposite.this.secondRevisionComposite != null) {
-					RepositoryResourceSelectionComposite.this.secondRevisionComposite.setSelectedResource(RepositoryResourceSelectionComposite.this.getSecondSelectedResource());
-					RepositoryResourceSelectionComposite.this.secondRevisionComposite.setFilterCurrent(toFilter);
+				if (RepositoryResourceSelectionComposite.this.isSelectionAvailable()) {
+					RepositoryResourceSelectionComposite.this.revisionComposite.setSelectedResource(RepositoryResourceSelectionComposite.this.getSelectedResource());
+					boolean toFilter = RepositoryResourceSelectionComposite.this.toFilterCurrent 
+										&& RepositoryResourceSelectionComposite.this.baseResource != null && 
+										(RepositoryResourceSelectionComposite.this.getSelectedResource().getUrl().equals(RepositoryResourceSelectionComposite.this.baseResource.getUrl())
+										|| RepositoryResourceSelectionComposite.this.getSelectedResource().getUrl().equals(RepositoryResourceSelectionComposite.this.baseResource.getUrl() + "/"));
+					RepositoryResourceSelectionComposite.this.revisionComposite.setFilterCurrent(toFilter);
+					if (RepositoryResourceSelectionComposite.this.secondRevisionComposite != null) {
+						RepositoryResourceSelectionComposite.this.secondRevisionComposite.setSelectedResource(RepositoryResourceSelectionComposite.this.getSecondSelectedResource());
+						RepositoryResourceSelectionComposite.this.secondRevisionComposite.setFilterCurrent(toFilter);
+					}
 				}
 			}
 		});
@@ -226,7 +255,7 @@ public class RepositoryResourceSelectionComposite extends Composite {
 		this.verifier.add(new URLVerifier(SVNTeamUIPlugin.instance().getResource(this.comboId + ".Verifier")) {
 			protected String getErrorMessage(Control input) {
 				String error = super.getErrorMessage(input);
-				if (error == null) {
+				if (RepositoryResourceSelectionComposite.this.baseResource != null && error == null) {
 					String url = this.getText(input);
 					if (RepositoryResourceSelectionComposite.this.getDestination(SVNUtility.asEntryReference(url), true) == null) {
 						error = SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.URL.Verifier.Error", new String[] {url, RepositoryResourceSelectionComposite.this.baseResource.getRepositoryLocation().getUrl()});
@@ -250,13 +279,13 @@ public class RepositoryResourceSelectionComposite extends Composite {
 			        	SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.Select.Title"), 
 						RepositoryResourceSelectionComposite.this.selectionTitle,
 						RepositoryResourceSelectionComposite.this.selectionDescription,
-						new IRepositoryResource[] {RepositoryResourceSelectionComposite.this.getSelectedResource()}, 
+						RepositoryResourceSelectionComposite.this.baseResource == null ? new IRepositoryResource[0] : new IRepositoryResource[] {RepositoryResourceSelectionComposite.this.getSelectedResource()}, 
 						true);
-				panel.setAllowFiles(RepositoryResourceSelectionComposite.this.baseResource instanceof IRepositoryFile);
+				panel.setAllowFiles(!RepositoryResourceSelectionComposite.this.foldersOnly);
 				DefaultDialog browser = new DefaultDialog(RepositoryResourceSelectionComposite.this.getShell(), panel);
 				if (browser.open() == 0) {
 					IRepositoryResource selectedResource = panel.getSelectedResource();
-					boolean samePeg = selectedResource.getPegRevision().equals(RepositoryResourceSelectionComposite.this.baseResource.getPegRevision());
+					boolean samePeg = RepositoryResourceSelectionComposite.this.baseResource != null && selectedResource.getPegRevision().equals(RepositoryResourceSelectionComposite.this.baseResource.getPegRevision());
 					RepositoryResourceSelectionComposite.this.urlText.setText(samePeg ? selectedResource.getUrl() : SVNUtility.getEntryReference(selectedResource).toString());
 					RepositoryResourceSelectionComposite.this.revisionComposite.setSelectedResource(selectedResource);
 					if (RepositoryResourceSelectionComposite.this.secondRevisionComposite != null) {
@@ -280,10 +309,10 @@ public class RepositoryResourceSelectionComposite extends Composite {
 				RepositoryResourceSelectionComposite.this.validateRevisions();
 			}
 		};
-		this.revisionComposite.setBaseResource(this.baseResource);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = (this.twoRevisions & MODE_TWO) != 0 ? 1 : 2;
 		this.revisionComposite.setLayoutData(data);
+		this.revisionComposite.setBaseResource(this.baseResource);
 		this.revisionComposite.setSelectedResource(this.baseResource);
 		if ((this.twoRevisions & MODE_TWO) != 0) {
 			this.secondRevisionComposite = new RevisionComposite(revisions, this.validationManager, this.stopOnCopy, new String[] {SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.StopRevision"), SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.HeadRevision")}, SVNRevision.HEAD) {
@@ -293,24 +322,45 @@ public class RepositoryResourceSelectionComposite extends Composite {
 			};
 			data = new GridData(GridData.FILL_HORIZONTAL);
 			this.secondRevisionComposite.setLayoutData(data);
+			this.secondRevisionComposite.setBaseResource(this.baseResource);
 			this.secondRevisionComposite.setSelectedResource(this.baseResource);
 		}
 	}
 	
 	protected IRepositoryResource getDestination(SVNEntryReference ref, boolean allowsNull) {
 		if (ref == null) {
+			if (this.baseResource == null) {
+				if (allowsNull) {
+					return null;
+				}
+				throw new IllegalArgumentException("SVN entry reference cannot be null.");
+			}
 			return SVNUtility.copyOf(this.baseResource);
 		}
 		String url = SVNUtility.normalizeURL(ref.path);
 		try {
-			IRepositoryResource resource = this.baseResource instanceof IRepositoryContainer ? (IRepositoryResource)this.baseResource.asRepositoryContainer(url, false) : this.baseResource.asRepositoryFile(url, false);
+			IRepositoryResource base = this.baseResource;
+			IRepositoryResource resource = null;
+			if (base != null) {
+				resource = this.foldersOnly ? (IRepositoryResource)this.baseResource.asRepositoryContainer(url, false) : this.baseResource.asRepositoryFile(url, false);
+			}
+			else {
+				SVNUtility.getSVNUrl(url);	// validate an URL
+				resource = SVNUtility.asRepositoryResource(url, this.foldersOnly);
+			}
 			if (ref.pegRevision != null) {
 				resource.setPegRevision(ref.pegRevision);
 			}
 			return resource;
 		}
-		catch (IllegalArgumentException ex) {
-			return allowsNull ? null : SVNUtility.copyOf(this.baseResource);
+		catch (Exception ex) {
+			if (allowsNull) {
+				return null;
+			}
+			if (this.baseResource == null) {
+				throw new IllegalArgumentException("SVN entry reference must contain a valid value.");
+			}
+			return SVNUtility.copyOf(this.baseResource);
 		}
 	}
 	

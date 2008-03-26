@@ -90,11 +90,7 @@ public class SVNFolderListener implements IResourceChangeListener {
 											url = url.substring(0, idx);
 										}
 										location = SVNRemoteStorage.instance().newRepositoryLocation();
-										location.setUrl(url);
-										location.setStructureEnabled(true);
-										location.setTrunkLocation(CoreExtensionsManager.instance().getOptionProvider().getDefaultTrunkName());
-										location.setBranchesLocation(CoreExtensionsManager.instance().getOptionProvider().getDefaultBranchesName());
-										location.setTagsLocation(CoreExtensionsManager.instance().getOptionProvider().getDefaultTagsName());
+										SVNUtility.initializeRepositoryLocation(location, url);
 										SVNRemoteStorage.instance().addRepositoryLocation(location);
 									}
 									else {

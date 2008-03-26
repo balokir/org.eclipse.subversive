@@ -70,7 +70,6 @@ import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
 import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.operation.file.SVNFileStorage;
 import org.eclipse.team.svn.core.resource.ILocalResource;
-import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -88,6 +87,32 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
  */
 public final class SVNUtility {
 	private static String svnFolderName = null;
+
+	public static IRepositoryResource asRepositoryResource(String url, boolean isFolder) {
+		IRepositoryRoot []roots = SVNUtility.findRoots(url, true);
+		IRepositoryResource retVal = null;
+		if (roots.length > 0) {
+			retVal = isFolder ? roots[0].asRepositoryContainer(url, false) : roots[0].asRepositoryFile(url, false); 
+		}
+		else {
+			IRepositoryLocation location = SVNRemoteStorage.instance().newRepositoryLocation();
+			SVNUtility.initializeRepositoryLocation(location, url);
+			retVal = isFolder ? location.asRepositoryContainer(url, false) : location.asRepositoryFile(url, false);
+		}
+		return retVal;
+	}
+	
+	public static void initializeRepositoryLocation(IRepositoryLocation location, String url) {
+		location.setStructureEnabled(true);
+		location.setTrunkLocation(CoreExtensionsManager.instance().getOptionProvider().getDefaultTrunkName());
+		location.setBranchesLocation(CoreExtensionsManager.instance().getOptionProvider().getDefaultBranchesName());
+		location.setTagsLocation(CoreExtensionsManager.instance().getOptionProvider().getDefaultTagsName());
+		Path urlPath = new Path(url);
+		if (urlPath.lastSegment().equals(location.getTrunkLocation())) {
+			url = urlPath.removeLastSegments(1).toString();
+		}
+		location.setUrl(url);
+	}
 	
 	public static SVNEntryReference asEntryReference(String url) {
 		if (url == null) {
@@ -96,16 +121,12 @@ public final class SVNUtility {
 		int idx = url.lastIndexOf('@');
 		SVNRevision peg = null;
 		if (idx != -1) {
-			String text = url.substring(idx + 1);
 			try {
-				peg = SVNRevision.fromNumber(Long.parseLong(text));
+				peg = SVNRevision.fromString(url.substring(idx + 1));
 				url = url.substring(0, idx);
 			}
-			catch (NumberFormatException ex) {
-				if (text.toLowerCase().equals("head")) {
-					peg = SVNRevision.HEAD;
-					url = url.substring(0, idx);
-				}
+			catch (IllegalArgumentException ex) {
+				// it is not a revision at the end of the URL
 			}
 		}
 		return new SVNEntryReference(url, peg);
@@ -351,12 +372,18 @@ public final class SVNUtility {
 	}
 	
 	public static IRepositoryRoot []findRoots(String resourceUrl, boolean longestOnly) {
+		if (!SVNUtility.isValidSVNURL(resourceUrl)) {
+			return new IRepositoryRoot[0];
+		}
 		IPath url = new Path(resourceUrl);
-		IRemoteStorage storage = SVNRemoteStorage.instance();
-		IRepositoryLocation []locations = storage.getRepositoryLocations();
+		IRepositoryLocation []locations = SVNRemoteStorage.instance().getRepositoryLocations();
 		ArrayList roots = new ArrayList();
 		for (int i = 0; i < locations.length; i++) {
-			if (new Path(locations[i].getUrl()).isPrefixOf(url) || // performance optimization: repository root URL detection [if is not cached] requires interaction with a remote host
+			IPath locationUrl = new Path(locations[i].getUrl());
+			if (url.segmentCount() < locationUrl.segmentCount() && !url.isPrefixOf(locationUrl)) {
+				continue;
+			}
+			if (locationUrl.isPrefixOf(url) || // performance optimization: repository root URL detection [if is not cached] requires interaction with a remote host
 				new Path(locations[i].getRepositoryRootUrl()).isPrefixOf(url)) {
 				SVNUtility.addRepositoryRoot(roots, (IRepositoryRoot)locations[i].asRepositoryContainer(resourceUrl, false).getRoot(), longestOnly);
 			}
@@ -431,6 +458,21 @@ public final class SVNUtility {
 			downPoint = downPoint.getParent();
 		}
 		return (IRepositoryResource [])resourceSet.toArray(new IRepositoryResource[resourceSet.size()]);
+	}
+	
+	public static boolean isValidSVNURL(String url) {
+		try {
+			URL svnUrl = SVNUtility.getSVNUrl(url);
+        	String host = svnUrl.getHost();
+        	if (!host.matches("[a-zA-Z0-9_\\-]+(?:\\.[a-zA-Z0-9_\\-]+)*") && host.length() > 0 ||
+        		host.length() == 0 && !"file".equals(svnUrl.getProtocol())) {
+                return false;
+        	}      	
+			return true;
+		}
+		catch (MalformedURLException e) {
+			return false;
+		}
 	}
 	
 	public static URL getSVNUrl(String url) throws MalformedURLException {
@@ -898,22 +940,23 @@ public final class SVNUtility {
 	}
 	
 	public static IRepositoryResource []getCommonParents(IRepositoryResource []resources) {
-		Map byRepositoryRoots = new HashMap();
+		Map<IRepositoryResource, ArrayList> byRepositoryRoots = new HashMap<IRepositoryResource, ArrayList>();
 		for (int i = 0; i < resources.length; i++) {
 			IRepositoryResource root = resources[i].getRoot();
-			List tmp = (List)byRepositoryRoots.get(root);
+			ArrayList tmp = byRepositoryRoots.get(root);
 			if (tmp == null) {
 				byRepositoryRoots.put(root, tmp = new ArrayList());
 			}
 			tmp.add(resources[i]);
 		}
-		IRepositoryResource []retVal = new IRepositoryResource[byRepositoryRoots.size()];
-		int i = 0;
-		for (Iterator it = byRepositoryRoots.values().iterator(); it.hasNext(); i++) {
-			List tmp = (List)it.next();
-			retVal[i] = SVNUtility.getCommonParent((IRepositoryResource [])tmp.toArray(new IRepositoryResource[tmp.size()]));
+		HashSet<IRepositoryResource> container = new HashSet<IRepositoryResource>();
+		for (ArrayList tmp : byRepositoryRoots.values()) {
+			IRepositoryResource parent = SVNUtility.getCommonParent((IRepositoryResource [])tmp.toArray(new IRepositoryResource[tmp.size()]));
+			if (parent != null) {
+				container.add(parent);
+			}
 		}
-		return retVal;
+		return container.toArray(new IRepositoryResource[container.size()]);
 	}
 	
 	public static String getAscendant(IRepositoryResource resource) {
@@ -1022,9 +1065,9 @@ public final class SVNUtility {
 		IRepositoryResource base = resources[0].getParent();
 		while (base != null) {	// can be null for resources from different repositories
 			int startsCnt = 0;
-			String baseUrl = base.getUrl();
+			Path baseUrl = new Path(base.getUrl());
 			for (int i = 0; i < resources.length; i++) {
-				if (resources[i].getUrl().startsWith(baseUrl)) {
+				if (baseUrl.isPrefixOf(new Path(resources[i].getUrl()))) {
 					startsCnt++;
 				}
 			}
