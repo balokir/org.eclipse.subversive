@@ -17,10 +17,12 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.SVNEntryInfo;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.ISVNConnector.Options;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -61,11 +63,35 @@ public class InfoOperation extends AbstractActionOperation {
             ISVNConnector proxy = location.acquireSVNProxy();
             try {
 //    			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn info \"" + this.local.getWorkingCopyPath() + "\"\n");
-                SVNEntryInfo []infos = SVNUtility.info(proxy, new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(this.resource), null, SVNRevision.WORKING), Depth.EMPTY, new SVNProgressMonitor(this, monitor, null));
-                
-                if (infos != null && infos.length > 0) {
-                    this.info = infos[0];
-                }
+            	SVNChangeStatus []statuses = SVNUtility.status(proxy, FileUtility.getWorkingCopyPath(this.resource), Depth.EMPTY, Options.INCLUDE_UNCHANGED, new SVNProgressMonitor(this, monitor, null));
+            	if (statuses != null && statuses.length > 0) {
+            		this.info = new SVNEntryInfo(statuses[0].path,
+            									 statuses[0].url,
+            									 statuses[0].revision,
+            									 statuses[0].nodeKind,
+            									 null,
+            									 null,
+            									 statuses[0].lastChangedRevision,
+            									 statuses[0].lastChangedDate,
+            									 statuses[0].lastCommitAuthor,
+            									 null,
+            									 true,
+            									 0,
+            									 statuses[0].urlCopiedFrom,
+            									 statuses[0].revisionCopiedFrom,
+            									 statuses[0].textStatus,
+            									 statuses[0].propStatus,
+            									 null,
+            									 statuses[0].conflictOld,
+            									 statuses[0].conflictNew,
+            									 statuses[0].conflictWorking,
+            									 null);
+	                SVNEntryInfo []infos = SVNUtility.info(proxy, new SVNEntryRevisionReference(statuses[0].url, null, SVNRevision.fromNumber(statuses[0].revision)), Depth.EMPTY, new SVNProgressMonitor(this, monitor, null));
+	                
+	                if (infos != null && infos.length > 0) {
+	                    this.info = infos[0];
+	                }
+            	}
             }
             finally {
                 location.releaseSVNProxy(proxy);
