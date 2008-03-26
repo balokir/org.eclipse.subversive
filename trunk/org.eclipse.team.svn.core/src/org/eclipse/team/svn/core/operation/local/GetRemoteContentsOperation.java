@@ -11,9 +11,11 @@
 
 package org.eclipse.team.svn.core.operation.local;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.text.MessageFormat;
+import java.util.HashMap;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -36,41 +38,49 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class GetRemoteContentsOperation extends AbstractWorkingCopyOperation {
 	protected IRepositoryResourceProvider provider;
+	protected HashMap<String, String> remotePath2localPath;
 
-	public GetRemoteContentsOperation(IResource []resources, final IRepositoryResource []remoteResources) {
+	public GetRemoteContentsOperation(IResource [] resources, final IRepositoryResource []remoteResources, HashMap<String, String> remotePath2localPath) {
 		this (resources, new IRepositoryResourceProvider() {
 			public IRepositoryResource[] getRepositoryResources() {
 				return remoteResources;
 			}
-		});
+		}, remotePath2localPath);
 	}
 	
-	public GetRemoteContentsOperation(IResource []resources, IRepositoryResourceProvider provider) {
+	public GetRemoteContentsOperation(IResource [] resources, IRepositoryResourceProvider provider, HashMap<String, String> remotePath2localPath) {
 		super("Operation.GetContent", resources);
 		this.provider = provider;
+		this.remotePath2localPath = remotePath2localPath;
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		IResource [] resources = this.operableData();
 		IRepositoryResource [] remoteResources = this.provider.getRepositoryResources();
-		for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
-			final IResource local = resources[i];
+		for (int i = 0; i < remoteResources.length && !monitor.isCanceled(); i++) {
 			final IRepositoryResource remote = remoteResources[i];
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-					GetRemoteContentsOperation.this.doGet(local, remote, monitor);
+					GetRemoteContentsOperation.this.doGet(remote, monitor);
 				}
-			}, monitor, resources.length);
+			}, monitor, remoteResources.length);
 		}
 	}
 	
-	protected void doGet(IResource local, IRepositoryResource remote, IProgressMonitor monitor) throws Exception {
+	protected void doGet(IRepositoryResource remote, IProgressMonitor monitor) throws Exception {
 		IRepositoryLocation location = remote.getRepositoryLocation();
 		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
-			String wcPath = FileUtility.getWorkingCopyPath(local);
 			String url = SVNUtility.encodeURL(remote.getUrl());
+			String wcPath = this.remotePath2localPath.get(remote.getUrl());
 			if (remote instanceof IRepositoryFile) {
+				File parent = new File(wcPath.substring(0, wcPath.lastIndexOf("/")));
+				if (!parent.exists()) {
+					parent.mkdirs();
+				}
+				File file = new File(wcPath);
+				if (!file.exists()) {
+					file.createNewFile();
+				}
 				FileOutputStream stream = null;
 				try {
 					this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn cat " + url + "@" + remote.getPegRevision() + " -r " + remote.getSelectedRevision() + FileUtility.getUsernameParam(location.getUsername()) + "\n");
@@ -87,6 +97,10 @@ public class GetRemoteContentsOperation extends AbstractWorkingCopyOperation {
 				}
 			}
 			else {
+				File directory = new File(wcPath);
+				if (!directory.exists()) {
+					directory.mkdirs();
+				}
 				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn export " + url + "@" + remote.getPegRevision() + " -r " + remote.getSelectedRevision() + " \"" + wcPath + "\" --force " + FileUtility.getUsernameParam(location.getUsername()) + "\n");
 				proxy.doExport(SVNUtility.getEntryRevisionReference(remote), wcPath, null, Depth.INFINITY, ISVNConnector.Options.FORCE, new SVNProgressMonitor(this, monitor, null));
 			}
@@ -97,7 +111,7 @@ public class GetRemoteContentsOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	protected String getShortErrorMessage(Throwable t) {
-		return MessageFormat.format(super.getShortErrorMessage(t), new Object[] {FileUtility.getNamesListAsString(this.operableData())});
+		return MessageFormat.format(super.getShortErrorMessage(t), new Object[] {FileUtility.getNamesListAsString(this.provider.getRepositoryResources())});
 	}
 
 }

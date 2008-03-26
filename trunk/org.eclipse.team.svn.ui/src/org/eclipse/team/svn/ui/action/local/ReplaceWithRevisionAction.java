@@ -11,6 +11,8 @@
 
 package org.eclipse.team.svn.ui.action.local;
 
+import java.util.HashMap;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
@@ -25,6 +27,8 @@ import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.action.AbstractNonRecursiveTeamAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.dialog.ReplaceWarningDialog;
@@ -62,10 +66,13 @@ public class ReplaceWithRevisionAction extends AbstractNonRecursiveTeamAction {
 			DefaultDialog selectionDialog = new DefaultDialog(shell, panel);
 			
 			if (selectionDialog.open() == Dialog.OK) {
+				IRepositoryResource selected = panel.getSelectedResource();
+				HashMap<String, String> remote2local = new HashMap<String, String>();
+				remote2local.put(SVNUtility.encodeURL(selected.getUrl()), FileUtility.getWorkingCopyPath(resources[0]));
 				CompositeOperation op = new CompositeOperation("Operation.ReplaceWithRevision");
 				SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
 				op.add(saveOp);
-				op.add(new GetRemoteContentsOperation(resources, new IRepositoryResource [] {panel.getSelectedResource()}));
+				op.add(new GetRemoteContentsOperation(resources, new IRepositoryResource [] {selected}, remote2local));
 				op.add(new RestoreProjectMetaOperation(saveOp));
 				op.add(new RefreshResourcesOperation(resources));
 				return op;

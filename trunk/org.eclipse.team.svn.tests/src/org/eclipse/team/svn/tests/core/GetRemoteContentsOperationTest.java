@@ -11,11 +11,15 @@
 
 package org.eclipse.team.svn.tests.core;
 
+import java.util.HashMap;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.GetRemoteContentsOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
  * GetRemoteContentsOperation test
@@ -25,7 +29,11 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 public abstract class GetRemoteContentsOperationTest extends AbstractOperationTestCase {
 	protected IActionOperation getOperation() {
 	    SVNRemoteStorage storage = SVNRemoteStorage.instance();
-		return new GetRemoteContentsOperation(new IResource[] {this.getFirstProject().getFile("maven.xml")}, new IRepositoryResource[] {storage.asRepositoryResource(this.getFirstProject().getFile("maven.xml"))});
+	    IResource local = this.getFirstProject().getFile("maven.xml");
+	    IRepositoryResource remote = storage.asRepositoryResource(this.getFirstProject().getFile("maven.xml"));
+	    HashMap<String, String> remote2local = new HashMap<String, String>();
+	    remote2local.put(SVNUtility.encodeURL(remote.getUrl()), FileUtility.getWorkingCopyPath(local));
+		return new GetRemoteContentsOperation(new IResource[] {local}, new IRepositoryResource[] {remote}, remote2local);
 	}
 
 }
