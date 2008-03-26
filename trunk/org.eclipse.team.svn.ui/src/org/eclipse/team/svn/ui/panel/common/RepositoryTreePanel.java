@@ -103,7 +103,7 @@ public class RepositoryTreePanel extends AbstractDialogPanel {
         	ProjectRoot root = (ProjectRoot)this.repositoryTree.getRepositoryTreeViewer().getInput();
 			this.repositoryTree.getRepositoryTreeViewer().setExpandedElements(new Object[] {root.getChildren(null)[0]});
         }
-		if (root == null && this.selectedResources.length > 0) {
+		if (this.root == null && this.selectedResources.length > 0) {
 			String url = this.selectedResources[0].getRepositoryLocation().getRepositoryRootUrl();
 			this.repositoryTree.setFilter(new RepositoryLocationFilter(url) {
 				public boolean accept(Object obj) {

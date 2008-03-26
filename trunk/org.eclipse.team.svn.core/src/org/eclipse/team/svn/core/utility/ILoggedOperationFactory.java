@@ -20,6 +20,12 @@ import org.eclipse.team.svn.core.operation.LoggedOperation;
  * @author Alexander Gurov
  */
 public interface ILoggedOperationFactory {
+	public static final ILoggedOperationFactory EMPTY = new ILoggedOperationFactory() {
+		public IActionOperation getLogged(IActionOperation operation) {
+			return operation;
+		}
+	};
+	
 	public static final ILoggedOperationFactory DEFAULT = new ILoggedOperationFactory() {
 		public IActionOperation getLogged(IActionOperation operation) {
 			return new LoggedOperation(operation);

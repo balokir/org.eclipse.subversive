@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.core.connector;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.util.Locale;
 
 /**
@@ -257,6 +258,48 @@ public class SVNRevision {
 			throw new IllegalArgumentException("A date must be specified");
 		}
 		return new SVNRevision.Date(revisionDate);
+	}
+	
+	/**
+	 * Creates revision object by revision string
+	 * 
+	 * @param revisionString
+	 *            string representation of one of valid revisions or revision kinds
+	 * @return revision object
+	 * @throws IllegalArgumentException
+	 *             if invalid revision kind or revision value specified
+	 */
+	public static SVNRevision fromString(String revisionString) {
+		revisionString = revisionString.toUpperCase();
+		if ("BASE".equals(revisionString)) {
+			return SVNRevision.BASE;
+		}
+		if ("WORKING".equals(revisionString)) {
+			return SVNRevision.WORKING;
+		}
+		if ("COMMITTED".equals(revisionString)) {
+			return SVNRevision.COMMITTED;
+		}
+		if ("HEAD".equals(revisionString)) {
+			return SVNRevision.HEAD;
+		}
+		if ("PREVIOUS".equals(revisionString)) {
+			return SVNRevision.PREVIOUS;
+		}
+		try {
+			return SVNRevision.fromNumber(Long.parseLong(revisionString));
+		}
+		catch (NumberFormatException ex) {
+			// check if revision specified as date (always locale-specific)
+			DateFormat dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.getDefault());
+			try {
+				return SVNRevision.fromDate(dateTimeFormat.parse(revisionString).getTime());
+			}
+			catch (ParseException e) {
+				// do nothing
+			}
+		}
+		throw new IllegalArgumentException("Invalid revision string: " + revisionString);
 	}
 
 	/**

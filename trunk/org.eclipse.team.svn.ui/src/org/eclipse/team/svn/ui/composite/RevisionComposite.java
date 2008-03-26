@@ -101,29 +101,40 @@ public class RevisionComposite extends Composite {
 	
 	public void setSelectedResource(IRepositoryResource resource) {
 		this.selectedResource = resource;
-		SVNRevision rev = this.selectedResource.getSelectedRevision();
-		if (rev.getKind() == Kind.NUMBER) {
-			this.selectedRevision = rev;
-			this.lastSelectedRevision = ((SVNRevision.Number)this.selectedRevision).getNumber();
-			
-			if (this.changeRevisionRadioButton != null) {
-				this.revisionField.setText(this.selectedRevision.toString());
-				this.headRevisionRadioButton.setSelection(false);
-				this.changeRevisionRadioButton.setSelection(true);
-				this.changeRevisionButton.setEnabled(true);
-				this.revisionField.setEditable(true);
-			}
+		if (this.baseResource == null) {
+			this.baseResource = resource;
+		}
+		if (this.selectedResource == null) {
+			this.headRevisionRadioButton.setEnabled(false);
+			this.changeRevisionRadioButton.setEnabled(false);
+			this.changeRevisionButton.setEnabled(false);
+			this.revisionField.setEditable(false);
 		}
 		else {
-			this.selectedRevision = this.defaultRevision;
-			this.lastSelectedRevision = -1;
-			
-			if (this.changeRevisionRadioButton != null) {
-				this.revisionField.setText("");
-				this.headRevisionRadioButton.setSelection(true);
-				this.changeRevisionRadioButton.setSelection(false);
-				this.changeRevisionButton.setEnabled(false);
-				this.revisionField.setEditable(false);
+			SVNRevision rev = this.selectedResource.getSelectedRevision();
+			if (rev.getKind() == Kind.NUMBER) {
+				this.selectedRevision = rev;
+				this.lastSelectedRevision = ((SVNRevision.Number)this.selectedRevision).getNumber();
+				
+				if (this.changeRevisionRadioButton != null) {
+					this.revisionField.setText(this.selectedRevision.toString());
+					this.headRevisionRadioButton.setSelection(false);
+					this.changeRevisionRadioButton.setSelection(true);
+					this.changeRevisionButton.setEnabled(true);
+					this.revisionField.setEditable(true);
+				}
+			}
+			else {
+				this.selectedRevision = this.defaultRevision;
+				this.lastSelectedRevision = -1;
+				
+				if (this.changeRevisionRadioButton != null) {
+					this.revisionField.setText("");
+					this.headRevisionRadioButton.setSelection(true);
+					this.changeRevisionRadioButton.setSelection(false);
+					this.changeRevisionButton.setEnabled(false);
+					this.revisionField.setEditable(false);
+				}
 			}
 		}
 	}
@@ -245,11 +256,14 @@ public class RevisionComposite extends Composite {
 				    SelectRevisionPanel panel = new SelectRevisionPanel(msgsOp, false, RevisionComposite.this.currentRevision);
 				    if (RevisionComposite.this.toFilterCurrent) {
 				    	RevisionLogEntryFilter revFilter = new RevisionLogEntryFilter();
-				    	long revNum = -1;
-				    	try {
-				    		revNum = RevisionComposite.this.baseResource.getRevision(); 
+				    	long revNum = SVNRevision.INVALID_REVISION_NUMBER;
+				    	if (RevisionComposite.this.baseResource != null) {
+					    	try {
+					    		revNum = RevisionComposite.this.baseResource.getRevision(); 
+					    	}
+					    	catch (SVNConnectorException ex) {
+					    	}
 				    	}
-				    	catch (SVNConnectorException ex){}
 				    	revFilter.setRevisionstoHide(revNum, revNum);
 				    	panel.addFilter(revFilter);
 				    }
