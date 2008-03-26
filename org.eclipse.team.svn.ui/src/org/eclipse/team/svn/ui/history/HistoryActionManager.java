@@ -11,7 +11,9 @@
 
 package org.eclipse.team.svn.ui.history;
 
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -19,11 +21,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -99,6 +103,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -637,7 +642,9 @@ public class HistoryActionManager {
 			}
 		}
 		if (canWrite) {
-			GetRemoteContentsOperation mainOp = new GetRemoteContentsOperation(new IResource[] {this.view.getResource()}, new IRepositoryResource[] {remote});
+			HashMap<String, String> remote2local = new HashMap<String, String>();
+			remote2local.put(SVNUtility.encodeURL(remote.getUrl()), FileUtility.getWorkingCopyPath(this.view.getResource()));
+			GetRemoteContentsOperation mainOp = new GetRemoteContentsOperation(new IResource[] {this.view.getResource()}, new IRepositoryResource[] {remote}, remote2local);
 			
 			CompositeOperation op = new CompositeOperation(mainOp.getId());
 			op.add(mainOp);
@@ -1170,15 +1177,13 @@ public class HistoryActionManager {
 					tAction.setEnabled(isPreviousExists);
 					
 					if (HistoryActionManager.this.view.getResource() != null) {
-						final String fullRemotePath = SVNRemoteStorage.instance().asRepositoryResource(HistoryActionManager.this.view.getResource()).getRepositoryLocation().getUrl() + "/" + firstData.getFullResourcePath();
 						manager.add(tAction = new HistoryAction("HistoryView.GetContents") {
 							public void run() {
 								FromChangedPathDataProvider provider = new FromChangedPathDataProvider(firstData, false);
-								HistoryActionManager.this.getContentAffected(provider, provider, fullRemotePath);
+								HistoryActionManager.this.getContentAffected(provider, provider, "/" + firstData.getFullResourcePath());
 							}
 						});
-						tAction.setEnabled(affectedTableSelection.size() > 0
-							&& fullRemotePath.startsWith(SVNRemoteStorage.instance().asRepositoryResource(HistoryActionManager.this.view.getResource().getProject()).getUrl()));
+						tAction.setEnabled(affectedTableSelection.size() > 0 && firstData.action != SVNLogPath.ChangeType.DELETED);
 					}
 					manager.add(new Separator());
 					
@@ -1400,14 +1405,85 @@ public class HistoryActionManager {
 		UIMonitorUtility.doTaskScheduledActive(op);
 	}
 	
-	protected void getContentAffected(IActionOperation preOp, IRepositoryResourceProvider provider, String fullRemotePath) {
-		String remoteProjectUrl = SVNRemoteStorage.instance().asRepositoryResource(this.view.getResource().getProject()).getUrl();
-		IResource resource = this.view.getResource().getProject().findMember(new Path(fullRemotePath.substring(remoteProjectUrl.length()))); 
-		GetRemoteContentsOperation mainOp = new GetRemoteContentsOperation(new IResource [] {resource}, provider);
+	protected void getContentAffected(IActionOperation preOp, IRepositoryResourceProvider provider, String remotePath) {
+		String rootUrl = SVNRemoteStorage.instance().asRepositoryResource(this.view.getResource()).getRepositoryLocation().getRoot().getUrl();
+		String remoteViewedResourceUrl = SVNRemoteStorage.instance().asRepositoryResource(this.view.getResource()).getUrl();
+		String remoteFoundPath = this.traceUrlToRevision(rootUrl, remotePath, this.view.getCurrentRevision(), this.selectedRevision);
+		if (!remoteFoundPath.startsWith(remoteViewedResourceUrl)) {
+			return;
+			//TODO message box;
+		}
+		IPath resourcePath = new Path(remoteFoundPath.substring(remoteViewedResourceUrl.length()));
+		IResource resourceToLock;
+		HashMap<String, String> remote2local = new HashMap<String, String>();
+		if (this.view.getResource() instanceof IContainer) {
+			IContainer viewedResource = (IContainer)this.view.getResource();
+			remote2local.put(SVNUtility.encodeURL(rootUrl + remotePath), FileUtility.getWorkingCopyPath(viewedResource).concat(resourcePath.toString()));
+			resourceToLock = viewedResource.findMember(resourcePath);
+			while (resourceToLock == null) {
+				resourcePath = resourcePath.removeLastSegments(1);
+				resourceToLock = viewedResource.findMember(resourcePath);
+			}
+		}
+		else {
+			IFile viewedResource = (IFile)this.view.getResource();
+			resourceToLock = viewedResource.getParent();
+		}
+		GetRemoteContentsOperation mainOp = new GetRemoteContentsOperation(new IResource [] {resourceToLock}, provider, remote2local);
 		CompositeOperation op = new CompositeOperation(mainOp.getId());
 		op.add(preOp);
 		op.add(mainOp, new IActionOperation[] {preOp});
+		op.add(new RefreshResourcesOperation(new IResource [] {resourceToLock}));
 		UIMonitorUtility.doTaskScheduledActive(op);
+	}
+	
+	protected String traceUrlToRevision(String rootUrl, String resourcePath, long currentRevision, long selectedRevision) {
+		String url = rootUrl + resourcePath; 
+		SVNLogEntry []entries = this.view.getFullRemoteHistory();
+		
+		if (currentRevision == selectedRevision || entries[entries.length - 1].revision > currentRevision) {
+			return url;
+		}
+		if (currentRevision > selectedRevision) {
+			for (int i = entries.length - 1; i > -1; i--) {
+				SVNLogEntry entry = entries[i];
+				if (entry.revision < selectedRevision) {
+					continue;
+				}
+				if (entry.revision > currentRevision) {
+					break;
+				}
+				if (entry.changedPaths == null) {
+					return url;
+				}
+				for (SVNLogPath path : entry.changedPaths) {
+					if (path.copiedFromPath != null && url.endsWith(path.path)) {
+						url = rootUrl + "/" + path.copiedFromPath;
+						break;
+					}
+				}
+			}
+		}		
+		else {
+			for (SVNLogEntry entry : entries) {
+				if (entry.revision > selectedRevision) {
+					continue;
+				}
+				if (entry.revision < currentRevision) {
+					break;
+				}
+				if (entry.changedPaths == null) {
+					return url;
+				}
+				for (SVNLogPath path : entry.changedPaths) {
+					if (path.copiedFromPath != null && url.endsWith(path.path)) {
+						url = rootUrl + "/" + path.copiedFromPath;
+						break;
+					}
+				}
+			}
+		}
+		return url;
 	}
 	
 	protected void addRevisionLink(IActionOperation preOp, IRepositoryResourceProvider provider) {
