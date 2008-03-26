@@ -1478,7 +1478,7 @@ public class HistoryActionManager {
 				}
 				for (SVNLogPath path : entry.changedPaths) {
 					if (path.copiedFromPath != null && url.endsWith(path.path)) {
-						url = rootUrl + "/" + path.copiedFromPath;
+						url = rootUrl + path.copiedFromPath;
 						break;
 					}
 				}
