@@ -50,7 +50,7 @@ public class LocalShowAnnotationOperation extends AbstractWorkingCopyOperation {
 		this.revision = revision;
 	}
 
-	protected void runImpl(final IProgressMonitor monitor) throws Exception {
+	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		final IResource resource = this.operableData()[0];
     	ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
     	boolean notExists = local == null || IStateFilter.SF_NOTEXISTS.accept(local);
@@ -85,32 +85,33 @@ public class LocalShowAnnotationOperation extends AbstractWorkingCopyOperation {
 	    remote.setSelectedRevision(revision);
 		final CorrectRevisionOperation correctOp = new CorrectRevisionOperation(null, remote, local.getRevision(), resource);
 		
+		this.protectStep(new IUnprotectedOperation() {
+			public void run(IProgressMonitor monitor) throws Exception {
+				correctOp.run(monitor);
+			}
+		}, monitor, 1);
+		
 		UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 			public void run() {
-					LocalShowAnnotationOperation.this.protectStep(new IUnprotectedOperation() {
-						public void run(IProgressMonitor monitor) throws Exception {
-							correctOp.run(monitor);
+				IWorkbenchPage page = UIMonitorUtility.getActivePage();
+				if (page != null) {
+			    	if (viewType[0] == SVNTeamPreferences.ANNOTATE_DEFAULT_VIEW) {
+			    		CheckPerspective.run(page.getWorkbenchWindow());
+						try {
+						    IViewPart viewPart = page.showView(AnnotateView.VIEW_ID);
+						    if (viewPart != null && viewPart instanceof AnnotateView) {
+								((AnnotateView)viewPart).showEditor(resource, revision, remote.getPegRevision());
+						    }
 						}
-					}, monitor, 1);
-					IWorkbenchPage page = UIMonitorUtility.getActivePage();
-					if (page != null) {
-				    	if (viewType[0] == SVNTeamPreferences.ANNOTATE_DEFAULT_VIEW) {
-				    		CheckPerspective.run(page.getWorkbenchWindow());
-							try {
-							    IViewPart viewPart = page.showView(AnnotateView.VIEW_ID);
-							    if (viewPart != null && viewPart instanceof AnnotateView) {
-									((AnnotateView)viewPart).showEditor(resource, revision, remote.getPegRevision());
-							    }
-							}
-							catch (PartInitException ex) {
-								LocalShowAnnotationOperation.this.reportError(ex);
-							}
-				    	}
-				    	else {
-						    new BuiltInAnnotate().open(page, remote, (IFile)resource);
-				    	}
-					}
+						catch (PartInitException ex) {
+							LocalShowAnnotationOperation.this.reportError(ex);
+						}
+			    	}
+			    	else {
+					    new BuiltInAnnotate().open(page, remote, (IFile)resource);
+			    	}
 				}
+			}
 		});
 	}
 	
