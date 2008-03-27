@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.local.AbstractWorkingCopyOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -49,7 +50,7 @@ public class LocalShowAnnotationOperation extends AbstractWorkingCopyOperation {
 		this.revision = revision;
 	}
 
-	protected void runImpl(IProgressMonitor monitor) throws Exception {
+	protected void runImpl(final IProgressMonitor monitor) throws Exception {
 		final IResource resource = this.operableData()[0];
     	ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
     	boolean notExists = local == null || IStateFilter.SF_NOTEXISTS.accept(local);
@@ -86,7 +87,11 @@ public class LocalShowAnnotationOperation extends AbstractWorkingCopyOperation {
 		
 		UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 			public void run() {
-				if (!UIMonitorUtility.doTaskScheduledDefault(correctOp).isCancelled()) {
+					LocalShowAnnotationOperation.this.protectStep(new IUnprotectedOperation() {
+						public void run(IProgressMonitor monitor) throws Exception {
+							correctOp.run(monitor);
+						}
+					}, monitor, 1);
 					IWorkbenchPage page = UIMonitorUtility.getActivePage();
 					if (page != null) {
 				    	if (viewType[0] == SVNTeamPreferences.ANNOTATE_DEFAULT_VIEW) {
@@ -106,7 +111,6 @@ public class LocalShowAnnotationOperation extends AbstractWorkingCopyOperation {
 				    	}
 					}
 				}
-			}
 		});
 	}
 	

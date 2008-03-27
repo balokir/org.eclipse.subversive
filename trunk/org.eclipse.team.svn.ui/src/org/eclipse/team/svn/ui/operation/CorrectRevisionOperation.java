@@ -46,6 +46,13 @@ public class CorrectRevisionOperation extends AbstractActionOperation {
 		this.resources = resources;
 	}
 	
+	public int getOperationWeight() {
+		if (this.msgsOps == null) {
+			return 0;
+		}
+		return super.getOperationWeight();
+	}
+	
 	protected void runImpl(final IProgressMonitor monitor) throws Exception {
 		boolean hasWarning = false;
 		for (int i = 0; i < this.repositoryResources.length; i++) {
