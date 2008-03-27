@@ -14,7 +14,7 @@ package org.eclipse.team.svn.core.operation;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * Unprotected action does not catch any exception that can be throwed by it 
+ * Unprotected action does not catch any exception that can be thrown by it 
  * 
  * @author Alexander Gurov
  */

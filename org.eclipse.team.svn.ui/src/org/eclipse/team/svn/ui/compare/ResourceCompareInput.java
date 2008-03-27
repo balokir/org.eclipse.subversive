@@ -516,7 +516,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 					}
 				}
 			});
-			UIMonitorUtility.doTaskScheduledDefault(fetchContent);
+			UIMonitorUtility.doTaskNowDefault(fetchContent, true);
 		}
 		
 		protected class LabelProviderWrapper implements ILabelProvider {
