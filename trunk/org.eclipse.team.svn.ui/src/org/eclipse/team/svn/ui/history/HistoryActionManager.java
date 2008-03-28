@@ -1413,6 +1413,9 @@ public class HistoryActionManager {
 			dialog.open();
 			return;
 		}
+		if (!this.confirmReplacement()){
+			return;
+		}
 		IPath resourcePath = new Path(remoteFoundPath.substring(remoteViewedResourceUrl.length()));
 		IResource resourceToLock;
 		HashMap<String, String> remote2local = new HashMap<String, String>();
