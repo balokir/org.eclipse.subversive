@@ -41,7 +41,7 @@ public class MergeScope extends AbstractSynchronizeScope {
     	String url = (this.info.fromEnd.length > 1 ? this.info.fromEnd[0].getRoot() : this.info.fromEnd[0]).getUrl();
     	String names = null;
     	for (int i = 0; i < this.info.to.length; i++) {
-    		String path = this.info.to[i].getFullPath().toString();
+    		String path = this.info.to[i].getFullPath().toString().substring(1);
     		names = names == null ? path : (names + ", " + path);
     	}
         return SVNTeamUIPlugin.instance().getResource("MergeScope.Name", new String[] {url, names});

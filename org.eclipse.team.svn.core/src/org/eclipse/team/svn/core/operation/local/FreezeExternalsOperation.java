@@ -126,7 +126,7 @@ public class FreezeExternalsOperation extends AbstractWorkingCopyOperation imple
 			if (local == null) {
 				return name + "\t" + url;
 			}
-			return name + "\t-r" + local.getRevision() + "\t" + url;
+			return name + "\t-r" + local.getBaseRevision() + "\t" + url;
 		}
 		
 	}

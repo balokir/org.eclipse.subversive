@@ -54,7 +54,7 @@ public class LocalShowAnnotationOperation extends AbstractWorkingCopyOperation {
 		final IResource resource = this.operableData()[0];
     	ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
     	boolean notExists = local == null || IStateFilter.SF_NOTEXISTS.accept(local);
-    	final SVNRevision revision = this.revision != null ? this.revision : (notExists || local.getRevision() == -1 ? SVNRevision.HEAD : SVNRevision.fromNumber(local.getRevision()));
+    	final SVNRevision revision = this.revision != null ? this.revision : (notExists || local.getRevision() == SVNRevision.INVALID_REVISION_NUMBER ? SVNRevision.HEAD : SVNRevision.fromNumber(local.getRevision()));
     	
     	final int []viewType = new int[] {SVNTeamPreferences.getAnnotateInt(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.ANNOTATE_USE_QUICK_DIFF_NAME)};
     	

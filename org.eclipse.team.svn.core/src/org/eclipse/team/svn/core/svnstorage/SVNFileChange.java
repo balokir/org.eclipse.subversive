@@ -30,7 +30,7 @@ public class SVNFileChange extends SVNLocalFile implements IFileChange {
 	protected ICommentProvider provider;
 
 	public SVNFileChange(IResource resource, long revision, String status, int changeMask, String author, long lastCommitDate, SVNRevision pegRevision, String comment) {
-		super(resource, revision, status, changeMask, author, lastCommitDate);
+		super(resource, revision, revision, status, changeMask, author, lastCommitDate);
 		this.comment = comment;
 		this.pegRevision = pegRevision;
 	}
