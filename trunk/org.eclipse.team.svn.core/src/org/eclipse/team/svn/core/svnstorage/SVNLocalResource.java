@@ -23,14 +23,16 @@ import org.eclipse.team.svn.core.resource.ILocalResource;
 public abstract class SVNLocalResource implements ILocalResource {
 	protected IResource resource;
 	protected long revision;
+	protected long baseRevision;
 	protected String status;
 	protected int changeMask;
 	protected String author;
 	protected long lastCommitDate;
 
-	protected SVNLocalResource(IResource resource, long revision, String status, int changeMask, String author, long lastCommitDate) {
+	protected SVNLocalResource(IResource resource, long revision, long baseRevision, String status, int changeMask, String author, long lastCommitDate) {
 		this.resource = resource;
 		this.revision = revision;
+		this.baseRevision = baseRevision;
 		this.status = status;
 		this.changeMask = changeMask;
 		this.author = author != null ? author.intern() : null;
@@ -53,6 +55,10 @@ public abstract class SVNLocalResource implements ILocalResource {
 		return this.revision;
 	}
 
+	public long getBaseRevision() {
+		return this.baseRevision;
+	}
+	
 	public String getStatus() {
 		return this.status;
 	}

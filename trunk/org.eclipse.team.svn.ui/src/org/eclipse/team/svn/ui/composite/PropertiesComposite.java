@@ -270,7 +270,7 @@ public class PropertiesComposite extends Composite {
 				synchronized (PropertiesComposite.this) {
 					manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 					final IStructuredSelection tSelection = (IStructuredSelection) PropertiesComposite.this.propertyViewer.getSelection();
-					if (tSelection.size() == 0 || tSelection.size() == 1 && tSelection.getFirstElement() instanceof String) {
+					if (tSelection.size() == 1 && tSelection.getFirstElement() instanceof String) {
 						return;
 					}
 					Action tAction = null;

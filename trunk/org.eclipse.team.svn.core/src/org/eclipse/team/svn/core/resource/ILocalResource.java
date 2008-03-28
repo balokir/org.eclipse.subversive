@@ -33,6 +33,8 @@ public interface ILocalResource {
 	
 	public long getRevision();
 	
+	public long getBaseRevision();
+	
 	public String getStatus();
 	
 	public int getChangeMask();
