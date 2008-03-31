@@ -32,6 +32,7 @@ import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.UpdateOperation;
+import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.svnstorage.ResourcesParentsProvider;
 import org.eclipse.team.svn.core.utility.FileUtility;
@@ -131,12 +132,16 @@ public class UpdateAction extends AbstractSynchronizeModelAction {
 		for (IResource resource : resources) {
 			try {
 				AbstractSVNSyncInfo info = (AbstractSVNSyncInfo)UpdateSubscriber.instance().getSyncInfo(resource);
-				SVNRevision pegRev = ((IResourceChange)((RemoteResourceVariant)info.getRemote()).getResource()).getPegRevision();
-				Set<IResource> list = splitted.get(pegRev);
-				if (list == null) {
-					splitted.put(pegRev, list = new HashSet<IResource>());
+				ILocalResource local = ((RemoteResourceVariant)info.getRemote()).getResource();
+				// can be ILocalResource in context of OverrideAndUpdateAction
+				if (local instanceof IResourceChange) {
+					SVNRevision pegRev = ((IResourceChange)local).getPegRevision();
+					Set<IResource> list = splitted.get(pegRev);
+					if (list == null) {
+						splitted.put(pegRev, list = new HashSet<IResource>());
+					}
+					list.add(resource);
 				}
-				list.add(resource);
 			}
 			catch (TeamException ex) {
 				UILoggedOperation.reportError(action.getText(), ex);
