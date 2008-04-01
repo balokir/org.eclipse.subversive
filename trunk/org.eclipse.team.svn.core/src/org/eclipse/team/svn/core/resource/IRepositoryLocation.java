@@ -28,6 +28,9 @@ public interface IRepositoryLocation extends IRepositoryBase, IRepositoryResourc
 	public void setLabel(String label);
 	public String getLabel();
 
+	public String asReference();
+	public void fillLocationFromReference(String [] referenceParts);
+	
 	public String getUrlAsIs();
 	public void setUrl(String url);
 	public String getRepositoryRootUrl();
@@ -71,10 +74,10 @@ public interface IRepositoryLocation extends IRepositoryBase, IRepositoryResourc
 	public SSLSettings getSSLSettings();
 	public SSHSettings getSSHSettings();
 	
-	public Collection getRealms();
+	public Collection<String> getRealms();
 	public void addRealm(String realm, IRepositoryLocation location);
 	public void removeRealm(String realm);
-	public Collection getRealmLocations();
+	public Collection<IRepositoryLocation> getRealmLocations();
 	public IRepositoryLocation getLocationForRealm(String realm);
 	
 	public boolean isAuthorNameEnabled();

@@ -40,6 +40,14 @@ public class SVNRepositoryLocationWrapper implements IRepositoryLocation {
 		this.url = mappedUrl;
 	}
 	
+	public String asReference() {
+		return this.location.asReference();
+	}
+	
+	public void fillLocationFromReference(String[] referenceParts) {
+		this.location.fillLocationFromReference(referenceParts);
+	}
+	
 	public String getUrlAsIs() {
 		return this.url;
 	}

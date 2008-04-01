@@ -43,8 +43,7 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
  * @author Alexander Gurov
  */
 public class SVNTeamProjectSetCapability extends ProjectSetCapability {
-	protected static final String OLD_PLUGIN_INFORMATION = "InClipse_0.2.7";
-	protected static final String PLUGIN_INFORMATION = "1.0.0";
+	protected static final String PLUGIN_INFORMATION = "1.0.1";
 
 	public SVNTeamProjectSetCapability() {
 		super();
@@ -149,9 +148,7 @@ public class SVNTeamProjectSetCapability extends ProjectSetCapability {
 	
 	protected String getNameForReference(String fullReference) {
 		String []parts = fullReference.split(",");
-		if (parts.length < 3 || 
-			!(parts[0].equals(SVNTeamProjectSetCapability.PLUGIN_INFORMATION) || 
-			parts[0].equals(SVNTeamProjectSetCapability.OLD_PLUGIN_INFORMATION))) {
+		if (parts.length < 3 || !(parts[0].equals(SVNTeamProjectSetCapability.PLUGIN_INFORMATION))) {
 			return null;
 		}
 		return parts[2];

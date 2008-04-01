@@ -74,6 +74,20 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * @author Alexander Gurov
  */
 public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStorage {
+	
+	/**
+	 * The name of the preferences node in the Subversive Core preferences that contains
+	 * the known repositories as its children.
+	 */
+	public static final String PREF_REPOSITORIES_NODE = "repositories";
+	
+	//TODO check version
+	/**
+	 * The name of file containing the SVN repository locations information.
+	 * @deprecated Since Subversive 0.7.0 v20080404 - must not be used. The valid information
+	 * is stored in preferences.
+	 * @see SVNRemoteStorage.PREF_REPOSITORIES_NODE
+	 */
 	public static final String STATE_INFO_FILE_NAME = ".svnRepositories";
 	
 	private static SVNRemoteStorage instance = new SVNRemoteStorage();
@@ -82,7 +96,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	protected Map switchedToUrls;
 	protected Map externalsLocations;
 	protected Map parent2Children;
-	protected Map resourceStateListeners;
+	protected Map<Class, List<IResourceStatesListener>> resourceStateListeners;
 	protected LinkedList fetchQueue;
 	
 	protected Integer notifyLock = new Integer(0);
@@ -90,12 +104,12 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	public static SVNRemoteStorage instance() {
 		return SVNRemoteStorage.instance;
 	}
-	
+
     public void addResourceStatesListener(Class eventClass, IResourceStatesListener listener) {
     	synchronized (this.resourceStateListeners) {
-    		List listenersList = (List)this.resourceStateListeners.get(eventClass);
+    		List<IResourceStatesListener> listenersList = this.resourceStateListeners.get(eventClass);
     		if (listenersList == null) {
-    			this.resourceStateListeners.put(eventClass, listenersList = new ArrayList());
+    			this.resourceStateListeners.put(eventClass, listenersList = new ArrayList<IResourceStatesListener>());
     		}
     		if (!listenersList.contains(listener)) {
     			listenersList.add(listener);
@@ -105,7 +119,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
     
     public void removeResourceStatesListener(Class eventClass, IResourceStatesListener listener) {
     	synchronized (this.resourceStateListeners) {
-    		List listenersList = (List)this.resourceStateListeners.get(eventClass);
+    		List<IResourceStatesListener> listenersList = this.resourceStateListeners.get(eventClass);
     		if (listenersList != null) {
     			listenersList.remove(listener);
         		if (listenersList.size() == 0) {
@@ -121,11 +135,11 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
     		if (event.resources.length > 0) {
     	    	IResourceStatesListener []listeners = null;
     	    	synchronized (this.resourceStateListeners) {
-    	    		List listenersArray = (List)this.resourceStateListeners.get(event.getClass());
+    	    		List<IResourceStatesListener> listenersArray = this.resourceStateListeners.get(event.getClass());
     	    		if (listenersArray == null) {
     	    			return;
     	    		}
-    	        	listeners = (IResourceStatesListener [])listenersArray.toArray(new IResourceStatesListener[listenersArray.size()]);
+    	        	listeners = listenersArray.toArray(new IResourceStatesListener[listenersArray.size()]);
     	    	}
     	    	for (int i = 0; i < listeners.length; i++) {
     	    		listeners[i].resourcesStateChanged(event);
@@ -135,7 +149,8 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
     }
     
 	public void initialize(IPath stateInfoLocation) throws Exception {
-		this.initializeImpl(stateInfoLocation, SVNRemoteStorage.STATE_INFO_FILE_NAME);
+		this.setStateInfoFile(stateInfoLocation, SVNRemoteStorage.STATE_INFO_FILE_NAME);
+		this.initializeImpl(SVNRemoteStorage.PREF_REPOSITORIES_NODE);
 	}
 	
 	public IResourceChange asResourceChange(IChangeStateProvider changeState, boolean update) {
@@ -1026,7 +1041,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		this.switchedToUrls = Collections.synchronizedMap(new LinkedHashMap());
 		this.parent2Children = new HashMap();
 		this.externalsLocations = new HashMap();
-		this.resourceStateListeners = new HashMap();
+		this.resourceStateListeners = new HashMap<Class, List<IResourceStatesListener>>();
 		this.fetchQueue = new LinkedList();
 	}
 
