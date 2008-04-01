@@ -88,7 +88,7 @@ public abstract class AbstractSVNTeamPreferencesPage extends PreferencePage impl
 	public void addListeners() {
 		this.changeListener.addListeners();		
 		this.validateContent();
-		this.setMessage(this.getDescription(), IMessageProvider.NONE);
+		this.setMessage(this.getTitle(), IMessageProvider.NONE);
 	}
 	
 	public void detachFrom(Control cmp) {
@@ -123,7 +123,7 @@ public abstract class AbstractSVNTeamPreferencesPage extends PreferencePage impl
         }
 
         public void hasNoError() {
-        	AbstractSVNTeamPreferencesPage.this.setMessage(AbstractSVNTeamPreferencesPage.this.getDescription(), IMessageProvider.NONE);
+        	AbstractSVNTeamPreferencesPage.this.setMessage(AbstractSVNTeamPreferencesPage.this.getTitle(), IMessageProvider.NONE);
 			this.handleButtons();
         }
 
