@@ -30,6 +30,19 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * @author Alexander Gurov
  */
 public class SVNFileStorage extends AbstractSVNStorage implements IFileStorage {
+	/**
+	 * The name of the preferences node in the Subversive Core preferences that contains
+	 * the known repositories as its children (for integrations).
+	 */
+	public static final String PREF_REPOSITORIES_NODE = "externalRepositories";
+	
+	//TODO check version
+	/**
+	 * The name of file containing the SVN repository locations information (for integration).
+	 * @deprecated Since Subversive 0.7.0 v20080404 - must not be used. The valid information is stored in
+	 * preferences.
+	 * @see SVNFileStorage.PREF_REPOSITORIES_NODE
+	 */
 	public static final String STATE_INFO_FILE_NAME = ".externalSVNRepositories";
 	
 	private static SVNFileStorage instance = new SVNFileStorage();
@@ -39,7 +52,8 @@ public class SVNFileStorage extends AbstractSVNStorage implements IFileStorage {
 	}
     
 	public void initialize(IPath stateInfoLocation) throws Exception {
-		this.initializeImpl(stateInfoLocation, SVNFileStorage.STATE_INFO_FILE_NAME);
+		this.setStateInfoFile(stateInfoLocation, SVNFileStorage.STATE_INFO_FILE_NAME);
+		this.initializeImpl(SVNFileStorage.PREF_REPOSITORIES_NODE);
 	}
 	
 	public IRepositoryResource asRepositoryResource(File file, boolean allowsNull) {

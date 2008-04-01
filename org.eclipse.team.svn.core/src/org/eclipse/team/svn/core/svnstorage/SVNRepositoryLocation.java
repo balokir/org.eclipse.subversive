@@ -13,6 +13,7 @@ package org.eclipse.team.svn.core.svnstorage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.internal.preferences.Base64;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -95,7 +97,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
     protected boolean authorNameEnabled;
     protected String authorName;
     
-    private Map additionalRealms;
+    private Map<String, IRepositoryLocation> additionalRealms;
 
 	public SVNRepositoryLocation() {
 		super(null);
@@ -105,8 +107,100 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		super(null);
 		this.id = id;
 	}
+	
+	public String asReference() {
+		String reference = this.id;
+		reference += ";" + ((this.repositoryUUID == null) ? "" : this.repositoryUUID);
+		reference += ";" + this.getUrlAsIs();
+		reference += ";" + ((this.repositoryRootUrl == null) ? "" : this.repositoryRootUrl);
+		reference += ";" + this.getLabel();
+		reference += ";" + this.getBranchesLocation();
+		reference += ";" + this.getTagsLocation();
+		reference += ";" + this.getTrunkLocation();
+		reference += ";" + this.trunkEnabled;
+		reference += ";" + this.getAuthorName();
+		reference += ";" + this.authorNameEnabled + ";";
+		String [] realms = this.getRealms().toArray(new String [0]);
+		for (int i = 0; i < realms.length; i++) {
+			if (i < realms.length -1) {
+				reference += realms[i] + "^";
+			}
+			else {
+				reference += realms[i];
+			}
+		}
+		reference += ";";
+		IRepositoryResource [] revisionLinks = this.getRevisionLinks();
+		for (int i = 0; i < revisionLinks.length; i++) {
+			String base64revLink = new String(Base64.encode(SVNRemoteStorage.instance().repositoryResourceAsBytes(revisionLinks[i])));
+			if (i < revisionLinks.length -1) {
+				reference += base64revLink + "^";
+			}
+			else {
+				reference += base64revLink;
+			}
+		}
+		return reference;
+	}
+	
+	public void fillLocationFromReference(String[] referenceParts) {
+		boolean containRevisionLinks = false;
+		ArrayList<String> realms = new ArrayList<String>();
+		switch (referenceParts.length) {
+		case 13:
+			if (!referenceParts[12].equals("")) {
+				containRevisionLinks = true;
+			}
+		case 12:
+			if (!referenceParts[11].equals("")) {
+				realms.addAll(Arrays.asList(referenceParts[11].split("^")));
+			}
+		case 11:
+			this.setAuthorNameEnabled(referenceParts[10].equals("true"));
+		case 10:
+			this.setAuthorName(referenceParts[9].trim());
+		case 9:
+			this.setStructureEnabled(referenceParts[8].equals("true"));
+		case 8:
+			this.setTrunkLocation(referenceParts[7].trim());
+		case 7:
+			this.setTagsLocation(referenceParts[6].trim());
+		case 6:
+			this.setBranchesLocation(referenceParts[5].trim());
+		case 5:
+			String label = referenceParts[4].trim();
+			if (label.length() > 0) {
+				this.setLabel(label);
+			}
+		case 4:
+			this.repositoryRootUrl = (referenceParts[3].trim().equals("") ? null : referenceParts[3].trim());
+		case 3:
+			this.setUrl(referenceParts[2].trim());
+		case 2:
+			this.repositoryUUID = (referenceParts[1].trim().equals("") ? null : referenceParts[1].trim());
+		case 1:
+		}
+		if (this.label == null || this.label.length() == 0) {
+			this.label = this.url;
+		}
+		try {
+			SVNRemoteStorage.instance().loadAuthInfo(this, "");
+			for (String realm : realms) {
+				SVNRemoteStorage.instance().loadAuthInfo(this, realm);
+			}
+		}
+		catch (Exception ex) {
+			//TODO add handling
+		}
+		if (containRevisionLinks) {
+			String [] revLinks = referenceParts[12].split("^");
+			for (int i = 0 ; i < revLinks.length; i++) {
+				this.addRevisionLink(SVNRemoteStorage.instance().repositoryResourceFromBytes(Base64.decode(revLinks[i].getBytes()), this));
+			}
+		}
+	}
 
-	public Collection getRealms() {
+	public Collection<String> getRealms() {
 		return this.getAdditionalRealms().keySet();
 	}
 	
@@ -118,12 +212,12 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		this.getAdditionalRealms().remove(realm);
 	}
 	
-	public Collection getRealmLocations() {
+	public Collection<IRepositoryLocation> getRealmLocations() {
 		return this.getAdditionalRealms().values();
 	}
 	
 	public IRepositoryLocation getLocationForRealm(String realm) {
-		return (IRepositoryLocation)this.getAdditionalRealms().get(realm);
+		return this.getAdditionalRealms().get(realm);
 	}
 	
 	public String getId() {
@@ -205,7 +299,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	}
 	
 	public String getAuthorName() {
-		return this.authorName;
+		return this.authorName == null ? "" : this.authorName;
 	}
 
     public IRepositoryContainer asRepositoryContainer(String url, boolean allowsNull) {
@@ -381,7 +475,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	public void setAuthorName(String name) {
 		this.authorName = name;
 	}
-
+	
 	public void setPassword(String password) {
 		if (!this.passwordSaved) {
 			this.passwordTemporary = SVNUtility.base64Encode(password);
@@ -670,9 +764,9 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	    return SVNUtility.normalizeURL(url);
 	}
 
-	protected synchronized Map getAdditionalRealms() {
+	protected synchronized Map<String, IRepositoryLocation> getAdditionalRealms() {
 		if (this.additionalRealms == null) {
-			this.additionalRealms = new LinkedHashMap();
+			this.additionalRealms = new LinkedHashMap<String, IRepositoryLocation>();
 		}
 		return this.additionalRealms;
 	}

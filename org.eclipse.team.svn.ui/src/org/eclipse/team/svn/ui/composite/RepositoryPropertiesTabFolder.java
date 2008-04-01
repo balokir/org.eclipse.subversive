@@ -525,9 +525,11 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 		this.repositoryLocation.setStructureEnabled(enabled);
 		
 		HashSet realms = new HashSet(Arrays.asList(this.cachedRealms.getItems()));
-		for (Iterator it = this.repositoryLocation.getRealms().iterator(); it.hasNext(); ) {
-			if (!realms.contains(it.next())) {
+		for (Iterator<String> it = this.repositoryLocation.getRealms().iterator(); it.hasNext(); ) {
+			String current = it.next();
+			if (!realms.contains(current)) {
 				it.remove();
+				SVNRemoteStorage.instance().removeAuthInfoForLocation(this.repositoryLocation, current);
 			}
 		}
 		this.validateOnFinish = this.validateButton.getSelection();

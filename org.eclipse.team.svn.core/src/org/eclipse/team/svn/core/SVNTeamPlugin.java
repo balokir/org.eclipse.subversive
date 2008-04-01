@@ -29,6 +29,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.crashrecovery.DefaultErrorHandlingFacility;
@@ -119,6 +121,14 @@ public class SVNTeamPlugin extends Plugin {
 		});
     }
     
+    
+    /**
+	 * Return the Subversive Core preferences node in the instance scope
+	 */
+    public IEclipsePreferences getSVNCorePreferences() {
+    	return new InstanceScope().getNode(this.getBundle().getSymbolicName());
+    }
+    
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		
@@ -127,18 +137,6 @@ public class SVNTeamPlugin extends Plugin {
 		
 		SVNRemoteStorage storage = SVNRemoteStorage.instance();
 		storage.initialize(stateLocation);
-		
-		// check for previous plugin versions repository info storage 
-		if (storage.getRepositoryLocations().length == 0) {
-			String coreFolderName = stateLocation.lastSegment();
-			IPath uiLocation = stateLocation.removeLastSegments(1).append(coreFolderName.substring(0, coreFolderName.length() - 4) + "ui");
-			File previousStore = new File(uiLocation + "/" + SVNRemoteStorage.STATE_INFO_FILE_NAME);
-			if (previousStore.exists()) {
-				FileUtility.copyFile(new File(stateLocation.toString() + "/" + SVNRemoteStorage.STATE_INFO_FILE_NAME), previousStore, new NullProgressMonitor());
-				previousStore.delete();
-				storage.initialize(stateLocation);
-			}
-		}
 		
 		WorkspaceJob job = new WorkspaceJob("") {
 			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
