@@ -2010,22 +2010,30 @@
   </actionSet>
 	</extension>
 	
+	<!-- Preferences and repositories exports -->
 	<extension
-       point="org.eclipse.ui.preferenceTransfer">
-		<transfer
-          icon="icons/views/svn.gif"
-          id="org.eclipse.team.svn.ui.preference.transfer"
-          name="SVN Preferences">
+    	point="org.eclipse.ui.preferenceTransfer">
+	    <transfer
+        	icon="icons/views/svn.gif"
+        	id="org.eclipse.team.svn.ui.preference.transfer"
+          	name="SVN Preferences">
        		<mapping scope="instance">
           		<entry node="org.eclipse.team.svn.ui"/>
        		</mapping>
-       		<description>
-       		%SVNPreferences.description
-       		</description>
+       		<description>%SVNPreferences.description</description>
 		</transfer>
-
+		<transfer
+	    	id="org.eclipse.team.svn.ui.preference.repositoryTransfer"
+	        name="SVN Repositories"
+	        icon="icons/views/svn.gif">
+	     	<mapping scope="instance">
+	        	<entry node="org.eclipse.team.svn.core/repositories"/>
+	     	</mapping>
+	     	<description>%SVNRepositories.description</description>
+	  	</transfer>
 	</extension>
- <extension
+ 	
+ 	<extension
        point="org.eclipse.ui.console.consolePatternMatchListeners">
     <consolePatternMatchListener
           class="org.eclipse.team.svn.ui.console.LocalPathMatcher"
