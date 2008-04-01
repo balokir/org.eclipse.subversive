@@ -36,12 +36,10 @@ public class AddRepositoryLocationOperation extends AbstractActionOperation {
 		return null;
 	}
 	
-	public int getOperationWeight() {
-		return 0;
-	}
-	
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		SVNRemoteStorage.instance().addRepositoryLocation(this.location);
+		//try to fetch repository root URL and UUID
+		this.location.getRepositoryRootUrl();
 	}
 	
 	protected String getShortErrorMessage(Throwable t) {

@@ -148,9 +148,6 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	
 	public String getRepositoryRootUrl() {
 		if (this.repositoryRootUrl == null) {
-			if (this.url == null) {
-				return null;
-			}
 			this.fetchRepoInfo();
 		}
 		return this.repositoryRootUrl == null ? this.getUrl() : this.repositoryRootUrl;
@@ -238,8 +235,13 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
                 return new SVNRepositoryBranches(location, url, SVNRevision.HEAD);
             }
     	}
-        if (urlPath.equals(new Path(location.getUrl()))) {
+    	Path locationUrl = new Path(location.getUrl());
+        if (urlPath.equals(locationUrl)) {
             return location.getRoot();
+        }
+        if (locationUrl.isPrefixOf(urlPath)) {
+        	// do not access repository root if it is not required
+            return new SVNRepositoryFolder(location, url, SVNRevision.HEAD);
         }
         if (urlPath.equals(new Path(location.getRepositoryRootUrl()))) {
             return location.getRepositoryRoot();
@@ -522,26 +524,32 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
     	if (url == null) {
     		throw new IllegalArgumentException(SVNTeamPlugin.instance().getResource("Error.NullURL"));
     	}
-        Path rootPath = new Path(location.getRepositoryRootUrl());
+        Path repoPath = new Path(location.getUrl());
     	Path urlPath = new Path(url);
-    	if (!rootPath.isPrefixOf(urlPath)) {
-    		if (!allowsNull) {
-        		if (!urlPath.isPrefixOf(rootPath)) {
-        			String message = SVNTeamPlugin.instance().getResource("Error.NotRelatedURL", new String[] {url, rootPath.toString()});
-        			throw new IllegalArgumentException(message);
+    	// do not access repository root URL if it is not required
+        if (!repoPath.isPrefixOf(urlPath)) {
+            Path rootPath = new Path(location.getRepositoryRootUrl());
+        	if (!rootPath.isPrefixOf(urlPath)) {
+        		if (!allowsNull) {
+            		if (!urlPath.isPrefixOf(rootPath)) {
+            			String message = SVNTeamPlugin.instance().getResource("Error.NotRelatedURL", new String[] {url, rootPath.toString()});
+            			throw new IllegalArgumentException(message);
+            		}
+        			String message = SVNTeamPlugin.instance().getResource("Error.ShorterURL", new String[] {url, rootPath.toString()});
+            		throw new UnreportableException(message);
         		}
-    			String message = SVNTeamPlugin.instance().getResource("Error.ShorterURL", new String[] {url, rootPath.toString()});
-        		throw new UnreportableException(message);
-    		}
-    		return false;
-    	}
+        		return false;
+        	}
+        }
     	return true;
     }
     
 	protected void fetchRepoInfo() {
-		String []values = SVNRepositoryLocation.fetchRepoInfo(this, false);
-		this.repositoryRootUrl = values[0];
-		this.repositoryUUID = values[1];
+		if (this.url != null && SVNUtility.isValidSVNURL(this.getUrl())) {
+			String []values = SVNRepositoryLocation.fetchRepoInfo(this, false);
+			this.repositoryRootUrl = values[0];
+			this.repositoryUUID = values[1];
+		}
 	}
 	
 	public static String []fetchRepoInfo(final IRepositoryLocation location, final boolean usePrompt) {
