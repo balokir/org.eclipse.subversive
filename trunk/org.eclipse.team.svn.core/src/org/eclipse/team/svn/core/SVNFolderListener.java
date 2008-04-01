@@ -26,8 +26,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
+import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.operation.local.management.ReconnectProjectOperation;
+import org.eclipse.team.svn.core.operation.remote.management.AddRepositoryLocationOperation;
+import org.eclipse.team.svn.core.operation.remote.management.SaveRepositoryLocationsOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -69,6 +72,7 @@ public class SVNFolderListener implements IResourceChangeListener {
 								((IProject)resource).isOpen()) {
 								SVNChangeStatus info = SVNUtility.getSVNInfoForNotConnected(resource);
 								if (info != null && info.url != null) {
+									CompositeOperation op = new CompositeOperation("Operation.Reconnect");
 									String url = SVNUtility.decodeURL(info.url);
 									IRepositoryRoot []roots = SVNUtility.findRoots(url, true);
 									IRepositoryLocation location = null;
@@ -91,12 +95,14 @@ public class SVNFolderListener implements IResourceChangeListener {
 										}
 										location = SVNRemoteStorage.instance().newRepositoryLocation();
 										SVNUtility.initializeRepositoryLocation(location, url);
-										SVNRemoteStorage.instance().addRepositoryLocation(location);
+										op.add(new AddRepositoryLocationOperation(location));
+										op.add(new SaveRepositoryLocationsOperation());
 									}
 									else {
 										location = roots[0].getRepositoryLocation();
 									}
-									ProgressMonitorUtility.doTaskExternalDefault(new ReconnectProjectOperation(new IProject[] {(IProject)resource}, location), monitor);
+									op.add(new ReconnectProjectOperation(new IProject[] {(IProject)resource}, location));
+									ProgressMonitorUtility.doTaskScheduled(op);
 									return false;
 								}
 							}

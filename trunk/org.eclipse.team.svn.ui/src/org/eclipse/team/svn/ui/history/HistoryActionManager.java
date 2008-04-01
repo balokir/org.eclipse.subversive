@@ -13,7 +13,6 @@ package org.eclipse.team.svn.ui.history;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1656,6 +1655,7 @@ public class HistoryActionManager {
 			resourcesToReturn.add(this.older);
 			SVNEntryRevisionReference refPrev = SVNUtility.getEntryRevisionReference(this.older);
 			SVNEntryRevisionReference refNext = SVNUtility.getEntryRevisionReference(this.newer);
+			ProgressMonitorUtility.setTaskInfo(monitor, this, SVNTeamPlugin.instance().getResource("Progress.Running"));
 			try {
 				if (SVNUtility.useSingleReferenceSignature(refPrev, refNext)) {
 					SVNUtility.diffStatus(proxy, statusesList, refPrev, refPrev.revision, refNext.revision, Depth.INFINITY, ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null, false));
@@ -1668,11 +1668,9 @@ public class HistoryActionManager {
 				this.location.releaseSVNProxy(proxy);
 			}
 			
-			this.statuses = statusesList.toArray(new SVNDiffStatus [0]);
+			this.statuses = statusesList.toArray(new SVNDiffStatus[0]);
 			
-			String message = SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.CheckingDelta");
 			for (int i = 0; i < this.statuses.length; i++) {
-				monitor.subTask(MessageFormat.format(message, new Object[] {SVNUtility.decodeURL(this.statuses[i].pathPrev)}));
 				IRepositoryResource resourceToAdd = this.getResourceForStatus(this.statuses[i]);
 				resourceToAdd.setSelectedRevision(SVNRevision.fromNumber(this.newer.getRevision()));
 				resourceToAdd.setPegRevision(SVNRevision.fromNumber(this.newer.getRevision()));
