@@ -20,6 +20,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -62,13 +63,10 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 	
 	protected class RepositoryPreferenceChangeListener implements IPreferenceChangeListener {
 		public void preferenceChange(PreferenceChangeEvent event) {
-			try {
-				AbstractSVNStorage.this.loadLocations();
-				AbstractSVNStorage.this.saveLocations();
-			}
-			catch (Exception ex) {
-				LoggedOperation.reportError(SVNTeamPlugin.instance().getResource("Error.LoadLocations"), ex);
-			}
+			HashSet<IRepositoryLocation> readLocations = new HashSet<IRepositoryLocation>(Arrays.asList(AbstractSVNStorage.this.repositories));
+			IRepositoryLocation location = AbstractSVNStorage.this.newRepositoryLocation((String)event.getNewValue());
+			readLocations.add(location);
+			AbstractSVNStorage.this.repositories = readLocations.toArray(new IRepositoryLocation[readLocations.size()]);
 		}
 	}
 	

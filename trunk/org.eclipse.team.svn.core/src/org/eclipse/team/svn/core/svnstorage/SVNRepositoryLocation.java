@@ -39,6 +39,7 @@ import org.eclipse.team.svn.core.extension.options.IOptionProvider;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.ActivityCancelledException;
 import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
@@ -190,7 +191,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 			}
 		}
 		catch (Exception ex) {
-			//TODO add handling
+			LoggedOperation.reportError("fillLocationFromReference", ex);
 		}
 		if (containRevisionLinks) {
 			String [] revLinks = referenceParts[12].split("\\^");
