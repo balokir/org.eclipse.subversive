@@ -446,7 +446,6 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		ArrayList<IRepositoryLocation> readLocations = new ArrayList<IRepositoryLocation>();
 		for (String current : keys) {
 			IRepositoryLocation location = this.newRepositoryLocation(repositoryPreferences.get(current, null));
-			this.loadAuthInfo(location, "");
 			readLocations.add(location);
 		}
 		this.repositories = readLocations.toArray(new IRepositoryLocation[readLocations.size()]);
