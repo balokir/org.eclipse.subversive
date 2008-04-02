@@ -99,5 +99,12 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 			}
 			ProgressMonitorUtility.progress(monitor, processed++, this.outgoingResources.length);
 		}
-	}	
+	}
+	
+	public int getOperationWeight() {
+		if (this.outgoingResources.length == 0) {
+			return 0;
+		}
+		return 1;
+	}
 }

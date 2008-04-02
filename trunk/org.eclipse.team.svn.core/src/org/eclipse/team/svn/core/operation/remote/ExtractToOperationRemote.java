@@ -163,6 +163,9 @@ public class ExtractToOperationRemote extends AbstractRepositoryOperation {
 	}
 
 	public int getOperationWeight() {
+		if (this.operableData().length == 0) {
+			return 0;
+		}
 		return 4;
 	}
 }
