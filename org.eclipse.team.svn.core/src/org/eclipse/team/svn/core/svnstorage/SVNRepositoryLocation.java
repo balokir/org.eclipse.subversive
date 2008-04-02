@@ -110,14 +110,14 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	
 	public String asReference() {
 		String reference = this.id;
-		reference += ";" + ((this.repositoryUUID == null) ? "" : this.repositoryUUID);
 		reference += ";" + this.getUrlAsIs();
-		reference += ";" + ((this.repositoryRootUrl == null) ? "" : this.repositoryRootUrl);
 		reference += ";" + this.getLabel();
 		reference += ";" + this.getBranchesLocation();
 		reference += ";" + this.getTagsLocation();
 		reference += ";" + this.getTrunkLocation();
 		reference += ";" + this.trunkEnabled;
+		reference += ";" + ((this.repositoryUUID == null) ? "" : this.repositoryUUID);
+		reference += ";" + ((this.repositoryRootUrl == null) ? "" : this.repositoryRootUrl);
 		reference += ";" + this.getAuthorName();
 		reference += ";" + this.authorNameEnabled + ";";
 		String [] realms = this.getRealms().toArray(new String [0]);
@@ -160,24 +160,24 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		case 10:
 			this.setAuthorName(referenceParts[9].trim());
 		case 9:
-			this.setStructureEnabled(referenceParts[8].equals("true"));
+			this.repositoryRootUrl = (referenceParts[8].trim().equals("") ? null : referenceParts[8].trim());
 		case 8:
-			this.setTrunkLocation(referenceParts[7].trim());
+			this.repositoryUUID = (referenceParts[7].trim().equals("") ? null : referenceParts[7].trim());
 		case 7:
-			this.setTagsLocation(referenceParts[6].trim());
+			this.setStructureEnabled(referenceParts[6].equals("true"));
 		case 6:
-			this.setBranchesLocation(referenceParts[5].trim());
+			this.setTrunkLocation(referenceParts[5].trim());
 		case 5:
-			String label = referenceParts[4].trim();
+			this.setTagsLocation(referenceParts[4].trim());
+		case 4:
+			this.setBranchesLocation(referenceParts[3].trim());
+		case 3:
+			String label = referenceParts[2].trim();
 			if (label.length() > 0) {
 				this.setLabel(label);
 			}
-		case 4:
-			this.repositoryRootUrl = (referenceParts[3].trim().equals("") ? null : referenceParts[3].trim());
-		case 3:
-			this.setUrl(referenceParts[2].trim());
 		case 2:
-			this.repositoryUUID = (referenceParts[1].trim().equals("") ? null : referenceParts[1].trim());
+			this.setUrl(referenceParts[1].trim());
 		case 1:
 		}
 		if (this.label == null || this.label.length() == 0) {
