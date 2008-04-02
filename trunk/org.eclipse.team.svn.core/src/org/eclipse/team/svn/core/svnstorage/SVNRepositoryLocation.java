@@ -153,7 +153,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 			}
 		case 12:
 			if (!referenceParts[11].equals("")) {
-				realms.addAll(Arrays.asList(referenceParts[11].split("^")));
+				realms.addAll(Arrays.asList(referenceParts[11].split("\\^")));
 			}
 		case 11:
 			this.setAuthorNameEnabled(referenceParts[10].equals("true"));
@@ -193,7 +193,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 			//TODO add handling
 		}
 		if (containRevisionLinks) {
-			String [] revLinks = referenceParts[12].split("^");
+			String [] revLinks = referenceParts[12].split("\\^");
 			for (int i = 0 ; i < revLinks.length; i++) {
 				this.addRevisionLink(SVNRemoteStorage.instance().repositoryResourceFromBytes(Base64.decode(revLinks[i].getBytes()), this));
 			}
@@ -369,7 +369,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 			this.revisionLinks = new IRepositoryResource[serialized.size()];
 			for (int i = 0; i < this.revisionLinks.length; i++) {
 				byte []data = (byte [])serialized.get(i);
-				this.revisionLinks[i] = storage.repositoryResourceFromBytes(data);
+				this.revisionLinks[i] = storage.repositoryResourceFromBytes(data, this);
 			}
 		}
 		return this.revisionLinks;
