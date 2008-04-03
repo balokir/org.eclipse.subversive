@@ -363,6 +363,7 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 						if (current.isRequiresAuthentication()){
 							AbstractSVNStorage.this.proxyCredentialsManager.setPassword(current.getPassword());
 							AbstractSVNStorage.this.proxyCredentialsManager.setUsername(current.getUserId());
+							AbstractSVNStorage.this.dispose();
 							break;
 						}
 					}
