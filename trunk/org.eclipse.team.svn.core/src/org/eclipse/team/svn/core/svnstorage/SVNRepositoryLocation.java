@@ -123,7 +123,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		reference += ";" + this.authorNameEnabled + ";";
 		String [] realms = this.getRealms().toArray(new String [0]);
 		for (int i = 0; i < realms.length; i++) {
-			if (i < realms.length -1) {
+			if (i < realms.length - 1) {
 				reference += realms[i] + "^";
 			}
 			else {
@@ -134,13 +134,14 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		IRepositoryResource [] revisionLinks = this.getRevisionLinks();
 		for (int i = 0; i < revisionLinks.length; i++) {
 			String base64revLink = new String(Base64.encode(SVNRemoteStorage.instance().repositoryResourceAsBytes(revisionLinks[i])));
-			if (i < revisionLinks.length -1) {
+			if (i < revisionLinks.length - 1) {
 				reference += base64revLink + "^";
 			}
 			else {
 				reference += base64revLink;
 			}
 		}
+		reference += ";" + this.getSSHSettings().getPort();
 		return reference;
 	}
 	
@@ -148,6 +149,8 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		boolean containRevisionLinks = false;
 		ArrayList<String> realms = new ArrayList<String>();
 		switch (referenceParts.length) {
+		case 14:
+			this.getSSHSettings().setPort(Integer.parseInt(referenceParts[13]));
 		case 13:
 			if (!referenceParts[12].equals("")) {
 				containRevisionLinks = true;
@@ -644,6 +647,9 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 			String []values = SVNRepositoryLocation.fetchRepoInfo(this, false);
 			this.repositoryRootUrl = values[0];
 			this.repositoryUUID = values[1];
+			if (this.repositoryUUID != null) {
+				SVNTeamPlugin.instance().setLocationsDirty(true);
+			}
 		}
 	}
 	

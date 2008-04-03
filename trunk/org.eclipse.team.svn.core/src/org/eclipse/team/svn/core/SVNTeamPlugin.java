@@ -62,6 +62,11 @@ public class SVNTeamPlugin extends Plugin {
 	
 	private IErrorHandlingFacility errorHandlingFacility;
 	
+	/**
+	 * Allows to save changes in repository root URL and UUID
+	 */
+	private boolean isLocationsDirty;
+	
 	public SVNTeamPlugin() {
 		super();
 		
@@ -74,6 +79,14 @@ public class SVNTeamPlugin extends Plugin {
 		this.errorHandlingFacility = new DefaultErrorHandlingFacility();
 	}
 
+	public void setLocationsDirty(boolean isLocationsDirty) {
+		this.isLocationsDirty = isLocationsDirty;
+	}
+	
+	public boolean isLocationsDirty() {
+		return this.isLocationsDirty;
+	}
+	
     public static SVNTeamPlugin instance() {
     	while (SVNTeamPlugin.instance == null) {
     		try {Thread.sleep(100);} catch (InterruptedException ex) {break;}
@@ -173,6 +186,10 @@ public class SVNTeamPlugin extends Plugin {
 		workspace.removeResourceChangeListener(this.rcListener);
 		workspace.removeResourceChangeListener(this.pcListener);
 		
+		if (this.isLocationsDirty) {
+			SVNRemoteStorage.instance().saveConfiguration();
+			SVNFileStorage.instance().saveConfiguration();
+		}
 		SVNRemoteStorage.instance().dispose();
 		SVNFileStorage.instance().dispose();
 		
@@ -180,7 +197,7 @@ public class SVNTeamPlugin extends Plugin {
 		File temporaryFilesStorage = SVNTeamPlugin.instance().getStateLocation().toFile();
 		File []files = temporaryFilesStorage.listFiles(new FileFilter() {
 			public boolean accept(File pathname) {
-				return pathname.getName().endsWith("tmp");
+				return pathname.getName().indexOf(".tmp") != -1;
 			}
 		});
 		if (files != null) {

@@ -104,7 +104,7 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		    	locations[i].reconfigure();
 		    }
 		}
-	}
+		    }
 	
 	public void addRepositoriesStateChangedListener(IRepositoriesStateChangedListener listener) {
 		synchronized(this.repositoriesStateChangedListeners) {
@@ -180,7 +180,7 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		sslNew.setCertificatePath(sslOriginal.getCertificatePath());
 		sslNew.setPassPhrase(sslOriginal.getPassPhrase());
 		sslNew.setPassPhraseSaved(sslOriginal.isPassPhraseSaved());
-							
+		
 		ProxySettings proxyOriginal = from.getProxySettings();
 		ProxySettings proxyNew = to.getProxySettings();
 		proxyNew.setAuthenticationEnabled(proxyOriginal.isAuthenticationEnabled());
@@ -190,7 +190,7 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		proxyNew.setPasswordSaved(proxyOriginal.isPasswordSaved());
 		proxyNew.setPort(proxyOriginal.getPort());
 		proxyNew.setUsername(proxyOriginal.getUsername());
-			
+		
 		if (from instanceof SVNRepositoryLocation && to instanceof SVNRepositoryLocation) {
 			SVNRepositoryLocation tmpFrom = (SVNRepositoryLocation)from;
 			SVNRepositoryLocation tmpTo = (SVNRepositoryLocation)to;
@@ -403,7 +403,6 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		
 		//store SSH settings
 		SSHSettings sshSettings = tmp.getSSHSettings();
-		authInfo.put("ssh_port", "" + String.valueOf(sshSettings.getPort()));
 		boolean useKeyFile = sshSettings.isUseKeyFile();
 		authInfo.put("ssh_use_key", String.valueOf(useKeyFile));
 		boolean savePassphrase = sshSettings.isPassPhraseSaved();
@@ -443,7 +442,6 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 			
 			//recover SSH settings
 			SSHSettings sshSettings = tmp.getSSHSettings();
-			sshSettings.setPort(Integer.parseInt(authInfo.get("ssh_port")));;
 			sshSettings.setUseKeyFile(authInfo.get("ssh_use_key").equals("true"));
 			sshSettings.setPrivateKeyPath(authInfo.get("ssh_key"));
 			sshSettings.setPassPhraseSaved(authInfo.get("ssh_passphrase_saved").equals("true"));
