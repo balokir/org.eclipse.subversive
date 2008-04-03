@@ -65,11 +65,8 @@ public class SVNFolderListener implements IResourceChangeListener {
 								return true;
 							}
 							
-							if (resource.getType() == IResource.PROJECT && 
-								(delta.getKind() == IResourceDelta.ADDED || delta.getKind() == IResourceDelta.CHANGED) &&
-								delta.getFlags() == IResourceDelta.OPEN &&
-								SVNTeamPlugin.instance().getOptionProvider().isAutomaticProjectShareEnabled() &&
-								((IProject)resource).isOpen()) {
+							if (resource.getType() == IResource.PROJECT && delta.getKind() == IResourceDelta.ADDED && delta.getFlags() == IResourceDelta.OPEN &&
+								SVNTeamPlugin.instance().getOptionProvider().isAutomaticProjectShareEnabled() && ((IProject)resource).isOpen()) {
 								SVNChangeStatus info = SVNUtility.getSVNInfoForNotConnected(resource);
 								if (info != null && info.url != null) {
 									CompositeOperation op = new CompositeOperation("Operation.Reconnect");

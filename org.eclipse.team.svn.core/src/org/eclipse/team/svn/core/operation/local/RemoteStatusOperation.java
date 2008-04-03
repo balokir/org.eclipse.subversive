@@ -79,7 +79,9 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 				if (parent != null) {// can be null for drive roots
 					Path projectPath = this.getProjectPath(parent);
 					if (projectPath != null) {
-						this.postStatus(parent, status);
+						if (status.nodeKind != SVNEntry.Kind.DIR) {
+							this.postStatus(parent, status);
+						}
 						this.postStatus(projectPath.toString(), status);
 					}
 				}

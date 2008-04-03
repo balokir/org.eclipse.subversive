@@ -13,7 +13,9 @@ package org.eclipse.team.svn.core.operation.local.management;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.SVNTeamProjectMapper;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
@@ -41,6 +43,11 @@ public class ReconnectProjectOperation extends AbstractWorkingCopyOperation {
 	public ReconnectProjectOperation(IResourceProvider provider, IRepositoryLocation location) {
 		super("Operation.Reconnect", provider);
 		this.location = location;
+	}
+	
+	public ISchedulingRule getSchedulingRule() {
+		// reconnect always requires root as scheduling rule
+		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 	
 	protected void runImpl(IProgressMonitor monitor) throws Exception {

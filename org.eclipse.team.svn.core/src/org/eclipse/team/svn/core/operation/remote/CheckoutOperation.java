@@ -12,8 +12,7 @@
 package org.eclipse.team.svn.core.operation.remote;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -32,26 +31,22 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
  * @author Alexander Gurov
  */
 public class CheckoutOperation extends AbstractActionOperation implements IResourceProvider {
-	protected HashMap<String, IRepositoryResource> checkoutMap;
 	protected IProject []projects;
 	protected CheckoutAsOperation []operations;
 	protected ISchedulingRule rule;
 	
-	public CheckoutOperation(HashMap<String, IRepositoryResource> checkoutMap, boolean respectHierarchy, String location, boolean checkoutRecursively) {
+	public CheckoutOperation(Map<String, IRepositoryResource> checkoutMap, boolean respectHierarchy, String location, boolean checkoutRecursively) {
 		this(checkoutMap, respectHierarchy, location, checkoutRecursively, false);
 	}
 
-	public CheckoutOperation(HashMap<String, IRepositoryResource> checkoutMap, boolean respectHierarchy, String location, boolean checkoutRecursively, boolean ignoreExternals) {
+	public CheckoutOperation(Map<String, IRepositoryResource> checkoutMap, boolean respectHierarchy, String location, boolean checkoutRecursively, boolean ignoreExternals) {
 		super("Operation.CheckOut");
-		this.checkoutMap = checkoutMap;
 		
 		ArrayList<IProject> projects = new ArrayList<IProject>();
 		ArrayList<CheckoutAsOperation> operations = new ArrayList<CheckoutAsOperation>();
 		ArrayList<ISchedulingRule> rules = new ArrayList<ISchedulingRule>();
-		for (Iterator<String> iter = this.checkoutMap.keySet().iterator(); iter.hasNext(); ) {
-			String name = iter.next();
-			IRepositoryResource currentResource = this.checkoutMap.get(name);
-			CheckoutAsOperation coOp = CheckoutOperation.getCheckoutAsOperation(name, currentResource, respectHierarchy, location, checkoutRecursively, ignoreExternals);
+		for (Map.Entry<String, IRepositoryResource> entry : checkoutMap.entrySet()) {
+			CheckoutAsOperation coOp = CheckoutOperation.getCheckoutAsOperation(entry.getKey(), entry.getValue(), respectHierarchy, location, checkoutRecursively, ignoreExternals);
 			operations.add(coOp);
 			projects.add(coOp.getProject());
 			rules.add(coOp.getSchedulingRule());
@@ -76,7 +71,7 @@ public class CheckoutOperation extends AbstractActionOperation implements IResou
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		for (int i = 0; i < this.operations.length && !monitor.isCanceled(); i++) {
 			this.operations[i].setConsoleStream(this.getConsoleStream());
-			ProgressMonitorUtility.doTask(this.operations[i], monitor, IActionOperation.DEFAULT_WEIGHT * this.checkoutMap.keySet().size(), IActionOperation.DEFAULT_WEIGHT);
+			ProgressMonitorUtility.doTask(this.operations[i], monitor, IActionOperation.DEFAULT_WEIGHT * this.projects.length, IActionOperation.DEFAULT_WEIGHT);
 			this.reportStatus(this.operations[i].getStatus());
 		}
 	}

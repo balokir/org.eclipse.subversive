@@ -12,7 +12,9 @@
 package org.eclipse.team.svn.core.operation.remote.management;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
+import org.eclipse.team.svn.core.operation.file.SVNFileStorage;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 
 /**
@@ -31,6 +33,10 @@ public class SaveRepositoryLocationsOperation extends AbstractActionOperation {
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		SVNRemoteStorage.instance().saveConfiguration();
+		if (SVNTeamPlugin.instance().isLocationsDirty()) {
+			SVNFileStorage.instance().saveConfiguration();
+			SVNTeamPlugin.instance().setLocationsDirty(false);
+		}
 	}
 	
 }
