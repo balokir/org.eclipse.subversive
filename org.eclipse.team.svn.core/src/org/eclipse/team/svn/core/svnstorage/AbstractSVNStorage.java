@@ -357,17 +357,15 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		
 		proxyService.addProxyChangeListener(new IProxyChangeListener() {
 			public void proxyInfoChanged(IProxyChangeEvent event) {
-				if (event.getChangeType() == IProxyChangeEvent.PROXY_DATA_CHANGED) {
-					IProxyData [] newDatas = event.getChangedProxyData();
-					for (IProxyData current : newDatas) {
-						if (current.isRequiresAuthentication()){
-							AbstractSVNStorage.this.proxyCredentialsManager.setPassword(current.getPassword());
-							AbstractSVNStorage.this.proxyCredentialsManager.setUsername(current.getUserId());
-							AbstractSVNStorage.this.dispose();
-							break;
-						}
+				IProxyData [] newDatas = event.getChangedProxyData();
+				for (IProxyData current : newDatas) {
+					if (current.isRequiresAuthentication()){
+						AbstractSVNStorage.this.proxyCredentialsManager.setPassword(current.getPassword());
+						AbstractSVNStorage.this.proxyCredentialsManager.setUsername(current.getUserId());
+						break;
 					}
 				}
+				AbstractSVNStorage.this.dispose();
 			}
 		});
 		
