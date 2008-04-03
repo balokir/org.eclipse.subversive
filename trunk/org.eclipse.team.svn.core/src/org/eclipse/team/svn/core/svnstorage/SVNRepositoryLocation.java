@@ -47,7 +47,6 @@ import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
-import org.eclipse.team.svn.core.resource.ProxySettings;
 import org.eclipse.team.svn.core.resource.SSHSettings;
 import org.eclipse.team.svn.core.resource.SSLSettings;
 import org.eclipse.team.svn.core.utility.ILoggedOperationFactory;
@@ -82,7 +81,6 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	protected boolean passwordSaved;
 	private transient String passwordTemporary;
 	private List serializedRevisionLinks;
-	private ProxySettings proxySettings;
 	private SSLSettings sslSettings;
 	private SSHSettings sshSettings;
 	

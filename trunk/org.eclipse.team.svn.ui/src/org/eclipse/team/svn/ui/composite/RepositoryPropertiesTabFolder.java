@@ -39,7 +39,6 @@ import org.eclipse.team.svn.core.connector.ISVNCredentialsPrompt;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
-import org.eclipse.team.svn.core.resource.ProxySettings;
 import org.eclipse.team.svn.core.resource.SSHSettings;
 import org.eclipse.team.svn.core.resource.SSLSettings;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -107,7 +106,6 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 	protected String sipUsername;
 	protected String sipPassword;
 	protected boolean sipIsPasswordSaved;
-	protected ProxySettings sipProxySettings;
 	protected SSHSettings sipSSHSettings;
 	protected SSLSettings sipSSLSettings;
 	
