@@ -185,15 +185,13 @@ public class SVNTeamPasswordManagementPreferencesPage extends AbstractSVNTeamPre
 	protected boolean checkIfAnyPasswordSaved(IRepositoryLocation location) {		
 		return location.isPasswordSaved() ||
 			location.getSSHSettings().isPassPhraseSaved() ||
-			location.getSSLSettings().isPassPhraseSaved() ||
-			location.getProxySettings().isPasswordSaved();
+			location.getSSLSettings().isPassPhraseSaved();
 	}
 	
 	protected void resetPasswordsSaving(IRepositoryLocation location) {
 		location.setPasswordSaved(false);
 		location.getSSHSettings().setPassPhraseSaved(false);
 		location.getSSLSettings().setPassPhraseSaved(false);
-		location.getProxySettings().setPasswordSaved(false);
 		location.reconfigure();
 	}
 	

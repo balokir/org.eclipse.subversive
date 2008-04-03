@@ -11,7 +11,11 @@
 
 package org.eclipse.team.svn.ui.panel.callback;
 
+import java.net.MalformedURLException;
+
 import org.eclipse.compare.internal.TabFolderLayout;
+import org.eclipse.core.net.proxy.IProxyData;
+import org.eclipse.core.net.proxy.IProxyService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -22,12 +26,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNCredentialsPrompt;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
-import org.eclipse.team.svn.core.resource.ProxySettings;
 import org.eclipse.team.svn.core.resource.SSHSettings;
 import org.eclipse.team.svn.core.resource.SSLSettings;
+import org.eclipse.team.svn.core.svnstorage.SVNCachedProxyCredentialsManager;
+import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.svnstorage.SVNRepositoryLocation;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.composite.CredentialsComposite;
 import org.eclipse.team.svn.ui.composite.ProxyComposite;
@@ -50,6 +57,7 @@ public class PromptCredentialsPanel extends AbstractDialogPanel {
     protected CredentialsComposite credentialsComposite;
 	protected String username;
 	protected String password;
+	protected String host;
 	protected boolean savePassword;
 	
 	protected SSHComposite compositeSSH;
@@ -58,14 +66,7 @@ public class PromptCredentialsPanel extends AbstractDialogPanel {
 	
 	protected SSHSettings sshSettings;
 	protected SSLSettings sslSettings;
-	
-	protected boolean proxyEnabled;
-	protected String proxyHost;
-	protected int proxyPort;
-	protected boolean proxyAuthenticationEnabled;
-	protected String proxyUsername;
-	protected String proxyPassword;
-	protected boolean proxySavePassword;
+
 	protected String rootLocationName;
 	
 	protected int connectionType;
@@ -80,6 +81,8 @@ public class PromptCredentialsPanel extends AbstractDialogPanel {
         this.dialogDescription = SVNTeamUIPlugin.instance().getResource("PromptCredentialsPanel.Description");
         this.rootLocationName = SVNTeamUIPlugin.instance().getResource("PromptCredentialsPanel.LocationRealm");
         this.defaultMessage = forWhat;
+        this.host = SVNTeamPlugin.instance().getProxyService().getProxyData(
+        		forWhat.split(":")[0].equals("https") ? IProxyData.HTTPS_PROXY_TYPE : IProxyData.HTTP_PROXY_TYPE).getHost();
         this.connectionType = connectionType;
         this.selectedRealm = this.connectionType != SVNRepositoryLocation.PROXY_CONNECTION ? forWhat : this.rootLocationName;
 
@@ -191,62 +194,6 @@ public class PromptCredentialsPanel extends AbstractDialogPanel {
 	public void setSSLPassphraseSaved(boolean sslPassphraseSaved) {
 		this.sslSettings.setPassPhraseSaved(sslPassphraseSaved);
 	}
-
-	public boolean isProxyEnabled() {
-		return this.proxyEnabled;
-	}
-
-	public void setProxyEnabled(boolean proxyEnabled) {
-		this.proxyEnabled = proxyEnabled;
-	}
-
-	public String getProxyHost() {
-		return this.proxyHost;
-	}
-
-	public void setProxyHost(String proxyHost) {
-		this.proxyHost = proxyHost;
-	}
-
-	public String getProxyPassword() {
-		return this.proxyPassword;
-	}
-
-	public void setProxyPassword(String proxyPassword) {
-		this.proxyPassword = proxyPassword;
-	}
-
-	public int getProxyPort() {
-		return this.proxyPort;
-	}
-
-	public void setProxyPort(int proxyPort) {
-		this.proxyPort = proxyPort;
-	}
-
-	public boolean isProxySavePassword() {
-		return this.proxySavePassword;
-	}
-
-	public void setProxySavePassword(boolean proxySavePassword) {
-		this.proxySavePassword = proxySavePassword;
-	}
-
-	public String getProxyUsername() {
-		return this.proxyUsername;
-	}
-
-	public void setProxyUsername(String proxyUsername) {
-		this.proxyUsername = proxyUsername;
-	}
-	
-	public boolean isProxyAuthenticationEnabled() {
-		return this.proxyAuthenticationEnabled;
-	}
-
-	public void setProxyAuthenticationEnabled(boolean proxyAuthenticationEnabled) {
-		this.proxyAuthenticationEnabled = proxyAuthenticationEnabled;
-	}
     
     public void createControlsImpl(Composite parent) {
 		GridLayout layout = null;
@@ -297,13 +244,10 @@ public class PromptCredentialsPanel extends AbstractDialogPanel {
 			TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
 			tabItem.setText(SVNTeamUIPlugin.instance().getResource("PromptCredentialsPanel.Tab.ProxySettings"));
 			this.proxyComposite = new ProxyComposite(tabFolder, SWT.NONE, this, true);
-			this.proxyComposite.setProxyEnabled(this.proxyEnabled);
-			this.proxyComposite.setHost(this.proxyHost);
-			this.proxyComposite.setPort(this.proxyPort);
-			this.proxyComposite.setAuthenticationEnabled(this.proxyAuthenticationEnabled);
-			this.proxyComposite.setUsername(this.proxyUsername);
-			this.proxyComposite.setPassword(this.proxyPassword);
-			this.proxyComposite.setSavePassword(this.proxySavePassword);
+			SVNCachedProxyCredentialsManager proxyCredentialsManager = SVNRemoteStorage.instance().getProxyCredentialsManager();
+   			this.proxyComposite.setUsername(proxyCredentialsManager.getUsername());
+   			this.proxyComposite.setPassword(proxyCredentialsManager.getPassword());
+   			this.proxyComposite.setHost(this.host);
 			this.proxyComposite.initialize();
 			tabItem.setControl(this.proxyComposite);
 		}
@@ -343,9 +287,6 @@ public class PromptCredentialsPanel extends AbstractDialogPanel {
 		if (this.connectionType == SVNRepositoryLocation.SSL_CONNECTION) {
 			this.compositeSSL.resetChanges();
 		}
-		if (this.connectionType == SVNRepositoryLocation.PROXY_CONNECTION) {
-			this.proxyComposite.resetChanges();
-		}
     	super.postInit();
     }
     
@@ -375,15 +316,9 @@ public class PromptCredentialsPanel extends AbstractDialogPanel {
     	} 
     	else {
     		this.proxyComposite.saveChanges();
-			if (this.proxyEnabled = this.proxyComposite.isProxyEnabled()) {
-				this.proxyHost = this.proxyComposite.getHost();
-				this.proxyPort = this.proxyComposite.getPort();
-				if (this.proxyAuthenticationEnabled = this.proxyComposite.isAuthenticationEnabled()) {
-					this.proxyUsername = this.proxyComposite.getUsername();
-					this.proxyPassword = this.proxyComposite.getPassword();
-					this.proxySavePassword = this.proxyComposite.isSavePassword();
-				}
-			}
+    		SVNCachedProxyCredentialsManager proxyCredentialsManager = SVNRemoteStorage.instance().getProxyCredentialsManager();
+			proxyCredentialsManager.setUsername(this.proxyComposite.getUsername());
+			proxyCredentialsManager.setPassword(this.proxyComposite.getPassword());
 		}
     }
 
@@ -523,6 +458,8 @@ public class PromptCredentialsPanel extends AbstractDialogPanel {
 	    protected boolean showPanel(IRepositoryLocation inputLocation, final int connectionType, final String realm) {
 	    	final IRepositoryLocation location = inputLocation.getLocationForRealm(realm) != null ? inputLocation.getLocationForRealm(realm) : inputLocation;
             final int []retVal = new int[1];
+            final SSLSettings settings = location.getSSLSettings();
+            
             UIMonitorUtility.getDisplay().syncExec(new Runnable() {
                 public void run() {
                     PromptCredentialsPanel panel = new PromptCredentialsPanel(realm, connectionType);
@@ -539,23 +476,12 @@ public class PromptCredentialsPanel extends AbstractDialogPanel {
                          	panel.setSSHPassphraseSaved(settings.isPassPhraseSaved());
                          	panel.setSSHPort(settings.getPort());
                          } else if (connectionType == SVNRepositoryLocation.SSL_CONNECTION) {
-                         	SSLSettings settings = location.getSSLSettings();
                          	panel.setSSLAuthenticationEnabled(settings.isAuthenticationEnabled());
                          	panel.setSSLCertificatePath(settings.getCertificatePath());
                          	panel.setSSLPassphrase(settings.getPassPhrase());
                          	panel.setSSLPassphraseSaved(settings.isPassPhraseSaved());
                          }
                     } 
-                    else {
-                    	ProxySettings settings = location.getProxySettings();
-                    	panel.setProxyEnabled(settings.isEnabled());
-                    	panel.setProxyHost(settings.getHost());
-                    	panel.setProxyPort(settings.getPort());
-                    	panel.setProxyAuthenticationEnabled(settings.isAuthenticationEnabled());
-                    	panel.setProxyUsername(settings.getUsername());
-                    	panel.setProxyPassword(settings.getPassword());
-                    	panel.setProxySavePassword(settings.isPasswordSaved());
-                    }
                     if ((retVal[0] = dialog.open()) == 0) {
                     	DefaultPrompt.this.realmToSave = panel.getRealmToSave();
                     	if (connectionType != SVNRepositoryLocation.PROXY_CONNECTION) {
@@ -578,13 +504,29 @@ public class PromptCredentialsPanel extends AbstractDialogPanel {
                             }
                     	} 
                     	else {
-                        	DefaultPrompt.this.proxyEnabled = panel.isProxyEnabled();
-                        	DefaultPrompt.this.proxyHost = panel.getProxyHost();
-                        	DefaultPrompt.this.proxyPort = panel.getProxyPort();
-                        	DefaultPrompt.this.proxyAuthenticationEnabled = panel.isProxyAuthenticationEnabled();
-                        	DefaultPrompt.this.proxyUsername = panel.getProxyUsername();
-                        	DefaultPrompt.this.proxyPassword = panel.getProxyPassword();
-                        	DefaultPrompt.this.proxySavePassword = panel.isProxySavePassword();
+                    		IProxyService proxyService = SVNTeamPlugin.instance().getProxyService();
+                    		String proxyType;
+                    		SVNCachedProxyCredentialsManager proxyCredentialsManager = SVNRemoteStorage.instance().getProxyCredentialsManager();
+                    		String protocol = "http";
+                    		try {
+                    			protocol = SVNUtility.getSVNUrl(location.getUrlAsIs()).getProtocol();
+                    		}
+                    		catch (MalformedURLException ex) {
+                    			//ignore
+                    		}
+                    		if (protocol != null && protocol.equals("https")) {
+                    			proxyType = IProxyData.HTTPS_PROXY_TYPE;
+                    		}
+                    		else {
+                    			proxyType = IProxyData.HTTP_PROXY_TYPE;
+                    		}
+                    		IProxyData proxyData = proxyService.getProxyData(proxyType);
+                            DefaultPrompt.this.proxyHost = proxyData.getHost();
+                            DefaultPrompt.this.proxyPort = proxyData.getPort();
+                            DefaultPrompt.this.proxyAuthenticationEnabled = proxyData.isRequiresAuthentication();
+                            DefaultPrompt.this.proxyUsername = proxyCredentialsManager.getUsername();
+                            DefaultPrompt.this.proxyPassword = proxyCredentialsManager.getPassword();
+                            DefaultPrompt.this.proxySavePassword = true;
                         }
                     }
                     else {

@@ -65,7 +65,6 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 	protected RepositoryPropertiesComposite repositoryPropertiesPanel;
 	protected SSHComposite sshComposite;
 	protected SSLComposite sslComposite;
-	protected ProxyComposite proxyComposite;
 	protected RepositoryRootsComposite rootsComposite;
 	protected Composite parent;
 	protected IRepositoryLocation repositoryLocation;
@@ -84,7 +83,6 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 	
 	protected TabItem sshTab;
 	protected TabItem sslTab;
-	protected TabItem proxyTab;
 	protected Composite unavailableSSHComposite;
 	protected Composite unavailableProxyComposite;
 	
@@ -137,10 +135,6 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 		this.sipIsPasswordSaved = saved;
 	}
 	
-	public ProxySettings getProxySettings() {
-		return this.sipProxySettings = this.proxyComposite.getProxySettingsDirect();
-	}
-	
 	public SSLSettings getSSLSettings() {
 		return this.sipSSLSettings = this.sslComposite.getSSLSettingsDirect();
 	}
@@ -155,7 +149,6 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 		this.repositoryPropertiesPanel.setPasswordSavedDirect(this.sipIsPasswordSaved);
 		this.sshComposite.setSSHSettingsDirect(this.sipSSHSettings);
 		this.sslComposite.setSSLSettingsDirect(this.sipSSLSettings);
-		this.proxyComposite.setProxySettingsDirect(this.sipProxySettings);
 	}
 	
 	public void initialize() {
@@ -199,14 +192,14 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 		    	return null;
 		    }
 		}; 
-		this.validationManager.attachTo(authorInput, new AbstractVerifierProxy(verifier){
+		this.validationManager.attachTo(this.authorInput, new AbstractVerifierProxy(verifier){
 			protected boolean isVerificationEnabled(Control input) {
 				return RepositoryPropertiesTabFolder.this.authorEnabled.getSelection();
 			}
 		});
-		authorEnabled.addSelectionListener(new SelectionListener() {
+		this.authorEnabled.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent event) {
-				authorInput.setEnabled(((Button)event.widget).getSelection());
+				RepositoryPropertiesTabFolder.this.authorInput.setEnabled(((Button)event.widget).getSelection());
 				RepositoryPropertiesTabFolder.this.validationManager.validateContent();
 			}
 			public void widgetDefaultSelected(SelectionEvent e) {			
@@ -235,16 +228,6 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 
 		this.unavailableProxyComposite = this.createUnavailableComposite(tabFolder);
 		this.unavailableProxyComposite.setVisible(false);
-		this.createProxyComposite(tabFolder);
-		this.proxyComposite.setVisible(false);
-		this.proxyTab = new TabItem(tabFolder, SWT.NONE);
-		this.proxyTab.setText(SVNTeamUIPlugin.instance().getResource("RepositoryPropertiesTabFolder.Proxy"));
-		if ((CoreExtensionsManager.instance().getSVNConnectorFactory().getSupportedFeatures() & ISVNConnectorFactory.OptionalFeatures.PROXY_SETTINGS) != 0) {
-			this.proxyTab.setControl(this.proxyComposite);
-		}
-		else {
-			this.proxyTab.setControl(this.unavailableProxyComposite);
-		}	
 
 		Composite bottomPart = new Composite(this, SWT.NONE);
 		layout = new GridLayout();
@@ -381,21 +364,6 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 		return this.sshComposite;
 	}
 	
-	protected Composite createProxyComposite(Composite tabFolder) {
-		this.proxyComposite = new ProxyComposite(tabFolder, this.style, this.validationManager);
-		ProxySettings settings = this.repositoryLocation.getProxySettings();
-		this.proxyComposite.setProxyEnabled(settings.isEnabled());
-		this.proxyComposite.setHost(settings.getHost());
-		this.proxyComposite.setPort(settings.getPort());
-		this.proxyComposite.setAuthenticationEnabled(settings.isAuthenticationEnabled());
-		this.proxyComposite.setUsername(settings.getUsername());
-		this.proxyComposite.setPassword(settings.getPassword());
-		this.proxyComposite.setSavePassword(settings.isPasswordSaved());
-		this.proxyComposite.initialize();
-		
-		return this.proxyComposite;
-	}
-	
 	protected Composite createSSLHostComposite(Composite tabFolder) {
 		this.sslComposite = new SSLComposite(tabFolder, this.style, this.validationManager);
 		this.sslComposite.setCredentialsInput(this.repositoryLocation.getSSLSettings());
@@ -439,16 +407,13 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 	
 	public void handleLinkSelection() {
 		boolean sshWasAllowed = (CoreExtensionsManager.instance().getSVNConnectorFactory().getSupportedFeatures() & ISVNConnectorFactory.OptionalFeatures.SSH_SETTINGS) != 0;
-		boolean proxyWasAllowed = (CoreExtensionsManager.instance().getSVNConnectorFactory().getSupportedFeatures() & ISVNConnectorFactory.OptionalFeatures.PROXY_SETTINGS) != 0;
 
 		String pageId = "org.eclipse.team.svn.ui.SVNTeamPreferences";
 		PreferencesUtil.createPreferenceDialogOn(null, pageId, new String[] {pageId}, null).open();
 
 		boolean sshAllowed = (CoreExtensionsManager.instance().getSVNConnectorFactory().getSupportedFeatures() & ISVNConnectorFactory.OptionalFeatures.SSH_SETTINGS) != 0;
-		boolean proxyAllowed = (CoreExtensionsManager.instance().getSVNConnectorFactory().getSupportedFeatures() & ISVNConnectorFactory.OptionalFeatures.PROXY_SETTINGS) != 0;
 		
 		this.updateTabContent(sshWasAllowed, sshAllowed, this.sshTab, this.sshComposite, this.unavailableSSHComposite);
-		this.updateTabContent(proxyWasAllowed, proxyAllowed, this.proxyTab, this.proxyComposite, this.unavailableProxyComposite);
 	}
 	
 	public void updateTabContent(boolean wasAvailable, boolean isAvailable, TabItem tab, AbstractDynamicComposite availableComposite, Composite unavailableComposite) {
@@ -490,21 +455,7 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 			this.sshComposite.saveChanges();
 		}
 		this.sslComposite.saveChanges();
-		if ((CoreExtensionsManager.instance().getSVNConnectorFactory().getSupportedFeatures() & ISVNConnectorFactory.OptionalFeatures.PROXY_SETTINGS) != 0) {
-			this.proxyComposite.saveChanges();
-		}
 		this.rootsComposite.saveChanges();
-		
-		if ((CoreExtensionsManager.instance().getSVNConnectorFactory().getSupportedFeatures() & ISVNConnectorFactory.OptionalFeatures.PROXY_SETTINGS) != 0) {
-			ProxySettings proxySettings = this.repositoryLocation.getProxySettings();
-			proxySettings.setEnabled(this.proxyComposite.isProxyEnabled());
-			proxySettings.setAuthenticationEnabled(this.proxyComposite.isAuthenticationEnabled());
-			proxySettings.setHost(this.proxyComposite.getHost());
-			proxySettings.setPort(this.proxyComposite.getPort());
-			proxySettings.setUsername(this.proxyComposite.getUsername());
-			proxySettings.setPassword(this.proxyComposite.getPassword());
-			proxySettings.setPasswordSaved(this.proxyComposite.isSavePassword());
-		}
 		
 		this.repositoryLocation.setAuthorName(this.authorInput.getText());
 		this.repositoryLocation.setAuthorNameEnabled(this.authorEnabled.getSelection());
@@ -541,9 +492,6 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 			this.sshComposite.resetChanges();
 		}
 		this.sslComposite.resetChanges();
-		if ((CoreExtensionsManager.instance().getSVNConnectorFactory().getSupportedFeatures() & ISVNConnectorFactory.OptionalFeatures.PROXY_SETTINGS) != 0) {
-			this.proxyComposite.resetChanges();
-		}
 		this.rootsComposite.resetChanges();
 	}
 

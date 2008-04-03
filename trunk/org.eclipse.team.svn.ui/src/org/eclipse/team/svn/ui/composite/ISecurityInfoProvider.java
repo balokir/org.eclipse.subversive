@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.ui.composite;
 
-import org.eclipse.team.svn.core.resource.ProxySettings;
 import org.eclipse.team.svn.core.resource.SSHSettings;
 import org.eclipse.team.svn.core.resource.SSLSettings;
 
@@ -29,7 +28,6 @@ public interface ISecurityInfoProvider {
 	public boolean isPasswordSaved();
 	public void setPasswordSaved(boolean saved);
 	
-	public ProxySettings getProxySettings();
 	public SSLSettings getSSLSettings();
 	public SSHSettings getSSHSettings();
 	
