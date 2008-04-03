@@ -45,6 +45,7 @@ import org.eclipse.team.svn.core.resource.ProxySettings;
 import org.eclipse.team.svn.core.resource.SSHSettings;
 import org.eclipse.team.svn.core.resource.SSLSettings;
 import org.eclipse.team.svn.core.utility.SVNUtility;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Basic IRemoteStorage implementation
@@ -67,6 +68,12 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 			IRepositoryLocation location = AbstractSVNStorage.this.newRepositoryLocation((String)event.getNewValue());
 			readLocations.add(location);
 			AbstractSVNStorage.this.repositories = readLocations.toArray(new IRepositoryLocation[readLocations.size()]);
+			try {
+				((IEclipsePreferences)event.getSource()).flush();
+			}
+			catch (BackingStoreException e) {
+				LoggedOperation.reportError("preferenceChange", e);
+			}
 		}
 	}
 	
