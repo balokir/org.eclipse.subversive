@@ -4,7 +4,7 @@
 
 <toc label="Team support with SVN®" href="teamSupport.html">
 	<topic label="SVN Repository Exploring Perspective" href="teamSupport/repos_persp.html"/>
-	<topic label="New SVN Repository Location Wizard" href="teamSupport/new_location_wiz.html"/>
+	<topic label="SVN Repository Location Wizard" href="teamSupport/new_location_wiz.html"/>
 	<topic label="SVN Sharing Wizard" href="teamSupport/sharing_wiz.html"/>
 	<topic label="SVN Find/Check Out As Wizard" href="teamSupport/find_check_wiz.html"/>
 	<topic label="SVN Console" href="teamSupport/console.html"/>
