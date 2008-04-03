@@ -44,6 +44,8 @@ import org.eclipse.team.svn.core.resource.ISVNStorage;
 import org.eclipse.team.svn.core.resource.ProxySettings;
 import org.eclipse.team.svn.core.resource.SSHSettings;
 import org.eclipse.team.svn.core.resource.SSLSettings;
+import org.eclipse.team.svn.core.svnstorage.events.IRepositoriesStateChangedListener;
+import org.eclipse.team.svn.core.svnstorage.events.RepositoriesStateChangedEvent;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -61,6 +63,7 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 	protected IPreferenceChangeListener repoPrefChangeListener;
 	
 	protected IRepositoryLocation []repositories;
+	protected List<IRepositoriesStateChangedListener> repositoriesStateChangedListeners;
 	
 	protected class RepositoryPreferenceChangeListener implements IPreferenceChangeListener {
 		public void preferenceChange(PreferenceChangeEvent event) {
@@ -74,11 +77,13 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 			catch (BackingStoreException e) {
 				LoggedOperation.reportError("preferenceChange", e);
 			}
+			AbstractSVNStorage.this.fireRepositoriesStateChanged(new RepositoriesStateChangedEvent(location, RepositoriesStateChangedEvent.ADDED));
 		}
 	}
 	
 	public AbstractSVNStorage() {
 		this.repositories = new IRepositoryLocation[0];
+		this.repositoriesStateChangedListeners = new ArrayList<IRepositoriesStateChangedListener>();
 	}
 	
 	public void dispose() {
@@ -98,6 +103,26 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		    for (int i = 0; i < locations.length; i++) {
 		    	locations[i].reconfigure();
 		    }
+		}
+	}
+	
+	public void addRepositoriesStateChangedListener(IRepositoriesStateChangedListener listener) {
+		synchronized(this.repositoriesStateChangedListeners) {
+			this.repositoriesStateChangedListeners.add(listener);
+		}
+	}
+	
+	public void removeRepositoriesStateChangedListener(IRepositoriesStateChangedListener listener) {
+		synchronized(this.repositoriesStateChangedListeners) {
+			this.repositoriesStateChangedListeners.remove(listener);
+		}
+	}
+
+	public void fireRepositoriesStateChanged(RepositoriesStateChangedEvent event) {
+		synchronized (this.repositoriesStateChangedListeners) {
+			for (IRepositoriesStateChangedListener listener : this.repositoriesStateChangedListeners) {
+				listener.repositoriesStateChanged(event);
+			}
 		}
 	}
 	
@@ -155,7 +180,7 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		sslNew.setCertificatePath(sslOriginal.getCertificatePath());
 		sslNew.setPassPhrase(sslOriginal.getPassPhrase());
 		sslNew.setPassPhraseSaved(sslOriginal.isPassPhraseSaved());
-		
+							
 		ProxySettings proxyOriginal = from.getProxySettings();
 		ProxySettings proxyNew = to.getProxySettings();
 		proxyNew.setAuthenticationEnabled(proxyOriginal.isAuthenticationEnabled());
@@ -165,7 +190,7 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		proxyNew.setPasswordSaved(proxyOriginal.isPasswordSaved());
 		proxyNew.setPort(proxyOriginal.getPort());
 		proxyNew.setUsername(proxyOriginal.getUsername());
-		
+			
 		if (from instanceof SVNRepositoryLocation && to instanceof SVNRepositoryLocation) {
 			SVNRepositoryLocation tmpFrom = (SVNRepositoryLocation)from;
 			SVNRepositoryLocation tmpTo = (SVNRepositoryLocation)to;
@@ -215,6 +240,7 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 			tmp.add(location);
 			this.repositories = tmp.toArray(new IRepositoryLocation[tmp.size()]);
 		}
+		this.fireRepositoriesStateChanged(new RepositoriesStateChangedEvent(location, RepositoriesStateChangedEvent.ADDED));
 	}
 	
 	public synchronized void removeRepositoryLocation(IRepositoryLocation location) {
@@ -227,6 +253,7 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		if (tmp.remove(location)) {
 			this.repositories = tmp.toArray(new IRepositoryLocation[tmp.size()]);
 		}
+		this.fireRepositoriesStateChanged(new RepositoriesStateChangedEvent(location, RepositoriesStateChangedEvent.REMOVED));
 	}
 
 	public synchronized void saveConfiguration() throws Exception {
