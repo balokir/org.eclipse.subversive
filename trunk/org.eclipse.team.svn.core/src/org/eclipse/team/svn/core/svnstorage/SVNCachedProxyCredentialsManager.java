@@ -23,7 +23,7 @@ public class SVNCachedProxyCredentialsManager {
 	protected String username;
 	protected String password;
 	
-	SVNCachedProxyCredentialsManager(IProxyService proxyService) {	
+	public SVNCachedProxyCredentialsManager(IProxyService proxyService) {	
 		IProxyData proxyData = proxyService.getProxyData(IProxyData.HTTP_PROXY_TYPE);
 		this.username = proxyData.isRequiresAuthentication() ? proxyData.getUserId() : "";
 		this.password = proxyData.isRequiresAuthentication() ? proxyData.getPassword() : "";
