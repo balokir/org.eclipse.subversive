@@ -74,7 +74,7 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 		final HashMap result = new HashMap();
 		final ISVNEntryStatusCallback cb = new ISVNEntryStatusCallback() {
 			public void next(SVNChangeStatus status) {
-				result.put(status.path, status);
+				result.put(new Path(status.path), status);
 				String parent = new File(status.path).getParent();
 				if (parent != null) {// can be null for drive roots
 					Path projectPath = this.getProjectPath(parent);
@@ -88,10 +88,11 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 			}
 			
 			private void postStatus(String path, SVNChangeStatus baseStatus) {
-				SVNChangeStatus st = (SVNChangeStatus)result.get(path);
+				Path tPath = new Path(path);
+				SVNChangeStatus st = (SVNChangeStatus)result.get(tPath);
 				if (st == null || st.reposLastCmtRevision < baseStatus.reposLastCmtRevision) {
 					SVNChangeStatus status = this.makeStatus(path, baseStatus);
-					result.put(status.path, status);
+					result.put(tPath, status);
 				}
 			}
 			
