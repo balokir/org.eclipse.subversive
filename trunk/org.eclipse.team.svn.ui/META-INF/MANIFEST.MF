@@ -77,5 +77,6 @@ Require-Bundle: org.eclipse.ui.ide,
  org.eclipse.osgi,
  org.eclipse.help,
  org.eclipse.team.svn.core,
- org.eclipse.ui.console
+ org.eclipse.ui.console,
+ org.eclipse.core.net
 Eclipse-LazyStart: true; exceptions="org.eclipse.team.svn.ui.decorator.wrapper"

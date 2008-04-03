@@ -31,9 +31,11 @@ Export-Package: org.eclipse.team.svn.core,
  org.eclipse.team.svn.core.resource,
  org.eclipse.team.svn.core.resource.events,
  org.eclipse.team.svn.core.svnstorage,
+ org.eclipse.team.svn.core.svnstorage.events,
  org.eclipse.team.svn.core.utility
 Require-Bundle: org.eclipse.core.resources,
  org.eclipse.core.runtime,
  org.eclipse.team.core,
- org.eclipse.core.filesystem
+ org.eclipse.core.filesystem,
+ org.eclipse.core.net
 Eclipse-LazyStart: true; exceptions="org.eclipse.team.svn.core.resource.events"
