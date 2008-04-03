@@ -588,13 +588,6 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
         });
 	    this.getProxyCache().clear();
 	}
-	
-	public ProxySettings getProxySettings() {
-		if (this.proxySettings == null) {
-			this.proxySettings = new ProxySettings();
-		}
-		return this.proxySettings;
-	}
 
 	public synchronized SSLSettings getSSLSettings() {
 		if (this.sslSettings == null) {
@@ -966,44 +959,28 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
         }
         
         protected void checkForSaveImpl(IRepositoryLocation location, boolean retVal, int connectionType) {
-        	if (connectionType == SVNRepositoryLocation.PROXY_CONNECTION) {
-            	ProxySettings settings = location.getProxySettings();
-            	settings.setEnabled(this.prompt.isProxyEnabled());
-            	if (settings.isEnabled()) {
-            		settings.setHost(this.prompt.getProxyHost());
-            		settings.setPort(this.prompt.getProxyPort());
-            		settings.setAuthenticationEnabled(this.prompt.isProxyAuthenticationEnabled());
-            		if (settings.isAuthenticationEnabled()) {
-            			settings.setUsername(this.prompt.getProxyUserName());
-            			settings.setPassword(this.prompt.getProxyPassword());
-            			settings.setPasswordSaved(this.prompt.isSaveProxyPassword());
-            		}
-            	}
-            } 
-        	else {
-        		location.setUsername(this.prompt.getUsername());
-        		location.setPassword(this.prompt.getPassword());
-        		location.setPasswordSaved(this.prompt.isSaveCredentialsEnabled());
-            
-        		if (connectionType == SVNRepositoryLocation.SSH_CONNECTION) {
-        			SSHSettings settings = location.getSSHSettings();
-        			settings.setUseKeyFile(this.prompt.isSSHPublicKeySelected());
-        			if (settings.isUseKeyFile()) {
-        				settings.setPrivateKeyPath(this.prompt.getSSHPrivateKeyPath());
-        				settings.setPassPhraseSaved(this.prompt.isSSHPrivateKeyPassphraseSaved());
-        				settings.setPassPhrase(this.getSSHPrivateKeyPassphrase());
-        			}
-        		}
-        		if (connectionType == SVNRepositoryLocation.SSL_CONNECTION) {
-        			SSLSettings settings = location.getSSLSettings();
-        			settings.setAuthenticationEnabled(this.prompt.isSSLAuthenticationEnabled());
-        			if (settings.isAuthenticationEnabled()) {
-        				settings.setCertificatePath(this.prompt.getSSLClientCertPath());
-        				settings.setPassPhrase(this.prompt.getSSLClientCertPassword());
-        				settings.setPassPhraseSaved(this.prompt.isSSLSavePassphrase());
-        			}
-        		}
-        	}
+    		location.setUsername(this.prompt.getUsername());
+    		location.setPassword(this.prompt.getPassword());
+    		location.setPasswordSaved(this.prompt.isSaveCredentialsEnabled());
+        
+    		if (connectionType == SVNRepositoryLocation.SSH_CONNECTION) {
+    			SSHSettings settings = location.getSSHSettings();
+    			settings.setUseKeyFile(this.prompt.isSSHPublicKeySelected());
+    			if (settings.isUseKeyFile()) {
+    				settings.setPrivateKeyPath(this.prompt.getSSHPrivateKeyPath());
+    				settings.setPassPhraseSaved(this.prompt.isSSHPrivateKeyPassphraseSaved());
+    				settings.setPassPhrase(this.getSSHPrivateKeyPassphrase());
+    			}
+    		}
+    		if (connectionType == SVNRepositoryLocation.SSL_CONNECTION) {
+    			SSLSettings settings = location.getSSLSettings();
+    			settings.setAuthenticationEnabled(this.prompt.isSSLAuthenticationEnabled());
+    			if (settings.isAuthenticationEnabled()) {
+    				settings.setCertificatePath(this.prompt.getSSLClientCertPath());
+    				settings.setPassPhrase(this.prompt.getSSLClientCertPassword());
+    				settings.setPassPhraseSaved(this.prompt.isSSLSavePassphrase());
+    			}
+    		}
         }
         
 	}

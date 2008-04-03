@@ -36,10 +36,9 @@ public class SVNFileStorage extends AbstractSVNStorage implements IFileStorage {
 	 */
 	public static final String PREF_REPOSITORIES_NODE = "externalRepositories";
 	
-	//TODO check version
 	/**
 	 * The name of file containing the SVN repository locations information (for integration).
-	 * deprecated Since Subversive 0.7.0 v20080404 - must not be used. The valid information is stored in
+	 * Deprecated since Subversive 0.7.0 v20080404 - must not be used. The valid information is stored in
 	 * preferences.
 	 * @see SVNFileStorage.PREF_REPOSITORIES_NODE
 	 */

@@ -19,7 +19,6 @@ import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
-import org.eclipse.team.svn.core.resource.ProxySettings;
 import org.eclipse.team.svn.core.resource.SSHSettings;
 import org.eclipse.team.svn.core.resource.SSLSettings;
 
@@ -124,10 +123,6 @@ public class SVNRepositoryLocationWrapper implements IRepositoryLocation {
 
 	public String getPassword() {
 		return this.location.getPassword();
-	}
-
-	public ProxySettings getProxySettings() {
-		return this.location.getProxySettings();
 	}
 
 	public Collection getRealmLocations() {

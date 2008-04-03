@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.operation.local.management.FindRelatedProjectsOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
-import org.eclipse.team.svn.core.resource.ProxySettings;
 import org.eclipse.team.svn.core.resource.SSHSettings;
 import org.eclipse.team.svn.core.resource.SSLSettings;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -176,17 +175,7 @@ public class RepositoryPropertiesComposite extends Composite implements IPropert
 				sslNew.setCertificatePath(sslOriginal.getCertificatePath());
 				sslNew.setPassPhrase(sslOriginal.getPassPhrase());
 				sslNew.setPassPhraseSaved(sslOriginal.isPassPhraseSaved());
-				
-				ProxySettings proxyOriginal = location.getProxySettings();
-				ProxySettings proxyNew = RepositoryPropertiesComposite.this.provider.getProxySettings();
-				proxyNew.setAuthenticationEnabled(proxyOriginal.isAuthenticationEnabled());
-				proxyNew.setEnabled(proxyOriginal.isEnabled());
-				proxyNew.setHost(proxyOriginal.getHost());
-				proxyNew.setPassword(proxyOriginal.getPassword());
-				proxyNew.setPasswordSaved(proxyOriginal.isPasswordSaved());
-				proxyNew.setPort(proxyOriginal.getPort());
-				proxyNew.setUsername(proxyOriginal.getUsername());
-				
+			
 				RepositoryTreePanel panel = new RepositoryTreePanel(
 						SVNTeamUIPlugin.instance().getResource("RepositoryPropertiesComposite.SelectNewURL"),
 						SVNTeamUIPlugin.instance().getResource("RepositoryBrowsingPanel.Description"),
@@ -219,16 +208,6 @@ public class RepositoryPropertiesComposite extends Composite implements IPropert
 					sslNew.setCertificatePath(sslOriginal.getCertificatePath());
 					sslNew.setPassPhrase(sslOriginal.getPassPhrase());
 					sslNew.setPassPhraseSaved(sslOriginal.isPassPhraseSaved());
-					
-					proxyOriginal = RepositoryPropertiesComposite.this.provider.getProxySettings();
-					proxyNew = location.getProxySettings();
-					proxyNew.setAuthenticationEnabled(proxyOriginal.isAuthenticationEnabled());
-					proxyNew.setEnabled(proxyOriginal.isEnabled());
-					proxyNew.setHost(proxyOriginal.getHost());
-					proxyNew.setPassword(proxyOriginal.getPassword());
-					proxyNew.setPasswordSaved(proxyOriginal.isPasswordSaved());
-					proxyNew.setPort(proxyOriginal.getPort());
-					proxyNew.setUsername(proxyOriginal.getUsername());
 					
 					RepositoryPropertiesComposite.this.provider.commit();
 				}

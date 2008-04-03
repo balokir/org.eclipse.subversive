@@ -70,7 +70,6 @@ public interface IRepositoryLocation extends IRepositoryBase, IRepositoryResourc
 	public void reconfigure();
 	public void dispose();
 	
-	public ProxySettings getProxySettings();
 	public SSLSettings getSSLSettings();
 	public SSHSettings getSSHSettings();
 	

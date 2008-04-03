@@ -32,6 +32,8 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.internal.preferences.Base64;
+import org.eclipse.core.net.proxy.IProxyData;
+import org.eclipse.core.net.proxy.IProxyService;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -75,9 +77,9 @@ import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
-import org.eclipse.team.svn.core.resource.ProxySettings;
 import org.eclipse.team.svn.core.resource.SSHSettings;
 import org.eclipse.team.svn.core.resource.SSLSettings;
+import org.eclipse.team.svn.core.svnstorage.SVNCachedProxyCredentialsManager;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 
 /**
@@ -658,15 +660,35 @@ public final class SVNUtility {
 		proxy.setUsername(location.getUsername());
 		proxy.setPassword(location.getPassword());
 		
-		ProxySettings proxySettings = location.getProxySettings();
-	    if (proxySettings.isEnabled()) {
-	    	proxy.setProxy(proxySettings.getHost(), proxySettings.getPort(), proxySettings.isAuthenticationEnabled() ? proxySettings.getUsername() : "", proxySettings.isAuthenticationEnabled() ? proxySettings.getPassword() : "");
+		SSLSettings sslSettings = location.getSSLSettings();
+		String host = "localhost";
+		String protocol = "file";
+		try {
+			protocol = SVNUtility.getSVNUrl(location.getUrl()).getProtocol();
+			if (!protocol.equals("file")) {
+				host = SVNUtility.getSVNUrl(location.getUrl()).getHost();
+			}
+		}
+		catch (MalformedURLException ex) {
+			//skip
+		}
+		IProxyService proxyService = SVNTeamPlugin.instance().getProxyService();
+		HashSet<String> nonProxied = new HashSet<String>(Arrays.asList(proxyService.getNonProxiedHosts()));
+		String proxyType;
+    	SVNCachedProxyCredentialsManager proxyCredetialsManager = SVNRemoteStorage.instance().getProxyCredentialsManager();
+		if (protocol.equals("https")){
+			proxyType = IProxyData.HTTPS_PROXY_TYPE;
+		}
+		else {
+			proxyType = IProxyData.HTTP_PROXY_TYPE;
+		}
+	    if (proxyService.isProxiesEnabled() && !nonProxied.contains(host)) {
+	    	IProxyData proxyData = proxyService.getProxyData(proxyType);
+	    	proxy.setProxy(proxyData.getHost(), proxyData.getPort(), proxyCredetialsManager.getUsername(), proxyCredetialsManager.getPassword());
 	    }
 	    else {
 	    	proxy.setProxy(null, -1, null, null);
 	    }
-	    
-	    SSLSettings sslSettings = location.getSSLSettings();
 	    if (sslSettings.isAuthenticationEnabled()) {
 		    proxy.setClientSSLCertificate(sslSettings.getCertificatePath(), sslSettings.getPassPhrase());
 	    }

@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.text.MessageFormat;
 
+import org.eclipse.core.net.proxy.IProxyService;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IWorkspace;
@@ -42,9 +43,10 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.osgi.framework.BundleContext;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
- * Team provider plugin implementation
+ * Team provider plug-in implementation
  * 
  * @author Alexander Gurov
  */
@@ -59,6 +61,7 @@ public class SVNTeamPlugin extends Plugin {
 	private ProjectCloseListener pcListener;
 	private ResourceChangeListener rcListener;
 	private SVNFolderListener svnListener;
+	private ServiceTracker tracker;
 	
 	private IErrorHandlingFacility errorHandlingFacility;
 	
@@ -144,6 +147,9 @@ public class SVNTeamPlugin extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		
+		this.tracker = new ServiceTracker(context, IProxyService.class.getName(), null);
+		this.tracker.open();
+		
 		IPath stateLocation = this.getStateLocation();
 		SVNFileStorage.instance().initialize(stateLocation);
 		
@@ -179,6 +185,10 @@ public class SVNTeamPlugin extends Plugin {
 		job.schedule();
 	}
 	
+	public IProxyService getProxyService() {
+		return (IProxyService)this.tracker.getService();
+	}
+	
 	public void stop(BundleContext context) throws Exception {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		
@@ -192,6 +202,8 @@ public class SVNTeamPlugin extends Plugin {
 		}
 		SVNRemoteStorage.instance().dispose();
 		SVNFileStorage.instance().dispose();
+		
+		this.tracker.close();
 		
 		// cleanup temporary files if any
 		File temporaryFilesStorage = SVNTeamPlugin.instance().getStateLocation().toFile();

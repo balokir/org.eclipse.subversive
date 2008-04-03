@@ -27,6 +27,10 @@ import java.util.Map;
 
 import org.eclipse.core.internal.preferences.Base64;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
+import org.eclipse.core.net.proxy.IProxyChangeEvent;
+import org.eclipse.core.net.proxy.IProxyChangeListener;
+import org.eclipse.core.net.proxy.IProxyData;
+import org.eclipse.core.net.proxy.IProxyService;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -41,7 +45,6 @@ import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.core.resource.ISVNStorage;
-import org.eclipse.team.svn.core.resource.ProxySettings;
 import org.eclipse.team.svn.core.resource.SSHSettings;
 import org.eclipse.team.svn.core.resource.SSLSettings;
 import org.eclipse.team.svn.core.svnstorage.events.IRepositoriesStateChangedListener;
@@ -61,6 +64,7 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 	protected File stateInfoFile;
 	protected String preferencesNode;
 	protected IPreferenceChangeListener repoPrefChangeListener;
+	protected SVNCachedProxyCredentialsManager proxyCredentialsManager;
 	
 	protected IRepositoryLocation []repositories;
 	protected List<IRepositoriesStateChangedListener> repositoriesStateChangedListeners;
@@ -104,7 +108,7 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		    	locations[i].reconfigure();
 		    }
 		}
-		    }
+	}
 	
 	public void addRepositoriesStateChangedListener(IRepositoriesStateChangedListener listener) {
 		synchronized(this.repositoriesStateChangedListeners) {
@@ -179,18 +183,8 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		sslNew.setAuthenticationEnabled(sslOriginal.isAuthenticationEnabled());
 		sslNew.setCertificatePath(sslOriginal.getCertificatePath());
 		sslNew.setPassPhrase(sslOriginal.getPassPhrase());
-		sslNew.setPassPhraseSaved(sslOriginal.isPassPhraseSaved());
-		
-		ProxySettings proxyOriginal = from.getProxySettings();
-		ProxySettings proxyNew = to.getProxySettings();
-		proxyNew.setAuthenticationEnabled(proxyOriginal.isAuthenticationEnabled());
-		proxyNew.setEnabled(proxyOriginal.isEnabled());
-		proxyNew.setHost(proxyOriginal.getHost());
-		proxyNew.setPassword(proxyOriginal.getPassword());
-		proxyNew.setPasswordSaved(proxyOriginal.isPasswordSaved());
-		proxyNew.setPort(proxyOriginal.getPort());
-		proxyNew.setUsername(proxyOriginal.getUsername());
-		
+		sslNew.setPassPhraseSaved(sslOriginal.isPassPhraseSaved());			
+			
 		if (from instanceof SVNRepositoryLocation && to instanceof SVNRepositoryLocation) {
 			SVNRepositoryLocation tmpFrom = (SVNRepositoryLocation)from;
 			SVNRepositoryLocation tmpTo = (SVNRepositoryLocation)to;
@@ -254,6 +248,10 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 			this.repositories = tmp.toArray(new IRepositoryLocation[tmp.size()]);
 		}
 		this.fireRepositoriesStateChanged(new RepositoriesStateChangedEvent(location, RepositoriesStateChangedEvent.REMOVED));
+	}
+	
+	public SVNCachedProxyCredentialsManager getProxyCredentialsManager() {
+		return this.proxyCredentialsManager;
 	}
 
 	public synchronized void saveConfiguration() throws Exception {
@@ -354,6 +352,24 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 	}
     
 	protected void initializeImpl(String preferencesNode) throws Exception {
+		IProxyService proxyService = SVNTeamPlugin.instance().getProxyService();
+		this.proxyCredentialsManager = new SVNCachedProxyCredentialsManager(proxyService);
+		
+		proxyService.addProxyChangeListener(new IProxyChangeListener() {
+			public void proxyInfoChanged(IProxyChangeEvent event) {
+				if (event.getChangeType() == IProxyChangeEvent.PROXY_DATA_CHANGED) {
+					IProxyData [] newDatas = event.getChangedProxyData();
+					for (IProxyData current : newDatas) {
+						if (current.isRequiresAuthentication()){
+							AbstractSVNStorage.this.proxyCredentialsManager.setPassword(current.getPassword());
+							AbstractSVNStorage.this.proxyCredentialsManager.setUsername(current.getUserId());
+							break;
+						}
+					}
+				}
+			}
+		});
+		
 		this.preferencesNode = preferencesNode;
 		this.repoPrefChangeListener = new RepositoryPreferenceChangeListener();
 		IEclipsePreferences repositoryPreferences = AbstractSVNStorage.getRepositoriesPreferences(this.preferencesNode);
