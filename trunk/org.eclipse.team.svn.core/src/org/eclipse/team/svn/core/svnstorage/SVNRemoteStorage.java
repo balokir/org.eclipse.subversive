@@ -84,7 +84,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	//TODO check version
 	/**
 	 * The name of file containing the SVN repository locations information.
-	 * @deprecated Since Subversive 0.7.0 v20080404 - must not be used. The valid information
+	 * deprecated Since Subversive 0.7.0 v20080404 - must not be used. The valid information
 	 * is stored in preferences.
 	 * @see SVNRemoteStorage.PREF_REPOSITORIES_NODE
 	 */
