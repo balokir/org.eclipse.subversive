@@ -10,7 +10,7 @@
 		<topic label="SVN History View" href="teamSupport/history_view.html"/>
 	</context>
 	<context id="propertiesViewContext">
-		<description>'SVN Properties View' provides a probability to view SVN® Properties for the resource.</description>
+		<description>'SVN Properties View' provides a probability to view SVN Properties for the resource.</description>
 		<topic label="SVN Properties View" href="teamSupport/props_view.html"/>
 	</context>
 	<context id="repositoryViewContext">
@@ -28,7 +28,7 @@
 
 	<!-- Pages Contexts -->
 	<context id="SVNInfoContext">
-		<description>'SVN Info' is shown in the resource properties window if it's linked to a repository location. Here the user can find the SVN® properties of the selected resource, its local path, its remote location, its state, revision number, the date and the author of last changes.</description>
+		<description>'SVN Info' is shown in the resource properties window if it's linked to a repository location. Here the user can find the SVN properties of the selected resource, its local path, its remote location, its state, revision number, the date and the author of last changes.</description>
 		<topic label="SVN Info" href="teamSupport/svn_info.html"/>
 	</context>
 	<context id="SVNPreferencesContext">
@@ -40,7 +40,7 @@
 		<topic label="Annotate Preferences" href="preferences/pref_annotate.html"/>
 	</context>
 	<context id="autoPropsPreferencesContext">
-		<description>On this page user can Import, Export, Add, Remove and Edit automatic properties for specified files. To do described actions use appropriate buttons.</description>
+		<description>On this page user can Import, Export, Add, Remove and Edit automatic properties for specified files or define custom properties.</description>
 		<topic label=" Automatic Properties Preferences" href="preferences/pref_autoprops.html"/>
 	</context>
 	<context id="commentTemplatesPreferencesContext">
@@ -170,10 +170,10 @@
 		<description>This dialog provides the user a probability to view his generated product quality report. In this preview window the report looks just like the plug-in developers will see it after receiving.</description>
 	</context>
 	<context id="errorDialogContext">
-		<description>If you see this dialog than the error has occured during the operation. For more information on the error click on the 'Advance' button. Mail report sending may be available. To preview the report click on the 'Preview' button, to send it click on the 'Send' button and to ignore it click on 'Don't send' button.</description>
+		<description>If you see this dialog than the error has occurred in Subversive plug-in. To post a bug on Bugzilla, click on the 'Send Report' button and to ignore it click on 'Don't Send' button. The bug report is automatically filled with stack-trace, Subversive version and JVM configuration.</description>
 	</context>
-	<context id="errorPreviewDialogContext">
-		<description>This dialog provides the user a probability to view his generated error report. In this preview window the report looks just like the plug-in developers will see it after receiving.</description>
+	<context id="cancelDialogContext">
+		<description>If you see this dialog than the operation hasn't normally finished. The error information is contained in this dialog.</description>
 	</context>
 	<context id="revisionLinkDialogContext">
 		<description>This dialog provides the user a probability to select a revision to create a link to.</description>

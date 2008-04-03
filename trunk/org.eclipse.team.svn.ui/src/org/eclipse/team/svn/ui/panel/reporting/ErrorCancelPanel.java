@@ -158,7 +158,10 @@ public class ErrorCancelPanel extends AbstractDialogPanel {
     }
     
 	public String getHelpId() {
-    	return "org.eclipse.team.svn.help.errorDialogContext";
+		if (this.sendMail) {
+			return "org.eclipse.team.svn.help.errorDialogContext";
+		}
+		return "org.eclipse.team.svn.help.cancelDialogContext";
 	}
     
     protected void saveChangesImpl() {

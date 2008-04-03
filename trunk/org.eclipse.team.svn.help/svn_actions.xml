@@ -20,4 +20,5 @@
 	<topic label="Patching" href="teamSupport/SVNaction/patch.html"/>
 	<topic label="Reverting changes" href="teamSupport/SVNaction/revert.html"/>
 	<topic label="Extracting changes" href="teamSupport/SVNaction/extract.html"/>
+	<topic label="Import/Export repository locations" href="teamSupport/SVNaction/location_ie.html"/>
 </toc>
