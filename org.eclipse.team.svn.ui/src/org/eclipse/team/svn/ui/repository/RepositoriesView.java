@@ -31,6 +31,10 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
+import org.eclipse.team.svn.core.resource.events.ResourceStatesChangedEvent;
+import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.svn.core.svnstorage.events.IRepositoriesStateChangedListener;
+import org.eclipse.team.svn.core.svnstorage.events.RepositoriesStateChangedEvent;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.action.AbstractSVNTeamAction;
 import org.eclipse.team.svn.ui.action.remote.DeleteAction;
@@ -270,6 +274,14 @@ public class RepositoriesView extends ViewPart {
 		};
 		
 		this.getViewSite().getPage().addPartListener(this.partListener);
+		
+		SVNRemoteStorage.instance().addRepositoriesStateChangedListener(new IRepositoriesStateChangedListener() {
+			public void repositoriesStateChanged(RepositoriesStateChangedEvent event) {
+				if (event.getAction() == RepositoriesStateChangedEvent.ADDED) {
+					RepositoriesView.refreshRepositories(false);
+				}
+			}
+		});
 		
 		//Setting context help
 	    PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.repositoryViewContext");
