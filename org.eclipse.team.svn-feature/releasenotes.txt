@@ -5,11 +5,11 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 0.7.0.v20080407 release date: 07 April 2008
+Version 0.7.0.v20080404 release date: 04 April 2008
 
 1. What's New
 
-   The version is 0.7.0 release which build ID is v20080407. The main target of the release is 
+   The version is 0.7.0 release which build ID is v20080404. The main target of the release is 
    transferring Subversive development to Eclipse.org.
    
    Changes in compare with previous version are listed below. The full list of 
