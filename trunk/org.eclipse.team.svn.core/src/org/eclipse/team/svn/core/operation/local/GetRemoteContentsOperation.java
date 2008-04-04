@@ -71,7 +71,7 @@ public class GetRemoteContentsOperation extends AbstractWorkingCopyOperation {
 		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
 			String url = SVNUtility.encodeURL(remote.getUrl());
-			String wcPath = this.remotePath2localPath.get(remote.getUrl());
+			String wcPath = this.remotePath2localPath.get(url);
 			if (remote instanceof IRepositoryFile) {
 				File parent = new File(wcPath.substring(0, wcPath.lastIndexOf("/")));
 				if (!parent.exists()) {

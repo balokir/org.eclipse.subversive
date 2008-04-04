@@ -1410,7 +1410,7 @@ public class HistoryActionManager {
 	}
 	
 	protected void getContentAffected(IActionOperation preOp, IRepositoryResourceProvider provider, String remotePath) {
-		String rootUrl = SVNRemoteStorage.instance().asRepositoryResource(this.view.getResource()).getRepositoryLocation().getRoot().getUrl();
+		String rootUrl = SVNRemoteStorage.instance().asRepositoryResource(this.view.getResource()).getRepositoryLocation().getRepositoryRootUrl();
 		String remoteViewedResourceUrl = SVNRemoteStorage.instance().asRepositoryResource(this.view.getResource()).getUrl();
 		String remoteFoundPath = this.traceUrlToRevision(rootUrl, remotePath, this.view.getCurrentRevision(), this.selectedRevision);
 		if (!remoteFoundPath.startsWith(remoteViewedResourceUrl)) {
