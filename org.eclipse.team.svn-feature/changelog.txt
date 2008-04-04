@@ -8,6 +8,43 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.0.v20080407 [07 April 2008]
+
+Features:
+ * Use Eclipse IDE proxy settings (bug 225289)
+   + special thanks to Anders Sveen
+
+ * Create M2Eclipse integration plug-in (bug 224074)
+   + special thanks to Eugene Kuleshov
+
+ * Export/Import of repository locations settings (bug 211248)
+ * Rework repository and authentication setting storing. (bug 224616)
+ * Affected path drop-down improvements. (bug 223630)
+ * Update help according to plug-in changes (bug 225568)
+ * Enable Extract for single selection in HistoryView. (bug 223632)
+
+Fixes:
+ * Minimize repository root access (bug 211391)
+   + special thanks to Pavel Zuev
+
+ * ClassCastException on Override and Update from Synchronize View (bug 224842)
+   + special thanks to Daniel Hirscher, Genady Beryozkin, Edoardo Comar, Leo Dos Santos
+
+ * Freeze externals uses wrong revision when external reference points to tag or branch without modifications (bug 224597)
+   + special thanks to Marco Perrando
+
+ * Patch files created under subversive not compatible with patch program [REOPENED] (bug 222669)
+   + special thanks to Mike
+
+ * Password Management Pref Page improvements (bug 223510)
+ * "Delete" action enablement in Select Resources composite is wrong. (bug 223628)
+ * Enable filter actions for all filtered (History View) (bug 223627)
+ * Some operations can't be sent to background. (bug 223631)
+ * Information about file locker (bug 211254)
+ * Improve Progress Reporting in Composite Operations (bug 223343)
+
+--------------------------------------------------------------------------------
+
 Version 0.7.0.v20080321 [21 March 2008]
 
 Features:
