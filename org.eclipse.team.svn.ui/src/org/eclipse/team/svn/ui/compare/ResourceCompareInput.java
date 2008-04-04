@@ -13,7 +13,6 @@ package org.eclipse.team.svn.ui.compare;
 
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -216,8 +215,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 				rightPart += rightResourceName + " [" + rightRevisionPart + "]";
 			}
 
-			String format = CompareUI.getResourceBundle().getString("ResourceCompare.threeWay.title");
-			this.setTitle(MessageFormat.format(format, new Object[] {leftPart, ancestorPart, rightPart}));
+			this.setTitle(SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.Title3", new Object[] {leftPart, ancestorPart, rightPart}));
 		} 
 		else {
 			String leftPart = leftResourceName + " [" + leftRevisionPart;
@@ -231,8 +229,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 				rightPart += rightResourceName + " [" + rightRevisionPart + "]";
 			}
 			
-			String format = CompareUI.getResourceBundle().getString("ResourceCompare.twoWay.title");
-			this.setTitle(MessageFormat.format(format, new Object[] {leftPart, rightPart}));
+			this.setTitle(SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.Title2", new Object[] {leftPart, rightPart}));
 		}
 	}
 	

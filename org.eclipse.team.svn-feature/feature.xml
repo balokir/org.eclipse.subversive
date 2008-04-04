@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.team.svn"
       label="SVN Team Provider (Incubation)"
-      version="0.7.0.v20080402"
+      version="0.7.0.v20080404"
       provider-name="Eclipse.org"
       plugin="org.eclipse.team.svn">
    <install-handler/>
@@ -143,21 +143,21 @@ Java and all Java-based trademarks are trademarks of Sun Microsystems, Inc. in t
          id="org.eclipse.team.svn.core"
          download-size="900"
          install-size="900"
-         version="0.7.0.v20080402"
+         version="0.7.0.v20080404"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.team.svn.ui"
          download-size="1600"
          install-size="1600"
-         version="0.7.0.v20080402"
+         version="0.7.0.v20080404"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.team.svn.help"
          download-size="1900"
          install-size="1900"
-         version="0.7.0.v20080402"
+         version="0.7.0.v20080404"
          unpack="false"/>
 
 </feature>
