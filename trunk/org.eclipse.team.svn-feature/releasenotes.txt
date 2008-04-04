@@ -5,48 +5,48 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 0.7.0.v20080321 release date: 21 March 2008
+Version 0.7.0.v20080407 release date: 07 April 2008
 
 1. What's New
 
-   The version is 0.7.0 release which build ID is v20080321. The main target of the release is 
+   The version is 0.7.0 release which build ID is v20080407. The main target of the release is 
    transferring Subversive development to Eclipse.org.
    
    Changes in compare with previous version are listed below. The full list of 
    changes you can find in Change Log.
     
 	Features:
-	 * Changed Path filter for history view (bug 222943)
-	 * Provide filter management for ILogNode table (bug 222413)
-	 * Add drop-down menu to revert dialog. (bug 219983)
+	 * Use Eclipse IDE proxy settings (bug 225289)
+	   + special thanks to Anders Sveen
+	
+	 * Create M2Eclipse integration plug-in (bug 224074)
+	   + special thanks to Eugene Kuleshov
+	
+	 * Export/Import of repository locations settings (bug 211248)
+	 * Rework repository and authentication setting storing. (bug 224616)
+	 * Affected path drop-down improvements. (bug 223630)
+	 * Update help according to plug-in changes (bug 225568)
+	 * Enable Extract for single selection in HistoryView. (bug 223632)
 	
 	Fixes:
-	 * Merge changes does not show conflict when file has been renamed (bug 222541)
-	   + special thanks to Remi Nodet
+	 * Minimize repository root access (bug 211391)
+	   + special thanks to Pavel Zuev
 	
-	 * Package org.eclipse.team.svn.ui.history.model is not exported (bug 223129)
-	   + special thanks to Michael Valenta
+	 * ClassCastException on Override and Update from Synchronize View (bug 224842)
+	   + special thanks to Daniel Hirscher, Genady Beryozkin, Edoardo Comar, Leo Dos Santos
 	
-	 * Team Synchronization very slow (bug 222632)
-	   + special thanks to Marc Guenther
+	 * Freeze externals uses wrong revision when external reference points to tag or branch without modifications (bug 224597)
+	   + special thanks to Marco Perrando
 	
-	 * Patch files created under subversive not compatible with patch program (bug 222669)
+	 * Patch files created under subversive not compatible with patch program [REOPENED] (bug 222669)
 	   + special thanks to Mike
 	
-	 * svn merge view graphical synchronize overwrites changes in local version (bug 221239)
-	   + special thanks to Andrew Bachmann, Daniel Hirscher
-	
-	 * Advanced merge: Comparison uses empty "Remote File" (bug 220737)
-	   + special thanks to Hubert Bildstein
-	
-	 * ClassCastException in ShowConflictEditor operation (bug 211390)
-	 * Remove Property Editor references. (bug 222388)
-	 * Extract improvements (bug 222944)
-	 * Synch View Set Property Action bug (bug 223101)
+	 * Password Management Pref Page improvements (bug 223510)
+	 * "Delete" action enablement in Select Resources composite is wrong. (bug 223628)
+	 * Enable filter actions for all filtered (History View) (bug 223627)
+	 * Some operations can't be sent to background. (bug 223631)
+	 * Information about file locker (bug 211254)
 	 * Improve Progress Reporting in Composite Operations (bug 223343)
-	 * Update action in Synchronize View performs update to HEAD instead of revision of synchronization (bug 223322)
-	 * URL validation is incorrect (bug 223222)
-	 * Merge URLs selection dialog should disable revision selection if entered URL is invalid (bug 223221)
 
 2. Information
 
@@ -54,9 +54,9 @@ Version 0.7.0.v20080321 release date: 21 March 2008
 
    Subversive requires JDK 1.5 or higher and supports following versions of Eclipse:
     * 3.3 (tested with 3.3, 3.3.1)
-    * 3.4 (tested with 3.4M5)
+    * 3.4 (tested with 3.4M6)
    
-   Subversive supports Subversion versions 1.1-1.4 with SVN Kit 1.1.4 and JavaHL 1.4.5, 
+   Subversive supports Subversion versions 1.1-1.4 with SVN Kit 1.1.6 and JavaHL 1.4.5, 
    Subversion version 1.5 with SVN Kit 1.2.0 and JavaHL 1.5.0
 
 2.2 Known issues
