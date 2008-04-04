@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.TabFolder;
@@ -166,19 +167,19 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 		Composite rootsComposite = this.createRepositoryRootsComposite(tabFolder);
 		GridData data = new GridData();
 		data.verticalIndent = 10;	
-		authorEnabled = new Button(rootsComposite, SWT.CHECK);
-		authorEnabled.setText(SVNTeamUIPlugin.instance().getResource("NewRepositoryLocationWizard.OverrideAuthor")); 
-		authorEnabled.setSelection(this.repositoryLocation.isAuthorNameEnabled());
-		authorEnabled.setLayoutData(data);
+		this.authorEnabled = new Button(rootsComposite, SWT.CHECK);
+		this.authorEnabled.setText(SVNTeamUIPlugin.instance().getResource("NewRepositoryLocationWizard.OverrideAuthor")); 
+		this.authorEnabled.setSelection(this.repositoryLocation.isAuthorNameEnabled());
+		this.authorEnabled.setLayoutData(data);
 		String name = (this.repositoryLocation.getAuthorName() == null) ? "" : this.repositoryLocation.getAuthorName();
 		data = new GridData(GridData.FILL_HORIZONTAL);
-		authorInput = new Combo(rootsComposite, SWT.BORDER);
+		this.authorInput = new Combo(rootsComposite, SWT.BORDER);
 		this.authorNameHistory = new UserInputHistory(RepositoryPropertiesTabFolder.AUTHOR_HISTORY_NAME);
 		this.authorInput.setVisibleItemCount(this.authorNameHistory.getDepth());
 		this.authorInput.setItems(this.authorNameHistory.getHistory());
-		authorInput.setText(name);
-		authorInput.setEnabled(this.repositoryLocation.isAuthorNameEnabled());
-		authorInput.setLayoutData(data);
+		this.authorInput.setText(name);
+		this.authorInput.setEnabled(this.repositoryLocation.isAuthorNameEnabled());
+		this.authorInput.setLayoutData(data);
 		AbstractFormattedVerifier verifier = new AbstractFormattedVerifier("AuthorNameVerifier") {
 		    protected String getErrorMessageImpl(Control input) {
 		    	if (this.getText(input).equals("")) {
@@ -203,6 +204,29 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 			public void widgetDefaultSelected(SelectionEvent e) {			
 			}	
 		});
+		
+		Group proxyGroup = new Group(rootsComposite, SWT.NONE);
+		GridLayout proxyGroupLayout = new GridLayout(1, true);
+		proxyGroupLayout.marginHeight = 5;
+		proxyGroupLayout.marginWidth = 5;
+		proxyGroup.setLayout(proxyGroupLayout);
+		proxyGroup.setText(SVNTeamUIPlugin.instance().getResource("RepositoryPropertiesTabFolder.Proxy"));
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.verticalIndent = 10;
+		proxyGroup.setLayoutData(data);
+		
+		Link proxyLink = new Link(proxyGroup, SWT.WRAP);
+		proxyLink.setText(SVNTeamUIPlugin.instance().getResource("RepositoryPropertiesTabFolder.Proxy.Link"));
+		proxyLink.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				String pageId = "org.eclipse.ui.net.NetPreferences";
+				PreferencesUtil.createPreferenceDialogOn(null, pageId, new String[] {pageId}, null).open();
+			}
+		});
+		data = new GridData(GridData.FILL_BOTH);
+		data.widthHint = 200;
+		data.heightHint = DefaultDialog.convertHeightInCharsToPixels(this, 3);
+		proxyLink.setLayoutData(data);
 		
 		tabItem.setControl(rootsComposite);
 		this.unavailableSSHComposite = this.createUnavailableComposite(tabFolder);
