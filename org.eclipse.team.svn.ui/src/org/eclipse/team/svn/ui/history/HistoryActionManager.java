@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
@@ -1103,12 +1104,8 @@ public class HistoryActionManager {
 		        	manager.add(new Separator());
 		        	
 					boolean isPreviousExists = false;
-					if (affectedTableSelection.size() == 1) {
-						//FIXME copied resources also must be handled
-//						isPreviousExists = !(firstData.action == SVNLogPath.ChangeType.ADDED && firstData.copiedFromRevision == SVNRevision.INVALID_REVISION_NUMBER);
-						isPreviousExists = firstData.action == SVNLogPath.ChangeType.MODIFIED
-											|| firstData.action == SVNLogPath.ChangeType.REPLACED
-											|| (firstData.copiedFromPath != null && !firstData.copiedFromPath.equals(""));
+					if (affectedTableSelection.size() > 0) {
+						isPreviousExists = HistoryActionManager.this.checkSelectionForExistanceInPrev(affectedTableSelection);
 					}
 					manager.add(tAction = new HistoryAction("HistoryView.CompareWithPrevious") {
 						public void run() {
@@ -1177,21 +1174,21 @@ public class HistoryActionManager {
 							HistoryActionManager.this.createBranchTag(viewer.getControl().getShell(), provider, provider, BranchTagAction.BRANCH_ACTION);
 						}
 					});
-					tAction.setEnabled(affectedTableSelection.size() > 0);
+					tAction.setEnabled(affectedTableSelection.size() > 0 && firstData.action != SVNLogPath.ChangeType.DELETED);
 					manager.add(tAction = new HistoryAction(tagFrom, "icons/common/actions/tag.gif") {
 						public void run() {
 							FromChangedPathDataProvider provider = new FromChangedPathDataProvider(firstData, false);
 							HistoryActionManager.this.createBranchTag(viewer.getControl().getShell(), provider, provider, BranchTagAction.TAG_ACTION);
 						}
 					});
-					tAction.setEnabled(affectedTableSelection.size() > 0);
+					tAction.setEnabled(affectedTableSelection.size() > 0 && firstData.action != SVNLogPath.ChangeType.DELETED);
 					manager.add(tAction = new HistoryAction("AddRevisionLinkAction.label") {
 						public void run() {
 							FromChangedPathDataProvider provider = new FromChangedPathDataProvider(firstData, false);
 							HistoryActionManager.this.addRevisionLink(provider, provider);
 						}
 					});
-					tAction.setEnabled(affectedTableSelection.size() > 0);
+					tAction.setEnabled(affectedTableSelection.size() > 0 && firstData.action != SVNLogPath.ChangeType.DELETED);
 				}
 			});
 			menuMgr.setRemoveAllWhenShown(true);
@@ -1287,21 +1284,21 @@ public class HistoryActionManager {
 							HistoryActionManager.this.createBranchTag(viewer.getControl().getShell(), provider, provider, BranchTagAction.BRANCH_ACTION);
 	        			}
 	        		});
-	        		tAction.setEnabled(affectedTableSelection.size() > 0);
+	        		tAction.setEnabled(affectedTableSelection.size() > 0 && node.getStatus() != SVNLogPath.ChangeType.DELETED);
 	        		manager.add(tAction = new HistoryAction("HistoryView.TagFrom", new String [] {String.valueOf(HistoryActionManager.this.selectedRevision)}, "icons/common/actions/tag.gif") {
 	        			public void run() {
 	        				FromAffectedPathsNodeProvider provider = new FromAffectedPathsNodeProvider(node);
 							HistoryActionManager.this.createBranchTag(viewer.getControl().getShell(), provider, provider, BranchTagAction.TAG_ACTION);
 	        			}
 	        		});
-	        		tAction.setEnabled(affectedTableSelection.size() > 0);
+	        		tAction.setEnabled(affectedTableSelection.size() > 0 && node.getStatus() != SVNLogPath.ChangeType.DELETED);
 	        		manager.add(tAction = new HistoryAction("AddRevisionLinkAction.label") {
 						public void run() {
 							FromAffectedPathsNodeProvider provider = new FromAffectedPathsNodeProvider(node);
 							HistoryActionManager.this.addRevisionLink(provider, provider);
 						}
 					});
-					tAction.setEnabled(affectedTableSelection.size() > 0);
+					tAction.setEnabled(affectedTableSelection.size() > 0 && node.getStatus() != SVNLogPath.ChangeType.DELETED);
 	            }
 	        });
 	        menuMgr.setRemoveAllWhenShown(true);
@@ -1309,6 +1306,21 @@ public class HistoryActionManager {
 	        site.registerContextMenu(menuMgr, viewer);
 		}
 		
+	}
+	
+	protected boolean checkSelectionForExistanceInPrev(IStructuredSelection selection) {
+		for (Iterator it = selection.iterator(); it.hasNext();) {
+			Object next = it.next();
+			if (next instanceof SVNChangedPathData) {
+				SVNChangedPathData current = (SVNChangedPathData)next;
+				if (!(current.action == SVNLogPath.ChangeType.MODIFIED
+					|| current.action == SVNLogPath.ChangeType.REPLACED
+					|| (current.copiedFromPath != null && !current.copiedFromPath.equals("")))){
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 	
 	protected void createPatchToPrevious(Shell shell, IActionOperation preOp, IRepositoryResourceProvider provider) {
