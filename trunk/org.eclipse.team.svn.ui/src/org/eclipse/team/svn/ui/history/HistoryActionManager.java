@@ -1146,7 +1146,7 @@ public class HistoryActionManager {
 							HistoryActionManager.this.doExport(viewer.getControl().getShell(), provider, provider);
 						}
 					});
-					tAction.setEnabled(affectedTableSelection.size() > 0);
+					tAction.setEnabled(affectedTableSelection.size() > 0 && firstData.action != SVNLogPath.ChangeType.DELETED);
 					manager.add(tAction = new HistoryAction("CreatePatchCommand.label") {
 						public void run() {
 							FromChangedPathDataProvider provider = new FromChangedPathDataProvider(firstData, false);
@@ -1257,7 +1257,7 @@ public class HistoryActionManager {
 							HistoryActionManager.this.doExport(viewer.getControl().getShell(), provider, provider);
 						}
 					});
-					tAction.setEnabled(affectedTableSelection.size() > 0);
+					tAction.setEnabled(affectedTableSelection.size() > 0 && node.getStatus() != SVNLogPath.ChangeType.DELETED);
 	        		manager.add(tAction = new HistoryAction("CreatePatchCommand.label") {
 						public void run() {					
 							FromAffectedPathsNodeProvider provider = new FromAffectedPathsNodeProvider(node);
