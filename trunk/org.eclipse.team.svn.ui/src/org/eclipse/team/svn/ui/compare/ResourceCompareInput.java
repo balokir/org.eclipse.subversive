@@ -34,6 +34,7 @@ import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -157,7 +158,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		return this.root;
 	}
 
-	protected void findRootNode(Map path2node, IRepositoryResource resource, IProgressMonitor monitor) {
+	protected void findRootNode(Map<IPath, IDiffElement> path2node, IRepositoryResource resource, IProgressMonitor monitor) {
 		this.root = (BaseCompareNode)path2node.get(new Path(resource.getUrl()));
 	}
 	
@@ -304,14 +305,14 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		return null;
 	}
 	
-	protected IDiffContainer getParentCompareNode(IRepositoryResource current, Map path2node) throws Exception {
+	protected IDiffContainer getParentCompareNode(IRepositoryResource current, Map<IPath, IDiffContainer> path2node) throws Exception {
 		IRepositoryResource parent = current.getParent();
 		if (parent == null) {
 			return null;
 		}
 		
 		Path parentUrl = new Path(parent.getUrl());
-		IDiffContainer node = (IDiffContainer)path2node.get(parentUrl);
+		IDiffContainer node = path2node.get(parentUrl);
 		if (node == null) {
 			path2node.put(parentUrl, node = this.makeStubNode(this.getParentCompareNode(parent, path2node), parent));
 		}
@@ -358,7 +359,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 	protected abstract IDiffContainer makeStubNode(IDiffContainer parent, IRepositoryResource node);
 	
 	public class ResourceElement implements ITypedElement, IEncodedStreamContentAccessor, IContentChangeNotifier, IEditableContent {
-		protected Vector listenerList;
+		protected Vector<IContentChangeListener> listenerList;
 		protected boolean dirty;
 		protected String charset;
 		
@@ -371,7 +372,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 			this.resource = resource;
 			this.localAlias = alias;
 			this.editable = false;
-			this.listenerList = new Vector();
+			this.listenerList = new Vector<IContentChangeListener>();
 			if (!showContent) {
 				this.resource.setSelectedRevision(SVNRevision.INVALID_REVISION);
 			}
@@ -517,11 +518,11 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		}
 		
 		protected class LabelProviderWrapper implements ILabelProvider {
-			protected Map images;
+			protected Map<Object, Image> images;
 			protected ILabelProvider baseProvider;
 			
 			public LabelProviderWrapper(ILabelProvider baseProvider) {
-				this.images = new HashMap();
+				this.images = new HashMap<Object, Image>();
 				this.baseProvider = baseProvider;
 			}
 			
@@ -546,8 +547,8 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 			}
 			
 			public void dispose() {
-				for (Iterator it = this.images.values().iterator(); it.hasNext(); ) {
-					((Image)it.next()).dispose();
+				for (Iterator<Image> it = this.images.values().iterator(); it.hasNext(); ) {
+					it.next().dispose();
 				}
 				this.baseProvider.dispose();
 			}
