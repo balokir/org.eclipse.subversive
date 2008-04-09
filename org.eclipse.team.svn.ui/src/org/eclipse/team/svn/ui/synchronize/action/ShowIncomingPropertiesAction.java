@@ -63,7 +63,7 @@ public class ShowIncomingPropertiesAction extends AbstractSynchronizeModelAction
 	}
 
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
-	    IResourceChange change = (IResourceChange)((RemoteResourceVariant)ShowIncomingPropertiesAction.this.getSelectedSVNSyncInfo().getRemote()).getResource();
+	    IResourceChange change = (IResourceChange)((RemoteResourceVariant)this.getSelectedSVNSyncInfo().getRemote()).getResource();
 	    IRepositoryResource remote = change.getOriginator();
 		IResourcePropertyProvider provider = new GetRemotePropertiesOperation(remote);
 		ShowPropertiesOperation op = new ShowPropertiesOperation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), remote, provider);
