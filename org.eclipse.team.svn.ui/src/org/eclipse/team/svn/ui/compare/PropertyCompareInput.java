@@ -14,21 +14,30 @@ package org.eclipse.team.svn.ui.compare;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.CompareUI;
+import org.eclipse.compare.IContentChangeListener;
+import org.eclipse.compare.IContentChangeNotifier;
 import org.eclipse.compare.IEditableContent;
 import org.eclipse.compare.IStreamContentAccessor;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
+import org.eclipse.compare.structuremergeviewer.DiffTreeViewer;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.viewers.IOpenListener;
+import org.eclipse.jface.viewers.OpenEvent;
+import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNProperty;
@@ -46,6 +55,8 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  * @author Alexei Goncharov
  */
 public class PropertyCompareInput extends CompareEditorInput {
+	
+	protected DiffTreeViewer viewer;
 	
 	protected IRepositoryLocation location;
 	
@@ -69,6 +80,22 @@ public class PropertyCompareInput extends CompareEditorInput {
 		this.right = right;
 		this.ancestor = ancestor;
 		this.location = location;
+	}
+	
+	public Viewer createDiffViewer(Composite parent) {
+		this.viewer = (DiffTreeViewer)super.createDiffViewer(parent);
+		this.viewer.addOpenListener(new IOpenListener () {
+			public void open(OpenEvent event) {
+				PropertyCompareNode selected = (PropertyCompareNode)((TreeSelection)event.getSelection()).getPaths()[0].getFirstSegment();
+				CompareConfiguration conf = PropertyCompareInput.this.getCompareConfiguration();
+				if (PropertyCompareInput.this.ancestor != null) {
+					conf.setAncestorLabel(selected.getName() + " [" + String.valueOf(PropertyCompareInput.this.ancestor.revision) + "]");
+				}
+				conf.setLeftLabel(selected.getName() + " [" + String.valueOf(PropertyCompareInput.this.left.revision) + "]");
+				conf.setRightLabel(selected.getName() + " [" + String.valueOf(PropertyCompareInput.this.right.revision) + "]");				
+			}
+		});
+		return this.viewer;
 	}
 	
 	protected Object prepareInput(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -122,45 +149,7 @@ public class PropertyCompareInput extends CompareEditorInput {
 			String leftValue = this.leftProps.get(current);
 			String rightValue = this.rightProps.get(current);
 			String ancestorValue = this.ancestorProps.get(current);
-			int diffKind = Differencer.NO_CHANGE;
-			if (this.ancestor == null) {
-			}
-			else {
-				if (ancestorValue == null) {
-					if (rightValue != null && leftValue != null) {
-						diffKind = Differencer.ADDITION | Differencer.CONFLICTING;
-					}
-					else if (rightValue != null) {
-						diffKind = Differencer.RIGHT | Differencer.ADDITION;
-					}
-					else if (leftValue != null) {
-						diffKind = Differencer.LEFT | Differencer.ADDITION;
-					}
-				}
-				else {
-					if (rightValue != null && leftValue != null)
-					{
-						if (!rightValue.equals(ancestorValue) && !leftValue.equals(ancestorValue)) {
-							diffKind = Differencer.CHANGE | Differencer.CONFLICTING;
-						}
-						else if (!rightValue.equals(ancestorValue)) {
-							diffKind = Differencer.RIGHT | Differencer.CHANGE;
-						}
-						else if (!leftValue.equals(ancestorValue)) {
-							diffKind = Differencer.LEFT | Differencer.CHANGE;
-						}
-					}
-					else if (leftValue == null && rightValue == null) {
-						diffKind = Differencer.DELETION | Differencer.CONFLICTING;
-					}
-					else if (leftValue == null) {
-						diffKind = Differencer.LEFT | Differencer.DELETION;
-					}
-					else if (rightValue == null) {
-						diffKind = Differencer.RIGHT | Differencer.DELETION;
-					}
-				}
-			}
+			int diffKind = this.calculateDifference(leftValue, rightValue, ancestorValue);
 			if (diffKind != Differencer.NO_CHANGE) {
 				new PropertyCompareNode(
 						root,
@@ -189,9 +178,58 @@ public class PropertyCompareInput extends CompareEditorInput {
 		return null;
 	}
 	
+	protected int calculateDifference(String leftValue, String rightValue, String ancestorValue) {
+		int diffKind = Differencer.NO_CHANGE;
+		if (this.ancestor == null) {
+		}
+		else {
+			if (ancestorValue == null) {
+				if (rightValue != null && leftValue != null) {
+					diffKind = Differencer.ADDITION | Differencer.CONFLICTING;
+				}
+				else if (rightValue != null) {
+					diffKind = Differencer.RIGHT | Differencer.ADDITION;
+				}
+				else if (leftValue != null) {
+					diffKind = Differencer.LEFT | Differencer.ADDITION;
+				}
+			}
+			else {
+				if (rightValue != null && leftValue != null)
+				{
+					if (!rightValue.equals(ancestorValue) && !leftValue.equals(ancestorValue)) {
+						diffKind = Differencer.CHANGE | Differencer.CONFLICTING;
+					}
+					else if (!rightValue.equals(ancestorValue)) {
+						diffKind = Differencer.RIGHT | Differencer.CHANGE;
+					}
+					else if (!leftValue.equals(ancestorValue)) {
+						diffKind = Differencer.LEFT | Differencer.CHANGE;
+					}
+				}
+				else if (leftValue == null && rightValue == null) {
+					diffKind = Differencer.DELETION | Differencer.CONFLICTING;
+				}
+				else if (leftValue == null) {
+					diffKind = Differencer.LEFT | Differencer.DELETION;
+				}
+				else if (rightValue == null) {
+					diffKind = Differencer.RIGHT | Differencer.DELETION;
+				}
+			}
+		}
+		return diffKind;
+	}
+	
 	public void saveChanges(IProgressMonitor monitor) throws CoreException {
-		//PropertyCompareNode currentNode = (PropertyCompareNode)this.getSelectedEdition();
 		super.saveChanges(monitor);
+		PropertyCompareNode currentNode = (PropertyCompareNode)this.getSelectedEdition();
+		PropertyElement left = (PropertyElement)currentNode.getLeft();
+		PropertyElement right = (PropertyElement)currentNode.getRight();
+		PropertyElement ancestor = (PropertyElement)currentNode.getAncestor();
+		left.commit(monitor);
+		currentNode.setKind(this.calculateDifference(left.getValue(), right.getValue(), ancestor.getValue()));
+		this.viewer.refresh();
 	}
 	
 	public boolean okPressed() {
@@ -213,16 +251,19 @@ public class PropertyCompareInput extends CompareEditorInput {
 		
 	}
 	
-	protected class PropertyElement implements ITypedElement, IEditableContent, IStreamContentAccessor {
+	protected class PropertyElement implements ITypedElement, IEditableContent, IStreamContentAccessor, IContentChangeNotifier {
 
 		protected String basedOnName;
 		protected String basedOnValue;
+		protected String currentInput;
 		protected boolean isEditable;
+		protected ArrayList<IContentChangeListener> listenersList;
 		
 		public PropertyElement(String name, String value, boolean isEditable) {
 			this.basedOnName = name;
 			this.basedOnValue = value;
 			this.isEditable = isEditable;
+			this.listenersList = new ArrayList<IContentChangeListener>();
 		}
 		
 		public Image getImage() {
@@ -231,6 +272,10 @@ public class PropertyCompareInput extends CompareEditorInput {
 
 		public String getName() {
 			return this.basedOnName;
+		}
+		
+		public String getValue() {
+			return this.basedOnValue;
 		}
 
 		public String getType() {
@@ -246,11 +291,32 @@ public class PropertyCompareInput extends CompareEditorInput {
 		}
 
 		public void setContent(byte[] newContent) {
+			this.currentInput = new String(newContent);
+		}
+		
+		public void commit(IProgressMonitor pm) throws CoreException {
+			this.basedOnValue = this.currentInput;
+			new SavePropChangesOperation(PropertyCompareInput.this.left, new SVNProperty(this.basedOnName, this.basedOnValue), PropertyCompareInput.this.location).run(pm);
+			this.fireContentChanged();
 		}
 
 		public InputStream getContents() throws CoreException {
-			String value = this.basedOnValue == null ? "" : this.basedOnValue;
-			return new ByteArrayInputStream(value.getBytes());
+			return new ByteArrayInputStream(this.basedOnValue == null ? "".getBytes() : this.basedOnValue.getBytes()); 
+		}
+
+		public void addContentChangeListener(IContentChangeListener listener) {
+			this.listenersList.add(listener);
+		}
+
+		public void removeContentChangeListener(IContentChangeListener listener) {
+			this.listenersList.remove(listener);
+		}
+		
+		protected void fireContentChanged() {
+			IContentChangeListener []listeners = this.listenersList.toArray(new IContentChangeListener[0]);
+			for (int i= 0; i < listeners.length; i++) {
+				listeners[i].contentChanged(this);
+			}
 		}
 		
 	}
@@ -270,7 +336,7 @@ public class PropertyCompareInput extends CompareEditorInput {
 		protected void runImpl(IProgressMonitor monitor) throws Exception {
 			ISVNConnector proxy = this.location.acquireSVNProxy();
 			try {
-				proxy.setProperty(this.reference.path, this.propToSet.name, this.propToSet.value, Depth.EMPTY, ISVNConnector.Options.NONE, null, new SVNProgressMonitor(this, monitor, null));
+				proxy.setProperty(this.reference.path, this.propToSet.name, this.propToSet.value, Depth.EMPTY, ISVNConnector.Options.FORCE, null, new SVNProgressMonitor(this, monitor, null));
 			}
 			finally {
 				this.location.releaseSVNProxy(proxy);

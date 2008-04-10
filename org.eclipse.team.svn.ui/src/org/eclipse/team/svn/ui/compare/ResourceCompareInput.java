@@ -471,9 +471,9 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 	
 		protected void fireContentChanged() {
 			this.dirty = true;
-			Object []listeners = this.listenerList.toArray();
+			IContentChangeListener []listeners = this.listenerList.toArray(new IContentChangeListener[0]);
 			for (int i= 0; i < listeners.length; i++) {
-				((IContentChangeListener)listeners[i]).contentChanged(this);
+				listeners[i].contentChanged(this);
 			}
 		}
 
