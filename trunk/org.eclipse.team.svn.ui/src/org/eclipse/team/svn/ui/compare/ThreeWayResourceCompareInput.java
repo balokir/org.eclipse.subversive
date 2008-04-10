@@ -308,7 +308,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 				super.setLabelProvider(new LabelProviderWrapper((ILabelProvider)labelProvider) {
 					public Image getImage(Object element) {
 						if (element instanceof CompareNode && (((CompareNode)element).getLocalChangeType() == SVNEntryStatus.Kind.REPLACED || ((CompareNode)element).getRemoteChangeType() == SVNEntryStatus.Kind.REPLACED)) {
-							Image image = (Image)this.images.get(element);
+							Image image = this.images.get(element);
 							if (image == null) {
 								OverlayedImageDescriptor imageDescriptor = null;
 								int direction = ((CompareNode)element).getKind() & Differencer.DIRECTION_MASK;
