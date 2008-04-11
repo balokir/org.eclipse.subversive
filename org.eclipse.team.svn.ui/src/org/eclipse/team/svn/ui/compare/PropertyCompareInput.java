@@ -51,6 +51,7 @@ import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.utility.SVNUtility;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
@@ -93,10 +94,10 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 				PropertyCompareNode selected = (PropertyCompareNode)((TreeSelection)event.getSelection()).getPaths()[0].getFirstSegment();
 				CompareConfiguration conf = PropertyCompareInput.this.getCompareConfiguration();
 				if (PropertyCompareInput.this.ancestor != null) {
-					conf.setAncestorLabel(selected.getName() + " [" + String.valueOf(PropertyCompareInput.this.ancestor.revision) + "]");
+					conf.setAncestorLabel(selected.getName() + " [" + PropertyCompareInput.this.getRevisionPart(PropertyCompareInput.this.ancestor) + "]");
 				}
-				conf.setLeftLabel(selected.getName() + " [" + String.valueOf(PropertyCompareInput.this.left.revision) + "]");
-				conf.setRightLabel(selected.getName() + " [" + String.valueOf(PropertyCompareInput.this.right.revision) + "]");				
+				conf.setLeftLabel(selected.getName() + " [" + PropertyCompareInput.this.getRevisionPart(PropertyCompareInput.this.left) + "]");
+				conf.setRightLabel(selected.getName() + " [" + PropertyCompareInput.this.getRevisionPart(PropertyCompareInput.this.right) + "]");	
 			}
 		});
 		
@@ -118,6 +119,10 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 	}
 	
 	protected abstract void fillMenu(IMenuManager manager, TreeSelection selection);
+	
+	protected String getRevisionPart(SVNEntryRevisionReference reference) {
+		return SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.RevisionSign", new String [] {String.valueOf(reference.revision)});
+	}
 	
 	protected Object prepareInput(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		this.leftProps = new HashMap<String, String>();
