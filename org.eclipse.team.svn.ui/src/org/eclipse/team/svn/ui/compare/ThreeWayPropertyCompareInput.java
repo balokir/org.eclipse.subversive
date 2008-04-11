@@ -12,7 +12,6 @@
 package org.eclipse.team.svn.ui.compare;
 
 import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
@@ -40,11 +39,11 @@ public class ThreeWayPropertyCompareInput extends PropertyCompareInput {
 	}
 
 	protected void fillMenu(IMenuManager manager, TreeSelection selection) {
-		manager.add(new Action("Test!") {
+		/*manager.add(new Action("Test!") {
 			public void run() {
 				
 			}
-		});
+		})*/;
 	}
 	
 	public String getTitle() {
