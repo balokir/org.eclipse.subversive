@@ -32,12 +32,16 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNProperty;
@@ -54,7 +58,7 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  * 
  * @author Alexei Goncharov
  */
-public class PropertyCompareInput extends CompareEditorInput {
+public abstract class PropertyCompareInput extends CompareEditorInput {
 	
 	protected DiffTreeViewer viewer;
 	
@@ -95,8 +99,25 @@ public class PropertyCompareInput extends CompareEditorInput {
 				conf.setRightLabel(selected.getName() + " [" + String.valueOf(PropertyCompareInput.this.right.revision) + "]");				
 			}
 		});
+		
+		MenuManager menuMgr = new MenuManager();
+		Menu menu = menuMgr.createContextMenu(this.viewer.getControl());	
+		menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				manager.removeAll();
+				TreeSelection selection = (TreeSelection)PropertyCompareInput.this.viewer.getSelection();
+				if (selection.size() == 0) {
+					return;
+				}
+				PropertyCompareInput.this.fillMenu(manager, selection);
+			}
+		});
+		this.viewer.getControl().setMenu(menu);
+		
 		return this.viewer;
 	}
+	
+	protected abstract void fillMenu(IMenuManager manager, TreeSelection selection);
 	
 	protected Object prepareInput(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		this.leftProps = new HashMap<String, String>();
@@ -142,7 +163,6 @@ public class PropertyCompareInput extends CompareEditorInput {
 			}			
 		}
 		
-		
 		//prepare input
 		RootCompareNode root = new RootCompareNode(Differencer.NO_CHANGE);
 		for (String current : this.propSet) {
@@ -155,23 +175,11 @@ public class PropertyCompareInput extends CompareEditorInput {
 						root,
 						diffKind,
 						new PropertyElement(current, ancestorValue, false),
-						new PropertyElement(current, leftValue, true),
+						new PropertyElement(current, leftValue, this.ancestor == null ? false : true),
 						new PropertyElement(current, rightValue, false));
 			}
 		}
-		
-		//TODO move to resources, process different resources names
-		this.setTitle("Property comparison (" +
-				this.left.path.substring(this.left.path.lastIndexOf("/")+1)
-				+ " ["
-				+ String.valueOf(this.left.revision)
-				+ " - "
-				+ String.valueOf(this.ancestor.revision)
-				+ " - "
-				+ String.valueOf(this.right.revision)
-				+ "] "
-				+ ")");
-		
+			
 		if (root.getChildren().length > 0) {
 			return root;
 		}
