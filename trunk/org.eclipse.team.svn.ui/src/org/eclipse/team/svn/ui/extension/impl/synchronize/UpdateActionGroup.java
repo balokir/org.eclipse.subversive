@@ -16,6 +16,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
 import org.eclipse.team.svn.ui.synchronize.action.CleanUpAction;
+import org.eclipse.team.svn.ui.synchronize.action.ComparePropertiesAction;
 import org.eclipse.team.svn.ui.synchronize.action.CreateBranchAction;
 import org.eclipse.team.svn.ui.synchronize.action.CreatePatchFileAction;
 import org.eclipse.team.svn.ui.synchronize.action.EditConflictsAction;
@@ -132,7 +133,12 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				UpdateActionGroup.GROUP_SYNC_CONFLICTS,
-				editConflictsAction);									
+				editConflictsAction);
+		ComparePropertiesAction comparePropsAction = new ComparePropertiesAction("Compare Properties", configuration);
+		this.appendToGroup(
+				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+				UpdateActionGroup.GROUP_SYNC_CONFLICTS,
+				comparePropsAction);
 		MarkAsMergedAction markMergedAction = new MarkAsMergedAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.MarkAsMerged"), configuration);
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 

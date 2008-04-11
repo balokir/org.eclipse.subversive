@@ -15,19 +15,29 @@ import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
+import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.compare.PropertyCompareInput;
 import org.eclipse.team.svn.ui.compare.ThreeWayPropertyCompareInput;
+import org.eclipse.team.svn.ui.operation.UILoggedOperation;
+import org.eclipse.team.svn.ui.synchronize.AbstractSVNSyncInfo;
+import org.eclipse.team.svn.ui.synchronize.variant.RemoteResourceVariant;
+import org.eclipse.team.svn.ui.synchronize.variant.ResourceVariant;
+import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
- * TODO insert type description here
+ * Compare properties action for Synchronize View
  * 
  * @author Alexei Goncharov
  */
@@ -38,23 +48,43 @@ public class ComparePropertiesAction extends AbstractSynchronizeModelAction {
 		super(text, configuration);
 	}
 	
-	public boolean isEnabled() {
-		return true;
+	protected boolean updateSelection(IStructuredSelection selection) {
+		super.updateSelection(selection);
+		if (selection.size() == 1 && selection.getFirstElement() instanceof SyncInfoModelElement) {
+			ISynchronizeModelElement element = (ISynchronizeModelElement)selection.getFirstElement();
+			if (element instanceof SyncInfoModelElement) {
+				AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo)((SyncInfoModelElement)selection.getFirstElement()).getSyncInfo();
+				ILocalResource incoming = ((ResourceVariant)syncInfo.getRemote()).getResource();
+				boolean retVal = IStateFilter.SF_EXCLUDE_DELETED.accept(incoming);
+				if (incoming instanceof IResourceChange) {
+					retVal &= IStateFilter.ST_DELETED != incoming.getStatus();
+				}
+				return retVal;
+			}
+		}
+		return false;
 	}
 	
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
-		IResource local = this.getSelectedResource();
-		IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(local);
-		long remoteRev = -1;
-		try {
-			remoteRev = remote.getRevision();
-		}
-		catch (Exception ex) {}
-		ILocalResource baseResource = SVNRemoteStorage.instance().asLocalResource(local);
+		IResource resource = this.getSelectedResource();
+		ILocalResource baseResource = SVNRemoteStorage.instance().asLocalResource(resource);
+		IRepositoryResource remote =  SVNRemoteStorage.instance().asRepositoryResource(resource);
+	    SVNEntryRevisionReference baseReference = new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(resource), null, SVNRevision.BASE);
+	    SVNEntryRevisionReference remoteReference = baseReference;
+	    ILocalResource change = ((RemoteResourceVariant)this.getSelectedSVNSyncInfo().getRemote()).getResource();
+	    if (change instanceof IResourceChange) {
+	    	remote = ((IResourceChange)change).getOriginator();
+	    	try {
+	    		remoteReference = new SVNEntryRevisionReference(remote.getUrl(), remote.getPegRevision(), SVNRevision.fromNumber(remote.getRevision()));
+	    	}
+	    	catch (SVNConnectorException ex) {
+	    		UILoggedOperation.reportError("Compare Properties Operation", ex);
+	    	}
+	    }
 		PropertyCompareInput input = new ThreeWayPropertyCompareInput(new CompareConfiguration(),
-				new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(local), null, SVNRevision.WORKING),
-				new SVNEntryRevisionReference(remote.getUrl(), SVNRevision.fromNumber(remoteRev), SVNRevision.fromNumber(remoteRev)),
-				new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(local), null, SVNRevision.BASE),
+				new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(resource), null, SVNRevision.WORKING),
+				remoteReference,
+				baseReference,
 				remote.getRepositoryLocation(),
 				baseResource.getRevision());
 		CompareUI.openCompareEditor(input);

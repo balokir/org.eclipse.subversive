@@ -240,10 +240,6 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 		this.viewer.refresh();
 	}
 	
-	public boolean okPressed() {
-		return false;
-	}
-	
 	protected class RootCompareNode extends DiffNode {
 		public RootCompareNode(int kind) {
 			super(kind);
