@@ -286,6 +286,10 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 		public String getValue() {
 			return this.basedOnValue;
 		}
+		
+		public void setValue(String value) {
+			this.basedOnValue = value;
+		}
 
 		public String getType() {
 			return ITypedElement.TEXT_TYPE;
