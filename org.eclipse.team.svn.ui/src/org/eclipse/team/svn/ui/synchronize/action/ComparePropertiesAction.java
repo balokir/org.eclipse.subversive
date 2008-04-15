@@ -82,7 +82,7 @@ public class ComparePropertiesAction extends AbstractSynchronizeModelAction {
 	    	}
 	    }
 		PropertyCompareInput input = new ThreeWayPropertyCompareInput(new CompareConfiguration(),
-				new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(resource), null, SVNRevision.WORKING),
+				resource,
 				remoteReference,
 				baseReference,
 				remote.getRepositoryLocation(),
