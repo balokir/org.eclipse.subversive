@@ -224,8 +224,8 @@ public class ResourceSelectionComposite extends Composite {
 
 		// adding comparator and selection default sorting column and direction
 		this.tableViewer.setComparator(comparator);
-		comparator.setColumnNumber(ResourceSelectionComposite.COLUMN_NAME);
-		this.tableViewer.getTable().setSortColumn(this.tableViewer.getTable().getColumn(ResourceSelectionComposite.COLUMN_NAME));
+		comparator.setColumnNumber(ResourceSelectionComposite.COLUMN_STATUS);
+		this.tableViewer.getTable().setSortColumn(this.tableViewer.getTable().getColumn(ResourceSelectionComposite.COLUMN_STATUS));
 		this.tableViewer.getTable().setSortDirection(SWT.UP);
 
 		this.tableViewer.setLabelProvider(new ITableLabelProvider() {
@@ -520,15 +520,15 @@ public class ResourceSelectionComposite extends Composite {
 		}
 
 		public int compareImpl(Viewer viewer, Object row1, Object row2) {
-			if (column == ResourceSelectionComposite.COLUMN_CHECKBOX) {
+			if (this.column == ResourceSelectionComposite.COLUMN_CHECKBOX) {
 				return 0;
 			}
 			IResource rowData1 = (IResource) row1;
 			IResource rowData2 = (IResource) row2;
-			if (column == ResourceSelectionComposite.COLUMN_NAME) {
+			if (this.column == ResourceSelectionComposite.COLUMN_NAME) {
 				return this.compareNames(rowData1, rowData2);
 			}
-			if (ResourceSelectionComposite.this.cacheEnabled) {
+			if (!ResourceSelectionComposite.this.cacheEnabled) {
 				return 0;
 			}
 			IRemoteStorage storage = SVNRemoteStorage.instance();
@@ -539,13 +539,13 @@ public class ResourceSelectionComposite extends Composite {
 			}
 			int changeMask1 = local1.getChangeMask();
 			int changeMask2 = local2.getChangeMask();
-			if (column == ResourceSelectionComposite.COLUMN_STATUS) {
+			if (this.column == ResourceSelectionComposite.COLUMN_STATUS) {
 				String status1 = ResourceSelectionComposite.this.statusAsString(local1.getStatus(), changeMask1);
 				String status2 = ResourceSelectionComposite.this.statusAsString(local2.getStatus(), changeMask2);
 				int retVal = this.compareStatuses(status1, status2);
 				return retVal != 0 ? retVal : this.compareNames(rowData1, rowData2);
 			}
-			if (column == ResourceSelectionComposite.COLUMN_PROPSTATUS) {
+			if (this.column == ResourceSelectionComposite.COLUMN_PROPSTATUS) {
 				String propStatus1 = changeMaskAsString(changeMask1);
 				String propStatus2 = changeMaskAsString(changeMask2);
 				return ColumnedViewerComparator.compare(propStatus1, propStatus2);
