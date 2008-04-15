@@ -194,7 +194,15 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 	protected int calculateDifference(String leftValue, String rightValue, String ancestorValue) {
 		int diffKind = Differencer.NO_CHANGE;
 		if (this.ancestor == null) {
-			//TODO two way comparison
+			if (leftValue != null && rightValue != null) {
+				diffKind = Differencer.CHANGE;
+			}
+			else if (leftValue == null) {
+				diffKind = Differencer.ADDITION;
+			}
+			else {
+				diffKind = Differencer.DELETION;
+			}
 		}
 		else {
 			if (ancestorValue == null) {

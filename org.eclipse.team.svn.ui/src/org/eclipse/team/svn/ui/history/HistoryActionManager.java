@@ -19,6 +19,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -112,6 +114,7 @@ import org.eclipse.team.svn.ui.action.remote.OpenFileAction;
 import org.eclipse.team.svn.ui.action.remote.OpenFileWithAction;
 import org.eclipse.team.svn.ui.action.remote.OpenFileWithExternalAction;
 import org.eclipse.team.svn.ui.action.remote.OpenFileWithInplaceAction;
+import org.eclipse.team.svn.ui.compare.TwoWayPropertyCompareInput;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.dialog.ReplaceWarningDialog;
 import org.eclipse.team.svn.ui.history.data.AffectedPathsNode;
@@ -396,6 +399,29 @@ public class HistoryActionManager {
 				}
 			});
 			tAction.setEnabled(selection.length == 1);
+			
+			manager.add(tAction = new HistoryAction("SynchronizeActionGroup.CompareProperties") {
+				public void run() {
+					SVNLogEntry first = (SVNLogEntry)selection[0].getEntity();
+					SVNLogEntry second = (SVNLogEntry)selection[1].getEntity();
+					if (first.revision < second.revision) {
+						SVNLogEntry tmp = second;
+						second = first;
+						first = tmp;
+					}
+					IRepositoryResource remote = HistoryActionManager.this.view.getRepositoryResource();
+					if (remote == null) {
+						remote = SVNRemoteStorage.instance().asRepositoryResource(HistoryActionManager.this.view.getResource());
+					}
+					TwoWayPropertyCompareInput input = new TwoWayPropertyCompareInput(
+							new CompareConfiguration(),
+							new SVNEntryRevisionReference(remote.getUrl(), SVNRevision.fromNumber(HistoryActionManager.this.view.getCurrentRevision()), SVNRevision.fromNumber(first.revision)),
+							new SVNEntryRevisionReference(remote.getUrl(), SVNRevision.fromNumber(HistoryActionManager.this.view.getCurrentRevision()), SVNRevision.fromNumber(second.revision)),
+							SVNRemoteStorage.instance().asRepositoryResource(HistoryActionManager.this.view.getResource()).getRepositoryLocation());
+					CompareUI.openCompareEditor(input);
+				}
+			});
+			tAction.setEnabled(selection.length == 2);
 			if (HistoryActionManager.this.view.getRepositoryResource() instanceof IRepositoryFile) {
 				manager.add(tAction = new HistoryAction("ShowAnnotationCommand.label") {
 					public void run() {
