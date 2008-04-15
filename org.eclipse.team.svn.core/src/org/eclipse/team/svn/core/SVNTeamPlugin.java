@@ -91,9 +91,6 @@ public class SVNTeamPlugin extends Plugin {
 	}
 	
     public static SVNTeamPlugin instance() {
-    	while (SVNTeamPlugin.instance == null) {
-    		try {Thread.sleep(100);} catch (InterruptedException ex) {break;}
-    	}
     	return SVNTeamPlugin.instance;
     }
     
