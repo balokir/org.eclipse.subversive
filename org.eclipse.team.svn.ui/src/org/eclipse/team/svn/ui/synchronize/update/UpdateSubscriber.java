@@ -163,7 +163,7 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 				}
 				// we optimized comment fetching by speed regarding to fact that only number revision used by this implementation of ICommentProvider
 				// and select messages for project root (helpful in case of multiple-project layouts)...
-				IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(resource.getProject()).getRoot();
+				IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(resource).getRoot();
 				remote.setSelectedRevision(rev);
 				remote.setPegRevision(peg);
 				GetLogMessagesOperation op = new GetLogMessagesOperation(remote);
