@@ -82,6 +82,7 @@ public class ThreeWayPropertyCompareInput extends PropertyCompareInput {
 									panel.getPropertyValue(),
 									((PropertyElement)current.getRight()).getValue(),
 									((PropertyElement)current.getAncestor()).getValue()));
+							current.fireChange();
 						}
 					}
 					if (notContained) {
@@ -133,6 +134,7 @@ public class ThreeWayPropertyCompareInput extends PropertyCompareInput {
 			((PropertyElement)currentNode.getLeft()).setValue(null);
 			currentNode.setKind(this.calculateDifference(null, ((PropertyElement)currentNode.getRight()).getValue(), ((PropertyElement)currentNode.getAncestor()).getValue()));
 		}
+		currentNode.fireChange();
 		this.viewer.refresh();
 	}
 	

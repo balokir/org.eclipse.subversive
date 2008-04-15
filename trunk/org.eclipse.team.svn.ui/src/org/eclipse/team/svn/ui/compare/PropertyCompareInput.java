@@ -243,6 +243,7 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 		PropertyElement ancestor = (PropertyElement)currentNode.getAncestor();
 		left.commit(monitor);
 		currentNode.setKind(this.calculateDifference(left.getValue(), right.getValue(), ancestor.getValue()));
+		currentNode.fireChange();
 		this.viewer.refresh();
 	}
 	
@@ -257,6 +258,10 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 		public PropertyCompareNode(IDiffContainer parent, int kind,
 				ITypedElement ancestor, ITypedElement left, ITypedElement right) {
 			super(parent, kind, ancestor, left, right);
+		}
+		
+		public void fireChange() {
+			super.fireChange();
 		}
 		
 	}
