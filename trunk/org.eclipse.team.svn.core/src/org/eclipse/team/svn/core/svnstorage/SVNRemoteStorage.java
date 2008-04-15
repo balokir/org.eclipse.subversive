@@ -1009,9 +1009,13 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 				break;
 			}
 		}
-		if (status == IStateFilter.ST_NORMAL &&
-			(propKind == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.MODIFIED || propKind == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.CONFLICTED)) {
-			status = IStateFilter.ST_MODIFIED;
+		if (status == IStateFilter.ST_NORMAL) {
+			if (propKind == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.CONFLICTED) {
+				status = IStateFilter.ST_CONFLICTING;
+			}
+			else if (propKind == org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.MODIFIED) {
+				status = IStateFilter.ST_MODIFIED;
+			}
 		}
 		
 		return status;

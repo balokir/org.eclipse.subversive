@@ -186,6 +186,7 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 		else {
 			IRepositoryResource base = SVNRemoteStorage.instance().asRepositoryResource(endResourceChange.getResource());
 			base.setSelectedRevision(this.scope.getMergeSet().fromStart[0].getSelectedRevision());
+			base.setPegRevision(this.scope.getMergeSet().fromStart[0].getPegRevision());
 			startResourceChange.setOriginator(base);
 		}
 		this.baseStatusCache.setBytes(startResourceChange.getResource(), SVNRemoteStorage.instance().resourceChangeAsBytes(startResourceChange));
