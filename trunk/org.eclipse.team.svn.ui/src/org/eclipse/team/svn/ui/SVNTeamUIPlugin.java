@@ -58,9 +58,6 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
     }
     
     public static SVNTeamUIPlugin instance() {
-    	while (SVNTeamUIPlugin.instance == null) {
-    		try {Thread.sleep(100);} catch (InterruptedException ex) {break;}
-    	}
     	return SVNTeamUIPlugin.instance;
     }
     
