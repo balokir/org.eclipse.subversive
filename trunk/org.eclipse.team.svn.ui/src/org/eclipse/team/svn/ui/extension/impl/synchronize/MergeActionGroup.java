@@ -20,6 +20,7 @@ import org.eclipse.team.svn.ui.synchronize.action.CreateBranchAction;
 import org.eclipse.team.svn.ui.synchronize.action.CreatePatchFileAction;
 import org.eclipse.team.svn.ui.synchronize.action.EditConflictsAction;
 import org.eclipse.team.svn.ui.synchronize.action.ExpandAllAction;
+import org.eclipse.team.svn.ui.synchronize.action.MergePropertiesAction;
 import org.eclipse.team.svn.ui.synchronize.action.RevertAction;
 import org.eclipse.team.svn.ui.synchronize.action.SetKeywordsAction;
 import org.eclipse.team.svn.ui.synchronize.action.SetPropertyAction;
@@ -101,7 +102,12 @@ public class MergeActionGroup extends AbstractSynchronizeActionGroup {
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				MergeActionGroup.GROUP_MERGE_CHANGES,
-				editConflictsAction);									
+				editConflictsAction);
+		MergePropertiesAction mergePropertiesAction = new MergePropertiesAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.MergeProperties"), configuration);
+		this.appendToGroup(
+				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+				MergeActionGroup.GROUP_MERGE_CHANGES,
+				mergePropertiesAction);
 		MarkAsMergedAction markAsMergedAction = new MarkAsMergedAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.MarkAsMerged"), configuration);
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 

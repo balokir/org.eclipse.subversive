@@ -134,7 +134,7 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				UpdateActionGroup.GROUP_SYNC_CONFLICTS,
 				editConflictsAction);
-		ComparePropertiesAction comparePropsAction = new ComparePropertiesAction("Compare Properties", configuration);
+		ComparePropertiesAction comparePropsAction = new ComparePropertiesAction("SynchronizeActionGroup.CompareProperties", configuration);
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				UpdateActionGroup.GROUP_SYNC_CONFLICTS,
