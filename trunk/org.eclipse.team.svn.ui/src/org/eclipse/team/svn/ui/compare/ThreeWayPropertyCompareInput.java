@@ -103,7 +103,7 @@ public class ThreeWayPropertyCompareInput extends PropertyCompareInput {
 				ThreeWayPropertyCompareInput.this.removeProperty(selectedNode);
 			}
 		});
-		tAction.setEnabled(((PropertyElement)selectedNode.getAncestor()).getValue() != null);
+		tAction.setEnabled(((PropertyElement)selectedNode.getLeft()).getValue() != null);
 	}
 	
 	protected void removeProperty(PropertyCompareNode currentNode){	
