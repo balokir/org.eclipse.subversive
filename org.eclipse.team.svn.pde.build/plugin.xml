@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+	<extension point="org.eclipse.ant.core.antTasks">
+		<antTask class="org.eclipse.team.svn.ant.SVNTask" library="svnanttask.jar" name="svn"/>
+	</extension>
+
+	<extension point="org.eclipse.pde.build.fetchFactories">
+		<factory class="org.eclipse.team.svn.pde.build.SVNFetchFactory" id="SVN"/>
+	</extension>
+
+</plugin>
