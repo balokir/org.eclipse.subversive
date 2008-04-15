@@ -65,6 +65,7 @@ public class InfoOperation extends AbstractActionOperation {
 //    			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn info \"" + this.local.getWorkingCopyPath() + "\"\n");
             	SVNChangeStatus []statuses = SVNUtility.status(proxy, FileUtility.getWorkingCopyPath(this.resource), Depth.EMPTY, Options.INCLUDE_UNCHANGED, new SVNProgressMonitor(this, monitor, null));
             	if (statuses != null && statuses.length > 0) {
+                	SVNUtility.reorder(statuses, true);
             		this.info = new SVNEntryInfo(statuses[0].path,
             									 statuses[0].url,
             									 statuses[0].revision,
