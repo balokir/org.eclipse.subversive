@@ -19,22 +19,35 @@ import java.util.Map;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.svn.core.connector.SVNDiffStatus;
 import org.eclipse.team.svn.core.connector.SVNEntry;
+import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
+import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.svnstorage.SVNLocalResource;
+import org.eclipse.team.svn.core.svnstorage.SVNRepositoryResource;
+import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.compare.ResourceCompareInput.ResourceElement;
+import org.eclipse.team.svn.ui.compare.ThreeWayResourceCompareInput.CompareNode;
+import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
+import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
  * Two way resource compare input
@@ -50,6 +63,31 @@ public class TwoWayResourceCompareInput extends ResourceCompareInput {
 		this.rootLeft = SVNUtility.copyOf(next);
 		this.rootRight = SVNUtility.copyOf(prev);
 		this.statuses = statuses.toArray(new SVNDiffStatus[statuses.size()]);
+	}
+	
+	protected void fillMenu(IMenuManager manager, TreeSelection selection) {
+		final CompareNode selectedNode = (CompareNode)selection.getFirstElement();
+		Action tAction = null;
+		manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.CompareProperties")){
+			public void run() {
+				SVNRepositoryResource repoResource = (SVNRepositoryResource)((ResourceElement)selectedNode.getLeft()).getRepositoryResource();
+				SVNEntryRevisionReference leftReference = new SVNEntryRevisionReference(
+							repoResource.getUrl(), repoResource.getPegRevision(), repoResource.getSelectedRevision());
+				repoResource = (SVNRepositoryResource)((ResourceElement)selectedNode.getRight()).getRepositoryResource();
+				SVNEntryRevisionReference rightReference = new SVNEntryRevisionReference(
+						repoResource.getUrl(), repoResource.getPegRevision(), repoResource.getSelectedRevision());
+				TwoWayPropertyCompareInput input = new TwoWayPropertyCompareInput(
+						new CompareConfiguration(),
+						leftReference,
+						rightReference,
+						repoResource.getRepositoryLocation());
+				PropertyComparePanel panel = new PropertyComparePanel(input, false);
+				DefaultDialog dlg = new DefaultDialog(UIMonitorUtility.getShell(), panel);
+				dlg.open();
+			}
+		});
+		tAction.setEnabled((selectedNode.getKind() & Differencer.CHANGE_TYPE_MASK) != Differencer.ADDITION
+				&& (selectedNode.getKind() & Differencer.CHANGE_TYPE_MASK) != Differencer.DELETION);
 	}
 
 	public void initialize(IProgressMonitor monitor) throws Exception {

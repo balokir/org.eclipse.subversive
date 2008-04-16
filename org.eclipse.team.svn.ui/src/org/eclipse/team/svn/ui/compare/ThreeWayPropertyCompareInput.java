@@ -61,7 +61,7 @@ public class ThreeWayPropertyCompareInput extends PropertyCompareInput {
 	}
 
 	protected void fillMenu(IMenuManager manager, TreeSelection selection) {
-		final PropertyCompareNode selectedNode = (PropertyCompareNode)selection.getPaths()[0].getFirstSegment();
+		final PropertyCompareNode selectedNode = (PropertyCompareNode)selection.getFirstElement();
 		Action tAction = null;
 		manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("SetPropertyAction.label")) {		
 			public void run() {

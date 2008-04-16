@@ -69,6 +69,9 @@
 		<description>Commit dialog allows the user to choose resources to commit and input commit comment.</description>
 		<topic label="Commiting" href="teamSupport/SVNaction/commit.html"/>
 	</context>
+	<context id="comparePropsDialogContext">
+		<description>Properties comparison dialog provides you a probability to compare resource properties. If the local comparison is launched you can also add, remove and edit your local resource properties, using context menu and compare editor.</description>
+	</context>
 	<context id="commitSetDialogContext">
 		<description>This dialog allows the user to add resources to a change set.</description>
 	</context>

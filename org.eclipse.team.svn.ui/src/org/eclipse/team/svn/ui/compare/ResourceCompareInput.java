@@ -39,14 +39,21 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.team.svn.core.connector.SVNDiffStatus;
 import org.eclipse.team.svn.core.connector.SVNEntry;
@@ -126,8 +133,31 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 	}
 	
 	public final Viewer createDiffViewer(Composite parent) {
-		return this.viewer = this.createDiffViewerImpl(parent, this.getCompareConfiguration());
+		this.viewer = this.createDiffViewerImpl(parent, this.getCompareConfiguration());
+		
+		MenuManager menuMgr = new MenuManager();
+		Menu menu = menuMgr.createContextMenu(this.viewer.getControl());	
+		menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				manager.removeAll();
+				TreeSelection selection = (TreeSelection)ResourceCompareInput.this.viewer.getSelection();
+				if (selection.size() != 0) {
+					ResourceCompareInput.this.fillMenu(manager, selection);
+					manager.add(new Separator());
+				}
+				manager.add(new Action(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.ExpandAll")) {
+					public void run() {
+						ResourceCompareInput.this.viewer.expandAll();
+					}
+				});
+			}
+		});
+		this.viewer.getControl().setMenu(menu);
+		
+		return this.viewer;
 	}
+	
+	protected abstract void fillMenu(IMenuManager manager, TreeSelection selection);
 	
 	public boolean equals(Object obj) {
 		if (obj != null && obj.getClass().equals(this.getClass())) {
