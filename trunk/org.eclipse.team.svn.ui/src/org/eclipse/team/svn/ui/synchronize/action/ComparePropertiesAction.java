@@ -18,7 +18,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -29,7 +28,6 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.compare.PropertyCompareInput;
 import org.eclipse.team.svn.ui.compare.ThreeWayPropertyCompareInput;
-import org.eclipse.team.svn.ui.operation.UILoggedOperation;
 import org.eclipse.team.svn.ui.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.ui.synchronize.variant.RemoteResourceVariant;
 import org.eclipse.team.svn.ui.synchronize.variant.ResourceVariant;
@@ -74,12 +72,7 @@ public class ComparePropertiesAction extends AbstractSynchronizeModelAction {
 	    ILocalResource change = ((RemoteResourceVariant)this.getSelectedSVNSyncInfo().getRemote()).getResource();
 	    if (change instanceof IResourceChange) {
 	    	remote = ((IResourceChange)change).getOriginator();
-	    	try {
-	    		remoteReference = new SVNEntryRevisionReference(remote.getUrl(), remote.getPegRevision(), SVNRevision.fromNumber(remote.getRevision()));
-	    	}
-	    	catch (SVNConnectorException ex) {
-	    		UILoggedOperation.reportError("Compare Properties Operation", ex);
-	    	}
+	    	remoteReference = new SVNEntryRevisionReference(remote.getUrl(), remote.getPegRevision(), SVNRevision.fromNumber(((IResourceChange)change).getRevision()));
 	    }
 		PropertyCompareInput input = new ThreeWayPropertyCompareInput(new CompareConfiguration(),
 				resource,

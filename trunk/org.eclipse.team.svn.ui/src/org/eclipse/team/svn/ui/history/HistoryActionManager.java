@@ -417,7 +417,7 @@ public class HistoryActionManager {
 							new CompareConfiguration(),
 							new SVNEntryRevisionReference(remote.getUrl(), SVNRevision.fromNumber(HistoryActionManager.this.view.getCurrentRevision()), SVNRevision.fromNumber(first.revision)),
 							new SVNEntryRevisionReference(remote.getUrl(), SVNRevision.fromNumber(HistoryActionManager.this.view.getCurrentRevision()), SVNRevision.fromNumber(second.revision)),
-							SVNRemoteStorage.instance().asRepositoryResource(HistoryActionManager.this.view.getResource()).getRepositoryLocation());
+							remote.getRepositoryLocation());
 					CompareUI.openCompareEditor(input);
 				}
 			});
