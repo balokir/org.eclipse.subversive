@@ -92,7 +92,7 @@ public class RepositoryRevisions extends RepositoryFictiveNode implements IParen
 			
 			this.children = new RepositoryRevision[revisions.size()];
 			int i = 0;
-			for (Iterator it = revisions.iterator(); i < children.length; i++) {
+			for (Iterator it = revisions.iterator(); i < this.children.length; i++) {
 				this.children[i] = new RepositoryRevision(this, ((RevisionWrapper)it.next()).revision);
 			}
 		}

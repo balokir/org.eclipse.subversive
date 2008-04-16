@@ -63,14 +63,14 @@ public class CreatePatchOperation extends AbstractActionOperation {
 	protected int rootPoint;
 	
 	protected String lineFeed = System.getProperty("line.separator");
-	protected String contentSeparator = lineFeed + "===================================================================" + lineFeed;
+	protected String contentSeparator = this.lineFeed + "===================================================================" + this.lineFeed;
 	protected String indexEntry = "Index: ";
 	protected String removeSign = "--- ";
 	protected String addSign = "+++ ";
-	protected String revisionMark = "\t(revision 0)" + lineFeed;
-	protected String noLF = "\\ No newline at end of file" + lineFeed;
+	protected String revisionMark = "\t(revision 0)" + this.lineFeed;
+	protected String noLF = "\\ No newline at end of file" + this.lineFeed;
 	protected String rangeStart = "@@ -0,0 +1";
-	protected String rangeEnd = " @@" + lineFeed;
+	protected String rangeEnd = " @@" + this.lineFeed;
 	
 	public CreatePatchOperation(IResource []resources, String fileName, boolean recurse, boolean ignoreDeleted, boolean processBinary, boolean processUnversioned) {
 		this(resources, fileName, recurse, ignoreDeleted, processBinary, processUnversioned, CreatePatchOperation.PROJECT);
@@ -95,7 +95,7 @@ public class CreatePatchOperation extends AbstractActionOperation {
 			if (workingCopies.size() > 1 || this.rootPoint == CreatePatchOperation.WORKSPACE) {
 				this.rootPoint = CreatePatchOperation.WORKSPACE;
 				stream.write("### Eclipse Workspace Patch 1.0".getBytes());
-				stream.write(lineFeed.getBytes());
+				stream.write(this.lineFeed.getBytes());
 			}
 			else if (this.rootPoint == CreatePatchOperation.SELECTION) {
 				this.selection = FileUtility.shrinkChildNodes(this.resources);
@@ -106,7 +106,7 @@ public class CreatePatchOperation extends AbstractActionOperation {
 				if (this.rootPoint == CreatePatchOperation.WORKSPACE) {
 					stream.write("#P ".getBytes());
 					stream.write(project.getName().getBytes());
-					stream.write(lineFeed.getBytes());
+					stream.write(this.lineFeed.getBytes());
 				}
 				IResource []resources = (IResource [])((List)entry.getValue()).toArray(new IResource[0]);
 				for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {

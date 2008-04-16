@@ -687,7 +687,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 			
 			int length = this.resources.length < CommitPanel.MAXIMUM_CHECKS_SIZE ? this.resources.length : CommitPanel.MAXIMUM_CHECKS_SIZE;
 	    	for (int i = 0; i < length && !monitor.isCanceled(); i++) {
-	    		ProgressMonitorUtility.setTaskInfo(monitor, this, resources[i].getFullPath().toString());
+	    		ProgressMonitorUtility.setTaskInfo(monitor, this, this.resources[i].getFullPath().toString());
 	    		
 	    		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(this.resources[i]);
 	    		if (local != null) {

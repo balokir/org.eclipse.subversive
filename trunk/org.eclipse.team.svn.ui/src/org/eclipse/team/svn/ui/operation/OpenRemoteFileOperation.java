@@ -81,10 +81,10 @@ public class OpenRemoteFileOperation extends AbstractActionOperation {
 	
 	protected void runImpl(final IProgressMonitor monitor) throws Exception {
 		if (this.provider != null) {
-			if (!(provider.getRepositoryResources()[0] instanceof IRepositoryFile)) {
+			if (!(this.provider.getRepositoryResources()[0] instanceof IRepositoryFile)) {
 				return;
 			}
-			this.inputs = OpenRemoteFileOperation.asEditorInput(new IRepositoryFile[] {(IRepositoryFile)provider.getRepositoryResources()[0]});
+			this.inputs = OpenRemoteFileOperation.asEditorInput(new IRepositoryFile[] {(IRepositoryFile)this.provider.getRepositoryResources()[0]});
 		}
 		this.editors = new IEditorPart[this.inputs.length];
 		for (int i = 0; i < this.inputs.length; i++) {

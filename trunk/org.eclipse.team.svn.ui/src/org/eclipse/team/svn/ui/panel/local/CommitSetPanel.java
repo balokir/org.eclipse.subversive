@@ -89,7 +89,7 @@ public class CommitSetPanel extends CommentPanel implements ICommentDialogPanel 
 		
 		this.nameText = new Text(composite, SWT.BORDER);
 		this.nameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        String initialText = set.getTitle();
+        String initialText = this.set.getTitle();
         if (initialText == null) {
         	initialText = "";
         }

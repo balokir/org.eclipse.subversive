@@ -245,7 +245,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 			operateResources.add(this.names2resources.get(this.names2resources.keySet().iterator().next()));
 		}
 		else {
-			operateResources = CheckoutAction.getOperateResources(this.names2resources, CheckoutAction.getResources2Names(names2resources), this.getShell(), location, !this.isCheckoutAsFolderSelected());
+			operateResources = CheckoutAction.getOperateResources(this.names2resources, CheckoutAction.getResources2Names(this.names2resources), this.getShell(), location, !this.isCheckoutAsFolderSelected());
 		}
 		
 		if (operateResources.size() > 0) {
@@ -273,8 +273,8 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 						resources2Names.put(entry.getValue(), entry.getKey());
 					}
 				}
-				Map mappings = this.getExternalsFolderNames(resources, resources2Names);
-				IResource destinationRoot = ResourcesPlugin.getWorkspace().getRoot().findMember(selectFolderPage.getTargetFolder().getFullPath());
+				Map mappings = this.getExternalsFolderNames(this.resources, resources2Names);
+				IResource destinationRoot = ResourcesPlugin.getWorkspace().getRoot().findMember(this.selectFolderPage.getTargetFolder().getFullPath());
 				IRemoteStorage storage = SVNRemoteStorage.instance();
 	    		ILocalResource localDest =  storage.asLocalResource(destinationRoot);
 	    		if (localDest == null) {
@@ -466,8 +466,8 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 							if (wizard.isCheckoutAsFoldersSelected()) {
 								projectNames = null;
 								Map resources2Names = new HashMap();
-								if (names2resources != null) {
-									for (Iterator it = names2resources.entrySet().iterator(); it.hasNext(); ) {
+								if (CheckoutAsWizard.this.names2resources != null) {
+									for (Iterator it = CheckoutAsWizard.this.names2resources.entrySet().iterator(); it.hasNext(); ) {
 										Map.Entry entry = (Map.Entry)it.next();
 										resources2Names.put(entry.getValue(), entry.getKey());
 									}
@@ -575,8 +575,8 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 		}
 
 		protected void runImpl(IProgressMonitor monitor) throws Exception {
-			final String wcPath = FileUtility.getWorkingCopyPath(resource);
-			IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(resource);
+			final String wcPath = FileUtility.getWorkingCopyPath(this.resource);
+			IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(this.resource);
 			final ISVNConnector proxy = location.acquireSVNProxy();
 			SVNProperty existingProperty;
 			try {

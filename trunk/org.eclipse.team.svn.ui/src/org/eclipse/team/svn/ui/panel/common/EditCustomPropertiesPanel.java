@@ -122,9 +122,9 @@ public class EditCustomPropertiesPanel extends AbstractDialogPanel {
 			this.property = new SVNTeamPropsPreferencePage.CustomProperty(this.propName.getText(), this.propRegexp.getText(), this.propDescription.getText());
 		}
 		else {
-			property.propName = this.propName.getText();
-			property.regExp = this.propRegexp.getText();
-			property.descriprion = this.propDescription.getText();
+			this.property.propName = this.propName.getText();
+			this.property.regExp = this.propRegexp.getText();
+			this.property.descriprion = this.propDescription.getText();
 		}
 	}
 

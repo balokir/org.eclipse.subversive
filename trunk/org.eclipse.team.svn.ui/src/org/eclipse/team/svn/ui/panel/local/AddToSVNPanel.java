@@ -175,9 +175,9 @@ public class AddToSVNPanel extends AbstractResourceSelectionPanel {
 			this.actionTookEffect = true;
 		}
 		newResourcesSet.removeAll(Arrays.asList(FileUtility.getResourcesRecursive(this.resources, IStateFilter.SF_IGNORED, IResource.DEPTH_ZERO)));
-		for (int i = 0; i < resources.length; i++) {
-			if (!resources[i].exists()) {
-				newResourcesSet.remove(resources[i]);
+		for (int i = 0; i < this.resources.length; i++) {
+			if (!this.resources[i].exists()) {
+				newResourcesSet.remove(this.resources[i]);
 				this.actionTookEffect = true;
 			}
 		}

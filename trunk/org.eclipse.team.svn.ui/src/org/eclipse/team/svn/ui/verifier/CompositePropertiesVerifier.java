@@ -32,7 +32,7 @@ public class CompositePropertiesVerifier extends AbstractVerifier {
 	}
 	
 	public boolean verify(Control input) {
-		AbstractFormattedVerifier current = this.verifiers.get(propNameCombo.getText());
+		AbstractFormattedVerifier current = this.verifiers.get(this.propNameCombo.getText());
 		if (current == null) {
 			return true;
 		}

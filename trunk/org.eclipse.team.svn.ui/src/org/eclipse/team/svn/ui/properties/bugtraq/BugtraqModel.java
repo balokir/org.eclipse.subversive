@@ -87,7 +87,7 @@ public class BugtraqModel {
 	}
 	
 	public boolean isDoubleLogRegexp() {
-		if (logregex != null) {
+		if (this.logregex != null) {
 			return (this.logregex.length == 2);
 		}
 		return false;

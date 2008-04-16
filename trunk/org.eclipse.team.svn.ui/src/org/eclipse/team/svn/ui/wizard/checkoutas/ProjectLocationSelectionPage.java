@@ -215,7 +215,7 @@ public class ProjectLocationSelectionPage extends AbstractVerifiedWizardPage {
 	}
 	
 	protected void refreshControls() {
-		this.useDefaultLocation = this.useDefaultLocationButton.isEnabled() && useDefaultLocationButton.getSelection();
+		this.useDefaultLocation = this.useDefaultLocationButton.isEnabled() && this.useDefaultLocationButton.getSelection();
 		this.locationField.setEnabled(!this.useDefaultLocation);
 		this.browse.setEnabled(!this.useDefaultLocation);
 	}
@@ -245,7 +245,7 @@ public class ProjectLocationSelectionPage extends AbstractVerifiedWizardPage {
 		}
 
 		protected String getErrorMessage(Control input) {
-			boolean respectHierarchy = (this.projectsSelectionPage != null && projectsSelectionPage.isRespectHierarchy());
+			boolean respectHierarchy = (this.projectsSelectionPage != null && this.projectsSelectionPage.isRespectHierarchy());
 			String parent = this.projectsSelectionPage != null && this.projectsSelectionPage.projects != null ? SVNUtility.getResourceParent(this.projectsSelectionPage.projects[0]) : "";
 			String inputLocation = this.useDefaultLocationButton.getSelection() ? this.defaultLocation : FileUtility.formatPath(this.getText(input));
 			if (inputLocation.startsWith(this.defaultLocation) && !this.sinceEclipse_3_2) {
