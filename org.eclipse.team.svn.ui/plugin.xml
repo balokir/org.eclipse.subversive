@@ -165,18 +165,6 @@
       </view>
 
    </extension>
-<!-- *************** Editors *************-->
-
- <extension
-         point="org.eclipse.ui.editors">
-      <editor
-            name="%SvnPropertiesEditor.name"
-            extensions=""
-            icon="icons/views/propertiesedit.gif"
-            class="org.eclipse.team.svn.ui.properties.PropertiesEditor"
-            id="org.eclipse.team.svn.ui.properties.PropertiesEditor">
-      </editor>
-   </extension>
    
 <!--   Project tree Label Decorator -->
 	<extension
