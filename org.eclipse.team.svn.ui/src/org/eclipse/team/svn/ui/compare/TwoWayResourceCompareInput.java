@@ -122,7 +122,7 @@ public class TwoWayResourceCompareInput extends ResourceCompareInput {
 				super.setLabelProvider(new LabelProviderWrapper((ILabelProvider)labelProvider) {
 					public Image getImage(Object element) {
 						if (element instanceof CompareNode && ((CompareNode)element).getChangeType() == SVNEntryStatus.Kind.REPLACED) {
-							Image image = (Image)this.images.get(element);
+							Image image = this.images.get(element);
 							if (image == null) {
 								OverlayedImageDescriptor imageDescriptor = new OverlayedImageDescriptor(this.baseProvider.getImage(element), SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/replaced_2way.gif"), new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V);
 								this.images.put(element,image = imageDescriptor.createImage());

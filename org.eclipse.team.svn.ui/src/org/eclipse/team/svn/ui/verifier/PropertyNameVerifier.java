@@ -45,7 +45,7 @@ public class PropertyNameVerifier extends AbstractFormattedVerifier {
         if (property.trim().length() == 0) {
             return null;
         }
-        if (ignoreStrings.contains(property)) {
+        if (this.ignoreStrings.contains(property)) {
         	return SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.Name.Verifier.IgnoreStrings");
         }
         Pattern pattern = Pattern.compile("[a-zA-Z].*");

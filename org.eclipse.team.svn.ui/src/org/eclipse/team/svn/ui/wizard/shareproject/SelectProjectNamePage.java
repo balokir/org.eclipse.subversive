@@ -281,7 +281,7 @@ public class SelectProjectNamePage extends AbstractVerifiedWizardPage {
 		
 		new Label(this.layoutGroup, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(this.makeGridData());
 
-		this.managementFoldersEnabledButton = new Button(layoutGroup, SWT.CHECK);
+		this.managementFoldersEnabledButton = new Button(this.layoutGroup, SWT.CHECK);
 		this.managementFoldersEnabledButton.setLayoutData(new GridData());
 		this.managementFoldersEnabledButton.setEnabled(false);
 		this.managementFoldersEnabledButton.setSelection(true);
@@ -294,7 +294,7 @@ public class SelectProjectNamePage extends AbstractVerifiedWizardPage {
 			}
 		});
 		this.initializeDialogUnits(parent);
-		Label label = new Label(layoutGroup, SWT.WRAP);
+		Label label = new Label(this.layoutGroup, SWT.WRAP);
 		data = this.makeGridData();
 		data.heightHint = this.convertHeightInCharsToPixels(2);
 		label.setLayoutData(data);

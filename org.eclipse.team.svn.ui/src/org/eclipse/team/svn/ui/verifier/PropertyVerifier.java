@@ -47,7 +47,7 @@ public class PropertyVerifier extends AbstractFormattedVerifier {
     }
 	
 	protected String getErrorMessageImpl(Control input) {
-		if (!toValidate) {
+		if (!this.toValidate) {
 			return null;
 		}
 		String inputText = this.getText(input);
@@ -78,7 +78,7 @@ public class PropertyVerifier extends AbstractFormattedVerifier {
 			}
 			return null;
 		}
-		Matcher matcher = pattern.matcher(inputText);
+		Matcher matcher = this.pattern.matcher(inputText);
 		if (!matcher.matches()) {
 			String retVal = SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.Verifier." + this.propName);
 			if (retVal.equals("PropertyEditPanel.Verifier." + this.propName)) {

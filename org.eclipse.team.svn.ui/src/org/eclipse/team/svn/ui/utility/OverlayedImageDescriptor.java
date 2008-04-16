@@ -46,22 +46,22 @@ public class OverlayedImageDescriptor extends CompositeImageDescriptor {
     }
 
     protected void drawCompositeImage(int width, int height) {
-        this.drawImage(base.getImageData(), 0, 0);
+        this.drawImage(this.base.getImageData(), 0, 0);
         
 		ImageData overlayData = this.overlay.getImageData();
 		int x = 0;
 		int y = 0;
 		if ((this.where & OverlayedImageDescriptor.CENTER_H) == OverlayedImageDescriptor.CENTER_H) {
-		    x = (size.x - overlayData.width) / 2;
+		    x = (this.size.x - overlayData.width) / 2;
 		}
 		else if ((this.where & OverlayedImageDescriptor.RIGHT) == OverlayedImageDescriptor.RIGHT) {
-		    x = size.x - overlayData.width;
+		    x = this.size.x - overlayData.width;
 		}
 		if ((this.where & OverlayedImageDescriptor.CENTER_V) == OverlayedImageDescriptor.CENTER_V) {
-		    y = (size.y - overlayData.height) / 2;
+		    y = (this.size.y - overlayData.height) / 2;
 		}
 		else if ((this.where & OverlayedImageDescriptor.BOTTOM) == OverlayedImageDescriptor.BOTTOM) {
-		    y = size.y - overlayData.height;
+		    y = this.size.y - overlayData.height;
 		}
 		this.drawImage(overlayData, x, y);
     }

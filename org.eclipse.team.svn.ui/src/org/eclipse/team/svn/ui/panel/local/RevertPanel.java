@@ -473,7 +473,7 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 					op.add(new AddToSVNOperation(newResources, false));
 				}
 				if (panel.isFreezeExternals()) {
-					FreezeExternalsOperation freezeOp = new FreezeExternalsOperation(resources);
+					FreezeExternalsOperation freezeOp = new FreezeExternalsOperation(this.resources);
 					op.add(freezeOp);
 					op.add(mainOp, new IActionOperation[] {freezeOp});
 					op.add(new RestoreExternalsOperation(freezeOp));

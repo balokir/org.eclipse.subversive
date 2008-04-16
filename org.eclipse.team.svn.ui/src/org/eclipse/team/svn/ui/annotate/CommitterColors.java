@@ -50,10 +50,10 @@ public class CommitterColors {
 	 * @return the corresponding color
 	 */
 	public RGB getCommitterRGB(String committer) {
-		RGB rgb= (RGB) fColors.get(committer);
+		RGB rgb= (RGB) this.fColors.get(committer);
 		if (rgb == null) {
-			rgb= computeRGB(fCount++);
-			fColors.put(committer, rgb);
+			rgb= computeRGB(this.fCount++);
+			this.fColors.put(committer, rgb);
 		}
 		return rgb;
 	}

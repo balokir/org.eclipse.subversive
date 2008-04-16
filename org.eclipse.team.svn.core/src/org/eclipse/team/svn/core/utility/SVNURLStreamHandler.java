@@ -38,7 +38,7 @@ public class SVNURLStreamHandler extends URLStreamHandler {
     }
     
     public void setHost(String host) {
-    	this.setURL(this.url, url.getProtocol(), host, url.getPort(), url.getAuthority(), url.getUserInfo(), url.getPath(), url.getQuery(), url.getRef());
+    	this.setURL(this.url, this.url.getProtocol(), host, this.url.getPort(), this.url.getAuthority(), this.url.getUserInfo(), this.url.getPath(), this.url.getQuery(), this.url.getRef());
     }
     
     protected void parseURL(URL u, String spec, int start, int limit) {

@@ -91,6 +91,9 @@ public final class SVNUtility {
 	private static String svnFolderName = null;
 
 	public static IRepositoryResource asRepositoryResource(String url, boolean isFolder) {
+		if (!SVNUtility.isValidSVNURL(url)) {
+			return null;
+		}
 		IRepositoryRoot []roots = SVNUtility.findRoots(url, true);
 		IRepositoryResource retVal = null;
 		if (roots.length > 0) {

@@ -85,9 +85,9 @@ public class IgnoreMethodPanel extends AbstractDialogPanel {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		extensionButton.setLayoutData(data);
 		String extension = null;
-		for (int i = 0; i < resources.length; i++) {
+		for (int i = 0; i < this.resources.length; i++) {
 		    if (extension == null) {
-			    extension = resources[i].getFileExtension();
+			    extension = this.resources[i].getFileExtension();
 		    }
 		    else {
 		        break;

@@ -28,6 +28,7 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.composite.RepositoryTreeComposite;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.repository.model.IParentTreeNode;
+import org.eclipse.team.svn.ui.repository.model.IResourceTreeNode;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFictiveNode;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFile;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFolder;
@@ -90,7 +91,7 @@ public class RepositoryTreePanel extends AbstractDialogPanel {
 	
 	public void createControlsImpl(Composite parent) {
 		if (this.root != null) {
-			this.repositoryTree = new RepositoryTreeComposite(parent, SWT.BORDER, false, root);
+			this.repositoryTree = new RepositoryTreeComposite(parent, SWT.BORDER, false, this.root);
 		}
 		else if (this.selectedResources.length > 0) {
 			this.repositoryTree = new RepositoryTreeComposite(parent, SWT.BORDER, false, new ProjectRoot(this.selectedResources[0]));
@@ -123,7 +124,7 @@ public class RepositoryTreePanel extends AbstractDialogPanel {
 			public void selectionChanged(SelectionChangedEvent event) {
 				if (RepositoryTreePanel.this.manager != null) {
 					IStructuredSelection selection = (IStructuredSelection)RepositoryTreePanel.this.repositoryTree.getRepositoryTreeViewer().getSelection();
-					RepositoryTreePanel.this.manager.setButtonEnabled(0, !selection.isEmpty() && selection.getFirstElement() instanceof RepositoryResource);
+					RepositoryTreePanel.this.manager.setButtonEnabled(0, !selection.isEmpty() && selection.getFirstElement() instanceof IResourceTreeNode);
 				}
 			}
 		});
@@ -136,7 +137,7 @@ public class RepositoryTreePanel extends AbstractDialogPanel {
 	protected void saveChangesImpl() {
 		IStructuredSelection selection = (IStructuredSelection)this.repositoryTree.getRepositoryTreeViewer().getSelection();
 		if (!selection.isEmpty() && selection.getFirstElement() instanceof RepositoryResource) {
-			this.selectedResource = ((RepositoryResource)selection.getFirstElement()).getRepositoryResource();
+			this.selectedResource = ((IResourceTreeNode)selection.getFirstElement()).getRepositoryResource();
 		}
 	}
 	

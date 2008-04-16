@@ -274,7 +274,7 @@ public class ReportingComposite extends Composite {
 			this.previewButton = new Button(buttonsComposite, SWT.PUSH);
 			data = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.FILL_HORIZONTAL);
 			this.previewButton.setText(SVNTeamUIPlugin.instance().getResource("ReportingComposite.Preview"));
-			data.widthHint = DefaultDialog.computeButtonWidth(previewButton);
+			data.widthHint = DefaultDialog.computeButtonWidth(this.previewButton);
 			this.previewButton.setLayoutData(data);
 					
 			this.previewButton.addSelectionListener(new SelectionAdapter() {

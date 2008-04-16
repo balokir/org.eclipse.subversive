@@ -108,9 +108,9 @@ public class DeleteResourceOperation extends AbstractActionOperation {
 	}
 	
 	protected String getShortErrorMessage(Throwable t) {
-		Object[] wcPaths = new String[resources.length];
-		for (int i = 0; i < resources.length; i++) {
-			wcPaths[i] = FileUtility.getWorkingCopyPath(resources[i]);
+		Object[] wcPaths = new String[this.resources.length];
+		for (int i = 0; i < this.resources.length; i++) {
+			wcPaths[i] = FileUtility.getWorkingCopyPath(this.resources[i]);
 		}
 		return MessageFormat.format(super.getShortErrorMessage(t), wcPaths);
 	}
