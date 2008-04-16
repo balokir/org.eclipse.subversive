@@ -34,6 +34,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.TreeSelection;
@@ -134,9 +136,28 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 						baseReference,
 						repoResource.getRepositoryLocation(),
 						baseRevNum);
-				PropertyComparePanel panel = new PropertyComparePanel(input, true);
-				DefaultDialog dlg = new DefaultDialog(UIMonitorUtility.getShell(), panel);
-				dlg.open();
+				try {
+					input.run(new NullProgressMonitor());
+					if (input.getCompareResult() == null) {
+						MessageDialog dialog = new MessageDialog(
+								UIMonitorUtility.getShell(),
+								SVNTeamUIPlugin.instance().getResource("ComparePropsNoDiff.Title"),
+								null,
+								SVNTeamUIPlugin.instance().getResource("ComparePropsNoDiff.Message"),
+								MessageDialog.INFORMATION,
+								new String [] {IDialogConstants.OK_LABEL},
+								0);
+						dialog.open();
+					}
+					else {
+						PropertyComparePanel panel = new PropertyComparePanel(input, true);
+						DefaultDialog dlg = new DefaultDialog(UIMonitorUtility.getShell(), panel);
+						dlg.open();
+					}
+				}
+				catch (Exception ex) {
+					UILoggedOperation.reportError("Compare Properties Operation", ex);
+				}
 			}
 		});
 		tAction.setEnabled(propertyComparisonAllowed);
