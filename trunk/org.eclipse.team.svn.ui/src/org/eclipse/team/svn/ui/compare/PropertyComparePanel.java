@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.ui.compare;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -19,7 +18,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.operation.UILoggedOperation;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 
 /**
@@ -44,18 +42,11 @@ public class PropertyComparePanel extends AbstractDialogPanel {
 	}
 
 	protected void createControlsImpl(Composite parent) {
-		try {
-			this.input.run(new NullProgressMonitor());
-		}
-		catch (Exception ex) {
-			UILoggedOperation.reportError("Compare Properties Operation", ex);
-		}
 		Control control = this.input.createContents(parent);
 		control.setLayoutData(new GridData(GridData.FILL_BOTH));
 		Shell shell= control.getShell();
 		shell.setText(this.input.getTitle());
 		shell.setImage(this.input.getTitleImage());
-		
 	}
 	
 	public String getHelpId() {

@@ -21,9 +21,12 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.TreeSelection;
@@ -46,6 +49,7 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.compare.ResourceCompareInput.ResourceElement;
 import org.eclipse.team.svn.ui.compare.ThreeWayResourceCompareInput.CompareNode;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
+import org.eclipse.team.svn.ui.operation.UILoggedOperation;
 import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
@@ -81,9 +85,28 @@ public class TwoWayResourceCompareInput extends ResourceCompareInput {
 						leftReference,
 						rightReference,
 						repoResource.getRepositoryLocation());
-				PropertyComparePanel panel = new PropertyComparePanel(input, false);
-				DefaultDialog dlg = new DefaultDialog(UIMonitorUtility.getShell(), panel);
-				dlg.open();
+				try {
+					input.run(new NullProgressMonitor());
+					if (input.getCompareResult() == null) {
+						MessageDialog dialog = new MessageDialog(
+								UIMonitorUtility.getShell(),
+								SVNTeamUIPlugin.instance().getResource("ComparePropsNoDiff.Title"),
+								null,
+								SVNTeamUIPlugin.instance().getResource("ComparePropsNoDiff.Message"),
+								MessageDialog.INFORMATION,
+								new String [] {IDialogConstants.OK_LABEL},
+								0);
+						dialog.open();
+					}
+					else {
+						PropertyComparePanel panel = new PropertyComparePanel(input, false);
+						DefaultDialog dlg = new DefaultDialog(UIMonitorUtility.getShell(), panel);
+						dlg.open();
+					}
+				}
+				catch (Exception ex) {
+					UILoggedOperation.reportError("Compare Properties Operation", ex);
+				}
 			}
 		});
 		tAction.setEnabled((selectedNode.getKind() & Differencer.CHANGE_TYPE_MASK) != Differencer.ADDITION
