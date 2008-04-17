@@ -32,6 +32,7 @@ import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.resource.ILocalResource;
+import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.synchronize.variant.ResourceVariant;
 import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
@@ -53,6 +54,7 @@ public abstract class AbstractSVNParticipant extends ScopableSubscriberParticipa
 	protected static ImageDescriptor OVR_REPLACED_OUT;
 	protected static ImageDescriptor OVR_REPLACED_IN;
 	protected static ImageDescriptor OVR_REPLACED_CONF;
+	protected static ImageDescriptor OVR_PROPCHANGE;
 	
 	protected ISynchronizePageConfiguration configuration;
 	
@@ -148,6 +150,7 @@ public abstract class AbstractSVNParticipant extends ScopableSubscriberParticipa
             AbstractSVNParticipant.OVR_REPLACED_OUT = instance.getImageDescriptor("icons/overlays/replaced_out.gif");
             AbstractSVNParticipant.OVR_REPLACED_IN = instance.getImageDescriptor("icons/overlays/replaced_in.gif");
             AbstractSVNParticipant.OVR_REPLACED_CONF = instance.getImageDescriptor("icons/overlays/replaced_conf.gif");
+            AbstractSVNParticipant.OVR_PROPCHANGE = instance.getImageDescriptor("icons/overlays/prop_changed.png");
 	    }
 	}	
     
@@ -190,7 +193,15 @@ public abstract class AbstractSVNParticipant extends ScopableSubscriberParticipa
 					    imgDescr = new OverlayedImageDescriptor(image, AbstractSVNParticipant.OVR_REPLACED_IN, new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V);
 				    }
 			    }
-			    return this.registerImageDescriptor(imgDescr);
+			    Image tmp = this.registerImageDescriptor(imgDescr);
+				if ((left.getChangeMask() & ILocalResource.PROP_MODIFIED) != 0 || (right.getChangeMask() & ILocalResource.PROP_MODIFIED) != 0) {
+				    if (tmp != null) {
+				    	image = tmp;
+				    }
+					imgDescr = new OverlayedImageDescriptor(image, AbstractSVNParticipant.OVR_PROPCHANGE, new Point(23, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.BOTTOM);
+					return this.registerImageDescriptor(imgDescr);
+				}
+			    return tmp;
 			}
 			return null;
 		}
