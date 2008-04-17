@@ -77,8 +77,7 @@ public class UpdateAction extends AbstractRecursiveTeamAction {
 	}
 
 	public static CompositeOperation getUpdateOperation(Shell shell, IResource []updateSet) {
-		final DetectDeletedProjectsOperation detectOp = new DetectDeletedProjectsOperation(updateSet);
-		final UpdateOperation mainOp = new UpdateOperation(detectOp, true);
+		final UpdateOperation mainOp = new UpdateOperation(updateSet, true);
 		IResourceProvider refreshProvider = new IResourceProvider() {
 			public IResource []getResources() {
 				HashSet fullSet = new HashSet(Arrays.asList(mainOp.getResources()));
@@ -87,12 +86,10 @@ public class UpdateAction extends AbstractRecursiveTeamAction {
 				}
 			};
 		CompositeOperation op = new CompositeOperation(mainOp.getOperationName());
-		op.add(detectOp);
-		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(detectOp);
+		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(updateSet);
 		op.add(saveOp);
 		op.add(mainOp);
 		op.add(new RestoreProjectMetaOperation(saveOp));
-		op.add(new ProcessDeletedProjectsOperation(detectOp));
 		op.add(new ClearUpdateStatusesOperation(refreshProvider));
 		op.add(new RefreshResourcesOperation(refreshProvider));
 		op.add(new NotifyUnresolvedConflictOperation(shell, mainOp));
@@ -100,7 +97,7 @@ public class UpdateAction extends AbstractRecursiveTeamAction {
 	}
 }
 </pre>
-	<p>As you can see the UpdateAction class implementation is more complex in compare with the sequence diagram because it supports more functionality - detecting projects, that is deleted on repository, saving Eclipse IDE meta-information in order to prevent problems when something like ".project" is deleted on repository. </p>
+	<p>As you can see the UpdateAction class implementation is more complex in compare with the sequence diagram because it supports more functionality - saving Eclipse IDE meta-information in order to prevent problems when something like ".project" is deleted on repository. </p>
 	<p>In general case it is not required for programmer to implement his own commands and work with SVN Client Library API. Nevertheless programmer can create own commands using SVN Client Library API - it also easy. The command implementation does not requires from programmer any additional actions (like integral resource locking policies calculation for all commands, interfaces that allows data transmitting between commands, error handling and crash recovery support) except of freeing of allocated resources in finally section.</p>
 	<i>Code Sample 2 Command implementation</i>
 <pre>
@@ -255,10 +252,6 @@ public class ExportOperation extends AbstractRepositoryOperation {
 			<td>Get all resources for the specified local folder including deleted, missing etc.</td>
 		</tr>
 		<tr>
-			<td width="50%">DetectDeletedProjectsOperation</td>
-			<td>Detect which projects are deleted on repository (the deleted projects cannot be processed in normal way)</td>
-		</tr>
-		<tr>
 			<td width="50%">SaveRepositoryLocationsOperation</td>
 			<td>Save Subversive meta-information changes</td>
 		</tr>
@@ -408,10 +401,6 @@ public class ExportOperation extends AbstractRepositoryOperation {
 		<tr>
 			<td width="50%">ShowConflictEditorOperation</td>
 			<td>Show conflicted files editor (for resources update by external tools)</td>
-		</tr>
-		<tr>
-			<td width="50%">ProcessDeletedProjectsOperation</td>
-			<td>Notify user about deleted projects and request his decision</td>
 		</tr>
 		<tr>
 			<td width="50%">ClearUpdateStatusesOperation</td>
