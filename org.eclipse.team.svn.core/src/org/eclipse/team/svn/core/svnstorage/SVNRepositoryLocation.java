@@ -960,6 +960,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
     		location.setUsername(this.prompt.getUsername());
     		location.setPassword(this.prompt.getPassword());
     		location.setPasswordSaved(this.prompt.isSaveCredentialsEnabled());
+    		SVNTeamPlugin.instance().setLocationsDirty(true);
         
     		if (connectionType == SVNRepositoryLocation.SSH_CONNECTION) {
     			SSHSettings settings = location.getSSHSettings();
