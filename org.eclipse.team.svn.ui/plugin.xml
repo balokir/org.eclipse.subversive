@@ -46,22 +46,6 @@
 			<adapter type="org.eclipse.team.svn.core.connector.SVNLogEntry"/>
 		</factory>
 	</extension>
-    
-<!-- ************** Property Merge Viewer ********************** -->
-	<extension point="org.eclipse.core.runtime.contentTypes">
-		<content-type id="svnproperties" name="%svnPropertiesContentTypeName">
-		</content-type>
-	</extension>		 
-
-	<extension
-         point="org.eclipse.compare.contentMergeViewers">      
-	  <viewer
-            class="org.eclipse.team.svn.ui.properties.PropertyMergeViewerCreator"
-            id="org.eclipse.team.svn.ui.properties.PropertyMergeViewerCreator"/>
-      <contentTypeBinding
-            contentMergeViewerId="org.eclipse.team.svn.ui.properties.PropertyMergeViewerCreator"
-            contentTypeId="org.eclipse.team.svn.ui.svnproperties"/>
-	</extension>
    
 <!-- ************** SVN Team Wizards ********************** -->
    <extension
