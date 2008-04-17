@@ -217,6 +217,7 @@ public class RepositoryResourceSelectionComposite extends Composite {
 		else if (defaultTextType == RepositoryResourceSelectionComposite.TEXT_LAST && this.urlText.getItemCount() > 0) {
 			this.urlText.select(0);
 		}
+		this.url = this.urlText.getText();
 		this.urlText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				RepositoryResourceSelectionComposite.this.url = ((Combo)e.widget).getText();

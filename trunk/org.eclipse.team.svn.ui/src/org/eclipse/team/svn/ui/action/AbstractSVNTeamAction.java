@@ -54,7 +54,10 @@ public abstract class AbstractSVNTeamAction extends TeamAction {
 		super();
 	}
 
-	public final void run(final IAction action) {
+	public abstract boolean isEnabled();
+	public abstract void runImpl(IAction action);
+	
+	protected final void execute(final IAction action) throws InvocationTargetException, InterruptedException {
 		ProgressMonitorUtility.doTaskExternal(new AbstractActionOperation("Operation.CallMenuAction") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				if (AbstractSVNTeamAction.this.isEnabled()) {
@@ -62,13 +65,6 @@ public abstract class AbstractSVNTeamAction extends TeamAction {
 				}
 			}
 		}, new NullProgressMonitor());
-	}
-	
-	public abstract boolean isEnabled();
-	public abstract void runImpl(IAction action);
-	
-	protected void execute(IAction action) throws InvocationTargetException, InterruptedException {
-		// compatibility with 3.3
 	}
 	
 	protected ICancellableOperationWrapper runBusy(IActionOperation operation) {
@@ -90,7 +86,9 @@ public abstract class AbstractSVNTeamAction extends TeamAction {
 	public void selectionChanged(IAction action, ISelection selection) {
 		try {
 			if (selection == null || selection.isEmpty() || !(selection instanceof IStructuredSelection)) {
-				action.setEnabled(false);
+				if (action != null) {
+					action.setEnabled(false);
+				}
 				return;
 			}
 			
