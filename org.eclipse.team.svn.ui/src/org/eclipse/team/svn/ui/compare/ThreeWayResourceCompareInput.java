@@ -157,7 +157,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 				}
 			}
 		});
-		tAction.setEnabled(propertyComparisonAllowed);
+		tAction.setEnabled(propertyComparisonAllowed && selection.size() == 1);
 	}
 
 	public void initialize(IProgressMonitor monitor) throws Exception {
