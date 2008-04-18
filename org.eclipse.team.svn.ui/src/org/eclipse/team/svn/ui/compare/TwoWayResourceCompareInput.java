@@ -103,7 +103,7 @@ public class TwoWayResourceCompareInput extends ResourceCompareInput {
 				}
 			}
 		});
-		tAction.setEnabled((selectedNode.getKind() & Differencer.CHANGE_TYPE_MASK) != Differencer.ADDITION
+		tAction.setEnabled(selection.size() == 1 && (selectedNode.getKind() & Differencer.CHANGE_TYPE_MASK) != Differencer.ADDITION
 				&& (selectedNode.getKind() & Differencer.CHANGE_TYPE_MASK) != Differencer.DELETION);
 	}
 
