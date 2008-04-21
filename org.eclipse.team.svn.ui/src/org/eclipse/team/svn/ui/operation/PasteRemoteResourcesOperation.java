@@ -85,8 +85,8 @@ public class PasteRemoteResourcesOperation extends AbstractActionOperation imple
 			}
 			AbstractCopyMoveResourcesOperation copyMoveOp = 
 				this.operationType == RemoteResourceTransferrable.OP_COPY ? 
-				(AbstractCopyMoveResourcesOperation)new CopyResourcesOperation(this.resource, this.pasted, this.message) : 
-				new MoveResourcesOperation(this.resource, this.pasted, this.message);
+				(AbstractCopyMoveResourcesOperation)new CopyResourcesOperation(this.resource, this.pasted, this.message, null) : 
+				new MoveResourcesOperation(this.resource, this.pasted, this.message, null);
 			copyMoveOp.setConsoleStream(this.getConsoleStream());
 			copyMoveOp.run(monitor);
 			this.reportStatus(copyMoveOp.getStatus());

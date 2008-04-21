@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.svn.core.resource.IRepositoryBase;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
-import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.composite.RepositoryTreeComposite;
@@ -53,7 +52,7 @@ public class RepositoryTreePanel extends AbstractDialogPanel {
 	public RepositoryTreePanel(String title, IRepositoryResource[] resources, boolean allowSourcesInTree) {
 		this(title,
 			SVNTeamUIPlugin.instance().getResource("RepositoryTreePanel.Description"), 
-			RepositoryTreePanel.formatMessage(resources), 
+			AbstractDialogPanel.makeToBeOperatetMessage(resources), 
 			resources, 
 			allowSourcesInTree);
 	}
@@ -154,22 +153,8 @@ public class RepositoryTreePanel extends AbstractDialogPanel {
 		}
 		return false;
 	}
-
-	private static String formatMessage(IRepositoryResource []resources) {
-		String message;
-		if (resources.length == 1) {
-			message = "RepositoryTreePanel.Message.Single";
-		}
-		else if (resources.length < 5) {
-			message = "RepositoryTreePanel.Message.UpTo4";
-		}
-		else {
-			message = "RepositoryTreePanel.Message.Multi";
-		}
-		return SVNTeamUIPlugin.instance().getResource(message, new String[] {FileUtility.getNamesListAsString(resources)});
-	}
 	
-	protected class ProjectRoot extends RepositoryFictiveNode implements IParentTreeNode {
+	public static class ProjectRoot extends RepositoryFictiveNode implements IParentTreeNode {
 		protected RepositoryResource []children;
 		
 		public ProjectRoot(IRepositoryResource resource) {

@@ -27,8 +27,8 @@ public class CopyToAction extends AbstractCopyMoveAction {
 		super("CopyToAction");
 	}
 
-	protected AbstractCopyMoveResourcesOperation makeCopyOperation(IRepositoryResource destination, IRepositoryResource[] selected, String message) {
-		return new CopyResourcesOperation(destination, selected, message);
+	protected AbstractCopyMoveResourcesOperation makeCopyOperation(IRepositoryResource destination, IRepositoryResource[] selected, String message, String name) {
+		return new CopyResourcesOperation(destination, selected, message, name);
 	}
 
 	public boolean isEnabled() {

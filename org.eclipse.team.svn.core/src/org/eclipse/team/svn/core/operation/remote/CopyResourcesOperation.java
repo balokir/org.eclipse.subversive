@@ -26,8 +26,8 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * @author Alexander Gurov
  */
 public class CopyResourcesOperation extends AbstractCopyMoveResourcesOperation {
-	public CopyResourcesOperation(IRepositoryResource destinationResource, IRepositoryResource[] selectedResources, String message) {
-		super("Operation.CopyRemote", destinationResource, selectedResources, message);
+	public CopyResourcesOperation(IRepositoryResource destinationResource, IRepositoryResource[] selectedResources, String message, String name) {
+		super("Operation.CopyRemote", destinationResource, selectedResources, message, name);
 	}
 
 	protected String []getRevisionPaths(String srcUrl, String dstUrl) {
@@ -37,7 +37,7 @@ public class CopyResourcesOperation extends AbstractCopyMoveResourcesOperation {
 	protected void processEntry(ISVNConnector proxy, String sourceUrl, String destinationUrl, IRepositoryResource current, IProgressMonitor monitor) throws Exception {
 		this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn copy \"" + SVNUtility.decodeURL(sourceUrl) + "\" \"" + SVNUtility.decodeURL(destinationUrl) + "\" -r " + current.getSelectedRevision() + " -m \"" + this.message + "\"" + FileUtility.getUsernameParam(current.getRepositoryLocation().getUsername()) + "\n");
 		SVNEntryRevisionReference []src = new SVNEntryRevisionReference[] {new SVNEntryRevisionReference(sourceUrl, current.getPegRevision(), current.getSelectedRevision())};
-		proxy.copy(src, destinationUrl, this.message, ISVNConnector.Options.INTERPRET_AS_CHILD, new SVNProgressMonitor(this, monitor, null));
+		proxy.copy(src, destinationUrl, this.message, ISVNConnector.CommandMasks.COPY_SERVER, new SVNProgressMonitor(this, monitor, null));
 	}
 	
 }
