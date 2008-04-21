@@ -25,7 +25,6 @@ import org.eclipse.team.svn.ui.wizard.AbstractVerifiedWizardPage;
  * @author Alexei Goncharov
  */
 public class CommentWizardPage extends AbstractVerifiedWizardPage {
-
 	protected CommentComposite commentComposite;
 	
 	public CommentWizardPage(boolean isMove) {
@@ -51,6 +50,7 @@ public class CommentWizardPage extends AbstractVerifiedWizardPage {
 	}
 	
 	public String getComment() {
+		this.commentComposite.saveChanges();
 		return this.commentComposite.getMessage();
 	}
 
