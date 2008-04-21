@@ -14,11 +14,8 @@ package org.eclipse.team.svn.core.operation.remote;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
-import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
-import org.eclipse.team.svn.core.utility.FileUtility;
-import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
  * Copy remote resources
@@ -34,10 +31,9 @@ public class CopyResourcesOperation extends AbstractCopyMoveResourcesOperation {
 		return new String [] {dstUrl};
 	}
 
-	protected void processEntry(ISVNConnector proxy, String sourceUrl, String destinationUrl, IRepositoryResource current, IProgressMonitor monitor) throws Exception {
-		this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn copy \"" + SVNUtility.decodeURL(sourceUrl) + "\" \"" + SVNUtility.decodeURL(destinationUrl) + "\" -r " + current.getSelectedRevision() + " -m \"" + this.message + "\"" + FileUtility.getUsernameParam(current.getRepositoryLocation().getUsername()) + "\n");
-		SVNEntryRevisionReference []src = new SVNEntryRevisionReference[] {new SVNEntryRevisionReference(sourceUrl, current.getPegRevision(), current.getSelectedRevision())};
-		proxy.copy(src, destinationUrl, this.message, ISVNConnector.CommandMasks.COPY_SERVER, new SVNProgressMonitor(this, monitor, null));
+	protected void runCopyMove(ISVNConnector proxy, SVNEntryRevisionReference[] source, String destinationUrl, IProgressMonitor monitor) throws Exception {
+		//this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn copy \"" + SVNUtility.decodeURL(sourceUrl) + "\" \"" + SVNUtility.decodeURL(destinationUrl) + "\" -r " + current.getSelectedRevision() + " -m \"" + this.message + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n");
+		proxy.copy(source, destinationUrl, this.message, ISVNConnector.CommandMasks.COPY_SERVER, new SVNProgressMonitor(this, monitor, null));
 	}
 	
 }
