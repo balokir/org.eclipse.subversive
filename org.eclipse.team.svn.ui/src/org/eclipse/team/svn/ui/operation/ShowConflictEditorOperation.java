@@ -69,7 +69,7 @@ public class ShowConflictEditorOperation extends AbstractWorkingCopyOperation {
     	IResource []resources = this.operableData();
     	HashSet ruleSet = new HashSet();
     	for (int i = 0; i < resources.length; i++) {
-			ruleSet.add(SVNResourceRuleFactory.INSTANCE.refreshRule(resources[i]));
+			ruleSet.add(SVNResourceRuleFactory.INSTANCE.refreshRule(resources[i].getParent()));
     	}
     	return new MultiRule((IResource [])ruleSet.toArray(new IResource[ruleSet.size()]));
     }
