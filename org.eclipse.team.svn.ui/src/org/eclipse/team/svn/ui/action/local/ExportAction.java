@@ -48,4 +48,8 @@ public class ExportAction extends AbstractWorkingCopyAction {
 		return this.checkForResourcesPresence(IStateFilter.SF_EXCLUDE_DELETED);
 	}
 	
+	protected boolean needsToSaveDirtyEditors() {
+		return true;
+	}
+	
 }

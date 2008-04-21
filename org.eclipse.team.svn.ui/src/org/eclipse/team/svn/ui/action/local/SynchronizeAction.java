@@ -44,12 +44,16 @@ public class SynchronizeAction extends AbstractWorkingCopyAction {
 		this.runScheduled(op);
 	}
 	
-	protected IWorkingSet []getSelectedWorkingSets() {
-		return (IWorkingSet [])this.getAdaptedSelection(IWorkingSet.class);
-	}
-	
 	public boolean isEnabled() {
 		return this.checkForResourcesPresence(IStateFilter.SF_VALID);
 	}
 
+	protected boolean needsToSaveDirtyEditors() {
+		return true;
+	}
+	
+	protected IWorkingSet []getSelectedWorkingSets() {
+		return (IWorkingSet [])this.getAdaptedSelection(IWorkingSet.class);
+	}
+	
 }

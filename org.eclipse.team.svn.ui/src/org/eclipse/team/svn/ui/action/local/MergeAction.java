@@ -95,4 +95,8 @@ public class MergeAction extends AbstractNonRecursiveTeamAction {
 		return this.checkForResourcesPresence(IStateFilter.SF_EXCLUDE_DELETED);
 	}
 
+	protected boolean needsToSaveDirtyEditors() {
+		return true;
+	}
+	
 }

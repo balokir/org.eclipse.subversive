@@ -47,4 +47,8 @@ public class MarkAsMergedAction extends AbstractNonRecursiveTeamAction {
 			this.checkForResourcesPresence(IStateFilter.SF_CONFLICTING);
 	}
 
+	protected boolean needsToSaveDirtyEditors() {
+		return true;
+	}
+	
 }

@@ -34,4 +34,8 @@ public class EditConflictsAction extends AbstractRecursiveTeamAction {
 		return this.checkForResourcesPresenceRecursive(IStateFilter.SF_CONFLICTING);
 	}
 
+	protected boolean needsToSaveDirtyEditors() {
+		return true;
+	}
+	
 }

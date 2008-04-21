@@ -64,4 +64,8 @@ public class CompareWithLatestRevisionAction extends AbstractWorkingCopyAction {
 			this.checkForResourcesPresence(CompareWithWorkingCopyAction.COMPARE_FILTER);
 	}
 
+	protected boolean needsToSaveDirtyEditors() {
+		return true;
+	}
+	
 }

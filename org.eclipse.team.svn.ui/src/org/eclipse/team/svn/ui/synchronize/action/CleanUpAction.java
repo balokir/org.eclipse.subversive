@@ -36,6 +36,10 @@ public class CleanUpAction extends AbstractSynchronizeModelAction {
 		super(text, configuration);
 	}
 
+	protected boolean needsToSaveDirtyEditors() {
+		return false;
+	}
+	
 	protected boolean updateSelection(IStructuredSelection selection) {
 		super.updateSelection(selection);
 		for (Iterator it = selection.iterator(); it.hasNext(); ) {

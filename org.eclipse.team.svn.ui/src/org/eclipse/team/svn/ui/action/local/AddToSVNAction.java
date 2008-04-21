@@ -53,4 +53,8 @@ public class AddToSVNAction extends AbstractRecursiveTeamAction {
 			this.checkForResourcesPresenceRecursive(IStateFilter.SF_NEW);
 	}
 
+	protected boolean needsToSaveDirtyEditors() {
+		return true;
+	}
+	
 }
