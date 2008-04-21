@@ -73,4 +73,8 @@ public class CompareWithBranchTagAction extends AbstractWorkingCopyAction {
 		}
 	}
 
+	protected boolean needsToSaveDirtyEditors() {
+		return true;
+	}
+	
 }

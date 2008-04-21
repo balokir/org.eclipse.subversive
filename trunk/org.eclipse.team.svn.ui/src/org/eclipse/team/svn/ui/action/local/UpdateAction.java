@@ -83,4 +83,8 @@ public class UpdateAction extends AbstractRecursiveTeamAction {
 		return op;
 	}
 	
+	protected boolean needsToSaveDirtyEditors() {
+		return true;
+	}
+	
 }

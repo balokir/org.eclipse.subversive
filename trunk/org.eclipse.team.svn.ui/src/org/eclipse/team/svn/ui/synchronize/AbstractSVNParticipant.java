@@ -20,10 +20,8 @@ import java.util.Map;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
 import org.eclipse.team.internal.ui.synchronize.IChangeSetProvider;
@@ -36,7 +34,6 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.synchronize.variant.ResourceVariant;
 import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.ISynchronizePage;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipantDescriptor;
 import org.eclipse.team.ui.synchronize.ISynchronizeScope;
@@ -121,27 +118,6 @@ public abstract class AbstractSVNParticipant extends ScopableSubscriberParticipa
 		return new LabelDecorator();
 	}
 	
-    protected void refresh() {
-    	ISynchronizePage page = this.configuration.getPage();
-    	Viewer viewer = null;
-    	// prevent problem with NullPointerException inside Eclipse code: when Synchronize View is not visible SyncInfoSet is not defined
-    	if (page != null && (viewer = page.getViewer()) != null && viewer.getControl() != null) {
-        	final Control control = viewer.getControl();
-        	if (!control.isDisposed()) {
-            	control.getDisplay().syncExec(new Runnable() {
-        			public void run() {
-        		        if (control.isVisible() && AbstractSVNParticipant.this.configuration.getSite() != null) {
-        		            int oldMode = AbstractSVNParticipant.this.configuration.getMode();
-        		            
-        		            AbstractSVNParticipant.this.configuration.setMode(oldMode != ISynchronizePageConfiguration.INCOMING_MODE ? ISynchronizePageConfiguration.INCOMING_MODE : ISynchronizePageConfiguration.OUTGOING_MODE);
-        		            AbstractSVNParticipant.this.configuration.setMode(oldMode);
-        		        }
-        			}
-        		});
-        	}
-    	}
-    }
-    
 	private void setDefaults() {
 	    if (AbstractSVNParticipant.OVR_REPLACED_OUT == null) {
 	        SVNTeamUIPlugin instance = SVNTeamUIPlugin.instance();

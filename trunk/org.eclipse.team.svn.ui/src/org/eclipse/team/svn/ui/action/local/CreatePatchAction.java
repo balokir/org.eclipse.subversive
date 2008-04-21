@@ -60,4 +60,8 @@ public class CreatePatchAction extends AbstractWorkingCopyAction {
 		return this.checkForResourcesPresenceRecursive(IStateFilter.SF_ANY_CHANGE);
 	}
 
+	protected boolean needsToSaveDirtyEditors() {
+		return true;
+	}
+	
 }

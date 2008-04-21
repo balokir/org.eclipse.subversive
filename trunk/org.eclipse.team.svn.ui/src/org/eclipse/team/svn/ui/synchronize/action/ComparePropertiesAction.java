@@ -41,9 +41,12 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
  */
 public class ComparePropertiesAction extends AbstractSynchronizeModelAction {
 
-	public ComparePropertiesAction(String text,
-			ISynchronizePageConfiguration configuration) {
+	public ComparePropertiesAction(String text, ISynchronizePageConfiguration configuration) {
 		super(text, configuration);
+	}
+	
+	protected boolean needsToSaveDirtyEditors() {
+		return false;
 	}
 	
 	protected boolean updateSelection(IStructuredSelection selection) {

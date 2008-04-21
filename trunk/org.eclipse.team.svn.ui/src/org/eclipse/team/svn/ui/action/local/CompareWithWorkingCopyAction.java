@@ -49,6 +49,10 @@ public class CompareWithWorkingCopyAction extends AbstractWorkingCopyAction {
 			this.checkForResourcesPresence(CompareWithWorkingCopyAction.COMPARE_FILTER);
 	}
 	
+	protected boolean needsToSaveDirtyEditors() {
+		return true;
+	}
+	
 	public static final IStateFilter COMPARE_FILTER = new IStateFilter.AbstractStateFilter() {
 		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_EXCLUDE_DELETED.accept(resource, state, mask) | (mask & ILocalResource.IS_COPIED) != 0;

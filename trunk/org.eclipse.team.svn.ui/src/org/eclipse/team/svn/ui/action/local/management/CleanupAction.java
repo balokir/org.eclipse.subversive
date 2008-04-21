@@ -45,4 +45,8 @@ public class CleanupAction extends AbstractWorkingCopyAction {
 		return this.checkForResourcesPresence(IStateFilter.SF_VERSIONED_FOLDERS);
 	}
 	
+	protected boolean needsToSaveDirtyEditors() {
+		return true;
+	}
+	
 }

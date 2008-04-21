@@ -151,6 +151,10 @@ public class CopyAction extends AbstractWorkingCopyAction {
 		return this.checkForResourcesPresence(CopyAction.SF_EXCLUDE_DELETED_AND_PROJECTS); 
 	}
 	
+	protected boolean needsToSaveDirtyEditors() {
+		return true;
+	}
+	
 	protected static final IStateFilter SF_EXCLUDE_DELETED_AND_PROJECTS = new IStateFilter.AbstractStateFilter() {
         protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
         	if (!IStateFilter.SF_LINKED.accept(resource, state, mask) && !IStateFilter.SF_OBSTRUCTED.accept(resource, state, mask)) {

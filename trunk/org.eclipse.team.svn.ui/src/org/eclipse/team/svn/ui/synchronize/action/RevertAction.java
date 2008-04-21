@@ -29,6 +29,10 @@ public class RevertAction extends AbstractSynchronizeModelAction {
 		super(text, configuration);
 	}
 
+	protected boolean needsToSaveDirtyEditors() {
+		return false;
+	}
+	
 	protected FastSyncInfoFilter getSyncInfoFilter() {
 		return new FastSyncInfoFilter() {
 			public boolean select(SyncInfo info) {

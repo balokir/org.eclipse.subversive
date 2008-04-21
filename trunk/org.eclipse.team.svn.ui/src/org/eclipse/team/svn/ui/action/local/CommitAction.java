@@ -61,6 +61,10 @@ public class CommitAction extends AbstractRecursiveTeamAction {
 		return this.checkForResourcesPresenceRecursive(CommitAction.SF_ANY_CHANGE);
 	}
 	
+	protected boolean needsToSaveDirtyEditors() {
+		return true;
+	}
+	
 	public static final IStateFilter SF_ANY_CHANGE = new IStateFilter.AbstractStateFilter() {
 		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_ANY_CHANGE.accept(resource, state, mask) && state != IStateFilter.ST_CONFLICTING;

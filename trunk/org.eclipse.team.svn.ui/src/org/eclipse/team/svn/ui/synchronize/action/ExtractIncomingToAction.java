@@ -40,6 +40,10 @@ public class ExtractIncomingToAction extends AbstractSynchronizeModelAction {
 		super(text, configuration);
 	}
 	
+	protected boolean needsToSaveDirtyEditors() {
+		return false;
+	}
+	
 	protected FastSyncInfoFilter getSyncInfoFilter() {
 		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.INCOMING, SyncInfo.CONFLICTING});
 	}

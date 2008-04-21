@@ -89,4 +89,8 @@ public class SwitchAction extends AbstractNonRecursiveTeamAction {
 		return this.checkForResourcesPresence(IStateFilter.SF_EXCLUDE_DELETED);
 	}
 	
+	protected boolean needsToSaveDirtyEditors() {
+		return true;
+	}
+	
 }
