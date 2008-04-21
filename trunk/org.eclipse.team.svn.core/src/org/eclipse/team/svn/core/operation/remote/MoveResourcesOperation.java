@@ -32,8 +32,8 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * @author Alexander Gurov
  */
 public class MoveResourcesOperation extends AbstractCopyMoveResourcesOperation {
-	public MoveResourcesOperation(IRepositoryResource destinationResource, IRepositoryResource[] selectedResources, String message) {
-		super("Operation.MoveRemote", destinationResource, selectedResources, message);
+	public MoveResourcesOperation(IRepositoryResource destinationResource, IRepositoryResource[] selectedResources, String message, String name) {
+		super("Operation.MoveRemote", destinationResource, selectedResources, message, name);
 	}
 
 	protected void runImpl(final IProgressMonitor monitor) throws Exception {
@@ -47,7 +47,8 @@ public class MoveResourcesOperation extends AbstractCopyMoveResourcesOperation {
 				final IRepositoryResource current = selectedResources[i];
 				ISVNNotificationCallback notify = new ISVNNotificationCallback() {
 					public void notify(SVNNotification info) {
-						String []paths = new String [] {current.getUrl(), dstUrl + "/" + current.getName()};
+						String []paths = new String [] {current.getUrl(), dstUrl + "/" +
+								((MoveResourcesOperation.this.resName == null) ? current.getName() : MoveResourcesOperation.this.resName)};
 						MoveResourcesOperation.this.revisionsPairs.add(new RevisionPair(info.revision, paths, location));
 						String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision", new String[] {String.valueOf(info.revision)});
 						MoveResourcesOperation.this.writeToConsole(IConsoleStream.LEVEL_OK, message);
@@ -57,7 +58,11 @@ public class MoveResourcesOperation extends AbstractCopyMoveResourcesOperation {
 				
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(IProgressMonitor monitor) throws Exception {
-						MoveResourcesOperation.this.processEntry(proxy, SVNUtility.encodeURL(current.getUrl()), SVNUtility.encodeURL(dstUrl + "/" + current.getName()), current, monitor);
+						MoveResourcesOperation.this.processEntry(proxy,
+								SVNUtility.encodeURL(current.getUrl()),
+								SVNUtility.encodeURL(dstUrl + "/" +
+										((MoveResourcesOperation.this.resName == null) ? current.getName() : MoveResourcesOperation.this.resName)),
+								current, monitor);
 					}
 				}, monitor, selectedResources.length);
 				
@@ -75,7 +80,7 @@ public class MoveResourcesOperation extends AbstractCopyMoveResourcesOperation {
 
 	protected void processEntry(ISVNConnector proxy, String sourceUrl, String destinationUrl, IRepositoryResource current, IProgressMonitor monitor) throws Exception {
 		this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn move \"" + SVNUtility.decodeURL(sourceUrl) + "\" \"" + SVNUtility.decodeURL(destinationUrl) + "\" -m \"" + this.message + "\"" + FileUtility.getUsernameParam(current.getRepositoryLocation().getUsername()) + "\n");
-		proxy.move(new String[] {sourceUrl}, destinationUrl, this.message, ISVNConnector.Options.INTERPRET_AS_CHILD, new SVNProgressMonitor(this, monitor, null));
+		proxy.move(new String[] {sourceUrl}, destinationUrl, this.message, ISVNConnector.CommandMasks.MOVE_SERVER, new SVNProgressMonitor(this, monitor, null));
 	}
 
 }

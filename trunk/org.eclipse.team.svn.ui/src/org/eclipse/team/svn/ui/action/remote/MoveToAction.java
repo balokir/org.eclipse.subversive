@@ -30,8 +30,8 @@ public class MoveToAction extends AbstractCopyMoveAction {
 		super("MoveToAction");
 	}
 	
-	protected AbstractCopyMoveResourcesOperation makeCopyOperation(IRepositoryResource destination, IRepositoryResource[] selected, String message) {
-		return new MoveResourcesOperation(destination, selected, message);
+	protected AbstractCopyMoveResourcesOperation makeCopyOperation(IRepositoryResource destination, IRepositoryResource[] selected, String message, String name) {
+		return new MoveResourcesOperation(destination, selected, message, name);
 	}
 
 	protected RefreshRemoteResourcesOperation makeRefreshOperation(IRepositoryResource destination, IRepositoryResource[] selected) {

@@ -12,17 +12,15 @@
 package org.eclipse.team.svn.ui.action.remote;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Options;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.remote.AbstractCopyMoveResourcesOperation;
 import org.eclipse.team.svn.core.operation.remote.SetRevisionAuthorNameOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.action.AbstractRepositoryTeamAction;
-import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.operation.RefreshRemoteResourcesOperation;
-import org.eclipse.team.svn.ui.panel.common.CommentPanel;
-import org.eclipse.team.svn.ui.panel.common.RepositoryTreePanel;
+import org.eclipse.team.svn.ui.wizard.copymove.CopyMoveWizard;
 
 /**
  * Abstract class for the copy and move remote resources actions
@@ -38,30 +36,25 @@ public abstract class AbstractCopyMoveAction extends AbstractRepositoryTeamActio
 	}
 	
 	public void runImpl(IAction action) {
-		RepositoryTreePanel panel = new RepositoryTreePanel(SVNTeamUIPlugin.instance().getResource(this.operationId + ".Select.Title"), this.getSelectedRepositoryResources(), this.operationId.toLowerCase().equals("copy"));
-		DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
-		if (dialog.open() == 0) {
-			IRepositoryResource destination = panel.getSelectedResource();
-			if (destination != null) {
-				CommentPanel commentPanel = new CommentPanel(SVNTeamUIPlugin.instance().getResource(this.operationId + ".Comment.Title"));
-				dialog = new DefaultDialog(this.getShell(), commentPanel);
-				if (dialog.open() == 0) {
-					String message = commentPanel.getMessage();
-					IRepositoryResource []selected = this.getSelectedRepositoryResources();
-					
-					AbstractCopyMoveResourcesOperation moveOp = this.makeCopyOperation(destination, selected, message);
-					CompositeOperation op = new CompositeOperation(moveOp.getId());
-					op.add(moveOp);
-					op.add(new SetRevisionAuthorNameOperation(moveOp, Options.FORCE));
-					op.add(this.makeRefreshOperation(destination, selected));
-					
-					this.runScheduled(op);
-				}
-			}
+		CopyMoveWizard copyMoveWizard = new CopyMoveWizard(this.getSelectedRepositoryResources(), this.operationId.toLowerCase().contains("move"));
+		WizardDialog dlg = new WizardDialog(this.getShell(), copyMoveWizard);
+		if (dlg.open() == 0) {
+			String message = copyMoveWizard.getComment();
+			IRepositoryResource []selected = this.getSelectedRepositoryResources();
+			IRepositoryResource destination = copyMoveWizard.getDestination();
+			
+			AbstractCopyMoveResourcesOperation moveOp = this.makeCopyOperation(destination, selected, message, copyMoveWizard.getNewName());
+			CompositeOperation op = new CompositeOperation(moveOp.getId());
+			op.add(moveOp);
+			op.add(new SetRevisionAuthorNameOperation(moveOp, Options.FORCE));
+			op.add(this.makeRefreshOperation(destination, selected));
+			
+			this.runScheduled(op);
 		}
+		
 	}
 	
-	protected abstract AbstractCopyMoveResourcesOperation makeCopyOperation(IRepositoryResource destination, IRepositoryResource []selected, String message);
+	protected abstract AbstractCopyMoveResourcesOperation makeCopyOperation(IRepositoryResource destination, IRepositoryResource[] selected, String message, String name);
 	protected abstract RefreshRemoteResourcesOperation makeRefreshOperation(IRepositoryResource destination, IRepositoryResource []selected);
 	
 }

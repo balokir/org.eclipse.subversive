@@ -24,12 +24,12 @@ import org.eclipse.swt.widgets.Control;
  */
 public abstract class AbstractFormattedVerifier extends AbstractVerifier {
     public static final String FIELD_NAME = "$FIELD_NAME$";
-    protected Map placeHolders;
+    protected Map<String, String> placeHolders;
 
     public AbstractFormattedVerifier(String fieldName) {
         super();
-        this.placeHolders = new HashMap();
-        this.setPlaceHolder(AbstractFormattedVerifier.FIELD_NAME, fieldName);
+        this.placeHolders = new HashMap<String, String>();
+        this.setPlaceHolder(AbstractFormattedVerifier.FIELD_NAME, fieldName.replace(":", ""));
     }
 
 	public void setPlaceHolder(String placeHolder, String value) {
@@ -37,7 +37,7 @@ public abstract class AbstractFormattedVerifier extends AbstractVerifier {
 	}
 	
 	public String getPlaceHolder(String placeHolder) {
-		return (String)this.placeHolders.get(placeHolder);
+		return this.placeHolders.get(placeHolder);
 	}
 	
     protected String getErrorMessage(Control input) {
@@ -53,9 +53,9 @@ public abstract class AbstractFormattedVerifier extends AbstractVerifier {
 
 	protected String getFormattedMessage(String message) {
 	    if (message != null) {
-			for (Iterator it = this.placeHolders.entrySet().iterator(); it.hasNext(); ) {
-				Map.Entry entry = (Map.Entry)it.next();
-				String key = (String)entry.getKey();
+			for (Iterator<Map.Entry<String, String>> it = this.placeHolders.entrySet().iterator(); it.hasNext(); ) {
+				Map.Entry<String, String> entry = it.next();
+				String key = entry.getKey();
 				String value = entry.getValue() == null ? "" : entry.getValue().toString();
 				int idx = message.indexOf(key);
 				if (idx != -1) {

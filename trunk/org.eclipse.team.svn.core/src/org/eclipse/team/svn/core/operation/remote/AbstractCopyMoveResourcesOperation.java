@@ -33,12 +33,14 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 public abstract class AbstractCopyMoveResourcesOperation extends AbstractRepositoryOperation implements IRevisionProvider {
 	protected IRepositoryResource destinationResource;
 	protected String message;
+	protected String resName;
 	protected ArrayList<RevisionPair> revisionsPairs;
 	
-	public AbstractCopyMoveResourcesOperation(String operationName, IRepositoryResource destinationResource, IRepositoryResource []selectedResources, String message) {
+	public AbstractCopyMoveResourcesOperation(String operationName, IRepositoryResource destinationResource, IRepositoryResource []selectedResources, String message, String resName) {
 		super(operationName, selectedResources);
 		this.destinationResource = destinationResource;
 		this.message = message;
+		this.resName = resName;
 	}
 	
 	public RevisionPair []getRevisions() {
@@ -55,7 +57,8 @@ public abstract class AbstractCopyMoveResourcesOperation extends AbstractReposit
 			final ISVNConnector proxy = location.acquireSVNProxy();
 			ISVNNotificationCallback notify = new ISVNNotificationCallback() {
 				public void notify(SVNNotification info) {
-					String []paths = AbstractCopyMoveResourcesOperation.this.getRevisionPaths(current.getUrl(), dstUrl + "/" + current.getName());
+					String []paths = AbstractCopyMoveResourcesOperation.this.getRevisionPaths(current.getUrl(), dstUrl + "/" +
+							((AbstractCopyMoveResourcesOperation.this.resName == null) ? current.getName() : AbstractCopyMoveResourcesOperation.this.resName));
 					AbstractCopyMoveResourcesOperation.this.revisionsPairs.add(new RevisionPair(info.revision, paths, location));
 					String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision", new String[] {String.valueOf(info.revision)});
 					AbstractCopyMoveResourcesOperation.this.writeToConsole(IConsoleStream.LEVEL_OK, message);
@@ -65,7 +68,12 @@ public abstract class AbstractCopyMoveResourcesOperation extends AbstractReposit
 			
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-					AbstractCopyMoveResourcesOperation.this.processEntry(proxy, SVNUtility.encodeURL(current.getUrl()), SVNUtility.encodeURL(dstUrl + "/" + current.getName()), current, monitor);
+					AbstractCopyMoveResourcesOperation.this.processEntry(proxy,
+							SVNUtility.encodeURL(current.getUrl()),
+							SVNUtility.encodeURL(
+									dstUrl + "/" +
+									((AbstractCopyMoveResourcesOperation.this.resName == null) ? current.getName() : AbstractCopyMoveResourcesOperation.this.resName)),
+							current, monitor);
 				}
 			}, monitor, selectedResources.length);
 			
