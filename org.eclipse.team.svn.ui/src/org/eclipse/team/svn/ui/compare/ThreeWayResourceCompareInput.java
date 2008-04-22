@@ -290,6 +290,15 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		if (diffKindRight != Differencer.NO_CHANGE) {
 			diffKindRight |= Differencer.RIGHT;
 		}
+		
+		if ((diffKindRight & Differencer.CHANGE_TYPE_MASK) == Differencer.ADDITION || (diffKindLeft & Differencer.CHANGE_TYPE_MASK) == Differencer.DELETION) {
+			left.setSelectedRevision(SVNRevision.INVALID_REVISION);
+			ancestor.setSelectedRevision(SVNRevision.INVALID_REVISION);
+		}
+		if ((diffKindRight & Differencer.CHANGE_TYPE_MASK) == Differencer.DELETION || (diffKindLeft & Differencer.CHANGE_TYPE_MASK) == Differencer.ADDITION) {
+			right.setSelectedRevision(SVNRevision.INVALID_REVISION);
+		}
+		
 		IDiffContainer parent = this.getParentCompareNode(left, path2node);
 		return new CompareNode(parent, diffKindLeft | diffKindRight, local, left, ancestor, right, statusLeft, statusRight);
 	}
@@ -364,7 +373,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 	
 	protected String getLeftLabel() throws Exception {
 		ResourceElement element = this.getLeftResourceElement();
-		return element.getLocalResource().getResource().getFullPath().toString().substring(1);
+		return element.getLocalResource().getResource().getFullPath().toString().substring(1) + " [" + this.getRevisionPart(element) + "]";
 	}
 	
 	protected String getRevisionPart(ResourceElement element) throws Exception {
