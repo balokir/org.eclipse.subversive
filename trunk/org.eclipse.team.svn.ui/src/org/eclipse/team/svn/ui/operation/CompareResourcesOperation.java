@@ -74,7 +74,7 @@ public class CompareResourcesOperation extends AbstractActionOperation {
 		super("Operation.CompareLocal");
 		this.local = local;
 		this.ancestor = local.isCopied() ? SVNUtility.getCopiedFrom(local.getResource()) : SVNRemoteStorage.instance().asRepositoryResource(local.getResource());
-		this.ancestor.setSelectedRevision(SVNRevision.fromNumber(local.getRevision()));
+		this.ancestor.setSelectedRevision(SVNRevision.fromNumber(local.getBaseRevision()));
 		this.remote = remote;
 		this.showInDialog = showInDialog;
 		this.forceReuse = forceReuse;

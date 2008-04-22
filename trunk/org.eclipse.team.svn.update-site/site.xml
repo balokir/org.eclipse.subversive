@@ -3,7 +3,7 @@
    <description url="http://download.eclipse.org/technology/subversive/0.7/update-site/">
       Eclipse Subversive - SVN Team Provider
    </description>
-   <feature url="features/org.eclipse.team.svn_0.7.0.v20080404.jar" id="org.eclipse.team.svn" version="0.7.0.v20080404">
+   <feature url="http://www.eclipse.org/downloads/download.php?file=/technology/subversive/0.7/update-site/features/org.eclipse.team.svn_0.7.0.v20080404.jar&amp;r=1" id="org.eclipse.team.svn" version="0.7.0.v20080404">
       <category name="Subversive (Incubation)"/>
    </feature>
    <feature url="features/org.eclipse.team.svn.nl1_0.7.0.v20080321.jar" id="org.eclipse.team.svn.nl1" version="0.7.0.v20080321">

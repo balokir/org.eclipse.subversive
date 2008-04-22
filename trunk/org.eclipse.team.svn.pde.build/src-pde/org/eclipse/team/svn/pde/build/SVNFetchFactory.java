@@ -146,7 +146,7 @@ public class SVNFetchFactory implements IFetchFactory {
 	 *  :	... //plug-in, feature, fragment or bundle version
 	 *  ;
 	 * svnContent
-	 * 	:	arg (',' arg)*
+	 * 	:	'SVN' (',' arg)+
 	 * 	;
 	 * arg
 	 * 	:	key '=' value
