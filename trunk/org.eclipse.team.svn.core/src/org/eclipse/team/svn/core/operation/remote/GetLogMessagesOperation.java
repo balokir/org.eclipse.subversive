@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -32,12 +31,15 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 public class GetLogMessagesOperation extends AbstractRepositoryOperation {
 	protected SVNLogEntry []msg;
 	protected boolean stopOnCopy;
+	protected boolean discoverPaths;
 	protected SVNRevision selectedRevision;
 	protected long limit;
 	
 	public GetLogMessagesOperation(IRepositoryResourceProvider provider) {
 		super("Operation.GetLogMessages", provider);
 		this.stopOnCopy = false;
+		this.discoverPaths = true;
+		this.limit = 0;
 	}
 	
 	public GetLogMessagesOperation(IRepositoryResource resource) {
@@ -47,6 +49,7 @@ public class GetLogMessagesOperation extends AbstractRepositoryOperation {
 	public GetLogMessagesOperation(IRepositoryResource resource, boolean stopOnCopy) {
 		super("Operation.GetLogMessages", new IRepositoryResource[] {resource});
 		this.stopOnCopy = stopOnCopy;
+		this.discoverPaths = true;
 		this.limit = 0;
 	}
 	
@@ -56,6 +59,14 @@ public class GetLogMessagesOperation extends AbstractRepositoryOperation {
 	
 	public void setStopOnCopy(boolean stopOnCopy) {
 		this.stopOnCopy = stopOnCopy;
+	}
+	
+	public boolean getDiscoverPaths() {
+		return this.discoverPaths;
+	}
+
+	public void setDiscoverPaths(boolean discoverPaths) {
+		this.discoverPaths = discoverPaths;
 	}
 	
 	public long getLimit() {
@@ -79,7 +90,9 @@ public class GetLogMessagesOperation extends AbstractRepositoryOperation {
 		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
 //			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn log " + SVNUtility.encodeURL(this.resource.getUrl()) + (this.limit != 0 ? (" --limit " + this.limit) : "") + (this.stopOnCopy ? " --stop-on-copy" : "") + " -r " + this.selectedRevision + ":0 --username \"" + location.getUsername() + "\"\n");
-			this.msg = GetLogMessagesOperation.getMessagesImpl(proxy, resource, this.selectedRevision, SVNRevision.fromNumber(0), ISVNConnector.DEFAULT_LOG_ENTRY_PROPS, this.limit, this.stopOnCopy, this, monitor);
+			long options = this.discoverPaths ? ISVNConnector.Options.DISCOVER_PATHS : ISVNConnector.Options.NONE;
+			options |= this.stopOnCopy ? ISVNConnector.Options.STOP_ON_COPY : ISVNConnector.Options.NONE;
+			this.msg = SVNUtility.logEntries(proxy, SVNUtility.getEntryReference(resource), this.selectedRevision, SVNRevision.fromNumber(0), options, ISVNConnector.DEFAULT_LOG_ENTRY_PROPS, limit, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 			location.releaseSVNProxy(proxy);
@@ -94,14 +107,8 @@ public class GetLogMessagesOperation extends AbstractRepositoryOperation {
 		return this.operableData()[0];
 	}
 	
-	public static SVNLogEntry []getMessagesImpl(ISVNConnector proxy, IRepositoryResource resource, SVNRevision from, SVNRevision to, String[] revProps, long limit, boolean stopOnCopy, IActionOperation parent, IProgressMonitor monitor) throws Exception {
-		long options = ISVNConnector.Options.DISCOVER_PATHS;
-		options |= stopOnCopy ? ISVNConnector.Options.STOP_ON_COPY : ISVNConnector.Options.NONE;
-		return SVNUtility.logEntries(proxy, SVNUtility.getEntryReference(resource), from, to, options, revProps, limit, new SVNProgressMonitor(parent, monitor, null));
-	}
-	
 	protected String getShortErrorMessage(Throwable t) {
 		return MessageFormat.format(super.getShortErrorMessage(t), new Object[] {this.operableData()[0].getUrl()});
 	}
-	
+
 }

@@ -19,6 +19,7 @@ import org.eclipse.team.svn.core.connector.SVNLogPath;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
+import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -82,10 +83,10 @@ public class LocateResourceURLInHistoryOperation extends AbstractRepositoryOpera
 			IRepositoryResource pegNode = SVNUtility.copyOf(current);
 			pegNode.setSelectedRevision(pegNode.getPegRevision());
 			if (pegNode.exists()) {
-				msgs = GetLogMessagesOperation.getMessagesImpl(proxy, pegNode, SVNRevision.fromNumber(0), pegNode.getPegRevision(), ISVNConnector.EMPTY_LOG_ENTRY_PROPS, 1, true, this, monitor);
+				msgs = SVNUtility.logEntries(proxy, SVNUtility.getEntryReference(pegNode), SVNRevision.fromNumber(0), pegNode.getPegRevision(), ISVNConnector.Options.STOP_ON_COPY | ISVNConnector.Options.DISCOVER_PATHS, ISVNConnector.EMPTY_LOG_ENTRY_PROPS, 1, new SVNProgressMonitor(this, monitor, null));
 			}
 			else if (pegNode.getParent() != null) {
-				msgs = GetLogMessagesOperation.getMessagesImpl(proxy, pegNode.getParent(), SVNRevision.fromNumber(0), pegNode.getPegRevision(), ISVNConnector.EMPTY_LOG_ENTRY_PROPS, 1, true, this, monitor);
+				msgs = SVNUtility.logEntries(proxy, SVNUtility.getEntryReference(pegNode.getParent()), SVNRevision.fromNumber(0), pegNode.getPegRevision(), ISVNConnector.Options.STOP_ON_COPY | ISVNConnector.Options.DISCOVER_PATHS, ISVNConnector.EMPTY_LOG_ENTRY_PROPS, 1, new SVNProgressMonitor(this, monitor, null));
 				if (msgs != null) {
 					for (int j = 0; j < msgs.length; j++) {
 						SVNLogPath []paths = msgs[j].changedPaths;

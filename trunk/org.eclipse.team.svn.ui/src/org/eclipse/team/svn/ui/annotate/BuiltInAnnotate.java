@@ -30,9 +30,10 @@ import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.core.operation.remote.GetLogMessagesOperation;
+import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.remote.GetResourceAnnotationOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.history.SVNHistoryPage;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
@@ -101,7 +102,7 @@ public class BuiltInAnnotate {
 				IRepositoryResource resource = annotateOp.getRepositoryResource();
 				ISVNConnector proxy = resource.getRepositoryLocation().acquireSVNProxy();
 				try {
-					SVNLogEntry []msgs = GetLogMessagesOperation.getMessagesImpl(proxy, resource, SVNRevision.fromNumber(to), SVNRevision.fromNumber(from), ISVNConnector.DEFAULT_LOG_ENTRY_PROPS, 0, false, this, monitor);
+					SVNLogEntry []msgs = SVNUtility.logEntries(proxy, SVNUtility.getEntryReference(resource), SVNRevision.fromNumber(to), SVNRevision.fromNumber(from), ISVNConnector.Options.NONE, ISVNConnector.DEFAULT_LOG_ENTRY_PROPS, 0, new SVNProgressMonitor(this, monitor, null));
 					for (int i = 0; i < msgs.length; i++) {
 						BuiltInAnnotateRevision revision = (BuiltInAnnotateRevision)revisions.get(String.valueOf(msgs[i].revision));
 						if (revision != null) {
