@@ -168,6 +168,7 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 				remote.setPegRevision(peg);
 				GetLogMessagesOperation op = new GetLogMessagesOperation(remote);
 				op.setLimit(20);
+				op.setDiscoverPaths(false);
 				ProgressMonitorUtility.doTaskExternalDefault(op, new NullProgressMonitor());
 				if (op.getExecutionState() == IActionOperation.OK) {
 					for (SVNLogEntry entry : op.getMessages()) {
