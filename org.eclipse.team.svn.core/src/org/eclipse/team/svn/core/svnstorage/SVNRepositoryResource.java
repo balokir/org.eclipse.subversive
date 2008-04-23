@@ -22,6 +22,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
  * SVN based representation of IRepositoryResource
@@ -122,7 +123,7 @@ public abstract class SVNRepositoryResource extends SVNRepositoryBase implements
 	}
 
 	public IRepositoryResource getParent() {
-		String parentUrl = this.getUrl();
+		String parentUrl = SVNUtility.normalizeURL(this.getUrl());
 		int idx = parentUrl.lastIndexOf('/');
 		if (idx != -1) {
 			parentUrl = parentUrl.substring(0, idx);
