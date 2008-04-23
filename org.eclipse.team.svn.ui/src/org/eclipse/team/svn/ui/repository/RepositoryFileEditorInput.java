@@ -111,6 +111,9 @@ public class RepositoryFileEditorInput extends PlatformObject implements IWorkbe
 		if (adapter == IWorkbenchAdapter.class) {
 			return this;
 		}
+		if (adapter == IRepositoryFile.class) {
+			return this.resource.getRepositoryResource();
+		}
 		return super.getAdapter(adapter);
 	}
 

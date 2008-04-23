@@ -24,7 +24,6 @@ import org.eclipse.team.svn.core.resource.events.IResourceStatesListener;
 import org.eclipse.team.svn.core.resource.events.ResourceStatesChangedEvent;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
-import org.eclipse.team.svn.ui.annotate.AnnotateEditorInput;
 import org.eclipse.team.svn.ui.repository.RepositoryFileEditorInput;
 import org.eclipse.team.svn.ui.repository.model.IResourceTreeNode;
 import org.eclipse.team.ui.synchronize.SyncInfoCompareInput;
@@ -207,9 +206,8 @@ public abstract class AbstractSVNView extends ViewPart implements IResourceState
 		}
 		IEditorInput input = editor.getEditorInput();
 
-		if (input != null && !(input instanceof AnnotateEditorInput)) {
-			if (input instanceof IFileEditorInput ||
-					input instanceof SyncInfoCompareInput) {
+		if (input != null) {
+			if (input instanceof IFileEditorInput || input instanceof SyncInfoCompareInput) {
 				Object adapter = input.getAdapter(IFile.class);
 				if (adapter instanceof IFile) {
 					this.updateViewInput((IFile)adapter);
