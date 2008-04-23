@@ -24,7 +24,6 @@ import org.eclipse.team.svn.ui.repository.RepositoryFileEditorInput;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -46,13 +45,14 @@ public class OpenRemoteFileOperation extends AbstractActionOperation {
 	protected IRepositoryResourceProvider provider;
 	protected int openType;
 	protected String openWith;
+	protected Class requiredDefaultEditorKind;
 
 	public OpenRemoteFileOperation(IRepositoryResourceProvider provider, int openType) {
 		this(provider, openType, openType == OpenRemoteFileOperation.OPEN_SPECIFIED ? EditorsUI.DEFAULT_TEXT_EDITOR_ID : null);
 	}
 	
 	public OpenRemoteFileOperation(IRepositoryResourceProvider provider, int openType, String openWith) {
-		this(new IRepositoryEditorInput[1], openType, openWith);
+		this((IRepositoryEditorInput [])null, openType, openWith);
 		this.provider = provider;
 	}
 	
@@ -75,6 +75,14 @@ public class OpenRemoteFileOperation extends AbstractActionOperation {
 		this.openWith = openWith;
 	}
 
+	public Class getRequiredDefaultEditorKind() {
+		return this.requiredDefaultEditorKind;
+	}
+
+	public void setRequiredDefaultEditorKind(Class requiredDefaultEditorKind) {
+		this.requiredDefaultEditorKind = requiredDefaultEditorKind;
+	}
+	
 	public IEditorPart []getEditors() {
 		return this.editors;
 	}
@@ -129,15 +137,7 @@ public class OpenRemoteFileOperation extends AbstractActionOperation {
 		}
 		else {
 			if (this.openType == OpenRemoteFileOperation.OPEN_SPECIFIED) {
-				IEditorReference []refs = page.findEditors(input, this.openWith, IWorkbenchPage.MATCH_INPUT | IWorkbenchPage.MATCH_ID);
-				this.editors[current] = refs == null || refs.length == 0 ? null : refs[0].getEditor(true);
-				
-				if (this.editors[current] == null) {
-					this.editors[current] = this.openEditor(page, this.openWith, input);
-				}
-				else {
-				    page.activate(this.editors[current]);
-				}
+				this.editors[current] = this.openEditor(page, this.openWith, input);
 			}
 			else {
 				String fileName = input.getRepositoryResource().getName();
@@ -153,23 +153,17 @@ public class OpenRemoteFileOperation extends AbstractActionOperation {
 				}
 				String editorId = descriptor == null ? EditorsUI.DEFAULT_TEXT_EDITOR_ID : descriptor.getId();
 
-				IEditorReference []refs = page.findEditors(input, editorId, IWorkbenchPage.MATCH_INPUT | IWorkbenchPage.MATCH_ID);
-				this.editors[current] = refs == null || refs.length == 0 ? null : refs[0].getEditor(true);
-				
-				if (this.editors[current] == null) {
-					try {
-					    this.editors[current] = this.openEditor(page, editorId, input);
-					    if (this.editors[current] != null && this.editors[current].getClass().getName().toLowerCase().indexOf("error") != -1) {
-							this.editors[current] = this.openEditor(page, EditorsUI.DEFAULT_TEXT_EDITOR_ID, input);
-					    }
-					} 
-					catch (Throwable e) {
-						// Cannot open file with correct editor. Trying default editor.
+				try {
+				    this.editors[current] = this.openEditor(page, editorId, input);
+				    if (this.editors[current] != null && 
+				    	(this.editors[current].getClass().getName().toLowerCase().indexOf("error") != -1 ||
+				    	this.requiredDefaultEditorKind != null && !this.requiredDefaultEditorKind.isAssignableFrom(this.editors[current].getClass()))) {
 						this.editors[current] = this.openEditor(page, EditorsUI.DEFAULT_TEXT_EDITOR_ID, input);
-					}
-				}
-				else {
-				    page.activate(this.editors[current]);
+				    }
+				} 
+				catch (Throwable e) {
+					// Cannot open file with correct editor. Trying default editor.
+					this.editors[current] = this.openEditor(page, EditorsUI.DEFAULT_TEXT_EDITOR_ID, input);
 				}
 			}
 		}
@@ -177,7 +171,7 @@ public class OpenRemoteFileOperation extends AbstractActionOperation {
 	
 	// the method is created in order to disallow reporting of Eclipse IDE or external tool errors
 	private final IEditorPart openEditor(IWorkbenchPage page, String editorId, IRepositoryEditorInput input) throws Exception {
-		return page.openEditor(input, editorId);
+		return page.openEditor(input, editorId, true, IWorkbenchPage.MATCH_INPUT | IWorkbenchPage.MATCH_ID);
 	}
 
 	protected static IRepositoryEditorInput []asEditorInput(IRepositoryFile []resources) {
@@ -187,5 +181,5 @@ public class OpenRemoteFileOperation extends AbstractActionOperation {
 		}
 		return inputs;
 	}
-	
+
 }

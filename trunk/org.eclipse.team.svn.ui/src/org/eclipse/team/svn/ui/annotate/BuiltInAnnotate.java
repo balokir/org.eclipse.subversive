@@ -17,6 +17,7 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.internal.text.revisions.RevisionSelectionProvider;
 import org.eclipse.jface.text.revisions.RevisionInformation;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -31,9 +32,12 @@ import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.remote.GetResourceAnnotationOperation;
+import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.history.SVNHistoryPage;
+import org.eclipse.team.svn.ui.operation.OpenRemoteFileOperation;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.ui.history.IHistoryView;
 import org.eclipse.ui.IEditorPart;
@@ -57,14 +61,14 @@ public class BuiltInAnnotate {
 	
 	public void open(IWorkbenchPage page, IRepositoryResource remote, IFile resource) {
 		GetResourceAnnotationOperation annotateOp = new GetResourceAnnotationOperation(remote);
-		IActionOperation showOp = this.prepareBuiltInAnnotate(annotateOp, page, resource);
+		IActionOperation showOp = this.prepareBuiltInAnnotate(annotateOp, page, remote, resource);
 		CompositeOperation op = new CompositeOperation(showOp.getId());
 		op.add(annotateOp);
 		op.add(showOp, new IActionOperation[] {annotateOp});
 		UIMonitorUtility.doTaskScheduledDefault(page.getActivePart(), op);
 	}
 
-	protected IActionOperation prepareBuiltInAnnotate(final GetResourceAnnotationOperation annotateOp, final IWorkbenchPage page, final IFile resource) {
+	protected IActionOperation prepareBuiltInAnnotate(final GetResourceAnnotationOperation annotateOp, final IWorkbenchPage page, final IRepositoryResource remote, final IFile resource) {
 		CompositeOperation op = new CompositeOperation("Operation.BuiltInShowAnnotation");
 		final RevisionInformation info = new RevisionInformation();
 		IActionOperation prepareRevisions = new AbstractActionOperation("Operation.PrepareRevisions") {
@@ -116,7 +120,7 @@ public class BuiltInAnnotate {
 				page.getActivePart().getSite().getShell().getDisplay().syncExec(new Runnable() {
 					public void run() {
 						try {
-							BuiltInAnnotate.this.initializeEditor(page, resource, info);
+							BuiltInAnnotate.this.initializeEditor(page, remote, resource, info);
 						}
 						catch (PartInitException ex) {
 							throw new RuntimeException(ex);
@@ -129,8 +133,8 @@ public class BuiltInAnnotate {
 		return op;
 	}
 	
-	protected void initializeEditor(final IWorkbenchPage page, final IFile resource, RevisionInformation info) throws PartInitException {
-		IEditorPart editor = this.openEditor(page, resource);
+	protected void initializeEditor(final IWorkbenchPage page, final IRepositoryResource remote, final IFile resource, RevisionInformation info) throws PartInitException {
+		IEditorPart editor = resource != null ? this.openEditor(page, resource) : this.openEditor(page, remote);
 	    if (editor instanceof AbstractDecoratedTextEditor) {
 	    	this.textEditor = (AbstractDecoratedTextEditor)editor;
 	    	final ISelectionProvider provider = (ISelectionProvider)this.textEditor.getAdapter(RevisionSelectionProvider.class);
@@ -167,13 +171,26 @@ public class BuiltInAnnotate {
 	    	}
 	    	this.textEditor.showRevisionInformation(info, SVNTeamQuickDiffProvider.class.getName());
 	    }
-	    
-	    IHistoryView view = (IHistoryView)page.showView(IHistoryView.VIEW_ID);
-		if (view != null) {
-			this.historyPage = (SVNHistoryPage)view.showHistoryFor(resource);
-			//FIXME enqueue selection event
-			//view.selectRevision(Long.parseLong(((BuiltInAnnotateRevision)info.getRevisions().get(0)).getId()));
+//	    
+//	    IHistoryView view = (IHistoryView)page.showView(IHistoryView.VIEW_ID);
+//		if (view != null) {
+//			this.historyPage = (SVNHistoryPage)view.showHistoryFor(resource);
+//			//FIXME enqueue selection event
+//			//view.selectRevision(Long.parseLong(((BuiltInAnnotateRevision)info.getRevisions().get(0)).getId()));
+//		}
+	}
+	
+	protected IEditorPart openEditor(IWorkbenchPage page, IRepositoryResource remote) throws PartInitException {
+		OpenRemoteFileOperation op = new OpenRemoteFileOperation(new IRepositoryFile[] {(IRepositoryFile)remote}, OpenRemoteFileOperation.OPEN_DEFAULT);
+		op.setRequiredDefaultEditorKind(AbstractDecoratedTextEditor.class);
+		ProgressMonitorUtility.doTaskExternal(op, new NullProgressMonitor());
+		if (op.getExecutionState() == IActionOperation.OK) {
+			IEditorPart part = op.getEditors()[0];
+			if (part instanceof AbstractDecoratedTextEditor) {
+				return part;
+			}
 		}
+		return null;
 	}
 	
 	protected IEditorPart openEditor(IWorkbenchPage page, IFile resource) throws PartInitException {

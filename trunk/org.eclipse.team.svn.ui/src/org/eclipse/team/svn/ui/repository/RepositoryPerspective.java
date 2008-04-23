@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.ui.repository;
 
-import org.eclipse.team.svn.ui.annotate.AnnotateView;
 import org.eclipse.team.svn.ui.properties.PropertiesView;
 import org.eclipse.team.svn.ui.repository.browser.RepositoryBrowser;
 import org.eclipse.team.ui.history.IHistoryView;
@@ -38,7 +37,6 @@ public class RepositoryPerspective implements IPerspectiveFactory {
 		// Add "show views". They will be present in "show view" menu
 		layout.addShowViewShortcut(RepositoriesView.VIEW_ID);
 		layout.addShowViewShortcut(RepositoryBrowser.VIEW_ID);
-		layout.addShowViewShortcut(AnnotateView.VIEW_ID);
 		layout.addShowViewShortcut(IHistoryView.VIEW_ID);
 		layout.addShowViewShortcut(PropertiesView.VIEW_ID);
 		
@@ -53,7 +51,6 @@ public class RepositoryPerspective implements IPerspectiveFactory {
 
 		IFolderLayout left = layout.createFolder("left", IPageLayout.LEFT, 0.26f, editorArea);
 		left.addView(RepositoriesView.VIEW_ID);
-		left.addView(AnnotateView.VIEW_ID);
 		
 		IFolderLayout bottom = layout.createFolder("bottom", IPageLayout.BOTTOM, 0.66f, editorArea);
 		bottom.addView(RepositoryBrowser.VIEW_ID);

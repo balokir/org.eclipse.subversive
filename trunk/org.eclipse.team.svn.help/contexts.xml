@@ -21,10 +21,6 @@
 		<description>'SVN Repository Browser View' shows the structure of selected repository in the report list view. So it's simply a table-like presentation of the repository tree.</description>
 		<topic label="SVN Repository Browser View" href="teamSupport/repos_browser_view.html"/>
 	</context>
-	<context id="annotationViewContext">
-		<description>'SVN Annotation View' provides a probability to view the history of file changes with exact highlighting of the changes from revision to revision.</description>
-		<topic label="SVN Annotation Browser View" href="teamSupport/annotation_view.html"/>
-	</context>
 
 	<!-- Pages Contexts -->
 	<context id="SVNInfoContext">

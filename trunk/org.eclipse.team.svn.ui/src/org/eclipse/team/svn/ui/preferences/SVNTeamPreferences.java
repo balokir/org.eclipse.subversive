@@ -21,7 +21,6 @@ import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.ui.decorator.TextVariableSetProvider;
-import org.eclipse.team.svn.ui.repository.RepositoryPerspective;
 
 /**
  * SVN Team plugin preference names
@@ -41,7 +40,6 @@ public final class SVNTeamPreferences {
 	public static final String CHECKOUT_BASE = "preference.checkout.";
 	public static final String CONSOLE_BASE = "preference.console.";
 	public static final String CORE_BASE = "preference.core.";
-	public static final String ANNOTATE_BASE = "preference.annotate.";
 	public static final String AUTO_PROPERTIES_BASE = "preference.autoproperties";
 	public static final String CUSTOM_PROPERTIES_BASE = "preference.customproperties";
 	public static final String BEHAVIOUR_BASE = "preference.";
@@ -57,22 +55,6 @@ public final class SVNTeamPreferences {
 	public static final boolean BEHAVIOUR_ENABLE_AUTO_SHARE_DEFAULT = true;
 	public static final boolean BEHAVIOUR_DO_NOT_SELECT_EXTERNAL_DEFAULT = true;
 	public static final boolean BEHAVIOUR_COMMIT_SELECT_NEW_RESOURCES_DEFAULT = true;
-	
-	public static final String ANNOTATE_CHANGE_PERSPECTIVE_NAME = "changePerspective";
-	public static final String ANNOTATE_PERSPECTIVE_NAME = "perspective";
-	public static final String ANNOTATE_USE_QUICK_DIFF_NAME = "useQuickDiff";
-	
-	public static final int ANNOTATE_DEFAULT_VIEW = 0;
-	public static final int ANNOTATE_QUICK_DIFF_VIEW = 1;
-	public static final int ANNOTATE_PROMPT_VIEW = 2;
-	
-	public static final int ANNOTATE_DEFAULT_PERSPECTIVE = 0;
-	public static final int ANNOTATE_CURRENT_PERSPECTIVE = 1;
-	public static final int ANNOTATE_PROMPT_PERSPECTIVE = 2;
-	
-	public static final int ANNOTATE_USE_QUICK_DIFF_DEFAULT = SVNTeamPreferences.ANNOTATE_PROMPT_VIEW;
-	public static final String ANNOTATE_PERSPECTIVE_DEFAULT = RepositoryPerspective.ID;
-	public static final int ANNOTATE_CHANGE_PERSPECTIVE_DEFAULT = SVNTeamPreferences.ANNOTATE_PROMPT_PERSPECTIVE;
 	
 	public static final String CONSOLE_AUTOSHOW_TYPE_NAME = "autoshow";
 	public static final String CONSOLE_ENABLED_NAME = "enabled";
@@ -285,7 +267,6 @@ public final class SVNTeamPreferences {
 		SVNTeamPreferences.setDefaultCheckoutValues(store);
 		SVNTeamPreferences.setDefaultConsoleValues(store);
 		SVNTeamPreferences.setDefaultCoreValues(store);
-		SVNTeamPreferences.setDefaultAnnotateValues(store);
 		SVNTeamPreferences.setDefaultCommitDialogValues(store);
 		SVNTeamPreferences.setDefaultAutoPropertiesValues(store);
 		SVNTeamPreferences.setDefaultCustomPropertiesValues(store);
@@ -394,12 +375,6 @@ public final class SVNTeamPreferences {
 		store.setDefault(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_LIMIT_ENABLED_NAME), SVNTeamPreferences.CONSOLE_LIMIT_ENABLED_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_WRAP_WIDTH_NAME), SVNTeamPreferences.CONSOLE_WRAP_WIDTH_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_LIMIT_VALUE_NAME), SVNTeamPreferences.CONSOLE_LIMIT_VALUE_DEFAULT);
-	}
-	
-	public static void setDefaultAnnotateValues(IPreferenceStore store) {
-		store.setDefault(SVNTeamPreferences.fullAnnotateName(SVNTeamPreferences.ANNOTATE_USE_QUICK_DIFF_NAME), SVNTeamPreferences.ANNOTATE_USE_QUICK_DIFF_DEFAULT);
-		store.setDefault(SVNTeamPreferences.fullAnnotateName(SVNTeamPreferences.ANNOTATE_CHANGE_PERSPECTIVE_NAME), SVNTeamPreferences.ANNOTATE_CHANGE_PERSPECTIVE_DEFAULT);
-		store.setDefault(SVNTeamPreferences.fullAnnotateName(SVNTeamPreferences.ANNOTATE_PERSPECTIVE_NAME), SVNTeamPreferences.ANNOTATE_PERSPECTIVE_DEFAULT);
 	}
 	
 	public static void setDefaultBehaviourValues(IPreferenceStore store) {
@@ -514,12 +489,6 @@ public final class SVNTeamPreferences {
 		store.setValue(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_LIMIT_ENABLED_NAME), SVNTeamPreferences.CONSOLE_LIMIT_ENABLED_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_WRAP_WIDTH_NAME), SVNTeamPreferences.CONSOLE_WRAP_WIDTH_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_LIMIT_VALUE_NAME), SVNTeamPreferences.CONSOLE_LIMIT_VALUE_DEFAULT);
-	}
-	
-	public static void resetToDefaultAnnotateValues(IPreferenceStore store) {
-		store.setValue(SVNTeamPreferences.fullAnnotateName(SVNTeamPreferences.ANNOTATE_USE_QUICK_DIFF_NAME), SVNTeamPreferences.ANNOTATE_USE_QUICK_DIFF_DEFAULT);
-		store.setValue(SVNTeamPreferences.fullAnnotateName(SVNTeamPreferences.ANNOTATE_CHANGE_PERSPECTIVE_NAME), SVNTeamPreferences.ANNOTATE_CHANGE_PERSPECTIVE_DEFAULT);
-		store.setValue(SVNTeamPreferences.fullAnnotateName(SVNTeamPreferences.ANNOTATE_PERSPECTIVE_NAME), SVNTeamPreferences.ANNOTATE_PERSPECTIVE_DEFAULT);
 	}
 	
 	public static int getDialogInt(IPreferenceStore store, String name) {
@@ -698,38 +667,6 @@ public final class SVNTeamPreferences {
 		store.setValue(SVNTeamPreferences.fullCoreName(shortName), value);
 	}
 	
-	public static RGB getAnnotateRGB(IPreferenceStore store, String shortName) {
-		return PreferenceConverter.getColor(store, SVNTeamPreferences.fullAnnotateName(shortName));
-	}
-	
-	public static void setAnnotateRGB(IPreferenceStore store, String shortName, RGB value) {
-		PreferenceConverter.setValue(store, SVNTeamPreferences.fullAnnotateName(shortName), value);
-	}
-	
-	public static int getAnnotateInt(IPreferenceStore store, String shortName) {
-		return store.getInt(SVNTeamPreferences.fullAnnotateName(shortName));
-	}
-	
-	public static void setAnnotateInt(IPreferenceStore store, String shortName, int value) {
-		store.setValue(SVNTeamPreferences.fullAnnotateName(shortName), value);
-	}
-	
-	public static String getAnnotateString(IPreferenceStore store, String shortName) {
-		return store.getString(SVNTeamPreferences.fullAnnotateName(shortName));
-	}
-	
-	public static void setAnnotateString(IPreferenceStore store, String shortName, String value) {
-		store.setValue(SVNTeamPreferences.fullAnnotateName(shortName), value);
-	}
-	
-	public static boolean getAnnotateBoolean(IPreferenceStore store, String shortName) {
-		return store.getBoolean(SVNTeamPreferences.fullAnnotateName(shortName));
-	}
-	
-	public static void setAnnotateBoolean(IPreferenceStore store, String shortName, boolean value) {
-		store.setValue(SVNTeamPreferences.fullAnnotateName(shortName), value);
-	}
-	
 	public static String fullCommitDialogName(String shortName) {
 		return SVNTeamPreferences.COMMIT_DIALOG_BASE + shortName;
 	}
@@ -784,10 +721,6 @@ public final class SVNTeamPreferences {
 	
 	public static String fullCoreName(String shortName) {
 		return SVNTeamPreferences.CORE_BASE + shortName;
-	}
-	
-	public static String fullAnnotateName(String shortName) {
-		return SVNTeamPreferences.ANNOTATE_BASE + shortName;
 	}
 	
 	public static String fullAutoPropertiesName(String shortName) {
