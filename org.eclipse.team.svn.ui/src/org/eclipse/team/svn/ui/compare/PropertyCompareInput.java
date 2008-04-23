@@ -195,7 +195,7 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 		int diffKind = Differencer.NO_CHANGE;
 		if (this.ancestor == null) {
 			if (leftValue != null && rightValue != null) {
-				diffKind = Differencer.CHANGE;
+				diffKind = (rightValue.equals(leftValue)) ? Differencer.NO_CHANGE : Differencer.CHANGE;
 			}
 			else if (leftValue == null) {
 				diffKind = Differencer.ADDITION;
