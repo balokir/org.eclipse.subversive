@@ -23,7 +23,6 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNRevision;
@@ -34,9 +33,7 @@ import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.remote.GetResourceAnnotationOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.SVNUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.history.SVNHistoryPage;
-import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.ui.history.IHistoryView;
 import org.eclipse.ui.IEditorPart;
@@ -77,12 +74,10 @@ public class BuiltInAnnotate {
 				if (lines == null || lines.length == 0) {
 					return;
 				}
-				RGB palette = SVNTeamPreferences.getAnnotateRGB(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.ANNOTATE_RGB_BASE_NAME);
-				boolean useOneRGB = SVNTeamPreferences.getAnnotateBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.ANNOTATE_USE_ONE_RGB_NAME);
 				for (int i = 0; i < lines.length; i++) {
 					BuiltInAnnotateRevision revision = (BuiltInAnnotateRevision)revisions.get(lines[i][0]);
 					if (revision == null) {
-						revisions.put(lines[i][0], revision = new BuiltInAnnotateRevision(lines[i][0], lines[i][1], useOneRGB ? palette : CommitterColors.getDefault().getCommitterRGB(lines[i][1])));
+						revisions.put(lines[i][0], revision = new BuiltInAnnotateRevision(lines[i][0], lines[i][1], CommitterColors.getDefault().getCommitterRGB(lines[i][1])));
 						info.addRevision(revision);
 					}
 					revision.addLine(Integer.parseInt(lines[i][2]));

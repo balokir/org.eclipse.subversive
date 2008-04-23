@@ -61,8 +61,6 @@ public final class SVNTeamPreferences {
 	public static final String ANNOTATE_CHANGE_PERSPECTIVE_NAME = "changePerspective";
 	public static final String ANNOTATE_PERSPECTIVE_NAME = "perspective";
 	public static final String ANNOTATE_USE_QUICK_DIFF_NAME = "useQuickDiff";
-	public static final String ANNOTATE_USE_ONE_RGB_NAME = "useOneRGB";
-	public static final String ANNOTATE_RGB_BASE_NAME = "rgbBase";
 	
 	public static final int ANNOTATE_DEFAULT_VIEW = 0;
 	public static final int ANNOTATE_QUICK_DIFF_VIEW = 1;
@@ -75,8 +73,6 @@ public final class SVNTeamPreferences {
 	public static final int ANNOTATE_USE_QUICK_DIFF_DEFAULT = SVNTeamPreferences.ANNOTATE_PROMPT_VIEW;
 	public static final String ANNOTATE_PERSPECTIVE_DEFAULT = RepositoryPerspective.ID;
 	public static final int ANNOTATE_CHANGE_PERSPECTIVE_DEFAULT = SVNTeamPreferences.ANNOTATE_PROMPT_PERSPECTIVE;
-	public static final boolean ANNOTATE_USE_ONE_RGB_DEFAULT = true;
-	public static final RGB ANNOTATE_RGB_BASE_DEFAULT = new RGB(186, 186, 186);
 	
 	public static final String CONSOLE_AUTOSHOW_TYPE_NAME = "autoshow";
 	public static final String CONSOLE_ENABLED_NAME = "enabled";
@@ -401,8 +397,6 @@ public final class SVNTeamPreferences {
 	}
 	
 	public static void setDefaultAnnotateValues(IPreferenceStore store) {
-		PreferenceConverter.setDefault(store, SVNTeamPreferences.fullAnnotateName(SVNTeamPreferences.ANNOTATE_RGB_BASE_NAME), SVNTeamPreferences.ANNOTATE_RGB_BASE_DEFAULT);
-		store.setDefault(SVNTeamPreferences.fullAnnotateName(SVNTeamPreferences.ANNOTATE_USE_ONE_RGB_NAME), SVNTeamPreferences.ANNOTATE_USE_ONE_RGB_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullAnnotateName(SVNTeamPreferences.ANNOTATE_USE_QUICK_DIFF_NAME), SVNTeamPreferences.ANNOTATE_USE_QUICK_DIFF_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullAnnotateName(SVNTeamPreferences.ANNOTATE_CHANGE_PERSPECTIVE_NAME), SVNTeamPreferences.ANNOTATE_CHANGE_PERSPECTIVE_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullAnnotateName(SVNTeamPreferences.ANNOTATE_PERSPECTIVE_NAME), SVNTeamPreferences.ANNOTATE_PERSPECTIVE_DEFAULT);
@@ -523,8 +517,6 @@ public final class SVNTeamPreferences {
 	}
 	
 	public static void resetToDefaultAnnotateValues(IPreferenceStore store) {
-		SVNTeamPreferences.setAnnotateRGB(store, SVNTeamPreferences.ANNOTATE_RGB_BASE_NAME, SVNTeamPreferences.ANNOTATE_RGB_BASE_DEFAULT);
-		store.setValue(SVNTeamPreferences.fullAnnotateName(SVNTeamPreferences.ANNOTATE_USE_ONE_RGB_NAME), SVNTeamPreferences.ANNOTATE_USE_ONE_RGB_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullAnnotateName(SVNTeamPreferences.ANNOTATE_USE_QUICK_DIFF_NAME), SVNTeamPreferences.ANNOTATE_USE_QUICK_DIFF_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullAnnotateName(SVNTeamPreferences.ANNOTATE_CHANGE_PERSPECTIVE_NAME), SVNTeamPreferences.ANNOTATE_CHANGE_PERSPECTIVE_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullAnnotateName(SVNTeamPreferences.ANNOTATE_PERSPECTIVE_NAME), SVNTeamPreferences.ANNOTATE_PERSPECTIVE_DEFAULT);
