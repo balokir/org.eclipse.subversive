@@ -8,6 +8,53 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.0.v20080423 [23 April 2008]
+
+Features:
+ * Merge property editor (bug 211411)
+   + special thanks to Francois Fernandes
+
+ * Enhance copy and move behaviour (bug 227491)
+   + special thanks to Eric Jain
+
+ * Create M2Eclipse integration plug-in [generalized extension point] (bug 224074)
+   + special thanks to contributor Eugene Kuleshov
+
+ * Use Quick-Diff annotate for repository files also (bug 228369)
+
+Fixes:
+ * Show Annotations using Quickdiff - Show Author doesn't work (bug 220027)
+   + special thanks to Steve
+
+ * "Negative revision number" when comparing renamed resources (bug 225972)
+   + special thanks to Jukefox
+
+ * Team Synchronization very slow (bug 222632)
+   + special thanks to Marc Guenther, Nikolaus Heger
+
+ * Unable to resolve conflicts (bug 228015)
+   + special thanks to Jesse Eichar
+
+ * Not asking to save resource before synchronize (bug 224651)
+   + special thanks to Aldo Bongio
+
+ * Subversive commit key shortcut stops working after first time (bug 225930)
+   + special thanks to Mark Powell
+
+ * The commit dialog doesn't show the modified files at the top anymore (bug 227136)
+   + special thanks to Paolo
+
+ * Cleanup plug-in initialization (bug 225884)
+   + special thanks to contributor Eugene Kuleshov
+
+ * Negative Revision number exception in InfoOperation when SVN Kit is selected (bug 226896)
+   + special thanks to Marijn, Jarkko Lietolahti, Aslam, Steffen Pingel
+
+ * Incoming change sets are not shown for external resources (bug 227118)
+ * Properties status is not reported while merge. (bug 227102)
+
+--------------------------------------------------------------------------------
+
 Version 0.7.0.v20080404 [04 April 2008]
 
 Features:
