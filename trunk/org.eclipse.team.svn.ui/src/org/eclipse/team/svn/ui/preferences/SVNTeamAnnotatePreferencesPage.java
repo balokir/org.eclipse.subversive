@@ -14,7 +14,6 @@ package org.eclipse.team.svn.ui.preferences;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -39,16 +38,11 @@ import org.eclipse.ui.PlatformUI;
  * @author Alexander Gurov
  */
 public class SVNTeamAnnotatePreferencesPage extends AbstractSVNTeamPreferencesPage {
-	protected ColorFieldEditor rgbEditor;
-	protected Composite rgbParent;
-
 	protected int viewType;
 	protected String perspective;
 	protected IPerspectiveDescriptor []perspectives;
 	protected int perspectiveType;
-	protected boolean useOneRGB;
 	
-	protected Button useOneRGBButton;
 	protected Button defaultViewButton;
 	protected Button quickDiffViewButton;
 	protected Button promptViewButton;
@@ -62,28 +56,19 @@ public class SVNTeamAnnotatePreferencesPage extends AbstractSVNTeamPreferencesPa
 	}
 	
 	protected void saveValues(IPreferenceStore store) {
-		this.rgbEditor.store();
-
-		SVNTeamPreferences.setAnnotateBoolean(store, SVNTeamPreferences.ANNOTATE_USE_ONE_RGB_NAME, this.useOneRGB);
 		SVNTeamPreferences.setAnnotateInt(store, SVNTeamPreferences.ANNOTATE_USE_QUICK_DIFF_NAME, this.viewType);
 		SVNTeamPreferences.setAnnotateInt(store, SVNTeamPreferences.ANNOTATE_CHANGE_PERSPECTIVE_NAME, this.perspectiveType);
 		SVNTeamPreferences.setAnnotateString(store, SVNTeamPreferences.ANNOTATE_PERSPECTIVE_NAME, this.perspective);
 	}
 	
 	protected void loadDefaultValues(IPreferenceStore store) {
-		this.rgbEditor.loadDefault();
-		
 		this.viewType = SVNTeamPreferences.ANNOTATE_USE_QUICK_DIFF_DEFAULT;
-		this.useOneRGB = SVNTeamPreferences.ANNOTATE_USE_ONE_RGB_DEFAULT;
 		this.perspectiveType = SVNTeamPreferences.ANNOTATE_CHANGE_PERSPECTIVE_DEFAULT;
 		this.perspective = SVNTeamPreferences.ANNOTATE_PERSPECTIVE_DEFAULT;
 	}
 	
 	protected void loadValues(IPreferenceStore store) {
-		this.rgbEditor.load();
-		
 		this.viewType = SVNTeamPreferences.getAnnotateInt(store, SVNTeamPreferences.ANNOTATE_USE_QUICK_DIFF_NAME);
-		this.useOneRGB = SVNTeamPreferences.getAnnotateBoolean(store, SVNTeamPreferences.ANNOTATE_USE_ONE_RGB_NAME);
 		this.perspectiveType = SVNTeamPreferences.getAnnotateInt(store, SVNTeamPreferences.ANNOTATE_CHANGE_PERSPECTIVE_NAME);
 		this.perspective = SVNTeamPreferences.getAnnotateString(store, SVNTeamPreferences.ANNOTATE_PERSPECTIVE_NAME);
 	}
@@ -101,9 +86,6 @@ public class SVNTeamAnnotatePreferencesPage extends AbstractSVNTeamPreferencesPa
 		else {
 			this.promptViewButton.setSelection(true);
 		}
-		
-		this.useOneRGBButton.setSelection(this.useOneRGB);
-		this.rgbEditor.setEnabled(this.useOneRGB, this.rgbParent);
 		
 		this.defaultPerspectiveButton.setSelection(false);
 		this.currentPerspectiveButton.setSelection(false);
@@ -272,22 +254,6 @@ public class SVNTeamAnnotatePreferencesPage extends AbstractSVNTeamPreferencesPa
 		data.horizontalSpan = 2;
 		separator.setLayoutData(data);
 		separator.setVisible(false);
-		
-		this.useOneRGBButton = new Button(composite, SWT.CHECK);
-		data = new GridData();
-		data.horizontalSpan = 2;
-		this.useOneRGBButton.setLayoutData(data);
-		this.useOneRGBButton.setText(SVNTeamUIPlugin.instance().getResource("AnnotatePreferencePage.textUseOneRGB"));
-		this.useOneRGBButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent (Event event) {
-				SVNTeamAnnotatePreferencesPage.this.useOneRGB = SVNTeamAnnotatePreferencesPage.this.useOneRGBButton.getSelection();
-				SVNTeamAnnotatePreferencesPage.this.rgbEditor.setEnabled(SVNTeamAnnotatePreferencesPage.this.useOneRGB, SVNTeamAnnotatePreferencesPage.this.rgbParent);
-			}
-		});
-		
-		this.rgbEditor = new ColorFieldEditor(SVNTeamPreferences.fullAnnotateName(SVNTeamPreferences.ANNOTATE_RGB_BASE_NAME), SVNTeamUIPlugin.instance().getResource("AnnotatePreferencePage.textRGB"), this.rgbParent = composite);
-		this.rgbEditor.setPage(this);
-		this.rgbEditor.setPreferenceStore(this.getPreferenceStore());
 		
 //		Setting context help
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.annotatePreferencesContext");

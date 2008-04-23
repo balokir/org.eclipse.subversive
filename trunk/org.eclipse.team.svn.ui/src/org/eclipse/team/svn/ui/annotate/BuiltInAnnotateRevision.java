@@ -16,6 +16,7 @@ import java.util.Date;
 import org.eclipse.jface.text.revisions.Revision;
 import org.eclipse.jface.text.source.LineRange;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
@@ -92,4 +93,8 @@ public class BuiltInAnnotateRevision extends Revision {
 		return date == null ? new Date(0) : date;
 	}
 
+	public String getAuthor() {
+		return this.author == null ? SVNTeamPlugin.instance().getResource("SVNInfo.NoAuthor") : this.author;
+	}
+	
 }
