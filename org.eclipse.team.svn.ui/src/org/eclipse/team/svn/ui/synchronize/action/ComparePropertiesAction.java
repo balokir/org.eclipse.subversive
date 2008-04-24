@@ -60,7 +60,8 @@ public class ComparePropertiesAction extends AbstractSynchronizeModelAction {
 				if (incoming instanceof IResourceChange) {
 					retVal &= IStateFilter.ST_DELETED != incoming.getStatus();
 				}
-				return retVal;
+				return retVal && ((incoming.getChangeMask() & ILocalResource.PROP_MODIFIED) != 0
+						|| (syncInfo.getLocalResource().getChangeMask() & ILocalResource.PROP_MODIFIED) != 0);
 			}
 		}
 		return false;
