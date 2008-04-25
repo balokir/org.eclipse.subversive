@@ -2,7 +2,7 @@
 <html>
 <head>
 	<title>SVN Workspace Synchronization</title>
-	<meta name="copyright"  content="Copyright (c) 2005-2007 Polarion Software. All rights reserved. This page is provided under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/epl-v10.html Contributors: Alexander Gurov."/>
+	<meta name="copyright"  content="Copyright (c) 2005-2008 Polarion Software. All rights reserved. This page is provided under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/epl-v10.html Contributors: Alexei Goncharov."/>
 	<LINK REL="STYLESHEET" HREF="../book.css" CHARSET="ISO-8859-1" TYPE="text/css"/>
 	<script language="JavaScript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"></script>
 </head>
@@ -91,25 +91,28 @@
 	</table>
 	<br/>
 	<p><b><i>Toolbar</i></b></p>
-	<p><b>Synchronize</b> - starts synchronization with repository.</p>
-	<p><b>Pin Current Synchronization</b> - pins current synchronization, so other started synchronizations will be shown in another synchronization view.</p>
-	<p><b>Next difference</b> - shows the next difference of the resources.</p>
-	<p><b>Previous difference</b> - shows the previous difference of the resources.</p>
-	<p><b>Collapse all</b> - redraws the view collapsing all expanded items.</p>
-	<p><b>Expand all</b> - redraws the view expanding all collapsed items.</p>
-	<p><b>Incoming mode</b> - redraws the view showing only incoming changes.</p>
-	<p><b>Outgoing mode</b> - redraws the view showing only outgoing changes.</p>
-	<p><b>Incoming/outgoing mode</b> - redraws the view showing both incoming and outgoing changes.</p>
-	<p><b>Conflict mode</b> - redraws the view showing only conflict changes.</p>
-	<p><b>Update All Incoming Changes</b> - activates the update action for all incoming changes.</p>
-	<p><b>Commit All Outgoing Changes</b> - activates the commit action for all outgoing changes.</p>
-	<p><b>Show change sets</b> - displays specific model based on change sets. The view shows incoming changes grouped by commit comment which is handy for seeing who released what and why. For outgoing changes, the user can create change sets to group related changes.</p>
+	<p><b>Synchronize (<img src="../images/synch_button.gif">)</b> - starts synchronization with repository.</p>
+	<p><b>Pin Current Synchronization (<img src="../images/pin.gif">)</b> - pins current synchronization, so other started synchronizations will be shown in another synchronization view.</p>
+	<p><b>Next difference (<img src="../images/next.gif">)</b> - shows the next difference of the resources.</p>
+	<p><b>Previous difference (<img src="../images/prev.gif">)</b> - shows the previous difference of the resources.</p>
+	<p><b>Collapse all (<img src="../images/collapseall.gif">)</b> - redraws the view collapsing all expanded items.</p>
+	<p><b>Expand all (<img src="../images/expandall.gif">)</b> - redraws the view expanding all collapsed items.</p>
+	<p><b>Incoming mode (<img src="../images/show_in.gif">)</b> - redraws the view showing only incoming changes.</p>
+	<p><b>Outgoing mode (<img src="../images/show_out.gif">)</b> - redraws the view showing only outgoing changes.</p>
+	<p><b>Incoming/outgoing mode (<img src="../images/show_both.gif">)</b> - redraws the view showing both incoming and outgoing changes.</p>
+	<p><b>Conflict mode (<img src="../images/show_conf.gif">)</b> - redraws the view showing only conflict changes.</p>
+	<p><b>Update All Incoming Changes (<img src="../images/update.gif">)</b> - activates the update action for all incoming changes.</p>
+	<p><b>Commit All Outgoing Changes (<img src="../images/commit.gif">)</b> - activates the commit action for all outgoing changes.</p>
+	<p><b>Show Change Sets (<img src="../images/changeset.gif">)</b> - displays specific model based on change sets. The view shows incoming changes grouped by commit comment which is handy for seeing who released what and why. For outgoing changes, the user can create change sets to group related changes.</p>
 	<p><b>Drop-down menu:</b></p>
 	<ul>
 		<li>
-			<b>Remove Current Synchronization</b> - removes current synchronization info from the view.</li>
+			<b>Pin Current Synchronization (<img src="../images/pin.gif">)</b> - pins current synchronization.</li>
 		<li>
-			<b>Remove Un-Pined Synchronization</b> - removes all unpinned synchronizations from the view.
+		<li>
+			<b>Remove Current Synchronization (<img src="../images/remove.gif">)</b> - removes current synchronization info from the view.</li>
+		<li>
+			<b>Remove Un-Pined Synchronization (<img src="../images/remove_all.gif">)</b> - removes all unpinned synchronizations from the view.
 		</li>
 		<li>
 			<b>Mode</b> - offers the user to choose a synchronization mode (incoming, outgoing, both or conflict).
@@ -137,17 +140,25 @@
 	<p><b>Open with... (files only)</b> - opens the file with probability to choose the editor.</p>
 	<p><b>Edit</b> - provides a probability to copy, delete, move or rename a resource.</p>
 	<p><b>Synchronize</b> - starts synchronization with repository.</p>
-	<p><b>Remove View</b> - removes the selected resource from the view. It will reappear in the view if it's synchronization status changes.</p>
+	<p><b>Remove from View</b> - removes the selected resource from the view. It will reappear in the view if it's synchronization status changes.</p>
 	<p><b>Update</b> - activates the update action for the selected resource.</p>
 	<p><b>Commit...</b> - activates the commit action for the selected resource.</p>
-	<p><b>Override and update...</b> - replaces the selected resource local copy with a repository one.</p>
-	<p><b>Override and commit...</b> - replaces the selected resource repository copy with a local one.	</p>
+	<p><b>Override and update... (<img src="../images/update.gif">)</b> - replaces the selected resource local copy with a repository one.</p>
+	<p><b>Override and commit... (<img src="../images/commit.gif">)</b> - replaces the selected resource repository copy with a local one.	</p>
 	<p><b>Mark as merged...</b> - mark the file as if it is already merged.</p>
-	<p><b>Revert...</b> - reverts the file changes to the unmodified state.</p>
+	<p><b>Revert... (<img src="../images/revert.gif">)</b> - reverts the file changes to the unmodified state.</p>
 	<p><b>Add to version control...</b> - adds a selected resource to version control.</p>
 	<p><b>Add to svn:ignore...</b> - adds a selected resource to svn:ignore.</p>
-	<p><b>Show Resource History</b> - shows SVN History View for a selected resource.</p>
-	<p><b>Show Annotations</b> - shows SVN Annotations View for a selected resource.</p>
+	<p><b>Create Patch...</b> - creates patch based on local changes.</p>
+	<p><b>Branch... (<img src="../images/branch.gif">)</b> - creates branch from working copy.</p>
+	<p><b>Show History (<img src="../images/showhistory.gif">)</b> - shows SVN History View for a selected resource.</p>
+	<p><b>Show Annotations</b> - shows annotation for a selected resource.</p>
+	<p><b>Show Properties (<img src="../images/propertiesedit.gif">)</b> - shows SVN properties of a selected resource.</p>
+	<p><b>Set Property...</b> - sets property on local resource.</p>
+	<p><b>Set Keywords...</b> - sets keywords on local resource.</p>
+	<p><b>Lock... (<img src="../images/lock.gif">)</b> - locks local resource.</p>
+	<p><b>Unlock (<img src="../images/unlock.gif">)</b> - unlocks local resource.</p>
+	<p><b>Clean-up</b> - performs clean-up for selected folder.</p>
 	<img border="0" src="../images/rel_tops.png" alt="Related topics"/>
 	<br/>
 	<a href="../teamSupport/svn_label_decor.html">SVN Label Decorations</a>
