@@ -14,6 +14,7 @@ package org.eclipse.team.svn.ui.synchronize.action;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
@@ -61,7 +62,8 @@ public class ComparePropertiesAction extends AbstractSynchronizeModelAction {
 					retVal &= IStateFilter.ST_DELETED != incoming.getStatus();
 				}
 				return retVal && ((incoming.getChangeMask() & ILocalResource.PROP_MODIFIED) != 0
-						|| (syncInfo.getLocalResource().getChangeMask() & ILocalResource.PROP_MODIFIED) != 0);
+						|| (syncInfo.getLocalResource().getChangeMask() & ILocalResource.PROP_MODIFIED) != 0
+						|| incoming.getResource() instanceof IContainer);
 			}
 		}
 		return false;

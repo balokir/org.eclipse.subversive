@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -169,7 +170,7 @@ public abstract class AbstractSVNParticipant extends ScopableSubscriberParticipa
 				    }
 			    }
 			    Image tmp = this.registerImageDescriptor(imgDescr);
-				if ((left.getChangeMask() & ILocalResource.PROP_MODIFIED) != 0 || (right.getChangeMask() & ILocalResource.PROP_MODIFIED) != 0) {
+				if (!(left.getResource() instanceof IContainer) && ((left.getChangeMask() & ILocalResource.PROP_MODIFIED) != 0 || (right.getChangeMask() & ILocalResource.PROP_MODIFIED) != 0)) {
 				    if (tmp != null) {
 				    	image = tmp;
 				    }
