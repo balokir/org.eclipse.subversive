@@ -131,17 +131,23 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 		return AbstractSVNSubscriber.RV_COMPARATOR;
     }
 
-    public void refresh(final IResource []resources, final int depth, IProgressMonitor monitor) {
-		HashSet<IResource> refreshScope = this.clearRemoteStatusesImpl(resources);
+    public void refresh(IResource []resources, int depth, IProgressMonitor monitor) {
+    	ArrayList<IResource> resourcesToOperateList = new ArrayList<IResource>();
+    	for (IResource current : resources) {
+    		if (FileUtility.isConnected(current)) {
+    			resourcesToOperateList.add(current);
+    		}
+    	}
+    	IResource [] operableData = resourcesToOperateList.toArray(new IResource[0]); 
+		HashSet<IResource> refreshScope = this.clearRemoteStatusesImpl(operableData);
 		AbstractSVNSubscriber.this.resourcesStateChangedImpl(refreshScope.toArray(new IResource[refreshScope.size()]));
-		
 		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
 		if (SVNTeamPreferences.getSynchronizeBoolean(store, SVNTeamPreferences.SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_NAME)) {
-			IActionOperation op = new UpdateStatusOperation(resources, depth);
+			IActionOperation op = new UpdateStatusOperation(operableData, depth);
 			ProgressMonitorUtility.doTaskExternal(op, monitor);
 		}
 		else {
-			this.resourcesStateChangedImpl(this.findChanges(resources, depth, monitor, UIMonitorUtility.DEFAULT_FACTORY));
+			this.resourcesStateChangedImpl(this.findChanges(operableData, depth, monitor, UIMonitorUtility.DEFAULT_FACTORY));
 		}
     }
 
