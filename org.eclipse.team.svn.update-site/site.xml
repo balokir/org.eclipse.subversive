@@ -12,10 +12,10 @@
    <feature url="features/org.eclipse.team.svn.resource.ignore.rules.jdt_0.7.0.v20080311.jar" id="org.eclipse.team.svn.resource.ignore.rules.jdt" version="0.7.0.v20080311">
       <category name="Subversive (Incubation)"/>
    </feature>
-   <feature url="features/org.eclipse.team.svn.mylyn_0.7.0.v20080423.jar" id="org.eclipse.team.svn.mylyn" version="0.7.0.v20080423">
+   <feature url="features/org.eclipse.team.svn.mylyn_0.7.0.v20080425.jar" id="org.eclipse.team.svn.mylyn" version="0.7.0.v20080425">
       <category name="Subversive Integration (Incubation)"/>
    </feature>
-   <feature url="features/org.eclipse.team.svn.source_0.7.0.v20080423.jar" id="org.eclipse.team.svn.source" version="0.7.0.v20080423">
+   <feature url="features/org.eclipse.team.svn.source_0.7.0.v20080425.jar" id="org.eclipse.team.svn.source" version="0.7.0.v20080425">
       <category name="Subversive Sources (Incubation)"/>
    </feature>
    <category-def name="Subversive (Incubation)" label="Subversive SVN Team Provider Plugin (Incubation)">
