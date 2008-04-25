@@ -92,7 +92,7 @@ public class GetLogMessagesOperation extends AbstractRepositoryOperation {
 //			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn log " + SVNUtility.encodeURL(this.resource.getUrl()) + (this.limit != 0 ? (" --limit " + this.limit) : "") + (this.stopOnCopy ? " --stop-on-copy" : "") + " -r " + this.selectedRevision + ":0 --username \"" + location.getUsername() + "\"\n");
 			long options = this.discoverPaths ? ISVNConnector.Options.DISCOVER_PATHS : ISVNConnector.Options.NONE;
 			options |= this.stopOnCopy ? ISVNConnector.Options.STOP_ON_COPY : ISVNConnector.Options.NONE;
-			this.msg = SVNUtility.logEntries(proxy, SVNUtility.getEntryReference(resource), this.selectedRevision, SVNRevision.fromNumber(0), options, ISVNConnector.DEFAULT_LOG_ENTRY_PROPS, limit, new SVNProgressMonitor(this, monitor, null));
+			this.msg = SVNUtility.logEntries(proxy, SVNUtility.getEntryReference(resource), this.selectedRevision, SVNRevision.fromNumber(0), options, ISVNConnector.DEFAULT_LOG_ENTRY_PROPS, this.limit, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 			location.releaseSVNProxy(proxy);
