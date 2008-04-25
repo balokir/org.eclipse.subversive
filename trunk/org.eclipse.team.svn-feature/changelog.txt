@@ -8,6 +8,20 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.0.v20080425 [25 April 2008]
+
+Fixes:
+ * Feedback on Documentation Page (bug 228692)
+   + special thanks to Nathan Gervais
+
+ * Attempt to synchronize closed projects produces error (bug 228789)
+   + special thanks to Leo Dos Santos
+
+ * Mylyn integration won't install due to Mylyn version update to 3.0.0 (bug 228507)
+   + special thanks to Martin Oberhuber
+
+--------------------------------------------------------------------------------
+
 Version 0.7.0.v20080423 [23 April 2008]
 
 Features:

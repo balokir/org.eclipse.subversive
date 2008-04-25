@@ -21,7 +21,7 @@
 
    <includes
          id="org.eclipse.team.svn.sources"
-         version="0.7.0.v20080423"/>
+         version="0.7.0.v20080425"/>
 
    <includes
          id="org.eclipse.team.svn.nl1.sources"
