@@ -68,7 +68,7 @@ public class ReplaceWithBranchTagAction extends AbstractWorkingCopyAction {
 			if (dlg.open() == 0){
 				IRepositoryResource selected = panel.getSelectedResource();
 				HashMap<String, String> remote2local = new HashMap<String, String>();
-				remote2local.put(SVNUtility.encodeURL(remote.getUrl()), FileUtility.getWorkingCopyPath(resources[0]));
+				remote2local.put(SVNUtility.encodeURL(selected.getUrl()), FileUtility.getWorkingCopyPath(resources[0]));
 				CompositeOperation op = new CompositeOperation("Operation.ReplaceWithRevision");
 				SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
 				op.add(saveOp);
