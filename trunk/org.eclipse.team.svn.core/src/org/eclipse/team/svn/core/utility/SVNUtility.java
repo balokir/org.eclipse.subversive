@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2006 Polarion Software.
+ * Copyright (c) 2005-2008 Polarion Software.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -254,13 +254,13 @@ public final class SVNUtility {
 	}
 	
 	public static SVNChangeStatus []status(ISVNConnector proxy, String path, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
-		final ArrayList statuses = new ArrayList();
+		final ArrayList<SVNChangeStatus> statuses = new ArrayList<SVNChangeStatus>();
 		proxy.status(path, depth, options, null, new ISVNEntryStatusCallback() {
 			public void next(SVNChangeStatus status) {
 				statuses.add(status);
 			}
 		}, monitor);
-		return (SVNChangeStatus [])statuses.toArray(new SVNChangeStatus[statuses.size()]);
+		return statuses.toArray(new SVNChangeStatus[statuses.size()]);
 	}
 	
 	public static void diffStatus(ISVNConnector proxy, final Collection<SVNDiffStatus> statuses, SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
@@ -280,43 +280,43 @@ public final class SVNUtility {
 	}
 	
 	public static SVNMergeStatus[] mergeStatus(ISVNConnector proxy, SVNEntryReference reference, SVNRevisionRange []revisions, String path, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
-		final ArrayList statuses = new ArrayList();
+		final ArrayList<SVNMergeStatus> statuses = new ArrayList<SVNMergeStatus>();
 		proxy.mergeStatus(reference, revisions, path, depth, options, new ISVNMergeStatusCallback() {
 			public void next(SVNMergeStatus status) {
 				statuses.add(status);
 			}
 		}, monitor);
-		return (SVNMergeStatus [])statuses.toArray(new SVNMergeStatus[statuses.size()]);
+		return statuses.toArray(new SVNMergeStatus[statuses.size()]);
 	}
 	
 	public static SVNEntry []list(ISVNConnector proxy, SVNEntryRevisionReference reference, int depth, int direntFields, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
-		final ArrayList entries = new ArrayList();
+		final ArrayList<SVNEntry> entries = new ArrayList<SVNEntry>();
 		proxy.list(reference, depth, direntFields, options, new ISVNEntryCallback() {
 			public void next(SVNEntry entry) {
 				entries.add(entry);
 			}
 		}, monitor);
-		return (SVNEntry [])entries.toArray(new SVNEntry[entries.size()]);
+		return entries.toArray(new SVNEntry[entries.size()]);
 	}
 	
 	public static SVNLogEntry []logEntries(ISVNConnector proxy, SVNEntryReference reference, SVNRevision revisionStart, SVNRevision revisionEnd, long options, String[] revProps, long limit, ISVNProgressMonitor monitor) throws SVNConnectorException {
-		final ArrayList entries = new ArrayList();
+		final ArrayList<SVNLogEntry> entries = new ArrayList<SVNLogEntry>();
 		proxy.logEntries(reference, revisionStart, revisionEnd, revProps, limit, options, new ISVNLogEntryCallback() {
 			public void next(SVNLogEntry log, boolean hasChildren) {
 				entries.add(log);
 			}
 		}, monitor);
-		return (SVNLogEntry [])entries.toArray(new SVNLogEntry[entries.size()]);
+		return entries.toArray(new SVNLogEntry[entries.size()]);
 	}
 	
 	public static SVNEntryInfo []info(ISVNConnector proxy, SVNEntryRevisionReference reference, int depth, ISVNProgressMonitor monitor) throws SVNConnectorException {
-		final ArrayList infos = new ArrayList();
+		final ArrayList<SVNEntryInfo> infos = new ArrayList<SVNEntryInfo>();
 		proxy.info(reference, depth, null, new ISVNEntryInfoCallback() {
 			public void next(SVNEntryInfo info) {
 				infos.add(info);
 			}
 		}, monitor);
-		return (SVNEntryInfo [])infos.toArray(new SVNEntryInfo[infos.size()]);
+		return infos.toArray(new SVNEntryInfo[infos.size()]);
 	}
 	
 	public static String getStatusText(String status) {
@@ -382,7 +382,7 @@ public final class SVNUtility {
 		}
 		IPath url = new Path(resourceUrl);
 		IRepositoryLocation []locations = SVNRemoteStorage.instance().getRepositoryLocations();
-		ArrayList roots = new ArrayList();
+		ArrayList<IRepositoryRoot> roots = new ArrayList<IRepositoryRoot>();
 		for (int i = 0; i < locations.length; i++) {
 			IPath locationUrl = new Path(locations[i].getUrl());
 			if (url.segmentCount() < locationUrl.segmentCount() && !url.isPrefixOf(locationUrl)) {
@@ -393,12 +393,10 @@ public final class SVNUtility {
 				SVNUtility.addRepositoryRoot(roots, (IRepositoryRoot)locations[i].asRepositoryContainer(resourceUrl, false).getRoot(), longestOnly);
 			}
 		}
-		IRepositoryRoot []repositoryRoots = (IRepositoryRoot [])roots.toArray(new IRepositoryRoot[roots.size()]);
+		IRepositoryRoot []repositoryRoots = roots.toArray(new IRepositoryRoot[roots.size()]);
 		if (!longestOnly) {
-			Arrays.sort(repositoryRoots, new Comparator() {
-				public int compare(Object o1, Object o2) {
-					IRepositoryRoot first = (IRepositoryRoot)o1;
-					IRepositoryRoot second = (IRepositoryRoot)o2;
+			Arrays.sort(repositoryRoots, new Comparator<IRepositoryRoot>() {
+				public int compare(IRepositoryRoot first, IRepositoryRoot second) {
 					return second.getUrl().compareTo(first.getUrl());
 				}
 			});
@@ -406,10 +404,10 @@ public final class SVNUtility {
 		return repositoryRoots;
 	}
 	
-	private static void addRepositoryRoot(List container, IRepositoryRoot root, boolean longestOnly) {
+	private static void addRepositoryRoot(List<IRepositoryRoot> container, IRepositoryRoot root, boolean longestOnly) {
 		if (longestOnly && container.size() > 0) {
 			int cnt = new Path(root.getUrl()).segmentCount();
-			int cnt2 = new Path(((IRepositoryRoot)container.get(0)).getUrl()).segmentCount();
+			int cnt2 = new Path(container.get(0).getUrl()).segmentCount();
 			if (cnt > cnt2) {
 				container.clear();
 				container.add(root);
@@ -457,12 +455,12 @@ public final class SVNUtility {
 	}
 	
 	public static IRepositoryResource []makeResourceSet(IRepositoryResource upPoint, IRepositoryResource downPoint) {
-		ArrayList resourceSet = new ArrayList();
+		ArrayList<IRepositoryResource> resourceSet = new ArrayList<IRepositoryResource>();
 		while (downPoint != null && !downPoint.equals(upPoint)) {
 			resourceSet.add(0, downPoint);
 			downPoint = downPoint.getParent();
 		}
-		return (IRepositoryResource [])resourceSet.toArray(new IRepositoryResource[resourceSet.size()]);
+		return resourceSet.toArray(new IRepositoryResource[resourceSet.size()]);
 	}
 	
 	public static boolean isValidSVNURL(String url) {
@@ -520,10 +518,8 @@ public final class SVNUtility {
 	}
 	
 	public static void reorder(SVNDiffStatus []statuses, final boolean parent2Child) {
-		Arrays.sort(statuses, new Comparator() {
-			public int compare(Object o1, Object o2) {
-				SVNDiffStatus d1 = (SVNDiffStatus)o1;
-				SVNDiffStatus d2 = (SVNDiffStatus)o2;
+		Arrays.sort(statuses, new Comparator<SVNDiffStatus>() {
+			public int compare(SVNDiffStatus d1, SVNDiffStatus d2) {
 				return parent2Child ? d1.pathPrev.compareTo(d2.pathPrev) : d2.pathPrev.compareTo(d1.pathPrev);
 			}
 			
@@ -534,10 +530,10 @@ public final class SVNUtility {
 	}
 	
 	public static void reorder(SVNChangeStatus []statuses, final boolean parent2Child) {
-		Arrays.sort(statuses, new Comparator() {
-			public int compare(Object o1, Object o2) {
-				String s1 = ((SVNChangeStatus)o1).path;
-				String s2 = ((SVNChangeStatus)o2).path;
+		Arrays.sort(statuses, new Comparator<SVNChangeStatus>() {
+			public int compare(SVNChangeStatus o1, SVNChangeStatus o2) {
+				String s1 = o1.path;
+				String s2 = o2.path;
 				return parent2Child ? s1.compareTo(s2) : s2.compareTo(s1);
 			}
 			
@@ -548,10 +544,10 @@ public final class SVNUtility {
 	}
 	
 	public static void reorder(IRepositoryResource []resources, final boolean parent2Child) {
-		Arrays.sort(resources, new Comparator() {
-			public int compare(Object o1, Object o2) {
-				String s1 = ((IRepositoryResource)o1).getUrl();
-				String s2 = ((IRepositoryResource)o2).getUrl();
+		Arrays.sort(resources, new Comparator<IRepositoryResource>() {
+			public int compare(IRepositoryResource o1, IRepositoryResource o2) {
+				String s1 = o1.getUrl();
+				String s2 = o2.getUrl();
 				return parent2Child ? s1.compareTo(s2) : s2.compareTo(s1);
 			}
 			
@@ -955,13 +951,13 @@ public final class SVNUtility {
 	}
 	
 	public static IRepositoryResource []shrinkChildNodes(IRepositoryResource []resources) {
-		Set roots = new HashSet(Arrays.asList(resources));
+		Set<IRepositoryResource> roots = new HashSet<IRepositoryResource>(Arrays.asList(resources));
 		for (int i = 0; i < resources.length; i++) {
 			if (SVNUtility.hasRoots(roots, resources[i])) {
 				roots.remove(resources[i]);
 			}
 		}
-		return (IRepositoryResource [])roots.toArray(new IRepositoryResource[roots.size()]);
+		return roots.toArray(new IRepositoryResource[roots.size()]);
 	}
 	
 	public static IRepositoryResource []getCommonParents(IRepositoryResource []resources) {
