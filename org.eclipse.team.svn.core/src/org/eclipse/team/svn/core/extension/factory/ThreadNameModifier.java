@@ -469,10 +469,10 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 
-	public void resolved(String path, int conflictResult, int depth, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void resolve(String path, int conflictResult, int depth, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			this.connector.resolved(path, conflictResult, depth, monitor);
+			this.connector.resolve(path, conflictResult, depth, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
@@ -639,10 +639,10 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 
-	public SVNRevisionRange[] getAvailableMerges(SVNEntryReference reference, String mergeSource, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public void getMergeInfoLog(int logKind, SVNEntryReference reference, SVNEntryReference mergeSourceReference, String[] revProps, long options, ISVNLogEntryCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			return this.connector.getAvailableMerges(reference, mergeSource, monitor);
+			this.connector.getMergeInfoLog(logKind, reference, mergeSourceReference, revProps, options, cb, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);

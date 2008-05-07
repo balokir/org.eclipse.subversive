@@ -70,7 +70,7 @@ public interface ISVNConnector {
 		}
 
 	}
-
+	
 	public static final String[] EMPTY_LOG_ENTRY_PROPS = new String[] {};
 
 	public static final String[] DEFAULT_LOG_ENTRY_PROPS = new String[] { SVNProperty.BuiltIn.REV_LOG, SVNProperty.BuiltIn.REV_DATE, SVNProperty.BuiltIn.REV_AUTHOR };
@@ -322,11 +322,11 @@ public interface ISVNConnector {
 
 	public SVNMergeInfo getMergeInfo(SVNEntryReference reference, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public SVNRevisionRange[] getAvailableMerges(SVNEntryReference reference, String mergeSource, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void getMergeInfoLog(int logKind, SVNEntryReference reference, SVNEntryReference mergeSourceReference, String[] revProps, long options, ISVNLogEntryCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public String[] suggestMergeSources(SVNEntryReference reference, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void resolved(String path, int conflictResult, int depth, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void resolve(String path, int conflictResult, int depth, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public void setConflictResolver(ISVNConflictResolutionCallback listener);
 
