@@ -257,20 +257,25 @@ public class SVNNotification {
 		public static final int CHANGELIST_CLEAR = 27;
 
 		/**
-		 * @since 1.5 Changelist operation failed.
-		 */
-		public static final int CHANGELIST_FAILED = 28;
-
-		/**
 		 * @since 1.5 A merge operation has begun.
 		 */
-		public static final int MERGE_BEGIN = 29;
+		public static final int MERGE_BEGIN = 28;
+
+		/**
+		 * @since 1.5 A merge operation from a foreign repository has begun.
+		 */
+		public static final int FOREIGN_MERGE_BEGIN = 29;
+
+		/**
+		 * @since 1.5 Got a replaced in an update.
+		 */
+		public static final int UPDATE_REPLACED = 30;
 
 		/*
 		 * Sometime native JavaHL client returns -1 as action (for example when file is replaced in branch then merged into trunk)...
 		 */
 		public static boolean isKnownAction(int action) {
-			return action >= PerformedAction.ADD /*0*/ && action <= PerformedAction.MERGE_BEGIN /*29*/;
+			return action >= PerformedAction.ADD /*0*/ && action <= PerformedAction.UPDATE_REPLACED /*30*/;
 		}
 		
 		/**
@@ -279,7 +284,7 @@ public class SVNNotification {
 		public static final String[] actionNames = { "add", "copy", "delete", "restore", "revert", "failed revert", "resolved", "skip", "update delete", "update add",
 				"update modified", "update completed", "update external", "status completed", "status external", "sending modified", "sending added", "sending deleted",
 				"sending replaced", "transfer", "blame revision processed", "locked", "unlocked", "locking failed", "unlocking failed", "path exists", "changelist set",
-				"changelist cleared", "changelist failed", "merge begin", };
+				"changelist cleared", "merge begin", "foreign merge begin", "replaced"};
 	}
 
 	/**

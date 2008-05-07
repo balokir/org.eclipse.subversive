@@ -58,7 +58,7 @@ public class MarkResolvedOperation extends AbstractFileOperation {
 			
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-					proxy.resolved(current.getAbsolutePath(), SVNConflictResolution.CHOOSE_MERGED, Depth.infinityOrEmpty(MarkResolvedOperation.this.recursive), new SVNProgressMonitor(MarkResolvedOperation.this, monitor, null));
+					proxy.resolve(current.getAbsolutePath(), SVNConflictResolution.CHOOSE_MERGED, Depth.infinityOrEmpty(MarkResolvedOperation.this.recursive), new SVNProgressMonitor(MarkResolvedOperation.this, monitor, null));
 				}
 			}, monitor, files.length);
 			
