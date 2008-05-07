@@ -58,7 +58,7 @@ public class ExtractToAction extends AbstractSynchronizeModelAction {
 				return false;
 			}
 		}
-		return true;
+		return infos.length > 0;
 	}
 	
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
