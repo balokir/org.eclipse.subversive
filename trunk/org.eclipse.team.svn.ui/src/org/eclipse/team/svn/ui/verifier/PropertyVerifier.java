@@ -16,6 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 
@@ -25,12 +26,12 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
  * @author Alexei Goncharov
  */
 public class PropertyVerifier extends AbstractFormattedVerifier {
-	
+	private IRepositoryResource base;
 	private Pattern pattern;
 	private String propName;
 	private boolean toValidate;
 	
-	public PropertyVerifier(String fieldName, String regExp, String propName) {
+	public PropertyVerifier(String fieldName, String regExp, String propName, IRepositoryResource base) {
         super(fieldName);
         if (regExp == null) {
         	this.toValidate = false;
@@ -43,7 +44,7 @@ public class PropertyVerifier extends AbstractFormattedVerifier {
 			this.propName += parts[i];
 		} 
         this.pattern = Pattern.compile(regExp);
-        
+        this.base = base;
     }
 	
 	protected String getErrorMessageImpl(Control input) {
@@ -71,7 +72,7 @@ public class PropertyVerifier extends AbstractFormattedVerifier {
 		}
 		if (this.propName.equals("svnexternals")) {
 			try {
-				SVNUtility.parseSVNExternalsProperty(inputText);
+				SVNUtility.parseSVNExternalsProperty(inputText, this.base);
 			}
 			catch (Exception ex) {
 				return SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.Verifier." + this.propName);

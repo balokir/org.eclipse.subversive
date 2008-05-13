@@ -37,6 +37,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.connector.SVNProperty;
+import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.composite.ApplyPropertyMethodComposite;
 import org.eclipse.team.svn.ui.composite.PropertiesComposite;
@@ -110,13 +112,13 @@ public class PropertyEditPanel extends AbstractDialogPanel {
 	
 	private void createVerifiersMap() {
 		this.verifiers = new HashMap<String, AbstractFormattedVerifier>();
-		String [] properties = {};
-		properties = this.predefinedPropertiesRegexps.keySet().toArray(properties);
+		String [] properties = this.predefinedPropertiesRegexps.keySet().toArray(new String[0]);
+		IRepositoryResource base = SVNRemoteStorage.instance().asRepositoryResource(this.selectedResources[0]);
 		for (int i = 0; i <  properties.length; i++) {
-			this.verifiers.put(properties[i], new PropertyVerifier("EditPropertiesInputField", this.predefinedPropertiesRegexps.get(properties[i]), properties[i]));
+			this.verifiers.put(properties[i], new PropertyVerifier("EditPropertiesInputField", this.predefinedPropertiesRegexps.get(properties[i]), properties[i], base));
 		}
 		for (int i = 0; i < this.customProps.length; i++) {
-			this.verifiers.put(this.customProps[i].propName, new PropertyVerifier("EditPropertiesInputField", this.customProps[i].regExp.equals("") ? null : this.customProps[i].regExp, this.customProps[i].propName));
+			this.verifiers.put(this.customProps[i].propName, new PropertyVerifier("EditPropertiesInputField", this.customProps[i].regExp.equals("") ? null : this.customProps[i].regExp, this.customProps[i].propName, base));
 		}
 	}
 	

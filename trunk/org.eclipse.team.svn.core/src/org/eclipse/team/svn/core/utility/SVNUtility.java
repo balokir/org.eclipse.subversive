@@ -119,24 +119,6 @@ public final class SVNUtility {
 		location.setUrl(url);
 	}
 	
-	public static SVNEntryReference asEntryReference(String url) {
-		if (url == null) {
-			return null;
-		}
-		int idx = url.lastIndexOf('@');
-		SVNRevision peg = null;
-		if (idx != -1) {
-			try {
-				peg = SVNRevision.fromString(url.substring(idx + 1));
-				url = url.substring(0, idx);
-			}
-			catch (IllegalArgumentException ex) {
-				// it is not a revision at the end of the URL
-			}
-		}
-		return new SVNEntryReference(url, peg);
-	}
-	
 	public static IRepositoryResource getCopiedFrom(IResource resource) {
 		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
 		if (local != null && local.isCopied()) {
@@ -182,48 +164,136 @@ public final class SVNUtility {
 		return null;
 	}
 	
-	public static Map parseSVNExternalsProperty(String property) {
+	public static Map parseSVNExternalsProperty(String property, IRepositoryResource propertyHolder) {
 		if (property == null) {
 			return Collections.EMPTY_MAP;
 		}
 		Map retVal = new HashMap();
-		String []externals = property.trim().split("[\\n]+"); // it seems different clients have different behaviours wrt trailing whitespace.. so trim() to be safe
-		if (externals.length > 0) {
-			for (int i = 0; i < externals.length; i++) {
-				String []parts = externals[i].split("[\\t ]+");
-				// 2 - name + URL
-				// 3 - name + -rRevision + URL
-				// 4 - name + -r Revision + URL
-				if (parts.length < 2 || parts.length > 4) {
-					throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]);
-				}
-				String name = parts[0];  // hmm, we aren't handle the case were the name does not match the remote name, ie.   "foo  http://server/trunk/bar"..
-				String url = (parts.length == 2 ? parts[1] : (parts.length == 4 ? parts[3] : parts[2])).trim(); // trim() to deal with Windows CR characters..
-				
+		String []externals = property.trim().split("[\\n|\\r\\n]+"); // it seems different clients have different behaviours wrt trailing whitespace.. so trim() to be safe
+		for (int i = 0; i < externals.length; i++) {
+			String []parts = externals[i].trim().split("[\\t ]+");
+			// 2 - name + URL
+			// 3 - name + -rRevision + URL
+			// 4 - name + -r + Revision + URL
+			//or in SVN 1.5 format
+			// 2 - URL@peg + name
+			// 3 - -rRevision + URL@peg + name
+			// 4 - -r + Revision + URL@peg + name
+			if (parts.length < 2 || parts.length > 4) {
+				throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]);
+			}
+			
+			String name = null;
+			String url = null;
+			SVNRevision revision = null;
+			SVNRevision pegRevision = null;
+			
+			if (SVNUtility.isValidSVNURL(parts[parts.length - 1])) {
+				name = parts[0];
 				try {
-					url = SVNUtility.decodeURL(url);
-				}
-				catch (IllegalArgumentException ex) {
-					// the URL is not encoded
-				}
-			    url = SVNUtility.normalizeURL(url);
-				// see if we can find a matching repository location:
-				int revision = SVNRevision.INVALID_REVISION_NUMBER;
-				try {
+					url = parts[1];
 					if (parts.length == 4) {
-						revision = Integer.parseInt(parts[2]);
+						revision = SVNRevision.fromString(parts[2]);
+						url = parts[3];
 					}
 					else if (parts.length == 3) {
-						revision = Integer.parseInt(parts[1].substring(2));
+						revision = SVNRevision.fromString(parts[1].substring(2));
+						url = parts[2];
 					}
 				}
 				catch (Exception ex) {
 					throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]);
 				}
-				retVal.put(name, new SVNEntryRevisionReference(url, null, revision != SVNRevision.INVALID_REVISION_NUMBER ? SVNRevision.fromNumber(revision) : null));
 			}
+			else {
+				name = parts[parts.length - 1];
+				try {
+					url = parts[0];
+					if (parts.length == 4) {
+						revision = SVNRevision.fromString(parts[1]);
+						url = parts[2];
+					}
+					else if (parts.length == 3) {
+						revision = SVNRevision.fromString(parts[0].substring(2));
+						url = parts[1];
+					}
+				}
+				catch (Exception ex) {
+					throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]);
+				}
+				if (!SVNUtility.isValidSVNURL(url)) {
+					if (url.startsWith("^/")) {
+						url = propertyHolder.getRepositoryLocation().getRepositoryRoot().getUrl() + url.substring(1);
+					}
+					else if (url.startsWith("//")) {
+						try {
+							String protocol = SVNUtility.getSVNUrl(propertyHolder.getUrl()).getProtocol();
+							if (propertyHolder.getUrl().indexOf(":///") != -1) {
+								url = protocol + ":/" + url;
+							}
+							else {
+								url = protocol + ":" + url;
+							}
+						}
+						catch (MalformedURLException e) {
+							// cannot be thrown
+						}
+					}
+					else if (url.startsWith("/")) {
+						String prefix = propertyHolder.getUrl();
+						int idx = prefix.lastIndexOf("//");
+						idx = prefix.indexOf('/', idx + 2);
+						url = prefix.substring(0, idx) + url;
+					}
+					else if (url.startsWith("../")) {
+						IRepositoryResource prefix = propertyHolder;
+						while (url.startsWith("../")) {
+							url = url.substring(3);
+							prefix = prefix.getParent();
+							if (prefix == null) {
+								throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]);
+							}
+						}
+						url = prefix.getUrl() + "/" + url;
+					}
+					else {
+						throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]);
+					}
+				}
+				SVNEntryReference ref = SVNUtility.asEntryReference(url);
+				url = ref.path;
+				pegRevision = ref.pegRevision;
+			}
+			
+			try {
+				url = SVNUtility.decodeURL(url);
+			}
+			catch (IllegalArgumentException ex) {
+				// the URL is not encoded
+			}
+		    url = SVNUtility.normalizeURL(url);
+			
+			retVal.put(name, new SVNEntryRevisionReference(url, pegRevision, revision));
 		}
 		return retVal;
+	}
+	
+	public static SVNEntryReference asEntryReference(String url) {
+		if (url == null) {
+			return null;
+		}
+		int idx = url.lastIndexOf('@');
+		SVNRevision peg = null;
+		if (idx != -1) {
+			try {
+				peg = SVNRevision.fromString(url.substring(idx + 1));
+				url = url.substring(0, idx);
+			}
+			catch (IllegalArgumentException ex) {
+				// it is not a revision at the end of the URL
+			}
+		}
+		return new SVNEntryReference(url, peg);
 	}
 	
 	public static boolean useSingleReferenceSignature(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2) {
