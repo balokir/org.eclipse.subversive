@@ -81,7 +81,7 @@ public class GetRemoteFolderChildrenOperation extends AbstractActionOperation {
 				if (data != null) {
 					//Map externals;
 					try {
-						Map externals = SVNUtility.parseSVNExternalsProperty(data.value);
+						Map externals = SVNUtility.parseSVNExternalsProperty(data.value, this.parent);
 						IRepositoryResource []newTmp = new IRepositoryResource[tmp.length + externals.size()];
 						System.arraycopy(tmp, 0, newTmp, 0, tmp.length);
 						int i = 0;
