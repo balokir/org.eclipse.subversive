@@ -17,34 +17,33 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.wizard.AbstractSVNWizard;
 
 /**
- * Wizard for 'Copy To...' and 'Move To...' refactoring actions on
- * repository.
+ * Wizard for 'Copy To...' and 'Move To...' refactoring actions on repository.
  * 
  * @author Alexei Goncharov
  */
 public class CopyMoveWizard extends AbstractSVNWizard {
-	
-	protected IRepositoryResource [] selectedResources;
 	protected SelectDestinationPage destinationPage;
 	protected CommentWizardPage commentPage;
+	
+	protected IRepositoryResource[] selectedResources;
 	protected boolean isMove;
+	
 	protected IRepositoryResource destination;
 	protected String comment;
 	protected String newName;
-	
-	public CopyMoveWizard(IRepositoryResource [] selectedResources, boolean isMove) {
+
+	public CopyMoveWizard(IRepositoryResource[] selectedResources, boolean isMove) {
 		super();
 		this.selectedResources = selectedResources;
-		this.setWindowTitle((this.isMove = isMove)
-							? SVNTeamUIPlugin.instance().getResource("MoveToAction.Select.Title")
-							: SVNTeamUIPlugin.instance().getResource("CopyToAction.Select.Title"));
+		this.setWindowTitle((this.isMove = isMove) ? SVNTeamUIPlugin.instance().getResource("MoveToAction.Select.Title") : SVNTeamUIPlugin.instance().getResource(
+				"CopyToAction.Select.Title"));
 	}
-	
+
 	public void addPages() {
 		this.addPage(this.destinationPage = new SelectDestinationPage(this.selectedResources));
 		this.addPage(this.commentPage = new CommentWizardPage(this.isMove));
 	}
-	
+
 	public boolean canFinish() {
 		IWizardPage currentPage = this.getContainer().getCurrentPage();
 		if (currentPage instanceof SelectDestinationPage) {
@@ -52,10 +51,10 @@ public class CopyMoveWizard extends AbstractSVNWizard {
 		}
 		return super.canFinish();
 	}
-	
+
 	public boolean performFinish() {
 		this.destination = this.destinationPage.getDestination();
-		this.newName = this.selectedResources.length > 1 ? null : this.destinationPage.getNewResourceName();
+		this.newName = this.destinationPage.getNewResourceName();
 		this.comment = this.commentPage.getComment();
 		return true;
 	}
@@ -63,13 +62,13 @@ public class CopyMoveWizard extends AbstractSVNWizard {
 	public String getComment() {
 		return this.comment;
 	}
-	
+
 	public String getNewName() {
 		return this.newName;
 	}
-	
+
 	public IRepositoryResource getDestination() {
 		return this.destination;
 	}
-	
+
 }

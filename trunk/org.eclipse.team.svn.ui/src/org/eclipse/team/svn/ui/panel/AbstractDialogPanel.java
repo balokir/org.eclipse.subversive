@@ -183,7 +183,7 @@ public abstract class AbstractDialogPanel implements IDialogPanel, IValidationMa
     	return true;
     };
 
-    public static String makeToBeOperatetMessage(IRepositoryResource []resources) {
+    public static String makeToBeOperatedMessage(IRepositoryResource []resources) {
 		String message;
 		if (resources.length == 1) {
 			message = "RepositoryTreePanel.Message.Single";

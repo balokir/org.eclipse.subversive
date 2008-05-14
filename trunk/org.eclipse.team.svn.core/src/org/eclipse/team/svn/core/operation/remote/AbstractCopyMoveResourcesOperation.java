@@ -49,39 +49,33 @@ public abstract class AbstractCopyMoveResourcesOperation extends AbstractReposit
 	
 	protected void runImpl(final IProgressMonitor monitor) throws Exception {
 		this.revisionsPairs = new ArrayList<RevisionPair>();
-		final String dstUrl = this.destinationResource.getUrl();
-		ArrayList<SVNEntryRevisionReference> refsList = new ArrayList<SVNEntryRevisionReference>();
 		IRepositoryResource []selectedResources = this.operableData();
-		final IRepositoryLocation location = selectedResources[0].getRepositoryLocation();
-		final ISVNConnector proxy = location.acquireSVNProxy();
-		for (int i = 0; i < selectedResources.length && !monitor.isCanceled(); i++) {
-			final IRepositoryResource current = selectedResources[i];
-			refsList.add(new SVNEntryRevisionReference(current.getUrl(), current.getPegRevision(), current.getSelectedRevision()));
+		final SVNEntryRevisionReference []refs = new SVNEntryRevisionReference[selectedResources.length]; 
+		for (int i = 0; i < selectedResources.length; i++) {
+			refs[i] = SVNUtility.getEntryRevisionReference(selectedResources[i]);
 		}
-		final SVNEntryRevisionReference [] refs = refsList.toArray(new SVNEntryRevisionReference[0]); 
+		final IRepositoryLocation location = selectedResources[0].getRepositoryLocation();
+		final String dstUrl = this.destinationResource.getUrl() + (this.resName != null && this.resName.length() > 0 ? "/" + this.resName : (selectedResources.length > 1 ? "" : "/" + selectedResources[0].getName()));
 		ISVNNotificationCallback notify = new ISVNNotificationCallback() {
-			
-			protected int i = 0;
-			
+			private int i = 0;
 			public void notify(SVNNotification info) {
-				
 				if (this.i == refs.length) {
 					return;
 				}
-				String []paths = AbstractCopyMoveResourcesOperation.this.getRevisionPaths(refs[this.i].path, dstUrl + "/" +
-						((refs.length == 1) ? AbstractCopyMoveResourcesOperation.this.resName : refs[this.i].path.substring(refs[this.i].path.lastIndexOf("/") + 1)));
+				String []paths = AbstractCopyMoveResourcesOperation.this.getRevisionPaths(refs[this.i].path, dstUrl);
 				AbstractCopyMoveResourcesOperation.this.revisionsPairs.add(new RevisionPair(info.revision, paths, location));
 				String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision", new String[] {String.valueOf(info.revision)});
 				AbstractCopyMoveResourcesOperation.this.writeToConsole(IConsoleStream.LEVEL_OK, message);
 				this.i++;
 			}
 		};
+		ISVNConnector proxy = location.acquireSVNProxy();
+		SVNUtility.addSVNNotifyListener(proxy, notify);	
 		try {
-			SVNUtility.addSVNNotifyListener(proxy, notify);	
-			this.runCopyMove(proxy, refs, dstUrl + ((refsList.size() == 1) ? ("/" + this.resName) : ""), monitor);
-			SVNUtility.removeSVNNotifyListener(proxy, notify);
+			this.runCopyMove(proxy, refs, dstUrl, monitor);
 		}
 		finally {
+			SVNUtility.removeSVNNotifyListener(proxy, notify);
 			location.releaseSVNProxy(proxy);
 		}
 	}

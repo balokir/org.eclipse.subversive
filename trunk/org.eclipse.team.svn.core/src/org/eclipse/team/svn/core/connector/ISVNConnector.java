@@ -373,11 +373,11 @@ public interface ISVNConnector {
 
 	public void move(String[] srcPaths, String dstPath, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void move(String[] srcPath, String dstPath, String message, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void move(SVNEntryReference[] srcPaths, String dstPath, String message, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public void copy(String[] srcPaths, String destPath, SVNRevision revision, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void copy(SVNEntryRevisionReference[] srcPath, String destPath, String message, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void copy(SVNEntryRevisionReference[] srcPaths, String destPath, String message, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public void remove(String[] path, String message, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 

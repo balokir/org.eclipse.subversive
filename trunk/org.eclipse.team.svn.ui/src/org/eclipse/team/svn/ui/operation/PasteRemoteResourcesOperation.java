@@ -16,7 +16,6 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
-import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IRevisionProvider;
 import org.eclipse.team.svn.core.operation.remote.AbstractCopyMoveResourcesOperation;
 import org.eclipse.team.svn.core.operation.remote.CopyResourcesOperation;
@@ -58,10 +57,11 @@ public class PasteRemoteResourcesOperation extends AbstractActionOperation imple
 	protected void runImpl(final IProgressMonitor monitor) throws Exception {
 		this.revisionsPairs = new RevisionPair[0];
 		final Exception []exs = new Exception[1];
+		final AbstractCopyMoveResourcesOperation []copyMoveOp = new AbstractCopyMoveResourcesOperation[1];
 		this.display.syncExec(new Runnable() {
 			public void run() {
 				try {
-					PasteRemoteResourcesOperation.this.nonSyncImpl(monitor);
+					copyMoveOp[0] = PasteRemoteResourcesOperation.this.nonSyncImpl(monitor);
 				}
 				catch (Exception ex) {
 					exs[0] = ex;
@@ -71,9 +71,15 @@ public class PasteRemoteResourcesOperation extends AbstractActionOperation imple
 		if (exs[0] != null) {
 			throw exs[0];
 		}
+		if (copyMoveOp[0] != null) {
+			copyMoveOp[0].setConsoleStream(this.getConsoleStream());
+			copyMoveOp[0].run(monitor);
+			this.reportStatus(copyMoveOp[0].getStatus());
+			this.revisionsPairs = copyMoveOp[0].getRevisions();
+		}
 	}
 
-	protected void nonSyncImpl(IProgressMonitor monitor) throws Exception {
+	protected AbstractCopyMoveResourcesOperation nonSyncImpl(IProgressMonitor monitor) throws Exception {
 		Clipboard clipboard = new Clipboard(this.display);
 		try {
 			final RemoteResourceTransferrable transferrable = (RemoteResourceTransferrable)clipboard.getContents(new RemoteResourceTransfer());
@@ -81,18 +87,10 @@ public class PasteRemoteResourcesOperation extends AbstractActionOperation imple
 				(this.operationType = transferrable.getOperationType()) == RemoteResourceTransferrable.OP_NONE ||
 				(this.pasted = transferrable.getResources()) == null || 
 				this.pasted.length == 0) {
-				return;
+				return null;
 			}
-			AbstractCopyMoveResourcesOperation copyMoveOp = 
-				this.operationType == RemoteResourceTransferrable.OP_COPY ? 
-				(AbstractCopyMoveResourcesOperation)new CopyResourcesOperation(this.resource, this.pasted, this.message, null) : 
-				new MoveResourcesOperation(this.resource, this.pasted, this.message, null);
-			copyMoveOp.setConsoleStream(this.getConsoleStream());
-			copyMoveOp.run(monitor);
-			this.reportStatus(copyMoveOp.getStatus());
-			this.revisionsPairs = copyMoveOp.getRevisions();
 			
-			if (this.operationType == RemoteResourceTransferrable.OP_CUT && copyMoveOp.getExecutionState() == IActionOperation.OK) {
+			if (this.operationType == RemoteResourceTransferrable.OP_CUT) {
 		        // Eclipse 3.1.0 API incompatibility fix instead of clipboard.setContents(new Object[0], new Transfer[0]);
 		        //clipboard.clearContents(); - does not work for unknown reasons (when MS Office clipboard features are enabled)
 		        //COM.OleSetClipboard(0); - incompatible with UNIX'like
@@ -100,6 +98,11 @@ public class PasteRemoteResourcesOperation extends AbstractActionOperation imple
 		        	new Object[] {new RemoteResourceTransferrable(null, RemoteResourceTransferrable.OP_NONE)}, 
 		        	new Transfer[] {new RemoteResourceTransfer()});
 			}
+			
+			return
+				this.operationType == RemoteResourceTransferrable.OP_COPY ? 
+				(AbstractCopyMoveResourcesOperation)new CopyResourcesOperation(this.resource, this.pasted, this.message, null) : 
+				new MoveResourcesOperation(this.resource, this.pasted, this.message, null);
 		}
 		finally {
 			clipboard.dispose();

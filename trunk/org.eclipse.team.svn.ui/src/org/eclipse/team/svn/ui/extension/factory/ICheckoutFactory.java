@@ -46,11 +46,11 @@ public interface ICheckoutFactory {
 	 * @param checkoutMap project names mapping
 	 * @param respectHierarchy create locally folder structure that corresponds to repository projects layout
 	 * @param location destination folder
-	 * @param recureDepth sets the recSure data
+	 * @param recurseDepth sets the recSure data
 	 * @return alternative Checkout Operation instance
 	 */
 	public IActionOperation getCheckoutOperation(Shell shell, IRepositoryResource []remote, 
-			HashMap checkoutMap, boolean respectHierarchy, String location, int recureDepth, boolean ignoreExternals);
+			HashMap checkoutMap, boolean respectHierarchy, String location, int recurseDepth, boolean ignoreExternals);
 	/**
 	 * The method allows correction of the automatically proposed project name mapping 
 	 * @param name2resources automatically proposed project name mapping

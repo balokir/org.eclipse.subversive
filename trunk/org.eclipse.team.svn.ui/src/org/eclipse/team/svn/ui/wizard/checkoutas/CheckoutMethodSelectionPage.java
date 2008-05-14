@@ -25,8 +25,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.utility.FileUtility;
-import org.eclipse.team.svn.ui.RecureDepthSelector;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.composite.RecurseDepthSelector;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifierProxy;
 import org.eclipse.team.svn.ui.verifier.CompositeVerifier;
@@ -49,7 +49,7 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 	protected String defaultName;
 	protected Button selectLocationButton;
 	protected Text nameField;
-	protected RecureDepthSelector recureDepthSelector;
+	protected RecurseDepthSelector recureDepthSelector;
 
 	protected String projectName;
 	protected int checkoutType;
@@ -187,7 +187,7 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 		separator.setVisible(false);
 		
 		data = new GridData(GridData.FILL_HORIZONTAL);
-		this.recureDepthSelector = new RecureDepthSelector(composite, SWT.NONE);
+		this.recureDepthSelector = new RecurseDepthSelector(composite, SWT.NONE);
 		this.recureDepthSelector.setLayoutData(data);
 			
 		Button ignoreExternalsCheckbox = new Button (composite, SWT.CHECK);
