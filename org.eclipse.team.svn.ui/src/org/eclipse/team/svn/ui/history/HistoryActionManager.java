@@ -718,7 +718,7 @@ public class HistoryActionManager {
 			String path = fileDialog.open();
 			if (path != null) {
 				IRepositoryResource resource = this.traceResourceToRevision((SVNLogEntry)item.getEntity());
-		    	UIMonitorUtility.doTaskScheduledDefault(new ExportOperation(resource, path));
+		    	UIMonitorUtility.doTaskScheduledDefault(new ExportOperation(resource, path, Depth.INFINITY));
 		    }
 		}
 	}
@@ -1390,7 +1390,7 @@ public class HistoryActionManager {
 		fileDialog.setMessage(SVNTeamUIPlugin.instance().getResource("ExportPanel.ExportFolder.Msg"));
 		String path = fileDialog.open();
 		if (path != null) {
-			ExportOperation mainOp = new ExportOperation(provider, path);
+			ExportOperation mainOp = new ExportOperation(provider, path, Depth.INFINITY);
 			CompositeOperation op = new CompositeOperation(mainOp.getId());
 			op.add(preOp);
 			op.add(mainOp, new IActionOperation[] {preOp});
