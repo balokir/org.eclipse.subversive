@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.composite.DepthSelectionComposite;
@@ -85,7 +86,7 @@ public class ExportPanel extends AbstractDialogPanel {
 		this.locationField = new Text(folderComposite,  SWT.SINGLE | SWT.BORDER);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.locationField.setLayoutData(data);
-		this.attachTo(this.locationField, new ExistingResourceVerifier(SVNTeamUIPlugin.instance().getResource("ExportPanel.Folder.Verifier"), false));
+		this.attachTo(this.locationField, new ExistingResourceVerifier(label.getText(), false));
 		
 		Button browseButton = new Button(folderComposite, SWT.PUSH);
 		browseButton.setText(SVNTeamUIPlugin.instance().getResource("Button.Browse"));
@@ -109,13 +110,15 @@ public class ExportPanel extends AbstractDialogPanel {
 		this.revisionComposite.setLayoutData(data);
 		this.revisionComposite.setSelectedResource(this.selectedResource);
 		
-		Label separator = new Label(parent, SWT.HORIZONTAL | SWT.SEPARATOR);
-		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		separator.setVisible(false);
-		
-		this.depthSelector = new DepthSelectionComposite(parent, SWT.NONE);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		this.depthSelector.setLayoutData(data);
+		if (this.selectedResource instanceof IRepositoryContainer) {
+			Label separator = new Label(parent, SWT.HORIZONTAL | SWT.SEPARATOR);
+			separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			separator.setVisible(false);
+			
+			this.depthSelector = new DepthSelectionComposite(parent, SWT.NONE);
+			data = new GridData(GridData.FILL_HORIZONTAL);
+			this.depthSelector.setLayoutData(data);
+		}
 	}
 	
 	public String getHelpId() {
