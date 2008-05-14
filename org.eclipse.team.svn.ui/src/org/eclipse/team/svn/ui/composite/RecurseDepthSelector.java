@@ -9,7 +9,7 @@
  *    Alexei Goncharov (Polarion Software) - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.svn.ui;
+package org.eclipse.team.svn.ui.composite;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -20,17 +20,18 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 
 /**
  * A UI component for selecting the recursion depth
  * 
  * @author Alexei Goncharov
  */
-public class RecureDepthSelector extends Composite {
+public class RecurseDepthSelector extends Composite {
 
 	protected int recureDepth;
 	
-	public RecureDepthSelector(Composite parent, int style) {
+	public RecurseDepthSelector(Composite parent, int style) {
 		super(parent, style);
 		this.recureDepth = Depth.INFINITY;
 		this.createControls();
@@ -43,15 +44,15 @@ public class RecureDepthSelector extends Composite {
 		this.setLayout(layout);
 
 		Label label = new Label(this, SWT.NONE);
-		label.setText(SVNTeamUIPlugin.instance().getResource("RecureDepthSelector.Label"));
+		label.setText(SVNTeamUIPlugin.instance().getResource("RecurseDepthSelector.Label"));
 		GridData data = new GridData();
 		label.setLayoutData(data);
 		
 		//getting strings for options
-		final String empty = SVNTeamUIPlugin.instance().getResource("RecureDepthSelector.Empty");
-		final String files = SVNTeamUIPlugin.instance().getResource("RecureDepthSelector.Files");
-		final String immediates = SVNTeamUIPlugin.instance().getResource("RecureDepthSelector.Immediates");
-		final String infinity = SVNTeamUIPlugin.instance().getResource("RecureDepthSelector.Infinity");
+		final String empty = SVNTeamUIPlugin.instance().getResource("RecurseDepthSelector.Empty");
+		final String files = SVNTeamUIPlugin.instance().getResource("RecurseDepthSelector.Files");
+		final String immediates = SVNTeamUIPlugin.instance().getResource("RecurseDepthSelector.Immediates");
+		final String infinity = SVNTeamUIPlugin.instance().getResource("RecurseDepthSelector.Infinity");
 		
 		Combo depthSelector = new Combo(this, SWT.READ_ONLY);
 		depthSelector.add(empty);
@@ -65,16 +66,16 @@ public class RecureDepthSelector extends Composite {
 			
 			public void widgetSelected(SelectionEvent e) {
 				if (((Combo)e.widget).getItem(((Combo)e.widget).getSelectionIndex()).equals(infinity)) {
-					RecureDepthSelector.this.recureDepth = Depth.INFINITY;
+					RecurseDepthSelector.this.recureDepth = Depth.INFINITY;
 				}
 				else if(((Combo)e.widget).getItem(((Combo)e.widget).getSelectionIndex()).equals(immediates)) {
-					RecureDepthSelector.this.recureDepth = Depth.IMMEDIATES;
+					RecurseDepthSelector.this.recureDepth = Depth.IMMEDIATES;
 				}
 				else if(((Combo)e.widget).getItem(((Combo)e.widget).getSelectionIndex()).equals(files)) {
-					RecureDepthSelector.this.recureDepth = Depth.FILES;
+					RecurseDepthSelector.this.recureDepth = Depth.FILES;
 				}
 				else {
-					RecureDepthSelector.this.recureDepth = Depth.EMPTY;
+					RecurseDepthSelector.this.recureDepth = Depth.EMPTY;
 				}
 			}
 			

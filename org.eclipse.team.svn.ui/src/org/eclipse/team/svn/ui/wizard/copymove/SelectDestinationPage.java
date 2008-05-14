@@ -44,8 +44,8 @@ import org.eclipse.team.svn.ui.wizard.AbstractVerifiedWizardPage;
  * @author Alexei Goncharov
  */
 public class SelectDestinationPage extends AbstractVerifiedWizardPage {
-
 	protected IRepositoryResource [] resources;
+	
 	protected RepositoryTreeComposite repositoryTree;
 	protected Text newResourceName;
 	
@@ -53,7 +53,7 @@ public class SelectDestinationPage extends AbstractVerifiedWizardPage {
 		super(SelectDestinationPage.class.getName(), 
 				SVNTeamUIPlugin.instance().getResource("RepositoryTreePanel.Description"),
 				SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
-		this.setDescription(AbstractDialogPanel.makeToBeOperatetMessage(resources));
+		this.setDescription(AbstractDialogPanel.makeToBeOperatedMessage(resources));
 		this.resources = resources;
 	}
 
@@ -81,7 +81,7 @@ public class SelectDestinationPage extends AbstractVerifiedWizardPage {
 				return super.accept(obj);
 			}
 			
-			boolean acceptYourself(IRepositoryResource resource) { 
+			private boolean acceptYourself(IRepositoryResource resource) { 
 				for (int i = 0; i < SelectDestinationPage.this.resources.length; i++) {
 					if (resource.equals(SelectDestinationPage.this.resources[i])) {
 						return true;
@@ -97,22 +97,24 @@ public class SelectDestinationPage extends AbstractVerifiedWizardPage {
 				}
 			}
 		);
+		
+		data = new GridData();
+		Label name = new Label(composite, SWT.NONE);
+		name.setText(SVNTeamUIPlugin.instance().getResource(this.resources.length == 1 ? "CopyMove.SubFolder.One" : "CopyMove.SubFolder.Multi"));
+		name.setLayoutData(data);
+		data = new GridData();
+		data.horizontalAlignment = SWT.FILL;
+		this.newResourceName = new Text(composite, SWT.BORDER);
+		this.newResourceName.setLayoutData(data);
+		CompositeVerifier verifier = new CompositeVerifier();
 		if (this.resources.length == 1) {
-			data = new GridData();
-			Label name = new Label(composite, SWT.NONE);
-			name.setText("New resource name:");
-			name.setLayoutData(data);
-			data = new GridData();
-			data.horizontalAlignment = SWT.FILL;
-			this.newResourceName = new Text(composite, SWT.BORDER);
-			this.newResourceName.setText(this.resources[0].getName());
-			this.newResourceName.setLayoutData(data);
-			CompositeVerifier verifier = new CompositeVerifier();
-			verifier.add(new ResourceNameVerifier(name.getText(),
-					CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() == ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x));
 			verifier.add(new NonEmptyFieldVerifier(name.getText()));
-			this.attachTo(this.newResourceName, verifier);
+			this.newResourceName.setText(this.resources[0].getName());
 		}
+		verifier.add(new ResourceNameVerifier(name.getText(),
+				CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() == ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x));
+		this.attachTo(this.newResourceName, verifier);
+		
 		return composite;
 	}
 	

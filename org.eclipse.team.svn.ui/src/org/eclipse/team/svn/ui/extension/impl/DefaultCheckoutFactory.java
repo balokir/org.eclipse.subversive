@@ -44,8 +44,8 @@ public class DefaultCheckoutFactory implements ICheckoutFactory {
 		return new EclipseProjectsFilter();
 	}
 	
-	public IActionOperation getCheckoutOperation(Shell shell, IRepositoryResource []remote, HashMap checkoutMap, boolean respectHierarchy, String location,  int recureDepth, boolean ignoreExternals) {
-		return CheckoutAction.getCheckoutOperation(shell, remote, checkoutMap, respectHierarchy, location, recureDepth, ignoreExternals);
+	public IActionOperation getCheckoutOperation(Shell shell, IRepositoryResource []remote, HashMap checkoutMap, boolean respectHierarchy, String location,  int recurseDepth, boolean ignoreExternals) {
+		return CheckoutAction.getCheckoutOperation(shell, remote, checkoutMap, respectHierarchy, location, recurseDepth, ignoreExternals);
 	}
 
 	protected class EclipseProjectsFilter implements LocateProjectsOperation.ILocateFilter {

@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.core.operation.remote;
 
-import java.util.ArrayList;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
@@ -35,11 +33,7 @@ public class MoveResourcesOperation extends AbstractCopyMoveResourcesOperation {
 
 	protected void runCopyMove(ISVNConnector proxy, SVNEntryRevisionReference[] source, String destinationUrl, IProgressMonitor monitor) throws Exception {
 		//this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn move \"" + SVNUtility.decodeURL(sourceUrl) + "\" \"" + SVNUtility.decodeURL(destinationUrl) + "\" -m \"" + this.message + "\"" + FileUtility.getUsernameParam(current.getRepositoryLocation().getUsername()) + "\n");
-		ArrayList<String> src = new ArrayList<String>();
-		for (SVNEntryRevisionReference current : source) {
-			src.add(current.path);
-		}
-		proxy.move(src.toArray(new String[0]), destinationUrl, this.message, ISVNConnector.CommandMasks.MOVE_SERVER, new SVNProgressMonitor(this, monitor, null));
+		proxy.move(source, destinationUrl, this.message, ISVNConnector.CommandMasks.MOVE_SERVER, new SVNProgressMonitor(this, monitor, null));
 	}
 
 }

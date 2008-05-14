@@ -52,7 +52,7 @@ public class RepositoryTreePanel extends AbstractDialogPanel {
 	public RepositoryTreePanel(String title, IRepositoryResource[] resources, boolean allowSourcesInTree) {
 		this(title,
 			SVNTeamUIPlugin.instance().getResource("RepositoryTreePanel.Description"), 
-			AbstractDialogPanel.makeToBeOperatetMessage(resources), 
+			AbstractDialogPanel.makeToBeOperatedMessage(resources), 
 			resources, 
 			allowSourcesInTree);
 	}
