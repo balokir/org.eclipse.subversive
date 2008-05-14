@@ -40,6 +40,7 @@ import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNProperty;
+import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.SVNProperty.BuiltIn;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
@@ -130,9 +131,9 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 		return this.selectFolderPage.getTargetFolder();
 	}
 
-	public boolean isCheckoutRecursivelySelected() {
-		return this.singleMode ? (this.methodSelectionPage == null ? true : this.methodSelectionPage.isCheckoutRecursivelySelected()) :
-			this.multipleMethodPage == null ? true : this.multipleMethodPage.isCheckoutRecursivelySelected();
+	public int getCheckoutRecure() {
+		return this.singleMode ? (this.methodSelectionPage == null ? Depth.INFINITY : this.methodSelectionPage.getRecureDepth()) :
+			this.multipleMethodPage == null ? Depth.INFINITY : this.multipleMethodPage.getRecureDepth();
 	}
 	
 	public boolean isIgnoreExternalsSelected() {
@@ -203,11 +204,11 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 
 	public boolean performFinish() {
 		if (this.isFindProjectsSelected()) {
-			final CompositeOperation op = this.getLocateProjectsOperation(this.resources, this.isCheckoutRecursivelySelected(), this.isIgnoreExternalsSelected());
+			final CompositeOperation op = this.getLocateProjectsOperation(this.resources, this.getCheckoutRecure(), this.isIgnoreExternalsSelected());
 			UIMonitorUtility.doTaskScheduledActive(op);
 		}
 		else if (this.obtainNames()) {
-			this.doCheckout(this.getLocation(), this.getProjectName(), this.isUseNewProjectWizard(), this.isCheckoutRecursivelySelected(), this.isIgnoreExternalsSelected(), this.getWorkingSetName());
+			this.doCheckout(this.getLocation(), this.getProjectName(), this.isUseNewProjectWizard(), this.getCheckoutRecure(), this.isIgnoreExternalsSelected(), this.getWorkingSetName());
 		}
 		return true;
 	}
@@ -234,7 +235,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 		return true;
 	}
 	
-	protected void doCheckout(String location, String projectName, boolean useNewProjectWizard, boolean checkoutRecursive, boolean ignoreExternals, String workingSetName) {
+	protected void doCheckout(String location, String projectName, boolean useNewProjectWizard, int recureDepth, boolean ignoreExternals, String workingSetName) {
 		if (!useNewProjectWizard && this.names2resources.keySet().size() == 1) {
 			Object resource = this.names2resources.get(this.names2resources.keySet().iterator().next());
 			this.names2resources.clear();
@@ -262,7 +263,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 			
 				IProject selectedProject = listener.getProject();
 				if (selectedProject != null) {
-					op = this.prepareForOne((IRepositoryResource)operateResources.get(0), selectedProject.getName(), FileUtility.getResourcePath(selectedProject).removeLastSegments(1).toString(), true, checkoutRecursive, ignoreExternals, workingSetName);
+					op = this.prepareForOne((IRepositoryResource)operateResources.get(0), selectedProject.getName(), FileUtility.getResourcePath(selectedProject).removeLastSegments(1).toString(), true, recureDepth, ignoreExternals, workingSetName);
 				}
 			}
 			else if (this.isCheckoutAsFolderSelected()) {
@@ -285,7 +286,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 				}
 			}
 			else if (this.singleMode) {
-				op = this.prepareForOne((IRepositoryResource)operateResources.get(0), projectName, location, false, checkoutRecursive, ignoreExternals, workingSetName);
+				op = this.prepareForOne((IRepositoryResource)operateResources.get(0), projectName, location, false, recureDepth, ignoreExternals, workingSetName);
 			}
 			else {
 				HashMap operateMap = new HashMap();
@@ -294,7 +295,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 					HashMap resources2names = CheckoutAction.getResources2Names(this.names2resources);
 					operateMap.put(resources2names.get(resource), resource);						
 				}
-				op = this.prepareForMultiple(operateMap, location, checkoutRecursive, ignoreExternals, workingSetName);
+				op = this.prepareForMultiple(operateMap, location, recureDepth, ignoreExternals, workingSetName);
 			}
 			if (op != null) {
 				if (this.priorOp != null) {
@@ -313,7 +314,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 		for (int i = 0; i < resources.length; i++) {
 			IPath location = FileUtility.getResourcePath(targetFolder);
 			File target = location.append((String)mappings.get(resources[i])).toFile();
-			op.add(new org.eclipse.team.svn.core.operation.file.CheckoutAsOperation(target, resources[i], this.isCheckoutRecursivelySelected(), this.isIgnoreExternalsSelected(), false));
+			op.add(new org.eclipse.team.svn.core.operation.file.CheckoutAsOperation(target, resources[i], this.getCheckoutRecure(), this.isIgnoreExternalsSelected(), false));
 		}
 		IResource []localResources = new IResource[] {targetFolder};
 		op.add(new RefreshResourcesOperation(localResources), null);
@@ -353,7 +354,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 			IPath location = targetFolder.getLocation();
 			if (location != null) {
 				File target = location.append((String)mappings.get(resources[i])).toFile();
-				op.add(new org.eclipse.team.svn.core.operation.file.CheckoutAsOperation(target, resources[i], this.isCheckoutRecursivelySelected(), this.isIgnoreExternalsSelected(), false), dependency);
+				op.add(new org.eclipse.team.svn.core.operation.file.CheckoutAsOperation(target, resources[i], this.getCheckoutRecure(), this.isIgnoreExternalsSelected(), false), dependency);
 			}
 		}
 		op.add(new RefreshResourcesOperation(localResources), dependency);
@@ -391,8 +392,8 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 		return name;
 	}
 	
-	protected CompositeOperation prepareForOne(IRepositoryResource resource, final String projectName, String location, boolean isUseNewProjectWizard, boolean checkoutRecursive, boolean ignoreExternals, String workingSetName) {
-		CheckoutAsOperation mainOp = new CheckoutAsOperation(projectName, resource, location, checkoutRecursive, ignoreExternals);
+	protected CompositeOperation prepareForOne(IRepositoryResource resource, final String projectName, String location, boolean isUseNewProjectWizard, int recureDepth, boolean ignoreExternals, String workingSetName) {
+		CheckoutAsOperation mainOp = new CheckoutAsOperation(projectName, resource, location, recureDepth, ignoreExternals);
 		
 		CompositeOperation op = new CompositeOperation(mainOp.getId());
 
@@ -412,14 +413,14 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 		return op;
 	}
 	
-	protected CompositeOperation prepareForMultiple(HashMap name2resources, String location, boolean checkoutRecursive, boolean ignoreExternals, String workingSetName) {
+	protected CompositeOperation prepareForMultiple(HashMap name2resources, String location, int recureDepth, boolean ignoreExternals, String workingSetName) {
 		CompositeOperation op = new CompositeOperation("");
 		IResource []locals = new IResource[name2resources.keySet().size()];
 		String name;
 		int i = 0;
 		for (Iterator iter = name2resources.keySet().iterator(); iter.hasNext(); i++) {
 			name = (String)iter.next();	
-			CheckoutAsOperation mainOp = new CheckoutAsOperation(name, (IRepositoryResource)name2resources.get(name), false, location, checkoutRecursive, ignoreExternals);
+			CheckoutAsOperation mainOp = new CheckoutAsOperation(name, (IRepositoryResource)name2resources.get(name), false, location, recureDepth, ignoreExternals);
 			locals[i] = mainOp.getProject();
 			op.add(mainOp);
 			op.setOperationName(mainOp.getId());
@@ -431,7 +432,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 		return op;
 	}
 
-	protected CompositeOperation getLocateProjectsOperation(IRepositoryResource[] resources, boolean checkoutRecursively, boolean ignoreExternals) {
+	protected CompositeOperation getLocateProjectsOperation(IRepositoryResource[] resources, int recureDepth, boolean ignoreExternals) {
 		LocateProjectsOperation mainOp = new LocateProjectsOperation(resources, ExtensionsManager.getInstance().getCurrentCheckoutFactory().getLocateFilter(), 5); //TODO level limitation now is hardcoded
 		
 		final CompositeOperation op = new CompositeOperation(mainOp.getId());
@@ -439,12 +440,12 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 		IRepositoryResourceProvider provider = ExtensionsManager.getInstance().getCurrentCheckoutFactory().additionalProcessing(op, mainOp);
 		ObtainProjectNameOperation obtainOperation = new ObtainProjectNameOperation(provider);
 		op.add(obtainOperation, new IActionOperation[] {mainOp});
-		op.add(this.getCheckoutProjectOperation(resources, obtainOperation, checkoutRecursively, ignoreExternals), new IActionOperation[] {obtainOperation});
+		op.add(this.getCheckoutProjectOperation(resources, obtainOperation, recureDepth, ignoreExternals), new IActionOperation[] {obtainOperation});
 		
 		return op;
 	}
 	
-	protected AbstractActionOperation getCheckoutProjectOperation(final IRepositoryResource []resources, final ObtainProjectNameOperation obtainOperation, final boolean checkoutRecursively, final boolean ignoreExternals) {
+	protected AbstractActionOperation getCheckoutProjectOperation(final IRepositoryResource []resources, final ObtainProjectNameOperation obtainOperation, final int recureDepth, final boolean ignoreExternals) {
 		return new AbstractActionOperation("Operation.CheckoutProjects") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
@@ -486,7 +487,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 										projects.add(name2resources.get(projName));
 									}
 								}
-								op = ExtensionsManager.getInstance().getCurrentCheckoutFactory().getCheckoutOperation(CheckoutAsWizard.this.getShell(), (IRepositoryResource[])projects.toArray(new IRepositoryResource[projects.size()]), selectedMap, wizard.isRespectHierarchy(), wizard.getLocation(), checkoutRecursively, ignoreExternals);
+								op = ExtensionsManager.getInstance().getCurrentCheckoutFactory().getCheckoutOperation(CheckoutAsWizard.this.getShell(), (IRepositoryResource[])projects.toArray(new IRepositoryResource[projects.size()]), selectedMap, wizard.isRespectHierarchy(), wizard.getLocation(), recureDepth, ignoreExternals);
 							}
 							if (op != null) {
 								String wsName = wizard.getWorkingSetName();

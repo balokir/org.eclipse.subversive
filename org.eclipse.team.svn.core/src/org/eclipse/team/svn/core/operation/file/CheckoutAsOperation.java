@@ -15,8 +15,6 @@ import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
-import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -30,14 +28,14 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class CheckoutAsOperation extends AbstractFileOperation {
 	protected IRepositoryResource resource;
-	protected boolean recursive;
+	protected int recureDepth;
 	protected boolean ignoreExternals;
 	protected boolean override;
 
-	public CheckoutAsOperation(File to, IRepositoryResource resource, boolean recursive, boolean ignoreExternals, boolean override) {
+	public CheckoutAsOperation(File to, IRepositoryResource resource, int recureDepth, boolean ignoreExternals, boolean override) {
 		super("Operation.CheckoutAsFile", new File[] {to});
 		this.resource = resource;
-		this.recursive = recursive;
+		this.recureDepth = recureDepth;
 		this.ignoreExternals = ignoreExternals;
 		this.override = override;
 	}
@@ -54,11 +52,11 @@ public class CheckoutAsOperation extends AbstractFileOperation {
 		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
 			String path = to.getAbsolutePath();
-			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn checkout \"" + this.resource.getUrl() + "@" + this.resource.getPegRevision() + "\" -r " + this.resource.getSelectedRevision() + (this.recursive ? "" : " -N") + " --ignore-externals \"" + FileUtility.normalizePath(path) + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n");
+			//this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn checkout \"" + this.resource.getUrl() + "@" + this.resource.getPegRevision() + "\" -r " + this.resource.getSelectedRevision() + (this.recursive ? "" : " -N") + " --ignore-externals \"" + FileUtility.normalizePath(path) + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n");
 			proxy.checkout(
 					SVNUtility.getEntryRevisionReference(this.resource), 
 					path, 
-					Depth.infinityOrFiles(this.recursive), 
+					this.recureDepth, 
 					this.ignoreExternals ? ISVNConnector.Options.IGNORE_EXTERNALS : ISVNConnector.Options.NONE, 
 					new SVNProgressMonitor(this, monitor, null));
 		}

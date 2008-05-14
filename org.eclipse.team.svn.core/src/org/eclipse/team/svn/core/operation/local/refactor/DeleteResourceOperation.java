@@ -25,8 +25,9 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
+import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
-import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.SVNResourceRuleFactory;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -43,14 +44,24 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class DeleteResourceOperation extends AbstractActionOperation {
 	protected IResource[] resources;
+	protected boolean keepLocal;
 
 	public DeleteResourceOperation(IResource resource) {
-		this(new IResource[]{resource});
+		this(new IResource[]{resource}, false);
+	}
+	
+	public DeleteResourceOperation(IResource resource, boolean keepLocal) {
+		this(new IResource[]{resource}, keepLocal);
 	}
 	
 	public DeleteResourceOperation(IResource[] resources) {
+		this(resources, false);
+	}
+	
+	public DeleteResourceOperation(IResource[] resources, boolean keepLocal) {
 		super("Operation.DeleteLocal");
 		this.resources = resources;
+		this.keepLocal = keepLocal;
 	}
 
 	public ISchedulingRule getSchedulingRule() {
@@ -65,14 +76,14 @@ public class DeleteResourceOperation extends AbstractActionOperation {
 		IRemoteStorage storage = SVNRemoteStorage.instance();
 		
 		// Clean up obstructed and new resources
-		ArrayList resourcesList = new ArrayList(Arrays.asList(this.resources));
+		ArrayList<IResource> resourcesList = new ArrayList<IResource>(Arrays.asList(this.resources));
 		this.cleanupResourcesList(resourcesList, DeleteResourceOperation.SF_OBSTRUCTED_OR_NEW, storage);
 		if (resourcesList.size() == 0) {
 			return;
 		}
 		
 		// Process resources by project basis
-		IResource[] allResources = (IResource[])resourcesList.toArray(new IResource[resourcesList.size()]);
+		IResource[] allResources = resourcesList.toArray(new IResource[resourcesList.size()]);
 		Map project2Resources = SVNUtility.splitWorkingCopies(allResources);
 		for (Iterator it = project2Resources.entrySet().iterator(); it.hasNext();) {
 			Map.Entry entry = (Map.Entry)it.next();
@@ -86,8 +97,12 @@ public class DeleteResourceOperation extends AbstractActionOperation {
 			}
 			ISVNConnector proxy = location.acquireSVNProxy();
 			try {
-				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn delete " + printedPath + " --force\n");
-				proxy.remove(wcPaths, "", ISVNConnector.Options.FORCE, new SVNProgressMonitor(this, monitor, null));
+				//this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn delete " + printedPath + " --force\n");
+				long options = ISVNConnector.Options.FORCE;
+				if (this.keepLocal && CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() == ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x) {
+					options |= ISVNConnector.Options.KEEP_LOCAL;
+				}
+				proxy.remove(wcPaths, "", options, new SVNProgressMonitor(this, monitor, null));
 			}
 			finally {
 			    location.releaseSVNProxy(proxy);
@@ -95,9 +110,9 @@ public class DeleteResourceOperation extends AbstractActionOperation {
 		}
 	}
 	
-	protected void cleanupResourcesList(List resources, IStateFilter filter, IRemoteStorage storage) {
-		for (Iterator it = resources.iterator(); it.hasNext();) {
-			IResource resource = (IResource)it.next();
+	protected void cleanupResourcesList(List<IResource> resources, IStateFilter filter, IRemoteStorage storage) {
+		for (Iterator<IResource> it = resources.iterator(); it.hasNext();) {
+			IResource resource = it.next();
 			ILocalResource local = storage.asLocalResource(resource);
 			String wcPath = FileUtility.getWorkingCopyPath(resource);
 			if (local != null && filter.accept(local)) {

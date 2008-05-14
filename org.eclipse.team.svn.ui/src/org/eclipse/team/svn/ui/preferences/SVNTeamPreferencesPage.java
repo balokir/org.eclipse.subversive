@@ -287,7 +287,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		label.setLayoutData(data);
 		label.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.svnConnectorPrompt"));
 		
-		label = new Label(composite, SWT.NULL);
+		label = new Label(composite, SWT.NONE);
 		data = new GridData();
 		label.setLayoutData(data);
 		label.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.svnConnector"));

@@ -47,7 +47,7 @@ public class GetRemoteFolderChildrenOperation extends AbstractActionOperation {
 	protected IRepositoryContainer parent;
 	protected IRepositoryResource []children;
 	protected boolean sortChildren;
-	protected Map externalsNames;
+	protected Map<IRepositoryResource, String> externalsNames;
 
 	public GetRemoteFolderChildrenOperation(IRepositoryContainer parent) {
 		this(parent, true);
@@ -57,7 +57,7 @@ public class GetRemoteFolderChildrenOperation extends AbstractActionOperation {
 		super("Operation.GetRemoteChildren");
 		this.parent = parent;
 		this.sortChildren = sortChildren;
-		this.externalsNames = new HashMap();
+		this.externalsNames = new HashMap<IRepositoryResource, String>();
 	}
 
 	public IRepositoryResource[] getChildren() {
@@ -65,7 +65,7 @@ public class GetRemoteFolderChildrenOperation extends AbstractActionOperation {
 	}
 	
 	public String getExternalsName(IRepositoryResource resource) {
-		return (String)this.externalsNames.get(resource);
+		return this.externalsNames.get(resource);
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
@@ -81,14 +81,14 @@ public class GetRemoteFolderChildrenOperation extends AbstractActionOperation {
 				if (data != null) {
 					//Map externals;
 					try {
-						Map externals = SVNUtility.parseSVNExternalsProperty(data.value, this.parent);
+						Map<String, SVNEntryRevisionReference> externals = SVNUtility.parseSVNExternalsProperty(data.value, this.parent);
 						IRepositoryResource []newTmp = new IRepositoryResource[tmp.length + externals.size()];
 						System.arraycopy(tmp, 0, newTmp, 0, tmp.length);
 						int i = 0;
-						for (Iterator it = externals.entrySet().iterator(); it.hasNext(); i++) {
-							Map.Entry entry = (Map.Entry)it.next();
-							String name = (String)entry.getKey();
-							SVNEntryRevisionReference ref = (SVNEntryRevisionReference)entry.getValue();
+						for (Iterator<Map.Entry<String, SVNEntryRevisionReference>> it = externals.entrySet().iterator(); it.hasNext(); i++) {
+							Map.Entry<String, SVNEntryRevisionReference> entry = it.next();
+							String name = entry.getKey();
+							SVNEntryRevisionReference ref = entry.getValue();
 							newTmp[tmp.length + i] = SVNRemoteStorage.instance().asRepositoryResource(location, ref.path, false);
 							newTmp[tmp.length + i].setSelectedRevision(ref.revision);
 							newTmp[tmp.length + i].setPegRevision(ref.pegRevision);
@@ -106,10 +106,8 @@ public class GetRemoteFolderChildrenOperation extends AbstractActionOperation {
 		}
 		
 		if (this.sortChildren) {
-			Arrays.sort(tmp, new Comparator() {
-				public int compare(Object o1, Object o2) {
-					IRepositoryResource first = (IRepositoryResource)o1;
-					IRepositoryResource second = (IRepositoryResource)o2;
+			Arrays.sort(tmp, new Comparator<IRepositoryResource>() {
+				public int compare(IRepositoryResource first, IRepositoryResource second) {
 					boolean firstContainer = first instanceof IRepositoryContainer;
 					boolean secondContainer = second instanceof IRepositoryContainer;
 					if (firstContainer && secondContainer) {
