@@ -27,13 +27,13 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
  * 
  * @author Alexei Goncharov
  */
-public class RecurseDepthSelector extends Composite {
+public class DepthSelectionComposite extends Composite {
 
-	protected int recureDepth;
+	protected int depth;
 	
-	public RecurseDepthSelector(Composite parent, int style) {
+	public DepthSelectionComposite(Composite parent, int style) {
 		super(parent, style);
-		this.recureDepth = Depth.INFINITY;
+		this.depth = Depth.INFINITY;
 		this.createControls();
 	}
 	
@@ -66,16 +66,16 @@ public class RecurseDepthSelector extends Composite {
 			
 			public void widgetSelected(SelectionEvent e) {
 				if (((Combo)e.widget).getItem(((Combo)e.widget).getSelectionIndex()).equals(infinity)) {
-					RecurseDepthSelector.this.recureDepth = Depth.INFINITY;
+					DepthSelectionComposite.this.depth = Depth.INFINITY;
 				}
 				else if(((Combo)e.widget).getItem(((Combo)e.widget).getSelectionIndex()).equals(immediates)) {
-					RecurseDepthSelector.this.recureDepth = Depth.IMMEDIATES;
+					DepthSelectionComposite.this.depth = Depth.IMMEDIATES;
 				}
 				else if(((Combo)e.widget).getItem(((Combo)e.widget).getSelectionIndex()).equals(files)) {
-					RecurseDepthSelector.this.recureDepth = Depth.FILES;
+					DepthSelectionComposite.this.depth = Depth.FILES;
 				}
 				else {
-					RecurseDepthSelector.this.recureDepth = Depth.EMPTY;
+					DepthSelectionComposite.this.depth = Depth.EMPTY;
 				}
 			}
 			
@@ -85,8 +85,8 @@ public class RecurseDepthSelector extends Composite {
 		depthSelector.setLayoutData(data);
 	}
 	
-	public int getRescureDepth() {
-		return this.recureDepth;
+	public int getDepth() {
+		return this.depth;
 	}
 
 }

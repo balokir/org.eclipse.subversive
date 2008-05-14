@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.composite.DepthSelectionComposite;
 import org.eclipse.team.svn.ui.composite.RevisionComposite;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
@@ -39,6 +40,7 @@ public class ExportPanel extends AbstractDialogPanel {
 	protected String location;
 	protected RevisionComposite revisionComposite;
 	protected IRepositoryResource selectedResource;
+	protected DepthSelectionComposite depthSelector;
 	
 	public ExportPanel(IRepositoryResource baseResource) {
 		super();
@@ -57,6 +59,10 @@ public class ExportPanel extends AbstractDialogPanel {
 	}
 
     protected void cancelChangesImpl() {
+    }
+    
+    public int getDepth(){
+    	return this.depthSelector.getDepth();
     }
     
 	public void createControlsImpl(Composite parent) {
@@ -102,6 +108,10 @@ public class ExportPanel extends AbstractDialogPanel {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.revisionComposite.setLayoutData(data);
 		this.revisionComposite.setSelectedResource(this.selectedResource);
+		
+		this.depthSelector = new DepthSelectionComposite(parent, SWT.NONE);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		this.depthSelector.setLayoutData(data);
 	}
 	
 	public String getHelpId() {

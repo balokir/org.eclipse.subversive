@@ -36,7 +36,7 @@ public class ExportAction extends AbstractRepositoryTeamAction {
 		if (dialog.open() == 0) {
 			resource = SVNUtility.copyOf(resource);
 			resource.setSelectedRevision(panel.getSelectedRevision());
-	    	this.runScheduled(new ExportOperation(resource, panel.getLocation()));
+	    	this.runScheduled(new ExportOperation(resource, panel.getLocation(), panel.getDepth()));
 	    }
 	}
 	

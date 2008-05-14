@@ -33,7 +33,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.composite.RecurseDepthSelector;
+import org.eclipse.team.svn.ui.composite.DepthSelectionComposite;
 import org.eclipse.team.svn.ui.utility.ArrayStructuredContentProvider;
 import org.eclipse.team.svn.ui.wizard.AbstractVerifiedWizardPage;
 import org.eclipse.team.svn.ui.wizard.CheckoutAsWizard;
@@ -50,7 +50,7 @@ public class MultipleCheckoutMethodSelectionPage extends AbstractVerifiedWizardP
 	protected static final int CHECKOUT_AS_PROJECTS = 2;
 	
 	protected int checkoutType;
-	protected RecurseDepthSelector recureDepthSelector;
+	protected DepthSelectionComposite recureDepthSelector;
 	protected boolean ignoreExternals;
 	protected IRepositoryResource[] selectedResources;
 
@@ -74,7 +74,7 @@ public class MultipleCheckoutMethodSelectionPage extends AbstractVerifiedWizardP
 	}
 	
 	public int getRecureDepth() {
-		return this.recureDepthSelector.getRescureDepth();
+		return this.recureDepthSelector.getDepth();
 	}
 	
 	public boolean isIgnoreExternalsSelected() {
@@ -179,7 +179,7 @@ public class MultipleCheckoutMethodSelectionPage extends AbstractVerifiedWizardP
 		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		separator.setVisible(false);
 		
-		this.recureDepthSelector = new RecurseDepthSelector(composite, SWT.NONE);
+		this.recureDepthSelector = new DepthSelectionComposite(composite, SWT.NONE);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.recureDepthSelector.setLayoutData(data);
 		
