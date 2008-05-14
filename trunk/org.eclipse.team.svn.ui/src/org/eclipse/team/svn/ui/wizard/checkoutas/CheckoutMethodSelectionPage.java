@@ -182,10 +182,6 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 			}
 		});
 		
-		Label separator = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
-		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		separator.setVisible(false);
-		
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.recureDepthSelector = new DepthSelectionComposite(composite, SWT.NONE);
 		this.recureDepthSelector.setLayoutData(data);

@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.svn.core.SVNTeamProjectMapper;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -169,7 +168,7 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
 			String path = destination.toString();
-			//this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn checkout \"" + this.resource.getUrl() + "@" + this.resource.getPegRevision() + "\" -r " + this.resource.getSelectedRevision() + (this.recursive ? "" : " -N") + " \"" + FileUtility.normalizePath(path) + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n");
+			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn checkout \"" + this.resource.getUrl() + "@" + this.resource.getPegRevision() + "\" -r " + this.resource.getSelectedRevision() + SVNUtility.getDepthArg(this.recureDepth) + " \"" + FileUtility.normalizePath(path) + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n");
 			proxy.checkout(
 					SVNUtility.getEntryRevisionReference(this.resource), 
 					path, 

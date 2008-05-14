@@ -1206,6 +1206,20 @@ public final class SVNUtility {
 		return false;
 	}
 	
+	public static String getDepthArg(int depth) {
+		String depthArg = "--depth ";
+		if (depth == Depth.EMPTY) {
+			return depthArg + "empty ";
+		}
+		if (depth == Depth.INFINITY) {
+			return depthArg + "infinity" ;
+		}
+		if (depth == Depth.IMMEDIATES) {
+			return depthArg + "immediates ";
+		}
+		return depthArg + "files ";
+	}
+	
 	private SVNUtility() {
 		
 	}

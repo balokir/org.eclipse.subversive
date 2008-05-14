@@ -19,7 +19,6 @@ import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
 import org.eclipse.team.svn.core.connector.SVNNotification;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IRevisionProvider;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -36,14 +35,14 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 public class ImportOperation extends AbstractRepositoryOperation implements IRevisionProvider {
 	protected String path;
 	protected String message;
-	protected boolean isRecursive;
+	protected int depth;
 	protected RevisionPair []revisionPair;
 	
-	public ImportOperation(IRepositoryResource resource, String path, String message, boolean isRecursive) {
+	public ImportOperation(IRepositoryResource resource, String path, String message, int depth) {
 		super("Operation.Import", new IRepositoryResource[] {resource});
 		this.path = path;
 		this.message = message;
-		this.isRecursive = isRecursive;
+		this.depth = depth;
 	}
 	
 	public RevisionPair []getRevisions() {
@@ -67,8 +66,8 @@ public class ImportOperation extends AbstractRepositoryOperation implements IRev
 		};
 		try {
 			SVNUtility.addSVNNotifyListener(proxy, notify);
-			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn import \"" + FileUtility.normalizePath(this.path) + "\" \"" + resource.getUrl() + "\"" + (this.isRecursive ? "" : " -N") + " -m \"" + this.message + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n");
-			proxy.doImport(this.path, SVNUtility.encodeURL(resource.getUrl()), this.message, Depth.infinityOrFiles(this.isRecursive), ISVNConnector.Options.INCLUDE_IGNORED | ISVNConnector.Options.IGNORE_UNKNOWN_NODE_TYPES, new SVNProgressMonitor(this, monitor, null));
+			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn import \"" + FileUtility.normalizePath(this.path) + "\" \"" + SVNUtility.getDepthArg(this.depth) + " -m \"" + this.message + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n");
+			proxy.doImport(this.path, SVNUtility.encodeURL(resource.getUrl()), this.message, this.depth, ISVNConnector.Options.INCLUDE_IGNORED | ISVNConnector.Options.IGNORE_UNKNOWN_NODE_TYPES, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 			SVNUtility.removeSVNNotifyListener(proxy, notify);

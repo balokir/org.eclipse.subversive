@@ -15,10 +15,12 @@ import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
+import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
@@ -48,7 +50,7 @@ public class ExportOperation extends AbstractRepositoryOperation {
 		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
 			String path = this.path + "/" + resource.getName();
-//			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn export \"" + resource.getUrl() + "@" + resource.getPegRevision() + "\" -r " + resource.getSelectedRevision() + " \"" + FileUtility.normalizePath(path) + "\" --force" + FileUtility.getUsernameParam(location.getUsername()) + "\n");
+			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn export \"" + resource.getUrl() + "@" + resource.getPegRevision() + "\" -r " + resource.getSelectedRevision() + " \"" + FileUtility.normalizePath(path) + "\"" + SVNUtility.getDepthArg(this.depth) + " --force" + FileUtility.getUsernameParam(location.getUsername()) + "\n");
 			proxy.doExport(SVNUtility.getEntryRevisionReference(resource), path, null, this.depth, ISVNConnector.Options.FORCE, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {

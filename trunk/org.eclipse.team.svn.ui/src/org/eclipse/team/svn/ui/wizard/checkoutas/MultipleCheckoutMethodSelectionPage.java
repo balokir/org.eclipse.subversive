@@ -26,7 +26,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -174,11 +173,7 @@ public class MultipleCheckoutMethodSelectionPage extends AbstractVerifiedWizardP
 		tableViewer.setContentProvider(new ArrayStructuredContentProvider());
 		
 		tableViewer.setInput(this.selectedResources);
-		
-		Label separator = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
-		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		separator.setVisible(false);
-		
+				
 		this.recureDepthSelector = new DepthSelectionComposite(composite, SWT.NONE);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.recureDepthSelector.setLayoutData(data);
