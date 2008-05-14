@@ -20,10 +20,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.composite.CommentComposite;
+import org.eclipse.team.svn.ui.composite.DepthSelectionComposite;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.verifier.ExistingResourceVerifier;
@@ -37,7 +39,7 @@ public class ImportPanel extends AbstractDialogPanel {
 	protected Text locationField;
 	protected String location;
 	protected Button recursiveButton;
-	protected boolean isRecursive;
+	protected DepthSelectionComposite depthSelector;
 	protected CommentComposite comment;
 	
 	public ImportPanel(String importToUrl) {
@@ -45,27 +47,30 @@ public class ImportPanel extends AbstractDialogPanel {
 		this.dialogTitle = SVNTeamUIPlugin.instance().getResource("ImportPanel.Title");
 		this.dialogDescription = SVNTeamUIPlugin.instance().getResource("ImportPanel.Description");
 		this.defaultMessage = SVNTeamUIPlugin.instance().getResource("ImportPanel.Message", new String[] {importToUrl});
-		this.isRecursive = true;
     }
 	
 	public void createControlsImpl(Composite parent) {
 		GridLayout layout = null;
 		GridData data = null;
 		
-		Group group = new Group(parent, SWT.NULL);
+		Composite folderSelectionComposite = new Composite(parent, SWT.NULL);
 		layout = new GridLayout();
-		layout.numColumns = 2;
-		group.setLayout(layout);
+		layout.numColumns = 3;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		folderSelectionComposite.setLayout(layout);
 		data = new GridData(GridData.FILL_HORIZONTAL);
-		group.setLayoutData(data);
-		group.setText(SVNTeamUIPlugin.instance().getResource("ImportPanel.Folder"));
+		folderSelectionComposite.setLayoutData(data);
 		
-		this.locationField = new Text(group,  SWT.SINGLE | SWT.BORDER);
+		Label folder = new Label(folderSelectionComposite, SWT.NONE);
+		folder.setText(SVNTeamUIPlugin.instance().getResource("ImportPanel.Folder"));
+		
+		this.locationField = new Text(folderSelectionComposite,  SWT.SINGLE | SWT.BORDER);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.locationField.setLayoutData(data);
-		this.attachTo(this.locationField, new ExistingResourceVerifier(SVNTeamUIPlugin.instance().getResource("ImportPanel.Folder.Verifier"), false));
+		this.attachTo(this.locationField, new ExistingResourceVerifier(folder.getText(), false));
 		
-		Button browseButton = new Button(group, SWT.PUSH);
+		Button browseButton = new Button(folderSelectionComposite, SWT.PUSH);
 		browseButton.setText(SVNTeamUIPlugin.instance().getResource("Button.Browse"));
 		data = new GridData();
 		data.widthHint = DefaultDialog.computeButtonWidth(browseButton);
@@ -82,11 +87,7 @@ public class ImportPanel extends AbstractDialogPanel {
 			}
 		});
 		
-		this.recursiveButton = new Button(group, SWT.CHECK);
-		this.recursiveButton.setText(SVNTeamUIPlugin.instance().getResource("ImportPanel.Recursively"));
-		this.recursiveButton.setSelection(true);
-		
-		group = new Group(parent, SWT.NULL);
+		Group group = new Group(parent, SWT.NONE);
 		group.setLayout(new GridLayout());
 		data = new GridData(GridData.FILL_BOTH);
 		group.setLayoutData(data);
@@ -95,6 +96,15 @@ public class ImportPanel extends AbstractDialogPanel {
 		this.comment = new CommentComposite(group, this);
 		data = new GridData(GridData.FILL_BOTH);
 		this.comment.setLayoutData(data);
+		
+		Label separator = new Label(parent, SWT.HORIZONTAL | SWT.SEPARATOR);
+		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		separator.setVisible(false);
+		
+		this.depthSelector = new DepthSelectionComposite(parent, SWT.NONE);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 2;
+		this.depthSelector.setLayoutData(data);
     }
 	
 	public String getHelpId() {
@@ -113,7 +123,6 @@ public class ImportPanel extends AbstractDialogPanel {
 	protected void saveChangesImpl() {
 		this.location = this.locationField.getText();
 		this.comment.saveChanges();
-		this.isRecursive = this.recursiveButton.getSelection();
 	}
 
     protected void cancelChangesImpl() {
@@ -128,8 +137,8 @@ public class ImportPanel extends AbstractDialogPanel {
     	return this.comment.getMessage();
     }
     
-    public boolean isRecursive() {
-    	return this.isRecursive;
+    public int getDepth() {
+    	return this.depthSelector.getDepth();
     }
     
 }

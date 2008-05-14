@@ -42,12 +42,12 @@ public class DepthSelectionComposite extends Composite {
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		this.setLayout(layout);
-
+				
 		Label label = new Label(this, SWT.NONE);
 		label.setText(SVNTeamUIPlugin.instance().getResource("RecurseDepthSelector.Label"));
 		GridData data = new GridData();
 		label.setLayoutData(data);
-		
+			
 		//getting strings for options
 		final String empty = SVNTeamUIPlugin.instance().getResource("RecurseDepthSelector.Empty");
 		final String files = SVNTeamUIPlugin.instance().getResource("RecurseDepthSelector.Files");
@@ -81,7 +81,6 @@ public class DepthSelectionComposite extends Composite {
 			
 		});
 		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.widthHint = 100;
 		depthSelector.setLayoutData(data);
 	}
 	

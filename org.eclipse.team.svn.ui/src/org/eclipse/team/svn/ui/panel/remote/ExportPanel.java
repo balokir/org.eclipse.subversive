@@ -109,6 +109,10 @@ public class ExportPanel extends AbstractDialogPanel {
 		this.revisionComposite.setLayoutData(data);
 		this.revisionComposite.setSelectedResource(this.selectedResource);
 		
+		Label separator = new Label(parent, SWT.HORIZONTAL | SWT.SEPARATOR);
+		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		separator.setVisible(false);
+		
 		this.depthSelector = new DepthSelectionComposite(parent, SWT.NONE);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.depthSelector.setLayoutData(data);
