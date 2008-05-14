@@ -31,6 +31,7 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.CheckoutOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -54,7 +55,7 @@ public class CheckoutAction extends AbstractRepositoryModifyWorkspaceAction {
 	}
 
 	public void runImpl(IAction action) {
-		IActionOperation op = ExtensionsManager.getInstance().getCurrentCheckoutFactory().getCheckoutOperation(this.getShell(), this.getSelectedRepositoryResources(), null, false, null, true, false);
+		IActionOperation op = ExtensionsManager.getInstance().getCurrentCheckoutFactory().getCheckoutOperation(this.getShell(), this.getSelectedRepositoryResources(), null, false, null, Depth.INFINITY, false);
 		if (op != null) {
 			this.runScheduled(op);
 		}
@@ -182,7 +183,7 @@ public class CheckoutAction extends AbstractRepositoryModifyWorkspaceAction {
 		return operateResources;
 	}
 	
-	public static IActionOperation getCheckoutOperation(Shell shell, IRepositoryResource []resources, HashMap checkoutMap, boolean respectHierarchy, String location, boolean checkoutRecursively, boolean ignoreExternals) {
+	public static IActionOperation getCheckoutOperation(Shell shell, IRepositoryResource []resources, HashMap checkoutMap, boolean respectHierarchy, String location, int recureDepth, boolean ignoreExternals) {
 		List resourceList = new ArrayList(Arrays.asList(resources));
 		if (checkoutMap != null && checkoutMap.keySet().size() != resources.length) {
 			for (Iterator iter = checkoutMap.entrySet().iterator(); iter.hasNext();) {
@@ -210,7 +211,7 @@ public class CheckoutAction extends AbstractRepositoryModifyWorkspaceAction {
 				operateMap.put(resources2names.get(checkoutSet[i]), checkoutSet[i]);
 			}
 			
-			return new CheckoutOperation(operateMap, respectHierarchy, location, checkoutRecursively, ignoreExternals);
+			return new CheckoutOperation(operateMap, respectHierarchy, location, recureDepth, ignoreExternals);
 		}
 		return null;
 	}

@@ -53,27 +53,27 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 	protected IRepositoryResource resource;
 	protected String projectLocation;
 	protected List<IProject> overlappingProjects;
-	protected boolean recursive;
+	protected int recureDepth;
 	protected boolean ignoreExternals;
 	protected RestoreProjectMetaOperation restoreOp;
 
-	public CheckoutAsOperation(String projectName, IRepositoryResource resource, boolean recursive) {
-		this(projectName, resource, Platform.getLocation().toString(), recursive, false);
+	public CheckoutAsOperation(String projectName, IRepositoryResource resource, int recureDepth) {
+		this(projectName, resource, Platform.getLocation().toString(), recureDepth, false);
 	}
 	
-	public CheckoutAsOperation(String projectName, IRepositoryResource resource, boolean recursive, boolean ignoreExternals) {
-		this(projectName, resource, Platform.getLocation().toString(), recursive, ignoreExternals);
+	public CheckoutAsOperation(String projectName, IRepositoryResource resource, int recureDepth, boolean ignoreExternals) {
+		this(projectName, resource, Platform.getLocation().toString(), recureDepth, ignoreExternals);
 	}
 	
-	public CheckoutAsOperation(String projectName, IRepositoryResource resource, boolean respectHierarchy, String location, boolean recursive, boolean ignoreExternals) {
-		this(projectName, resource, location == null ? Platform.getLocation().toString() : location + (respectHierarchy ? SVNUtility.getResourceParent(resource) : ""), recursive, ignoreExternals);
+	public CheckoutAsOperation(String projectName, IRepositoryResource resource, boolean respectHierarchy, String location, int recureDepth, boolean ignoreExternals) {
+		this(projectName, resource, location == null ? Platform.getLocation().toString() : location + (respectHierarchy ? SVNUtility.getResourceParent(resource) : ""), recureDepth, ignoreExternals);
 	}
 	
 	public int getOperationWeight() {
 		return 19;
 	}
 	
-	public CheckoutAsOperation(String projectName, IRepositoryResource resource, String projectLocation, boolean recursive, boolean ignoreExternals) {
+	public CheckoutAsOperation(String projectName, IRepositoryResource resource, String projectLocation, int recureDepth, boolean ignoreExternals) {
 		super("Operation.CheckOutAs");
 		projectName = FileUtility.formatResourceName(projectName);
 		if (FileUtility.isCaseInsensitiveOS()) {
@@ -91,7 +91,7 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 		}
 		this.resource = resource;
 		this.projectLocation = projectLocation;
-		this.recursive = recursive;
+		this.recureDepth = recureDepth;
 		this.ignoreExternals = ignoreExternals;
 		this.overlappingProjects = new ArrayList<IProject>();
 		IProject []projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
@@ -169,11 +169,11 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
 			String path = destination.toString();
-			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn checkout \"" + this.resource.getUrl() + "@" + this.resource.getPegRevision() + "\" -r " + this.resource.getSelectedRevision() + (this.recursive ? "" : " -N") + " \"" + FileUtility.normalizePath(path) + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n");
+			//this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn checkout \"" + this.resource.getUrl() + "@" + this.resource.getPegRevision() + "\" -r " + this.resource.getSelectedRevision() + (this.recursive ? "" : " -N") + " \"" + FileUtility.normalizePath(path) + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n");
 			proxy.checkout(
 					SVNUtility.getEntryRevisionReference(this.resource), 
 					path, 
-					Depth.infinityOrFiles(this.recursive), 
+					this.recureDepth, 
 					this.ignoreExternals ? ISVNConnector.Options.IGNORE_EXTERNALS : ISVNConnector.Options.NONE, 
 					new SVNProgressMonitor(this, monitor, this.project.getFullPath()));
 		}

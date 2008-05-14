@@ -164,25 +164,25 @@ public final class SVNUtility {
 		return null;
 	}
 	
-	public static Map parseSVNExternalsProperty(String property, IRepositoryResource propertyHolder) {
+	public static Map<String, SVNEntryRevisionReference> parseSVNExternalsProperty(String property, IRepositoryResource propertyHolder) {
 		if (property == null) {
-			return Collections.EMPTY_MAP;
+			return Collections.emptyMap();
 		}
-		Map retVal = new HashMap();
+		Map<String, SVNEntryRevisionReference> retVal = new HashMap<String, SVNEntryRevisionReference>();
 		String []externals = property.trim().split("[\\n|\\r\\n]+"); // it seems different clients have different behaviours wrt trailing whitespace.. so trim() to be safe
 		for (int i = 0; i < externals.length; i++) {
 			String []parts = externals[i].trim().split("[\\t ]+");
-			// 2 - name + URL
-			// 3 - name + -rRevision + URL
+				// 2 - name + URL
+				// 3 - name + -rRevision + URL
 			// 4 - name + -r + Revision + URL
 			//or in SVN 1.5 format
 			// 2 - URL@peg + name
 			// 3 - -rRevision + URL@peg + name
 			// 4 - -r + Revision + URL@peg + name
-			if (parts.length < 2 || parts.length > 4) {
-				throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]);
-			}
-			
+				if (parts.length < 2 || parts.length > 4) {
+					throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]);
+				}
+				
 			String name = null;
 			String url = null;
 			SVNRevision revision = null;
@@ -204,7 +204,7 @@ public final class SVNUtility {
 				catch (Exception ex) {
 					throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]);
 				}
-			}
+				}
 			else {
 				name = parts[parts.length - 1];
 				try {
@@ -856,15 +856,15 @@ public final class SVNUtility {
 		
 		ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();
 		try {
-			Map file2info = new HashMap();
+			Map<File, SVNEntryInfo> file2info = new HashMap<File, SVNEntryInfo>();
 			for (int i = 0; i < files.length; i++) {
 				file2info.put(files[i], SVNUtility.getSVNInfo(files[i], proxy));
 			}
 			
-			ArrayList restOfFiles = new ArrayList(Arrays.asList(files));
+			ArrayList<File> restOfFiles = new ArrayList<File>(Arrays.asList(files));
 			while (restOfFiles.size() > 0) {
-				File current = (File)restOfFiles.get(0);
-				SVNEntryInfo info = (SVNEntryInfo)file2info.get(current);
+				File current = restOfFiles.get(0);
+				SVNEntryInfo info = file2info.get(current);
 				Object []wcRoot = SVNUtility.getWCRoot(proxy, current, info);
 				
 				List wcResources = (List)wc2Resources.get(wcRoot[0]);
@@ -1140,7 +1140,7 @@ public final class SVNUtility {
 	    return repository2Resources;
 	}
 	
-	private static boolean hasRoots(Set roots, IRepositoryResource node) {
+	private static boolean hasRoots(Set<IRepositoryResource> roots, IRepositoryResource node) {
 		while ((node = node.getParent()) != null) {
 			if (roots.contains(node)) {
 				return true;

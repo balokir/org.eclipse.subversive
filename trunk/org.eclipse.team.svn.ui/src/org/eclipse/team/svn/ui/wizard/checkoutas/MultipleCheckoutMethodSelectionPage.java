@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
+import org.eclipse.team.svn.ui.RecureDepthSelector;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.utility.ArrayStructuredContentProvider;
 import org.eclipse.team.svn.ui.wizard.AbstractVerifiedWizardPage;
@@ -49,7 +50,7 @@ public class MultipleCheckoutMethodSelectionPage extends AbstractVerifiedWizardP
 	protected static final int CHECKOUT_AS_PROJECTS = 2;
 	
 	protected int checkoutType;
-	protected boolean checkoutRecursively;
+	protected RecureDepthSelector recureDepthSelector;
 	protected boolean ignoreExternals;
 	protected IRepositoryResource[] selectedResources;
 
@@ -59,7 +60,6 @@ public class MultipleCheckoutMethodSelectionPage extends AbstractVerifiedWizardP
 			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
 		this.selectedResources = selectedResources;
 		this.checkoutType = MultipleCheckoutMethodSelectionPage.FIND_PROJECTS;
-		this.checkoutRecursively = true;
 		this.ignoreExternals = false;
 		
 		this.setDescription(SVNTeamUIPlugin.instance().getResource("MultipleCheckoutMethodSelectionPage.Description"));
@@ -73,8 +73,8 @@ public class MultipleCheckoutMethodSelectionPage extends AbstractVerifiedWizardP
 		return this.checkoutType == MultipleCheckoutMethodSelectionPage.CHECKOUT_AS_FOLDER;
 	}
 	
-	public boolean isCheckoutRecursivelySelected() {
-		return this.checkoutRecursively;
+	public int getRecureDepth() {
+		return this.recureDepthSelector.getRescureDepth();
 	}
 	
 	public boolean isIgnoreExternalsSelected() {
@@ -179,16 +179,9 @@ public class MultipleCheckoutMethodSelectionPage extends AbstractVerifiedWizardP
 		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		separator.setVisible(false);
 		
-		Button checkoutRecursivelyCheckbox = new Button (composite, SWT.CHECK);
+		this.recureDepthSelector = new RecureDepthSelector(composite, SWT.NONE);
 		data = new GridData(GridData.FILL_HORIZONTAL);
-		checkoutRecursivelyCheckbox.setLayoutData(data);
-		checkoutRecursivelyCheckbox.setSelection(true);
-		checkoutRecursivelyCheckbox.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				MultipleCheckoutMethodSelectionPage.this.checkoutRecursively = ((Button)e.widget).getSelection();
-			}
-		});
-		checkoutRecursivelyCheckbox.setText(SVNTeamUIPlugin.instance().getResource("MultipleCheckoutMethodSelectionPage.Recursively"));
+		this.recureDepthSelector.setLayoutData(data);
 		
 		Button ingnoreExternalsCheckbox = new Button (composite, SWT.CHECK);
 		data = new GridData(GridData.FILL_HORIZONTAL);
@@ -199,7 +192,7 @@ public class MultipleCheckoutMethodSelectionPage extends AbstractVerifiedWizardP
 				MultipleCheckoutMethodSelectionPage.this.ignoreExternals = ((Button)e.widget).getSelection();
 			}
 		});
-		ingnoreExternalsCheckbox.setText(SVNTeamUIPlugin.instance().getResource("MultipleCheckoutMethodSelectionPage.Externals"));
+		ingnoreExternalsCheckbox.setText(SVNTeamUIPlugin.instance().getResource("CheckoutMethodSelectionPage.Externals"));
 		
 //		Setting context help
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.multiSelectionContext");

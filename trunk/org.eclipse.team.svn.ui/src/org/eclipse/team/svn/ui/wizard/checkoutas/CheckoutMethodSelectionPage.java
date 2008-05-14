@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.ui.RecureDepthSelector;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifierProxy;
@@ -48,10 +49,10 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 	protected String defaultName;
 	protected Button selectLocationButton;
 	protected Text nameField;
+	protected RecureDepthSelector recureDepthSelector;
 
 	protected String projectName;
 	protected int checkoutType;
-	protected boolean checkoutRecursivelySelected;
 	protected boolean ignoreExternalsSelected;
 
 	public CheckoutMethodSelectionPage(String defaultName, boolean newProjectSelectionEnabled) {
@@ -63,7 +64,7 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 		
 		this.projectName = this.defaultName = defaultName;
 		this.checkoutType = newProjectSelectionEnabled ? CheckoutMethodSelectionPage.USE_NEW_PROJECT_WIZARD : CheckoutMethodSelectionPage.CHECKOUT_AS_PROJECT;
-		this.checkoutRecursivelySelected = true;
+
 		this.ignoreExternalsSelected = false;
 	}
 	
@@ -83,8 +84,8 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 		return this.checkoutType == CheckoutMethodSelectionPage.CHECKOUT_AS_FOLDER;
 	}
 	
-	public boolean isCheckoutRecursivelySelected() {
-		return this.checkoutRecursivelySelected;
+	public int getRecureDepth() {
+		return this.recureDepthSelector.getRescureDepth();
 	}
 	
 	public boolean isIgnoreExternalsSelected() {
@@ -185,17 +186,10 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		separator.setVisible(false);
 		
-		Button checkoutRecursivelyCheckbox = new Button (composite, SWT.CHECK);
 		data = new GridData(GridData.FILL_HORIZONTAL);
-		checkoutRecursivelyCheckbox.setLayoutData(data);
-		checkoutRecursivelyCheckbox.setSelection(true);
-		checkoutRecursivelyCheckbox.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				CheckoutMethodSelectionPage.this.checkoutRecursivelySelected = ((Button)e.widget).getSelection();
-			}
-		});
-		checkoutRecursivelyCheckbox.setText(SVNTeamUIPlugin.instance().getResource("CheckoutMethodSelectionPage.Recursively"));
-		
+		this.recureDepthSelector = new RecureDepthSelector(composite, SWT.NONE);
+		this.recureDepthSelector.setLayoutData(data);
+			
 		Button ignoreExternalsCheckbox = new Button (composite, SWT.CHECK);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		ignoreExternalsCheckbox.setLayoutData(data);

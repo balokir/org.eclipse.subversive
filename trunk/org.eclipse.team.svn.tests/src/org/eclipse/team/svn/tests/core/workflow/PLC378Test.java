@@ -15,6 +15,7 @@ import java.io.FileOutputStream;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.AddToSVNOperation;
 import org.eclipse.team.svn.core.operation.local.CommitOperation;
@@ -42,7 +43,7 @@ public class PLC378Test extends TestWorkflow {
             protected IActionOperation getOperation() {
                 return new AbstractLockingTestOperation("PLC378Test") {
                     protected void runImpl(IProgressMonitor monitor) throws Exception {
-                        new CheckoutAsOperation("CopyProject", SVNUtility.getProposedTrunk(getLocation()).asRepositoryContainer(getFirstProject().getName(), false), true).run(monitor);
+                        new CheckoutAsOperation("CopyProject", SVNUtility.getProposedTrunk(getLocation()).asRepositoryContainer(getFirstProject().getName(), false), Depth.INFINITY).run(monitor);
                         FileOutputStream fos = null;
                         try {
                             fos = new FileOutputStream (getFirstProject().getLocation().toString() + "/testFile");
