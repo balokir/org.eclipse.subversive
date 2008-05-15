@@ -56,7 +56,7 @@ public class ShowMergeViewOperation extends AbstractActionOperation {
 	}
 
     protected void runImpl(IProgressMonitor monitor) throws Exception {
-    	MergeSet mergeSet = new MergeSet(this.locals, this.fromStart.getRepositoryResources(), this.fromEnd.getRepositoryResources(), this.ignoreAncestry);
+    	MergeSet mergeSet = new MergeSet(this.locals, this.fromStart.getRepositoryResources(), this.fromEnd.getRepositoryResources(), this.ignoreAncestry, this.depth);
         
     	//SubscriberParticipant.getMatchingParticipant silently changes resources order. So, make a copy...
     	IResource []copy = new IResource[mergeSet.to.length];
@@ -69,7 +69,6 @@ public class ShowMergeViewOperation extends AbstractActionOperation {
 		else {
 		    ((MergeScope)participant.getScope()).setMergeSet(mergeSet);
 		}
-		participant.setSubsriberDepth(this.depth);
 
 		participant.run(this.part);
     }
