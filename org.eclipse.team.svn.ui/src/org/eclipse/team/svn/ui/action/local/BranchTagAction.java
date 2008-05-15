@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.AddToSVNOperation;
@@ -140,7 +141,7 @@ public class BranchTagAction extends AbstractNonRecursiveTeamAction {
 					}
 					SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(switchedResources);
 					op.add(saveOp);
-				    op.add(new SwitchOperation(switchedResources, mainOp), new IActionOperation[] {mainOp});
+				    op.add(new SwitchOperation(switchedResources, mainOp, Depth.INFINITY), new IActionOperation[] {mainOp});
 					op.add(new RestoreProjectMetaOperation(saveOp));
 					op.add(new RefreshResourcesOperation(operateResourcesArr));
 				}

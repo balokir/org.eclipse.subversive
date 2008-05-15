@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.svn.core.IConnectedProjectInformation;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -39,15 +38,18 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class SwitchOperation extends AbstractRepositoryOperation {
 	protected IResource []resources;
+	protected int depth;
 
-	public SwitchOperation(IResource []resources, IRepositoryResourceProvider destination) {
+	public SwitchOperation(IResource []resources, IRepositoryResourceProvider destination, int depth) {
 		super("Operation.Switch", destination);
 		this.resources = resources;
+		this.depth = depth;
 	}
 
-	public SwitchOperation(IResource []resources, IRepositoryResource []destination) {
+	public SwitchOperation(IResource []resources, IRepositoryResource []destination, int depth) {
 		super("Operation.Switch", destination);
 		this.resources = resources;
+		this.depth = depth;
 	}
 	
 	public int getOperationWeight() {
@@ -74,7 +76,7 @@ public class SwitchOperation extends AbstractRepositoryOperation {
 				public void run(IProgressMonitor monitor) throws Exception {
 					String wcPath = FileUtility.getWorkingCopyPath(resource);
 					SwitchOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn switch \"" + destination.getUrl() + "\" \"" + FileUtility.normalizePath(wcPath) + "\" -r " + destination.getSelectedRevision() + FileUtility.getUsernameParam(location.getUsername()) + "\n");
-					proxy.doSwitch(wcPath, SVNUtility.getEntryRevisionReference(destination), Depth.infinityOrFiles(true),
+					proxy.doSwitch(wcPath, SVNUtility.getEntryRevisionReference(destination), SwitchOperation.this.depth,
 							ISVNConnector.Options.NONE, new SVNProgressMonitor(SwitchOperation.this, monitor, null));
 					
 					if (resource instanceof IProject) {

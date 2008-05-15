@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -63,6 +64,9 @@ public class ExportPanel extends AbstractDialogPanel {
     }
     
     public int getDepth(){
+    	if (this.depthSelector == null) {
+    		return Depth.INFINITY;
+    	}
     	return this.depthSelector.getDepth();
     }
     
