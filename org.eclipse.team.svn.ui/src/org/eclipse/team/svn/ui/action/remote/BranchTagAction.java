@@ -73,12 +73,8 @@ public class BranchTagAction extends AbstractRepositoryTeamAction {
 			return null;
 		}
 		
-		Set<String> nodeNames = Collections.emptySet();
+		resources = SVNUtility.shrinkChildNodes(resources);
 		boolean isStructureEnabled = resources[0].getRepositoryLocation().isStructureEnabled()&& SVNTeamPreferences.getRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_NAME);
-		if (isStructureEnabled) {
-			nodeNames = BranchTagAction.getExistingNodeNames(nodeType == BranchTagAction.BRANCH_ACTION ? SVNUtility.getBranchesLocation(resources[0]) : SVNUtility.getTagsLocation(resources[0]));
-		}
-		
 		//no structure -> copy to destination
 		//structure detection disabled -> copy to destination
 		//consider structure disabled -> copy to destination
@@ -89,7 +85,7 @@ public class BranchTagAction extends AbstractRepositoryTeamAction {
 		//multiple-project:one resource:trunk -> copy to destination
 		//multiple-project:many resources -> copy to destination
 		//multiple-project:one resource:not a trunk -> copy to destination + resource name (forceCreate)
-		resources = SVNUtility.shrinkChildNodes(resources);
+		Set<String> nodeNames = Collections.emptySet();
 		boolean forceCreate = false;
 		if (isStructureEnabled) {
 			int kind = ((IRepositoryRoot)resources[0].getRoot()).getKind();
@@ -104,6 +100,7 @@ public class BranchTagAction extends AbstractRepositoryTeamAction {
 					// do nothing
 				}
 			}
+			nodeNames = BranchTagAction.getExistingNodeNames(nodeType == BranchTagAction.BRANCH_ACTION ? SVNUtility.getBranchesLocation(resources[0]) : SVNUtility.getTagsLocation(resources[0]));
 			forceCreate = 
 				resources.length == 1 && 
 				!(resources[0] instanceof IRepositoryRoot && ((IRepositoryRoot)resources[0]).getKind() == IRepositoryRoot.KIND_TRUNK) &&  
