@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.ui.action.remote;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -56,46 +57,63 @@ public class BranchTagAction extends AbstractRepositoryTeamAction {
 	}
 	
 	public void runImpl(IAction action) {
-		boolean respectProjectStructure = SVNTeamPreferences.getRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_NAME);
-		
 		IRepositoryResource []resources = this.getSelectedRepositoryResources();
-		PreparedBranchTagOperation op = BranchTagAction.getBranchTagOperation(resources, this.getShell(), this.nodeType, respectProjectStructure);
+		PreparedBranchTagOperation op = BranchTagAction.getBranchTagOperation(resources, this.getShell(), this.nodeType);
 
 		if (op != null) {
 			CompositeOperation composite = new CompositeOperation(op.getId());
 			composite.add(op);
-			RefreshRemoteResourcesOperation refreshOp = new RefreshRemoteResourcesOperation(new IRepositoryResource[] {op.getDestination().getParent()});
-			composite.add(refreshOp, new IActionOperation[] {op});
+			composite.add(new RefreshRemoteResourcesOperation(new IRepositoryResource[] {op.getDestination().getParent()}), new IActionOperation[] {op});
 			this.runScheduled(composite);
 		}
 	}
 
-	/*
-	 * Processes resources which are selected to be branched/tagged
-	 * If structure detection is enabled for the current location:
-	 * - replaces project root with its trunk;
-	 * - returns true if the selected resource is located in the trunk and the location layout is not single-project
-	 * - returns false if only content of the selected resources should be branched/tagged
-	 */
-	public static boolean replaceProjectRootsWithTrunk(final IRepositoryResource resources[]) {
-		IRepositoryLocation location = resources[0].getRepositoryLocation();
-		if (location.isStructureEnabled() && resources[0] instanceof IRepositoryContainer) {
-			IRepositoryResource parent = resources[0].getParent();
-			if (parent instanceof IRepositoryRoot && ((IRepositoryRoot)parent).getKind() == IRepositoryRoot.KIND_TRUNK) {
-				return !BranchTagAction.isSingleProjectLayout((IRepositoryRoot)parent);
-			}
-			IRepositoryResource []children = BranchTagAction.getRemoteChildren((IRepositoryContainer)resources[0]);
-			if (children != null) {
-				for (int i = 0; i < children.length; i++) {
-					if (children[i] instanceof IRepositoryRoot && 
-						((IRepositoryRoot)children[i]).getKind() == IRepositoryRoot.KIND_TRUNK) {
-						resources[0] = children[i];
-						break;
+	public static PreparedBranchTagOperation getBranchTagOperation(IRepositoryResource []resources, Shell shell, int nodeType) {
+		if (!OperationErrorDialog.isAcceptableAtOnce(resources, SVNTeamUIPlugin.instance().getResource(nodeType == BranchTagAction.BRANCH_ACTION ? "BranchTagAction.Error.Branch" : "BranchTagAction.Error.Tag"), shell)) {
+			return null;
+		}
+		
+		Set<String> nodeNames = Collections.emptySet();
+		boolean isStructureEnabled = resources[0].getRepositoryLocation().isStructureEnabled()&& SVNTeamPreferences.getRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_NAME);
+		if (isStructureEnabled) {
+			nodeNames = BranchTagAction.getExistingNodeNames(nodeType == BranchTagAction.BRANCH_ACTION ? SVNUtility.getBranchesLocation(resources[0]) : SVNUtility.getTagsLocation(resources[0]));
+		}
+		
+		//no structure -> copy to destination
+		//structure detection disabled -> copy to destination
+		//consider structure disabled -> copy to destination
+		//
+		//single-project:trunk -> copy to destination
+		//single-project:trunk child -> copy to destination
+		//
+		//multiple-project:one resource:trunk -> copy to destination
+		//multiple-project:many resources -> copy to destination
+		//multiple-project:one resource:not a trunk -> copy to destination + resource name (forceCreate)
+		resources = SVNUtility.shrinkChildNodes(resources);
+		boolean forceCreate = false;
+		if (isStructureEnabled) {
+			int kind = ((IRepositoryRoot)resources[0].getRoot()).getKind();
+			if (kind == IRepositoryRoot.KIND_LOCATION_ROOT || kind == IRepositoryRoot.KIND_ROOT) {
+				try {
+					IRepositoryContainer supposedTrunk = resources[0].asRepositoryContainer(resources[0].getRepositoryLocation().getTrunkLocation(), false);
+					if (supposedTrunk.exists()) {
+						resources[0] = supposedTrunk;
 					}
 				}
+				catch (SVNConnectorException ex) {
+					// do nothing
+				}
 			}
+			forceCreate = 
+				resources.length == 1 && 
+				!(resources[0] instanceof IRepositoryRoot && ((IRepositoryRoot)resources[0]).getKind() == IRepositoryRoot.KIND_TRUNK) &&  
+				!BranchTagAction.isSingleProjectLayout(resources[0]) && 
+				BranchTagAction.isProjectFileExists(resources[0]);
 		}
-		return false;
+		
+		AbstractBranchTagPanel panel = nodeType == BranchTagAction.BRANCH_ACTION ? (AbstractBranchTagPanel)new BranchPanel(SVNUtility.getBranchesLocation(resources[0]), false, nodeNames) : new TagPanel(SVNUtility.getTagsLocation(resources[0]), false, nodeNames);
+		DefaultDialog dialog = new DefaultDialog(shell, panel);
+		return dialog.open() != 0 ? null : new PreparedBranchTagOperation(nodeType == BranchTagAction.BRANCH_ACTION ? "Branch" : "Tag", resources, panel.getDestination(), panel.getMessage(), forceCreate);
 	}
 	
 	public static Set<String> getExistingNodeNames(IRepositoryContainer parent) {
@@ -107,48 +125,6 @@ public class BranchTagAction extends AbstractRepositoryTeamAction {
 			}
 		}
 		return nodeNames;
-	}
-	
-	public static PreparedBranchTagOperation getBranchTagOperation(IRepositoryResource []resources, Shell shell, int nodeType, boolean respectProjectStructure) {
-		boolean multipleProjLayout = BranchTagAction.replaceProjectRootsWithTrunk(resources);
-		if (!OperationErrorDialog.isAcceptableAtOnce(resources, SVNTeamUIPlugin.instance().getResource(nodeType == BranchTagAction.BRANCH_ACTION ? "BranchTagAction.Error.Branch" : "BranchTagAction.Error.Tag"), shell)) {
-			return null;
-		}
-		Set<String> nodeNames = null;
-		if (respectProjectStructure && resources[0].getRepositoryLocation().isStructureEnabled()) {
-			nodeNames = BranchTagAction.getExistingNodeNames(nodeType == BranchTagAction.BRANCH_ACTION ? SVNUtility.getBranchesLocation(resources[0]) : SVNUtility.getTagsLocation(resources[0]));
-		}
-		else {
-			nodeNames = new HashSet<String>();
-		}
-		
-		AbstractBranchTagPanel panel = nodeType == BranchTagAction.BRANCH_ACTION ? (AbstractBranchTagPanel)new BranchPanel(SVNUtility.getBranchesLocation(resources[0]), false, nodeNames) : new TagPanel(SVNUtility.getTagsLocation(resources[0]), false, nodeNames);
-		DefaultDialog dialog = new DefaultDialog(shell, panel);
-		if (dialog.open() == 0) {
-			IRepositoryResource destination = panel.getDestination();
-			return new PreparedBranchTagOperation(nodeType == BranchTagAction.BRANCH_ACTION ? "Branch" : "Tag", resources, destination, panel.getMessage(), multipleProjLayout);
-		}
-		
-		return null;
-	}
-	
-	protected static boolean isSingleProjectLayout(IRepositoryRoot trunk) {
-		try {
-			return trunk.asRepositoryFile(trunk.getUrl() + "/.project", false).exists();
-		}
-		catch (SVNConnectorException ex) {
-			return false;
-		}
-	}
-	
-	protected static IRepositoryResource []getRemoteChildren(final IRepositoryContainer parent) {
-		GetRemoteFolderChildrenOperation op = new GetRemoteFolderChildrenOperation(parent, false);
-		UIMonitorUtility.doTaskBusy(op, new DefaultOperationWrapperFactory() {
-			public IActionOperation getLogged(IActionOperation operation) {
-				return new LoggedOperation(operation);
-			}
-		});
-		return op.getChildren();
 	}
 	
 	public boolean isEnabled() {
@@ -166,4 +142,27 @@ public class BranchTagAction extends AbstractRepositoryTeamAction {
 		return true;
 	}
 
+	protected static IRepositoryResource []getRemoteChildren(final IRepositoryContainer parent) {
+		GetRemoteFolderChildrenOperation op = new GetRemoteFolderChildrenOperation(parent, false);
+		UIMonitorUtility.doTaskBusy(op, new DefaultOperationWrapperFactory() {
+			public IActionOperation getLogged(IActionOperation operation) {
+				return new LoggedOperation(operation);
+			}
+		});
+		return op.getChildren();
+	}
+	
+	public static boolean isSingleProjectLayout(IRepositoryResource resource) {
+		return BranchTagAction.isProjectFileExists(SVNUtility.getTrunkLocation(resource));
+	}
+	
+	protected static boolean isProjectFileExists(IRepositoryResource resource) {
+		try {
+			return resource.asRepositoryFile(".project", false).exists();
+		}
+		catch (SVNConnectorException ex) {
+			return false;
+		}
+	}
+	
 }

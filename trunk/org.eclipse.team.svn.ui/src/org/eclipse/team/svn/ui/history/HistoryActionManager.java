@@ -130,7 +130,6 @@ import org.eclipse.team.svn.ui.operation.RemoteShowAnnotationOperation;
 import org.eclipse.team.svn.ui.operation.ShowHistoryViewOperation;
 import org.eclipse.team.svn.ui.operation.ShowPropertiesOperation;
 import org.eclipse.team.svn.ui.operation.UILoggedOperation;
-import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFile;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFolder;
 import org.eclipse.team.svn.ui.utility.LockProposeUtility;
@@ -485,7 +484,7 @@ public class HistoryActionManager {
 			}
 			manager.add(tAction = new HistoryAction(branchFrom, "icons/common/actions/branch.gif") {
 				public void run() {
-					PreparedBranchTagOperation op = BranchTagAction.getBranchTagOperation(new IRepositoryResource[] {HistoryActionManager.this.getResourceForSelectedRevision((SVNLogEntry)selection[0].getEntity())}, UIMonitorUtility.getShell(), BranchTagAction.BRANCH_ACTION, false);
+					PreparedBranchTagOperation op = BranchTagAction.getBranchTagOperation(new IRepositoryResource[] {HistoryActionManager.this.getResourceForSelectedRevision((SVNLogEntry)selection[0].getEntity())}, UIMonitorUtility.getShell(), BranchTagAction.BRANCH_ACTION);
 					if (op != null) {
 						UIMonitorUtility.doTaskScheduledActive(op);
 					}
@@ -494,7 +493,7 @@ public class HistoryActionManager {
 			tAction.setEnabled(selection.length == 1);
 			manager.add(tAction = new HistoryAction(tagFrom, "icons/common/actions/tag.gif") {
 				public void run() {
-					PreparedBranchTagOperation op = BranchTagAction.getBranchTagOperation(new IRepositoryResource[] {HistoryActionManager.this.getResourceForSelectedRevision((SVNLogEntry)selection[0].getEntity())}, UIMonitorUtility.getShell(), BranchTagAction.TAG_ACTION, false);
+					PreparedBranchTagOperation op = BranchTagAction.getBranchTagOperation(new IRepositoryResource[] {HistoryActionManager.this.getResourceForSelectedRevision((SVNLogEntry)selection[0].getEntity())}, UIMonitorUtility.getShell(), BranchTagAction.TAG_ACTION);
 					if (op != null) {
 						UIMonitorUtility.doTaskScheduledActive(op);
 					}
@@ -1370,10 +1369,8 @@ public class HistoryActionManager {
 			return;
 		}
 		
-		boolean respectProjectStructure = SVNTeamPreferences.getRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_NAME);
-		
 		IRepositoryResource []resources = provider.getRepositoryResources();
-		PreparedBranchTagOperation op = BranchTagAction.getBranchTagOperation(resources, shell, type, respectProjectStructure);
+		PreparedBranchTagOperation op = BranchTagAction.getBranchTagOperation(resources, shell, type);
 
 		if (op != null) {
 			CompositeOperation composite = new CompositeOperation(op.getId());
