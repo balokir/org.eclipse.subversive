@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.SVNUtility;
@@ -54,8 +55,13 @@ public class OperationErrorDialog extends MessageDialog {
 	}
 	
 	public static boolean isAcceptableAtOnce(IRepositoryResource []resources, String name, Shell shell) {
+		IRepositoryLocation first = resources[0].getRepositoryLocation(); 
 		String url = SVNUtility.getTrunkLocation(resources[0]).getUrl();
 		for (int i = 1; i < resources.length; i++) {
+			if (resources[i].getRepositoryLocation() != first) {
+				new OperationErrorDialog(shell, name, OperationErrorDialog.ERR_DIFFREPOSITORIES).open();
+				return false;
+			}
 			if (!url.equals(SVNUtility.getTrunkLocation(resources[i]).getUrl())) {
 				new OperationErrorDialog(shell, name, OperationErrorDialog.ERR_DIFFPROJECTS).open();
 				return false;
