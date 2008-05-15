@@ -35,6 +35,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.composite.DepthSelectionComposite;
 import org.eclipse.team.svn.ui.composite.RepositoryResourceSelectionComposite;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.AbstractAdvancedDialogPanel;
@@ -58,6 +59,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 	protected IResource []to;
 	protected IRepositoryResource baseResource;
 	protected long currentRevision;
+	protected DepthSelectionComposite depthSelector;
 
 	protected IRepositoryResource firstSelectedResource;
 	protected IRepositoryResource secondSelectedResource;
@@ -118,11 +120,17 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 	}
 	
 	public void createControlsImpl(Composite parent) {
-		((GridLayout)parent.getLayout()).verticalSpacing = 0;
-		
+		((GridLayout)parent.getLayout()).verticalSpacing = 2;
 		this.simpleView = this.createSimpleModeView(parent);
-        this.advancedView = this.createAdvancedModeView(parent);
-        
+		this.advancedView = this.createAdvancedModeView(parent);
+		
+		Label separator = new Label(parent, SWT.HORIZONTAL | SWT.SEPARATOR);
+		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		separator.setVisible(false);
+		        
+		this.depthSelector = new DepthSelectionComposite(parent, SWT.NONE);
+		this.depthSelector.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
         this.setMode(false);
 	}
 	
@@ -220,11 +228,15 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 		return parent;
 	}
 	
+	public int getDepth() {
+		return this.depthSelector.getDepth();
+	}
+	
 	public void extendedButtonPressed(int idx) {
 		super.extendedButtonPressed(idx);
 		if (idx == 1) {
 			this.saveChangesImpl();
-			JavaHLMergeOperation mergeOp = new JavaHLMergeOperation(this.to, this.getFirstSelection(), this.getSecondSelection(), true, this.getIgnoreAncestry());
+			JavaHLMergeOperation mergeOp = new JavaHLMergeOperation(this.to, this.getFirstSelection(), this.getSecondSelection(), true, this.getIgnoreAncestry(), this.getDepth());
 			final StringBuffer buf = new StringBuffer();
 			buf.append(SVNTeamUIPlugin.instance().getResource("MergePanel.Preview.Header.Text"));
 			buf.append(SVNTeamUIPlugin.instance().getResource("MergePanel.Preview.Header.Line"));

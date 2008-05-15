@@ -69,7 +69,7 @@ public class MergeAction extends AbstractNonRecursiveTeamAction {
 	    	LocateResourceURLInHistoryOperation locateFirst = new LocateResourceURLInHistoryOperation(panel.getFirstSelection(), true);
 	    	LocateResourceURLInHistoryOperation locateSecond = new LocateResourceURLInHistoryOperation(panel.getSecondSelection(), true);
 	    	if (SVNTeamPreferences.getMergeBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MERGE_USE_JAVAHL_NAME)) {
-		    	JavaHLMergeOperation mainOp = new JavaHLMergeOperation(resources, locateFirst, locateSecond, false, panel.getIgnoreAncestry());
+		    	JavaHLMergeOperation mainOp = new JavaHLMergeOperation(resources, locateFirst, locateSecond, false, panel.getIgnoreAncestry(), panel.getDepth());
 		    	CompositeOperation op = new CompositeOperation(mainOp.getId());
 		    	op.add(locateFirst);
 		    	op.add(locateSecond);
@@ -81,7 +81,7 @@ public class MergeAction extends AbstractNonRecursiveTeamAction {
 		    	this.runScheduled(op);
 	    	}
 	    	else {
-	    		ShowMergeViewOperation mainOp = new ShowMergeViewOperation(resources, locateFirst, locateSecond, panel.getIgnoreAncestry(), this.getTargetPart());
+	    		ShowMergeViewOperation mainOp = new ShowMergeViewOperation(resources, locateFirst, locateSecond, panel.getIgnoreAncestry(), this.getTargetPart(), panel.getDepth());
 		    	CompositeOperation op = new CompositeOperation(mainOp.getId());
 		    	op.add(locateFirst);
 		    	op.add(locateSecond);

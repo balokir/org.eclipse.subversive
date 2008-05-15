@@ -46,6 +46,10 @@ public class MergeParticipant extends AbstractSVNParticipant {
     public MergeParticipant(ISynchronizeScope scope) {
         super(scope);
     }
+    
+    public void setSubsriberDepth(int depth){
+    	((MergeSubscriber)this.getMatchingSubscriber()).setDepth(depth);
+    }
 
     public AbstractSVNSubscriber getMatchingSubscriber() {
         MergeSubscriber subscriber = MergeSubscriber.instance();
