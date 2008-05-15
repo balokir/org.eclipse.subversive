@@ -20,7 +20,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.operation.remote.PreparedBranchTagOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -143,7 +142,7 @@ public class BranchTagAction extends AbstractRepositoryTeamAction {
 		GetRemoteFolderChildrenOperation op = new GetRemoteFolderChildrenOperation(parent, false);
 		UIMonitorUtility.doTaskBusy(op, new DefaultOperationWrapperFactory() {
 			public IActionOperation getLogged(IActionOperation operation) {
-				return new LoggedOperation(operation);
+				return operation;
 			}
 		});
 		return op.getChildren();
