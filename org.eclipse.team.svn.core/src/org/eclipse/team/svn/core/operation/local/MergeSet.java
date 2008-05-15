@@ -30,14 +30,16 @@ public class MergeSet {
     public final IRepositoryResource []fromStart;
     public final IRepositoryResource []fromEnd;
     public final boolean ignoreAncestry;
+    public final int depth;
     
     protected ArrayList<SVNMergeStatus> statuses;
     
-    public MergeSet(IResource []to, IRepositoryResource []fromStart, IRepositoryResource []fromEnd, boolean ignoreAncestry) {
+    public MergeSet(IResource []to, IRepositoryResource []fromStart, IRepositoryResource []fromEnd, boolean ignoreAncestry, int depth) {
     	this.to = to;
     	this.fromStart = fromStart;
     	this.fromEnd = fromEnd;
     	this.ignoreAncestry = ignoreAncestry;
+    	this.depth = depth;
     	this.statuses = new ArrayList();
     }
 

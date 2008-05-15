@@ -39,12 +39,10 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 public class MergeStatusOperation extends AbstractWorkingCopyOperation implements IRemoteStatusOperation {
 	protected MergeSet info;
 	protected SVNMergeStatus []retVal;
-	protected int depth;
 	
-	public MergeStatusOperation(MergeSet info, IResource []resources, int depth) {
+	public MergeStatusOperation(MergeSet info, IResource []resources) {
 		super("Operation.MergeStatus", resources == null ? info.to : resources);
 		this.info = info;
-		this.depth = depth;
 	}
 	
 	public IResource []getScope() {
@@ -77,10 +75,10 @@ public class MergeStatusOperation extends AbstractWorkingCopyOperation implement
 						SVNEntryRevisionReference startRef = SVNUtility.getEntryRevisionReference(fromStart);
 						SVNEntryRevisionReference endRef = SVNUtility.getEntryRevisionReference(fromEnd);
 						if (SVNUtility.useSingleReferenceSignature(startRef, endRef)) {
-							proxy.mergeStatus(endRef, new SVNRevisionRange [] {new SVNRevisionRange(startRef.revision, endRef.revision)}, wcPath, MergeStatusOperation.this.depth, options, cb, new SVNProgressMonitor(MergeStatusOperation.this, monitor, null));
+							proxy.mergeStatus(endRef, new SVNRevisionRange [] {new SVNRevisionRange(startRef.revision, endRef.revision)}, wcPath, MergeStatusOperation.this.info.depth, options, cb, new SVNProgressMonitor(MergeStatusOperation.this, monitor, null));
 						}
 						else {
-							proxy.mergeStatus(startRef, endRef, wcPath, MergeStatusOperation.this.depth, options, cb, new SVNProgressMonitor(MergeStatusOperation.this, monitor, null));
+							proxy.mergeStatus(startRef, endRef, wcPath, MergeStatusOperation.this.info.depth, options, cb, new SVNProgressMonitor(MergeStatusOperation.this, monitor, null));
 						}
 					}
 				}, monitor, this.info.to.length);
