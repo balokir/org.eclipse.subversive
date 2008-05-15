@@ -877,8 +877,7 @@ public final class SVNUtility {
 				for (Iterator it = restOfFiles.iterator(); it.hasNext(); ) {
 					File checked = (File)it.next();
 					if (rootPath.isPrefixOf(new Path(checked.getAbsolutePath()))) {
-						SVNEntryInfo checkedInfo = (SVNEntryInfo)file2info.get(checked);
-						if (rootInfoPath.isPrefixOf(new Path(checkedInfo.url))) {
+						if (rootInfoPath.isPrefixOf(new Path(file2info.get(checked).url))) {
 							wcResources.add(checked);
 							it.remove();
 						}

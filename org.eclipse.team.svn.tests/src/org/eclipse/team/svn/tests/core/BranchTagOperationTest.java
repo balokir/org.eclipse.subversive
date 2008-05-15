@@ -27,10 +27,10 @@ public abstract class BranchTagOperationTest extends AbstractOperationTestCase {
     protected IActionOperation getOperation() {
         SVNRemoteStorage storage = SVNRemoteStorage.instance(); 
         IRepositoryResource branchTagResource = storage.asRepositoryResource(this.getFirstProject());
-        PreparedBranchTagOperation mainOp = new PreparedBranchTagOperation("Branch", new IRepositoryResource[] {branchTagResource}, SVNUtility.getProposedBranches(this.getLocation()), "test branch");
+        PreparedBranchTagOperation mainOp = new PreparedBranchTagOperation("Branch", new IRepositoryResource[] {branchTagResource}, SVNUtility.getProposedBranches(this.getLocation()), "test branch", false);
         CompositeOperation op = new CompositeOperation(mainOp.getId());
         op.add(mainOp);
-        op.add(new PreparedBranchTagOperation("Tag", new IRepositoryResource[] {branchTagResource}, SVNUtility.getProposedTags(this.getLocation()), "test branch"));
+        op.add(new PreparedBranchTagOperation("Tag", new IRepositoryResource[] {branchTagResource}, SVNUtility.getProposedTags(this.getLocation()), "test branch", false));
         return op;
 	}
     

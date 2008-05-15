@@ -47,10 +47,10 @@ public class PLC350Test extends TestWorkflow {
 		                    FileUtility.deleteRecursive(new File (taggedTrunk.getUrl()));
 		                }
 		                IRepositoryResource branchTagResource = SVNUtility.getProposedTrunk(getLocation());
-		                new PreparedBranchTagOperation("Branch", new IRepositoryResource[] {branchTagResource}, SVNUtility.getProposedBranches(getLocation()), "test branch").run(monitor);
+		                new PreparedBranchTagOperation("Branch", new IRepositoryResource[] {branchTagResource}, SVNUtility.getProposedBranches(getLocation()), "test branch", false).run(monitor);
 		                branchedTrunk = new SVNRepositoryFolder(getLocation(), SVNUtility.getProposedBranchesLocation(getLocation()) + "/trunk", SVNRevision.HEAD);
 		                assertTrue("PLC350Test", branchedTrunk.exists());
-		                new PreparedBranchTagOperation("Tag", new IRepositoryResource[] {branchTagResource}, SVNUtility.getProposedTags(getLocation()), "test tag").run(monitor);
+		                new PreparedBranchTagOperation("Tag", new IRepositoryResource[] {branchTagResource}, SVNUtility.getProposedTags(getLocation()), "test tag", false).run(monitor);
 		                taggedTrunk = new SVNRepositoryFolder(getLocation(), SVNUtility.getProposedTagsLocation(getLocation()) + "/trunk", SVNRevision.HEAD);
 		                assertTrue("PLC350Test", taggedTrunk.exists());
                     }
