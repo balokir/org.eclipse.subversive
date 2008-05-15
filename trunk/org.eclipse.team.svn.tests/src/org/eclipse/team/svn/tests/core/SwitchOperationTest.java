@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.tests.core;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.SwitchOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -26,7 +27,7 @@ public abstract class SwitchOperationTest extends AbstractOperationTestCase {
     protected IActionOperation getOperation() {
         IResource project = this.getFirstProject();
         IRepositoryResource switchDestination = this.getLocation().asRepositoryContainer(SVNUtility.getProposedBranchesLocation(this.getLocation()) + "/" + project.getName(), false);
-        return new SwitchOperation(new IResource[] {project}, new IRepositoryResource[] {switchDestination});
+        return new SwitchOperation(new IResource[] {project}, new IRepositoryResource[] {switchDestination}, Depth.INFINITY);
 	}
    
 }

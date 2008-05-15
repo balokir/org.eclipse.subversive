@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.ui.action.local;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.svn.core.IStateFilter;
@@ -53,9 +54,16 @@ public class SwitchAction extends AbstractNonRecursiveTeamAction {
 	//FIXME peg revision, revision limitation ???
 		SwitchPanel panel;
 		if (resources.length > 1) {
+			boolean containFolders = false;
+			for (IResource current : resources) {
+				if (current instanceof IContainer) {
+					containFolders = true;
+					break;
+				}
+			}
 			IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(resources[0]);
 			remote = SVNUtility.getTrunkLocation(remote);
-			panel = new SwitchPanel(remote, SVNRevision.INVALID_REVISION_NUMBER);
+			panel = new SwitchPanel(remote, SVNRevision.INVALID_REVISION_NUMBER, containFolders);
 		}
 		else {
 			IResource resource = resources[0];
@@ -64,14 +72,14 @@ public class SwitchAction extends AbstractNonRecursiveTeamAction {
 			if (local == null) {
 				return;
 			}
-			panel = new SwitchPanel(remote, local.getRevision());
+			panel = new SwitchPanel(remote, local.getRevision(), resources[0] instanceof IContainer);
 		}
 			
 		DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
 		if (dialog.open() == 0) {
 			IRepositoryResource []destinations = panel.getSelection(resources);
 
-			SwitchOperation mainOp = new SwitchOperation(resources, destinations);
+			SwitchOperation mainOp = new SwitchOperation(resources, destinations, panel.getDepth());
 			
 			CompositeOperation op = new CompositeOperation(mainOp.getId());
 

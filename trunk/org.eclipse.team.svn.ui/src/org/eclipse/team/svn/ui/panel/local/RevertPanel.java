@@ -42,6 +42,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
@@ -492,7 +493,7 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 					}
 					SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(switchedResources);
 					op.add(saveOp);
-			    	op.add(new SwitchOperation(switchedResources, mainOp), new IActionOperation[] {mainOp});
+			    	op.add(new SwitchOperation(switchedResources, mainOp, Depth.INFINITY), new IActionOperation[] {mainOp});
 					op.add(new RestoreProjectMetaOperation(saveOp));
 					op.add(new RefreshResourcesOperation(operateResourcesArr));
 				}
