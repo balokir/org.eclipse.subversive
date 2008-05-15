@@ -20,6 +20,8 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
+import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 
 /**
@@ -54,9 +56,16 @@ public class DepthSelectionComposite extends Composite {
 		final String immediates = SVNTeamUIPlugin.instance().getResource("RecurseDepthSelector.Immediates");
 		final String infinity = SVNTeamUIPlugin.instance().getResource("RecurseDepthSelector.Infinity");
 		
+		boolean svn15used = CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() == ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x;
+		
 		Combo depthSelector = new Combo(this, SWT.READ_ONLY);
-		depthSelector.add(empty);
+		if (svn15used) {
+			depthSelector.add(empty);
+		}
 		depthSelector.add(files);
+		if (svn15used) {
+			depthSelector.add(empty);
+		}
 		depthSelector.add(immediates);
 		depthSelector.add(infinity);
 		depthSelector.setText(infinity);
