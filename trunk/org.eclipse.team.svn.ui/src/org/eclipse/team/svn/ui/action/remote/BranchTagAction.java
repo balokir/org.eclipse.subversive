@@ -74,19 +74,22 @@ public class BranchTagAction extends AbstractRepositoryTeamAction {
 		
 		resources = SVNUtility.shrinkChildNodes(resources);
 		boolean isStructureEnabled = resources[0].getRepositoryLocation().isStructureEnabled()&& SVNTeamPreferences.getRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_NAME);
-		//no structure -> copy to destination
-		//structure detection disabled -> copy to destination
-		//consider structure disabled -> copy to destination
-		//
-		//single-project:trunk -> copy to destination
-		//single-project:trunk child -> copy to destination
-		//
-		//multiple-project:one resource:trunk -> copy to destination
-		//multiple-project:many resources -> copy to destination
-		//multiple-project:one resource:not a trunk -> copy to destination + resource name (forceCreate)
+		// no structure -> copy content to destination
+		// structure detection disabled -> copy selection content to destination
+		// consider structure disabled -> copy selection content to destination
+		
+		// single-project layout:trunk selected -> copy selection content to destination
+		// single-project layout:child of trunk selected -> copy selection content to destination
+	
+		// multiple-project layout:trunk selected -> copy selection content to destination
+		// multiple-project layout:trunk children selected -> copy selection to destination
+		// multiple-project layout:one child of trunk selected -> copy selection to destination (forceCreate)
+		
+		// tagging from branch and branching from tag uses the same rules, i.e. respects a project layout.
 		Set<String> nodeNames = Collections.emptySet();
 		boolean forceCreate = false;
 		if (isStructureEnabled) {
+			// allows to use project root for branching and tagging of the whole project
 			int kind = ((IRepositoryRoot)resources[0].getRoot()).getKind();
 			if (kind == IRepositoryRoot.KIND_LOCATION_ROOT || kind == IRepositoryRoot.KIND_ROOT) {
 				try {
