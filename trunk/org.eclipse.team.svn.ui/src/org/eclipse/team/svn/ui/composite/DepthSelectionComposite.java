@@ -64,9 +64,8 @@ public class DepthSelectionComposite extends Composite {
 		}
 		depthSelector.add(files);
 		if (svn15used) {
-			depthSelector.add(empty);
+			depthSelector.add(immediates);
 		}
-		depthSelector.add(immediates);
 		depthSelector.add(infinity);
 		depthSelector.setText(infinity);
 		depthSelector.addSelectionListener(new SelectionListener() {
