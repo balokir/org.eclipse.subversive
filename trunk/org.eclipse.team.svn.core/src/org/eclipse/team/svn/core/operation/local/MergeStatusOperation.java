@@ -23,7 +23,6 @@ import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNMergeStatus;
 import org.eclipse.team.svn.core.connector.SVNRevisionRange;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -40,10 +39,12 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 public class MergeStatusOperation extends AbstractWorkingCopyOperation implements IRemoteStatusOperation {
 	protected MergeSet info;
 	protected SVNMergeStatus []retVal;
+	protected int depth;
 	
-	public MergeStatusOperation(MergeSet info, IResource []resources) {
+	public MergeStatusOperation(MergeSet info, IResource []resources, int depth) {
 		super("Operation.MergeStatus", resources == null ? info.to : resources);
 		this.info = info;
+		this.depth = depth;
 	}
 	
 	public IResource []getScope() {
@@ -51,9 +52,9 @@ public class MergeStatusOperation extends AbstractWorkingCopyOperation implement
 	}
 
     protected void runImpl(IProgressMonitor monitor) throws Exception {
-		final ArrayList st = new ArrayList();
+		final ArrayList<SVNMergeStatus> st = new ArrayList<SVNMergeStatus>();
 		
-		HashSet resources = new HashSet(Arrays.asList(this.operableData()));
+		HashSet<IResource> resources = new HashSet<IResource>(Arrays.asList(this.operableData()));
 		
 		final ISVNMergeStatusCallback cb = new ISVNMergeStatusCallback() {
 			public void next(SVNMergeStatus status) {
@@ -76,10 +77,10 @@ public class MergeStatusOperation extends AbstractWorkingCopyOperation implement
 						SVNEntryRevisionReference startRef = SVNUtility.getEntryRevisionReference(fromStart);
 						SVNEntryRevisionReference endRef = SVNUtility.getEntryRevisionReference(fromEnd);
 						if (SVNUtility.useSingleReferenceSignature(startRef, endRef)) {
-							proxy.mergeStatus(endRef, new SVNRevisionRange [] {new SVNRevisionRange(startRef.revision, endRef.revision)}, wcPath, Depth.INFINITY, options, cb, new SVNProgressMonitor(MergeStatusOperation.this, monitor, null));
+							proxy.mergeStatus(endRef, new SVNRevisionRange [] {new SVNRevisionRange(startRef.revision, endRef.revision)}, wcPath, MergeStatusOperation.this.depth, options, cb, new SVNProgressMonitor(MergeStatusOperation.this, monitor, null));
 						}
 						else {
-							proxy.mergeStatus(startRef, endRef, wcPath, Depth.INFINITY, options, cb, new SVNProgressMonitor(MergeStatusOperation.this, monitor, null));
+							proxy.mergeStatus(startRef, endRef, wcPath, MergeStatusOperation.this.depth, options, cb, new SVNProgressMonitor(MergeStatusOperation.this, monitor, null));
 						}
 					}
 				}, monitor, this.info.to.length);
@@ -87,7 +88,7 @@ public class MergeStatusOperation extends AbstractWorkingCopyOperation implement
 				fromEnd.getRepositoryLocation().releaseSVNProxy(proxy);
 			}
 		}
-		this.info.addStatuses(this.retVal = (SVNMergeStatus [])st.toArray(new SVNMergeStatus[st.size()]));
+		this.info.addStatuses(this.retVal = st.toArray(new SVNMergeStatus[st.size()]));
     }
 
 	public SVNEntryStatus[]getStatuses() {

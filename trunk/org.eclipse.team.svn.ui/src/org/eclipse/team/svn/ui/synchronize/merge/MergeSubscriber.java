@@ -20,6 +20,7 @@ import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNMergeStatus;
 import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.local.IRemoteStatusOperation;
 import org.eclipse.team.svn.core.operation.local.MergeStatusOperation;
 import org.eclipse.team.svn.core.resource.IChangeStateProvider;
@@ -43,6 +44,7 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 	protected MergeScope scope;
 	protected MergeStatusOperation mergeStatusOp;
     protected RemoteStatusCache baseStatusCache;
+    protected int depth;
 	
 	public static synchronized MergeSubscriber instance() {
 		if (MergeSubscriber.instance == null) {
@@ -59,6 +61,10 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
         this.scope = scope;
     }
     
+    public void setDepth(int depth) {
+		this.depth = depth;
+	}
+    
     protected SyncInfo getSVNSyncInfo(ILocalResource localStatus, IResourceChange remoteStatus) {
 		IResourceChange baseStatus = SVNRemoteStorage.instance().resourceChangeFromBytes(this.baseStatusCache.getBytes(localStatus.getResource()));
     	// provide correct base resource: same as right but with start revision specified
@@ -66,7 +72,7 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
     }
 
     protected IRemoteStatusOperation getStatusOperation(IResource[] resources, int depth) {
-        return this.mergeStatusOp = (this.scope == null ? null : new MergeStatusOperation(this.scope.getMergeSet(), resources));
+        return this.mergeStatusOp = (this.scope == null ? null : new MergeStatusOperation(this.scope.getMergeSet(), resources, this.depth));
     }
     
 	protected HashSet<IResource> clearRemoteStatusesImpl(IResource []resources) {
@@ -201,6 +207,7 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
     private MergeSubscriber() {
         super();
 		this.baseStatusCache = new RemoteStatusCache();
+		this.depth = Depth.INFINITY;
     }
 
 }

@@ -60,14 +60,14 @@ public class MergeOperation extends AbstractConflictDetectionOperation implement
 		this.defineInitialResourceSet(localTo);
 		localTo = FileUtility.shrinkChildNodes(localTo);
 		
-		ArrayList retVal = new ArrayList();
+		ArrayList<SVNMergeStatus> retVal = new ArrayList<SVNMergeStatus>();
 		for (int i = 0; i < localTo.length && !monitor.isCanceled(); i++) {
 			SVNMergeStatus st = this.getStatusFor(localTo[i]);
 			if (st != null) {
 				retVal.add(st);
 			}
 		}
-		SVNMergeStatus []statuses = (SVNMergeStatus [])retVal.toArray(new SVNMergeStatus[retVal.size()]);
+		SVNMergeStatus []statuses = retVal.toArray(new SVNMergeStatus[retVal.size()]);
 		
 		SVNEntryRevisionReference startRef = SVNUtility.getEntryRevisionReference(this.info.fromStart[0]);
 		SVNEntryRevisionReference endRef = SVNUtility.getEntryRevisionReference(this.info.fromEnd[0]);
@@ -109,8 +109,8 @@ public class MergeOperation extends AbstractConflictDetectionOperation implement
 			super.progress(current, total, state);
 		    if (state.contentState == NodeStatus.CONFLICTED || state.propState == NodeStatus.CONFLICTED) {
 		        MergeOperation.this.hasUnresolvedConflict = true;
-			    for (Iterator it = MergeOperation.this.processed.iterator(); it.hasNext(); ) {
-			        IResource res = (IResource)it.next();
+			    for (Iterator<IResource> it = MergeOperation.this.processed.iterator(); it.hasNext(); ) {
+			        IResource res = it.next();
 			        if (FileUtility.getResourcePath(res).equals(new Path(state.path))) {
 			            it.remove();
 			            MergeOperation.this.unprocessed.add(res);

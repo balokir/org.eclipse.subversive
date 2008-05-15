@@ -35,18 +35,20 @@ public class ShowMergeViewOperation extends AbstractActionOperation {
     protected IRepositoryResourceProvider fromStart;
     protected IRepositoryResourceProvider fromEnd;
     protected boolean ignoreAncestry;
+    protected int depth;
 
-    public ShowMergeViewOperation(IResource []locals, IRepositoryResource []fromStart, IRepositoryResource []fromEnd, boolean ignoreAncestry, IWorkbenchPart part) {
-        this(locals, new IRepositoryResourceProvider.DefaultRepositoryResourceProvider(fromStart), new IRepositoryResourceProvider.DefaultRepositoryResourceProvider(fromEnd), ignoreAncestry, part);
+    public ShowMergeViewOperation(IResource []locals, IRepositoryResource []fromStart, IRepositoryResource []fromEnd, boolean ignoreAncestry, IWorkbenchPart part, int depth) {
+        this(locals, new IRepositoryResourceProvider.DefaultRepositoryResourceProvider(fromStart), new IRepositoryResourceProvider.DefaultRepositoryResourceProvider(fromEnd), ignoreAncestry, part, depth);
     }
 
-    public ShowMergeViewOperation(IResource []locals, IRepositoryResourceProvider fromStart, IRepositoryResourceProvider fromEnd, boolean ignoreAncestry, IWorkbenchPart part) {
+    public ShowMergeViewOperation(IResource []locals, IRepositoryResourceProvider fromStart, IRepositoryResourceProvider fromEnd, boolean ignoreAncestry, IWorkbenchPart part, int depth) {
         super("Operation.ShowMergeView");
         this.part = part;
         this.locals = locals;
         this.fromStart = fromStart;
         this.fromEnd = fromEnd;
         this.ignoreAncestry = ignoreAncestry;
+        this.depth = depth;
     }
     
     public int getOperationWeight() {
@@ -67,6 +69,7 @@ public class ShowMergeViewOperation extends AbstractActionOperation {
 		else {
 		    ((MergeScope)participant.getScope()).setMergeSet(mergeSet);
 		}
+		participant.setSubsriberDepth(this.depth);
 
 		participant.run(this.part);
     }

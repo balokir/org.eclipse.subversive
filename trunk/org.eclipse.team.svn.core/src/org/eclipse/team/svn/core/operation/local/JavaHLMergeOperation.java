@@ -18,7 +18,6 @@ import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNProgressMonitor;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNRevisionRange;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -39,19 +38,21 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 	protected IRepositoryResourceProvider fromEnd;
 	protected boolean dryRun;
 	protected boolean ignoreAncestry;
+	protected int depth;
 	
 	protected ISVNProgressMonitor externalMonitor;
 	
-	public JavaHLMergeOperation(IResource []localTo, IRepositoryResource []fromStart, IRepositoryResource []fromEnd, boolean dryRun, boolean ignoreAncestry) {
-		this(localTo, new IRepositoryResourceProvider.DefaultRepositoryResourceProvider(fromStart), new IRepositoryResourceProvider.DefaultRepositoryResourceProvider(fromEnd), dryRun, ignoreAncestry);
+	public JavaHLMergeOperation(IResource []localTo, IRepositoryResource []fromStart, IRepositoryResource []fromEnd, boolean dryRun, boolean ignoreAncestry, int depth) {
+		this(localTo, new IRepositoryResourceProvider.DefaultRepositoryResourceProvider(fromStart), new IRepositoryResourceProvider.DefaultRepositoryResourceProvider(fromEnd), dryRun, ignoreAncestry, depth);
 	}
 	
-	public JavaHLMergeOperation(IResource []localTo, IRepositoryResourceProvider fromStart, IRepositoryResourceProvider fromEnd, boolean dryRun, boolean ignoreAncestry) {
+	public JavaHLMergeOperation(IResource []localTo, IRepositoryResourceProvider fromStart, IRepositoryResourceProvider fromEnd, boolean dryRun, boolean ignoreAncestry, int depth) {
 		super("Operation.JavaHLMerge", localTo);
 		this.fromStart = fromStart;
 		this.fromEnd = fromEnd;
 		this.dryRun = dryRun;
 		this.ignoreAncestry = ignoreAncestry;
+		this.depth = depth;
 	}
 	
 	public int getOperationWeight() {
@@ -91,12 +92,12 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 			long options = this.ignoreAncestry ? ISVNConnector.Options.IGNORE_ANCESTRY : ISVNConnector.Options.NONE;
 			options |= this.dryRun ? ISVNConnector.Options.SIMULATE : ISVNConnector.Options.NONE;
 			if (SVNUtility.useSingleReferenceSignature(ref1, ref2)) {
-				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn merge -r " + from1.getSelectedRevision() + ":" + from2.getSelectedRevision() + "\"" + from1.getUrl() + "@" + from1.getPegRevision() + "\" \"" + FileUtility.normalizePath(wcPath) + "\"" + (this.dryRun ? " --dry-run" : "") + (this.ignoreAncestry ? " --ignore-ancestry" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n");
-				proxy.merge(ref1, new SVNRevisionRange[] {new SVNRevisionRange(from1.getSelectedRevision(), from2.getSelectedRevision())}, wcPath, Depth.INFINITY, options, new MergeProgressMonitor(this, monitor, null));
+				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn merge -r " + from1.getSelectedRevision() + ":" + from2.getSelectedRevision() + "\"" + from1.getUrl() + "@" + from1.getPegRevision() + "\" \"" + FileUtility.normalizePath(wcPath) + "\"" + SVNUtility.getDepthArg(this.depth) +(this.dryRun ? " --dry-run" : "") + (this.ignoreAncestry ? " --ignore-ancestry" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n");
+				proxy.merge(ref1, new SVNRevisionRange[] {new SVNRevisionRange(from1.getSelectedRevision(), from2.getSelectedRevision())}, wcPath, this.depth, options, new MergeProgressMonitor(this, monitor, null));
 			}
 			else {
-				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn merge \"" + from1.getUrl() + "@" + from1.getSelectedRevision() + "\" \"" + from2.getUrl() + "@" + from2.getSelectedRevision() + "\" \"" + FileUtility.normalizePath(wcPath) + "\"" + (this.dryRun ? " --dry-run" : "") + (this.ignoreAncestry ? " --ignore-ancestry" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n");
-				proxy.merge(ref1, ref2, wcPath, Depth.INFINITY, options, new MergeProgressMonitor(this, monitor, null));
+				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn merge \"" + from1.getUrl() + "@" + from1.getSelectedRevision() + "\" \"" + from2.getUrl() + "@" + from2.getSelectedRevision() + "\" \"" + FileUtility.normalizePath(wcPath) + "\"" + SVNUtility.getDepthArg(this.depth) + (this.dryRun ? " --dry-run" : "") + (this.ignoreAncestry ? " --ignore-ancestry" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n");
+				proxy.merge(ref1, ref2, wcPath, this.depth, options, new MergeProgressMonitor(this, monitor, null));
 			}
 		}
 		finally {
