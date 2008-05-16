@@ -63,7 +63,7 @@ import org.eclipse.team.svn.ui.action.local.SetPropertyAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.dialog.SetPropertyWithOverrideDialog;
 import org.eclipse.team.svn.ui.panel.view.property.PropertyApplyPanel;
-import org.eclipse.team.svn.ui.panel.view.property.PropertyEditPanel;
+import org.eclipse.team.svn.ui.properties.ResourcePropertyEditPanel;
 import org.eclipse.team.svn.ui.properties.RemovePropertyDialog;
 import org.eclipse.team.svn.ui.repository.model.RepositoryPending;
 import org.eclipse.team.svn.ui.utility.ColumnedViewerComparator;
@@ -390,7 +390,7 @@ public class PropertiesComposite extends Composite {
 		boolean propertyAlreadyExists = false;
 		boolean override = true;
 		IResource []resources = new IResource[] {this.wcResource};
-		final PropertyEditPanel panel = new PropertyEditPanel(data, resources, false);
+		final ResourcePropertyEditPanel panel = new ResourcePropertyEditPanel(new SVNProperty[] {data}, resources, false);
 	    DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
 		
 		if (dialog.open() != 0) {

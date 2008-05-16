@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.extension.factory.IPredefinedPropertySet;
 import org.eclipse.team.svn.ui.extension.factory.PredefinedProperty;
@@ -28,11 +27,11 @@ import org.eclipse.team.svn.ui.extension.factory.PredefinedProperty;
  */
 public class PredefinedPropertySet implements IPredefinedPropertySet {
 	
-	public List<PredefinedProperty> getPredefinedProperties(IResource []resources) {
+	public List<PredefinedProperty> getPredefinedProperties() {
 		
-		List properties = new ArrayList();
+		List<PredefinedProperty> properties = new ArrayList<PredefinedProperty>();
 		
-		properties.add(new PredefinedProperty(SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.svn_description"), "", ""));
+		properties.add(new PredefinedProperty(SVNTeamUIPlugin.instance().getResource("AbstractPropertyEditPanel.svn_description"), "", ""));
 		properties.add(new PredefinedProperty("svn:eol-style", this.getDescription("SVN.EOL"), ""));		
 		properties.add(new PredefinedProperty("svn:executable", this.getDescription("SVN.Executable"), ""));
 		properties.add(new PredefinedProperty("svn:externals", this.getDescription("SVN.Externals"), ""));
@@ -52,9 +51,9 @@ public class PredefinedPropertySet implements IPredefinedPropertySet {
 		return properties;
 	}
 	
-	public Map<String, String> getPredefinedPropertiesRegexps(IResource []resources) {
+	public Map<String, String> getPredefinedPropertiesRegexps() {
 		
-		HashMap<String, String> regexpmap = new HashMap();
+		HashMap<String, String> regexpmap = new HashMap<String, String>();
 		
 		regexpmap.put("svn:eol-style", "((native)|(LF)|(CR)|(CRLF))");
 		regexpmap.put("svn:executable", null);
@@ -78,7 +77,7 @@ public class PredefinedPropertySet implements IPredefinedPropertySet {
 	 * Allow to define custom bugtraq properties, clients should override this method.
 	 * @param properties
 	 */
-	protected void getBugtrackProperties(List properties) {
+	protected void getBugtrackProperties(List<PredefinedProperty> properties) {
 		properties.add(new PredefinedProperty(SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.bugtraq_description"), "", ""));
 		properties.add(new PredefinedProperty("bugtraq:url", this.getDescription("Bugtraq.URL"), "%BUGID%"));
 		properties.add(new PredefinedProperty("bugtraq:logregex", this.getDescription("Bugtraq.LogRegex"), ""));

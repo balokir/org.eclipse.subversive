@@ -32,7 +32,7 @@ import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.action.local.SetPropertyAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
-import org.eclipse.team.svn.ui.panel.view.property.PropertyEditPanel;
+import org.eclipse.team.svn.ui.properties.ResourcePropertyEditPanel;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
@@ -66,7 +66,7 @@ public class ThreeWayPropertyCompareInput extends PropertyCompareInput {
 		manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("SetPropertyAction.label")) {		
 			public void run() {
 				IResource [] resources = new IResource[] {ThreeWayPropertyCompareInput.this.leftResource};
-				PropertyEditPanel panel = new PropertyEditPanel(null, resources, false);
+				ResourcePropertyEditPanel panel = new ResourcePropertyEditPanel(null, resources, false);
 				DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getShell(), panel);
 				if (dialog.open() == Dialog.OK) {
 					SetPropertyAction.doSetProperty(resources, panel, null);
