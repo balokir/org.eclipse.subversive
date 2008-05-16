@@ -33,11 +33,11 @@ public class PropertyNameVerifier extends AbstractFormattedVerifier {
         PropertyNameVerifier.ERROR_MESSAGE_LETTER = SVNTeamUIPlugin.instance().getResource("Verifier.PropertyName.Letter", new String[] {AbstractFormattedVerifier.FIELD_NAME});
         PropertyNameVerifier.ERROR_MESSAGE_SYMBOLS = SVNTeamUIPlugin.instance().getResource("Verifier.PropertyName.Symbols", new String[] {AbstractFormattedVerifier.FIELD_NAME});
         this.ignoreStrings = new HashSet<String>();
-        this.ignoreStrings.add(SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.svn_description"));
+        this.ignoreStrings.add(SVNTeamUIPlugin.instance().getResource("AbstractPropertyEditPanel.svn_description"));
         this.ignoreStrings.add(SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.tsvn_description"));
         this.ignoreStrings.add(SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.bugtraq_description"));
-        this.ignoreStrings.add(SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.custom_description"));
-        this.ignoreStrings.add("    "  + SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.custom_hint"));
+        this.ignoreStrings.add(SVNTeamUIPlugin.instance().getResource("AbstractPropertyEditPanel.custom_description"));
+        this.ignoreStrings.add("    "  + SVNTeamUIPlugin.instance().getResource("AbstractPropertyEditPanel.custom_hint"));
     }
 
     protected String getErrorMessageImpl(Control input) {
@@ -46,7 +46,7 @@ public class PropertyNameVerifier extends AbstractFormattedVerifier {
             return null;
         }
         if (this.ignoreStrings.contains(property)) {
-        	return SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.Name.Verifier.IgnoreStrings");
+        	return SVNTeamUIPlugin.instance().getResource("AbstractPropertyEditPanel.Name.Verifier.IgnoreStrings");
         }
         Pattern pattern = Pattern.compile("[a-zA-Z].*");
         Matcher matcher = pattern.matcher(property);

@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.panel.view.property.PropertyEditPanel;
+import org.eclipse.team.svn.ui.properties.ResourcePropertyEditPanel;
 import org.eclipse.team.svn.ui.utility.UserInputHistory;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifierProxy;
 import org.eclipse.team.svn.ui.verifier.IValidationManager;
@@ -78,7 +78,7 @@ public class ApplyPropertyMethodComposite extends Composite {
 	}
 	
 	public void setEnabled(boolean enabled) {
-		if (this.resourcesType == PropertyEditPanel.MIXED_RESOURCES) {
+		if (this.resourcesType == ResourcePropertyEditPanel.MIXED_RESOURCES) {
 			this.applyToAllResourcesButton.setEnabled(enabled);
 			this.applyToFilesButton.setEnabled(enabled);
 			this.applyToFoldersButton.setEnabled(enabled);
@@ -89,7 +89,7 @@ public class ApplyPropertyMethodComposite extends Composite {
 	}
 	
 	public void saveChanges() {
-		if (this.resourcesType == PropertyEditPanel.MIXED_RESOURCES) {
+		if (this.resourcesType == ResourcePropertyEditPanel.MIXED_RESOURCES) {
 			this.applyToFiles = this.applyToFilesButton.getSelection();
 			this.applyToFolders = this.applyToFoldersButton.getSelection();
 		}
@@ -112,7 +112,7 @@ public class ApplyPropertyMethodComposite extends Composite {
 		group.setLayoutData(new GridData(GridData.FILL_BOTH));
 		group.setText(SVNTeamUIPlugin.instance().getResource("ApplyPropertyMethodComposite.ResourcesOptions"));
 		
-		if (this.resourcesType == PropertyEditPanel.MIXED_RESOURCES) {
+		if (this.resourcesType == ResourcePropertyEditPanel.MIXED_RESOURCES) {
 			this.applyToAllResourcesButton = new Button(group, SWT.RADIO);
 			this.applyToAllResourcesButton.setLayoutData(new GridData());
 			this.applyToAllResourcesButton.setText(SVNTeamUIPlugin.instance().getResource("ApplyPropertyMethodComposite.AllResources"));

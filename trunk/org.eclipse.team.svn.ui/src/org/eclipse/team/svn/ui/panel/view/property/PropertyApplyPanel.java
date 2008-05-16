@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.composite.ApplyPropertyMethodComposite;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
+import org.eclipse.team.svn.ui.properties.ResourcePropertyEditPanel;
 
 /**
  * Apply property recursively panel
@@ -46,7 +47,7 @@ public class PropertyApplyPanel extends AbstractDialogPanel {
 	}
 	
 	public void createControlsImpl(Composite parent) {
-		this.applyComposite = new ApplyPropertyMethodComposite(parent, SWT.NONE, this, PropertyEditPanel.MIXED_RESOURCES);
+		this.applyComposite = new ApplyPropertyMethodComposite(parent, SWT.NONE, this, ResourcePropertyEditPanel.MIXED_RESOURCES);
 	}
 	
 	protected void cancelChangesImpl() {

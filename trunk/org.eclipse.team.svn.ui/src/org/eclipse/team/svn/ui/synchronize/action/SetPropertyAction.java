@@ -22,7 +22,7 @@ import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
-import org.eclipse.team.svn.ui.panel.view.property.PropertyEditPanel;
+import org.eclipse.team.svn.ui.properties.ResourcePropertyEditPanel;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -42,8 +42,8 @@ public class SetPropertyAction extends AbstractSynchronizeModelAction {
 	
 	protected boolean updateSelection(IStructuredSelection selection) {
 		super.updateSelection(selection);
-		for (Iterator it = selection.iterator(); it.hasNext(); ) {
-			ISynchronizeModelElement element = (ISynchronizeModelElement)it.next();
+		for (Iterator<ISynchronizeModelElement> it = selection.iterator(); it.hasNext(); ) {
+			ISynchronizeModelElement element = it.next();
 			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(element.getResource());
 			// null for change set nodes
 			if (local != null && IStateFilter.SF_VERSIONED.accept(local)) {
@@ -55,7 +55,7 @@ public class SetPropertyAction extends AbstractSynchronizeModelAction {
 	
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
 		IResource [] resources = SetPropertyAction.this.treeNodeSelector.getSelectedResourcesRecursive(IStateFilter.SF_VERSIONED);
-		PropertyEditPanel panel = new PropertyEditPanel(null, resources, true);
+		ResourcePropertyEditPanel panel = new ResourcePropertyEditPanel(null, resources, true);
 		DefaultDialog dialog = new DefaultDialog(configuration.getSite().getShell(), panel);
 		if (dialog.open() == Dialog.OK) {
 			org.eclipse.team.svn.ui.action.local.SetPropertyAction.doSetProperty(resources, panel, null);

@@ -33,7 +33,7 @@ import org.eclipse.team.svn.core.utility.StringMatcher;
 import org.eclipse.team.svn.ui.action.AbstractNonRecursiveTeamAction;
 import org.eclipse.team.svn.ui.composite.PropertiesComposite;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
-import org.eclipse.team.svn.ui.panel.view.property.PropertyEditPanel;
+import org.eclipse.team.svn.ui.properties.ResourcePropertyEditPanel;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
@@ -50,14 +50,14 @@ public class SetPropertyAction extends AbstractNonRecursiveTeamAction {
 	public void runImpl(IAction action) {
 		final IResource []resources = this.getSelectedResources(IStateFilter.SF_EXCLUDE_PREREPLACED_AND_DELETED);
 		
-		PropertyEditPanel panel = new PropertyEditPanel(null, resources, false);
+		ResourcePropertyEditPanel panel = new ResourcePropertyEditPanel(null, resources, false);
 		DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
 		if (dialog.open() == Dialog.OK) {
 			SetPropertyAction.doSetProperty(resources, panel, null);
 		}
 	}
 	
-	public static void doSetProperty(final IResource []resources, PropertyEditPanel panel, IActionOperation addOn) {
+	public static void doSetProperty(final IResource []resources, ResourcePropertyEditPanel panel, IActionOperation addOn) {
 		SetPropertyAction.doSetProperty(resources, panel.getPropertyName(), panel.getPropertyValue(), panel.getPropertyFile(), panel.isFileSelected(), panel.isRecursiveSelected(), panel.getApplyMethod(), panel.useMask(), panel.getFilterMask(), panel.isStrict(), addOn);
 	}
 	

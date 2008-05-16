@@ -11,6 +11,8 @@
 
 package org.eclipse.team.svn.ui.history;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -70,6 +72,7 @@ import org.eclipse.team.svn.core.connector.SVNEntryInfo;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNLogPath;
+import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.SVNEntry.Kind;
@@ -88,11 +91,14 @@ import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.UpdateOperation;
+import org.eclipse.team.svn.core.operation.local.property.IRevisionPropertiesProvider;
 import org.eclipse.team.svn.core.operation.remote.ExportOperation;
 import org.eclipse.team.svn.core.operation.remote.ExtractToOperationRemote;
 import org.eclipse.team.svn.core.operation.remote.GetRemotePropertiesOperation;
+import org.eclipse.team.svn.core.operation.remote.GetRevisionPropertiesOperation;
 import org.eclipse.team.svn.core.operation.remote.LocateResourceURLInHistoryOperation;
 import org.eclipse.team.svn.core.operation.remote.PreparedBranchTagOperation;
+import org.eclipse.team.svn.core.operation.remote.SetRevisionPropertyOperation;
 import org.eclipse.team.svn.core.operation.remote.management.AddRevisionLinkOperation;
 import org.eclipse.team.svn.core.operation.remote.management.SaveRepositoryLocationsOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -130,6 +136,7 @@ import org.eclipse.team.svn.ui.operation.RemoteShowAnnotationOperation;
 import org.eclipse.team.svn.ui.operation.ShowHistoryViewOperation;
 import org.eclipse.team.svn.ui.operation.ShowPropertiesOperation;
 import org.eclipse.team.svn.ui.operation.UILoggedOperation;
+import org.eclipse.team.svn.ui.properties.RevPropertiesEditPanel;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFile;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFolder;
 import org.eclipse.team.svn.ui.utility.LockProposeUtility;
@@ -421,6 +428,13 @@ public class HistoryActionManager {
 				}
 			});
 			tAction.setEnabled(selection.length == 2);
+			manager.add(tAction = new HistoryAction("ModifyRevisionPropertyAction.label") {
+				public void run() {
+					SVNRevision selectedRevision = SVNRevision.fromNumber(HistoryActionManager.this.getSelectedRevision());
+					IRepositoryLocation location = HistoryActionManager.this.getResourceForHeadRevision().getRepositoryLocation();
+					HistoryActionManager.this.modifyRevisionProperty(location, selectedRevision);
+				}
+			});
 			if (HistoryActionManager.this.view.getRepositoryResource() instanceof IRepositoryFile) {
 				manager.add(tAction = new HistoryAction("ShowAnnotationCommand.label") {
 					public void run() {
@@ -1378,6 +1392,49 @@ public class HistoryActionManager {
 			RefreshRemoteResourcesOperation refreshOp = new RefreshRemoteResourcesOperation(new IRepositoryResource[] {op.getDestination().getParent()});
 			composite.add(refreshOp, new IActionOperation[] {op});
 			UIMonitorUtility.doTaskScheduledDefault(op);
+		}
+	}
+	
+	protected void modifyRevisionProperty(IRepositoryLocation location, SVNRevision selectedRevision) {
+		GetRevisionPropertiesOperation getPropOp = new GetRevisionPropertiesOperation(location, selectedRevision);
+		UIMonitorUtility.doTaskNowDefault(getPropOp, false);
+		RevPropertiesEditPanel panel = new RevPropertiesEditPanel(getPropOp.getRevisionProperties(), selectedRevision, location);
+		if (new DefaultDialog(UIMonitorUtility.getShell(), panel).open() == 0) {
+			final SVNProperty []data = new SVNProperty[] {new SVNProperty(panel.getPropertyName(), panel.getPropertyValue())};
+			SetRevisionPropertyOperation setPropOp = null;
+			CompositeOperation op = new CompositeOperation("");
+			if (panel.isFileSelected()) {
+				final File f = new File(panel.getPropertyFile());
+				AbstractActionOperation loadOp = new AbstractActionOperation("Operation.SLoadFileContent") {
+		            protected void runImpl(IProgressMonitor monitor) throws Exception {
+		                FileInputStream input = null;
+		                try {
+		                    input = new FileInputStream(f);
+		                    byte []binary = new byte[(int)f.length()];
+		                    input.read(binary);
+		                    data[0] = new SVNProperty(data[0].name, new String(binary));
+		                }
+		                finally {
+		                    if (input != null) {
+		                        input.close();
+		                    }
+		                }
+		            }
+		        };
+		        op.add(loadOp);
+				IRevisionPropertiesProvider provider = new IRevisionPropertiesProvider() {
+					public SVNProperty[] getRevision(SVNRevision revision) {
+						return data;
+					}
+				};
+				setPropOp = new SetRevisionPropertyOperation(location, selectedRevision, provider);
+			}
+			else {
+				setPropOp = new SetRevisionPropertyOperation(location, selectedRevision, data[0]);
+			}
+			op.setOperationName(setPropOp.getOperationName());
+			op.add(setPropOp);
+			UIMonitorUtility.doTaskNowDefault(op, true);
 		}
 	}
 	

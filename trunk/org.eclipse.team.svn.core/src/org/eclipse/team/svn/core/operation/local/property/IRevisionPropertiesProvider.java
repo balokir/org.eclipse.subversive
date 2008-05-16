@@ -6,20 +6,19 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Sergiy Logvin - Initial API and implementation
+ *    Alexei Goncharov (Polarion Software) - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.svn.ui.extension.factory;
+package org.eclipse.team.svn.core.operation.local.property;
 
-import java.util.List;
-import java.util.Map;
+import org.eclipse.team.svn.core.connector.SVNProperty;
+import org.eclipse.team.svn.core.connector.SVNRevision;
 
 /**
- * Predefined properties provider interface
- *
- * @author Sergiy Logvin
+ * Revision properties provider.
+ * 
+ * @author Alexei Goncharov
  */
-public interface IPredefinedPropertySet {
-	public List<PredefinedProperty> getPredefinedProperties();
-	public Map<String, String> getPredefinedPropertiesRegexps();	
+public interface IRevisionPropertiesProvider {
+	public SVNProperty [] getRevision(SVNRevision revision);
 }
