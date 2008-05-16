@@ -729,10 +729,10 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 
-	public SVNProperty []getRevisionProperties(SVNEntryReference reference, ISVNPropertyCallback callback, ISVNProgressMonitor monitor) throws SVNConnectorException {
+	public SVNProperty []getRevisionProperties(SVNEntryReference reference, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
-			return this.connector.getRevisionProperties(reference, callback, monitor);
+			return this.connector.getRevisionProperties(reference, monitor);
 		}
 		finally {
 			this.restoreThreadName(oldName);
