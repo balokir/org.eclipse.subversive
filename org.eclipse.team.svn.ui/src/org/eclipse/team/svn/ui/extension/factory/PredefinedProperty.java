@@ -31,10 +31,6 @@ public class PredefinedProperty {
 		this.value = value;
 	}
 	
-	public String getName() {
-		return this.name;
-	}
-	
 	public boolean equals(Object arg0) {
 		if (arg0 instanceof PredefinedProperty) {
 			return ((PredefinedProperty)arg0).name.equals(this.name);

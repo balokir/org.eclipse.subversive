@@ -20,5 +20,5 @@ import org.eclipse.team.svn.core.connector.SVNRevision;
  * @author Alexei Goncharov
  */
 public interface IRevisionPropertiesProvider {
-	public SVNProperty [] getRevision(SVNRevision revision);
+	public SVNProperty [] getRevisionProperties(SVNRevision revision);
 }

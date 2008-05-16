@@ -18,6 +18,7 @@ import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
+import org.eclipse.team.svn.core.operation.local.property.IRevisionPropertiesProvider;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 
 /**
@@ -25,7 +26,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryLocation;
  * 
  * @author Alexei Goncharov
  */
-public class GetRevisionPropertiesOperation extends AbstractActionOperation {
+public class GetRevisionPropertiesOperation extends AbstractActionOperation implements IRevisionPropertiesProvider {
 	protected IRepositoryLocation location;
 	protected SVNRevision revision;
 	protected SVNProperty[] revProperties;
@@ -44,7 +45,7 @@ public class GetRevisionPropertiesOperation extends AbstractActionOperation {
 		this.location = location;
 	}
 	
-	public SVNProperty[] getRevisionProperties() {
+	public SVNProperty[] getRevisionProperties(SVNRevision revision) {
 		if (this.revProperties == null) {
 			return new SVNProperty[0];
 		}
