@@ -12,7 +12,6 @@
 package org.eclipse.team.svn.core.operation.local.property;
 
 import org.eclipse.team.svn.core.connector.SVNProperty;
-import org.eclipse.team.svn.core.connector.SVNRevision;
 
 /**
  * Revision properties provider.
@@ -20,5 +19,5 @@ import org.eclipse.team.svn.core.connector.SVNRevision;
  * @author Alexei Goncharov
  */
 public interface IRevisionPropertiesProvider {
-	public SVNProperty [] getRevisionProperties(SVNRevision revision);
+	public SVNProperty [] getRevisionProperties();
 }
