@@ -12,7 +12,6 @@
 package org.eclipse.team.svn.ui.history.data;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 
@@ -23,15 +22,17 @@ import java.util.List;
  */
 public class AffectedPathsNode {
 	protected String name;
-	protected List<AffectedPathsNode> children = new ArrayList<AffectedPathsNode>(); 
+	protected String compressedName;
+	protected List<AffectedPathsNode> children; 
 	protected AffectedPathsNode parent;
-	protected ArrayList<SVNChangedPathData> data = null;
+	protected ArrayList<SVNChangedPathData> data;
 	protected char status;
 	
 	public AffectedPathsNode(String name, AffectedPathsNode parent, char status) {
-		this.name = name;
+		this.name = this.compressedName = name;
 		this.parent = parent;
 		this.data = new ArrayList<SVNChangedPathData>();
+		this.children = new ArrayList<AffectedPathsNode>();
 		this.status = status;
 	}
 	
@@ -39,19 +40,16 @@ public class AffectedPathsNode {
 		return this.name;
 	}
 	
-	public AffectedPathsNode findByName(String name) {
-		for (Iterator<AffectedPathsNode> it = this.children.iterator(); it.hasNext(); ) {
-			AffectedPathsNode node = it.next();
-			if (node.getName().equals(name)) {
-				return node;
-			}
-		}
-		
-		return null;
+	public String getCompressedName() {
+		return this.compressedName;
 	}
 	
-	public String toString() {	
-		return this.name;
+	public void addCompressedNameSegment(String compressedName) {
+		this.compressedName += "/" + compressedName;
+	}
+	
+	public String toString() {
+		return this.compressedName;
 	}
 	
 	public boolean hasChildren() {
@@ -73,12 +71,6 @@ public class AffectedPathsNode {
 		return this.children.add(child);
 	}
 	
-	public void addChildren(List<AffectedPathsNode> children) {
-		for (Iterator<AffectedPathsNode> it = children.iterator(); it.hasNext(); ) {
-			this.addChild(it.next());
-		}		
-	}
-	
 	public boolean removeChild(AffectedPathsNode child) {
 		if (this.children.contains(child)) {
 			return this.children.remove(child);
@@ -87,18 +79,15 @@ public class AffectedPathsNode {
 	}
 	
 	public boolean equals(Object arg0) {
-		if (!(arg0 instanceof AffectedPathsNode)) {
-			return false;
+		if (arg0 instanceof AffectedPathsNode) {
+			AffectedPathsNode node2 = (AffectedPathsNode)arg0;
+			if (this.parent == null) {
+				return node2.parent == null;
+			}		
+			if (this.parent.equals(node2.parent) && this.name.equals(node2.name)) {
+				return true;
+			}
 		}
-		AffectedPathsNode node2 = (AffectedPathsNode)arg0;
-		if (this.parent == null) {
-			return node2.parent == null;
-		}		
-		if (this.parent.equals(node2.parent) &&
-				this.getName().equals(node2.getName())) {
-			return true;
-		}
-		
 		return false;
 	}
 	
@@ -106,7 +95,6 @@ public class AffectedPathsNode {
 		int h = 17;
         h += (31 * (this.parent != null ? this.parent.hashCode() : 0));
         h += (31 * this.name.hashCode());
-        
         return h;		
 	}
 
@@ -115,13 +103,10 @@ public class AffectedPathsNode {
 	}
 	
 	protected List<SVNChangedPathData> getPathDataImpl(List<SVNChangedPathData> result) {
-		if (this.data != null) {
-			result.addAll(this.data);
+		result.addAll(this.data);
+		for (AffectedPathsNode node : this.children) {
+			node.getPathDataImpl(result);
 		}
-		for (Iterator<AffectedPathsNode> it = this.children.iterator(); it.hasNext(); ) {
-			it.next().getPathDataImpl(result);
-		}
-
 		return result;
 	}
 
@@ -136,24 +121,21 @@ public class AffectedPathsNode {
     	return tmp.toArray(new SVNChangedPathData[tmp.size()]);
 	}
 	
-	public void setName(String name) {
-		this.name = name;
-	}
-	
 	public void setParent(AffectedPathsNode parent) {
 		this.parent = parent;
 	}
 
 	public void setChildren(List<AffectedPathsNode> children) {
-		this.children = children;
+		if (children != null) {
+			this.children = children;
+		}
+		else {
+			this.children.clear();
+		}
 	}
 	
 	public String getFullPath() {
-		String path = "";
-		if (this.parent != null) {
-			path = this.parent.getFullPath() + "/" + this.name;
-		}
-		return path;
+		return this.parent != null ? this.parent.getFullPath() + "/" + this.compressedName : "";
 	}
 
 	public char getStatus() {

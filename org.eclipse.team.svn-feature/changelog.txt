@@ -8,6 +8,29 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.0.v20080517 [17 May 2008]
+
+Features:
+ * Allow to set/modify revision properties (bug 231554)
+   + special thanks to Neale Upstone
+
+ * Support latest SVN 1.5 API changes [REOPENED] (bug 216473)
+ * Support relative paths and peg-revisions for svn:externals property (bug 231546)
+ * Support sparse checkouts (bug 231552)
+ * Minimize transactions count where it is possible regarding to SVN 1.5 API changes (bug 231548)
+
+Fixes:
+ * NPE in "Replace with Tag" operation (bug 226025)
+   + special thanks to Mark Addleman, Georg Lippold, Chris Myers
+
+ * Problem with tagging from branches (bug 229761)
+   + special thanks to Damir Murat
+
+ * Precise Team menu enablements must be disabled by default (bug 230461)
+   + special thanks to Rafael Chaves, Pavel Zuev, Assaf Almaz
+
+--------------------------------------------------------------------------------
+
 Version 0.7.0.v20080425 [25 April 2008]
 
 Fixes:

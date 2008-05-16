@@ -35,12 +35,15 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 		if (affectedPaths == null) {
 			return;
 		}
+		
 		for (int i = 0; i < affectedPaths.length; i++) {
 			SVNChangedPathData row = affectedPaths[i];
 			this.processPath(row, relatedPathPrefixes, relatedParents);
 		}
-		this.doCompress(this.root);
-		this.refreshStatuses(this.root);
+		
+		for (AffectedPathsNode node : this.root.getChildren()) {
+			this.doCompress(node);
+		}
 	}
 
 	public boolean hasChildren(Object element) {
@@ -83,12 +86,12 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 		AffectedPathsNode nextToLast = this.root;
 		while (st.hasMoreTokens()) {
 			String name = st.nextToken();
-			node = parent.findByName(name);
+			node = this.findByName(parent, name);
 			if (node == null) {
 				node = new AffectedPathsNode(name, parent, name.equals(affectedPath.resourceName) ? affectedPath.action : '\0');
 				parent.addChild(node);
 			} 
-			else if (name.equals(affectedPath.resourceName)) {
+			else if (!st.hasMoreTokens()) {
 				node.setStatus(affectedPath.action);
 			}
 			nextToLast = parent;
@@ -98,6 +101,15 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 		if (node != null && (node.getChildren() == null || node.getChildren().size() == 0) && (node.getPathData() == null || node.getPathData().length == 0)) {
 			nextToLast.removeChild(node);
 		}
+	}
+	
+	protected AffectedPathsNode findByName(AffectedPathsNode parent, String name) {
+		for (AffectedPathsNode node : parent.getChildren()) {
+			if (node.getName().equals(name)) {
+				return node;
+			}
+		}
+		return null;
 	}
 	
 	protected boolean isRelatedParent(String fullPath, Collection<String> relatedParents) {
@@ -122,66 +134,31 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 	
 	protected void doCompress(AffectedPathsNode node) {
 		List<AffectedPathsNode> children = node.getChildren();
-		if (node.getParent() == null) {
-			for (Iterator<AffectedPathsNode> it = children.iterator(); it.hasNext(); ) {
-				this.doCompress(it.next());
+		if (children.size() > 1) {
+			for (AffectedPathsNode tNode : children) {
+				this.doCompress(tNode);
 			}
-			return;
-		}
-		if (children.size() == 0) {
-			return;
 		}
 		else if (children.size() == 1) {
-			AffectedPathsNode nodeChild = children.get(0);
-			if (node.getData() != null && node.getData().length > 0) {
-				this.doCompress(nodeChild);
-				return;
+			AffectedPathsNode child = children.get(0);
+			
+			if (node.getData().length > 0) {
+				this.doCompress(child);
 			}
-			node.setName(node.getName() + "/" + nodeChild.getName());
-			List<AffectedPathsNode> lowerChildren = nodeChild.getChildren();
-			for (Iterator<AffectedPathsNode> it = lowerChildren.iterator(); it.hasNext(); ) {
-				it.next().setParent(node);
-			}
-			node.setChildren(lowerChildren);
-			SVNChangedPathData [] data = nodeChild.getData();
-			for (int i = 0; i < data.length; i++) {
-				node.addData(data[i]);
-			}
-			this.doCompress(node);
-			for (Iterator<AffectedPathsNode> it = lowerChildren.iterator(); it.hasNext(); ) {
-				this.doCompress(it.next());
-			}
-		}
-		else {
-			for (Iterator<AffectedPathsNode> it = children.iterator(); it.hasNext(); ) {
-				this.doCompress(it.next());
-			}
-		}
-		
-	}
-	
-	protected void refreshStatuses(AffectedPathsNode node) {
-		List<AffectedPathsNode> children = node.getChildren();
-		if (children.size() == 0) {
-			return;
-		}
-		SVNChangedPathData [] affectedPathData = node.getData();
-		if (affectedPathData != null && affectedPathData.length > 0) {
-			for (Iterator<AffectedPathsNode> iter = children.iterator(); iter.hasNext();) {
-				AffectedPathsNode currentNode = iter.next();
-				for (int i = 0; i < affectedPathData.length; i++) {
-					SVNChangedPathData affectedPath = affectedPathData[i];
-					if (currentNode.getName().equals(affectedPath.resourceName)) {
-						currentNode.setStatus(affectedPath.action);
-						break;
-					}
+			else {
+				node.addCompressedNameSegment(child.getName());
+				
+				List<AffectedPathsNode> lowerChildren = child.getChildren();
+				for (AffectedPathsNode tNode : lowerChildren) {
+					tNode.setParent(node);
 				}
-				this.refreshStatuses(currentNode);
-			}
-		}
-		else {
-			for (Iterator<AffectedPathsNode> iter = children.iterator(); iter.hasNext();) {
-				this.refreshStatuses(iter.next());
+				node.setChildren(lowerChildren);
+				
+				for (SVNChangedPathData data : child.getData()) {
+					node.addData(data);
+				}
+				
+				this.doCompress(node);
 			}
 		}
 	}
