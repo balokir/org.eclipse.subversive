@@ -398,7 +398,7 @@ public interface ISVNConnector {
 
 	public void removeProperty(String path, String name, int depth, String[] changelistNames, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public SVNProperty []getRevisionProperties(SVNEntryReference reference, ISVNPropertyCallback callback, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public SVNProperty []getRevisionProperties(SVNEntryReference reference, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public SVNProperty getRevisionProperty(SVNEntryReference reference, String name, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
