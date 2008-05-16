@@ -32,9 +32,11 @@ import org.eclipse.ui.PlatformUI;
  */
 public class SVNTeamPerformancePage extends AbstractSVNTeamPreferencesPage {
 	protected Button computeDeepButton;
+	protected Button preciseEnablementsButton;
 	protected Button enableCacheButton;
 	
 	protected boolean computeDeep;
+	protected boolean preciseEnablements;
 	protected boolean enableCache;
 
 	public SVNTeamPerformancePage() {
@@ -47,24 +49,32 @@ public class SVNTeamPerformancePage extends AbstractSVNTeamPreferencesPage {
 
 	protected void saveValues(IPreferenceStore store) {
 		SVNTeamPreferences.setDecorationBoolean(store, SVNTeamPreferences.DECORATION_COMPUTE_DEEP_NAME, this.computeDeep);
+		SVNTeamPreferences.setDecorationBoolean(store, SVNTeamPreferences.DECORATION_PRECISE_ENABLEMENTS_NAME, this.preciseEnablements);
 		SVNTeamPreferences.setDecorationBoolean(store, SVNTeamPreferences.DECORATION_ENABLE_CACHE_NAME, this.computeDeep | this.enableCache);
 	}
 	
 	protected void loadDefaultValues(IPreferenceStore store) {
 		this.computeDeep = SVNTeamPreferences.DECORATION_COMPUTE_DEEP_DEFAULT;
+		this.preciseEnablements = SVNTeamPreferences.DECORATION_PRECISE_ENABLEMENTS_DEFAULT;
 		this.enableCache = SVNTeamPreferences.DECORATION_ENABLE_CACHE_DEFAULT;
 	}
 	
 	protected void loadValues(IPreferenceStore store) {
 		this.computeDeep = SVNTeamPreferences.getDecorationBoolean(store, SVNTeamPreferences.DECORATION_COMPUTE_DEEP_NAME);
+		this.preciseEnablements = SVNTeamPreferences.getDecorationBoolean(store, SVNTeamPreferences.DECORATION_PRECISE_ENABLEMENTS_NAME);
 		this.enableCache = SVNTeamPreferences.getDecorationBoolean(store, SVNTeamPreferences.DECORATION_ENABLE_CACHE_NAME);
 	}
 	
 	protected void initializeControls() {
 		this.computeDeepButton.setSelection(this.computeDeep);
+		this.preciseEnablementsButton.setSelection(this.preciseEnablements);
 		this.enableCacheButton.setSelection(this.enableCache);
-		if (this.computeDeep) {
+		if (this.computeDeep || this.preciseEnablements) {
 			this.enableCacheButton.setEnabled(false);
+		}
+		else if (!this.enableCache) {
+			this.computeDeepButton.setEnabled(false);
+			this.preciseEnablementsButton.setEnabled(false);
 		}
 	}
 	
@@ -93,7 +103,17 @@ public class SVNTeamPerformancePage extends AbstractSVNTeamPreferencesPage {
 		this.computeDeepButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent (Event event) {
 				SVNTeamPerformancePage.this.computeDeep = SVNTeamPerformancePage.this.computeDeepButton.getSelection();
-				SVNTeamPerformancePage.this.enableCacheButton.setEnabled(!SVNTeamPerformancePage.this.computeDeep);
+				SVNTeamPerformancePage.this.enableCacheButton.setEnabled(!(SVNTeamPerformancePage.this.computeDeep | SVNTeamPerformancePage.this.preciseEnablements));
+			}
+		});
+		
+		this.preciseEnablementsButton = new Button(composite, SWT.CHECK);
+		this.preciseEnablementsButton.setLayoutData(new GridData());
+		this.preciseEnablementsButton.setText(SVNTeamUIPlugin.instance().getResource("PerformancePreferencePage.preciseEnablements"));
+		this.preciseEnablementsButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent (Event event) {
+				SVNTeamPerformancePage.this.preciseEnablements = SVNTeamPerformancePage.this.preciseEnablementsButton.getSelection();
+				SVNTeamPerformancePage.this.enableCacheButton.setEnabled(!(SVNTeamPerformancePage.this.computeDeep | SVNTeamPerformancePage.this.preciseEnablements));
 			}
 		});
 		
@@ -103,6 +123,8 @@ public class SVNTeamPerformancePage extends AbstractSVNTeamPreferencesPage {
 		this.enableCacheButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent (Event event) {
 				SVNTeamPerformancePage.this.enableCache = SVNTeamPerformancePage.this.enableCacheButton.getSelection();
+				SVNTeamPerformancePage.this.computeDeepButton.setEnabled(SVNTeamPerformancePage.this.enableCache);
+				SVNTeamPerformancePage.this.preciseEnablementsButton.setEnabled(SVNTeamPerformancePage.this.enableCache);
 			}
 		});
 		
