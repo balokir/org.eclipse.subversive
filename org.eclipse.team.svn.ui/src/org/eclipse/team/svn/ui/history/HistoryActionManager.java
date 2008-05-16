@@ -1398,7 +1398,7 @@ public class HistoryActionManager {
 	protected void modifyRevisionProperty(IRepositoryLocation location, SVNRevision selectedRevision) {
 		GetRevisionPropertiesOperation getPropOp = new GetRevisionPropertiesOperation(location, selectedRevision);
 		UIMonitorUtility.doTaskNowDefault(getPropOp, false);
-		RevPropertiesEditPanel panel = new RevPropertiesEditPanel(getPropOp.getRevisionProperties(selectedRevision), selectedRevision, location);
+		RevPropertiesEditPanel panel = new RevPropertiesEditPanel(getPropOp.getRevisionProperties(), selectedRevision, location);
 		if (new DefaultDialog(UIMonitorUtility.getShell(), panel).open() == 0) {
 			final SVNProperty []data = new SVNProperty[] {new SVNProperty(panel.getPropertyName(), panel.getPropertyValue())};
 			SetRevisionPropertyOperation setPropOp = null;
@@ -1423,7 +1423,7 @@ public class HistoryActionManager {
 		        };
 		        op.add(loadOp);
 				IRevisionPropertiesProvider provider = new IRevisionPropertiesProvider() {
-					public SVNProperty[] getRevisionProperties(SVNRevision revision) {
+					public SVNProperty[] getRevisionProperties() {
 						return data;
 					}
 				};

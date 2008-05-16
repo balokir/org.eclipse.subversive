@@ -45,7 +45,7 @@ public class GetRevisionPropertiesOperation extends AbstractActionOperation impl
 		this.location = location;
 	}
 	
-	public SVNProperty[] getRevisionProperties(SVNRevision revision) {
+	public SVNProperty[] getRevisionProperties() {
 		if (this.revProperties == null) {
 			return new SVNProperty[0];
 		}

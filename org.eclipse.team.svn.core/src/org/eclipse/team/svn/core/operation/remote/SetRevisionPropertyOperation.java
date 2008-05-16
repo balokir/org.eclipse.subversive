@@ -45,7 +45,7 @@ public class SetRevisionPropertyOperation extends AbstractActionOperation {
 	public SetRevisionPropertyOperation(IRepositoryLocation location, SVNRevision revision, final SVNProperty revProp) {
 		this(location, revision,
 				new IRevisionPropertiesProvider() {
-					public SVNProperty[] getRevisionProperties(SVNRevision revision) {
+					public SVNProperty[] getRevisionProperties() {
 						return new SVNProperty [] {revProp};
 					}
 		});
@@ -68,7 +68,7 @@ public class SetRevisionPropertyOperation extends AbstractActionOperation {
 	}
 		
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		SVNProperty toSet = this.provider.getRevisionProperties(this.revision)[0];
+		SVNProperty toSet = this.provider.getRevisionProperties()[0];
 		ISVNConnector proxy =  this.location.acquireSVNProxy();
 		try {
 			proxy.setRevisionProperty(new SVNEntryReference(this.location.getUrl(), this.revision) , toSet.name, toSet.value, Options.FORCE, new SVNProgressMonitor(SetRevisionPropertyOperation.this, monitor, null));
