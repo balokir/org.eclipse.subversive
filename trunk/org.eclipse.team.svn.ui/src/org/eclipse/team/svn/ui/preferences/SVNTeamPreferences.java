@@ -203,9 +203,11 @@ public final class SVNTeamPreferences {
 	public static final boolean DECORATION_ICON_SWITCHED_DEFAULT = true;
 	
 	public static final String DECORATION_COMPUTE_DEEP_NAME = "compute.deep";
-	public static final boolean DECORATION_COMPUTE_DEEP_DEFAULT = true;
-	
+	public static final String DECORATION_PRECISE_ENABLEMENTS_NAME = "precise.enablements";
 	public static final String DECORATION_ENABLE_CACHE_NAME = "enable.cache";
+	
+	public static final boolean DECORATION_COMPUTE_DEEP_DEFAULT = true;
+	public static final boolean DECORATION_PRECISE_ENABLEMENTS_DEFAULT = false;
 	public static final boolean DECORATION_ENABLE_CACHE_DEFAULT = true;
 	
 	public static final String DECORATION_USE_FONT_COLORS_DECOR_NAME = "use.fontdecor";
@@ -348,6 +350,7 @@ public final class SVNTeamPreferences {
 	
 	public static void setDefaultPerformanceValues(IPreferenceStore store) {
 		store.setDefault(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.DECORATION_COMPUTE_DEEP_NAME), SVNTeamPreferences.DECORATION_COMPUTE_DEEP_DEFAULT);		
+		store.setDefault(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.DECORATION_PRECISE_ENABLEMENTS_NAME), SVNTeamPreferences.DECORATION_PRECISE_ENABLEMENTS_DEFAULT);		
 		store.setDefault(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.DECORATION_ENABLE_CACHE_NAME), SVNTeamPreferences.DECORATION_ENABLE_CACHE_DEFAULT);		
 	}
 	
@@ -467,6 +470,7 @@ public final class SVNTeamPreferences {
 	
 	public static void resetToDefaultPerformanceValues(IPreferenceStore store) {
 		store.setValue(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.DECORATION_COMPUTE_DEEP_NAME), SVNTeamPreferences.DECORATION_COMPUTE_DEEP_DEFAULT);
+		store.setValue(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.DECORATION_PRECISE_ENABLEMENTS_NAME), SVNTeamPreferences.DECORATION_PRECISE_ENABLEMENTS_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.DECORATION_ENABLE_CACHE_NAME), SVNTeamPreferences.DECORATION_ENABLE_CACHE_DEFAULT);
 	}
 	

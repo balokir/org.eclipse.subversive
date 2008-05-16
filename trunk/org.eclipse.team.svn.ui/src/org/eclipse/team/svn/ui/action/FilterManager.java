@@ -50,7 +50,7 @@ public class FilterManager implements IPropertyChangeListener, IResourceStatesLi
 	}
 	
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.DECORATION_COMPUTE_DEEP_NAME)) ||
+		if (event.getProperty().equals(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.DECORATION_PRECISE_ENABLEMENTS_NAME)) ||
 			event.getProperty().equals(SVNTeamPreferences.fullCoreName(SVNTeamPreferences.CORE_SVNCONNECTOR_NAME))) {
 			this.clear();
 		}
@@ -69,7 +69,7 @@ public class FilterManager implements IPropertyChangeListener, IResourceStatesLi
 	}
 	
 	public boolean checkForResourcesPresence(IResource []selectedResources, IStateFilter stateFilter, boolean recursive) {
-		boolean computeDeep = SVNTeamPreferences.getDecorationBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.DECORATION_COMPUTE_DEEP_NAME);
+		boolean computeDeep = SVNTeamPreferences.getDecorationBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.DECORATION_PRECISE_ENABLEMENTS_NAME);
 		if (this.dirty) {
 			this.dirty = false;
 			if (!this.connectedToSVN(selectedResources)) {
