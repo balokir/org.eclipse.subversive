@@ -23,6 +23,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.extension.factory.PredefinedProperty;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPropsPreferencePage.CustomProperty;
+import org.eclipse.team.svn.ui.verifier.PropertyVerifier;
 
 /**
  * Panel for editing revision properties.
@@ -72,6 +73,9 @@ public class RevPropertiesEditPanel extends AbstractPropertyEditPanel {
 	}
 
 	protected void fillVerifiersMap() {
+		for (PredefinedProperty current : this.predefinedProperties) {
+			this.verifiers.put(current.name, new PropertyVerifier("EditPropertiesInputField", "", current.name, null));
+		}
 	}
 
 	protected List<PredefinedProperty> getPredefinedProperties() {

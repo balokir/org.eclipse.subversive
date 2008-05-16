@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.ui.verifier;
 
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,7 +49,7 @@ public class PropertyVerifier extends AbstractFormattedVerifier {
     }
 	
 	protected String getErrorMessageImpl(Control input) {
-		if (!this.toValidate) {
+		if (!this.toValidate || this.propName.equals("svnlog") || this.propName.equals("svnauthor")) {
 			return null;
 		}
 		String inputText = this.getText(input);
@@ -79,6 +80,15 @@ public class PropertyVerifier extends AbstractFormattedVerifier {
 			}
 			return null;
 		}
+		if (this.propName.equals("svndate")) {
+			try {
+				new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(inputText);
+			}
+			catch (Exception ex) {
+				return SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.Verifier." + this.propName, new String [] {"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"});
+			}
+			return null;
+		}
 		Matcher matcher = this.pattern.matcher(inputText);
 		if (!matcher.matches()) {
 			String retVal = SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.Verifier." + this.propName);
@@ -91,7 +101,10 @@ public class PropertyVerifier extends AbstractFormattedVerifier {
 	}	
 
 	protected String getWarningMessageImpl(Control input) {
-		return null;
+		if (this.propName.equals("svnautoversioned")) {
+			return null;
+		}
+		return SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.Verifier.Warning." + this.propName);
 	}
 
 }
