@@ -44,16 +44,13 @@ public class RemoteResourceTransfer extends ByteArrayTransfer {
     		return;
     	}
     	RemoteResourceTransferrable transferrable = (RemoteResourceTransferrable)object;
-    	IRepositoryResource []resources = transferrable.getResources();
-    	IRemoteStorage storage = SVNRemoteStorage.instance();
 
     	ByteArrayOutputStream stream = new ByteArrayOutputStream();
     	try {
-    		stream.write(transferrable.getOperationType());
-    		if (transferrable.getResources() != null &&
-    			transferrable.getOperationType() != RemoteResourceTransferrable.OP_NONE) {
-            	for (int i = 0; i < resources.length; i++) {
-            		byte []data = storage.repositoryResourceAsBytes(resources[i]);
+    		stream.write(transferrable.operation);
+    		if (transferrable.resources != null && transferrable.operation != RemoteResourceTransferrable.OP_NONE) {
+            	for (int i = 0; i < transferrable.resources.length; i++) {
+            		byte []data = SVNRemoteStorage.instance().repositoryResourceAsBytes(transferrable.resources[i]);
             		stream.write(data.length & 0xFF);
             		stream.write((data.length >> 8) & 0xFF);
             		stream.write(data);

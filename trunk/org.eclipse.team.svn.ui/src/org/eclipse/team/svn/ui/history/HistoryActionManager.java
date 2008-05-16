@@ -1428,7 +1428,6 @@ public class HistoryActionManager {
 		CompositeOperation op = new CompositeOperation(mainOp.getId());
 		op.add(preOp);
 		op.add(mainOp, new IActionOperation[] {preOp});
-		op.add(new RefreshResourcesOperation(new IResource [] {this.view.getResource().getProject()}));
 		UIMonitorUtility.doTaskScheduledActive(op);
 	}
 	
