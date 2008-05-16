@@ -23,20 +23,12 @@ public class RemoteResourceTransferrable {
 	public static final int OP_COPY = 0;
 	public static final int OP_CUT = 1;
 	
-	protected IRepositoryResource []resources;
-	protected int operation;
+	public final IRepositoryResource []resources;
+	public final int operation;
 
 	public RemoteResourceTransferrable(IRepositoryResource []resources, int operation) {
 		this.resources = resources;
 		this.operation = operation;
-	}
-
-	public int getOperationType() {
-		return this.operation;
-	}
-	
-	public IRepositoryResource []getResources() {
-		return this.resources;
 	}
 	
 }
