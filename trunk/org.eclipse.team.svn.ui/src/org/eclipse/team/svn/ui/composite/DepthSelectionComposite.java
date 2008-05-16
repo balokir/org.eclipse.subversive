@@ -56,14 +56,14 @@ public class DepthSelectionComposite extends Composite {
 		final String immediates = SVNTeamUIPlugin.instance().getResource("RecurseDepthSelector.Immediates");
 		final String infinity = SVNTeamUIPlugin.instance().getResource("RecurseDepthSelector.Infinity");
 		
-		boolean svn15used = CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() == ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x;
+		boolean svn15compatible = CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() >= ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x;
 		
 		Combo depthSelector = new Combo(this, SWT.READ_ONLY);
-		if (svn15used) {
+		if (svn15compatible) {
 			depthSelector.add(empty);
 		}
 		depthSelector.add(files);
-		if (svn15used) {
+		if (svn15compatible) {
 			depthSelector.add(immediates);
 		}
 		depthSelector.add(infinity);
