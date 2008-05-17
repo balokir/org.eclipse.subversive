@@ -33,6 +33,8 @@ Version 0.7.0.v20080517 release date: 17 May 2008
 	
 	 * Precise Team menu enablements must be disabled by default (bug 230461)
 	   + special thanks to Rafael Chaves, Pavel Zuev, Assaf Almaz
+	   
+ 	* Automatic project share makes more than one repository location for the same repository (bug 232649)
 
 2. Information
 

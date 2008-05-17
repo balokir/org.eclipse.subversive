@@ -69,7 +69,6 @@ public class SVNFolderListener implements IResourceChangeListener {
 								SVNTeamPlugin.instance().getOptionProvider().isAutomaticProjectShareEnabled() && ((IProject)resource).isOpen()) {
 								SVNChangeStatus info = SVNUtility.getSVNInfoForNotConnected(resource);
 								if (info != null && info.url != null) {
-									CompositeOperation op = new CompositeOperation("Operation.Reconnect");
 									String url = SVNUtility.decodeURL(info.url);
 									IRepositoryRoot []roots = SVNUtility.findRoots(url, true);
 									IRepositoryLocation location = null;
@@ -92,14 +91,17 @@ public class SVNFolderListener implements IResourceChangeListener {
 										}
 										location = SVNRemoteStorage.instance().newRepositoryLocation();
 										SVNUtility.initializeRepositoryLocation(location, url);
-										op.add(new AddRepositoryLocationOperation(location));
+										AddRepositoryLocationOperation mainOp = new AddRepositoryLocationOperation(location);
+										CompositeOperation op = new CompositeOperation(mainOp.getId());
+										op.add(mainOp);
 										op.add(new SaveRepositoryLocationsOperation());
+										// important! location doubles when it is added asynchronously and several projects for the same location are imported 
+										ProgressMonitorUtility.doTaskExternal(op, monitor);
 									}
 									else {
 										location = roots[0].getRepositoryLocation();
 									}
-									op.add(new ReconnectProjectOperation(new IProject[] {(IProject)resource}, location));
-									ProgressMonitorUtility.doTaskScheduled(op);
+									ProgressMonitorUtility.doTaskScheduled(new ReconnectProjectOperation(new IProject[] {(IProject)resource}, location));
 									return false;
 								}
 							}
