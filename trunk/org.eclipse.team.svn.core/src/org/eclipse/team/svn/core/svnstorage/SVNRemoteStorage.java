@@ -581,15 +581,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	
 	protected ILocalResource loadLocalResourcesSubTreeSVNImpl(IConnectedProjectInformation provider, IResource resource, boolean recurse) throws Exception {
 		IProject project = resource.getProject();
-		IResource target = null;
-		boolean recursively = false;
-		if (resource.getType() == IResource.FILE) {
-			target = resource.getParent();
-		}
-		else {
-			target = resource;
-			recursively = target.getFullPath().segmentCount() > 2 & recurse;
-		}
+		IResource target = resource.getType() == IResource.FILE ? resource.getParent() : resource;
 
 		IPath wcPath = project.getLocation();
 		IPath resourcePath = target.getLocation();
@@ -609,12 +601,11 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 			}
 			hasSVNMeta = false;
 			// load statuses non-recursively for the found parent
-			recursively = false;
 			resourcePath = resourcePath.removeLastSegments(1);
 			target = target.getParent();
 		}
 		IRepositoryResource baseResource = provider.getRepositoryResource();
-		SVNChangeStatus []statuses = this.getStatuses(baseResource.getRepositoryLocation(), resourcePath.toString(), recursively);
+		SVNChangeStatus []statuses = this.getStatuses(baseResource.getRepositoryLocation(), resourcePath.toString());
 		String desiredUrl = this.makeUrl(target, baseResource);
 		ILocalResource retVal = this.fillCache(statuses, desiredUrl, resource, subPathStart, requestedPath);
 		
@@ -623,7 +614,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 			this.parent2Children.put(target.getFullPath(), new HashSet());
 		}
 		
-		if (retVal != null && hasSVNMeta && !recursively && statuses.length > 1 && recurse) {
+		if (retVal != null && hasSVNMeta && statuses.length > 1 && recurse) {
 			this.scheduleStatusesFetch(statuses, target);
 		}
 		
@@ -691,7 +682,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		return path.append(SVNUtility.getSVNFolderName()).toFile().exists();
 	}
 	
-	protected SVNChangeStatus []getStatuses(IRepositoryLocation location, String path, boolean recursively) throws Exception {
+	protected SVNChangeStatus []getStatuses(IRepositoryLocation location, String path) throws Exception {
 		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
 			SVNChangeStatus []statuses = SVNUtility.status(proxy, path, Depth.IMMEDIATES, ISVNConnector.Options.INCLUDE_UNCHANGED | ISVNConnector.Options.INCLUDE_IGNORED, new SVNNullProgressMonitor());
