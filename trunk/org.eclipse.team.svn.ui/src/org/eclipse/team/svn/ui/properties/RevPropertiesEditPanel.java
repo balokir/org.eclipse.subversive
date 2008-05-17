@@ -74,7 +74,7 @@ public class RevPropertiesEditPanel extends AbstractPropertyEditPanel {
 
 	protected void fillVerifiersMap() {
 		for (PredefinedProperty current : this.predefinedProperties) {
-			this.verifiers.put(current.name, new PropertyVerifier("EditPropertiesInputField", "", current.name, null));
+			this.verifiers.put(current.name, new PropertyVerifier("EditPropertiesInputField", current.name.equals("svn:autoversioned") ? null : "", current.name, null));
 		}
 	}
 

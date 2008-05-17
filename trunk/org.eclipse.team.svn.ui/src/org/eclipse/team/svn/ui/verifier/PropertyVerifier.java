@@ -101,10 +101,15 @@ public class PropertyVerifier extends AbstractFormattedVerifier {
 	}	
 
 	protected String getWarningMessageImpl(Control input) {
-		if (this.propName.equals("svnautoversioned")) {
+		if (this.propName == null) {
 			return null;
 		}
-		return SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.Verifier.Warning." + this.propName);
+		if (this.propName.equals("svnauthor")
+				|| this.propName.equals("svnlog")
+				|| this.propName.equals("svndate")) {
+			return SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.Verifier.Warning." + this.propName);
+		}
+		return null;
 	}
 
 }
