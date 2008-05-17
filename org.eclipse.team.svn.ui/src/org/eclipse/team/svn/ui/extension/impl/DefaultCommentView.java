@@ -174,7 +174,7 @@ public class DefaultCommentView implements ICommentView {
 				if (DefaultCommentView.this.getModel().getMessage() != null) {
 					DefaultCommentView.this.linkList.parseMessage(text, DefaultCommentView.this.getModel());
 				}
-				List styledRanges = new ArrayList();
+				List<StyleRange> styledRanges = new ArrayList<StyleRange>();
 				for (Iterator iter = DefaultCommentView.this.linkList.getLinks().iterator(); iter.hasNext();) {
 					LinkList.LinkPlacement issue = (LinkList.LinkPlacement)iter.next();
 					StyleRange range = new StyleRange();
@@ -193,7 +193,7 @@ public class DefaultCommentView implements ICommentView {
 					range.underline = true;
 					styledRanges.add(range);
 				}
-				StyleRange[] sorted = (StyleRange[]) styledRanges.toArray(new StyleRange[styledRanges.size()]);
+				StyleRange[] sorted = styledRanges.toArray(new StyleRange[styledRanges.size()]);
 				for (int i = 0; i < sorted.length-1; i++){
 					for (int j = sorted.length-1; j > i; j--) {
 						if (sorted[j].start < sorted[j-1].start) {

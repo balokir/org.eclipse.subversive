@@ -643,8 +643,8 @@ public class HistoryActionManager {
 		}
 		
 		protected ILogNode []getSelection(StructuredViewer viewer) {
-			List selection = ((IStructuredSelection)viewer.getSelection()).toList();
-			return (ILogNode [])selection.toArray(new ILogNode[selection.size()]);
+			List<?> selection = ((IStructuredSelection)viewer.getSelection()).toList();
+			return selection.toArray(new ILogNode[selection.size()]);
 		}
 
 	}
@@ -1349,7 +1349,7 @@ public class HistoryActionManager {
 	}
 	
 	protected boolean checkSelectionForExistanceInPrev(IStructuredSelection selection) {
-		for (Iterator it = selection.iterator(); it.hasNext();) {
+		for (Iterator<?> it = selection.iterator(); it.hasNext();) {
 			Object next = it.next();
 			if (next instanceof SVNChangedPathData) {
 				SVNChangedPathData current = (SVNChangedPathData)next;

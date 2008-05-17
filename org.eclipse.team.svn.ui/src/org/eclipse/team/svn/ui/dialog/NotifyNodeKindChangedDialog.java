@@ -13,6 +13,7 @@ package org.eclipse.team.svn.ui.dialog;
 
 import java.util.HashSet;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -38,11 +39,11 @@ public class NotifyNodeKindChangedDialog extends MessageDialog {
     }
     
     protected static String enumerateParents(IResource []resources) {
-        HashSet parents = new HashSet();
+        HashSet<IContainer> parents = new HashSet<IContainer>();
         for (int i = 0; i < resources.length; i++) {
             parents.add(resources[i].getParent());
         }
-        resources = (IResource [])parents.toArray(new IResource[parents.size()]);
+        resources = parents.toArray(new IResource[parents.size()]);
         FileUtility.reorder(resources, true);
         String retVal = "";
         for (int i = 0; i < resources.length; i++) {

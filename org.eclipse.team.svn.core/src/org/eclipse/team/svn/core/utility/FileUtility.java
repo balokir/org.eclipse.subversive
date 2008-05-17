@@ -129,10 +129,10 @@ public final class FileUtility {
 		return location;
 	}
 	
-	public static Map getEnvironmentVariables() {
+	public static Map<String, String> getEnvironmentVariables() {
 		try {
 			Method getenv = System.class.getMethod("getenv", (Class [])null);
-			return (Map)getenv.invoke(null, (Object [])null);
+			return (Map<String, String>)getenv.invoke(null, (Object [])null);
 		}
 		catch (Exception ex) {
 			try {
@@ -141,7 +141,7 @@ public final class FileUtility {
 	            
 				BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 	            String varLine;
-				HashMap retVal = new HashMap();
+				HashMap<String, String> retVal = new HashMap<String, String>();
 	            while ((varLine = br.readLine()) != null) {
 	                int idx = varLine.indexOf('=');
 	                if (idx != -1) {
@@ -155,7 +155,7 @@ public final class FileUtility {
 				return retVal;
 			}
 			catch (IOException ex1) {
-				return Collections.EMPTY_MAP;
+				return Collections.emptyMap();
 			}
 		}
 	}
@@ -316,10 +316,10 @@ public final class FileUtility {
 	public static boolean checkForResourcesPresence(IResource []roots, IStateFilter filter, int depth) {
 		IRemoteStorage storage = SVNRemoteStorage.instance();
 		
-		ArrayList recursiveCheck = null;
+		ArrayList<IResource> recursiveCheck = null;
 		int nextDepth = IResource.DEPTH_ZERO;
 		if (depth != IResource.DEPTH_ZERO) {
-			recursiveCheck = new ArrayList();
+			recursiveCheck = new ArrayList<IResource>();
 			nextDepth = depth == IResource.DEPTH_ONE ? IResource.DEPTH_ZERO : IResource.DEPTH_INFINITE;
 		}
 		
@@ -342,7 +342,7 @@ public final class FileUtility {
 		
 		// no resources accepted, check recursively (performance optimizations)
 		if (depth != IResource.DEPTH_ZERO) {
-			for (Iterator it = recursiveCheck.iterator(); it.hasNext(); ) {
+			for (Iterator<IResource> it = recursiveCheck.iterator(); it.hasNext(); ) {
 				IContainer local = (IContainer)it.next();
 				if (FileUtility.checkForResourcesPresence(FileUtility.getAllMembers(local), filter, nextDepth)) {
 					return true;
@@ -371,9 +371,9 @@ public final class FileUtility {
 	}
 	
 	public static IResource []getResourcesRecursive(IResource []roots, IStateFilter filter, int depth, IActionOperation calledFrom, IProgressMonitor monitor) {
-		Set resources = new HashSet();
+		Set<IResource> resources = new HashSet<IResource>();
 		FileUtility.addChildren(resources, roots, filter, depth, calledFrom, monitor);
-		return (IResource [])resources.toArray(new IResource[resources.size()]);
+		return resources.toArray(new IResource[resources.size()]);
 	}
 	
 	public static IResource []addOperableParents(IResource []resources, IStateFilter stateFilter) {
@@ -381,9 +381,9 @@ public final class FileUtility {
 	}
 	
 	public static IResource []addOperableParents(IResource []resources, IStateFilter stateFilter, boolean through) {
-		HashSet tmp = new HashSet(Arrays.asList(resources));
+		HashSet<IResource> tmp = new HashSet<IResource>(Arrays.asList(resources));
 		tmp.addAll(Arrays.asList(FileUtility.getOperableParents(resources, stateFilter, through)));
-		return (IResource [])tmp.toArray(new IResource[tmp.size()]);
+		return tmp.toArray(new IResource[tmp.size()]);
 	}
 	
 	public static IResource []getOperableParents(IResource []resources, IStateFilter stateFilter) {
@@ -391,7 +391,7 @@ public final class FileUtility {
 	}
 	
 	public static IResource []getOperableParents(IResource []resources, IStateFilter stateFilter, boolean through) {
-		HashSet tmp = new HashSet();
+		HashSet<IResource> tmp = new HashSet<IResource>();
 		IResource []parents = FileUtility.getParents(resources, true);
 		if (!through) {
 			FileUtility.reorder(parents, false);
@@ -414,11 +414,11 @@ public final class FileUtility {
 				}
 			}
 		}
-		return (IResource [])tmp.toArray(new IResource[tmp.size()]);
+		return tmp.toArray(new IResource[tmp.size()]);
 	}
 	
 	public static IResource []getParents(IResource []resources, boolean excludeIncoming) {
-		HashSet parents = new HashSet();
+		HashSet<IResource> parents = new HashSet<IResource>();
 		for (int i = 0; i < resources.length; i++) {
 			IResource parent = resources[i];
 			while ((parent = parent.getParent()) != null && !(parent instanceof IWorkspaceRoot)) {
@@ -431,7 +431,7 @@ public final class FileUtility {
 		if (excludeIncoming) {
 			parents.removeAll(Arrays.asList(resources));
 		}
-		return (IResource [])parents.toArray(new IResource[parents.size()]);
+		return parents.toArray(new IResource[parents.size()]);
 	}
 	
 	public static boolean isSVNInternals(IResource resource) {
@@ -539,7 +539,7 @@ public final class FileUtility {
 	}
 	
 	public static void removeSVNMetaInformation(IResource root, IProgressMonitor monitor) throws CoreException {
-		final List toRemove = new ArrayList();
+		final List<IResource> toRemove = new ArrayList<IResource>();
 		
 		root.accept(new IResourceVisitor() {
 			public boolean visit(IResource resource) throws CoreException {
@@ -553,8 +553,8 @@ public final class FileUtility {
 		IResource.DEPTH_INFINITE, 
 		IContainer.INCLUDE_PHANTOMS | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
 		
-		for (Iterator it = toRemove.iterator(); it.hasNext(); ) {
-			IResource resource = (IResource)it.next();
+		for (Iterator<IResource> it = toRemove.iterator(); it.hasNext(); ) {
+			IResource resource = it.next();
 			FileUtility.deleteRecursive(new File(resource.getLocation().toString()));
 		}
 	}
@@ -573,8 +573,8 @@ public final class FileUtility {
 	}
 	
 	public static IResource []getPathNodes(IResource []resources) {
-		List tmp = Arrays.asList(resources);
-		Set modifiedRoots = new HashSet();
+		List<IResource> tmp = Arrays.asList(resources);
+		Set<IResource> modifiedRoots = new HashSet<IResource>();
 		IWorkspaceRoot wRoot = ResourcesPlugin.getWorkspace().getRoot();
 		
 		for (int i = 0; i < resources.length; i++) {
@@ -589,11 +589,11 @@ public final class FileUtility {
 			}
 		}
 		
-		return (IResource [])modifiedRoots.toArray(new IResource[modifiedRoots.size()]);
+		return modifiedRoots.toArray(new IResource[modifiedRoots.size()]);
 	}
 	
 	public static void reorder(IResource []resources, final boolean parent2Child) {
-		Arrays.sort(resources, new Comparator() {
+		Arrays.sort(resources, new Comparator<Object>() {
 			public int compare(Object o1, Object o2) {
 				String first = ((IResource)o1).getFullPath().toString();
 				String second = ((IResource)o2).getFullPath().toString();
@@ -603,7 +603,7 @@ public final class FileUtility {
 	}
 	
 	public static void reorder(File []files, final boolean parent2Child) {
-		Arrays.sort(files, new Comparator() {
+		Arrays.sort(files, new Comparator<Object>() {
 			public int compare(Object o1, Object o2) {
 				String first = ((File)o1).getAbsolutePath();
 				String second = ((File)o2).getAbsolutePath();
@@ -613,17 +613,17 @@ public final class FileUtility {
 	}
 	
 	public static IResource []shrinkChildNodes(IResource []resources) {
-		HashSet tRoots = new HashSet(Arrays.asList(resources));
+		HashSet<IResource> tRoots = new HashSet<IResource>(Arrays.asList(resources));
 		for (int i = 0; i < resources.length; i++) {
 			if (FileUtility.hasRoots(tRoots, resources[i])) {
 				tRoots.remove(resources[i]);
 			}
 		}
-		return (IResource [])tRoots.toArray(new IResource[tRoots.size()]);
+		return tRoots.toArray(new IResource[tRoots.size()]);
 	}
 	
 	public static File []shrinkChildNodes(File []files, boolean skipFiles) {
-		HashSet tRoots = new HashSet(Arrays.asList(files));
+		HashSet<File> tRoots = new HashSet<File>(Arrays.asList(files));
 		for (int i = 0; i < files.length; i++) {
 			if (skipFiles && files[i].isFile()) {
 				continue;
@@ -632,7 +632,7 @@ public final class FileUtility {
 				tRoots.remove(files[i]);
 			}
 		}
-		return (File [])tRoots.toArray(new File[tRoots.size()]);
+		return tRoots.toArray(new File[tRoots.size()]);
 	}
 	
 	public static IResource []resourceMembers(IContainer node, boolean includePhantoms) throws CoreException {
@@ -686,7 +686,7 @@ public final class FileUtility {
 		return false;
 	}
 	
-	private static boolean hasRoots(Set roots, IResource node) {
+	private static boolean hasRoots(Set<IResource> roots, IResource node) {
 		while ((node = node.getParent()) != null) {
 			if (roots.contains(node)) {
 				return true;
@@ -695,7 +695,7 @@ public final class FileUtility {
 		return false;
 	}
 	
-	private static boolean hasRoots(Set roots, File node) {
+	private static boolean hasRoots(Set<File> roots, File node) {
 		while ((node = node.getParentFile()) != null) {
 			if (roots.contains(node)) {
 				return true;
@@ -714,7 +714,7 @@ public final class FileUtility {
 		node.setTeamPrivateMember(isTeamPrivate);
 	}
 	
-	private static void addChildren(Set resources, IResource []roots, IStateFilter filter, int depth, IActionOperation calledFrom, IProgressMonitor monitor) {
+	private static void addChildren(Set<IResource> resources, IResource []roots, IStateFilter filter, int depth, IActionOperation calledFrom, IProgressMonitor monitor) {
 		int nextDepth = depth == IResource.DEPTH_ONE ? IResource.DEPTH_ZERO : IResource.DEPTH_INFINITE;
 		IRemoteStorage storage = SVNRemoteStorage.instance();
 		for (int i = 0; i < roots.length && (monitor == null || !monitor.isCanceled()); i++) {

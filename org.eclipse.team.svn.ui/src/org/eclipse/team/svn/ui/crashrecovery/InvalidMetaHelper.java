@@ -12,8 +12,6 @@
 package org.eclipse.team.svn.ui.crashrecovery;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
@@ -50,10 +48,8 @@ public class InvalidMetaHelper implements IResolutionHelper {
 			if (this.isValid(current, path)) {
 				return true;
 			}
-			Collection connectors = CoreExtensionsManager.instance().getAccessibleClients();
-			final ArrayList valid = new ArrayList();
-			for (Iterator it = connectors.iterator(); it.hasNext(); ) {
-				ISVNConnectorFactory factory = (ISVNConnectorFactory)it.next();
+			final ArrayList<ISVNConnectorFactory> valid = new ArrayList<ISVNConnectorFactory>();
+			for (ISVNConnectorFactory factory : CoreExtensionsManager.instance().getAccessibleClients()) {
 				if (this.isValid(factory, path)) {
 					valid.add(factory);
 				}

@@ -24,6 +24,7 @@ import org.eclipse.team.svn.core.connector.ISVNEntryStatusCallback;
 import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
 import org.eclipse.team.svn.core.connector.SVNNotification;
 import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.connector.SVNRevision.Number;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
@@ -32,7 +33,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * @author Alexander Gurov
  */
 public class RemoteStatusOperation extends AbstractStatusOperation implements ISVNNotificationCallback {
-	protected Map pegRevisions = new HashMap();
+	protected Map<String, Number> pegRevisions = new HashMap<String, Number>();
 
 	public RemoteStatusOperation(File []files, boolean recursive) {
 		super("Operation.UpdateStatusFile", files, recursive);
@@ -44,7 +45,7 @@ public class RemoteStatusOperation extends AbstractStatusOperation implements IS
 	
 	public SVNRevision getPegRevision(File change) {
 	    IPath resourcePath = new Path(change.getAbsolutePath());
-	    for (Iterator it = this.pegRevisions.entrySet().iterator(); it.hasNext(); ) {
+	    for (Iterator<?> it = this.pegRevisions.entrySet().iterator(); it.hasNext(); ) {
 	        Map.Entry entry = (Map.Entry)it.next();
 	        IPath rootPath = new Path((String)entry.getKey());
 	        if (rootPath.isPrefixOf(resourcePath)) {

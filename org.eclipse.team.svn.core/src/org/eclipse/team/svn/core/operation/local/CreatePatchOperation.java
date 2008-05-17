@@ -88,7 +88,7 @@ public class CreatePatchOperation extends AbstractActionOperation {
 	}
 
 	protected void runImpl(final IProgressMonitor monitor) throws Exception {
-		Map workingCopies = SVNUtility.splitWorkingCopies(this.resources);
+		Map<?, ?> workingCopies = SVNUtility.splitWorkingCopies(this.resources);
 		final FileOutputStream stream = new FileOutputStream(this.fileName);
 		try {
 //			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn diff " + (this.recurse ? "" : " -N") + (this.ignoreDeleted ? " --no-diff-deleted" : "") + "\n");
@@ -100,7 +100,7 @@ public class CreatePatchOperation extends AbstractActionOperation {
 			else if (this.rootPoint == CreatePatchOperation.SELECTION) {
 				this.selection = FileUtility.shrinkChildNodes(this.resources);
 			}
-			for (Iterator it = workingCopies.entrySet().iterator(); it.hasNext() && !monitor.isCanceled(); ) {
+			for (Iterator<?> it = workingCopies.entrySet().iterator(); it.hasNext() && !monitor.isCanceled(); ) {
 				Map.Entry entry = (Map.Entry)it.next();
 				IProject project = (IProject)entry.getKey();
 				if (this.rootPoint == CreatePatchOperation.WORKSPACE) {
@@ -108,7 +108,7 @@ public class CreatePatchOperation extends AbstractActionOperation {
 					stream.write(project.getName().getBytes());
 					stream.write(this.lineFeed.getBytes());
 				}
-				IResource []resources = (IResource [])((List)entry.getValue()).toArray(new IResource[0]);
+				IResource []resources = ((List<?>)entry.getValue()).toArray(new IResource[0]);
 				for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
 					if (resources[i] instanceof IFile) {
 						this.addFileDiff(stream, (IFile)resources[i], monitor);

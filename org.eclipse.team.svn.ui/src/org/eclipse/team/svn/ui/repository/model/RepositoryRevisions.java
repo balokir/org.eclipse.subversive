@@ -72,28 +72,28 @@ public class RepositoryRevisions extends RepositoryFictiveNode implements IParen
 
 	public IRepositoryResource []getLinks(SVNRevision revision) {
 		IRepositoryResource []resources = this.location.getRevisionLinks();
-		ArrayList retVal = new ArrayList();
+		ArrayList<IRepositoryResource> retVal = new ArrayList<IRepositoryResource>();
 		for (int i = 0; i < resources.length; i++) {
 			if (resources[i].getSelectedRevision().equals(revision)) {
 				retVal.add(resources[i]);
 			}
 		}
-		return (IRepositoryResource [])retVal.toArray(new IRepositoryResource[retVal.size()]);
+		return retVal.toArray(new IRepositoryResource[retVal.size()]);
 	}
 	
 	public Object []getChildren(Object o) {
 		if (this.children == null) {
 			IRepositoryResource []resources = this.location.getRevisionLinks();
 
-			HashSet revisions = new HashSet();
+			HashSet<RevisionWrapper> revisions = new HashSet<RevisionWrapper>();
 			for (int i = 0; i < resources.length; i++) {
 				revisions.add(new RevisionWrapper(resources[i].getSelectedRevision()));
 			}
 			
 			this.children = new RepositoryRevision[revisions.size()];
 			int i = 0;
-			for (Iterator it = revisions.iterator(); i < this.children.length; i++) {
-				this.children[i] = new RepositoryRevision(this, ((RevisionWrapper)it.next()).revision);
+			for (Iterator<RevisionWrapper> it = revisions.iterator(); i < this.children.length; i++) {
+				this.children[i] = new RepositoryRevision(this, it.next().revision);
 			}
 		}
 		return this.children;

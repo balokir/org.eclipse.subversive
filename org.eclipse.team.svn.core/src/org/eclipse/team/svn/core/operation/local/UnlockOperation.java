@@ -47,11 +47,11 @@ public class UnlockOperation extends AbstractWorkingCopyOperation {
 		IResource []resources = this.operableData();
 
 		IRemoteStorage storage = SVNRemoteStorage.instance();
-		Map wc2Resources = SVNUtility.splitWorkingCopies(resources);
-		for (Iterator it = wc2Resources.entrySet().iterator(); it.hasNext() && !monitor.isCanceled(); ) {
+		Map<?, ?> wc2Resources = SVNUtility.splitWorkingCopies(resources);
+		for (Iterator<?> it = wc2Resources.entrySet().iterator(); it.hasNext() && !monitor.isCanceled(); ) {
 			Map.Entry entry = (Map.Entry)it.next();
 			final IRepositoryLocation location = storage.getRepositoryLocation((IProject)entry.getKey());
-			final String []paths = FileUtility.asPathArray((IResource [])((List)entry.getValue()).toArray(new IResource[0]));
+			final String []paths = FileUtility.asPathArray(((List<?>)entry.getValue()).toArray(new IResource[0]));
 
 			this.complexWriteToConsole(new Runnable() {
 				public void run() {

@@ -442,7 +442,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	}
 	
 	protected void refreshLocalResourceImpl(IResource resource, int depth) {	   
-	    ArrayList removed = new ArrayList();
+	    ArrayList<IResource> removed = new ArrayList<IResource>();
 	    removed.add(resource);
 	    if (resource.getType() == IResource.PROJECT) {
 	    	IConnectedProjectInformation info = (IConnectedProjectInformation)RepositoryProvider.getProvider(resource.getProject(), SVNTeamPlugin.NATURE_ID);

@@ -84,9 +84,9 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	private SSLSettings sslSettings;
 	private SSHSettings sshSettings;
 	
-	private transient List proxyCache;
-	private transient HashSet usedProxies;
-	private transient HashMap thread2Proxy;
+	private transient List<ISVNConnector> proxyCache;
+	private transient HashSet<ISVNConnector> usedProxies;
+	private transient HashMap<Thread, ProxyHolder> thread2Proxy;
 	private transient IRepositoryResource []revisionLinks;
     protected transient boolean trustSiteDefined;
     protected transient int trustSite;
@@ -506,11 +506,11 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 			this.waiters++;
 			
 			// initialize proxy cache, usedProxies list and thread2Proxy map
-		    List cache = this.getProxyCache();
+		    List<ISVNConnector> cache = this.getProxyCache();
 		    
 			// make the method reenterable: one thread use proxy only sequentially. So, we can use same proxy in order to avoid deadlock.
 			Thread current = Thread.currentThread();
-			ProxyHolder holder = (ProxyHolder)this.thread2Proxy.get(current);
+			ProxyHolder holder = this.thread2Proxy.get(current);
 			if (holder != null) {
 				holder.referenceCounter++;
 				return holder.proxy;
@@ -526,7 +526,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 				this.proxyConfigurationState = 1;
 			}
 		    
-			ISVNConnector retVal = cache.size() == 0 ? this.newProxyInstance() : (ISVNConnector)cache.remove(0);
+			ISVNConnector retVal = cache.size() == 0 ? this.newProxyInstance() : cache.remove(0);
 		    this.usedProxies.add(retVal);
 		    this.thread2Proxy.put(current, new ProxyHolder(retVal));
 		    return retVal;
@@ -547,10 +547,10 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	}
 	
 	public synchronized void releaseSVNProxy(ISVNConnector proxy) {
-	    List proxies = this.getProxyCache();
+	    List<ISVNConnector> proxies = this.getProxyCache();
 	    
 	    Thread current = Thread.currentThread();
-	    ProxyHolder holder = (ProxyHolder)this.thread2Proxy.get(current);
+	    ProxyHolder holder = this.thread2Proxy.get(current);
 	    if (--holder.referenceCounter == 0) {
 	    	this.thread2Proxy.remove(current);
 	    	// Proxy should be always removed from used list. So, do it first.
@@ -708,17 +708,17 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	}
 	
 	protected void visitProxies(IProxyVisitor visitor) {
-	    for (Iterator it = this.getProxyCache().iterator(); it.hasNext(); ) {
-		    ISVNConnector proxy = (ISVNConnector)it.next();
+	    for (Iterator<ISVNConnector> it = this.getProxyCache().iterator(); it.hasNext(); ) {
+		    ISVNConnector proxy = it.next();
 		    visitor.visit(proxy);
 	    }
 	}
 	
-	protected List getProxyCache() {
+	protected List<ISVNConnector> getProxyCache() {
 	    if (this.proxyCache == null) {
-	        this.proxyCache = new ArrayList();
-	        this.usedProxies = new HashSet();
-	        this.thread2Proxy = new HashMap();
+	        this.proxyCache = new ArrayList<ISVNConnector>();
+	        this.usedProxies = new HashSet<ISVNConnector>();
+	        this.thread2Proxy = new HashMap<Thread, ProxyHolder>();
 	    }
 	    return this.proxyCache;
 	}

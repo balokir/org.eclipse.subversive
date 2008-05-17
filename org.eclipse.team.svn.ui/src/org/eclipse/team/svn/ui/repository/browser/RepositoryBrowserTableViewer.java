@@ -64,7 +64,7 @@ public class RepositoryBrowserTableViewer extends TableViewer {
 	public static final int COLUMN_HAS_PROPS = 5;
 	public static final int COLUMN_LOCK_OWNER = 6;
 
-	private static final Map class2Format = new HashMap();
+	private static final Map<Class<?>, String> class2Format = new HashMap<Class<?>, String>();
 
 	static {
 		RepositoryBrowserTableViewer.class2Format.put(RepositoryResource.class, RepositoryBrowserTableViewer.FMT_REPOSITORY_RESOURCE);
@@ -107,7 +107,7 @@ public class RepositoryBrowserTableViewer extends TableViewer {
 				if (item != null) {
 					Object data = item.getData();
 					if (data != null && data instanceof IToolTipProvider) {
-						tooltipText = ((IToolTipProvider)data).getToolTipMessage((String)RepositoryBrowserTableViewer.class2Format.get(data.getClass()));
+						tooltipText = ((IToolTipProvider)data).getToolTipMessage(RepositoryBrowserTableViewer.class2Format.get(data.getClass()));
 					}
 				}
 				RepositoryBrowserTableViewer.this.getTable().setToolTipText(tooltipText);

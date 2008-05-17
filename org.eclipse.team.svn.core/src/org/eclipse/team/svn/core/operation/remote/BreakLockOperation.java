@@ -37,14 +37,14 @@ public class BreakLockOperation extends AbstractRepositoryOperation {
 
 	protected void runImpl(final IProgressMonitor monitor) throws Exception {
 		IRepositoryResource []resources = this.operableData();
-		Map splittedSet = SVNUtility.splitRepositoryLocations(resources);
+		Map<?, ?> splittedSet = SVNUtility.splitRepositoryLocations(resources);
 		
-		for (Iterator it = splittedSet.entrySet().iterator(); it.hasNext(); ) {
+		for (Iterator<?> it = splittedSet.entrySet().iterator(); it.hasNext(); ) {
 			Map.Entry entry = (Map.Entry)it.next();
 			
 			final IRepositoryLocation location = (IRepositoryLocation)entry.getKey();
-			List values = (List)entry.getValue();
-			final String []paths = SVNUtility.asURLArray((IRepositoryResource [])values.toArray(new IRepositoryResource[values.size()]), true);
+			List<?> values = (List<?>)entry.getValue();
+			final String []paths = SVNUtility.asURLArray(values.toArray(new IRepositoryResource[values.size()]), true);
 
 			this.complexWriteToConsole(new Runnable() {
 				public void run() {

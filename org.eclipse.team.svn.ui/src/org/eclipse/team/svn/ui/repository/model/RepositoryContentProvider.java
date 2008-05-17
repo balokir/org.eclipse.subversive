@@ -52,7 +52,7 @@ public class RepositoryContentProvider extends WorkbenchContentProvider {
 			if (adapter instanceof IResourceTreeNode) {
 				((IResourceTreeNode)adapter).setViewer(this.repositoryTree);
 			}
-			ArrayList filtered = new ArrayList();
+			ArrayList<Object> filtered = new ArrayList<Object>();
 			Object []children = adapter.getChildren(parentElement);
 			if (children != null) {
 				for (int i = 0; i < children.length; i++) {

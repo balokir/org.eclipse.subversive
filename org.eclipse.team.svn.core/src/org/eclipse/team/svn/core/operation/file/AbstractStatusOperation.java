@@ -51,7 +51,7 @@ public abstract class AbstractStatusOperation extends AbstractFileOperation {
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		File []files = this.operableData();
 
-		final List result = new ArrayList();
+		final List<SVNChangeStatus> result = new ArrayList<SVNChangeStatus>();
 		ISVNEntryStatusCallback cb = new ISVNEntryStatusCallback() {
 			public void next(SVNChangeStatus status) {
 				result.add(status);
@@ -67,7 +67,7 @@ public abstract class AbstractStatusOperation extends AbstractFileOperation {
 			
 			location.releaseSVNProxy(proxy);
 		}
-		this.statuses = (SVNChangeStatus [])result.toArray(new SVNChangeStatus[result.size()]);
+		this.statuses = result.toArray(new SVNChangeStatus[result.size()]);
 	}
 
 	protected void reportStatuses(final ISVNConnector proxy, final ISVNEntryStatusCallback cb, final File current, IProgressMonitor monitor, int tasks) {

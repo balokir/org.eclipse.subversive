@@ -70,10 +70,10 @@ public class PreviewPanel extends AbstractDialogPanel {
 			styledText.setFont(this.font);
 		}
 		
-		List styledRanges = new ArrayList();
+		List<StyleRange> styledRanges = new ArrayList<StyleRange>();
 		styledRanges = this.getStyleRanges();
 		styledText.setText(this.report);
-		styledText.setStyleRanges((StyleRange[]) styledRanges.toArray(new StyleRange[styledRanges.size()]));		
+		styledText.setStyleRanges(styledRanges.toArray(new StyleRange[styledRanges.size()]));		
 		styledText.setEditable(false);
 		styledText.setLayoutData(data);
 	}
@@ -91,11 +91,11 @@ public class PreviewPanel extends AbstractDialogPanel {
 	protected void cancelChangesImpl() {
 	}
 	
-	protected List getStyleRanges() {
-		List styledRanges = new ArrayList();
+	protected List<StyleRange> getStyleRanges() {
+		List<StyleRange> styledRanges = new ArrayList<StyleRange>();
 		
-		Stack boldEntries = new Stack();
-		Stack italicEntries = new Stack();
+		Stack<StyleRange> boldEntries = new Stack<StyleRange>();
+		Stack<StyleRange> italicEntries = new Stack<StyleRange>();
 		
 		for (int i = 0; i < this.report.length(); i++) {
 			if (this.report.charAt(i) == '<' && i < this.report.length() - 2) {
@@ -117,7 +117,7 @@ public class PreviewPanel extends AbstractDialogPanel {
 					if (i < this.report.length() - 3 && this.report.charAt(i + 3) == '>') {
 						if (this.report.charAt(i + 2) == 'b') {
 							if (boldEntries.size() > 0) {
-								StyleRange range = (StyleRange)boldEntries.pop();
+								StyleRange range = boldEntries.pop();
 								range.length = i - range.start;
 								styledRanges.add(range);
 								this.report = this.report.substring(0, i) + this.report.substring(i + 4);
@@ -125,7 +125,7 @@ public class PreviewPanel extends AbstractDialogPanel {
 						}
 						else if (this.report.charAt(i + 2) == 'i') {
 							if (italicEntries.size() > 0) {
-								StyleRange range = (StyleRange)italicEntries.pop();
+								StyleRange range = italicEntries.pop();
 								range.length = i - range.start;
 								styledRanges.add(range);
 								this.report = this.report.substring(0, i) + this.report.substring(i + 4);

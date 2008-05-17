@@ -58,7 +58,7 @@ public class TextVariableSetProvider implements IVariableSetProvider {
 
 	public static final IVariable CENTER_VARIABLE = TextVariableSetProvider.VAR_NAME;
 	
-	private static final Map name2Variable = new HashMap();
+	private static final Map<String, IVariable> name2Variable = new HashMap<String, IVariable>();
 	
 	static {
 		TextVariableSetProvider.name2Variable.put(TextVariableSetProvider.NAME_OF_LOCATION_URL, TextVariableSetProvider.VAR_LOCATION_URL);
@@ -89,7 +89,7 @@ public class TextVariableSetProvider implements IVariableSetProvider {
 	}
 
 	public IVariable getVariable(String name) {
-		return (IVariable)TextVariableSetProvider.name2Variable.get(name);
+		return TextVariableSetProvider.name2Variable.get(name);
 	}
 	
 	protected TextVariableSetProvider() {

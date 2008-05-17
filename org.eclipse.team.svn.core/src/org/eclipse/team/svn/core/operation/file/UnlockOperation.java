@@ -43,14 +43,14 @@ public class UnlockOperation extends AbstractFileOperation {
 	protected void runImpl(final IProgressMonitor monitor) throws Exception {
 		File []files = this.operableData();
 		
-		Map wc2Resources = SVNUtility.splitWorkingCopies(files);
-		for (Iterator it = wc2Resources.entrySet().iterator(); it.hasNext() && !monitor.isCanceled(); ) {
+		Map<?, ?> wc2Resources = SVNUtility.splitWorkingCopies(files);
+		for (Iterator<?> it = wc2Resources.entrySet().iterator(); it.hasNext() && !monitor.isCanceled(); ) {
 			Map.Entry entry = (Map.Entry)it.next();
 			
 			IRepositoryResource wcRoot = SVNFileStorage.instance().asRepositoryResource((File)entry.getKey(), false);
 			final IRepositoryLocation location = wcRoot.getRepositoryLocation();
 			
-			final String []paths = FileUtility.asPathArray((File [])((List)entry.getValue()).toArray(new File[0]));
+			final String []paths = FileUtility.asPathArray(((List<?>)entry.getValue()).toArray(new File[0]));
 
 			this.complexWriteToConsole(new Runnable() {
 				public void run() {

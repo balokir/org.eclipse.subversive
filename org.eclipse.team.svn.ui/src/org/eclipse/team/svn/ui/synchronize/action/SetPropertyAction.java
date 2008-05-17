@@ -42,8 +42,8 @@ public class SetPropertyAction extends AbstractSynchronizeModelAction {
 	
 	protected boolean updateSelection(IStructuredSelection selection) {
 		super.updateSelection(selection);
-		for (Iterator<ISynchronizeModelElement> it = selection.iterator(); it.hasNext(); ) {
-			ISynchronizeModelElement element = it.next();
+		for (Iterator<?> it = selection.iterator(); it.hasNext(); ) {
+			ISynchronizeModelElement element = (ISynchronizeModelElement)it.next();
 			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(element.getResource());
 			// null for change set nodes
 			if (local != null && IStateFilter.SF_VERSIONED.accept(local)) {

@@ -81,7 +81,7 @@ public class ShareOperation extends AbstractFileOperation {
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		File []folders = FileUtility.shrinkChildNodes(this.operableData(), true);
-		HashMap local2remote = new HashMap();
+		HashMap<File, IRepositoryContainer> local2remote = new HashMap<File, IRepositoryContainer>();
 		for (int i = 0; i < folders.length; i++) {
 			String url = this.getTargetUrl(this.mapper == null ? folders[i].getName() : this.mapper.getRepositoryFolderName(folders[i]), this.managementFoldersEnabled);
 			IRepositoryContainer remote = this.location.asRepositoryContainer(url, false);
@@ -89,7 +89,7 @@ public class ShareOperation extends AbstractFileOperation {
 		}
 		if (this.commitComment == null) {
 			this.commitComment = "";
-			for (Iterator it = local2remote.entrySet().iterator(); it.hasNext(); ) {
+			for (Iterator<?> it = local2remote.entrySet().iterator(); it.hasNext(); ) {
 				Map.Entry entry = (Map.Entry)it.next();
 				String commentPart = ShareOperation.getDefaultComment((File)entry.getKey(), (IRepositoryContainer)entry.getValue());
 				this.commitComment += this.commitComment.length() == 0 ? commentPart : ("\n" + commentPart);
@@ -120,7 +120,7 @@ public class ShareOperation extends AbstractFileOperation {
 			
 			this.mkdir(proxy, resourceSet, monitor);
 			
-			for (Iterator it = local2remote.entrySet().iterator(); it.hasNext() && !monitor.isCanceled(); ) {
+			for (Iterator<?> it = local2remote.entrySet().iterator(); it.hasNext() && !monitor.isCanceled(); ) {
 				final Map.Entry entry = (Map.Entry)it.next();
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(IProgressMonitor monitor) throws Exception {
@@ -164,7 +164,7 @@ public class ShareOperation extends AbstractFileOperation {
 	}
 	
 	protected void mkdir(ISVNConnector proxy, IRepositoryResource []resourceSet, IProgressMonitor monitor) throws Exception {
-		ArrayList urlsList = new ArrayList();
+		ArrayList<String> urlsList = new ArrayList<String>();
 		for (int i = 0; i < resourceSet.length && !monitor.isCanceled(); i++) {
 			ProgressMonitorUtility.setTaskInfo(monitor, this, resourceSet[i].getUrl());
 			if (!resourceSet[i].exists()) {
@@ -172,25 +172,25 @@ public class ShareOperation extends AbstractFileOperation {
 			}
 			ProgressMonitorUtility.progress(monitor, IProgressMonitor.UNKNOWN, resourceSet.length);
 		}
-		String []urls = (String [])urlsList.toArray(new String[urlsList.size()]);
+		String []urls = urlsList.toArray(new String[urlsList.size()]);
 		proxy.mkdir(urls, this.commitComment, ISVNConnector.Options.INCLUDE_PARENTS, new SVNProgressMonitor(this, monitor, null));
 	}
 	
-	protected IRepositoryResource []doDefaultLayout(Map local2remote) {
-		HashSet fullSet = new HashSet();
-		for (Iterator it = local2remote.values().iterator(); it.hasNext(); ) {
-			IRepositoryContainer remote = (IRepositoryContainer)it.next();
+	protected IRepositoryResource []doDefaultLayout(Map<File, IRepositoryContainer> local2remote) {
+		HashSet<IRepositoryResource> fullSet = new HashSet<IRepositoryResource>();
+		for (Iterator<IRepositoryContainer> it = local2remote.values().iterator(); it.hasNext(); ) {
+			IRepositoryContainer remote = it.next();
 			IRepositoryResource []resources = SVNUtility.makeResourceSet(remote.getRepositoryLocation().getRoot(), remote);
 			fullSet.addAll(Arrays.asList(resources));
 		}
 		return this.getOrderedSet(fullSet);
 	}
 	
-	protected IRepositoryResource []doSingleLayout(Map local2remote) {
+	protected IRepositoryResource []doSingleLayout(Map<File, IRepositoryContainer> local2remote) {
 		if (this.managementFoldersEnabled) {
-			HashSet fullSet = new HashSet();
-			for (Iterator it = local2remote.values().iterator(); it.hasNext(); ) {
-				IRepositoryContainer remote = (IRepositoryContainer)it.next();
+			HashSet<IRepositoryResource> fullSet = new HashSet<IRepositoryResource>();
+			for (Iterator<IRepositoryContainer> it = local2remote.values().iterator(); it.hasNext(); ) {
+				IRepositoryContainer remote = it.next();
 				IRepositoryResource []resources = SVNUtility.makeResourceSet(remote.getRepositoryLocation().getRoot(), remote);
 				fullSet.addAll(Arrays.asList(resources));
 				IRepositoryContainer parent = (IRepositoryContainer)remote.getParent();
@@ -202,11 +202,11 @@ public class ShareOperation extends AbstractFileOperation {
 		return this.doDefaultLayout(local2remote);
 	}
 	
-	protected IRepositoryResource []doMultipleLayout(Map local2remote) {
+	protected IRepositoryResource []doMultipleLayout(Map<File, IRepositoryContainer> local2remote) {
 		if (this.managementFoldersEnabled) {
-			HashSet fullSet = new HashSet();
-			for (Iterator it = local2remote.values().iterator(); it.hasNext(); ) {
-				IRepositoryContainer remote = (IRepositoryContainer)it.next();
+			HashSet<IRepositoryResource> fullSet = new HashSet<IRepositoryResource>();
+			for (Iterator<IRepositoryContainer> it = local2remote.values().iterator(); it.hasNext(); ) {
+				IRepositoryContainer remote = it.next();
 				IRepositoryResource []resources = SVNUtility.makeResourceSet(remote.getRepositoryLocation().getRoot(), remote);
 				fullSet.addAll(Arrays.asList(resources));
 				
@@ -224,9 +224,9 @@ public class ShareOperation extends AbstractFileOperation {
 		return this.location.asRepositoryContainer(parent.getUrl() + "/" + name, false);
 	}
 	
-	protected IRepositoryResource []getOrderedSet(Set fullSet) {
-		IRepositoryResource [] resources = (IRepositoryResource [])fullSet.toArray(new IRepositoryResource[fullSet.size()]);
-		Arrays.sort(resources, new Comparator() {
+	protected IRepositoryResource []getOrderedSet(Set<IRepositoryResource> fullSet) {
+		IRepositoryResource [] resources = fullSet.toArray(new IRepositoryResource[fullSet.size()]);
+		Arrays.sort(resources, new Comparator<Object>() {
 			public int compare(Object arg0, Object arg1) {
 				IRepositoryResource first = (IRepositoryResource)arg0;
 				IRepositoryResource second = (IRepositoryResource)arg1;

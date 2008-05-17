@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 public final class PatternProvider {
 	private static int MAX_CACHE_SIZE = 100;
 	
-	private static LinkedHashMap patterns = new LinkedHashMap() {
+	private static LinkedHashMap<String, Pattern> patterns = new LinkedHashMap<String, Pattern>() {
 		private static final long serialVersionUID = 2921759287651173337L;
 
 		protected boolean removeEldestEntry(Map.Entry eldest) {
@@ -36,7 +36,7 @@ public final class PatternProvider {
 	}
 
 	public static synchronized Pattern getPattern(String strPattern) {
-		Pattern patternReturn = (Pattern)PatternProvider.patterns.get(strPattern);
+		Pattern patternReturn = PatternProvider.patterns.get(strPattern);
 		
 		//if two threads would need the same new pattern in the same time, only one will compile it
 		if (patternReturn == null) {

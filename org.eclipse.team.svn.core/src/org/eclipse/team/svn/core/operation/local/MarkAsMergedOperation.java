@@ -82,8 +82,8 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 	
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		IResource []resources = FileUtility.shrinkChildNodes(this.operableData());
-		ArrayList committables = new ArrayList();
-		ArrayList withDifferentNodeKind = new ArrayList();
+		ArrayList<IResource> committables = new ArrayList<IResource>();
+		ArrayList<IResource> withDifferentNodeKind = new ArrayList<IResource>();
 		this.committables = new IResource[0];
 		this.withDifferentNodeKind = new IResource[0];
 
@@ -107,8 +107,8 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 			}
 		}
 		
-		this.committables = (IResource [])committables.toArray(new IResource[committables.size()]);
-		this.withDifferentNodeKind = (IResource [])withDifferentNodeKind.toArray(new IResource[withDifferentNodeKind.size()]);
+		this.committables = committables.toArray(new IResource[committables.size()]);
+		this.withDifferentNodeKind = withDifferentNodeKind.toArray(new IResource[withDifferentNodeKind.size()]);
 	}
 
 	protected void markDeleted(ILocalResource local, IProgressMonitor monitor) {

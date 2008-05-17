@@ -50,7 +50,7 @@ public class RepositoriesRoot extends RepositoryFictiveNode implements IParentTr
 	
 	public Object []getChildren(Object o) {
 		if (this.children == null || this.softRefresh) {
-			HashMap oldLocations = new HashMap();
+			HashMap<IRepositoryLocation, RepositoryLocation> oldLocations = new HashMap<IRepositoryLocation, RepositoryLocation>();
 			if (this.children != null) {
 				for (int i = 0; i < this.children.length; i++) {
 					oldLocations.put(this.children[i].getRepositoryLocation(), this.children[i]);
@@ -58,16 +58,14 @@ public class RepositoriesRoot extends RepositoryFictiveNode implements IParentTr
 			}
 			
 			IRepositoryLocation []locations = SVNRemoteStorage.instance().getRepositoryLocations();
-			Arrays.sort(locations, new Comparator() {
-				public int compare(Object o1, Object o2) {
-					IRepositoryLocation first = (IRepositoryLocation)o1;
-					IRepositoryLocation second = (IRepositoryLocation)o2;
+			Arrays.sort(locations, new Comparator<IRepositoryLocation>() {
+				public int compare(IRepositoryLocation first, IRepositoryLocation second) {
 					return first.getLabel().compareTo(second.getLabel());
 				}
 			});
 			this.children = new RepositoryLocation[locations.length];
 			for (int i = 0; i < locations.length; i++) {
-				this.children[i] = (RepositoryLocation)oldLocations.get(locations[i]);
+				this.children[i] = oldLocations.get(locations[i]);
 				if (this.children[i] == null) {
 					this.children[i] = new RepositoryLocation(locations[i]);
 				}

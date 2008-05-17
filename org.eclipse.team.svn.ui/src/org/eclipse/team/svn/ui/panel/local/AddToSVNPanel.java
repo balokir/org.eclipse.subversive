@@ -166,9 +166,9 @@ public class AddToSVNPanel extends AbstractResourceSelectionPanel {
     
     public void updateResources() {
     	final TableViewer tableViewer = this.selectionComposite.getTableViewer();
-		HashSet toDeleteSet = new HashSet();
+		HashSet<IResource> toDeleteSet = new HashSet<IResource>();
 		toDeleteSet.addAll(Arrays.asList(this.resources));
-		HashSet newResourcesSet = new HashSet();
+		HashSet<IResource> newResourcesSet = new HashSet<IResource>();
 		newResourcesSet.addAll(Arrays.asList(FileUtility.getResourcesRecursive(this.resources, IStateFilter.SF_UNVERSIONED, IResource.DEPTH_ZERO)));
 		List<IResource> ignored = Arrays.asList(FileUtility.getResourcesRecursive(this.resources, IStateFilter.SF_IGNORED, IResource.DEPTH_ZERO));
 		if (ignored.size() != 0){
@@ -181,9 +181,9 @@ public class AddToSVNPanel extends AbstractResourceSelectionPanel {
 				this.actionTookEffect = true;
 			}
 		}
-		final IResource[] newResources = (IResource[])newResourcesSet.toArray(new IResource[newResourcesSet.size()]);
+		final IResource[] newResources = newResourcesSet.toArray(new IResource[newResourcesSet.size()]);
 		toDeleteSet.removeAll(newResourcesSet);
-		final IResource[] toDeleteResources = (IResource[])toDeleteSet.toArray(new IResource[toDeleteSet.size()]);
+		final IResource[] toDeleteResources = toDeleteSet.toArray(new IResource[toDeleteSet.size()]);
 		UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 			public void run() {
 				AddToSVNPanel.this.selectionComposite.setResources(newResources);

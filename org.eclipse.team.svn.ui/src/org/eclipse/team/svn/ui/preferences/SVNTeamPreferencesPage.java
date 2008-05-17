@@ -215,7 +215,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.btnResourceSelectionNew.setSelection(this.commitSelectNewResources);
 		this.btnResourceSelectionExternal.setSelection(this.useSubversionExternalsBehaviour);
 		
-		List factoriesList = Arrays.asList(this.factories);
+		List<ISVNConnectorFactory> factoriesList = Arrays.asList(this.factories);
 		this.svnConnectorField.select(factoriesList.indexOf(CoreExtensionsManager.instance().getSVNConnectorFactory(this.svnConnector)));
 		
 		this.initializeClientSettings();
@@ -296,9 +296,9 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = 100;
 		this.svnConnectorField.setLayoutData(data);
-		Collection fullSet = CoreExtensionsManager.instance().getAccessibleClients();
-		this.factories = (ISVNConnectorFactory [])fullSet.toArray(new ISVNConnectorFactory[fullSet.size()]);
-		Arrays.sort(this.factories, new Comparator() {
+		Collection<?> fullSet = CoreExtensionsManager.instance().getAccessibleClients();
+		this.factories = fullSet.toArray(new ISVNConnectorFactory[fullSet.size()]);
+		Arrays.sort(this.factories, new Comparator<Object>() {
 			public int compare(Object o1, Object o2) {
 				return ((ISVNConnectorFactory)o1).getName().compareTo(((ISVNConnectorFactory)o2).getName());
 			}

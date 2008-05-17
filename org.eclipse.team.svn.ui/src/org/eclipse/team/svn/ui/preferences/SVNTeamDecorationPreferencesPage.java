@@ -119,7 +119,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 	protected String branchPrefix;
 	protected String tagPrefix;
 
-	protected static final Collection ROOT;
+	protected static final Collection<PreviewFile> ROOT;
 	static {	
 		//name, type, added, new, dirty, ignored, hasRemote, locked
 		PreviewFile branchProject = new PreviewFile("ProjectBranch", IResource.PROJECT, false, false, false, false, false, true, false, false, false, true, false, false);
@@ -128,7 +128,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		PreviewFile project = new PreviewFile("Project", IResource.PROJECT, false, false, true, false, false, true, false, false, true, false, false, false);
 		
 		PreviewFile modifiedFolder = new PreviewFile("folder", IResource.FOLDER, false, false, true, false, false, true, false, false, true, false, false, false);
-		ArrayList children = new ArrayList();
+		ArrayList<PreviewFile> children = new ArrayList<PreviewFile>();
 		children.add(new PreviewFile("switched", IResource.FOLDER, false, false, false, false, false, true, false, false, true, false, false, true));
 		children.add(new PreviewFile("normal.txt", IResource.FILE, false, false, false, false, false, true, false, false, true, false, false, false));
 		children.add(new PreviewFile("modified.cpp", IResource.FILE, false, false, true, false, false, true, false, false, true, false, false, false));
@@ -136,7 +136,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		children.add(new PreviewFile("ignored.txt", IResource.FILE, false, false, false, false, true, false, false, false, true, false, false, false));
 		modifiedFolder.children = children;
 		
-		children = new ArrayList();
+		children = new ArrayList<PreviewFile>();
 		children.add(modifiedFolder);
 		children.add(new PreviewFile("new", IResource.FILE, false, true, false, false, false, false, false, false, true, false, false, false));
 		children.add(new PreviewFile("added.java", IResource.FILE, true, false, true, false, false, false, false, false, true, false, false, false));
@@ -144,7 +144,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		children.add(new PreviewFile("needsLock", IResource.FILE, false, false, false, false, false, true, false, true, true, false, false, false));
 		
 		project.children = children;
-		ROOT = new ArrayList();
+		ROOT = new ArrayList<PreviewFile>();
 		ROOT.add(project);
 		ROOT.add(branchProject);
 		ROOT.add(tagProject);
@@ -318,7 +318,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		formatGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		formatGroup.setText("Format");
 		
-		List fileOptions = new ArrayList();
+		List<IVariable> fileOptions = new ArrayList<IVariable>();
 		fileOptions.add(TextVariableSetProvider.VAR_OUTGOING_FLAG);
 		fileOptions.add(TextVariableSetProvider.VAR_ADDED_FLAG);
 		fileOptions.add(TextVariableSetProvider.VAR_NAME);
@@ -326,23 +326,23 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		fileOptions.add(TextVariableSetProvider.VAR_DATE);
 		fileOptions.add(TextVariableSetProvider.VAR_AUTHOR);
 		fileOptions.add(TextVariableSetProvider.VAR_RESOURCE_URL);
-		this.fileFormatField = this.createFormatControl(formatGroup, "PreferencePage.textFileFormat", fileOptions, Collections.EMPTY_LIST);
+		this.fileFormatField = this.createFormatControl(formatGroup, "PreferencePage.textFileFormat", fileOptions, Collections.emptyList());
 		this.fileFormatField.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				SVNTeamDecorationPreferencesPage.this.fileFormat = SVNTeamDecorationPreferencesPage.this.fileFormatField.getText();
 			}
 		});
 		
-		List folderOptions = new ArrayList();
+		List<IVariable> folderOptions = new ArrayList<IVariable>();
 		folderOptions.addAll(fileOptions);
-		this.folderFormatField = this.createFormatControl(formatGroup, "PreferencePage.textFolderFormat", folderOptions, Collections.EMPTY_LIST);
+		this.folderFormatField = this.createFormatControl(formatGroup, "PreferencePage.textFolderFormat", folderOptions, Collections.emptyList());
 		this.folderFormatField.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				SVNTeamDecorationPreferencesPage.this.folderFormat = SVNTeamDecorationPreferencesPage.this.folderFormatField.getText();
 			}
 		});
 		
-		List projectOptions = new ArrayList();
+		List<IVariable> projectOptions = new ArrayList<IVariable>();
 		projectOptions.add(TextVariableSetProvider.VAR_OUTGOING_FLAG);
 		projectOptions.add(TextVariableSetProvider.VAR_NAME);
 		projectOptions.add(TextVariableSetProvider.VAR_REVISION);
@@ -358,14 +358,14 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		projectOptions.add(TextVariableSetProvider.VAR_DATE);
 		projectOptions.add(TextVariableSetProvider.VAR_AUTHOR);
 		
-		this.projectFormatField = this.createFormatControl(formatGroup, "PreferencePage.textProjectFormat", projectOptions, Collections.EMPTY_LIST);
+		this.projectFormatField = this.createFormatControl(formatGroup, "PreferencePage.textProjectFormat", projectOptions, Collections.emptyList());
 		this.projectFormatField.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				SVNTeamDecorationPreferencesPage.this.projectFormat = SVNTeamDecorationPreferencesPage.this.projectFormatField.getText();
 			}
 		});
 		
-		List grayedOptions = new ArrayList();
+		List<Object> grayedOptions = new ArrayList<Object>();
 		grayedOptions.add(projectOptions.get(5));
 		
 		Group prefixGroup = new Group(groups, SWT.NONE);
@@ -448,7 +448,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		return composite;
 	}
 	
-	protected Text createFormatControl(Composite parent, String labelId, final List variables, final List grayedVariables) {
+	protected Text createFormatControl(Composite parent, String labelId, final List<IVariable> variables, final List<Object> grayedVariables) {
 		Label label = new Label(parent, SWT.NULL);
 		label.setLayoutData(new GridData());
 		if (labelId != null) {
@@ -482,9 +482,9 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		return format;
 	}
 	
-	protected void variableConfigurationDialog(Text field, List variableList, List grayedVariableList) {
-		final IVariable []variables = (IVariable [])variableList.toArray(new IVariable[variableList.size()]);
-		final IVariable []grayedVariables = (IVariable [])grayedVariableList.toArray(new IVariable[grayedVariableList.size()]);
+	protected void variableConfigurationDialog(Text field, List<IVariable> variableList, List<Object> grayedVariableList) {
+		final IVariable []variables = variableList.toArray(new IVariable[variableList.size()]);
+		final IVariable []grayedVariables = grayedVariableList.toArray(new IVariable[grayedVariableList.size()]);
 		IStructuredContentProvider contentProvider = new IStructuredContentProvider() {
 			public Object[] getElements(Object inputElement) {
 				return variables;
@@ -510,8 +510,8 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		panel.setInitialSelections(realVars);
 		panel.setInitialGrayed(grayedVariables);
 		if (new DefaultDialog(this.getShell(), panel).open() == 0) {
-			List result = new ArrayList();
-			List newSelection = Arrays.asList(panel.getResultSelections());
+			List<Object> result = new ArrayList<Object>();
+			List<Object> newSelection = Arrays.asList(panel.getResultSelections());
 			for (int i = 0; i < realVars.length; i++) {
 				if (TextVariableSetProvider.instance.getVariable(realVars[i].getName()) == null) {
 					result.add(realVars[i]);
@@ -525,7 +525,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 					result.add(newSelection.get(i));
 				}
 			}
-			realVars = (IVariable [])result.toArray(new IVariable[result.size()]);
+			realVars = result.toArray(new IVariable[result.size()]);
 			
 			field.setText(DecoratorVariables.prepareFormatLine(realVars));
 		}
@@ -879,7 +879,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		}
 		
 		public Object[] getElements(Object inputElement) {
-			return ((Collection)inputElement).toArray();
+			return ((Collection<?>)inputElement).toArray();
 		}
 
 		public void dispose() {
@@ -1007,7 +1007,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		public final String name;
 		public final int type;
 		public final boolean added, dirty, conflicted, hasRemote, ignored, newResource, locked, needsLock, isTrunk, isBranch, isTag, isSwitched;
-		public Collection children;
+		public Collection<PreviewFile> children;
 		
 		public PreviewFile(String name, int type, boolean added, boolean newResource, boolean dirty, boolean conflicted, boolean ignored, boolean hasRemote, boolean locked, boolean needsLock, boolean isTrunk, boolean isBranch, boolean isTag, boolean isSwitched) {
 			this.name = name;
@@ -1020,7 +1020,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 			this.newResource = newResource;
 			this.locked = locked;
 			this.needsLock = needsLock;
-			this.children = Collections.EMPTY_LIST;
+			this.children = Collections.emptyList();
 			this.isTrunk = isTrunk;
 			this.isBranch = isBranch;
 			this.isTag = isTag;

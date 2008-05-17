@@ -35,7 +35,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 public class SaveProjectMetaOperation extends AbstractWorkingCopyOperation implements IResourceProvider {
 	// exclude .settings folder due large information amount contained in it
 	protected static final String []META_FILES = new String[] {".project", ".classpath"};
-	protected HashMap savedMetas;
+	protected HashMap<String, File> savedMetas;
 	protected String startsWith;
 
 	public SaveProjectMetaOperation(IResource []resources) {
@@ -44,7 +44,7 @@ public class SaveProjectMetaOperation extends AbstractWorkingCopyOperation imple
 	
 	public SaveProjectMetaOperation(IResource []resources, String startsWith) {
 		super("Operation.SaveMeta", resources);
-		this.savedMetas = new HashMap();
+		this.savedMetas = new HashMap<String, File>();
 		this.startsWith = startsWith;
 	}
 
@@ -54,7 +54,7 @@ public class SaveProjectMetaOperation extends AbstractWorkingCopyOperation imple
 	
 	public SaveProjectMetaOperation(IResourceProvider provider, String startsWith) {
 		super("Operation.SaveMeta", provider);
-		this.savedMetas = new HashMap();
+		this.savedMetas = new HashMap<String, File>();
 		this.startsWith = startsWith;
 	}
 	
@@ -62,7 +62,7 @@ public class SaveProjectMetaOperation extends AbstractWorkingCopyOperation imple
 		return this.operableData();
 	}
 	
-	public Map getSavedMetas() {
+	public Map<String, File> getSavedMetas() {
 		return this.savedMetas;
 	}
 	

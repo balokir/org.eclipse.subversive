@@ -50,7 +50,7 @@ public class GetAllFilesOperation extends AbstractFileOperation implements IFile
 			return;
 		}
 		
-		final HashSet allFiles = new HashSet();
+		final HashSet<File> allFiles = new HashSet<File>();
 		
 		File []children = file.listFiles(new FileFilter() {
 			public boolean accept(File arg0) {
@@ -77,7 +77,7 @@ public class GetAllFilesOperation extends AbstractFileOperation implements IFile
 			}
 		}
 		
-		this.children = (File [])allFiles.toArray(new File[allFiles.size()]);
+		this.children = allFiles.toArray(new File[allFiles.size()]);
 	}
 
 }

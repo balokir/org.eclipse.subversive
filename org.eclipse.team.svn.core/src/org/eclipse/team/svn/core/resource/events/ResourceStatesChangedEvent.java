@@ -81,7 +81,7 @@ public class ResourceStatesChangedEvent {
     		return resources;
     	}
     	
-		final HashSet fullList = new HashSet();
+		final HashSet<IResource> fullList = new HashSet<IResource>();
 		for (int i = 0; i < resources.length; i++) {
     		FileUtility.visitNodes(resources[i], new IResourceVisitor() {
 				public boolean visit(IResource resource) throws CoreException {
@@ -93,7 +93,7 @@ public class ResourceStatesChangedEvent {
 				}
 			}, depth);
 		}
-		return (IResource [])fullList.toArray(new IResource[fullList.size()]);
+		return fullList.toArray(new IResource[fullList.size()]);
 	}
 	
 	protected boolean containsImpl(IResource resource) {

@@ -87,7 +87,7 @@ public class RepositoryLocation extends RepositoryFictiveNode implements IParent
 
 	public Object []getChildren(Object o) {
 		if (this.children == null) {
-			ArrayList list = new ArrayList(Arrays.asList(this.locationRoot.getChildren(o)));
+			ArrayList<Object> list = new ArrayList<Object>(Arrays.asList(this.locationRoot.getChildren(o)));
 			list.add(new RepositoryRoot(null, this.location.getRepositoryRoot()));
 			list.add(new RepositoryRevisions(this.location));
 			if (list.get(0) instanceof RepositoryPending) {

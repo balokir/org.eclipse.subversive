@@ -126,7 +126,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 	protected SashForm sForm;
 	protected IResource []resources;
 	protected boolean keepLocks;
-	protected List changeListenerList;
+	protected List<IResourceSelectionChangeListener> changeListenerList;
 	protected IResource[] userSelectedResources;
 	protected int minLogSize;
 	protected int maxLogWidth;
@@ -152,7 +152,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 			this.defaultMessage = SVNTeamUIPlugin.instance().getResource("CommitPanel.Message");
 			this.dialogDescription = SVNTeamUIPlugin.instance().getResource("CommitPanel.Description");
 		}
-		this.changeListenerList = new ArrayList();
+		this.changeListenerList = new ArrayList<IResourceSelectionChangeListener>();
 		this.userSelectedResources = userSelectedResources;
 	}
     
@@ -678,7 +678,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 	
 	public void fireResourcesSelectionChanged(ResourceSelectionChangedEvent event) {
 		this.validateContent();
-		IResourceSelectionChangeListener []listeners = (IResourceSelectionChangeListener [])this.changeListenerList.toArray(new IResourceSelectionChangeListener[this.changeListenerList.size()]);
+		IResourceSelectionChangeListener []listeners = this.changeListenerList.toArray(new IResourceSelectionChangeListener[this.changeListenerList.size()]);
 		for (int i = 0; i < listeners.length; i++) {
 			listeners[i].resourcesSelectionChanged(event);
 		}
@@ -729,7 +729,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
     	}
     	
     	protected void runImpl(IProgressMonitor monitor) throws Exception {
-    		ArrayList parentProperties = new ArrayList();
+    		ArrayList<IResource> parentProperties = new ArrayList<IResource>();
 			
 			int length = this.resources.length < CommitPanel.MAXIMUM_CHECKS_SIZE ? this.resources.length : CommitPanel.MAXIMUM_CHECKS_SIZE;
 	    	for (int i = 0; i < length && !monitor.isCanceled(); i++) {
@@ -751,7 +751,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 			}
 		}
     	
-    	protected boolean processProperty(IResource resource, ArrayList parentProperties, IProgressMonitor monitor) {
+    	protected boolean processProperty(IResource resource, ArrayList<IResource> parentProperties, IProgressMonitor monitor) {
     		if (parentProperties.contains(resource) || monitor.isCanceled()) {
 				return true;
 			}

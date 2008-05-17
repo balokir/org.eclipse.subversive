@@ -23,18 +23,18 @@ import org.eclipse.swt.widgets.Control;
  * @author Alexander Gurov
  */
 public class GroupVerifier extends CompositeVerifier {
-    protected Map componentsMap;
+    protected Map<AbstractVerifier, Control> componentsMap;
     
     public GroupVerifier() {
         super();
-        this.componentsMap = new LinkedHashMap();
+        this.componentsMap = new LinkedHashMap<AbstractVerifier, Control>();
     }
 
 	public boolean verify() {
 		this.hasWarning = false;
-		for (Iterator it = this.verifiers.iterator(); it.hasNext(); ) {
+		for (Iterator<?> it = this.verifiers.iterator(); it.hasNext(); ) {
 			AbstractVerifier iVer = (AbstractVerifier)it.next();
-			if (!iVer.verify((Control)this.componentsMap.get(iVer))) {
+			if (!iVer.verify(this.componentsMap.get(iVer))) {
 				return false;
 			}
 		}
@@ -46,10 +46,9 @@ public class GroupVerifier extends CompositeVerifier {
 	
 	public boolean verify(Control input) {
 		// could be used as workaround for situations when control validation is required in any case
-		for (Iterator it = this.componentsMap.entrySet().iterator(); it.hasNext(); ) {
-			Map.Entry entry = (Map.Entry)it.next();
+		for (Map.Entry<AbstractVerifier, Control> entry : this.componentsMap.entrySet()) {
 			if (entry.getValue().equals(input)) {
-				return ((AbstractVerifier)entry.getKey()).verify(input);
+				return entry.getKey().verify(input);
 			}
 		}
 		return true;
@@ -61,10 +60,10 @@ public class GroupVerifier extends CompositeVerifier {
 	}
     
 	public void remove(Control cmp) {
-	    for (Iterator it = this.componentsMap.entrySet().iterator(); it.hasNext(); ) {
-	        Map.Entry entry = (Map.Entry)it.next();
+	    for (Iterator<Map.Entry<AbstractVerifier, Control>> it = this.componentsMap.entrySet().iterator(); it.hasNext(); ) {
+	    	Map.Entry<AbstractVerifier, Control> entry = it.next();
 	        if (cmp == entry.getValue()) {
-	            AbstractVerifier verifier = (AbstractVerifier)entry.getKey();
+	            AbstractVerifier verifier = entry.getKey();
 				super.remove(verifier);
 				it.remove();
 				break;
@@ -77,7 +76,7 @@ public class GroupVerifier extends CompositeVerifier {
 		this.componentsMap.clear();
 	}
         
-	public Iterator getComponents() {
+	public Iterator<Control> getComponents() {
 		return this.componentsMap.values().iterator();
 	}
 	

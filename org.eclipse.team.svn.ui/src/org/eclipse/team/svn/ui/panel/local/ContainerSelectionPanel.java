@@ -253,7 +253,7 @@ public class ContainerSelectionPanel extends AbstractDialogPanel {
         			}
         		}
         	}
-        	ArrayList destResources = new ArrayList();
+        	ArrayList<IResource> destResources = new ArrayList<IResource>();
         	int numberOfConflictedResources = 0;
         	for (int i = 0; i < ContainerSelectionPanel.this.resources.length; i++) {
     			IPath dest = containerPath.append(ContainerSelectionPanel.this.resources[i].getName());

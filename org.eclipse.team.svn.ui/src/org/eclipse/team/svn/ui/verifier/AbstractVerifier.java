@@ -26,12 +26,12 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
  * @author Alexander Gurov
  */
 public abstract class AbstractVerifier {
-    protected List listeners;
+    protected List<IVerifierListener> listeners;
     protected boolean filledRight;
     protected boolean hasWarning;
 
     public AbstractVerifier() {
-        this.listeners = new ArrayList();
+        this.listeners = new ArrayList<IVerifierListener>();
         this.filledRight = false;
         this.hasWarning = false;
     }

@@ -54,10 +54,10 @@ public class MoveProjectsToWorkingSetOperation extends AbstractWorkingCopyOperat
 		for (int i = 0; i < workingSets.length; i++) {
 			if (workingSets[i].getName().equals(this.workingSetName)) {
 				wSet = workingSets[i];
-				List existing = new ArrayList();
+				List<IAdaptable> existing = new ArrayList<IAdaptable>();
 				existing.addAll(Arrays.asList(wSet.getElements()));
 				existing.addAll(Arrays.asList(projects));
-				wSet.setElements((IAdaptable[])existing.toArray(new IAdaptable[existing.size()]));
+				wSet.setElements(existing.toArray(new IAdaptable[existing.size()]));
 				break;
 			}
 		}

@@ -31,17 +31,17 @@ public class Notify2Composite implements ISVNNotificationCallback {
 	}
 	
 	public void add(ISVNNotificationCallback listener) {
-		List tmp = new ArrayList(Arrays.asList(this.listeners));
+		List<ISVNNotificationCallback> tmp = new ArrayList<ISVNNotificationCallback>(Arrays.asList(this.listeners));
 		if (!tmp.contains(listener)) {
 			tmp.add(listener);
 		}
-		this.listeners = (ISVNNotificationCallback [])tmp.toArray(new ISVNNotificationCallback[tmp.size()]);
+		this.listeners = tmp.toArray(new ISVNNotificationCallback[tmp.size()]);
 	}
 	
 	public void remove(ISVNNotificationCallback listener) {
-		List tmp = new ArrayList(Arrays.asList(this.listeners));
+		List<ISVNNotificationCallback> tmp = new ArrayList<ISVNNotificationCallback>(Arrays.asList(this.listeners));
 		tmp.remove(listener);
-		this.listeners = (ISVNNotificationCallback [])tmp.toArray(new ISVNNotificationCallback[tmp.size()]);
+		this.listeners = tmp.toArray(new ISVNNotificationCallback[tmp.size()]);
 	}
 
 	public void notify(SVNNotification info) {
