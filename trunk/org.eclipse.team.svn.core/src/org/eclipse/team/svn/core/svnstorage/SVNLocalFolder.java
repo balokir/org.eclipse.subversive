@@ -35,7 +35,7 @@ public class SVNLocalFolder extends SVNLocalResource implements ILocalFolder {
 
 	public ILocalResource []getChildren() {
 		IContainer root = (IContainer)this.resource;
-		List members = new ArrayList();
+		List<ILocalResource> members = new ArrayList<ILocalResource>();
 		
 		GetAllResourcesOperation op = new GetAllResourcesOperation(root);
 		ProgressMonitorUtility.doTaskExternalDefault(op, new NullProgressMonitor());
@@ -47,7 +47,7 @@ public class SVNLocalFolder extends SVNLocalResource implements ILocalFolder {
 			}
 		}
 		
-		return (ILocalResource [])members.toArray(new ILocalResource[members.size()]);
+		return members.toArray(new ILocalResource[members.size()]);
 	}
 
 }

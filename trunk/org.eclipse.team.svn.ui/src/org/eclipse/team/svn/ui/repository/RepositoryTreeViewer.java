@@ -68,7 +68,7 @@ public class RepositoryTreeViewer extends TreeViewer {
 	public static final String FMT_REPOSITORY_TAGS = RepositoryTreeViewer.FMT_REPOSITORY_FOLDER;
 	public static final String FMT_REPOSITORY_TRUNK = RepositoryTreeViewer.FMT_REPOSITORY_FOLDER;
 	
-	private static final Map class2Format = new HashMap();
+	private static final Map<Class<?>, String> class2Format = new HashMap<Class<?>, String>();
 	
 	static {
 		RepositoryTreeViewer.class2Format.put(RepositoryResource.class, RepositoryTreeViewer.FMT_REPOSITORY_RESOURCE);
@@ -88,7 +88,7 @@ public class RepositoryTreeViewer extends TreeViewer {
 		public void refreshed(Object element);
 	}
 	
-	protected List refreshListeners = new ArrayList();
+	protected List<IRefreshListener> refreshListeners = new ArrayList<IRefreshListener>();
 
 	public RepositoryTreeViewer(Composite parent) {
 		super(parent);
@@ -249,11 +249,11 @@ public class RepositoryTreeViewer extends TreeViewer {
 	}
 	
 	protected TreeItem []findUnfreshNodes(TreeItem []items, Object obj, boolean exact) {
-		List retVal = this.findUnfreshNodesImpl(items, obj, exact);
+		List<TreeItem> retVal = this.findUnfreshNodesImpl(items, obj, exact);
 		return retVal == null ? null : (TreeItem [])retVal.toArray(new TreeItem[retVal.size()]);
 	}
 	
-	protected List findUnfreshNodes(TreeItem item, Object obj, boolean exact) {
+	protected List<TreeItem> findUnfreshNodes(TreeItem item, Object obj, boolean exact) {
 		Object data = item.getData();
 		if (obj == data || !exact && obj.equals(data)) {
 			return Arrays.asList(new TreeItem[] {item});
@@ -267,11 +267,11 @@ public class RepositoryTreeViewer extends TreeViewer {
 		return this.findUnfreshNodesImpl(item.getItems(), obj, exact);
 	}
 	
-	protected List findUnfreshNodesImpl(TreeItem []items, Object obj, boolean exact) {
+	protected List<TreeItem> findUnfreshNodesImpl(TreeItem []items, Object obj, boolean exact) {
 		if (items != null) {
-			List retVal = new ArrayList();
+			List<TreeItem> retVal = new ArrayList<TreeItem>();
 			for (int i = 0; i < items.length; i++) {
-				List tmp = this.findUnfreshNodes(items[i], obj, exact);
+				List<TreeItem> tmp = this.findUnfreshNodes(items[i], obj, exact);
 				if (tmp != null) {
 					retVal.addAll(tmp);
 				}
@@ -316,7 +316,7 @@ public class RepositoryTreeViewer extends TreeViewer {
 				if (item != null) {
 					Object data = item.getData();
 					if (data != null && data instanceof IToolTipProvider) {
-						tooltipText = ((IToolTipProvider)data).getToolTipMessage((String)RepositoryTreeViewer.class2Format.get(data.getClass()));
+						tooltipText = ((IToolTipProvider)data).getToolTipMessage(RepositoryTreeViewer.class2Format.get(data.getClass()));
 					}
 				}
 				tree.setToolTipText(tooltipText);

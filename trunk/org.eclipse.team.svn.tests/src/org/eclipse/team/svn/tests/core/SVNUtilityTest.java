@@ -61,10 +61,10 @@ public abstract class SVNUtilityTest extends AbstractOperationTestCase {
 				IResource []localProjectSet = new IResource[] {local1, local2};				
 				assertTrue("SVNUtility.splitWorkingCopies", SVNUtility.splitWorkingCopies(localProjectSet).size() == localProjectSet.length);
 				
-				Map repositoryLocations = SVNUtility.splitRepositoryLocations(remoteProjectSet);
+				Map<?, ?> repositoryLocations = SVNUtility.splitRepositoryLocations(remoteProjectSet);
 				assertTrue("SVNUtility.splitRepositoryLocations", repositoryLocations.size() == 1 && repositoryLocations.containsKey(remote1.getRepositoryLocation()));
 				
-				Map locations = SVNUtility.splitRepositoryLocations(localProjectSet);
+				Map<?, ?> locations = SVNUtility.splitRepositoryLocations(localProjectSet);
 				assertTrue("SVNUtility.splitRepositoryLocations", locations.size() == 1 && locations.containsKey(SVNRemoteStorage.instance().asRepositoryResource(local1).getRepositoryLocation()));
 				
 				IRepositoryResource []remoteProjectParents = SVNUtility.getCommonParents(remoteProjectSet);

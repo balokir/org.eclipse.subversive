@@ -65,7 +65,7 @@ public abstract class RepositoryResource implements IWorkbenchAdapter, IWorkbenc
 	public static RGB STRUCTURE_DEFINED_NODES_BACKGROUND;
 	public static Font STRUCTURE_DEFINED_NODES_FONT;
 	
-    protected static Map images = new HashMap();
+    protected static Map<ImageDescriptor, OverlayedImageDescriptor> images = new HashMap<ImageDescriptor, OverlayedImageDescriptor>();
     protected static ImageDescriptor lockDescriptor;
     protected static ImageDescriptor externalsDescriptor;
     protected GetRemoteResourceRevisionOperation revisionOp;
@@ -170,7 +170,7 @@ public abstract class RepositoryResource implements IWorkbenchAdapter, IWorkbenc
 	
 	protected static ImageDescriptor decorateImage(ImageDescriptor originalDescriptor, ImageDescriptor decorationDescriptor) {
 		synchronized (RepositoryResource.images) {
-		    OverlayedImageDescriptor imgDescr = (OverlayedImageDescriptor)RepositoryResource.images.get(originalDescriptor);
+		    OverlayedImageDescriptor imgDescr = RepositoryResource.images.get(originalDescriptor);
 		    if (imgDescr == null) {
 		    	Image image = originalDescriptor.createImage();
 	            CompareUI.disposeOnShutdown(image);

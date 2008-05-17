@@ -43,8 +43,8 @@ public class CoreExtensionsManager {
 	public static final String CRASH_RECOVERY = "crashrecovery";
 	public static final String IGNORE_RECOMMENDATIONS = "resourceIgnoreRules";
 
-	private HashMap connectors;
-	private HashSet validConnectors;
+	private HashMap<String, ISVNConnectorFactory> connectors;
+	private HashSet<String> validConnectors;
 	private IOptionProvider optionProvider;
 	private IResolutionHelper []helpers;
 	private IIgnoreRecommendations []ignoreRecommendations;
@@ -85,11 +85,11 @@ public class CoreExtensionsManager {
 		this.optionProvider = optionProvider;
 	}
 	
-	public Collection getAccessibleClientIds() {
+	public Collection<String> getAccessibleClientIds() {
 		return this.connectors.keySet();
 	}
 	
-	public Collection getAccessibleClients() {
+	public Collection<ISVNConnectorFactory> getAccessibleClients() {
 		return this.connectors.values();
 	}
 	
@@ -108,13 +108,13 @@ public class CoreExtensionsManager {
 	
 	private ISVNConnectorFactory getFirstValidConnector(String id) {
 		if (this.validConnectors.contains(id)) {
-			return (ISVNConnectorFactory)this.connectors.get(id);
+			return this.connectors.get(id);
 		}
 		else if (this.validConnectors.contains(ISVNConnectorFactory.DEFAULT_ID)) {
-			return (ISVNConnectorFactory)this.connectors.get(ISVNConnectorFactory.DEFAULT_ID);
+			return this.connectors.get(ISVNConnectorFactory.DEFAULT_ID);
 		}
-		for (Iterator it = this.connectors.values().iterator(); it.hasNext(); ) {
-			ISVNConnectorFactory connector = (ISVNConnectorFactory)it.next(); 
+		for (Iterator<ISVNConnectorFactory> it = this.connectors.values().iterator(); it.hasNext(); ) {
+			ISVNConnectorFactory connector = it.next(); 
 			if (this.validConnectors.contains(connector.getId())) {
 				return connector;
 			}
@@ -124,8 +124,8 @@ public class CoreExtensionsManager {
 	
 	private CoreExtensionsManager() {
 		this.disableHelpers = false;
-		this.connectors = new HashMap();
-		this.validConnectors = new HashSet();
+		this.connectors = new HashMap<String, ISVNConnectorFactory>();
+		this.validConnectors = new HashSet<String>();
 		Object []extensions = this.loadCoreExtensions(CoreExtensionsManager.SVN_CONNECTOR);
 		for (int i = 0; i < extensions.length; i++) {
 			ISVNConnectorFactory factory = new ThreadNameModifierFactory((ISVNConnectorFactory)extensions[i]);
@@ -175,7 +175,7 @@ public class CoreExtensionsManager {
 			throw new RuntimeException(errMessage);
 		}
 		IExtension []extensions = extension.getExtensions();
-		ArrayList retVal = new ArrayList();
+		ArrayList<Object> retVal = new ArrayList<Object>();
 		for (int i = 0; i < extensions.length; i++) {
 			IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
 			for (int j = 0; j < configElements.length; j++) {

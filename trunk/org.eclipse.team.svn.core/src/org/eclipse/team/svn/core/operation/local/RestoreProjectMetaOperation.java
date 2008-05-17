@@ -49,8 +49,8 @@ public class RestoreProjectMetaOperation extends AbstractActionOperation {
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		Map container = this.saveOp.getSavedMetas();
-		for (Iterator it = container.entrySet().iterator(); it.hasNext() && !monitor.isCanceled(); ) {
+		Map<?, ?> container = this.saveOp.getSavedMetas();
+		for (Iterator<?> it = container.entrySet().iterator(); it.hasNext() && !monitor.isCanceled(); ) {
 			Map.Entry entry = (Map.Entry)it.next();
 			final File targetFile = new File((String)entry.getKey());
 			final File savedCopy = (File)entry.getValue();

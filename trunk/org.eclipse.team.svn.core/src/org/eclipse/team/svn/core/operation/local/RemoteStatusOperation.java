@@ -30,6 +30,7 @@ import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNNotification;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNRevision.Number;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -48,16 +49,16 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class RemoteStatusOperation extends AbstractWorkingCopyOperation implements IRemoteStatusOperation, ISVNNotificationCallback {
 	protected SVNChangeStatus []statuses;
-	protected Map pegRevisions;
+	protected Map<String, Number> pegRevisions;
 
 	public RemoteStatusOperation(IResource []resources) {
 		super("Operation.UpdateStatus", resources);
-		this.pegRevisions = new HashMap();
+		this.pegRevisions = new HashMap<String, Number>();
 	}
 
 	public RemoteStatusOperation(IResourceProvider provider) {
 		super("Operation.UpdateStatus", provider);
-		this.pegRevisions = new HashMap();
+		this.pegRevisions = new HashMap<String, Number>();
 	}
 
 	public IResource []getScope() {
@@ -71,7 +72,7 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 		for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
 			projectPaths.add(new Path(FileUtility.getWorkingCopyPath(resources[i].getProject())));
 		}
-		final HashMap result = new HashMap();
+		final HashMap<Path, SVNChangeStatus> result = new HashMap<Path, SVNChangeStatus>();
 		final ISVNEntryStatusCallback cb = new ISVNEntryStatusCallback() {
 			public void next(SVNChangeStatus status) {
 				result.put(new Path(status.path), status);
@@ -89,7 +90,7 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 			
 			private void postStatus(String path, SVNChangeStatus baseStatus) {
 				Path tPath = new Path(path);
-				SVNChangeStatus st = (SVNChangeStatus)result.get(tPath);
+				SVNChangeStatus st = result.get(tPath);
 				if (st == null || st.reposLastCmtRevision < baseStatus.reposLastCmtRevision) {
 					SVNChangeStatus status = this.makeStatus(path, baseStatus);
 					result.put(tPath, status);
@@ -131,7 +132,7 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 			
 			location.releaseSVNProxy(proxy);
 		}
-		this.statuses = (SVNChangeStatus [])result.values().toArray(new SVNChangeStatus[result.size()]);
+		this.statuses = result.values().toArray(new SVNChangeStatus[result.size()]);
 	}
 
 	public SVNEntryStatus[]getStatuses() {
@@ -142,7 +143,7 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 	    IPath resourcePath = FileUtility.getResourcePath(change.getResource());
 	    int prefixLength = 0;
 	    SVNRevision revision = SVNRevision.INVALID_REVISION;
-	    for (Iterator it = this.pegRevisions.entrySet().iterator(); it.hasNext(); ) {
+	    for (Iterator<?> it = this.pegRevisions.entrySet().iterator(); it.hasNext(); ) {
 	        Map.Entry entry = (Map.Entry)it.next();
 	        IPath rootPath = new Path((String)entry.getKey());
 	        int segments = rootPath.segmentCount();

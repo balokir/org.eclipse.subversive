@@ -162,7 +162,7 @@ public class CreateFilePanel extends AbstractDialogPanel {
 		tokenizer.resetSyntax();
 		tokenizer.quoteChar('\"');
 		tokenizer.whitespaceChars(32, 32);
-		final Set fileNames = new HashSet();
+		final Set<String> fileNames = new HashSet<String>();
 		
 		new AbstractActionOperation("Operation.ParseFile") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
@@ -175,7 +175,7 @@ public class CreateFilePanel extends AbstractDialogPanel {
 			}
 		}.run(new NullProgressMonitor());
 		
-		return (String[])fileNames.toArray(new String[fileNames.size()]);
+		return fileNames.toArray(new String[fileNames.size()]);
 	}
 	
 	public String getHelpId() {

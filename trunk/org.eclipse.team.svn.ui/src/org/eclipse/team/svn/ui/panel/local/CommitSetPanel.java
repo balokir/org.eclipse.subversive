@@ -48,7 +48,7 @@ public class CommitSetPanel extends CommentPanel implements ICommentDialogPanel 
 	protected ResourceSelectionComposite selectionComposite;
     private Text nameText;
 	protected IResource []resources;
-	protected List changeListenerList;
+	protected List<IResourceSelectionChangeListener> changeListenerList;
 	
 	public CommitSetPanel(ActiveChangeSet set, IResource [] resources, int type) {
 		super(SVNTeamUIPlugin.instance().getResource("CommitSetPanel.Title"));
@@ -68,7 +68,7 @@ public class CommitSetPanel extends CommentPanel implements ICommentDialogPanel 
         	resources = set.getResources();
         }
 
-		this.changeListenerList = new ArrayList();
+		this.changeListenerList = new ArrayList<IResourceSelectionChangeListener>();
     }
     
 	public void createControlsImpl(Composite parent) {
@@ -130,7 +130,7 @@ public class CommitSetPanel extends CommentPanel implements ICommentDialogPanel 
 	
 	public void fireResourcesSelectionChanged(ResourceSelectionChangedEvent event) {
 		this.validateContent();
-		IResourceSelectionChangeListener []listeners = (IResourceSelectionChangeListener [])this.changeListenerList.toArray(new IResourceSelectionChangeListener[this.changeListenerList.size()]);
+		IResourceSelectionChangeListener []listeners = this.changeListenerList.toArray(new IResourceSelectionChangeListener[this.changeListenerList.size()]);
 		for (int i = 0; i < listeners.length; i++) {
 			listeners[i].resourcesSelectionChanged(event);
 		}

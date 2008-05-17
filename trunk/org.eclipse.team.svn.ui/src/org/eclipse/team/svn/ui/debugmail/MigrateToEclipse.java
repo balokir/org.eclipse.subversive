@@ -109,18 +109,18 @@ main:
 	}
 	
 	protected static class RemapProjects extends AbstractWorkingCopyOperation implements IResourceProvider {
-		protected List processed;
+		protected List<IProject> processed;
 		
 		public RemapProjects() {
 			super("Operation.RemapProjects", (IResource [])null);
 		}
 
 		public IResource []getResources() {
-			return (IProject [])this.processed.toArray(new IProject [this.processed.size()]);
+			return this.processed.toArray(new IProject [this.processed.size()]);
 		}
 		
 		protected void runImpl(IProgressMonitor monitor) throws Exception {
-			this.processed = new ArrayList();
+			this.processed = new ArrayList<IProject>();
 			
 			IProject []projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 			for (int i = 0; i < projects.length; i++) {

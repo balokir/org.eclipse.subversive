@@ -12,7 +12,6 @@
 package org.eclipse.team.svn.ui.annotate;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
@@ -73,13 +72,13 @@ public class BuiltInAnnotate {
 		final RevisionInformation info = new RevisionInformation();
 		IActionOperation prepareRevisions = new AbstractActionOperation("Operation.PrepareRevisions") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
-				Map revisions = new HashMap();
+				Map<String, BuiltInAnnotateRevision> revisions = new HashMap<String, BuiltInAnnotateRevision>();
 				String [][]lines = annotateOp.getAnnotatedLines();
 				if (lines == null || lines.length == 0) {
 					return;
 				}
 				for (int i = 0; i < lines.length; i++) {
-					BuiltInAnnotateRevision revision = (BuiltInAnnotateRevision)revisions.get(lines[i][0]);
+					BuiltInAnnotateRevision revision = revisions.get(lines[i][0]);
 					if (revision == null) {
 						revisions.put(lines[i][0], revision = new BuiltInAnnotateRevision(lines[i][0], lines[i][1], CommitterColors.getDefault().getCommitterRGB(lines[i][1])));
 						info.addRevision(revision);
@@ -87,8 +86,7 @@ public class BuiltInAnnotate {
 					revision.addLine(Integer.parseInt(lines[i][2]));
 				}
 				long from = SVNRevision.INVALID_REVISION_NUMBER, to = SVNRevision.INVALID_REVISION_NUMBER;
-				for (Iterator it = revisions.values().iterator(); it.hasNext(); ) {
-					BuiltInAnnotateRevision revision = (BuiltInAnnotateRevision)it.next();
+				for (BuiltInAnnotateRevision revision : revisions.values()) {
 					revision.addLine(BuiltInAnnotateRevision.END_LINE);
 					long revisionNum = Long.parseLong(revision.getId());
 					if (from > revisionNum || from == SVNRevision.INVALID_REVISION_NUMBER) {
@@ -103,7 +101,7 @@ public class BuiltInAnnotate {
 				try {
 					SVNLogEntry []msgs = SVNUtility.logEntries(proxy, SVNUtility.getEntryReference(resource), SVNRevision.fromNumber(to), SVNRevision.fromNumber(from), ISVNConnector.Options.NONE, ISVNConnector.DEFAULT_LOG_ENTRY_PROPS, 0, new SVNProgressMonitor(this, monitor, null));
 					for (int i = 0; i < msgs.length; i++) {
-						BuiltInAnnotateRevision revision = (BuiltInAnnotateRevision)revisions.get(String.valueOf(msgs[i].revision));
+						BuiltInAnnotateRevision revision = revisions.get(String.valueOf(msgs[i].revision));
 						if (revision != null) {
 							revision.setLogMessage(msgs[i]);
 						}
@@ -171,13 +169,6 @@ public class BuiltInAnnotate {
 	    	}
 	    	this.textEditor.showRevisionInformation(info, SVNTeamQuickDiffProvider.class.getName());
 	    }
-//	    
-//	    IHistoryView view = (IHistoryView)page.showView(IHistoryView.VIEW_ID);
-//		if (view != null) {
-//			this.historyPage = (SVNHistoryPage)view.showHistoryFor(resource);
-//			//FIXME enqueue selection event
-//			//view.selectRevision(Long.parseLong(((BuiltInAnnotateRevision)info.getRevisions().get(0)).getId()));
-//		}
 	}
 	
 	protected IEditorPart openEditor(IWorkbenchPage page, IRepositoryResource remote) throws PartInitException {

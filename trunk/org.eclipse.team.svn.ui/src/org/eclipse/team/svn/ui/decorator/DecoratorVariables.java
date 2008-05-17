@@ -97,7 +97,7 @@ public final class DecoratorVariables {
 	}
 	
 	public IVariable[] parseFormatLine(String line) {
-		List retVal = new ArrayList();
+		List<IVariable> retVal = new ArrayList<IVariable>();
 		
 		int startPos = 0;
 		int stopPos = -1;
@@ -136,7 +136,7 @@ public final class DecoratorVariables {
 			}
 		} while (stopPos > 0);
 		
-		return (IVariable [])retVal.toArray(new IVariable[retVal.size()]);
+		return retVal.toArray(new IVariable[retVal.size()]);
 	}
 	
 	public DecoratorVariables(IVariableSetProvider variableSetProvider) {

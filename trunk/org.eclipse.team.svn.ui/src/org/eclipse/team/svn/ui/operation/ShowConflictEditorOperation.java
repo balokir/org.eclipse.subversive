@@ -67,11 +67,11 @@ public class ShowConflictEditorOperation extends AbstractWorkingCopyOperation {
     		return rule;
     	}
     	IResource []resources = this.operableData();
-    	HashSet ruleSet = new HashSet();
+    	HashSet<ISchedulingRule> ruleSet = new HashSet<ISchedulingRule>();
     	for (int i = 0; i < resources.length; i++) {
 			ruleSet.add(SVNResourceRuleFactory.INSTANCE.refreshRule(resources[i].getParent()));
     	}
-    	return new MultiRule((IResource [])ruleSet.toArray(new IResource[ruleSet.size()]));
+    	return new MultiRule(ruleSet.toArray(new IResource[ruleSet.size()]));
     }
 
     public int getOperationWeight() {

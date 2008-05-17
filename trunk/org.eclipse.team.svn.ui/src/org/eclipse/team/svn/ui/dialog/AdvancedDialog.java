@@ -83,11 +83,11 @@ public class AdvancedDialog extends DefaultDialog implements IDialogManagerEx {
 		this.createExtendedButtonPanel(buttonPanel);
 		this.createBaseButtonPanel(buttonPanel);
 		
-		ArrayList allButtons = new ArrayList();
+		ArrayList<Button> allButtons = new ArrayList<Button>();
 		for (int i = 0; i < this.getButtonLabels().length; i++) {
 			allButtons.add(this.getButton(i));
 		}
-		this.setButtons((Button[])allButtons.toArray(new Button[allButtons.size()]));
+		this.setButtons(allButtons.toArray(new Button[allButtons.size()]));
 		if (this.focusButtonIdx != 0) {
 			this.getShell().setDefaultButton(this.getButton(this.focusButtonIdx));
 		}

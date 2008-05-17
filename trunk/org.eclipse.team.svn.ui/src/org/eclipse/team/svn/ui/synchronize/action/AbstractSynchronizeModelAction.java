@@ -212,7 +212,7 @@ public abstract class AbstractSynchronizeModelAction extends SynchronizeModelAct
 	protected ISynchronizeModelElement []getSelectedElements() {
 		ArrayList<ISynchronizeModelElement> retVal = new ArrayList<ISynchronizeModelElement>();
 	    IStructuredSelection selection = AbstractSynchronizeModelAction.this.getStructuredSelection();
-		for (Iterator it = selection.iterator(); it.hasNext(); ) {
+		for (Iterator<?> it = selection.iterator(); it.hasNext(); ) {
 			Object element = it.next();
 			if (element instanceof ISynchronizeModelElement) {
 				retVal.add((ISynchronizeModelElement)element);

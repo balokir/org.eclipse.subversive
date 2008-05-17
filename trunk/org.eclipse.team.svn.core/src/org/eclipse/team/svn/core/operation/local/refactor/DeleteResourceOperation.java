@@ -84,11 +84,11 @@ public class DeleteResourceOperation extends AbstractActionOperation {
 		
 		// Process resources by project basis
 		IResource[] allResources = resourcesList.toArray(new IResource[resourcesList.size()]);
-		Map project2Resources = SVNUtility.splitWorkingCopies(allResources);
-		for (Iterator it = project2Resources.entrySet().iterator(); it.hasNext();) {
+		Map<?, ?> project2Resources = SVNUtility.splitWorkingCopies(allResources);
+		for (Iterator<?> it = project2Resources.entrySet().iterator(); it.hasNext();) {
 			Map.Entry entry = (Map.Entry)it.next();
 			IRepositoryLocation location = storage.getRepositoryLocation((IResource)entry.getKey());
-			IResource[] resources = (IResource[])((List)entry.getValue()).toArray(new IResource[((List)entry.getValue()).size()]);
+			IResource[] resources = ((List<?>)entry.getValue()).toArray(new IResource[((List<?>)entry.getValue()).size()]);
 			String[] wcPaths = new String[resources.length];
 			String printedPath = "";
 			for (int i = 0; i < resources.length; i++) {

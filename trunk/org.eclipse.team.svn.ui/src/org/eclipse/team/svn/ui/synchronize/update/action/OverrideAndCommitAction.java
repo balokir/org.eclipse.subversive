@@ -75,7 +75,7 @@ public class OverrideAndCommitAction extends AbstractSynchronizeModelAction {
 		IResource []overrideResources = UnacceptableOperationNotificator.shrinkResourcesWithNotOnRespositoryParents(configuration.getSite().getShell(), changedResources);
 		if (overrideResources != null && overrideResources.length > 0) {
 			overrideResources = FileUtility.addOperableParents(overrideResources, IStateFilter.SF_NOTONREPOSITORY);
-			HashSet allResourcesSet = new HashSet(Arrays.asList(overrideResources));
+			HashSet<IResource> allResourcesSet = new HashSet<IResource>(Arrays.asList(overrideResources));
 		    String proposedComment = SVNChangeSetCapability.getProposedComment(overrideResources);
 			CommitPanel commitPanel = new CommitPanel(overrideResources, overrideResources, CommitPanel.MSG_OVER_AND_COMMIT, proposedComment);
 			ICommitDialog commitDialog = ExtensionsManager.getInstance().getCurrentCommitFactory().getCommitDialog(configuration.getSite().getShell(), allResourcesSet, commitPanel);
@@ -98,7 +98,7 @@ public class OverrideAndCommitAction extends AbstractSynchronizeModelAction {
 		        
                 public IResource[] getResources() {
                     if (this.result == null) {
-                        HashSet tAdd = new HashSet(Arrays.asList(addition));
+                        HashSet<IResource> tAdd = new HashSet<IResource>(Arrays.asList(addition));
                         IResource []restricted = mergeOp.getHavingDifferentNodeKind();
                         for (int i = 0; i < restricted.length; i++) {
                             if (restricted[i] instanceof IContainer) {//delete from add to SVN list, resources, with nodekind changed, and all their children 
@@ -110,7 +110,7 @@ public class OverrideAndCommitAction extends AbstractSynchronizeModelAction {
                         	
                         }
                         
-                        this.result = (IResource [])tAdd.toArray(new IResource[tAdd.size()]);
+                        this.result = tAdd.toArray(new IResource[tAdd.size()]);
                     }
                     return this.result;
                 }

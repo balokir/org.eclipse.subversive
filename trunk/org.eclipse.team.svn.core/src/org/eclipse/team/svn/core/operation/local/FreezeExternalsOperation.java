@@ -39,7 +39,7 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
  * @author Alexander Gurov
  */
 public class FreezeExternalsOperation extends AbstractWorkingCopyOperation implements IActionOperationProcessor, IResourceProvider {
-	protected ArrayList changes = new ArrayList();
+	protected ArrayList<ResourceChange> changes = new ArrayList<ResourceChange>();
 	
 	public FreezeExternalsOperation(IResource[] resources) {
 		super("Operation.FreezeExternals", resources);
@@ -53,7 +53,7 @@ public class FreezeExternalsOperation extends AbstractWorkingCopyOperation imple
 		return this.operableData();
 	}
 	
-	public Collection getChanges() {
+	public Collection<ResourceChange> getChanges() {
 		return this.changes;
 	}
 

@@ -44,12 +44,12 @@ public class ObtainProjectNameOperation extends AbstractActionOperation {
 	
 	protected IRepositoryResourceProvider resourceProvider;
 	protected IRepositoryResource []resources;
-	protected HashMap names2Resources;
+	protected HashMap<String, IRepositoryResource> names2Resources;
 
 	public ObtainProjectNameOperation(IRepositoryResource[] resources) {
 		super("Operation.ObtainProjectName");
 		this.resources = resources;
-		this.names2Resources = new HashMap();
+		this.names2Resources = new HashMap<String, IRepositoryResource>();
 	}
 	
 	public ObtainProjectNameOperation(IRepositoryResourceProvider resourceProvider) {
@@ -60,7 +60,7 @@ public class ObtainProjectNameOperation extends AbstractActionOperation {
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
 		final boolean doObtainFromDotProject = SVNTeamPreferences.getCheckoutBoolean(store, SVNTeamPreferences.CHECKOUT_USE_DOT_PROJECT_NAME);
-		final Set lowerCaseNames = new HashSet();
+		final Set<String> lowerCaseNames = new HashSet<String>();
 		final boolean caseInsensitiveOS = FileUtility.isCaseInsensitiveOS();
 		if (this.resourceProvider != null) {
 			this.resources = this.resourceProvider.getRepositoryResources();
@@ -150,7 +150,7 @@ public class ObtainProjectNameOperation extends AbstractActionOperation {
 		return null;
 	}
 
-	public HashMap getNames2Resources() {
+	public HashMap<String, IRepositoryResource> getNames2Resources() {
 		return this.names2Resources;
 	}
 	

@@ -34,7 +34,7 @@ public class CommitterColors {
 	}
 
 	/** The color map. */
-	private Map fColors= new HashMap();
+	private Map<String, RGB> fColors= new HashMap<String, RGB>();
 
 	/** The number of colors that have been issued. */
 	private int fCount= 0;
@@ -50,7 +50,7 @@ public class CommitterColors {
 	 * @return the corresponding color
 	 */
 	public RGB getCommitterRGB(String committer) {
-		RGB rgb= (RGB) this.fColors.get(committer);
+		RGB rgb= this.fColors.get(committer);
 		if (rgb == null) {
 			rgb= computeRGB(this.fCount++);
 			this.fColors.put(committer, rgb);

@@ -48,12 +48,12 @@ public class DeleteResourcesOperation extends AbstractRepositoryOperation implem
 		this.revisionsPairs = new ArrayList<RevisionPair>();
 		IRepositoryResource []resources = SVNUtility.shrinkChildNodes(this.operableData());
 		
-		Map repository2Resources = SVNUtility.splitRepositoryLocations(resources);
+		Map<?, ?> repository2Resources = SVNUtility.splitRepositoryLocations(resources);
 		
-		for (Iterator it = repository2Resources.entrySet().iterator(); it.hasNext() && !monitor.isCanceled(); ) {
+		for (Iterator<?> it = repository2Resources.entrySet().iterator(); it.hasNext() && !monitor.isCanceled(); ) {
 			Map.Entry entry = (Map.Entry)it.next();
 			final IRepositoryLocation location = (IRepositoryLocation)entry.getKey();
-			final String []paths = SVNUtility.asURLArray((IRepositoryResource [])((List)entry.getValue()).toArray(new IRepositoryResource[0]), true);
+			final String []paths = SVNUtility.asURLArray(((List<?>)entry.getValue()).toArray(new IRepositoryResource[0]), true);
 			
 			this.complexWriteToConsole(new Runnable() {
 				public void run() {

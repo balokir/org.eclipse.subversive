@@ -40,7 +40,7 @@ public class MergeSet {
     	this.fromEnd = fromEnd;
     	this.ignoreAncestry = ignoreAncestry;
     	this.depth = depth;
-    	this.statuses = new ArrayList();
+    	this.statuses = new ArrayList<SVNMergeStatus>();
     }
 
 	public SVNMergeStatus []getStatuses() {

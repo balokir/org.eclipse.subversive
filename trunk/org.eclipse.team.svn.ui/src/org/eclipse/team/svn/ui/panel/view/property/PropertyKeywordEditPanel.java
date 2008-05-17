@@ -356,7 +356,7 @@ public class PropertyKeywordEditPanel extends AbstractDialogPanel {
 		this.headUrlElement = new KeywordTableElement(SVNKeywordProperty.HEAD_URL_NAMES[0], SVNKeywordProperty.HEAD_URL_DESCR(), SVNKeywordProperty.HEAD_URL_SAMPLE, KeywordTableElement.INITIAL);
 		this.idElement = new KeywordTableElement(SVNKeywordProperty.ID_NAMES[0], SVNKeywordProperty.ID_DESCR(), SVNKeywordProperty.ID_SAMPLE, KeywordTableElement.INITIAL);
 
-		List alreadyWithPropertiesList = Arrays.asList(this.alreadyWithProperties);
+		List<IResource> alreadyWithPropertiesList = Arrays.asList(this.alreadyWithProperties);
 		for (int i = 0; i < this.selectedResources.length; i++) {
 			SVNProperty[] data;
 			SVNKeywordProperty keywordPropertyValue = new SVNKeywordProperty(null);

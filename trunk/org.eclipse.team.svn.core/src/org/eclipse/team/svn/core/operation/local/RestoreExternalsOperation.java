@@ -37,7 +37,7 @@ public class RestoreExternalsOperation extends AbstractWorkingCopyOperation impl
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		final RestorePropertiesVisitor visitor = new RestorePropertiesVisitor();
 		
-		for (Iterator it = this.freezeOp.getChanges().iterator(); it.hasNext() && !monitor.isCanceled(); ) {
+		for (Iterator<?> it = this.freezeOp.getChanges().iterator(); it.hasNext() && !monitor.isCanceled(); ) {
 			final ResourceChange change = (ResourceChange)it.next();
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {

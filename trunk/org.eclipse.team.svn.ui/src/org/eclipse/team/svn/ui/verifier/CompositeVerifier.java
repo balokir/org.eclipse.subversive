@@ -12,7 +12,6 @@
 package org.eclipse.team.svn.ui.verifier;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.swt.widgets.Control;
@@ -23,14 +22,14 @@ import org.eclipse.swt.widgets.Control;
  * @author Alexander Gurov
  */
 public class CompositeVerifier extends AbstractVerifier implements IVerifierListener {
-    protected List verifiers;
+    protected List<AbstractVerifier> verifiers;
 
     public CompositeVerifier() {
         super();
-        this.verifiers = new ArrayList();
+        this.verifiers = new ArrayList<AbstractVerifier>();
     }
 
-	public List getVerifiers() {
+	public List<AbstractVerifier> getVerifiers() {
 		return this.verifiers;
 	}
 	
@@ -48,17 +47,16 @@ public class CompositeVerifier extends AbstractVerifier implements IVerifierList
 	}
 	
 	public void removeAll() {
-		for (Iterator it = this.verifiers.iterator(); it.hasNext(); ) {
-			((AbstractVerifier)it.next()).removeVerifierListener(this);
+		for (AbstractVerifier verifier : this.verifiers) {
+			verifier.removeVerifierListener(this);
 		}
 		this.verifiers.clear();
 	}
 
 	public boolean verify(Control input) {
 		this.hasWarning = false;
-		for (Iterator it = this.verifiers.iterator(); it.hasNext(); ) {
-			AbstractVerifier iVer = (AbstractVerifier)it.next();
-			if (!iVer.verify(input)) {
+		for (AbstractVerifier verifier : this.verifiers) {
+			if (!verifier.verify(input)) {
 				return false;
 			}
 		}

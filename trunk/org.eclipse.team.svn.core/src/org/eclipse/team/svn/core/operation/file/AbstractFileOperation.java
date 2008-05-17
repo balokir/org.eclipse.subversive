@@ -46,11 +46,11 @@ public abstract class AbstractFileOperation extends AbstractActionOperation {
 		if (this.files == null) {
 			return AbstractFileOperation.EXCLUSIVE;
 		}
-		HashSet ruleSet = new HashSet();
+		HashSet<ISchedulingRule> ruleSet = new HashSet<ISchedulingRule>();
     	for (int i = 0; i < this.files.length; i++) {
     		ruleSet.add(this.getSchedulingRule(this.files[i]));
     	}
-		return ruleSet.size() == 1 ? (ISchedulingRule)ruleSet.iterator().next() : new MultiRule((IResource [])ruleSet.toArray(new IResource[ruleSet.size()]));
+		return ruleSet.size() == 1 ? (ISchedulingRule)ruleSet.iterator().next() : new MultiRule(ruleSet.toArray(new IResource[ruleSet.size()]));
 	}
 
 	protected File []operableData() {

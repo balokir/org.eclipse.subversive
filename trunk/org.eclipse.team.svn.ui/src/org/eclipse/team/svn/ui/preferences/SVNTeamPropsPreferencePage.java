@@ -455,7 +455,7 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 		}
 		
 		BufferedReader cfgReader = null;
-		ArrayList autoPropsList = new ArrayList();
+		ArrayList<AutoProperty> autoPropsList = new ArrayList<AutoProperty>();
 		try {
 			cfgReader = new BufferedReader(new FileReader(filePath));
 			String line;
@@ -701,7 +701,7 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 	}
 	
 	public static Object[] loadAutoProperties(String encodedProps) {
-		ArrayList propsList = new ArrayList();
+		ArrayList<AutoProperty> propsList = new ArrayList<AutoProperty>();
 		String[] props = FileUtility.decodeStringToArray(encodedProps);
 		for (int i = 0; i < props.length; i += 3) {
 			boolean enabled = !props[i].equals("0");

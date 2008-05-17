@@ -193,7 +193,7 @@ public class ExtensionsManager {
 		this.reportingDescriptors = Arrays.asList(extensions).toArray(new IReportingDescriptor[extensions.length]);
 		extensions = this.loadUIExtensions("reporterfactory");
 		this.reporterFactories = Arrays.asList(extensions).toArray(new IReporterFactory[extensions.length]);
-		Arrays.sort(this.reporterFactories, new Comparator() {
+		Arrays.sort(this.reporterFactories, new Comparator<Object>() {
 			public int compare(Object o1, Object o2) {
 				IReporterFactory f1 = (IReporterFactory)o1;
 				IReporterFactory f2 = (IReporterFactory)o2;
@@ -214,7 +214,7 @@ public class ExtensionsManager {
 	private Object []loadExtensions(String namespace, String extensionPoint) {
 		IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(namespace, extensionPoint);
 		IExtension []extensions = extension.getExtensions();
-		ArrayList retVal = new ArrayList();
+		ArrayList<Object> retVal = new ArrayList<Object>();
 		for (int i = 0; i < extensions.length; i++) {
 			IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
 			for (int j = 0; j < configElements.length; j++) {

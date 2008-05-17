@@ -48,7 +48,7 @@ public class ToolTipVariableSetProvider implements IVariableSetProvider {
 	public static final IVariable VAR_LOCK_EXPIRATION_DATE = new PredefinedVariable(ToolTipVariableSetProvider.DOMAIN_NAME, ToolTipVariableSetProvider.NAME_OF_LOCK_EXPIRATION_DATE);
 	public static final IVariable VAR_LOCK_COMMENT = new PredefinedVariable(ToolTipVariableSetProvider.DOMAIN_NAME, ToolTipVariableSetProvider.NAME_OF_LOCK_COMMENT);
 	
-	private static final Map name2Variable = new HashMap();
+	private static final Map<String, IVariable> name2Variable = new HashMap<String, IVariable>();
 	
 	static {
 		ToolTipVariableSetProvider.name2Variable.put(ToolTipVariableSetProvider.NAME_OF_NAME, ToolTipVariableSetProvider.VAR_NAME);
@@ -73,7 +73,7 @@ public class ToolTipVariableSetProvider implements IVariableSetProvider {
 	}
 
 	public IVariable getVariable(String name) {
-		return (IVariable)ToolTipVariableSetProvider.name2Variable.get(name);
+		return ToolTipVariableSetProvider.name2Variable.get(name);
 	}
 	
 	protected ToolTipVariableSetProvider() {
