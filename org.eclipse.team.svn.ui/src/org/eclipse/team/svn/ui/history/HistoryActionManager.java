@@ -435,6 +435,7 @@ public class HistoryActionManager {
 					HistoryActionManager.this.modifyRevisionProperty(location, selectedRevision);
 				}
 			});
+			tAction.setEnabled(selection.length == 1);
 			if (HistoryActionManager.this.view.getRepositoryResource() instanceof IRepositoryFile) {
 				manager.add(tAction = new HistoryAction("ShowAnnotationCommand.label") {
 					public void run() {
