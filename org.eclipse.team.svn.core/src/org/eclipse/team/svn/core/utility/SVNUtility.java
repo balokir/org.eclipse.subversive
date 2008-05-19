@@ -1206,7 +1206,7 @@ public final class SVNUtility {
 	}
 	
 	public static String getDepthArg(int depth) {
-		String depthArg = "--depth ";
+		String depthArg = " --depth ";
 		if (depth == Depth.EMPTY) {
 			return depthArg + "empty ";
 		}
