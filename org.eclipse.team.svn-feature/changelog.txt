@@ -8,6 +8,14 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.0.v20080521 [21 May 2008]
+
+Fixes:
+ * NoClassDefFoundError: org/eclipse/ui/internal/util/SWTResourceUtil (bug 232972)
+   + special thanks to Jorg von Frantzius
+
+--------------------------------------------------------------------------------
+
 Version 0.7.0.v20080517 [17 May 2008]
 
 Features:

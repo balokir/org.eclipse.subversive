@@ -5,36 +5,20 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 0.7.0.v20080517 release date: 17 May 2008
+Version 0.7.0.v20080521 release date: 21 May 2008
 
 1. What's New
 
-   The version is 0.7.0 release which build ID is v20080517. The main target of the release is 
+   The version is 0.7.0 release which build ID is v20080521. The main target of the release is 
    transferring Subversive development to Eclipse.org.
    
    Changes in compare with previous version are listed below. The full list of 
    changes you can find in Change Log.
     
-	Features:
-	 * Allow to set/modify revision properties (bug 231554)
-	   + special thanks to Neale Upstone
-	
-	 * Support latest SVN 1.5 API changes [REOPENED] (bug 216473)
-	 * Support relative paths and peg-revisions for svn:externals property (bug 231546)
-	 * Support sparse checkouts (bug 231552)
-	 * Minimize transactions count where it is possible regarding to SVN 1.5 API changes (bug 231548)
-	
 	Fixes:
-	 * NPE in "Replace with Tag" operation (bug 226025)
-	   + special thanks to Mark Addleman, Georg Lippold, Chris Myers
+	 * NoClassDefFoundError: org/eclipse/ui/internal/util/SWTResourceUtil (bug 232972)
+	   + special thanks to Jorg von Frantzius
 	
-	 * Problem with tagging from branches (bug 229761)
-	   + special thanks to Damir Murat
-	
-	 * Precise Team menu enablements must be disabled by default (bug 230461)
-	   + special thanks to Rafael Chaves, Pavel Zuev, Assaf Almaz
-	   
- 	* Automatic project share makes more than one repository location for the same repository (bug 232649)
 
 2. Information
 
@@ -42,7 +26,7 @@ Version 0.7.0.v20080517 release date: 17 May 2008
 
    Subversive requires JDK 1.5 or higher and supports following versions of Eclipse:
     * 3.3 (tested with 3.3.2)
-    * 3.4 (tested with 3.4M6)
+    * 3.4 (tested with 3.4RC1)
    
    Subversive supports Subversion versions 1.1-1.4 with SVN Kit 1.1.7 and JavaHL 1.4.5, 
    Subversion version 1.5 with SVN Kit 1.2.0 and JavaHL 1.5.0
