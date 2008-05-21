@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -69,7 +68,6 @@ import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferenceLinkArea;
-import org.eclipse.ui.internal.util.SWTResourceUtil;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 /**
@@ -883,8 +881,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		}
 
 		public void dispose() {
-            for (Iterator<Image> iter = this.images.values().iterator(); iter.hasNext();) {
-				Image image = iter.next();
+            for (Image image : this.images.values()) {
 				image.dispose();
 			}
 		}
@@ -977,10 +974,9 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 				descriptor = SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/file.gif");
 				break;
 			}
-			Image image = (Image) SWTResourceUtil.getImageTable().get(descriptor);
+			Image image = this.images.get(descriptor);
 			if (image == null) {
-				image = descriptor.createImage();
-				SWTResourceUtil.getImageTable().put(descriptor, image);
+				this.images.put(descriptor, image = descriptor.createImage());
 			}
 			
 			ImageDescriptor overlay = SVNTeamDecorationPreferencesPage.this.getOverlay((PreviewFile)element);
