@@ -11,6 +11,9 @@
 
 package org.eclipse.team.svn.ui.panel.local;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -29,7 +32,6 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.utility.ArrayStructuredContentProvider;
-import org.eclipse.ui.internal.util.SWTResourceUtil;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -42,6 +44,7 @@ public class ResourceListPanel extends AbstractDialogPanel {
 	protected TableViewer tableViewer;
 	protected boolean showLocalNames;
 	protected String helpId;
+	protected Map<ImageDescriptor, Image> images;
 	
 	public ResourceListPanel(IResource []resources, String dialogTitle, String dialogDescription, String defaultMessage, String[] buttons) {
 		this(resources, dialogTitle, dialogDescription, defaultMessage, buttons, null);
@@ -53,6 +56,7 @@ public class ResourceListPanel extends AbstractDialogPanel {
 		this.dialogDescription = dialogDescription;
 		this.defaultMessage = defaultMessage;
 		this.resources = resources;
+		this.images = new HashMap<ImageDescriptor, Image>();
 	}
     
 	public boolean isShowLocalNames() {
@@ -65,6 +69,13 @@ public class ResourceListPanel extends AbstractDialogPanel {
 	
     public String getHelpId() {
     	return this.helpId;
+    }
+    
+    public void dispose() {
+    	for (Image img : this.images.values()) {
+    		img.dispose();
+    	}
+    	super.dispose();
     }
     
     public void createControlsImpl(Composite parent) {
@@ -90,10 +101,10 @@ public class ResourceListPanel extends AbstractDialogPanel {
 				if (descriptor == null) {
 					return null;
 				}
-				Image image = (Image) SWTResourceUtil.getImageTable().get(descriptor);
+				Image image = ResourceListPanel.this.images.get(descriptor);
 				if (image == null) {
 					image = descriptor.createImage();
-					SWTResourceUtil.getImageTable().put(descriptor, image);
+					ResourceListPanel.this.images.put(descriptor, image);
 				}
 				return image;
 			}

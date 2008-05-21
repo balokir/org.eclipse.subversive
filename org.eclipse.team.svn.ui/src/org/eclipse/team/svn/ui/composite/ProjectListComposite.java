@@ -11,6 +11,9 @@
 
 package org.eclipse.team.svn.ui.composite;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
@@ -32,7 +35,6 @@ import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.utility.ArrayStructuredContentProvider;
-import org.eclipse.ui.internal.util.SWTResourceUtil;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -46,11 +48,20 @@ public class ProjectListComposite extends Composite {
 	protected TableViewer tableViewer;
 	protected Composite parent;
 	protected boolean remoteMode;
+	protected Map<ImageDescriptor, Image> images;
 	
 	public ProjectListComposite(Composite parent, int style, IProject []resources, boolean remoteMode) {
 		super(parent, style);
 		this.resources = resources;
 		this.remoteMode = remoteMode;
+		this.images = new HashMap<ImageDescriptor, Image>();
+	}
+	
+	public void dispose() {
+    	for (Image img : this.images.values()) {
+    		img.dispose();
+    	}
+		super.dispose();
 	}
 	
 	public void initialize() {
@@ -95,10 +106,10 @@ public class ProjectListComposite extends Composite {
 					if (descriptor == null) {
 						return null;
 					}
-					Image image = (Image) SWTResourceUtil.getImageTable().get(descriptor);
+					Image image = ProjectListComposite.this.images.get(descriptor);
 					if (image == null) {
 						image = descriptor.createImage();
-						SWTResourceUtil.getImageTable().put(descriptor, image);
+						ProjectListComposite.this.images.put(descriptor, image);
 					}
 					return image;
 				}

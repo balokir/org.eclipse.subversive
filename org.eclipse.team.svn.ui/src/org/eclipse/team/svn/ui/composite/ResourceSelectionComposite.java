@@ -13,8 +13,10 @@ package org.eclipse.team.svn.ui.composite;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IMarker;
@@ -72,7 +74,6 @@ import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamImages;
-import org.eclipse.ui.internal.util.SWTResourceUtil;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -122,6 +123,7 @@ public class ResourceSelectionComposite extends Composite {
 	protected HashSet externalResources = new HashSet();
 
 	protected HashSet userSelectedResources = new HashSet();
+	protected Map<ImageDescriptor, Image> images;
 
 	protected Label lblSelectedResourcesNumber;
 
@@ -135,6 +137,7 @@ public class ResourceSelectionComposite extends Composite {
 		this.notSelectedResources = new IResource[0];
 		this.selectionChangedListeners = new ArrayList();
 		this.deselectNewl = selectAll;
+		this.images = new HashMap<ImageDescriptor, Image>();
 		if (userSelectedResources != null) {
 			this.userSelectedResources.addAll(Arrays.asList(userSelectedResources));
 		}
@@ -147,6 +150,13 @@ public class ResourceSelectionComposite extends Composite {
 		this.refreshSelection();
 	}
 
+	public void dispose() {
+    	for (Image img : this.images.values()) {
+    		img.dispose();
+    	}
+		super.dispose();
+	}
+	
 	public IResource[] getSelectedResources() {
 		return this.selectedResources;
 	}
@@ -258,9 +268,9 @@ public class ResourceSelectionComposite extends Composite {
 						// Markers are inaccessible: do not decorate resource icon
 					}
 
-					Image image = (Image) SWTResourceUtil.getImageTable().get(descriptor);
+					Image image = ResourceSelectionComposite.this.images.get(descriptor);
 					if (image == null) {
-						SWTResourceUtil.getImageTable().put(descriptor, image = descriptor.createImage());
+						ResourceSelectionComposite.this.images.put(descriptor, image = descriptor.createImage());
 					}
 					OverlayedImageDescriptor desc = null;
 					if (hasError) {
@@ -289,9 +299,9 @@ public class ResourceSelectionComposite extends Composite {
 			}
 
 			protected Image createImage(OverlayedImageDescriptor descriptor) {
-				Image image = (Image) SWTResourceUtil.getImageTable().get(descriptor);
+				Image image = ResourceSelectionComposite.this.images.get(descriptor);
 				if (image == null) {
-					SWTResourceUtil.getImageTable().put(descriptor, image = descriptor.createImage());
+					ResourceSelectionComposite.this.images.put(descriptor, image = descriptor.createImage());
 				}
 				return image;
 			}
