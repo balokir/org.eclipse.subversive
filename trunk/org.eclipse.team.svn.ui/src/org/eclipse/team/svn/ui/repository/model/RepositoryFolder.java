@@ -11,6 +11,10 @@
 
 package org.eclipse.team.svn.ui.repository.model;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -19,7 +23,9 @@ import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.operation.GetRemoteFolderChildrenOperation;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.DefaultOperationWrapperFactory;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.ISharedImages;
@@ -97,6 +103,34 @@ public class RepositoryFolder extends RepositoryResource implements IParentTreeN
 				}
 			}
 		}
+		Arrays.sort(wrappers, new Comparator<RepositoryResource>() {
+			public int compare(RepositoryResource first, RepositoryResource second) {
+				boolean isFirstStructureNode = (first instanceof RepositoryTrunk)
+				|| (first instanceof RepositoryBranches) || (first instanceof RepositoryTags);
+				boolean isSecondStructureNode = (second instanceof RepositoryTrunk)
+				|| (second instanceof RepositoryBranches) || (second instanceof RepositoryTags);
+				if (isFirstStructureNode && !isSecondStructureNode) {
+					return -1;
+				}
+				if (isSecondStructureNode && !isFirstStructureNode) {
+					return 1;
+				}
+				if (isFirstStructureNode && isSecondStructureNode) {
+					return 0;
+				}
+				if (first instanceof RepositoryFolder && !(second instanceof RepositoryFolder)) {
+					return -1;
+				}
+				if (second instanceof RepositoryFolder && !(first instanceof RepositoryFolder)) {
+					return 1;
+				}
+				IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
+				if (SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_NAME)) {
+					return first.getLabel().compareToIgnoreCase(second.getLabel());
+				}
+				return first.getLabel().compareTo(second.getLabel());
+			}
+		});
 		return wrappers;
 	}
 	
