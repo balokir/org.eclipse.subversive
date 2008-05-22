@@ -95,17 +95,10 @@ public class PropertiesComposite extends Composite {
 	protected IRepositoryResource repositoryResource;
 	protected IAdaptable resource;
 	
-	protected ViewPart workbenchPart;
-	
-	public PropertiesComposite(Composite parent,  ViewPart workbenchPart) {
-		super(parent, SWT.NONE);
-		this.isProcessing = false;
-		this.workbenchPart = workbenchPart; 
-		this.createControls(parent);
-	}
-	
 	public PropertiesComposite(Composite parent) {
-		this(parent, null);
+		super(parent, SWT.NONE);
+		this.isProcessing = false; 
+		this.createControls(parent);
 	}
 	
 	public synchronized void setResource(IAdaptable resource, IResourcePropertyProvider provider) {
@@ -390,7 +383,7 @@ public class PropertiesComposite extends Composite {
 		boolean propertyAlreadyExists = false;
 		boolean override = true;
 		IResource []resources = new IResource[] {this.wcResource};
-		final ResourcePropertyEditPanel panel = new ResourcePropertyEditPanel(new SVNProperty[] {data}, resources, false);
+		final ResourcePropertyEditPanel panel = new ResourcePropertyEditPanel(data == null ? null : new SVNProperty[] {data}, resources, false);
 	    DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
 		
 		if (dialog.open() != 0) {
