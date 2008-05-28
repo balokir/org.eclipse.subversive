@@ -8,6 +8,7 @@
  * Contributors:
  *    Alexander Gurov - Initial API and implementation
  *    Dann Martens - [patch] Text decorations 'ascendant' variable
+ *    Thomas Champagne - Bug 217561 : additional date formats for label decorations
  *******************************************************************************/
 
 package org.eclipse.team.svn.ui.decorator;
@@ -40,6 +41,7 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.decorator.wrapper.ResourceDecoratorWrapper;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
+import org.eclipse.team.svn.ui.utility.DateFormatter;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamImages;
@@ -112,7 +114,8 @@ public abstract class AbstractResourceDecorator extends LabelProvider implements
 		
 		this.configurationListener = new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty().startsWith(SVNTeamPreferences.DECORATION_BASE)) {
+				if (event.getProperty().startsWith(SVNTeamPreferences.DECORATION_BASE) || 
+					event.getProperty().startsWith(SVNTeamPreferences.DATE_FORMAT_BASE)) {
 					AbstractResourceDecorator.this.loadConfiguration();
 					String decoratorId = ResourceDecoratorWrapper.class.getName();
 					SVNTeamUIPlugin.instance().getWorkbench().getDecoratorManager().update(decoratorId);
@@ -265,7 +268,7 @@ public abstract class AbstractResourceDecorator extends LabelProvider implements
 						if (date == 0) {
 							return SVNTeamPlugin.instance().getResource("SVNInfo.NoDate");
 						}
-						return SVNTeamPreferences.formatDate(date);
+						return DateFormatter.formatDate(date);
 					}
 					else if (var.equals(TextVariableSetProvider.VAR_RESOURCE_URL)) {
 						return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask) ? SVNUtility.decodeURL(remote.getUrl()) : "";

@@ -8,12 +8,13 @@
  * Contributors:
  *    Alexander Gurov - Initial API and implementation
  *    Dann Martens - [patch] Text decorations 'ascendant' variable
+ *    Thomas Champagne - Bug 217561 : additional date formats for label decorations
  *******************************************************************************/
 
 package org.eclipse.team.svn.ui.preferences;
 
 import java.text.DateFormat;
-import java.util.Date;
+import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -32,6 +33,7 @@ public final class SVNTeamPreferences {
 	public static final String REPOSITORY_BASE = "preference.repository.";
 	public static final String SYNCHRONIZE_BASE = "preference.synchronize.";
 	public static final String HISTORY_BASE = "preference.history.";
+	public static final String DATE_FORMAT_BASE = "preference.dateFormat.";
 	public static final String PROPERTIES_BASE = "preference.properties.";
 	public static final String MAILREPORTER_BASE = "preference.mailreporter.";
 	public static final String COMMENT_TEMPLATES_BASE = "preference.templates";
@@ -133,6 +135,17 @@ public final class SVNTeamPreferences {
 	public static final boolean HISTORY_HIERARCHICAL_LAYOUT_DEFAULT = true;
 	public static final boolean HISTORY_COMPARE_MODE_DEFAULT = false;
 	public static final boolean HISTORY_LINK_WITH_EDITOR_DEFAULT = false;
+	
+	public static final String DATE_FORMAT_NAME = "dateFormat";
+	public static final String DATE_FORMAT_CUSTOM_NAME = "dateFormatCustom";
+	
+	public static final int DATE_FORMAT_MODE_SHORT = 0;
+	public static final int DATE_FORMAT_MODE_MEDIUM = 1;
+	public static final int DATE_FORMAT_MODE_LONG = 2;
+	public static final int DATE_FORMAT_MODE_CUSTOM = 3;
+	
+	public static final int DATE_FORMAT_DEFAULT = DATE_FORMAT_MODE_SHORT;
+	public static final String DATE_FORMAT_CUSTOM_DEFAULT = "";
 	
 	public static final String PROPERTY_LINK_WITH_EDITOR_NAME = "linkWithEditor";
 	
@@ -245,14 +258,29 @@ public final class SVNTeamPreferences {
 	public static final String CUSTOM_PROPERTIES_LIST_NAME = "customproperties";
 	public static final String CUSTOM_PROPERTIES_LIST_DEFAULT = "";
 	
-	public static String formatDate(long date) {
-		return SVNTeamPreferences.formatDate(new Date(date));
-	}
-	
-	public static String formatDate(Date date) {
-		// we can introduce option to override date format
-		DateFormat dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.getDefault());
-		return dateTimeFormat.format(date);
+	public static DateFormat getDateFormat(IPreferenceStore store) {
+		int formatMode = SVNTeamPreferences.getDateFormatInt(store, SVNTeamPreferences.DATE_FORMAT_NAME);
+		DateFormat dateTimeFormat = null;
+		switch (formatMode) {
+		case SVNTeamPreferences.DATE_FORMAT_MODE_SHORT:
+			dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, Locale.getDefault());
+			break;
+		case SVNTeamPreferences.DATE_FORMAT_MODE_MEDIUM:
+			dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.getDefault());
+			break;
+		case SVNTeamPreferences.DATE_FORMAT_MODE_LONG:
+			dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, Locale.getDefault());
+			break;
+		case SVNTeamPreferences.DATE_FORMAT_MODE_CUSTOM:
+			dateTimeFormat = new SimpleDateFormat(
+					SVNTeamPreferences.getDateFormatString(store, SVNTeamPreferences.DATE_FORMAT_CUSTOM_NAME),
+					Locale.getDefault());
+			break;
+		default:
+			dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, Locale.getDefault());
+			break;
+		}
+		return dateTimeFormat;
 	}
 	
 	public static void setDefaultValues(IPreferenceStore store) {
@@ -262,6 +290,7 @@ public final class SVNTeamPreferences {
 		SVNTeamPreferences.setDefaultSynchronizeValues(store);
 		SVNTeamPreferences.setDefaultMailReporterValues(store);
 		SVNTeamPreferences.setDefaultHistoryValues(store);
+		SVNTeamPreferences.setDefaultDateFormatValues(store);
 		SVNTeamPreferences.setDefaultPropertiesValues(store);
 		SVNTeamPreferences.setDefaultCommentTemplatesValues(store);
 		SVNTeamPreferences.setDefaultBehaviourValues(store);
@@ -304,6 +333,11 @@ public final class SVNTeamPreferences {
 		store.setDefault(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_HIERARCHICAL_LAYOUT), SVNTeamPreferences.HISTORY_HIERARCHICAL_LAYOUT_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_COMPARE_MODE), SVNTeamPreferences.HISTORY_COMPARE_MODE_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_LINK_WITH_EDITOR_NAME), SVNTeamPreferences.HISTORY_LINK_WITH_EDITOR_DEFAULT);
+	}
+	
+	public static void setDefaultDateFormatValues(IPreferenceStore store) {
+		store.setDefault(SVNTeamPreferences.fullDateFormatName(SVNTeamPreferences.DATE_FORMAT_NAME), SVNTeamPreferences.DATE_FORMAT_DEFAULT);
+		store.setDefault(SVNTeamPreferences.fullDateFormatName(SVNTeamPreferences.DATE_FORMAT_CUSTOM_NAME), SVNTeamPreferences.DATE_FORMAT_CUSTOM_DEFAULT);
 	}
 	
 	public static void setDefaultSynchronizeValues(IPreferenceStore store) {
@@ -407,6 +441,11 @@ public final class SVNTeamPreferences {
 	public static void resetToDefaultHistoryValues(IPreferenceStore store) {
 		store.setValue(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_PAGE_SIZE_NAME), SVNTeamPreferences.HISTORY_PAGE_SIZE_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_PAGING_ENABLE_NAME), SVNTeamPreferences.HISTORY_PAGING_ENABLE_DEFAULT);
+	}
+	
+	public static void resetToDefaultDateFormatValues(IPreferenceStore store) {
+		store.setValue(SVNTeamPreferences.fullDateFormatName(SVNTeamPreferences.DATE_FORMAT_NAME), SVNTeamPreferences.DATE_FORMAT_DEFAULT);
+		store.setValue(SVNTeamPreferences.fullDateFormatName(SVNTeamPreferences.DATE_FORMAT_CUSTOM_NAME), SVNTeamPreferences.DATE_FORMAT_CUSTOM_DEFAULT);
 	}
 	
 	public static void resetToDefaultMailReporterValues(IPreferenceStore store) {
@@ -535,6 +574,14 @@ public final class SVNTeamPreferences {
 		return store.getBoolean(SVNTeamPreferences.fullHistoryName(shortName));
 	}
 	
+	public static int getDateFormatInt(IPreferenceStore store, String shortName) {
+		return store.getInt(SVNTeamPreferences.fullDateFormatName(shortName));
+	}
+	
+	public static String getDateFormatString(IPreferenceStore store, String shortName) {
+		return store.getString(SVNTeamPreferences.fullDateFormatName(shortName));
+	}
+	
 	public static boolean getBehaviourBoolean(IPreferenceStore store, String shortName) {
 		return store.getBoolean(SVNTeamPreferences.fullBehaviourName(shortName));
 	}
@@ -609,6 +656,14 @@ public final class SVNTeamPreferences {
 	
 	public static void setHistoryInt(IPreferenceStore store, String shortName, int value) {
 		store.setValue(SVNTeamPreferences.fullHistoryName(shortName), value);
+	}
+	
+	public static void setDateFormatInt(IPreferenceStore store, String shortName, int value) {
+		store.setValue(SVNTeamPreferences.fullDateFormatName(shortName), value);
+	}
+	
+	public static void setDateFormatString(IPreferenceStore store, String shortName, String value) {
+		store.setValue(SVNTeamPreferences.fullDateFormatName(shortName), value);
 	}
 	
 	public static boolean getMailReporterBoolean(IPreferenceStore store, String shortName) {
@@ -701,6 +756,10 @@ public final class SVNTeamPreferences {
 	
 	public static String fullHistoryName(String shortName) {
 		return SVNTeamPreferences.HISTORY_BASE + shortName;
+	}
+	
+	public static String fullDateFormatName(String shortName) {
+		return SVNTeamPreferences.DATE_FORMAT_BASE + shortName;
 	}
 	
 	public static String fullBehaviourName(String shortName) {

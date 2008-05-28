@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Alexander Gurov (Polarion Software) - initial API and implementation
+ *    Thomas Champagne - Bug 217561 : additional date formats for label decorations
  *******************************************************************************/
 
 package org.eclipse.team.svn.ui.history.model;
@@ -17,7 +18,7 @@ import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.history.data.SVNLocalFileRevision;
-import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
+import org.eclipse.team.svn.ui.utility.DateFormatter;
 
 /**
  * Local log UI node
@@ -58,7 +59,7 @@ public class LocalLogNode extends AbstractLogNode {
 	public String getLabel(int columnIndex, int labelType, long currentRevision) {
 		switch (columnIndex) {
 			case ILogNode.COLUMN_DATE: {
-				return SVNTeamPreferences.formatDate(this.entry.getTimestamp());
+				return DateFormatter.formatDate(this.entry.getTimestamp());
 			}
 			case ILogNode.COLUMN_REVISION: {
 				if (this.entry.isCurrentState()) {

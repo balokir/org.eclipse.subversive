@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Alexander Gurov - Initial API and implementation
+ *    Thomas Champagne - Bug 217561 : additional date formats for label decorations
  *******************************************************************************/
 
 package org.eclipse.team.svn.ui.repository.model;
@@ -44,6 +45,7 @@ import org.eclipse.team.svn.ui.operation.GetRemoteResourceRevisionOperation;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.repository.RepositoriesView;
 import org.eclipse.team.svn.ui.repository.RepositoryTreeViewer;
+import org.eclipse.team.svn.ui.utility.DateFormatter;
 import org.eclipse.team.svn.ui.utility.DefaultOperationWrapperFactory;
 import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -217,7 +219,7 @@ public abstract class RepositoryResource implements IWorkbenchAdapter, IWorkbenc
 		}
 		else if (var.equals(ToolTipVariableSetProvider.VAR_LAST_CHANGE_DATE)) {
 			if (info != null && info.lastChangedDate != 0) {
-				return RepositoryResource.this.formatToolTipLine(var, SVNTeamPreferences.formatDate(info.lastChangedDate));
+				return RepositoryResource.this.formatToolTipLine(var, DateFormatter.formatDate(info.lastChangedDate));
 			}
 		}
 		else if (var.equals(ToolTipVariableSetProvider.VAR_LAST_AUTHOR)) {
@@ -237,12 +239,12 @@ public abstract class RepositoryResource implements IWorkbenchAdapter, IWorkbenc
 		}
 		else if (var.equals(ToolTipVariableSetProvider.VAR_LOCK_CREATION_DATE)) {
 			if (lock != null && lock.creationDate != 0) {
-				return RepositoryResource.this.formatToolTipLine(var, SVNTeamPreferences.formatDate(lock.creationDate));
+				return RepositoryResource.this.formatToolTipLine(var, DateFormatter.formatDate(lock.creationDate));
 			}
 		}
 		else if (var.equals(ToolTipVariableSetProvider.VAR_LOCK_EXPIRATION_DATE)) {
 			if (lock != null && lock.expirationDate != 0) {
-				return RepositoryResource.this.formatToolTipLine(var, SVNTeamPreferences.formatDate(lock.expirationDate));
+				return RepositoryResource.this.formatToolTipLine(var, DateFormatter.formatDate(lock.expirationDate));
 			}
 		}
 		else if (var.equals(ToolTipVariableSetProvider.VAR_LOCK_COMMENT)) {

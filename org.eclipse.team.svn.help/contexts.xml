@@ -13,6 +13,9 @@
 		<description>'SVN Properties View' provides a probability to view SVN Properties for the resource.</description>
 		<topic label="SVN Properties View" href="teamSupport/props_view.html"/>
 	</context>
+	<context id="revPropertiesViewContext">
+		<description>'Revision Properties View' provides a probability to view, add and modify the Revision Properties of the repository location for the selected revision.</description>
+	</context>
 	<context id="repositoryViewContext">
 		<description>'SVN Repository View' shows SVN Repositories associated with your Workbench. If the user expands the location item the trunk, project revisions, tags and branches are shown which also are expandable, showing the files and folders of shared project contained in them.</description>
 		<topic label="SVN Repository View" href="teamSupport/repos_view.html"/>

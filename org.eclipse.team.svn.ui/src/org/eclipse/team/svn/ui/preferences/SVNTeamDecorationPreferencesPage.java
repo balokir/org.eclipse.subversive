@@ -9,6 +9,7 @@
  *    IBM Corporation - Initial API and implementation
  *    Alexander Gurov - adaptation for Subversive
  *    Dann Martens - [patch] Text decorations 'ascendant' variable, More decoration options
+ *    Thomas Champagne - Bug 217561 : additional date formats for label decorations
  *******************************************************************************/
  
 package org.eclipse.team.svn.ui.preferences;
@@ -29,6 +30,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -63,6 +65,7 @@ import org.eclipse.team.svn.ui.decorator.IVariableContentProvider;
 import org.eclipse.team.svn.ui.decorator.TextVariableSetProvider;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.ListSelectionPanel;
+import org.eclipse.team.svn.ui.utility.DateFormatter;
 import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamImages;
@@ -75,7 +78,7 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
  * 
  * @author Alexander Gurov
  */
-public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferencesPage {
+public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferencesPage implements org.eclipse.jface.util.IPropertyChangeListener {
 	protected Button useFontsButton;
 	protected boolean useFontsDecor;
 	
@@ -150,6 +153,13 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 	
 	public SVNTeamDecorationPreferencesPage() {
 		super();
+		getPreferenceStore().addPropertyChangeListener(this);
+	}
+
+	@Override
+	public void dispose() {
+		super.dispose();
+		getPreferenceStore().removePropertyChangeListener(this);
 	}
 
 	protected void saveValues(IPreferenceStore store) {
@@ -248,6 +258,12 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		this.useFontsButton.setSelection(this.useFontsDecor);
 		
 		this.refreshPreview();
+	}
+	
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty().startsWith(SVNTeamPreferences.DATE_FORMAT_BASE)) {
+			this.refreshPreview();
+		}
 	}
 	
 	protected Control createContentsImpl(Composite parent) {
@@ -813,7 +829,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 				return SVNTeamUIPlugin.instance().getResource("PreferencePage.demoRemoteName");
 			}
 			else if (var.equals(TextVariableSetProvider.VAR_DATE)) {
-				return SVNTeamPreferences.formatDate(new Date());
+				return DateFormatter.formatDate(new Date());
 			}
 			else if (var.equals(TextVariableSetProvider.VAR_REVISION)) {
 				return this.demoRevision;

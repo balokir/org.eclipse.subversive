@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Alessandro Nistico - [patch] Initial API and implementation
+ *    Thomas Champagne - Bug 217561 : additional date formats for label decorations
  *******************************************************************************/
 
 package org.eclipse.team.svn.ui.synchronize;

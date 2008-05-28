@@ -48,7 +48,9 @@ import org.eclipse.team.svn.core.resource.ISVNStorage;
 import org.eclipse.team.svn.core.resource.SSHSettings;
 import org.eclipse.team.svn.core.resource.SSLSettings;
 import org.eclipse.team.svn.core.svnstorage.events.IRepositoriesStateChangedListener;
+import org.eclipse.team.svn.core.svnstorage.events.IRevisionPropertyChangeListener;
 import org.eclipse.team.svn.core.svnstorage.events.RepositoriesStateChangedEvent;
+import org.eclipse.team.svn.core.svnstorage.events.RevisonPropertyChangeEvent;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -68,6 +70,7 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 	
 	protected IRepositoryLocation []repositories;
 	protected List<IRepositoriesStateChangedListener> repositoriesStateChangedListeners;
+	protected ArrayList<IRevisionPropertyChangeListener> revPropChangeListeners;
 	
 	protected class RepositoryPreferenceChangeListener implements IPreferenceChangeListener {
 		public void preferenceChange(PreferenceChangeEvent event) {
@@ -88,6 +91,7 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 	public AbstractSVNStorage() {
 		this.repositories = new IRepositoryLocation[0];
 		this.repositoriesStateChangedListeners = new ArrayList<IRepositoriesStateChangedListener>();
+		this.revPropChangeListeners = new ArrayList<IRevisionPropertyChangeListener>();
 	}
 	
 	public void dispose() {
@@ -127,6 +131,26 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 			for (IRepositoriesStateChangedListener listener : this.repositoriesStateChangedListeners) {
 				listener.repositoriesStateChanged(event);
 			}
+		}
+	}
+	
+	public void addRevisionPropertyChangeListener(IRevisionPropertyChangeListener listener) {
+		synchronized(this.revPropChangeListeners) {
+			this.revPropChangeListeners.add(listener);
+		}
+	}
+
+	public void fireRevisionPropertyChangeEvent(RevisonPropertyChangeEvent event) {
+		synchronized(this.revPropChangeListeners) {
+			for (IRevisionPropertyChangeListener current : this.revPropChangeListeners) {
+				current.revisionPropertyChanged(event);
+			}
+		}
+	}
+
+	public void removeRevisionPropertyChangeListener(IRevisionPropertyChangeListener listener) {
+		synchronized(this.revPropChangeListeners) {
+			this.revPropChangeListeners.remove(listener);
 		}
 	}
 	
