@@ -125,11 +125,11 @@ public class SVNRepositoryLocationWrapper implements IRepositoryLocation {
 		return this.location.getPassword();
 	}
 
-	public Collection getRealmLocations() {
+	public Collection<IRepositoryLocation> getRealmLocations() {
 		return this.location.getRealmLocations();
 	}
 
-	public Collection getRealms() {
+	public Collection<String> getRealms() {
 		return this.location.getRealms();
 	}
 

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Alexander Gurov - Initial API and implementation
+ *    Thomas Champagne - Bug 217561 : additional date formats for label decorations
  *******************************************************************************/
 
 package org.eclipse.team.svn.ui.info;
@@ -30,7 +31,7 @@ import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.composite.PropertiesComposite;
-import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
+import org.eclipse.team.svn.ui.utility.DateFormatter;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
@@ -127,7 +128,7 @@ public class LocalInfoPage extends PropertyPage {
 			content = new Text(composite, SWT.SINGLE);
 			content.setLayoutData(new GridData());
 			content.setEditable(false);
-			content.setText(info.lastChangedDate == 0 ? SVNTeamPlugin.instance().getResource("SVNInfo.NoDate") : SVNTeamPreferences.formatDate(info.lastChangedDate));
+			content.setText(info.lastChangedDate == 0 ? SVNTeamPlugin.instance().getResource("SVNInfo.NoDate") : DateFormatter.formatDate(info.lastChangedDate));
 
 			description = new Label(composite, SWT.WRAP);
 			description.setLayoutData(new GridData());
@@ -169,7 +170,7 @@ public class LocalInfoPage extends PropertyPage {
 				content = new Text(composite, SWT.SINGLE);
 				content.setLayoutData(new GridData());
 				content.setEditable(false);
-				content.setText(lock.creationDate == 0 ? SVNTeamPlugin.instance().getResource("SVNInfo.NoAuthor") : SVNTeamPreferences.formatDate(lock.creationDate));
+				content.setText(lock.creationDate == 0 ? SVNTeamPlugin.instance().getResource("SVNInfo.NoAuthor") : DateFormatter.formatDate(lock.creationDate));
 				if (lock.expirationDate != 0) {
 					description = new Label(composite, SWT.WRAP);
 					description.setLayoutData(new GridData());
@@ -178,7 +179,7 @@ public class LocalInfoPage extends PropertyPage {
 					content = new Text(composite, SWT.SINGLE);
 					content.setLayoutData(new GridData());
 					content.setEditable(false);
-					content.setText(lock.expirationDate == 0 ? SVNTeamPlugin.instance().getResource("SVNInfo.NoDate") : SVNTeamPreferences.formatDate(lock.expirationDate));
+					content.setText(lock.expirationDate == 0 ? SVNTeamPlugin.instance().getResource("SVNInfo.NoDate") : DateFormatter.formatDate(lock.expirationDate));
 				}
 			}
 		}

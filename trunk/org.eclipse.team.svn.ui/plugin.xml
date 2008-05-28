@@ -140,6 +140,13 @@
             class="org.eclipse.team.svn.ui.repository.browser.RepositoryBrowser"
             id="org.eclipse.team.svn.ui.repository.browser.RepositoryBrowser">
       </view>
+      <view
+            name="Revision Properties"
+            icon="icons/views/propertiesedit.gif"
+            category="org.eclipse.team.svn"
+            class="org.eclipse.team.svn.ui.properties.RevPropertiesView"
+            id="org.eclipse.team.svn.ui.properties.RevPropertiesView">
+      </view>
 
    </extension>
    

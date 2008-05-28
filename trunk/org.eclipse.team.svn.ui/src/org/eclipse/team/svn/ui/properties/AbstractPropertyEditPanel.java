@@ -75,6 +75,10 @@ public abstract class AbstractPropertyEditPanel extends AbstractDialogPanel {
 	
 	public AbstractPropertyEditPanel(SVNProperty[] propertyData, String dialogTitle, String dialogDescription) {
 		super();
+		if (propertyData != null) {
+			this.propertyName = propertyData[0].name;
+			this.propertyValue = propertyData[0].value;
+		}
 		this.customProps = SVNTeamPropsPreferencePage.loadCustomProperties(SVNTeamPreferences.getCustomPropertiesList(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.CUSTOM_PROPERTIES_LIST_NAME));
 		this.verifiers = new HashMap<String, AbstractFormattedVerifier>();
 		this.dialogTitle = dialogTitle;
@@ -116,6 +120,16 @@ public abstract class AbstractPropertyEditPanel extends AbstractDialogPanel {
 		return null;
 	}
 
+	public void setPropertyToEdit(SVNProperty propertyToEdit) {
+		if (propertyToEdit != null) {
+			this.propertyName = propertyToEdit.name;
+			this.propertyValue = propertyToEdit.value;
+		}
+		else {
+			this.propertyName = this.propertyValue = "";
+		}
+	}
+	
 	protected void createControlsImpl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -268,8 +282,8 @@ public abstract class AbstractPropertyEditPanel extends AbstractDialogPanel {
 			}
 		});
 		if (this.source != null && this.source.length > 0) {
-			this.nameField.setText(this.source[0].name);
-			this.valueField.setText(this.source[0].value);
+			this.nameField.setText(this.propertyName);
+			this.valueField.setText(this.propertyValue);
 		}
 		this.nameField.setFocus();
 	}

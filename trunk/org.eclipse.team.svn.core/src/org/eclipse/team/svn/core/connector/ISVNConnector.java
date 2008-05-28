@@ -403,6 +403,8 @@ public interface ISVNConnector {
 	public SVNProperty getRevisionProperty(SVNEntryReference reference, String name, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public void setRevisionProperty(SVNEntryReference reference, String name, String value, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	
+	public void removeRevisionProperty(SVNEntryReference reference, String name, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public void dispose();
 }

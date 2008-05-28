@@ -11,18 +11,29 @@
 
 package org.eclipse.team.svn.ui.properties;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
+import org.eclipse.team.svn.core.operation.CompositeOperation;
+import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.operation.local.property.IRevisionPropertiesProvider;
+import org.eclipse.team.svn.core.operation.remote.SetRevisionPropertyOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
+import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.svn.core.svnstorage.events.RevisonPropertyChangeEvent;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.extension.factory.PredefinedProperty;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPropsPreferencePage.CustomProperty;
+import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.svn.ui.verifier.PropertyVerifier;
 
 /**
@@ -33,21 +44,18 @@ import org.eclipse.team.svn.ui.verifier.PropertyVerifier;
 public class RevPropertiesEditPanel extends AbstractPropertyEditPanel {
 
 	protected SVNRevision revision;
-	protected IRepositoryLocation location;
 	
 	/**
 	 * Creates a panel. 
 	 * 
 	 * @param revProperties - existent revision properties
 	 * @param revision - the revision to edit properties for
-	 * @param location - the repository location
 	 */
-	public RevPropertiesEditPanel(SVNProperty[] revProperties, SVNRevision revision, IRepositoryLocation location) {
+	public RevPropertiesEditPanel(SVNProperty[] revProperties, SVNRevision revision) {
 		super(revProperties,
 				SVNTeamUIPlugin.instance().getResource("RevisionPropertyEditPanel.Title"),
 				SVNTeamUIPlugin.instance().getResource("RevisionPropertyEditPanel.Description", new String [] {String.valueOf(revision)}));
 		this.revision = revision;
-		this.location = location;
 		ArrayList<CustomProperty> customPropList = new ArrayList<CustomProperty>(Arrays.asList(this.customProps));
 		ArrayList<String> givenNames = new ArrayList<String>();
 		for (CustomProperty current : this.customProps) {
@@ -77,7 +85,7 @@ public class RevPropertiesEditPanel extends AbstractPropertyEditPanel {
 			this.verifiers.put(current.name, new PropertyVerifier("EditPropertiesInputField", current.name.equals("svn:autoversioned") ? null : "", current.name, null));
 		}
 	}
-
+	
 	protected List<PredefinedProperty> getPredefinedProperties() {
 		ArrayList<PredefinedProperty> properties = new ArrayList<PredefinedProperty>();
 		properties.add(new PredefinedProperty(SVNTeamUIPlugin.instance().getResource("AbstractPropertyEditPanel.svn_description"), "", ""));
@@ -94,6 +102,53 @@ public class RevPropertiesEditPanel extends AbstractPropertyEditPanel {
 
 	protected Map<String, String> getPredefinedPropertiesRegexps() {
 		return Collections.emptyMap();
+	}
+	
+	public static void doSetRevisionProperty(RevPropertiesEditPanel panel, final IRepositoryLocation location, final SVNRevision revision) {
+		final SVNProperty []data = new SVNProperty[] {new SVNProperty(panel.getPropertyName(), panel.getPropertyValue())};
+		SetRevisionPropertyOperation setPropOp = null;
+		CompositeOperation op = new CompositeOperation("");
+		if (panel.isFileSelected()) {
+			final File f = new File(panel.getPropertyFile());
+			AbstractActionOperation loadOp = new AbstractActionOperation("Operation.SLoadFileContent") {
+	            protected void runImpl(IProgressMonitor monitor) throws Exception {
+	                FileInputStream input = null;
+	                try {
+	                    input = new FileInputStream(f);
+	                    byte []binary = new byte[(int)f.length()];
+	                    input.read(binary);
+	                    data[0] = new SVNProperty(data[0].name, new String(binary));
+	                }
+	                finally {
+	                    if (input != null) {
+	                        input.close();
+	                    }
+	                }
+	            }
+	        };
+	        op.add(loadOp);
+			IRevisionPropertiesProvider provider = new IRevisionPropertiesProvider() {
+				public SVNProperty[] getRevisionProperties() {
+					return data;
+				}
+			};
+			setPropOp = new SetRevisionPropertyOperation(location, revision, provider);
+		}
+		else {
+			setPropOp = new SetRevisionPropertyOperation(location, revision, data[0]);
+		}
+		op.setOperationName(setPropOp.getOperationName());
+		op.add(setPropOp);
+		op.add(new AbstractActionOperation(setPropOp.getOperationName()) {
+			protected void runImpl(IProgressMonitor monitor) throws Exception {
+				SVNRemoteStorage.instance().fireRevisionPropertyChangeEvent(new RevisonPropertyChangeEvent(
+						RevisonPropertyChangeEvent.SET, 
+						revision,
+						location,
+						data[0]));
+			}			
+		}, new IActionOperation [] {setPropOp});
+		UIMonitorUtility.doTaskNowDefault(op, true);
 	}
 	
 }

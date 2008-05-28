@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Alexander Gurov (Polarion Software) - initial API and implementation
+ *    Thomas Champagne - Bug 217561 : additional date formats for label decorations
  *******************************************************************************/
 
 package org.eclipse.team.svn.ui.annotate;
@@ -19,7 +20,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
+import org.eclipse.team.svn.ui.utility.DateFormatter;
 
 /**
  * Built-in annotate revision model 
@@ -78,7 +79,7 @@ public class BuiltInAnnotateRevision extends Revision {
 				this.info += "<b>" + SVNTeamUIPlugin.instance().getResource("BuiltInAnnotateRevision.Author") + " </b>" + this.author;
 			}
 			if (this.getDate() != null) {
-				this.info += "<br><b>" + SVNTeamUIPlugin.instance().getResource("BuiltInAnnotateRevision.Date") + " </b>" + SVNTeamPreferences.formatDate(this.getDate());
+				this.info += "<br><b>" + SVNTeamUIPlugin.instance().getResource("BuiltInAnnotateRevision.Date") + " </b>" + DateFormatter.formatDate(this.getDate());
 			}
 			String message = this.msg == null ? null : this.msg.message;
 			if (message != null && message.length() > 0) {

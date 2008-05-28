@@ -7,10 +7,13 @@
  *
  * Contributors:
  *    Alexander Gurov (Polarion Software) - initial API and implementation
+ *    Thomas Champagne - Bug 217561 : additional date formats for label decorations
  *******************************************************************************/
 
 package org.eclipse.team.svn.ui.history;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -29,6 +32,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -44,10 +48,13 @@ import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.GetLogMessagesOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
+import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.events.IResourceStatesListener;
 import org.eclipse.team.svn.core.resource.events.ResourceStatesChangedEvent;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.svn.core.svnstorage.events.IRevisionPropertyChangeListener;
+import org.eclipse.team.svn.core.svnstorage.events.RevisonPropertyChangeEvent;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
@@ -80,7 +87,7 @@ import org.eclipse.ui.PlatformUI;
  * 
  * @author Alexander Gurov
  */
-public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IResourceStatesListener, org.eclipse.jface.util.IPropertyChangeListener {
+public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IResourceStatesListener, IPropertyChangeListener, IRevisionPropertyChangeListener {
 	protected IResource wcResource;
 	protected IRepositoryResource repositoryResource;
 
@@ -121,6 +128,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 	protected int options = 0;
 
 	protected IResource compareWith;
+	protected IRepositoryLocation currentlyInvolvedLocation;
 
 	protected long currentRevision = 0;
 	protected SVNLogEntry[] logMessages;
@@ -130,6 +138,8 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 
 	public SVNHistoryPage(Object input) {
 		SVNRemoteStorage.instance().addResourceStatesListener(ResourceStatesChangedEvent.class, this);
+		SVNRemoteStorage.instance().addRevisionPropertyChangeListener(this);
+		this.currentlyInvolvedLocation = null;
 		this.actionManager = new HistoryActionManager(this);
 		SVNTeamUIPlugin.instance().getPreferenceStore().addPropertyChangeListener(this);
 		this.authorFilter = new AuthorNameLogEntryFilter();
@@ -142,6 +152,53 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		if (event.getProperty().equals(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_PAGE_SIZE_NAME)) || 
 			event.getProperty().equals(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_PAGING_ENABLE_NAME))) {
 			SVNHistoryPage.this.refreshLimitOption(); 
+		}
+		if (event.getProperty().startsWith(SVNTeamPreferences.DATE_FORMAT_BASE)) {
+			SVNHistoryPage.this.refresh(ISVNHistoryView.REFRESH_VIEW);
+		}
+	}
+	
+	public void revisionPropertyChanged(RevisonPropertyChangeEvent event) {
+		if (this.currentlyInvolvedLocation == null || !this.currentlyInvolvedLocation.equals(event.getLocation())){
+			return;
+		}
+		if (event.getProperty().name.equals("svn:author")
+				|| event.getProperty().name.equals("svn:log")
+				|| event.getProperty().name.equals("svn:date")){
+			for (int i = 0; i < this.logMessages.length; i++) {
+				SVNLogEntry current = this.logMessages[i];
+				if (SVNRevision.fromNumber(current.revision).equals(event.getRevision())) {
+					if (event.getProperty().name.equals("svn:author")) {
+						this.logMessages[i] = new SVNLogEntry(current.revision,
+												  current.date,
+												  event.getProperty().value,
+												  current.message,
+												  current.changedPaths);
+					}
+					if (event.getProperty().name.equals("svn:log")) {
+						this.logMessages[i] = new SVNLogEntry(current.revision,
+												  current.date,
+												  current.author,
+												  event.getProperty().value,
+												  current.changedPaths);
+					}
+					if (event.getProperty().name.equals("svn:date")) {
+						try {
+							this.logMessages[i] = new SVNLogEntry(current.revision,
+												  new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(event.getProperty().value).getTime(),
+												  current.author,
+												  current.message,
+												  current.changedPaths);
+						}
+						catch (ParseException ex){}
+					}
+				}
+			}
+			UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+				public void run() {
+					SVNHistoryPage.this.refresh(ISVNHistoryView.REFRESH_VIEW);
+				}
+			});
 		}
 	}
 	
@@ -180,6 +237,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 			this.clear();
 
 			this.wcResource = resource;
+			this.currentlyInvolvedLocation = SVNRemoteStorage.instance().asRepositoryResource(this.wcResource).getRepositoryLocation();
 
 			this.refresh(ISVNHistoryView.REFRESH_ALL);
 		}
@@ -188,9 +246,10 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 	public void showHistory(IRepositoryResource remoteResource) {
 		if (!remoteResource.equals(this.repositoryResource)) {
 			this.clear();
-
+			
 			this.repositoryResource = remoteResource;
-
+			this.currentlyInvolvedLocation = this.repositoryResource.getRepositoryLocation();
+	
 			this.refresh(ISVNHistoryView.REFRESH_ALL);
 		}
 	}
@@ -347,6 +406,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 
 	public void dispose() {
 		SVNRemoteStorage.instance().removeResourceStatesListener(ResourceStatesChangedEvent.class, this);
+		SVNRemoteStorage.instance().removeRevisionPropertyChangeListener(this);
 		SVNTeamUIPlugin.instance().getPreferenceStore().removePropertyChangeListener(this);
 		// log messages composite is disposed by HistoryPage.dispose()
 		super.dispose();

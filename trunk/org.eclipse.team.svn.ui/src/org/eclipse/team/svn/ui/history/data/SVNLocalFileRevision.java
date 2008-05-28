@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Alexei Goncharov (Polarion Software) - initial API and implementation
+ *    Thomas Champagne - Bug 217561 : additional date formats for label decorations
  *******************************************************************************/
 
 package org.eclipse.team.svn.ui.history.data;
@@ -22,7 +23,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.internal.core.history.LocalFileRevision;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.operation.UILoggedOperation;
-import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
+import org.eclipse.team.svn.ui.utility.DateFormatter;
 
 /**
  * Local file revision representation.
@@ -50,7 +51,7 @@ public class SVNLocalFileRevision extends LocalFileRevision implements IEditable
 		if (this.getFile() != null) {
 			return "";
 		}
-		return "[" + SVNTeamPreferences.formatDate(this.getTimestamp()) + "]"; 
+		return "[" + DateFormatter.formatDate(this.getTimestamp()) + "]"; 
 	}
 	
 	public boolean isEditable() {

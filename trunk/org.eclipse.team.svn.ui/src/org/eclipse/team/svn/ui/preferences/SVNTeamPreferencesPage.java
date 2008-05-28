@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Alexander Gurov - Initial API and implementation
+ *    Thomas Champagne - Bug 217561 : additional date formats for label decorations
  *******************************************************************************/
 
 package org.eclipse.team.svn.ui.preferences;
@@ -40,7 +41,9 @@ import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.verifier.AbstractVerifierProxy;
 import org.eclipse.team.svn.ui.verifier.CompositeVerifier;
+import org.eclipse.team.svn.ui.verifier.DateFormatVerifier;
 import org.eclipse.team.svn.ui.verifier.IntegerFieldVerifier;
 import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
 import org.eclipse.team.svn.ui.verifier.ResourceNameVerifier;
@@ -59,6 +62,8 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected boolean fastReport;
 	protected boolean pagingEnable;
 	protected int pageSize;
+	protected int dateFormat;
+	protected String dateFormatCustom;
 	protected boolean mailReporterEnabled;
 	protected boolean mailReporterErrorsEnabled;
 	protected boolean commitSelectNewResources;
@@ -82,6 +87,8 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected Button fastReportButton;
 	protected Button enablePagingButton;
 	protected Text pageSizeField;
+	protected Combo dateFormatField;
+	protected Text dateFormatCustomField;
 	protected Button mailReporterEnabledButton;
 	protected Button mailReporterErrorsEnabledButton;
 	protected Button btnResourceSelectionNew;
@@ -110,6 +117,9 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 
 		SVNTeamPreferences.setHistoryInt(store, SVNTeamPreferences.HISTORY_PAGE_SIZE_NAME, this.pageSize);
 		SVNTeamPreferences.setHistoryBoolean(store, SVNTeamPreferences.HISTORY_PAGING_ENABLE_NAME, this.pagingEnable);
+		
+		SVNTeamPreferences.setDateFormatInt(store, SVNTeamPreferences.DATE_FORMAT_NAME, this.dateFormat);
+		SVNTeamPreferences.setDateFormatString(store, SVNTeamPreferences.DATE_FORMAT_CUSTOM_NAME, this.dateFormatCustom);
 		
 		SVNTeamPreferences.setMailReporterBoolean(store, SVNTeamPreferences.MAILREPORTER_ENABLED_NAME, this.mailReporterEnabled);
 		SVNTeamPreferences.setMailReporterBoolean(store, SVNTeamPreferences.MAILREPORTER_ERRORS_ENABLED_NAME, this.mailReporterErrorsEnabled);
@@ -142,6 +152,9 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		
 		this.pagingEnable = SVNTeamPreferences.HISTORY_PAGING_ENABLE_DEFAULT;
 		this.pageSize = SVNTeamPreferences.HISTORY_PAGE_SIZE_DEFAULT;
+		
+		this.dateFormat = SVNTeamPreferences.DATE_FORMAT_DEFAULT;
+		this.dateFormatCustom = SVNTeamPreferences.DATE_FORMAT_CUSTOM_DEFAULT;
 		
 		this.mailReporterEnabled = SVNTeamPreferences.MAILREPORTER_ENABLED_DEFAULT;
 		this.mailReporterErrorsEnabled = SVNTeamPreferences.MAILREPORTER_ERRORS_ENABLED_DEFAULT;
@@ -176,6 +189,9 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.pagingEnable = SVNTeamPreferences.getHistoryBoolean(store, SVNTeamPreferences.HISTORY_PAGING_ENABLE_NAME);
 		this.pageSize = SVNTeamPreferences.getHistoryInt(store, SVNTeamPreferences.HISTORY_PAGE_SIZE_NAME);
 		
+		this.dateFormat = SVNTeamPreferences.getDateFormatInt(store, SVNTeamPreferences.DATE_FORMAT_NAME);
+		this.dateFormatCustom = SVNTeamPreferences.getDateFormatString(store, SVNTeamPreferences.DATE_FORMAT_CUSTOM_NAME);
+		
 		this.mailReporterEnabled = SVNTeamPreferences.getMailReporterBoolean(store, SVNTeamPreferences.MAILREPORTER_ENABLED_NAME);
 		this.mailReporterErrorsEnabled = SVNTeamPreferences.getMailReporterBoolean(store, SVNTeamPreferences.MAILREPORTER_ERRORS_ENABLED_NAME);
 		
@@ -208,6 +224,8 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.enablePagingButton.setSelection(this.pagingEnable);
 		this.pageSizeField.setEnabled(this.pagingEnable);
 		
+		this.dateFormatField.select(this.dateFormat);
+		this.dateFormatCustomField.setText(this.dateFormatCustom);
 		
 		this.mailReporterEnabledButton.setSelection(this.mailReporterEnabled);
 		this.mailReporterErrorsEnabledButton.setSelection(this.mailReporterErrorsEnabled);
@@ -477,6 +495,13 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		historyViewGroup.setLayoutData(data);
 		
+		Group dateFormatGroup = new Group(composite, SWT.NONE);
+		layout = new GridLayout();
+		layout.numColumns = 2;
+		dateFormatGroup.setLayout(layout);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		dateFormatGroup.setLayoutData(data);	
+		
 		//Synchronize View group
 		synchViewGroup.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.synchronizeGroupName"));
 		
@@ -541,6 +566,59 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 				catch (Exception ex) {
 
 				}
+			}
+		});
+		
+		// Date format group
+		dateFormatGroup.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.dateFormatGroupName"));
+		
+		label = new Label(dateFormatGroup, SWT.WRAP);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 2;
+		label.setLayoutData(data);
+		labelText = SVNTeamUIPlugin.instance().getResource("MainPreferencePage.dateFormatPrompt");
+		label.setText(labelText);
+		
+		this.dateFormatField = new Combo(dateFormatGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
+		String[] itemsDateFormat = new String[4]; 
+		itemsDateFormat[SVNTeamPreferences.DATE_FORMAT_MODE_SHORT] = SVNTeamUIPlugin.instance().getResource("MainPreferencePage.dateFormatShort");
+		itemsDateFormat[SVNTeamPreferences.DATE_FORMAT_MODE_MEDIUM] = SVNTeamUIPlugin.instance().getResource("MainPreferencePage.dateFormatMedium");
+		itemsDateFormat[SVNTeamPreferences.DATE_FORMAT_MODE_LONG] = SVNTeamUIPlugin.instance().getResource("MainPreferencePage.dateFormatLong");
+		itemsDateFormat[SVNTeamPreferences.DATE_FORMAT_MODE_CUSTOM] = SVNTeamUIPlugin.instance().getResource("MainPreferencePage.dateFormatCustom");
+		this.dateFormatField.setItems(itemsDateFormat);
+		
+		data = new GridData();
+		data.widthHint = 100;
+		this.dateFormatField.setLayoutData(data);
+		this.dateFormatField.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				SVNTeamPreferencesPage.this.dateFormat = SVNTeamPreferencesPage.this.dateFormatField.getSelectionIndex();
+				if (SVNTeamPreferencesPage.this.dateFormat == SVNTeamPreferences.DATE_FORMAT_MODE_CUSTOM) {
+					SVNTeamPreferencesPage.this.dateFormatCustomField.setEnabled(true);
+					SVNTeamPreferencesPage.this.dateFormatCustomField.setFocus();
+				}
+				else {
+					SVNTeamPreferencesPage.this.dateFormatCustomField.setEnabled(false);
+				}
+				SVNTeamPreferencesPage.this.validateContent();
+			}
+		});
+		
+		this.dateFormatCustomField = new Text(dateFormatGroup, SWT.SINGLE | SWT.BORDER);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		this.dateFormatCustomField.setLayoutData(data);
+		verifier = new CompositeVerifier();
+		verifier.add(new NonEmptyFieldVerifier(labelText));
+		verifier.add(new DateFormatVerifier(labelText));
+		this.attachTo(this.dateFormatCustomField, new AbstractVerifierProxy(verifier){
+			@Override
+			protected boolean isVerificationEnabled(Control input) {
+				return SVNTeamPreferencesPage.this.dateFormatField.getSelectionIndex() == SVNTeamPreferences.DATE_FORMAT_MODE_CUSTOM;
+			}
+		});
+		this.dateFormatCustomField.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				SVNTeamPreferencesPage.this.dateFormatCustom = SVNTeamPreferencesPage.this.dateFormatCustomField.getText();
 			}
 		});
 		

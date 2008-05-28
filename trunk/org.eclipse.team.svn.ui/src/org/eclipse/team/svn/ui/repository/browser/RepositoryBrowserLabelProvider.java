@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Sergiy Logvin - Initial API and implementation
+ *    Thomas Champagne - Bug 217561 : additional date formats for label decorations
  *******************************************************************************/
 
 package org.eclipse.team.svn.ui.repository.browser;
@@ -24,11 +25,11 @@ import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFictiveNode;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFictiveWorkingDirectory;
 import org.eclipse.team.svn.ui.repository.model.RepositoryPending;
 import org.eclipse.team.svn.ui.repository.model.RepositoryResource;
+import org.eclipse.team.svn.ui.utility.DateFormatter;
 
 /**
  * Repository browser label provider
@@ -124,7 +125,7 @@ public class RepositoryBrowserLabelProvider implements ITableLabelProvider {
 			}
 			else if (resourceInfo != null) {			
 				if (columnIndex == RepositoryBrowserTableViewer.COLUMN_LAST_CHANGE_DATE) {
-					return (resourceInfo.lastChangedDate != 0) ? SVNTeamPreferences.formatDate(resourceInfo.lastChangedDate) : RepositoryBrowserLabelProvider.noDate;
+					return (resourceInfo.lastChangedDate != 0) ? DateFormatter.formatDate(resourceInfo.lastChangedDate) : RepositoryBrowserLabelProvider.noDate;
 				}
 				else if (columnIndex == RepositoryBrowserTableViewer.COLUMN_LAST_CHANGE_AUTHOR) {
 					String author = resourceInfo.lastAuthor;

@@ -107,7 +107,7 @@ public class PropertiesView extends AbstractSVNView {
 		super.createPartControl(parent);
 		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
 	    this.isLinkWithEditorEnabled = SVNTeamPreferences.getPropertiesBoolean(store, SVNTeamPreferences.PROPERTY_LINK_WITH_EDITOR_NAME);
-		this.propertiesComposite = new PropertiesComposite(parent, this); 
+		this.propertiesComposite = new PropertiesComposite(parent); 
 		this.propertiesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		this.refreshView();
 		

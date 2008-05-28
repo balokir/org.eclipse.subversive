@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Alexander Gurov (Polarion Software) - initial API and implementation
+ *    Thomas Champagne - Bug 217561 : additional date formats for label decorations
  *******************************************************************************/
 
 package org.eclipse.team.svn.ui.history.model;
@@ -17,7 +18,7 @@ import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
+import org.eclipse.team.svn.ui.utility.DateFormatter;
 
 /**
  * SVN log entry UI node
@@ -61,7 +62,7 @@ public class SVNLogNode extends AbstractLogNode {
 				return retVal;
 			}
 			case ILogNode.COLUMN_DATE: {
-				return this.entry.date == 0 ? SVNTeamPlugin.instance().getResource("SVNInfo.NoDate") : SVNTeamPreferences.formatDate(this.entry.date);
+				return this.entry.date == 0 ? SVNTeamPlugin.instance().getResource("SVNInfo.NoDate") : DateFormatter.formatDate(this.entry.date);
 			}
 			case ILogNode.COLUMN_CHANGES: {
 				return String.valueOf(this.entry.changedPaths != null ? this.entry.changedPaths.length : 0);
