@@ -21,6 +21,8 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * @author Alexander Gurov
  */
 public class SVNMylynIntegrationPlugin extends AbstractUIPlugin {
+	public static final String ID = "org.eclipse.team.svn.mylyn";
+	
 	private static SVNMylynIntegrationPlugin instance;
 	
 	public SVNMylynIntegrationPlugin() {

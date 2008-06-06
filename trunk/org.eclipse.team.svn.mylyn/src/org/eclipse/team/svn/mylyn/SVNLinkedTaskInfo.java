@@ -11,39 +11,32 @@
 
 package org.eclipse.team.svn.mylyn;
 
-import org.eclipse.mylyn.tasks.core.ILinkedTaskInfo;
-import org.eclipse.mylyn.tasks.core.AbstractTask;
+import org.eclipse.mylyn.team.ui.AbstractTaskReference;
 
 /**
  * ILinkedTaskInfo implementation.
  * 
  * @author Alexander Gurov
  */
-public class SVNLinkedTaskInfo implements ILinkedTaskInfo {
-	protected AbstractTask task;
+public class SVNLinkedTaskInfo extends AbstractTaskReference {
 	protected String repositoryUrl;
 	protected String taskId;
 	protected String taskFullUrl;
 	protected String comment;
 	
-	public SVNLinkedTaskInfo(AbstractTask task, String repositoryUrl, String taskId, String taskFullUrl, String comment) {
-		this.task = task;
+	public SVNLinkedTaskInfo(String repositoryUrl, String taskId, String taskFullUrl, String comment) {
 		this.repositoryUrl = repositoryUrl;
 		this.taskId = taskId;
 		this.taskFullUrl = taskFullUrl;
 		this.comment = comment;
 	}
 
-	public String getComment() {
+	public String getText() {
 		return this.comment;
 	}
 
 	public String getRepositoryUrl() {
 		return this.repositoryUrl;
-	}
-
-	public AbstractTask getTask() {
-		return this.task;
 	}
 
 	public String getTaskUrl() {
