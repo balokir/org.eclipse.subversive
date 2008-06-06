@@ -11,11 +11,9 @@
 
 package org.eclipse.team.svn.mylyn;
 
-import java.util.Iterator;
-
 import org.eclipse.core.resources.IResource;
+import org.eclipse.mylyn.tasks.core.IRepositoryManager;
 import org.eclipse.mylyn.tasks.core.TaskRepository;
-import org.eclipse.mylyn.tasks.core.TaskRepositoryManager;
 import org.eclipse.mylyn.tasks.ui.AbstractTaskRepositoryLinkProvider;
 
 /**
@@ -25,12 +23,11 @@ import org.eclipse.mylyn.tasks.ui.AbstractTaskRepositoryLinkProvider;
  */
 public class SVNTaskRepositoryLinkProvider extends AbstractTaskRepositoryLinkProvider {
 
-	public TaskRepository getTaskRepository(IResource resource, TaskRepositoryManager repositoryManager) {
+	public TaskRepository getTaskRepository(IResource resource, IRepositoryManager repositoryManager) {
 		String url = SVNLinkedTaskInfoAdapterFactory.getBugtraqModel(resource).getUrl();
 		if (url != null) {
-		    for (Iterator it = repositoryManager.getAllRepositories().iterator(); it.hasNext(); ) {
-		    	TaskRepository repository = (TaskRepository)it.next();
-		    	String tUrl = repository.getUrl();
+		    for (TaskRepository repository : repositoryManager.getAllRepositories()) {
+		    	String tUrl = repository.getRepositoryUrl();
 		    	if (url.startsWith(tUrl)) {
 		    		return repository;
 		    	}

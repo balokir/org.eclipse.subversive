@@ -14,18 +14,15 @@ package org.eclipse.team.svn.mylyn;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.mylyn.internal.bugzilla.core.BugzillaReportElement;
-import org.eclipse.mylyn.tasks.core.AbstractAttributeFactory;
-import org.eclipse.mylyn.tasks.core.AbstractTask;
-import org.eclipse.mylyn.tasks.core.AbstractTaskDataHandler;
+import org.eclipse.mylyn.internal.bugzilla.core.BugzillaAttribute;
+import org.eclipse.mylyn.internal.tasks.ui.util.TasksUiInternal;
 import org.eclipse.mylyn.tasks.core.RepositoryStatus;
-import org.eclipse.mylyn.tasks.core.RepositoryTaskAttribute;
-import org.eclipse.mylyn.tasks.core.RepositoryTaskData;
+import org.eclipse.mylyn.tasks.core.TaskMapping;
 import org.eclipse.mylyn.tasks.core.TaskRepository;
-import org.eclipse.mylyn.tasks.ui.TasksUiPlugin;
-import org.eclipse.mylyn.tasks.ui.TasksUiUtil;
-import org.eclipse.mylyn.tasks.ui.editors.NewTaskEditorInput;
-import org.eclipse.mylyn.tasks.ui.editors.TaskEditor;
+import org.eclipse.mylyn.tasks.core.data.AbstractTaskDataHandler;
+import org.eclipse.mylyn.tasks.core.data.TaskAttribute;
+import org.eclipse.mylyn.tasks.core.data.TaskAttributeMapper;
+import org.eclipse.mylyn.tasks.core.data.TaskData;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.utility.StringId;
 import org.eclipse.team.svn.ui.debugmail.ReportPartsFactory;
@@ -33,8 +30,6 @@ import org.eclipse.team.svn.ui.extension.factory.IReporter;
 import org.eclipse.team.svn.ui.extension.factory.IReportingDescriptor;
 import org.eclipse.team.svn.ui.extension.factory.IReporterFactory.ReportType;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PlatformUI;
 
 
 /**
@@ -66,27 +61,46 @@ public class MylynReporter extends AbstractActionOperation implements IReporter 
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		String kind = this.repository.getConnectorKind();
-		AbstractAttributeFactory attributeFactory = this.taskDataHandler.getAttributeFactory(this.repository.getUrl(), kind, AbstractTask.DEFAULT_TASK_KIND);
-		final RepositoryTaskData taskData = new RepositoryTaskData(attributeFactory, kind, this.repository.getUrl(), TasksUiPlugin.getDefault().getNextNewRepositoryTaskId());
-		taskData.setNew(true);
-		taskData.setAttributeValue(RepositoryTaskAttribute.PRODUCT, this.settings.getProductName());
+		TaskAttributeMapper attributeFactory = this.taskDataHandler.getAttributeMapper(this.repository);
+		final TaskData taskData = new TaskData(attributeFactory, kind, this.repository.getRepositoryUrl(), ""); // ID must be empty (but not null) for new task
 		
-		if (!this.taskDataHandler.initializeTaskData(MylynReporter.this.repository, taskData, monitor)) {
-			throw new CoreException(new RepositoryStatus(IStatus.ERROR, TasksUiPlugin.ID_PLUGIN,
+		boolean isInitializedSuccessfully = this.taskDataHandler.initializeTaskData(this.repository, taskData, new TaskMapping() {
+			public String getSummary() {
+				return MylynReporter.this.buildSubject();
+			}
+			public String getTaskKind() {
+				return MylynReporter.this.type == ReportType.BUG ? "normal" : "enhancement";
+			}
+			public String getDescription() {
+				return MylynReporter.this.buildReport();
+			}
+			public String getProduct() {
+				return MylynReporter.this.settings.getProductName();
+			}
+		}, monitor);
+		
+		if (!isInitializedSuccessfully) {
+			throw new CoreException(new RepositoryStatus(IStatus.ERROR, SVNMylynIntegrationPlugin.ID,
 					RepositoryStatus.ERROR_REPOSITORY,
 					"The selected repository does not support creating new tasks."));
 		}
+
+		//does not work for Bugzilla connector
+		taskData.getRoot().getMappedAttribute(TaskAttribute.SUMMARY).setValue(this.buildSubject());
+		taskData.getRoot().getMappedAttribute(TaskAttribute.DESCRIPTION).setValue(this.buildReport());
 		
-		taskData.setSummary(this.buildSubject());
-		taskData.setDescription(this.buildReport());
-		taskData.setAttributeValue(BugzillaReportElement.BUG_SEVERITY.getKeyString(), this.type == ReportType.BUG ? "normal" : "enhancement");
+		// has no public key
+		taskData.getRoot().getAttribute(BugzillaAttribute.BUG_SEVERITY.getKey()).setValue(this.type == ReportType.BUG ? "normal" : "enhancement");
 		
 		// open task editor
 		UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 			public void run() {
-				NewTaskEditorInput editorInput = new NewTaskEditorInput(MylynReporter.this.repository, taskData);
-				IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-				TasksUiUtil.openEditor(editorInput, TaskEditor.ID_EDITOR, page);
+				try {
+					TasksUiInternal.createAndOpenNewTask(taskData);
+				}
+				catch (CoreException e) {
+					MylynReporter.this.reportError(e);
+				}
 			}
 		});
 	}

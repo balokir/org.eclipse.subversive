@@ -17,9 +17,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.mylyn.tasks.core.ILinkedTaskInfo;
+import org.eclipse.mylyn.internal.tasks.ui.TasksUiPlugin;
 import org.eclipse.mylyn.tasks.core.TaskRepository;
-import org.eclipse.mylyn.tasks.ui.TasksUiPlugin;
+import org.eclipse.mylyn.team.ui.AbstractTaskReference;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.ui.history.SVNHistoryPage;
 import org.eclipse.team.svn.ui.panel.local.CommitPanel;
@@ -38,14 +38,14 @@ import org.eclipse.ui.IWorkbenchPage;
  * @author Alexander Gurov
  */
 public class SVNLinkedTaskInfoAdapterFactory implements IAdapterFactory {
-	private static final Class []ADAPTED_TYPES = new Class[] {ILinkedTaskInfo.class};
+	private static final Class []ADAPTED_TYPES = new Class[] {AbstractTaskReference.class};
 	
 	public Class[] getAdapterList() {
 		return SVNLinkedTaskInfoAdapterFactory.ADAPTED_TYPES;
 	}
 
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
-		if (!ILinkedTaskInfo.class.equals(adapterType)) {
+		if (!AbstractTaskReference.class.equals(adapterType)) {
 			return null;
 		}
 		
@@ -65,30 +65,30 @@ public class SVNLinkedTaskInfoAdapterFactory implements IAdapterFactory {
 					IHistoryPage historyPage = ((IHistoryView)view).getHistoryPage();
 					if (historyPage instanceof SVNHistoryPage) {
 						IResource resource = ((SVNHistoryPage)historyPage).getResource();
-						return new SVNLinkedTaskInfo(null, this.getTaskRepositoryUrl(resource), null, this.getTaskFullUrl(resource, comment), comment);
+						return new SVNLinkedTaskInfo(this.getTaskRepositoryUrl(resource), null, this.getTaskFullUrl(resource, comment), comment);
 					}
 				}
 			}
-			return new SVNLinkedTaskInfo(null, null, null, null, comment);
+			return new SVNLinkedTaskInfo(null, null, null, comment);
 		}
 		
 		return null;
 	}
 
-	protected ILinkedTaskInfo createFromCheckedInChangeSet(SVNChangeSetCollector.SVNCheckedInChangeSet set) {
+	protected AbstractTaskReference createFromCheckedInChangeSet(SVNChangeSetCollector.SVNCheckedInChangeSet set) {
 		IResource []resources = set.getResources();
 		if (resources != null && resources.length > 0) {
-			return new SVNLinkedTaskInfo(null, this.getTaskRepositoryUrl(resources[0]), null, this.getTaskFullUrl(resources[0], set.getComment()), set.getComment());
+			return new SVNLinkedTaskInfo(this.getTaskRepositoryUrl(resources[0]), null, this.getTaskFullUrl(resources[0], set.getComment()), set.getComment());
 		}
 		
-		return new SVNLinkedTaskInfo(null, null, null, null, set.getComment());
+		return new SVNLinkedTaskInfo(null, null, null, set.getComment());
 	}
 	
 	protected String getTaskRepositoryUrl(IResource resource) {
 		if (resource != null) {
-			TaskRepository repository = TasksUiPlugin.getDefault().getRepositoryForResource(resource, true);
+			TaskRepository repository = TasksUiPlugin.getDefault().getRepositoryForResource(resource);
 			if (repository != null) {
-				return repository.getUrl();
+				return repository.getRepositoryUrl();
 			}
 		}
 		return null;

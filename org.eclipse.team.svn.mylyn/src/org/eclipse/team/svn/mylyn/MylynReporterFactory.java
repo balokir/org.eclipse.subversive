@@ -12,10 +12,9 @@
 package org.eclipse.team.svn.mylyn;
 
 import org.eclipse.mylyn.tasks.core.AbstractRepositoryConnector;
-import org.eclipse.mylyn.tasks.core.AbstractTaskDataHandler;
 import org.eclipse.mylyn.tasks.core.TaskRepository;
-import org.eclipse.mylyn.tasks.core.TaskRepositoryManager;
-import org.eclipse.mylyn.tasks.ui.TasksUiPlugin;
+import org.eclipse.mylyn.tasks.core.data.AbstractTaskDataHandler;
+import org.eclipse.mylyn.tasks.ui.TasksUi;
 import org.eclipse.team.svn.ui.extension.factory.IReporter;
 import org.eclipse.team.svn.ui.extension.factory.IReporterFactory;
 import org.eclipse.team.svn.ui.extension.factory.IReportingDescriptor;
@@ -31,12 +30,11 @@ public class MylynReporterFactory implements IReporterFactory {
 	}
 
 	public IReporter newReporter(IReportingDescriptor settings, ReportType type) {
-		TaskRepositoryManager manager = TasksUiPlugin.getRepositoryManager();
-		TaskRepository repository = manager.getRepository(settings.getTrackerUrl());
+		TaskRepository repository = MylynReporterFactory.getRepository(settings.getTrackerUrl());
 		if (repository == null) {
 			return null;
 		}
-		AbstractRepositoryConnector connector = manager.getRepositoryConnector(repository.getConnectorKind());
+		AbstractRepositoryConnector connector = TasksUi.getRepositoryManager().getRepositoryConnector(repository.getConnectorKind());
 		AbstractTaskDataHandler taskDataHandler = connector.getTaskDataHandler();
 		if (taskDataHandler == null) {
 			return null;
@@ -44,4 +42,15 @@ public class MylynReporterFactory implements IReporterFactory {
 		return new MylynReporter(repository, taskDataHandler, settings, type);
 	}
 
+	public static TaskRepository getRepository(String url)
+	{
+		for (TaskRepository repository : TasksUi.getRepositoryManager().getAllRepositories())
+		{
+			if (repository.getRepositoryUrl().equals(url)) {
+				return repository;
+			}
+		}
+		return null;
+	}
+	
 }
