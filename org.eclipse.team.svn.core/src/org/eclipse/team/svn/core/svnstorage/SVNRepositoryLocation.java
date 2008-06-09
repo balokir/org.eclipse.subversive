@@ -67,6 +67,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
     public static final int SSH_CONNECTION = 1;
     public static final int SSL_CONNECTION = 2;
     public static final int PROXY_CONNECTION = 3;
+    
 	protected String id;
 	protected String label;
 	protected String trunk;
@@ -91,12 +92,15 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
     protected transient boolean trustSiteDefined;
     protected transient int trustSite;
     protected transient int proxyConfigurationState;
-    protected transient int waiters;
     
     protected boolean authorNameEnabled;
     protected String authorName;
     
     private Map<String, IRepositoryLocation> additionalRealms;
+    
+    private Integer lazyInitLock = new Integer(0);
+    private Integer proxyManagerLock = new Integer(0);
+    private Integer repositoryRootLock = new Integer(0);
 
 	public SVNRepositoryLocation() {
 		super(null);
@@ -243,16 +247,12 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	}
 	
 	public String getRepositoryRootUrl() {
-		if (this.repositoryRootUrl == null) {
-			this.fetchRepoInfo();
-		}
+		this.fetchRepoInfo();
 		return this.repositoryRootUrl == null ? this.getUrl() : this.repositoryRootUrl;
 	}
 	
 	public String getRepositoryUUID() {
-		if (this.repositoryUUID == null) {
-			this.fetchRepoInfo();
-		}
+		this.fetchRepoInfo();
 		return this.repositoryUUID;
 	}
 	
@@ -285,7 +285,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	}
 
 	public String getTrunkLocation() {
-		return (this.trunk == null || !this.isStructureEnabled())  ? "" : this.trunk;
+		return (this.trunk == null || !this.isStructureEnabled()) ? "" : this.trunk;
 	}
 
 	public String getBranchesLocation() {
@@ -364,48 +364,53 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		return this.passwordSaved;
 	}
 
-	public synchronized IRepositoryResource []getRevisionLinks() {
-		if (this.revisionLinks == null) {
-			SVNRemoteStorage storage = SVNRemoteStorage.instance();
-			List serialized = this.getSerializedRevisionLinks();
-			this.revisionLinks = new IRepositoryResource[serialized.size()];
-			for (int i = 0; i < this.revisionLinks.length; i++) {
-				byte []data = (byte [])serialized.get(i);
-				this.revisionLinks[i] = storage.repositoryResourceFromBytes(data, this);
+	public IRepositoryResource []getRevisionLinks() {
+		synchronized (this.lazyInitLock) {
+			if (this.revisionLinks == null) {
+				List serialized = this.getSerializedRevisionLinks();
+				this.revisionLinks = new IRepositoryResource[serialized.size()];
+				for (int i = 0; i < this.revisionLinks.length; i++) {
+					byte []data = (byte [])serialized.get(i);
+					this.revisionLinks[i] = SVNRemoteStorage.instance().repositoryResourceFromBytes(data, this);
+				}
 			}
-		}
-		return this.revisionLinks;
-	}
-	
-	public synchronized void addRevisionLink(IRepositoryResource link) {
-		IRepositoryResource []links = this.getRevisionLinks();
-		int idx = -1;
-		for (int i = 0; i < links.length; i++) {
-			if (links[i].equals(link) && links[i].getSelectedRevision().equals(link.getSelectedRevision())) {
-				idx = i;
-				break;
-			}
-		}
-		if (idx == -1) {
-			List serialized = this.getSerializedRevisionLinks();
-			serialized.add(SVNRemoteStorage.instance().repositoryResourceAsBytes(link));
-			this.revisionLinks = null;
+			return this.revisionLinks;
 		}
 	}
 	
-	public synchronized void removeRevisionLink(IRepositoryResource link) {
-		IRepositoryResource []links = this.getRevisionLinks();
-		int idx = -1;
-		for (int i = 0; i < links.length; i++) {
-			if (links[i].equals(link) && links[i].getSelectedRevision().equals(link.getSelectedRevision())) {
-				idx = i;
-				break;
+	public void addRevisionLink(IRepositoryResource link) {
+		synchronized (this.lazyInitLock) {
+			IRepositoryResource []links = this.getRevisionLinks();
+			int idx = -1;
+			for (int i = 0; i < links.length; i++) {
+				if (links[i].equals(link) && links[i].getSelectedRevision().equals(link.getSelectedRevision())) {
+					idx = i;
+					break;
+				}
+			}
+			if (idx == -1) {
+				List serialized = this.getSerializedRevisionLinks();
+				serialized.add(SVNRemoteStorage.instance().repositoryResourceAsBytes(link));
+				this.revisionLinks = null;
 			}
 		}
-		if (idx != -1) {
-			List serialized = this.getSerializedRevisionLinks();
-			serialized.remove(idx);
-			this.revisionLinks = null;
+	}
+	
+	public void removeRevisionLink(IRepositoryResource link) {
+		synchronized (this.lazyInitLock) {
+			IRepositoryResource []links = this.getRevisionLinks();
+			int idx = -1;
+			for (int i = 0; i < links.length; i++) {
+				if (links[i].equals(link) && links[i].getSelectedRevision().equals(link.getSelectedRevision())) {
+					idx = i;
+					break;
+				}
+			}
+			if (idx != -1) {
+				List serialized = this.getSerializedRevisionLinks();
+				serialized.remove(idx);
+				this.revisionLinks = null;
+			}
 		}
 	}
 	
@@ -416,6 +421,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	public void setUrl(String url) {
 		String oldRootUrl = this.getRepositoryRootUrl();
 		IRepositoryResource []oldLinks = this.getRevisionLinks();
+		List serialized = this.getSerializedRevisionLinks();
 		
 		this.url = url;
 		
@@ -424,10 +430,8 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 			this.repositoryUUID = null;
 			
 			if (oldLinks.length > 0) {
-				List serialized = this.getSerializedRevisionLinks();
 				String newRootUrl = this.getRepositoryRootUrl();
-				SVNRemoteStorage storage = SVNRemoteStorage.instance();
-				synchronized (this) {
+				synchronized (this.lazyInitLock) {
 					for (int i = 0; i < oldLinks.length; i++) {
 						String linkUrl = oldLinks[i].getUrl();
 						int idx = linkUrl.indexOf(oldRootUrl);
@@ -440,7 +444,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 							resource.setPegRevision(oldLinks[i].getPegRevision());
 							resource.setSelectedRevision(oldLinks[i].getSelectedRevision());
 							
-							serialized.set(i, storage.repositoryResourceAsBytes(resource));
+							serialized.set(i, SVNRemoteStorage.instance().repositoryResourceAsBytes(resource));
 						}
 					}
 					for (Iterator it = serialized.iterator(); it.hasNext(); ) {
@@ -501,59 +505,61 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		}
 	}
 
-	public synchronized ISVNConnector acquireSVNProxy() {
-		try {
-			this.waiters++;
-			
-			// initialize proxy cache, usedProxies list and thread2Proxy map
-		    List<ISVNConnector> cache = this.getProxyCache();
-		    
-			// make the method reenterable: one thread use proxy only sequentially. So, we can use same proxy in order to avoid deadlock.
-			Thread current = Thread.currentThread();
-			ProxyHolder holder = this.thread2Proxy.get(current);
-			if (holder != null) {
-				holder.referenceCounter++;
-				return holder.proxy;
-			}
-
-			if (this.proxyConfigurationState == 1) {
-				try {this.wait();} catch (InterruptedException ex) {}
-				if (this.proxyConfigurationState != 2) {
-					throw new ActivityCancelledException(SVNTeamPlugin.instance().getResource("Error.AuthenticationCancelled"));
+	public ISVNConnector acquireSVNProxy() {
+		synchronized (this.proxyManagerLock) {
+			try {
+				// initialize proxy cache, usedProxies list and thread2Proxy map
+			    List<ISVNConnector> cache = this.getProxyCache();
+			    
+				// make the method reenterable: the same thread must use the same proxy. Access from call-backs must be controlled by programmer
+				Thread current = Thread.currentThread();
+				ProxyHolder holder = this.thread2Proxy.get(current);
+				if (holder != null) {
+					holder.referenceCounter++;
+					return holder.proxy;
 				}
+
+				if (this.proxyConfigurationState == 1) {
+					try {this.proxyManagerLock.wait();} catch (InterruptedException ex) {}
+					if (this.proxyConfigurationState != 2) {
+						throw new ActivityCancelledException(SVNTeamPlugin.instance().getResource("Error.AuthenticationCancelled"));
+					}
+				}
+				else if (this.proxyConfigurationState == 0) {
+					this.proxyConfigurationState = 1;
+				}
+			    
+				ISVNConnector retVal = cache.size() == 0 ? this.newProxyInstance() : cache.remove(0);
+			    this.usedProxies.add(retVal);
+			    this.thread2Proxy.put(current, new ProxyHolder(retVal));
+			    return retVal;
 			}
-			else if (this.proxyConfigurationState == 0) {
-				this.proxyConfigurationState = 1;
+			catch (RuntimeException e) {
+			    this.proxyConfigurationState = 0;
+			    this.proxyManagerLock.notifyAll();
+			    throw e;
 			}
-		    
-			ISVNConnector retVal = cache.size() == 0 ? this.newProxyInstance() : cache.remove(0);
-		    this.usedProxies.add(retVal);
-		    this.thread2Proxy.put(current, new ProxyHolder(retVal));
-		    return retVal;
-		}
-		catch (RuntimeException e) {
-		    this.proxyConfigurationState = 0;
-		    this.notifyAll();
-		    throw e;
-		}
-		catch (Throwable e) {
-		    this.proxyConfigurationState = 0;
-		    this.notifyAll();
-		    throw new RuntimeException(e);
-		}
-		finally {
-			this.waiters--;
+			catch (Throwable e) {
+			    this.proxyConfigurationState = 0;
+			    this.proxyManagerLock.notifyAll();
+			    throw new RuntimeException(e);
+			}
 		}
 	}
 	
-	public synchronized void releaseSVNProxy(ISVNConnector proxy) {
-	    List<ISVNConnector> proxies = this.getProxyCache();
-	    
-	    Thread current = Thread.currentThread();
-	    ProxyHolder holder = this.thread2Proxy.get(current);
-	    if (--holder.referenceCounter == 0) {
+	public void releaseSVNProxy(ISVNConnector proxy) {
+		synchronized (this.proxyManagerLock) {
+		    List<ISVNConnector> proxies = this.getProxyCache();
+		    
+		    Thread current = Thread.currentThread();
+		    ProxyHolder holder = this.thread2Proxy.get(current);
+		    
+		    if (--holder.referenceCounter > 0) {
+		    	return;
+		    }
+		    
 	    	this.thread2Proxy.remove(current);
-	    	// Proxy should be always removed from used list. So, do it first.
+	    	// Proxy should be always removed from the usedProxies list. So, do it first.
 		    if (!this.usedProxies.remove(proxy) || proxies.size() >= SVNRepositoryLocation.PROXY_CACHE_SIZE) {
 		    	// The function code is sensitive to exceptions. So, disallow error reporting in that case.
     	        try {proxy.dispose();} catch (Throwable ex) {}
@@ -561,44 +567,49 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		    else {
 		        proxies.add(proxy);
 		    }
-	    }
-	    else {
-	    	return;
-	    }
-	    
-	    if (this.proxyConfigurationState == 1) {
-		    this.proxyConfigurationState = 2;
-	    }
-	    this.notifyAll();
+		    
+		    if (this.proxyConfigurationState == 1) {
+			    this.proxyConfigurationState = 2;
+		    }
+		    this.proxyManagerLock.notifyAll();
+		}
 	}
 	
-	public synchronized void reconfigure() {
-		this.proxyConfigurationState = 0;
-		this.reconfigureImpl();
+	public void reconfigure() {
+		synchronized (this.proxyManagerLock) {
+			this.proxyConfigurationState = 0;
+			this.reconfigureImpl();
+		}
 	}
 	
-	public synchronized void dispose() {
-		this.reconfigureProxies(new IProxyVisitor() {
-            public void visit(ISVNConnector proxy) {
-            	// When exiting Eclipse IDE connector plug-in's can be stopped before Core. So, disallow error reporting in that case. 
-    	        try {proxy.dispose();} catch (Throwable ex) {}
-            }
-        });
-	    this.getProxyCache().clear();
+	public void dispose() {
+		synchronized (this.proxyManagerLock) {
+			this.reconfigureProxies(new IProxyVisitor() {
+	            public void visit(ISVNConnector proxy) {
+	            	// When exiting Eclipse IDE connector plug-in's can be stopped before Core. So, disallow error reporting in that case. 
+	    	        try {proxy.dispose();} catch (Throwable ex) {}
+	            }
+	        });
+		    this.getProxyCache().clear();
+		}
 	}
 
-	public synchronized SSLSettings getSSLSettings() {
-		if (this.sslSettings == null) {
-			this.sslSettings = new SSLSettings();
+	public SSLSettings getSSLSettings() {
+		synchronized (this.lazyInitLock) {
+			if (this.sslSettings == null) {
+				this.sslSettings = new SSLSettings();
+			}
+			return this.sslSettings;
 		}
-		return this.sslSettings;
 	}
 
 	public SSHSettings getSSHSettings() {
-		if (this.sshSettings == null) {
-			this.sshSettings = new SSHSettings();
+		synchronized (this.lazyInitLock) {
+			if (this.sshSettings == null) {
+				this.sshSettings = new SSHSettings();
+			}
+			return this.sshSettings;
 		}
-		return this.sshSettings;
 	}
 	
 	public boolean equals(Object obj) {
@@ -634,12 +645,14 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
     }
     
 	protected void fetchRepoInfo() {
-		if (this.url != null && SVNUtility.isValidSVNURL(this.getUrl())) {
-			String []values = SVNRepositoryLocation.fetchRepoInfo(this, false);
-			this.repositoryRootUrl = values[0];
-			this.repositoryUUID = values[1];
-			if (this.repositoryUUID != null) {
-				SVNTeamPlugin.instance().setLocationsDirty(true);
+		synchronized (this.repositoryRootLock) {
+			if (this.repositoryRootUrl == null && this.url != null && SVNUtility.isValidSVNURL(this.getUrl())) {
+				String []values = SVNRepositoryLocation.fetchRepoInfo(this, false);
+				this.repositoryRootUrl = values[0];
+				this.repositoryUUID = values[1];
+				if (this.repositoryUUID != null) {
+					SVNTeamPlugin.instance().setLocationsDirty(true);
+				}
 			}
 		}
 	}
@@ -708,8 +721,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	}
 	
 	protected void visitProxies(IProxyVisitor visitor) {
-	    for (Iterator<ISVNConnector> it = this.getProxyCache().iterator(); it.hasNext(); ) {
-		    ISVNConnector proxy = it.next();
+	    for (ISVNConnector proxy : this.getProxyCache()) {
 		    visitor.visit(proxy);
 	    }
 	}
@@ -947,12 +959,6 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
         			}
         		}
             	this.checkForSaveImpl(location, retVal, connectionType);
-            	try {
-                	SVNRemoteStorage.instance().saveConfiguration();
-            	}
-            	catch (Exception ex) {
-            		// do nothing
-            	}
             }
         }
         
@@ -985,7 +991,6 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	}
 	
 	protected class CredentialsPromptWrapper extends BaseCredentialsPromptWrapper {
-		
 		public CredentialsPromptWrapper(ISVNCredentialsPrompt prompt) {
 			super(prompt, SVNRepositoryLocation.this);
 		}
@@ -1005,7 +1010,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		}
 		
         protected void checkForSave(boolean retVal, int connectionType) {
-        	synchronized (SVNRepositoryLocation.this) {
+        	synchronized (SVNRepositoryLocation.this.proxyManagerLock) {
                 if (retVal) {
                 	super.checkForSave(retVal, connectionType);
                 }
