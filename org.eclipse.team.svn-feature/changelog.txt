@@ -8,6 +8,23 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.0.v20080609 [09 June 2008]
+
+Features:
+ * additional date formats for label decorations (bug 217561)
+   + special thanks to Jae Gangemi
+   + special thanks to contributor Thomas Champagne
+   
+ * Revision properties viewer (bug 232728)
+
+Fixes:
+ * Avoid potential deadlock while prompting credentials (bug 236259)
+ * Support Mylyn 3.0 API changes (bug 236100)
+ * NPE in Properties View when "Add" action is called (bug 233407)
+ * Repositories View ignores case sensitivity option (bug 233424)
+
+--------------------------------------------------------------------------------
+
 Version 0.7.0.v20080521 [21 May 2008]
 
 Fixes:
