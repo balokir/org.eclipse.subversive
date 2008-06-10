@@ -751,8 +751,8 @@ public final class SVNUtility {
 		else {
 			proxyType = IProxyData.HTTP_PROXY_TYPE;
 		}
-	    if (proxyService.isProxiesEnabled() && !nonProxied.contains(host)) {
-	    	IProxyData proxyData = proxyService.getProxyData(proxyType);
+		IProxyData proxyData = proxyService.getProxyDataForHost(host, proxyType);
+	    if (proxyService.isProxiesEnabled() && proxyData != null) {
 	    	proxy.setProxy(proxyData.getHost(), proxyData.getPort(), proxyCredetialsManager.getUsername(), proxyCredetialsManager.getPassword());
 	    }
 	    else {
