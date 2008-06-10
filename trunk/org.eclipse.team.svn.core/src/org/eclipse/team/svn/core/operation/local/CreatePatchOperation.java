@@ -247,6 +247,9 @@ public class CreatePatchOperation extends AbstractActionOperation {
 			}
 			else {
 				i++;
+				if (i == m) {
+					tLines.add(content.substring(lineStart, i));
+				}
 			}
 		}
 		String []lines = tLines.toArray(new String[tLines.size()]);
