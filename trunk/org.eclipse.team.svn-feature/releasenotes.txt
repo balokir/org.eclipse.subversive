@@ -5,28 +5,27 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 0.7.0.v20080609 release date: 09 June 2008
+Version 0.7.1.I20080612-1500 release date: 12 June 2008
 
 1. What's New
 
-   The version is 0.7.0 release. The main target of the release is 
-   transferring Subversive development to Eclipse.org.
+   The version is 0.7.1 release. The main target of the release is introducing  
+   correct build numbers and transferring Subversive development to Eclipse.org.
    
    Changes in compare with previous version are listed below. The full list of 
    changes you can find in Change Log.
     
 	Features:
-	 * additional date formats for label decorations (bug 217561)
-	   + special thanks to Jae Gangemi
-	   + special thanks to contributor Thomas Champagne
-	   
-	 * Revision properties viewer (bug 232728)
+	 * Support latest SVN 1.5 API changes (bug 216473)
 	
 	Fixes:
-	 * Avoid potential deadlock while prompting credentials (bug 236259)
-	 * Support Mylyn 3.0 API changes (bug 236100)
-	 * NPE in Properties View when "Add" action is called (bug 233407)
-	 * Repositories View ignores case sensitivity option (bug 233424)
+	 * JavaHLConnector creates a huge amount of short living threads (bug 235764)
+	   + special thanks to contributor Micha Riser
+	   
+	 * Using a proxy server doesn't work (bug 233962)
+	   + special thanks to Enrico Ehrich, Francois Masurel
+	   
+	 * The last added line is ignored in the new file while creating a patch. (bug 236399)
 
 2. Information
 
