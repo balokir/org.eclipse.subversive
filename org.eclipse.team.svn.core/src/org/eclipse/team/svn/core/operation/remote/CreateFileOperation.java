@@ -78,7 +78,7 @@ public class CreateFileOperation extends AbstractRepositoryOperation implements 
 								CreateFileOperation.this.message, 
 								Depth.FILES,
 								ISVNConnector.Options.INCLUDE_IGNORED | ISVNConnector.Options.IGNORE_UNKNOWN_NODE_TYPES, 
-								new SVNProgressMonitor(CreateFileOperation.this, monitor, null));		
+								null, new SVNProgressMonitor(CreateFileOperation.this, monitor, null));		
 					}}, monitor, this.fileNames.length);
 			}
 		}
