@@ -8,6 +8,22 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.1.I20080612-1500 [12 June 2008] [build ids are changed corresponding to guidelines]
+
+Features:
+ * Support latest SVN 1.5 API changes (bug 216473)
+
+Fixes:
+ * JavaHLConnector creates a huge amount of short living threads (bug 235764)
+   + special thanks to contributor Micha Riser
+   
+ * Using a proxy server doesn't work (bug 233962)
+   + special thanks to Enrico Ehrich, Francois Masurel
+   
+ * The last added line is ignored in the new file while creating a patch. (bug 236399)
+
+--------------------------------------------------------------------------------
+
 Version 0.7.0.v20080609 [09 June 2008]
 
 Features:
