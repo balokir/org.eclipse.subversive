@@ -117,7 +117,7 @@ public class CommitOperation extends AbstractFileConflictDetectionOperation impl
 					CommitOperation.this.message, 
 					null,
 					Depth.infinityOrEmpty(CommitOperation.this.recursive), CommitOperation.this.keepLocks ? ISVNConnector.Options.KEEP_LOCKS : ISVNConnector.Options.NONE, 
-					new SVNProgressMonitor(CommitOperation.this, monitor, null));
+					null, new SVNProgressMonitor(CommitOperation.this, monitor, null));
 				if (revisionNumbers.length > 0) {
 					CommitOperation.this.revisionsPairs.add(new RevisionPair(revisionNumbers[0], CommitOperation.this.paths, location));	
 					String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision", new String[] {String.valueOf(revisionNumbers[0])});

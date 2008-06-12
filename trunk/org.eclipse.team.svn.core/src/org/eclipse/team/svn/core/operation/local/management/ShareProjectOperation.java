@@ -258,7 +258,7 @@ public class ShareProjectOperation extends AbstractWorkingCopyOperation {
 			ProgressMonitorUtility.progress(monitor, IProgressMonitor.UNKNOWN, resourceSet.length);
 		}
 		String []urls = (String [])urlsList.toArray(new String[urlsList.size()]);
-		proxy.mkdir(urls, this.commitComment, ISVNConnector.Options.INCLUDE_PARENTS, new SVNProgressMonitor(this, monitor, null));
+		proxy.mkdir(urls, this.commitComment, ISVNConnector.Options.INCLUDE_PARENTS, null, new SVNProgressMonitor(this, monitor, null));
 	}
 	
 	protected IRepositoryContainer makeChild(IRepositoryContainer parent, String name) {

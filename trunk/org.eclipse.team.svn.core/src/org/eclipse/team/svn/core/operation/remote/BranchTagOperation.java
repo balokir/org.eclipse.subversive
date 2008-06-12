@@ -74,7 +74,7 @@ public class BranchTagOperation extends AbstractRepositoryOperation implements I
 					public void run(IProgressMonitor monitor) throws Exception {
 						BranchTagOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn copy \"" + current.getUrl() + "\" \"" + BranchTagOperation.this.destinationUrl + "\" -r " + current.getSelectedRevision() + " -m \"" + BranchTagOperation.this.message + "\"" + FileUtility.getUsernameParam(current.getRepositoryLocation().getUsername()) + "\n");
 						SVNEntryRevisionReference []src = new SVNEntryRevisionReference[] {new SVNEntryRevisionReference(SVNUtility.encodeURL(current.getUrl()), current.getPegRevision(), current.getSelectedRevision())};
-						proxy.copy(src, url2, BranchTagOperation.this.message, ISVNConnector.Options.INTERPRET_AS_CHILD, new SVNProgressMonitor(BranchTagOperation.this, monitor, null));
+						proxy.copy(src, url2, BranchTagOperation.this.message, ISVNConnector.Options.INTERPRET_AS_CHILD, null, new SVNProgressMonitor(BranchTagOperation.this, monitor, null));
 					}
 				}, monitor, resources.length);
 				

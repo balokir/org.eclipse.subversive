@@ -87,7 +87,7 @@ public class CreateFolderOperation extends AbstractRepositoryOperation implement
 		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
 			SVNUtility.addSVNNotifyListener(proxy, notify);
-			proxy.mkdir(childUrls, this.comment, ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null));
+			proxy.mkdir(childUrls, this.comment, ISVNConnector.Options.NONE, null, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 			SVNUtility.removeSVNNotifyListener(proxy, notify);

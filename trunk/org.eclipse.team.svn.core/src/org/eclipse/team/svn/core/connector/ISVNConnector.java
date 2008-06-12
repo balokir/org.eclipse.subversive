@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.core.connector;
 
 import java.io.OutputStream;
+import java.util.Map;
 
 /**
  * SVN connector wrapper interface
@@ -298,7 +299,7 @@ public interface ISVNConnector {
 
 	public void add(String path, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public long[] commit(String[] path, String message, String[] changelistNames, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public long[] commit(String[] path, String message, String[] changelistNames, int depth, long options, Map revProps, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public long[] update(String[] path, SVNRevision revision, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
@@ -348,7 +349,7 @@ public interface ISVNConnector {
 	public void mergeStatus(SVNEntryRevisionReference reference1, SVNEntryRevisionReference reference2, String path, int depth, long options, ISVNMergeStatusCallback cb, ISVNProgressMonitor monitor)
 		throws SVNConnectorException;
 
-	public void doImport(String path, String url, String message, int depth, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void doImport(String path, String url, String message, int depth, long options, Map revProps, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public long doExport(SVNEntryRevisionReference fromReference, String destPath, String nativeEOL, int depth, long options, ISVNProgressMonitor monitor)
 			throws SVNConnectorException;
@@ -369,17 +370,17 @@ public interface ISVNConnector {
 
 	public void streamFileContent(SVNEntryRevisionReference reference, int bufferSize, OutputStream stream, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void mkdir(String[] path, String message, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void mkdir(String[] path, String message, long options, Map revProps, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public void move(String[] srcPaths, String dstPath, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void move(SVNEntryReference[] srcPaths, String dstPath, String message, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void move(SVNEntryReference[] srcPaths, String dstPath, String message, long options, Map revProps, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public void copy(String[] srcPaths, String destPath, SVNRevision revision, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void copy(SVNEntryRevisionReference[] srcPaths, String destPath, String message, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void copy(SVNEntryRevisionReference[] srcPaths, String destPath, String message, long options, Map revProps, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
-	public void remove(String[] path, String message, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	public void remove(String[] path, String message, long options, Map revProps, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
 	public void logEntries(SVNEntryReference reference, SVNRevision revisionStart, SVNRevision revisionEnd, String[] revProps, long limit, long options, ISVNLogEntryCallback cb,
 			ISVNProgressMonitor monitor) throws SVNConnectorException;

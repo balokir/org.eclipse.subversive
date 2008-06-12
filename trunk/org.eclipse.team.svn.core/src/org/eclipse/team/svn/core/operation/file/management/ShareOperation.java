@@ -173,7 +173,7 @@ public class ShareOperation extends AbstractFileOperation {
 			ProgressMonitorUtility.progress(monitor, IProgressMonitor.UNKNOWN, resourceSet.length);
 		}
 		String []urls = urlsList.toArray(new String[urlsList.size()]);
-		proxy.mkdir(urls, this.commitComment, ISVNConnector.Options.INCLUDE_PARENTS, new SVNProgressMonitor(this, monitor, null));
+		proxy.mkdir(urls, this.commitComment, ISVNConnector.Options.INCLUDE_PARENTS, null, new SVNProgressMonitor(this, monitor, null));
 	}
 	
 	protected IRepositoryResource []doDefaultLayout(Map<File, IRepositoryContainer> local2remote) {

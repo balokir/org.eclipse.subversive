@@ -76,7 +76,7 @@ public class DeleteResourcesOperation extends AbstractRepositoryOperation implem
 			SVNUtility.addSVNNotifyListener(proxy, notify);
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-					proxy.remove(paths, DeleteResourcesOperation.this.message, ISVNConnector.Options.FORCE, new SVNProgressMonitor(DeleteResourcesOperation.this, monitor, null));
+					proxy.remove(paths, DeleteResourcesOperation.this.message, ISVNConnector.Options.FORCE, null, new SVNProgressMonitor(DeleteResourcesOperation.this, monitor, null));
 				}
 			}, monitor, repository2Resources.size());
 			SVNUtility.removeSVNNotifyListener(proxy, notify);

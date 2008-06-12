@@ -67,7 +67,7 @@ public class ImportOperation extends AbstractRepositoryOperation implements IRev
 		try {
 			SVNUtility.addSVNNotifyListener(proxy, notify);
 			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn import \"" + FileUtility.normalizePath(this.path) + "\" \"" + SVNUtility.getDepthArg(this.depth) + " -m \"" + this.message + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n");
-			proxy.doImport(this.path, SVNUtility.encodeURL(resource.getUrl()), this.message, this.depth, ISVNConnector.Options.INCLUDE_IGNORED | ISVNConnector.Options.IGNORE_UNKNOWN_NODE_TYPES, new SVNProgressMonitor(this, monitor, null));
+			proxy.doImport(this.path, SVNUtility.encodeURL(resource.getUrl()), this.message, this.depth, ISVNConnector.Options.INCLUDE_IGNORED | ISVNConnector.Options.IGNORE_UNKNOWN_NODE_TYPES, null, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 			SVNUtility.removeSVNNotifyListener(proxy, notify);
