@@ -543,7 +543,7 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		try {
 			stream = new ObjectInputStream(new FileInputStream(this.stateInfoFile));
 			
-			// why stream.available() does not work ???
+			// stream.available() does not provide any EOF information
 			while (true) {
 				SVNRepositoryLocation obj = (SVNRepositoryLocation)stream.readObject();
 				if (!tmp.contains(obj)) {
