@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.core.svnstorage;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -98,9 +99,9 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
     
     private Map<String, IRepositoryLocation> additionalRealms;
     
-    private Integer lazyInitLock = new Integer(0);
-    private Integer proxyManagerLock = new Integer(0);
-    private Integer repositoryRootLock = new Integer(0);
+    private transient Integer lazyInitLock = new Integer(0);
+    private transient Integer proxyManagerLock = new Integer(0);
+    private transient Integer repositoryRootLock = new Integer(0);
 
 	public SVNRepositoryLocation() {
 		super(null);
@@ -781,6 +782,15 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		return this.additionalRealms;
 	}
 	
+    private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+    }
+    
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+        this.lazyInitLock = new Integer(0);
+        this.proxyManagerLock = new Integer(0);
+        this.repositoryRootLock = new Integer(0);
+    }
+    
 	protected interface IProxyVisitor {
 	    public void visit(ISVNConnector proxy);
 	}
