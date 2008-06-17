@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.ui.synchronize.action;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
@@ -33,7 +34,7 @@ public class EditConflictsAction extends AbstractSynchronizeModelAction {
 	protected FastSyncInfoFilter getSyncInfoFilter() {
 		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.CONFLICTING}) {
 			public boolean select(SyncInfo info) {
-				return super.select(info) && IStateFilter.SF_CONFLICTING.accept(((AbstractSVNSyncInfo)info).getLocalResource());
+				return super.select(info) && info.getLocal().getType() == IResource.FILE && IStateFilter.SF_CONFLICTING.accept(((AbstractSVNSyncInfo)info).getLocalResource());
 			}
 		};
 	}
