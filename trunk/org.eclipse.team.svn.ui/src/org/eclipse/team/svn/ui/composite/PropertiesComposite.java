@@ -63,13 +63,12 @@ import org.eclipse.team.svn.ui.action.local.SetPropertyAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.dialog.SetPropertyWithOverrideDialog;
 import org.eclipse.team.svn.ui.panel.view.property.PropertyApplyPanel;
-import org.eclipse.team.svn.ui.properties.ResourcePropertyEditPanel;
 import org.eclipse.team.svn.ui.properties.RemovePropertyDialog;
+import org.eclipse.team.svn.ui.properties.ResourcePropertyEditPanel;
 import org.eclipse.team.svn.ui.repository.model.RepositoryPending;
 import org.eclipse.team.svn.ui.utility.ColumnedViewerComparator;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.part.ViewPart;
 
 /**
  * Property viewer composite 
