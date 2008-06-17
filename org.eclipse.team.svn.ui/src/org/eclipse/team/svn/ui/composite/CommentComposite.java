@@ -27,6 +27,8 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -50,69 +52,87 @@ import org.eclipse.team.svn.ui.verifier.IValidationManager;
  * 
  * @author Alexander Gurov
  */
-public class CommentComposite extends Composite  {
+public class CommentComposite extends Composite {
 	public static String TEMPORARY_COMMENT = null;
+
 	protected static final String COMMENT_HISTORY_NAME = "comment";
+
 	protected static String PREVIOUS_COMMENTS_HEADER;
+
 	protected static String PREVIOUS_COMMENTS_HINT;
-    protected static String TEMPLATE_HEADER;
-    protected static String TEMPLATE_HINT;
-    protected static String TSVN_LOGTEMPLATE_HEADER;
-    protected static String TSVN_LOGTEMPLATE_HINT;
-	
+
+	protected static String TEMPLATE_HEADER;
+
+	protected static String TEMPLATE_HINT;
+
+	protected static String TSVN_LOGTEMPLATE_HEADER;
+
+	protected static String TSVN_LOGTEMPLATE_HINT;
+
 	protected StyledText text;
+
 	protected Text bugIdText;
+
 	protected String message;
+
 	protected String bugID;
+
 	protected UserInputHistory history;
+
 	protected Set logTemplates;
+
 	protected Set ignoredStrings;
+
 	protected BugtraqModel bugtraqModel;
+
 	protected int minLogSize;
+
 	protected int maxLogWidth;
-	
+
 	protected IValidationManager validationManager;
+
 	protected IDialogManager dialogManager;
 
-    public CommentComposite(Composite parent, IValidationManager validationManager) {
-        this(parent, validationManager, null);
-    }
-    
-    public CommentComposite(Composite parent, IValidationManager validationManager, Set logTemplates) {
-    	this(parent, null, validationManager, logTemplates, null);
-    }
-        
-    public CommentComposite(Composite parent, String message, IValidationManager validationManager, Set logTemplates, BugtraqModel bugtraqModel) {
-    	this(parent, null, validationManager, logTemplates, null, 0);
-    }
-    
-    public CommentComposite(Composite parent, String message, IValidationManager validationManager, Set logTemplates, BugtraqModel bugtraqModel, int minLogSize) {
-    	this(parent, null, validationManager, logTemplates, null, minLogSize, 0);
-    }
-    public CommentComposite(Composite parent, String message, IValidationManager validationManager, Set logTemplates, BugtraqModel bugtraqModel, int minLogSize, int maxLogWidth){
-    	super(parent, SWT.NONE);
-    	
-    	CommentComposite.PREVIOUS_COMMENTS_HEADER = SVNTeamUIPlugin.instance().getResource("CommentComposite.Previous");
-    	CommentComposite.PREVIOUS_COMMENTS_HINT = "    " + SVNTeamUIPlugin.instance().getResource("CommentComposite.Previous.Hint");
-    	CommentComposite.TEMPLATE_HEADER = SVNTeamUIPlugin.instance().getResource("CommentComposite.Template");
-        CommentComposite.TEMPLATE_HINT = "    " + SVNTeamUIPlugin.instance().getResource("CommentComposite.Template.Hint");
-        CommentComposite.TSVN_LOGTEMPLATE_HEADER = SVNTeamUIPlugin.instance().getResource("CommentComposite.LogTemplate");
-        CommentComposite.TSVN_LOGTEMPLATE_HINT = "    " + SVNTeamUIPlugin.instance().getResource("CommentComposite.LogTemplate.Hint");
-    	
-        this.message = message;
-        this.validationManager = validationManager;
-        this.logTemplates = logTemplates;
-        this.ignoredStrings = new HashSet();
-        this.bugtraqModel = bugtraqModel;
-        this.minLogSize = minLogSize;
-        this.maxLogWidth = maxLogWidth;
-        this.createControls();
-    }
+	public CommentComposite(Composite parent, IValidationManager validationManager) {
+		this(parent, validationManager, null);
+	}
+
+	public CommentComposite(Composite parent, IValidationManager validationManager, Set logTemplates) {
+		this(parent, null, validationManager, logTemplates, null);
+	}
+
+	public CommentComposite(Composite parent, String message, IValidationManager validationManager, Set logTemplates, BugtraqModel bugtraqModel) {
+		this(parent, null, validationManager, logTemplates, null, 0);
+	}
+
+	public CommentComposite(Composite parent, String message, IValidationManager validationManager, Set logTemplates, BugtraqModel bugtraqModel, int minLogSize) {
+		this(parent, null, validationManager, logTemplates, null, minLogSize, 0);
+	}
+
+	public CommentComposite(Composite parent, String message, IValidationManager validationManager, Set logTemplates, BugtraqModel bugtraqModel, int minLogSize, int maxLogWidth) {
+		super(parent, SWT.NONE);
+
+		CommentComposite.PREVIOUS_COMMENTS_HEADER = SVNTeamUIPlugin.instance().getResource("CommentComposite.Previous");
+		CommentComposite.PREVIOUS_COMMENTS_HINT = "    " + SVNTeamUIPlugin.instance().getResource("CommentComposite.Previous.Hint");
+		CommentComposite.TEMPLATE_HEADER = SVNTeamUIPlugin.instance().getResource("CommentComposite.Template");
+		CommentComposite.TEMPLATE_HINT = "    " + SVNTeamUIPlugin.instance().getResource("CommentComposite.Template.Hint");
+		CommentComposite.TSVN_LOGTEMPLATE_HEADER = SVNTeamUIPlugin.instance().getResource("CommentComposite.LogTemplate");
+		CommentComposite.TSVN_LOGTEMPLATE_HINT = "    " + SVNTeamUIPlugin.instance().getResource("CommentComposite.LogTemplate.Hint");
+
+		this.message = message;
+		this.validationManager = validationManager;
+		this.logTemplates = logTemplates;
+		this.ignoredStrings = new HashSet();
+		this.bugtraqModel = bugtraqModel;
+		this.minLogSize = minLogSize;
+		this.maxLogWidth = maxLogWidth;
+		this.createControls();
+	}
 
 	public String getMessage() {
 		return this.message;
 	}
-	
+
 	public void setMessage(String message) {
 		this.text.setText(message);
 	}
@@ -120,59 +140,62 @@ public class CommentComposite extends Composite  {
 	public String getBugID() {
 		return this.bugID;
 	}
-	
+
 	public void insertText(String text) {
 		this.text.insert(text);
 	}
-	
-    public void saveChanges() {
+
+	public void saveChanges() {
 		this.message = this.text.getText();
 		this.history.addLine(this.message);
 		CommentComposite.TEMPORARY_COMMENT = null;
-		
+
 		if (this.bugIdText != null) {
 			this.bugID = this.bugIdText.getText();
 		}
-    }
-    
-    public void cancelChanges() {
-    	CommentComposite.TEMPORARY_COMMENT = this.text.getText().trim().length() == 0 ? null : this.text.getText();
-    }
+	}
 
-    private void createControls() {
-        GridData data = null;
-        
-        GridLayout layout = new GridLayout();
-        layout.marginHeight = 0;
-        layout.marginWidth = 0;
-        this.setLayout(layout);
-        
-        if (this.bugtraqModel != null && this.bugtraqModel.getMessage() != null) {
-        	Composite bugtraqComposite = new Composite(this, SWT.NONE);
-        	layout = new GridLayout();
-        	layout.numColumns = 2;
-        	layout.marginHeight = layout.marginWidth = 0;
-        	bugtraqComposite.setLayout(layout);
-        	
-        	bugtraqComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        	
-        	Label label = new Label(bugtraqComposite, SWT.NONE);
-        	label.setLayoutData(new GridData(GridData.BEGINNING));
-        	label.setText(this.bugtraqModel.getLabel());
-        	
-        	this.bugIdText = new Text(bugtraqComposite, SWT.FILL | SWT.BORDER);
-        	this.bugIdText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        	
-        	this.validationManager.attachTo(this.bugIdText, new AbstractVerifier() {
+	public void cancelChanges() {
+		CommentComposite.TEMPORARY_COMMENT = this.text.getText().trim().length() == 0 ? null : this.text.getText();
+	}
+
+	private void createControls() {
+		GridData data = null;
+
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		this.setLayout(layout);
+
+		if (this.bugtraqModel != null && this.bugtraqModel.getMessage() != null) {
+			Composite bugtraqComposite = new Composite(this, SWT.NONE);
+			layout = new GridLayout();
+			layout.numColumns = 2;
+			layout.marginHeight = layout.marginWidth = 0;
+			bugtraqComposite.setLayout(layout);
+
+			bugtraqComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+			Label label = new Label(bugtraqComposite, SWT.NONE);
+			label.setLayoutData(new GridData(GridData.BEGINNING));
+			label.setText(this.bugtraqModel.getLabel());
+
+			this.bugIdText = new Text(bugtraqComposite, SWT.FILL | SWT.BORDER);
+			this.bugIdText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+			this.validationManager.attachTo(this.bugIdText, new AbstractVerifier() {
 				protected String getErrorMessage(Control input) {
-					String logregex = CommentComposite.this.bugtraqModel.isNumber() ? "[0-9]+(,?[0-9]+)*" : ((CommentComposite.this.bugtraqModel.getLogregex() != null) ? CommentComposite.this.bugtraqModel.getLogregex()[0] : null);
+					String logregex = CommentComposite.this.bugtraqModel.isNumber() ? "[0-9]+(,?[0-9]+)*"
+							: ((CommentComposite.this.bugtraqModel.getLogregex() != null) ? CommentComposite.this.bugtraqModel.getLogregex()[0] : null);
 					if (logregex != null) {
 						String bugId = this.getText(input);
 						if (bugId.length() > 0 && !bugId.matches(logregex)) {
 							if (CommentComposite.this.bugtraqModel.isNumber()) {
-								return SVNTeamUIPlugin.instance().getResource("CommentComposite.BugID.Verifier.Error.Number", new String[] {CommentComposite.this.bugtraqModel.getLabel()});
+								return SVNTeamUIPlugin.instance().getResource("CommentComposite.BugID.Verifier.Error.Number",
+										new String[] { CommentComposite.this.bugtraqModel.getLabel() });
 							}
-							return SVNTeamUIPlugin.instance().getResource("CommentComposite.BugID.Verifier.Error.Text", new String[] {CommentComposite.this.bugtraqModel.getLabel(), CommentComposite.this.bugtraqModel.getLogregex()[0]});
+							return SVNTeamUIPlugin.instance().getResource("CommentComposite.BugID.Verifier.Error.Text",
+									new String[] { CommentComposite.this.bugtraqModel.getLabel(), CommentComposite.this.bugtraqModel.getLogregex()[0] });
 						}
 					}
 					return null;
@@ -184,25 +207,32 @@ public class CommentComposite extends Composite  {
 					}
 					return null;
 				}
-        	});
-        }
-        data = new GridData(GridData.FILL_BOTH);
+			});
+		}
+		data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = 80;
-        this.text = SpellcheckedTextProvider.getTextWidget(this, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.WRAP, data, this.maxLogWidth);
-		this.text.selectAll();
+		this.text = SpellcheckedTextProvider.getTextWidget(this, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.WRAP, data, this.maxLogWidth);
+		this.text.addTraverseListener(new TraverseListener() {
+			public void keyTraversed(TraverseEvent e) {
+				if (e.character == SWT.TAB) {
+					// no TABs are accepted as a text part
+					e.doit = true;
+				}
+			}
+		});
 		this.validationManager.attachTo(this.text, new CommentVerifier(SVNTeamUIPlugin.instance().getResource("CommentComposite.Comment.Verifier"), this.minLogSize));
-		
+
 		Label label = new Label(this, SWT.NULL);
 		label.setLayoutData(new GridData());
 		label.setText(SVNTeamUIPlugin.instance().getResource("CommentComposite.ChooseComment"));
-		
+
 		this.history = new UserInputHistory(CommentComposite.COMMENT_HISTORY_NAME, SVNTeamPreferences.getCommentTemplatesInt(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.COMMENT_SAVED_COMMENTS_COUNT_NAME));
-		
+
 		final Combo previousCommentsCombo = new Combo(this, SWT.READ_ONLY);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		previousCommentsCombo.setLayoutData(data);
-		
+
 		final List commentsList = this.getCommentsList();
 		if (this.message != null && this.message.length() > 0) {
 			this.text.setText(this.message);
@@ -213,47 +243,47 @@ public class CommentComposite extends Composite  {
 		this.text.selectAll();
 		List flattenCommentsList = new ArrayList();
 		for (Iterator iter = commentsList.iterator(); iter.hasNext();) {
-			flattenCommentsList.add(FileUtility.flattenText((String)iter.next()));
+			flattenCommentsList.add(FileUtility.flattenText((String) iter.next()));
 		}
 		previousCommentsCombo.setVisibleItemCount(flattenCommentsList.size());
-		previousCommentsCombo.setItems((String[])flattenCommentsList.toArray(new String[flattenCommentsList.size()]));
+		previousCommentsCombo.setItems((String[]) flattenCommentsList.toArray(new String[flattenCommentsList.size()]));
 		previousCommentsCombo.addSelectionListener(new SelectionListener() {
-            public void widgetSelected(SelectionEvent e) {
-            	int idx = previousCommentsCombo.getSelectionIndex();
-            	if (idx != -1) {
-                	String comboText = (String)commentsList.get(idx);
-                    CommentComposite.this.text.setText(CommentComposite.this.ignoredStrings.contains(comboText) ? 
-                    		CommentComposite.this.text.getText() : comboText);
-            	}
-            }
-            public void widgetDefaultSelected(SelectionEvent e) {
-            }
-        });
-    }
-    
-    public void postInit(IDialogManager dialogManager) {
-    	this.dialogManager = dialogManager;
-    	this.text.addKeyListener(new KeyAdapter() {
-        	public void keyPressed(KeyEvent event) {
-        		if (event.keyCode == SWT.TAB) {
-        			CommentComposite.this.text.traverse(SWT.TRAVERSE_TAB_NEXT);
-        			event.doit = false;
-        		}
-        	}
+			public void widgetSelected(SelectionEvent e) {
+				int idx = previousCommentsCombo.getSelectionIndex();
+				if (idx != -1) {
+					String comboText = (String) commentsList.get(idx);
+					CommentComposite.this.text.setText(CommentComposite.this.ignoredStrings.contains(comboText) ? CommentComposite.this.text.getText() : comboText);
+				}
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
 		});
-    	if (this.minLogSize > 0) {
-    		this.validationManager.validateContent();
-    	}
-    }
-    
-    protected List getCommentsList() {
-    	List commentsList = new ArrayList();
-    	
-    	IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
+	}
+
+	public void postInit(IDialogManager dialogManager) {
+		this.dialogManager = dialogManager;
+		this.text.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent event) {
+				if (event.keyCode == SWT.TAB) {
+					CommentComposite.this.text.traverse(SWT.TRAVERSE_TAB_NEXT);
+					event.doit = false;
+				}
+			}
+		});
+		if (this.minLogSize > 0) {
+			this.validationManager.validateContent();
+		}
+	}
+
+	protected List getCommentsList() {
+		List commentsList = new ArrayList();
+
+		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
 		boolean logTemplatesEnabled = SVNTeamPreferences.getCommentTemplatesBoolean(store, SVNTeamPreferences.COMMENT_LOG_TEMPLATES_ENABLED_NAME);
 		boolean userTemplatesEnabled = SVNTeamPreferences.getCommentTemplatesBoolean(store, SVNTeamPreferences.COMMENT_TEMPLATES_LIST_ENABLED_NAME);
-		
-		if ((logTemplatesEnabled && this.logTemplates != null) || userTemplatesEnabled) {
+
+		if (logTemplatesEnabled && this.logTemplates != null || userTemplatesEnabled) {
 			commentsList.add(CommentComposite.PREVIOUS_COMMENTS_HEADER);
 			this.ignoredStrings.add(CommentComposite.PREVIOUS_COMMENTS_HEADER);
 			if (this.history.getHistory().length > 0) {
@@ -267,12 +297,11 @@ public class CommentComposite extends Composite  {
 		else {
 			commentsList.addAll(Arrays.asList(this.history.getHistory()));
 		}
-		
+
 		if (userTemplatesEnabled) {
 			commentsList.add(CommentComposite.TEMPLATE_HEADER);
 			this.ignoredStrings.add(CommentComposite.TEMPLATE_HEADER);
-			String []templates = FileUtility.decodeStringToArray(SVNTeamPreferences.getCommentTemplatesString(store, 
-					SVNTeamPreferences.COMMENT_TEMPLATES_LIST_NAME));
+			String[] templates = FileUtility.decodeStringToArray(SVNTeamPreferences.getCommentTemplatesString(store, SVNTeamPreferences.COMMENT_TEMPLATES_LIST_NAME));
 			if (templates.length == 0) {
 				commentsList.add(CommentComposite.TEMPLATE_HINT);
 				this.ignoredStrings.add(CommentComposite.TEMPLATE_HINT);
@@ -285,7 +314,7 @@ public class CommentComposite extends Composite  {
 			commentsList.add(CommentComposite.TSVN_LOGTEMPLATE_HEADER);
 			this.ignoredStrings.add(CommentComposite.TSVN_LOGTEMPLATE_HEADER);
 			if (this.logTemplates.size() > 0) {
-				String mainTemplate = (String)this.logTemplates.iterator().next();
+				String mainTemplate = (String) this.logTemplates.iterator().next();
 				this.text.setText(mainTemplate);
 				this.text.selectAll();
 				commentsList.addAll(this.logTemplates);
@@ -295,8 +324,8 @@ public class CommentComposite extends Composite  {
 				this.ignoredStrings.add(CommentComposite.TSVN_LOGTEMPLATE_HINT);
 			}
 		}
-		
+
 		return commentsList;
-    }
-    
+	}
+
 }

@@ -94,6 +94,7 @@ public class CommitSetPanel extends CommentPanel implements ICommentDialogPanel 
         	initialText = "";
         }
         this.nameText.setText(initialText);
+        this.nameText.selectAll();
 		this.attachTo(this.nameText, new NonEmptyFieldVerifier(SVNTeamUIPlugin.instance().getResource("CommitSetPanel.Name.Verifier")));
         
 		Group group = new Group(parent, SWT.NULL);

@@ -38,51 +38,50 @@ import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
  * @author Alexei Goncharov
  */
 public class SpellcheckedTextProvider {
-	
+
 	public static StyledText getTextWidget(Composite parent, Object layoutData, int style) {
 		return SpellcheckedTextProvider.getTextWidget(parent, style, layoutData, 0);
 	}
-	
+
 	public static StyledText getTextWidget(Composite parent, int style, Object layoutData, int widthMarker) {
-        Composite offset = new Composite(parent, SWT.BORDER);
-        GridLayout layout = new GridLayout();
-        layout.marginHeight = 0;
-        layout.marginWidth = 0;
-        layout.marginRight = 0;
-        layout.marginLeft = 4;
-        layout.horizontalSpacing = 0;
-        offset.setLayout(layout);
-        offset.setLayoutData(layoutData);
-        
-        SourceViewer sourceViewer = new SourceViewer(offset, null, null, true, style & ~SWT.BORDER);
-        GridData data = new GridData(GridData.FILL_BOTH);
-        sourceViewer.getTextWidget().setLayoutData(data);
-        offset.setBackground(sourceViewer.getTextWidget().getBackground());
-        
+		Composite offset = new Composite(parent, SWT.BORDER);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.marginRight = 0;
+		layout.marginLeft = 4;
+		layout.horizontalSpacing = 0;
+		offset.setLayout(layout);
+		offset.setLayoutData(layoutData);
+
+		SourceViewer sourceViewer = new SourceViewer(offset, null, null, true, style & ~SWT.BORDER);
+		GridData data = new GridData(GridData.FILL_BOTH);
+		sourceViewer.getTextWidget().setLayoutData(data);
+		offset.setBackground(sourceViewer.getTextWidget().getBackground());
+
 		AnnotationModel annotationModel = new AnnotationModel();
-        IAnnotationAccess annotationAccess = new DefaultMarkerAnnotationAccess();
-        final SourceViewerDecorationSupport support = new SourceViewerDecorationSupport(sourceViewer, null, annotationAccess, EditorsUI.getSharedTextColors());
-		Iterator e = new MarkerAnnotationPreferences().getAnnotationPreferences().iterator();
-		while (e.hasNext()) {
+		IAnnotationAccess annotationAccess = new DefaultMarkerAnnotationAccess();
+		final SourceViewerDecorationSupport support = new SourceViewerDecorationSupport(sourceViewer, null, annotationAccess, EditorsUI.getSharedTextColors());
+		for (Iterator e = new MarkerAnnotationPreferences().getAnnotationPreferences().iterator(); e.hasNext();) {
 			support.setAnnotationPreference((AnnotationPreference) e.next());
 		}
-        support.install(EditorsUI.getPreferenceStore());
-        sourceViewer.getTextWidget().addDisposeListener(new DisposeListener() {
+		support.install(EditorsUI.getPreferenceStore());
+		sourceViewer.getTextWidget().addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				support.uninstall();
 			}
-		});        
-        Document document = new Document();
-        sourceViewer.configure(new TextSourceViewerConfiguration(EditorsUI.getPreferenceStore()));
-        sourceViewer.setDocument(document, annotationModel);
-        if (widthMarker > 0) {
-        	MarginPainter painter = new MarginPainter(sourceViewer);
-        	painter.setMarginRulerColumn(widthMarker);
-        	painter.setMarginRulerColor(parent.getShell().getDisplay().getSystemColor(SWT.COLOR_GRAY));
-            sourceViewer.addPainter(painter);
-        }
-        sourceViewer.getTextWidget().setIndent(0);
-        return sourceViewer.getTextWidget();
+		});
+		Document document = new Document();
+		sourceViewer.configure(new TextSourceViewerConfiguration(EditorsUI.getPreferenceStore()));
+		sourceViewer.setDocument(document, annotationModel);
+		if (widthMarker > 0) {
+			MarginPainter painter = new MarginPainter(sourceViewer);
+			painter.setMarginRulerColumn(widthMarker);
+			painter.setMarginRulerColor(parent.getShell().getDisplay().getSystemColor(SWT.COLOR_GRAY));
+			sourceViewer.addPainter(painter);
+		}
+		sourceViewer.getTextWidget().setIndent(0);
+		return sourceViewer.getTextWidget();
 	}
 
 }
