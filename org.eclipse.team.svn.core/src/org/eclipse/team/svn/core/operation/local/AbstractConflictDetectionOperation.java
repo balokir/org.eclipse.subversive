@@ -46,11 +46,11 @@ public abstract class AbstractConflictDetectionOperation extends AbstractWorking
     }
     
     public IResource []getUnprocessed() {
-		return this.unprocessed == null ? null : this.unprocessed.toArray(new IResource[this.unprocessed.size()]);
+		return this.unprocessed == null ? new IResource[0] : this.unprocessed.toArray(new IResource[this.unprocessed.size()]);
     }
 
 	public IResource []getProcessed() {
-		return this.processed == null ? null : this.processed.toArray(new IResource[this.processed.size()]);
+		return this.processed == null ? new IResource[0] : this.processed.toArray(new IResource[this.processed.size()]);
 	}
 	
 	protected void defineInitialResourceSet(IResource []resources) {
