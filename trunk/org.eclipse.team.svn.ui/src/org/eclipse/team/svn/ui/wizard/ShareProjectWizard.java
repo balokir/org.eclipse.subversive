@@ -219,10 +219,11 @@ public class ShareProjectWizard extends AbstractSVNWizard implements IConfigurat
 
 		op.add(new NotifyProjectStatesChangedOperation(mainOp.getProjects(), ProjectStatesChangedEvent.ST_POST_SHARED));
 		
-		UIMonitorUtility.doTaskNowDefault(this.getShell(), op, false);
-		if ((!this.alreadyConnected() || reconnect) && (this.commentPage == null ? true : this.commentPage.isShowCommitDialog())) {
-			UIMonitorUtility.doTaskScheduledActive(new PostShareCommitOperation(mainOp));
+		if ((!this.alreadyConnected() || reconnect) && (this.commentPage == null || this.commentPage.isShowCommitDialog())) {
+			op.add(new PostShareCommitOperation(mainOp));
 		}
+		
+		UIMonitorUtility.doTaskScheduledActive(op);
 
 		return true;
 	}
