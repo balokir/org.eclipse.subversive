@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.team.svn"
-      label="SVN Team Provider (Incubation)"
+      label="%featureName"
       version="0.7.1.I20080619-1400"
-      provider-name="Eclipse.org"
+      provider-name="%providerName"
       plugin="org.eclipse.team.svn">
    <install-handler/>
 
