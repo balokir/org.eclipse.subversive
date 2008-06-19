@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.team.svn.pde.build"
-      label="SVN PDE Build Extension (Incubation)"
+      label="%featureName"
       version="0.7.1.I20080612-1500"
-      provider-name="Eclipse.org">
+      provider-name="%providerName">
 
    <description>
       SVN fetch task implementation for the Eclipse PDE build.
