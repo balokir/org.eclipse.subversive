@@ -60,7 +60,7 @@ public class ReplaceWithRevisionAction extends AbstractNonRecursiveTeamAction {
 		ReplaceWarningDialog dialog = new ReplaceWarningDialog(shell);
 		if (dialog.open() == 0) {
 			IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(resources[0]);
-			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resources[0]);
+			ILocalResource local = SVNRemoteStorage.instance().asLocalResourceAccessible(resources[0]);
 			
 			ReplaceWithUrlPanel panel = new ReplaceWithUrlPanel(remote, local.getRevision());
 			DefaultDialog selectionDialog = new DefaultDialog(shell, panel);

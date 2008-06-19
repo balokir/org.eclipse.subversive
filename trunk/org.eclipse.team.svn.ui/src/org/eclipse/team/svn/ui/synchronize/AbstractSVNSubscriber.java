@@ -87,7 +87,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 
     public IResource []members(IResource resource) {
     	ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-    	if (local == null || IStateFilter.SF_IGNORED.accept(local) || IStateFilter.SF_NOTEXISTS.accept(local)) {
+    	if (IStateFilter.SF_INTERNAL_INVALID.accept(local) || IStateFilter.SF_IGNORED.accept(local) || IStateFilter.SF_NOTEXISTS.accept(local)) {
     		return FileUtility.NO_CHILDREN;
     	}
     	return this.statusCache.allMembers(resource);
@@ -111,7 +111,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 		IResourceChange remoteStatus = SVNRemoteStorage.instance().resourceChangeFromBytes(this.statusCache.getBytes(resource));
     	// incoming additions shouldn't call WC access
 		ILocalResource localStatus = this.statusCache.containsData() ? SVNRemoteStorage.instance().asLocalResourceDirty(resource) : SVNRemoteStorage.instance().asLocalResource(resource);
-		if (localStatus != null || remoteStatus != null) {
+		if (!IStateFilter.SF_INTERNAL_INVALID.accept(localStatus) || remoteStatus != null) {
 			SyncInfo info = this.getSVNSyncInfo(localStatus, remoteStatus);
 			if (info != null) {
 				info.init();

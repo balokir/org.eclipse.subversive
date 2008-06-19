@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.local.change.FolderChange;
 import org.eclipse.team.svn.core.operation.local.change.IActionOperationProcessor;
 import org.eclipse.team.svn.core.operation.local.change.ResourceChange;
@@ -82,29 +83,31 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 	
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		IResource []resources = FileUtility.shrinkChildNodes(this.operableData());
-		ArrayList<IResource> committables = new ArrayList<IResource>();
-		ArrayList<IResource> withDifferentNodeKind = new ArrayList<IResource>();
+		final ArrayList<IResource> committables = new ArrayList<IResource>();
+		final ArrayList<IResource> withDifferentNodeKind = new ArrayList<IResource>();
 		this.committables = new IResource[0];
 		this.withDifferentNodeKind = new IResource[0];
 
 		for (int i = 0; i < resources.length; i++) {
-			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resources[i]);
-			if (local == null) {
-				continue;
-			}
-			if (IStateFilter.SF_DELETED.accept(local) && !IStateFilter.SF_PREREPLACEDREPLACED.accept(local)) {
-				this.markDeleted(local, new NullProgressMonitor());
-				committables.add(local.getResource());
-			}
-			else {
-				boolean nodeKindChanged = this.markExisting(local, new NullProgressMonitor());
-				if (!nodeKindChanged) {
-					committables.add(local.getResource());
+			final IResource current = resources[i];
+			this.protectStep(new IUnprotectedOperation() {
+				public void run(IProgressMonitor monitor) throws Exception {
+					ILocalResource local = SVNRemoteStorage.instance().asLocalResourceAccessible(current);
+					if (IStateFilter.SF_DELETED.accept(local) && !IStateFilter.SF_PREREPLACEDREPLACED.accept(local)) {
+						MarkAsMergedOperation.this.markDeleted(local, new NullProgressMonitor());
+						committables.add(local.getResource());
+					}
+					else if (!IStateFilter.SF_INTERNAL_INVALID.accept(local)) {
+						boolean nodeKindChanged = MarkAsMergedOperation.this.markExisting(local, monitor);
+						if (!nodeKindChanged) {
+							committables.add(local.getResource());
+						}
+						else {
+						    withDifferentNodeKind.add(local.getResource());
+						}
+					}
 				}
-				else {
-				    withDifferentNodeKind.add(local.getResource());
-				}
-			}
+			}, monitor, resources.length);
 		}
 		
 		this.committables = committables.toArray(new IResource[committables.size()]);

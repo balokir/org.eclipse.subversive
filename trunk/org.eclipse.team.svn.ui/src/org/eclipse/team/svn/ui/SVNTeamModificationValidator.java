@@ -21,7 +21,6 @@ import org.eclipse.core.resources.team.FileModificationValidator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.utility.LockProposeUtility;
@@ -49,11 +48,9 @@ public class SVNTeamModificationValidator extends FileModificationValidator {
 	
 	protected IResource[] getNeedsLockResources(IResource []files) {
 		List<IResource> returnResources = new ArrayList<IResource>();
-		SVNRemoteStorage storage = SVNRemoteStorage.instance();
 		IResource[] needsLockResources = FileUtility.getResourcesRecursive(files, IStateFilter.SF_NEEDS_LOCK, IResource.DEPTH_ZERO);
 		for (int i = 0; i < needsLockResources.length; i++) {
-			ILocalResource local = storage.asLocalResource(needsLockResources[i]);
-			if (local != null && !local.isLocked()) {
+			if (!SVNRemoteStorage.instance().asLocalResource(needsLockResources[i]).isLocked()) {
 				returnResources.add(needsLockResources[i]);
 			}
 		}

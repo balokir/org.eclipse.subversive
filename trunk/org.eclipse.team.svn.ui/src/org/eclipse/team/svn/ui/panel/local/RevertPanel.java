@@ -250,7 +250,7 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 					public void run() {
 						IResource resource = selectedResources[0];
 						ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-						if (local != null) {
+						if (!IStateFilter.SF_INTERNAL_INVALID.accept(local)) {
 							IRepositoryResource remote = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
 							remote.setSelectedRevision(SVNRevision.BASE);
 							UIMonitorUtility.doTaskScheduledDefault(new CompareResourcesOperation(local, remote, false, true));
@@ -262,7 +262,7 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 					public void run() {
 						IResource resource = selectedResources[0];
 						ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-						if (local != null) {
+						if (!IStateFilter.SF_INTERNAL_INVALID.accept(local)) {
 							IRepositoryResource remote = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
 							remote.setSelectedRevision(SVNRevision.HEAD);
 							UIMonitorUtility.doTaskScheduledDefault(new CompareResourcesOperation(local, remote, false, true));
@@ -276,7 +276,7 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 					public void run() {
 						IResource resource = selectedResources[0];
 						ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-						if (local != null) {
+						if (!IStateFilter.SF_INTERNAL_INVALID.accept(local)) {
 							IRepositoryResource remote = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
 							ComparePanel panel = new ComparePanel(remote, local.getRevision());
 							DefaultDialog dlg = new DefaultDialog(UIMonitorUtility.getShell(), panel);

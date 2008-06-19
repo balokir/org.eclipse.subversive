@@ -57,8 +57,7 @@ public class SVNFileHistoryProvider extends FileHistoryProvider {
 	}
 	
 	public IFileRevision getWorkspaceFileRevision(IResource resource) {
-		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-		return new SVNLocalResourceRevision(local, SVNRevision.WORKING);
+		return new SVNLocalResourceRevision(SVNRemoteStorage.instance().asLocalResource(resource), SVNRevision.WORKING);
 	}
 	
 	public IFileHistory getFileHistoryFor(IFileStore store, int flags, IProgressMonitor monitor) {

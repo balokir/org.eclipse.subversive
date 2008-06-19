@@ -194,14 +194,12 @@ public class PropertiesView extends AbstractSVNView {
 	}
 	
 	protected void updateViewInput(IResource resource) {
-		if (resource != null) {
-			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-			if (local != null && IStateFilter.SF_EXCLUDE_PREREPLACED_AND_DELETED.accept(local)) {
-				if (local.getResource().equals(this.wcResource)) {
-					return;
-				}
-				this.setResource(resource, new GetPropertiesOperation(resource), true);
+		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
+		if (IStateFilter.SF_EXCLUDE_PREREPLACED_AND_DELETED.accept(local)) {
+			if (local.getResource().equals(this.wcResource)) {
+				return;
 			}
+			this.setResource(resource, new GetPropertiesOperation(resource), true);
 		}
 	}
 

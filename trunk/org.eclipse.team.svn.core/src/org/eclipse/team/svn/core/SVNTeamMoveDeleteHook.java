@@ -33,7 +33,6 @@ import org.eclipse.team.svn.core.operation.local.refactor.CopyResourceOperation;
 import org.eclipse.team.svn.core.operation.local.refactor.DeleteResourceOperation;
 import org.eclipse.team.svn.core.operation.local.refactor.MoveResourceOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
-import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
@@ -75,13 +74,12 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 	}
 
 	protected boolean doMove(IResourceTree tree, IResource source, IResource destination, IProgressMonitor monitor) {
-	    IRemoteStorage storage = SVNRemoteStorage.instance();
-		ILocalResource local = storage.asLocalResource(source);
-		if (local == null || IStateFilter.SF_NOTEXISTS.accept(local) || IStateFilter.SF_UNVERSIONED.accept(local) || IStateFilter.SF_OBSTRUCTED.accept(local)) {
+		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(source);
+		if (!IStateFilter.SF_VERSIONED.accept(local)) {
 			return FileUtility.isSVNInternals(source);
 		}
-		local = storage.asLocalResource(destination.getParent());
-		if (local == null || IStateFilter.SF_LINKED.accept(local) || IStateFilter.SF_OBSTRUCTED.accept(local)) {
+		local = SVNRemoteStorage.instance().asLocalResource(destination.getParent());
+		if (IStateFilter.SF_INTERNAL_INVALID.accept(local) || IStateFilter.SF_LINKED.accept(local) || IStateFilter.SF_OBSTRUCTED.accept(local)) {
 		    return false;
 		}
 		
@@ -121,7 +119,7 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 	
 	protected boolean doDelete(IResourceTree tree, IResource resource, IProgressMonitor monitor) {
 		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-		if (local == null || IStateFilter.SF_NOTEXISTS.accept(local) || IStateFilter.SF_UNVERSIONED.accept(local)) {
+		if (IStateFilter.SF_INTERNAL_INVALID.accept(local) || IStateFilter.SF_NOTEXISTS.accept(local) || IStateFilter.SF_UNVERSIONED.accept(local)) {
 			return FileUtility.isSVNInternals(resource);
 		}
 		

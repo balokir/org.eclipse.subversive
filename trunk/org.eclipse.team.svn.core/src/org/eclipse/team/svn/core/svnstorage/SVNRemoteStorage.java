@@ -275,43 +275,46 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		}
 		// null resource and workspace root shouldn't be provided
 		if (resource == null || resource.getProject() == null) {
-			return null;
+			return this.wrapUnexistingResource(resource, IStateFilter.ST_INTERNAL_INVALID, 0);
 		}
 		ILocalResource retVal = (ILocalResource)this.localResources.get(resource.getFullPath());
 		if (retVal == null) {
 			ILocalResource parent = this.getFirstExistingParentLocal(resource);
 			int mask = parent == null ? 0 : (parent.getChangeMask() & ILocalResource.IS_SWITCHED);
-			retVal = 
-				resource.getType() == IResource.FILE ? 
-				(ILocalResource)new SVNLocalFile(resource, SVNRevision.INVALID_REVISION_NUMBER, SVNRevision.INVALID_REVISION_NUMBER, IStateFilter.ST_NOTEXISTS, mask, null, -1) :
-				new SVNLocalFolder(resource, SVNRevision.INVALID_REVISION_NUMBER, SVNRevision.INVALID_REVISION_NUMBER, IStateFilter.ST_NOTEXISTS, mask, null, -1);
+			retVal = this.wrapUnexistingResource(resource, IStateFilter.ST_NOTEXISTS, mask);
+		}
+		return retVal;
+	}
+	
+	public ILocalResource asLocalResourceAccessible(IResource resource) {
+		ILocalResource retVal = this.asLocalResource(resource);
+		if (IStateFilter.SF_INTERNAL_INVALID.accept(retVal)) {
+			throw new UnreportableException(SVNTeamPlugin.instance().getResource("Error.InaccessibleResource"));
 		}
 		return retVal;
 	}
 	
 	public ILocalResource asLocalResource(IResource resource) {
 		// null resource and workspace root shouldn't be provided
-		if (resource == null || resource.getProject() == null) {
-			return null;
+		if (resource == null || resource.getProject() == null || !resource.getProject().isAccessible()) {
+			return this.wrapUnexistingResource(resource, IStateFilter.ST_INTERNAL_INVALID, 0);
 		}
 		ILocalResource local = (ILocalResource)this.localResources.get(resource.getFullPath());
 		if (local == null) {
 			synchronized (this) {
 				local = (ILocalResource)this.localResources.get(resource.getFullPath());
 				if (local == null) {
-					if (resource.getProject().isAccessible()) {
-						try {
-							local = this.loadLocalResourcesSubTree(resource, true);
-						} 
-						catch (RuntimeException ex) {
-							throw ex;
-						}
-						catch (SVNConnectorCancelException ex) {
-							return null;
-						}
-						catch (Exception e) {
-							throw new RuntimeException(e);
-						}
+					try {
+						local = this.loadLocalResourcesSubTree(resource, true);
+					} 
+					catch (RuntimeException ex) {
+						throw ex;
+					}
+					catch (SVNConnectorCancelException ex) {
+						return this.wrapUnexistingResource(resource, IStateFilter.ST_INTERNAL_INVALID, 0);
+					}
+					catch (Exception e) {
+						throw new RuntimeException(e);
 					}
 				}
 			}
@@ -341,7 +344,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		}
 		String projectUrl = this.asRepositoryResource(project).getUrl();
 		if (url.length() < projectUrl.length()) {
-			return null;
+			return this.wrapUnexistingResource(null, IStateFilter.ST_INTERNAL_INVALID, 0);
 		}
 		String pathInProject = url.substring(projectUrl.length());
 		if (pathInProject.length() == 0) {
@@ -417,6 +420,12 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		return location;
 	}
 	
+	protected ILocalResource wrapUnexistingResource(IResource resource, String state, int mask) {
+		return resource.getType() == IResource.FILE ? 
+				(ILocalResource)new SVNLocalFile(resource, SVNRevision.INVALID_REVISION_NUMBER, SVNRevision.INVALID_REVISION_NUMBER, state, mask, null, 0) :
+				new SVNLocalFolder(resource, SVNRevision.INVALID_REVISION_NUMBER, SVNRevision.INVALID_REVISION_NUMBER, state, mask, null, 0);
+	}
+	
 	protected String makeUrl(IResource resource, IRepositoryResource baseResource) {
 		if (resource.getType() == IResource.PROJECT) {
 			return baseResource.getUrl();
@@ -480,7 +489,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	protected ILocalResource loadLocalResourcesSubTree(final IResource resource, boolean recurse) throws Exception {
 		IConnectedProjectInformation provider = (IConnectedProjectInformation)RepositoryProvider.getProvider(resource.getProject(), SVNTeamPlugin.NATURE_ID);
 		if (provider == null || FileUtility.isSVNInternals(resource)) {
-			return null;
+			return this.wrapUnexistingResource(resource, IStateFilter.ST_INTERNAL_INVALID, 0);
 		}
 		
 		boolean isCacheEnabled = CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled();
@@ -533,7 +542,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
             }
         }, recurse ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE, false);
         
-		return tmp[0];
+		return tmp[0] != null ? tmp[0] : this.wrapUnexistingResource(resource, IStateFilter.ST_INTERNAL_INVALID, 0);
 	}
 	
 	protected String calculateUnversionedStatus(final IResource resource, boolean isLinked) {
@@ -666,7 +675,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 									IResource folder = prj.getFolder(new Path(st[i].path.substring(projectEnd)));
 									ProgressMonitorUtility.setTaskInfo(monitor, this, folder.getFullPath().toString());
 									ILocalFolder local = (ILocalFolder)SVNRemoteStorage.this.asLocalResource(folder);
-									if (local != null) {
+									if (!IStateFilter.SF_INTERNAL_INVALID.accept(local)) {
 										local.getChildren();
 									}
 								}

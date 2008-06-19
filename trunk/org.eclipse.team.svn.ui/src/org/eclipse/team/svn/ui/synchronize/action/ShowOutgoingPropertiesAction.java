@@ -19,7 +19,6 @@ import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
 import org.eclipse.team.svn.core.operation.local.property.GetPropertiesOperation;
-import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.operation.ShowPropertiesOperation;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
@@ -49,9 +48,7 @@ public class ShowOutgoingPropertiesAction extends AbstractSynchronizeModelAction
 		super.updateSelection(selection);
 		if (selection.size() == 1) {
 			ISynchronizeModelElement element = (ISynchronizeModelElement)selection.getFirstElement();
-			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(element.getResource());
-			// null for change set nodes
-			return local != null && IStateFilter.SF_VERSIONED.accept(local);
+			return IStateFilter.SF_VERSIONED.accept(SVNRemoteStorage.instance().asLocalResource(element.getResource()));
 		}
 	    return false;
 	}

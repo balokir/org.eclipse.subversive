@@ -131,7 +131,7 @@ public class SVNTeamQuickDiffProvider implements IQuickDiffReferenceProvider, IR
 	
 	protected boolean isShared() {
 		ILocalResource local = this.getLocalResource();
-		return local != null && IStateFilter.SF_VERSIONED.accept(local);
+		return IStateFilter.SF_VERSIONED.accept(local);
 	}
 	
 	protected ILocalResource getLocalResource() {
@@ -163,7 +163,7 @@ public class SVNTeamQuickDiffProvider implements IQuickDiffReferenceProvider, IR
 			String encoding = encodingTmp == null ? provider.getDefaultEncoding() : encodingTmp;
 			
 			ILocalResource tmp = this.getLocalResource();
-			if (this.savedState == null || tmp != null && this.savedState.getRevision() != tmp.getRevision()) {
+			if (this.savedState == null || !IStateFilter.SF_INTERNAL_INVALID.accept(tmp) && this.savedState.getRevision() != tmp.getRevision()) {
 				this.savedState = tmp;
 				final GetLocalFileContentOperation contentOp = new GetLocalFileContentOperation(tmp.getResource(), Kind.BASE);
 				CompositeOperation op = new CompositeOperation("Operation.PrepareQuickDiff");

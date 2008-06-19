@@ -82,10 +82,7 @@ public class GetMultiPropertiesOperation extends AbstractActionOperation impleme
 								if (monitor.isCanceled()) {
 									return false;
 								}
-								ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-								if (local == null) {
-									return false;
-								}
+								ILocalResource local = SVNRemoteStorage.instance().asLocalResourceAccessible(resource);
 								if (GetMultiPropertiesOperation.this.filter.accept(local)) {
 									GetMultiPropertiesOperation.this.processResource(proxy, resource, monitor);
 								}

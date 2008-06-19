@@ -52,9 +52,7 @@ public class ShowHistoryAction extends AbstractSynchronizeModelAction {
 			}
 			if (selection.getFirstElement() instanceof ISynchronizeModelElement) {
 				ISynchronizeModelElement element = (ISynchronizeModelElement)selection.getFirstElement();
-				ILocalResource local = SVNRemoteStorage.instance().asLocalResource(element.getResource());
-				// null for change set nodes
-				return local != null && IStateFilter.SF_ONREPOSITORY.accept(local);
+				return IStateFilter.SF_ONREPOSITORY.accept(SVNRemoteStorage.instance().asLocalResource(element.getResource()));
 			}
 		}
 		return false;

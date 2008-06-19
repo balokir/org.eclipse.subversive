@@ -42,7 +42,7 @@ public class SVNLocalFolder extends SVNLocalResource implements ILocalFolder {
 		IResource []resources = op.getChildren();
 		for (int i = 0; i < resources.length; i++) {
 			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resources[i]);
-			if (local != null && local.getStatus() != IStateFilter.ST_NOTEXISTS) {
+			if (!IStateFilter.SF_INTERNAL_INVALID.accept(local) && local.getStatus() != IStateFilter.ST_NOTEXISTS) {
 				members.add(local);
 			}
 		}

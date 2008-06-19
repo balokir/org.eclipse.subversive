@@ -207,7 +207,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 			return;
 		}
 		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(this.wcResource);
-		if (local != null) {
+		if (!IStateFilter.SF_INTERNAL_INVALID.accept(local)) {
 			if (IStateFilter.SF_ONREPOSITORY.accept(local) && this.logMessages == null){
 				this.refreshChanges(ISVNHistoryView.REFRESH_ALL);
 			}
@@ -349,22 +349,20 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 	public void refresh(int refreshType) {
 		if (this.wcResource != null) {
 			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(this.wcResource);
-			if (local != null) {
-				if (IStateFilter.SF_ONREPOSITORY.accept(local)) {
-					this.currentRevision = local.getRevision();
-					this.repositoryResource = local.isCopied() ? SVNUtility.getCopiedFrom(this.wcResource) : SVNRemoteStorage.instance().asRepositoryResource(this.wcResource);
-				}
-				else {
-					this.repositoryResource = null;
-				}
+			if (IStateFilter.SF_ONREPOSITORY.accept(local)) {
+				this.currentRevision = local.getRevision();
+				this.repositoryResource = local.isCopied() ? SVNUtility.getCopiedFrom(this.wcResource) : SVNRemoteStorage.instance().asRepositoryResource(this.wcResource);
+			}
+			else {
+				this.repositoryResource = null;
+			}
 
-				if (this.wcResource instanceof IFile && refreshType != ISVNHistoryView.REFRESH_REMOTE && refreshType != ISVNHistoryView.REFRESH_VIEW) {
-					try {
-						this.fetchLocalHistory(local, new NullProgressMonitor());
-					}
-					catch (CoreException ex) {
-						UILoggedOperation.reportError(SVNTeamUIPlugin.instance().getResource("HistoryView.Name"), ex);
-					}
+			if (this.wcResource instanceof IFile && refreshType != ISVNHistoryView.REFRESH_REMOTE && refreshType != ISVNHistoryView.REFRESH_VIEW) {
+				try {
+					this.fetchLocalHistory(local, new NullProgressMonitor());
+				}
+				catch (CoreException ex) {
+					UILoggedOperation.reportError(SVNTeamUIPlugin.instance().getResource("HistoryView.Name"), ex);
 				}
 			}
 		}
@@ -932,7 +930,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 
 	protected void setButtonsEnablement() {
 		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(this.wcResource);
-		boolean enableRepo = (local != null && IStateFilter.SF_ONREPOSITORY.accept(local) || this.repositoryResource != null) && !this.pending;
+		boolean enableRepo = (IStateFilter.SF_ONREPOSITORY.accept(local) || this.repositoryResource != null) && !this.pending;
 
 		this.filterDropDownAction.setEnabled(enableRepo && this.repositoryResource != null && this.logMessages != null);
 		this.clearFilterDropDownAction.setEnabled(this.isFilterEnabled());

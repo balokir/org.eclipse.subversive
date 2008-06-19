@@ -165,8 +165,7 @@ public abstract class AbstractSynchronizeModelAction extends SynchronizeModelAct
 			
 			private void fetchSelectedNodes(Set<IResource> nodes, ISynchronizeModelElement node, ISyncStateFilter filter, int depth) {
 				IResource resource = node.getResource();
-				ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-				if (local != null && filter.accept(local)) {
+				if (filter.accept(SVNRemoteStorage.instance().asLocalResource(resource))) {
 					nodes.add(resource);
 				}
 				else if (node instanceof SyncInfoModelElement) {

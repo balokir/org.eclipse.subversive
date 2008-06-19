@@ -54,7 +54,6 @@ import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.operation.local.GetAllResourcesOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
-import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 
@@ -314,8 +313,6 @@ public final class FileUtility {
 	}
 	
 	public static boolean checkForResourcesPresence(IResource []roots, IStateFilter filter, int depth) {
-		IRemoteStorage storage = SVNRemoteStorage.instance();
-		
 		ArrayList<IResource> recursiveCheck = null;
 		int nextDepth = IResource.DEPTH_ZERO;
 		if (depth != IResource.DEPTH_ZERO) {
@@ -329,14 +326,12 @@ public final class FileUtility {
 				continue;
 			}
 			
-			ILocalResource local = storage.asLocalResource(roots[i]);
-			if (local != null) {
-				if (filter.accept(local)) {
-					return true;
-				}
-				else if (roots[i] instanceof IContainer && depth != IResource.DEPTH_ZERO && filter.allowsRecursion(local)) {
-					recursiveCheck.add(roots[i]);
-				}
+			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(roots[i]);
+			if (filter.accept(local)) {
+				return true;
+			}
+			else if (roots[i] instanceof IContainer && depth != IResource.DEPTH_ZERO && filter.allowsRecursion(local)) {
+				recursiveCheck.add(roots[i]);
 			}
 		}
 		
@@ -398,7 +393,7 @@ public final class FileUtility {
 		}
 		for (int i = 0; i < parents.length; i++) {
 			ILocalResource parent = SVNRemoteStorage.instance().asLocalResource(parents[i]);
-			if (parent != null && stateFilter.accept(parent)) {
+			if (stateFilter.accept(parent)) {
 				tmp.add(parents[i]);
 			}
 			else if (!through) {
@@ -716,7 +711,6 @@ public final class FileUtility {
 	
 	private static void addChildren(Set<IResource> resources, IResource []roots, IStateFilter filter, int depth, IActionOperation calledFrom, IProgressMonitor monitor) {
 		int nextDepth = depth == IResource.DEPTH_ONE ? IResource.DEPTH_ZERO : IResource.DEPTH_INFINITE;
-		IRemoteStorage storage = SVNRemoteStorage.instance();
 		for (int i = 0; i < roots.length && (monitor == null || !monitor.isCanceled()); i++) {
 			if (roots[i].isTeamPrivateMember()) {//FileUtility.isSVNInternals(roots[i])
 				continue;
@@ -733,10 +727,7 @@ public final class FileUtility {
 				ProgressMonitorUtility.progress(monitor, 1, IProgressMonitor.UNKNOWN);
 			}
 			
-			ILocalResource local = storage.asLocalResource(roots[i]);
-			if (local == null) {
-				continue;
-			}
+			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(roots[i]);
 			
 			if (filter.accept(local)) {
 				resources.add(roots[i]);

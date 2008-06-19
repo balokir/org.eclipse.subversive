@@ -44,8 +44,8 @@ public class LocalShowAnnotationOperation extends AbstractWorkingCopyOperation {
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		final IResource resource = this.operableData()[0];
-    	ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-    	boolean notExists = local == null || IStateFilter.SF_NOTEXISTS.accept(local);
+    	ILocalResource local = SVNRemoteStorage.instance().asLocalResourceAccessible(resource);
+    	boolean notExists = IStateFilter.SF_NOTEXISTS.accept(local);
     	final SVNRevision revision = this.revision != null ? this.revision : (notExists || local.getRevision() == SVNRevision.INVALID_REVISION_NUMBER ? SVNRevision.HEAD : SVNRevision.fromNumber(local.getRevision()));
     	
     	final IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(resource);

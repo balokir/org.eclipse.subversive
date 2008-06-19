@@ -42,18 +42,16 @@ public class CompareWithLatestRevisionAction extends AbstractWorkingCopyAction {
 	public void runImpl(IAction action) {
 		IResource resource = this.getSelectedResources()[0];
 		
-		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-		if (local != null) {
-			IRepositoryResource remote = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
-			remote.setSelectedRevision(SVNRevision.HEAD);
-			
-			CompareResourcesOperation mainOp = new CompareResourcesOperation(local, remote);
-			CompositeOperation op = new CompositeOperation(mainOp.getId());
-			op.add(new CorrectRevisionOperation(null, remote, local.getRevision(), resource));
-			op.add(mainOp);
-			op.add(new ShowHistoryViewOperation(resource, remote, ISVNHistoryView.COMPARE_MODE, ISVNHistoryView.COMPARE_MODE), new IActionOperation[] {mainOp});
-			this.runScheduled(op);
-		}
+		ILocalResource local = SVNRemoteStorage.instance().asLocalResourceAccessible(resource);
+		IRepositoryResource remote = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
+		remote.setSelectedRevision(SVNRevision.HEAD);
+		
+		CompareResourcesOperation mainOp = new CompareResourcesOperation(local, remote);
+		CompositeOperation op = new CompositeOperation(mainOp.getId());
+		op.add(new CorrectRevisionOperation(null, remote, local.getRevision(), resource));
+		op.add(mainOp);
+		op.add(new ShowHistoryViewOperation(resource, remote, ISVNHistoryView.COMPARE_MODE, ISVNHistoryView.COMPARE_MODE), new IActionOperation[] {mainOp});
+		this.runScheduled(op);
 	}
 
 	public boolean isEnabled() {

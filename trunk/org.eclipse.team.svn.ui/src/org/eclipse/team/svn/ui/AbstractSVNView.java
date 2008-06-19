@@ -156,7 +156,7 @@ public abstract class AbstractSVNView extends ViewPart implements IResourceState
 			}
 			else {
 				ILocalResource local = SVNRemoteStorage.instance().asLocalResource(this.wcResource);
-				if (local == null || IStateFilter.SF_UNVERSIONED.accept(local)) {
+				if (IStateFilter.SF_UNVERSIONED.accept(local) || IStateFilter.SF_INTERNAL_INVALID.accept(local)) {
 					this.disconnectView();
 				}
 			}
