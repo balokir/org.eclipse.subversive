@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.eclipse.team.svn.mylyn"
-      label="Subversive Integration for the Mylyn Project (Optional) (Incubation)"
+      label="%featureName"
       version="0.7.1.I20080612-1500"
-      provider-name="Eclipse.org"
+      provider-name="%providerName"
       colocation-affinity="org.eclipse.team.svn">
    <install-handler/>
 
