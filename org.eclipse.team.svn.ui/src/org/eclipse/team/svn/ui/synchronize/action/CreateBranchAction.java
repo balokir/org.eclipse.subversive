@@ -18,7 +18,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.action.local.BranchTagAction;
@@ -39,9 +38,7 @@ public class CreateBranchAction extends AbstractSynchronizeModelAction {
 		super.updateSelection(selection);
 		for (Iterator<?> it = selection.iterator(); it.hasNext(); ) {
 			ISynchronizeModelElement element = (ISynchronizeModelElement)it.next();
-			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(element.getResource());
-			// null for change set nodes
-			if (local != null && IStateFilter.SF_EXCLUDE_DELETED.accept(local)) {
+			if (IStateFilter.SF_EXCLUDE_DELETED.accept(SVNRemoteStorage.instance().asLocalResource(element.getResource()))) {
 				return true;
 			}
 		}

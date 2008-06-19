@@ -18,7 +18,6 @@ import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.local.change.IActionOperationProcessor;
 import org.eclipse.team.svn.core.operation.local.change.ResourceChange;
 import org.eclipse.team.svn.core.operation.local.change.visitors.RemoveNonVersionedVisitor;
-import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
@@ -43,12 +42,11 @@ public class RemoveNonVersionedResourcesOperation extends AbstractWorkingCopyOpe
 
     protected void runImpl(IProgressMonitor monitor) throws Exception {
         IResource []resources = FileUtility.shrinkChildNodes(this.operableData());
-        final IRemoteStorage storage = SVNRemoteStorage.instance();
         for (int i = 0; i < resources.length; i++) {
             final IResource current = resources[i];
             this.protectStep(new IUnprotectedOperation() {
                 public void run(IProgressMonitor monitor) throws Exception {
-                    ResourceChange change = ResourceChange.wrapLocalResource(null, storage.asLocalResource(current), false);
+                    ResourceChange change = ResourceChange.wrapLocalResource(null, SVNRemoteStorage.instance().asLocalResourceAccessible(current), false);
                     if (change != null) {
                     	change.traverse(new RemoveNonVersionedVisitor(RemoveNonVersionedResourcesOperation.this.addedAlso), IResource.DEPTH_INFINITE, RemoveNonVersionedResourcesOperation.this, monitor);
                     }

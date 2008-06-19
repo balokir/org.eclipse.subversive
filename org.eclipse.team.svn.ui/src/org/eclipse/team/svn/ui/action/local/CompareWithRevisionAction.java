@@ -41,20 +41,18 @@ public class CompareWithRevisionAction extends AbstractWorkingCopyAction {
 	
 	public void runImpl(IAction action) {
 		IResource resource = this.getSelectedResources()[0];
-		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-		if (local != null) {
-			IRepositoryResource remote = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
+		ILocalResource local = SVNRemoteStorage.instance().asLocalResourceAccessible(resource);
+		IRepositoryResource remote = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
 
-			ComparePanel panel = new ComparePanel(remote, local.getRevision());
-			DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
-			if (dialog.open() == 0) {
-				remote = panel.getSelectedResource();
-				CompareResourcesOperation mainOp = new CompareResourcesOperation(local, remote);
-				CompositeOperation op = new CompositeOperation(mainOp.getId());
-				op.add(mainOp);
-				op.add(new ShowHistoryViewOperation(resource, remote, ISVNHistoryView.COMPARE_MODE, ISVNHistoryView.COMPARE_MODE), new IActionOperation[] {mainOp});
-				this.runScheduled(op);
-			}
+		ComparePanel panel = new ComparePanel(remote, local.getRevision());
+		DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
+		if (dialog.open() == 0) {
+			remote = panel.getSelectedResource();
+			CompareResourcesOperation mainOp = new CompareResourcesOperation(local, remote);
+			CompositeOperation op = new CompositeOperation(mainOp.getId());
+			op.add(mainOp);
+			op.add(new ShowHistoryViewOperation(resource, remote, ISVNHistoryView.COMPARE_MODE, ISVNHistoryView.COMPARE_MODE), new IActionOperation[] {mainOp});
+			this.runScheduled(op);
 		}
 	}
 

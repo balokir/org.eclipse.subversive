@@ -21,7 +21,6 @@ import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.remote.LocateResourceURLInHistoryOperation;
-import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.ResourcesParentsProvider;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -52,11 +51,7 @@ public class MergeAction extends AbstractNonRecursiveTeamAction {
 		}
 	    
 		IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(resources[0]);
-	    ILocalResource localTo = SVNRemoteStorage.instance().asLocalResource(resources[0]);
-	    if (localTo == null) {
-	    	return;
-	    }
-		long revision = localTo.getRevision();
+		long revision = SVNRemoteStorage.instance().asLocalResourceAccessible(resources[0]).getRevision();
 		
 		if (resources.length > 1) {
 			revision = SVNRevision.INVALID_REVISION_NUMBER;

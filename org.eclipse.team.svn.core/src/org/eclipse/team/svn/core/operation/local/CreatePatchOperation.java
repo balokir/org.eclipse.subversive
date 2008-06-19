@@ -157,7 +157,7 @@ public class CreatePatchOperation extends AbstractActionOperation {
 			}
 		}
 		
-		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
+		ILocalResource local = SVNRemoteStorage.instance().asLocalResourceAccessible(resource);
 		if (IStateFilter.SF_VERSIONED.accept(local)) {
 			File tmp = File.createTempFile("patch", ".tmp", SVNTeamPlugin.instance().getStateLocation().toFile());
 			tmp.deleteOnExit();

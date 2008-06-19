@@ -29,7 +29,6 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.resource.ILocalResource;
-import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
@@ -147,10 +146,9 @@ public abstract class AbstractResourceDecorator extends LabelProvider implements
 				!this.filter.isAcceptable(resource)) {
 				return;
 			}
-			IRemoteStorage storage = SVNRemoteStorage.instance();
-			ILocalResource local = storage.asLocalResource(resource);
-			IRepositoryResource remote = storage.asRepositoryResource(resource);
-			if (local == null || remote == null) {
+			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
+			IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(resource);
+			if (IStateFilter.SF_INTERNAL_INVALID.accept(local) || remote == null) {
 			    return;
 			}
 

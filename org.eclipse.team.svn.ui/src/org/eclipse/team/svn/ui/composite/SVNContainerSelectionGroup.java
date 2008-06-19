@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.resource.ILocalResource;
-import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -78,9 +77,8 @@ public class SVNContainerSelectionGroup extends ContainerSelectionGroup {
             	return SVNContainerSelectionVerifier.ERROR_MESSAGE;	
             }
         	IResource destinationRoot = ResourcesPlugin.getWorkspace().getRoot().findMember(control.getContainerFullPath());
-        	IRemoteStorage storage = SVNRemoteStorage.instance();
-    		ILocalResource localDest =  storage.asLocalResource(destinationRoot);
-    		if (localDest == null) {
+    		ILocalResource localDest = SVNRemoteStorage.instance().asLocalResource(destinationRoot);
+    		if (IStateFilter.SF_INTERNAL_INVALID.accept(localDest)) {
     			return this.isNonSVNCheckDisabled() ? SVNContainerSelectionVerifier.DESTINATION_IS_DETACHED_FROM_SVN : null;
     		}
         	if (IStateFilter.SF_DELETED.accept(localDest)) {

@@ -69,10 +69,7 @@ public class SetMultiPropertiesOperation extends AbstractWorkingCopyOperation {
 								if (monitor.isCanceled()) {
 									return false;
 								}
-								ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-								if (local == null) {
-									return false;
-								}
+								ILocalResource local = SVNRemoteStorage.instance().asLocalResourceAccessible(resource);
 								if (SetMultiPropertiesOperation.this.filter.accept(local)) {
 									SVNProperty []properties = SetMultiPropertiesOperation.this.propertyProvider.getProperties(resource);
 									if (properties != null) {

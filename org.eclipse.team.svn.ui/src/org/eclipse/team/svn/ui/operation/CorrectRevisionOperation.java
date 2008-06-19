@@ -58,21 +58,19 @@ public class CorrectRevisionOperation extends AbstractActionOperation {
 		for (int i = 0; i < this.repositoryResources.length; i++) {
 			if (!this.repositoryResources[i].exists() && this.resources != null && this.resources[i] != null && this.resources[i].getType() != IResource.PROJECT) {
 				// calculate peg revision for the repository resource
-				ILocalResource parent = SVNRemoteStorage.instance().asLocalResource(this.resources[i].getParent());
-				ILocalResource self = SVNRemoteStorage.instance().asLocalResource(this.resources[i]);
-				if (parent != null && self != null) {
-					boolean switchedStateEquals = (parent.getChangeMask() & ILocalResource.IS_SWITCHED) == (self.getChangeMask() & ILocalResource.IS_SWITCHED);
-					if (switchedStateEquals) {
-						long parentRevision = parent.getRevision();
-						long selfRevision = self.getRevision();
-						long revision = parentRevision > selfRevision ? parentRevision : selfRevision;
-						if (revision != SVNRevision.INVALID_REVISION_NUMBER) {
-							this.repositoryResources[i].setPegRevision(SVNRevision.fromNumber(revision));
-						}
+				ILocalResource parent = SVNRemoteStorage.instance().asLocalResourceAccessible(this.resources[i].getParent());
+				ILocalResource self = SVNRemoteStorage.instance().asLocalResourceAccessible(this.resources[i]);
+				boolean switchedStateEquals = (parent.getChangeMask() & ILocalResource.IS_SWITCHED) == (self.getChangeMask() & ILocalResource.IS_SWITCHED);
+				if (switchedStateEquals) {
+					long parentRevision = parent.getRevision();
+					long selfRevision = self.getRevision();
+					long revision = parentRevision > selfRevision ? parentRevision : selfRevision;
+					if (revision != SVNRevision.INVALID_REVISION_NUMBER) {
+						this.repositoryResources[i].setPegRevision(SVNRevision.fromNumber(revision));
 					}
-					else {
-						this.repositoryResources[i].setPegRevision(SVNRevision.fromNumber(self.getRevision()));
-					}
+				}
+				else {
+					this.repositoryResources[i].setPegRevision(SVNRevision.fromNumber(self.getRevision()));
 				}
 			}
 			if (!this.repositoryResources[i].exists() && this.knownRevisions[i] != SVNRevision.INVALID_REVISION_NUMBER) {

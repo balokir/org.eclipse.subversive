@@ -68,10 +68,7 @@ public class SwitchAction extends AbstractNonRecursiveTeamAction {
 		else {
 			IResource resource = resources[0];
 			IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(resource);
-			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-			if (local == null) {
-				return;
-			}
+			ILocalResource local = SVNRemoteStorage.instance().asLocalResourceAccessible(resource);
 			panel = new SwitchPanel(remote, local.getRevision(), resources[0] instanceof IContainer);
 		}
 			

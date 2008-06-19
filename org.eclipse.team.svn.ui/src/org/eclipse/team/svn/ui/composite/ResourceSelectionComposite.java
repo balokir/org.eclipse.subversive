@@ -57,7 +57,6 @@ import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.resource.ILocalResource;
-import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
@@ -316,9 +315,6 @@ public class ResourceSelectionComposite extends Composite {
 					return path.startsWith("/") ? path.substring(1) : path;
 				}
 				ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-				if (local == null) {
-					return SVNTeamUIPlugin.instance().getResource("ResourceSelectionComposite.InvalidResource");
-				}
 				int changeMask = local.getChangeMask();
 				if (columnIndex == ResourceSelectionComposite.COLUMN_STATUS) {
 					return ResourceSelectionComposite.this.statusAsString(local.getStatus(), changeMask);
@@ -418,7 +414,7 @@ public class ResourceSelectionComposite extends Composite {
 					UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 						public void run() {
 							ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-							if (local != null) {
+							if (!IStateFilter.SF_INTERNAL_INVALID.accept(local)) {
 								IRepositoryResource remote = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
 								remote.setSelectedRevision(SVNRevision.HEAD);
 								UIMonitorUtility.doTaskScheduledDefault(new CompareResourcesOperation(local, remote, true, true));
@@ -471,7 +467,7 @@ public class ResourceSelectionComposite extends Composite {
 			Object[] elements = this.tableViewer.getCheckedElements();
 			for (int i = 0; i < elements.length; i++) {
 				ILocalResource local = SVNRemoteStorage.instance().asLocalResource((IResource) elements[i]);
-				if (local == null || local.getStatus() == IStateFilter.ST_NEW) {
+				if (local.getStatus() == IStateFilter.ST_NEW) {
 					this.tableViewer.setChecked(elements[i], false);
 				}
 			}
@@ -512,7 +508,7 @@ public class ResourceSelectionComposite extends Composite {
 
 		while ((resource = resource.getParent()) != null) {
 			ILocalResource localResource = SVNRemoteStorage.instance().asLocalResource(resource);
-			if (localResource == null || (localResource.getChangeMask() & ILocalResource.IS_EXTERNAL) == 0) {
+			if (IStateFilter.SF_INTERNAL_INVALID.accept(localResource) || (localResource.getChangeMask() & ILocalResource.IS_EXTERNAL) == 0) {
 				break;
 			}
 			if (this.userSelectedResources.contains(resource)) {
@@ -541,12 +537,8 @@ public class ResourceSelectionComposite extends Composite {
 			if (!ResourceSelectionComposite.this.cacheEnabled) {
 				return 0;
 			}
-			IRemoteStorage storage = SVNRemoteStorage.instance();
-			ILocalResource local1 = storage.asLocalResource(rowData1);
-			ILocalResource local2 = storage.asLocalResource(rowData2);
-			if (local1 == null || local2 == null) {
-				return 0;
-			}
+			ILocalResource local1 = SVNRemoteStorage.instance().asLocalResource(rowData1);
+			ILocalResource local2 = SVNRemoteStorage.instance().asLocalResource(rowData2);
 			int changeMask1 = local1.getChangeMask();
 			int changeMask2 = local2.getChangeMask();
 			if (this.column == ResourceSelectionComposite.COLUMN_STATUS) {

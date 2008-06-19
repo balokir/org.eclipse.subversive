@@ -68,7 +68,7 @@ public class FreezeExternalsOperation extends AbstractWorkingCopyOperation imple
 			final IResource current = resources[i];
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-					ResourceChange change = ResourceChange.wrapLocalResource(null, SVNRemoteStorage.instance().asLocalResource(current), false);
+					ResourceChange change = ResourceChange.wrapLocalResource(null, SVNRemoteStorage.instance().asLocalResourceAccessible(current), false);
 					if (change != null) {
 						change.traverse(visitor, IResource.DEPTH_INFINITE, FreezeExternalsOperation.this, monitor);
 					}
@@ -122,10 +122,7 @@ public class FreezeExternalsOperation extends AbstractWorkingCopyOperation imple
 		
 		protected String freezeExternal(ResourceChange change, String name, String url) {
 			IContainer container = (IContainer)change.getLocal().getResource();
-			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(container.findMember(name));
-			if (local == null) {
-				return name + "\t" + url;
-			}
+			ILocalResource local = SVNRemoteStorage.instance().asLocalResourceAccessible(container.findMember(name));
 			return name + "\t-r" + local.getBaseRevision() + "\t" + url;
 		}
 		

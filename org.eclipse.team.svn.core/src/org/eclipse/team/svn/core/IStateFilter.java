@@ -38,6 +38,8 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public interface IStateFilter {
 
+	public static final String ST_INTERNAL_INVALID = "InternalInvalid";
+
 	public static final String ST_NOTEXISTS = null;
 
 	public static final String ST_IGNORED = "Ignored";
@@ -74,16 +76,16 @@ public interface IStateFilter {
 	
 	public abstract class AbstractStateFilter implements IStateFilter {
 		public boolean accept(ILocalResource resource) {
-			return this.acceptImpl(resource, resource.getResource(), resource.getStatus(), resource.getChangeMask());
+			return resource.getStatus() != IStateFilter.ST_INTERNAL_INVALID && this.acceptImpl(resource, resource.getResource(), resource.getStatus(), resource.getChangeMask());
 		}
 		public boolean accept(IResource resource, String state, int mask) {
-			return this.acceptImpl(null, resource, state, mask);
+			return state != IStateFilter.ST_INTERNAL_INVALID && this.acceptImpl(null, resource, state, mask);
 		}
 		public boolean allowsRecursion(ILocalResource resource) {
-			return this.allowsRecursionImpl(null, resource.getResource(), resource.getStatus(), resource.getChangeMask());
+			return resource.getStatus() != IStateFilter.ST_INTERNAL_INVALID && this.allowsRecursionImpl(null, resource.getResource(), resource.getStatus(), resource.getChangeMask());
 		}
 		public boolean allowsRecursion(IResource resource, String state, int mask) {
-			return this.allowsRecursionImpl(null, resource, state, mask);
+			return state != IStateFilter.ST_INTERNAL_INVALID && this.allowsRecursionImpl(null, resource, state, mask);
 		}
 		
 		protected abstract boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask);
@@ -175,6 +177,21 @@ public interface IStateFilter {
 			return false;
 		}
 		
+	};
+	
+	public static final IStateFilter SF_INTERNAL_INVALID = new IStateFilter() {
+		public boolean accept(ILocalResource resource) {
+			return resource.getStatus() == IStateFilter.ST_INTERNAL_INVALID;
+		}
+		public boolean accept(IResource resource, String state, int mask) {
+			return state == IStateFilter.ST_INTERNAL_INVALID;
+		}
+		public boolean allowsRecursion(ILocalResource resource) {
+			return false;
+		}
+		public boolean allowsRecursion(IResource resource, String state, int mask) {
+			return false;
+		}
 	};
 	
 	public static final IStateFilter SF_LOCKED = new AbstractStateFilter() {

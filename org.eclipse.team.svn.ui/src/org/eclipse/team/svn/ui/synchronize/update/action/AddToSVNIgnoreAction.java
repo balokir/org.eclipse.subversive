@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
@@ -53,13 +52,7 @@ public class AddToSVNIgnoreAction extends AbstractSynchronizeModelAction {
 	protected static IStateFilter SF_NEW_AND_PARENT_VERSIONED = new IStateFilter.AbstractStateFilter() {
         protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
             if (state == IStateFilter.ST_NEW) {
-            	IContainer parent = resource.getParent();
-            	if (parent != null) {
-            		ILocalResource localParent = SVNRemoteStorage.instance().asLocalResource(parent);
-            		if (localParent != null) {
-            			return IStateFilter.SF_VERSIONED.accept(localParent);
-            		}
-                }
+    			return IStateFilter.SF_VERSIONED.accept(SVNRemoteStorage.instance().asLocalResource(resource.getParent()));
             }
             return false;
         }

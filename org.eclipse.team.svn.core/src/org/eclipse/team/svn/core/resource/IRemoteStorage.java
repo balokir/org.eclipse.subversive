@@ -28,6 +28,7 @@ public interface IRemoteStorage extends ISVNStorage {
 	
 	public IResourceChange asResourceChange(IChangeStateProvider changeState, boolean update);
 	public ILocalResource asLocalResource(IResource resource);
+	public ILocalResource asLocalResourceAccessible(IResource resource);
 	public ILocalResource asLocalResourceDirty(IResource resource);
 	public void refreshLocalResources(IResource []resources, int depth);
 	public IRepositoryResource asRepositoryResource(IRepositoryLocation location, String url, boolean isFile);

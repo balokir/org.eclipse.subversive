@@ -305,7 +305,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 	
 	protected ILocalResource getLocalResource(String path, boolean isFile) {
 		if (path == null) {
-			return null;
+			return SVNRemoteStorage.instance().asLocalResource(null);
 		}
 		IProject project = this.local.getResource().getProject();
 		String relative = path.substring(FileUtility.getWorkingCopyPath(project).length());
@@ -315,7 +315,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 			resource = isFile ? project.getFile(relative) : project.getFolder(relative);
 		}
 		
-		return SVNRemoteStorage.instance().asLocalResource(resource);
+		return SVNRemoteStorage.instance().asLocalResourceAccessible(resource);
 	}
 	
 	protected String getLocalPath(String url, IRepositoryResource base) {
@@ -332,7 +332,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		ILocalResource local = this.getLocalResource(this.getLocalPath(node.getUrl(), this.rootLeft), false);
 		IRepositoryResource ancestor = node;
 		IRepositoryResource remote = node;
-		if (local != null) {
+		if (!IStateFilter.SF_INTERNAL_INVALID.accept(local)) {
 			IRepositoryResource []entries = this.getRepositoryEntries(local, SVNEntry.Kind.DIR, null, null);
 			ancestor = entries[1];
 			remote = entries[2];

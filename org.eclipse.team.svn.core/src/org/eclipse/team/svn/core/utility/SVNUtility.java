@@ -121,7 +121,7 @@ public final class SVNUtility {
 	
 	public static IRepositoryResource getCopiedFrom(IResource resource) {
 		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-		if (local != null && local.isCopied()) {
+		if (local.isCopied()) {
 			IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(resource);
 			ISVNConnector proxy = location.acquireSVNProxy();
 			final SVNChangeStatus []st = new SVNChangeStatus[1];
@@ -742,15 +742,8 @@ public final class SVNUtility {
 			//skip
 		}
 		IProxyService proxyService = SVNTeamPlugin.instance().getProxyService();
-		HashSet<String> nonProxied = new HashSet<String>(Arrays.asList(proxyService.getNonProxiedHosts()));
-		String proxyType;
+		String proxyType = protocol.equals("https") ? IProxyData.HTTPS_PROXY_TYPE : IProxyData.HTTP_PROXY_TYPE;
     	SVNCachedProxyCredentialsManager proxyCredetialsManager = SVNRemoteStorage.instance().getProxyCredentialsManager();
-		if (protocol.equals("https")){
-			proxyType = IProxyData.HTTPS_PROXY_TYPE;
-		}
-		else {
-			proxyType = IProxyData.HTTP_PROXY_TYPE;
-		}
 		IProxyData proxyData = proxyService.getProxyDataForHost(host, proxyType);
 	    if (proxyService.isProxiesEnabled() && proxyData != null) {
 	    	proxy.setProxy(proxyData.getHost(), proxyData.getPort(), proxyCredetialsManager.getUsername(), proxyCredetialsManager.getPassword());

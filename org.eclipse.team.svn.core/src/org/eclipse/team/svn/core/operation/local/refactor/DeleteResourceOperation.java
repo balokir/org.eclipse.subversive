@@ -31,7 +31,6 @@ import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.SVNResourceRuleFactory;
 import org.eclipse.team.svn.core.resource.ILocalResource;
-import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
@@ -73,11 +72,9 @@ public class DeleteResourceOperation extends AbstractActionOperation {
 	}
 	
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		IRemoteStorage storage = SVNRemoteStorage.instance();
-		
 		// Clean up obstructed and new resources
 		ArrayList<IResource> resourcesList = new ArrayList<IResource>(Arrays.asList(this.resources));
-		this.cleanupResourcesList(resourcesList, DeleteResourceOperation.SF_OBSTRUCTED_OR_NEW, storage);
+		this.cleanupResourcesList(resourcesList, DeleteResourceOperation.SF_OBSTRUCTED_OR_NEW);
 		if (resourcesList.size() == 0) {
 			return;
 		}
@@ -87,7 +84,7 @@ public class DeleteResourceOperation extends AbstractActionOperation {
 		Map<?, ?> project2Resources = SVNUtility.splitWorkingCopies(allResources);
 		for (Iterator<?> it = project2Resources.entrySet().iterator(); it.hasNext();) {
 			Map.Entry entry = (Map.Entry)it.next();
-			IRepositoryLocation location = storage.getRepositoryLocation((IResource)entry.getKey());
+			IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation((IResource)entry.getKey());
 			IResource[] resources = ((List<?>)entry.getValue()).toArray(new IResource[((List<?>)entry.getValue()).size()]);
 			String[] wcPaths = new String[resources.length];
 			String printedPath = "";
@@ -110,12 +107,11 @@ public class DeleteResourceOperation extends AbstractActionOperation {
 		}
 	}
 	
-	protected void cleanupResourcesList(List<IResource> resources, IStateFilter filter, IRemoteStorage storage) {
+	protected void cleanupResourcesList(List<IResource> resources, IStateFilter filter) {
 		for (Iterator<IResource> it = resources.iterator(); it.hasNext();) {
 			IResource resource = it.next();
-			ILocalResource local = storage.asLocalResource(resource);
 			String wcPath = FileUtility.getWorkingCopyPath(resource);
-			if (local != null && filter.accept(local)) {
+			if (filter.accept(SVNRemoteStorage.instance().asLocalResourceAccessible(resource))) {
 				it.remove();
 				FileUtility.deleteRecursive(new File(wcPath));
 			}

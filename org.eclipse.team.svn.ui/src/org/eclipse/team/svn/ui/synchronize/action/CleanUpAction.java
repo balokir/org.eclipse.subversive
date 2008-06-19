@@ -21,7 +21,6 @@ import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.management.CleanupOperation;
-import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -44,9 +43,7 @@ public class CleanUpAction extends AbstractSynchronizeModelAction {
 		super.updateSelection(selection);
 		for (Iterator<?> it = selection.iterator(); it.hasNext(); ) {
 			ISynchronizeModelElement element = (ISynchronizeModelElement)it.next();
-			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(element.getResource());
-			// null for change set nodes
-			if (local != null && IStateFilter.SF_VERSIONED_FOLDERS.accept(local)) {
+			if (IStateFilter.SF_VERSIONED_FOLDERS.accept(SVNRemoteStorage.instance().asLocalResource(element.getResource()))) {
 				return true;
 			}
 		}

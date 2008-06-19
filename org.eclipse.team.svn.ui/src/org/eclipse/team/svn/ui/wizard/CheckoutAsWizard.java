@@ -56,7 +56,6 @@ import org.eclipse.team.svn.core.operation.local.property.SetPropertiesOperation
 import org.eclipse.team.svn.core.operation.remote.CheckoutAsOperation;
 import org.eclipse.team.svn.core.operation.remote.LocateProjectsOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
-import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -276,9 +275,8 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 				}
 				Map mappings = this.getExternalsFolderNames(this.resources, resources2Names);
 				IResource destinationRoot = ResourcesPlugin.getWorkspace().getRoot().findMember(this.selectFolderPage.getTargetFolder().getFullPath());
-				IRemoteStorage storage = SVNRemoteStorage.instance();
-	    		ILocalResource localDest =  storage.asLocalResource(destinationRoot);
-	    		if (localDest == null) {
+	    		ILocalResource localDest = SVNRemoteStorage.instance().asLocalResource(destinationRoot);
+	    		if (IStateFilter.SF_INTERNAL_INVALID.accept(localDest)) {
 	    			op = this.getCheckoutAsFolderOperationUnshared(this.getTargetFolder(), this.resources, mappings);
 	    		}
 	    		else {
@@ -331,7 +329,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 		CompositeOperation op = new CompositeOperation(SVNTeamUIPlugin.instance().getResource("Operation.CheckoutAsFolder"));
 		IActionOperation [] dependency = null;
 		IResource []localResources = new IResource[] {targetFolder};
-		ILocalResource localResource = SVNRemoteStorage.instance().asLocalResource(targetFolder);
+		ILocalResource localResource = SVNRemoteStorage.instance().asLocalResourceAccessible(targetFolder);
 		IResource []newResources = null;
 		if (IStateFilter.SF_UNVERSIONED.accept(localResource)){
 			newResources = FileUtility.addOperableParents(localResources, IStateFilter.SF_UNVERSIONED);

@@ -104,10 +104,11 @@ public class ReplaceWithLatestRevisionAction extends AbstractNonRecursiveTeamAct
 		protected void runImpl(IProgressMonitor monitor) throws Exception {
 			IResource []resources = this.operableData();
 			for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
-				ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resources[i]);
-				final ResourceChange change = ResourceChange.wrapLocalResource(null, local, true);
+				final IResource current = resources[i];
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(IProgressMonitor monitor) throws Exception {
+						ILocalResource local = SVNRemoteStorage.instance().asLocalResourceAccessible(current);
+						ResourceChange change = ResourceChange.wrapLocalResource(null, local, true);
 						change.traverse(new IResourceChangeVisitor() {
 							public void preVisit(ResourceChange change, IActionOperationProcessor processor, IProgressMonitor monitor) throws Exception {
 								ILocalResource local = change.getLocal();
@@ -123,9 +124,9 @@ public class ReplaceWithLatestRevisionAction extends AbstractNonRecursiveTeamAct
 							public void postVisit(ResourceChange change, IActionOperationProcessor processor, IProgressMonitor monitor) throws Exception {
 							}
 						}, IResource.DEPTH_INFINITE, SaveUnversionedOperation.this, monitor);
+						SaveUnversionedOperation.this.changes.add(change);
 					}
 				}, monitor, resources.length);
-				this.changes.add(change);
 			}
 		}
 		

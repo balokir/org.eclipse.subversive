@@ -510,7 +510,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 					public void run() {
 						IResource resource = selectedResources[0];
 						ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-						if (local != null) {
+						if (!IStateFilter.SF_INTERNAL_INVALID.accept(local)) {
 							IRepositoryResource remote = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
 							remote.setSelectedRevision(SVNRevision.BASE);
 							UIMonitorUtility.doTaskScheduledDefault(new CompareResourcesOperation(local, remote, false, true));
@@ -522,7 +522,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 					public void run() {
 						IResource resource = selectedResources[0];
 						ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-						if (local != null) {
+						if (!IStateFilter.SF_INTERNAL_INVALID.accept(local)) {
 							IRepositoryResource remote = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
 							remote.setSelectedRevision(SVNRevision.HEAD);
 							UIMonitorUtility.doTaskScheduledDefault(new CompareResourcesOperation(local, remote, false, true));
@@ -536,7 +536,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 					public void run() {
 						IResource resource = selectedResources[0];
 						ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-						if (local != null) {
+						if (!IStateFilter.SF_INTERNAL_INVALID.accept(local)) {
 							IRepositoryResource remote = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
 							ComparePanel panel = new ComparePanel(remote, local.getRevision());
 							DefaultDialog dlg = new DefaultDialog(UIMonitorUtility.getShell(), panel);
@@ -735,17 +735,15 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 	    	for (int i = 0; i < length && !monitor.isCanceled(); i++) {
 	    		ProgressMonitorUtility.setTaskInfo(monitor, this, this.resources[i].getFullPath().toString());
 	    		
-	    		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(this.resources[i]);
-	    		if (local != null) {
-	    			IResource resourceToProcess = this.resources[i];
-	    			while (IStateFilter.SF_UNVERSIONED.accept(local)) {
-	    				resourceToProcess = resourceToProcess.getParent();
-	    				local = SVNRemoteStorage.instance().asLocalResource(resourceToProcess);
-	    			}
-	    			if (!this.processProperty(resourceToProcess, parentProperties, monitor)) {
-	    				break;
-	    			}
-	    		}
+	    		ILocalResource local = SVNRemoteStorage.instance().asLocalResourceAccessible(this.resources[i]);
+    			IResource resourceToProcess = this.resources[i];
+    			while (IStateFilter.SF_UNVERSIONED.accept(local)) {
+    				resourceToProcess = resourceToProcess.getParent();
+    				local = SVNRemoteStorage.instance().asLocalResourceAccessible(resourceToProcess);
+    			}
+				if (!this.processProperty(resourceToProcess, parentProperties, monitor)) {
+    				break;
+    			}
 	    		
 	    		ProgressMonitorUtility.progress(monitor, i, length);
 			}

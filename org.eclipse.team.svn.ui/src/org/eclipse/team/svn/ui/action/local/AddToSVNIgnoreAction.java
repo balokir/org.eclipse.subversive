@@ -88,10 +88,7 @@ public class AddToSVNIgnoreAction extends AbstractNonRecursiveTeamAction {
             if (state == IStateFilter.ST_NEW) {
             	IContainer parent = resource.getParent();
             	if (parent != null) {
-            		ILocalResource localParent = SVNRemoteStorage.instance().asLocalResource(parent);
-            		if (localParent != null) {
-            			return IStateFilter.SF_VERSIONED.accept(localParent);	
-            		}
+        			return IStateFilter.SF_VERSIONED.accept(SVNRemoteStorage.instance().asLocalResource(parent));	
                 }
             }
             return false;
