@@ -5,27 +5,37 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 0.7.1.I20080612-1500 release date: 12 June 2008
+Version 0.7.1.I20080619-1400 release date: 19 June 2008
 
 1. What's New
 
-   The version is 0.7.1 release. The main target of the release is introducing  
+   The version is based on 0.7.1 release. The main target of the release is introducing  
    correct build numbers and transferring Subversive development to Eclipse.org.
    
    Changes in compare with previous version are listed below. The full list of 
    changes you can find in Change Log.
     
-	Features:
-	 * Support latest SVN 1.5 API changes (bug 216473)
-	
 	Fixes:
-	 * JavaHLConnector creates a huge amount of short living threads (bug 235764)
-	   + special thanks to contributor Micha Riser
+	 * NPE in SVN 1.5 compatible connectors when user has no access to repository revision (bug 237408)
+	   + special thanks to Darren Hodges
 	   
-	 * Using a proxy server doesn't work (bug 233962)
-	   + special thanks to Enrico Ehrich, Francois Masurel
+	 * The 'New Working Set' dialog should come up with the default text in the 'Name' textbox already selected (bug 234397)
+	   + special thanks to Dan Berindei
 	   
-	 * The last added line is ignored in the new file while creating a patch. (bug 236399)
+	 * NPE in acquireSVNProxy after plug-in is upgraded from the old version (bug 237422)
+	   + special thanks to Edward Willink
+	   
+	 * Share Project should run in background (bug 237304)
+	   + special thanks to Lars Vogel
+	   
+	 * Synchronize View's "Edit Conflicts" action should not touch folders (bug 237264)
+	   + special thanks to Markus Dangl
+	   
+	 * NPE in ClearUpdateStatuses operation (bug 235317)
+	   + special thanks to Ulli Hafner
+	   
+	 * SVNRemoteStorage.asLocalResource() should never return null (bug 216629)
+	   + special thanks to Gene Huang
 
 2. Information
 
@@ -33,7 +43,7 @@ Version 0.7.1.I20080612-1500 release date: 12 June 2008
 
    Subversive requires JDK 1.5 or higher and supports following versions of Eclipse:
     * 3.3 (tested with 3.3.2)
-    * 3.4 (tested with 3.4RC3)
+    * 3.4 (tested with 3.4RC4)
    
    Subversive supports Subversion versions 1.1-1.4 with SVN Kit 1.1.7 and JavaHL 1.4.5, 
    Subversion version 1.5 with SVN Kit 1.2.0 and JavaHL 1.5.0

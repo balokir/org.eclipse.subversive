@@ -421,7 +421,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	}
 	
 	protected ILocalResource wrapUnexistingResource(IResource resource, String state, int mask) {
-		return resource.getType() == IResource.FILE ? 
+		return resource == null || resource.getType() == IResource.FILE ? 
 				(ILocalResource)new SVNLocalFile(resource, SVNRevision.INVALID_REVISION_NUMBER, SVNRevision.INVALID_REVISION_NUMBER, state, mask, null, 0) :
 				new SVNLocalFolder(resource, SVNRevision.INVALID_REVISION_NUMBER, SVNRevision.INVALID_REVISION_NUMBER, state, mask, null, 0);
 	}

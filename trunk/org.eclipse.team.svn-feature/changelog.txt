@@ -8,6 +8,32 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.1.I20080619-1400 [19 June 2008]
+
+Fixes:
+ * NPE in SVN 1.5 compatible connectors when user has no access to repository revision (bug 237408)
+   + special thanks to Darren Hodges
+   
+ * The 'New Working Set' dialog should come up with the default text in the 'Name' textbox already selected (bug 234397)
+   + special thanks to Dan Berindei
+   
+ * NPE in acquireSVNProxy after plug-in is upgraded from the old version (bug 237422)
+   + special thanks to Edward Willink
+   
+ * Share Project should run in background (bug 237304)
+   + special thanks to Lars Vogel
+   
+ * Synchronize View's "Edit Conflicts" action should not touch folders (bug 237264)
+   + special thanks to Markus Dangl
+   
+ * NPE in ClearUpdateStatuses operation (bug 235317)
+   + special thanks to Ulli Hafner
+   
+ * SVNRemoteStorage.asLocalResource() should never return null (bug 216629)
+   + special thanks to Gene Huang
+
+--------------------------------------------------------------------------------
+
 Version 0.7.1.I20080612-1500 [12 June 2008] [build ids are changed corresponding to guidelines]
 
 Features:
