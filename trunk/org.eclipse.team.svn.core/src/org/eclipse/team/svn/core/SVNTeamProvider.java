@@ -18,6 +18,7 @@ import org.eclipse.core.resources.team.FileModificationValidator;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.history.IFileHistoryProvider;
@@ -73,17 +74,15 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 	}
 	
 	public synchronized void switchResource(IRepositoryResource resource) throws CoreException {
-		if (this.state != 0) {
-			SVNTeamProvider.setRepositoryLocation(this.getProject(), resource.getRepositoryLocation());
-			this.state = 0;
-		}
+		//does not affect finite automate state
+		this.resource = SVNUtility.copyOf(resource);
+		this.location = resource.getRepositoryLocation();
+		SVNTeamProvider.setRepositoryLocation(this.getProject(), this.location);
 	}
 	
 	public synchronized void relocateResource() throws CoreException {
-		if (this.state != 0) {
-			SVNTeamProvider.setRepositoryLocation(this.getProject(), this.location);
-			this.state = 0;
-		}
+		//does not affect finite automate state
+		SVNTeamProvider.setRepositoryLocation(this.getProject(), this.location);
 	}
 	
 	public static void map(IProject project, IRepositoryResource resource) throws CoreException {
@@ -100,7 +99,7 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 	}
 
 	public void deconfigure() throws CoreException {
-		
+		ProgressMonitorUtility.doTaskExternal(new DisconnectOperation(new IProject[] {this.getProject()}, false), new NullProgressMonitor());
 	}
 
 	public IMoveDeleteHook getMoveDeleteHook() {
@@ -211,11 +210,10 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 
 	protected void performDisconnect() {
     	this.state = -1;
-    	String opName = "Operation.OpenProject";
-    	CompositeOperation op = new CompositeOperation(opName);
+    	CompositeOperation op = new CompositeOperation("Operation.OpenProject");
     	op.add(new DisconnectOperation(new IProject[] {this.getProject()}, false));
     	// notify user about the problem is happened
-    	op.add(new AbstractActionOperation(opName) {
+    	op.add(new AbstractActionOperation(op.getId()) {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				throw new UnreportableException(SVNTeamProvider.this.getAutoDisconnectMessage());
 			}
