@@ -119,6 +119,8 @@ public class RelocatedProjectHelper implements IResolutionHelper {
 						SVNRemoteStorage.instance().copyRepositoryLocation(newLocation, location);
 						newLocation.setUrl(relocatedTo);
 						newLocation.setUrl(newLocation.getRepositoryRootUrl());
+						SVNRemoteStorage.instance().addRepositoryLocation(newLocation);
+						SVNTeamPlugin.instance().setLocationsDirty(true);
 						provider.switchResource(newLocation.asRepositoryContainer(relocatedTo, false));
 					}
 				}
