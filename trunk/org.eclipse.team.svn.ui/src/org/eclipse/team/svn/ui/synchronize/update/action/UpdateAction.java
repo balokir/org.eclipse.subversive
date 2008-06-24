@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.ui.synchronize.update.action;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -21,7 +22,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
@@ -32,19 +32,13 @@ import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.UpdateOperation;
-import org.eclipse.team.svn.core.resource.ILocalResource;
-import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.svnstorage.ResourcesParentsProvider;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.operation.ClearUpdateStatusesOperation;
 import org.eclipse.team.svn.ui.operation.NotifyUnresolvedConflictOperation;
-import org.eclipse.team.svn.ui.operation.UILoggedOperation;
-import org.eclipse.team.svn.ui.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
-import org.eclipse.team.svn.ui.synchronize.update.UpdateSubscriber;
 import org.eclipse.team.svn.ui.synchronize.update.UpdateSyncInfo;
-import org.eclipse.team.svn.ui.synchronize.variant.RemoteResourceVariant;
 import org.eclipse.team.svn.ui.utility.UnacceptableOperationNotificator;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -129,25 +123,29 @@ public class UpdateAction extends AbstractSynchronizeModelAction {
 	
 	public static Map<SVNRevision, Set<IResource>> splitByPegRevision(AbstractSynchronizeModelAction action, IResource []resources) {
 		Map<SVNRevision, Set<IResource>> splitted = new HashMap<SVNRevision, Set<IResource>>();
-		for (IResource resource : resources) {
-			try {
-				AbstractSVNSyncInfo info = (AbstractSVNSyncInfo)UpdateSubscriber.instance().getSyncInfo(resource);
-				ILocalResource local = ((RemoteResourceVariant)info.getRemote()).getResource();
-				// can be ILocalResource in context of OverrideAndUpdateAction
-				if (local instanceof IResourceChange) {
-					SVNRevision pegRev = ((IResourceChange)local).getPegRevision();
-					Set<IResource> list = splitted.get(pegRev);
-					if (list == null) {
-						splitted.put(pegRev, list = new HashSet<IResource>());
-					}
-					list.add(resource);
-				}
-			}
-			catch (TeamException ex) {
-				UILoggedOperation.reportError(action.getText(), ex);
-				return null;
-			}
-		}
+		//NOTE See bug 237204: SVN replaces files with second last revision after commit: https://bugs.eclipse.org/bugs/show_bug.cgi?id=237204
+		// Due to described problem we should roll back code which prepares update to revisions saved in synchronize view, because potential damage
+		// from updating of unapproved changes many times smaller than reverting all committed files to its previous states
+		splitted.put(SVNRevision.HEAD, new HashSet<IResource>(Arrays.asList(resources)));
+//		for (IResource resource : resources) {
+//			try {
+//				AbstractSVNSyncInfo info = (AbstractSVNSyncInfo)UpdateSubscriber.instance().getSyncInfo(resource);
+//				ILocalResource local = ((RemoteResourceVariant)info.getRemote()).getResource();
+//				// can be ILocalResource in context of OverrideAndUpdateAction
+//				if (local instanceof IResourceChange) {
+//					SVNRevision pegRev = ((IResourceChange)local).getPegRevision();
+//					Set<IResource> list = splitted.get(pegRev);
+//					if (list == null) {
+//						splitted.put(pegRev, list = new HashSet<IResource>());
+//					}
+//					list.add(resource);
+//				}
+//			}
+//			catch (TeamException ex) {
+//				UILoggedOperation.reportError(action.getText(), ex);
+//				return null;
+//			}
+//		}
 		return splitted;
 	}
 
