@@ -98,7 +98,14 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	protected Map<Class, List<IResourceStatesListener>> resourceStateListeners;
 	protected LinkedList fetchQueue;
 	
-	protected Integer notifyLock = new Integer(0);
+	protected ISchedulingRule notifyLock = new ISchedulingRule() {
+		public boolean isConflicting(ISchedulingRule rule) {
+			return rule == this;
+		}
+		public boolean contains(ISchedulingRule rule) {
+			return rule == this;
+		}
+	};
 
 	public static SVNRemoteStorage instance() {
 		return SVNRemoteStorage.instance;
@@ -128,22 +135,27 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
     	}
     }
     
-    // events should be serialized
-    public void fireResourceStatesChangedEvent(ResourceStatesChangedEvent event) {
-    	synchronized (this.notifyLock) {
-    		if (event.resources.length > 0) {
-    	    	IResourceStatesListener []listeners = null;
-    	    	synchronized (this.resourceStateListeners) {
-    	    		List<IResourceStatesListener> listenersArray = this.resourceStateListeners.get(event.getClass());
-    	    		if (listenersArray == null) {
-    	    			return;
-    	    		}
-    	        	listeners = listenersArray.toArray(new IResourceStatesListener[listenersArray.size()]);
-    	    	}
-    	    	for (int i = 0; i < listeners.length; i++) {
-    	    		listeners[i].resourcesStateChanged(event);
-    	    	}
-    		}
+    public void fireResourceStatesChangedEvent(final ResourceStatesChangedEvent event) {
+		if (event.resources.length > 0) {
+		    // events should be serialized and called asynchronous to caller thread
+	    	ProgressMonitorUtility.doTaskScheduled(new AbstractActionOperation("Operation.SendNotifications") {
+	    		protected void runImpl(IProgressMonitor monitor) throws Exception {
+	    	    	IResourceStatesListener []listeners = null;
+	    	    	synchronized (SVNRemoteStorage.this.resourceStateListeners) {
+	    	    		List<IResourceStatesListener> listenersArray = SVNRemoteStorage.this.resourceStateListeners.get(event.getClass());
+	    	    		if (listenersArray == null) {
+	    	    			return;
+	    	    		}
+	    	        	listeners = listenersArray.toArray(new IResourceStatesListener[listenersArray.size()]);
+	    	    	}
+	    	    	for (int i = 0; i < listeners.length; i++) {
+	    	    		listeners[i].resourcesStateChanged(event);
+	    	    	}
+	    		}
+	    		public ISchedulingRule getSchedulingRule() {
+	    			return SVNRemoteStorage.this.notifyLock;
+	    		}
+	    	}, true);
 		}
     }
     
