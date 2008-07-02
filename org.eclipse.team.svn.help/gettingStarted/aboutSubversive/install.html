@@ -21,53 +21,26 @@
 	<p>Subversive can be simply installed from within Eclipse using update manager. All what the user should do is just point update manager to the remote or local update site. To install Subversive:</p>
 	<ol>
 		<li>
-			Start Eclipse and select menu item <i>'Help > Software Updates > Find and Install...'</i>
-			<br/><br/><img border="0" src="../../images/find_and_install.png" alt="Find and install"/><br/><br/>
+			Start Eclipse and select menu item <i>'Help > Software Updates...'</i>
+			<br/><br/><img border="0" src="../../images/find_and_install.png" alt="Software Updates"/><br/><br/>
 		</li>
 		<li>
-			In the <i>'Install/Update'</i> wizard select <i>'Search for new features to install'</i> option and click on the <i>'Next'</i> button.
-			<br/><br/><img border="0" src="../../images/feature_updates.png" alt="Feature updates"/><br/><br/>
+			Select the <i>'Available Software'</i> tab group and click the <i>'Add Site...'</i> button.
+			<br/><br/><img border="0" src="../../images/add_site.png" alt="Update manager"/><br/><br/>
 		</li>
 		<li>
-			The <i>'Install'</i> dialog shows a list of available update sites. Subversive has its own update site, so you need to add it to the list. You are provided a probability to install either from remote or local update site. Installation from remote update site is preferred, because the user just have to refer the site URL. If the user has downloaded local update site distribution as ZIP archive, he should refer it as local update site location.
-			Click on the <i>'New Remote Site...'</i> button to add Subversive update site.
-			<br/><br/><img border="0" src="../../images/update_sites.png" alt="Update sites"/><br/><br/>
-		</li>
-		<li>
-			On the <i>'New Update Site'</i> dialog enter the name of update site and the URL. Use following values:
+			On the <i>'Add Site'</i> dialog enter the URL to SVN Connectors update site. The proper URL can be found on <a href="http://www.eclipse.org/subversive/downloads.php">http://www.eclipse.org/subversive/downloads.php</a>.
+			Also the update-site for Subversive integration plug-ins can be added in the same way.
 			<ul>
-				<li>
-					<b>Name:</b> Subversive
-				</li>
-				<li>
-					<b>URL:</b> The proper URL can be found on <a href="http://www.eclipse.org/subversive/downloads.php">http://www.eclipse.org/subversive/downloads.php</a>
-				</li>
-			</ul>
-			<br/>Click on the <i>'OK'</i> button to store update site information.
-			<br/><br/><img border="0" src="../../images/new_update_site.png" alt="New update site"/><br/><br/>
-			Also you should install Subversive SVN Connectors to allow the plug-in work with Subversion. You can do the following in such a simple way: <br/><br/>
-			On the <i>'New Update Site'</i> dialog enter the name of clients' update site and the URL. Use following values:
-			<ul>
-				<li>
-					<b>Name:</b> Subversive SVN Connectors
-				</li>
-				<li>
-					<b>URL:</b> The proper URL can be found on <a href="http://www.eclipse.org/subversive/downloads.php">http://www.eclipse.org/subversive/downloads.php</a>
-				</li>
 				<li>
 					<u><i>Please note that the use of the software you are about to access may be subject to third party terms and conditions and you are responsible for abiding by such terms and conditions.</i></u>
 				</li>
-
 			</ul>
 			<br/>Click on the <i>'OK'</i> button to store update site information.
-			<br/><br/><img border="0" src="../../images/update_site_connectors.png" alt="New update site"/><br/><br/>		
+			<br/><br/><img border="0" src="../../images/new_update_site.png" alt="New update site"/><br/><br/>		
 		</li>
 		<li>
-			To start features search in the list of the update sites the user should select <i>'Subversive'</i> and click on the <i>'Finish'</i> button.
-			<br/><br/><img border="0" src="../../images/update_site_subversive.png" alt="Check 'Subversive'"/><br/><br/>
-		</li>
-		<li>
-			Update manager checks update site and shows the list of available features. You can expand the tree and select features to install. Subversive provides following features list.
+			The Subversive update site can be found in 'Ganymede Update Site' in 'Collaboration Tools' category and provides following features list.
 			<ul>
 				Required feature, which should be installed unconditionally:
 				<li>
@@ -75,10 +48,7 @@
 				</li>
 				<br/><br/>Optional integrations with other plug-ins, which can be installed if you use these plugins and want to have them integrated with Subversive:
 				<li>
-					<b>Subversive Integration for the Mylyn Project</b> - Integration with Mylyn (<a href="http://www.eclipse.org/mylyn/">http://www.eclipse.org/mylyn/</a>). Installation is possible only if Mylyn is already installed or installed in one step with Subversive.
-				</li>
-				<li>
-					<b>Subversive Integration for the CSC ProjectSet Project</b> - Integration with ProjectSet (<a href="http://vpms.de.csc.com/projectset/">http://vpms.de.csc.com/projectset/</a>). Installation is possible only if ProjectSet is already installed or installed in one step with Subversive.
+					<b>Subversive Integration for the Mylyn Project</b> - Integration with Mylyn (<a href="http://www.eclipse.org/mylyn/">http://www.eclipse.org/mylyn/</a>).
 				</li>
 				<br/><br/>Other optional features:
 				<li>
@@ -88,20 +58,16 @@
 					<b>SVN Team Provider Sources</b> - The sources of the Eclipse Team Provider for Subversion.
 				</li>
 			</ul>
-			<br/>Select SVN Team Provider and other features if required and click on the <i>'Next >'</i> button.
+			<br/>Select SVN Team Provider, Subversive SVN Connectors and other features if required and click the <i>'Install'</i> button.
 			<br/><br/><img border="0" src="../../images/install_search_res.png" alt="Feature Search Result"/><br/><br/>
 		</li>
 		<li>
-			Accept terms of license agreement and click on the <i>'Next >'</i> button.
+			The update manager calculates dependencies and offers you a list of features to install. Select the needed ones and click the <i>'Next >'</i> button.
+			<br/><br/><img border="0" src="../../images/install.png" alt="Features to Install"/><br/><br/>
+		</li>
+		<li>
+			Accept terms of license agreement and click the <i>'Finish'</i> button in order to start the download of selected features.
 			<br/><br/><img border="0" src="../../images/install_license.png" alt="Feature License"/><br/><br/>
-		</li>
-		<li>
-			Click on the <i>'Finish'</i> button in order to start the download of selected features.
-			<br/><br/><img border="0" src="../../images/install_finish.png" alt="Finish installation"/><br/><br/>
-		</li>
-		<li>
-			Click on the <i>'Install All'</i> button in order to confirm installation of downloaded features.
-			<br/><br/><img border="0" src="../../images/install_verification.png" alt="Feature verification"/><br/><br/>
 		</li>
 		<li>
 			To apply installation changes and restart Eclipse click on the <i>'Yes'</i> button.
