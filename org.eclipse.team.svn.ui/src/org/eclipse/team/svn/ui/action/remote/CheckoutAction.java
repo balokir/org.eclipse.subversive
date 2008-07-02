@@ -82,7 +82,7 @@ public class CheckoutAction extends AbstractRepositoryModifyWorkspaceAction {
 		return set;
 	}
 	
-	public static ArrayList getOperateResources(HashMap names2resources, final HashMap resources2names, Shell shell, String location, boolean checkProjectExistance) {
+	public static ArrayList getOperateResources(HashMap names2resources, final HashMap resources2names, Shell shell, final String location, boolean checkProjectExistance) {
 		NameSet set = CheckoutAction.getExistingProjectNames();
 		final HashMap existingResources = new HashMap();
 		final HashMap existingFolders = new HashMap();
@@ -98,13 +98,13 @@ public class CheckoutAction extends AbstractRepositoryModifyWorkspaceAction {
 			if (set.existing.keySet().contains(set.caseInsensitiveOS ? resourceName.toLowerCase() : resourceName) && checkProjectExistance) {
 				existingResources.put(resourceName, currentResource);
 				if (!FileUtility.formatPath(folder.getAbsolutePath()).equals(set.existing.get(set.caseInsensitiveOS ? resourceName.toLowerCase() : resourceName))) {
-					if (folder.exists() && folder.listFiles() != null && folder.listFiles().length > 0) {
+					if (folder.exists() && (folder.listFiles() != null && folder.listFiles().length > 0 || folder.isFile())) {
 						existingFolders.put(resourceName, currentResource);
 					}
 				}
 			}
 			else {
-				if (folder.exists() && folder.listFiles() != null && folder.listFiles().length > 0) {
+				if (folder.exists() && (folder.listFiles() != null && folder.listFiles().length > 0 || folder.isFile())) {
 					existingFolders.put(resourceName, currentResource);
 				}
 				else {
@@ -149,7 +149,7 @@ public class CheckoutAction extends AbstractRepositoryModifyWorkspaceAction {
 							return SVNTeamUIPlugin.instance().getResource("CheckoutAction.Type1");
 						}
 						else if (folder) {
-							return SVNTeamUIPlugin.instance().getResource("CheckoutAction.Type3");
+							return SVNTeamUIPlugin.instance().getResource(new File(location + "/" + element).isDirectory() ? "CheckoutAction.Type3" : "CheckoutAction.Type4");
 						}
 						return "";
 					}
