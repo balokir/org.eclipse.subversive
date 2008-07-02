@@ -124,12 +124,14 @@ main:
 			
 			IProject []projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 			for (int i = 0; i < projects.length; i++) {
-				final IProject current = projects[i];
-				this.protectStep(new IUnprotectedOperation() {
-					public void run(IProgressMonitor monitor) throws Exception {
-						RemapProjects.this.processProject(current);
-					}
-				}, monitor, projects.length);
+				if (projects[i].isAccessible()) {
+					final IProject current = projects[i];
+					this.protectStep(new IUnprotectedOperation() {
+						public void run(IProgressMonitor monitor) throws Exception {
+							RemapProjects.this.processProject(current);
+						}
+					}, monitor, projects.length);
+				}
 			}
 		}
 		
