@@ -257,7 +257,9 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 		this.autopropTableViewer.getTable().setLayout(layout);
 		this.autopropTableViewer.getTable().setLinesVisible(true);
 		this.autopropTableViewer.getTable().setHeaderVisible(true);
-		this.autopropTableViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.heightHint = 200;
+		this.autopropTableViewer.getTable().setLayoutData(data);
 		
 		this.autopropTableViewer.setLabelProvider(new ITableLabelProvider() {
 
