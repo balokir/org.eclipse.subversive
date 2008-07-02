@@ -18,6 +18,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import org.eclipse.compare.internal.TabFolderLayout;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -466,10 +467,11 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 				}
 			}
 			
+			//another section beginning pattern
+			Pattern p = Pattern.compile("\\[.*\\]");
 			// Process [auto-props] section content
-			while ((line = cfgReader.readLine()) != null &&
-					!line.trim().equals("")) {
-				if (line.startsWith(SVNTeamPropsPreferencePage.AUTO_PROPS_COMMENT_START)) {
+			while ((line = cfgReader.readLine()) != null && !p.matcher(line).matches()) {
+				if (line.startsWith(SVNTeamPropsPreferencePage.AUTO_PROPS_COMMENT_START) || line.equals("")) {
 					continue;
 				}
 				String fileName = "";
@@ -585,7 +587,6 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 		this.custompropTableViewer.getTable().setLinesVisible(true);
 		this.custompropTableViewer.getTable().setHeaderVisible(true);
 		this.custompropTableViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
-		
 		this.custompropTableViewer.setLabelProvider(new ITableLabelProvider() {
 
 			public Image getColumnImage(Object element, int columnIndex) {
