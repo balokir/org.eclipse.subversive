@@ -588,7 +588,9 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 		this.custompropTableViewer.getTable().setLayout(layout);
 		this.custompropTableViewer.getTable().setLinesVisible(true);
 		this.custompropTableViewer.getTable().setHeaderVisible(true);
-		this.custompropTableViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.heightHint = 150;
+		this.custompropTableViewer.getTable().setLayoutData(data);
 		this.custompropTableViewer.setLabelProvider(new ITableLabelProvider() {
 
 			public Image getColumnImage(Object element, int columnIndex) {
