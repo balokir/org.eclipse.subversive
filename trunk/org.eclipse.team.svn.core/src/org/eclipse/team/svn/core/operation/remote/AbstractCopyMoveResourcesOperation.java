@@ -74,7 +74,7 @@ public abstract class AbstractCopyMoveResourcesOperation extends AbstractReposit
 		//NOTE JavaHL is crashed when empty folder is copied independently from MAKE_PARENTS option
 		SVNUtility.addSVNNotifyListener(proxy, notify);	
 		try {
-			this.runCopyMove(proxy, refs, dstUrl, monitor);
+			this.runCopyMove(proxy, refs, SVNUtility.encodeURL(dstUrl), monitor);
 		}
 		finally {
 			SVNUtility.removeSVNNotifyListener(proxy, notify);
