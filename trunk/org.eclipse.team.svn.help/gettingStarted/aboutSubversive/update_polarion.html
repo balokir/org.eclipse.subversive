@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
 <head>
-	<title>Subversive update instructions</title>
+	<title>Migration instructions</title>
 	<meta name="copyright"  content="Copyright (c) 2005-2008 Polarion Software. All rights reserved. This page is provided under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/epl-v10.html Contributors: Alexander Gurov."/>
 	<LINK REL="STYLESHEET" HREF="../../book.css" CHARSET="ISO-8859-1" TYPE="text/css"/>
 </head>
@@ -17,81 +17,11 @@
 			</td>
 		</tr>
 	</table>
-<h3>Subversive update instructions (Polarion.org version installed)</h3>
-	<p>Subversive can be simply installed from within Eclipse using update manager. All what the user should do is just point update manager to the remote or local update site. Please note that if you want to save your workspace settings related to SVN you shouldn't uninstall this version before updating to the Eclipse one. To update Subversive:</p>
-	<ol>
-		<li>
-			Start Eclipse and select menu item <i>'Help > Software Updates > Find and Install...'</i>
-			<br/><br/><img border="0" src="../../images/find_and_install.png" alt="Find and install"/><br/><br/>
-		</li>
-		<li>
-			In the <i>'Install/Update'</i> wizard select <i>'Search for new features to install'</i> option and click on the <i>'Next'</i> button.
-			<br/><br/><img border="0" src="../../images/feature_updates.png" alt="Feature updates"/><br/><br/>
-		</li>
-		<li>
-			The <i>'Install'</i> dialog shows a list of available update sites. Subversive has its own update site, so you need to add it to the list. You are provided a probability to install either from remote or local update site. Installation from remote update site is preferred, because the user just have to refer the site URL. If the user has downloaded local update site distribution as ZIP archive, he should refer it as local update site location.
-			Click on the <i>'New Remote Site...'</i> button to add Subversive update site.
-			<br/><br/><img border="0" src="../../images/update_sites.png" alt="Update sites"/><br/><br/>
-		</li>
-		<li>
-			On the <i>'New Update Site'</i> dialog enter the name of update site and the URL. Use following values:
-			<ul>
-				<li>
-					<b>Name:</b> Subversive
-				</li>
-				<li>
-					<b>URL:</b> The proper URL can be found on <a href="http://www.eclipse.org/subversive/downloads.php">http://www.eclipse.org/subversive/downloads.php</a>
-				</li>
-			</ul>
-			<br/>Click on the <i>'OK'</i> button to store update site information.
-			<br/><br/><img border="0" src="../../images/new_update_site.png" alt="New update site"/><br/><br/>
-			Also you should install Subversive SVN Connectors to allow the plug-in work with Subversion. You can do the following in such a simple way: <br/><br/>
-			On the <i>'New Update Site'</i> dialog enter the name of clients' update site and the URL. Use following values:
-			<ul>
-				<li>
-					<b>Name:</b> Subversive SVN Connectors
-				</li>
-				<li>
-					<b>URL:</b> The proper URL can be found on <a href="http://www.eclipse.org/subversive/downloads.php">http://www.eclipse.org/subversive/downloads.php</a>
-				</li>
-				<li>
-					<u><i>Please note that the use of the software you are about to access may be subject to third party terms and conditions and you are responsible for abiding by such terms and conditions.</i></u>
-				</li>
-
-			</ul>
-			<br/>Click on the <i>'OK'</i> button to store update site information.
-			<br/><br/><img border="0" src="../../images/update_site_connectors.png" alt="New update site"/><br/><br/>		
-		</li>
-		<li>
-			To start features search in the list of the update sites the user should select <i>'Subversive'</i> and click on the <i>'Finish'</i> button.
-			<br/><br/><img border="0" src="../../images/update_site_subversive.png" alt="Check 'Subversive'"/><br/><br/>
-		</li>
-		<li>
-			Update manager checks update site and shows the list of available features.
-			<br/>Select the features to be updated and click on the <i>'Next >'</i> button.
-			<br/><br/><img border="0" src="../../images/install_search_res.png" alt="Feature Search Result"/><br/><br/>
-		</li>
-		<li>
-			Accept terms of license agreement and click on the <i>'Next >'</i> button.
-			<br/><br/><img border="0" src="../../images/install_license.png" alt="Feature License"/><br/><br/>
-		</li>
-		<li>
-			Click on the <i>'Finish'</i> button in order to start the download of selected features.
-			<br/><br/><img border="0" src="../../images/install_finish.png" alt="Finish installation"/><br/><br/>
-		</li>
-		<li>
-			Click on the <i>'Install All'</i> button in order to confirm installation of downloaded features.
-			<br/><br/><img border="0" src="../../images/install_verification.png" alt="Feature verification"/><br/><br/>
-		</li>
-		<li>
-			To apply installation changes and restart Eclipse click on the <i>'Yes'</i> button.
-			<br/><br/><img border="0" src="../../images/restart_dialog.png" alt="Restart dialog"/><br/><br/>
-		</li>
-		<li>
-			After Eclipse restart you should click on <i>'Help > Subversive > Migrate Projects and Settings'</i> menu item for all workspaces which SVN settings should be saved. Then you are able to start using the updated version of Subversive.<br/><br/>
-			<img border="0" src="../../images/migrate.png" alt="Migrate Projects and Settings"/><br/><br/>
-			<p><u><i>Please note, that it is highly recommended to uninstall the Polarion.org version of Subversive <b>only</b> after performing the steps described above to avoid feather compatibility problems.</i></u></p>
-		</li>
-	</ol>
+<h3>Migration instructions (Polarion.org version installed)</h3>
+	<p>To migrate from Polarion.org Subversive version to Eclipse one firstly you should install Eclipse version into your environment. For the instructions on Subversive installation please refer the <a href="install.html">'Subversive installation instructions'</a> topic.</p>
+	<p>Please note that if you want to save your workspace settings related to SVN you shouldn't uninstall Polarion.org version before updating to the Eclipse one.</p>
+	<p>After the installation is compleate and Eclipse has restarted you should click on <i>'Help > Subversive > Migrate Projects and Settings'</i> menu item for all workspaces which SVN settings should be saved. Then you are able to start using the updated version of Subversive.</p>
+	<img border="0" src="../../images/migrate.png" alt="Migrate Projects and Settings"/><br/><br/>
+	<p><u><i>Please note, that it is highly recommended to uninstall the Polarion.org version of Subversive <b>only after</b> performing the steps described above to avoid feather compatibility problems.</i></u></p>
 </body>
 </html>
