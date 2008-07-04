@@ -5,7 +5,7 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 0.7.1.I20080619-1400 release date: 19 June 2008
+Version 0.7.1.I20080704-1500 release date: 04 July 2008
 
 1. What's New
 
@@ -16,26 +16,34 @@ Version 0.7.1.I20080619-1400 release date: 19 June 2008
    changes you can find in Change Log.
     
 	Fixes:
-	 * NPE in SVN 1.5 compatible connectors when user has no access to repository revision (bug 237408)
-	   + special thanks to Darren Hodges
-	   
-	 * The 'New Working Set' dialog should come up with the default text in the 'Name' textbox already selected (bug 234397)
-	   + special thanks to Dan Berindei
-	   
-	 * NPE in acquireSVNProxy after plug-in is upgraded from the old version (bug 237422)
-	   + special thanks to Edward Willink
-	   
-	 * Share Project should run in background (bug 237304)
-	   + special thanks to Lars Vogel
-	   
-	 * Synchronize View's "Edit Conflicts" action should not touch folders (bug 237264)
-	   + special thanks to Markus Dangl
-	   
-	 * NPE in ClearUpdateStatuses operation (bug 235317)
+	 * Check out deleted files on my system without asking about it (bug 238916)
+	   + special thanks to Vesa Jaaskelainen 
+	
+	 * Commiting not up to date directory results in uninformative console message only (bug 239105)
+	   + special thanks to Max Gilead
+	
+	 * Migrate Projects and Settings throws NullPointerException, perhaps on Closed Projects (bug 238863)
+	   + special thanks to Brett Randall, Steffen Pingel
+	
+	 * view settings wording: contiguous should be incremental (bug 238834)
+	   + special thanks to Andrew Bachmann
+	
+	 * Properties Configuration preference uses the wrong scrollbars (bug 238389)
+	   + special thanks to Kristoffer Peterhansel
+	
+	 * Auto-properties not importing from my Subversion config file (bug 238390)
+	   + special thanks to Kristoffer Peterhansel
+	
+	 * Deadlock when moving multiple sources from one project to another. (bug 233956)
 	   + special thanks to Ulli Hafner
-	   
-	 * SVNRemoteStorage.asLocalResource() should never return null (bug 216629)
-	   + special thanks to Gene Huang
+	
+	 * SVN replaces files with second last revision after commit (bug 237204)
+	   + special thanks to Fabricio Silva
+	
+	 * Relocate outside plugin control, then "Share with another repository location" fails (bug 231426)
+	   + special thanks to Max Bowsher
+	
+	 * Update help according to plug-in changes (bug 225568)
 
 2. Information
 
