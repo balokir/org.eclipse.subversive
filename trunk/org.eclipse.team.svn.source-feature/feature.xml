@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.team.svn.source"
       label="%featureName"
-      version="0.7.1.I20080619-1400"
+      version="0.7.1.I20080704-1500"
       provider-name="%providerName"
       colocation-affinity="org.eclipse.team.svn">
 
@@ -21,7 +21,7 @@
 
    <includes
          id="org.eclipse.team.svn.sources"
-         version="0.7.1.I20080619-1400"/>
+         version="0.7.1.I20080704-1500"/>
 
    <includes
          id="org.eclipse.team.svn.nl1.sources"

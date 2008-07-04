@@ -8,6 +8,40 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.1.I20080704-1500 [04 July 2008]
+
+Fixes:
+ * Check out deleted files on my system without asking about it (bug 238916)
+   + special thanks to Vesa Jaaskelainen 
+
+ * Commiting not up to date directory results in uninformative console message only (bug 239105)
+   + special thanks to Max Gilead
+
+ * Migrate Projects and Settings throws NullPointerException, perhaps on Closed Projects (bug 238863)
+   + special thanks to Brett Randall, Steffen Pingel
+
+ * view settings wording: contiguous should be incremental (bug 238834)
+   + special thanks to Andrew Bachmann
+
+ * Properties Configuration preference uses the wrong scrollbars (bug 238389)
+   + special thanks to Kristoffer Peterhansel
+
+ * Auto-properties not importing from my Subversion config file (bug 238390)
+   + special thanks to Kristoffer Peterhansel
+
+ * Deadlock when moving multiple sources from one project to another. (bug 233956)
+   + special thanks to Ulli Hafner
+
+ * SVN replaces files with second last revision after commit (bug 237204)
+   + special thanks to Fabricio Silva
+
+ * Relocate outside plugin control, then "Share with another repository location" fails (bug 231426)
+   + special thanks to Max Bowsher
+
+ * Update help according to plug-in changes (bug 225568)
+
+--------------------------------------------------------------------------------
+
 Version 0.7.1.I20080619-1400 [19 June 2008]
 
 Fixes:
