@@ -32,6 +32,7 @@ public interface ISVNHistoryView extends ISVNHistoryViewInfo {
 	public static final int STOP_ON_COPY = 0x08;
 	public static final int GROUP_BY_DATE = 0x10;
 	/* 0x20, 0x40 and 0x80 are reserved for LogMessagesComposite */
+	public static final int INCLUDE_MERGED = 0x100;
 	
 	public HistoryPage getHistoryPage();
 	public IResource getCompareWith();

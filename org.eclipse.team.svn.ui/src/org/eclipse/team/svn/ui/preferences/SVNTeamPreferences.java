@@ -117,7 +117,7 @@ public final class SVNTeamPreferences {
 	public static final String HISTORY_REVISION_MODE_NAME = "revisionMode";
 	public static final String HISTORY_HIERARCHICAL_LAYOUT = "hierarchicalLayout";
 	public static final String HISTORY_COMPARE_MODE = "compareMode";
-	public static final String HISTORY_LINK_WITH_EDITOR_NAME = "linkWithEditor";
+	public static final String HISTORY_INCLUDE_MERGED_NAME = "includeMerged";
 
 	public static final int HISTORY_GROUPING_TYPE_NONE = 0;
 	public static final int HISTORY_GROUPING_TYPE_DATE = 1;
@@ -134,7 +134,7 @@ public final class SVNTeamPreferences {
 	public static final boolean HISTORY_SHOW_AFFECTED_PATHS_DEFAULT = true;
 	public static final boolean HISTORY_HIERARCHICAL_LAYOUT_DEFAULT = true;
 	public static final boolean HISTORY_COMPARE_MODE_DEFAULT = false;
-	public static final boolean HISTORY_LINK_WITH_EDITOR_DEFAULT = false;
+	public static final boolean HISTORY_INCLUDE_MERGED_DEFAULT = false;
 	
 	public static final String DATE_FORMAT_NAME = "dateFormat";
 	public static final String DATE_FORMAT_CUSTOM_NAME = "dateFormatCustom";
@@ -238,6 +238,7 @@ public final class SVNTeamPreferences {
 	public static final String NAME_OF_STRUCTURE_NODES_FOREGROUND_COLOR = "structure_nodes_foreground_color";
 	public static final String NAME_OF_STRUCTURE_NODES_BACKGROUND_COLOR = "structure_nodes_background_color";
 	public static final String NAME_OF_STRUCTURE_NODES_FONT = "structure_nodes_font";
+	public static final String NAME_OF_MERGED_REVISIONS_FOREGROUND_COLOR = "merged_revision_foreground_color";
 	
 	public static final String COMMENT_TEMPLATES_LIST_NAME = "comment.templates";
 	public static final String COMMENT_TEMPLATES_LIST_ENABLED_NAME = "comment.templates.enabled";
@@ -332,7 +333,7 @@ public final class SVNTeamPreferences {
 		store.setDefault(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_REVISION_MODE_NAME), SVNTeamPreferences.HISTORY_REVISION_MODE_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_HIERARCHICAL_LAYOUT), SVNTeamPreferences.HISTORY_HIERARCHICAL_LAYOUT_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_COMPARE_MODE), SVNTeamPreferences.HISTORY_COMPARE_MODE_DEFAULT);
-		store.setDefault(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_LINK_WITH_EDITOR_NAME), SVNTeamPreferences.HISTORY_LINK_WITH_EDITOR_DEFAULT);
+		store.setDefault(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_INCLUDE_MERGED_NAME), SVNTeamPreferences.HISTORY_INCLUDE_MERGED_DEFAULT);
 	}
 	
 	public static void setDefaultDateFormatValues(IPreferenceStore store) {

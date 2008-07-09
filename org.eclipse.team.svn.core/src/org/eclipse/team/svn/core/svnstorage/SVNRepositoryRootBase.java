@@ -35,7 +35,8 @@ public abstract class SVNRepositoryRootBase extends SVNRepositoryContainer imple
 		if (obj == null || !(obj instanceof IRepositoryRoot)) {
 			return false;
 		}
-		return ((IRepositoryRoot)obj).getKind() == this.getKind() && super.equals(obj);
+		// additional check for equality of REPOSITORY_ROOT and REPOSITORY_LOCATION_ROOT in case if both are the same
+		return (((IRepositoryRoot)obj).getKind() == this.getKind() || this.getKind() == IRepositoryRoot.KIND_ROOT || this.getKind() == IRepositoryRoot.KIND_LOCATION_ROOT) && super.equals(obj);
 	}
 	
 }

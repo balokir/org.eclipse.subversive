@@ -1543,6 +1543,17 @@
 			</description>
 		</fontDefinition>
 		
+		<!--Fonts and colors definitions for history view nodes-->
+		<colorDefinition
+				categoryId="org.eclipse.team.svn.ui.theme"
+				label="%SVNMergedRevisionForeground.label"
+				value="140,140,140"
+				id="preference.decoration.merged_revision_foreground_color">
+			<description>
+				%SVNMergedRevisionForeground.description
+			</description>
+		</colorDefinition>
+		
 		<!--Fonts and colors definitions for repository tree nodes-->
 		<colorDefinition
 				categoryId="org.eclipse.team.svn.ui.theme"

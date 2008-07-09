@@ -34,10 +34,12 @@ public class GetLogMessagesOperation extends AbstractRepositoryOperation {
 	protected boolean discoverPaths;
 	protected SVNRevision selectedRevision;
 	protected long limit;
+	protected boolean includeMerged;
 	
 	public GetLogMessagesOperation(IRepositoryResourceProvider provider) {
 		super("Operation.GetLogMessages", provider);
 		this.stopOnCopy = false;
+		this.includeMerged = false;
 		this.discoverPaths = true;
 		this.limit = 0;
 	}
@@ -49,8 +51,17 @@ public class GetLogMessagesOperation extends AbstractRepositoryOperation {
 	public GetLogMessagesOperation(IRepositoryResource resource, boolean stopOnCopy) {
 		super("Operation.GetLogMessages", new IRepositoryResource[] {resource});
 		this.stopOnCopy = stopOnCopy;
+		this.includeMerged = false;
 		this.discoverPaths = true;
 		this.limit = 0;
+	}
+	
+	public boolean getIncludeMerged() {
+		return this.includeMerged;
+	}
+	
+	public void setIncludeMerged(boolean includeMerged) {
+		this.includeMerged = includeMerged;
 	}
 	
 	public boolean getStopOnCopy() {
@@ -92,6 +103,7 @@ public class GetLogMessagesOperation extends AbstractRepositoryOperation {
 //			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn log " + SVNUtility.encodeURL(this.resource.getUrl()) + (this.limit != 0 ? (" --limit " + this.limit) : "") + (this.stopOnCopy ? " --stop-on-copy" : "") + " -r " + this.selectedRevision + ":0 --username \"" + location.getUsername() + "\"\n");
 			long options = this.discoverPaths ? ISVNConnector.Options.DISCOVER_PATHS : ISVNConnector.Options.NONE;
 			options |= this.stopOnCopy ? ISVNConnector.Options.STOP_ON_COPY : ISVNConnector.Options.NONE;
+			options |= this.includeMerged ? ISVNConnector.Options.INCLUDE_MERGED_REVISIONS : ISVNConnector.Options.NONE;
 			this.msg = SVNUtility.logEntries(proxy, SVNUtility.getEntryReference(resource), this.selectedRevision, SVNRevision.fromNumber(0), options, ISVNConnector.DEFAULT_LOG_ENTRY_PROPS, this.limit, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {

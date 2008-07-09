@@ -11,6 +11,9 @@
 
 package org.eclipse.team.svn.core.connector;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * LogEntry information container
  * 
@@ -48,6 +51,8 @@ public class SVNLogEntry {
 	 * log has no access rights to the specified resource.
 	 */
 	public final SVNLogPath[] changedPaths;
+	
+	private List<SVNLogEntry> children;
 
 	/**
 	 * The {@link SVNLogEntry} instance could be initialized only once because all fields are final
@@ -69,6 +74,22 @@ public class SVNLogEntry {
 		this.revision = revision;
 		this.author = author;
 		this.changedPaths = changedPaths;
+	}
+	
+	public SVNLogEntry []getChildren() {
+		return this.children == null ? null : this.children.toArray(new SVNLogEntry[this.children.size()]);
+	}
+	
+	public boolean hasChildren() {
+		return this.children != null;
+	}
+	
+	public void addChild(SVNLogEntry child) {
+		// create on request
+		if (this.children == null) {
+			this.children = new ArrayList<SVNLogEntry>();
+		}
+		this.children.add(child);
 	}
 	
 	public int hashCode() {
