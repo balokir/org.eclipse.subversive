@@ -65,7 +65,7 @@ public class GetResourceAnnotationOperation extends AbstractRepositoryOperation 
 				SVNUtility.getEntryReference(resource),
 				SVNRevision.fromNumber(0),
 				resource.getSelectedRevision(),
-				ISVNConnector.Options.IGNORE_MIME_TYPE, new ISVNAnnotationCallback() {
+				ISVNConnector.Options.IGNORE_MIME_TYPE /*| ISVNConnector.Options.INCLUDE_MERGED_REVISIONS: no merged if merged_revision is invalid or revisions are equal*/, new ISVNAnnotationCallback() {
 					protected int lineNumber = 0;
 					protected String noAuthor = SVNTeamPlugin.instance().getResource("SVNInfo.NoAuthor");
 					

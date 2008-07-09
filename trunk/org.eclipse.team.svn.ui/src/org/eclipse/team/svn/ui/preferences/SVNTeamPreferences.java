@@ -102,8 +102,10 @@ public final class SVNTeamPreferences {
 	public static final boolean MAILREPORTER_ERRORS_ENABLED_DEFAULT = true;
 
 	public static final String MERGE_USE_JAVAHL_NAME = "useJavaHL";
+	public static final String MERGE_INCLUDE_MERGED_NAME = "includeMerged";
 	
 	public static final boolean MERGE_USE_JAVAHL_DEFAULT = false;
+	public static final boolean MERGE_INCLUDE_MERGED_DEFAULT = false;
 	
 	public static final String CHECKOUT_USE_DOT_PROJECT_NAME = "useDotProject";
 	
@@ -117,7 +119,6 @@ public final class SVNTeamPreferences {
 	public static final String HISTORY_REVISION_MODE_NAME = "revisionMode";
 	public static final String HISTORY_HIERARCHICAL_LAYOUT = "hierarchicalLayout";
 	public static final String HISTORY_COMPARE_MODE = "compareMode";
-	public static final String HISTORY_INCLUDE_MERGED_NAME = "includeMerged";
 
 	public static final int HISTORY_GROUPING_TYPE_NONE = 0;
 	public static final int HISTORY_GROUPING_TYPE_DATE = 1;
@@ -134,7 +135,6 @@ public final class SVNTeamPreferences {
 	public static final boolean HISTORY_SHOW_AFFECTED_PATHS_DEFAULT = true;
 	public static final boolean HISTORY_HIERARCHICAL_LAYOUT_DEFAULT = true;
 	public static final boolean HISTORY_COMPARE_MODE_DEFAULT = false;
-	public static final boolean HISTORY_INCLUDE_MERGED_DEFAULT = false;
 	
 	public static final String DATE_FORMAT_NAME = "dateFormat";
 	public static final String DATE_FORMAT_CUSTOM_NAME = "dateFormatCustom";
@@ -322,6 +322,7 @@ public final class SVNTeamPreferences {
 	
 	public static void setDefaultMergeValues(IPreferenceStore store) {
 		store.setDefault(SVNTeamPreferences.fullMergeName(SVNTeamPreferences.MERGE_USE_JAVAHL_NAME), SVNTeamPreferences.MERGE_USE_JAVAHL_DEFAULT);
+		store.setDefault(SVNTeamPreferences.fullMergeName(SVNTeamPreferences.MERGE_INCLUDE_MERGED_NAME), SVNTeamPreferences.MERGE_INCLUDE_MERGED_DEFAULT);
 	}
 	
 	public static void setDefaultHistoryValues(IPreferenceStore store) {
@@ -333,7 +334,6 @@ public final class SVNTeamPreferences {
 		store.setDefault(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_REVISION_MODE_NAME), SVNTeamPreferences.HISTORY_REVISION_MODE_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_HIERARCHICAL_LAYOUT), SVNTeamPreferences.HISTORY_HIERARCHICAL_LAYOUT_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_COMPARE_MODE), SVNTeamPreferences.HISTORY_COMPARE_MODE_DEFAULT);
-		store.setDefault(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_INCLUDE_MERGED_NAME), SVNTeamPreferences.HISTORY_INCLUDE_MERGED_DEFAULT);
 	}
 	
 	public static void setDefaultDateFormatValues(IPreferenceStore store) {
@@ -460,6 +460,7 @@ public final class SVNTeamPreferences {
 	
 	public static void resetToDefaultMergeValues(IPreferenceStore store) {
 		store.setValue(SVNTeamPreferences.fullMergeName(SVNTeamPreferences.MERGE_USE_JAVAHL_NAME), SVNTeamPreferences.MERGE_USE_JAVAHL_DEFAULT);
+		store.setValue(SVNTeamPreferences.fullMergeName(SVNTeamPreferences.MERGE_INCLUDE_MERGED_NAME), SVNTeamPreferences.MERGE_INCLUDE_MERGED_DEFAULT);
 	}
 	
 	public static void resetToDefaultBehaviourValues(IPreferenceStore store) {

@@ -375,7 +375,7 @@ public final class SVNUtility {
 		proxy.logEntries(reference, revisionStart, revisionEnd, revProps, limit, options, new ISVNLogEntryCallback() {
 			private Stack<SVNLogEntry> mergeTreeBuilder = new Stack<SVNLogEntry>();
 			
-			public void next(SVNLogEntry log, boolean hasChildren) {
+			public void next(SVNLogEntry log) {
 				if (log.revision == SVNRevision.INVALID_REVISION_NUMBER) {
 					log = this.mergeTreeBuilder.pop();
 					if (this.mergeTreeBuilder.isEmpty()) {
@@ -385,12 +385,12 @@ public final class SVNUtility {
 				}
 				
 				if (!this.mergeTreeBuilder.isEmpty()) {
-					this.mergeTreeBuilder.peek().addChild(log);
+					this.mergeTreeBuilder.peek().add(log);
 				}
-				else if (!hasChildren) {
+				else if (!log.hasChildren()) {
 					entries.add(log);
 				}
-				if (hasChildren) {
+				if (log.hasChildren()) {
 					this.mergeTreeBuilder.push(log);
 				}
 			}

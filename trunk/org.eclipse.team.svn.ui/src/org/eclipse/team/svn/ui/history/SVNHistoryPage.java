@@ -105,7 +105,6 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 	protected Action stopOnCopyAction;
 	protected Action stopOnCopyDropDownAction;
 	protected Action groupByDateDropDownAction;
-	protected Action includeMergedDropDownAction;
 	protected Action getNextPageAction;
 	protected Action getAllPagesAction;
 	protected Action clearFilterDropDownAction;
@@ -152,10 +151,13 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_PAGE_SIZE_NAME)) || 
 			event.getProperty().equals(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_PAGING_ENABLE_NAME))) {
-			SVNHistoryPage.this.refreshLimitOption(); 
+			this.refreshLimitOption(); 
 		}
 		if (event.getProperty().startsWith(SVNTeamPreferences.DATE_FORMAT_BASE)) {
-			SVNHistoryPage.this.refresh(ISVNHistoryView.REFRESH_VIEW);
+			this.refresh(ISVNHistoryView.REFRESH_VIEW);
+		}
+		if (event.getProperty().equals(SVNTeamPreferences.fullMergeName(SVNTeamPreferences.MERGE_INCLUDE_MERGED_NAME))) {
+			this.refresh(ISVNHistoryView.REFRESH_REMOTE);
 		}
 	}
 	
@@ -174,14 +176,22 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 												  current.date,
 												  event.getProperty().value,
 												  current.message,
-												  current.changedPaths);
+												  current.changedPaths, 
+												  current.hasChildren());
+						if (current.hasChildren()) {
+							this.logMessages[i].addAll(current.getChildren());
+						}
 					}
 					if (event.getProperty().name.equals("svn:log")) {
 						this.logMessages[i] = new SVNLogEntry(current.revision,
 												  current.date,
 												  current.author,
 												  event.getProperty().value,
-												  current.changedPaths);
+												  current.changedPaths, 
+												  current.hasChildren());
+						if (current.hasChildren()) {
+							this.logMessages[i].addAll(current.getChildren());
+						}
 					}
 					if (event.getProperty().name.equals("svn:date")) {
 						try {
@@ -189,9 +199,15 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 												  new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(event.getProperty().value).getTime(),
 												  current.author,
 												  current.message,
-												  current.changedPaths);
+												  current.changedPaths, 
+												  current.hasChildren());
 						}
-						catch (ParseException ex){}
+						catch (ParseException ex) {
+							// uninteresting in this context
+						}
+						if (current.hasChildren()) {
+							this.logMessages[i].addAll(current.getChildren());
+						}
 					}
 				}
 			}
@@ -611,15 +627,6 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 			}
 		};
 
-		this.includeMergedDropDownAction = new HistoryAction("HistoryView.IncludeMerged", (String)null) {
-			public void run() {
-				SVNHistoryPage.this.options ^= ISVNHistoryView.INCLUDE_MERGED;
-				SVNHistoryPage.this.includeMergedDropDownAction.setChecked((SVNHistoryPage.this.options & ISVNHistoryView.INCLUDE_MERGED) != 0);
-				SVNHistoryPage.saveBoolean(SVNTeamPreferences.HISTORY_INCLUDE_MERGED_NAME, (SVNHistoryPage.this.options & ISVNHistoryView.INCLUDE_MERGED) != 0);
-				SVNHistoryPage.this.refresh(ISVNHistoryView.REFRESH_REMOTE);
-			}
-		};
-
 		this.groupByDateDropDownAction = new HistoryAction("HistoryView.GroupByDate", "icons/views/history/group_by_date.gif") {
 			public void run() {
 				SVNHistoryPage.this.options ^= ISVNHistoryView.GROUP_BY_DATE;
@@ -708,7 +715,6 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		actionBarsMenu.add(new Separator());
 		actionBarsMenu.add(this.hideUnrelatedDropDownAction);
 		actionBarsMenu.add(this.stopOnCopyDropDownAction);
-		actionBarsMenu.add(this.includeMergedDropDownAction);
 		actionBarsMenu.add(new Separator());
 		actionBarsMenu.add(this.filterDropDownAction);
 		actionBarsMenu.add(this.clearFilterDropDownAction);
@@ -784,7 +790,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 	}
 
 	protected void fetchRemoteHistory(final GetLogMessagesOperation msgsOp) {
-		msgsOp.setIncludeMerged(SVNTeamPreferences.getHistoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.HISTORY_INCLUDE_MERGED_NAME));
+		msgsOp.setIncludeMerged(SVNTeamPreferences.getMergeBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MERGE_INCLUDE_MERGED_NAME));
 		
 		final IStructuredSelection selected = (IStructuredSelection) this.history.getTreeViewer().getSelection();
 		IActionOperation showOp = new AbstractActionOperation("Operation.HShowHistory") {
@@ -897,10 +903,6 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 			revisionMode = ISVNHistoryViewInfo.MODE_LOCAL;
 		}
 
-		boolean includeMerged = SVNTeamPreferences.getHistoryBoolean(store, SVNTeamPreferences.HISTORY_INCLUDE_MERGED_NAME);
-		if (includeMerged) {
-			this.options |= ISVNHistoryView.INCLUDE_MERGED;
-		}
 		boolean compareMode = SVNTeamPreferences.getHistoryBoolean(store, SVNTeamPreferences.HISTORY_COMPARE_MODE);
 		if (compareMode) {
 			this.options |= ISVNHistoryView.COMPARE_MODE;
@@ -908,7 +910,6 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		this.options |= groupingType == SVNTeamPreferences.HISTORY_GROUPING_TYPE_DATE ? ISVNHistoryView.GROUP_BY_DATE : 0;
 		this.options = this.options & ~(ISVNHistoryViewInfo.MODE_BOTH | ISVNHistoryViewInfo.MODE_LOCAL | ISVNHistoryViewInfo.MODE_REMOTE) | revisionMode;
 		
-		this.includeMergedDropDownAction.setChecked((this.options & ISVNHistoryView.INCLUDE_MERGED) != 0);
 		this.hideUnrelatedDropDownAction.setChecked((this.options & ISVNHistoryView.HIDE_UNRELATED) != 0);
 		this.hideUnrelatedAction.setChecked((this.options & ISVNHistoryView.HIDE_UNRELATED) != 0);
 		this.stopOnCopyDropDownAction.setChecked((this.options & ISVNHistoryView.STOP_ON_COPY) != 0);

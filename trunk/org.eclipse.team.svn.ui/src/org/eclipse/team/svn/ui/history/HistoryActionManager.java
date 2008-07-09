@@ -793,7 +793,7 @@ public class HistoryActionManager {
 			if (selected.length == 1) {
 				//FIXME peg revisions for renamed resources: (rev - 1) works only if the revision really exists in repository for current resource
 				// use LocateUrlInHistory
-				prev = this.getResourceForSelectedRevision(new SVNLogEntry(msg0.revision - 1, 0, null, null, null));
+				prev = this.getResourceForSelectedRevision(new SVNLogEntry(msg0.revision - 1, 0, null, null, null, false));
 			}
 			else {
 				SVNLogEntry msg1 = (SVNLogEntry)selected[1].getEntity();
@@ -918,7 +918,7 @@ public class HistoryActionManager {
 			}
 		}
 		else {
-			selectedLogs[1] = new SVNLogEntry(selectedLogs[0].revision - 1, 0, null, null, null);
+			selectedLogs[1] = new SVNLogEntry(selectedLogs[0].revision - 1, 0, null, null, null, false);
 		}
 		SVNLogEntry [] allLogs = this.view.getFullRemoteHistory();
 		HashMap<String, Character> changesMapping = new HashMap<String, Character>();
