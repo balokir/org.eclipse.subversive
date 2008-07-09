@@ -71,6 +71,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected String svnConnector;
 	protected ISVNConnectorFactory []factories;
 	protected boolean useJavaHLMerge;
+	protected boolean includeMergedRevisions;
 	protected boolean checkoutUsingDotProjectName;
 	protected boolean branchTagConsiderStructure;
 	protected boolean forceExternalsFreeze;
@@ -84,6 +85,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected Button showExternalsButton;
 	protected Combo svnConnectorField;
 	protected Button useInteractiveMergeButton;
+	protected Button includeMergedRevisionsButton;
 	protected Button fastReportButton;
 	protected Button enablePagingButton;
 	protected Text pageSizeField;
@@ -138,6 +140,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		}
 		
 		SVNTeamPreferences.setMergeBoolean(store, SVNTeamPreferences.MERGE_USE_JAVAHL_NAME, this.useJavaHLMerge);
+		SVNTeamPreferences.setMergeBoolean(store, SVNTeamPreferences.MERGE_INCLUDE_MERGED_NAME, this.includeMergedRevisions);
 		
 		SVNTeamPreferences.setCheckoutBoolean(store, SVNTeamPreferences.CHECKOUT_USE_DOT_PROJECT_NAME, this.checkoutUsingDotProjectName);
 	}
@@ -163,6 +166,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.useSubversionExternalsBehaviour = SVNTeamPreferences.BEHAVIOUR_DO_NOT_SELECT_EXTERNAL_DEFAULT;
 		
 		this.useJavaHLMerge = SVNTeamPreferences.MERGE_USE_JAVAHL_DEFAULT;
+		this.includeMergedRevisions = SVNTeamPreferences.MERGE_INCLUDE_MERGED_DEFAULT;
 		
 		this.checkoutUsingDotProjectName = SVNTeamPreferences.CHECKOUT_USE_DOT_PROJECT_DEFAULT;
 		
@@ -202,6 +206,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.caseInsensitiveSorting = SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_NAME);
 		
 		this.useJavaHLMerge = SVNTeamPreferences.getMergeBoolean(store, SVNTeamPreferences.MERGE_USE_JAVAHL_NAME);
+		this.includeMergedRevisions = SVNTeamPreferences.getMergeBoolean(store, SVNTeamPreferences.MERGE_INCLUDE_MERGED_NAME);
 		
 		this.checkoutUsingDotProjectName = SVNTeamPreferences.getCheckoutBoolean(store, SVNTeamPreferences.CHECKOUT_USE_DOT_PROJECT_NAME);
 		
@@ -253,7 +258,10 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	}
 	
 	protected void initializeClientSettings() {
+		boolean isSVN15CompatibleConnector = CoreExtensionsManager.instance().getSVNConnectorFactory(this.svnConnector).getSVNAPIVersion() >= ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x;
 		this.useInteractiveMergeButton.setSelection(!this.useJavaHLMerge);
+		this.includeMergedRevisionsButton.setSelection(this.includeMergedRevisions);
+		this.includeMergedRevisionsButton.setEnabled(isSVN15CompatibleConnector);
 	}
 	
 	protected Control createContentsImpl(Composite parent) {
@@ -355,6 +363,16 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.useInteractiveMergeButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				SVNTeamPreferencesPage.this.useJavaHLMerge = !SVNTeamPreferencesPage.this.useInteractiveMergeButton.getSelection();
+			}
+		});
+		
+		this.includeMergedRevisionsButton = new Button(group, SWT.CHECK);
+		data = new GridData();
+		this.includeMergedRevisionsButton.setLayoutData(data);
+		this.includeMergedRevisionsButton.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.includeMergedRevisions"));
+		this.includeMergedRevisionsButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				SVNTeamPreferencesPage.this.includeMergedRevisions = SVNTeamPreferencesPage.this.includeMergedRevisionsButton.getSelection();
 			}
 		});
 		
