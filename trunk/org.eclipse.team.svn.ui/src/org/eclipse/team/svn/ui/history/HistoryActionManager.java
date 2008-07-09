@@ -121,6 +121,7 @@ import org.eclipse.team.svn.ui.history.data.AffectedPathsNode;
 import org.eclipse.team.svn.ui.history.data.SVNChangedPathData;
 import org.eclipse.team.svn.ui.history.data.SVNLocalFileRevision;
 import org.eclipse.team.svn.ui.history.model.ILogNode;
+import org.eclipse.team.svn.ui.history.model.SVNLogNode;
 import org.eclipse.team.svn.ui.operation.CompareRepositoryResourcesOperation;
 import org.eclipse.team.svn.ui.operation.CompareResourcesOperation;
 import org.eclipse.team.svn.ui.operation.OpenRemoteFileOperation;
@@ -263,10 +264,14 @@ public class HistoryActionManager {
 					boolean onlyLogEntries = true;
 					boolean onlyLocalEntries = true;
 					boolean containsCategory = false;
+					boolean containsMergeHistory = false;
 					for (ILogNode node : selection) {
 						int type = node.getType();
 						if (type != ILogNode.TYPE_SVN) {
 							onlyLogEntries = false;
+						}
+						else if (node.getParent() instanceof SVNLogNode) {
+							containsMergeHistory = true;
 						}
 						if (type != ILogNode.TYPE_LOCAL) {
 							onlyLocalEntries = false;
@@ -279,7 +284,7 @@ public class HistoryActionManager {
 					}
 					
 					if (onlyLogEntries) {
-						LogMessagesActionManager.this.addRemotePart(viewer, manager, selection);
+						LogMessagesActionManager.this.addRemotePart(viewer, manager, selection, containsMergeHistory);
 						LogMessagesActionManager.this.addFilterPart(viewer, manager);
 						manager.add(new Separator());
 					}
@@ -289,12 +294,12 @@ public class HistoryActionManager {
 						manager.add(new Separator());
 					}
 					if (!onlyLogEntries && !onlyLocalEntries && !containsCategory) {
-						LogMessagesActionManager.this.addLocalOrRemotePart(viewer, manager, selection);
+						LogMessagesActionManager.this.addLocalOrRemotePart(viewer, manager, selection, containsMergeHistory);
 						
 						manager.add(new Separator());
 					}
 					if (!onlyLogEntries) {
-						LogMessagesActionManager.this.addCommonPart(viewer, manager, selection);
+						LogMessagesActionManager.this.addCommonPart(viewer, manager, selection, containsMergeHistory);
 						
 						manager.add(new Separator());
 					}
@@ -307,121 +312,124 @@ public class HistoryActionManager {
 	        site.registerContextMenu(menuMgr, viewer);
 		}
 		
-		protected void addRemotePart(final StructuredViewer viewer, IMenuManager manager, final ILogNode []selection) {
+		protected void addRemotePart(final StructuredViewer viewer, IMenuManager manager, final ILogNode []selection, boolean containsMergeHistory) {
 			Action tAction = null;
-			if (HistoryActionManager.this.view.getRepositoryResource() instanceof IRepositoryFile) {
-				String name = HistoryActionManager.this.view.getRepositoryResource().getName();
-				manager.add(tAction = new HistoryAction("HistoryView.Open") {
+			boolean existsInPrevious = HistoryActionManager.this.view.getFullRemoteHistory()[HistoryActionManager.this.view.getFullRemoteHistory().length - 1] != selection[0].getEntity() || !HistoryActionManager.this.view.isAllRemoteHistoryFetched();
+			final SVNLogEntry current = (SVNLogEntry)selection[0].getEntity();
+			String revision = HistoryActionManager.this.view.getResource() != null ? String.valueOf(current.revision) : SVNTeamUIPlugin.instance().getResource("HistoryView.HEAD");
+			if (!containsMergeHistory) {
+				if (HistoryActionManager.this.view.getRepositoryResource() instanceof IRepositoryFile) {
+					String name = HistoryActionManager.this.view.getRepositoryResource().getName();
+					manager.add(tAction = new HistoryAction("HistoryView.Open") {
+						public void run() {
+							HistoryActionManager.this.handleDoubleClick((TreeViewer)viewer, selection[0], false);
+						}
+					});
+					tAction.setEnabled(selection.length == 1);
+					tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getWorkbench().getEditorRegistry().getImageDescriptor(name));
+					
+					//FIXME: "Open with" submenu shouldn't be hardcoded after reworking of
+					//       the HistoryView. Should be made like the RepositoriesView menu.
+					MenuManager sub = new MenuManager(SVNTeamUIPlugin.instance().getResource("HistoryView.OpenWith"), "historyOpenWithMenu");
+					sub.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+					
+					sub.add(new Separator("nonDefaultTextEditors"));
+					IEditorDescriptor[] editors = SVNTeamUIPlugin.instance().getWorkbench().getEditorRegistry().getEditors(name);
+					for (int i = 0; i < editors.length; i++) {
+	    				if (!editors[i].getId().equals(EditorsUI.DEFAULT_TEXT_EDITOR_ID)) {
+	    					HistoryActionManager.this.addMenuItem(viewer, sub, editors[i].getLabel(), new OpenFileWithAction(editors[i].getId(), false));
+	    				}
+	    			}
+						
+					sub.add(new Separator("variousEditors"));
+					HistoryActionManager.this.addMenuItem(viewer, sub, SVNTeamUIPlugin.instance().getResource("HistoryView.TextEditor"), new OpenFileWithAction());
+					HistoryActionManager.this.addMenuItem(viewer, sub, SVNTeamUIPlugin.instance().getResource("HistoryView.SystemEditor"), new OpenFileWithExternalAction());
+					HistoryActionManager.this.addMenuItem(viewer, sub, SVNTeamUIPlugin.instance().getResource("HistoryView.InplaceEditor"), new OpenFileWithInplaceAction());
+					HistoryActionManager.this.addMenuItem(viewer, sub, SVNTeamUIPlugin.instance().getResource("HistoryView.DefaultEditor"), new OpenFileAction());
+						
+		        	manager.add(sub);
+		        	
+		        	manager.add(new Separator());
+				}
+				
+	    		boolean isCompareAllowed = 
+	    			CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() == ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x ||
+	    			HistoryActionManager.this.view.getRepositoryResource() instanceof IRepositoryFile;
+	    		
+				manager.add(tAction = new HistoryAction("HistoryView.CompareEachOther") {
 					public void run() {
-						HistoryActionManager.this.handleDoubleClick((TreeViewer)viewer, selection[0], false);
+						SVNLogEntry msg0 = (SVNLogEntry)selection[0].getEntity();
+						SVNLogEntry msg1 = (SVNLogEntry)selection[1].getEntity();
+						IRepositoryResource next = HistoryActionManager.this.getResourceForSelectedRevision(msg0);
+						IRepositoryResource prev = HistoryActionManager.this.getResourceForSelectedRevision(msg1);
+						if (msg0.revision < msg1.revision) {
+							IRepositoryResource tmp = prev;
+							prev = next;
+							next = tmp;
+						}
+						CompareRepositoryResourcesOperation op = new CompareRepositoryResourcesOperation(prev, next);
+						op.setForceId(HistoryActionManager.this.getCompareForceId());
+						UIMonitorUtility.doTaskScheduledActive(op);
+					}
+				});
+				tAction.setEnabled(selection.length == 2 && isCompareAllowed);
+				
+				manager.add(tAction = new HistoryAction("HistoryView.CompareCurrentWith", new String[] {revision}) {
+					public void run() {
+						HistoryActionManager.this.compareWithCurrent(current);
+					}
+				});
+				tAction.setEnabled(selection.length == 1 && isCompareAllowed);
+				
+				manager.add(tAction = new HistoryAction("HistoryView.CompareWithPrevious") {
+					public void run() {
+						HistoryActionManager.this.compareWithPreviousRevision(null, new IRepositoryResourceProvider() {
+							public IRepositoryResource[] getRepositoryResources() {
+								SVNLogEntry current = (SVNLogEntry)selection[0].getEntity();
+								return new IRepositoryResource[] {HistoryActionManager.this.getResourceForSelectedRevision(current)};
+							}
+						});
+					}
+				});
+				tAction.setEnabled(selection.length == 1 && isCompareAllowed && existsInPrevious);
+				
+				manager.add(new Separator());
+				
+				manager.add(tAction = new HistoryAction("ShowPropertiesAction.label", "icons/views/propertiesedit.gif") {
+					public void run() {
+						SVNLogEntry current = (SVNLogEntry)selection[0].getEntity();
+						IRepositoryResource resource = HistoryActionManager.this.getResourceForSelectedRevision(current);
+						IResourcePropertyProvider provider = new GetRemotePropertiesOperation(resource);
+						ShowPropertiesOperation op = new ShowPropertiesOperation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), resource, provider);
+						UIMonitorUtility.doTaskScheduledActive(op);
 					}
 				});
 				tAction.setEnabled(selection.length == 1);
-				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getWorkbench().getEditorRegistry().getImageDescriptor(name));
 				
-				//FIXME: "Open with" submenu shouldn't be hardcoded after reworking of
-				//       the HistoryView. Should be made like the RepositoriesView menu.
-				MenuManager sub = new MenuManager(SVNTeamUIPlugin.instance().getResource("HistoryView.OpenWith"), "historyOpenWithMenu");
-				sub.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-				
-				sub.add(new Separator("nonDefaultTextEditors"));
-				IEditorDescriptor[] editors = SVNTeamUIPlugin.instance().getWorkbench().getEditorRegistry().getEditors(name);
-				for (int i = 0; i < editors.length; i++) {
-    				if (!editors[i].getId().equals(EditorsUI.DEFAULT_TEXT_EDITOR_ID)) {
-    					HistoryActionManager.this.addMenuItem(viewer, sub, editors[i].getLabel(), new OpenFileWithAction(editors[i].getId(), false));
-    				}
-    			}
-					
-				sub.add(new Separator("variousEditors"));
-				HistoryActionManager.this.addMenuItem(viewer, sub, SVNTeamUIPlugin.instance().getResource("HistoryView.TextEditor"), new OpenFileWithAction());
-				HistoryActionManager.this.addMenuItem(viewer, sub, SVNTeamUIPlugin.instance().getResource("HistoryView.SystemEditor"), new OpenFileWithExternalAction());
-				HistoryActionManager.this.addMenuItem(viewer, sub, SVNTeamUIPlugin.instance().getResource("HistoryView.InplaceEditor"), new OpenFileWithInplaceAction());
-				HistoryActionManager.this.addMenuItem(viewer, sub, SVNTeamUIPlugin.instance().getResource("HistoryView.DefaultEditor"), new OpenFileAction());
-					
-	        	manager.add(sub);
-	        	
-	        	manager.add(new Separator());
+				manager.add(tAction = new HistoryAction("SynchronizeActionGroup.CompareProperties") {
+					public void run() {
+						SVNLogEntry first = (SVNLogEntry)selection[0].getEntity();
+						SVNLogEntry second = (SVNLogEntry)selection[1].getEntity();
+						if (first.revision < second.revision) {
+							SVNLogEntry tmp = second;
+							second = first;
+							first = tmp;
+						}
+						IRepositoryResource remote = HistoryActionManager.this.view.getRepositoryResource();
+						if (remote == null) {
+							remote = SVNRemoteStorage.instance().asRepositoryResource(HistoryActionManager.this.view.getResource());
+						}
+						TwoWayPropertyCompareInput input = new TwoWayPropertyCompareInput(
+								new CompareConfiguration(),
+								new SVNEntryRevisionReference(remote.getUrl(), SVNRevision.fromNumber(HistoryActionManager.this.view.getCurrentRevision()), SVNRevision.fromNumber(first.revision)),
+								new SVNEntryRevisionReference(remote.getUrl(), SVNRevision.fromNumber(HistoryActionManager.this.view.getCurrentRevision()), SVNRevision.fromNumber(second.revision)),
+								remote.getRepositoryLocation());
+						CompareUI.openCompareEditor(input);
+					}
+				});
+				tAction.setEnabled(selection.length == 2);
 			}
 			
-    		boolean isCompareAllowed = 
-    			CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() == ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x ||
-    			HistoryActionManager.this.view.getRepositoryResource() instanceof IRepositoryFile;
-    		
-			manager.add(tAction = new HistoryAction("HistoryView.CompareEachOther") {
-				public void run() {
-					SVNLogEntry msg0 = (SVNLogEntry)selection[0].getEntity();
-					SVNLogEntry msg1 = (SVNLogEntry)selection[1].getEntity();
-					IRepositoryResource next = HistoryActionManager.this.getResourceForSelectedRevision(msg0);
-					IRepositoryResource prev = HistoryActionManager.this.getResourceForSelectedRevision(msg1);
-					if (msg0.revision < msg1.revision) {
-						IRepositoryResource tmp = prev;
-						prev = next;
-						next = tmp;
-					}
-					CompareRepositoryResourcesOperation op = new CompareRepositoryResourcesOperation(prev, next);
-					op.setForceId(HistoryActionManager.this.getCompareForceId());
-					UIMonitorUtility.doTaskScheduledActive(op);
-				}
-			});
-			tAction.setEnabled(selection.length == 2 && isCompareAllowed);
-			final SVNLogEntry current = (SVNLogEntry)selection[0].getEntity();
-			String revision = HistoryActionManager.this.view.getResource() != null ? String.valueOf(current.revision) : SVNTeamUIPlugin.instance().getResource("HistoryView.HEAD");
-			
-			manager.add(tAction = new HistoryAction("HistoryView.CompareCurrentWith", new String[] {revision}) {
-				public void run() {
-					HistoryActionManager.this.compareWithCurrent(current);
-				}
-			});
-			tAction.setEnabled(selection.length == 1 && isCompareAllowed);
-			
-			manager.add(tAction = new HistoryAction("HistoryView.CompareWithPrevious") {
-				public void run() {
-					HistoryActionManager.this.compareWithPreviousRevision(null, new IRepositoryResourceProvider() {
-						public IRepositoryResource[] getRepositoryResources() {
-							SVNLogEntry current = (SVNLogEntry)selection[0].getEntity();
-							return new IRepositoryResource[] {HistoryActionManager.this.getResourceForSelectedRevision(current)};
-						}
-					});
-				}
-			});
-			boolean existsInPrevious = HistoryActionManager.this.view.getFullRemoteHistory()[HistoryActionManager.this.view.getFullRemoteHistory().length - 1] != selection[0].getEntity() || !HistoryActionManager.this.view.isAllRemoteHistoryFetched();
-			tAction.setEnabled(selection.length == 1 && isCompareAllowed && existsInPrevious);
-			
-			manager.add(new Separator());
-			
-			manager.add(tAction = new HistoryAction("ShowPropertiesAction.label", "icons/views/propertiesedit.gif") {
-				public void run() {
-					SVNLogEntry current = (SVNLogEntry)selection[0].getEntity();
-					IRepositoryResource resource = HistoryActionManager.this.getResourceForSelectedRevision(current);
-					IResourcePropertyProvider provider = new GetRemotePropertiesOperation(resource);
-					ShowPropertiesOperation op = new ShowPropertiesOperation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), resource, provider);
-					UIMonitorUtility.doTaskScheduledActive(op);
-				}
-			});
-			tAction.setEnabled(selection.length == 1);
-			
-			manager.add(tAction = new HistoryAction("SynchronizeActionGroup.CompareProperties") {
-				public void run() {
-					SVNLogEntry first = (SVNLogEntry)selection[0].getEntity();
-					SVNLogEntry second = (SVNLogEntry)selection[1].getEntity();
-					if (first.revision < second.revision) {
-						SVNLogEntry tmp = second;
-						second = first;
-						first = tmp;
-					}
-					IRepositoryResource remote = HistoryActionManager.this.view.getRepositoryResource();
-					if (remote == null) {
-						remote = SVNRemoteStorage.instance().asRepositoryResource(HistoryActionManager.this.view.getResource());
-					}
-					TwoWayPropertyCompareInput input = new TwoWayPropertyCompareInput(
-							new CompareConfiguration(),
-							new SVNEntryRevisionReference(remote.getUrl(), SVNRevision.fromNumber(HistoryActionManager.this.view.getCurrentRevision()), SVNRevision.fromNumber(first.revision)),
-							new SVNEntryRevisionReference(remote.getUrl(), SVNRevision.fromNumber(HistoryActionManager.this.view.getCurrentRevision()), SVNRevision.fromNumber(second.revision)),
-							remote.getRepositoryLocation());
-					CompareUI.openCompareEditor(input);
-				}
-			});
-			tAction.setEnabled(selection.length == 2);
 			manager.add(tAction = new HistoryAction("ShowRevisionProperties.label") {
 				public void run() {
 					SVNRevision selectedRevision = SVNRevision.fromNumber(HistoryActionManager.this.getSelectedRevision());
@@ -431,91 +439,94 @@ public class HistoryActionManager {
 				}
 			});
 			tAction.setEnabled(selection.length == 1);
-			if (HistoryActionManager.this.view.getRepositoryResource() instanceof IRepositoryFile) {
-				manager.add(tAction = new HistoryAction("ShowAnnotationCommand.label") {
-					public void run() {
-				        IRepositoryResource remote = HistoryActionManager.this.getResourceForSelectedRevision((SVNLogEntry)selection[0].getEntity());
-						UIMonitorUtility.doTaskScheduledDefault(new RemoteShowAnnotationOperation(remote));
-					}
-				});
-				tAction.setEnabled(selection.length == 1);
-			}
 			
-			manager.add(new Separator());
-			
-			manager.add(tAction = new HistoryAction("ExportCommand.label", "icons/common/export.gif") {
-				public void run() {
-					HistoryActionManager.this.doExport(selection[0]);
-				}
-			});
-			tAction.setEnabled(selection.length == 1);
-			manager.add(tAction = new HistoryAction("CreatePatchCommand.label") {
-				public void run() {
-					HistoryActionManager.this.createPatch(selection);
-				}
-			});
-			tAction.setEnabled(selection.length == 1 && existsInPrevious || selection.length == 2);
-			if (HistoryActionManager.this.view.getResource() != null) {
-				manager.add(tAction = new HistoryAction("HistoryView.GetContents") {
-					public void run() {
-						if (HistoryActionManager.this.confirmReplacement()) {
-							HistoryActionManager.this.getRevisionContents((SVNLogEntry)selection[0].getEntity());
+			if (!containsMergeHistory) {
+				if (HistoryActionManager.this.view.getRepositoryResource() instanceof IRepositoryFile) {
+					manager.add(tAction = new HistoryAction("ShowAnnotationCommand.label") {
+						public void run() {
+					        IRepositoryResource remote = HistoryActionManager.this.getResourceForSelectedRevision((SVNLogEntry)selection[0].getEntity());
+							UIMonitorUtility.doTaskScheduledDefault(new RemoteShowAnnotationOperation(remote));
 						}
-					}
-				});
-				tAction.setEnabled(selection.length == 1);
-			}
-			if (HistoryActionManager.this.view.getResource() != null)  {
-				manager.add(tAction = new HistoryAction("HistoryView.UpdateTo") {
-					public void run() {
-						if (HistoryActionManager.this.confirmReplacement()) {
-							HistoryActionManager.this.updateTo((SVNLogEntry)selection[0].getEntity());
-						}
-					}
-				});
-				tAction.setEnabled(selection.length == 1);
-			}
-			
-			manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Label")) {
-				public void run() {
-					HistoryActionManager.this.runExtractTo(selection);
+					});
+					tAction.setEnabled(selection.length == 1);
 				}
-			});
-			tAction.setEnabled((selection.length == 1 && existsInPrevious) || selection.length == 2);
-			
-			manager.add(new Separator());
+				
+				manager.add(new Separator());
+				
+				manager.add(tAction = new HistoryAction("ExportCommand.label", "icons/common/export.gif") {
+					public void run() {
+						HistoryActionManager.this.doExport(selection[0]);
+					}
+				});
+				tAction.setEnabled(selection.length == 1);
+				manager.add(tAction = new HistoryAction("CreatePatchCommand.label") {
+					public void run() {
+						HistoryActionManager.this.createPatch(selection);
+					}
+				});
+				tAction.setEnabled(selection.length == 1 && existsInPrevious || selection.length == 2);
+				if (HistoryActionManager.this.view.getResource() != null) {
+					manager.add(tAction = new HistoryAction("HistoryView.GetContents") {
+						public void run() {
+							if (HistoryActionManager.this.confirmReplacement()) {
+								HistoryActionManager.this.getRevisionContents((SVNLogEntry)selection[0].getEntity());
+							}
+						}
+					});
+					tAction.setEnabled(selection.length == 1);
+				}
+				if (HistoryActionManager.this.view.getResource() != null)  {
+					manager.add(tAction = new HistoryAction("HistoryView.UpdateTo") {
+						public void run() {
+							if (HistoryActionManager.this.confirmReplacement()) {
+								HistoryActionManager.this.updateTo((SVNLogEntry)selection[0].getEntity());
+							}
+						}
+					});
+					tAction.setEnabled(selection.length == 1);
+				}
+				
+				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Label")) {
+					public void run() {
+						HistoryActionManager.this.runExtractTo(selection);
+					}
+				});
+				tAction.setEnabled((selection.length == 1 && existsInPrevious) || selection.length == 2);
+				
+				manager.add(new Separator());
 
-			String branchFrom = SVNTeamUIPlugin.instance().getResource("HistoryView.BranchFromRevision");
-			String tagFrom = SVNTeamUIPlugin.instance().getResource("HistoryView.TagFromRevision");
-			if (selection.length == 1) {
-				revision = String.valueOf(((SVNLogEntry)selection[0].getEntity()).revision);
-				branchFrom = SVNTeamUIPlugin.instance().getResource("HistoryView.BranchFrom", new String[] {revision});
-				tagFrom = SVNTeamUIPlugin.instance().getResource("HistoryView.TagFrom", new String[] {revision});
+				String branchFrom = SVNTeamUIPlugin.instance().getResource("HistoryView.BranchFromRevision");
+				String tagFrom = SVNTeamUIPlugin.instance().getResource("HistoryView.TagFromRevision");
+				if (selection.length == 1) {
+					revision = String.valueOf(((SVNLogEntry)selection[0].getEntity()).revision);
+					branchFrom = SVNTeamUIPlugin.instance().getResource("HistoryView.BranchFrom", new String[] {revision});
+					tagFrom = SVNTeamUIPlugin.instance().getResource("HistoryView.TagFrom", new String[] {revision});
+				}
+				manager.add(tAction = new HistoryAction(branchFrom, "icons/common/actions/branch.gif") {
+					public void run() {
+						PreparedBranchTagOperation op = BranchTagAction.getBranchTagOperation(new IRepositoryResource[] {HistoryActionManager.this.getResourceForSelectedRevision((SVNLogEntry)selection[0].getEntity())}, UIMonitorUtility.getShell(), BranchTagAction.BRANCH_ACTION);
+						if (op != null) {
+							UIMonitorUtility.doTaskScheduledActive(op);
+						}
+					}
+				});
+				tAction.setEnabled(selection.length == 1);
+				manager.add(tAction = new HistoryAction(tagFrom, "icons/common/actions/tag.gif") {
+					public void run() {
+						PreparedBranchTagOperation op = BranchTagAction.getBranchTagOperation(new IRepositoryResource[] {HistoryActionManager.this.getResourceForSelectedRevision((SVNLogEntry)selection[0].getEntity())}, UIMonitorUtility.getShell(), BranchTagAction.TAG_ACTION);
+						if (op != null) {
+							UIMonitorUtility.doTaskScheduledActive(op);
+						}
+					}
+				});
+				tAction.setEnabled(selection.length == 1);
+				manager.add(tAction = new HistoryAction("AddRevisionLinkAction.label") {
+					public void run() {
+						HistoryActionManager.this.addRevisionLinks(selection);
+					}
+				});
+				tAction.setEnabled(selection.length > 0);
 			}
-			manager.add(tAction = new HistoryAction(branchFrom, "icons/common/actions/branch.gif") {
-				public void run() {
-					PreparedBranchTagOperation op = BranchTagAction.getBranchTagOperation(new IRepositoryResource[] {HistoryActionManager.this.getResourceForSelectedRevision((SVNLogEntry)selection[0].getEntity())}, UIMonitorUtility.getShell(), BranchTagAction.BRANCH_ACTION);
-					if (op != null) {
-						UIMonitorUtility.doTaskScheduledActive(op);
-					}
-				}
-			});
-			tAction.setEnabled(selection.length == 1);
-			manager.add(tAction = new HistoryAction(tagFrom, "icons/common/actions/tag.gif") {
-				public void run() {
-					PreparedBranchTagOperation op = BranchTagAction.getBranchTagOperation(new IRepositoryResource[] {HistoryActionManager.this.getResourceForSelectedRevision((SVNLogEntry)selection[0].getEntity())}, UIMonitorUtility.getShell(), BranchTagAction.TAG_ACTION);
-					if (op != null) {
-						UIMonitorUtility.doTaskScheduledActive(op);
-					}
-				}
-			});
-			tAction.setEnabled(selection.length == 1);
-			manager.add(tAction = new HistoryAction("AddRevisionLinkAction.label") {
-				public void run() {
-					HistoryActionManager.this.addRevisionLinks(selection);
-				}
-			});
-			tAction.setEnabled(selection.length > 0);
 			
 			manager.add(new Separator());
 			
@@ -606,28 +617,30 @@ public class HistoryActionManager {
 			tAction.setEnabled(selection.length == 1 && (!((SVNLocalFileRevision)selection[0].getEntity()).isCurrentState()));
 		}
 		
-		protected void addLocalOrRemotePart(StructuredViewer viewer, IMenuManager manager, final ILogNode []selection) {
+		protected void addLocalOrRemotePart(StructuredViewer viewer, IMenuManager manager, final ILogNode []selection, boolean containsMergeHistory) {
 			Action tAction = null;
-			manager.add(tAction = new HistoryAction("HistoryView.CompareEachOther") {
-				public void run() {
-					ArrayList<Object> selected = new ArrayList<Object>();
-					for (ILogNode item : selection) {
-						if (item.getType() == ILogNode.TYPE_LOCAL) {
-							selected.add(item);
+			if (!containsMergeHistory) {
+				manager.add(tAction = new HistoryAction("HistoryView.CompareEachOther") {
+					public void run() {
+						ArrayList<Object> selected = new ArrayList<Object>();
+						for (ILogNode item : selection) {
+							if (item.getType() == ILogNode.TYPE_LOCAL) {
+								selected.add(item);
+							}
+							else {
+								selected.add(new SVNRemoteResourceRevision(
+										HistoryActionManager.this.getResourceForSelectedRevision((SVNLogEntry)item.getEntity()),
+										(SVNLogEntry)item.getEntity()));
+							}
 						}
-						else {
-							selected.add(new SVNRemoteResourceRevision(
-									HistoryActionManager.this.getResourceForSelectedRevision((SVNLogEntry)item.getEntity()),
-									(SVNLogEntry)item.getEntity()));
-						}
+						HistoryActionManager.this.runCompareForLocal(selected.toArray());
 					}
-					HistoryActionManager.this.runCompareForLocal(selected.toArray());
-				}
-			});
-			tAction.setEnabled(selection.length == 2);
+				});
+				tAction.setEnabled(selection.length == 2);
+			}
 		}
 		
-		protected void addCommonPart(StructuredViewer viewer, IMenuManager manager, final ILogNode []selection) {
+		protected void addCommonPart(StructuredViewer viewer, IMenuManager manager, final ILogNode []selection, boolean containsMergeHistory) {
 			Action tAction = null;
 			manager.add(tAction = new HistoryAction("HistoryView.CopyHistory", "icons/common/copy.gif") {
 				public void run() {
@@ -644,7 +657,7 @@ public class HistoryActionManager {
 
 	}
 	
-	protected void addMenuItem(StructuredViewer viewer, MenuManager menuManager, String label, final AbstractRepositoryTeamAction action) {
+	protected Action addMenuItem(StructuredViewer viewer, MenuManager menuManager, String label, final AbstractRepositoryTeamAction action) {
 		IStructuredSelection tSelection = (IStructuredSelection)viewer.getSelection();
 		Action wrapper = new Action(label) {
 			public void run() {
@@ -660,6 +673,7 @@ public class HistoryActionManager {
 		}
 		action.selectionChanged(wrapper, resourceSelection);
 		menuManager.add(wrapper);
+		return wrapper;
 	}
 	
 	protected void getRevisionContents(SVNLogEntry item) {
@@ -848,10 +862,10 @@ public class HistoryActionManager {
 			CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() == ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x ||
 			this.view.getRepositoryResource() instanceof IRepositoryFile;
 		if ((this.view.getOptions() & ISVNHistoryView.COMPARE_MODE) != 0 && doubleClick && isCompareAllowed) {
-			if (type == ILogNode.TYPE_SVN) {
+			if (type == ILogNode.TYPE_SVN && !(item.getParent() instanceof SVNLogNode)) {
 				this.compareWithCurrent((SVNLogEntry)item.getEntity());
 			}
-			if (type == ILogNode.TYPE_LOCAL) {
+			else if (type == ILogNode.TYPE_LOCAL) {
 				this.runCompareForLocal(new Object[] {item});
 			}
 		}
@@ -864,7 +878,7 @@ public class HistoryActionManager {
 				UILoggedOperation.reportError("Open Editor", ex);
 			}
 		}
-		else if (!(this.view.getRepositoryResource() instanceof IRepositoryContainer) && type == ILogNode.TYPE_SVN) {
+		else if (!(this.view.getRepositoryResource() instanceof IRepositoryContainer) && type == ILogNode.TYPE_SVN && !(item.getParent() instanceof SVNLogNode)) {
 			UIMonitorUtility.doTaskScheduledActive(new OpenRemoteFileOperation(new IRepositoryFile[] {(IRepositoryFile)this.getResourceForSelectedRevision((SVNLogEntry)item.getEntity())}, OpenRemoteFileOperation.OPEN_DEFAULT));
 		}
 	}

@@ -20,8 +20,10 @@ import java.util.Map;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -35,10 +37,12 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
@@ -52,8 +56,12 @@ import org.eclipse.team.svn.ui.history.data.SVNChangedPathData;
 import org.eclipse.team.svn.ui.history.model.CategoryLogNode;
 import org.eclipse.team.svn.ui.history.model.ILogNode;
 import org.eclipse.team.svn.ui.history.model.SVNLogNode;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.ColumnedViewerComparator;
+import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.themes.ITheme;
 
 /**
  * LogMessage's viewer implementation
@@ -331,7 +339,7 @@ public class LogMessagesComposite extends SashForm {
 		};
         this.historyTable.addSelectionChangedListener(this.historyTableListener);
 		
-		this.historyTable.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
+		this.historyTable.setAutoExpandLevel(2); //auto-expand all categories
         this.historyTable.setInput(new CategoryLogNode(this.rootCategory));
 	}
 	
@@ -344,11 +352,35 @@ public class LogMessagesComposite extends SashForm {
 		this.currentRevisionFont = new Font(this.getDisplay(), data);
 	}
 	
-	protected class HistoryLabelProvider implements ITableLabelProvider, IFontProvider {
+	protected class HistoryLabelProvider implements ITableLabelProvider, IFontProvider, IColorProvider {
+		private Color mergedRevisionsForeground;
 		private Map<ImageDescriptor, Image> images;
+		protected IPropertyChangeListener configurationListener;
 		
 		public HistoryLabelProvider() {
 			this.images = new HashMap<ImageDescriptor, Image>();
+			this.configurationListener = new IPropertyChangeListener() {
+				public void propertyChange(PropertyChangeEvent event) {
+					if (event.getProperty().startsWith(SVNTeamPreferences.DECORATION_BASE)) {
+						UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+							public void run() {
+								HistoryLabelProvider.this.loadConfiguration();
+								LogMessagesComposite.this.refresh(LogMessagesComposite.REFRESH_UI_ALL);
+							}
+						});
+					}
+				}
+			};
+			this.loadConfiguration();
+			PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().addPropertyChangeListener(this.configurationListener);
+		}
+		
+		protected void loadConfiguration() {
+			if (this.mergedRevisionsForeground != null) {
+				this.mergedRevisionsForeground.dispose();
+			}
+			ITheme current = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();
+			this.mergedRevisionsForeground = new Color(Display.getCurrent(), current.getColorRegistry().get(SVNTeamPreferences.fullDecorationName(SVNTeamPreferences.NAME_OF_MERGED_REVISIONS_FOREGROUND_COLOR)).getRGB());
 		}
 		
 		public Image getColumnImage(Object element, int columnIndex) {
@@ -369,16 +401,15 @@ public class LogMessagesComposite extends SashForm {
 		}
 
 		public Font getFont(Object element) {
-			if (((ILogNode)element).requiresBoldFont(LogMessagesComposite.this.info.getCurrentRevision())) {
-				return LogMessagesComposite.this.currentRevisionFont;
-			}
-			return null;
+			return ((ILogNode)element).requiresBoldFont(LogMessagesComposite.this.info.getCurrentRevision()) ? LogMessagesComposite.this.currentRevisionFont : null;
 		}
 		
 		public void dispose() {
+			PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().removePropertyChangeListener(this.configurationListener);
 			for (Image img : this.images.values()) {
 				img.dispose();
 			}
+			this.mergedRevisionsForeground.dispose();
 		}
 
 		public boolean isLabelProperty(Object element, String property) {
@@ -389,6 +420,15 @@ public class LogMessagesComposite extends SashForm {
 		}
 
 		public void removeListener(ILabelProviderListener listener) {
+		}
+
+		public Color getBackground(Object element) {
+			return null;
+		}
+
+		public Color getForeground(Object element) {
+			ILogNode node = (ILogNode)element;
+			return node.getType() == ILogNode.TYPE_SVN && node.getParent() instanceof SVNLogNode ? this.mergedRevisionsForeground : null;
 		}
 
 	}

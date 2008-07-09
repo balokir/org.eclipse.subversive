@@ -41,11 +41,16 @@ public class SVNLogNode extends AbstractLogNode {
 	}
 
 	public ILogNode[] getChildren() {
-		return null;
+		SVNLogEntry []entries = this.entry.getChildren();
+		ILogNode []children = new ILogNode[entries.length];
+		for (int i = 0; i < entries.length; i++) {
+			children[i] = new SVNLogNode(entries[i], this);
+		}
+		return children;
 	}
 
 	public ImageDescriptor getImageDescriptor() {
-		return SVNTeamUIPlugin.instance().getImageDescriptor("icons/objects/repository.gif");
+		return SVNTeamUIPlugin.instance().getImageDescriptor(this.parent instanceof SVNLogNode ? "icons/objects/repository-gray.gif" : "icons/objects/repository.gif");
 	}
 	
 	public boolean requiresBoldFont(long currentRevision) {
@@ -96,7 +101,7 @@ public class SVNLogNode extends AbstractLogNode {
 	}
 
 	public boolean hasChildren() {
-		return false;
+		return this.entry.hasChildren();
 	}
 	
 	public String getAuthor() {

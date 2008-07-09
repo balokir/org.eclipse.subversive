@@ -95,6 +95,7 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 	}
 
 	public void configureProject() {
+		this.connectToProject();
 		SVNRemoteStorage.instance().fireResourceStatesChangedEvent(new ResourceStatesChangedEvent(new IResource[] {this.getProject()}, IResource.DEPTH_ZERO, ResourceStatesChangedEvent.CHANGED_NODES));		
 	}
 

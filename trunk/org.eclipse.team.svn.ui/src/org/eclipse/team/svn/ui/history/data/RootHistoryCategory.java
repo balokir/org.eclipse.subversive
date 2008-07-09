@@ -363,6 +363,12 @@ public class RootHistoryCategory extends HistoryCategory {
 				);
 		}
 		this.pathData.put(key, pathData);
+		SVNLogEntry []children = key.getChildren();
+		if (children != null) {
+			for (SVNLogEntry child : children) {
+				this.mapPathData(child);
+			}
+		}
 	}
 	
 	protected Object []getLocalHistoryInternal() {

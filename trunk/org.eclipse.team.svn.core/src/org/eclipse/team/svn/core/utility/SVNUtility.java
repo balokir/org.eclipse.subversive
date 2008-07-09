@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.internal.preferences.Base64;
@@ -372,8 +373,26 @@ public final class SVNUtility {
 	public static SVNLogEntry []logEntries(ISVNConnector proxy, SVNEntryReference reference, SVNRevision revisionStart, SVNRevision revisionEnd, long options, String[] revProps, long limit, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		final ArrayList<SVNLogEntry> entries = new ArrayList<SVNLogEntry>();
 		proxy.logEntries(reference, revisionStart, revisionEnd, revProps, limit, options, new ISVNLogEntryCallback() {
+			private Stack<SVNLogEntry> mergeTreeBuilder = new Stack<SVNLogEntry>();
+			
 			public void next(SVNLogEntry log, boolean hasChildren) {
-				entries.add(log);
+				if (log.revision == SVNRevision.INVALID_REVISION_NUMBER) {
+					log = this.mergeTreeBuilder.pop();
+					if (this.mergeTreeBuilder.isEmpty()) {
+						entries.add(log);
+					}
+					return;
+				}
+				
+				if (!this.mergeTreeBuilder.isEmpty()) {
+					this.mergeTreeBuilder.peek().addChild(log);
+				}
+				else if (!hasChildren) {
+					entries.add(log);
+				}
+				if (hasChildren) {
+					this.mergeTreeBuilder.push(log);
+				}
 			}
 		}, monitor);
 		return entries.toArray(new SVNLogEntry[entries.size()]);
