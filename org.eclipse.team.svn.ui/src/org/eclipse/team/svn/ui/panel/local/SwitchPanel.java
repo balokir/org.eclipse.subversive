@@ -16,6 +16,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
+import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.composite.DepthSelectionComposite;
@@ -46,12 +48,16 @@ public class SwitchPanel extends AbstractRepositoryResourceSelectionPanel {
 			separator.setVisible(false);
 			
     		this.depthSelector = new DepthSelectionComposite(parent, SWT.NONE);
+    		if (CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() >= ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x)
+    		{
+    			this.depthSelector.addAndSelectWorkingCopyDepth();
+    		}
     		GridData data = new GridData(GridData.FILL_HORIZONTAL);
     		this.depthSelector.setLayoutData(data);
     	}
     }
     
-    public int getDepth(){
+    public int getDepth() {
     	if (this.depthSelector == null) {
     		return Depth.INFINITY;
     	}

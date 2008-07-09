@@ -32,11 +32,22 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 public class DepthSelectionComposite extends Composite {
 
 	protected int depth;
+	protected boolean useWorkingCopyDepth;
+	protected Combo depthSelector;
+	final protected String unknown = SVNTeamUIPlugin.instance().getResource("RecurseDepthSelector.Unknown");
 	
 	public DepthSelectionComposite(Composite parent, int style) {
 		super(parent, style);
 		this.depth = Depth.INFINITY;
+		this.useWorkingCopyDepth = false;
 		this.createControls();
+	}
+	
+	public void addAndSelectWorkingCopyDepth()
+	{
+		this.depth = Depth.UNKNOWN;
+		this.depthSelector.add(this.unknown);
+		this.depthSelector.setText(this.unknown);
 	}
 	
 	protected void createControls() {
@@ -58,17 +69,17 @@ public class DepthSelectionComposite extends Composite {
 		
 		boolean svn15compatible = CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() >= ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x;
 		
-		Combo depthSelector = new Combo(this, SWT.READ_ONLY);
+		this.depthSelector = new Combo(this, SWT.READ_ONLY);
 		if (svn15compatible) {
-			depthSelector.add(empty);
+			this.depthSelector.add(empty);
 		}
-		depthSelector.add(files);
+		this.depthSelector.add(files);
 		if (svn15compatible) {
-			depthSelector.add(immediates);
+			this.depthSelector.add(immediates);
 		}
-		depthSelector.add(infinity);
-		depthSelector.setText(infinity);
-		depthSelector.addSelectionListener(new SelectionListener() {
+		this.depthSelector.add(infinity);
+		this.depthSelector.setText(infinity);
+		this.depthSelector.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 			
@@ -82,6 +93,9 @@ public class DepthSelectionComposite extends Composite {
 				else if(((Combo)e.widget).getItem(((Combo)e.widget).getSelectionIndex()).equals(files)) {
 					DepthSelectionComposite.this.depth = Depth.FILES;
 				}
+				else if (((Combo)e.widget).getItem(((Combo)e.widget).getSelectionIndex()).equals(DepthSelectionComposite.this.unknown)){
+					DepthSelectionComposite.this.depth = Depth.UNKNOWN;
+				}
 				else {
 					DepthSelectionComposite.this.depth = Depth.EMPTY;
 				}
@@ -89,7 +103,7 @@ public class DepthSelectionComposite extends Composite {
 			
 		});
 		data = new GridData(GridData.FILL_HORIZONTAL);
-		depthSelector.setLayoutData(data);
+		this.depthSelector.setLayoutData(data);
 	}
 	
 	public int getDepth() {

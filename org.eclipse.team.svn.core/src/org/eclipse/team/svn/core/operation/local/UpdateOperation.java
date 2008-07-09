@@ -109,7 +109,7 @@ public class UpdateOperation extends AbstractConflictDetectionOperation implemen
 					proxy.update(
 					    paths, 
 					    UpdateOperation.this.selectedRevision, 
-						Depth.infinityOrFiles(UpdateOperation.this.doRecursiveUpdate),
+						Depth.unknownOrFiles(UpdateOperation.this.doRecursiveUpdate),
 						ISVNConnector.Options.NONE, 
 						new ConflictDetectionProgressMonitor(UpdateOperation.this, monitor, null));
 				}
@@ -129,8 +129,8 @@ public class UpdateOperation extends AbstractConflictDetectionOperation implemen
 		    if (state.contentState == NodeStatus.CONFLICTED || 
 		        state.propState == NodeStatus.CONFLICTED) {
 		        UpdateOperation.this.hasUnresolvedConflict = true;
-			    for (Iterator it = UpdateOperation.this.processed.iterator(); it.hasNext(); ) {
-			        IResource res = (IResource)it.next();
+			    for (Iterator<IResource> it = UpdateOperation.this.processed.iterator(); it.hasNext(); ) {
+			        IResource res = it.next();
 			        IPath conflictPath = new Path(state.path);
 			        IPath resourcePath = FileUtility.getResourcePath(res);
 			        if (resourcePath.isPrefixOf(conflictPath)) {
