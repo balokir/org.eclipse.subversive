@@ -366,6 +366,15 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 			}
 		});
 		
+		label = new Label(group, SWT.SEPARATOR | SWT.HORIZONTAL);
+		label.setVisible(false);
+		
+		label = new Label(group, SWT.WRAP);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.widthHint = 450;
+		label.setLayoutData(data);
+		label.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.includeMergedRevisionsLabel"));
+		
 		this.includeMergedRevisionsButton = new Button(group, SWT.CHECK);
 		data = new GridData();
 		this.includeMergedRevisionsButton.setLayoutData(data);
