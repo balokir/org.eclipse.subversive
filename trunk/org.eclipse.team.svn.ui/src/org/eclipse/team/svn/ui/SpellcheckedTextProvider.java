@@ -62,7 +62,7 @@ public class SpellcheckedTextProvider {
 		AnnotationModel annotationModel = new AnnotationModel();
 		IAnnotationAccess annotationAccess = new DefaultMarkerAnnotationAccess();
 		final SourceViewerDecorationSupport support = new SourceViewerDecorationSupport(sourceViewer, null, annotationAccess, EditorsUI.getSharedTextColors());
-		for (Iterator e = new MarkerAnnotationPreferences().getAnnotationPreferences().iterator(); e.hasNext();) {
+		for (Iterator<?> e = new MarkerAnnotationPreferences().getAnnotationPreferences().iterator(); e.hasNext();) {
 			support.setAnnotationPreference((AnnotationPreference) e.next());
 		}
 		support.install(EditorsUI.getPreferenceStore());
