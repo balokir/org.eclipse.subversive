@@ -26,8 +26,8 @@ public interface ISVNAnnotationCallback {
 	 * 
 	 * @param line
 	 *            the annotated line content
-	 * @param revision
-	 *            the annotated line revision
+	 * @param data
+	 *            the line annotation information. See {@link SVNAnnotationData}.
 	 * @param date
 	 *            the annotated line change date
 	 * @param author
@@ -41,5 +41,5 @@ public interface ISVNAnnotationCallback {
 	 * @param mergedWithPath
 	 *            the path of the last change merged into the line
 	 */
-	public void annotate(String line, long revision, long date, String author, long mergedWithRevision, long mergedWithDate, String mergedWithAuthor, String mergedWithPath);
+	public void annotate(String line, SVNAnnotationData data);
 }

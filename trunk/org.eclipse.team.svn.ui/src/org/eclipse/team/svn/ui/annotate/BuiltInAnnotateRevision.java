@@ -12,6 +12,7 @@
 
 package org.eclipse.team.svn.ui.annotate;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.eclipse.jface.text.revisions.Revision;
@@ -29,13 +30,29 @@ import org.eclipse.team.svn.ui.utility.DateFormatter;
  */
 public class BuiltInAnnotateRevision extends Revision {
 	public static final int END_LINE = -1;
+	
+	protected class MergeInfo {
+		public final String line;
+		public final String reference;
+		public final long date;
+		public final String author;
+		
+		public MergeInfo(String line, String reference, long date, String author) {
+			this.line = line;
+			this.reference = reference;
+			this.date = date;
+			this.author = author;
+		}
+	}
+	
 	protected String id;
 	protected String author;
 	private int startLine;
 	private int stopLine;
-	private String info;
 	protected RGB color;
 	protected SVNLogEntry msg;
+	
+	protected ArrayList<MergeInfo> mergeInfoList;
 	
 	public BuiltInAnnotateRevision(String id, String author, RGB color) {
 		this.id = id;
@@ -48,8 +65,12 @@ public class BuiltInAnnotateRevision extends Revision {
 		this.msg = msg;
 	}
 	
+	public long getRevision() {
+		return Long.parseLong(this.id);
+	}
+	
 	public String getId() {
-		return this.id;
+		return this.mergeInfoList != null ? this.id + "*" : this.id;
 	}
 	
 	public void addLine(int line) {
@@ -67,35 +88,54 @@ public class BuiltInAnnotateRevision extends Revision {
 			this.startLine = this.stopLine = line;
 		}
 	}
+	
+	public void addMergeInfo(int line, long mergedRevision, long mergedDate, String mergedAuthor, String mergedPath) {
+		// Merged lines:
+		// XX with line from path@rev made by ZZZ at YYY
+		if (this.mergeInfoList == null) {
+			this.mergeInfoList = new ArrayList<MergeInfo>();
+		}
+		String reference = mergedPath != null ? mergedPath + "@" + mergedRevision : String.valueOf(mergedRevision);
+		this.mergeInfoList.add(new MergeInfo(String.valueOf(line), reference, mergedDate, mergedAuthor));
+	}
 
 	public RGB getColor() {
 		return this.color;
 	}
 
 	public Object getHoverInfo() {
-		if (this.info == null) {
-			this.info = "<b>" + SVNTeamUIPlugin.instance().getResource("BuiltInAnnotateRevision.Revision") + " </b>" + this.getId() + "<br>";
-			if (this.author != null) {
-				this.info += "<b>" + SVNTeamUIPlugin.instance().getResource("BuiltInAnnotateRevision.Author") + " </b>" + this.author;
-			}
-			if (this.getDate() != null) {
-				this.info += "<br><b>" + SVNTeamUIPlugin.instance().getResource("BuiltInAnnotateRevision.Date") + " </b>" + DateFormatter.formatDate(this.getDate());
-			}
-			String message = this.msg == null ? null : this.msg.message;
-			if (message != null && message.length() > 0) {
-				this.info += "<br><b>" + SVNTeamUIPlugin.instance().getResource("BuiltInAnnotateRevision.Message") + "</b><br>" + this.msg.message;
+		String info = "<b>" + SVNTeamUIPlugin.instance().getResource("BuiltInAnnotateRevision.Revision") + " </b>" + this.id + "<br>";
+		if (this.author != null) {
+			info += "<b>" + SVNTeamUIPlugin.instance().getResource("BuiltInAnnotateRevision.Author") + " </b>" + this.author;
+		}
+		if (this.getDateImpl() != null) {
+			info += "<br><b>" + SVNTeamUIPlugin.instance().getResource("BuiltInAnnotateRevision.Date") + " </b>" + DateFormatter.formatDate(this.getDate());
+		}
+		String message = this.msg == null ? null : this.msg.message;
+		if (message != null && message.length() > 0) {
+			info += "<br><b>" + SVNTeamUIPlugin.instance().getResource("BuiltInAnnotateRevision.Message") + "</b><br>" + this.msg.message;
+		}
+		if (this.mergeInfoList != null) {
+			info += "<br>";
+			for (MergeInfo mergeInfo : this.mergeInfoList) {
+				info += "<br>" + SVNTeamUIPlugin.instance().getResource("BuiltInAnnotateRevision.MergedWith", new String[] {mergeInfo.line, mergeInfo.reference, mergeInfo.author, DateFormatter.formatDate(new Date(mergeInfo.date))});
 			}
 		}
-		return this.info;
+		return info;
 	}
 
 	public Date getDate() {
-		Date date = this.msg == null || this.msg.date == 0 ? null : new Date(this.msg.date);
+		Date date = this.getDateImpl();
 		return date == null ? new Date(0) : date;
 	}
 
+	protected Date getDateImpl() {
+		return this.msg == null || this.msg.date == 0 ? null : new Date(this.msg.date);
+	}
+
 	public String getAuthor() {
-		return this.author == null ? SVNTeamPlugin.instance().getResource("SVNInfo.NoAuthor") : this.author;
+		String author = this.author == null ? SVNTeamPlugin.instance().getResource("SVNInfo.NoAuthor") : this.author;
+		return author + " "; // Eclipse IDE does not separate line numbers and author names 
 	}
 	
 }

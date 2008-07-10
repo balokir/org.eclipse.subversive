@@ -23,7 +23,9 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNAnnotationData;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
@@ -35,8 +37,10 @@ import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.history.SVNHistoryPage;
 import org.eclipse.team.svn.ui.operation.OpenRemoteFileOperation;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.ui.history.IHistoryView;
 import org.eclipse.ui.IEditorPart;
@@ -60,6 +64,7 @@ public class BuiltInAnnotate {
 	
 	public void open(IWorkbenchPage page, IRepositoryResource remote, IFile resource) {
 		GetResourceAnnotationOperation annotateOp = new GetResourceAnnotationOperation(remote);
+		annotateOp.setIncludeMerged(SVNTeamPreferences.getMergeBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MERGE_INCLUDE_MERGED_NAME));
 		IActionOperation showOp = this.prepareBuiltInAnnotate(annotateOp, page, remote, resource);
 		CompositeOperation op = new CompositeOperation(showOp.getId());
 		op.add(annotateOp);
@@ -73,22 +78,27 @@ public class BuiltInAnnotate {
 		IActionOperation prepareRevisions = new AbstractActionOperation("Operation.PrepareRevisions") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				Map<String, BuiltInAnnotateRevision> revisions = new HashMap<String, BuiltInAnnotateRevision>();
-				String [][]lines = annotateOp.getAnnotatedLines();
-				if (lines == null || lines.length == 0) {
+				SVNAnnotationData []data = annotateOp.getAnnotatedLines();
+				if (data == null || data.length == 0) {
 					return;
 				}
-				for (int i = 0; i < lines.length; i++) {
-					BuiltInAnnotateRevision revision = revisions.get(lines[i][0]);
+				String noAuthor = SVNTeamPlugin.instance().getResource("SVNInfo.NoAuthor");
+				for (int i = 0; i < data.length; i++) {
+					String revisionId = String.valueOf(data[i].revision);
+					BuiltInAnnotateRevision revision = revisions.get(revisionId);
 					if (revision == null) {
-						revisions.put(lines[i][0], revision = new BuiltInAnnotateRevision(lines[i][0], lines[i][1], CommitterColors.getDefault().getCommitterRGB(lines[i][1])));
+						revisions.put(revisionId, revision = new BuiltInAnnotateRevision(revisionId, data[i].author, CommitterColors.getDefault().getCommitterRGB(data[i].author == null ? noAuthor : data[i].author)));
 						info.addRevision(revision);
 					}
-					revision.addLine(Integer.parseInt(lines[i][2]));
+					revision.addLine(i + 1);
+					if (data[i].mergedRevision != SVNRevision.INVALID_REVISION_NUMBER && data[i].mergedRevision != data[i].revision) {
+						revision.addMergeInfo(i + 1, data[i].mergedRevision, data[i].mergedDate, data[i].mergedAuthor == null ? noAuthor : data[i].mergedAuthor, data[i].mergedPath);
+					}
 				}
 				long from = SVNRevision.INVALID_REVISION_NUMBER, to = SVNRevision.INVALID_REVISION_NUMBER;
 				for (BuiltInAnnotateRevision revision : revisions.values()) {
 					revision.addLine(BuiltInAnnotateRevision.END_LINE);
-					long revisionNum = Long.parseLong(revision.getId());
+					long revisionNum = revision.getRevision();
 					if (from > revisionNum || from == SVNRevision.INVALID_REVISION_NUMBER) {
 						from = revisionNum;
 					}

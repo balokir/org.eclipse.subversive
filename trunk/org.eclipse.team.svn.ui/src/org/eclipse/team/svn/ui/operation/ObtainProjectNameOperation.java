@@ -92,7 +92,6 @@ public class ObtainProjectNameOperation extends AbstractActionOperation {
 							name = FileUtility.formatResourceName(name);
 						}
 					}
-					name = name == null ? ObtainProjectNameOperation.this.resources[j].getName() : name;
 					if (!ObtainProjectNameOperation.this.names2Resources.containsKey(name) && (caseInsensitiveOS ? !lowerCaseNames.contains(name.toLowerCase()) : true)) {
 						ObtainProjectNameOperation.this.names2Resources.put(name, ObtainProjectNameOperation.this.resources[j]);
 						if (caseInsensitiveOS) {
@@ -135,7 +134,8 @@ public class ObtainProjectNameOperation extends AbstractActionOperation {
 					//FIXME incorrect search: could be on different lines
 					if ((first = currentString.indexOf("<name>")) >= 0 &&
 						(last = currentString.indexOf("</name>")) >= 0) {
-						return currentString.substring(first + "<name>".length(), last);
+						String name = currentString.substring(first + "<name>".length(), last);
+						return name.length() > 0 ? name : resource.getName();
 					}
 				}
 			}

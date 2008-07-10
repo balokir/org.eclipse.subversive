@@ -17,9 +17,9 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNAnnotationCallback;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNAnnotationData;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.connector.SVNErrorCodes;
 import org.eclipse.team.svn.core.connector.SVNRevision;
@@ -34,18 +34,27 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * @author Alexander Gurov
  */
 public class GetResourceAnnotationOperation extends AbstractRepositoryOperation {
-	protected String [][]annotatedLines;
+	protected SVNAnnotationData []annotatedLines;
 	protected byte []content;
+	protected boolean includeMerged;
 
 	public GetResourceAnnotationOperation(IRepositoryResource resource) {
 		super("Operation.GetAnnotation", new IRepositoryResource[] {resource});
+	}
+	
+	public boolean getIncludeMerged() {
+		return this.includeMerged;
+	}
+	
+	public void setIncludeMerged(boolean includeMerged) {
+		this.includeMerged = includeMerged;
 	}
 	
 	public IRepositoryResource getRepositoryResource() {
 		return this.operableData()[0];
 	}
 
-	public String [][]getAnnotatedLines() {
+	public SVNAnnotationData []getAnnotatedLines() {
 		return this.annotatedLines;
 	}
 	
@@ -55,27 +64,21 @@ public class GetResourceAnnotationOperation extends AbstractRepositoryOperation 
 	
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		final ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		final ArrayList<String []> lines = new ArrayList<String []>();
+		final ArrayList<SVNAnnotationData> lines = new ArrayList<SVNAnnotationData>();
 		IRepositoryResource resource = this.operableData()[0];
 		IRepositoryLocation location = resource.getRepositoryLocation();
 		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
 //			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn blame " + url + "@" + resource.getPegRevision() + " -r 0:" + resource.getSelectedRevision() + " --username \"" + location.getUsername() + "\"\n");
+			long options = ISVNConnector.Options.IGNORE_MIME_TYPE;
+			options |= this.includeMerged ? ISVNConnector.Options.INCLUDE_MERGED_REVISIONS : ISVNConnector.Options.NONE;
 			proxy.annotate(
 				SVNUtility.getEntryReference(resource),
 				SVNRevision.fromNumber(0),
 				resource.getSelectedRevision(),
-				ISVNConnector.Options.IGNORE_MIME_TYPE /*| ISVNConnector.Options.INCLUDE_MERGED_REVISIONS: no merged if merged_revision is invalid or revisions are equal*/, new ISVNAnnotationCallback() {
-					protected int lineNumber = 0;
-					protected String noAuthor = SVNTeamPlugin.instance().getResource("SVNInfo.NoAuthor");
-					
-					public void annotate(String line, long revision, long date, String author, long merged_revision, long merged_date, String merged_author, String merged_path) {
-						String []row = new String[] {
-							String.valueOf(revision),
-							author == null ? this.noAuthor : author,
-							String.valueOf(++this.lineNumber),
-						};
-						lines.add(row);
+				options, new ISVNAnnotationCallback() {
+					public void annotate(String line, SVNAnnotationData data) {
+						lines.add(data);
 						try {
 							stream.write((line + "\n").getBytes());
 						} 
@@ -90,7 +93,7 @@ public class GetResourceAnnotationOperation extends AbstractRepositoryOperation 
 		finally {
 			location.releaseSVNProxy(proxy);
 		}
-		this.annotatedLines = lines.toArray(new String[lines.size()][]);
+		this.annotatedLines = lines.toArray(new SVNAnnotationData[lines.size()]);
 		this.content = stream.toByteArray();
 	}
 	
