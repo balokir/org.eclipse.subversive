@@ -155,9 +155,8 @@ public class OpenRemoteFileOperation extends AbstractActionOperation {
 
 				try {
 				    this.editors[current] = this.openEditor(page, editorId, input);
-				    if (this.editors[current] != null && 
-				    	(this.editors[current].getClass().getName().toLowerCase().indexOf("error") != -1 ||
-				    	this.requiredDefaultEditorKind != null && !this.requiredDefaultEditorKind.isAssignableFrom(this.editors[current].getClass()))) {
+				    if (this.editors[current] != null && this.editors[current].getClass().getName().toLowerCase().indexOf("error") != -1 ||
+				    	this.requiredDefaultEditorKind != null && (this.editors[current] == null || !this.requiredDefaultEditorKind.isAssignableFrom(this.editors[current].getClass()))) {
 						this.editors[current] = this.openEditor(page, EditorsUI.DEFAULT_TEXT_EDITOR_ID, input);
 				    }
 				} 
