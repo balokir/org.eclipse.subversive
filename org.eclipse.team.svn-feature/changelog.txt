@@ -8,6 +8,28 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.1.I20080711-1500 [11 July 2008]
+
+Features:
+ * Include information about merged revisions into annotation (bug 240156)
+ * Show merged revisions in History View (bug 239819)
+ * Support sparse actions (checkout, import, export) [REOPENED] (bug 231552)
+
+Fixes:
+ * Replace confirmation before main dialog window doesn't make sense (bug 240471)
+   + special thanks to Max Gilead
+   
+ * Merge problem "File not found: revision..." when opening 3-way comparator (bug 240291)
+   + special thanks to Alexey Kamenchuk
+   
+ * "Overwrite and Update" doing merge (bug 237218)
+   + special thanks to Tony Poppleton
+   
+ * Branch from working copy failed with SVN 1.5-compatible connectors (bug 240258)
+   + special thanks to Larry Edelstein
+
+--------------------------------------------------------------------------------
+
 Version 0.7.1.I20080704-1500 [04 July 2008]
 
 Fixes:
