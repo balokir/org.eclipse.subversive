@@ -57,15 +57,15 @@ public class ReplaceWithRevisionAction extends AbstractNonRecursiveTeamAction {
 	}
 
 	public static IActionOperation getReplaceOperation(IResource []resources, Shell shell) {
-		ReplaceWarningDialog dialog = new ReplaceWarningDialog(shell);
-		if (dialog.open() == 0) {
-			IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(resources[0]);
-			ILocalResource local = SVNRemoteStorage.instance().asLocalResourceAccessible(resources[0]);
-			
-			ReplaceWithUrlPanel panel = new ReplaceWithUrlPanel(remote, local.getRevision());
-			DefaultDialog selectionDialog = new DefaultDialog(shell, panel);
-			
-			if (selectionDialog.open() == Dialog.OK) {
+		IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(resources[0]);
+		ILocalResource local = SVNRemoteStorage.instance().asLocalResourceAccessible(resources[0]);
+		
+		ReplaceWithUrlPanel panel = new ReplaceWithUrlPanel(remote, local.getRevision());
+		DefaultDialog selectionDialog = new DefaultDialog(shell, panel);
+		
+		if (selectionDialog.open() == Dialog.OK) {
+			ReplaceWarningDialog dialog = new ReplaceWarningDialog(shell);
+			if (dialog.open() == 0) {
 				IRepositoryResource selected = panel.getSelectedResource();
 				HashMap<String, String> remote2local = new HashMap<String, String>();
 				remote2local.put(SVNUtility.encodeURL(selected.getUrl()), FileUtility.getWorkingCopyPath(resources[0]));
