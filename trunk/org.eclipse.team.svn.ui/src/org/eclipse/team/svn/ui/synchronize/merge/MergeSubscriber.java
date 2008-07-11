@@ -174,20 +174,13 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 			}
 		};
 		IResourceChange startResourceChange = SVNRemoteStorage.instance().asResourceChange(startProvider, false);
-		if (!current.endUrl.equals(current.startUrl)) {
-			if (startResourceChange.getRevision() != SVNRevision.INVALID_REVISION_NUMBER) {
-				String decodedUrl = SVNUtility.decodeURL(current.startUrl);
-				IRepositoryResource originator = this.scope.getMergeSet().fromStart[0];
-				originator = startProvider.getNodeKind() == SVNEntry.Kind.DIR ? (IRepositoryResource)originator.asRepositoryContainer(decodedUrl, false) : originator.asRepositoryFile(decodedUrl, false);
-				originator.setSelectedRevision(current.startRevision == SVNRevision.INVALID_REVISION_NUMBER ? SVNRevision.INVALID_REVISION : SVNRevision.fromNumber(current.startRevision));
-				startResourceChange.setOriginator(originator);
-			}
-		}
-		else {
-			IRepositoryResource base = SVNRemoteStorage.instance().asRepositoryResource(endResourceChange.getResource());
-			base.setSelectedRevision(this.scope.getMergeSet().fromStart[0].getSelectedRevision());
-			base.setPegRevision(this.scope.getMergeSet().fromStart[0].getPegRevision());
-			startResourceChange.setOriginator(base);
+		if (startResourceChange.getRevision() != SVNRevision.INVALID_REVISION_NUMBER) {
+			String decodedUrl = SVNUtility.decodeURL(current.startUrl);
+			IRepositoryResource originator = this.scope.getMergeSet().fromStart[0];
+			originator = startProvider.getNodeKind() == SVNEntry.Kind.DIR ? (IRepositoryResource)originator.asRepositoryContainer(decodedUrl, false) : originator.asRepositoryFile(decodedUrl, false);
+			originator.setSelectedRevision(SVNRevision.fromNumber(current.startRevision));
+			originator.setPegRevision(this.scope.getMergeSet().fromStart[0].getPegRevision());
+			startResourceChange.setOriginator(originator);
 		}
 		this.baseStatusCache.setBytes(startResourceChange.getResource(), SVNRemoteStorage.instance().resourceChangeAsBytes(startResourceChange));
 		

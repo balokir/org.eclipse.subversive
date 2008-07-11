@@ -130,6 +130,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 		        
 		this.depthSelector = new DepthSelectionComposite(parent, SWT.NONE);
 		this.depthSelector.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		this.depthSelector.addAndSelectWorkingCopyDepth();
 		
         this.setMode(false);
 	}

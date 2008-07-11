@@ -45,9 +45,12 @@ public class DepthSelectionComposite extends Composite {
 	
 	public void addAndSelectWorkingCopyDepth()
 	{
-		this.depth = Depth.UNKNOWN;
-		this.depthSelector.add(this.unknown);
-		this.depthSelector.setText(this.unknown);
+		if (CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() >= ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x)
+		{
+			this.depth = Depth.UNKNOWN;
+			this.depthSelector.add(this.unknown);
+			this.depthSelector.setText(this.unknown);
+		}
 	}
 	
 	protected void createControls() {
