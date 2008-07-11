@@ -22,7 +22,7 @@ import org.eclipse.team.svn.core.operation.UnreportableException;
  */
 public interface ISVNConnectorFactory {
 	public static final String DEFAULT_ID = "org.eclipse.team.svn.connector.svnkit";
-	public static final String CURRENT_COMPATIBILITY_VERSION = "0.7.1.I20080612-1500";
+	public static final String CURRENT_COMPATIBILITY_VERSION = "0.7.1.I20080711-1500";
 	
 	/**
 	 * Enumeration of connector API compatibility levels
