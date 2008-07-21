@@ -33,7 +33,7 @@ public class SwitchPanel extends AbstractRepositoryResourceSelectionPanel {
 	protected DepthSelectionComposite depthSelector;
 	
     public SwitchPanel(IRepositoryResource baseResource, long currentRevision, boolean containFolders) {    	
-    	super(baseResource, currentRevision, SVNTeamUIPlugin.instance().getResource("SwitchPanel.Title"), SVNTeamUIPlugin.instance().getResource("SwitchPanel.Description"), "SwitchPanel.URL_HISTORY_NAME", false, SVNTeamUIPlugin.instance().getResource("SwitchPanel.Selection.Title"), SVNTeamUIPlugin.instance().getResource("SwitchPanel.Selection.Description"), RepositoryResourceSelectionComposite.TEXT_NONE);
+    	super(baseResource, currentRevision, SVNTeamUIPlugin.instance().getResource("SwitchPanel.Title"), SVNTeamUIPlugin.instance().getResource("SwitchPanel.Description"), "SwitchPanel.URL_HISTORY_NAME", SVNTeamUIPlugin.instance().getResource("SwitchPanel.Selection.Title"), SVNTeamUIPlugin.instance().getResource("SwitchPanel.Selection.Description"), RepositoryResourceSelectionComposite.TEXT_NONE);
     	this.defaultMessage = SVNTeamUIPlugin.instance().getResource("SwitchPanel.Message");
     	this.containFolders = containFolders;
     }

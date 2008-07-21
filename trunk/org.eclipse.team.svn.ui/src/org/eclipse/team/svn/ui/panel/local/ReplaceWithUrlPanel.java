@@ -24,7 +24,7 @@ import org.eclipse.team.svn.ui.panel.common.AbstractRepositoryResourceSelectionP
 public class ReplaceWithUrlPanel extends AbstractRepositoryResourceSelectionPanel {
 
 	public ReplaceWithUrlPanel(IRepositoryResource baseResource, long currentRevision) {
-		super(baseResource, currentRevision, SVNTeamUIPlugin.instance().getResource("ReplaceUrlPanel.Title"), SVNTeamUIPlugin.instance().getResource("ReplaceUrlPanel.Selection.Description"), "replaceUrl", false, SVNTeamUIPlugin.instance().getResource("ReplaceUrlPanel.Selection.Title"), SVNTeamUIPlugin.instance().getResource("ReplaceUrlPanel.Description"), RepositoryResourceSelectionComposite.TEXT_BASE);
+		super(baseResource, currentRevision, SVNTeamUIPlugin.instance().getResource("ReplaceUrlPanel.Title"), SVNTeamUIPlugin.instance().getResource("ReplaceUrlPanel.Selection.Description"), "replaceUrl", SVNTeamUIPlugin.instance().getResource("ReplaceUrlPanel.Selection.Title"), SVNTeamUIPlugin.instance().getResource("ReplaceUrlPanel.Description"), RepositoryResourceSelectionComposite.TEXT_BASE);
     	this.defaultMessage = SVNTeamUIPlugin.instance().getResource("ReplaceUrlPanel.Message");
 	}
 	

@@ -721,7 +721,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		actionBarsMenu.add(new Separator());
 		actionBarsMenu.add(this.compareModeDropDownAction);
 
-		this.history = new LogMessagesComposite(parent, true, this);
+		this.history = new LogMessagesComposite(parent, true, false, this);
 
 		GridData data = new GridData(GridData.FILL_BOTH);
 		this.history.setLayoutData(data);

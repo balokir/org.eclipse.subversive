@@ -29,7 +29,6 @@ public abstract class AbstractRepositoryResourceSelectionPanel extends AbstractD
 	protected IRepositoryResource selectedResource;
 	
 	protected long currentRevision;
-	protected boolean stopOnCopy;
 	protected boolean filterCurrentRevision;
 	
 	protected boolean toFilterCurrent;
@@ -39,15 +38,13 @@ public abstract class AbstractRepositoryResourceSelectionPanel extends AbstractD
 	
 	protected String selectionTitle;
 	protected String selectionDescription;
-	protected int twoRevisions;
 	protected int defaultTextType;
 	
-    public AbstractRepositoryResourceSelectionPanel(IRepositoryResource baseResource, long currentRevision, String title, String proposal, String historyKey, boolean stopOnCopy, String selectionTitle, String selectionDescription, int defaultTextType) {
+    public AbstractRepositoryResourceSelectionPanel(IRepositoryResource baseResource, long currentRevision, String title, String proposal, String historyKey, String selectionTitle, String selectionDescription, int defaultTextType) {
         super();
         this.dialogTitle = title;
         this.dialogDescription = proposal;
         
-        this.stopOnCopy = stopOnCopy;
 		this.historyKey = historyKey;
 		this.selectedResource = baseResource;
 		this.currentRevision = currentRevision;
@@ -61,11 +58,6 @@ public abstract class AbstractRepositoryResourceSelectionPanel extends AbstractD
 		this.toFilterCurrent = toFilter;
 	}
     
-    public AbstractRepositoryResourceSelectionPanel(IRepositoryResource baseResource, long currentRevision, String title, String proposal, String historyKey, boolean stopOnCopy, String selectionTitle, String selectionDescription, int twoRevisions, int defaultTextType) {
-    	this(baseResource, currentRevision, title, proposal, historyKey, stopOnCopy, selectionTitle, selectionDescription, defaultTextType);
-    	this.twoRevisions = twoRevisions;
-    }
-
 	public IRepositoryResource []getSelection(IResource []to) {
 		IRepositoryResource base = this.getSelectedResource();
 		if (to.length == 1) {
@@ -87,7 +79,7 @@ public abstract class AbstractRepositoryResourceSelectionPanel extends AbstractD
     public void createControlsImpl(Composite parent) {
         GridData data = null;
 
-        this.selectionComposite = new RepositoryResourceSelectionComposite(parent, SWT.NONE, this, this.historyKey, this.selectedResource, this.stopOnCopy, this.selectionTitle, this.selectionDescription, this.twoRevisions, this.defaultTextType);
+        this.selectionComposite = new RepositoryResourceSelectionComposite(parent, SWT.NONE, this, this.historyKey, this.selectedResource, false, this.selectionTitle, this.selectionDescription, RepositoryResourceSelectionComposite.MODE_DEFAULT, this.defaultTextType);
         this.selectionComposite.setFilterCurrent(this.toFilterCurrent);
         data = new GridData(GridData.FILL_HORIZONTAL);
         this.selectionComposite.setLayoutData(data);

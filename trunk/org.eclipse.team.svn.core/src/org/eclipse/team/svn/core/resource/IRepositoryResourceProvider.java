@@ -17,7 +17,7 @@ package org.eclipse.team.svn.core.resource;
  * @author Alexander Gurov
  */
 public interface IRepositoryResourceProvider {
-	public static class DefaultRepositoryResourceProvider implements IRepositoryResourceProvider {
+	public class DefaultRepositoryResourceProvider implements IRepositoryResourceProvider {
 		protected IRepositoryResource []resources;
 		
 		public DefaultRepositoryResourceProvider(IRepositoryResource []resources) {
@@ -27,7 +27,6 @@ public interface IRepositoryResourceProvider {
 		public IRepositoryResource[] getRepositoryResources() {
 			return this.resources;
 		}
-		
 	}
 	
 	public IRepositoryResource []getRepositoryResources();

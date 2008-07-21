@@ -53,7 +53,7 @@ public class SelectResourceRevisionAction extends AbstractRepositoryTeamAction {
 			SVNRevision selectedRevision = panel.getSelectedRevision();
 			resource.setSelectedRevision(selectedRevision);
 			
-			LocateResourceURLInHistoryOperation locateOp = new LocateResourceURLInHistoryOperation(new IRepositoryResource[] {resource}, true);
+			LocateResourceURLInHistoryOperation locateOp = new LocateResourceURLInHistoryOperation(new IRepositoryResource[] {resource});
 			AbstractActionOperation mainOp = new AddRevisionLinkOperation(locateOp, selectedRevision);
 			CompositeOperation op = new CompositeOperation(mainOp.getId());
 			op.add(locateOp);

@@ -58,7 +58,6 @@ public class BranchTagSelectionComposite extends Composite {
 	protected RevisionComposite secondRevisionComposite;
 	protected IValidationManager validationManager;
 	protected IRepositoryResource baseResource;
-	protected boolean stopOnCopy;
 	protected boolean considerStructure;
 	protected int type;
 	protected String url;
@@ -69,13 +68,12 @@ public class BranchTagSelectionComposite extends Composite {
 	
 	protected String ignored;
 		
-	public BranchTagSelectionComposite(Composite parent, int style, IRepositoryResource baseResource, String historyKey, IValidationManager validationManager, int type, boolean stopOnCopy) {
+	public BranchTagSelectionComposite(Composite parent, int style, IRepositoryResource baseResource, String historyKey, IValidationManager validationManager, int type) {
 		super(parent, style);
 		this.baseResource = baseResource;
 		this.inputHistory = new UserInputHistory(historyKey);
 		this.validationManager = validationManager;
 		this.type = type;
-		this.stopOnCopy = stopOnCopy;
 		this.ignored = SVNTeamUIPlugin.instance().getResource(this.type == BranchTagSelectionComposite.BRANCH_OPERATED ? "Branch.Read.Separator" : "Tag.Read.Separator");
 		this.considerStructure = 
 			baseResource.getRepositoryLocation().isStructureEnabled() &&
@@ -200,7 +198,7 @@ public class BranchTagSelectionComposite extends Composite {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		revisions.setLayoutData(data);
-		this.revisionComposite = new RevisionComposite(revisions, this.validationManager, this.stopOnCopy, new String[] {SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.Revision"), SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.HeadRevision")}, SVNRevision.HEAD) {
+		this.revisionComposite = new RevisionComposite(revisions, this.validationManager, true, new String[] {SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.Revision"), SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.HeadRevision")}, SVNRevision.HEAD) {
 			public void additionalValidation() {
 				BranchTagSelectionComposite.this.validationManager.validateContent();
 			}

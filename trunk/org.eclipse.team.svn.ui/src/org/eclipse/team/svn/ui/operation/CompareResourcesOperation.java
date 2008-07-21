@@ -112,7 +112,7 @@ public class CompareResourcesOperation extends AbstractActionOperation {
 		if (!monitor.isCanceled() && fetchRemote) {
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-					LocateResourceURLInHistoryOperation op = new LocateResourceURLInHistoryOperation(diffPair, true);
+					LocateResourceURLInHistoryOperation op = new LocateResourceURLInHistoryOperation(diffPair);
 					ProgressMonitorUtility.doTaskExternal(op, monitor);
 					if (op.getExecutionState() != IActionOperation.OK) {
 						CompareResourcesOperation.this.reportStatus(op.getStatus());

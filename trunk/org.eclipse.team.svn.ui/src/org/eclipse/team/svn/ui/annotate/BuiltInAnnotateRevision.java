@@ -70,7 +70,7 @@ public class BuiltInAnnotateRevision extends Revision {
 	}
 	
 	public String getId() {
-		return this.mergeInfoList != null ? this.id + "*" : this.id;
+		return this.mergeInfoList != null ? this.id + "+" : this.id;
 	}
 	
 	public void addLine(int line) {

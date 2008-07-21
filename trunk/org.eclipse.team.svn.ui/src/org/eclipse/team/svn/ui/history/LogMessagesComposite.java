@@ -22,7 +22,10 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -75,7 +78,7 @@ public class LogMessagesComposite extends SashForm {
 	
 	protected SashForm innerSashForm;
     
-	protected TreeViewer historyTable;
+	protected CheckboxTreeViewer historyTable;
 	protected ISelectionChangedListener historyTableListener;
 	protected Font currentRevisionFont;
 	protected AffectedPathsComposite affectedPathsComposite;
@@ -86,11 +89,13 @@ public class LogMessagesComposite extends SashForm {
 
 	protected HistoryActionManager actionManager;
 	protected ISVNHistoryViewInfo info;
+	protected boolean useCheckboxes;
 	
-	public LogMessagesComposite(Composite parent, boolean multiSelect, ISVNHistoryViewInfo info) {
+	public LogMessagesComposite(Composite parent, boolean multiSelect, boolean useCheckboxes, ISVNHistoryViewInfo info) {
 	    super(parent, SWT.VERTICAL);
 		
 	    this.info = info;
+		this.useCheckboxes = useCheckboxes;
 		this.rootCategory = new RootHistoryCategory(info);
 	    
 		this.initializeFont();
@@ -155,12 +160,23 @@ public class LogMessagesComposite extends SashForm {
 	}
 	
 	public SVNLogEntry []getSelectedLogMessages() {
-		IStructuredSelection tSelection = (IStructuredSelection)this.historyTable.getSelection();
 		ArrayList<SVNLogEntry> entries = new ArrayList<SVNLogEntry>();
-		for (Iterator it = tSelection.iterator(); it.hasNext(); ) {
-			ILogNode node = (ILogNode)it.next();
-			if (node.getType() == ILogNode.TYPE_SVN) {
-				entries.add((SVNLogEntry)node.getEntity());
+		if (this.useCheckboxes) {
+			Object []checked = this.historyTable.getCheckedElements();
+			for (Object current : checked) {
+				ILogNode node = (ILogNode)current;
+				if (node.getType() == ILogNode.TYPE_SVN) {
+					entries.add((SVNLogEntry)node.getEntity());
+				}
+			}
+		}
+		else {
+			IStructuredSelection tSelection = (IStructuredSelection)this.historyTable.getSelection();
+			for (Iterator it = tSelection.iterator(); it.hasNext(); ) {
+				ILogNode node = (ILogNode)it.next();
+				if (node.getType() == ILogNode.TYPE_SVN) {
+					entries.add((SVNLogEntry)node.getEntity());
+				}
 			}
 		}
 		return entries.toArray(new SVNLogEntry[entries.size()]);
@@ -215,7 +231,7 @@ public class LogMessagesComposite extends SashForm {
 	private void initializeTableView(int style) {
 		this.innerSashForm = new SashForm(this, SWT.VERTICAL);
 		
-		Tree treeTable = new Tree(this.innerSashForm, style | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
+		Tree treeTable = new Tree(this.innerSashForm, style | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | (this.useCheckboxes ? SWT.CHECK : SWT.NONE));
 		treeTable.setHeaderVisible(true);
 		treeTable.setLinesVisible(true);
 		TableLayout layout = new TableLayout();
@@ -229,7 +245,7 @@ public class LogMessagesComposite extends SashForm {
 		this.innerSashForm.setWeights(new int[] {75, 25});
 		this.setWeights(new int[] {70, 30});		
 		
-		this.historyTable = new TreeViewer(treeTable);
+		this.historyTable = new CheckboxTreeViewer(treeTable);
 
 		//creating a comparator now to get listeners for columns
 		HistoryTableComparator comparator = new HistoryTableComparator(this.historyTable);
@@ -339,6 +355,43 @@ public class LogMessagesComposite extends SashForm {
 		};
         this.historyTable.addSelectionChangedListener(this.historyTableListener);
 		
+        if (this.useCheckboxes) {
+            this.historyTable.addCheckStateListener(new ICheckStateListener() {
+				public void checkStateChanged(CheckStateChangedEvent event) {
+					boolean isChecked = event.getChecked();
+					ILogNode checkedNode = (ILogNode)event.getElement();
+					if (checkedNode.getType() == ILogNode.TYPE_CATEGORY) {
+						for (ILogNode node : checkedNode.getChildren()) {
+							LogMessagesComposite.this.historyTable.setChecked(node, isChecked);
+						}
+						LogMessagesComposite.this.historyTable.setGrayed(checkedNode, false);
+					}
+					else if (checkedNode.getType() == ILogNode.TYPE_SVN) {
+						if (checkedNode.getParent().getType() == ILogNode.TYPE_SVN) {
+							LogMessagesComposite.this.historyTable.setChecked(checkedNode, false);// could fail if many revisions with the same id are present
+						}
+						else {
+							int uncheckedCount = 0;
+							ILogNode parent = checkedNode.getParent();
+							ILogNode []children = parent.getChildren();
+							for (ILogNode node : children) {
+								if (!LogMessagesComposite.this.historyTable.getChecked(node)) {
+									uncheckedCount++;
+								}
+							}
+							if (uncheckedCount == children.length) {
+								LogMessagesComposite.this.historyTable.setChecked(parent, false);
+								LogMessagesComposite.this.historyTable.setGrayed(parent, false);
+							}
+							else {
+								LogMessagesComposite.this.historyTable.setChecked(parent, true);
+								LogMessagesComposite.this.historyTable.setGrayed(parent, uncheckedCount > 0);
+							}
+						}
+					}
+				}
+			});
+        }
 		this.historyTable.setAutoExpandLevel(2); //auto-expand all categories
         this.historyTable.setInput(new CategoryLogNode(this.rootCategory));
 	}

@@ -28,15 +28,13 @@ public class ReplaceBranchTagPanel extends AbstractDialogPanel {
 	protected IRepositoryResource selectedResource;
 	protected int type;
 	protected long currentRevision;
-	protected boolean stopOnCopy;
 	protected String historyKey;
 	protected BranchTagSelectionComposite selectionComposite;
 	
-	public ReplaceBranchTagPanel(IRepositoryResource baseResource, long currentRevision, int type, boolean stopOnCopy) {
+	public ReplaceBranchTagPanel(IRepositoryResource baseResource, long currentRevision, int type) {
 		super();
 		this.selectedResource = baseResource;
 		this.type = type;
-		this.stopOnCopy = stopOnCopy;
 		if (type == BranchTagSelectionComposite.BRANCH_OPERATED) {
 			this.dialogTitle = SVNTeamUIPlugin.instance().getResource("Replace.Branch.Title");
 			this.dialogDescription = SVNTeamUIPlugin.instance().getResource("Replace.Branch.Description");
@@ -53,7 +51,7 @@ public class ReplaceBranchTagPanel extends AbstractDialogPanel {
 	
 	protected void createControlsImpl(Composite parent) {
         GridData data = null;
-        this.selectionComposite = new BranchTagSelectionComposite(parent, SWT.NONE, this.selectedResource, this.historyKey, this, this.type, this.stopOnCopy);
+        this.selectionComposite = new BranchTagSelectionComposite(parent, SWT.NONE, this.selectedResource, this.historyKey, this, this.type);
         data = new GridData(GridData.FILL_HORIZONTAL);
         this.selectionComposite.setLayoutData(data);
         this.selectionComposite.setCurrentRevision(this.currentRevision);

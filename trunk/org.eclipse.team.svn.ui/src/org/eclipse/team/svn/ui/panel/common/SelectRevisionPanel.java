@@ -69,6 +69,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
 	protected IRepositoryResource resource;
 	protected long currentRevision;
 	protected boolean multiSelect;
+	protected boolean useCheckboxes;
 	protected long limit;
 	protected boolean pagingEnabled;
 	protected SVNLogEntry[] selectedLogMessages;
@@ -94,12 +95,9 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
 	protected boolean initialStopOnCopy;
 	protected boolean pending;
 
-	public SelectRevisionPanel(GetLogMessagesOperation msgOp, boolean multiSelect) {
-		this(msgOp, multiSelect, SVNRevision.INVALID_REVISION_NUMBER);
-    }
-
-    public SelectRevisionPanel(GetLogMessagesOperation msgOp, boolean multiSelect, long currentRevision) {
+    public SelectRevisionPanel(GetLogMessagesOperation msgOp, boolean multiSelect, boolean useCheckboxes, long currentRevision) {
     	this.multiSelect = multiSelect;
+    	this.useCheckboxes = useCheckboxes;
         this.dialogTitle = SVNTeamUIPlugin.instance().getResource("SelectRevisionPanel.Title");
         this.dialogDescription = SVNTeamUIPlugin.instance().getResource("SelectRevisionPanel.Description");
         this.defaultMessage = SVNTeamUIPlugin.instance().getResource("SelectRevisionPanel.Message");
@@ -112,6 +110,17 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
 		this.changeFilter = new ChangeNameLogEntryFilter();
 		this.logEntriesFilter = new CompositeLogEntryFilter(new ILogEntryFilter [] {this.authorFilter, this.commentFilter, this.changeFilter});
 	}
+    
+    public static GetLogMessagesOperation getMsgsOp(IRepositoryResource resource, boolean stopOnCopy) {
+    	GetLogMessagesOperation msgsOp = new GetLogMessagesOperation(resource, stopOnCopy);
+		msgsOp.setIncludeMerged(SVNTeamPreferences.getMergeBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MERGE_INCLUDE_MERGED_NAME));
+		
+		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
+		if (SVNTeamPreferences.getHistoryBoolean(store, SVNTeamPreferences.HISTORY_PAGING_ENABLE_NAME)) {
+			msgsOp.setLimit(SVNTeamPreferences.getHistoryInt(store, SVNTeamPreferences.HISTORY_PAGE_SIZE_NAME));
+		}
+		return msgsOp;
+    }
         
 	public String getHelpId() {
     	return "org.eclipse.team.svn.help.revisionLinkDialogContext";
@@ -257,7 +266,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
         group.setLayout(layout);
         group.setLayoutData(new GridData(GridData.FILL_BOTH));
     	
-    	this.history = new LogMessagesComposite(group, this.multiSelect, this);
+    	this.history = new LogMessagesComposite(group, this.multiSelect, this.useCheckboxes, this);
     	data = new GridData(GridData.FILL_BOTH);
     	data.heightHint = 350;
     	this.history.setLayoutData(data);
@@ -387,6 +396,8 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
     }
     
     protected void fetchHistory(final GetLogMessagesOperation msgsOp) {
+		msgsOp.setIncludeMerged(SVNTeamPreferences.getMergeBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MERGE_INCLUDE_MERGED_NAME));
+		
 		final IStructuredSelection selected = (IStructuredSelection)this.history.getTreeViewer().getSelection();
     	IActionOperation showOp = new AbstractActionOperation("Operation.ShowMessages") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
