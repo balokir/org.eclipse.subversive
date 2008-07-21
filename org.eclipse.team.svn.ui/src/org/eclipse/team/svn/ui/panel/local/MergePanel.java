@@ -89,6 +89,10 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
         this.currentRevision = currentRevision;
 	}
 	
+	public boolean isAdvancedMode() {
+		return this.advancedMode;
+	}
+	
     public Point getPrefferedSizeImpl() {
         return new Point(550, 245);
     }
@@ -138,6 +142,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 	protected Composite createSimpleModeView(Composite parent) {
 		GridData data = null;
 		
+//		boolean allowMultiselect = CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() >= ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x;
 		this.simpleSelectionComposite = new RepositoryResourceSelectionComposite(
 				parent, SWT.NONE, new ValidationManagerProxy() {
 					protected AbstractVerifier wrapVerifier(AbstractVerifier verifier) {

@@ -34,16 +34,13 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class LocateResourceURLInHistoryOperation extends AbstractRepositoryOperation implements IRepositoryResourceProvider {
 	protected IRepositoryResource []converted;
-	protected boolean pegAsSelected;
 
-	public LocateResourceURLInHistoryOperation(IRepositoryResource []resources, boolean pegAsSelected) {
+	public LocateResourceURLInHistoryOperation(IRepositoryResource []resources) {
 		super("Operation.LocateURLInHistory", resources);
-		this.pegAsSelected = pegAsSelected;
 	}
 
-	public LocateResourceURLInHistoryOperation(IRepositoryResourceProvider provider, boolean pegAsSelected) {
+	public LocateResourceURLInHistoryOperation(IRepositoryResourceProvider provider) {
 		super("Operation.LocateURLInHistory", provider);
-		this.pegAsSelected = pegAsSelected;
 	}
 
 	public IRepositoryResource []getRepositoryResources() {
@@ -63,11 +60,8 @@ public class LocateResourceURLInHistoryOperation extends AbstractRepositoryOpera
 					public void run(IProgressMonitor monitor) throws Exception {
 						IRepositoryResource result = LocateResourceURLInHistoryOperation.this.processEntry(LocateResourceURLInHistoryOperation.this.converted[idx], monitor);
 						LocateResourceURLInHistoryOperation.this.converted[idx] = LocateResourceURLInHistoryOperation.this.converted[idx] == result ? SVNUtility.copyOf(result) : result;
-						
-						if (LocateResourceURLInHistoryOperation.this.pegAsSelected) {
-							// when URL is corrected peg can be set to selected revision number
-							LocateResourceURLInHistoryOperation.this.converted[idx].setPegRevision(LocateResourceURLInHistoryOperation.this.converted[idx].getSelectedRevision());
-						}
+						// when URL is corrected peg can be set to selected revision number
+						LocateResourceURLInHistoryOperation.this.converted[idx].setPegRevision(LocateResourceURLInHistoryOperation.this.converted[idx].getSelectedRevision());
 					}
 				}, monitor, resources.length);
 			}

@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.ui.composite;
 
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -36,7 +35,6 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.history.filter.RevisionLogEntryFilter;
 import org.eclipse.team.svn.ui.panel.common.SelectRevisionPanel;
-import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifierProxy;
 import org.eclipse.team.svn.ui.verifier.CompositeVerifier;
@@ -247,13 +245,9 @@ public class RevisionComposite extends Composite {
 			
 		this.changeRevisionButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-		    	GetLogMessagesOperation msgsOp = new GetLogMessagesOperation(RevisionComposite.this.selectedResource, RevisionComposite.this.stopOnCopy);
-				IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
-				if (SVNTeamPreferences.getHistoryBoolean(store, SVNTeamPreferences.HISTORY_PAGING_ENABLE_NAME)) {
-					msgsOp.setLimit(SVNTeamPreferences.getHistoryInt(store, SVNTeamPreferences.HISTORY_PAGE_SIZE_NAME));
-				}
+				GetLogMessagesOperation msgsOp = SelectRevisionPanel.getMsgsOp(RevisionComposite.this.selectedResource, RevisionComposite.this.stopOnCopy);
 				if (!UIMonitorUtility.doTaskNowDefault(RevisionComposite.this.getShell(), msgsOp, true).isCancelled() && msgsOp.getExecutionState() == IActionOperation.OK) {
-				    SelectRevisionPanel panel = new SelectRevisionPanel(msgsOp, false, RevisionComposite.this.currentRevision);
+				    SelectRevisionPanel panel = new SelectRevisionPanel(msgsOp, false, false, RevisionComposite.this.currentRevision);
 				    if (RevisionComposite.this.toFilterCurrent) {
 				    	RevisionLogEntryFilter revFilter = new RevisionLogEntryFilter();
 				    	long revNum = SVNRevision.INVALID_REVISION_NUMBER;

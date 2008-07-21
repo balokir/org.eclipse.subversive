@@ -94,6 +94,7 @@ public class RepositoryResourceSelectionComposite extends Composite {
 		this.comboId = comboId;
 		this.foldersOnly = !(baseResource instanceof IRepositoryFile);
 		this.defaultTextType = defaultTextType;
+		
 		this.createControls(defaultTextType);
 	}
 	

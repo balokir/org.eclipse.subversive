@@ -41,7 +41,7 @@ public class CompareWithBranchTagAction extends CompareAction {
 
 	public void runImpl(IAction action) {
         IRepositoryResource first = this.getSelectedRepositoryResources()[0];
-		CompareBranchTagPanel panel = new CompareBranchTagPanel(first, this.type, true);
+		CompareBranchTagPanel panel = new CompareBranchTagPanel(first, this.type);
 		DefaultDialog dlg = new DefaultDialog(this.getShell(), panel);
 		if (dlg.open() == 0){
 			this.doCompare(first, panel.getSelectedResoure());

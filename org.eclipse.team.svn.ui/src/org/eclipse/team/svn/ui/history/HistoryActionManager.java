@@ -763,7 +763,7 @@ public class HistoryActionManager {
 			SVNLogEntry item = (SVNLogEntry)node.getEntity();
 			IRepositoryResource resource = SVNUtility.copyOf(this.view.getRepositoryResource());
 			resource.setSelectedRevision(SVNRevision.fromNumber(item.revision));
-			LocateResourceURLInHistoryOperation locateOp = new LocateResourceURLInHistoryOperation(new IRepositoryResource[] {resource}, true);
+			LocateResourceURLInHistoryOperation locateOp = new LocateResourceURLInHistoryOperation(new IRepositoryResource[] {resource});
 			op.add(locateOp);
 			op.add(new AddRevisionLinkOperation(locateOp, item.revision), new IActionOperation[] {locateOp});
 		}
@@ -1701,7 +1701,7 @@ public class HistoryActionManager {
 			HashSet<IRepositoryResource> resourcesToReturn = new HashSet<IRepositoryResource>();
 			ArrayList<SVNDiffStatus> statusesList = new ArrayList<SVNDiffStatus>();
 			ISVNConnector proxy = this.location.acquireSVNProxy();
-			final LocateResourceURLInHistoryOperation op = new LocateResourceURLInHistoryOperation(new IRepositoryResource[] {this.older, this.newer}, true);
+			final LocateResourceURLInHistoryOperation op = new LocateResourceURLInHistoryOperation(new IRepositoryResource[] {this.older, this.newer});
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
 					ProgressMonitorUtility.doTaskExternal(op, monitor);

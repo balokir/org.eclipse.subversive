@@ -83,7 +83,7 @@ public class CompareRepositoryResourcesOperation extends AbstractActionOperation
 			this.next = toCompare[1];
 		}
 		
-		final LocateResourceURLInHistoryOperation op = new LocateResourceURLInHistoryOperation(new IRepositoryResource[] {this.next, this.prev}, true);
+		final LocateResourceURLInHistoryOperation op = new LocateResourceURLInHistoryOperation(new IRepositoryResource[] {this.next, this.prev});
 		this.protectStep(new IUnprotectedOperation() {
 			public void run(IProgressMonitor monitor) throws Exception {
 				ProgressMonitorUtility.doTaskExternal(op, monitor);
