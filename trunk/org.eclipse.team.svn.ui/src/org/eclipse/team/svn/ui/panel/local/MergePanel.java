@@ -80,6 +80,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 
 	protected IRepositoryResource firstSelectedResource;
 	protected IRepositoryResource secondSelectedResource;
+	protected SVNRevisionRange []selectedRevisions;
 	
 	protected int mode;
 	
@@ -141,6 +142,10 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 		return this.ignoreAncestry;
 	}
 	
+	public SVNRevisionRange []getSelectedRevisions() {
+		return this.selectedRevisions;
+	}
+	
 	public void createControlsImpl(Composite parent) {
 		((GridLayout)parent.getLayout()).verticalSpacing = 2;
 		
@@ -150,11 +155,11 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 		
 		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
 		tabItem.setText(SVNTeamUIPlugin.instance().getResource("MergePanel.1URL"));
-		tabItem.setControl(this.createSimpleModeView(tabFolder));
+		tabItem.setControl(this.create1URLModeView(tabFolder));
 		
 		tabItem = new TabItem(tabFolder, SWT.NONE);
 		tabItem.setText(SVNTeamUIPlugin.instance().getResource("MergePanel.2URL"));
-		tabItem.setControl(this.createAdvancedModeView(tabFolder));
+		tabItem.setControl(this.create2URLModeView(tabFolder));
 		
 		if (CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() >= ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x) {
 			tabItem = new TabItem(tabFolder, SWT.NONE);
@@ -172,7 +177,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
         this.mode = MergePanel.MODE_1URL;
 	}
 	
-	protected Composite createSimpleModeView(Composite parent) {
+	protected Composite create1URLModeView(Composite parent) {
 		GridData data = null;
 		GridLayout layout = null;
 		
@@ -182,7 +187,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		parent.setLayoutData(data);
 		
-//		boolean allowMultiselect = CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() >= ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x;
+		int mode = CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() >= ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x ? RepositoryResourceSelectionComposite.MODE_CHECK : RepositoryResourceSelectionComposite.MODE_TWO;
 		this.simpleSelectionComposite = new RepositoryResourceSelectionComposite(
 				parent, SWT.NONE, new ValidationManagerProxy() {
 					protected AbstractVerifier wrapVerifier(AbstractVerifier verifier) {
@@ -193,7 +198,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 						};
 					}
 				}, MergePanel.FIRST_URL_HISTORY, this.firstSelectedResource, true, 
-				SVNTeamUIPlugin.instance().getResource("MergePanel.Selection.Title"), SVNTeamUIPlugin.instance().getResource("MergePanel.Selection.Description"), RepositoryResourceSelectionComposite.MODE_TWO, RepositoryResourceSelectionComposite.TEXT_LAST);
+				SVNTeamUIPlugin.instance().getResource("MergePanel.Selection.Title"), SVNTeamUIPlugin.instance().getResource("MergePanel.Selection.Description"), mode, RepositoryResourceSelectionComposite.TEXT_LAST);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.simpleSelectionComposite.setLayoutData(data);
 		this.simpleSelectionComposite.setCurrentRevision(this.currentRevision);
@@ -215,7 +220,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 		return parent;
 	}
 	
-	protected Composite createAdvancedModeView(Composite parent) {
+	protected Composite create2URLModeView(Composite parent) {
 		GridData data = null;
 		GridLayout layout = null;
 		
@@ -334,7 +339,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 			mergeOp = new JavaHLMergeOperation(this.to, firstSet, secondSet, true, this.getIgnoreAncestry(), this.getDepth()); 
 		}
 		else if (this.mode == MergePanel.MODE_1URL) {
-			mergeOp = new JavaHLMergeOperation(this.to, firstSet, new SVNRevisionRange[] {new SVNRevisionRange(this.getFirstSelection()[0].getSelectedRevision(), this.getSecondSelection()[0].getSelectedRevision())}, true, this.getIgnoreAncestry(), this.getDepth());
+			mergeOp = new JavaHLMergeOperation(this.to, firstSet, this.getSelectedRevisions(), true, this.getIgnoreAncestry(), this.getDepth());
 		}
 		else {
 			mergeOp = new JavaHLMergeOperation(this.to, firstSet, true);
@@ -399,6 +404,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
     	if (this.mode == MergePanel.MODE_1URL) {
         	this.firstSelectedResource = this.simpleSelectionComposite.getSelectedResource();
     		this.secondSelectedResource = this.simpleSelectionComposite.getSecondSelectedResource();
+    		this.selectedRevisions = this.simpleSelectionComposite.getSelectedRevisions();
         	this.simpleSelectionComposite.saveHistory();
         	
         	this.ignoreAncestry = this.ignoreAncestrySimpleButton.getSelection();
@@ -422,7 +428,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 	}
 
 	protected void setButtonsEnabled(boolean enabled) {
-	    ((IDialogManagerEx)this.manager).setExtendedButtonEnabled(0, SVNTeamPreferences.getMergeBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MERGE_USE_JAVAHL_NAME) || this.mode == MergePanel.MODE_REINTEGRATE);
+	    ((IDialogManagerEx)this.manager).setExtendedButtonEnabled(0, SVNTeamPreferences.getMergeBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MERGE_USE_JAVAHL_NAME) /*|| this.mode == MergePanel.MODE_REINTEGRATE*/);
 	}
 	
 	protected IRepositoryResource []getSelection(IRepositoryResource base) {

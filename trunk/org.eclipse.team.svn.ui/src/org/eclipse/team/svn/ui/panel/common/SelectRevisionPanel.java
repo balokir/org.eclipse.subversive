@@ -11,8 +11,10 @@
 
 package org.eclipse.team.svn.ui.panel.common;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -36,6 +38,7 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.connector.SVNRevisionRange;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -94,7 +97,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
 	protected IPropertyChangeListener configurationListener;
 	protected boolean initialStopOnCopy;
 	protected boolean pending;
-
+	
     public SelectRevisionPanel(GetLogMessagesOperation msgOp, boolean multiSelect, boolean useCheckboxes, long currentRevision) {
     	this.multiSelect = multiSelect;
     	this.useCheckboxes = useCheckboxes;
@@ -132,6 +135,30 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
 
     public SVNLogEntry[] getSelectedLogMessages() {
         return this.selectedLogMessages;
+    }
+    
+    public SVNRevisionRange[] getSelectedRevisions() {
+    	ArrayList<SVNRevisionRange> revisions = new ArrayList<SVNRevisionRange>();
+
+    	List<SVNLogEntry> selected = Arrays.asList(this.selectedLogMessages);
+    	long startRev = SVNRevision.INVALID_REVISION_NUMBER;
+    	long lastRev = SVNRevision.INVALID_REVISION_NUMBER;
+    	for (SVNLogEntry entry : this.logMessages) {
+    		if (selected.indexOf(entry) != -1) {
+    			lastRev = entry.revision;
+    			if (startRev == SVNRevision.INVALID_REVISION_NUMBER) {
+    				startRev = entry.revision;
+    			}
+    		}
+    		else {
+    			if (startRev != SVNRevision.INVALID_REVISION_NUMBER) {
+    				revisions.add(new SVNRevisionRange(startRev, lastRev));
+    				startRev = SVNRevision.INVALID_REVISION_NUMBER;
+    			}
+    		}
+    	}
+    	
+        return revisions.toArray(new SVNRevisionRange[revisions.size()]);
     }
     
     public String getImagePath() {

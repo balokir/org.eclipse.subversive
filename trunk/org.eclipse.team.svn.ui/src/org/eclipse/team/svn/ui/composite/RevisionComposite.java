@@ -11,6 +11,10 @@
 
 package org.eclipse.team.svn.ui.composite;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -25,12 +29,19 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
+import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.connector.SVNRevisionRange;
+import org.eclipse.team.svn.core.connector.ISVNConnector.Options;
 import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
 import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.operation.LoggedOperation;
+import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
 import org.eclipse.team.svn.core.operation.remote.GetLogMessagesOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.history.filter.RevisionLogEntryFilter;
@@ -41,9 +52,10 @@ import org.eclipse.team.svn.ui.verifier.CompositeVerifier;
 import org.eclipse.team.svn.ui.verifier.IValidationManager;
 import org.eclipse.team.svn.ui.verifier.IntegerFieldVerifier;
 import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
+import org.eclipse.team.svn.ui.verifier.RevisionRangesVerifier;
 
 /**
- * Select revision panel
+ * Allows to select a resource revision
  * 
  * @author Sergiy Logvin
  */
@@ -63,10 +75,15 @@ public class RevisionComposite extends Composite {
 	protected Button headRevisionRadioButton;
 	protected Button changeRevisionRadioButton;
 	protected Button changeRevisionButton;
+	protected Button reverseRevisionsButton;
+	protected boolean reverseRevisions;
 	
 	protected IValidationManager validationManager;
 	
-	public RevisionComposite(Composite parent, IValidationManager validationManager, boolean stopOnCopy, String []captions, SVNRevision defaultRevision) {
+	protected boolean checkStyled;
+	protected SVNRevisionRange []revisions;
+	
+	public RevisionComposite(Composite parent, IValidationManager validationManager, boolean stopOnCopy, String []captions, SVNRevision defaultRevision, boolean checkStyled) {
 		super(parent, SWT.NONE);
 		this.stopOnCopy = stopOnCopy;
 		this.toFilterCurrent = false;
@@ -74,6 +91,7 @@ public class RevisionComposite extends Composite {
 		this.lastSelectedRevision = SVNRevision.INVALID_REVISION_NUMBER;
 		this.captions = captions;
 		this.defaultRevision = defaultRevision;
+		this.checkStyled = checkStyled;
 		this.createControls();
 	}
 	
@@ -87,6 +105,43 @@ public class RevisionComposite extends Composite {
 	
 	public SVNRevision getSelectedRevision() {
 		return this.selectedRevision;
+	}
+	
+	public SVNRevisionRange []getSelectedRevisions() {
+		// check for unspecified
+		if (this.revisions[0].from.getKind() == SVNRevision.Kind.START) {
+			ISVNConnector proxy = this.baseResource.getRepositoryLocation().acquireSVNProxy();
+			try {
+				SVNLogEntry []msgs = SVNUtility.logEntries(proxy, SVNUtility.getEntryReference(this.baseResource), SVNRevision.fromNumber(0), this.baseResource.getSelectedRevision(), Options.STOP_ON_COPY | Options.DISCOVER_PATHS, ISVNConnector.EMPTY_LOG_ENTRY_PROPS, 1, new SVNNullProgressMonitor());
+				if (msgs.length > 0) {
+					this.revisions[0] = new SVNRevisionRange(SVNRevision.fromNumber(msgs[0].revision), this.revisions[0].to);
+				}
+			}
+			catch (Exception ex) {
+				LoggedOperation.reportError("RevisionComposite.getSelectedRevisions", ex);
+			}
+			finally {
+				this.baseResource.getRepositoryLocation().releaseSVNProxy(proxy);
+			}
+		}
+		// align range bounds
+		for (int i = 0; i < this.revisions.length; i++) {
+			if (this.reverseRevisions ^ 
+				(this.revisions[i].from.getKind() == SVNRevision.Kind.HEAD || 
+				this.revisions[i].from.getKind() == SVNRevision.Kind.NUMBER && this.revisions[i].to.getKind() == SVNRevision.Kind.NUMBER && ((SVNRevision.Number)this.revisions[i].from).getNumber() > ((SVNRevision.Number)this.revisions[i].to).getNumber())) {
+				this.revisions[i] = new SVNRevisionRange(this.revisions[i].to, this.revisions[i].from);
+			}
+		}
+		//reorder revisions
+		Arrays.sort(this.revisions, new Comparator<SVNRevisionRange>() {
+			public int compare(SVNRevisionRange o1, SVNRevisionRange o2) {
+				long rev1 = ((SVNRevision.Number)o1.from).getNumber();
+				long rev2 = ((SVNRevision.Number)o2.from).getNumber();
+				int retVal = rev1 == rev2 ? 0 : (rev1 < rev2 ? -1 : 1);
+				return RevisionComposite.this.reverseRevisions ? (retVal * -1) : retVal;
+			}
+		});
+		return this.revisions;
 	}
 	
 	public IRepositoryResource getSelectedResource() {
@@ -155,7 +210,7 @@ public class RevisionComposite extends Composite {
         this.setLayout(layout);
 		
 		Group group = new Group(this, SWT.NONE);
-		group.setText(this.captions == null ? SVNTeamUIPlugin.instance().getResource("RevisionComposite.Revision") : this.captions[0]);
+		group.setText(this.captions == null ? SVNTeamUIPlugin.instance().getResource(this.checkStyled ? "RevisionComposite.Revisions" : "RevisionComposite.Revision") : this.captions[0]);
 		layout = new GridLayout();
 		layout.numColumns = 2;
 		group.setLayout(layout);
@@ -164,7 +219,7 @@ public class RevisionComposite extends Composite {
 		group.setLayoutData(data);
 
 		this.headRevisionRadioButton = new Button(group, SWT.RADIO);
-		this.headRevisionRadioButton.setText(this.captions == null ? SVNTeamUIPlugin.instance().getResource("RevisionComposite.HeadRevision") : this.captions[1]);
+		this.headRevisionRadioButton.setText(this.captions == null ? SVNTeamUIPlugin.instance().getResource(this.checkStyled ? "RevisionComposite.All" : "RevisionComposite.HeadRevision") : this.captions[1]);
 		this.headRevisionRadioButton.setLayoutData(new GridData());
 		this.headRevisionRadioButton.setSelection(true);
 
@@ -173,18 +228,14 @@ public class RevisionComposite extends Composite {
 				RevisionComposite.this.validationManager.validateContent();
 				Button button = (Button)e.widget;
 				if (button.getSelection()) {
-					RevisionComposite.this.selectedRevision = RevisionComposite.this.defaultRevision;
 					RevisionComposite.this.changeRevisionButton.setEnabled(false);
 					RevisionComposite.this.revisionField.setEditable(false);
-					RevisionComposite.this.revisionField.setText("");	
+					RevisionComposite.this.defaultToRevisions();
 				}
 				else {
 					RevisionComposite.this.changeRevisionButton.setEnabled(true);
 					RevisionComposite.this.revisionField.setEditable(true);
-					if (RevisionComposite.this.lastSelectedRevision != SVNRevision.INVALID_REVISION_NUMBER) {
-						RevisionComposite.this.revisionField.setText(String.valueOf(RevisionComposite.this.lastSelectedRevision));
-						RevisionComposite.this.selectedRevision = SVNRevision.fromNumber(RevisionComposite.this.lastSelectedRevision);
-					}
+					RevisionComposite.this.textToRevisions();
 				}
 				RevisionComposite.this.additionalValidation();
 			}
@@ -195,7 +246,7 @@ public class RevisionComposite extends Composite {
 		emptyControl.setText("");
 		
 		this.changeRevisionRadioButton = new Button(group, SWT.RADIO);
-		this.changeRevisionRadioButton.setText(SVNTeamUIPlugin.instance().getResource("RevisionComposite.Revision"));
+		this.changeRevisionRadioButton.setText(SVNTeamUIPlugin.instance().getResource(this.checkStyled ? "RevisionComposite.Revisions" : "RevisionComposite.Revision"));
 		
 		final Composite revisionSelection = new Composite(group, SWT.NONE);
 		layout = new GridLayout();
@@ -206,15 +257,20 @@ public class RevisionComposite extends Composite {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		revisionSelection.setLayoutData(data);
 		
-		data = new GridData();
-		data.widthHint = 60;
+		if (this.checkStyled) {
+			data = new GridData(GridData.FILL_HORIZONTAL);
+		}
+		else {
+			data = new GridData();
+			data.widthHint = 60;
+		}
 		this.revisionField = new Text(revisionSelection, SWT.SINGLE | SWT.BORDER);	
 		this.revisionField.setLayoutData(data);
 		this.revisionField.setEditable(false);
 		CompositeVerifier verifier = new CompositeVerifier();
-		String name = SVNTeamUIPlugin.instance().getResource("RevisionComposite.Revision.Verifier");
+		String name = this.changeRevisionRadioButton.getText();
 		verifier.add(new NonEmptyFieldVerifier(name));
-		verifier.add(new IntegerFieldVerifier(name, true));
+		verifier.add(this.checkStyled ? new RevisionRangesVerifier(name) : new IntegerFieldVerifier(name, true));
 		this.validationManager.attachTo(this.revisionField, new AbstractVerifierProxy(verifier) {
 			protected boolean isVerificationEnabled(Control input) {
 				return RevisionComposite.this.changeRevisionRadioButton.getSelection();
@@ -222,17 +278,7 @@ public class RevisionComposite extends Composite {
 		});
 		this.revisionField.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				String input = ((Text)e.widget).getText();
-				try {
-					long selectedRevisionNum = Long.parseLong(input);
-					if (selectedRevisionNum >= 0) {
-					    RevisionComposite.this.lastSelectedRevision = selectedRevisionNum;
-					    RevisionComposite.this.selectedRevision = SVNRevision.fromNumber(selectedRevisionNum);
-					}
-				}
-				catch (NumberFormatException ex) {
-					//don't handle this exception - already handled by the verifier
-				}
+				RevisionComposite.this.textToRevisions();
 			}
 		});
 		
@@ -242,12 +288,12 @@ public class RevisionComposite extends Composite {
 		data.widthHint = DefaultDialog.computeButtonWidth(this.changeRevisionButton);
 		this.changeRevisionButton.setLayoutData(data);
 		this.changeRevisionButton.setEnabled(false);
-			
+		
 		this.changeRevisionButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				GetLogMessagesOperation msgsOp = SelectRevisionPanel.getMsgsOp(RevisionComposite.this.selectedResource, RevisionComposite.this.stopOnCopy);
 				if (!UIMonitorUtility.doTaskNowDefault(RevisionComposite.this.getShell(), msgsOp, true).isCancelled() && msgsOp.getExecutionState() == IActionOperation.OK) {
-				    SelectRevisionPanel panel = new SelectRevisionPanel(msgsOp, false, false, RevisionComposite.this.currentRevision);
+				    SelectRevisionPanel panel = new SelectRevisionPanel(msgsOp, RevisionComposite.this.checkStyled, RevisionComposite.this.checkStyled, RevisionComposite.this.currentRevision);
 				    if (RevisionComposite.this.toFilterCurrent) {
 				    	RevisionLogEntryFilter revFilter = new RevisionLogEntryFilter();
 				    	long revNum = SVNRevision.INVALID_REVISION_NUMBER;
@@ -263,15 +309,39 @@ public class RevisionComposite extends Composite {
 				    }
 					DefaultDialog dialog = new DefaultDialog(RevisionComposite.this.getShell(), panel);
 					if (dialog.open() == 0) {
-					    long selectedRevisionNum = panel.getSelectedRevision();
-					    RevisionComposite.this.lastSelectedRevision = selectedRevisionNum;
-					    RevisionComposite.this.selectedRevision = SVNRevision.fromNumber(selectedRevisionNum);
-					    RevisionComposite.this.revisionField.setText(String.valueOf(selectedRevisionNum));
+						if (RevisionComposite.this.checkStyled) {
+							RevisionComposite.this.revisions = panel.getSelectedRevisions();
+							String text = "";
+							for (SVNRevisionRange range : RevisionComposite.this.revisions) {
+								text += text.length() == 0 ? range.toString() : (", " + range.toString());
+							}
+						    RevisionComposite.this.revisionField.setText(text);
+						}
+						else {
+						    long selectedRevisionNum = panel.getSelectedRevision();
+						    RevisionComposite.this.lastSelectedRevision = selectedRevisionNum;
+						    RevisionComposite.this.selectedRevision = SVNRevision.fromNumber(selectedRevisionNum);
+						    RevisionComposite.this.revisionField.setText(String.valueOf(selectedRevisionNum));
+						}
 					}
 				}
 				RevisionComposite.this.additionalValidation();
 			}
-		});		
+		});
+		if (this.checkStyled) {
+			this.reverseRevisionsButton = new Button(group, SWT.CHECK);
+			this.reverseRevisionsButton.setText(SVNTeamUIPlugin.instance().getResource("RevisionComposite.Reverse"));
+			data = new GridData(GridData.FILL_HORIZONTAL);
+			data.horizontalSpan = 2;
+			this.reverseRevisionsButton.setLayoutData(data);
+			this.reverseRevisionsButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					RevisionComposite.this.reverseRevisions = ((Button)e.widget).getSelection();
+				}
+			});
+		}
+		
+		this.defaultToRevisions();
 	}
 	
 	public void setEnabled(boolean enabled) {
@@ -283,6 +353,39 @@ public class RevisionComposite extends Composite {
 	
 	public void additionalValidation() {
 		//override this if there is a need to perform additional validation
+	}
+	
+	protected void defaultToRevisions() {
+		if (this.checkStyled) {
+			this.revisions = new SVNRevisionRange[] {new SVNRevisionRange(SVNRevision.START, this.defaultRevision)};
+		}
+		else {
+			this.selectedRevision = this.defaultRevision;
+		}
+	}
+	
+	protected void textToRevisions() {
+		String input = this.revisionField.getText();
+		try {
+			if (this.checkStyled) {
+				String []parts = input.split(",");
+		    	ArrayList<SVNRevisionRange> revisions = new ArrayList<SVNRevisionRange>();
+				for (String part : parts) {
+					revisions.add(new SVNRevisionRange(part.trim()));
+				}
+				this.revisions = revisions.toArray(new SVNRevisionRange[revisions.size()]);
+			}
+			else {
+				long selectedRevisionNum = Long.parseLong(input);
+				if (selectedRevisionNum >= 0) {
+				    this.lastSelectedRevision = selectedRevisionNum;
+				    this.selectedRevision = SVNRevision.fromNumber(selectedRevisionNum);
+				}
+			}
+		}
+		catch (NumberFormatException ex) {
+			//don't handle this exception - already handled by the verifier
+		}
 	}
 	
 }
