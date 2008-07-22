@@ -20,7 +20,11 @@ import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNMergeStatus;
 import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.operation.local.AbstractMergeSet;
 import org.eclipse.team.svn.core.operation.local.IRemoteStatusOperation;
+import org.eclipse.team.svn.core.operation.local.MergeSet1URL;
+import org.eclipse.team.svn.core.operation.local.MergeSet2URL;
+import org.eclipse.team.svn.core.operation.local.MergeSetReintegrate;
 import org.eclipse.team.svn.core.operation.local.MergeStatusOperation;
 import org.eclipse.team.svn.core.resource.IChangeStateProvider;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -129,7 +133,7 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 			return null;
 		}
 		if (endResourceChange.getRevision() != SVNRevision.INVALID_REVISION_NUMBER) {
-			IRepositoryResource originator = this.scope.getMergeSet().fromEnd[0];
+			IRepositoryResource originator = this.getEndOriginator();
 			String decodedUrl = SVNUtility.decodeURL(current.endUrl);
 			originator = endProvider.getNodeKind() == SVNEntry.Kind.DIR ? (IRepositoryResource)originator.asRepositoryContainer(decodedUrl, false) : originator.asRepositoryFile(decodedUrl, false);
 			originator.setSelectedRevision(SVNRevision.fromNumber(current.textStatus == SVNEntryStatus.Kind.DELETED ? current.endRevision - 1 : current.endRevision));
@@ -176,15 +180,40 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 		IResourceChange startResourceChange = SVNRemoteStorage.instance().asResourceChange(startProvider, false);
 		if (startResourceChange.getRevision() != SVNRevision.INVALID_REVISION_NUMBER) {
 			String decodedUrl = SVNUtility.decodeURL(current.startUrl);
-			IRepositoryResource originator = this.scope.getMergeSet().fromStart[0];
+			IRepositoryResource originator = this.getStartOriginator();
 			originator = startProvider.getNodeKind() == SVNEntry.Kind.DIR ? (IRepositoryResource)originator.asRepositoryContainer(decodedUrl, false) : originator.asRepositoryFile(decodedUrl, false);
 			originator.setSelectedRevision(SVNRevision.fromNumber(current.startRevision));
-			originator.setPegRevision(this.scope.getMergeSet().fromStart[0].getPegRevision());
 			startResourceChange.setOriginator(originator);
 		}
 		this.baseStatusCache.setBytes(startResourceChange.getResource(), SVNRemoteStorage.instance().resourceChangeAsBytes(startResourceChange));
 		
 		return endResourceChange;
+	}
+	
+	protected IRepositoryResource getEndOriginator() {
+		AbstractMergeSet mergeSet = this.scope.getMergeSet();
+		if (mergeSet instanceof MergeSet1URL) {
+			return ((MergeSet1URL)mergeSet).from[0];
+		}
+		else if (mergeSet instanceof MergeSet2URL) {
+			return ((MergeSet2URL)mergeSet).fromEnd[0];
+		}
+		else {
+			return ((MergeSetReintegrate)mergeSet).from[0];
+		}
+	}
+	
+	protected IRepositoryResource getStartOriginator() {
+		AbstractMergeSet mergeSet = this.scope.getMergeSet();
+		if (mergeSet instanceof MergeSet1URL) {
+			return ((MergeSet1URL)mergeSet).from[0];
+		}
+		else if (mergeSet instanceof MergeSet2URL) {
+			return ((MergeSet2URL)mergeSet).fromStart[0];
+		}
+		else {
+			return ((MergeSetReintegrate)mergeSet).from[0];
+		}
 	}
 	
 	protected boolean isIncoming(SVNEntryStatus status) {

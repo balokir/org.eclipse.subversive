@@ -16,30 +16,19 @@ import java.util.Arrays;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.svn.core.connector.SVNMergeStatus;
-import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.resource.IRepositoryResource;
-import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
  * Merge scope info: merge to, merge from resources and merge start revision
  * 
  * @author Alexander Gurov
  */
-public class MergeSet {
+public abstract class AbstractMergeSet {
     public final IResource []to;
-    public final IRepositoryResource []fromStart;
-    public final IRepositoryResource []fromEnd;
-    public final boolean ignoreAncestry;
-    public final int depth;
     
     protected ArrayList<SVNMergeStatus> statuses;
     
-    public MergeSet(IResource []to, IRepositoryResource []fromStart, IRepositoryResource []fromEnd, boolean ignoreAncestry, int depth) {
+    public AbstractMergeSet(IResource []to) {
     	this.to = to;
-    	this.fromStart = fromStart;
-    	this.fromEnd = fromEnd;
-    	this.ignoreAncestry = ignoreAncestry;
-    	this.depth = depth;
     	this.statuses = new ArrayList<SVNMergeStatus>();
     }
 
@@ -58,12 +47,4 @@ public class MergeSet {
 		}
 	}
     
-	protected static IRepositoryResource []makeFromStart(IRepositoryResource []fromEnd, SVNRevision start) {
-		IRepositoryResource []fromStart = new IRepositoryResource[fromEnd.length];
-		for (int i = 0; i < fromEnd.length; i++) {
-			fromStart[i] = SVNUtility.copyOf(fromEnd[i]);
-			fromStart[i].setSelectedRevision(start);
-		}
-		return fromStart;
-	}
 }

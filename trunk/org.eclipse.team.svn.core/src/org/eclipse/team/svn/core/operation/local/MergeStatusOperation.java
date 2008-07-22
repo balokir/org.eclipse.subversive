@@ -22,10 +22,8 @@ import org.eclipse.team.svn.core.connector.ISVNMergeStatusCallback;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNMergeStatus;
-import org.eclipse.team.svn.core.connector.SVNRevisionRange;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
-import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
@@ -37,10 +35,10 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * @author Alexander Gurov
  */
 public class MergeStatusOperation extends AbstractWorkingCopyOperation implements IRemoteStatusOperation {
-	protected MergeSet info;
+	protected AbstractMergeSet info;
 	protected SVNMergeStatus []retVal;
 	
-	public MergeStatusOperation(MergeSet info, IResource []resources) {
+	public MergeStatusOperation(AbstractMergeSet info, IResource []resources) {
 		super("Operation.MergeStatus", resources == null ? info.to : resources);
 		this.info = info;
 	}
@@ -60,30 +58,23 @@ public class MergeStatusOperation extends AbstractWorkingCopyOperation implement
 			}
 		};
 		
-		final long options = this.info.ignoreAncestry ? (ISVNConnector.Options.IGNORE_ANCESTRY | ISVNConnector.Options.FORCE) : ISVNConnector.Options.FORCE;
 		for (int i = 0; i < this.info.to.length && !monitor.isCanceled(); i++) {
 			if (resources.contains(this.info.to[i])) {
-				final IRepositoryResource fromStart = this.info.fromStart[i];
-				final IRepositoryResource fromEnd = this.info.fromEnd[i];
-				final ISVNConnector proxy = fromEnd.getRepositoryLocation().acquireSVNProxy();
-				final String wcPath = FileUtility.getWorkingCopyPath(this.info.to[i]);
-				
 				ProgressMonitorUtility.setTaskInfo(monitor, this, this.info.to[i].getFullPath().toString());
-				
+				final int idx = i;
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(IProgressMonitor monitor) throws Exception {
-						SVNEntryRevisionReference startRef = SVNUtility.getEntryRevisionReference(fromStart);
-						SVNEntryRevisionReference endRef = SVNUtility.getEntryRevisionReference(fromEnd);
-						if (SVNUtility.useSingleReferenceSignature(startRef, endRef)) {
-							proxy.mergeStatus(endRef, new SVNRevisionRange [] {new SVNRevisionRange(startRef.revision, endRef.revision)}, wcPath, MergeStatusOperation.this.info.depth, options, cb, new SVNProgressMonitor(MergeStatusOperation.this, monitor, null));
+						if (MergeStatusOperation.this.info instanceof MergeSet1URL) {
+							MergeStatusOperation.this.doMerge1URL(idx, cb, monitor);
+						}
+						else if (MergeStatusOperation.this.info instanceof MergeSet2URL) {
+							MergeStatusOperation.this.doMerge2URL(idx, cb, monitor);
 						}
 						else {
-							proxy.mergeStatus(startRef, endRef, wcPath, MergeStatusOperation.this.info.depth, options, cb, new SVNProgressMonitor(MergeStatusOperation.this, monitor, null));
+							MergeStatusOperation.this.doMergeReintegrate(idx, cb, monitor);
 						}
 					}
 				}, monitor, this.info.to.length);
-				
-				fromEnd.getRepositoryLocation().releaseSVNProxy(proxy);
 			}
 		}
 		this.info.addStatuses(this.retVal = st.toArray(new SVNMergeStatus[st.size()]));
@@ -95,6 +86,48 @@ public class MergeStatusOperation extends AbstractWorkingCopyOperation implement
 
     public void setPegRevision(IResourceChange change) {
         
+    }
+    
+    protected void doMerge1URL(int idx, ISVNMergeStatusCallback cb, IProgressMonitor monitor) throws Exception {
+    	MergeSet1URL info = (MergeSet1URL)this.info;
+		SVNEntryRevisionReference mergeRef = SVNUtility.getEntryRevisionReference(info.from[idx]);
+		String wcPath = FileUtility.getWorkingCopyPath(info.to[idx]);
+		long options = info.ignoreAncestry ? (ISVNConnector.Options.IGNORE_ANCESTRY | ISVNConnector.Options.FORCE) : ISVNConnector.Options.FORCE;
+		ISVNConnector proxy = info.from[idx].getRepositoryLocation().acquireSVNProxy();
+		try {
+			proxy.mergeStatus(mergeRef, info.revisions, wcPath, info.depth, options, cb, new SVNProgressMonitor(this, monitor, null));
+		}
+		finally {
+			info.from[idx].getRepositoryLocation().releaseSVNProxy(proxy);
+		}
+    }
+    
+    protected void doMerge2URL(int idx, ISVNMergeStatusCallback cb, IProgressMonitor monitor) throws Exception {
+    	MergeSet2URL info = (MergeSet2URL)this.info;
+		SVNEntryRevisionReference startRef = SVNUtility.getEntryRevisionReference(info.fromStart[idx]);
+		SVNEntryRevisionReference endRef = SVNUtility.getEntryRevisionReference(info.fromEnd[idx]);
+		String wcPath = FileUtility.getWorkingCopyPath(info.to[idx]);
+		long options = info.ignoreAncestry ? (ISVNConnector.Options.IGNORE_ANCESTRY | ISVNConnector.Options.FORCE) : ISVNConnector.Options.FORCE;
+		ISVNConnector proxy = info.fromEnd[idx].getRepositoryLocation().acquireSVNProxy();
+		try {
+			proxy.mergeStatus(startRef, endRef, wcPath, info.depth, options, cb, new SVNProgressMonitor(this, monitor, null));
+		}
+		finally {
+			info.fromEnd[idx].getRepositoryLocation().releaseSVNProxy(proxy);
+		}
+    }
+    
+    protected void doMergeReintegrate(int idx, ISVNMergeStatusCallback cb, IProgressMonitor monitor) throws Exception {
+    	MergeSetReintegrate info = (MergeSetReintegrate)this.info;
+		SVNEntryRevisionReference mergeRef = SVNUtility.getEntryRevisionReference(info.from[idx]);
+		String wcPath = FileUtility.getWorkingCopyPath(info.to[idx]);
+		ISVNConnector proxy = info.from[idx].getRepositoryLocation().acquireSVNProxy();
+		try {
+			proxy.mergeStatus(mergeRef, wcPath, ISVNConnector.Options.NONE, cb, new SVNProgressMonitor(this, monitor, null));
+		}
+		finally {
+			info.from[idx].getRepositoryLocation().releaseSVNProxy(proxy);
+		}
     }
     
 }

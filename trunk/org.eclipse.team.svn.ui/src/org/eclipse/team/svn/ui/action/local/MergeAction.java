@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.connector.SVNRevisionRange;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.JavaHLMergeOperation;
@@ -68,13 +69,21 @@ public class MergeAction extends AbstractNonRecursiveTeamAction {
 			LocateResourceURLInHistoryOperation locateSecond = new LocateResourceURLInHistoryOperation(panel.getSecondSelection());
 			IRepositoryResourceProvider firstSet = locateFirst;
 			IRepositoryResourceProvider secondSet = locateSecond;
-			if (!panel.isAdvancedMode()) {
+			if (panel.getMode() == MergePanel.MODE_1URL) {
 				firstSet = new IRepositoryResourceProvider.DefaultRepositoryResourceProvider(panel.getFirstSelection());
-				secondSet = new IRepositoryResourceProvider.DefaultRepositoryResourceProvider(panel.getSecondSelection());
 			}
 			IActionOperation mergeOp = null;
-	    	if (SVNTeamPreferences.getMergeBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MERGE_USE_JAVAHL_NAME)) {
-		    	JavaHLMergeOperation mainOp = new JavaHLMergeOperation(resources, firstSet, secondSet, false, panel.getIgnoreAncestry(), panel.getDepth());
+	    	if (SVNTeamPreferences.getMergeBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MERGE_USE_JAVAHL_NAME) || panel.getMode() == MergePanel.MODE_REINTEGRATE) {
+		    	JavaHLMergeOperation mainOp = null;
+				if (panel.getMode() == MergePanel.MODE_2URL) {
+					mainOp = new JavaHLMergeOperation(resources, firstSet, secondSet, true, panel.getIgnoreAncestry(), panel.getDepth()); 
+				}
+				else if (panel.getMode() == MergePanel.MODE_1URL) {
+					mainOp = new JavaHLMergeOperation(resources, firstSet, new SVNRevisionRange[] {new SVNRevisionRange(panel.getFirstSelection()[0].getSelectedRevision(), panel.getSecondSelection()[0].getSelectedRevision())}, true, panel.getIgnoreAncestry(), panel.getDepth());
+				}
+				else {
+					mainOp = new JavaHLMergeOperation(resources, firstSet, true);
+				}
 		    	CompositeOperation op = new CompositeOperation(mainOp.getId());
 	    		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
 	    		op.add(saveOp);
@@ -83,13 +92,21 @@ public class MergeAction extends AbstractNonRecursiveTeamAction {
 		    	op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(resources)));
 		    	mergeOp = op;
 	    	}
-	    	else {
-	    		mergeOp = new ShowMergeViewOperation(resources, firstSet, secondSet, panel.getIgnoreAncestry(), this.getTargetPart(), panel.getDepth());
-	    	}
-	    	if (panel.isAdvancedMode()) {
+	    	else if (panel.getMode() == MergePanel.MODE_2URL) {
+				mergeOp = new ShowMergeViewOperation(resources, firstSet, secondSet, panel.getIgnoreAncestry(), panel.getDepth(), this.getTargetPart());
+			}
+			else if (panel.getMode() == MergePanel.MODE_1URL) {
+				mergeOp = new ShowMergeViewOperation(resources, firstSet, new SVNRevisionRange[] {new SVNRevisionRange(panel.getFirstSelection()[0].getSelectedRevision(), panel.getSecondSelection()[0].getSelectedRevision())}, panel.getIgnoreAncestry(), panel.getDepth(), this.getTargetPart());
+			}
+			else {
+				mergeOp = new ShowMergeViewOperation(resources, firstSet, this.getTargetPart());
+			}
+	    	if (panel.getMode() != MergePanel.MODE_1URL) {
 	    		CompositeOperation op = new CompositeOperation(mergeOp.getId());
 	    		op.add(locateFirst);
-	    		op.add(locateSecond);
+		    	if (panel.getMode() == MergePanel.MODE_2URL) {
+		    		op.add(locateSecond);
+		    	}
 	    		op.add(mergeOp);
 		    	this.runScheduled(op);
 	    	}
