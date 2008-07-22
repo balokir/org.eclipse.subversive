@@ -333,7 +333,7 @@ public class RepositoryResourceSelectionComposite extends Composite {
 		data.horizontalSpan = this.mode == MODE_TWO ? 1 : 2;
 		this.revisionComposite.setLayoutData(data);
 		this.revisionComposite.setBaseResource(this.baseResource);
-		this.revisionComposite.setSelectedResource(this.baseResource);
+		this.revisionComposite.setSelectedResource(this.getSelectedResource());
 		if (this.mode == MODE_TWO) {
 			this.secondRevisionComposite = new RevisionComposite(revisions, this.validationManager, this.stopOnCopy, new String[] {SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.StopRevision"), SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.HeadRevision")}, SVNRevision.HEAD, false) {
 				public void additionalValidation() {
@@ -343,7 +343,7 @@ public class RepositoryResourceSelectionComposite extends Composite {
 			data = new GridData(GridData.FILL_HORIZONTAL);
 			this.secondRevisionComposite.setLayoutData(data);
 			this.secondRevisionComposite.setBaseResource(this.baseResource);
-			this.secondRevisionComposite.setSelectedResource(this.baseResource);
+			this.secondRevisionComposite.setSelectedResource(this.getSelectedResource());
 		}
 	}
 	
