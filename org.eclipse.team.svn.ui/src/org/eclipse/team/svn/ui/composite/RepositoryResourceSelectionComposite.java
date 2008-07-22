@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.svn.core.connector.SVNEntryReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.connector.SVNRevisionRange;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.SVNUtility;
@@ -48,7 +49,7 @@ import org.eclipse.team.svn.ui.verifier.URLVerifier;
 public class RepositoryResourceSelectionComposite extends Composite {
 	public static final int MODE_DEFAULT = 0;
 	public static final int MODE_TWO = 1;
-	public static final int MODE_AUTO = 2;
+	public static final int MODE_CHECK = 2;
 	
 	public static final int TEXT_NONE = 0;
 	public static final int TEXT_BASE = 1;
@@ -63,7 +64,7 @@ public class RepositoryResourceSelectionComposite extends Composite {
 	protected IRepositoryResource baseResource;
 	protected boolean stopOnCopy;
 	protected boolean toFilterCurrent;
-	protected int twoRevisions;
+	protected int mode;
 	
 	protected String url;
 
@@ -77,11 +78,11 @@ public class RepositoryResourceSelectionComposite extends Composite {
 	
 	protected int defaultTextType;
 
-	public RepositoryResourceSelectionComposite(Composite parent, int style, IValidationManager validationManager, String historyKey, IRepositoryResource baseResource, boolean stopOnCopy, String selectionTitle, String selectionDescription, int twoRevisions, int defaultTextType) {
-		this(parent, style, validationManager, historyKey, "RepositoryResourceSelectionComposite.URL", baseResource, stopOnCopy, selectionTitle, selectionDescription, twoRevisions, defaultTextType);
+	public RepositoryResourceSelectionComposite(Composite parent, int style, IValidationManager validationManager, String historyKey, IRepositoryResource baseResource, boolean stopOnCopy, String selectionTitle, String selectionDescription, int mode, int defaultTextType) {
+		this(parent, style, validationManager, historyKey, "RepositoryResourceSelectionComposite.URL", baseResource, stopOnCopy, selectionTitle, selectionDescription, mode, defaultTextType);
 	}
 	
-	public RepositoryResourceSelectionComposite(Composite parent, int style, IValidationManager validationManager, String historyKey, String comboId, IRepositoryResource baseResource, boolean stopOnCopy, String selectionTitle, String selectionDescription, int twoRevisions, int defaultTextType) {
+	public RepositoryResourceSelectionComposite(Composite parent, int style, IValidationManager validationManager, String historyKey, String comboId, IRepositoryResource baseResource, boolean stopOnCopy, String selectionTitle, String selectionDescription, int mode, int defaultTextType) {
 		super(parent, style);
 		this.stopOnCopy = stopOnCopy;
 		this.toFilterCurrent = false;
@@ -90,7 +91,7 @@ public class RepositoryResourceSelectionComposite extends Composite {
 		this.baseResource = baseResource;
 		this.selectionTitle = selectionTitle;
 		this.selectionDescription = selectionDescription;
-		this.twoRevisions = twoRevisions;
+		this.mode = mode;
 		this.comboId = comboId;
 		this.foldersOnly = !(baseResource instanceof IRepositoryFile);
 		this.defaultTextType = defaultTextType;
@@ -137,6 +138,15 @@ public class RepositoryResourceSelectionComposite extends Composite {
 		IRepositoryResource resource = this.getDestination(SVNUtility.asEntryReference(this.url), false);
 		resource.setSelectedRevision(this.secondRevisionComposite.getSelectedRevision());
 		return resource;
+	}
+	
+	public SVNRevisionRange []getSelectedRevisions() {
+		if (this.mode == MODE_CHECK) {
+			return this.revisionComposite.getSelectedRevisions();
+		}
+		SVNRevision first = this.getSelectedResource().getSelectedRevision();
+		SVNRevision second = this.getSecondSelectedRevision();
+		return new SVNRevisionRange[] {new SVNRevisionRange(first, second == null ? first : second)};
 	}
 	
 	public SVNRevision getStartRevision() {
@@ -306,18 +316,26 @@ public class RepositoryResourceSelectionComposite extends Composite {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		revisions.setLayoutData(data);
-		this.revisionComposite = new RevisionComposite(revisions, this.validationManager, this.stopOnCopy, new String[] {((this.twoRevisions & MODE_TWO) != 0 ? SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.StartRevision") : SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.Revision")), (this.twoRevisions & MODE_AUTO) != 0 ? SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.Autodetect") : SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.HeadRevision")}, (this.twoRevisions & MODE_AUTO) != 0 ? null : SVNRevision.HEAD) {
+		String revTitle = SVNTeamUIPlugin.instance().getResource("RevisionComposite.Revision");
+		if (this.mode == MODE_TWO) {
+			revTitle = SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.StartRevision");
+		}
+		else if (this.mode == MODE_CHECK) {
+			revTitle = SVNTeamUIPlugin.instance().getResource("RevisionComposite.Revisions");
+		}
+		String revHeadName = SVNTeamUIPlugin.instance().getResource(this.mode == MODE_CHECK ? "RevisionComposite.All" : "RevisionComposite.HeadRevision");
+		this.revisionComposite = new RevisionComposite(revisions, this.validationManager, this.stopOnCopy, new String[] {revTitle, revHeadName}, SVNRevision.HEAD, this.mode == MODE_CHECK) {
 			public void additionalValidation() {
 				RepositoryResourceSelectionComposite.this.validateRevisions();
 			}
 		};
 		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = (this.twoRevisions & MODE_TWO) != 0 ? 1 : 2;
+		data.horizontalSpan = this.mode == MODE_TWO ? 1 : 2;
 		this.revisionComposite.setLayoutData(data);
 		this.revisionComposite.setBaseResource(this.baseResource);
 		this.revisionComposite.setSelectedResource(this.baseResource);
-		if ((this.twoRevisions & MODE_TWO) != 0) {
-			this.secondRevisionComposite = new RevisionComposite(revisions, this.validationManager, this.stopOnCopy, new String[] {SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.StopRevision"), SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.HeadRevision")}, SVNRevision.HEAD) {
+		if (this.mode == MODE_TWO) {
+			this.secondRevisionComposite = new RevisionComposite(revisions, this.validationManager, this.stopOnCopy, new String[] {SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.StopRevision"), SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.HeadRevision")}, SVNRevision.HEAD, false) {
 				public void additionalValidation() {
 					RepositoryResourceSelectionComposite.this.validateRevisions();
 				}
@@ -367,7 +385,7 @@ public class RepositoryResourceSelectionComposite extends Composite {
 	}
 	
 	protected void validateRevisions() {
-		if ((this.twoRevisions & MODE_TWO) != 0) {
+		if ((this.mode & MODE_TWO) != 0) {
 			this.validationManager.validateContent();
 		}
 	}

@@ -109,7 +109,7 @@ public class ExportPanel extends AbstractDialogPanel {
 			}
 		});
 		
-		this.revisionComposite = new RevisionComposite(parent, this, false, null, SVNRevision.HEAD);
+		this.revisionComposite = new RevisionComposite(parent, this, false, null, SVNRevision.HEAD, false);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.revisionComposite.setLayoutData(data);
 		this.revisionComposite.setSelectedResource(this.selectedResource);

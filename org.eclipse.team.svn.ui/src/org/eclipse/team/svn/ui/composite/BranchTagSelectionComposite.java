@@ -198,7 +198,7 @@ public class BranchTagSelectionComposite extends Composite {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		revisions.setLayoutData(data);
-		this.revisionComposite = new RevisionComposite(revisions, this.validationManager, true, new String[] {SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.Revision"), SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.HeadRevision")}, SVNRevision.HEAD) {
+		this.revisionComposite = new RevisionComposite(revisions, this.validationManager, true, new String[] {SVNTeamUIPlugin.instance().getResource("RevisionComposite.Revision"), SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.HeadRevision")}, SVNRevision.HEAD, false) {
 			public void additionalValidation() {
 				BranchTagSelectionComposite.this.validationManager.validateContent();
 			}

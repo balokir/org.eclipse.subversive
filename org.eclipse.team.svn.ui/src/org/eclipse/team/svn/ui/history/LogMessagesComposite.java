@@ -36,7 +36,6 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -102,7 +101,7 @@ public class LogMessagesComposite extends SashForm {
 		this.initializeTableView(multiSelect ? SWT.MULTI : SWT.SINGLE);
 	}
 	
-	public TreeViewer getTreeViewer() {
+	public CheckboxTreeViewer getTreeViewer() {
 	    return this.historyTable;
 	}
 	
