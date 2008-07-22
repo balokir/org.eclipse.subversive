@@ -112,7 +112,7 @@ public class RevisionComposite extends Composite {
 		if (this.revisions[0].from.getKind() == SVNRevision.Kind.START) {
 			ISVNConnector proxy = this.baseResource.getRepositoryLocation().acquireSVNProxy();
 			try {
-				SVNLogEntry []msgs = SVNUtility.logEntries(proxy, SVNUtility.getEntryReference(this.baseResource), SVNRevision.fromNumber(0), this.baseResource.getSelectedRevision(), Options.STOP_ON_COPY | Options.DISCOVER_PATHS, ISVNConnector.EMPTY_LOG_ENTRY_PROPS, 1, new SVNNullProgressMonitor());
+				SVNLogEntry []msgs = SVNUtility.logEntries(proxy, SVNUtility.getEntryReference(this.baseResource), this.baseResource.getSelectedRevision(), SVNRevision.fromNumber(0), Options.STOP_ON_COPY | Options.DISCOVER_PATHS, ISVNConnector.EMPTY_LOG_ENTRY_PROPS, 1, new SVNNullProgressMonitor());
 				if (msgs.length > 0) {
 					this.revisions[0] = new SVNRevisionRange(SVNRevision.fromNumber(msgs[0].revision), this.revisions[0].to);
 				}
