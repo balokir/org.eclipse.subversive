@@ -222,9 +222,11 @@ public interface ISVNConnector {
 
 		public static final long MERGE = Options.FORCE | Options.IGNORE_ANCESTRY | Options.SIMULATE | Options.RECORD_ONLY;
 
-		public static final long MERGE_REINTEGRATE = Options.SIMULATE;
+		public static final long MERGE_REINTEGRATE = Options.FORCE /*OVR&UPD*/ | Options.SIMULATE;
 
 		public static final long MERGE_STATUS = Options.FORCE | Options.IGNORE_ANCESTRY;
+
+		public static final long MERGE_STATUS_REINTEGRATE = Options.NONE;
 
 		public static final long IMPORT = Options.INCLUDE_IGNORED | Options.IGNORE_UNKNOWN_NODE_TYPES;
 
@@ -341,9 +343,13 @@ public interface ISVNConnector {
 
 	public void dumpChangeLists(String[] changeLists, String rootPath, int depth, ISVNChangeListCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
+	public void merge(SVNEntryReference reference, String mergePath, SVNMergeStatus[] mergeStatus, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
+	public void mergeStatus(SVNEntryReference reference, String mergePath, long options, ISVNMergeStatusCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException;
+
 	public void merge(SVNEntryReference reference, SVNRevisionRange[] revisions, String mergePath, SVNMergeStatus[] mergeStatus, long options, ISVNProgressMonitor monitor)
 			throws SVNConnectorException;
-
+	
 	public void mergeStatus(SVNEntryReference reference, SVNRevisionRange[] revisions, String path, int depth, long options, ISVNMergeStatusCallback cb, ISVNProgressMonitor monitor)
 			throws SVNConnectorException;
 

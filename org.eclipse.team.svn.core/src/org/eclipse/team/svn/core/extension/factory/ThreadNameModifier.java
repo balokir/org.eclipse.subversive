@@ -370,6 +370,26 @@ public class ThreadNameModifier implements ISVNConnector {
 		}
 	}
 	
+	public void merge(SVNEntryReference reference, String mergePath, SVNMergeStatus[] mergeStatus, long options, ISVNProgressMonitor monitor) throws SVNConnectorException {
+		String oldName = this.overrideThreadName();
+		try {
+			this.connector.merge(reference, mergePath, mergeStatus, options, monitor);
+		}
+		finally {
+			this.restoreThreadName(oldName);
+		}
+	}
+
+	public void mergeStatus(SVNEntryReference reference, String mergePath, long options, ISVNMergeStatusCallback cb, ISVNProgressMonitor monitor) throws SVNConnectorException {
+		String oldName = this.overrideThreadName();
+		try {
+			this.connector.mergeStatus(reference, mergePath, options, cb, monitor);
+		}
+		finally {
+			this.restoreThreadName(oldName);
+		}
+	}
+	
 	public void mkdir(String []path, String message, long options, Map revProps, ISVNProgressMonitor monitor) throws SVNConnectorException {
 		String oldName = this.overrideThreadName();
 		try {
