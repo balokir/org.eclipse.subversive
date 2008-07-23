@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
@@ -91,6 +90,9 @@ public class ObtainProjectNameOperation extends AbstractActionOperation {
 							}
 							name = FileUtility.formatResourceName(name);
 						}
+						else {
+							name = resource.getName();
+						}
 					}
 					if (!ObtainProjectNameOperation.this.names2Resources.containsKey(name) && (caseInsensitiveOS ? !lowerCaseNames.contains(name.toLowerCase()) : true)) {
 						ObtainProjectNameOperation.this.names2Resources.put(name, ObtainProjectNameOperation.this.resources[j]);
@@ -122,7 +124,7 @@ public class ObtainProjectNameOperation extends AbstractActionOperation {
 		IRepositoryResource projFile = resource.getRepositoryLocation().asRepositoryFile(projFileUrl, false);
 		if (projFile.exists()) {
 			GetFileContentOperation op = new GetFileContentOperation(projFile);
-			ProgressMonitorUtility.doTaskExternal(op, new NullProgressMonitor());
+			ProgressMonitorUtility.doTaskExternal(op, monitor);
 			InputStream is = op.getContent();
 			BufferedReader reader = null;
 			try {
@@ -135,7 +137,7 @@ public class ObtainProjectNameOperation extends AbstractActionOperation {
 					if ((first = currentString.indexOf("<name>")) >= 0 &&
 						(last = currentString.indexOf("</name>")) >= 0) {
 						String name = currentString.substring(first + "<name>".length(), last);
-						return name.length() > 0 ? name : resource.getName();
+						return name.length() > 0 ? name : null;
 					}
 				}
 			}
