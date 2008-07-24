@@ -60,6 +60,11 @@ public class SVNMergeStatus extends SVNEntryStatus {
 	 * The comment entered for the last merged change in the merged repository resource. Could be <code>null</code>.
 	 */
 	public final String comment;
+	
+	/**
+	 * Tells if this resource is skipped during merge or not.
+	 */
+	public final boolean skipped;
 
 	/**
 	 * The {@link SVNMergeStatus} instance could be initialized only once because all fields are final
@@ -86,8 +91,10 @@ public class SVNMergeStatus extends SVNEntryStatus {
 	 *            The author of the last merged change. Could be <code>null</code>.
 	 * @param comment
 	 *            The comment entered for the last merged change. Could be <code>null</code>.
+	 * @param skipped
+	 *            Tells if this resource is skipped during merge or not.
 	 */
-	public SVNMergeStatus(String startUrl, String endUrl, String path, int nodeKind, int textStatus, int propStatus, long startRevision, long endRevision, long date, String author, String comment) {
+	public SVNMergeStatus(String startUrl, String endUrl, String path, int nodeKind, int textStatus, int propStatus, long startRevision, long endRevision, long date, String author, String comment, boolean skipped) {
 		super(nodeKind, textStatus, propStatus);
 		this.startUrl = startUrl;
 		this.endUrl = endUrl;
@@ -97,5 +104,6 @@ public class SVNMergeStatus extends SVNEntryStatus {
 		this.date = date;
 		this.author = author;
 		this.comment = comment;
+		this.skipped = skipped;
 	}
 }

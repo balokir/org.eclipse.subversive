@@ -74,7 +74,7 @@ public class MergeActionGroup extends AbstractSynchronizeActionGroup {
 	}
 	
 	public void configureActions(ISynchronizePageConfiguration configuration) {
-		UpdateAction updateAllAction = new UpdateAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.UpdateAllIncomingChanges"), configuration, this.getVisibleRootsSelectionProvider());
+		UpdateAction updateAllAction = new UpdateAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.AcceptAllIncomingChanges"), configuration, this.getVisibleRootsSelectionProvider());
 		updateAllAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/update.gif"));
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_TOOLBAR_MENU, 
@@ -87,7 +87,7 @@ public class MergeActionGroup extends AbstractSynchronizeActionGroup {
 				ISynchronizePageConfiguration.MODE_GROUP,
 				expandAllAction);
 
-		UpdateAction updateAction = new UpdateAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Update"), configuration);
+		UpdateAction updateAction = new UpdateAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Accept"), configuration);
 		updateAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/update.gif"));
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 

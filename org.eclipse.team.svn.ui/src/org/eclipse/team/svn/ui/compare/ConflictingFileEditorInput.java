@@ -84,6 +84,8 @@ public class ConflictingFileEditorInput extends CompareEditorInput {
 			}
 		}
 		
+		this.setDirty(true);
+		
 		try {
 			return new Differencer().findDifferences(true, monitor, null, new MergeElement(this.ancestor), this.targetElement, new MergeElement(this.right));
 		}
@@ -105,6 +107,8 @@ public class ConflictingFileEditorInput extends CompareEditorInput {
 		super.saveChanges(pm);
 		// ...and save it
 		this.targetElement.commit(pm);
+		
+		this.setDirty(false);
 	}
 	
 	protected class MergeElement extends BufferedResourceNode {

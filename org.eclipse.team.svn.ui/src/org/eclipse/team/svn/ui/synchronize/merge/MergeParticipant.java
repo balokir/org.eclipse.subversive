@@ -23,6 +23,7 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.synchronize.AbstractSVNParticipant;
 import org.eclipse.team.svn.ui.synchronize.AbstractSVNSubscriber;
+import org.eclipse.team.svn.ui.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
 import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -35,7 +36,7 @@ import org.eclipse.team.ui.synchronize.ISynchronizeScope;
  */
 public class MergeParticipant extends AbstractSVNParticipant {
 	public static final String PARTICIPANT_ID = MergeParticipant.class.getName();
-	public static final int SUPPORTED_MODES = ISynchronizePageConfiguration.INCOMING_MODE | ISynchronizePageConfiguration.CONFLICTING_MODE;
+	public static final int SUPPORTED_MODES = ISynchronizePageConfiguration.ALL_MODES;
 
 	protected IPropertyChangeListener configurationListener;
 	
@@ -74,7 +75,7 @@ public class MergeParticipant extends AbstractSVNParticipant {
     }
 
     protected int getDefaultMode() {
-        return ISynchronizePageConfiguration.INCOMING_MODE;
+        return ISynchronizePageConfiguration.BOTH_MODE;
     }
 
     protected String getShortTaskName() {
@@ -91,7 +92,7 @@ public class MergeParticipant extends AbstractSVNParticipant {
 	    }
 	    
 		public Image decorateImage(Image image, Object element) {
-		    MergeSyncInfo info = (MergeSyncInfo)this.getSyncInfo(element);
+		    AbstractSVNSyncInfo info = this.getSyncInfo(element);
 			if (info != null && (info.getKind() & LabelDecorator.CONFLICTING_REPLACEMENT_MASK) == LabelDecorator.CONFLICTING_REPLACEMENT_MASK) {
 				ILocalResource local = info.getLocalResource();
 		        if (IStateFilter.SF_PREREPLACEDREPLACED.accept(local)) {

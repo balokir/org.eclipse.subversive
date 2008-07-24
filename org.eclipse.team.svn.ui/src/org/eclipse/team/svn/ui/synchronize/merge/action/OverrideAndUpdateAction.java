@@ -12,31 +12,31 @@
 
 package org.eclipse.team.svn.ui.synchronize.merge.action;
 
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNConflictResolution;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.core.operation.local.ClearLocalStatusesOperation;
-import org.eclipse.team.svn.core.operation.local.MergeOperation;
+import org.eclipse.team.svn.core.operation.local.GetRemoteContentsOperation;
+import org.eclipse.team.svn.core.operation.local.MarkResolvedOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
-import org.eclipse.team.svn.core.operation.local.RemoveNonVersionedResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
-import org.eclipse.team.svn.core.operation.local.RevertOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
-import org.eclipse.team.svn.core.operation.local.UpdateOperation;
+import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.utility.FileUtility;
-import org.eclipse.team.svn.ui.dialog.DefaultDialog;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.operation.ClearMergeStatusesOperation;
-import org.eclipse.team.svn.ui.panel.local.OverrideResourcesPanel;
+import org.eclipse.team.svn.ui.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
-import org.eclipse.team.svn.ui.synchronize.action.ISyncStateFilter;
-import org.eclipse.team.svn.ui.synchronize.merge.MergeSubscriber;
+import org.eclipse.team.svn.ui.synchronize.variant.RemoteResourceVariant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
@@ -55,44 +55,31 @@ public class OverrideAndUpdateAction extends AbstractSynchronizeModelAction {
 	}
 
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
-		IResource []obstructedResources = OverrideAndUpdateAction.this.syncInfoSelector.getSelectedResourcesRecursive(IStateFilter.SF_OBSTRUCTED);
-		obstructedResources = FileUtility.addOperableParents(obstructedResources, IStateFilter.SF_OBSTRUCTED);
-		HashSet<IResource> allResources = new HashSet<IResource>(Arrays.asList(obstructedResources));
-		IResource []changedResources = OverrideAndUpdateAction.this.syncInfoSelector.getSelectedResourcesRecursive(ISyncStateFilter.SF_OVERRIDE);
-		changedResources = FileUtility.addOperableParents(changedResources, IStateFilter.SF_NOTONREPOSITORY);
-		allResources.addAll(Arrays.asList(changedResources));
-		IResource []fullSet = allResources.toArray(new IResource[allResources.size()]);
-		OverrideResourcesPanel panel = new OverrideResourcesPanel(fullSet, fullSet, OverrideResourcesPanel.MSG_UPDATE);
-		DefaultDialog dialog = new DefaultDialog(configuration.getSite().getShell(), panel);
-		IResource []resources = null;
-		if (dialog.open() == 0) {
-			resources = panel.getSelectedResources();
-		}
-		else {
-			return null;
+		AbstractSVNSyncInfo []infos = this.getSVNSyncInfos();
+		HashMap<String, String> remote2local = new HashMap<String, String>();
+		ArrayList<IRepositoryResource> remoteSet = new ArrayList<IRepositoryResource>();
+		ArrayList<IResource> localSet = new ArrayList<IResource>();
+		for (int i = 0; i < infos.length; i++) {
+			IResource resource = infos[i].getLocal();
+			localSet.add(resource);
+			IRepositoryResource remote = ((IResourceChange)((RemoteResourceVariant)infos[i].getRemote()).getResource()).getOriginator();
+			remoteSet.add(remote);
+			remote2local.put(SVNUtility.encodeURL(remote.getUrl()), FileUtility.getWorkingCopyPath(resource));
 		}
 		
-		CompositeOperation op = new CompositeOperation("Operation.MOverrideAndUpdate");
-
+		IResource []resources = localSet.toArray(new IResource[localSet.size()]);
+		GetRemoteContentsOperation mainOp = new GetRemoteContentsOperation(resources, remoteSet.toArray(new IRepositoryResource[remoteSet.size()]), remote2local);
+		CompositeOperation op = new CompositeOperation(mainOp.getId());
 		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
 		op.add(saveOp);
-		RevertOperation revertOp = new RevertOperation(FileUtility.getResourcesRecursive(resources, IStateFilter.SF_REVERTABLE, IResource.DEPTH_ZERO), true);
-		op.add(revertOp);
-		op.add(new ClearLocalStatusesOperation(resources));
-		RemoveNonVersionedResourcesOperation removeNonVersionedResourcesOp = new RemoveNonVersionedResourcesOperation(resources, true);
-		op.add(removeNonVersionedResourcesOp);
-		// Obstructed resources are deleted now. So, try to revert all corresponding entries
-		RevertOperation revertOp1 = new RevertOperation(FileUtility.getResourcesRecursive(resources, IStateFilter.SF_OBSTRUCTED, IResource.DEPTH_ZERO), true);
-		op.add(revertOp1);
-		op.add(new ClearLocalStatusesOperation(resources));
-		op.add(new UpdateOperation(FileUtility.getResourcesRecursive(resources, IStateFilter.SF_OBSTRUCTED, IResource.DEPTH_ZERO), true));
-		
-		op.add(new MergeOperation(resources, MergeSubscriber.instance().getMergeScope().getMergeSet(), true));
-        
+		IResource []conflicting = FileUtility.getResourcesRecursive(resources, IStateFilter.SF_CONFLICTING, IResource.DEPTH_ZERO);
+		if (conflicting.length > 0) {
+			op.add(new MarkResolvedOperation(conflicting, SVNConflictResolution.CHOOSE_LOCAL_FULL, ISVNConnector.Depth.INFINITY));
+		}
+		op.add(mainOp);
 		op.add(new RestoreProjectMetaOperation(saveOp));
+		op.add(new RefreshResourcesOperation(conflicting.length > 0 ? FileUtility.getParents(resources, false) : resources));
 		op.add(new ClearMergeStatusesOperation(resources));
-		op.add(new RefreshResourcesOperation(resources));
-		
 		return op;
 	}
 

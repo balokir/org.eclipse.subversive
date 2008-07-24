@@ -51,9 +51,7 @@ import org.eclipse.team.svn.ui.composite.DepthSelectionComposite;
 import org.eclipse.team.svn.ui.composite.RepositoryResourceSelectionComposite;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.AbstractAdvancedDialogPanel;
-import org.eclipse.team.svn.ui.panel.IDialogManagerEx;
 import org.eclipse.team.svn.ui.panel.reporting.PreviewPanel;
-import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifier;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifierProxy;
@@ -427,10 +425,6 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 	protected void cancelChangesImpl() {
 	}
 
-	protected void setButtonsEnabled(boolean enabled) {
-	    ((IDialogManagerEx)this.manager).setExtendedButtonEnabled(0, SVNTeamPreferences.getMergeBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MERGE_USE_JAVAHL_NAME) /*|| this.mode == MergePanel.MODE_REINTEGRATE*/);
-	}
-	
 	protected IRepositoryResource []getSelection(IRepositoryResource base) {
 		if (this.to.length == 1) {
 			return new IRepositoryResource[] {base};

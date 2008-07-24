@@ -24,6 +24,7 @@ import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.IRemoteStatusOperation;
 import org.eclipse.team.svn.core.operation.local.RemoteStatusOperation;
@@ -62,8 +63,10 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 		super.refresh(resources, depth, monitor);
 	}
 
-    protected IRemoteStatusOperation getStatusOperation(IResource[] resources, int depth) {
-        return new RemoteStatusOperation(resources);
+    protected IRemoteStatusOperation addStatusOperation(CompositeOperation op, IResource[] resources, int depth) {
+    	RemoteStatusOperation rStatus = new RemoteStatusOperation(resources);
+    	op.add(rStatus);
+        return rStatus;
     }
 
     protected SyncInfo getSVNSyncInfo(ILocalResource localStatus, IResourceChange remoteStatus) {

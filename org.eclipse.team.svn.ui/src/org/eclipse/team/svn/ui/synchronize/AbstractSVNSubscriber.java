@@ -213,14 +213,15 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
   	}
     
 	protected IResource []findChanges(IResource []resources, int depth, IProgressMonitor monitor, ILoggedOperationFactory operationWrapperFactory) {
-		final IRemoteStatusOperation rStatusOp = this.getStatusOperation(resources, depth);
+		CompositeOperation op = new CompositeOperation("");
+		
+		final IRemoteStatusOperation rStatusOp = this.addStatusOperation(op, resources, depth);
 		if (rStatusOp == null) {
     		return FileUtility.NO_CHILDREN;
 		}
-		final ArrayList<IResource> changes = new ArrayList<IResource>();
+		op.setOperationName(rStatusOp.getId());
 		
-		CompositeOperation op = new CompositeOperation(rStatusOp.getId());
-		op.add(rStatusOp);
+		final ArrayList<IResource> changes = new ArrayList<IResource>();
 		op.add(new AbstractActionOperation("Operation.FetchChanges") {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				SVNEntryStatus []statuses = rStatusOp.getStatuses();
@@ -247,7 +248,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 	protected abstract boolean isIncoming(SVNEntryStatus status);
 	protected abstract IResourceChange handleResourceChange(IRemoteStatusOperation rStatusOp, SVNEntryStatus status);
     protected abstract SyncInfo getSVNSyncInfo(ILocalResource localStatus, IResourceChange remoteStatus);
-    protected abstract IRemoteStatusOperation getStatusOperation(IResource []resources, int depth);
+    protected abstract IRemoteStatusOperation addStatusOperation(CompositeOperation op, IResource []resources, int depth);
 
     public class UpdateStatusOperation extends AbstractActionOperation implements ILoggedOperationFactory {
     	protected IResource []resources;
