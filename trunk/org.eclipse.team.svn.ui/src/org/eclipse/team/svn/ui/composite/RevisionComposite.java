@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -27,7 +28,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
@@ -36,9 +36,9 @@ import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNRevisionRange;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Options;
 import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.core.operation.LoggedOperation;
-import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
+import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.remote.GetLogMessagesOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.SVNUtility;
@@ -67,12 +67,14 @@ public class RevisionComposite extends Composite {
 	protected long lastSelectedRevision;
 	protected boolean stopOnCopy;
 	protected boolean toFilterCurrent;
+	protected boolean startFromCopy;
 	protected String []captions;
 
 	protected SVNRevision selectedRevision;
 	
 	protected Text revisionField;
 	protected Button headRevisionRadioButton;
+	protected Button startFromCopyRadioButton;
 	protected Button changeRevisionRadioButton;
 	protected Button changeRevisionButton;
 	protected Button reverseRevisionsButton;
@@ -110,19 +112,20 @@ public class RevisionComposite extends Composite {
 	public SVNRevisionRange []getSelectedRevisions() {
 		// check for unspecified
 		if (this.revisions[0].from.getKind() == SVNRevision.Kind.START) {
-			ISVNConnector proxy = this.baseResource.getRepositoryLocation().acquireSVNProxy();
-			try {
-				SVNLogEntry []msgs = SVNUtility.logEntries(proxy, SVNUtility.getEntryReference(this.baseResource), this.baseResource.getSelectedRevision(), SVNRevision.fromNumber(0), Options.STOP_ON_COPY | Options.DISCOVER_PATHS, ISVNConnector.EMPTY_LOG_ENTRY_PROPS, 1, new SVNNullProgressMonitor());
-				if (msgs.length > 0) {
-					this.revisions[0] = new SVNRevisionRange(SVNRevision.fromNumber(msgs[0].revision), this.revisions[0].to);
+			UIMonitorUtility.doTaskNowDefault(new AbstractActionOperation("Operation.DetectStartRevision") {
+				protected void runImpl(IProgressMonitor monitor) throws Exception {
+					ISVNConnector proxy = RevisionComposite.this.selectedResource.getRepositoryLocation().acquireSVNProxy();
+					try {
+						SVNLogEntry []msgs = SVNUtility.logEntries(proxy, SVNUtility.getEntryReference(RevisionComposite.this.selectedResource), SVNRevision.fromNumber(0), RevisionComposite.this.selectedResource.getSelectedRevision(), Options.DISCOVER_PATHS | (RevisionComposite.this.startFromCopy ? Options.STOP_ON_COPY : Options.NONE), ISVNConnector.EMPTY_LOG_ENTRY_PROPS, 1, new SVNProgressMonitor(this, monitor, null));
+						if (msgs.length > 0) {
+							RevisionComposite.this.revisions[0] = new SVNRevisionRange(SVNRevision.fromNumber(RevisionComposite.this.startFromCopy & msgs[0].revision > 1 ? msgs[0].revision - 1 : msgs[0].revision), RevisionComposite.this.revisions[0].to);
+						}
+					}
+					finally {
+						RevisionComposite.this.selectedResource.getRepositoryLocation().releaseSVNProxy(proxy);
+					}
 				}
-			}
-			catch (Exception ex) {
-				LoggedOperation.reportError("RevisionComposite.getSelectedRevisions", ex);
-			}
-			finally {
-				this.baseResource.getRepositoryLocation().releaseSVNProxy(proxy);
-			}
+			}, true);
 		}
 		// align range bounds
 		for (int i = 0; i < this.revisions.length; i++) {
@@ -172,6 +175,9 @@ public class RevisionComposite extends Composite {
 				if (this.changeRevisionRadioButton != null) {
 					this.revisionField.setText(this.selectedRevision.toString());
 					this.headRevisionRadioButton.setSelection(false);
+					if (this.checkStyled) {
+						this.startFromCopyRadioButton.setSelection(false);
+					}
 					this.changeRevisionRadioButton.setSelection(true);
 					this.changeRevisionButton.setEnabled(true);
 					this.revisionField.setEditable(true);
@@ -183,7 +189,10 @@ public class RevisionComposite extends Composite {
 				
 				if (this.changeRevisionRadioButton != null) {
 					this.revisionField.setText("");
-					this.headRevisionRadioButton.setSelection(true);
+					this.headRevisionRadioButton.setSelection(!this.checkStyled);
+					if (this.checkStyled) {
+						this.startFromCopyRadioButton.setSelection(true);
+					}
 					this.changeRevisionRadioButton.setSelection(false);
 					this.changeRevisionButton.setEnabled(false);
 					this.revisionField.setEditable(false);
@@ -220,33 +229,61 @@ public class RevisionComposite extends Composite {
 
 		this.headRevisionRadioButton = new Button(group, SWT.RADIO);
 		this.headRevisionRadioButton.setText(this.captions == null ? SVNTeamUIPlugin.instance().getResource(this.checkStyled ? "RevisionComposite.All" : "RevisionComposite.HeadRevision") : this.captions[1]);
-		this.headRevisionRadioButton.setLayoutData(new GridData());
-		this.headRevisionRadioButton.setSelection(true);
+		data = new GridData();
+		data.horizontalSpan = 2;
+		this.headRevisionRadioButton.setLayoutData(data);
+		this.headRevisionRadioButton.setSelection(!this.checkStyled);
 
 		this.headRevisionRadioButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				RevisionComposite.this.validationManager.validateContent();
-				Button button = (Button)e.widget;
-				if (button.getSelection()) {
+				if (((Button)e.widget).getSelection()) {
 					RevisionComposite.this.changeRevisionButton.setEnabled(false);
 					RevisionComposite.this.revisionField.setEditable(false);
+					RevisionComposite.this.startFromCopy = false;
 					RevisionComposite.this.defaultToRevisions();
-				}
-				else {
-					RevisionComposite.this.changeRevisionButton.setEnabled(true);
-					RevisionComposite.this.revisionField.setEditable(true);
-					RevisionComposite.this.textToRevisions();
 				}
 				RevisionComposite.this.additionalValidation();
 			}
 		});
 		
-		Label emptyControl = new Label(group, SWT.NONE);
-		emptyControl.setLayoutData(new GridData());
-		emptyControl.setText("");
+		if (this.checkStyled) {
+			this.startFromCopyRadioButton = new Button(group, SWT.RADIO);
+			this.startFromCopyRadioButton.setText(SVNTeamUIPlugin.instance().getResource("RevisionComposite.StartFromCopy"));
+			data = new GridData();
+			data.horizontalSpan = 2;
+			this.startFromCopyRadioButton.setLayoutData(data);
+			this.startFromCopyRadioButton.setSelection(true);
+
+			this.startFromCopyRadioButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					RevisionComposite.this.validationManager.validateContent();
+					if (((Button)e.widget).getSelection()) {
+						RevisionComposite.this.changeRevisionButton.setEnabled(false);
+						RevisionComposite.this.revisionField.setEditable(false);
+						RevisionComposite.this.startFromCopy = true;
+						RevisionComposite.this.defaultToRevisions();
+					}
+					RevisionComposite.this.additionalValidation();
+				}
+			});
+		}
 		
 		this.changeRevisionRadioButton = new Button(group, SWT.RADIO);
-		this.changeRevisionRadioButton.setText(SVNTeamUIPlugin.instance().getResource(this.checkStyled ? "RevisionComposite.Revisions" : "RevisionComposite.Revision"));
+		this.changeRevisionRadioButton.setText(SVNTeamUIPlugin.instance().getResource(this.checkStyled ? "RevisionComposite.RevisionsCtrl" : "RevisionComposite.RevisionCtrl"));
+		
+		this.changeRevisionRadioButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				RevisionComposite.this.validationManager.validateContent();
+				if (((Button)e.widget).getSelection()) {
+					RevisionComposite.this.changeRevisionButton.setEnabled(true);
+					RevisionComposite.this.revisionField.setEditable(true);
+					RevisionComposite.this.startFromCopy = false;
+					RevisionComposite.this.textToRevisions();
+				}
+				RevisionComposite.this.additionalValidation();
+			}
+		});
 		
 		final Composite revisionSelection = new Composite(group, SWT.NONE);
 		layout = new GridLayout();
@@ -349,6 +386,10 @@ public class RevisionComposite extends Composite {
 		this.changeRevisionButton.setEnabled(enabled && this.changeRevisionRadioButton.getSelection());
 		this.changeRevisionRadioButton.setEnabled(enabled);
 		this.headRevisionRadioButton.setEnabled(enabled);
+		if (this.checkStyled) {
+			this.startFromCopyRadioButton.setEnabled(enabled);
+			this.reverseRevisionsButton.setEnabled(enabled);
+		}
 	}
 	
 	public void additionalValidation() {

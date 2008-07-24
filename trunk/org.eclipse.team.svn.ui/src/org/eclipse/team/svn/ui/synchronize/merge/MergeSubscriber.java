@@ -16,16 +16,21 @@ import java.util.HashSet;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNMergeStatus;
 import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.local.AbstractMergeSet;
 import org.eclipse.team.svn.core.operation.local.IRemoteStatusOperation;
 import org.eclipse.team.svn.core.operation.local.MergeSet1URL;
 import org.eclipse.team.svn.core.operation.local.MergeSet2URL;
 import org.eclipse.team.svn.core.operation.local.MergeSetReintegrate;
 import org.eclipse.team.svn.core.operation.local.MergeStatusOperation;
+import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
+import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
+import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
 import org.eclipse.team.svn.core.resource.IChangeStateProvider;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -35,6 +40,7 @@ import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.synchronize.AbstractSVNSubscriber;
 import org.eclipse.team.svn.ui.synchronize.RemoteStatusCache;
+import org.eclipse.team.svn.ui.synchronize.update.UpdateSyncInfo;
 
 /**
  * Merge view data provider
@@ -65,12 +71,24 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
     
     protected SyncInfo getSVNSyncInfo(ILocalResource localStatus, IResourceChange remoteStatus) {
 		IResourceChange baseStatus = SVNRemoteStorage.instance().resourceChangeFromBytes(this.baseStatusCache.getBytes(localStatus.getResource()));
-    	// provide correct base resource: same as right but with start revision specified
-        return new MergeSyncInfo(localStatus, baseStatus, remoteStatus, this.getResourceComparator());
+    	// provide correct base resource: same as right but with the start revision specified
+        return
+        	remoteStatus != null && IStateFilter.SF_NOTMODIFIED.accept(remoteStatus) ? 
+        	new UpdateSyncInfo(localStatus, null, this.getResourceComparator()) : 
+        	new MergeSyncInfo(localStatus, baseStatus, remoteStatus, this.getResourceComparator());
     }
 
-    protected IRemoteStatusOperation getStatusOperation(IResource[] resources, int depth) {
-        return this.mergeStatusOp = (this.scope == null ? null : new MergeStatusOperation(this.scope.getMergeSet(), resources));
+    protected IRemoteStatusOperation addStatusOperation(CompositeOperation op, IResource[] resources, int depth) {
+    	MergeStatusOperation mergeOp = this.mergeStatusOp = (this.scope == null ? null : new MergeStatusOperation(this.scope.getMergeSet(), resources));
+    	if (mergeOp == null) {
+    		return null;
+    	}
+		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
+		op.add(saveOp);
+    	op.add(mergeOp);
+		op.add(new RestoreProjectMetaOperation(saveOp));
+    	op.add(new RefreshResourcesOperation(resources, depth, RefreshResourcesOperation.REFRESH_CHANGES));
+        return mergeOp;
     }
     
 	protected HashSet<IResource> clearRemoteStatusesImpl(IResource []resources) {
@@ -99,10 +117,10 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 				return current.endRevision == SVNRevision.INVALID_REVISION_NUMBER ? null : SVNRevision.fromNumber(current.endRevision);
 			}
 			public int getTextChangeType() {
-				return current.textStatus;
+				return current.skipped ? current.textStatus : SVNEntryStatus.Kind.NORMAL;
 			}
 			public int getPropertiesChangeType() {
-				return current.propStatus;
+				return current.skipped ? current.propStatus : SVNEntryStatus.Kind.NONE;
 			}
 			public int getNodeKind() {
 				int kind = SVNUtility.getNodeKind(current.path, current.nodeKind, true);

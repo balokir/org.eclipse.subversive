@@ -83,11 +83,13 @@ public class ShowConflictEditorOperation extends AbstractWorkingCopyOperation {
 		
 		for (int i = 0; i < conflictingResources.length && !monitor.isCanceled(); i++) {
 			final IResource current = conflictingResources[i];
-			this.protectStep(new IUnprotectedOperation() {
-				public void run(IProgressMonitor monitor) throws Exception {
-					ShowConflictEditorOperation.this.showEditorFor((IFile)current, monitor);
-				}
-			}, monitor, conflictingResources.length);
+			if (current.getType() == IResource.FILE) {
+				this.protectStep(new IUnprotectedOperation() {
+					public void run(IProgressMonitor monitor) throws Exception {
+						ShowConflictEditorOperation.this.showEditorFor((IFile)current, monitor);
+					}
+				}, monitor, conflictingResources.length);
+			}
 		}
 	}
 

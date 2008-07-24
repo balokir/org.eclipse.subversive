@@ -11,6 +11,9 @@
 
 package org.eclipse.team.svn.ui.synchronize.merge.action;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -21,17 +24,22 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.core.operation.local.MergeOperation;
+import org.eclipse.team.svn.core.operation.local.GetRemoteContentsOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
+import org.eclipse.team.svn.core.resource.ILocalResource;
+import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.operation.ClearMergeStatusesOperation;
-import org.eclipse.team.svn.ui.operation.NotifyUnresolvedConflictOperation;
+import org.eclipse.team.svn.ui.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
-import org.eclipse.team.svn.ui.synchronize.merge.MergeSubscriber;
-import org.eclipse.team.svn.ui.synchronize.merge.MergeSyncInfo;
+import org.eclipse.team.svn.ui.synchronize.action.ISyncStateFilter;
+import org.eclipse.team.svn.ui.synchronize.variant.RemoteResourceVariant;
+import org.eclipse.team.svn.ui.synchronize.variant.ResourceVariant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
@@ -53,45 +61,57 @@ public class UpdateAction extends AbstractSynchronizeModelAction {
 	}
 
 	protected FastSyncInfoFilter getSyncInfoFilter() {
-		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.INCOMING, SyncInfo.CONFLICTING}) {
+		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.INCOMING, SyncInfo.OUTGOING}) {
             public boolean select(SyncInfo info) {
-                return super.select(info) && !IStateFilter.SF_OBSTRUCTED.accept(((MergeSyncInfo)info).getLocalResource());
+                return super.select(info) && !IStateFilter.SF_OBSTRUCTED.accept(((AbstractSVNSyncInfo)info).getLocalResource());
             }
         };
 	}
 
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
-		IResource []resources = this.syncInfoSelector.getSelectedResources();
-		// IStateFilter.SF_NONVERSIONED not versioned locally
-		IResource []refreshResources = FileUtility.addOperableParents(resources, IStateFilter.SF_UNVERSIONED);
-		
+		IResource []allResources = this.syncInfoSelector.getSelectedResources();
 		if (this.advancedMode) {
 			String message;
-			if (resources.length == 1) {
-				message = SVNTeamUIPlugin.instance().getResource("UpdateAll.Message.Single");
+			if (allResources.length == 1) {
+				message = SVNTeamUIPlugin.instance().getResource("AcceptAll.Message.Single");
 			}
 			else {
-				message = SVNTeamUIPlugin.instance().getResource("UpdateAll.Message.Multi", new String[] {String.valueOf(resources.length)});
+				message = SVNTeamUIPlugin.instance().getResource("AcceptAll.Message.Multi", new String[] {String.valueOf(allResources.length)});
 			}
-			MessageDialog dlg = new MessageDialog(configuration.getSite().getShell(), SVNTeamUIPlugin.instance().getResource("UpdateAll.Title"), null, message, MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 0);
+			MessageDialog dlg = new MessageDialog(configuration.getSite().getShell(), SVNTeamUIPlugin.instance().getResource("AcceptAll.Title"), null, message, MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 0);
 			if (dlg.open() != 0) {
 				return null;
 			}
 		}
 
-		MergeOperation mainOp = new MergeOperation(resources, MergeSubscriber.instance().getMergeScope().getMergeSet(), false);
+		AbstractSVNSyncInfo []infos = this.getSVNSyncInfos();
+		HashMap<String, String> remote2local = new HashMap<String, String>();
+		ArrayList<IRepositoryResource> remoteSet = new ArrayList<IRepositoryResource>();
+		ArrayList<IResource> localSet = new ArrayList<IResource>();
+		for (int i = 0; i < infos.length; i++) {
+	        ILocalResource remote = ((ResourceVariant)infos[i].getRemote()).getResource();
+	        if (remote instanceof IResourceChange && ISyncStateFilter.SF_ONREPOSITORY.acceptRemote(remote.getResource(), remote.getStatus(), remote.getChangeMask())) {
+				IResource resource = infos[i].getLocal();
+				localSet.add(resource);
+				IRepositoryResource remoteResource = ((IResourceChange)((RemoteResourceVariant)infos[i].getRemote()).getResource()).getOriginator();
+				remoteSet.add(remoteResource);
+				remote2local.put(SVNUtility.encodeURL(remoteResource.getUrl()), FileUtility.getWorkingCopyPath(resource));
+	        }
+		}
 		
-		CompositeOperation op = new CompositeOperation(mainOp.getId());
-		
-		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(refreshResources);
-		op.add(saveOp);
-		op.add(mainOp);
-		op.add(new RestoreProjectMetaOperation(saveOp));
-		op.add(new ClearMergeStatusesOperation(mainOp));
-		op.add(new RefreshResourcesOperation(refreshResources));
-		op.add(new NotifyUnresolvedConflictOperation(mainOp));
-
-		return op;
+		IResource []resources = localSet.toArray(new IResource[localSet.size()]);
+		if (resources.length > 0) {
+			GetRemoteContentsOperation mainOp = new GetRemoteContentsOperation(resources, remoteSet.toArray(new IRepositoryResource[remoteSet.size()]), remote2local);
+			CompositeOperation op = new CompositeOperation(mainOp.getId());
+			SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
+			op.add(saveOp);
+			op.add(mainOp);
+			op.add(new RestoreProjectMetaOperation(saveOp));
+			op.add(new RefreshResourcesOperation(resources));
+			op.add(new ClearMergeStatusesOperation(allResources));
+			return op;
+		}
+		return new ClearMergeStatusesOperation(allResources);
 	}
 
 }

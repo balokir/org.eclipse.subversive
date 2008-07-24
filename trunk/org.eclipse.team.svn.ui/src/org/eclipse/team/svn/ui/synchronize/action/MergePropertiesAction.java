@@ -52,6 +52,9 @@ public class MergePropertiesAction extends AbstractSynchronizeModelAction {
 			if (element instanceof SyncInfoModelElement) {
 				AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo)((SyncInfoModelElement)selection.getFirstElement()).getSyncInfo();
 				ILocalResource incoming = ((ResourceVariant)syncInfo.getRemote()).getResource();
+				if (!(incoming instanceof IResourceChange)) {
+					return false;
+				}
 				boolean retVal = IStateFilter.SF_EXCLUDE_DELETED.accept(incoming);
 				if (incoming instanceof IResourceChange) {
 					retVal &= IStateFilter.ST_DELETED != incoming.getStatus();
