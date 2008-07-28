@@ -8,6 +8,41 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.1.I20080728-1500 [28 July 2008]
+
+Features:
+ * Popping up of History View can't be disabled when Compare With action is perfomed. (bug 242192)
+   + special thanks to Radoslaw Jozwik
+
+ * Allow multiple selection for repository operations (export, add revision link). (bug 241249)
+ * Ensure that merge action serves merge-tracking functionality (bug 239818)
+ * Allows to select multiple revisions in merge dialog (bug 239820)
+ * Support merge --reintegrate mode (bug 241500)
+ * Use latest SVN 1.5 binaries [REOPENED] (bug 218472)
+
+Fixes:
+ * NPE in MessageDialog (bug 242085)
+   + special thanks to Eugene Babikhin
+
+ * 'Select' button in 'Replace With' window should have a better name (bug 240462)
+   + special thanks to Max Gilead
+
+ * Replace With -> URL should have better name (bug 240461)
+   + special thanks to Max Gilead
+
+ * NPE when creating a new project from a repos (bug 242142)
+   + special thanks to Marshall Pierce
+
+ * NPE while calculating project name before checkout (bug 241777)
+   + special thanks to Wang Lihui
+
+ * All protocols: Subversive uses incorrect credentials with SVN Kit 1.1.7-based connector (bug 221094)
+   + special thanks to Christopher Smith, Fabio N. Kepler, Antony Jones, Heath Borders, Martin Oberhuber, Jeroen, Nathan Vick, Cinly Ooi
+
+ * NPE while refreshing repository browser (bug 240795)
+
+--------------------------------------------------------------------------------
+
 Version 0.7.1.I20080711-1500 [11 July 2008]
 
 Features:
