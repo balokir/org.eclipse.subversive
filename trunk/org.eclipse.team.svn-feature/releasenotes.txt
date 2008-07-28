@@ -5,7 +5,7 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 0.7.1.I20080711-1500 release date: 11 July 2008
+Version 0.7.1.I20080728-1500 release date: 28 July 2008
 
 1. What's New
 
@@ -16,22 +16,35 @@ Version 0.7.1.I20080711-1500 release date: 11 July 2008
    changes you can find in Change Log.
     
 	Features:
-	 * Include information about merged revisions into annotation (bug 240156)
-	 * Show merged revisions in History View (bug 239819)
-	 * Support sparse actions (checkout, import, export) [REOPENED] (bug 231552)
+	 * Popping up of History View can't be disabled when Compare With action is perfomed. (bug 242192)
+	   + special thanks to Radoslaw Jozwik
+	
+	 * Allow multiple selection for repository operations (export, add revision link). (bug 241249)
+	 * Ensure that merge action serves merge-tracking functionality (bug 239818)
+	 * Allows to select multiple revisions in merge dialog (bug 239820)
+	 * Support merge --reintegrate mode (bug 241500)
+	 * Use latest SVN 1.5 binaries [REOPENED] (bug 218472)
 	
 	Fixes:
-	 * Replace confirmation before main dialog window doesn't make sense (bug 240471)
+	 * NPE in MessageDialog (bug 242085)
+	   + special thanks to Eugene Babikhin
+	
+	 * 'Select' button in 'Replace With' window should have a better name (bug 240462)
 	   + special thanks to Max Gilead
-	   
-	 * Merge problem "File not found: revision..." when opening 3-way comparator (bug 240291)
-	   + special thanks to Alexey Kamenchuk
-	   
-	 * "Overwrite and Update" doing merge (bug 237218)
-	   + special thanks to Tony Poppleton
-	   
-	 * Branch from working copy failed with SVN 1.5-compatible connectors (bug 240258)
-	   + special thanks to Larry Edelstein
+	
+	 * Replace With -> URL should have better name (bug 240461)
+	   + special thanks to Max Gilead
+	
+	 * NPE when creating a new project from a repos (bug 242142)
+	   + special thanks to Marshall Pierce
+	
+	 * NPE while calculating project name before checkout (bug 241777)
+	   + special thanks to Wang Lihui
+	
+	 * All protocols: Subversive uses incorrect credentials with SVN Kit 1.1.7-based connector (bug 221094)
+	   + special thanks to Christopher Smith, Fabio N. Kepler, Antony Jones, Heath Borders, Martin Oberhuber, Jeroen, Nathan Vick, Cinly Ooi
+	
+	 * NPE while refreshing repository browser (bug 240795)
 
 2. Information
 
@@ -39,10 +52,10 @@ Version 0.7.1.I20080711-1500 release date: 11 July 2008
 
    Subversive requires JDK 1.5 or higher and supports following versions of Eclipse:
     * 3.3 (tested with 3.3.2)
-    * 3.4 (tested with 3.4RC4)
+    * 3.4 (tested with 3.4)
    
    Subversive supports Subversion versions 1.1-1.4 with SVN Kit 1.1.7 and JavaHL 1.4.5, 
-   Subversion version 1.5 with SVN Kit 1.2.0 and JavaHL 1.5.0
+   Subversion version 1.5 with SVN Kit 1.2.0 and JavaHL 1.5.1
 
 2.2 Known issues
 
