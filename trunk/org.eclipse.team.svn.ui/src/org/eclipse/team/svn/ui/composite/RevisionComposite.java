@@ -320,7 +320,7 @@ public class RevisionComposite extends Composite {
 		});
 		
 		this.changeRevisionButton = new Button(revisionSelection, SWT.PUSH);
-		this.changeRevisionButton.setText(SVNTeamUIPlugin.instance().getResource("RevisionComposite.Select"));
+		this.changeRevisionButton.setText(SVNTeamUIPlugin.instance().getResource("Button.Browse"));
 		data = new GridData();
 		data.widthHint = DefaultDialog.computeButtonWidth(this.changeRevisionButton);
 		this.changeRevisionButton.setLayoutData(data);
