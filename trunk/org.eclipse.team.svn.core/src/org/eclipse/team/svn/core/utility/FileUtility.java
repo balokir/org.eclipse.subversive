@@ -209,7 +209,7 @@ public final class FileUtility {
 	
 	public static String formatResourceName(String projectName) {
 		// remove invalid characters when repository root was specified
-		return PatternProvider.replaceAll(projectName, "([\\/:])+", ".");
+		return projectName == null ? null : PatternProvider.replaceAll(projectName, "([\\/:])+", ".");
 	}
 	
 	public static String formatPath(String path) {
