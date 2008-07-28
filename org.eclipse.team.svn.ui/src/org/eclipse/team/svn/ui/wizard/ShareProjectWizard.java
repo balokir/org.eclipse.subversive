@@ -251,18 +251,18 @@ public class ShareProjectWizard extends AbstractSVNWizard implements IConfigurat
 		
 		final ShareProjectOperation mainOp = ExtensionsManager.getInstance().getCurrentShareProjectFactory().getShareProjectOperation(this.getProjects(), location, this.selectName, this.commentPage.getCommitComment());
 		mainOp.setSharePrompt(new IShareProjectPrompt() {
-			public boolean prompt(IProject []projects) {
-				String projectNames = FileUtility.getNamesListAsString(projects);
-				String message = SVNTeamUIPlugin.instance().getResource(projects.length == 1 ? "ShareProject.Confirmation.Description.Single" : "ShareProject.Confirmation.Description.Multiple", new String[] {projectNames});
+			public boolean prompt(final IProject []projects) {
 				final int []result = new int[1];
-				final MessageDialog dialog = new MessageDialog(
-						ShareProjectWizard.this.getShell(),
-						SVNTeamUIPlugin.instance().getResource(projects.length == 1 ? "ShareProject.Confirmation.Title.Single" : "ShareProject.Confirmation.Title.Multiple"), 
-						null, message, MessageDialog.WARNING,
-						new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL},
-						0);
 				ShareProjectWizard.this.getShell().getDisplay().syncExec(new Runnable() {
 					public void run() {
+						String projectNames = FileUtility.getNamesListAsString(projects);
+						String message = SVNTeamUIPlugin.instance().getResource(projects.length == 1 ? "ShareProject.Confirmation.Description.Single" : "ShareProject.Confirmation.Description.Multiple", new String[] {projectNames});
+						MessageDialog dialog = new MessageDialog(
+								ShareProjectWizard.this.getShell(),
+								SVNTeamUIPlugin.instance().getResource(projects.length == 1 ? "ShareProject.Confirmation.Title.Single" : "ShareProject.Confirmation.Title.Multiple"), 
+								null, message, MessageDialog.WARNING,
+								new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL},
+								0);
 						result[0] = dialog.open();
 					}
 				});
