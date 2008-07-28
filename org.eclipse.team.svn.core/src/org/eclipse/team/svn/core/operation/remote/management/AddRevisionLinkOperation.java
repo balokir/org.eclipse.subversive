@@ -49,13 +49,13 @@ public class AddRevisionLinkOperation extends AbstractRepositoryOperation {
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		IRepositoryResource []resources = this.operableData();
 		for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
-			final IRepositoryResource source = resources[0];
+			final IRepositoryResource source = resources[i];
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
 					IRepositoryLocation location = source.getRepositoryLocation();
 					IRepositoryResource target = SVNUtility.copyOf(source);
 					
-					SVNRevision selectedRevision = AddRevisionLinkOperation.this.revision;
+					SVNRevision selectedRevision = AddRevisionLinkOperation.this.revision == null ? source.getSelectedRevision() : AddRevisionLinkOperation.this.revision;
 					if (selectedRevision.equals(SVNRevision.HEAD)) {
 						selectedRevision = SVNRevision.fromNumber(source.getRevision());
 					}
