@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.ui.action.remote.management;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.repository.model.RepositoryRevisions;
 
 /**
@@ -26,7 +27,7 @@ public class SelectRootRevisionAction extends SelectResourceRevisionAction {
 
 	public void runImpl(IAction action) {
 		RepositoryRevisions root = ((RepositoryRevisions [])this.getAdaptedSelection(RepositoryRevisions.class))[0];
-		this.runImpl(root.getRepositoryLocation().getRoot());
+		this.runImpl(new IRepositoryResource[] {root.getRepositoryLocation().getRoot()});
 	}
 	
 	public boolean isEnabled() {

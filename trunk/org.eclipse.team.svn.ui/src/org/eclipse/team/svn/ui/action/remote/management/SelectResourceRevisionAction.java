@@ -11,6 +11,8 @@
 
 package org.eclipse.team.svn.ui.action.remote.management;
 
+import java.util.HashSet;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.team.svn.core.connector.SVNRevision;
@@ -40,32 +42,42 @@ public class SelectResourceRevisionAction extends AbstractRepositoryTeamAction {
 	}
 
 	public void runImpl(IAction action) {
-		this.runImpl(this.getSelectedRepositoryResources()[0]);
+		IRepositoryResource []resources = this.getSelectedRepositoryResources();
+		this.runImpl(resources);
 	}
 	
-	protected void runImpl(IRepositoryResource resource) {
-		final IRepositoryLocation location = resource.getRepositoryLocation();
+	protected void runImpl(IRepositoryResource []resources) {
+		SVNRevision selectedRevision = null;
 		
-		InputRevisionPanel panel = new InputRevisionPanel(resource, SVNTeamUIPlugin.instance().getResource("SelectResourceRevisionAction.InputRevisionPanel.Title"));
-		DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
-		if (dialog.open() == Dialog.OK) {
-			resource = SVNUtility.copyOf(resource);
-			SVNRevision selectedRevision = panel.getSelectedRevision();
-			resource.setSelectedRevision(selectedRevision);
-			
-			LocateResourceURLInHistoryOperation locateOp = new LocateResourceURLInHistoryOperation(new IRepositoryResource[] {resource});
-			AbstractActionOperation mainOp = new AddRevisionLinkOperation(locateOp, selectedRevision);
-			CompositeOperation op = new CompositeOperation(mainOp.getId());
-			op.add(locateOp);
-			op.add(mainOp, new IActionOperation[] {locateOp});
-			op.add(new SaveRepositoryLocationsOperation());
-			op.add(new RefreshRepositoryLocationsOperation(new IRepositoryLocation [] {location}, true));
-			this.runScheduled(op);
+		if (resources.length == 1) {
+			InputRevisionPanel panel = new InputRevisionPanel(resources[0], SVNTeamUIPlugin.instance().getResource("SelectResourceRevisionAction.InputRevisionPanel.Title"));
+			DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
+			if (dialog.open() == Dialog.OK) {
+				selectedRevision = panel.getSelectedRevision();
+				resources[0] = SVNUtility.copyOf(resources[0]);
+				resources[0].setSelectedRevision(selectedRevision);
+			}
+			else {
+				return;
+			}
 		}
+		
+		LocateResourceURLInHistoryOperation locateOp = new LocateResourceURLInHistoryOperation(resources);
+		AbstractActionOperation mainOp = new AddRevisionLinkOperation(locateOp, selectedRevision);
+		CompositeOperation op = new CompositeOperation(mainOp.getId());
+		op.add(locateOp);
+		op.add(mainOp, new IActionOperation[] {locateOp});
+		op.add(new SaveRepositoryLocationsOperation());
+		HashSet<IRepositoryLocation> locations = new HashSet<IRepositoryLocation>();
+		for (IRepositoryResource resource : resources) {
+			locations.add(resource.getRepositoryLocation());
+		}
+		op.add(new RefreshRepositoryLocationsOperation(locations.toArray(new IRepositoryLocation[locations.size()]), true));
+		this.runScheduled(op);
 	}
 	
 	public boolean isEnabled() {
-		return this.getSelectedRepositoryResources().length == 1;
+		return this.getSelectedRepositoryResources().length > 0;
 	}
 
 }

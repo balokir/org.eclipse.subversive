@@ -30,18 +30,20 @@ public class ExportAction extends AbstractRepositoryTeamAction {
 	}
 	
 	public void runImpl(IAction action) {
-		IRepositoryResource resource = this.getSelectedRepositoryResources()[0];
-		ExportPanel panel = new ExportPanel(resource);
+		IRepositoryResource []resources = this.getSelectedRepositoryResources();
+		ExportPanel panel = new ExportPanel(resources.length > 1 ? null : resources[0]);
 		DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
 		if (dialog.open() == 0) {
-			resource = SVNUtility.copyOf(resource);
-			resource.setSelectedRevision(panel.getSelectedRevision());
-	    	this.runScheduled(new ExportOperation(resource, panel.getLocation(), panel.getDepth()));
+			if (resources.length == 1) {
+				resources[0] = SVNUtility.copyOf(resources[0]);
+				resources[0].setSelectedRevision(panel.getSelectedRevision());
+			}
+	    	this.runScheduled(new ExportOperation(resources, panel.getLocation(), panel.getDepth()));
 	    }
 	}
 	
 	public boolean isEnabled() {
-		return this.getSelectedRepositoryResources().length == 1;
+		return this.getSelectedRepositoryResources().length > 0;
 	}
 	
 }

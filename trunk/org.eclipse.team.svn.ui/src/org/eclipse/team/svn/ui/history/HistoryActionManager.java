@@ -741,7 +741,7 @@ public class HistoryActionManager {
 			String path = fileDialog.open();
 			if (path != null) {
 				IRepositoryResource resource = this.traceResourceToRevision((SVNLogEntry)item.getEntity());
-		    	UIMonitorUtility.doTaskScheduledDefault(new ExportOperation(resource, path, Depth.INFINITY));
+		    	UIMonitorUtility.doTaskScheduledDefault(new ExportOperation(new IRepositoryResource[] {resource}, path, Depth.INFINITY));
 		    }
 		}
 	}

@@ -53,7 +53,7 @@ public class ExportPanel extends AbstractDialogPanel {
 	}	
 	
 	public SVNRevision getSelectedRevision() {
-		return this.revisionComposite.getSelectedRevision();
+		return this.revisionComposite != null ? this.revisionComposite.getSelectedRevision() : SVNRevision.INVALID_REVISION;
 	}
 	
 	protected void saveChangesImpl() {
@@ -109,12 +109,14 @@ public class ExportPanel extends AbstractDialogPanel {
 			}
 		});
 		
-		this.revisionComposite = new RevisionComposite(parent, this, false, null, SVNRevision.HEAD, false);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		this.revisionComposite.setLayoutData(data);
-		this.revisionComposite.setSelectedResource(this.selectedResource);
+		if (this.selectedResource != null) {
+			this.revisionComposite = new RevisionComposite(parent, this, false, null, SVNRevision.HEAD, false);
+			data = new GridData(GridData.FILL_HORIZONTAL);
+			this.revisionComposite.setLayoutData(data);
+			this.revisionComposite.setSelectedResource(this.selectedResource);
+		}
 		
-		if (this.selectedResource instanceof IRepositoryContainer) {
+		if (this.selectedResource instanceof IRepositoryContainer || this.selectedResource == null) {
 			Label separator = new Label(parent, SWT.HORIZONTAL | SWT.SEPARATOR);
 			separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			separator.setVisible(false);
