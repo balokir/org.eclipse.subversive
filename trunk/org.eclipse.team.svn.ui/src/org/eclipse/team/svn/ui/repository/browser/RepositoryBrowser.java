@@ -248,7 +248,7 @@ public class RepositoryBrowser extends AbstractSVNView implements ISelectionChan
 			boolean hideGrid = false;
 			if (this.inputElement instanceof RepositoryFolder) {
 				Object []children = ((RepositoryFolder)this.inputElement).peekChildren(null);
-				hideGrid = children.length > 0 ? children[0] instanceof RepositoryFictiveNode : false;
+				hideGrid = children != null && children.length > 0 && children[0] instanceof RepositoryFictiveNode;
 			}
 			this.tableViewer.getTable().setLinesVisible(!hideGrid);
 			this.tableViewer.setInput(this.inputElement);
