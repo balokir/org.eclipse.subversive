@@ -119,6 +119,7 @@ public final class SVNTeamPreferences {
 	public static final String HISTORY_REVISION_MODE_NAME = "revisionMode";
 	public static final String HISTORY_HIERARCHICAL_LAYOUT = "hierarchicalLayout";
 	public static final String HISTORY_COMPARE_MODE = "compareMode";
+	public static final String HISTORY_CONNECT_TO_COMPARE_WITH_NAME = "connectToCompareWith";
 
 	public static final int HISTORY_GROUPING_TYPE_NONE = 0;
 	public static final int HISTORY_GROUPING_TYPE_DATE = 1;
@@ -135,6 +136,7 @@ public final class SVNTeamPreferences {
 	public static final boolean HISTORY_SHOW_AFFECTED_PATHS_DEFAULT = true;
 	public static final boolean HISTORY_HIERARCHICAL_LAYOUT_DEFAULT = true;
 	public static final boolean HISTORY_COMPARE_MODE_DEFAULT = false;
+	public static final boolean HISTORY_CONNECT_TO_COMPARE_WITH_DEFAULT = true;
 	
 	public static final String DATE_FORMAT_NAME = "dateFormat";
 	public static final String DATE_FORMAT_CUSTOM_NAME = "dateFormatCustom";
@@ -326,6 +328,7 @@ public final class SVNTeamPreferences {
 	}
 	
 	public static void setDefaultHistoryValues(IPreferenceStore store) {
+		store.setDefault(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_CONNECT_TO_COMPARE_WITH_NAME), SVNTeamPreferences.HISTORY_CONNECT_TO_COMPARE_WITH_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_PAGE_SIZE_NAME), SVNTeamPreferences.HISTORY_PAGE_SIZE_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_PAGING_ENABLE_NAME), SVNTeamPreferences.HISTORY_PAGING_ENABLE_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_SHOW_MULTILINE_COMMENT_NAME), SVNTeamPreferences.HISTORY_SHOW_MULTILINE_COMMENT_DEFAULT);
@@ -440,6 +443,7 @@ public final class SVNTeamPreferences {
 	}
 	
 	public static void resetToDefaultHistoryValues(IPreferenceStore store) {
+		store.setValue(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_CONNECT_TO_COMPARE_WITH_NAME), SVNTeamPreferences.HISTORY_CONNECT_TO_COMPARE_WITH_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_PAGE_SIZE_NAME), SVNTeamPreferences.HISTORY_PAGE_SIZE_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullHistoryName(SVNTeamPreferences.HISTORY_PAGING_ENABLE_NAME), SVNTeamPreferences.HISTORY_PAGING_ENABLE_DEFAULT);
 	}

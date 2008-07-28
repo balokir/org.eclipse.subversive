@@ -61,6 +61,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected boolean showExternals;
 	protected boolean fastReport;
 	protected boolean pagingEnable;
+	protected boolean connectToCompareWith;
 	protected int pageSize;
 	protected int dateFormat;
 	protected String dateFormatCustom;
@@ -88,6 +89,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected Button includeMergedRevisionsButton;
 	protected Button fastReportButton;
 	protected Button enablePagingButton;
+	protected Button connectToCompareWithButton;
 	protected Text pageSizeField;
 	protected Combo dateFormatField;
 	protected Text dateFormatCustomField;
@@ -119,6 +121,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 
 		SVNTeamPreferences.setHistoryInt(store, SVNTeamPreferences.HISTORY_PAGE_SIZE_NAME, this.pageSize);
 		SVNTeamPreferences.setHistoryBoolean(store, SVNTeamPreferences.HISTORY_PAGING_ENABLE_NAME, this.pagingEnable);
+		SVNTeamPreferences.setHistoryBoolean(store, SVNTeamPreferences.HISTORY_CONNECT_TO_COMPARE_WITH_NAME, this.connectToCompareWith);
 		
 		SVNTeamPreferences.setDateFormatInt(store, SVNTeamPreferences.DATE_FORMAT_NAME, this.dateFormat);
 		SVNTeamPreferences.setDateFormatString(store, SVNTeamPreferences.DATE_FORMAT_CUSTOM_NAME, this.dateFormatCustom);
@@ -155,6 +158,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		
 		this.pagingEnable = SVNTeamPreferences.HISTORY_PAGING_ENABLE_DEFAULT;
 		this.pageSize = SVNTeamPreferences.HISTORY_PAGE_SIZE_DEFAULT;
+		this.connectToCompareWith = SVNTeamPreferences.HISTORY_CONNECT_TO_COMPARE_WITH_DEFAULT;
 		
 		this.dateFormat = SVNTeamPreferences.DATE_FORMAT_DEFAULT;
 		this.dateFormatCustom = SVNTeamPreferences.DATE_FORMAT_CUSTOM_DEFAULT;
@@ -190,6 +194,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		
 		this.fastReport = SVNTeamPreferences.getSynchronizeBoolean(store, SVNTeamPreferences.SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_NAME);
 		
+		this.connectToCompareWith = SVNTeamPreferences.getHistoryBoolean(store, SVNTeamPreferences.HISTORY_CONNECT_TO_COMPARE_WITH_NAME);
 		this.pagingEnable = SVNTeamPreferences.getHistoryBoolean(store, SVNTeamPreferences.HISTORY_PAGING_ENABLE_NAME);
 		this.pageSize = SVNTeamPreferences.getHistoryInt(store, SVNTeamPreferences.HISTORY_PAGE_SIZE_NAME);
 		
@@ -228,6 +233,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.pageSizeField.setText(String.valueOf(this.pageSize));
 		this.enablePagingButton.setSelection(this.pagingEnable);
 		this.pageSizeField.setEnabled(this.pagingEnable);
+		this.connectToCompareWithButton.setSelection(this.connectToCompareWith);
 		
 		this.dateFormatField.select(this.dateFormat);
 		this.dateFormatCustomField.setText(this.dateFormatCustom);
@@ -575,7 +581,6 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 				}
 			}
 		});
-		this.enablePagingButton.setSelection(this.pagingEnable);
 		
 		this.pageSizeField = new Text(historyViewGroup, SWT.SINGLE | SWT.BORDER);
 		data = new GridData(GridData.FILL_HORIZONTAL);
@@ -593,6 +598,18 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 				catch (Exception ex) {
 
 				}
+			}
+		});
+		
+		this.connectToCompareWithButton = new Button(historyViewGroup, SWT.CHECK);
+		data = new GridData();
+		data.horizontalSpan = 2;
+		this.connectToCompareWithButton.setLayoutData(data);
+		labelText = SVNTeamUIPlugin.instance().getResource("MainPreferencePage.historyConnectToCompareWith");
+		this.connectToCompareWithButton.setText(labelText);
+		this.connectToCompareWithButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				SVNTeamPreferencesPage.this.connectToCompareWith = ((Button)e.widget).getSelection();
 			}
 		});
 		

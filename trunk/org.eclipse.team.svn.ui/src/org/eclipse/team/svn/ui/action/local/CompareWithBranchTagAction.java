@@ -68,7 +68,9 @@ public class CompareWithBranchTagAction extends AbstractWorkingCopyAction {
 			CompareResourcesOperation mainOp = new CompareResourcesOperation(local, remote);
 			CompositeOperation op = new CompositeOperation(mainOp.getId());
 			op.add(mainOp);
-			op.add(new ShowHistoryViewOperation(resource, remote, ISVNHistoryView.COMPARE_MODE, ISVNHistoryView.COMPARE_MODE), new IActionOperation[] {mainOp});
+			if (SVNTeamPreferences.getHistoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.HISTORY_CONNECT_TO_COMPARE_WITH_NAME)) {
+				op.add(new ShowHistoryViewOperation(resource, remote, ISVNHistoryView.COMPARE_MODE, ISVNHistoryView.COMPARE_MODE), new IActionOperation[] {mainOp});
+			}
 			this.runScheduled(op);
 		}
 	}
