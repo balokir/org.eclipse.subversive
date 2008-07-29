@@ -131,6 +131,7 @@ public abstract class AbstractResourceDecorator extends LabelProvider implements
 	}
 	
 	public void dispose() {
+		PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().removePropertyChangeListener(this.configurationListener);
 		SVNTeamUIPlugin.instance().getPreferenceStore().removePropertyChangeListener(this.configurationListener);
 		
 		this.finiStatic();
