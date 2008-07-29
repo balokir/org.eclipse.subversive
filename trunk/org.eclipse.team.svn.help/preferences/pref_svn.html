@@ -52,12 +52,6 @@
 				<td class="header" align ="center" valign="center">Default</td>
 			</tr>
 			<tr>
-				<td align ="center" valign="center">Detect deleted projects before update</td>
-				<td align ="center" valign="center">Specifies if the plug-in should detect if the project the user is trying to update have been
-				removed from the repository.</td>
-				<td align ="center" valign="center">Enabled</td>
-			</tr>
-			<tr>
 				<td align ="center" valign="center">Check the new resources in the commit dialog</td>
 				<td align ="center" valign="center">Specifies if the plug-in should check the new resources in the commit dialog.</td>
 				<td align ="center" valign="center">Enabled</td>
@@ -99,8 +93,13 @@
 				<td align ="center" valign="center">Subversive Default</td>
 			</tr>
 			<tr>
-				<td align ="center" valign="center">Use SVN Merge View</td>
+				<td align ="center" valign="center">Use SVN Merge view</td>
 				<td align ="center" valign="center">When chosen Subversive allows to use Synchronize View features during the merging.</td>
+				<td align ="center" valign="center">Enabled</td>
+			</tr>
+			<tr>
+				<td align ="center" valign="center">Show merged revisions</td>
+				<td align ="center" valign="center">When chosen Subversive show revisions, which took part in the merges, while viewing resource history.</td>
 				<td align ="center" valign="center">Disabled</td>
 			</tr>
 		</table><br/>
@@ -148,6 +147,11 @@
 				<td align ="center" valign="center">tags</td>
 			</tr>
 			<tr>
+				<td align ="center" valign="center">Show resources linked with svn:externals</td>
+				<td align ="center" valign="center">When enabled the resources linked as externals are shown in Repository Tree and Repository Browser.</td>
+				<td align ="center" valign="center">Enabled</td>
+			</tr>
+			<tr>
 				<td align ="center" valign="center">Use '.project' project name for the working copy instead of repository folder name</td>
 				<td align ="center" valign="center">When enabled uses the local project name from '.project'. Disabling improves check out performance.</td>
 				<td align ="center" valign="center">Enabled</td>
@@ -192,18 +196,8 @@
 				<td class="header" align ="center" valign="center">Default</td>
 			</tr>
 			<tr>
-				<td align ="center" valign="center">Show synchronize info contiguous</td>
+				<td align ="center" valign="center">Show synchronize info incrementally</td>
 				<td align ="center" valign="center">Specifies if the synchronization info will be get in series (Enabled) or in whole (Disabled).</td>
-				<td align ="center" valign="center">Enabled</td>
-			</tr>
-			<tr>
-				<td align ="center" valign="center">Show multi line comment view</td>
-				<td align ="center" valign="center">Allows plug-in to show 'multi line comment view' in a 'History View'.</td>
-				<td align ="center" valign="center">Enabled</td>
-			</tr>
-			<tr>
-				<td align ="center" valign="center">Show Affected Path View</td>
-				<td align ="center" valign="center">Allows plug-in to show paths where changes have been made.</td>
 				<td align ="center" valign="center">Enabled</td>
 			</tr>
 			<tr>
@@ -212,9 +206,9 @@
 				<td align ="center" valign="center">Enabled / 25</td>
 			</tr>
 			<tr>
-				<td align ="center" valign="center">Choose where to show SVN&reg; properties for the resource</td>
-				<td align ="center" valign="center">SVN&reg; properties for a resource are shown in a 'Properties View' or in a  'Properties Editor' depending on a selection.</td>
-				<td align ="center" valign="center">Display in 'Properties View'</td>
+				<td align ="center" valign="center">Show History View while comparison</td>
+				<td align ="center" valign="center">Specifies if the history view is shown when one of 'Compare With' actions is called.</td>
+				<td align ="center" valign="center">Enabled</td>
 			</tr>
 		</table><br/>
 		This is how <i>'View Settings'</i> tab group looks like:
