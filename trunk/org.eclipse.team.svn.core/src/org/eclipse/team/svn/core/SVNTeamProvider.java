@@ -18,7 +18,6 @@ import org.eclipse.core.resources.team.FileModificationValidator;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.history.IFileHistoryProvider;
@@ -39,7 +38,7 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
- * IProject attachement, that allows us to associate a project with a repository
+ * IProject attachment, that allows us to associate a project with a repository
  * 
  * @author Alexander Gurov
  */
@@ -100,7 +99,7 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 	}
 
 	public void deconfigure() throws CoreException {
-		ProgressMonitorUtility.doTaskExternal(new DisconnectOperation(new IProject[] {this.getProject()}, false), new NullProgressMonitor());
+
 	}
 
 	public IMoveDeleteHook getMoveDeleteHook() {
