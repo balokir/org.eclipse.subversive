@@ -233,7 +233,7 @@ public abstract class AbstractResourceDecorator extends LabelProvider implements
 				decoration.addOverlay(AbstractResourceDecorator.OVR_VERSIONED);
 			}
 		}
-		if (this.useFonts && IStateFilter.SF_MODIFIED.accept(resource, state, mask)) {
+		if (this.useFonts && IStateFilter.SF_ANY_CHANGE.accept(resource, state, mask)) {
 			decoration.setBackgroundColor(this.changedBackgroundColor);
 			decoration.setForegroundColor(this.changedForegroundColor);
 			decoration.setFont(this.changedFont);
