@@ -36,23 +36,25 @@ public class CreatePatchAction extends AbstractWorkingCopyAction {
 	
 	public void runImpl(IAction action) {
 		IResource []targets = FileUtility.filterResources(this.getSelectedResources(), IStateFilter.SF_ANY_CHANGE);
-		CreatePatchWizard wizard = new CreatePatchWizard(targets[0].getName(), targets);
-		WizardDialog dialog = new WizardDialog(this.getShell(), wizard);
-		if (dialog.open() == 0) {
-			CreatePatchOperation mainOp = new CreatePatchOperation(wizard.getSelection(), wizard.getFileName(), wizard.isRecursive(), wizard.isIgnoreDeleted(), wizard.isProcessBinary(), wizard.isProcessUnversioned(), wizard.getRootPoint());
-			CompositeOperation op = new CompositeOperation(mainOp.getId());
-			op.add(mainOp);
-			switch (wizard.getWriteMode()) {
-				case CreatePatchWizard.WRITE_TO_WORKSPACE_FILE: {
-					op.add(new RefreshResourcesOperation(new IResource[] {wizard.getTargetFolder()}, IResource.DEPTH_ONE, RefreshResourcesOperation.REFRESH_CHANGES), new IActionOperation[] {mainOp});
-					break;
+		if (targets.length > 0) {
+			CreatePatchWizard wizard = new CreatePatchWizard(targets[0].getName(), targets);
+			WizardDialog dialog = new WizardDialog(this.getShell(), wizard);
+			if (dialog.open() == 0) {
+				CreatePatchOperation mainOp = new CreatePatchOperation(wizard.getSelection(), wizard.getFileName(), wizard.isRecursive(), wizard.isIgnoreDeleted(), wizard.isProcessBinary(), wizard.isProcessUnversioned(), wizard.getRootPoint());
+				CompositeOperation op = new CompositeOperation(mainOp.getId());
+				op.add(mainOp);
+				switch (wizard.getWriteMode()) {
+					case CreatePatchWizard.WRITE_TO_WORKSPACE_FILE: {
+						op.add(new RefreshResourcesOperation(new IResource[] {wizard.getTargetFolder()}, IResource.DEPTH_ONE, RefreshResourcesOperation.REFRESH_CHANGES), new IActionOperation[] {mainOp});
+						break;
+					}
+					case CreatePatchWizard.WRITE_TO_CLIPBOARD: {
+						op.add(new FileToClipboardOperation(wizard.getFileName()), new IActionOperation[] {mainOp});
+						break;
+					}
 				}
-				case CreatePatchWizard.WRITE_TO_CLIPBOARD: {
-					op.add(new FileToClipboardOperation(wizard.getFileName()), new IActionOperation[] {mainOp});
-					break;
-				}
+				this.runScheduled(op);
 			}
-			this.runScheduled(op);
 		}
 	}
 
