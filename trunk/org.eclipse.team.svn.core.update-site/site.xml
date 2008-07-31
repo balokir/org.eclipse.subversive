@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site
+      mirrorsURL="http://www.eclipse.org/downloads/download.php?file=/technology/subversive/0.7/headless-update-site/site.xml&amp;protocol=http&amp;format=xml" pack200="true">
+   <description url="http://download.eclipse.org/technology/subversive/0.7/headless-update-site/">
+      Eclipse Subversive - SVN Team Provider Core
+   </description>
+   <feature url="features/org.eclipse.team.svn.core_0.7.1.I20080728-1500.jar" id="org.eclipse.team.svn.core" version="0.7.1.I20080728-1500">
+      <category name="Subversive Core (Incubation)"/>
+   </feature>
+   <category-def name="Subversive Core (Incubation)" label="Subversive SVN Team Provider Core (Incubation)">
+      <description>
+         Headless part of the Eclipse Subversive Team Provider for the Subversion version control system.
+      </description>
+   </category-def>
+</site>
