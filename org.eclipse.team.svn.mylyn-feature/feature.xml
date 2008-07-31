@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.team.svn.mylyn"
       label="%featureName"
-      version="0.7.1.I20080612-1500"
+      version="0.7.2.I20080801-1500"
       provider-name="%providerName"
       colocation-affinity="org.eclipse.team.svn">
    <install-handler/>
@@ -116,17 +116,17 @@ Java and all Java-based trademarks are trademarks of Sun Microsystems, Inc. in t
    </url>
 
    <requires>
-      <import feature="org.eclipse.mylyn_feature" version="3.0.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.mylyn.context_feature" version="3.0.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.mylyn.bugzilla_feature" version="3.0.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.team.svn" version="0.7.1.I20080612-1500" match="compatible"/>
+      <import feature="org.eclipse.mylyn_feature" version="3.0.0" match="compatible"/>
+      <import feature="org.eclipse.mylyn.context_feature" version="3.0.0" match="compatible"/>
+      <import feature="org.eclipse.mylyn.bugzilla_feature" version="3.0.0" match="compatible"/>
+      <import feature="org.eclipse.team.svn" version="0.7.2.I20080801-1500" match="compatible"/>
    </requires>
 
    <plugin
          id="org.eclipse.team.svn.mylyn"
          download-size="20"
          install-size="20"
-         version="0.7.1.I20080612-1500"
+         version="0.7.2.I20080801-1500"
          unpack="false"/>
 
 </feature>

@@ -5,27 +5,52 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 0.7.1.I20080728-1500 release date: 28 July 2008
+Version 0.7.2.I20080801-1500 release date: 1 August 2008
 
 1. What's New
 
-   The version is based on 0.7.1 release. The main target of the release is introducing  
-   correct build numbers and transferring Subversive development to Eclipse.org.
+   The version is 0.7.2 service release. The main target of the release is transferring 
+   Subversive development to Eclipse.org.
    
    Changes in compare with previous version are listed below. The full list of 
    changes you can find in Change Log.
     
 	Features:
-	 * Popping up of History View can't be disabled when Compare With action is perfomed. (bug 242192)
+	 * When a project is relocated outside Eclipse, and the new URL matches an already-existing repository location, Subversive should automatically update its metadata (bug 231427)
+	   + special thanks to Max Bowsher
+	
+	 * Improve "Import Project Set" behaviour (bug 230826)
+	   + special thanks to Michael Murphree
+	
+	 * Provide "Headless" update site (bug 211420)
+	   + special thanks to Panagiotis Korros, Thomas Hallgren
+	
+	 * decorate working sets in Package Explorer (bug 242249)
+	   + special thanks to Igor Fedorenko
+	
+	 * Popping up of History View can't be disabled when Compare With action is performed. (bug 242192)
 	   + special thanks to Radoslaw Jozwik
 	
+	 * Include information about merged revisions into annotation (bug 240156)
+	 * Show merged revisions in History View (bug 239819)
+	 * Support sparse actions (checkout, import, export) [REOPENED] (bug 231552)
 	 * Allow multiple selection for repository operations (export, add revision link). (bug 241249)
 	 * Ensure that merge action serves merge-tracking functionality (bug 239818)
 	 * Allows to select multiple revisions in merge dialog (bug 239820)
 	 * Support merge --reintegrate mode (bug 241500)
 	 * Use latest SVN 1.5 binaries [REOPENED] (bug 218472)
+	 * Improve "Extract Changes" operation (bug 242557)
 	
 	Fixes:
+	 * ArrayIndexOutOfBoundsException in Create Patch action (bug 242670)
+	   + special thanks to Ulli Hafner
+	
+	 * Stack overflow while disconnecting a project (bug 241814)
+	   + special thanks to Vadim Dmitriev
+	
+	 * New resources are not decorated as outgoing changes (bug 242248)
+	   + special thanks to Igor Fedorenko
+	
 	 * NPE in MessageDialog (bug 242085)
 	   + special thanks to Eugene Babikhin
 	
@@ -44,6 +69,67 @@ Version 0.7.1.I20080728-1500 release date: 28 July 2008
 	 * All protocols: Subversive uses incorrect credentials with SVN Kit 1.1.7-based connector (bug 221094)
 	   + special thanks to Christopher Smith, Fabio N. Kepler, Antony Jones, Heath Borders, Martin Oberhuber, Jeroen, Nathan Vick, Cinly Ooi
 	
+	 * Replace confirmation before main dialog window doesn't make sense (bug 240471)
+	   + special thanks to Max Gilead
+	   
+	 * Merge problem "File not found: revision..." when opening 3-way comparator (bug 240291)
+	   + special thanks to Alexey Kamenchuk
+	   
+	 * "Overwrite and Update" doing merge (bug 237218)
+	   + special thanks to Tony Poppleton
+	   
+	 * Branch from working copy failed with SVN 1.5-compatible connectors (bug 240258)
+	   + special thanks to Larry Edelstein
+	
+	 * Check out deleted files on my system without asking about it (bug 238916)
+	   + special thanks to Vesa Jaaskelainen 
+	
+	 * Commiting not up to date directory results in uninformative console message only (bug 239105)
+	   + special thanks to Max Gilead
+	
+	 * Migrate Projects and Settings throws NullPointerException, perhaps on Closed Projects (bug 238863)
+	   + special thanks to Brett Randall, Steffen Pingel
+	
+	 * view settings wording: contiguous should be incremental (bug 238834)
+	   + special thanks to Andrew Bachmann
+	
+	 * Properties Configuration preference uses the wrong scrollbars (bug 238389)
+	   + special thanks to Kristoffer Peterhansel
+	
+	 * Auto-properties not importing from my Subversion config file (bug 238390)
+	   + special thanks to Kristoffer Peterhansel
+	
+	 * Deadlock when moving multiple sources from one project to another. (bug 233956)
+	   + special thanks to Ulli Hafner
+	
+	 * SVN replaces files with second last revision after commit (bug 237204)
+	   + special thanks to Fabricio Silva
+	
+	 * Relocate outside plugin control, then "Share with another repository location" fails (bug 231426)
+	   + special thanks to Max Bowsher
+	
+	 * NPE in SVN 1.5 compatible connectors when user has no access to repository revision (bug 237408)
+	   + special thanks to Darren Hodges
+	   
+	 * The 'New Working Set' dialog should come up with the default text in the 'Name' textbox already selected (bug 234397)
+	   + special thanks to Dan Berindei
+	   
+	 * NPE in acquireSVNProxy after plug-in is upgraded from the old version (bug 237422)
+	   + special thanks to Edward Willink
+	   
+	 * Share Project should run in background (bug 237304)
+	   + special thanks to Lars Vogel
+	   
+	 * Synchronize View's "Edit Conflicts" action should not touch folders (bug 237264)
+	   + special thanks to Markus Dangl
+	   
+	 * NPE in ClearUpdateStatuses operation (bug 235317)
+	   + special thanks to Ulli Hafner
+	   
+	 * SVNRemoteStorage.asLocalResource() should never return null (bug 216629)
+	   + special thanks to Gene Huang
+	
+	 * Update help according to plug-in changes (bug 225568)
 	 * NPE while refreshing repository browser (bug 240795)
 
 2. Information

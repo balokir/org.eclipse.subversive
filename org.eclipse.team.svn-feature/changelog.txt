@@ -8,19 +8,44 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
-Version 0.7.1.I20080728-1500 [28 July 2008]
+Version 0.7.2.I20080801-1500 [1 August 2008]
 
 Features:
- * Popping up of History View can't be disabled when Compare With action is perfomed. (bug 242192)
+ * When a project is relocated outside Eclipse, and the new URL matches an already-existing repository location, Subversive should automatically update its metadata (bug 231427)
+   + special thanks to Max Bowsher
+
+ * Improve "Import Project Set" behaviour (bug 230826)
+   + special thanks to Michael Murphree
+
+ * Provide "Headless" update site (bug 211420)
+   + special thanks to Panagiotis Korros, Thomas Hallgren
+
+ * decorate working sets in Package Explorer (bug 242249)
+   + special thanks to Igor Fedorenko
+
+ * Popping up of History View can't be disabled when Compare With action is performed. (bug 242192)
    + special thanks to Radoslaw Jozwik
 
+ * Include information about merged revisions into annotation (bug 240156)
+ * Show merged revisions in History View (bug 239819)
+ * Support sparse actions (checkout, import, export) [REOPENED] (bug 231552)
  * Allow multiple selection for repository operations (export, add revision link). (bug 241249)
  * Ensure that merge action serves merge-tracking functionality (bug 239818)
  * Allows to select multiple revisions in merge dialog (bug 239820)
  * Support merge --reintegrate mode (bug 241500)
  * Use latest SVN 1.5 binaries [REOPENED] (bug 218472)
+ * Improve "Extract Changes" operation (bug 242557)
 
 Fixes:
+ * ArrayIndexOutOfBoundsException in Create Patch action (bug 242670)
+   + special thanks to Ulli Hafner
+
+ * Stack overflow while disconnecting a project (bug 241814)
+   + special thanks to Vadim Dmitriev
+
+ * New resources are not decorated as outgoing changes (bug 242248)
+   + special thanks to Igor Fedorenko
+
  * NPE in MessageDialog (bug 242085)
    + special thanks to Eugene Babikhin
 
@@ -39,18 +64,6 @@ Fixes:
  * All protocols: Subversive uses incorrect credentials with SVN Kit 1.1.7-based connector (bug 221094)
    + special thanks to Christopher Smith, Fabio N. Kepler, Antony Jones, Heath Borders, Martin Oberhuber, Jeroen, Nathan Vick, Cinly Ooi
 
- * NPE while refreshing repository browser (bug 240795)
-
---------------------------------------------------------------------------------
-
-Version 0.7.1.I20080711-1500 [11 July 2008]
-
-Features:
- * Include information about merged revisions into annotation (bug 240156)
- * Show merged revisions in History View (bug 239819)
- * Support sparse actions (checkout, import, export) [REOPENED] (bug 231552)
-
-Fixes:
  * Replace confirmation before main dialog window doesn't make sense (bug 240471)
    + special thanks to Max Gilead
    
@@ -63,11 +76,6 @@ Fixes:
  * Branch from working copy failed with SVN 1.5-compatible connectors (bug 240258)
    + special thanks to Larry Edelstein
 
---------------------------------------------------------------------------------
-
-Version 0.7.1.I20080704-1500 [04 July 2008]
-
-Fixes:
  * Check out deleted files on my system without asking about it (bug 238916)
    + special thanks to Vesa Jaaskelainen 
 
@@ -95,13 +103,6 @@ Fixes:
  * Relocate outside plugin control, then "Share with another repository location" fails (bug 231426)
    + special thanks to Max Bowsher
 
- * Update help according to plug-in changes (bug 225568)
-
---------------------------------------------------------------------------------
-
-Version 0.7.1.I20080619-1400 [19 June 2008]
-
-Fixes:
  * NPE in SVN 1.5 compatible connectors when user has no access to repository revision (bug 237408)
    + special thanks to Darren Hodges
    
@@ -122,6 +123,9 @@ Fixes:
    
  * SVNRemoteStorage.asLocalResource() should never return null (bug 216629)
    + special thanks to Gene Huang
+
+ * Update help according to plug-in changes (bug 225568)
+ * NPE while refreshing repository browser (bug 240795)
 
 --------------------------------------------------------------------------------
 
