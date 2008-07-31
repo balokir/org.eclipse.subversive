@@ -30,7 +30,6 @@ import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.remote.CheckoutAsOperation;
 import org.eclipse.team.svn.core.operation.remote.management.SaveRepositoryLocationsOperation;
-import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -103,11 +102,9 @@ public class SVNTeamProjectSetCapability extends ProjectSetCapability {
 	}
 	
 	protected IProject configureCheckoutOperation(CompositeOperation op, IProject project, String fullReference) throws TeamException {
-		IRemoteStorage storage = SVNRemoteStorage.instance();
-
 		String []parts = fullReference.split(",");
 		
-		IRepositoryLocation location = this.getLocationForReference(storage, parts);
+		IRepositoryLocation location = this.getLocationForReference(parts);
 		IRepositoryResource resource = location.asRepositoryContainer(parts[1], true);
 
 		if (resource != null) {
@@ -122,28 +119,26 @@ public class SVNTeamProjectSetCapability extends ProjectSetCapability {
 		return null;
 	}
 	
-	protected IRepositoryLocation getLocationForReference(IRemoteStorage storage, String []parts) {
+	protected IRepositoryLocation getLocationForReference(String []parts) {
 		IRepositoryLocation location = null;
 		if (parts.length > 3) {
-			location = storage.newRepositoryLocation(parts[3]);
-			if (storage.getRepositoryLocation(location.getId()) != null) {
+			location = SVNRemoteStorage.instance().newRepositoryLocation(parts[3]);
+			if (SVNRemoteStorage.instance().getRepositoryLocation(location.getId()) != null) {
 				return location;
 			}
 		}
-		else {
-			IRepositoryLocation []locations = storage.getRepositoryLocations();
-			Path awaitingFor = new Path(parts[1]);
-			for (int i = 0; i < locations.length; i++) {
-				if (new Path(locations[i].getUrl()).isPrefixOf(awaitingFor)) {
-					return locations[i];
-				}
+		IRepositoryLocation []locations = SVNRemoteStorage.instance().getRepositoryLocations();
+		Path awaitingFor = new Path(location != null ? location.getUrl() : parts[1]);
+		for (int i = 0; i < locations.length; i++) {
+			if (new Path(locations[i].getUrl()).isPrefixOf(awaitingFor)) {
+				return locations[i];
 			}
-			location = storage.newRepositoryLocation();
 		}
-		if (location.getUrl() == null || location.getUrl().length() == 0) {
+		if (location == null) {
+			location = SVNRemoteStorage.instance().newRepositoryLocation();
 			location.setUrl(parts[1]);
 		}
-		storage.addRepositoryLocation(location);
+		SVNRemoteStorage.instance().addRepositoryLocation(location);
 		return location;
 	}
 	
@@ -156,8 +151,7 @@ public class SVNTeamProjectSetCapability extends ProjectSetCapability {
 	}
 	
 	protected String asReference(IProject project) throws TeamException {
-		IRemoteStorage storage = SVNRemoteStorage.instance();
-		IRepositoryResource resource = storage.asRepositoryResource(project);
+		IRepositoryResource resource = SVNRemoteStorage.instance().asRepositoryResource(project);
 		IRepositoryLocation location = resource.getRepositoryLocation();
 		
 		// 1) save plugin information
@@ -169,7 +163,7 @@ public class SVNTeamProjectSetCapability extends ProjectSetCapability {
 		fullReference += "," + resource.getUrl();
 		fullReference += "," + project.getName();
 		
-		fullReference += "," + storage.repositoryLocationAsReference(location);
+		fullReference += "," + SVNRemoteStorage.instance().repositoryLocationAsReference(location);
 		
 		return fullReference;
 	}
