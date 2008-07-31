@@ -13,10 +13,14 @@ package org.eclipse.team.svn.core.operation.remote;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -36,9 +40,10 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class ExtractToOperationRemote extends AbstractRepositoryOperation {
 	private Collection<String> toDelete;
+	private IRepositoryResourceProvider deletionsProvider;
 	private String path;
 	private boolean delitionAllowed;
-	private HashMap<String, String> resource2projectNames;
+	private HashMap<String, String> exportRoots2Names;
 	
 	/**
 	 * Operation for extracting remote resources to a specified location
@@ -46,7 +51,7 @@ public class ExtractToOperationRemote extends AbstractRepositoryOperation {
 	 * @param incomingResources - the resources to extract array
 	 * @param markedForDelition - the collection of the resource URLs to delete (can be empty but must not be null)
 	 * @param path - path to extract to
-	 * @param resource2projectNames - resource URL to project name mapping (can be empty but must not be null)
+	 * @param exportRoots2Names - resource URL to project name mapping (can be empty but must not be null)
 	 * @param delitionAllowed - specifies if deletion allowed if the resource is marked for deletion
 	 */
 	public ExtractToOperationRemote(IRepositoryResource []incomingResources, Collection<String> markedForDelition, String path, HashMap<String, String> resource2projectNames, boolean delitionAllowed) {
@@ -54,7 +59,7 @@ public class ExtractToOperationRemote extends AbstractRepositoryOperation {
 		this.path = path;
 		this.delitionAllowed = delitionAllowed;
 		this.toDelete = markedForDelition;
-		this.resource2projectNames = resource2projectNames; 
+		this.exportRoots2Names = resource2projectNames; 
 	}
 	
 	/**
@@ -63,98 +68,105 @@ public class ExtractToOperationRemote extends AbstractRepositoryOperation {
 	 * @param incomingResourcesProvider - incoming resources to extract provider
 	 * @param markedForDelition - the collection of the resource URLs to delete (can be empty but must not be null)
 	 * @param path - path to extract to
-	 * @param resource2projectNames - resource URL to project name mapping (can be empty but must not be null)
+	 * @param exportRoots2Names - resource URL to project name mapping (can be empty but must not be null)
 	 * @param delitionAllowed - specifies if deletion allowed if the resource is marked for deletion
 	 */
-	public ExtractToOperationRemote(IRepositoryResourceProvider incomingResourcesProvider, Collection<String> markedForDelition, String path, HashMap<String, String> resource2projectNames, boolean delitionAllowed) {
+	public ExtractToOperationRemote(IRepositoryResourceProvider incomingResourcesProvider, Collection<String> markedForDelition, String path, HashMap<String, String> exportRoots2Names, boolean delitionAllowed) {
 		super("Operation.ExtractTo", incomingResourcesProvider);
 		this.path = path;
 		this.delitionAllowed = delitionAllowed;
 		this.toDelete = markedForDelition;
-		this.resource2projectNames = resource2projectNames;
+		this.exportRoots2Names = exportRoots2Names;
+	}
+
+	public ExtractToOperationRemote(IRepositoryResourceProvider incomingResourcesProvider, IRepositoryResourceProvider markedForDelition, String path, HashMap<String, String> exportRoots2Names, boolean delitionAllowed) {
+		super("Operation.ExtractTo", incomingResourcesProvider);
+		this.path = path;
+		this.delitionAllowed = delitionAllowed;
+		this.deletionsProvider = markedForDelition;
+		this.exportRoots2Names = exportRoots2Names;
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		IRepositoryResource []resources = this.operableData();
-		//to report progress
+		if (this.deletionsProvider != null) {
+			IRepositoryResource []deletions = this.deletionsProvider.getRepositoryResources();
+			this.toDelete = new HashSet<String>();
+			if (deletions != null) {
+				for (IRepositoryResource deletion : deletions) {
+					this.toDelete.add(deletion.getUrl());
+				}
+			}
+		}
 		int processed = 0;
 		SVNUtility.reorder(resources, true);
 		String previousPref = null;
 		String previousPath = null;
 		for (IRepositoryResource current : resources) {
 			String currentURL = current.getUrl();
+			Path currentPath = new Path(currentURL);
 			String toOperate = "";
-			if (previousPref == null
-					|| !currentURL.startsWith(previousPref)) {
+			String rootUrl = null;
+			String rootName = null;
+			for (String url : this.exportRoots2Names.keySet()) {
+				if (new Path(url).isPrefixOf(currentPath)) {
+					rootUrl = url;
+					rootName = this.exportRoots2Names.get(url);
+				}
+			}
+			if (previousPref == null || !new Path(previousPref).isPrefixOf(currentPath)) {
 				if (current instanceof IRepositoryContainer) {
 					previousPref = current.getUrl();
 				}
-				previousPath = "/" + current.getName();
+				previousPath = "/" + (rootUrl == null ? current.getName() : current.getUrl().substring(rootUrl.lastIndexOf('/') + 1));
 				toOperate = this.path + previousPath;
 			}
 			else {
 				toOperate = this.path + previousPath + currentURL.substring(previousPref.length());
 			}
-			for (String url : this.resource2projectNames.keySet()) {
-				if (currentURL.contains(url)) {
-					String projectRepoName = url.substring(url.lastIndexOf("/") + 1);
-					String [] parts = toOperate.split(projectRepoName);
-					toOperate = parts[0] + this.resource2projectNames.get(url);
-					for (int i = 1; i < parts.length; i++) {
-						toOperate += parts[i];
-					}
+			if (rootUrl != null) {
+				String projectRepoName = rootUrl.substring(rootUrl.lastIndexOf("/") + 1);
+				String [] parts = toOperate.split(projectRepoName);
+				toOperate = parts[0] + rootName;
+				for (int i = 1; i < parts.length; i++) {
+					toOperate += parts[i];
 				}
 			}
 			File operatingDirectory = new File(toOperate);
+			ExtractToOperationRemote.logToAll(this.path, operatingDirectory.getAbsolutePath().substring(this.path.length() + 1), true);
 			if (this.toDelete.contains(current.getUrl())) {
+				ExtractToOperationRemote.logToDeletions(this.path, operatingDirectory.getAbsolutePath().substring(this.path.length() + 1), true);
 				if (operatingDirectory.exists() && this.delitionAllowed)
 				{
 					FileUtility.deleteRecursive(operatingDirectory);
 				}
 			}
+			else if (current instanceof IRepositoryContainer) {
+				monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.Folders", new String [] {currentURL}));
+				operatingDirectory.mkdirs();
+			}
 			else {
-				if (current instanceof IRepositoryContainer) {
-					monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.Folders", new String [] {currentURL}));
-					operatingDirectory.mkdirs();
+				monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.Folders", new String [] {currentURL}));
+				if (operatingDirectory.getParentFile() != null) {
+					operatingDirectory.getParentFile().mkdirs();
 				}
-				else {
-					monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.Folders", new String [] {currentURL}));
-					String parentUrl = current.getParent().getUrl();
-					if (previousPref != null) {
-						String dirsToMake = this.path + previousPath + parentUrl.substring(previousPref.length());
-						for (String url : this.resource2projectNames.keySet()) {
-							if (parentUrl.contains(url)) {
-								String projectRepoName = url.substring(url.lastIndexOf("/") + 1);
-								String [] parts = dirsToMake.split(projectRepoName);
-								dirsToMake = parts[0] + this.resource2projectNames.get(url);
-								for (int i = 1; i < parts.length; i++) {
-									dirsToMake += parts[i];
-								}
-							}
-						}
-						new File(dirsToMake).mkdirs();
-					}
-					monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.RemoteFile", new String [] {currentURL}));
-					this.downloadFile(current, toOperate, monitor);
-				}
+				monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.RemoteFile", new String [] {currentURL}));
+				this.downloadFile(current, toOperate, monitor);
 			}
 			ProgressMonitorUtility.progress(monitor, processed++, resources.length);
 		}
 	}
 	
 	protected void downloadFile(IRepositoryResource remote, String downloadPath, IProgressMonitor monitor) throws Exception {
-		FileOutputStream stream = null;
 		IRepositoryLocation location = remote.getRepositoryLocation();
 		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
+			FileOutputStream stream = new FileOutputStream(downloadPath);
 			try {
-				stream = new FileOutputStream(downloadPath);
 				proxy.streamFileContent(SVNUtility.getEntryRevisionReference(remote), 2048, stream, new SVNProgressMonitor(this, monitor, null));
 			}
 			finally {
-				if (stream != null) {
-					try {stream.close();} catch (Exception ex) {}
-				}
+				try {stream.close();} catch (Exception ex) {}
 			}
 		}
 		finally {
@@ -168,4 +180,30 @@ public class ExtractToOperationRemote extends AbstractRepositoryOperation {
 		}
 		return 4;
 	}
+	
+	public static void logToDeletions(String logPath, String line, boolean append) {
+		ExtractToOperationRemote.logTo(logPath + "/deletions.log", line, append);
+	}
+	
+	public static void logToAll(String logPath, String line, boolean append) {
+		ExtractToOperationRemote.logTo(logPath + "/changes.log", line, append);
+	}
+	
+	private static void logTo(String logPath, String line, boolean append) {
+		FileWriter writer = null;
+		try {
+			writer = new FileWriter(logPath, append);
+			writer.write(line);
+			writer.write(System.getProperty("line.separator"));
+		}
+		catch (IOException ex) {
+			//ignore
+		}
+		finally {
+			if (writer != null) {
+				try {writer.close();} catch (Exception ex) {}
+			}
+		}
+	}
+	
 }
