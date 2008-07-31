@@ -47,6 +47,20 @@ public class RelocatedProjectHelper implements IResolutionHelper {
 		if (description.code == ErrorDescription.PROJECT_IS_RELOCATED_OUTSIDE_PLUGIN) {
 			Object []context = (Object [])description.context;
 			final IProject project = (IProject)context[0];
+			final IRepositoryLocation location = (IRepositoryLocation)context[2];
+			final String relocatedTo = (String)context[1];
+			
+			IRepositoryRoot []roots = SVNUtility.findRoots(relocatedTo, true);
+			if (roots.length != 0) {
+				IConnectedProjectInformation provider = (IConnectedProjectInformation)RepositoryProvider.getProvider(project, SVNTeamPlugin.NATURE_ID);
+				try {
+					provider.switchResource(roots[0].asRepositoryContainer(relocatedTo, false));
+					return true;
+				}
+				catch (CoreException ex) {
+					//ask user if not successful
+				}
+			}
 			
 			final RelocationChoicesPanel panel = new RelocationChoicesPanel(project);
 			UIMonitorUtility.parallelSyncExec(new Runnable() {
@@ -59,9 +73,6 @@ public class RelocatedProjectHelper implements IResolutionHelper {
 			if (panel.getRecoveryAction() == RelocationChoicesPanel.DISCONNECT_PROJECT) {
 				return false;
 			}
-			
-			final IRepositoryLocation location = (IRepositoryLocation)context[2];
-			final String relocatedTo = (String)context[1];
 			
 			if (panel.getRecoveryAction() == RelocationChoicesPanel.RELOCATE_THE_PROJECT_BACK) {
 				RelocateWorkingCopyOperation mainOp = new RelocateWorkingCopyOperation(new IResource[] {project}, location);
@@ -110,19 +121,13 @@ public class RelocatedProjectHelper implements IResolutionHelper {
 			else if (panel.getRecoveryAction() == RelocationChoicesPanel.SHARE_WITH_ANOTHER_LOCATION) {
 				try {
 					IConnectedProjectInformation provider = (IConnectedProjectInformation)RepositoryProvider.getProvider(project, SVNTeamPlugin.NATURE_ID);
-					IRepositoryRoot []roots = SVNUtility.findRoots(relocatedTo, true);
-					if (roots.length == 1) {
-						provider.switchResource(roots[0].asRepositoryContainer(relocatedTo, false));
-					}
-					else {
-						IRepositoryLocation newLocation = SVNRemoteStorage.instance().newRepositoryLocation();
-						SVNRemoteStorage.instance().copyRepositoryLocation(newLocation, location);
-						newLocation.setUrl(relocatedTo);
-						newLocation.setUrl(newLocation.getRepositoryRootUrl());
-						SVNRemoteStorage.instance().addRepositoryLocation(newLocation);
-						SVNTeamPlugin.instance().setLocationsDirty(true);
-						provider.switchResource(newLocation.asRepositoryContainer(relocatedTo, false));
-					}
+					IRepositoryLocation newLocation = SVNRemoteStorage.instance().newRepositoryLocation();
+					SVNRemoteStorage.instance().copyRepositoryLocation(newLocation, location);
+					newLocation.setUrl(relocatedTo);
+					newLocation.setUrl(newLocation.getRepositoryRootUrl());
+					SVNRemoteStorage.instance().addRepositoryLocation(newLocation);
+					SVNTeamPlugin.instance().setLocationsDirty(true);
+					provider.switchResource(newLocation.asRepositoryContainer(relocatedTo, false));
 				}
 				catch (CoreException ex) {
 					return false;
