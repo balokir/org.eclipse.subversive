@@ -20,8 +20,10 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.ExtractToOperationLocal;
+import org.eclipse.team.svn.core.operation.local.InitExtractLogOperation;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -40,16 +42,23 @@ public class ExtractOutgoingToAction extends AbstractSynchronizeModelAction {
 	}
 	
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+		DirectoryDialog fileDialog = new DirectoryDialog(configuration.getSite().getShell());
+		fileDialog.setText(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Select.Title"));
+		fileDialog.setMessage(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Select.Description"));
+		String path = fileDialog.open();
+		if (path == null) {
+			return null;
+		}
 		IResource []selectedOutgoingResources = this.syncInfoSelector.getSelectedResources(new ISyncStateFilter.StateFilterWrapper(IStateFilter.SF_ANY_CHANGE, true));
 		HashSet<IResource> outgoingResources = new HashSet<IResource>(Arrays.asList(selectedOutgoingResources));
 		for (IResource current : selectedOutgoingResources) {
 			outgoingResources.add(current.getProject());
 		}
-		DirectoryDialog fileDialog = new DirectoryDialog(configuration.getSite().getShell());
-		fileDialog.setText(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Select.Title"));
-		fileDialog.setMessage(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Select.Description"));
-		String path = fileDialog.open();
-		return path == null ? null : new ExtractToOperationLocal(outgoingResources.toArray(new IResource[outgoingResources.size()]), path, true);
+		ExtractToOperationLocal mainOp = new ExtractToOperationLocal(outgoingResources.toArray(new IResource[outgoingResources.size()]), path, true);
+		CompositeOperation op = new CompositeOperation(mainOp.getId());
+		op.add(new InitExtractLogOperation(path));
+		op.add(mainOp);
+		return op;
 	}
 	
 }

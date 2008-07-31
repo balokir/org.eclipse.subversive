@@ -23,7 +23,6 @@ import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
@@ -68,12 +67,12 @@ import org.eclipse.team.svn.core.connector.SVNDiffStatus;
 import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryInfo;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
+import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNLogPath;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.SVNEntry.Kind;
-import org.eclipse.team.svn.core.connector.SVNLogPath.ChangeType;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.history.SVNRemoteResourceRevision;
@@ -84,6 +83,7 @@ import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.local.GetRemoteContentsOperation;
+import org.eclipse.team.svn.core.operation.local.InitExtractLogOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
@@ -920,47 +920,21 @@ public class HistoryActionManager {
 		else {
 			selectedLogs[1] = new SVNLogEntry(selectedLogs[0].revision - 1, 0, null, null, null, false);
 		}
-		SVNLogEntry [] allLogs = this.view.getFullRemoteHistory();
-		HashMap<String, Character> changesMapping = new HashMap<String, Character>();
-		String rootUrl = this.view.getRepositoryResource().getRepositoryLocation().getRepositoryRootUrl();
-		String selectedUrl = this.view.getRepositoryResource().getUrl();
 		HashMap<String, String> resource2project = new HashMap<String, String>();
 		IResource local = this.view.getResource();
-		if (local != null && local instanceof IProject) {
+		if (local != null) {
+			IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(local.getProject());
+			resource2project.put(remote.getUrl(), local.getProject().getName());
+		}
+		else {
 			IRepositoryResource remote = this.view.getRepositoryResource();
-			resource2project.put(remote.getUrl(), local.getName());
-		}
-		HashMap<SVNLogPath, Long> operablePaths = new HashMap<SVNLogPath, Long>();
-		HashSet<String> toDelete = new HashSet<String>();
-		for (int i = allLogs.length -1; i > -1; i--) {
-			SVNLogEntry current = allLogs[i];
-			if (current.revision <= selectedLogs[0].revision
-					&& current.revision > selectedLogs[1].revision) {
-				SVNLogPath[] changedPaths = current.changedPaths;
-				if (changedPaths == null) {
-					continue;
-				}
-				for (SVNLogPath operable : changedPaths) {
-					if ((rootUrl + operable.path).startsWith(selectedUrl)) {
-						operablePaths.put(operable, current.revision);
-						changesMapping.put(rootUrl + operable.path, operable.action);
-					}
-					else if ((rootUrl + operable.path).startsWith(selectedUrl.substring(0, selectedUrl.lastIndexOf("/")))
-							&& operable.action == ChangeType.DELETED) {
-						toDelete.add(rootUrl + operable.path);
-					}
-				}
-			}
-		}
-		for (String url : changesMapping.keySet()) {
-			if (changesMapping.get(url).equals(new Character(ChangeType.DELETED))) {
-				toDelete.add(url);
-			}
+			resource2project.put(remote.getUrl(), remote.getName());
 		}
 		CompositeOperation op = new CompositeOperation(SVNTeamPlugin.instance().getResource("Operation.ExtractTo"));
 		FromDifferenceRepositoryResourceProvider provider = new FromDifferenceRepositoryResourceProvider(selectedLogs);
 		op.add(provider);
-		op.add(new ExtractToOperationRemote(provider, toDelete, path, resource2project, true), new IActionOperation [] {provider});
+		op.add(new InitExtractLogOperation(path));
+		op.add(new ExtractToOperationRemote(provider, provider.getDeletionsProvider(), path, resource2project, true), new IActionOperation [] {provider});
 		UIMonitorUtility.doTaskScheduledActive(op);
 	}
 	
@@ -1666,16 +1640,24 @@ public class HistoryActionManager {
 	
 	protected class FromDifferenceRepositoryResourceProvider extends AbstractActionOperation implements IRepositoryResourceProvider {
 		protected IRepositoryResource [] repositoryResources;
+		protected IRepositoryResource [] repositoryResourcesToDelete;
 		protected IRepositoryResource newer;
 		protected IRepositoryResource older;
 		protected IRepositoryLocation location;
-		protected SVNDiffStatus [] statuses;
 		
 		public FromDifferenceRepositoryResourceProvider(SVNLogEntry [] logEntries) {//(HashMap<SVNLogPath, Long> paths, SVNLogEntry selectedLogEntry) {
 			super("Operation.GetRepositoryResource");
 			this.newer = HistoryActionManager.this.getResourceForSelectedRevision(logEntries[0]);
 			this.older = HistoryActionManager.this.getResourceForSelectedRevision(logEntries[1]);
 			this.location = this.newer.getRepositoryLocation();
+		}
+		
+		public IRepositoryResourceProvider getDeletionsProvider() {
+			return new IRepositoryResourceProvider() {
+				public IRepositoryResource[] getRepositoryResources() {
+					return FromDifferenceRepositoryResourceProvider.this.repositoryResourcesToDelete;
+				}
+			};
 		}
 		
 		protected IRepositoryResource createResourceFor(int kind, String url) {
@@ -1699,18 +1681,17 @@ public class HistoryActionManager {
 		
 		protected void runImpl(IProgressMonitor monitor) throws Exception {
 			HashSet<IRepositoryResource> resourcesToReturn = new HashSet<IRepositoryResource>();
+			HashSet<IRepositoryResource> resourcesToDelete = new HashSet<IRepositoryResource>();
 			ArrayList<SVNDiffStatus> statusesList = new ArrayList<SVNDiffStatus>();
 			ISVNConnector proxy = this.location.acquireSVNProxy();
-			final LocateResourceURLInHistoryOperation op = new LocateResourceURLInHistoryOperation(new IRepositoryResource[] {this.older, this.newer});
+			final LocateResourceURLInHistoryOperation op = new LocateResourceURLInHistoryOperation(new IRepositoryResource[] {this.newer, this.older});
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
 					ProgressMonitorUtility.doTaskExternal(op, monitor);
 				}
 			}, monitor, 3);
-			this.older = op.getRepositoryResources()[0];
-			this.newer = op.getRepositoryResources()[1];
-			resourcesToReturn.add(this.newer);
-			resourcesToReturn.add(this.older);
+			this.newer = op.getRepositoryResources()[0];
+			this.older = op.getRepositoryResources()[1];
 			SVNEntryRevisionReference refPrev = SVNUtility.getEntryRevisionReference(this.older);
 			SVNEntryRevisionReference refNext = SVNUtility.getEntryRevisionReference(this.newer);
 			ProgressMonitorUtility.setTaskInfo(monitor, this, SVNTeamPlugin.instance().getResource("Progress.Running"));
@@ -1726,15 +1707,17 @@ public class HistoryActionManager {
 				this.location.releaseSVNProxy(proxy);
 			}
 			
-			this.statuses = statusesList.toArray(new SVNDiffStatus[0]);
-			
-			for (int i = 0; i < this.statuses.length; i++) {
-				IRepositoryResource resourceToAdd = this.getResourceForStatus(this.statuses[i]);
-				resourceToAdd.setSelectedRevision(SVNRevision.fromNumber(this.newer.getRevision()));
-				resourceToAdd.setPegRevision(SVNRevision.fromNumber(this.newer.getRevision()));
+			for (SVNDiffStatus status : statusesList) {
+				IRepositoryResource resourceToAdd = this.getResourceForStatus(status);
+				resourceToAdd.setSelectedRevision(this.newer.getSelectedRevision());
+				resourceToAdd.setPegRevision(this.newer.getPegRevision());
 				resourcesToReturn.add(resourceToAdd);
+				if (status.textStatus == SVNEntryStatus.Kind.DELETED) {
+					resourcesToDelete.add(resourceToAdd);
+				}
 			}
 			this.repositoryResources = resourcesToReturn.toArray(new IRepositoryResource[0]);
+			this.repositoryResourcesToDelete = resourcesToDelete.toArray(new IRepositoryResource[0]);
 		}
 		
 		public IRepositoryResource[] getRepositoryResources() {

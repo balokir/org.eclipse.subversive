@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
+import org.eclipse.team.svn.core.operation.remote.ExtractToOperationRemote;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
@@ -50,17 +51,13 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		//progressReporter
-		int processed = 0;
-		
 		FileUtility.reorder(this.outgoingResources, true);
-		
+		int processed = 0;
 		IPath previousPref = null;
 		for (IResource current : this.outgoingResources) {
 			IPath currentPath = current.getFullPath();
 			String toOperate = "";
-			if (previousPref == null
-					|| !previousPref.isPrefixOf(currentPath)) {
+			if (previousPref == null || !previousPref.isPrefixOf(currentPath)) {
 				toOperate = this.path + "/" + current.getName();
 				if (current instanceof IContainer) {
 					previousPref = current.getFullPath();
@@ -74,28 +71,28 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 				toOperate = this.path + (currentPath.toString()).substring(toRemove);
 			}
 			File operatingDirectory = new File(toOperate);
+			ExtractToOperationRemote.logToAll(this.path, operatingDirectory.getAbsolutePath().substring(this.path.length() + 1), true);
 			if (IStateFilter.SF_DELETED.accept(SVNRemoteStorage.instance().asLocalResourceAccessible(current))) {
+				ExtractToOperationRemote.logToDeletions(this.path, operatingDirectory.getAbsolutePath().substring(this.path.length() + 1), true);
 				if (operatingDirectory.exists() && this.delitionAllowed) {
 					FileUtility.deleteRecursive(operatingDirectory);
 				}
 			}
+			else if (current instanceof IContainer) {
+				monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.Folders", new String [] {FileUtility.getWorkingCopyPath(current)}));
+				operatingDirectory.mkdirs();
+			}
 			else {
-				if (current instanceof IContainer) {
-					monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.Folders", new String [] {FileUtility.getWorkingCopyPath(current)}));
-					operatingDirectory.mkdirs();
-				}
-				else {
-					if (previousPref != null) {
-						File parent = operatingDirectory.getParentFile();
-						if (parent != null) {
-							monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.Folders", new String [] {FileUtility.getWorkingCopyPath(current)}));
-							parent.mkdirs();
-							operatingDirectory = parent;
-						}
+				if (previousPref != null) {
+					File parent = operatingDirectory.getParentFile();
+					if (parent != null) {
+						monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.Folders", new String [] {FileUtility.getWorkingCopyPath(current)}));
+						parent.mkdirs();
+						operatingDirectory = parent;
 					}
-					monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.LocalFile", new String [] {FileUtility.getWorkingCopyPath(current)}));
-					FileUtility.copyAll(operatingDirectory, new File(FileUtility.getWorkingCopyPath(current)), FileUtility.COPY_OVERRIDE_EXISTING_FILES, null, monitor);
 				}
+				monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.LocalFile", new String [] {FileUtility.getWorkingCopyPath(current)}));
+				FileUtility.copyAll(operatingDirectory, new File(FileUtility.getWorkingCopyPath(current)), FileUtility.COPY_OVERRIDE_EXISTING_FILES, null, monitor);
 			}
 			ProgressMonitorUtility.progress(monitor, processed++, this.outgoingResources.length);
 		}
