@@ -65,12 +65,16 @@ public class MergeAction extends AbstractNonRecursiveTeamAction {
 	    if (dialog.open() == 0) {
 			// 2URL mode requires peg as revision
 			LocateResourceURLInHistoryOperation locateFirst = new LocateResourceURLInHistoryOperation(panel.getFirstSelection());
-			LocateResourceURLInHistoryOperation locateSecond = new LocateResourceURLInHistoryOperation(panel.getSecondSelection());
+			LocateResourceURLInHistoryOperation locateSecond = null;
 			IRepositoryResourceProvider firstSet = locateFirst;
-			IRepositoryResourceProvider secondSet = locateSecond;
+			IRepositoryResourceProvider secondSet = null;
 			if (panel.getMode() == MergePanel.MODE_1URL) {
 				firstSet = new IRepositoryResourceProvider.DefaultRepositoryResourceProvider(panel.getFirstSelection());
 			}
+			else if (panel.getMode() == MergePanel.MODE_2URL) {
+				secondSet = locateSecond = new LocateResourceURLInHistoryOperation(panel.getSecondSelection());
+			}
+			
 			IActionOperation mergeOp = null;
 	    	if (SVNTeamPreferences.getMergeBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MERGE_USE_JAVAHL_NAME) /*|| panel.getMode() == MergePanel.MODE_REINTEGRATE*/) {
 		    	JavaHLMergeOperation mainOp = null;

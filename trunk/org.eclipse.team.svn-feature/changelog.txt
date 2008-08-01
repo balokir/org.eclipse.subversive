@@ -43,6 +43,9 @@ Fixes:
  * Stack overflow while disconnecting a project (bug 241814)
    + special thanks to Vadim Dmitriev
 
+ * NPE in MergePanel.getSelection (bug 242753)
+   + special thanks to Igor Fedorenko
+
  * New resources are not decorated as outgoing changes (bug 242248)
    + special thanks to Igor Fedorenko
 

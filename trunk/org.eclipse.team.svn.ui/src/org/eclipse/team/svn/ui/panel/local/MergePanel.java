@@ -51,6 +51,7 @@ import org.eclipse.team.svn.ui.composite.DepthSelectionComposite;
 import org.eclipse.team.svn.ui.composite.RepositoryResourceSelectionComposite;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.AbstractAdvancedDialogPanel;
+import org.eclipse.team.svn.ui.panel.IDialogManagerEx;
 import org.eclipse.team.svn.ui.panel.reporting.PreviewPanel;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifier;
@@ -326,11 +327,14 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 		this.saveChangesImpl();
 		
 		LocateResourceURLInHistoryOperation locateFirst = new LocateResourceURLInHistoryOperation(this.getFirstSelection());
-		LocateResourceURLInHistoryOperation locateSecond = new LocateResourceURLInHistoryOperation(this.getSecondSelection());
+		LocateResourceURLInHistoryOperation locateSecond = null;
 		IRepositoryResourceProvider firstSet = locateFirst;
-		IRepositoryResourceProvider secondSet = locateSecond;
+		IRepositoryResourceProvider secondSet = null;
 		if (this.mode == MergePanel.MODE_1URL) {
 			firstSet = new IRepositoryResourceProvider.DefaultRepositoryResourceProvider(this.getFirstSelection());
+		}
+		else if (this.mode == MergePanel.MODE_2URL) {
+			secondSet = locateSecond = new LocateResourceURLInHistoryOperation(this.getSecondSelection());
 		}
 		JavaHLMergeOperation mergeOp = null;
 		if (this.mode == MergePanel.MODE_2URL) {
@@ -382,7 +386,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 		if (this.mode != MergePanel.MODE_1URL) {
 			CompositeOperation op = new CompositeOperation(mergeOp.getId());
 			op.add(locateFirst);
-			if (this.mode != MergePanel.MODE_2URL) {
+			if (this.mode == MergePanel.MODE_2URL) {
 				op.add(locateSecond);
 			}
 			op.add(mergeOp);
@@ -425,6 +429,10 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 	protected void cancelChangesImpl() {
 	}
 
+	protected void setButtonsEnabled(boolean enabled) {
+	    ((IDialogManagerEx)this.manager).setExtendedButtonEnabled(0, enabled);
+	}
+	
 	protected IRepositoryResource []getSelection(IRepositoryResource base) {
 		if (this.to.length == 1) {
 			return new IRepositoryResource[] {base};
