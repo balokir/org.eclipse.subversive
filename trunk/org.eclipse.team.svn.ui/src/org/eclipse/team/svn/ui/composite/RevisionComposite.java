@@ -13,6 +13,7 @@ package org.eclipse.team.svn.ui.composite;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Comparator;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -27,7 +28,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
@@ -78,6 +81,9 @@ public class RevisionComposite extends Composite {
 	protected Button changeRevisionRadioButton;
 	protected Button changeRevisionButton;
 	protected Button reverseRevisionsButton;
+	protected Button dateTimeRadioButton;
+	protected DateTime dateField;
+	protected DateTime timeField;
 	protected boolean reverseRevisions;
 	
 	protected IValidationManager validationManager;
@@ -161,10 +167,7 @@ public class RevisionComposite extends Composite {
 			this.baseResource = resource;
 		}
 		if (this.selectedResource == null) {
-			this.headRevisionRadioButton.setEnabled(false);
-			this.changeRevisionRadioButton.setEnabled(false);
-			this.changeRevisionButton.setEnabled(false);
-			this.revisionField.setEditable(false);
+			this.setEnabled(false);
 		}
 		else {
 			SVNRevision rev = this.selectedResource.getSelectedRevision();
@@ -172,32 +175,45 @@ public class RevisionComposite extends Composite {
 				this.selectedRevision = rev;
 				this.lastSelectedRevision = ((SVNRevision.Number)this.selectedRevision).getNumber();
 				
-				if (this.changeRevisionRadioButton != null) {
-					this.revisionField.setText(this.selectedRevision.toString());
-					this.headRevisionRadioButton.setSelection(false);
-					if (this.checkStyled) {
-						this.startFromCopyRadioButton.setSelection(false);
-					}
-					this.changeRevisionRadioButton.setSelection(true);
-					this.changeRevisionButton.setEnabled(true);
-					this.revisionField.setEditable(true);
+				this.revisionField.setText(this.selectedRevision.toString());
+				this.headRevisionRadioButton.setSelection(false);
+				if (this.checkStyled) {
+					this.startFromCopyRadioButton.setSelection(false);
 				}
+				else {
+					this.dateTimeRadioButton.setSelection(false);
+				}
+				this.changeRevisionRadioButton.setSelection(true);
+			}
+			else if (rev.getKind() == Kind.DATE && !this.checkStyled) {
+				this.selectedRevision = rev;
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTimeInMillis(((SVNRevision.Date)rev).getDate());
+				this.dateField.setYear(calendar.get(Calendar.YEAR));
+				this.dateField.setMonth(calendar.get(Calendar.MONTH));
+				this.dateField.setDay(calendar.get(Calendar.DAY_OF_MONTH));
+				this.timeField.setHours(calendar.get(Calendar.HOUR_OF_DAY));
+				this.timeField.setMinutes(calendar.get(Calendar.MINUTE));
+				this.timeField.setSeconds(calendar.get(Calendar.SECOND));
+				this.headRevisionRadioButton.setSelection(false);
+				this.dateTimeRadioButton.setSelection(true);
+				this.changeRevisionRadioButton.setSelection(false);
 			}
 			else {
 				this.selectedRevision = this.defaultRevision;
 				this.lastSelectedRevision = -1;
 				
-				if (this.changeRevisionRadioButton != null) {
-					this.revisionField.setText("");
-					this.headRevisionRadioButton.setSelection(!this.checkStyled);
-					if (this.checkStyled) {
-						this.startFromCopyRadioButton.setSelection(true);
-					}
-					this.changeRevisionRadioButton.setSelection(false);
-					this.changeRevisionButton.setEnabled(false);
-					this.revisionField.setEditable(false);
+				this.revisionField.setText("");
+				this.headRevisionRadioButton.setSelection(!this.checkStyled);
+				if (this.checkStyled) {
+					this.startFromCopyRadioButton.setSelection(true);
 				}
+				else {
+					this.dateTimeRadioButton.setSelection(false);
+				}
+				this.changeRevisionRadioButton.setSelection(false);
 			}
+			this.setEnabled(true);
 		}
 	}
 	
@@ -221,16 +237,16 @@ public class RevisionComposite extends Composite {
 		Group group = new Group(this, SWT.NONE);
 		group.setText(this.captions == null ? SVNTeamUIPlugin.instance().getResource(this.checkStyled ? "RevisionComposite.Revisions" : "RevisionComposite.Revision") : this.captions[0]);
 		layout = new GridLayout();
-		layout.numColumns = 2;
+		layout.numColumns = 3;
 		group.setLayout(layout);
 		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
+		data.horizontalSpan = 3;
 		group.setLayoutData(data);
 
 		this.headRevisionRadioButton = new Button(group, SWT.RADIO);
 		this.headRevisionRadioButton.setText(this.captions == null ? SVNTeamUIPlugin.instance().getResource(this.checkStyled ? "RevisionComposite.All" : "RevisionComposite.HeadRevision") : this.captions[1]);
 		data = new GridData();
-		data.horizontalSpan = 2;
+		data.horizontalSpan = 3;
 		this.headRevisionRadioButton.setLayoutData(data);
 		this.headRevisionRadioButton.setSelection(!this.checkStyled);
 
@@ -239,7 +255,9 @@ public class RevisionComposite extends Composite {
 				RevisionComposite.this.validationManager.validateContent();
 				if (((Button)e.widget).getSelection()) {
 					RevisionComposite.this.changeRevisionButton.setEnabled(false);
-					RevisionComposite.this.revisionField.setEditable(false);
+					RevisionComposite.this.revisionField.setEnabled(false);
+					RevisionComposite.this.dateField.setEnabled(false);
+					RevisionComposite.this.timeField.setEnabled(false);
 					RevisionComposite.this.startFromCopy = false;
 					RevisionComposite.this.defaultToRevisions();
 				}
@@ -251,7 +269,7 @@ public class RevisionComposite extends Composite {
 			this.startFromCopyRadioButton = new Button(group, SWT.RADIO);
 			this.startFromCopyRadioButton.setText(SVNTeamUIPlugin.instance().getResource("RevisionComposite.StartFromCopy"));
 			data = new GridData();
-			data.horizontalSpan = 2;
+			data.horizontalSpan = 3;
 			this.startFromCopyRadioButton.setLayoutData(data);
 			this.startFromCopyRadioButton.setSelection(true);
 
@@ -260,13 +278,70 @@ public class RevisionComposite extends Composite {
 					RevisionComposite.this.validationManager.validateContent();
 					if (((Button)e.widget).getSelection()) {
 						RevisionComposite.this.changeRevisionButton.setEnabled(false);
-						RevisionComposite.this.revisionField.setEditable(false);
+						RevisionComposite.this.revisionField.setEnabled(false);
+						RevisionComposite.this.dateField.setEnabled(false);
+						RevisionComposite.this.timeField.setEnabled(false);
 						RevisionComposite.this.startFromCopy = true;
 						RevisionComposite.this.defaultToRevisions();
 					}
 					RevisionComposite.this.additionalValidation();
 				}
 			});
+		}
+		else {
+			this.dateTimeRadioButton = new Button(group, SWT.RADIO);
+			this.dateTimeRadioButton.setText(SVNTeamUIPlugin.instance().getResource("RevisionComposite.DateTime"));
+			data = new GridData();
+			this.dateTimeRadioButton.setLayoutData(data);
+			this.dateTimeRadioButton.setSelection(false);
+
+			this.dateTimeRadioButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					RevisionComposite.this.validationManager.validateContent();
+					if (((Button)e.widget).getSelection()) {
+						RevisionComposite.this.changeRevisionButton.setEnabled(false);
+						RevisionComposite.this.revisionField.setEnabled(false);
+						RevisionComposite.this.dateField.setEnabled(true);
+						RevisionComposite.this.timeField.setEnabled(true);
+						RevisionComposite.this.startFromCopy = false;
+						RevisionComposite.this.dateTimeToRevision();
+					}
+					RevisionComposite.this.additionalValidation();
+				}
+			});
+
+			Composite cmp = new Composite(group, SWT.NONE);
+			layout = new GridLayout();
+			layout.numColumns = 2;
+			layout.marginHeight = layout.marginWidth = 0;
+			cmp.setLayout(layout);
+			data = new GridData();
+			cmp.setLayoutData(data);
+			
+			this.dateField = new DateTime(cmp, SWT.DATE | SWT.MEDIUM);
+			data = new GridData();
+			this.dateField.setLayoutData(data);
+			this.dateField.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					RevisionComposite.this.dateTimeToRevision();
+				}
+			});
+
+			this.timeField = new DateTime(cmp, SWT.TIME | SWT.MEDIUM);
+			data = new GridData();
+			this.timeField.setLayoutData(data);
+			this.timeField.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					RevisionComposite.this.dateTimeToRevision();
+				}
+			});
+			
+			Label label = new Label(group, SWT.NONE);
+			data = new GridData();
+			label.setLayoutData(data);
+			
+			this.dateField.setEnabled(false);
+			this.timeField.setEnabled(false);
 		}
 		
 		this.changeRevisionRadioButton = new Button(group, SWT.RADIO);
@@ -277,7 +352,9 @@ public class RevisionComposite extends Composite {
 				RevisionComposite.this.validationManager.validateContent();
 				if (((Button)e.widget).getSelection()) {
 					RevisionComposite.this.changeRevisionButton.setEnabled(true);
-					RevisionComposite.this.revisionField.setEditable(true);
+					RevisionComposite.this.revisionField.setEnabled(true);
+					RevisionComposite.this.dateField.setEnabled(false);
+					RevisionComposite.this.timeField.setEnabled(false);
 					RevisionComposite.this.startFromCopy = false;
 					RevisionComposite.this.textToRevisions();
 				}
@@ -285,25 +362,16 @@ public class RevisionComposite extends Composite {
 			}
 		});
 		
-		final Composite revisionSelection = new Composite(group, SWT.NONE);
-		layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		revisionSelection.setLayout(layout);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		revisionSelection.setLayoutData(data);
-		
 		if (this.checkStyled) {
 			data = new GridData(GridData.FILL_HORIZONTAL);
 		}
 		else {
 			data = new GridData();
-			data.widthHint = 60;
+			data.horizontalAlignment = SWT.FILL;
 		}
-		this.revisionField = new Text(revisionSelection, SWT.SINGLE | SWT.BORDER);	
+		this.revisionField = new Text(group, SWT.SINGLE | SWT.BORDER);	
 		this.revisionField.setLayoutData(data);
-		this.revisionField.setEditable(false);
+		this.revisionField.setEnabled(false);
 		CompositeVerifier verifier = new CompositeVerifier();
 		String name = this.changeRevisionRadioButton.getText();
 		verifier.add(new NonEmptyFieldVerifier(name));
@@ -319,7 +387,7 @@ public class RevisionComposite extends Composite {
 			}
 		});
 		
-		this.changeRevisionButton = new Button(revisionSelection, SWT.PUSH);
+		this.changeRevisionButton = new Button(group, SWT.PUSH);
 		this.changeRevisionButton.setText(SVNTeamUIPlugin.instance().getResource("Button.Browse"));
 		data = new GridData();
 		data.widthHint = DefaultDialog.computeButtonWidth(this.changeRevisionButton);
@@ -383,17 +451,29 @@ public class RevisionComposite extends Composite {
 	
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
-		this.changeRevisionButton.setEnabled(enabled && this.changeRevisionRadioButton.getSelection());
-		this.changeRevisionRadioButton.setEnabled(enabled);
 		this.headRevisionRadioButton.setEnabled(enabled);
 		if (this.checkStyled) {
 			this.startFromCopyRadioButton.setEnabled(enabled);
 			this.reverseRevisionsButton.setEnabled(enabled);
 		}
+		else {
+			this.dateTimeRadioButton.setEnabled(enabled);
+			this.dateField.setEnabled(enabled && this.dateTimeRadioButton.getSelection());
+			this.timeField.setEnabled(enabled && this.dateTimeRadioButton.getSelection());
+		}
+		this.changeRevisionRadioButton.setEnabled(enabled);
+		this.changeRevisionButton.setEnabled(enabled && this.changeRevisionRadioButton.getSelection());
+		this.revisionField.setEnabled(enabled && this.changeRevisionRadioButton.getSelection());
 	}
 	
 	public void additionalValidation() {
 		//override this if there is a need to perform additional validation
+	}
+	
+	protected void dateTimeToRevision() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(this.dateField.getYear(), this.dateField.getMonth(), this.dateField.getDay(), this.timeField.getHours(), this.timeField.getMinutes(), this.timeField.getSeconds());
+		this.selectedRevision = SVNRevision.fromDate(calendar.getTimeInMillis());
 	}
 	
 	protected void defaultToRevisions() {
