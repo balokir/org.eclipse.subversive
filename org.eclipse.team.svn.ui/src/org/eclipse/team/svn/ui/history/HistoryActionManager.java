@@ -314,7 +314,8 @@ public class HistoryActionManager {
 		
 		protected void addRemotePart(final StructuredViewer viewer, IMenuManager manager, final ILogNode []selection, boolean containsMergeHistory) {
 			Action tAction = null;
-			boolean existsInPrevious = HistoryActionManager.this.view.getFullRemoteHistory()[HistoryActionManager.this.view.getFullRemoteHistory().length - 1] != selection[0].getEntity() || !HistoryActionManager.this.view.isAllRemoteHistoryFetched();
+			SVNLogEntry []entries = HistoryActionManager.this.view.getFullRemoteHistory();
+			boolean existsInPrevious = entries[entries.length - 1] != selection[0].getEntity() || !HistoryActionManager.this.view.isAllRemoteHistoryFetched();
 			final SVNLogEntry current = (SVNLogEntry)selection[0].getEntity();
 			String revision = HistoryActionManager.this.view.getResource() != null ? String.valueOf(current.revision) : SVNTeamUIPlugin.instance().getResource("HistoryView.HEAD");
 			if (!containsMergeHistory) {

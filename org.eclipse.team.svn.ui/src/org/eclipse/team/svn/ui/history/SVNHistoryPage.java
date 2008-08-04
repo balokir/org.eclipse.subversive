@@ -71,6 +71,7 @@ import org.eclipse.team.svn.ui.history.model.ILogNode;
 import org.eclipse.team.svn.ui.operation.CorrectRevisionOperation;
 import org.eclipse.team.svn.ui.operation.UILoggedOperation;
 import org.eclipse.team.svn.ui.panel.view.HistoryFilterPanel;
+import org.eclipse.team.svn.ui.panel.view.HistoryRangePanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.repository.model.RepositoryLocation;
 import org.eclipse.team.svn.ui.repository.model.RepositoryResource;
@@ -90,6 +91,9 @@ import org.eclipse.ui.PlatformUI;
 public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IResourceStatesListener, IPropertyChangeListener, IRevisionPropertyChangeListener {
 	protected IResource wcResource;
 	protected IRepositoryResource repositoryResource;
+	
+	protected SVNRevision endRevision;
+	protected SVNRevision startRevision;
 
 	protected LogMessagesComposite history;
 
@@ -109,6 +113,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 	protected Action getAllPagesAction;
 	protected Action clearFilterDropDownAction;
 	protected Action filterDropDownAction;
+	protected Action revisionsRangeDropDownAction;
 	protected Action hierarchicalAction;
 	protected Action flatAction;
 	protected Action compareModeAction;
@@ -139,7 +144,6 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 	public SVNHistoryPage(Object input) {
 		SVNRemoteStorage.instance().addResourceStatesListener(ResourceStatesChangedEvent.class, this);
 		SVNRemoteStorage.instance().addRevisionPropertyChangeListener(this);
-		this.currentlyInvolvedLocation = null;
 		this.actionManager = new HistoryActionManager(this);
 		SVNTeamUIPlugin.instance().getPreferenceStore().addPropertyChangeListener(this);
 		this.authorFilter = new AuthorNameLogEntryFilter();
@@ -389,7 +393,10 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 			this.pending = true;
 			this.setButtonsEnablement();
 			this.history.refresh(LogMessagesComposite.REFRESH_ALL);
-			GetLogMessagesOperation msgOp = new GetLogMessagesOperation(this.repositoryResource, this.stopOnCopyAction.isChecked());
+			GetLogMessagesOperation msgOp = this.createRemoteHistoryFetcher();
+			if (this.startRevision != null) {
+				msgOp.setStartRevision(this.startRevision);
+			}
 			msgOp.setLimit(this.limit);
 			this.fetchRemoteHistory(msgOp);
 		}
@@ -541,11 +548,11 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		
 		this.getNextPageAction = new HistoryAction("HistoryView.GetNextPage", "icons/views/history/paging.gif") {
 			public void run() {
-				GetLogMessagesOperation msgOp = new GetLogMessagesOperation(SVNHistoryPage.this.repositoryResource, SVNHistoryPage.this.stopOnCopyAction.isChecked());
+				GetLogMessagesOperation msgOp = SVNHistoryPage.this.createRemoteHistoryFetcher();
 				msgOp.setLimit(SVNHistoryPage.this.limit + 1);
 				if (SVNHistoryPage.this.logMessages != null) {
 					SVNLogEntry lm = SVNHistoryPage.this.logMessages[SVNHistoryPage.this.logMessages.length - 1];
-					msgOp.setSelectedRevision(SVNRevision.fromNumber(lm.revision));
+					msgOp.setStartRevision(SVNRevision.fromNumber(lm.revision));
 				}
 				SVNHistoryPage.this.fetchRemoteHistory(msgOp);
 			}
@@ -555,11 +562,11 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		this.getNextPageAction.setToolTipText(msg);
 		this.getAllPagesAction = new HistoryAction("HistoryView.ShowAll", "icons/views/history/paging_all.gif") {
 			public void run() {
-				GetLogMessagesOperation msgOp = new GetLogMessagesOperation(SVNHistoryPage.this.repositoryResource, SVNHistoryPage.this.stopOnCopyAction.isChecked());
+				GetLogMessagesOperation msgOp = SVNHistoryPage.this.createRemoteHistoryFetcher();
 				msgOp.setLimit(0);
 				if (SVNHistoryPage.this.logMessages != null) {
 					SVNLogEntry lm = SVNHistoryPage.this.logMessages[SVNHistoryPage.this.logMessages.length - 1];
-					msgOp.setSelectedRevision(SVNRevision.fromNumber(lm.revision));
+					msgOp.setStartRevision(SVNRevision.fromNumber(lm.revision));
 				}
 				SVNHistoryPage.this.fetchRemoteHistory(msgOp);
 			}
@@ -667,6 +674,12 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 			}
 		};
 
+		this.revisionsRangeDropDownAction = new HistoryAction("HistoryView.RevisionsRange") {
+			public void run() {
+				SVNHistoryPage.this.defineRevisionsRange();
+			}
+		};
+
 		this.filterDropDownAction = new HistoryAction("HistoryView.QuickFilter", "icons/views/history/filter.gif") {
 			public void run() {
 				SVNHistoryPage.this.setFilter();
@@ -677,7 +690,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 				SVNHistoryPage.this.clearFilter();
 			}
 		};
-
+		
 		this.compareModeDropDownAction = new HistoryAction("HistoryView.CompareMode", "icons/views/history/compare_mode.gif") {
 			public void run() {
 				SVNHistoryPage.this.options ^= ISVNHistoryView.COMPARE_MODE;
@@ -716,6 +729,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		actionBarsMenu.add(this.hideUnrelatedDropDownAction);
 		actionBarsMenu.add(this.stopOnCopyDropDownAction);
 		actionBarsMenu.add(new Separator());
+		actionBarsMenu.add(this.revisionsRangeDropDownAction);
 		actionBarsMenu.add(this.filterDropDownAction);
 		actionBarsMenu.add(this.clearFilterDropDownAction);
 		actionBarsMenu.add(new Separator());
@@ -787,6 +801,15 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 			site = part.getSite();
 		}
 		return site;
+	}
+	
+	protected GetLogMessagesOperation createRemoteHistoryFetcher() {
+		GetLogMessagesOperation msgOp = new GetLogMessagesOperation(this.repositoryResource, this.stopOnCopyAction.isChecked());
+		if (this.endRevision != null) {
+			msgOp.setEndRevision(this.endRevision);
+		}
+		// set revision range here
+		return msgOp;
 	}
 
 	protected void fetchRemoteHistory(final GetLogMessagesOperation msgsOp) {
@@ -933,6 +956,16 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		this.setButtonsEnablement();
 	}
 	
+	protected void defineRevisionsRange() {
+		HistoryRangePanel panel = new HistoryRangePanel(this.repositoryResource, this.startRevision, this.endRevision);
+		DefaultDialog dialog = new DefaultDialog(this.getPartSite().getShell(), panel);
+		if (dialog.open() == 0) {
+			this.startRevision = panel.getStartRevision();
+			this.endRevision = panel.getStopRevision();
+			this.refresh(ISVNHistoryView.REFRESH_REMOTE);
+		}
+	}
+	
 	protected void refreshLimitOption() {
 		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
 		
@@ -952,6 +985,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(this.wcResource);
 		boolean enableRepo = (IStateFilter.SF_ONREPOSITORY.accept(local) || this.repositoryResource != null) && !this.pending;
 
+		this.revisionsRangeDropDownAction.setEnabled(enableRepo && this.repositoryResource != null);
 		this.filterDropDownAction.setEnabled(enableRepo && this.repositoryResource != null && this.logMessages != null);
 		this.clearFilterDropDownAction.setEnabled(this.isFilterEnabled());
 		this.getNextPageAction.setEnabled(enableRepo && this.pagingEnabled & ((this.options & ISVNHistoryView.PAGING_ENABLED) != 0));
