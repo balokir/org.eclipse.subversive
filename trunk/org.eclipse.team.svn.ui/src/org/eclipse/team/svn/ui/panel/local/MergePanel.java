@@ -112,7 +112,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 	}
 	
     public Point getPrefferedSizeImpl() {
-        return new Point(570, 245);
+        return new Point(727, 245);
     }
     
     public SVNRevision getStartRevision() {

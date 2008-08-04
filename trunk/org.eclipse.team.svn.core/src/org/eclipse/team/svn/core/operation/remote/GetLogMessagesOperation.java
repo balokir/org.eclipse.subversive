@@ -20,7 +20,6 @@ import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
-import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
@@ -32,17 +31,10 @@ public class GetLogMessagesOperation extends AbstractRepositoryOperation {
 	protected SVNLogEntry []msg;
 	protected boolean stopOnCopy;
 	protected boolean discoverPaths;
-	protected SVNRevision selectedRevision;
+	protected SVNRevision startRevision;
+	protected SVNRevision endRevision;
 	protected long limit;
 	protected boolean includeMerged;
-	
-	public GetLogMessagesOperation(IRepositoryResourceProvider provider) {
-		super("Operation.GetLogMessages", provider);
-		this.stopOnCopy = false;
-		this.includeMerged = false;
-		this.discoverPaths = true;
-		this.limit = 0;
-	}
 	
 	public GetLogMessagesOperation(IRepositoryResource resource) {
 		this(resource, false);
@@ -54,6 +46,7 @@ public class GetLogMessagesOperation extends AbstractRepositoryOperation {
 		this.includeMerged = false;
 		this.discoverPaths = true;
 		this.limit = 0;
+		this.endRevision = SVNRevision.fromNumber(0); 
 	}
 	
 	public boolean getIncludeMerged() {
@@ -88,14 +81,18 @@ public class GetLogMessagesOperation extends AbstractRepositoryOperation {
 		this.limit = limit;
 	}
 	
-	public void setSelectedRevision(SVNRevision revision) {
-		this.selectedRevision = revision;
+	public void setStartRevision(SVNRevision revision) {
+		this.startRevision = revision;
+	}
+
+	public void setEndRevision(SVNRevision revision) {
+		this.endRevision = revision;
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		IRepositoryResource resource = this.operableData()[0];
-		if (this.selectedRevision == null) {
-			this.selectedRevision = resource.getSelectedRevision();
+		if (this.startRevision == null) {
+			this.startRevision = resource.getSelectedRevision();
 		}
 		IRepositoryLocation location = resource.getRepositoryLocation();
 		ISVNConnector proxy = location.acquireSVNProxy();
@@ -104,7 +101,7 @@ public class GetLogMessagesOperation extends AbstractRepositoryOperation {
 			long options = this.discoverPaths ? ISVNConnector.Options.DISCOVER_PATHS : ISVNConnector.Options.NONE;
 			options |= this.stopOnCopy ? ISVNConnector.Options.STOP_ON_COPY : ISVNConnector.Options.NONE;
 			options |= this.includeMerged ? ISVNConnector.Options.INCLUDE_MERGED_REVISIONS : ISVNConnector.Options.NONE;
-			this.msg = SVNUtility.logEntries(proxy, SVNUtility.getEntryReference(resource), this.selectedRevision, SVNRevision.fromNumber(0), options, ISVNConnector.DEFAULT_LOG_ENTRY_PROPS, this.limit, new SVNProgressMonitor(this, monitor, null));
+			this.msg = SVNUtility.logEntries(proxy, SVNUtility.getEntryReference(resource), this.startRevision, this.endRevision, options, ISVNConnector.DEFAULT_LOG_ENTRY_PROPS, this.limit, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {
 			location.releaseSVNProxy(proxy);

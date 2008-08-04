@@ -85,7 +85,7 @@ public class DefaultDialog extends MessageDialog implements IDialogManager {
 		this.levelErrorImage = this.findImage("icons/common/level_error.gif");
     }
     
-    public static int convertHeightInCharsToPixels (Control control, int chars) {
+    public static int convertHeightInCharsToPixels(Control control, int chars) {
     	GC gc = new GC(control);
 		gc.setFont(JFaceResources.getDialogFont());
 		FontMetrics fontMetrics = gc.getFontMetrics();

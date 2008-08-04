@@ -1087,15 +1087,7 @@ public final class SVNUtility {
 		if (first.getKind() == SVNRevision.Kind.NUMBER && second.getKind() == SVNRevision.Kind.NUMBER) {
 			SVNRevision.Number fromNumber = (SVNRevision.Number)first;
 			SVNRevision.Number toNumber = (SVNRevision.Number)second;
-			if (fromNumber.getNumber() > toNumber.getNumber()) {
-				return 1;
-			}
-			else if (fromNumber.getNumber() == toNumber.getNumber()){
-				return 0;
-			}
-			else {
-				return -1;
-			}
+			return fromNumber.getNumber() > toNumber.getNumber() ? 1 : (fromNumber.getNumber() == toNumber.getNumber() ? 0 : -1);
 		}
 		SVNRevision.Date fromDate = null;
 		SVNRevision.Date toDate = null;
@@ -1113,15 +1105,7 @@ public final class SVNUtility {
 			SVNEntryInfo []entryInfo = SVNUtility.info(proxy, referenceSecond, Depth.UNKNOWN, new SVNNullProgressMonitor());
 			toDate = SVNRevision.fromDate(entryInfo[0].lastChangedDate);
 		}
-		if (fromDate.getDate() > toDate.getDate()){
-			return 1;
-		}
-		else if (fromDate.getDate() == toDate.getDate()){
-			return 0;
-		}
-		else {
-			return -1;
-		}
+		return fromDate.getDate() > toDate.getDate() ? 1 : (fromDate.getDate() == toDate.getDate() ? 0 : -1);
 	}
 
 	private static boolean isMergeParts(IResource resource) {

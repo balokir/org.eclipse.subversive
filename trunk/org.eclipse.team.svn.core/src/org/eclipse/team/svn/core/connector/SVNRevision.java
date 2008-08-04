@@ -254,7 +254,7 @@ public class SVNRevision {
 	 *             if revisionDate is zero
 	 */
 	public static SVNRevision.Date fromDate(long revisionDate) {
-		if (revisionDate == 0) {
+		if (revisionDate == -1) {
 			throw new IllegalArgumentException("A date must be specified");
 		}
 		return new SVNRevision.Date(revisionDate);
