@@ -79,7 +79,7 @@ public class CorrectRevisionOperation extends AbstractActionOperation {
 				this.repositoryResources[i].setSelectedRevision(rev);
 				this.repositoryResources[i].setPegRevision(rev);
 				if (this.msgsOps != null) {
-					this.msgsOps[i].setSelectedRevision(rev);
+					this.msgsOps[i].setStartRevision(rev);
 				}
 			}
 		}

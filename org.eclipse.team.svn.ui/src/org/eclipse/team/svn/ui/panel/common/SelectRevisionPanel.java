@@ -476,7 +476,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
     			SVNLogEntry lm = this.logMessages[this.logMessages.length - 1];
     			revision = SVNRevision.fromNumber(lm.revision);
     		}    		
-    		msgsOp.setSelectedRevision(revision);
+    		msgsOp.setStartRevision(revision);
     		this.fetchHistory(msgsOp);
     	}
     }

@@ -90,9 +90,9 @@ public abstract class AbstractDialogPanel implements IDialogPanel, IValidationMa
 		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
 		int width = SVNTeamPreferences.getDialogInt(store, this.getClass().getName() + ".width");
 		int height = SVNTeamPreferences.getDialogInt(store, this.getClass().getName() + ".height");
-		if ((width == 0) && (height == 0)) {
-			return this.getPrefferedSizeImpl();
-		}
+		Point prefSize = this.getPrefferedSizeImpl();
+		width = Math.max(width, prefSize.x);
+		height = Math.max(height, prefSize.y);
     	return new Point(width, height); 
 	}
     
