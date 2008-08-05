@@ -11,7 +11,7 @@
 
 package org.eclipse.team.svn.ui.extension.impl.synchronize;
 
-import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
@@ -51,12 +51,6 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 	public static final String GROUP_SYNC_NORMAL = "syncIncomingOutgoing";
 	public static final String GROUP_SYNC_CONFLICTS = "syncConflicting";
-	public static final String GROUP_MANAGE_LOCALS = "manageLocalChanges";
-	public static final String GROUP_TEAM = "team";
-	public static final String GROUP_PROCESS_ALL = "processAllItems";
-	
-	protected MenuManager outgoing;
-	protected MenuManager incoming;
 	
 	public void configureMenuGroups(ISynchronizePageConfiguration configuration) {
 		configuration.addMenuGroup(
@@ -67,23 +61,13 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 				UpdateActionGroup.GROUP_SYNC_CONFLICTS);
 		configuration.addMenuGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-				UpdateActionGroup.GROUP_MANAGE_LOCALS);
+				AbstractSynchronizeActionGroup.GROUP_MANAGE_LOCALS);
 		configuration.addMenuGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				UpdateActionGroup.GROUP_TEAM);
 		configuration.addMenuGroup(
 				ISynchronizePageConfiguration.P_TOOLBAR_MENU, 
-				UpdateActionGroup.GROUP_PROCESS_ALL);
-	}
-	
-	public void dispose() {
-		this.outgoing.removeAll();
-		this.outgoing.dispose();
-		
-		this.incoming.removeAll();
-		this.incoming.dispose();
-		
-		super.dispose();
+				AbstractSynchronizeActionGroup.GROUP_PROCESS_ALL);
 	}
 	
 	protected void configureActions(ISynchronizePageConfiguration configuration) {
@@ -172,62 +156,57 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				UpdateActionGroup.GROUP_MANAGE_LOCALS,
 				extractTo);
-				
-		this.outgoing = new MenuManager(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Outgoing"));
-		this.appendToGroup(
-				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-				UpdateActionGroup.GROUP_TEAM, 
-				this.outgoing);
-		this.incoming = new MenuManager(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Incoming"));
-		this.appendToGroup(
-				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-				UpdateActionGroup.GROUP_TEAM, 
-				this.incoming);
 		
+		this.addSpecificActions(extractTo, configuration);
+	}
+	
+	protected void addLocalActions(IMenuManager manager, ISynchronizePageConfiguration configuration) {
 		ShowOutgoingPropertiesAction showPropertiesAction = new ShowOutgoingPropertiesAction(SVNTeamUIPlugin.instance().getResource("ShowPropertiesAction.label"), configuration);
 		showPropertiesAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/propertiesedit.gif"));
-		this.outgoing.add(showPropertiesAction);
+		manager.add(showPropertiesAction);
 		SetPropertyAction setPropAction = new SetPropertyAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.SetProperty"), configuration);
-		this.outgoing.add(setPropAction);
+		manager.add(setPropAction);
 		SetKeywordsAction setKeywordsAction = new SetKeywordsAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.SetKeywords"), configuration);
-		this.outgoing.add(setKeywordsAction);
+		manager.add(setKeywordsAction);
 		ShowOutgoingAnnotationAction showAnnotationAction = new ShowOutgoingAnnotationAction(SVNTeamUIPlugin.instance().getResource("ShowAnnotationCommand.label"), configuration);
-		this.outgoing.add(showAnnotationAction);
+		manager.add(showAnnotationAction);
 		
-		this.outgoing.add(new Separator());
+		manager.add(new Separator());
 		
 		LockAction lockAction = new LockAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.Lock"), configuration);
 		lockAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/lock.gif"));
-		this.outgoing.add(lockAction);
+		manager.add(lockAction);
 		UnlockAction unlockAction = new UnlockAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.Unlock"), configuration);
 		unlockAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/unlock.gif"));
-		this.outgoing.add(unlockAction);
+		manager.add(unlockAction);
 		
-		this.outgoing.add(new Separator());
+		manager.add(new Separator());
 		
 		CreatePatchFileAction patchAction = new CreatePatchFileAction(SVNTeamUIPlugin.instance().getResource("CreatePatchCommand.label"), configuration);
-		this.outgoing.add(patchAction);
+		manager.add(patchAction);
 		CreateBranchAction branchAction = new CreateBranchAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Branch"), configuration);
 		branchAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/branch.gif"));
-		this.outgoing.add(branchAction);
+		manager.add(branchAction);
 		ExtractOutgoingToAction extractActionOutgoing = new ExtractOutgoingToAction(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Label"), configuration);
-		this.outgoing.add(extractActionOutgoing);
+		manager.add(extractActionOutgoing);
 		
-		this.outgoing.add(new Separator());
+		manager.add(new Separator());
 		
 		CleanUpAction cleanUpAction = new CleanUpAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Cleanup"), configuration);
-		this.outgoing.add(cleanUpAction);
-		
+		manager.add(cleanUpAction);
+	}
+	
+	protected void addRemoteActions(IMenuManager manager, ISynchronizePageConfiguration configuration) {
 		ShowIncomingPropertiesAction showIncomingPropertiesAction = new ShowIncomingPropertiesAction(SVNTeamUIPlugin.instance().getResource("ShowPropertiesAction.label"), configuration);
 		showIncomingPropertiesAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/propertiesedit.gif"));
-		this.incoming.add(showIncomingPropertiesAction);
+		manager.add(showIncomingPropertiesAction);
 		ShowIncomingAnnotationAction showIncomingAnnotationAction = new ShowIncomingAnnotationAction(SVNTeamUIPlugin.instance().getResource("ShowAnnotationAction.label"), configuration);
-		this.incoming.add(showIncomingAnnotationAction);
+		manager.add(showIncomingAnnotationAction);
 		
-		this.incoming.add(new Separator());
+		manager.add(new Separator());
 		
 		ExtractIncomingToAction extractActionIncoming = new ExtractIncomingToAction(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Label"), configuration);
-		this.incoming.add(extractActionIncoming);
+		manager.add(extractActionIncoming);
 	}
 	
 }
