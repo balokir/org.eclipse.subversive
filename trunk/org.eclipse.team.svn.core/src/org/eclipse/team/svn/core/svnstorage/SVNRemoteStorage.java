@@ -652,7 +652,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 					}
 					protected void runImpl(IProgressMonitor monitor) throws Exception {
 						Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-						while (CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled()) {
+						while (CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled() && !monitor.isCanceled()) {
 							SVNChangeStatus [] st;
 							IResource target;
 							synchronized (SVNRemoteStorage.this.fetchQueue) {

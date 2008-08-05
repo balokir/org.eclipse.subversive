@@ -11,13 +11,14 @@
 
 package org.eclipse.team.svn.ui.operation;
 
+import java.util.LinkedList;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.SVNConnectorAuthenticationException;
 import org.eclipse.team.svn.core.connector.SVNConnectorCancelException;
@@ -31,7 +32,6 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.debugmail.ReportPartsFactory;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.extension.factory.IReporter;
-import org.eclipse.team.svn.ui.extension.factory.IReportingDescriptor;
 import org.eclipse.team.svn.ui.panel.reporting.ErrorCancelPanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.DefaultOperationWrapperFactory;
@@ -43,6 +43,7 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  * @author Alexander Gurov
  */
 public class UILoggedOperation extends LoggedOperation {
+	protected static LinkedList<Object []> errorQueue = new LinkedList<Object []>();
 	
     public UILoggedOperation(IActionOperation op) {
         super(op);
@@ -70,35 +71,110 @@ public class UILoggedOperation extends LoggedOperation {
     	}
     }
     
-    public static void showError(final String pluginID, final String operationName, final IStatus errorStatus, final boolean isReportingAllowed) {
+    public static void showError(String pluginID, String operationName, IStatus errorStatus, boolean isReportingAllowed) {
     	OperationErrorInfo errorInfo = UILoggedOperation.formatMessage(errorStatus, false);
         if (errorInfo == null) {
         	return;
         }
-    	// release calling thread
-		Job job = new Job("") {
-			protected IStatus run(IProgressMonitor monitor) {
-    			UIMonitorUtility.getDisplay().syncExec(new Runnable() {
-    	            public void run() {
-    	            	boolean showCheckBox = SVNTeamPreferences.getMailReporterBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MAILREPORTER_ENABLED_NAME);
-    	            	boolean doNotShowAgain = UILoggedOperation.showErrorImpl(
-    	            			UIMonitorUtility.getShell(), 
-    	            			pluginID, 
-    	            			operationName, 
-    	            			errorStatus, 
-    	            			isReportingAllowed, 
-    	            			showCheckBox ? SVNTeamUIPlugin.instance().getResource("UILoggedOperation.DontAskSend") : null,
-            					null);
-    					if (showCheckBox && doNotShowAgain) {
-    						SVNTeamPreferences.setMailReporterBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MAILREPORTER_ENABLED_NAME, false);
-    					}
-    	            }
-    	        });
-				return Status.OK_STATUS;
+		synchronized (UILoggedOperation.errorQueue) {
+			UILoggedOperation.errorQueue.add(new Object[] {pluginID, operationName, errorStatus, Boolean.valueOf(isReportingAllowed)});
+			if (UILoggedOperation.errorQueue.size() == 1) {
+		    	// release calling thread
+				Job job = new Job("") {
+					protected IStatus run(IProgressMonitor monitor) {
+		            	boolean showCheckBox = SVNTeamPreferences.getMailReporterBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MAILREPORTER_ENABLED_NAME);
+		            	
+						while (!monitor.isCanceled()) {
+							String pluginID;
+							String operationName;
+							IStatus errorStatus;
+							boolean isReportingAllowed;
+							synchronized (UILoggedOperation.errorQueue) {
+								if (UILoggedOperation.errorQueue.size() == 0) {
+									break;
+								}
+								Object []entry = UILoggedOperation.errorQueue.get(0);
+								pluginID = (String)entry[0];
+								operationName = (String)entry[1];
+								errorStatus = (IStatus)entry[2];
+								isReportingAllowed = ((Boolean)entry[3]).booleanValue();
+							}
+							
+			            	boolean doNotShowAgain = UILoggedOperation.showErrorImpl(
+			            			pluginID, 
+			            			operationName, 
+			            			errorStatus, 
+			            			isReportingAllowed, 
+			            			showCheckBox ? SVNTeamUIPlugin.instance().getResource("UILoggedOperation.DontAskSend") : null,
+			    					null);
+							
+							if (showCheckBox && doNotShowAgain) {
+				            	showCheckBox = !doNotShowAgain;
+								SVNTeamPreferences.setMailReporterBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MAILREPORTER_ENABLED_NAME, false);
+							}
+			            	
+							synchronized (UILoggedOperation.errorQueue) {
+								UILoggedOperation.errorQueue.remove(0);
+							}
+						}
+						return Status.OK_STATUS;
+					}
+				};
+				job.setSystem(true);
+				job.schedule();
 			}
-		};
-		job.setSystem(true);
-		job.schedule();
+		}
+    }
+    
+    protected static boolean showErrorImpl(final String pluginID, final String operationName, final IStatus errorStatus, boolean isReportingAllowed, final String optionName, final String originalReport) {
+    	final OperationErrorInfo errorInfo = UILoggedOperation.formatMessage(errorStatus, false);
+    	if (errorInfo == null) {
+    		// cancelled
+    		return !isReportingAllowed;
+    	}
+    	final ErrorCancelPanel []panel = new ErrorCancelPanel[1];
+    	final int []retCode = new int[1];
+    	final boolean isPlugInError = ReportPartsFactory.checkStatus(errorStatus, new ErrorReasonVisitor());
+    	final boolean sendReport = isPlugInError & isReportingAllowed & SVNTeamPreferences.getMailReporterBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MAILREPORTER_ENABLED_NAME);
+		UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+            public void run() {
+            	//For example, if there is an NPE in the JavaSVN code or in our code - add option "Send Report" to the ErrorDialog
+                //also interesting problems can be located before/after ClientCancelException, we shouldn't ignore that
+            	if (originalReport == null) {
+                    panel[0] = new ErrorCancelPanel(operationName, errorInfo.numberOfErrors, errorInfo.simpleMessage, errorInfo.advancedMessage, sendReport, isPlugInError, optionName, errorStatus, pluginID);
+            	}
+            	else {
+            		panel[0] = new ErrorCancelPanel(operationName, errorInfo.numberOfErrors, errorInfo.simpleMessage, errorInfo.advancedMessage, sendReport, isPlugInError, optionName, errorStatus, pluginID, originalReport);
+            	}
+                DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getShell(), panel[0]);
+                retCode[0] = dialog.open();
+            }
+        });
+        if (retCode[0] == 0 && sendReport) {
+			UILoggedOperation.sendReport(panel[0].getReporter());
+		}
+		return panel[0].doNotShowAgain();
+    }
+    
+    public static void sendReport(IReporter reporter) {
+		UIMonitorUtility.doTaskNow(UIMonitorUtility.getShell(), reporter, true, new DefaultOperationWrapperFactory() {
+			protected IActionOperation wrappedOperation(IActionOperation operation) {
+				return new LoggedOperation(operation);
+			}
+		});
+		if (reporter.getExecutionState() != IActionOperation.OK && 
+			SVNTeamPreferences.getMailReporterBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MAILREPORTER_ERRORS_ENABLED_NAME)) {
+			boolean doNotShowAgain = UILoggedOperation.showErrorImpl(
+					SVNTeamPlugin.NATURE_ID, 
+					SVNTeamUIPlugin.instance().getResource("UILoggedOperation.SendReport.Error.Title"), 
+					reporter.getStatus(), 
+					false, 
+					SVNTeamUIPlugin.instance().getResource("UILoggedOperation.SendReport.Error.DontShow"),
+					reporter.buildReport());
+			if (doNotShowAgain) {
+				SVNTeamPreferences.setMailReporterBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MAILREPORTER_ERRORS_ENABLED_NAME, false);
+			}
+		}
     }
     
     public static OperationErrorInfo formatMessage(IStatus status, boolean allowsCancelled) {
@@ -190,63 +266,6 @@ public class UILoggedOperation extends LoggedOperation {
     		this.numberOfErrors = numberOfErrors;
     	}
      }
-    
-    protected static boolean showErrorImpl(final Shell shell, final String pluginID, final String operationName, final IStatus errorStatus, boolean isReportingAllowed, String optionName, String originalReport) {
-    	OperationErrorInfo errorInfo = UILoggedOperation.formatMessage(errorStatus, false);
-    	if (errorInfo == null) {
-    		// cancelled
-    		return true;
-    	}
-    	final ErrorCancelPanel panel;
-    	//For example, if there is an NPE in the JavaSVN code or in our code - add option "Send Report" to the ErrorDialog
-        //also interesting problems can be located before/after ClientCancelException, we shouldn't ignore that
-    	boolean sendReport = isReportingAllowed && SVNTeamPreferences.getMailReporterBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MAILREPORTER_ENABLED_NAME);
-    	boolean isPlugInError = ReportPartsFactory.checkStatus(errorStatus, new ErrorReasonVisitor());
-    	sendReport &= isPlugInError;
-    	if (originalReport == null) {
-            panel = new ErrorCancelPanel(operationName, errorInfo.numberOfErrors, errorInfo.simpleMessage, errorInfo.advancedMessage, sendReport, isPlugInError, optionName, errorStatus, pluginID);
-    	}
-    	else {
-    		panel = new ErrorCancelPanel(operationName, errorInfo.numberOfErrors, errorInfo.simpleMessage, errorInfo.advancedMessage, sendReport, isPlugInError, optionName, errorStatus, pluginID, originalReport);
-    	}
-        DefaultDialog dialog = new DefaultDialog(shell, panel);
-        if (dialog.open() == 0 && sendReport) {
-			IReporter reporter = panel.getReporter();
-			UIMonitorUtility.doTaskNow(shell, reporter, true, new DefaultOperationWrapperFactory() {
-				protected IActionOperation wrappedOperation(IActionOperation operation) {
-					return new LoggedOperation(operation);
-				}
-			});
-			if (reporter.getExecutionState() != IActionOperation.OK) {
-				UILoggedOperation.showSendingError(reporter.getStatus(), shell, reporter.getReportingDescriptor(), reporter.buildReport());
-			}
-		}
-		return panel.doNotShowAgain();
-    }
-    
-    public static void showSendingError(Throwable ex, Shell shell, IReportingDescriptor provider, String originalReport) {
-    	UILoggedOperation.showSendingError(new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID, IStatus.OK, SVNTeamUIPlugin.instance().getResource("UILoggedOperation.SendReport.Error.Message", new String[] {provider.getEmailTo()}), ex), shell, provider, originalReport);
-	}
-    
-    public static void showSendingError(final IStatus st, final Shell shell, IReportingDescriptor provider, final String originalReport) {
-		if (SVNTeamPreferences.getMailReporterBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MAILREPORTER_ERRORS_ENABLED_NAME)) {
-			shell.getDisplay().syncExec(new Runnable() {
-				public void run() {
-					boolean doNotShowAgain = UILoggedOperation.showErrorImpl(
-							shell, 
-							SVNTeamPlugin.NATURE_ID, 
-							SVNTeamUIPlugin.instance().getResource("UILoggedOperation.SendReport.Error.Title"), 
-							st, 
-							false, 
-							SVNTeamUIPlugin.instance().getResource("UILoggedOperation.SendReport.Error.DontShow"),
-							originalReport);
-					if (doNotShowAgain) {
-						SVNTeamPreferences.setMailReporterBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MAILREPORTER_ERRORS_ENABLED_NAME, false);
-					}
-				}
-			});
-		}
-	}
     
 	protected static class ErrorReasonVisitor implements ReportPartsFactory.IStatusVisitor {
 		public boolean visit(IStatus status) {
