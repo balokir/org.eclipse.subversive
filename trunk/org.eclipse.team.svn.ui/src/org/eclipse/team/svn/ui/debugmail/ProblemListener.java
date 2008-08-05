@@ -37,7 +37,7 @@ public class ProblemListener implements ILogListener {
 	}
 	
 	protected void sendReport(IStatus status, String plugin) {
-		UILoggedOperation.showError(plugin, "", status, true);
+		UILoggedOperation.showError(plugin, "", status);
 	}
 	
 }
