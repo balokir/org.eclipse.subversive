@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.ui.operation;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -61,23 +62,23 @@ public class UILoggedOperation extends LoggedOperation {
 					t);
 		status.merge(st);
 		UILoggedOperation.logError(st);
-		UILoggedOperation.showError(SVNTeamPlugin.NATURE_ID, where, st, true);
+		UILoggedOperation.showError(SVNTeamPlugin.NATURE_ID, where, st);
 	}
 
     protected void handleError(IStatus errorStatus) {
     	super.handleError(errorStatus);
     	if (errorStatus.matches(IStatus.ERROR)) {
-    		UILoggedOperation.showError(SVNTeamPlugin.NATURE_ID, this.getOperationName(), errorStatus, true);
+    		UILoggedOperation.showError(SVNTeamPlugin.NATURE_ID, this.getOperationName(), errorStatus);
     	}
     }
     
-    public static void showError(String pluginID, String operationName, IStatus errorStatus, boolean isReportingAllowed) {
+    public static void showError(String pluginID, String operationName, IStatus errorStatus) {
     	OperationErrorInfo errorInfo = UILoggedOperation.formatMessage(errorStatus, false);
         if (errorInfo == null) {
         	return;
         }
 		synchronized (UILoggedOperation.errorQueue) {
-			UILoggedOperation.errorQueue.add(new Object[] {pluginID, operationName, errorStatus, Boolean.valueOf(isReportingAllowed)});
+			UILoggedOperation.errorQueue.add(new Object[] {pluginID, operationName, errorStatus});
 			if (UILoggedOperation.errorQueue.size() == 1) {
 		    	// release calling thread
 				Job job = new Job("") {
@@ -88,7 +89,6 @@ public class UILoggedOperation extends LoggedOperation {
 							String pluginID;
 							String operationName;
 							IStatus errorStatus;
-							boolean isReportingAllowed;
 							synchronized (UILoggedOperation.errorQueue) {
 								if (UILoggedOperation.errorQueue.size() == 0) {
 									break;
@@ -97,14 +97,31 @@ public class UILoggedOperation extends LoggedOperation {
 								pluginID = (String)entry[0];
 								operationName = (String)entry[1];
 								errorStatus = (IStatus)entry[2];
-								isReportingAllowed = ((Boolean)entry[3]).booleanValue();
+								Iterator<Object []> it = UILoggedOperation.errorQueue.iterator();
+								// skip first entry
+								it.next();
+								for (; it.hasNext(); ) {
+									entry = it.next();
+									// merge similar statuses
+									if (pluginID.equals(entry[0]) && operationName.equals(entry[1])) {
+										MultiStatus ms;
+										if (!(errorStatus instanceof MultiStatus)) {
+											errorStatus = ms = new MultiStatus(errorStatus.getPlugin(), errorStatus.getCode(), errorStatus.getMessage(), errorStatus.getException());
+										}
+										else {
+											ms = (MultiStatus)errorStatus;
+										}
+										ms.addAll((IStatus)entry[2]);
+										it.remove();
+									}
+								}
 							}
 							
 			            	boolean doNotShowAgain = UILoggedOperation.showErrorImpl(
 			            			pluginID, 
 			            			operationName, 
 			            			errorStatus, 
-			            			isReportingAllowed, 
+			            			true, 
 			            			showCheckBox ? SVNTeamUIPlugin.instance().getResource("UILoggedOperation.DontAskSend") : null,
 			    					null);
 							
