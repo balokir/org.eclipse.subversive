@@ -8,6 +8,29 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.2.I20080808-1500 [8 August 2008]
+
+Features:
+ * Add date selection options to History View (bug 211408)
+   + special thanks to Gabor Liptak
+
+ * Extract Changes action should not create deletions.log file if no deletions occurs (bug 243395)
+
+Fixes:
+ * SVN hangs in SVNRepositoryResource.getRoot() method (bug 242130)
+   + special thanks to Neale Upstone
+
+ * UI pops up dozens of error dialogs making eclipse unusable (bug 220292)
+   + special thanks to David Green
+
+ * Cannot create a new branch (bug 243181)
+   + special thanks to Jonathan Marston
+
+ * Synchronize View's Local and Remote submenus are disappeared in Eclipse 3.4 after first call (bug 243045)
+   + special thanks to Noah Roberts, Owen Rees
+
+--------------------------------------------------------------------------------
+
 Version 0.7.2.I20080801-1500 [1 August 2008]
 
 Features:

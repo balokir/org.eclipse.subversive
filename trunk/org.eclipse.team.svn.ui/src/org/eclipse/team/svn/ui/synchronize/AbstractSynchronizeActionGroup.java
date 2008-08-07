@@ -54,11 +54,15 @@ public abstract class AbstractSynchronizeActionGroup extends SynchronizePageActi
     }
 
 	public void dispose() {
-		this.outgoing.removeAll();
-		this.outgoing.dispose();
+		if (this.outgoing != null) {
+			this.outgoing.removeAll();
+			this.outgoing.dispose();
+		}
 		
-		this.incoming.removeAll();
-		this.incoming.dispose();
+		if (this.incoming != null) {
+			this.incoming.removeAll();
+			this.incoming.dispose();
+		}
 		
 		super.dispose();
 	}
