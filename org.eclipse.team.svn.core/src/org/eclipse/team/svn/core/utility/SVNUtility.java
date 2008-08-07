@@ -729,7 +729,7 @@ public final class SVNUtility {
 	public static Exception validateRepositoryLocation(IRepositoryLocation location) {
 		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
-			proxy.list(new SVNEntryRevisionReference(SVNUtility.encodeURL(location.getUrl()), null, null), Depth.EMPTY, SVNEntry.Fields.ALL, ISVNConnector.Options.NONE, new ISVNEntryCallback() {
+			proxy.list(new SVNEntryRevisionReference(SVNUtility.encodeURL(location.getUrl()), null, null), Depth.EMPTY, SVNEntry.Fields.NONE, ISVNConnector.Options.NONE, new ISVNEntryCallback() {
 				public void next(SVNEntry entry) {
 				}
 			}, new SVNNullProgressMonitor());

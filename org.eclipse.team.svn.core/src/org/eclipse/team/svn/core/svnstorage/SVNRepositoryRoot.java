@@ -17,7 +17,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 
 /**
- * Basic implementation of IRepositoryRoot
+ * Implementation of IRepositoryRoot
  * 
  * @author Alexander Gurov
  */
