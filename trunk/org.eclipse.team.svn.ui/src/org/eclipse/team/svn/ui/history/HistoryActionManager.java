@@ -82,6 +82,7 @@ import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
+import org.eclipse.team.svn.core.operation.local.FiniExtractLogOperation;
 import org.eclipse.team.svn.core.operation.local.GetRemoteContentsOperation;
 import org.eclipse.team.svn.core.operation.local.InitExtractLogOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
@@ -936,6 +937,7 @@ public class HistoryActionManager {
 		op.add(provider);
 		op.add(new InitExtractLogOperation(path));
 		op.add(new ExtractToOperationRemote(provider, provider.getDeletionsProvider(), path, resource2project, true), new IActionOperation [] {provider});
+		op.add(new FiniExtractLogOperation(path));
 		UIMonitorUtility.doTaskScheduledActive(op);
 	}
 	
