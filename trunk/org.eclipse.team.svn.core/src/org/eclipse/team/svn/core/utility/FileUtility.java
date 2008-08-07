@@ -196,17 +196,6 @@ public final class FileUtility {
 		return retVal;
 	}
 	
-	public static String getResourceParent(IRepositoryResource resource) {
-		String parent = "";
-		String url = resource.getUrl();
-		String rootUrl = resource.getRoot().getUrl();
-		if (url.equals(rootUrl)) {
-			return "";
-		}
-		parent = url.substring(rootUrl.length(), url.length() - resource.getName().length() - 1);
-		return parent;
-	}
-	
 	public static String formatResourceName(String projectName) {
 		// remove invalid characters when repository root was specified
 		return projectName == null ? null : PatternProvider.replaceAll(projectName, "([\\/:])+", ".");

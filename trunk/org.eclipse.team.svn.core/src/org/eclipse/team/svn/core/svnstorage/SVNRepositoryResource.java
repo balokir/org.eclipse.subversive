@@ -125,13 +125,13 @@ public abstract class SVNRepositoryResource extends SVNRepositoryBase implements
 	public IRepositoryResource getParent() {
 		String parentUrl = SVNUtility.normalizeURL(this.getUrl());
 		int idx = parentUrl.lastIndexOf('/');
-		if (idx != -1) {
-			parentUrl = parentUrl.substring(0, idx);
+		if (idx == -1) {
+			throw new IllegalArgumentException(parentUrl);
 		}
-		return this.asRepositoryContainer(parentUrl, true);
+		return this.asRepositoryContainer(parentUrl.substring(0, idx), true);
 	}
 	
-	public synchronized IRepositoryResource getRoot() {
+	public IRepositoryResource getRoot() {
 		if (this.root == null) {
 			IRepositoryResource parent = this;
 			while (!(parent instanceof IRepositoryRoot)) {
