@@ -24,10 +24,10 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.ExtractToOperationLocal;
+import org.eclipse.team.svn.core.operation.local.FiniExtractLogOperation;
 import org.eclipse.team.svn.core.operation.local.InitExtractLogOperation;
 import org.eclipse.team.svn.core.operation.remote.ExtractToOperationRemote;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -107,10 +107,11 @@ public class ExtractToAction extends AbstractSynchronizeModelAction {
 				markedForDelition.add(remote.getUrl());
 			}
 		}
-		CompositeOperation op = new CompositeOperation(SVNTeamPlugin.instance().getResource("Operation.ExtractTo"));
+		CompositeOperation op = new CompositeOperation("Operation.ExtractTo");
 		op.add(new InitExtractLogOperation(path));
 		op.add(new ExtractToOperationLocal(outgoingChanges, path, true));
 		op.add(new ExtractToOperationRemote(incomingResourcesToOperate.toArray(new IRepositoryResource[incomingResourcesToOperate.size()]), markedForDelition, path, resource2project, true));
+		op.add(new FiniExtractLogOperation(path));
 		return op;
 	}
 

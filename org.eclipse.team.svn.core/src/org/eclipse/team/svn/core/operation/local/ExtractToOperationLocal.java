@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
-import org.eclipse.team.svn.core.operation.remote.ExtractToOperationRemote;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
@@ -71,9 +70,9 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 				toOperate = this.path + (currentPath.toString()).substring(toRemove);
 			}
 			File operatingDirectory = new File(toOperate);
-			ExtractToOperationRemote.logToAll(this.path, operatingDirectory.getAbsolutePath().substring(this.path.length() + 1), true);
+			InitExtractLogOperation.logToAll(this.path, operatingDirectory.getAbsolutePath().substring(this.path.length() + 1));
 			if (IStateFilter.SF_DELETED.accept(SVNRemoteStorage.instance().asLocalResourceAccessible(current))) {
-				ExtractToOperationRemote.logToDeletions(this.path, operatingDirectory.getAbsolutePath().substring(this.path.length() + 1), true);
+				InitExtractLogOperation.logToDeletions(this.path, operatingDirectory.getAbsolutePath().substring(this.path.length() + 1), true);
 				if (operatingDirectory.exists() && this.delitionAllowed) {
 					FileUtility.deleteRecursive(operatingDirectory);
 				}

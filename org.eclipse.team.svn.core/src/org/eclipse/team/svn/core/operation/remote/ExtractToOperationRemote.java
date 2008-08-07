@@ -13,8 +13,6 @@ package org.eclipse.team.svn.core.operation.remote;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,6 +22,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
+import org.eclipse.team.svn.core.operation.local.InitExtractLogOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -133,9 +132,9 @@ public class ExtractToOperationRemote extends AbstractRepositoryOperation {
 				}
 			}
 			File operatingDirectory = new File(toOperate);
-			ExtractToOperationRemote.logToAll(this.path, operatingDirectory.getAbsolutePath().substring(this.path.length() + 1), true);
+			InitExtractLogOperation.logToAll(this.path, operatingDirectory.getAbsolutePath().substring(this.path.length() + 1));
 			if (this.toDelete.contains(current.getUrl())) {
-				ExtractToOperationRemote.logToDeletions(this.path, operatingDirectory.getAbsolutePath().substring(this.path.length() + 1), true);
+				InitExtractLogOperation.logToDeletions(this.path, operatingDirectory.getAbsolutePath().substring(this.path.length() + 1), true);
 				if (operatingDirectory.exists() && this.delitionAllowed)
 				{
 					FileUtility.deleteRecursive(operatingDirectory);
@@ -179,31 +178,6 @@ public class ExtractToOperationRemote extends AbstractRepositoryOperation {
 			return 0;
 		}
 		return 4;
-	}
-	
-	public static void logToDeletions(String logPath, String line, boolean append) {
-		ExtractToOperationRemote.logTo(logPath + "/deletions.log", line, append);
-	}
-	
-	public static void logToAll(String logPath, String line, boolean append) {
-		ExtractToOperationRemote.logTo(logPath + "/changes.log", line, append);
-	}
-	
-	private static void logTo(String logPath, String line, boolean append) {
-		FileWriter writer = null;
-		try {
-			writer = new FileWriter(logPath, append);
-			writer.write(line);
-			writer.write(System.getProperty("line.separator"));
-		}
-		catch (IOException ex) {
-			//ignore
-		}
-		finally {
-			if (writer != null) {
-				try {writer.close();} catch (Exception ex) {}
-			}
-		}
 	}
 	
 }

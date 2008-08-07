@@ -25,6 +25,7 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.operation.local.FiniExtractLogOperation;
 import org.eclipse.team.svn.core.operation.local.InitExtractLogOperation;
 import org.eclipse.team.svn.core.operation.remote.ExtractToOperationRemote;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -89,6 +90,7 @@ public class ExtractIncomingToAction extends AbstractSynchronizeModelAction {
 		CompositeOperation op = new CompositeOperation(mainOp.getId());
 		op.add(new InitExtractLogOperation(path));
 		op.add(mainOp);
+		op.add(new FiniExtractLogOperation(path));
 		return op;
 	}
 	
