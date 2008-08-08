@@ -37,6 +37,9 @@ Version 0.7.2.I20080808-1500 release date: 8 August 2008
 	 * NPE in Share Project wizard when a project is already exists in the repository (bug 243446)
 	   + special thanks to Stephan Heffner
 
+	 * Synchronize doesn't show incomming changes (bug 243401)
+	   + special thanks to Tony Poppleton, Channing Walton, Radoslaw Jozwik
+	
 2. Information
 
 2.1. System Requirements
