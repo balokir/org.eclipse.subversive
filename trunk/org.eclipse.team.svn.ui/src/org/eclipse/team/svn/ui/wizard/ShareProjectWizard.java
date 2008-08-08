@@ -253,12 +253,12 @@ public class ShareProjectWizard extends AbstractSVNWizard implements IConfigurat
 		mainOp.setSharePrompt(new IShareProjectPrompt() {
 			public boolean prompt(final IProject []projects) {
 				final int []result = new int[1];
-				ShareProjectWizard.this.getShell().getDisplay().syncExec(new Runnable() {
+				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 					public void run() {
 						String projectNames = FileUtility.getNamesListAsString(projects);
 						String message = SVNTeamUIPlugin.instance().getResource(projects.length == 1 ? "ShareProject.Confirmation.Description.Single" : "ShareProject.Confirmation.Description.Multiple", new String[] {projectNames});
 						MessageDialog dialog = new MessageDialog(
-								ShareProjectWizard.this.getShell(),
+								UIMonitorUtility.getShell(),
 								SVNTeamUIPlugin.instance().getResource(projects.length == 1 ? "ShareProject.Confirmation.Title.Single" : "ShareProject.Confirmation.Title.Multiple"), 
 								null, message, MessageDialog.WARNING,
 								new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL},
