@@ -28,6 +28,9 @@ Fixes:
 
  * Synchronize View's Local and Remote submenus are disappeared in Eclipse 3.4 after first call (bug 243045)
    + special thanks to Noah Roberts, Owen Rees
+   
+ * NPE in Share Project wizard when a project is already exists in the repository (bug 243446)
+   + special thanks to Stephan Heffner
 
 --------------------------------------------------------------------------------
 
