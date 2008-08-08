@@ -31,6 +31,9 @@ Fixes:
    
  * NPE in Share Project wizard when a project is already exists in the repository (bug 243446)
    + special thanks to Stephan Heffner
+   
+ * Synchronize doesn't show incomming changes (bug 243401)
+   + special thanks to Tony Poppleton, Channing Walton, Radoslaw Jozwik
 
 --------------------------------------------------------------------------------
 

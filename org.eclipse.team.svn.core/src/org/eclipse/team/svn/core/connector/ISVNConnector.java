@@ -71,7 +71,7 @@ public interface ISVNConnector {
 		}
 		
 		public static final int unknownOrFiles(boolean recurse) {
-			return (recurse ? Depth.UNKNOWN : Depth.IMMEDIATES);
+			return (recurse ? Depth.UNKNOWN : Depth.FILES);
 		}
 
 	}
