@@ -44,7 +44,6 @@ import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
-import org.eclipse.team.svn.core.connector.SVNConnectorCancelException;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
@@ -322,7 +321,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 					catch (RuntimeException ex) {
 						throw ex;
 					}
-					catch (SVNConnectorCancelException ex) {
+					catch (SVNConnectorException ex) {
 						return this.wrapUnexistingResource(resource, IStateFilter.ST_INTERNAL_INVALID, 0);
 					}
 					catch (Exception e) {

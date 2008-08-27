@@ -23,6 +23,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -32,9 +33,13 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.CheckoutOperation;
+import org.eclipse.team.svn.core.resource.IRepositoryContainer;
+import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.action.AbstractRepositoryModifyWorkspaceAction;
@@ -42,6 +47,7 @@ import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.operation.ObtainProjectNameOperation;
 import org.eclipse.team.svn.ui.panel.ListSelectionPanel;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
@@ -55,9 +61,58 @@ public class CheckoutAction extends AbstractRepositoryModifyWorkspaceAction {
 	}
 
 	public void runImpl(IAction action) {
-		IActionOperation op = ExtensionsManager.getInstance().getCurrentCheckoutFactory().getCheckoutOperation(this.getShell(), this.getSelectedRepositoryResources(), null, false, null, Depth.INFINITY, false);
-		if (op != null) {
-			this.runScheduled(op);
+		final IRepositoryResource []resources = this.getSelectedRepositoryResources();
+		if (SVNTeamPreferences.getCheckoutBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.CHECKOUT_RESPECT_PROJECT_STRUCTURE_NAME)) {
+			this.runScheduled(new AbstractActionOperation("Operation.CheckLayout") {
+				protected void runImpl(IProgressMonitor monitor) throws Exception {
+					final HashSet<IRepositoryResource> toCheckout = new HashSet<IRepositoryResource>();
+					for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
+						int kind = ((IRepositoryRoot)resources[i].getRoot()).getKind();
+						if (!resources[i].getRepositoryLocation().isStructureEnabled() || kind != IRepositoryRoot.KIND_LOCATION_ROOT && kind != IRepositoryRoot.KIND_ROOT) {
+							toCheckout.add(resources[i]);
+						}
+						else {
+							IRepositoryContainer trunk = resources[i].asRepositoryContainer(resources[i].getRepositoryLocation().getTrunkLocation(), false);
+							if (!trunk.exists()) {
+								toCheckout.add(resources[i]);
+							}
+							else {
+								IRepositoryFile projectFile = trunk.asRepositoryFile(".project", false);
+								if (projectFile.exists()) {
+									toCheckout.add(trunk);
+								}
+								else {
+									IRepositoryResource []children = trunk.getChildren();
+									for (IRepositoryResource child : children) {
+										if (child instanceof IRepositoryContainer) {
+											toCheckout.add(child);
+										}
+									}
+								}
+							}
+						}
+					}
+					if (!monitor.isCanceled()) {
+						UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+							public void run() {
+								IActionOperation op = ExtensionsManager.getInstance().getCurrentCheckoutFactory().getCheckoutOperation(UIMonitorUtility.getShell(), toCheckout.toArray(new IRepositoryResource[toCheckout.size()]), null, false, null, Depth.INFINITY, false);
+								if (op != null) {
+									UIMonitorUtility.doTaskScheduledWorkspaceModify(op);
+								}
+							}
+						});
+					}
+				}
+				public int getOperationWeight() {
+					return 2;
+				}
+			});
+		}
+		else {
+			IActionOperation op = ExtensionsManager.getInstance().getCurrentCheckoutFactory().getCheckoutOperation(this.getShell(), resources, null, false, null, Depth.INFINITY, false);
+			if (op != null) {
+				this.runScheduled(op);
+			}
 		}
 	}
 	

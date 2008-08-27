@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Andrej Zachar - Initial API and implementation
+ *    Jens Scheidtmann - butraq:logregex property display disgresses from specification (bug 243678)
  *******************************************************************************/
 
 package org.eclipse.team.svn.ui.extension.impl;
@@ -171,7 +172,8 @@ public class DefaultCommentView implements ICommentView {
 					start = linkMatcher.end();
 					DefaultCommentView.this.hyperList.getLinks().add(new LinkList.LinkPlacement(linkMatcher.start(), start, text));
 				}
-				if (DefaultCommentView.this.getModel().getMessage() != null) {
+				if (DefaultCommentView.this.getModel().getMessage() != null ||
+					DefaultCommentView.this.getModel().getLogregex() != null) {
 					DefaultCommentView.this.linkList.parseMessage(text, DefaultCommentView.this.getModel());
 				}
 				List<StyleRange> styledRanges = new ArrayList<StyleRange>();

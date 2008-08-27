@@ -100,7 +100,7 @@ public class SVNLinkedTaskInfoAdapterFactory implements IAdapterFactory {
 		linkList.parseMessage(comment, model);
 		List issues = linkList.getLinks();
 		if (issues.size() > 0) {
-			return ((IssueList.LinkPlacement)issues.get(0)).getURL();
+			return model.getResultingURL((IssueList.LinkPlacement)issues.get(0));
 		}
 		return null;
 	}

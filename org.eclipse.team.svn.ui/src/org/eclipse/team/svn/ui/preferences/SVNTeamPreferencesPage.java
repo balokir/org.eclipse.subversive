@@ -74,6 +74,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected boolean useJavaHLMerge;
 	protected boolean includeMergedRevisions;
 	protected boolean checkoutUsingDotProjectName;
+	protected boolean checkoutRespectProjectStructure;
 	protected boolean branchTagConsiderStructure;
 	protected boolean forceExternalsFreeze;
 	protected boolean computeKeywordsValues;
@@ -98,6 +99,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected Button btnResourceSelectionNew;
 	protected Button btnResourceSelectionExternal;
 	protected Button checkoutUsingDotProjectNameButton;
+	protected Button checkoutRespectProjectStructureButton;
 	protected Button branchTagConsiderStructureButton;
 	protected Button branchTagManualUrlEditButton;
 	protected Button computeKeywordsValuesButton;
@@ -146,6 +148,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		SVNTeamPreferences.setMergeBoolean(store, SVNTeamPreferences.MERGE_INCLUDE_MERGED_NAME, this.includeMergedRevisions);
 		
 		SVNTeamPreferences.setCheckoutBoolean(store, SVNTeamPreferences.CHECKOUT_USE_DOT_PROJECT_NAME, this.checkoutUsingDotProjectName);
+		SVNTeamPreferences.setCheckoutBoolean(store, SVNTeamPreferences.CHECKOUT_RESPECT_PROJECT_STRUCTURE_NAME, this.checkoutRespectProjectStructure);
 	}
 	
 	protected void loadDefaultValues(IPreferenceStore store) {
@@ -173,6 +176,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.includeMergedRevisions = SVNTeamPreferences.MERGE_INCLUDE_MERGED_DEFAULT;
 		
 		this.checkoutUsingDotProjectName = SVNTeamPreferences.CHECKOUT_USE_DOT_PROJECT_DEFAULT;
+		this.checkoutRespectProjectStructure = SVNTeamPreferences.CHECKOUT_RESPECT_PROJECT_STRUCTURE_DEFAULT;
 		
 		this.branchTagConsiderStructure = SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_DEFAULT;
 		this.forceExternalsFreeze = SVNTeamPreferences.REPOSITORY_FORCE_EXTERNALS_FREEZE_DEFAULT;
@@ -214,6 +218,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.includeMergedRevisions = SVNTeamPreferences.getMergeBoolean(store, SVNTeamPreferences.MERGE_INCLUDE_MERGED_NAME);
 		
 		this.checkoutUsingDotProjectName = SVNTeamPreferences.getCheckoutBoolean(store, SVNTeamPreferences.CHECKOUT_USE_DOT_PROJECT_NAME);
+		this.checkoutRespectProjectStructure = SVNTeamPreferences.getCheckoutBoolean(store, SVNTeamPreferences.CHECKOUT_RESPECT_PROJECT_STRUCTURE_NAME);
 		
 		this.branchTagConsiderStructure = SVNTeamPreferences.getRepositoryBoolean(store, SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_NAME);
 		this.forceExternalsFreeze = SVNTeamPreferences.getRepositoryBoolean(store, SVNTeamPreferences.REPOSITORY_FORCE_EXTERNALS_FREEZE_NAME);
@@ -250,6 +255,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.initializeClientSettings();
 		
 		this.checkoutUsingDotProjectNameButton.setSelection(this.checkoutUsingDotProjectName);
+		this.checkoutRespectProjectStructureButton.setSelection(this.checkoutRespectProjectStructure);
 		
 		this.branchTagConsiderStructureButton.setSelection(this.branchTagConsiderStructure);
 		this.forceExternalsFreezeButton.setSelection(this.forceExternalsFreeze);
@@ -780,6 +786,16 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.checkoutUsingDotProjectNameButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				SVNTeamPreferencesPage.this.checkoutUsingDotProjectName = SVNTeamPreferencesPage.this.checkoutUsingDotProjectNameButton.getSelection();
+			}
+		});
+		
+		this.checkoutRespectProjectStructureButton = new Button(group, SWT.CHECK);
+		data = new GridData();
+		this.checkoutRespectProjectStructureButton.setLayoutData(data);
+		this.checkoutRespectProjectStructureButton.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.checkoutRespectProjectStructure"));
+		this.checkoutRespectProjectStructureButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				SVNTeamPreferencesPage.this.checkoutRespectProjectStructure = SVNTeamPreferencesPage.this.checkoutRespectProjectStructureButton.getSelection();
 			}
 		});
 		
