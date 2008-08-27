@@ -108,8 +108,10 @@ public final class SVNTeamPreferences {
 	public static final boolean MERGE_INCLUDE_MERGED_DEFAULT = false;
 	
 	public static final String CHECKOUT_USE_DOT_PROJECT_NAME = "useDotProject";
+	public static final String CHECKOUT_RESPECT_PROJECT_STRUCTURE_NAME = "respectProjectStructure";
 	
 	public static final boolean CHECKOUT_USE_DOT_PROJECT_DEFAULT = true;
+	public static final boolean CHECKOUT_RESPECT_PROJECT_STRUCTURE_DEFAULT = false;
 	
 	public static final String HISTORY_PAGE_SIZE_NAME = "pageSize";
 	public static final String HISTORY_PAGING_ENABLE_NAME = "pagingEnable";
@@ -320,6 +322,7 @@ public final class SVNTeamPreferences {
 	
 	public static void setDefaultCheckoutValues(IPreferenceStore store) {
 		store.setDefault(SVNTeamPreferences.fullCheckoutName(SVNTeamPreferences.CHECKOUT_USE_DOT_PROJECT_NAME), SVNTeamPreferences.CHECKOUT_USE_DOT_PROJECT_DEFAULT);
+		store.setDefault(SVNTeamPreferences.fullCheckoutName(SVNTeamPreferences.CHECKOUT_RESPECT_PROJECT_STRUCTURE_NAME), SVNTeamPreferences.CHECKOUT_RESPECT_PROJECT_STRUCTURE_DEFAULT);
 	}
 	
 	public static void setDefaultMergeValues(IPreferenceStore store) {
@@ -460,6 +463,7 @@ public final class SVNTeamPreferences {
 	
 	public static void resetToDefaultCheckoutValues(IPreferenceStore store) {
 		store.setValue(SVNTeamPreferences.fullCheckoutName(SVNTeamPreferences.CHECKOUT_USE_DOT_PROJECT_NAME), SVNTeamPreferences.CHECKOUT_USE_DOT_PROJECT_DEFAULT);
+		store.setValue(SVNTeamPreferences.fullCheckoutName(SVNTeamPreferences.CHECKOUT_RESPECT_PROJECT_STRUCTURE_NAME), SVNTeamPreferences.CHECKOUT_RESPECT_PROJECT_STRUCTURE_DEFAULT);
 	}
 	
 	public static void resetToDefaultMergeValues(IPreferenceStore store) {

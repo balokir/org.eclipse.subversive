@@ -173,12 +173,16 @@ public class UILoggedOperation extends LoggedOperation {
 		return panel[0].doNotShowAgain();
     }
     
-    public static void sendReport(IReporter reporter) {
-		UIMonitorUtility.doTaskNow(UIMonitorUtility.getShell(), reporter, true, new DefaultOperationWrapperFactory() {
-			protected IActionOperation wrappedOperation(IActionOperation operation) {
-				return new LoggedOperation(operation);
-			}
-		});
+    public static void sendReport(final IReporter reporter) {
+		UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+            public void run() {
+        		UIMonitorUtility.doTaskNow(UIMonitorUtility.getShell(), reporter, true, new DefaultOperationWrapperFactory() {
+        			protected IActionOperation wrappedOperation(IActionOperation operation) {
+        				return new LoggedOperation(operation);
+        			}
+        		});
+            }
+        });
 		if (reporter.getExecutionState() != IActionOperation.OK && 
 			SVNTeamPreferences.getMailReporterBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MAILREPORTER_ERRORS_ENABLED_NAME)) {
 			boolean doNotShowAgain = UILoggedOperation.showErrorImpl(

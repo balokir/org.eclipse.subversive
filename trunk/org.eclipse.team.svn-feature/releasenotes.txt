@@ -5,11 +5,11 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 0.7.2.I20080808-1500 release date: 8 August 2008
+Version 0.7.3.I20080814-1500 release date: 14 August 2008
 
 1. What's New
 
-   The version is based on 0.7.2 service release. The main target of the release is transferring 
+   The version is 0.7.3 service release. The main target of the release is transferring 
    Subversive development to Eclipse.org.
    
    Changes in compare with previous version are listed below. The full list of 
@@ -18,10 +18,22 @@ Version 0.7.2.I20080808-1500 release date: 8 August 2008
 	Features:
 	 * Add date selection options to History View (bug 211408)
 	   + special thanks to Gabor Liptak
+	   
+	 * Allow different behavior for Checkout action (bug 211237)
+	   + special thanks to Felipe Carasso, Jacob Robertson
 	
 	 * Extract Changes action should not create deletions.log file if no deletions occurs (bug 243395)
 	
 	Fixes:
+	 * butraq:logregex property display disgresses from specification (bug 243678)
+	   + special thanks to contributor Jens Scheidtmann
+	   
+	 * Use standard create patch dialog in Synchronize View (bug 243713)
+	   + special thanks to Noah Roberts
+	   
+	 * getRepository failed: exception AssertionFailedException: null argument (bug 240133)
+	   + special thanks to Chomat Stephane
+	
 	 * SVN hangs in SVNRepositoryResource.getRoot() method (bug 242130)
 	   + special thanks to Neale Upstone
 	
@@ -33,10 +45,10 @@ Version 0.7.2.I20080808-1500 release date: 8 August 2008
 	
 	 * Synchronize View's Local and Remote submenus are disappeared in Eclipse 3.4 after first call (bug 243045)
 	   + special thanks to Noah Roberts, Owen Rees
-
+	   
 	 * NPE in Share Project wizard when a project is already exists in the repository (bug 243446)
 	   + special thanks to Stephan Heffner
-
+	   
 	 * Synchronize doesn't show incomming changes (bug 243401)
 	   + special thanks to Tony Poppleton, Channing Walton, Radoslaw Jozwik
 	

@@ -103,7 +103,8 @@ public class SVNFileStorage extends AbstractSVNStorage implements IFileStorage {
 				return locations[i];
 			}
 		}
-		IRepositoryLocation location = this.newRepositoryLocation(";" + rootUrl);
+		IRepositoryLocation location = this.newRepositoryLocation();
+		SVNUtility.initializeRepositoryLocation(location, rootUrl);
 		this.addRepositoryLocation(location);
 		return location;
 	}
