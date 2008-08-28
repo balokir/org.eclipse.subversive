@@ -126,11 +126,13 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		reference += ";" + this.authorNameEnabled + ";";
 		String [] realms = this.getRealms().toArray(new String [0]);
 		for (int i = 0; i < realms.length; i++) {
-			if (i < realms.length - 1) {
-				reference += realms[i] + "^";
-			}
-			else {
-				reference += realms[i];
+			if (this.getAdditionalRealms().get(realms[i]).isPasswordSaved()) {
+				if (i < realms.length - 1) {
+					reference += realms[i] + "^";
+				}
+				else {
+					reference += realms[i];
+				}
 			}
 		}
 		reference += ";";
@@ -1041,6 +1043,14 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 			this.proxy = proxy;
 			this.referenceCounter = 1;
 		}
+	}
+
+	public boolean isPasswordSavedForRealm(String realm) {
+		IRepositoryLocation locationForRealm = this.getAdditionalRealms().get(realm);
+		if (locationForRealm != null && locationForRealm.isPasswordSaved()) {
+			return true;
+		}
+		return false;
 	}
 
 }
