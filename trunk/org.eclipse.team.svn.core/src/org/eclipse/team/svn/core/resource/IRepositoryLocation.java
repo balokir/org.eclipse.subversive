@@ -62,6 +62,7 @@ public interface IRepositoryLocation extends IRepositoryBase, IRepositoryResourc
 	public String getPassword();
 	public void setPassword(String password);
 	
+	public boolean isPasswordSavedForRealm(String realm);
 	public boolean isPasswordSaved();
 	public void setPasswordSaved(boolean saved);
 	

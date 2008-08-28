@@ -254,5 +254,9 @@ public class SVNRepositoryLocationWrapper implements IRepositoryLocation {
 		this.repositoryRootUrl = values[0];
 		this.repositoryUUID = values[1];
 	}
+
+	public boolean isPasswordSavedForRealm(String realm) {
+		return this.location.isPasswordSavedForRealm(realm);
+	}
 	
 }

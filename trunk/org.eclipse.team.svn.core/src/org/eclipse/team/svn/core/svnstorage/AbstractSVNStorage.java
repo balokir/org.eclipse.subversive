@@ -421,7 +421,9 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 			this.saveAuthInfo(current, "");
 			String [] realms = current.getRealms().toArray(new String[0]);
 			for (String realm : realms) {
-				this.saveAuthInfo(current, realm);
+				if (current.isPasswordSavedForRealm(realm)) {
+					this.saveAuthInfo(current, realm);
+				}
 			}
 		}
 		repositoryPreferences.flush();
