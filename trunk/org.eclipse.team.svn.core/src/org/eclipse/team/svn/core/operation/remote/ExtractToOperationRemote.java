@@ -116,9 +116,16 @@ public class ExtractToOperationRemote extends AbstractRepositoryOperation {
 			if (previousPref == null || !new Path(previousPref).isPrefixOf(currentPath)) {
 				if (current instanceof IRepositoryContainer) {
 					previousPref = current.getUrl();
+					previousPath = "/" + (rootUrl == null ? current.getName() : current.getUrl().substring(rootUrl.lastIndexOf('/') + 1));
+					toOperate = this.path + previousPath;
 				}
-				previousPath = "/" + (rootUrl == null ? current.getName() : current.getUrl().substring(rootUrl.lastIndexOf('/') + 1));
-				toOperate = this.path + previousPath;
+				else
+				{
+					String filePath = rootUrl == null ? "" : current.getUrl().substring(rootUrl.lastIndexOf('/') + 1);
+					int lastSlashIdx = filePath.lastIndexOf('/');
+					previousPath = "/" + (lastSlashIdx < 1 ? "" :  filePath.substring(0, filePath.lastIndexOf('/')));
+					toOperate = this.path + previousPath + "/" + current.getName();
+				}
 			}
 			else {
 				toOperate = this.path + previousPath + currentURL.substring(previousPref.length());
