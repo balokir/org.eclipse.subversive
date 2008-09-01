@@ -8,10 +8,12 @@
  * Contributors:
  *    Alexander Gurov (Polarion Software) - initial API and implementation
  *    Thomas Champagne - Bug 217561 : additional date formats for label decorations
+ *    Igor Burilo - Bug 211415: Export History log
  *******************************************************************************/
 
 package org.eclipse.team.svn.ui.history;
 
+import java.io.FileOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,9 +38,11 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
@@ -46,6 +50,7 @@ import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.operation.remote.GetLogMessagesOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -123,6 +128,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 	protected Action showRemoteAction;
 	protected Action showBothAction;
 	protected Action collapseAllAction;
+	protected Action exportLogAction;
 	protected Action showLocalActionDropDown;
 	protected Action showRemoteActionDropDown;
 	protected Action showBothActionDropDown;
@@ -484,6 +490,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		this.refresh(ISVNHistoryView.REFRESH_ALL);
 	}
 
+	@SuppressWarnings("unchecked")
 	public Object getAdapter(Class adapter) {
 		return null;
 	}
@@ -643,6 +650,29 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 			}
 		};
 
+		this.exportLogAction = new HistoryAction("HistoryView.ExportLog") {
+			public void run() {
+				FileDialog dlg = new FileDialog(UIMonitorUtility.getShell(), SWT.PRIMARY_MODAL | SWT.SAVE);
+				dlg.setText(SVNTeamUIPlugin.instance().getResource("ExportLogDialog.Title"));
+				String caption = SVNHistoryPage.this.getName();
+				dlg.setFileName(caption.substring(caption.lastIndexOf('/') + 1) + "_history.log");
+				dlg.setFilterExtensions(new String[] {"log", "*.*"});
+				String file = dlg.open();
+				if (file != null) {
+					ILogNode input = (ILogNode)SVNHistoryPage.this.history.getTreeViewer().getInput();
+					try {
+						FileOutputStream stream = new FileOutputStream(file);
+						stream.write(SVNHistoryPage.this.actionManager.getSelectedMessagesAsString(new ILogNode [] {input}).getBytes());
+						stream.flush();
+						stream.close();
+					}
+					catch (Exception ex) {
+						LoggedOperation.reportError(SVNTeamUIPlugin.instance().getResource("Operation.ExportLog"), ex);
+					}
+				}
+			}
+		};
+		
 		this.showBothActionDropDown = new HistoryAction("HistoryView.ShowBoth", "icons/views/history/both_history_mode.gif", IAction.AS_RADIO_BUTTON) {
 			public void run() {
 				SVNHistoryPage.this.options = SVNHistoryPage.this.options & ~(ISVNHistoryViewInfo.MODE_LOCAL | ISVNHistoryViewInfo.MODE_REMOTE) | ISVNHistoryViewInfo.MODE_BOTH;
@@ -732,6 +762,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		actionBarsMenu.add(this.revisionsRangeDropDownAction);
 		actionBarsMenu.add(this.filterDropDownAction);
 		actionBarsMenu.add(this.clearFilterDropDownAction);
+		actionBarsMenu.add(this.exportLogAction);
 		actionBarsMenu.add(new Separator());
 		actionBarsMenu.add(this.compareModeDropDownAction);
 
