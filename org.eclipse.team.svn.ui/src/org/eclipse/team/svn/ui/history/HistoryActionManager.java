@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Alexander Gurov (Polarion Software) - initial API and implementation
+ *    Igor Burilo - Bug 211415: Export History log
  *******************************************************************************/
 
 package org.eclipse.team.svn.ui.history;
@@ -821,20 +822,38 @@ public class HistoryActionManager {
 		}
 	}
 	
-	protected String getSelectedMessagesAsString(ILogNode []selection) {
-		String historyText = "";
+	public String getSelectedMessagesAsString(ILogNode []selection) {
+		String [] historyText = {""};
 		HashSet<ILogNode> processed = new HashSet<ILogNode>();
 		long revision = this.view.getCurrentRevision();
 		for (ILogNode node : selection) {
-			historyText += this.toString(processed, node, revision);
-			if (node.hasChildren()) {
-				ILogNode []children = node.getChildren();
-				for (int j = 0; j < children.length; j++) {
-					historyText += this.toString(processed, children[j], revision);
-				}
+			this.toString(processed, node, revision, historyText);
+		}
+		return historyText[0];
+	}
+	
+	protected void toString(HashSet<ILogNode> processed, ILogNode node, long revision, String [] retStr)
+	{
+		if (processed.contains(node)) {
+			return;
+		}
+		processed.add(node);
+		String toAdd = "";
+		toAdd += node.getLabel(0, ILogNode.LABEL_FLAT, revision);
+		for (int i = 1; i < ILogNode.NUM_OF_COLUMNS; i++) {
+			toAdd += "\t" + node.getLabel(i, ILogNode.LABEL_FLAT, revision);
+		}
+		toAdd = toAdd.trim();
+		if (!toAdd.equals(""))
+		{
+			retStr[0] += toAdd + System.getProperty("line.separator");
+		}
+		if (node.hasChildren()) {
+			ILogNode []children = node.getChildren();
+			for (int j = 0; j < children.length; j++) {
+				this.toString(processed, children[j], revision, retStr);
 			}
 		}
-		return historyText;
 	}
 	
 	protected String toString(HashSet<ILogNode> processed, ILogNode node, long revision) {
