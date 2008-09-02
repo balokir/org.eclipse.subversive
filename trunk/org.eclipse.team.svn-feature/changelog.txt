@@ -8,6 +8,20 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.3.I20080814-1500 [02 September 2008]
+
+Features:
+ * Export History log (bug 211415)
+   + thanks to Igor Burilo for the patch
+
+Fixes:
+ * Authentication problems (bug 243914)
+ 
+ * Extract from HistoryView fails if the folder has modification and modified children with greater names. (bug 245504)
+   + thanks to Igor Burilo for the patch
+
+--------------------------------------------------------------------------------
+
 Version 0.7.3.I20080814-1500 [14 August 2008]
 
 Features:
