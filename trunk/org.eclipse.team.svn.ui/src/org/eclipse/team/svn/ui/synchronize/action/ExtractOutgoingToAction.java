@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Alexei Goncharov (Polarion Software) - initial API and implementation
+ *    Igor Burilo - Bug 245509: Improve extract log
  *******************************************************************************/
 
 package org.eclipse.team.svn.ui.synchronize.action;
@@ -55,11 +56,12 @@ public class ExtractOutgoingToAction extends AbstractSynchronizeModelAction {
 		for (IResource current : selectedOutgoingResources) {
 			outgoingResources.add(current.getProject());
 		}
-		ExtractToOperationLocal mainOp = new ExtractToOperationLocal(outgoingResources.toArray(new IResource[outgoingResources.size()]), path, true);
+		InitExtractLogOperation logger = new InitExtractLogOperation(path);
+		ExtractToOperationLocal mainOp = new ExtractToOperationLocal(outgoingResources.toArray(new IResource[outgoingResources.size()]), path, true, logger);
 		CompositeOperation op = new CompositeOperation(mainOp.getId());
-		op.add(new InitExtractLogOperation(path));
+		op.add(logger);
 		op.add(mainOp);
-		op.add(new FiniExtractLogOperation(path));
+		op.add(new FiniExtractLogOperation(logger));
 		return op;
 	}
 	

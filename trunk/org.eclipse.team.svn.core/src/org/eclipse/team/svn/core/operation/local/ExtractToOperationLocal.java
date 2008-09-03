@@ -7,7 +7,9 @@
  *
  * Contributors:
  *    Alexei Goncharov (Polarion Software) - initial API and implementation
+ *    Igor Burilo - Bug 245509: Improve extract log
  *******************************************************************************/
+
 
 package org.eclipse.team.svn.core.operation.local;
 
@@ -20,9 +22,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
+import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
  * Extract selected resources to location (only local resources)
@@ -34,6 +38,7 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 	private IResource [] outgoingResources;
 	private String path;
 	private boolean delitionAllowed;
+	private InitExtractLogOperation logger;
 	
 	/**
 	 * Operation for extracting local resources to a location
@@ -42,11 +47,12 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 	 * @param path - path to extract to
 	 * @param delitionAllowed - specifies if deletion allowed if the resource is marked for deletion
 	 */
-	public ExtractToOperationLocal(IResource [] outgoingResources, String path, boolean delitionAllowed) {
+	public ExtractToOperationLocal(IResource [] outgoingResources, String path, boolean delitionAllowed, InitExtractLogOperation logger) {
 		super(SVNTeamPlugin.instance().getResource("Operation.ExtractTo"));
 		this.outgoingResources = outgoingResources;
 		this.path = path;
 		this.delitionAllowed = delitionAllowed;
+		this.logger = logger;
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
@@ -70,9 +76,11 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 				toOperate = this.path + (currentPath.toString()).substring(toRemove);
 			}
 			File operatingDirectory = new File(toOperate);
-			InitExtractLogOperation.logToAll(this.path, operatingDirectory.getAbsolutePath().substring(this.path.length() + 1));
-			if (IStateFilter.SF_DELETED.accept(SVNRemoteStorage.instance().asLocalResourceAccessible(current))) {
-				InitExtractLogOperation.logToDeletions(this.path, operatingDirectory.getAbsolutePath().substring(this.path.length() + 1), true);
+			ILocalResource localResource = SVNRemoteStorage.instance().asLocalResourceAccessible(current);
+			if (!IStateFilter.SF_NOTMODIFIED.accept(localResource)) {
+				this.logger.log(operatingDirectory.getAbsolutePath().substring(this.path.length() + 1), SVNUtility.getStatusText(localResource.getStatus()));
+			}
+			if (IStateFilter.SF_DELETED.accept(localResource)) {
 				if (operatingDirectory.exists() && this.delitionAllowed) {
 					FileUtility.deleteRecursive(operatingDirectory);
 				}
