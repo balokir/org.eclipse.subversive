@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Alexei Goncharov (Polarion Software) - initial API and implementation
+ *    Igor Burilo - Bug 245509: Improve extract log
  *******************************************************************************/
 
 package org.eclipse.team.svn.core.operation.remote;
@@ -16,17 +17,20 @@ import java.io.FileOutputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.local.InitExtractLogOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
+import org.eclipse.team.svn.core.resource.IRepositoryResourceWithStatusProvider;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
@@ -37,9 +41,11 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * 
  * @author Alexei Goncharov
  */
-public class ExtractToOperationRemote extends AbstractRepositoryOperation {
+public class ExtractToOperationRemote extends AbstractActionOperation {
+	private InitExtractLogOperation logger;
 	private Collection<String> toDelete;
 	private IRepositoryResourceProvider deletionsProvider;
+	private IRepositoryResourceWithStatusProvider dataProvider;
 	private String path;
 	private boolean delitionAllowed;
 	private HashMap<String, String> exportRoots2Names;
@@ -48,38 +54,44 @@ public class ExtractToOperationRemote extends AbstractRepositoryOperation {
 	 * Operation for extracting remote resources to a specified location
 	 * 
 	 * @param incomingResources - the resources to extract array
+	 * @param statusesMap - the map of the incoming statuses associated to remote resource URLs
 	 * @param markedForDelition - the collection of the resource URLs to delete (can be empty but must not be null)
 	 * @param path - path to extract to
 	 * @param exportRoots2Names - resource URL to project name mapping (can be empty but must not be null)
 	 * @param delitionAllowed - specifies if deletion allowed if the resource is marked for deletion
 	 */
-	public ExtractToOperationRemote(IRepositoryResource []incomingResources, Collection<String> markedForDelition, String path, HashMap<String, String> resource2projectNames, boolean delitionAllowed) {
-		super("Operation.ExtractTo", incomingResources);
-		this.path = path;
-		this.delitionAllowed = delitionAllowed;
-		this.toDelete = markedForDelition;
-		this.exportRoots2Names = resource2projectNames; 
+	public ExtractToOperationRemote(IRepositoryResource []incomingResources, Map<String, String> statusesMap, Collection<String> markedForDelition, String path, HashMap<String, String> resource2projectNames, InitExtractLogOperation logger, boolean delitionAllowed) {
+		this(new IRepositoryResourceWithStatusProvider.DefaultRepositoryResourceWithStatusProvider(incomingResources, statusesMap),
+				markedForDelition,
+				path,
+				resource2projectNames,
+				logger,
+				delitionAllowed);
 	}
 	
 	/**
 	 * Operation for extracting remote resources to a specified location
 	 * 
-	 * @param incomingResourcesProvider - incoming resources to extract provider
+	 * @param incomingResourcesProvider - incoming resources with statuses to extract provider
 	 * @param markedForDelition - the collection of the resource URLs to delete (can be empty but must not be null)
 	 * @param path - path to extract to
 	 * @param exportRoots2Names - resource URL to project name mapping (can be empty but must not be null)
 	 * @param delitionAllowed - specifies if deletion allowed if the resource is marked for deletion
 	 */
-	public ExtractToOperationRemote(IRepositoryResourceProvider incomingResourcesProvider, Collection<String> markedForDelition, String path, HashMap<String, String> exportRoots2Names, boolean delitionAllowed) {
-		super("Operation.ExtractTo", incomingResourcesProvider);
+	public ExtractToOperationRemote(IRepositoryResourceWithStatusProvider incomingResourcesProvider, Collection<String> markedForDelition, String path, HashMap<String, String> exportRoots2Names, InitExtractLogOperation logger, boolean delitionAllowed) {
+		super("Operation.ExtractTo");
+		this.logger = logger;
+		this.dataProvider = incomingResourcesProvider;
 		this.path = path;
 		this.delitionAllowed = delitionAllowed;
 		this.toDelete = markedForDelition;
 		this.exportRoots2Names = exportRoots2Names;
 	}
 
-	public ExtractToOperationRemote(IRepositoryResourceProvider incomingResourcesProvider, IRepositoryResourceProvider markedForDelition, String path, HashMap<String, String> exportRoots2Names, boolean delitionAllowed) {
-		super("Operation.ExtractTo", incomingResourcesProvider);
+	public ExtractToOperationRemote(IRepositoryResourceWithStatusProvider incomingResourcesProvider, IRepositoryResourceProvider markedForDelition, String path, HashMap<String, String> exportRoots2Names, InitExtractLogOperation logger, boolean delitionAllowed) {
+		super("Operation.ExtractTo");
+		this.logger = logger;
+		this.dataProvider = incomingResourcesProvider;
 		this.path = path;
 		this.delitionAllowed = delitionAllowed;
 		this.deletionsProvider = markedForDelition;
@@ -87,7 +99,7 @@ public class ExtractToOperationRemote extends AbstractRepositoryOperation {
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		IRepositoryResource []resources = this.operableData();
+		IRepositoryResource []resources = this.dataProvider.getRepositoryResources();
 		if (this.deletionsProvider != null) {
 			IRepositoryResource []deletions = this.deletionsProvider.getRepositoryResources();
 			this.toDelete = new HashSet<String>();
@@ -139,9 +151,12 @@ public class ExtractToOperationRemote extends AbstractRepositoryOperation {
 				}
 			}
 			File operatingDirectory = new File(toOperate);
-			InitExtractLogOperation.logToAll(this.path, operatingDirectory.getAbsolutePath().substring(this.path.length() + 1));
+			String status = this.dataProvider.getStatusesMap().get(currentURL);
+			if (status != null)
+			{
+				this.logger.log(operatingDirectory.getAbsolutePath().substring(this.path.length() + 1), status);
+			};
 			if (this.toDelete.contains(current.getUrl())) {
-				InitExtractLogOperation.logToDeletions(this.path, operatingDirectory.getAbsolutePath().substring(this.path.length() + 1), true);
 				if (operatingDirectory.exists() && this.delitionAllowed)
 				{
 					FileUtility.deleteRecursive(operatingDirectory);
@@ -181,7 +196,7 @@ public class ExtractToOperationRemote extends AbstractRepositoryOperation {
 	}
 
 	public int getOperationWeight() {
-		if (this.operableData() != null && this.operableData().length == 0) {
+		if (this.dataProvider.getRepositoryResources() != null && this.dataProvider.getRepositoryResources().length == 0) {
 			return 0;
 		}
 		return 4;

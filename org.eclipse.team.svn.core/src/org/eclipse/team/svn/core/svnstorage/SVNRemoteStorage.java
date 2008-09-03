@@ -973,7 +973,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		throw new RuntimeException(SVNTeamPlugin.instance().getResource("Error.UnknownStatus"));
 	}
 	
-	protected String getStatusString(int propKind, int textKind, boolean isRemoteStatus) {
+	public String getStatusString(int propKind, int textKind, boolean isRemoteStatus) {
 		String status = IStateFilter.ST_NORMAL;
 		
 		switch (textKind) {

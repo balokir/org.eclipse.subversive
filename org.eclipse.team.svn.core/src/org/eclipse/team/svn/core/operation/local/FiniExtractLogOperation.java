@@ -7,16 +7,10 @@
  *
  * Contributors:
  *    Alexander Gurov (Polarion Software) - initial API and implementation
+ *    Igor Burilo - Bug 245509: Improve extract log
  *******************************************************************************/
 
 package org.eclipse.team.svn.core.operation.local;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
@@ -27,40 +21,15 @@ import org.eclipse.team.svn.core.operation.AbstractActionOperation;
  * @author Alexander Gurov
  */
 public class FiniExtractLogOperation extends AbstractActionOperation {
-	protected String logPath;
+	protected InitExtractLogOperation logger;
 	
-	public FiniExtractLogOperation(String logPath) {
+	public FiniExtractLogOperation(InitExtractLogOperation logger) {
 		super("Operation.FiniExtractLog");
-		this.logPath = logPath;
+		this.logger = logger;
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.getDefault());
-		String date = formatter.format(new Date());
-		File copyFrom = new File(this.logPath + InitExtractLogOperation.DELETIONS_TMP_LOG_NAME);
-		if (copyFrom.length() > 0) {
-			InitExtractLogOperation.logToDeletions(this.logPath, "", false);
-			InitExtractLogOperation.logToDeletions(this.logPath, date, false);
-			InitExtractLogOperation.logToDeletions(this.logPath, "===============================================================================", false);
-			
-			FileInputStream input = new FileInputStream(copyFrom);
-			FileOutputStream output = null;
-			try {
-				output = new FileOutputStream(this.logPath + InitExtractLogOperation.DELETIONS_LOG_NAME, true);
-				byte []buf = new byte[2048];
-				int len;
-				while ((len = input.read(buf)) > 0) {
-					output.write(buf, 0, len);
-				}
-			}
-			finally {
-				if (output != null) {
-					try {output.close();} catch (Exception ex) {}
-				}
-				try {input.close();} catch (Exception ex) {}
-			}
-		}
-		copyFrom.delete();
+		this.logger.flushLog();
 	}
 	
 }

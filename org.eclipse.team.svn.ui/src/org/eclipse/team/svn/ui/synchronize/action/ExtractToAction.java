@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Alexei Goncharov (Polarion Software) - initial API and implementation
+ *    Igor Burilo - Bug 245509: Improve extract log
  *******************************************************************************/
 
 package org.eclipse.team.svn.ui.synchronize.action;
@@ -31,9 +32,11 @@ import org.eclipse.team.svn.core.operation.local.FiniExtractLogOperation;
 import org.eclipse.team.svn.core.operation.local.InitExtractLogOperation;
 import org.eclipse.team.svn.core.operation.remote.ExtractToOperationRemote;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.synchronize.AbstractSVNSyncInfo;
+import org.eclipse.team.svn.ui.synchronize.variant.RemoteResourceVariant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
@@ -92,6 +95,7 @@ public class ExtractToAction extends AbstractSynchronizeModelAction {
 		HashSet<IRepositoryResource> incomingResourcesToOperate = new HashSet<IRepositoryResource>();
 		HashSet<String> markedForDelition = new HashSet<String>();
 		HashMap<String, String> resource2project = new HashMap<String, String>();
+		HashMap<String, String> url2status = new HashMap<String, String>();
 		for (IResource current : incomingChanges) {
 			IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(current);
 			IRepositoryResource projectRemote = SVNRemoteStorage.instance().asRepositoryResource(current.getProject());
@@ -103,15 +107,25 @@ public class ExtractToAction extends AbstractSynchronizeModelAction {
 				resource2project.put(remote.getUrl(), current.getFullPath().toString().substring(1));
 			}
 			incomingResourcesToOperate.add(remote);
+			AbstractSVNSyncInfo[] syncInfos = this.getSVNSyncInfos();
+			for (AbstractSVNSyncInfo info : syncInfos) {
+				if (SyncInfo.getDirection(info.getKind()) == SyncInfo.INCOMING) {
+					IResourceChange change = ((IResourceChange)((RemoteResourceVariant)info.getRemote()).getResource());
+					if (remote.getUrl().equals(change.getOriginator().getUrl())) {
+						url2status.put(remote.getUrl(), change.getStatus());
+					}
+				}
+			}
 			if (deletionsOnly.contains(current)) {
 				markedForDelition.add(remote.getUrl());
 			}
 		}
 		CompositeOperation op = new CompositeOperation("Operation.ExtractTo");
-		op.add(new InitExtractLogOperation(path));
-		op.add(new ExtractToOperationLocal(outgoingChanges, path, true));
-		op.add(new ExtractToOperationRemote(incomingResourcesToOperate.toArray(new IRepositoryResource[incomingResourcesToOperate.size()]), markedForDelition, path, resource2project, true));
-		op.add(new FiniExtractLogOperation(path));
+		InitExtractLogOperation logger = new InitExtractLogOperation(path);
+		op.add(logger);
+		op.add(new ExtractToOperationLocal(outgoingChanges, path, true, logger));
+		op.add(new ExtractToOperationRemote(incomingResourcesToOperate.toArray(new IRepositoryResource[incomingResourcesToOperate.size()]), url2status, markedForDelition, path, resource2project, logger, true));
+		op.add(new FiniExtractLogOperation(logger));
 		return op;
 	}
 

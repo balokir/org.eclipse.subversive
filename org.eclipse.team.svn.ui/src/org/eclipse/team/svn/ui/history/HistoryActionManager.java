@@ -8,6 +8,7 @@
  * Contributors:
  *    Alexander Gurov (Polarion Software) - initial API and implementation
  *    Igor Burilo - Bug 211415: Export History log
+ *    Igor Burilo - Bug 245509: Improve extract log
  *******************************************************************************/
 
 package org.eclipse.team.svn.ui.history;
@@ -19,6 +20,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareUI;
@@ -103,6 +105,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
+import org.eclipse.team.svn.core.resource.IRepositoryResourceWithStatusProvider;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
@@ -952,11 +955,12 @@ public class HistoryActionManager {
 			resource2project.put(remote.getUrl(), remote.getName());
 		}
 		CompositeOperation op = new CompositeOperation(SVNTeamPlugin.instance().getResource("Operation.ExtractTo"));
+		InitExtractLogOperation logger = new InitExtractLogOperation(path);
 		FromDifferenceRepositoryResourceProvider provider = new FromDifferenceRepositoryResourceProvider(selectedLogs);
 		op.add(provider);
-		op.add(new InitExtractLogOperation(path));
-		op.add(new ExtractToOperationRemote(provider, provider.getDeletionsProvider(), path, resource2project, true), new IActionOperation [] {provider});
-		op.add(new FiniExtractLogOperation(path));
+		op.add(logger);
+		op.add(new ExtractToOperationRemote(provider, provider.getDeletionsProvider(), path, resource2project, logger, true), new IActionOperation [] {provider});
+		op.add(new FiniExtractLogOperation(logger));
 		UIMonitorUtility.doTaskScheduledActive(op);
 	}
 	
@@ -1660,18 +1664,20 @@ public class HistoryActionManager {
 		
 	}
 	
-	protected class FromDifferenceRepositoryResourceProvider extends AbstractActionOperation implements IRepositoryResourceProvider {
+	protected class FromDifferenceRepositoryResourceProvider extends AbstractActionOperation implements IRepositoryResourceWithStatusProvider {
 		protected IRepositoryResource [] repositoryResources;
 		protected IRepositoryResource [] repositoryResourcesToDelete;
 		protected IRepositoryResource newer;
 		protected IRepositoryResource older;
 		protected IRepositoryLocation location;
+		protected HashMap<String, String> url2status;
 		
 		public FromDifferenceRepositoryResourceProvider(SVNLogEntry [] logEntries) {//(HashMap<SVNLogPath, Long> paths, SVNLogEntry selectedLogEntry) {
 			super("Operation.GetRepositoryResource");
 			this.newer = HistoryActionManager.this.getResourceForSelectedRevision(logEntries[0]);
 			this.older = HistoryActionManager.this.getResourceForSelectedRevision(logEntries[1]);
 			this.location = this.newer.getRepositoryLocation();
+			this.url2status = new HashMap<String, String>();
 		}
 		
 		public IRepositoryResourceProvider getDeletionsProvider() {
@@ -1734,6 +1740,7 @@ public class HistoryActionManager {
 				resourceToAdd.setSelectedRevision(this.newer.getSelectedRevision());
 				resourceToAdd.setPegRevision(this.newer.getPegRevision());
 				resourcesToReturn.add(resourceToAdd);
+				this.url2status.put(resourceToAdd.getUrl(), SVNRemoteStorage.instance().getStatusString(status.propStatus, status.textStatus, true));
 				if (status.textStatus == SVNEntryStatus.Kind.DELETED) {
 					resourcesToDelete.add(resourceToAdd);
 				}
@@ -1744,6 +1751,10 @@ public class HistoryActionManager {
 		
 		public IRepositoryResource[] getRepositoryResources() {
 			return this.repositoryResources;
+		}
+
+		public Map<String, String> getStatusesMap() {
+			return this.url2status;
 		}
 		
 	}
