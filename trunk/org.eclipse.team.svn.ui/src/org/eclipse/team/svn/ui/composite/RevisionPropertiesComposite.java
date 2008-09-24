@@ -256,6 +256,7 @@ public class RevisionPropertiesComposite extends Composite {
 							RevisionPropertiesComposite.this.editProperty(null);
 						}
 					});
+					tAction.setEnabled(RevisionPropertiesComposite.this.location != null);
 					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("PropertiesComposite.Edit")) {
 						public void run() {
 							SVNProperty data = (SVNProperty) tSelection.getFirstElement();
