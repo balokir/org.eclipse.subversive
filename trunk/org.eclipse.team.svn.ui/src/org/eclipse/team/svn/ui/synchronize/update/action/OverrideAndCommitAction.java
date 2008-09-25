@@ -58,7 +58,7 @@ public class OverrideAndCommitAction extends AbstractSynchronizeModelAction {
 	}
 
 	protected FastSyncInfoFilter getSyncInfoFilter() {
-		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.CONFLICTING, SyncInfo.OUTGOING}) {
+		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.CONFLICTING, SyncInfo.OUTGOING, SyncInfo.INCOMING}) {
             public boolean select(SyncInfo info) {
                 UpdateSyncInfo sync = (UpdateSyncInfo)info;
                 return super.select(info) && !(IStateFilter.SF_OBSTRUCTED.accept(sync.getLocalResource()));
