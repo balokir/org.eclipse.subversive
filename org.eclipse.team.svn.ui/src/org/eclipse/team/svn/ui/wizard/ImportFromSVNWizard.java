@@ -81,8 +81,8 @@ public class ImportFromSVNWizard extends AbstractSVNWizard implements INewWizard
 	}
 	
 	public boolean performFinish() {
-		IRepositoryResource []resources = this.selectResource.getSelectedResources();
-		CheckoutAsWizard checkoutWizard = new CheckoutAsWizard(resources, this.addLocation.getOperationToPeform());
+		IRepositoryResource resource = this.selectResource.getSelectedResource();
+		CheckoutAsWizard checkoutWizard = new CheckoutAsWizard(new IRepositoryResource[]{resource}, this.addLocation.getOperationToPeform());
 		WizardDialog dialog = new WizardDialog(this.getShell(), checkoutWizard);
 		dialog.create();
 		dialog.getShell().setSize(Math.max(CheckoutAsWizard.SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x), CheckoutAsWizard.SIZING_WIZARD_HEIGHT);

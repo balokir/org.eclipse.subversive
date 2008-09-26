@@ -11,24 +11,15 @@
 
 package org.eclipse.team.svn.ui.wizard.checkoutas;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.composite.RepositoryTreeComposite;
-import org.eclipse.team.svn.ui.repository.model.IRepositoryContentFilter;
-import org.eclipse.team.svn.ui.repository.model.RepositoryLocation;
-import org.eclipse.team.svn.ui.repository.model.RepositoryResource;
+import org.eclipse.team.svn.ui.composite.RepositoryResourceSelectionComposite;
 import org.eclipse.team.svn.ui.wizard.AbstractVerifiedWizardPage;
 import org.eclipse.ui.PlatformUI;
 
@@ -38,25 +29,29 @@ import org.eclipse.ui.PlatformUI;
  * @author Alexander Gurov
  */
 public class SelectCheckoutResourcePage extends AbstractVerifiedWizardPage {
-	protected RepositoryTreeComposite selectionComposite;
-	protected IRepositoryResource []selectedResources;
 
+	protected RepositoryResourceSelectionComposite selectComposite;	
+	
+	protected IRepositoryResource baseResource;
+	protected IRepositoryResource selectedResource;
+	
 	public SelectCheckoutResourcePage() {
 		super(
 			SelectCheckoutResourcePage.class.getName(), 
 			SVNTeamUIPlugin.instance().getResource("SelectCheckoutResourcePage.Title"), 
 			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
-		this.setDescription(SVNTeamUIPlugin.instance().getResource("SelectCheckoutResourcePage.Description"));
+		this.setDescription(SVNTeamUIPlugin.instance().getResource("SelectCheckoutResourcePage.Description"));		
 	}
 	
-	public void setRepositoryLocation(IRepositoryLocation location) {
-		this.selectionComposite.setModelRoot(new RepositoryLocation(location));
+	public void setRepositoryLocation(IRepositoryLocation location) {		
+		this.selectedResource = this.baseResource = location.getRoot();
+		this.selectComposite.setBaseResource(this.baseResource);
 		this.setPageComplete(false);
 	}
 	
-	public IRepositoryResource []getSelectedResources() {
-		return this.selectedResources;
-	}
+	public IRepositoryResource getSelectedResource() {
+		return this.selectedResource;		
+	}		
 	
 	protected Composite createControlImpl(Composite parent) {
 		GridData data = null;
@@ -67,38 +62,25 @@ public class SelectCheckoutResourcePage extends AbstractVerifiedWizardPage {
 		layout.marginWidth = 4;
 		composite.setLayout(layout);
 		data = new GridData(GridData.FILL_BOTH);
-		composite.setLayoutData(data);
+		composite.setLayoutData(data);	
 		
-		this.selectionComposite = new RepositoryTreeComposite(composite, SWT.BORDER, true);
-		data = new GridData(GridData.FILL_BOTH);
-		this.selectionComposite.setLayoutData(data);
-		this.selectionComposite.setFilter(new IRepositoryContentFilter() {
-			public boolean accept(Object obj) {
-				return !(obj instanceof IRepositoryFile);
-			}
-		});
+		this.selectComposite = new RepositoryResourceSelectionComposite(
+				composite, SWT.NONE, this, "selectCheckoutUrl", this.baseResource, true, 
+				SVNTeamUIPlugin.instance().getResource("SelectRepositoryResourcePage.Select.Title"),
+				SVNTeamUIPlugin.instance().getResource("SelectRepositoryResourcePage.Select.Description"), RepositoryResourceSelectionComposite.MODE_DEFAULT, RepositoryResourceSelectionComposite.TEXT_BASE);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.widthHint = 550;
+		this.selectComposite.setLayoutData(data);
 		
-		this.selectionComposite.getRepositoryTreeViewer().setAutoExpandLevel(1);
-		
-		this.selectionComposite.getRepositoryTreeViewer().addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection selection = (IStructuredSelection)SelectCheckoutResourcePage.this.selectionComposite.getRepositoryTreeViewer().getSelection();
-				ArrayList resources = new ArrayList();
-				for (Iterator it = selection.iterator(); it.hasNext(); ) {
-					Object item = it.next();
-					if (item instanceof RepositoryResource) {
-						resources.add(((RepositoryResource)item).getRepositoryResource());
-					}
-				}
-				SelectCheckoutResourcePage.this.selectedResources = (IRepositoryResource [])resources.toArray(new IRepositoryResource[resources.size()]);
-				SelectCheckoutResourcePage.this.setPageComplete(resources.size() > 0);
-			}
-		});
-		
-//		Setting context help
+		//Setting context help
         PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.selectCheckResourcesContext");
 		
 		return composite;
 	}
-
+	
+	public IWizardPage getNextPage() {
+		this.selectedResource = this.selectComposite.getSelectedResource();
+		this.selectComposite.saveHistory();
+		return super.getNextPage();
+	}
 }
