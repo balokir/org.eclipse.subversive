@@ -5,25 +5,35 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 0.7.3.I20080902-1500 release date: 14 August 2008
+Version 0.7.4.I20081001-1900 release date: 01 October 2008
 
 1. What's New
 
-   The version is 0.7.3 service release. The main target of the release is transferring 
-   Subversive development to Eclipse.org.
+   The version is 0.7.4 service release. The release contains some requested features
+   and fixes for the most critical bugs. 
    
-   Changes in compare with previous version are listed below. The full list of 
+   Changes comparatively to the previous version are listed below. The full list of 
    changes you can find in Change Log.
     
 	Features:
-     * Export History log (bug 211415)
-       + thanks to Igor Burilo for the patch
+ 	 * Export History log (bug 211415)
+   	   + thanks to Igor Burilo for the patch
+ 
+     * Browse button in Share dialog (bug 211233)
+ 
+     * Allow "override and commit" for non-conflicting resources (bug 241422)
 
     Fixes:
      * Authentication problems (bug 243914)
  
      * Extract from HistoryView fails if the folder has modification and modified children with greater names. (bug 245504)
        + thanks to Igor Burilo for the patch
+
+     * Null Pointer Exception in Revision Properties View (bug 248355)
+ 
+     * Improve extract log (bug 245509)
+     
+     * Serious usability regression: Replace With merges with revision instead of replacing with revision (bug 240473)
 	
 2. Information
 
