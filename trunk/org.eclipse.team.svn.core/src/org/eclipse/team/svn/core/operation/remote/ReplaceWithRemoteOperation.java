@@ -40,7 +40,7 @@ public class ReplaceWithRemoteOperation extends AbstractActionOperation {
 	protected IRepositoryResource remoteRoot;
 	
 	public ReplaceWithRemoteOperation(IResource toReplace, IRepositoryResource remoteResource) {
-		super("Replace Operation");
+		super("Operation.ReplaceWithRemote");
 		this.toReplace = toReplace;
 		this.remoteRoot = remoteResource;
 	}
