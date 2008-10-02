@@ -13,12 +13,12 @@ package org.eclipse.team.svn.ui.wizard.shareproject;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -29,12 +29,18 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.operation.local.management.ShareProjectOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
+import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.composite.RepositoryResourceOnlySelectionComposite;
 import org.eclipse.team.svn.ui.verifier.AbsolutePathVerifier;
+import org.eclipse.team.svn.ui.verifier.AbstractVerifier;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifierProxy;
 import org.eclipse.team.svn.ui.verifier.CompositeVerifier;
+import org.eclipse.team.svn.ui.verifier.IValidationManager;
 import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
 import org.eclipse.team.svn.ui.verifier.ResourceNameVerifier;
+import org.eclipse.team.svn.ui.verifier.WrapperValidationManagerProxy;
 import org.eclipse.team.svn.ui.wizard.AbstractVerifiedWizardPage;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -45,6 +51,8 @@ import org.eclipse.ui.PlatformUI;
  * @author Alexander Gurov
  */
 public class SelectProjectNamePage extends AbstractVerifiedWizardPage {
+	
+	protected boolean isSimpleMode;
 	protected int layoutType;
 	protected String rootProjectName;
 	protected String projectName;
@@ -61,8 +69,38 @@ public class SelectProjectNamePage extends AbstractVerifiedWizardPage {
 	protected Button singleLayoutButton;
 	protected Group nameGroup;
 	protected Group layoutGroup;
-	protected Point savedPosition;
+		 
+	protected Composite simpleModeComposite;
+	protected Composite advancedModeComposite;
+	
+	protected RepositoryResourceOnlySelectionComposite resourceSelectionComposite;
+	protected Button modeButton;
+	
+	/*
+	 * As we override behavior of validation manager, then 
+	 * managers listed below should be used instead of current wizard page class
+	 */
+	protected IValidationManager simpleModeValidationManager;
+	protected IValidationManager advancedModeValidationManager;
+	
+	protected class SelectProjectNamePageValidationManager extends WrapperValidationManagerProxy {
+				
+		protected boolean isSimpleValidationManager;
+		
+		public SelectProjectNamePageValidationManager(IValidationManager validationManager, boolean isSimpleValidationManager) {
+			super(validationManager);	
+			this.isSimpleValidationManager = isSimpleValidationManager;
+		}
 
+		protected AbstractVerifier wrapVerifier(AbstractVerifier verifier) {
+			return new AbstractVerifierProxy(verifier) {
+				protected boolean isVerificationEnabled(Control input) {
+					return SelectProjectNamePage.this.isSimpleMode == SelectProjectNamePageValidationManager.this.isSimpleValidationManager;
+				}
+			};			
+		}					
+	}
+	
 	public SelectProjectNamePage() {
 		super(
 			SelectProjectNamePage.class.getName(), 
@@ -70,39 +108,59 @@ public class SelectProjectNamePage extends AbstractVerifiedWizardPage {
 			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
 		
 		this.layoutType = ShareProjectOperation.LAYOUT_DEFAULT;
+		this.isSimpleMode = true;				
+	}
+	
+	public IRepositoryLocation getLocation() {
+		return this.location;
+	}
+	
+	public boolean isSimpleMode() {
+		return this.isSimpleMode;
 	}
 	
 	public void setProjectsAndLocation(IProject []projects, IRepositoryLocation location) {
 		this.multiProject = projects.length > 1;
 		this.location = location;
+						
+		IRepositoryResource baseResource = this.location.asRepositoryContainer(this.location.getUrl(), false);			
+		this.resourceSelectionComposite.setBaseResource(baseResource);
+		this.resourceSelectionComposite.setMatchToBaseResource(true);
+		
+		/*
+		 * Set picker URL as repository location plus project name
+		 */
+		if (this.isSimpleMode && !this.multiProject) {
+			IProject pr = projects[0];
+			String url = baseResource + "/" + pr.getName();
+			this.resourceSelectionComposite.setUrl(url);
+		}
 		
 		if (this.multiProject) {
 			this.selectedName = this.projectName = "";
-			this.setTitle(SVNTeamUIPlugin.instance().getResource("SelectProjectNamePage.Title.Multi"));
-			this.setDescription(SVNTeamUIPlugin.instance().getResource("SelectProjectNamePage.Description.Multi"));
-			this.savedPosition = this.layoutGroup.getLocation();
-			this.layoutGroup.setLocation(this.nameGroup.getLocation());
 			this.nameGroup.setVisible(false);
+			((GridData)this.nameGroup.getLayoutData()).exclude = true;			
 			this.defaultLayoutButton.setSelection(true);
 		}
 		else {
 			this.selectedName = this.projectName = projects[0].getName();
-			if (this.savedPosition != null) {
-				this.nameGroup.setVisible(true);
-				this.layoutGroup.setLocation(this.savedPosition);
-				this.savedPosition = null;
-			}
-			this.setTitle(SVNTeamUIPlugin.instance().getResource("SelectProjectNamePage.Title.Single"));
-			this.setDescription(SVNTeamUIPlugin.instance().getResource("SelectProjectNamePage.Description.Single"));
+			this.nameGroup.setVisible(true);
+			((GridData)this.nameGroup.getLayoutData()).exclude = false;
 		}
 		this.singleLayoutButton.setEnabled(!this.multiProject);
 		this.projectNameField.setText(this.projectName);
 		this.rootProjectNameField.setText(this.projectName);
 		this.showTargetUrl();
+		
+		this.changePageTitle();
 	}
 	
-	public boolean isManagementFoldersEnabled() {
-		return (this.layoutType == ShareProjectOperation.LAYOUT_DEFAULT) ? true : this.managementFoldersEnabled;
+	public boolean isManagementFoldersEnabled() {	
+		if (this.isSimpleMode) {
+			return false;
+		} else {
+			return (this.layoutType == ShareProjectOperation.LAYOUT_DEFAULT) ? true : this.managementFoldersEnabled;
+		}		
 	}
 	
 	public int getLayoutType() {
@@ -110,11 +168,34 @@ public class SelectProjectNamePage extends AbstractVerifiedWizardPage {
 	}
 	
 	public ShareProjectOperation.IFolderNameMapper getSelectedNames() {
-		return this.multiProject ? null : new ShareProjectOperation.IFolderNameMapper() {
-			public String getRepositoryFolderName(IProject project) {
-				return SelectProjectNamePage.this.selectedName;
-			}
-		};
+		if (this.isSimpleMode) {				
+			return new ShareProjectOperation.IFolderNameMapper() {
+				public String getRepositoryFolderName(IProject project) {
+					String folderName = null;
+					
+					String toTrim = SelectProjectNamePage.this.location.getUrl();					
+					String selectedUrl = SelectProjectNamePage.this.resourceSelectionComposite.getSelectedResource().getUrl();
+					selectedUrl = SVNUtility.normalizeURL(selectedUrl);
+					if (selectedUrl.startsWith(toTrim)) {
+						folderName = selectedUrl.equals(toTrim) ? "" : selectedUrl.substring(toTrim.length() + 1);																				
+						if (SelectProjectNamePage.this.multiProject) {
+							folderName += "/" + project.getName();
+						}						
+					} else {
+						throw new RuntimeException("Inconsistent repository location and selected repository url. "
+							+ "Selected url: " + selectedUrl + ", repository location: " + toTrim);
+					}
+
+					return folderName;
+				}					
+			};				
+		} else {
+			return this.multiProject ? null : new ShareProjectOperation.IFolderNameMapper() {
+				public String getRepositoryFolderName(IProject project) {
+					return SelectProjectNamePage.this.selectedName;
+				}
+			};
+		}
 	}
 	
 	public String getRootProjectName() {
@@ -122,19 +203,127 @@ public class SelectProjectNamePage extends AbstractVerifiedWizardPage {
 	}
 	
 	protected Composite createControlImpl(Composite parent) {
+		this.initializeDialogUnits(parent);
+		
+		this.simpleModeValidationManager = new SelectProjectNamePageValidationManager(this, true);
+		this.advancedModeValidationManager = new SelectProjectNamePageValidationManager(this, false);
+			
 		Composite composite = new Composite(parent, SWT.NONE);
-		
-		// GridLayout
-		GridLayout layout = new GridLayout();
+		GridLayout layout = new GridLayout();		
 		composite.setLayout(layout);
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		// GridData
+		//controls area
+		this.createSimpleModeControls(composite);
+		this.createAdvancedModeControls(composite);
+		
+		//mode button				
+		this.modeButton = new Button(composite, SWT.PUSH);			
+		GridData gridData = new GridData();
+		int charsCount = Math.max(SVNTeamUIPlugin.instance().getResource("Button.Advanced").length(), SVNTeamUIPlugin.instance().getResource("Button.Simple").length());
+		charsCount += 5;
+		gridData.widthHint = this.convertWidthInCharsToPixels(charsCount);
+		this.modeButton.setLayoutData(gridData);
+		this.modeButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				//change controls area mode
+				SelectProjectNamePage.this.isSimpleMode = !SelectProjectNamePage.this.isSimpleMode;
+				if (SelectProjectNamePage.this.isSimpleMode) {
+					SelectProjectNamePage.this.layoutType = ShareProjectOperation.LAYOUT_DEFAULT;
+				}								
+				//refresh
+				enableControlsArea();
+			}
+		});
+		
+		this.enableControlsArea();
+		
+		//Setting context help
+	    PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.projectNameContext");
+		
+		return composite;
+	}	
+	
+	protected void changePageTitle() {
+		if (this.isSimpleMode) {
+			this.setTitle(SVNTeamUIPlugin.instance().getResource("SelectProjectNamePage.Title.Simple"));
+			this.setDescription(SVNTeamUIPlugin.instance().getResource("SelectProjectNamePage.Description.Simple"));		
+		} else {
+			if (this.multiProject) {
+				this.setTitle(SVNTeamUIPlugin.instance().getResource("SelectProjectNamePage.Title.Multi"));
+				this.setDescription(SVNTeamUIPlugin.instance().getResource("SelectProjectNamePage.Description.Multi"));			
+			}
+			else {
+				this.setTitle(SVNTeamUIPlugin.instance().getResource("SelectProjectNamePage.Title.Single"));
+				this.setDescription(SVNTeamUIPlugin.instance().getResource("SelectProjectNamePage.Description.Single"));
+			}	
+		}
+	}
+	
+	protected void enableControlsArea() {	
+		this.changePageTitle();
+		 
+	    if (this.isSimpleMode) {	
+	    	this.modeButton.setText(SVNTeamUIPlugin.instance().getResource("Button.Advanced"));	    	
+	    	
+	        this.simpleModeComposite.setVisible(true);
+	        this.advancedModeComposite.setVisible(false);	        
+	        
+	        ((GridData)this.advancedModeComposite.getLayoutData()).exclude = true;
+	        ((GridData)this.simpleModeComposite.getLayoutData()).exclude = false;
+	        	        
+	        this.simpleModeComposite.getParent().layout();	        
+	    } else {	
+	    	this.modeButton.setText(SVNTeamUIPlugin.instance().getResource("Button.Simple"));
+	    	
+	        this.simpleModeComposite.setVisible(false);
+	        this.advancedModeComposite.setVisible(true);
+	        
+	        ((GridData)this.simpleModeComposite.getLayoutData()).exclude = true;
+	        ((GridData)this.advancedModeComposite.getLayoutData()).exclude = false;
+	        
+	        this.advancedModeComposite.getParent().layout();
+	    }
+	    
+	    //update validators
+	    this.simpleModeValidationManager.validateContent();
+	    this.advancedModeValidationManager.validateContent();	    	   
+	}
+	
+	protected void createSimpleModeControls(Composite parent) {
+		this.simpleModeComposite = new Composite(parent, SWT.NONE);
 		GridData data = new GridData(GridData.FILL_BOTH);
-		composite.setLayoutData(data);
+		this.simpleModeComposite.setLayoutData(data);
+		GridLayout layout = new GridLayout();
+		this.simpleModeComposite.setLayout(layout);	
+				
+		IRepositoryResource baseResource = null;
+		
+		this.resourceSelectionComposite = new RepositoryResourceOnlySelectionComposite(
+				this.simpleModeComposite,
+				SWT.NONE,
+				this.simpleModeValidationManager, 
+				"selectProjectNamePage", 
+				baseResource,				
+				SVNTeamUIPlugin.instance().getResource("SelectProjectNamePage.Select.Title"),
+				SVNTeamUIPlugin.instance().getResource("SelectProjectNamePage.Select.Description"));				
+				
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.widthHint = 550;
+		this.resourceSelectionComposite.setLayoutData(data); 
+	}
+	
+	protected void createAdvancedModeControls(Composite parent) {							
+		this.advancedModeComposite = new Composite(parent, SWT.NONE);
+		GridData data = new GridData(GridData.FILL_BOTH);
+		this.advancedModeComposite.setLayoutData(data);
+		
+		GridLayout layout = new GridLayout();
+		this.advancedModeComposite.setLayout(layout);
 		
 		CompositeVerifier verifier;
 		
-		this.nameGroup = new Group(composite, SWT.NONE);
+		this.nameGroup = new Group(this.advancedModeComposite, SWT.NONE);
 		layout = new GridLayout();
 		this.nameGroup.setLayout(layout);
 		data = new GridData(GridData.FILL_HORIZONTAL);
@@ -195,13 +384,13 @@ public class SelectProjectNamePage extends AbstractVerifiedWizardPage {
 		verifier.add(new NonEmptyFieldVerifier(name));
 		verifier.add(new ResourceNameVerifier(name, true));
 		verifier.add(new AbsolutePathVerifier(name));
-		this.attachTo(this.projectNameField, new AbstractVerifierProxy(verifier) {
+		this.advancedModeValidationManager.attachTo(this.projectNameField, new AbstractVerifierProxy(verifier) {
 			protected boolean isVerificationEnabled(Control input) {
 				return useRedefinedNameButton.getSelection();
 			}			
 		});
 		
-		this.layoutGroup = new Group(composite, SWT.NONE);
+		this.layoutGroup = new Group(this.advancedModeComposite, SWT.NONE);
 		layout = new GridLayout();
 		this.layoutGroup.setLayout(layout);
 		data = new GridData(GridData.FILL_HORIZONTAL);
@@ -273,7 +462,7 @@ public class SelectProjectNamePage extends AbstractVerifiedWizardPage {
 		verifier.add(new NonEmptyFieldVerifier(name));
 		verifier.add(new ResourceNameVerifier(name, true));
 		verifier.add(new AbsolutePathVerifier(name));
-		this.attachTo(this.rootProjectNameField, new AbstractVerifierProxy(verifier) {
+		this.advancedModeValidationManager.attachTo(this.rootProjectNameField, new AbstractVerifierProxy(verifier) {
 			protected boolean isVerificationEnabled(Control input) {
 				return multipleLayoutButton.getSelection();
 			}			
@@ -292,8 +481,7 @@ public class SelectProjectNamePage extends AbstractVerifiedWizardPage {
 				SelectProjectNamePage.this.managementFoldersEnabled = ((Button)e.widget).getSelection();
 				SelectProjectNamePage.this.showTargetUrl();
 			}
-		});
-		this.initializeDialogUnits(parent);
+		});		
 		Label label = new Label(this.layoutGroup, SWT.WRAP);
 		data = this.makeGridData();
 		data.heightHint = this.convertHeightInCharsToPixels(2);
@@ -340,11 +528,7 @@ public class SelectProjectNamePage extends AbstractVerifiedWizardPage {
 				SelectProjectNamePage.this.showTargetUrl();
 			}
 		});
-		
-//		Setting context help
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.projectNameContext");
-		
-		return composite;
+
 	}
 	
 	protected void showTargetUrl() {
@@ -365,4 +549,8 @@ public class SelectProjectNamePage extends AbstractVerifiedWizardPage {
 		return data;
 	}
 
+	public IWizardPage getNextPage() {
+		this.resourceSelectionComposite.saveHistory();
+		return super.getNextPage();
+	}
 }
