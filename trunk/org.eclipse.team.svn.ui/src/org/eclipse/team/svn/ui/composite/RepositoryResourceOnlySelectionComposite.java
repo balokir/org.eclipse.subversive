@@ -51,6 +51,7 @@ import org.eclipse.team.svn.ui.verifier.URLVerifier;
  */
 public class RepositoryResourceOnlySelectionComposite extends Composite {
 	
+	protected Label urlLabel;
 	protected Combo urlText;
 	protected Button browse;
 	protected UserInputHistory urlHistory;
@@ -140,6 +141,7 @@ public class RepositoryResourceOnlySelectionComposite extends Composite {
 	
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
+		this.urlLabel.setEnabled(enabled);
 		this.urlText.setEnabled(enabled);
 		this.browse.setEnabled(enabled);
 	}
@@ -153,7 +155,7 @@ public class RepositoryResourceOnlySelectionComposite extends Composite {
 		layout.marginHeight = layout.marginWidth = 0;
 		this.setLayout(layout);
 		
-		Label urlLabel = new Label(this, SWT.NONE);
+		this. urlLabel = new Label(this, SWT.NONE);
 		urlLabel.setLayoutData(new GridData());
 		urlLabel.setText(SVNTeamUIPlugin.instance().getResource(this.comboId));
 		
