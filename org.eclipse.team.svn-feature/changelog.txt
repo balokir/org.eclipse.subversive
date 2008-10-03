@@ -8,13 +8,20 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.4.I20091003-1900 [03 October 2008]
+
+Features:
+ * Browse button in Share dialog (bug 211233)
+  
+--------------------------------------------------------------------------------
+
 Version 0.7.4.I20091001-1900 [01 October 2008]
 
 Features:
  * Export History log (bug 211415)
    + thanks to Igor Burilo for the patch
  
- * Browse button in Share dialog (bug 211233)
+ * There is no way to type in the repository path when doing a Checkout from SVN (bug 231984)
  
  * Allow "override and commit" for non-conflicting resources (bug 241422)
 
