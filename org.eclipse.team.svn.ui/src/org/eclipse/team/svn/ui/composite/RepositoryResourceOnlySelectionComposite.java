@@ -222,8 +222,9 @@ public class RepositoryResourceOnlySelectionComposite extends Composite {
 			        	SVNTeamUIPlugin.instance().getResource("RepositoryResourceOnlySelectionComposite.Select.Title"), 
 						RepositoryResourceOnlySelectionComposite.this.selectionTitle,
 						RepositoryResourceOnlySelectionComposite.this.selectionDescription,
-						RepositoryResourceOnlySelectionComposite.this.baseResource == null ? new IRepositoryResource[0] : new IRepositoryResource[] {RepositoryResourceOnlySelectionComposite.this.getSelectedResource()}, 
-						true);
+						null, 
+						true, 
+						RepositoryResourceOnlySelectionComposite.this.baseResource);
 				panel.setAllowFiles(!RepositoryResourceOnlySelectionComposite.this.foldersOnly);
 				DefaultDialog browser = new DefaultDialog(RepositoryResourceOnlySelectionComposite.this.getShell(), panel);
 				if (browser.open() == 0) {
