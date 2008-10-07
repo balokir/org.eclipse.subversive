@@ -18,18 +18,20 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
 import org.eclipse.team.internal.ui.synchronize.IChangeSetProvider;
-import org.eclipse.team.internal.ui.synchronize.ScopableSubscriberParticipant;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.synchronize.variant.ResourceVariant;
@@ -38,6 +40,7 @@ import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipantDescriptor;
 import org.eclipse.team.ui.synchronize.ISynchronizeScope;
+import org.eclipse.team.ui.synchronize.SubscriberParticipant;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PartInitException;
 
@@ -46,7 +49,7 @@ import org.eclipse.ui.PartInitException;
  * 
  * @author Alexander Gurov
  */
-public abstract class AbstractSVNParticipant extends ScopableSubscriberParticipant implements IChangeSetProvider {
+public abstract class AbstractSVNParticipant extends SubscriberParticipant implements IChangeSetProvider {
 	protected static ImageDescriptor OVR_OBSTRUCTED;
 	protected static ImageDescriptor OVR_REPLACED_OUT;
 	protected static ImageDescriptor OVR_REPLACED_IN;
@@ -220,6 +223,22 @@ public abstract class AbstractSVNParticipant extends ScopableSubscriberParticipa
 			return null;
 		}
 		
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant#setSubscriber(org.eclipse.team.core.subscribers.Subscriber)
+	 */
+	protected void setSubscriber(Subscriber subscriber) {
+		super.setSubscriber(subscriber);
+		try {
+			ISynchronizeParticipantDescriptor descriptor = getDescriptor();
+			setInitializationData(descriptor);
+		} catch (CoreException e) {
+			 LoggedOperation.reportError(this.getClass().getName(), e);
+		}
+		if (getSecondaryId() == null) {
+			setSecondaryId(Long.toString(System.currentTimeMillis()));
+		}
 	}
 
 }
