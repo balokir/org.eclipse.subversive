@@ -38,6 +38,10 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DropTargetAdapter;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -47,28 +51,35 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
+import org.eclipse.team.svn.core.operation.local.property.GetPropertiesOperation;
 import org.eclipse.team.svn.core.operation.local.property.RemovePropertiesOperation;
 import org.eclipse.team.svn.core.operation.remote.GetRemotePropertiesOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.ui.RemoteResourceTransfer;
+import org.eclipse.team.svn.ui.RemoteResourceTransferrable;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.action.local.SetKeywordsAction;
 import org.eclipse.team.svn.ui.action.local.SetPropertyAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.dialog.SetPropertyWithOverrideDialog;
 import org.eclipse.team.svn.ui.panel.view.property.PropertyApplyPanel;
+import org.eclipse.team.svn.ui.properties.PropertiesView;
 import org.eclipse.team.svn.ui.properties.RemovePropertyDialog;
 import org.eclipse.team.svn.ui.properties.ResourcePropertyEditPanel;
 import org.eclipse.team.svn.ui.repository.model.RepositoryPending;
 import org.eclipse.team.svn.ui.utility.ColumnedViewerComparator;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.part.ResourceTransfer;
 
 /**
  * Property viewer composite 
@@ -87,6 +98,8 @@ public class PropertiesComposite extends Composite {
 	protected TableViewer propertyViewer;
 	protected Text propertyText;
 	protected boolean isProcessing;
+	
+	protected PropertiesView propertiesView;
 	
 	protected IResourcePropertyProvider provider;
 	
@@ -109,6 +122,10 @@ public class PropertiesComposite extends Composite {
 			this.repositoryResource = (IRepositoryResource)resource;
 		}
 		this.provider = provider;
+	}
+	
+	public void setPropertiesView(PropertiesView view) {
+		this.propertiesView = view;
 	}
 	
 	public IActionOperation getRefreshViewOperation() {
@@ -208,7 +225,7 @@ public class PropertiesComposite extends Composite {
 		comparator.setColumnNumber(PropertiesComposite.COLUMN_NAME);
 		this.propertyViewer.getTable().setSortColumn(this.propertyViewer.getTable().getColumn(PropertiesComposite.COLUMN_NAME));
 		this.propertyViewer.getTable().setSortDirection(SWT.UP);
-
+		
 		this.propertyViewer.setContentProvider(new IStructuredContentProvider() {
 			public Object[] getElements(Object inputElement) {
 				if (PropertiesComposite.this.isProcessing) {
@@ -337,6 +354,30 @@ public class PropertiesComposite extends Composite {
 		});
 		menuMgr.setRemoveAllWhenShown(true);
 		table.setMenu(menu);
+		
+		this.propertyViewer.addDropSupport(DND.DROP_LINK, new Transfer [] {ResourceTransfer.getInstance(), RemoteResourceTransfer.getInstance()}, new DropTargetAdapter() {
+
+			public void dragEnter(DropTargetEvent event) {
+				event.detail = DND.DROP_LINK;
+			}
+			
+			public void drop(DropTargetEvent event) {
+				if (PropertiesComposite.this.propertiesView == null) {
+					return;
+				}
+				if (event.data instanceof IResource[]) {
+					IResource resource = ((IResource [])event.data)[0];
+					if (IStateFilter.SF_VERSIONED.accept(SVNRemoteStorage.instance().asLocalResource(resource))) {
+						PropertiesComposite.this.propertiesView.setResource(resource, new GetPropertiesOperation(resource), true);	
+					}
+					return;
+				}
+				if (event.data instanceof RemoteResourceTransferrable) {
+					IRepositoryResource resource = ((RemoteResourceTransferrable)event.data).resources[0];
+					PropertiesComposite.this.propertiesView.setResource(resource, new GetRemotePropertiesOperation(resource), false);
+				}
+			}
+		});
 		
 		this.propertyViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent e) {

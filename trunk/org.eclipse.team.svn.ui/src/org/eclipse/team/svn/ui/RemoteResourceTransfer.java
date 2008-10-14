@@ -33,10 +33,16 @@ public class RemoteResourceTransfer extends ByteArrayTransfer {
 	protected static final String TYPE_NAME = RemoteResourceTransferrable.class.getName();
 	protected static final int TYPE_ID = Transfer.registerType(RemoteResourceTransfer.TYPE_NAME);
 	
-	public RemoteResourceTransfer() {
+	protected static final RemoteResourceTransfer instance = new RemoteResourceTransfer();
+	
+	protected RemoteResourceTransfer() {
 		super();
 	}
 
+	public static RemoteResourceTransfer getInstance() {
+		return RemoteResourceTransfer.instance;
+	}
+	
     public void javaToNative(Object object, TransferData transferData) {
     	if (object == null || 
     		!(object instanceof RemoteResourceTransferrable) || 
@@ -123,5 +129,4 @@ public class RemoteResourceTransfer extends ByteArrayTransfer {
     protected int []getTypeIds(){
     	return new int[] {RemoteResourceTransfer.TYPE_ID};
     }
-
 }

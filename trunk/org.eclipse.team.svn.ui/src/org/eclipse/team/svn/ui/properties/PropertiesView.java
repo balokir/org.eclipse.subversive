@@ -109,6 +109,7 @@ public class PropertiesView extends AbstractSVNView {
 	    this.isLinkWithEditorEnabled = SVNTeamPreferences.getPropertiesBoolean(store, SVNTeamPreferences.PROPERTY_LINK_WITH_EDITOR_NAME);
 		this.propertiesComposite = new PropertiesComposite(parent); 
 		this.propertiesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		this.propertiesComposite.setPropertiesView(this);
 		this.refreshView();
 		
 		//drop-down menu

@@ -111,7 +111,7 @@ public class PasteAction extends AbstractRepositoryTeamAction {
 	protected RemoteResourceTransferrable getTransferrable() {
 		Clipboard clipboard = new Clipboard(this.getShell().getDisplay());
 		try {
-			RemoteResourceTransferrable transferrable = (RemoteResourceTransferrable)clipboard.getContents(new RemoteResourceTransfer());
+			RemoteResourceTransferrable transferrable = (RemoteResourceTransferrable)clipboard.getContents(RemoteResourceTransfer.getInstance());
 			if (transferrable == null || transferrable.operation == RemoteResourceTransferrable.OP_NONE ||
 				transferrable.resources == null || transferrable.resources.length == 0) {
 				return null;
@@ -132,7 +132,7 @@ public class PasteAction extends AbstractRepositoryTeamAction {
 		        //COM.OleSetClipboard(0); - incompatible with UNIX'like
 		        clipboard.setContents(
 		        	new Object[] {new RemoteResourceTransferrable(null, RemoteResourceTransferrable.OP_NONE)}, 
-		        	new Transfer[] {new RemoteResourceTransfer()});
+		        	new Transfer[] {RemoteResourceTransfer.getInstance()});
 			}
 			finally {
 				clipboard.dispose();
