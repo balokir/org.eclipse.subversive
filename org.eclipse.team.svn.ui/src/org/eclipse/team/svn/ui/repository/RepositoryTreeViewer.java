@@ -15,9 +15,12 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.util.TransferDragSourceListener;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -26,6 +29,12 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.dnd.DropTargetAdapter;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.graphics.Point;
@@ -34,6 +43,21 @@ import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.operation.CompositeOperation;
+import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.operation.remote.AbstractCopyMoveResourcesOperation;
+import org.eclipse.team.svn.core.operation.remote.CopyResourcesOperation;
+import org.eclipse.team.svn.core.operation.remote.MoveResourcesOperation;
+import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
+import org.eclipse.team.svn.core.utility.SVNUtility;
+import org.eclipse.team.svn.ui.RemoteResourceTransfer;
+import org.eclipse.team.svn.ui.RemoteResourceTransferrable;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.dialog.DefaultDialog;
+import org.eclipse.team.svn.ui.operation.RefreshRemoteResourcesOperation;
+import org.eclipse.team.svn.ui.panel.common.CommentPanel;
 import org.eclipse.team.svn.ui.repository.model.IDataTreeNode;
 import org.eclipse.team.svn.ui.repository.model.IParentTreeNode;
 import org.eclipse.team.svn.ui.repository.model.IToolTipProvider;
@@ -45,6 +69,7 @@ import org.eclipse.team.svn.ui.repository.model.RepositoryRoot;
 import org.eclipse.team.svn.ui.repository.model.RepositoryTags;
 import org.eclipse.team.svn.ui.repository.model.RepositoryTrunk;
 import org.eclipse.team.svn.ui.repository.model.ToolTipVariableSetProvider;
+import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
  * Repository TreeViewer implementation
@@ -306,6 +331,105 @@ public class RepositoryTreeViewer extends TreeViewer {
 					}
 				}
 			}
+		});
+		
+		this.addDragSupport(DND.DROP_COPY | DND.DROP_NONE | DND.DROP_MOVE | DND.DROP_LINK, new Transfer [] {RemoteResourceTransfer.getInstance()}, new TransferDragSourceListener() {
+
+			public void dragFinished(DragSourceEvent event) {}
+
+			public void dragSetData(DragSourceEvent event) {
+				if (RemoteResourceTransfer.getInstance().isSupportedType(event.dataType)) {
+					IStructuredSelection selection = (IStructuredSelection)RepositoryTreeViewer.this.getSelection();
+					ArrayList<IRepositoryResource> resources = new ArrayList<IRepositoryResource>();
+					for (Iterator<?> it = selection.iterator(); it.hasNext();) {
+						resources.add(((RepositoryResource)it.next()).getRepositoryResource());
+					}
+					event.data = new RemoteResourceTransferrable(resources.toArray(new IRepositoryResource[0]), 0);
+				}
+			}
+
+			public void dragStart(DragSourceEvent event) {
+				IStructuredSelection selection = (IStructuredSelection)RepositoryTreeViewer.this.getSelection();
+				boolean canBeDragged = selection.size() > 0;
+				for (Iterator<?> it = selection.iterator(); it.hasNext();) {
+					if (!(it.next() instanceof RepositoryResource)) {
+						canBeDragged = false;
+					}
+				}
+				event.doit = canBeDragged;
+			}
+
+			public Transfer getTransfer() {
+				return RemoteResourceTransfer.getInstance();
+			}
+			
+		});
+		
+		this.addDropSupport(DND.DROP_COPY | DND.DROP_MOVE, new Transfer [] {RemoteResourceTransfer.getInstance()}, new DropTargetAdapter() {
+			
+			protected int expectedOperation = DND.DROP_MOVE;
+			
+			public void dragOperationChanged(DropTargetEvent event) {
+				this.expectedOperation = event.detail;
+			}
+			
+			public void dragEnter(DropTargetEvent event) {
+				this.expectedOperation = event.detail;
+			}
+			
+			public void dragOver(DropTargetEvent event) {
+				Tree repositoryTree = (Tree)((DropTarget)event.widget).getControl();
+				TreeItem aboveItem = repositoryTree.getItem(repositoryTree.toControl(event.x, event.y));
+				if (aboveItem == null) {
+					event.detail = DND.DROP_NONE;
+					return;
+				}
+				Object aboveObject = aboveItem.getData();
+				if (!(aboveObject instanceof RepositoryResource) || aboveObject instanceof RepositoryFile) {
+					event.detail = DND.DROP_NONE;
+					return;
+				}
+				RepositoryResource aboveResource = (RepositoryResource)aboveObject;
+				if (aboveResource.getRepositoryResource().getSelectedRevision() != SVNRevision.HEAD) {
+					event.detail = DND.DROP_NONE;
+					return;
+				}
+				IStructuredSelection selection = (IStructuredSelection)RepositoryTreeViewer.this.getSelection();
+				int lastSlashIdx = 0;
+				for (Iterator<?> it = selection.iterator(); it.hasNext();) {
+					RepositoryResource current = (RepositoryResource)it.next();
+					if (lastSlashIdx == 0) {
+						lastSlashIdx = current.getRepositoryResource().getUrl().lastIndexOf("/"); 
+					}
+					if (current.getRepositoryResource().getUrl().lastIndexOf("/") != lastSlashIdx || aboveResource == current || aboveResource == current.getParent()) {
+						event.detail = DND.DROP_NONE;
+						return;
+					}
+				}
+				event.detail = this.expectedOperation;
+			}
+			
+			public void drop(DropTargetEvent event) {
+				Tree repositoryTree = (Tree)((DropTarget)event.widget).getControl();
+				RepositoryResource aboveResource = (RepositoryResource)repositoryTree.getItem(repositoryTree.toControl(event.x, event.y)).getData();
+				CommentPanel commentPanel = new CommentPanel(event.detail == DND.DROP_MOVE ? SVNTeamUIPlugin.instance().getResource("MoveToAction.Select.Title") : SVNTeamUIPlugin.instance().getResource("CopyToAction.Select.Title"));
+				DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getShell(), commentPanel);
+				if (dialog.open() == IDialogConstants.OK_ID) {
+					AbstractCopyMoveResourcesOperation mainOp = event.detail == DND.DROP_MOVE
+							? new MoveResourcesOperation(aboveResource.getRepositoryResource(), ((RemoteResourceTransferrable)event.data).resources, commentPanel.getMessage(), null)
+							: new CopyResourcesOperation(aboveResource.getRepositoryResource(), ((RemoteResourceTransferrable)event.data).resources, commentPanel.getMessage(), null);
+					CompositeOperation op = new CompositeOperation(mainOp.getId());
+					op.add(mainOp);
+					ArrayList<IRepositoryResource> toRefresh = new ArrayList<IRepositoryResource>();
+					toRefresh.add(aboveResource.getRepositoryResource());
+					if (event.detail == DND.DROP_MOVE) {
+						toRefresh.addAll(Arrays.asList(((RemoteResourceTransferrable)event.data).resources));
+					}
+					op.add(new RefreshRemoteResourcesOperation(SVNUtility.getCommonParents(toRefresh.toArray(new IRepositoryResource[0]))), new IActionOperation [] {mainOp});
+					ProgressMonitorUtility.doTaskScheduled(op);
+				}
+			}
+			
 		});
 		
 		this.getTree().addMouseTrackListener(new MouseTrackAdapter() {

@@ -46,7 +46,7 @@ public class PrepareRemoteResourcesTransferrableOperation extends AbstractAction
 		try {
 			clipboard.setContents(
 				new Object[] {new RemoteResourceTransferrable(this.resources, this.operation)}, 
-				new Transfer[] {new RemoteResourceTransfer()});
+				new Transfer[] {RemoteResourceTransfer.getInstance()});
 		}
 		finally {
 			clipboard.dispose();
