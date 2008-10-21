@@ -155,10 +155,6 @@ public final class SVNTeamPreferences {
 	
 	public static final boolean PROPERTY_LINK_WITH_EDITOR_DEFAULT = false;
 	
-	public static final String SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_NAME = "fastReport";
-	
-	public static final boolean SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_DEFAULT = true;
-	
 	public static final String REPOSITORY_SHOW_BROWSER_NAME = "repositoryBrowser";
 	public static final boolean REPOSITORY_SHOW_BROWSER_DEFAULT = true;
 	public static final String REPOSITORY_FORCE_EXTERNALS_FREEZE_NAME = "forceExternalsFreeze";
@@ -292,7 +288,6 @@ public final class SVNTeamPreferences {
 		SVNTeamPreferences.setDefaultRepositoryValues(store);
 		SVNTeamPreferences.setDefaultDecorationValues(store);
 		SVNTeamPreferences.setDefaultPerformanceValues(store);
-		SVNTeamPreferences.setDefaultSynchronizeValues(store);
 		SVNTeamPreferences.setDefaultMailReporterValues(store);
 		SVNTeamPreferences.setDefaultHistoryValues(store);
 		SVNTeamPreferences.setDefaultDateFormatValues(store);
@@ -345,10 +340,6 @@ public final class SVNTeamPreferences {
 	public static void setDefaultDateFormatValues(IPreferenceStore store) {
 		store.setDefault(SVNTeamPreferences.fullDateFormatName(SVNTeamPreferences.DATE_FORMAT_NAME), SVNTeamPreferences.DATE_FORMAT_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullDateFormatName(SVNTeamPreferences.DATE_FORMAT_CUSTOM_NAME), SVNTeamPreferences.DATE_FORMAT_CUSTOM_DEFAULT);
-	}
-	
-	public static void setDefaultSynchronizeValues(IPreferenceStore store) {
-		store.setDefault(SVNTeamPreferences.fullSynchronizeName(SVNTeamPreferences.SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_NAME), SVNTeamPreferences.SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_DEFAULT);
 	}
 	
 	public static void setDefaultPropertiesValues(IPreferenceStore store) {
@@ -477,10 +468,6 @@ public final class SVNTeamPreferences {
 		store.setValue(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_ENABLE_AUTO_SHARE_NAME), SVNTeamPreferences.BEHAVIOUR_ENABLE_AUTO_SHARE_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_COMPUTE_KEYWORDS_NAME), SVNTeamPreferences.BEHAVIOUR_COMPUTE_KEYWORDS_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_NAME), SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_DEFAULT);
-	}
-	
-	public static void resetToDefaultSynchronizeValues(IPreferenceStore store) {
-		store.setValue(SVNTeamPreferences.fullSynchronizeName(SVNTeamPreferences.SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_NAME), SVNTeamPreferences.SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_DEFAULT);
 	}
 	
 	public static void resetToDefaultRepositoryValues(IPreferenceStore store) {

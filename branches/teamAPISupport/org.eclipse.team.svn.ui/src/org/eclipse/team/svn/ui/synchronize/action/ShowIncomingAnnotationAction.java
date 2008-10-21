@@ -19,10 +19,10 @@ import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.IFileChange;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
+import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
+import org.eclipse.team.svn.core.synchronize.variant.RemoteResourceVariant;
+import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
 import org.eclipse.team.svn.ui.operation.RemoteShowAnnotationOperation;
-import org.eclipse.team.svn.ui.synchronize.AbstractSVNSyncInfo;
-import org.eclipse.team.svn.ui.synchronize.variant.RemoteResourceVariant;
-import org.eclipse.team.svn.ui.synchronize.variant.ResourceVariant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**

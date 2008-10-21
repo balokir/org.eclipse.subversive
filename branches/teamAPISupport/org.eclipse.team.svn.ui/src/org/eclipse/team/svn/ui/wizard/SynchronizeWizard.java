@@ -12,9 +12,9 @@
 package org.eclipse.team.svn.ui.wizard;
 
 import org.eclipse.team.internal.ui.synchronize.GlobalRefreshResourceSelectionPage;
+import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.operation.ShowUpdateViewOperation;
-import org.eclipse.team.svn.ui.synchronize.update.UpdateSubscriber;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
