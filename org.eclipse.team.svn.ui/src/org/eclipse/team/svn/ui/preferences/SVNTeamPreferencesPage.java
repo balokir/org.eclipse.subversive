@@ -40,6 +40,7 @@ import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.svn.core.synchronize.AbstractSVNSubscriber;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifierProxy;
 import org.eclipse.team.svn.ui.verifier.CompositeVerifier;
@@ -119,7 +120,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		SVNTeamPreferences.setRepositoryBoolean(store, SVNTeamPreferences.REPOSITORY_FORCE_EXTERNALS_FREEZE_NAME, this.forceExternalsFreeze);
 		SVNTeamPreferences.setRepositoryBoolean(store, SVNTeamPreferences.REPOSITORY_SHOW_EXTERNALS_NAME, this.showExternals);
 		
-		SVNTeamPreferences.setSynchronizeBoolean(store, SVNTeamPreferences.SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_NAME, this.fastReport);
+		AbstractSVNSubscriber.setSynchInfoContigous(this.fastReport);
 
 		SVNTeamPreferences.setHistoryInt(store, SVNTeamPreferences.HISTORY_PAGE_SIZE_NAME, this.pageSize);
 		SVNTeamPreferences.setHistoryBoolean(store, SVNTeamPreferences.HISTORY_PAGING_ENABLE_NAME, this.pagingEnable);
@@ -157,7 +158,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.tags = SVNTeamPreferences.REPOSITORY_TAGS_DEFAULT;
 		this.showExternals = SVNTeamPreferences.REPOSITORY_SHOW_EXTERNALS_DEFAULT;
 		
-		this.fastReport = SVNTeamPreferences.SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_DEFAULT;
+		this.fastReport = Boolean.parseBoolean(AbstractSVNSubscriber.CONTIGOUS_REPORT_DEFAULT);
 		
 		this.pagingEnable = SVNTeamPreferences.HISTORY_PAGING_ENABLE_DEFAULT;
 		this.pageSize = SVNTeamPreferences.HISTORY_PAGE_SIZE_DEFAULT;
@@ -196,7 +197,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.tags = SVNTeamPreferences.getRepositoryString(store, SVNTeamPreferences.REPOSITORY_TAGS_NAME);
 		this.showExternals = SVNTeamPreferences.getRepositoryBoolean(store, SVNTeamPreferences.REPOSITORY_SHOW_EXTERNALS_NAME);
 		
-		this.fastReport = SVNTeamPreferences.getSynchronizeBoolean(store, SVNTeamPreferences.SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_NAME);
+		this.fastReport = AbstractSVNSubscriber.getSynchInfoContigous();
 		
 		this.connectToCompareWith = SVNTeamPreferences.getHistoryBoolean(store, SVNTeamPreferences.HISTORY_CONNECT_TO_COMPARE_WITH_NAME);
 		this.pagingEnable = SVNTeamPreferences.getHistoryBoolean(store, SVNTeamPreferences.HISTORY_PAGING_ENABLE_NAME);

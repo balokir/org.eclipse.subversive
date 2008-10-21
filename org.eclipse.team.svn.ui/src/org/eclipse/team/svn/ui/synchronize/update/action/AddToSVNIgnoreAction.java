@@ -27,12 +27,12 @@ import org.eclipse.team.svn.core.operation.local.ClearLocalStatusesOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.svn.core.synchronize.UpdateSyncInfo;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.local.AddToSVNPanel;
 import org.eclipse.team.svn.ui.panel.local.IgnoreMethodPanel;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
-import org.eclipse.team.svn.ui.synchronize.update.UpdateSyncInfo;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**

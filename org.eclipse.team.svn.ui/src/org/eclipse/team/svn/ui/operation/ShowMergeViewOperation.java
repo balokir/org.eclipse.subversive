@@ -22,7 +22,6 @@ import org.eclipse.team.svn.core.operation.local.MergeSetReintegrate;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
 import org.eclipse.team.svn.ui.synchronize.merge.MergeParticipant;
-import org.eclipse.team.svn.ui.synchronize.merge.MergeScope;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.SubscriberParticipant;

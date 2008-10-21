@@ -32,9 +32,9 @@ import org.eclipse.team.svn.core.operation.remote.ExtractToOperationRemote;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
+import org.eclipse.team.svn.core.synchronize.variant.RemoteResourceVariant;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.synchronize.AbstractSVNSyncInfo;
-import org.eclipse.team.svn.ui.synchronize.variant.RemoteResourceVariant;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
