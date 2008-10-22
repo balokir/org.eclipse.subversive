@@ -25,9 +25,11 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.internal.ui.synchronize.IChangeSetProvider;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.mapping.SVNChangeSetModelProvider;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
@@ -98,7 +100,25 @@ public abstract class AbstractSVNModelParticipant extends ModelSynchronizePartic
 	 * 
 	 */
 	public ModelProvider[] getEnabledModelProviders() {
-		return super.getEnabledModelProviders();
+		ModelProvider[] enabledProviders =  super.getEnabledModelProviders();
+		if (this instanceof IChangeSetProvider) {
+			for (int i = 0; i < enabledProviders.length; i++) {
+				ModelProvider provider = enabledProviders[i];
+				if (provider.getId().equals(SVNChangeSetModelProvider.ID))
+					return enabledProviders;
+			}
+			ModelProvider[] extended = new ModelProvider[enabledProviders.length + 1];
+			for (int i = 0; i < enabledProviders.length; i++) {
+				extended[i] = enabledProviders[i];
+			}
+			SVNChangeSetModelProvider provider = SVNChangeSetModelProvider.getProvider();
+			if (provider == null) {
+				return enabledProviders;
+			}
+			extended[extended.length - 1] = provider;
+			return extended;
+		}
+		return enabledProviders;
 	}
 	
 	

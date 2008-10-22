@@ -13,23 +13,24 @@ package org.eclipse.team.svn.ui.mapping;
 
 import java.util.Collection;
 
-import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
+import org.eclipse.team.internal.ui.synchronize.IChangeSetProvider;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
 
 /**
  * @author Igor Burilo
  *
  */
-public class UpdateModelParticipant extends AbstractSVNModelParticipant {
+public class UpdateModelParticipant extends AbstractSVNModelParticipant implements IChangeSetProvider {
 
+	protected ChangeSetCapability capability;
+	
 	public UpdateModelParticipant() {
 		super();
 	}
@@ -60,6 +61,13 @@ public class UpdateModelParticipant extends AbstractSVNModelParticipant {
 	//TODO
 	public String getName() {
 		return "UpdateModelParticipant";
+	}
+
+	public ChangeSetCapability getChangeSetCapability() {
+		if (this.capability == null) {
+			this.capability = new SVNModelParticipantChangeSetCapability();
+        }
+        return this.capability;
 	}
 
 }

@@ -2241,4 +2241,37 @@
           name="Subversive Key Bindings Scheme"/>
  </extension>
 
+<!-- ************ Model elements ************ -->
+   <extension point="org.eclipse.ui.navigator.navigatorContent">
+      <navigatorContent
+            activeByDefault="false"
+            contentProvider="org.eclipse.team.svn.ui.mapping.SVNChangeSetContentProvider"
+            icon="icons/objects/changeset.gif"
+            id="org.eclipse.team.svn.ui.changeSetContent"
+            labelProvider="org.eclipse.team.svn.ui.mapping.SVNChangeSetLabelProvider"
+            name="%ChangeSetModel.Name"
+            priority="normal">
+         <enablement>
+           <or>         
+            <instanceof value="org.eclipse.team.svn.core.mapping.SVNChangeSetModelProvider"/>
+            <instanceof value="org.eclipse.team.svn.core.mapping.SVNActiveChangeSet"/>
+            <instanceof value="org.eclipse.team.svn.core.mapping.SVNIncomingChangeSet"/>
+            <instanceof value="org.eclipse.team.svn.core.mapping.SVNUnassignedChangeSet"/>
+            <instanceof value="org.eclipse.core.resources.IResource"/>
+           </or>
+         </enablement>
+         <commonSorter class="org.eclipse.team.svn.ui.mapping.SVNChangeSetSorter" id="org.eclipse.team.svn.ui.changeSetSorter"/>
+         <actionProvider
+               class="org.eclipse.team.svn.ui.mapping.SVNChangeSetActionProvider"
+               id="org.eclipse.team.svn.ui.changeSetActions"/>
+       </navigatorContent>
+   </extension>
+   <extension
+         point="org.eclipse.team.ui.teamContentProviders">
+      <teamContentProvider
+            contentExtensionId="org.eclipse.team.svn.ui.changeSetContent"
+            icon="icons/objects/changeset.gif"
+            modelProviderId="org.eclipse.team.svn.core.svnChangeSetModel"/>
+   </extension>
+
  </plugin>

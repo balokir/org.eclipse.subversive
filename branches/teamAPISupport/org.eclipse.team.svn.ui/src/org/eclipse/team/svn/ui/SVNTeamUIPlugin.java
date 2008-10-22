@@ -22,8 +22,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
 import org.eclipse.team.internal.core.subscribers.SubscriberChangeSetManager;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.mapping.SVNActiveChangeSetCollector;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
@@ -47,6 +49,7 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 	
 	private SVNConsole console;
 	private SubscriberChangeSetManager changeSetManager;
+	private ActiveChangeSetManager activeChangeSetManager;
 
     public SVNTeamUIPlugin() {
         super();
@@ -93,6 +96,8 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 		
 //		Platform.addLogListener(this.problemListener);
 		
+		this.getActriveCangeSetManager();
+		
 		SVNTeamPreferences.setDefaultValues(this.getPreferenceStore());
 		
 		Preferences corePreferences = SVNTeamPlugin.instance().getPluginPreferences();
@@ -125,6 +130,10 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 		if (this.changeSetManager != null) {
 			this.changeSetManager.dispose();
 		}
+		
+		if (this.activeChangeSetManager != null) {
+			this.activeChangeSetManager.dispose();
+		}
 
 //		Platform.removeLogListener(this.problemListener);
 		super.stop(context);
@@ -136,5 +145,12 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 		}
 		return this.changeSetManager;
     }
+	
+	public synchronized ActiveChangeSetManager getActriveCangeSetManager() {
+		if (this.activeChangeSetManager == null) {
+			this.activeChangeSetManager = new SVNActiveChangeSetCollector(UpdateSubscriber.instance());
+		}
+		return this.activeChangeSetManager;
+	}
 	
 }
