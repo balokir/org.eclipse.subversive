@@ -52,4 +52,7 @@ public class MergeScope extends AbstractSynchronizeScope {
         this.fireRootsChanges();
     }
     
+    public MergeScopeHelper getMergeScopeHelper() {
+    	return this.scopeHelper;
+    }
 }
