@@ -6,11 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alexander Gurov - Initial API and implementation
- *    Alessandro Nistico - [patch] Change Set's implementation
+ *    Igor Burilo - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.svn.ui.synchronize;
+package org.eclipse.team.svn.ui.mapping;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -18,86 +17,42 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.team.core.subscribers.Subscriber;
+import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
-import org.eclipse.team.internal.ui.synchronize.IChangeSetProvider;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
-import org.eclipse.team.svn.core.synchronize.AbstractSVNSubscriber;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.synchronize.AbstractSVNParticipant;
+import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
 import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
-import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipantDescriptor;
-import org.eclipse.team.ui.synchronize.ISynchronizeScope;
-import org.eclipse.team.ui.synchronize.SubscriberParticipant;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
 
 /**
- * Abstract SVN participant. Can be merge and synchronize participant.
- * 
- * @author Alexander Gurov
+ * @author Igor Burilo
+ *
  */
-public abstract class AbstractSVNParticipant extends SubscriberParticipant implements IChangeSetProvider {
-	public static ImageDescriptor OVR_OBSTRUCTED;
-	public static ImageDescriptor OVR_REPLACED_OUT;
-	public static ImageDescriptor OVR_REPLACED_IN;
-	public static ImageDescriptor OVR_REPLACED_CONF;
-	public static ImageDescriptor OVR_PROPCHANGE;
-	
+public abstract class AbstractSVNModelParticipant extends ModelSynchronizeParticipant {
+
 	protected ISynchronizePageConfiguration configuration;
 	
-	private ChangeSetCapability capability;
-
-	public AbstractSVNParticipant() {
-        super();
-        this.setDefaults();
-    }
-
-    public AbstractSVNParticipant(ISynchronizeScope scope) {
-        super(scope);
-		this.setSubscriber(this.getMatchingSubscriber());
-		this.setDefaults();
-    }
-    
-	public void init(String secondaryId, IMemento memento) throws PartInitException {
-		super.init(secondaryId, memento);
-		this.setSubscriber(this.getMatchingSubscriber());
+	public AbstractSVNModelParticipant() {
+		super();
 	}
-    
-    public ISynchronizePageConfiguration getConfiguration() {
-        return this.configuration;
-    }
 
-	// Change sets support
-	public synchronized ChangeSetCapability getChangeSetCapability() {
-		if (this.capability == null) {
-			this.capability = new SVNChangeSetCapability();
-		}
-		return this.capability;
+	public AbstractSVNModelParticipant(SynchronizationContext context) {
+		super(context);
 	}
 	
-	protected ISynchronizeParticipantDescriptor getDescriptor() {
-		return TeamUI.getSynchronizeManager().getParticipantDescriptor(this.getParticipantId());
-	}
-	
-    protected boolean isViewerContributionsSupported() {
-        return true;
-    }
-    
 	protected void initializeConfiguration(ISynchronizePageConfiguration configuration) {
 		super.initializeConfiguration(configuration);
 		
@@ -114,33 +69,43 @@ public abstract class AbstractSVNParticipant extends SubscriberParticipant imple
 			configuration.addActionContribution(actionGroup);
 		}
 		
+		/*
+		 * TODO it seems that label decorator doesn't work ???
+		 * but I didn't find that it works in CVS
+		 */
 		configuration.addLabelDecorator(this.createLabelDecorator());
 
 		configuration.setSupportedModes(this.getSupportedModes());
 		configuration.setMode(this.getDefaultMode());
-	}
+	}	
 	
 	protected ILabelDecorator createLabelDecorator() {
 		return new LabelDecorator();
 	}
 	
-	private void setDefaults() {
-	    if (AbstractSVNParticipant.OVR_REPLACED_OUT == null) {
-	        SVNTeamUIPlugin instance = SVNTeamUIPlugin.instance();
-            AbstractSVNParticipant.OVR_OBSTRUCTED = instance.getImageDescriptor("icons/overlays/obstructed.gif");
-            AbstractSVNParticipant.OVR_REPLACED_OUT = instance.getImageDescriptor("icons/overlays/replaced_out.gif");
-            AbstractSVNParticipant.OVR_REPLACED_IN = instance.getImageDescriptor("icons/overlays/replaced_in.gif");
-            AbstractSVNParticipant.OVR_REPLACED_CONF = instance.getImageDescriptor("icons/overlays/replaced_conf.gif");
-            AbstractSVNParticipant.OVR_PROPCHANGE = instance.getImageDescriptor("icons/overlays/prop_changed.png");
-	    }
-	}	
-    
-    public abstract AbstractSVNSubscriber getMatchingSubscriber();
-    protected abstract String getParticipantId();
-    protected abstract Collection<AbstractSynchronizeActionGroup> getActionGroups();
     protected abstract int getSupportedModes();
     protected abstract int getDefaultMode();
+    protected abstract Collection<AbstractSynchronizeActionGroup> getActionGroups();
+    
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant#getEnabledModelProviders()
+	 * 
+	 * TODO add correct impl
+	 * 		add change set model provider
+	 * 
+	 * see CVSModelSynchronizeParticipant
+	 * 
+	 */
+	public ModelProvider[] getEnabledModelProviders() {
+		return super.getEnabledModelProviders();
+	}
 	
+	
+	/*
+	 * TODO move LabelDecorator to a separate class which will be
+	 * used by AbstractSVNModelParticipant and AbstractSVNParticipant
+	 */
 	protected class LabelDecorator extends LabelProvider implements ILabelDecorator {
 		public static final int CONFLICTING_REPLACEMENT_MASK = SyncInfo.CONFLICTING | SyncInfo.CHANGE;
 		public static final int REPLACEMENT_MASK = SyncInfo.CHANGE;
@@ -226,21 +191,4 @@ public abstract class AbstractSVNParticipant extends SubscriberParticipant imple
 		}
 		
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant#setSubscriber(org.eclipse.team.core.subscribers.Subscriber)
-	 */
-	protected void setSubscriber(Subscriber subscriber) {
-		super.setSubscriber(subscriber);
-		try {
-			ISynchronizeParticipantDescriptor descriptor = getDescriptor();
-			setInitializationData(descriptor);
-		} catch (CoreException e) {
-			 LoggedOperation.reportError(this.getClass().getName(), e);
-		}
-		if (getSecondaryId() == null) {
-			setSecondaryId(Long.toString(System.currentTimeMillis()));
-		}
-	}
-
 }

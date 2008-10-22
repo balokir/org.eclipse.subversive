@@ -218,6 +218,13 @@
             id="org.eclipse.team.svn.ui.synchronize.update.SynchronizeParticipant">
       </participant>
       <participant
+            persistent="true"
+            icon="icons/views/svn.gif"
+            class="org.eclipse.team.svn.ui.mapping.UpdateModelParticipant"
+            name="%SynchronizeModelParticipant"
+            id="org.eclipse.team.svn.ui.synchronize.update.SynchronizeModelParticipant">            
+      </participant>      
+      <participant
             persistent="false"
             icon="icons/views/svn.gif"
             class="org.eclipse.team.svn.ui.synchronize.merge.MergeParticipant"
