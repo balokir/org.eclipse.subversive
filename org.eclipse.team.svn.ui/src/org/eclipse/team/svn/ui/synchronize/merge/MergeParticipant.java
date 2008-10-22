@@ -21,10 +21,10 @@ import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSubscriber;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
-import org.eclipse.team.svn.core.synchronize.MergeScopeHelper;
 import org.eclipse.team.svn.core.synchronize.MergeSubscriber;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
+import org.eclipse.team.svn.ui.operation.MergeScope;
 import org.eclipse.team.svn.ui.synchronize.AbstractSVNParticipant;
 import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
 import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
@@ -52,7 +52,9 @@ public class MergeParticipant extends AbstractSVNParticipant {
     
     public AbstractSVNSubscriber getMatchingSubscriber() {
         MergeSubscriber subscriber = MergeSubscriber.instance();
-        subscriber.setMergeScope((MergeScopeHelper)this.getScope());
+        MergeScope scope = (MergeScope) this.getScope();        
+        
+        subscriber.setMergeScopeHelper(scope.getMergeScopeHelper());
         return subscriber;
     }
 
