@@ -47,7 +47,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 public class MergeSubscriber extends AbstractSVNSubscriber {
 	private static MergeSubscriber instance = null;
 	
-	protected MergeScopeHelper scope;
+	protected MergeScopeHelper mergeScopeHelper;
 	protected MergeStatusOperation mergeStatusOp;
     protected RemoteStatusCache baseStatusCache;
 	
@@ -58,12 +58,12 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 		return MergeSubscriber.instance;
 	}
 
-	public MergeScopeHelper getMergeScope() {
-		return this.scope;
+	public MergeScopeHelper getMergeScopeHelper() {
+		return this.mergeScopeHelper;
 	}
 	
-    public void setMergeScope(MergeScopeHelper scope) {
-        this.scope = scope;
+    public void setMergeScopeHelper(MergeScopeHelper scope) {
+        this.mergeScopeHelper = scope;
     }
     
     protected SyncInfo getSVNSyncInfo(ILocalResource localStatus, IResourceChange remoteStatus) {
@@ -76,7 +76,7 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
     }
 
     protected IRemoteStatusOperation addStatusOperation(CompositeOperation op, IResource[] resources, int depth) {
-    	MergeStatusOperation mergeOp = this.mergeStatusOp = (this.scope == null ? null : new MergeStatusOperation(this.scope.getMergeSet(), resources));
+    	MergeStatusOperation mergeOp = this.mergeStatusOp = (this.mergeScopeHelper == null ? null : new MergeStatusOperation(this.mergeScopeHelper.getMergeSet(), resources));
     	if (mergeOp == null) {
     		return null;
     	}
@@ -94,9 +94,9 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 	}
 	
     public void refresh(final IResource []resources, final int depth, IProgressMonitor monitor) {
-		if (this.scope != null) {
+		if (this.mergeScopeHelper != null) {
 			this.baseStatusCache.clearAll();
-			this.scope.getMergeSet().setStatuses(new SVNMergeStatus[0]);
+			this.mergeScopeHelper.getMergeSet().setStatuses(new SVNMergeStatus[0]);
 		}
     	super.refresh(resources, depth, monitor);
     }
@@ -137,7 +137,7 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 				return false;
 			}
 			public IResource getExact(IResource []set) {
-				return FileUtility.selectOneOf(MergeSubscriber.this.scope.getRoots(), set);
+				return FileUtility.selectOneOf(MergeSubscriber.this.mergeScopeHelper.getRoots(), set);
 			}
 		};
 		if (endProvider.getNodeKind() == SVNEntry.Kind.NONE) {
@@ -189,7 +189,7 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 				return false;
 			}
 			public IResource getExact(IResource []set) {
-				return FileUtility.selectOneOf(MergeSubscriber.this.scope.getRoots(), set);
+				return FileUtility.selectOneOf(MergeSubscriber.this.mergeScopeHelper.getRoots(), set);
 			}
 		};
 		IResourceChange startResourceChange = SVNRemoteStorage.instance().asResourceChange(startProvider, false);
@@ -206,7 +206,7 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 	}
 	
 	protected IRepositoryResource getEndOriginator() {
-		AbstractMergeSet mergeSet = this.scope.getMergeSet();
+		AbstractMergeSet mergeSet = this.mergeScopeHelper.getMergeSet();
 		if (mergeSet instanceof MergeSet1URL) {
 			return ((MergeSet1URL)mergeSet).from[0];
 		}
@@ -219,7 +219,7 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 	}
 	
 	protected IRepositoryResource getStartOriginator() {
-		AbstractMergeSet mergeSet = this.scope.getMergeSet();
+		AbstractMergeSet mergeSet = this.mergeScopeHelper.getMergeSet();
 		if (mergeSet instanceof MergeSet1URL) {
 			return ((MergeSet1URL)mergeSet).from[0];
 		}
