@@ -20,10 +20,6 @@ import org.eclipse.team.internal.ui.mapping.DiffTreeChangesSection.ITraversalFac
 import org.eclipse.team.ui.mapping.SynchronizationCompareAdapter;
 import org.eclipse.ui.IMemento;
 
-/**
- * @author Igor Burilo
- *
- */
 public class ChangeSetCompareAdapter extends SynchronizationCompareAdapter implements ITraversalFactory {
 
 	public void save(ResourceMapping[] mappings, IMemento memento) {

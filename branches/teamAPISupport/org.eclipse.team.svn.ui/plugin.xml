@@ -210,6 +210,7 @@
             id="org.eclipse.team.svn.ui.wizard.ShareProjectWizard">
       </wizard>
    </extension>
+
 <!-- *************** Synchronize View Participant **************** -->
    <extension
          point="org.eclipse.team.ui.synchronizeParticipants">
@@ -235,6 +236,25 @@
             id="org.eclipse.team.svn.ui.synchronize.merge.MergeParticipant">
       </participant>
    </extension>
+   
+   <extension point="org.eclipse.ui.navigator.viewer">
+       <viewer viewerId="org.eclipse.team.svn.ui.workspaceSynchronization">
+           <popupMenu
+                allowsPlatformContributions="false"
+                id="org.eclipse.team.svn.ui.workspaceSynchronizationMenu">
+             <insertionPoint name="file"/>
+             <insertionPoint name="file-bottom"/>  
+             <insertionPoint name="edit" separator="true"/>
+             <insertionPoint
+                   name="svnChangeSetActions"
+                   separator="true"/> 
+             <insertionPoint
+                   name="sort"
+                   separator="true"/>
+          </popupMenu>
+       </viewer>
+   </extension>
+   
 <!-- *************** Synchronize Wizards **************** -->
    <extension
          point="org.eclipse.team.ui.synchronizeWizards">
@@ -2266,7 +2286,7 @@
          <commonSorter class="org.eclipse.team.svn.ui.mapping.SVNChangeSetSorter" id="org.eclipse.team.svn.ui.changeSetSorter"/>
          <actionProvider
                class="org.eclipse.team.svn.ui.mapping.SVNChangeSetActionProvider"
-               id="org.eclipse.team.svn.ui.changeSetActions"/>
+               id="org.eclipse.team.svn.ui.svnChangeSetActions"/>
        </navigatorContent>
    </extension>
    <extension

@@ -59,6 +59,7 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ModelParticipantAction;
+import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.BaseSelectionListenerAction;
 import org.eclipse.ui.navigator.INavigatorContentExtension;
 import org.eclipse.ui.navigator.INavigatorContentService;
@@ -68,7 +69,7 @@ public class SVNChangeSetActionProvider extends ResourceModelActionProvider {
 	/**
      * Menu group that can be added to the context menu
      */
-    public final static String CHANGE_SET_GROUP = "changeSetActions"; //$NON-NLS-1$
+    public final static String CHANGE_SET_GROUP = "svnChangeSetActions"; //$NON-NLS-1$
 	
 	private static final String CHANGESET_SORTING_TYPE = TeamUIPlugin.ID + ".SET_SORTING_TYPE"; //$NON-NLS-1$
 	
@@ -467,6 +468,18 @@ public class SVNChangeSetActionProvider extends ResourceModelActionProvider {
 			}
 		}
 		return new ResourceTraversal[0];
+	}
+	
+	public void setContext(ActionContext context) {
+		super.setContext(context);
+		if (context != null) {
+	        if (this.editChangeSetAction != null)
+	        	this.editChangeSetAction.selectionChanged((IStructuredSelection)getContext().getSelection());
+	        if (this.removeChangeSetAction != null)
+	        	this.removeChangeSetAction.selectionChanged((IStructuredSelection)getContext().getSelection());
+	        if (this.makeDefaultAction != null)
+	        	this.makeDefaultAction.selectionChanged((IStructuredSelection)getContext().getSelection());
+		}
 	}
 	
 	public boolean containsLocalChanges(IStructuredSelection selection) {

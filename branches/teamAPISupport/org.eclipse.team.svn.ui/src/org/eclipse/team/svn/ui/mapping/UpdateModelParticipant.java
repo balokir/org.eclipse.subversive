@@ -30,10 +30,6 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PartInitException;
 
-/**
- * @author Igor Burilo
- *
- */
 public class UpdateModelParticipant extends AbstractSVNModelParticipant implements IChangeSetProvider {
 
 	private static final String CTX_CONSULT_CHANGE_SETS = "consultChangeSets"; //$NON-NLS-1$
@@ -55,6 +51,11 @@ public class UpdateModelParticipant extends AbstractSVNModelParticipant implemen
 		}
 		setSecondaryId(Long.toString(System.currentTimeMillis()));
 		this.isConsultChangeSets = isConsultChangeSets(context.getScopeManager());
+	}
+	
+	protected void initializeConfiguration(ISynchronizePageConfiguration configuration) {
+		configuration.setProperty(ISynchronizePageConfiguration.P_VIEWER_ID, "org.eclipse.team.svn.ui.workspaceSynchronization");
+		super.initializeConfiguration(configuration);
 	}
 	
 	protected Collection<AbstractSynchronizeActionGroup> getActionGroups() {
@@ -107,8 +108,4 @@ public class UpdateModelParticipant extends AbstractSVNModelParticipant implemen
 		return false;
 	}
 	
-	public boolean isMergingEnabled() {
-		return false;
-	}
-
 }
