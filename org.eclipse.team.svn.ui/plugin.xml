@@ -45,6 +45,9 @@
 		<factory adaptableType="org.eclipse.team.svn.ui.history.model.ILogNode" class="org.eclipse.team.svn.ui.history.SVNHistoryAdapterFactory">
 			<adapter type="org.eclipse.team.svn.core.connector.SVNLogEntry"/>
 		</factory>
+      	<factory adaptableType="org.eclipse.team.svn.core.mapping.SVNChangeSetModelProvider" class="org.eclipse.team.svn.ui.mapping.SVNAdapterFactory">
+        	<adapter type="org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter"/>
+        </factory>		
 	</extension>
    
 <!-- ************** SVN Team Wizards ********************** -->
