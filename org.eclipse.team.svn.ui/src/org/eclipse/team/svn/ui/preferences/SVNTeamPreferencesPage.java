@@ -122,6 +122,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		SVNTeamPreferences.setRepositoryBoolean(store, SVNTeamPreferences.REPOSITORY_FORCE_EXTERNALS_FREEZE_NAME, this.forceExternalsFreeze);
 		SVNTeamPreferences.setRepositoryBoolean(store, SVNTeamPreferences.REPOSITORY_SHOW_EXTERNALS_NAME, this.showExternals);
 				
+		AbstractSVNSubscriber.setSynchInfoContigous(this.fastReport);
 		SVNTeamPreferences.setSynchronizeBoolean(store, SVNTeamPreferences.ENABLE_MODEL_SYNC_NAME, this.enableModelSync);
 		
 		SVNTeamPreferences.setHistoryInt(store, SVNTeamPreferences.HISTORY_PAGE_SIZE_NAME, this.pageSize);
@@ -159,7 +160,8 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.branches = SVNTeamPreferences.REPOSITORY_BRANCHES_DEFAULT;
 		this.tags = SVNTeamPreferences.REPOSITORY_TAGS_DEFAULT;
 		this.showExternals = SVNTeamPreferences.REPOSITORY_SHOW_EXTERNALS_DEFAULT;
-				
+						
+		this.fastReport = Boolean.parseBoolean(AbstractSVNSubscriber.CONTIGOUS_REPORT_DEFAULT);
 		this.enableModelSync = SVNTeamPreferences.ENABLE_MODEL_SYNC_DEFAULT;
 		
 		this.pagingEnable = SVNTeamPreferences.HISTORY_PAGING_ENABLE_DEFAULT;
@@ -198,7 +200,8 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.branches = SVNTeamPreferences.getRepositoryString(store, SVNTeamPreferences.REPOSITORY_BRANCHES_NAME);
 		this.tags = SVNTeamPreferences.getRepositoryString(store, SVNTeamPreferences.REPOSITORY_TAGS_NAME);
 		this.showExternals = SVNTeamPreferences.getRepositoryBoolean(store, SVNTeamPreferences.REPOSITORY_SHOW_EXTERNALS_NAME);
-		
+				
+		this.fastReport = AbstractSVNSubscriber.getSynchInfoContigous();
 		this.enableModelSync = SVNTeamPreferences.getSynchronizeBoolean(store, SVNTeamPreferences.ENABLE_MODEL_SYNC_NAME);
 		
 		this.connectToCompareWith = SVNTeamPreferences.getHistoryBoolean(store, SVNTeamPreferences.HISTORY_CONNECT_TO_COMPARE_WITH_NAME);
@@ -236,6 +239,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.tagsField.setText(this.tags);
 		this.showExternalsButton.setSelection(this.showExternals);
 		
+		this.fastReportButton.setSelection(this.fastReport);
 		this.enableModelSyncButton.setSelection(this.enableModelSync);
 		
 		this.pageSizeField.setText(String.valueOf(this.pageSize));
