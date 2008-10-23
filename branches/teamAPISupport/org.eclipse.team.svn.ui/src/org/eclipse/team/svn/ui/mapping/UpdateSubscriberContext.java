@@ -57,7 +57,15 @@ public class UpdateSubscriberContext extends SubscriberMergeContext {
 		System.out.println("reject");		
 	}
 	
-	public static SubscriberScopeManager createWorkspaceScopeManager(ResourceMapping[] mappings, boolean consultModels) {
+	public static SubscriberScopeManager createWorkspaceScopeManager(ResourceMapping[] mappings, boolean consultModels, final boolean consultChangeSets) {
+		return new ChangeSetSubscriberScopeManager(UpdateSubscriber.instance().getName(), mappings, UpdateSubscriber.instance(), consultModels, consultChangeSets);
+	}
+	
+	/*
+	 * TODO
+	 * It's called from CVS's ModelUpdateOperation, but we don't have such operation
+	 */
+	public static SubscriberScopeManager createUpdateScopeManager(ResourceMapping[] mappings, boolean consultModels) {
 		/*
 		 * name
 		 * 
@@ -75,10 +83,6 @@ public class UpdateSubscriberContext extends SubscriberMergeContext {
 		UpdateSubscriberContext mergeContext = new UpdateSubscriberContext(subscriber, manager, type);
 		mergeContext.initialize();
 		return mergeContext;
-	}
-	
-	public static SubscriberScopeManager createWorkspaceScopeManager(ResourceMapping[] mappings, boolean consultModels, final boolean consultChangeSets) {
-		return new ChangeSetSubscriberScopeManager(UpdateSubscriber.instance().getName(), mappings, UpdateSubscriber.instance(), consultModels, consultChangeSets);
 	}
 	
 	public static final class ChangeSetSubscriberScopeManager extends SubscriberScopeManager {

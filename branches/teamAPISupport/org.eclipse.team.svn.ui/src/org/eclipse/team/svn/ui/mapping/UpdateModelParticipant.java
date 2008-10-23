@@ -22,6 +22,7 @@ import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
 import org.eclipse.team.internal.ui.synchronize.IChangeSetProvider;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
+import org.eclipse.team.svn.ui.mapping.UpdateSubscriberContext.ChangeSetSubscriberScopeManager;
 import org.eclipse.team.svn.ui.operation.UILoggedOperation;
 import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
 import org.eclipse.team.ui.TeamUI;
@@ -35,7 +36,11 @@ import org.eclipse.ui.PartInitException;
  */
 public class UpdateModelParticipant extends AbstractSVNModelParticipant implements IChangeSetProvider {
 
+	private static final String CTX_CONSULT_CHANGE_SETS = "consultChangeSets"; //$NON-NLS-1$
+	
 	protected ChangeSetCapability capability;
+	
+	protected boolean isConsultChangeSets;
 	
 	public UpdateModelParticipant() {
 		super();
@@ -49,7 +54,7 @@ public class UpdateModelParticipant extends AbstractSVNModelParticipant implemen
 			UILoggedOperation.reportError(this.getClass().getName(), e);
 		}
 		setSecondaryId(Long.toString(System.currentTimeMillis()));
-		//isConsultChangeSets = isConsultChangeSets(context.getScopeManager());
+		this.isConsultChangeSets = isConsultChangeSets(context.getScopeManager());
 	}
 	
 	protected Collection<AbstractSynchronizeActionGroup> getActionGroups() {
@@ -82,23 +87,31 @@ public class UpdateModelParticipant extends AbstractSVNModelParticipant implemen
 	 * @see org.eclipse.team.ui.operations.ModelSynchronizeParticipant#createScopeManager(org.eclipse.core.resources.mapping.ResourceMapping[])
 	 */
 	protected ISynchronizationScopeManager createScopeManager(ResourceMapping[] mappings) {
-		return UpdateSubscriberContext.createWorkspaceScopeManager(mappings, true/*, isConsultChangeSets*/);
+		return UpdateSubscriberContext.createWorkspaceScopeManager(mappings, true, this.isConsultChangeSets);
 	}
 	
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
-	   	//memento.putString(CTX_CONSULT_CHANGE_SETS, Boolean.toString(isConsultChangeSets));
+	   	memento.putString(CTX_CONSULT_CHANGE_SETS, Boolean.toString(isConsultChangeSets));
 	}
 	
     public void init(String secondaryId, IMemento memento) throws PartInitException {
     	try {
-//    		String consult = memento.getString(CTX_CONSULT_CHANGE_SETS);
-//    		if (consult != null)
-//    			isConsultChangeSets = Boolean.valueOf(consult).booleanValue();
+    		String consult = memento.getString(CTX_CONSULT_CHANGE_SETS);
+    		if (consult != null)
+    			isConsultChangeSets = Boolean.valueOf(consult).booleanValue();
     	} finally {
     		super.init(secondaryId, memento);
     	}
     }
+	    
+	protected boolean isConsultChangeSets(ISynchronizationScopeManager manager) {
+		if (manager instanceof ChangeSetSubscriberScopeManager) {
+			ChangeSetSubscriberScopeManager man = (ChangeSetSubscriberScopeManager) manager;
+			return man.isConsultSets();
+		}
+		return false;
+	}
 	
 //	 TODO try it to add actions	
 //	/* (non-Javadoc)
