@@ -18,11 +18,6 @@ import org.eclipse.team.internal.ui.mapping.ResourceModelSorter;
 import org.eclipse.team.svn.ui.synchronize.SVNChangeSetCollector.SVNCheckedInChangeSet;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
-/**
- * TODO insert type description here
- * 
- * @author Alexei Goncharov
- */
 public class SVNChangeSetSorter extends ResourceModelSorter {
 
 	// Comment sorting options

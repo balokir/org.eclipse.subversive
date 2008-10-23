@@ -23,24 +23,21 @@ public class SVNAdapterFactory implements IAdapterFactory {
 
 	protected ChangeSetCompareAdapter compareAdapter;
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
-	 */
+	@SuppressWarnings("unchecked")
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (ISynchronizationCompareAdapter.class == adapterType) {
-			if (compareAdapter == null)
-				compareAdapter = new ChangeSetCompareAdapter();
-			return compareAdapter;
+			if (this.compareAdapter == null) {
+				this.compareAdapter = new ChangeSetCompareAdapter();
+			}
+			return this.compareAdapter;
 		}
 		
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
-	 */
+	@SuppressWarnings("unchecked")
 	public Class[] getAdapterList() {
-		return new Class[] { ISynchronizationCompareAdapter.class};
+		return new Class[] { ISynchronizationCompareAdapter.class };
 	}
 
 }
