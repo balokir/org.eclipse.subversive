@@ -76,30 +76,24 @@ public class UpdateModelParticipant extends AbstractSVNModelParticipant implemen
         return this.capability;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.operations.ModelSynchronizeParticipant#restoreContext(org.eclipse.team.core.mapping.IResourceMappingScope, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	protected MergeContext restoreContext(ISynchronizationScopeManager manager) {		
 		return UpdateSubscriberContext.createContext(manager, ISynchronizationContext.THREE_WAY);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.operations.ModelSynchronizeParticipant#createScopeManager(org.eclipse.core.resources.mapping.ResourceMapping[])
-	 */
 	protected ISynchronizationScopeManager createScopeManager(ResourceMapping[] mappings) {
 		return UpdateSubscriberContext.createWorkspaceScopeManager(mappings, true, this.isConsultChangeSets);
 	}
 	
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
-	   	memento.putString(CTX_CONSULT_CHANGE_SETS, Boolean.toString(isConsultChangeSets));
+	   	memento.putString(CTX_CONSULT_CHANGE_SETS, Boolean.toString(this.isConsultChangeSets));
 	}
 	
     public void init(String secondaryId, IMemento memento) throws PartInitException {
     	try {
     		String consult = memento.getString(CTX_CONSULT_CHANGE_SETS);
     		if (consult != null)
-    			isConsultChangeSets = Boolean.valueOf(consult).booleanValue();
+    			this.isConsultChangeSets = Boolean.valueOf(consult).booleanValue();
     	} finally {
     		super.init(secondaryId, memento);
     	}
@@ -113,12 +107,8 @@ public class UpdateModelParticipant extends AbstractSVNModelParticipant implemen
 		return false;
 	}
 	
-//	 TODO try it to add actions	
-//	/* (non-Javadoc)
-//	 * @see org.eclipse.team.ui.operations.ResourceMappingSynchronizeParticipant#createMergeActionGroup()
-//	 */
-//	protected ModelSynchronizeParticipantActionGroup createMergeActionGroup() {
-//		return new WorkspaceMergeActionGroup();
-//	}
+	public boolean isMergingEnabled() {
+		return false;
+	}
 
 }
