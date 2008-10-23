@@ -28,38 +28,15 @@ import org.eclipse.team.internal.core.subscribers.ChangeSet;
 import org.eclipse.team.internal.core.subscribers.DiffChangeSet;
 import org.eclipse.team.internal.ui.mapping.ResourceModelLabelProvider;
 import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
-import org.eclipse.team.svn.core.mapping.SVNChangeSetModelProvider;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.synchronize.SynchronizeLabelDecorator;
-import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 
 public class SVNChangeSetLabelProvider extends ResourceModelLabelProvider {
 
-	private SynchronizeLabelDecorator decorator;
 	private Image changeSetImage;
 
 	public void init(ICommonContentExtensionSite site) {
 		super.init(site);
-		this.decorator = new SynchronizeLabelDecorator();
-	}
-
-	private ISynchronizePageConfiguration getConfiguration() {
-		return (ISynchronizePageConfiguration)getExtensionSite().getExtensionStateModel().getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_PAGE_CONFIGURATION);
-	}
-	
-	public String getText(Object element) {
-		String text = super.getText(element);
-		if (this.decorator != null && this.changeSetsEnabled())
-			text = this.decorator.decorateText(text, element);
-		return text;
-	}
-	
-	private boolean changeSetsEnabled() {
-		String id = (String)this.getConfiguration().getProperty(ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER);
-		return id.equals(SVNChangeSetModelProvider.ID);
 	}
 
 	protected String getDelegateText(Object elementOrPath) {
@@ -72,7 +49,7 @@ public class SVNChangeSetLabelProvider extends ResourceModelLabelProvider {
 	}
 	
 	protected Image getDelegateImage(Object elementOrPath) {
-		Object element = internalGetElement(elementOrPath);
+		Object element = this.internalGetElement(elementOrPath);
 		if (element instanceof ChangeSet) {
 			return this.getChangeSetImage();
 		}
@@ -87,9 +64,6 @@ public class SVNChangeSetLabelProvider extends ResourceModelLabelProvider {
 	}
 	
 	public void dispose() {
-		if (this.decorator != null) {
-			this.decorator.dispose();
-		}
 		if (this.changeSetImage != null) {
 			this.changeSetImage.dispose();
 		}
