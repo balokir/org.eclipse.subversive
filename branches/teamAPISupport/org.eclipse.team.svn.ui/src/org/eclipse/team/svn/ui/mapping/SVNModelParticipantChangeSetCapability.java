@@ -29,7 +29,7 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 public class SVNModelParticipantChangeSetCapability extends ChangeSetCapability {
 
 	public boolean supportsCheckedInChangeSets() {
-		return false;
+		return true;
 	}
 	
 	public boolean enableCheckedInChangeSetsFor(ISynchronizePageConfiguration configuration) {
