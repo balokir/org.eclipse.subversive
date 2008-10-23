@@ -274,7 +274,7 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 			if (input instanceof SVNChangeSetModelProvider
 					&& SVNChangeSetContentProvider.this.unassignedDiffs != null
 					&& event.getTree() == SVNChangeSetContentProvider.this.unassignedDiffs.getDiffTree()) {
-				Utils.asyncExec(new Runnable() {
+				UIMonitorUtility.getDisplay().asyncExec(new Runnable() {
 					public void run() {
 						if (SVNChangeSetContentProvider.this.unassignedDiffs.isEmpty()
 								|| !hasChildren(TreePath.EMPTY.createChildPath(getUnassignedSet()))) {
@@ -287,7 +287,7 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 							((AbstractTreeViewer)getViewer()).refresh(SVNChangeSetContentProvider.this.unassignedDiffs);
 						}
 					}
-				}, (StructuredViewer)getViewer());
+				});
 			}
 		}
 	
