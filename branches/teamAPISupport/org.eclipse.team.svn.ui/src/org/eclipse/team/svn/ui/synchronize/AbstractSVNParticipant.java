@@ -121,7 +121,7 @@ public abstract class AbstractSVNParticipant extends SubscriberParticipant imple
 	}
 	
 	protected ILabelDecorator createLabelDecorator() {
-		return new LabelDecorator();
+		return new SynchronizeLabelDecorator();
 	}
 	
 	private void setDefaults() {
@@ -139,93 +139,7 @@ public abstract class AbstractSVNParticipant extends SubscriberParticipant imple
     protected abstract String getParticipantId();
     protected abstract Collection<AbstractSynchronizeActionGroup> getActionGroups();
     protected abstract int getSupportedModes();
-    protected abstract int getDefaultMode();
-	
-	protected class LabelDecorator extends LabelProvider implements ILabelDecorator {
-		public static final int CONFLICTING_REPLACEMENT_MASK = SyncInfo.CONFLICTING | SyncInfo.CHANGE;
-		public static final int REPLACEMENT_MASK = SyncInfo.CHANGE;
-
-		protected Map<ImageDescriptor, Image> images;
-	    
-	    public LabelDecorator() {
-	        super();
-	        this.images = new HashMap<ImageDescriptor, Image>();
-	    }
-
-		public Image decorateImage(Image image, Object element) {
-		    AbstractSVNSyncInfo info = this.getSyncInfo(element);
-			if (info != null) {
-			    ILocalResource left = info.getLocalResource();
-			    ILocalResource right = ((ResourceVariant)info.getRemote()).getResource();
-			    OverlayedImageDescriptor imgDescr = null;
-			    if (IStateFilter.SF_OBSTRUCTED.accept(left)) {
-				    imgDescr = new OverlayedImageDescriptor(image, AbstractSVNParticipant.OVR_OBSTRUCTED, new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V);
-			    }
-			    else if ((info.getKind() & LabelDecorator.CONFLICTING_REPLACEMENT_MASK) == LabelDecorator.CONFLICTING_REPLACEMENT_MASK) {
-				    if (IStateFilter.SF_PREREPLACEDREPLACED.accept(left) || IStateFilter.SF_PREREPLACEDREPLACED.accept(right)) {
-					    imgDescr = new OverlayedImageDescriptor(image, AbstractSVNParticipant.OVR_REPLACED_CONF, new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V);
-				    }
-			    }
-			    else if ((info.getKind() & LabelDecorator.REPLACEMENT_MASK) == LabelDecorator.REPLACEMENT_MASK) {
-				    if (IStateFilter.SF_PREREPLACEDREPLACED.accept(left)) {
-					    imgDescr = new OverlayedImageDescriptor(image, AbstractSVNParticipant.OVR_REPLACED_OUT, new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V);
-				    }
-				    else if (IStateFilter.SF_PREREPLACEDREPLACED.accept(right)) {
-					    imgDescr = new OverlayedImageDescriptor(image, AbstractSVNParticipant.OVR_REPLACED_IN, new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V);
-				    }
-			    }
-			    Image tmp = this.registerImageDescriptor(imgDescr);
-				if (!(left.getResource() instanceof IContainer) && ((left.getChangeMask() & ILocalResource.PROP_MODIFIED) != 0 || (right.getChangeMask() & ILocalResource.PROP_MODIFIED) != 0)) {
-				    if (tmp != null) {
-				    	image = tmp;
-				    }
-					imgDescr = new OverlayedImageDescriptor(image, AbstractSVNParticipant.OVR_PROPCHANGE, new Point(23, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.BOTTOM);
-					return this.registerImageDescriptor(imgDescr);
-				}
-			    return tmp;
-			}
-			return null;
-		}
-		
-		public String decorateText(String text, Object element) {
-		    AbstractSVNSyncInfo info = this.getSyncInfo(element);
-			if (info != null) {
-				ResourceVariant variant = (ResourceVariant)info.getRemote();
-				if (variant != null) {
-				    ILocalResource remote = variant.getResource();
-				    if (remote.getRevision() != SVNRevision.INVALID_REVISION_NUMBER) {
-						return text + " " + variant.getContentIdentifier();
-				    }
-				}
-			}
-			return null;
-		}
-		
-		protected Image registerImageDescriptor(OverlayedImageDescriptor imgDescr) {
-		    if (imgDescr != null) {
-		        Image img = this.images.get(imgDescr);
-		        if (img == null) {
-		            this.images.put(imgDescr, img = imgDescr.createImage());
-		        }
-				return img;
-		    }
-		    return null;
-		}
-		
-		public void dispose() {
-			for (Image img : this.images.values()) {
-				img.dispose();
-			}
-		}
-		
-		protected AbstractSVNSyncInfo getSyncInfo(Object element) {
-			if (element instanceof SyncInfoModelElement) {
-			    return (AbstractSVNSyncInfo)((SyncInfoModelElement)element).getSyncInfo();
-			}
-			return null;
-		}
-		
-	}
+    protected abstract int getDefaultMode();		
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant#setSubscriber(org.eclipse.team.core.subscribers.Subscriber)

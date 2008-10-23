@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.ui.action.AbstractWorkingCopyAction;
 import org.eclipse.team.svn.ui.mapping.ModelHelper;
 import org.eclipse.team.svn.ui.operation.ShowUpdateViewOperation;
@@ -36,9 +37,8 @@ public class SynchronizeAction extends AbstractWorkingCopyAction {
 		IWorkingSet []sets = this.getSelectedWorkingSets();
 		ShowUpdateViewOperation op;
 		
-		//TODO correctly get svn nature id
 		if (ModelHelper.isShowModelSync()) {
-			ResourceMapping[] resourcesMapping = getSelectedResourceMappings("org.eclipse.team.svn.core.svnnature");			 
+			ResourceMapping[] resourcesMapping = getSelectedResourceMappings(SVNTeamPlugin.NATURE_ID);			 
 			op = new ShowUpdateViewOperation(resourcesMapping, this.getTargetPart());	
 		} else if (sets != null && sets.length > 0) {
 			op = new ShowUpdateViewOperation(new WorkingSetScope(sets), this.getTargetPart());

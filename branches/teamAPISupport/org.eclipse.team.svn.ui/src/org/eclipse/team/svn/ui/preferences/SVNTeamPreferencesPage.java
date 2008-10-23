@@ -61,6 +61,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected String tags;
 	protected boolean showExternals;
 	protected boolean fastReport;
+	protected boolean enableModelSync;
 	protected boolean pagingEnable;
 	protected boolean connectToCompareWith;
 	protected int pageSize;
@@ -90,6 +91,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected Button useInteractiveMergeButton;
 	protected Button includeMergedRevisionsButton;
 	protected Button fastReportButton;
+	protected Button enableModelSyncButton;
 	protected Button enablePagingButton;
 	protected Button connectToCompareWithButton;
 	protected Text pageSizeField;
@@ -119,9 +121,9 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		SVNTeamPreferences.setRepositoryBoolean(store, SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_NAME, this.branchTagConsiderStructure);
 		SVNTeamPreferences.setRepositoryBoolean(store, SVNTeamPreferences.REPOSITORY_FORCE_EXTERNALS_FREEZE_NAME, this.forceExternalsFreeze);
 		SVNTeamPreferences.setRepositoryBoolean(store, SVNTeamPreferences.REPOSITORY_SHOW_EXTERNALS_NAME, this.showExternals);
+				
+		SVNTeamPreferences.setSynchronizeBoolean(store, SVNTeamPreferences.ENABLE_MODEL_SYNC_NAME, this.enableModelSync);
 		
-		AbstractSVNSubscriber.setSynchInfoContigous(this.fastReport);
-
 		SVNTeamPreferences.setHistoryInt(store, SVNTeamPreferences.HISTORY_PAGE_SIZE_NAME, this.pageSize);
 		SVNTeamPreferences.setHistoryBoolean(store, SVNTeamPreferences.HISTORY_PAGING_ENABLE_NAME, this.pagingEnable);
 		SVNTeamPreferences.setHistoryBoolean(store, SVNTeamPreferences.HISTORY_CONNECT_TO_COMPARE_WITH_NAME, this.connectToCompareWith);
@@ -157,8 +159,8 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.branches = SVNTeamPreferences.REPOSITORY_BRANCHES_DEFAULT;
 		this.tags = SVNTeamPreferences.REPOSITORY_TAGS_DEFAULT;
 		this.showExternals = SVNTeamPreferences.REPOSITORY_SHOW_EXTERNALS_DEFAULT;
-		
-		this.fastReport = Boolean.parseBoolean(AbstractSVNSubscriber.CONTIGOUS_REPORT_DEFAULT);
+				
+		this.enableModelSync = SVNTeamPreferences.ENABLE_MODEL_SYNC_DEFAULT;
 		
 		this.pagingEnable = SVNTeamPreferences.HISTORY_PAGING_ENABLE_DEFAULT;
 		this.pageSize = SVNTeamPreferences.HISTORY_PAGE_SIZE_DEFAULT;
@@ -197,7 +199,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.tags = SVNTeamPreferences.getRepositoryString(store, SVNTeamPreferences.REPOSITORY_TAGS_NAME);
 		this.showExternals = SVNTeamPreferences.getRepositoryBoolean(store, SVNTeamPreferences.REPOSITORY_SHOW_EXTERNALS_NAME);
 		
-		this.fastReport = AbstractSVNSubscriber.getSynchInfoContigous();
+		this.enableModelSync = SVNTeamPreferences.getSynchronizeBoolean(store, SVNTeamPreferences.ENABLE_MODEL_SYNC_NAME);
 		
 		this.connectToCompareWith = SVNTeamPreferences.getHistoryBoolean(store, SVNTeamPreferences.HISTORY_CONNECT_TO_COMPARE_WITH_NAME);
 		this.pagingEnable = SVNTeamPreferences.getHistoryBoolean(store, SVNTeamPreferences.HISTORY_PAGING_ENABLE_NAME);
@@ -234,7 +236,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.tagsField.setText(this.tags);
 		this.showExternalsButton.setSelection(this.showExternals);
 		
-		this.fastReportButton.setSelection(this.fastReport);
+		this.enableModelSyncButton.setSelection(this.enableModelSync);
 		
 		this.pageSizeField.setText(String.valueOf(this.pageSize));
 		this.enablePagingButton.setSelection(this.pagingEnable);
@@ -556,6 +558,17 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.fastReportButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				SVNTeamPreferencesPage.this.fastReport = SVNTeamPreferencesPage.this.fastReportButton.getSelection();
+			}
+		});
+		
+		//show models
+		this.enableModelSyncButton = new Button(synchViewGroup, SWT.CHECK);
+		data = new GridData();
+		this.enableModelSyncButton.setLayoutData(data);
+		this.enableModelSyncButton.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.allowModelsName"));
+		this.enableModelSyncButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				SVNTeamPreferencesPage.this.enableModelSync = SVNTeamPreferencesPage.this.enableModelSyncButton.getSelection();
 			}
 		});
 		

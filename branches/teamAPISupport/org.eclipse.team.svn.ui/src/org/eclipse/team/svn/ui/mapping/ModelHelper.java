@@ -11,14 +11,20 @@
 
 package org.eclipse.team.svn.ui.mapping;
 
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
+
 /**
+ * Simple helper for getting modelSync flag
+ * 
  * @author Igor Burilo
  *
- * FIXME use properities instead
  */
 public class ModelHelper {
 
 	public static boolean isShowModelSync() {
-		return true;
+		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
+		return SVNTeamPreferences.getSynchronizeBoolean(store, SVNTeamPreferences.ENABLE_MODEL_SYNC_NAME);
 	}
 }

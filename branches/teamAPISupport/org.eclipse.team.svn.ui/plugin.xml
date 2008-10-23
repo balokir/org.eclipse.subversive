@@ -221,7 +221,7 @@
             persistent="true"
             icon="icons/views/svn.gif"
             class="org.eclipse.team.svn.ui.mapping.UpdateModelParticipant"
-            name="%SynchronizeModelParticipant"
+            name="%SynchronizeParticipant"
             id="org.eclipse.team.svn.ui.synchronize.update.SynchronizeModelParticipant">            
       </participant>      
       <participant
