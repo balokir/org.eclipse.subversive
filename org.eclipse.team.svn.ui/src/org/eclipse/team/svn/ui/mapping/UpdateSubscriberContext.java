@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.ui.mapping;
 
 import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.diff.IDiff;
@@ -20,6 +21,7 @@ import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.subscribers.SubscriberMergeContext;
 import org.eclipse.team.core.subscribers.SubscriberScopeManager;
 import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 
 /**
  * @author Igor Burilo
@@ -73,6 +75,29 @@ public class UpdateSubscriberContext extends SubscriberMergeContext {
 		UpdateSubscriberContext mergeContext = new UpdateSubscriberContext(subscriber, manager, type);
 		mergeContext.initialize();
 		return mergeContext;
+	}
+	
+	public static SubscriberScopeManager createWorkspaceScopeManager(ResourceMapping[] mappings, boolean consultModels, final boolean consultChangeSets) {
+		return new ChangeSetSubscriberScopeManager(UpdateSubscriber.instance().getName(), mappings, UpdateSubscriber.instance(), consultModels, consultChangeSets);
+	}
+	
+	public static final class ChangeSetSubscriberScopeManager extends SubscriberScopeManager {
+		private final boolean consultSets;
+
+		private ChangeSetSubscriberScopeManager(String name, ResourceMapping[] mappings, Subscriber subscriber, boolean consultModels, boolean consultSets) {
+			super(name, mappings, subscriber, consultModels);
+			this.consultSets = consultSets;
+		}
+
+		protected ResourceTraversal[] adjustInputTraversals(ResourceTraversal[] traversals) {
+			if (isConsultSets())
+				return SVNTeamUIPlugin.instance().getActriveCangeSetManager().adjustInputTraversals(traversals);
+			return super.adjustInputTraversals(traversals);
+		}
+
+		public boolean isConsultSets() {
+			return this.consultSets;
+		}
 	}
 
 }

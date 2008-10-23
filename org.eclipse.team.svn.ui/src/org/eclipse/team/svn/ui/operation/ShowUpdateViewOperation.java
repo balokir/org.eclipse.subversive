@@ -77,12 +77,8 @@ public class ShowUpdateViewOperation extends AbstractWorkingCopyOperation {
 				return;					
 			}
 			
-			boolean consultModels = true;
-			//TODO see also ChangeSetSubscriberScopeManager
-			SubscriberScopeManager manager = UpdateSubscriberContext.createWorkspaceScopeManager(this.resourcesMapping, consultModels);
-												
+			SubscriberScopeManager manager = UpdateSubscriberContext.createWorkspaceScopeManager(this.resourcesMapping, true, true);										
 			UpdateSubscriberContext context = UpdateSubscriberContext.createContext(manager, ISynchronizationContext.THREE_WAY);
-			
 			UpdateModelParticipant participant = new UpdateModelParticipant(context);
 			TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[] {participant});
 			participant.run(this.part);

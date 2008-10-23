@@ -648,12 +648,15 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 
 	private void initializeCheckedInChangeSetCollector(ChangeSetCapability capability) {
 		if (capability.supportsCheckedInChangeSets()) {
-			//TODO incoming change sets collector initialization
+			this.incomingCollector = ((SVNModelParticipantChangeSetCapability)capability).createIncomingChangeSetCollector(this.getConfiguration());
+			//getConfiguration().setProperty(CVSChangeSetCollector.CVS_CHECKED_IN_COLLECTOR, checkedInCollector);
+			this.incomingCollector.addListener(this.collectorListener);
+			this.incomingCollector.add(((ResourceDiffTree)getContext().getDiffTree()).getDiffs());
 		}
 	}
 	
 	public void dispose() {
-		ChangeSetCapability capability = getChangeSetCapability();
+		ChangeSetCapability capability = this.getChangeSetCapability();
 		if (capability.supportsActiveChangeSets()) {
 			capability.getActiveChangeSetManager().removeListener(this.collectorListener);
 		}

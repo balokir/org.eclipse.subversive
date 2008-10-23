@@ -14,29 +14,54 @@ package org.eclipse.team.svn.core.mapping;
 import java.util.Date;
 
 import org.eclipse.team.internal.core.subscribers.DiffChangeSet;
-import org.eclipse.team.svn.core.resource.ILocalResource;
-import org.eclipse.team.svn.core.resource.IResourceChange;
 
 public class SVNIncomingChangeSet extends DiffChangeSet {
 	
-	protected ILocalResource entry;
+	protected String comment;
+	protected String author;
+	protected Long revision;
+	protected Date date;
 	
-	public SVNIncomingChangeSet(ILocalResource incomingChange) {
-		this.entry = incomingChange;
+	public SVNIncomingChangeSet() {
+		this.comment = "";
+		this.revision = Long.MIN_VALUE;
+		this.author = "";
+		this.date = null;
+	}
+	
+	public void setName(String name) {
+		super.setName(name);
+	}
+	
+	public void setRevision(Long revision) {
+		this.revision = revision;
+	}
+	
+	public Long getRevision() {
+		return this.revision;
+	}
+	
+	public void setAuthor(String author) {
+		this.author = author;
 	}
 	
 	public String getAuthor() {
-        return this.entry.getAuthor();
+        return this.author;
     }
 
+	public void setDate(Date date) {
+		this.date = date;
+	}
+	
     public Date getDate() {
-        return new Date(this.entry.getLastCommitDate());
+        return this.date;
     }
 
+    public void setComment(String comment) {
+    	this.comment = comment;
+    }
+    
     public String getComment() {
-        if (this.entry instanceof IResourceChange) {
-        	return ((IResourceChange)this.entry).getComment();
-        }
-        return "";
+        return this.comment;
     }
 }
