@@ -20,12 +20,12 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.mylyn.internal.tasks.ui.TasksUiPlugin;
 import org.eclipse.mylyn.tasks.core.TaskRepository;
 import org.eclipse.mylyn.team.ui.AbstractTaskReference;
+import org.eclipse.team.internal.core.subscribers.ChangeSet;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.ui.history.SVNHistoryPage;
 import org.eclipse.team.svn.ui.panel.local.CommitPanel;
 import org.eclipse.team.svn.ui.properties.bugtraq.BugtraqModel;
 import org.eclipse.team.svn.ui.properties.bugtraq.IssueList;
-import org.eclipse.team.svn.ui.synchronize.SVNChangeSetCollector;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.ui.history.IHistoryPage;
 import org.eclipse.team.ui.history.IHistoryView;
@@ -49,8 +49,8 @@ public class SVNLinkedTaskInfoAdapterFactory implements IAdapterFactory {
 			return null;
 		}
 		
-		if (adaptableObject instanceof SVNChangeSetCollector.SVNCheckedInChangeSet) {
-			return this.createFromCheckedInChangeSet((SVNChangeSetCollector.SVNCheckedInChangeSet)adaptableObject);
+		if (adaptableObject instanceof ChangeSet) {
+			return this.createFromChangeSet((ChangeSet)adaptableObject);
 		}
 		
 		Object adapted =  Platform.getAdapterManager().getAdapter(adaptableObject, SVNLogEntry.class);
@@ -75,7 +75,7 @@ public class SVNLinkedTaskInfoAdapterFactory implements IAdapterFactory {
 		return null;
 	}
 
-	protected AbstractTaskReference createFromCheckedInChangeSet(SVNChangeSetCollector.SVNCheckedInChangeSet set) {
+	protected AbstractTaskReference createFromChangeSet(ChangeSet set) {
 		IResource []resources = set.getResources();
 		if (resources != null && resources.length > 0) {
 			return new SVNLinkedTaskInfo(this.getTaskRepositoryUrl(resources[0]), null, this.getTaskFullUrl(resources[0], set.getComment()), set.getComment());
