@@ -19,15 +19,29 @@ import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSet;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
+import org.eclipse.team.internal.core.subscribers.ChangeSet;
 import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
 import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.local.CommitSetPanel;
+import org.eclipse.team.svn.ui.synchronize.SVNChangeSetCapability;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 public class SVNModelParticipantChangeSetCapability extends ChangeSetCapability {
 
+	public static String getProposedComment(IResource []resourcesToCommit) {
+		String retVal = null;
+		ChangeSet []sets = SVNTeamUIPlugin.instance().getModelCangeSetManager().getSets();
+		for (int i = 0; i < sets.length; i++) {
+			if (SVNChangeSetCapability.containsOneOf(sets[i], resourcesToCommit)) {
+				String comment = sets[i].getComment();
+				retVal = retVal == null ? comment : (retVal + "\n" + comment);
+			}
+		}
+		return retVal;
+	}
+	
 	public boolean supportsCheckedInChangeSets() {
 		return true;
 	}
