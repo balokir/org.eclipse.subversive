@@ -39,6 +39,13 @@ public class SVNChangeSetLabelProvider extends ResourceModelLabelProvider {
 		super.init(site);
 	}
 
+	public String getText(Object element) {
+		if (element instanceof ActiveChangeSet && SVNTeamUIPlugin.instance().getModelCangeSetManager().isDefault((ActiveChangeSet)element)) {
+			return super.getText(element) + " " + SVNTeamUIPlugin.instance().getResource("ChangeSet.DefaultDecoration");
+		}
+		return super.getText(element);
+	}
+	
 	protected String getDelegateText(Object elementOrPath) {
 		Object element = this.internalGetElement(elementOrPath);
 		if (element instanceof ChangeSet) {
