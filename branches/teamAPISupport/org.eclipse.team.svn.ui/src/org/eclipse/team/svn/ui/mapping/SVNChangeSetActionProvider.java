@@ -521,7 +521,7 @@ public class SVNChangeSetActionProvider extends ResourceModelActionProvider {
 	}
 	
 	protected ActiveChangeSetManager getActiveChangeSetManager() {
-		return SVNTeamUIPlugin.instance().getActriveCangeSetManager();
+		return SVNTeamUIPlugin.instance().getModelCangeSetManager();
 	}
 	
 	private String getLayout() {

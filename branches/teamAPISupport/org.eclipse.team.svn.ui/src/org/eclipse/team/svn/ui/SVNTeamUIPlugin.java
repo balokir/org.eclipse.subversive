@@ -96,7 +96,7 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 		
 //		Platform.addLogListener(this.problemListener);
 		
-		this.getActriveCangeSetManager();
+		this.getModelCangeSetManager();
 		
 		SVNTeamPreferences.setDefaultValues(this.getPreferenceStore());
 		
@@ -146,7 +146,7 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 		return this.changeSetManager;
     }
 	
-	public synchronized ActiveChangeSetManager getActriveCangeSetManager() {
+	public synchronized ActiveChangeSetManager getModelCangeSetManager() {
 		if (this.activeChangeSetManager == null) {
 			this.activeChangeSetManager = new SVNActiveChangeSetCollector(UpdateSubscriber.instance());
 		}

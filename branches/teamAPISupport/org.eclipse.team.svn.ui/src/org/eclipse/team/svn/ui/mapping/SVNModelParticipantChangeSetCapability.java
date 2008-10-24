@@ -45,7 +45,7 @@ public class SVNModelParticipantChangeSetCapability extends ChangeSetCapability 
 	}
 
 	public ActiveChangeSetManager getActiveChangeSetManager() {
-		return SVNTeamUIPlugin.instance().getActriveCangeSetManager();
+		return SVNTeamUIPlugin.instance().getModelCangeSetManager();
     }
 	
 	public SVNIncomingChangeSetCollector createIncomingChangeSetCollector(ISynchronizePageConfiguration configuration) {

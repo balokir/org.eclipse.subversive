@@ -12,18 +12,23 @@
 package org.eclipse.team.svn.ui.mapping;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.diff.IDiff;
+import org.eclipse.team.core.diff.IDiffChangeEvent;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.core.subscribers.ChangeSet;
 import org.eclipse.team.internal.core.subscribers.ChangeSetManager;
+import org.eclipse.team.internal.core.subscribers.DiffChangeSet;
 import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
 import org.eclipse.team.internal.ui.synchronize.IChangeSetProvider;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
@@ -126,6 +131,31 @@ public class SVNIncomingChangeSetCollector extends ChangeSetManager {
 			LoggedOperation.reportError(this.getClass().getName(), ex);
 		}
 	}
+	
+    public void handleChange(IDiffChangeEvent event) {
+        ArrayList<IPath> removals = new ArrayList<IPath>(Arrays.asList(event.getRemovals()));
+        ArrayList<IDiff> additions = new ArrayList<IDiff>(Arrays.asList(event.getAdditions()));
+        IDiff[] changed = event.getChanges();
+        for (int i = 0; i < changed.length; i++) {
+            IDiff diff = changed[i];
+            additions.add(diff);
+            removals.add(diff.getPath());
+        }
+        if (!removals.isEmpty()) {
+            this.remove(removals.toArray(new IPath[removals.size()]));
+        }
+        if (!additions.isEmpty()) {
+            this.add(additions.toArray(new IDiff[additions.size()]));
+        }
+    }
+    
+    protected void remove(IPath[] paths) {
+    	ChangeSet[] sets = this.getSets();
+        for (int i = 0; i < sets.length; i++) {
+        	DiffChangeSet set = (DiffChangeSet)sets[i];
+            set.remove(paths);
+        }
+    }
 	
 	public Subscriber getSubscriber() {
 		return this.subscriber;

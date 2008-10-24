@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreePathContentProvider;
-import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -38,6 +37,7 @@ import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
+import org.eclipse.team.internal.core.subscribers.ActiveChangeSet;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
 import org.eclipse.team.internal.core.subscribers.BatchingChangeSetManager;
 import org.eclipse.team.internal.core.subscribers.ChangeSet;
@@ -45,12 +45,10 @@ import org.eclipse.team.internal.core.subscribers.DiffChangeSet;
 import org.eclipse.team.internal.core.subscribers.IChangeSetChangeListener;
 import org.eclipse.team.internal.core.subscribers.BatchingChangeSetManager.CollectorChangeEvent;
 import org.eclipse.team.internal.ui.IPreferenceIds;
-import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.ResourceModelContentProvider;
 import org.eclipse.team.internal.ui.mapping.ResourceModelLabelProvider;
 import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
 import org.eclipse.team.internal.ui.synchronize.IChangeSetProvider;
-import org.eclipse.team.svn.core.mapping.SVNActiveChangeSet;
 import org.eclipse.team.svn.core.mapping.SVNChangeSetModelProvider;
 import org.eclipse.team.svn.core.mapping.SVNIncomingChangeSet;
 import org.eclipse.team.svn.core.mapping.SVNUnassignedChangeSet;
@@ -68,7 +66,7 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 	private final class CollectorListener implements IChangeSetChangeListener, BatchingChangeSetManager.IChangeSetCollectorChangeListener {
 		
 		public void setAdded(final ChangeSet set) {
-			if (set instanceof SVNActiveChangeSet) {
+			if (set instanceof ActiveChangeSet) {
 				if (SVNChangeSetContentProvider.this.isVisibleInMode(set)) {
 					UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 						public void run() {
@@ -87,7 +85,7 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 
 		public void defaultSetChanged(final ChangeSet previousDefault, final ChangeSet set) {
 			if (SVNChangeSetContentProvider.this.isVisibleInMode(set) || SVNChangeSetContentProvider.this.isVisibleInMode(previousDefault)) {
-				UIMonitorUtility.getDisplay().asyncExec(new Runnable() {
+				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 					public void run() {
 						((AbstractTreeViewer)SVNChangeSetContentProvider.this.getViewer()).update(previousDefault != null ? new Object[] {previousDefault, set} : set, null);
 					}
@@ -96,7 +94,7 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 		}
 
 		public void setRemoved(final ChangeSet set) {
-			if (set instanceof SVNActiveChangeSet) {
+			if (set instanceof ActiveChangeSet) {
 				if (SVNChangeSetContentProvider.this.isVisibleInMode(set)) {
 					UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 						public void run() {
@@ -123,7 +121,7 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 
 		public void nameChanged(final ChangeSet set) {
 			if (SVNChangeSetContentProvider.this.isVisibleInMode(set)) {
-				UIMonitorUtility.getDisplay().asyncExec(new Runnable() {
+				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 					public void run() {
 						((AbstractTreeViewer)SVNChangeSetContentProvider.this.getViewer()).update(set, null);
 					}
@@ -132,7 +130,7 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 		}
 
 		public void resourcesChanged(final ChangeSet set, final IPath[] paths) {
-			if (set instanceof SVNActiveChangeSet) {
+			if (set instanceof ActiveChangeSet) {
 				if (SVNChangeSetContentProvider.this.isVisibleInMode(set)) {
 					UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 						public void run() {
@@ -255,7 +253,6 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 	}
 	
 	private DiffChangeSet unassignedDiffs;
-	private boolean firstDiffChange = true;
 	private SVNIncomingChangeSetCollector incomingCollector;
 	private boolean collectorInitialized;
 	private IChangeSetChangeListener collectorListener = new CollectorListener();
@@ -274,7 +271,7 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 			if (input instanceof SVNChangeSetModelProvider
 					&& SVNChangeSetContentProvider.this.unassignedDiffs != null
 					&& event.getTree() == SVNChangeSetContentProvider.this.unassignedDiffs.getDiffTree()) {
-				UIMonitorUtility.getDisplay().asyncExec(new Runnable() {
+				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 					public void run() {
 						if (SVNChangeSetContentProvider.this.unassignedDiffs.isEmpty()
 								|| !hasChildren(TreePath.EMPTY.createChildPath(getUnassignedSet()))) {
@@ -299,7 +296,7 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 
 	protected boolean isVisibleInMode(ChangeSet set) {
 		if (this.getViewer().getInput() instanceof SVNChangeSetModelProvider) {
-			if (set instanceof SVNActiveChangeSet) {
+			if (set instanceof ActiveChangeSet) {
 				return getConfiguration().getMode() != ISynchronizePageConfiguration.INCOMING_MODE;
 			}
 			if (set instanceof DiffChangeSet) {
@@ -331,7 +328,7 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 			this.collectorInitialized = true;
 		}
 		ArrayList<ChangeSet> result = new ArrayList<ChangeSet>();
-		ChangeSet[] sets = getAllSets();
+		ChangeSet[] sets = this.getAllSets();
 		for (int i = 0; i < sets.length; i++) {
 			if (this.hasChildren(TreePath.EMPTY.createChildPath(sets[i]))) {
 				result.add(sets[i]);
@@ -435,7 +432,7 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 			case ISynchronizePageConfiguration.INCOMING_MODE:
 				return changeSet instanceof SVNIncomingChangeSet || (this.isUnassignedSet(changeSet) && this.hasIncomingChanges(changeSet));
 			case ISynchronizePageConfiguration.OUTGOING_MODE:
-				return changeSet instanceof SVNActiveChangeSet || this.hasConflicts(changeSet) || (this.isUnassignedSet(changeSet) && this.hasOutgoingChanges(changeSet));
+				return changeSet instanceof ActiveChangeSet || this.hasConflicts(changeSet) || (this.isUnassignedSet(changeSet) && this.hasOutgoingChanges(changeSet));
 			default:
 				break;
 			}
@@ -704,16 +701,13 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 			this.getTheRest().endInput(monitor);
 		}
 		if (this.incomingCollector != null) {
-			//TODO this.incomingCollector.handleChange(event);
+			this.incomingCollector.handleChange(event);
 		}
-		if (this.firstDiffChange) {
-			this.firstDiffChange = false;
-			UIMonitorUtility.getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					SVNChangeSetContentProvider.this.getViewer().refresh();
-				}
-			});
-		}
+		UIMonitorUtility.getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				SVNChangeSetContentProvider.this.getViewer().refresh();
+			}
+		});
 	}
 
 	protected void updateLabels(ISynchronizationContext context, IPath[] paths) {
