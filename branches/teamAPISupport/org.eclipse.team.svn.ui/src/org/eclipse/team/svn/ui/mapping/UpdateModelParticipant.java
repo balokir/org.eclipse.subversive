@@ -21,12 +21,17 @@ import org.eclipse.team.core.mapping.provider.MergeContext;
 import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
 import org.eclipse.team.internal.ui.synchronize.IChangeSetProvider;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
+import org.eclipse.team.svn.ui.extension.impl.synchronize.UpdateActionGroup;
 import org.eclipse.team.svn.ui.mapping.UpdateSubscriberContext.ChangeSetSubscriberScopeManager;
 import org.eclipse.team.svn.ui.operation.UILoggedOperation;
 import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
+import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeModelActionGroup;
+import org.eclipse.team.svn.ui.synchronize.update.action.CommitModelAction;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipantActionGroup;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PartInitException;
 
@@ -108,4 +113,43 @@ public class UpdateModelParticipant extends AbstractSVNModelParticipant implemen
 		return false;
 	}
 	
+	protected ModelSynchronizeParticipantActionGroup createMergeActionGroup() {
+		return new UpdateMergeActionGroup();		
+	}
+	
+	public class UpdateMergeActionGroup extends AbstractSynchronizeModelActionGroup {
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup#configureMenuGroups(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
+		 */	
+		public void configureMenuGroups(ISynchronizePageConfiguration configuration) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup#configureActions(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
+		 */		
+		protected void configureActions(ISynchronizePageConfiguration configuration) {
+			// TODO Auto-generated method stub
+			
+			CommitModelAction commitAction = new CommitModelAction("My Commit...", configuration);
+			appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					UpdateActionGroup.GROUP_SYNC_NORMAL,
+					commitAction);	
+		}
+
+
+		
+//		public void initialize(ISynchronizePageConfiguration configuration) {
+//			super.initialize(configuration);
+//			
+//			CommitModelAction commitAction = new CommitModelAction("My Commit...", configuration);
+//			appendToGroup(
+//					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+//					UpdateActionGroup.GROUP_SYNC_NORMAL,
+//					commitAction);					
+//		}
+	}
 }

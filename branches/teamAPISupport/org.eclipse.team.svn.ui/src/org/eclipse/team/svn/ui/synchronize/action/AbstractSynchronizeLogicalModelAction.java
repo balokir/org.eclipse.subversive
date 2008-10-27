@@ -1,0 +1,231 @@
+/*******************************************************************************
+ * Copyright (c) 2005-2008 Polarion Software.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Igor Burilo - Initial API and implementation
+ *******************************************************************************/
+
+package org.eclipse.team.svn.ui.synchronize.action;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.diff.IDiff;
+import org.eclipse.team.core.diff.IDiffVisitor;
+import org.eclipse.team.core.mapping.IResourceDiffTree;
+import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
+import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
+import org.eclipse.team.internal.ui.mapping.ResourceModelParticipantAction;
+import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.operation.LoggedOperation;
+import org.eclipse.team.svn.core.resource.ILocalResource;
+import org.eclipse.team.svn.core.resource.IResourceChange;
+import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
+import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
+import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
+import org.eclipse.team.svn.ui.action.IResourceSelector;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+
+@SuppressWarnings("restriction")
+public abstract class AbstractSynchronizeLogicalModelAction extends ResourceModelParticipantAction {
+	
+	/**
+	 * Provides set of resources filtered by FastSyncInfoFilter(s)
+	 */
+	protected IResourceSelector syncInfoSelector;
+	
+    public AbstractSynchronizeLogicalModelAction(String text, ISynchronizePageConfiguration configuration) {
+		super(text, configuration);
+		this.setEnabled(false);
+		this.setToolTipText(text);		
+		this.createSyncInfoSelector();
+		//this.createTreeNodeSelector();
+	}
+    
+    final protected boolean isEnabledForSelection(IStructuredSelection selection) {
+    	return this.getFilteredResources().length > 0;
+    }
+    
+    protected void createSyncInfoSelector() {
+		this.syncInfoSelector = new IResourceSelector() {
+			public IResource []getSelectedResources() {
+			    return this.getSelectedResources(new ISyncStateFilter.StateFilterWrapper(IStateFilter.SF_ALL, false));
+			}
+			
+	        public IResource[] getSelectedResources(IStateFilter filter) {
+	            if (filter instanceof ISyncStateFilter) {
+	    			return this.getSelectedResources((ISyncStateFilter)filter);
+	            }
+				return this.getSelectedResources(new ISyncStateFilter.StateFilterWrapper(filter, false));
+	        }
+			
+			public IResource []getSelectedResourcesRecursive(IStateFilter filter) {
+				return this.getSelectedResources(filter);
+			}
+			
+			public IResource []getSelectedResourcesRecursive(IStateFilter filter, int depth) {
+				return this.getSelectedResources(filter);
+			}
+			
+			private IResource []getSelectedResources(ISyncStateFilter filter) {
+				HashSet<IResource> retVal = new HashSet<IResource>();
+				try {
+					IResource [] filtered = AbstractSynchronizeLogicalModelAction.this.getFilteredResources();
+				    for (int i = 0; i < filtered.length; i++) {
+				    	AbstractSVNSyncInfo info = (AbstractSVNSyncInfo)UpdateSubscriber.instance().getSyncInfo(filtered[i]);
+				        ILocalResource local = info.getLocalResource();
+				        ILocalResource remote = ((ResourceVariant)info.getRemote()).getResource();
+				        if (remote instanceof IResourceChange && filter.acceptRemote(remote.getResource(), remote.getStatus(), remote.getChangeMask()) || filter.accept(local)) {
+				            retVal.add(local.getResource());
+				        }
+				    }
+				    IResource [] filteredResources = retVal.toArray(new IResource[retVal.size()]);
+				    if (filter.acceptGroupNodes()) {
+				    	ArrayList<IResource> allSelected = new ArrayList<IResource>(Arrays.asList(AbstractSynchronizeLogicalModelAction.this.getAllSelectedResources()));
+				    	for (IResource filteredResource : filteredResources) {
+				    		ArrayList<IResource> parents = new ArrayList<IResource>();
+				    		IResource parent = filteredResource.getParent();
+				    		while (parent != null) {
+				    			parents.add(parent);
+				    			if (allSelected.contains(parent)) {
+				    				retVal.addAll(parents);
+				    				break;
+				    			}
+				    			parent = parent.getParent();
+				    		}
+				    	}
+				    }
+				}
+			    catch (Exception ex) {
+			    	LoggedOperation.reportError(this.getClass().getName(), ex);
+			    }
+				return retVal.toArray(new IResource[retVal.size()]);
+			}
+		};
+	}
+    
+    //TODO seems like it is not needed for model content
+    /*protected void createTreeNodeSelector() {
+		this.treeNodeSelector = new IResourceSelector() {
+			public IResource[] getSelectedResources() {
+			    return this.getSelectedResources(new ISyncStateFilter.StateFilterWrapper(IStateFilter.SF_ALL, true));
+			}
+			
+			public IResource[] getSelectedResources(IStateFilter filter) {
+				return this.getSelectedResourcesRecursive(filter, IResource.DEPTH_ZERO);
+			}
+			
+			public IResource[] getSelectedResourcesRecursive(IStateFilter filter) {
+				return this.getSelectedResourcesRecursive(filter, IResource.DEPTH_INFINITE);
+			}
+			
+			public IResource[] getSelectedResourcesRecursive(IStateFilter filter, int depth) {
+	            if (filter instanceof ISyncStateFilter) {
+	    			return this.getSelectedResourcesRecursive((ISyncStateFilter)filter, depth);
+	            }
+				return this.getSelectedResourcesRecursive(new ISyncStateFilter.StateFilterWrapper(filter, true), depth);
+			}
+			
+			private IResource[] getSelectedResourcesRecursive(final ISyncStateFilter filter, int depth) {
+			    final HashSet<IResource> retVal = new HashSet<IResource>();
+			    final IResourceDiffTree diffTree = AbstractSynchronizeLogicalModelAction.this.getSynchronizationContext().getDiffTree();
+			    
+			    IResource [] allSelected = AbstractSynchronizeLogicalModelAction.this.getAllSelectedResources();
+			    for (IResource currentFromSelection : allSelected) {
+			    	diffTree.accept(currentFromSelection.getFullPath(), new IDiffVisitor() {
+						public boolean visit(IDiff diff) {
+							try {
+								IResource current = diffTree.getResource(diff);
+								if (filter.accept(SVNRemoteStorage.instance().asLocalResource(current))) {
+									retVal.add(current);
+								}
+								else {
+									AbstractSVNSyncInfo info = (AbstractSVNSyncInfo)UpdateSubscriber.instance().getSyncInfo(current);
+									ILocalResource change = ((ResourceVariant)info.getRemote()).getResource();
+									if (change instanceof IResourceChange && filter.acceptRemote(change.getResource(), change.getStatus(), change.getChangeMask())) {
+										retVal.add(current);
+									}
+								}
+							}
+							catch (Exception ex) {
+								LoggedOperation.reportError(this.getClass().getName(), ex);
+							}
+							return true;
+						}
+						
+					}, depth);
+			    }
+				return retVal.toArray(new IResource[retVal.size()]);
+			}
+		};
+	}*/
+    
+    protected FastSyncInfoFilter getFastSyncInfoFilter() {
+    	return new FastSyncInfoFilter();
+    }
+    
+    protected IResource [] getFilteredResources() {
+		final HashSet<IResource> filtered = new HashSet<IResource>();
+		try {
+			final IResourceDiffTree diffTree = AbstractSynchronizeLogicalModelAction.this.getSynchronizationContext().getDiffTree();
+			IDiff [] affectedDiffs = diffTree.getDiffs(this.getResourceTraversals(this.getStructuredSelection(), new NullProgressMonitor()));
+			for (IDiff currentDiff : affectedDiffs) {
+				IResource resource = ResourceDiffTree.getResourceFor(currentDiff);
+				if (AbstractSynchronizeLogicalModelAction.this.getFastSyncInfoFilter().select(UpdateSubscriber.instance().getSyncInfo(resource))) {
+					filtered.add(resource);
+				}
+			}
+		}
+		catch (Exception ex) {
+			LoggedOperation.reportError(this.getClass().getName(), ex);
+		}
+		return filtered.toArray(new IResource[filtered.size()]);
+    }
+    
+    protected IResource [] getAllSelectedResources() {
+    	IStructuredSelection selection = this.getStructuredSelection();
+    	ArrayList<IResource> retVal = new ArrayList<IResource>();
+    	for (Iterator<?> it = selection.iterator(); it.hasNext(); ) {
+    		Object adapter = Platform.getAdapterManager().getAdapter(it.next(), IResource.class);
+    		if (adapter == null) {
+    			continue;
+    		}
+    		retVal.add((IResource)adapter);
+    	}
+    	return retVal.toArray(new IResource[retVal.size()]);
+    } 
+    
+	protected IResource getSelectedResource() {
+		IStructuredSelection selection = this.getStructuredSelection();
+    	for (Iterator<?> it = selection.iterator(); it.hasNext(); ) {
+    		Object adapter = Platform.getAdapterManager().getAdapter(it.next(), IResource.class);
+    		if (adapter != null) {
+    			return (IResource)adapter;
+    		}
+    	}
+    	return null;
+	}
+	
+	protected AbstractSVNSyncInfo getSelectedSVNSyncInfo() {
+		IResource resource = this.getSelectedResource();
+		try {
+			return resource == null ? null : (AbstractSVNSyncInfo)UpdateSubscriber.instance().getSyncInfo(resource);
+		}
+		catch (TeamException ex) {
+			LoggedOperation.reportError(this.getClass().getName(), ex);
+		}
+		return null;
+	}
+}

@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.ui.synchronize.action;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -22,7 +21,6 @@ import java.util.Set;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
@@ -33,8 +31,8 @@ import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
-import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.ui.action.IResourceSelector;
+import org.eclipse.team.svn.ui.synchronize.FilteredSynchronizeModelOperation;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.SynchronizeModelAction;
@@ -218,30 +216,6 @@ public abstract class AbstractSynchronizeModelAction extends SynchronizeModelAct
 			}
 		}
 		return retVal.toArray(new ISynchronizeModelElement[retVal.size()]);
-	}
-	
-	protected static class FilteredSynchronizeModelOperation extends SynchronizeModelOperation {
-		protected IActionOperation executable;
-		
-		public FilteredSynchronizeModelOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements, IActionOperation executable) {
-			super(configuration, elements);
-			this.executable = executable;
-		}
-
-		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-			if (this.executable != null) {
-			    ProgressMonitorUtility.doTaskExternal(this.executable, monitor);
-			}
-		}
-		
-		protected boolean canRunAsJob() {
-			return true;
-		}
-		
-		protected String getJobName() {
-			return this.executable == null ? super.getJobName() : this.executable.getOperationName();
-		}
-
 	}
 
 }

@@ -51,7 +51,8 @@ public class SetPropertyAction extends AbstractSynchronizeModelAction {
 	}
 	
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
-		IResource [] resources = SetPropertyAction.this.treeNodeSelector.getSelectedResourcesRecursive(IStateFilter.SF_VERSIONED);
+		IResource [] resources = this.treeNodeSelector.getSelectedResourcesRecursive(IStateFilter.SF_VERSIONED);
+		resources = this.syncInfoSelector.getSelectedResourcesRecursive(new ISyncStateFilter.StateFilterWrapper(IStateFilter.SF_VERSIONED, true));
 		ResourcePropertyEditPanel panel = new ResourcePropertyEditPanel(null, resources, true);
 		DefaultDialog dialog = new DefaultDialog(configuration.getSite().getShell(), panel);
 		if (dialog.open() == Dialog.OK) {
