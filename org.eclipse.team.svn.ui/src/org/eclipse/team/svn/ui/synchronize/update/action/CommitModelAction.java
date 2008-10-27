@@ -6,20 +6,18 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alexander Gurov - Initial API and implementation
- *    Alessandro Nistico - [patch] Change Set's implementation
+ *    Igor Burilo - Initial API and implementation
  *******************************************************************************/
 
 package org.eclipse.team.svn.ui.synchronize.update.action;
 
-import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.synchronize.UpdateSyncInfo;
+import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.dialog.TagModifyWarningDialog;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
@@ -28,25 +26,17 @@ import org.eclipse.team.svn.ui.mapping.ModelHelper;
 import org.eclipse.team.svn.ui.mapping.SVNModelParticipantChangeSetCapability;
 import org.eclipse.team.svn.ui.panel.local.CommitPanel;
 import org.eclipse.team.svn.ui.synchronize.SVNChangeSetCapability;
-import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
+import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeLogicalModelAction;
 import org.eclipse.team.svn.ui.utility.CommitActionUtility;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
-/**
- * Synchronize view commit action implementation
- * 
- * @author Alexander Gurov
- */
-public class CommitAction extends AbstractSynchronizeModelAction {
-	public CommitAction(String text, ISynchronizePageConfiguration configuration) {
+public class CommitModelAction extends AbstractSynchronizeLogicalModelAction {
+
+	public CommitModelAction(String text, ISynchronizePageConfiguration configuration) {		
 		super(text, configuration);
 	}
-
-	public CommitAction(String text, ISynchronizePageConfiguration configuration, ISelectionProvider selectionProvider) {
-		super(text, configuration, selectionProvider);
-	}
-
-	protected FastSyncInfoFilter getSyncInfoFilter() {
+	
+	protected FastSyncInfoFilter getFastSyncInfoFilter() {
 		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.OUTGOING}) {
             public boolean select(SyncInfo info) {
                 UpdateSyncInfo sync = (UpdateSyncInfo)info;
@@ -54,26 +44,23 @@ public class CommitAction extends AbstractSynchronizeModelAction {
             }		    
 		};
 	}
-
-	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+	
+	public void run() {
 		CommitActionUtility commitUtility = new CommitActionUtility(this.syncInfoSelector);
-		
 		IResource[] resources = commitUtility.getAllResources();
 		if (SVNUtility.isTagOperated(resources)) {
-			TagModifyWarningDialog dlg = new TagModifyWarningDialog(configuration.getSite().getShell());
+			TagModifyWarningDialog dlg = new TagModifyWarningDialog(this.getConfiguration().getSite().getShell());
         	if (dlg.open() != 0) {
-        		return null;
+        		return;
         	}
 		}
-		
-	    String proposedComment = ModelHelper.isShowModelSync() ? SVNModelParticipantChangeSetCapability.getProposedComment(resources) : SVNChangeSetCapability.getProposedComment(resources);                
+		String proposedComment = ModelHelper.isShowModelSync() ? SVNModelParticipantChangeSetCapability.getProposedComment(resources) : SVNChangeSetCapability.getProposedComment(resources);                
 	    CommitPanel commitPanel = new CommitPanel(resources, resources, CommitPanel.MSG_COMMIT, proposedComment); 
-        ICommitDialog dialog = ExtensionsManager.getInstance().getCurrentCommitFactory().getCommitDialog(configuration.getSite().getShell(), commitUtility.getAllResourcesSet(), commitPanel);				
+        ICommitDialog dialog = ExtensionsManager.getInstance().getCurrentCommitFactory().getCommitDialog(this.getConfiguration().getSite().getShell(), commitUtility.getAllResourcesSet(), commitPanel);				
 		if (dialog.open() != 0) {
-			return null;
+			return;
 		}
-		
-		return commitUtility.getCompositeCommitOperation(commitPanel.getSelectedResources(), dialog.getMessage(), commitPanel.getKeepLocks(), configuration.getSite().getShell(), configuration.getSite().getPart());
+		ProgressMonitorUtility.doTaskExternal(commitUtility.getCompositeCommitOperation(commitPanel.getSelectedResources(), dialog.getMessage(), commitPanel.getKeepLocks(), this.getConfiguration().getSite().getShell(), this.getConfiguration().getSite().getPart()), new NullProgressMonitor());
 	}
-	
+		
 }

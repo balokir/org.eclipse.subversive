@@ -242,8 +242,11 @@
            <popupMenu
                 allowsPlatformContributions="false"
                 id="org.eclipse.team.svn.ui.workspaceSynchronizationMenu">
+                
              <insertionPoint name="file"/>
-             <insertionPoint name="file-bottom"/>  
+             
+             <insertionPoint name="file-bottom"/>
+             
              <insertionPoint name="edit" separator="true"/>
              <insertionPoint
                    name="svnChangeSetActions"
@@ -251,6 +254,11 @@
              <insertionPoint
                    name="sort"
                    separator="true"/>
+                   
+                   
+                   
+             <insertionPoint name="syncIncomingOutgoing" separator="true"/>                   
+                   
           </popupMenu>
        </viewer>
    </extension>
