@@ -196,7 +196,7 @@ public abstract class AbstractSynchronizeLogicalModelAction extends ResourceMode
     /*
      * Can be overridden in subclasses
      */
-    protected FastSyncInfoFilter getFastSyncInfoFilter() {
+    protected FastSyncInfoFilter getSyncInfoFilter() {
     	return new FastSyncInfoFilter();
     }
     
@@ -207,7 +207,7 @@ public abstract class AbstractSynchronizeLogicalModelAction extends ResourceMode
 			IDiff [] affectedDiffs = diffTree.getDiffs(this.getResourceTraversals(this.getStructuredSelection(), new NullProgressMonitor()));
 			for (IDiff currentDiff : affectedDiffs) {
 				IResource resource = ResourceDiffTree.getResourceFor(currentDiff);
-				if (AbstractSynchronizeLogicalModelAction.this.getFastSyncInfoFilter().select(UpdateSubscriber.instance().getSyncInfo(resource))) {
+				if (AbstractSynchronizeLogicalModelAction.this.getSyncInfoFilter().select(UpdateSubscriber.instance().getSyncInfo(resource))) {
 					filtered.add(resource);
 				}
 			}

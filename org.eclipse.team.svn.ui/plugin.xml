@@ -250,7 +250,7 @@
              <insertionPoint name="modelSyncConflicting" separator="true"/>
              <insertionPoint name="modelManageLocalChanges" separator="true"/>
              <insertionPoint name="modelTeam" separator="true"/>
-                   name="svnChangeSetActions"
+             <insertionPoint name="svnChangeSetActions"
                    separator="true"/> 
              <insertionPoint
                    name="sort"

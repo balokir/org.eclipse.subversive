@@ -36,6 +36,7 @@ import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
 import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeModelActionGroup;
 import org.eclipse.team.svn.ui.synchronize.action.RevertAction;
 import org.eclipse.team.svn.ui.synchronize.action.ShowHistoryAction;
+import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.RevertModelAction;
 import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.ShowHistoryModelAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.logicalmodel.CommitModelAction;
 import org.eclipse.team.ui.TeamUI;
@@ -188,14 +189,12 @@ public class UpdateModelParticipant extends AbstractSVNModelParticipant implemen
 					commitAction);
 			
 			//revert
-			/*
 			RevertModelAction revertAction = new RevertModelAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Revert"), configuration);
 			revertAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/revert.gif"));
 			this.appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					UpdateModelActionGroup.GROUP_MANAGE_LOCALS,
 					revertAction);
-			*/
 			
 			//show history
 			ShowHistoryModelAction showHistoryAction = new ShowHistoryModelAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.ShowResourceHistory"), configuration);

@@ -40,7 +40,7 @@ public class CommitModelAction extends AbstractSynchronizeLogicalModelAction {
 		super(text, configuration);
 	}
 	
-	protected FastSyncInfoFilter getFastSyncInfoFilter() {
+	protected FastSyncInfoFilter getSyncInfoFilter() {
 		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.OUTGOING}) {
             public boolean select(SyncInfo info) {
                 UpdateSyncInfo sync = (UpdateSyncInfo)info;
