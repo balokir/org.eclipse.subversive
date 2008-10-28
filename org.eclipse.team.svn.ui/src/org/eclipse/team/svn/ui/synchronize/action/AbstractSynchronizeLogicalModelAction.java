@@ -22,21 +22,24 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.diff.IDiff;
-import org.eclipse.team.core.diff.IDiffVisitor;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.ResourceModelParticipantAction;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
-import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
 import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
+import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.ui.action.IResourceSelector;
+import org.eclipse.team.svn.ui.synchronize.action.ISyncStateFilter;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.ui.ide.IDE;
 
 @SuppressWarnings("restriction")
 public abstract class AbstractSynchronizeLogicalModelAction extends ResourceModelParticipantAction {
@@ -92,6 +95,24 @@ public abstract class AbstractSynchronizeLogicalModelAction extends ResourceMode
 				        }
 				    }
 				    IResource [] filteredResources = retVal.toArray(new IResource[retVal.size()]);
+				    /*
+				     * filteredResources variable contains now only changed resources. 
+				     * But for some operations we need also to include all tree.
+				     * Example:
+				     * 	Project-1/
+				     * 		src/
+				     * 			com.polarion/
+				     * 				> ClassA.java
+				     * 
+				     * Here we have changed only ClassA.java and we have it as a resulted selected resource.
+				     * But some operations require all changes tree, i.e. we need to 
+				     * include also Project-1, src, com.polarion in the result.
+				     * 
+				     * In order to indicate that operation needs all tree ISyncStateFilter.acceptGroupNodes method
+				     * should return true.
+				     * 
+				     * In order to return all tree it, we process here parents of changed resources
+				     */
 				    if (filter.acceptGroupNodes()) {
 				    	ArrayList<IResource> allSelected = new ArrayList<IResource>(Arrays.asList(AbstractSynchronizeLogicalModelAction.this.getAllSelectedResources()));
 				    	for (IResource filteredResource : filteredResources) {
@@ -172,6 +193,9 @@ public abstract class AbstractSynchronizeLogicalModelAction extends ResourceMode
 		};
 	}*/
     
+    /*
+     * Can be overridden in subclasses
+     */
     protected FastSyncInfoFilter getFastSyncInfoFilter() {
     	return new FastSyncInfoFilter();
     }
@@ -228,4 +252,66 @@ public abstract class AbstractSynchronizeLogicalModelAction extends ResourceMode
 		}
 		return null;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#run()
+	 */
+	public void run() {
+		if(needsToSaveDirtyEditors()) {
+			if(!saveAllEditors(confirmSaveOfDirtyEditor())) {
+				return;
+			}
+		}
+		runOperation();
+	}
+	
+	/**
+	 * Returns whether the user should be prompted to save dirty editors. The
+	 * default is <code>true</code>.
+	 * 
+	 * @return whether the user should be prompted to save dirty editors
+	 * 
+	 * @see SynchronizeModelAction.confirmSaveOfDirtyEditor
+	 */
+	protected boolean confirmSaveOfDirtyEditor() {
+		return true;
+	}
+	
+	/**
+	 * Return whether dirty editor should be saved before this action is run.
+	 * Default is <code>true</code>.
+	 * 
+	 * @return whether dirty editor should be saved before this action is run
+	 * 
+	 * @see SynchronizeModelAction.needsToSaveDirtyEditors
+	 */
+	protected boolean needsToSaveDirtyEditors() {
+		return true;
+	}
+	
+	/**
+	 * Save all dirty editors in the workbench that are open on files that may
+	 * be affected by this operation. Opens a dialog to prompt the user if
+	 * <code>confirm</code> is true. Return true if successful. Return false
+	 * if the user has canceled the command. Must be called from the UI thread.
+	 * 
+	 * @param confirm prompt the user if true
+	 * @return boolean false if the operation was canceled.
+	 * 
+	 * @see SynchronizeModelAction.saveAllEditors
+	 */
+	public final boolean saveAllEditors(boolean confirm) {
+		IResource[] resources = this.getFilteredResources();
+		return IDE.saveAllEditors(Utils.getResources(resources), confirm);
+	}
+	
+	protected void runOperation() {
+		IActionOperation op = this.getOperation();
+		if (op != null) {
+			//TODO how to get Progress Monitor ?
+			ProgressMonitorUtility.doTaskExternal(op, new NullProgressMonitor());	
+		}		
+	}	
+	
+	protected abstract IActionOperation getOperation();
 }

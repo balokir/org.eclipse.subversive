@@ -28,7 +28,10 @@ import org.eclipse.team.svn.ui.mapping.UpdateSubscriberContext.ChangeSetSubscrib
 import org.eclipse.team.svn.ui.operation.UILoggedOperation;
 import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
 import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeModelActionGroup;
-import org.eclipse.team.svn.ui.synchronize.update.action.CommitModelAction;
+import org.eclipse.team.svn.ui.synchronize.action.RevertAction;
+import org.eclipse.team.svn.ui.synchronize.action.ShowHistoryAction;
+import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.ShowHistoryModelAction;
+import org.eclipse.team.svn.ui.synchronize.update.action.logicalmodel.CommitModelAction;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipantActionGroup;
@@ -114,10 +117,22 @@ public class UpdateModelParticipant extends AbstractSVNModelParticipant implemen
 	}
 	
 	protected ModelSynchronizeParticipantActionGroup createMergeActionGroup() {
-		return new UpdateMergeActionGroup();		
+		return new UpdateModelActionGroup();		
 	}
 	
-	public class UpdateMergeActionGroup extends AbstractSynchronizeModelActionGroup {
+	/**
+	 * Synchronize view logical mode update action set
+	 * 
+	 * @author Igor Burilo
+	 * 
+	 * TODO
+	 * Externalize class.
+	 * Don't use any references, i.e. constants from UpdateActionGroup class 
+	 */
+	public class UpdateModelActionGroup extends AbstractSynchronizeModelActionGroup {
+		
+		public static final String GROUP_SYNC_NORMAL = "modelSyncIncomingOutgoing";
+		public static final String GROUP_SYNC_CONFLICTS = "modelSyncConflicting";
 		
 		/* (non-Javadoc)
 		 * @see org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup#configureMenuGroups(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
@@ -130,26 +145,31 @@ public class UpdateModelParticipant extends AbstractSVNModelParticipant implemen
 		/* (non-Javadoc)
 		 * @see org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup#configureActions(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
 		 */		
-		protected void configureActions(ISynchronizePageConfiguration configuration) {
-			// TODO Auto-generated method stub
-			
+		protected void configureActions(ISynchronizePageConfiguration configuration) {			
+			//TODO correctly add action. Externalize string
 			CommitModelAction commitAction = new CommitModelAction("My Commit...", configuration);
-			appendToGroup(
+			this.appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-					UpdateActionGroup.GROUP_SYNC_NORMAL,
-					commitAction);	
-		}
-
-
-		
-//		public void initialize(ISynchronizePageConfiguration configuration) {
-//			super.initialize(configuration);
-//			
-//			CommitModelAction commitAction = new CommitModelAction("My Commit...", configuration);
-//			appendToGroup(
-//					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-//					UpdateActionGroup.GROUP_SYNC_NORMAL,
-//					commitAction);					
-//		}
+					UpdateModelActionGroup.GROUP_SYNC_NORMAL,
+					commitAction);
+			
+			//revert
+			/*
+			RevertModelAction revertAction = new RevertModelAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Revert"), configuration);
+			revertAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/revert.gif"));
+			this.appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					UpdateModelActionGroup.GROUP_MANAGE_LOCALS,
+					revertAction);
+			*/
+			
+			//show history
+			ShowHistoryModelAction showHistoryAction = new ShowHistoryModelAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.ShowResourceHistory"), configuration);
+			showHistoryAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/showhistory.gif"));
+			this.appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					UpdateModelActionGroup.GROUP_MANAGE_LOCALS,
+					showHistoryAction);			
+		}		
 	}
 }

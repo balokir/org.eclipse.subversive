@@ -31,9 +31,9 @@ import org.eclipse.team.ui.synchronize.SynchronizeModelAction;
  */
 public abstract class AbstractSynchronizeModelActionGroup extends ModelSynchronizeParticipantActionGroup {
 
-	public static final String GROUP_MANAGE_LOCALS = "manageLocalChanges";
-	public static final String GROUP_PROCESS_ALL = "processAllItems";
-	public static final String GROUP_TEAM = "team";
+	public static final String GROUP_MANAGE_LOCALS = "modelManageLocalChanges";
+	public static final String GROUP_PROCESS_ALL = "modelProcessAllItems";
+	public static final String GROUP_TEAM = "modelTeam";
 	
 	protected ISynchronizePageConfiguration configuration;
 	
