@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
@@ -34,10 +35,20 @@ import org.eclipse.team.svn.ui.mapping.UpdateSubscriberContext.ChangeSetSubscrib
 import org.eclipse.team.svn.ui.operation.UILoggedOperation;
 import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
 import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeModelActionGroup;
+import org.eclipse.team.svn.ui.synchronize.action.EditConflictsAction;
+import org.eclipse.team.svn.ui.synchronize.action.ExtractOutgoingToAction;
+import org.eclipse.team.svn.ui.synchronize.action.ExtractToAction;
 import org.eclipse.team.svn.ui.synchronize.action.RevertAction;
 import org.eclipse.team.svn.ui.synchronize.action.ShowHistoryAction;
+import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.EditConflictsModelAction;
+import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.ExtractOutgoingToModelAction;
+import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.ExtractToModelAction;
 import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.RevertModelAction;
 import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.ShowHistoryModelAction;
+import org.eclipse.team.svn.ui.synchronize.update.action.AddToSVNAction;
+import org.eclipse.team.svn.ui.synchronize.update.action.AddToSVNIgnoreAction;
+import org.eclipse.team.svn.ui.synchronize.update.action.logicalmodel.AddToSVNIgnoreModelAction;
+import org.eclipse.team.svn.ui.synchronize.update.action.logicalmodel.AddToSVNModelAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.logicalmodel.CommitModelAction;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.SynchronizationActionProvider;
@@ -175,18 +186,23 @@ public class UpdateModelParticipant extends AbstractSVNModelParticipant implemen
 			} else {
 				manager.add(action);
 			}
-		}
+		}		
 		
-		public void configureMenuGroups(ISynchronizePageConfiguration configuration) {
-		}
-		
-		protected void configureActions(ISynchronizePageConfiguration configuration) {			
+		protected void configureActions(ISynchronizePageConfiguration configuration) {
+			//commit
 			CommitModelAction commitAction = new CommitModelAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.Commit"), configuration);
 			commitAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/commit.gif"));
 			this.appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					UpdateModelActionGroup.GROUP_SYNC_NORMAL,
 					commitAction);
+			
+			//edit conflicts
+			EditConflictsModelAction editConflictsAction = new EditConflictsModelAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.EditConflicts"), configuration);
+			this.appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					UpdateModelActionGroup.GROUP_SYNC_CONFLICTS,
+					editConflictsAction);
 			
 			//revert
 			RevertModelAction revertAction = new RevertModelAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Revert"), configuration);
@@ -202,7 +218,45 @@ public class UpdateModelParticipant extends AbstractSVNModelParticipant implemen
 			this.appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					UpdateModelActionGroup.GROUP_MANAGE_LOCALS,
-					showHistoryAction);			
-		}		
+					showHistoryAction);	
+			
+			//add to SVN
+			AddToSVNModelAction addToSVNAction = new AddToSVNModelAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.AddToVersionControl"), configuration);
+			this.appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					UpdateModelActionGroup.GROUP_MANAGE_LOCALS,
+					addToSVNAction);
+			
+			//add to SVN ignore
+			AddToSVNIgnoreModelAction addToSVNIgnoreAction = new AddToSVNIgnoreModelAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.AddToIgnore"), configuration);
+			this.appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					UpdateModelActionGroup.GROUP_MANAGE_LOCALS,
+					addToSVNIgnoreAction);
+			
+			//extract to
+			ExtractToModelAction extractTo = new ExtractToModelAction(SVNTeamUIPlugin.instance().getResource("ExtractAllToAction.Label"), configuration);
+			this.appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					UpdateModelActionGroup.GROUP_MANAGE_LOCALS,
+					extractTo);
+			
+			//TODO add actions here
+			
+			this.addSpecificActions(extractTo, configuration);
+		}	
+		
+		protected void addLocalActions(IMenuManager manager, ISynchronizePageConfiguration configuration) {
+			//TODO add local actions here
+			
+			ExtractOutgoingToModelAction extractActionOutgoing = new ExtractOutgoingToModelAction(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Label"), configuration);
+			manager.add(extractActionOutgoing);
+			
+			manager.add(new Separator());
+		}
+		
+		protected void addRemoteActions(IMenuManager manager, ISynchronizePageConfiguration configuration) {
+			//TODO add remote actions here
+		}
 	}
 }

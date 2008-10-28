@@ -20,14 +20,15 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
+import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeLogicalModelAction;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipantActionGroup;
 import org.eclipse.team.ui.synchronize.SynchronizeModelAction;
 
 /**
+ * Abstract synchronize view logical model action contribution implementation
+ * 
  * @author Igor Burilo
- *
  */
 public abstract class AbstractSynchronizeModelActionGroup extends ModelSynchronizeParticipantActionGroup {
 
@@ -66,21 +67,20 @@ public abstract class AbstractSynchronizeModelActionGroup extends ModelSynchroni
 		
 		super.dispose();
 	}
-	
-    public abstract void configureMenuGroups(ISynchronizePageConfiguration configuration);
+	   
 	protected abstract void configureActions(ISynchronizePageConfiguration configuration);
 	
-	protected void addSpecificActions(final AbstractSynchronizeModelAction selectionProvider, final ISynchronizePageConfiguration configuration) {
+	protected void addSpecificActions(final AbstractSynchronizeLogicalModelAction selectionProvider, final ISynchronizePageConfiguration configuration) {
 		this.outgoing = new MenuManager(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Outgoing"));
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-				AbstractSynchronizeActionGroup.GROUP_TEAM, 
+				AbstractSynchronizeModelActionGroup.GROUP_TEAM, 
 				this.outgoing);
 		
 		this.incoming = new MenuManager(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Incoming"));
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-				AbstractSynchronizeActionGroup.GROUP_TEAM, 
+				AbstractSynchronizeModelActionGroup.GROUP_TEAM, 
 				this.incoming);
 		
 		boolean isEuropa = false;
@@ -122,6 +122,7 @@ public abstract class AbstractSynchronizeModelActionGroup extends ModelSynchroni
 		
 	}
 	
+	//TODO check that it correctly works
 	protected void updateSelection(IMenuManager manager, ISelection selection) {
 		IContributionItem[] items = manager.getItems();
 		for (int i = 0; i < items.length; i++) {

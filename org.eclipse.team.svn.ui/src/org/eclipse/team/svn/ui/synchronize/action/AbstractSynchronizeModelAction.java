@@ -198,7 +198,7 @@ public abstract class AbstractSynchronizeModelAction extends SynchronizeModelAct
 		return (AbstractSVNSyncInfo)((SyncInfoModelElement)selection[0]).getSyncInfo();
 	}
 	
-	protected AbstractSVNSyncInfo[] getSVNSyncInfos() {
+	public AbstractSVNSyncInfo[] getSVNSyncInfos() {
 		List<AbstractSVNSyncInfo> filtered = new ArrayList<AbstractSVNSyncInfo>();
 		for (IDiffElement e : this.getFilteredDiffElements()) {
 			filtered.add((AbstractSVNSyncInfo)((SyncInfoModelElement)e).getSyncInfo());
@@ -218,4 +218,7 @@ public abstract class AbstractSynchronizeModelAction extends SynchronizeModelAct
 		return retVal.toArray(new ISynchronizeModelElement[retVal.size()]);
 	}
 
+	public IResourceSelector getSyncInfoSelector() {
+		return this.syncInfoSelector;
+	}
 }

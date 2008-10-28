@@ -6,38 +6,37 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alexei Goncharov (Polarion Software) - initial API and implementation
- *    Igor Burilo - Bug 245509: Improve extract log
+ *    Igor Burilo - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.svn.ui.synchronize.action;
+package org.eclipse.team.svn.ui.synchronize.action.logicalmodel;
 
-import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.ExtractOutgoingToActionHelper;
+import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeLogicalModelAction;
+import org.eclipse.team.svn.ui.synchronize.action.EditConflictsActionHelper;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
- * Outgoing Extract To action for Synchronize View
+ * Edit conflicts logical model action implementation for Synchronize view
  * 
- * @author Alexei Goncharov
+ * @author Igor Burilo
  */
-public class ExtractOutgoingToAction extends AbstractSynchronizeModelAction {
+public class EditConflictsModelAction extends AbstractSynchronizeLogicalModelAction {
+
+	protected EditConflictsActionHelper actionHelper;
 	
-	protected ExtractOutgoingToActionHelper actionHelper;
-	
-	public ExtractOutgoingToAction(String text, ISynchronizePageConfiguration configuration) {
+	public EditConflictsModelAction(String text, ISynchronizePageConfiguration configuration) {
 		super(text, configuration);
-		this.actionHelper = new ExtractOutgoingToActionHelper(this, configuration);
+		this.actionHelper = new EditConflictsActionHelper(this, configuration);
 	}
-	
+
 	protected FastSyncInfoFilter getSyncInfoFilter() {
 		return this.actionHelper.getSyncInfoFilter();
 	}
 	
-	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+	protected IActionOperation getOperation() {
 		return this.actionHelper.getOperation();
 	}
-	
+
 }

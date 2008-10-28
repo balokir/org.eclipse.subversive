@@ -15,7 +15,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
@@ -27,6 +29,7 @@ import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.ResourceModelParticipantAction;
+import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
@@ -200,6 +203,20 @@ public abstract class AbstractSynchronizeLogicalModelAction extends ResourceMode
     	return new FastSyncInfoFilter();
     }
     
+    public AbstractSVNSyncInfo[] getSVNSyncInfos() {
+    	List<AbstractSVNSyncInfo> filtered = new ArrayList<AbstractSVNSyncInfo>();
+    	try {
+    		for (IResource resource : this.getFilteredResources()) {
+    			AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo) UpdateSubscriber.instance().getSyncInfo(resource);
+    			filtered.add(syncInfo);
+    		}    		
+    	} catch (TeamException te) {
+    		LoggedOperation.reportError(this.getClass().getName(), te);
+    	}
+
+		return filtered.toArray(new AbstractSVNSyncInfo[filtered.size()]);
+    }
+    
     protected IResource [] getFilteredResources() {
 		final HashSet<IResource> filtered = new HashSet<IResource>();
 		try {
@@ -312,6 +329,11 @@ public abstract class AbstractSynchronizeLogicalModelAction extends ResourceMode
 			ProgressMonitorUtility.doTaskExternal(op, new NullProgressMonitor());	
 		}		
 	}	
+
+	public IResourceSelector getSyncInfoSelector() {
+		return this.syncInfoSelector;
+	}
 	
 	protected abstract IActionOperation getOperation();
+	 
 }

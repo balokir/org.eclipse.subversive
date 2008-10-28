@@ -14,32 +14,36 @@ package org.eclipse.team.svn.ui.synchronize.update.action.logicalmodel;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeLogicalModelAction;
-import org.eclipse.team.svn.ui.synchronize.action.CommitActionHelper;
+import org.eclipse.team.svn.ui.synchronize.update.action.AddToSVNIgnoreActionHelper;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
- * Synchronize view commit action logical model implementation
+ * Synchronize view add to svn:ignore logical model action implementation
  * 
  * @author Igor Burilo
  */
-public class CommitModelAction extends AbstractSynchronizeLogicalModelAction {
+public class AddToSVNIgnoreModelAction extends AbstractSynchronizeLogicalModelAction {
 
-	protected CommitActionHelper actionHelper;
+	protected AddToSVNIgnoreActionHelper actionHelper;
 	
-	public CommitModelAction(String text, ISynchronizePageConfiguration configuration) {		
+	public AddToSVNIgnoreModelAction(String text, ISynchronizePageConfiguration configuration) {
 		super(text, configuration);
-		this.actionHelper = new CommitActionHelper(this, configuration);
+		this.actionHelper = new AddToSVNIgnoreActionHelper(this, configuration);
 	}
-	
+
+	protected boolean needsToSaveDirtyEditors() {
+		return false;
+	}
+			
 	protected FastSyncInfoFilter getSyncInfoFilter() {
 		return this.actionHelper.getSyncInfoFilter();
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeLogicalModelAction#getOperation()
-	 */	
+	 */
 	protected IActionOperation getOperation() {
 		return this.actionHelper.getOperation();
 	}
-		
+
 }
