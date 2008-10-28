@@ -11,10 +11,15 @@
 
 package org.eclipse.team.svn.ui.mapping;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
 import org.eclipse.team.core.mapping.provider.MergeContext;
@@ -22,6 +27,7 @@ import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
 import org.eclipse.team.internal.ui.synchronize.IChangeSetProvider;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.action.local.UpdateAction;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.extension.impl.synchronize.UpdateActionGroup;
 import org.eclipse.team.svn.ui.mapping.UpdateSubscriberContext.ChangeSetSubscriberScopeManager;
@@ -33,6 +39,7 @@ import org.eclipse.team.svn.ui.synchronize.action.ShowHistoryAction;
 import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.ShowHistoryModelAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.logicalmodel.CommitModelAction;
 import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.mapping.SynchronizationActionProvider;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipantActionGroup;
 import org.eclipse.ui.IMemento;
@@ -67,7 +74,7 @@ public class UpdateModelParticipant extends AbstractSVNModelParticipant implemen
 	}
 	
 	protected Collection<AbstractSynchronizeActionGroup> getActionGroups() {
-		return ExtensionsManager.getInstance().getCurrentSynchronizeActionContributor().getUpdateContributions();
+		return new ArrayList<AbstractSynchronizeActionGroup>();// ExtensionsManager.getInstance().getCurrentSynchronizeActionContributor().getUpdateContributions();
 	}
 
     protected int getSupportedModes() {
@@ -134,20 +141,47 @@ public class UpdateModelParticipant extends AbstractSVNModelParticipant implemen
 		public static final String GROUP_SYNC_NORMAL = "modelSyncIncomingOutgoing";
 		public static final String GROUP_SYNC_CONFLICTS = "modelSyncConflicting";
 		
-		/* (non-Javadoc)
-		 * @see org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup#configureMenuGroups(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
-		 */	
-		public void configureMenuGroups(ISynchronizePageConfiguration configuration) {
-			// TODO Auto-generated method stub
-			
+		protected void configureMergeAction(String mergeActionId, Action action) {
+			if (mergeActionId == SynchronizationActionProvider.MERGE_ACTION_ID) {
+				action.setText(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Update"));
+				action.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("/icons/common/actions/update.gif"));
+			} else if (mergeActionId == SynchronizationActionProvider.OVERWRITE_ACTION_ID) {
+				action.setText(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.OverrideAndUpdate"));
+			} else if (mergeActionId == SynchronizationActionProvider.MARK_AS_MERGE_ACTION_ID) {
+				action.setText(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.MarkAsMerged"));
+			} else if (mergeActionId == MERGE_ALL_ACTION_ID) {
+				action.setText(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.UpdateAllIncomingChanges"));
+				action.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("/icons/common/actions/update.gif"));
+			} else {
+				super.configureMergeAction(mergeActionId, action);
+			}
 		}
 		
-		/* (non-Javadoc)
-		 * @see org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup#configureActions(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
-		 */		
+		protected void addToContextMenu(String mergeActionId, Action action, IMenuManager manager) {
+			IContributionItem group = null;;
+			if (mergeActionId == SynchronizationActionProvider.MERGE_ACTION_ID) {
+				group = manager.find(UpdateModelActionGroup.GROUP_SYNC_NORMAL);
+			} else if (mergeActionId == SynchronizationActionProvider.OVERWRITE_ACTION_ID) {
+				group = manager.find(UpdateModelActionGroup.GROUP_SYNC_CONFLICTS);
+			} else if (mergeActionId == SynchronizationActionProvider.MARK_AS_MERGE_ACTION_ID) {
+				group = manager.find(UpdateModelActionGroup.GROUP_SYNC_CONFLICTS);
+			} else {
+				super.addToContextMenu(mergeActionId, action, manager);
+				return;
+			}
+			if (group != null) {
+				manager.appendToGroup(group.getId(), action);
+			} else {
+				manager.add(action);
+			}
+		}
+		
+		public void configureMenuGroups(ISynchronizePageConfiguration configuration) {
+		}
+		
 		protected void configureActions(ISynchronizePageConfiguration configuration) {			
-			//TODO correctly add action. Externalize string
-			CommitModelAction commitAction = new CommitModelAction("My Commit...", configuration);
+			CommitModelAction commitAction = new CommitModelAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.Commit"), configuration);
+			commitAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/commit.gif"));
 			this.appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					UpdateModelActionGroup.GROUP_SYNC_NORMAL,

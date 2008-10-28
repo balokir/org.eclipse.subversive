@@ -244,22 +244,17 @@
                 id="org.eclipse.team.svn.ui.workspaceSynchronizationMenu">
                 
              <insertionPoint name="file"/>
-             
              <insertionPoint name="file-bottom"/>
-             
              <insertionPoint name="edit" separator="true"/>
-             <insertionPoint
+             <insertionPoint name="modelSyncIncomingOutgoing" separator="true"/>
+             <insertionPoint name="modelSyncConflicting" separator="true"/>
+             <insertionPoint name="modelManageLocalChanges" separator="true"/>
+             <insertionPoint name="modelTeam" separator="true"/>
                    name="svnChangeSetActions"
                    separator="true"/> 
              <insertionPoint
                    name="sort"
                    separator="true"/>                   
-                                      
-             <insertionPoint name="modelSyncIncomingOutgoing" separator="true"/>
-             <insertionPoint name="modelSyncConflicting" separator="true"/>
-             <insertionPoint name="modelManageLocalChanges" separator="true"/>
-             <insertionPoint name="modelTeam" separator="true"/>
-
           </popupMenu>
        </viewer>
    </extension>
