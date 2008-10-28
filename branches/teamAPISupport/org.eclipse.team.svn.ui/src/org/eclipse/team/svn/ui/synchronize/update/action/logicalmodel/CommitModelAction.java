@@ -9,15 +9,14 @@
  *    Igor Burilo - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.svn.ui.synchronize.update.action;
+package org.eclipse.team.svn.ui.synchronize.update.action.logicalmodel;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.synchronize.UpdateSyncInfo;
-import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.dialog.TagModifyWarningDialog;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
@@ -30,6 +29,11 @@ import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeLogicalMode
 import org.eclipse.team.svn.ui.utility.CommitActionUtility;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
+/**
+ * Synchronize view commit action logical model implementation
+ * 
+ * @author Igor Burilo
+ */
 public class CommitModelAction extends AbstractSynchronizeLogicalModelAction {
 
 	public CommitModelAction(String text, ISynchronizePageConfiguration configuration) {		
@@ -44,23 +48,27 @@ public class CommitModelAction extends AbstractSynchronizeLogicalModelAction {
             }		    
 		};
 	}
-	
-	public void run() {
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeLogicalModelAction#getOperation()
+	 */	
+	protected IActionOperation getOperation() {
 		CommitActionUtility commitUtility = new CommitActionUtility(this.syncInfoSelector);
 		IResource[] resources = commitUtility.getAllResources();
 		if (SVNUtility.isTagOperated(resources)) {
 			TagModifyWarningDialog dlg = new TagModifyWarningDialog(this.getConfiguration().getSite().getShell());
         	if (dlg.open() != 0) {
-        		return;
+        		return null;
         	}
 		}
 		String proposedComment = ModelHelper.isShowModelSync() ? SVNModelParticipantChangeSetCapability.getProposedComment(resources) : SVNChangeSetCapability.getProposedComment(resources);                
 	    CommitPanel commitPanel = new CommitPanel(resources, resources, CommitPanel.MSG_COMMIT, proposedComment); 
         ICommitDialog dialog = ExtensionsManager.getInstance().getCurrentCommitFactory().getCommitDialog(this.getConfiguration().getSite().getShell(), commitUtility.getAllResourcesSet(), commitPanel);				
 		if (dialog.open() != 0) {
-			return;
+			return null;
 		}
-		ProgressMonitorUtility.doTaskExternal(commitUtility.getCompositeCommitOperation(commitPanel.getSelectedResources(), dialog.getMessage(), commitPanel.getKeepLocks(), this.getConfiguration().getSite().getShell(), this.getConfiguration().getSite().getPart()), new NullProgressMonitor());
+		
+		return commitUtility.getCompositeCommitOperation(commitPanel.getSelectedResources(), dialog.getMessage(), commitPanel.getKeepLocks(), this.getConfiguration().getSite().getShell(), this.getConfiguration().getSite().getPart());
 	}
 		
 }

@@ -253,12 +253,13 @@
                    separator="true"/> 
              <insertionPoint
                    name="sort"
-                   separator="true"/>
-                   
-                   
-                   
-             <insertionPoint name="syncIncomingOutgoing" separator="true"/>                   
-                   
+                   separator="true"/>                   
+                                      
+             <insertionPoint name="modelSyncIncomingOutgoing" separator="true"/>
+             <insertionPoint name="modelSyncConflicting" separator="true"/>
+             <insertionPoint name="modelManageLocalChanges" separator="true"/>
+             <insertionPoint name="modelTeam" separator="true"/>
+
           </popupMenu>
        </viewer>
    </extension>
