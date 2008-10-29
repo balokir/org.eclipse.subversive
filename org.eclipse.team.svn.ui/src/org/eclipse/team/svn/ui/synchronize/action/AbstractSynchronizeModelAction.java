@@ -185,12 +185,12 @@ public abstract class AbstractSynchronizeModelAction extends SynchronizeModelAct
 		};
 	}
 	
-	protected IResource getSelectedResource() {
+	public IResource getSelectedResource() {
 		ISynchronizeModelElement []selection = this.getSelectedElements();
 		return selection.length == 0 ? null : this.getSelectedElements()[0].getResource();
 	}
 	
-	protected AbstractSVNSyncInfo getSelectedSVNSyncInfo() {
+	public AbstractSVNSyncInfo getSelectedSVNSyncInfo() {
 		ISynchronizeModelElement []selection = this.getSelectedElements();
 		if (selection.length == 0 || !(selection[0] instanceof SyncInfoModelElement)) {
 			return null;
@@ -218,7 +218,11 @@ public abstract class AbstractSynchronizeModelAction extends SynchronizeModelAct
 		return retVal.toArray(new ISynchronizeModelElement[retVal.size()]);
 	}
 
-	public IResourceSelector getSyncInfoSelector() {
+	public IResourceSelector getSyncInfoSelector() {		
 		return this.syncInfoSelector;
 	}
+	
+	public IResourceSelector getTreeNodeSelector() {
+		return this.treeNodeSelector;
+	}		
 }
