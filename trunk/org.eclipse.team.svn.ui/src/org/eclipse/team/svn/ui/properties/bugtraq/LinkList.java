@@ -7,12 +7,12 @@
  *
  * Contributors:
  *    Alexander Gurov (Polarion Software) - initial API and implementation
+ *    Alexei Goncharov (Polarion Software) - URL decoration with bugtraq properties does not work properly (bug 252563)
  *******************************************************************************/
 
 package org.eclipse.team.svn.ui.properties.bugtraq;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -21,19 +21,18 @@ import java.util.List;
  * @author Alexander Gurov
  */
 public class LinkList {
-	protected ArrayList links = new ArrayList();
+	protected ArrayList<LinkPlacement> links = new ArrayList<LinkPlacement>();
 
 	public LinkList() {
 		super();
 	}
 	
-	public List getLinks() {
+	public List<LinkPlacement> getLinks() {
 		return this.links;
 	}
 
 	public boolean hasLinkAt(int offset) {
-		for (Iterator iter = this.links.iterator(); iter.hasNext();) {
-			LinkPlacement link = (LinkPlacement) iter.next();
+		for (LinkPlacement link : this.links) {
 			if (link.existAtOffset(offset)) {
 				return true;
 			}
@@ -42,8 +41,7 @@ public class LinkList {
 	}
 	
 	public LinkPlacement getLinkAt(int offset) {
-		for (Iterator iter = this.links.iterator(); iter.hasNext();) {
-			LinkPlacement link = (LinkPlacement)iter.next();
+		for (LinkPlacement link : this.links) {
 			if (link.existAtOffset(offset)) {
 				return link;
 			}

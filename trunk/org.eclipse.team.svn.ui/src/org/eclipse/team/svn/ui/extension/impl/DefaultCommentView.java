@@ -8,12 +8,12 @@
  * Contributors:
  *    Andrej Zachar - Initial API and implementation
  *    Jens Scheidtmann - butraq:logregex property display disgresses from specification (bug 243678)
+ *    Alexei Goncharov (Polarion Software) - URL decoration with bugtraq properties does not work properly (bug 252563)
  *******************************************************************************/
 
 package org.eclipse.team.svn.ui.extension.impl;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -170,15 +170,14 @@ public class DefaultCommentView implements ICommentView {
 				int start = 0;
 				while (linkMatcher.find(start)) {
 					start = linkMatcher.end();
-					DefaultCommentView.this.hyperList.getLinks().add(new LinkList.LinkPlacement(linkMatcher.start(), start, text));
+					DefaultCommentView.this.hyperList.getLinks().add(new LinkPlacement(linkMatcher.start(), start, text));
 				}
 				if (DefaultCommentView.this.getModel().getMessage() != null ||
 					DefaultCommentView.this.getModel().getLogregex() != null) {
 					DefaultCommentView.this.linkList.parseMessage(text, DefaultCommentView.this.getModel());
 				}
 				List<StyleRange> styledRanges = new ArrayList<StyleRange>();
-				for (Iterator iter = DefaultCommentView.this.linkList.getLinks().iterator(); iter.hasNext();) {
-					LinkList.LinkPlacement issue = (LinkList.LinkPlacement)iter.next();
+				for (LinkPlacement issue : DefaultCommentView.this.linkList.getLinks()) {
 					StyleRange range = new StyleRange();
 					range.start  = issue.getStart();
 					range.length = issue.getEnd() - issue.getStart();
@@ -186,8 +185,7 @@ public class DefaultCommentView implements ICommentView {
 					range.underline = true;
 					styledRanges.add(range);
 				}
-				for (Iterator iter = DefaultCommentView.this.hyperList.getLinks().iterator(); iter.hasNext();) {
-					LinkList.LinkPlacement issue = (LinkList.LinkPlacement)iter.next();
+				for (LinkList.LinkPlacement issue : DefaultCommentView.this.hyperList.getLinks()) {
 					StyleRange range = new StyleRange();
 					range.start  = issue.getStart();
 					range.length = issue.getEnd() - issue.getStart();
