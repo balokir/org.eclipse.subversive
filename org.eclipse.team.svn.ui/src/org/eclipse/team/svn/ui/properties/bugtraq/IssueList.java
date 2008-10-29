@@ -8,6 +8,7 @@
  * Contributors:
  *    Sergiy Logvin (Polarion Software) - initial API and implementation
  *    Jens Scheidtmann - butraq:logregex property display disgresses from specification (bug 243678)
+ *    Alexei Goncharov (Polarion Software) - URL decoration with bugtraq properties does not work properly (bug 252563)
  *******************************************************************************/
 
 package org.eclipse.team.svn.ui.properties.bugtraq;
@@ -15,11 +16,6 @@ package org.eclipse.team.svn.ui.properties.bugtraq;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Issue list
- * 
- * @author Sergiy Logvin
- */
 public class IssueList extends LinkList {
 	public IssueList() {
 		super();
@@ -95,6 +91,8 @@ public class IssueList extends LinkList {
 			return;
 		}
 
+		prefix = Pattern.quote(prefix);
+		suffix = Pattern.quote(suffix);
 		String regex = prefix + issueRegex + suffix;
 		Matcher matcher = Pattern.compile(regex, Pattern.MULTILINE).matcher(message);
 		while (matcher.find()) {
