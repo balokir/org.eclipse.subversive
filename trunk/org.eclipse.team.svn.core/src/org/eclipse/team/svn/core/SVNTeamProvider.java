@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Alexander Gurov - Initial API and implementation
+ *    Alexei Goncharov (Polarion Software) - Closing project with file in editor and reopening project generates NPE (bug 246147)
  *******************************************************************************/
 
 package org.eclipse.team.svn.core;
@@ -81,6 +82,9 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 	
 	public synchronized void relocateResource() throws CoreException {
 		//does not affect finite automate state
+		if (this.state != 1) {
+			this.restoreLocation();
+		}
 		SVNTeamProvider.setRepositoryLocation(this.getProject(), this.location);
 	}
 	
