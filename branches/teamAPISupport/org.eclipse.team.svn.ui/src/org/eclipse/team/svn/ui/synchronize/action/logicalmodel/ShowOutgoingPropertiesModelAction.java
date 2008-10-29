@@ -6,33 +6,33 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alexei Goncharov (Polarion Software) - initial API and implementation
+ *    Igor Burilo - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.svn.ui.synchronize.action;
+package org.eclipse.team.svn.ui.synchronize.action.logicalmodel;
 
-import java.util.Iterator;
-
-import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeLogicalModelAction;
+import org.eclipse.team.svn.ui.synchronize.action.ShowOutgoingPropertiesActionHelper;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
- * Set property action implementation for Synchronize view
+ * Show properties logical model action implementation for Synchronize view.
  * 
- * @author Alexei Goncharov
+ * @author Igor Burilo
  */
-public class SetPropertyAction extends AbstractSynchronizeModelAction {
+public class ShowOutgoingPropertiesModelAction extends AbstractSynchronizeLogicalModelAction {
+
+	protected ShowOutgoingPropertiesActionHelper actionHelper;
 	
-	protected SetPropertyActionHelper actionHelper;
-	
-	public SetPropertyAction(String text, ISynchronizePageConfiguration configuration) {
+	public ShowOutgoingPropertiesModelAction(String text, ISynchronizePageConfiguration configuration) {
 		super(text, configuration);
-		this.actionHelper = new SetPropertyActionHelper(this, configuration);
+		this.actionHelper = new ShowOutgoingPropertiesActionHelper(this, configuration);
 	}
 
 	protected boolean needsToSaveDirtyEditors() {
@@ -41,16 +41,14 @@ public class SetPropertyAction extends AbstractSynchronizeModelAction {
 	
 	protected boolean updateSelection(IStructuredSelection selection) {
 		super.updateSelection(selection);
-		for (Iterator<?> it = selection.iterator(); it.hasNext(); ) {
-			ISynchronizeModelElement element = (ISynchronizeModelElement)it.next();
-			if (IStateFilter.SF_VERSIONED.accept(SVNRemoteStorage.instance().asLocalResource(element.getResource()))) {
-				return true;
-			}
+		if (selection.size() == 1) {	
+			IResource resource = this.getSelectedResource();
+			return IStateFilter.SF_VERSIONED.accept(SVNRemoteStorage.instance().asLocalResource(resource));
 		}
 	    return false;
 	}
 	
-	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+	protected IActionOperation getOperation() {
 		return this.actionHelper.getOperation();
 	}
 

@@ -22,8 +22,8 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeLogicalModelAction;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.ModelParticipantAction;
 import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipantActionGroup;
-import org.eclipse.team.ui.synchronize.SynchronizeModelAction;
 
 /**
  * Abstract synchronize view logical model action contribution implementation
@@ -122,15 +122,14 @@ public abstract class AbstractSynchronizeModelActionGroup extends ModelSynchroni
 		
 	}
 	
-	//TODO check that it correctly works
 	protected void updateSelection(IMenuManager manager, ISelection selection) {
 		IContributionItem[] items = manager.getItems();
 		for (int i = 0; i < items.length; i++) {
 			IContributionItem item = items[i];
 			if (item instanceof ActionContributionItem) {
 				IAction actionItem = ((ActionContributionItem) item).getAction();
-				if (actionItem instanceof SynchronizeModelAction) {
-					((SynchronizeModelAction) actionItem).selectionChanged(selection);
+				if (actionItem instanceof ModelParticipantAction) {
+					((ModelParticipantAction) actionItem).selectionChanged(selection);
 				}
 			}
 		}

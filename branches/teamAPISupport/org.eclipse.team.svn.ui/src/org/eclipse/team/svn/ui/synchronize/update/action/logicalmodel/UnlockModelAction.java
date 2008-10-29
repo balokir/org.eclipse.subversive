@@ -6,31 +6,31 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alexei Goncharov (Polarion Software) - initial API and implementation
+ *    Igor Burilo - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.svn.ui.synchronize.update.action;
+package org.eclipse.team.svn.ui.synchronize.update.action.logicalmodel;
 
-import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
+import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeLogicalModelAction;
+import org.eclipse.team.svn.ui.synchronize.update.action.UnlockActionHelper;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
- * Unlock action implementation for Synchronize View
+ * Unlock logical model action implementation for Synchronize View
  * 
- * @author Alexei Goncharov
+ * @author Igor Burilo
  */
-public class UnlockAction extends AbstractSynchronizeModelAction {
-	
+public class UnlockModelAction extends AbstractSynchronizeLogicalModelAction {
+
 	protected UnlockActionHelper actionHelper;
 	
-	public UnlockAction(String text, ISynchronizePageConfiguration configuration) {
+	public UnlockModelAction(String text, ISynchronizePageConfiguration configuration) {
 		super(text, configuration);
 		this.actionHelper = new UnlockActionHelper(this, configuration);
 	}
-
+	
 	protected boolean needsToSaveDirtyEditors() {
 		return false;
 	}
@@ -38,8 +38,8 @@ public class UnlockAction extends AbstractSynchronizeModelAction {
 	protected FastSyncInfoFilter getSyncInfoFilter() {
 		return this.actionHelper.getSyncInfoFilter();
 	}
-
-	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+	
+	protected IActionOperation getOperation() {
 		return this.actionHelper.getOperation();
 	}
 

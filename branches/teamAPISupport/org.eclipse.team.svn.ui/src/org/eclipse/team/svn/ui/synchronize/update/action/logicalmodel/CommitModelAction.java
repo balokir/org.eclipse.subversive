@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.ui.synchronize.update.action.logicalmodel;
 
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeLogicalModelAction;
@@ -28,6 +29,11 @@ public class CommitModelAction extends AbstractSynchronizeLogicalModelAction {
 	
 	public CommitModelAction(String text, ISynchronizePageConfiguration configuration) {		
 		super(text, configuration);
+		this.actionHelper = new CommitActionHelper(this, configuration);
+	}
+	
+	public CommitModelAction(String text, ISynchronizePageConfiguration configuration, ISelectionProvider selectionProvider) {
+		super(text, configuration, selectionProvider);
 		this.actionHelper = new CommitActionHelper(this, configuration);
 	}
 	
