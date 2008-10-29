@@ -5,17 +5,29 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 0.7.4.I20081003-1900 release date: 03 October 2008
+Version 0.7.5.I20081029-1900 release date: 29 October 2008
 
 1. What's New
 
-   The version is 0.7.4 service release.
+   The version is 0.7.5 service release.
    
    Changes comparatively to the previous version are listed below. The full list of 
    changes you can find in Change Log.
     
-	Features:
-     * Browse button in Share dialog (bug 211233)
+   Features:
+    * Browse button in Share dialog (bug 211233)
+
+    * Allow to select resources only under repository location in Share project's simple mode (bug 249623)
+ 
+    * There is no way to type in the repository path when doing a Checkout from SVN (bug 231984)
+ 
+    * Add 'Drag and Drop' listeners to the Subversive views (bug 211236)
+      + thanks to Nick Entin for patches
+
+   Fixes:
+    * Closing project with file in editor and reopening project generates NPE (bug 246147)
+
+    * URL decoration with bugtraq properties does not work properly (bug 252563)
 	
 2. Information
 
