@@ -246,6 +246,8 @@
              <insertionPoint name="file"/>
              <insertionPoint name="file-bottom"/>
              <insertionPoint name="edit" separator="true"/>
+             <insertionPoint name="synchronize"/>
+             <insertionPoint name="navigate" separator="true"/>             
              <insertionPoint name="modelSyncIncomingOutgoing" separator="true"/>
              <insertionPoint name="modelSyncConflicting" separator="true"/>
              <insertionPoint name="modelManageLocalChanges" separator="true"/>

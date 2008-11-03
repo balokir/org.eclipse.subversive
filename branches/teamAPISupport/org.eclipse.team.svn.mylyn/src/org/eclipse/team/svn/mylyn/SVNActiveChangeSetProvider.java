@@ -14,7 +14,6 @@ package org.eclipse.team.svn.mylyn;
 import org.eclipse.mylyn.team.ui.AbstractActiveChangeSetProvider;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.mapping.ModelHelper;
 
 /**
  * Provides access to SVN ActiveChangeSet's 
@@ -23,10 +22,7 @@ import org.eclipse.team.svn.ui.mapping.ModelHelper;
  */
 public class SVNActiveChangeSetProvider extends AbstractActiveChangeSetProvider {
 	public ActiveChangeSetManager getActiveChangeSetManager() {
-		if (ModelHelper.isShowModelSync()) {
-			return SVNTeamUIPlugin.instance().getModelCangeSetManager();
-		}
-		return SVNTeamUIPlugin.instance().getChangeSetManager();
+		return SVNTeamUIPlugin.instance().getModelCangeSetManager();
 	}
 	
 }
