@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.ui.synchronize.action;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -18,8 +19,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.diff.IDiff;
@@ -38,9 +41,11 @@ import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
 import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.ui.action.IResourceSelector;
-import org.eclipse.team.svn.ui.synchronize.action.ISyncStateFilter;
+import org.eclipse.team.svn.ui.operation.UILoggedOperation;
+import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.SynchronizeModelAction;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
 @SuppressWarnings("restriction")
@@ -322,11 +327,27 @@ public abstract class AbstractSynchronizeLogicalModelAction extends ResourceMode
 	}
 	
 	protected void runOperation() {
-		IActionOperation op = this.getOperation();
-		if (op != null) {
-			//TODO how to get Progress Monitor ?
-			ProgressMonitorUtility.doTaskExternal(op, new NullProgressMonitor());	
-		}		
+		final IActionOperation op = AbstractSynchronizeLogicalModelAction.this.getOperation();
+		if (op == null) {
+			return;
+		}
+		UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+			public void run() {
+				try {
+					PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
+						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+								ProgressMonitorUtility.doTaskExternal(op, monitor);	
+							}
+						});
+				}
+				catch (InvocationTargetException ex) {
+					UILoggedOperation.reportError(op.getOperationName(), ex);
+				}
+				catch (InterruptedException ex) {
+					LoggedOperation.reportError(AbstractSynchronizeLogicalModelAction.this.getClass().getName(), ex);
+				}
+			}
+		});
 	}	
 
 	public IResourceSelector getSyncInfoSelector() {
