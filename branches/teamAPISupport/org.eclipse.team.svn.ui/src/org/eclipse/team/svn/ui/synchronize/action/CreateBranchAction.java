@@ -11,17 +11,13 @@
 
 package org.eclipse.team.svn.ui.synchronize.action;
 
-import java.util.Iterator;
-
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.action.local.BranchTagAction;
-import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
@@ -35,19 +31,17 @@ public class CreateBranchAction extends AbstractSynchronizeModelAction {
 	}
 
 	protected boolean updateSelection(IStructuredSelection selection) {
-		super.updateSelection(selection);
-		for (Iterator<?> it = selection.iterator(); it.hasNext(); ) {
-			ISynchronizeModelElement element = (ISynchronizeModelElement)it.next();
-			if (IStateFilter.SF_EXCLUDE_DELETED.accept(SVNRemoteStorage.instance().asLocalResource(element.getResource()))) {
-				return true;
-			}
-		}
+		super.updateSelection(selection);		
+		IResource[] resources = this.getAllSelectedResources();
+		if (FileUtility.checkForResourcesPresence(resources, IStateFilter.SF_EXCLUDE_DELETED, IResource.DEPTH_ZERO)) {
+			return true;
+		}	
 	    return false;
 	}
 	
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
-		IResource []resources = FileUtility.getResourcesRecursive(this.treeNodeSelector.getSelectedResources(), IStateFilter.SF_EXCLUDE_DELETED, IResource.DEPTH_ZERO);
-		
+		IResource[] selectedResources = this.getAllSelectedResources();
+		IResource []resources = FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_EXCLUDE_DELETED, IResource.DEPTH_ZERO);
 		return BranchTagAction.getBranchTagOperation(configuration.getSite().getShell(), BranchTagAction.BRANCH_ACTION, resources);
 	}
 

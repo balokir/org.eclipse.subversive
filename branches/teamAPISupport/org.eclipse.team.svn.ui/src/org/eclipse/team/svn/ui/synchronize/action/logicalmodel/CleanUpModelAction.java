@@ -6,29 +6,30 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    Alexei Goncharov (Polarion Software) - initial API and implementation
+ *    Igor Burilo - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.svn.ui.synchronize.action;
+package org.eclipse.team.svn.ui.synchronize.action.logicalmodel;
 
-import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeLogicalModelAction;
+import org.eclipse.team.svn.ui.synchronize.action.CleanUpActionHelper;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
- * Cleanup action implementation for Synchronize view
+ * Cleanup logical model action implementation for Synchronize view
  * 
- * @author Alexei Goncharov
+ * @author Igor Burilo
  */
-public class CleanUpAction extends AbstractSynchronizeModelAction {
-	
+public class CleanUpModelAction extends AbstractSynchronizeLogicalModelAction {
+
 	protected CleanUpActionHelper actionHelper;
 	
-	public CleanUpAction(String text, ISynchronizePageConfiguration configuration) {
+	public CleanUpModelAction(String text, ISynchronizePageConfiguration configuration) {
 		super(text, configuration);
 		this.actionHelper = new CleanUpActionHelper(this, configuration);
 	}
@@ -47,8 +48,8 @@ public class CleanUpAction extends AbstractSynchronizeModelAction {
 	    return false;
 	}
 	
-	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
+	protected IActionOperation getOperation() {
 		return this.actionHelper.getOperation();
 	}
-	
+
 }

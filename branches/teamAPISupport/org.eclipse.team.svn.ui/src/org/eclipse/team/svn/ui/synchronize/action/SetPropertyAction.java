@@ -11,14 +11,12 @@
 
 package org.eclipse.team.svn.ui.synchronize.action;
 
-import java.util.Iterator;
-
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
-import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
+import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
@@ -41,12 +39,12 @@ public class SetPropertyAction extends AbstractSynchronizeModelAction {
 	
 	protected boolean updateSelection(IStructuredSelection selection) {
 		super.updateSelection(selection);
-		for (Iterator<?> it = selection.iterator(); it.hasNext(); ) {
-			ISynchronizeModelElement element = (ISynchronizeModelElement)it.next();
-			if (IStateFilter.SF_VERSIONED.accept(SVNRemoteStorage.instance().asLocalResource(element.getResource()))) {
-				return true;
-			}
+		
+		IResource[] selectedResources = this.getAllSelectedResources();
+		if (FileUtility.checkForResourcesPresence(selectedResources, IStateFilter.SF_VERSIONED, IResource.DEPTH_ZERO)) {
+			return true;
 		}
+		
 	    return false;
 	}
 	

@@ -15,7 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeLogicalModelAction;
 import org.eclipse.team.svn.ui.synchronize.action.SetPropertyActionHelper;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -40,13 +40,11 @@ public class SetPropertyModelAction extends AbstractSynchronizeLogicalModelActio
 	
 	protected boolean updateSelection(IStructuredSelection selection) {
 		super.updateSelection(selection);
-
+		
 		IResource[] selectedResources = this.getAllSelectedResources();
-		for (IResource selectedResource : selectedResources) {
-			if (IStateFilter.SF_VERSIONED.accept(SVNRemoteStorage.instance().asLocalResource(selectedResource))) {
-				return true;
-			}
-		}		
+		if (FileUtility.checkForResourcesPresence(selectedResources, IStateFilter.SF_VERSIONED, IResource.DEPTH_ZERO)) {
+			return true;
+		}
 	    return false;
 	}
 	

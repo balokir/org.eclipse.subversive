@@ -13,30 +13,26 @@ package org.eclipse.team.svn.ui.synchronize.update.action.logicalmodel;
 
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeLogicalModelAction;
 import org.eclipse.team.svn.ui.synchronize.action.CommitActionHelper;
+import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.AbstractModelToolbarAction;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
- * Synchronize view commit action logical model implementation
+ * Synchronize view commit all action logical model implementation
  * 
  * @author Igor Burilo
  */
-public class CommitModelAction extends AbstractSynchronizeLogicalModelAction {
-
-	protected CommitActionHelper actionHelper;
+public class CommitAllModelAction extends AbstractModelToolbarAction {	
 	
-	public CommitModelAction(String text, ISynchronizePageConfiguration configuration) {		
+	public CommitAllModelAction(String text, ISynchronizePageConfiguration configuration) {		
 		super(text, configuration);
-		this.actionHelper = new CommitActionHelper(this, configuration);
 	}
 	
-	protected FastSyncInfoFilter getSyncInfoFilter() {
-		return this.actionHelper.getSyncInfoFilter();
+	public FastSyncInfoFilter getSyncInfoFilter() {
+		return CommitActionHelper.getCommitSyncInfoFilter();
 	}
 
 	protected IActionOperation getOperation() {
-		return this.actionHelper.getOperation();
+		return CommitActionHelper.getCommitOperation(this.getSyncInfoSelector(), this.getConfiguration());
 	}
-		
 }

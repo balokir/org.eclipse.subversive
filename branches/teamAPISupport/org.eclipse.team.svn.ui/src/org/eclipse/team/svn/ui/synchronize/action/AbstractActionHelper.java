@@ -56,15 +56,15 @@ public abstract class AbstractActionHelper {
 		return selector;
 	}
 	
-	public IResourceSelector getTreeNodeSelector() {
-		IResourceSelector selector = null;
-		if (this.action instanceof AbstractSynchronizeLogicalModelAction) {
-			selector =  ((AbstractSynchronizeLogicalModelAction) this.action).getSyncInfoSelector();
-		} else if (this.action instanceof AbstractSynchronizeModelAction) {
-			selector =  ((AbstractSynchronizeModelAction) this.action).getTreeNodeSelector();
-		}
-		return selector;
-	}
+//	public IResourceSelector getTreeNodeSelector() {
+//		IResourceSelector selector = null;
+//		if (this.action instanceof AbstractSynchronizeLogicalModelAction) {
+//			selector =  ((AbstractSynchronizeLogicalModelAction) this.action).getSyncInfoSelector();
+//		} else if (this.action instanceof AbstractSynchronizeModelAction) {
+//			selector =  ((AbstractSynchronizeModelAction) this.action).getTreeNodeSelector();
+//		}
+//		return selector;
+//	}
 	
 	public AbstractSVNSyncInfo[] getSVNSyncInfos() {
 		AbstractSVNSyncInfo[] syncInfos = null;
@@ -84,6 +84,16 @@ public abstract class AbstractActionHelper {
 			resource = ((AbstractSynchronizeModelAction) this.action).getSelectedResource();
 		}
 		return resource;
+	}
+	
+	public IResource[] getAllSelectedResources() {
+		IResource[] resources = null;
+		if (this.action instanceof AbstractSynchronizeLogicalModelAction) {
+			resources = ((AbstractSynchronizeLogicalModelAction) this.action).getAllSelectedResources();
+		} else if (this.action instanceof AbstractSynchronizeModelAction) {
+			resources = ((AbstractSynchronizeModelAction) this.action).getAllSelectedResources();
+		}
+		return resources;
 	}
 	
 	public AbstractSVNSyncInfo getSelectedSVNSyncInfo() {

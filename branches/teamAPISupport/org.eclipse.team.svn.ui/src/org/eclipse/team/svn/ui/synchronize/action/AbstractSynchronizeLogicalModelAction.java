@@ -17,14 +17,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
@@ -32,7 +28,6 @@ import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.ResourceModelParticipantAction;
-import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
@@ -64,41 +59,7 @@ public abstract class AbstractSynchronizeLogicalModelAction extends ResourceMode
 		//this.createTreeNodeSelector();
 	}
     
-	/**
-	 * Create an action with the given text and configuration. By default,
-	 * the action registers for selection change with the given selection provider.
-	 * 
-	 * @param text the action's text
-	 * @param configuration the actions synchronize page configuration
-	 * @param selectionProvider a selection provider
-	 */
-    public AbstractSynchronizeLogicalModelAction(String text, ISynchronizePageConfiguration configuration, ISelectionProvider selectionProvider) {
-		super(text, configuration);
-		initialize(configuration, selectionProvider);
-		
-		this.setEnabled(false);
-		this.setToolTipText(text);		
-		this.createSyncInfoSelector();				
-	}
-    
-	/**
-	 * Method invoked from the constructor.
-	 * The default implementation registers the action as a selection change
-	 * listener. Subclasses may override.
-	 * 
-	 * @param configuration the synchronize page configuration
-	 * @param selectionProvider a selection provider
-	 */
-	protected void initialize(final ISynchronizePageConfiguration configuration, final ISelectionProvider selectionProvider) {
-		selectionProvider.addSelectionChangedListener(this);
-		configuration.getPage().getViewer().getControl().addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				selectionProvider.removeSelectionChangedListener(AbstractSynchronizeLogicalModelAction.this);
-			}
-		});
-	}
-    
-    final protected boolean isEnabledForSelection(IStructuredSelection selection) {
+    protected boolean isEnabledForSelection(IStructuredSelection selection) {
     	return this.getFilteredResources().length > 0;
     }
     
@@ -273,7 +234,7 @@ public abstract class AbstractSynchronizeLogicalModelAction extends ResourceMode
 		return filtered.toArray(new IResource[filtered.size()]);
     }
     
-    protected IResource [] getAllSelectedResources() {
+    public IResource [] getAllSelectedResources() {
     	IStructuredSelection selection = this.getStructuredSelection();
     	ArrayList<IResource> retVal = new ArrayList<IResource>();
     	for (Iterator<?> it = selection.iterator(); it.hasNext(); ) {
