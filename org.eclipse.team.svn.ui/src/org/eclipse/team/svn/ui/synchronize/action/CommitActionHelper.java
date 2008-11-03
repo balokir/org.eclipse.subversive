@@ -19,6 +19,7 @@ import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.synchronize.UpdateSyncInfo;
 import org.eclipse.team.svn.core.utility.SVNUtility;
+import org.eclipse.team.svn.ui.action.IResourceSelector;
 import org.eclipse.team.svn.ui.dialog.TagModifyWarningDialog;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.extension.factory.ICommitDialog;
@@ -40,16 +41,29 @@ public class CommitActionHelper extends AbstractActionHelper {
 	public CommitActionHelper(IAction action, ISynchronizePageConfiguration configuration) {
 		super(action, configuration);		
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.svn.ui.synchronize.action.IActionHelper#getOperation(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
-	 */
+	
 	public IActionOperation getOperation() {
-		CommitActionUtility commitUtility = new CommitActionUtility(this.getSyncInfoSelector());
+		return CommitActionHelper.getCommitOperation(this.getSyncInfoSelector(), this.configuration);	}
+
+	public FastSyncInfoFilter getSyncInfoFilter() {
+		return CommitActionHelper.getCommitSyncInfoFilter();
+	}
+	
+	public static FastSyncInfoFilter getCommitSyncInfoFilter() {
+		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.OUTGOING}) {
+            public boolean select(SyncInfo info) {
+                UpdateSyncInfo sync = (UpdateSyncInfo)info;
+                return super.select(info) && !IStateFilter.SF_OBSTRUCTED.accept(sync.getLocalResource());
+            }		    
+		};
+	}
+	
+	public static IActionOperation getCommitOperation(IResourceSelector resourceSelector, ISynchronizePageConfiguration configuration) {
+		CommitActionUtility commitUtility = new CommitActionUtility(resourceSelector);
 		
 		IResource[] resources = commitUtility.getAllResources();
 		if (SVNUtility.isTagOperated(resources)) {
-			TagModifyWarningDialog dlg = new TagModifyWarningDialog(this.configuration.getSite().getShell());
+			TagModifyWarningDialog dlg = new TagModifyWarningDialog(configuration.getSite().getShell());
         	if (dlg.open() != 0) {
         		return null;
         	}
@@ -63,15 +77,6 @@ public class CommitActionHelper extends AbstractActionHelper {
 		}
 		
 		return commitUtility.getCompositeCommitOperation(commitPanel.getSelectedResources(), dialog.getMessage(), commitPanel.getKeepLocks(), configuration.getSite().getShell(), configuration.getSite().getPart());
-	}
-
-	public FastSyncInfoFilter getSyncInfoFilter() {
-		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.OUTGOING}) {
-            public boolean select(SyncInfo info) {
-                UpdateSyncInfo sync = (UpdateSyncInfo)info;
-                return super.select(info) && !IStateFilter.SF_OBSTRUCTED.accept(sync.getLocalResource());
-            }		    
-		};
 	}
 
 }

@@ -13,37 +13,36 @@ package org.eclipse.team.svn.ui.synchronize.action;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
+import org.eclipse.team.svn.core.operation.local.management.CleanupOperation;
 import org.eclipse.team.svn.core.utility.FileUtility;
-import org.eclipse.team.svn.ui.dialog.DefaultDialog;
-import org.eclipse.team.svn.ui.properties.ResourcePropertyEditPanel;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
- * Set property action helper implementation for Synchronize view
+ * Cleanup action helper implementation for Synchronize view
  * 
  * @author Igor Burilo
  */
-public class SetPropertyActionHelper extends AbstractActionHelper {
-	
-	public SetPropertyActionHelper(IAction action, ISynchronizePageConfiguration configuration) {
-		super(action, configuration);
+public class CleanUpActionHelper extends AbstractActionHelper {
+
+	public CleanUpActionHelper(IAction action, ISynchronizePageConfiguration configuration) {
+		super(action, configuration);	
 	}
-	
+
 	public IActionOperation getOperation() {
 		/*
-		 * Set property for all versioned selected resources 
+		 * Cleanup versioned selected folder 
 		 */
 		IResource[] selectedResources = this.getAllSelectedResources();
-		IResource[] filteredResources = FileUtility.filterResources(selectedResources, IStateFilter.SF_VERSIONED, IResource.DEPTH_ZERO);									
-		ResourcePropertyEditPanel panel = new ResourcePropertyEditPanel(null, filteredResources, true);
-		DefaultDialog dialog = new DefaultDialog(this.configuration.getSite().getShell(), panel);
-		if (dialog.open() == Dialog.OK) {
-			org.eclipse.team.svn.ui.action.local.SetPropertyAction.doSetProperty(filteredResources, panel, null);
-		}
-		return null;		
+		IResource[] filteredResources = FileUtility.filterResources(selectedResources, IStateFilter.SF_VERSIONED_FOLDERS, IResource.DEPTH_ZERO);
+		CleanupOperation mainOp = new CleanupOperation(filteredResources);
+		CompositeOperation op = new CompositeOperation(mainOp.getId());
+		op.add(mainOp);
+		op.add(new RefreshResourcesOperation(filteredResources));
+		return op;
 	}
 
 }

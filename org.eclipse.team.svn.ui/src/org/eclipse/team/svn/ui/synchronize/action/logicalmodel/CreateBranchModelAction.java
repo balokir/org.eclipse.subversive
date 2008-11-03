@@ -15,11 +15,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.action.local.BranchTagAction;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeLogicalModelAction;
-import org.eclipse.team.svn.ui.synchronize.action.ISyncStateFilter;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
@@ -36,20 +34,15 @@ public class CreateBranchModelAction extends AbstractSynchronizeLogicalModelActi
 	protected boolean updateSelection(IStructuredSelection selection) {
 		super.updateSelection(selection);		
 		IResource[] resources = this.getAllSelectedResources();
-		for (IResource resource : resources) {
-			if (IStateFilter.SF_EXCLUDE_DELETED.accept(SVNRemoteStorage.instance().asLocalResource(resource))) {
-				return true;
-			}
-		}		
+		if (FileUtility.checkForResourcesPresence(resources, IStateFilter.SF_EXCLUDE_DELETED, IResource.DEPTH_ZERO)) {
+			return true;
+		}	
 	    return false;
 	}
 		
 	protected IActionOperation getOperation() {
-		//TODO correctly use treeNodeSelector
-		IResource []resources = FileUtility.getResourcesRecursive(this.getSyncInfoSelector().getSelectedResources(), 
-				new ISyncStateFilter.StateFilterWrapper(IStateFilter.SF_EXCLUDE_DELETED, false), 				
-				IResource.DEPTH_ZERO);
-		
+		IResource[] selectedResources = this.getAllSelectedResources();
+		IResource []resources = FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_EXCLUDE_DELETED, IResource.DEPTH_ZERO);
 		return BranchTagAction.getBranchTagOperation(this.getConfiguration().getSite().getShell(), BranchTagAction.BRANCH_ACTION, resources);
 	}
 

@@ -40,9 +40,6 @@ public class EditConflictsActionHelper extends AbstractActionHelper {
 		};
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.svn.ui.synchronize.action.AbstractActionHelper#getOperation()
-	 */
 	public IActionOperation getOperation() {
 		return new ShowConflictEditorOperation(this.getSyncInfoSelector().getSelectedResources(), false);
 	}
