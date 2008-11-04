@@ -23,13 +23,15 @@ import org.eclipse.team.svn.ui.action.IResourceSelector;
 import org.eclipse.team.svn.ui.action.local.CommitAction;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.extension.factory.ICommitDialog;
+import org.eclipse.team.svn.ui.mapping.ModelHelper;
+import org.eclipse.team.svn.ui.mapping.SVNModelParticipantChangeSetCapability;
 import org.eclipse.team.svn.ui.panel.local.CommitPanel;
 import org.eclipse.team.svn.ui.synchronize.SVNChangeSetCapability;
 import org.eclipse.team.svn.ui.utility.CommitActionUtility;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
- * Commit integration for the Mylar project.
+ * Commit integration for the Mylyn project.
  * 
  * @author Alexander Gurov
  */
@@ -54,7 +56,7 @@ public class SVNCommitWorkflowProvider /*extends AbstractCommitWorkflowProvider*
 				return FileUtility.getResourcesRecursive(this.getSelectedResources(), filter, IResource.DEPTH_ZERO);
 			}
 		});	
-	    String proposedComment = SVNChangeSetCapability.getProposedComment(commitUtility.getAllResources());
+	    String proposedComment = ModelHelper.isShowModelSync() ? SVNModelParticipantChangeSetCapability.getProposedComment(commitUtility.getAllResources()) : SVNChangeSetCapability.getProposedComment(commitUtility.getAllResources());
         CommitPanel commitPanel = new CommitPanel(commitUtility.getAllResources(), CommitPanel.MSG_COMMIT, proposedComment);
         Shell shell = UIMonitorUtility.getShell();
         ICommitDialog commitDialog = ExtensionsManager.getInstance().getCurrentCommitFactory().getCommitDialog(shell, commitUtility.getAllResourcesSet(), commitPanel);

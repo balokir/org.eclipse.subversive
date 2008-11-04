@@ -35,5 +35,5 @@ public class SVNTaskRepositoryLinkProvider extends AbstractTaskRepositoryLinkPro
 		}
 		return null;
 	}
-
+	
 }

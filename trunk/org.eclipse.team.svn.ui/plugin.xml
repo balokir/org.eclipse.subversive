@@ -45,6 +45,9 @@
 		<factory adaptableType="org.eclipse.team.svn.ui.history.model.ILogNode" class="org.eclipse.team.svn.ui.history.SVNHistoryAdapterFactory">
 			<adapter type="org.eclipse.team.svn.core.connector.SVNLogEntry"/>
 		</factory>
+      	<factory adaptableType="org.eclipse.team.svn.core.mapping.SVNChangeSetModelProvider" class="org.eclipse.team.svn.ui.mapping.SVNAdapterFactory">
+        	<adapter type="org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter"/>
+        </factory>		
 	</extension>
    
 <!-- ************** SVN Team Wizards ********************** -->
@@ -207,6 +210,7 @@
             id="org.eclipse.team.svn.ui.wizard.ShareProjectWizard">
       </wizard>
    </extension>
+
 <!-- *************** Synchronize View Participant **************** -->
    <extension
          point="org.eclipse.team.ui.synchronizeParticipants">
@@ -218,6 +222,13 @@
             id="org.eclipse.team.svn.ui.synchronize.update.SynchronizeParticipant">
       </participant>
       <participant
+            persistent="true"
+            icon="icons/views/svn.gif"
+            class="org.eclipse.team.svn.ui.mapping.UpdateModelParticipant"
+            name="%SynchronizeParticipant"
+            id="org.eclipse.team.svn.ui.synchronize.update.SynchronizeModelParticipant">            
+      </participant>      
+      <participant
             persistent="false"
             icon="icons/views/svn.gif"
             class="org.eclipse.team.svn.ui.synchronize.merge.MergeParticipant"
@@ -225,6 +236,31 @@
             id="org.eclipse.team.svn.ui.synchronize.merge.MergeParticipant">
       </participant>
    </extension>
+   
+   <extension point="org.eclipse.ui.navigator.viewer">
+       <viewer viewerId="org.eclipse.team.svn.ui.workspaceSynchronization">
+           <popupMenu
+                allowsPlatformContributions="false"
+                id="org.eclipse.team.svn.ui.workspaceSynchronizationMenu">
+                
+             <insertionPoint name="file"/>
+             <insertionPoint name="file-bottom"/>
+             <insertionPoint name="edit" separator="true"/>
+             <insertionPoint name="synchronize"/>
+             <insertionPoint name="navigate" separator="true"/>             
+             <insertionPoint name="modelSyncIncomingOutgoing" separator="true"/>
+             <insertionPoint name="modelSyncConflicting" separator="true"/>
+             <insertionPoint name="modelManageLocalChanges" separator="true"/>
+             <insertionPoint name="modelTeam" separator="true"/>
+             <insertionPoint name="svnChangeSetActions"
+                   separator="true"/> 
+             <insertionPoint
+                   name="sort"
+                   separator="true"/>                   
+          </popupMenu>
+       </viewer>
+   </extension>
+   
 <!-- *************** Synchronize Wizards **************** -->
    <extension
          point="org.eclipse.team.ui.synchronizeWizards">
@@ -2233,5 +2269,38 @@
           id="org.eclipse.team.svn.ui.keybindings.scheme"
           name="Subversive Key Bindings Scheme"/>
  </extension>
+
+<!-- ************ Model elements ************ -->
+   <extension point="org.eclipse.ui.navigator.navigatorContent">
+      <navigatorContent
+            activeByDefault="false"
+            contentProvider="org.eclipse.team.svn.ui.mapping.SVNChangeSetContentProvider"
+            icon="icons/objects/changeset.gif"
+            id="org.eclipse.team.svn.ui.changeSetContent"
+            labelProvider="org.eclipse.team.svn.ui.mapping.SVNChangeSetLabelProvider"
+            name="%ChangeSetModel.Name"
+            priority="normal">
+         <enablement>
+           <or>         
+            <instanceof value="org.eclipse.team.svn.core.mapping.SVNChangeSetModelProvider"/>
+            <instanceof value="org.eclipse.team.svn.core.mapping.SVNActiveChangeSet"/>
+            <instanceof value="org.eclipse.team.svn.core.mapping.SVNIncomingChangeSet"/>
+            <instanceof value="org.eclipse.team.svn.core.mapping.SVNUnassignedChangeSet"/>
+            <instanceof value="org.eclipse.core.resources.IResource"/>
+           </or>
+         </enablement>
+         <commonSorter class="org.eclipse.team.svn.ui.mapping.SVNChangeSetSorter" id="org.eclipse.team.svn.ui.changeSetSorter"/>
+         <actionProvider
+               class="org.eclipse.team.svn.ui.mapping.SVNChangeSetActionProvider"
+               id="org.eclipse.team.svn.ui.svnChangeSetActions"/>
+       </navigatorContent>
+   </extension>
+   <extension
+         point="org.eclipse.team.ui.teamContentProviders">
+      <teamContentProvider
+            contentExtensionId="org.eclipse.team.svn.ui.changeSetContent"
+            icon="icons/objects/changeset.gif"
+            modelProviderId="org.eclipse.team.svn.core.svnChangeSetModel"/>
+   </extension>
 
  </plugin>

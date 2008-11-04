@@ -11,18 +11,12 @@
 
 package org.eclipse.team.svn.ui.synchronize.action;
 
-import java.util.Iterator;
-
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
-import org.eclipse.team.svn.core.operation.local.management.CleanupOperation;
-import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
-import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
+import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
@@ -31,8 +25,12 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
  * @author Alexei Goncharov
  */
 public class CleanUpAction extends AbstractSynchronizeModelAction {
+	
+	protected CleanUpActionHelper actionHelper;
+	
 	public CleanUpAction(String text, ISynchronizePageConfiguration configuration) {
 		super(text, configuration);
+		this.actionHelper = new CleanUpActionHelper(this, configuration);
 	}
 
 	protected boolean needsToSaveDirtyEditors() {
@@ -41,22 +39,16 @@ public class CleanUpAction extends AbstractSynchronizeModelAction {
 	
 	protected boolean updateSelection(IStructuredSelection selection) {
 		super.updateSelection(selection);
-		for (Iterator<?> it = selection.iterator(); it.hasNext(); ) {
-			ISynchronizeModelElement element = (ISynchronizeModelElement)it.next();
-			if (IStateFilter.SF_VERSIONED_FOLDERS.accept(SVNRemoteStorage.instance().asLocalResource(element.getResource()))) {
-				return true;
-			}
+		
+		IResource[] selectedResources = this.getAllSelectedResources();
+		if (FileUtility.checkForResourcesPresence(selectedResources, IStateFilter.SF_VERSIONED_FOLDERS, IResource.DEPTH_ZERO)) {
+			return true;
 		}
 	    return false;
 	}
 	
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
-		IResource []resources = this.treeNodeSelector.getSelectedResources(IStateFilter.SF_VERSIONED_FOLDERS);
-		CleanupOperation mainOp = new CleanupOperation(resources);
-		CompositeOperation op = new CompositeOperation(mainOp.getId());
-		op.add(mainOp);
-		op.add(new RefreshResourcesOperation(resources));
-		return op;
+		return this.actionHelper.getOperation();
 	}
 	
 }

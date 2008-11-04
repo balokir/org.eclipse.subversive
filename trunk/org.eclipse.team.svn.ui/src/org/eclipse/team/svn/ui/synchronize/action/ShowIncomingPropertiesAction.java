@@ -17,18 +17,12 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
-import org.eclipse.team.svn.core.operation.remote.GetRemotePropertiesOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
-import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
-import org.eclipse.team.svn.ui.operation.ShowPropertiesOperation;
-import org.eclipse.team.svn.ui.synchronize.AbstractSVNSyncInfo;
-import org.eclipse.team.svn.ui.synchronize.variant.RemoteResourceVariant;
-import org.eclipse.team.svn.ui.synchronize.variant.ResourceVariant;
+import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
+import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * Show properties action implementation for Synchronize view.
@@ -37,12 +31,16 @@ import org.eclipse.ui.PlatformUI;
  */
 public class ShowIncomingPropertiesAction extends AbstractSynchronizeModelAction {
 
+	protected ShowIncomingPropertiesActionHelper actionHelper;
+	
 	public ShowIncomingPropertiesAction(String text, ISynchronizePageConfiguration configuration) {
 		super(text, configuration);
+		this.actionHelper = new ShowIncomingPropertiesActionHelper(this, configuration);
 	}
 
 	public ShowIncomingPropertiesAction(String text, ISynchronizePageConfiguration configuration, ISelectionProvider selectionProvider) {
 		super(text, configuration, selectionProvider);
+		this.actionHelper = new ShowIncomingPropertiesActionHelper(this, configuration);
 	}
 	
 	protected boolean needsToSaveDirtyEditors() {
@@ -63,11 +61,7 @@ public class ShowIncomingPropertiesAction extends AbstractSynchronizeModelAction
 	}
 
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
-	    IResourceChange change = (IResourceChange)((RemoteResourceVariant)this.getSelectedSVNSyncInfo().getRemote()).getResource();
-	    IRepositoryResource remote = change.getOriginator();
-		IResourcePropertyProvider provider = new GetRemotePropertiesOperation(remote);
-		ShowPropertiesOperation op = new ShowPropertiesOperation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), remote, provider);
-		return op;
+		return this.actionHelper.getOperation();
 	}
 
 }

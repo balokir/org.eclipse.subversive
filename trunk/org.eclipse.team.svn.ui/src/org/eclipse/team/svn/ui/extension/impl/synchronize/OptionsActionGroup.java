@@ -13,9 +13,9 @@ package org.eclipse.team.svn.ui.extension.impl.synchronize;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.synchronize.AbstractSVNSubscriber;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -38,10 +38,9 @@ public class OptionsActionGroup extends AbstractSynchronizeActionGroup {
 	protected void configureActions(ISynchronizePageConfiguration configuration) {
 		this.contiguousOptionAction = new Action(SVNTeamUIPlugin.instance().getResource("OptionsActionGroup.ShowInfoContiguous"), IAction.AS_CHECK_BOX) {
 			public void run() {
-				IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
-				boolean fastReportMode = SVNTeamPreferences.getSynchronizeBoolean(store, SVNTeamPreferences.SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_NAME);
-				SVNTeamPreferences.setSynchronizeBoolean(store, SVNTeamPreferences.SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_NAME, !fastReportMode);
-				SVNTeamUIPlugin.instance().savePluginPreferences();
+				boolean fastReportMode = AbstractSVNSubscriber.getSynchInfoContigous();
+				AbstractSVNSubscriber.setSynchInfoContigous(!fastReportMode);
+				SVNTeamPlugin.instance().savePluginPreferences();
 			}
 		};
 		this.refreshOptionButtons();
@@ -52,7 +51,6 @@ public class OptionsActionGroup extends AbstractSynchronizeActionGroup {
 	}
 	
     protected void refreshOptionButtons() {
-		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
-		this.contiguousOptionAction.setChecked(SVNTeamPreferences.getSynchronizeBoolean(store, SVNTeamPreferences.SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_NAME));
+		this.contiguousOptionAction.setChecked(AbstractSVNSubscriber.getSynchInfoContigous());
     }
 }

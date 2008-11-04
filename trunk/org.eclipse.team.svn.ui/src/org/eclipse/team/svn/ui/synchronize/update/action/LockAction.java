@@ -12,19 +12,8 @@
 package org.eclipse.team.svn.ui.synchronize.update.action;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
-import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.core.operation.local.LockOperation;
-import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
-import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
-import org.eclipse.team.svn.ui.dialog.DefaultDialog;
-import org.eclipse.team.svn.ui.panel.local.CommitPanel;
-import org.eclipse.team.svn.ui.panel.local.LockPanel;
-import org.eclipse.team.svn.ui.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -34,8 +23,12 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
  * @author Alexei Goncharov
  */
 public class LockAction extends AbstractSynchronizeModelAction {
+	
+	protected LockActionHelper actionHelper;
+	
 	public LockAction(String text, ISynchronizePageConfiguration configuration) {
 		super(text, configuration);
+		this.actionHelper = new LockActionHelper(this, configuration);
 	}
 	
 	protected boolean needsToSaveDirtyEditors() {
@@ -43,27 +36,11 @@ public class LockAction extends AbstractSynchronizeModelAction {
 	}
 	
 	protected FastSyncInfoFilter getSyncInfoFilter() {
-		return new FastSyncInfoFilter() {
-            public boolean select(SyncInfo info) {
-                return super.select(info) && IStateFilter.SF_READY_TO_LOCK.accept(((AbstractSVNSyncInfo)info).getLocalResource());
-            }
-        };
+		return this.actionHelper.getSyncInfoFilter();
 	}
 
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
-		IResource [] selectedResources = this.syncInfoSelector.getSelectedResources();
-		CommitPanel.CollectPropertiesOperation cop = new CommitPanel.CollectPropertiesOperation(selectedResources);
-		ProgressMonitorUtility.doTaskExternal(cop, null);
-		LockPanel commentPanel = new LockPanel(true, cop.getMinLockSize());
-		DefaultDialog dialog = new DefaultDialog(configuration.getSite().getShell(), commentPanel);
-		if (dialog.open() == 0) {
-		    LockOperation mainOp = new LockOperation(selectedResources, commentPanel.getMessage(), commentPanel.getForce());
-		    CompositeOperation lockOp = new CompositeOperation(mainOp.getId());
-		    lockOp.add(mainOp);
-		    lockOp.add(new RefreshResourcesOperation(selectedResources));
-		    return lockOp;
-		}
-		return null;
+		return this.actionHelper.getOperation();
 	}
 
 }

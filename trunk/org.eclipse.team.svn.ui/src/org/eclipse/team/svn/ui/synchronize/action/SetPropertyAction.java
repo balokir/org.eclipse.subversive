@@ -11,18 +11,12 @@
 
 package org.eclipse.team.svn.ui.synchronize.action;
 
-import java.util.Iterator;
-
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
-import org.eclipse.team.svn.ui.dialog.DefaultDialog;
-import org.eclipse.team.svn.ui.properties.ResourcePropertyEditPanel;
-import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
+import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
@@ -31,8 +25,12 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
  * @author Alexei Goncharov
  */
 public class SetPropertyAction extends AbstractSynchronizeModelAction {
+	
+	protected SetPropertyActionHelper actionHelper;
+	
 	public SetPropertyAction(String text, ISynchronizePageConfiguration configuration) {
 		super(text, configuration);
+		this.actionHelper = new SetPropertyActionHelper(this, configuration);
 	}
 
 	protected boolean needsToSaveDirtyEditors() {
@@ -41,23 +39,17 @@ public class SetPropertyAction extends AbstractSynchronizeModelAction {
 	
 	protected boolean updateSelection(IStructuredSelection selection) {
 		super.updateSelection(selection);
-		for (Iterator<?> it = selection.iterator(); it.hasNext(); ) {
-			ISynchronizeModelElement element = (ISynchronizeModelElement)it.next();
-			if (IStateFilter.SF_VERSIONED.accept(SVNRemoteStorage.instance().asLocalResource(element.getResource()))) {
-				return true;
-			}
+		
+		IResource[] selectedResources = this.getAllSelectedResources();
+		if (FileUtility.checkForResourcesPresence(selectedResources, IStateFilter.SF_VERSIONED, IResource.DEPTH_ZERO)) {
+			return true;
 		}
+		
 	    return false;
 	}
 	
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
-		IResource [] resources = SetPropertyAction.this.treeNodeSelector.getSelectedResourcesRecursive(IStateFilter.SF_VERSIONED);
-		ResourcePropertyEditPanel panel = new ResourcePropertyEditPanel(null, resources, true);
-		DefaultDialog dialog = new DefaultDialog(configuration.getSite().getShell(), panel);
-		if (dialog.open() == Dialog.OK) {
-			org.eclipse.team.svn.ui.action.local.SetPropertyAction.doSetProperty(resources, panel, null);
-		}
-		return null;
+		return this.actionHelper.getOperation();
 	}
 
 }
