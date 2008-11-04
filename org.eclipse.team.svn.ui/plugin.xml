@@ -250,6 +250,7 @@
              <insertionPoint name="navigate" separator="true"/>             
              <insertionPoint name="modelSyncIncomingOutgoing" separator="true"/>
              <insertionPoint name="modelSyncConflicting" separator="true"/>
+             <insertionPoint name="svnSyncConflicting" separator="true"/>
              <insertionPoint name="modelManageLocalChanges" separator="true"/>
              <insertionPoint name="modelTeam" separator="true"/>
              <insertionPoint name="svnChangeSetActions"
