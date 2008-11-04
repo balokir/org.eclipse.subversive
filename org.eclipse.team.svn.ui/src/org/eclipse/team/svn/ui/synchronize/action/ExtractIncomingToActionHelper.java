@@ -52,7 +52,7 @@ public class ExtractIncomingToActionHelper extends AbstractActionHelper {
 	}
 	
 	public IActionOperation getOperation() {
-		DirectoryDialog fileDialog = new DirectoryDialog(configuration.getSite().getShell());
+		DirectoryDialog fileDialog = new DirectoryDialog(this.configuration.getSite().getShell());
 		fileDialog.setText(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Select.Title"));
 		fileDialog.setMessage(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Select.Description"));
 		String path = fileDialog.open();
@@ -84,7 +84,7 @@ public class ExtractIncomingToActionHelper extends AbstractActionHelper {
 			incomingResourcesToOperate.add(remote);
 			AbstractSVNSyncInfo[] syncInfos = this.getSVNSyncInfos();
 			for (AbstractSVNSyncInfo info : syncInfos) {
-				if (SyncInfo.getDirection(info.getKind()) == SyncInfo.INCOMING) {
+				if (SyncInfo.getDirection(info.getKind()) == SyncInfo.INCOMING || SyncInfo.getDirection(info.getKind()) == SyncInfo.CONFLICTING) {
 					IResourceChange change = ((IResourceChange)((RemoteResourceVariant)info.getRemote()).getResource());
 					if (remote.getUrl().equals(change.getOriginator().getUrl())) {
 						url2status.put(remote.getUrl(), change.getStatus());
