@@ -337,9 +337,13 @@ public final class FileUtility {
 	}
 	
 	public static IResource []filterResources(IResource []resources, IStateFilter filter) {
+		return FileUtility.filterResources(resources, filter, IResource.DEPTH_INFINITE);
+	}
+	
+	public static IResource []filterResources(IResource []resources, IStateFilter filter, int depth) {
 		HashSet<IResource> retVal = new HashSet<IResource>(Arrays.asList(resources));
 		for (int i = 0; i < resources.length; i++) {
-			if (!FileUtility.checkForResourcesPresenceRecursive(new IResource[] {resources[i]}, filter)) {
+			if (!FileUtility.checkForResourcesPresence(new IResource[] {resources[i]}, filter, depth)) {
 				retVal.remove(resources[i]);
 			}
 		}

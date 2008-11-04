@@ -155,9 +155,8 @@ public final class SVNTeamPreferences {
 	
 	public static final boolean PROPERTY_LINK_WITH_EDITOR_DEFAULT = false;
 	
-	public static final String SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_NAME = "fastReport";
-	
-	public static final boolean SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_DEFAULT = true;
+	public static final String ENABLE_MODEL_SYNC_NAME = "enableModelSync";	
+	public static final boolean ENABLE_MODEL_SYNC_DEFAULT = true;
 	
 	public static final String REPOSITORY_SHOW_BROWSER_NAME = "repositoryBrowser";
 	public static final boolean REPOSITORY_SHOW_BROWSER_DEFAULT = true;
@@ -347,8 +346,8 @@ public final class SVNTeamPreferences {
 		store.setDefault(SVNTeamPreferences.fullDateFormatName(SVNTeamPreferences.DATE_FORMAT_CUSTOM_NAME), SVNTeamPreferences.DATE_FORMAT_CUSTOM_DEFAULT);
 	}
 	
-	public static void setDefaultSynchronizeValues(IPreferenceStore store) {
-		store.setDefault(SVNTeamPreferences.fullSynchronizeName(SVNTeamPreferences.SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_NAME), SVNTeamPreferences.SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_DEFAULT);
+	public static void setDefaultSynchronizeValues(IPreferenceStore store) {			
+		store.setDefault(SVNTeamPreferences.fullSynchronizeName(SVNTeamPreferences.ENABLE_MODEL_SYNC_NAME), SVNTeamPreferences.ENABLE_MODEL_SYNC_DEFAULT);		
 	}
 	
 	public static void setDefaultPropertiesValues(IPreferenceStore store) {
@@ -479,8 +478,8 @@ public final class SVNTeamPreferences {
 		store.setValue(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_NAME), SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_DEFAULT);
 	}
 	
-	public static void resetToDefaultSynchronizeValues(IPreferenceStore store) {
-		store.setValue(SVNTeamPreferences.fullSynchronizeName(SVNTeamPreferences.SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_NAME), SVNTeamPreferences.SYNCHRONIZE_SHOW_REPORT_CONTIGUOUS_DEFAULT);
+	public static void resetToDefaultSynchronizeValues(IPreferenceStore store) {		
+		store.setValue(SVNTeamPreferences.fullSynchronizeName(SVNTeamPreferences.ENABLE_MODEL_SYNC_NAME), SVNTeamPreferences.ENABLE_MODEL_SYNC_DEFAULT);
 	}
 	
 	public static void resetToDefaultRepositoryValues(IPreferenceStore store) {

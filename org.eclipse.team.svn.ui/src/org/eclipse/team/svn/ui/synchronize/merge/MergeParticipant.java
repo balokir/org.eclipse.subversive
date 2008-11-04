@@ -19,12 +19,15 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.resource.ILocalResource;
+import org.eclipse.team.svn.core.synchronize.AbstractSVNSubscriber;
+import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
+import org.eclipse.team.svn.core.synchronize.MergeSubscriber;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
+import org.eclipse.team.svn.ui.operation.MergeScope;
 import org.eclipse.team.svn.ui.synchronize.AbstractSVNParticipant;
-import org.eclipse.team.svn.ui.synchronize.AbstractSVNSubscriber;
-import org.eclipse.team.svn.ui.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
+import org.eclipse.team.svn.ui.synchronize.SynchronizeLabelDecorator;
 import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ISynchronizeScope;
@@ -50,7 +53,9 @@ public class MergeParticipant extends AbstractSVNParticipant {
     
     public AbstractSVNSubscriber getMatchingSubscriber() {
         MergeSubscriber subscriber = MergeSubscriber.instance();
-        subscriber.setMergeScope((MergeScope)this.getScope());
+        MergeScope scope = (MergeScope) this.getScope();        
+        
+        subscriber.setMergeScopeHelper(scope.getMergeScopeHelper());
         return subscriber;
     }
 
@@ -86,14 +91,14 @@ public class MergeParticipant extends AbstractSVNParticipant {
     	return new MergeLabelDecorator();
     }
     
-	protected class MergeLabelDecorator extends LabelDecorator {
+	protected class MergeLabelDecorator extends SynchronizeLabelDecorator {
 	    public MergeLabelDecorator() {
 	        super();
 	    }
 	    
 		public Image decorateImage(Image image, Object element) {
 		    AbstractSVNSyncInfo info = this.getSyncInfo(element);
-			if (info != null && (info.getKind() & LabelDecorator.CONFLICTING_REPLACEMENT_MASK) == LabelDecorator.CONFLICTING_REPLACEMENT_MASK) {
+			if (info != null && (info.getKind() & SynchronizeLabelDecorator.CONFLICTING_REPLACEMENT_MASK) == SynchronizeLabelDecorator.CONFLICTING_REPLACEMENT_MASK) {
 				ILocalResource local = info.getLocalResource();
 		        if (IStateFilter.SF_PREREPLACEDREPLACED.accept(local)) {
 				    return this.registerImageDescriptor(new OverlayedImageDescriptor(image, AbstractSVNParticipant.OVR_REPLACED_CONF, new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V));

@@ -22,14 +22,15 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.team.internal.core.subscribers.SubscriberChangeSetManager;
+import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.mapping.SVNActiveChangeSetCollector;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
+import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.console.SVNConsole;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
-import org.eclipse.team.svn.ui.synchronize.update.UpdateSubscriber;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -46,7 +47,7 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 //	private ProblemListener problemListener;
 	
 	private SVNConsole console;
-	private SubscriberChangeSetManager changeSetManager;
+	private ActiveChangeSetManager activeChangeSetManager;
 
     public SVNTeamUIPlugin() {
         super();
@@ -93,6 +94,8 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 		
 //		Platform.addLogListener(this.problemListener);
 		
+		this.getModelCangeSetManager();
+		
 		SVNTeamPreferences.setDefaultValues(this.getPreferenceStore());
 		
 		Preferences corePreferences = SVNTeamPlugin.instance().getPluginPreferences();
@@ -122,19 +125,19 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 		
 		workspace.removeResourceChangeListener(this.pcListener);
 		
-		if (this.changeSetManager != null) {
-			this.changeSetManager.dispose();
+		if (this.activeChangeSetManager != null) {
+			this.activeChangeSetManager.dispose();
 		}
 
 //		Platform.removeLogListener(this.problemListener);
 		super.stop(context);
 	}
 	
-	public synchronized SubscriberChangeSetManager getChangeSetManager() {
-		if (this.changeSetManager == null) {
-			this.changeSetManager = new SubscriberChangeSetManager(UpdateSubscriber.instance());
+	public synchronized ActiveChangeSetManager getModelCangeSetManager() {
+		if (this.activeChangeSetManager == null) {
+			this.activeChangeSetManager = new SVNActiveChangeSetCollector(UpdateSubscriber.instance());
 		}
-		return this.changeSetManager;
-    }
+		return this.activeChangeSetManager;
+	}
 	
 }

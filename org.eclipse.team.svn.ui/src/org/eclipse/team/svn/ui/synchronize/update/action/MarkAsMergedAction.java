@@ -22,11 +22,11 @@ import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.MarkAsMergedOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.resource.ILocalFile;
+import org.eclipse.team.svn.core.synchronize.UpdateSyncInfo;
+import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.operation.ClearUpdateStatusesOperation;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
-import org.eclipse.team.svn.ui.synchronize.update.UpdateSyncInfo;
-import org.eclipse.team.svn.ui.synchronize.variant.ResourceVariant;
 import org.eclipse.team.svn.ui.utility.UnacceptableOperationNotificator;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -48,7 +48,7 @@ public class MarkAsMergedAction extends AbstractSynchronizeModelAction {
                     UpdateSyncInfo sync = (UpdateSyncInfo)info;
                     boolean localIsFile = sync.getLocalResource().getResource() instanceof IFile;
                     boolean remoteIsFile = ((ResourceVariant)sync.getRemote()).getResource() instanceof ILocalFile;
-                    return !IStateFilter.SF_OBSTRUCTED.accept(sync.getLocalResource()) && localIsFile == remoteIsFile;
+                    return !IStateFilter.SF_OBSTRUCTED.accept(sync.getLocalResource()) && localIsFile && remoteIsFile;
                 }
                 return false;
             }

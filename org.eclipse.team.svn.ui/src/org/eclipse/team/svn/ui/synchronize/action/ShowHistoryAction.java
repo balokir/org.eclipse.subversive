@@ -19,10 +19,8 @@ import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
-import org.eclipse.team.svn.ui.operation.ShowHistoryViewOperation;
-import org.eclipse.team.svn.ui.synchronize.AbstractSVNSyncInfo;
-import org.eclipse.team.svn.ui.synchronize.variant.RemoteResourceVariant;
-import org.eclipse.team.svn.ui.synchronize.variant.ResourceVariant;
+import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
+import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -32,8 +30,12 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
  * @author Alexander Gurov
  */
 public class ShowHistoryAction extends AbstractSynchronizeModelAction {
+	
+	protected ShowHistoryActionHelper actionHelper;
+	
 	public ShowHistoryAction(String text, ISynchronizePageConfiguration configuration) {
 		super(text, configuration);
+		this.actionHelper = new ShowHistoryActionHelper(this, configuration);
 	}
 
 	protected boolean needsToSaveDirtyEditors() {
@@ -59,14 +61,7 @@ public class ShowHistoryAction extends AbstractSynchronizeModelAction {
 	}
 
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
-		AbstractSVNSyncInfo info = this.getSelectedSVNSyncInfo();
-		if (info != null ) {
-			RemoteResourceVariant variant = (RemoteResourceVariant)info.getRemote();
-			if (variant.getResource() instanceof IResourceChange) {
-				return new ShowHistoryViewOperation(((IResourceChange)variant.getResource()).getOriginator(), 0, 0);
-			}
-		}
-		return new ShowHistoryViewOperation(this.getSelectedResource(), 0, 0);
+		return this.actionHelper.getOperation();
 	}
 
 }

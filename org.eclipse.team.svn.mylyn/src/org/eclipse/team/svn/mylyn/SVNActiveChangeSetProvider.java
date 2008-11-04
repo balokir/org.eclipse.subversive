@@ -22,7 +22,7 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
  */
 public class SVNActiveChangeSetProvider extends AbstractActiveChangeSetProvider {
 	public ActiveChangeSetManager getActiveChangeSetManager() {
-		return SVNTeamUIPlugin.instance().getChangeSetManager();
+		return SVNTeamUIPlugin.instance().getModelCangeSetManager();
 	}
 	
 }

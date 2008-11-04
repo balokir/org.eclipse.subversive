@@ -12,18 +12,13 @@
 package org.eclipse.team.svn.ui.synchronize.action;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
-import org.eclipse.team.svn.core.operation.local.property.GetPropertiesOperation;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
-import org.eclipse.team.svn.ui.operation.ShowPropertiesOperation;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * Show properties action implementation for Synchronize view.
@@ -32,12 +27,16 @@ import org.eclipse.ui.PlatformUI;
  */
 public class ShowOutgoingPropertiesAction extends AbstractSynchronizeModelAction {
 
+	protected ShowOutgoingPropertiesActionHelper actionHelper;
+	
 	public ShowOutgoingPropertiesAction(String text, ISynchronizePageConfiguration configuration) {
 		super(text, configuration);
+		this.actionHelper = new ShowOutgoingPropertiesActionHelper(this, configuration);
 	}
 
 	public ShowOutgoingPropertiesAction(String text, ISynchronizePageConfiguration configuration, ISelectionProvider selectionProvider) {
 		super(text, configuration, selectionProvider);
+		this.actionHelper = new ShowOutgoingPropertiesActionHelper(this, configuration);
 	}
 	
 	protected boolean needsToSaveDirtyEditors() {
@@ -54,10 +53,7 @@ public class ShowOutgoingPropertiesAction extends AbstractSynchronizeModelAction
 	}
 	
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
-		IResource selectedResource = this.getSelectedResource();
-		IResourcePropertyProvider provider = new GetPropertiesOperation(selectedResource);
-		ShowPropertiesOperation op = new ShowPropertiesOperation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), selectedResource, provider);
-		return op;
+		return this.actionHelper.getOperation();
 	}
 
 }

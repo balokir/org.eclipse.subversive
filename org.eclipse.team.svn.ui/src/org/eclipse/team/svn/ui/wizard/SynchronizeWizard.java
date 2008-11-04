@@ -11,11 +11,16 @@
 
 package org.eclipse.team.svn.ui.wizard;
 
+import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.team.internal.ui.mapping.ModelElementSelectionPage;
+import org.eclipse.team.internal.ui.synchronize.GlobalRefreshElementSelectionPage;
 import org.eclipse.team.internal.ui.synchronize.GlobalRefreshResourceSelectionPage;
+import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.mapping.ModelHelper;
 import org.eclipse.team.svn.ui.operation.ShowUpdateViewOperation;
-import org.eclipse.team.svn.ui.synchronize.update.UpdateSubscriber;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
+import org.eclipse.team.ui.synchronize.ISynchronizeScope;
 
 /**
  * Synchronize set selection wizard
@@ -23,8 +28,8 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  * @author Alexander Gurov
  */
 public class SynchronizeWizard extends AbstractSVNWizard {
-	
-	protected GlobalRefreshResourceSelectionPage selection;
+			  
+	protected GlobalRefreshElementSelectionPage selection;
 
 	public SynchronizeWizard() {
 		super();
@@ -32,13 +37,26 @@ public class SynchronizeWizard extends AbstractSVNWizard {
 	}
 	
 	public void addPages() {
-		this.selection = new GlobalRefreshResourceSelectionPage(UpdateSubscriber.instance().roots());
+		if (ModelHelper.isShowModelSync()) {
+			this.selection = new ModelElementSelectionPage(UpdateSubscriber.instance().roots());
+		} else {
+			this.selection = new GlobalRefreshResourceSelectionPage(UpdateSubscriber.instance().roots());
+		}
 		this.selection.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
 		this.addPage(this.selection);
 	}
 
 	public boolean performFinish() {
-		UIMonitorUtility.doTaskBusyDefault(new ShowUpdateViewOperation(this.selection.getSynchronizeScope(), null));
+		ShowUpdateViewOperation op;
+		if (ModelHelper.isShowModelSync()) {
+			ResourceMapping[] mappings =  ((ModelElementSelectionPage) this.selection).getSelectedMappings();
+			op = new ShowUpdateViewOperation(mappings, null);	
+		} else {
+			ISynchronizeScope scope = ((GlobalRefreshResourceSelectionPage) this.selection).getSynchronizeScope();  
+			op = new ShowUpdateViewOperation(scope, null);	
+		}
+		UIMonitorUtility.doTaskBusyDefault(op);
+		
 		return true;
 	}
 
