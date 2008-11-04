@@ -52,6 +52,7 @@ import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipantActionGroup;
 public class UpdateModelActionGroup extends AbstractSynchronizeModelActionGroup {
 
 	public static final String GROUP_SYNC_NORMAL = "modelSyncIncomingOutgoing";
+	public static final String SVN_SYNC_CONFLICTS = "svnSyncConflicting";
 	public static final String GROUP_SYNC_CONFLICTS = "modelSyncConflicting";
 	
 	protected void configureMergeAction(String mergeActionId, Action action) {			
@@ -126,14 +127,14 @@ public class UpdateModelActionGroup extends AbstractSynchronizeModelActionGroup 
 		EditConflictsModelAction editConflictsAction = new EditConflictsModelAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.EditConflicts"), configuration);
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-				UpdateModelActionGroup.GROUP_SYNC_CONFLICTS,
+				UpdateModelActionGroup.SVN_SYNC_CONFLICTS,
 				editConflictsAction);
 		
 		//compare properties
 		ComparePropertiesModelAction comparePropsAction = new ComparePropertiesModelAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.CompareProperties"), configuration);
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-				UpdateModelActionGroup.GROUP_SYNC_CONFLICTS,
+				UpdateModelActionGroup.SVN_SYNC_CONFLICTS,
 				comparePropsAction);
 		
 		//revert
