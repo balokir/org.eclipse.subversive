@@ -90,12 +90,6 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 				ISynchronizePageConfiguration.MODE_GROUP,
 				expandAllAction);
 		
-		UpdateAction updateAction = new UpdateAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Update"), configuration);
-		updateAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/update.gif"));
-		this.appendToGroup(
-				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-				UpdateActionGroup.GROUP_SYNC_NORMAL,
-				updateAction);
 		CommitAction commitAction = new CommitAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.Commit"), configuration);
 		commitAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/commit.gif"));
 		this.appendToGroup(
@@ -103,16 +97,32 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 				UpdateActionGroup.GROUP_SYNC_NORMAL,
 				commitAction);
 
-		OverrideAndUpdateAction overrideUpdateAction = new OverrideAndUpdateAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.OverrideAndUpdate"), configuration);
+		UpdateAction updateAction = new UpdateAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Update"), configuration);
+		updateAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/update.gif"));
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-				UpdateActionGroup.GROUP_SYNC_CONFLICTS,
-				overrideUpdateAction);
+				UpdateActionGroup.GROUP_SYNC_NORMAL,
+				updateAction);
+		
 		OverrideAndCommitAction overrideCommitAction = new OverrideAndCommitAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.OverrideAndCommit"), configuration);
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				UpdateActionGroup.GROUP_SYNC_CONFLICTS,
 				overrideCommitAction);
+		OverrideAndUpdateAction overrideUpdateAction = new OverrideAndUpdateAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.OverrideAndUpdate"), configuration);
+		this.appendToGroup(
+				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+				UpdateActionGroup.GROUP_SYNC_CONFLICTS,
+				overrideUpdateAction);
+		MarkAsMergedAction markMergedAction = new MarkAsMergedAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.MarkAsMerged"), configuration);
+		this.appendToGroup(
+				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+				UpdateActionGroup.GROUP_SYNC_CONFLICTS,
+				markMergedAction);
+		this.appendToGroup(
+				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+				UpdateActionGroup.GROUP_SYNC_CONFLICTS,
+				new Separator());
 		EditConflictsAction editConflictsAction = new EditConflictsAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.EditConflicts"), configuration);
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
@@ -123,11 +133,6 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				UpdateActionGroup.GROUP_SYNC_CONFLICTS,
 				comparePropsAction);
-		MarkAsMergedAction markMergedAction = new MarkAsMergedAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.MarkAsMerged"), configuration);
-		this.appendToGroup(
-				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-				UpdateActionGroup.GROUP_SYNC_CONFLICTS,
-				markMergedAction);									
 		
 		RevertAction revertAction = new RevertAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Revert"), configuration);
 		revertAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/revert.gif"));
