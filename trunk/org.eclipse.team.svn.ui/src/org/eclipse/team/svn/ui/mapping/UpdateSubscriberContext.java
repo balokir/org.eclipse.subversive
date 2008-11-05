@@ -273,7 +273,7 @@ public class UpdateSubscriberContext extends SubscriberMergeContext {
 		//stub		
 	}
 	
-	public static SubscriberScopeManager createWorkspaceScopeManager(ResourceMapping[] mappings, boolean consultModels, final boolean consultChangeSets) {
+	public static SubscriberScopeManager createWorkspaceScopeManager(ResourceMapping[] mappings, boolean consultModels, boolean consultChangeSets) {
 		return new ChangeSetSubscriberScopeManager(UpdateSubscriber.instance().getName(), mappings, UpdateSubscriber.instance(), consultModels, consultChangeSets);
 	}
 	
