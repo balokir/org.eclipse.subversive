@@ -13,12 +13,17 @@ package org.eclipse.team.svn.ui.synchronize.action;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.synchronize.UpdateSyncInfo;
 import org.eclipse.team.svn.core.utility.SVNUtility;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.action.IResourceSelector;
 import org.eclipse.team.svn.ui.dialog.TagModifyWarningDialog;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
@@ -26,8 +31,10 @@ import org.eclipse.team.svn.ui.extension.factory.ICommitDialog;
 import org.eclipse.team.svn.ui.mapping.ModelHelper;
 import org.eclipse.team.svn.ui.mapping.SVNModelParticipantChangeSetCapability;
 import org.eclipse.team.svn.ui.panel.local.CommitPanel;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.synchronize.SVNChangeSetCapability;
 import org.eclipse.team.svn.ui.utility.CommitActionUtility;
+import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
@@ -78,5 +85,51 @@ public class CommitActionHelper extends AbstractActionHelper {
 		
 		return commitUtility.getCompositeCommitOperation(commitPanel.getSelectedResources(), dialog.getMessage(), commitPanel.getKeepLocks(), configuration.getSite().getShell(), configuration.getSite().getPart());
 	}
-
+	
+	/**
+	 * Ask preferences in order to determine whether to consult change sets
+	 * during commit, synchronize or not
+	 */
+	public static boolean isIncludeChangeSets(final String message) {		
+		if (SVNTeamUIPlugin.instance().getModelCangeSetManager().getSets().length == 0)
+			return false;
+		
+		final IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
+		String consultChangeSetsOption = SVNTeamPreferences.getConsultChangeSetsInCommit(store, SVNTeamPreferences.CONSULT_CHANGE_SETS_IN_COMMIT);		
+		if (consultChangeSetsOption.equals(SVNTeamPreferences.CONSULT_CHANGE_SETS_IN_COMMIT_ALWAYS)) {
+			return true;
+		} else if (consultChangeSetsOption.equals(SVNTeamPreferences.CONSULT_CHANGE_SETS_IN_COMMIT_NEVER)) {
+			return false;
+		}
+		
+		final int[] result = new int[] { 0 };
+		// Ask the user whether to switch
+		UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+			public void run() {
+				Shell shell = UIMonitorUtility.getShell();
+				
+				MessageDialogWithToggle m = MessageDialogWithToggle.openYesNoQuestion(
+						shell,
+						SVNTeamUIPlugin.instance().getResource("ConsultChangeSets.toggleDialog.title"), 
+						message, 
+						SVNTeamUIPlugin.instance().getResource("ConsultChangeSets.toggleDialog.toggleMessage"), 
+						false /* toggle state */,
+						store,
+						SVNTeamPreferences.fullPromptName(SVNTeamPreferences.CONSULT_CHANGE_SETS_IN_COMMIT));
+				m.getReturnCode();	
+				result[0] = m.getReturnCode();
+			}
+		});
+							
+		switch (result[0]) {
+			// yes
+			case IDialogConstants.YES_ID:
+			case IDialogConstants.OK_ID :
+				return true;
+			// no
+			case IDialogConstants.NO_ID :
+				return false;
+		}
+		return false;				
+	}
 }

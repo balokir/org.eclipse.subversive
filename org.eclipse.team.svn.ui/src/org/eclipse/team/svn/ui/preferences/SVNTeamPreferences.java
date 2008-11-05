@@ -17,6 +17,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.RGB;
@@ -34,6 +35,7 @@ public final class SVNTeamPreferences {
 	public static final String SYNCHRONIZE_BASE = "preference.synchronize.";
 	public static final String HISTORY_BASE = "preference.history.";
 	public static final String DATE_FORMAT_BASE = "preference.dateFormat.";
+	public static final String PROMPT_BASE = "preference.prompt.";
 	public static final String PROPERTIES_BASE = "preference.properties.";
 	public static final String MAILREPORTER_BASE = "preference.mailreporter.";
 	public static final String COMMENT_TEMPLATES_BASE = "preference.templates";
@@ -141,7 +143,7 @@ public final class SVNTeamPreferences {
 	public static final boolean HISTORY_CONNECT_TO_COMPARE_WITH_DEFAULT = true;
 	
 	public static final String DATE_FORMAT_NAME = "dateFormat";
-	public static final String DATE_FORMAT_CUSTOM_NAME = "dateFormatCustom";
+	public static final String DATE_FORMAT_CUSTOM_NAME = "dateFormatCustom";		
 	
 	public static final int DATE_FORMAT_MODE_SHORT = 0;
 	public static final int DATE_FORMAT_MODE_MEDIUM = 1;
@@ -150,6 +152,13 @@ public final class SVNTeamPreferences {
 	
 	public static final int DATE_FORMAT_DEFAULT = DATE_FORMAT_MODE_SHORT;
 	public static final String DATE_FORMAT_CUSTOM_DEFAULT = "";
+	
+	public static final String CONSULT_CHANGE_SETS_IN_COMMIT = "consultChangeSetsInCommit";
+	
+	public static final String CONSULT_CHANGE_SETS_IN_COMMIT_ALWAYS = MessageDialogWithToggle.ALWAYS;
+	public static final String CONSULT_CHANGE_SETS_IN_COMMIT_NEVER = MessageDialogWithToggle.NEVER;
+	public static final String CONSULT_CHANGE_SETS_IN_COMMIT_PROMPT = MessageDialogWithToggle.PROMPT;
+	public static final String CONSULT_CHANGE_SETS_IN_COMMIT_DEFAULT = CONSULT_CHANGE_SETS_IN_COMMIT_NEVER;
 	
 	public static final String PROPERTY_LINK_WITH_EDITOR_NAME = "linkWithEditor";
 	
@@ -295,6 +304,7 @@ public final class SVNTeamPreferences {
 		SVNTeamPreferences.setDefaultMailReporterValues(store);
 		SVNTeamPreferences.setDefaultHistoryValues(store);
 		SVNTeamPreferences.setDefaultDateFormatValues(store);
+		SVNTeamPreferences.setDefaultPromptValues(store);
 		SVNTeamPreferences.setDefaultPropertiesValues(store);
 		SVNTeamPreferences.setDefaultCommentTemplatesValues(store);
 		SVNTeamPreferences.setDefaultBehaviourValues(store);
@@ -344,6 +354,10 @@ public final class SVNTeamPreferences {
 	public static void setDefaultDateFormatValues(IPreferenceStore store) {
 		store.setDefault(SVNTeamPreferences.fullDateFormatName(SVNTeamPreferences.DATE_FORMAT_NAME), SVNTeamPreferences.DATE_FORMAT_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullDateFormatName(SVNTeamPreferences.DATE_FORMAT_CUSTOM_NAME), SVNTeamPreferences.DATE_FORMAT_CUSTOM_DEFAULT);
+	}
+	
+	public static void setDefaultPromptValues(IPreferenceStore store) {
+		store.setDefault(SVNTeamPreferences.fullPromptName(SVNTeamPreferences.CONSULT_CHANGE_SETS_IN_COMMIT), SVNTeamPreferences.CONSULT_CHANGE_SETS_IN_COMMIT_DEFAULT);
 	}
 	
 	public static void setDefaultSynchronizeValues(IPreferenceStore store) {			
@@ -454,6 +468,10 @@ public final class SVNTeamPreferences {
 		store.setValue(SVNTeamPreferences.fullDateFormatName(SVNTeamPreferences.DATE_FORMAT_NAME), SVNTeamPreferences.DATE_FORMAT_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullDateFormatName(SVNTeamPreferences.DATE_FORMAT_CUSTOM_NAME), SVNTeamPreferences.DATE_FORMAT_CUSTOM_DEFAULT);
 	}
+	
+	public static void resetToDefaultPromptValues(IPreferenceStore store) {
+		store.setValue(SVNTeamPreferences.fullPromptName(SVNTeamPreferences.CONSULT_CHANGE_SETS_IN_COMMIT), SVNTeamPreferences.CONSULT_CHANGE_SETS_IN_COMMIT_DEFAULT);
+	} 
 	
 	public static void resetToDefaultMailReporterValues(IPreferenceStore store) {
 		store.setValue(SVNTeamPreferences.fullMailReporterName(SVNTeamPreferences.MAILREPORTER_ENABLED_NAME), SVNTeamPreferences.MAILREPORTER_ENABLED_DEFAULT);
@@ -591,6 +609,10 @@ public final class SVNTeamPreferences {
 		return store.getString(SVNTeamPreferences.fullDateFormatName(shortName));
 	}
 	
+	public static String getConsultChangeSetsInCommit(IPreferenceStore store, String shortName) {
+		return store.getString(SVNTeamPreferences.fullPromptName(shortName));
+	}	
+	
 	public static boolean getBehaviourBoolean(IPreferenceStore store, String shortName) {
 		return store.getBoolean(SVNTeamPreferences.fullBehaviourName(shortName));
 	}
@@ -673,6 +695,10 @@ public final class SVNTeamPreferences {
 	
 	public static void setDateFormatString(IPreferenceStore store, String shortName, String value) {
 		store.setValue(SVNTeamPreferences.fullDateFormatName(shortName), value);
+	}
+		
+	public static void setConsultChangeSetsInCommit(IPreferenceStore store, String shortName, String value) {
+		store.setValue(SVNTeamPreferences.fullPromptName(shortName), value);
 	}
 	
 	public static boolean getMailReporterBoolean(IPreferenceStore store, String shortName) {
@@ -769,6 +795,10 @@ public final class SVNTeamPreferences {
 	
 	public static String fullDateFormatName(String shortName) {
 		return SVNTeamPreferences.DATE_FORMAT_BASE + shortName;
+	}
+	
+	public static String fullPromptName(String shortName) {
+		return SVNTeamPreferences.PROMPT_BASE + shortName;
 	}
 	
 	public static String fullBehaviourName(String shortName) {

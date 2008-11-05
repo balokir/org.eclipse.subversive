@@ -31,8 +31,10 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
@@ -81,7 +83,8 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected boolean forceExternalsFreeze;
 	protected boolean computeKeywordsValues;
 	protected boolean enableAutoShare;
-	protected boolean caseInsensitiveSorting;
+	protected boolean caseInsensitiveSorting;	
+	protected String consultChangeSets;
 	
 	protected Text headField;
 	protected Text branchesField;
@@ -109,7 +112,10 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected Button enableAutoShareButton;
 	protected Button caseInsensitiveSortingButton;
 	protected Button forceExternalsFreezeButton;
-
+	protected Button consultCSAlwaysButton;
+	protected Button consultCSNeverButton;
+	protected Button consultCSPromptButton;
+	
 	public SVNTeamPreferencesPage() {
 		super();
 	}
@@ -131,6 +137,8 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		
 		SVNTeamPreferences.setDateFormatInt(store, SVNTeamPreferences.DATE_FORMAT_NAME, this.dateFormat);
 		SVNTeamPreferences.setDateFormatString(store, SVNTeamPreferences.DATE_FORMAT_CUSTOM_NAME, this.dateFormatCustom);
+		
+		SVNTeamPreferences.setConsultChangeSetsInCommit(store, SVNTeamPreferences.CONSULT_CHANGE_SETS_IN_COMMIT, this.consultChangeSets);
 		
 		SVNTeamPreferences.setMailReporterBoolean(store, SVNTeamPreferences.MAILREPORTER_ENABLED_NAME, this.mailReporterEnabled);
 		SVNTeamPreferences.setMailReporterBoolean(store, SVNTeamPreferences.MAILREPORTER_ERRORS_ENABLED_NAME, this.mailReporterErrorsEnabled);
@@ -170,6 +178,8 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		
 		this.dateFormat = SVNTeamPreferences.DATE_FORMAT_DEFAULT;
 		this.dateFormatCustom = SVNTeamPreferences.DATE_FORMAT_CUSTOM_DEFAULT;
+		
+		this.consultChangeSets = SVNTeamPreferences.CONSULT_CHANGE_SETS_IN_COMMIT_DEFAULT;
 		
 		this.mailReporterEnabled = SVNTeamPreferences.MAILREPORTER_ENABLED_DEFAULT;
 		this.mailReporterErrorsEnabled = SVNTeamPreferences.MAILREPORTER_ERRORS_ENABLED_DEFAULT;
@@ -211,6 +221,8 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.dateFormat = SVNTeamPreferences.getDateFormatInt(store, SVNTeamPreferences.DATE_FORMAT_NAME);
 		this.dateFormatCustom = SVNTeamPreferences.getDateFormatString(store, SVNTeamPreferences.DATE_FORMAT_CUSTOM_NAME);
 		
+		this.consultChangeSets = SVNTeamPreferences.getConsultChangeSetsInCommit(store, SVNTeamPreferences.CONSULT_CHANGE_SETS_IN_COMMIT);
+		
 		this.mailReporterEnabled = SVNTeamPreferences.getMailReporterBoolean(store, SVNTeamPreferences.MAILREPORTER_ENABLED_NAME);
 		this.mailReporterErrorsEnabled = SVNTeamPreferences.getMailReporterBoolean(store, SVNTeamPreferences.MAILREPORTER_ERRORS_ENABLED_NAME);
 		
@@ -249,6 +261,10 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		
 		this.dateFormatField.select(this.dateFormat);
 		this.dateFormatCustomField.setText(this.dateFormatCustom);
+		
+		this.consultCSAlwaysButton.setSelection(SVNTeamPreferences.CONSULT_CHANGE_SETS_IN_COMMIT_ALWAYS.equals(this.consultChangeSets));	
+		this.consultCSNeverButton.setSelection(SVNTeamPreferences.CONSULT_CHANGE_SETS_IN_COMMIT_NEVER.equals(this.consultChangeSets));	
+		this.consultCSPromptButton.setSelection(SVNTeamPreferences.CONSULT_CHANGE_SETS_IN_COMMIT_PROMPT.equals(this.consultChangeSets));			
 		
 		this.mailReporterEnabledButton.setSelection(this.mailReporterEnabled);
 		this.mailReporterErrorsEnabledButton.setSelection(this.mailReporterErrorsEnabled);
@@ -533,6 +549,12 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		synchViewGroup.setLayout(layout);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		synchViewGroup.setLayoutData(data);	
+				
+		Group consultChangeSetsGroup = new Group(composite, SWT.FILL);				
+		layout = new GridLayout();		
+		consultChangeSetsGroup.setLayout(layout);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		consultChangeSetsGroup.setLayoutData(data);
 		
 		Group historyViewGroup = new Group(composite, SWT.NONE);
 		layout = new GridLayout();
@@ -575,6 +597,9 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 				SVNTeamPreferencesPage.this.enableModelSync = SVNTeamPreferencesPage.this.enableModelSyncButton.getSelection();
 			}
 		});
+		
+		//Consult change sets group
+		this.createConsultChangeSets(consultChangeSetsGroup);
 		
 		//History View group
 		historyViewGroup.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.historyGroupName"));
@@ -691,6 +716,46 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		});
 		
 		return composite;
+	}
+	
+	protected void createConsultChangeSets(Group consultChangeSetsGroup) {
+		Listener changeSetsSelectionListener = new Listener() {
+			public void handleEvent(Event event) {
+				if (SVNTeamPreferencesPage.this.consultCSAlwaysButton.getSelection()) {
+					SVNTeamPreferencesPage.this.consultChangeSets = SVNTeamPreferences.CONSULT_CHANGE_SETS_IN_COMMIT_ALWAYS;
+				} else if (SVNTeamPreferencesPage.this.consultCSNeverButton.getSelection()) {
+					SVNTeamPreferencesPage.this.consultChangeSets = SVNTeamPreferences.CONSULT_CHANGE_SETS_IN_COMMIT_NEVER;
+				} else if (SVNTeamPreferencesPage.this.consultCSPromptButton.getSelection()) {
+					SVNTeamPreferencesPage.this.consultChangeSets = SVNTeamPreferences.CONSULT_CHANGE_SETS_IN_COMMIT_PROMPT;
+				}
+			}			
+		};
+				
+		consultChangeSetsGroup.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.consultChangeSetsGroupName"));
+		GridLayout layout = (GridLayout) consultChangeSetsGroup.getLayout();
+		layout.numColumns = 3;
+		layout.horizontalSpacing = 40;		
+		GridData data = (GridData) consultChangeSetsGroup.getLayoutData();
+		data.horizontalSpan = 2;
+		data.grabExcessVerticalSpace = false;		
+		
+		this.consultCSAlwaysButton = new Button(consultChangeSetsGroup, SWT.RADIO);
+		data = new GridData();
+		this.consultCSAlwaysButton.setLayoutData(data);
+		this.consultCSAlwaysButton.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.consultChangeSetsAlways"));
+		this.consultCSAlwaysButton.addListener(SWT.Selection, changeSetsSelectionListener);
+		
+		this.consultCSNeverButton = new Button(consultChangeSetsGroup, SWT.RADIO);
+		data = new GridData();
+		this.consultCSNeverButton.setLayoutData(data);
+		this.consultCSNeverButton.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.consultChangeSetsNever"));
+		this.consultCSNeverButton.addListener(SWT.Selection, changeSetsSelectionListener);
+		
+		this.consultCSPromptButton = new Button(consultChangeSetsGroup, SWT.RADIO);
+		data = new GridData();
+		this.consultCSPromptButton.setLayoutData(data);		
+		this.consultCSPromptButton.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.consultChangeSetsPrompt"));
+		this.consultCSPromptButton.addListener(SWT.Selection, changeSetsSelectionListener);
 	}
 	
 	protected Control createRepositorySettingsPage(Composite parent) {
