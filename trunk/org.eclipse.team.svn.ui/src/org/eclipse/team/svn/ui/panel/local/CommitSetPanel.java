@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSet;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.composite.CommentComposite;
-import org.eclipse.team.svn.ui.composite.ResourceSelectionComposite;
 import org.eclipse.team.svn.ui.event.IResourceSelectionChangeListener;
 import org.eclipse.team.svn.ui.event.ResourceSelectionChangedEvent;
 import org.eclipse.team.svn.ui.extension.factory.ICommentDialogPanel;
@@ -44,8 +43,7 @@ public class CommitSetPanel extends CommentPanel implements ICommentDialogPanel 
 	public static final int MSG_CREATE = 0;
 	public static final int MSG_EDIT = 1;
 	
-    private final ActiveChangeSet set;
-	protected ResourceSelectionComposite selectionComposite;
+    private final ActiveChangeSet set;	
     private Text nameText;
 	protected IResource []resources;
 	protected List<IResourceSelectionChangeListener> changeListenerList;
@@ -115,10 +113,6 @@ public class CommitSetPanel extends CommentPanel implements ICommentDialogPanel 
 	
 	public String getHelpId() {
     	return "org.eclipse.team.svn.help.commitSetDialogContext";
-    }
-    
-    public IResource []getSelectedResources() {
-    	return this.selectionComposite.getSelectedResources();
     }
     
     public void addResourcesSelectionChangedListener(IResourceSelectionChangeListener listener) {
