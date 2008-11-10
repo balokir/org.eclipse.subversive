@@ -68,8 +68,10 @@ import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.dialog.DiscardConfirmationDialog;
 import org.eclipse.team.svn.ui.dialog.UnlockResourcesDialog;
 import org.eclipse.team.svn.ui.operation.CompareResourcesOperation;
+import org.eclipse.team.svn.ui.panel.BasePaneParticipant;
 import org.eclipse.team.svn.ui.panel.remote.ComparePanel;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
+import org.eclipse.team.ui.synchronize.ResourceScope;
 import org.eclipse.ui.IWorkbenchActionConstants;
 
 /**
@@ -133,22 +135,27 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
     			RevertPanel.this.removeNonVersioned = removeNonVersionedButton.getSelection();
     		}
     	});
-    	this.addContextMenu();
+    	
+    	if (!this.isParticipantPane) {
+    		this.addContextMenu();	
+    	}    	
     }
     
     public void postInit() {
-		super.postInit();
+		super.postInit();		
+		
 		this.resourceStatesListener = new IResourceStatesListener() {
 			public void resourcesStateChanged(ResourceStatesChangedEvent event) {
 				RevertPanel.this.updateResources(event);
 			}
 		};
-		SVNRemoteStorage.instance().addResourceStatesListener(ResourceStatesChangedEvent.class, RevertPanel.this.resourceStatesListener);
+		SVNRemoteStorage.instance().addResourceStatesListener(ResourceStatesChangedEvent.class, RevertPanel.this.resourceStatesListener);			
 	}
     
     public void dispose() {
     	super.dispose();
-    	SVNRemoteStorage.instance().removeResourceStatesListener(ResourceStatesChangedEvent.class, this.resourceStatesListener);
+    	
+    	SVNRemoteStorage.instance().removeResourceStatesListener(ResourceStatesChangedEvent.class, this.resourceStatesListener);	    	    	
     }
     
     protected void addContextMenu() {
@@ -382,15 +389,17 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 		
 		final IResource[] newResources = allResources.toArray(new IResource[allResources.size()]);
 		
-		UIMonitorUtility.getDisplay().syncExec(new Runnable() {
-			public void run() {
-				//FIXME isDisposed() test is necessary as dispose() method is not called from FastTrack Commit Dialog
-				if (!RevertPanel.this.selectionComposite.isDisposed()) {
-					RevertPanel.this.selectionComposite.setResources(newResources);
-					RevertPanel.this.selectionComposite.fireSelectionChanged();
+		if (!this.isParticipantPane) {
+			UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+				public void run() {
+					//FIXME isDisposed() test is necessary as dispose() method is not called from FastTrack Commit Dialog
+					if (!RevertPanel.this.selectionComposite.isDisposed()) {
+						RevertPanel.this.selectionComposite.setResources(newResources);
+						RevertPanel.this.selectionComposite.fireSelectionChanged();
+					}
 				}
-			}
-		});
+			});	
+		}
 		
 		this.resources = newResources;
 	}
@@ -409,5 +418,12 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
     	data.heightHint = height;
     	strut.setLayoutData(data);
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.svn.ui.panel.local.AbstractResourceSelectionPanel#createPaneParticipant()
+	 */
+	protected BasePaneParticipant createPaneParticipant() {
+		return new RevertPaneParticipant(new ResourceScope(this.resources));
+	}
     
 }

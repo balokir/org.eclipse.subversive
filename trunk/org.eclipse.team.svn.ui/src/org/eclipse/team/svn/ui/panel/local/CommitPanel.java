@@ -15,7 +15,6 @@ package org.eclipse.team.svn.ui.panel.local;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
@@ -32,6 +31,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -106,7 +106,6 @@ import org.eclipse.team.svn.ui.dialog.UnlockResourcesDialog;
 import org.eclipse.team.svn.ui.event.IResourceSelectionChangeListener;
 import org.eclipse.team.svn.ui.event.ResourceSelectionChangedEvent;
 import org.eclipse.team.svn.ui.extension.factory.ICommentDialogPanel;
-import org.eclipse.team.svn.ui.mapping.CommitPanelParticipant;
 import org.eclipse.team.svn.ui.operation.CompareResourcesOperation;
 import org.eclipse.team.svn.ui.operation.ShowConflictEditorOperation;
 import org.eclipse.team.svn.ui.panel.common.CommentPanel;
@@ -165,12 +164,10 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 	protected IResourceStatesListener resourceStatesListener;
 	protected boolean resourcesChanged;		
 	
-	//--- participant pane fields
-	
+	//--- participant pane fields	
 	protected boolean isParticipantPane;	
-	protected CommitPanelParticipant participant;
-	private ISynchronizePageConfiguration syncPageConfiguration;
-	private ParticipantPagePane pagePane;	
+	protected CommitPaneParticipant participant;
+	protected ISynchronizePageConfiguration syncPageConfiguration;
 	protected List<IResource> resourcesRemovedFromPane = new ArrayList<IResource>();	
 	protected ISyncInfoSetChangeListener paneSyncInfoSetListener;
 	
@@ -242,7 +239,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 		layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 2;
-		layout.numColumns = this.isParticipantPane ? 1 : 2;
+		layout.numColumns = 2;
 		middleComposite.setLayoutData(data);
 		middleComposite.setLayout(layout);
 		
@@ -256,18 +253,16 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				CommitPanel.this.keepLocks = CommitPanel.this.keepLocksButton.getSelection();
 			}
 		});
-		
-		if (!this.isParticipantPane) {
-			this.pasteNamesButton = new Button(middleComposite, SWT.PUSH | SWT.END);
-			data = new GridData();
-			this.pasteNamesButton.setLayoutData(data);
-			this.pasteNamesButton.setText(SVNTeamUIPlugin.instance().getResource("CommitPanel.PasteNames.Button"));
-			this.pasteNamesButton.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					CommitPanel.this.pasteNames();
-				}
-			});	
-		}
+				
+		this.pasteNamesButton = new Button(middleComposite, SWT.PUSH | SWT.END);
+		data = new GridData();
+		this.pasteNamesButton.setLayoutData(data);
+		this.pasteNamesButton.setText(SVNTeamUIPlugin.instance().getResource("CommitPanel.PasteNames.Button"));
+		this.pasteNamesButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				CommitPanel.this.pasteNames();
+			}
+		});	
 		
 		Label separator = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -312,11 +307,8 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 		this.addContextMenu();			
 	}
 	
-	protected void createPaneControls() {
-		//TODO take into account files threshold. see CommitWizardCommitPage
-
-		IResource[] fResources = this.userSelectedResources != null ? this.userSelectedResources : this.resources;
-		this.participant= new CommitPanelParticipant(new ResourceScope(fResources));					
+	protected void createPaneControls() {		
+		this.participant= new CommitPaneParticipant(new ResourceScope(this.resources), this);					
 		
 		Composite paneComposite = new Composite(this.sForm, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -332,9 +324,9 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 		int first = SVNTeamPreferences.getDialogInt(store, SVNTeamPreferences.COMMIT_DIALOG_WEIGHT_NAME);
 		this.sForm.setWeights(new int[] {first, 100 - first});
         
-        Control c = this.createChangesPage(paneComposite, participant);
+        Control paneControl = this.createChangesPage(paneComposite);
         data = new GridData(GridData.FILL_BOTH);
-        c.setLayoutData(data);
+        paneControl.setLayoutData(data);
         	        	        	        	        
         //sync view listener
         SyncInfoSet paneSyncInfoSet = this.getPaneSyncInfoSet();
@@ -355,11 +347,10 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 		return syncInfoSet;
 	}
 	
-    private Control createChangesPage(final Composite composite, CommitPanelParticipant participant) {
-        this.syncPageConfiguration= participant.createPageConfiguration();
-        this.pagePane= new ParticipantPagePane(UIMonitorUtility.getShell(), true /* modal */, this.syncPageConfiguration, participant);        
-        
-        Control control = this.pagePane.createPartControl(composite);
+	protected Control createChangesPage(Composite composite) {
+        this.syncPageConfiguration= this.participant.createPageConfiguration();
+        ParticipantPagePane pagePane = new ParticipantPagePane(UIMonitorUtility.getShell(), true /* modal */, this.syncPageConfiguration, participant);
+        Control control = pagePane.createPartControl(composite);
         return control;
     }
 		
@@ -369,15 +360,15 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 	
 	public void postInit() {
 		super.postInit();
+
+		this.resourceStatesListener = new IResourceStatesListener() {
+			public void resourcesStateChanged(ResourceStatesChangedEvent event) {
+				CommitPanel.this.updateResources(event);
+			}
+		};
+		SVNRemoteStorage.instance().addResourceStatesListener(ResourceStatesChangedEvent.class, CommitPanel.this.resourceStatesListener);
 		
-		if (!this.isParticipantPane) {
-			this.resourceStatesListener = new IResourceStatesListener() {
-				public void resourcesStateChanged(ResourceStatesChangedEvent event) {
-					CommitPanel.this.updateResources(event);
-				}
-			};
-			SVNRemoteStorage.instance().addResourceStatesListener(ResourceStatesChangedEvent.class, CommitPanel.this.resourceStatesListener);			
-		} else {
+		if (this.isParticipantPane) {
 			this.expandPaneTree();
 		}
 	}
@@ -430,18 +421,32 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 		return commit[0];
 	}
 	
-	//TODO relates to resource selection composite
-	protected void pasteNames() {
-		List selectedResources = this.selectionComposite.getCurrentSelection();
-		String namesString = "";
-		for (Iterator iter = selectedResources.iterator(); iter.hasNext();) {
-			IResource resource = (IResource) iter.next();
-			namesString += resource.getName() + "\n";
+	public void pasteNames() {
+		if (!this.isParticipantPane) {
+			List<IResource> selectedResources = this.selectionComposite.getCurrentSelection();
+			this.pasteNames(selectedResources.toArray(new IResource[0]));			
+		} else {
+			ISelection selection = this.syncPageConfiguration.getSite().getSelectionProvider().getSelection();
+			if (selection instanceof IStructuredSelection) {
+				IStructuredSelection strSelection = (IStructuredSelection) selection;
+				Object[] elements = strSelection.toArray();
+				IResource[] resources = Utils.getResources(elements);
+				this.pasteNames(resources);
+			}
 		}
-		this.comment.insertText(namesString);
 	}
 	
-	//TODO relates to resource selection composite	
+	protected void pasteNames(IResource[] resources) {
+		if (resources.length > 0) {
+			String namesString = "";
+			for (IResource resource : resources) {			
+				namesString += resource.getName() + "\n";
+			}
+			this.comment.insertText(namesString);			
+		}			
+	}
+	
+	//relates to resource selection composite	
 	protected void addContextMenu() {		
 		final TableViewer tableViewer = this.selectionComposite.getTableViewer();
 		MenuManager menuMgr = new MenuManager();
@@ -752,8 +757,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
         menuMgr.setRemoveAllWhenShown(true);
         tableViewer.getTable().setMenu(menu);        
 	}
-	
-	//TODO correctly update resources in pane
+		
 	protected void updateResources(ResourceStatesChangedEvent event) {
 		HashSet<IResource> allResources = new HashSet<IResource>(Arrays.asList(this.resources));
 		
@@ -766,15 +770,17 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 		
 		final IResource[] newResources = allResources.toArray(new IResource[allResources.size()]);
 				
-		UIMonitorUtility.getDisplay().syncExec(new Runnable() {
-			public void run() {
-				//FIXME isDisposed() test is necessary as dispose() method is not called from FastTrack Commit Dialog
-				if (!CommitPanel.this.selectionComposite.isDisposed()) {
-					CommitPanel.this.selectionComposite.setResources(newResources);
-					CommitPanel.this.selectionComposite.fireSelectionChanged();
+		if (!this.isParticipantPane) {
+			UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+				public void run() {
+					//FIXME isDisposed() test is necessary as dispose() method is not called from FastTrack Commit Dialog
+					if (!CommitPanel.this.selectionComposite.isDisposed()) {
+						CommitPanel.this.selectionComposite.setResources(newResources);
+						CommitPanel.this.selectionComposite.fireSelectionChanged();
+					}
 				}
-			}
-		});
+			});	
+		}
 		
 		this.resources = newResources;
 		this.resourcesChanged = true;
@@ -784,22 +790,22 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
     	return this.resourcesChanged;
     }
     
-    //TODO relates to pane
-    public SyncInfoSet getInfosToCommit() {
+    public SyncInfoSet getPaneSyncInfoSetToCommit() {
         final SyncInfoSet infos= new SyncInfoSet();
-        if (syncPageConfiguration == null) {
+        if (this.syncPageConfiguration == null) {
             return this.participant.getSyncInfoSet();
         }
         
-        final IDiffElement root = (ISynchronizeModelElement)syncPageConfiguration.getProperty(SynchronizePageConfiguration.P_MODEL);
-        final IDiffElement [] elements= Utils.getDiffNodes(new IDiffElement [] { root });
+        final IDiffElement root = (ISynchronizeModelElement) this.syncPageConfiguration.getProperty(SynchronizePageConfiguration.P_MODEL);
+        final IDiffElement[] elements= Utils.getDiffNodes(new IDiffElement [] { root });
         
         for (int i = 0; i < elements.length; i++) {
             if (elements[i] instanceof SyncInfoModelElement) {
                 SyncInfo syncInfo = ((SyncInfoModelElement)elements[i]).getSyncInfo();
                 int direction = syncInfo.getKind() & SyncInfo.DIRECTION_MASK;
-				if (direction == SyncInfo.OUTGOING || direction == SyncInfo.CONFLICTING)
+				if (direction == SyncInfo.OUTGOING || direction == SyncInfo.CONFLICTING) {
                 	infos.add(syncInfo);
+				}                	
             }
         }  
         return infos;
@@ -807,7 +813,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
     
 	public IResource []getSelectedResources() {
 		if (this.isParticipantPane) {
-			SyncInfoSet syncInfoSet = this.getInfosToCommit();
+			SyncInfoSet syncInfoSet = this.getPaneSyncInfoSetToCommit();
 			return syncInfoSet.getResources();		    		
 		} else {
 			return this.selectionComposite.getSelectedResources();			
@@ -858,12 +864,13 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
          
     public void dispose() {
     	super.dispose();
+    	
+    	SVNRemoteStorage.instance().removeResourceStatesListener(ResourceStatesChangedEvent.class, this.resourceStatesListener);
+    	
     	if (this.isParticipantPane) {
     		SyncInfoSet paneSyncInfoSet =  this.getPaneSyncInfoSet();
     		paneSyncInfoSet.removeSyncSetChangedListener(this.paneSyncInfoSetListener);
-    	} else {
-    		SVNRemoteStorage.instance().removeResourceStatesListener(ResourceStatesChangedEvent.class, this.resourceStatesListener);	
-    	}    	
+    	}
     }
     
     public static class CollectPropertiesOperation extends AbstractActionOperation {
@@ -963,7 +970,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 	/*
 	 * Pane validator
 	 */
-	protected class PaneVerifier extends AbstractVerifier {
+	private class PaneVerifier extends AbstractVerifier {
 		
 		protected String getErrorMessage(Control input) {
 			/*
@@ -995,12 +1002,10 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 	/*
 	 * Listens to changes in sync view for pane
 	 */
-	protected class PaneSyncInfoSetListener implements ISyncInfoSetChangeListener {
+	private class PaneSyncInfoSetListener implements ISyncInfoSetChangeListener {
 			
 		public void syncInfoChanged(ISyncInfoSetChangeEvent event, IProgressMonitor monitor) {					
 			IResource[] removed = event.getRemovedResources();
-//			System.out.println("syncInfoChanged. Removed: " + Arrays.asList(removed) + 
-//					", is empty: " + syncInfoSet.isEmpty());	
 			if (removed.length > 0) {	 							 							 						
 				CommitPanel.this.resourcesRemovedFromPane.addAll(Arrays.asList(removed));	 						
 				UIMonitorUtility.getDisplay().syncExec(new Runnable() {

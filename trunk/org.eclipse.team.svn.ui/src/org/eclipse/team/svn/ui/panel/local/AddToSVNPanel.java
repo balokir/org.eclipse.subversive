@@ -41,7 +41,9 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.dialog.DiscardConfirmationDialog;
+import org.eclipse.team.svn.ui.panel.BasePaneParticipant;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
+import org.eclipse.team.ui.synchronize.ResourceScope;
 import org.eclipse.ui.IWorkbenchActionConstants;
 
 /**
@@ -164,8 +166,7 @@ public class AddToSVNPanel extends AbstractResourceSelectionPanel {
     	return this.actionTookEffect;
     }
     
-    public void updateResources() {
-    	final TableViewer tableViewer = this.selectionComposite.getTableViewer();
+    public void updateResources() {    	
 		HashSet<IResource> toDeleteSet = new HashSet<IResource>();
 		toDeleteSet.addAll(Arrays.asList(this.resources));
 		HashSet<IResource> newResourcesSet = new HashSet<IResource>();
@@ -184,16 +185,21 @@ public class AddToSVNPanel extends AbstractResourceSelectionPanel {
 		final IResource[] newResources = newResourcesSet.toArray(new IResource[newResourcesSet.size()]);
 		toDeleteSet.removeAll(newResourcesSet);
 		final IResource[] toDeleteResources = toDeleteSet.toArray(new IResource[toDeleteSet.size()]);
-		UIMonitorUtility.getDisplay().syncExec(new Runnable() {
-			public void run() {
-				AddToSVNPanel.this.selectionComposite.setResources(newResources);
-				if (!tableViewer.getTable().isDisposed()) {
-					tableViewer.remove(toDeleteResources);
-					tableViewer.refresh();
-					AddToSVNPanel.this.selectionComposite.fireSelectionChanged();
+		
+		if (!this.isParticipantPane) {
+			final TableViewer tableViewer = this.selectionComposite.getTableViewer();		
+			UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+				public void run() {
+					AddToSVNPanel.this.selectionComposite.setResources(newResources);
+					if (!tableViewer.getTable().isDisposed()) {
+						tableViewer.remove(toDeleteResources);
+						tableViewer.refresh();
+						AddToSVNPanel.this.selectionComposite.fireSelectionChanged();
+					}
 				}
-			}
-		});
+			});
+		}
+		
 		this.resources = newResources;
     }
     
@@ -205,5 +211,12 @@ public class AddToSVNPanel extends AbstractResourceSelectionPanel {
 	public String getHelpId() {
     	return "org.eclipse.team.svn.help.addToVCDialogContext";
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.svn.ui.panel.local.AbstractResourceSelectionPanel#createPaneParticipant()
+	 */	
+	protected BasePaneParticipant createPaneParticipant() {		
+		return new AddToSVNPaneParticipant(new ResourceScope(this.resources));
+	}
 
 }
