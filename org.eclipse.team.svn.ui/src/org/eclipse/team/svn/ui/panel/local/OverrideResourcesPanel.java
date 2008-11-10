@@ -11,9 +11,15 @@
 
 package org.eclipse.team.svn.ui.panel.local;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.panel.BasePaneParticipant;
+import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
+import org.eclipse.team.ui.synchronize.ResourceScope;
 
 /**
  * Override and commit/update panel implementation
@@ -39,4 +45,14 @@ public class OverrideResourcesPanel extends AbstractResourceSelectionPanel {
     public String getHelpId() {
     	return "org.eclipse.team.svn.help.overrideDialogContext";
     }
+	
+	protected BasePaneParticipant createPaneParticipant() {
+		return new BasePaneParticipant(new ResourceScope(this.resources)) {
+			protected Collection<AbstractSynchronizeActionGroup> getActionGroups() {
+				Collection<AbstractSynchronizeActionGroup> actionGroups = new ArrayList<AbstractSynchronizeActionGroup>();
+				actionGroups.add(new BasePaneActionGroup());
+		    	return actionGroups;
+			}
+		};
+	}
 }

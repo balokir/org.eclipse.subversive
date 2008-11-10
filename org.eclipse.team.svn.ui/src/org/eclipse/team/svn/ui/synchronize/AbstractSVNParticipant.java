@@ -13,31 +13,16 @@
 package org.eclipse.team.svn.ui.synchronize;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
-
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelDecorator;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.team.core.subscribers.Subscriber;
-import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
 import org.eclipse.team.internal.ui.synchronize.IChangeSetProvider;
-import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
-import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
-import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSubscriber;
-import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
-import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipantDescriptor;
@@ -115,9 +100,20 @@ public abstract class AbstractSVNParticipant extends SubscriberParticipant imple
 		}
 		
 		configuration.addLabelDecorator(this.createLabelDecorator());
-
-		configuration.setSupportedModes(this.getSupportedModes());
-		configuration.setMode(this.getDefaultMode());
+		
+		if (this.isSetModes()) {
+			configuration.setSupportedModes(this.getSupportedModes());
+			configuration.setMode(this.getDefaultMode());	
+		}
+	}
+	
+	/**
+	 * Flag which determines whether to set mode properties in synchronize page configuration
+	 * 
+	 * Can be overridden in sub classes
+	 */
+	protected boolean isSetModes() {
+		return true;
 	}
 	
 	protected ILabelDecorator createLabelDecorator() {
