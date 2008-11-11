@@ -17,7 +17,7 @@ import java.util.Collection;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.panel.BasePaneParticipant;
+import org.eclipse.team.svn.ui.panel.participant.BasePaneParticipant;
 import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
 import org.eclipse.team.ui.synchronize.ResourceScope;
 
@@ -39,7 +39,8 @@ public class OverrideResourcesPanel extends AbstractResourceSelectionPanel {
         super(resources, userSelectedResources, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL});
         this.dialogTitle = SVNTeamUIPlugin.instance().getResource("OverrideResourcesPanel.Title");
         this.dialogDescription = SVNTeamUIPlugin.instance().getResource(OverrideResourcesPanel.MESSAGES[msgId]);
-        this.defaultMessage = SVNTeamUIPlugin.instance().getResource("OverrideResourcesPanel.Message");
+        boolean isParticipantPane = this.paneParticipantHelper.isParticipantPane();
+        this.defaultMessage = SVNTeamUIPlugin.instance().getResource(isParticipantPane ? "OverrideResourcesPanel.Pane.Message" : "OverrideResourcesPanel.Message");
     }
 	
     public String getHelpId() {
@@ -47,10 +48,10 @@ public class OverrideResourcesPanel extends AbstractResourceSelectionPanel {
     }
 	
 	protected BasePaneParticipant createPaneParticipant() {
-		return new BasePaneParticipant(new ResourceScope(this.resources)) {
+		return new BasePaneParticipant(new ResourceScope(this.resources), this) {
 			protected Collection<AbstractSynchronizeActionGroup> getActionGroups() {
 				Collection<AbstractSynchronizeActionGroup> actionGroups = new ArrayList<AbstractSynchronizeActionGroup>();
-				actionGroups.add(new BasePaneActionGroup());
+				actionGroups.add(new BasePaneActionGroup(this.validationManager));
 		    	return actionGroups;
 			}
 		};

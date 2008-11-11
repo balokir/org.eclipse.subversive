@@ -9,17 +9,21 @@
  *    Igor Burilo - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.svn.ui.panel;
+package org.eclipse.team.svn.ui.panel.participant;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
 import org.eclipse.team.svn.ui.synchronize.action.ExpandAllAction;
 import org.eclipse.team.svn.ui.synchronize.update.UpdateParticipant;
+import org.eclipse.team.svn.ui.verifier.IValidationManager;
+import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ISynchronizeScope;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -34,8 +38,11 @@ import org.eclipse.ui.IWorkbenchActionConstants;
  */
 public class BasePaneParticipant extends UpdateParticipant {
 
-	public BasePaneParticipant(ISynchronizeScope scope) {
+	protected IValidationManager validationManager;
+	
+	public BasePaneParticipant(ISynchronizeScope scope, IValidationManager validationManager) {
 		super(scope);	   
+		this.validationManager = validationManager;
 	}
 
 	/**
@@ -46,6 +53,27 @@ public class BasePaneParticipant extends UpdateParticipant {
 	public static class BasePaneActionGroup extends AbstractSynchronizeActionGroup {
 		
 		protected static final String GROUP_SYNC_NORMAL = "syncNormal";
+		
+		protected IValidationManager validationManager;
+		
+		public BasePaneActionGroup(IValidationManager validationManager) {
+			this.validationManager = validationManager;
+		}
+				
+		/* (non-Javadoc)
+		 * @see org.eclipse.team.ui.synchronize.SynchronizePageActionGroup#modelChanged(org.eclipse.team.ui.synchronize.ISynchronizeModelElement)
+		 */
+		public void modelChanged(ISynchronizeModelElement root) {
+            super.modelChanged(root);
+            
+            Display.getDefault().asyncExec(new Runnable() {
+                public void run() {                
+                    if (BasePaneActionGroup.this.validationManager != null) {
+                    	BasePaneActionGroup.this.validationManager.validateContent();
+                    }
+                }
+            });
+        }
 		
 		public void configureMenuGroups(ISynchronizePageConfiguration configuration) {
 			configuration.addMenuGroup(

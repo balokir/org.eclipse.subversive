@@ -9,7 +9,7 @@
  *    Igor Burilo - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.svn.ui.panel.local;
+package org.eclipse.team.svn.ui.panel.participant;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -27,11 +27,11 @@ import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.svnstorage.ResourcesParentsProvider;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.panel.BasePaneParticipant;
-import org.eclipse.team.svn.ui.panel.local.CommitPaneParticipant.CommitPaneActionGroup;
+import org.eclipse.team.svn.ui.panel.participant.CommitPaneParticipant.CommitPaneActionGroup;
 import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
 import org.eclipse.team.svn.ui.synchronize.action.DeletePaneAction;
+import org.eclipse.team.svn.ui.verifier.IValidationManager;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ISynchronizeScope;
 
@@ -42,13 +42,13 @@ import org.eclipse.team.ui.synchronize.ISynchronizeScope;
  */
 public class AddToSVNPaneParticipant extends BasePaneParticipant {
 
-	public AddToSVNPaneParticipant(ISynchronizeScope scope) {
-		super(scope);
+	public AddToSVNPaneParticipant(ISynchronizeScope scope, IValidationManager validationManager) {
+		super(scope, validationManager);
 	}
 	
 	protected Collection<AbstractSynchronizeActionGroup> getActionGroups() {
 		List<AbstractSynchronizeActionGroup> actionGroups = new ArrayList<AbstractSynchronizeActionGroup>();
-		actionGroups.add(new AddToSVNPaneActionGroup());
+		actionGroups.add(new AddToSVNPaneActionGroup(this.validationManager));
 		return actionGroups;
 	}
 	
@@ -59,8 +59,12 @@ public class AddToSVNPaneParticipant extends BasePaneParticipant {
      * @author Igor Burilo
      */
     protected static class AddToSVNPaneActionGroup extends BasePaneActionGroup {    
-    	
-    	/**
+    	    	
+		public AddToSVNPaneActionGroup(IValidationManager validationManager) {
+			super(validationManager);		
+		}
+
+		/**
     	 * Add to SVN ignore by name
     	 *
     	 * @author Igor Burilo

@@ -12,17 +12,11 @@
 package org.eclipse.team.svn.ui.panel.common;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
-import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -36,16 +30,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.team.core.ITeamStatus;
-import org.eclipse.team.core.synchronize.ISyncInfoSetChangeEvent;
-import org.eclipse.team.core.synchronize.ISyncInfoSetChangeListener;
-import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.core.synchronize.SyncInfoSet;
-import org.eclipse.team.internal.core.subscribers.WorkingSetFilteredSyncInfoCollector;
-import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.internal.ui.synchronize.SubscriberParticipantPage;
-import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
-import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -59,20 +43,16 @@ import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.event.IResourceSelectionChangeListener;
 import org.eclipse.team.svn.ui.event.ResourceSelectionChangedEvent;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
-import org.eclipse.team.svn.ui.panel.BasePaneParticipant;
+import org.eclipse.team.svn.ui.panel.participant.BasePaneParticipant;
+import org.eclipse.team.svn.ui.panel.participant.PaneParticipantHelper;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
-import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.svn.ui.utility.UserInputHistory;
 import org.eclipse.team.svn.ui.verifier.AbsolutePathVerifier;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifier;
 import org.eclipse.team.svn.ui.verifier.CompositeVerifier;
 import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
 import org.eclipse.team.svn.ui.verifier.URLVerifier;
-import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
-import org.eclipse.team.ui.synchronize.ISynchronizePage;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.ParticipantPagePane;
 import org.eclipse.team.ui.synchronize.ResourceScope;
 
 /**
@@ -100,12 +80,14 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 	protected IResource[] newResources;
 	protected boolean disableSwitch;
 
-	//--- participant pane fields	
-	protected boolean isParticipantPane;	
-	protected BasePaneParticipant participant;
-	protected ISynchronizePageConfiguration syncPageConfiguration;
-	protected List<IResource> resourcesRemovedFromPane = new ArrayList<IResource>();	
-	protected ISyncInfoSetChangeListener paneSyncInfoSetListener;
+	protected AbstractBranchTagPaneParticipantHelper paneParticipantHelper;
+	/*
+	 * As participant pane is not always present, we need to use this flag 
+	 * (instead of paneParticipantHelper.isParticipantPane()) 
+	 * to determine whether we can work with pane or not.
+	 * (E.g. participant pane is not present if there are no new resources)
+	 */
+	protected boolean hasParticipantPane;
 	
 	public AbstractBranchTagPanel(IRepositoryRoot root, boolean showStartsWith, Set existingNames, String nationalizationId, String historyName) {
 		this(root, showStartsWith, existingNames, nationalizationId, historyName, new IResource[0]);
@@ -141,25 +123,20 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 		this.considerStructure = root.getRepositoryLocation().isStructureEnabled()
 				&& SVNTeamPreferences.getRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_NAME);
 		
-		this.isParticipantPane = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_SHOW_SELECTED_RESOURCES_IN_SYNC_PANE_NAME);
+		this.paneParticipantHelper = new AbstractBranchTagPaneParticipantHelper();
 	}
 	
 	public IResource[] getSelectedResources() {
-		if (this.isParticipantPane) {
-			SyncInfoSet syncInfoSet = this.getPaneSyncInfoSetToProcess();
-			return syncInfoSet.getResources();		    		
+		if (this.hasParticipantPane) {
+			return this.paneParticipantHelper.getSelectedResources();
 		} else {
 			return this.resourceSelection.getSelectedResources();			
 		}		
 	}
 
 	public IResource[] getNotSelectedResources() {
-		if (this.isParticipantPane) {    		
-    		/*
-    		 * As we can delete resources using 'Remove from View' action,
-    		 * we need to process not selected resources.
-    		 */    		
-    		return this.resourcesRemovedFromPane.toArray(new IResource[0]);
+		if (this.hasParticipantPane) {    		
+			return this.paneParticipantHelper.getNotSelectedResources();
     	} else {
     		return this.resourceSelection.getNotSelectedResources();
     	}
@@ -192,8 +169,8 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 	public void postInit() {
 		super.postInit();
 		this.comment.postInit(this.manager);
-		if (this.isParticipantPane) {
-			this.expandPaneTree();
+		if (this.hasParticipantPane) {
+			this.paneParticipantHelper.expandPaneTree();
 		}
 	}
 
@@ -270,7 +247,9 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 		this.comment.setLayoutData(data);
 
 		if (this.startsWith && this.newResources != null && this.newResources.length > 0) {
-			if (this.isParticipantPane) {
+			if (this.paneParticipantHelper.isParticipantPane()) {
+				this.hasParticipantPane = true;
+				this.paneParticipantHelper.init(this.createPaneParticipant());
 				this.createPaneControls(splitter);				
 			} else {
 				this.createResourceSelectionCompositeControls(splitter);
@@ -282,35 +261,22 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 		}
 	}
 	
-	protected void createPaneControls(Composite parent) {
-		this.participant = this.createPaneParticipant();
-		
-		Control paneControl = this.createChangesPage(parent);
+	protected void createPaneControls(Composite parent) {		
+		Control paneControl = this.paneParticipantHelper.createChangesPage(parent);
 		GridData data = new GridData(GridData.FILL_BOTH);		
         paneControl.setLayoutData(data);      
         
-        //sync view listener
-        SyncInfoSet paneSyncInfoSet = this.getPaneSyncInfoSet();
-        this.paneSyncInfoSetListener = new PaneSyncInfoSetListener();
-        paneSyncInfoSet.addSyncSetChangedListener(this.paneSyncInfoSetListener);	        
+        this.paneParticipantHelper.initListeners();        
                                           
         //add validator to pane
-        this.attachTo(paneControl, new PaneVerifier());            
+        this.attachTo(paneControl, this.paneParticipantHelper.new AbstractBranchTagPaneVerifier());            
 	}
 	
-	protected Control createChangesPage(Composite composite) {
-        this.syncPageConfiguration= this.participant.createPageConfiguration();
-        ParticipantPagePane pagePane = new ParticipantPagePane(UIMonitorUtility.getShell(), true /* modal */, this.syncPageConfiguration, participant);        
-        
-        Control control = pagePane.createPartControl(composite);
-        return control;
-    }
-	
 	protected BasePaneParticipant createPaneParticipant() {
-		return new BasePaneParticipant(new ResourceScope(this.newResources)) {
+		return new BasePaneParticipant(new ResourceScope(this.newResources), this) {
 			protected Collection<AbstractSynchronizeActionGroup> getActionGroups() {
 				Collection<AbstractSynchronizeActionGroup> actionGroups = new ArrayList<AbstractSynchronizeActionGroup>();
-				actionGroups.add(new BasePaneActionGroup());
+				actionGroups.add(new BasePaneActionGroup(this.validationManager));
 		    	return actionGroups;
 			}
 		};	
@@ -491,104 +457,30 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 
 	public void dispose() {
 		super.dispose();
-    	if (this.isParticipantPane) {
-    		SyncInfoSet paneSyncInfoSet =  this.getPaneSyncInfoSet();
-    		paneSyncInfoSet.removeSyncSetChangedListener(this.paneSyncInfoSetListener);
+    	if (this.hasParticipantPane) {
+    		this.paneParticipantHelper.dispose();
     	}  	
 	}
 	
-	protected SyncInfoSet getPaneSyncInfoSet() {
-		SyncInfoSet syncInfoSet = null;
-		ISynchronizePage page = this.syncPageConfiguration.getPage();
-		if (page instanceof SubscriberParticipantPage) {
-        	WorkingSetFilteredSyncInfoCollector collector = ((SubscriberParticipantPage)page).getCollector();
-        	syncInfoSet = collector.getWorkingSetSyncInfoSet();
-		}
-		return syncInfoSet;
-	}
-	
-    public SyncInfoSet getPaneSyncInfoSetToProcess() {
-        final SyncInfoSet infos= new SyncInfoSet();
-        if (this.syncPageConfiguration == null) {
-            return this.participant.getSyncInfoSet();
-        }
-        
-        final IDiffElement root = (ISynchronizeModelElement) this.syncPageConfiguration.getProperty(SynchronizePageConfiguration.P_MODEL);
-        final IDiffElement[] elements= Utils.getDiffNodes(new IDiffElement [] { root });
-        
-        for (int i = 0; i < elements.length; i++) {
-            if (elements[i] instanceof SyncInfoModelElement) {
-                SyncInfo syncInfo = ((SyncInfoModelElement)elements[i]).getSyncInfo();           	
-                infos.add(syncInfo);
-            }
-        }  
-        return infos;
-    } 
-	
-    protected void expandPaneTree() {
-        if (this.syncPageConfiguration != null) {
-            final Viewer viewer= this.syncPageConfiguration.getPage().getViewer();
-            if (viewer instanceof TreeViewer) {
-            	try {
-    	        	viewer.getControl().setRedraw(false);
-    	            ((TreeViewer)viewer).expandAll();
-            	} finally {
-            		viewer.getControl().setRedraw(true);
-            	}
-            }
-        }
-    }
-    
-    /*
-	 * Pane validator
-	 */
-	private class PaneVerifier extends AbstractVerifier {
-		
-		protected String getErrorMessage(Control input) {			
-			return null;
-		}
-		
-		protected String getWarningMessage(Control input) {
-			/*
-			 * As current validation may be caused by deletion of resources from sync view,
-			 * then selected resources still contain deleted resources. 
-			 * So we need to exclude them explicitly
-			 */
-			IResource []selectedResources = AbstractBranchTagPanel.this.getSelectedResources();
-			List<IResource> resourcesToProcess = new ArrayList<IResource>();
-			resourcesToProcess.addAll(Arrays.asList(selectedResources));
-			if (!AbstractBranchTagPanel.this.resourcesRemovedFromPane.isEmpty()) {
-				resourcesToProcess.removeAll(AbstractBranchTagPanel.this.resourcesRemovedFromPane);
+	protected class AbstractBranchTagPaneParticipantHelper extends PaneParticipantHelper {
+		/*
+		 * Pane validator
+		 */
+		public class AbstractBranchTagPaneVerifier extends PaneVerifier {
+			
+			protected String getErrorMessage(Control input) {			
+				return null;
 			}
 			
-			if ((resourcesToProcess.isEmpty() || AbstractBranchTagPanel.this.disableSwitch) && AbstractBranchTagPanel.this.startWithCheck.getSelection()) {
-				return AbstractBranchTagPanel.this.defaultMessage + " " + SVNTeamUIPlugin.instance().getResource(AbstractBranchTagPanel.this.nationalizationId + ".Warning");
-			}
-			return null;
+			protected String getWarningMessage(Control input) {
+				IResource[] resourcesToProcess = AbstractBranchTagPaneParticipantHelper.this.getSelectedResources();
+				
+				if ((resourcesToProcess.length == 0 || AbstractBranchTagPanel.this.disableSwitch) && AbstractBranchTagPanel.this.startWithCheck.getSelection()) {
+					return AbstractBranchTagPanel.this.defaultMessage + " " + SVNTeamUIPlugin.instance().getResource(AbstractBranchTagPanel.this.nationalizationId + ".Warning");
+				}
+				return null;
+			}	
 		}	
 	}
-    
-	/*
-	 * Listens to changes in sync view for pane
-	 */
-	private class PaneSyncInfoSetListener implements ISyncInfoSetChangeListener {
-			
-		public void syncInfoChanged(ISyncInfoSetChangeEvent event, IProgressMonitor monitor) {					
-			IResource[] removed = event.getRemovedResources();			
-			if (removed.length > 0) {	 							 							 						
-				AbstractBranchTagPanel.this.resourcesRemovedFromPane.addAll(Arrays.asList(removed));	 						
-				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
-					public void run() {
-						AbstractBranchTagPanel.this.validateContent();									
-					}	 							
-				});	 						
-			}	 			
-		}
-
-		public void syncInfoSetErrors(SyncInfoSet set, ITeamStatus[] errors, IProgressMonitor monitor) {			 				
-		}
-
-		public void syncInfoSetReset(SyncInfoSet set, IProgressMonitor monitor) {					 					
-		}	        	
-	}
+	
 }
