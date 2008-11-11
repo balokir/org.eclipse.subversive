@@ -68,7 +68,8 @@ import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.dialog.DiscardConfirmationDialog;
 import org.eclipse.team.svn.ui.dialog.UnlockResourcesDialog;
 import org.eclipse.team.svn.ui.operation.CompareResourcesOperation;
-import org.eclipse.team.svn.ui.panel.BasePaneParticipant;
+import org.eclipse.team.svn.ui.panel.participant.BasePaneParticipant;
+import org.eclipse.team.svn.ui.panel.participant.RevertPaneParticipant;
 import org.eclipse.team.svn.ui.panel.remote.ComparePanel;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.ui.synchronize.ResourceScope;
@@ -93,8 +94,10 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
     public RevertPanel(IResource[] resources, IResource[] userSelectedResources) {
         super(resources, userSelectedResources, new String[] {IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL});
         this.dialogTitle = SVNTeamUIPlugin.instance().getResource("RevertPanel.Title");
-        this.dialogDescription = SVNTeamUIPlugin.instance().getResource("RevertPanel.Description");
-        this.defaultMessage = SVNTeamUIPlugin.instance().getResource("RevertPanel.Message");
+        
+        boolean isParticipantPane = this.paneParticipantHelper.isParticipantPane();
+        this.dialogDescription = SVNTeamUIPlugin.instance().getResource(isParticipantPane ? "RevertPanel.Pane.Description" : "RevertPanel.Description");
+        this.defaultMessage = SVNTeamUIPlugin.instance().getResource(isParticipantPane ? "RevertPanel.Pane.Message" : "RevertPanel.Message");
         IResource[] nonVersionedResources = FileUtility.getResourcesRecursive(resources, IStateFilter.SF_NEW, IResource.DEPTH_ZERO);
         this.disableRemoveNonVersionedChange = nonVersionedResources.length == resources.length;
     	this.removeNonVersioned = this.disableRemoveNonVersionedChange;
@@ -136,7 +139,7 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
     		}
     	});
     	
-    	if (!this.isParticipantPane) {
+    	if (!this.paneParticipantHelper.isParticipantPane()) {
     		this.addContextMenu();	
     	}    	
     }
@@ -389,7 +392,7 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 		
 		final IResource[] newResources = allResources.toArray(new IResource[allResources.size()]);
 		
-		if (!this.isParticipantPane) {
+		if (!this.paneParticipantHelper.isParticipantPane()) {
 			UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 				public void run() {
 					//FIXME isDisposed() test is necessary as dispose() method is not called from FastTrack Commit Dialog
@@ -423,7 +426,7 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 	 * @see org.eclipse.team.svn.ui.panel.local.AbstractResourceSelectionPanel#createPaneParticipant()
 	 */
 	protected BasePaneParticipant createPaneParticipant() {
-		return new RevertPaneParticipant(new ResourceScope(this.resources));
+		return new RevertPaneParticipant(new ResourceScope(this.resources), this);
 	}
     
 }

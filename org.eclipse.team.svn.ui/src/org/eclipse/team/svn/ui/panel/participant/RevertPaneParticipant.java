@@ -9,7 +9,7 @@
  *    Igor Burilo - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.svn.ui.panel.local;
+package org.eclipse.team.svn.ui.panel.participant;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,8 +18,7 @@ import java.util.List;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.panel.BasePaneParticipant;
-import org.eclipse.team.svn.ui.panel.local.CommitPaneParticipant.CommitPaneActionGroup;
+import org.eclipse.team.svn.ui.panel.participant.CommitPaneParticipant.CommitPaneActionGroup;
 import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
 import org.eclipse.team.svn.ui.synchronize.action.CleanUpAction;
 import org.eclipse.team.svn.ui.synchronize.action.CompareWithLatestRevisionPaneAction;
@@ -34,6 +33,7 @@ import org.eclipse.team.svn.ui.synchronize.action.ReplaceWithLatestRevisionPaneA
 import org.eclipse.team.svn.ui.synchronize.action.ReplaceWithRevisionPaneAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.LockAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.UnlockAction;
+import org.eclipse.team.svn.ui.verifier.IValidationManager;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ISynchronizeScope;
 
@@ -44,13 +44,13 @@ import org.eclipse.team.ui.synchronize.ISynchronizeScope;
  */
 public class RevertPaneParticipant extends BasePaneParticipant {
 
-	public RevertPaneParticipant(ISynchronizeScope scope) {
-		super(scope);		
+	public RevertPaneParticipant(ISynchronizeScope scope, IValidationManager validationManager) {
+		super(scope, validationManager);		
 	}
 	
 	protected Collection<AbstractSynchronizeActionGroup> getActionGroups() {
     	List<AbstractSynchronizeActionGroup> actionGroups = new ArrayList<AbstractSynchronizeActionGroup>();
-    	actionGroups.add(new RevertPaneActionGroup());
+    	actionGroups.add(new RevertPaneActionGroup(this.validationManager));
     	return actionGroups;
     }
 	
@@ -61,8 +61,12 @@ public class RevertPaneParticipant extends BasePaneParticipant {
      * @author Igor Burilo
      */
     protected static class RevertPaneActionGroup extends BasePaneActionGroup {  	
-    	
-    	protected MenuManager compareWithGroup;
+    	    	
+		public RevertPaneActionGroup(IValidationManager validationManager) {
+			super(validationManager);		
+		}
+
+		protected MenuManager compareWithGroup;
     	protected MenuManager replaceWithGroup;    	    
 		
 		protected void configureActions(ISynchronizePageConfiguration configuration) {	

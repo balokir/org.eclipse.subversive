@@ -9,7 +9,7 @@
  *    Igor Burilo - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.svn.ui.panel.local;
+package org.eclipse.team.svn.ui.panel.participant;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,7 +20,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.panel.BasePaneParticipant;
+import org.eclipse.team.svn.ui.panel.local.CommitPanel;
 import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
 import org.eclipse.team.svn.ui.synchronize.action.CleanUpAction;
@@ -53,7 +53,7 @@ public class CommitPaneParticipant extends BasePaneParticipant {
 	protected CommitPanel commitPanel;
 	
 	public CommitPaneParticipant(ISynchronizeScope scope, CommitPanel commitPanel) {
-		super(scope);	   
+		super(scope, commitPanel);	   
 		this.commitPanel = commitPanel;
 	}
 	
@@ -77,6 +77,7 @@ public class CommitPaneParticipant extends BasePaneParticipant {
     	protected CommitPanel commitPanel;
     	
     	public CommitPaneActionGroup(CommitPanel commitPanel) {
+    		super(commitPanel);
     		this.commitPanel = commitPanel;
     	}    			   
 		
