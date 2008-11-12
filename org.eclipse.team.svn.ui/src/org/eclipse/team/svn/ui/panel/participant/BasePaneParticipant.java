@@ -14,7 +14,6 @@ package org.eclipse.team.svn.ui.panel.participant;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;

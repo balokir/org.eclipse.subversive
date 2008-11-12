@@ -16,8 +16,10 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.panel.local.CommitPanel;
@@ -84,22 +86,13 @@ public class CommitPaneParticipant extends BasePaneParticipant {
 		protected void configureActions(ISynchronizePageConfiguration configuration) {
 			super.configureActions(configuration);
 			
-			//Open in compare editor				
-			final OpenInComparePaneAction openInCompareAction = new OpenInComparePaneAction("", configuration);
-			this.appendToGroup(
-					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-					ISynchronizePageConfiguration.FILE_GROUP,
-					openInCompareAction);
-			/*
-			TODO handle double click ?
-			For more details see ModelSynchronizeParticipantActionGroup
-			
+			//Open in compare editor: handle double click		
+			final OpenInComparePaneAction openInCompareAction = new OpenInComparePaneAction(configuration);
 			configuration.setProperty(SynchronizePageConfiguration.P_OPEN_ACTION, new Action() {
 				public void run() {
 					openInCompareAction.run();
 				}
-			});			
-			*/
+			});						
 			
 			//separator
 			this.appendToGroup(
