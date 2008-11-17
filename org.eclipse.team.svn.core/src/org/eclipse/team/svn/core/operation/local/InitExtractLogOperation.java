@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -53,10 +55,11 @@ public class InitExtractLogOperation extends AbstractActionOperation {
 	}
 
 	public void log(String participant, String status) {
-		if (this.extractParticipants.get(status) == null) {
-			this.extractParticipants.put(status, new ArrayList<String>());
+		String toPut = status.equals(IStateFilter.ST_NEW) ? IStateFilter.ST_ADDED : status;
+		if (this.extractParticipants.get(toPut) == null) {
+			this.extractParticipants.put(toPut, new ArrayList<String>());
 		}
-		this.extractParticipants.get(status).add(participant);
+		this.extractParticipants.get(toPut).add(participant);
 	}
 	
 	public void flushLog() {
@@ -84,7 +87,42 @@ public class InitExtractLogOperation extends AbstractActionOperation {
 			}
 			sortedParticipants.put(status, participantsToLog);
 		}
-		for (String status : sortedParticipants.keySet()) {
+		
+		//Sorting statuses
+		List<String> statusesList = Arrays.asList(sortedParticipants.keySet().toArray(new String [this.extractParticipants.keySet().size()]));
+		Collections.sort(statusesList, new Comparator<String>() {
+
+			public int compare(String o1, String o2) {
+				if (o1.equals(IStateFilter.ST_MODIFIED))
+				{
+					return -1;
+				}
+				if (o2.equals(IStateFilter.ST_MODIFIED))
+				{
+					return 1;
+				}
+				if (o1.equals(IStateFilter.ST_ADDED))
+				{
+					return -1;
+				}
+				if (o2.equals(IStateFilter.ST_ADDED))
+				{
+					return 1;
+				}
+				if (o1.equals(IStateFilter.ST_NEW))
+				{
+					return -1;
+				}
+				if (o2.equals(IStateFilter.ST_NEW))
+				{
+					return 1;
+				}
+				return 0;
+			}
+			
+		});
+		
+		for (String status : statusesList) {
 			for (String participant : sortedParticipants.get(status)) {
 				this.logImpl(SVNTeamPlugin.instance().getResource("Console.Status." + status) + " " + participant);
 			}
