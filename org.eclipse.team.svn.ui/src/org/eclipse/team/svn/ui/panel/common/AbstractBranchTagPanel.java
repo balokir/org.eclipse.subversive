@@ -127,10 +127,10 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 	}
 	
 	public IResource[] getSelectedResources() {
-		if (this.hasParticipantPane) {
+		if (this.hasParticipantPane) {			
 			return this.paneParticipantHelper.getSelectedResources();
 		} else {
-			return this.resourceSelection.getSelectedResources();			
+			return this.resourceSelection == null ? new IResource[0] : this.resourceSelection.getSelectedResources();			
 		}		
 	}
 
@@ -138,7 +138,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 		if (this.hasParticipantPane) {    		
 			return this.paneParticipantHelper.getNotSelectedResources();
     	} else {
-    		return this.resourceSelection.getNotSelectedResources();
+    		return this.resourceSelection == null ? new IResource[0] : this.resourceSelection.getNotSelectedResources();
     	}
 	}
 
