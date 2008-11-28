@@ -26,7 +26,7 @@ import java.util.Locale;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 
 /**
@@ -124,7 +124,7 @@ public class InitExtractLogOperation extends AbstractActionOperation {
 		
 		for (String status : statusesList) {
 			for (String participant : sortedParticipants.get(status)) {
-				this.logImpl(SVNTeamPlugin.instance().getResource("Console.Status." + status) + " " + participant);
+				this.logImpl(SVNMessages.getString("Console_Status_" + status) + " " + participant);
 			}
 			this.logImpl("");
 		}

@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.core.operation;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNProgressMonitor;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNNotification.NodeStatus;
@@ -63,7 +63,7 @@ public class SVNProgressMonitor implements ISVNProgressMonitor {
 	public static void writeToConsole(IConsoleStream stream, int contentState, int propState, int action, String path, long revision) {
 		if (stream != null && path != null && path.length() > 0) {
 			if (action == PerformedAction.UPDATE_COMPLETED || action == PerformedAction.STATUS_COMPLETED) {
-				String message = SVNTeamPlugin.instance().getResource("Console.AtRevision", new String[] {String.valueOf(revision)});
+				String message = SVNMessages.format(SVNMessages.Console_AtRevision, new String[] {String.valueOf(revision)});
 				stream.write(IConsoleStream.LEVEL_OK, message);
 			}
 			else {
@@ -73,13 +73,13 @@ public class SVNProgressMonitor implements ISVNProgressMonitor {
 					case PerformedAction.ADD: 
 					case PerformedAction.UPDATE_ADD: 
 					case PerformedAction.COMMIT_ADDED: {
-						status = SVNTeamPlugin.instance().getResource("Console.Action.Added");
+						status = SVNMessages.Console_Action_Added;
 						break;
 					}
 					case PerformedAction.DELETE: 
 					case PerformedAction.UPDATE_DELETE: 
 					case PerformedAction.COMMIT_DELETED: {
-						status = SVNTeamPlugin.instance().getResource("Console.Action.Deleted");
+						status = SVNMessages.Console_Action_Deleted;
 						break;
 					}
 					case PerformedAction.UPDATE_UPDATE: {
@@ -89,36 +89,36 @@ public class SVNProgressMonitor implements ISVNProgressMonitor {
 							IConsoleStream.LEVEL_WARNING : 
 							IConsoleStream.LEVEL_OK;
 						if (resourceState >= 0 && resourceState < NodeStatus.shortStatusNames.length) {
-							status = SVNTeamPlugin.instance().getResource("Console.Update.Status." + NodeStatus.statusNames[resourceState]);
+							status = SVNMessages.getString("Console_Update_Status_" + NodeStatus.statusNames[resourceState]); //$NON-NLS-1$
 							if (status.length() > 0) {
 								break;
 							}
 						}
-						status = " ";
+						status = " "; //$NON-NLS-1$
 						break;
 					}
 					case PerformedAction.COMMIT_MODIFIED: {
-						status = SVNTeamPlugin.instance().getResource("Console.Action.Modified");
+						status = SVNMessages.Console_Action_Modified;
 						break;
 					}
 					case PerformedAction.COMMIT_REPLACED: {
-						status = SVNTeamPlugin.instance().getResource("Console.Action.Replaced");
+						status = SVNMessages.Console_Action_Replaced;
 						break;
 					}
 					case PerformedAction.REVERT: {
-						status = SVNTeamPlugin.instance().getResource("Console.Action.Reverted");
+						status = SVNMessages.Console_Action_Reverted;
 						break;
 					}
 					case PerformedAction.RESTORE: {
-						status = SVNTeamPlugin.instance().getResource("Console.Action.Restored");
+						status = SVNMessages.Console_Action_Restored;
 						break;
 					}
 					case PerformedAction.LOCKED: {
-						status = SVNTeamPlugin.instance().getResource("Console.Action.Locked");
+						status = SVNMessages.Console_Action_Locked;
 						break;
 					}
 					case PerformedAction.UNLOCKED: {
-						status = SVNTeamPlugin.instance().getResource("Console.Action.Unlocked");
+						status = SVNMessages.Console_Action_Unlocked;
 						break;
 					}
 					default: {
@@ -132,11 +132,11 @@ public class SVNProgressMonitor implements ISVNProgressMonitor {
 					}
 				}
 				if (action == PerformedAction.COMMIT_POSTFIX_TXDELTA) {
-					String message = SVNTeamPlugin.instance().getResource("Console.TransmittingData", new String[] {path});
+					String message = SVNMessages.format(SVNMessages.Console_TransmittingData, new String[] {path});
 					stream.write(severity, message);
 				}
 				else if (status != null) {
-					String message = SVNTeamPlugin.instance().getResource("Console.Status", new String[] {status, path});
+					String message = SVNMessages.format(SVNMessages.Console_Status, new String[] {status, path});
 					stream.write(severity, message);
 				}
 			}
@@ -146,28 +146,28 @@ public class SVNProgressMonitor implements ISVNProgressMonitor {
 	protected static String getStatus(int resourceState) {
 		switch (resourceState) {
 			case SVNEntryStatus.Kind.ADDED: {
-				return SVNTeamPlugin.instance().getResource("Console.Status.Added");
+				return SVNMessages.Console_Status_Added;
 			}
 			case SVNEntryStatus.Kind.MODIFIED: {
-				return SVNTeamPlugin.instance().getResource("Console.Status.Modified");
+				return SVNMessages.Console_Status_Modified;
 			}
 			case SVNEntryStatus.Kind.DELETED: {
-				return SVNTeamPlugin.instance().getResource("Console.Status.Deleted");
+				return SVNMessages.Console_Status_Deleted;
 			}
 			case SVNEntryStatus.Kind.MISSING: {
-				return SVNTeamPlugin.instance().getResource("Console.Status.Missing");
+				return SVNMessages.Console_Status_Missing;
 			}
 			case SVNEntryStatus.Kind.REPLACED: {
-				return SVNTeamPlugin.instance().getResource("Console.Status.Replaced");
+				return SVNMessages.Console_Status_Replaced;
 			}
 			case SVNEntryStatus.Kind.MERGED: {
-				return SVNTeamPlugin.instance().getResource("Console.Status.Merged");
+				return SVNMessages.Console_Status_Merged;
 			}
 			case SVNEntryStatus.Kind.CONFLICTED: {
-				return SVNTeamPlugin.instance().getResource("Console.Status.Conflicted");
+				return SVNMessages.Console_Status_Conflicted;
 			}
 			case SVNEntryStatus.Kind.OBSTRUCTED: {
-				return SVNTeamPlugin.instance().getResource("Console.Status.Obstructed");
+				return SVNMessages.Console_Status_Obstructed;
 			}
 			default: {
 				return null;

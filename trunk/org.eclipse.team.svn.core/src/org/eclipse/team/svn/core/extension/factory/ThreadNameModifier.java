@@ -787,7 +787,7 @@ public class ThreadNameModifier implements ISVNConnector {
 	protected String overrideThreadName() {
 		Thread current = Thread.currentThread();
 		String oldName = current.getName();
-		current.setName(StringId.generateRandom("SVN", 5));
+		current.setName(StringId.generateRandom("SVN", 5)); //$NON-NLS-1$
 		return oldName;
 	}
 

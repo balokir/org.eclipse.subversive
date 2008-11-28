@@ -41,6 +41,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.Team;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNDiffStatusCallback;
@@ -412,7 +413,7 @@ public final class SVNUtility {
 		if (status == null) {
 			status = "NotExists";
 		}
-		return SVNTeamPlugin.instance().getResource("Status." + status);
+		return SVNMessages.getString("Status_" + status);
 	}
 	
 	public static String getOldRoot(String oldUrl, IRepositoryResource []rootChildren) {
@@ -927,7 +928,7 @@ public final class SVNUtility {
 		}
 		
 		if (oldInfo == null) {
-			String errMessage = SVNTeamPlugin.instance().getResource("Error.NonSVNPath", new String[] {oldRoot.getAbsolutePath()});
+			String errMessage = SVNMessages.formatErrorString("Error_NonSVNPath", new String[] {oldRoot.getAbsolutePath()});
 			throw new RuntimeException(errMessage);
 		}
 		return new Object[] {oldRoot, oldInfo};
@@ -1027,7 +1028,7 @@ public final class SVNUtility {
 		if (ignoreNone) {
 			return Kind.NONE;
 		}
-		String errMessage = SVNTeamPlugin.instance().getResource("Error.UnrecognizedNodeKind", new String[] {String.valueOf(kind), path});
+		String errMessage = SVNMessages.format("Error_UnrecognizedNodeKind", new String[] {String.valueOf(kind), path});
 		throw new RuntimeException(errMessage);
 	}
 	

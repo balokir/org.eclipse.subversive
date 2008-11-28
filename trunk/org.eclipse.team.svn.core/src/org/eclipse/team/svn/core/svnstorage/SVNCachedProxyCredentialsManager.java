@@ -25,8 +25,8 @@ public class SVNCachedProxyCredentialsManager {
 	
 	public SVNCachedProxyCredentialsManager(IProxyService proxyService) {	
 		IProxyData proxyData = proxyService.getProxyData(IProxyData.HTTP_PROXY_TYPE);
-		this.username = proxyData.isRequiresAuthentication() ? proxyData.getUserId() : "";
-		this.password = proxyData.isRequiresAuthentication() ? proxyData.getPassword() : "";
+		this.username = proxyData.isRequiresAuthentication() ? proxyData.getUserId() : ""; //$NON-NLS-1$
+		this.password = proxyData.isRequiresAuthentication() ? proxyData.getPassword() : ""; //$NON-NLS-1$
 	}
 	
 	public String getPassword() {

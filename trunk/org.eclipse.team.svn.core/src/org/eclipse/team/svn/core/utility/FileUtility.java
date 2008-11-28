@@ -29,8 +29,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 import java.util.Set;
 
 import org.eclipse.core.internal.preferences.Base64;
@@ -49,7 +47,7 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.svn.core.IConnectedProjectInformation;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.operation.local.GetAllResourcesOperation;
@@ -66,7 +64,7 @@ public final class FileUtility {
 	public static final IResource []NO_CHILDREN = new IResource[0];
 	
 	public static int getMIMEType(IResource resource) {
-		int type = Team.getFileContentManager().getTypeForExtension(resource.getFileExtension() == null ? "" : resource.getFileExtension());
+		int type = Team.getFileContentManager().getTypeForExtension(resource.getFileExtension() == null ? "" : resource.getFileExtension()); //$NON-NLS-1$
 		if (type == Team.UNKNOWN) {
 			type = Team.getFileContentManager().getTypeForName(resource.getName());
 		}
@@ -95,25 +93,26 @@ public final class FileUtility {
 		return set.equals(resource) ? true : (resource == null ? false : FileUtility.relatesTo(set, resource.getParent()));
 	}
 	
-	public static String getResource(ResourceBundle bundle, String key) {
-		if (key == null) {
-			return null;
-		}
-		if (bundle == null) {
-			return key;
-		}
-		String retVal = FileUtility.getResourceImpl(bundle, key);
-		if (retVal != null) {
-			if (key.indexOf("Error") != -1) {
-				String id = FileUtility.getResourceImpl(bundle, key + ".Id");
-				if (id != null) {
-					retVal = id + ": " + retVal;
-				}
-			}
-			return retVal;
-		}
-		return key;
-	}
+//	TODO delete	
+//	public static String getResource(ResourceBundle bundle, String key) {
+//		if (key == null) {
+//			return null;
+//		}
+//		if (bundle == null) {
+//			return key;
+//		}
+//		String retVal = FileUtility.getResourceImpl(bundle, key);
+//		if (retVal != null) {
+//			if (key.indexOf("Error") != -1) {
+//				String id = FileUtility.getResourceImpl(bundle, key + ".Id");
+//				if (id != null) {
+//					retVal = id + ": " + retVal;
+//				}
+//			}
+//			return retVal;
+//		}
+//		return key;
+//	}
 	
 	public static String getWorkingCopyPath(IResource resource) {
 		return FileUtility.getResourcePath(resource).toString();
@@ -122,7 +121,7 @@ public final class FileUtility {
 	public static IPath getResourcePath(IResource resource) {
 		IPath location = resource.getLocation();
 		if (location == null) {
-			String errMessage = SVNTeamPlugin.instance().getResource("Error.InaccessibleResource", new String[] {resource.getFullPath().toString()});
+			String errMessage = SVNMessages.formatErrorString("Error_InaccessibleResource_2", new String[] {resource.getFullPath().toString()}); //$NON-NLS-1$
 			throw new UnreportableException(errMessage);
 		}
 		return location;
@@ -130,13 +129,13 @@ public final class FileUtility {
 	
 	public static Map<String, String> getEnvironmentVariables() {
 		try {
-			Method getenv = System.class.getMethod("getenv", (Class [])null);
+			Method getenv = System.class.getMethod("getenv", (Class [])null); //$NON-NLS-1$
 			return (Map<String, String>)getenv.invoke(null, (Object [])null);
 		}
 		catch (Exception ex) {
 			try {
 				boolean isWindows = FileUtility.isWindows();
-				Process p = isWindows ? Runtime.getRuntime().exec("cmd.exe /c set") : Runtime.getRuntime().exec("env");
+				Process p = isWindows ? Runtime.getRuntime().exec("cmd.exe /c set") : Runtime.getRuntime().exec("env"); //$NON-NLS-1$ //$NON-NLS-2$
 	            
 				BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 	            String varLine;
@@ -148,7 +147,7 @@ public final class FileUtility {
 		                retVal.put(isWindows ? name.toUpperCase() : name, varLine.substring(idx + 1));
 	                }
 	                else if (varLine.length() > 0) {
-	                	retVal.put(varLine, "");
+	                	retVal.put(varLine, ""); //$NON-NLS-1$
 	                }
 	            }
 				return retVal;
@@ -164,15 +163,15 @@ public final class FileUtility {
 	}
 	
 	public static boolean isWindows() {
-		return FileUtility.getOSName().indexOf("windows") != -1;
+		return FileUtility.getOSName().indexOf("windows") != -1; //$NON-NLS-1$
 	}
 	
 	public static String getOSName() {
-		return System.getProperty("os.name").toLowerCase();
+		return System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
 	}
 	
 	public static boolean isCaseInsensitiveOS() {
-		return !(Platform.OS_MACOSX.equals(Platform.getOS()) ? false : new java.io.File("a").compareTo(new java.io.File("A")) != 0);
+		return !(Platform.OS_MACOSX.equals(Platform.getOS()) ? false : new java.io.File("a").compareTo(new java.io.File("A")) != 0); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
     public static boolean isLinked(IResource resource) {
@@ -198,15 +197,15 @@ public final class FileUtility {
 	
 	public static String formatResourceName(String projectName) {
 		// remove invalid characters when repository root was specified
-		return projectName == null ? null : PatternProvider.replaceAll(projectName, "([\\/:])+", ".");
+		return projectName == null ? null : PatternProvider.replaceAll(projectName, "([\\/:])+", "."); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public static String formatPath(String path) {
-		return PatternProvider.replaceAll(path, "\\\\", "/");
+		return PatternProvider.replaceAll(path, "\\\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public static String getUsernameParam(String username) {
-		return username == null || username.trim().length() == 0 ? "" : " --username \"" + username + "\"";
+		return username == null || username.trim().length() == 0 ? "" : " --username \"" + username + "\""; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	public static String flattenText(String text) {
@@ -216,7 +215,7 @@ public final class FileUtility {
 			char currentChar = text.charAt(i);
 			if (currentChar == '\r' || currentChar == '\n') {
 				if (!skipAdjacentLineSeparator)
-					flat.append("/"); 
+					flat.append("/");  //$NON-NLS-1$
 				skipAdjacentLineSeparator = true;
 			} else {
 				flat.append(currentChar);
@@ -235,11 +234,11 @@ public final class FileUtility {
 	}
 	
 	public static String formatMultilineText(String text) {
-		if (text.length() > 0 && text.substring(0, 1).matches("(\\s)+")) {
-			text = text.replaceFirst("(\\s)+", "");
+		if (text.length() > 0 && text.substring(0, 1).matches("(\\s)+")) { //$NON-NLS-1$
+			text = text.replaceFirst("(\\s)+", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (text.length() == 0) {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 		text = text.replace('\t', ' ');
 		int idx = text.indexOf('\n');
@@ -250,7 +249,7 @@ public final class FileUtility {
 		idx = idx < idx1 || idx1 == -1 ? idx : idx1;
 		if (idx != -1) {
 			if (text.substring(idx).trim().length() != 0) {
-				return text.substring(0, idx) + "...";
+				return text.substring(0, idx) + "..."; //$NON-NLS-1$
 			}
 			return text.substring(0, idx);
 		}
@@ -260,7 +259,7 @@ public final class FileUtility {
 	public static String[] decodeStringToArray(String encodedString) {
         String []valuesArray = new String[] {};
         if (encodedString != null && encodedString.length() > 0) {
-            valuesArray = encodedString.split(";");
+            valuesArray = encodedString.split(";"); //$NON-NLS-1$
             for (int i = 0; i < valuesArray.length; i++) {
             	valuesArray[i] = new String(Base64.decode(valuesArray[i].getBytes()));
             }
@@ -269,10 +268,10 @@ public final class FileUtility {
     }
     
     public static String encodeArrayToString(String []valuesArray) {
-        String result = "";
+        String result = ""; //$NON-NLS-1$
         for (int i = 0; i < valuesArray.length; i++) {
             String str = new String(Base64.encode(valuesArray[i].getBytes()));
-            result += result.length() == 0 ? str : (";" + str);
+            result += result.length() == 0 ? str : (";" + str); //$NON-NLS-1$
 		}
         return result;
     }
@@ -475,12 +474,12 @@ public final class FileUtility {
 	
 	public static void copyAll(File to, File what, int options, FileFilter filter, IProgressMonitor monitor) throws Exception {
 		if (what.isDirectory()) {
-			to = new File(to.getAbsolutePath() + "/" + what.getName());
+			to = new File(to.getAbsolutePath() + "/" + what.getName()); //$NON-NLS-1$
 			if (monitor.isCanceled()) {
 				return;
 			}
 			if (!to.mkdirs() && ((options & FileUtility.COPY_IGNORE_EXISTING_FOLDERS) == 0)) {
-				String errMessage = SVNTeamPlugin.instance().getResource("Error.CreateDirectory", new String[] {to.getAbsolutePath()});
+				String errMessage = SVNMessages.formatErrorString("Error_CreateDirectory", new String[] {to.getAbsolutePath()}); //$NON-NLS-1$
 				throw new Exception(errMessage);
 			}
 			File []files = what.listFiles(filter);
@@ -501,7 +500,7 @@ public final class FileUtility {
 	
 	public static void copyFile(File to, File what, int options, IProgressMonitor monitor) throws Exception {
 		if (to.exists() && to.isDirectory()) {
-			to = new File(to.getAbsolutePath() + "/" + what.getName());
+			to = new File(to.getAbsolutePath() + "/" + what.getName()); //$NON-NLS-1$
 		}
 		if ((!to.exists() || (options & FileUtility.COPY_OVERRIDE_EXISTING_FILES) != 0) && !monitor.isCanceled()) {
 			FileOutputStream output = null;
@@ -638,11 +637,11 @@ public final class FileUtility {
 	}
 	
 	public static String getNamesListAsString(Object []resources) {
-		String resourcesNames = "";
-		String name = "";
+		String resourcesNames = ""; //$NON-NLS-1$
+		String name = ""; //$NON-NLS-1$
 		for (int i = 0; i < resources.length; i++) {
 			if (i == 4) {
-				resourcesNames += "...";
+				resourcesNames += "..."; //$NON-NLS-1$
 				break;
 			}
 			if (resources[i] instanceof IRepositoryResource) {
@@ -654,7 +653,7 @@ public final class FileUtility {
 			else {
 				name = resources[i].toString();
 			}
-			resourcesNames += (i == 0 ? "'" : ", '") + name + "'";
+			resourcesNames += (i == 0 ? "'" : ", '") + name + "'"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		
 		return resourcesNames;
@@ -738,14 +737,15 @@ public final class FileUtility {
 		return op.getChildren();
 	}
 	
-	private static String getResourceImpl(ResourceBundle bundle, String key) {
-		try {
-			return bundle.getString(key);
-		}
-		catch (MissingResourceException ex) {
-			return null;
-		}
-	}
+//	TODO delete	
+//	private static String getResourceImpl(ResourceBundle bundle, String key) {
+//		try {
+//			return bundle.getString(key);
+//		}
+//		catch (MissingResourceException ex) {
+//			return null;
+//		}
+//	}
 	
 	private FileUtility() {
 	}

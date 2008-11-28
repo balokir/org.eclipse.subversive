@@ -28,32 +28,32 @@ public class SVNProperty {
 		/**
 		 * The mime type of the binary file
 		 */
-		public static final String MIME_TYPE = "svn:mime-type";
+		public static final String MIME_TYPE = "svn:mime-type"; //$NON-NLS-1$
 
 		/**
 		 * New line-separated list of ignored resource name patterns
 		 */
-		public static final String IGNORE = "svn:ignore";
+		public static final String IGNORE = "svn:ignore"; //$NON-NLS-1$
 
 		/**
 		 * Specify the "end-of-line" characters will be used while reading file lines
 		 */
-		public static final String EOL_STYLE = "svn:eol-style";
+		public static final String EOL_STYLE = "svn:eol-style"; //$NON-NLS-1$
 
 		/**
 		 * Keywords to be expanded during commit
 		 */
-		public static final String KEYWORDS = "svn:keywords";
+		public static final String KEYWORDS = "svn:keywords"; //$NON-NLS-1$
 
 		/**
 		 * Marks the file is executable
 		 */
-		public static final String EXECUTABLE = "svn:executable";
+		public static final String EXECUTABLE = "svn:executable"; //$NON-NLS-1$
 
 		/**
 		 * The value for svn:executable
 		 */
-		public static final String EXECUTABLE_VALUE = "*";
+		public static final String EXECUTABLE_VALUE = "*"; //$NON-NLS-1$
 
 		/**
 		 * The new line-separated list of folders which contains resources not related to this working copy. The value
@@ -61,32 +61,32 @@ public class SVNProperty {
 		 * 
 		 * {Folder_name_without_spaces} [-r{revision_number} | -r {revision_number}] {encoded_URL}
 		 */
-		public static final String EXTERNALS = "svn:externals";
+		public static final String EXTERNALS = "svn:externals"; //$NON-NLS-1$
 
 		/**
 		 * Internal property. The revision author.
 		 */
-		public static final String REV_AUTHOR = "svn:author";
+		public static final String REV_AUTHOR = "svn:author"; //$NON-NLS-1$
 
 		/**
 		 * Internal property. The revision message.
 		 */
-		public static final String REV_LOG = "svn:log";
+		public static final String REV_LOG = "svn:log"; //$NON-NLS-1$
 
 		/**
 		 * Internal property. The revision date.
 		 */
-		public static final String REV_DATE = "svn:date";
+		public static final String REV_DATE = "svn:date"; //$NON-NLS-1$
 
 		/**
 		 * Internal property. The revision original date.
 		 */
-		public static final String REV_ORIGINAL_DATE = "svn:original-date";
+		public static final String REV_ORIGINAL_DATE = "svn:original-date"; //$NON-NLS-1$
 
 		/**
 		 * @since 1.2 If set points that lock is required to modify this node.
 		 */
-		public static final String NEEDS_LOCK = "svn:needs-lock";
+		public static final String NEEDS_LOCK = "svn:needs-lock"; //$NON-NLS-1$
 
 	}
 

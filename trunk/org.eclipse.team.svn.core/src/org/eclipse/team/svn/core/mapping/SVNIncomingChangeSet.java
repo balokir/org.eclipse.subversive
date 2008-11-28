@@ -23,9 +23,9 @@ public class SVNIncomingChangeSet extends DiffChangeSet {
 	protected Date date;
 	
 	public SVNIncomingChangeSet() {
-		this.comment = "";
+		this.comment = ""; //$NON-NLS-1$
 		this.revision = Long.MIN_VALUE;
-		this.author = "";
+		this.author = ""; //$NON-NLS-1$
 		this.date = null;
 	}
 	

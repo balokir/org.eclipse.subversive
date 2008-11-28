@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -61,7 +62,7 @@ public final class ProgressMonitorUtility {
 					}, this.getRule(), IWorkspace.AVOID_UPDATE, monitor);
 				} 
 				catch (CoreException e) {
-					LoggedOperation.reportError(SVNTeamPlugin.instance().getResource("Error.ScheduledTask"), e);
+					LoggedOperation.reportError(SVNMessages.getErrorString("Error_ScheduledTask"), e); //$NON-NLS-1$
 				}
 				return Status.OK_STATUS;
 			}
@@ -98,13 +99,13 @@ public final class ProgressMonitorUtility {
 			monitor = new SubProgressMonitorWithInfo(monitor, ProgressMonitorUtility.TOTAL_WORK * currentWeight / totalWeight);
 		}
 		monitor.beginTask(runnable.getOperationName(), ProgressMonitorUtility.TOTAL_WORK);
-		ProgressMonitorUtility.setTaskInfo(monitor, runnable, SVNTeamPlugin.instance().getResource("Progress.Running"));
+		ProgressMonitorUtility.setTaskInfo(monitor, runnable, SVNMessages.Progress_Running);
 		try {
 			runnable.run(monitor);
 		}
 		finally {
 			monitor.done();
-			ProgressMonitorUtility.setTaskInfo(monitor, runnable, SVNTeamPlugin.instance().getResource("Progress.Done"));
+			ProgressMonitorUtility.setTaskInfo(monitor, runnable, SVNMessages.Progress_Done);
 		}
 	}
 	
@@ -132,7 +133,7 @@ public final class ProgressMonitorUtility {
 	}
 
 	public static void setTaskInfo(IProgressMonitor monitor, IActionOperation op, String subTask) {
-		String message = SVNTeamPlugin.instance().getResource("Progress.SubTask", new String[] {op.getOperationName(), subTask == null || subTask.length() == 0 ? SVNTeamPlugin.instance().getResource("Progress.Running") : subTask});
+		String message = SVNMessages.format(SVNMessages.Progress_SubTask, new String[] {op.getOperationName(), subTask == null || subTask.length() == 0 ? SVNMessages.Progress_Running : subTask});
 		monitor.subTask(message);
 	}
 

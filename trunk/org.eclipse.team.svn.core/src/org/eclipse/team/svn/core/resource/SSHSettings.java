@@ -37,8 +37,8 @@ public class SSHSettings implements Serializable {
 	public SSHSettings() {
 		this.port = SSHSettings.SSH_PORT_DEFAULT;
 		this.useKeyFile = false;
-		this.privateKeyPath = "";
-		this.passPhrase = "";
+		this.privateKeyPath = ""; //$NON-NLS-1$
+		this.passPhrase = ""; //$NON-NLS-1$
 		this.passPhraseSaved = false;
 	}
 

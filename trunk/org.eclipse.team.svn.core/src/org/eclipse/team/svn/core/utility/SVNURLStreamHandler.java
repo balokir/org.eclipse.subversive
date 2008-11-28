@@ -16,7 +16,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
 
-import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.SVNMessages;
 
 /**
  * SVN-specific URL stream handler
@@ -43,12 +43,12 @@ public class SVNURLStreamHandler extends URLStreamHandler {
     
     protected void parseURL(URL u, String spec, int start, int limit) {
     	String protocol = u.getProtocol();
-        if (!protocol.equals("file") &&
-    		!protocol.equals("svn") &&
-            !protocol.equals("http") &&
-            !protocol.equals("https") &&
-            !protocol.equals("svn+ssh")) {
-    		String errMessage = SVNTeamPlugin.instance().getResource("Error.UnknownProtocol", new String[] {protocol});
+        if (!protocol.equals("file") && //$NON-NLS-1$
+    		!protocol.equals("svn") && //$NON-NLS-1$
+            !protocol.equals("http") && //$NON-NLS-1$
+            !protocol.equals("https") && //$NON-NLS-1$
+            !protocol.equals("svn+ssh")) { //$NON-NLS-1$
+    		String errMessage = SVNMessages.formatErrorString("Error_UnknownProtocol", new String[] {protocol}); //$NON-NLS-1$
             throw new RuntimeException(errMessage);
         }
     	this.url = u;

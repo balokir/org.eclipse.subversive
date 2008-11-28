@@ -55,7 +55,7 @@ public class SVNEntryReference {
 	}
 
 	public String toString() {
-		return this.pegRevision == null ? this.path : (this.path + "@" + this.pegRevision.toString());
+		return this.pegRevision == null ? this.path : (this.path + "@" + this.pegRevision.toString()); //$NON-NLS-1$
 	}
 	
 }

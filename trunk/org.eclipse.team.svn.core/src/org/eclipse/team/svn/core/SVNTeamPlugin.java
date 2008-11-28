@@ -14,7 +14,6 @@ package org.eclipse.team.svn.core;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.text.MessageFormat;
 
 import org.eclipse.core.net.proxy.IProxyService;
 import org.eclipse.core.resources.IProject;
@@ -26,7 +25,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -52,9 +50,9 @@ import org.osgi.util.tracker.ServiceTracker;
  */
 public class SVNTeamPlugin extends Plugin {
 	// all projects shared with subversion will have this nature
-	public static final String NATURE_ID = "org.eclipse.team.svn.core.svnnature";
+	public static final String NATURE_ID = "org.eclipse.team.svn.core.svnnature"; //$NON-NLS-1$
 	
-	public static final String CORE_SVNCLIENT_NAME = "svnconnector";
+	public static final String CORE_SVNCLIENT_NAME = "svnconnector"; //$NON-NLS-1$
 	
 	private volatile static SVNTeamPlugin instance = null;
 	
@@ -94,6 +92,7 @@ public class SVNTeamPlugin extends Plugin {
     	return SVNTeamPlugin.instance;
     }
     
+    /* TODO delete
     public String getResource(String key) {
         return FileUtility.getResource(Platform.getResourceBundle(this.getBundle()), key);
     }
@@ -102,6 +101,7 @@ public class SVNTeamPlugin extends Plugin {
         String message = this.getResource(key);
         return MessageFormat.format(message, args);
     }
+    */
     
 	public IOptionProvider getOptionProvider() {
 		return CoreExtensionsManager.instance().getOptionProvider();
@@ -153,7 +153,7 @@ public class SVNTeamPlugin extends Plugin {
 		SVNRemoteStorage storage = SVNRemoteStorage.instance();
 		storage.initialize(stateLocation);
 		
-		WorkspaceJob job = new WorkspaceJob("") {
+		WorkspaceJob job = new WorkspaceJob("") { //$NON-NLS-1$
 			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 				IWorkspace workspace = ResourcesPlugin.getWorkspace();
 				
@@ -206,7 +206,7 @@ public class SVNTeamPlugin extends Plugin {
 		File temporaryFilesStorage = SVNTeamPlugin.instance().getStateLocation().toFile();
 		File []files = temporaryFilesStorage.listFiles(new FileFilter() {
 			public boolean accept(File pathname) {
-				return pathname.getName().indexOf(".tmp") != -1;
+				return pathname.getName().indexOf(".tmp") != -1; //$NON-NLS-1$
 			}
 		});
 		if (files != null) {

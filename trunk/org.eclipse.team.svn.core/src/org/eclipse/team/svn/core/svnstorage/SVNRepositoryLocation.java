@@ -27,6 +27,7 @@ import org.eclipse.core.internal.preferences.Base64;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNCredentialsPrompt;
@@ -114,39 +115,39 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	
 	public String asReference() {
 		String reference = this.id;
-		reference += ";" + this.getUrlAsIs();
-		reference += ";" + this.getLabel();
-		reference += ";" + this.getBranchesLocation();
-		reference += ";" + this.getTagsLocation();
-		reference += ";" + this.getTrunkLocation();
-		reference += ";" + this.trunkEnabled;
-		reference += ";" + ((this.repositoryUUID == null) ? "" : this.repositoryUUID);
-		reference += ";" + ((this.repositoryRootUrl == null) ? "" : this.repositoryRootUrl);
-		reference += ";" + this.getAuthorName();
-		reference += ";" + this.authorNameEnabled + ";";
+		reference += ";" + this.getUrlAsIs(); //$NON-NLS-1$
+		reference += ";" + this.getLabel(); //$NON-NLS-1$
+		reference += ";" + this.getBranchesLocation(); //$NON-NLS-1$
+		reference += ";" + this.getTagsLocation(); //$NON-NLS-1$
+		reference += ";" + this.getTrunkLocation(); //$NON-NLS-1$
+		reference += ";" + this.trunkEnabled; //$NON-NLS-1$
+		reference += ";" + ((this.repositoryUUID == null) ? "" : this.repositoryUUID); //$NON-NLS-1$ //$NON-NLS-2$
+		reference += ";" + ((this.repositoryRootUrl == null) ? "" : this.repositoryRootUrl); //$NON-NLS-1$ //$NON-NLS-2$
+		reference += ";" + this.getAuthorName(); //$NON-NLS-1$
+		reference += ";" + this.authorNameEnabled + ";"; //$NON-NLS-1$ //$NON-NLS-2$
 		String [] realms = this.getRealms().toArray(new String [0]);
 		for (int i = 0; i < realms.length; i++) {
 			if (this.getAdditionalRealms().get(realms[i]).isPasswordSaved()) {
 				if (i < realms.length - 1) {
-					reference += realms[i] + "^";
+					reference += realms[i] + "^"; //$NON-NLS-1$
 				}
 				else {
 					reference += realms[i];
 				}
 			}
 		}
-		reference += ";";
+		reference += ";"; //$NON-NLS-1$
 		IRepositoryResource [] revisionLinks = this.getRevisionLinks();
 		for (int i = 0; i < revisionLinks.length; i++) {
 			String base64revLink = new String(Base64.encode(SVNRemoteStorage.instance().repositoryResourceAsBytes(revisionLinks[i])));
 			if (i < revisionLinks.length - 1) {
-				reference += base64revLink + "^";
+				reference += base64revLink + "^"; //$NON-NLS-1$
 			}
 			else {
 				reference += base64revLink;
 			}
 		}
-		reference += ";" + this.getSSHSettings().getPort();
+		reference += ";" + this.getSSHSettings().getPort(); //$NON-NLS-1$
 		return reference;
 	}
 	
@@ -157,23 +158,23 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		case 14:
 			this.getSSHSettings().setPort(Integer.parseInt(referenceParts[13]));
 		case 13:
-			if (!referenceParts[12].equals("")) {
+			if (!referenceParts[12].equals("")) { //$NON-NLS-1$
 				containRevisionLinks = true;
 			}
 		case 12:
-			if (!referenceParts[11].equals("")) {
-				realms.addAll(Arrays.asList(referenceParts[11].split("\\^")));
+			if (!referenceParts[11].equals("")) { //$NON-NLS-1$
+				realms.addAll(Arrays.asList(referenceParts[11].split("\\^"))); //$NON-NLS-1$
 			}
 		case 11:
-			this.setAuthorNameEnabled(referenceParts[10].equals("true"));
+			this.setAuthorNameEnabled(referenceParts[10].equals("true")); //$NON-NLS-1$
 		case 10:
 			this.setAuthorName(referenceParts[9].trim());
 		case 9:
-			this.repositoryRootUrl = (referenceParts[8].trim().equals("") ? null : referenceParts[8].trim());
+			this.repositoryRootUrl = (referenceParts[8].trim().equals("") ? null : referenceParts[8].trim()); //$NON-NLS-1$
 		case 8:
-			this.repositoryUUID = (referenceParts[7].trim().equals("") ? null : referenceParts[7].trim());
+			this.repositoryUUID = (referenceParts[7].trim().equals("") ? null : referenceParts[7].trim()); //$NON-NLS-1$
 		case 7:
-			this.setStructureEnabled(referenceParts[6].equals("true"));
+			this.setStructureEnabled(referenceParts[6].equals("true")); //$NON-NLS-1$
 		case 6:
 			this.setTrunkLocation(referenceParts[5].trim());
 		case 5:
@@ -193,7 +194,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 			this.label = this.url;
 		}
 		try {
-			SVNRemoteStorage.instance().loadAuthInfo(this, "");
+			SVNRemoteStorage.instance().loadAuthInfo(this, ""); //$NON-NLS-1$
 			for (String realm : realms) {
 				SVNRemoteStorage.instance().loadAuthInfo(this, realm);
 			}
@@ -202,7 +203,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 			LoggedOperation.reportError("fillLocationFromReference", ex);
 		}
 		if (containRevisionLinks) {
-			String [] revLinks = referenceParts[12].split("\\^");
+			String [] revLinks = referenceParts[12].split("\\^"); //$NON-NLS-1$
 			for (int i = 0 ; i < revLinks.length; i++) {
 				this.addRevisionLink(SVNRemoteStorage.instance().repositoryResourceFromBytes(Base64.decode(revLinks[i].getBytes()), this));
 			}
@@ -276,27 +277,27 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	}
 
 	public String getUserInputTrunk() {
-		return this.trunk == null ? "" : this.trunk;
+		return this.trunk == null ? "" : this.trunk; //$NON-NLS-1$
 	}
 
 	public String getUserInputTags() {
-		return this.tags == null ? "" : this.tags;
+		return this.tags == null ? "" : this.tags; //$NON-NLS-1$
 	}
 
 	public String getUserInputBranches() {
-		return this.branches == null ? "" : this.branches;
+		return this.branches == null ? "" : this.branches; //$NON-NLS-1$
 	}
 
 	public String getTrunkLocation() {
-		return (this.trunk == null || !this.isStructureEnabled()) ? "" : this.trunk;
+		return (this.trunk == null || !this.isStructureEnabled()) ? "" : this.trunk; //$NON-NLS-1$
 	}
 
 	public String getBranchesLocation() {
-		return (this.branches == null || !this.isStructureEnabled()) ? "" : this.branches;
+		return (this.branches == null || !this.isStructureEnabled()) ? "" : this.branches; //$NON-NLS-1$
 	}
 
 	public String getTagsLocation() {
-		return (this.tags == null || !this.isStructureEnabled()) ? "" : this.tags;
+		return (this.tags == null || !this.isStructureEnabled()) ? "" : this.tags; //$NON-NLS-1$
 	}
 	
 	public boolean isAuthorNameEnabled() {
@@ -304,7 +305,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	}
 	
 	public String getAuthorName() {
-		return this.authorName == null ? "" : this.authorName;
+		return this.authorName == null ? "" : this.authorName; //$NON-NLS-1$
 	}
 
     public IRepositoryContainer asRepositoryContainer(String url, boolean allowsNull) {
@@ -525,7 +526,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 				if (this.proxyConfigurationState == 1) {
 					try {this.proxyManagerLock.wait();} catch (InterruptedException ex) {}
 					if (this.proxyConfigurationState != 2) {
-						throw new ActivityCancelledException(SVNTeamPlugin.instance().getResource("Error.AuthenticationCancelled"));
+						throw new ActivityCancelledException(SVNMessages.getErrorString("Error_AuthenticationCancelled")); //$NON-NLS-1$
 					}
 				}
 				else if (this.proxyConfigurationState == 0) {
@@ -625,7 +626,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 
     protected static boolean isArgumentsCorrect(IRepositoryLocation location, String url, boolean allowsNull) throws IllegalArgumentException {
     	if (url == null) {
-    		throw new IllegalArgumentException(SVNTeamPlugin.instance().getResource("Error.NullURL"));
+    		throw new IllegalArgumentException(SVNMessages.getErrorString("Error_NullURL")); //$NON-NLS-1$
     	}
         Path repoPath = new Path(location.getUrl());
     	Path urlPath = new Path(url);
@@ -635,10 +636,10 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
         	if (!rootPath.isPrefixOf(urlPath)) {
         		if (!allowsNull) {
             		if (!urlPath.isPrefixOf(rootPath)) {
-            			String message = SVNTeamPlugin.instance().getResource("Error.NotRelatedURL", new String[] {url, rootPath.toString()});
+            			String message = SVNMessages.formatErrorString("Error_NotRelatedURL", new String[] {url, rootPath.toString()}); //$NON-NLS-1$
             			throw new IllegalArgumentException(message);
             		}
-        			String message = SVNTeamPlugin.instance().getResource("Error.ShorterURL", new String[] {url, rootPath.toString()});
+            		String message = SVNMessages.formatErrorString("Error_ShorterURL", new String[] {url, rootPath.toString()}); //$NON-NLS-1$
             		throw new UnreportableException(message);
         		}
         		return false;

@@ -26,6 +26,7 @@ import java.util.Set;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.SVNTeamProjectMapper;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
@@ -96,7 +97,7 @@ public class ShareProjectOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	public static String getDefaultComment(IProject project, IRepositoryResource remote) {
-		return SVNTeamPlugin.instance().getResource("Operation.ShareProject.DefaultComment", new String[] {project.getName(), SVNUtility.encodeURL(remote.getUrl())});
+		return SVNMessages.format(SVNMessages.Operation_ShareProject_DefaultComment, new String[] {project.getName(), SVNUtility.encodeURL(remote.getUrl())});
 	}
 	
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
@@ -273,7 +274,7 @@ public class ShareProjectOperation extends AbstractWorkingCopyOperation {
 			return tempDirectory;
 		}
 		catch (IOException ex) {
-			String message = SVNTeamPlugin.instance().getResource("Error.CannotCheckOutMeta", new String[] {String.valueOf(project.getName())});
+			String message = SVNMessages.formatErrorString("Error_CannotCheckOutMeta", new String[] {String.valueOf(project.getName())});
 			throw new UnreportableException(message, ex);
 		}
 	}
@@ -309,7 +310,7 @@ public class ShareProjectOperation extends AbstractWorkingCopyOperation {
 				return location.getUrl() + "/" + rootName + trunkName + "/" + projectName;
 			}
 			default: {
-				String message = SVNTeamPlugin.instance().getResource("Error.UnknownProjectLayoutType", new String[] {String.valueOf(shareLayout)});
+				String message = SVNMessages.formatErrorString("Error_UnknownProjectLayoutType", new String[] {String.valueOf(shareLayout)});
 				throw new RuntimeException(message);
 			}
 		}

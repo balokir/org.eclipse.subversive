@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.core.synchronize;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.local.AbstractMergeSet;
 import org.eclipse.team.svn.core.operation.local.MergeSet1URL;
 import org.eclipse.team.svn.core.operation.local.MergeSet2URL;
@@ -36,7 +36,7 @@ public class MergeScopeHelper {
 
     public String getName() {
     	if (this.info.to == null) {
-    		return "";
+    		return ""; //$NON-NLS-1$
     	}
     	String url = null;
     	if (this.info instanceof MergeSet1URL) {
@@ -54,9 +54,9 @@ public class MergeScopeHelper {
     	String names = null;
     	for (int i = 0; i < this.info.to.length; i++) {
     		String path = this.info.to[i].getFullPath().toString().substring(1);
-    		names = names == null ? path : (names + ", " + path);
+    		names = names == null ? path : (names + ", " + path); //$NON-NLS-1$
     	}
-        return SVNTeamPlugin.instance().getResource("MergeScope.Name", new String[] {url, names});
+    	return SVNMessages.format(SVNMessages.MergeScope_Name, new String[] {url, names});
     }
 
     public IResource []getRoots() {

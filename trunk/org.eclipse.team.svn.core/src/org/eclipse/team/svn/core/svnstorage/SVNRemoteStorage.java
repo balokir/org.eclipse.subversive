@@ -41,6 +41,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.svn.core.IConnectedProjectInformation;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
@@ -300,7 +301,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	public ILocalResource asLocalResourceAccessible(IResource resource) {
 		ILocalResource retVal = this.asLocalResource(resource);
 		if (IStateFilter.SF_INTERNAL_INVALID.accept(retVal)) {
-			throw new UnreportableException(SVNTeamPlugin.instance().getResource("Error.InaccessibleResource"));
+			throw new UnreportableException(SVNMessages.getErrorString("Error_InaccessibleResource_1"));
 		}
 		return retVal;
 	}
@@ -450,11 +451,11 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	protected IConnectedProjectInformation getConnectedProjectInformation(IProject project) {
 		RepositoryProvider provider = RepositoryProvider.getProvider(project);
 		if (provider == null) {
-			String errMessage = SVNTeamPlugin.instance().getResource("Error.NotConnectedProject", new String[] {project.getName()});
+			String errMessage = SVNMessages.formatErrorString("Error_NotConnectedProject", new String[] {project.getName()});
 			throw new UnreportableException(errMessage);
 		}
 		if (!(provider instanceof IConnectedProjectInformation)) {
-			String errMessage = SVNTeamPlugin.instance().getResource("Error.AnotherProvider", new String[] {project.getName(), provider.getID()});
+			String errMessage = SVNMessages.formatErrorString("Error_AnotherProvider", new String[] {project.getName(), provider.getID()});
 			throw new UnreportableException(errMessage);
 		}
 		
@@ -970,7 +971,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		else if (IStateFilter.ST_REPLACED.equals(status)) {
 			return IStateFilter.ST_REPLACED;
 		}
-		throw new RuntimeException(SVNTeamPlugin.instance().getResource("Error.UnknownStatus"));
+		throw new RuntimeException(SVNMessages.getErrorString("Error_UnknownStatus"));
 	}
 	
 	public String getStatusString(int propKind, int textKind, boolean isRemoteStatus) {
