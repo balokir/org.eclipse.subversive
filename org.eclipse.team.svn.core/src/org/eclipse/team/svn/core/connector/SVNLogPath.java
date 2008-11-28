@@ -83,7 +83,7 @@ public class SVNLogPath {
 	}
 
 	public String toString() {
-		return String.valueOf(this.action) + ":" + this.path;
+		return String.valueOf(this.action) + ":" + this.path; //$NON-NLS-1$
 	}
 	
 }

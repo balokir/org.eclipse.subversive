@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
@@ -137,7 +138,7 @@ public class ShareOperation extends AbstractFileOperation {
 	}
 
 	public static String getDefaultComment(File folder, IRepositoryResource remote) {
-		return SVNTeamPlugin.instance().getResource("Operation.ShareFile.DefaultComment", new String[] {folder.getName(), remote.getUrl()});
+		return SVNMessages.format(SVNMessages.Operation_ShareFile_DefaultComment, new String[] {folder.getName(), remote.getUrl()});
 	}
 	
 	public String getTargetUrl(String projectName, boolean managementFoldersEnabled) {

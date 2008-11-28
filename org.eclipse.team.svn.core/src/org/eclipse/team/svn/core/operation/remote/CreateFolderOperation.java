@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
 import org.eclipse.team.svn.core.connector.SVNNotification;
@@ -69,7 +69,7 @@ public class CreateFolderOperation extends AbstractRepositoryOperation implement
 			public void notify(SVNNotification info) {
 				String [] path = childUrls;
 				CreateFolderOperation.this.revisionPair[0] = new RevisionPair(info.revision, path, location);
-				String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision", new String[] {String.valueOf(info.revision)});
+				String message = SVNMessages.format(SVNMessages.Console_CommittedRevision, new String[] {String.valueOf(info.revision)});
 				CreateFolderOperation.this.writeToConsole(IConsoleStream.LEVEL_OK, message);
 			}
 		};

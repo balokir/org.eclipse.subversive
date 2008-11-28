@@ -31,8 +31,8 @@ public class SSLSettings implements Serializable {
 	private transient String passPhraseTemporary;
 	
 	public SSLSettings() {
-		this.certificatePath = "";
-		this.passPhrase = "";
+		this.certificatePath = ""; //$NON-NLS-1$
+		this.passPhrase = ""; //$NON-NLS-1$
 		this.passPhraseSaved = false;
 	}
 

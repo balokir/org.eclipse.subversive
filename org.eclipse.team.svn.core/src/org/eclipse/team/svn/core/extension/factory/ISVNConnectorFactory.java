@@ -11,7 +11,7 @@
 
 package org.eclipse.team.svn.core.extension.factory;
 
-import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.operation.UnreportableException;
 
@@ -21,8 +21,8 @@ import org.eclipse.team.svn.core.operation.UnreportableException;
  * @author Alexander Gurov
  */
 public interface ISVNConnectorFactory {
-	public static final String DEFAULT_ID = "org.eclipse.team.svn.connector.svnkit";
-	public static final String CURRENT_COMPATIBILITY_VERSION = "0.7.1.I20080728-1500";
+	public static final String DEFAULT_ID = "org.eclipse.team.svn.connector.svnkit"; //$NON-NLS-1$
+	public static final String CURRENT_COMPATIBILITY_VERSION = "0.7.1.I20080728-1500"; //$NON-NLS-1$
 	
 	/**
 	 * Enumeration of connector API compatibility levels
@@ -92,19 +92,19 @@ public interface ISVNConnectorFactory {
 			return OptionalFeatures.NO_OPTIONAL_FEATURES;
 		}
 		public String getVersion() {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 		public String getName() {
-			return SVNTeamPlugin.instance().getResource(this.getId());
+			return SVNMessages.getErrorString(this.getId());
 		}
 		public String getId() {
-			return "Error.NoSVNClient";
+			return "Error_NoSVNClient";
 		}
 		public String getCompatibilityVersion() {
 			return ISVNConnectorFactory.CURRENT_COMPATIBILITY_VERSION;
 		}
 		public String getClientVersion() {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 		public int getSVNAPIVersion() {
 			return APICompatibility.SVNAPI_NOT_SPECIFIED;

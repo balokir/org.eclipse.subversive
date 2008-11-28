@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.extension.crashrecovery.IResolutionHelper;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
@@ -37,11 +38,11 @@ import org.eclipse.team.svn.core.operation.LoggedOperation;
  * @author Alexander Gurov
  */
 public class CoreExtensionsManager {
-	public static final String EXTENSION_NAMESPACE = "org.eclipse.team.svn.core";
-	public static final String SVN_CONNECTOR = "svnconnector";
-	public static final String CORE_OPTIONS = "coreoptions";
-	public static final String CRASH_RECOVERY = "crashrecovery";
-	public static final String IGNORE_RECOMMENDATIONS = "resourceIgnoreRules";
+	public static final String EXTENSION_NAMESPACE = "org.eclipse.team.svn.core"; //$NON-NLS-1$
+	public static final String SVN_CONNECTOR = "svnconnector"; //$NON-NLS-1$
+	public static final String CORE_OPTIONS = "coreoptions"; //$NON-NLS-1$
+	public static final String CRASH_RECOVERY = "crashrecovery"; //$NON-NLS-1$
+	public static final String IGNORE_RECOMMENDATIONS = "resourceIgnoreRules"; //$NON-NLS-1$
 
 	private HashMap<String, ISVNConnectorFactory> connectors;
 	private HashSet<String> validConnectors;
@@ -171,7 +172,7 @@ public class CoreExtensionsManager {
 	private Object []loadExtensions(String namespace, String extensionPoint) {
 		IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(namespace, extensionPoint);
 		if (extension == null) {
-			String errMessage = SVNTeamPlugin.instance().getResource("Error.InvalidExtensionPoint", new String[] {namespace, extensionPoint});
+			String errMessage = SVNMessages.formatErrorString("Error_InvalidExtensionPoint", new String[] {namespace, extensionPoint});				 //$NON-NLS-1$
 			throw new RuntimeException(errMessage);
 		}
 		IExtension []extensions = extension.getExtensions();
@@ -180,10 +181,10 @@ public class CoreExtensionsManager {
 			IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
 			for (int j = 0; j < configElements.length; j++) {
 				try {
-					retVal.add(configElements[j].createExecutableExtension("class"));
+					retVal.add(configElements[j].createExecutableExtension("class")); //$NON-NLS-1$
 				}
 				catch (CoreException ex) {
-				    LoggedOperation.reportError(SVNTeamPlugin.instance().getResource("Error.LoadExtensions"), ex);
+					LoggedOperation.reportError(SVNMessages.getErrorString("Error_LoadExtensions"), ex); //$NON-NLS-1$
 				}
 			}
 		}

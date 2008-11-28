@@ -43,14 +43,14 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
  * @author Alexander Gurov
  */
 public class SVNTeamProjectSetCapability extends ProjectSetCapability {
-	protected static final String PLUGIN_INFORMATION = "1.0.1";
+	protected static final String PLUGIN_INFORMATION = "1.0.1"; //$NON-NLS-1$
 
 	public SVNTeamProjectSetCapability() {
 		super();
 	}
 
 	public String[] asReference(IProject []projects, ProjectSetSerializationContext context, IProgressMonitor monitor) throws TeamException {
-		monitor.beginTask(SVNTeamPlugin.instance().getResource("Operation.ExportProjectSet"), projects.length);
+		monitor.beginTask(SVNMessages.Operation_ExportProjectSet, projects.length);
 		try {
 			String []result = new String[projects.length];
 			for (int i = 0; i < projects.length; i++) {
@@ -102,7 +102,7 @@ public class SVNTeamProjectSetCapability extends ProjectSetCapability {
 	}
 	
 	protected IProject configureCheckoutOperation(CompositeOperation op, IProject project, String fullReference) throws TeamException {
-		String []parts = fullReference.split(",");
+		String []parts = fullReference.split(","); //$NON-NLS-1$
 		
 		IRepositoryLocation location = this.getLocationForReference(parts);
 		IRepositoryResource resource = location.asRepositoryContainer(parts[1], true);
@@ -143,7 +143,7 @@ public class SVNTeamProjectSetCapability extends ProjectSetCapability {
 	}
 	
 	protected String getNameForReference(String fullReference) {
-		String []parts = fullReference.split(",");
+		String []parts = fullReference.split(","); //$NON-NLS-1$
 		if (parts.length < 3 || !(parts[0].equals(SVNTeamProjectSetCapability.PLUGIN_INFORMATION))) {
 			return null;
 		}
@@ -160,10 +160,10 @@ public class SVNTeamProjectSetCapability extends ProjectSetCapability {
 		// non-mandatory part
 		// 4) save repository location
 		String fullReference = PLUGIN_INFORMATION;
-		fullReference += "," + resource.getUrl();
-		fullReference += "," + project.getName();
+		fullReference += "," + resource.getUrl(); //$NON-NLS-1$
+		fullReference += "," + project.getName(); //$NON-NLS-1$
 		
-		fullReference += "," + SVNRemoteStorage.instance().repositoryLocationAsReference(location);
+		fullReference += "," + SVNRemoteStorage.instance().repositoryLocationAsReference(location); //$NON-NLS-1$
 		
 		return fullReference;
 	}

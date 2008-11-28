@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
 import org.eclipse.team.svn.core.connector.SVNNotification;
@@ -69,7 +69,7 @@ public class DeleteResourcesOperation extends AbstractRepositoryOperation implem
 			ISVNNotificationCallback notify = new ISVNNotificationCallback() {
 				public void notify(SVNNotification info) {
 					DeleteResourcesOperation.this.revisionsPairs.add(new RevisionPair(info.revision, paths, location));
-					String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision", new String[] {String.valueOf(info.revision)});
+					String message = SVNMessages.format(SVNMessages.Console_CommittedRevision, new String[] {String.valueOf(info.revision)});
 					DeleteResourcesOperation.this.writeToConsole(IConsoleStream.LEVEL_OK, message);
 				}
 			};

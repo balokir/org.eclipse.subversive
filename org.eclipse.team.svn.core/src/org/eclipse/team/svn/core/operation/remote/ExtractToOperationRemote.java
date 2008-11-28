@@ -21,7 +21,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -163,15 +163,15 @@ public class ExtractToOperationRemote extends AbstractActionOperation {
 				}
 			}
 			else if (current instanceof IRepositoryContainer) {
-				monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.Folders", new String [] {currentURL}));
+				monitor.subTask(SVNMessages.format(SVNMessages.Operation_ExtractTo_Folders, new String [] {currentURL}));
 				operatingDirectory.mkdirs();
 			}
 			else {
-				monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.Folders", new String [] {currentURL}));
+				monitor.subTask(SVNMessages.format(SVNMessages.Operation_ExtractTo_Folders, new String [] {currentURL}));
 				if (operatingDirectory.getParentFile() != null) {
 					operatingDirectory.getParentFile().mkdirs();
 				}
-				monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.RemoteFile", new String [] {currentURL}));
+				monitor.subTask(SVNMessages.format(SVNMessages.Operation_ExtractTo_RemoteFile, new String [] {currentURL}));
 				this.downloadFile(current, toOperate, monitor);
 			}
 			ProgressMonitorUtility.progress(monitor, processed++, resources.length);

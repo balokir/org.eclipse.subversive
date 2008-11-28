@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.SVNConnectorCancelException;
 
@@ -74,14 +75,14 @@ public class LoggedOperation implements IActionOperation {
 	}
 	
 	public static void reportError(String where, Throwable t) {
-		String errMessage = SVNTeamPlugin.instance().getResource("Operation.Error.LogHeader", new String[] {where});
+		String errMessage = SVNMessages.format(SVNMessages.Operation_Error_LogHeader, new String[] {where});
 	    MultiStatus status = new MultiStatus(SVNTeamPlugin.NATURE_ID, IStatus.OK, errMessage, null);
 		Status st = 
 			new Status(
 					IStatus.ERROR, 
 					SVNTeamPlugin.NATURE_ID, 
 					IStatus.OK, 
-					status.getMessage() + ": " + t.getMessage(), 
+					status.getMessage() + ": " + t.getMessage(),  //$NON-NLS-1$
 					t);
 		status.merge(st);
 		LoggedOperation.logError(status);

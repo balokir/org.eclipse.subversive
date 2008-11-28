@@ -159,7 +159,7 @@ public abstract class SVNRepositoryResource extends SVNRepositoryBase implements
 	
 	
 	public IRepositoryContainer asRepositoryContainer(String url, boolean allowsNull) {
-		IRepositoryContainer retVal = this.getRepositoryLocation().asRepositoryContainer(url.indexOf('/') != -1 ? url : (this.getUrl() + "/" + url), allowsNull);
+		IRepositoryContainer retVal = this.getRepositoryLocation().asRepositoryContainer(url.indexOf('/') != -1 ? url : (this.getUrl() + "/" + url), allowsNull); //$NON-NLS-1$
 		if (retVal == null) {
 			return null;
 		}
@@ -169,7 +169,7 @@ public abstract class SVNRepositoryResource extends SVNRepositoryBase implements
 	}
 	
 	public IRepositoryFile asRepositoryFile(String url, boolean allowsNull) {
-		IRepositoryFile retVal = this.getRepositoryLocation().asRepositoryFile(url.indexOf('/') != -1 ? url : (this.getUrl() + "/" + url), allowsNull);
+		IRepositoryFile retVal = this.getRepositoryLocation().asRepositoryFile(url.indexOf('/') != -1 ? url : (this.getUrl() + "/" + url), allowsNull); //$NON-NLS-1$
 		if (retVal == null) {
 			return null;
 		}

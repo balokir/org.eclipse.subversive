@@ -20,7 +20,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -48,7 +48,7 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 	 * @param delitionAllowed - specifies if deletion allowed if the resource is marked for deletion
 	 */
 	public ExtractToOperationLocal(IResource [] outgoingResources, String path, boolean delitionAllowed, InitExtractLogOperation logger) {
-		super(SVNTeamPlugin.instance().getResource("Operation.ExtractTo"));
+		super(SVNMessages.Operation_ExtractTo);
 		this.outgoingResources = outgoingResources;
 		this.path = path;
 		this.delitionAllowed = delitionAllowed;
@@ -86,19 +86,19 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 				}
 			}
 			else if (current instanceof IContainer) {
-				monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.Folders", new String [] {FileUtility.getWorkingCopyPath(current)}));
+				monitor.subTask(SVNMessages.format(SVNMessages.Operation_ExtractTo_Folders, new String [] {FileUtility.getWorkingCopyPath(current)}));
 				operatingDirectory.mkdirs();
 			}
 			else {
 				if (previousPref != null) {
 					File parent = operatingDirectory.getParentFile();
 					if (parent != null) {
-						monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.Folders", new String [] {FileUtility.getWorkingCopyPath(current)}));
+						monitor.subTask(SVNMessages.format(SVNMessages.Operation_ExtractTo_Folders, new String [] {FileUtility.getWorkingCopyPath(current)}));
 						parent.mkdirs();
 						operatingDirectory = parent;
 					}
 				}
-				monitor.subTask(SVNTeamPlugin.instance().getResource("Operation.ExtractTo.LocalFile", new String [] {FileUtility.getWorkingCopyPath(current)}));
+				monitor.subTask(SVNMessages.format(SVNMessages.Operation_ExtractTo_LocalFile, new String [] {FileUtility.getWorkingCopyPath(current)}));
 				FileUtility.copyAll(operatingDirectory, new File(FileUtility.getWorkingCopyPath(current)), FileUtility.COPY_OVERRIDE_EXISTING_FILES, null, monitor);
 			}
 			ProgressMonitorUtility.progress(monitor, processed++, this.outgoingResources.length);

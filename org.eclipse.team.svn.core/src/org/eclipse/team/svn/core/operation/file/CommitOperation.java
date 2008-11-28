@@ -19,7 +19,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNConnectorUnresolvedConflictException;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
@@ -120,7 +120,7 @@ public class CommitOperation extends AbstractFileConflictDetectionOperation impl
 					null, new SVNProgressMonitor(CommitOperation.this, monitor, null));
 				if (revisionNumbers.length > 0) {
 					CommitOperation.this.revisionsPairs.add(new RevisionPair(revisionNumbers[0], CommitOperation.this.paths, location));	
-					String message = SVNTeamPlugin.instance().getResource("Console.CommittedRevision", new String[] {String.valueOf(revisionNumbers[0])});
+					String message = SVNMessages.format(SVNMessages.Console_CommittedRevision, new String[] {String.valueOf(revisionNumbers[0])});
 					CommitOperation.this.writeToConsole(IConsoleStream.LEVEL_OK, message);
 				}
 			}

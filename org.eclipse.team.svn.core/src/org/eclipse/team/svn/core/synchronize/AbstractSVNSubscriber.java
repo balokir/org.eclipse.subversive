@@ -26,13 +26,13 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.subscribers.SubscriberChangeEvent;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.variants.IResourceVariantComparator;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
@@ -60,8 +60,8 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public abstract class AbstractSVNSubscriber extends Subscriber implements IResourceStatesListener {
 	protected static final IResourceVariantComparator RV_COMPARATOR = new ResourceVariantComparator();
-	public static final String CONTIGOUS_PREF_NODE = "contigous";
-	public static final String CONTIGOUS_REPORT_DEFAULT = "true";
+	public static final String CONTIGOUS_PREF_NODE = "contigous"; //$NON-NLS-1$
+	public static final String CONTIGOUS_REPORT_DEFAULT = "true"; //$NON-NLS-1$
 	
     protected RemoteStatusCache statusCache;
     protected Set<IResource> oldResources;
@@ -74,11 +74,11 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
     }
 
     public static boolean getSynchInfoContigous() {
-    	return Boolean.parseBoolean(SVNTeamPlugin.instance().getSVNCorePreferences().node("synch_info").get(AbstractSVNSubscriber.CONTIGOUS_PREF_NODE, AbstractSVNSubscriber.CONTIGOUS_REPORT_DEFAULT));
+    	return Boolean.parseBoolean(SVNTeamPlugin.instance().getSVNCorePreferences().node("synch_info").get(AbstractSVNSubscriber.CONTIGOUS_PREF_NODE, AbstractSVNSubscriber.CONTIGOUS_REPORT_DEFAULT)); //$NON-NLS-1$
     }
     
     public static void setSynchInfoContigous(boolean isContigous) {
-    	SVNTeamPlugin.instance().getSVNCorePreferences().node("synch_info").put(AbstractSVNSubscriber.CONTIGOUS_PREF_NODE, String.valueOf(isContigous));
+    	SVNTeamPlugin.instance().getSVNCorePreferences().node("synch_info").put(AbstractSVNSubscriber.CONTIGOUS_PREF_NODE, String.valueOf(isContigous)); //$NON-NLS-1$
 		SVNTeamPlugin.instance().savePluginPreferences();
     }
     
@@ -212,7 +212,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
     					SVNRemoteStorage.instance().getRegisteredChildren((IContainer)parents[i]);
     				}
     				catch (Exception ex) {
-    					LoggedOperation.reportError(SVNTeamPlugin.instance().getResource("Error.CheckCache"), ex);
+    					LoggedOperation.reportError(SVNMessages.getErrorString("Error_CheckCache"), ex); //$NON-NLS-1$
     				}
             	}
         	}
@@ -221,7 +221,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
   	}
     
 	protected IResource []findChanges(IResource []resources, int depth, IProgressMonitor monitor, ILoggedOperationFactory operationWrapperFactory) {
-		CompositeOperation op = new CompositeOperation("");
+		CompositeOperation op = new CompositeOperation(""); //$NON-NLS-1$
 		
 		final IRemoteStatusOperation rStatusOp = this.addStatusOperation(op, resources, depth);
 		if (rStatusOp == null) {

@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.SVNConnectorCancelException;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
@@ -26,7 +27,7 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
  * @author Alexander Gurov
  */
 public abstract class AbstractActionOperation implements IActionOperation {
-	private final MultiStatus status = new MultiStatus(SVNTeamPlugin.NATURE_ID, IStatus.OK, "", null);
+	private final MultiStatus status = new MultiStatus(SVNTeamPlugin.NATURE_ID, IStatus.OK, "", null); //$NON-NLS-1$
 	protected String nameId;
 	protected String name;
 	protected boolean isExecuted;
@@ -155,17 +156,17 @@ public abstract class AbstractActionOperation implements IActionOperation {
 			this.writeCancelledToConsole();
 		}
 		else {
-			this.writeToConsole(IConsoleStream.LEVEL_ERROR, (t.getMessage() != null ? t.getMessage() : this.getShortErrorMessage(t)) + "\n");
+			this.writeToConsole(IConsoleStream.LEVEL_ERROR, (t.getMessage() != null ? t.getMessage() : this.getShortErrorMessage(t)) + "\n"); //$NON-NLS-1$
 		}
 		
 		this.reportStatus(new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID, IStatus.OK, this.getShortErrorMessage(t), t));
 	}
 	
 	protected String getShortErrorMessage(Throwable t) {
-		String key = this.nameId + ".Error";
+		String key = this.nameId + "_Error"; //$NON-NLS-1$
 		String retVal = this.getNationalizedString(key);
 		if (retVal.equals(key)) {
-			return this.status.getMessage() + ": " + t.getMessage();
+			return this.status.getMessage() + ": " + t.getMessage(); //$NON-NLS-1$
 		}
 		return retVal;
 	}
@@ -177,11 +178,11 @@ public abstract class AbstractActionOperation implements IActionOperation {
 	}
 	
 	protected String getOperationResource(String key) {
-		return this.getNationalizedString(this.nameId + "." + key);
+		return this.getNationalizedString(this.nameId + "_" + key); //$NON-NLS-1$
 	}
 	
 	protected final String getNationalizedString(String key) {
-		String retVal = SVNTeamPlugin.instance().getResource(key);
+		String retVal = SVNMessages.getString(key);
 		if (retVal.equals(key)) {
 			return CoreExtensionsManager.instance().getOptionProvider().getResource(key);
 		}
@@ -189,10 +190,10 @@ public abstract class AbstractActionOperation implements IActionOperation {
 	}
 	
 	private void updateStatusMessage() {
-		String key = this.nameId + ".Id";
+		String key = this.nameId + "_Id"; //$NON-NLS-1$
 		String prefix = this.getNationalizedString(key);
-		prefix = prefix.equals(key) ? "" : (prefix + ": ");
-		String errMessage = SVNTeamPlugin.instance().getResource("Operation.Error.LogHeader", new String[] {prefix + this.name});
+		prefix = prefix.equals(key) ? "" : (prefix + ": "); //$NON-NLS-1$ //$NON-NLS-2$
+		String errMessage = SVNMessages.format(SVNMessages.Operation_Error_LogHeader, new String[] {prefix + this.name});
 		this.status.setMessage(errMessage);
 	}
 	

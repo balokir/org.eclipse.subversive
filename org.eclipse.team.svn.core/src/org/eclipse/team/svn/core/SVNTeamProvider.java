@@ -44,8 +44,8 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * @author Alexander Gurov
  */
 public class SVNTeamProvider extends RepositoryProvider implements IConnectedProjectInformation {
-	public final static QualifiedName RESOURCE_PROPERTY = new QualifiedName("org.eclipse.team.svn", "resource");
-	public final static QualifiedName LOCATION_PROPERTY = new QualifiedName("org.eclipse.team.svn", "location");
+	public final static QualifiedName RESOURCE_PROPERTY = new QualifiedName("org.eclipse.team.svn", "resource"); //$NON-NLS-1$ //$NON-NLS-2$
+	public final static QualifiedName LOCATION_PROPERTY = new QualifiedName("org.eclipse.team.svn", "location"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	protected IRepositoryLocation location;
 	protected IRepositoryResource resource;
@@ -230,7 +230,7 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 	}
 	
 	protected String getAutoDisconnectMessage() {
-		return SVNTeamPlugin.instance().getResource("Error.AutoDisconnect", new String[] {this.getProject().getName()});
+		return SVNMessages.formatErrorString("Error_AutoDisconnect", new String[] {this.getProject().getName()}); //$NON-NLS-1$
 	}
 	
 	protected int uploadRepositoryResource() {
@@ -290,7 +290,7 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 	// compatibility with old plugin versions
 	protected static String extractLocationId(String resourceData) {
 		if (resourceData != null) {
-			String []data = resourceData.split(";");
+			String []data = resourceData.split(";"); //$NON-NLS-1$
 			if (data.length >= 2) {
 				return data[1];
 			}

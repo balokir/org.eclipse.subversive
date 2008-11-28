@@ -14,7 +14,7 @@ package org.eclipse.team.svn.core.synchronize.variant;
 import java.text.MessageFormat;
 
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 
 /**
@@ -27,7 +27,7 @@ public abstract class RemoteResourceVariant extends ResourceVariant {
 
 	public RemoteResourceVariant(ILocalResource local) {
 		super(local);
-		RemoteResourceVariant.svnAuthor = SVNTeamPlugin.instance().getResource("SVNInfo.Author");
+		RemoteResourceVariant.svnAuthor = SVNMessages.SVNInfo_Author;
 	}
 
 	protected String getCacheId() {

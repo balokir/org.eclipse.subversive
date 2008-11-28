@@ -16,7 +16,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamProjectMapper;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -59,7 +59,7 @@ public class ReconnectProjectOperation extends AbstractWorkingCopyOperation {
 				public void run(IProgressMonitor monitor) throws Exception {
 					SVNChangeStatus st = SVNUtility.getSVNInfoForNotConnected(project);
 					if (st == null) {
-						throw new UnreportableException(SVNTeamPlugin.instance().getResource("Error.NonSVNPath"));
+						throw new UnreportableException(SVNMessages.getErrorString("Error_NonSVNPath"));
 					}
 					IRepositoryContainer remote = ReconnectProjectOperation.this.location.asRepositoryContainer(SVNUtility.decodeURL(st.url), false);
 					SVNTeamProjectMapper.map(project, remote);

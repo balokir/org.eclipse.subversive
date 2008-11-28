@@ -73,13 +73,13 @@ public class SVNFolderListener implements IResourceChangeListener {
 									IRepositoryRoot []roots = SVNUtility.findRoots(url, true);
 									IRepositoryLocation location = null;
 									if (roots.length == 0) {
-										String rootNode = "/" + CoreExtensionsManager.instance().getOptionProvider().getDefaultTrunkName();
+										String rootNode = "/" + CoreExtensionsManager.instance().getOptionProvider().getDefaultTrunkName(); //$NON-NLS-1$
 										int idx = url.lastIndexOf(rootNode);
 										if (idx == -1 || !url.endsWith(rootNode) && url.charAt(idx + rootNode.length()) != '/') {
-											rootNode = "/" + CoreExtensionsManager.instance().getOptionProvider().getDefaultBranchesName();
+											rootNode = "/" + CoreExtensionsManager.instance().getOptionProvider().getDefaultBranchesName(); //$NON-NLS-1$
 											idx = url.lastIndexOf(rootNode);
 											if (idx == -1 || !url.endsWith(rootNode) && url.charAt(idx + rootNode.length()) != '/') {
-												rootNode = "/" + CoreExtensionsManager.instance().getOptionProvider().getDefaultTagsName();
+												rootNode = "/" + CoreExtensionsManager.instance().getOptionProvider().getDefaultTagsName(); //$NON-NLS-1$
 												idx = url.lastIndexOf(rootNode);
 												if (idx != -1 && !url.endsWith(rootNode) && url.charAt(idx + rootNode.length()) != '/') {
 													idx = -1;

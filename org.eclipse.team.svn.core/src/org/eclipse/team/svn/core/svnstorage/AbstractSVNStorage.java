@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
@@ -61,7 +62,7 @@ import org.osgi.service.prefs.BackingStoreException;
  */
 public abstract class AbstractSVNStorage implements ISVNStorage {
 	
-	private static final String URL_TO_STORE = "http://eclipse.org/subversive/"; 
+	private static final String URL_TO_STORE = "http://eclipse.org/subversive/";  //$NON-NLS-1$
 	
 	protected File stateInfoFile;
 	protected String preferencesNode;
@@ -230,7 +231,7 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		if (reference == null) {
 			return this.newRepositoryLocation();
 		}
-		String []parts = reference.split(";");
+		String []parts = reference.split(";"); //$NON-NLS-1$
 		if (parts.length == 0 || parts[0].length() == 0) {
 			return this.newRepositoryLocation();
 		}
@@ -240,10 +241,10 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		}
 		String id = parts[0].trim();
 		location = new SVNRepositoryLocation(id.length() > 0 ? id : new UniversalUniqueIdentifier().toString());
-		location.setTrunkLocation("");
-		location.setTagsLocation("");
-		location.setBranchesLocation("");
-		location.setAuthorName("");
+		location.setTrunkLocation(""); //$NON-NLS-1$
+		location.setTagsLocation(""); //$NON-NLS-1$
+		location.setBranchesLocation(""); //$NON-NLS-1$
+		location.setAuthorName(""); //$NON-NLS-1$
 		location.fillLocationFromReference(parts);
 		return location;
 	}
@@ -263,7 +264,7 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 	
 	public synchronized void removeRepositoryLocation(IRepositoryLocation location) {
 		List<IRepositoryLocation> tmp = new ArrayList<IRepositoryLocation>(Arrays.asList(this.repositories));
-		this.removeAuthInfoForLocation(location, "");
+		this.removeAuthInfoForLocation(location, ""); //$NON-NLS-1$
 		String [] realms = location.getRealms().toArray(new String[0]);
 		for (String realm : realms) {
 			this.removeAuthInfoForLocation(location, realm);
@@ -289,14 +290,14 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		int selectedKind = resource.getSelectedRevision().getKind();
 		int pegKind = resource.getPegRevision().getKind();
 		String retVal = 
-			new String(Base64.encode(String.valueOf(resource instanceof IRepositoryContainer).getBytes())) + ";" + 
-			resource.getRepositoryLocation().getId() + ";" +
-			new String(Base64.encode(resource.getUrl().getBytes())) + ";" +
-			String.valueOf(selectedKind) + ";" + 
-			(selectedKind == Kind.NUMBER ? String.valueOf(((SVNRevision.Number)resource.getSelectedRevision()).getNumber()) : "0") + ";" +
-			String.valueOf(IRepositoryRoot.KIND_ROOT) + ";" + 
-			String.valueOf(pegKind) + ";" + 
-			(pegKind == Kind.NUMBER ? String.valueOf(((SVNRevision.Number)resource.getPegRevision()).getNumber()) : "0");
+			new String(Base64.encode(String.valueOf(resource instanceof IRepositoryContainer).getBytes())) + ";" +  //$NON-NLS-1$
+			resource.getRepositoryLocation().getId() + ";" + //$NON-NLS-1$
+			new String(Base64.encode(resource.getUrl().getBytes())) + ";" + //$NON-NLS-1$
+			String.valueOf(selectedKind) + ";" +  //$NON-NLS-1$
+			(selectedKind == Kind.NUMBER ? String.valueOf(((SVNRevision.Number)resource.getSelectedRevision()).getNumber()) : "0") + ";" + //$NON-NLS-1$ //$NON-NLS-2$
+			String.valueOf(IRepositoryRoot.KIND_ROOT) + ";" +  //$NON-NLS-1$
+			String.valueOf(pegKind) + ";" +  //$NON-NLS-1$
+			(pegKind == Kind.NUMBER ? String.valueOf(((SVNRevision.Number)resource.getPegRevision()).getNumber()) : "0"); //$NON-NLS-1$
 		return retVal.getBytes();
 	}
 	
@@ -308,14 +309,14 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		if (bytes == null) {
 			return null;
 		}
-		String []data = new String(bytes).split(";");
+		String []data = new String(bytes).split(";"); //$NON-NLS-1$
 		boolean isFolder = false;
 		boolean base64Label = false;
-		if ("true".equals(data[0])) {
+		if ("true".equals(data[0])) { //$NON-NLS-1$
 			isFolder = true;
 		}
-		else if (!"false".equals(data[0])) {
-			isFolder = "true".equals(new String(Base64.decode(data[0].getBytes())));
+		else if (!"false".equals(data[0])) { //$NON-NLS-1$
+			isFolder = "true".equals(new String(Base64.decode(data[0].getBytes()))); //$NON-NLS-1$
 			base64Label = true;
 		}
 		if (location == null) {
@@ -363,13 +364,13 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 				return location.getUrl();
 			}
 			case IRepositoryRoot.KIND_TRUNK: {
-				return location.isStructureEnabled() ? (location.getUrl() + "/" + location.getTrunkLocation()) : location.getUrl();
+				return location.isStructureEnabled() ? (location.getUrl() + "/" + location.getTrunkLocation()) : location.getUrl(); //$NON-NLS-1$
 			}
 			case IRepositoryRoot.KIND_BRANCHES: {
-				return location.isStructureEnabled() ? (location.getUrl() + "/" + location.getBranchesLocation()) : location.getUrl();
+				return location.isStructureEnabled() ? (location.getUrl() + "/" + location.getBranchesLocation()) : location.getUrl(); //$NON-NLS-1$
 			}
 			case IRepositoryRoot.KIND_TAGS: {
-				return location.isStructureEnabled() ? (location.getUrl() + "/" + location.getTagsLocation()) : location.getUrl();
+				return location.isStructureEnabled() ? (location.getUrl() + "/" + location.getTagsLocation()) : location.getUrl(); //$NON-NLS-1$
 			}
 		}
 		return null;
@@ -408,7 +409,7 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 			this.loadLocations();
 		}
 		catch (Exception ex) {
-			LoggedOperation.reportError(SVNTeamPlugin.instance().getResource("Error.LoadLocations"), ex);
+			LoggedOperation.reportError(SVNMessages.getErrorString("Error_LoadLocations"), ex); //$NON-NLS-1$
 		}
 	}
 
@@ -418,7 +419,7 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		repositoryPreferences.clear();
 		for (IRepositoryLocation current : this.repositories) {
 			repositoryPreferences.put(current.getId(), this.repositoryLocationAsReference(current));
-			this.saveAuthInfo(current, "");
+			this.saveAuthInfo(current, ""); //$NON-NLS-1$
 			String [] realms = current.getRealms().toArray(new String[0]);
 			for (String realm : realms) {
 				if (current.isPasswordSavedForRealm(realm)) {
@@ -433,32 +434,32 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 	
 	protected void saveAuthInfo(IRepositoryLocation location, String realm) throws Exception {
 		Platform.flushAuthorizationInfo(new URL(AbstractSVNStorage.URL_TO_STORE), location.getId(), realm);
-		IRepositoryLocation tmp = realm.equals("") ? location : location.getLocationForRealm(realm);
+		IRepositoryLocation tmp = realm.equals("") ? location : location.getLocationForRealm(realm); //$NON-NLS-1$
 		boolean toStorePass = tmp.isPasswordSaved();
 		HashMap<String, String> authInfo = new HashMap<String, String>();
 
 		//store normal password settings
-		authInfo.put("username", tmp.getUsername());
-		authInfo.put("password", toStorePass ? tmp.getPassword() : "");
-		authInfo.put("password_saved", String.valueOf(toStorePass));
+		authInfo.put("username", tmp.getUsername()); //$NON-NLS-1$
+		authInfo.put("password", toStorePass ? tmp.getPassword() : ""); //$NON-NLS-1$ //$NON-NLS-2$
+		authInfo.put("password_saved", String.valueOf(toStorePass)); //$NON-NLS-1$
 		
 		//store SSH settings
 		SSHSettings sshSettings = tmp.getSSHSettings();
 		boolean useKeyFile = sshSettings.isUseKeyFile();
-		authInfo.put("ssh_use_key", String.valueOf(useKeyFile));
+		authInfo.put("ssh_use_key", String.valueOf(useKeyFile)); //$NON-NLS-1$
 		boolean savePassphrase = sshSettings.isPassPhraseSaved();
-		authInfo.put("ssh_passphrase_saved", useKeyFile ? String.valueOf(savePassphrase) : "false");
-		authInfo.put("ssh_key", useKeyFile ? sshSettings.getPrivateKeyPath() : "");
-		authInfo.put("ssh_passprase", (useKeyFile && savePassphrase) ? sshSettings.getPassPhrase() : "");
+		authInfo.put("ssh_passphrase_saved", useKeyFile ? String.valueOf(savePassphrase) : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+		authInfo.put("ssh_key", useKeyFile ? sshSettings.getPrivateKeyPath() : ""); //$NON-NLS-1$ //$NON-NLS-2$
+		authInfo.put("ssh_passprase", (useKeyFile && savePassphrase) ? sshSettings.getPassPhrase() : ""); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		//store SSL settings
 		SSLSettings sslSettings = tmp.getSSLSettings();
 		boolean clientAuthEnabled = sslSettings.isAuthenticationEnabled();
 		savePassphrase = sslSettings.isPassPhraseSaved();
-		authInfo.put("ssl_enabled", String.valueOf(clientAuthEnabled));
-		authInfo.put("ssl_certificate", clientAuthEnabled ? sslSettings.getCertificatePath() : "");
-		authInfo.put("ssl_passphrase_saved", clientAuthEnabled ? String.valueOf(savePassphrase) : "false");
-		authInfo.put("ssl_passphrase", (clientAuthEnabled && savePassphrase) ? sslSettings.getPassPhrase() : "");
+		authInfo.put("ssl_enabled", String.valueOf(clientAuthEnabled)); //$NON-NLS-1$
+		authInfo.put("ssl_certificate", clientAuthEnabled ? sslSettings.getCertificatePath() : ""); //$NON-NLS-1$ //$NON-NLS-2$
+		authInfo.put("ssl_passphrase_saved", clientAuthEnabled ? String.valueOf(savePassphrase) : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+		authInfo.put("ssl_passphrase", (clientAuthEnabled && savePassphrase) ? sslSettings.getPassPhrase() : ""); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		//store the map in platform
 		Platform.addAuthorizationInfo(new URL(AbstractSVNStorage.URL_TO_STORE), location.getId(), realm, authInfo);
@@ -468,7 +469,7 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		Map<String, String> authInfo = Platform.getAuthorizationInfo(new URL(AbstractSVNStorage.URL_TO_STORE), location.getId(), realm);
 		if (authInfo != null) {
 			IRepositoryLocation tmp;
-			boolean toAddRealm = !realm.equals(""); 
+			boolean toAddRealm = !realm.equals("");  //$NON-NLS-1$
 			if (toAddRealm) {
 				tmp = this.newRepositoryLocation();
 			}
@@ -477,23 +478,23 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 			}
 			
 			//recover normal password settings
-			tmp.setUsername(authInfo.get("username"));
-			tmp.setPasswordSaved(authInfo.get("password_saved").equals("true"));
-			tmp.setPassword(authInfo.get("password"));
+			tmp.setUsername(authInfo.get("username")); //$NON-NLS-1$
+			tmp.setPasswordSaved(authInfo.get("password_saved").equals("true")); //$NON-NLS-1$ //$NON-NLS-2$
+			tmp.setPassword(authInfo.get("password")); //$NON-NLS-1$
 			
 			//recover SSH settings
 			SSHSettings sshSettings = tmp.getSSHSettings();
-			sshSettings.setUseKeyFile(authInfo.get("ssh_use_key").equals("true"));
-			sshSettings.setPrivateKeyPath(authInfo.get("ssh_key"));
-			sshSettings.setPassPhraseSaved(authInfo.get("ssh_passphrase_saved").equals("true"));
-			sshSettings.setPassPhrase(authInfo.get("ssh_passprase"));
+			sshSettings.setUseKeyFile(authInfo.get("ssh_use_key").equals("true")); //$NON-NLS-1$ //$NON-NLS-2$
+			sshSettings.setPrivateKeyPath(authInfo.get("ssh_key")); //$NON-NLS-1$
+			sshSettings.setPassPhraseSaved(authInfo.get("ssh_passphrase_saved").equals("true")); //$NON-NLS-1$ //$NON-NLS-2$
+			sshSettings.setPassPhrase(authInfo.get("ssh_passprase")); //$NON-NLS-1$
 			
 			//recover SSL settings
 			SSLSettings sslSettings = tmp.getSSLSettings();
-			sslSettings.setAuthenticationEnabled(authInfo.get("ssl_enabled").equals("true"));
-			sslSettings.setCertificatePath(authInfo.get("ssl_certificate"));
-			sslSettings.setPassPhraseSaved(authInfo.get("ssl_passphrase_saved").equals("true"));
-			sslSettings.setPassPhrase(authInfo.get("ssl_passphrase"));
+			sslSettings.setAuthenticationEnabled(authInfo.get("ssl_enabled").equals("true")); //$NON-NLS-1$ //$NON-NLS-2$
+			sslSettings.setCertificatePath(authInfo.get("ssl_certificate")); //$NON-NLS-1$
+			sslSettings.setPassPhraseSaved(authInfo.get("ssl_passphrase_saved").equals("true")); //$NON-NLS-1$ //$NON-NLS-2$
+			sslSettings.setPassPhrase(authInfo.get("ssl_passphrase")); //$NON-NLS-1$
 			
 			//if realm, add it to realms
 			if (toAddRealm) {

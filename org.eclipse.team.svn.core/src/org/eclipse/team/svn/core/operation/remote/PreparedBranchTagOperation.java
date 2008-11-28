@@ -15,7 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Options;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
@@ -68,7 +68,7 @@ public class PreparedBranchTagOperation extends CompositeOperation implements IR
 		if (CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() < ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x || this.wcResources != null) {
 			IRepositoryResource parent = PreparedBranchTagOperation.getExistentParent(this.destination);
 			if (parent == null) {
-				throw new UnreportableException(SVNTeamPlugin.instance().getResource("Error.RepositoryInaccessible"));
+				throw new UnreportableException(SVNMessages.getErrorString("Error_RepositoryInaccessible"));
 			}
 			this.targets = new IRepositoryResource[this.resources.length];
 			CreateFolderOperation op = null;

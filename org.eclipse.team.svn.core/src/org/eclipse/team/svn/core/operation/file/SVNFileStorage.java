@@ -34,7 +34,7 @@ public class SVNFileStorage extends AbstractSVNStorage implements IFileStorage {
 	 * The name of the preferences node in the Subversive Core preferences that contains
 	 * the known repositories as its children (for integrations).
 	 */
-	public static final String PREF_REPOSITORIES_NODE = "externalRepositories";
+	public static final String PREF_REPOSITORIES_NODE = "externalRepositories"; //$NON-NLS-1$
 	
 	/**
 	 * The name of file containing the SVN repository locations information (for integration).
@@ -42,7 +42,7 @@ public class SVNFileStorage extends AbstractSVNStorage implements IFileStorage {
 	 * preferences.
 	 * @see SVNFileStorage.PREF_REPOSITORIES_NODE
 	 */
-	public static final String STATE_INFO_FILE_NAME = ".externalSVNRepositories";
+	public static final String STATE_INFO_FILE_NAME = ".externalSVNRepositories"; //$NON-NLS-1$
 	
 	private static SVNFileStorage instance = new SVNFileStorage();
 	
