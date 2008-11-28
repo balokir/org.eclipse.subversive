@@ -57,7 +57,7 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	public JavaHLMergeOperation(IResource []localTo, IRepositoryResourceProvider from, SVNRevisionRange []revisions, boolean dryRun, boolean ignoreAncestry, int depth) {
-		super("Operation.JavaHLMerge", localTo);
+		super("Operation_JavaHLMerge", localTo); //$NON-NLS-1$
 		this.from = from;
 		this.revisions = revisions;
 		this.dryRun = dryRun;
@@ -66,7 +66,7 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	public JavaHLMergeOperation(IResource []localTo, IRepositoryResourceProvider fromStart, IRepositoryResourceProvider fromEnd, boolean dryRun, boolean ignoreAncestry, int depth) {
-		super("Operation.JavaHLMerge", localTo);
+		super("Operation_JavaHLMerge", localTo); //$NON-NLS-1$
 		this.from = fromStart;
 		this.fromEnd = fromEnd;
 		this.dryRun = dryRun;
@@ -75,7 +75,7 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	public JavaHLMergeOperation(IResource []localTo, IRepositoryResourceProvider from, boolean dryRun) {
-		super("Operation.JavaHLMerge", localTo);
+		super("Operation_JavaHLMerge", localTo); //$NON-NLS-1$
 		this.from = from;
 		this.dryRun = dryRun;
 	}
@@ -123,24 +123,24 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 			SVNEntryReference ref1 = SVNUtility.getEntryReference(from);
 			long options = this.ignoreAncestry ? ISVNConnector.Options.IGNORE_ANCESTRY : ISVNConnector.Options.NONE;
 			options |= this.dryRun ? ISVNConnector.Options.SIMULATE : ISVNConnector.Options.NONE;
-			String changes = "";
-			String ranges = "";
+			String changes = ""; //$NON-NLS-1$
+			String ranges = ""; //$NON-NLS-1$
 			for (SVNRevisionRange range : this.revisions) {
 				if (range.from.equals(range.to)) {
-					changes += changes.length() > 0 ? ("," + range.from.toString()) : range.from.toString();
+					changes += changes.length() > 0 ? ("," + range.from.toString()) : range.from.toString(); //$NON-NLS-1$
 				}
 				else {
-					String rangeStr = range.from.toString() + ":" + range.to.toString();
-					ranges += ranges.length() > 0 ? (" " + rangeStr) : rangeStr;
+					String rangeStr = range.from.toString() + ":" + range.to.toString(); //$NON-NLS-1$
+					ranges += ranges.length() > 0 ? (" " + rangeStr) : rangeStr; //$NON-NLS-1$
 				}
 			}
 			if (changes.length() > 0) {
-				changes = " -c " + changes;
+				changes = " -c " + changes; //$NON-NLS-1$
 			}
 			if (ranges.length() > 0) {
-				ranges = " -r " + ranges;
+				ranges = " -r " + ranges; //$NON-NLS-1$
 			}
-			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn merge" + changes + ranges + " \"" + from.getUrl() + "@" + from.getPegRevision() + "\" \"" + FileUtility.normalizePath(wcPath) + "\"" + SVNUtility.getDepthArg(this.depth) +(this.dryRun ? " --dry-run" : "") + (this.ignoreAncestry ? " --ignore-ancestry" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n");
+			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn merge" + changes + ranges + " \"" + from.getUrl() + "@" + from.getPegRevision() + "\" \"" + FileUtility.normalizePath(wcPath) + "\"" + SVNUtility.getDepthArg(this.depth) +(this.dryRun ? " --dry-run" : "") + (this.ignoreAncestry ? " --ignore-ancestry" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
 			proxy.merge(ref1, this.revisions, wcPath, this.depth, options, new MergeProgressMonitor(this, monitor, null));
 		}
 		finally {
@@ -160,7 +160,7 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 			SVNEntryRevisionReference ref2 = SVNUtility.getEntryRevisionReference(from2);
 			long options = this.ignoreAncestry ? ISVNConnector.Options.IGNORE_ANCESTRY : ISVNConnector.Options.NONE;
 			options |= this.dryRun ? ISVNConnector.Options.SIMULATE : ISVNConnector.Options.NONE;
-			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn merge \"" + from1.getUrl() + "@" + from1.getSelectedRevision() + "\" \"" + from2.getUrl() + "@" + from2.getSelectedRevision() + "\" \"" + FileUtility.normalizePath(wcPath) + "\"" + SVNUtility.getDepthArg(this.depth) + (this.dryRun ? " --dry-run" : "") + (this.ignoreAncestry ? " --ignore-ancestry" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n");
+			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn merge \"" + from1.getUrl() + "@" + from1.getSelectedRevision() + "\" \"" + from2.getUrl() + "@" + from2.getSelectedRevision() + "\" \"" + FileUtility.normalizePath(wcPath) + "\"" + SVNUtility.getDepthArg(this.depth) + (this.dryRun ? " --dry-run" : "") + (this.ignoreAncestry ? " --ignore-ancestry" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$ //$NON-NLS-11$
 			proxy.merge(ref1, ref2, wcPath, this.depth, options, new MergeProgressMonitor(this, monitor, null));
 		}
 		finally {
@@ -179,7 +179,7 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 			SVNEntryReference ref1 = SVNUtility.getEntryReference(from1);
 			long options = this.ignoreAncestry ? ISVNConnector.Options.IGNORE_ANCESTRY : ISVNConnector.Options.NONE;
 			options |= this.dryRun ? ISVNConnector.Options.SIMULATE : ISVNConnector.Options.NONE;
-			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn merge --reintegrate \"" + from1.getUrl() + "@" + from1.getPegRevision() + "\" \"" + FileUtility.normalizePath(wcPath) + "\"" + (this.dryRun ? " --dry-run" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n");
+			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn merge --reintegrate \"" + from1.getUrl() + "@" + from1.getPegRevision() + "\" \"" + FileUtility.normalizePath(wcPath) + "\"" + (this.dryRun ? " --dry-run" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 			proxy.mergeReintegrate(ref1, wcPath, options, new MergeProgressMonitor(this, monitor, null));
 		}
 		finally {

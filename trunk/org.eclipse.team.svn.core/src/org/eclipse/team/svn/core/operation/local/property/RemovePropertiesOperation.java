@@ -35,13 +35,13 @@ public class RemovePropertiesOperation extends AbstractWorkingCopyOperation {
 	protected boolean isRecursive;
 	
 	public RemovePropertiesOperation(IResource []resources, SVNProperty []data, boolean isRecursive) {
-		super("Operation.RemoveProperties", resources);
+		super("Operation_RemoveProperties", resources); //$NON-NLS-1$
 		this.data = data;
 		this.isRecursive = isRecursive; 
 	}
 	
 	public RemovePropertiesOperation(IResourceProvider resourceProvider, SVNProperty []data, boolean isRecursive) {
-		super("Operation.RemoveProperties", resourceProvider);
+		super("Operation_RemoveProperties", resourceProvider); //$NON-NLS-1$
 		this.data = data;
 		this.isRecursive = isRecursive; 
 	}

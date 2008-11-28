@@ -35,7 +35,7 @@ public class GetAllFilesOperation extends AbstractFileOperation implements IFile
 	protected File []children;
 	
 	public GetAllFilesOperation(File file) {
-		super("Operation.GetAllFiles", new File[] {file});
+		super("Operation_GetAllFiles", new File[] {file}); //$NON-NLS-1$
 	}
 
 	public File []getFiles() {

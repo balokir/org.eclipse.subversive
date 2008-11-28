@@ -28,7 +28,7 @@ public class AddRepositoryLocationOperation extends AbstractActionOperation {
 	protected IRepositoryLocation location;
 
 	public AddRepositoryLocationOperation(IRepositoryLocation location) {
-		super("Operation.AddRepositoryLocation");
+		super("Operation_AddRepositoryLocation"); //$NON-NLS-1$
 		this.location = location;
 	}
 

@@ -39,7 +39,7 @@ public class GetResourceAnnotationOperation extends AbstractRepositoryOperation 
 	protected boolean includeMerged;
 
 	public GetResourceAnnotationOperation(IRepositoryResource resource) {
-		super("Operation.GetAnnotation", new IRepositoryResource[] {resource});
+		super("Operation_GetAnnotation", new IRepositoryResource[] {resource}); //$NON-NLS-1$
 	}
 	
 	public boolean getIncludeMerged() {
@@ -80,7 +80,7 @@ public class GetResourceAnnotationOperation extends AbstractRepositoryOperation 
 					public void annotate(String line, SVNAnnotationData data) {
 						lines.add(data);
 						try {
-							stream.write((line + "\n").getBytes());
+							stream.write((line + "\n").getBytes()); //$NON-NLS-1$
 						} 
 						catch (IOException e) {
 							throw new RuntimeException(e);
@@ -99,7 +99,7 @@ public class GetResourceAnnotationOperation extends AbstractRepositoryOperation 
 	
 	protected String getShortErrorMessage(Throwable t) {
 		if (t instanceof SVNConnectorException && ((SVNConnectorException)t).getErrorId() == SVNErrorCodes.clientIsBinaryFile) {
-			return this.getOperationResource("Error.IsBinary");
+			return this.getOperationResource("Error_IsBinary"); //$NON-NLS-1$
 		}
 		return MessageFormat.format(super.getShortErrorMessage(t), new Object[] {this.operableData()[0].getName()});
 	}

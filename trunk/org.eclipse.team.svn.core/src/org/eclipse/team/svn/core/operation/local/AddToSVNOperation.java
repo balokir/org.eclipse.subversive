@@ -44,7 +44,7 @@ public class AddToSVNOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	public AddToSVNOperation(IResource[] resources, boolean isRecursive) {
-		super("Operation.AddToSVN", resources);
+		super("Operation_AddToSVN", resources); //$NON-NLS-1$
 		this.isRecursive = isRecursive;
 	}
 
@@ -53,7 +53,7 @@ public class AddToSVNOperation extends AbstractWorkingCopyOperation {
 	}
 
 	public AddToSVNOperation(IResourceProvider provider, boolean isRecursive) {
-		super("Operation.AddToSVN", provider);
+		super("Operation_AddToSVN", provider); //$NON-NLS-1$
 		this.isRecursive = isRecursive;
 	}
 
@@ -87,10 +87,10 @@ public class AddToSVNOperation extends AbstractWorkingCopyOperation {
 	
 	public static void removeFromParentIgnore(ISVNConnector proxy, String parentPath, String name) throws Exception {
 		SVNProperty data = proxy.getProperty(new SVNEntryRevisionReference(parentPath), BuiltIn.IGNORE, new SVNNullProgressMonitor());
-		String ignoreValue = data == null ? "" : data.value;
+		String ignoreValue = data == null ? "" : data.value; //$NON-NLS-1$
 		
-		StringTokenizer tok = new StringTokenizer(ignoreValue, "\n", true);
-		ignoreValue = "";
+		StringTokenizer tok = new StringTokenizer(ignoreValue, "\n", true); //$NON-NLS-1$
+		ignoreValue = ""; //$NON-NLS-1$
 		boolean skipToken = false;
 		while (tok.hasMoreTokens()) {
 		    String oneOf = tok.nextToken();
@@ -116,7 +116,7 @@ public class AddToSVNOperation extends AbstractWorkingCopyOperation {
 	protected void doAdd(IResource current, ISVNConnector proxy, IProgressMonitor monitor) throws Exception {
 		String wcPath = FileUtility.getWorkingCopyPath(current);
 
-		AddToSVNOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn add \"" + FileUtility.normalizePath(wcPath) + "\"" + (AddToSVNOperation.this.isRecursive ? "" : " -N") + "\n");
+		AddToSVNOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn add \"" + FileUtility.normalizePath(wcPath) + "\"" + (AddToSVNOperation.this.isRecursive ? "" : " -N") + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		
 		IResource parent = current.getParent();
 		if (parent != null) {

@@ -33,12 +33,12 @@ public class RevertOperation extends AbstractWorkingCopyOperation {
 	protected boolean doRecursiveRevert;
 
 	public RevertOperation(IResource []resources, boolean doRecursiveRevert) {
-		super("Operation.Revert", resources);
+		super("Operation_Revert", resources); //$NON-NLS-1$
 		this.doRecursiveRevert = doRecursiveRevert;
 	}
 
 	public RevertOperation(IResourceProvider provider, boolean doRecursiveRevert) {
-		super("Operation.Revert", provider);
+		super("Operation_Revert", provider); //$NON-NLS-1$
 		this.doRecursiveRevert = doRecursiveRevert;
 	}
 
@@ -57,7 +57,7 @@ public class RevertOperation extends AbstractWorkingCopyOperation {
 			IRepositoryLocation location = storage.getRepositoryLocation(resources[i]);
 			final String wcPath = FileUtility.getWorkingCopyPath(resources[i]);
 			final ISVNConnector proxy = location.acquireSVNProxy();
-			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn revert \"" + FileUtility.normalizePath(wcPath) + "\"" + (this.doRecursiveRevert ? " -R" : "") + "\n");
+			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn revert \"" + FileUtility.normalizePath(wcPath) + "\"" + (this.doRecursiveRevert ? " -R" : "") + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
 					proxy.revert(wcPath, 

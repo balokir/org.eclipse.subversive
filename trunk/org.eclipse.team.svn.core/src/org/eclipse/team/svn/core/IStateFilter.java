@@ -38,33 +38,33 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public interface IStateFilter {
 
-	public static final String ST_INTERNAL_INVALID = "InternalInvalid";
+	public static final String ST_INTERNAL_INVALID = "InternalInvalid"; //$NON-NLS-1$
 
 	public static final String ST_NOTEXISTS = null;
 
-	public static final String ST_IGNORED = "Ignored";
+	public static final String ST_IGNORED = "Ignored"; //$NON-NLS-1$
 
-	public static final String ST_NEW = "New";
+	public static final String ST_NEW = "New"; //$NON-NLS-1$
 
-	public static final String ST_ADDED = "Added";
+	public static final String ST_ADDED = "Added"; //$NON-NLS-1$
 
-	public static final String ST_NORMAL = "Normal";
+	public static final String ST_NORMAL = "Normal"; //$NON-NLS-1$
 
-	public static final String ST_MODIFIED = "Modified";
+	public static final String ST_MODIFIED = "Modified"; //$NON-NLS-1$
 
-	public static final String ST_CONFLICTING = "Conflicting";
+	public static final String ST_CONFLICTING = "Conflicting"; //$NON-NLS-1$
 
-	public static final String ST_DELETED = "Deleted";
+	public static final String ST_DELETED = "Deleted"; //$NON-NLS-1$
 
-	public static final String ST_MISSING = "Missing";
+	public static final String ST_MISSING = "Missing"; //$NON-NLS-1$
 
-	public static final String ST_OBSTRUCTED = "Obstructed";
+	public static final String ST_OBSTRUCTED = "Obstructed"; //$NON-NLS-1$
 
-	public static final String ST_PREREPLACED = "Prereplaced";
+	public static final String ST_PREREPLACED = "Prereplaced"; //$NON-NLS-1$
 
-	public static final String ST_REPLACED = "Replaced";
+	public static final String ST_REPLACED = "Replaced"; //$NON-NLS-1$
 
-	public static final String ST_LINKED = "Linked";
+	public static final String ST_LINKED = "Linked"; //$NON-NLS-1$
 
 	public boolean accept(ILocalResource resource);
 	
@@ -469,7 +469,7 @@ public interface IStateFilter {
 				return false;
 			}
 			final SVNProperty [][]propData = new SVNProperty[1][];
-			IActionOperation op = new AbstractActionOperation("Operation.CheckProperty") {
+			IActionOperation op = new AbstractActionOperation("Operation_CheckProperty") { //$NON-NLS-1$
 				protected void runImpl(IProgressMonitor monitor) throws Exception {
 					IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(resource);
 					ISVNConnector proxy = location.acquireSVNProxy();

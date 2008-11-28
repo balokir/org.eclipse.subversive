@@ -79,7 +79,7 @@ public class ShareProjectOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	public ShareProjectOperation(IProject []projects, IRepositoryLocation location, IFolderNameMapper mapper, String rootName, int shareLayout, boolean managementFoldersEnabled, String commitComment) {
-		super("Operation.ShareProject", projects);
+		super("Operation_ShareProject", projects); //$NON-NLS-1$
 		this.mapper = mapper;
 		this.location = location;
 		this.shareLayout = shareLayout;
@@ -111,11 +111,11 @@ public class ShareProjectOperation extends AbstractWorkingCopyOperation {
 		}
 		
 		if (this.commitComment == null) {
-			this.commitComment = "";
+			this.commitComment = ""; //$NON-NLS-1$
 			for (Iterator it = local2remote.entrySet().iterator(); it.hasNext(); ) {
 				Map.Entry entry = (Map.Entry)it.next();
 				String commentPart = ShareProjectOperation.getDefaultComment((IProject)entry.getKey(), (IRepositoryContainer)entry.getValue());
-				this.commitComment += this.commitComment.length() == 0 ? commentPart : ("\n" + commentPart);
+				this.commitComment += this.commitComment.length() == 0 ? commentPart : ("\n" + commentPart); //$NON-NLS-1$
 			}
 		}
 		
@@ -134,7 +134,7 @@ public class ShareProjectOperation extends AbstractWorkingCopyOperation {
 				break;
 			}
 			default: {
-				String message = this.getNationalizedString("Error.UnknownProjectLayoutType");
+				String message = this.getNationalizedString("Error_UnknownProjectLayoutType"); //$NON-NLS-1$
 				throw new Exception(MessageFormat.format(message, new Object[] {String.valueOf(this.shareLayout)}));
 			}
 		}
@@ -158,7 +158,7 @@ public class ShareProjectOperation extends AbstractWorkingCopyOperation {
 		}			
 		
 		if (existingProjects.size() > 0 && this.shareProjectPrompt != null && !this.shareProjectPrompt.prompt((IProject [])existingProjects.toArray(new IProject[existingProjects.size()]))) {
-			throw new SVNConnectorCancelException(this.getNationalizedString("Error.ShareCanceled"));
+			throw new SVNConnectorCancelException(this.getNationalizedString("Error_ShareCanceled")); //$NON-NLS-1$
 		}
 		
 		final ISVNConnector proxy = this.location.acquireSVNProxy();
@@ -227,7 +227,7 @@ public class ShareProjectOperation extends AbstractWorkingCopyOperation {
 				IRepositoryResource []resources = SVNUtility.makeResourceSet(remote.getRepositoryLocation().getRoot(), remote);
 				fullSet.addAll(Arrays.asList(resources));
 				
-				String targetUrl = ShareProjectOperation.getTargetUrl(this.location, this.shareLayout, "", this.rootName, false);
+				String targetUrl = ShareProjectOperation.getTargetUrl(this.location, this.shareLayout, "", this.rootName, false); //$NON-NLS-1$
 				IRepositoryContainer parent = this.location.asRepositoryContainer(targetUrl, false);
 				fullSet.add(this.makeChild(parent, ShareProjectOperation.getTagsName(this.location)));
 				fullSet.add(this.makeChild(parent, ShareProjectOperation.getBranchesName(this.location)));
@@ -263,18 +263,18 @@ public class ShareProjectOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	protected IRepositoryContainer makeChild(IRepositoryContainer parent, String name) {
-		return this.location.asRepositoryContainer(parent.getUrl() + "/" + name, false);
+		return this.location.asRepositoryContainer(parent.getUrl() + "/" + name, false); //$NON-NLS-1$
 	}
 	
 	protected File createTempDirectory(IProject project) {
 		try {
-			File tempDirectory = File.createTempFile("save_" + project.getName(), ".tmp", FileUtility.getResourcePath(project).toFile().getParentFile());
+			File tempDirectory = File.createTempFile("save_" + project.getName(), ".tmp", FileUtility.getResourcePath(project).toFile().getParentFile()); //$NON-NLS-1$ //$NON-NLS-2$
 			tempDirectory.deleteOnExit();
 			tempDirectory.delete();
 			return tempDirectory;
 		}
 		catch (IOException ex) {
-			String message = SVNMessages.formatErrorString("Error_CannotCheckOutMeta", new String[] {String.valueOf(project.getName())});
+			String message = SVNMessages.formatErrorString("Error_CannotCheckOutMeta", new String[] {String.valueOf(project.getName())}); //$NON-NLS-1$
 			throw new UnreportableException(message, ex);
 		}
 	}
@@ -286,7 +286,7 @@ public class ShareProjectOperation extends AbstractWorkingCopyOperation {
 		File []tempFiles = fromFolder.listFiles();
 		if (tempFiles != null) {
 			for (int i = 0; i < tempFiles.length; i++) {
-				File renameToFile = new File(toFolder + "/" + tempFiles[i].getName());
+				File renameToFile = new File(toFolder + "/" + tempFiles[i].getName()); //$NON-NLS-1$
 				if (!renameToFile.exists()) {
 					tempFiles[i].renameTo(renameToFile);
 				}
@@ -298,19 +298,19 @@ public class ShareProjectOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	protected static String getTargetUrlImpl(IRepositoryLocation location, int shareLayout, String projectName, String rootName, boolean managementFoldersEnabled) {
-		String trunkName = managementFoldersEnabled ? ("/" + ShareProjectOperation.getTrunkName(location)) : "";
+		String trunkName = managementFoldersEnabled ? ("/" + ShareProjectOperation.getTrunkName(location)) : ""; //$NON-NLS-1$ //$NON-NLS-2$
 		switch (shareLayout) {
 			case ShareProjectOperation.LAYOUT_DEFAULT: {
-				return location.getUrl() + trunkName + "/" + projectName;
+				return location.getUrl() + trunkName + "/" + projectName; //$NON-NLS-1$
 			}
 			case ShareProjectOperation.LAYOUT_SINGLE: {
-				return location.getUrl() + "/" + projectName + trunkName;
+				return location.getUrl() + "/" + projectName + trunkName; //$NON-NLS-1$
 			}
 			case ShareProjectOperation.LAYOUT_MULTIPLE: {
-				return location.getUrl() + "/" + rootName + trunkName + "/" + projectName;
+				return location.getUrl() + "/" + rootName + trunkName + "/" + projectName; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			default: {
-				String message = SVNMessages.formatErrorString("Error_UnknownProjectLayoutType", new String[] {String.valueOf(shareLayout)});
+				String message = SVNMessages.formatErrorString("Error_UnknownProjectLayoutType", new String[] {String.valueOf(shareLayout)}); //$NON-NLS-1$
 				throw new RuntimeException(message);
 			}
 		}

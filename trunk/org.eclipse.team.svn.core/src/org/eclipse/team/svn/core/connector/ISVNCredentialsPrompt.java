@@ -139,7 +139,7 @@ public interface ISVNCredentialsPrompt {
 	 */
 	public static final int ACCEPT_PERMANENTLY = 2;
 
-	public static final String ROOT_LOCATION = "<Repository Location>";
+	public static final String ROOT_LOCATION = "<Repository Location>"; //$NON-NLS-1$
 
 	public boolean prompt(Object context, String realm);
 

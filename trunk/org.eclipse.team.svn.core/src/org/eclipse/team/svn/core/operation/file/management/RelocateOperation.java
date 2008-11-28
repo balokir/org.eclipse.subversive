@@ -36,12 +36,12 @@ public class RelocateOperation extends AbstractFileOperation {
 	protected String toUrl;
 	
 	public RelocateOperation(File []folders, String toUrl) {
-		super("Operation.RelocateFile", folders);
+		super("Operation_RelocateFile", folders); //$NON-NLS-1$
 		this.toUrl = toUrl;
 	}
 
 	public RelocateOperation(IFileProvider provider, String toUrl) {
-		super("Operation.RelocateFile", provider);
+		super("Operation_RelocateFile", provider); //$NON-NLS-1$
 		this.toUrl = toUrl;
 	}
 
@@ -56,7 +56,7 @@ public class RelocateOperation extends AbstractFileOperation {
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
 					String path = current.getAbsolutePath();
-					RelocateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn switch --relocate \"" + remote.getUrl() + "\" \"" + RelocateOperation.this.toUrl + "\" \"" + FileUtility.normalizePath(path) + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n");
+					RelocateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn switch --relocate \"" + remote.getUrl() + "\" \"" + RelocateOperation.this.toUrl + "\" \"" + FileUtility.normalizePath(path) + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					proxy.relocate(SVNUtility.encodeURL(remote.getUrl()), SVNUtility.encodeURL(RelocateOperation.this.toUrl), path, Depth.INFINITY, new SVNProgressMonitor(RelocateOperation.this, monitor, null));
 				}
 			}, monitor, files.length);

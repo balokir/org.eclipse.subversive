@@ -38,13 +38,13 @@ public class LockOperation extends AbstractWorkingCopyOperation {
 	protected boolean force;
 
 	public LockOperation(IResource []resources, String message, boolean force) {
-		super("Operation.Lock", resources);
+		super("Operation_Lock", resources); //$NON-NLS-1$
 		this.message = message;
 		this.force = force;
 	}
 
 	public LockOperation(IResourceProvider provider, String message, boolean force) {
-		super("Operation.Lock", provider);
+		super("Operation_Lock", provider); //$NON-NLS-1$
 		this.message = message;
 		this.force = force;
 	}
@@ -60,11 +60,11 @@ public class LockOperation extends AbstractWorkingCopyOperation {
 			
 			this.complexWriteToConsole(new Runnable() {
 				public void run() {
-					LockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn lock");
+					LockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn lock"); //$NON-NLS-1$
 					for (int i = 0; i < paths.length && !monitor.isCanceled(); i++) {
-						LockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " \"" + paths[i] + "\"");
+						LockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " \"" + paths[i] + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 					}
-					LockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, (LockOperation.this.force ? " --force" : "") + " -m \"" + LockOperation.this.message + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n");
+					LockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, (LockOperation.this.force ? " --force" : "") + " -m \"" + LockOperation.this.message + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 				}
 			});
 			

@@ -33,7 +33,7 @@ public class DisconnectOperation extends AbstractActionOperation {
 	protected boolean dropSVNFolders;
 
 	public DisconnectOperation(IProject []projects, boolean dropSVNFolders) {
-		super("Operation.Disconnect");
+		super("Operation_Disconnect"); //$NON-NLS-1$
 		this.projects = projects;
 		this.dropSVNFolders = dropSVNFolders;
 	}

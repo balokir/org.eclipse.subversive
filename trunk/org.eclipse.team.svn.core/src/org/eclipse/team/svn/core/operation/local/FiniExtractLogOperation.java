@@ -24,7 +24,7 @@ public class FiniExtractLogOperation extends AbstractActionOperation {
 	protected InitExtractLogOperation logger;
 	
 	public FiniExtractLogOperation(InitExtractLogOperation logger) {
-		super("Operation.FiniExtractLog");
+		super("Operation_FiniExtractLog"); //$NON-NLS-1$
 		this.logger = logger;
 	}
 

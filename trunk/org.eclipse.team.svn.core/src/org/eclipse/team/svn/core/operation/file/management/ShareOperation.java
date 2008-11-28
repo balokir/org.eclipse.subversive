@@ -61,7 +61,7 @@ public class ShareOperation extends AbstractFileOperation {
 	protected String commitComment;
 
 	public ShareOperation(File []files, IRepositoryLocation location, IFolderNameMapper mapper, String rootName, int shareLayout, boolean managementFoldersEnabled, String commitComment) {
-		super("Operation.ShareFile", files);
+		super("Operation_ShareFile", files); //$NON-NLS-1$
 		this.location = location;
 		this.mapper = mapper;
 		this.rootName = rootName;
@@ -71,7 +71,7 @@ public class ShareOperation extends AbstractFileOperation {
 	}
 
 	public ShareOperation(IFileProvider provider, IRepositoryLocation location, IFolderNameMapper mapper, String rootName, int shareLayout, boolean managementFoldersEnabled, String commitComment) {
-		super("Operation.ShareFile", provider);
+		super("Operation_ShareFile", provider); //$NON-NLS-1$
 		this.location = location;
 		this.mapper = mapper;
 		this.rootName = rootName;
@@ -89,11 +89,11 @@ public class ShareOperation extends AbstractFileOperation {
 			local2remote.put(folders[i], remote);
 		}
 		if (this.commitComment == null) {
-			this.commitComment = "";
+			this.commitComment = ""; //$NON-NLS-1$
 			for (Iterator<?> it = local2remote.entrySet().iterator(); it.hasNext(); ) {
 				Map.Entry entry = (Map.Entry)it.next();
 				String commentPart = ShareOperation.getDefaultComment((File)entry.getKey(), (IRepositoryContainer)entry.getValue());
-				this.commitComment += this.commitComment.length() == 0 ? commentPart : ("\n" + commentPart);
+				this.commitComment += this.commitComment.length() == 0 ? commentPart : ("\n" + commentPart); //$NON-NLS-1$
 			}
 		}
 		
@@ -114,7 +114,7 @@ public class ShareOperation extends AbstractFileOperation {
 					break;
 				}
 				default: {
-					String message = this.getNationalizedString("Error.UnknownProjectLayoutType");
+					String message = this.getNationalizedString("Error_UnknownProjectLayoutType"); //$NON-NLS-1$
 					throw new Exception(MessageFormat.format(message, new Object[] {String.valueOf(this.shareLayout)}));
 				}
 			}
@@ -146,19 +146,19 @@ public class ShareOperation extends AbstractFileOperation {
 	}
 	
 	protected String getTargetUrlImpl(String projectName, boolean managementFoldersEnabled) {
-		String trunkName = managementFoldersEnabled ? ("/" + this.getTrunkName()) : "";
+		String trunkName = managementFoldersEnabled ? ("/" + this.getTrunkName()) : ""; //$NON-NLS-1$ //$NON-NLS-2$
 		switch (this.shareLayout) {
 			case ShareProjectOperation.LAYOUT_DEFAULT: {
-				return this.location.getUrl() + trunkName + "/" + projectName;
+				return this.location.getUrl() + trunkName + "/" + projectName; //$NON-NLS-1$
 			}
 			case ShareProjectOperation.LAYOUT_SINGLE: {
-				return this.location.getUrl() + "/" + projectName + trunkName;
+				return this.location.getUrl() + "/" + projectName + trunkName; //$NON-NLS-1$
 			}
 			case ShareProjectOperation.LAYOUT_MULTIPLE: {
-				return this.location.getUrl() + "/" + this.rootName + trunkName + "/" + projectName;
+				return this.location.getUrl() + "/" + this.rootName + trunkName + "/" + projectName; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			default: {
-				String message = this.getNationalizedString("Error.UnknownProjectLayoutType");
+				String message = this.getNationalizedString("Error_UnknownProjectLayoutType"); //$NON-NLS-1$
 				throw new RuntimeException(MessageFormat.format(message, new Object[] {String.valueOf(this.shareLayout)}));
 			}
 		}
@@ -211,7 +211,7 @@ public class ShareOperation extends AbstractFileOperation {
 				IRepositoryResource []resources = SVNUtility.makeResourceSet(remote.getRepositoryLocation().getRoot(), remote);
 				fullSet.addAll(Arrays.asList(resources));
 				
-				String targetUrl = this.getTargetUrl("", false);
+				String targetUrl = this.getTargetUrl("", false); //$NON-NLS-1$
 				IRepositoryContainer parent = this.location.asRepositoryContainer(targetUrl, false);
 				fullSet.add(this.makeChild(parent, this.getTagsName()));
 				fullSet.add(this.makeChild(parent, this.getBranchesName()));
@@ -222,7 +222,7 @@ public class ShareOperation extends AbstractFileOperation {
 	}
 	
 	protected IRepositoryContainer makeChild(IRepositoryContainer parent, String name) {
-		return this.location.asRepositoryContainer(parent.getUrl() + "/" + name, false);
+		return this.location.asRepositoryContainer(parent.getUrl() + "/" + name, false); //$NON-NLS-1$
 	}
 	
 	protected IRepositoryResource []getOrderedSet(Set<IRepositoryResource> fullSet) {

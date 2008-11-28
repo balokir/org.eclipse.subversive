@@ -61,7 +61,7 @@ public class SetRevisionPropertyOperation extends AbstractActionOperation {
 	 * @author Alexei Goncharov
 	 */
 	public SetRevisionPropertyOperation(IRepositoryLocation location, SVNRevision revision, IRevisionPropertiesProvider revPropProvider) {
-		super("Operation.SetRevisionProperty");
+		super("Operation_SetRevisionProperty"); //$NON-NLS-1$
 		this.revision = revision;
 		this.provider = revPropProvider;
 		this.location = location;

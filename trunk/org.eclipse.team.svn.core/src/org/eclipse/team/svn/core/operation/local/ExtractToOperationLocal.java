@@ -61,9 +61,9 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 		IPath previousPref = null;
 		for (IResource current : this.outgoingResources) {
 			IPath currentPath = current.getFullPath();
-			String toOperate = "";
+			String toOperate = ""; //$NON-NLS-1$
 			if (previousPref == null || !previousPref.isPrefixOf(currentPath)) {
-				toOperate = this.path + "/" + current.getName();
+				toOperate = this.path + "/" + current.getName(); //$NON-NLS-1$
 				if (current instanceof IContainer) {
 					previousPref = current.getFullPath();
 				}

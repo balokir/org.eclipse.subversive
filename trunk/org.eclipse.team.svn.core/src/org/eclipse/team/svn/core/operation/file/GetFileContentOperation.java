@@ -41,7 +41,7 @@ public class GetFileContentOperation extends AbstractFileOperation {
 	}
 	
 	public GetFileContentOperation(File file, SVNRevision revision, SVNRevision pegRevision, int bufferSize, OutputStream target) {
-		super("Operation.GetFileContent", new File[] {file});
+		super("Operation_GetFileContent", new File[] {file}); //$NON-NLS-1$
 		this.revision = revision;
 		this.pegRevision = pegRevision;
 		this.bufferSize = bufferSize;

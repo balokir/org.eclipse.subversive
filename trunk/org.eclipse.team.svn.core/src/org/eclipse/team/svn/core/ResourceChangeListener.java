@@ -52,7 +52,7 @@ public class ResourceChangeListener implements IResourceChangeListener, ISavePar
 	}
 
 	public void resourceChanged(final IResourceChangeEvent event) {
-		ProgressMonitorUtility.doTaskScheduledDefault(new AbstractActionOperation("Operation.ResourcesChanged") {
+		ProgressMonitorUtility.doTaskScheduledDefault(new AbstractActionOperation("Operation_ResourcesChanged") { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				final Set<IResource> modified = new HashSet<IResource>();
 				event.getDelta().accept(new IResourceDeltaVisitor() {

@@ -34,7 +34,7 @@ public class JavaHLMergeOperation extends AbstractFileOperation {
 	protected ISVNNotificationCallback notify;
 	
 	public JavaHLMergeOperation(File localTo, IRepositoryResource from1, IRepositoryResource from2, boolean dryRun, ISVNNotificationCallback notify) {
-		super("Operation.JavaHLMergeFile", new File[] {localTo});
+		super("Operation_JavaHLMergeFile", new File[] {localTo}); //$NON-NLS-1$
 		this.from1 = from1;
 		this.from2 = from2;
 		this.dryRun = dryRun;

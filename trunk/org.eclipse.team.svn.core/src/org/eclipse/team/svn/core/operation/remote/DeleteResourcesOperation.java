@@ -40,7 +40,7 @@ public class DeleteResourcesOperation extends AbstractRepositoryOperation implem
 	protected ArrayList<RevisionPair> revisionsPairs;
 	
 	public DeleteResourcesOperation(IRepositoryResource []resources, String message) {
-		super("Operation.DeleteRemote", resources);
+		super("Operation_DeleteRemote", resources); //$NON-NLS-1$
 		this.message = message;
 	}
 
@@ -57,11 +57,11 @@ public class DeleteResourcesOperation extends AbstractRepositoryOperation implem
 			
 			this.complexWriteToConsole(new Runnable() {
 				public void run() {
-					DeleteResourcesOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn delete");
+					DeleteResourcesOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn delete"); //$NON-NLS-1$
 					for (int i = 0; i < paths.length && !monitor.isCanceled(); i++) {
-						DeleteResourcesOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " \"" + SVNUtility.decodeURL(paths[i]) + "\"");
+						DeleteResourcesOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " \"" + SVNUtility.decodeURL(paths[i]) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 					}
-					DeleteResourcesOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " -m \"" + DeleteResourcesOperation.this.message + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n");
+					DeleteResourcesOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " -m \"" + DeleteResourcesOperation.this.message + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
 			});
 			

@@ -35,7 +35,7 @@ public class CreatePatchOperation extends AbstractFileOperation {
 	protected boolean useRelativePath;
 
 	public CreatePatchOperation(File file, String fileName, boolean recurse, boolean ignoreDeleted, boolean processBinary, boolean useRelativePath) {
-		super("Operation.CreatePatchFile", new File[] {file});
+		super("Operation_CreatePatchFile", new File[] {file}); //$NON-NLS-1$
 		this.fileName = fileName;
 		this.recurse = recurse;
 		this.ignoreDeleted = ignoreDeleted;
@@ -48,7 +48,7 @@ public class CreatePatchOperation extends AbstractFileOperation {
 		IRepositoryResource remote = SVNFileStorage.instance().asRepositoryResource(file, false);
 		ISVNConnector proxy = remote.getRepositoryLocation().acquireSVNProxy();
 		try {
-			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn diff " + (this.recurse ? "" : " -N") + (this.ignoreDeleted ? " --no-diff-deleted" : "") + "\n");
+			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn diff " + (this.recurse ? "" : " -N") + (this.ignoreDeleted ? " --no-diff-deleted" : "") + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 			String path = file.getAbsolutePath();
 			long options = ISVNConnector.Options.IGNORE_ANCESTRY;
 			options |= this.ignoreDeleted ? ISVNConnector.Options.SKIP_DELETED : ISVNConnector.Options.NONE;

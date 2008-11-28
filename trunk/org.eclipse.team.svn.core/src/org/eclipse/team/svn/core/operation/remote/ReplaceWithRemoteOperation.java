@@ -40,7 +40,7 @@ public class ReplaceWithRemoteOperation extends AbstractActionOperation {
 	protected IRepositoryResource remoteRoot;
 	
 	public ReplaceWithRemoteOperation(IResource toReplace, IRepositoryResource remoteResource) {
-		super("Operation.ReplaceWithRemote");
+		super("Operation_ReplaceWithRemote"); //$NON-NLS-1$
 		this.toReplace = toReplace;
 		this.remoteRoot = remoteResource;
 	}
@@ -49,9 +49,9 @@ public class ReplaceWithRemoteOperation extends AbstractActionOperation {
 		//perform export into temp folder
 		IRepositoryLocation location = this.remoteRoot.getRepositoryLocation();
 		String toReplacePath = FileUtility.getWorkingCopyPath(this.toReplace);
-		File f = File.createTempFile("svn", "");
+		File f = File.createTempFile("svn", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		f.delete(); 
-		String tempPath = toReplacePath.substring(0, toReplacePath.lastIndexOf("/") + 1) + f.getName() + "/"; 
+		String tempPath = toReplacePath.substring(0, toReplacePath.lastIndexOf("/") + 1) + f.getName() + "/";  //$NON-NLS-1$ //$NON-NLS-2$
 		final ISVNConnector proxy = location.acquireSVNProxy();
 		final String path = tempPath + this.remoteRoot.getName();
 		final SVNEntryRevisionReference entryRef = SVNUtility.getEntryRevisionReference(this.remoteRoot);		
@@ -86,19 +86,19 @@ public class ReplaceWithRemoteOperation extends AbstractActionOperation {
 		}
 		ArrayList<String> pathsToDelete = new ArrayList<String>();
 		for (String currentToReplace : toReplaceChildren) {
-			if (!currentToReplace.equalsIgnoreCase(".svn") && !sourceChildren.contains(currentToReplace)) {
-				pathsToDelete.add(pathForReplacement + "/" + currentToReplace);
+			if (!currentToReplace.equalsIgnoreCase(".svn") && !sourceChildren.contains(currentToReplace)) { //$NON-NLS-1$
+				pathsToDelete.add(pathForReplacement + "/" + currentToReplace); //$NON-NLS-1$
 			}
 		}
-		connectorProxy.remove(pathsToDelete.toArray(new String [0]), "", ISVNConnector.Options.FORCE, null, new SVNProgressMonitor(this, monitor, null));
+		connectorProxy.remove(pathsToDelete.toArray(new String [0]), "", ISVNConnector.Options.FORCE, null, new SVNProgressMonitor(this, monitor, null)); //$NON-NLS-1$
 		for (String currentFromSource : sourceChildren) {
-			File toReplace =  new File(pathForReplacement + "/" + currentFromSource);
-			File source = new File(sourcePath + "/" + currentFromSource);
+			File toReplace =  new File(pathForReplacement + "/" + currentFromSource); //$NON-NLS-1$
+			File source = new File(sourcePath + "/" + currentFromSource); //$NON-NLS-1$
 			if (source.isDirectory()) {
 				if (!toReplace.exists()) {
 					toReplace.mkdir();
 				}
-				this.performReplacementRecursively(pathForReplacement + "/" + currentFromSource, sourcePath + "/" + currentFromSource, connectorProxy, monitor);
+				this.performReplacementRecursively(pathForReplacement + "/" + currentFromSource, sourcePath + "/" + currentFromSource, connectorProxy, monitor); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			else {
 				FileUtility.copyFile(toReplace, source, monitor);

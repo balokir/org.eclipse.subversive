@@ -664,7 +664,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	public static String []fetchRepoInfo(final IRepositoryLocation location, final boolean usePrompt) {
 		// completely disallow error reporting
 		final String []retVal = new String[2];
-		ProgressMonitorUtility.doTaskExternal(new AbstractActionOperation("Operation.FetchRepositoryRoot") {
+		ProgressMonitorUtility.doTaskExternal(new AbstractActionOperation("Operation_FetchRepositoryRoot") { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 			    ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();
 				proxy.setCredentialsCacheEnabled(false);

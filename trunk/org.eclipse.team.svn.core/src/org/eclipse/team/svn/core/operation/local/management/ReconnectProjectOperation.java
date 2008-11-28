@@ -36,12 +36,12 @@ public class ReconnectProjectOperation extends AbstractWorkingCopyOperation {
 	protected IRepositoryLocation location;
 
 	public ReconnectProjectOperation(IProject []projects, IRepositoryLocation location) {
-		super("Operation.Reconnect", projects);
+		super("Operation_Reconnect", projects); //$NON-NLS-1$
 		this.location = location;
 	}
 	
 	public ReconnectProjectOperation(IResourceProvider provider, IRepositoryLocation location) {
-		super("Operation.Reconnect", provider);
+		super("Operation_Reconnect", provider); //$NON-NLS-1$
 		this.location = location;
 	}
 	
@@ -59,7 +59,7 @@ public class ReconnectProjectOperation extends AbstractWorkingCopyOperation {
 				public void run(IProgressMonitor monitor) throws Exception {
 					SVNChangeStatus st = SVNUtility.getSVNInfoForNotConnected(project);
 					if (st == null) {
-						throw new UnreportableException(SVNMessages.getErrorString("Error_NonSVNPath"));
+						throw new UnreportableException(SVNMessages.getErrorString("Error_NonSVNPath")); //$NON-NLS-1$
 					}
 					IRepositoryContainer remote = ReconnectProjectOperation.this.location.asRepositoryContainer(SVNUtility.decodeURL(st.url), false);
 					SVNTeamProjectMapper.map(project, remote);

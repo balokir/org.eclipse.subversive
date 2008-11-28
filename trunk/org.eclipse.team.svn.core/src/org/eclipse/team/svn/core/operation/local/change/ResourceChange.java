@@ -35,7 +35,7 @@ public abstract class ResourceChange {
     public ResourceChange(ResourceChange parent, ILocalResource local, boolean needsTemporary) throws Exception {
         this.local = local;
         if (needsTemporary) {
-        	this.tmp = File.createTempFile("merge", ".tmp", parent == null ? SVNTeamPlugin.instance().getStateLocation().toFile() : parent.getTemporary());
+        	this.tmp = File.createTempFile("merge", ".tmp", parent == null ? SVNTeamPlugin.instance().getStateLocation().toFile() : parent.getTemporary()); //$NON-NLS-1$ //$NON-NLS-2$
         	this.tmp.delete();
         }
 		this.properties = null;

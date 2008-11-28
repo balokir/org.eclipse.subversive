@@ -26,11 +26,11 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class DisconnectOperation extends AbstractFileOperation {
 	public DisconnectOperation(File []files) {
-		super("Operation.DisconnectFile", files);
+		super("Operation_DisconnectFile", files); //$NON-NLS-1$
 	}
 
 	public DisconnectOperation(IFileProvider provider) {
-		super("Operation.DisconnectFile", provider);
+		super("Operation_DisconnectFile", provider); //$NON-NLS-1$
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
@@ -40,7 +40,7 @@ public class DisconnectOperation extends AbstractFileOperation {
 	protected void disconnect(File []files, IProgressMonitor monitor) {
 		files = FileUtility.shrinkChildNodes(files, true);
 		for (int i = 0; i < files.length && !monitor.isCanceled(); i++) {
-			File meta = new File(files[i].getAbsolutePath() + "/" + SVNUtility.getSVNFolderName());
+			File meta = new File(files[i].getAbsolutePath() + "/" + SVNUtility.getSVNFolderName()); //$NON-NLS-1$
 			FileUtility.deleteRecursive(meta, monitor);
 			if (files[i].isDirectory()) {
 				this.disconnect(files[i].listFiles(), monitor);

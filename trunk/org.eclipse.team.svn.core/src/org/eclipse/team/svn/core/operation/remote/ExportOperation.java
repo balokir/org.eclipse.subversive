@@ -35,13 +35,13 @@ public class ExportOperation extends AbstractRepositoryOperation {
 	protected int depth;
 	
 	public ExportOperation(IRepositoryResource []resources, String path, int depth) {
-		super("Operation.ExportRevision", resources);
+		super("Operation_ExportRevision", resources); //$NON-NLS-1$
 		this.path = path;
 		this.depth = depth;
 	}
 	
 	public ExportOperation(IRepositoryResourceProvider provider, String path, int depth) {
-		super("Operation.ExportRevision", provider);
+		super("Operation_ExportRevision", provider); //$NON-NLS-1$
 		this.path = path;
 		this.depth = depth;
 	}
@@ -51,9 +51,9 @@ public class ExportOperation extends AbstractRepositoryOperation {
 		for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
 			IRepositoryLocation location = resources[i].getRepositoryLocation();
 			final ISVNConnector proxy = location.acquireSVNProxy();
-			final String path = this.path + "/" + resources[i].getName();
+			final String path = this.path + "/" + resources[i].getName(); //$NON-NLS-1$
 			final SVNEntryRevisionReference entryRef = SVNUtility.getEntryRevisionReference(resources[i]);
-			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn export \"" + resources[i].getUrl() + "@" + resources[i].getPegRevision() + "\" -r " + resources[i].getSelectedRevision() + " \"" + FileUtility.normalizePath(path) + "\"" + SVNUtility.getDepthArg(ExportOperation.this.depth) + " --force" + FileUtility.getUsernameParam(location.getUsername()) + "\n");
+			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn export \"" + resources[i].getUrl() + "@" + resources[i].getPegRevision() + "\" -r " + resources[i].getSelectedRevision() + " \"" + FileUtility.normalizePath(path) + "\"" + SVNUtility.getDepthArg(ExportOperation.this.depth) + " --force" + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 			
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {

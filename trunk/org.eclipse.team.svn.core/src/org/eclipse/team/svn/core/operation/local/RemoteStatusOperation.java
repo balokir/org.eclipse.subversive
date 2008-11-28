@@ -52,12 +52,12 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 	protected Map<String, Number> pegRevisions;
 
 	public RemoteStatusOperation(IResource []resources) {
-		super("Operation.UpdateStatus", resources);
+		super("Operation_UpdateStatus", resources); //$NON-NLS-1$
 		this.pegRevisions = new HashMap<String, Number>();
 	}
 
 	public RemoteStatusOperation(IResourceProvider provider) {
-		super("Operation.UpdateStatus", provider);
+		super("Operation_UpdateStatus", provider); //$NON-NLS-1$
 		this.pegRevisions = new HashMap<String, Number>();
 	}
 

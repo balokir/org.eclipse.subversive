@@ -58,7 +58,7 @@ public class DeleteResourceOperation extends AbstractActionOperation {
 	}
 	
 	public DeleteResourceOperation(IResource[] resources, boolean keepLocal) {
-		super("Operation.DeleteLocal");
+		super("Operation_DeleteLocal"); //$NON-NLS-1$
 		this.resources = resources;
 		this.keepLocal = keepLocal;
 	}
@@ -87,10 +87,10 @@ public class DeleteResourceOperation extends AbstractActionOperation {
 			IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation((IResource)entry.getKey());
 			IResource[] resources = ((List<?>)entry.getValue()).toArray(new IResource[((List<?>)entry.getValue()).size()]);
 			String[] wcPaths = new String[resources.length];
-			String printedPath = "";
+			String printedPath = ""; //$NON-NLS-1$
 			for (int i = 0; i < resources.length; i++) {
 				wcPaths[i] = FileUtility.getWorkingCopyPath(resources[i]);
-				printedPath += "\"" + FileUtility.normalizePath(wcPaths[i]) + ((i < resources.length - 1) ? " " : "") + "\"";
+				printedPath += "\"" + FileUtility.normalizePath(wcPaths[i]) + ((i < resources.length - 1) ? " " : "") + "\""; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			}
 			ISVNConnector proxy = location.acquireSVNProxy();
 			try {
@@ -99,7 +99,7 @@ public class DeleteResourceOperation extends AbstractActionOperation {
 				if (this.keepLocal && CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() == ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x) {
 					options |= ISVNConnector.Options.KEEP_LOCAL;
 				}
-				proxy.remove(wcPaths, "", options, null, new SVNProgressMonitor(this, monitor, null));
+				proxy.remove(wcPaths, "", options, null, new SVNProgressMonitor(this, monitor, null)); //$NON-NLS-1$
 			}
 			finally {
 			    location.releaseSVNProxy(proxy);

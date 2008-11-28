@@ -31,12 +31,12 @@ public class RemoveNonVersionedResourcesOperation extends AbstractWorkingCopyOpe
 	protected boolean addedAlso;
 	
     public RemoveNonVersionedResourcesOperation(IResource[] resources, boolean addedAlso) {
-        super("Operation.RemoveNonSVN", resources);
+        super("Operation_RemoveNonSVN", resources); //$NON-NLS-1$
 		this.addedAlso = addedAlso;
     }
 
     public RemoveNonVersionedResourcesOperation(IResourceProvider provider, boolean addedAlso) {
-        super("Operation.RemoveNonSVN", provider);
+        super("Operation_RemoveNonSVN", provider); //$NON-NLS-1$
 		this.addedAlso = addedAlso;
     }
 

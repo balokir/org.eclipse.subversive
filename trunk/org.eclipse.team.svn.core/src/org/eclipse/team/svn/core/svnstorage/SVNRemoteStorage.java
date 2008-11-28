@@ -79,7 +79,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	 * The name of the preferences node in the Subversive Core preferences that contains
 	 * the known repositories as its children.
 	 */
-	public static final String PREF_REPOSITORIES_NODE = "repositories";
+	public static final String PREF_REPOSITORIES_NODE = "repositories"; //$NON-NLS-1$
 	
 	/**
 	 * The name of file containing the SVN repository locations information.
@@ -87,7 +87,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	 * is stored in preferences.
 	 * @see SVNRemoteStorage.PREF_REPOSITORIES_NODE
 	 */
-	public static final String STATE_INFO_FILE_NAME = ".svnRepositories";
+	public static final String STATE_INFO_FILE_NAME = ".svnRepositories"; //$NON-NLS-1$
 	
 	private static SVNRemoteStorage instance = new SVNRemoteStorage();
 	
@@ -138,7 +138,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
     public void fireResourceStatesChangedEvent(final ResourceStatesChangedEvent event) {
 		if (event.resources.length > 0) {
 		    // events should be serialized and called asynchronous to caller thread
-	    	ProgressMonitorUtility.doTaskScheduled(new AbstractActionOperation("Operation.SendNotifications") {
+	    	ProgressMonitorUtility.doTaskScheduled(new AbstractActionOperation("Operation_SendNotifications") { //$NON-NLS-1$
 	    		protected void runImpl(IProgressMonitor monitor) throws Exception {
 	    	    	IResourceStatesListener []listeners = null;
 	    	    	synchronized (SVNRemoteStorage.this.resourceStateListeners) {
@@ -211,16 +211,16 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		long lastCommitDate = resource.getLastCommitDate();
 		String comment = resource.getComment();
 		String retVal = 
-	/*0*/	String.valueOf(resource instanceof ILocalFolder) + ";" + 
-	/*1*/	new String(Base64.encode(FileUtility.getWorkingCopyPath(resource.getResource()).getBytes())) + ";" + 
-	/*2*/	resource.getRevision() + ";" + 
-	/*3*/	resource.getStatus() + ";" +
-	/*4*/	resource.getAuthor() + ";" + 
-	/*5*/	(lastCommitDate == 0 ? "null" : String.valueOf(lastCommitDate)) + ";" +
-	/*6*/	String.valueOf(kind) + ";" + 
-	/*7*/	(kind == SVNRevision.Kind.NUMBER ? String.valueOf(((SVNRevision.Number)resource.getPegRevision()).getNumber()) : String.valueOf(kind)) + ";" +
-	/*8*/	(originatorData != null ? originatorData : "null") + ";" +
-	/*9*/	(comment == null ? "null" : new String(Base64.encode(comment.getBytes()))) + ";" +
+	/*0*/	String.valueOf(resource instanceof ILocalFolder) + ";" +  //$NON-NLS-1$
+	/*1*/	new String(Base64.encode(FileUtility.getWorkingCopyPath(resource.getResource()).getBytes())) + ";" +  //$NON-NLS-1$
+	/*2*/	resource.getRevision() + ";" +  //$NON-NLS-1$
+	/*3*/	resource.getStatus() + ";" + //$NON-NLS-1$
+	/*4*/	resource.getAuthor() + ";" +  //$NON-NLS-1$
+	/*5*/	(lastCommitDate == 0 ? "null" : String.valueOf(lastCommitDate)) + ";" + //$NON-NLS-1$ //$NON-NLS-2$
+	/*6*/	String.valueOf(kind) + ";" +  //$NON-NLS-1$
+	/*7*/	(kind == SVNRevision.Kind.NUMBER ? String.valueOf(((SVNRevision.Number)resource.getPegRevision()).getNumber()) : String.valueOf(kind)) + ";" + //$NON-NLS-1$
+	/*8*/	(originatorData != null ? originatorData : "null") + ";" + //$NON-NLS-1$ //$NON-NLS-2$
+	/*9*/	(comment == null ? "null" : new String(Base64.encode(comment.getBytes()))) + ";" + //$NON-NLS-1$ //$NON-NLS-2$
 	/*10*/	resource.getChangeMask();
 		return retVal.getBytes();
 	}
@@ -229,13 +229,13 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		if (bytes == null) {
 			return null;
 		}
-		String []data = new String(bytes).split(";");
-		boolean isFolder = "true".equals(data[0]);
+		String []data = new String(bytes).split(";"); //$NON-NLS-1$
+		boolean isFolder = "true".equals(data[0]); //$NON-NLS-1$
 		String name = new String(Base64.decode(data[1].getBytes()));
 		long revision = Long.parseLong(data[2]);
 		String status = this.deserializeStatus(data[3]);
-		String author = "null".equals(data[4]) ? null : data[4];
-		long lastCommitDate = "null".equals(data[5]) ? 0 : Long.parseLong(data[5]);
+		String author = "null".equals(data[4]) ? null : data[4]; //$NON-NLS-1$
+		long lastCommitDate = "null".equals(data[5]) ? 0 : Long.parseLong(data[5]); //$NON-NLS-1$
 		int revisionKind = Integer.parseInt(data[6]);
 		SVNRevision pegRevision = null;
 		if (revisionKind == SVNRevision.Kind.NUMBER) {
@@ -245,15 +245,15 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		else {
 		    pegRevision = SVNRevision.fromKind(revisionKind);
 		}
-		String comment = "null".equals(data[9]) ? null : new String(Base64.decode(data[9].getBytes()));
-		int changeMask = "null".equals(data[10]) ? ILocalResource.NO_MODIFICATION : Integer.parseInt(data[10]);
+		String comment = "null".equals(data[9]) ? null : new String(Base64.decode(data[9].getBytes())); //$NON-NLS-1$
+		int changeMask = "null".equals(data[10]) ? ILocalResource.NO_MODIFICATION : Integer.parseInt(data[10]); //$NON-NLS-1$
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IResourceChange change = 
 			isFolder ? 
 			(IResourceChange)new SVNFolderChange(root.getContainerForLocation(new Path(name)), revision, status, changeMask, author, lastCommitDate, pegRevision, comment) : 
 			new SVNFileChange(root.getFileForLocation(new Path(name)), revision, status, changeMask, author, lastCommitDate, pegRevision, comment);
 
-		if (!"null".equals(data[8])) {
+		if (!"null".equals(data[8])) { //$NON-NLS-1$
 			byte []originatorData = Base64.decode(data[8].getBytes());
 			change.setOriginator(this.repositoryResourceFromBytes(originatorData));
 		}
@@ -301,7 +301,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	public ILocalResource asLocalResourceAccessible(IResource resource) {
 		ILocalResource retVal = this.asLocalResource(resource);
 		if (IStateFilter.SF_INTERNAL_INVALID.accept(retVal)) {
-			throw new UnreportableException(SVNMessages.getErrorString("Error_InaccessibleResource_1"));
+			throw new UnreportableException(SVNMessages.getErrorString("Error_InaccessibleResource_1")); //$NON-NLS-1$
 		}
 		return retVal;
 	}
@@ -381,7 +381,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 			if (parent != null && (parent.getChangeMask() & ILocalResource.IS_SWITCHED) != 0) {
 				IPath parentPath = parent.getResource().getFullPath();
 				
-				url = (String)this.switchedToUrls.get(parentPath) + "/" + resource.getFullPath().removeFirstSegments(parentPath.segmentCount()).toString();
+				url = (String)this.switchedToUrls.get(parentPath) + "/" + resource.getFullPath().removeFirstSegments(parentPath.segmentCount()).toString(); //$NON-NLS-1$
 			}
 		}
 		
@@ -445,17 +445,17 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		IProject project = resource.getProject();
 		String url = resource.getFullPath().toString();
 		//truncating of the project name allow us to remap a content of project with name 'A' to the remote folder called 'B'
-		return baseResource.getUrl() + "/" + url.substring(project.getFullPath().toString().length() + 1);
+		return baseResource.getUrl() + "/" + url.substring(project.getFullPath().toString().length() + 1); //$NON-NLS-1$
 	}
 	
 	protected IConnectedProjectInformation getConnectedProjectInformation(IProject project) {
 		RepositoryProvider provider = RepositoryProvider.getProvider(project);
 		if (provider == null) {
-			String errMessage = SVNMessages.formatErrorString("Error_NotConnectedProject", new String[] {project.getName()});
+			String errMessage = SVNMessages.formatErrorString("Error_NotConnectedProject", new String[] {project.getName()}); //$NON-NLS-1$
 			throw new UnreportableException(errMessage);
 		}
 		if (!(provider instanceof IConnectedProjectInformation)) {
-			String errMessage = SVNMessages.formatErrorString("Error_AnotherProvider", new String[] {project.getName(), provider.getID()});
+			String errMessage = SVNMessages.formatErrorString("Error_AnotherProvider", new String[] {project.getName(), provider.getID()}); //$NON-NLS-1$
 			throw new UnreportableException(errMessage);
 		}
 		
@@ -543,7 +543,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
             	int changeMask = (state == IStateFilter.ST_OBSTRUCTED || state == IStateFilter.ST_NEW) ? ILocalResource.TEXT_MODIFIED : ILocalResource.NO_MODIFICATION;
             	changeMask |= parentCM;
             	String path = FileUtility.getWorkingCopyPath(child);
-            	if (new File(path + "/" + SVNUtility.getSVNFolderName()).exists() && SVNUtility.getSVNInfoForNotConnected(child) != null) {
+            	if (new File(path + "/" + SVNUtility.getSVNFolderName()).exists() && SVNUtility.getSVNInfoForNotConnected(child) != null) { //$NON-NLS-1$
             		return false;
             	}
             	ILocalResource retVal = SVNRemoteStorage.this.registerResource(child, SVNRevision.INVALID_REVISION_NUMBER, SVNRevision.INVALID_REVISION_NUMBER, state, changeMask, null, -1);
@@ -646,7 +646,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		synchronized (this.fetchQueue) {
 			this.fetchQueue.add(new Object[] {st, target});
 			if (this.fetchQueue.size() == 1) {
-				ProgressMonitorUtility.doTaskScheduledDefault(new AbstractActionOperation("Operation.UpdateSVNCache") {
+				ProgressMonitorUtility.doTaskScheduledDefault(new AbstractActionOperation("Operation_UpdateSVNCache") { //$NON-NLS-1$
 					public ISchedulingRule getSchedulingRule() {
 						return null;
 					}
@@ -741,7 +741,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 			String fsNodePath = statuses[i].path;
 			String nodePath = statuses[i].path;
 			
-			nodePath = nodePath.length() >= subPathStart ? nodePath.substring(subPathStart) : "";
+			nodePath = nodePath.length() >= subPathStart ? nodePath.substring(subPathStart) : ""; //$NON-NLS-1$
 			if (nodePath.length() > 0 && nodePath.charAt(nodePath.length() - 1) == '/') {
 				nodePath = nodePath.substring(0, nodePath.length() - 1);
 			}
@@ -935,7 +935,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	}
 	
 	protected String deserializeStatus(String status) {
-		if ("null".equals(status)) {
+		if ("null".equals(status)) { //$NON-NLS-1$
 			return IStateFilter.ST_NOTEXISTS;
 		}
 		else if (IStateFilter.ST_IGNORED.equals(status)) {
@@ -971,7 +971,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		else if (IStateFilter.ST_REPLACED.equals(status)) {
 			return IStateFilter.ST_REPLACED;
 		}
-		throw new RuntimeException(SVNMessages.getErrorString("Error_UnknownStatus"));
+		throw new RuntimeException(SVNMessages.getErrorString("Error_UnknownStatus")); //$NON-NLS-1$
 	}
 	
 	public String getStatusString(int propKind, int textKind, boolean isRemoteStatus) {

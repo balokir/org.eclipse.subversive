@@ -40,7 +40,7 @@ public class GetRevisionPropertiesOperation extends AbstractActionOperation impl
 	 * @author Alexei Goncharov
 	 */
 	public GetRevisionPropertiesOperation(IRepositoryLocation location, SVNRevision revision) {
-		super("Operation.GetRevisionProperties");
+		super("Operation_GetRevisionProperties"); //$NON-NLS-1$
 		this.revision = revision;
 		this.location = location;
 	}

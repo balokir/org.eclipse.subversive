@@ -34,7 +34,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class SaveProjectMetaOperation extends AbstractWorkingCopyOperation implements IResourceProvider {
 	// exclude .settings folder due large information amount contained in it
-	protected static final String []META_FILES = new String[] {".project", ".classpath"};
+	protected static final String []META_FILES = new String[] {".project", ".classpath"}; //$NON-NLS-1$ //$NON-NLS-2$
 	protected HashMap<String, File> savedMetas;
 	protected String startsWith;
 
@@ -43,7 +43,7 @@ public class SaveProjectMetaOperation extends AbstractWorkingCopyOperation imple
 	}
 	
 	public SaveProjectMetaOperation(IResource []resources, String startsWith) {
-		super("Operation.SaveMeta", resources);
+		super("Operation_SaveMeta", resources); //$NON-NLS-1$
 		this.savedMetas = new HashMap<String, File>();
 		this.startsWith = startsWith;
 	}
@@ -53,7 +53,7 @@ public class SaveProjectMetaOperation extends AbstractWorkingCopyOperation imple
 	}
 	
 	public SaveProjectMetaOperation(IResourceProvider provider, String startsWith) {
-		super("Operation.SaveMeta", provider);
+		super("Operation_SaveMeta", provider); //$NON-NLS-1$
 		this.savedMetas = new HashMap<String, File>();
 		this.startsWith = startsWith;
 	}
@@ -112,10 +112,10 @@ public class SaveProjectMetaOperation extends AbstractWorkingCopyOperation imple
 
 	protected void saveMeta(IResource resource, IProgressMonitor monitor) throws Exception {
 		if (resource != null) {
-			String sourceLocation = PatternProvider.replaceAll(FileUtility.getWorkingCopyPath(resource), "\\\\", "/");
+			String sourceLocation = PatternProvider.replaceAll(FileUtility.getWorkingCopyPath(resource), "\\\\", "/"); //$NON-NLS-1$ //$NON-NLS-2$
 			File source = new File(sourceLocation);
 			if (source.exists()) {
-				File target = File.createTempFile("save_" + resource.getName(), ".tmp", SVNTeamPlugin.instance().getStateLocation().toFile());
+				File target = File.createTempFile("save_" + resource.getName(), ".tmp", SVNTeamPlugin.instance().getStateLocation().toFile()); //$NON-NLS-1$ //$NON-NLS-2$
 				target.deleteOnExit();
 				if (source.isDirectory()) {
 					target.delete();

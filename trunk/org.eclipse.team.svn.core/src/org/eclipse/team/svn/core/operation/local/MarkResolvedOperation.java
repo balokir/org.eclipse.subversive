@@ -31,13 +31,13 @@ public class MarkResolvedOperation extends AbstractWorkingCopyOperation {
 	protected int depth;
 	
 	public MarkResolvedOperation(IResource[] resources, int conflictResult, int depth) {
-		super("Operation.MarkResolved", resources);
+		super("Operation_MarkResolved", resources); //$NON-NLS-1$
 		this.conflictResult = conflictResult;
 		this.depth = depth;
 	}
 
 	public MarkResolvedOperation(IResourceProvider provider, int conflictResult, int depth) {
-		super("Operation.MarkResolved", provider);
+		super("Operation_MarkResolved", provider); //$NON-NLS-1$
 		this.conflictResult = conflictResult;
 		this.depth = depth;
 	}

@@ -38,13 +38,13 @@ public class MergeOperation extends AbstractConflictDetectionOperation implement
 	protected boolean force;
 
 	public MergeOperation(IResource []resources, AbstractMergeSet info, boolean force) {
-		super("Operation.Merge", resources);
+		super("Operation_Merge", resources); //$NON-NLS-1$
 		this.info = info;
 		this.force = force;
 	}
 
 	public MergeOperation(IResourceProvider provider, AbstractMergeSet info, boolean force) {
-		super("Operation.Merge", provider);
+		super("Operation_Merge", provider); //$NON-NLS-1$
 		this.info = info;
 		this.force = force;
 	}

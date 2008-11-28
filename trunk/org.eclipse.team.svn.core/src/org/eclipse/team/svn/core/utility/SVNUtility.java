@@ -151,7 +151,7 @@ public final class SVNUtility {
 					if (parent != null && parent.getType() != IResource.ROOT) {
 						IRepositoryResource tmp = SVNUtility.getCopiedFrom(parent);
 						if (tmp != null) {
-							url = tmp.getUrl() + "/" + resource.getName();
+							url = tmp.getUrl() + "/" + resource.getName(); //$NON-NLS-1$
 						}
 					}
 				}
@@ -171,9 +171,9 @@ public final class SVNUtility {
 			return Collections.emptyMap();
 		}
 		Map<String, SVNEntryRevisionReference> retVal = new HashMap<String, SVNEntryRevisionReference>();
-		String []externals = property.trim().split("[\\n|\\r\\n]+"); // it seems different clients have different behaviours wrt trailing whitespace.. so trim() to be safe
+		String []externals = property.trim().split("[\\n|\\r\\n]+"); // it seems different clients have different behaviours wrt trailing whitespace.. so trim() to be safe //$NON-NLS-1$
 		for (int i = 0; i < externals.length; i++) {
-			String []parts = externals[i].trim().split("[\\t ]+");
+			String []parts = externals[i].trim().split("[\\t ]+"); //$NON-NLS-1$
 				// 2 - name + URL
 				// 3 - name + -rRevision + URL
 			// 4 - name + -r + Revision + URL
@@ -182,7 +182,7 @@ public final class SVNUtility {
 			// 3 - -rRevision + URL@peg + name
 			// 4 - -r + Revision + URL@peg + name
 				if (parts.length < 2 || parts.length > 4) {
-					throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]);
+					throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]); //$NON-NLS-2$
 				}
 				
 			String name = null;
@@ -204,7 +204,7 @@ public final class SVNUtility {
 					}
 				}
 				catch (Exception ex) {
-					throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]);
+					throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]); //$NON-NLS-2$
 				}
 				}
 			else {
@@ -221,45 +221,45 @@ public final class SVNUtility {
 					}
 				}
 				catch (Exception ex) {
-					throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]);
+					throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]); //$NON-NLS-2$
 				}
 				if (!SVNUtility.isValidSVNURL(url)) {
-					if (url.startsWith("^/")) {
+					if (url.startsWith("^/")) { //$NON-NLS-1$
 						url = propertyHolder.getRepositoryLocation().getRepositoryRoot().getUrl() + url.substring(1);
 					}
-					else if (url.startsWith("//")) {
+					else if (url.startsWith("//")) { //$NON-NLS-1$
 						try {
 							String protocol = SVNUtility.getSVNUrl(propertyHolder.getUrl()).getProtocol();
-							if (propertyHolder.getUrl().indexOf(":///") != -1) {
-								url = protocol + ":/" + url;
+							if (propertyHolder.getUrl().indexOf(":///") != -1) { //$NON-NLS-1$
+								url = protocol + ":/" + url; //$NON-NLS-1$
 							}
 							else {
-								url = protocol + ":" + url;
+								url = protocol + ":" + url; //$NON-NLS-1$
 							}
 						}
 						catch (MalformedURLException e) {
 							// cannot be thrown
 						}
 					}
-					else if (url.startsWith("/")) {
+					else if (url.startsWith("/")) { //$NON-NLS-1$
 						String prefix = propertyHolder.getUrl();
-						int idx = prefix.lastIndexOf("//");
+						int idx = prefix.lastIndexOf("//"); //$NON-NLS-1$
 						idx = prefix.indexOf('/', idx + 2);
 						url = prefix.substring(0, idx) + url;
 					}
-					else if (url.startsWith("../")) {
+					else if (url.startsWith("../")) { //$NON-NLS-1$
 						IRepositoryResource prefix = propertyHolder;
-						while (url.startsWith("../")) {
+						while (url.startsWith("../")) { //$NON-NLS-1$
 							url = url.substring(3);
 							prefix = prefix.getParent();
 							if (prefix == null) {
-								throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]);
+								throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]); //$NON-NLS-2$
 							}
 						}
-						url = prefix.getUrl() + "/" + url;
+						url = prefix.getUrl() + "/" + url; //$NON-NLS-1$
 					}
 					else {
-						throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]);
+						throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]); //$NON-NLS-2$
 					}
 				}
 				SVNEntryReference ref = SVNUtility.asEntryReference(url);
@@ -411,9 +411,9 @@ public final class SVNUtility {
 	
 	public static String getStatusText(String status) {
 		if (status == null) {
-			status = "NotExists";
+			status = "NotExists"; //$NON-NLS-1$
 		}
-		return SVNMessages.getString("Status_" + status);
+		return SVNMessages.getString("Status_" + status); //$NON-NLS-1$
 	}
 	
 	public static String getOldRoot(String oldUrl, IRepositoryResource []rootChildren) {
@@ -453,17 +453,17 @@ public final class SVNUtility {
 	
 	public static String getProposedTrunkLocation(IRepositoryLocation location) {
 		String baseUrl = location.getUrl();
-		return location.isStructureEnabled() ? (baseUrl + "/" + location.getTrunkLocation()) : baseUrl;
+		return location.isStructureEnabled() ? (baseUrl + "/" + location.getTrunkLocation()) : baseUrl; //$NON-NLS-1$
 	}
 	
 	public static String getProposedBranchesLocation(IRepositoryLocation location) {
 		String baseUrl = location.getUrl();
-		return location.isStructureEnabled() ? (baseUrl + "/" + location.getBranchesLocation()) : baseUrl;
+		return location.isStructureEnabled() ? (baseUrl + "/" + location.getBranchesLocation()) : baseUrl; //$NON-NLS-1$
 	}
 	
 	public static String getProposedTagsLocation(IRepositoryLocation location) {
 		String baseUrl = location.getUrl();
-		return location.isStructureEnabled() ? (baseUrl + "/" + location.getTagsLocation()) : baseUrl;
+		return location.isStructureEnabled() ? (baseUrl + "/" + location.getTagsLocation()) : baseUrl; //$NON-NLS-1$
 	}
 	
 	public static IRepositoryRoot []findRoots(String resourceUrl, boolean longestOnly) {
@@ -513,18 +513,18 @@ public final class SVNUtility {
 	
 	public static synchronized String getSVNFolderName() {
 		if (SVNUtility.svnFolderName == null) {
-			String name = FileUtility.getEnvironmentVariables().get("SVN_ASP_DOT_NET_HACK") != null ? "_svn" : ".svn";
-			SVNUtility.svnFolderName = System.getProperty("javasvn.admindir", name);
+			String name = FileUtility.getEnvironmentVariables().get("SVN_ASP_DOT_NET_HACK") != null ? "_svn" : ".svn"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			SVNUtility.svnFolderName = System.getProperty("javasvn.admindir", name); //$NON-NLS-1$
 		}
 		return SVNUtility.svnFolderName;
 	}
 	
 	public static String getResourceParent(IRepositoryResource resource) {
-		String parent = "";
+		String parent = ""; //$NON-NLS-1$
 		String url = resource.getUrl();
 		String rootUrl = resource.getRoot().getUrl();
 		if (url.equals(rootUrl)) {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 		parent = url.substring(rootUrl.length(), url.length() - resource.getName().length() - 1);
 		return parent;
@@ -536,7 +536,7 @@ public final class SVNUtility {
 	}
 	
 	public static IRepositoryResource []makeResourceSet(IRepositoryResource upPoint, String relativeReference, boolean isFile) {
-		String url = SVNUtility.normalizeURL(upPoint.getUrl() + "/" + relativeReference);
+		String url = SVNUtility.normalizeURL(upPoint.getUrl() + "/" + relativeReference); //$NON-NLS-1$
 		IRepositoryLocation location = upPoint.getRepositoryLocation();
 		IRepositoryResource downPoint = isFile ? (IRepositoryResource)location.asRepositoryFile(url, false) : location.asRepositoryContainer(url, false);
 		downPoint.setPegRevision(upPoint.getPegRevision());
@@ -557,8 +557,8 @@ public final class SVNUtility {
 		try {
 			URL svnUrl = SVNUtility.getSVNUrl(url);
         	String host = svnUrl.getHost();
-        	if (!host.matches("[a-zA-Z0-9_\\-]+(?:\\.[a-zA-Z0-9_\\-]+)*") && host.length() > 0 ||
-        		host.length() == 0 && !"file".equals(svnUrl.getProtocol())) {
+        	if (!host.matches("[a-zA-Z0-9_\\-]+(?:\\.[a-zA-Z0-9_\\-]+)*") && host.length() > 0 || //$NON-NLS-1$
+        		host.length() == 0 && !"file".equals(svnUrl.getProtocol())) { //$NON-NLS-1$
                 return false;
         	}      	
 			return true;
@@ -650,30 +650,30 @@ public final class SVNUtility {
 	public static String encodeURL(String url) {
 		try {
 			url = SVNUtility.normalizeURL(url);
-			int idx = url.startsWith("file:///") ? "file:///".length() : (url.startsWith("file://") ? (url.indexOf("/", "file://".length()) + 1) : (url.indexOf("://") + 3));
-			idx = url.indexOf("/", idx);
+			int idx = url.startsWith("file:///") ? "file:///".length() : (url.startsWith("file://") ? (url.indexOf("/", "file://".length()) + 1) : (url.indexOf("://") + 3)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+			idx = url.indexOf("/", idx); //$NON-NLS-1$
 			if (idx == -1) {
 				return url;
 			}
 			String retVal = url.substring(0, idx);
-			StringTokenizer tok = new StringTokenizer(url.substring(idx), "/ ", true);
+			StringTokenizer tok = new StringTokenizer(url.substring(idx), "/ ", true); //$NON-NLS-1$
 			// user name should be never encoded
 			idx = retVal.indexOf('@');
 			if (idx != -1) {
-				String protocol = retVal.substring(0, retVal.indexOf("://") + 3);
+				String protocol = retVal.substring(0, retVal.indexOf("://") + 3); //$NON-NLS-1$
 				String serverPart = retVal.substring(idx);
 				retVal = protocol + retVal.substring(protocol.length(), idx) + serverPart;
 			}
 			while (tok.hasMoreTokens()) {
 				String token = tok.nextToken();
-				if (token.equals("/")) {
+				if (token.equals("/")) { //$NON-NLS-1$
 					retVal += token;
 				}
-				else if (token.equals(" ")) {
-					retVal += "%20";
+				else if (token.equals(" ")) { //$NON-NLS-1$
+					retVal += "%20"; //$NON-NLS-1$
 				}
 				else {
-					retVal += URLEncoder.encode(token, "UTF-8");
+					retVal += URLEncoder.encode(token, "UTF-8"); //$NON-NLS-1$
 				}
 			}
 			return retVal;
@@ -686,27 +686,27 @@ public final class SVNUtility {
 	public static String decodeURL(String url) {
 		try {
 			url = SVNUtility.normalizeURL(url);
-			int idx = url.startsWith("file:///") ? "file:///".length() : (url.startsWith("file://") ? (url.indexOf("/", "file://".length()) + 1) : (url.indexOf("://") + 3));
-			idx = url.indexOf("/", idx);
+			int idx = url.startsWith("file:///") ? "file:///".length() : (url.startsWith("file://") ? (url.indexOf("/", "file://".length()) + 1) : (url.indexOf("://") + 3)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+			idx = url.indexOf("/", idx); //$NON-NLS-1$
 			if (idx == -1) {
 				return url;
 			}
 			String retVal = url.substring(0, idx);
-			StringTokenizer tok = new StringTokenizer(url.substring(idx), "/+", true);
+			StringTokenizer tok = new StringTokenizer(url.substring(idx), "/+", true); //$NON-NLS-1$
 			// user name should be never decoded
 			idx = retVal.indexOf('@');
 			if (idx != -1) {
-				String protocol = retVal.substring(0, retVal.indexOf("://") + 3);
+				String protocol = retVal.substring(0, retVal.indexOf("://") + 3); //$NON-NLS-1$
 				String serverPart = retVal.substring(idx);
 				retVal = protocol + retVal.substring(protocol.length(), idx) + serverPart;
 			}
 			while (tok.hasMoreTokens()) {
 				String token = tok.nextToken();
-				if (token.equals("/") || token.equals("+")) {
+				if (token.equals("/") || token.equals("+")) { //$NON-NLS-1$ //$NON-NLS-2$
 					retVal += token;
 				}
 				else {
-					retVal += URLDecoder.decode(token, "UTF-8");
+					retVal += URLDecoder.decode(token, "UTF-8"); //$NON-NLS-1$
 				}
 			}
 			return retVal;
@@ -717,14 +717,14 @@ public final class SVNUtility {
 	}
 	
 	public static String normalizeURL(String url) {
-	    StringTokenizer tokenizer = new StringTokenizer(PatternProvider.replaceAll(url, "([\\\\])+", "/"), "/", false);
-	    String retVal = "";
+	    StringTokenizer tokenizer = new StringTokenizer(PatternProvider.replaceAll(url, "([\\\\])+", "/"), "/", false); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	    String retVal = ""; //$NON-NLS-1$
 	    while (tokenizer.hasMoreTokens()) {
 	        String token = tokenizer.nextToken();
-	        retVal += retVal.length() == 0 ? token : ("/" + token);
+	        retVal += retVal.length() == 0 ? token : ("/" + token); //$NON-NLS-1$
 	    }
 	    int idx = retVal.indexOf(':') + 1;
-	    return idx == 0 ? retVal : retVal.substring(0, idx) + (url.startsWith("file:///") ? "//" : "/") + retVal.substring(idx);
+	    return idx == 0 ? retVal : retVal.substring(0, idx) + (url.startsWith("file:///") ? "//" : "/") + retVal.substring(idx); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	public static Exception validateRepositoryLocation(IRepositoryLocation location) {
@@ -750,11 +750,11 @@ public final class SVNUtility {
 		proxy.setPassword(location.getPassword());
 		
 		SSLSettings sslSettings = location.getSSLSettings();
-		String host = "localhost";
-		String protocol = "file";
+		String host = "localhost"; //$NON-NLS-1$
+		String protocol = "file"; //$NON-NLS-1$
 		try {
 			protocol = SVNUtility.getSVNUrl(location.getUrl()).getProtocol();
-			if (!protocol.equals("file")) {
+			if (!protocol.equals("file")) { //$NON-NLS-1$
 				host = SVNUtility.getSVNUrl(location.getUrl()).getHost();
 			}
 		}
@@ -762,7 +762,7 @@ public final class SVNUtility {
 			//skip
 		}
 		IProxyService proxyService = SVNTeamPlugin.instance().getProxyService();
-		String proxyType = protocol.equals("https") ? IProxyData.HTTPS_PROXY_TYPE : IProxyData.HTTP_PROXY_TYPE;
+		String proxyType = protocol.equals("https") ? IProxyData.HTTPS_PROXY_TYPE : IProxyData.HTTP_PROXY_TYPE; //$NON-NLS-1$
     	SVNCachedProxyCredentialsManager proxyCredetialsManager = SVNRemoteStorage.instance().getProxyCredentialsManager();
 		IProxyData proxyData = proxyService.getProxyDataForHost(host, proxyType);
 	    if (proxyService.isProxiesEnabled() && proxyData != null) {
@@ -928,7 +928,7 @@ public final class SVNUtility {
 		}
 		
 		if (oldInfo == null) {
-			String errMessage = SVNMessages.formatErrorString("Error_NonSVNPath", new String[] {oldRoot.getAbsolutePath()});
+			String errMessage = SVNMessages.formatErrorString("Error_NonSVNPath", new String[] {oldRoot.getAbsolutePath()}); //$NON-NLS-1$
 			throw new RuntimeException(errMessage);
 		}
 		return new Object[] {oldRoot, oldInfo};
@@ -947,7 +947,7 @@ public final class SVNUtility {
 	public static SVNEntryInfo getSVNInfo(File root, ISVNConnector proxy) {
 		if (root.exists()) {
 			File svnMeta = root.isDirectory() ? root : root.getParentFile();
-			svnMeta = new File(svnMeta.getAbsolutePath() + "/" + SVNUtility.getSVNFolderName());
+			svnMeta = new File(svnMeta.getAbsolutePath() + "/" + SVNUtility.getSVNFolderName()); //$NON-NLS-1$
 			if (svnMeta.exists()) {
 				try {
 					SVNEntryInfo []st = SVNUtility.info(proxy, new SVNEntryRevisionReference(root.getAbsolutePath(), null, SVNRevision.BASE), Depth.EMPTY, new SVNNullProgressMonitor());
@@ -1028,7 +1028,7 @@ public final class SVNUtility {
 		if (ignoreNone) {
 			return Kind.NONE;
 		}
-		String errMessage = SVNMessages.format("Error_UnrecognizedNodeKind", new String[] {String.valueOf(kind), path});
+		String errMessage = SVNMessages.format("Error_UnrecognizedNodeKind", new String[] {String.valueOf(kind), path}); //$NON-NLS-1$
 		throw new RuntimeException(errMessage);
 	}
 	
@@ -1111,7 +1111,7 @@ public final class SVNUtility {
 
 	private static boolean isMergeParts(IResource resource) {
 		String ext = resource.getFileExtension();
-		return ext != null && ext.matches("r(\\d)+");
+		return ext != null && ext.matches("r(\\d)+"); //$NON-NLS-1$
 	}
 	    
 	private static Map combineLocationsByUUID(Map repository2Resources) throws Exception{
@@ -1203,17 +1203,17 @@ public final class SVNUtility {
 	}
 	
 	public static String getDepthArg(int depth) {
-		String depthArg = " --depth ";
+		String depthArg = " --depth "; //$NON-NLS-1$
 		if (depth == Depth.EMPTY) {
-			return depthArg + "empty ";
+			return depthArg + "empty "; //$NON-NLS-1$
 		}
 		if (depth == Depth.INFINITY) {
-			return depthArg + "infinity" ;
+			return depthArg + "infinity" ; //$NON-NLS-1$
 		}
 		if (depth == Depth.IMMEDIATES) {
-			return depthArg + "immediates ";
+			return depthArg + "immediates "; //$NON-NLS-1$
 		}
-		return depthArg + "files ";
+		return depthArg + "files "; //$NON-NLS-1$
 	}
 	
 	private SVNUtility() {

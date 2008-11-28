@@ -40,14 +40,14 @@ public class SetMultiPropertiesOperation extends AbstractWorkingCopyOperation {
 	protected IStateFilter filter;
 	
 	public SetMultiPropertiesOperation(IResourceProvider resourceProvider, IPropertyProvider propertyProvider, IStateFilter filter, int depth) {
-		super("Operation.SetMultiProperties", resourceProvider);
+		super("Operation_SetMultiProperties", resourceProvider); //$NON-NLS-1$
 		this.propertyProvider = propertyProvider;
 		this.depth = depth;
 		this.filter = filter != null ? filter : IStateFilter.SF_VERSIONED;
 	}
 	
 	public SetMultiPropertiesOperation(IResource[] resources, IPropertyProvider propertyProvider, IStateFilter filter, int depth) {
-		super("Operation.SetMultiProperties", resources);
+		super("Operation_SetMultiProperties", resources); //$NON-NLS-1$
 		this.propertyProvider = propertyProvider;
 		this.depth = depth;
 		this.filter = filter != null ? filter : IStateFilter.SF_VERSIONED;

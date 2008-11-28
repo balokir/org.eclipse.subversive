@@ -26,7 +26,7 @@ public class DiscardRepositoryLocationsOperation extends AbstractActionOperation
 	protected IRepositoryLocation []locations;
 	
 	public DiscardRepositoryLocationsOperation(IRepositoryLocation []locations) {
-		super("Operation.DiscardRepositoryLocation");
+		super("Operation_DiscardRepositoryLocation"); //$NON-NLS-1$
 		this.locations = locations;
 	}
 	

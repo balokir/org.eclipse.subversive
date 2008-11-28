@@ -41,7 +41,7 @@ public class SetPropertyOperation extends AbstractFileOperation {
 	}
 
 	public SetPropertyOperation(File []files, SVNProperty []data, boolean isRecursive) {
-		super("Operation.SetPropertiesFile", files);
+		super("Operation_SetPropertiesFile", files); //$NON-NLS-1$
 		this.propertyData = data;
 		this.isRecursive = isRecursive;
 	}
@@ -51,7 +51,7 @@ public class SetPropertyOperation extends AbstractFileOperation {
 	}
 
 	public SetPropertyOperation(IFileProvider provider, SVNProperty []data, boolean isRecursive) {
-		super("Operation.SetPropertiesFile", provider);
+		super("Operation_SetPropertiesFile", provider); //$NON-NLS-1$
 		this.propertyData = data;
 		this.isRecursive = isRecursive;
 	}

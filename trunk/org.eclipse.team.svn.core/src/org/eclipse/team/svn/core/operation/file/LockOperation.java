@@ -36,13 +36,13 @@ public class LockOperation extends AbstractFileOperation {
 	protected boolean force;
 
 	public LockOperation(File []files, String message, boolean force) {
-		super("Operation.LockFile", files);
+		super("Operation_LockFile", files); //$NON-NLS-1$
 		this.message = message;
 		this.force = force;
 	}
 
 	public LockOperation(IFileProvider provider, String message, boolean force) {
-		super("Operation.LockFile", provider);
+		super("Operation_LockFile", provider); //$NON-NLS-1$
 		this.message = message;
 		this.force = force;
 	}
@@ -60,11 +60,11 @@ public class LockOperation extends AbstractFileOperation {
 			
 			this.complexWriteToConsole(new Runnable() {
 				public void run() {
-					LockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn lock");
+					LockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn lock"); //$NON-NLS-1$
 					for (int i = 0; i < paths.length && !monitor.isCanceled(); i++) {
-						LockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " \"" + paths[i] + "\"");
+						LockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " \"" + paths[i] + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 					}
-					LockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, (LockOperation.this.force ? " --force" : "") + " -m \"" + LockOperation.this.message + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n");
+					LockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, (LockOperation.this.force ? " --force" : "") + " -m \"" + LockOperation.this.message + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 				}
 			});
 			

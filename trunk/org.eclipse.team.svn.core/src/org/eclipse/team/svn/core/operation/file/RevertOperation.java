@@ -32,12 +32,12 @@ public class RevertOperation extends AbstractFileOperation {
 	protected boolean recursive;
 
 	public RevertOperation(File []files, boolean recursive) {
-		super("Operation.RevertFile", files);
+		super("Operation_RevertFile", files); //$NON-NLS-1$
 		this.recursive = recursive;
 	}
 
 	public RevertOperation(IFileProvider provider, boolean recursive) {
-		super("Operation.RevertFile", provider);
+		super("Operation_RevertFile", provider); //$NON-NLS-1$
 		this.recursive = recursive;
 	}
 
@@ -56,7 +56,7 @@ public class RevertOperation extends AbstractFileOperation {
 			IRepositoryResource remote = SVNFileStorage.instance().asRepositoryResource(current, false);
 			IRepositoryLocation location = remote.getRepositoryLocation();
 			final ISVNConnector proxy = location.acquireSVNProxy();
-			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn revert \"" + FileUtility.normalizePath(current.getAbsolutePath()) + "\"" + (this.recursive ? " -R" : "") + "\n");
+			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn revert \"" + FileUtility.normalizePath(current.getAbsolutePath()) + "\"" + (this.recursive ? " -R" : "") + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
 					proxy.revert(current.getAbsolutePath(), Depth.infinityOrEmpty(RevertOperation.this.recursive), null, new SVNProgressMonitor(RevertOperation.this, monitor, null));

@@ -45,7 +45,7 @@ public class LocateProjectsOperation extends AbstractRepositoryOperation impleme
 	}
 	
 	public LocateProjectsOperation(IRepositoryResource []startFrom, ILocateFilter filter, int limitation) {
-		super("Operation.LocateProjects", startFrom);
+		super("Operation_LocateProjects", startFrom); //$NON-NLS-1$
 		this.levelLimitation = limitation;
 		this.filter = filter;
 	}
@@ -71,7 +71,7 @@ public class LocateProjectsOperation extends AbstractRepositoryOperation impleme
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(IProgressMonitor monitor) throws Exception {
 						if (current instanceof IRepositoryContainer) {
-							String message = LocateProjectsOperation.this.getOperationResource("Scanning");
+							String message = LocateProjectsOperation.this.getOperationResource("Scanning"); //$NON-NLS-1$
 							ProgressMonitorUtility.setTaskInfo(monitor, LocateProjectsOperation.this, MessageFormat.format(message, new Object[] {current.getUrl()}));
 							IRepositoryResource []children = ((IRepositoryContainer)current).getChildren();
 							if (LocateProjectsOperation.this.filter.isProject(current, children)) {

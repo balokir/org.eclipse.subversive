@@ -20,11 +20,11 @@ import java.io.File;
  */
 public class LocalStatusOperation extends AbstractStatusOperation {
 	public LocalStatusOperation(File []files, boolean recursive) {
-		super("Operation.LocalStatusFile", files, recursive);
+		super("Operation_LocalStatusFile", files, recursive); //$NON-NLS-1$
 	}
 
 	public LocalStatusOperation(IFileProvider provider, boolean recursive) {
-		super("Operation.LocalStatusFile", provider, recursive);
+		super("Operation_LocalStatusFile", provider, recursive); //$NON-NLS-1$
 	}
 
 	protected boolean isRemote() {

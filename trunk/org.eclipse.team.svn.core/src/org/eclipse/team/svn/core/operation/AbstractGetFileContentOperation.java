@@ -33,7 +33,7 @@ public abstract class AbstractGetFileContentOperation extends AbstractActionOper
 	protected File tmpFile;
 
 	public AbstractGetFileContentOperation(String getOperationType) {
-		super("Operation.GetFileContent." + getOperationType);
+		super("Operation_GetFileContent_" + getOperationType); //$NON-NLS-1$
 	}
 	
 	public String getTemporaryPath() {
@@ -43,7 +43,7 @@ public abstract class AbstractGetFileContentOperation extends AbstractActionOper
 	public InputStream getContent() {
 		final InputStream []retVal = new InputStream[] {new ByteArrayInputStream(new byte[0])};
 		if (this.tmpFile != null && this.tmpFile.exists()) {
-			ProgressMonitorUtility.doTaskExternal(new AbstractActionOperation("Operation.GetFileContent.CreateStream") {
+			ProgressMonitorUtility.doTaskExternal(new AbstractActionOperation("Operation_GetFileContent_CreateStream") { //$NON-NLS-1$
 				protected void runImpl(IProgressMonitor monitor) throws Exception {
 					retVal[0] = new FileInputStream(AbstractGetFileContentOperation.this.tmpFile);
 				}
@@ -53,7 +53,7 @@ public abstract class AbstractGetFileContentOperation extends AbstractActionOper
 	}
 	
 	public void setContent(final byte []data) {
-		ProgressMonitorUtility.doTaskExternal(new AbstractActionOperation("Operation.GetFileContent.SetContent") {
+		ProgressMonitorUtility.doTaskExternal(new AbstractActionOperation("Operation_GetFileContent_SetContent") { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				if (AbstractGetFileContentOperation.this.tmpFile == null) {
 					AbstractGetFileContentOperation.this.tmpFile = AbstractGetFileContentOperation.this.createTempFile();
@@ -71,13 +71,13 @@ public abstract class AbstractGetFileContentOperation extends AbstractActionOper
 	
 	protected File createTempFile() throws IOException {
 		String extension = this.getExtension();
-		File retVal = File.createTempFile("getfilecontent", ".tmp" + (extension != null && extension.length() > 0 ? "." + extension : ""), SVNTeamPlugin.instance().getStateLocation().toFile());
+		File retVal = File.createTempFile("getfilecontent", ".tmp" + (extension != null && extension.length() > 0 ? "." + extension : ""), SVNTeamPlugin.instance().getStateLocation().toFile()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		retVal.deleteOnExit();
 		return retVal;
 	}
 	
 	protected String getExtension() {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	
 }

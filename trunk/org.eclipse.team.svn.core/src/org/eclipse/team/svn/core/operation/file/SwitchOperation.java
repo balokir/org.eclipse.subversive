@@ -32,7 +32,7 @@ public class SwitchOperation extends AbstractFileOperation {
 	protected IRepositoryResource destination;
 	
 	public SwitchOperation(File file, IRepositoryResource destination) {
-		super("Operation.SwitchFile", new File[] {file});
+		super("Operation_SwitchFile", new File[] {file}); //$NON-NLS-1$
 		this.destination = destination;
 	}
 
@@ -41,7 +41,7 @@ public class SwitchOperation extends AbstractFileOperation {
 		
 		IRepositoryLocation location = this.destination.getRepositoryLocation();
 		ISVNConnector proxy = location.acquireSVNProxy();
-		this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn switch \"" + this.destination.getUrl() + "\" \"" + FileUtility.normalizePath(file.getAbsolutePath()) + "\" -r " + this.destination.getSelectedRevision() + FileUtility.getUsernameParam(location.getUsername()) + "\n");
+		this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn switch \"" + this.destination.getUrl() + "\" \"" + FileUtility.normalizePath(file.getAbsolutePath()) + "\" -r " + this.destination.getSelectedRevision() + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		try {
 			proxy.doSwitch(file.getAbsolutePath(), SVNUtility.getEntryRevisionReference(this.destination), Depth.infinityOrFiles(true), ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null));
 		}

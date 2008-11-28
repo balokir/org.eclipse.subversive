@@ -36,11 +36,11 @@ public class RemoteStatusOperation extends AbstractStatusOperation implements IS
 	protected Map<String, Number> pegRevisions = new HashMap<String, Number>();
 
 	public RemoteStatusOperation(File []files, boolean recursive) {
-		super("Operation.UpdateStatusFile", files, recursive);
+		super("Operation_UpdateStatusFile", files, recursive); //$NON-NLS-1$
 	}
 
 	public RemoteStatusOperation(IFileProvider provider, boolean recursive) {
-		super("Operation.UpdateStatusFile", provider, recursive);
+		super("Operation_UpdateStatusFile", provider, recursive); //$NON-NLS-1$
 	}
 	
 	public SVNRevision getPegRevision(File change) {
