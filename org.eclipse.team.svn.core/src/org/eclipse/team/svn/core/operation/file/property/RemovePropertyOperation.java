@@ -36,13 +36,13 @@ public class RemovePropertyOperation extends AbstractFileOperation {
 	protected String []names;
 
 	public RemovePropertyOperation(File []files, String []names, boolean isRecursive) {
-		super("Operation.RemovePropertiesFile", files);
+		super("Operation_RemovePropertiesFile", files); //$NON-NLS-1$
 		this.names = names;
 		this.isRecursive = isRecursive;
 	}
 
 	public RemovePropertyOperation(IFileProvider provider, String []names, boolean isRecursive) {
-		super("Operation.RemovePropertiesFile", provider);
+		super("Operation_RemovePropertiesFile", provider); //$NON-NLS-1$
 		this.names = names;
 		this.isRecursive = isRecursive;
 	}

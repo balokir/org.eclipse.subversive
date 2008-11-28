@@ -33,7 +33,7 @@ public class AddRevisionLinkOperation extends AbstractRepositoryOperation {
 	}
 	
 	public AddRevisionLinkOperation(IRepositoryResource resource, SVNRevision revision) {
-		super("Operation.AddRevisionLink", new IRepositoryResource[] {resource});
+		super("Operation_AddRevisionLink", new IRepositoryResource[] {resource}); //$NON-NLS-1$
 		this.revision = revision;
 	}
 	
@@ -42,7 +42,7 @@ public class AddRevisionLinkOperation extends AbstractRepositoryOperation {
 	}
 	
 	public AddRevisionLinkOperation(IRepositoryResourceProvider provider, SVNRevision revision) {
-		super("Operation.AddRevisionLink", provider);
+		super("Operation_AddRevisionLink", provider); //$NON-NLS-1$
 		this.revision = revision;
 	}
 	

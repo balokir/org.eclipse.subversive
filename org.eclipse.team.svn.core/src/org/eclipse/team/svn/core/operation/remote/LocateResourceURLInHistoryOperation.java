@@ -36,11 +36,11 @@ public class LocateResourceURLInHistoryOperation extends AbstractRepositoryOpera
 	protected IRepositoryResource []converted;
 
 	public LocateResourceURLInHistoryOperation(IRepositoryResource []resources) {
-		super("Operation.LocateURLInHistory", resources);
+		super("Operation_LocateURLInHistory", resources); //$NON-NLS-1$
 	}
 
 	public LocateResourceURLInHistoryOperation(IRepositoryResourceProvider provider) {
-		super("Operation.LocateURLInHistory", provider);
+		super("Operation_LocateURLInHistory", provider); //$NON-NLS-1$
 	}
 
 	public IRepositoryResource []getRepositoryResources() {

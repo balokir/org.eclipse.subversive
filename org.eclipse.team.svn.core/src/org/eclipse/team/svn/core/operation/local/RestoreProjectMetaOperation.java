@@ -35,7 +35,7 @@ public class RestoreProjectMetaOperation extends AbstractActionOperation {
 	}
 	
 	public RestoreProjectMetaOperation(SaveProjectMetaOperation saveOp, boolean force) {
-		super("Operation.RestoreMeta");
+		super("Operation_RestoreMeta"); //$NON-NLS-1$
 		this.saveOp = saveOp;
 		this.force = force;
 	}

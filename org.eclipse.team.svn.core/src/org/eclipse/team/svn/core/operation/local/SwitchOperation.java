@@ -41,13 +41,13 @@ public class SwitchOperation extends AbstractRepositoryOperation {
 	protected int depth;
 
 	public SwitchOperation(IResource []resources, IRepositoryResourceProvider destination, int depth) {
-		super("Operation.Switch", destination);
+		super("Operation_Switch", destination); //$NON-NLS-1$
 		this.resources = resources;
 		this.depth = depth;
 	}
 
 	public SwitchOperation(IResource []resources, IRepositoryResource []destination, int depth) {
-		super("Operation.Switch", destination);
+		super("Operation_Switch", destination); //$NON-NLS-1$
 		this.resources = resources;
 		this.depth = depth;
 	}
@@ -75,7 +75,7 @@ public class SwitchOperation extends AbstractRepositoryOperation {
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
 					String wcPath = FileUtility.getWorkingCopyPath(resource);
-					SwitchOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn switch \"" + destination.getUrl() + "\" \"" + FileUtility.normalizePath(wcPath) + "\" -r " + destination.getSelectedRevision() + SVNUtility.getDepthArg(SwitchOperation.this.depth) + FileUtility.getUsernameParam(location.getUsername()) + "\n");
+					SwitchOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn switch \"" + destination.getUrl() + "\" \"" + FileUtility.normalizePath(wcPath) + "\" -r " + destination.getSelectedRevision() + SVNUtility.getDepthArg(SwitchOperation.this.depth) + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 					proxy.doSwitch(wcPath, SVNUtility.getEntryRevisionReference(destination), SwitchOperation.this.depth,
 							ISVNConnector.Options.NONE, new SVNProgressMonitor(SwitchOperation.this, monitor, null));
 					

@@ -59,7 +59,7 @@ public class SVNMessages extends NLS {
 	public static String Progress_Running;
 	public static String Progress_SubTask;
 	
-	public static String SVNInfo_Author;						
+	public static String SVNInfo_Author;
 	
 	static {
 		//load message values from bundle file

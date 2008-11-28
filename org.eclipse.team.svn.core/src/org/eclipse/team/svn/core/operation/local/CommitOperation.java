@@ -50,7 +50,7 @@ public class CommitOperation extends AbstractConflictDetectionOperation implemen
 	protected String []paths;
 
 	public CommitOperation(IResource []resources, String message, boolean recursive, boolean keepLocks) {
-		super("Operation.Commit", resources);
+		super("Operation_Commit", resources); //$NON-NLS-1$
 		this.message = message;
 		this.recursive = recursive;
 		this.keepLocks = keepLocks;
@@ -61,7 +61,7 @@ public class CommitOperation extends AbstractConflictDetectionOperation implemen
 	}
 
 	public CommitOperation(IResourceProvider provider, String message, boolean recursive, boolean keepLocks) {
-		super("Operation.Commit", provider);
+		super("Operation_Commit", provider); //$NON-NLS-1$
 		this.message = message;
 		this.recursive = recursive;
 		this.keepLocks = keepLocks;
@@ -109,11 +109,11 @@ public class CommitOperation extends AbstractConflictDetectionOperation implemen
 		
 		this.complexWriteToConsole(new Runnable() {
 			public void run() {
-				CommitOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn commit");
+				CommitOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn commit"); //$NON-NLS-1$
 				for (int i = 0; i < CommitOperation.this.paths.length && !monitor.isCanceled(); i++) {
-					CommitOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " \"" + CommitOperation.this.paths[i] + "\"");
+					CommitOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " \"" + CommitOperation.this.paths[i] + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 				}
-				CommitOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, (CommitOperation.this.recursive ? "" : " -N") + (CommitOperation.this.keepLocks ? " --no-unlock" : "") + " -m \"" + CommitOperation.this.message + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n");
+				CommitOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, (CommitOperation.this.recursive ? "" : " -N") + (CommitOperation.this.keepLocks ? " --no-unlock" : "") + " -m \"" + CommitOperation.this.message + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 			}
 		});
 		

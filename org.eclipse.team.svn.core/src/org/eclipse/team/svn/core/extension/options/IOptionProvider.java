@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.core.extension.options;
 
 import org.eclipse.core.resources.team.FileModificationValidator;
-import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNCredentialsPrompt;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
@@ -59,7 +59,7 @@ public interface IOptionProvider {
 			return new SVNProperty[0];
 		}
 		public String getResource(String key) {
-			return SVNTeamPlugin.instance().getResource(key);
+			return SVNMessages.getErrorString(key);
 		}
 	};
 	

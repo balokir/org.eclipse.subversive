@@ -29,14 +29,14 @@ public class AddToSVNIgnoreOperation extends AbstractFileOperation {
 	protected String pattern;
 
 	public AddToSVNIgnoreOperation(File []files, int ignoreType, String pattern) {
-		super("Operation.AddToSVNIgnoreFile", files);
+		super("Operation_AddToSVNIgnoreFile", files); //$NON-NLS-1$
 		
 		this.ignoreType = ignoreType;
 		this.pattern = pattern;
 	}
 
 	public AddToSVNIgnoreOperation(IFileProvider provider, int ignoreType, String pattern) {
-		super("Operation.AddToSVNIgnoreFile", provider);
+		super("Operation_AddToSVNIgnoreFile", provider); //$NON-NLS-1$
 		
 		this.ignoreType = ignoreType;
 		this.pattern = pattern;

@@ -52,7 +52,7 @@ public class ResourceContentStorage implements IEncodedStorage {
 			this.op = this.getLoadContentOperation();
 	        CompositeOperation composite = new CompositeOperation(this.op.getId());
 	        composite.add(this.op);
-	        composite.add(new AbstractActionOperation("Operation.DetectCharset") {
+	        composite.add(new AbstractActionOperation("Operation_DetectCharset") { //$NON-NLS-1$
                 protected void runImpl(IProgressMonitor monitor) throws Exception {
                     ResourceContentStorage.this.detectCharset(ResourceContentStorage.this.op.getContent());
                 }

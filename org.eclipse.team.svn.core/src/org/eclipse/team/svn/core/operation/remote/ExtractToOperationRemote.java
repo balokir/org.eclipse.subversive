@@ -79,7 +79,7 @@ public class ExtractToOperationRemote extends AbstractActionOperation {
 	 * @param delitionAllowed - specifies if deletion allowed if the resource is marked for deletion
 	 */
 	public ExtractToOperationRemote(IRepositoryResourceWithStatusProvider incomingResourcesProvider, Collection<String> markedForDelition, String path, HashMap<String, String> exportRoots2Names, InitExtractLogOperation logger, boolean delitionAllowed) {
-		super("Operation.ExtractTo");
+		super("Operation_ExtractTo"); //$NON-NLS-1$
 		this.logger = logger;
 		this.dataProvider = incomingResourcesProvider;
 		this.path = path;
@@ -89,7 +89,7 @@ public class ExtractToOperationRemote extends AbstractActionOperation {
 	}
 
 	public ExtractToOperationRemote(IRepositoryResourceWithStatusProvider incomingResourcesProvider, IRepositoryResourceProvider markedForDelition, String path, HashMap<String, String> exportRoots2Names, InitExtractLogOperation logger, boolean delitionAllowed) {
-		super("Operation.ExtractTo");
+		super("Operation_ExtractTo"); //$NON-NLS-1$
 		this.logger = logger;
 		this.dataProvider = incomingResourcesProvider;
 		this.path = path;
@@ -116,7 +116,7 @@ public class ExtractToOperationRemote extends AbstractActionOperation {
 		for (IRepositoryResource current : resources) {
 			String currentURL = current.getUrl();
 			Path currentPath = new Path(currentURL);
-			String toOperate = "";
+			String toOperate = ""; //$NON-NLS-1$
 			String rootUrl = null;
 			String rootName = null;
 			for (String url : this.exportRoots2Names.keySet()) {
@@ -128,22 +128,22 @@ public class ExtractToOperationRemote extends AbstractActionOperation {
 			if (previousPref == null || !new Path(previousPref).isPrefixOf(currentPath)) {
 				if (current instanceof IRepositoryContainer) {
 					previousPref = current.getUrl();
-					previousPath = "/" + (rootUrl == null ? current.getName() : current.getUrl().substring(rootUrl.lastIndexOf('/') + 1));
+					previousPath = "/" + (rootUrl == null ? current.getName() : current.getUrl().substring(rootUrl.lastIndexOf('/') + 1)); //$NON-NLS-1$
 					toOperate = this.path + previousPath;
 				}
 				else
 				{
-					String filePath = rootUrl == null ? "" : current.getUrl().substring(rootUrl.lastIndexOf('/') + 1);
+					String filePath = rootUrl == null ? "" : current.getUrl().substring(rootUrl.lastIndexOf('/') + 1); //$NON-NLS-1$
 					int lastSlashIdx = filePath.lastIndexOf('/');
-					previousPath = "/" + (lastSlashIdx < 1 ? "" :  filePath.substring(0, filePath.lastIndexOf('/')));
-					toOperate = this.path + previousPath + "/" + current.getName();
+					previousPath = "/" + (lastSlashIdx < 1 ? "" :  filePath.substring(0, filePath.lastIndexOf('/'))); //$NON-NLS-1$ //$NON-NLS-2$
+					toOperate = this.path + previousPath + "/" + current.getName(); //$NON-NLS-1$
 				}
 			}
 			else {
 				toOperate = this.path + previousPath + currentURL.substring(previousPref.length());
 			}
 			if (rootUrl != null) {
-				String projectRepoName = rootUrl.substring(rootUrl.lastIndexOf("/") + 1);
+				String projectRepoName = rootUrl.substring(rootUrl.lastIndexOf("/") + 1); //$NON-NLS-1$
 				String [] parts = toOperate.split(projectRepoName);
 				toOperate = parts[0] + rootName;
 				for (int i = 1; i < parts.length; i++) {

@@ -41,7 +41,7 @@ public class GetLogMessagesOperation extends AbstractRepositoryOperation {
 	}
 	
 	public GetLogMessagesOperation(IRepositoryResource resource, boolean stopOnCopy) {
-		super("Operation.GetLogMessages", new IRepositoryResource[] {resource});
+		super("Operation_GetLogMessages", new IRepositoryResource[] {resource}); //$NON-NLS-1$
 		this.stopOnCopy = stopOnCopy;
 		this.includeMerged = false;
 		this.discoverPaths = true;

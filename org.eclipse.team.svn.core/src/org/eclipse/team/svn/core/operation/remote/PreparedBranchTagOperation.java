@@ -48,7 +48,7 @@ public class PreparedBranchTagOperation extends CompositeOperation implements IR
 	}
 	
 	public PreparedBranchTagOperation(String operationName, IRepositoryResource []resources, IRepositoryResource destination, String message, boolean forceCreate) {
-		super("Operation.Prepared" + operationName);
+		super("Operation_Prepared" + operationName); //$NON-NLS-1$
 		this.operationName = operationName;
 		this.resources = resources;
 		this.destination = destination;
@@ -68,7 +68,7 @@ public class PreparedBranchTagOperation extends CompositeOperation implements IR
 		if (CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() < ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x || this.wcResources != null) {
 			IRepositoryResource parent = PreparedBranchTagOperation.getExistentParent(this.destination);
 			if (parent == null) {
-				throw new UnreportableException(SVNMessages.getErrorString("Error_RepositoryInaccessible"));
+				throw new UnreportableException(SVNMessages.getErrorString("Error_RepositoryInaccessible")); //$NON-NLS-1$
 			}
 			this.targets = new IRepositoryResource[this.resources.length];
 			CreateFolderOperation op = null;
@@ -86,7 +86,7 @@ public class PreparedBranchTagOperation extends CompositeOperation implements IR
 			for (int i = 0; i < this.targets.length; i++) {
 				String targetUrl = this.destination.getUrl();
 				if (!createLastSegment) {
-					targetUrl += "/" + this.resources[i].getName();
+					targetUrl += "/" + this.resources[i].getName(); //$NON-NLS-1$
 				}
 				this.targets[i] = this.resources[i] instanceof IRepositoryFile ? (IRepositoryResource)this.destination.asRepositoryFile(targetUrl, false) : this.destination.asRepositoryContainer(targetUrl, false);
 				if (this.wcResources != null) {

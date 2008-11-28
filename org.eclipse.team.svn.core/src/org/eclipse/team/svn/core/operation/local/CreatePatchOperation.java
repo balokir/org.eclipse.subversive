@@ -62,22 +62,22 @@ public class CreatePatchOperation extends AbstractActionOperation {
 	protected boolean processUnversioned;
 	protected int rootPoint;
 	
-	protected String lineFeed = System.getProperty("line.separator");
-	protected String contentSeparator = this.lineFeed + "===================================================================" + this.lineFeed;
-	protected String indexEntry = "Index: ";
-	protected String removeSign = "--- ";
-	protected String addSign = "+++ ";
-	protected String revisionMark = "\t(revision 0)" + this.lineFeed;
-	protected String noLF = "\\ No newline at end of file" + this.lineFeed;
-	protected String rangeStart = "@@ -0,0 +1";
-	protected String rangeEnd = " @@" + this.lineFeed;
+	protected String lineFeed = System.getProperty("line.separator"); //$NON-NLS-1$
+	protected String contentSeparator = this.lineFeed + "===================================================================" + this.lineFeed; //$NON-NLS-1$
+	protected String indexEntry = "Index: "; //$NON-NLS-1$
+	protected String removeSign = "--- "; //$NON-NLS-1$
+	protected String addSign = "+++ "; //$NON-NLS-1$
+	protected String revisionMark = "\t(revision 0)" + this.lineFeed; //$NON-NLS-1$
+	protected String noLF = "\\ No newline at end of file" + this.lineFeed; //$NON-NLS-1$
+	protected String rangeStart = "@@ -0,0 +1"; //$NON-NLS-1$
+	protected String rangeEnd = " @@" + this.lineFeed; //$NON-NLS-1$
 	
 	public CreatePatchOperation(IResource []resources, String fileName, boolean recurse, boolean ignoreDeleted, boolean processBinary, boolean processUnversioned) {
 		this(resources, fileName, recurse, ignoreDeleted, processBinary, processUnversioned, CreatePatchOperation.PROJECT);
 	}
 	
 	public CreatePatchOperation(IResource []resources, String fileName, boolean recurse, boolean ignoreDeleted, boolean processBinary, boolean processUnversioned, int rootPoint) {
-		super("Operation.CreatePatchLocal");
+		super("Operation_CreatePatchLocal"); //$NON-NLS-1$
 		this.resources = resources;
 		this.fileName = fileName;
 		this.recurse = recurse;
@@ -94,7 +94,7 @@ public class CreatePatchOperation extends AbstractActionOperation {
 //			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn diff " + (this.recurse ? "" : " -N") + (this.ignoreDeleted ? " --no-diff-deleted" : "") + "\n");
 			if (workingCopies.size() > 1 || this.rootPoint == CreatePatchOperation.WORKSPACE) {
 				this.rootPoint = CreatePatchOperation.WORKSPACE;
-				stream.write("### Eclipse Workspace Patch 1.0".getBytes());
+				stream.write("### Eclipse Workspace Patch 1.0".getBytes()); //$NON-NLS-1$
 				stream.write(this.lineFeed.getBytes());
 			}
 			else if (this.rootPoint == CreatePatchOperation.SELECTION) {
@@ -104,7 +104,7 @@ public class CreatePatchOperation extends AbstractActionOperation {
 				Map.Entry entry = (Map.Entry)it.next();
 				IProject project = (IProject)entry.getKey();
 				if (this.rootPoint == CreatePatchOperation.WORKSPACE) {
-					stream.write("#P ".getBytes());
+					stream.write("#P ".getBytes()); //$NON-NLS-1$
 					stream.write(project.getName().getBytes());
 					stream.write(this.lineFeed.getBytes());
 				}
@@ -159,7 +159,7 @@ public class CreatePatchOperation extends AbstractActionOperation {
 		
 		ILocalResource local = SVNRemoteStorage.instance().asLocalResourceAccessible(resource);
 		if (IStateFilter.SF_VERSIONED.accept(local)) {
-			File tmp = File.createTempFile("patch", ".tmp", SVNTeamPlugin.instance().getStateLocation().toFile());
+			File tmp = File.createTempFile("patch", ".tmp", SVNTeamPlugin.instance().getStateLocation().toFile()); //$NON-NLS-1$ //$NON-NLS-2$
 			tmp.deleteOnExit();
 			
 			IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(resource);
@@ -254,7 +254,7 @@ public class CreatePatchOperation extends AbstractActionOperation {
 		}
 		String []lines = tLines.toArray(new String[tLines.size()]);
 		String retVal = this.getFilledNewContentDiff(fileName, lines);
-		if (!content.endsWith("\r\n") && !content.endsWith("\r") && !content.endsWith("\n")) {
+		if (!content.endsWith("\r\n") && !content.endsWith("\r") && !content.endsWith("\n")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			retVal += this.noLF;
 		}
 		return retVal;
@@ -265,9 +265,9 @@ public class CreatePatchOperation extends AbstractActionOperation {
 			this.getEmptyNewContentDiff(fileName) + 
 			this.removeSign + fileName + this.revisionMark +
 			this.addSign + fileName + this.revisionMark + 
-			this.rangeStart + (lines.length == 1 ? "" : ("," + lines.length)) + this.rangeEnd;
+			this.rangeStart + (lines.length == 1 ? "" : ("," + lines.length)) + this.rangeEnd; //$NON-NLS-1$ //$NON-NLS-2$
 		for (int i = 0; i < lines.length; i++) {
-			retVal += "+" + lines[i];
+			retVal += "+" + lines[i]; //$NON-NLS-1$
 		}
 		return retVal;
 	}

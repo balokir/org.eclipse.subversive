@@ -31,7 +31,7 @@ public class GetFileContentOperation extends AbstractGetFileContentOperation {
 	protected IRepositoryResource resource;
 
 	public GetFileContentOperation(IRepositoryResource resource) {
-		super("Revision");
+		super("Revision"); //$NON-NLS-1$
 		this.resource = resource;
 	}
 
@@ -63,7 +63,7 @@ public class GetFileContentOperation extends AbstractGetFileContentOperation {
 	protected String getExtension() {
 		String name = this.resource.getName();
 		int idx = name.lastIndexOf('.');
-		return idx == -1 ? "" : name.substring(idx + 1);
+		return idx == -1 ? "" : name.substring(idx + 1); //$NON-NLS-1$
 	}
 	
 	protected String getShortErrorMessage(Throwable t) {

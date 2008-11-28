@@ -36,7 +36,7 @@ public class MoveResourceOperation extends AbstractActionOperation {
 	protected IResource destination;
 
 	public MoveResourceOperation(IResource source, IResource destination) {
-		super("Operation.MoveLocal");
+		super("Operation_MoveLocal"); //$NON-NLS-1$
 		this.source = source;
 		this.destination = destination;
 	}

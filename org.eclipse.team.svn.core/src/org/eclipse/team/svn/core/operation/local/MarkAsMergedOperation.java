@@ -52,14 +52,14 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 	}
 
 	public MarkAsMergedOperation(IResource[] resources, boolean override, String overrideMessage, boolean keepLocks) {
-		super("Operation.MarkAsMerged", resources);
+		super("Operation_MarkAsMerged", resources); //$NON-NLS-1$
 		this.override = override;
 		this.overrideMessage = overrideMessage;
 		this.keepLocks = keepLocks;
 	}
 
 	public MarkAsMergedOperation(IResourceProvider provider, boolean override, String overrideMessage, boolean keepLocks) {
-		super("Operation.MarkAsMerged", provider);
+		super("Operation_MarkAsMerged", provider); //$NON-NLS-1$
 		this.override = override;
 		this.overrideMessage = overrideMessage;
 		this.keepLocks = keepLocks;

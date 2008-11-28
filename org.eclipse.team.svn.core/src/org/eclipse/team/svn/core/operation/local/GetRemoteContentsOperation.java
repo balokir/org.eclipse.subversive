@@ -49,7 +49,7 @@ public class GetRemoteContentsOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	public GetRemoteContentsOperation(IResource [] resources, IRepositoryResourceProvider provider, HashMap<String, String> remotePath2localPath) {
-		super("Operation.GetContent", resources);
+		super("Operation_GetContent", resources); //$NON-NLS-1$
 		this.provider = provider;
 		this.remotePath2localPath = remotePath2localPath;
 	}
@@ -73,7 +73,7 @@ public class GetRemoteContentsOperation extends AbstractWorkingCopyOperation {
 			String url = SVNUtility.encodeURL(remote.getUrl());
 			String wcPath = this.remotePath2localPath.get(url);
 			if (remote instanceof IRepositoryFile) {
-				File parent = new File(wcPath.substring(0, wcPath.lastIndexOf("/")));
+				File parent = new File(wcPath.substring(0, wcPath.lastIndexOf("/"))); //$NON-NLS-1$
 				if (!parent.exists()) {
 					parent.mkdirs();
 				}
@@ -83,7 +83,7 @@ public class GetRemoteContentsOperation extends AbstractWorkingCopyOperation {
 				}
 				FileOutputStream stream = null;
 				try {
-					this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn cat " + url + "@" + remote.getPegRevision() + " -r " + remote.getSelectedRevision() + FileUtility.getUsernameParam(location.getUsername()) + "\n");
+					this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn cat " + url + "@" + remote.getPegRevision() + " -r " + remote.getSelectedRevision() + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 					stream = new FileOutputStream(wcPath);
 					proxy.streamFileContent(SVNUtility.getEntryRevisionReference(remote), 2048, stream, new SVNProgressMonitor(this, monitor, null));
 				}
@@ -101,7 +101,7 @@ public class GetRemoteContentsOperation extends AbstractWorkingCopyOperation {
 				if (!directory.exists()) {
 					directory.mkdirs();
 				}
-				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn export " + url + "@" + remote.getPegRevision() + " -r " + remote.getSelectedRevision() + " \"" + wcPath + "\" --force " + FileUtility.getUsernameParam(location.getUsername()) + "\n");
+				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn export " + url + "@" + remote.getPegRevision() + " -r " + remote.getSelectedRevision() + " \"" + wcPath + "\" --force " + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 				proxy.doExport(SVNUtility.getEntryRevisionReference(remote), wcPath, null, Depth.INFINITY, ISVNConnector.Options.FORCE, new SVNProgressMonitor(this, monitor, null));
 			}
 		}

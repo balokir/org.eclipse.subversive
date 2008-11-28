@@ -55,7 +55,7 @@ public abstract class AbstractCopyMoveResourcesOperation extends AbstractReposit
 			refs[i] = SVNUtility.getEntryRevisionReference(selectedResources[i]);
 		}
 		final IRepositoryLocation location = selectedResources[0].getRepositoryLocation();
-		final String dstUrl = this.destinationResource.getUrl() + (this.resName != null && this.resName.length() > 0 ? "/" + this.resName : (selectedResources.length > 1 ? "" : "/" + selectedResources[0].getName()));
+		final String dstUrl = this.destinationResource.getUrl() + (this.resName != null && this.resName.length() > 0 ? "/" + this.resName : (selectedResources.length > 1 ? "" : "/" + selectedResources[0].getName())); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		ISVNNotificationCallback notify = new ISVNNotificationCallback() {
 			private int i = 0;
 			public void notify(SVNNotification info) {

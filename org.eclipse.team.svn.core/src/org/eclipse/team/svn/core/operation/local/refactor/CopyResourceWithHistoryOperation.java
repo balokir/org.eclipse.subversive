@@ -39,7 +39,7 @@ public class CopyResourceWithHistoryOperation extends AbstractActionOperation {
 	protected IResource destination;
 	
 	public CopyResourceWithHistoryOperation(IResource source, IResource destination) {
-		super("Operation.CopyLocalH");
+		super("Operation_CopyLocalH"); //$NON-NLS-1$
 		this.source = source;
 		this.destination = destination;
 	}
@@ -62,7 +62,7 @@ public class CopyResourceWithHistoryOperation extends AbstractActionOperation {
 		IRepositoryLocation location = storage.getRepositoryLocation(this.source);
         ISVNConnector proxy = location.acquireSVNProxy();
         try {
-			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn copy \"" + FileUtility.normalizePath(FileUtility.getWorkingCopyPath(this.source)) + "\" \"" + FileUtility.getWorkingCopyPath(this.destination) + "\"\n");
+			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn copy \"" + FileUtility.normalizePath(FileUtility.getWorkingCopyPath(this.source)) + "\" \"" + FileUtility.getWorkingCopyPath(this.destination) + "\"\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			proxy.copy(new String[] {FileUtility.getWorkingCopyPath(this.source)}, FileUtility.getWorkingCopyPath(this.destination), SVNRevision.WORKING, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {

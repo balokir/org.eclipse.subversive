@@ -35,7 +35,7 @@ public class CopyResourceOperation extends AbstractActionOperation {
 	}
 	
 	public CopyResourceOperation(IResource source, IResource destination, boolean skipSVNMeta) {
-		super("Operation.CopyLocal");
+		super("Operation_CopyLocal"); //$NON-NLS-1$
 		this.source = source;
 		this.destination = destination;
 		this.skipSVNMeta = skipSVNMeta;

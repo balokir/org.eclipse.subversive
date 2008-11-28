@@ -44,7 +44,7 @@ public class FindRelatedProjectsOperation extends AbstractActionOperation implem
 	}
 	
 	public FindRelatedProjectsOperation(IRepositoryLocation location, IProject []exceptProjects) {
-		super("Operation.FindRelatedProjects");
+		super(Messages.getString("FindRelatedProjectsOperation.0")); //$NON-NLS-1$
 		this.location = location;
 		if (exceptProjects != null) {
 			this.exceptProjects = new HashSet<IProject>(Arrays.asList(exceptProjects));

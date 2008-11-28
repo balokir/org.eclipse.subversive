@@ -54,13 +54,13 @@ public class UpdateOperation extends AbstractConflictDetectionOperation implemen
 	}
 
 	public UpdateOperation(IResourceProvider provider, SVNRevision selectedRevision, boolean doRecursiveUpdate) {
-		super("Operation.Update", provider);		
+		super("Operation_Update", provider);		 //$NON-NLS-1$
 		this.doRecursiveUpdate = doRecursiveUpdate;
 		this.selectedRevision = selectedRevision == null ? SVNRevision.HEAD : selectedRevision;
 	}
 	
 	public UpdateOperation(IResource[] resources, SVNRevision selectedRevision, boolean doRecursiveUpdate) {
-		super("Operation.Update", resources);
+		super("Operation_Update", resources); //$NON-NLS-1$
 		this.selectedRevision = selectedRevision == null ? SVNRevision.HEAD : selectedRevision;
 		this.doRecursiveUpdate = doRecursiveUpdate;
 	}
@@ -95,11 +95,11 @@ public class UpdateOperation extends AbstractConflictDetectionOperation implemen
 
 			this.complexWriteToConsole(new Runnable() {
 				public void run() {
-					UpdateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn update");
+					UpdateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn update"); //$NON-NLS-1$
 					for (int i = 0; i < paths.length && !monitor.isCanceled(); i++) {
-						UpdateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " \"" + paths[i] + "\"");
+						UpdateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " \"" + paths[i] + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 					}
-					UpdateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " -r " + UpdateOperation.this.selectedRevision + (UpdateOperation.this.doRecursiveUpdate ? "" : " -N") + FileUtility.getUsernameParam(location.getUsername()) + "\n");
+					UpdateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " -r " + UpdateOperation.this.selectedRevision + (UpdateOperation.this.doRecursiveUpdate ? "" : " -N") + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				}
 			});
 			

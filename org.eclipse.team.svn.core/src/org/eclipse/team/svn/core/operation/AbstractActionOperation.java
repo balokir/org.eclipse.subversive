@@ -182,7 +182,7 @@ public abstract class AbstractActionOperation implements IActionOperation {
 	}
 	
 	protected final String getNationalizedString(String key) {
-		String retVal = SVNMessages.getString(key);
+		String retVal = SVNMessages.getErrorString(key);
 		if (retVal.equals(key)) {
 			return CoreExtensionsManager.instance().getOptionProvider().getResource(key);
 		}

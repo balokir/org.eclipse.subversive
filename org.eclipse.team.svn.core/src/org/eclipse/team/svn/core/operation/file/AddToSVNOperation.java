@@ -31,12 +31,12 @@ public class AddToSVNOperation extends AbstractFileOperation {
 	protected boolean isRecursive;
 	
 	public AddToSVNOperation(File []files, boolean isRecursive) {
-		super("Operation.AddToSVNFile", files);
+		super("Operation_AddToSVNFile", files); //$NON-NLS-1$
 		this.isRecursive = isRecursive;
 	}
 
 	public AddToSVNOperation(IFileProvider provider, boolean isRecursive) {
-		super("Operation.AddToSVNFile", provider);
+		super("Operation_AddToSVNFile", provider); //$NON-NLS-1$
 		this.isRecursive = isRecursive;
 	}
 
@@ -55,7 +55,7 @@ public class AddToSVNOperation extends AbstractFileOperation {
 			final ISVNConnector proxy = location.acquireSVNProxy();
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-					AddToSVNOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn add \"" + FileUtility.normalizePath(current.getAbsolutePath()) + "\"" + (AddToSVNOperation.this.isRecursive ? "" : " -N") + "\n");
+					AddToSVNOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn add \"" + FileUtility.normalizePath(current.getAbsolutePath()) + "\"" + (AddToSVNOperation.this.isRecursive ? "" : " -N") + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					
 					File parent = current.getParentFile();
 					if (parent != null) {

@@ -39,7 +39,7 @@ public class MergeStatusOperation extends AbstractWorkingCopyOperation implement
 	protected SVNMergeStatus []retVal;
 	
 	public MergeStatusOperation(AbstractMergeSet info, IResource []resources) {
-		super("Operation.MergeStatus", resources == null ? info.to : resources);
+		super("Operation_MergeStatus", resources == null ? info.to : resources); //$NON-NLS-1$
 		this.info = info;
 	}
 	

@@ -38,7 +38,7 @@ public class RenameResourceOperation extends AbstractRepositoryOperation impleme
 	protected RevisionPair []revisionPair;
 	
 	public RenameResourceOperation(IRepositoryResource resource, String newName, String message) {
-		super("Operation.Rename", new IRepositoryResource[] {resource});
+		super("Operation_Rename", new IRepositoryResource[] {resource}); //$NON-NLS-1$
 		this.message = message;
 		this.newName = newName;
 	}
@@ -52,7 +52,7 @@ public class RenameResourceOperation extends AbstractRepositoryOperation impleme
 		this.revisionPair = new RevisionPair[1];
 		final IRepositoryLocation location = resource.getRepositoryLocation();
 		ISVNConnector proxy = location.acquireSVNProxy();
-		final String newUrl = resource.getParent().getUrl() + "/" + this.newName;
+		final String newUrl = resource.getParent().getUrl() + "/" + this.newName; //$NON-NLS-1$
 		ISVNNotificationCallback notify = new ISVNNotificationCallback() {
 			public void notify(SVNNotification info) {
 				String []path = new String[] {newUrl};
@@ -63,7 +63,7 @@ public class RenameResourceOperation extends AbstractRepositoryOperation impleme
 		};
 		try {
 			SVNUtility.addSVNNotifyListener(proxy, notify);
-			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn move \"" + resource.getUrl() + "\" \"" + newUrl + "\" -m \"" + this.message + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n");
+			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn move \"" + resource.getUrl() + "\" \"" + newUrl + "\" -m \"" + this.message + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 			proxy.move(new SVNEntryReference[] {SVNUtility.getEntryReference(resource)}, SVNUtility.encodeURL(newUrl), this.message, ISVNConnector.Options.INTERPRET_AS_CHILD, null, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {

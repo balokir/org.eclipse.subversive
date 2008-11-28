@@ -41,13 +41,13 @@ public class CopyOperation extends AbstractFileOperation {
 	protected boolean forceNonSVN;
 	
 	public CopyOperation(File []files, File localTo, boolean forceNonSVN) {
-		super("Operation.CopyFile", files);
+		super("Operation_CopyFile", files); //$NON-NLS-1$
 		this.localTo = localTo;
 		this.forceNonSVN = forceNonSVN;
 	}
 
 	public CopyOperation(IFileProvider provider, File localTo, boolean forceNonSVN) {
-		super("Operation.CopyFile", provider);
+		super("Operation_CopyFile", provider); //$NON-NLS-1$
 		this.localTo = localTo;
 		this.forceNonSVN = forceNonSVN;
 	}
@@ -86,9 +86,9 @@ public class CopyOperation extends AbstractFileOperation {
 	}
 
 	protected File getCopyTo(File what) {
-		File checked = new File(this.localTo.getAbsolutePath() + "/" + what.getName());
+		File checked = new File(this.localTo.getAbsolutePath() + "/" + what.getName()); //$NON-NLS-1$
 		if (checked.exists()) {
-			String message = this.getNationalizedString("Error.AlreadyExists");
+			String message = this.getNationalizedString("Error_AlreadyExists"); //$NON-NLS-1$
 			throw new UnreportableException(MessageFormat.format(message, new Object[] {checked.getAbsolutePath()}));
 		}
 		return checked;

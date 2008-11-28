@@ -65,7 +65,7 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 	}
 	
 	public CheckoutAsOperation(String projectName, IRepositoryResource resource, boolean respectHierarchy, String location, int recureDepth, boolean ignoreExternals) {
-		this(projectName, resource, location == null ? Platform.getLocation().toString() : location + (respectHierarchy ? SVNUtility.getResourceParent(resource) : ""), recureDepth, ignoreExternals);
+		this(projectName, resource, location == null ? Platform.getLocation().toString() : location + (respectHierarchy ? SVNUtility.getResourceParent(resource) : ""), recureDepth, ignoreExternals); //$NON-NLS-1$
 	}
 	
 	public int getOperationWeight() {
@@ -73,7 +73,7 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 	}
 	
 	public CheckoutAsOperation(String projectName, IRepositoryResource resource, String projectLocation, int recureDepth, boolean ignoreExternals) {
-		super("Operation.CheckOutAs");
+		super("Operation_CheckOutAs"); //$NON-NLS-1$
 		projectName = FileUtility.formatResourceName(projectName);
 		if (FileUtility.isCaseInsensitiveOS()) {
 			IProject []projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
@@ -121,7 +121,7 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 	
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		String projectName = this.project.isAccessible() ?
-				this.project.getLocation().toString().substring(this.project.getLocation().toString().lastIndexOf("/") + 1)
+				this.project.getLocation().toString().substring(this.project.getLocation().toString().lastIndexOf("/") + 1) //$NON-NLS-1$
 				: this.project.getName();
 		final IPath destination = new Path(this.projectLocation).append(projectName);
 
@@ -154,7 +154,7 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 	
 	protected void doCheckout(IProgressMonitor monitor, IPath destination) throws Exception {
 		// prepare workspace...
-		ProgressMonitorUtility.setTaskInfo(monitor, this, this.getOperationResource("PrepareFS"));
+		ProgressMonitorUtility.setTaskInfo(monitor, this, this.getOperationResource("PrepareFS")); //$NON-NLS-1$
 		
 		for (Iterator<IProject> it = this.overlappingProjects.iterator(); it.hasNext() && !monitor.isCanceled(); ) {
 			IProject overlappingProject = it.next();
@@ -168,7 +168,7 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
 			String path = destination.toString();
-			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn checkout \"" + this.resource.getUrl() + "@" + this.resource.getPegRevision() + "\" -r " + this.resource.getSelectedRevision() + SVNUtility.getDepthArg(this.recureDepth) + " \"" + FileUtility.normalizePath(path) + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n");
+			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn checkout \"" + this.resource.getUrl() + "@" + this.resource.getPegRevision() + "\" -r " + this.resource.getSelectedRevision() + SVNUtility.getDepthArg(this.recureDepth) + " \"" + FileUtility.normalizePath(path) + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 			proxy.checkout(
 					SVNUtility.getEntryRevisionReference(this.resource), 
 					path, 
@@ -194,7 +194,7 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 		if (!FileUtility.deleteRecursive(target, monitor)) {
 			File []children = target.listFiles();
 			if (children != null && children.length > 0) {
-				String message = this.getNationalizedString("Error.LockedExternally");
+				String message = this.getNationalizedString("Error_LockedExternally"); //$NON-NLS-1$
 				throw new UnreportableException(MessageFormat.format(message, new Object[] {children[0].getAbsolutePath()}));
 			}
 		}

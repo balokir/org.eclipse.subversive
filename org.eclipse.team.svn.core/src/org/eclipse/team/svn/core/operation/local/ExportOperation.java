@@ -37,13 +37,13 @@ public class ExportOperation extends AbstractWorkingCopyOperation {
 	protected String path;
 	
 	public ExportOperation(IResource[] resources, String path, SVNRevision revision) {
-		super("Operation.ExportRevision", resources);
+		super("Operation_ExportRevision", resources); //$NON-NLS-1$
 		this.revision = revision;
 		this.path = path;
 	}
 
 	public ExportOperation(IResourceProvider provider, String path, SVNRevision revision) {
-		super("Operation.ExportRevision", provider);
+		super("Operation_ExportRevision", provider); //$NON-NLS-1$
 		this.revision = revision;
 		this.path = path;
 	}
@@ -58,8 +58,8 @@ public class ExportOperation extends AbstractWorkingCopyOperation {
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
 					String wcPath = FileUtility.getWorkingCopyPath(current);
-					String targetPath = ExportOperation.this.path + "/" + current.getName();
-					ExportOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn export \"" + wcPath + "\" -r " + ExportOperation.this.revision.toString() + " \"" + FileUtility.normalizePath(targetPath) + "\" --force" + FileUtility.getUsernameParam(location.getUsername()) + "\n");
+					String targetPath = ExportOperation.this.path + "/" + current.getName(); //$NON-NLS-1$
+					ExportOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn export \"" + wcPath + "\" -r " + ExportOperation.this.revision.toString() + " \"" + FileUtility.normalizePath(targetPath) + "\" --force" + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					proxy.doExport(new SVNEntryRevisionReference(wcPath, null, ExportOperation.this.revision), targetPath, null, Depth.INFINITY, ISVNConnector.Options.FORCE, new SVNProgressMonitor(ExportOperation.this, monitor, null));
 				}
 			}, monitor, resources.length);

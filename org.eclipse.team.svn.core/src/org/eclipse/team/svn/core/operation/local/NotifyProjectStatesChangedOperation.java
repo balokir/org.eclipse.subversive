@@ -27,7 +27,7 @@ public class NotifyProjectStatesChangedOperation extends AbstractActionOperation
 	protected int eventType;
 
 	public NotifyProjectStatesChangedOperation(IProject []projects, int eventType) {
-		super("Operation.NotifyProjectChange");
+		super("Operation_NotifyProjectChange"); //$NON-NLS-1$
 		this.projects = projects;
 		this.eventType = eventType;
 	}

@@ -34,11 +34,11 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
  */
 public class CleanupOperation extends AbstractFileOperation {
 	public CleanupOperation(File []files) {
-		super("Operation.CleanupFile", files);
+		super("Operation_CleanupFile", files); //$NON-NLS-1$
 	}
 
 	public CleanupOperation(IFileProvider provider) {
-		super("Operation.CleanupFile", provider);
+		super("Operation_CleanupFile", provider); //$NON-NLS-1$
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
@@ -55,7 +55,7 @@ public class CleanupOperation extends AbstractFileOperation {
 			
 			ProgressMonitorUtility.setTaskInfo(monitor, this, current);
 
-			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn cleanup \"" + FileUtility.normalizePath(current) + "\"\n");
+			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn cleanup \"" + FileUtility.normalizePath(current) + "\"\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {

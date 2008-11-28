@@ -35,13 +35,13 @@ import org.eclipse.team.svn.core.operation.AbstractActionOperation;
  * @author Alexander Gurov
  */
 public class InitExtractLogOperation extends AbstractActionOperation {
-	public static final String COMPLETE_LOG_NAME = "/changes.log";
+	public static final String COMPLETE_LOG_NAME = "/changes.log"; //$NON-NLS-1$
 	
 	protected HashMap<String, List<String>> extractParticipants;
 	protected String logPath;
 	
 	public InitExtractLogOperation(String logPath) {
-		super("Operation.InitExtractLog");
+		super("Operation_InitExtractLog"); //$NON-NLS-1$
 		this.logPath = logPath;
 		this.extractParticipants = new HashMap<String, List<String>>();
 	}
@@ -49,9 +49,9 @@ public class InitExtractLogOperation extends AbstractActionOperation {
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.getDefault());
 		String date = formatter.format(new Date());
-		this.logImpl("");
+		this.logImpl(""); //$NON-NLS-1$
 		this.logImpl(date);
-		this.logImpl("===============================================================================");
+		this.logImpl("==============================================================================="); //$NON-NLS-1$
 	}
 
 	public void log(String participant, String status) {
@@ -72,7 +72,7 @@ public class InitExtractLogOperation extends AbstractActionOperation {
 				if (status.equals(IStateFilter.ST_DELETED)) {
 					boolean parentIsAlreadyLogged = false;
 					for (String logged : participantsToLog) {
-						if (participants[i].startsWith(logged + "\\")) {
+						if (participants[i].startsWith(logged + "\\")) { //$NON-NLS-1$
 							parentIsAlreadyLogged = true;
 							break;
 						}
@@ -81,7 +81,7 @@ public class InitExtractLogOperation extends AbstractActionOperation {
 						participantsToLog.add(participants[i]);
 					}
 				}
-				else if (i + 1 >= participants.length || !participants[i + 1].startsWith(participants[i] + "\\")) {
+				else if (i + 1 >= participants.length || !participants[i + 1].startsWith(participants[i] + "\\")) { //$NON-NLS-1$
 					participantsToLog.add(participants[i]);
 				}
 			}
@@ -124,9 +124,9 @@ public class InitExtractLogOperation extends AbstractActionOperation {
 		
 		for (String status : statusesList) {
 			for (String participant : sortedParticipants.get(status)) {
-				this.logImpl(SVNMessages.getString("Console_Status_" + status) + " " + participant);
+				this.logImpl(SVNMessages.getString("Console_Status_" + status) + " " + participant); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			this.logImpl("");
+			this.logImpl(""); //$NON-NLS-1$
 		}
 		this.extractParticipants.clear();
 	}
@@ -136,7 +136,7 @@ public class InitExtractLogOperation extends AbstractActionOperation {
 		try {
 			writer = new FileWriter(this.logPath + InitExtractLogOperation.COMPLETE_LOG_NAME, true);
 			writer.write(line);
-			writer.write(System.getProperty("line.separator"));
+			writer.write(System.getProperty("line.separator")); //$NON-NLS-1$
 		}
 		catch (IOException ex) {
 			//ignore

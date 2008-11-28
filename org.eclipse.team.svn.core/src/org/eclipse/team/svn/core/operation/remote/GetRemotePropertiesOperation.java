@@ -33,11 +33,11 @@ public class GetRemotePropertiesOperation extends AbstractRepositoryOperation im
 	protected SVNProperty []properties;
 
 	public GetRemotePropertiesOperation(IRepositoryResource resource) {
-		super("Operation.GetRevisionProperties", new IRepositoryResource[] {resource});
+		super("Operation_GetRevisionProperties", new IRepositoryResource[] {resource}); //$NON-NLS-1$
 	}
 	
 	public GetRemotePropertiesOperation(IRepositoryResourceProvider provider) {
-		super("Operation.GetRevisionProperties", provider);
+		super("Operation_GetRevisionProperties", provider); //$NON-NLS-1$
 	}
 
 	public SVNProperty []getProperties() {

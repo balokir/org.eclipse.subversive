@@ -45,7 +45,7 @@ public class CreateFolderOperation extends AbstractRepositoryOperation implement
 	}
 
 	public CreateFolderOperation(IRepositoryResource parent, String []names, String comment) {
-		super("Operation.CreateFolder", new IRepositoryResource[] {parent});
+		super("Operation_CreateFolder", new IRepositoryResource[] {parent}); //$NON-NLS-1$
 		this.names = names;
 		this.comment = comment;
 	}
@@ -54,7 +54,7 @@ public class CreateFolderOperation extends AbstractRepositoryOperation implement
 		this.revisionPair = new RevisionPair[1];
 		IRepositoryResource parent = this.operableData()[0];
 		final IRepositoryLocation location = parent.getRepositoryLocation();
-		ProgressMonitorUtility.setTaskInfo(monitor, this, parent.getUrl() + "/" + this.names[0]);
+		ProgressMonitorUtility.setTaskInfo(monitor, this, parent.getUrl() + "/" + this.names[0]); //$NON-NLS-1$
 		
 		Set<IRepositoryResource> fullSet = new HashSet<IRepositoryResource>();
 		for (int i = 0; i < this.names.length; i++) {
@@ -76,11 +76,11 @@ public class CreateFolderOperation extends AbstractRepositoryOperation implement
 		
 		this.complexWriteToConsole(new Runnable() {
 			public void run() {
-				CreateFolderOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn mkdir");
+				CreateFolderOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn mkdir"); //$NON-NLS-1$
 				for (int i = 0; i < childUrls.length && !monitor.isCanceled(); i++) {
-					CreateFolderOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " \"" + SVNUtility.decodeURL(childUrls[i]) + "\"");
+					CreateFolderOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " \"" + SVNUtility.decodeURL(childUrls[i]) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 				}
-				CreateFolderOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " -m \"" + CreateFolderOperation.this.comment + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n");
+				CreateFolderOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " -m \"" + CreateFolderOperation.this.comment + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 		});
 		

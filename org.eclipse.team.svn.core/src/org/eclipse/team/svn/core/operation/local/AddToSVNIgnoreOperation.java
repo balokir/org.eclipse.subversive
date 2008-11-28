@@ -40,14 +40,14 @@ public class AddToSVNIgnoreOperation extends AbstractWorkingCopyOperation {
 	protected String pattern;
 
 	public AddToSVNIgnoreOperation(IResource []resources, int ignoreType, String pattern) {
-		super("Operation.AddToSVNIgnore", resources);
+		super("Operation_AddToSVNIgnore", resources); //$NON-NLS-1$
 		
 		this.ignoreType = ignoreType;
 		this.pattern = pattern;
 	}
 
 	public AddToSVNIgnoreOperation(IResourceProvider provider, int ignoreType, String pattern) {
-		super("Operation.AddToSVNIgnore", provider);
+		super("Operation_AddToSVNIgnore", provider); //$NON-NLS-1$
 		
 		this.ignoreType = ignoreType;
 		this.pattern = pattern;
@@ -83,7 +83,7 @@ public class AddToSVNIgnoreOperation extends AbstractWorkingCopyOperation {
 	
 	public static void changeIgnoreProperty(ISVNConnector proxy, int ignoreType, String pattern, String path, String name) throws Exception {
 		SVNProperty data = proxy.getProperty(new SVNEntryRevisionReference(path), BuiltIn.IGNORE, new SVNNullProgressMonitor());
-		String ignoreValue = data == null ? "" : data.value;
+		String ignoreValue = data == null ? "" : data.value; //$NON-NLS-1$
 		String mask = null;
 		switch (ignoreType) {
 			case ISVNStorage.IGNORE_NAME: {
@@ -91,9 +91,9 @@ public class AddToSVNIgnoreOperation extends AbstractWorkingCopyOperation {
 				break;
 			}
 			case ISVNStorage.IGNORE_EXTENSION: {
-			    String extension = new Path(path + "/" +name).getFileExtension();
+			    String extension = new Path(path + "/" +name).getFileExtension(); //$NON-NLS-1$
 			    if (extension != null) {
-					mask = "*." + extension;
+					mask = "*." + extension; //$NON-NLS-1$
 			    }
 				break;
 			}
@@ -110,7 +110,7 @@ public class AddToSVNIgnoreOperation extends AbstractWorkingCopyOperation {
 	    if (mask == null || mask.length() == 0) {
 	        return ignore;
 	    }
-		StringTokenizer tok = new StringTokenizer(ignore, "\n", false);
+		StringTokenizer tok = new StringTokenizer(ignore, "\n", false); //$NON-NLS-1$
 		boolean found = false;
 		while (tok.hasMoreTokens()) {
 			if (tok.nextToken().equals(mask)) {
@@ -119,7 +119,7 @@ public class AddToSVNIgnoreOperation extends AbstractWorkingCopyOperation {
 			}
 		}
 		
-		return found ? ignore : (ignore + (ignore.length() > 0 ? "\n" : "") + mask);
+		return found ? ignore : (ignore + (ignore.length() > 0 ? "\n" : "") + mask); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 }

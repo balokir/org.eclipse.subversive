@@ -24,7 +24,7 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
  */
 public class SaveRepositoryLocationsOperation extends AbstractActionOperation {
 	public SaveRepositoryLocationsOperation() {
-		super("Operation.SaveRepositoryLocations");
+		super(Messages.getString("SaveRepositoryLocationsOperation.0")); //$NON-NLS-1$
 	}
 	
 	public int getOperationWeight() {

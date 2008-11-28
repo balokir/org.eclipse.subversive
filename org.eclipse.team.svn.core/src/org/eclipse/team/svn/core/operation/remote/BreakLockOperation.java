@@ -32,7 +32,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class BreakLockOperation extends AbstractRepositoryOperation {
 	public BreakLockOperation(IRepositoryResource []resources) {
-		super("Operation.BreakLock", resources);
+		super("Operation_BreakLock", resources); //$NON-NLS-1$
 	}
 
 	protected void runImpl(final IProgressMonitor monitor) throws Exception {
@@ -48,11 +48,11 @@ public class BreakLockOperation extends AbstractRepositoryOperation {
 
 			this.complexWriteToConsole(new Runnable() {
 				public void run() {
-					BreakLockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn unlock");
+					BreakLockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn unlock"); //$NON-NLS-1$
 					for (int i = 0; i < paths.length && !monitor.isCanceled(); i++) {
-						BreakLockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " \"" + SVNUtility.decodeURL(paths[i]) + "\"");
+						BreakLockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " \"" + SVNUtility.decodeURL(paths[i]) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 					}
-					BreakLockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " --force" + FileUtility.getUsernameParam(location.getUsername()) + "\n");
+					BreakLockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " --force" + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			});
 			

@@ -27,7 +27,7 @@ public class GetAllResourcesOperation extends AbstractActionOperation {
 	protected IResource []children;
 
 	public GetAllResourcesOperation(IContainer container) {
-		super("Operation.GetResourceList");
+		super("Operation_GetResourceList"); //$NON-NLS-1$
 		this.container = container;
 		this.children = new IResource[0];
 	}

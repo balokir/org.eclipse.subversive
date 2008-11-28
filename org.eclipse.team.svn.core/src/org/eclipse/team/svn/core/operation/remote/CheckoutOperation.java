@@ -40,7 +40,7 @@ public class CheckoutOperation extends AbstractActionOperation implements IResou
 	}
 
 	public CheckoutOperation(Map<String, IRepositoryResource> checkoutMap, boolean respectHierarchy, String location, int recureDepth, boolean ignoreExternals) {
-		super("Operation.CheckOut");
+		super("Operation_CheckOut"); //$NON-NLS-1$
 		
 		ArrayList<IProject> projects = new ArrayList<IProject>();
 		ArrayList<CheckoutAsOperation> operations = new ArrayList<CheckoutAsOperation>();

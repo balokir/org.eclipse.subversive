@@ -44,7 +44,7 @@ public class GetPropertiesOperation extends AbstractActionOperation implements I
 	}
 	
 	public GetPropertiesOperation(IResource resource, SVNRevision revision) {
-		super("Operation.GetProperties");
+		super("Operation_GetProperties"); //$NON-NLS-1$
 		this.resource = resource;
 		this.revision = revision;
 	}

@@ -271,19 +271,19 @@ public class SVNRevision {
 	 */
 	public static SVNRevision fromString(String revisionString) {
 		revisionString = revisionString.toUpperCase();
-		if ("BASE".equals(revisionString)) {
+		if ("BASE".equals(revisionString)) { //$NON-NLS-1$
 			return SVNRevision.BASE;
 		}
-		if ("WORKING".equals(revisionString)) {
+		if ("WORKING".equals(revisionString)) { //$NON-NLS-1$
 			return SVNRevision.WORKING;
 		}
-		if ("COMMITTED".equals(revisionString)) {
+		if ("COMMITTED".equals(revisionString)) { //$NON-NLS-1$
 			return SVNRevision.COMMITTED;
 		}
-		if ("HEAD".equals(revisionString)) {
+		if ("HEAD".equals(revisionString)) { //$NON-NLS-1$
 			return SVNRevision.HEAD;
 		}
-		if ("PREVIOUS".equals(revisionString)) {
+		if ("PREVIOUS".equals(revisionString)) { //$NON-NLS-1$
 			return SVNRevision.PREVIOUS;
 		}
 		try {
@@ -314,22 +314,22 @@ public class SVNRevision {
 	public String toString() {
 		switch (this.revKind) {
 			case Kind.BASE: {
-				return "BASE";
+				return "BASE"; //$NON-NLS-1$
 			}
 			case Kind.COMMITTED: {
-				return "COMMITTED";
+				return "COMMITTED"; //$NON-NLS-1$
 			}
 			case Kind.HEAD: {
-				return "HEAD";
+				return "HEAD"; //$NON-NLS-1$
 			}
 			case Kind.PREVIOUS: {
-				return "PREV";
+				return "PREV"; //$NON-NLS-1$
 			}
 			case Kind.WORKING: {
-				return "WORKING";
+				return "WORKING"; //$NON-NLS-1$
 			}
 		}
-		return "UNSPECIFIED";
+		return "UNSPECIFIED"; //$NON-NLS-1$
 	}
 
 	public int hashCode() {

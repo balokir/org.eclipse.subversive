@@ -47,12 +47,12 @@ public class RelocateWorkingCopyOperation extends AbstractWorkingCopyOperation i
 	protected List<IProject> resources;
 
 	public RelocateWorkingCopyOperation(IResource []resources, IRepositoryLocation location) {
-		super("Operation.RelocateResources", resources);
+		super("Operation_RelocateResources", resources); //$NON-NLS-1$
 		this.location = location;
 	}
 	
 	public RelocateWorkingCopyOperation(IResourceProvider provider, IRepositoryLocation location) {
-		super("Operation.RelocateResources", provider);
+		super("Operation_RelocateResources", provider); //$NON-NLS-1$
 		this.location = location;
 	}
 
@@ -89,7 +89,7 @@ public class RelocateWorkingCopyOperation extends AbstractWorkingCopyOperation i
 								String url = SVNUtility.decodeURL(st.url);
 								String oldRoot = SVNUtility.getOldRoot(url, children);
 								if (oldRoot != null) {
-									RelocateWorkingCopyOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn switch --relocate \"" + oldRoot + "\" \"" + rootUrl + "\" \"" + FileUtility.normalizePath(path) + "\"" + FileUtility.getUsernameParam(RelocateWorkingCopyOperation.this.location.getUsername()) + "\n");
+									RelocateWorkingCopyOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn switch --relocate \"" + oldRoot + "\" \"" + rootUrl + "\" \"" + FileUtility.normalizePath(path) + "\"" + FileUtility.getUsernameParam(RelocateWorkingCopyOperation.this.location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 									proxy.relocate(oldRoot, rootUrl, path, Depth.INFINITY, new SVNProgressMonitor(RelocateWorkingCopyOperation.this, monitor, null));
 									provider.relocateResource();
 									RelocateWorkingCopyOperation.this.resources.add(current);

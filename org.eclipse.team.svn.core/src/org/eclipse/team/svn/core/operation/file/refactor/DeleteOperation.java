@@ -33,11 +33,11 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
  */
 public class DeleteOperation extends AbstractFileOperation {
 	public DeleteOperation(File []files) {
-		super("Operation.DeleteFile", files);
+		super("Operation_DeleteFile", files); //$NON-NLS-1$
 	}
 
 	public DeleteOperation(IFileProvider provider) {
-		super("Operation.DeleteFile", provider);
+		super("Operation_DeleteFile", provider); //$NON-NLS-1$
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
@@ -55,8 +55,8 @@ public class DeleteOperation extends AbstractFileOperation {
 				final ISVNConnector proxy = location.acquireSVNProxy();
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(IProgressMonitor monitor) throws Exception {
-						DeleteOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn delete \"" + FileUtility.normalizePath(current.getAbsolutePath()) + "\" --force\n");
-						proxy.remove(new String[] {current.getAbsolutePath()}, "", ISVNConnector.Options.FORCE, null, new SVNProgressMonitor(DeleteOperation.this, monitor, null));
+						DeleteOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn delete \"" + FileUtility.normalizePath(current.getAbsolutePath()) + "\" --force\n"); //$NON-NLS-1$ //$NON-NLS-2$
+						proxy.remove(new String[] {current.getAbsolutePath()}, "", ISVNConnector.Options.FORCE, null, new SVNProgressMonitor(DeleteOperation.this, monitor, null)); //$NON-NLS-1$
 					}
 				}, monitor, files.length);
 				location.releaseSVNProxy(proxy);

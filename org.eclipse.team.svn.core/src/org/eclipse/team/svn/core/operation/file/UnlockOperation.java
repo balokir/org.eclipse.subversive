@@ -33,11 +33,11 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class UnlockOperation extends AbstractFileOperation {
 	public UnlockOperation(File []files) {
-		super("Operation.UnlockFile", files);
+		super("Operation_UnlockFile", files); //$NON-NLS-1$
 	}
 
 	public UnlockOperation(IFileProvider provider) {
-		super("Operation.UnlockFile", provider);
+		super("Operation_UnlockFile", provider); //$NON-NLS-1$
 	}
 
 	protected void runImpl(final IProgressMonitor monitor) throws Exception {
@@ -54,11 +54,11 @@ public class UnlockOperation extends AbstractFileOperation {
 
 			this.complexWriteToConsole(new Runnable() {
 				public void run() {
-					UnlockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn unlock");
+					UnlockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn unlock"); //$NON-NLS-1$
 					for (int i = 0; i < paths.length && !monitor.isCanceled(); i++) {
-						UnlockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " \"" + paths[i] + "\"");
+						UnlockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " \"" + paths[i] + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 					}
-					UnlockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " --force" + FileUtility.getUsernameParam(location.getUsername()) + "\n");
+					UnlockOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " --force" + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			});
 			

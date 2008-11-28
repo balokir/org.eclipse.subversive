@@ -25,11 +25,11 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
  */
 public class ClearLocalStatusesOperation extends AbstractWorkingCopyOperation {
 	public ClearLocalStatusesOperation(IResource[] resources) {
-		super("Operation.ClearLocalStatuses", resources);
+		super("Operation_ClearLocalStatuses", resources); //$NON-NLS-1$
 	}
 
 	public ClearLocalStatusesOperation(IResourceProvider provider) {
-		super("Operation.ClearLocalStatuses", provider);
+		super("Operation_ClearLocalStatuses", provider); //$NON-NLS-1$
 	}
 
 	public ISchedulingRule getSchedulingRule() {

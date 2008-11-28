@@ -40,7 +40,7 @@ public class BranchTagOperation extends AbstractRepositoryOperation implements I
 	protected ArrayList<RevisionPair> revisionsPairs;
 
 	public BranchTagOperation(String operationName, IRepositoryResource []resources, IRepositoryResource destination, String message) {
-		super("Operation." + operationName, resources);
+		super("Operation_" + operationName, resources); //$NON-NLS-1$
 		this.destinationUrl = destination.getUrl();
 		this.message = message;
 	}
@@ -72,7 +72,7 @@ public class BranchTagOperation extends AbstractRepositoryOperation implements I
 				
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(IProgressMonitor monitor) throws Exception {
-						BranchTagOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn copy \"" + current.getUrl() + "\" \"" + BranchTagOperation.this.destinationUrl + "\" -r " + current.getSelectedRevision() + " -m \"" + BranchTagOperation.this.message + "\"" + FileUtility.getUsernameParam(current.getRepositoryLocation().getUsername()) + "\n");
+						BranchTagOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn copy \"" + current.getUrl() + "\" \"" + BranchTagOperation.this.destinationUrl + "\" -r " + current.getSelectedRevision() + " -m \"" + BranchTagOperation.this.message + "\"" + FileUtility.getUsernameParam(current.getRepositoryLocation().getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 						SVNEntryRevisionReference []src = new SVNEntryRevisionReference[] {new SVNEntryRevisionReference(SVNUtility.encodeURL(current.getUrl()), current.getPegRevision(), current.getSelectedRevision())};
 						proxy.copy(src, url2, BranchTagOperation.this.message, ISVNConnector.Options.INTERPRET_AS_CHILD, null, new SVNProgressMonitor(BranchTagOperation.this, monitor, null));
 					}

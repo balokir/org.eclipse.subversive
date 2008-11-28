@@ -42,11 +42,11 @@ public class FreezeExternalsOperation extends AbstractWorkingCopyOperation imple
 	protected ArrayList<ResourceChange> changes = new ArrayList<ResourceChange>();
 	
 	public FreezeExternalsOperation(IResource[] resources) {
-		super("Operation.FreezeExternals", resources);
+		super("Operation_FreezeExternals", resources); //$NON-NLS-1$
 	}
 
 	public FreezeExternalsOperation(IResourceProvider provider) {
-		super("Operation.FreezeExternals", provider);
+		super("Operation_FreezeExternals", provider); //$NON-NLS-1$
 	}
 	
 	public IResource []getResources() {
@@ -102,18 +102,18 @@ public class FreezeExternalsOperation extends AbstractWorkingCopyOperation imple
 		
 		protected void processExternals(ResourceChange change, SVNProperty property, IActionOperationProcessor processor, IProgressMonitor monitor) throws Exception {
 			// process externals
-			String newValue = "";
-			StringTokenizer tok = new StringTokenizer(property.value, "\n\r", false);
+			String newValue = ""; //$NON-NLS-1$
+			StringTokenizer tok = new StringTokenizer(property.value, "\n\r", false); //$NON-NLS-1$
 			while (tok.hasMoreTokens()) {
 				String line = tok.nextToken();
-				String []entries = line.split("\\s");
+				String []entries = line.split("\\s"); //$NON-NLS-1$
 				if (entries.length == 2) {
 					newValue += this.freezeExternal(change, entries[0], entries[1]);
 				}
 				else {
 					newValue += line;
 				}
-				newValue += "\n";
+				newValue += "\n"; //$NON-NLS-1$
 			}
 			
 			SetPropertiesOperation setOp = new SetPropertiesOperation(new IResource[] {change.getLocal().getResource()}, property.name, newValue.getBytes(), false);
@@ -123,7 +123,7 @@ public class FreezeExternalsOperation extends AbstractWorkingCopyOperation imple
 		protected String freezeExternal(ResourceChange change, String name, String url) {
 			IContainer container = (IContainer)change.getLocal().getResource();
 			ILocalResource local = SVNRemoteStorage.instance().asLocalResourceAccessible(container.findMember(name));
-			return name + "\t-r" + local.getBaseRevision() + "\t" + url;
+			return name + "\t-r" + local.getBaseRevision() + "\t" + url; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 	}

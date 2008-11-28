@@ -52,7 +52,7 @@ public class GetMultiPropertiesOperation extends AbstractActionOperation impleme
 	 * 		If null then all the properties will be computed for the resources.
 	 */
 	public GetMultiPropertiesOperation(IResource []resources, int depth, IStateFilter filter, String propertyName) {
-		super("Operation.GetMultiProperties");
+		super("Operation_GetMultiProperties"); //$NON-NLS-1$
 		this.resources = resources;
 		this.propertyName = propertyName;
 		this.filter = filter != null ? filter : IStateFilter.SF_VERSIONED;

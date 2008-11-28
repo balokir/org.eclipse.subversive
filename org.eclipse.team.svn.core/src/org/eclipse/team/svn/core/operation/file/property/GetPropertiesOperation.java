@@ -39,7 +39,7 @@ public class GetPropertiesOperation extends AbstractFileOperation {
 	}
 
 	public GetPropertiesOperation(File file, SVNRevision revision) {
-		super("Operation.GetPropertiesFile", new File[] {file});
+		super("Operation_GetPropertiesFile", new File[] {file}); //$NON-NLS-1$
 		this.revision = revision;
 	}
 

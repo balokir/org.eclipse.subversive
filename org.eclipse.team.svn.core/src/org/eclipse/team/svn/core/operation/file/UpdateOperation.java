@@ -42,13 +42,13 @@ public class UpdateOperation extends AbstractFileConflictDetectionOperation impl
 	protected SVNRevision selectedRevision;
 	
 	public UpdateOperation(File []files, SVNRevision selectedRevision, boolean updateUnresolved) {
-		super("Operation.UpdateFile", files);
+		super("Operation_UpdateFile", files); //$NON-NLS-1$
 		this.updateUnresolved = updateUnresolved;
 		this.selectedRevision = selectedRevision;
 	}
 
 	public UpdateOperation(IFileProvider provider, SVNRevision selectedRevision, boolean updateUnresolved) {
-		super("Operation.UpdateFile", provider);
+		super("Operation_UpdateFile", provider); //$NON-NLS-1$
 		this.updateUnresolved = updateUnresolved;
 		this.selectedRevision = selectedRevision;
 	}
@@ -74,11 +74,11 @@ public class UpdateOperation extends AbstractFileConflictDetectionOperation impl
 
 			this.complexWriteToConsole(new Runnable() {
 				public void run() {
-					UpdateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn update");
+					UpdateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn update"); //$NON-NLS-1$
 					for (int i = 0; i < paths.length && !monitor.isCanceled(); i++) {
-						UpdateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " \"" + paths[i] + "\"");
+						UpdateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " \"" + paths[i] + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 					}
-					UpdateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " -r " + UpdateOperation.this.selectedRevision + FileUtility.getUsernameParam(location.getUsername()) + "\n");
+					UpdateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " -r " + UpdateOperation.this.selectedRevision + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			});
 			

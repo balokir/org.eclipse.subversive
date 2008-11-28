@@ -39,7 +39,7 @@ public class CreateFileOperation extends AbstractRepositoryOperation implements 
 	protected RevisionPair []revisionPair;
 	
 	public CreateFileOperation(IRepositoryResource resource, String path, String message, String []fileNames) {
-		super("Operation.CreateFile", new IRepositoryResource[] {resource});
+		super("Operation_CreateFile", new IRepositoryResource[] {resource}); //$NON-NLS-1$
 		this.path = path;
 		this.message = message;
 		this.fileNames = fileNames;
@@ -70,9 +70,9 @@ public class CreateFileOperation extends AbstractRepositoryOperation implements 
 				final String []currentFile = new String[] {this.fileNames[i]};
 				this.protectStep(new IUnprotectedOperation() {
 					public void run(IProgressMonitor monitor) throws Exception {
-						String path = FileUtility.normalizePath(CreateFileOperation.this.path + "/" + currentFile[0]);
-						String url = resource.getUrl() + "/" + currentFile[0];
-						CreateFileOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn import \"" + path + "\" \"" + url + "\" -m \"" + CreateFileOperation.this.message + "\"" + FileUtility.getUsernameParam(location.getUsername()) + " -N\n");
+						String path = FileUtility.normalizePath(CreateFileOperation.this.path + "/" + currentFile[0]); //$NON-NLS-1$
+						String url = resource.getUrl() + "/" + currentFile[0]; //$NON-NLS-1$
+						CreateFileOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn import \"" + path + "\" \"" + url + "\" -m \"" + CreateFileOperation.this.message + "\"" + FileUtility.getUsernameParam(location.getUsername()) + " -N\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 						proxy.doImport(path, 
 								SVNUtility.encodeURL(url), 
 								CreateFileOperation.this.message, 

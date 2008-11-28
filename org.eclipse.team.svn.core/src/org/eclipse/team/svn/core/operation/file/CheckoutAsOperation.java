@@ -33,7 +33,7 @@ public class CheckoutAsOperation extends AbstractFileOperation {
 	protected boolean override;
 
 	public CheckoutAsOperation(File to, IRepositoryResource resource, int recureDepth, boolean ignoreExternals, boolean override) {
-		super("Operation.CheckoutAsFile", new File[] {to});
+		super("Operation_CheckoutAsFile", new File[] {to}); //$NON-NLS-1$
 		this.resource = resource;
 		this.recureDepth = recureDepth;
 		this.ignoreExternals = ignoreExternals;

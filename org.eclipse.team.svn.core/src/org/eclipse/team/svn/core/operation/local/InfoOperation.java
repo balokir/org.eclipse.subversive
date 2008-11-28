@@ -42,7 +42,7 @@ public class InfoOperation extends AbstractActionOperation {
     protected SVNEntryInfo info;
 
     public InfoOperation(IResource resource) {
-        super("Operation.Info");
+        super("Operation_Info"); //$NON-NLS-1$
         this.resource = resource;
     }
 

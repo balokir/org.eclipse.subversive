@@ -30,7 +30,7 @@ public class RestoreExternalsOperation extends AbstractWorkingCopyOperation impl
 	protected FreezeExternalsOperation freezeOp;
 
 	public RestoreExternalsOperation(FreezeExternalsOperation freezeOp) {
-		super("Operation.RestoreExternals", freezeOp);
+		super("Operation_RestoreExternals", freezeOp); //$NON-NLS-1$
 		this.freezeOp = freezeOp;
 	}
 

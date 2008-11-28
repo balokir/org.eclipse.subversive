@@ -26,7 +26,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
  */
 public class MoveResourcesOperation extends AbstractCopyMoveResourcesOperation {
 	public MoveResourcesOperation(IRepositoryResource destinationResource, IRepositoryResource[] selectedResources, String message, String name) {
-		super("Operation.MoveRemote", destinationResource, selectedResources, message, name);
+		super("Operation_MoveRemote", destinationResource, selectedResources, message, name); //$NON-NLS-1$
 	}
 	
 	protected String[] getRevisionPaths(String srcUrl, String dstUrl) {

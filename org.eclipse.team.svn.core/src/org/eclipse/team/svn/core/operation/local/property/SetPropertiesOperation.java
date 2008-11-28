@@ -41,19 +41,19 @@ public class SetPropertiesOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	public SetPropertiesOperation(IResource []resources, SVNProperty []data, boolean isRecursive) {
-		super("Operation.SetProperties", resources);
+		super("Operation_SetProperties", resources); //$NON-NLS-1$
 		this.propertyData = data;
 		this.isRecursive = isRecursive;
 	}
 	
 	public SetPropertiesOperation(IResourceProvider resourceProvider, SVNProperty []data, boolean isRecursive) {
-		super("Operation.SetProperties", resourceProvider);
+		super("Operation_SetProperties", resourceProvider); //$NON-NLS-1$
 		this.propertyData = data;
 		this.isRecursive = isRecursive;
 	}
 	
 	public SetPropertiesOperation(IResource []resources, IResourcePropertyProvider propertyProvider, boolean isRecursive) {
-		super("Operation.SetProperties", resources);
+		super("Operation_SetProperties", resources); //$NON-NLS-1$
 		this.propertyProvider = propertyProvider;
 		this.isRecursive = isRecursive;
 	}

@@ -39,7 +39,7 @@ public class ImportOperation extends AbstractRepositoryOperation implements IRev
 	protected RevisionPair []revisionPair;
 	
 	public ImportOperation(IRepositoryResource resource, String path, String message, int depth) {
-		super("Operation.Import", new IRepositoryResource[] {resource});
+		super("Operation_Import", new IRepositoryResource[] {resource}); //$NON-NLS-1$
 		this.path = path;
 		this.message = message;
 		this.depth = depth;
@@ -66,7 +66,7 @@ public class ImportOperation extends AbstractRepositoryOperation implements IRev
 		};
 		try {
 			SVNUtility.addSVNNotifyListener(proxy, notify);
-			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn import \"" + FileUtility.normalizePath(this.path) + "\" \"" + SVNUtility.getDepthArg(this.depth) + " -m \"" + this.message + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n");
+			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn import \"" + FileUtility.normalizePath(this.path) + "\" \"" + SVNUtility.getDepthArg(this.depth) + " -m \"" + this.message + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 			proxy.doImport(this.path, SVNUtility.encodeURL(resource.getUrl()), this.message, this.depth, ISVNConnector.Options.INCLUDE_IGNORED | ISVNConnector.Options.IGNORE_UNKNOWN_NODE_TYPES, null, new SVNProgressMonitor(this, monitor, null));
 		}
 		finally {

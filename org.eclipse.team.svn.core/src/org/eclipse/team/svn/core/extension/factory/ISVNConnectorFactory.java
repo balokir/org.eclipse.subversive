@@ -98,7 +98,7 @@ public interface ISVNConnectorFactory {
 			return SVNMessages.getErrorString(this.getId());
 		}
 		public String getId() {
-			return "Error_NoSVNClient";
+			return "Error_NoSVNClient"; //$NON-NLS-1$
 		}
 		public String getCompatibilityVersion() {
 			return ISVNConnectorFactory.CURRENT_COMPATIBILITY_VERSION;

@@ -31,12 +31,12 @@ public class MarkResolvedOperation extends AbstractFileOperation {
 	protected boolean recursive;
 	
 	public MarkResolvedOperation(File []files, boolean recursive) {
-		super("Operation.MarkResolvedFile", files);
+		super("Operation_MarkResolvedFile", files); //$NON-NLS-1$
 		this.recursive = recursive;
 	}
 
 	public MarkResolvedOperation(IFileProvider provider, boolean recursive) {
-		super("Operation.MarkResolvedFile", provider);
+		super("Operation_MarkResolvedFile", provider); //$NON-NLS-1$
 		this.recursive = recursive;
 	}
 

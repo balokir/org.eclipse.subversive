@@ -230,7 +230,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 		op.setOperationName(rStatusOp.getId());
 		
 		final ArrayList<IResource> changes = new ArrayList<IResource>();
-		op.add(new AbstractActionOperation("Operation.FetchChanges") {
+		op.add(new AbstractActionOperation("Operation_FetchChanges") { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				SVNEntryStatus []statuses = rStatusOp.getStatuses();
 				if (statuses != null) {
@@ -263,7 +263,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
     	protected int depth;
     	
     	public UpdateStatusOperation(IResource []resources, int depth) {
-    		super("Operation.UpdateStatus");
+    		super("Operation_UpdateStatus"); //$NON-NLS-1$
     		this.resources = resources;
     		this.depth = depth;
     	}

@@ -52,7 +52,7 @@ public class RefreshResourcesOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	public RefreshResourcesOperation(IResource []resources, int depth, int refreshType) {
-		super("Operation.RefreshResources", resources);
+		super("Operation_RefreshResources", resources); //$NON-NLS-1$
 		this.depth = depth;
 		this.refreshType = refreshType;
 	}
@@ -62,7 +62,7 @@ public class RefreshResourcesOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	public RefreshResourcesOperation(IResourceProvider provider, int depth, int refreshType) {
-		super("Operation.RefreshResources", provider);
+		super("Operation_RefreshResources", provider); //$NON-NLS-1$
 		this.depth = depth;
 		this.refreshType = refreshType;
 	}

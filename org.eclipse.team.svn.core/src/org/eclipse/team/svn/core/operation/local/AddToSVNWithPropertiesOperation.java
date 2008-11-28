@@ -33,8 +33,8 @@ import org.eclipse.team.svn.core.utility.FileUtility;
  * @author Sergiy Logvin
  */
 public class AddToSVNWithPropertiesOperation extends AddToSVNOperation {
-	protected static final String BINARY_FILE = "application/octet-stream";
-	protected static final String TEXT_FILE = "text/plain";
+	protected static final String BINARY_FILE = "application/octet-stream"; //$NON-NLS-1$
+	protected static final String TEXT_FILE = "text/plain"; //$NON-NLS-1$
 	
 	public AddToSVNWithPropertiesOperation(IResource[] resources) {
 		this(resources, false);

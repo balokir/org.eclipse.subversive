@@ -41,13 +41,13 @@ public class MoveOperation extends AbstractFileOperation {
 	protected boolean forceNonSVN;
 	
 	public MoveOperation(File []files, File localTo, boolean forceNonSVN) {
-		super("Operation.MoveFile", files);
+		super("Operation_MoveFile", files); //$NON-NLS-1$
 		this.localTo = localTo;
 		this.forceNonSVN = forceNonSVN;
 	}
 
 	public MoveOperation(IFileProvider provider, File localTo, boolean forceNonSVN) {
-		super("Operation.MoveFile", provider);
+		super("Operation_MoveFile", provider); //$NON-NLS-1$
 		this.localTo = localTo;
 		this.forceNonSVN = forceNonSVN;
 	}
@@ -92,9 +92,9 @@ public class MoveOperation extends AbstractFileOperation {
 	}
 
 	protected File getRenameTo(File what) {
-		File checked = new File(this.localTo.getAbsolutePath() + "/" + what.getName());
+		File checked = new File(this.localTo.getAbsolutePath() + "/" + what.getName()); //$NON-NLS-1$
 		if (checked.exists()) {
-			String message = this.getNationalizedString("Error.AlreadyExists");
+			String message = this.getNationalizedString("Error_AlreadyExists"); //$NON-NLS-1$
 			throw new UnreportableException(MessageFormat.format(message, new Object[] {checked.getAbsolutePath()}));
 		}
 		return checked;
