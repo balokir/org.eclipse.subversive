@@ -18,9 +18,9 @@ import java.util.Date;
 import org.eclipse.jface.text.revisions.Revision;
 import org.eclipse.jface.text.source.LineRange;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.utility.DateFormatter;
 
 /**
@@ -104,21 +104,21 @@ public class BuiltInAnnotateRevision extends Revision {
 	}
 
 	public Object getHoverInfo() {
-		String info = "<b>" + SVNTeamUIPlugin.instance().getResource("BuiltInAnnotateRevision.Revision") + " </b>" + this.id + "<br>";
+		String info = "<b>" + SVNUIMessages.BuiltInAnnotateRevision_Revision + " </b>" + this.id + "<br>";
 		if (this.author != null) {
-			info += "<b>" + SVNTeamUIPlugin.instance().getResource("BuiltInAnnotateRevision.Author") + " </b>" + this.author;
+			info += "<b>" + SVNUIMessages.BuiltInAnnotateRevision_Author + " </b>" + this.author;
 		}
 		if (this.getDateImpl() != null) {
-			info += "<br><b>" + SVNTeamUIPlugin.instance().getResource("BuiltInAnnotateRevision.Date") + " </b>" + DateFormatter.formatDate(this.getDate());
+			info += "<br><b>" + SVNUIMessages.BuiltInAnnotateRevision_Date + " </b>" + DateFormatter.formatDate(this.getDate());
 		}
 		String message = this.msg == null ? null : this.msg.message;
 		if (message != null && message.length() > 0) {
-			info += "<br><b>" + SVNTeamUIPlugin.instance().getResource("BuiltInAnnotateRevision.Message") + "</b><br>" + this.msg.message;
+			info += "<br><b>" + SVNUIMessages.BuiltInAnnotateRevision_Message + "</b><br>" + this.msg.message;
 		}
 		if (this.mergeInfoList != null) {
 			info += "<br>";
 			for (MergeInfo mergeInfo : this.mergeInfoList) {
-				info += "<br>" + SVNTeamUIPlugin.instance().getResource("BuiltInAnnotateRevision.MergedWith", new String[] {mergeInfo.line, mergeInfo.reference, mergeInfo.author, DateFormatter.formatDate(new Date(mergeInfo.date))});
+				info += "<br>" + SVNUIMessages.format(SVNUIMessages.BuiltInAnnotateRevision_MergedWith, new String[] {mergeInfo.line, mergeInfo.reference, mergeInfo.author, DateFormatter.formatDate(new Date(mergeInfo.date))});
 			}
 		}
 		return info;
@@ -134,7 +134,7 @@ public class BuiltInAnnotateRevision extends Revision {
 	}
 
 	public String getAuthor() {
-		String author = this.author == null ? SVNTeamPlugin.instance().getResource("SVNInfo.NoAuthor") : this.author;
+		String author = this.author == null ? SVNMessages.SVNInfo_NoAuthor : this.author;
 		return author + " "; // Eclipse IDE does not separate line numbers and author names 
 	}
 	

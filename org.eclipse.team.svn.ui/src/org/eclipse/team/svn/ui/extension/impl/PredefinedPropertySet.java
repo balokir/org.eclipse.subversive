@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.extension.factory.IPredefinedPropertySet;
 import org.eclipse.team.svn.ui.extension.factory.PredefinedProperty;
 
@@ -31,7 +31,7 @@ public class PredefinedPropertySet implements IPredefinedPropertySet {
 		
 		List<PredefinedProperty> properties = new ArrayList<PredefinedProperty>();
 		
-		properties.add(new PredefinedProperty(SVNTeamUIPlugin.instance().getResource("AbstractPropertyEditPanel.svn_description"), "", ""));
+		properties.add(new PredefinedProperty(SVNUIMessages.AbstractPropertyEditPanel_svn_description, "", ""));
 		properties.add(new PredefinedProperty("svn:eol-style", this.getDescription("SVN.EOL"), ""));		
 		properties.add(new PredefinedProperty("svn:executable", this.getDescription("SVN.Executable"), ""));
 		properties.add(new PredefinedProperty("svn:externals", this.getDescription("SVN.Externals"), ""));
@@ -40,7 +40,7 @@ public class PredefinedPropertySet implements IPredefinedPropertySet {
 		properties.add(new PredefinedProperty("svn:needs-lock", this.getDescription("SVN.NeedsLock"), ""));
 		properties.add(new PredefinedProperty("svn:mime-type", this.getDescription("SVN.Mimetype"), ""));
 		this.getBugtrackProperties(properties);
-		properties.add(new PredefinedProperty(SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.tsvn_description"), "", ""));
+		properties.add(new PredefinedProperty(SVNUIMessages.PropertyEditPanel_tsvn_description, "", ""));
 		properties.add(new PredefinedProperty("tsvn:logtemplate", this.getDescription("TSVN.LogTemplate"), ""));
 		properties.add(new PredefinedProperty("tsvn:logwidthmarker", this.getDescription("TSVN.LogWidthMarker"), ""));
 		properties.add(new PredefinedProperty("tsvn:logminsize", this.getDescription("TSVN.LogMinSize"), ""));
@@ -78,14 +78,14 @@ public class PredefinedPropertySet implements IPredefinedPropertySet {
 	 * @param properties
 	 */
 	protected void getBugtrackProperties(List<PredefinedProperty> properties) {
-		properties.add(new PredefinedProperty(SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.bugtraq_description"), "", ""));
-		properties.add(new PredefinedProperty("bugtraq:url", this.getDescription("Bugtraq.URL"), "%BUGID%"));
-		properties.add(new PredefinedProperty("bugtraq:logregex", this.getDescription("Bugtraq.LogRegex"), ""));
-		properties.add(new PredefinedProperty("bugtraq:label", this.getDescription("Bugtraq.Label"), ""));
-		properties.add(new PredefinedProperty("bugtraq:message", this.getDescription("Bugtraq.Message"), "%BUGID%"));
-		properties.add(new PredefinedProperty("bugtraq:number", this.getDescription("Bugtraq.Number"), ""));
-		properties.add(new PredefinedProperty("bugtraq:warnifnoissue", this.getDescription("Bugtraq.WarnIfNoIssue"), ""));
-		properties.add(new PredefinedProperty("bugtraq:append", this.getDescription("Bugtraq.Append"), ""));
+		properties.add(new PredefinedProperty(SVNUIMessages.PropertyEditPanel_bugtraq_description, "", ""));
+		properties.add(new PredefinedProperty("bugtraq:url", this.getDescription("Bugtraq_URL"), "%BUGID%"));
+		properties.add(new PredefinedProperty("bugtraq:logregex", this.getDescription("Bugtraq_LogRegex"), ""));
+		properties.add(new PredefinedProperty("bugtraq:label", this.getDescription("Bugtraq_Label"), ""));
+		properties.add(new PredefinedProperty("bugtraq:message", this.getDescription("Bugtraq_Message"), "%BUGID%"));
+		properties.add(new PredefinedProperty("bugtraq:number", this.getDescription("Bugtraq_Number"), ""));
+		properties.add(new PredefinedProperty("bugtraq:warnifnoissue", this.getDescription("Bugtraq_WarnIfNoIssue"), ""));
+		properties.add(new PredefinedProperty("bugtraq:append", this.getDescription("Bugtraq_Append"), ""));
 	}
 	
 	/**
@@ -104,7 +104,7 @@ public class PredefinedPropertySet implements IPredefinedPropertySet {
 	
 	
 	protected String getDescription(String id) {
-		return SVNTeamUIPlugin.instance().getResource("Property." + id);
+		return SVNUIMessages.getString("Property_" + id);
 	}
 	
 }

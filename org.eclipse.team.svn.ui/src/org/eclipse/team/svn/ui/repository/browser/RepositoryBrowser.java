@@ -33,6 +33,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.AbstractSVNView;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractSVNTeamAction;
 import org.eclipse.team.svn.ui.action.remote.DeleteAction;
 import org.eclipse.team.svn.ui.action.remote.OpenFileAction;
@@ -77,7 +78,7 @@ public class RepositoryBrowser extends AbstractSVNView implements ISelectionChan
 	protected RepositoryBrowserContentProvider contentProvider;
 	
 	public RepositoryBrowser() {
-		super(SVNTeamUIPlugin.instance().getResource("RepositoriesView.Browser.Description"));
+		super(SVNUIMessages.RepositoriesView_Browser_Description);
 		RepositoryBrowser.instance = this;
 	}
 	
@@ -158,13 +159,13 @@ public class RepositoryBrowser extends AbstractSVNView implements ISelectionChan
         
 		IActionBars actionBars = this.getViewSite().getActionBars();
 		IToolBarManager tbm = actionBars.getToolBarManager();
-	    Action refreshAction = new Action(SVNTeamUIPlugin.instance().getResource("SVNView.Refresh.Label")) {
+	    Action refreshAction = new Action(SVNUIMessages.SVNView_Refresh_Label) {
 			public void run() {
 				RepositoryBrowser.this.handleRefresh();
 			}
 		};
 		refreshAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/refresh.gif"));
-		refreshAction.setToolTipText(SVNTeamUIPlugin.instance().getResource("SVNView.Refresh.ToolTip"));
+		refreshAction.setToolTipText(SVNUIMessages.SVNView_Refresh_ToolTip);
 		tbm.add(refreshAction);
 		
 		this.tableViewer.getControl().addKeyListener(new KeyAdapter() {

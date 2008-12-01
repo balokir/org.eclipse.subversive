@@ -24,7 +24,7 @@ import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.verifier.AbstractFormattedVerifier;
 import org.eclipse.ui.internal.ide.misc.ContainerSelectionGroup;
 
@@ -65,10 +65,10 @@ public class SVNContainerSelectionGroup extends ContainerSelectionGroup {
     	public SVNContainerSelectionVerifier() {
             super("");
             
-            SVNContainerSelectionVerifier.ERROR_MESSAGE = SVNTeamUIPlugin.instance().getResource("SVNContainerSelectionGroup.Verifier.NotSelected");
-            SVNContainerSelectionVerifier.DESTINATION_IS_DETACHED_FROM_SVN = SVNTeamUIPlugin.instance().getResource("SVNContainerSelectionGroup.Verifier.NonSVN");
-            SVNContainerSelectionVerifier.DESTINATION_DIRECTORY_IS_DELETED = SVNTeamUIPlugin.instance().getResource("SVNContainerSelectionGroup.Verifier.Deleted");
-            SVNContainerSelectionVerifier.DESTINATION_DIRECTORY_IS_OBSTRUCTED = SVNTeamUIPlugin.instance().getResource("SVNContainerSelectionGroup.Verifier.Obstructed");
+            SVNContainerSelectionVerifier.ERROR_MESSAGE = SVNUIMessages.SVNContainerSelectionGroup_Verifier_NotSelected;
+            SVNContainerSelectionVerifier.DESTINATION_IS_DETACHED_FROM_SVN = SVNUIMessages.SVNContainerSelectionGroup_Verifier_NonSVN;
+            SVNContainerSelectionVerifier.DESTINATION_DIRECTORY_IS_DELETED = SVNUIMessages.SVNContainerSelectionGroup_Verifier_Deleted;
+            SVNContainerSelectionVerifier.DESTINATION_DIRECTORY_IS_OBSTRUCTED = SVNUIMessages.SVNContainerSelectionGroup_Verifier_Obstructed;
         }
     	
         protected String getErrorMessageImpl(Control input) {
@@ -105,7 +105,7 @@ public class SVNContainerSelectionGroup extends ContainerSelectionGroup {
     	
     	public SVNContainerCheckOutSelectionVerifier() { 
             super();
-            SVNContainerCheckOutSelectionVerifier.WARNING_MESSAGE = SVNTeamUIPlugin.instance().getResource("SVNContainerSelectionGroup.Verifier.NonSVNWarning");
+            SVNContainerCheckOutSelectionVerifier.WARNING_MESSAGE = SVNUIMessages.SVNContainerSelectionGroup_Verifier_NonSVNWarning;
         }
     	
     	protected String getWarningMessageImpl(Control input) {

@@ -21,15 +21,15 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.decorator.IDecorationFilter;
 import org.eclipse.team.svn.ui.extension.factory.ICheckoutFactory;
 import org.eclipse.team.svn.ui.extension.factory.ICommitActionFactory;
 import org.eclipse.team.svn.ui.extension.factory.IHistoryViewFactory;
+import org.eclipse.team.svn.ui.extension.factory.IPredefinedPropertySet;
 import org.eclipse.team.svn.ui.extension.factory.IReporter;
 import org.eclipse.team.svn.ui.extension.factory.IReporterFactory;
 import org.eclipse.team.svn.ui.extension.factory.IReportingDescriptor;
-import org.eclipse.team.svn.ui.extension.factory.IPredefinedPropertySet;
 import org.eclipse.team.svn.ui.extension.factory.IShareProjectFactory;
 import org.eclipse.team.svn.ui.extension.factory.ISynchronizeViewActionContributor;
 import org.eclipse.team.svn.ui.extension.factory.IReporterFactory.ReportType;
@@ -222,7 +222,7 @@ public class ExtensionsManager {
 					retVal.add(configElements[j].createExecutableExtension("class"));
 				}
 				catch (CoreException ex) {
-				    LoggedOperation.reportError(SVNTeamUIPlugin.instance().getResource("Error.LoadUIExtension"), ex);
+				    LoggedOperation.reportError(SVNUIMessages.Error_LoadUIExtension, ex);
 				}
 			}
 		}

@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.resource.SSHSettings;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.utility.UserInputHistory;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifierProxy;
@@ -120,13 +120,13 @@ public class SSHComposite extends AbstractDynamicComposite implements IPropertie
 		sshGroup.setLayoutData(data);
 		
 		Label lblPort = new Label(sshGroup, SWT.NONE);
-		lblPort.setText(SVNTeamUIPlugin.instance().getResource("SSHComposite.Port"));
+		lblPort.setText(SVNUIMessages.SSHComposite_Port);
 		
 		this.portText = new Text(sshGroup, SWT.BORDER);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.portText.setLayoutData(data);
 		CompositeVerifier verifier = new CompositeVerifier();
-		String name = SVNTeamUIPlugin.instance().getResource("SSHComposite.Port.Verifier");
+		String name = SVNUIMessages.SSHComposite_Port_Verifier;
 		verifier.add(new NonEmptyFieldVerifier(name));
 		verifier.add(new ProxyPortVerifier(name));
 		this.portText.setText(String.valueOf(SSHSettings.SSH_PORT_DEFAULT));
@@ -142,7 +142,7 @@ public class SSHComposite extends AbstractDynamicComposite implements IPropertie
 		layout.verticalSpacing = 12;
 		passGroup.setLayout(layout);
 		passGroup.setLayoutData(data);
-		passGroup.setText(SVNTeamUIPlugin.instance().getResource("SSHComposite.Authentication"));
+		passGroup.setText(SVNUIMessages.SSHComposite_Authentication);
 		
 		Composite inner = new Composite(passGroup, SWT.NONE);
 		layout = new GridLayout();
@@ -155,7 +155,7 @@ public class SSHComposite extends AbstractDynamicComposite implements IPropertie
 		this.passwordRadioButton = new Button(inner, SWT.RADIO);
 		data = new GridData(GridData.BEGINNING);
 		this.passwordRadioButton.setLayoutData(data);
-		this.passwordRadioButton.setText(SVNTeamUIPlugin.instance().getResource("SSHComposite.Password"));
+		this.passwordRadioButton.setText(SVNUIMessages.SSHComposite_Password);
 		
 		this.passwordRadioButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
@@ -168,7 +168,7 @@ public class SSHComposite extends AbstractDynamicComposite implements IPropertie
 		this.privateKeyRadioButton = new Button(inner, SWT.RADIO);
 		data = new GridData();
 		this.privateKeyRadioButton.setLayoutData(data);
-		this.privateKeyRadioButton.setText(SVNTeamUIPlugin.instance().getResource("SSHComposite.PrivateKey"));
+		this.privateKeyRadioButton.setText(SVNUIMessages.SSHComposite_PrivateKey);
 		this.privateKeyRadioButton.setSelection(false);
 		
 		Composite groupInner = new Composite(inner, SWT.FILL);
@@ -180,7 +180,7 @@ public class SSHComposite extends AbstractDynamicComposite implements IPropertie
 		groupInner.setLayoutData(data);
 		
 		Label description = new Label(groupInner, SWT.NULL);
-		description.setText(SVNTeamUIPlugin.instance().getResource("SSHComposite.File"));
+		description.setText(SVNUIMessages.SSHComposite_File);
 		data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		description.setLayoutData(data);
 		
@@ -196,14 +196,14 @@ public class SSHComposite extends AbstractDynamicComposite implements IPropertie
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		this.privateKeyFileText.setLayoutData(data);
-		this.validationManager.attachTo(this.privateKeyFileText, new AbstractVerifierProxy(new ExistingResourceVerifier(SVNTeamUIPlugin.instance().getResource("SSHComposite.File.Verifier"), true)) {
+		this.validationManager.attachTo(this.privateKeyFileText, new AbstractVerifierProxy(new ExistingResourceVerifier(SVNUIMessages.SSHComposite_File_Verifier, true)) {
 			protected boolean isVerificationEnabled(Control input) {
 				return SSHComposite.this.privateKeyRadioButton.getSelection() && SSHComposite.this.isVisible();
 			}
 		});
 		
 		this.browseButton = new Button (privateKeyFileComposite, SWT.PUSH);
-		this.browseButton.setText(SVNTeamUIPlugin.instance().getResource("Button.Browse"));
+		this.browseButton.setText(SVNUIMessages.Button_Browse);
 		data = new GridData(GridData.HORIZONTAL_ALIGN_END);	
 		data.widthHint = DefaultDialog.computeButtonWidth(this.browseButton);
 		this.browseButton.setLayoutData(data);
@@ -220,7 +220,7 @@ public class SSHComposite extends AbstractDynamicComposite implements IPropertie
 		});
 				
 		description = new Label(groupInner, SWT.NULL);
-		description.setText(SVNTeamUIPlugin.instance().getResource("SSHComposite.Passphrase"));
+		description.setText(SVNUIMessages.SSHComposite_Passphrase);
 		data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		description.setLayoutData(data);
 		
@@ -238,7 +238,7 @@ public class SSHComposite extends AbstractDynamicComposite implements IPropertie
 		savePassphrase.setLayoutData(data);
 		
 		this.savePassphraseCheckBox = new Button(savePassphrase, SWT.CHECK);
-		this.savePassphraseCheckBox.setText(SVNTeamUIPlugin.instance().getResource("SSHComposite.SavePassphrase"));
+		this.savePassphraseCheckBox.setText(SVNUIMessages.SSHComposite_SavePassphrase);
 		
 		new SecurityWarningComposite(savePassphrase);
 	}

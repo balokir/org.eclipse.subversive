@@ -21,7 +21,7 @@ import org.eclipse.team.svn.core.operation.remote.management.AddRepositoryLocati
 import org.eclipse.team.svn.core.operation.remote.management.SaveRepositoryLocationsOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.operation.RefreshRepositoryLocationsOperation;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
@@ -55,9 +55,9 @@ public class DiscardedLocationHelper implements IResolutionHelper {
 				public void run() {
 					MessageDialog dlg = new MessageDialog(
 							UIMonitorUtility.getShell(), 
-							SVNTeamUIPlugin.instance().getResource("DiscardedLocationHelper.Dialog.Title"), 
+							SVNUIMessages.DiscardedLocationHelper_Dialog_Title, 
 							null, 
-							SVNTeamUIPlugin.instance().getResource("DiscardedLocationHelper.Dialog.Message", new String[] {project.getName(), location.getLabel()}), 
+							SVNUIMessages.format(SVNUIMessages.DiscardedLocationHelper_Dialog_Message, new String[] {project.getName(), location.getLabel()}), 
 							MessageDialog.WARNING, 
 							new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 
 							0);

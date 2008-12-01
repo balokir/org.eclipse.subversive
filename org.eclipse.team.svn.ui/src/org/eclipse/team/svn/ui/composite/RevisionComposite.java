@@ -45,7 +45,7 @@ import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.remote.GetLogMessagesOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.SVNUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.history.filter.RevisionLogEntryFilter;
 import org.eclipse.team.svn.ui.panel.common.SelectRevisionPanel;
@@ -235,7 +235,7 @@ public class RevisionComposite extends Composite {
         this.setLayout(layout);
 		
 		Group group = new Group(this, SWT.NONE);
-		group.setText(this.captions == null ? SVNTeamUIPlugin.instance().getResource(this.checkStyled ? "RevisionComposite.Revisions" : "RevisionComposite.Revision") : this.captions[0]);
+		group.setText(this.captions == null ? this.checkStyled ? SVNUIMessages.RevisionComposite_Revisions : SVNUIMessages.RevisionComposite_Revision : this.captions[0]);
 		layout = new GridLayout();
 		layout.numColumns = 3;
 		group.setLayout(layout);
@@ -244,7 +244,7 @@ public class RevisionComposite extends Composite {
 		group.setLayoutData(data);
 
 		this.headRevisionRadioButton = new Button(group, SWT.RADIO);
-		this.headRevisionRadioButton.setText(this.captions == null ? SVNTeamUIPlugin.instance().getResource(this.checkStyled ? "RevisionComposite.All" : "RevisionComposite.HeadRevision") : this.captions[1]);
+		this.headRevisionRadioButton.setText(this.captions == null ? this.checkStyled ? SVNUIMessages.RevisionComposite_All : SVNUIMessages.RevisionComposite_HeadRevision : this.captions[1]);
 		data = new GridData();
 		data.horizontalSpan = 3;
 		this.headRevisionRadioButton.setLayoutData(data);
@@ -267,7 +267,7 @@ public class RevisionComposite extends Composite {
 		
 		if (this.checkStyled) {
 			this.startFromCopyRadioButton = new Button(group, SWT.RADIO);
-			this.startFromCopyRadioButton.setText(SVNTeamUIPlugin.instance().getResource("RevisionComposite.StartFromCopy"));
+			this.startFromCopyRadioButton.setText(SVNUIMessages.RevisionComposite_StartFromCopy);
 			data = new GridData();
 			data.horizontalSpan = 3;
 			this.startFromCopyRadioButton.setLayoutData(data);
@@ -290,7 +290,7 @@ public class RevisionComposite extends Composite {
 		}
 		else {
 			this.dateTimeRadioButton = new Button(group, SWT.RADIO);
-			this.dateTimeRadioButton.setText(SVNTeamUIPlugin.instance().getResource("RevisionComposite.DateTime"));
+			this.dateTimeRadioButton.setText(SVNUIMessages.RevisionComposite_DateTime);
 			data = new GridData();
 			this.dateTimeRadioButton.setLayoutData(data);
 			this.dateTimeRadioButton.setSelection(false);
@@ -345,7 +345,7 @@ public class RevisionComposite extends Composite {
 		}
 		
 		this.changeRevisionRadioButton = new Button(group, SWT.RADIO);
-		this.changeRevisionRadioButton.setText(SVNTeamUIPlugin.instance().getResource(this.checkStyled ? "RevisionComposite.RevisionsCtrl" : "RevisionComposite.RevisionCtrl"));
+		this.changeRevisionRadioButton.setText(this.checkStyled ? SVNUIMessages.RevisionComposite_RevisionsCtrl : SVNUIMessages.RevisionComposite_RevisionCtrl);
 		
 		this.changeRevisionRadioButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -388,7 +388,7 @@ public class RevisionComposite extends Composite {
 		});
 		
 		this.changeRevisionButton = new Button(group, SWT.PUSH);
-		this.changeRevisionButton.setText(SVNTeamUIPlugin.instance().getResource("Button.Browse"));
+		this.changeRevisionButton.setText(SVNUIMessages.Button_Browse);
 		data = new GridData();
 		data.widthHint = DefaultDialog.computeButtonWidth(this.changeRevisionButton);
 		this.changeRevisionButton.setLayoutData(data);
@@ -435,7 +435,7 @@ public class RevisionComposite extends Composite {
 		});
 		if (this.checkStyled) {
 			this.reverseRevisionsButton = new Button(group, SWT.CHECK);
-			this.reverseRevisionsButton.setText(SVNTeamUIPlugin.instance().getResource("RevisionComposite.Reverse"));
+			this.reverseRevisionsButton.setText(SVNUIMessages.RevisionComposite_Reverse);
 			data = new GridData(GridData.FILL_HORIZONTAL);
 			data.horizontalSpan = 2;
 			this.reverseRevisionsButton.setLayoutData(data);

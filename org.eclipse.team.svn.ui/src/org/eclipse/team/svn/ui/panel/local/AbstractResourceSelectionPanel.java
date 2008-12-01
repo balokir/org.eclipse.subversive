@@ -18,7 +18,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.ResourceSelectionComposite;
 import org.eclipse.team.svn.ui.event.IResourceSelectionChangeListener;
 import org.eclipse.team.svn.ui.event.ResourceSelectionChangedEvent;
@@ -87,7 +87,7 @@ public abstract class AbstractResourceSelectionPanel extends AbstractDialogPanel
     			protected String getErrorMessage(Control input) {
     				IResource []selection = AbstractResourceSelectionPanel.this.getSelectedResources();
     				if (selection == null || selection.length == 0) {
-    					return SVNTeamUIPlugin.instance().getResource("ResourceSelectionComposite.Verifier.Error");
+    					return SVNUIMessages.ResourceSelectionComposite_Verifier_Error;
     				}
     				return null;
     			}

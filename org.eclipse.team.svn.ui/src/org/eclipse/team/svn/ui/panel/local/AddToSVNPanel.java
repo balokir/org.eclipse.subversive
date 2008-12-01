@@ -40,6 +40,7 @@ import org.eclipse.team.svn.core.svnstorage.ResourcesParentsProvider;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DiscardConfirmationDialog;
 import org.eclipse.team.svn.ui.panel.participant.AddToSVNPaneParticipant;
 import org.eclipse.team.svn.ui.panel.participant.BasePaneParticipant;
@@ -64,19 +65,17 @@ public class AddToSVNPanel extends AbstractResourceSelectionPanel {
     public AddToSVNPanel(IResource []resources, IResource []userSelectedResources) {
         super(resources, userSelectedResources, new String[] {IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL});
         this.actionTookEffect = false;
-        this.dialogTitle = SVNTeamUIPlugin.instance().getResource("AddToSVNPanel.Title");
+        this.dialogTitle = SVNUIMessages.AddToSVNPanel_Title;
         
         boolean isParticipantPane = this.paneParticipantHelper.isParticipantPane();
-        
-        String dialogDescriptionKey = isParticipantPane ? "AddToSVNPanel.Pane.Description" : "AddToSVNPanel.Description";        
-        this.dialogDescription = SVNTeamUIPlugin.instance().getResource(dialogDescriptionKey);
+                
+        this.dialogDescription = isParticipantPane ? SVNUIMessages.AddToSVNPanel_Pane_Description : SVNUIMessages.AddToSVNPanel_Description;        
         if (resources.length == 1) {
-        	String defaultMessageKey = isParticipantPane ? "AddToSVNPanel.Pane.Message.Single" : "AddToSVNPanel.Message.Single";
-        	this.defaultMessage = SVNTeamUIPlugin.instance().getResource(defaultMessageKey);
+        	this.defaultMessage = isParticipantPane ? SVNUIMessages.AddToSVNPanel_Pane_Message_Single : SVNUIMessages.AddToSVNPanel_Message_Single;
         }
         else {
-        	String defaultMessageKey = isParticipantPane ? "AddToSVNPanel.Pane.Message.Multi" : "AddToSVNPanel.Message.Multi";
-        	this.defaultMessage = SVNTeamUIPlugin.instance().getResource(defaultMessageKey, new String[] {String.valueOf(resources.length)});
+        	String defaultMessage = isParticipantPane ? SVNUIMessages.AddToSVNPanel_Pane_Message_Multi : SVNUIMessages.AddToSVNPanel_Message_Multi;
+        	this.defaultMessage = SVNUIMessages.format(defaultMessage, new String[] {String.valueOf(resources.length)});
         }
     }
     
@@ -91,7 +90,7 @@ public class AddToSVNPanel extends AbstractResourceSelectionPanel {
 				final IResource[] selectedResources = (IResource[])tSelection.toList().toArray(new IResource[tSelection.size()]);
 				Action tAction = null;
 				if (selectedResources.length == 1) {
-					manager.add(tAction = new Action(MessageFormat.format(SVNTeamUIPlugin.instance().getResource("AddToSVNPanel.Ignore.Single"), selectedResources[0].getName())) {
+					manager.add(tAction = new Action(MessageFormat.format(SVNUIMessages.AddToSVNPanel_Ignore_Single, selectedResources[0].getName())) {
 						public void run() {
 							CompositeOperation op = new CompositeOperation("AddToIgnore");
 							op.add(new AddToSVNIgnoreOperation(selectedResources, IRemoteStorage.IGNORE_NAME, null));
@@ -103,7 +102,7 @@ public class AddToSVNPanel extends AbstractResourceSelectionPanel {
 					String name = selectedResources[0].getName();
 					String [] parts = name.split("\\.");
 					if ((parts.length != 0)) {
-						manager.add(tAction = new Action(MessageFormat.format(SVNTeamUIPlugin.instance().getResource("AddToSVNPanel.Ignore.Single"), "*." + parts[parts.length-1])) {
+						manager.add(tAction = new Action(MessageFormat.format(SVNUIMessages.AddToSVNPanel_Ignore_Single, "*." + parts[parts.length-1])) {
 							public void run() {
 								CompositeOperation op = new CompositeOperation("AddToIgnore");
 								op.add(new AddToSVNIgnoreOperation(selectedResources, IRemoteStorage.IGNORE_EXTENSION, null));
@@ -115,7 +114,7 @@ public class AddToSVNPanel extends AbstractResourceSelectionPanel {
 					}
 				}
 				else {
-					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AddToSVNPanel.IgnoreByNames.Multiple")) {
+					manager.add(tAction = new Action(SVNUIMessages.AddToSVNPanel_IgnoreByNames_Multiple) {
 						public void run() {
 							CompositeOperation op = new CompositeOperation("AddToIgnore");
 							op.add(new AddToSVNIgnoreOperation(selectedResources, IRemoteStorage.IGNORE_NAME, null));
@@ -124,7 +123,7 @@ public class AddToSVNPanel extends AbstractResourceSelectionPanel {
 						}
 					});
 					tAction.setEnabled(tSelection.size() > 0);
-					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AddToSVNPanel.IgnoreByExtension.Multiple")) {
+					manager.add(tAction = new Action(SVNUIMessages.AddToSVNPanel_IgnoreByExtension_Multiple) {
 						public void run() {
 							CompositeOperation op = new CompositeOperation("AddToIgnore");
 							op.add(new AddToSVNIgnoreOperation(selectedResources, IRemoteStorage.IGNORE_EXTENSION, null));
@@ -135,7 +134,7 @@ public class AddToSVNPanel extends AbstractResourceSelectionPanel {
 					tAction.setEnabled(tSelection.size() > 0);
 				}
 				manager.add(new Separator());
-				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("AddToSVNPanel.Delete.Action.Lable")) {
+				manager.add(tAction = new Action(SVNUIMessages.AddToSVNPanel_Delete_Action_Lable) {
 					public void run () {
 						DiscardConfirmationDialog dialog = new DiscardConfirmationDialog(UIMonitorUtility.getShell(), selectedResources.length == 1, DiscardConfirmationDialog.MSG_RESOURCE);
 						if (dialog.open() == 0) {

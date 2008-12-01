@@ -31,7 +31,7 @@ import org.eclipse.team.internal.core.subscribers.ChangeSetManager;
 import org.eclipse.team.internal.core.subscribers.DiffChangeSet;
 import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
 import org.eclipse.team.internal.ui.synchronize.IChangeSetProvider;
-import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.mapping.SVNIncomingChangeSet;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -62,10 +62,10 @@ public class SVNIncomingChangeSetCollector extends ChangeSetManager {
 		}
 		
 		//format strings
-		String svnAuthor = SVNTeamPlugin.instance().getResource("SVNInfo.Author");
-		String svnDate = SVNTeamPlugin.instance().getResource("SVNInfo.Date");
-		String svnNoAuthor = SVNTeamPlugin.instance().getResource("SVNInfo.NoAuthor");
-		String svnNoDate = SVNTeamPlugin.instance().getResource("SVNInfo.NoDate");
+		String svnAuthor = SVNMessages.SVNInfo_Author;
+		String svnDate = SVNMessages.SVNInfo_Date;
+		String svnNoAuthor = SVNMessages.SVNInfo_NoAuthor;
+		String svnNoDate = SVNMessages.SVNInfo_NoDate;
 		//
 		
 		HashMap<Long, SVNIncomingChangeSet> sets = new HashMap<Long, SVNIncomingChangeSet>();

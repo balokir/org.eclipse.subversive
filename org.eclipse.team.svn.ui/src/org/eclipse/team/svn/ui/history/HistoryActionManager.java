@@ -64,6 +64,7 @@ import org.eclipse.team.core.history.provider.FileRevision;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.actions.CompareRevisionAction;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNDiffStatus;
@@ -112,6 +113,7 @@ import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractRepositoryTeamAction;
 import org.eclipse.team.svn.ui.action.remote.BranchTagAction;
 import org.eclipse.team.svn.ui.action.remote.CreatePatchAction;
@@ -164,7 +166,7 @@ public class HistoryActionManager {
 	
 	public static class HistoryAction extends Action {
 		protected HistoryAction(String text) {
-			super(SVNTeamUIPlugin.instance().getResource(text));
+			super(SVNUIMessages.getString(text));
 		}
 		
 		protected HistoryAction(String text, Object []args) {
@@ -172,7 +174,7 @@ public class HistoryActionManager {
 		}
 		
 		protected HistoryAction(String text, Object []args, String imageDescriptor) {
-			super(SVNTeamUIPlugin.instance().getResource(text, args));
+			super(SVNUIMessages.format(text, args));
 			this.setHoverImageDescriptor(imageDescriptor == null ? null : SVNTeamUIPlugin.instance().getImageDescriptor(imageDescriptor));
 		}
 		
@@ -182,7 +184,7 @@ public class HistoryActionManager {
 		}
 		
 		protected HistoryAction(String text, String imageDescriptor, int style) {
-			super(SVNTeamUIPlugin.instance().getResource(text), style);
+			super(SVNUIMessages.getString(text), style);
 			this.setHoverImageDescriptor(imageDescriptor == null ? null : SVNTeamUIPlugin.instance().getImageDescriptor(imageDescriptor));
 		}
 		
@@ -322,7 +324,7 @@ public class HistoryActionManager {
 			SVNLogEntry []entries = HistoryActionManager.this.view.getFullRemoteHistory();
 			boolean existsInPrevious = entries[entries.length - 1] != selection[0].getEntity() || !HistoryActionManager.this.view.isAllRemoteHistoryFetched();
 			final SVNLogEntry current = (SVNLogEntry)selection[0].getEntity();
-			String revision = HistoryActionManager.this.view.getResource() != null ? String.valueOf(current.revision) : SVNTeamUIPlugin.instance().getResource("HistoryView.HEAD");
+			String revision = HistoryActionManager.this.view.getResource() != null ? String.valueOf(current.revision) : SVNUIMessages.HistoryView_HEAD;
 			if (!containsMergeHistory) {
 				if (HistoryActionManager.this.view.getRepositoryResource() instanceof IRepositoryFile) {
 					String name = HistoryActionManager.this.view.getRepositoryResource().getName();
@@ -336,7 +338,7 @@ public class HistoryActionManager {
 					
 					//FIXME: "Open with" submenu shouldn't be hardcoded after reworking of
 					//       the HistoryView. Should be made like the RepositoriesView menu.
-					MenuManager sub = new MenuManager(SVNTeamUIPlugin.instance().getResource("HistoryView.OpenWith"), "historyOpenWithMenu");
+					MenuManager sub = new MenuManager(SVNUIMessages.HistoryView_OpenWith, "historyOpenWithMenu");
 					sub.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 					
 					sub.add(new Separator("nonDefaultTextEditors"));
@@ -348,10 +350,10 @@ public class HistoryActionManager {
 	    			}
 						
 					sub.add(new Separator("variousEditors"));
-					HistoryActionManager.this.addMenuItem(viewer, sub, SVNTeamUIPlugin.instance().getResource("HistoryView.TextEditor"), new OpenFileWithAction());
-					HistoryActionManager.this.addMenuItem(viewer, sub, SVNTeamUIPlugin.instance().getResource("HistoryView.SystemEditor"), new OpenFileWithExternalAction());
-					HistoryActionManager.this.addMenuItem(viewer, sub, SVNTeamUIPlugin.instance().getResource("HistoryView.InplaceEditor"), new OpenFileWithInplaceAction());
-					HistoryActionManager.this.addMenuItem(viewer, sub, SVNTeamUIPlugin.instance().getResource("HistoryView.DefaultEditor"), new OpenFileAction());
+					HistoryActionManager.this.addMenuItem(viewer, sub, SVNUIMessages.HistoryView_TextEditor, new OpenFileWithAction());
+					HistoryActionManager.this.addMenuItem(viewer, sub, SVNUIMessages.HistoryView_SystemEditor, new OpenFileWithExternalAction());
+					HistoryActionManager.this.addMenuItem(viewer, sub, SVNUIMessages.HistoryView_InplaceEditor, new OpenFileWithInplaceAction());
+					HistoryActionManager.this.addMenuItem(viewer, sub, SVNUIMessages.HistoryView_DefaultEditor, new OpenFileAction());
 						
 		        	manager.add(sub);
 		        	
@@ -492,7 +494,7 @@ public class HistoryActionManager {
 					tAction.setEnabled(selection.length == 1);
 				}
 				
-				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Label")) {
+				manager.add(tAction = new Action(SVNUIMessages.ExtractToAction_Label) {
 					public void run() {
 						HistoryActionManager.this.runExtractTo(selection);
 					}
@@ -501,12 +503,12 @@ public class HistoryActionManager {
 				
 				manager.add(new Separator());
 
-				String branchFrom = SVNTeamUIPlugin.instance().getResource("HistoryView.BranchFromRevision");
-				String tagFrom = SVNTeamUIPlugin.instance().getResource("HistoryView.TagFromRevision");
+				String branchFrom = SVNUIMessages.HistoryView_BranchFromRevision;
+				String tagFrom = SVNUIMessages.HistoryView_TagFromRevision;
 				if (selection.length == 1) {
 					revision = String.valueOf(((SVNLogEntry)selection[0].getEntity()).revision);
-					branchFrom = SVNTeamUIPlugin.instance().getResource("HistoryView.BranchFrom", new String[] {revision});
-					tagFrom = SVNTeamUIPlugin.instance().getResource("HistoryView.TagFrom", new String[] {revision});
+					branchFrom = SVNUIMessages.format(SVNUIMessages.HistoryView_BranchFrom, new String[] {revision});
+					tagFrom = SVNUIMessages.format(SVNUIMessages.HistoryView_TagFrom, new String[] {revision});
 				}
 				manager.add(tAction = new HistoryAction(branchFrom, "icons/common/actions/branch.gif") {
 					public void run() {
@@ -579,7 +581,7 @@ public class HistoryActionManager {
 				}
 			});
 			tAction.setEnabled(selection.length == 2);
-			manager.add(tAction = new HistoryAction("HistoryView.CompareCurrentWith", new String[] {SVNTeamUIPlugin.instance().getResource("HistoryView.RevisionLocal")}) {
+			manager.add(tAction = new HistoryAction("HistoryView.CompareCurrentWith", new String[] {SVNUIMessages.HistoryView_RevisionLocal}) {
 				public void run() {
 					HistoryActionManager.this.runCompareForLocal(selection);
 				}
@@ -711,7 +713,7 @@ public class HistoryActionManager {
 		if (item.getType() == ILogNode.TYPE_LOCAL) {
 			final SVNLocalFileRevision revision = (SVNLocalFileRevision)item.getEntity();
 		    FileDialog dlg = new FileDialog(UIMonitorUtility.getShell(), SWT.PRIMARY_MODAL | SWT.SAVE);
-			dlg.setText(SVNTeamUIPlugin.instance().getResource("ExportPanel.Title"));
+			dlg.setText(SVNUIMessages.ExportPanel_Title);
 			dlg.setFileName(revision.getName());
 			dlg.setFilterExtensions(new String[] {"*.*"});
 			final String file = dlg.open();
@@ -742,8 +744,8 @@ public class HistoryActionManager {
 		}
 		else {
 			DirectoryDialog fileDialog = new DirectoryDialog(UIMonitorUtility.getShell());
-			fileDialog.setText(SVNTeamUIPlugin.instance().getResource("ExportPanel.ExportFolder"));
-			fileDialog.setMessage(SVNTeamUIPlugin.instance().getResource("ExportPanel.ExportFolder.Msg"));
+			fileDialog.setText(SVNUIMessages.ExportPanel_ExportFolder);
+			fileDialog.setMessage(SVNUIMessages.ExportPanel_ExportFolder_Msg);
 			String path = fileDialog.open();
 			if (path != null) {
 				IRepositoryResource resource = this.traceResourceToRevision((SVNLogEntry)item.getEntity());
@@ -925,8 +927,8 @@ public class HistoryActionManager {
 	protected void runExtractTo(ILogNode [] selection) {
 		String path = null;
 		DirectoryDialog fileDialog = new DirectoryDialog(UIMonitorUtility.getShell());
-		fileDialog.setText(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Select.Title"));
-		fileDialog.setMessage(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Select.Description"));
+		fileDialog.setText(SVNUIMessages.ExtractToAction_Select_Title);
+		fileDialog.setMessage(SVNUIMessages.ExtractToAction_Select_Description);
 		path = fileDialog.open();
 		if (path == null) {
 			return;
@@ -954,7 +956,7 @@ public class HistoryActionManager {
 			IRepositoryResource remote = this.view.getRepositoryResource();
 			resource2project.put(remote.getUrl(), remote.getName());
 		}
-		CompositeOperation op = new CompositeOperation(SVNTeamPlugin.instance().getResource("Operation.ExtractTo"));
+		CompositeOperation op = new CompositeOperation(SVNMessages.Operation_ExtractTo);
 		InitExtractLogOperation logger = new InitExtractLogOperation(path);
 		FromDifferenceRepositoryResourceProvider provider = new FromDifferenceRepositoryResourceProvider(selectedLogs);
 		op.add(provider);
@@ -1045,9 +1047,9 @@ public class HistoryActionManager {
 								}
 								else {
 									MessageDialog dialog = new MessageDialog(e.getViewer().getControl().getShell(), 
-											SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.NoPreviousRevision.Title"), 
+											SVNUIMessages.AffectedPathsComposite_NoPreviousRevision_Title, 
 											null, 
-											SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.NoPreviousRevision.Message"),
+											SVNUIMessages.AffectedPathsComposite_NoPreviousRevision_Message,
 											MessageDialog.INFORMATION, 
 											new String[] {IDialogConstants.OK_LABEL}, 
 											0);
@@ -1088,7 +1090,7 @@ public class HistoryActionManager {
 					
 					//FIXME: "Open with" submenu shouldn't be hardcoded after reworking of
 					//       the HistoryView. Should be made like the RepositoriesView menu.
-					MenuManager sub = new MenuManager(SVNTeamUIPlugin.instance().getResource("HistoryView.OpenWith"), "historyOpenWithMenu");
+					MenuManager sub = new MenuManager(SVNUIMessages.HistoryView_OpenWith, "historyOpenWithMenu");
 					sub.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 					
 					sub.add(new Separator("nonDefaultTextEditors"));
@@ -1215,8 +1217,8 @@ public class HistoryActionManager {
 					}
 					manager.add(new Separator());
 					
-					String branchFrom = SVNTeamUIPlugin.instance().getResource("HistoryView.BranchFrom", new String [] {String.valueOf(HistoryActionManager.this.selectedRevision)});
-					String tagFrom = SVNTeamUIPlugin.instance().getResource("HistoryView.TagFrom", new String [] {String.valueOf(HistoryActionManager.this.selectedRevision)});
+					String branchFrom = SVNUIMessages.format(SVNUIMessages.HistoryView_BranchFrom, new String [] {String.valueOf(HistoryActionManager.this.selectedRevision)});
+					String tagFrom = SVNUIMessages.format(SVNUIMessages.HistoryView_TagFrom, new String [] {String.valueOf(HistoryActionManager.this.selectedRevision)});
 					manager.add(tAction = new HistoryAction(branchFrom, "icons/common/actions/branch.gif") {
 						public void run() {
 							FromChangedPathDataProvider provider = new FromChangedPathDataProvider(firstData, false);
@@ -1407,8 +1409,8 @@ public class HistoryActionManager {
 	
 	protected void doExport(Shell shell, IActionOperation preOp, IRepositoryResourceProvider provider) {
 		DirectoryDialog fileDialog = new DirectoryDialog(shell);
-		fileDialog.setText(SVNTeamUIPlugin.instance().getResource("ExportPanel.ExportFolder"));
-		fileDialog.setMessage(SVNTeamUIPlugin.instance().getResource("ExportPanel.ExportFolder.Msg"));
+		fileDialog.setText(SVNUIMessages.ExportPanel_ExportFolder);
+		fileDialog.setMessage(SVNUIMessages.ExportPanel_ExportFolder_Msg);
 		String path = fileDialog.open();
 		if (path != null) {
 			ExportOperation mainOp = new ExportOperation(provider, path, Depth.INFINITY);
@@ -1461,9 +1463,9 @@ public class HistoryActionManager {
 		String remoteFoundPath = this.traceUrlToRevision(rootUrl, remotePath, this.view.getCurrentRevision(), this.selectedRevision);
 		if (!remoteFoundPath.startsWith(remoteViewedResourceUrl)) {
 			MessageDialog dialog = new MessageDialog(UIMonitorUtility.getShell(), 
-					SVNTeamUIPlugin.instance().getResource("AffectedPathsActions.CantGetContent.Title"), 
+					SVNUIMessages.AffectedPathsActions_CantGetContent_Title, 
 					null, 
-					SVNTeamUIPlugin.instance().getResource("AffectedPathsActions.CantGetContent.Message"),
+					SVNUIMessages.AffectedPathsActions_CantGetContent_Message,
 					MessageDialog.INFORMATION, 
 					new String[] {IDialogConstants.OK_LABEL}, 
 					0);
@@ -1636,11 +1638,11 @@ public class HistoryActionManager {
 			}
 			
 			if (info.kind == Kind.DIR && this.filesOnly) {
-				final String message = SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.Open.Message", new String[] {SVNUtility.decodeURL(info.url)});
+				final String message = SVNUIMessages.format(SVNUIMessages.AffectedPathsComposite_Open_Message, new String[] {SVNUtility.decodeURL(info.url)});
 				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 					public void run() {
 						MessageDialog dialog = new MessageDialog(UIMonitorUtility.getDisplay().getActiveShell(), 
-								SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.Open.Title"), 
+								SVNUIMessages.AffectedPathsComposite_Open_Title, 
 								null, 
 								message,
 								MessageDialog.INFORMATION, 
@@ -1697,7 +1699,7 @@ public class HistoryActionManager {
 				retVal = this.location.asRepositoryContainer(url, false);
 			}
 			if (retVal == null) {
-				throw new RuntimeException(SVNTeamUIPlugin.instance().getResource("Error.CompareUnknownNodeKind"));
+				throw new RuntimeException(SVNUIMessages.Error_CompareUnknownNodeKind);
 			}
 			return retVal;
 		}
@@ -1722,7 +1724,7 @@ public class HistoryActionManager {
 			this.older = op.getRepositoryResources()[1];
 			SVNEntryRevisionReference refPrev = SVNUtility.getEntryRevisionReference(this.older);
 			SVNEntryRevisionReference refNext = SVNUtility.getEntryRevisionReference(this.newer);
-			ProgressMonitorUtility.setTaskInfo(monitor, this, SVNTeamPlugin.instance().getResource("Progress.Running"));
+			ProgressMonitorUtility.setTaskInfo(monitor, this, SVNMessages.Progress_Running);
 			try {
 				if (SVNUtility.useSingleReferenceSignature(refPrev, refNext)) {
 					SVNUtility.diffStatus(proxy, statusesList, refPrev, refPrev.revision, refNext.revision, Depth.INFINITY, ISVNConnector.Options.NONE, new SVNProgressMonitor(this, monitor, null, false));

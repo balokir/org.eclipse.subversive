@@ -14,7 +14,7 @@ package org.eclipse.team.svn.ui.action.remote;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -59,7 +59,7 @@ public class CreatePatchAction extends AbstractRepositoryModifyWorkspaceAction {
 				this.runScheduled(CreatePatchAction.getCreatePatchOperation(resources[0], second, wizard));
 			}
 			catch (SVNConnectorException ex) {
-				UILoggedOperation.reportError(SVNTeamPlugin.instance().getResource("Operation.CreatePatchRemote"), ex);
+				UILoggedOperation.reportError(SVNMessages.Operation_CreatePatchRemote, ex);
 			}
 		}
 	}

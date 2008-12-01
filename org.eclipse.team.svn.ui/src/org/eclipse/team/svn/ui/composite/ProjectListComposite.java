@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.utility.ArrayStructuredContentProvider;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -87,12 +87,12 @@ public class ProjectListComposite extends Composite {
 
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(SVNTeamUIPlugin.instance().getResource("ProjectListComposite.ProjectName"));
+		col.setText(SVNUIMessages.ProjectListComposite_ProjectName);
 		layout.addColumnData(new ColumnWeightData(30, true));
 		
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(SVNTeamUIPlugin.instance().getResource(this.remoteMode ? "ProjectListComposite.RepositoryLabel" : "ProjectListComposite.RepositoryURL"));
+		col.setText(this.remoteMode ? SVNUIMessages.ProjectListComposite_RepositoryLabel : SVNUIMessages.ProjectListComposite_RepositoryURL);
 		layout.addColumnData(new ColumnWeightData(70, true));
 		
 		this.tableViewer.setLabelProvider(new ITableLabelProvider() {

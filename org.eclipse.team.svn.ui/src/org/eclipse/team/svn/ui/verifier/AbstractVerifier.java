@@ -18,7 +18,7 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * Abstract field verifier implementation
@@ -85,7 +85,7 @@ public abstract class AbstractVerifier {
         else if (input instanceof Combo) {
             return ((Combo)input).getText();
         }
-        String message = SVNTeamUIPlugin.instance().getResource("Verifier.Abstract", new String[] {this.getClass().getName()});
+        String message = SVNUIMessages.format(SVNUIMessages.Verifier_Abstract, new String[] {this.getClass().getName()});
         throw new RuntimeException(message);
     }
     

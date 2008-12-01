@@ -64,7 +64,7 @@ import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.remote.CheckoutAction;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.operation.GetRemoteFolderChildrenOperation;
@@ -105,7 +105,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 	
 	public CheckoutAsWizard(IRepositoryResource []resources, IActionOperation priorOp) {
 		super();
-		this.setWindowTitle(SVNTeamUIPlugin.instance().getResource("CheckoutAsWizard.Title"));
+		this.setWindowTitle(SVNUIMessages.CheckoutAsWizard_Title);
 		this.setForcePreviousAndNextButtons(true);
 		this.resources = resources;
 		this.singleMode = this.resources.length == 1;
@@ -308,7 +308,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 	}
 	
 	protected IActionOperation getCheckoutAsFolderOperationUnshared(IContainer targetFolder, IRepositoryResource []resources, Map mappings) {
-		CompositeOperation op = new CompositeOperation(SVNTeamUIPlugin.instance().getResource("Operation.CheckoutAsFolder"));
+		CompositeOperation op = new CompositeOperation(SVNUIMessages.Operation_CheckoutAsFolder);
 		for (int i = 0; i < resources.length; i++) {
 			IPath location = FileUtility.getResourcePath(targetFolder);
 			File target = location.append((String)mappings.get(resources[i])).toFile();
@@ -326,7 +326,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 			externalsData += line;
 		}
 		
-		CompositeOperation op = new CompositeOperation(SVNTeamUIPlugin.instance().getResource("Operation.CheckoutAsFolder"));
+		CompositeOperation op = new CompositeOperation(SVNUIMessages.Operation_CheckoutAsFolder);
 		IActionOperation [] dependency = null;
 		IResource []localResources = new IResource[] {targetFolder};
 		ILocalResource localResource = SVNRemoteStorage.instance().asLocalResourceAccessible(targetFolder);

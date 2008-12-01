@@ -42,6 +42,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractRepositoryModifyWorkspaceAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
@@ -198,13 +199,13 @@ public class CheckoutAction extends AbstractRepositoryModifyWorkspaceAction {
 						boolean folder = existingFolders.keySet().contains(element);
 						
 						if (project && folder) {
-							return SVNTeamUIPlugin.instance().getResource("CheckoutAction.Type2");
+							return SVNUIMessages.CheckoutAction_Type2;
 						}
 						else if (project) {
-							return SVNTeamUIPlugin.instance().getResource("CheckoutAction.Type1");
+							return SVNUIMessages.CheckoutAction_Type1;
 						}
 						else if (folder) {
-							return SVNTeamUIPlugin.instance().getResource(new File(location + "/" + element).isDirectory() ? "CheckoutAction.Type3" : "CheckoutAction.Type4");
+							return new File(location + "/" + element).isDirectory() ? SVNUIMessages.CheckoutAction_Type3 : SVNUIMessages.CheckoutAction_Type4;
 						}
 						return "";
 					}
@@ -220,8 +221,8 @@ public class CheckoutAction extends AbstractRepositoryModifyWorkspaceAction {
 				public void removeListener(ILabelProviderListener listener) {
 				}
 			};
-			String message = SVNTeamUIPlugin.instance().getResource(existingResources.size() > 1 ? "CheckoutAction.Selection.Description.Multi" : "CheckoutAction.Selection.Description.Single");
-			ListSelectionPanel panel = new ListSelectionPanel(existingResources, contentProvider, labelProvider, message, SVNTeamUIPlugin.instance().getResource(existingResources.size() > 1 ? "CheckoutAction.Selection.Message.Multi" : "CheckoutAction.Selection.Message.Single"), SVNTeamUIPlugin.instance().getResource(existingResources.size() > 1 ? "CheckoutAction.Selection.Title.Multi" : "CheckoutAction.Selection.Title.Single"), true);
+			String message = existingResources.size() > 1 ? SVNUIMessages.CheckoutAction_Selection_Description_Multi : SVNUIMessages.CheckoutAction_Selection_Description_Single;
+			ListSelectionPanel panel = new ListSelectionPanel(existingResources, contentProvider, labelProvider, message, existingResources.size() > 1 ? SVNUIMessages.CheckoutAction_Selection_Message_Multi : SVNUIMessages.CheckoutAction_Selection_Message_Single, existingResources.size() > 1 ? SVNUIMessages.CheckoutAction_Selection_Title_Multi : SVNUIMessages.CheckoutAction_Selection_Title_Single, true);
 			if (new DefaultDialog(shell, panel).open() == 0) {
 				Object []selection = panel.getResultSelections();
 				for (int i = 0; i < selection.length; i++) {

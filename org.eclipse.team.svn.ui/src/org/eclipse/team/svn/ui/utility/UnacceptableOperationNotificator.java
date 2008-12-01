@@ -25,7 +25,7 @@ import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.local.ResourceListPanel;
 
@@ -76,23 +76,23 @@ public class UnacceptableOperationNotificator {
 					String description;
 					String defaultMessage;
 					if (oneParent && oneResource) {
-						description = SVNTeamUIPlugin.instance().getResource("UnacceptableOperation.Description.1");
-						defaultMessage = SVNTeamUIPlugin.instance().getResource("UnacceptableOperation.Message.1");
+						description = SVNUIMessages.UnacceptableOperation_Description_1;
+						defaultMessage = SVNUIMessages.UnacceptableOperation_Message_1;
 					}
 					else if (!oneParent && oneResource) {
-						description = SVNTeamUIPlugin.instance().getResource("UnacceptableOperation.Description.2");
-						defaultMessage = SVNTeamUIPlugin.instance().getResource("UnacceptableOperation.Message.2");
+						description = SVNUIMessages.UnacceptableOperation_Description_2;
+						defaultMessage = SVNUIMessages.UnacceptableOperation_Message_2;
 					}
 					else if (oneParent && !oneResource) {
-						description = SVNTeamUIPlugin.instance().getResource("UnacceptableOperation.Description.3");
-						defaultMessage = SVNTeamUIPlugin.instance().getResource("UnacceptableOperation.Message.3");
+						description = SVNUIMessages.UnacceptableOperation_Description_3;
+						defaultMessage = SVNUIMessages.UnacceptableOperation_Message_3;
 					}
 					else {
-						description = SVNTeamUIPlugin.instance().getResource("UnacceptableOperation.Description.4");
-						defaultMessage = SVNTeamUIPlugin.instance().getResource("UnacceptableOperation.Message.4");
+						description = SVNUIMessages.UnacceptableOperation_Description_4;
+						defaultMessage = SVNUIMessages.UnacceptableOperation_Message_4;
 					}
 					ResourceListPanel panel = new ResourceListPanel((IResource [])unsupportedResources.keySet().toArray(new IResource[unsupportedResources.keySet().size()]), 
-							SVNTeamUIPlugin.instance().getResource("UnacceptableOperation.Title"), description, 
+							SVNUIMessages.UnacceptableOperation_Title, description, 
 							defaultMessage, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL});
 					DefaultDialog dialog = new DefaultDialog(shell, panel);
 					if (dialog.open() != 0) {

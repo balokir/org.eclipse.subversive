@@ -27,6 +27,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -265,7 +266,7 @@ public abstract class AbstractResourceDecorator extends LabelProvider implements
 						}
 						long date = local.getLastCommitDate();
 						if (date == 0) {
-							return SVNTeamPlugin.instance().getResource("SVNInfo.NoDate");
+							return SVNMessages.SVNInfo_NoDate;
 						}
 						return DateFormatter.formatDate(date);
 					}

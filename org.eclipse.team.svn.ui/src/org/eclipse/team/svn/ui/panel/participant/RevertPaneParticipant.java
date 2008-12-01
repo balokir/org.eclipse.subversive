@@ -20,6 +20,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.panel.participant.CommitPaneParticipant.CommitPaneActionGroup;
 import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
 import org.eclipse.team.svn.ui.synchronize.action.CleanUpAction;
@@ -89,14 +90,14 @@ public class RevertPaneParticipant extends BasePaneParticipant {
 					new Separator());		
 
 	        //create patch
-	        CreatePatchFileAction patchAction = new CreatePatchFileAction(SVNTeamUIPlugin.instance().getResource("CreatePatchCommand.label"), configuration);
+	        CreatePatchFileAction patchAction = new CreatePatchFileAction(SVNUIMessages.CreatePatchCommand_label, configuration);
 	        this.appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					CommitPaneActionGroup.GROUP_SYNC_NORMAL,
 					patchAction);		        
 	        	        
 			//create branch
-			CreateBranchAction branchAction = new CreateBranchAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Branch"), configuration);
+			CreateBranchAction branchAction = new CreateBranchAction(SVNUIMessages.SynchronizeActionGroup_Branch, configuration);
 			branchAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/branch.gif"));
 			this.appendToGroup(
 						ISynchronizePageConfiguration.P_CONTEXT_MENU, 
@@ -110,7 +111,7 @@ public class RevertPaneParticipant extends BasePaneParticipant {
 					new Separator());												
 			
 			//lock
-			LockAction lockAction = new LockAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.Lock"), configuration);
+			LockAction lockAction = new LockAction(SVNUIMessages.UpdateActionGroup_Lock, configuration);
 			lockAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/lock.gif"));
 			this.appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
@@ -118,7 +119,7 @@ public class RevertPaneParticipant extends BasePaneParticipant {
 					lockAction);			
 			
 			//unlock
-			UnlockAction unlockAction = new UnlockAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.Unlock"), configuration);
+			UnlockAction unlockAction = new UnlockAction(SVNUIMessages.UpdateActionGroup_Unlock, configuration);
 			unlockAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/unlock.gif"));
 			this.appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
@@ -132,37 +133,37 @@ public class RevertPaneParticipant extends BasePaneParticipant {
 					new Separator());		
 			
 			//Compare With group 
-			this.compareWithGroup = new MenuManager(SVNTeamUIPlugin.instance().getResource("CommitPanel.CompareWith.Group"));
+			this.compareWithGroup = new MenuManager(SVNUIMessages.CommitPanel_CompareWith_Group);
 			this.appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					CommitPaneActionGroup.GROUP_SYNC_NORMAL, 
 					this.compareWithGroup);
 						
 			//compare with working copy
-			CompareWithWorkingCopyPaneAction compareWithWorkingCopyAction = new CompareWithWorkingCopyPaneAction(SVNTeamUIPlugin.instance().getResource("CompareWithWorkingCopyAction.label"), configuration);
+			CompareWithWorkingCopyPaneAction compareWithWorkingCopyAction = new CompareWithWorkingCopyPaneAction(SVNUIMessages.CompareWithWorkingCopyAction_label, configuration);
 			this.compareWithGroup.add(compareWithWorkingCopyAction);						
 			
 			//compare with latest revision
-			CompareWithLatestRevisionPaneAction compareWithLatestRevisionPaneAction = new CompareWithLatestRevisionPaneAction(SVNTeamUIPlugin.instance().getResource("CompareWithLatestRevisionAction.label"), configuration);
+			CompareWithLatestRevisionPaneAction compareWithLatestRevisionPaneAction = new CompareWithLatestRevisionPaneAction(SVNUIMessages.CompareWithLatestRevisionAction_label, configuration);
 			this.compareWithGroup.add(compareWithLatestRevisionPaneAction);			
 						
 			//compare with revision
-			CompareWithRevisionPaneAction compareWithRevisionPaneAction = new CompareWithRevisionPaneAction(SVNTeamUIPlugin.instance().getResource("CompareWithRevisionAction.label"), configuration);
+			CompareWithRevisionPaneAction compareWithRevisionPaneAction = new CompareWithRevisionPaneAction(SVNUIMessages.CompareWithRevisionAction_label, configuration);
 			this.compareWithGroup.add(compareWithRevisionPaneAction);			
 			
 			//Replace with group
-			this.replaceWithGroup = new MenuManager(SVNTeamUIPlugin.instance().getResource("CommitPanel.ReplaceWith.Group"));
+			this.replaceWithGroup = new MenuManager(SVNUIMessages.CommitPanel_ReplaceWith_Group);
 			this.appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					CommitPaneActionGroup.GROUP_SYNC_NORMAL, 
 					this.replaceWithGroup);
 			
 			//replace with latest revision
-			ReplaceWithLatestRevisionPaneAction replaceWithLatestRevisionPaneAction = new ReplaceWithLatestRevisionPaneAction(SVNTeamUIPlugin.instance().getResource("ReplaceWithLatestRevisionAction.label"), configuration);
+			ReplaceWithLatestRevisionPaneAction replaceWithLatestRevisionPaneAction = new ReplaceWithLatestRevisionPaneAction(SVNUIMessages.ReplaceWithLatestRevisionAction_label, configuration);
 			this.replaceWithGroup.add(replaceWithLatestRevisionPaneAction);
 			
 			//replace with revision
-			ReplaceWithRevisionPaneAction replaceWithRevisionPaneAction = new ReplaceWithRevisionPaneAction(SVNTeamUIPlugin.instance().getResource("ReplaceWithRevisionAction.label"), configuration);
+			ReplaceWithRevisionPaneAction replaceWithRevisionPaneAction = new ReplaceWithRevisionPaneAction(SVNUIMessages.ReplaceWithRevisionAction_label, configuration);
 			this.replaceWithGroup.add(replaceWithRevisionPaneAction);
 			
 			//separator
@@ -172,14 +173,14 @@ public class RevertPaneParticipant extends BasePaneParticipant {
 					new Separator());	
 			
 			//export
-			ExtractOutgoingToAction extractActionOutgoing = new ExtractOutgoingToAction(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Label"), configuration);
+			ExtractOutgoingToAction extractActionOutgoing = new ExtractOutgoingToAction(SVNUIMessages.ExtractToAction_Label, configuration);
 			this.appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					CommitPaneActionGroup.GROUP_SYNC_NORMAL,
 					extractActionOutgoing);	
 			
 			//cleanup
-			CleanUpAction cleanUpAction = new CleanUpAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Cleanup"), configuration);
+			CleanUpAction cleanUpAction = new CleanUpAction(SVNUIMessages.SynchronizeActionGroup_Cleanup, configuration);
 			this.appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					CommitPaneActionGroup.GROUP_SYNC_NORMAL,
@@ -192,7 +193,7 @@ public class RevertPaneParticipant extends BasePaneParticipant {
 					new Separator());		
 			
 			//delete
-			DeletePaneAction deleteAction = new DeletePaneAction(SVNTeamUIPlugin.instance().getResource("CommitPanel.Delete.Action"), configuration);
+			DeletePaneAction deleteAction = new DeletePaneAction(SVNUIMessages.CommitPanel_Delete_Action, configuration);
 			deleteAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/delete.gif"));
 			this.appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 

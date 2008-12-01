@@ -60,6 +60,7 @@ import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.local.BranchTagAction;
 import org.eclipse.team.svn.ui.action.local.CompareWithWorkingCopyAction;
 import org.eclipse.team.svn.ui.action.local.ReplaceWithLatestRevisionAction;
@@ -93,11 +94,11 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
     
     public RevertPanel(IResource[] resources, IResource[] userSelectedResources) {
         super(resources, userSelectedResources, new String[] {IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL});
-        this.dialogTitle = SVNTeamUIPlugin.instance().getResource("RevertPanel.Title");
+        this.dialogTitle = SVNUIMessages.RevertPanel_Title;
         
         boolean isParticipantPane = this.paneParticipantHelper.isParticipantPane();
-        this.dialogDescription = SVNTeamUIPlugin.instance().getResource(isParticipantPane ? "RevertPanel.Pane.Description" : "RevertPanel.Description");
-        this.defaultMessage = SVNTeamUIPlugin.instance().getResource(isParticipantPane ? "RevertPanel.Pane.Message" : "RevertPanel.Message");
+        this.dialogDescription = isParticipantPane ? SVNUIMessages.RevertPanel_Pane_Description : SVNUIMessages.RevertPanel_Description;
+        this.defaultMessage = isParticipantPane ? SVNUIMessages.RevertPanel_Pane_Message : SVNUIMessages.RevertPanel_Message;
         IResource[] nonVersionedResources = FileUtility.getResourcesRecursive(resources, IStateFilter.SF_NEW, IResource.DEPTH_ZERO);
         this.disableRemoveNonVersionedChange = nonVersionedResources.length == resources.length;
     	this.removeNonVersioned = this.disableRemoveNonVersionedChange;
@@ -130,7 +131,7 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
     	final Button removeNonVersionedButton = new Button(composite, SWT.CHECK);
     	data = new GridData();
     	removeNonVersionedButton.setLayoutData(data);
-    	removeNonVersionedButton.setText(SVNTeamUIPlugin.instance().getResource("RevertPanel.Button.RemoveNonVersioned"));
+    	removeNonVersionedButton.setText(SVNUIMessages.RevertPanel_Button_RemoveNonVersioned);
     	removeNonVersionedButton.setSelection(this.removeNonVersioned);
     	removeNonVersionedButton.setEnabled(!this.disableRemoveNonVersionedChange);
     	removeNonVersionedButton.addSelectionListener(new SelectionAdapter() {
@@ -173,10 +174,10 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 				Action tAction = null;
 
 				//Create Patch File action
-				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("CreatePatchCommand.label")) {
+				manager.add(tAction = new Action(SVNUIMessages.CreatePatchCommand_label) {
 					public void run() {
 						FileDialog dlg = new FileDialog(UIMonitorUtility.getShell(), SWT.PRIMARY_MODAL | SWT.SAVE);
-						dlg.setText(SVNTeamUIPlugin.instance().getResource("SelectPatchFilePage.SavePatchAs"));
+						dlg.setText(SVNUIMessages.SelectPatchFilePage_SavePatchAs);
 						dlg.setFileName(selectedResources[0].getName() + ".patch");
 						dlg.setFilterExtensions(new String[] {"patch", "*.*"});
 						String file = dlg.open();
@@ -189,7 +190,7 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 				tAction.setEnabled(tSelection.size() == 1 && FileUtility.checkForResourcesPresence(selectedResources, IStateFilter.SF_VERSIONED, IResource.DEPTH_ZERO));
 				
 				//Create Branch action
-				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("BranchAction.label")) {
+				manager.add(tAction = new Action(SVNUIMessages.BranchAction_label) {
 					public void run() {
 						IResource [] resources = FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_EXCLUDE_DELETED, IResource.DEPTH_INFINITE);
 						IActionOperation op = BranchTagAction.getBranchTagOperation(UIMonitorUtility.getShell(), BranchTagAction.BRANCH_ACTION, resources);
@@ -203,7 +204,7 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 				manager.add(new Separator());
 				
 				//Lock action
-				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("LockAction.label")) {
+				manager.add(tAction = new Action(SVNUIMessages.LockAction_label) {
 					public void run() {
 						boolean containsFolder = false;
 						for (int i = 0; i < selectedResources.length; i++) {
@@ -230,7 +231,7 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 				tAction.setEnabled(FileUtility.checkForResourcesPresenceRecursive(selectedResources, IStateFilter.SF_READY_TO_LOCK));
 				
 				//Unlock action
-				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("UnlockAction.label")) {
+				manager.add(tAction = new Action(SVNUIMessages.UnlockAction_label) {
 					public void run() {
 						boolean recursive = false;
 						for (int i = 0; i < selectedResources.length; i++) {
@@ -255,8 +256,8 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 				manager.add(new Separator());
 				
 				//Compare With group 
-				MenuManager subMenu = new MenuManager(SVNTeamUIPlugin.instance().getResource("CommitPanel.CompareWith.Group"));
-				subMenu.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("CompareWithWorkingCopyAction.label")) {
+				MenuManager subMenu = new MenuManager(SVNUIMessages.CommitPanel_CompareWith_Group);
+				subMenu.add(tAction = new Action(SVNUIMessages.CompareWithWorkingCopyAction_label) {
 					public void run() {
 						IResource resource = selectedResources[0];
 						ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
@@ -268,7 +269,7 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 					}
 				});
 				tAction.setEnabled(tSelection.size() == 1 && FileUtility.checkForResourcesPresence(selectedResources, CompareWithWorkingCopyAction.COMPARE_FILTER, IResource.DEPTH_ZERO));
-				subMenu.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("CompareWithLatestRevisionAction.label")) {
+				subMenu.add(tAction = new Action(SVNUIMessages.CompareWithLatestRevisionAction_label) {
 					public void run() {
 						IResource resource = selectedResources[0];
 						ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
@@ -282,7 +283,7 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 				tAction.setEnabled(tSelection.size() == 1 && 
 						(CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() == ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x || 
 						selectedResources[0].getType() == IResource.FILE) && FileUtility.checkForResourcesPresenceRecursive(selectedResources, CompareWithWorkingCopyAction.COMPARE_FILTER));
-				subMenu.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("CompareWithRevisionAction.label")) {
+				subMenu.add(tAction = new Action(SVNUIMessages.CompareWithRevisionAction_label) {
 					public void run() {
 						IResource resource = selectedResources[0];
 						ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
@@ -303,8 +304,8 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 				manager.add(subMenu);
 				
 				//Replace with group
-				subMenu = new MenuManager(SVNTeamUIPlugin.instance().getResource("CommitPanel.ReplaceWith.Group"));
-				subMenu.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("ReplaceWithLatestRevisionAction.label")) {
+				subMenu = new MenuManager(SVNUIMessages.CommitPanel_ReplaceWith_Group);
+				subMenu.add(tAction = new Action(SVNUIMessages.ReplaceWithLatestRevisionAction_label) {
 					public void run() {
 						IResource []resources = FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_ONREPOSITORY, IResource.DEPTH_ZERO);
 						IActionOperation op = ReplaceWithLatestRevisionAction.getReplaceOperation(resources, UIMonitorUtility.getShell());
@@ -314,7 +315,7 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 					}
 				});
 				tAction.setEnabled(FileUtility.checkForResourcesPresenceRecursive(selectedResources, IStateFilter.SF_ONREPOSITORY));
-				subMenu.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("ReplaceWithRevisionAction.label")) {
+				subMenu.add(tAction = new Action(SVNUIMessages.ReplaceWithRevisionAction_label) {
 					public void run() {
 						IActionOperation op = ReplaceWithRevisionAction.getReplaceOperation(selectedResources, UIMonitorUtility.getShell());
 						if (op != null) {
@@ -327,11 +328,11 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 				manager.add(new Separator());
 				
 				//Export action
-				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("ExportCommand.label")) {
+				manager.add(tAction = new Action(SVNUIMessages.ExportCommand_label) {
 					public void run() {
 						DirectoryDialog fileDialog = new DirectoryDialog(UIMonitorUtility.getShell());
-						fileDialog.setText(SVNTeamUIPlugin.instance().getResource("ExportAction.Select.Title"));
-						fileDialog.setMessage(SVNTeamUIPlugin.instance().getResource("ExportAction.Select.Description"));
+						fileDialog.setText(SVNUIMessages.ExportAction_Select_Title);
+						fileDialog.setMessage(SVNUIMessages.ExportAction_Select_Description);
 						String path = fileDialog.open();
 						if (path != null) {
 							UIMonitorUtility.doTaskScheduledDefault(new ExportOperation(FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_EXCLUDE_DELETED, IResource.DEPTH_ZERO) , path, SVNRevision.WORKING));
@@ -342,7 +343,7 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 				tAction.setEnabled(tSelection.size() > 0 && FileUtility.checkForResourcesPresence(selectedResources, IStateFilter.SF_EXCLUDE_DELETED, IResource.DEPTH_ZERO));
 				
 				//Clean-up action
-				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("CleanupCommand.label")) {
+				manager.add(tAction = new Action(SVNUIMessages.CleanupCommand_label) {
 					public void run() {
 						IResource []resources = FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_VERSIONED_FOLDERS, IResource.DEPTH_ZERO);
 						CleanupOperation mainOp = new CleanupOperation(resources);
@@ -356,7 +357,7 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 				manager.add(new Separator());
 				
 				//Delete action
-				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("CommitPanel.Delete.Action")) {
+				manager.add(tAction = new Action(SVNUIMessages.CommitPanel_Delete_Action) {
 					public void run() {
 						DiscardConfirmationDialog dialog = new DiscardConfirmationDialog(UIMonitorUtility.getShell(), selectedResources.length == 1, DiscardConfirmationDialog.MSG_RESOURCE);
 						if (dialog.open() == 0) {

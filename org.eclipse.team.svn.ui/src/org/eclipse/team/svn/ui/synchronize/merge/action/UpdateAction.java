@@ -36,7 +36,7 @@ import org.eclipse.team.svn.core.synchronize.variant.RemoteResourceVariant;
 import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.operation.ClearMergeStatusesOperation;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
 import org.eclipse.team.svn.ui.synchronize.action.ISyncStateFilter;
@@ -73,12 +73,12 @@ public class UpdateAction extends AbstractSynchronizeModelAction {
 		if (this.advancedMode) {
 			String message;
 			if (allResources.length == 1) {
-				message = SVNTeamUIPlugin.instance().getResource("AcceptAll.Message.Single");
+				message = SVNUIMessages.AcceptAll_Message_Single;
 			}
 			else {
-				message = SVNTeamUIPlugin.instance().getResource("AcceptAll.Message.Multi", new String[] {String.valueOf(allResources.length)});
+				message = SVNUIMessages.format(SVNUIMessages.AcceptAll_Message_Multi, new String[] {String.valueOf(allResources.length)});
 			}
-			MessageDialog dlg = new MessageDialog(configuration.getSite().getShell(), SVNTeamUIPlugin.instance().getResource("AcceptAll.Title"), null, message, MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 0);
+			MessageDialog dlg = new MessageDialog(configuration.getSite().getShell(), SVNUIMessages.AcceptAll_Title, null, message, MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 0);
 			if (dlg.open() != 0) {
 				return null;
 			}

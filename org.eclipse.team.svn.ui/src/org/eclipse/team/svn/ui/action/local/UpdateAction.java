@@ -22,7 +22,7 @@ import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.UpdateOperation;
 import org.eclipse.team.svn.core.svnstorage.ResourcesParentsProvider;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractRecursiveTeamAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.operation.ClearUpdateStatusesOperation;
@@ -62,7 +62,7 @@ public class UpdateAction extends AbstractRecursiveTeamAction {
 	}
 	
 	public static boolean updateMissing(Shell shell, IResource []missing) {
-		ResourceListPanel panel = new ResourceListPanel(missing, SVNTeamUIPlugin.instance().getResource("UpdateAction.List.Title"), SVNTeamUIPlugin.instance().getResource("UpdateAction.List.Description"), SVNTeamUIPlugin.instance().getResource("UpdateAction.List.Message"), new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL});
+		ResourceListPanel panel = new ResourceListPanel(missing, SVNUIMessages.UpdateAction_List_Title, SVNUIMessages.UpdateAction_List_Description, SVNUIMessages.UpdateAction_List_Message, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL});
 		panel.setShowLocalNames(true);
 		return new DefaultDialog(shell, panel).open() == 0;
 	}

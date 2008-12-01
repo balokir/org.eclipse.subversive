@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.svn.core.operation.local.management.ShareProjectOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.extension.impl.ISelectProjectNamePageData;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifier;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifierProxy;
@@ -102,8 +103,8 @@ public class SelectProjectNamePage extends AbstractVerifiedWizardPage {
 	public void setProjectsAndLocation(IProject []projects, IRepositoryLocation location) {
 		boolean multiProject = projects.length > 1;
 					
-		this.setTitle(SVNTeamUIPlugin.instance().getResource("SelectProjectNamePage.Title"));
-		this.setDescription(SVNTeamUIPlugin.instance().getResource("SelectProjectNamePage.Description"));
+		this.setTitle(SVNUIMessages.SelectProjectNamePage_Title);
+		this.setDescription(SVNUIMessages.SelectProjectNamePage_Description);
 		
 		this.simpleModeComposite.setProjectsAndLocation(projects, location, multiProject);
 		this.advancedModeComposite.setProjectsAndLocation(projects, location, multiProject);		
@@ -135,7 +136,7 @@ public class SelectProjectNamePage extends AbstractVerifiedWizardPage {
 		ModeListener modeListener = new ModeListener();
 		
 		this.simpleModeRadionButton = new Button(composite, SWT.RADIO);
-		this.simpleModeRadionButton.setText(SVNTeamUIPlugin.instance().getResource("SelectProjectNamePage.SimpleModeButton"));
+		this.simpleModeRadionButton.setText(SVNUIMessages.SelectProjectNamePage_SimpleModeButton);
 		this.simpleModeRadionButton.setSelection(true);
 		this.simpleModeRadionButton.addSelectionListener(modeListener);
 		
@@ -156,7 +157,7 @@ public class SelectProjectNamePage extends AbstractVerifiedWizardPage {
 		label.setLayoutData(gridData);
 		
 		this.advancedModeRadionButton = new Button(composite, SWT.RADIO);
-		this.advancedModeRadionButton.setText(SVNTeamUIPlugin.instance().getResource("SelectProjectNamePage.AdvancedModeButton"));
+		this.advancedModeRadionButton.setText(SVNUIMessages.SelectProjectNamePage_AdvancedModeButton);
 		layout = new GridLayout();
 		gridData = new GridData();
 		gridData.verticalIndent = 5;

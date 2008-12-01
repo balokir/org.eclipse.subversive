@@ -17,6 +17,7 @@ import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.history.data.SVNLocalFileRevision;
 import org.eclipse.team.svn.ui.utility.DateFormatter;
 
@@ -64,7 +65,7 @@ public class LocalLogNode extends AbstractLogNode {
 			case ILogNode.COLUMN_REVISION: {
 				if (this.entry.isCurrentState()) {
 					if (currentRevision != SVNRevision.INVALID_REVISION_NUMBER) {
-						return SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.CurrentRevision", new String [] {String.valueOf(currentRevision)});
+						return SVNUIMessages.format(SVNUIMessages.LogMessagesComposite_CurrentRevision, new String [] {String.valueOf(currentRevision)});
 					}
 					return "*";
 				}

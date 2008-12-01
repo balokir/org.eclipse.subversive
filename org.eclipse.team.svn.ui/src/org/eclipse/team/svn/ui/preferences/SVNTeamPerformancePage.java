@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 
@@ -44,7 +44,7 @@ public class SVNTeamPerformancePage extends AbstractSVNTeamPreferencesPage {
 	}
 	
 	public void init(IWorkbench workbench) {
-		setDescription(SVNTeamUIPlugin.instance().getResource("PerformancePreferencePage.optionsDesc"));
+		setDescription(SVNUIMessages.PerformancePreferencePage_optionsDesc);
 	}
 
 	protected void saveValues(IPreferenceStore store) {
@@ -99,7 +99,7 @@ public class SVNTeamPerformancePage extends AbstractSVNTeamPreferencesPage {
 		
 		this.computeDeepButton = new Button(composite, SWT.CHECK);
 		this.computeDeepButton.setLayoutData(new GridData());
-		this.computeDeepButton.setText(SVNTeamUIPlugin.instance().getResource("PerformancePreferencePage.computeDeep"));
+		this.computeDeepButton.setText(SVNUIMessages.PerformancePreferencePage_computeDeep);
 		this.computeDeepButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent (Event event) {
 				SVNTeamPerformancePage.this.computeDeep = SVNTeamPerformancePage.this.computeDeepButton.getSelection();
@@ -109,7 +109,7 @@ public class SVNTeamPerformancePage extends AbstractSVNTeamPreferencesPage {
 		
 		this.preciseEnablementsButton = new Button(composite, SWT.CHECK);
 		this.preciseEnablementsButton.setLayoutData(new GridData());
-		this.preciseEnablementsButton.setText(SVNTeamUIPlugin.instance().getResource("PerformancePreferencePage.preciseEnablements"));
+		this.preciseEnablementsButton.setText(SVNUIMessages.PerformancePreferencePage_preciseEnablements);
 		this.preciseEnablementsButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent (Event event) {
 				SVNTeamPerformancePage.this.preciseEnablements = SVNTeamPerformancePage.this.preciseEnablementsButton.getSelection();
@@ -119,7 +119,7 @@ public class SVNTeamPerformancePage extends AbstractSVNTeamPreferencesPage {
 		
 		this.enableCacheButton = new Button(composite, SWT.CHECK);
 		this.enableCacheButton.setLayoutData(new GridData());
-		this.enableCacheButton.setText(SVNTeamUIPlugin.instance().getResource("PerformancePreferencePage.enableCache"));
+		this.enableCacheButton.setText(SVNUIMessages.PerformancePreferencePage_enableCache);
 		this.enableCacheButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent (Event event) {
 				SVNTeamPerformancePage.this.enableCache = SVNTeamPerformancePage.this.enableCacheButton.getSelection();

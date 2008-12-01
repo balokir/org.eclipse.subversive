@@ -18,7 +18,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.CommentComposite;
 import org.eclipse.team.svn.ui.panel.common.CommentPanel;
 
@@ -38,17 +38,17 @@ public class LockPanel extends CommentPanel {
 	
 	
 	public LockPanel(boolean isFile, int minLockSize) {
-        super(SVNTeamUIPlugin.instance().getResource("LockPanel.Title"));
+        super(SVNUIMessages.LockPanel_Title);
         this.isFile = isFile;
         this.minLockSize = minLockSize;
-        this.dialogDescription = SVNTeamUIPlugin.instance().getResource("LockPanel.Description.Default");
+        this.dialogDescription = SVNUIMessages.LockPanel_Description_Default;
     }
 	
 	public LockPanel(boolean isFile, boolean needsLock, int minLockSize) {
 		this(isFile, minLockSize);
 		if (needsLock) {
-			 this.dialogDescription = SVNTeamUIPlugin.instance().getResource("LockPanel.Description.NeedsLock");
-			 this.defaultMessage = SVNTeamUIPlugin.instance().getResource("LockPanel.Message.NeedsLock");
+			 this.dialogDescription = SVNUIMessages.LockPanel_Description_NeedsLock;
+			 this.defaultMessage = SVNUIMessages.LockPanel_Message_NeedsLock;
 		}
 	}
 	
@@ -63,7 +63,7 @@ public class LockPanel extends CommentPanel {
 		group.setLayout(new GridLayout());
 		data = new GridData(GridData.FILL_BOTH);
 		group.setLayoutData(data);
-		group.setText(SVNTeamUIPlugin.instance().getResource("LockPanel.Comment"));
+		group.setText(SVNUIMessages.LockPanel_Comment);
     	this.comment = new CommentComposite(group, null, this, null, null, this.minLockSize);
 		data = new GridData(GridData.FILL_BOTH);
 		this.comment.setLayoutData(data);
@@ -75,12 +75,12 @@ public class LockPanel extends CommentPanel {
 		forcePanel.setLayout(layout);
 		
 		this.forceButton = new Button(forcePanel, SWT.CHECK);
-		this.forceButton.setText(SVNTeamUIPlugin.instance().getResource("LockPanel.Force"));
+		this.forceButton.setText(SVNUIMessages.LockPanel_Force);
 		this.forceButton.setSelection(false);
 		
 		if (!this.isFile) {
 			this.recursiveButton = new Button(forcePanel, SWT.CHECK);
-			this.recursiveButton.setText(SVNTeamUIPlugin.instance().getResource("LockPanel.Recursively"));
+			this.recursiveButton.setText(SVNUIMessages.LockPanel_Recursively);
 			this.recursiveButton.setSelection(false);
 		}
     }

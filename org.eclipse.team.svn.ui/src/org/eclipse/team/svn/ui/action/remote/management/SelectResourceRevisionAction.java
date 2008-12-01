@@ -25,7 +25,7 @@ import org.eclipse.team.svn.core.operation.remote.management.SaveRepositoryLocat
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.SVNUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractRepositoryTeamAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.operation.RefreshRepositoryLocationsOperation;
@@ -50,7 +50,7 @@ public class SelectResourceRevisionAction extends AbstractRepositoryTeamAction {
 		SVNRevision selectedRevision = null;
 		
 		if (resources.length == 1) {
-			InputRevisionPanel panel = new InputRevisionPanel(resources[0], SVNTeamUIPlugin.instance().getResource("SelectResourceRevisionAction.InputRevisionPanel.Title"));
+			InputRevisionPanel panel = new InputRevisionPanel(resources[0], SVNUIMessages.SelectResourceRevisionAction_InputRevisionPanel_Title);
 			DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
 			if (dialog.open() == Dialog.OK) {
 				selectedRevision = panel.getSelectedRevision();

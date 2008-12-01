@@ -18,7 +18,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.history.data.AffectedPathsNode;
 import org.eclipse.team.svn.ui.history.data.SVNChangedPathData;
 
@@ -31,7 +31,7 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 	protected AffectedPathsNode root;
 	
 	public void initialize(SVNChangedPathData [] affectedPaths, Collection<String> relatedPathPrefixes, Collection<String> relatedParents, long currentRevision) {
-		this.root = new AffectedPathsNode(SVNTeamUIPlugin.instance().getResource("AffectedPathsContentProvider.RootName"), null, '\0');
+		this.root = new AffectedPathsNode(SVNUIMessages.AffectedPathsContentProvider_RootName, null, '\0');
 		if (affectedPaths == null) {
 			return;
 		}

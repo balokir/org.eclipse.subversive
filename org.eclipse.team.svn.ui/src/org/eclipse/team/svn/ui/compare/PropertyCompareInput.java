@@ -51,7 +51,7 @@ import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.utility.SVNUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
@@ -121,7 +121,7 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 	protected abstract void fillMenu(IMenuManager manager, TreeSelection selection);
 	
 	protected String getRevisionPart(SVNEntryRevisionReference reference) {
-		return SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.RevisionSign", new String [] {String.valueOf(reference.revision)});
+		return SVNUIMessages.format(SVNUIMessages.ResourceCompareInput_RevisionSign, new String [] {String.valueOf(reference.revision)});
 	}
 	
 	protected Object prepareInput(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {

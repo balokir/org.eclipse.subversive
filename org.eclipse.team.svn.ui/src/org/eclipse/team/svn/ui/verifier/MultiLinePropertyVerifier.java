@@ -15,7 +15,7 @@ import java.text.MessageFormat;
 import java.util.regex.Pattern;
 
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPropsPreferencePage;
 
 /**
@@ -29,7 +29,7 @@ public class MultiLinePropertyVerifier extends AbstractFormattedVerifier {
 
 	public MultiLinePropertyVerifier(String fieldName) {
 		super(fieldName);
-		MultiLinePropertyVerifier.ERROR_MESSAGE_INVALID_FORMAT = SVNTeamUIPlugin.instance().getResource("Verifier.MultiLineProperty.Main");
+		MultiLinePropertyVerifier.ERROR_MESSAGE_INVALID_FORMAT = SVNUIMessages.Verifier_MultiLineProperty_Main;
 	}
 
 	protected String getErrorMessageImpl(Control input) {
@@ -65,32 +65,32 @@ public class MultiLinePropertyVerifier extends AbstractFormattedVerifier {
 		Pattern pattern;
 		
 		if (property.indexOf("=") != property.lastIndexOf("=")) {
-			return this.formatMainMessage(line) + " " + SVNTeamUIPlugin.instance().getResource("Verifier.MultiLineProperty.ManyEquals");
+			return this.formatMainMessage(line) + " " + SVNUIMessages.Verifier_MultiLineProperty_ManyEquals;
 		}
         
 		String[] propNameValue = property.split("=");
 		
 		if (propNameValue.length == 0 || propNameValue[0].length() == 0) {
-			return this.formatMainMessage(line) + " " + SVNTeamUIPlugin.instance().getResource("Verifier.MultiLineProperty.NameIsEmpty");
+			return this.formatMainMessage(line) + " " + SVNUIMessages.Verifier_MultiLineProperty_NameIsEmpty;
 		}
 		
         pattern = Pattern.compile("[a-zA-Z].*");
         if (!pattern.matcher(propNameValue[0]).matches()) {
-        	return this.formatMainMessage(line) + " " + SVNTeamUIPlugin.instance().getResource("Verifier.MultiLineProperty.NotALetter");
+        	return this.formatMainMessage(line) + " " + SVNUIMessages.Verifier_MultiLineProperty_NotALetter;
         }
         
         pattern = Pattern.compile("[a-zA-Z0-9:\\-_.]*");
         if (!pattern.matcher(propNameValue[0]).matches()) {
-        	return this.formatMainMessage(line) + " " + SVNTeamUIPlugin.instance().getResource("Verifier.MultiLineProperty.InvalidNameChar");
+        	return this.formatMainMessage(line) + " " + SVNUIMessages.Verifier_MultiLineProperty_InvalidNameChar;
         }
 		
         if (property.indexOf("=") != -1) {
         	if (propNameValue.length == 1 || propNameValue[1].length() == 0) {
-	        	return this.formatMainMessage(line) + " " + SVNTeamUIPlugin.instance().getResource("Verifier.MultiLineProperty.EmptyValue");
+	        	return this.formatMainMessage(line) + " " + SVNUIMessages.Verifier_MultiLineProperty_EmptyValue;
         	}
         
 	        if (propNameValue[1].indexOf(";") != -1) {
-	        	return this.formatMainMessage(line) + " " + SVNTeamUIPlugin.instance().getResource("Verifier.MultiLineProperty.InvalidValueChar");
+	        	return this.formatMainMessage(line) + " " + SVNUIMessages.Verifier_MultiLineProperty_InvalidValueChar;
 	        }
 			
         }

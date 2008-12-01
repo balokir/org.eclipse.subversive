@@ -24,6 +24,7 @@ import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.synchronize.UpdateSyncInfo;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.IResourceSelector;
 import org.eclipse.team.svn.ui.dialog.TagModifyWarningDialog;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
@@ -110,9 +111,9 @@ public class CommitActionHelper extends AbstractActionHelper {
 				
 				MessageDialogWithToggle m = MessageDialogWithToggle.openYesNoQuestion(
 						shell,
-						SVNTeamUIPlugin.instance().getResource("ConsultChangeSets.toggleDialog.title"), 
+						SVNUIMessages.ConsultChangeSets_toggleDialog_title, 
 						message, 
-						SVNTeamUIPlugin.instance().getResource("ConsultChangeSets.toggleDialog.toggleMessage"), 
+						SVNUIMessages.ConsultChangeSets_toggleDialog_toggleMessage, 
 						false /* toggle state */,
 						store,
 						SVNTeamPreferences.fullPromptName(SVNTeamPreferences.CONSULT_CHANGE_SETS_IN_COMMIT));

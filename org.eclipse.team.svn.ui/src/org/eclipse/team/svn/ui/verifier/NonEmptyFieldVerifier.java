@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.ui.verifier;
 
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * Verifier for custom fields
@@ -24,7 +24,7 @@ public class NonEmptyFieldVerifier extends AbstractFormattedVerifier {
         
     public NonEmptyFieldVerifier(String fieldName) {
         super(fieldName);
-        NonEmptyFieldVerifier.ERROR_MESSAGE = SVNTeamUIPlugin.instance().getResource("Verifier.NonEmpty", new String[] {AbstractFormattedVerifier.FIELD_NAME});
+        NonEmptyFieldVerifier.ERROR_MESSAGE = SVNUIMessages.format(SVNUIMessages.Verifier_NonEmpty, new String[] {AbstractFormattedVerifier.FIELD_NAME});
     }
     
     protected String getErrorMessageImpl(Control input) {

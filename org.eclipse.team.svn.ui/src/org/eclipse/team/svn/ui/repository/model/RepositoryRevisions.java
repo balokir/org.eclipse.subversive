@@ -22,6 +22,7 @@ import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * Repository revisions node representation 
@@ -35,7 +36,7 @@ public class RepositoryRevisions extends RepositoryFictiveNode implements IParen
 	
 	public RepositoryRevisions(IRepositoryLocation location) {
 		this.location = location;
-		RepositoryRevisions.REVISIONS_NAME = SVNTeamUIPlugin.instance().getResource("RepositoriesView.Model.Revisions");
+		RepositoryRevisions.REVISIONS_NAME = SVNUIMessages.RepositoriesView_Model_Revisions;
 	}
 	
 	public IRepositoryLocation getRepositoryLocation() {

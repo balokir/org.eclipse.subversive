@@ -35,6 +35,7 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.svnstorage.events.IRepositoriesStateChangedListener;
 import org.eclipse.team.svn.core.svnstorage.events.RepositoriesStateChangedEvent;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractSVNTeamAction;
 import org.eclipse.team.svn.ui.action.remote.DeleteAction;
 import org.eclipse.team.svn.ui.action.remote.OpenFileAction;
@@ -86,12 +87,12 @@ public class RepositoriesView extends ViewPart {
 		MenuManager menuMgr = new MenuManager();
         menuMgr.addMenuListener(new IMenuListener() {
             public void menuAboutToShow(final IMenuManager manager) {
-        		MenuManager sub = new MenuManager(SVNTeamUIPlugin.instance().getResource("RepositoriesView.New"), "addMenu");
+        		MenuManager sub = new MenuManager(SVNUIMessages.RepositoriesView_New, "addMenu");
         		sub.add(new Separator("mainGroup"));
         		sub.add(new Separator("managementGroup"));
         		sub.add(new Separator("repositoryGroup"));
         		sub.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-        		Action newRepositoryLocation = new Action(SVNTeamUIPlugin.instance().getResource("RepositoriesView.RepositoryLocation")) {
+        		Action newRepositoryLocation = new Action(SVNUIMessages.RepositoriesView_RepositoryLocation) {
 					public void run() {
 						new NewRepositoryLocationAction().run(this);
 					}
@@ -102,7 +103,7 @@ public class RepositoriesView extends ViewPart {
         		
 				manager.add(new Separator("checkoutGroup"));
                 
-        		sub = new MenuManager(SVNTeamUIPlugin.instance().getResource("RepositoriesView.OpenWith"), "openWithMenu");
+        		sub = new MenuManager(SVNUIMessages.RepositoriesView_OpenWith, "openWithMenu");
         		sub.add(new Separator("dynamicGroup"));
         		IStructuredSelection selection = (IStructuredSelection)provider.getSelection();
         		if (selection.size() == 1) {
@@ -130,7 +131,7 @@ public class RepositoriesView extends ViewPart {
                 
                 manager.add(new Separator("miscGroup"));
                 
-        		sub = new MenuManager(SVNTeamUIPlugin.instance().getResource("RepositoriesView.Refactor"), "refactorMenu");
+        		sub = new MenuManager(SVNUIMessages.RepositoriesView_Refactor, "refactorMenu");
         		sub.add(new Separator("mainGroup"));
         		sub.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
         		manager.add(sub);
@@ -141,7 +142,7 @@ public class RepositoriesView extends ViewPart {
 
                 manager.add(new Separator("importExportGroup"));
                 
-				sub = new MenuManager(SVNTeamUIPlugin.instance().getResource("RepositoriesView.CompareWith"), "compareMenu");
+				sub = new MenuManager(SVNUIMessages.RepositoriesView_CompareWith, "compareMenu");
         		sub.add(new Separator("mainGroup"));
         		sub.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
         		manager.prependToGroup("importExportGroup", sub);
@@ -177,7 +178,7 @@ public class RepositoriesView extends ViewPart {
         IToolBarManager tbm = actionBars.getToolBarManager();
         this.ddAdapter.addNavigationActions(tbm);
         Action tAction = null;
-        tbm.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("SVNView.Refresh.Label")) {
+        tbm.add(tAction = new Action(SVNUIMessages.SVNView_Refresh_Label) {
             public void run() {
                 if (RepositoriesView.this.repositoryTree.getSelection() instanceof IStructuredSelection) {
                     IStructuredSelection selection = (IStructuredSelection)RepositoriesView.this.repositoryTree.getSelection();
@@ -186,29 +187,29 @@ public class RepositoriesView extends ViewPart {
             }
         }); 
         tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/refresh.gif"));
-        tAction.setToolTipText(SVNTeamUIPlugin.instance().getResource("SVNView.Refresh.ToolTip"));
+        tAction.setToolTipText(SVNUIMessages.SVNView_Refresh_ToolTip);
         
 		tbm.add(new Separator("collapseAllGroup"));
 		
-        tbm.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("RepositoriesView.CollapseAll.Label")) {
+        tbm.add(tAction = new Action(SVNUIMessages.RepositoriesView_CollapseAll_Label) {
 			public void run() {
 			    RepositoriesView.this.repositoryTree.collapseAll();				
 			}
         }); 
         tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/collapseall.gif"));
-        tAction.setToolTipText(SVNTeamUIPlugin.instance().getResource("RepositoriesView.CollapseAll.ToolTip"));
+        tAction.setToolTipText(SVNUIMessages.RepositoriesView_CollapseAll_ToolTip);
         
 		tbm.add(new Separator("repositoryGroup"));
         
-        tbm.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("RepositoriesView.NewLocation.Label")) {
+        tbm.add(tAction = new Action(SVNUIMessages.RepositoriesView_NewLocation_Label) {
 			public void run() {
 				new NewRepositoryLocationAction().run(this);
 			}
         }); 
         tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/repositories/new_location.gif"));
-        tAction.setToolTipText(SVNTeamUIPlugin.instance().getResource("RepositoriesView.NewLocation.ToolTip"));
+        tAction.setToolTipText(SVNUIMessages.RepositoriesView_NewLocation_ToolTip);
         
-        tbm.add(this.showBrowserAction = new Action(SVNTeamUIPlugin.instance().getResource("RepositoriesView.ShowBrowser.Label"), Action.AS_CHECK_BOX) {
+        tbm.add(this.showBrowserAction = new Action(SVNUIMessages.RepositoriesView_ShowBrowser_Label, Action.AS_CHECK_BOX) {
 			public void run() {
 				if (this.isChecked()) {
 					RepositoriesView.this.showRepositoryBrowser(true);
@@ -219,7 +220,7 @@ public class RepositoriesView extends ViewPart {
 			}			
         });        
         this.showBrowserAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/repositories/browser.gif"));
-        this.showBrowserAction.setToolTipText(SVNTeamUIPlugin.instance().getResource("RepositoriesView.ShowBrowser.ToolTip"));
+        this.showBrowserAction.setToolTipText(SVNUIMessages.RepositoriesView_ShowBrowser_ToolTip);
 
         this.repositoryTree.getControl().addKeyListener(new KeyAdapter() {
         	public void keyPressed(KeyEvent event) {

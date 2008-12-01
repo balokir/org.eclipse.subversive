@@ -18,6 +18,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
 import org.eclipse.team.svn.ui.synchronize.action.ExpandAllAction;
 import org.eclipse.team.svn.ui.synchronize.update.UpdateParticipant;
@@ -87,7 +88,7 @@ public class BasePaneParticipant extends UpdateParticipant {
 					new Separator(IWorkbenchActionConstants.MB_ADDITIONS));		
 					
 			//expand all
-			ExpandAllAction expandAllAction = new ExpandAllAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.ExpandAll"), configuration, this.getVisibleRootsSelectionProvider());
+			ExpandAllAction expandAllAction = new ExpandAllAction(SVNUIMessages.SynchronizeActionGroup_ExpandAll, configuration, this.getVisibleRootsSelectionProvider());
 			expandAllAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/expandall.gif"));
 			this.appendToGroup(
 					ISynchronizePageConfiguration.P_TOOLBAR_MENU, 

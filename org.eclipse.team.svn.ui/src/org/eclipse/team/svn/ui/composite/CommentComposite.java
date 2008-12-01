@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.SpellcheckedTextProvider;
 import org.eclipse.team.svn.ui.panel.IDialogManager;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
@@ -112,12 +113,12 @@ public class CommentComposite extends Composite {
 	public CommentComposite(Composite parent, String message, IValidationManager validationManager, Set logTemplates, BugtraqModel bugtraqModel, int minLogSize, int maxLogWidth) {
 		super(parent, SWT.NONE);
 
-		CommentComposite.PREVIOUS_COMMENTS_HEADER = SVNTeamUIPlugin.instance().getResource("CommentComposite.Previous");
-		CommentComposite.PREVIOUS_COMMENTS_HINT = "    " + SVNTeamUIPlugin.instance().getResource("CommentComposite.Previous.Hint");
-		CommentComposite.TEMPLATE_HEADER = SVNTeamUIPlugin.instance().getResource("CommentComposite.Template");
-		CommentComposite.TEMPLATE_HINT = "    " + SVNTeamUIPlugin.instance().getResource("CommentComposite.Template.Hint");
-		CommentComposite.TSVN_LOGTEMPLATE_HEADER = SVNTeamUIPlugin.instance().getResource("CommentComposite.LogTemplate");
-		CommentComposite.TSVN_LOGTEMPLATE_HINT = "    " + SVNTeamUIPlugin.instance().getResource("CommentComposite.LogTemplate.Hint");
+		CommentComposite.PREVIOUS_COMMENTS_HEADER = SVNUIMessages.CommentComposite_Previous;
+		CommentComposite.PREVIOUS_COMMENTS_HINT = "    " + SVNUIMessages.CommentComposite_Previous_Hint;
+		CommentComposite.TEMPLATE_HEADER = SVNUIMessages.CommentComposite_Template;
+		CommentComposite.TEMPLATE_HINT = "    " + SVNUIMessages.CommentComposite_Template_Hint;
+		CommentComposite.TSVN_LOGTEMPLATE_HEADER = SVNUIMessages.CommentComposite_LogTemplate;
+		CommentComposite.TSVN_LOGTEMPLATE_HINT = "    " + SVNUIMessages.CommentComposite_LogTemplate_Hint;
 
 		this.message = message;
 		this.validationManager = validationManager;
@@ -191,10 +192,10 @@ public class CommentComposite extends Composite {
 						String bugId = this.getText(input);
 						if (bugId.length() > 0 && !bugId.matches(logregex)) {
 							if (CommentComposite.this.bugtraqModel.isNumber()) {
-								return SVNTeamUIPlugin.instance().getResource("CommentComposite.BugID.Verifier.Error.Number",
+								return SVNUIMessages.format(SVNUIMessages.CommentComposite_BugID_Verifier_Error_Number,
 										new String[] { CommentComposite.this.bugtraqModel.getLabel() });
 							}
-							return SVNTeamUIPlugin.instance().getResource("CommentComposite.BugID.Verifier.Error.Text",
+							return SVNUIMessages.format(SVNUIMessages.CommentComposite_BugID_Verifier_Error_Text,
 									new String[] { CommentComposite.this.bugtraqModel.getLabel(), CommentComposite.this.bugtraqModel.getLogregex()[0] });
 						}
 					}
@@ -203,7 +204,7 @@ public class CommentComposite extends Composite {
 
 				protected String getWarningMessage(Control input) {
 					if (CommentComposite.this.bugtraqModel.isWarnIfNoIssue() && this.getText(input).length() == 0) {
-						return SVNTeamUIPlugin.instance().getResource("CommentComposite.BugID.Verifier.Warning");
+						return SVNUIMessages.CommentComposite_BugID_Verifier_Warning;
 					}
 					return null;
 				}
@@ -220,11 +221,11 @@ public class CommentComposite extends Composite {
 				}
 			}
 		});
-		this.validationManager.attachTo(this.text, new CommentVerifier(SVNTeamUIPlugin.instance().getResource("CommentComposite.Comment.Verifier"), this.minLogSize));
+		this.validationManager.attachTo(this.text, new CommentVerifier(SVNUIMessages.CommentComposite_Comment_Verifier, this.minLogSize));
 
 		Label label = new Label(this, SWT.NULL);
 		label.setLayoutData(new GridData());
-		label.setText(SVNTeamUIPlugin.instance().getResource("CommentComposite.ChooseComment"));
+		label.setText(SVNUIMessages.CommentComposite_ChooseComment);
 
 		this.history = new UserInputHistory(CommentComposite.COMMENT_HISTORY_NAME, SVNTeamPreferences.getCommentTemplatesInt(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.COMMENT_SAVED_COMMENTS_COUNT_NAME));
 

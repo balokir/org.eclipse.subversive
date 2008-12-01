@@ -35,7 +35,7 @@ import org.eclipse.team.svn.core.operation.local.UpdateOperation;
 import org.eclipse.team.svn.core.svnstorage.ResourcesParentsProvider;
 import org.eclipse.team.svn.core.synchronize.UpdateSyncInfo;
 import org.eclipse.team.svn.core.utility.FileUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.operation.ClearUpdateStatusesOperation;
 import org.eclipse.team.svn.ui.operation.NotifyUnresolvedConflictOperation;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
@@ -90,12 +90,12 @@ public class UpdateAction extends AbstractSynchronizeModelAction {
 		if (this.advancedMode) {
 			String message;
 			if (resources.length == 1) {
-				message = SVNTeamUIPlugin.instance().getResource("UpdateAll.Message.Single");
+				message = SVNUIMessages.UpdateAll_Message_Single;
 			}
 			else {
-				message = SVNTeamUIPlugin.instance().getResource("UpdateAll.Message.Multi", new String[] {String.valueOf(resources.length)});
+				message = SVNUIMessages.format(SVNUIMessages.UpdateAll_Message_Multi, new String[] {String.valueOf(resources.length)});
 			}
-			MessageDialog dlg = new MessageDialog(configuration.getSite().getShell(), SVNTeamUIPlugin.instance().getResource("UpdateAll.Title"), null, message, MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 0);
+			MessageDialog dlg = new MessageDialog(configuration.getSite().getShell(), SVNUIMessages.UpdateAll_Title, null, message, MessageDialog.QUESTION, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 0);
 			if (dlg.open() != 0) {
 				return null;
 			}

@@ -11,7 +11,7 @@
 
 package org.eclipse.team.svn.ui.panel.remote;
 
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 
 /**
@@ -22,8 +22,8 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 public class CreateFolderPanel extends AbstractGetResourceNamePanel {
 
     public CreateFolderPanel() {
-        super(SVNTeamUIPlugin.instance().getResource("CreateFolderPanel.Title"), true);
-        this.dialogDescription = SVNTeamUIPlugin.instance().getResource("CreateFolderPanel.Description");
+        super(SVNUIMessages.CreateFolderPanel_Title, true);
+        this.dialogDescription = SVNUIMessages.CreateFolderPanel_Description;
     }
     
 	public String getHelpId() {

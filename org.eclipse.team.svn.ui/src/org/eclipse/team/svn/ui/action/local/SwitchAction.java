@@ -25,7 +25,7 @@ import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.SVNUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractNonRecursiveTeamAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.dialog.OperationErrorDialog;
@@ -45,7 +45,7 @@ public class SwitchAction extends AbstractNonRecursiveTeamAction {
 	public void runImpl(IAction action) {
 		IResource []resources = this.getSelectedResources(IStateFilter.SF_EXCLUDE_DELETED);
 		
-		if (!OperationErrorDialog.isAcceptableAtOnce(resources, SVNTeamUIPlugin.instance().getResource("SwitchAction.Error"), this.getShell())) {
+		if (!OperationErrorDialog.isAcceptableAtOnce(resources, SVNUIMessages.SwitchAction_Error, this.getShell())) {
 			return;
 		}
 		

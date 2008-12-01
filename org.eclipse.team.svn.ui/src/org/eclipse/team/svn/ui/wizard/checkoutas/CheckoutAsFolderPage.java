@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.SVNContainerSelectionGroup;
 import org.eclipse.team.svn.ui.wizard.AbstractVerifiedWizardPage;
 import org.eclipse.ui.PlatformUI;
@@ -38,9 +39,9 @@ public class CheckoutAsFolderPage extends AbstractVerifiedWizardPage {
 
 	public CheckoutAsFolderPage(IRepositoryResource []repositoryResources) {
 		super(CheckoutAsFolderPage.class.getName(), 
-				SVNTeamUIPlugin.instance().getResource("CheckoutAsFolderPage.Title"), 
+				SVNUIMessages.CheckoutAsFolderPage_Title, 
 				SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
-		this.setDescription(SVNTeamUIPlugin.instance().getResource("CheckoutAsFolderPage.Description"));
+		this.setDescription(SVNUIMessages.CheckoutAsFolderPage_Description);
 		this.repositoryResources = repositoryResources;
 	}
 	

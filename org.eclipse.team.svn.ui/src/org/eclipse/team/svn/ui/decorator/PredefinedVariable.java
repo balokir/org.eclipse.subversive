@@ -11,7 +11,7 @@
 
 package org.eclipse.team.svn.ui.decorator;
 
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * Predefined decoration variable 
@@ -37,7 +37,7 @@ public class PredefinedVariable implements IVariable {
 	}
 
 	protected String getDescription(String name) {
-		return SVNTeamUIPlugin.instance().getResource(this.domain + "." + name);
+		return SVNUIMessages.getString(this.domain + "." + name);
 	}
 
 	public String toString() {

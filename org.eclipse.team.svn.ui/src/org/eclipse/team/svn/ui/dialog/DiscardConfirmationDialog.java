@@ -14,7 +14,7 @@ package org.eclipse.team.svn.ui.dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * Discard location confirmation dialog
@@ -34,9 +34,9 @@ public class DiscardConfirmationDialog extends MessageDialog {
 
 	public DiscardConfirmationDialog(Shell parentShell, boolean oneLocation, int msgSelector) {
 		super(parentShell, 
-			SVNTeamUIPlugin.instance().getResource(DiscardConfirmationDialog.MESSAGES[msgSelector][0] + (oneLocation ? ".Single" : ".Multi")), 
+			SVNUIMessages.getString(DiscardConfirmationDialog.MESSAGES[msgSelector][0] + (oneLocation ? ".Single" : ".Multi")), 
 			null, 
-			SVNTeamUIPlugin.instance().getResource(DiscardConfirmationDialog.MESSAGES[msgSelector][1] + (oneLocation ? ".Single" : ".Multi")),
+			SVNUIMessages.getString(DiscardConfirmationDialog.MESSAGES[msgSelector][1] + (oneLocation ? ".Single" : ".Multi")),
 			MessageDialog.QUESTION, 
 			new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 
 			0);

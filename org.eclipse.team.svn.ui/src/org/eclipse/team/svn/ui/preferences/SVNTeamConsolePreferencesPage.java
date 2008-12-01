@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.verifier.CompositeVerifier;
 import org.eclipse.team.svn.ui.verifier.IntegerFieldVerifier;
 import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
@@ -159,7 +159,7 @@ public class SVNTeamConsolePreferencesPage extends AbstractSVNTeamPreferencesPag
 		data = new GridData();
 		data.horizontalSpan = 2;
 		this.enabledButton.setLayoutData(data);
-		this.enabledButton.setText(SVNTeamUIPlugin.instance().getResource("ConsolePreferencePage.textIsEnabled"));
+		this.enabledButton.setText(SVNUIMessages.ConsolePreferencePage_textIsEnabled);
 		this.enabledButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent (Event event) {
 				SVNTeamConsolePreferencesPage.this.enabled = SVNTeamConsolePreferencesPage.this.enabledButton.getSelection();
@@ -170,7 +170,7 @@ public class SVNTeamConsolePreferencesPage extends AbstractSVNTeamPreferencesPag
 		data = new GridData();
 		data.horizontalSpan = 2;
 		this.hyperlinksEnabledButton.setLayoutData(data);
-		this.hyperlinksEnabledButton.setText(SVNTeamUIPlugin.instance().getResource("ConsolePreferencePage.hyperlinksIsEnabled"));
+		this.hyperlinksEnabledButton.setText(SVNUIMessages.ConsolePreferencePage_hyperlinksIsEnabled);
 		this.hyperlinksEnabledButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent (Event event) {
 				SVNTeamConsolePreferencesPage.this.hyperlinksEnabled = SVNTeamConsolePreferencesPage.this.hyperlinksEnabledButton.getSelection();
@@ -178,7 +178,7 @@ public class SVNTeamConsolePreferencesPage extends AbstractSVNTeamPreferencesPag
 		});
 		
 		Group showType = new Group(composite, SWT.FILL);
-		showType.setText(SVNTeamUIPlugin.instance().getResource("ConsolePreferencePage.textShowOnGroup"));
+		showType.setText(SVNUIMessages.ConsolePreferencePage_textShowOnGroup);
 		layout = new GridLayout();
 		layout.numColumns = 4;
 		layout.horizontalSpacing = 10;
@@ -191,7 +191,7 @@ public class SVNTeamConsolePreferencesPage extends AbstractSVNTeamPreferencesPag
 		this.showNeverButton = new Button(showType, SWT.RADIO);
 		data = new GridData();
 		this.showNeverButton.setLayoutData(data);
-		this.showNeverButton.setText(SVNTeamUIPlugin.instance().getResource("ConsolePreferencePage.textShowNever"));
+		this.showNeverButton.setText(SVNUIMessages.ConsolePreferencePage_textShowNever);
 		this.showNeverButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				if (SVNTeamConsolePreferencesPage.this.showNeverButton.getSelection()) {
@@ -203,7 +203,7 @@ public class SVNTeamConsolePreferencesPage extends AbstractSVNTeamPreferencesPag
 		this.showAlwaysButton = new Button(showType, SWT.RADIO);
 		data = new GridData();
 		this.showAlwaysButton.setLayoutData(data);
-		this.showAlwaysButton.setText(SVNTeamUIPlugin.instance().getResource("ConsolePreferencePage.textShowAlways"));
+		this.showAlwaysButton.setText(SVNUIMessages.ConsolePreferencePage_textShowAlways);
 		this.showAlwaysButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				if (SVNTeamConsolePreferencesPage.this.showAlwaysButton.getSelection()) {
@@ -215,7 +215,7 @@ public class SVNTeamConsolePreferencesPage extends AbstractSVNTeamPreferencesPag
 		this.showErrorButton = new Button(showType, SWT.RADIO);
 		data = new GridData();
 		this.showErrorButton.setLayoutData(data);
-		this.showErrorButton.setText(SVNTeamUIPlugin.instance().getResource("ConsolePreferencePage.textShowError"));
+		this.showErrorButton.setText(SVNUIMessages.ConsolePreferencePage_textShowError);
 		this.showErrorButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				if (SVNTeamConsolePreferencesPage.this.showErrorButton.getSelection()) {
@@ -227,7 +227,7 @@ public class SVNTeamConsolePreferencesPage extends AbstractSVNTeamPreferencesPag
 		this.showWarningErrorButton = new Button(showType, SWT.RADIO);
 		data = new GridData();
 		this.showWarningErrorButton.setLayoutData(data);
-		this.showWarningErrorButton.setText(SVNTeamUIPlugin.instance().getResource("ConsolePreferencePage.textShowWarningError"));
+		this.showWarningErrorButton.setText(SVNUIMessages.ConsolePreferencePage_textShowWarningError);
 		this.showWarningErrorButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				if (SVNTeamConsolePreferencesPage.this.showWarningErrorButton.getSelection()) {
@@ -246,7 +246,7 @@ public class SVNTeamConsolePreferencesPage extends AbstractSVNTeamPreferencesPag
 		data = new GridData();
 		data.horizontalSpan = 2;
 		this.wrapEnabledButton.setLayoutData(data);
-		this.wrapEnabledButton.setText(SVNTeamUIPlugin.instance().getResource("ConsolePreferencePage.textWrapEnabled"));
+		this.wrapEnabledButton.setText(SVNUIMessages.ConsolePreferencePage_textWrapEnabled);
 		this.wrapEnabledButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent (Event event) {
 				SVNTeamConsolePreferencesPage.this.wrapEnabled = SVNTeamConsolePreferencesPage.this.wrapEnabledButton.getSelection();
@@ -257,7 +257,7 @@ public class SVNTeamConsolePreferencesPage extends AbstractSVNTeamPreferencesPag
 		Label label = new Label(composite, SWT.NULL);
 		data = new GridData();
 		label.setLayoutData(data);
-		String labelText = SVNTeamUIPlugin.instance().getResource("ConsolePreferencePage.textWrapWidth");
+		String labelText = SVNUIMessages.ConsolePreferencePage_textWrapWidth;
 		label.setText(labelText);
 		
 		this.wrapWidthText = new Text(composite, SWT.SINGLE | SWT.BORDER);
@@ -282,7 +282,7 @@ public class SVNTeamConsolePreferencesPage extends AbstractSVNTeamPreferencesPag
 		data = new GridData();
 		data.horizontalSpan = 2;
 		this.limitEnabledButton.setLayoutData(data);
-		this.limitEnabledButton.setText(SVNTeamUIPlugin.instance().getResource("ConsolePreferencePage.textLimitEnabled"));
+		this.limitEnabledButton.setText(SVNUIMessages.ConsolePreferencePage_textLimitEnabled);
 		this.limitEnabledButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				SVNTeamConsolePreferencesPage.this.limitEnabled = SVNTeamConsolePreferencesPage.this.limitEnabledButton.getSelection();
@@ -293,7 +293,7 @@ public class SVNTeamConsolePreferencesPage extends AbstractSVNTeamPreferencesPag
 		label = new Label(composite, SWT.NULL);
 		data = new GridData();
 		label.setLayoutData(data);
-		labelText = SVNTeamUIPlugin.instance().getResource("ConsolePreferencePage.textLimitValue");
+		labelText = SVNUIMessages.ConsolePreferencePage_textLimitValue;
 		label.setText(labelText);
 		
 		this.limitValueText = new Text(composite, SWT.SINGLE | SWT.BORDER);
@@ -324,21 +324,21 @@ public class SVNTeamConsolePreferencesPage extends AbstractSVNTeamPreferencesPag
 		data = new GridData();
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
-		label.setText(SVNTeamUIPlugin.instance().getResource("ConsolePreferencePage.textColorsGroup"));
+		label.setText(SVNUIMessages.ConsolePreferencePage_textColorsGroup);
 		
-		this.cmdEditor = new ColorFieldEditor(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_CMD_COLOR_NAME), SVNTeamUIPlugin.instance().getResource("ConsolePreferencePage.textCmdMessage"), composite);
+		this.cmdEditor = new ColorFieldEditor(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_CMD_COLOR_NAME), SVNUIMessages.ConsolePreferencePage_textCmdMessage, composite);
 		this.cmdEditor.setPage(this);
 		this.cmdEditor.setPreferenceStore(this.getPreferenceStore());
 		
-		this.okEditor = new ColorFieldEditor(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_OK_COLOR_NAME), SVNTeamUIPlugin.instance().getResource("ConsolePreferencePage.textOkMessage"), composite);
+		this.okEditor = new ColorFieldEditor(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_OK_COLOR_NAME), SVNUIMessages.ConsolePreferencePage_textOkMessage, composite);
 		this.okEditor.setPage(this);
 		this.okEditor.setPreferenceStore(this.getPreferenceStore());
 
-		this.wrnEditor = new ColorFieldEditor(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_WRN_COLOR_NAME), SVNTeamUIPlugin.instance().getResource("ConsolePreferencePage.textWrnMessage"), composite);
+		this.wrnEditor = new ColorFieldEditor(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_WRN_COLOR_NAME), SVNUIMessages.ConsolePreferencePage_textWrnMessage, composite);
 		this.wrnEditor.setPage(this);
 		this.wrnEditor.setPreferenceStore(this.getPreferenceStore());
 
-		this.errEditor = new ColorFieldEditor(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_ERR_COLOR_NAME), SVNTeamUIPlugin.instance().getResource("ConsolePreferencePage.textErrMessage"), composite);
+		this.errEditor = new ColorFieldEditor(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_ERR_COLOR_NAME), SVNUIMessages.ConsolePreferencePage_textErrMessage, composite);
 		this.errEditor.setPage(this);
 		this.errEditor.setPreferenceStore(this.getPreferenceStore());
 		

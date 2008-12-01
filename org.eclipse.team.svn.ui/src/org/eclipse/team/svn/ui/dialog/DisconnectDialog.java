@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.utility.FileUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * Disconnect from repository confirmation dialog
@@ -36,9 +36,9 @@ public class DisconnectDialog extends MessageDialog {
 
 	public DisconnectDialog(Shell parentShell, IProject[] projects) {
 		super(parentShell, 
-			SVNTeamUIPlugin.instance().getResource("DisconnectDialog.Title"), 
+			SVNUIMessages.DisconnectDialog_Title, 
 			null, 
-			SVNTeamUIPlugin.instance().getResource("DisconnectDialog.Message", new String[] {FileUtility.getNamesListAsString(projects)}),
+			SVNUIMessages.format(SVNUIMessages.DisconnectDialog_Message, new String[] {FileUtility.getNamesListAsString(projects)}),
 			MessageDialog.QUESTION, 
 			new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 
 			0);
@@ -58,11 +58,11 @@ public class DisconnectDialog extends MessageDialog {
 			}
 		});
 		
-		dropSVNFoldersButton.setText(SVNTeamUIPlugin.instance().getResource("DisconnectDialog.Option.dropSVNMeta")); 
+		dropSVNFoldersButton.setText(SVNUIMessages.DisconnectDialog_Option_dropSVNMeta); 
 
 		Button leaveSVNFoldersButton = new Button(composite, SWT.RADIO);
 
-		leaveSVNFoldersButton.setText(SVNTeamUIPlugin.instance().getResource("DisconnectDialog.Option.leaveSVNMeta")); 
+		leaveSVNFoldersButton.setText(SVNUIMessages.DisconnectDialog_Option_leaveSVNMeta); 
 		
 		// set initial state
 		dropSVNFoldersButton.setSelection(false);

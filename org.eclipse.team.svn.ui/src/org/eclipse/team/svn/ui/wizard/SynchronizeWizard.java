@@ -17,6 +17,7 @@ import org.eclipse.team.internal.ui.synchronize.GlobalRefreshElementSelectionPag
 import org.eclipse.team.internal.ui.synchronize.GlobalRefreshResourceSelectionPage;
 import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.mapping.ModelHelper;
 import org.eclipse.team.svn.ui.operation.ShowUpdateViewOperation;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -33,7 +34,7 @@ public class SynchronizeWizard extends AbstractSVNWizard {
 
 	public SynchronizeWizard() {
 		super();
-		this.setWindowTitle(SVNTeamUIPlugin.instance().getResource("SynchronizeWizard.Title"));
+		this.setWindowTitle(SVNUIMessages.SynchronizeWizard_Title);
 	}
 	
 	public void addPages() {

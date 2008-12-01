@@ -14,12 +14,10 @@ package org.eclipse.team.svn.ui;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.MessageFormat;
 
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
@@ -28,7 +26,6 @@ import org.eclipse.team.svn.core.mapping.SVNActiveChangeSetCollector;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
-import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.console.SVNConsole;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -66,21 +63,22 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
     	return this.console == null ? null : this.console.getConsoleStream();
     }
     
-    public String getResource(String key) {
-        return FileUtility.getResource(Platform.getResourceBundle(this.getBundle()), key);
-    }
-    
-    public String getResource(String key, Object []args) {
-        String message = this.getResource(key);
-        return MessageFormat.format(message, args);
-    }
+//    //TODO delete
+//    public String getResource(String key) {
+//        return FileUtility.getResource(Platform.getResourceBundle(this.getBundle()), key);
+//    }
+//    
+//    public String getResource(String key, Object []args) {
+//        String message = this.getResource(key);
+//        return MessageFormat.format(message, args);
+//    }
     
     public ImageDescriptor getImageDescriptor(String path) {
     	try {
 			return ImageDescriptor.createFromURL(new URL(this.baseUrl, path));
 		} 
     	catch (MalformedURLException e) {
-			LoggedOperation.reportError(this.getResource("Error.GetImageDescriptor"), e);
+			LoggedOperation.reportError(SVNUIMessages.getErrorString("Error_GetImageDescriptor"), e);
 			return null;
 		}
     }

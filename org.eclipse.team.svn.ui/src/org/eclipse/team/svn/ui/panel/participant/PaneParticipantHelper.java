@@ -33,6 +33,7 @@ import org.eclipse.team.internal.ui.synchronize.SubscriberParticipantPage;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifier;
@@ -165,7 +166,7 @@ public class PaneParticipantHelper {
 		protected String getErrorMessage(Control input) {
 			IResource[] resources = PaneParticipantHelper.this.getSelectedResources();
 			if (resources.length == 0) {
-				return SVNTeamUIPlugin.instance().getResource("ParticipantPagePane.Verifier.Error");
+				return SVNUIMessages.ParticipantPagePane_Verifier_Error;
 			}
 			return null;
 		}

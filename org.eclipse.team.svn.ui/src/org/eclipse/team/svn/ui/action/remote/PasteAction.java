@@ -31,7 +31,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.RemoteResourceTransfer;
 import org.eclipse.team.svn.ui.RemoteResourceTransferrable;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractRepositoryTeamAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.operation.RefreshRemoteResourcesOperation;
@@ -50,7 +50,7 @@ public class PasteAction extends AbstractRepositoryTeamAction {
 	
 	public void runImpl(IAction action) {
 		final RemoteResourceTransferrable transferrable = this.getTransferrable();
-	    CommentPanel commentPanel = new CommentPanel(SVNTeamUIPlugin.instance().getResource("PasteAction.Comment.Title"));
+	    CommentPanel commentPanel = new CommentPanel(SVNUIMessages.PasteAction_Comment_Title);
 		DefaultDialog dialog = new DefaultDialog(this.getShell(), commentPanel);
 		if (dialog.open() == 0) {
 			this.clearClipboard(transferrable);

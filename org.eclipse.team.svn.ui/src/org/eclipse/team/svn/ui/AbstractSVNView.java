@@ -177,7 +177,7 @@ public abstract class AbstractSVNView extends ViewPart implements IResourceState
 			resourceName = this.repositoryResource.getUrl();
 		}
 		else {
-			resourceName = SVNTeamUIPlugin.instance().getResource("SVNView.ResourceNotSelected");
+			resourceName = SVNUIMessages.SVNView_ResourceNotSelected;
 		}
 		this.setContentDescription(resourceName);
 	}

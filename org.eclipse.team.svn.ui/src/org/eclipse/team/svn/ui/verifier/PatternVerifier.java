@@ -16,7 +16,7 @@ import java.text.MessageFormat;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.internal.core.StringMatcher;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * Pattern verifier
@@ -29,7 +29,7 @@ public class PatternVerifier extends AbstractFormattedVerifier {
 
 	public PatternVerifier(String fieldName, IResource []resources) {
 		super(fieldName);
-		PatternVerifier.message = SVNTeamUIPlugin.instance().getResource("Verifier.Pattern");
+		PatternVerifier.message = SVNUIMessages.Verifier_Pattern;
 		this.resources = resources;
 	}
 

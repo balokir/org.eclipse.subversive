@@ -16,7 +16,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * Compare input for comparison remote resources' SVN properties.
@@ -40,13 +40,13 @@ public class TwoWayPropertyCompareInput extends PropertyCompareInput {
 		String nameLeft = this.left.path.substring(this.left.path.lastIndexOf("/") + 1);
 		String nameRight = this.right.path.substring(this.right.path.lastIndexOf("/") + 1);
 		if (nameLeft.equals(nameRight)) {
-			return SVNTeamUIPlugin.instance().getResource("PropertyCompareInput.Title2",
+			return SVNUIMessages.format(SVNUIMessages.PropertyCompareInput_Title2,
 					  new String []	{
 					  nameLeft + " [" + this.getRevisionPart(this.left),
 					  this.getRevisionPart(this.right)+ "] "
 					  });
 		}
-		return SVNTeamUIPlugin.instance().getResource("PropertyCompareInput.Title2",
+		return SVNUIMessages.format(SVNUIMessages.PropertyCompareInput_Title2,
 				  new String []	{
 				  nameLeft  + " [" + this.getRevisionPart(this.left) + "]",
 				  nameRight + " [" + this.getRevisionPart(this.right)+ "] "
@@ -55,7 +55,7 @@ public class TwoWayPropertyCompareInput extends PropertyCompareInput {
 	}
 	
 	protected String getRevisionPart(SVNEntryRevisionReference reference) {
-		return SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.RevisionSign", new String [] {String.valueOf(reference.revision)});
+		return SVNUIMessages.format(SVNUIMessages.ResourceCompareInput_RevisionSign, new String [] {String.valueOf(reference.revision)});
 	}
 
 }

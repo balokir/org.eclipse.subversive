@@ -29,7 +29,7 @@ import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.utility.FileUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.local.SetPropertyAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.properties.ResourcePropertyEditPanel;
@@ -63,7 +63,7 @@ public class ThreeWayPropertyCompareInput extends PropertyCompareInput {
 	protected void fillMenu(IMenuManager manager, TreeSelection selection) {
 		final PropertyCompareNode selectedNode = (PropertyCompareNode)selection.getFirstElement();
 		Action tAction = null;
-		manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("SetPropertyAction.label")) {		
+		manager.add(tAction = new Action(SVNUIMessages.SetPropertyAction_label) {		
 			public void run() {
 				IResource [] resources = new IResource[] {ThreeWayPropertyCompareInput.this.leftResource};
 				ResourcePropertyEditPanel panel = new ResourcePropertyEditPanel(null, resources, false);
@@ -99,7 +99,7 @@ public class ThreeWayPropertyCompareInput extends PropertyCompareInput {
 		});
 		tAction.setEnabled(true);
 		
-		manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("RemovePropertyAction.label")) {		
+		manager.add(tAction = new Action(SVNUIMessages.RemovePropertyAction_label) {		
 			public void run() {
 				ThreeWayPropertyCompareInput.this.removeProperty(selectedNode);
 			}
@@ -139,7 +139,7 @@ public class ThreeWayPropertyCompareInput extends PropertyCompareInput {
 	}
 	
 	public String getTitle() {
-		return SVNTeamUIPlugin.instance().getResource("PropertyCompareInput.Title3",
+		return SVNUIMessages.format(SVNUIMessages.PropertyCompareInput_Title3,
 													  new String []	{
 													  this.left.path.substring(this.left.path.lastIndexOf("/")+1)
 													  + " [" + this.getRevisionPart(this.left),
@@ -150,15 +150,15 @@ public class ThreeWayPropertyCompareInput extends PropertyCompareInput {
 	
 	protected String getRevisionPart(SVNEntryRevisionReference reference) {
 		if (reference.revision == SVNRevision.WORKING) {
-			return SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.LocalSign");
+			return SVNUIMessages.ResourceCompareInput_LocalSign;
 		}
 		else if (reference.revision == SVNRevision.BASE) {
 			if (this.ancestor == null) {
-				return SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.ResourceIsNotAvailable");
+				return SVNUIMessages.ResourceCompareInput_ResourceIsNotAvailable;
 			}
-			return SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.BaseSign", new String [] {String.valueOf(this.baseRevisionNumber)});
+			return SVNUIMessages.format(SVNUIMessages.ResourceCompareInput_BaseSign, new String [] {String.valueOf(this.baseRevisionNumber)});
 		}
-		return SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.RevisionSign", new String [] {String.valueOf(reference.revision)});
+		return SVNUIMessages.format(SVNUIMessages.ResourceCompareInput_RevisionSign, new String [] {String.valueOf(reference.revision)});
 	}
 
 }

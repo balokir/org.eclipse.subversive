@@ -19,7 +19,7 @@ import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.subscribers.SubscriberScopeManager;
 import org.eclipse.team.svn.core.operation.local.AbstractWorkingCopyOperation;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.mapping.ModelHelper;
 import org.eclipse.team.svn.ui.mapping.UpdateModelParticipant;
 import org.eclipse.team.svn.ui.mapping.UpdateSubscriberContext;
@@ -82,7 +82,7 @@ public class ShowUpdateViewOperation extends AbstractWorkingCopyOperation {
 				return;					
 			}
 						
-			String messsage = SVNTeamUIPlugin.instance().getResource("ConsultChangeSets.message1");			
+			String messsage = SVNUIMessages.ConsultChangeSets_message1;			
 			boolean consultChangeSets = CommitActionHelper.isIncludeChangeSets(messsage);
 			SubscriberScopeManager manager = UpdateSubscriberContext.createWorkspaceScopeManager(this.resourcesMapping, true, consultChangeSets);										
 			UpdateSubscriberContext context = UpdateSubscriberContext.createContext(manager, ISynchronizationContext.THREE_WAY);

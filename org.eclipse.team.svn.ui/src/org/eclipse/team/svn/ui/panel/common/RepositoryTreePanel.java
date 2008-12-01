@@ -23,7 +23,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryBase;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.core.utility.SVNUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.RepositoryTreeComposite;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.repository.model.IParentTreeNode;
@@ -51,7 +51,7 @@ public class RepositoryTreePanel extends AbstractDialogPanel {
 	
 	public RepositoryTreePanel(String title, IRepositoryResource[] resources, boolean allowSourcesInTree) {
 		this(title,
-			SVNTeamUIPlugin.instance().getResource("RepositoryTreePanel.Description"), 
+			SVNUIMessages.RepositoryTreePanel_Description, 
 			AbstractDialogPanel.makeToBeOperatedMessage(resources), 
 			resources, 
 			allowSourcesInTree);

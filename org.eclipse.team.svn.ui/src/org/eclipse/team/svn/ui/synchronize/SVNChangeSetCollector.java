@@ -26,7 +26,7 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.core.subscribers.ChangeSet;
 import org.eclipse.team.internal.core.subscribers.CheckedInChangeSet;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoSetChangeSetCollector;
-import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
@@ -60,10 +60,10 @@ public class SVNChangeSetCollector extends SyncInfoSetChangeSetCollector {
 			sets.put(svnSet.getRevision(), svnSet);
 		}
 		// change set name format is: revisionNum (date) [author] ...comment...
-		String svnAuthor = SVNTeamPlugin.instance().getResource("SVNInfo.Author");
-		String svnDate = SVNTeamPlugin.instance().getResource("SVNInfo.Date");
-		String svnNoAuthor = SVNTeamPlugin.instance().getResource("SVNInfo.NoAuthor");
-		String svnNoDate = SVNTeamPlugin.instance().getResource("SVNInfo.NoDate");
+		String svnAuthor = SVNMessages.SVNInfo_Author;
+		String svnDate = SVNMessages.SVNInfo_Date;
+		String svnNoAuthor = SVNMessages.SVNInfo_NoAuthor;
+		String svnNoDate = SVNMessages.SVNInfo_NoDate;
 		for (SyncInfo info : infos) {
 			if ((info.getKind() & SyncInfo.INCOMING) == 0) {
 				continue;

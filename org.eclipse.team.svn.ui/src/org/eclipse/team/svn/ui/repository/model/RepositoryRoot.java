@@ -15,6 +15,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * Repository root node representation 
@@ -26,7 +27,7 @@ public class RepositoryRoot extends RepositoryFolder {
 	
 	public RepositoryRoot(RepositoryResource parent, IRepositoryResource resource) {
 		super(parent, resource);
-		RepositoryRoot.ROOT_NAME = SVNTeamUIPlugin.instance().getResource("RepositoriesView.Model.Root");
+		RepositoryRoot.ROOT_NAME = SVNUIMessages.RepositoriesView_Model_Root;
 		this.relatesToLocation = Boolean.FALSE;
 	}
 

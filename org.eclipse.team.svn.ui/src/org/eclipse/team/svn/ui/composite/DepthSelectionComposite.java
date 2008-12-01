@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * A UI component for selecting the recursion depth
@@ -34,7 +34,7 @@ public class DepthSelectionComposite extends Composite {
 	protected int depth;
 	protected boolean useWorkingCopyDepth;
 	protected Combo depthSelector;
-	final protected String unknown = SVNTeamUIPlugin.instance().getResource("RecurseDepthSelector.Unknown");
+	final protected String unknown = SVNUIMessages.RecurseDepthSelector_Unknown;
 	
 	public DepthSelectionComposite(Composite parent, int style) {
 		super(parent, style);
@@ -60,15 +60,15 @@ public class DepthSelectionComposite extends Composite {
 		this.setLayout(layout);
 				
 		Label label = new Label(this, SWT.NONE);
-		label.setText(SVNTeamUIPlugin.instance().getResource("RecurseDepthSelector.Label"));
+		label.setText(SVNUIMessages.RecurseDepthSelector_Label);
 		GridData data = new GridData();
 		label.setLayoutData(data);
 			
 		//getting strings for options
-		final String empty = SVNTeamUIPlugin.instance().getResource("RecurseDepthSelector.Empty");
-		final String files = SVNTeamUIPlugin.instance().getResource("RecurseDepthSelector.Files");
-		final String immediates = SVNTeamUIPlugin.instance().getResource("RecurseDepthSelector.Immediates");
-		final String infinity = SVNTeamUIPlugin.instance().getResource("RecurseDepthSelector.Infinity");
+		final String empty = SVNUIMessages.RecurseDepthSelector_Empty;
+		final String files = SVNUIMessages.RecurseDepthSelector_Files;
+		final String immediates = SVNUIMessages.RecurseDepthSelector_Immediates;
+		final String infinity = SVNUIMessages.RecurseDepthSelector_Infinity;
 		
 		boolean svn15compatible = CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() >= ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x;
 		

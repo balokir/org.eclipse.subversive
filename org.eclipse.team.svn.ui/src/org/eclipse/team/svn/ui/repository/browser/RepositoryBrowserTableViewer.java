@@ -26,8 +26,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.core.SVNMessages;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.repository.model.IToolTipProvider;
 import org.eclipse.team.svn.ui.repository.model.RepositoryBranches;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFile;
@@ -89,9 +89,9 @@ public class RepositoryBrowserTableViewer extends TableViewer {
 	}
 
 	public void initialize() {
-		RepositoryBrowserTableViewer.noAuthor = SVNTeamPlugin.instance().getResource("SVNInfo.NoAuthor");
-		RepositoryBrowserTableViewer.hasProps = SVNTeamUIPlugin.instance().getResource("RepositoriesView.Browser.HasProps");
-		RepositoryBrowserTableViewer.noProps = SVNTeamUIPlugin.instance().getResource("RepositoriesView.Browser.NoProps");
+		RepositoryBrowserTableViewer.noAuthor = SVNMessages.SVNInfo_NoAuthor;
+		RepositoryBrowserTableViewer.hasProps = SVNUIMessages.RepositoriesView_Browser_HasProps;
+		RepositoryBrowserTableViewer.noProps = SVNUIMessages.RepositoriesView_Browser_NoProps;
 		
 		this.getTable().setHeaderVisible(true);
 		this.getTable().setLinesVisible(true);
@@ -120,13 +120,13 @@ public class RepositoryBrowserTableViewer extends TableViewer {
 
 		RepositoryBrowserTableComparator comparator = new RepositoryBrowserTableComparator(this);
 		
-		this.createColumn(comparator, SVNTeamUIPlugin.instance().getResource("RepositoriesView.Browser.Name"), SWT.NONE, SWT.LEFT, true, new ColumnWeightData(18, true));
-		this.createColumn(comparator, SVNTeamUIPlugin.instance().getResource("RepositoriesView.Browser.Revision"), SWT.NONE, SWT.RIGHT, true, new ColumnWeightData(9, true));
-		this.createColumn(comparator, SVNTeamUIPlugin.instance().getResource("RepositoriesView.Browser.LastChangedAt"), SWT.NONE, SWT.LEFT, true, new ColumnWeightData(17, true));
-		this.createColumn(comparator, SVNTeamUIPlugin.instance().getResource("RepositoriesView.Browser.LastChangedBy"), SWT.NONE, SWT.LEFT, true, new ColumnWeightData(14, true));
-		this.createColumn(comparator, SVNTeamUIPlugin.instance().getResource("RepositoriesView.Browser.Size"), SWT.NONE, SWT.RIGHT, true, new ColumnWeightData(10, true));
-		this.createColumn(comparator, SVNTeamUIPlugin.instance().getResource("RepositoriesView.Browser.HasProperties"), SWT.NONE, SWT.LEFT, true, new ColumnWeightData(12, true));
-		this.createColumn(comparator, SVNTeamUIPlugin.instance().getResource("RepositoriesView.Browser.LockOwner"), SWT.NONE, SWT.LEFT, true, new ColumnWeightData(13, true));
+		this.createColumn(comparator, SVNUIMessages.RepositoriesView_Browser_Name, SWT.NONE, SWT.LEFT, true, new ColumnWeightData(18, true));
+		this.createColumn(comparator, SVNUIMessages.RepositoriesView_Browser_Revision, SWT.NONE, SWT.RIGHT, true, new ColumnWeightData(9, true));
+		this.createColumn(comparator, SVNUIMessages.RepositoriesView_Browser_LastChangedAt, SWT.NONE, SWT.LEFT, true, new ColumnWeightData(17, true));
+		this.createColumn(comparator, SVNUIMessages.RepositoriesView_Browser_LastChangedBy, SWT.NONE, SWT.LEFT, true, new ColumnWeightData(14, true));
+		this.createColumn(comparator, SVNUIMessages.RepositoriesView_Browser_Size, SWT.NONE, SWT.RIGHT, true, new ColumnWeightData(10, true));
+		this.createColumn(comparator, SVNUIMessages.RepositoriesView_Browser_HasProperties, SWT.NONE, SWT.LEFT, true, new ColumnWeightData(12, true));
+		this.createColumn(comparator, SVNUIMessages.RepositoriesView_Browser_LockOwner, SWT.NONE, SWT.LEFT, true, new ColumnWeightData(13, true));
 		
 		this.setComparator(comparator);
 		comparator.setColumnNumber(RepositoryBrowserTableViewer.COLUMN_NAME);

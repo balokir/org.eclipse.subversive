@@ -64,6 +64,7 @@ import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.history.HistoryActionManager.HistoryAction;
 import org.eclipse.team.svn.ui.history.data.SVNLocalFileRevision;
@@ -389,7 +390,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 					this.fetchLocalHistory(local, new NullProgressMonitor());
 				}
 				catch (CoreException ex) {
-					UILoggedOperation.reportError(SVNTeamUIPlugin.instance().getResource("HistoryView.Name"), ex);
+					UILoggedOperation.reportError(SVNUIMessages.HistoryView_Name, ex);
 				}
 			}
 		}
@@ -479,7 +480,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		if (this.getRepositoryResource() != null) {
 			return this.getRepositoryResource().getUrl();
 		}
-		return SVNTeamUIPlugin.instance().getResource("SVNView.ResourceNotSelected");
+		return SVNUIMessages.SVNView_ResourceNotSelected;
 	}
 
 	public boolean isValidInput(Object object) {
@@ -564,8 +565,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 				SVNHistoryPage.this.fetchRemoteHistory(msgOp);
 			}
 		};
-		String msg = this.limit > 0 ? SVNTeamUIPlugin.instance().getResource("HistoryView.ShowNextX", new String[] { String.valueOf(this.limit) }) : SVNTeamUIPlugin.instance()
-				.getResource("HistoryView.ShowNextPage");
+		String msg = this.limit > 0 ? SVNUIMessages.format(SVNUIMessages.HistoryView_ShowNextX, new String[] { String.valueOf(this.limit) }) : SVNUIMessages.HistoryView_ShowNextPage;
 		this.getNextPageAction.setToolTipText(msg);
 		this.getAllPagesAction = new HistoryAction("HistoryView.ShowAll", "icons/views/history/paging_all.gif") {
 			public void run() {
@@ -653,7 +653,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		this.exportLogAction = new HistoryAction("HistoryView.ExportLog") {
 			public void run() {
 				FileDialog dlg = new FileDialog(UIMonitorUtility.getShell(), SWT.PRIMARY_MODAL | SWT.SAVE);
-				dlg.setText(SVNTeamUIPlugin.instance().getResource("ExportLogDialog.Title"));
+				dlg.setText(SVNUIMessages.ExportLogDialog_Title);
 				String caption = SVNHistoryPage.this.getName();
 				dlg.setFileName(caption.substring(caption.lastIndexOf('/') + 1) + "_history.log");
 				dlg.setFilterExtensions(new String[] {"log", "*.*"});
@@ -667,7 +667,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 						stream.close();
 					}
 					catch (Exception ex) {
-						LoggedOperation.reportError(SVNTeamUIPlugin.instance().getResource("Operation.ExportLog"), ex);
+						LoggedOperation.reportError(SVNUIMessages.Operation_ExportLog, ex);
 					}
 				}
 			}
@@ -745,7 +745,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		IMenuManager actionBarsMenu = actionBars.getMenuManager();
 		actionBarsMenu.add(this.showCommentViewerAction);
 		actionBarsMenu.add(this.showAffectedPathsViewerAction);
-		MenuManager sub = new MenuManager(SVNTeamUIPlugin.instance().getResource("HistoryView.AffectedPathLayout"), IWorkbenchActionConstants.GROUP_MANAGING);
+		MenuManager sub = new MenuManager(SVNUIMessages.HistoryView_AffectedPathLayout, IWorkbenchActionConstants.GROUP_MANAGING);
 		sub.add(this.flatAction);
 		sub.add(this.hierarchicalAction);
 		actionBarsMenu.add(sub);

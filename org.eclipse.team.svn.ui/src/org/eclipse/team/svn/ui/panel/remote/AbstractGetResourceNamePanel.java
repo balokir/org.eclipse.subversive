@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.CommentComposite;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.verifier.AbsolutePathVerifier;
@@ -48,7 +48,7 @@ public abstract class AbstractGetResourceNamePanel extends AbstractDialogPanel {
         super();
         this.dialogTitle = title;
         this.allowMultipart = allowMultipart;
-        this.defaultMessage = SVNTeamUIPlugin.instance().getResource(allowMultipart ? "AbstractGetResourceNamePanel.Message.MultiPart" : "AbstractGetResourceNamePanel.Message.Simple");
+        this.defaultMessage = allowMultipart ? SVNUIMessages.AbstractGetResourceNamePanel_Message_MultiPart : SVNUIMessages.AbstractGetResourceNamePanel_Message_Simple;
         this.resourceName = "";
     }
 
@@ -74,18 +74,18 @@ public abstract class AbstractGetResourceNamePanel extends AbstractDialogPanel {
         nameComposite.setLayoutData(data);
         
         Label nameLabel = new Label(nameComposite, SWT.NONE);
-        nameLabel.setText(SVNTeamUIPlugin.instance().getResource("AbstractGetResourceNamePanel.Name"));
+        nameLabel.setText(SVNUIMessages.AbstractGetResourceNamePanel_Name);
 		this.text = new Text(nameComposite, SWT.SINGLE | SWT.BORDER);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.text.setLayoutData(data);
 		this.text.setEditable(true);
 		CompositeVerifier verifier = new CompositeVerifier();
 		verifier.add(this.createNonEmptyNameFieldVerifier());
-		String name = SVNTeamUIPlugin.instance().getResource("AbstractGetResourceNamePanel.Name.Verifier");
+		String name = SVNUIMessages.AbstractGetResourceNamePanel_Name_Verifier;
 		verifier.add(new ResourceNameVerifier(name, this.allowMultipart));
 		verifier.add(new AbsolutePathVerifier(name));
 		verifier.add(new AbstractFormattedVerifier(name) {
-			private String msg = SVNTeamUIPlugin.instance().getResource("AbstractGetResourceNamePanel.Name.Verifier.Error");
+			private String msg = SVNUIMessages.AbstractGetResourceNamePanel_Name_Verifier_Error;
 			
 			protected String getErrorMessageImpl(Control input) {
 				String text = this.getText(input);
@@ -105,7 +105,7 @@ public abstract class AbstractGetResourceNamePanel extends AbstractDialogPanel {
 		group.setLayout(new GridLayout());
 		data = new GridData(GridData.FILL_BOTH);
 		group.setLayoutData(data);
-		group.setText(SVNTeamUIPlugin.instance().getResource("AbstractGetResourceNamePanel.Comment"));
+		group.setText(SVNUIMessages.AbstractGetResourceNamePanel_Comment);
 		
         this.comment = new CommentComposite(group, this);
 		data = new GridData(GridData.FILL_BOTH);
@@ -131,7 +131,7 @@ public abstract class AbstractGetResourceNamePanel extends AbstractDialogPanel {
     }
 
     protected AbstractVerifier createNonEmptyNameFieldVerifier() {
-    	return new NonEmptyFieldVerifier(SVNTeamUIPlugin.instance().getResource("AbstractGetResourceNamePanel.Name.Verifier"));
+    	return new NonEmptyFieldVerifier(SVNUIMessages.AbstractGetResourceNamePanel_Name_Verifier);
     }
     
 }

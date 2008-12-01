@@ -18,7 +18,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSubscriber;
 import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.synchronize.AbstractSVNParticipant;
 import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
@@ -47,7 +47,7 @@ public class UpdateParticipant extends AbstractSVNParticipant {
     }
 
 	public String getName() {
-		String name = SVNTeamUIPlugin.instance().getResource("SynchronizeParticipant");
+		String name = SVNUIMessages.SynchronizeParticipant;
 		ISynchronizeScope scope = this.getScope();
 		String scopeName = scope.getName();
 		if (scope instanceof ResourceScope) {

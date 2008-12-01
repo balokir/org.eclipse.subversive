@@ -45,6 +45,7 @@ import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.GetLogMessagesOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.history.ISVNHistoryViewInfo;
 import org.eclipse.team.svn.ui.history.LogMessagesComposite;
@@ -101,9 +102,9 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
     public SelectRevisionPanel(GetLogMessagesOperation msgOp, boolean multiSelect, boolean useCheckboxes, long currentRevision) {
     	this.multiSelect = multiSelect;
     	this.useCheckboxes = useCheckboxes;
-        this.dialogTitle = SVNTeamUIPlugin.instance().getResource("SelectRevisionPanel.Title");
-        this.dialogDescription = SVNTeamUIPlugin.instance().getResource("SelectRevisionPanel.Description");
-        this.defaultMessage = SVNTeamUIPlugin.instance().getResource("SelectRevisionPanel.Message");
+        this.dialogTitle = SVNUIMessages.SelectRevisionPanel_Title;
+        this.dialogDescription = SVNUIMessages.SelectRevisionPanel_Description;
+        this.defaultMessage = SVNUIMessages.SelectRevisionPanel_Message;
 		this.resource = msgOp.getResource();
 		this.currentRevision = currentRevision;
     	this.logMessages = msgOp.getMessages();
@@ -279,12 +280,12 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
     	this.pagingAllItem.setImage(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/paging_all.gif").createImage());
     	this.refreshItem.setImage(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/refresh.gif").createImage());
     	
-    	this.hideUnrelatedItem.setToolTipText(SVNTeamUIPlugin.instance().getResource("SelectRevisionPanel.Unrelated"));
-    	this.stopOnCopyItem.setToolTipText(SVNTeamUIPlugin.instance().getResource("SelectRevisionPanel.StopOnCopy"));
-    	this.filterItem.setToolTipText(SVNTeamUIPlugin.instance().getResource("SelectRevisionPanel.QuickFilter"));
-    	this.clearFilterItem.setToolTipText(SVNTeamUIPlugin.instance().getResource("SelectRevisionPanel.ClearFilter"));
-    	this.pagingAllItem.setToolTipText(SVNTeamUIPlugin.instance().getResource("SelectRevisionPanel.ShowAll"));
-    	this.refreshItem.setToolTipText(SVNTeamUIPlugin.instance().getResource("SelectRevisionPanel.Refresh"));
+    	this.hideUnrelatedItem.setToolTipText(SVNUIMessages.SelectRevisionPanel_Unrelated);
+    	this.stopOnCopyItem.setToolTipText(SVNUIMessages.SelectRevisionPanel_StopOnCopy);
+    	this.filterItem.setToolTipText(SVNUIMessages.SelectRevisionPanel_QuickFilter);
+    	this.clearFilterItem.setToolTipText(SVNUIMessages.SelectRevisionPanel_ClearFilter);
+    	this.pagingAllItem.setToolTipText(SVNUIMessages.SelectRevisionPanel_ShowAll);
+    	this.refreshItem.setToolTipText(SVNUIMessages.SelectRevisionPanel_Refresh);
     	
     	Composite group = new Composite(parent, SWT.BORDER);
         layout = new GridLayout();
@@ -311,13 +312,13 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
     	
     	if (SVNTeamPreferences.getHistoryBoolean(store, SVNTeamPreferences.HISTORY_PAGING_ENABLE_NAME)) {
     		this.limit = SVNTeamPreferences.getHistoryInt(store, SVNTeamPreferences.HISTORY_PAGE_SIZE_NAME);
-    		String msg = SVNTeamUIPlugin.instance().getResource("SelectRevisionPanel.ShowNextX", new String[] {String.valueOf(this.limit)});
+    		String msg = SVNUIMessages.format(SVNUIMessages.SelectRevisionPanel_ShowNextX, new String[] {String.valueOf(this.limit)});
     	    this.pagingItem.setToolTipText(msg);
     	    this.pagingEnabled = true;
         }
         else {
         	this.limit = 0;
-    	    this.pagingItem.setToolTipText(SVNTeamUIPlugin.instance().getResource("SelectRevisionPanel.ShowNextPage"));
+    	    this.pagingItem.setToolTipText(SVNUIMessages.SelectRevisionPanel_ShowNextPage);
     	    this.pagingEnabled = false;
         }
     	this.pagingEnabled = SelectRevisionPanel.this.limit > 0 && this.logMessages.length == SelectRevisionPanel.this.limit;
@@ -385,7 +386,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
     }
     
     protected void showResourceLabel() {
-		String resourceName = SVNTeamUIPlugin.instance().getResource("SelectRevisionPanel.NotSelected");
+		String resourceName = SVNUIMessages.SelectRevisionPanel_NotSelected;
 		if (this.resource != null) {
 		    resourceName = this.resource.getUrl();
 		}

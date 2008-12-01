@@ -11,7 +11,7 @@
 
 package org.eclipse.team.svn.ui.panel.reporting;
 
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 
 /**
@@ -21,7 +21,7 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
  */
 public class PreviewReportPanel extends PreviewPanel {
 	public PreviewReportPanel(String description, String report) {
-		super(SVNTeamUIPlugin.instance().getResource("PreviewReportPanel.Preview"), description, SVNTeamUIPlugin.instance().getResource("PreviewReportPanel.Message"), report);
+		super(SVNUIMessages.PreviewReportPanel_Title, description, SVNUIMessages.PreviewReportPanel_Message, report);
 	}
 	
 	public String getHelpId() {

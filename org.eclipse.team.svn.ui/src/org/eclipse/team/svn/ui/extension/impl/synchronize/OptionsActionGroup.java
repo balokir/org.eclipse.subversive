@@ -15,7 +15,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSubscriber;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -36,7 +36,7 @@ public class OptionsActionGroup extends AbstractSynchronizeActionGroup {
 	}
 	
 	protected void configureActions(ISynchronizePageConfiguration configuration) {
-		this.contiguousOptionAction = new Action(SVNTeamUIPlugin.instance().getResource("OptionsActionGroup.ShowInfoContiguous"), IAction.AS_CHECK_BOX) {
+		this.contiguousOptionAction = new Action(SVNUIMessages.OptionsActionGroup_ShowInfoContiguous, IAction.AS_CHECK_BOX) {
 			public void run() {
 				boolean fastReportMode = AbstractSVNSubscriber.getSynchInfoContigous();
 				AbstractSVNSubscriber.setSynchInfoContigous(!fastReportMode);

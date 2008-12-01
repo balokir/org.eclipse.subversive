@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifier;
 import org.eclipse.team.svn.ui.wizard.AbstractVerifiedWizardPage;
@@ -79,16 +80,16 @@ public class ProjectsSelectionPage extends AbstractVerifiedWizardPage {
 		this.listViewer.setLabelProvider(labelProvider);
 		this.listViewer.setContentProvider(contentProvider);
 		if (projects.length > 1) {
-			this.setTitle(SVNTeamUIPlugin.instance().getResource("ProjectsSelectionPage.Title.Multi"));
-			this.setDescription(SVNTeamUIPlugin.instance().getResource("ProjectsSelectionPage.Description.Multi"));
+			this.setTitle(SVNUIMessages.ProjectsSelectionPage_Title_Multi);
+			this.setDescription(SVNUIMessages.ProjectsSelectionPage_Description_Multi);
 		}
 		else {
-			this.setTitle(SVNTeamUIPlugin.instance().getResource("ProjectsSelectionPage.Title.Single"));
-			this.setDescription(SVNTeamUIPlugin.instance().getResource("ProjectsSelectionPage.Description.Single"));
+			this.setTitle(SVNUIMessages.ProjectsSelectionPage_Title_Single);
+			this.setDescription(SVNUIMessages.ProjectsSelectionPage_Description_Single);
 		}
 		
-		this.checkoutAsFolderButton.setText(SVNTeamUIPlugin.instance().getResource(this.projects.length > 0 ? "ProjectsSelectionPage.CheckoutAsFolder.Multi" : "ProjectsSelectionPage.CheckoutAsFolder.Single"));
-		this.checkoutAsProjectButton.setText(SVNTeamUIPlugin.instance().getResource(this.projects.length > 0 ? "ProjectsSelectionPage.CheckoutAsProject.Multi" : "ProjectsSelectionPage.CheckoutAsProject.Single"));
+		this.checkoutAsFolderButton.setText(this.projects.length > 0 ? SVNUIMessages.ProjectsSelectionPage_CheckoutAsFolder_Multi : SVNUIMessages.ProjectsSelectionPage_CheckoutAsFolder_Single);
+		this.checkoutAsProjectButton.setText(this.projects.length > 0 ? SVNUIMessages.ProjectsSelectionPage_CheckoutAsProject_Multi : SVNUIMessages.ProjectsSelectionPage_CheckoutAsProject_Single);
 		
 		this.listViewer.setInput(projects);
 		this.listViewer.setAllChecked(true);
@@ -154,7 +155,7 @@ public class ProjectsSelectionPage extends AbstractVerifiedWizardPage {
 			}
 			protected String getErrorMessage(Control input) {
 				Object []elements = ProjectsSelectionPage.this.listViewer.getCheckedElements();
-				return elements == null || elements.length == 0 ? SVNTeamUIPlugin.instance().getResource("ProjectsSelectionPage.CheckoutAsProject.Verifier.Error") : null;
+				return elements == null || elements.length == 0 ? SVNUIMessages.ProjectsSelectionPage_CheckoutAsProject_Verifier_Error : null;
 			}
 		});
 						
@@ -177,7 +178,7 @@ public class ProjectsSelectionPage extends AbstractVerifiedWizardPage {
 		tComposite.setData(data);
 
 		Button selectButton = new Button(tComposite, SWT.PUSH);
-		selectButton.setText(SVNTeamUIPlugin.instance().getResource("Button.SelectAll"));
+		selectButton.setText(SVNUIMessages.Button_SelectAll);
 		data = new GridData();
 		data.widthHint = DefaultDialog.computeButtonWidth(selectButton);
 		selectButton.setLayoutData(data);
@@ -190,7 +191,7 @@ public class ProjectsSelectionPage extends AbstractVerifiedWizardPage {
 		});
 	
 		Button deselectButton = new Button(tComposite, SWT.PUSH);
-		deselectButton.setText(SVNTeamUIPlugin.instance().getResource("Button.ClearSelection"));
+		deselectButton.setText(SVNUIMessages.Button_ClearSelection);
 		data = new GridData();
 		data.widthHint = DefaultDialog.computeButtonWidth(deselectButton);
 		deselectButton.setLayoutData(data);
@@ -203,7 +204,7 @@ public class ProjectsSelectionPage extends AbstractVerifiedWizardPage {
 		});
 		
 		this.respectHierarchyButton = new Button(bottomPart, SWT.CHECK);
-		this.respectHierarchyButton.setText(SVNTeamUIPlugin.instance().getResource("ProjectsSelectionPage.RespectHierarchy"));
+		this.respectHierarchyButton.setText(SVNUIMessages.ProjectsSelectionPage_RespectHierarchy);
 		this.respectHierarchyButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.FILL_HORIZONTAL));
 		this.respectHierarchyButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -235,17 +236,17 @@ public class ProjectsSelectionPage extends AbstractVerifiedWizardPage {
 		
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(SVNTeamUIPlugin.instance().getResource("ProjectsSelectionPage.RepositoryURL"));
+		col.setText(SVNUIMessages.ProjectsSelectionPage_RepositoryURL);
 		layout.addColumnData(new ColumnPixelData(270, true));
 		
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(SVNTeamUIPlugin.instance().getResource("ProjectsSelectionPage.ProjectName"));
+		col.setText(SVNUIMessages.ProjectsSelectionPage_ProjectName);
 		layout.addColumnData(new ColumnPixelData(150, true));
 		
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(SVNTeamUIPlugin.instance().getResource("ProjectsSelectionPage.ProjectType"));
+		col.setText(SVNUIMessages.ProjectsSelectionPage_ProjectType);
 		layout.addColumnData(new ColumnPixelData(100, true));
 
 		return viewer;

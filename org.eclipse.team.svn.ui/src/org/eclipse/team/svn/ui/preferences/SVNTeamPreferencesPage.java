@@ -43,7 +43,7 @@ import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSubscriber;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifierProxy;
 import org.eclipse.team.svn.ui.verifier.CompositeVerifier;
 import org.eclipse.team.svn.ui.verifier.DateFormatVerifier;
@@ -311,23 +311,23 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
-		tabItem.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.generalTabName"));
+		tabItem.setText(SVNUIMessages.MainPreferencePage_generalTabName);
 		tabItem.setControl(this.createGeneralPage(tabFolder));
 		
 		tabItem = new TabItem(tabFolder, SWT.NONE);
-		tabItem.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.svnConnectorTabName"));
+		tabItem.setText(SVNUIMessages.MainPreferencePage_svnConnectorTabName);
 		tabItem.setControl(this.createSVNConnectorsPage(tabFolder));
 		
 		tabItem = new TabItem(tabFolder, SWT.NONE);
-		tabItem.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.repositoryTabName"));
+		tabItem.setText(SVNUIMessages.MainPreferencePage_repositoryTabName);
 		tabItem.setControl(this.createRepositorySettingsPage(tabFolder));
 		
 		tabItem = new TabItem(tabFolder, SWT.NONE);
-		tabItem.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.viewSettingsTabName"));
+		tabItem.setText(SVNUIMessages.MainPreferencePage_viewSettingsTabName);
 		tabItem.setControl(this.createViewSettingsPage(tabFolder));
 		
 		tabItem = new TabItem(tabFolder, SWT.NONE);
-		tabItem.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.mailReporterGroupName"));
+		tabItem.setText(SVNUIMessages.MainPreferencePage_mailReporterGroupName);
 		tabItem.setControl(this.createErrorReportingSettingsPage(tabFolder));
 
 //		Setting context help
@@ -352,12 +352,12 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		data.widthHint = 450;
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
-		label.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.svnConnectorPrompt"));
+		label.setText(SVNUIMessages.MainPreferencePage_svnConnectorPrompt);
 		
 		label = new Label(composite, SWT.NONE);
 		data = new GridData();
 		label.setLayoutData(data);
-		label.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.svnConnector"));
+		label.setText(SVNUIMessages.MainPreferencePage_svnConnector);
 		
 		this.svnConnectorField = new Combo(composite, SWT.READ_ONLY);
 		data = new GridData(GridData.FILL_HORIZONTAL);
@@ -389,18 +389,18 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		group.setLayoutData(data);
-		group.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.mergeGroupName"));
+		group.setText(SVNUIMessages.MainPreferencePage_mergeGroupName);
 		
 		label = new Label(group, SWT.WRAP);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = 450;
 		label.setLayoutData(data);
-		label.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.mergePrompt"));
+		label.setText(SVNUIMessages.MainPreferencePage_mergePrompt);
 		
 		this.useInteractiveMergeButton = new Button(group, SWT.CHECK);
 		data = new GridData();
 		this.useInteractiveMergeButton.setLayoutData(data);
-		this.useInteractiveMergeButton.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.mergeUseInteractiveMerge"));
+		this.useInteractiveMergeButton.setText(SVNUIMessages.MainPreferencePage_mergeUseInteractiveMerge);
 		this.useInteractiveMergeButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				SVNTeamPreferencesPage.this.useJavaHLMerge = !SVNTeamPreferencesPage.this.useInteractiveMergeButton.getSelection();
@@ -414,12 +414,12 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = 450;
 		label.setLayoutData(data);
-		label.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.includeMergedRevisionsLabel"));
+		label.setText(SVNUIMessages.MainPreferencePage_includeMergedRevisionsLabel);
 		
 		this.includeMergedRevisionsButton = new Button(group, SWT.CHECK);
 		data = new GridData();
 		this.includeMergedRevisionsButton.setLayoutData(data);
-		this.includeMergedRevisionsButton.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.includeMergedRevisions"));
+		this.includeMergedRevisionsButton.setText(SVNUIMessages.MainPreferencePage_includeMergedRevisions);
 		this.includeMergedRevisionsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				SVNTeamPreferencesPage.this.includeMergedRevisions = SVNTeamPreferencesPage.this.includeMergedRevisionsButton.getSelection();
@@ -443,18 +443,18 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		Group group = new Group(composite, SWT.NONE);
 		group.setLayout(new GridLayout());
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		group.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.resourceSelectionGroupName"));
+		group.setText(SVNUIMessages.MainPreferencePage_resourceSelectionGroupName);
 		
 		Label label = new Label(group, SWT.WRAP);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = 450;
 		label.setLayoutData(data);
-		label.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.resourceSelectionPrompt"));
+		label.setText(SVNUIMessages.MainPreferencePage_resourceSelectionPrompt);
 		
 		this.btnResourceSelectionNew = new Button(group, SWT.CHECK);
 		data = new GridData();
 		this.btnResourceSelectionNew.setLayoutData(data);
-		this.btnResourceSelectionNew.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.resourceSelectionNew"));
+		this.btnResourceSelectionNew.setText(SVNUIMessages.MainPreferencePage_resourceSelectionNew);
 		this.btnResourceSelectionNew.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				SVNTeamPreferencesPage.this.commitSelectNewResources = SVNTeamPreferencesPage.this.btnResourceSelectionNew.getSelection();
@@ -464,7 +464,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.btnResourceSelectionExternal = new Button(group, SWT.CHECK);
 		data = new GridData();
 		this.btnResourceSelectionExternal.setLayoutData(data);
-		this.btnResourceSelectionExternal.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.resourceSelectionExternal"));
+		this.btnResourceSelectionExternal.setText(SVNUIMessages.MainPreferencePage_resourceSelectionExternal);
 		this.btnResourceSelectionExternal.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				SVNTeamPreferencesPage.this.useSubversionExternalsBehaviour = SVNTeamPreferencesPage.this.btnResourceSelectionExternal.getSelection();
@@ -474,7 +474,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.btnResourceSelectionPresentation = new Button(group, SWT.CHECK);
 		data = new GridData();
 		this.btnResourceSelectionPresentation.setLayoutData(data);
-		this.btnResourceSelectionPresentation.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.resourceSelectionPresentation"));
+		this.btnResourceSelectionPresentation.setText(SVNUIMessages.MainPreferencePage_resourceSelectionPresentation);
 		this.btnResourceSelectionPresentation.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				SVNTeamPreferencesPage.this.showSelectedResourcesInSyncPane = SVNTeamPreferencesPage.this.btnResourceSelectionPresentation.getSelection();
@@ -485,18 +485,18 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		group = new Group(composite, SWT.NONE);
 		group.setLayout(new GridLayout());
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		group.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.shareGroupName"));
+		group.setText(SVNUIMessages.MainPreferencePage_shareGroupName);
 		
 		label = new Label(group, SWT.WRAP);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = 450;
 		label.setLayoutData(data);
-		label.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.sharePrompt"));
+		label.setText(SVNUIMessages.MainPreferencePage_sharePrompt);
 		
 		this.enableAutoShareButton = new Button(group, SWT.CHECK);
 		data = new GridData();
 		this.enableAutoShareButton.setLayoutData(data);
-		this.enableAutoShareButton.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.shareEnableAuto"));
+		this.enableAutoShareButton.setText(SVNUIMessages.MainPreferencePage_shareEnableAuto);
 		this.enableAutoShareButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				SVNTeamPreferencesPage.this.enableAutoShare = SVNTeamPreferencesPage.this.enableAutoShareButton.getSelection();
@@ -507,18 +507,18 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		group = new Group(composite, SWT.NONE);
 		group.setLayout(new GridLayout());
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		group.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.keywordsGroupName"));
+		group.setText(SVNUIMessages.MainPreferencePage_keywordsGroupName);
 		
 		label = new Label(group, SWT.WRAP);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = 450;
 		label.setLayoutData(data);
-		label.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.keywordsPrompt"));
+		label.setText(SVNUIMessages.MainPreferencePage_keywordsPrompt);
 		
 		this.computeKeywordsValuesButton = new Button(group, SWT.CHECK);
 		data = new GridData();
 		this.computeKeywordsValuesButton.setLayoutData(data);
-		this.computeKeywordsValuesButton.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.keywordsComputeRecursively"));
+		this.computeKeywordsValuesButton.setText(SVNUIMessages.MainPreferencePage_keywordsComputeRecursively);
 		this.computeKeywordsValuesButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				SVNTeamPreferencesPage.this.computeKeywordsValues = SVNTeamPreferencesPage.this.computeKeywordsValuesButton.getSelection();
@@ -529,18 +529,18 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		group = new Group(composite, SWT.NONE);
 		group.setLayout(new GridLayout());
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		group.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.tableSortingGroupName"));
+		group.setText(SVNUIMessages.MainPreferencePage_tableSortingGroupName);
 		
 		label = new Label(group, SWT.WRAP);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = 450;
 		label.setLayoutData(data);
-		label.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.tableSortingPrompt"));
+		label.setText(SVNUIMessages.MainPreferencePage_tableSortingPrompt);
 		
 		this.caseInsensitiveSortingButton = new Button(group, SWT.CHECK);
 		data = new GridData();
 		this.caseInsensitiveSortingButton.setLayoutData(data);
-		this.caseInsensitiveSortingButton.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.tableSortingCaseInsensitive"));
+		this.caseInsensitiveSortingButton.setText(SVNUIMessages.MainPreferencePage_tableSortingCaseInsensitive);
 		this.caseInsensitiveSortingButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				SVNTeamPreferencesPage.this.caseInsensitiveSorting = SVNTeamPreferencesPage.this.caseInsensitiveSortingButton.getSelection();
@@ -587,16 +587,16 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		dateFormatGroup.setLayoutData(data);	
 		
 		//Synchronize View group
-		synchViewGroup.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.synchronizeGroupName"));
+		synchViewGroup.setText(SVNUIMessages.MainPreferencePage_synchronizeGroupName);
 		
 		Label label = new Label(synchViewGroup, SWT.NULL);
 		label.setLayoutData(new GridData());
-		label.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.synchronizePrompt"));
+		label.setText(SVNUIMessages.MainPreferencePage_synchronizePrompt);
 		
 		this.fastReportButton = new Button(synchViewGroup, SWT.CHECK);
 		data = new GridData();
 		this.fastReportButton.setLayoutData(data);
-		this.fastReportButton.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.synchronizeFastReportName"));
+		this.fastReportButton.setText(SVNUIMessages.MainPreferencePage_synchronizeFastReportName);
 		this.fastReportButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				SVNTeamPreferencesPage.this.fastReport = SVNTeamPreferencesPage.this.fastReportButton.getSelection();
@@ -607,7 +607,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.enableModelSyncButton = new Button(synchViewGroup, SWT.CHECK);
 		data = new GridData();
 		this.enableModelSyncButton.setLayoutData(data);
-		this.enableModelSyncButton.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.allowModelsName"));
+		this.enableModelSyncButton.setText(SVNUIMessages.MainPreferencePage_allowModelsName);
 		this.enableModelSyncButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				SVNTeamPreferencesPage.this.enableModelSync = SVNTeamPreferencesPage.this.enableModelSyncButton.getSelection();
@@ -618,18 +618,18 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.createConsultChangeSets(consultChangeSetsGroup);
 		
 		//History View group
-		historyViewGroup.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.historyGroupName"));
+		historyViewGroup.setText(SVNUIMessages.MainPreferencePage_historyGroupName);
 		
 		label = new Label(historyViewGroup, SWT.WRAP);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
-		label.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.historyPrompt"));
+		label.setText(SVNUIMessages.MainPreferencePage_historyPrompt);
 		
 		this.enablePagingButton = new Button(historyViewGroup, SWT.CHECK);
 		data = new GridData();
 		this.enablePagingButton.setLayoutData(data);
-		String labelText = SVNTeamUIPlugin.instance().getResource("MainPreferencePage.historyEnablePaging");
+		String labelText = SVNUIMessages.MainPreferencePage_historyEnablePaging;
 		this.enablePagingButton.setText(labelText);
 		this.enablePagingButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -670,7 +670,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		data = new GridData();
 		data.horizontalSpan = 2;
 		this.connectToCompareWithButton.setLayoutData(data);
-		labelText = SVNTeamUIPlugin.instance().getResource("MainPreferencePage.historyConnectToCompareWith");
+		labelText = SVNUIMessages.MainPreferencePage_historyConnectToCompareWith;
 		this.connectToCompareWithButton.setText(labelText);
 		this.connectToCompareWithButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -679,21 +679,21 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		});
 		
 		// Date format group
-		dateFormatGroup.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.dateFormatGroupName"));
+		dateFormatGroup.setText(SVNUIMessages.MainPreferencePage_dateFormatGroupName);
 		
 		label = new Label(dateFormatGroup, SWT.WRAP);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
-		labelText = SVNTeamUIPlugin.instance().getResource("MainPreferencePage.dateFormatPrompt");
+		labelText = SVNUIMessages.MainPreferencePage_dateFormatPrompt;
 		label.setText(labelText);
 		
 		this.dateFormatField = new Combo(dateFormatGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
 		String[] itemsDateFormat = new String[4]; 
-		itemsDateFormat[SVNTeamPreferences.DATE_FORMAT_MODE_SHORT] = SVNTeamUIPlugin.instance().getResource("MainPreferencePage.dateFormatShort");
-		itemsDateFormat[SVNTeamPreferences.DATE_FORMAT_MODE_MEDIUM] = SVNTeamUIPlugin.instance().getResource("MainPreferencePage.dateFormatMedium");
-		itemsDateFormat[SVNTeamPreferences.DATE_FORMAT_MODE_LONG] = SVNTeamUIPlugin.instance().getResource("MainPreferencePage.dateFormatLong");
-		itemsDateFormat[SVNTeamPreferences.DATE_FORMAT_MODE_CUSTOM] = SVNTeamUIPlugin.instance().getResource("MainPreferencePage.dateFormatCustom");
+		itemsDateFormat[SVNTeamPreferences.DATE_FORMAT_MODE_SHORT] = SVNUIMessages.MainPreferencePage_dateFormatShort;
+		itemsDateFormat[SVNTeamPreferences.DATE_FORMAT_MODE_MEDIUM] = SVNUIMessages.MainPreferencePage_dateFormatMedium;
+		itemsDateFormat[SVNTeamPreferences.DATE_FORMAT_MODE_LONG] = SVNUIMessages.MainPreferencePage_dateFormatLong;
+		itemsDateFormat[SVNTeamPreferences.DATE_FORMAT_MODE_CUSTOM] = SVNUIMessages.MainPreferencePage_dateFormatCustom;
 		this.dateFormatField.setItems(itemsDateFormat);
 		
 		data = new GridData();
@@ -747,7 +747,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 			}			
 		};
 				
-		consultChangeSetsGroup.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.consultChangeSetsGroupName"));
+		consultChangeSetsGroup.setText(SVNUIMessages.MainPreferencePage_consultChangeSetsGroupName);
 		GridLayout layout = (GridLayout) consultChangeSetsGroup.getLayout();
 		layout.numColumns = 3;
 		layout.horizontalSpacing = 40;		
@@ -758,19 +758,19 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.consultCSAlwaysButton = new Button(consultChangeSetsGroup, SWT.RADIO);
 		data = new GridData();
 		this.consultCSAlwaysButton.setLayoutData(data);
-		this.consultCSAlwaysButton.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.consultChangeSetsAlways"));
+		this.consultCSAlwaysButton.setText(SVNUIMessages.MainPreferencePage_consultChangeSetsAlways);
 		this.consultCSAlwaysButton.addListener(SWT.Selection, changeSetsSelectionListener);
 		
 		this.consultCSNeverButton = new Button(consultChangeSetsGroup, SWT.RADIO);
 		data = new GridData();
 		this.consultCSNeverButton.setLayoutData(data);
-		this.consultCSNeverButton.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.consultChangeSetsNever"));
+		this.consultCSNeverButton.setText(SVNUIMessages.MainPreferencePage_consultChangeSetsNever);
 		this.consultCSNeverButton.addListener(SWT.Selection, changeSetsSelectionListener);
 		
 		this.consultCSPromptButton = new Button(consultChangeSetsGroup, SWT.RADIO);
 		data = new GridData();
 		this.consultCSPromptButton.setLayoutData(data);		
-		this.consultCSPromptButton.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.consultChangeSetsPrompt"));
+		this.consultCSPromptButton.setText(SVNUIMessages.MainPreferencePage_consultChangeSetsPrompt);
 		this.consultCSPromptButton.addListener(SWT.Selection, changeSetsSelectionListener);
 	}
 	
@@ -789,18 +789,18 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		layout.numColumns = 2;
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		group.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.structureGroupName"));
+		group.setText(SVNUIMessages.MainPreferencePage_structureGroupName);
 		
 		Label label = new Label(group, SWT.NULL);
 		data = new GridData();
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
-		label.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.repositoryPrompt"));
+		label.setText(SVNUIMessages.MainPreferencePage_repositoryPrompt);
 		
 		label = new Label(group, SWT.NULL);
 		data = new GridData();
 		label.setLayoutData(data);
-		String labelText = SVNTeamUIPlugin.instance().getResource("MainPreferencePage.repositoryHeadName");
+		String labelText = SVNUIMessages.MainPreferencePage_repositoryHeadName;
 		label.setText(labelText);
 		
 		this.headField = new Text(group, SWT.SINGLE | SWT.BORDER);
@@ -819,7 +819,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 
 		label = new Label(group, SWT.NULL);
 		label.setLayoutData(new GridData());
-		labelText = SVNTeamUIPlugin.instance().getResource("MainPreferencePage.repositoryBranchesName");
+		labelText = SVNUIMessages.MainPreferencePage_repositoryBranchesName;
 		label.setText(labelText);
 		
 		this.branchesField = new Text(group, SWT.SINGLE | SWT.BORDER);
@@ -838,7 +838,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 
 		label = new Label(group, SWT.NULL);
 		label.setLayoutData(new GridData());
-		labelText = SVNTeamUIPlugin.instance().getResource("MainPreferencePage.repositoryTagsName");
+		labelText = SVNUIMessages.MainPreferencePage_repositoryTagsName;
 		label.setText(labelText);
 		
 		this.tagsField = new Text(group, SWT.SINGLE | SWT.BORDER);
@@ -859,7 +859,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		this.showExternalsButton.setLayoutData(data);
-		this.showExternalsButton.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.showExternals"));
+		this.showExternalsButton.setText(SVNUIMessages.MainPreferencePage_showExternals);
 		this.showExternalsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				SVNTeamPreferencesPage.this.showExternals = ((Button)e.widget).getSelection();
@@ -870,18 +870,18 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		group = new Group(composite, SWT.NONE);
 		group.setLayout(new GridLayout());
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		group.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.checkoutGroupName"));
+		group.setText(SVNUIMessages.MainPreferencePage_checkoutGroupName);
 		
 		label = new Label(group, SWT.WRAP);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = 450;
 		label.setLayoutData(data);
-		label.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.checkoutPrompt"));
+		label.setText(SVNUIMessages.MainPreferencePage_checkoutPrompt);
 		
 		this.checkoutUsingDotProjectNameButton = new Button(group, SWT.CHECK);
 		data = new GridData();
 		this.checkoutUsingDotProjectNameButton.setLayoutData(data);
-		this.checkoutUsingDotProjectNameButton.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.checkoutUsingDotProjectName"));
+		this.checkoutUsingDotProjectNameButton.setText(SVNUIMessages.MainPreferencePage_checkoutUsingDotProjectName);
 		this.checkoutUsingDotProjectNameButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				SVNTeamPreferencesPage.this.checkoutUsingDotProjectName = SVNTeamPreferencesPage.this.checkoutUsingDotProjectNameButton.getSelection();
@@ -891,7 +891,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.checkoutRespectProjectStructureButton = new Button(group, SWT.CHECK);
 		data = new GridData();
 		this.checkoutRespectProjectStructureButton.setLayoutData(data);
-		this.checkoutRespectProjectStructureButton.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.checkoutRespectProjectStructure"));
+		this.checkoutRespectProjectStructureButton.setText(SVNUIMessages.MainPreferencePage_checkoutRespectProjectStructure);
 		this.checkoutRespectProjectStructureButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				SVNTeamPreferencesPage.this.checkoutRespectProjectStructure = SVNTeamPreferencesPage.this.checkoutRespectProjectStructureButton.getSelection();
@@ -902,13 +902,13 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		group = new Group(composite, SWT.NONE);
 		group.setLayout(new GridLayout());
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		group.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.branchTagGroupName"));
+		group.setText(SVNUIMessages.MainPreferencePage_branchTagGroupName);
 		
 		label = new Label(group, SWT.WRAP);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = 450;
 		label.setLayoutData(data);
-		label.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.branchTagPrompt"));
+		label.setText(SVNUIMessages.MainPreferencePage_branchTagPrompt);
 		
 		SelectionListener listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -917,12 +917,12 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		};
 		this.branchTagConsiderStructureButton = new Button(group, SWT.RADIO);
 		this.branchTagConsiderStructureButton.setLayoutData(new GridData());
-		this.branchTagConsiderStructureButton.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.branchTagConsiderStructureLabel"));
+		this.branchTagConsiderStructureButton.setText(SVNUIMessages.MainPreferencePage_branchTagConsiderStructureLabel);
 		this.branchTagConsiderStructureButton.addSelectionListener(listener);
 		
 		this.branchTagManualUrlEditButton = new Button(group, SWT.RADIO);
 		this.branchTagManualUrlEditButton.setLayoutData(new GridData());
-		this.branchTagManualUrlEditButton.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.branchTagManualLabel"));
+		this.branchTagManualUrlEditButton.setText(SVNUIMessages.MainPreferencePage_branchTagManualLabel);
 		this.branchTagManualUrlEditButton.addSelectionListener(listener);
 		
 		label = new Label(group, SWT.HORIZONTAL | SWT.SEPARATOR);
@@ -932,7 +932,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.forceExternalsFreezeButton = new Button(group, SWT.CHECK);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.forceExternalsFreezeButton.setLayoutData(data);
-		this.forceExternalsFreezeButton.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.forceFreezeExternals"));
+		this.forceExternalsFreezeButton.setText(SVNUIMessages.MainPreferencePage_forceFreezeExternals);
 		this.forceExternalsFreezeButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				SVNTeamPreferencesPage.this.forceExternalsFreeze = ((Button)e.widget).getSelection();
@@ -956,12 +956,12 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = 450;
 		label.setLayoutData(data);
-		label.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.mailReporterPrompt"));
+		label.setText(SVNUIMessages.MainPreferencePage_mailReporterPrompt);
 		
 		this.mailReporterEnabledButton = new Button(composite, SWT.CHECK);
 		data = new GridData();
 		this.mailReporterEnabledButton.setLayoutData(data);
-		this.mailReporterEnabledButton.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.mailReporterEnabledName"));
+		this.mailReporterEnabledButton.setText(SVNUIMessages.MainPreferencePage_mailReporterEnabledName);
 		this.mailReporterEnabledButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				SVNTeamPreferencesPage.this.mailReporterEnabled = SVNTeamPreferencesPage.this.mailReporterEnabledButton.getSelection();
@@ -971,7 +971,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.mailReporterErrorsEnabledButton = new Button(composite, SWT.CHECK);
 		data = new GridData();
 		this.mailReporterErrorsEnabledButton.setLayoutData(data);
-		this.mailReporterErrorsEnabledButton.setText(SVNTeamUIPlugin.instance().getResource("MainPreferencePage.mailReporterErrorsEnabledName"));
+		this.mailReporterErrorsEnabledButton.setText(SVNUIMessages.MainPreferencePage_mailReporterErrorsEnabledName);
 		this.mailReporterErrorsEnabledButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				SVNTeamPreferencesPage.this.mailReporterErrorsEnabled = SVNTeamPreferencesPage.this.mailReporterErrorsEnabledButton.getSelection();

@@ -23,7 +23,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNAnnotationData;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
@@ -82,7 +82,7 @@ public class BuiltInAnnotate {
 				if (data == null || data.length == 0) {
 					return;
 				}
-				String noAuthor = SVNTeamPlugin.instance().getResource("SVNInfo.NoAuthor");
+				String noAuthor = SVNMessages.SVNInfo_NoAuthor;
 				for (int i = 0; i < data.length; i++) {
 					String revisionId = String.valueOf(data[i].revision);
 					BuiltInAnnotateRevision revision = revisions.get(revisionId);

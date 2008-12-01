@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * Remove property dialog
@@ -36,9 +36,9 @@ public class RemovePropertyDialog extends MessageDialog {
 
 	public RemovePropertyDialog(Shell parentShell, boolean oneProperty, boolean isFile) {
 		super(parentShell, 
-			SVNTeamUIPlugin.instance().getResource(oneProperty ? "RemoveProperty.Title.Single" : "RemoveProperty.Title.Multi"), 
+			oneProperty ? SVNUIMessages.RemoveProperty_Title_Single : SVNUIMessages.RemoveProperty_Title_Multi, 
 			null, 
-			SVNTeamUIPlugin.instance().getResource(oneProperty ? "RemoveProperty.Message.Single" : "RemoveProperty.Message.Multi"),
+			oneProperty ? SVNUIMessages.RemoveProperty_Message_Single : SVNUIMessages.RemoveProperty_Message_Multi,
 			MessageDialog.QUESTION, 
 			new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 
 			0);
@@ -60,7 +60,7 @@ public class RemovePropertyDialog extends MessageDialog {
 			Button recursive = new Button(composite, SWT.CHECK);
 			recursive.setLayoutData(new GridData());
 			recursive.setSelection(false);
-			recursive.setText(SVNTeamUIPlugin.instance().getResource("RemoveProperty.Recursively"));
+			recursive.setText(SVNUIMessages.RemoveProperty_Recursively);
 			recursive.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {
 					Button button = (Button)event.widget;

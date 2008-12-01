@@ -21,7 +21,7 @@ import org.eclipse.compare.internal.Utilities;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNEntryStatusCallback;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
@@ -127,7 +127,7 @@ public class CompareResourcesOperation extends AbstractActionOperation {
 			}
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-					ProgressMonitorUtility.setTaskInfo(monitor, CompareResourcesOperation.this, SVNTeamPlugin.instance().getResource("Progress.Running"));
+					ProgressMonitorUtility.setTaskInfo(monitor, CompareResourcesOperation.this, SVNMessages.Progress_Running);
 					
 					SVNEntryRevisionReference refPrev = SVNUtility.getEntryRevisionReference(diffPair[0]);
 					SVNEntryRevisionReference refNext = SVNUtility.getEntryRevisionReference(diffPair[1]);

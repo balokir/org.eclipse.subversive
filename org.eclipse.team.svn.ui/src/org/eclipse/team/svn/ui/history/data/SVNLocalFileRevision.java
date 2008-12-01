@@ -21,7 +21,8 @@ import org.eclipse.core.resources.IFileState;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.internal.core.history.LocalFileRevision;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.core.SVNMessages;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.operation.UILoggedOperation;
 import org.eclipse.team.svn.ui.utility.DateFormatter;
 
@@ -42,7 +43,7 @@ public class SVNLocalFileRevision extends LocalFileRevision implements IEditable
 
 	public String getComment() {
 		if (this.getFile() != null) {
-			return SVNTeamUIPlugin.instance().getResource("SVNLocalFileRevision.CurrentVersion");
+			return SVNUIMessages.SVNLocalFileRevision_CurrentVersion;
 		}
 		return "";
 	}
@@ -68,7 +69,7 @@ public class SVNLocalFileRevision extends LocalFileRevision implements IEditable
 				this.getFile().setContents(new ByteArrayInputStream(newContent), true, true, new NullProgressMonitor());
 			}
 			catch (CoreException ex) {
-				UILoggedOperation.reportError(SVNTeamUIPlugin.instance().getResource("Operation.GetFileContent.SetContent"), ex);
+				UILoggedOperation.reportError(SVNMessages.Operation_GetFileContent_SetContent, ex);
 			}
 		}
 	}

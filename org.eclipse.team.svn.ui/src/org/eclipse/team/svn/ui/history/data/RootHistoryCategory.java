@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNLogPath;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.history.ISVNHistoryViewInfo;
 import org.eclipse.team.svn.ui.history.model.ILogNode;
 
@@ -56,10 +56,10 @@ public class RootHistoryCategory extends HistoryCategory {
 	public RootHistoryCategory(ISVNHistoryViewInfo info) {
 		super(HistoryCategory.CATEGORY_ROOT, null);
 		if (RootHistoryCategory.NO_REMOTE == null) {
-			RootHistoryCategory.NO_REMOTE = new String[] {SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.NoRemote")};
-			RootHistoryCategory.NO_LOCAL = new String[] {SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.NoLocal")};
-			RootHistoryCategory.NO_REVS = new String[] {SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.NoRevs")};
-			RootHistoryCategory.PENDING = new String[] {SVNTeamUIPlugin.instance().getResource("RepositoriesView.Model.Pending")};
+			RootHistoryCategory.NO_REMOTE = new String[] {SVNUIMessages.LogMessagesComposite_NoRemote};
+			RootHistoryCategory.NO_LOCAL = new String[] {SVNUIMessages.LogMessagesComposite_NoLocal};
+			RootHistoryCategory.NO_REVS = new String[] {SVNUIMessages.LogMessagesComposite_NoRevs};
+			RootHistoryCategory.PENDING = new String[] {SVNUIMessages.RepositoriesView_Model_Pending};
 		}
 		this.info = info;
 	    this.pathData = new HashMap<Object, SVNChangedPathData []>();

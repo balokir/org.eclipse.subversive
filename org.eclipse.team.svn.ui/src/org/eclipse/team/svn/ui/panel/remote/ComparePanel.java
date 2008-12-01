@@ -13,7 +13,7 @@ package org.eclipse.team.svn.ui.panel.remote;
 
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.RepositoryResourceSelectionComposite;
 import org.eclipse.team.svn.ui.panel.common.AbstractRepositoryResourceSelectionPanel;
 
@@ -24,13 +24,13 @@ import org.eclipse.team.svn.ui.panel.common.AbstractRepositoryResourceSelectionP
  */
 public class ComparePanel extends AbstractRepositoryResourceSelectionPanel {
     public ComparePanel(IRepositoryResource baseResource) {    	
-    	super(baseResource, SVNRevision.INVALID_REVISION_NUMBER, SVNTeamUIPlugin.instance().getResource("ComparePanel.Title"), SVNTeamUIPlugin.instance().getResource("ComparePanel.Description"), "compareUrl", SVNTeamUIPlugin.instance().getResource("ComparePanel.Selection.Title"), SVNTeamUIPlugin.instance().getResource("ComparePanel.Selection.Description"), RepositoryResourceSelectionComposite.TEXT_BASE);
-    	this.defaultMessage = SVNTeamUIPlugin.instance().getResource("ComparePanel.Message");
+    	super(baseResource, SVNRevision.INVALID_REVISION_NUMBER, SVNUIMessages.ComparePanel_Title, SVNUIMessages.ComparePanel_Description, "compareUrl", SVNUIMessages.ComparePanel_Selection_Title, SVNUIMessages.ComparePanel_Selection_Description, RepositoryResourceSelectionComposite.TEXT_BASE);
+    	this.defaultMessage = SVNUIMessages.ComparePanel_Message;
     }
     
     public ComparePanel(IRepositoryResource baseResource, long revision) {    	
-    	super(baseResource, revision, SVNTeamUIPlugin.instance().getResource("ComparePanel.Title"), SVNTeamUIPlugin.instance().getResource("ComparePanel.Description"), "compareUrl", SVNTeamUIPlugin.instance().getResource("ComparePanel.Selection.Title"), SVNTeamUIPlugin.instance().getResource("ComparePanel.Selection.Description"), RepositoryResourceSelectionComposite.TEXT_BASE);
-    	this.defaultMessage = SVNTeamUIPlugin.instance().getResource("ComparePanel.Message");
+    	super(baseResource, revision, SVNUIMessages.ComparePanel_Title, SVNUIMessages.ComparePanel_Description, "compareUrl", SVNUIMessages.ComparePanel_Selection_Title, SVNUIMessages.ComparePanel_Selection_Description, RepositoryResourceSelectionComposite.TEXT_BASE);
+    	this.defaultMessage = SVNUIMessages.ComparePanel_Message;
     }
     
 	public String getHelpId() {

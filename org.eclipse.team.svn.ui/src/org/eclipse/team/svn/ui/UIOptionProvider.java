@@ -113,7 +113,7 @@ public class UIOptionProvider implements IOptionProvider {
 	}
 	
 	public String getResource(String key) {
-		return SVNTeamUIPlugin.instance().getResource(key);
+		return SVNUIMessages.getErrorString(key);
 	}
 	
 }

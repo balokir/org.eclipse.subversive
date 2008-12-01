@@ -15,7 +15,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.BranchTagSelectionComposite;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 
@@ -36,15 +36,15 @@ public class CompareBranchTagPanel extends AbstractDialogPanel {
 		this.selectedResource = baseResource;
 		this.type = type;
 		if (type == BranchTagSelectionComposite.BRANCH_OPERATED) {
-			this.dialogTitle = SVNTeamUIPlugin.instance().getResource("Compare.Branch.Title");
-			this.dialogDescription = SVNTeamUIPlugin.instance().getResource("Compare.Branch.Description");
-			this.defaultMessage = SVNTeamUIPlugin.instance().getResource("Compare.Branch.Message");
+			this.dialogTitle = SVNUIMessages.Compare_Branch_Title;
+			this.dialogDescription = SVNUIMessages.Compare_Branch_Description;
+			this.defaultMessage = SVNUIMessages.Compare_Branch_Message;
 			this.historyKey = "branchCompare";
 		}
 		else {
-			this.dialogTitle = SVNTeamUIPlugin.instance().getResource("Compare.Tag.Title");
-			this.dialogDescription = SVNTeamUIPlugin.instance().getResource("Compare.Tag.Description");
-			this.defaultMessage = SVNTeamUIPlugin.instance().getResource("Compare.Tag.Message");
+			this.dialogTitle = SVNUIMessages.Compare_Tag_Title;
+			this.dialogDescription = SVNUIMessages.Compare_Tag_Description;
+			this.defaultMessage = SVNUIMessages.Compare_Tag_Message;
 			this.historyKey = "tagCompare";
 		}
 	}

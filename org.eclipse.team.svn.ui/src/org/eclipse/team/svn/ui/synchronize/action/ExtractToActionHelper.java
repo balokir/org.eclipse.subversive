@@ -34,7 +34,7 @@ import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.core.synchronize.variant.RemoteResourceVariant;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 /**
@@ -55,8 +55,8 @@ public class ExtractToActionHelper extends AbstractActionHelper {
 	
 	public IActionOperation getOperation() {
 		DirectoryDialog fileDialog = new DirectoryDialog(configuration.getSite().getShell());
-		fileDialog.setText(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Select.Title"));
-		fileDialog.setMessage(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Select.Description"));
+		fileDialog.setText(SVNUIMessages.ExtractToAction_Select_Title);
+		fileDialog.setMessage(SVNUIMessages.ExtractToAction_Select_Description);
 		String path = fileDialog.open();
 		if (path == null) {
 			return null;

@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.utility.UserInputHistory;
 import org.eclipse.team.svn.ui.verifier.IValidationManager;
 
@@ -106,7 +106,7 @@ public class ProxyComposite extends AbstractDynamicComposite implements IPropert
 		Label description = new Label(this, SWT.WRAP);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		description.setLayoutData(data);
-		description.setText(SVNTeamUIPlugin.instance().getResource("ProxyComposite.Description", new String [] {this.host}));
+		description.setText(SVNUIMessages.format(SVNUIMessages.ProxyComposite_Description, new String [] {this.host}));
 						
 		//Authentication group
 		Group authGroup = new Group(this, SWT.NULL);
@@ -117,7 +117,7 @@ public class ProxyComposite extends AbstractDynamicComposite implements IPropert
 		layout.numColumns = 2;
 		layout.verticalSpacing = 12;
 		authGroup.setLayout(layout);
-		authGroup.setText(SVNTeamUIPlugin.instance().getResource("ProxyComposite.Authentication"));
+		authGroup.setText(SVNUIMessages.ProxyComposite_Authentication);
 		
 		//Username and password inner group
 		Composite inner = new Composite(authGroup, SWT.FILL);
@@ -132,7 +132,7 @@ public class ProxyComposite extends AbstractDynamicComposite implements IPropert
 		description = new Label(inner, SWT.NULL);
 		data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		description.setLayoutData(data);
-		description.setText(SVNTeamUIPlugin.instance().getResource("ProxyComposite.Username"));
+		description.setText(SVNUIMessages.ProxyComposite_Username);
 		
 		this.userHistory = new UserInputHistory(ProxyComposite.USER_HISTORY_NAME);
 		
@@ -145,7 +145,7 @@ public class ProxyComposite extends AbstractDynamicComposite implements IPropert
 		this.usernameText.setText(this.getUsername());
 		
 		description = new Label(inner, SWT.NULL);
-		description.setText(SVNTeamUIPlugin.instance().getResource("ProxyComposite.Password"));
+		description.setText(SVNUIMessages.ProxyComposite_Password);
 		data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		description.setLayoutData(data);
 		

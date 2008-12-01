@@ -24,6 +24,7 @@ import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.PlatformUI;
@@ -49,7 +50,7 @@ public class SVNConsole extends MessageConsole implements IPropertyChangeListene
 	protected boolean enabled;
 	
 	public SVNConsole() {
-		super(SVNTeamUIPlugin.instance().getResource("SVNConsole.Name"), SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/console.gif"));
+		super(SVNUIMessages.SVNConsole_Name, SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/console.gif"));
 		
 		super.setType(SVNConsole.SVN_CONSOLE_TYPE);
 		
@@ -195,15 +196,15 @@ public class SVNConsole extends MessageConsole implements IPropertyChangeListene
 			if (this.outputStarted) {
 				this.write(IConsoleStream.LEVEL_CMD, "*** ");
 				if (this.hasError) {
-					this.write(IConsoleStream.LEVEL_ERROR, SVNTeamUIPlugin.instance().getResource("SVNConsole.Error"));
+					this.write(IConsoleStream.LEVEL_ERROR, SVNUIMessages.SVNConsole_Error);
 				}
 				else if (this.hasWarning) {
-					this.write(IConsoleStream.LEVEL_WARNING, SVNTeamUIPlugin.instance().getResource("SVNConsole.Warning"));
+					this.write(IConsoleStream.LEVEL_WARNING, SVNUIMessages.SVNConsole_Warning);
 				}
 				else {
-					this.write(IConsoleStream.LEVEL_CMD, this.cancelled ? SVNTeamUIPlugin.instance().getResource("SVNConsole.Cancelled") : SVNTeamUIPlugin.instance().getResource("SVNConsole.Ok"));
+					this.write(IConsoleStream.LEVEL_CMD, this.cancelled ? SVNUIMessages.SVNConsole_Cancelled : SVNUIMessages.SVNConsole_Ok);
 				}
-				this.write(IConsoleStream.LEVEL_CMD, " " + SVNTeamUIPlugin.instance().getResource("SVNConsole.Took", new String[] {new SimpleDateFormat("mm:ss.SSS").format(new Date(System.currentTimeMillis() - this.start))}) + "\n\n");
+				this.write(IConsoleStream.LEVEL_CMD, " " + SVNUIMessages.format(SVNUIMessages.SVNConsole_Took, new String[] {new SimpleDateFormat("mm:ss.SSS").format(new Date(System.currentTimeMillis() - this.start))}) + "\n\n");
 			}
 		}
 

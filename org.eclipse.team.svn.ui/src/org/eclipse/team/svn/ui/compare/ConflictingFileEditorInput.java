@@ -26,7 +26,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * Conflicting files merger editor input implementation
@@ -55,11 +55,11 @@ public class ConflictingFileEditorInput extends CompareEditorInput {
 		cc.setLeftImage(img);
 		cc.setRightImage(img);
 		cc.setAncestorImage(img);
-		cc.setLeftLabel(this.target.getName() + " " + SVNTeamUIPlugin.instance().getResource("ConflictingFileEditorInput.Working"));
-		cc.setRightLabel(this.target.getName() + " " + SVNTeamUIPlugin.instance().getResource("ConflictingFileEditorInput.Repository"));
-		cc.setAncestorLabel(this.target.getName() + " " + SVNTeamUIPlugin.instance().getResource("ConflictingFileEditorInput.Base"));
+		cc.setLeftLabel(this.target.getName() + " " + SVNUIMessages.ConflictingFileEditorInput_Working);
+		cc.setRightLabel(this.target.getName() + " " + SVNUIMessages.ConflictingFileEditorInput_Repository);
+		cc.setAncestorLabel(this.target.getName() + " " + SVNUIMessages.ConflictingFileEditorInput_Base);
 		
-		this.setTitle(this.target.getName() + " " + SVNTeamUIPlugin.instance().getResource("ConflictingFileEditorInput.EditConflicts"));
+		this.setTitle(this.target.getName() + " " + SVNUIMessages.ConflictingFileEditorInput_EditConflicts);
 		
 		InputStream stream = null;
 		try {

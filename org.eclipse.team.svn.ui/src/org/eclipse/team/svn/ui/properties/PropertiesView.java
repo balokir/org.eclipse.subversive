@@ -31,6 +31,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.AbstractSVNView;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.PropertiesComposite;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -54,7 +55,7 @@ public class PropertiesView extends AbstractSVNView {
 	protected boolean backgroundExecution;
 	
 	public PropertiesView() {
-		super(SVNTeamUIPlugin.instance().getResource("PropertiesView.Description"));
+		super(SVNUIMessages.PropertiesView_Description);
 	}
 	
 	public void setFocus() {
@@ -116,7 +117,7 @@ public class PropertiesView extends AbstractSVNView {
         IActionBars actionBars = this.getViewSite().getActionBars();	    
 	    IMenuManager actionBarsMenu = actionBars.getMenuManager();
 	    
-	    this.linkWithEditorDropDownAction = new Action(SVNTeamUIPlugin.instance().getResource("SVNView.LinkWith.Label"), Action.AS_CHECK_BOX) {
+	    this.linkWithEditorDropDownAction = new Action(SVNUIMessages.SVNView_LinkWith_Label, Action.AS_CHECK_BOX) {
 	    	public void run() {
 	    		PropertiesView.this.linkWithEditor();
 	    		PropertiesView.this.linkWithEditorAction.setChecked(PropertiesView.this.isLinkWithEditorEnabled);
@@ -128,7 +129,7 @@ public class PropertiesView extends AbstractSVNView {
 
 	    IToolBarManager tbm = actionBars.getToolBarManager();
         tbm.removeAll();
-        Action action = new Action(SVNTeamUIPlugin.instance().getResource("SVNView.Refresh.Label")) {
+        Action action = new Action(SVNUIMessages.SVNView_Refresh_Label) {
         	public void run() {
 	    		PropertiesView.this.refreshAction();
 	    	}
@@ -159,13 +160,13 @@ public class PropertiesView extends AbstractSVNView {
 	}
 	
 	protected Action getLinkWithEditorAction() {
-		this.linkWithEditorAction = new Action(SVNTeamUIPlugin.instance().getResource("SVNView.LinkWith.Label"), IAction.AS_CHECK_BOX) {
+		this.linkWithEditorAction = new Action(SVNUIMessages.SVNView_LinkWith_Label, IAction.AS_CHECK_BOX) {
 	        public void run() {
 	            PropertiesView.this.linkWithEditor();
 	            PropertiesView.this.linkWithEditorDropDownAction.setChecked(PropertiesView.this.isLinkWithEditorEnabled);
 	        }
 	    };
-	    this.linkWithEditorAction.setToolTipText(SVNTeamUIPlugin.instance().getResource("SVNView.LinkWith.ToolTip"));
+	    this.linkWithEditorAction.setToolTipText(SVNUIMessages.SVNView_LinkWith_ToolTip);
 	    this.linkWithEditorAction.setDisabledImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/link_with_disabled.gif"));
 	    this.linkWithEditorAction.setHoverImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/link_with.gif"));
 	    

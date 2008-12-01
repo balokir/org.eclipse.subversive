@@ -16,7 +16,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.CommentComposite;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.properties.bugtraq.BugtraqModel;
@@ -33,8 +33,8 @@ public class CommentPanel extends AbstractDialogPanel {
     public CommentPanel(String title) {
         super();
         this.dialogTitle = title;
-        this.dialogDescription = SVNTeamUIPlugin.instance().getResource("CommentPanel.Description");
-        this.defaultMessage = SVNTeamUIPlugin.instance().getResource("CommentPanel.Message");
+        this.dialogDescription = SVNUIMessages.CommentPanel_Description;
+        this.defaultMessage = SVNUIMessages.CommentPanel_Message;
     }
     
     public CommentPanel(String title, BugtraqModel bugtraqModel) {

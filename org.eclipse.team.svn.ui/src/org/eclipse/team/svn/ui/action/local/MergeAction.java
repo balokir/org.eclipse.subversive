@@ -27,6 +27,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
 import org.eclipse.team.svn.core.svnstorage.ResourcesParentsProvider;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractNonRecursiveTeamAction;
 import org.eclipse.team.svn.ui.dialog.AdvancedDialog;
 import org.eclipse.team.svn.ui.dialog.OperationErrorDialog;
@@ -48,7 +49,7 @@ public class MergeAction extends AbstractNonRecursiveTeamAction {
 	public void runImpl(IAction action) {
 	    IResource []resources = this.getSelectedResources(IStateFilter.SF_EXCLUDE_DELETED);
 		
-		if (!OperationErrorDialog.isAcceptableAtOnce(resources, SVNTeamUIPlugin.instance().getResource("MergeAction.MergeError"), this.getShell())) {
+		if (!OperationErrorDialog.isAcceptableAtOnce(resources, SVNUIMessages.MergeAction_MergeError, this.getShell())) {
 			return;
 		}
 	    

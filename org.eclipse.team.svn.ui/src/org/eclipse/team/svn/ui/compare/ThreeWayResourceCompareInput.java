@@ -60,6 +60,7 @@ import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.operation.UILoggedOperation;
 import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
@@ -98,7 +99,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		else {
 			propertyComparisonAllowed = (selectedNode.getKind() & Differencer.CHANGE_TYPE_MASK) == Differencer.CHANGE;
 		}
-		manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.CompareProperties")){
+		manager.add(tAction = new Action(SVNUIMessages.SynchronizeActionGroup_CompareProperties){
 			public void run() {
 				ResourceElement element = (ResourceElement)selectedNode.getLeft();
 				SVNLocalResource local = (SVNLocalResource)element.getLocalResource();
@@ -138,9 +139,9 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 					if (input.getCompareResult() == null) {
 						MessageDialog dialog = new MessageDialog(
 								UIMonitorUtility.getShell(),
-								SVNTeamUIPlugin.instance().getResource("ComparePropsNoDiff.Title"),
+								SVNUIMessages.ComparePropsNoDiff_Title,
 								null,
-								SVNTeamUIPlugin.instance().getResource("ComparePropsNoDiff.Message"),
+								SVNUIMessages.ComparePropsNoDiff_Message,
 								MessageDialog.INFORMATION,
 								new String [] {IDialogConstants.OK_LABEL},
 								0);
@@ -179,7 +180,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		Arrays.sort(allChanges);
 		HashMap path2node = new HashMap();
 		
-		String message = SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.CheckingDelta");
+		String message = SVNUIMessages.ResourceCompareInput_CheckingDelta;
 		for (int i = 0; i < allChanges.length && !monitor.isCanceled(); i++) {
 			monitor.subTask(MessageFormat.format(message, new Object[] {allChanges[i]}));
 			this.makeBranch(allChanges[i], localChanges.get(allChanges[i]), remoteChanges.get(allChanges[i]), path2node, monitor);
@@ -382,14 +383,14 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		int kind = selected.getKind();
 		
 		if (kind == Kind.WORKING) {
-			return SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.LocalSign");
+			return SVNUIMessages.ResourceCompareInput_LocalSign;
 		}
 		else if (kind == Kind.BASE) {
 			long revision = element.getLocalResource().getRevision();
 			if (revision == SVNRevision.INVALID_REVISION_NUMBER) {
-				return SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.ResourceIsNotAvailable");
+				return SVNUIMessages.ResourceCompareInput_ResourceIsNotAvailable;
 			}
-			return SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.BaseSign", new String[] {String.valueOf(revision)});
+			return SVNUIMessages.format(SVNUIMessages.ResourceCompareInput_BaseSign, new String[] {String.valueOf(revision)});
 		}
 
 		return super.getRevisionPart(element);
@@ -438,7 +439,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		
 		if (this.root != null) {
 			try {
-				pm.beginTask(SVNTeamUIPlugin.instance().getResource("ThreeWayResourceCompareInput.SaveChanges"), -1);
+				pm.beginTask(SVNUIMessages.ThreeWayResourceCompareInput_SaveChanges, -1);
 				this.saveChanges((CompareNode)this.root, pm);
 			}
 			finally {

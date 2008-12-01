@@ -16,6 +16,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.CommentComposite;
 import org.eclipse.team.svn.ui.wizard.AbstractVerifiedWizardPage;
 
@@ -30,10 +31,10 @@ public class CommentWizardPage extends AbstractVerifiedWizardPage {
 	public CommentWizardPage(boolean isMove) {
 		super(CommentWizardPage.class.getName(),
 				isMove ?
-				SVNTeamUIPlugin.instance().getResource("MoveToAction.Comment.Title") :
-				SVNTeamUIPlugin.instance().getResource("CopyToAction.Comment.Title"),
+				SVNUIMessages.MoveToAction_Comment_Title :
+				SVNUIMessages.CopyToAction_Comment_Title,
 				SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
-		this.setDescription(SVNTeamUIPlugin.instance().getResource("CopyMove.Comment.Message"));
+		this.setDescription(SVNUIMessages.CopyMove_Comment_Message);
 	}
 
 	protected Composite createControlImpl(Composite parent) {

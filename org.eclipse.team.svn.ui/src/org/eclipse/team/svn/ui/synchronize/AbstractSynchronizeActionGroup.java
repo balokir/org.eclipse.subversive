@@ -19,7 +19,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.SynchronizeModelAction;
@@ -71,13 +71,13 @@ public abstract class AbstractSynchronizeActionGroup extends SynchronizePageActi
 	protected abstract void configureActions(ISynchronizePageConfiguration configuration);
 	
 	protected void addSpecificActions(final AbstractSynchronizeModelAction selectionProvider, final ISynchronizePageConfiguration configuration) {
-		this.outgoing = new MenuManager(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Outgoing"));
+		this.outgoing = new MenuManager(SVNUIMessages.SynchronizeActionGroup_Outgoing);
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				AbstractSynchronizeActionGroup.GROUP_TEAM, 
 				this.outgoing);
 		
-		this.incoming = new MenuManager(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Incoming"));
+		this.incoming = new MenuManager(SVNUIMessages.SynchronizeActionGroup_Incoming);
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				AbstractSynchronizeActionGroup.GROUP_TEAM, 

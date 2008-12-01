@@ -22,7 +22,7 @@ import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSubscriber;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.core.synchronize.MergeSubscriber;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.operation.MergeScope;
 import org.eclipse.team.svn.ui.synchronize.AbstractSVNParticipant;
@@ -84,7 +84,7 @@ public class MergeParticipant extends AbstractSVNParticipant {
     }
 
     protected String getShortTaskName() {
-        return SVNTeamUIPlugin.instance().getResource("MergeView.TaskName");
+        return SVNUIMessages.MergeView_TaskName;
     }
     
     protected ILabelDecorator createLabelDecorator() {

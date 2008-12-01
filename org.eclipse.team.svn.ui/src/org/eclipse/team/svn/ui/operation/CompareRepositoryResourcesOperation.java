@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.internal.CompareEditor;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNDiffStatus;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
@@ -96,7 +96,7 @@ public class CompareRepositoryResourcesOperation extends AbstractActionOperation
 		final ISVNConnector proxy = location.acquireSVNProxy();
 		final ArrayList<SVNDiffStatus> statuses = new ArrayList<SVNDiffStatus>();
 		
-		ProgressMonitorUtility.setTaskInfo(monitor, this, SVNTeamPlugin.instance().getResource("Progress.Running"));
+		ProgressMonitorUtility.setTaskInfo(monitor, this, SVNMessages.Progress_Running);
 		this.protectStep(new IUnprotectedOperation() {
 			public void run(IProgressMonitor monitor) throws Exception {
 				SVNEntryRevisionReference refPrev = SVNUtility.getEntryRevisionReference(CompareRepositoryResourcesOperation.this.prev);

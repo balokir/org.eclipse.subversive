@@ -18,7 +18,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 
 /**
@@ -51,7 +51,7 @@ public class SecurityWarningComposite extends Composite {
 		Dialog.applyDialogFont(description);
 		data.heightHint = DefaultDialog.convertHeightInCharsToPixels(description, 2);
 		description.setLayoutData(data);
-		description.setText(SVNTeamUIPlugin.instance().getResource("SecurityWarningComposite.Message"));
+		description.setText(SVNUIMessages.SecurityWarningComposite_Message);
     }
 	
 }

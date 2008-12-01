@@ -35,7 +35,7 @@ import org.eclipse.team.svn.core.svnstorage.SVNCachedProxyCredentialsManager;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.svnstorage.SVNRepositoryLocation;
 import org.eclipse.team.svn.core.utility.SVNUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.CredentialsComposite;
 import org.eclipse.team.svn.ui.composite.ProxyComposite;
 import org.eclipse.team.svn.ui.composite.SSHComposite;
@@ -77,9 +77,9 @@ public class PromptCredentialsPanel extends AbstractDialogPanel {
     
     public PromptCredentialsPanel(String forWhat, int connectionType) {
         super();
-        this.dialogTitle = SVNTeamUIPlugin.instance().getResource("PromptCredentialsPanel.Title");
-        this.dialogDescription = SVNTeamUIPlugin.instance().getResource("PromptCredentialsPanel.Description");
-        this.rootLocationName = SVNTeamUIPlugin.instance().getResource("PromptCredentialsPanel.LocationRealm");
+        this.dialogTitle = SVNUIMessages.PromptCredentialsPanel_Title;
+        this.dialogDescription = SVNUIMessages.PromptCredentialsPanel_Description;
+        this.rootLocationName = SVNUIMessages.PromptCredentialsPanel_LocationRealm;
         this.defaultMessage = forWhat;
         this.host = SVNTeamPlugin.instance().getProxyService().getProxyData(
         		forWhat.split(":")[0].equals("https") ? IProxyData.HTTPS_PROXY_TYPE : IProxyData.HTTP_PROXY_TYPE).getHost();
@@ -216,12 +216,12 @@ public class PromptCredentialsPanel extends AbstractDialogPanel {
 		if (this.connectionType != SVNRepositoryLocation.PROXY_CONNECTION) {
 			if (this.connectionType != SVNRepositoryLocation.SSL_CONNECTION) {
 				TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
-				tabItem.setText(SVNTeamUIPlugin.instance().getResource("PromptCredentialsPanel.Tab.General"));
+				tabItem.setText(SVNUIMessages.PromptCredentialsPanel_Tab_General);
 				tabItem.setControl(composite);
 				
 				if (this.connectionType == SVNRepositoryLocation.SSH_CONNECTION) {
 					tabItem = new TabItem(tabFolder, SWT.NONE);
-					tabItem.setText(SVNTeamUIPlugin.instance().getResource("PromptCredentialsPanel.Tab.SSHSettings"));
+					tabItem.setText(SVNUIMessages.PromptCredentialsPanel_Tab_SSHSettings);
 					this.compositeSSH = new SSHComposite(tabFolder, SWT.NONE, this, true);
 					this.compositeSSH.setCredentialsInput(this.sshSettings);
 					this.compositeSSH.initialize();
@@ -233,7 +233,7 @@ public class PromptCredentialsPanel extends AbstractDialogPanel {
 			}
 			else {
 				TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
-				tabItem.setText(SVNTeamUIPlugin.instance().getResource("PromptCredentialsPanel.Tab.SSLSettings"));
+				tabItem.setText(SVNUIMessages.PromptCredentialsPanel_Tab_SSLSettings);
 				this.compositeSSL = new SSLComposite(tabFolder, SWT.NONE, this, true);
 				this.compositeSSL.setCredentialsInput(this.sslSettings);
 				this.compositeSSL.initialize();
@@ -242,7 +242,7 @@ public class PromptCredentialsPanel extends AbstractDialogPanel {
 		}
 		else {
 			TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
-			tabItem.setText(SVNTeamUIPlugin.instance().getResource("PromptCredentialsPanel.Tab.ProxySettings"));
+			tabItem.setText(SVNUIMessages.PromptCredentialsPanel_Tab_ProxySettings);
 			this.proxyComposite = new ProxyComposite(tabFolder, SWT.NONE, this, true);
 			SVNCachedProxyCredentialsManager proxyCredentialsManager = SVNRemoteStorage.instance().getProxyCredentialsManager();
    			this.proxyComposite.setUsername(proxyCredentialsManager.getUsername());
@@ -265,7 +265,7 @@ public class PromptCredentialsPanel extends AbstractDialogPanel {
 			Label label = new Label(composite, SWT.NONE);
 			data = new GridData();
 			label.setLayoutData(data);
-			label.setText(SVNTeamUIPlugin.instance().getResource("PromptCredentialsPanel.ApplyTo"));
+			label.setText(SVNUIMessages.PromptCredentialsPanel_ApplyTo);
 			
 			final Combo combo = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
 			data = new GridData(GridData.FILL_HORIZONTAL);

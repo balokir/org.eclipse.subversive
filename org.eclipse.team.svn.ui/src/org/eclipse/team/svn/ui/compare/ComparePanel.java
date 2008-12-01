@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.local.AbstractWorkingCopyOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
@@ -38,12 +38,12 @@ public class ComparePanel extends AbstractDialogPanel {
 	protected IResource resource;
 	
 	public ComparePanel(CompareEditorInput compareInput, IResource resource) {
-		super(new String[] {SVNTeamUIPlugin.instance().getResource("CompareLocalPanel.Save"), IDialogConstants.CANCEL_LABEL});
+		super(new String[] {SVNUIMessages.CompareLocalPanel_Save, IDialogConstants.CANCEL_LABEL});
 		this.compareInput = compareInput;
 		this.resource = resource;
-		this.dialogTitle = SVNTeamUIPlugin.instance().getResource("CompareLocalPanel.Title");
-		this.dialogDescription = SVNTeamUIPlugin.instance().getResource("CompareLocalPanel.Description");
-		this.defaultMessage = SVNTeamUIPlugin.instance().getResource("CompareLocalPanel.Message");
+		this.dialogTitle = SVNUIMessages.CompareLocalPanel_Title;
+		this.dialogDescription = SVNUIMessages.CompareLocalPanel_Description;
+		this.defaultMessage = SVNUIMessages.CompareLocalPanel_Message;
 	}
 	
 	public void createControlsImpl(Composite parent) {

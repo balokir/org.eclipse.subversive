@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.local.ExportOperation;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractWorkingCopyAction;
 
 /**
@@ -36,8 +36,8 @@ public class ExportAction extends AbstractWorkingCopyAction {
 		IResource []resources = this.getSelectedResources(IStateFilter.SF_EXCLUDE_DELETED);
 		
 		DirectoryDialog fileDialog = new DirectoryDialog(this.getShell());
-		fileDialog.setText(SVNTeamUIPlugin.instance().getResource("ExportAction.Select.Title"));
-		fileDialog.setMessage(SVNTeamUIPlugin.instance().getResource("ExportAction.Select.Description"));
+		fileDialog.setText(SVNUIMessages.ExportAction_Select_Title);
+		fileDialog.setMessage(SVNUIMessages.ExportAction_Select_Description);
 		String path = fileDialog.open();
 		if (path != null) {
 			this.runScheduled(new ExportOperation(resources, path, SVNRevision.WORKING));

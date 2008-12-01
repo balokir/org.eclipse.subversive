@@ -31,6 +31,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.svnstorage.events.RevisonPropertyChangeEvent;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.extension.factory.PredefinedProperty;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPropsPreferencePage.CustomProperty;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -53,8 +54,8 @@ public class RevPropertiesEditPanel extends AbstractPropertyEditPanel {
 	 */
 	public RevPropertiesEditPanel(SVNProperty[] revProperties, SVNRevision revision) {
 		super(revProperties,
-				SVNTeamUIPlugin.instance().getResource("RevisionPropertyEditPanel.Title"),
-				SVNTeamUIPlugin.instance().getResource("RevisionPropertyEditPanel.Description", new String [] {String.valueOf(revision)}));
+				SVNUIMessages.RevisionPropertyEditPanel_Title,
+				SVNUIMessages.format(SVNUIMessages.RevisionPropertyEditPanel_Description, new String [] {String.valueOf(revision)}));
 		this.revision = revision;
 		ArrayList<CustomProperty> customPropList = new ArrayList<CustomProperty>(Arrays.asList(this.customProps));
 		ArrayList<String> givenNames = new ArrayList<String>();
@@ -88,7 +89,7 @@ public class RevPropertiesEditPanel extends AbstractPropertyEditPanel {
 	
 	protected List<PredefinedProperty> getPredefinedProperties() {
 		ArrayList<PredefinedProperty> properties = new ArrayList<PredefinedProperty>();
-		properties.add(new PredefinedProperty(SVNTeamUIPlugin.instance().getResource("AbstractPropertyEditPanel.svn_description"), "", ""));
+		properties.add(new PredefinedProperty(SVNUIMessages.AbstractPropertyEditPanel_svn_description, "", ""));
 		properties.add(new PredefinedProperty("svn:log", this.getDescription("SVN.Log"), ""));		
 		properties.add(new PredefinedProperty("svn:author", this.getDescription("SVN.Author"), ""));
 		properties.add(new PredefinedProperty("svn:date", this.getDescription("SVN.Date"), ""));
@@ -97,7 +98,7 @@ public class RevPropertiesEditPanel extends AbstractPropertyEditPanel {
 	}
 	
 	protected String getDescription(String id) {
-		return SVNTeamUIPlugin.instance().getResource("Property." + id);
+		return SVNUIMessages.getString("Property_" + id);
 	}
 
 	protected Map<String, String> getPredefinedPropertiesRegexps() {

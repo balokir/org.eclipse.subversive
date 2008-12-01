@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.extension.factory.PredefinedProperty;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
@@ -140,7 +141,7 @@ public abstract class AbstractPropertyEditPanel extends AbstractDialogPanel {
 		
 		Label label = new Label(composite, SWT.NONE);
 		label.setLayoutData(new GridData());
-		label.setText(SVNTeamUIPlugin.instance().getResource("AbstractPropertyEditPanel.Name"));
+		label.setText(SVNUIMessages.AbstractPropertyEditPanel_Name);
 		
 		this.nameField = new Combo(composite, SWT.NONE);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
@@ -201,7 +202,7 @@ public abstract class AbstractPropertyEditPanel extends AbstractDialogPanel {
 		bulb.setBackground(this.nameField.getBackground());
 		
 		CompositeVerifier verifier = new CompositeVerifier();
-		String name = SVNTeamUIPlugin.instance().getResource("AbstractPropertyEditPanel.Name.Verifier");
+		String name = SVNUIMessages.AbstractPropertyEditPanel_Name_Verifier;
 		verifier.add(new NonEmptyFieldVerifier(name));
 		verifier.add(new PropertyNameVerifier(name));
 		this.attachTo(this.nameField, verifier);
@@ -214,7 +215,7 @@ public abstract class AbstractPropertyEditPanel extends AbstractDialogPanel {
 
 		data = new GridData();
 		editManual.setLayoutData(data);
-		editManual.setText(SVNTeamUIPlugin.instance().getResource("AbstractPropertyEditPanel.EnterValue"));
+		editManual.setText(SVNUIMessages.AbstractPropertyEditPanel_EnterValue);
 		editManual.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				Button button = (Button)event.widget;
@@ -244,7 +245,7 @@ public abstract class AbstractPropertyEditPanel extends AbstractDialogPanel {
 		
 		this.fileField = new Text(subComposite, SWT.SINGLE | SWT.BORDER);
 		final Button browse = new Button(subComposite, SWT.PUSH);
-		browse.setText(SVNTeamUIPlugin.instance().getResource("Button.Browse"));
+		browse.setText(SVNUIMessages.Button_Browse);
 		data = new GridData();
 		data.widthHint = DefaultDialog.computeButtonWidth(browse);
 		browse.setLayoutData(data);
@@ -262,7 +263,7 @@ public abstract class AbstractPropertyEditPanel extends AbstractDialogPanel {
 
 		data = new GridData();
 		loadFromFile.setLayoutData(data);
-		loadFromFile.setText(SVNTeamUIPlugin.instance().getResource("AbstractPropertyEditPanel.LoadValue"));
+		loadFromFile.setText(SVNUIMessages.AbstractPropertyEditPanel_LoadValue);
 		loadFromFile.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				Button button = (Button)event.widget;
@@ -276,7 +277,7 @@ public abstract class AbstractPropertyEditPanel extends AbstractDialogPanel {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.fileField.setLayoutData(data);
 		this.fileField.setEnabled(false);
-		this.attachTo(this.fileField, new AbstractVerifierProxy(new ExistingResourceVerifier(SVNTeamUIPlugin.instance().getResource("AbstractPropertyEditPanel.File.Verifier"), true)) {
+		this.attachTo(this.fileField, new AbstractVerifierProxy(new ExistingResourceVerifier(SVNUIMessages.AbstractPropertyEditPanel_File_Verifier, true)) {
 			protected boolean isVerificationEnabled(Control input) {
 				return loadFromFile.getSelection();
 			}
@@ -301,12 +302,12 @@ public abstract class AbstractPropertyEditPanel extends AbstractDialogPanel {
 		for (Iterator<PredefinedProperty> it = predefinedProperties.iterator(); it.hasNext(); ) {
 			names.add(it.next().name);
 		}
-		names.add(SVNTeamUIPlugin.instance().getResource("AbstractPropertyEditPanel.custom_description"));
+		names.add(SVNUIMessages.AbstractPropertyEditPanel_custom_description);
 		for (int i = 0; i < customProperties.length; i++) {
 			names.add(customProperties[i].propName);
 		}
 		if (this.customProps.length == 0) {
-			names.add("    " + SVNTeamUIPlugin.instance().getResource("AbstractPropertyEditPanel.custom_hint"));
+			names.add("    " + SVNUIMessages.AbstractPropertyEditPanel_custom_hint);
 		}
 		String[] propertyNames = names.toArray(new String[names.size()]);
 		return propertyNames;
@@ -316,13 +317,13 @@ public abstract class AbstractPropertyEditPanel extends AbstractDialogPanel {
 		String propName = this.nameField.getText();
 		PredefinedProperty prop = this.getPredefinedProperty(propName);
 		if (prop != null) {
-			return (prop.description != null && prop.description.trim().length() > 0) ? prop.description : SVNTeamUIPlugin.instance().getResource("AbstractPropertyEditPanel.NoDescription");			
+			return (prop.description != null && prop.description.trim().length() > 0) ? prop.description : SVNUIMessages.AbstractPropertyEditPanel_NoDescription;			
 		}
 		SVNTeamPropsPreferencePage.CustomProperty customProp = this.getCustomProperty(propName);
 		if (customProp != null && !customProp.descriprion.equals("")) {
 			return customProp.descriprion;
 		}
-		return SVNTeamUIPlugin.instance().getResource("AbstractPropertyEditPanel.UserDefined");
+		return SVNUIMessages.AbstractPropertyEditPanel_UserDefined;
 	}
 	
 	protected PredefinedProperty getPredefinedProperty(String name) {
@@ -343,6 +344,6 @@ public abstract class AbstractPropertyEditPanel extends AbstractDialogPanel {
 	}
 	
 	public String getDefaultMessage() {
-		return SVNTeamUIPlugin.instance().getResource("AbstractPropertyEditPanel.DefaultMessage");
+		return SVNUIMessages.AbstractPropertyEditPanel_DefaultMessage;
 	}	
 }

@@ -14,7 +14,7 @@ package org.eclipse.team.svn.ui.verifier;
 import java.text.SimpleDateFormat;
 
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * Date Format Verifier. Check if the text is a good date and time pattern 
@@ -32,7 +32,7 @@ public class DateFormatVerifier extends AbstractFormattedVerifier {
 		try {
 			new SimpleDateFormat(this.getText(input));
 		} catch (IllegalArgumentException e) {
-			return SVNTeamUIPlugin.instance().getResource("Verifier.DateFormat.Error");
+			return SVNUIMessages.Verifier_DateFormat_Error;
 		}
 		return null;
 	}

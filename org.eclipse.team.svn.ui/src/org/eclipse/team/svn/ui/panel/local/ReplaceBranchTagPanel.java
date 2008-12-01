@@ -15,7 +15,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.BranchTagSelectionComposite;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 
@@ -36,15 +36,15 @@ public class ReplaceBranchTagPanel extends AbstractDialogPanel {
 		this.selectedResource = baseResource;
 		this.type = type;
 		if (type == BranchTagSelectionComposite.BRANCH_OPERATED) {
-			this.dialogTitle = SVNTeamUIPlugin.instance().getResource("Replace.Branch.Title");
-			this.dialogDescription = SVNTeamUIPlugin.instance().getResource("Replace.Branch.Description");
-			this.defaultMessage = SVNTeamUIPlugin.instance().getResource("Replace.Branch.Message");
+			this.dialogTitle = SVNUIMessages.Replace_Branch_Title;
+			this.dialogDescription = SVNUIMessages.Replace_Branch_Description;
+			this.defaultMessage = SVNUIMessages.Replace_Branch_Message;
 			this.historyKey = "branchReplace";
 		}
 		else {
-			this.dialogTitle = SVNTeamUIPlugin.instance().getResource("Replace.Tag.Title");
-			this.dialogDescription = SVNTeamUIPlugin.instance().getResource("Replace.Tag.Description");
-			this.defaultMessage = SVNTeamUIPlugin.instance().getResource("Replace.Tag.Message");
+			this.dialogTitle = SVNUIMessages.Replace_Tag_Title;
+			this.dialogDescription = SVNUIMessages.Replace_Tag_Description;
+			this.defaultMessage = SVNUIMessages.Replace_Tag_Message;
 			this.historyKey = "tagReplace";
 		}
 	}

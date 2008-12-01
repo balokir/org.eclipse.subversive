@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.DepthSelectionComposite;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifierProxy;
@@ -57,10 +58,10 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 
 	public CheckoutMethodSelectionPage(String defaultName, boolean newProjectSelectionEnabled) {
 		super(CheckoutMethodSelectionPage.class.getName(), 
-			SVNTeamUIPlugin.instance().getResource("CheckoutMethodSelectionPage.Title"), 
+			SVNUIMessages.CheckoutMethodSelectionPage_Title, 
 			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
 		
-		this.setDescription(SVNTeamUIPlugin.instance().getResource("CheckoutMethodSelectionPage.Description"));
+		this.setDescription(SVNUIMessages.CheckoutMethodSelectionPage_Description);
 		
 		this.projectName = this.defaultName = defaultName;
 		this.checkoutType = newProjectSelectionEnabled ? CheckoutMethodSelectionPage.USE_NEW_PROJECT_WIZARD : CheckoutMethodSelectionPage.CHECKOUT_AS_PROJECT;
@@ -111,9 +112,9 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		data.heightHint = this.convertHeightInCharsToPixels(this.checkoutType == CheckoutMethodSelectionPage.USE_NEW_PROJECT_WIZARD ? 1 : 2);
 		description.setLayoutData(data);
-		String message = SVNTeamUIPlugin.instance().getResource("CheckoutMethodSelectionPage.HintHead", new String[] {this.defaultName});
+		String message = SVNUIMessages.format(SVNUIMessages.CheckoutMethodSelectionPage_HintHead, new String[] {this.defaultName});
 		description.setText(message + (this.checkoutType != CheckoutMethodSelectionPage.USE_NEW_PROJECT_WIZARD ?
-				" " + SVNTeamUIPlugin.instance().getResource("CheckoutMethodSelectionPage.HintTail") : ""));
+				" " + SVNUIMessages.CheckoutMethodSelectionPage_HintTail : ""));
 		this.projectName = this.defaultName = FileUtility.formatResourceName(this.defaultName);
 
 		Button useNewProjectWizardButton = new Button(composite, SWT.RADIO);
@@ -124,7 +125,7 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 				CheckoutMethodSelectionPage.this.selectionChanged(CheckoutMethodSelectionPage.USE_NEW_PROJECT_WIZARD);
 			}
 		});
-		useNewProjectWizardButton.setText(SVNTeamUIPlugin.instance().getResource("CheckoutMethodSelectionPage.NewWizard")); 
+		useNewProjectWizardButton.setText(SVNUIMessages.CheckoutMethodSelectionPage_NewWizard); 
 		useNewProjectWizardButton.setSelection(this.checkoutType == CheckoutMethodSelectionPage.USE_NEW_PROJECT_WIZARD);
 		useNewProjectWizardButton.setEnabled(this.checkoutType == CheckoutMethodSelectionPage.USE_NEW_PROJECT_WIZARD);
 		
@@ -136,7 +137,7 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 				CheckoutMethodSelectionPage.this.selectionChanged(CheckoutMethodSelectionPage.FIND_PROJECTS);
 			}
 		});
-		findProjectsButton.setText(SVNTeamUIPlugin.instance().getResource("CheckoutMethodSelectionPage.Find")); 
+		findProjectsButton.setText(SVNUIMessages.CheckoutMethodSelectionPage_Find); 
 		findProjectsButton.setEnabled(this.checkoutType == CheckoutMethodSelectionPage.USE_NEW_PROJECT_WIZARD ||
 				ExtensionsManager.getInstance().getCurrentCheckoutFactory().findProjectsOptionEnabled());
 		
@@ -148,7 +149,7 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 				CheckoutMethodSelectionPage.this.selectionChanged(CheckoutMethodSelectionPage.CHECKOUT_AS_FOLDER);
 			}
 		});
-		checkoutAsFolder.setText(SVNTeamUIPlugin.instance().getResource("CheckoutMethodSelectionPage.Folder"));
+		checkoutAsFolder.setText(SVNUIMessages.CheckoutMethodSelectionPage_Folder);
 		
 		this.selectLocationButton = new Button(composite, SWT.RADIO);
 		data = new GridData(GridData.FILL_HORIZONTAL);
@@ -158,7 +159,7 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 				CheckoutMethodSelectionPage.this.selectionChanged(CheckoutMethodSelectionPage.CHECKOUT_AS_PROJECT);
 			}
 		});
-		this.selectLocationButton.setText(SVNTeamUIPlugin.instance().getResource("CheckoutMethodSelectionPage.Project")); 
+		this.selectLocationButton.setText(SVNUIMessages.CheckoutMethodSelectionPage_Project); 
 		this.selectLocationButton.setSelection(this.checkoutType != CheckoutMethodSelectionPage.USE_NEW_PROJECT_WIZARD);
 		
 		this.nameField = new Text(composite, SWT.SINGLE | SWT.BORDER);
@@ -172,7 +173,7 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 				CheckoutMethodSelectionPage.this.projectName = name;
 			}
 		});
-		String name = SVNTeamUIPlugin.instance().getResource("CheckoutMethodSelectionPage.ProjectName.Verifier");
+		String name = SVNUIMessages.CheckoutMethodSelectionPage_ProjectName_Verifier;
 		CompositeVerifier verifier = new CompositeVerifier();
 		verifier.add(new ResourceNameVerifier(name, false));
 		verifier.add(new NonEmptyFieldVerifier(name));
@@ -195,7 +196,7 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 				CheckoutMethodSelectionPage.this.ignoreExternalsSelected = ((Button)e.widget).getSelection();
 			}
 		});
-		ignoreExternalsCheckbox.setText(SVNTeamUIPlugin.instance().getResource("CheckoutMethodSelectionPage.Externals"));
+		ignoreExternalsCheckbox.setText(SVNUIMessages.CheckoutMethodSelectionPage_Externals);
 		
 //		Setting context help
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.checkoutMethodSelectionContext");

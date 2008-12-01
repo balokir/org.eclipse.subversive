@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNEntryInfo;
 import org.eclipse.team.svn.core.connector.SVNLock;
 import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
@@ -29,7 +29,7 @@ import org.eclipse.team.svn.core.operation.local.InfoOperation;
 import org.eclipse.team.svn.core.operation.local.property.GetPropertiesOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.utility.SVNUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.PropertiesComposite;
 import org.eclipse.team.svn.ui.utility.DateFormatter;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -68,7 +68,7 @@ public class LocalInfoPage extends PropertyPage {
 		
 		Label description = new Label(composite, SWT.WRAP);
 		description.setLayoutData(new GridData());
-		description.setText(SVNTeamUIPlugin.instance().getResource("LocalInfoPage.LocalPath"));
+		description.setText(SVNUIMessages.LocalInfoPage_LocalPath);
 		
 		Text content = new Text(composite, SWT.WRAP);
 		data = new GridData();
@@ -79,7 +79,7 @@ public class LocalInfoPage extends PropertyPage {
 		
 		description = new Label(composite, SWT.WRAP);
 		description.setLayoutData(new GridData());
-		description.setText(SVNTeamUIPlugin.instance().getResource("LocalInfoPage.State"));
+		description.setText(SVNUIMessages.LocalInfoPage_State);
 		
 		content = new Text(composite, SWT.SINGLE);
 		content.setLayoutData(new GridData());
@@ -94,7 +94,7 @@ public class LocalInfoPage extends PropertyPage {
 		    
 			description = new Label(composite, SWT.WRAP);
 			description.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
-			description.setText(SVNTeamUIPlugin.instance().getResource("LocalInfoPage.ResourceURL"));
+			description.setText(SVNUIMessages.LocalInfoPage_ResourceURL);
 			
 			content = new Text(composite, SWT.WRAP);
 			data = new GridData();
@@ -105,7 +105,7 @@ public class LocalInfoPage extends PropertyPage {
 					
 			description = new Label(composite, SWT.WRAP);
 			description.setLayoutData(new GridData());
-			description.setText(SVNTeamUIPlugin.instance().getResource("LocalInfoPage.Revision"));
+			description.setText(SVNUIMessages.LocalInfoPage_Revision);
 			
 			content = new Text(composite, SWT.SINGLE);
 			content.setLayoutData(new GridData());
@@ -114,25 +114,25 @@ public class LocalInfoPage extends PropertyPage {
 
 			description = new Label(composite, SWT.WRAP);
 			description.setLayoutData(new GridData());
-			description.setText(SVNTeamUIPlugin.instance().getResource("LocalInfoPage.LastChangedAuthor"));
+			description.setText(SVNUIMessages.LocalInfoPage_LastChangedAuthor);
 			
 			content = new Text(composite, SWT.SINGLE);
 			content.setLayoutData(new GridData());
 			content.setEditable(false);
-			content.setText(info.lastChangedAuthor == null ? SVNTeamPlugin.instance().getResource("SVNInfo.NoAuthor") : info.lastChangedAuthor);
+			content.setText(info.lastChangedAuthor == null ? SVNMessages.SVNInfo_NoAuthor : info.lastChangedAuthor);
 
 			description = new Label(composite, SWT.WRAP);
 			description.setLayoutData(new GridData());
-			description.setText(SVNTeamUIPlugin.instance().getResource("LocalInfoPage.LastChangedDate"));
+			description.setText(SVNUIMessages.LocalInfoPage_LastChangedDate);
 			
 			content = new Text(composite, SWT.SINGLE);
 			content.setLayoutData(new GridData());
 			content.setEditable(false);
-			content.setText(info.lastChangedDate == 0 ? SVNTeamPlugin.instance().getResource("SVNInfo.NoDate") : DateFormatter.formatDate(info.lastChangedDate));
+			content.setText(info.lastChangedDate == 0 ? SVNMessages.SVNInfo_NoDate : DateFormatter.formatDate(info.lastChangedDate));
 
 			description = new Label(composite, SWT.WRAP);
 			description.setLayoutData(new GridData());
-			description.setText(SVNTeamUIPlugin.instance().getResource("LocalInfoPage.LastChangedRevision"));
+			description.setText(SVNUIMessages.LocalInfoPage_LastChangedRevision);
 			
 			content = new Text(composite, SWT.SINGLE);
 			content.setLayoutData(new GridData());
@@ -147,39 +147,39 @@ public class LocalInfoPage extends PropertyPage {
 
 				description = new Label(composite, SWT.WRAP);
 				description.setLayoutData(new GridData());
-				description.setText(SVNTeamUIPlugin.instance().getResource("LocalInfoPage.LockOwner"));
+				description.setText(SVNUIMessages.LocalInfoPage_LockOwner);
 				
 				content = new Text(composite, SWT.SINGLE);
 				content.setLayoutData(new GridData());
 				content.setEditable(false);
-				content.setText(lock.owner == null ? SVNTeamPlugin.instance().getResource("SVNInfo.NoAuthor") : lock.owner);
+				content.setText(lock.owner == null ? SVNMessages.SVNInfo_NoAuthor : lock.owner);
 
 				description = new Label(composite, SWT.WRAP);
 				description.setLayoutData(new GridData());
-				description.setText(SVNTeamUIPlugin.instance().getResource("LocalInfoPage.LockComment"));
+				description.setText(SVNUIMessages.LocalInfoPage_LockComment);
 				
 				content = new Text(composite, SWT.SINGLE);
 				content.setLayoutData(new GridData());
 				content.setEditable(false);
-				content.setText(lock.comment == null ? SVNTeamPlugin.instance().getResource("SVNInfo.NoComment") : lock.comment);
+				content.setText(lock.comment == null ? SVNMessages.SVNInfo_NoComment : lock.comment);
 
 				description = new Label(composite, SWT.WRAP);
 				description.setLayoutData(new GridData());
-				description.setText(SVNTeamUIPlugin.instance().getResource("LocalInfoPage.LockCreationDate"));
+				description.setText(SVNUIMessages.LocalInfoPage_LockCreationDate);
 				
 				content = new Text(composite, SWT.SINGLE);
 				content.setLayoutData(new GridData());
 				content.setEditable(false);
-				content.setText(lock.creationDate == 0 ? SVNTeamPlugin.instance().getResource("SVNInfo.NoAuthor") : DateFormatter.formatDate(lock.creationDate));
+				content.setText(lock.creationDate == 0 ? SVNMessages.SVNInfo_NoAuthor : DateFormatter.formatDate(lock.creationDate));
 				if (lock.expirationDate != 0) {
 					description = new Label(composite, SWT.WRAP);
 					description.setLayoutData(new GridData());
-					description.setText(SVNTeamUIPlugin.instance().getResource("LocalInfoPage.LockExpirationDate"));
+					description.setText(SVNUIMessages.LocalInfoPage_LockExpirationDate);
 					
 					content = new Text(composite, SWT.SINGLE);
 					content.setLayoutData(new GridData());
 					content.setEditable(false);
-					content.setText(lock.expirationDate == 0 ? SVNTeamPlugin.instance().getResource("SVNInfo.NoDate") : DateFormatter.formatDate(lock.expirationDate));
+					content.setText(lock.expirationDate == 0 ? SVNMessages.SVNInfo_NoDate : DateFormatter.formatDate(lock.expirationDate));
 				}
 			}
 		}

@@ -31,6 +31,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.operation.GetRemoteFolderChildrenOperation;
 import org.eclipse.team.svn.ui.panel.common.RepositoryTreePanel;
@@ -74,7 +75,7 @@ public class BranchTagSelectionComposite extends Composite {
 		this.inputHistory = new UserInputHistory(historyKey);
 		this.validationManager = validationManager;
 		this.type = type;
-		this.ignored = SVNTeamUIPlugin.instance().getResource(this.type == BranchTagSelectionComposite.BRANCH_OPERATED ? "Branch.Read.Separator" : "Tag.Read.Separator");
+		this.ignored = this.type == BranchTagSelectionComposite.BRANCH_OPERATED ? SVNUIMessages.Branch_Read_Separator : SVNUIMessages.Tag_Read_Separator;
 		this.considerStructure = 
 			baseResource.getRepositoryLocation().isStructureEnabled() &&
 			SVNTeamPreferences.getRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_NAME);
@@ -94,10 +95,10 @@ public class BranchTagSelectionComposite extends Composite {
 		Label resourceLabel = new Label(this, SWT.NONE);
 		resourceLabel.setLayoutData(new GridData());
 		if (this.type == BranchTagSelectionComposite.BRANCH_OPERATED) {
-			resourceLabel.setText(SVNTeamUIPlugin.instance().getResource("Select.Branch.Label"));
+			resourceLabel.setText(SVNUIMessages.Select_Branch_Label);
 		}
 		else {
-			resourceLabel.setText(SVNTeamUIPlugin.instance().getResource("Select.Tag.Label"));
+			resourceLabel.setText(SVNUIMessages.Select_Tag_Label);
 		}
 		
 		Composite select = new Composite(this, SWT.NONE);	
@@ -153,24 +154,24 @@ public class BranchTagSelectionComposite extends Composite {
 		this.validationManager.attachTo(this.urlText, new NonEmptyFieldVerifier(resourceLabel.getText()));
 		
 		this.browse = new Button(select, SWT.PUSH);
-		this.browse.setText(SVNTeamUIPlugin.instance().getResource("Button.Browse"));
+		this.browse.setText(SVNUIMessages.Button_Browse);
 		data = new GridData();
 		data.widthHint = DefaultDialog.computeButtonWidth(this.browse);
 		this.browse.setLayoutData(data);
 		this.browse.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				RepositoryTreePanel panel;
-				String part = (BranchTagSelectionComposite.this.type == BranchTagSelectionComposite.BRANCH_OPERATED) ? "Branch" : "Tag";
+				String part = BranchTagSelectionComposite.this.type == BranchTagSelectionComposite.BRANCH_OPERATED ? SVNUIMessages.Select_Branch_Title : SVNUIMessages.Select_Tag_Title;
 				if (BranchTagSelectionComposite.this.considerStructure) {
-					panel = new RepositoryTreePanel(SVNTeamUIPlugin.instance().getResource("Select." + part + ".Title"),
-							SVNTeamUIPlugin.instance().getResource("RepositoryBrowsingPanel.Description"),
-							SVNTeamUIPlugin.instance().getResource("RepositoryBrowsingPanel.Message"),
+					panel = new RepositoryTreePanel(part,
+							SVNUIMessages.RepositoryBrowsingPanel_Description,
+							SVNUIMessages.RepositoryBrowsingPanel_Message,
 							null, true, BranchTagSelectionComposite.this.root);
 				}
 				else {
-					panel = new RepositoryTreePanel(SVNTeamUIPlugin.instance().getResource("Select." + part + ".Title"),
-							SVNTeamUIPlugin.instance().getResource("RepositoryBrowsingPanel.Description"),
-							SVNTeamUIPlugin.instance().getResource("RepositoryBrowsingPanel.Message"),
+					panel = new RepositoryTreePanel(part,
+							SVNUIMessages.RepositoryBrowsingPanel_Description,
+							SVNUIMessages.RepositoryBrowsingPanel_Message,
 							null, true, location);
 				}
 				DefaultDialog browser = new DefaultDialog(BranchTagSelectionComposite.this.getShell(), panel);
@@ -198,7 +199,7 @@ public class BranchTagSelectionComposite extends Composite {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		revisions.setLayoutData(data);
-		this.revisionComposite = new RevisionComposite(revisions, this.validationManager, true, new String[] {SVNTeamUIPlugin.instance().getResource("RevisionComposite.Revision"), SVNTeamUIPlugin.instance().getResource("RepositoryResourceSelectionComposite.HeadRevision")}, SVNRevision.HEAD, false) {
+		this.revisionComposite = new RevisionComposite(revisions, this.validationManager, true, new String[] {SVNUIMessages.RevisionComposite_Revision, SVNUIMessages.RepositoryResourceSelectionComposite_HeadRevision}, SVNRevision.HEAD, false) {
 			public void additionalValidation() {
 				BranchTagSelectionComposite.this.validationManager.validateContent();
 			}

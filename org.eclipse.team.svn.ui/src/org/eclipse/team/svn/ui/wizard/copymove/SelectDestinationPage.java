@@ -24,6 +24,7 @@ import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.RepositoryTreeComposite;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.panel.common.RepositoryTreePanel;
@@ -51,7 +52,7 @@ public class SelectDestinationPage extends AbstractVerifiedWizardPage {
 	
 	public SelectDestinationPage(IRepositoryResource[] resources) {
 		super(SelectDestinationPage.class.getName(), 
-				SVNTeamUIPlugin.instance().getResource("RepositoryTreePanel.Description"),
+				SVNUIMessages.RepositoryTreePanel_Description,
 				SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
 		this.setDescription(AbstractDialogPanel.makeToBeOperatedMessage(resources));
 		this.resources = resources;
@@ -100,7 +101,7 @@ public class SelectDestinationPage extends AbstractVerifiedWizardPage {
 		
 		data = new GridData();
 		Label name = new Label(composite, SWT.NONE);
-		name.setText(SVNTeamUIPlugin.instance().getResource(this.resources.length == 1 ? "CopyMove.SubFolder.One" : "CopyMove.SubFolder.Multi"));
+		name.setText(this.resources.length == 1 ? SVNUIMessages.CopyMove_SubFolder_One : SVNUIMessages.CopyMove_SubFolder_Multi);
 		name.setLayoutData(data);
 		data = new GridData();
 		data.horizontalAlignment = SWT.FILL;

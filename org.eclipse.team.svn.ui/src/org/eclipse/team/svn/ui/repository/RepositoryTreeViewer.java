@@ -54,7 +54,7 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.RemoteResourceTransfer;
 import org.eclipse.team.svn.ui.RemoteResourceTransferrable;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.operation.RefreshRemoteResourcesOperation;
 import org.eclipse.team.svn.ui.panel.common.CommentPanel;
@@ -412,7 +412,7 @@ public class RepositoryTreeViewer extends TreeViewer {
 			public void drop(DropTargetEvent event) {
 				Tree repositoryTree = (Tree)((DropTarget)event.widget).getControl();
 				RepositoryResource aboveResource = (RepositoryResource)repositoryTree.getItem(repositoryTree.toControl(event.x, event.y)).getData();
-				CommentPanel commentPanel = new CommentPanel(event.detail == DND.DROP_MOVE ? SVNTeamUIPlugin.instance().getResource("MoveToAction.Select.Title") : SVNTeamUIPlugin.instance().getResource("CopyToAction.Select.Title"));
+				CommentPanel commentPanel = new CommentPanel(event.detail == DND.DROP_MOVE ? SVNUIMessages.MoveToAction_Select_Title : SVNUIMessages.CopyToAction_Select_Title);
 				DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getShell(), commentPanel);
 				if (dialog.open() == IDialogConstants.OK_ID) {
 					AbstractCopyMoveResourcesOperation mainOp = event.detail == DND.DROP_MOVE

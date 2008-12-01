@@ -14,6 +14,7 @@ package org.eclipse.team.svn.ui.repository.model;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * Referesh in progress node implementation
@@ -21,7 +22,7 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
  * @author Alexander Gurov
  */
 public class RepositoryPending extends RepositoryFictiveNode {
-	public static final String PENDING = "RepositoriesView.Model.Pending";
+	public static final String PENDING = "RepositoriesView_Model_Pending";
 	
 	protected RepositoryResource parent;
 	
@@ -42,7 +43,7 @@ public class RepositoryPending extends RepositoryFictiveNode {
 	}
 
 	public String getLabel(Object o) {
-		return SVNTeamUIPlugin.instance().getResource(RepositoryPending.PENDING);
+		return SVNUIMessages.getString(RepositoryPending.PENDING);
 	}
 	
 	public ImageDescriptor getImageDescriptor(Object object) {

@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.extension.factory.IReporter;
@@ -152,7 +152,7 @@ public class ReportingComposite extends Composite {
 			Label description1 = new Label(this, SWT.NONE);
 			data = new GridData();
 			description1.setLayoutData(data);
-			description1.setText(SVNTeamUIPlugin.instance().getResource("ReportingComposite.Product"));
+			description1.setText(SVNUIMessages.ReportingComposite_Product);
 			
 			this.providersCombo = new Combo(this, SWT.BORDER | SWT.READ_ONLY);
 			data = new GridData(GridData.FILL_HORIZONTAL);
@@ -189,12 +189,12 @@ public class ReportingComposite extends Composite {
 			data.heightHint = DefaultDialog.convertHeightInCharsToPixels(this, this.isError ? 4 : 3);
 			data.horizontalSpan = 2;
 			description.setLayoutData(data);
-			description.setText(SVNTeamUIPlugin.instance().getResource(this.isError ? "ReportingComposite.ErrorHint" : "ReportingComposite.Hint"));
+			description.setText(this.isError ? SVNUIMessages.ReportingComposite_ErrorHint : SVNUIMessages.ReportingComposite_Hint);
 			
 			Label description2 = new Label(this, SWT.NONE);
 			data = new GridData();
 			description2.setLayoutData(data);
-			description2.setText(SVNTeamUIPlugin.instance().getResource("ReportingComposite.EMail"));
+			description2.setText(SVNUIMessages.ReportingComposite_EMail);
 			
 			this.emailText = new Text(this, SWT.BORDER);			
 			data = new GridData(GridData.FILL_HORIZONTAL);
@@ -207,7 +207,7 @@ public class ReportingComposite extends Composite {
 			Label description3 = new Label(this, SWT.NONE);
 			data = new GridData();
 			description3.setLayoutData(data);
-			description3.setText(SVNTeamUIPlugin.instance().getResource("ReportingComposite.Name"));
+			description3.setText(SVNUIMessages.ReportingComposite_Name);
 			
 			this.nameText = new Text(this, SWT.BORDER);
 			data = new GridData(GridData.FILL_HORIZONTAL);
@@ -221,7 +221,7 @@ public class ReportingComposite extends Composite {
 			data = new GridData();
 			data.horizontalSpan = 2;
 			commentLabel.setLayoutData(data);
-			commentLabel.setText(SVNTeamUIPlugin.instance().getResource("ReportingComposite.Comment"));
+			commentLabel.setText(SVNUIMessages.ReportingComposite_Comment);
 			
 			this.commentText = new Text(this, SWT.MULTI | SWT.V_SCROLL | SWT.BORDER | SWT.WRAP);
 			data = new GridData(GridData.FILL_BOTH);
@@ -238,13 +238,13 @@ public class ReportingComposite extends Composite {
 					}
 					protected String getErrorMessage(Control input) {
 						if (ReportingComposite.this.getReporter() == null) {
-							return SVNTeamUIPlugin.instance().getResource("ReportingComposite.Product.Verifier");
+							return SVNUIMessages.ReportingComposite_Product_Verifier;
 						}
 						return null;
 					}
 				});
 				if (!doNotValidateComment) {
-					manager.attachTo(this.commentText, new NonEmptyFieldVerifier(SVNTeamUIPlugin.instance().getResource("ReportingComposite.Comment.Verifier")));
+					manager.attachTo(this.commentText, new NonEmptyFieldVerifier(SVNUIMessages.ReportingComposite_Comment_Verifier));
 				}
 			}
 		}
@@ -273,7 +273,7 @@ public class ReportingComposite extends Composite {
 		if (this.providers.length > 1 || this.reporter != null && !this.reporter.isCustomEditorSupported() || this.reporter == null) {
 			this.previewButton = new Button(buttonsComposite, SWT.PUSH);
 			data = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.FILL_HORIZONTAL);
-			this.previewButton.setText(SVNTeamUIPlugin.instance().getResource("ReportingComposite.Preview"));
+			this.previewButton.setText(SVNUIMessages.ReportingComposite_Preview);
 			data.widthHint = DefaultDialog.computeButtonWidth(this.previewButton);
 			this.previewButton.setLayoutData(data);
 					
@@ -291,7 +291,7 @@ public class ReportingComposite extends Composite {
 						panel = new PreviewErrorReportPanel(ReportingComposite.this.reporter.buildReport());
 					}
 					else {
-						String msg = SVNTeamUIPlugin.instance().getResource("ReportingComposite.Preview.Title", new String[] {ReportingComposite.this.reportType});
+						String msg = SVNUIMessages.format(SVNUIMessages.ReportingComposite_Preview_Title, new String[] {ReportingComposite.this.reportType});
 						panel = new PreviewReportPanel(msg, ReportingComposite.this.reporter.buildReport());
 					}
 					DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getDisplay().getActiveShell(), panel);

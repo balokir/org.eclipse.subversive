@@ -37,7 +37,7 @@ import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.resource.events.ProjectStatesChangedEvent;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.IResourceSelector;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.extension.factory.ICommitDialog;
@@ -72,7 +72,7 @@ public class ShareProjectWizard extends AbstractSVNWizard implements IConfigurat
 	
 	public ShareProjectWizard() {
 		super();
-		this.setWindowTitle(SVNTeamUIPlugin.instance().getResource("ShareProjectWizard.Title.Single"));
+		this.setWindowTitle(SVNUIMessages.ShareProjectWizard_Title_Single);
 	}
 	
 	public void addPages() {
@@ -256,10 +256,10 @@ public class ShareProjectWizard extends AbstractSVNWizard implements IConfigurat
 				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 					public void run() {
 						String projectNames = FileUtility.getNamesListAsString(projects);
-						String message = SVNTeamUIPlugin.instance().getResource(projects.length == 1 ? "ShareProject.Confirmation.Description.Single" : "ShareProject.Confirmation.Description.Multiple", new String[] {projectNames});
+						String message = SVNUIMessages.format(projects.length == 1 ? SVNUIMessages.ShareProject_Confirmation_Description_Single : SVNUIMessages.ShareProject_Confirmation_Description_Multiple, new String[] {projectNames});
 						MessageDialog dialog = new MessageDialog(
 								UIMonitorUtility.getShell(),
-								SVNTeamUIPlugin.instance().getResource(projects.length == 1 ? "ShareProject.Confirmation.Title.Single" : "ShareProject.Confirmation.Title.Multiple"), 
+								projects.length == 1 ? SVNUIMessages.ShareProject_Confirmation_Title_Single : SVNUIMessages.ShareProject_Confirmation_Title_Multiple, 
 								null, message, MessageDialog.WARNING,
 								new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL},
 								0);
@@ -308,10 +308,10 @@ public class ShareProjectWizard extends AbstractSVNWizard implements IConfigurat
 	public void init(IProject []projects) {
 		this.allProjects = projects;
 		if (projects.length > 1) {
-			this.setWindowTitle(SVNTeamUIPlugin.instance().getResource("ShareProjectWizard.Title.Multiple"));
+			this.setWindowTitle(SVNUIMessages.ShareProjectWizard_Title_Multiple);
 		}
 		else {
-			this.setWindowTitle(SVNTeamUIPlugin.instance().getResource("ShareProjectWizard.Title.Single"));
+			this.setWindowTitle(SVNUIMessages.ShareProjectWizard_Title_Single);
 		}
 	}
 	

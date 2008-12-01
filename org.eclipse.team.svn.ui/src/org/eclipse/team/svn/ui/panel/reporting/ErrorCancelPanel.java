@@ -22,7 +22,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.ReportingComposite;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.extension.factory.IReporter;
@@ -76,36 +76,36 @@ public class ErrorCancelPanel extends AbstractDialogPanel {
     }
     
     protected ErrorCancelPanel(int panelType, int numberOfErrors, String title, String simpleMessage, String advancedMessage, boolean sendMail, boolean isPlugInError, String optionName) {
-    	super(sendMail ? new String[] {SVNTeamUIPlugin.instance().getResource("ErrorCancelPanel.Send"), SVNTeamUIPlugin.instance().getResource("ErrorCancelPanel.DontSend")} : new String[] {IDialogConstants.OK_LABEL});
+    	super(sendMail ? new String[] {SVNUIMessages.ErrorCancelPanel_Send, SVNUIMessages.ErrorCancelPanel_DontSend} : new String[] {IDialogConstants.OK_LABEL});
     	this.isPluginError = isPlugInError;
     	this.panelType = panelType;
     	this.sendMail = sendMail;
-    	this.dialogTitle = SVNTeamUIPlugin.instance().getResource(panelType == ErrorCancelPanel.ERROR_PANEL_TYPE ? "ErrorCancelPanel.Title.Failed" : "ErrorCancelPanel.Title.Cancelled");
+    	this.dialogTitle = panelType == ErrorCancelPanel.ERROR_PANEL_TYPE ? SVNUIMessages.ErrorCancelPanel_Title_Failed : SVNUIMessages.ErrorCancelPanel_Title_Cancelled;
     	if (title == null || title.length() == 0) {
-    		this.dialogDescription = SVNTeamUIPlugin.instance().getResource(panelType == ErrorCancelPanel.ERROR_PANEL_TYPE ? "ErrorCancelPanel.Description.Failed.Empty" : "ErrorCancelPanel.Description.Cancelled.Empty");
+    		this.dialogDescription = panelType == ErrorCancelPanel.ERROR_PANEL_TYPE ? SVNUIMessages.ErrorCancelPanel_Description_Failed_Empty : SVNUIMessages.ErrorCancelPanel_Description_Cancelled_Empty;
     	}
     	else {
-    		this.dialogDescription = SVNTeamUIPlugin.instance().getResource(panelType == ErrorCancelPanel.ERROR_PANEL_TYPE ? "ErrorCancelPanel.Description.Failed" : "ErrorCancelPanel.Description.Cancelled", new String[] {title});
+    		this.dialogDescription = SVNUIMessages.format(panelType == ErrorCancelPanel.ERROR_PANEL_TYPE ? SVNUIMessages.ErrorCancelPanel_Description_Failed : SVNUIMessages.ErrorCancelPanel_Description_Cancelled, new String[] {title});
     	}
 		if (sendMail) {
-			this.defaultMessage = SVNTeamUIPlugin.instance().getResource("ErrorCancelPanel.Message.Send");
+			this.defaultMessage = SVNUIMessages.ErrorCancelPanel_Message_Send;
 		} 
 		else {
 			if (panelType == ErrorCancelPanel.ERROR_PANEL_TYPE) {
 				if (numberOfErrors == 1) {
-					this.defaultMessage = SVNTeamUIPlugin.instance().getResource("ErrorCancelPanel.Message.DontSend.Single");
+					this.defaultMessage = SVNUIMessages.ErrorCancelPanel_Message_DontSend_Single;
 				}
 				else {
-					this.defaultMessage = SVNTeamUIPlugin.instance().getResource("ErrorCancelPanel.Message.DontSend.Multi", new String[] {String.valueOf(numberOfErrors)});
+					this.defaultMessage = SVNUIMessages.format(SVNUIMessages.ErrorCancelPanel_Message_DontSend_Multi, new String[] {String.valueOf(numberOfErrors)});
 				}
 			}
 			else {
-				this.defaultMessage = SVNTeamUIPlugin.instance().getResource("ErrorCancelPanel.Message.DontSend");
+				this.defaultMessage = SVNUIMessages.ErrorCancelPanel_Message_DontSend;
 			}
 		}
 		
-		this.simpleMessage = simpleMessage == null ? SVNTeamUIPlugin.instance().getResource("ErrorCancelPanel.NoInfo") : simpleMessage;
-		this.advancedMessage = advancedMessage == null ? SVNTeamUIPlugin.instance().getResource("ErrorCancelPanel.NoAdvancedInfo") : advancedMessage;
+		this.simpleMessage = simpleMessage == null ? SVNUIMessages.ErrorCancelPanel_NoInfo : simpleMessage;
+		this.advancedMessage = advancedMessage == null ? SVNUIMessages.ErrorCancelPanel_NoAdvancedInfo : advancedMessage;
 		this.optionName = optionName;
     }
     
@@ -142,13 +142,13 @@ public class ErrorCancelPanel extends AbstractDialogPanel {
 		else {
 			if (this.originalReport != null) {
 				Button viewButton = new Button(parent, SWT.PUSH);
-				viewButton.setText(SVNTeamUIPlugin.instance().getResource("ErrorCancelPanel.OriginalReport"));
+				viewButton.setText(SVNUIMessages.ErrorCancelPanel_OriginalReport);
 				data = new GridData();
 				data.widthHint = DefaultDialog.computeButtonWidth(viewButton);
 				viewButton.setLayoutData(data);
 				viewButton.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
-						PreviewReportPanel panel = new PreviewReportPanel(SVNTeamUIPlugin.instance().getResource("ErrorCancelPanel.OriginalReportPreview"), ErrorCancelPanel.this.originalReport);
+						PreviewReportPanel panel = new PreviewReportPanel(SVNUIMessages.ErrorCancelPanel_OriginalReportPreview, ErrorCancelPanel.this.originalReport);
 						DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getDisplay().getActiveShell(), panel);
 						dialog.open();
 					}

@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.CommentComposite;
 import org.eclipse.team.svn.ui.composite.DepthSelectionComposite;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
@@ -44,9 +44,9 @@ public class ImportPanel extends AbstractDialogPanel {
 	
 	public ImportPanel(String importToUrl) {
 		super();
-		this.dialogTitle = SVNTeamUIPlugin.instance().getResource("ImportPanel.Title");
-		this.dialogDescription = SVNTeamUIPlugin.instance().getResource("ImportPanel.Description");
-		this.defaultMessage = SVNTeamUIPlugin.instance().getResource("ImportPanel.Message", new String[] {importToUrl});
+		this.dialogTitle = SVNUIMessages.ImportPanel_Title;
+		this.dialogDescription = SVNUIMessages.ImportPanel_Description;
+		this.defaultMessage = SVNUIMessages.format(SVNUIMessages.ImportPanel_Message, new String[] {importToUrl});
     }
 	
 	public void createControlsImpl(Composite parent) {
@@ -63,7 +63,7 @@ public class ImportPanel extends AbstractDialogPanel {
 		folderSelectionComposite.setLayoutData(data);
 		
 		Label folder = new Label(folderSelectionComposite, SWT.NONE);
-		folder.setText(SVNTeamUIPlugin.instance().getResource("ImportPanel.Folder"));
+		folder.setText(SVNUIMessages.ImportPanel_Folder);
 		
 		this.locationField = new Text(folderSelectionComposite,  SWT.SINGLE | SWT.BORDER);
 		data = new GridData(GridData.FILL_HORIZONTAL);
@@ -71,15 +71,15 @@ public class ImportPanel extends AbstractDialogPanel {
 		this.attachTo(this.locationField, new ExistingResourceVerifier(folder.getText(), false));
 		
 		Button browseButton = new Button(folderSelectionComposite, SWT.PUSH);
-		browseButton.setText(SVNTeamUIPlugin.instance().getResource("Button.Browse"));
+		browseButton.setText(SVNUIMessages.Button_Browse);
 		data = new GridData();
 		data.widthHint = DefaultDialog.computeButtonWidth(browseButton);
 		browseButton.setLayoutData(data);
 		browseButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				DirectoryDialog fileDialog = new DirectoryDialog(ImportPanel.this.manager.getShell());
-				fileDialog.setText(SVNTeamUIPlugin.instance().getResource("ImportPanel.ImportFolder"));
-				fileDialog.setMessage(SVNTeamUIPlugin.instance().getResource("ImportPanel.ImportFolder.Msg"));
+				fileDialog.setText(SVNUIMessages.ImportPanel_ImportFolder);
+				fileDialog.setMessage(SVNUIMessages.ImportPanel_ImportFolder_Msg);
 				String path = fileDialog.open();
 				if (path != null) {
 					ImportPanel.this.locationField.setText(path);
@@ -91,7 +91,7 @@ public class ImportPanel extends AbstractDialogPanel {
 		group.setLayout(new GridLayout());
 		data = new GridData(GridData.FILL_BOTH);
 		group.setLayoutData(data);
-		group.setText(SVNTeamUIPlugin.instance().getResource("ImportPanel.Comment"));
+		group.setText(SVNUIMessages.ImportPanel_Comment);
 		
 		this.comment = new CommentComposite(group, this);
 		data = new GridData(GridData.FILL_BOTH);

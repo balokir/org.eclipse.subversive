@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.ApplyPropertyMethodComposite;
 import org.eclipse.team.svn.ui.composite.PropertiesComposite;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
@@ -55,8 +55,7 @@ public class ResourcePropertyEditPanel extends AbstractPropertyEditPanel {
 	protected boolean strict;
 
 	public ResourcePropertyEditPanel(SVNProperty[] data, IResource []selectedResources, boolean strict) {
-		super(data, SVNTeamUIPlugin.instance().getResource(data != null ? "PropertyEditPanel.Title.Edit" : "PropertyEditPanel.Title.Add"),
-				SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.Description"));
+		super(data, data != null ? SVNUIMessages.PropertyEditPanel_Title_Edit : SVNUIMessages.PropertyEditPanel_Title_Add, SVNUIMessages.PropertyEditPanel_Description);
 		this.strict = strict;	
 		this.selectedResources = selectedResources;
 		this.resourcesType = this.computeResourcesType();
@@ -107,7 +106,7 @@ public class ResourcePropertyEditPanel extends AbstractPropertyEditPanel {
 		if (this.resourcesType != ResourcePropertyEditPanel.SINGLE_FILE) {
 			if (this.resourcesType == ResourcePropertyEditPanel.MIXED_RESOURCES && !this.strict) {
 				this.recursiveButton = new Button(parent, SWT.CHECK);
-				this.recursiveButton.setText(SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.Recursively"));
+				this.recursiveButton.setText(SVNUIMessages.PropertyEditPanel_Recursively);
 			
 				this.recursiveButton.addSelectionListener(new SelectionListener() {
 					public void widgetSelected(SelectionEvent e) {

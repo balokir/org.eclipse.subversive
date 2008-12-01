@@ -15,7 +15,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.svn.ui.wizard.shareproject.AddRepositoryLocationPage;
 import org.eclipse.ui.INewWizard;
@@ -41,12 +41,12 @@ public class NewRepositoryLocationWizard extends AbstractSVNWizard implements IN
 		this.performAction = performAction;
 		this.editable = editable;
 		if (this.editable != null) {
-			this.setWindowTitle(SVNTeamUIPlugin.instance().getResource("NewRepositoryLocationWizard.Title.Edit"));
+			this.setWindowTitle(SVNUIMessages.NewRepositoryLocationWizard_Title_Edit);
 			this.backup = SVNRemoteStorage.instance().newRepositoryLocation();
 			SVNRemoteStorage.instance().copyRepositoryLocation(this.backup, editable);
 		}
 		else {
-			this.setWindowTitle(SVNTeamUIPlugin.instance().getResource("NewRepositoryLocationWizard.Title.New"));
+			this.setWindowTitle(SVNUIMessages.NewRepositoryLocationWizard_Title_New);
 		}
 	}
 	

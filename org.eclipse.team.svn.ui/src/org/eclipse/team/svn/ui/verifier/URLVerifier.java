@@ -15,7 +15,7 @@ import java.net.URL;
 
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.svn.core.utility.SVNUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * SVN URL verifier
@@ -29,8 +29,8 @@ public class URLVerifier extends AbstractFormattedVerifier {
 
     public URLVerifier(String fieldName) {
         super(fieldName);
-        URLVerifier.ERROR_MESSAGE_SHORT = SVNTeamUIPlugin.instance().getResource("Verifier.URL.Short", new String[] {AbstractFormattedVerifier.FIELD_NAME});
-        URLVerifier.ERROR_MESSAGE_FULL = SVNTeamUIPlugin.instance().getResource("Verifier.URL.Full", new String[] {AbstractFormattedVerifier.FIELD_NAME, URLVerifier.ERROR_REASON});
+        URLVerifier.ERROR_MESSAGE_SHORT = SVNUIMessages.format(SVNUIMessages.Verifier_URL_Short, new String[] {AbstractFormattedVerifier.FIELD_NAME});
+        URLVerifier.ERROR_MESSAGE_FULL = SVNUIMessages.format(SVNUIMessages.Verifier_URL_Full, new String[] {AbstractFormattedVerifier.FIELD_NAME, URLVerifier.ERROR_REASON});
     }
 
     protected String getErrorMessageImpl(Control input) {
@@ -40,7 +40,7 @@ public class URLVerifier extends AbstractFormattedVerifier {
         	String host = svnUrl.getHost();
         	if (!host.matches("[a-zA-Z0-9_\\-]+(?:\\.[a-zA-Z0-9_\\-]+)*") && host.length() > 0 ||
         		host.length() == 0 && !"file".equals(svnUrl.getProtocol())) {
-        		this.setPlaceHolder(URLVerifier.ERROR_REASON, SVNTeamUIPlugin.instance().getResource("Verifier.URL.NoHost"));
+        		this.setPlaceHolder(URLVerifier.ERROR_REASON, SVNUIMessages.Verifier_URL_NoHost);
                 return URLVerifier.ERROR_MESSAGE_FULL;
         	}      	
             return null;

@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.CommentComposite;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
@@ -60,9 +60,9 @@ public class CreateFilePanel extends AbstractDialogPanel {
 	
 	public CreateFilePanel(String importToUrl) {
 		super();
-		this.dialogTitle = SVNTeamUIPlugin.instance().getResource("CreateFilePanel.Title");
-		this.dialogDescription = SVNTeamUIPlugin.instance().getResource("CreateFilePanel.Description");
-		this.defaultMessage = SVNTeamUIPlugin.instance().getResource("CreateFilePanel.Message", new String[] {importToUrl});
+		this.dialogTitle = SVNUIMessages.CreateFilePanel_Title;
+		this.dialogDescription = SVNUIMessages.CreateFilePanel_Description;
+		this.defaultMessage = SVNUIMessages.format(SVNUIMessages.CreateFilePanel_Message, new String[] {importToUrl});
     }
 	
 	public void createControlsImpl(Composite parent) {
@@ -81,7 +81,7 @@ public class CreateFilePanel extends AbstractDialogPanel {
 		Label fileLabel = new Label(fileGroup, SWT.NONE);
 		data = new GridData();
 		fileLabel.setLayoutData(data);
-		fileLabel.setText(SVNTeamUIPlugin.instance().getResource("CreateFilePanel.FilePath"));
+		fileLabel.setText(SVNUIMessages.CreateFilePanel_FilePath);
 		
 		this.locationField = new Text(fileGroup,  SWT.SINGLE | SWT.BORDER);
 		data = new GridData(GridData.FILL_HORIZONTAL);
@@ -94,16 +94,16 @@ public class CreateFilePanel extends AbstractDialogPanel {
 				}
 			}
 		});
-		this.attachTo(this.locationField, new ExistingResourceMultiVerifier(SVNTeamUIPlugin.instance().getResource("CreateFilePanel.FilePath.Verifier")));
+		this.attachTo(this.locationField, new ExistingResourceMultiVerifier(SVNUIMessages.CreateFilePanel_FilePath_Verifier));
 		Button browseButton = new Button(fileGroup, SWT.PUSH);
-		browseButton.setText(SVNTeamUIPlugin.instance().getResource("Button.Browse"));
+		browseButton.setText(SVNUIMessages.Button_Browse);
 		data = new GridData();
 		data.widthHint = DefaultDialog.computeButtonWidth(browseButton);
 		browseButton.setLayoutData(data);
 		browseButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				FileDialog fileDialog = new FileDialog(CreateFilePanel.this.manager.getShell(), SWT.MULTI);
-				fileDialog.setText(SVNTeamUIPlugin.instance().getResource("CreateFilePanel.ImportFile"));
+				fileDialog.setText(SVNUIMessages.CreateFilePanel_ImportFile);
 				String path = fileDialog.open();
 				if (path != null) {
 					String []fileNames = fileDialog.getFileNames();
@@ -127,7 +127,7 @@ public class CreateFilePanel extends AbstractDialogPanel {
 		group.setLayout(new GridLayout());
 		data = new GridData(GridData.FILL_BOTH);
 		group.setLayoutData(data);
-		group.setText(SVNTeamUIPlugin.instance().getResource("CreateFilePanel.Comment"));
+		group.setText(SVNUIMessages.CreateFilePanel_Comment);
 		
 		this.comment = new CommentComposite(group, this);
 		data = new GridData(GridData.FILL_BOTH);
@@ -204,8 +204,8 @@ public class CreateFilePanel extends AbstractDialogPanel {
 
 		public ExistingResourceMultiVerifier(String fieldName) {
 			super(fieldName, true);
-	    	this.ERROR_MESSAGE_DOES_NOT_EXIST_MULTIPLE = SVNTeamUIPlugin.instance().getResource("CreateFilePanel.FilePath.Verifier.Error.Exists", new String[] {AbstractFormattedVerifier.FIELD_NAME});
-	    	this.ERROR_MESSAGE_IS_NOT_A_FILE_MULTIPLE = SVNTeamUIPlugin.instance().getResource("CreateFilePanel.FilePath.Verifier.Error.NotAFile", new String[] {AbstractFormattedVerifier.FIELD_NAME});
+	    	this.ERROR_MESSAGE_DOES_NOT_EXIST_MULTIPLE = SVNUIMessages.format(SVNUIMessages.CreateFilePanel_FilePath_Verifier_Error_Exists, new String[] {AbstractFormattedVerifier.FIELD_NAME});
+	    	this.ERROR_MESSAGE_IS_NOT_A_FILE_MULTIPLE = SVNUIMessages.format(SVNUIMessages.CreateFilePanel_FilePath_Verifier_Error_NotAFile, new String[] {AbstractFormattedVerifier.FIELD_NAME});
 		}
     	
 		protected String getErrorMessageImpl(Control input) {

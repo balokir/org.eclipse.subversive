@@ -15,7 +15,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.RevisionComposite;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 
@@ -34,8 +34,8 @@ public class InputRevisionPanel extends AbstractDialogPanel {
 		super();
 		this.resource = resource;
 		this.dialogTitle = dialogTitle;
-		this.dialogDescription = SVNTeamUIPlugin.instance().getResource("InputRevisionPanel.Description");
-		this.defaultMessage = SVNTeamUIPlugin.instance().getResource("InputRevisionPanel.Message");
+		this.dialogDescription = SVNUIMessages.InputRevisionPanel_Description;
+		this.defaultMessage = SVNUIMessages.InputRevisionPanel_Message;
 	}
 	
 	public SVNRevision getSelectedRevision() {
@@ -43,7 +43,7 @@ public class InputRevisionPanel extends AbstractDialogPanel {
 	}
 	
 	protected void createControlsImpl(Composite parent) {
-		this.revComposite = new RevisionComposite(parent, this, false,  new String [] {SVNTeamUIPlugin.instance().getResource("InputRevisionPanel.Caption.First"), SVNTeamUIPlugin.instance().getResource("InputRevisionPanel.Caption.Second")}, SVNRevision.HEAD, false);
+		this.revComposite = new RevisionComposite(parent, this, false,  new String [] {SVNUIMessages.InputRevisionPanel_Caption_First, SVNUIMessages.InputRevisionPanel_Caption_Second}, SVNRevision.HEAD, false);
 		this.revComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		this.revComposite.setSelectedResource(this.resource);
 	}
