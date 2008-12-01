@@ -33,12 +33,12 @@ public class MoveProjectsToWorkingSetOperation extends AbstractWorkingCopyOperat
 	protected String workingSetName;
 	
 	public MoveProjectsToWorkingSetOperation(IResource []projects, String workingSetName) {
-		super("Operation.MoveToWorkingSet", projects);
+		super("Operation_MoveToWorkingSet", projects); //$NON-NLS-1$
 		this.workingSetName = workingSetName;
 	}
 
 	public MoveProjectsToWorkingSetOperation(IResourceProvider provider, String workingSetName) {
-		super("Operation.MoveToWorkingSet", provider);
+		super("Operation_MoveToWorkingSet", provider); //$NON-NLS-1$
 		this.workingSetName = workingSetName;
 	}
 	
@@ -63,7 +63,7 @@ public class MoveProjectsToWorkingSetOperation extends AbstractWorkingCopyOperat
 		}
 		if (wSet == null) {
 			wSet = workingSetManager.createWorkingSet(this.workingSetName, projects);
-			wSet.setId("org.eclipse.ui.resourceWorkingSetPage");
+			wSet.setId("org.eclipse.ui.resourceWorkingSetPage"); //$NON-NLS-1$
 			workingSetManager.addWorkingSet(wSet);
 		}
 	}

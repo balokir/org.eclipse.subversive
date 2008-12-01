@@ -72,7 +72,7 @@ public class EditAutoPropertiesPanel extends AbstractDialogPanel {
 		label.setText(SVNUIMessages.EditAutoPropertiesPanel_FileName);
 		
 		this.txtFileName = new Text(composite, SWT.BORDER);
-		this.txtFileName.setText((this.property == null) ? "" : this.property.fileName);
+		this.txtFileName.setText((this.property == null) ? "" : this.property.fileName); //$NON-NLS-1$
 		layoutData = new GridData(GridData.FILL_HORIZONTAL);
 		this.txtFileName.setLayoutData(layoutData);
 		String fieldName = SVNUIMessages.EditAutoPropertiesPanel_FileName_Verifier;
@@ -96,7 +96,7 @@ public class EditAutoPropertiesPanel extends AbstractDialogPanel {
 		label.setText(SVNUIMessages.EditAutoPropertiesPanel_Properties_Hint);
 		
 		this.txtProperties = new Text(group, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
-		this.txtProperties.setText((this.property == null) ? "" : PatternProvider.replaceAll(this.property.properties, SVNTeamPropsPreferencePage.AUTO_PROPS_PROPS_SEPARATOR, System.getProperty("line.separator")).trim());
+		this.txtProperties.setText((this.property == null) ? "" : PatternProvider.replaceAll(this.property.properties, SVNTeamPropsPreferencePage.AUTO_PROPS_PROPS_SEPARATOR, System.getProperty("line.separator")).trim()); //$NON-NLS-1$ //$NON-NLS-2$
 		layoutData = new GridData(GridData.FILL_BOTH);
 		layoutData.heightHint = DefaultDialog.convertHeightInCharsToPixels(this.txtProperties, 7);
 		this.txtProperties.setLayoutData(layoutData);
@@ -112,9 +112,9 @@ public class EditAutoPropertiesPanel extends AbstractDialogPanel {
 
 	protected void saveChangesImpl() {
 		this.fileName = this.txtFileName.getText().trim();
-		this.properties = PatternProvider.replaceAll(this.txtProperties.getText().trim(), SVNTeamPropsPreferencePage.AUTO_PROPS_PROPS_SEPARATOR, System.getProperty("line.separator"));
-		this.properties = PatternProvider.replaceAll(this.properties.trim(), System.getProperty("line.separator"), SVNTeamPropsPreferencePage.AUTO_PROPS_PROPS_SEPARATOR);
-		this.properties = PatternProvider.replaceAll(this.properties, SVNTeamPropsPreferencePage.AUTO_PROPS_PROPS_SEPARATOR + "{2,}", SVNTeamPropsPreferencePage.AUTO_PROPS_PROPS_SEPARATOR);
+		this.properties = PatternProvider.replaceAll(this.txtProperties.getText().trim(), SVNTeamPropsPreferencePage.AUTO_PROPS_PROPS_SEPARATOR, System.getProperty("line.separator")); //$NON-NLS-1$
+		this.properties = PatternProvider.replaceAll(this.properties.trim(), System.getProperty("line.separator"), SVNTeamPropsPreferencePage.AUTO_PROPS_PROPS_SEPARATOR); //$NON-NLS-1$
+		this.properties = PatternProvider.replaceAll(this.properties, SVNTeamPropsPreferencePage.AUTO_PROPS_PROPS_SEPARATOR + "{2,}", SVNTeamPropsPreferencePage.AUTO_PROPS_PROPS_SEPARATOR); //$NON-NLS-1$
 	}
 	
 	public String getFileName() {

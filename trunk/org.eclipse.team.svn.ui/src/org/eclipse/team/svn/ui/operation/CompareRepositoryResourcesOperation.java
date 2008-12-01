@@ -52,7 +52,7 @@ public class CompareRepositoryResourcesOperation extends AbstractActionOperation
 	}
 	
 	public CompareRepositoryResourcesOperation(IRepositoryResource prev, IRepositoryResource next, boolean forceReuse) {
-		super("Operation.CompareRepository");
+		super("Operation_CompareRepository"); //$NON-NLS-1$
 		this.prev = prev;
 		this.next = next;
 		this.forceReuse = forceReuse;

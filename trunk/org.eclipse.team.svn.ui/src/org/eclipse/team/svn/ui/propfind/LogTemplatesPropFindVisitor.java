@@ -36,7 +36,7 @@ public class LogTemplatesPropFindVisitor implements IPropFindVisitor {
 		if (this.logTemplates.size() == LogTemplatesPropFindVisitor.MAXIMUM_LOG_TEMPLATE_SIZE) {
 			return false;
 		}
-		if (propertyParam.name.equals("tsvn:logtemplate")) {
+		if (propertyParam.name.equals("tsvn:logtemplate")) { //$NON-NLS-1$
 			this.logTemplates.add(propertyParam.value);
 		}
 		return true;

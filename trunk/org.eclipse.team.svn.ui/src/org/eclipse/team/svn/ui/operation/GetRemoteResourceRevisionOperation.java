@@ -26,7 +26,7 @@ public class GetRemoteResourceRevisionOperation extends AbstractActionOperation 
 	protected long revision;
 
 	public GetRemoteResourceRevisionOperation(IRepositoryResource resource) {
-		super("Operation.GetRemoteRevision");
+		super("Operation_GetRemoteRevision"); //$NON-NLS-1$
 		this.resource = resource;
 		this.revision = SVNRevision.INVALID_REVISION_NUMBER;
 	}

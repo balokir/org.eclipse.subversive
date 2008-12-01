@@ -343,7 +343,7 @@ public class SVNTeamConsolePreferencesPage extends AbstractSVNTeamPreferencesPag
 		this.errEditor.setPreferenceStore(this.getPreferenceStore());
 		
 //		Setting context help
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.consolePreferencesContext");
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.consolePreferencesContext"); //$NON-NLS-1$
 		
 		return composite;
 	}

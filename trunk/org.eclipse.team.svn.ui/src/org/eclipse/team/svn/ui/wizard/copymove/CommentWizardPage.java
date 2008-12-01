@@ -33,7 +33,7 @@ public class CommentWizardPage extends AbstractVerifiedWizardPage {
 				isMove ?
 				SVNUIMessages.MoveToAction_Comment_Title :
 				SVNUIMessages.CopyToAction_Comment_Title,
-				SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
+				SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif")); //$NON-NLS-1$
 		this.setDescription(SVNUIMessages.CopyMove_Comment_Message);
 	}
 

@@ -71,7 +71,7 @@ public class ContainerSelectionPanel extends AbstractDialogPanel {
 		this.initialRoot = resources[0].getParent();
 		this.resources = resources;
 		this.numConflicts = conflicts.size();
-		this.defaultConflictMessage = "";
+		this.defaultConflictMessage = ""; //$NON-NLS-1$
 		this.getDefaultConflictMessage(conflicts);
 		this.defaultConflictMessage = this.getDefaultConflictMessage(conflicts);
 		this.defaultMessage = conflicts.size() == 0 ? SVNUIMessages.ContainerSelectionPanel_Message : this.defaultConflictMessage;
@@ -167,7 +167,7 @@ public class ContainerSelectionPanel extends AbstractDialogPanel {
     }
     
 	public String getHelpId() {
-    	return "org.eclipse.team.svn.help.copyMoveToDialogContext";
+    	return "org.eclipse.team.svn.help.copyMoveToDialogContext"; //$NON-NLS-1$
 	}
     
     protected void saveChangesImpl() {
@@ -185,16 +185,16 @@ public class ContainerSelectionPanel extends AbstractDialogPanel {
 			return null;
 		}
 		int numberOfConflicts = 0;
-		String message = "";
+		String message = ""; //$NON-NLS-1$
 		for (Iterator iter = conflicts.iterator(); iter.hasNext();) {
 			String element = (String) iter.next();
 			numberOfConflicts++;
 			if (numberOfConflicts < 4) {
-				message += numberOfConflicts == 1 ? "'" + element + "'" : ", '" + element + "'";
+				message += numberOfConflicts == 1 ? "'" + element + "'" : ", '" + element + "'"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			}
 		}
 		if (numberOfConflicts >= 4) {
-			message += "...";
+			message += "..."; //$NON-NLS-1$
     	}
 		return SVNUIMessages.format(SVNUIMessages.ContainerSelectionPanel_ConflictMessage, new String[] {message});
 	}
@@ -208,7 +208,7 @@ public class ContainerSelectionPanel extends AbstractDialogPanel {
     	
     	public ContainerSelectionVerifier(String conflictingResourcesNames) {
             super();
-            this.conflictedResources = "";
+            this.conflictedResources = ""; //$NON-NLS-1$
             this.defaultConflictingResourcesNames = conflictingResourcesNames;
             this.ALL_RESOURCES_IN_CONFLICT_MESSAGE = SVNUIMessages.ContainerSelectionPanel_Selection_Verifier_AllInConflict;
             this.SOME_RESOURCE_IN_CONFLICT_MESSAGE = SVNUIMessages.ContainerSelectionPanel_Selection_Verifier_SomeInConflict_Single;

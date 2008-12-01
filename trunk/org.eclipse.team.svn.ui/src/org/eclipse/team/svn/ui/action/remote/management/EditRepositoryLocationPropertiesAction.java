@@ -53,7 +53,7 @@ public class EditRepositoryLocationPropertiesAction extends AbstractRepositoryMo
 				CompositeOperation op = new CompositeOperation(mainOp.getId());
 				op.add(scannerOp);
 				op.add(mainOp);
-				op.add(new AbstractActionOperation("Operation.CheckRelocationState") {
+				op.add(new AbstractActionOperation("Operation_CheckRelocationState") { //$NON-NLS-1$
 					protected void runImpl(IProgressMonitor monitor) throws Exception {
 						if (mainOp.getExecutionState() != IActionOperation.OK) {
 							SVNRemoteStorage.instance().copyRepositoryLocation(locations[0], backup);

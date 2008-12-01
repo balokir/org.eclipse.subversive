@@ -52,8 +52,8 @@ public class SelectProjectNamePage extends AbstractVerifiedWizardPage {
 	public SelectProjectNamePage() {
 		super(
 			SelectProjectNamePage.class.getName(), 
-			"", 
-			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
+			"",  //$NON-NLS-1$
+			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif")); //$NON-NLS-1$
 		this.isSimpleMode = true;				
 	}
 	
@@ -179,7 +179,7 @@ public class SelectProjectNamePage extends AbstractVerifiedWizardPage {
 		this.enableControlsArea();
 		
 		//Setting context help
-	    PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.projectNameContext");
+	    PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.projectNameContext"); //$NON-NLS-1$
 		
 		return composite;
 	}	

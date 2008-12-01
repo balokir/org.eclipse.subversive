@@ -90,11 +90,11 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 	public static final int COLUMN_INDEX_FILE_NAME = 1;
 	public static final int COLUMN_INDEX_PROPERTIES = 2;
 	
-	public static final String AUTO_PROPS_CONFIG_FILE_NAME = "config";
-	public static final String AUTO_PROPS_SECTION_HEADER = "[auto-props]";
-	public static final String AUTO_PROPS_COMMENT_START = "#";
-	public static final String AUTO_PROPS_PATTERN_SEPARATOR = "=";
-	public static final String AUTO_PROPS_PROPS_SEPARATOR = ";";
+	public static final String AUTO_PROPS_CONFIG_FILE_NAME = "config"; //$NON-NLS-1$
+	public static final String AUTO_PROPS_SECTION_HEADER = "[auto-props]"; //$NON-NLS-1$
+	public static final String AUTO_PROPS_COMMENT_START = "#"; //$NON-NLS-1$
+	public static final String AUTO_PROPS_PATTERN_SEPARATOR = "="; //$NON-NLS-1$
+	public static final String AUTO_PROPS_PROPS_SEPARATOR = ";"; //$NON-NLS-1$
 	
 	public static class AutoProperty {
 		public String fileName;
@@ -125,7 +125,7 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 		String []props = new String[3 * propsCount];
 		for (int i = 0; i < propsCount; i++) {
 			SVNTeamPropsPreferencePage.AutoProperty property = (SVNTeamPropsPreferencePage.AutoProperty)this.autopropTableViewer.getElementAt(i);
-			props[3 * i] = property.enabled ? "1" : "0";
+			props[3 * i] = property.enabled ? "1" : "0"; //$NON-NLS-1$ //$NON-NLS-2$
 			props[3 * i + 1] = property.fileName;
 			props[3 * i + 2] = property.properties;
 		}
@@ -174,7 +174,7 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 		tabItem.setControl(this.createCustompropsComposite(tabFolder));
 		
 		//Setting context help
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.autoPropsPreferencesContext");
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.autoPropsPreferencesContext"); //$NON-NLS-1$
 		
 		return tabFolder;
 	}
@@ -274,7 +274,7 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 				else if (columnIndex == SVNTeamPropsPreferencePage.COLUMN_INDEX_PROPERTIES) {
 					return ((SVNTeamPropsPreferencePage.AutoProperty)element).properties;
 				}
-				return ""; 
+				return "";  //$NON-NLS-1$
 			}
 
 			public void addListener(ILabelProviderListener listener) {
@@ -385,7 +385,7 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 		BufferedReader srcReader = null;
 		PrintWriter tmpWriter = null;
 		try {
-			tmpCfg = File.createTempFile("cfg_", srcCfg.getName() + "tmp", SVNTeamPlugin.instance().getStateLocation().toFile());
+			tmpCfg = File.createTempFile("cfg_", srcCfg.getName() + "tmp", SVNTeamPlugin.instance().getStateLocation().toFile()); //$NON-NLS-1$ //$NON-NLS-2$
 			tmpCfg.deleteOnExit();
 			if (!srcCfg.exists()) {
 				srcCfg.createNewFile();
@@ -402,7 +402,7 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 			tmpWriter.println(SVNTeamPropsPreferencePage.AUTO_PROPS_SECTION_HEADER);
 			// Copy [auto-props] section content
 			while ((line = srcReader.readLine()) != null &&
-					!line.trim().equals("")) {
+					!line.trim().equals("")) { //$NON-NLS-1$
 				tmpWriter.println(line);
 			}
 			// Insert auto-properties
@@ -410,11 +410,11 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 			for (int i = 0; i < checkedProps.length; i++) {
 				SVNTeamPropsPreferencePage.AutoProperty property =
 					(SVNTeamPropsPreferencePage.AutoProperty)checkedProps[i];
-				if (!property.properties.equals("")) {
+				if (!property.properties.equals("")) { //$NON-NLS-1$
 					tmpWriter.println(property.fileName +
-							" " +
+							" " + //$NON-NLS-1$
 							SVNTeamPropsPreferencePage.AUTO_PROPS_PATTERN_SEPARATOR +
-							" " +
+							" " + //$NON-NLS-1$
 							property.properties);
 				}
 			}
@@ -470,14 +470,14 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 			}
 			
 			//another section beginning pattern
-			Pattern p = Pattern.compile("\\[.*\\]");
+			Pattern p = Pattern.compile("\\[.*\\]"); //$NON-NLS-1$
 			// Process [auto-props] section content
 			while ((line = cfgReader.readLine()) != null && !p.matcher(line).matches()) {
-				if (line.startsWith(SVNTeamPropsPreferencePage.AUTO_PROPS_COMMENT_START) || line.equals("")) {
+				if (line.startsWith(SVNTeamPropsPreferencePage.AUTO_PROPS_COMMENT_START) || line.equals("")) { //$NON-NLS-1$
 					continue;
 				}
-				String fileName = "";
-				String properties = "";
+				String fileName = ""; //$NON-NLS-1$
+				String properties = ""; //$NON-NLS-1$
 				int index = line.indexOf(SVNTeamPropsPreferencePage.AUTO_PROPS_PATTERN_SEPARATOR);
 				if (index != -1) {
 					fileName = line.substring(0, index).trim();
@@ -604,7 +604,7 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 				else if (columnIndex == 1) {
 					return ((SVNTeamPropsPreferencePage.CustomProperty)element).regExp;
 				}
-				return ""; 
+				return "";  //$NON-NLS-1$
 			}
 
 			public void addListener(ILabelProviderListener listener) {
@@ -656,7 +656,7 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 			return;
 		}
 		String description = ((SVNTeamPropsPreferencePage.CustomProperty)selection.getFirstElement()).descriprion;
-		if (description.equals("")) {
+		if (description.equals("")) { //$NON-NLS-1$
 			this.customPropDescription.setText("No description available.");
 		}
 		else {
@@ -696,8 +696,8 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 		String[] props = FileUtility.decodeStringToArray(encodedProps);
 		for (int i = 0; i < props.length; i += 3) {
 			String propName = props[i];
-			String regexp =  (i + 1 == props.length) ? "" : props[i + 1];
-			String description =  (i + 2 >= props.length) ? "" :  props[i + 2];
+			String regexp =  (i + 1 == props.length) ? "" : props[i + 1]; //$NON-NLS-1$
+			String description =  (i + 2 >= props.length) ? "" :  props[i + 2]; //$NON-NLS-1$
 			SVNTeamPropsPreferencePage.CustomProperty property = 
 				new SVNTeamPropsPreferencePage.CustomProperty(propName, regexp, description);
 			propsList.add(property);
@@ -709,9 +709,9 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 		ArrayList<AutoProperty> propsList = new ArrayList<AutoProperty>();
 		String[] props = FileUtility.decodeStringToArray(encodedProps);
 		for (int i = 0; i < props.length; i += 3) {
-			boolean enabled = !props[i].equals("0");
+			boolean enabled = !props[i].equals("0"); //$NON-NLS-1$
 			String fileName = props[i + 1];
-			String properties = (i + 2 == props.length) ? "" : props[i + 2];
+			String properties = (i + 2 == props.length) ? "" : props[i + 2]; //$NON-NLS-1$
 			SVNTeamPropsPreferencePage.AutoProperty property = 
 				new SVNTeamPropsPreferencePage.AutoProperty(fileName, properties, enabled);
 			propsList.add(property);
@@ -732,7 +732,7 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 		FileDialog dlg = new FileDialog(this.getShell());
 		dlg.setText(dialogTitle);
 		dlg.setFilterPath(cfgDir);
-		File cfgFile = new File(cfgDir + System.getProperty("file.separator") + SVNTeamPropsPreferencePage.AUTO_PROPS_CONFIG_FILE_NAME);
+		File cfgFile = new File(cfgDir + System.getProperty("file.separator") + SVNTeamPropsPreferencePage.AUTO_PROPS_CONFIG_FILE_NAME); //$NON-NLS-1$
 		if (cfgFile.exists()) {
 			dlg.setFileName(SVNTeamPropsPreferencePage.AUTO_PROPS_CONFIG_FILE_NAME);
 		}

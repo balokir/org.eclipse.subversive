@@ -24,17 +24,17 @@ import org.eclipse.team.svn.ui.panel.common.AbstractRepositoryResourceSelectionP
  */
 public class ComparePanel extends AbstractRepositoryResourceSelectionPanel {
     public ComparePanel(IRepositoryResource baseResource) {    	
-    	super(baseResource, SVNRevision.INVALID_REVISION_NUMBER, SVNUIMessages.ComparePanel_Title, SVNUIMessages.ComparePanel_Description, "compareUrl", SVNUIMessages.ComparePanel_Selection_Title, SVNUIMessages.ComparePanel_Selection_Description, RepositoryResourceSelectionComposite.TEXT_BASE);
+    	super(baseResource, SVNRevision.INVALID_REVISION_NUMBER, SVNUIMessages.ComparePanel_Title, SVNUIMessages.ComparePanel_Description, "compareUrl", SVNUIMessages.ComparePanel_Selection_Title, SVNUIMessages.ComparePanel_Selection_Description, RepositoryResourceSelectionComposite.TEXT_BASE); //$NON-NLS-1$
     	this.defaultMessage = SVNUIMessages.ComparePanel_Message;
     }
     
     public ComparePanel(IRepositoryResource baseResource, long revision) {    	
-    	super(baseResource, revision, SVNUIMessages.ComparePanel_Title, SVNUIMessages.ComparePanel_Description, "compareUrl", SVNUIMessages.ComparePanel_Selection_Title, SVNUIMessages.ComparePanel_Selection_Description, RepositoryResourceSelectionComposite.TEXT_BASE);
+    	super(baseResource, revision, SVNUIMessages.ComparePanel_Title, SVNUIMessages.ComparePanel_Description, "compareUrl", SVNUIMessages.ComparePanel_Selection_Title, SVNUIMessages.ComparePanel_Selection_Description, RepositoryResourceSelectionComposite.TEXT_BASE); //$NON-NLS-1$
     	this.defaultMessage = SVNUIMessages.ComparePanel_Message;
     }
     
 	public String getHelpId() {
-    	return "org.eclipse.team.svn.help.remote_compareDialogContext";
+    	return "org.eclipse.team.svn.help.remote_compareDialogContext"; //$NON-NLS-1$
 	}
 
 }

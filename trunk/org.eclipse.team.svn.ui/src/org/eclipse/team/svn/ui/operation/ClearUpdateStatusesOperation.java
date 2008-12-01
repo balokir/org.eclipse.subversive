@@ -25,11 +25,11 @@ import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
  */
 public class ClearUpdateStatusesOperation extends AbstractWorkingCopyOperation {
 	public ClearUpdateStatusesOperation(IResource[] resources) {
-		super("Operation.ClearUpdateStatusesCache", resources);
+		super("Operation_ClearUpdateStatusesCache", resources); //$NON-NLS-1$
 	}
 
 	public ClearUpdateStatusesOperation(IResourceProvider provider) {
-		super("Operation.ClearUpdateStatusesCache", provider);
+		super("Operation_ClearUpdateStatusesCache", provider); //$NON-NLS-1$
 	}
 
 	public ISchedulingRule getSchedulingRule() {

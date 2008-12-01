@@ -49,7 +49,7 @@ public class InputRevisionPanel extends AbstractDialogPanel {
 	}
 	
 	public String getHelpId() {
-    	return "org.eclipse.team.svn.help.revisionDialogContext";
+    	return "org.eclipse.team.svn.help.revisionDialogContext"; //$NON-NLS-1$
 	}
 	
 	protected void saveChangesImpl() {

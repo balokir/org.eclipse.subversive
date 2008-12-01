@@ -101,7 +101,7 @@ public class UpdateAction extends AbstractSynchronizeModelAction {
 			}
 		}
 
-		CompositeOperation op = new CompositeOperation("Operation.Update");
+		CompositeOperation op = new CompositeOperation("Operation_Update"); //$NON-NLS-1$
 		
 		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
 		op.add(saveOp);

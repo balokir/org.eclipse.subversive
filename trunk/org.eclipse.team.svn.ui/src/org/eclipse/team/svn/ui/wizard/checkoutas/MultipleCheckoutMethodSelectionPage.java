@@ -57,7 +57,7 @@ public class MultipleCheckoutMethodSelectionPage extends AbstractVerifiedWizardP
 	public MultipleCheckoutMethodSelectionPage(IRepositoryResource[] selectedResources) {
 		super(MultipleCheckoutMethodSelectionPage.class.getName(), 
 			SVNUIMessages.MultipleCheckoutMethodSelectionPage_Title, 
-			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
+			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif")); //$NON-NLS-1$
 		this.selectedResources = selectedResources;
 		this.checkoutType = MultipleCheckoutMethodSelectionPage.FIND_PROJECTS;
 		this.ignoreExternals = false;
@@ -191,7 +191,7 @@ public class MultipleCheckoutMethodSelectionPage extends AbstractVerifiedWizardP
 		ingnoreExternalsCheckbox.setText(SVNUIMessages.CheckoutMethodSelectionPage_Externals);
 		
 //		Setting context help
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.multiSelectionContext");
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.multiSelectionContext"); //$NON-NLS-1$
 		
 		return composite;
     }

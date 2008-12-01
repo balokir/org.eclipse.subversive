@@ -78,7 +78,7 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 			return ImageDescriptor.createFromURL(new URL(this.baseUrl, path));
 		} 
     	catch (MalformedURLException e) {
-			LoggedOperation.reportError(SVNUIMessages.getErrorString("Error_GetImageDescriptor"), e);
+			LoggedOperation.reportError(SVNUIMessages.getErrorString("Error_GetImageDescriptor"), e); //$NON-NLS-1$
 			return null;
 		}
     }
@@ -104,11 +104,11 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 		String connector = corePreferences.getString(SVNTeamPlugin.CORE_SVNCLIENT_NAME).trim();
 		if (connector.length() != 0) {
 			SVNTeamPreferences.setCoreString(this.getPreferenceStore(), SVNTeamPreferences.CORE_SVNCONNECTOR_NAME, connector);
-			corePreferences.setValue(SVNTeamPlugin.CORE_SVNCLIENT_NAME, "");
+			corePreferences.setValue(SVNTeamPlugin.CORE_SVNCLIENT_NAME, ""); //$NON-NLS-1$
 			SVNTeamPlugin.instance().savePluginPreferences();
 		}
 
-        this.baseUrl = context.getBundle().getEntry("/");
+        this.baseUrl = context.getBundle().getEntry("/"); //$NON-NLS-1$
 		
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		workspace.addResourceChangeListener(SVNTeamUIPlugin.this.pcListener, IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_DELETE);

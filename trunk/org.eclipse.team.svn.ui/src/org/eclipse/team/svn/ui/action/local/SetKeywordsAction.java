@@ -51,7 +51,7 @@ public class SetKeywordsAction extends AbstractNonRecursiveTeamAction {
 			}, null);
 		}
 		else {
-			CompositeOperation composite = new CompositeOperation("Operation.SetKeywordsProperty");
+			CompositeOperation composite = new CompositeOperation("Operation_SetKeywordsProperty"); //$NON-NLS-1$
 			final GetMultiPropertiesOperation getKeywordsOp = new GetMultiPropertiesOperation(resources, IResource.DEPTH_INFINITE, IStateFilter.SF_EXCLUDE_PREREPLACED_AND_DELETED_FILES, BuiltIn.KEYWORDS);
 			composite.add(getKeywordsOp);
 			composite.add(new AbstractActionOperation(composite.getId()) {

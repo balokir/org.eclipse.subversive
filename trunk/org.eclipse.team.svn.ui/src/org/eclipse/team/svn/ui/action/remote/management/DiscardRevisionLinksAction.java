@@ -45,7 +45,7 @@ public class DiscardRevisionLinksAction extends AbstractRepositoryTeamAction {
 			for (int i = 0; i < revisions.length; i++) {
 				locations.add(revisions[i].getRepositoryResources()[0].getRepositoryLocation());
 			}
-			AbstractActionOperation mainOp = new AbstractActionOperation("Operation.RemoveRevisionLinks") {
+			AbstractActionOperation mainOp = new AbstractActionOperation("Operation_RemoveRevisionLinks") { //$NON-NLS-1$
 				protected void runImpl(IProgressMonitor monitor)
 						throws Exception {
 					for (int i = 0; i < revisions.length; i++) {

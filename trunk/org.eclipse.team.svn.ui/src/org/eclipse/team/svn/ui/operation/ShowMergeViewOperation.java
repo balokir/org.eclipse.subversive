@@ -54,7 +54,7 @@ public class ShowMergeViewOperation extends AbstractActionOperation {
     }
 
     public ShowMergeViewOperation(IResource []locals, IRepositoryResourceProvider from, SVNRevisionRange []revisions, boolean ignoreAncestry, int depth, IWorkbenchPart part) {
-        super("Operation.ShowMergeView");
+        super("Operation_ShowMergeView"); //$NON-NLS-1$
         this.part = part;
         this.locals = locals;
         this.from = from;
@@ -64,7 +64,7 @@ public class ShowMergeViewOperation extends AbstractActionOperation {
     }
     
     public ShowMergeViewOperation(IResource []locals, IRepositoryResourceProvider fromStart, IRepositoryResourceProvider fromEnd, boolean ignoreAncestry, int depth, IWorkbenchPart part) {
-        super("Operation.ShowMergeView");
+        super("Operation_ShowMergeView"); //$NON-NLS-1$
         this.part = part;
         this.locals = locals;
         this.from = fromStart;
@@ -74,7 +74,7 @@ public class ShowMergeViewOperation extends AbstractActionOperation {
     }
     
     public ShowMergeViewOperation(IResource []locals, IRepositoryResourceProvider from, IWorkbenchPart part) {
-        super("Operation.ShowMergeView");
+        super("Operation_ShowMergeView"); //$NON-NLS-1$
         this.part = part;
         this.locals = locals;
         this.from = from;

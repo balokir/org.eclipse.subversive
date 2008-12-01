@@ -89,7 +89,7 @@ public class CommitSetPanel extends CommentPanel implements ICommentDialogPanel 
 		this.nameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         String initialText = this.set.getTitle();
         if (initialText == null) {
-        	initialText = "";
+        	initialText = ""; //$NON-NLS-1$
         }
         this.nameText.setText(initialText);
         this.nameText.selectAll();
@@ -112,7 +112,7 @@ public class CommitSetPanel extends CommentPanel implements ICommentDialogPanel 
     }
 	
 	public String getHelpId() {
-    	return "org.eclipse.team.svn.help.commitSetDialogContext";
+    	return "org.eclipse.team.svn.help.commitSetDialogContext"; //$NON-NLS-1$
     }
     
     public void addResourcesSelectionChangedListener(IResourceSelectionChangeListener listener) {

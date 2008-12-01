@@ -81,10 +81,10 @@ public class AffectedPathsComposite extends Composite {
 		super(parent, style);
 		
 		if (AffectedPathsComposite.ADDITION_OVERLAY == null) {
-			AffectedPathsComposite.ADDITION_OVERLAY = SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/addition.gif");
-			AffectedPathsComposite.MODIFICATION_OVERLAY = SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/change.gif");
-			AffectedPathsComposite.DELETION_OVERLAY = SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/deletion.gif");
-			AffectedPathsComposite.REPLACEMENT_OVERLAY = SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/replacement.gif");
+			AffectedPathsComposite.ADDITION_OVERLAY = SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/addition.gif"); //$NON-NLS-1$
+			AffectedPathsComposite.MODIFICATION_OVERLAY = SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/change.gif"); //$NON-NLS-1$
+			AffectedPathsComposite.DELETION_OVERLAY = SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/deletion.gif"); //$NON-NLS-1$
+			AffectedPathsComposite.REPLACEMENT_OVERLAY = SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/replacement.gif"); //$NON-NLS-1$
 		}
 		
 		this.createControls();
@@ -168,7 +168,7 @@ public class AffectedPathsComposite extends Composite {
 				TableItem item = table.getItem(new Point(e.x, e.y));
 				if (item != null) {
 					Rectangle rect = item.getBounds(0);
-					String tooltip = "";
+					String tooltip = ""; //$NON-NLS-1$
 					if (rect.contains(e.x, e.y)){
 						SVNChangedPathData data = (SVNChangedPathData)item.getData();
 						switch (data.action) {
@@ -190,7 +190,7 @@ public class AffectedPathsComposite extends Composite {
 			    			}
 						}
 					}
-					table.setToolTipText(rect.contains(e.x, e.y) ? tooltip : "");
+					table.setToolTipText(rect.contains(e.x, e.y) ? tooltip : ""); //$NON-NLS-1$
 				}
 			}
 		});
@@ -205,7 +205,7 @@ public class AffectedPathsComposite extends Composite {
 		
 		//0.image        
         TableColumn col = new TableColumn(table, SWT.NONE);
-		col.setText("");
+		col.setText(""); //$NON-NLS-1$
 		col.setResizable(false);
 		col.setAlignment(SWT.CENTER);
         layout.addColumnData(new ColumnPixelData(26, false));        
@@ -288,10 +288,10 @@ public class AffectedPathsComposite extends Composite {
 					return data.resourcePath;
 				}
 				case AffectedPathsComposite.COLUMN_COPIED_FROM: {
-					return data.copiedFromPath + ((data.copiedFromRevision == SVNRevision.INVALID_REVISION_NUMBER) ? "" : '@' + String.valueOf(data.copiedFromRevision)); 
+					return data.copiedFromPath + ((data.copiedFromRevision == SVNRevision.INVALID_REVISION_NUMBER) ? "" : '@' + String.valueOf(data.copiedFromRevision));  //$NON-NLS-1$
 				}
 			}
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 
 		public void dispose() {
@@ -328,8 +328,8 @@ public class AffectedPathsComposite extends Composite {
 					return ColumnedViewerComparator.compare(data1.resourcePath, data2.resourcePath);
 				}
 				case AffectedPathsComposite.COLUMN_COPIED_FROM : {
-					String copied1 = data1.copiedFromPath + ((data1.copiedFromRevision == SVNRevision.INVALID_REVISION_NUMBER) ? "" : '@' + String.valueOf(data1.copiedFromRevision));
-					String copied2 = data2.copiedFromPath + ((data2.copiedFromRevision == SVNRevision.INVALID_REVISION_NUMBER) ? "" : '@' + String.valueOf(data2.copiedFromRevision));
+					String copied1 = data1.copiedFromPath + ((data1.copiedFromRevision == SVNRevision.INVALID_REVISION_NUMBER) ? "" : '@' + String.valueOf(data1.copiedFromRevision)); //$NON-NLS-1$
+					String copied2 = data2.copiedFromPath + ((data2.copiedFromRevision == SVNRevision.INVALID_REVISION_NUMBER) ? "" : '@' + String.valueOf(data2.copiedFromRevision)); //$NON-NLS-1$
 					return ColumnedViewerComparator.compare(copied1, copied2);
 				}
 			}

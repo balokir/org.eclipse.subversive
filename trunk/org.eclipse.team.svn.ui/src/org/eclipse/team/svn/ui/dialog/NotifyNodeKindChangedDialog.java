@@ -45,9 +45,9 @@ public class NotifyNodeKindChangedDialog extends MessageDialog {
         }
         resources = parents.toArray(new IResource[parents.size()]);
         FileUtility.reorder(resources, true);
-        String retVal = "";
+        String retVal = ""; //$NON-NLS-1$
         for (int i = 0; i < resources.length; i++) {
-            retVal += "'" + resources[i].getFullPath().toString() + "'\n";
+            retVal += "'" + resources[i].getFullPath().toString() + "'\n"; //$NON-NLS-1$ //$NON-NLS-2$
         }
         return retVal;
     }

@@ -168,7 +168,7 @@ public abstract class AbstractSVNView extends ViewPart implements IResourceState
 		String resourceName;
 		if (this.wcResource != null) {
 		    String path = this.wcResource.getFullPath().toString();
-		    if (path.startsWith("/")) {
+		    if (path.startsWith("/")) { //$NON-NLS-1$
 		    	path = path.substring(1);
 		    }
 			resourceName = path;

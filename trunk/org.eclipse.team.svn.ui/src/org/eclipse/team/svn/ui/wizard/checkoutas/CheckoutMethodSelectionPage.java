@@ -59,7 +59,7 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 	public CheckoutMethodSelectionPage(String defaultName, boolean newProjectSelectionEnabled) {
 		super(CheckoutMethodSelectionPage.class.getName(), 
 			SVNUIMessages.CheckoutMethodSelectionPage_Title, 
-			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
+			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif")); //$NON-NLS-1$
 		
 		this.setDescription(SVNUIMessages.CheckoutMethodSelectionPage_Description);
 		
@@ -114,7 +114,7 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 		description.setLayoutData(data);
 		String message = SVNUIMessages.format(SVNUIMessages.CheckoutMethodSelectionPage_HintHead, new String[] {this.defaultName});
 		description.setText(message + (this.checkoutType != CheckoutMethodSelectionPage.USE_NEW_PROJECT_WIZARD ?
-				" " + SVNUIMessages.CheckoutMethodSelectionPage_HintTail : ""));
+				" " + SVNUIMessages.CheckoutMethodSelectionPage_HintTail : "")); //$NON-NLS-1$ //$NON-NLS-2$
 		this.projectName = this.defaultName = FileUtility.formatResourceName(this.defaultName);
 
 		Button useNewProjectWizardButton = new Button(composite, SWT.RADIO);
@@ -199,7 +199,7 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 		ignoreExternalsCheckbox.setText(SVNUIMessages.CheckoutMethodSelectionPage_Externals);
 		
 //		Setting context help
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.checkoutMethodSelectionContext");
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.checkoutMethodSelectionContext"); //$NON-NLS-1$
 		
 		return composite;
 	}

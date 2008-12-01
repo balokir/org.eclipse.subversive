@@ -73,9 +73,9 @@ public class BuiltInAnnotate {
 	}
 
 	protected IActionOperation prepareBuiltInAnnotate(final GetResourceAnnotationOperation annotateOp, final IWorkbenchPage page, final IRepositoryResource remote, final IFile resource) {
-		CompositeOperation op = new CompositeOperation("Operation.BuiltInShowAnnotation");
+		CompositeOperation op = new CompositeOperation("Operation_BuiltInShowAnnotation"); //$NON-NLS-1$
 		final RevisionInformation info = new RevisionInformation();
-		IActionOperation prepareRevisions = new AbstractActionOperation("Operation.PrepareRevisions") {
+		IActionOperation prepareRevisions = new AbstractActionOperation("Operation_PrepareRevisions") { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				Map<String, BuiltInAnnotateRevision> revisions = new HashMap<String, BuiltInAnnotateRevision>();
 				SVNAnnotationData []data = annotateOp.getAnnotatedLines();
@@ -123,7 +123,7 @@ public class BuiltInAnnotate {
 			}
 		};
 		op.add(prepareRevisions, new IActionOperation[] {annotateOp});
-		IActionOperation attachMessages = new AbstractActionOperation("Operation.BuiltInShowView") {
+		IActionOperation attachMessages = new AbstractActionOperation("Operation_BuiltInShowView") { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				page.getActivePart().getSite().getShell().getDisplay().syncExec(new Runnable() {
 					public void run() {

@@ -50,7 +50,7 @@ public class PlainTextLogNode extends AbstractLogNode {
 	
 	public ImageDescriptor getImageDescriptor() {
 		if (this.label.equals(RootHistoryCategory.PENDING[0])) {
-			return SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/repositories/browser_pending.gif");
+			return SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/repositories/browser_pending.gif"); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -59,7 +59,7 @@ public class PlainTextLogNode extends AbstractLogNode {
 		if (columnIndex == ILogNode.COLUMN_REVISION) {
 			return this.label;
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	
 	public ILogNode []getChildren() {
@@ -71,7 +71,7 @@ public class PlainTextLogNode extends AbstractLogNode {
 	}
 
 	public String getAuthor() {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	public int getChangesCount() {
@@ -79,7 +79,7 @@ public class PlainTextLogNode extends AbstractLogNode {
 	}
 
 	public String getComment() {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	public long getRevision() {

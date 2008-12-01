@@ -124,7 +124,7 @@ public class CommitPaneParticipant extends BasePaneParticipant {
 	        	        
 			//create branch
 			CreateBranchAction branchAction = new CreateBranchAction(SVNUIMessages.SynchronizeActionGroup_Branch, configuration);
-			branchAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/branch.gif"));
+			branchAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/branch.gif")); //$NON-NLS-1$
 			this.appendToGroup(
 						ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 						CommitPaneActionGroup.GROUP_SYNC_NORMAL,
@@ -138,7 +138,7 @@ public class CommitPaneParticipant extends BasePaneParticipant {
 			
 			//revert
 			RevertAction revertAction = new RevertAction(SVNUIMessages.SynchronizeActionGroup_Revert, configuration);
-			revertAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/revert.gif"));
+			revertAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/revert.gif")); //$NON-NLS-1$
 				this.appendToGroup(
 						ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 						CommitPaneActionGroup.GROUP_SYNC_NORMAL,
@@ -166,7 +166,7 @@ public class CommitPaneParticipant extends BasePaneParticipant {
 			
 			//lock
 			LockAction lockAction = new LockAction(SVNUIMessages.UpdateActionGroup_Lock, configuration);
-			lockAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/lock.gif"));
+			lockAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/lock.gif")); //$NON-NLS-1$
 			this.appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					CommitPaneActionGroup.GROUP_SYNC_NORMAL,
@@ -174,7 +174,7 @@ public class CommitPaneParticipant extends BasePaneParticipant {
 			
 			//unlock
 			UnlockAction unlockAction = new UnlockAction(SVNUIMessages.UpdateActionGroup_Unlock, configuration);
-			unlockAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/unlock.gif"));
+			unlockAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/unlock.gif")); //$NON-NLS-1$
 			this.appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					CommitPaneActionGroup.GROUP_SYNC_NORMAL,
@@ -248,7 +248,7 @@ public class CommitPaneParticipant extends BasePaneParticipant {
 			
 			//delete
 			DeletePaneAction deleteAction = new DeletePaneAction(SVNUIMessages.CommitPanel_Delete_Action, configuration);
-			deleteAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/delete.gif"));
+			deleteAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/delete.gif")); //$NON-NLS-1$
 			this.appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					CommitPaneActionGroup.GROUP_SYNC_NORMAL,

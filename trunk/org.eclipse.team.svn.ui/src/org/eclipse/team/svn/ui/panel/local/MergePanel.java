@@ -68,8 +68,8 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 	public static final int MODE_2URL = 1;
 	public static final int MODE_REINTEGRATE = 2;
 	
-	protected static final String FIRST_URL_HISTORY = "Merge.FirstUrl";
-	protected static final String SECOND_URL_HISTORY = "Merge.SecondUrl";
+	protected static final String FIRST_URL_HISTORY = "Merge_FirstUrl"; //$NON-NLS-1$
+	protected static final String SECOND_URL_HISTORY = "Merge_SecondUrl"; //$NON-NLS-1$
 	
 	protected IResource []to;
 	protected IRepositoryResource baseResource;
@@ -257,7 +257,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 		};
 		
 		this.firstSelectionComposite = new RepositoryResourceSelectionComposite(
-				parent, SWT.NONE, proxy, MergePanel.FIRST_URL_HISTORY, "MergePanel.SourceURL1", this.firstSelectedResource, true, 
+				parent, SWT.NONE, proxy, MergePanel.FIRST_URL_HISTORY, "MergePanel_SourceURL1", this.firstSelectedResource, true,  //$NON-NLS-1$
 				SVNUIMessages.MergePanel_Selection_Title, SVNUIMessages.MergePanel_Selection_Description, RepositoryResourceSelectionComposite.MODE_DEFAULT, RepositoryResourceSelectionComposite.TEXT_LAST);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.firstSelectionComposite.setLayoutData(data);
@@ -268,7 +268,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 		separator.setVisible(false);
 		
 		this.secondSelectionComposite = new RepositoryResourceSelectionComposite(
-				parent, SWT.NONE, proxy2, MergePanel.SECOND_URL_HISTORY, "MergePanel.SourceURL2", this.secondSelectedResource, true, 
+				parent, SWT.NONE, proxy2, MergePanel.SECOND_URL_HISTORY, "MergePanel_SourceURL2", this.secondSelectedResource, true,  //$NON-NLS-1$
 				SVNUIMessages.MergePanel_Selection_Title, SVNUIMessages.MergePanel_Selection_Description, RepositoryResourceSelectionComposite.MODE_DEFAULT, RepositoryResourceSelectionComposite.TEXT_LAST);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.secondSelectionComposite.setLayoutData(data);
@@ -354,7 +354,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 				return false;
 			}
 			public void progress(int current, int total, ItemState state) {
-				buf.append("<b>");
+				buf.append("<b>"); //$NON-NLS-1$
 				switch (state.action) {
 					case PerformedAction.UPDATE_ADD: {
 						buf.append(SVNUIMessages.MergePanel_Preview_Added);
@@ -373,13 +373,13 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 							buf.append(PerformedAction.actionNames[state.action]);
 						}
 						else {
-							buf.append("\t");
+							buf.append("\t"); //$NON-NLS-1$
 						}
 						buf.append(SVNUIMessages.MergePanel_Preview_Default);
 					}
 				}
 				buf.append(state.path);
-				buf.append("\n");
+				buf.append("\n"); //$NON-NLS-1$
 			}
 		});
 		
@@ -397,7 +397,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 		}
 		
 		if (mergeOp.getExecutionState() == IActionOperation.OK) {
-			Font font = new Font(UIMonitorUtility.getDisplay(), "Courier New", 8, SWT.NORMAL);
+			Font font = new Font(UIMonitorUtility.getDisplay(), "Courier New", 8, SWT.NORMAL); //$NON-NLS-1$
 			new DefaultDialog(this.manager.getShell(), new PreviewPanel(SVNUIMessages.MergePanel_Preview_Title, SVNUIMessages.MergePanel_Preview_Description, SVNUIMessages.MergePanel_Preview_Message, buf.toString(), font)).open();
 		}
 	}
@@ -440,7 +440,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 		IRepositoryResource []retVal = new IRepositoryResource[this.to.length];
 		String baseUrl = base.getUrl();
 		for (int i = 0; i < retVal.length; i++) {
-			String url = baseUrl + "/" + SVNRemoteStorage.instance().asRepositoryResource(this.to[i]).getName();
+			String url = baseUrl + "/" + SVNRemoteStorage.instance().asRepositoryResource(this.to[i]).getName(); //$NON-NLS-1$
 			retVal[i] = this.to[i].getType() == IResource.FILE ? (IRepositoryResource)base.asRepositoryFile(url, false) : base.asRepositoryContainer(url, false);
 		}
 		return retVal;
@@ -484,7 +484,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 	}
 	
     public String getHelpId() {
-    	return "org.eclipse.team.svn.help.mergeDialogContext";
+    	return "org.eclipse.team.svn.help.mergeDialogContext"; //$NON-NLS-1$
     }
 
 }

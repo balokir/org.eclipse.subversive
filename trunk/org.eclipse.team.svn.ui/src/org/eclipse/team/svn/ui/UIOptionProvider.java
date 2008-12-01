@@ -100,11 +100,11 @@ public class UIOptionProvider implements IOptionProvider {
 				if (autoProperty.properties.length() == 0) {
 					return new SVNProperty[0];
 				}
-				String[] props = autoProperty.properties.split(";");
+				String[] props = autoProperty.properties.split(";"); //$NON-NLS-1$
 				SVNProperty[] propertyData = new SVNProperty[props.length];
 				for (int j = 0; j < props.length; j++) {
-					String[] propsNameValue = props[j].split("=");
-					propertyData[j] = new SVNProperty(propsNameValue[0], propsNameValue.length == 1 ? "" : propsNameValue[1]);
+					String[] propsNameValue = props[j].split("="); //$NON-NLS-1$
+					propertyData[j] = new SVNProperty(propsNameValue[0], propsNameValue.length == 1 ? "" : propsNameValue[1]); //$NON-NLS-1$
 				}
 				return propertyData;
 			}

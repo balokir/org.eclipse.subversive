@@ -124,26 +124,26 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 	protected static final Collection<PreviewFile> ROOT;
 	static {	
 		//name, type, added, new, dirty, ignored, hasRemote, locked
-		PreviewFile branchProject = new PreviewFile("ProjectBranch", IResource.PROJECT, false, false, false, false, false, true, false, false, false, true, false, false);
-		PreviewFile tagProject = new PreviewFile("ProjectTag", IResource.PROJECT, false, false, false, false, false, true, false, false, false, false, true, false);
+		PreviewFile branchProject = new PreviewFile("ProjectBranch", IResource.PROJECT, false, false, false, false, false, true, false, false, false, true, false, false); //$NON-NLS-1$
+		PreviewFile tagProject = new PreviewFile("ProjectTag", IResource.PROJECT, false, false, false, false, false, true, false, false, false, false, true, false); //$NON-NLS-1$
 		
-		PreviewFile project = new PreviewFile("Project", IResource.PROJECT, false, false, true, false, false, true, false, false, true, false, false, false);
+		PreviewFile project = new PreviewFile("Project", IResource.PROJECT, false, false, true, false, false, true, false, false, true, false, false, false); //$NON-NLS-1$
 		
-		PreviewFile modifiedFolder = new PreviewFile("folder", IResource.FOLDER, false, false, true, false, false, true, false, false, true, false, false, false);
+		PreviewFile modifiedFolder = new PreviewFile("folder", IResource.FOLDER, false, false, true, false, false, true, false, false, true, false, false, false); //$NON-NLS-1$
 		ArrayList<PreviewFile> children = new ArrayList<PreviewFile>();
-		children.add(new PreviewFile("switched", IResource.FOLDER, false, false, false, false, false, true, false, false, true, false, false, true));
-		children.add(new PreviewFile("normal.txt", IResource.FILE, false, false, false, false, false, true, false, false, true, false, false, false));
-		children.add(new PreviewFile("modified.cpp", IResource.FILE, false, false, true, false, false, true, false, false, true, false, false, false));
-		children.add(new PreviewFile("conflicting.cpp", IResource.FILE, false, false, true, true, false, true, false, false, true, false, false, false));
-		children.add(new PreviewFile("ignored.txt", IResource.FILE, false, false, false, false, true, false, false, false, true, false, false, false));
+		children.add(new PreviewFile("switched", IResource.FOLDER, false, false, false, false, false, true, false, false, true, false, false, true)); //$NON-NLS-1$
+		children.add(new PreviewFile("normal.txt", IResource.FILE, false, false, false, false, false, true, false, false, true, false, false, false)); //$NON-NLS-1$
+		children.add(new PreviewFile("modified.cpp", IResource.FILE, false, false, true, false, false, true, false, false, true, false, false, false)); //$NON-NLS-1$
+		children.add(new PreviewFile("conflicting.cpp", IResource.FILE, false, false, true, true, false, true, false, false, true, false, false, false)); //$NON-NLS-1$
+		children.add(new PreviewFile("ignored.txt", IResource.FILE, false, false, false, false, true, false, false, false, true, false, false, false)); //$NON-NLS-1$
 		modifiedFolder.children = children;
 		
 		children = new ArrayList<PreviewFile>();
 		children.add(modifiedFolder);
-		children.add(new PreviewFile("new", IResource.FILE, false, true, false, false, false, false, false, false, true, false, false, false));
-		children.add(new PreviewFile("added.java", IResource.FILE, true, false, true, false, false, false, false, false, true, false, false, false));
-		children.add(new PreviewFile("locked", IResource.FILE, false, false, false, false, false, true, true, false, true, false, false, false));
-		children.add(new PreviewFile("needsLock", IResource.FILE, false, false, false, false, false, true, false, true, true, false, false, false));
+		children.add(new PreviewFile("new", IResource.FILE, false, true, false, false, false, false, false, false, true, false, false, false)); //$NON-NLS-1$
+		children.add(new PreviewFile("added.java", IResource.FILE, true, false, true, false, false, false, false, false, true, false, false, false)); //$NON-NLS-1$
+		children.add(new PreviewFile("locked", IResource.FILE, false, false, false, false, false, true, true, false, true, false, false, false)); //$NON-NLS-1$
+		children.add(new PreviewFile("needsLock", IResource.FILE, false, false, false, false, false, true, false, true, true, false, false, false)); //$NON-NLS-1$
 		
 		project.children = children;
 		ROOT = new ArrayList<PreviewFile>();
@@ -294,7 +294,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		this.preview = new Preview(parent);
 		
 //		Setting context help
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.decorsPreferencesContext");
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.decorsPreferencesContext"); //$NON-NLS-1$
 		
 		return tabFolder;
 	}
@@ -341,7 +341,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		fileOptions.add(TextVariableSetProvider.VAR_DATE);
 		fileOptions.add(TextVariableSetProvider.VAR_AUTHOR);
 		fileOptions.add(TextVariableSetProvider.VAR_RESOURCE_URL);
-		this.fileFormatField = this.createFormatControl(formatGroup, "PreferencePage.textFileFormat", fileOptions, Collections.emptyList());
+		this.fileFormatField = this.createFormatControl(formatGroup, "PreferencePage_textFileFormat", fileOptions, Collections.emptyList()); //$NON-NLS-1$
 		this.fileFormatField.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				SVNTeamDecorationPreferencesPage.this.fileFormat = SVNTeamDecorationPreferencesPage.this.fileFormatField.getText();
@@ -350,7 +350,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		
 		List<IVariable> folderOptions = new ArrayList<IVariable>();
 		folderOptions.addAll(fileOptions);
-		this.folderFormatField = this.createFormatControl(formatGroup, "PreferencePage.textFolderFormat", folderOptions, Collections.emptyList());
+		this.folderFormatField = this.createFormatControl(formatGroup, "PreferencePage_textFolderFormat", folderOptions, Collections.emptyList()); //$NON-NLS-1$
 		this.folderFormatField.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				SVNTeamDecorationPreferencesPage.this.folderFormat = SVNTeamDecorationPreferencesPage.this.folderFormatField.getText();
@@ -373,7 +373,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		projectOptions.add(TextVariableSetProvider.VAR_DATE);
 		projectOptions.add(TextVariableSetProvider.VAR_AUTHOR);
 		
-		this.projectFormatField = this.createFormatControl(formatGroup, "PreferencePage.textProjectFormat", projectOptions, Collections.emptyList());
+		this.projectFormatField = this.createFormatControl(formatGroup, "PreferencePage_textProjectFormat", projectOptions, Collections.emptyList()); //$NON-NLS-1$
 		this.projectFormatField.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				SVNTeamDecorationPreferencesPage.this.projectFormat = SVNTeamDecorationPreferencesPage.this.projectFormatField.getText();
@@ -393,21 +393,21 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		prefixGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		prefixGroup.setText("Root Prefix");
 		
-		this.trunkPrefixField = this.createFormatControl(prefixGroup, "PreferencePage.textTrunkPrefix", projectOptions, grayedOptions);
+		this.trunkPrefixField = this.createFormatControl(prefixGroup, "PreferencePage_textTrunkPrefix", projectOptions, grayedOptions); //$NON-NLS-1$
 		this.trunkPrefixField.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				SVNTeamDecorationPreferencesPage.this.trunkPrefix = SVNTeamDecorationPreferencesPage.this.trunkPrefixField.getText();
 			}
 		});
 
-		this.branchPrefixField = this.createFormatControl(prefixGroup, "PreferencePage.textBranchPrefix", projectOptions, grayedOptions);
+		this.branchPrefixField = this.createFormatControl(prefixGroup, "PreferencePage_textBranchPrefix", projectOptions, grayedOptions); //$NON-NLS-1$
 		this.branchPrefixField.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				SVNTeamDecorationPreferencesPage.this.branchPrefix = SVNTeamDecorationPreferencesPage.this.branchPrefixField.getText();
 			}
 		});
 
-		this.tagPrefixField = this.createFormatControl(prefixGroup, "PreferencePage.textTagPrefix", projectOptions, grayedOptions);
+		this.tagPrefixField = this.createFormatControl(prefixGroup, "PreferencePage_textTagPrefix", projectOptions, grayedOptions); //$NON-NLS-1$
 		this.tagPrefixField.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				SVNTeamDecorationPreferencesPage.this.tagPrefix = SVNTeamDecorationPreferencesPage.this.tagPrefixField.getText();
@@ -470,7 +470,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 			label.setText(SVNUIMessages.getString(labelId));
 		}
 		else {
-			label.setText("");
+			label.setText(""); //$NON-NLS-1$
 		}
 		
 		final Text format = new Text(parent, SWT.SINGLE | SWT.BORDER);
@@ -512,7 +512,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		ILabelProvider labelProvider = new LabelProvider() {
 			public String getText(Object element) {
 				IVariable var = (IVariable)element;
-				return var.getName() + " - " + var.getDescription();
+				return var.getName() + " - " + var.getDescription(); //$NON-NLS-1$
 			}
 		};
 		String dialogPrompt = SVNUIMessages.PreferencePage_textAddVariablesPrompt;
@@ -691,22 +691,22 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 			return null;
 		} 
 		else if (element.locked && this.indicateLocked) {
-			return SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/lock.gif");
+			return SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/lock.gif"); //$NON-NLS-1$
 		}
 		else if (element.isSwitched && this.indicateSwitched) {
-			return SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/switched.gif");
+			return SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/switched.gif"); //$NON-NLS-1$
 		}
 		else if (element.needsLock && this.indicateNeedsLock) {
-			return SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/needs_lock.gif");
+			return SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/needs_lock.gif"); //$NON-NLS-1$
 		}
 		else if (element.newResource && this.indicateNew) {
-			return SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/new_resource.gif");
+			return SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/new_resource.gif"); //$NON-NLS-1$
 		}
 		else if (element.added && this.indicateAdded) {
 			return TeamImages.getImageDescriptor(ISharedImages.IMG_HOURGLASS_OVR);
 		}
 		else if (element.conflicted && this.indicateConflicted) {
-			return SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/conflicted_unresolved.gif");
+			return SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/conflicted_unresolved.gif"); //$NON-NLS-1$
 		}
 		else if (element.dirty && this.indicateModified) {
 			return TeamImages.getImageDescriptor(ISharedImages.IMG_DIRTY_OVR);
@@ -779,13 +779,13 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 				if (this.preview.added) {
 					return SVNTeamDecorationPreferencesPage.this.addedChars;
 				}
-				return "";
+				return ""; //$NON-NLS-1$
 			}
 			else if (var.equals(TextVariableSetProvider.VAR_OUTGOING_FLAG)) {
 				if (this.preview.dirty) {
 					return SVNTeamDecorationPreferencesPage.this.outgoingChars;
 				}
-				return "";
+				return ""; //$NON-NLS-1$
 			}
 			else if (var.equals(TextVariableSetProvider.VAR_ROOT_PREFIX)) {
 				if (this.preview.isTag) {
@@ -797,7 +797,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 				else if (this.preview.isTrunk) {
 					return SVNTeamDecorationPreferencesPage.this.trunkPrefix;
 				}
-				return "";
+				return ""; //$NON-NLS-1$
 			}
 			else if (var.equals(TextVariableSetProvider.VAR_ASCENDANT)) {
 				return SVNUIMessages.PreferencePage_demoAscendant;
@@ -941,7 +941,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		 */
 		private String amend(IVariable var, IVariableContentProvider provider) {
 			IVariable[] variables = this.decoratorVariables.parseFormatLine(provider.getValue(var));
-			String value = "";
+			String value = ""; //$NON-NLS-1$
 			for (int i = 0; i < variables.length; i++) {
 				String variableValue = provider.getValue(variables[i]);
 				if (!variables[i].equals(var)) {
@@ -952,7 +952,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 						value += variableValue;
 					}
 					else {
-						value += "?{" + variables[i].getName() + "}?";
+						value += "?{" + variables[i].getName() + "}?"; //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
 			}
@@ -961,8 +961,8 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		
 		public void decorateText(DemoDecoration decoration, IVariable []format, IVariableContentProvider provider) {
 			int centerPoint = Arrays.asList(format).indexOf(TextVariableSetProvider.instance.getCenterVariable());
-			String prefix = "";
-			String suffix = "";
+			String prefix = ""; //$NON-NLS-1$
+			String suffix = ""; //$NON-NLS-1$
 			for (int i = 0; i < format.length; i++) {
 				if (!format[i].equals(TextVariableSetProvider.instance.getCenterVariable())) {
 					if (centerPoint != -1 && i < centerPoint) {
@@ -982,13 +982,13 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 			
 			switch (((PreviewFile)element).type) {
 			case IResource.PROJECT:
-				descriptor = SVNTeamUIPlugin.instance().getImageDescriptor("icons/objects/project.gif");
+				descriptor = SVNTeamUIPlugin.instance().getImageDescriptor("icons/objects/project.gif"); //$NON-NLS-1$
 				break;
 			case IResource.FOLDER:
-				descriptor = SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/folder.gif");
+				descriptor = SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/folder.gif"); //$NON-NLS-1$
 				break;
 			default:
-				descriptor = SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/file.gif");
+				descriptor = SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/file.gif"); //$NON-NLS-1$
 				break;
 			}
 			Image image = this.images.get(descriptor);

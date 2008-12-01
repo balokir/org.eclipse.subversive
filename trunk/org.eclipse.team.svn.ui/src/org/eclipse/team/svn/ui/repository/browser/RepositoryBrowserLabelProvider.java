@@ -82,7 +82,7 @@ public class RepositoryBrowserLabelProvider implements ITableLabelProvider {
 				return this.getColumnTextForElement(((RepositoryFictiveWorkingDirectory)element).getAssociatedDirectory(), columnIndex);
 			}
 		}
-		return "";		
+		return "";		 //$NON-NLS-1$
 	}
 
 	public void addListener(ILabelProviderListener listener) {
@@ -109,7 +109,7 @@ public class RepositoryBrowserLabelProvider implements ITableLabelProvider {
 				return ((RepositoryResource)element).getLabel();
 			}
 			else if (columnIndex == RepositoryBrowserTableViewer.COLUMN_REVISION) {
-				String revision = "";
+				String revision = ""; //$NON-NLS-1$
 				try {
 					if (resource.isInfoCached()) {
 						revision = String.valueOf(((RepositoryResource)element).getRevision());
@@ -133,20 +133,20 @@ public class RepositoryBrowserLabelProvider implements ITableLabelProvider {
 				}
 				else if (columnIndex == RepositoryBrowserTableViewer.COLUMN_LOCK_OWNER) {
 					SVNLock lock = resourceInfo.lock;
-					String lockOwner = (lock == null) ? "" : lock.owner;
+					String lockOwner = (lock == null) ? "" : lock.owner; //$NON-NLS-1$
 					return lockOwner;
 				}
 				else if (columnIndex == RepositoryBrowserTableViewer.COLUMN_SIZE) {
 					long size = resourceInfo.fileSize;
-					return (resource instanceof IRepositoryFile) ? String.valueOf(size) : "";
+					return (resource instanceof IRepositoryFile) ? String.valueOf(size) : ""; //$NON-NLS-1$
 				}
 				else if (columnIndex == RepositoryBrowserTableViewer.COLUMN_HAS_PROPS) {
 					boolean hasProps = resourceInfo.hasProperties;
-					return (hasProps) ? RepositoryBrowserLabelProvider.hasProps : "";
+					return (hasProps) ? RepositoryBrowserLabelProvider.hasProps : ""; //$NON-NLS-1$
 				}
 			}
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	
 }

@@ -106,7 +106,7 @@ public class SVNTeamCommentTemplatesPreferencesPage extends AbstractSVNTeamPrefe
 		IStructuredSelection selection = (IStructuredSelection) this.listViewer.getSelection();
 		this.editButton.setEnabled(this.userTemplatesEnabled && selection.size() == 1);
 		this.removeButton.setEnabled(this.userTemplatesEnabled && selection.size() > 0);
-		this.previewText.setText(selection.size() == 1 ? (String)selection.getFirstElement() : "");
+		this.previewText.setText(selection.size() == 1 ? (String)selection.getFirstElement() : ""); //$NON-NLS-1$
 	}
 	
 	protected Control createContentsImpl(Composite parent) {
@@ -181,7 +181,7 @@ public class SVNTeamCommentTemplatesPreferencesPage extends AbstractSVNTeamPrefe
 		Dialog.applyDialogFont(parent);
 
 //		Setting context help
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.commentTemplatesPreferencesContext");
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.commentTemplatesPreferencesContext"); //$NON-NLS-1$
 		
 		return composite;
 	}
@@ -326,7 +326,7 @@ public class SVNTeamCommentTemplatesPreferencesPage extends AbstractSVNTeamPrefe
 		IStructuredSelection selection = (IStructuredSelection) this.listViewer.getSelection();
 		this.editButton.setEnabled(this.userTemplatesEnabled && selection.size() == 1);
 		this.removeButton.setEnabled(this.userTemplatesEnabled && selection.size() > 0);
-		this.previewText.setText(selection.size() == 1 ? (String)selection.getFirstElement() : "");
+		this.previewText.setText(selection.size() == 1 ? (String)selection.getFirstElement() : ""); //$NON-NLS-1$
 	}
 	
 }

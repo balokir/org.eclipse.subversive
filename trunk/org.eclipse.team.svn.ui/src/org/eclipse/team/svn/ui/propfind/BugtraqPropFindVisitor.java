@@ -31,13 +31,13 @@ public class BugtraqPropFindVisitor implements IPropFindVisitor {
 	public BugtraqPropFindVisitor() {
 		this.model = new BugtraqModel();
 		this.bugtraqProperties = new HashSet<String>(
-				Arrays.asList(new String[] {"bugtraq:url",
-											 "bugtraq:logregex",
-											 "bugtraq:label",
-											 "bugtraq:message",
-											 "bugtraq:number",
-											 "bugtraq:warnifnoissue",
-											 "bugtraq:append"}));
+				Arrays.asList(new String[] {"bugtraq:url", //$NON-NLS-1$
+											 "bugtraq:logregex", //$NON-NLS-1$
+											 "bugtraq:label", //$NON-NLS-1$
+											 "bugtraq:message", //$NON-NLS-1$
+											 "bugtraq:number", //$NON-NLS-1$
+											 "bugtraq:warnifnoissue", //$NON-NLS-1$
+											 "bugtraq:append"})); //$NON-NLS-1$
 	}
 	
 	public boolean visit(SVNProperty propertyParam) {
@@ -49,28 +49,28 @@ public class BugtraqPropFindVisitor implements IPropFindVisitor {
 	}
 	
 	protected void processBugtraqProperty(String name, String value) {
-		if (name.equals("bugtraq:url")) {
+		if (name.equals("bugtraq:url")) { //$NON-NLS-1$
 			this.model.setUrl(value);
 		}
-		else if (name.equals("bugtraq:logregex")) {
+		else if (name.equals("bugtraq:logregex")) { //$NON-NLS-1$
 			this.model.setLogregex(value);
 		}
-		else if (name.equals("bugtraq:label")) {
+		else if (name.equals("bugtraq:label")) { //$NON-NLS-1$
 			this.model.setLabel(value);
 		}
-		else if (name.equals("bugtraq:message")) {
+		else if (name.equals("bugtraq:message")) { //$NON-NLS-1$
 			this.model.setMessage(value);
 		}
-		else if (name.equals("bugtraq:number")) {
-			boolean number = value == null || !(value.trim().equals("false") || value.trim().equals("no"));
+		else if (name.equals("bugtraq:number")) { //$NON-NLS-1$
+			boolean number = value == null || !(value.trim().equals("false") || value.trim().equals("no")); //$NON-NLS-1$ //$NON-NLS-2$
 			this.model.setNumber(number);
 		}
-		else if (name.equals("bugtraq:warnifnoissue")) {
-			boolean warn = value != null && (value.trim().equals("yes") || value.trim().equals("true"));
+		else if (name.equals("bugtraq:warnifnoissue")) { //$NON-NLS-1$
+			boolean warn = value != null && (value.trim().equals("yes") || value.trim().equals("true")); //$NON-NLS-1$ //$NON-NLS-2$
 			this.model.setWarnIfNoIssue(warn);
 		}
-		else if (name.equals("bugtraq:append")) {
-			boolean append = value == null || !(value.trim().equals("false") || value.trim().equals("no"));
+		else if (name.equals("bugtraq:append")) { //$NON-NLS-1$
+			boolean append = value == null || !(value.trim().equals("false") || value.trim().equals("no")); //$NON-NLS-1$ //$NON-NLS-2$
 			this.model.setAppend(append);
 		}
 	}

@@ -123,7 +123,7 @@ public class UpdateSubscriberContext extends SubscriberMergeContext {
 				}
 				resources[0] = panel.getSelectedResources();
 			}
-			CompositeOperation op = new CompositeOperation("Operation.UOverrideAndUpdate");
+			CompositeOperation op = new CompositeOperation(Messages.getString("UpdateSubscriberContext.0")); //$NON-NLS-1$
 			SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources[0]);
 			op.add(saveOp);
 			RevertOperation revertOp = new RevertOperation(FileUtility.getResourcesRecursive(resources[0], IStateFilter.SF_REVERTABLE, IResource.DEPTH_ZERO), true);
@@ -203,7 +203,7 @@ public class UpdateSubscriberContext extends SubscriberMergeContext {
 				}
 			}
 			
-			CompositeOperation op = new CompositeOperation("Operation.Update");
+			CompositeOperation op = new CompositeOperation(Messages.getString("UpdateSubscriberContext.1")); //$NON-NLS-1$
 			SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources[0]);
 			op.add(saveOp);
 			

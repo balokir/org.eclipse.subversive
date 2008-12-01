@@ -52,12 +52,12 @@ public class ShowConflictEditorOperation extends AbstractWorkingCopyOperation {
 	protected boolean showInDialog;
 	
 	public ShowConflictEditorOperation(IResource []resources, boolean showInDialog) {
-		super("Operation.ShowConflictEditor", resources);
+		super("Operation_ShowConflictEditor", resources); //$NON-NLS-1$
 		this.showInDialog = showInDialog;
 	}
 
 	public ShowConflictEditorOperation(IResourceProvider provider, boolean showInDialog) {
-		super("Operation.ShowConflictEditor", provider);
+		super("Operation_ShowConflictEditor", provider); //$NON-NLS-1$
 		this.showInDialog = showInDialog;
 	}
 

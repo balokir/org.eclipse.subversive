@@ -55,7 +55,7 @@ public class PatchOptionsPage extends AbstractVerifiedWizardPage {
 	public PatchOptionsPage(boolean localMode, boolean showIgnoreAncestry) {
 		super(PatchOptionsPage.class.getName(), 
 			SVNUIMessages.PatchOptionsPage_Title, 
-			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
+			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif")); //$NON-NLS-1$
 		this.setDescription(SVNUIMessages.PatchOptionsPage_Description);
 		this.localMode = localMode;
 		this.showIgnoreAncestry = showIgnoreAncestry;
@@ -234,7 +234,7 @@ public class PatchOptionsPage extends AbstractVerifiedWizardPage {
 		}
 		
 //		Setting context help
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.patchOptionsContext");
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.patchOptionsContext"); //$NON-NLS-1$
 		
 		return composite;
 	}

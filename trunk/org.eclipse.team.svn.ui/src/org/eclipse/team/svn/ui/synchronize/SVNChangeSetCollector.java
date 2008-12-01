@@ -96,15 +96,15 @@ public class SVNChangeSetCollector extends SyncInfoSetChangeSetCollector {
 			if (updateName) {
 				// rebuild name
 				String name = 
-					String.valueOf(revision) + " " + 
-					(resource.getLastCommitDate() == 0 ? svnNoDate : MessageFormat.format(svnDate, new Object[] {DateFormatter.formatDate(set.date)})) + " " + 
+					String.valueOf(revision) + " " +  //$NON-NLS-1$
+					(resource.getLastCommitDate() == 0 ? svnNoDate : MessageFormat.format(svnDate, new Object[] {DateFormatter.formatDate(set.date)})) + " " +  //$NON-NLS-1$
 					(resource.getAuthor() == null ? svnNoAuthor : MessageFormat.format(svnAuthor, new Object[] {resource.getAuthor()}));
 				if (set.comment != null) {
 					String comment = set.comment;
 					if (FileUtility.isWindows()) {
-						comment = comment.replaceAll("\r\n|\r|\n", " ");
+						comment = comment.replaceAll("\r\n|\r|\n", " "); //$NON-NLS-1$ //$NON-NLS-2$
 					}
-					name += " " + comment;
+					name += " " + comment; //$NON-NLS-1$
 				}
 				set.setName(name);
 			}

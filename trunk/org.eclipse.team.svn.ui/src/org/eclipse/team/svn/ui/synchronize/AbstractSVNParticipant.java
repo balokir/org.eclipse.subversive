@@ -123,11 +123,11 @@ public abstract class AbstractSVNParticipant extends SubscriberParticipant imple
 	private void setDefaults() {
 	    if (AbstractSVNParticipant.OVR_REPLACED_OUT == null) {
 	        SVNTeamUIPlugin instance = SVNTeamUIPlugin.instance();
-            AbstractSVNParticipant.OVR_OBSTRUCTED = instance.getImageDescriptor("icons/overlays/obstructed.gif");
-            AbstractSVNParticipant.OVR_REPLACED_OUT = instance.getImageDescriptor("icons/overlays/replaced_out.gif");
-            AbstractSVNParticipant.OVR_REPLACED_IN = instance.getImageDescriptor("icons/overlays/replaced_in.gif");
-            AbstractSVNParticipant.OVR_REPLACED_CONF = instance.getImageDescriptor("icons/overlays/replaced_conf.gif");
-            AbstractSVNParticipant.OVR_PROPCHANGE = instance.getImageDescriptor("icons/overlays/prop_changed.png");
+            AbstractSVNParticipant.OVR_OBSTRUCTED = instance.getImageDescriptor("icons/overlays/obstructed.gif"); //$NON-NLS-1$
+            AbstractSVNParticipant.OVR_REPLACED_OUT = instance.getImageDescriptor("icons/overlays/replaced_out.gif"); //$NON-NLS-1$
+            AbstractSVNParticipant.OVR_REPLACED_IN = instance.getImageDescriptor("icons/overlays/replaced_in.gif"); //$NON-NLS-1$
+            AbstractSVNParticipant.OVR_REPLACED_CONF = instance.getImageDescriptor("icons/overlays/replaced_conf.gif"); //$NON-NLS-1$
+            AbstractSVNParticipant.OVR_PROPCHANGE = instance.getImageDescriptor("icons/overlays/prop_changed.png"); //$NON-NLS-1$
 	    }
 	}	
     

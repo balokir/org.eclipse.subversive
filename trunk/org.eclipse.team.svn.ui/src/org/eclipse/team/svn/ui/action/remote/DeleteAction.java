@@ -54,7 +54,7 @@ public class DeleteAction extends AbstractRepositoryTeamAction {
 			
 			op.add(mainOp);
 			op.add(new RefreshRemoteResourcesOperation(commonParents));
-			op.add(new AbstractActionOperation("") {
+			op.add(new AbstractActionOperation("") { //$NON-NLS-1$
 				protected void runImpl(IProgressMonitor monitor) throws Exception {
 					DeleteAction.this.getShell().getDisplay().syncExec(new Runnable() {
 						public void run() {

@@ -31,8 +31,8 @@ public class OverrideResourcesPanel extends AbstractResourceSelectionPanel {
 	public static final int MSG_UPDATE = 1;
 	
 	protected static final String []MESSAGES = new String[] {
-		"OverrideResourcesPanel_Description_Commit",
-		"OverrideResourcesPanel_Description_Update"
+		"OverrideResourcesPanel_Description_Commit", //$NON-NLS-1$
+		"OverrideResourcesPanel_Description_Update" //$NON-NLS-1$
 	};
 	
     public OverrideResourcesPanel(IResource []resources, IResource[] userSelectedResources, int msgId) {
@@ -44,7 +44,7 @@ public class OverrideResourcesPanel extends AbstractResourceSelectionPanel {
     }
 	
     public String getHelpId() {
-    	return "org.eclipse.team.svn.help.overrideDialogContext";
+    	return "org.eclipse.team.svn.help.overrideDialogContext"; //$NON-NLS-1$
     }
 	
 	protected BasePaneParticipant createPaneParticipant() {

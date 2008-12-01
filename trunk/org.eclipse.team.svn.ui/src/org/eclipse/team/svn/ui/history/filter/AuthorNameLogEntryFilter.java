@@ -36,7 +36,7 @@ public class AuthorNameLogEntryFilter implements ILogEntryFilter {
 			return true;
 		}
 		StringMatcher matcher = new StringMatcher(this.authorNameToAccept);
-		String authorName = logEntry.author == null ? "" : logEntry.author;
+		String authorName = logEntry.author == null ? "" : logEntry.author; //$NON-NLS-1$
 		return matcher.match(authorName);
 	}
 

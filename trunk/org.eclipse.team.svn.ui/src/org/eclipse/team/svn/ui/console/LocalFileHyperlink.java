@@ -57,7 +57,7 @@ public class LocalFileHyperlink implements IHyperlink {
 		protected String filePath;
 		
 		public OpenLocalFileOperation(String filePath) {
-			super("Operation.OpenLocalFile");
+			super("Operation_OpenLocalFile"); //$NON-NLS-1$
 			this.filePath = filePath;
 		}
 

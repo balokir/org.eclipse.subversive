@@ -47,7 +47,7 @@ import org.eclipse.team.svn.ui.extension.impl.PredefinedPropertySet;
  * @author Andrej Zachar
  */
 public class ExtensionsManager {
-	private static final String UI_EXTENSION_NAMESPACE = "org.eclipse.team.svn.ui";
+	private static final String UI_EXTENSION_NAMESPACE = "org.eclipse.team.svn.ui"; //$NON-NLS-1$
 	
 	private ICommitActionFactory currentCommitFactory;
 	private IHistoryViewFactory currentMessageFactory;
@@ -183,15 +183,15 @@ public class ExtensionsManager {
 	
 	private ExtensionsManager() {
 		this.predefinedPropertySet = new PredefinedPropertySet();
-		this.currentDecorationFilter = (IDecorationFilter)this.loadUIExtension("decoration");
-		this.currentMessageFactory = (IHistoryViewFactory)this.loadUIExtension("history");
-		this.currentCommitFactory = (ICommitActionFactory)this.loadUIExtension("commit");
-		this.currentCheckoutFactory = (ICheckoutFactory)this.loadUIExtension("checkout");
-		this.currentShareProjectFactory = (IShareProjectFactory)this.loadUIExtension("shareproject");
-		this.currentActionContributor = (ISynchronizeViewActionContributor)this.loadUIExtension("synchronizeActionContribution");
-		Object []extensions = this.loadUIExtensions("reportingdescriptor");
+		this.currentDecorationFilter = (IDecorationFilter)this.loadUIExtension("decoration"); //$NON-NLS-1$
+		this.currentMessageFactory = (IHistoryViewFactory)this.loadUIExtension("history"); //$NON-NLS-1$
+		this.currentCommitFactory = (ICommitActionFactory)this.loadUIExtension("commit"); //$NON-NLS-1$
+		this.currentCheckoutFactory = (ICheckoutFactory)this.loadUIExtension("checkout"); //$NON-NLS-1$
+		this.currentShareProjectFactory = (IShareProjectFactory)this.loadUIExtension("shareproject"); //$NON-NLS-1$
+		this.currentActionContributor = (ISynchronizeViewActionContributor)this.loadUIExtension("synchronizeActionContribution"); //$NON-NLS-1$
+		Object []extensions = this.loadUIExtensions("reportingdescriptor"); //$NON-NLS-1$
 		this.reportingDescriptors = Arrays.asList(extensions).toArray(new IReportingDescriptor[extensions.length]);
-		extensions = this.loadUIExtensions("reporterfactory");
+		extensions = this.loadUIExtensions("reporterfactory"); //$NON-NLS-1$
 		this.reporterFactories = Arrays.asList(extensions).toArray(new IReporterFactory[extensions.length]);
 		Arrays.sort(this.reporterFactories, new Comparator<Object>() {
 			public int compare(Object o1, Object o2) {
@@ -219,7 +219,7 @@ public class ExtensionsManager {
 			IConfigurationElement[] configElements = extensions[i].getConfigurationElements();
 			for (int j = 0; j < configElements.length; j++) {
 				try {
-					retVal.add(configElements[j].createExecutableExtension("class"));
+					retVal.add(configElements[j].createExecutableExtension("class")); //$NON-NLS-1$
 				}
 				catch (CoreException ex) {
 				    LoggedOperation.reportError(SVNUIMessages.Error_LoadUIExtension, ex);

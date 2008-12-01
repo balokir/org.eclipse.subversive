@@ -67,7 +67,7 @@ public class RevPropertiesEditPanel extends AbstractPropertyEditPanel {
 		}
 		for (SVNProperty current : revProperties) {
 			if (!givenNames.contains(current.name)) {
-				customPropList.add(new CustomProperty(current.name, "", ""));
+				customPropList.add(new CustomProperty(current.name, "", "")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		this.customProps = customPropList.toArray(new CustomProperty[customPropList.size()]);
@@ -83,22 +83,22 @@ public class RevPropertiesEditPanel extends AbstractPropertyEditPanel {
 
 	protected void fillVerifiersMap() {
 		for (PredefinedProperty current : this.predefinedProperties) {
-			this.verifiers.put(current.name, new PropertyVerifier("EditPropertiesInputField", current.name.equals("svn:autoversioned") ? null : "", current.name, null));
+			this.verifiers.put(current.name, new PropertyVerifier("EditPropertiesInputField", current.name.equals("svn:autoversioned") ? null : "", current.name, null)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
 	
 	protected List<PredefinedProperty> getPredefinedProperties() {
 		ArrayList<PredefinedProperty> properties = new ArrayList<PredefinedProperty>();
-		properties.add(new PredefinedProperty(SVNUIMessages.AbstractPropertyEditPanel_svn_description, "", ""));
-		properties.add(new PredefinedProperty("svn:log", this.getDescription("SVN.Log"), ""));		
-		properties.add(new PredefinedProperty("svn:author", this.getDescription("SVN.Author"), ""));
-		properties.add(new PredefinedProperty("svn:date", this.getDescription("SVN.Date"), ""));
-		properties.add(new PredefinedProperty("svn:autoversioned", this.getDescription("SVN.Autoversioned"), ""));
+		properties.add(new PredefinedProperty(SVNUIMessages.AbstractPropertyEditPanel_svn_description, "", "")); //$NON-NLS-1$ //$NON-NLS-2$
+		properties.add(new PredefinedProperty("svn:log", this.getDescription("SVN_Log"), ""));		 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		properties.add(new PredefinedProperty("svn:author", this.getDescription("SVN_Author"), "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		properties.add(new PredefinedProperty("svn:date", this.getDescription("SVN_Date"), "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		properties.add(new PredefinedProperty("svn:autoversioned", this.getDescription("SVN_Autoversioned"), "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return properties;
 	}
 	
 	protected String getDescription(String id) {
-		return SVNUIMessages.getString("Property_" + id);
+		return SVNUIMessages.getString("Property_" + id); //$NON-NLS-1$
 	}
 
 	protected Map<String, String> getPredefinedPropertiesRegexps() {
@@ -108,10 +108,10 @@ public class RevPropertiesEditPanel extends AbstractPropertyEditPanel {
 	public static void doSetRevisionProperty(RevPropertiesEditPanel panel, final IRepositoryLocation location, final SVNRevision revision) {
 		final SVNProperty []data = new SVNProperty[] {new SVNProperty(panel.getPropertyName(), panel.getPropertyValue())};
 		SetRevisionPropertyOperation setPropOp = null;
-		CompositeOperation op = new CompositeOperation("");
+		CompositeOperation op = new CompositeOperation(""); //$NON-NLS-1$
 		if (panel.isFileSelected()) {
 			final File f = new File(panel.getPropertyFile());
-			AbstractActionOperation loadOp = new AbstractActionOperation("Operation.SLoadFileContent") {
+			AbstractActionOperation loadOp = new AbstractActionOperation("Operation_SLoadFileContent") { //$NON-NLS-1$
 	            protected void runImpl(IProgressMonitor monitor) throws Exception {
 	                FileInputStream input = null;
 	                try {

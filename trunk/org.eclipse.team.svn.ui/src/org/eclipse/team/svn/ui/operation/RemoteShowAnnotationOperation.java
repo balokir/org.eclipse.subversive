@@ -26,11 +26,11 @@ import org.eclipse.ui.IWorkbenchPage;
  */
 public class RemoteShowAnnotationOperation extends AbstractRepositoryOperation {
 	public RemoteShowAnnotationOperation(IRepositoryResource resource) {
-		super("Operation.ShowAnnotationRemote", new IRepositoryResource[] {resource});
+		super("Operation_ShowAnnotationRemote", new IRepositoryResource[] {resource}); //$NON-NLS-1$
 	}
 
 	public RemoteShowAnnotationOperation(IRepositoryResourceProvider provider) {
-		super("Operation.ShowAnnotationRemote", provider);
+		super("Operation_ShowAnnotationRemote", provider); //$NON-NLS-1$
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {

@@ -89,8 +89,8 @@ public abstract class AbstractDialogPanel implements IDialogPanel, IValidationMa
 
     public final Point getPrefferedSize() {
 		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
-		int width = SVNTeamPreferences.getDialogInt(store, this.getClass().getName() + ".width");
-		int height = SVNTeamPreferences.getDialogInt(store, this.getClass().getName() + ".height");
+		int width = SVNTeamPreferences.getDialogInt(store, this.getClass().getName() + ".width"); //$NON-NLS-1$
+		int height = SVNTeamPreferences.getDialogInt(store, this.getClass().getName() + ".height"); //$NON-NLS-1$
 		Point prefSize = this.getPrefferedSizeImpl();
 		width = Math.max(width, prefSize.x);
 		height = Math.max(height, prefSize.y);
@@ -154,8 +154,8 @@ public abstract class AbstractDialogPanel implements IDialogPanel, IValidationMa
 	protected void retainSize() {
 		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
 		Point size = this.parent.getSize();
-		SVNTeamPreferences.setDialogInt(store, this.getClass().getName() + ".width", size.x);
-		SVNTeamPreferences.setDialogInt(store, this.getClass().getName() + ".height", size.y);
+		SVNTeamPreferences.setDialogInt(store, this.getClass().getName() + ".width", size.x); //$NON-NLS-1$
+		SVNTeamPreferences.setDialogInt(store, this.getClass().getName() + ".height", size.y); //$NON-NLS-1$
 	}
 	
 	protected final void saveChanges() {
@@ -187,13 +187,13 @@ public abstract class AbstractDialogPanel implements IDialogPanel, IValidationMa
     public static String makeToBeOperatedMessage(IRepositoryResource []resources) {
 		String message;
 		if (resources.length == 1) {
-			message = "RepositoryTreePanel_Message_Single";
+			message = "RepositoryTreePanel_Message_Single"; //$NON-NLS-1$
 		}
 		else if (resources.length < 5) {
-			message = "RepositoryTreePanel_Message_UpTo4";
+			message = "RepositoryTreePanel_Message_UpTo4"; //$NON-NLS-1$
 		}
 		else {
-			message = "RepositoryTreePanel_Message_Multi";
+			message = "RepositoryTreePanel_Message_Multi"; //$NON-NLS-1$
 		}
 		return SVNUIMessages.format(message, new String[] {FileUtility.getNamesListAsString(resources)});
 	}

@@ -74,7 +74,7 @@ public class CopyAction extends AbstractWorkingCopyAction {
 			IPath path = panel.getSelectedPath();
 			boolean saveHistory = panel.isCopyWithHistorySelected();
 			
-			CompositeOperation op = new CompositeOperation("Operation.CopyResources");
+			CompositeOperation op = new CompositeOperation("Operation_CopyResources"); //$NON-NLS-1$
 			
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			IActionOperation addOp = null;

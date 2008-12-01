@@ -108,7 +108,7 @@ public class ImportPanel extends AbstractDialogPanel {
     }
 	
 	public String getHelpId() {
-    	return "org.eclipse.team.svn.help.remote_importDialogContext";
+    	return "org.eclipse.team.svn.help.remote_importDialogContext"; //$NON-NLS-1$
 	}
 	
     public Point getPrefferedSizeImpl() {

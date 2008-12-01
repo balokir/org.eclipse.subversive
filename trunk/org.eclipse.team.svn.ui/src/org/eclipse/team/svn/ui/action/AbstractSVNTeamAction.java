@@ -72,7 +72,7 @@ public abstract class AbstractSVNTeamAction extends TeamAction {
 	public abstract void runImpl(IAction action);
 	
 	protected final void execute(final IAction action) throws InvocationTargetException, InterruptedException {
-		ProgressMonitorUtility.doTaskExternal(new AbstractActionOperation("Operation.CallMenuAction") {
+		ProgressMonitorUtility.doTaskExternal(new AbstractActionOperation("Operation_CallMenuAction") { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				if (AbstractSVNTeamAction.this.isEnabled()) {
 					if (AbstractSVNTeamAction.this.needsToSaveDirtyEditors() && 
@@ -118,7 +118,7 @@ public abstract class AbstractSVNTeamAction extends TeamAction {
 	}
 
 	protected void handleException(Exception ex) {
-		this.handle(ex, SVNUIMessages.getErrorString("Error_ActionFailed"), SVNUIMessages.Error_ActionFailed_Message);
+		this.handle(ex, SVNUIMessages.getErrorString("Error_ActionFailed"), SVNUIMessages.Error_ActionFailed_Message); //$NON-NLS-1$
 	}
 	
 	public void selectionChanged(IAction action, ISelection selection) {
@@ -135,7 +135,7 @@ public abstract class AbstractSVNTeamAction extends TeamAction {
 			super.selectionChanged(action, selection);
 		}
 		catch (Throwable ex) {
-			LoggedOperation.reportError(SVNUIMessages.getErrorString("Error_MenuEnablement"), ex);
+			LoggedOperation.reportError(SVNUIMessages.getErrorString("Error_MenuEnablement"), ex); //$NON-NLS-1$
 		}
 	}
 

@@ -66,10 +66,10 @@ public class IssueList extends LinkList {
 	 *            derived from <code>bugtraq</code> properties
 	 */
 	public void parseMessage(String message, BugtraqModel model) {
-		String prefix = "";
-		String suffix = "";
+		String prefix = ""; //$NON-NLS-1$
+		String suffix = ""; //$NON-NLS-1$
 
-		String issueRegex = ".*";
+		String issueRegex = ".*"; //$NON-NLS-1$
 		String innerRegExp = null;
 
 		if (model.getLogregex() != null) {
@@ -83,8 +83,8 @@ public class IssueList extends LinkList {
 			prefix = getTemplatePrefix(template);
 			suffix = getTemplateSuffix(template);
 			if (model.isNumber()) {
-				issueRegex = "[0-9]+(?:,[0-9]+)*";
-				innerRegExp = "[0-9]+";
+				issueRegex = "[0-9]+(?:,[0-9]+)*"; //$NON-NLS-1$
+				innerRegExp = "[0-9]+"; //$NON-NLS-1$
 			}
 		}
 		else {
@@ -114,7 +114,7 @@ public class IssueList extends LinkList {
 	protected String getTemplatePrefix(String template) {
 		int indexOfIssue = template.indexOf(BugtraqModel.BUG_ID);
 
-		String prefix = "";
+		String prefix = ""; //$NON-NLS-1$
 		if (indexOfIssue > 0) {
 			prefix = this.maskRegExpEntries(template.substring(0, indexOfIssue));
 		}
@@ -124,7 +124,7 @@ public class IssueList extends LinkList {
 	protected String getTemplateSuffix(String template) {
 		int indexOfIssue = template.indexOf(BugtraqModel.BUG_ID);
 
-		String suffix = "";
+		String suffix = ""; //$NON-NLS-1$
 		if (indexOfIssue != -1) {
 			int indexOfSuffix = indexOfIssue + BugtraqModel.BUG_ID.length();
 			if (indexOfSuffix < template.length()) {
@@ -135,19 +135,19 @@ public class IssueList extends LinkList {
 	}
 
 	protected String maskRegExpEntries(String original) {
-		String retVal = "";
+		String retVal = ""; //$NON-NLS-1$
 		for (int i = 0; i < original.length(); i++) {
-			if ("*\\/:.,?^&+()|".indexOf(original.charAt(i)) != -1) {
-				retVal = retVal + "\\" + original.charAt(i);
+			if ("*\\/:.,?^&+()|".indexOf(original.charAt(i)) != -1) { //$NON-NLS-1$
+				retVal = retVal + "\\" + original.charAt(i); //$NON-NLS-1$
 			}
 			else if (original.charAt(i) == '\n') {
-				retVal = retVal + "(?:\r|\n|\r\n)";
+				retVal = retVal + "(?:\r|\n|\r\n)"; //$NON-NLS-1$
 			}
 			else if (original.charAt(i) == '\r') {
 				if ((i + 1) < original.length() && original.charAt(i + 1) == '\n') {
 					i++;
 				}
-				retVal = retVal + "(?:\r|\n|\r\n)";
+				retVal = retVal + "(?:\r|\n|\r\n)"; //$NON-NLS-1$
 			}
 			else {
 				retVal = retVal + original.charAt(i);

@@ -72,7 +72,7 @@ public class PromptCredentialsPanel extends AbstractDialogPanel {
 	protected int connectionType;
 	
 	public PromptCredentialsPanel() {
-        this("", SVNRepositoryLocation.DEFAULT_CONNECTION);
+        this("", SVNRepositoryLocation.DEFAULT_CONNECTION); //$NON-NLS-1$
     }
     
     public PromptCredentialsPanel(String forWhat, int connectionType) {
@@ -82,7 +82,7 @@ public class PromptCredentialsPanel extends AbstractDialogPanel {
         this.rootLocationName = SVNUIMessages.PromptCredentialsPanel_LocationRealm;
         this.defaultMessage = forWhat;
         this.host = SVNTeamPlugin.instance().getProxyService().getProxyData(
-        		forWhat.split(":")[0].equals("https") ? IProxyData.HTTPS_PROXY_TYPE : IProxyData.HTTP_PROXY_TYPE).getHost();
+        		forWhat.split(":")[0].equals("https") ? IProxyData.HTTPS_PROXY_TYPE : IProxyData.HTTP_PROXY_TYPE).getHost(); //$NON-NLS-1$ //$NON-NLS-2$
         this.connectionType = connectionType;
         this.selectedRealm = this.connectionType != SVNRepositoryLocation.PROXY_CONNECTION ? forWhat : this.rootLocationName;
 
@@ -507,14 +507,14 @@ public class PromptCredentialsPanel extends AbstractDialogPanel {
                     		IProxyService proxyService = SVNTeamPlugin.instance().getProxyService();
                     		String proxyType;
                     		SVNCachedProxyCredentialsManager proxyCredentialsManager = SVNRemoteStorage.instance().getProxyCredentialsManager();
-                    		String protocol = "http";
+                    		String protocol = "http"; //$NON-NLS-1$
                     		try {
                     			protocol = SVNUtility.getSVNUrl(location.getUrlAsIs()).getProtocol();
                     		}
                     		catch (MalformedURLException ex) {
                     			//ignore
                     		}
-                    		if (protocol != null && protocol.equals("https")) {
+                    		if (protocol != null && protocol.equals("https")) { //$NON-NLS-1$
                     			proxyType = IProxyData.HTTPS_PROXY_TYPE;
                     		}
                     		else {

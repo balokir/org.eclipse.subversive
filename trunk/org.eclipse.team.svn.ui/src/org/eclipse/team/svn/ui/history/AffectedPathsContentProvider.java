@@ -79,7 +79,7 @@ public class AffectedPathsContentProvider implements ITreeContentProvider {
 		if (!this.isRelatedPath(fullResourcePath, relatedPathPrefixes) && !this.isRelatedParent(fullResourcePath, relatedParents)) {
 			return;
 		}
-		StringTokenizer st = new StringTokenizer(fullResourcePath, "/");
+		StringTokenizer st = new StringTokenizer(fullResourcePath, "/"); //$NON-NLS-1$
 		AffectedPathsNode node = null;
 		AffectedPathsNode parent = this.root;
 		// also handle changes for repository root

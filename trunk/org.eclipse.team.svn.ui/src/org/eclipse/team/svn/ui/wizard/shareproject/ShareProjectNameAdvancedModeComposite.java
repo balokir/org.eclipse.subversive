@@ -297,7 +297,7 @@ public class ShareProjectNameAdvancedModeComposite extends Composite implements 
 		this.useEmptyNameButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				ShareProjectNameAdvancedModeComposite.this.validationManager.validateContent();
-				ShareProjectNameAdvancedModeComposite.this.selectedName = "";
+				ShareProjectNameAdvancedModeComposite.this.selectedName = ""; //$NON-NLS-1$
 				Button button = (Button)e.widget;				
 				
 				if (button.getSelection()) {				
@@ -320,7 +320,7 @@ public class ShareProjectNameAdvancedModeComposite extends Composite implements 
 		this.location = location;
 		
 		if (this.multiProject) {
-			this.selectedName = this.projectName = "";
+			this.selectedName = this.projectName = ""; //$NON-NLS-1$
 			this.savedPosition = this.layoutGroup.getLocation();
 			this.layoutGroup.setLocation(this.nameGroup.getLocation());
 			this.nameGroup.setVisible(false);

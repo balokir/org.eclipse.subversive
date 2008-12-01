@@ -39,13 +39,13 @@ public class ReplaceBranchTagPanel extends AbstractDialogPanel {
 			this.dialogTitle = SVNUIMessages.Replace_Branch_Title;
 			this.dialogDescription = SVNUIMessages.Replace_Branch_Description;
 			this.defaultMessage = SVNUIMessages.Replace_Branch_Message;
-			this.historyKey = "branchReplace";
+			this.historyKey = "branchReplace"; //$NON-NLS-1$
 		}
 		else {
 			this.dialogTitle = SVNUIMessages.Replace_Tag_Title;
 			this.dialogDescription = SVNUIMessages.Replace_Tag_Description;
 			this.defaultMessage = SVNUIMessages.Replace_Tag_Message;
-			this.historyKey = "tagReplace";
+			this.historyKey = "tagReplace"; //$NON-NLS-1$
 		}
 	}
 	

@@ -77,7 +77,7 @@ public class RepositoryResourceOnlySelectionComposite extends Composite {
 	protected boolean isMatchToBaseResource;
 
 	public RepositoryResourceOnlySelectionComposite(Composite parent, int style, IValidationManager validationManager, String historyKey, IRepositoryResource baseResource, String selectionTitle, String selectionDescription) {
-		this(parent, style, validationManager, historyKey, "RepositoryResourceOnlySelectionComposite.URL", baseResource, selectionTitle, selectionDescription);
+		this(parent, style, validationManager, historyKey, "RepositoryResourceOnlySelectionComposite_URL", baseResource, selectionTitle, selectionDescription); //$NON-NLS-1$
 	}
 	
 	public RepositoryResourceOnlySelectionComposite(Composite parent, int style, IValidationManager validationManager, String historyKey, String comboId, IRepositoryResource baseResource, String selectionTitle, String selectionDescription) {
@@ -186,8 +186,8 @@ public class RepositoryResourceOnlySelectionComposite extends Composite {
 			}
 		});
 		this.verifier = new CompositeVerifier();
-		this.verifier.add(new NonEmptyFieldVerifier(SVNUIMessages.getString(this.comboId + "_Verifier")));
-		this.verifier.add(new URLVerifier(SVNUIMessages.getString(this.comboId + "_Verifier")) {
+		this.verifier.add(new NonEmptyFieldVerifier(SVNUIMessages.getString(this.comboId + "_Verifier"))); //$NON-NLS-1$
+		this.verifier.add(new URLVerifier(SVNUIMessages.getString(this.comboId + "_Verifier")) { //$NON-NLS-1$
 			protected String getErrorMessage(Control input) {
 				String error = super.getErrorMessage(input);
 				if (RepositoryResourceOnlySelectionComposite.this.baseResource != null && error == null) {

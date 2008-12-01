@@ -30,9 +30,9 @@ public abstract class AbstractLogNode implements ILogNode {
 	}
 
 	protected static String flattenMultiLineText(String input, String lineSeparatorReplacement) {
-		String retVal = PatternProvider.replaceAll(input, "\r\n", lineSeparatorReplacement);
-		retVal = PatternProvider.replaceAll(retVal, "\n", lineSeparatorReplacement);
-		retVal = PatternProvider.replaceAll(retVal, "\r", lineSeparatorReplacement);
+		String retVal = PatternProvider.replaceAll(input, "\r\n", lineSeparatorReplacement); //$NON-NLS-1$
+		retVal = PatternProvider.replaceAll(retVal, "\n", lineSeparatorReplacement); //$NON-NLS-1$
+		retVal = PatternProvider.replaceAll(retVal, "\r", lineSeparatorReplacement); //$NON-NLS-1$
 		return retVal;
 	}
 	

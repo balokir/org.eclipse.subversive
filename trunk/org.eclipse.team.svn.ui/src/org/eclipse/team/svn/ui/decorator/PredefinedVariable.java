@@ -37,7 +37,7 @@ public class PredefinedVariable implements IVariable {
 	}
 
 	protected String getDescription(String name) {
-		return SVNUIMessages.getString(this.domain + "." + name);
+		return SVNUIMessages.getString(this.domain + "." + name); //$NON-NLS-1$
 	}
 
 	public String toString() {

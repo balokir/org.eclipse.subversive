@@ -31,7 +31,7 @@ public class DiscardLocationFailurePanel extends ItemListPanel {
 	protected IProject []projects;
 	
 	public DiscardLocationFailurePanel(String []locations, IProject []projects) {
-		super(locations, SVNTeamUIPlugin.instance().getImageDescriptor("icons/objects/repository.gif"),
+		super(locations, SVNTeamUIPlugin.instance().getImageDescriptor("icons/objects/repository.gif"), //$NON-NLS-1$
 				locations.length == 1 ? SVNUIMessages.DiscardLocationFailurePanel_Title_Single : SVNUIMessages.DiscardLocationFailurePanel_Title_Multi, 
 				locations.length == 1 ? SVNUIMessages.DiscardLocationFailurePanel_Description_Single : SVNUIMessages.DiscardLocationFailurePanel_Description_Multi, 
 				locations.length == 1 ? SVNUIMessages.DiscardLocationFailurePanel_Message_Single : SVNUIMessages.DiscardLocationFailurePanel_Message_Multi, 

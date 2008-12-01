@@ -63,7 +63,7 @@ public class DefaultCommentView implements ICommentView {
 	protected IssueList linkList = new IssueList();
 	protected IssueList hyperList = new IssueList();
 	
-	protected final static String linkRegExp = "(?:http|https|file|svn|svn\\+[\\w]+)\\:/(?:/)?(?:/[^\\s\\|\\{\\}\"><#\\^\\~\\[\\]`]+)+";
+	protected final static String linkRegExp = "(?:http|https|file|svn|svn\\+[\\w]+)\\:/(?:/)?(?:/[^\\s\\|\\{\\}\"><#\\^\\~\\[\\]`]+)+"; //$NON-NLS-1$
 
 	public void createCommentView(Composite parent) {
 		this.createCommentView(parent, SWT.V_SCROLL | SWT.MULTI | SWT.BORDER | SWT.WRAP);

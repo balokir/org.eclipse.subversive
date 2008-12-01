@@ -107,7 +107,7 @@ public class ExtractToActionHelper extends AbstractActionHelper {
 				markedForDelition.add(remote.getUrl());
 			}
 		}
-		CompositeOperation op = new CompositeOperation("Operation.ExtractTo");
+		CompositeOperation op = new CompositeOperation(Messages.getString("ExtractToActionHelper.0")); //$NON-NLS-1$
 		InitExtractLogOperation logger = new InitExtractLogOperation(path);
 		op.add(logger);
 		op.add(new ExtractToOperationLocal(outgoingChanges, path, true, logger));

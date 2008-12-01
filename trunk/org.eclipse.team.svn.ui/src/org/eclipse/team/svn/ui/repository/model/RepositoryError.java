@@ -23,7 +23,7 @@ import org.eclipse.ui.PlatformUI;
  * @author Alexander Gurov
  */
 public class RepositoryError extends RepositoryFictiveNode {
-	public static final String ERROR_MSG = "RepositoriesView_Model_Error";
+	public static final String ERROR_MSG = "RepositoriesView_Model_Error"; //$NON-NLS-1$
 	
 	protected IStatus errorStatus;
 	

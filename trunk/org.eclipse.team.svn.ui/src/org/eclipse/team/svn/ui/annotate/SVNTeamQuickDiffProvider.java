@@ -146,7 +146,7 @@ public class SVNTeamQuickDiffProvider implements IQuickDiffReferenceProvider, IR
 		if (this.updateJob != null && this.updateJob.getState() != Job.NONE) {
 			this.updateJob.cancel();
 		}
-		this.updateJob = ProgressMonitorUtility.doTaskScheduledDefault(new AbstractActionOperation("Operation.QuickDiff") {
+		this.updateJob = ProgressMonitorUtility.doTaskScheduledDefault(new AbstractActionOperation("Operation_QuickDiff") { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				SVNTeamQuickDiffProvider.this.readDocument(monitor);
 			}
@@ -166,7 +166,7 @@ public class SVNTeamQuickDiffProvider implements IQuickDiffReferenceProvider, IR
 			if (this.savedState == null || !IStateFilter.SF_INTERNAL_INVALID.accept(tmp) && this.savedState.getRevision() != tmp.getRevision()) {
 				this.savedState = tmp;
 				final GetLocalFileContentOperation contentOp = new GetLocalFileContentOperation(tmp.getResource(), Kind.BASE);
-				CompositeOperation op = new CompositeOperation("Operation.PrepareQuickDiff");
+				CompositeOperation op = new CompositeOperation("Operation_PrepareQuickDiff"); //$NON-NLS-1$
 				op.add(contentOp);
 				op.add(new InitializeDocumentOperation(encoding) {
 					public InputStream getInputStream() {
@@ -177,7 +177,7 @@ public class SVNTeamQuickDiffProvider implements IQuickDiffReferenceProvider, IR
 			}
 		}
 		else if (!monitor.isCanceled()) {
-			this.reference.set("");
+			this.reference.set(""); //$NON-NLS-1$
 		}
 	}
 	
@@ -185,7 +185,7 @@ public class SVNTeamQuickDiffProvider implements IQuickDiffReferenceProvider, IR
 		public String encoding;
 		
 		public InitializeDocumentOperation(String encoding) {
-			super("Operation.InitializeDocument");
+			super("Operation_InitializeDocument"); //$NON-NLS-1$
 			this.encoding = encoding;
 		}
 		

@@ -74,14 +74,14 @@ public class ProjectLocationSelectionPage extends AbstractVerifiedWizardPage {
 	public ProjectLocationSelectionPage(boolean multiple, ProjectsSelectionPage projectsSelectionPage) {
 		super(ProjectLocationSelectionPage.class.getName(), 
 			SVNUIMessages.ProjectLocationSelectionPage_Title, 
-			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
+			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif")); //$NON-NLS-1$
 		
 		ProjectLocationSelectionPage.DEFAULT_WORKING_SET = SVNUIMessages.ProjectLocationSelectionPage_DefaultWS;
 		
 		this.setDescription(multiple ? SVNUIMessages.ProjectLocationSelectionPage_Description_Multi : SVNUIMessages.ProjectLocationSelectionPage_Description_Single);
-		String framework = System.getProperties().getProperty("osgi.framework.version");
+		String framework = System.getProperties().getProperty("osgi.framework.version"); //$NON-NLS-1$
 		try {
-			int version = Integer.parseInt(PatternProvider.replaceAll(framework, "\\.", "").substring(0, 2));
+			int version = Integer.parseInt(PatternProvider.replaceAll(framework, "\\.", "").substring(0, 2)); //$NON-NLS-1$ //$NON-NLS-2$
 			this.sinceEclipse_3_2 = version >= 32;
 		}
 		catch (NumberFormatException e) {
@@ -210,7 +210,7 @@ public class ProjectLocationSelectionPage extends AbstractVerifiedWizardPage {
 		this.attachTo(this.workingSetNameCombo, new NonEmptyFieldVerifier(SVNUIMessages.ProjectLocationSelectionPage_WorkingSet_Verifier));
 		
 //		Setting context help
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.projectLocationSelectionContext");
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.projectLocationSelectionContext"); //$NON-NLS-1$
 		
 		return composite;
 	}
@@ -247,7 +247,7 @@ public class ProjectLocationSelectionPage extends AbstractVerifiedWizardPage {
 
 		protected String getErrorMessage(Control input) {
 			boolean respectHierarchy = (this.projectsSelectionPage != null && this.projectsSelectionPage.isRespectHierarchy());
-			String parent = this.projectsSelectionPage != null && this.projectsSelectionPage.projects != null ? SVNUtility.getResourceParent(this.projectsSelectionPage.projects[0]) : "";
+			String parent = this.projectsSelectionPage != null && this.projectsSelectionPage.projects != null ? SVNUtility.getResourceParent(this.projectsSelectionPage.projects[0]) : ""; //$NON-NLS-1$
 			String inputLocation = this.useDefaultLocationButton.getSelection() ? this.defaultLocation : FileUtility.formatPath(this.getText(input));
 			if (inputLocation.startsWith(this.defaultLocation) && !this.sinceEclipse_3_2) {
 				if (respectHierarchy || inputLocation.length() > this.defaultLocation.length()) {

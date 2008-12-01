@@ -39,7 +39,7 @@ public class CorrectRevisionOperation extends AbstractActionOperation {
 	}
 
 	public CorrectRevisionOperation(GetLogMessagesOperation []msgsOps, IRepositoryResource []repositoryResources, long []knownRevisions, IResource []resources) {
-		super("Operation.CorrectRevision");
+		super("Operation_CorrectRevision"); //$NON-NLS-1$
 		this.repositoryResources = repositoryResources;
 		this.knownRevisions = knownRevisions;
 		this.msgsOps = msgsOps;
@@ -89,9 +89,9 @@ public class CorrectRevisionOperation extends AbstractActionOperation {
 					boolean one = CorrectRevisionOperation.this.repositoryResources.length == 1;
 					MessageDialog dlg = new MessageDialog(
 							UIMonitorUtility.getShell(), 
-							CorrectRevisionOperation.this.getOperationResource(one ? "Title.Single" : "Title.Multi"), 
+							CorrectRevisionOperation.this.getOperationResource(one ? "Title_Single" : "Title_Multi"),  //$NON-NLS-1$ //$NON-NLS-2$
 							null, 
-							CorrectRevisionOperation.this.getOperationResource(one ? "Message.Single" : "Message.Multi"), 
+							CorrectRevisionOperation.this.getOperationResource(one ? "Message_Single" : "Message_Multi"),  //$NON-NLS-1$ //$NON-NLS-2$
 							MessageDialog.WARNING, 
 							new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 
 							0);

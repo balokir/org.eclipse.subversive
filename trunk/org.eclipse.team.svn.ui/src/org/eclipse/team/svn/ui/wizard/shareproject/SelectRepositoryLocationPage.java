@@ -59,8 +59,8 @@ public class SelectRepositoryLocationPage extends AbstractVerifiedWizardPage {
 	public SelectRepositoryLocationPage(IRepositoryLocation []repositories, boolean importProject) {
 		super(
 				SelectRepositoryLocationPage.class.getName(), 
-				SVNUIMessages.getString("SelectRepositoryLocationPage_Title" + SelectRepositoryLocationPage.getNationalizationSuffix(importProject)), 
-				SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
+				SVNUIMessages.getString("SelectRepositoryLocationPage_Title" + SelectRepositoryLocationPage.getNationalizationSuffix(importProject)),  //$NON-NLS-1$
+				SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif")); //$NON-NLS-1$
 			
 			this.setDescription(SVNUIMessages.SelectRepositoryLocationPage_Description);
 			this.repositories = repositories;
@@ -85,7 +85,7 @@ public class SelectRepositoryLocationPage extends AbstractVerifiedWizardPage {
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		data.heightHint = this.convertHeightInCharsToPixels(2);
 		description.setLayoutData(data);
-		description.setText(SVNUIMessages.getString("SelectRepositoryLocationPage_Hint" + SelectRepositoryLocationPage.getNationalizationSuffix(this.importProject)));
+		description.setText(SVNUIMessages.getString("SelectRepositoryLocationPage_Hint" + SelectRepositoryLocationPage.getNationalizationSuffix(this.importProject))); //$NON-NLS-1$
 		
 		Button addLocationButton = new Button(composite, SWT.RADIO);
 		data = new GridData(GridData.FILL_HORIZONTAL);
@@ -180,7 +180,7 @@ public class SelectRepositoryLocationPage extends AbstractVerifiedWizardPage {
 		this.location = (IRepositoryLocation)selection.getFirstElement();
 		
 //		Setting context help
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.reposLocationContext");
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.reposLocationContext"); //$NON-NLS-1$
 		
 		return composite;
 	}
@@ -194,7 +194,7 @@ public class SelectRepositoryLocationPage extends AbstractVerifiedWizardPage {
 	}
 	
 	protected static String getNationalizationSuffix(boolean importProject) {
-		return "." + (importProject ? "Import" : "Share");
+		return "." + (importProject ? "Import" : "Share"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 }

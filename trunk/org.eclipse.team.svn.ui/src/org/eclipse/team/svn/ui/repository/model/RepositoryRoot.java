@@ -36,7 +36,7 @@ public class RepositoryRoot extends RepositoryFolder {
 	}
 
 	protected ImageDescriptor getImageDescriptorImpl() {
-		return this.isExternals() ? super.getImageDescriptorImpl() : (((IRepositoryRoot)this.resource).getKind() == IRepositoryRoot.KIND_ROOT ? SVNTeamUIPlugin.instance().getImageDescriptor("icons/objects/repository-root.gif") : SVNTeamUIPlugin.instance().getImageDescriptor("icons/objects/root.gif"));
+		return this.isExternals() ? super.getImageDescriptorImpl() : (((IRepositoryRoot)this.resource).getKind() == IRepositoryRoot.KIND_ROOT ? SVNTeamUIPlugin.instance().getImageDescriptor("icons/objects/repository-root.gif") : SVNTeamUIPlugin.instance().getImageDescriptor("icons/objects/root.gif")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 }

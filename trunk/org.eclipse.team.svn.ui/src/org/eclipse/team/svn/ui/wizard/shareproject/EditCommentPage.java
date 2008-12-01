@@ -44,7 +44,7 @@ public class EditCommentPage extends AbstractVerifiedWizardPage {
 	public EditCommentPage(IResourceProvider provider) {
 		super(EditCommentPage.class.getName(), 
 				SVNUIMessages.EditCommentPage_Title, 
-				SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
+				SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif")); //$NON-NLS-1$
 		this.setDescription(SVNUIMessages.EditCommentPage_Description);
 		this.provider = provider;
 	}
@@ -63,11 +63,11 @@ public class EditCommentPage extends AbstractVerifiedWizardPage {
 	}
 	
 	public void setDefaultCommitMessage() {
-		this.commitComment = "";
+		this.commitComment = ""; //$NON-NLS-1$
 		IProject []projects = this.getProjects();
 		for (int i = 0; i < projects.length; i++) {
 			String commentPart = ShareProjectOperation.getDefaultComment(projects[i], this.location.getRoot());
-			this.commitComment += this.commitComment.length() == 0 ? commentPart : ("\n" + commentPart);
+			this.commitComment += this.commitComment.length() == 0 ? commentPart : ("\n" + commentPart); //$NON-NLS-1$
 		}
 		this.commentComposite.setMessage(this.commitComment);
 	}
@@ -101,7 +101,7 @@ public class EditCommentPage extends AbstractVerifiedWizardPage {
 		});
 		
 //		Setting context help
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.editCommentContext");
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.editCommentContext"); //$NON-NLS-1$
 		
 		return composite;
 	}

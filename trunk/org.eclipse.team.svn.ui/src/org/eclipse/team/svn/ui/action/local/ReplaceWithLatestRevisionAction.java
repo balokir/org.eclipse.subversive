@@ -65,7 +65,7 @@ public class ReplaceWithLatestRevisionAction extends AbstractNonRecursiveTeamAct
 	public static IActionOperation getReplaceOperation(IResource []resources, Shell shell) {
 		ReplaceWarningDialog dialog = new ReplaceWarningDialog(shell);
 		if (dialog.open() == 0) {
-			CompositeOperation op = new CompositeOperation("Operation.ReplaceWithLatest");
+			CompositeOperation op = new CompositeOperation("Operation_ReplaceWithLatest"); //$NON-NLS-1$
 			
 			SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
 			op.add(saveOp);
@@ -93,7 +93,7 @@ public class ReplaceWithLatestRevisionAction extends AbstractNonRecursiveTeamAct
 		public List<ResourceChange> changes;
 		
 		public SaveUnversionedOperation(IResource[] resources) {
-			super("Operation.SaveUnversioned", resources);
+			super("Operation_SaveUnversioned", resources); //$NON-NLS-1$
 			this.changes = new ArrayList<ResourceChange>();
 		}
 		
@@ -136,7 +136,7 @@ public class ReplaceWithLatestRevisionAction extends AbstractNonRecursiveTeamAct
 		public SaveUnversionedOperation changes;
 		
 		public RestoreUnversionedOperation(IResource[] resources, SaveUnversionedOperation changes) {
-			super("Operation.RestoreUnversioned", resources);
+			super("Operation_RestoreUnversioned", resources); //$NON-NLS-1$
 			this.changes = changes;
 		}
 		

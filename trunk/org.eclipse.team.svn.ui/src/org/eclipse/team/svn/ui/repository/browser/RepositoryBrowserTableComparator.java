@@ -78,8 +78,8 @@ public class RepositoryBrowserTableComparator extends ColumnedViewerComparator {
 			} else if (this.column == RepositoryBrowserTableViewer.COLUMN_LOCK_OWNER) {
 				SVNLock lock1 = info1.lock;
 				SVNLock lock2 = info2.lock;
-				String lockOwner1 = (lock1 == null) ? "" : lock1.owner;
-				String lockOwner2 = (lock2 == null) ? "" : lock2.owner;
+				String lockOwner1 = (lock1 == null) ? "" : lock1.owner; //$NON-NLS-1$
+				String lockOwner2 = (lock2 == null) ? "" : lock2.owner; //$NON-NLS-1$
 				return ColumnedViewerComparator.compare(lockOwner1, lockOwner2);
 			} else if (this.column == RepositoryBrowserTableViewer.COLUMN_HAS_PROPS) {
 				boolean hasProps1 = info1.hasProperties;

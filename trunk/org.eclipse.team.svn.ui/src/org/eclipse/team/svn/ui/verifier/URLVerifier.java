@@ -23,7 +23,7 @@ import org.eclipse.team.svn.ui.SVNUIMessages;
  * @author Alexander Gurov
  */
 public class URLVerifier extends AbstractFormattedVerifier {
-    protected static final String ERROR_REASON = "$ERROR_REASON$";
+    protected static final String ERROR_REASON = "$ERROR_REASON$"; //$NON-NLS-1$
     protected static String ERROR_MESSAGE_SHORT;
     protected static String ERROR_MESSAGE_FULL;
 
@@ -38,8 +38,8 @@ public class URLVerifier extends AbstractFormattedVerifier {
         try {
         	URL svnUrl = SVNUtility.getSVNUrl(url);
         	String host = svnUrl.getHost();
-        	if (!host.matches("[a-zA-Z0-9_\\-]+(?:\\.[a-zA-Z0-9_\\-]+)*") && host.length() > 0 ||
-        		host.length() == 0 && !"file".equals(svnUrl.getProtocol())) {
+        	if (!host.matches("[a-zA-Z0-9_\\-]+(?:\\.[a-zA-Z0-9_\\-]+)*") && host.length() > 0 || //$NON-NLS-1$
+        		host.length() == 0 && !"file".equals(svnUrl.getProtocol())) { //$NON-NLS-1$
         		this.setPlaceHolder(URLVerifier.ERROR_REASON, SVNUIMessages.Verifier_URL_NoHost);
                 return URLVerifier.ERROR_MESSAGE_FULL;
         	}      	

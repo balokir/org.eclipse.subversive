@@ -45,7 +45,7 @@ public class CreateProjectStructureAction extends AbstractRepositoryTeamAction {
 			String trunk = ShareProjectOperation.getTrunkName(location);
 			String branches = ShareProjectOperation.getBranchesName(location);
 			String tags = ShareProjectOperation.getTagsName(location);
-			String []folders = name.length() == 0 ? new String[] {trunk, branches, tags} : new String[] {name + "/" + trunk, name + "/" + branches, name + "/" + tags};
+			String []folders = name.length() == 0 ? new String[] {trunk, branches, tags} : new String[] {name + "/" + trunk, name + "/" + branches, name + "/" + tags}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 			CreateFolderOperation mainOp = new CreateFolderOperation(parent[0], folders, panel.getMessage());
 			CompositeOperation op = new CompositeOperation(mainOp.getId());

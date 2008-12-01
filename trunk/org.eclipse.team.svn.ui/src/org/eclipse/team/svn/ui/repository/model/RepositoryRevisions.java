@@ -101,7 +101,7 @@ public class RepositoryRevisions extends RepositoryFictiveNode implements IParen
 	}
 	
 	public ImageDescriptor getImageDescriptor(Object o) {
-		return SVNTeamUIPlugin.instance().getImageDescriptor("icons/objects/revisions.gif");
+		return SVNTeamUIPlugin.instance().getImageDescriptor("icons/objects/revisions.gif"); //$NON-NLS-1$
 	}
 
 	public boolean equals(Object obj) {

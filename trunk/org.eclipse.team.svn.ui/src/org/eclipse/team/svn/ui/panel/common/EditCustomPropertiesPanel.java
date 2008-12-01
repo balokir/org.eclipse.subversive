@@ -59,7 +59,7 @@ public class EditCustomPropertiesPanel extends AbstractDialogPanel {
 		Label propNameLabel = new Label(parent, SWT.NONE);
 		propNameLabel.setText(SVNUIMessages.EditCustomPropertiesPanel_PropName);
 		this.propName = new Text(parent, SWT.BORDER);
-		this.propName.setText((this.property == null) ? "" : this.property.propName);
+		this.propName.setText((this.property == null) ? "" : this.property.propName); //$NON-NLS-1$
 		GridData layoutData = new GridData(GridData.FILL_HORIZONTAL);
 		this.propName.setLayoutData(layoutData);
 		
@@ -81,10 +81,10 @@ public class EditCustomPropertiesPanel extends AbstractDialogPanel {
 		Label propRegexpLabel = new Label(optional, SWT.NONE);
 		propRegexpLabel.setText(SVNUIMessages.EditCustomPropertiesPanel_PropRegExp);
 		this.propRegexp = new Text(optional, SWT.BORDER);
-		this.propRegexp.setText((this.property == null) ? "" : this.property.regExp);
+		this.propRegexp.setText((this.property == null) ? "" : this.property.regExp); //$NON-NLS-1$
 		layoutData = new GridData(GridData.FILL_HORIZONTAL);
 		this.propRegexp.setLayoutData(layoutData);
-		this.attachTo(this.propRegexp, new AbstractFormattedVerifier("EditCustomProperty.Regexp") {			
+		this.attachTo(this.propRegexp, new AbstractFormattedVerifier("EditCustomProperty_Regexp") {			 //$NON-NLS-1$
 			protected String getErrorMessageImpl(Control input) {
 				try {
 					Pattern.compile(this.getText(input));
@@ -107,7 +107,7 @@ public class EditCustomPropertiesPanel extends AbstractDialogPanel {
 		layoutData.heightHint = 80;
 		layoutData.widthHint = 0;
         this.propDescription = SpellcheckedTextProvider.getTextWidget(optional, layoutData, SWT.MULTI | SWT.V_SCROLL | SWT.WRAP);
-		this.propDescription.setText((this.property == null) ? "" : this.property.descriprion);
+		this.propDescription.setText((this.property == null) ? "" : this.property.descriprion); //$NON-NLS-1$
 	}
 	
 	public SVNTeamPropsPreferencePage.CustomProperty getProperty() {

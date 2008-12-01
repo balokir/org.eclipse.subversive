@@ -99,7 +99,7 @@ public class DiscardRepositoryLocationAction extends AbstractRepositoryTeamActio
 				}
 				else {
 					op.add(new NotifyProjectStatesChangedOperation(tmp, ProjectStatesChangedEvent.ST_PRE_DELETED));
-					op.add(new AbstractWorkingCopyOperation("Operation.DeleteProjects", tmp) {
+					op.add(new AbstractWorkingCopyOperation("Operation_DeleteProjects", tmp) { //$NON-NLS-1$
 						protected void runImpl(IProgressMonitor monitor) throws Exception {
 							IProject []projects = (IProject [])this.operableData();
 							for (int i = 0; i < projects.length && !monitor.isCanceled(); i++) {

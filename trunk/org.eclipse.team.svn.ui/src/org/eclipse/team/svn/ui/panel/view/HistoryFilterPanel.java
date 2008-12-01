@@ -35,9 +35,9 @@ import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
  * @author Alexander Gurov
  */
 public class HistoryFilterPanel extends AbstractDialogPanel {
-    protected static final String FILTER_AUTHOR_HISTORY_NAME = "filterAuthor";
-    protected static final String FILTER_COMMENT_HISTORY_NAME = "filterComment";
-    protected static final String FILTER_PATH_HISTORY_NAME = "filterPath";
+    protected static final String FILTER_AUTHOR_HISTORY_NAME = "filterAuthor"; //$NON-NLS-1$
+    protected static final String FILTER_COMMENT_HISTORY_NAME = "filterComment"; //$NON-NLS-1$
+    protected static final String FILTER_PATH_HISTORY_NAME = "filterPath"; //$NON-NLS-1$
     
     protected String filter;
     protected Button authorButton;
@@ -111,7 +111,7 @@ public class HistoryFilterPanel extends AbstractDialogPanel {
 		this.authorsCombo.setEnabled(enabledAuthor);
 		this.authorsCombo.setVisibleItemCount(this.authorsHistory.getDepth());
 		this.authorsCombo.setItems(this.mergeAuthorsList());
-		this.authorsCombo.setText(this.authorInput == null ? "" : this.authorInput);
+		this.authorsCombo.setText(this.authorInput == null ? "" : this.authorInput); //$NON-NLS-1$
 		
 		this.commentButton = new Button(composite, SWT.CHECK);
 		this.commentButton.setText(SVNUIMessages.HistoryFilterPanel_Comment);
@@ -132,7 +132,7 @@ public class HistoryFilterPanel extends AbstractDialogPanel {
 		this.commentsCombo.setEnabled(enabledComment);
 		this.commentsCombo.setVisibleItemCount(this.commentsHistory.getDepth());
 		this.commentsCombo.setItems(this.commentsHistory.getHistory());
-		this.commentsCombo.setText(this.commentInput == null ? "" : this.commentInput);
+		this.commentsCombo.setText(this.commentInput == null ? "" : this.commentInput); //$NON-NLS-1$
 		
 		this.pathButton = new Button(composite, SWT.CHECK);
 		this.pathButton.setText(SVNUIMessages.HistoryFilterPanel_Path);
@@ -154,7 +154,7 @@ public class HistoryFilterPanel extends AbstractDialogPanel {
 		this.pathCombo.setEnabled(enabledPath);
 		this.pathCombo.setVisibleItemCount(this.pathHistory.getDepth());
 		this.pathCombo.setItems(this.pathHistory.getHistory());
-		this.pathCombo.setText(this.pathInput == null ? "" : this.pathInput);
+		this.pathCombo.setText(this.pathInput == null ? "" : this.pathInput); //$NON-NLS-1$
 		this.attachTo(this.pathCombo, new NonEmptyFieldVerifier(SVNUIMessages.HistoryFilterPanel_Path) {
 			protected String getErrorMessageImpl(Control input) {
 				if (HistoryFilterPanel.this.pathCombo.isEnabled()) {
@@ -166,7 +166,7 @@ public class HistoryFilterPanel extends AbstractDialogPanel {
     }
     
 	public String getHelpId() {
-    	return "org.eclipse.team.svn.help.historyDialogContext";
+    	return "org.eclipse.team.svn.help.historyDialogContext"; //$NON-NLS-1$
 	}
     
     protected void saveChangesImpl() {

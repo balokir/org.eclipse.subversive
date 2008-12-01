@@ -130,7 +130,7 @@ public class RepositoryTreePanel extends AbstractDialogPanel {
 	}
 	
 	public String getHelpId() {
-    	return "org.eclipse.team.svn.help.copyMoveToDialogContext";
+    	return "org.eclipse.team.svn.help.copyMoveToDialogContext"; //$NON-NLS-1$
 	}
 	
 	protected void saveChangesImpl() {

@@ -42,7 +42,7 @@ public class EditCommentTemplatePanel extends AbstractDialogPanel {
 		GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_BOTH);
 		data.heightHint = 180;
 		this.templateText = SpellcheckedTextProvider.getTextWidget(parent, data, SWT.MULTI);
-		this.templateText.setText(this.template == null ? "" : this.template);
+		this.templateText.setText(this.template == null ? "" : this.template); //$NON-NLS-1$
 		this.templateText.selectAll();
 		this.attachTo(this.templateText, new NonEmptyFieldVerifier(SVNUIMessages.EditCommentTemplatePanel_Template_Verifier));
 	}

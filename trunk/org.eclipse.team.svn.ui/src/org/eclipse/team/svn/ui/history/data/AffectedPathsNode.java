@@ -45,7 +45,7 @@ public class AffectedPathsNode {
 	}
 	
 	public void addCompressedNameSegment(String compressedName) {
-		this.compressedName += "/" + compressedName;
+		this.compressedName += "/" + compressedName; //$NON-NLS-1$
 	}
 	
 	public String toString() {
@@ -135,7 +135,7 @@ public class AffectedPathsNode {
 	}
 	
 	public String getFullPath() {
-		return this.parent != null ? this.parent.getFullPath() + "/" + this.compressedName : "";
+		return this.parent != null ? this.parent.getFullPath() + "/" + this.compressedName : ""; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public char getStatus() {

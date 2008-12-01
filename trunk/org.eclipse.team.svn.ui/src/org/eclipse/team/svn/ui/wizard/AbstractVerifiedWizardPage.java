@@ -94,14 +94,14 @@ public abstract class AbstractVerifiedWizardPage extends WizardPage implements I
     public void setMessage(String newMessage, int newType) {
     	if (newType == IMessageProvider.WARNING) {
         	//NOTE Eclipse workaround: all warnings are rendered as animated but old message does not cleared. So, old error still visible after warning is shown.
-            AbstractVerifiedWizardPage.this.setMessage("", IMessageProvider.NONE);
+            AbstractVerifiedWizardPage.this.setMessage("", IMessageProvider.NONE); //$NON-NLS-1$
         	//NOTE Eclipse workaround: clear error message before setting warning message
             AbstractVerifiedWizardPage.this.setErrorMessage(null);
         	super.setMessage(newMessage, newType);
     	}
     	else if (newType == IMessageProvider.ERROR) {
         	//NOTE Eclipse workaround: all warnings are rendered as animated but old message does not cleared. So, old error still visible after warning is shown.
-            AbstractVerifiedWizardPage.this.setMessage("", IMessageProvider.NONE);
+            AbstractVerifiedWizardPage.this.setMessage("", IMessageProvider.NONE); //$NON-NLS-1$
         	//NOTE Eclipse workaround: error will be rendered as animated only when setErrorMessage() is used.
             AbstractVerifiedWizardPage.this.setErrorMessage(newMessage);
     	}

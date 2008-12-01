@@ -25,7 +25,7 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
  * @author Alexander Gurov
  */
 public class OptionsActionGroup extends AbstractSynchronizeActionGroup {
-	public static final String GROUP_SYNCH_OPTIONS = "synchronizeViewOptions";
+	public static final String GROUP_SYNCH_OPTIONS = "synchronizeViewOptions"; //$NON-NLS-1$
 	
 	protected IAction contiguousOptionAction;
 

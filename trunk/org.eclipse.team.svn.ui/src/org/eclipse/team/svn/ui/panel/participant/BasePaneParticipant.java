@@ -52,7 +52,7 @@ public class BasePaneParticipant extends UpdateParticipant {
 	 */
 	public static class BasePaneActionGroup extends AbstractSynchronizeActionGroup {
 		
-		protected static final String GROUP_SYNC_NORMAL = "syncNormal";
+		protected static final String GROUP_SYNC_NORMAL = "syncNormal"; //$NON-NLS-1$
 		
 		protected IValidationManager validationManager;
 		
@@ -89,7 +89,7 @@ public class BasePaneParticipant extends UpdateParticipant {
 					
 			//expand all
 			ExpandAllAction expandAllAction = new ExpandAllAction(SVNUIMessages.SynchronizeActionGroup_ExpandAll, configuration, this.getVisibleRootsSelectionProvider());
-			expandAllAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/expandall.gif"));
+			expandAllAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/expandall.gif")); //$NON-NLS-1$
 			this.appendToGroup(
 					ISynchronizePageConfiguration.P_TOOLBAR_MENU, 
 					ISynchronizePageConfiguration.MODE_GROUP,

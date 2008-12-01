@@ -78,15 +78,15 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  */
 public class RepositoryTreeViewer extends TreeViewer {
 
-	public static final String FMT_REPOSITORY_RESOURCE = "{" + ToolTipVariableSetProvider.NAME_OF_NAME + "}" +
-	                                                     "{" + ToolTipVariableSetProvider.NAME_OF_LAST_CHANGE_DATE + "}" +
-	                                                     "{" + ToolTipVariableSetProvider.NAME_OF_LAST_AUTHOR + "}";
+	public static final String FMT_REPOSITORY_RESOURCE = "{" + ToolTipVariableSetProvider.NAME_OF_NAME + "}" + //$NON-NLS-1$ //$NON-NLS-2$
+	                                                     "{" + ToolTipVariableSetProvider.NAME_OF_LAST_CHANGE_DATE + "}" + //$NON-NLS-1$ //$NON-NLS-2$
+	                                                     "{" + ToolTipVariableSetProvider.NAME_OF_LAST_AUTHOR + "}"; //$NON-NLS-1$ //$NON-NLS-2$
 	public static final String FMT_REPOSITORY_FILE = RepositoryTreeViewer.FMT_REPOSITORY_RESOURCE +  
-												     "{" + ToolTipVariableSetProvider.NAME_OF_SIZE + "}" +
-												     "{" + ToolTipVariableSetProvider.NAME_OF_LOCK_OWNER + "}" +
-												     "{" + ToolTipVariableSetProvider.NAME_OF_LOCK_CREATION_DATE + "}" +
-												     "{" + ToolTipVariableSetProvider.NAME_OF_LOCK_EXPIRATION_DATE + "}" +
-												     "{" + ToolTipVariableSetProvider.NAME_OF_LOCK_COMMENT + "}";
+												     "{" + ToolTipVariableSetProvider.NAME_OF_SIZE + "}" + //$NON-NLS-1$ //$NON-NLS-2$
+												     "{" + ToolTipVariableSetProvider.NAME_OF_LOCK_OWNER + "}" + //$NON-NLS-1$ //$NON-NLS-2$
+												     "{" + ToolTipVariableSetProvider.NAME_OF_LOCK_CREATION_DATE + "}" + //$NON-NLS-1$ //$NON-NLS-2$
+												     "{" + ToolTipVariableSetProvider.NAME_OF_LOCK_EXPIRATION_DATE + "}" + //$NON-NLS-1$ //$NON-NLS-2$
+												     "{" + ToolTipVariableSetProvider.NAME_OF_LOCK_COMMENT + "}"; //$NON-NLS-1$ //$NON-NLS-2$
 	public static final String FMT_REPOSITORY_FOLDER =  RepositoryTreeViewer.FMT_REPOSITORY_RESOURCE;
 	public static final String FMT_REPOSITORY_BRANCHES = RepositoryTreeViewer.FMT_REPOSITORY_FOLDER;
 	public static final String FMT_REPOSITORY_ROOT = RepositoryTreeViewer.FMT_REPOSITORY_FOLDER;
@@ -232,7 +232,7 @@ public class RepositoryTreeViewer extends TreeViewer {
 //		this.updateChildren(widget, element, null);
 		try {
 			//updateChildren(Widget widget, Object parent, Object[] elementChildren, boolean updateLabels)
-			Method m = AbstractTreeViewer.class.getDeclaredMethod("updateChildren", new Class[] {Widget.class, Object.class, Object [].class, boolean.class});
+			Method m = AbstractTreeViewer.class.getDeclaredMethod("updateChildren", new Class[] {Widget.class, Object.class, Object [].class, boolean.class}); //$NON-NLS-1$
 			m.setAccessible(true);
 			m.invoke(this, new Object[] {widget, element, null, Boolean.valueOf(updateLabels)});
 		}
@@ -399,9 +399,9 @@ public class RepositoryTreeViewer extends TreeViewer {
 				for (Iterator<?> it = selection.iterator(); it.hasNext();) {
 					RepositoryResource current = (RepositoryResource)it.next();
 					if (lastSlashIdx == 0) {
-						lastSlashIdx = current.getRepositoryResource().getUrl().lastIndexOf("/"); 
+						lastSlashIdx = current.getRepositoryResource().getUrl().lastIndexOf("/");  //$NON-NLS-1$
 					}
-					if (current.getRepositoryResource().getUrl().lastIndexOf("/") != lastSlashIdx || aboveResource == current || aboveResource == current.getParent()) {
+					if (current.getRepositoryResource().getUrl().lastIndexOf("/") != lastSlashIdx || aboveResource == current || aboveResource == current.getParent()) { //$NON-NLS-1$
 						event.detail = DND.DROP_NONE;
 						return;
 					}
@@ -434,7 +434,7 @@ public class RepositoryTreeViewer extends TreeViewer {
 		
 		this.getTree().addMouseTrackListener(new MouseTrackAdapter() {
 			public void mouseHover(MouseEvent e) {
-				String tooltipText = "";
+				String tooltipText = ""; //$NON-NLS-1$
 				Tree tree = RepositoryTreeViewer.this.getTree();
 				TreeItem item = tree.getItem(new Point(e.x, e.y));
 				if (item != null) {
@@ -447,7 +447,7 @@ public class RepositoryTreeViewer extends TreeViewer {
 			}
 			
 			public void mouseExit(MouseEvent e) {
-				RepositoryTreeViewer.this.getTree().setToolTipText("");
+				RepositoryTreeViewer.this.getTree().setToolTipText(""); //$NON-NLS-1$
 			}
 		});
 	}

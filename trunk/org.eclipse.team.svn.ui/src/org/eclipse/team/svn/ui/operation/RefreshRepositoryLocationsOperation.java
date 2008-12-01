@@ -33,7 +33,7 @@ public class RefreshRepositoryLocationsOperation extends AbstractActionOperation
 	}
 
 	public RefreshRepositoryLocationsOperation(IRepositoryLocation []resources, boolean deep) {
-		super("Operation.RefreshLocations");
+		super("Operation_RefreshLocations"); //$NON-NLS-1$
 		this.resources = resources;
 		this.deep = deep;
 	}

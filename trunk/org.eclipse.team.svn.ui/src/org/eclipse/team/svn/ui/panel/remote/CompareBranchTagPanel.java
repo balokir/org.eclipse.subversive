@@ -39,13 +39,13 @@ public class CompareBranchTagPanel extends AbstractDialogPanel {
 			this.dialogTitle = SVNUIMessages.Compare_Branch_Title;
 			this.dialogDescription = SVNUIMessages.Compare_Branch_Description;
 			this.defaultMessage = SVNUIMessages.Compare_Branch_Message;
-			this.historyKey = "branchCompare";
+			this.historyKey = "branchCompare"; //$NON-NLS-1$
 		}
 		else {
 			this.dialogTitle = SVNUIMessages.Compare_Tag_Title;
 			this.dialogDescription = SVNUIMessages.Compare_Tag_Description;
 			this.defaultMessage = SVNUIMessages.Compare_Tag_Message;
-			this.historyKey = "tagCompare";
+			this.historyKey = "tagCompare"; //$NON-NLS-1$
 		}
 	}
 	

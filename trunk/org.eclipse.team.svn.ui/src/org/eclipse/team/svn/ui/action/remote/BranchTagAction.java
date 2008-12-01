@@ -158,7 +158,7 @@ public class BranchTagAction extends AbstractRepositoryTeamAction {
 	
 	protected static boolean isProjectFileExists(IRepositoryResource resource) {
 		try {
-			return resource.asRepositoryFile(".project", false).exists();
+			return resource.asRepositoryFile(".project", false).exists(); //$NON-NLS-1$
 		}
 		catch (SVNConnectorException ex) {
 			return false;

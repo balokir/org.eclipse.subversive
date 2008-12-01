@@ -157,7 +157,7 @@ public class SVNTeamPasswordManagementPreferencesPage extends AbstractSVNTeamPre
 		this.handleSelection();
 		
 //		Setting context help
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.passwordPreferencesContext");
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.passwordPreferencesContext"); //$NON-NLS-1$
 		
 		return composite;
 	}

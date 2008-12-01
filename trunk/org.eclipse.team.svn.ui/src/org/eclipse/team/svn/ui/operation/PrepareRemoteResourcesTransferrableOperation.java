@@ -31,7 +31,7 @@ public class PrepareRemoteResourcesTransferrableOperation extends AbstractAction
 	protected int operation;
 
 	public PrepareRemoteResourcesTransferrableOperation(IRepositoryResource []resources, int operation, Display display) {
-		super("Operation.FillCopyPaste");
+		super("Operation_FillCopyPaste"); //$NON-NLS-1$
 		this.resources = resources;
 		this.display = display;
 		this.operation = operation;

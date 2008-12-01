@@ -59,7 +59,7 @@ public class HistoryRangePanel extends AbstractDialogPanel {
 	}
 	
     public String getHelpId() {
-    	return "org.eclipse.team.svn.help.historyRangeDialogContext";
+    	return "org.eclipse.team.svn.help.historyRangeDialogContext"; //$NON-NLS-1$
     }
     
 	public SVNRevision getStartRevision() {
@@ -102,7 +102,7 @@ public class HistoryRangePanel extends AbstractDialogPanel {
 		this.initStartResource.setSelectedRevision(this.getStartRevision());
 		this.initStopResource.setSelectedRevision(this.getStopRevision());
 
-		UIMonitorUtility.doTaskNowDefault(new AbstractActionOperation("Operation.CheckRevisions") {
+		UIMonitorUtility.doTaskNowDefault(new AbstractActionOperation("Operation_CheckRevisions") { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				ISVNConnector proxy = HistoryRangePanel.this.initStartResource.getRepositoryLocation().acquireSVNProxy();
 				try {

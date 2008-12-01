@@ -36,7 +36,7 @@ public class ExpandAllModelAction extends AbstractModelToolbarAction {
 	}
 	
 	protected IActionOperation getOperation() {
-		return new AbstractActionOperation("Operation.UExpandAll") {
+		return new AbstractActionOperation("Operation_UExpandAll") { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 					public void run() {

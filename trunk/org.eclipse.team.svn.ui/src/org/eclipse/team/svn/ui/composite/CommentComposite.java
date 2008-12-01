@@ -56,7 +56,7 @@ import org.eclipse.team.svn.ui.verifier.IValidationManager;
 public class CommentComposite extends Composite {
 	public static String TEMPORARY_COMMENT = null;
 
-	protected static final String COMMENT_HISTORY_NAME = "comment";
+	protected static final String COMMENT_HISTORY_NAME = "comment"; //$NON-NLS-1$
 
 	protected static String PREVIOUS_COMMENTS_HEADER;
 
@@ -114,11 +114,11 @@ public class CommentComposite extends Composite {
 		super(parent, SWT.NONE);
 
 		CommentComposite.PREVIOUS_COMMENTS_HEADER = SVNUIMessages.CommentComposite_Previous;
-		CommentComposite.PREVIOUS_COMMENTS_HINT = "    " + SVNUIMessages.CommentComposite_Previous_Hint;
+		CommentComposite.PREVIOUS_COMMENTS_HINT = "    " + SVNUIMessages.CommentComposite_Previous_Hint; //$NON-NLS-1$
 		CommentComposite.TEMPLATE_HEADER = SVNUIMessages.CommentComposite_Template;
-		CommentComposite.TEMPLATE_HINT = "    " + SVNUIMessages.CommentComposite_Template_Hint;
+		CommentComposite.TEMPLATE_HINT = "    " + SVNUIMessages.CommentComposite_Template_Hint; //$NON-NLS-1$
 		CommentComposite.TSVN_LOGTEMPLATE_HEADER = SVNUIMessages.CommentComposite_LogTemplate;
-		CommentComposite.TSVN_LOGTEMPLATE_HINT = "    " + SVNUIMessages.CommentComposite_LogTemplate_Hint;
+		CommentComposite.TSVN_LOGTEMPLATE_HINT = "    " + SVNUIMessages.CommentComposite_LogTemplate_Hint; //$NON-NLS-1$
 
 		this.message = message;
 		this.validationManager = validationManager;
@@ -186,7 +186,7 @@ public class CommentComposite extends Composite {
 
 			this.validationManager.attachTo(this.bugIdText, new AbstractVerifier() {
 				protected String getErrorMessage(Control input) {
-					String logregex = CommentComposite.this.bugtraqModel.isNumber() ? "[0-9]+(,?[0-9]+)*"
+					String logregex = CommentComposite.this.bugtraqModel.isNumber() ? "[0-9]+(,?[0-9]+)*" //$NON-NLS-1$
 							: ((CommentComposite.this.bugtraqModel.getLogregex() != null) ? CommentComposite.this.bugtraqModel.getLogregex()[0] : null);
 					if (logregex != null) {
 						String bugId = this.getText(input);

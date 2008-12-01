@@ -164,7 +164,7 @@ public class RepositoryBrowser extends AbstractSVNView implements ISelectionChan
 				RepositoryBrowser.this.handleRefresh();
 			}
 		};
-		refreshAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/refresh.gif"));
+		refreshAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/refresh.gif")); //$NON-NLS-1$
 		refreshAction.setToolTipText(SVNUIMessages.SVNView_Refresh_ToolTip);
 		tbm.add(refreshAction);
 		
@@ -235,7 +235,7 @@ public class RepositoryBrowser extends AbstractSVNView implements ISelectionChan
 		this.getViewSite().getPage().addPartListener(this.partListener);
 	
 		//Setting context help
-	    PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.repositoryBrowserViewContext");
+	    PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.repositoryBrowserViewContext"); //$NON-NLS-1$
 	}
 
 	protected void connectTo(RepositoryResource inputElement) {

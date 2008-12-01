@@ -61,7 +61,7 @@ public class ComparePanel extends AbstractDialogPanel {
 	protected void saveChangesImpl() {
 		
 		RefreshResourcesOperation refreshOp = new RefreshResourcesOperation(new IResource[] {this.resource.getProject()});
-		AbstractWorkingCopyOperation mainOp = new AbstractWorkingCopyOperation("Operation.SaveChanges", new IResource[] {this.resource.getProject()}) {
+		AbstractWorkingCopyOperation mainOp = new AbstractWorkingCopyOperation("Operation_SaveChanges", new IResource[] {this.resource.getProject()}) { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				ComparePanel.this.compareInput.saveChanges(monitor);
 			}

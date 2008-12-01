@@ -22,7 +22,7 @@ public class UserVariable extends PredefinedVariable {
 	}
 	
 	public String getDescription() {
-		return this.getDescription("_user_defined_data");
+		return this.getDescription("_user_defined_data"); //$NON-NLS-1$
 	}
 	
 }

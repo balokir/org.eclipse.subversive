@@ -89,7 +89,7 @@ public class CreateFilePanel extends AbstractDialogPanel {
 		this.locationField.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				String text = CreateFilePanel.this.locationField.getText(); 
-				if (text.indexOf("\"") == -1) {
+				if (text.indexOf("\"") == -1) { //$NON-NLS-1$
 					CreateFilePanel.this.location = new Path(text).removeLastSegments(1).toString();
 				}
 			}
@@ -110,9 +110,9 @@ public class CreateFilePanel extends AbstractDialogPanel {
 					CreateFilePanel.this.location = new Path(path).removeLastSegments(1).toString();
 					CreateFilePanel.this.fileNames = fileNames;
 					if (fileNames.length > 1) {
-						String text = "";
+						String text = ""; //$NON-NLS-1$
 						for (int i = 0; i < fileNames.length; i++) {
-							text += text.length() > 0 ? " \"" + fileNames[i] + "\"": "\"" + fileNames[i] + "\""; 
+							text += text.length() > 0 ? " \"" + fileNames[i] + "\"": "\"" + fileNames[i] + "\"";  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 						}
 						CreateFilePanel.this.locationField.setText(text);
 					}
@@ -146,7 +146,7 @@ public class CreateFilePanel extends AbstractDialogPanel {
 	protected void saveChangesImpl() {
 		this.comment.saveChanges();
 		String text = CreateFilePanel.this.locationField.getText();
-		if (text.indexOf("\"") > -1) {
+		if (text.indexOf("\"") > -1) { //$NON-NLS-1$
 			this.fileNames = this.parseFileNames(text);
 		}	
 		else {
@@ -164,7 +164,7 @@ public class CreateFilePanel extends AbstractDialogPanel {
 		tokenizer.whitespaceChars(32, 32);
 		final Set<String> fileNames = new HashSet<String>();
 		
-		new AbstractActionOperation("Operation.ParseFile") {
+		new AbstractActionOperation("Operation_ParseFile") { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				while (tokenizer.nextToken() != StreamTokenizer.TT_EOF) {
 					fileNames.add(tokenizer.sval);
@@ -179,7 +179,7 @@ public class CreateFilePanel extends AbstractDialogPanel {
 	}
 	
 	public String getHelpId() {
-    	return "org.eclipse.team.svn.help.remote_createFileDialogContext";
+    	return "org.eclipse.team.svn.help.remote_createFileDialogContext"; //$NON-NLS-1$
 	}
 
     protected void cancelChangesImpl() {
@@ -215,7 +215,7 @@ public class CreateFilePanel extends AbstractDialogPanel {
 			boolean existAll = true;
 			boolean allFiles = true;
 			String text = this.getText(input);
-		    if (text.indexOf("\"") > -1) {
+		    if (text.indexOf("\"") > -1) { //$NON-NLS-1$
 		        String []fileNames = CreateFilePanel.this.parseFileNames(text);
 				for (int i = 0; i < fileNames.length; i++) {
 					if (fileNames[i] == null || fileNames[i].trim().length() == 0) {

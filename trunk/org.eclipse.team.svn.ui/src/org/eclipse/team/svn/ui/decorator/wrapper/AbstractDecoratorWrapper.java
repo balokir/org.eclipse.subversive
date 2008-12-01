@@ -36,7 +36,7 @@ public abstract class AbstractDecoratorWrapper extends LabelProvider implements 
 			return false;
 		}
 		IProject project = resource.getProject();
-		return project != null && RepositoryProvider.getProvider(project, "org.eclipse.team.svn.core.svnnature") != null;
+		return project != null && RepositoryProvider.getProvider(project, "org.eclipse.team.svn.core.svnnature") != null; //$NON-NLS-1$
 	}
 	
 }

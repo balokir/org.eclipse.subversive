@@ -46,23 +46,23 @@ public class ShowUpdateViewOperation extends AbstractWorkingCopyOperation {
 	protected ResourceMapping[] resourcesMapping;
 	
 	public ShowUpdateViewOperation(ISynchronizeScope scope, IWorkbenchPart part) {
-		super("Operation.ShowUpdateView", (IResource [])null);
+		super("Operation_ShowUpdateView", (IResource [])null); //$NON-NLS-1$
 		this.part = part;
 		this.scope = scope;
 	}
 
 	public ShowUpdateViewOperation(IResource []resources, IWorkbenchPart part) {
-		super("Operation.ShowUpdateView", resources);
+		super("Operation_ShowUpdateView", resources); //$NON-NLS-1$
 		this.part = part;
 	}
 
 	public ShowUpdateViewOperation(IResourceProvider provider, IWorkbenchPart part) {
-		super("Operation.ShowUpdateView", provider);
+		super("Operation_ShowUpdateView", provider); //$NON-NLS-1$
 		this.part = part;
 	}
 	
 	public ShowUpdateViewOperation(ResourceMapping[] resourcesMapping, IWorkbenchPart part) {
-		super("Operation.ShowUpdateView", (IResource [])null);
+		super("Operation_ShowUpdateView", (IResource [])null); //$NON-NLS-1$
 		this.part = part;
 		this.resourcesMapping = resourcesMapping;
 	}

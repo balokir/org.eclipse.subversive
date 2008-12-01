@@ -40,7 +40,7 @@ public class SelectCheckoutResourcePage extends AbstractVerifiedWizardPage {
 		super(
 			SelectCheckoutResourcePage.class.getName(), 
 			SVNUIMessages.SelectCheckoutResourcePage_Title, 
-			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
+			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif")); //$NON-NLS-1$
 		this.setDescription(SVNUIMessages.SelectCheckoutResourcePage_Description);		
 	}
 	
@@ -66,7 +66,7 @@ public class SelectCheckoutResourcePage extends AbstractVerifiedWizardPage {
 		composite.setLayoutData(data);	
 		
 		this.selectComposite = new RepositoryResourceSelectionComposite(
-				composite, SWT.NONE, this, "selectCheckoutUrl", this.baseResource, true, 
+				composite, SWT.NONE, this, "selectCheckoutUrl", this.baseResource, true,  //$NON-NLS-1$
 				SVNUIMessages.SelectRepositoryResourcePage_Select_Title,
 				SVNUIMessages.SelectRepositoryResourcePage_Select_Description, RepositoryResourceSelectionComposite.MODE_DEFAULT, RepositoryResourceSelectionComposite.TEXT_BASE);
 		data = new GridData(GridData.FILL_HORIZONTAL);
@@ -74,7 +74,7 @@ public class SelectCheckoutResourcePage extends AbstractVerifiedWizardPage {
 		this.selectComposite.setLayoutData(data);
 		
 		//Setting context help
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.selectCheckResourcesContext");
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.selectCheckResourcesContext"); //$NON-NLS-1$
 		
 		return composite;
 	}

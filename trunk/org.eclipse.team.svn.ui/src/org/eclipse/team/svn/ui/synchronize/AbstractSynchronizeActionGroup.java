@@ -31,9 +31,9 @@ import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
  * @author Alexander Gurov
  */
 public abstract class AbstractSynchronizeActionGroup extends SynchronizePageActionGroup {
-	public static final String GROUP_MANAGE_LOCALS = "manageLocalChanges";
-	public static final String GROUP_PROCESS_ALL = "processAllItems";
-	public static final String GROUP_TEAM = "team";
+	public static final String GROUP_MANAGE_LOCALS = "manageLocalChanges"; //$NON-NLS-1$
+	public static final String GROUP_PROCESS_ALL = "processAllItems"; //$NON-NLS-1$
+	public static final String GROUP_TEAM = "team"; //$NON-NLS-1$
 	
 	protected ISynchronizePageConfiguration configuration;
 	
@@ -85,12 +85,12 @@ public abstract class AbstractSynchronizeActionGroup extends SynchronizePageActi
 		
 		boolean isEuropa = false;
 		String description = Platform.getProduct().getDescription();
-		int idx = description.indexOf("Version:");
+		int idx = description.indexOf("Version:"); //$NON-NLS-1$
 		if (idx != -1) {
-			idx += "Version:".length() + 1;
+			idx += "Version:".length() + 1; //$NON-NLS-1$
 			if (idx + 5 < description.length()) {
 				description = description.substring(idx, idx + 5);
-				isEuropa = "3.4.0".compareTo(description) > 0;
+				isEuropa = "3.4.0".compareTo(description) > 0; //$NON-NLS-1$
 			}
 		}
 		if (isEuropa) {

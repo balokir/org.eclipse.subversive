@@ -88,7 +88,7 @@ public class ValidConnectorsSelectionPanel extends AbstractDialogPanel {
 		});
 		String []items = new String[this.factories.length];
 		for (int i = 0; i < items.length; i++) {
-			items[i] = this.factories[i].getName() + " (" + this.factories[i].getClientVersion().replace('\n', ' ') + ")";
+			items[i] = this.factories[i].getName() + " (" + this.factories[i].getClientVersion().replace('\n', ' ') + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		this.svnConnectorField.setItems(items);
 		this.svnConnectorField.select(0);

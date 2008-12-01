@@ -82,18 +82,18 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * @author Sergiy Logvin
  */
 public class ResourceSelectionComposite extends Composite {
-	protected static final ImageDescriptor ERROR_IMAGE_DESC = new OverlayedImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/problem_underlay.gif")
+	protected static final ImageDescriptor ERROR_IMAGE_DESC = new OverlayedImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/problem_underlay.gif") //$NON-NLS-1$
 			.createImage(), TeamImages.getImageDescriptor(ISharedImages.IMG_ERROR_OVR), new Point(9, 9), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.TOP);
 
-	protected static final ImageDescriptor WARNING_IMAGE_DESC = new OverlayedImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/problem_underlay.gif")
+	protected static final ImageDescriptor WARNING_IMAGE_DESC = new OverlayedImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/problem_underlay.gif") //$NON-NLS-1$
 			.createImage(), TeamImages.getImageDescriptor(ISharedImages.IMG_WARNING_OVR), new Point(9, 9), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.TOP);
 
-	protected static final ImageDescriptor EMPTY_IMAGE_DESC = new OverlayedImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/problem_underlay.gif")
-			.createImage(), SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/empty_error.gif"), new Point(9, 9), OverlayedImageDescriptor.RIGHT
+	protected static final ImageDescriptor EMPTY_IMAGE_DESC = new OverlayedImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/problem_underlay.gif") //$NON-NLS-1$
+			.createImage(), SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/empty_error.gif"), new Point(9, 9), OverlayedImageDescriptor.RIGHT //$NON-NLS-1$
 			| OverlayedImageDescriptor.TOP);
 
-	protected static final ImageDescriptor SWITCHED_IMAGE_DESC = new OverlayedImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/problem_underlay.gif")
-			.createImage(), SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/switched.gif"), new Point(9, 9), OverlayedImageDescriptor.RIGHT
+	protected static final ImageDescriptor SWITCHED_IMAGE_DESC = new OverlayedImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/problem_underlay.gif") //$NON-NLS-1$
+			.createImage(), SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/switched.gif"), new Point(9, 9), OverlayedImageDescriptor.RIGHT //$NON-NLS-1$
 			| OverlayedImageDescriptor.TOP);
 
 	protected static final int COLUMN_CHECKBOX = 0;
@@ -308,12 +308,12 @@ public class ResourceSelectionComposite extends Composite {
 
 			public String getColumnText(Object element, int columnIndex) {
 				if (columnIndex == ResourceSelectionComposite.COLUMN_CHECKBOX) {
-					return "";
+					return ""; //$NON-NLS-1$
 				}
 				IResource resource = (IResource) element;
 				if (columnIndex == ResourceSelectionComposite.COLUMN_NAME) {
 					String path = resource.getFullPath().toString();
-					return path.startsWith("/") ? path.substring(1) : path;
+					return path.startsWith("/") ? path.substring(1) : path; //$NON-NLS-1$
 				}
 				ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
 				int changeMask = local.getChangeMask();
@@ -433,7 +433,7 @@ public class ResourceSelectionComposite extends Composite {
 
 	protected String statusAsString(String status, int changeMask) {
 		if ((changeMask & ILocalResource.TEXT_MODIFIED) == 0) {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 		return SVNUtility.getStatusText(status);
 	}
@@ -442,7 +442,7 @@ public class ResourceSelectionComposite extends Composite {
 		if ((changeMask & ILocalResource.PROP_MODIFIED) != 0) {
 			return IStateFilter.ST_MODIFIED;
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	public void addResourcesSelectionChangedListener(IResourceSelectionChangeListener listener) {

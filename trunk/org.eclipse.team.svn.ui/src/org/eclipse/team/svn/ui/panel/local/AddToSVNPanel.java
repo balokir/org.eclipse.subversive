@@ -92,7 +92,7 @@ public class AddToSVNPanel extends AbstractResourceSelectionPanel {
 				if (selectedResources.length == 1) {
 					manager.add(tAction = new Action(MessageFormat.format(SVNUIMessages.AddToSVNPanel_Ignore_Single, selectedResources[0].getName())) {
 						public void run() {
-							CompositeOperation op = new CompositeOperation("AddToIgnore");
+							CompositeOperation op = new CompositeOperation("AddToIgnore"); //$NON-NLS-1$
 							op.add(new AddToSVNIgnoreOperation(selectedResources, IRemoteStorage.IGNORE_NAME, null));
 							op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(selectedResources), IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
 							UIMonitorUtility.doTaskNowDefault(op, true);							
@@ -100,11 +100,11 @@ public class AddToSVNPanel extends AbstractResourceSelectionPanel {
 					});
 					tAction.setEnabled(true);
 					String name = selectedResources[0].getName();
-					String [] parts = name.split("\\.");
+					String [] parts = name.split("\\."); //$NON-NLS-1$
 					if ((parts.length != 0)) {
-						manager.add(tAction = new Action(MessageFormat.format(SVNUIMessages.AddToSVNPanel_Ignore_Single, "*." + parts[parts.length-1])) {
+						manager.add(tAction = new Action(MessageFormat.format(SVNUIMessages.AddToSVNPanel_Ignore_Single, "*." + parts[parts.length-1])) { //$NON-NLS-1$
 							public void run() {
-								CompositeOperation op = new CompositeOperation("AddToIgnore");
+								CompositeOperation op = new CompositeOperation("AddToIgnore"); //$NON-NLS-1$
 								op.add(new AddToSVNIgnoreOperation(selectedResources, IRemoteStorage.IGNORE_EXTENSION, null));
 								op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(selectedResources), IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
 								UIMonitorUtility.doTaskNowDefault(op, true);
@@ -116,7 +116,7 @@ public class AddToSVNPanel extends AbstractResourceSelectionPanel {
 				else {
 					manager.add(tAction = new Action(SVNUIMessages.AddToSVNPanel_IgnoreByNames_Multiple) {
 						public void run() {
-							CompositeOperation op = new CompositeOperation("AddToIgnore");
+							CompositeOperation op = new CompositeOperation("AddToIgnore"); //$NON-NLS-1$
 							op.add(new AddToSVNIgnoreOperation(selectedResources, IRemoteStorage.IGNORE_NAME, null));
 							op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(selectedResources), IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
 							UIMonitorUtility.doTaskNowDefault(op, true);
@@ -125,7 +125,7 @@ public class AddToSVNPanel extends AbstractResourceSelectionPanel {
 					tAction.setEnabled(tSelection.size() > 0);
 					manager.add(tAction = new Action(SVNUIMessages.AddToSVNPanel_IgnoreByExtension_Multiple) {
 						public void run() {
-							CompositeOperation op = new CompositeOperation("AddToIgnore");
+							CompositeOperation op = new CompositeOperation("AddToIgnore"); //$NON-NLS-1$
 							op.add(new AddToSVNIgnoreOperation(selectedResources, IRemoteStorage.IGNORE_EXTENSION, null));
 							op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(selectedResources), IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
 							UIMonitorUtility.doTaskNowDefault(op, true);							
@@ -150,7 +150,7 @@ public class AddToSVNPanel extends AbstractResourceSelectionPanel {
 						}
 					}
 				});
-				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/delete.gif"));
+				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/delete.gif")); //$NON-NLS-1$
 				tAction.setEnabled(tSelection.size() > 0);
 			}
 		});
@@ -215,7 +215,7 @@ public class AddToSVNPanel extends AbstractResourceSelectionPanel {
     }
     
 	public String getHelpId() {
-    	return "org.eclipse.team.svn.help.addToVCDialogContext";
+    	return "org.eclipse.team.svn.help.addToVCDialogContext"; //$NON-NLS-1$
     }
 
 	/* (non-Javadoc)

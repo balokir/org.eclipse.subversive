@@ -331,7 +331,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		tabItem.setControl(this.createErrorReportingSettingsPage(tabFolder));
 
 //		Setting context help
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.SVNPreferencesContext");
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.SVNPreferencesContext"); //$NON-NLS-1$
 	    
 		return tabFolder;
 	}
@@ -372,7 +372,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		});
 		String []items = new String[fullSet.size()];
 		for (int i = 0; i < items.length; i++) {
-			items[i] = this.factories[i].getName() + " (" + this.factories[i].getClientVersion().replace('\n', ' ') + ")";
+			items[i] = this.factories[i].getName() + " (" + this.factories[i].getClientVersion().replace('\n', ' ') + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		this.svnConnectorField.setItems(items);
 		this.svnConnectorField.setVisibleItemCount(items.length);

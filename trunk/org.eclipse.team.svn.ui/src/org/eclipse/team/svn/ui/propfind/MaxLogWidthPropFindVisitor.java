@@ -26,7 +26,7 @@ public class MaxLogWidthPropFindVisitor implements IPropFindVisitor {
 	}
 	
 	public boolean visit(SVNProperty propertyParam) {
-		if (propertyParam.name.equals("tsvn:logwidthmarker")) {
+		if (propertyParam.name.equals("tsvn:logwidthmarker")) { //$NON-NLS-1$
 			try {
 				int currWidth = Integer.decode(propertyParam.value);
 				if (this.width > currWidth || this.width == 0) {

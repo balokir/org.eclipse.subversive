@@ -317,7 +317,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 	}
 		
 	public String getHelpId() {
-    	return "org.eclipse.team.svn.help.commitDialogContext";
+    	return "org.eclipse.team.svn.help.commitDialogContext"; //$NON-NLS-1$
     }
 	
 	public void postInit() {
@@ -386,9 +386,9 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 	
 	protected void pasteNames(IResource[] resources) {
 		if (resources.length > 0) {
-			String namesString = "";
+			String namesString = ""; //$NON-NLS-1$
 			for (IResource resource : resources) {			
-				namesString += resource.getName() + "\n";
+				namesString += resource.getName() + "\n"; //$NON-NLS-1$
 			}
 			this.comment.insertText(namesString);			
 		}			
@@ -419,8 +419,8 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 					public void run() {
 						FileDialog dlg = new FileDialog(UIMonitorUtility.getShell(), SWT.PRIMARY_MODAL | SWT.SAVE);
 						dlg.setText(SVNUIMessages.SelectPatchFilePage_SavePatchAs);
-						dlg.setFileName(selectedResources[0].getName() + ".patch");
-						dlg.setFilterExtensions(new String[] {"patch", "*.*"});
+						dlg.setFileName(selectedResources[0].getName() + ".patch"); //$NON-NLS-1$
+						dlg.setFilterExtensions(new String[] {"patch", "*.*"}); //$NON-NLS-1$ //$NON-NLS-2$
 						String file = dlg.open();
 						if (file != null) {
 							CreatePatchOperation mainOp = new CreatePatchOperation(new IResource[] {selectedResources[0]}, file, true, true, true, true);
@@ -441,7 +441,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 					}
 				});
 				tAction.setEnabled(tSelection.size() > 0  && FileUtility.checkForResourcesPresence(selectedResources, IStateFilter.SF_EXCLUDE_DELETED, IResource.DEPTH_ZERO));
-				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/branch.gif"));
+				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/branch.gif")); //$NON-NLS-1$
 				manager.add(new Separator());
 				
 				//Revert action
@@ -454,7 +454,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 						}
 					}
 				});
-				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/revert.gif"));
+				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/revert.gif")); //$NON-NLS-1$
 				tAction.setEnabled(tSelection.size() > 0);
 				
 				//Ignore resources group
@@ -463,7 +463,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 					if (tSelection.size() > 1) {
 						subMenu.add(tAction = new Action(SVNUIMessages.CommitPanel_IgnoreByName_Multiple_Action) {
 							public void run() {
-								CompositeOperation op = new CompositeOperation("AddToIgnore");
+								CompositeOperation op = new CompositeOperation("AddToIgnore"); //$NON-NLS-1$
 								op.add(new AddToSVNIgnoreOperation(selectedResources, IRemoteStorage.IGNORE_NAME, null));
 								op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(CommitPanel.this.resources), IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
 								UIMonitorUtility.doTaskNowDefault(op, true);
@@ -472,7 +472,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 						tAction.setEnabled(true);
 						subMenu.add(tAction = new Action(SVNUIMessages.CommitPanel_IgnoreByExtension_Multiple_Action) {
 							public void run() {
-								CompositeOperation op = new CompositeOperation("AddToIgnore");
+								CompositeOperation op = new CompositeOperation("AddToIgnore"); //$NON-NLS-1$
 								op.add(new AddToSVNIgnoreOperation(selectedResources, IRemoteStorage.IGNORE_EXTENSION, null));
 								op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(CommitPanel.this.resources), IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
 								UIMonitorUtility.doTaskNowDefault(op, true);							
@@ -483,7 +483,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 					else {
 						subMenu.add(tAction = new Action(selectedResources[0].getName()) {
 							public void run() {
-								CompositeOperation op = new CompositeOperation("AddToIgnore");
+								CompositeOperation op = new CompositeOperation("AddToIgnore"); //$NON-NLS-1$
 								op.add(new AddToSVNIgnoreOperation(selectedResources, IRemoteStorage.IGNORE_NAME, null));
 								op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(CommitPanel.this.resources), IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
 								UIMonitorUtility.doTaskNowDefault(op, true);							
@@ -491,11 +491,11 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 						});
 						tAction.setEnabled(true);
 						String name = selectedResources[0].getName();
-						String [] parts = name.split("\\.");
+						String [] parts = name.split("\\."); //$NON-NLS-1$
 						if ((parts.length != 0)) {
-							subMenu.add(tAction = new Action("*." + parts[parts.length-1]) {
+							subMenu.add(tAction = new Action("*." + parts[parts.length-1]) { //$NON-NLS-1$
 								public void run() {
-									CompositeOperation op = new CompositeOperation("AddToIgnore");
+									CompositeOperation op = new CompositeOperation("AddToIgnore"); //$NON-NLS-1$
 									op.add(new AddToSVNIgnoreOperation(selectedResources, IRemoteStorage.IGNORE_EXTENSION, null));
 									op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(CommitPanel.this.resources), IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
 									UIMonitorUtility.doTaskNowDefault(op, true);
@@ -552,7 +552,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 						}
 					}
 				});
-				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/lock.gif"));
+				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/lock.gif")); //$NON-NLS-1$
 				tAction.setEnabled(FileUtility.checkForResourcesPresenceRecursive(selectedResources, IStateFilter.SF_READY_TO_LOCK));
 				
 				//Unlock action
@@ -576,7 +576,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 						}
 					}
 				});
-				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/unlock.gif"));
+				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/unlock.gif")); //$NON-NLS-1$
 				tAction.setEnabled(FileUtility.checkForResourcesPresenceRecursive(selectedResources, IStateFilter.SF_LOCKED));
 				manager.add(new Separator());
 				
@@ -664,7 +664,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 						}
 					}
 				});
-				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/export.gif"));
+				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/export.gif")); //$NON-NLS-1$
 				tAction.setEnabled(tSelection.size() > 0 && FileUtility.checkForResourcesPresence(selectedResources, IStateFilter.SF_EXCLUDE_DELETED, IResource.DEPTH_ZERO));
 				
 				//Clean-up action
@@ -698,7 +698,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 						}
 					}
 				});
-				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/delete.gif"));
+				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/delete.gif")); //$NON-NLS-1$
 				tAction.setEnabled(tSelection.size() > 0 && !FileUtility.checkForResourcesPresence(selectedResources, IStateFilter.SF_DELETED, IResource.DEPTH_ZERO));
 			}
 		});
@@ -804,7 +804,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
     	protected CompositePropFindVisitor compositeVisitor;
     	
     	public CollectPropertiesOperation(IResource []resources) {
-    		super("Operation.CollectProperties");
+    		super("Operation_CollectProperties"); //$NON-NLS-1$
     		this.resources = resources;
     		this.logTemplateVisitor = new LogTemplatesPropFindVisitor();
     		this.bugtraqVisitor = new BugtraqPropFindVisitor();

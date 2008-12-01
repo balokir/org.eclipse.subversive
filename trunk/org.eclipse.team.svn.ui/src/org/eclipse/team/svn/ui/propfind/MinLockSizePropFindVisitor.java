@@ -26,7 +26,7 @@ public class MinLockSizePropFindVisitor implements IPropFindVisitor {
 	}
 	
 	public boolean visit(SVNProperty propertyParam) {
-		if (propertyParam.name.equals("tsvn:lockmsgminsize")) {
+		if (propertyParam.name.equals("tsvn:lockmsgminsize")) { //$NON-NLS-1$
 			try {
 				int currMinSize = Integer.decode(propertyParam.value);
 				if (this.minLockSize < currMinSize) {

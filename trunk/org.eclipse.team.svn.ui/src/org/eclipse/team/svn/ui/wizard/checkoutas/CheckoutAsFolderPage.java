@@ -40,7 +40,7 @@ public class CheckoutAsFolderPage extends AbstractVerifiedWizardPage {
 	public CheckoutAsFolderPage(IRepositoryResource []repositoryResources) {
 		super(CheckoutAsFolderPage.class.getName(), 
 				SVNUIMessages.CheckoutAsFolderPage_Title, 
-				SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
+				SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif")); //$NON-NLS-1$
 		this.setDescription(SVNUIMessages.CheckoutAsFolderPage_Description);
 		this.repositoryResources = repositoryResources;
 	}
@@ -69,7 +69,7 @@ public class CheckoutAsFolderPage extends AbstractVerifiedWizardPage {
         this.attachTo(this.group, new SVNContainerSelectionGroup.SVNContainerCheckOutSelectionVerifier());
         
 //		Setting context help
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.checkoutAsAFolderContext");
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.checkoutAsAFolderContext"); //$NON-NLS-1$
         
 		return composite;
 	}

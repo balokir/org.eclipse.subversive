@@ -142,7 +142,7 @@ public abstract class RepositoryResource implements IWorkbenchAdapter, IWorkbenc
     }
     
     public String getLabel(Object o) {
-		String retVal = this.getLabel() + " ";
+		String retVal = this.getLabel() + " "; //$NON-NLS-1$
 		try {
 	        retVal += this.getRevision();
 		}
@@ -158,13 +158,13 @@ public abstract class RepositoryResource implements IWorkbenchAdapter, IWorkbenc
 		Information info = this.resource.getInfo();
 		if (info != null && info.lock != null) {
 			if (RepositoryResource.lockDescriptor == null) {
-				RepositoryResource.lockDescriptor = SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/lock.gif");
+				RepositoryResource.lockDescriptor = SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/lock.gif"); //$NON-NLS-1$
 			}
 			return RepositoryResource.decorateImage(originalDescriptor, RepositoryResource.lockDescriptor);
 		}
 		else if (this.isExternals() && SVNTeamPreferences.getDecorationBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.DECORATION_ICON_SWITCHED_NAME)) {
 			if (RepositoryResource.externalsDescriptor == null) {
-				RepositoryResource.externalsDescriptor = SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/switched.gif");
+				RepositoryResource.externalsDescriptor = SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/switched.gif"); //$NON-NLS-1$
 			}
 			return RepositoryResource.decorateImage(originalDescriptor, RepositoryResource.externalsDescriptor);
 		}
@@ -224,7 +224,7 @@ public abstract class RepositoryResource implements IWorkbenchAdapter, IWorkbenc
 			}
 		}
 		else if (var.equals(ToolTipVariableSetProvider.VAR_LAST_AUTHOR)) {
-			if (info != null && info.lastAuthor != null && !info.lastAuthor.equals("")) {
+			if (info != null && info.lastAuthor != null && !info.lastAuthor.equals("")) { //$NON-NLS-1$
 				return RepositoryResource.this.formatToolTipLine(var, info.lastAuthor);
 			}
 		}
@@ -256,11 +256,11 @@ public abstract class RepositoryResource implements IWorkbenchAdapter, IWorkbenc
 		if (var instanceof UserVariable) {
 			return var.toString();
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	
 	protected String formatToolTipLine(IVariable var, String value) {
-		return var.getDescription() + " " + value + "\n";
+		return var.getDescription() + " " + value + "\n"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	protected void initializeFontsAndColors() {
@@ -338,7 +338,7 @@ public abstract class RepositoryResource implements IWorkbenchAdapter, IWorkbenc
 		protected RepositoryTreeViewer viewer;
 		
 		public RefreshOperation(RepositoryTreeViewer viewer) {
-			super("Operation.RefreshView");
+			super("Operation_RefreshView"); //$NON-NLS-1$
 			this.viewer = viewer;
 		}
 

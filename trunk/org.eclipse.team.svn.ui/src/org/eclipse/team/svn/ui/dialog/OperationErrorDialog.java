@@ -32,8 +32,8 @@ public class OperationErrorDialog extends MessageDialog {
 	public static final int ERR_DIFFPROJECTS = 1;
 	
 	protected static final String []errorMessages = new String[] {
-		"OperationErrorDialog_Message_DifferentRepositories",
-		"OperationErrorDialog_Message_DifferentProjects"
+		"OperationErrorDialog_Message_DifferentRepositories", //$NON-NLS-1$
+		"OperationErrorDialog_Message_DifferentProjects" //$NON-NLS-1$
 	};
 	
 	public OperationErrorDialog(Shell parentShell, String title, int errorCode) {

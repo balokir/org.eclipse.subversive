@@ -87,7 +87,7 @@ public class PropertiesView extends AbstractSVNView {
 				PropertiesView.this.propertiesComposite.initializeComposite();
 			}
 		});
-		CompositeOperation composite = new CompositeOperation("Operation.ShowProperties");
+		CompositeOperation composite = new CompositeOperation("Operation_ShowProperties"); //$NON-NLS-1$
 		if (this.propertyProvider != null && this.propertyProvider.getExecutionState() != IStatus.OK) {
 			composite.add(this.propertyProvider);
 			composite.add(this.propertiesComposite.getRefreshViewOperation(), new IActionOperation[] {this.propertyProvider});
@@ -134,7 +134,7 @@ public class PropertiesView extends AbstractSVNView {
 	    		PropertiesView.this.refreshAction();
 	    	}
         };
-        action.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/refresh.gif"));
+        action.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/refresh.gif")); //$NON-NLS-1$
         tbm.add(action);        
         tbm.add(this.getLinkWithEditorAction());
         
@@ -143,7 +143,7 @@ public class PropertiesView extends AbstractSVNView {
         this.getSite().getPage().addSelectionListener(this.selectionListener);
 
         //Setting context help
-	    PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.propertiesViewContext");
+	    PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.propertiesViewContext"); //$NON-NLS-1$
 	}
 
 	protected void disconnectView() {
@@ -167,8 +167,8 @@ public class PropertiesView extends AbstractSVNView {
 	        }
 	    };
 	    this.linkWithEditorAction.setToolTipText(SVNUIMessages.SVNView_LinkWith_ToolTip);
-	    this.linkWithEditorAction.setDisabledImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/link_with_disabled.gif"));
-	    this.linkWithEditorAction.setHoverImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/link_with.gif"));
+	    this.linkWithEditorAction.setDisabledImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/link_with_disabled.gif")); //$NON-NLS-1$
+	    this.linkWithEditorAction.setHoverImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/link_with.gif")); //$NON-NLS-1$
 	    
 	    
 	    this.linkWithEditorAction.setChecked(this.isLinkWithEditorEnabled);

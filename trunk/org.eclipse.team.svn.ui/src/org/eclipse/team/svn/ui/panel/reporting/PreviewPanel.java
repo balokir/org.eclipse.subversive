@@ -61,9 +61,9 @@ public class PreviewPanel extends AbstractDialogPanel {
 		data.heightHint = prefferedSize.y;
 		composite.setLayoutData(data);
 		
-		this.report = PatternProvider.replaceAll(this.report, "<br>", "\n");
-		this.report = PatternProvider.replaceAll(this.report, "&lt;", "<");
-		this.report = PatternProvider.replaceAll(this.report, "&gt;", ">");
+		this.report = PatternProvider.replaceAll(this.report, "<br>", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		this.report = PatternProvider.replaceAll(this.report, "&lt;", "<"); //$NON-NLS-1$ //$NON-NLS-2$
+		this.report = PatternProvider.replaceAll(this.report, "&gt;", ">"); //$NON-NLS-1$ //$NON-NLS-2$
 		StyledText styledText = new StyledText(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.BORDER | SWT.WRAP);
 		
 		if (this.font != null) {

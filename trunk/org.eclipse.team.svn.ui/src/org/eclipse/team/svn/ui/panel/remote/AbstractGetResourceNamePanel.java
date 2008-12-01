@@ -49,7 +49,7 @@ public abstract class AbstractGetResourceNamePanel extends AbstractDialogPanel {
         this.dialogTitle = title;
         this.allowMultipart = allowMultipart;
         this.defaultMessage = allowMultipart ? SVNUIMessages.AbstractGetResourceNamePanel_Message_MultiPart : SVNUIMessages.AbstractGetResourceNamePanel_Message_Simple;
-        this.resourceName = "";
+        this.resourceName = ""; //$NON-NLS-1$
     }
 
 	public String getResourceName() {

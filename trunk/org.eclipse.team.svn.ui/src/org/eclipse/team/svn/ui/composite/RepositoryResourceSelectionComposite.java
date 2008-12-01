@@ -79,7 +79,7 @@ public class RepositoryResourceSelectionComposite extends Composite {
 	protected int defaultTextType;
 
 	public RepositoryResourceSelectionComposite(Composite parent, int style, IValidationManager validationManager, String historyKey, IRepositoryResource baseResource, boolean stopOnCopy, String selectionTitle, String selectionDescription, int mode, int defaultTextType) {
-		this(parent, style, validationManager, historyKey, "RepositoryResourceSelectionComposite.URL", baseResource, stopOnCopy, selectionTitle, selectionDescription, mode, defaultTextType);
+		this(parent, style, validationManager, historyKey, "RepositoryResourceSelectionComposite_URL", baseResource, stopOnCopy, selectionTitle, selectionDescription, mode, defaultTextType); //$NON-NLS-1$
 	}
 	
 	public RepositoryResourceSelectionComposite(Composite parent, int style, IValidationManager validationManager, String historyKey, String comboId, IRepositoryResource baseResource, boolean stopOnCopy, String selectionTitle, String selectionDescription, int mode, int defaultTextType) {
@@ -237,7 +237,7 @@ public class RepositoryResourceSelectionComposite extends Composite {
 					boolean toFilter = RepositoryResourceSelectionComposite.this.toFilterCurrent 
 										&& RepositoryResourceSelectionComposite.this.baseResource != null && 
 										(RepositoryResourceSelectionComposite.this.getSelectedResource().getUrl().equals(RepositoryResourceSelectionComposite.this.baseResource.getUrl())
-										|| RepositoryResourceSelectionComposite.this.getSelectedResource().getUrl().equals(RepositoryResourceSelectionComposite.this.baseResource.getUrl() + "/"));
+										|| RepositoryResourceSelectionComposite.this.getSelectedResource().getUrl().equals(RepositoryResourceSelectionComposite.this.baseResource.getUrl() + "/")); //$NON-NLS-1$
 					RepositoryResourceSelectionComposite.this.revisionComposite.setFilterCurrent(toFilter);
 					if (RepositoryResourceSelectionComposite.this.secondRevisionComposite != null) {
 						RepositoryResourceSelectionComposite.this.secondRevisionComposite.setSelectedResource(RepositoryResourceSelectionComposite.this.getSecondSelectedResource());
@@ -263,8 +263,8 @@ public class RepositoryResourceSelectionComposite extends Composite {
 				super.fireOk();
 			}
 		};
-		this.verifier.add(new NonEmptyFieldVerifier(SVNUIMessages.getString(this.comboId + "_Verifier")));
-		this.verifier.add(new URLVerifier(SVNUIMessages.getString(this.comboId + "_Verifier")) {
+		this.verifier.add(new NonEmptyFieldVerifier(SVNUIMessages.getString(this.comboId + "_Verifier"))); //$NON-NLS-1$
+		this.verifier.add(new URLVerifier(SVNUIMessages.getString(this.comboId + "_Verifier")) { //$NON-NLS-1$
 			protected String getErrorMessage(Control input) {
 				String error = super.getErrorMessage(input);
 				if (RepositoryResourceSelectionComposite.this.baseResource != null && error == null) {

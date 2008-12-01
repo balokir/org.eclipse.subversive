@@ -29,11 +29,11 @@ import org.eclipse.team.svn.ui.repository.model.IDataTreeNode;
 public class RefreshRemoteResourcesOperation extends AbstractRepositoryOperation {
 
 	public RefreshRemoteResourcesOperation(IRepositoryResource []resources) {
-		super("Operation.RefreshRemote", resources);
+		super("Operation_RefreshRemote", resources); //$NON-NLS-1$
 	}
 
 	public RefreshRemoteResourcesOperation(IRepositoryResourceProvider provider) {
-		super("Operation.RefreshRemote", provider);
+		super("Operation_RefreshRemote", provider); //$NON-NLS-1$
 	}
 	
 	public int getOperationWeight() {

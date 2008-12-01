@@ -33,7 +33,7 @@ public class SwitchPanel extends AbstractRepositoryResourceSelectionPanel {
 	protected DepthSelectionComposite depthSelector;
 	
     public SwitchPanel(IRepositoryResource baseResource, long currentRevision, boolean containFolders) {    	
-    	super(baseResource, currentRevision, SVNUIMessages.SwitchPanel_Title, SVNUIMessages.SwitchPanel_Description, "SwitchPanel_URL_HISTORY_NAME", SVNUIMessages.SwitchPanel_Selection_Title, SVNUIMessages.SwitchPanel_Selection_Description, RepositoryResourceSelectionComposite.TEXT_NONE);
+    	super(baseResource, currentRevision, SVNUIMessages.SwitchPanel_Title, SVNUIMessages.SwitchPanel_Description, "SwitchPanel_URL_HISTORY_NAME", SVNUIMessages.SwitchPanel_Selection_Title, SVNUIMessages.SwitchPanel_Selection_Description, RepositoryResourceSelectionComposite.TEXT_NONE); //$NON-NLS-1$
     	this.defaultMessage = SVNUIMessages.SwitchPanel_Message;
     	this.containFolders = containFolders;
     }
@@ -60,7 +60,7 @@ public class SwitchPanel extends AbstractRepositoryResourceSelectionPanel {
     }
     
 	public String getHelpId() {
-    	return "org.eclipse.team.svn.help.switchDialogContext";
+    	return "org.eclipse.team.svn.help.switchDialogContext"; //$NON-NLS-1$
 	}
 
 }

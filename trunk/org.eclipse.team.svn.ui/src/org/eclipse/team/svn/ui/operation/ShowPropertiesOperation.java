@@ -40,7 +40,7 @@ public class ShowPropertiesOperation extends AbstractActionOperation {
 	}
 	
 	public ShowPropertiesOperation(IWorkbenchPage page, IAdaptable resource, IResourcePropertyProvider propertyProvider) {
-		super("Operation.ShowProperties");
+		super("Operation_ShowProperties"); //$NON-NLS-1$
 		this.resource = resource;
 		this.page = page;
 		this.propertyProvider = propertyProvider;

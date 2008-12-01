@@ -111,7 +111,7 @@ public class ThreeWayPropertyCompareInput extends PropertyCompareInput {
 		//perform property removing
 		final String propName = currentNode.getName();
 		IActionOperation op = null;
-		UIMonitorUtility.doTaskNowDefault(op = new AbstractActionOperation("Operation.RemoveProperties") {
+		UIMonitorUtility.doTaskNowDefault(op = new AbstractActionOperation("Operation_RemoveProperties") { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				final ISVNConnector proxy = ThreeWayPropertyCompareInput.this.location.acquireSVNProxy();
 				try {
@@ -141,10 +141,10 @@ public class ThreeWayPropertyCompareInput extends PropertyCompareInput {
 	public String getTitle() {
 		return SVNUIMessages.format(SVNUIMessages.PropertyCompareInput_Title3,
 													  new String []	{
-													  this.left.path.substring(this.left.path.lastIndexOf("/")+1)
-													  + " [" + this.getRevisionPart(this.left),
+													  this.left.path.substring(this.left.path.lastIndexOf("/")+1) //$NON-NLS-1$
+													  + " [" + this.getRevisionPart(this.left), //$NON-NLS-1$
 													  this.getRevisionPart(this.ancestor),
-													  this.getRevisionPart(this.right)+ "] "
+													  this.getRevisionPart(this.right)+ "] " //$NON-NLS-1$
 													  });
 	}
 	
