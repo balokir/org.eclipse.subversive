@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.ui.debugmail;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.extension.factory.IReporter;
@@ -26,8 +26,8 @@ import org.eclipse.team.svn.ui.panel.reporting.MailReportPanel;
  */
 public class SendBugReportAction extends AbstractMainMenuAction {
 	public void run(IAction action) {
-		String title = SVNTeamUIPlugin.instance().getResource("SendBugReportAction.Panel.Title");
-		MailReportPanel panel = new MailReportPanel(title, SVNTeamUIPlugin.instance().getResource("SendBugReportAction.Panel.Description"), SVNTeamUIPlugin.instance().getResource("SendBugReportAction.Panel.Message"), true);
+		String title = SVNUIMessages.SendBugReportAction_Panel_Title;
+		MailReportPanel panel = new MailReportPanel(title, SVNUIMessages.SendBugReportAction_Panel_Description, SVNUIMessages.SendBugReportAction_Panel_Message, true);
 		IReporter reporter = panel.getReporter();
 		if (reporter != null && reporter.isCustomEditorSupported() && ExtensionsManager.getInstance().getReportingDescriptors().length == 1) {
 			UILoggedOperation.sendReport(reporter);

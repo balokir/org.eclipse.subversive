@@ -17,7 +17,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 
 /**
@@ -32,12 +32,12 @@ public class PropertyComparePanel extends AbstractDialogPanel {
 	public PropertyComparePanel(PropertyCompareInput input, boolean local) {
 		super(new String[] {IDialogConstants.CLOSE_LABEL});
 		this.input = input;
-		this.dialogDescription = SVNTeamUIPlugin.instance().getResource("ComparePropsPanel.Description");
+		this.dialogDescription = SVNUIMessages.ComparePropsPanel_Description;
 		if (local) {
-			this.defaultMessage = SVNTeamUIPlugin.instance().getResource("ComparePropsPanel.Local.Message");
+			this.defaultMessage = SVNUIMessages.ComparePropsPanel_Local_Message;
 		}
 		else {
-			this.defaultMessage = SVNTeamUIPlugin.instance().getResource("ComparePropsPanel.Remote.Message");
+			this.defaultMessage = SVNUIMessages.ComparePropsPanel_Remote_Message;
 		}
 	}
 

@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * Unlock resources dialog
@@ -36,9 +36,9 @@ public class UnlockResourcesDialog extends MessageDialog {
 
 	public UnlockResourcesDialog(Shell parentShell, boolean enableRecursive) {
 		super(parentShell, 
-			SVNTeamUIPlugin.instance().getResource("UnlockResourcesDialog.Title"), 
+			SVNUIMessages.UnlockResourcesDialog_Title, 
 			null, 
-			SVNTeamUIPlugin.instance().getResource("UnlockResourcesDialog.Message"),
+			SVNUIMessages.UnlockResourcesDialog_Message,
 			MessageDialog.QUESTION, 
 			new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 
 			0);
@@ -59,7 +59,7 @@ public class UnlockResourcesDialog extends MessageDialog {
 			Button recursive = new Button(composite, SWT.CHECK);
 			recursive.setLayoutData(new GridData());
 			recursive.setSelection(false);
-			recursive.setText(SVNTeamUIPlugin.instance().getResource("UnlockResourcesDialog.Recursively"));
+			recursive.setText(SVNUIMessages.UnlockResourcesDialog_Recursively);
 			recursive.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {
 					Button button = (Button)event.widget;

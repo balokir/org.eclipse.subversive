@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.utility.PatternProvider;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPropsPreferencePage;
@@ -48,9 +48,9 @@ public class EditAutoPropertiesPanel extends AbstractDialogPanel {
 	public EditAutoPropertiesPanel(SVNTeamPropsPreferencePage.AutoProperty property) {
 		super();
 		this.property = property;
-		this.dialogTitle = SVNTeamUIPlugin.instance().getResource(property == null ? "EditAutoPropertiesPanel.Title.Add" : "EditAutoPropertiesPanel.Title.Edit");
-		this.dialogDescription = SVNTeamUIPlugin.instance().getResource("EditAutoPropertiesPanel.Description");
-		this.defaultMessage = SVNTeamUIPlugin.instance().getResource("EditAutoPropertiesPanel.Message");
+		this.dialogTitle = property == null ? SVNUIMessages.EditAutoPropertiesPanel_Title_Add : SVNUIMessages.EditAutoPropertiesPanel_Title_Edit;
+		this.dialogDescription = SVNUIMessages.EditAutoPropertiesPanel_Description;
+		this.defaultMessage = SVNUIMessages.EditAutoPropertiesPanel_Message;
 	}
 	
 	public void createControlsImpl(Composite parent) {
@@ -69,13 +69,13 @@ public class EditAutoPropertiesPanel extends AbstractDialogPanel {
 		composite.setLayoutData(layoutData);
 		
 		label = new Label(composite, SWT.NONE);
-		label.setText(SVNTeamUIPlugin.instance().getResource("EditAutoPropertiesPanel.FileName"));
+		label.setText(SVNUIMessages.EditAutoPropertiesPanel_FileName);
 		
 		this.txtFileName = new Text(composite, SWT.BORDER);
 		this.txtFileName.setText((this.property == null) ? "" : this.property.fileName);
 		layoutData = new GridData(GridData.FILL_HORIZONTAL);
 		this.txtFileName.setLayoutData(layoutData);
-		String fieldName = SVNTeamUIPlugin.instance().getResource("EditAutoPropertiesPanel.FileName.Verifier");
+		String fieldName = SVNUIMessages.EditAutoPropertiesPanel_FileName_Verifier;
 		CompositeVerifier verifier = new CompositeVerifier();
 		verifier.add(new NonEmptyFieldVerifier(fieldName));
 		verifier.add(new AbstractVerifierProxy(new FileNameTemplateVerifier(fieldName)) {
@@ -86,21 +86,21 @@ public class EditAutoPropertiesPanel extends AbstractDialogPanel {
 		this.attachTo(this.txtFileName, verifier);
 		
 		Group group = new Group(parent, SWT.NONE);
-		group.setText(SVNTeamUIPlugin.instance().getResource("EditAutoPropertiesPanel.Properties"));
+		group.setText(SVNUIMessages.EditAutoPropertiesPanel_Properties);
 		layoutData = new GridData(GridData.FILL_BOTH);
 		group.setLayoutData(layoutData);
 		layout = new GridLayout();
 		group.setLayout(layout);
 		
 		label = new Label(group, SWT.NONE);
-		label.setText(SVNTeamUIPlugin.instance().getResource("EditAutoPropertiesPanel.Properties.Hint"));
+		label.setText(SVNUIMessages.EditAutoPropertiesPanel_Properties_Hint);
 		
 		this.txtProperties = new Text(group, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 		this.txtProperties.setText((this.property == null) ? "" : PatternProvider.replaceAll(this.property.properties, SVNTeamPropsPreferencePage.AUTO_PROPS_PROPS_SEPARATOR, System.getProperty("line.separator")).trim());
 		layoutData = new GridData(GridData.FILL_BOTH);
 		layoutData.heightHint = DefaultDialog.convertHeightInCharsToPixels(this.txtProperties, 7);
 		this.txtProperties.setLayoutData(layoutData);
-		this.attachTo(this.txtProperties, new AbstractVerifierProxy(new MultiLinePropertyVerifier(SVNTeamUIPlugin.instance().getResource("EditAutoPropertiesPanel.Properties.Verifier"))) {
+		this.attachTo(this.txtProperties, new AbstractVerifierProxy(new MultiLinePropertyVerifier(SVNUIMessages.EditAutoPropertiesPanel_Properties_Verifier)) {
 			protected boolean isVerificationEnabled(Control input) {
 				return EditAutoPropertiesPanel.this.txtProperties.getText().trim().length() > 0;
 			}

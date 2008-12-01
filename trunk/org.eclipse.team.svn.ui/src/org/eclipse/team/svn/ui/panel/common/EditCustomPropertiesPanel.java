@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.SpellcheckedTextProvider;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPropsPreferencePage;
@@ -46,9 +46,9 @@ public class EditCustomPropertiesPanel extends AbstractDialogPanel {
 	public EditCustomPropertiesPanel(SVNTeamPropsPreferencePage.CustomProperty property) {
 		super();
 		this.property = property;
-		this.dialogTitle = SVNTeamUIPlugin.instance().getResource(property == null ? "EditCustomPropertiesPanel.Title.Add" : "EditAutoPropertiesPanel.Title.Edit");
-		this.dialogDescription = SVNTeamUIPlugin.instance().getResource("EditCustomPropertiesPanel.Description");
-		this.defaultMessage = SVNTeamUIPlugin.instance().getResource("EditCustomPropertiesPanel.Message");
+		this.dialogTitle = property == null ? SVNUIMessages.EditCustomPropertiesPanel_Title_Add : SVNUIMessages.EditAutoPropertiesPanel_Title_Edit;
+		this.dialogDescription = SVNUIMessages.EditCustomPropertiesPanel_Description;
+		this.defaultMessage = SVNUIMessages.EditCustomPropertiesPanel_Message;
 	}
 	
 	protected void createControlsImpl(Composite parent) {
@@ -57,20 +57,20 @@ public class EditCustomPropertiesPanel extends AbstractDialogPanel {
 		layout.verticalSpacing = 10;
 		parent.setLayout(layout);
 		Label propNameLabel = new Label(parent, SWT.NONE);
-		propNameLabel.setText(SVNTeamUIPlugin.instance().getResource("EditCustomPropertiesPanel.PropName"));
+		propNameLabel.setText(SVNUIMessages.EditCustomPropertiesPanel_PropName);
 		this.propName = new Text(parent, SWT.BORDER);
 		this.propName.setText((this.property == null) ? "" : this.property.propName);
 		GridData layoutData = new GridData(GridData.FILL_HORIZONTAL);
 		this.propName.setLayoutData(layoutData);
 		
 		CompositeVerifier verifier = new CompositeVerifier();
-		String name = SVNTeamUIPlugin.instance().getResource("EditCustomPropertiesPanel.PropName.Verifier");
+		String name = SVNUIMessages.EditCustomPropertiesPanel_PropName_Verifier;
 		verifier.add(new NonEmptyFieldVerifier(name));
 		verifier.add(new PropertyNameVerifier(name));
 		this.attachTo(this.propName, verifier);
 		
 		Group optional = new Group(parent, SWT.NONE);
-		optional.setText(SVNTeamUIPlugin.instance().getResource("EditCustomPropertiesPanel.Optional"));
+		optional.setText(SVNUIMessages.EditCustomPropertiesPanel_Optional);
 		layoutData = new GridData(GridData.FILL_BOTH);
 		layoutData.horizontalSpan = 2;
 		optional.setLayoutData(layoutData);
@@ -79,7 +79,7 @@ public class EditCustomPropertiesPanel extends AbstractDialogPanel {
 		optional.setLayout(layout);
 		
 		Label propRegexpLabel = new Label(optional, SWT.NONE);
-		propRegexpLabel.setText(SVNTeamUIPlugin.instance().getResource("EditCustomPropertiesPanel.PropRegExp"));
+		propRegexpLabel.setText(SVNUIMessages.EditCustomPropertiesPanel_PropRegExp);
 		this.propRegexp = new Text(optional, SWT.BORDER);
 		this.propRegexp.setText((this.property == null) ? "" : this.property.regExp);
 		layoutData = new GridData(GridData.FILL_HORIZONTAL);
@@ -90,7 +90,7 @@ public class EditCustomPropertiesPanel extends AbstractDialogPanel {
 					Pattern.compile(this.getText(input));
 				}
 				catch (Exception ex) {
-					return SVNTeamUIPlugin.instance().getResource("EditCustomPropertiesPanel.Validator.RegExp");
+					return SVNUIMessages.EditCustomPropertiesPanel_Validator_RegExp;
 				}
 				return null;
 			}
@@ -100,7 +100,7 @@ public class EditCustomPropertiesPanel extends AbstractDialogPanel {
 		});
 		
 		Label propDescriptionLabel = new Label(optional, SWT.NONE);
-		propDescriptionLabel.setText(SVNTeamUIPlugin.instance().getResource("EditCustomPropertiesPanel.PropDescription"));
+		propDescriptionLabel.setText(SVNUIMessages.EditCustomPropertiesPanel_PropDescription);
 		layoutData = new GridData();
 		propDescriptionLabel.setLayoutData(layoutData);
 		layoutData = new GridData(GridData.FILL_BOTH);

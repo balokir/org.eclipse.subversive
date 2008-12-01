@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.verifier.AbstractFormattedVerifier;
 import org.eclipse.team.svn.ui.verifier.CompositeVerifier;
@@ -49,9 +49,9 @@ public class SavePatchInWorkspacePanel extends AbstractDialogPanel {
 
 	public SavePatchInWorkspacePanel(String proposedName) {
 		super();
-		this.dialogTitle = SVNTeamUIPlugin.instance().getResource("SavePatchInWorkspace.Title");
-		this.dialogDescription = SVNTeamUIPlugin.instance().getResource("SavePatchInWorkspace.Description");
-		this.defaultMessage = SVNTeamUIPlugin.instance().getResource("SavePatchInWorkspace.Message");
+		this.dialogTitle = SVNUIMessages.SavePatchInWorkspace_Title;
+		this.dialogDescription = SVNUIMessages.SavePatchInWorkspace_Description;
+		this.defaultMessage = SVNUIMessages.SavePatchInWorkspace_Message;
 		this.proposedName = proposedName;
 	}
 	
@@ -84,13 +84,13 @@ public class SavePatchInWorkspacePanel extends AbstractDialogPanel {
 				SavePatchInWorkspacePanel.this.validateContent();
 			}
 		});
-		AbstractFormattedVerifier verifier = new AbstractFormattedVerifier(SVNTeamUIPlugin.instance().getResource("SavePatchInWorkspace.WorkspaceTree")) {
+		AbstractFormattedVerifier verifier = new AbstractFormattedVerifier(SVNUIMessages.SavePatchInWorkspace_WorkspaceTree) {
 			protected String getWarningMessageImpl(Control input) {
 				return null;
 			}
 			protected String getErrorMessageImpl(Control input) {
 				IStructuredSelection selection = (IStructuredSelection)SavePatchInWorkspacePanel.this.treeViewer.getSelection();
-				return selection != null && !selection.isEmpty() ? null : SVNTeamUIPlugin.instance().getResource("SavePatchInWorkspace.WorkspaceTree.Verifier.Error");
+				return selection != null && !selection.isEmpty() ? null : SVNUIMessages.SavePatchInWorkspace_WorkspaceTree_Verifier_Error;
 			}
 		};
 		this.attachTo(this.treeViewer.getTree(), verifier);
@@ -107,13 +107,13 @@ public class SavePatchInWorkspacePanel extends AbstractDialogPanel {
 		Label description = new Label(wsComposite,SWT.NONE);
 		data = new GridData();
 		description.setLayoutData(data);
-		description.setText(SVNTeamUIPlugin.instance().getResource("SavePatchInWorkspace.FileName"));
+		description.setText(SVNUIMessages.SavePatchInWorkspace_FileName);
 	
 		this.workspaceFilenameField = new Text(wsComposite, SWT.BORDER | SWT.SINGLE);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.workspaceFilenameField.setLayoutData(data);
 		CompositeVerifier cVerifier = new CompositeVerifier();
-		String name = SVNTeamUIPlugin.instance().getResource("SavePatchInWorkspace.FileName.Verifier");
+		String name = SVNUIMessages.SavePatchInWorkspace_FileName_Verifier;
 		cVerifier.add(new NonEmptyFieldVerifier(name));
 		cVerifier.add(new ResourceNameVerifier(name, false));
 		cVerifier.add(new AbstractFormattedVerifier(name) {
@@ -123,7 +123,7 @@ public class SavePatchInWorkspacePanel extends AbstractDialogPanel {
 		    protected String getWarningMessageImpl(Control input) {
 		    	IFile file = SavePatchInWorkspacePanel.this.makeFile();
 		        if (file != null && file.isAccessible()) {
-		            return SVNTeamUIPlugin.instance().getResource("SavePatchInWorkspace.FileName.Verifier.Warning", new String[] {AbstractFormattedVerifier.FIELD_NAME});
+		            return SVNUIMessages.format(SVNUIMessages.SavePatchInWorkspace_FileName_Verifier_Warning, new String[] {AbstractFormattedVerifier.FIELD_NAME});
 		        }
 		        return null;
 		    }

@@ -19,7 +19,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 
 /**
@@ -39,9 +39,9 @@ public class RelocationChoicesPanel extends AbstractDialogPanel {
 
 	public RelocationChoicesPanel(IProject project) {
 		super();
-		this.dialogTitle = SVNTeamUIPlugin.instance().getResource("RelocationChoicesPanel.Title");
-		this.dialogDescription = SVNTeamUIPlugin.instance().getResource("RelocationChoicesPanel.Description", new String[] {project.getName()});
-		this.defaultMessage = SVNTeamUIPlugin.instance().getResource("RelocationChoicesPanel.Message");
+		this.dialogTitle = SVNUIMessages.RelocationChoicesPanel_Title;
+		this.dialogDescription = SVNUIMessages.format(SVNUIMessages.RelocationChoicesPanel_Description, new String[] {project.getName()});
+		this.defaultMessage = SVNUIMessages.RelocationChoicesPanel_Message;
 	}
 	
 	public int getRecoveryAction() {
@@ -63,7 +63,7 @@ public class RelocationChoicesPanel extends AbstractDialogPanel {
 		Button relocateOthers = new Button(composite, SWT.RADIO);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		relocateOthers.setLayoutData(data);
-		relocateOthers.setText(SVNTeamUIPlugin.instance().getResource("RelocationChoicesPanel.ChangeLocation"));
+		relocateOthers.setText(SVNUIMessages.RelocationChoicesPanel_ChangeLocation);
 		relocateOthers.setSelection(true);
 		this.recoveryAction = RelocationChoicesPanel.RELOCATE_REST_OF_PROJECTS;
 		relocateOthers.addSelectionListener(new SelectionAdapter() {
@@ -77,7 +77,7 @@ public class RelocationChoicesPanel extends AbstractDialogPanel {
 		Button relocateBack = new Button(composite, SWT.RADIO);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		relocateBack.setLayoutData(data);
-		relocateBack.setText(SVNTeamUIPlugin.instance().getResource("RelocationChoicesPanel.RelocateBack"));
+		relocateBack.setText(SVNUIMessages.RelocationChoicesPanel_RelocateBack);
 		relocateBack.setSelection(false);
 		relocateBack.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -90,7 +90,7 @@ public class RelocationChoicesPanel extends AbstractDialogPanel {
 		Button runShareWizard = new Button(composite, SWT.RADIO);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		runShareWizard.setLayoutData(data);
-		runShareWizard.setText(SVNTeamUIPlugin.instance().getResource("RelocationChoicesPanel.CreateLocation"));
+		runShareWizard.setText(SVNUIMessages.RelocationChoicesPanel_CreateLocation);
 		runShareWizard.setSelection(false);
 		runShareWizard.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

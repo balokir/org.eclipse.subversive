@@ -37,6 +37,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.CommentComposite;
 import org.eclipse.team.svn.ui.composite.ResourceSelectionComposite;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
@@ -108,13 +109,13 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 			}
 		}, IResource.DEPTH_INFINITE);
 
-		this.dialogTitle = SVNTeamUIPlugin.instance().getResource(this.nationalizationId + ".Title");
-		this.dialogDescription = SVNTeamUIPlugin.instance().getResource(this.nationalizationId + ".Description");
+		this.dialogTitle = SVNUIMessages.getString(this.nationalizationId + "_Title");
+		this.dialogDescription = SVNUIMessages.getString(this.nationalizationId + "_Description");
 		if (SVNTeamPreferences.getRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_NAME)) {
-			this.defaultMessage = SVNTeamUIPlugin.instance().getResource(this.nationalizationId + ".MessageAuto");
+			this.defaultMessage = SVNUIMessages.getString(this.nationalizationId + "_MessageAuto");
 		}
 		else {
-			this.defaultMessage = SVNTeamUIPlugin.instance().getResource(this.nationalizationId + ".Message");
+			this.defaultMessage = SVNUIMessages.getString(this.nationalizationId + "_Message");
 		}
 
 		this.existingNodesNamesSet = existingNames;
@@ -179,11 +180,11 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 
 		GridLayout layout = new GridLayout();
 		Composite select = null;
-		String substitutionUppercase = SVNTeamUIPlugin.instance().getResource(this.nationalizationId + ".NodeName");
+		String substitutionUppercase = SVNUIMessages.getString(this.nationalizationId + "_NodeName");
 		if (this.startsWith) {
 			select = new Group(parent, SWT.NULL);
 			layout.numColumns = 2;
-			((Group) select).setText(this.considerStructure ? substitutionUppercase : SVNTeamUIPlugin.instance().getResource(this.nationalizationId + ".Location.Group"));
+			((Group) select).setText(this.considerStructure ? substitutionUppercase : SVNUIMessages.getString(this.nationalizationId + "_Location_roup"));
 		}
 		else {
 			select = new Composite(parent, SWT.NONE);
@@ -198,7 +199,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 			Label description = new Label(select, SWT.NONE);
 			data = new GridData();
 			description.setLayoutData(data);
-			description.setText(this.considerStructure ? substitutionUppercase : SVNTeamUIPlugin.instance().getResource(this.nationalizationId + ".Location.Field"));
+			description.setText(this.considerStructure ? substitutionUppercase : SVNUIMessages.getString(this.nationalizationId + "_Location_Field"));
 		}
 		this.createTopPart(select, substitutionUppercase);
 
@@ -213,7 +214,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 			this.startWithCheck = new Button(inner, SWT.CHECK);
 			data = new GridData(GridData.FILL_HORIZONTAL);
 			this.startWithCheck.setLayoutData(data);
-			this.startWithCheck.setText(SVNTeamUIPlugin.instance().getResource(this.nationalizationId + ".StartsWith"));
+			this.startWithCheck.setText(SVNUIMessages.getString(this.nationalizationId + "_StartsWith"));
 			this.startWithCheck.setSelection(false);
 			this.startWithCheck.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
@@ -224,7 +225,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 			this.freezeExternalsCheck = new Button(inner, SWT.CHECK);
 			data = new GridData(GridData.FILL_HORIZONTAL);
 			this.freezeExternalsCheck.setLayoutData(data);
-			this.freezeExternalsCheck.setText(SVNTeamUIPlugin.instance().getResource(this.nationalizationId + ".FreezeExternals"));
+			this.freezeExternalsCheck.setText(SVNUIMessages.getString(this.nationalizationId + "_FreezeExternals"));
 			this.freezeExternalsCheck.setSelection(false);
 		}
 
@@ -240,7 +241,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 		group.setLayout(new GridLayout());
 		data = new GridData(GridData.FILL_BOTH);
 		group.setLayoutData(data);
-		group.setText(SVNTeamUIPlugin.instance().getResource(this.nationalizationId + ".Comment"));
+		group.setText(SVNUIMessages.getString(this.nationalizationId + "_Comment"));
 
 		this.comment = new CommentComposite(group, this);
 		data = new GridData(GridData.FILL_BOTH);
@@ -295,7 +296,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 			protected String getWarningMessage(Control input) {
 				IResource []resources = AbstractBranchTagPanel.this.resourceSelection.getSelectedResources();
 				if ((resources != null && resources.length != 0 || AbstractBranchTagPanel.this.disableSwitch) && AbstractBranchTagPanel.this.startWithCheck.getSelection()) {
-					return AbstractBranchTagPanel.this.defaultMessage + " " + SVNTeamUIPlugin.instance().getResource(AbstractBranchTagPanel.this.nationalizationId + ".Warning");
+					return AbstractBranchTagPanel.this.defaultMessage + " " + SVNUIMessages.getString(AbstractBranchTagPanel.this.nationalizationId + "_Warning");
 				}
 				return null;
 			}
@@ -313,7 +314,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 		this.destinationCombo.setLayoutData(data);
 
 		Button browse = new Button(select, SWT.PUSH);
-		browse.setText(SVNTeamUIPlugin.instance().getResource("Button.Browse"));
+		browse.setText(SVNUIMessages.Button_Browse);
 		data = new GridData();
 		data.widthHint = DefaultDialog.computeButtonWidth(browse);
 		browse.setLayoutData(data);
@@ -323,14 +324,14 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 		if (!this.considerStructure) {
 			this.resourceNameHistory = new UserInputHistory(this.historyName);
 			this.destinationCombo.setText(this.destinationUrl);
-			String name = SVNTeamUIPlugin.instance().getResource(this.nationalizationId + ".Location.Verifier");
+			String name = SVNUIMessages.getString(this.nationalizationId + "_Location_Verifier");
 			verifier.add(new URLVerifier(name));
 			verifier.add(new AbsolutePathVerifier(name));
 			verifier.add(new AbstractVerifier() {
 				protected String getErrorMessage(Control input) {
 					String url = AbstractBranchTagPanel.this.root.getRepositoryLocation().getUrl();
 					if (!AbstractBranchTagPanel.this.destinationCombo.getText().startsWith(url)) {
-						return SVNTeamUIPlugin.instance().getResource(AbstractBranchTagPanel.this.nationalizationId + ".Location.Verifier.DoesNotCorresponds", new String[] {AbstractBranchTagPanel.this.destinationCombo.getText(), url});
+						return SVNUIMessages.format(AbstractBranchTagPanel.this.nationalizationId + "_Location_Verifier_DoesNotCorresponds", new String[] {AbstractBranchTagPanel.this.destinationCombo.getText(), url});
 					}
 					if (AbstractBranchTagPanel.this.startsWith) {
 						if (!AbstractBranchTagPanel.this.destinationCombo.getText().startsWith(AbstractBranchTagPanel.this.root.getUrl())) {
@@ -342,7 +343,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 						}
 					}
 					if (AbstractBranchTagPanel.this.root.getUrl().equals(SVNUtility.normalizeURL(AbstractBranchTagPanel.this.destinationCombo.getText()))) {
-						return SVNTeamUIPlugin.instance().getResource(AbstractBranchTagPanel.this.nationalizationId + ".Location.Verifier.NoTagName");
+						return SVNUIMessages.getString(AbstractBranchTagPanel.this.nationalizationId + "_Location_Verifier_NoTagName");
 					}
 					return null;
 				}
@@ -354,10 +355,10 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 
 			browse.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					RepositoryTreePanel panel = new RepositoryTreePanel(SVNTeamUIPlugin.instance().getResource(
-							AbstractBranchTagPanel.this.nationalizationId + ".SelectionProposal"),
-							SVNTeamUIPlugin.instance().getResource("RepositoryBrowsingPanel.Description"),
-							SVNTeamUIPlugin.instance().getResource("RepositoryBrowsingPanel.Message"),
+					RepositoryTreePanel panel = new RepositoryTreePanel(SVNUIMessages.getString(
+							AbstractBranchTagPanel.this.nationalizationId + "_SelectionProposal"),
+							SVNUIMessages.RepositoryBrowsingPanel_Description,
+							SVNUIMessages.RepositoryBrowsingPanel_Message,
 							null,
 							true,
 							AbstractBranchTagPanel.this.root.getRepositoryLocation());
@@ -375,7 +376,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 		else {
 			this.resourceNameHistory = new UserInputHistory(this.historyName + "Name");
 
-			String name = SVNTeamUIPlugin.instance().getResource(this.nationalizationId + ".NodeName.Verifier");
+			String name = SVNUIMessages.getString(this.nationalizationId + "_NodeName_Verifier");
 			verifier.add(new NonEmptyFieldVerifier(name) {
 				protected String getErrorMessageImpl(Control input) {
 					String msg = super.getErrorMessageImpl(input);
@@ -396,7 +397,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 				protected String getWarningMessage(Control input) {
 					String name = AbstractBranchTagPanel.this.destinationCombo.getText();
 					if (AbstractBranchTagPanel.this.existingNodesNamesSet != null && AbstractBranchTagPanel.this.existingNodesNamesSet.contains(name)) {
-						return SVNTeamUIPlugin.instance().getResource(AbstractBranchTagPanel.this.nationalizationId + ".NodeName.Verifier.Error.Exists", new String[] {name});
+						return SVNUIMessages.format(AbstractBranchTagPanel.this.nationalizationId + "_NodeName_Verifier_Error_Exists", new String[] {name});
 					}
 					return null;
 				}
@@ -404,10 +405,10 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 
 			browse.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					RepositoryTreePanel panel = new RepositoryTreePanel(SVNTeamUIPlugin.instance().getResource(
-							AbstractBranchTagPanel.this.nationalizationId + ".SelectionProposal"),
-							SVNTeamUIPlugin.instance().getResource("RepositoryBrowsingPanel.Description"),
-							SVNTeamUIPlugin.instance().getResource("RepositoryBrowsingPanel.Message"),
+					RepositoryTreePanel panel = new RepositoryTreePanel(SVNUIMessages.getString(
+							AbstractBranchTagPanel.this.nationalizationId + "_SelectionProposal"),
+							SVNUIMessages.RepositoryBrowsingPanel_Description,
+							SVNUIMessages.RepositoryBrowsingPanel_Message,
 							null,
 							true,
 							AbstractBranchTagPanel.this.root.getRoot());
@@ -476,7 +477,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 				IResource[] resourcesToProcess = AbstractBranchTagPaneParticipantHelper.this.getSelectedResources();
 				
 				if ((resourcesToProcess.length == 0 || AbstractBranchTagPanel.this.disableSwitch) && AbstractBranchTagPanel.this.startWithCheck.getSelection()) {
-					return AbstractBranchTagPanel.this.defaultMessage + " " + SVNTeamUIPlugin.instance().getResource(AbstractBranchTagPanel.this.nationalizationId + ".Warning");
+					return AbstractBranchTagPanel.this.defaultMessage + " " + SVNUIMessages.getString(AbstractBranchTagPanel.this.nationalizationId + "_Warning");
 				}
 				return null;
 			}	

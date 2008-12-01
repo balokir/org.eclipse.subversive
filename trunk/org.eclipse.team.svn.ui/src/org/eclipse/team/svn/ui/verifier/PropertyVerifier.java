@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.ui.verifier;
 
-import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,7 +18,7 @@ import java.util.regex.Pattern;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.SVNUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * Property verifier. Checks the property value to match property regExp
@@ -61,13 +60,13 @@ public class PropertyVerifier extends AbstractFormattedVerifier {
 				}
 			}
 			catch (Exception ex) {
-				return SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.Verifier." + this.propName);
+				return SVNUIMessages.getString("PropertyEditPanel_Verifier_" + this.propName);
 			}
 			return null;
 		}
 		if (this.propName.equals("bugtraqmessage")) {
 			if (!inputText.contains("%BUGID%")) {
-				return SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.Verifier." + this.propName);
+				return SVNUIMessages.getString("PropertyEditPanel_Verifier_" + this.propName);
 			}
 			return null;
 		}
@@ -76,7 +75,7 @@ public class PropertyVerifier extends AbstractFormattedVerifier {
 				SVNUtility.parseSVNExternalsProperty(inputText, this.base);
 			}
 			catch (Exception ex) {
-				return SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.Verifier." + this.propName);
+				return SVNUIMessages.getString("PropertyEditPanel_Verifier_" + this.propName);
 			}
 			return null;
 		}
@@ -85,17 +84,18 @@ public class PropertyVerifier extends AbstractFormattedVerifier {
 				new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(inputText);
 			}
 			catch (Exception ex) {
-				return SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.Verifier." + this.propName, new String [] {"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"});
+				return SVNUIMessages.format("PropertyEditPanel_Verifier_" + this.propName, new String [] {"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"});
 			}
 			return null;
 		}
 		Matcher matcher = this.pattern.matcher(inputText);
 		if (!matcher.matches()) {
-			String retVal = SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.Verifier." + this.propName);
-			if (retVal.equals("PropertyEditPanel.Verifier." + this.propName)) {
-				return MessageFormat.format(SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.regExp.Verifier"), this.pattern.pattern());
+			String retVal = SVNUIMessages.getString("PropertyEditPanel_Verifier_" + this.propName);
+			//TODO check if this is a valid statement
+			if (retVal.equals("PropertyEditPanel_Verifier_" + this.propName)) {
+				return SVNUIMessages.format(SVNUIMessages.PropertyEditPanel_regExp_Verifier, new String[]{this.pattern.pattern()});
 			}
-			return SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.Verifier." + this.propName);
+			return SVNUIMessages.getString("PropertyEditPanel_Verifier_" + this.propName);
 		}
 		return null;
 	}	
@@ -107,7 +107,7 @@ public class PropertyVerifier extends AbstractFormattedVerifier {
 		if (this.propName.equals("svnauthor")
 				|| this.propName.equals("svnlog")
 				|| this.propName.equals("svndate")) {
-			return SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.Verifier.Warning." + this.propName);
+			return SVNUIMessages.getString("PropertyEditPanel_Verifier_Warning_" + this.propName);
 		}
 		return null;
 	}

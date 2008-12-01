@@ -19,12 +19,12 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNLock;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFictiveNode;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFictiveWorkingDirectory;
 import org.eclipse.team.svn.ui.repository.model.RepositoryPending;
@@ -45,9 +45,9 @@ public class RepositoryBrowserLabelProvider implements ITableLabelProvider {
 
 	public RepositoryBrowserLabelProvider(RepositoryBrowserTableViewer tableViewer) {
 		this.images = new HashMap<ImageDescriptor, Image>();
-		RepositoryBrowserLabelProvider.noAuthor = SVNTeamPlugin.instance().getResource("SVNInfo.NoAuthor");
-		RepositoryBrowserLabelProvider.noDate = SVNTeamPlugin.instance().getResource("SVNInfo.NoDate");
-		RepositoryBrowserLabelProvider.hasProps = SVNTeamUIPlugin.instance().getResource("RepositoriesView.Browser.HasProps");
+		RepositoryBrowserLabelProvider.noAuthor = SVNMessages.SVNInfo_NoAuthor;
+		RepositoryBrowserLabelProvider.noDate = SVNMessages.SVNInfo_NoDate;
+		RepositoryBrowserLabelProvider.hasProps = SVNUIMessages.RepositoriesView_Browser_HasProps;
 	}
 	
 	public Image getColumnImage(Object element, int columnIndex) {
@@ -115,11 +115,11 @@ public class RepositoryBrowserLabelProvider implements ITableLabelProvider {
 						revision = String.valueOf(((RepositoryResource)element).getRevision());
 					}
 					else {
-						revision = SVNTeamUIPlugin.instance().getResource(RepositoryPending.PENDING);
+						revision = SVNUIMessages.getString(RepositoryPending.PENDING);
 					}
 				}
 				catch (Exception ex) {
-					LoggedOperation.reportError(SVNTeamUIPlugin.instance().getResource("Error.GetColumnText"), ex);
+					LoggedOperation.reportError(SVNUIMessages.Error_GetColumnText, ex);
 				}
 				return revision;
 			}

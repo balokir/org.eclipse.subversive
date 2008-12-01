@@ -16,7 +16,7 @@ import java.util.Collection;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.panel.participant.BasePaneParticipant;
 import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
 import org.eclipse.team.ui.synchronize.ResourceScope;
@@ -31,16 +31,16 @@ public class OverrideResourcesPanel extends AbstractResourceSelectionPanel {
 	public static final int MSG_UPDATE = 1;
 	
 	protected static final String []MESSAGES = new String[] {
-		"OverrideResourcesPanel.Description.Commit",
-		"OverrideResourcesPanel.Description.Update"
+		"OverrideResourcesPanel_Description_Commit",
+		"OverrideResourcesPanel_Description_Update"
 	};
 	
     public OverrideResourcesPanel(IResource []resources, IResource[] userSelectedResources, int msgId) {
         super(resources, userSelectedResources, new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL});
-        this.dialogTitle = SVNTeamUIPlugin.instance().getResource("OverrideResourcesPanel.Title");
-        this.dialogDescription = SVNTeamUIPlugin.instance().getResource(OverrideResourcesPanel.MESSAGES[msgId]);
+        this.dialogTitle = SVNUIMessages.OverrideResourcesPanel_Title;
+        this.dialogDescription = SVNUIMessages.getString(OverrideResourcesPanel.MESSAGES[msgId]);
         boolean isParticipantPane = this.paneParticipantHelper.isParticipantPane();
-        this.defaultMessage = SVNTeamUIPlugin.instance().getResource(isParticipantPane ? "OverrideResourcesPanel.Pane.Message" : "OverrideResourcesPanel.Message");
+        this.defaultMessage = isParticipantPane ? SVNUIMessages.OverrideResourcesPanel_Pane_Message : SVNUIMessages.OverrideResourcesPanel_Message;
     }
 	
     public String getHelpId() {

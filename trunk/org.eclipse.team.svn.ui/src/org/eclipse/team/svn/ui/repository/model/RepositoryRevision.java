@@ -18,7 +18,7 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
@@ -35,7 +35,7 @@ public class RepositoryRevision extends RepositoryFictiveNode implements IParent
 	protected SVNRevision revision;
 	
 	public RepositoryRevision(RepositoryRevisions parent, SVNRevision revision) {
-		RepositoryRevision.REVISION_NAME = SVNTeamUIPlugin.instance().getResource("RepositoriesView.Model.Revision");
+		RepositoryRevision.REVISION_NAME = SVNUIMessages.RepositoriesView_Model_Revision;
 		this.parent = parent;
 		this.revision = revision;
 		this.refresh();

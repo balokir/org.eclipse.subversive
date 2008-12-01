@@ -39,6 +39,7 @@ import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.PatternProvider;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifier;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifierProxy;
@@ -72,12 +73,12 @@ public class ProjectLocationSelectionPage extends AbstractVerifiedWizardPage {
 
 	public ProjectLocationSelectionPage(boolean multiple, ProjectsSelectionPage projectsSelectionPage) {
 		super(ProjectLocationSelectionPage.class.getName(), 
-			SVNTeamUIPlugin.instance().getResource("ProjectLocationSelectionPage.Title"), 
+			SVNUIMessages.ProjectLocationSelectionPage_Title, 
 			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
 		
-		ProjectLocationSelectionPage.DEFAULT_WORKING_SET = SVNTeamUIPlugin.instance().getResource("ProjectLocationSelectionPage.DefaultWS");
+		ProjectLocationSelectionPage.DEFAULT_WORKING_SET = SVNUIMessages.ProjectLocationSelectionPage_DefaultWS;
 		
-		this.setDescription(SVNTeamUIPlugin.instance().getResource(multiple ? "ProjectLocationSelectionPage.Description.Multi" : "ProjectLocationSelectionPage.Description.Single"));
+		this.setDescription(multiple ? SVNUIMessages.ProjectLocationSelectionPage_Description_Multi : SVNUIMessages.ProjectLocationSelectionPage_Description_Single);
 		String framework = System.getProperties().getProperty("osgi.framework.version");
 		try {
 			int version = Integer.parseInt(PatternProvider.replaceAll(framework, "\\.", "").substring(0, 2));
@@ -128,7 +129,7 @@ public class ProjectLocationSelectionPage extends AbstractVerifiedWizardPage {
 		layout = new GridLayout();
 		layout.numColumns = 2;
 		locationSelectionGroup.setLayout(layout);
-		locationSelectionGroup.setText(SVNTeamUIPlugin.instance().getResource("ProjectLocationSelectionPage.Location"));
+		locationSelectionGroup.setText(SVNUIMessages.ProjectLocationSelectionPage_Location);
 
 		this.useDefaultLocationButton = new Button(locationSelectionGroup, SWT.CHECK);
 
@@ -139,7 +140,7 @@ public class ProjectLocationSelectionPage extends AbstractVerifiedWizardPage {
 		data.horizontalSpan = 2;
 		this.useDefaultLocationButton.setLayoutData(data);
 		this.useDefaultLocationButton.setSelection(true);
-		this.useDefaultLocationButton.setText(SVNTeamUIPlugin.instance().getResource("ProjectLocationSelectionPage.UseDefaultLocation"));
+		this.useDefaultLocationButton.setText(SVNUIMessages.ProjectLocationSelectionPage_UseDefaultLocation);
 		this.useDefaultLocationButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				ProjectLocationSelectionPage.this.validateContent();
@@ -154,7 +155,7 @@ public class ProjectLocationSelectionPage extends AbstractVerifiedWizardPage {
 		this.locationField.setEnabled(false);
 		CompositeVerifier verifier = new CompositeVerifier();
 		verifier.add(new ProjectLocationSelectionPage.LocationVerifier(this.projectsSelectionPage, this.defaultLocation, this.sinceEclipse_3_2, this.useDefaultLocationButton));
-		verifier.add(new AbstractVerifierProxy(new ExistingResourceVerifier(SVNTeamUIPlugin.instance().getResource("ProjectLocationSelectionPage.Location.Verifier"), false)) {
+		verifier.add(new AbstractVerifierProxy(new ExistingResourceVerifier(SVNUIMessages.ProjectLocationSelectionPage_Location_Verifier, false)) {
 			protected boolean isVerificationEnabled(Control input) {
 				return !ProjectLocationSelectionPage.this.useDefaultLocationButton.getSelection();
 			}
@@ -166,7 +167,7 @@ public class ProjectLocationSelectionPage extends AbstractVerifiedWizardPage {
 			}
 		});
 		
-		this.browse.setText(SVNTeamUIPlugin.instance().getResource("Button.Browse"));
+		this.browse.setText(SVNUIMessages.Button_Browse);
 		data = new GridData();
 		data.widthHint = DefaultDialog.computeButtonWidth(this.browse);
 		this.browse.setLayoutData(data);		
@@ -190,7 +191,7 @@ public class ProjectLocationSelectionPage extends AbstractVerifiedWizardPage {
 		workingSetComposite.setLayoutData(data);
 		
 		Label wSetLabel = new Label(workingSetComposite, SWT.NONE);
-		wSetLabel.setText(SVNTeamUIPlugin.instance().getResource("ProjectLocationSelectionPage.SelectWS"));
+		wSetLabel.setText(SVNUIMessages.ProjectLocationSelectionPage_SelectWS);
 		
 		this.workingSetNameCombo = new Combo(workingSetComposite, SWT.NULL);
 		data = new GridData(GridData.FILL_HORIZONTAL);
@@ -206,7 +207,7 @@ public class ProjectLocationSelectionPage extends AbstractVerifiedWizardPage {
 			}
 		});
 		this.workingSetNameCombo.setText(ProjectLocationSelectionPage.DEFAULT_WORKING_SET);
-		this.attachTo(this.workingSetNameCombo, new NonEmptyFieldVerifier(SVNTeamUIPlugin.instance().getResource("ProjectLocationSelectionPage.WorkingSet.Verifier")));
+		this.attachTo(this.workingSetNameCombo, new NonEmptyFieldVerifier(SVNUIMessages.ProjectLocationSelectionPage_WorkingSet_Verifier));
 		
 //		Setting context help
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.projectLocationSelectionContext");
@@ -250,14 +251,14 @@ public class ProjectLocationSelectionPage extends AbstractVerifiedWizardPage {
 			String inputLocation = this.useDefaultLocationButton.getSelection() ? this.defaultLocation : FileUtility.formatPath(this.getText(input));
 			if (inputLocation.startsWith(this.defaultLocation) && !this.sinceEclipse_3_2) {
 				if (respectHierarchy || inputLocation.length() > this.defaultLocation.length()) {
-					return SVNTeamUIPlugin.instance().getResource("ProjectLocationSelectionPage.Location.Verifier.Error.Eclipse32");
+					return SVNUIMessages.ProjectLocationSelectionPage_Location_Verifier_Error_Eclipse32;
 				}
 			}
 			IProject []projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 			for (int i = 0; i < projects.length; i++) {
 				IPath location = projects[i].getLocation();
 				if (location != null && location.isPrefixOf(new Path(inputLocation + parent))) {
-					return SVNTeamUIPlugin.instance().getResource("ProjectLocationSelectionPage.Location.Verifier.Error.ExistingProject", new String[] {location.toString()});
+					return SVNUIMessages.format(SVNUIMessages.ProjectLocationSelectionPage_Location_Verifier_Error_ExistingProject, new String[] {location.toString()});
 				}
 			}
 			return null;

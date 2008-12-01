@@ -47,10 +47,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
-import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.extension.factory.ICommentView;
 import org.eclipse.team.svn.ui.history.data.RootHistoryCategory;
@@ -253,14 +253,14 @@ public class LogMessagesComposite extends SashForm {
 		TreeColumn col = new TreeColumn(treeTable, SWT.NONE);
 		col.setResizable(true);
 		col.setAlignment(SWT.RIGHT);
-		col.setText(SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Revision"));
+		col.setText(SVNUIMessages.LogMessagesComposite_Revision);
 		col.addSelectionListener(comparator);
 		layout.addColumnData(new ColumnWeightData(14, true));
 	
 		// creation date
 		col = new TreeColumn(treeTable, SWT.NONE);
 		col.setResizable(true);
-		col.setText(SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Date"));
+		col.setText(SVNUIMessages.LogMessagesComposite_Date);
 		col.addSelectionListener(comparator);
 		layout.addColumnData(new ColumnWeightData(15, true));
 	
@@ -268,21 +268,21 @@ public class LogMessagesComposite extends SashForm {
 		col = new TreeColumn(treeTable, SWT.NONE);
 		col.setResizable(true);
 		col.setAlignment(SWT.RIGHT);
-		col.setText(SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Changes"));
+		col.setText(SVNUIMessages.LogMessagesComposite_Changes);
 		col.addSelectionListener(comparator);
 		layout.addColumnData(new ColumnWeightData(7, true));
 		
 		// author
 		col = new TreeColumn(treeTable, SWT.NONE);
 		col.setResizable(true);
-		col.setText(SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Author"));
+		col.setText(SVNUIMessages.LogMessagesComposite_Author);
 		col.addSelectionListener(comparator);
 		layout.addColumnData(new ColumnWeightData(14, true));
 	
 		//comment
 		col = new TreeColumn(treeTable, SWT.NONE);
 		col.setResizable(true);
-		col.setText(SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Comment"));
+		col.setText(SVNUIMessages.LogMessagesComposite_Comment);
 		col.addSelectionListener(comparator);
 		layout.addColumnData(new ColumnWeightData(50, true));
 		
@@ -327,7 +327,7 @@ public class LogMessagesComposite extends SashForm {
 					if (this.oldSelection != selection || this.hideUnrelated != LogMessagesComposite.this.info.isRelatedPathsOnly()) {
 						String message = selection.getComment();
 						if (message == null || message.length() == 0) {
-							message = selection.getType() == ILogNode.TYPE_SVN ? SVNTeamPlugin.instance().getResource("SVNInfo.NoComment") : "";
+							message = selection.getType() == ILogNode.TYPE_SVN ? SVNMessages.SVNInfo_NoComment : "";
 						}
 						LogMessagesComposite.this.commentViewManager.setComment(message);
 

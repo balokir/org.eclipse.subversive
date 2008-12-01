@@ -14,7 +14,7 @@ package org.eclipse.team.svn.ui.verifier;
 import java.io.File;
 
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * Existing file verifier
@@ -61,8 +61,8 @@ public class ExistingResourceVerifier extends AbstractFormattedVerifier {
     }
 
     private void init() {
-    	ExistingResourceVerifier.ERROR_MESSAGE_DOES_NOT_EXIST = SVNTeamUIPlugin.instance().getResource("Verifier.ExistingResource.NotExists", new String[] {AbstractFormattedVerifier.FIELD_NAME});
-    	ExistingResourceVerifier.ERROR_MESSAGE_IS_NOT_A_FILE = SVNTeamUIPlugin.instance().getResource("Verifier.ExistingResource.IsNotAFile", new String[] {AbstractFormattedVerifier.FIELD_NAME});
-    	ExistingResourceVerifier.ERROR_MESSAGE_IS_NOT_A_DIRECTORY = SVNTeamUIPlugin.instance().getResource("Verifier.ExistingResource.IsNotADir", new String[] {AbstractFormattedVerifier.FIELD_NAME});
+    	ExistingResourceVerifier.ERROR_MESSAGE_DOES_NOT_EXIST = SVNUIMessages.format(SVNUIMessages.Verifier_ExistingResource_NotExists, new String[] {AbstractFormattedVerifier.FIELD_NAME});
+    	ExistingResourceVerifier.ERROR_MESSAGE_IS_NOT_A_FILE = SVNUIMessages.format(SVNUIMessages.Verifier_ExistingResource_IsNotAFile, new String[] {AbstractFormattedVerifier.FIELD_NAME});
+    	ExistingResourceVerifier.ERROR_MESSAGE_IS_NOT_A_DIRECTORY = SVNUIMessages.format(SVNUIMessages.Verifier_ExistingResource_IsNotADir, new String[] {AbstractFormattedVerifier.FIELD_NAME});
     }
 }

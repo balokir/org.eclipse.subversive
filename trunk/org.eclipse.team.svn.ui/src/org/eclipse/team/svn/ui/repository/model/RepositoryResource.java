@@ -37,6 +37,7 @@ import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource.Information;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.decorator.DecoratorVariables;
 import org.eclipse.team.svn.ui.decorator.IVariable;
 import org.eclipse.team.svn.ui.decorator.IVariableContentProvider;
@@ -146,8 +147,8 @@ public abstract class RepositoryResource implements IWorkbenchAdapter, IWorkbenc
 	        retVal += this.getRevision();
 		}
 		catch (Exception e) {
-			LoggedOperation.reportError(SVNTeamUIPlugin.instance().getResource("Error.FormatLabel"), e);
-			retVal += SVNTeamUIPlugin.instance().getResource(RepositoryError.ERROR_MSG);
+			LoggedOperation.reportError(SVNUIMessages.Error_FormatLabel, e);
+			retVal += SVNUIMessages.getString(RepositoryError.ERROR_MSG);
 		}
 		return retVal;
 	}
@@ -302,7 +303,7 @@ public abstract class RepositoryResource implements IWorkbenchAdapter, IWorkbenc
 	
 	public String getRevision() throws Exception {
 		if (this.revisionOp != null) {
-			return this.revisionOp.getRevision() == SVNRevision.INVALID_REVISION_NUMBER ? SVNTeamUIPlugin.instance().getResource(this.revisionOp.getExecutionState() == IActionOperation.ERROR ? RepositoryError.ERROR_MSG : RepositoryPending.PENDING) : String.valueOf(this.revisionOp.getRevision());
+			return this.revisionOp.getRevision() == SVNRevision.INVALID_REVISION_NUMBER ? SVNUIMessages.getString(this.revisionOp.getExecutionState() == IActionOperation.ERROR ? RepositoryError.ERROR_MSG : RepositoryPending.PENDING) : String.valueOf(this.revisionOp.getRevision());
 		}
 		
 		if (this.resource.isInfoCached()) {
@@ -320,7 +321,7 @@ public abstract class RepositoryResource implements IWorkbenchAdapter, IWorkbenc
             }
         });
 		
-		return SVNTeamUIPlugin.instance().getResource(RepositoryPending.PENDING);
+		return SVNUIMessages.getString(RepositoryPending.PENDING);
 	}
 
 	protected RepositoryTreeViewer getViewer() {

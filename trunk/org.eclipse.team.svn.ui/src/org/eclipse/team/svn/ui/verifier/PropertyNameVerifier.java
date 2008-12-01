@@ -16,7 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * Property name verifier
@@ -30,14 +30,14 @@ public class PropertyNameVerifier extends AbstractFormattedVerifier {
         
     public PropertyNameVerifier(String fieldName) {
         super(fieldName);
-        PropertyNameVerifier.ERROR_MESSAGE_LETTER = SVNTeamUIPlugin.instance().getResource("Verifier.PropertyName.Letter", new String[] {AbstractFormattedVerifier.FIELD_NAME});
-        PropertyNameVerifier.ERROR_MESSAGE_SYMBOLS = SVNTeamUIPlugin.instance().getResource("Verifier.PropertyName.Symbols", new String[] {AbstractFormattedVerifier.FIELD_NAME});
+        PropertyNameVerifier.ERROR_MESSAGE_LETTER = SVNUIMessages.format(SVNUIMessages.Verifier_PropertyName_Letter, new String[] {AbstractFormattedVerifier.FIELD_NAME});
+        PropertyNameVerifier.ERROR_MESSAGE_SYMBOLS = SVNUIMessages.format(SVNUIMessages.Verifier_PropertyName_Symbols, new String[] {AbstractFormattedVerifier.FIELD_NAME});
         this.ignoreStrings = new HashSet<String>();
-        this.ignoreStrings.add(SVNTeamUIPlugin.instance().getResource("AbstractPropertyEditPanel.svn_description"));
-        this.ignoreStrings.add(SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.tsvn_description"));
-        this.ignoreStrings.add(SVNTeamUIPlugin.instance().getResource("PropertyEditPanel.bugtraq_description"));
-        this.ignoreStrings.add(SVNTeamUIPlugin.instance().getResource("AbstractPropertyEditPanel.custom_description"));
-        this.ignoreStrings.add("    "  + SVNTeamUIPlugin.instance().getResource("AbstractPropertyEditPanel.custom_hint"));
+        this.ignoreStrings.add(SVNUIMessages.AbstractPropertyEditPanel_svn_description);
+        this.ignoreStrings.add(SVNUIMessages.PropertyEditPanel_tsvn_description);
+        this.ignoreStrings.add(SVNUIMessages.PropertyEditPanel_bugtraq_description);
+        this.ignoreStrings.add(SVNUIMessages.AbstractPropertyEditPanel_custom_description);
+        this.ignoreStrings.add("    "  + SVNUIMessages.AbstractPropertyEditPanel_custom_hint);
     }
 
     protected String getErrorMessageImpl(Control input) {
@@ -46,7 +46,7 @@ public class PropertyNameVerifier extends AbstractFormattedVerifier {
             return null;
         }
         if (this.ignoreStrings.contains(property)) {
-        	return SVNTeamUIPlugin.instance().getResource("AbstractPropertyEditPanel.Name.Verifier.IgnoreStrings");
+        	return SVNUIMessages.AbstractPropertyEditPanel_Name_Verifier_IgnoreStrings;
         }
         Pattern pattern = Pattern.compile("[a-zA-Z].*");
         Matcher matcher = pattern.matcher(property);

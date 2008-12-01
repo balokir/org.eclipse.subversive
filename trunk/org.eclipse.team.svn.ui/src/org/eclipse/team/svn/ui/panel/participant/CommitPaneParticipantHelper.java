@@ -17,7 +17,7 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.utility.FileUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * @author Igor Burilo
@@ -52,7 +52,7 @@ public class CommitPaneParticipantHelper extends PaneParticipantHelper {
 			if (errorMessage == null) {
 				IResource[] resourcesToProcess = CommitPaneParticipantHelper.this.getSelectedResources();
 				if (FileUtility.checkForResourcesPresenceRecursive(resourcesToProcess, IStateFilter.SF_CONFLICTING)) {
-					return SVNTeamUIPlugin.instance().getResource("CommitPanel.Pane.Conflicting.Error");
+					return SVNUIMessages.CommitPanel_Pane_Conflicting_Error;
 				}
 				return null;
 			}

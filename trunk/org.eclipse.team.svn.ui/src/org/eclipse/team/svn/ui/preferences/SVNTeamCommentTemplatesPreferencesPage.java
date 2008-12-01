@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.SpellcheckedTextProvider;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.common.EditCommentTemplatePanel;
@@ -125,7 +126,7 @@ public class SVNTeamCommentTemplatesPreferencesPage extends AbstractSVNTeamPrefe
 		Label label = new Label(checkBoxComposite, SWT.NONE);
 		GridData data = new GridData();
 		label.setLayoutData(data);
-		String labelText = SVNTeamUIPlugin.instance().getResource("CommentTemplatesPreferencePage.historySavedCommentsCount");
+		String labelText = SVNUIMessages.CommentTemplatesPreferencePage_historySavedCommentsCount;
 		label.setText(labelText);
 		
 		this.savedCommentsCountField = new Text(checkBoxComposite, SWT.SINGLE | SWT.BORDER);
@@ -149,7 +150,7 @@ public class SVNTeamCommentTemplatesPreferencesPage extends AbstractSVNTeamPrefe
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		this.useLogTemplatesButton.setLayoutData(data);
-		this.useLogTemplatesButton.setText(SVNTeamUIPlugin.instance().getResource("CommentTemplatesPreferencePage.LogTemplates"));
+		this.useLogTemplatesButton.setText(SVNUIMessages.CommentTemplatesPreferencePage_LogTemplates);
 		this.useLogTemplatesButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				SVNTeamCommentTemplatesPreferencesPage.this.logTemplatesEnabled = ((Button)e.widget).getSelection();
@@ -160,7 +161,7 @@ public class SVNTeamCommentTemplatesPreferencesPage extends AbstractSVNTeamPrefe
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		this.useTemplatesButton.setLayoutData(data);
-		this.useTemplatesButton.setText(SVNTeamUIPlugin.instance().getResource("CommentTemplatesPreferencePage.UserTemplates"));
+		this.useTemplatesButton.setText(SVNUIMessages.CommentTemplatesPreferencePage_UserTemplates);
 		this.useTemplatesButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				SVNTeamCommentTemplatesPreferencesPage.this.selectionChanged(null);
@@ -173,7 +174,7 @@ public class SVNTeamCommentTemplatesPreferencesPage extends AbstractSVNTeamPrefe
 		separator.setLayoutData(data);
 		
 		Label templatesLabel = new Label(composite, SWT.NONE);
-		templatesLabel.setText(SVNTeamUIPlugin.instance().getResource("CommentTemplatesPreferencePage.EditHint"));
+		templatesLabel.setText(SVNUIMessages.CommentTemplatesPreferencePage_EditHint);
 
 		this.createTemplatesList(composite);
 		
@@ -233,7 +234,7 @@ public class SVNTeamCommentTemplatesPreferencesPage extends AbstractSVNTeamPrefe
 		data = new GridData();
 		data.horizontalSpan = 2;
 		previewLabel.setLayoutData(data);
-		previewLabel.setText(SVNTeamUIPlugin.instance().getResource("CommentTemplatesPreferencePage.ViewHint"));
+		previewLabel.setText(SVNUIMessages.CommentTemplatesPreferencePage_ViewHint);
 		
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.heightHint = this.convertHeightInCharsToPixels(5);
@@ -251,7 +252,7 @@ public class SVNTeamCommentTemplatesPreferencesPage extends AbstractSVNTeamPrefe
 		buttons.setLayout(layout);
 
 		this.newButton = new Button(buttons, SWT.PUSH);
-		this.newButton.setText(SVNTeamUIPlugin.instance().getResource("Button.New"));
+		this.newButton.setText(SVNUIMessages.Button_New);
 		GridData data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		data.widthHint = DefaultDialog.computeButtonWidth(this.newButton);
@@ -264,7 +265,7 @@ public class SVNTeamCommentTemplatesPreferencesPage extends AbstractSVNTeamPrefe
 		});
 
 		this.editButton = new Button(buttons, SWT.PUSH);
-		this.editButton.setText(SVNTeamUIPlugin.instance().getResource("Button.Edit"));
+		this.editButton.setText(SVNUIMessages.Button_Edit);
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		data.widthHint = DefaultDialog.computeButtonWidth(this.editButton);
@@ -277,7 +278,7 @@ public class SVNTeamCommentTemplatesPreferencesPage extends AbstractSVNTeamPrefe
 		});
 
 		this.removeButton = new Button(buttons, SWT.PUSH);
-		this.removeButton.setText(SVNTeamUIPlugin.instance().getResource("Button.Remove"));
+		this.removeButton.setText(SVNUIMessages.Button_Remove);
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		data.widthHint = DefaultDialog.computeButtonWidth(this.removeButton);

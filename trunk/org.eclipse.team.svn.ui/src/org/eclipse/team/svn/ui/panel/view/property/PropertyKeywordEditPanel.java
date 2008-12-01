@@ -50,7 +50,7 @@ import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.StringMatcher;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.utility.ArrayStructuredContentProvider;
@@ -102,9 +102,9 @@ public class PropertyKeywordEditPanel extends AbstractDialogPanel {
 				return resource instanceof IContainer;
 			}
 		}, IResource.DEPTH_ZERO);
-		this.dialogTitle = SVNTeamUIPlugin.instance().getResource("PropertyKeywordEditPanel.Title");
-		this.dialogDescription = SVNTeamUIPlugin.instance().getResource("PropertyKeywordEditPanel.Description");
-		this.defaultMessage = SVNTeamUIPlugin.instance().getResource(this.alreadyWithProperties.length > 1? "PropertyKeywordEditPanel.Message.Single" : "PropertyKeywordEditPanel.Message.Multi");
+		this.dialogTitle = SVNUIMessages.PropertyKeywordEditPanel_Title;
+		this.dialogDescription = SVNUIMessages.PropertyKeywordEditPanel_Description;
+		this.defaultMessage = this.alreadyWithProperties.length > 1? SVNUIMessages.PropertyKeywordEditPanel_Message_Single : SVNUIMessages.PropertyKeywordEditPanel_Message_Multi;
 		
 		this.initializeKeywordElements();
 	}
@@ -124,15 +124,15 @@ public class PropertyKeywordEditPanel extends AbstractDialogPanel {
 		this.checkboxViewer.getTable().setLayout(tlayout);
 		   
 		TableColumn column = new TableColumn(this.checkboxViewer.getTable(), SWT.LEFT);
-		column.setText(SVNTeamUIPlugin.instance().getResource("PropertyKeywordEditPanel.Keyword"));
+		column.setText(SVNUIMessages.PropertyKeywordEditPanel_Keyword);
 		tlayout.addColumnData(new ColumnWeightData(20, true));
 	       
 		column = new TableColumn(this.checkboxViewer.getTable(), SWT.LEFT);
-		column.setText(SVNTeamUIPlugin.instance().getResource("PropertyKeywordEditPanel.Description1"));
+		column.setText(SVNUIMessages.PropertyKeywordEditPanel_Description1);
 		tlayout.addColumnData(new ColumnWeightData(50, true));
 		
 		column = new TableColumn(this.checkboxViewer.getTable(), SWT.LEFT);
-		column.setText(SVNTeamUIPlugin.instance().getResource("PropertyKeywordEditPanel.Sample"));
+		column.setText(SVNUIMessages.PropertyKeywordEditPanel_Sample);
 		tlayout.addColumnData(new ColumnWeightData(30, true));
 		
 		KeywordTableElement[] elements = new KeywordTableElement[] {this.dateElement, this.revisionElement, this.lastChangedByElement, this.headUrlElement, this.idElement};
@@ -217,7 +217,7 @@ public class PropertyKeywordEditPanel extends AbstractDialogPanel {
 			maskComposite.setLayout(layout);
 			maskComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			this.useMaskCheckbox = new Button(maskComposite, SWT.CHECK);
-			this.useMaskCheckbox.setText(SVNTeamUIPlugin.instance().getResource("PropertyKeywordEditPanel.UseMask"));
+			this.useMaskCheckbox.setText(SVNUIMessages.PropertyKeywordEditPanel_UseMask);
 			this.maskHistory = new UserInputHistory("keywordsEditPanel");
 			this.maskText = new Combo(maskComposite, SWT.BORDER);
 			this.maskText.setItems(this.maskHistory.getHistory());
@@ -234,7 +234,7 @@ public class PropertyKeywordEditPanel extends AbstractDialogPanel {
 				}
 			});
 			this.attachTo(this.maskText,
-					new AbstractVerifierProxy(new NonEmptyFieldVerifier(SVNTeamUIPlugin.instance().getResource("PropertyKeywordEditPanel.Mask.Verifier"))) {
+					new AbstractVerifierProxy(new NonEmptyFieldVerifier(SVNUIMessages.PropertyKeywordEditPanel_Mask_Verifier)) {
 						protected boolean isVerificationEnabled(Control input) {
 							return PropertyKeywordEditPanel.this.useMaskCheckbox.getSelection();
 						}
@@ -258,7 +258,7 @@ public class PropertyKeywordEditPanel extends AbstractDialogPanel {
 			
 			if (this.recursionEnabled) {
 				this.setRecursivelyCheckbox = new Button(subComposite, SWT.CHECK);
-				this.setRecursivelyCheckbox.setText(SVNTeamUIPlugin.instance().getResource("PropertyKeywordEditPanel.Recursively"));
+				this.setRecursivelyCheckbox.setText(SVNUIMessages.PropertyKeywordEditPanel_Recursively);
 				this.setRecursivelyCheckbox.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END));
 				this.setRecursivelyCheckbox.setSelection(true);
 				this.setRecursivelyCheckbox.addSelectionListener(new SelectionListener() {
@@ -397,7 +397,7 @@ public class PropertyKeywordEditPanel extends AbstractDialogPanel {
 		tComposite.setData(data);
 		   
 		Button selectButton = new Button(tComposite, SWT.PUSH);
-		selectButton.setText(SVNTeamUIPlugin.instance().getResource("Button.SelectAll"));
+		selectButton.setText(SVNUIMessages.Button_SelectAll);
 		data = new GridData();
 		data.widthHint = DefaultDialog.computeButtonWidth(selectButton);
 		selectButton.setLayoutData(data);
@@ -409,7 +409,7 @@ public class PropertyKeywordEditPanel extends AbstractDialogPanel {
 		selectButton.addSelectionListener(listener);
 		
 		Button deselectButton = new Button(tComposite, SWT.PUSH);
-		deselectButton.setText(SVNTeamUIPlugin.instance().getResource("Button.ClearSelection"));
+		deselectButton.setText(SVNUIMessages.Button_ClearSelection);
 		data = new GridData();
 		data.widthHint = DefaultDialog.computeButtonWidth(deselectButton);
 		deselectButton.setLayoutData(data);

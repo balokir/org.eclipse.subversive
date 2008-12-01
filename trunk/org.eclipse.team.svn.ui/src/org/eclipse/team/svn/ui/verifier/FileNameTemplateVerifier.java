@@ -13,7 +13,7 @@ package org.eclipse.team.svn.ui.verifier;
 
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.svn.core.utility.StringMatcher;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * File Name Template Verifier
@@ -27,7 +27,7 @@ public class FileNameTemplateVerifier extends AbstractFormattedVerifier {
 
 	public FileNameTemplateVerifier(String fieldName) {
 		super(fieldName);
-		FileNameTemplateVerifier.ERROR_MESSAGE = SVNTeamUIPlugin.instance().getResource("Verifier.FileNameTemplate", new String[] {AbstractFormattedVerifier.FIELD_NAME});
+		FileNameTemplateVerifier.ERROR_MESSAGE = SVNUIMessages.format(SVNUIMessages.Verifier_FileNameTemplate, new String[] {AbstractFormattedVerifier.FIELD_NAME});
 	}
 
 	protected String getErrorMessageImpl(Control input) {

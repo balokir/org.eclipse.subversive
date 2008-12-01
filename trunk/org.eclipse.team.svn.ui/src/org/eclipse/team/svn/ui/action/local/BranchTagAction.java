@@ -34,6 +34,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractNonRecursiveTeamAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.dialog.OperationErrorDialog;
@@ -73,7 +74,7 @@ public class BranchTagAction extends AbstractNonRecursiveTeamAction {
 			remoteResources[i] = SVNRemoteStorage.instance().asRepositoryResource(resources[i]);
 		}
 		
-		if (!OperationErrorDialog.isAcceptableAtOnce(remoteResources, SVNTeamUIPlugin.instance().getResource(actionType == BRANCH_ACTION ? "BranchTagAction.Error.Branch" : "BranchTagAction.Error.Tag"), shell)) {
+		if (!OperationErrorDialog.isAcceptableAtOnce(remoteResources, actionType == BRANCH_ACTION ? SVNUIMessages.BranchTagAction_Error_Branch : SVNUIMessages.BranchTagAction_Error_Tag, shell)) {
 			return null;
 		}
 		

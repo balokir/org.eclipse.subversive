@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.svn.core.connector.SVNConnectorCancelException;
 import org.eclipse.team.svn.core.operation.ActivityCancelledException;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractRepositoryTeamAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.operation.UILoggedOperation;
@@ -41,10 +41,10 @@ public class ShowBrowsingErrorAction extends AbstractRepositoryTeamAction {
         if (errorInfo.exception instanceof SVNConnectorCancelException || 
         	errorInfo.exception instanceof ActivityCancelledException ||
         	errorInfo.exception instanceof OperationCanceledException) {
-        	panel = new ErrorCancelPanel(SVNTeamUIPlugin.instance().getResource("ShowBrowsingErrorAction.Dialog.Title"), errorInfo.simpleMessage, errorInfo.advancedMessage, false, null);
+        	panel = new ErrorCancelPanel(SVNUIMessages.ShowBrowsingErrorAction_Dialog_Title, errorInfo.simpleMessage, errorInfo.advancedMessage, false, null);
         } 
         else {
-        	panel = new ErrorCancelPanel(SVNTeamUIPlugin.instance().getResource("ShowBrowsingErrorAction.Dialog.Title"), errorInfo.numberOfErrors, errorInfo.simpleMessage, errorInfo.advancedMessage, false, false, null);
+        	panel = new ErrorCancelPanel(SVNUIMessages.ShowBrowsingErrorAction_Dialog_Title, errorInfo.numberOfErrors, errorInfo.simpleMessage, errorInfo.advancedMessage, false, false, null);
         }
 		DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
 		dialog.open();

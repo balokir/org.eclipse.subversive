@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.operation.local.management.ShareProjectOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.extension.impl.ISelectProjectNamePageData;
 import org.eclipse.team.svn.ui.verifier.AbsolutePathVerifier;
@@ -95,7 +95,7 @@ public class ShareProjectNameAdvancedModeComposite extends Composite implements 
 		this.nameGroup.setLayout(layout);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		this.nameGroup.setLayoutData(data);
-		this.nameGroup.setText(SVNTeamUIPlugin.instance().getResource("SelectProjectNamePage.NameOnRepository"));
+		this.nameGroup.setText(SVNUIMessages.SelectProjectNamePage_NameOnRepository);
 		this.controls.add(this.nameGroup);
 		
 		Button useProjectNameButton = new Button(this.nameGroup, SWT.RADIO);
@@ -111,19 +111,19 @@ public class ShareProjectNameAdvancedModeComposite extends Composite implements 
 				ShareProjectNameAdvancedModeComposite.this.showTargetUrl();
 			}
 		});
-		useProjectNameButton.setText(SVNTeamUIPlugin.instance().getResource("SelectProjectNamePage.UseProjectName")); 
+		useProjectNameButton.setText(SVNUIMessages.SelectProjectNamePage_UseProjectName); 
 		useProjectNameButton.setSelection(true);
 		this.controls.add(useProjectNameButton);
 		
 		this.useEmptyNameButton = new Button(this.nameGroup, SWT.RADIO);
 		this.useEmptyNameButton.setLayoutData(this.makeGridData());
-		this.useEmptyNameButton.setText(SVNTeamUIPlugin.instance().getResource("SelectProjectNamePage.UseEmptyName"));
+		this.useEmptyNameButton.setText(SVNUIMessages.SelectProjectNamePage_UseEmptyName);
 		this.useEmptyNameButton.setSelection(false);
 		this.controls.add(this.useEmptyNameButton);
 		
 		final Button useRedefinedNameButton = new Button(this.nameGroup, SWT.RADIO);
 		useRedefinedNameButton.setLayoutData(this.makeGridData());
-		useRedefinedNameButton.setText(SVNTeamUIPlugin.instance().getResource("SelectProjectNamePage.UseSpecifiedName"));
+		useRedefinedNameButton.setText(SVNUIMessages.SelectProjectNamePage_UseSpecifiedName);
 		useRedefinedNameButton.setSelection(false);
 		useRedefinedNameButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -151,7 +151,7 @@ public class ShareProjectNameAdvancedModeComposite extends Composite implements 
 			}
 		});
 		verifier = new CompositeVerifier();
-		String name = SVNTeamUIPlugin.instance().getResource("SelectProjectNamePage.ProjectName");
+		String name = SVNUIMessages.SelectProjectNamePage_ProjectName;
 		verifier.add(new NonEmptyFieldVerifier(name));
 		verifier.add(new ResourceNameVerifier(name, true));
 		verifier.add(new AbsolutePathVerifier(name));
@@ -167,7 +167,7 @@ public class ShareProjectNameAdvancedModeComposite extends Composite implements 
 		this.layoutGroup.setLayout(layout);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.layoutGroup.setLayoutData(data);
-		this.layoutGroup.setText(SVNTeamUIPlugin.instance().getResource("SelectProjectNamePage.ProjectLayout"));
+		this.layoutGroup.setText(SVNUIMessages.SelectProjectNamePage_ProjectLayout);
 		this.controls.add(this.layoutGroup);
 		
 		this.defaultLayoutButton = new Button(this.layoutGroup, SWT.RADIO);
@@ -184,7 +184,7 @@ public class ShareProjectNameAdvancedModeComposite extends Composite implements 
 				ShareProjectNameAdvancedModeComposite.this.enableManagementFoldersEnabledButton();
 			}
 		});
-		this.defaultLayoutButton.setText(SVNTeamUIPlugin.instance().getResource("SelectProjectNamePage.RepositoryLocationLayout"));
+		this.defaultLayoutButton.setText(SVNUIMessages.SelectProjectNamePage_RepositoryLocationLayout);
 		this.defaultLayoutButton.setSelection(true);
 		this.controls.add(this.defaultLayoutButton);
 		
@@ -202,7 +202,7 @@ public class ShareProjectNameAdvancedModeComposite extends Composite implements 
 				ShareProjectNameAdvancedModeComposite.this.enableManagementFoldersEnabledButton();
 			}
 		});
-		this.singleLayoutButton.setText(SVNTeamUIPlugin.instance().getResource("SelectProjectNamePage.SingleProjectLayout")); 
+		this.singleLayoutButton.setText(SVNUIMessages.SelectProjectNamePage_SingleProjectLayout); 
 		this.controls.add(this.singleLayoutButton);
 		
 		this.multipleLayoutButton = new Button(this.layoutGroup, SWT.RADIO);
@@ -221,7 +221,7 @@ public class ShareProjectNameAdvancedModeComposite extends Composite implements 
 				ShareProjectNameAdvancedModeComposite.this.enableManagementFoldersEnabledButton();
 			}
 		});
-		this.multipleLayoutButton.setText(SVNTeamUIPlugin.instance().getResource("SelectProjectNamePage.MultiProjectLayout"));
+		this.multipleLayoutButton.setText(SVNUIMessages.SelectProjectNamePage_MultiProjectLayout);
 		this.controls.add(this.multipleLayoutButton);
 		
 		this.rootProjectNameField = new Text(this.layoutGroup, SWT.SINGLE | SWT.BORDER);
@@ -234,7 +234,7 @@ public class ShareProjectNameAdvancedModeComposite extends Composite implements 
 			}
 		});
 		verifier = new CompositeVerifier();
-		name = SVNTeamUIPlugin.instance().getResource("SelectProjectNamePage.RootName");
+		name = SVNUIMessages.SelectProjectNamePage_RootName;
 		verifier.add(new NonEmptyFieldVerifier(name));
 		verifier.add(new ResourceNameVerifier(name, true));
 		verifier.add(new AbsolutePathVerifier(name));
@@ -253,7 +253,7 @@ public class ShareProjectNameAdvancedModeComposite extends Composite implements 
 		this.managementFoldersEnabledButton.setLayoutData(new GridData());
 		this.managementFoldersEnabledButton.setSelection(true);
 		this.managementFoldersEnabled = true;
-		this.managementFoldersEnabledButton.setText(SVNTeamUIPlugin.instance().getResource("SelectProjectNamePage.UseRecommended"));
+		this.managementFoldersEnabledButton.setText(SVNUIMessages.SelectProjectNamePage_UseRecommended);
 		this.managementFoldersEnabledButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				ShareProjectNameAdvancedModeComposite.this.managementFoldersEnabled = ((Button)e.widget).getSelection();
@@ -267,7 +267,7 @@ public class ShareProjectNameAdvancedModeComposite extends Composite implements 
 		data.heightHint = DefaultDialog.convertHeightInCharsToPixels(this, 2);
 		//this.convertHeightInCharsToPixels(2);
 		label.setLayoutData(data);
-		label.setText(SVNTeamUIPlugin.instance().getResource("SelectProjectNamePage.Hint"));
+		label.setText(SVNUIMessages.SelectProjectNamePage_Hint);
 		this.controls.add(label);
 				
 		Composite urlComposite = new Composite(this.layoutGroup, SWT.NONE);

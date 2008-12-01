@@ -62,6 +62,7 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.event.IResourceSelectionChangeListener;
 import org.eclipse.team.svn.ui.event.ResourceSelectionChangedEvent;
@@ -209,14 +210,14 @@ public class ResourceSelectionComposite extends Composite {
 		// resource name
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(SVNTeamUIPlugin.instance().getResource("ResourceSelectionComposite.Resource"));
+		col.setText(SVNUIMessages.ResourceSelectionComposite_Resource);
 		layout.addColumnData(new ColumnWeightData(56, true));
 		col.addSelectionListener(comparator);
 
 		// status
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(SVNTeamUIPlugin.instance().getResource("ResourceSelectionComposite.Content"));
+		col.setText(SVNUIMessages.ResourceSelectionComposite_Content);
 		layout.addColumnData(new ColumnWeightData(12, true));
 		if (this.cacheEnabled) {
 			col.addSelectionListener(comparator);
@@ -225,7 +226,7 @@ public class ResourceSelectionComposite extends Composite {
 		// propstatus
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(SVNTeamUIPlugin.instance().getResource("ResourceSelectionComposite.Properties"));
+		col.setText(SVNUIMessages.ResourceSelectionComposite_Properties);
 		layout.addColumnData(new ColumnWeightData(12, true));
 		if (this.cacheEnabled) {
 			col.addSelectionListener(comparator);
@@ -364,7 +365,7 @@ public class ResourceSelectionComposite extends Composite {
 		tComposite.setLayoutData(data);
 
 		Button selectButton = new Button(tComposite, SWT.PUSH);
-		selectButton.setText(SVNTeamUIPlugin.instance().getResource("Button.SelectAll"));
+		selectButton.setText(SVNUIMessages.Button_SelectAll);
 		data = new GridData();
 		data.widthHint = DefaultDialog.computeButtonWidth(selectButton);
 		selectButton.setLayoutData(data);
@@ -379,7 +380,7 @@ public class ResourceSelectionComposite extends Composite {
 		selectButton.addSelectionListener(listener);
 
 		Button deselectButton = new Button(tComposite, SWT.PUSH);
-		deselectButton.setText(SVNTeamUIPlugin.instance().getResource("Button.ClearSelection"));
+		deselectButton.setText(SVNUIMessages.Button_ClearSelection);
 		data = new GridData();
 		data.widthHint = DefaultDialog.computeButtonWidth(deselectButton);
 		deselectButton.setLayoutData(data);
@@ -427,7 +428,7 @@ public class ResourceSelectionComposite extends Composite {
 	}
 
 	protected String resourceNumberToString(int value) {
-		return SVNTeamUIPlugin.instance().getResource("ResourceSelectionComposite.Info", new String[] { String.valueOf(value), String.valueOf(this.resources.length) });
+		return SVNUIMessages.format(SVNUIMessages.ResourceSelectionComposite_Info, new String[] { String.valueOf(value), String.valueOf(this.resources.length) });
 	}
 
 	protected String statusAsString(String status, int changeMask) {

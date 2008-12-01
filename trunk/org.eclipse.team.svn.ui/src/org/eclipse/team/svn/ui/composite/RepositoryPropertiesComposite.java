@@ -31,7 +31,7 @@ import org.eclipse.team.svn.core.resource.SSHSettings;
 import org.eclipse.team.svn.core.resource.SSLSettings;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.SVNUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.common.RepositoryTreePanel;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -124,7 +124,7 @@ public class RepositoryPropertiesComposite extends Composite implements IPropert
 		Label description = new Label(rootURLGroup, SWT.NULL);
 		data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		description.setLayoutData(data);
-		description.setText(SVNTeamUIPlugin.instance().getResource("RepositoryPropertiesComposite.URL"));
+		description.setText(SVNUIMessages.RepositoryPropertiesComposite_URL);
 		
 		this.urlHistory = new UserInputHistory(RepositoryPropertiesComposite.URL_HISTORY_NAME);
 		
@@ -146,7 +146,7 @@ public class RepositoryPropertiesComposite extends Composite implements IPropert
 		this.validationManager.attachTo(this.url, this.urlVerifier);
 		
 		this.browse = new Button (rootURLGroup, SWT.PUSH);
-		this.browse.setText(SVNTeamUIPlugin.instance().getResource("Button.Browse"));
+		this.browse.setText(SVNUIMessages.Button_Browse);
 		data = new GridData(GridData.HORIZONTAL_ALIGN_END);	
 		data.widthHint = DefaultDialog.computeButtonWidth(this.browse);
 		this.browse.setLayoutData(data);
@@ -177,9 +177,9 @@ public class RepositoryPropertiesComposite extends Composite implements IPropert
 				sslNew.setPassPhraseSaved(sslOriginal.isPassPhraseSaved());
 			
 				RepositoryTreePanel panel = new RepositoryTreePanel(
-						SVNTeamUIPlugin.instance().getResource("RepositoryPropertiesComposite.SelectNewURL"),
-						SVNTeamUIPlugin.instance().getResource("RepositoryBrowsingPanel.Description"),
-						SVNTeamUIPlugin.instance().getResource("RepositoryBrowsingPanel.Message"),
+						SVNUIMessages.RepositoryPropertiesComposite_SelectNewURL,
+						SVNUIMessages.RepositoryBrowsingPanel_Description,
+						SVNUIMessages.RepositoryBrowsingPanel_Message,
 						null,
 						true,
 						location);
@@ -221,7 +221,7 @@ public class RepositoryPropertiesComposite extends Composite implements IPropert
 		layout = new GridLayout();
 		labelGroup.setLayout(layout);
 		labelGroup.setLayoutData(data);
-		labelGroup.setText(SVNTeamUIPlugin.instance().getResource("RepositoryPropertiesComposite.Label"));
+		labelGroup.setText(SVNUIMessages.RepositoryPropertiesComposite_Label);
 		
 		this.useLocationButton = new Button(labelGroup, SWT.RADIO);
 		this.useLocationButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -238,18 +238,18 @@ public class RepositoryPropertiesComposite extends Composite implements IPropert
 				}
 			}
 		});
-		this.useLocationButton.setText(SVNTeamUIPlugin.instance().getResource("RepositoryPropertiesComposite.UseURL"));
+		this.useLocationButton.setText(SVNUIMessages.RepositoryPropertiesComposite_UseURL);
 		
 		this.newLabelButton = new Button(labelGroup, SWT.RADIO);
 		this.newLabelButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		this.newLabelButton.setText(SVNTeamUIPlugin.instance().getResource("RepositoryPropertiesComposite.UseCustom")); 
+		this.newLabelButton.setText(SVNUIMessages.RepositoryPropertiesComposite_UseCustom); 
 		
 		this.repositoryLabel = new Text(labelGroup, SWT.SINGLE | SWT.BORDER);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.grabExcessHorizontalSpace = true;
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		this.repositoryLabel.setLayoutData(data);
-		this.validationManager.attachTo(this.repositoryLabel, new AbstractVerifierProxy(new NonEmptyFieldVerifier(SVNTeamUIPlugin.instance().getResource("RepositoryPropertiesComposite.UseCustom.Verifier"))) {
+		this.validationManager.attachTo(this.repositoryLabel, new AbstractVerifierProxy(new NonEmptyFieldVerifier(SVNUIMessages.RepositoryPropertiesComposite_UseCustom_Verifier)) {
 			protected boolean isVerificationEnabled(Control input) {
 				return RepositoryPropertiesComposite.this.newLabelButton.getSelection();
 			}			
@@ -284,7 +284,7 @@ public class RepositoryPropertiesComposite extends Composite implements IPropert
 	}
 	
 	public void defineUrlVerifier(AbstractVerifier verifier) {
-		String name = SVNTeamUIPlugin.instance().getResource("RepositoryPropertiesComposite.URL.Verifier");
+		String name = SVNUIMessages.RepositoryPropertiesComposite_URL_Verifier;
 		this.urlVerifier.removeAll();
 		this.urlVerifier.add(new URLVerifier(name));
 		this.urlVerifier.add(new AbsolutePathVerifier(name));
@@ -313,7 +313,7 @@ public class RepositoryPropertiesComposite extends Composite implements IPropert
 						// is not encoded URL
 					}
 					if (!new Path(RepositoryPropertiesComposite.this.rootUrl).isPrefixOf(new Path(newUrl))) {
-						return SVNTeamUIPlugin.instance().getResource("RepositoryPropertiesComposite.URL.Verifier.Warning");
+						return SVNUIMessages.RepositoryPropertiesComposite_URL_Verifier_Warning;
 					}
 					return null;
 				}

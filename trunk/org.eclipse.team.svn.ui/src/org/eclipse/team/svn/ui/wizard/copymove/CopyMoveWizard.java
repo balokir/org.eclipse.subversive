@@ -13,7 +13,7 @@ package org.eclipse.team.svn.ui.wizard.copymove;
 
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.wizard.AbstractSVNWizard;
 
 /**
@@ -35,8 +35,7 @@ public class CopyMoveWizard extends AbstractSVNWizard {
 	public CopyMoveWizard(IRepositoryResource[] selectedResources, boolean isMove) {
 		super();
 		this.selectedResources = selectedResources;
-		this.setWindowTitle((this.isMove = isMove) ? SVNTeamUIPlugin.instance().getResource("MoveToAction.Select.Title") : SVNTeamUIPlugin.instance().getResource(
-				"CopyToAction.Select.Title"));
+		this.setWindowTitle((this.isMove = isMove) ? SVNUIMessages.MoveToAction_Select_Title : SVNUIMessages.CopyToAction_Select_Title);
 	}
 
 	public void addPages() {

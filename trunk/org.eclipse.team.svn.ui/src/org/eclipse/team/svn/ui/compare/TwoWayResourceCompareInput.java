@@ -42,6 +42,7 @@ import org.eclipse.team.svn.core.svnstorage.SVNRepositoryResource;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.operation.UILoggedOperation;
 import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
@@ -66,7 +67,7 @@ public class TwoWayResourceCompareInput extends ResourceCompareInput {
 	protected void fillMenu(IMenuManager manager, TreeSelection selection) {
 		final CompareNode selectedNode = (CompareNode)selection.getFirstElement();
 		Action tAction = null;
-		manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.CompareProperties")){
+		manager.add(tAction = new Action(SVNUIMessages.SynchronizeActionGroup_CompareProperties){
 			public void run() {
 				SVNRepositoryResource repoResource = (SVNRepositoryResource)((ResourceElement)selectedNode.getLeft()).getRepositoryResource();
 				SVNEntryRevisionReference leftReference = new SVNEntryRevisionReference(
@@ -84,9 +85,9 @@ public class TwoWayResourceCompareInput extends ResourceCompareInput {
 					if (input.getCompareResult() == null) {
 						MessageDialog dialog = new MessageDialog(
 								UIMonitorUtility.getShell(),
-								SVNTeamUIPlugin.instance().getResource("ComparePropsNoDiff.Title"),
+								SVNUIMessages.ComparePropsNoDiff_Title,
 								null,
-								SVNTeamUIPlugin.instance().getResource("ComparePropsNoDiff.Message"),
+								SVNUIMessages.ComparePropsNoDiff_Message,
 								MessageDialog.INFORMATION,
 								new String [] {IDialogConstants.OK_LABEL},
 								0);
@@ -111,7 +112,7 @@ public class TwoWayResourceCompareInput extends ResourceCompareInput {
 		SVNUtility.reorder(this.statuses, true);
 		
 		HashMap path2node = new HashMap();
-		String message = SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.CheckingDelta");
+		String message = SVNUIMessages.ResourceCompareInput_CheckingDelta;
 		for (int i = 0; i < this.statuses.length; i++) {
 			monitor.subTask(MessageFormat.format(message, new Object[] {SVNUtility.decodeURL(this.statuses[i].pathPrev)}));
 			

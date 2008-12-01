@@ -27,6 +27,7 @@ import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.svnstorage.ResourcesParentsProvider;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.panel.participant.CommitPaneParticipant.CommitPaneActionGroup;
 import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
@@ -86,9 +87,9 @@ public class AddToSVNPaneParticipant extends BasePaneParticipant {
 			protected boolean updateSelection(IStructuredSelection selection) {
 				IResource[] selectedResources = this.getAllSelectedResources();
 				if (selectedResources.length == 1) {
-					this.setText(MessageFormat.format(SVNTeamUIPlugin.instance().getResource("AddToSVNPanel.Ignore.Single"), selectedResources[0].getName()));
+					this.setText(MessageFormat.format(SVNUIMessages.AddToSVNPanel_Ignore_Single, selectedResources[0].getName()));
 				} else if (selectedResources.length > 1) {
-					this.setText(SVNTeamUIPlugin.instance().getResource("AddToSVNPanel.IgnoreByNames.Multiple"));
+					this.setText(SVNUIMessages.AddToSVNPanel_IgnoreByNames_Multiple);
 				}
 				
 				return super.updateSelection(selection);
@@ -118,9 +119,9 @@ public class AddToSVNPaneParticipant extends BasePaneParticipant {
 				IResource[] selectedResources = this.getAllSelectedResources();
 				if (selectedResources.length == 1) {
 					String[] parts = this.getNameParts(selectedResources);
-					this.setText(MessageFormat.format(SVNTeamUIPlugin.instance().getResource("AddToSVNPanel.Ignore.Single"), "*." + parts[parts.length-1]));
+					this.setText(MessageFormat.format(SVNUIMessages.AddToSVNPanel_Ignore_Single, "*." + parts[parts.length-1]));
 				} else if (selectedResources.length > 1) {
-					this.setText(SVNTeamUIPlugin.instance().getResource("AddToSVNPanel.IgnoreByExtension.Multiple"));
+					this.setText(SVNUIMessages.AddToSVNPanel_IgnoreByExtension_Multiple);
 				}
 				
 				boolean isUpdate = false;
@@ -148,14 +149,14 @@ public class AddToSVNPaneParticipant extends BasePaneParticipant {
 			super.configureActions(configuration);
 			
 			//add to ignore by name
-			AddToIgnoreByNameAction addToIgnoreByNameAction = new AddToIgnoreByNameAction(SVNTeamUIPlugin.instance().getResource("AddToSVNPanel.IgnoreByNames.Multiple"), configuration);
+			AddToIgnoreByNameAction addToIgnoreByNameAction = new AddToIgnoreByNameAction(SVNUIMessages.AddToSVNPanel_IgnoreByNames_Multiple, configuration);
 			this.appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					CommitPaneActionGroup.GROUP_SYNC_NORMAL,
 					addToIgnoreByNameAction);		
 			
 			//add to ignore by extension 
-			AddToIgnoreByExtensionAction addToIgnoreByExtensionAction = new AddToIgnoreByExtensionAction(SVNTeamUIPlugin.instance().getResource("AddToSVNPanel.IgnoreByExtension.Multiple"), configuration);
+			AddToIgnoreByExtensionAction addToIgnoreByExtensionAction = new AddToIgnoreByExtensionAction(SVNUIMessages.AddToSVNPanel_IgnoreByExtension_Multiple, configuration);
 			this.appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					CommitPaneActionGroup.GROUP_SYNC_NORMAL,
@@ -168,7 +169,7 @@ public class AddToSVNPaneParticipant extends BasePaneParticipant {
 					new Separator());		
 			
 			//delete
-			DeletePaneAction deleteAction = new DeletePaneAction(SVNTeamUIPlugin.instance().getResource("CommitPanel.Delete.Action"), configuration);
+			DeletePaneAction deleteAction = new DeletePaneAction(SVNUIMessages.CommitPanel_Delete_Action, configuration);
 			deleteAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/delete.gif"));
 			this.appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 

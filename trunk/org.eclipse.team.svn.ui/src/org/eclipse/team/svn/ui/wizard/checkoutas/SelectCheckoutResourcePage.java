@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.RepositoryResourceSelectionComposite;
 import org.eclipse.team.svn.ui.wizard.AbstractVerifiedWizardPage;
 import org.eclipse.ui.PlatformUI;
@@ -38,9 +39,9 @@ public class SelectCheckoutResourcePage extends AbstractVerifiedWizardPage {
 	public SelectCheckoutResourcePage() {
 		super(
 			SelectCheckoutResourcePage.class.getName(), 
-			SVNTeamUIPlugin.instance().getResource("SelectCheckoutResourcePage.Title"), 
+			SVNUIMessages.SelectCheckoutResourcePage_Title, 
 			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
-		this.setDescription(SVNTeamUIPlugin.instance().getResource("SelectCheckoutResourcePage.Description"));		
+		this.setDescription(SVNUIMessages.SelectCheckoutResourcePage_Description);		
 	}
 	
 	public void setRepositoryLocation(IRepositoryLocation location) {		
@@ -66,8 +67,8 @@ public class SelectCheckoutResourcePage extends AbstractVerifiedWizardPage {
 		
 		this.selectComposite = new RepositoryResourceSelectionComposite(
 				composite, SWT.NONE, this, "selectCheckoutUrl", this.baseResource, true, 
-				SVNTeamUIPlugin.instance().getResource("SelectRepositoryResourcePage.Select.Title"),
-				SVNTeamUIPlugin.instance().getResource("SelectRepositoryResourcePage.Select.Description"), RepositoryResourceSelectionComposite.MODE_DEFAULT, RepositoryResourceSelectionComposite.TEXT_BASE);
+				SVNUIMessages.SelectRepositoryResourcePage_Select_Title,
+				SVNUIMessages.SelectRepositoryResourcePage_Select_Description, RepositoryResourceSelectionComposite.MODE_DEFAULT, RepositoryResourceSelectionComposite.TEXT_BASE);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = 550;
 		this.selectComposite.setLayoutData(data);

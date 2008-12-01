@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.utility.ArrayStructuredContentProvider;
 import org.eclipse.team.svn.ui.utility.ColumnedViewerComparator;
 import org.eclipse.team.svn.ui.wizard.AbstractVerifiedWizardPage;
@@ -58,10 +59,10 @@ public class SelectRepositoryLocationPage extends AbstractVerifiedWizardPage {
 	public SelectRepositoryLocationPage(IRepositoryLocation []repositories, boolean importProject) {
 		super(
 				SelectRepositoryLocationPage.class.getName(), 
-				SVNTeamUIPlugin.instance().getResource("SelectRepositoryLocationPage.Title" + SelectRepositoryLocationPage.getNationalizationSuffix(importProject)), 
+				SVNUIMessages.getString("SelectRepositoryLocationPage_Title" + SelectRepositoryLocationPage.getNationalizationSuffix(importProject)), 
 				SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
 			
-			this.setDescription(SVNTeamUIPlugin.instance().getResource("SelectRepositoryLocationPage.Description"));
+			this.setDescription(SVNUIMessages.SelectRepositoryLocationPage_Description);
 			this.repositories = repositories;
 			this.useExistingLocation = true;
 			this.location = this.repositories[0];
@@ -84,11 +85,11 @@ public class SelectRepositoryLocationPage extends AbstractVerifiedWizardPage {
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		data.heightHint = this.convertHeightInCharsToPixels(2);
 		description.setLayoutData(data);
-		description.setText(SVNTeamUIPlugin.instance().getResource("SelectRepositoryLocationPage.Hint" + SelectRepositoryLocationPage.getNationalizationSuffix(this.importProject)));
+		description.setText(SVNUIMessages.getString("SelectRepositoryLocationPage_Hint" + SelectRepositoryLocationPage.getNationalizationSuffix(this.importProject)));
 		
 		Button addLocationButton = new Button(composite, SWT.RADIO);
 		data = new GridData(GridData.FILL_HORIZONTAL);
-		addLocationButton.setText(SVNTeamUIPlugin.instance().getResource("SelectRepositoryLocationPage.AddLocation")); 
+		addLocationButton.setText(SVNUIMessages.SelectRepositoryLocationPage_AddLocation); 
 		addLocationButton.setSelection(false);
 		
 		Button useExistingLocationButton = new Button(composite, SWT.RADIO);
@@ -102,7 +103,7 @@ public class SelectRepositoryLocationPage extends AbstractVerifiedWizardPage {
 				SelectRepositoryLocationPage.this.setPageComplete(true);
 			}
 		});
-		useExistingLocationButton.setText(SVNTeamUIPlugin.instance().getResource("SelectRepositoryLocationPage.UseLocation")); 
+		useExistingLocationButton.setText(SVNUIMessages.SelectRepositoryLocationPage_UseLocation); 
 		useExistingLocationButton.setSelection(true);
 		
 		Table table = new Table(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);

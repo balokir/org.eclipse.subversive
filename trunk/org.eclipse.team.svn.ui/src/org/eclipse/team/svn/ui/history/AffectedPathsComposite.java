@@ -45,6 +45,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.team.svn.core.connector.SVNLogPath;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.history.data.AffectedPathsNode;
 import org.eclipse.team.svn.ui.history.data.SVNChangedPathData;
 import org.eclipse.team.svn.ui.utility.ArrayStructuredContentProvider;
@@ -172,19 +173,19 @@ public class AffectedPathsComposite extends Composite {
 						SVNChangedPathData data = (SVNChangedPathData)item.getData();
 						switch (data.action) {
 							case SVNLogPath.ChangeType.ADDED: {
-								tooltip = SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Add");
+								tooltip = SVNUIMessages.LogMessagesComposite_Add;
 								break;
 			    			}
 			    			case SVNLogPath.ChangeType.MODIFIED: {
-			    				tooltip = SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Modify");
+			    				tooltip = SVNUIMessages.LogMessagesComposite_Modify;
 			    				break;
 			    			}
 			    			case SVNLogPath.ChangeType.DELETED: {
-			    				tooltip = SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Delete");
+			    				tooltip = SVNUIMessages.LogMessagesComposite_Delete;
 			    				break;
 			    			}
 			    			case SVNLogPath.ChangeType.REPLACED: {
-			    				tooltip = SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Replace");
+			    				tooltip = SVNUIMessages.LogMessagesComposite_Replace;
 			    				break;
 			    			}
 						}
@@ -211,19 +212,19 @@ public class AffectedPathsComposite extends Composite {
         
         //1.name
         col = new TableColumn(table, SWT.NONE);
-        col.setText(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.Name"));
+        col.setText(SVNUIMessages.AffectedPathsComposite_Name);
         col.addSelectionListener(tableComparator);
         layout.addColumnData(new ColumnWeightData(20, true));
         
         //2.path
         col = new TableColumn(table, SWT.NONE);
-        col.setText(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.Path"));
+        col.setText(SVNUIMessages.AffectedPathsComposite_Path);
         col.addSelectionListener(tableComparator);
         layout.addColumnData(new ColumnWeightData(40, true));
         
         //3.source path
         col = new TableColumn(table, SWT.NONE);
-        col.setText(SVNTeamUIPlugin.instance().getResource("AffectedPathsComposite.CopiedFrom"));
+        col.setText(SVNUIMessages.AffectedPathsComposite_CopiedFrom);
         col.addSelectionListener(tableComparator);
         layout.addColumnData(new ColumnWeightData(40, true));
         

@@ -19,7 +19,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.utility.FileUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * Node Kind changed notification dialog
@@ -30,9 +30,9 @@ public class NotifyNodeKindChangedDialog extends MessageDialog {
 
     public NotifyNodeKindChangedDialog(Shell parentShell, IResource []resources) {
 		super(parentShell, 
-			SVNTeamUIPlugin.instance().getResource("NotifyNodeKindChangedDialog.Title"), 
+			SVNUIMessages.NotifyNodeKindChangedDialog_Title, 
 			null, 
-			SVNTeamUIPlugin.instance().getResource("NotifyNodeKindChangedDialog.Message", new String[] {NotifyNodeKindChangedDialog.enumerateParents(resources)}),
+			SVNUIMessages.format(SVNUIMessages.NotifyNodeKindChangedDialog_Message, new String[] {NotifyNodeKindChangedDialog.enumerateParents(resources)}),
 			MessageDialog.WARNING, 
 			new String[] {IDialogConstants.OK_LABEL}, 
 			0);

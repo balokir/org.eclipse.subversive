@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.remote.CheckoutAction;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.utility.ArrayStructuredContentProvider;
@@ -43,7 +43,7 @@ public class CheckoutProjectsWizard extends AbstractSVNWizard {
 	
 	public CheckoutProjectsWizard(IRepositoryResource []projects, HashMap name2resources) {
 		super();
-		this.setWindowTitle(SVNTeamUIPlugin.instance().getResource("CheckoutProjectsWizard.Title"));
+		this.setWindowTitle(SVNUIMessages.CheckoutProjectsWizard_Title);
 		this.projects = projects;
 		this.name2resources = name2resources;
 	}
@@ -67,7 +67,7 @@ public class CheckoutProjectsWizard extends AbstractSVNWizard {
 	public void addPages() {
 		this.addPage(this.projectsSelectionPage = new ProjectsSelectionPage());
 		this.locationSelectionPage = new ProjectLocationSelectionPage(true, this.projectsSelectionPage);
-		this.locationSelectionPage.setTitle(SVNTeamUIPlugin.instance().getResource("CheckoutProjectsWizard.SelectLocation.Title"));
+		this.locationSelectionPage.setTitle(SVNUIMessages.CheckoutProjectsWizard_SelectLocation_Title);
 		this.addPage(this.selectFolderPage = new CheckoutAsFolderPage(this.projects));
 		this.addPage(this.locationSelectionPage);	
 	}

@@ -15,7 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * Revision ranges input field verifier
@@ -29,7 +29,7 @@ public class RevisionRangesVerifier extends AbstractFormattedVerifier {
 
 	public RevisionRangesVerifier(String fieldName) {
 		super(fieldName);
-		RevisionRangesVerifier.ERROR_MESSAGE = SVNTeamUIPlugin.instance().getResource("Verifier.RevisionRanges", new String[] {AbstractFormattedVerifier.FIELD_NAME});
+		RevisionRangesVerifier.ERROR_MESSAGE = SVNUIMessages.format(SVNUIMessages.Verifier_RevisionRanges, new String[] {AbstractFormattedVerifier.FIELD_NAME});
 		this.pattern = Pattern.compile("\\d+(-\\d+)?(\\s*,\\s*\\d+(-\\d+)?)*");
 	}
 

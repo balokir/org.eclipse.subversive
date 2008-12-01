@@ -48,6 +48,7 @@ import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.local.SavePatchInWorkspacePanel;
 import org.eclipse.team.svn.ui.verifier.AbstractFormattedVerifier;
@@ -86,9 +87,9 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 	public SelectPatchFilePage(String proposedName, IResource []roots) {
 		super(
 			SelectPatchFilePage.class.getName(), 
-			SVNTeamUIPlugin.instance().getResource("SelectPatchFilePage.Title"), 
+			SVNUIMessages.SelectPatchFilePage_Title, 
 			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
-		this.setDescription(SVNTeamUIPlugin.instance().getResource("SelectPatchFilePage.Description"));
+		this.setDescription(SVNUIMessages.SelectPatchFilePage_Description);
 		this.proposedName = proposedName + ".patch";
 		this.writeMode = CreatePatchWizard.WRITE_TO_CLIPBOARD;
 		this.roots = roots;
@@ -141,12 +142,12 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 			saveToImpl.setLayout(layout);
 			data = new GridData(GridData.FILL_HORIZONTAL);
 			saveToImpl.setLayoutData(data);
-			saveToImpl.setText(SVNTeamUIPlugin.instance().getResource("SelectPatchFilePage.SaveTo"));
+			saveToImpl.setText(SVNUIMessages.SelectPatchFilePage_SaveTo);
 			saveTo = saveToImpl;
 		}
 		
 		Button saveToClipboard = new Button(saveTo, SWT.RADIO);
-		saveToClipboard.setText(SVNTeamUIPlugin.instance().getResource("SelectPatchFilePage.SaveToClipboard"));
+		saveToClipboard.setText(SVNUIMessages.SelectPatchFilePage_SaveToClipboard);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		saveToClipboard.setLayoutData(data);
 		saveToClipboard.addListener(SWT.Selection, new Listener() {
@@ -169,7 +170,7 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 		});
 		
 		final Button saveOnFileSystem = new Button(saveTo, SWT.RADIO);
-		saveOnFileSystem.setText(SVNTeamUIPlugin.instance().getResource("SelectPatchFilePage.SaveInFS"));
+		saveOnFileSystem.setText(SVNUIMessages.SelectPatchFilePage_SaveInFS);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		saveOnFileSystem.setLayoutData(data);
 		saveOnFileSystem.addListener(SWT.Selection, new Listener() {
@@ -204,7 +205,7 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 			}
 		});
 		CompositeVerifier cVerifier = new CompositeVerifier();
-		String name = SVNTeamUIPlugin.instance().getResource("SelectPatchFilePage.SaveInFS.Verifier");
+		String name = SVNUIMessages.SelectPatchFilePage_SaveInFS_Verifier;
 		cVerifier.add(new NonEmptyFieldVerifier(name));
 		cVerifier.add(new ResourcePathVerifier(name));
 		cVerifier.add(new AbstractFormattedVerifier(name) {
@@ -214,7 +215,7 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 		    protected String getWarningMessageImpl(Control input) {
 		        String text = this.getText(input);
 		        if (new File(text).exists()) {
-		            return SVNTeamUIPlugin.instance().getResource("SelectPatchFilePage.SaveInFS.Verifier.Warning", new String[] {AbstractFormattedVerifier.FIELD_NAME});
+		            return SVNUIMessages.format(SVNUIMessages.SelectPatchFilePage_SaveInFS_Verifier_Warning, new String[] {AbstractFormattedVerifier.FIELD_NAME});
 		        }
 		        return null;
 		    }
@@ -226,14 +227,14 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 		});
 
 		this.browseButton = new Button(fsComposite, SWT.PUSH);
-		this.browseButton.setText(SVNTeamUIPlugin.instance().getResource("Button.Browse"));
+		this.browseButton.setText(SVNUIMessages.Button_Browse);
 		data = new GridData();
 		data.widthHint = DefaultDialog.computeButtonWidth(this.browseButton);
 		this.browseButton.setLayoutData(data);
 		this.browseButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				FileDialog dlg = new FileDialog(SelectPatchFilePage.this.getShell(), SWT.PRIMARY_MODAL | SWT.SAVE);
-				dlg.setText(SVNTeamUIPlugin.instance().getResource("SelectPatchFilePage.SavePatchAs"));
+				dlg.setText(SVNUIMessages.SelectPatchFilePage_SavePatchAs);
 				dlg.setFileName(SelectPatchFilePage.this.proposedName);
 				dlg.setFilterExtensions(new String[] {"patch", "*.*"});
 				String file = dlg.open();
@@ -248,7 +249,7 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 		final Button saveInWorkspace = new Button(saveTo, SWT.RADIO);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		saveInWorkspace.setLayoutData(data);
-		saveInWorkspace.setText(SVNTeamUIPlugin.instance().getResource("SelectPatchFilePage.SaveInWS"));
+		saveInWorkspace.setText(SVNUIMessages.SelectPatchFilePage_SaveInWS);
 		saveInWorkspace.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				Button button = (Button)event.widget;
@@ -276,7 +277,7 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.wsPathField.setLayoutData(data);
 		cVerifier = new CompositeVerifier();
-		name = SVNTeamUIPlugin.instance().getResource("SelectPatchFilePage.SaveInWS.Verifier");
+		name = SVNUIMessages.SelectPatchFilePage_SaveInWS_Verifier;
 		cVerifier.add(new NonEmptyFieldVerifier(name));
 		cVerifier.add(new AbstractFormattedVerifier(name) {
 		    protected String getErrorMessageImpl(Control input) {
@@ -284,7 +285,7 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 		    }
 		    protected String getWarningMessageImpl(Control input) {
 		        if (SelectPatchFilePage.this.file != null && SelectPatchFilePage.this.file.isAccessible()) {
-		            return SVNTeamUIPlugin.instance().getResource("SelectPatchFilePage.SaveInWS.Verifier.Warning", new String[] {AbstractFormattedVerifier.FIELD_NAME});
+		            return SVNUIMessages.format(SVNUIMessages.SelectPatchFilePage_SaveInWS_Verifier_Warning, new String[] {AbstractFormattedVerifier.FIELD_NAME});
 		        }
 		        return null;
 		    }
@@ -296,7 +297,7 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 		});
 
 		this.browseWSButton = new Button(wsComposite, SWT.PUSH);
-		this.browseWSButton.setText(SVNTeamUIPlugin.instance().getResource("Button.Browse"));
+		this.browseWSButton.setText(SVNUIMessages.Button_Browse);
 		data = new GridData();
 		data.widthHint = DefaultDialog.computeButtonWidth(this.browseWSButton);
 		this.browseWSButton.setLayoutData(data);
@@ -317,7 +318,7 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 			Label label = new Label(composite, SWT.NONE);
 			data = new GridData();
 			label.setLayoutData(data);
-			label.setText(SVNTeamUIPlugin.instance().getResource("SelectPatchFilePage.Changes"));
+			label.setText(SVNUIMessages.SelectPatchFilePage_Changes);
 			
 			this.changeViewer = new CheckboxTreeViewer(composite, SWT.BORDER);
 			data = new GridData(GridData.FILL_BOTH);

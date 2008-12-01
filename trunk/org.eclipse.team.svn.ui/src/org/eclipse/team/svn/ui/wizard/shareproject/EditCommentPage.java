@@ -24,6 +24,7 @@ import org.eclipse.team.svn.core.operation.local.management.ShareProjectOperatio
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.CommentComposite;
 import org.eclipse.team.svn.ui.wizard.AbstractVerifiedWizardPage;
 import org.eclipse.ui.PlatformUI;
@@ -42,9 +43,9 @@ public class EditCommentPage extends AbstractVerifiedWizardPage {
 
 	public EditCommentPage(IResourceProvider provider) {
 		super(EditCommentPage.class.getName(), 
-				SVNTeamUIPlugin.instance().getResource("EditCommentPage.Title"), 
+				SVNUIMessages.EditCommentPage_Title, 
 				SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
-		this.setDescription(SVNTeamUIPlugin.instance().getResource("EditCommentPage.Description"));
+		this.setDescription(SVNUIMessages.EditCommentPage_Description);
 		this.provider = provider;
 	}
 	
@@ -89,7 +90,7 @@ public class EditCommentPage extends AbstractVerifiedWizardPage {
 		separator.setVisible(false);
 		
 		Button showComment = new Button(composite, SWT.CHECK);
-		showComment.setText(SVNTeamUIPlugin.instance().getResource("EditCommentPage.LaunchCommit"));
+		showComment.setText(SVNUIMessages.EditCommentPage_LaunchCommit);
 		showComment.setSelection(this.showCommitDialog = true);
 		showComment.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {

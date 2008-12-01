@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.DepthSelectionComposite;
 import org.eclipse.team.svn.ui.composite.RepositoryResourceSelectionComposite;
 import org.eclipse.team.svn.ui.panel.common.AbstractRepositoryResourceSelectionPanel;
@@ -33,8 +33,8 @@ public class SwitchPanel extends AbstractRepositoryResourceSelectionPanel {
 	protected DepthSelectionComposite depthSelector;
 	
     public SwitchPanel(IRepositoryResource baseResource, long currentRevision, boolean containFolders) {    	
-    	super(baseResource, currentRevision, SVNTeamUIPlugin.instance().getResource("SwitchPanel.Title"), SVNTeamUIPlugin.instance().getResource("SwitchPanel.Description"), "SwitchPanel.URL_HISTORY_NAME", SVNTeamUIPlugin.instance().getResource("SwitchPanel.Selection.Title"), SVNTeamUIPlugin.instance().getResource("SwitchPanel.Selection.Description"), RepositoryResourceSelectionComposite.TEXT_NONE);
-    	this.defaultMessage = SVNTeamUIPlugin.instance().getResource("SwitchPanel.Message");
+    	super(baseResource, currentRevision, SVNUIMessages.SwitchPanel_Title, SVNUIMessages.SwitchPanel_Description, "SwitchPanel_URL_HISTORY_NAME", SVNUIMessages.SwitchPanel_Selection_Title, SVNUIMessages.SwitchPanel_Selection_Description, RepositoryResourceSelectionComposite.TEXT_NONE);
+    	this.defaultMessage = SVNUIMessages.SwitchPanel_Message;
     	this.containFolders = containFolders;
     }
     

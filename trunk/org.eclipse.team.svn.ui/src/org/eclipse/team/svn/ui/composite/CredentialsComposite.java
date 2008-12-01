@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.utility.UserInputHistory;
 
 /**
@@ -113,7 +113,7 @@ public class CredentialsComposite extends Composite {
 		data = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 		data.horizontalSpan = 2;
 		authGroup.setLayoutData(data);
-		authGroup.setText(SVNTeamUIPlugin.instance().getResource("CredentialsComposite.Authentication"));
+		authGroup.setText(SVNUIMessages.CredentialsComposite_Authentication);
 		
 		Composite inner = new Composite(authGroup, SWT.FILL);
 		layout = new GridLayout();
@@ -129,7 +129,7 @@ public class CredentialsComposite extends Composite {
 		data.grabExcessHorizontalSpace = false;
 		data.horizontalIndent = 0;
 		description.setLayoutData(data);
-		description.setText(SVNTeamUIPlugin.instance().getResource("CredentialsComposite.User"));
+		description.setText(SVNUIMessages.CredentialsComposite_User);
 		
 		this.userHistory = new UserInputHistory(CredentialsComposite.USER_HISTORY_NAME);
 		
@@ -146,7 +146,7 @@ public class CredentialsComposite extends Composite {
 		data.grabExcessHorizontalSpace = false;
 		data.horizontalIndent = 0;
 		description.setLayoutData(data);
-		description.setText(SVNTeamUIPlugin.instance().getResource("CredentialsComposite.Password"));
+		description.setText(SVNUIMessages.CredentialsComposite_Password);
 		
 		this.password = new Text(inner, SWT.SINGLE | SWT.BORDER | SWT.PASSWORD);
 		data = new GridData(GridData.FILL_HORIZONTAL);
@@ -165,7 +165,7 @@ public class CredentialsComposite extends Composite {
 		this.savePassword = new Button(inner, SWT.CHECK);
 		data = new GridData();
 		this.savePassword.setLayoutData(data);
-		this.savePassword.setText(SVNTeamUIPlugin.instance().getResource("CredentialsComposite.SavePassword"));
+		this.savePassword.setText(SVNUIMessages.CredentialsComposite_SavePassword);
 		
 		new SecurityWarningComposite(inner);
 	}

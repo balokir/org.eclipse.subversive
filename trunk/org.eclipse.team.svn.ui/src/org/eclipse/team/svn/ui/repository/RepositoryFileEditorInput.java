@@ -20,7 +20,7 @@ import org.eclipse.team.svn.core.history.ResourceContentStorage;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.repository.model.IResourceTreeNode;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFile;
 import org.eclipse.ui.IPersistableElement;
@@ -96,7 +96,7 @@ public class RepositoryFileEditorInput extends PlatformObject implements IWorkbe
 	}
 
 	public String getName() {
-		return SVNTeamUIPlugin.instance().getResource("RepositoryFileViewer.Name", new String[] {this.resource.getRepositoryResource().getName(), String.valueOf(this.resource.getRepositoryResource().getSelectedRevision())});
+		return SVNUIMessages.format(SVNUIMessages.RepositoryFileViewer_Name, new String[] {this.resource.getRepositoryResource().getName(), String.valueOf(this.resource.getRepositoryResource().getSelectedRevision())});
 	}
 
 	public IPersistableElement getPersistable() {

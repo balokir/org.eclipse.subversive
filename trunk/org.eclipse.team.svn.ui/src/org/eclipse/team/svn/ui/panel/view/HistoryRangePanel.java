@@ -22,7 +22,7 @@ import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.SVNUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.RevisionComposite;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -43,9 +43,9 @@ public class HistoryRangePanel extends AbstractDialogPanel {
 	protected boolean reversed;
 
 	public HistoryRangePanel(IRepositoryResource resource, SVNRevision initStartRevision, SVNRevision initStopRevision) {
-        this.dialogTitle = SVNTeamUIPlugin.instance().getResource("HistoryRangePanel.Title");
-        this.dialogDescription = SVNTeamUIPlugin.instance().getResource("HistoryRangePanel.Description");
-        this.defaultMessage = SVNTeamUIPlugin.instance().getResource("HistoryRangePanel.Message");
+        this.dialogTitle = SVNUIMessages.HistoryRangePanel_Title;
+        this.dialogDescription = SVNUIMessages.HistoryRangePanel_Description;
+        this.defaultMessage = SVNUIMessages.HistoryRangePanel_Message;
         
         this.resource = resource;
         this.initStartResource = SVNUtility.copyOf(resource);
@@ -82,11 +82,11 @@ public class HistoryRangePanel extends AbstractDialogPanel {
 		data = new GridData(GridData.FILL_BOTH);
 		cmp.setLayoutData(data);
 		
-		String defaultRevision = SVNTeamUIPlugin.instance().getResource("HistoryRangePanel.Default");
-		this.startComposite = new RevisionComposite(cmp, this, true, new String[] {SVNTeamUIPlugin.instance().getResource("HistoryRangePanel.StartRevision"), defaultRevision}, null, false);
+		String defaultRevision = SVNUIMessages.HistoryRangePanel_Default;
+		this.startComposite = new RevisionComposite(cmp, this, true, new String[] {SVNUIMessages.HistoryRangePanel_StartRevision, defaultRevision}, null, false);
 		this.startComposite.setBaseResource(this.resource);
 		this.startComposite.setSelectedResource(this.initStartResource);
-		this.stopComposite = new RevisionComposite(cmp, this, true, new String[] {SVNTeamUIPlugin.instance().getResource("HistoryRangePanel.StopRevision"), defaultRevision}, null, false);
+		this.stopComposite = new RevisionComposite(cmp, this, true, new String[] {SVNUIMessages.HistoryRangePanel_StopRevision, defaultRevision}, null, false);
 		this.stopComposite.setBaseResource(this.resource);
 		this.stopComposite.setSelectedResource(this.initStopResource);
 	}

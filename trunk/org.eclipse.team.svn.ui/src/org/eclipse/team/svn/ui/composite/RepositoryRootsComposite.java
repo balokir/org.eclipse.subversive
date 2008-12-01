@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.verifier.AbsolutePathVerifier;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifierProxy;
@@ -103,7 +104,7 @@ public class RepositoryRootsComposite extends Composite implements IPropertiesPa
 		this.structureCheckBox = new Button(this, SWT.CHECK);
 		data = new GridData();
 		this.structureCheckBox.setLayoutData(data);
-		this.structureCheckBox.setText(SVNTeamUIPlugin.instance().getResource("RepositoryRootsComposite.EnableDetection"));
+		this.structureCheckBox.setText(SVNUIMessages.RepositoryRootsComposite_EnableDetection);
 		this.structureCheckBox.addSelectionListener(new SelectionListener() {			
 			public void widgetSelected(SelectionEvent e) {
 				boolean enabled = ((Button)e.widget).getSelection();
@@ -117,7 +118,7 @@ public class RepositoryRootsComposite extends Composite implements IPropertiesPa
 		});
 
 		Group standardLocations = new Group(this, SWT.NONE);
-		standardLocations.setText(SVNTeamUIPlugin.instance().getResource("RepositoryRootsComposite.ResourceNames"));
+		standardLocations.setText(SVNUIMessages.RepositoryRootsComposite_ResourceNames);
 		layout = new GridLayout();
 		layout.numColumns = 2;
 		standardLocations.setLayout(layout);
@@ -178,13 +179,13 @@ public class RepositoryRootsComposite extends Composite implements IPropertiesPa
 		Label label = new Label(standardLocations, SWT.NONE);
 		GridData data = new GridData();
 		label.setLayoutData(data);
-		label.setText(SVNTeamUIPlugin.instance().getResource(id));
+		label.setText(SVNUIMessages.getString(id));
 		
 		Text field = new Text(standardLocations, SWT.SINGLE | SWT.BORDER);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		field.setLayoutData(data);
-		String name = SVNTeamUIPlugin.instance().getResource(id + ".Verifier");
+		String name = SVNUIMessages.getString(id + "_Verifier");
 		CompositeVerifier verifier = new CompositeVerifier();
 		verifier.add(new ResourceNameVerifier(name, false));
 		verifier.add(new NonEmptyFieldVerifier(name));

@@ -19,7 +19,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.SVNUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * Branch/Tag creation error dialog
@@ -32,15 +32,15 @@ public class OperationErrorDialog extends MessageDialog {
 	public static final int ERR_DIFFPROJECTS = 1;
 	
 	protected static final String []errorMessages = new String[] {
-		"OperationErrorDialog.Message.DifferentRepositories",
-		"OperationErrorDialog.Message.DifferentProjects"
+		"OperationErrorDialog_Message_DifferentRepositories",
+		"OperationErrorDialog_Message_DifferentProjects"
 	};
 	
 	public OperationErrorDialog(Shell parentShell, String title, int errorCode) {
 		super(parentShell, 
 			title, 
 			null, 
-			SVNTeamUIPlugin.instance().getResource(OperationErrorDialog.errorMessages[errorCode]),
+			SVNUIMessages.getString(OperationErrorDialog.errorMessages[errorCode]),
 			MessageDialog.WARNING, 
 			new String[] {IDialogConstants.OK_LABEL}, 
 			0);

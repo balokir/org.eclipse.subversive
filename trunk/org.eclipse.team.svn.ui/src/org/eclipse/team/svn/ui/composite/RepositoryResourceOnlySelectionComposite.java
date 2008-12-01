@@ -28,7 +28,7 @@ import org.eclipse.team.svn.core.connector.SVNEntryReference;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.SVNUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.common.RepositoryTreePanel;
 import org.eclipse.team.svn.ui.utility.UserInputHistory;
@@ -157,7 +157,7 @@ public class RepositoryResourceOnlySelectionComposite extends Composite {
 		
 		this. urlLabel = new Label(this, SWT.NONE);
 		urlLabel.setLayoutData(new GridData());
-		urlLabel.setText(SVNTeamUIPlugin.instance().getResource(this.comboId));
+		urlLabel.setText(SVNUIMessages.getString(this.comboId));
 		
 		Composite select = new Composite(this, SWT.NONE);	
 		layout = new GridLayout();
@@ -186,21 +186,21 @@ public class RepositoryResourceOnlySelectionComposite extends Composite {
 			}
 		});
 		this.verifier = new CompositeVerifier();
-		this.verifier.add(new NonEmptyFieldVerifier(SVNTeamUIPlugin.instance().getResource(this.comboId + ".Verifier")));
-		this.verifier.add(new URLVerifier(SVNTeamUIPlugin.instance().getResource(this.comboId + ".Verifier")) {
+		this.verifier.add(new NonEmptyFieldVerifier(SVNUIMessages.getString(this.comboId + "_Verifier")));
+		this.verifier.add(new URLVerifier(SVNUIMessages.getString(this.comboId + "_Verifier")) {
 			protected String getErrorMessage(Control input) {
 				String error = super.getErrorMessage(input);
 				if (RepositoryResourceOnlySelectionComposite.this.baseResource != null && error == null) {
 					String url = this.getText(input);
 					if (RepositoryResourceOnlySelectionComposite.this.getDestination(SVNUtility.asEntryReference(url), true) == null) {
-						error = SVNTeamUIPlugin.instance().getResource("RepositoryResourceOnlySelectionComposite.URL.Verifier.Error", new String[] {url, RepositoryResourceOnlySelectionComposite.this.baseResource.getRepositoryLocation().getUrl()});
+						error = SVNUIMessages.format(SVNUIMessages.RepositoryResourceOnlySelectionComposite_URL_Verifier_Error, new String[] {url, RepositoryResourceOnlySelectionComposite.this.baseResource.getRepositoryLocation().getUrl()});
 					}
 					
 					//check that resource starts with location
 					if (error == null && RepositoryResourceOnlySelectionComposite.this.isMatchToBaseResource) {
 						String baseResourceUrl = RepositoryResourceOnlySelectionComposite.this.baseResource.getUrl();
 						if (!url.startsWith(baseResourceUrl)) {							
-							error = SVNTeamUIPlugin.instance().getResource("RepositoryResourceOnlySelectionComposite.URL.Verifier.Error", new String[] {url, baseResourceUrl});
+							error = SVNUIMessages.format(SVNUIMessages.RepositoryResourceOnlySelectionComposite_URL_Verifier_Error, new String[] {url, baseResourceUrl});
 						}
 					}
 				}
@@ -211,7 +211,7 @@ public class RepositoryResourceOnlySelectionComposite extends Composite {
 		this.validationManager.attachTo(this.urlText, this.verifier);
 		
 		this.browse = new Button(select, SWT.PUSH);
-		this.browse.setText(SVNTeamUIPlugin.instance().getResource("Button.Browse"));
+		this.browse.setText(SVNUIMessages.Button_Browse);
 		data = new GridData();
 		data.widthHint = DefaultDialog.computeButtonWidth(this.browse);
 		this.browse.setLayoutData(data);
@@ -219,7 +219,7 @@ public class RepositoryResourceOnlySelectionComposite extends Composite {
 			public void widgetSelected(SelectionEvent e) {
 				RepositoryTreePanel panel = 
 			        new RepositoryTreePanel(
-			        	SVNTeamUIPlugin.instance().getResource("RepositoryResourceOnlySelectionComposite.Select.Title"), 
+			        	SVNUIMessages.RepositoryResourceOnlySelectionComposite_Select_Title, 
 						RepositoryResourceOnlySelectionComposite.this.selectionTitle,
 						RepositoryResourceOnlySelectionComposite.this.selectionDescription,
 						null, 

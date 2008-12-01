@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.ui.panel.remote;
 
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 
 /**
@@ -22,8 +22,8 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
  */
 public class RenameResourcePanel extends AbstractGetResourceNamePanel {
     public RenameResourcePanel(String originalName) {
-        super(SVNTeamUIPlugin.instance().getResource("RenameResourcePanel.Title"), true);
-        this.dialogDescription = SVNTeamUIPlugin.instance().getResource("RenameResourcePanel.Description");
+        super(SVNUIMessages.RenameResourcePanel_Title, true);
+        this.dialogDescription = SVNUIMessages.RenameResourcePanel_Description;
         this.disallowedName = originalName;
     }
 

@@ -11,7 +11,7 @@
 
 package org.eclipse.team.svn.ui.history.data;
 
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * History View entries category
@@ -37,11 +37,11 @@ public class HistoryCategory {
 	
 	public String getName() {
 		switch (this.categoryType) {
-			case HistoryCategory.CATEGORY_TODAY: return SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Group.Today");
-			case HistoryCategory.CATEGORY_YESTERDAY: return SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Group.Yesterday");
-			case HistoryCategory.CATEGORY_THIS_WEEK : return SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Group.Week");
-			case HistoryCategory.CATEGORY_THIS_MONTH : return SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Group.Month");
-			case HistoryCategory.CATEGORY_EARLIER : return SVNTeamUIPlugin.instance().getResource("LogMessagesComposite.Group.Earlier");
+			case HistoryCategory.CATEGORY_TODAY: return SVNUIMessages.LogMessagesComposite_Group_Today;
+			case HistoryCategory.CATEGORY_YESTERDAY: return SVNUIMessages.LogMessagesComposite_Group_Yesterday;
+			case HistoryCategory.CATEGORY_THIS_WEEK : return SVNUIMessages.LogMessagesComposite_Group_Week;
+			case HistoryCategory.CATEGORY_THIS_MONTH : return SVNUIMessages.LogMessagesComposite_Group_Month;
+			case HistoryCategory.CATEGORY_EARLIER : return SVNUIMessages.LogMessagesComposite_Group_Earlier;
 		}
 		return "";
 	}

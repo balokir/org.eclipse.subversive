@@ -13,7 +13,7 @@ package org.eclipse.team.svn.ui.repository.model;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
@@ -23,7 +23,7 @@ import org.eclipse.ui.PlatformUI;
  * @author Alexander Gurov
  */
 public class RepositoryError extends RepositoryFictiveNode {
-	public static final String ERROR_MSG = "RepositoriesView.Model.Error";
+	public static final String ERROR_MSG = "RepositoriesView_Model_Error";
 	
 	protected IStatus errorStatus;
 	
@@ -44,7 +44,7 @@ public class RepositoryError extends RepositoryFictiveNode {
 	}
 
 	public String getLabel(Object o) {
-		return SVNTeamUIPlugin.instance().getResource(RepositoryError.ERROR_MSG);
+		return SVNUIMessages.getString(RepositoryError.ERROR_MSG);
 	}
 
 	public ImageDescriptor getImageDescriptor(Object o) {

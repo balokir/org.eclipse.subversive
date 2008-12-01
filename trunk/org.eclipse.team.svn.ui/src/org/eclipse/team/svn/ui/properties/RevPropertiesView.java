@@ -32,6 +32,7 @@ import org.eclipse.team.svn.core.svnstorage.events.IRevisionPropertyChangeListen
 import org.eclipse.team.svn.core.svnstorage.events.RepositoriesStateChangedEvent;
 import org.eclipse.team.svn.core.svnstorage.events.RevisonPropertyChangeEvent;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.RevisionPropertiesComposite;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.PlatformUI;
@@ -70,7 +71,7 @@ public class RevPropertiesView extends ViewPart implements IRepositoriesStateCha
 			this.setContentDescription("");
 			return;
 		}
-		this.setContentDescription(SVNTeamUIPlugin.instance().getResource("RevisionPropertyView.Decript", new String [] {String.valueOf(this.location), String.valueOf(this.revision)}));
+		this.setContentDescription(SVNUIMessages.format(SVNUIMessages.RevisionPropertyView_Decript, new String [] {String.valueOf(this.location), String.valueOf(this.revision)}));
 		this.revPropComposite.setPending(true);
 		CompositeOperation op = new CompositeOperation("ShowRevProp");
 		op.add((IActionOperation)(this.provider = new GetRevisionPropertiesOperation(this.location, this.revision)));
@@ -86,7 +87,7 @@ public class RevPropertiesView extends ViewPart implements IRepositoriesStateCha
 	public void createPartControl(Composite parent) {
 		IToolBarManager tbm = this.getViewSite().getActionBars().getToolBarManager();
 		tbm.removeAll();
-        Action action = new Action(SVNTeamUIPlugin.instance().getResource("SVNView.Refresh.Label")) {
+        Action action = new Action(SVNUIMessages.SVNView_Refresh_Label) {
         	public void run() {
 	    		RevPropertiesView.this.refreshView();
 	    	}

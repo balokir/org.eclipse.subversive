@@ -14,7 +14,7 @@ package org.eclipse.team.svn.ui.verifier;
 import java.text.MessageFormat;
 
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * Comment verifier
@@ -31,14 +31,14 @@ public class CommentVerifier extends AbstractFormattedVerifier {
     
     protected String getErrorMessageImpl(Control input) {
     	if (this.getText(input).trim().length() < this.logMinSize) {
-    		return MessageFormat.format(SVNTeamUIPlugin.instance().getResource("Verifier.Comment.Error"), this.logMinSize);
+    		return MessageFormat.format(SVNUIMessages.Verifier_Comment_Error, this.logMinSize);
     	}
         return null;
     }
 
     protected String getWarningMessageImpl(Control input) {
     	if (this.getText(input).trim().length() == 0) {
-    		return SVNTeamUIPlugin.instance().getResource("Verifier.Comment.Warning");
+    		return SVNUIMessages.Verifier_Comment_Warning;
     	}
         return null;
     }

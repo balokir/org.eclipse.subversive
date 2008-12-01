@@ -24,7 +24,7 @@ import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.utility.DefaultOperationWrapperFactory;
 import org.eclipse.team.svn.ui.utility.ICancellableOperationWrapper;
 import org.eclipse.team.svn.ui.utility.IOperationWrapperFactory;
@@ -118,7 +118,7 @@ public abstract class AbstractSVNTeamAction extends TeamAction {
 	}
 
 	protected void handleException(Exception ex) {
-		this.handle(ex, SVNTeamUIPlugin.instance().getResource("Error.ActionFailed"), SVNTeamUIPlugin.instance().getResource("Error.ActionFailed.Message"));
+		this.handle(ex, SVNUIMessages.getErrorString("Error_ActionFailed"), SVNUIMessages.Error_ActionFailed_Message);
 	}
 	
 	public void selectionChanged(IAction action, ISelection selection) {
@@ -135,7 +135,7 @@ public abstract class AbstractSVNTeamAction extends TeamAction {
 			super.selectionChanged(action, selection);
 		}
 		catch (Throwable ex) {
-			LoggedOperation.reportError(SVNTeamUIPlugin.instance().getResource("Error.MenuEnablement"), ex);
+			LoggedOperation.reportError(SVNUIMessages.getErrorString("Error_MenuEnablement"), ex);
 		}
 	}
 

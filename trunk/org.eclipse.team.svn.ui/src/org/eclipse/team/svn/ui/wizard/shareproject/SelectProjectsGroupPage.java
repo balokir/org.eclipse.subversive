@@ -43,6 +43,7 @@ import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.utility.ColumnedViewerComparator;
 import org.eclipse.team.svn.ui.wizard.AbstractVerifiedWizardPage;
 import org.eclipse.ui.PlatformUI;
@@ -67,10 +68,10 @@ public class SelectProjectsGroupPage extends AbstractVerifiedWizardPage implemen
 	public SelectProjectsGroupPage(IProject []projects) {
 		super(
 			SelectProjectsGroupPage.class.getName(), 
-			SVNTeamUIPlugin.instance().getResource("SelectProjectsGroupPage.Title"), 
+			SVNUIMessages.SelectProjectsGroupPage_Title, 
 			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
 		
-		this.setDescription(SVNTeamUIPlugin.instance().getResource("SelectProjectsGroupPage.Description"));
+		this.setDescription(SVNUIMessages.SelectProjectsGroupPage_Description);
 		this.allProjects = projects;
 		this.analysisDepth = 2;
 		this.maxURLLength = 0;
@@ -145,13 +146,13 @@ public class SelectProjectsGroupPage extends AbstractVerifiedWizardPage implemen
 		data.heightHint = this.convertHeightInCharsToPixels(3);
 		data.widthHint = 420;
 		label.setLayoutData(data);
-		label.setText(SVNTeamUIPlugin.instance().getResource("SelectProjectsGroupPage.Hint"));
+		label.setText(SVNUIMessages.SelectProjectsGroupPage_Hint);
 		
 		Button shareProjectsButton = new Button(composite, SWT.RADIO);
 		data = new GridData();
 		data.horizontalSpan = 2;
 		shareProjectsButton.setLayoutData(data);
-		shareProjectsButton.setText(SVNTeamUIPlugin.instance().getResource("SelectProjectsGroupPage.ShareNew"));
+		shareProjectsButton.setText(SVNUIMessages.SelectProjectsGroupPage_ShareNew);
 		boolean newEnabled = this.projectGroups.get(null) != null;
 		shareProjectsButton.setEnabled(newEnabled);
 		shareProjectsButton.setSelection(newEnabled);
@@ -171,7 +172,7 @@ public class SelectProjectsGroupPage extends AbstractVerifiedWizardPage implemen
 		data.horizontalSpan = 2;
 		reconnectProjectsButton.setLayoutData(data);
 		reconnectProjectsButton.setEnabled(this.projectGroups.size() > 1 || this.projectGroups.get(null) == null);
-		reconnectProjectsButton.setText(SVNTeamUIPlugin.instance().getResource("SelectProjectsGroupPage.Reconnect"));
+		reconnectProjectsButton.setText(SVNUIMessages.SelectProjectsGroupPage_Reconnect);
 		reconnectProjectsButton.setSelection(!newEnabled);
 		reconnectProjectsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -223,7 +224,7 @@ public class SelectProjectsGroupPage extends AbstractVerifiedWizardPage implemen
 		data = new GridData();
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
-		label.setText(SVNTeamUIPlugin.instance().getResource("SelectProjectsGroupPage.ProjectsList"));
+		label.setText(SVNUIMessages.SelectProjectsGroupPage_ProjectsList);
 		
 		this.viewer = new TableViewer(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
 		Table table = this.viewer.getTable();
@@ -270,7 +271,7 @@ public class SelectProjectsGroupPage extends AbstractVerifiedWizardPage implemen
 		
 		TableColumn col = new TableColumn(table, SWT.NONE);
 		col.setResizable(false);
-		col.setText(SVNTeamUIPlugin.instance().getResource("SelectProjectsGroupPage.ProjectName"));
+		col.setText(SVNUIMessages.SelectProjectsGroupPage_ProjectName);
 		col.addSelectionListener(comparator);
 		TableLayout tLayout = new TableLayout();
 		tLayout.addColumnData(new ColumnWeightData(100));

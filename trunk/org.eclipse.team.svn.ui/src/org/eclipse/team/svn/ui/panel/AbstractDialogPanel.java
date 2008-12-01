@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.verifier.AbstractVerificationKeyListener;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifier;
@@ -186,15 +187,15 @@ public abstract class AbstractDialogPanel implements IDialogPanel, IValidationMa
     public static String makeToBeOperatedMessage(IRepositoryResource []resources) {
 		String message;
 		if (resources.length == 1) {
-			message = "RepositoryTreePanel.Message.Single";
+			message = "RepositoryTreePanel_Message_Single";
 		}
 		else if (resources.length < 5) {
-			message = "RepositoryTreePanel.Message.UpTo4";
+			message = "RepositoryTreePanel_Message_UpTo4";
 		}
 		else {
-			message = "RepositoryTreePanel.Message.Multi";
+			message = "RepositoryTreePanel_Message_Multi";
 		}
-		return SVNTeamUIPlugin.instance().getResource(message, new String[] {FileUtility.getNamesListAsString(resources)});
+		return SVNUIMessages.format(message, new String[] {FileUtility.getNamesListAsString(resources)});
 	}
 
 	protected class VerificationKeyListener extends AbstractVerificationKeyListener {

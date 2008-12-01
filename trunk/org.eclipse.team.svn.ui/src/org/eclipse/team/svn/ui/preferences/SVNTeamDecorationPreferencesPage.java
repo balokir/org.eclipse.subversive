@@ -59,6 +59,7 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.decorator.DecoratorVariables;
 import org.eclipse.team.svn.ui.decorator.IVariable;
 import org.eclipse.team.svn.ui.decorator.IVariableContentProvider;
@@ -279,15 +280,15 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		tabFolder.setLayoutData(new GridData());
 		
 		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
-		tabItem.setText(SVNTeamUIPlugin.instance().getResource("PreferencePage.generalTabName"));
+		tabItem.setText(SVNUIMessages.PreferencePage_generalTabName);
 		tabItem.setControl(this.createGeneralSettingsPage(tabFolder));
 		
 		tabItem = new TabItem(tabFolder, SWT.NONE);
-		tabItem.setText(SVNTeamUIPlugin.instance().getResource("PreferencePage.textTabName"));
+		tabItem.setText(SVNUIMessages.PreferencePage_textTabName);
 		tabItem.setControl(this.createTextSettingsPage(tabFolder));
 		
 		tabItem = new TabItem(tabFolder, SWT.NONE);
-		tabItem.setText(SVNTeamUIPlugin.instance().getResource("PreferencePage.iconsTabName"));
+		tabItem.setText(SVNUIMessages.PreferencePage_iconsTabName);
 		tabItem.setControl(this.createIconsSettingsPage(tabFolder));
 		
 		this.preview = new Preview(parent);
@@ -311,7 +312,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = 450;
 		label.setLayoutData(data);
-		label.setText(SVNTeamUIPlugin.instance().getResource("PreferencePage.textPrompt"));
+		label.setText(SVNUIMessages.PreferencePage_textPrompt);
 		
 		Composite groups = new Composite(composite, SWT.NULL);
 		layout = new GridLayout();
@@ -423,7 +424,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 				
 		label = new Label(outFlagComposite, SWT.NONE);
 		label.setLayoutData(new GridData());
-		label.setText(SVNTeamUIPlugin.instance().getResource("PreferencePage.textOutgoingFlag"));
+		label.setText(SVNUIMessages.PreferencePage_textOutgoingFlag);
 
 		this.outgoingCharsField = new Text(outFlagComposite, SWT.SINGLE | SWT.BORDER);
 		data = new GridData(GridData.FILL_HORIZONTAL);
@@ -446,7 +447,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		
 		label = new Label(addFlagComposite, SWT.NULL);
 		label.setLayoutData(new GridData());
-		label.setText(SVNTeamUIPlugin.instance().getResource("PreferencePage.textAddedFlag"));
+		label.setText(SVNUIMessages.PreferencePage_textAddedFlag);
 		
 		this.addedCharsField = new Text(addFlagComposite, SWT.SINGLE | SWT.BORDER);
 		data = new GridData(GridData.FILL_HORIZONTAL);
@@ -466,7 +467,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		Label label = new Label(parent, SWT.NULL);
 		label.setLayoutData(new GridData());
 		if (labelId != null) {
-			label.setText(SVNTeamUIPlugin.instance().getResource(labelId));
+			label.setText(SVNUIMessages.getString(labelId));
 		}
 		else {
 			label.setText("");
@@ -479,7 +480,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		format.setLayoutData(data);
 		
 		Button addVariables = new Button(parent, SWT.PUSH);
-		addVariables.setText(SVNTeamUIPlugin.instance().getResource("PreferencePage.textAddVariables"));
+		addVariables.setText(SVNUIMessages.PreferencePage_textAddVariables);
 		data = new GridData();
 		data.widthHint = 25;
 		addVariables.setLayoutData(data);		
@@ -514,8 +515,8 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 				return var.getName() + " - " + var.getDescription();
 			}
 		};
-		String dialogPrompt = SVNTeamUIPlugin.instance().getResource("PreferencePage.textAddVariablesPrompt");
-		String dialogMessage = SVNTeamUIPlugin.instance().getResource("PreferencePage.textAddVariablesMessage");
+		String dialogPrompt = SVNUIMessages.PreferencePage_textAddVariablesPrompt;
+		String dialogMessage = SVNUIMessages.PreferencePage_textAddVariablesMessage;
 		
 		DecoratorVariables decorator = new DecoratorVariables(TextVariableSetProvider.instance);
 		IVariable []realVars = decorator.parseFormatLine(field.getText());
@@ -556,12 +557,12 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		GridData data = new GridData();
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
-		label.setText(SVNTeamUIPlugin.instance().getResource("PreferencePage.iconsPrompt"));
+		label.setText(SVNUIMessages.PreferencePage_iconsPrompt);
 		
 		this.indicateModifiedButton = new Button(composite, SWT.CHECK);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.indicateModifiedButton.setLayoutData(data);
-		this.indicateModifiedButton.setText(SVNTeamUIPlugin.instance().getResource("PreferencePage.iconsIndicateModified"));
+		this.indicateModifiedButton.setText(SVNUIMessages.PreferencePage_iconsIndicateModified);
 		this.indicateModifiedButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent (Event event) {
 				SVNTeamDecorationPreferencesPage.this.indicateModified = SVNTeamDecorationPreferencesPage.this.indicateModifiedButton.getSelection();
@@ -572,7 +573,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		this.indicateConflictedButton = new Button(composite, SWT.CHECK);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.indicateConflictedButton.setLayoutData(data);
-		this.indicateConflictedButton.setText(SVNTeamUIPlugin.instance().getResource("PreferencePage.iconsIndicateConflicted"));
+		this.indicateConflictedButton.setText(SVNUIMessages.PreferencePage_iconsIndicateConflicted);
 		this.indicateConflictedButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent (Event event) {
 				SVNTeamDecorationPreferencesPage.this.indicateConflicted = SVNTeamDecorationPreferencesPage.this.indicateConflictedButton.getSelection();
@@ -583,7 +584,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		this.indicateRemoteButton = new Button(composite, SWT.CHECK);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.indicateRemoteButton.setLayoutData(data);
-		this.indicateRemoteButton.setText(SVNTeamUIPlugin.instance().getResource("PreferencePage.iconsIndicateRemote"));
+		this.indicateRemoteButton.setText(SVNUIMessages.PreferencePage_iconsIndicateRemote);
 		this.indicateRemoteButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent (Event event) {
 				SVNTeamDecorationPreferencesPage.this.indicateRemote = SVNTeamDecorationPreferencesPage.this.indicateRemoteButton.getSelection();
@@ -594,7 +595,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		this.indicateLockedButton = new Button(composite, SWT.CHECK);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.indicateLockedButton.setLayoutData(data);
-		this.indicateLockedButton.setText(SVNTeamUIPlugin.instance().getResource("PreferencePage.iconsIndicateLocked"));
+		this.indicateLockedButton.setText(SVNUIMessages.PreferencePage_iconsIndicateLocked);
 		this.indicateLockedButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent (Event event) {
 				SVNTeamDecorationPreferencesPage.this.indicateLocked = SVNTeamDecorationPreferencesPage.this.indicateLockedButton.getSelection();
@@ -605,7 +606,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		this.indicateAddedButton = new Button(composite, SWT.CHECK);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.indicateAddedButton.setLayoutData(data);
-		this.indicateAddedButton.setText(SVNTeamUIPlugin.instance().getResource("PreferencePage.iconsIndicateAdded"));
+		this.indicateAddedButton.setText(SVNUIMessages.PreferencePage_iconsIndicateAdded);
 		this.indicateAddedButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent (Event event) {
 				SVNTeamDecorationPreferencesPage.this.indicateAdded = SVNTeamDecorationPreferencesPage.this.indicateAddedButton.getSelection();
@@ -616,7 +617,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		this.indicateNeedsLockButton = new Button(composite, SWT.CHECK);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.indicateNeedsLockButton.setLayoutData(data);
-		this.indicateNeedsLockButton.setText(SVNTeamUIPlugin.instance().getResource("PreferencePage.iconsIndicateNeedsLock"));
+		this.indicateNeedsLockButton.setText(SVNUIMessages.PreferencePage_iconsIndicateNeedsLock);
 		this.indicateNeedsLockButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent (Event event) {
 				SVNTeamDecorationPreferencesPage.this.indicateNeedsLock = SVNTeamDecorationPreferencesPage.this.indicateNeedsLockButton.getSelection();
@@ -627,7 +628,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		this.indicateNewButton = new Button(composite, SWT.CHECK);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.indicateNewButton.setLayoutData(data);
-		this.indicateNewButton.setText(SVNTeamUIPlugin.instance().getResource("PreferencePage.iconsIndicateNew"));
+		this.indicateNewButton.setText(SVNUIMessages.PreferencePage_iconsIndicateNew);
 		this.indicateNewButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent (Event event) {
 				SVNTeamDecorationPreferencesPage.this.indicateNew = SVNTeamDecorationPreferencesPage.this.indicateNewButton.getSelection();
@@ -638,7 +639,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		this.indicateSwitchedButton = new Button(composite, SWT.CHECK);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.indicateSwitchedButton.setLayoutData(data);
-		this.indicateSwitchedButton.setText(SVNTeamUIPlugin.instance().getResource("PreferencePage.iconsIndicateSwitched"));
+		this.indicateSwitchedButton.setText(SVNUIMessages.PreferencePage_iconsIndicateSwitched);
 		this.indicateSwitchedButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent (Event event) {
 				SVNTeamDecorationPreferencesPage.this.indicateSwitched = SVNTeamDecorationPreferencesPage.this.indicateSwitchedButton.getSelection();
@@ -665,17 +666,17 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 		data.heightHint = this.convertHeightInCharsToPixels(4);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;		
 		noteLabel.setLayoutData(data);
-		noteLabel.setText(SVNTeamUIPlugin.instance().getResource("PreferencePage.noteLabel"));
+		noteLabel.setText(SVNUIMessages.PreferencePage_noteLabel);
 		
 		Label separator = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		new PreferenceLinkArea(composite, SWT.NONE, SVNTeamUIPlugin.instance().getResource("PreferencePage.generalUseLabels_1"), SVNTeamUIPlugin.instance().getResource("PreferencePage.generalUseLabels_2"), (IWorkbenchPreferenceContainer)this.getContainer(), null);
+		new PreferenceLinkArea(composite, SWT.NONE, SVNUIMessages.PreferencePage_generalUseLabels_1, SVNUIMessages.PreferencePage_generalUseLabels_2, (IWorkbenchPreferenceContainer)this.getContainer(), null);
 		
 		this.useFontsButton = new Button(composite, SWT.CHECK);
 		this.useFontsButton.setLayoutData(new GridData());
-		this.useFontsButton.setText(SVNTeamUIPlugin.instance().getResource("PreferencePage.generalUseFonts_2"));
-		new PreferenceLinkArea(composite, SWT.NONE, SVNTeamUIPlugin.instance().getResource("PreferencePage.generalUseFonts_1"), SVNTeamUIPlugin.instance().getResource("PreferencePage.generalUseFonts_3"), (IWorkbenchPreferenceContainer)this.getContainer(), null);
+		this.useFontsButton.setText(SVNUIMessages.PreferencePage_generalUseFonts_2);
+		new PreferenceLinkArea(composite, SWT.NONE, SVNUIMessages.PreferencePage_generalUseFonts_1, SVNUIMessages.PreferencePage_generalUseFonts_3, (IWorkbenchPreferenceContainer)this.getContainer(), null);
 		this.useFontsButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent (Event event) {
 				SVNTeamDecorationPreferencesPage.this.useFontsDecor = SVNTeamDecorationPreferencesPage.this.useFontsButton.getSelection();
@@ -799,34 +800,34 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 				return "";
 			}
 			else if (var.equals(TextVariableSetProvider.VAR_ASCENDANT)) {
-				return SVNTeamUIPlugin.instance().getResource("PreferencePage.demoAscendant");
+				return SVNUIMessages.PreferencePage_demoAscendant;
 			}
 			else if (var.equals(TextVariableSetProvider.VAR_DESCENDANT)) {
-				return SVNTeamUIPlugin.instance().getResource("PreferencePage.demoDescendant");
+				return SVNUIMessages.PreferencePage_demoDescendant;
 			}
 			else if (var.equals(TextVariableSetProvider.VAR_FULLNAME)) {
-				return SVNTeamUIPlugin.instance().getResource("PreferencePage.demoFullname");
+				return SVNUIMessages.PreferencePage_demoFullname;
 			}
 			else if (var.equals(TextVariableSetProvider.VAR_AUTHOR)) {
-				return SVNTeamUIPlugin.instance().getResource("PreferencePage.demoAuthor");
+				return SVNUIMessages.PreferencePage_demoAuthor;
 			}
 			else if (var.equals(TextVariableSetProvider.VAR_NAME)) {
 				return this.preview.name;
 			}
 			else if (var.equals(TextVariableSetProvider.VAR_LOCATION_URL)) {
-				return SVNTeamUIPlugin.instance().getResource("PreferencePage.demoLocationURL");
+				return SVNUIMessages.PreferencePage_demoLocationURL;
 			}
 			else if (var.equals(TextVariableSetProvider.VAR_LOCATION_LABEL)) {
-				return SVNTeamUIPlugin.instance().getResource("PreferencePage.demoLocationLabel");
+				return SVNUIMessages.PreferencePage_demoLocationLabel;
 			}
 			else if (var.equals(TextVariableSetProvider.VAR_RESOURCE_URL)) {
-				return SVNTeamUIPlugin.instance().getResource("PreferencePage.demoResourceURL");
+				return SVNUIMessages.PreferencePage_demoResourceURL;
 			}
 			else if (var.equals(TextVariableSetProvider.VAR_SHORT_RESOURCE_URL)) {
-				return SVNTeamUIPlugin.instance().getResource("PreferencePage.demoShortURL");
+				return SVNUIMessages.PreferencePage_demoShortURL;
 			}
 			else if (var.equals(TextVariableSetProvider.VAR_REMOTE_NAME)) {
-				return SVNTeamUIPlugin.instance().getResource("PreferencePage.demoRemoteName");
+				return SVNUIMessages.PreferencePage_demoRemoteName;
 			}
 			else if (var.equals(TextVariableSetProvider.VAR_DATE)) {
 				return DateFormatter.formatDate(new Date());
@@ -858,7 +859,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 			composite.setLayoutData(data);
 			Label label = new Label(composite, SWT.NULL);
 			label.setLayoutData(new GridData());
-			label.setText(SVNTeamUIPlugin.instance().getResource("PreferencePage.preview"));
+			label.setText(SVNUIMessages.PreferencePage_preview);
 			this.fViewer = new TreeViewer(composite);
 			data = new GridData(GridData.FILL_BOTH);
 			data.heightHint = Math.max(SVNTeamDecorationPreferencesPage.this.convertHeightInCharsToPixels(1), 16) * 13;
@@ -911,15 +912,15 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
 			PreviewFile previewFile = (PreviewFile)element;
 			switch (previewFile.type) {
 			case IResource.PROJECT:
-				provider = new DemoVariableContentProvider(previewFile,	SVNTeamUIPlugin.instance().getResource("PreferencePage.demoProjectRevision"));
+				provider = new DemoVariableContentProvider(previewFile,	SVNUIMessages.PreferencePage_demoProjectRevision);
 				realVars = this.decoratorVariables.parseFormatLine(SVNTeamDecorationPreferencesPage.this.projectFormatField.getText());
 				break;
 			case IResource.FOLDER:
-				provider = new DemoVariableContentProvider(previewFile, SVNTeamUIPlugin.instance().getResource("PreferencePage.demoFolderRevision"));
+				provider = new DemoVariableContentProvider(previewFile, SVNUIMessages.PreferencePage_demoFolderRevision);
 				realVars = this.decoratorVariables.parseFormatLine(SVNTeamDecorationPreferencesPage.this.folderFormatField.getText());
 				break;
 			default:
-				provider = new DemoVariableContentProvider(previewFile,	SVNTeamUIPlugin.instance().getResource("PreferencePage.demoFileRevision"));
+				provider = new DemoVariableContentProvider(previewFile,	SVNUIMessages.PreferencePage_demoFileRevision);
 				realVars = this.decoratorVariables.parseFormatLine(SVNTeamDecorationPreferencesPage.this.fileFormatField.getText());
 				break;
 			}
@@ -1009,7 +1010,7 @@ public class SVNTeamDecorationPreferencesPage extends AbstractSVNTeamPreferences
                 return overlayedImg;
             } 
 			catch (Exception e) {
-                LoggedOperation.reportError(SVNTeamUIPlugin.instance().getResource("Error.DecoratorImage"), e);
+                LoggedOperation.reportError(SVNUIMessages.Error_DecoratorImage, e);
             }
             return null;
 		}

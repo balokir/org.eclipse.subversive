@@ -33,7 +33,7 @@ public class ProjectCloseListener implements IResourceChangeListener {
 		IProject []projects = new IProject[] {(IProject)event.getResource()};
 		SVNRemoteStorage.instance().fireResourceStatesChangedEvent(new ProjectStatesChangedEvent(projects, event.getType() == IResourceChangeEvent.PRE_CLOSE ? ProjectStatesChangedEvent.ST_PRE_CLOSED : ProjectStatesChangedEvent.ST_PRE_DELETED));
 		if (RepositoryProvider.getProvider(projects[0], SVNTeamPlugin.NATURE_ID) != null) {
-			CompositeOperation op = new CompositeOperation(SVNTeamUIPlugin.instance().getResource("Operation.PreCloseDeleteClean"));
+			CompositeOperation op = new CompositeOperation(SVNUIMessages.Operation_PreCloseDeleteClean);
 			op.add(new ClearUpdateStatusesOperation(projects));
 			op.add(new ClearMergeStatusesOperation(projects));
 			UIMonitorUtility.doTaskScheduledDefault(op);

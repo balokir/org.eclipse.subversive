@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.properties.ResourcePropertyEditPanel;
 import org.eclipse.team.svn.ui.utility.UserInputHistory;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifierProxy;
@@ -110,21 +110,21 @@ public class ApplyPropertyMethodComposite extends Composite {
 		layout = new GridLayout();
 		group.setLayout(layout);
 		group.setLayoutData(new GridData(GridData.FILL_BOTH));
-		group.setText(SVNTeamUIPlugin.instance().getResource("ApplyPropertyMethodComposite.ResourcesOptions"));
+		group.setText(SVNUIMessages.ApplyPropertyMethodComposite_ResourcesOptions);
 		
 		if (this.resourcesType == ResourcePropertyEditPanel.MIXED_RESOURCES) {
 			this.applyToAllResourcesButton = new Button(group, SWT.RADIO);
 			this.applyToAllResourcesButton.setLayoutData(new GridData());
-			this.applyToAllResourcesButton.setText(SVNTeamUIPlugin.instance().getResource("ApplyPropertyMethodComposite.AllResources"));
+			this.applyToAllResourcesButton.setText(SVNUIMessages.ApplyPropertyMethodComposite_AllResources);
 			this.applyToAllResourcesButton.setSelection(true);
 			
 			this.applyToFilesButton = new Button(group, SWT.RADIO);
 			this.applyToFilesButton.setLayoutData(new GridData());
-			this.applyToFilesButton.setText(SVNTeamUIPlugin.instance().getResource("ApplyPropertyMethodComposite.FilesOnly"));
+			this.applyToFilesButton.setText(SVNUIMessages.ApplyPropertyMethodComposite_FilesOnly);
 			
 			this.applyToFoldersButton = new Button(group, SWT.RADIO);
 			this.applyToFoldersButton.setLayoutData(new GridData());
-			this.applyToFoldersButton.setText(SVNTeamUIPlugin.instance().getResource("ApplyPropertyMethodComposite.FoldersOnly"));
+			this.applyToFoldersButton.setText(SVNUIMessages.ApplyPropertyMethodComposite_FoldersOnly);
 		}
 		
 		Composite filter = new Composite(group, SWT.NONE);
@@ -137,7 +137,7 @@ public class ApplyPropertyMethodComposite extends Composite {
 		filter.setLayoutData(data);
 		
 		this.useFilterButton = new Button(filter, SWT.CHECK);
-		this.useFilterButton.setText(SVNTeamUIPlugin.instance().getResource("ApplyPropertyMethodComposite.ResourceNameFiltration"));
+		this.useFilterButton.setText(SVNUIMessages.ApplyPropertyMethodComposite_ResourceNameFiltration);
 		this.useFilterButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 		
 		this.useFilterButton.addSelectionListener(new SelectionListener() {
@@ -159,7 +159,7 @@ public class ApplyPropertyMethodComposite extends Composite {
 		
 		this.filterLabel = new Label(subFilter, SWT.NONE);
 		this.filterLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
-		this.filterLabel.setText(SVNTeamUIPlugin.instance().getResource("ApplyPropertyMethodComposite.Mask"));
+		this.filterLabel.setText(SVNUIMessages.ApplyPropertyMethodComposite_Mask);
 		
 		this.propertyFilterHistory = new UserInputHistory(ApplyPropertyMethodComposite.PROPERTY_FILTER_HISTORY_NAME);
 		
@@ -170,7 +170,7 @@ public class ApplyPropertyMethodComposite extends Composite {
 		this.filterMaskText.setVisibleItemCount(this.propertyFilterHistory.getDepth());
 		this.filterMaskText.setItems(this.propertyFilterHistory.getHistory());
 		this.validationManager.attachTo(this.filterMaskText, 
-				new AbstractVerifierProxy(new NonEmptyFieldVerifier(SVNTeamUIPlugin.instance().getResource("ApplyPropertyMethodComposite.Mask.Verifier"))) {
+				new AbstractVerifierProxy(new NonEmptyFieldVerifier(SVNUIMessages.ApplyPropertyMethodComposite_Mask_Verifier)) {
 					protected boolean isVerificationEnabled(Control input) {
 						return ApplyPropertyMethodComposite.this.useFilterButton.getSelection() && ApplyPropertyMethodComposite.this.useFilterButton.isEnabled();
 					}

@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.ui.panel.reporting;
 
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * Preview error report panel
@@ -21,7 +21,7 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
  */
 public class PreviewErrorReportPanel extends PreviewReportPanel {
 	public PreviewErrorReportPanel(String report) {
-		super(SVNTeamUIPlugin.instance().getResource("PreviewErrorReportPanel.Description"), report);
+		super(SVNUIMessages.PreviewErrorReportPanel_Description, report);
 	}
 	
 	public Point getPrefferedSizeImpl() {

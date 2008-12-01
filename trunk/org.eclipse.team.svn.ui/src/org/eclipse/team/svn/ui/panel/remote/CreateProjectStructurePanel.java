@@ -19,7 +19,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifier;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifierProxy;
 
@@ -30,8 +30,8 @@ import org.eclipse.team.svn.ui.verifier.AbstractVerifierProxy;
  */
 public class CreateProjectStructurePanel extends AbstractGetResourceNamePanel {
 	public CreateProjectStructurePanel() {
-		super(SVNTeamUIPlugin.instance().getResource("CreateProjectStructurePanel.Title"), true);
-        this.dialogDescription = SVNTeamUIPlugin.instance().getResource("CreateProjectStructurePanel.Description");
+		super(SVNUIMessages.CreateProjectStructurePanel_Title, true);
+        this.dialogDescription = SVNUIMessages.CreateProjectStructurePanel_Description;
 	}
 
     public void createControlsImpl(Composite parent) {
@@ -49,7 +49,7 @@ public class CreateProjectStructurePanel extends AbstractGetResourceNamePanel {
         Button monolythicButton = new Button(projectComposite, SWT.RADIO);
         data = new GridData(GridData.FILL_HORIZONTAL);        
         monolythicButton.setLayoutData(data);
-        monolythicButton.setText(SVNTeamUIPlugin.instance().getResource("CreateProjectStructurePanel.Monolythic"));
+        monolythicButton.setText(SVNUIMessages.CreateProjectStructurePanel_Monolythic);
         monolythicButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (((Button)e.widget).getSelection()) {
@@ -64,7 +64,7 @@ public class CreateProjectStructurePanel extends AbstractGetResourceNamePanel {
         Button otherButton = new Button(projectComposite, SWT.RADIO);
         data = new GridData(GridData.FILL_HORIZONTAL);        
         otherButton.setLayoutData(data);
-        otherButton.setText(SVNTeamUIPlugin.instance().getResource("CreateProjectStructurePanel.SingleOrMulti"));
+        otherButton.setText(SVNUIMessages.CreateProjectStructurePanel_SingleOrMulti);
         otherButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (((Button)e.widget).getSelection()) {

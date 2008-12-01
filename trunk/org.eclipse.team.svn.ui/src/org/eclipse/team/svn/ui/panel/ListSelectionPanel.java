@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 
 /**
@@ -54,7 +54,7 @@ public class ListSelectionPanel extends AbstractDialogPanel {
 	protected CheckboxTableViewer listViewer;
 	
 	public ListSelectionPanel(Object input, IStructuredContentProvider contentProvider, IBaseLabelProvider labelProvider, String description, String defaultMessage) {
-		this(input, contentProvider, labelProvider, description, defaultMessage, SVNTeamUIPlugin.instance().getResource("ListSelectionPanel.Title"), false);
+		this(input, contentProvider, labelProvider, description, defaultMessage, SVNUIMessages.ListSelectionPanel_Title, false);
 	}
 	
 	public ListSelectionPanel(Object input, IStructuredContentProvider contentProvider, IBaseLabelProvider labelProvider, String description, String defaultMessage, String title, boolean multipleColumns) {
@@ -93,7 +93,7 @@ public class ListSelectionPanel extends AbstractDialogPanel {
 		tComposite.setData(data);
 	
 		Button selectButton = new Button(tComposite, SWT.PUSH);
-		selectButton.setText(SVNTeamUIPlugin.instance().getResource("Button.SelectAll"));
+		selectButton.setText(SVNUIMessages.Button_SelectAll);
 		data = new GridData();
 		data.widthHint = DefaultDialog.computeButtonWidth(selectButton);
 		selectButton.setLayoutData(data);
@@ -106,7 +106,7 @@ public class ListSelectionPanel extends AbstractDialogPanel {
 		selectButton.addSelectionListener(listener);
 	
 		Button deselectButton = new Button(tComposite, SWT.PUSH);
-		deselectButton.setText(SVNTeamUIPlugin.instance().getResource("Button.ClearSelection"));
+		deselectButton.setText(SVNUIMessages.Button_ClearSelection);
 		data = new GridData();
 		data.widthHint = DefaultDialog.computeButtonWidth(deselectButton);
 		deselectButton.setLayoutData(data);
@@ -161,13 +161,13 @@ public class ListSelectionPanel extends AbstractDialogPanel {
 		// resource name
 		TableColumn col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(SVNTeamUIPlugin.instance().getResource("ListSelectionPanel.Resource"));
+		col.setText(SVNUIMessages.ListSelectionPanel_Resource);
 		layout.addColumnData(new ColumnWeightData(60, true));
 	
 		// local presentation
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(SVNTeamUIPlugin.instance().getResource("ListSelectionPanel.LocalPresentation"));
+		col.setText(SVNUIMessages.ListSelectionPanel_LocalPresentation);
 		layout.addColumnData(new ColumnWeightData(40, true));
 		
 		return new CheckboxTableViewer(table); 

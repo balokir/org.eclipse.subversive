@@ -44,6 +44,7 @@ import org.eclipse.team.svn.core.resource.SSHSettings;
 import org.eclipse.team.svn.core.resource.SSLSettings;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.UserInputHistory;
@@ -159,16 +160,16 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 		tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));		
 		
 		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
-		tabItem.setText(SVNTeamUIPlugin.instance().getResource("RepositoryPropertiesTabFolder.General"));
+		tabItem.setText(SVNUIMessages.RepositoryPropertiesTabFolder_General);
 		tabItem.setControl(this.createRepositoryPropertiesPanel(tabFolder));
 		
 		tabItem = new TabItem(tabFolder, SWT.NONE);
-		tabItem.setText(SVNTeamUIPlugin.instance().getResource("RepositoryPropertiesTabFolder.Advanced"));
+		tabItem.setText(SVNUIMessages.RepositoryPropertiesTabFolder_Advanced);
 		Composite rootsComposite = this.createRepositoryRootsComposite(tabFolder);
 		GridData data = new GridData();
 		data.verticalIndent = 10;	
 		this.authorEnabled = new Button(rootsComposite, SWT.CHECK);
-		this.authorEnabled.setText(SVNTeamUIPlugin.instance().getResource("NewRepositoryLocationWizard.OverrideAuthor")); 
+		this.authorEnabled.setText(SVNUIMessages.NewRepositoryLocationWizard_OverrideAuthor); 
 		this.authorEnabled.setSelection(this.repositoryLocation.isAuthorNameEnabled());
 		this.authorEnabled.setLayoutData(data);
 		String name = (this.repositoryLocation.getAuthorName() == null) ? "" : this.repositoryLocation.getAuthorName();
@@ -183,7 +184,7 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 		AbstractFormattedVerifier verifier = new AbstractFormattedVerifier("AuthorNameVerifier") {
 		    protected String getErrorMessageImpl(Control input) {
 		    	if (this.getText(input).equals("")) {
-		    		return SVNTeamUIPlugin.instance().getResource(SVNTeamUIPlugin.instance().getResource("NewRepositoryLocationWizard.AuthorName.Verifier"));
+		    		return SVNUIMessages.NewRepositoryLocationWizard_AuthorName_Verifier;
 		    	}
 		    	return null;
 		    }
@@ -210,13 +211,13 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 		proxyGroupLayout.marginHeight = 5;
 		proxyGroupLayout.marginWidth = 5;
 		proxyGroup.setLayout(proxyGroupLayout);
-		proxyGroup.setText(SVNTeamUIPlugin.instance().getResource("RepositoryPropertiesTabFolder.Proxy"));
+		proxyGroup.setText(SVNUIMessages.RepositoryPropertiesTabFolder_Proxy);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.verticalIndent = 10;
 		proxyGroup.setLayoutData(data);
 		
 		Link proxyLink = new Link(proxyGroup, SWT.WRAP);
-		proxyLink.setText(SVNTeamUIPlugin.instance().getResource("RepositoryPropertiesTabFolder.Proxy.Link"));
+		proxyLink.setText(SVNUIMessages.RepositoryPropertiesTabFolder_Proxy_Link);
 		proxyLink.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				String pageId = "org.eclipse.ui.net.NetPreferences";
@@ -234,7 +235,7 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 		this.createSSHHostComposite(tabFolder);
 		this.sshComposite.setVisible(false);
 		this.sshTab = new TabItem(tabFolder, SWT.NONE);
-		this.sshTab.setText(SVNTeamUIPlugin.instance().getResource("RepositoryPropertiesTabFolder.SSHSettings"));
+		this.sshTab.setText(SVNUIMessages.RepositoryPropertiesTabFolder_SSHSettings);
 		if ((CoreExtensionsManager.instance().getSVNConnectorFactory().getSupportedFeatures() & ISVNConnectorFactory.OptionalFeatures.SSH_SETTINGS) != 0) {
 			this.sshTab.setControl(this.sshComposite);
 		}
@@ -245,7 +246,7 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 		this.createSSLHostComposite(tabFolder);
 		this.sslComposite.setVisible(false);
 		this.sslTab = new TabItem(tabFolder, SWT.NONE);
-		this.sslTab.setText(SVNTeamUIPlugin.instance().getResource("RepositoryPropertiesTabFolder.SSLSettings"));
+		this.sslTab.setText(SVNUIMessages.RepositoryPropertiesTabFolder_SSLSettings);
 		this.sslTab.setControl(this.sslComposite);	
 
 		this.unavailableProxyComposite = this.createUnavailableComposite(tabFolder);
@@ -272,7 +273,7 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 		Label label = new Label(realmsComposite, SWT.NONE);
 		data = new GridData();
 		label.setLayoutData(data);
-		label.setText(SVNTeamUIPlugin.instance().getResource("RepositoryPropertiesTabFolder.ShowFor"));
+		label.setText(SVNUIMessages.RepositoryPropertiesTabFolder_ShowFor);
 		
 		this.cachedRealms = new Combo(realmsComposite, SWT.BORDER | SWT.READ_ONLY);
 		final Button deleteRealm = new Button(realmsComposite, SWT.PUSH);
@@ -321,7 +322,7 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 		this.validateButton = new Button(bottomPart, SWT.CHECK);
 		data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		this.validateButton.setLayoutData(data);
-		this.validateButton.setText(SVNTeamUIPlugin.instance().getResource("RepositoryPropertiesTabFolder.ValidateOnFinish"));
+		this.validateButton.setText(SVNUIMessages.RepositoryPropertiesTabFolder_ValidateOnFinish);
 		this.validateButton.setSelection(true);
 		
 		Text empty = new Text(bottomPart, SWT.READ_ONLY);
@@ -331,7 +332,7 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 		
 		this.resetChangesButton = new Button(bottomPart, SWT.PUSH);
 		data = new GridData(GridData.HORIZONTAL_ALIGN_END);
-		this.resetChangesButton.setText(SVNTeamUIPlugin.instance().getResource("RepositoryPropertiesTabFolder.ResetChanges"));
+		this.resetChangesButton.setText(SVNUIMessages.RepositoryPropertiesTabFolder_ResetChanges);
 		int widthHint = DefaultDialog.computeButtonWidth(this.resetChangesButton);
 		data.widthHint = widthHint;
 		this.resetChangesButton.setLayoutData(data);
@@ -414,10 +415,10 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 		composite.setLayout(layout);
 		
 		Label label = new Label(composite, SWT.WRAP);
-		label.setText(SVNTeamUIPlugin.instance().getResource("RepositoryPropertiesTabFolder.UnavailableMessage"));
+		label.setText(SVNUIMessages.RepositoryPropertiesTabFolder_UnavailableMessage);
 		
 		Link link = new Link(composite, SWT.NONE);
-		link.setText(SVNTeamUIPlugin.instance().getResource("RepositoryPropertiesTabFolder.LinkToPreferences"));
+		link.setText(SVNUIMessages.RepositoryPropertiesTabFolder_LinkToPreferences);
 		link.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				RepositoryPropertiesTabFolder.this.handleLinkSelection();

@@ -15,7 +15,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.SpellcheckedTextProvider;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
@@ -32,9 +32,9 @@ public class EditCommentTemplatePanel extends AbstractDialogPanel {
 	
 	public EditCommentTemplatePanel(String template) {
 		super();
-		this.dialogTitle = SVNTeamUIPlugin.instance().getResource(template == null ? "EditCommentTemplatePanel.Title.New" : "EditCommentTemplatePanel.Title.edit");
-		this.defaultMessage = SVNTeamUIPlugin.instance().getResource("EditCommentTemplatePanel.Message");
-		this.dialogDescription = SVNTeamUIPlugin.instance().getResource("EditCommentTemplatePanel.Description");
+		this.dialogTitle = template == null ? SVNUIMessages.EditCommentTemplatePanel_Title_New : SVNUIMessages.EditCommentTemplatePanel_Title_Edit;
+		this.defaultMessage = SVNUIMessages.EditCommentTemplatePanel_Message;
+		this.dialogDescription = SVNUIMessages.EditCommentTemplatePanel_Description;
 		this.template = template;
 	}
 	
@@ -44,7 +44,7 @@ public class EditCommentTemplatePanel extends AbstractDialogPanel {
 		this.templateText = SpellcheckedTextProvider.getTextWidget(parent, data, SWT.MULTI);
 		this.templateText.setText(this.template == null ? "" : this.template);
 		this.templateText.selectAll();
-		this.attachTo(this.templateText, new NonEmptyFieldVerifier(SVNTeamUIPlugin.instance().getResource("EditCommentTemplatePanel.Tempalte.Verifier")));
+		this.attachTo(this.templateText, new NonEmptyFieldVerifier(SVNUIMessages.EditCommentTemplatePanel_Template_Verifier));
 	}
 	
 	public String getTemplate() {

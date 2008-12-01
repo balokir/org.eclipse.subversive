@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.SVNConnectorAuthenticationException;
 import org.eclipse.team.svn.core.connector.SVNConnectorCancelException;
@@ -30,6 +31,7 @@ import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.debugmail.ReportPartsFactory;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.extension.factory.IReporter;
@@ -51,7 +53,7 @@ public class UILoggedOperation extends LoggedOperation {
     }
     
     public static void reportError(String where, Throwable t) {
-		String errMessage = SVNTeamPlugin.instance().getResource("Operation.Error.LogHeader", new String[] {where});
+		String errMessage = SVNMessages.format(SVNMessages.Operation_Error_LogHeader, new String[] {where});
 	    MultiStatus status = new MultiStatus(SVNTeamPlugin.NATURE_ID, IStatus.OK, errMessage, null);
 		Status st = 
 			new Status(
@@ -122,7 +124,7 @@ public class UILoggedOperation extends LoggedOperation {
 			            			operationName, 
 			            			errorStatus, 
 			            			true, 
-			            			showCheckBox ? SVNTeamUIPlugin.instance().getResource("UILoggedOperation.DontAskSend") : null,
+			            			showCheckBox ? SVNUIMessages.UILoggedOperation_DontAskSend : null,
 			    					null);
 							
 							if (showCheckBox && doNotShowAgain) {
@@ -187,10 +189,10 @@ public class UILoggedOperation extends LoggedOperation {
 			SVNTeamPreferences.getMailReporterBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MAILREPORTER_ERRORS_ENABLED_NAME)) {
 			boolean doNotShowAgain = UILoggedOperation.showErrorImpl(
 					SVNTeamPlugin.NATURE_ID, 
-					SVNTeamUIPlugin.instance().getResource("UILoggedOperation.SendReport.Error.Title"), 
+					SVNUIMessages.UILoggedOperation_SendReport_Error_Title, 
 					reporter.getStatus(), 
 					false, 
-					SVNTeamUIPlugin.instance().getResource("UILoggedOperation.SendReport.Error.DontShow"),
+					SVNUIMessages.UILoggedOperation_SendReport_Error_DontShow,
 					reporter.buildReport());
 			if (doNotShowAgain) {
 				SVNTeamPreferences.setMailReporterBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MAILREPORTER_ERRORS_ENABLED_NAME, false);
@@ -244,11 +246,11 @@ public class UILoggedOperation extends LoggedOperation {
     	if (status.getException() instanceof SVNConnectorCancelException ||
     		status.getException() instanceof ActivityCancelledException ||
     		status.getException() instanceof OperationCanceledException) {
-    		return SVNTeamUIPlugin.instance().getResource("UILoggedOperation.Cancelled");
+    		return SVNUIMessages.UILoggedOperation_Cancelled;
     	}
     	
     	if (status.getException() instanceof SVNConnectorAuthenticationException) {
-    		return SVNTeamUIPlugin.instance().getResource("UILoggedOperation.Authentication");
+    		return SVNUIMessages.UILoggedOperation_Authentication;
     	}
     	
     	return status.getMessage();
@@ -259,12 +261,12 @@ public class UILoggedOperation extends LoggedOperation {
     		if (status.getMessage() != null) {
     			return status.getMessage();
     		}
-    		return SVNTeamUIPlugin.instance().getResource("UILoggedOperation.Unknown");
+    		return SVNUIMessages.UILoggedOperation_Unknown;
     	}
     	
     	if (status.getException() instanceof SVNConnectorCancelException ||
     		status.getException() instanceof ActivityCancelledException) {
-    		return SVNTeamUIPlugin.instance().getResource("UILoggedOperation.Cancelled");
+    		return SVNUIMessages.UILoggedOperation_Cancelled;
     	}
     	
     	if (status.getException().getMessage() == null) {

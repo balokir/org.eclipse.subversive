@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.utility.UserInputHistory;
 import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
@@ -56,9 +56,9 @@ public class HistoryFilterPanel extends AbstractDialogPanel {
     
     public HistoryFilterPanel(String authorInput, String commentInput, String pathInput, String[] selectedAuthors) {
         super();
-        this.dialogTitle = SVNTeamUIPlugin.instance().getResource("HistoryFilterPanel.Title");
-        this.dialogDescription = SVNTeamUIPlugin.instance().getResource("HistoryFilterPanel.Description");
-        this.defaultMessage = SVNTeamUIPlugin.instance().getResource("HistoryFilterPanel.Message");
+        this.dialogTitle = SVNUIMessages.HistoryFilterPanel_Title;
+        this.dialogDescription = SVNUIMessages.HistoryFilterPanel_Description;
+        this.defaultMessage = SVNUIMessages.HistoryFilterPanel_Message;
         
         this.selectedAuthors = selectedAuthors;
         this.authorInput = authorInput;
@@ -93,7 +93,7 @@ public class HistoryFilterPanel extends AbstractDialogPanel {
 		composite.setLayoutData(data);
 
 		this.authorButton = new Button(composite, SWT.CHECK);
-		this.authorButton.setText(SVNTeamUIPlugin.instance().getResource("HistoryFilterPanel.Author"));
+		this.authorButton.setText(SVNUIMessages.HistoryFilterPanel_Author);
 		data = new GridData();
 		this.authorButton.setLayoutData(data);
 		boolean enabledAuthor = this.authorInput != null;
@@ -114,7 +114,7 @@ public class HistoryFilterPanel extends AbstractDialogPanel {
 		this.authorsCombo.setText(this.authorInput == null ? "" : this.authorInput);
 		
 		this.commentButton = new Button(composite, SWT.CHECK);
-		this.commentButton.setText(SVNTeamUIPlugin.instance().getResource("HistoryFilterPanel.Comment"));
+		this.commentButton.setText(SVNUIMessages.HistoryFilterPanel_Comment);
 		data = new GridData();
 		this.commentButton.setLayoutData(data);
 		boolean enabledComment = this.commentInput != null;
@@ -135,7 +135,7 @@ public class HistoryFilterPanel extends AbstractDialogPanel {
 		this.commentsCombo.setText(this.commentInput == null ? "" : this.commentInput);
 		
 		this.pathButton = new Button(composite, SWT.CHECK);
-		this.pathButton.setText(SVNTeamUIPlugin.instance().getResource("HistoryFilterPanel.Path"));
+		this.pathButton.setText(SVNUIMessages.HistoryFilterPanel_Path);
 		data = new GridData();
 		this.pathButton.setLayoutData(data);
 		boolean enabledPath = this.pathInput != null;
@@ -155,7 +155,7 @@ public class HistoryFilterPanel extends AbstractDialogPanel {
 		this.pathCombo.setVisibleItemCount(this.pathHistory.getDepth());
 		this.pathCombo.setItems(this.pathHistory.getHistory());
 		this.pathCombo.setText(this.pathInput == null ? "" : this.pathInput);
-		this.attachTo(this.pathCombo, new NonEmptyFieldVerifier(SVNTeamUIPlugin.instance().getResource("HistoryFilterPanel.Path")) {
+		this.attachTo(this.pathCombo, new NonEmptyFieldVerifier(SVNUIMessages.HistoryFilterPanel_Path) {
 			protected String getErrorMessageImpl(Control input) {
 				if (HistoryFilterPanel.this.pathCombo.isEnabled()) {
 					return super.getErrorMessageImpl(input);

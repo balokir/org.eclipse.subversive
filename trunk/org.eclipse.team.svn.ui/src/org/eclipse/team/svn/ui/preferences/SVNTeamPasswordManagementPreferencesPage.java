@@ -42,7 +42,7 @@ import org.eclipse.team.svn.core.operation.remote.management.SaveRepositoryLocat
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.svnstorage.SVNRepositoryLocation;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.IWorkbench;
@@ -64,7 +64,7 @@ public class SVNTeamPasswordManagementPreferencesPage extends AbstractSVNTeamPre
 	}
 	
 	public void init(IWorkbench workbench) {
-		setDescription(SVNTeamUIPlugin.instance().getResource("PasswordManagementPreferencePage.Hint"));
+		setDescription(SVNUIMessages.PasswordManagementPreferencePage_Hint);
 	}
 	
 	protected Control createContentsImpl(Composite parent) {
@@ -94,9 +94,9 @@ public class SVNTeamPasswordManagementPreferencesPage extends AbstractSVNTeamPre
 		});
 		
 		TableColumn column = new TableColumn(table, SWT.NULL);
-		column.setText(SVNTeamUIPlugin.instance().getResource("PasswordManagementPreferencePage.Location"));
+		column.setText(SVNUIMessages.PasswordManagementPreferencePage_Location);
 		column = new TableColumn(table, SWT.NULL);
-		column.setText(SVNTeamUIPlugin.instance().getResource("PasswordManagementPreferencePage.Username"));
+		column.setText(SVNUIMessages.PasswordManagementPreferencePage_Username);
 		this.viewer.setLabelProvider(new TableLabelProvider());
 		this.viewer.setContentProvider(new IStructuredContentProvider() {
 			public void dispose() {
@@ -130,7 +130,7 @@ public class SVNTeamPasswordManagementPreferencesPage extends AbstractSVNTeamPre
 		buttons.setLayout(layout);
 		
 		this.removeButton = new Button(buttons, SWT.PUSH);
-		this.removeButton.setText(SVNTeamUIPlugin.instance().getResource("Button.Remove"));  
+		this.removeButton.setText(SVNUIMessages.Button_Remove);  
 		this.removeButton.setEnabled(false);
 		this.removeButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -138,7 +138,7 @@ public class SVNTeamPasswordManagementPreferencesPage extends AbstractSVNTeamPre
 			}
 		});
 		this.removeAllButton = new Button(buttons, SWT.PUSH);
-		this.removeAllButton.setText(SVNTeamUIPlugin.instance().getResource("Button.RemoveAll"));  
+		this.removeAllButton.setText(SVNUIMessages.Button_RemoveAll);  
 		this.removeAllButton.setEnabled(true);
 		this.removeAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

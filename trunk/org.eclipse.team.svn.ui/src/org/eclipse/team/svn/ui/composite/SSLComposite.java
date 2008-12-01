@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.resource.SSLSettings;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifierProxy;
 import org.eclipse.team.svn.ui.verifier.ExistingResourceVerifier;
@@ -105,7 +105,7 @@ public class SSLComposite extends Composite implements IPropertiesPanel {
 		data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		data.horizontalSpan = 2;
 		this.enableAuthenticationCheckBox.setLayoutData(data);
-		this.enableAuthenticationCheckBox.setText(SVNTeamUIPlugin.instance().getResource("SSLComposite.EnableAuthentication"));
+		this.enableAuthenticationCheckBox.setText(SVNUIMessages.SSLComposite_EnableAuthentication);
 		this.enableAuthenticationCheckBox.addSelectionListener(new SelectionListener() {			
 			public void widgetSelected(SelectionEvent e) {
 				SSLComposite.this.refreshControlsEnablement();
@@ -115,7 +115,7 @@ public class SSLComposite extends Composite implements IPropertiesPanel {
 		});
 		
 		Group group = new Group(this, SWT.NONE);
-		group.setText(SVNTeamUIPlugin.instance().getResource("SSLComposite.ClientCertificate"));
+		group.setText(SVNUIMessages.SSLComposite_ClientCertificate);
 		layout = new GridLayout();
 		layout.verticalSpacing = 12;
 		group.setLayout(layout);
@@ -134,7 +134,7 @@ public class SSLComposite extends Composite implements IPropertiesPanel {
 		Label description = new Label(fileAndPassphrase, SWT.NULL);
 		data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		description.setLayoutData(data);
-		description.setText(SVNTeamUIPlugin.instance().getResource("SSLComposite.File"));
+		description.setText(SVNUIMessages.SSLComposite_File);
 		
 		Composite inner = new Composite(fileAndPassphrase, SWT.FILL);
 		layout = new GridLayout();
@@ -148,14 +148,14 @@ public class SSLComposite extends Composite implements IPropertiesPanel {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		this.certificateFileText.setLayoutData(data);
-		this.validationManager.attachTo(this.certificateFileText, new AbstractVerifierProxy(new ExistingResourceVerifier(SVNTeamUIPlugin.instance().getResource("SSLComposite.File.Verifier"), true)) {
+		this.validationManager.attachTo(this.certificateFileText, new AbstractVerifierProxy(new ExistingResourceVerifier(SVNUIMessages.SSLComposite_File_Verifier, true)) {
 			protected boolean isVerificationEnabled(Control input) {
 				return SSLComposite.this.enableAuthenticationCheckBox.getSelection();
 			}
 		});
 		
 		this.browseButton = new Button (inner, SWT.PUSH);
-		this.browseButton.setText(SVNTeamUIPlugin.instance().getResource("Button.Browse"));
+		this.browseButton.setText(SVNUIMessages.Button_Browse);
 		data = new GridData(GridData.HORIZONTAL_ALIGN_END);	
 		data.widthHint = DefaultDialog.computeButtonWidth(this.browseButton);
 		this.browseButton.setLayoutData(data);
@@ -173,7 +173,7 @@ public class SSLComposite extends Composite implements IPropertiesPanel {
 		description = new Label(fileAndPassphrase, SWT.NULL);
 		data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		description.setLayoutData(data);
-		description.setText(SVNTeamUIPlugin.instance().getResource("SSLComposite.Passphrase"));
+		description.setText(SVNUIMessages.SSLComposite_Passphrase);
 		
 		this.certificatePassphraseText = new Text(fileAndPassphrase, SWT.BORDER | SWT.PASSWORD);
 		data = new GridData(GridData.FILL_HORIZONTAL);
@@ -189,7 +189,7 @@ public class SSLComposite extends Composite implements IPropertiesPanel {
 		inner.setLayoutData(data);
 		
 		this.savePassphraseCheckBox = new Button(inner, SWT.CHECK);
-		this.savePassphraseCheckBox.setText(SVNTeamUIPlugin.instance().getResource("SSLComposite.SavePassphrase"));
+		this.savePassphraseCheckBox.setText(SVNUIMessages.SSLComposite_SavePassphrase);
 		
 		new SecurityWarningComposite(inner);
 	}

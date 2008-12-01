@@ -14,7 +14,7 @@ package org.eclipse.team.svn.ui.verifier;
 import java.util.StringTokenizer;
 
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * Allows only absolute paths
@@ -26,7 +26,7 @@ public class AbsolutePathVerifier extends AbstractFormattedVerifier {
         
     public AbsolutePathVerifier(String fieldName) {
         super(fieldName);
-        AbsolutePathVerifier.ERROR_MESSAGE = SVNTeamUIPlugin.instance().getResource("Verifier.AbsolutePath", new String[] {AbstractFormattedVerifier.FIELD_NAME});
+        AbsolutePathVerifier.ERROR_MESSAGE = SVNUIMessages.format(SVNUIMessages.Verifier_AbsolutePath, new String[] {AbstractFormattedVerifier.FIELD_NAME});
     }
     
     protected String getErrorMessageImpl(Control input) {

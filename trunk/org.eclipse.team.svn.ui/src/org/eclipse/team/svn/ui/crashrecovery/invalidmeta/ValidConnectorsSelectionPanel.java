@@ -29,6 +29,7 @@ import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 
@@ -44,9 +45,9 @@ public class ValidConnectorsSelectionPanel extends AbstractDialogPanel {
 
 	public ValidConnectorsSelectionPanel(IProject project, List validClients) {
 		super();
-		this.dialogTitle = SVNTeamUIPlugin.instance().getResource("ValidConnectorsSelectionPanel.Title", new String[] {project.getName()});
-		this.dialogDescription = SVNTeamUIPlugin.instance().getResource("ValidConnectorsSelectionPanel.Description");
-		this.defaultMessage = SVNTeamUIPlugin.instance().getResource("ValidConnectorsSelectionPanel.Message");
+		this.dialogTitle = SVNUIMessages.format(SVNUIMessages.ValidConnectorsSelectionPanel_Title, new String[] {project.getName()});
+		this.dialogDescription = SVNUIMessages.ValidConnectorsSelectionPanel_Description;
+		this.defaultMessage = SVNUIMessages.ValidConnectorsSelectionPanel_Message;
 		
 		this.factories = (ISVNConnectorFactory [])validClients.toArray(new ISVNConnectorFactory[validClients.size()]);
 	}
@@ -75,7 +76,7 @@ public class ValidConnectorsSelectionPanel extends AbstractDialogPanel {
 		Label label = new Label(composite, SWT.NULL);
 		data = new GridData();
 		label.setLayoutData(data);
-		label.setText(SVNTeamUIPlugin.instance().getResource("ValidConnectorsSelectionPanel.Clients"));
+		label.setText(SVNUIMessages.ValidConnectorsSelectionPanel_Clients);
 		
 		this.svnConnectorField = new Combo(composite, SWT.READ_ONLY);
 		data = new GridData(GridData.FILL_HORIZONTAL);

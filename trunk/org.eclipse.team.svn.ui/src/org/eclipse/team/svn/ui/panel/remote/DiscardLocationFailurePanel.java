@@ -17,6 +17,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.ProjectListComposite;
 import org.eclipse.team.svn.ui.panel.ItemListPanel;
 
@@ -31,10 +32,10 @@ public class DiscardLocationFailurePanel extends ItemListPanel {
 	
 	public DiscardLocationFailurePanel(String []locations, IProject []projects) {
 		super(locations, SVNTeamUIPlugin.instance().getImageDescriptor("icons/objects/repository.gif"),
-				SVNTeamUIPlugin.instance().getResource(locations.length == 1 ? "DiscardLocationFailurePanel.Title.Single" : "DiscardLocationFailurePanel.Title.Multi"), 
-				SVNTeamUIPlugin.instance().getResource(locations.length == 1 ? "DiscardLocationFailurePanel.Description.Single" : "DiscardLocationFailurePanel.Description.Multi"), 
-				SVNTeamUIPlugin.instance().getResource(locations.length == 1 ? "DiscardLocationFailurePanel.Message.Single" : "DiscardLocationFailurePanel.Message.Multi"), 
-				new String[] {SVNTeamUIPlugin.instance().getResource("DiscardLocationFailurePanel.Disconnect"), SVNTeamUIPlugin.instance().getResource("DiscardLocationFailurePanel.Delete"), IDialogConstants.CANCEL_LABEL});
+				locations.length == 1 ? SVNUIMessages.DiscardLocationFailurePanel_Title_Single : SVNUIMessages.DiscardLocationFailurePanel_Title_Multi, 
+				locations.length == 1 ? SVNUIMessages.DiscardLocationFailurePanel_Description_Single : SVNUIMessages.DiscardLocationFailurePanel_Description_Multi, 
+				locations.length == 1 ? SVNUIMessages.DiscardLocationFailurePanel_Message_Single : SVNUIMessages.DiscardLocationFailurePanel_Message_Multi, 
+				new String[] {SVNUIMessages.DiscardLocationFailurePanel_Disconnect, SVNUIMessages.DiscardLocationFailurePanel_Delete, IDialogConstants.CANCEL_LABEL});
 		this.projects = projects;
 	}
 	

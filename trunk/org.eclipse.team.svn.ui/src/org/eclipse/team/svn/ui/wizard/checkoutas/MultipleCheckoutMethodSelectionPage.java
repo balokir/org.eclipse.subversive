@@ -32,6 +32,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.DepthSelectionComposite;
 import org.eclipse.team.svn.ui.utility.ArrayStructuredContentProvider;
 import org.eclipse.team.svn.ui.wizard.AbstractVerifiedWizardPage;
@@ -55,13 +56,13 @@ public class MultipleCheckoutMethodSelectionPage extends AbstractVerifiedWizardP
 
 	public MultipleCheckoutMethodSelectionPage(IRepositoryResource[] selectedResources) {
 		super(MultipleCheckoutMethodSelectionPage.class.getName(), 
-			SVNTeamUIPlugin.instance().getResource("MultipleCheckoutMethodSelectionPage.Title"), 
+			SVNUIMessages.MultipleCheckoutMethodSelectionPage_Title, 
 			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
 		this.selectedResources = selectedResources;
 		this.checkoutType = MultipleCheckoutMethodSelectionPage.FIND_PROJECTS;
 		this.ignoreExternals = false;
 		
-		this.setDescription(SVNTeamUIPlugin.instance().getResource("MultipleCheckoutMethodSelectionPage.Description"));
+		this.setDescription(SVNUIMessages.MultipleCheckoutMethodSelectionPage_Description);
 	}
 	
 	public boolean isFindProjectsSelected() {
@@ -100,7 +101,7 @@ public class MultipleCheckoutMethodSelectionPage extends AbstractVerifiedWizardP
 				MultipleCheckoutMethodSelectionPage.this.validateContent();
 			}
 		});
-		findProjectsButton.setText(SVNTeamUIPlugin.instance().getResource("MultipleCheckoutMethodSelectionPage.Find"));
+		findProjectsButton.setText(SVNUIMessages.MultipleCheckoutMethodSelectionPage_Find);
 		findProjectsButton.setSelection(true);
 		
 		Button checkoutAsFolder = new Button(composite, SWT.RADIO);
@@ -112,7 +113,7 @@ public class MultipleCheckoutMethodSelectionPage extends AbstractVerifiedWizardP
 				MultipleCheckoutMethodSelectionPage.this.validateContent();
 			}
 		});
-		checkoutAsFolder.setText(SVNTeamUIPlugin.instance().getResource("MultipleCheckoutMethodSelectionPage.Folders"));
+		checkoutAsFolder.setText(SVNUIMessages.MultipleCheckoutMethodSelectionPage_Folders);
 		
 		Button simpleCheckoutButton = new Button(composite, SWT.RADIO);
 		data = new GridData(GridData.FILL_HORIZONTAL);
@@ -123,7 +124,7 @@ public class MultipleCheckoutMethodSelectionPage extends AbstractVerifiedWizardP
 				MultipleCheckoutMethodSelectionPage.this.validateContent();
 			}
 		});
-		simpleCheckoutButton.setText(SVNTeamUIPlugin.instance().getResource("MultipleCheckoutMethodSelectionPage.Projects"));
+		simpleCheckoutButton.setText(SVNUIMessages.MultipleCheckoutMethodSelectionPage_Projects);
 		
 		data = new GridData(GridData.FILL_BOTH);
 		
@@ -187,7 +188,7 @@ public class MultipleCheckoutMethodSelectionPage extends AbstractVerifiedWizardP
 				MultipleCheckoutMethodSelectionPage.this.ignoreExternals = ((Button)e.widget).getSelection();
 			}
 		});
-		ingnoreExternalsCheckbox.setText(SVNTeamUIPlugin.instance().getResource("CheckoutMethodSelectionPage.Externals"));
+		ingnoreExternalsCheckbox.setText(SVNUIMessages.CheckoutMethodSelectionPage_Externals);
 		
 //		Setting context help
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.multiSelectionContext");

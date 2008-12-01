@@ -27,7 +27,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.svn.ui.wizard.NewRepositoryLocationWizard;
 
@@ -55,9 +55,9 @@ public class InaccessibleLocationDataHelper implements IResolutionHelper {
 				public void run() {
 					MessageDialog dlg = new MessageDialog(
 							UIMonitorUtility.getShell(), 
-							SVNTeamUIPlugin.instance().getResource("InaccessibleLocationDataHelper.Dialog.Title"), 
+							SVNUIMessages.InaccessibleLocationDataHelper_Dialog_Title, 
 							null, 
-							SVNTeamUIPlugin.instance().getResource("InaccessibleLocationDataHelper.Dialog.Message", new String[] {project.getName()}), 
+							SVNUIMessages.format(SVNUIMessages.InaccessibleLocationDataHelper_Dialog_Message, new String[] {project.getName()}), 
 							MessageDialog.WARNING, 
 							new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 
 							0);

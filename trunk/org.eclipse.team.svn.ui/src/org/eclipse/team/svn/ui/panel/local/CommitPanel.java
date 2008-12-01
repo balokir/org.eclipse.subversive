@@ -80,6 +80,7 @@ import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.local.AddToSVNIgnoreAction;
 import org.eclipse.team.svn.ui.action.local.BranchTagAction;
 import org.eclipse.team.svn.ui.action.local.CompareWithWorkingCopyAction;
@@ -161,12 +162,12 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
     }
 	
 	public CommitPanel(IResource []resources, IResource[] userSelectedResources, int msgType, String proposedComment) {
-		super(SVNTeamUIPlugin.instance().getResource("CommitPanel.Title"));
+		super(SVNUIMessages.CommitPanel_Title);
 		this.proposedComment = proposedComment;
 		this.resources = resources;
 		if (msgType == CommitPanel.MSG_OVER_AND_COMMIT) {
-			this.defaultMessage = SVNTeamUIPlugin.instance().getResource("CommitPanel.Message");
-			this.dialogDescription = SVNTeamUIPlugin.instance().getResource("CommitPanel.Description");
+			this.defaultMessage = SVNUIMessages.CommitPanel_Message;
+			this.dialogDescription = SVNUIMessages.CommitPanel_Description;
 		}
 		this.changeListenerList = new ArrayList<IResourceSelectionChangeListener>();
 		this.userSelectedResources = userSelectedResources;
@@ -203,7 +204,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 		group.setLayout(layout);
 		data = new GridData(GridData.FILL_BOTH);
 		group.setLayoutData(data);
-		group.setText(SVNTeamUIPlugin.instance().getResource("CommitPanel.Comment"));
+		group.setText(SVNUIMessages.CommitPanel_Comment);
 		
 		CommitPanel.CollectPropertiesOperation op = new CollectPropertiesOperation(this.resources);
     	UIMonitorUtility.doTaskNowDefault(op, true);
@@ -227,7 +228,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 		this.keepLocksButton = new Button(middleComposite, SWT.CHECK);
 		data = new GridData(GridData.BEGINNING | GridData.FILL_HORIZONTAL);
 		this.keepLocksButton.setLayoutData(data);
-		this.keepLocksButton.setText(SVNTeamUIPlugin.instance().getResource("CommitPanel.KeepLocks"));
+		this.keepLocksButton.setText(SVNUIMessages.CommitPanel_KeepLocks);
 		this.keepLocksButton.setSelection(false);
 		this.keepLocksButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -238,7 +239,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 		this.pasteNamesButton = new Button(middleComposite, SWT.PUSH | SWT.END);
 		data = new GridData();
 		this.pasteNamesButton.setLayoutData(data);
-		this.pasteNamesButton.setText(SVNTeamUIPlugin.instance().getResource("CommitPanel.PasteNames.Button"));
+		this.pasteNamesButton.setText(SVNUIMessages.CommitPanel_PasteNames_Button);
 		this.pasteNamesButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				CommitPanel.this.pasteNames();
@@ -276,10 +277,10 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 			protected String getErrorMessage(Control input) {
 				IResource []selection = CommitPanel.this.getSelectedResources();
 				if (selection == null || selection.length == 0) {
-					return SVNTeamUIPlugin.instance().getResource("ResourceSelectionComposite.Verifier.Error");
+					return SVNUIMessages.ResourceSelectionComposite_Verifier_Error;
 				}
 				if (FileUtility.checkForResourcesPresenceRecursive(selection, IStateFilter.SF_CONFLICTING)) {
-					return SVNTeamUIPlugin.instance().getResource("CommitPanel.Conflicting.Error");
+					return SVNUIMessages.CommitPanel_Conflicting_Error;
 				}
 				return null;
 			}
@@ -355,9 +356,9 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				public void run() {
 					MessageDialog dlg = new MessageDialog(
 							UIMonitorUtility.getShell(), 
-							SVNTeamUIPlugin.instance().getResource("CommitPanel.NoBugId.Title"), 
+							SVNUIMessages.CommitPanel_NoBugId_Title, 
 							null, 
-							SVNTeamUIPlugin.instance().getResource("CommitPanel.NoBugId.Message"), 
+							SVNUIMessages.CommitPanel_NoBugId_Message, 
 							MessageDialog.WARNING, 
 							new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 
 							0);
@@ -406,7 +407,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				Action tAction = null;
 				
 				//paste selected names action
-				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("CommitPanel.PasteNames.Action")) {
+				manager.add(tAction = new Action(SVNUIMessages.CommitPanel_PasteNames_Action) {
 					public void run() {
 						CommitPanel.this.pasteNames();
 					}
@@ -414,10 +415,10 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				tAction.setEnabled(tSelection.size() > 0);
 				
 				//Create Patch File action
-				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("CreatePatchCommand.label")) {
+				manager.add(tAction = new Action(SVNUIMessages.CreatePatchCommand_label) {
 					public void run() {
 						FileDialog dlg = new FileDialog(UIMonitorUtility.getShell(), SWT.PRIMARY_MODAL | SWT.SAVE);
-						dlg.setText(SVNTeamUIPlugin.instance().getResource("SelectPatchFilePage.SavePatchAs"));
+						dlg.setText(SVNUIMessages.SelectPatchFilePage_SavePatchAs);
 						dlg.setFileName(selectedResources[0].getName() + ".patch");
 						dlg.setFilterExtensions(new String[] {"patch", "*.*"});
 						String file = dlg.open();
@@ -430,7 +431,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				tAction.setEnabled(tSelection.size() == 1 && FileUtility.checkForResourcesPresence(selectedResources, IStateFilter.SF_VERSIONED, IResource.DEPTH_ZERO));
 				
 				//Create Branch action
-				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("BranchAction.label")) {
+				manager.add(tAction = new Action(SVNUIMessages.BranchAction_label) {
 					public void run() {
 						IResource [] resources = FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_EXCLUDE_DELETED, IResource.DEPTH_INFINITE);
 						IActionOperation op = BranchTagAction.getBranchTagOperation(UIMonitorUtility.getShell(), BranchTagAction.BRANCH_ACTION, resources);
@@ -444,7 +445,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				manager.add(new Separator());
 				
 				//Revert action
-				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("CommitPanel.Revert.Action")) {
+				manager.add(tAction = new Action(SVNUIMessages.CommitPanel_Revert_Action) {
 					public void run() {
 						IResource[] changedResources = FileUtility.getResourcesRecursive(selectedResources, RevertAction.SF_REVERTABLE_OR_NEW);
 						CompositeOperation revertOp = RevertAction.getRevertOperation(UIMonitorUtility.getShell(), changedResources, selectedResources);
@@ -458,9 +459,9 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				
 				//Ignore resources group
 				if (tSelection.size() > 0 && selectedResources.length == FileUtility.getResourcesRecursive(selectedResources, AddToSVNIgnoreAction.SF_NEW_AND_PARENT_VERSIONED).length) {				
-					MenuManager subMenu = new MenuManager(SVNTeamUIPlugin.instance().getResource("CommitPanel.Ignore.Group"));
+					MenuManager subMenu = new MenuManager(SVNUIMessages.CommitPanel_Ignore_Group);
 					if (tSelection.size() > 1) {
-						subMenu.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("CommitPanel.IgnoreByName.Multiple.Action")) {
+						subMenu.add(tAction = new Action(SVNUIMessages.CommitPanel_IgnoreByName_Multiple_Action) {
 							public void run() {
 								CompositeOperation op = new CompositeOperation("AddToIgnore");
 								op.add(new AddToSVNIgnoreOperation(selectedResources, IRemoteStorage.IGNORE_NAME, null));
@@ -469,7 +470,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 							}
 						});
 						tAction.setEnabled(true);
-						subMenu.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("CommitPanel.IgnoreByExtension.Multiple.Action")) {
+						subMenu.add(tAction = new Action(SVNUIMessages.CommitPanel_IgnoreByExtension_Multiple_Action) {
 							public void run() {
 								CompositeOperation op = new CompositeOperation("AddToIgnore");
 								op.add(new AddToSVNIgnoreOperation(selectedResources, IRemoteStorage.IGNORE_EXTENSION, null));
@@ -507,7 +508,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				}
 				
 				//Edit conflicts action
-				manager.add (tAction = new Action(SVNTeamUIPlugin.instance().getResource("EditConflictsAction.label")) {
+				manager.add (tAction = new Action(SVNUIMessages.EditConflictsAction_label) {
 					public void run() {
 						UIMonitorUtility.doTaskScheduledDefault(new ShowConflictEditorOperation(FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_CONFLICTING), true));
 					}
@@ -515,7 +516,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				tAction.setEnabled(FileUtility.checkForResourcesPresenceRecursive(selectedResources, IStateFilter.SF_CONFLICTING));
 				
 				//Mark as merged action
-				manager.add (tAction = new Action(SVNTeamUIPlugin.instance().getResource("CommitPanel.MarkAsMerged.Action")) {
+				manager.add (tAction = new Action(SVNUIMessages.CommitPanel_MarkAsMerged_Action) {
 					public void run() {
 						MarkAsMergedOperation mainOp = new MarkAsMergedOperation(selectedResources, false, null);
 						CompositeOperation op = new CompositeOperation(mainOp.getId());
@@ -528,7 +529,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				manager.add(new Separator());
 				
 				//Lock action
-				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("LockAction.label")) {
+				manager.add(tAction = new Action(SVNUIMessages.LockAction_label) {
 					public void run() {
 						boolean containsFolder = false;
 						for (int i = 0; i < selectedResources.length; i++) {
@@ -555,7 +556,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				tAction.setEnabled(FileUtility.checkForResourcesPresenceRecursive(selectedResources, IStateFilter.SF_READY_TO_LOCK));
 				
 				//Unlock action
-				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("UnlockAction.label")) {
+				manager.add(tAction = new Action(SVNUIMessages.UnlockAction_label) {
 					public void run() {
 						boolean recursive = false;
 						for (int i = 0; i < selectedResources.length; i++) {
@@ -580,8 +581,8 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				manager.add(new Separator());
 				
 				//Compare With group 
-				MenuManager subMenu = new MenuManager(SVNTeamUIPlugin.instance().getResource("CommitPanel.CompareWith.Group"));
-				subMenu.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("CompareWithWorkingCopyAction.label")) {
+				MenuManager subMenu = new MenuManager(SVNUIMessages.CommitPanel_CompareWith_Group);
+				subMenu.add(tAction = new Action(SVNUIMessages.CompareWithWorkingCopyAction_label) {
 					public void run() {
 						IResource resource = selectedResources[0];
 						ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
@@ -593,7 +594,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 					}
 				});
 				tAction.setEnabled(tSelection.size() == 1 && FileUtility.checkForResourcesPresence(selectedResources, CompareWithWorkingCopyAction.COMPARE_FILTER, IResource.DEPTH_ZERO));
-				subMenu.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("CompareWithLatestRevisionAction.label")) {
+				subMenu.add(tAction = new Action(SVNUIMessages.CompareWithLatestRevisionAction_label) {
 					public void run() {
 						IResource resource = selectedResources[0];
 						ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
@@ -607,7 +608,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				tAction.setEnabled(tSelection.size() == 1 && 
 						(CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() == ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x || 
 						selectedResources[0].getType() == IResource.FILE) && FileUtility.checkForResourcesPresenceRecursive(selectedResources, CompareWithWorkingCopyAction.COMPARE_FILTER));
-				subMenu.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("CompareWithRevisionAction.label")) {
+				subMenu.add(tAction = new Action(SVNUIMessages.CompareWithRevisionAction_label) {
 					public void run() {
 						IResource resource = selectedResources[0];
 						ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
@@ -628,8 +629,8 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				manager.add(subMenu);
 				
 				//Replace with group
-				subMenu = new MenuManager(SVNTeamUIPlugin.instance().getResource("CommitPanel.ReplaceWith.Group"));
-				subMenu.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("ReplaceWithLatestRevisionAction.label")) {
+				subMenu = new MenuManager(SVNUIMessages.CommitPanel_ReplaceWith_Group);
+				subMenu.add(tAction = new Action(SVNUIMessages.ReplaceWithLatestRevisionAction_label) {
 					public void run() {
 						IResource []resources = FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_ONREPOSITORY, IResource.DEPTH_ZERO);
 						IActionOperation op = ReplaceWithLatestRevisionAction.getReplaceOperation(resources, UIMonitorUtility.getShell());
@@ -639,7 +640,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 					}
 				});
 				tAction.setEnabled(FileUtility.checkForResourcesPresenceRecursive(selectedResources, IStateFilter.SF_ONREPOSITORY));
-				subMenu.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("ReplaceWithRevisionAction.label")) {
+				subMenu.add(tAction = new Action(SVNUIMessages.ReplaceWithRevisionAction_label) {
 					public void run() {
 						IActionOperation op = ReplaceWithRevisionAction.getReplaceOperation(selectedResources, UIMonitorUtility.getShell());
 						if (op != null) {
@@ -652,11 +653,11 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				manager.add(new Separator());
 				
 				//Export action
-				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("ExportCommand.label")) {
+				manager.add(tAction = new Action(SVNUIMessages.ExportCommand_label) {
 					public void run() {
 						DirectoryDialog fileDialog = new DirectoryDialog(UIMonitorUtility.getShell());
-						fileDialog.setText(SVNTeamUIPlugin.instance().getResource("ExportAction.Select.Title"));
-						fileDialog.setMessage(SVNTeamUIPlugin.instance().getResource("ExportAction.Select.Description"));
+						fileDialog.setText(SVNUIMessages.ExportAction_Select_Title);
+						fileDialog.setMessage(SVNUIMessages.ExportAction_Select_Description);
 						String path = fileDialog.open();
 						if (path != null) {
 							UIMonitorUtility.doTaskScheduledDefault(new ExportOperation(FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_EXCLUDE_DELETED, IResource.DEPTH_ZERO) , path, SVNRevision.WORKING));
@@ -667,7 +668,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				tAction.setEnabled(tSelection.size() > 0 && FileUtility.checkForResourcesPresence(selectedResources, IStateFilter.SF_EXCLUDE_DELETED, IResource.DEPTH_ZERO));
 				
 				//Clean-up action
-				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("CleanupCommand.label")) {
+				manager.add(tAction = new Action(SVNUIMessages.CleanupCommand_label) {
 					public void run() {
 						IResource []resources = FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_VERSIONED_FOLDERS, IResource.DEPTH_ZERO);
 						CleanupOperation mainOp = new CleanupOperation(resources);
@@ -681,7 +682,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				manager.add(new Separator());
 				
 				//Delete action
-				manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("CommitPanel.Delete.Action")) {
+				manager.add(tAction = new Action(SVNUIMessages.CommitPanel_Delete_Action) {
 					public void run() {
 						DiscardConfirmationDialog dialog = new DiscardConfirmationDialog(UIMonitorUtility.getShell(), selectedResources.length == 1, DiscardConfirmationDialog.MSG_RESOURCE);
 						if (dialog.open() == 0) {

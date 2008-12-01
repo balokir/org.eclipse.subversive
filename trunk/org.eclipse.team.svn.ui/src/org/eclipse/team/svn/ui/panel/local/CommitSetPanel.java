@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSet;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.CommentComposite;
 import org.eclipse.team.svn.ui.event.IResourceSelectionChangeListener;
 import org.eclipse.team.svn.ui.event.ResourceSelectionChangedEvent;
@@ -49,17 +49,17 @@ public class CommitSetPanel extends CommentPanel implements ICommentDialogPanel 
 	protected List<IResourceSelectionChangeListener> changeListenerList;
 	
 	public CommitSetPanel(ActiveChangeSet set, IResource [] resources, int type) {
-		super(SVNTeamUIPlugin.instance().getResource("CommitSetPanel.Title"));
+		super(SVNUIMessages.CommitSetPanel_Title);
 		this.set = set;
 		this.resources = resources;
 		switch (type) {
 		case MSG_EDIT:
-			this.dialogDescription = SVNTeamUIPlugin.instance().getResource("CommitSetPanel.Description.Edit");
-			this.defaultMessage = SVNTeamUIPlugin.instance().getResource("CommitSetPanel.Message.Edit");
+			this.dialogDescription = SVNUIMessages.CommitSetPanel_Description_Edit;
+			this.defaultMessage = SVNUIMessages.CommitSetPanel_Message_Edit;
 			break;
 		default:
-			this.dialogDescription = SVNTeamUIPlugin.instance().getResource("CommitSetPanel.Description.New");
-			this.defaultMessage = SVNTeamUIPlugin.instance().getResource("CommitSetPanel.Message.New");
+			this.dialogDescription = SVNUIMessages.CommitSetPanel_Description_New;
+			this.defaultMessage = SVNUIMessages.CommitSetPanel_Message_New;
 		}
 		
         if (resources == null) {
@@ -82,7 +82,7 @@ public class CommitSetPanel extends CommentPanel implements ICommentDialogPanel 
 		composite.setFont(parent.getFont());
 
 		Label label = new Label(composite, SWT.NONE);
-		label.setText(SVNTeamUIPlugin.instance().getResource("CommitSetPanel.Name")); 
+		label.setText(SVNUIMessages.CommitSetPanel_Name); 
 		label.setLayoutData(new GridData(GridData.BEGINNING));
 		
 		this.nameText = new Text(composite, SWT.BORDER);
@@ -93,14 +93,14 @@ public class CommitSetPanel extends CommentPanel implements ICommentDialogPanel 
         }
         this.nameText.setText(initialText);
         this.nameText.selectAll();
-		this.attachTo(this.nameText, new NonEmptyFieldVerifier(SVNTeamUIPlugin.instance().getResource("CommitSetPanel.Name.Verifier")));
+		this.attachTo(this.nameText, new NonEmptyFieldVerifier(SVNUIMessages.CommitSetPanel_Name_Verifier));
         
 		Group group = new Group(parent, SWT.NULL);
     	layout = new GridLayout();
 		group.setLayout(layout);
 		data = new GridData(GridData.FILL_BOTH);
 		group.setLayoutData(data);
-		group.setText(SVNTeamUIPlugin.instance().getResource("CommitSetPanel.Comment"));
+		group.setText(SVNUIMessages.CommitSetPanel_Comment);
 		
 		CommitPanel.CollectPropertiesOperation op = new CollectPropertiesOperation(this.resources);
     	UIMonitorUtility.doTaskNowDefault(op, true);

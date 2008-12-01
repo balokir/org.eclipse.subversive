@@ -16,6 +16,7 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.CleanUpModelAction;
 import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.ComparePropertiesModelAction;
 import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.CreateBranchModelAction;
@@ -57,14 +58,14 @@ public class UpdateModelActionGroup extends AbstractSynchronizeModelActionGroup 
 	
 	protected void configureMergeAction(String mergeActionId, Action action) {			
 		if (mergeActionId == SynchronizationActionProvider.MERGE_ACTION_ID) {
-			action.setText(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Update"));
+			action.setText(SVNUIMessages.SynchronizeActionGroup_Update);
 			action.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("/icons/common/actions/update.gif"));
 		} else if (mergeActionId == SynchronizationActionProvider.OVERWRITE_ACTION_ID) {
-			action.setText(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.OverrideAndUpdate"));
+			action.setText(SVNUIMessages.SynchronizeActionGroup_OverrideAndUpdate);
 		} else if (mergeActionId == SynchronizationActionProvider.MARK_AS_MERGE_ACTION_ID) {
-			action.setText(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.MarkAsMerged"));
+			action.setText(SVNUIMessages.SynchronizeActionGroup_MarkAsMerged);
 		} else if (mergeActionId == MERGE_ALL_ACTION_ID) {
-			action.setText(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.UpdateAllIncomingChanges"));
+			action.setText(SVNUIMessages.SynchronizeActionGroup_UpdateAllIncomingChanges);
 			action.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("/icons/common/actions/update.gif"));
 		} else {
 			super.configureMergeAction(mergeActionId, action);
@@ -92,7 +93,7 @@ public class UpdateModelActionGroup extends AbstractSynchronizeModelActionGroup 
 	
 	protected void configureActions(ISynchronizePageConfiguration configuration) {
 		//commit all
-		CommitAllModelAction commitAllAction = new CommitAllModelAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.CommitAllOutgoingChanges"), configuration);
+		CommitAllModelAction commitAllAction = new CommitAllModelAction(SVNUIMessages.UpdateActionGroup_CommitAllOutgoingChanges, configuration);
 		commitAllAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/commit.gif"));
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_TOOLBAR_MENU, 
@@ -100,7 +101,7 @@ public class UpdateModelActionGroup extends AbstractSynchronizeModelActionGroup 
 				commitAllAction);			
 		
 		//expand all
-		ExpandAllModelAction expandAllAction = new ExpandAllModelAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.ExpandAll"), configuration);
+		ExpandAllModelAction expandAllAction = new ExpandAllModelAction(SVNUIMessages.SynchronizeActionGroup_ExpandAll, configuration);
 		expandAllAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/expandall.gif"));
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_TOOLBAR_MENU, 
@@ -108,7 +109,7 @@ public class UpdateModelActionGroup extends AbstractSynchronizeModelActionGroup 
 				expandAllAction);
 		
 		//commit
-		CommitModelAction commitAction = new CommitModelAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.Commit"), configuration);
+		CommitModelAction commitAction = new CommitModelAction(SVNUIMessages.UpdateActionGroup_Commit, configuration);
 		commitAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/commit.gif"));
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
@@ -116,7 +117,7 @@ public class UpdateModelActionGroup extends AbstractSynchronizeModelActionGroup 
 				commitAction);
 		
 		//override and commit			
-		OverrideAndCommitModelAction overrideCommitAction = new OverrideAndCommitModelAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.OverrideAndCommit"), configuration);
+		OverrideAndCommitModelAction overrideCommitAction = new OverrideAndCommitModelAction(SVNUIMessages.UpdateActionGroup_OverrideAndCommit, configuration);
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				UpdateModelActionGroup.GROUP_SYNC_CONFLICTS,
@@ -124,21 +125,21 @@ public class UpdateModelActionGroup extends AbstractSynchronizeModelActionGroup 
 		
 		
 		//edit conflicts
-		EditConflictsModelAction editConflictsAction = new EditConflictsModelAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.EditConflicts"), configuration);
+		EditConflictsModelAction editConflictsAction = new EditConflictsModelAction(SVNUIMessages.UpdateActionGroup_EditConflicts, configuration);
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				UpdateModelActionGroup.SVN_SYNC_CONFLICTS,
 				editConflictsAction);
 		
 		//compare properties
-		ComparePropertiesModelAction comparePropsAction = new ComparePropertiesModelAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.CompareProperties"), configuration);
+		ComparePropertiesModelAction comparePropsAction = new ComparePropertiesModelAction(SVNUIMessages.SynchronizeActionGroup_CompareProperties, configuration);
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				UpdateModelActionGroup.SVN_SYNC_CONFLICTS,
 				comparePropsAction);
 		
 		//revert
-		RevertModelAction revertAction = new RevertModelAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Revert"), configuration);
+		RevertModelAction revertAction = new RevertModelAction(SVNUIMessages.SynchronizeActionGroup_Revert, configuration);
 		revertAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/revert.gif"));
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
@@ -146,7 +147,7 @@ public class UpdateModelActionGroup extends AbstractSynchronizeModelActionGroup 
 				revertAction);
 		
 		//show history
-		ShowHistoryModelAction showHistoryAction = new ShowHistoryModelAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.ShowResourceHistory"), configuration);
+		ShowHistoryModelAction showHistoryAction = new ShowHistoryModelAction(SVNUIMessages.SynchronizeActionGroup_ShowResourceHistory, configuration);
 		showHistoryAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/showhistory.gif"));
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
@@ -154,21 +155,21 @@ public class UpdateModelActionGroup extends AbstractSynchronizeModelActionGroup 
 				showHistoryAction);	
 		
 		//add to SVN
-		AddToSVNModelAction addToSVNAction = new AddToSVNModelAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.AddToVersionControl"), configuration);
+		AddToSVNModelAction addToSVNAction = new AddToSVNModelAction(SVNUIMessages.UpdateActionGroup_AddToVersionControl, configuration);
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				UpdateModelActionGroup.GROUP_MANAGE_LOCALS,
 				addToSVNAction);
 		
 		//add to SVN ignore
-		AddToSVNIgnoreModelAction addToSVNIgnoreAction = new AddToSVNIgnoreModelAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.AddToIgnore"), configuration);
+		AddToSVNIgnoreModelAction addToSVNIgnoreAction = new AddToSVNIgnoreModelAction(SVNUIMessages.UpdateActionGroup_AddToIgnore, configuration);
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				UpdateModelActionGroup.GROUP_MANAGE_LOCALS,
 				addToSVNIgnoreAction);
 		
 		//extract to
-		ExtractToModelAction extractTo = new ExtractToModelAction(SVNTeamUIPlugin.instance().getResource("ExtractAllToAction.Label"), configuration);
+		ExtractToModelAction extractTo = new ExtractToModelAction(SVNUIMessages.ExtractAllToAction_Label, configuration);
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				UpdateModelActionGroup.GROUP_MANAGE_LOCALS,
@@ -179,70 +180,70 @@ public class UpdateModelActionGroup extends AbstractSynchronizeModelActionGroup 
 	
 	protected void addLocalActions(IMenuManager manager, ISynchronizePageConfiguration configuration) {				
 		//show properties
-		ShowOutgoingPropertiesModelAction showPropertiesAction = new ShowOutgoingPropertiesModelAction(SVNTeamUIPlugin.instance().getResource("ShowPropertiesAction.label"), configuration);
+		ShowOutgoingPropertiesModelAction showPropertiesAction = new ShowOutgoingPropertiesModelAction(SVNUIMessages.ShowPropertiesAction_label, configuration);
 		showPropertiesAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/propertiesedit.gif"));
 		manager.add(showPropertiesAction);						
 		
 		//set property
-		SetPropertyModelAction setPropAction = new SetPropertyModelAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.SetProperty"), configuration);
+		SetPropertyModelAction setPropAction = new SetPropertyModelAction(SVNUIMessages.SynchronizeActionGroup_SetProperty, configuration);
 		manager.add(setPropAction);
 		
 		//set keywords
-		SetKeywordsModelAction setKeywordsAction = new SetKeywordsModelAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.SetKeywords"), configuration);
+		SetKeywordsModelAction setKeywordsAction = new SetKeywordsModelAction(SVNUIMessages.SynchronizeActionGroup_SetKeywords, configuration);
 		manager.add(setKeywordsAction);
 		
 		//show annotation
-		ShowOutgoingAnnotationModelAction showAnnotationAction = new ShowOutgoingAnnotationModelAction(SVNTeamUIPlugin.instance().getResource("ShowAnnotationCommand.label"), configuration);
+		ShowOutgoingAnnotationModelAction showAnnotationAction = new ShowOutgoingAnnotationModelAction(SVNUIMessages.ShowAnnotationCommand_label, configuration);
 		manager.add(showAnnotationAction);
 		
 		manager.add(new Separator());
 		
 		//lock
-		LockModelAction lockAction = new LockModelAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.Lock"), configuration);
+		LockModelAction lockAction = new LockModelAction(SVNUIMessages.UpdateActionGroup_Lock, configuration);
 		lockAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/lock.gif"));
 		manager.add(lockAction);
 		
 		//unlock
-		UnlockModelAction unlockAction = new UnlockModelAction(SVNTeamUIPlugin.instance().getResource("UpdateActionGroup.Unlock"), configuration);
+		UnlockModelAction unlockAction = new UnlockModelAction(SVNUIMessages.UpdateActionGroup_Unlock, configuration);
 		unlockAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/unlock.gif"));
 		manager.add(unlockAction);
 		
 		manager.add(new Separator());
 		
 		//create patch
-		CreatePatchFileModelAction patchAction = new CreatePatchFileModelAction(SVNTeamUIPlugin.instance().getResource("CreatePatchCommand.label"), configuration);
+		CreatePatchFileModelAction patchAction = new CreatePatchFileModelAction(SVNUIMessages.CreatePatchCommand_label, configuration);
 		manager.add(patchAction);
 					
 		//create branch
-		CreateBranchModelAction branchAction = new CreateBranchModelAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Branch"), configuration);
+		CreateBranchModelAction branchAction = new CreateBranchModelAction(SVNUIMessages.SynchronizeActionGroup_Branch, configuration);
 		branchAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/branch.gif"));
 		manager.add(branchAction);
 		
 		//extract
-		ExtractOutgoingToModelAction extractActionOutgoing = new ExtractOutgoingToModelAction(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Label"), configuration);
+		ExtractOutgoingToModelAction extractActionOutgoing = new ExtractOutgoingToModelAction(SVNUIMessages.ExtractToAction_Label, configuration);
 		manager.add(extractActionOutgoing);
 		
 		manager.add(new Separator());
 		
 		//cleanup
-		CleanUpModelAction cleanUpAction = new CleanUpModelAction(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.Cleanup"), configuration);
+		CleanUpModelAction cleanUpAction = new CleanUpModelAction(SVNUIMessages.SynchronizeActionGroup_Cleanup, configuration);
 		manager.add(cleanUpAction);
 	}
 	
 	protected void addRemoteActions(IMenuManager manager, ISynchronizePageConfiguration configuration) {			
 		//show properties
-		ShowIncomingPropertiesModelAction showIncomingPropertiesAction = new ShowIncomingPropertiesModelAction(SVNTeamUIPlugin.instance().getResource("ShowPropertiesAction.label"), configuration);
+		ShowIncomingPropertiesModelAction showIncomingPropertiesAction = new ShowIncomingPropertiesModelAction(SVNUIMessages.ShowPropertiesAction_label, configuration);
 		showIncomingPropertiesAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/propertiesedit.gif"));
 		manager.add(showIncomingPropertiesAction);
 		
 		//show annotation
-		ShowIncomingAnnotationModelAction showIncomingAnnotationAction = new ShowIncomingAnnotationModelAction(SVNTeamUIPlugin.instance().getResource("ShowAnnotationAction.label"), configuration);
+		ShowIncomingAnnotationModelAction showIncomingAnnotationAction = new ShowIncomingAnnotationModelAction(SVNUIMessages.ShowAnnotationAction_label, configuration);
 		manager.add(showIncomingAnnotationAction);
 					
 		manager.add(new Separator());
 		
 		//extract
-		ExtractIncomingToModelAction extractActionIncoming = new ExtractIncomingToModelAction(SVNTeamUIPlugin.instance().getResource("ExtractToAction.Label"), configuration);
+		ExtractIncomingToModelAction extractActionIncoming = new ExtractIncomingToModelAction(SVNUIMessages.ExtractToAction_Label, configuration);
 		manager.add(extractActionIncoming);
 	}
 }

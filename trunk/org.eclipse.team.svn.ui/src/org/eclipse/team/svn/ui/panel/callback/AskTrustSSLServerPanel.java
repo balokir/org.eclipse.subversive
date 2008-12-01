@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.utility.PatternProvider;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.utility.ArrayStructuredContentProvider;
 
@@ -43,10 +43,10 @@ public class AskTrustSSLServerPanel extends AbstractDialogPanel {
 	protected String message;
 
 	public AskTrustSSLServerPanel(String location, String message, boolean allowPermanently) {
-        super(allowPermanently ? new String[] {SVNTeamUIPlugin.instance().getResource("AskTrustSSLServerPanel.Trust"), SVNTeamUIPlugin.instance().getResource("AskTrustSSLServerPanel.TrustAlways"), IDialogConstants.NO_LABEL} : new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL});
-        this.dialogTitle = SVNTeamUIPlugin.instance().getResource("AskTrustSSLServerPanel.Title");
-        this.dialogDescription = SVNTeamUIPlugin.instance().getResource("AskTrustSSLServerPanel.Description");
-        this.defaultMessage = SVNTeamUIPlugin.instance().getResource("AskTrustSSLServerPanel.Message", new String[] {location});
+        super(allowPermanently ? new String[] {SVNUIMessages.AskTrustSSLServerPanel_Trust, SVNUIMessages.AskTrustSSLServerPanel_TrustAlways, IDialogConstants.NO_LABEL} : new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL});
+        this.dialogTitle = SVNUIMessages.AskTrustSSLServerPanel_Title;
+        this.dialogDescription = SVNUIMessages.AskTrustSSLServerPanel_Description;
+        this.defaultMessage = SVNUIMessages.format(SVNUIMessages.AskTrustSSLServerPanel_Message, new String[] {location});
         this.message = message;
 	}
 
@@ -101,10 +101,10 @@ public class AskTrustSSLServerPanel extends AbstractDialogPanel {
 		
 		TableColumn col = new TableColumn(table, SWT.LEFT);
 		col.setResizable(true);
-		col.setText(SVNTeamUIPlugin.instance().getResource("AskTrustSSLServerPanel.Field"));
+		col.setText(SVNUIMessages.AskTrustSSLServerPanel_Field);
 		col = new TableColumn(table, SWT.LEFT);
 		col.setResizable(true);
-		col.setText(SVNTeamUIPlugin.instance().getResource("AskTrustSSLServerPanel.Value"));
+		col.setText(SVNUIMessages.AskTrustSSLServerPanel_Value);
 
 		TableViewer view = new TableViewer(table);
 		view.setContentProvider(new ArrayStructuredContentProvider());

@@ -40,6 +40,7 @@ import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.utility.ArrayStructuredContentProvider;
 import org.eclipse.team.svn.ui.utility.ColumnedViewerComparator;
 import org.eclipse.team.svn.ui.wizard.AbstractVerifiedWizardPage;
@@ -65,10 +66,10 @@ public class AlreadyConnectedPage extends AbstractVerifiedWizardPage {
 	public AlreadyConnectedPage() {
 		super(
 			AlreadyConnectedPage.class.getName(), 
-			SVNTeamUIPlugin.instance().getResource("AlreadyConnectedPage.Title"), 
+			SVNUIMessages.AlreadyConnectedPage_Title, 
 			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
 		
-		this.setDescription(SVNTeamUIPlugin.instance().getResource("AlreadyConnectedPage.Description"));
+		this.setDescription(SVNUIMessages.AlreadyConnectedPage_Description);
 	}
 	
 	public void setProjects(IProject []projects) {
@@ -131,7 +132,7 @@ public class AlreadyConnectedPage extends AbstractVerifiedWizardPage {
 		
 		Label description = new Label(composite, SWT.WRAP);
 		description.setLayoutData(this.makeGridData());
-		description.setText(SVNTeamUIPlugin.instance().getResource("AlreadyConnectedPage.ProjectURL"));
+		description.setText(SVNUIMessages.AlreadyConnectedPage_ProjectURL);
 		
 		this.urlText = new Text(composite, SWT.SINGLE | SWT.BORDER);
 		data = new GridData(GridData.FILL_HORIZONTAL);
@@ -141,7 +142,7 @@ public class AlreadyConnectedPage extends AbstractVerifiedWizardPage {
 		
 		description = new Label(composite, SWT.WRAP);
 		description.setLayoutData(this.makeGridData());
-		description.setText(SVNTeamUIPlugin.instance().getResource("AlreadyConnectedPage.RepositoryLocation"));
+		description.setText(SVNUIMessages.AlreadyConnectedPage_RepositoryLocation);
 		
 		Table table = new Table(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -194,12 +195,12 @@ public class AlreadyConnectedPage extends AbstractVerifiedWizardPage {
 		
 		TableColumn col = new TableColumn(table, SWT.LEFT);
 		col.setResizable(true);
-		col.setText(SVNTeamUIPlugin.instance().getResource("AlreadyConnectedPage.LocationLabel"));
+		col.setText(SVNUIMessages.AlreadyConnectedPage_LocationLabel);
 		col.addSelectionListener(comparator);
 		
 		col = new TableColumn(table, SWT.LEFT);
 		col.setResizable(true);
-		col.setText(SVNTeamUIPlugin.instance().getResource("AlreadyConnectedPage.URL"));
+		col.setText(SVNUIMessages.AlreadyConnectedPage_URL);
 		col.addSelectionListener(comparator);
 		
 		this.repositoryRootsView.getTable().setSortDirection(SWT.UP);
@@ -219,7 +220,7 @@ public class AlreadyConnectedPage extends AbstractVerifiedWizardPage {
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		data.heightHint = this.convertHeightInCharsToPixels(2);
 		description.setLayoutData(data);
-		description.setText(SVNTeamUIPlugin.instance().getResource("AlreadyConnectedPage.Hint"));
+		description.setText(SVNUIMessages.AlreadyConnectedPage_Hint);
 		
 		this.useProjectSettingsButton = new Button(btnComposite, SWT.RADIO);
 		this.useProjectSettingsButton.setLayoutData(this.makeGridData());
@@ -231,11 +232,11 @@ public class AlreadyConnectedPage extends AbstractVerifiedWizardPage {
 				AlreadyConnectedPage.this.setPageComplete(true);
 			}
 		});
-		this.useProjectSettingsButton.setText(SVNTeamUIPlugin.instance().getResource("AlreadyConnectedPage.UseProjectSettings")); 
+		this.useProjectSettingsButton.setText(SVNUIMessages.AlreadyConnectedPage_UseProjectSettings); 
 		
 		this.createProjectLocationButton = new Button(btnComposite, SWT.RADIO);
 		this.createProjectLocationButton.setLayoutData(this.makeGridData());
-		this.createProjectLocationButton.setText(SVNTeamUIPlugin.instance().getResource("AlreadyConnectedPage.CreateLocation"));
+		this.createProjectLocationButton.setText(SVNUIMessages.AlreadyConnectedPage_CreateLocation);
 		this.createProjectLocationButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				Button button = (Button)e.widget;
@@ -247,7 +248,7 @@ public class AlreadyConnectedPage extends AbstractVerifiedWizardPage {
 		
 		this.reconnectButton = new Button(btnComposite, SWT.RADIO);
 		this.reconnectButton.setLayoutData(this.makeGridData());
-		this.reconnectButton.setText(SVNTeamUIPlugin.instance().getResource("AlreadyConnectedPage.ReconnectToAnother")); 
+		this.reconnectButton.setText(SVNUIMessages.AlreadyConnectedPage_ReconnectToAnother); 
 		
 		this.initControls();
 		

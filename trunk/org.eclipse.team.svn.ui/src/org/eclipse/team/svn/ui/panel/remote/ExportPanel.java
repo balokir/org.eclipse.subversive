@@ -25,7 +25,7 @@ import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.DepthSelectionComposite;
 import org.eclipse.team.svn.ui.composite.RevisionComposite;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
@@ -46,9 +46,9 @@ public class ExportPanel extends AbstractDialogPanel {
 	
 	public ExportPanel(IRepositoryResource baseResource) {
 		super();
-		this.dialogTitle = SVNTeamUIPlugin.instance().getResource("ExportPanel.Title");
-		this.dialogDescription = SVNTeamUIPlugin.instance().getResource("ExportPanel.Description");
-		this.defaultMessage = SVNTeamUIPlugin.instance().getResource("ExportPanel.Message");
+		this.dialogTitle = SVNUIMessages.ExportPanel_Title;
+		this.dialogDescription = SVNUIMessages.ExportPanel_Description;
+		this.defaultMessage = SVNUIMessages.ExportPanel_Message;
 		this.selectedResource = baseResource;
 	}	
 	
@@ -85,7 +85,7 @@ public class ExportPanel extends AbstractDialogPanel {
 		Label label = new Label(folderComposite, SWT.NONE);
 		data = new GridData();
 		label.setLayoutData(data);
-		label.setText(SVNTeamUIPlugin.instance().getResource("ExportPanel.Folder"));
+		label.setText(SVNUIMessages.ExportPanel_Folder);
 		
 		this.locationField = new Text(folderComposite,  SWT.SINGLE | SWT.BORDER);
 		data = new GridData(GridData.FILL_HORIZONTAL);
@@ -93,15 +93,15 @@ public class ExportPanel extends AbstractDialogPanel {
 		this.attachTo(this.locationField, new ExistingResourceVerifier(label.getText(), false));
 		
 		Button browseButton = new Button(folderComposite, SWT.PUSH);
-		browseButton.setText(SVNTeamUIPlugin.instance().getResource("Button.Browse"));
+		browseButton.setText(SVNUIMessages.Button_Browse);
 		data = new GridData();
 		data.widthHint = DefaultDialog.computeButtonWidth(browseButton);
 		browseButton.setLayoutData(data);
 		browseButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				DirectoryDialog fileDialog = new DirectoryDialog(ExportPanel.this.manager.getShell());
-				fileDialog.setText(SVNTeamUIPlugin.instance().getResource("ExportPanel.ExportFolder"));
-				fileDialog.setMessage(SVNTeamUIPlugin.instance().getResource("ExportPanel.ExportFolder.Msg"));
+				fileDialog.setText(SVNUIMessages.ExportPanel_ExportFolder);
+				fileDialog.setMessage(SVNUIMessages.ExportPanel_ExportFolder_Msg);
 				String path = fileDialog.open();
 				if (path != null) {
 					ExportPanel.this.locationField.setText(path);

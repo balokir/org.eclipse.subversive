@@ -24,7 +24,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.core.utility.SVNUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractRepositoryTeamAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.operation.RefreshRemoteResourcesOperation;
@@ -43,7 +43,7 @@ public class DeleteAction extends AbstractRepositoryTeamAction {
 	}
 	
 	public void runImpl(IAction action) {
-	    CommentPanel commentPanel = new CommentPanel(SVNTeamUIPlugin.instance().getResource("DeleteAction.Comment.Title"));
+	    CommentPanel commentPanel = new CommentPanel(SVNUIMessages.DeleteAction_Comment_Title);
 		DefaultDialog dialog = new DefaultDialog(this.getShell(), commentPanel);
 		if (dialog.open() == 0) {
 			IRepositoryResource []resources = this.getSelectedRepositoryResources();

@@ -13,7 +13,7 @@ package org.eclipse.team.svn.ui.panel.view.property;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.ApplyPropertyMethodComposite;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.properties.ResourcePropertyEditPanel;
@@ -29,9 +29,9 @@ public class PropertyApplyPanel extends AbstractDialogPanel {
 	
 	public PropertyApplyPanel(boolean oneProperty) {
 		super();
-		this.dialogTitle = SVNTeamUIPlugin.instance().getResource(oneProperty ? "PropertyApplyPanel.Title.Single" : "PropertyApplyPanel.Title.Multi");
-		this.dialogDescription = SVNTeamUIPlugin.instance().getResource(oneProperty ? "PropertyApplyPanel.Description.Single" : "PropertyApplyPanel.Description.Multi");
-		this.defaultMessage = SVNTeamUIPlugin.instance().getResource(oneProperty ? "PropertyApplyPanel.Message.Single" : "PropertyApplyPanel.Message.Multi");
+		this.dialogTitle = oneProperty ? SVNUIMessages.PropertyApplyPanel_Title_Single : SVNUIMessages.PropertyApplyPanel_Title_Multi;
+		this.dialogDescription = oneProperty ? SVNUIMessages.PropertyApplyPanel_Description_Single : SVNUIMessages.PropertyApplyPanel_Description_Multi;
+		this.defaultMessage = oneProperty ? SVNUIMessages.PropertyApplyPanel_Message_Single : SVNUIMessages.PropertyApplyPanel_Message_Multi;
 	}
 	
 	public int getApplyMethod() {

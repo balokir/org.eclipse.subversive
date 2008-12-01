@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.team.svn.core.operation.local.CreatePatchOperation;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.verifier.AbstractFormattedVerifier;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifier;
 import org.eclipse.team.svn.ui.wizard.AbstractVerifiedWizardPage;
@@ -53,9 +54,9 @@ public class PatchOptionsPage extends AbstractVerifiedWizardPage {
 	
 	public PatchOptionsPage(boolean localMode, boolean showIgnoreAncestry) {
 		super(PatchOptionsPage.class.getName(), 
-			SVNTeamUIPlugin.instance().getResource("PatchOptionsPage.Title"), 
+			SVNUIMessages.PatchOptionsPage_Title, 
 			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
-		this.setDescription(SVNTeamUIPlugin.instance().getResource("PatchOptionsPage.Description"));
+		this.setDescription(SVNUIMessages.PatchOptionsPage_Description);
 		this.localMode = localMode;
 		this.showIgnoreAncestry = showIgnoreAncestry;
 		this.ignoreAncestry = true;
@@ -110,7 +111,7 @@ public class PatchOptionsPage extends AbstractVerifiedWizardPage {
 		composite.setLayoutData(data);
 		
 		Group options = new Group(composite, SWT.NONE);
-		options.setText(SVNTeamUIPlugin.instance().getResource("PatchOptionsPage.Options"));
+		options.setText(SVNUIMessages.PatchOptionsPage_Options);
 		layout = new GridLayout();
 		options.setLayout(layout);
 		data = new GridData(GridData.FILL_HORIZONTAL);
@@ -119,7 +120,7 @@ public class PatchOptionsPage extends AbstractVerifiedWizardPage {
 		Button recursiveButton = new Button(options, SWT.CHECK);
 		data = new GridData();
 		recursiveButton.setLayoutData(data);
-		recursiveButton.setText(SVNTeamUIPlugin.instance().getResource("PatchOptionsPage.Recurse"));
+		recursiveButton.setText(SVNUIMessages.PatchOptionsPage_Recurse);
 		recursiveButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				PatchOptionsPage.this.recursive = ((Button)e.widget).getSelection();
@@ -130,7 +131,7 @@ public class PatchOptionsPage extends AbstractVerifiedWizardPage {
 		Button processBinaryButton = new Button(options, SWT.CHECK);
 		data = new GridData();
 		processBinaryButton.setLayoutData(data);
-		processBinaryButton.setText(SVNTeamUIPlugin.instance().getResource("PatchOptionsPage.Binary"));
+		processBinaryButton.setText(SVNUIMessages.PatchOptionsPage_Binary);
 		processBinaryButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				PatchOptionsPage.this.processBinary = ((Button)e.widget).getSelection();
@@ -138,13 +139,13 @@ public class PatchOptionsPage extends AbstractVerifiedWizardPage {
 			}
 		});
 		processBinaryButton.setSelection(this.processBinary = false);
-		AbstractVerifier verifier = new AbstractFormattedVerifier(SVNTeamUIPlugin.instance().getResource("PatchOptionsPage.ProcessBinary.Verifier")) {
+		AbstractVerifier verifier = new AbstractFormattedVerifier(SVNUIMessages.PatchOptionsPage_ProcessBinary_Verifier) {
 		    protected String getErrorMessageImpl(Control input) {
 		        return null;
 		    }
 		    protected String getWarningMessageImpl(Control input) {
 		    	if (((Button)input).getSelection()) {
-		            return SVNTeamUIPlugin.instance().getResource("PatchOptionsPage.ProcessBinary.Verifier.Warning", new String[] {AbstractFormattedVerifier.FIELD_NAME});
+		            return SVNUIMessages.format(SVNUIMessages.PatchOptionsPage_ProcessBinary_Verifier_Warning, new String[] {AbstractFormattedVerifier.FIELD_NAME});
 		        }
 		        return null;
 		    }
@@ -154,7 +155,7 @@ public class PatchOptionsPage extends AbstractVerifiedWizardPage {
 		Button processDeletedButton = new Button(options, SWT.CHECK);
 		data = new GridData();
 		processDeletedButton.setLayoutData(data);
-		processDeletedButton.setText(SVNTeamUIPlugin.instance().getResource("PatchOptionsPage.Deleted"));
+		processDeletedButton.setText(SVNUIMessages.PatchOptionsPage_Deleted);
 		processDeletedButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				PatchOptionsPage.this.ignoreDeleted = !((Button)e.widget).getSelection();
@@ -166,7 +167,7 @@ public class PatchOptionsPage extends AbstractVerifiedWizardPage {
 			Button processUnversionedButton = new Button(options, SWT.CHECK);
 			data = new GridData();
 			processUnversionedButton.setLayoutData(data);
-			processUnversionedButton.setText(SVNTeamUIPlugin.instance().getResource("PatchOptionsPage.New"));
+			processUnversionedButton.setText(SVNUIMessages.PatchOptionsPage_New);
 			processUnversionedButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					PatchOptionsPage.this.processUnversioned = ((Button)e.widget).getSelection();
@@ -179,7 +180,7 @@ public class PatchOptionsPage extends AbstractVerifiedWizardPage {
 			final Button showIgnoreAncestryButton = new Button(options, SWT.CHECK);
 			data = new GridData();
 			showIgnoreAncestryButton.setLayoutData(data);
-			showIgnoreAncestryButton.setText(SVNTeamUIPlugin.instance().getResource("PatchOptionsPage.Ancestry"));
+			showIgnoreAncestryButton.setText(SVNUIMessages.PatchOptionsPage_Ancestry);
 			showIgnoreAncestryButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					PatchOptionsPage.this.ignoreAncestry = showIgnoreAncestryButton.getSelection();
@@ -190,7 +191,7 @@ public class PatchOptionsPage extends AbstractVerifiedWizardPage {
 		
 		if (this.localMode) { 
 			Group patchRoot = new Group(composite, SWT.NONE);
-			patchRoot.setText(SVNTeamUIPlugin.instance().getResource("PatchOptionsPage.PatchRoot"));
+			patchRoot.setText(SVNUIMessages.PatchOptionsPage_PatchRoot);
 			layout = new GridLayout();
 			patchRoot.setLayout(layout);
 			data = new GridData(GridData.FILL_HORIZONTAL);
@@ -199,7 +200,7 @@ public class PatchOptionsPage extends AbstractVerifiedWizardPage {
 			this.rootWorkspace = new Button(patchRoot, SWT.RADIO);
 			data = new GridData();
 			this.rootWorkspace.setLayoutData(data);
-			this.rootWorkspace.setText(SVNTeamUIPlugin.instance().getResource("PatchOptionsPage.PatchRootWorkspace"));
+			this.rootWorkspace.setText(SVNUIMessages.PatchOptionsPage_PatchRootWorkspace);
 			this.rootWorkspace.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					PatchOptionsPage.this.rootPoint = CreatePatchOperation.WORKSPACE;
@@ -209,7 +210,7 @@ public class PatchOptionsPage extends AbstractVerifiedWizardPage {
 			this.rootProject = new Button(patchRoot, SWT.RADIO);
 			data = new GridData();
 			this.rootProject.setLayoutData(data);
-			this.rootProject.setText(SVNTeamUIPlugin.instance().getResource("PatchOptionsPage.PatchRootProject"));
+			this.rootProject.setText(SVNUIMessages.PatchOptionsPage_PatchRootProject);
 			this.rootProject.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					PatchOptionsPage.this.rootPoint = CreatePatchOperation.PROJECT;
@@ -219,7 +220,7 @@ public class PatchOptionsPage extends AbstractVerifiedWizardPage {
 			this.rootSelection = new Button(patchRoot, SWT.RADIO);
 			data = new GridData();
 			this.rootSelection.setLayoutData(data);
-			this.rootSelection.setText(SVNTeamUIPlugin.instance().getResource("PatchOptionsPage.PatchRootSelection"));
+			this.rootSelection.setText(SVNUIMessages.PatchOptionsPage_PatchRootSelection);
 			this.rootSelection.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					PatchOptionsPage.this.rootPoint = CreatePatchOperation.SELECTION;

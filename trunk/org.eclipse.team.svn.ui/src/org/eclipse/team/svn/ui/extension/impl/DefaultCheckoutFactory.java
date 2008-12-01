@@ -24,7 +24,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
 import org.eclipse.team.svn.core.utility.FileUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.remote.CheckoutAction;
 import org.eclipse.team.svn.ui.extension.factory.ICheckoutFactory;
 
@@ -88,7 +88,7 @@ public class DefaultCheckoutFactory implements ICheckoutFactory {
 					return FileUtility.formatResourceName((String)this.resources2names.get(resource));
 				}
 				case 3: {
-					return SVNTeamUIPlugin.instance().getResource("DefaultCheckoutFactory.EclipseProject");
+					return SVNUIMessages.DefaultCheckoutFactory_EclipseProject;
 				}
 			}
 			return "";

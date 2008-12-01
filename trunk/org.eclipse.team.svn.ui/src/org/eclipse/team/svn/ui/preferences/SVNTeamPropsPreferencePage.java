@@ -56,7 +56,7 @@ import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.utility.FileUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.SpellcheckedTextProvider;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.common.EditAutoPropertiesPanel;
@@ -296,10 +296,10 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 		column.setResizable(false);
 		
 		column = new TableColumn(this.autopropTableViewer.getTable(), SWT.NONE);
-		column.setText(SVNTeamUIPlugin.instance().getResource("AutoPropsPreferencePage.columnHeaderFileName"));
+		column.setText(SVNUIMessages.AutoPropsPreferencePage_columnHeaderFileName);
 		
 		column =  new TableColumn(this.autopropTableViewer.getTable(), SWT.NONE);
-		column.setText(SVNTeamUIPlugin.instance().getResource("AutoPropsPreferencePage.columnHeaderProperties"));
+		column.setText(SVNUIMessages.AutoPropsPreferencePage_columnHeaderProperties);
 	}
 	
 	protected void createAutopropButtons(Composite parent) {
@@ -311,19 +311,19 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 		buttons.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		
 		this.autopropBtnAdd = this.createButton(buttons,
-				SVNTeamUIPlugin.instance().getResource("AutoPropsPreferencePage.buttonTextAdd"),
+				SVNUIMessages.AutoPropsPreferencePage_buttonTextAdd,
 				true);
 		this.autopropBtnEdit = this.createButton(buttons,
-				SVNTeamUIPlugin.instance().getResource("AutoPropsPreferencePage.buttonTextEdit"),
+				SVNUIMessages.AutoPropsPreferencePage_buttonTextEdit,
 				false);
 		this.autopropBtnRemove = this.createButton(buttons,
-				SVNTeamUIPlugin.instance().getResource("AutoPropsPreferencePage.buttonTextRemove"),
+				SVNUIMessages.AutoPropsPreferencePage_buttonTextRemove,
 				false);
 		this.autopropBtnExport = createButton(buttons,
-				SVNTeamUIPlugin.instance().getResource("AutoPropsPreferencePage.buttonTextExport"),
+				SVNUIMessages.AutoPropsPreferencePage_buttonTextExport,
 				this.autopropTableViewer.getCheckedElements().length != 0);
 		this.autopropBtnImport = this.createButton(buttons,
-				SVNTeamUIPlugin.instance().getResource("AutoPropsPreferencePage.buttonTextImport"),
+				SVNUIMessages.AutoPropsPreferencePage_buttonTextImport,
 				true);
 	}
 	
@@ -375,7 +375,7 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 	}
 	
 	public void exportAutoProperties() {
-		String filePath = this.findConfigFile(SVNTeamUIPlugin.instance().getResource("AutoPropsPreferencePage.dialogTitleExport"));
+		String filePath = this.findConfigFile(SVNUIMessages.AutoPropsPreferencePage_dialogTitleExport);
 		if (filePath == null) {
 			return;
 		}
@@ -430,7 +430,7 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 			tmpCfg.renameTo(srcCfg);
 		}
 		catch (IOException ioe) {
-			LoggedOperation.reportError(SVNTeamUIPlugin.instance().getResource("Error.ExportProperties"), ioe);
+			LoggedOperation.reportError(SVNUIMessages.Error_ExportProperties, ioe);
 			return;
 		}
 		finally {
@@ -452,7 +452,7 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 	}
 	
 	public void importAutoProperties() {
-		String filePath = this.findConfigFile(SVNTeamUIPlugin.instance().getResource("AutoPropsPreferencePage.dialogTitleImport"));
+		String filePath = this.findConfigFile(SVNUIMessages.AutoPropsPreferencePage_dialogTitleImport);
 		if (filePath == null) {
 			return;
 		}
@@ -495,7 +495,7 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 			this.populateAutopropTable(autoPropsList.toArray());
 		}
 		catch (IOException ioe) {
-			LoggedOperation.reportError(SVNTeamUIPlugin.instance().getResource("Error.ImportProperties"), ioe);
+			LoggedOperation.reportError(SVNUIMessages.Error_ImportProperties, ioe);
 			return;
 		}
 		finally {
@@ -540,7 +540,7 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 		data.heightHint = 80;
 		data.widthHint = 0;
         this.customPropDescription = SpellcheckedTextProvider.getTextWidget(composite, data, SWT.MULTI | SWT.V_SCROLL | SWT.WRAP);
-		this.customPropDescription.setText(SVNTeamUIPlugin.instance().getResource("CustomPropsPreferencePage.description"));
+		this.customPropDescription.setText(SVNUIMessages.CustomPropsPreferencePage_description);
 		this.customPropDescription.setEditable(false);
 		
 		this.custompropTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -623,10 +623,10 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 		});
 		
 		TableColumn column = new TableColumn(this.custompropTableViewer.getTable(), SWT.NONE);
-		column.setText(SVNTeamUIPlugin.instance().getResource("CustomPropsPreferencePage.columnHeaderPropName"));
+		column.setText(SVNUIMessages.CustomPropsPreferencePage_columnHeaderPropName);
 		
 		column =  new TableColumn(this.custompropTableViewer.getTable(), SWT.NONE);
-		column.setText(SVNTeamUIPlugin.instance().getResource("CustomPropsPreferencePage.columnHeaderRegexp"));
+		column.setText(SVNUIMessages.CustomPropsPreferencePage_columnHeaderRegexp);
 		
 	}
 	
@@ -639,20 +639,20 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 		buttons.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		
 		this.custompropBtnAdd = this.createButton(buttons,
-				SVNTeamUIPlugin.instance().getResource("AutoPropsPreferencePage.buttonTextAdd"),
+				SVNUIMessages.AutoPropsPreferencePage_buttonTextAdd,
 				true);
 		this.custompropBtnEdit = this.createButton(buttons,
-				SVNTeamUIPlugin.instance().getResource("AutoPropsPreferencePage.buttonTextEdit"),
+				SVNUIMessages.AutoPropsPreferencePage_buttonTextEdit,
 				false);
 		this.custompropBtnRemove = this.createButton(buttons,
-				SVNTeamUIPlugin.instance().getResource("AutoPropsPreferencePage.buttonTextRemove"),
+				SVNUIMessages.AutoPropsPreferencePage_buttonTextRemove,
 				false);
 	}
 	
 	protected void refreshDescription() {
 		IStructuredSelection selection = (IStructuredSelection)this.custompropTableViewer.getSelection();
 		if (selection.size() == 0) {
-			this.customPropDescription.setText(SVNTeamUIPlugin.instance().getResource("CustomPropsPreferencePage.description"));
+			this.customPropDescription.setText(SVNUIMessages.CustomPropsPreferencePage_description);
 			return;
 		}
 		String description = ((SVNTeamPropsPreferencePage.CustomProperty)selection.getFirstElement()).descriprion;
@@ -726,7 +726,7 @@ public class SVNTeamPropsPreferencePage extends AbstractSVNTeamPreferencesPage {
 			cfgDir = connector.getConfigDirectory();
 		}
 		catch (SVNConnectorException cwe) {
-			LoggedOperation.reportError(SVNTeamUIPlugin.instance().getResource("Error.FindConfigFile"), cwe);
+			LoggedOperation.reportError(SVNUIMessages.Error_FindConfigFile, cwe);
 			return null;
 		}
 		FileDialog dlg = new FileDialog(this.getShell());

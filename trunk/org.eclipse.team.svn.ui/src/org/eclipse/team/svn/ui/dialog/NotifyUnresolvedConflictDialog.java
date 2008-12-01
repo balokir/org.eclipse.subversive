@@ -14,7 +14,7 @@ package org.eclipse.team.svn.ui.dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * Unresolved conflict notification dialog
@@ -25,9 +25,9 @@ public class NotifyUnresolvedConflictDialog extends MessageDialog {
 
     public NotifyUnresolvedConflictDialog(Shell parentShell, String message) {
 		super(parentShell, 
-			SVNTeamUIPlugin.instance().getResource("NotifyUnresolvedConflictDialog.Title"), 
+			SVNUIMessages.NotifyUnresolvedConflictDialog_Title, 
 			null, 
-			message != null ? message : SVNTeamUIPlugin.instance().getResource("NotifyUnresolvedConflictDialog.Message"),
+			message != null ? message : SVNUIMessages.NotifyUnresolvedConflictDialog_Message,
 			MessageDialog.WARNING, 
 			new String[] {IDialogConstants.OK_LABEL}, 
 			0);

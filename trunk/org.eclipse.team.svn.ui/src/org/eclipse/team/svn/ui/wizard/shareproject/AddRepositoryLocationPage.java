@@ -36,6 +36,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.ProjectListComposite;
 import org.eclipse.team.svn.ui.composite.RepositoryPropertiesTabFolder;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
@@ -68,10 +69,10 @@ public class AddRepositoryLocationPage extends AbstractVerifiedWizardPage {
 	
 	public AddRepositoryLocationPage(IRepositoryLocation editable) {
 		super(AddRepositoryLocationPage.class.getName(), 
-			SVNTeamUIPlugin.instance().getResource("AddRepositoryLocationPage.Title"), 
+			SVNUIMessages.AddRepositoryLocationPage_Title, 
 			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
 		
-		this.setDescription(SVNTeamUIPlugin.instance().getResource("AddRepositoryLocationPage.Description"));
+		this.setDescription(SVNUIMessages.AddRepositoryLocationPage_Description);
 		this.editable = editable;
 		if (editable != null) {
 			this.oldUrl = editable.getUrl();
@@ -105,11 +106,11 @@ public class AddRepositoryLocationPage extends AbstractVerifiedWizardPage {
 	}
 	
 	public void setForceDisableRoots(boolean force) {
-		this.propertiesTabFolder.setForceDisableRoots(force, this.initialUrl == null || this.initialUrl.length() == 0 ? null : new AbstractFormattedVerifier(SVNTeamUIPlugin.instance().getResource("AddRepositoryLocationPage.RootURL")) {
+		this.propertiesTabFolder.setForceDisableRoots(force, this.initialUrl == null || this.initialUrl.length() == 0 ? null : new AbstractFormattedVerifier(SVNUIMessages.AddRepositoryLocationPage_RootURL) {
 		    protected String getErrorMessageImpl(Control input) {
 				String url = this.getText(input);
 				if (!new Path(url).isPrefixOf(new Path(SVNUtility.decodeURL(AddRepositoryLocationPage.this.initialUrl)))) {
-					return SVNTeamUIPlugin.instance().getResource("AddRepositoryLocationPage.FixedURL.Verifier.Error", new String[] {AbstractFormattedVerifier.FIELD_NAME, AddRepositoryLocationPage.this.initialUrl});
+					return SVNUIMessages.format(SVNUIMessages.AddRepositoryLocationPage_FixedURL_Verifier_Error, new String[] {AbstractFormattedVerifier.FIELD_NAME, AddRepositoryLocationPage.this.initialUrl});
 				}
 				return null;
 			}
@@ -163,9 +164,9 @@ public class AddRepositoryLocationPage extends AbstractVerifiedWizardPage {
 				endsPart.equals(this.propertiesTabFolder.getRepositoryLocation().getTagsLocation())) {
 				final int []result = new int[1];
 				final MessageDialog dialog = new MessageDialog(this.getShell(), 
-														SVNTeamUIPlugin.instance().getResource("AddRepositoryLocationPage.Normalize.Title"),
+														SVNUIMessages.AddRepositoryLocationPage_Normalize_Title,
 														null,
-														SVNTeamUIPlugin.instance().getResource("AddRepositoryLocationPage.Normalize.Message"),
+														SVNUIMessages.AddRepositoryLocationPage_Normalize_Message,
 														MessageDialog.WARNING,
 														new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL},
 														0);
@@ -255,9 +256,9 @@ public class AddRepositoryLocationPage extends AbstractVerifiedWizardPage {
 		public ProjectListPanel(IProject []input, boolean differentUuid) {
 			super(new String[] {IDialogConstants.OK_LABEL});
 			
-			this.dialogTitle = SVNTeamUIPlugin.instance().getResource("AddRepositoryLocationPage.ProjectList.Title");
-			this.dialogDescription = SVNTeamUIPlugin.instance().getResource("AddRepositoryLocationPage.ProjectList.Description");
-			this.defaultMessage = SVNTeamUIPlugin.instance().getResource(differentUuid ? "AddRepositoryLocationPage.ProjectList.Message1" : "AddRepositoryLocationPage.ProjectList.Message2");
+			this.dialogTitle = SVNUIMessages.AddRepositoryLocationPage_ProjectList_Title;
+			this.dialogDescription = SVNUIMessages.AddRepositoryLocationPage_ProjectList_Description;
+			this.defaultMessage = differentUuid ? SVNUIMessages.AddRepositoryLocationPage_ProjectList_Message1 : SVNUIMessages.AddRepositoryLocationPage_ProjectList_Message2;
 			this.resources = input;
 		}
 		

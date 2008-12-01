@@ -67,6 +67,7 @@ import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.RemoteResourceTransfer;
 import org.eclipse.team.svn.ui.RemoteResourceTransferrable;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.local.SetKeywordsAction;
 import org.eclipse.team.svn.ui.action.local.SetPropertyAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
@@ -211,12 +212,12 @@ public class PropertiesComposite extends Composite {
 		
 		TableColumn col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(SVNTeamUIPlugin.instance().getResource("PropertiesComposite.Name"));
+		col.setText(SVNUIMessages.PropertiesComposite_Name);
 		col.addSelectionListener(comparator);
 		tableLayout.addColumnData(new ColumnWeightData(30, true));
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(SVNTeamUIPlugin.instance().getResource("PropertiesComposite.Value"));
+		col.setText(SVNUIMessages.PropertiesComposite_Value);
 		col.addSelectionListener(comparator);
 		tableLayout.addColumnData(new ColumnWeightData(70, true));
 		
@@ -250,7 +251,7 @@ public class PropertiesComposite extends Composite {
 			public String getColumnText(Object element, int columnIndex) {
 				if (PropertiesComposite.this.isProcessing) {
 					if (columnIndex == 0 && PropertiesComposite.this.wcResource != null) {
-						return SVNTeamUIPlugin.instance().getResource(RepositoryPending.PENDING);
+						return SVNUIMessages.getString(RepositoryPending.PENDING);
 					}
 					return "";
 				}
@@ -285,20 +286,20 @@ public class PropertiesComposite extends Composite {
 					Action tAction = null;
 					boolean isEditAllowed = PropertiesComposite.this.provider != null && PropertiesComposite.this.provider.isEditAllowed();
 					if (PropertiesComposite.this.wcResource != null && PropertiesComposite.this.repositoryResource == null) {
-						manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("PropertiesComposite.Add")) {
+						manager.add(tAction = new Action(SVNUIMessages.PropertiesComposite_Add) {
 							public void run() {
 								PropertiesComposite.this.editProperty(null);
 							}
 						});
 						tAction.setEnabled(isEditAllowed);
-						manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("PropertiesComposite.Edit")) {
+						manager.add(tAction = new Action(SVNUIMessages.PropertiesComposite_Edit) {
 							public void run() {
 								SVNProperty data = (SVNProperty) tSelection.getFirstElement();
 								PropertiesComposite.this.editProperty(data);
 							}
 						});
 						tAction.setEnabled(isEditAllowed && tSelection.size() == 1);
-						manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("PropertiesComposite.Remove")) {
+						manager.add(tAction = new Action(SVNUIMessages.PropertiesComposite_Remove) {
 							public void run() {
 								SVNProperty[] data = (SVNProperty[]) tSelection.toList().toArray(new SVNProperty[tSelection.size()]);
 								PropertiesComposite.this.removeProperty(data);
@@ -306,12 +307,12 @@ public class PropertiesComposite extends Composite {
 						});
 						tAction.setEnabled(isEditAllowed && tSelection.size() > 0);
 						manager.add(new Separator());
-						manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("PropertiesComposite.SetKeywords")) {
+						manager.add(tAction = new Action(SVNUIMessages.PropertiesComposite_SetKeywords) {
 							public void run() {
 								PropertiesComposite.this.setKeywords();
 							}
 						});
-						manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("PropertiesComposite.ApplyRecursively")) {
+						manager.add(tAction = new Action(SVNUIMessages.PropertiesComposite_ApplyRecursively) {
 							public void run() {
 								SVNProperty[] data = (SVNProperty[]) tSelection.toList().toArray(new SVNProperty[tSelection.size()]);
 								PropertiesComposite.this.setPropertyRecursive(data);
@@ -319,7 +320,7 @@ public class PropertiesComposite extends Composite {
 						});
 						tAction.setEnabled(isEditAllowed && tSelection.size() > 0 && PropertiesComposite.this.wcResource instanceof IContainer);
 					}
-					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("PropertiesComposite.SaveValueToFile")) {
+					manager.add(tAction = new Action(SVNUIMessages.PropertiesComposite_SaveValueToFile) {
 						public void run() {
 							SVNProperty data = (SVNProperty) tSelection.getFirstElement();
 							PropertiesComposite.this.saveValueToFile(data);
@@ -328,7 +329,7 @@ public class PropertiesComposite extends Composite {
 					tAction.setEnabled(PropertiesComposite.this.provider != null && tSelection.size() == 1);
 					
 					manager.add(new Separator());
-					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("PropertiesComposite.Refresh")) {
+					manager.add(tAction = new Action(SVNUIMessages.PropertiesComposite_Refresh) {
 						public void run() {
 							synchronized (PropertiesComposite.this) {
 								if (PropertiesComposite.this.repositoryResource != null) {

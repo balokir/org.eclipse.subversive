@@ -34,7 +34,7 @@ import org.eclipse.team.svn.core.operation.local.refactor.CopyResourceOperation;
 import org.eclipse.team.svn.core.operation.local.refactor.CopyResourceWithHistoryOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.utility.FileUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractWorkingCopyAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.local.ContainerSelectionPanel;
@@ -57,8 +57,8 @@ public class CopyAction extends AbstractWorkingCopyAction {
 		HashSet<String> conflictedResources = this.excludeResourcesWithEqualNames(resourcesWithoutEqualsNames, AllResources);
 		
 		if (resourcesWithoutEqualsNames.isEmpty()) {
-			MessageDialog dialog = new MessageDialog(this.getShell(), SVNTeamUIPlugin.instance().getResource("CopyAction.Conflict.Title"), null, 
-					SVNTeamUIPlugin.instance().getResource("CopyAction.Conflict.Message"), 
+			MessageDialog dialog = new MessageDialog(this.getShell(), SVNUIMessages.CopyAction_Conflict_Title, null, 
+					SVNUIMessages.CopyAction_Conflict_Message, 
 					MessageDialog.WARNING, 
 					new String[] {IDialogConstants.OK_LABEL}, 
 					0);

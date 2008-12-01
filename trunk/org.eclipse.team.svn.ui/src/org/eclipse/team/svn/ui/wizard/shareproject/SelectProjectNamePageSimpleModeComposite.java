@@ -24,7 +24,7 @@ import org.eclipse.team.svn.core.operation.local.management.ShareProjectOperatio
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.SVNUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.RepositoryResourceOnlySelectionComposite;
 import org.eclipse.team.svn.ui.extension.impl.ISelectProjectNamePageData;
 import org.eclipse.team.svn.ui.verifier.IValidationManager;
@@ -83,8 +83,8 @@ public class SelectProjectNamePageSimpleModeComposite extends Composite implemen
 				this.validationManager, 
 				"selectProjectNamePage", 
 				baseResource,				
-				SVNTeamUIPlugin.instance().getResource("SelectProjectNamePage.Select.Title"),
-				SVNTeamUIPlugin.instance().getResource("SelectProjectNamePage.Select.Description"));				
+				SVNUIMessages.SelectProjectNamePage_Select_Title,
+				SVNUIMessages.SelectProjectNamePage_Select_Description);				
 				
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = 550;

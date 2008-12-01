@@ -16,7 +16,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.team.svn.core.utility.SVNUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.wizard.createpatch.PatchOptionsPage;
 import org.eclipse.team.svn.ui.wizard.createpatch.SelectPatchFilePage;
 
@@ -47,7 +47,7 @@ public class CreatePatchWizard extends AbstractSVNWizard {
 	
 	public CreatePatchWizard(String targetName, IResource []roots, boolean showIgnoreAncestry) {
 		super();
-		this.setWindowTitle(SVNTeamUIPlugin.instance().getResource("CreatePatchWizard.Title"));
+		this.setWindowTitle(SVNUIMessages.CreatePatchWizard_Title);
 		this.targetName = targetName;
 		this.roots = roots;
 		this.showIgnoreAncestry = showIgnoreAncestry;

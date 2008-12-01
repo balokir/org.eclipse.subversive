@@ -13,7 +13,7 @@
 package org.eclipse.team.svn.ui.history.model;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.utility.FileUtility;
@@ -67,18 +67,18 @@ public class SVNLogNode extends AbstractLogNode {
 				return retVal;
 			}
 			case ILogNode.COLUMN_DATE: {
-				return this.entry.date == 0 ? SVNTeamPlugin.instance().getResource("SVNInfo.NoDate") : DateFormatter.formatDate(this.entry.date);
+				return this.entry.date == 0 ? SVNMessages.SVNInfo_NoDate : DateFormatter.formatDate(this.entry.date);
 			}
 			case ILogNode.COLUMN_CHANGES: {
 				return String.valueOf(this.entry.changedPaths != null ? this.entry.changedPaths.length : 0);
 			}
 			case ILogNode.COLUMN_AUTHOR: {
-				return this.entry.author == null || this.entry.author.length() == 0 ? SVNTeamPlugin.instance().getResource("SVNInfo.NoAuthor") : this.entry.author;
+				return this.entry.author == null || this.entry.author.length() == 0 ? SVNMessages.SVNInfo_NoAuthor : this.entry.author;
 			}
 			case ILogNode.COLUMN_COMMENT: {
 				String retVal = this.entry.message;
 				if (retVal == null || retVal.length() == 0) {
-					return SVNTeamPlugin.instance().getResource("SVNInfo.NoComment");
+					return SVNMessages.SVNInfo_NoComment;
 				}
 				if (labelType == ILogNode.LABEL_TRIM) {
 					return FileUtility.formatMultilineText(retVal);

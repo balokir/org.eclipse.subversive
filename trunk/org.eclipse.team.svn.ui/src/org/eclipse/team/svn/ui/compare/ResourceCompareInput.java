@@ -72,7 +72,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFolder;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.IEditorPart;
@@ -145,7 +145,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 					ResourceCompareInput.this.fillMenu(manager, selection);
 					manager.add(new Separator());
 				}
-				manager.add(new Action(SVNTeamUIPlugin.instance().getResource("SynchronizeActionGroup.ExpandAll")) {
+				manager.add(new Action(SVNUIMessages.SynchronizeActionGroup_ExpandAll) {
 					public void run() {
 						ResourceCompareInput.this.viewer.expandAll();
 					}
@@ -246,7 +246,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 				rightPart += rightResourceName + " [" + rightRevisionPart + "]";
 			}
 
-			this.setTitle(SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.Title3", new Object[] {leftPart, ancestorPart, rightPart}));
+			this.setTitle(SVNUIMessages.format(SVNUIMessages.ResourceCompareInput_Title3, new Object[] {leftPart, ancestorPart, rightPart}));
 		} 
 		else {
 			String leftPart = leftResourceName + " [" + leftRevisionPart;
@@ -260,7 +260,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 				rightPart += rightResourceName + " [" + rightRevisionPart + "]";
 			}
 			
-			this.setTitle(SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.Title2", new Object[] {leftPart, rightPart}));
+			this.setTitle(SVNUIMessages.format(SVNUIMessages.ResourceCompareInput_Title2, new Object[] {leftPart, rightPart}));
 		}
 	}
 	
@@ -296,9 +296,9 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		IRepositoryResource resource = element.getRepositoryResource();
 		SVNRevision selected = resource.getSelectedRevision();
 		if (selected == SVNRevision.INVALID_REVISION) {
-			return SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.ResourceIsNotAvailable");
+			return SVNUIMessages.ResourceCompareInput_ResourceIsNotAvailable;
 		}
-		return SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.RevisionSign", new String[] {String.valueOf(resource.getRevision())});
+		return SVNUIMessages.format(SVNUIMessages.ResourceCompareInput_RevisionSign, new String[] {String.valueOf(resource.getRevision())});
 	}
 	
 	protected ResourceElement getLeftResourceElement() {
@@ -380,7 +380,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 			retVal = location.asRepositoryContainer(url, false);
 		}
 		if (retVal == null) {
-			throw new RuntimeException(SVNTeamUIPlugin.instance().getResource("Error.CompareUnknownNodeKind"));
+			throw new RuntimeException(SVNUIMessages.getErrorString("Error_CompareUnknownNodeKind"));
 		}
 		return retVal;
 	}
@@ -605,7 +605,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 			final ResourceElement left = (ResourceElement)this.getLeft();
 			final ResourceElement ancestor = (ResourceElement)this.getAncestor();
 			final ResourceElement right = (ResourceElement)this.getRight();
-			CompositeOperation op = new CompositeOperation(SVNTeamUIPlugin.instance().getResource("ResourceCompareInput.Fetch"));
+			CompositeOperation op = new CompositeOperation(SVNUIMessages.ResourceCompareInput_Fetch);
 			
 			if (left != null && left.getType() != ITypedElement.FOLDER_TYPE) {
 				final AbstractGetFileContentOperation fetchOp = left.getFetcher();

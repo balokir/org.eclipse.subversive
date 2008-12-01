@@ -13,7 +13,7 @@ package org.eclipse.team.svn.ui.panel.view.property;
 
 import java.util.StringTokenizer;
 
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * SVN keyword property
@@ -31,19 +31,19 @@ public class SVNKeywordProperty {
     
     // descriptions:
     public static String DATE_DESCR() {
-    	return SVNTeamUIPlugin.instance().getResource("SVNKeywordProperty.DATE_DESCR");    
+    	return SVNUIMessages.SVNKeywordProperty_DATE_DESCR;    
     }
     public static String REVISION_DESCR() {
-    	return SVNTeamUIPlugin.instance().getResource("SVNKeywordProperty.REVISION_DESCR");    
+    	return SVNUIMessages.SVNKeywordProperty_REVISION_DESCR;    
     }
     public static String AUTHOR_DESCR() {
-    	return SVNTeamUIPlugin.instance().getResource("SVNKeywordProperty.AUTHOR_DESCR");    
+    	return SVNUIMessages.SVNKeywordProperty_AUTHOR_DESCR;    
     }
     public static String HEAD_URL_DESCR() {
-    	return SVNTeamUIPlugin.instance().getResource("SVNKeywordProperty.HEAD_URL_DESCR");    
+    	return SVNUIMessages.SVNKeywordProperty_HEAD_URL_DESCR;    
     }
     public static String ID_DESCR() {
-    	return SVNTeamUIPlugin.instance().getResource("SVNKeywordProperty.ID_DESCR");    
+    	return SVNUIMessages.SVNKeywordProperty_ID_DESCR;    
     }
     
     // samples:

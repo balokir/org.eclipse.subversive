@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.utility.FileUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.SVNContainerSelectionGroup;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.panel.IDialogManager;
@@ -65,8 +65,8 @@ public class ContainerSelectionPanel extends AbstractDialogPanel {
     
 	public ContainerSelectionPanel(IResource []resources, HashSet conflicts) {
 	 	super();
-		this.dialogTitle = SVNTeamUIPlugin.instance().getResource("ContainerSelectionPanel.Title");
-		this.dialogDescription = SVNTeamUIPlugin.instance().getResource("ContainerSelectionPanel.Description");
+		this.dialogTitle = SVNUIMessages.ContainerSelectionPanel_Title;
+		this.dialogDescription = SVNUIMessages.ContainerSelectionPanel_Description;
 		this.selectedPath = null;
 		this.initialRoot = resources[0].getParent();
 		this.resources = resources;
@@ -74,7 +74,7 @@ public class ContainerSelectionPanel extends AbstractDialogPanel {
 		this.defaultConflictMessage = "";
 		this.getDefaultConflictMessage(conflicts);
 		this.defaultConflictMessage = this.getDefaultConflictMessage(conflicts);
-		this.defaultMessage = conflicts.size() == 0 ? SVNTeamUIPlugin.instance().getResource("ContainerSelectionPanel.Message") : this.defaultConflictMessage;
+		this.defaultMessage = conflicts.size() == 0 ? SVNUIMessages.ContainerSelectionPanel_Message : this.defaultConflictMessage;
     }
 
     public IPath getSelectedPath() {
@@ -106,7 +106,7 @@ public class ContainerSelectionPanel extends AbstractDialogPanel {
         
     	this.overrideResourceNameButton = new Button(parent, SWT.CHECK);
     	this.overrideResourceNameButton.setLayoutData(new GridData());
-    	this.overrideResourceNameButton.setText(SVNTeamUIPlugin.instance().getResource("ContainerSelectionPanel.NewName"));
+    	this.overrideResourceNameButton.setText(SVNUIMessages.ContainerSelectionPanel_NewName);
     	this.overrideResourceNameButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				ContainerSelectionPanel.this.nameBox.setEnabled(((Button)e.widget).getSelection());
@@ -121,7 +121,7 @@ public class ContainerSelectionPanel extends AbstractDialogPanel {
     	this.nameBox.setText(this.resources[0].getName());
     	this.nameBox.setEnabled(false);
     	CompositeVerifier verifier = new CompositeVerifier();
-    	String name = SVNTeamUIPlugin.instance().getResource("ContainerSelectionPanel.NewName.Verifier");
+    	String name = SVNUIMessages.ContainerSelectionPanel_NewName_Verifier;
     	verifier.add(new NonEmptyFieldVerifier(name));
     	verifier.add(new ResourceNameVerifier(name, true));
     	verifier.add(new AbstractFormattedVerifier(name) {
@@ -131,7 +131,7 @@ public class ContainerSelectionPanel extends AbstractDialogPanel {
 			protected String getErrorMessageImpl(Control input) {
 				IPath path = ContainerSelectionPanel.this.group.getContainerFullPath();
 				if (path != null && ResourcesPlugin.getWorkspace().getRoot().findMember(path.append(this.getText(input))) != null) {
-					return SVNTeamUIPlugin.instance().getResource("ContainerSelectionPanel.NewName.Verifier.Error");
+					return SVNUIMessages.ContainerSelectionPanel_NewName_Verifier_Error;
 				}
 				return null;
 			}
@@ -144,7 +144,7 @@ public class ContainerSelectionPanel extends AbstractDialogPanel {
         
         this.copyWithHistoryButton = new Button(parent, SWT.CHECK);
         this.copyWithHistoryButton.setLayoutData(new GridData());
-        this.copyWithHistoryButton.setText(SVNTeamUIPlugin.instance().getResource("ContainerSelectionPanel.KeepHistory"));
+        this.copyWithHistoryButton.setText(SVNUIMessages.ContainerSelectionPanel_KeepHistory);
         this.copyWithHistoryButton.setSelection(true);
         this.copyWithHistoryButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -196,7 +196,7 @@ public class ContainerSelectionPanel extends AbstractDialogPanel {
 		if (numberOfConflicts >= 4) {
 			message += "...";
     	}
-		return SVNTeamUIPlugin.instance().getResource("ContainerSelectionPanel.ConflictMessage", new String[] {message});
+		return SVNUIMessages.format(SVNUIMessages.ContainerSelectionPanel_ConflictMessage, new String[] {message});
 	}
 	
     public class ContainerSelectionVerifier extends SVNContainerSelectionGroup.SVNContainerSelectionVerifier {
@@ -210,9 +210,9 @@ public class ContainerSelectionPanel extends AbstractDialogPanel {
             super();
             this.conflictedResources = "";
             this.defaultConflictingResourcesNames = conflictingResourcesNames;
-            this.ALL_RESOURCES_IN_CONFLICT_MESSAGE = SVNTeamUIPlugin.instance().getResource("ContainerSelectionPanel.Selection.Verifier.AllInConflict");
-            this.SOME_RESOURCE_IN_CONFLICT_MESSAGE = SVNTeamUIPlugin.instance().getResource("ContainerSelectionPanel.Selection.Verifier.SomeInConflict.Single");
-            this.SOME_RESOURCES_IN_CONFLICT_MESSAGE = SVNTeamUIPlugin.instance().getResource("ContainerSelectionPanel.Selection.Verifier.SomeInConflict.Multi");
+            this.ALL_RESOURCES_IN_CONFLICT_MESSAGE = SVNUIMessages.ContainerSelectionPanel_Selection_Verifier_AllInConflict;
+            this.SOME_RESOURCE_IN_CONFLICT_MESSAGE = SVNUIMessages.ContainerSelectionPanel_Selection_Verifier_SomeInConflict_Single;
+            this.SOME_RESOURCES_IN_CONFLICT_MESSAGE = SVNUIMessages.ContainerSelectionPanel_Selection_Verifier_SomeInConflict_Multi;
         }
     	
         protected String getErrorMessageImpl(Control input) {

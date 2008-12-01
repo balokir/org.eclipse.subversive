@@ -42,7 +42,7 @@ import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.utility.FileUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.properties.RevPropertiesEditPanel;
 import org.eclipse.team.svn.ui.repository.model.RepositoryPending;
@@ -181,12 +181,12 @@ public class RevisionPropertiesComposite extends Composite {
 		
 		TableColumn col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(SVNTeamUIPlugin.instance().getResource("PropertiesComposite.Name"));
+		col.setText(SVNUIMessages.PropertiesComposite_Name);
 		col.addSelectionListener(comparator);
 		tableLayout.addColumnData(new ColumnWeightData(30, true));
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);
-		col.setText(SVNTeamUIPlugin.instance().getResource("PropertiesComposite.Value"));
+		col.setText(SVNUIMessages.PropertiesComposite_Value);
 		col.addSelectionListener(comparator);
 		tableLayout.addColumnData(new ColumnWeightData(70, true));
 		
@@ -217,7 +217,7 @@ public class RevisionPropertiesComposite extends Composite {
 			public String getColumnText(Object element, int columnIndex) {
 				if (RevisionPropertiesComposite.this.isPending) {
 					if (columnIndex == RevisionPropertiesComposite.COLUMN_NAME) {
-						return SVNTeamUIPlugin.instance().getResource(RepositoryPending.PENDING);
+						return SVNUIMessages.getString(RepositoryPending.PENDING);
 					}
 					return "";
 				}
@@ -251,13 +251,13 @@ public class RevisionPropertiesComposite extends Composite {
 				Action tAction = null;
 				boolean isItitialized = RevisionPropertiesComposite.this.properties != null;
 				if (isItitialized) {
-					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("PropertiesComposite.Add")) {
+					manager.add(tAction = new Action(SVNUIMessages.PropertiesComposite_Add) {
 						public void run() {
 							RevisionPropertiesComposite.this.editProperty(null);
 						}
 					});
 					tAction.setEnabled(RevisionPropertiesComposite.this.location != null);
-					manager.add(tAction = new Action(SVNTeamUIPlugin.instance().getResource("PropertiesComposite.Edit")) {
+					manager.add(tAction = new Action(SVNUIMessages.PropertiesComposite_Edit) {
 						public void run() {
 							SVNProperty data = (SVNProperty) tSelection.getFirstElement();
 							RevisionPropertiesComposite.this.editProperty(data);

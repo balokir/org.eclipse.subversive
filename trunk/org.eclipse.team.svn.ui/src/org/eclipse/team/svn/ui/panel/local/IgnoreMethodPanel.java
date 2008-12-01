@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.resource.IRemoteStorage;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifierProxy;
 import org.eclipse.team.svn.ui.verifier.PatternVerifier;
@@ -43,14 +43,14 @@ public class IgnoreMethodPanel extends AbstractDialogPanel {
     public IgnoreMethodPanel(IResource []resources) {
         super();
         if (resources.length == 1) {
-            this.dialogTitle = SVNTeamUIPlugin.instance().getResource("IgnoreMethodPanel.Title.Single");
-            this.dialogDescription = SVNTeamUIPlugin.instance().getResource("IgnoreMethodPanel.Description.Single");
+            this.dialogTitle = SVNUIMessages.IgnoreMethodPanel_Title_Single;
+            this.dialogDescription = SVNUIMessages.IgnoreMethodPanel_Description_Single;
         }
         else {
-            this.dialogTitle = SVNTeamUIPlugin.instance().getResource("IgnoreMethodPanel.Title.Multi");
-            this.dialogDescription = SVNTeamUIPlugin.instance().getResource("IgnoreMethodPanel.Description.Multi");
+            this.dialogTitle = SVNUIMessages.IgnoreMethodPanel_Title_Multi;
+            this.dialogDescription = SVNUIMessages.IgnoreMethodPanel_Description_Multi;
         }
-        this.defaultMessage = SVNTeamUIPlugin.instance().getResource("IgnoreMethodPanel.Message");
+        this.defaultMessage = SVNUIMessages.IgnoreMethodPanel_Message;
         
 		this.ignoreType = IRemoteStorage.IGNORE_NAME;
 		this.ignorePattern = null;
@@ -71,7 +71,7 @@ public class IgnoreMethodPanel extends AbstractDialogPanel {
 		Button nameButton = new Button(parent, SWT.RADIO);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		nameButton.setLayoutData(data);
-		String text = SVNTeamUIPlugin.instance().getResource(this.resources.length == 1 ? "IgnoreMethodPanel.Name.Single" : "IgnoreMethodPanel.Name.Multi", new String[] {this.resources[0].getName()});
+		String text = SVNUIMessages.format(this.resources.length == 1 ? SVNUIMessages.IgnoreMethodPanel_Name_Single : SVNUIMessages.IgnoreMethodPanel_Name_Multi, new String[] {this.resources[0].getName()});
 		nameButton.setText(text);
 		nameButton.setSelection(true);
 		nameButton.addSelectionListener(new SelectionAdapter() {
@@ -93,7 +93,7 @@ public class IgnoreMethodPanel extends AbstractDialogPanel {
 		        break;
 		    }
 		}
-		text = SVNTeamUIPlugin.instance().getResource(this.resources.length == 1 ? "IgnoreMethodPanel.Extension.Single" : "IgnoreMethodPanel.Extension.Multi", new String[] {extension == null ? "" : extension});
+		text = SVNUIMessages.format(this.resources.length == 1 ? SVNUIMessages.IgnoreMethodPanel_Extension_Single : SVNUIMessages.IgnoreMethodPanel_Extension_Multi, new String[] {extension == null ? "" : extension});
 		extensionButton.setText(text);
 		extensionButton.setSelection(false);
 		extensionButton.setEnabled(extension != null);
@@ -107,7 +107,7 @@ public class IgnoreMethodPanel extends AbstractDialogPanel {
 		this.patternButton = new Button(parent, SWT.RADIO);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.patternButton.setLayoutData(data);
-		text = SVNTeamUIPlugin.instance().getResource("IgnoreMethodPanel.Pattern", new String[] {this.resources[0].getName().substring(1)});
+		text = SVNUIMessages.format(SVNUIMessages.IgnoreMethodPanel_Pattern, new String[] {this.resources[0].getName().substring(1)});
 		this.patternButton.setText(text);
 		this.patternButton.setSelection(false);
 		this.patternButton.addSelectionListener(new SelectionAdapter() {
@@ -122,7 +122,7 @@ public class IgnoreMethodPanel extends AbstractDialogPanel {
 		this.ignorePatternField.setLayoutData(data);
 		this.ignorePatternField.setEnabled(false);
 		this.ignorePatternField.setText(this.resources[0].getName());
-		this.attachTo(this.ignorePatternField, new AbstractVerifierProxy(new PatternVerifier(SVNTeamUIPlugin.instance().getResource("IgnoreMethodPanel.Pattern.Verifier"), this.resources)) {
+		this.attachTo(this.ignorePatternField, new AbstractVerifierProxy(new PatternVerifier(SVNUIMessages.IgnoreMethodPanel_Pattern_Verifier, this.resources)) {
 			protected boolean isVerificationEnabled(Control input) {
 				return IgnoreMethodPanel.this.patternButton.getSelection();
 			}

@@ -13,7 +13,7 @@ package org.eclipse.team.svn.ui.verifier;
 
 import org.eclipse.core.runtime.Path;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * Correct file path verifier
@@ -25,7 +25,7 @@ public class ResourcePathVerifier extends AbstractFormattedVerifier {
         
     public ResourcePathVerifier(String fieldName) {
         super(fieldName);
-        ResourcePathVerifier.ERROR_MESSAGE = SVNTeamUIPlugin.instance().getResource("Verifier.ResourcePath", new String[] {AbstractFormattedVerifier.FIELD_NAME});
+        ResourcePathVerifier.ERROR_MESSAGE = SVNUIMessages.format(SVNUIMessages.Verifier_ResourcePath, new String[] {AbstractFormattedVerifier.FIELD_NAME});
     }
     
     protected String getErrorMessageImpl(Control input) {
