@@ -51,7 +51,7 @@ import org.eclipse.team.svn.ui.verifier.URLVerifier;
  * @author Alexander Gurov
  */
 public class RepositoryPropertiesComposite extends Composite implements IPropertiesPanel {
-    protected static final String URL_HISTORY_NAME = "repositoryURL";
+    protected static final String URL_HISTORY_NAME = "repositoryURL"; //$NON-NLS-1$
     
 	protected Text repositoryLabel;
 	protected Combo url;
@@ -234,7 +234,7 @@ public class RepositoryPropertiesComposite extends Composite implements IPropert
 					RepositoryPropertiesComposite.this.repositoryLabel.selectAll();
 				}
 				else {
-					RepositoryPropertiesComposite.this.repositoryLabel.setText("");
+					RepositoryPropertiesComposite.this.repositoryLabel.setText(""); //$NON-NLS-1$
 				}
 			}
 		});
@@ -345,7 +345,7 @@ public class RepositoryPropertiesComposite extends Composite implements IPropert
 	
 	public void resetChanges() {
 		String url = this.repositoryLocation.getUrlAsIs();
-		url = url == null ? "" : url;
+		url = url == null ? "" : url; //$NON-NLS-1$
 		if (this.repositoryLocation.getLabel() == null || 
 			this.repositoryLocation.getLabel().equalsIgnoreCase(this.repositoryLocation.getUrlAsIs()) ||
 			this.repositoryLocation.getLabel().equalsIgnoreCase(this.repositoryLocation.getUrl())) {
@@ -362,9 +362,9 @@ public class RepositoryPropertiesComposite extends Composite implements IPropert
 		this.url.setText(url);
 
 		String username = this.credentialsInput.getUsername();
-		this.credentialsComposite.getUsername().setText(username == null ? "" : username);
+		this.credentialsComposite.getUsername().setText(username == null ? "" : username); //$NON-NLS-1$
 		String password = this.credentialsInput.getPassword();
-		this.credentialsComposite.getPassword().setText(password == null ? "" : password);
+		this.credentialsComposite.getPassword().setText(password == null ? "" : password); //$NON-NLS-1$
 		
 		this.credentialsComposite.getSavePassword().setSelection(this.credentialsInput.isPasswordSaved());
 	}

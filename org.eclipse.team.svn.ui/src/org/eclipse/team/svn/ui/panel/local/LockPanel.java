@@ -86,7 +86,7 @@ public class LockPanel extends CommentPanel {
     }
     
     public String getHelpId() {
-    	return "org.eclipse.team.svn.help.lockDialogContext";
+    	return "org.eclipse.team.svn.help.lockDialogContext"; //$NON-NLS-1$
     }
     
     public Point getPrefferedSizeImpl() {

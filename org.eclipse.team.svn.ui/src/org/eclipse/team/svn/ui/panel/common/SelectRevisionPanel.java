@@ -127,7 +127,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
     }
         
 	public String getHelpId() {
-    	return "org.eclipse.team.svn.help.revisionLinkDialogContext";
+    	return "org.eclipse.team.svn.help.revisionLinkDialogContext"; //$NON-NLS-1$
 	}
 
 	public long getSelectedRevision() {
@@ -163,7 +163,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
     }
     
     public String getImagePath() {
-        return "icons/dialogs/select_revision.gif";
+        return "icons/dialogs/select_revision.gif"; //$NON-NLS-1$
     }
     
     public void postInit() {
@@ -269,16 +269,16 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
     	this.pagingItem = new ToolItem(toolBar, SWT.FLAT);
     	this.pagingAllItem = new ToolItem(toolBar, SWT.FLAT);
     	
-    	this.groupByDateItem.setImage(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/group_by_date.gif").createImage());
-    	this.hideUnrelatedItem.setImage(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/hide_unrelated.gif").createImage());
-    	this.stopOnCopyItem.setImage(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/stop_on_copy.gif").createImage());
+    	this.groupByDateItem.setImage(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/group_by_date.gif").createImage()); //$NON-NLS-1$
+    	this.hideUnrelatedItem.setImage(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/hide_unrelated.gif").createImage()); //$NON-NLS-1$
+    	this.stopOnCopyItem.setImage(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/stop_on_copy.gif").createImage()); //$NON-NLS-1$
     	this.stopOnCopyItem.setSelection(this.initialStopOnCopy);
-    	this.filterItem.setImage(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/filter.gif").createImage());
-    	this.clearFilterItem.setDisabledImage(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/clear.gif").createImage());
-	    this.clearFilterItem.setImage(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/clear_filter.gif").createImage());
-    	this.pagingItem.setImage(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/paging.gif").createImage());
-    	this.pagingAllItem.setImage(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/paging_all.gif").createImage());
-    	this.refreshItem.setImage(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/refresh.gif").createImage());
+    	this.filterItem.setImage(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/filter.gif").createImage()); //$NON-NLS-1$
+    	this.clearFilterItem.setDisabledImage(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/clear.gif").createImage()); //$NON-NLS-1$
+	    this.clearFilterItem.setImage(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/clear_filter.gif").createImage()); //$NON-NLS-1$
+    	this.pagingItem.setImage(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/paging.gif").createImage()); //$NON-NLS-1$
+    	this.pagingAllItem.setImage(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/paging_all.gif").createImage()); //$NON-NLS-1$
+    	this.refreshItem.setImage(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/refresh.gif").createImage()); //$NON-NLS-1$
     	
     	this.hideUnrelatedItem.setToolTipText(SVNUIMessages.SelectRevisionPanel_Unrelated);
     	this.stopOnCopyItem.setToolTipText(SVNUIMessages.SelectRevisionPanel_StopOnCopy);
@@ -427,7 +427,7 @@ public class SelectRevisionPanel extends AbstractDialogPanel implements ISVNHist
 		msgsOp.setIncludeMerged(SVNTeamPreferences.getMergeBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MERGE_INCLUDE_MERGED_NAME));
 		
 		final IStructuredSelection selected = (IStructuredSelection)this.history.getTreeViewer().getSelection();
-    	IActionOperation showOp = new AbstractActionOperation("Operation.ShowMessages") {
+    	IActionOperation showOp = new AbstractActionOperation("Operation_ShowMessages") { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				SVNTeamUIPlugin.instance().getWorkbench().getDisplay().syncExec(new Runnable() {
 					public void run() {

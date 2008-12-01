@@ -60,7 +60,7 @@ public class SavePatchInWorkspacePanel extends AbstractDialogPanel {
 	}
 	
     public String getHelpId() {
-    	return "org.eclipse.team.svn.help.savePatchInWorkspaceContext";
+    	return "org.eclipse.team.svn.help.savePatchInWorkspaceContext"; //$NON-NLS-1$
     }
     
 	protected Point getPrefferedSizeImpl() {

@@ -1791,8 +1791,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String Verifier_URL_Short;
 
 	public static String svnPropertiesContentTypeName;
-
-
 	
 	static {
 		//load message values from bundle file

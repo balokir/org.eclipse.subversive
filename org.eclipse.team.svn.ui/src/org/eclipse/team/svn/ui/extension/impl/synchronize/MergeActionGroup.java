@@ -41,7 +41,7 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
  * @author Alexander Gurov
  */
 public class MergeActionGroup extends AbstractSynchronizeActionGroup {
-	public static final String GROUP_MERGE_CHANGES = "mergeChanges";
+	public static final String GROUP_MERGE_CHANGES = "mergeChanges"; //$NON-NLS-1$
 	
 	public void configureMenuGroups(ISynchronizePageConfiguration configuration) {
 		configuration.addMenuGroup(
@@ -60,20 +60,20 @@ public class MergeActionGroup extends AbstractSynchronizeActionGroup {
 	
 	public void configureActions(ISynchronizePageConfiguration configuration) {
 		UpdateAction updateAllAction = new UpdateAction(SVNUIMessages.SynchronizeActionGroup_AcceptAllIncomingChanges, configuration, this.getVisibleRootsSelectionProvider());
-		updateAllAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/update.gif"));
+		updateAllAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/update.gif")); //$NON-NLS-1$
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_TOOLBAR_MENU, 
 				MergeActionGroup.GROUP_PROCESS_ALL,
 				updateAllAction);
 		ExpandAllAction expandAllAction = new ExpandAllAction(SVNUIMessages.SynchronizeActionGroup_ExpandAll, configuration, this.getVisibleRootsSelectionProvider());
-		expandAllAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/expandall.gif"));
+		expandAllAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/expandall.gif")); //$NON-NLS-1$
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_TOOLBAR_MENU, 
 				ISynchronizePageConfiguration.MODE_GROUP,
 				expandAllAction);
 
 		UpdateAction updateAction = new UpdateAction(SVNUIMessages.SynchronizeActionGroup_Accept, configuration);
-		updateAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/update.gif"));
+		updateAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/update.gif")); //$NON-NLS-1$
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				MergeActionGroup.GROUP_MERGE_CHANGES,
@@ -100,13 +100,13 @@ public class MergeActionGroup extends AbstractSynchronizeActionGroup {
 				markAsMergedAction);
 
 		RevertAction revertAction = new RevertAction(SVNUIMessages.SynchronizeActionGroup_Revert, configuration);
-		revertAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/revert.gif"));
+		revertAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/revert.gif")); //$NON-NLS-1$
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				MergeActionGroup.GROUP_MANAGE_LOCALS,
 				revertAction);
 		ShowHistoryAction showHistoryAction = new ShowHistoryAction(SVNUIMessages.SynchronizeActionGroup_ShowResourceHistory, configuration);
-		showHistoryAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/showhistory.gif"));
+		showHistoryAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/showhistory.gif")); //$NON-NLS-1$
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				MergeActionGroup.GROUP_MANAGE_LOCALS,
@@ -117,7 +117,7 @@ public class MergeActionGroup extends AbstractSynchronizeActionGroup {
 	
 	protected void addLocalActions(IMenuManager manager, ISynchronizePageConfiguration configuration) {
 		ShowOutgoingPropertiesAction showPropertiesAction = new ShowOutgoingPropertiesAction(SVNUIMessages.ShowPropertiesAction_label, configuration);
-		showPropertiesAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/propertiesedit.gif"));
+		showPropertiesAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/propertiesedit.gif")); //$NON-NLS-1$
 		manager.add(showPropertiesAction);
 		SetPropertyAction setPropAction = new SetPropertyAction(SVNUIMessages.SynchronizeActionGroup_SetProperty, configuration);
 		manager.add(setPropAction);
@@ -131,7 +131,7 @@ public class MergeActionGroup extends AbstractSynchronizeActionGroup {
 		CreatePatchFileAction patchAction = new CreatePatchFileAction(SVNUIMessages.CreatePatchCommand_label, configuration);
 		manager.add(patchAction);
 		CreateBranchAction branchAction = new CreateBranchAction(SVNUIMessages.SynchronizeActionGroup_Branch, configuration);
-		branchAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/branch.gif"));
+		branchAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/branch.gif")); //$NON-NLS-1$
 		manager.add(branchAction);
 		
 		manager.add(new Separator());
@@ -142,7 +142,7 @@ public class MergeActionGroup extends AbstractSynchronizeActionGroup {
 	
 	protected void addRemoteActions(IMenuManager manager, ISynchronizePageConfiguration configuration) {
 		ShowIncomingPropertiesAction showIncomingPropertiesAction = new ShowIncomingPropertiesAction(SVNUIMessages.ShowPropertiesAction_label, configuration);
-		showIncomingPropertiesAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/propertiesedit.gif"));
+		showIncomingPropertiesAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/propertiesedit.gif")); //$NON-NLS-1$
 		manager.add(showIncomingPropertiesAction);
 		ShowIncomingAnnotationAction showIncomingAnnotationAction = new ShowIncomingAnnotationAction(SVNUIMessages.ShowAnnotationAction_label, configuration);
 		manager.add(showIncomingAnnotationAction);

@@ -128,7 +128,7 @@ public class ProjectListComposite extends Composite {
 	                }
 					return storage.asRepositoryResource(resource).getUrl();
 				}
-				return "";
+				return ""; //$NON-NLS-1$
 			}
 
 			public void addListener(ILabelProviderListener listener) {

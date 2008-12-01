@@ -30,30 +30,30 @@ import org.eclipse.team.svn.ui.decorator.TextVariableSetProvider;
  * @author Alexander Gurov 
  */
 public final class SVNTeamPreferences {
-	public static final String DECORATION_BASE = "preference.decoration.";
-	public static final String REPOSITORY_BASE = "preference.repository.";
-	public static final String SYNCHRONIZE_BASE = "preference.synchronize.";
-	public static final String HISTORY_BASE = "preference.history.";
-	public static final String DATE_FORMAT_BASE = "preference.dateFormat.";
-	public static final String PROMPT_BASE = "preference.prompt.";
-	public static final String PROPERTIES_BASE = "preference.properties.";
-	public static final String MAILREPORTER_BASE = "preference.mailreporter.";
-	public static final String COMMENT_TEMPLATES_BASE = "preference.templates";
-	public static final String COMMIT_DIALOG_BASE = "preference.commitDialog.";
-	public static final String MERGE_BASE = "preference.merge.";
-	public static final String CHECKOUT_BASE = "preference.checkout.";
-	public static final String CONSOLE_BASE = "preference.console.";
-	public static final String CORE_BASE = "preference.core.";
-	public static final String AUTO_PROPERTIES_BASE = "preference.autoproperties";
-	public static final String CUSTOM_PROPERTIES_BASE = "preference.customproperties";
-	public static final String BEHAVIOUR_BASE = "preference.";
+	public static final String DECORATION_BASE = "preference.decoration."; //$NON-NLS-1$
+	public static final String REPOSITORY_BASE = "preference.repository."; //$NON-NLS-1$
+	public static final String SYNCHRONIZE_BASE = "preference.synchronize."; //$NON-NLS-1$
+	public static final String HISTORY_BASE = "preference.history."; //$NON-NLS-1$
+	public static final String DATE_FORMAT_BASE = "preference.dateFormat."; //$NON-NLS-1$
+	public static final String PROMPT_BASE = "preference.prompt."; //$NON-NLS-1$
+	public static final String PROPERTIES_BASE = "preference.properties."; //$NON-NLS-1$
+	public static final String MAILREPORTER_BASE = "preference.mailreporter."; //$NON-NLS-1$
+	public static final String COMMENT_TEMPLATES_BASE = "preference.templates"; //$NON-NLS-1$
+	public static final String COMMIT_DIALOG_BASE = "preference.commitDialog."; //$NON-NLS-1$
+	public static final String MERGE_BASE = "preference.merge."; //$NON-NLS-1$
+	public static final String CHECKOUT_BASE = "preference.checkout."; //$NON-NLS-1$
+	public static final String CONSOLE_BASE = "preference.console."; //$NON-NLS-1$
+	public static final String CORE_BASE = "preference.core."; //$NON-NLS-1$
+	public static final String AUTO_PROPERTIES_BASE = "preference.autoproperties"; //$NON-NLS-1$
+	public static final String CUSTOM_PROPERTIES_BASE = "preference.customproperties"; //$NON-NLS-1$
+	public static final String BEHAVIOUR_BASE = "preference."; //$NON-NLS-1$
 	
-	public static final String BEHAVIOUR_COMMIT_SELECT_NEW_RESOURCES_NAME = "resourceSelection.selectNew";
-	public static final String BEHAVIOUR_DO_NOT_SELECT_EXTERNALS_NAME = "resourceSelection.treatExternalAsLocal";
-	public static final String BEHAVIOUR_SHOW_SELECTED_RESOURCES_IN_SYNC_PANE_NAME = "resourceSelection.showResourcesInSyncPane";
-	public static final String BEHAVIOUR_ENABLE_AUTO_SHARE_NAME = "share.enableAuto";
-	public static final String BEHAVIOUR_COMPUTE_KEYWORDS_NAME = "keywords.computeValues";
-	public static final String BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_NAME = "sorting.case.insensitive";		
+	public static final String BEHAVIOUR_COMMIT_SELECT_NEW_RESOURCES_NAME = "resourceSelection.selectNew"; //$NON-NLS-1$
+	public static final String BEHAVIOUR_DO_NOT_SELECT_EXTERNALS_NAME = "resourceSelection.treatExternalAsLocal"; //$NON-NLS-1$
+	public static final String BEHAVIOUR_SHOW_SELECTED_RESOURCES_IN_SYNC_PANE_NAME = "resourceSelection.showResourcesInSyncPane"; //$NON-NLS-1$
+	public static final String BEHAVIOUR_ENABLE_AUTO_SHARE_NAME = "share.enableAuto"; //$NON-NLS-1$
+	public static final String BEHAVIOUR_COMPUTE_KEYWORDS_NAME = "keywords.computeValues"; //$NON-NLS-1$
+	public static final String BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_NAME = "sorting.case.insensitive";		 //$NON-NLS-1$
 	
 	public static final boolean BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_DEFAULT = true;
 	public static final boolean BEHAVIOUR_COMPUTE_KEYWORDS_DEFAULT = true;
@@ -62,23 +62,23 @@ public final class SVNTeamPreferences {
 	public static final boolean BEHAVIOUR_SHOW_SELECTED_RESOURCES_IN_SYNC_PANE_DEFAULT = false;
 	public static final boolean BEHAVIOUR_COMMIT_SELECT_NEW_RESOURCES_DEFAULT = true;
 	
-	public static final String CONSOLE_AUTOSHOW_TYPE_NAME = "autoshow";
-	public static final String CONSOLE_ENABLED_NAME = "enabled";
-	public static final String CONSOLE_HYPERLINKS_ENABLED_NAME = "hyperlinksEnabled";
-	public static final String CONSOLE_FONT_NAME = "font";
-	public static final String CONSOLE_WRAP_ENABLED_NAME = "wrapEnabled";
-	public static final String CONSOLE_WRAP_WIDTH_NAME = "wrapWidth";
-	public static final String CONSOLE_LIMIT_ENABLED_NAME = "limitEnabled";
-	public static final String CONSOLE_LIMIT_VALUE_NAME = "limitRange";
+	public static final String CONSOLE_AUTOSHOW_TYPE_NAME = "autoshow"; //$NON-NLS-1$
+	public static final String CONSOLE_ENABLED_NAME = "enabled"; //$NON-NLS-1$
+	public static final String CONSOLE_HYPERLINKS_ENABLED_NAME = "hyperlinksEnabled"; //$NON-NLS-1$
+	public static final String CONSOLE_FONT_NAME = "font"; //$NON-NLS-1$
+	public static final String CONSOLE_WRAP_ENABLED_NAME = "wrapEnabled"; //$NON-NLS-1$
+	public static final String CONSOLE_WRAP_WIDTH_NAME = "wrapWidth"; //$NON-NLS-1$
+	public static final String CONSOLE_LIMIT_ENABLED_NAME = "limitEnabled"; //$NON-NLS-1$
+	public static final String CONSOLE_LIMIT_VALUE_NAME = "limitRange"; //$NON-NLS-1$
 	
-	public static final String CORE_SVNCONNECTOR_NAME = "svnconnector";
+	public static final String CORE_SVNCONNECTOR_NAME = "svnconnector"; //$NON-NLS-1$
 	
 	public static final String CORE_SVNCONNECTOR_DEFAULT = ISVNConnectorFactory.DEFAULT_ID;
 	
-	public static final String CONSOLE_ERR_COLOR_NAME = "error";
-	public static final String CONSOLE_WRN_COLOR_NAME = "warning";
-	public static final String CONSOLE_OK_COLOR_NAME = "ok";
-	public static final String CONSOLE_CMD_COLOR_NAME = "command";
+	public static final String CONSOLE_ERR_COLOR_NAME = "error"; //$NON-NLS-1$
+	public static final String CONSOLE_WRN_COLOR_NAME = "warning"; //$NON-NLS-1$
+	public static final String CONSOLE_OK_COLOR_NAME = "ok"; //$NON-NLS-1$
+	public static final String CONSOLE_CMD_COLOR_NAME = "command"; //$NON-NLS-1$
 	
 	public static final int CONSOLE_AUTOSHOW_TYPE_NEVER = 0;
 	public static final int CONSOLE_AUTOSHOW_TYPE_ALWAYS = 1;
@@ -99,33 +99,33 @@ public final class SVNTeamPreferences {
 	public static final RGB CONSOLE_OK_COLOR_DEFAULT = new RGB(0, 0, 255);
 	public static final RGB CONSOLE_CMD_COLOR_DEFAULT = new RGB(0, 0, 0);
 	
-	public static final String MAILREPORTER_ENABLED_NAME = "enabled";
-	public static final String MAILREPORTER_ERRORS_ENABLED_NAME = "errorsEnabled";
+	public static final String MAILREPORTER_ENABLED_NAME = "enabled"; //$NON-NLS-1$
+	public static final String MAILREPORTER_ERRORS_ENABLED_NAME = "errorsEnabled"; //$NON-NLS-1$
 	
 	public static final boolean MAILREPORTER_ENABLED_DEFAULT = true;
 	public static final boolean MAILREPORTER_ERRORS_ENABLED_DEFAULT = true;
 
-	public static final String MERGE_USE_JAVAHL_NAME = "useJavaHL";
-	public static final String MERGE_INCLUDE_MERGED_NAME = "includeMerged";
+	public static final String MERGE_USE_JAVAHL_NAME = "useJavaHL"; //$NON-NLS-1$
+	public static final String MERGE_INCLUDE_MERGED_NAME = "includeMerged"; //$NON-NLS-1$
 	
 	public static final boolean MERGE_USE_JAVAHL_DEFAULT = false;
 	public static final boolean MERGE_INCLUDE_MERGED_DEFAULT = false;
 	
-	public static final String CHECKOUT_USE_DOT_PROJECT_NAME = "useDotProject";
-	public static final String CHECKOUT_RESPECT_PROJECT_STRUCTURE_NAME = "respectProjectStructure";
+	public static final String CHECKOUT_USE_DOT_PROJECT_NAME = "useDotProject"; //$NON-NLS-1$
+	public static final String CHECKOUT_RESPECT_PROJECT_STRUCTURE_NAME = "respectProjectStructure"; //$NON-NLS-1$
 	
 	public static final boolean CHECKOUT_USE_DOT_PROJECT_DEFAULT = true;
 	public static final boolean CHECKOUT_RESPECT_PROJECT_STRUCTURE_DEFAULT = false;
 	
-	public static final String HISTORY_PAGE_SIZE_NAME = "pageSize";
-	public static final String HISTORY_PAGING_ENABLE_NAME = "pagingEnable";
-	public static final String HISTORY_SHOW_MULTILINE_COMMENT_NAME = "multilineComment";
-	public static final String HISTORY_SHOW_AFFECTED_PATHS_NAME = "affectedPaths";
-	public static final String HISTORY_GROUPING_TYPE_NAME = "groupingType";
-	public static final String HISTORY_REVISION_MODE_NAME = "revisionMode";
-	public static final String HISTORY_HIERARCHICAL_LAYOUT = "hierarchicalLayout";
-	public static final String HISTORY_COMPARE_MODE = "compareMode";
-	public static final String HISTORY_CONNECT_TO_COMPARE_WITH_NAME = "connectToCompareWith";
+	public static final String HISTORY_PAGE_SIZE_NAME = "pageSize"; //$NON-NLS-1$
+	public static final String HISTORY_PAGING_ENABLE_NAME = "pagingEnable"; //$NON-NLS-1$
+	public static final String HISTORY_SHOW_MULTILINE_COMMENT_NAME = "multilineComment"; //$NON-NLS-1$
+	public static final String HISTORY_SHOW_AFFECTED_PATHS_NAME = "affectedPaths"; //$NON-NLS-1$
+	public static final String HISTORY_GROUPING_TYPE_NAME = "groupingType"; //$NON-NLS-1$
+	public static final String HISTORY_REVISION_MODE_NAME = "revisionMode"; //$NON-NLS-1$
+	public static final String HISTORY_HIERARCHICAL_LAYOUT = "hierarchicalLayout"; //$NON-NLS-1$
+	public static final String HISTORY_COMPARE_MODE = "compareMode"; //$NON-NLS-1$
+	public static final String HISTORY_CONNECT_TO_COMPARE_WITH_NAME = "connectToCompareWith"; //$NON-NLS-1$
 
 	public static final int HISTORY_GROUPING_TYPE_NONE = 0;
 	public static final int HISTORY_GROUPING_TYPE_DATE = 1;
@@ -144,8 +144,8 @@ public final class SVNTeamPreferences {
 	public static final boolean HISTORY_COMPARE_MODE_DEFAULT = false;
 	public static final boolean HISTORY_CONNECT_TO_COMPARE_WITH_DEFAULT = true;
 	
-	public static final String DATE_FORMAT_NAME = "dateFormat";
-	public static final String DATE_FORMAT_CUSTOM_NAME = "dateFormatCustom";		
+	public static final String DATE_FORMAT_NAME = "dateFormat"; //$NON-NLS-1$
+	public static final String DATE_FORMAT_CUSTOM_NAME = "dateFormatCustom";		 //$NON-NLS-1$
 	
 	public static final int DATE_FORMAT_MODE_SHORT = 0;
 	public static final int DATE_FORMAT_MODE_MEDIUM = 1;
@@ -153,72 +153,72 @@ public final class SVNTeamPreferences {
 	public static final int DATE_FORMAT_MODE_CUSTOM = 3;
 	
 	public static final int DATE_FORMAT_DEFAULT = DATE_FORMAT_MODE_SHORT;
-	public static final String DATE_FORMAT_CUSTOM_DEFAULT = "";
+	public static final String DATE_FORMAT_CUSTOM_DEFAULT = ""; //$NON-NLS-1$
 	
-	public static final String CONSULT_CHANGE_SETS_IN_COMMIT = "consultChangeSetsInCommit";
+	public static final String CONSULT_CHANGE_SETS_IN_COMMIT = "consultChangeSetsInCommit"; //$NON-NLS-1$
 	
 	public static final String CONSULT_CHANGE_SETS_IN_COMMIT_ALWAYS = MessageDialogWithToggle.ALWAYS;
 	public static final String CONSULT_CHANGE_SETS_IN_COMMIT_NEVER = MessageDialogWithToggle.NEVER;
 	public static final String CONSULT_CHANGE_SETS_IN_COMMIT_PROMPT = MessageDialogWithToggle.PROMPT;
 	public static final String CONSULT_CHANGE_SETS_IN_COMMIT_DEFAULT = CONSULT_CHANGE_SETS_IN_COMMIT_NEVER;
 	
-	public static final String PROPERTY_LINK_WITH_EDITOR_NAME = "linkWithEditor";
+	public static final String PROPERTY_LINK_WITH_EDITOR_NAME = "linkWithEditor"; //$NON-NLS-1$
 	
 	public static final boolean PROPERTY_LINK_WITH_EDITOR_DEFAULT = false;
 	
-	public static final String ENABLE_MODEL_SYNC_NAME = "enableModelSync";	
+	public static final String ENABLE_MODEL_SYNC_NAME = "enableModelSync";	 //$NON-NLS-1$
 	public static final boolean ENABLE_MODEL_SYNC_DEFAULT = true;
 	
-	public static final String REPOSITORY_SHOW_BROWSER_NAME = "repositoryBrowser";
+	public static final String REPOSITORY_SHOW_BROWSER_NAME = "repositoryBrowser"; //$NON-NLS-1$
 	public static final boolean REPOSITORY_SHOW_BROWSER_DEFAULT = true;
-	public static final String REPOSITORY_FORCE_EXTERNALS_FREEZE_NAME = "forceExternalsFreeze";
+	public static final String REPOSITORY_FORCE_EXTERNALS_FREEZE_NAME = "forceExternalsFreeze"; //$NON-NLS-1$
 	public static final boolean REPOSITORY_FORCE_EXTERNALS_FREEZE_DEFAULT = true;
-	public static final String REPOSITORY_HEAD_NAME = "head";
-	public static final String REPOSITORY_BRANCHES_NAME = "branches";
-	public static final String REPOSITORY_TAGS_NAME = "tags";
-	public static final String REPOSITORY_SHOW_EXTERNALS_NAME = "showExternals";
+	public static final String REPOSITORY_HEAD_NAME = "head"; //$NON-NLS-1$
+	public static final String REPOSITORY_BRANCHES_NAME = "branches"; //$NON-NLS-1$
+	public static final String REPOSITORY_TAGS_NAME = "tags"; //$NON-NLS-1$
+	public static final String REPOSITORY_SHOW_EXTERNALS_NAME = "showExternals"; //$NON-NLS-1$
 	
 	public static final String REPOSITORY_HEAD_DEFAULT = "trunk";
 	public static final String REPOSITORY_BRANCHES_DEFAULT = "branches";
 	public static final String REPOSITORY_TAGS_DEFAULT = "tags";
 	public static final boolean REPOSITORY_SHOW_EXTERNALS_DEFAULT = true;
 	
-	public static final String BRANCH_TAG_CONSIDER_STRUCTURE_NAME = "tagConsideringProjectStructure";
+	public static final String BRANCH_TAG_CONSIDER_STRUCTURE_NAME = "tagConsideringProjectStructure"; //$NON-NLS-1$
 	public static final boolean BRANCH_TAG_CONSIDER_STRUCTURE_DEFAULT = true;
 	
-	public static final String DECORATION_FORMAT_FILE_NAME = "format.file";
-	public static final String DECORATION_FORMAT_FOLDER_NAME = "format.folder";
-	public static final String DECORATION_FORMAT_PROJECT_NAME = "format.project";
+	public static final String DECORATION_FORMAT_FILE_NAME = "format.file"; //$NON-NLS-1$
+	public static final String DECORATION_FORMAT_FOLDER_NAME = "format.folder"; //$NON-NLS-1$
+	public static final String DECORATION_FORMAT_PROJECT_NAME = "format.project"; //$NON-NLS-1$
 	
 //	{outgoing_flag} {name} {revision}
-	public static final String DECORATION_FORMAT_FILE_DEFAULT = "{" + TextVariableSetProvider.NAME_OF_OUTGOING_FLAG + "} {" + TextVariableSetProvider.NAME_OF_NAME + "} {" + TextVariableSetProvider.NAME_OF_REVISION + "}";
+	public static final String DECORATION_FORMAT_FILE_DEFAULT = "{" + TextVariableSetProvider.NAME_OF_OUTGOING_FLAG + "} {" + TextVariableSetProvider.NAME_OF_NAME + "} {" + TextVariableSetProvider.NAME_OF_REVISION + "}"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 //	{outgoing_flag} {name} {revision}
 	public static final String DECORATION_FORMAT_FOLDER_DEFAULT = SVNTeamPreferences.DECORATION_FORMAT_FILE_DEFAULT;
 //	{outgoing_flag} {name} {revision} [{location_label}{root_prefix}: {fullname}]
-	public static final String DECORATION_FORMAT_PROJECT_DEFAULT = SVNTeamPreferences.DECORATION_FORMAT_FOLDER_DEFAULT + " [{" + TextVariableSetProvider.NAME_OF_LOCATION_LABEL + "}{" + TextVariableSetProvider.NAME_OF_ROOT_PREFIX + "}: {" + TextVariableSetProvider.NAME_OF_ASCENDANT + "}]";
+	public static final String DECORATION_FORMAT_PROJECT_DEFAULT = SVNTeamPreferences.DECORATION_FORMAT_FOLDER_DEFAULT + " [{" + TextVariableSetProvider.NAME_OF_LOCATION_LABEL + "}{" + TextVariableSetProvider.NAME_OF_ROOT_PREFIX + "}: {" + TextVariableSetProvider.NAME_OF_ASCENDANT + "}]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	
-	public static final String DECORATION_FLAG_OUTGOING_NAME = "flag.outgoing";
-	public static final String DECORATION_FLAG_ADDED_NAME = "flag.added";
+	public static final String DECORATION_FLAG_OUTGOING_NAME = "flag.outgoing"; //$NON-NLS-1$
+	public static final String DECORATION_FLAG_ADDED_NAME = "flag.added"; //$NON-NLS-1$
 	
-	public static final String DECORATION_FLAG_OUTGOING_DEFAULT = ">";
-	public static final String DECORATION_FLAG_ADDED_DEFAULT = "*";
+	public static final String DECORATION_FLAG_OUTGOING_DEFAULT = ">"; //$NON-NLS-1$
+	public static final String DECORATION_FLAG_ADDED_DEFAULT = "*"; //$NON-NLS-1$
 	
-	public static final String DECORATION_TRUNK_PREFIX_NAME = "trunk.branch";
-	public static final String DECORATION_BRANCH_PREFIX_NAME = "prefix.branch";
-	public static final String DECORATION_TAG_PREFIX_NAME = "prefix.tag";
+	public static final String DECORATION_TRUNK_PREFIX_NAME = "trunk.branch"; //$NON-NLS-1$
+	public static final String DECORATION_BRANCH_PREFIX_NAME = "prefix.branch"; //$NON-NLS-1$
+	public static final String DECORATION_TAG_PREFIX_NAME = "prefix.tag"; //$NON-NLS-1$
 	
 	public static final String DECORATION_TRUNK_PREFIX_DEFAULT = ", Trunk";
 	public static final String DECORATION_BRANCH_PREFIX_DEFAULT = ", Branch";
 	public static final String DECORATION_TAG_PREFIX_DEFAULT = ", Tag";
 	
-	public static final String DECORATION_ICON_CONFLICTED_NAME = "icon.conflicted";
-	public static final String DECORATION_ICON_MODIFIED_NAME = "icon.modified";
-	public static final String DECORATION_ICON_REMOTE_NAME = "icon.remote";
-	public static final String DECORATION_ICON_ADDED_NAME = "icon.added";
-	public static final String DECORATION_ICON_NEW_NAME = "icon.new";
-	public static final String DECORATION_ICON_LOCKED_NAME = "icon.locked";
-	public static final String DECORATION_ICON_NEEDS_LOCK_NAME = "icon.needslock";
-	public static final String DECORATION_ICON_SWITCHED_NAME = "icon.switched";
+	public static final String DECORATION_ICON_CONFLICTED_NAME = "icon.conflicted"; //$NON-NLS-1$
+	public static final String DECORATION_ICON_MODIFIED_NAME = "icon.modified"; //$NON-NLS-1$
+	public static final String DECORATION_ICON_REMOTE_NAME = "icon.remote"; //$NON-NLS-1$
+	public static final String DECORATION_ICON_ADDED_NAME = "icon.added"; //$NON-NLS-1$
+	public static final String DECORATION_ICON_NEW_NAME = "icon.new"; //$NON-NLS-1$
+	public static final String DECORATION_ICON_LOCKED_NAME = "icon.locked"; //$NON-NLS-1$
+	public static final String DECORATION_ICON_NEEDS_LOCK_NAME = "icon.needslock"; //$NON-NLS-1$
+	public static final String DECORATION_ICON_SWITCHED_NAME = "icon.switched"; //$NON-NLS-1$
 	
 	public static final boolean DECORATION_ICON_CONFLICTED_DEFAULT = true;
 	public static final boolean DECORATION_ICON_MODIFIED_DEFAULT = false;
@@ -229,49 +229,49 @@ public final class SVNTeamPreferences {
 	public static final boolean DECORATION_ICON_NEEDS_LOCK_DEFAULT = false;
 	public static final boolean DECORATION_ICON_SWITCHED_DEFAULT = true;
 	
-	public static final String DECORATION_COMPUTE_DEEP_NAME = "compute.deep";
-	public static final String DECORATION_PRECISE_ENABLEMENTS_NAME = "precise.enablements";
-	public static final String DECORATION_ENABLE_CACHE_NAME = "enable.cache";
+	public static final String DECORATION_COMPUTE_DEEP_NAME = "compute.deep"; //$NON-NLS-1$
+	public static final String DECORATION_PRECISE_ENABLEMENTS_NAME = "precise.enablements"; //$NON-NLS-1$
+	public static final String DECORATION_ENABLE_CACHE_NAME = "enable.cache"; //$NON-NLS-1$
 	
 	public static final boolean DECORATION_COMPUTE_DEEP_DEFAULT = true;
 	public static final boolean DECORATION_PRECISE_ENABLEMENTS_DEFAULT = false;
 	public static final boolean DECORATION_ENABLE_CACHE_DEFAULT = true;
 	
-	public static final String DECORATION_USE_FONT_COLORS_DECOR_NAME = "use.fontdecor";
+	public static final String DECORATION_USE_FONT_COLORS_DECOR_NAME = "use.fontdecor"; //$NON-NLS-1$
 	public static final boolean DECORATION_USE_FONT_COLORS_DECOR_DEFAULT = false;
 	
-	public static final String NAME_OF_OUTGOING_FOREGROUND_COLOR = "outgoing_change_foreground_color";
-	public static final String NAME_OF_OUTGOING_BACKGROUND_COLOR = "outgoing_change_background_color";
-	public static final String NAME_OF_OUTGOING_FONT = "outgoing_change_font";
-	public static final String NAME_OF_IGNORED_FOREGROUND_COLOR = "ignored_resource_foreground_color";
-	public static final String NAME_OF_IGNORED_BACKGROUND_COLOR = "ignored_resource_background_color";
-	public static final String NAME_OF_IGNORED_FONT = "ignored_resource_font";
-	public static final String NAME_OF_NOT_RELATED_NODES_FOREGROUND_COLOR = "not_related_nodes_foreground_color";
-	public static final String NAME_OF_NOT_RELATED_NODES_BACKGROUND_COLOR = "not_related_nodes_background_color";
-	public static final String NAME_OF_NOT_RELATED_NODES_FONT = "not_related_nodes_font";
-	public static final String NAME_OF_STRUCTURE_NODES_FOREGROUND_COLOR = "structure_nodes_foreground_color";
-	public static final String NAME_OF_STRUCTURE_NODES_BACKGROUND_COLOR = "structure_nodes_background_color";
-	public static final String NAME_OF_STRUCTURE_NODES_FONT = "structure_nodes_font";
-	public static final String NAME_OF_MERGED_REVISIONS_FOREGROUND_COLOR = "merged_revision_foreground_color";
+	public static final String NAME_OF_OUTGOING_FOREGROUND_COLOR = "outgoing_change_foreground_color"; //$NON-NLS-1$
+	public static final String NAME_OF_OUTGOING_BACKGROUND_COLOR = "outgoing_change_background_color"; //$NON-NLS-1$
+	public static final String NAME_OF_OUTGOING_FONT = "outgoing_change_font"; //$NON-NLS-1$
+	public static final String NAME_OF_IGNORED_FOREGROUND_COLOR = "ignored_resource_foreground_color"; //$NON-NLS-1$
+	public static final String NAME_OF_IGNORED_BACKGROUND_COLOR = "ignored_resource_background_color"; //$NON-NLS-1$
+	public static final String NAME_OF_IGNORED_FONT = "ignored_resource_font"; //$NON-NLS-1$
+	public static final String NAME_OF_NOT_RELATED_NODES_FOREGROUND_COLOR = "not_related_nodes_foreground_color"; //$NON-NLS-1$
+	public static final String NAME_OF_NOT_RELATED_NODES_BACKGROUND_COLOR = "not_related_nodes_background_color"; //$NON-NLS-1$
+	public static final String NAME_OF_NOT_RELATED_NODES_FONT = "not_related_nodes_font"; //$NON-NLS-1$
+	public static final String NAME_OF_STRUCTURE_NODES_FOREGROUND_COLOR = "structure_nodes_foreground_color"; //$NON-NLS-1$
+	public static final String NAME_OF_STRUCTURE_NODES_BACKGROUND_COLOR = "structure_nodes_background_color"; //$NON-NLS-1$
+	public static final String NAME_OF_STRUCTURE_NODES_FONT = "structure_nodes_font"; //$NON-NLS-1$
+	public static final String NAME_OF_MERGED_REVISIONS_FOREGROUND_COLOR = "merged_revision_foreground_color"; //$NON-NLS-1$
 	
-	public static final String COMMENT_TEMPLATES_LIST_NAME = "comment.templates";
-	public static final String COMMENT_TEMPLATES_LIST_ENABLED_NAME = "comment.templates.enabled";
-	public static final String COMMENT_LOG_TEMPLATES_ENABLED_NAME = "comment.logTemplates.enabled";
-	public static final String COMMENT_SAVED_COMMENTS_COUNT_NAME = "savedCommentsCount";
+	public static final String COMMENT_TEMPLATES_LIST_NAME = "comment.templates"; //$NON-NLS-1$
+	public static final String COMMENT_TEMPLATES_LIST_ENABLED_NAME = "comment.templates.enabled"; //$NON-NLS-1$
+	public static final String COMMENT_LOG_TEMPLATES_ENABLED_NAME = "comment.logTemplates.enabled"; //$NON-NLS-1$
+	public static final String COMMENT_SAVED_COMMENTS_COUNT_NAME = "savedCommentsCount"; //$NON-NLS-1$
 	
-	public static final String COMMENT_TEMPLATES_LIST_DEFAULT = "";
+	public static final String COMMENT_TEMPLATES_LIST_DEFAULT = ""; //$NON-NLS-1$
 	public static final boolean COMMENT_TEMPLATES_LIST_ENABLED_DEFAULT = true;
 	public static final boolean COMMENT_LOG_TEMPLATES_ENABLED_DEFAULT = true;
 	public static final int COMMENT_SAVED_COMMENTS_COUNT_DEFAULT = 10;
 	
-	public static final String COMMIT_DIALOG_WEIGHT_NAME = "CommitPanel.weight";
+	public static final String COMMIT_DIALOG_WEIGHT_NAME = "CommitPanel.weight"; //$NON-NLS-1$
 	public static final int COMMIT_DIALOG_WEIGHT_DEFAULT = 50;
 	
-	public static final String AUTO_PROPERTIES_LIST_NAME = "autoproperties";
-	public static final String AUTO_PROPERTIES_LIST_DEFAULT = "";
+	public static final String AUTO_PROPERTIES_LIST_NAME = "autoproperties"; //$NON-NLS-1$
+	public static final String AUTO_PROPERTIES_LIST_DEFAULT = ""; //$NON-NLS-1$
 	
-	public static final String CUSTOM_PROPERTIES_LIST_NAME = "customproperties";
-	public static final String CUSTOM_PROPERTIES_LIST_DEFAULT = "";
+	public static final String CUSTOM_PROPERTIES_LIST_NAME = "customproperties"; //$NON-NLS-1$
+	public static final String CUSTOM_PROPERTIES_LIST_DEFAULT = ""; //$NON-NLS-1$
 	
 	public static DateFormat getDateFormat(IPreferenceStore store) {
 		int formatMode = SVNTeamPreferences.getDateFormatInt(store, SVNTeamPreferences.DATE_FORMAT_NAME);

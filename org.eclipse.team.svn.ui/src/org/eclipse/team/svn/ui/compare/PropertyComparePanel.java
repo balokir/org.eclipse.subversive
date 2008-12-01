@@ -50,7 +50,7 @@ public class PropertyComparePanel extends AbstractDialogPanel {
 	}
 	
 	public String getHelpId() {
-		return "org.eclipse.team.svn.help.comparePropsDialogContext";
+		return "org.eclipse.team.svn.help.comparePropsDialogContext"; //$NON-NLS-1$
 	}
 	
 	public Point getPrefferedSizeImpl() {

@@ -61,7 +61,7 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
  */
 public class RepositoryPropertiesTabFolder extends Composite implements IPropertiesPanel, ISecurityInfoProvider {
 	
-	protected static final String AUTHOR_HISTORY_NAME = "authorName";
+	protected static final String AUTHOR_HISTORY_NAME = "authorName"; //$NON-NLS-1$
 	
 	protected RepositoryPropertiesComposite repositoryPropertiesPanel;
 	protected SSHComposite sshComposite;
@@ -172,7 +172,7 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 		this.authorEnabled.setText(SVNUIMessages.NewRepositoryLocationWizard_OverrideAuthor); 
 		this.authorEnabled.setSelection(this.repositoryLocation.isAuthorNameEnabled());
 		this.authorEnabled.setLayoutData(data);
-		String name = (this.repositoryLocation.getAuthorName() == null) ? "" : this.repositoryLocation.getAuthorName();
+		String name = (this.repositoryLocation.getAuthorName() == null) ? "" : this.repositoryLocation.getAuthorName(); //$NON-NLS-1$
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.authorInput = new Combo(rootsComposite, SWT.BORDER);
 		this.authorNameHistory = new UserInputHistory(RepositoryPropertiesTabFolder.AUTHOR_HISTORY_NAME);
@@ -181,9 +181,9 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 		this.authorInput.setText(name);
 		this.authorInput.setEnabled(this.repositoryLocation.isAuthorNameEnabled());
 		this.authorInput.setLayoutData(data);
-		AbstractFormattedVerifier verifier = new AbstractFormattedVerifier("AuthorNameVerifier") {
+		AbstractFormattedVerifier verifier = new AbstractFormattedVerifier("AuthorNameVerifier") { //$NON-NLS-1$
 		    protected String getErrorMessageImpl(Control input) {
-		    	if (this.getText(input).equals("")) {
+		    	if (this.getText(input).equals("")) { //$NON-NLS-1$
 		    		return SVNUIMessages.NewRepositoryLocationWizard_AuthorName_Verifier;
 		    	}
 		    	return null;
@@ -220,7 +220,7 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 		proxyLink.setText(SVNUIMessages.RepositoryPropertiesTabFolder_Proxy_Link);
 		proxyLink.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				String pageId = "org.eclipse.ui.net.NetPreferences";
+				String pageId = "org.eclipse.ui.net.NetPreferences"; //$NON-NLS-1$
 				PreferencesUtil.createPreferenceDialogOn(null, pageId, new String[] {pageId}, null).open();
 			}
 		});
@@ -292,7 +292,7 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 			}
 		});
 		
-		ImageDescriptor imgDescr = SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/delete_realm.gif");
+		ImageDescriptor imgDescr = SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/delete_realm.gif"); //$NON-NLS-1$
 		deleteRealm.setImage(imgDescr.createImage());
 		data = new GridData();
 		data.heightHint = this.cachedRealms.getTextHeight() + 2;
@@ -431,7 +431,7 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 	public void handleLinkSelection() {
 		boolean sshWasAllowed = (CoreExtensionsManager.instance().getSVNConnectorFactory().getSupportedFeatures() & ISVNConnectorFactory.OptionalFeatures.SSH_SETTINGS) != 0;
 
-		String pageId = "org.eclipse.team.svn.ui.SVNTeamPreferences";
+		String pageId = "org.eclipse.team.svn.ui.SVNTeamPreferences"; //$NON-NLS-1$
 		PreferencesUtil.createPreferenceDialogOn(null, pageId, new String[] {pageId}, null).open();
 
 		boolean sshAllowed = (CoreExtensionsManager.instance().getSVNConnectorFactory().getSupportedFeatures() & ISVNConnectorFactory.OptionalFeatures.SSH_SETTINGS) != 0;

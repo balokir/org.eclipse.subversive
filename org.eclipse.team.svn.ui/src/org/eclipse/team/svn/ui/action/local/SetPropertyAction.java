@@ -66,7 +66,7 @@ public class SetPropertyAction extends AbstractNonRecursiveTeamAction {
 		IActionOperation loadOp = null;
 		if (isFileSelected) {
 			final File f = new File(fileName);
-	        loadOp = new AbstractActionOperation("Operation.SLoadFileContent") {
+	        loadOp = new AbstractActionOperation("Operation_SLoadFileContent") { //$NON-NLS-1$
 	            protected void runImpl(IProgressMonitor monitor) throws Exception {
 	                FileInputStream input = null;
 	                try {

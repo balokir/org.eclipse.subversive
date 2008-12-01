@@ -35,7 +35,7 @@ import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
  * @author Sergiy Logvin
  */
 public class ApplyPropertyMethodComposite extends Composite {
-	protected static final String PROPERTY_FILTER_HISTORY_NAME = "propertyFilter";
+	protected static final String PROPERTY_FILTER_HISTORY_NAME = "propertyFilter"; //$NON-NLS-1$
 	
 	protected Button applyToAllResourcesButton;
 	protected Button applyToFilesButton;
@@ -175,7 +175,7 @@ public class ApplyPropertyMethodComposite extends Composite {
 						return ApplyPropertyMethodComposite.this.useFilterButton.getSelection() && ApplyPropertyMethodComposite.this.useFilterButton.isEnabled();
 					}
 		});
-		this.filterMaskText.setText("*");
+		this.filterMaskText.setText("*"); //$NON-NLS-1$
 	}
 
 }

@@ -58,8 +58,8 @@ public class ProjectsSelectionPage extends AbstractVerifiedWizardPage {
 	
 	public ProjectsSelectionPage() {
 		super(ProjectsSelectionPage.class.getName(), 
-				"", 
-				SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
+				"",  //$NON-NLS-1$
+				SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif")); //$NON-NLS-1$
 	}
 	
 	public boolean isCheckoutAsFoldersSelected() {

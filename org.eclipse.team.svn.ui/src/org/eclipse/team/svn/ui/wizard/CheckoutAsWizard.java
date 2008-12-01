@@ -165,7 +165,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 			if (op.getExecutionState() == IActionOperation.OK) {
 				IRepositoryResource []children = op.getChildren();
 				for (int i = 0; i < children.length; i++) {
-					if (children[i].getName().equals(".project")) {
+					if (children[i].getName().equals(".project")) { //$NON-NLS-1$
 						isEclipseProject = true;
 						break;
 					}
@@ -320,9 +320,9 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 	}
 	
 	protected IActionOperation getCheckoutAsFolderOperation(IContainer targetFolder, IRepositoryResource []resources, Map mappings) {
-		String externalsData = "";
+		String externalsData = ""; //$NON-NLS-1$
 		for (int i = 0; i < resources.length; i++) {
-			String line = (String)mappings.get(resources[i]) + "\t" + SVNUtility.encodeURL(resources[i].getUrl()) + "\n";;
+			String line = (String)mappings.get(resources[i]) + "\t" + SVNUtility.encodeURL(resources[i].getUrl()) + "\n";; //$NON-NLS-1$ //$NON-NLS-2$
 			externalsData += line;
 		}
 		
@@ -382,7 +382,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 		String name;
 		for (int i = 1; true; i++)
 		{
-			name = baseName + "_(" + i + ")"; 
+			name = baseName + "_(" + i + ")";  //$NON-NLS-1$ //$NON-NLS-2$
 			if (!targetFolder.exists(new Path(name)) && !allNames.contains(name)) {
 				break;
 			}
@@ -396,7 +396,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 		CompositeOperation op = new CompositeOperation(mainOp.getId());
 
 		if (isUseNewProjectWizard) {
-			SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(new IResource[] {mainOp.getProject()}, "");
+			SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(new IResource[] {mainOp.getProject()}, ""); //$NON-NLS-1$
 			op.add(saveOp);
 			op.add(mainOp);
 			mainOp.setRestoreOperation(new RestoreProjectMetaOperation(saveOp, true));
@@ -412,7 +412,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 	}
 	
 	protected CompositeOperation prepareForMultiple(HashMap name2resources, String location, int recureDepth, boolean ignoreExternals, String workingSetName) {
-		CompositeOperation op = new CompositeOperation("");
+		CompositeOperation op = new CompositeOperation(""); //$NON-NLS-1$
 		IResource []locals = new IResource[name2resources.keySet().size()];
 		String name;
 		int i = 0;
@@ -444,13 +444,13 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 	}
 	
 	protected AbstractActionOperation getCheckoutProjectOperation(final IRepositoryResource []resources, final ObtainProjectNameOperation obtainOperation, final int recureDepth, final boolean ignoreExternals) {
-		return new AbstractActionOperation("Operation.CheckoutProjects") {
+		return new AbstractActionOperation("Operation_CheckoutProjects") { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 					public void run() {
 						HashMap name2resources = obtainOperation.getNames2Resources();						
 						if (name2resources.isEmpty()) {
-							new MessageDialog(UIMonitorUtility.getShell(), getOperationResource("Title"), null, getOperationResource("Message"), MessageDialog.INFORMATION, new String[] {IDialogConstants.OK_LABEL}, 0).open();
+							new MessageDialog(UIMonitorUtility.getShell(), getOperationResource("Title"), null, getOperationResource("Message"), MessageDialog.INFORMATION, new String[] {IDialogConstants.OK_LABEL}, 0).open(); //$NON-NLS-1$ //$NON-NLS-2$
 							return;
 						}
 						CheckoutProjectsWizard wizard = new CheckoutProjectsWizard(resources, name2resources);
@@ -566,7 +566,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 		protected SVNProperty property;
 		
 		public ConcatenateProperyDataOperation(IResource resource, String propertyName, byte[] concatenatedData) {
-			super("Operation.ConcatenatePropertyData");
+			super("Operation_ConcatenatePropertyData"); //$NON-NLS-1$
 			this.resource = resource;
 			this.propertyName = propertyName;
 			this.concatenatedData = concatenatedData;

@@ -159,7 +159,7 @@ public class RootHistoryCategory extends HistoryCategory {
 	}
 	
 	protected String getNextPrefix(SVNLogEntry message, String current) {
-		String checked = "/" + current;
+		String checked = "/" + current; //$NON-NLS-1$
 		SVNLogPath []changes = message.changedPaths;
 		
 		for (int i = 0; i < changes.length; i++) {
@@ -351,14 +351,14 @@ public class RootHistoryCategory extends HistoryCategory {
 		SVNChangedPathData [] pathData = new SVNChangedPathData[key.changedPaths == null ? 0 : key.changedPaths.length];
 		for (int i = 0; i < pathData.length; i++) {
 			String path = key.changedPaths[i].path;
-			path = path.startsWith("/") ? path.substring(1) : path;
-			int idx = path.lastIndexOf("/");
+			path = path.startsWith("/") ? path.substring(1) : path; //$NON-NLS-1$
+			int idx = path.lastIndexOf("/"); //$NON-NLS-1$
 			pathData[i] = 
 				new SVNChangedPathData (
 					key.changedPaths[i].action, 
 					idx != -1 ? path.substring(idx + 1) : path,
-					idx != -1 ? path.substring(0, idx) : "",
-					key.changedPaths[i].copiedFromRevision != SVNRevision.INVALID_REVISION_NUMBER ?  key.changedPaths[i].copiedFromPath : "",
+					idx != -1 ? path.substring(0, idx) : "", //$NON-NLS-1$
+					key.changedPaths[i].copiedFromRevision != SVNRevision.INVALID_REVISION_NUMBER ?  key.changedPaths[i].copiedFromPath : "", //$NON-NLS-1$
 					key.changedPaths[i].copiedFromRevision
 				);
 		}

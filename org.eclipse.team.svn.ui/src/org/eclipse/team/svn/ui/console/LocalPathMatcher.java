@@ -41,7 +41,7 @@ public class LocalPathMatcher implements IPatternMatchListenerDelegate, IPropert
 	protected boolean enabled;
 	
 	public void createPattern() {
-		String regExp = "(?:\\s|\")(?:[A-Z]\\:)?(?:[\\\\/][^\\\\/\\:\\?\\*\r\n\"]+)+";
+		String regExp = "(?:\\s|\")(?:[A-Z]\\:)?(?:[\\\\/][^\\\\/\\:\\?\\*\r\n\"]+)+"; //$NON-NLS-1$
 		this.pattern = Pattern.compile(regExp);
 	}
 	
@@ -79,7 +79,7 @@ public class LocalPathMatcher implements IPatternMatchListenerDelegate, IPropert
 		protected PatternMatchEvent event;
 		
 		public AddConsoleHyperlinkOperation(PatternMatchEvent event) {
-			super("Operation.AddConsoleHyperlink");
+			super("Operation_AddConsoleHyperlink"); //$NON-NLS-1$
 			this.event = event;
 		}
 		

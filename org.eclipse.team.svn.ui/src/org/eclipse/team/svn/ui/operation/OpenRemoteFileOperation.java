@@ -69,7 +69,7 @@ public class OpenRemoteFileOperation extends AbstractActionOperation {
 	}
 	
 	public OpenRemoteFileOperation(IRepositoryEditorInput []inputs, int openType, String openWith) {
-		super("Operation.OpenFile");
+		super("Operation_OpenFile"); //$NON-NLS-1$
 		this.inputs = inputs;
 		this.openType = openType;
 		this.openWith = openWith;
@@ -155,7 +155,7 @@ public class OpenRemoteFileOperation extends AbstractActionOperation {
 
 				try {
 				    this.editors[current] = this.openEditor(page, editorId, input);
-				    if (this.editors[current] != null && this.editors[current].getClass().getName().toLowerCase().indexOf("error") != -1 ||
+				    if (this.editors[current] != null && this.editors[current].getClass().getName().toLowerCase().indexOf("error") != -1 || //$NON-NLS-1$
 				    	this.requiredDefaultEditorKind != null && (this.editors[current] == null || !this.requiredDefaultEditorKind.isAssignableFrom(this.editors[current].getClass()))) {
 						this.editors[current] = this.openEditor(page, EditorsUI.DEFAULT_TEXT_EDITOR_ID, input);
 				    }

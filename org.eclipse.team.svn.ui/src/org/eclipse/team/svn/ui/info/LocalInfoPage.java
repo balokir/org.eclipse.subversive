@@ -204,7 +204,7 @@ public class LocalInfoPage extends PropertyPage {
 		}
 		
 //		Setting context help
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.SVNInfoContext");
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.SVNInfoContext"); //$NON-NLS-1$
 		
         return composite;
     }

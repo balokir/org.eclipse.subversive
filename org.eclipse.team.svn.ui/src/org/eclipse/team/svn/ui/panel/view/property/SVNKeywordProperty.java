@@ -47,11 +47,11 @@ public class SVNKeywordProperty {
     }
     
     // samples:
-    public static final String DATE_SAMPLE = "$LastChangedDate: 2006-08-07 15:40:37 +0000 (Mon, 08 Aug 2006) $";    
-    public static final String REVISION_SAMPLE = "$LastChangedRevision: 7206 $";
-    public static final String AUTHOR_SAMPLE = "$LastChangedBy: J.M.Wade $";
-    public static final String HEAD_URL_SAMPLE = "$HeadURL: http://svn.eclipse.org/community/Subversive/src/ui/PropertyKeywordEditPanel.java $";
-    public static final String ID_SAMPLE = "$Id: PropertyKeywordEditPanel.java 7206 2006-08-07 15:40:37 J.M.Wade $";
+    public static final String DATE_SAMPLE = "$LastChangedDate: 2006-08-07 15:40:37 +0000 (Mon, 08 Aug 2006) $";     //$NON-NLS-1$
+    public static final String REVISION_SAMPLE = "$LastChangedRevision: 7206 $"; //$NON-NLS-1$
+    public static final String AUTHOR_SAMPLE = "$LastChangedBy: J.M.Wade $"; //$NON-NLS-1$
+    public static final String HEAD_URL_SAMPLE = "$HeadURL: http://svn.eclipse.org/community/Subversive/src/ui/PropertyKeywordEditPanel.java $"; //$NON-NLS-1$
+    public static final String ID_SAMPLE = "$Id: PropertyKeywordEditPanel.java 7206 2006-08-07 15:40:37 J.M.Wade $"; //$NON-NLS-1$
     
     protected boolean dateEnabled;
     protected boolean revisionEnabled;
@@ -106,7 +106,7 @@ public class SVNKeywordProperty {
 	}
 	
     public String toString() {
-    	String result = "";
+    	String result = ""; //$NON-NLS-1$
     	if (this.dateEnabled) {
     		result = this.addKeyword(result, SVNKeywordProperty.DATE_NAMES[0]);
     	}
@@ -136,7 +136,7 @@ public class SVNKeywordProperty {
     }
 	
 	protected void parsePropertyValue(String keywordValue) {
-		StringTokenizer st = new StringTokenizer(keywordValue, " ");
+		StringTokenizer st = new StringTokenizer(keywordValue, " "); //$NON-NLS-1$
         while (st.hasMoreTokens()) {
             String name = st.nextToken();
             if (name.equals(SVNKeywordProperty.DATE_NAMES[0]) || name.equals(SVNKeywordProperty.DATE_NAMES[1])) {

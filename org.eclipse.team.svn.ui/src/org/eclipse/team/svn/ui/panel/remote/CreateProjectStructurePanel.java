@@ -53,7 +53,7 @@ public class CreateProjectStructurePanel extends AbstractGetResourceNamePanel {
         monolythicButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (((Button)e.widget).getSelection()) {
-					CreateProjectStructurePanel.this.resourceName = "";
+					CreateProjectStructurePanel.this.resourceName = ""; //$NON-NLS-1$
 					CreateProjectStructurePanel.this.text.setEnabled(false);
 				}
 				CreateProjectStructurePanel.this.validateContent();
@@ -82,7 +82,7 @@ public class CreateProjectStructurePanel extends AbstractGetResourceNamePanel {
     }
     
 	public String getHelpId() {
-    	return "org.eclipse.team.svn.help.remote_createProjectStructureDialogContext";
+    	return "org.eclipse.team.svn.help.remote_createProjectStructureDialogContext"; //$NON-NLS-1$
 	}
     
     protected AbstractVerifier createNonEmptyNameFieldVerifier() {

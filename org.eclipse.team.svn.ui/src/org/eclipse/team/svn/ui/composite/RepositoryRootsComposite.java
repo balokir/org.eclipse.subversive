@@ -125,9 +125,9 @@ public class RepositoryRootsComposite extends Composite implements IPropertiesPa
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		standardLocations.setLayoutData(data);
 		
-		this.trunkRight = this.createControl(standardLocations, "RepositoryRootsComposite.Trunk");
-		this.branchesRight = this.createControl(standardLocations, "RepositoryRootsComposite.Branches");
-		this.tagsRight = this.createControl(standardLocations, "RepositoryRootsComposite.Tags");
+		this.trunkRight = this.createControl(standardLocations, "RepositoryRootsComposite_Trunk"); //$NON-NLS-1$
+		this.branchesRight = this.createControl(standardLocations, "RepositoryRootsComposite_Branches"); //$NON-NLS-1$
+		this.tagsRight = this.createControl(standardLocations, "RepositoryRootsComposite_Tags"); //$NON-NLS-1$
 	}
 	
 	public boolean isStructureEnabled() {
@@ -185,7 +185,7 @@ public class RepositoryRootsComposite extends Composite implements IPropertiesPa
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		field.setLayoutData(data);
-		String name = SVNUIMessages.getString(id + "_Verifier");
+		String name = SVNUIMessages.getString(id + "_Verifier"); //$NON-NLS-1$
 		CompositeVerifier verifier = new CompositeVerifier();
 		verifier.add(new ResourceNameVerifier(name, false));
 		verifier.add(new NonEmptyFieldVerifier(name));

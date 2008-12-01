@@ -70,7 +70,7 @@ public class AddRepositoryLocationPage extends AbstractVerifiedWizardPage {
 	public AddRepositoryLocationPage(IRepositoryLocation editable) {
 		super(AddRepositoryLocationPage.class.getName(), 
 			SVNUIMessages.AddRepositoryLocationPage_Title, 
-			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
+			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif")); //$NON-NLS-1$
 		
 		this.setDescription(SVNUIMessages.AddRepositoryLocationPage_Description);
 		this.editable = editable;
@@ -90,7 +90,7 @@ public class AddRepositoryLocationPage extends AbstractVerifiedWizardPage {
 		this.propertiesTabFolder.resetChanges();
 		
 //		Setting context help
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.newReposWizContext");
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.newReposWizContext"); //$NON-NLS-1$
 		
 		return this.propertiesTabFolder;
 		
@@ -209,7 +209,7 @@ public class AddRepositoryLocationPage extends AbstractVerifiedWizardPage {
 		
 		if (this.propertiesTabFolder.isValidateOnFinishRequested() && panel == null) {
 			final Exception []problem = new Exception[1];
-			UIMonitorUtility.doTaskNowDefault(this.getShell(), new AbstractActionOperation("Operation.ValidateLocation") {
+			UIMonitorUtility.doTaskNowDefault(this.getShell(), new AbstractActionOperation("Operation_ValidateLocation") { //$NON-NLS-1$
 				protected void runImpl(IProgressMonitor monitor) throws Exception {
 					problem[0] = SVNUtility.validateRepositoryLocation(AddRepositoryLocationPage.this.propertiesTabFolder.getRepositoryLocation());
 				}
@@ -227,7 +227,7 @@ public class AddRepositoryLocationPage extends AbstractVerifiedWizardPage {
 
 		AbstractActionOperation mainOp = 
 			shouldntBeAdded ?
-			new AbstractActionOperation("Operation.CommitLocationChanges") {
+			new AbstractActionOperation("Operation_CommitLocationChanges") { //$NON-NLS-1$
 				protected void runImpl(IProgressMonitor monitor) throws Exception {
 					AddRepositoryLocationPage.this.editable.reconfigure();
 				}

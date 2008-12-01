@@ -70,7 +70,7 @@ public class BuiltInAnnotateRevision extends Revision {
 	}
 	
 	public String getId() {
-		return this.mergeInfoList != null ? this.id + "+" : this.id;
+		return this.mergeInfoList != null ? this.id + "+" : this.id; //$NON-NLS-1$
 	}
 	
 	public void addLine(int line) {
@@ -95,7 +95,7 @@ public class BuiltInAnnotateRevision extends Revision {
 		if (this.mergeInfoList == null) {
 			this.mergeInfoList = new ArrayList<MergeInfo>();
 		}
-		String reference = mergedPath != null ? mergedPath + "@" + mergedRevision : String.valueOf(mergedRevision);
+		String reference = mergedPath != null ? mergedPath + "@" + mergedRevision : String.valueOf(mergedRevision); //$NON-NLS-1$
 		this.mergeInfoList.add(new MergeInfo(String.valueOf(line), reference, mergedDate, mergedAuthor));
 	}
 
@@ -104,21 +104,21 @@ public class BuiltInAnnotateRevision extends Revision {
 	}
 
 	public Object getHoverInfo() {
-		String info = "<b>" + SVNUIMessages.BuiltInAnnotateRevision_Revision + " </b>" + this.id + "<br>";
+		String info = "<b>" + SVNUIMessages.BuiltInAnnotateRevision_Revision + " </b>" + this.id + "<br>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (this.author != null) {
-			info += "<b>" + SVNUIMessages.BuiltInAnnotateRevision_Author + " </b>" + this.author;
+			info += "<b>" + SVNUIMessages.BuiltInAnnotateRevision_Author + " </b>" + this.author; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (this.getDateImpl() != null) {
-			info += "<br><b>" + SVNUIMessages.BuiltInAnnotateRevision_Date + " </b>" + DateFormatter.formatDate(this.getDate());
+			info += "<br><b>" + SVNUIMessages.BuiltInAnnotateRevision_Date + " </b>" + DateFormatter.formatDate(this.getDate()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		String message = this.msg == null ? null : this.msg.message;
 		if (message != null && message.length() > 0) {
-			info += "<br><b>" + SVNUIMessages.BuiltInAnnotateRevision_Message + "</b><br>" + this.msg.message;
+			info += "<br><b>" + SVNUIMessages.BuiltInAnnotateRevision_Message + "</b><br>" + this.msg.message; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if (this.mergeInfoList != null) {
-			info += "<br>";
+			info += "<br>"; //$NON-NLS-1$
 			for (MergeInfo mergeInfo : this.mergeInfoList) {
-				info += "<br>" + SVNUIMessages.format(SVNUIMessages.BuiltInAnnotateRevision_MergedWith, new String[] {mergeInfo.line, mergeInfo.reference, mergeInfo.author, DateFormatter.formatDate(new Date(mergeInfo.date))});
+				info += "<br>" + SVNUIMessages.format(SVNUIMessages.BuiltInAnnotateRevision_MergedWith, new String[] {mergeInfo.line, mergeInfo.reference, mergeInfo.author, DateFormatter.formatDate(new Date(mergeInfo.date))}); //$NON-NLS-1$
 			}
 		}
 		return info;
@@ -135,7 +135,7 @@ public class BuiltInAnnotateRevision extends Revision {
 
 	public String getAuthor() {
 		String author = this.author == null ? SVNMessages.SVNInfo_NoAuthor : this.author;
-		return author + " "; // Eclipse IDE does not separate line numbers and author names 
+		return author + " "; // Eclipse IDE does not separate line numbers and author names  //$NON-NLS-1$
 	}
 	
 }

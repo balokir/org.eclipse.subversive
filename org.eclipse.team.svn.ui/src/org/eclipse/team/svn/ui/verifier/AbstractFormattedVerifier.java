@@ -23,13 +23,13 @@ import org.eclipse.swt.widgets.Control;
  * @author Alexander Gurov
  */
 public abstract class AbstractFormattedVerifier extends AbstractVerifier {
-    public static final String FIELD_NAME = "$FIELD_NAME$";
+    public static final String FIELD_NAME = "$FIELD_NAME$"; //$NON-NLS-1$
     protected Map<String, String> placeHolders;
 
     public AbstractFormattedVerifier(String fieldName) {
         super();
         this.placeHolders = new HashMap<String, String>();
-        this.setPlaceHolder(AbstractFormattedVerifier.FIELD_NAME, fieldName.replace(":", ""));
+        this.setPlaceHolder(AbstractFormattedVerifier.FIELD_NAME, fieldName.replace(":", "")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
 	public void setPlaceHolder(String placeHolder, String value) {
@@ -56,7 +56,7 @@ public abstract class AbstractFormattedVerifier extends AbstractVerifier {
 			for (Iterator<Map.Entry<String, String>> it = this.placeHolders.entrySet().iterator(); it.hasNext(); ) {
 				Map.Entry<String, String> entry = it.next();
 				String key = entry.getKey();
-				String value = entry.getValue() == null ? "" : entry.getValue().toString();
+				String value = entry.getValue() == null ? "" : entry.getValue().toString(); //$NON-NLS-1$
 				int idx = message.indexOf(key);
 				if (idx != -1) {
 				    message = message.substring(0, idx) + value + message.substring(idx + key.length());

@@ -64,7 +64,7 @@ public class CheckoutAction extends AbstractRepositoryModifyWorkspaceAction {
 	public void runImpl(IAction action) {
 		final IRepositoryResource []resources = this.getSelectedRepositoryResources();
 		if (SVNTeamPreferences.getCheckoutBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.CHECKOUT_RESPECT_PROJECT_STRUCTURE_NAME)) {
-			this.runScheduled(new AbstractActionOperation("Operation.CheckLayout") {
+			this.runScheduled(new AbstractActionOperation("Operation_CheckLayout") { //$NON-NLS-1$
 				protected void runImpl(IProgressMonitor monitor) throws Exception {
 					final HashSet<IRepositoryResource> toCheckout = new HashSet<IRepositoryResource>();
 					for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
@@ -78,7 +78,7 @@ public class CheckoutAction extends AbstractRepositoryModifyWorkspaceAction {
 								toCheckout.add(resources[i]);
 							}
 							else {
-								IRepositoryFile projectFile = trunk.asRepositoryFile(".project", false);
+								IRepositoryFile projectFile = trunk.asRepositoryFile(".project", false); //$NON-NLS-1$
 								if (projectFile.exists()) {
 									toCheckout.add(trunk);
 								}
@@ -149,7 +149,7 @@ public class CheckoutAction extends AbstractRepositoryModifyWorkspaceAction {
 			String key = (String)iter.next();
 			String resourceName = FileUtility.formatResourceName(key);
 			Object currentResource = names2resources.get(key);
-			folder = new File(location + "/" + resourceName);
+			folder = new File(location + "/" + resourceName); //$NON-NLS-1$
 			
 			if (set.existing.keySet().contains(set.caseInsensitiveOS ? resourceName.toLowerCase() : resourceName) && checkProjectExistance) {
 				existingResources.put(resourceName, currentResource);
@@ -205,9 +205,9 @@ public class CheckoutAction extends AbstractRepositoryModifyWorkspaceAction {
 							return SVNUIMessages.CheckoutAction_Type1;
 						}
 						else if (folder) {
-							return new File(location + "/" + element).isDirectory() ? SVNUIMessages.CheckoutAction_Type3 : SVNUIMessages.CheckoutAction_Type4;
+							return new File(location + "/" + element).isDirectory() ? SVNUIMessages.CheckoutAction_Type3 : SVNUIMessages.CheckoutAction_Type4; //$NON-NLS-1$
 						}
-						return "";
+						return ""; //$NON-NLS-1$
 					}
 					return null;
 				}

@@ -72,9 +72,9 @@ public class SSLComposite extends Composite implements IPropertiesPanel {
 		this.savePassphraseCheckBox.setSelection(settings.isPassPhraseSaved());
 		this.enableAuthenticationCheckBox.setSelection(settings.isAuthenticationEnabled());
 		String text = settings.getPassPhrase();
-		this.certificatePassphraseText.setText(text == null ? "" : text);
+		this.certificatePassphraseText.setText(text == null ? "" : text); //$NON-NLS-1$
 		text = settings.getCertificatePath();
-		this.certificateFileText.setText(text == null ? "" : text);
+		this.certificateFileText.setText(text == null ? "" : text); //$NON-NLS-1$
 		
 		if (this.callback) {
 			if (text != null && text.length() > 0) {

@@ -80,9 +80,9 @@ public class DefaultDialog extends MessageDialog implements IDialogManager {
 			0);
 		this.setShellStyle(this.getShellStyle() | SWT.RESIZE);
 		this.panel = panel;		
-		this.levelOkImage = this.findImage("icons/common/level_ok.gif");
-		this.levelWarningImage = this.findImage("icons/common/level_warning.gif");
-		this.levelErrorImage = this.findImage("icons/common/level_error.gif");
+		this.levelOkImage = this.findImage("icons/common/level_ok.gif"); //$NON-NLS-1$
+		this.levelWarningImage = this.findImage("icons/common/level_warning.gif"); //$NON-NLS-1$
+		this.levelErrorImage = this.findImage("icons/common/level_error.gif"); //$NON-NLS-1$
     }
     
     public static int convertHeightInCharsToPixels(Control control, int chars) {
@@ -121,7 +121,7 @@ public class DefaultDialog extends MessageDialog implements IDialogManager {
         if (message == null) {
             message = this.panel.getDefaultMessage();
         }
-        this.message.setText(message == null ? "" : message);
+        this.message.setText(message == null ? "" : message); //$NON-NLS-1$
         this.icon.setImage(img);
     }
 
@@ -277,7 +277,7 @@ public class DefaultDialog extends MessageDialog implements IDialogManager {
 	    data.horizontalSpan = 2;
 		description.setLayoutData(data);
 		String text = this.panel.getDialogDescription();
-		description.setText(text != null ? text : "");
+		description.setText(text != null ? text : ""); //$NON-NLS-1$
 		description.setFont(this.mainLabelFont);
 		description.setBackground(bgColor);
 		
@@ -393,7 +393,7 @@ public class DefaultDialog extends MessageDialog implements IDialogManager {
 	
 	protected Image findImage(String imagePath) {
 	    SVNTeamUIPlugin plugin = SVNTeamUIPlugin.instance();
-	    ImageDescriptor descriptor = plugin.getImageDescriptor(imagePath == null ? "icons/wizards/newconnect.gif" : imagePath);
+	    ImageDescriptor descriptor = plugin.getImageDescriptor(imagePath == null ? "icons/wizards/newconnect.gif" : imagePath); //$NON-NLS-1$
 	    if (descriptor == null) {
 	        descriptor = ImageDescriptor.getMissingImageDescriptor();
 	    }

@@ -26,7 +26,7 @@ public class MinLogSizePropFindVisitor implements IPropFindVisitor {
 	}
 	
 	public boolean visit(SVNProperty propertyParam) {
-		if (propertyParam.name.equals("tsvn:logminsize")) {
+		if (propertyParam.name.equals("tsvn:logminsize")) { //$NON-NLS-1$
 			try {
 				int currMinSize = Integer.decode(propertyParam.value);
 				if (this.minLogSize < currMinSize) {

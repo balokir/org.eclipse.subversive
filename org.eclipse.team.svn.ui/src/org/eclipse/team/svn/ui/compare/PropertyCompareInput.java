@@ -94,10 +94,10 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 				PropertyCompareNode selected = (PropertyCompareNode)((TreeSelection)event.getSelection()).getPaths()[0].getFirstSegment();
 				CompareConfiguration conf = PropertyCompareInput.this.getCompareConfiguration();
 				if (PropertyCompareInput.this.ancestor != null) {
-					conf.setAncestorLabel(selected.getName() + " [" + PropertyCompareInput.this.getRevisionPart(PropertyCompareInput.this.ancestor) + "]");
+					conf.setAncestorLabel(selected.getName() + " [" + PropertyCompareInput.this.getRevisionPart(PropertyCompareInput.this.ancestor) + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
-				conf.setLeftLabel(selected.getName() + " [" + PropertyCompareInput.this.getRevisionPart(PropertyCompareInput.this.left) + "]");
-				conf.setRightLabel(selected.getName() + " [" + PropertyCompareInput.this.getRevisionPart(PropertyCompareInput.this.right) + "]");	
+				conf.setLeftLabel(selected.getName() + " [" + PropertyCompareInput.this.getRevisionPart(PropertyCompareInput.this.left) + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+				conf.setRightLabel(selected.getName() + " [" + PropertyCompareInput.this.getRevisionPart(PropertyCompareInput.this.right) + "]");	 //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		});
 		
@@ -290,7 +290,7 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 		}
 		
 		public Image getImage() {
-			return CompareUI.getImage("");
+			return CompareUI.getImage(""); //$NON-NLS-1$
 		}
 
 		public String getName() {
@@ -328,7 +328,7 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 		}
 
 		public InputStream getContents() throws CoreException {
-			return new ByteArrayInputStream(this.basedOnValue == null ? "".getBytes() : this.basedOnValue.getBytes()); 
+			return new ByteArrayInputStream(this.basedOnValue == null ? "".getBytes() : this.basedOnValue.getBytes());  //$NON-NLS-1$
 		}
 
 		public void addContentChangeListener(IContentChangeListener listener) {
@@ -354,7 +354,7 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 		protected IRepositoryLocation location;
 		
 		public SavePropChangesOperation(SVNEntryRevisionReference reference, SVNProperty propToSet, IRepositoryLocation location) {
-			super("Operation.SetProperties");
+			super("Operation_SetProperties"); //$NON-NLS-1$
 			this.propToSet = propToSet;
 			this.reference = reference;
 			this.location = location;
@@ -377,7 +377,7 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 		protected SVNProperty [] properties;
 		
 		public GetPropertiesOperation(SVNEntryRevisionReference reference, IRepositoryLocation location) {
-			super("Operation.GetRevisionProperties");
+			super("Operation_GetRevisionProperties"); //$NON-NLS-1$
 			this.reference = reference;
 			this.location = location;
 		}

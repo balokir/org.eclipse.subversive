@@ -55,11 +55,11 @@ public class ConflictingFileEditorInput extends CompareEditorInput {
 		cc.setLeftImage(img);
 		cc.setRightImage(img);
 		cc.setAncestorImage(img);
-		cc.setLeftLabel(this.target.getName() + " " + SVNUIMessages.ConflictingFileEditorInput_Working);
-		cc.setRightLabel(this.target.getName() + " " + SVNUIMessages.ConflictingFileEditorInput_Repository);
-		cc.setAncestorLabel(this.target.getName() + " " + SVNUIMessages.ConflictingFileEditorInput_Base);
+		cc.setLeftLabel(this.target.getName() + " " + SVNUIMessages.ConflictingFileEditorInput_Working); //$NON-NLS-1$
+		cc.setRightLabel(this.target.getName() + " " + SVNUIMessages.ConflictingFileEditorInput_Repository); //$NON-NLS-1$
+		cc.setAncestorLabel(this.target.getName() + " " + SVNUIMessages.ConflictingFileEditorInput_Base); //$NON-NLS-1$
 		
-		this.setTitle(this.target.getName() + " " + SVNUIMessages.ConflictingFileEditorInput_EditConflicts);
+		this.setTitle(this.target.getName() + " " + SVNUIMessages.ConflictingFileEditorInput_EditConflicts); //$NON-NLS-1$
 		
 		InputStream stream = null;
 		try {

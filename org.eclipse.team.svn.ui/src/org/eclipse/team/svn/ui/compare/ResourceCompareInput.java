@@ -219,45 +219,45 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 			String ancestorRevisionPart = this.getRevisionPart(ancestor);
 			String ancestorResourceName = ancestor.getName();
 			
-			String leftPart = leftResourceName + " [" + leftRevisionPart;
-			String ancestorPart = " ";
-			String rightPart = " ";
+			String leftPart = leftResourceName + " [" + leftRevisionPart; //$NON-NLS-1$
+			String ancestorPart = " "; //$NON-NLS-1$
+			String rightPart = " "; //$NON-NLS-1$
 			boolean leftEquals = leftResourceName.equals(ancestorResourceName);
 			boolean rightEquals = rightResourceName.equals(ancestorResourceName);
 			if (leftEquals) {
-				leftPart += " ";
+				leftPart += " "; //$NON-NLS-1$
 				if (rightEquals) {
-					ancestorPart += ancestorRevisionPart + " ";
-					rightPart += rightRevisionPart + "]";
+					ancestorPart += ancestorRevisionPart + " "; //$NON-NLS-1$
+					rightPart += rightRevisionPart + "]"; //$NON-NLS-1$
 				}
 				else {
-					ancestorPart += ancestorRevisionPart + "] ";
-					rightPart += rightResourceName + " [" + rightRevisionPart + "]";
+					ancestorPart += ancestorRevisionPart + "] "; //$NON-NLS-1$
+					rightPart += rightResourceName + " [" + rightRevisionPart + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 			else if (rightEquals) {
-				leftPart += "] ";
-				ancestorPart += ancestorResourceName + " [" + ancestorRevisionPart + " ";
-				rightPart += rightRevisionPart + "]";
+				leftPart += "] "; //$NON-NLS-1$
+				ancestorPart += ancestorResourceName + " [" + ancestorRevisionPart + " "; //$NON-NLS-1$ //$NON-NLS-2$
+				rightPart += rightRevisionPart + "]"; //$NON-NLS-1$
 			}
 			else {
-				leftPart += "] ";
-				ancestorPart += ancestorResourceName + " [" + ancestorRevisionPart + "] ";
-				rightPart += rightResourceName + " [" + rightRevisionPart + "]";
+				leftPart += "] "; //$NON-NLS-1$
+				ancestorPart += ancestorResourceName + " [" + ancestorRevisionPart + "] "; //$NON-NLS-1$ //$NON-NLS-2$
+				rightPart += rightResourceName + " [" + rightRevisionPart + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
 			this.setTitle(SVNUIMessages.format(SVNUIMessages.ResourceCompareInput_Title3, new Object[] {leftPart, ancestorPart, rightPart}));
 		} 
 		else {
-			String leftPart = leftResourceName + " [" + leftRevisionPart;
-			String rightPart = " ";
+			String leftPart = leftResourceName + " [" + leftRevisionPart; //$NON-NLS-1$
+			String rightPart = " "; //$NON-NLS-1$
 			if (leftResourceName.equals(rightResourceName)){
-				leftPart += " ";
-				rightPart += rightRevisionPart + "]";
+				leftPart += " "; //$NON-NLS-1$
+				rightPart += rightRevisionPart + "]"; //$NON-NLS-1$
 			}
 			else {
-				leftPart += "] ";
-				rightPart += rightResourceName + " [" + rightRevisionPart + "]";
+				leftPart += "] "; //$NON-NLS-1$
+				rightPart += rightResourceName + " [" + rightRevisionPart + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
 			this.setTitle(SVNUIMessages.format(SVNUIMessages.ResourceCompareInput_Title2, new Object[] {leftPart, rightPart}));
@@ -289,7 +289,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 	}
 	
 	protected String getLabel(ResourceElement element) throws Exception {
-		return element.getRepositoryResource().getUrl() + " [" + this.getRevisionPart(element) + "]";
+		return element.getRepositoryResource().getUrl() + " [" + this.getRevisionPart(element) + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	protected String getRevisionPart(ResourceElement element) throws Exception {
@@ -380,7 +380,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 			retVal = location.asRepositoryContainer(url, false);
 		}
 		if (retVal == null) {
-			throw new RuntimeException(SVNUIMessages.getErrorString("Error_CompareUnknownNodeKind"));
+			throw new RuntimeException(SVNUIMessages.getErrorString("Error_CompareUnknownNodeKind")); //$NON-NLS-1$
 		}
 		return retVal;
 	}
@@ -525,7 +525,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		protected void handleOpen(final SelectionEvent event) {
 			final BaseCompareNode node = (BaseCompareNode)((TreeItem)event.item).getData();
 			CompositeOperation fetchContent = node.getFetcher();
-			fetchContent.add(new AbstractActionOperation("Operation.FetchContent") {
+			fetchContent.add(new AbstractActionOperation("Operation_FetchContent") { //$NON-NLS-1$
 				protected void runImpl(IProgressMonitor monitor) throws Exception {
 					final Throwable []t = new Throwable[1];
 					UIMonitorUtility.getDisplay().syncExec(new Runnable() {
@@ -611,7 +611,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 				final AbstractGetFileContentOperation fetchOp = left.getFetcher();
 				if (fetchOp != null) {
 					op.add(fetchOp);
-					op.add(new AbstractActionOperation("Operation.DetectCharset") {
+					op.add(new AbstractActionOperation("Operation_DetectCharset") { //$NON-NLS-1$
 		                protected void runImpl(IProgressMonitor monitor) throws Exception {
 		                	left.setCharset(BaseCompareNode.this.detectCharset(fetchOp.getContent()));
 		                }
@@ -622,7 +622,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 				final AbstractGetFileContentOperation fetchOp = ancestor.getFetcher();
 				if (fetchOp != null) {
 					op.add(fetchOp);
-					op.add(new AbstractActionOperation("Operation.DetectCharset") {
+					op.add(new AbstractActionOperation("Operation_DetectCharset") { //$NON-NLS-1$
 		                protected void runImpl(IProgressMonitor monitor) throws Exception {
 		                	ancestor.setCharset(BaseCompareNode.this.detectCharset(fetchOp.getContent()));
 		                }
@@ -633,7 +633,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 				final AbstractGetFileContentOperation fetchOp = right.getFetcher();
 				if (fetchOp != null) {
 					op.add(fetchOp);
-					op.add(new AbstractActionOperation("Operation.DetectCharset") {
+					op.add(new AbstractActionOperation("Operation_DetectCharset") { //$NON-NLS-1$
 		                protected void runImpl(IProgressMonitor monitor) throws Exception {
 		                	right.setCharset(BaseCompareNode.this.detectCharset(fetchOp.getContent()));
 		                }

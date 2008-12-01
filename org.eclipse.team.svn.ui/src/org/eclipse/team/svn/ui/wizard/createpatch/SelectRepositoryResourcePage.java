@@ -37,7 +37,7 @@ public class SelectRepositoryResourcePage extends AbstractVerifiedWizardPage {
 		super(
 			SelectRepositoryResourcePage.class.getName(), 
 			SVNUIMessages.SelectRepositoryResourcePage_Title, 
-			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
+			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif")); //$NON-NLS-1$
 		this.setDescription(SVNUIMessages.SelectRepositoryResourcePage_Description);
 		this.selectedResource = this.baseResource = baseResource;
 	}
@@ -58,7 +58,7 @@ public class SelectRepositoryResourcePage extends AbstractVerifiedWizardPage {
 		composite.setLayoutData(data);
 		
 		this.selectComposite = new RepositoryResourceSelectionComposite(
-				composite, SWT.NONE, this, "patchUrl", this.baseResource, true, 
+				composite, SWT.NONE, this, "patchUrl", this.baseResource, true,  //$NON-NLS-1$
 				SVNUIMessages.SelectRepositoryResourcePage_Select_Title,
 				SVNUIMessages.SelectRepositoryResourcePage_Select_Description, RepositoryResourceSelectionComposite.MODE_DEFAULT, RepositoryResourceSelectionComposite.TEXT_BASE);
 		data = new GridData(GridData.FILL_HORIZONTAL);
@@ -66,7 +66,7 @@ public class SelectRepositoryResourcePage extends AbstractVerifiedWizardPage {
 		this.selectComposite.setLayoutData(data);
 		
 //		Setting context help
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.patchRemoteContext");
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.patchRemoteContext"); //$NON-NLS-1$
 		
 		return composite;
 	}

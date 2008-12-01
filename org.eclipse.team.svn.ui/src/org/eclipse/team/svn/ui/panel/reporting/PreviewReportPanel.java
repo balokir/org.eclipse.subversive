@@ -25,6 +25,6 @@ public class PreviewReportPanel extends PreviewPanel {
 	}
 	
 	public String getHelpId() {
-    	return "org.eclipse.team.svn.help.previewReportDialogContext";
+    	return "org.eclipse.team.svn.help.previewReportDialogContext"; //$NON-NLS-1$
 	}	
 }

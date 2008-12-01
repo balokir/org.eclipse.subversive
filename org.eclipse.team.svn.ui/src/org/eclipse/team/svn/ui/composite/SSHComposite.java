@@ -85,9 +85,9 @@ public class SSHComposite extends AbstractDynamicComposite implements IPropertie
 		this.privateKeyRadioButton.setSelection(settings.isUseKeyFile());
 		this.passwordRadioButton.setSelection(!settings.isUseKeyFile());
 		String text = settings.getPassPhrase();
-		this.passphraseText.setText(text == null ? "" : text);
+		this.passphraseText.setText(text == null ? "" : text); //$NON-NLS-1$
 		text = settings.getPrivateKeyPath();
-		this.privateKeyFileText.setText(text == null ? "" : text);
+		this.privateKeyFileText.setText(text == null ? "" : text); //$NON-NLS-1$
 		this.portText.setText(String.valueOf(settings.getPort()));
 		
 		if (this.callback && text != null && text.length() > 0) {

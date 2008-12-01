@@ -178,8 +178,8 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 					public void run() {
 						FileDialog dlg = new FileDialog(UIMonitorUtility.getShell(), SWT.PRIMARY_MODAL | SWT.SAVE);
 						dlg.setText(SVNUIMessages.SelectPatchFilePage_SavePatchAs);
-						dlg.setFileName(selectedResources[0].getName() + ".patch");
-						dlg.setFilterExtensions(new String[] {"patch", "*.*"});
+						dlg.setFileName(selectedResources[0].getName() + ".patch"); //$NON-NLS-1$
+						dlg.setFilterExtensions(new String[] {"patch", "*.*"}); //$NON-NLS-1$ //$NON-NLS-2$
 						String file = dlg.open();
 						if (file != null) {
 							CreatePatchOperation mainOp = new CreatePatchOperation(new IResource[] {selectedResources[0]}, file, true, true, true, true);
@@ -200,7 +200,7 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 					}
 				});
 				tAction.setEnabled(tSelection.size() > 0  && FileUtility.checkForResourcesPresence(selectedResources, IStateFilter.SF_EXCLUDE_DELETED, IResource.DEPTH_ZERO));
-				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/branch.gif"));
+				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/branch.gif")); //$NON-NLS-1$
 				manager.add(new Separator());
 				
 				//Lock action
@@ -227,7 +227,7 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 						}
 					}
 				});
-				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/lock.gif"));
+				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/lock.gif")); //$NON-NLS-1$
 				tAction.setEnabled(FileUtility.checkForResourcesPresenceRecursive(selectedResources, IStateFilter.SF_READY_TO_LOCK));
 				
 				//Unlock action
@@ -251,7 +251,7 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 						}
 					}
 				});
-				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/unlock.gif"));
+				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/unlock.gif")); //$NON-NLS-1$
 				tAction.setEnabled(FileUtility.checkForResourcesPresenceRecursive(selectedResources, IStateFilter.SF_LOCKED));
 				manager.add(new Separator());
 				
@@ -339,7 +339,7 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 						}
 					}
 				});
-				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/export.gif"));
+				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/export.gif")); //$NON-NLS-1$
 				tAction.setEnabled(tSelection.size() > 0 && FileUtility.checkForResourcesPresence(selectedResources, IStateFilter.SF_EXCLUDE_DELETED, IResource.DEPTH_ZERO));
 				
 				//Clean-up action
@@ -373,7 +373,7 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 						}
 					}
 				});
-				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/delete.gif"));
+				tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/delete.gif")); //$NON-NLS-1$
 				tAction.setEnabled(tSelection.size() > 0 && !FileUtility.checkForResourcesPresence(selectedResources, IStateFilter.SF_DELETED, IResource.DEPTH_ZERO));
 			}
 		});
@@ -409,7 +409,7 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 	}
     
 	public String getHelpId() {
-    	return "org.eclipse.team.svn.help.revertDialogContext";
+    	return "org.eclipse.team.svn.help.revertDialogContext"; //$NON-NLS-1$
     }
     
     public boolean getRemoveNonVersioned() {

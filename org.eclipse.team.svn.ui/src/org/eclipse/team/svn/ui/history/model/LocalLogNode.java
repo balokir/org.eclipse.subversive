@@ -54,7 +54,7 @@ public class LocalLogNode extends AbstractLogNode {
 	}
 	
 	public ImageDescriptor getImageDescriptor() {
-		return SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/local_rev.gif");
+		return SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/local_rev.gif"); //$NON-NLS-1$
 	}
 	
 	public String getLabel(int columnIndex, int labelType, long currentRevision) {
@@ -67,9 +67,9 @@ public class LocalLogNode extends AbstractLogNode {
 					if (currentRevision != SVNRevision.INVALID_REVISION_NUMBER) {
 						return SVNUIMessages.format(SVNUIMessages.LogMessagesComposite_CurrentRevision, new String [] {String.valueOf(currentRevision)});
 					}
-					return "*";
+					return "*"; //$NON-NLS-1$
 				}
-				return "";
+				return ""; //$NON-NLS-1$
 			}
 			case ILogNode.COLUMN_COMMENT: {
 				String retVal = this.entry.getComment();
@@ -77,12 +77,12 @@ public class LocalLogNode extends AbstractLogNode {
 					return FileUtility.formatMultilineText(retVal);
 				}
 				else if (labelType == ILogNode.LABEL_FLAT) {
-					return AbstractLogNode.flattenMultiLineText(retVal, " ");
+					return AbstractLogNode.flattenMultiLineText(retVal, " "); //$NON-NLS-1$
 				}
 				return retVal;
 			}
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	
 	public int getType() {
@@ -94,7 +94,7 @@ public class LocalLogNode extends AbstractLogNode {
 	}
 	
 	public String getAuthor() {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	public int getChangesCount() {

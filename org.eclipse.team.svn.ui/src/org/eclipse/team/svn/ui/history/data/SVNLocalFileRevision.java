@@ -45,14 +45,14 @@ public class SVNLocalFileRevision extends LocalFileRevision implements IEditable
 		if (this.getFile() != null) {
 			return SVNUIMessages.SVNLocalFileRevision_CurrentVersion;
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	
 	public String getContentIdentifier() {
 		if (this.getFile() != null) {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
-		return "[" + DateFormatter.formatDate(this.getTimestamp()) + "]"; 
+		return "[" + DateFormatter.formatDate(this.getTimestamp()) + "]";  //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public boolean isEditable() {

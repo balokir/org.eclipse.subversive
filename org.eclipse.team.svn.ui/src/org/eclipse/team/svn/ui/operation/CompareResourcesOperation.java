@@ -71,7 +71,7 @@ public class CompareResourcesOperation extends AbstractActionOperation {
 	}
 	
 	public CompareResourcesOperation(ILocalResource local, IRepositoryResource remote, boolean forceReuse, boolean showInDialog) {
-		super("Operation.CompareLocal");
+		super("Operation_CompareLocal"); //$NON-NLS-1$
 		this.local = local;
 		this.ancestor = local.isCopied() ? SVNUtility.getCopiedFrom(local.getResource()) : SVNRemoteStorage.instance().asRepositoryResource(local.getResource());
 		this.ancestor.setSelectedRevision(SVNRevision.fromNumber(local.getBaseRevision()));
@@ -179,10 +179,10 @@ public class CompareResourcesOperation extends AbstractActionOperation {
 						
 			String message = input.getMessage();
 			if (message != null) {
-				MessageDialog.openError(shell, Utilities.getString("CompareUIPlugin.compareFailed"), message);
+				MessageDialog.openError(shell, Utilities.getString("CompareUIPlugin_compareFailed"), message); //$NON-NLS-1$
 			}
 			else if (input.getCompareResult() == null) {
-				MessageDialog.openInformation(shell, Utilities.getString("CompareUIPlugin.dialogTitle"), Utilities.getString("CompareUIPlugin.noDifferences"));
+				MessageDialog.openInformation(shell, Utilities.getString("CompareUIPlugin_dialogTitle"), Utilities.getString("CompareUIPlugin_noDifferences")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			else {
 				return true;
@@ -192,7 +192,7 @@ public class CompareResourcesOperation extends AbstractActionOperation {
 			// cancelled by user		
 		} 
 		catch (InvocationTargetException x) {
-			MessageDialog.openError(shell, Utilities.getString("CompareUIPlugin.compareFailed"), x.getTargetException().getMessage());
+			MessageDialog.openError(shell, Utilities.getString("CompareUIPlugin_compareFailed"), x.getTargetException().getMessage()); //$NON-NLS-1$
 		}
 		return false;
 	}

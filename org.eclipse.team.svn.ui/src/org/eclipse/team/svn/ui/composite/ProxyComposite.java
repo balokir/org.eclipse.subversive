@@ -30,7 +30,7 @@ import org.eclipse.team.svn.ui.verifier.IValidationManager;
  * @author Sergiy Logvin
  */
 public class ProxyComposite extends AbstractDynamicComposite implements IPropertiesPanel {
-	protected static final String USER_HISTORY_NAME = "proxyUser";
+	protected static final String USER_HISTORY_NAME = "proxyUser"; //$NON-NLS-1$
 	
 	protected String username;
 	protected String password;
@@ -75,8 +75,8 @@ public class ProxyComposite extends AbstractDynamicComposite implements IPropert
 	}
 
 	public void resetChanges() {
-		this.usernameText.setText(this.username != null ? this.username : "");
-		this.passwordText.setText(this.password != null ? this.password : "");
+		this.usernameText.setText(this.username != null ? this.username : ""); //$NON-NLS-1$
+		this.passwordText.setText(this.password != null ? this.password : ""); //$NON-NLS-1$
 		if (this.callback) {
 			if (this.username != null && this.username.trim().length() > 0) {
 				this.passwordText.setFocus();

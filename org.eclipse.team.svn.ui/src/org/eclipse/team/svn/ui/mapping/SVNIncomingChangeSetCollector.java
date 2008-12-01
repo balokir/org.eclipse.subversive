@@ -108,15 +108,15 @@ public class SVNIncomingChangeSetCollector extends ChangeSetManager {
 				if (updateName) {
 					// rebuild name
 					String name = 
-						String.valueOf(revision) + " " + 
-						(resource.getLastCommitDate() == 0 ? svnNoDate : MessageFormat.format(svnDate, new Object[] {DateFormatter.formatDate(set.getDate())})) + " " + 
+						String.valueOf(revision) + " " +  //$NON-NLS-1$
+						(resource.getLastCommitDate() == 0 ? svnNoDate : MessageFormat.format(svnDate, new Object[] {DateFormatter.formatDate(set.getDate())})) + " " +  //$NON-NLS-1$
 						(resource.getAuthor() == null ? svnNoAuthor : MessageFormat.format(svnAuthor, new Object[] {resource.getAuthor()}));
 					if (set.getComment() != null) {
 						String comment = set.getComment();
 						if (FileUtility.isWindows()) {
-							comment = comment.replaceAll("\r\n|\r|\n", " ");
+							comment = comment.replaceAll("\r\n|\r|\n", " "); //$NON-NLS-1$ //$NON-NLS-2$
 						}
-						name += " " + comment;
+						name += " " + comment; //$NON-NLS-1$
 					}
 					set.setName(name);
 				}

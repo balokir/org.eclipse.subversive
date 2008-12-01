@@ -43,7 +43,7 @@ public class SynchronizeWizard extends AbstractSVNWizard {
 		} else {
 			this.selection = new GlobalRefreshResourceSelectionPage(UpdateSubscriber.instance().roots());
 		}
-		this.selection.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
+		this.selection.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif")); //$NON-NLS-1$
 		this.addPage(this.selection);
 	}
 

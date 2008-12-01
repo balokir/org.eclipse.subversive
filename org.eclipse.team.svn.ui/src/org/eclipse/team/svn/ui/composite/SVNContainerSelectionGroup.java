@@ -35,7 +35,7 @@ import org.eclipse.ui.internal.ide.misc.ContainerSelectionGroup;
  */
 public class SVNContainerSelectionGroup extends ContainerSelectionGroup {
 	public SVNContainerSelectionGroup(Composite parent, Listener listener) {
-		super(parent, listener, false, "", false);
+		super(parent, listener, false, "", false); //$NON-NLS-1$
 	}
 	
 	public void createContents(String message, int heightHint, int widthHint) {
@@ -63,7 +63,7 @@ public class SVNContainerSelectionGroup extends ContainerSelectionGroup {
     	protected static String DESTINATION_DIRECTORY_IS_OBSTRUCTED;
     	
     	public SVNContainerSelectionVerifier() {
-            super("");
+            super(""); //$NON-NLS-1$
             
             SVNContainerSelectionVerifier.ERROR_MESSAGE = SVNUIMessages.SVNContainerSelectionGroup_Verifier_NotSelected;
             SVNContainerSelectionVerifier.DESTINATION_IS_DETACHED_FROM_SVN = SVNUIMessages.SVNContainerSelectionGroup_Verifier_NonSVN;

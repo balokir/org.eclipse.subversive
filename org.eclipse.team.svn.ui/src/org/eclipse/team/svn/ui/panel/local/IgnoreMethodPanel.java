@@ -93,7 +93,7 @@ public class IgnoreMethodPanel extends AbstractDialogPanel {
 		        break;
 		    }
 		}
-		text = SVNUIMessages.format(this.resources.length == 1 ? SVNUIMessages.IgnoreMethodPanel_Extension_Single : SVNUIMessages.IgnoreMethodPanel_Extension_Multi, new String[] {extension == null ? "" : extension});
+		text = SVNUIMessages.format(this.resources.length == 1 ? SVNUIMessages.IgnoreMethodPanel_Extension_Single : SVNUIMessages.IgnoreMethodPanel_Extension_Multi, new String[] {extension == null ? "" : extension}); //$NON-NLS-1$
 		extensionButton.setText(text);
 		extensionButton.setSelection(false);
 		extensionButton.setEnabled(extension != null);
@@ -130,7 +130,7 @@ public class IgnoreMethodPanel extends AbstractDialogPanel {
     }
     
 	public String getHelpId() {
-    	return "org.eclipse.team.svn.help.addToIgnoreDialogContext";
+    	return "org.eclipse.team.svn.help.addToIgnoreDialogContext"; //$NON-NLS-1$
     }
     
 	public Point getPrefferedSizeImpl() {

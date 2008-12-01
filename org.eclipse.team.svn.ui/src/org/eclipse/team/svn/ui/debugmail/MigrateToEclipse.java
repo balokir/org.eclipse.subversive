@@ -52,11 +52,11 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  * @author Alexander Gurov
  */
 public class MigrateToEclipse extends AbstractMainMenuAction {
-	public static final String OLD_PROVIDER_ID = "org.polarion.team.svn.core.svnnature";
-	public static final String OLD_STATE_LOCATION = "org.polarion.team.svn.core";
-	public static final String OLD_PREFERENCES_LOCATION = "org.polarion.team.svn.ui";
-	public static final QualifiedName OLD_RESOURCE_PROPERTY = new QualifiedName("org.polarion.team.svn", "resource");
-	public static final QualifiedName OLD_LOCATION_PROPERTY = new QualifiedName("org.polarion.team.svn", "location");
+	public static final String OLD_PROVIDER_ID = "org.polarion.team.svn.core.svnnature"; //$NON-NLS-1$
+	public static final String OLD_STATE_LOCATION = "org.polarion.team.svn.core"; //$NON-NLS-1$
+	public static final String OLD_PREFERENCES_LOCATION = "org.polarion.team.svn.ui"; //$NON-NLS-1$
+	public static final QualifiedName OLD_RESOURCE_PROPERTY = new QualifiedName("org.polarion.team.svn", "resource"); //$NON-NLS-1$ //$NON-NLS-2$
+	public static final QualifiedName OLD_LOCATION_PROPERTY = new QualifiedName("org.polarion.team.svn", "location"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	protected static final byte []OLD_ENTRY1 = new byte[] {'o', 'r', 'g', '.', 'p', 'o', 'l', 'a', 'r', 'i', 'o', 'n'};
 	protected static final byte []NEW_ENTRY1 = new byte[] {'o', 'r', 'g', '.', 'e', 'c', 'l', 'i', 'p', 's', 'e'};
@@ -64,7 +64,7 @@ public class MigrateToEclipse extends AbstractMainMenuAction {
 	protected static final byte []NEW_ENTRY2 = new byte[] {'L', 'o', 'r', 'g', '/', 'e', 'c', 'l', 'i', 'p', 's', 'e'};
 	
 	public void run(IAction action) {
-		CompositeOperation op = new CompositeOperation("Operation.MigrateToEclipse");
+		CompositeOperation op = new CompositeOperation("Operation_MigrateToEclipse"); //$NON-NLS-1$
 		op.add(new ConvertRepositoryFiles());
 		op.add(new ConvertSettings());
 		RemapProjects remapOp = new RemapProjects();
@@ -112,7 +112,7 @@ main:
 		protected List<IProject> processed;
 		
 		public RemapProjects() {
-			super("Operation.RemapProjects", (IResource [])null);
+			super("Operation_RemapProjects", (IResource [])null); //$NON-NLS-1$
 		}
 
 		public IResource []getResources() {
@@ -155,7 +155,7 @@ main:
 	
 	protected static class ConvertSettings extends AbstractActionOperation {
 		public ConvertSettings() {
-			super("Operation.ConvertSettings");
+			super("Operation_ConvertSettings"); //$NON-NLS-1$
 		}
 	
 		protected void runImpl(IProgressMonitor monitor) throws Exception {
@@ -184,7 +184,7 @@ main:
 	
 	protected static class ConvertRepositoryFiles extends AbstractActionOperation {
 		public ConvertRepositoryFiles() {
-			super("Operation.ConvertRepositoryFiles");
+			super("Operation_ConvertRepositoryFiles"); //$NON-NLS-1$
 		}
 
 		protected void runImpl(IProgressMonitor monitor) throws Exception {

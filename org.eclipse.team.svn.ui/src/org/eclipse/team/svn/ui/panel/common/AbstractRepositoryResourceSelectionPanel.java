@@ -66,7 +66,7 @@ public abstract class AbstractRepositoryResourceSelectionPanel extends AbstractD
 		IRepositoryResource []retVal = new IRepositoryResource[to.length];
 		String baseUrl = base.getUrl();
 		for (int i = 0; i < retVal.length; i++) {
-			String url = baseUrl + "/" + SVNRemoteStorage.instance().asRepositoryResource(to[i]).getName();
+			String url = baseUrl + "/" + SVNRemoteStorage.instance().asRepositoryResource(to[i]).getName(); //$NON-NLS-1$
 			retVal[i] = to[i].getType() == IResource.FILE ? (IRepositoryResource)base.asRepositoryFile(url, false) : base.asRepositoryContainer(url, false);
 		}
 		return retVal;

@@ -38,7 +38,7 @@ public class LocalShowAnnotationOperation extends AbstractWorkingCopyOperation {
 	}
 
 	public LocalShowAnnotationOperation(IResource resource, SVNRevision revision) {
-		super("Operation.ShowAnnotation", new IResource[] {resource});
+		super("Operation_ShowAnnotation", new IResource[] {resource}); //$NON-NLS-1$
 		this.revision = revision;
 	}
 

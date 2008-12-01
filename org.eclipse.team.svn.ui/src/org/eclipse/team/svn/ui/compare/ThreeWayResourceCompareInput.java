@@ -374,7 +374,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 	
 	protected String getLeftLabel() throws Exception {
 		ResourceElement element = this.getLeftResourceElement();
-		return element.getLocalResource().getResource().getFullPath().toString().substring(1) + " [" + this.getRevisionPart(element) + "]";
+		return element.getLocalResource().getResource().getFullPath().toString().substring(1) + " [" + this.getRevisionPart(element) + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	protected String getRevisionPart(ResourceElement element) throws Exception {
@@ -407,13 +407,13 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 								OverlayedImageDescriptor imageDescriptor = null;
 								int direction = ((CompareNode)element).getKind() & Differencer.DIRECTION_MASK;
 								if (direction == Differencer.LEFT) {
-									imageDescriptor = new OverlayedImageDescriptor(this.baseProvider.getImage(element), SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/replaced_out.gif"), new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V);
+									imageDescriptor = new OverlayedImageDescriptor(this.baseProvider.getImage(element), SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/replaced_out.gif"), new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V); //$NON-NLS-1$
 								}
 								else if (direction == Differencer.RIGHT) {
-									imageDescriptor = new OverlayedImageDescriptor(this.baseProvider.getImage(element), SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/replaced_in.gif"), new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V);
+									imageDescriptor = new OverlayedImageDescriptor(this.baseProvider.getImage(element), SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/replaced_in.gif"), new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V); //$NON-NLS-1$
 								}
 								else {
-									imageDescriptor = new OverlayedImageDescriptor(this.baseProvider.getImage(element), SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/replaced_conf.gif"), new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V);
+									imageDescriptor = new OverlayedImageDescriptor(this.baseProvider.getImage(element), SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/replaced_conf.gif"), new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V); //$NON-NLS-1$
 								}
 								this.images.put(element,image = imageDescriptor.createImage());
 							}

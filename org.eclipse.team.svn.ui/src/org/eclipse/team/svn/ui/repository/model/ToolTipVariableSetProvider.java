@@ -26,17 +26,17 @@ import org.eclipse.team.svn.ui.decorator.PredefinedVariable;
  */
 public class ToolTipVariableSetProvider implements IVariableSetProvider {
 
-	public static final String DOMAIN_NAME = "ToolTipDecoratorVariable";
+	public static final String DOMAIN_NAME = "ToolTipDecoratorVariable"; //$NON-NLS-1$
 	
-	public static final String NAME_OF_NAME = "name";
-	public static final String NAME_OF_URL = "URL";
-	public static final String NAME_OF_LAST_CHANGE_DATE = "last_change_date";
-	public static final String NAME_OF_LAST_AUTHOR = "last_author";
-	public static final String NAME_OF_SIZE = "size";
-	public static final String NAME_OF_LOCK_OWNER = "lock_owner";
-	public static final String NAME_OF_LOCK_CREATION_DATE = "lock_creation_date";
-	public static final String NAME_OF_LOCK_EXPIRATION_DATE = "lock_expiration_date";
-	public static final String NAME_OF_LOCK_COMMENT = "lock_comment";
+	public static final String NAME_OF_NAME = "name"; //$NON-NLS-1$
+	public static final String NAME_OF_URL = "URL"; //$NON-NLS-1$
+	public static final String NAME_OF_LAST_CHANGE_DATE = "last_change_date"; //$NON-NLS-1$
+	public static final String NAME_OF_LAST_AUTHOR = "last_author"; //$NON-NLS-1$
+	public static final String NAME_OF_SIZE = "size"; //$NON-NLS-1$
+	public static final String NAME_OF_LOCK_OWNER = "lock_owner"; //$NON-NLS-1$
+	public static final String NAME_OF_LOCK_CREATION_DATE = "lock_creation_date"; //$NON-NLS-1$
+	public static final String NAME_OF_LOCK_EXPIRATION_DATE = "lock_expiration_date"; //$NON-NLS-1$
+	public static final String NAME_OF_LOCK_COMMENT = "lock_comment"; //$NON-NLS-1$
 	
 	public static final IVariable VAR_NAME = new PredefinedVariable(ToolTipVariableSetProvider.DOMAIN_NAME, ToolTipVariableSetProvider.NAME_OF_NAME);
 	public static final IVariable VAR_URL = new PredefinedVariable(ToolTipVariableSetProvider.DOMAIN_NAME, ToolTipVariableSetProvider.NAME_OF_URL);

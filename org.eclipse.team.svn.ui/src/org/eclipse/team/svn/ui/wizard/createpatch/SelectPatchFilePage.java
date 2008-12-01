@@ -88,13 +88,13 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 		super(
 			SelectPatchFilePage.class.getName(), 
 			SVNUIMessages.SelectPatchFilePage_Title, 
-			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
+			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif")); //$NON-NLS-1$
 		this.setDescription(SVNUIMessages.SelectPatchFilePage_Description);
-		this.proposedName = proposedName + ".patch";
+		this.proposedName = proposedName + ".patch"; //$NON-NLS-1$
 		this.writeMode = CreatePatchWizard.WRITE_TO_CLIPBOARD;
 		this.roots = roots;
 		try {
-			File tmp = File.createTempFile("patch", "tmp");
+			File tmp = File.createTempFile("patch", "tmp"); //$NON-NLS-1$ //$NON-NLS-2$
 			tmp.delete();
 			SelectPatchFilePage.this.fileName = tmp.getAbsolutePath();
 		} 
@@ -158,7 +158,7 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 					SelectPatchFilePage.this.browseButton.setEnabled(false);
 					SelectPatchFilePage.this.browseWSButton.setEnabled(false);
 					try {
-						SelectPatchFilePage.this.fileName = File.createTempFile("patch", ".tmp").getAbsolutePath();
+						SelectPatchFilePage.this.fileName = File.createTempFile("patch", ".tmp").getAbsolutePath(); //$NON-NLS-1$ //$NON-NLS-2$
 					} 
 					catch (IOException e) {
 						throw new RuntimeException(e);
@@ -236,7 +236,7 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 				FileDialog dlg = new FileDialog(SelectPatchFilePage.this.getShell(), SWT.PRIMARY_MODAL | SWT.SAVE);
 				dlg.setText(SVNUIMessages.SelectPatchFilePage_SavePatchAs);
 				dlg.setFileName(SelectPatchFilePage.this.proposedName);
-				dlg.setFilterExtensions(new String[] {"patch", "*.*"});
+				dlg.setFilterExtensions(new String[] {"patch", "*.*"}); //$NON-NLS-1$ //$NON-NLS-2$
 				String file = dlg.open();
 				if (file != null) {
 					SelectPatchFilePage.this.fileName = file;
@@ -414,7 +414,7 @@ public class SelectPatchFilePage extends AbstractVerifiedWizardPage {
 		saveToClipboard.setSelection(true);
 		
 //		Setting context help
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.patchFileContext");
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.patchFileContext"); //$NON-NLS-1$
 		
 		return composite;
 	}

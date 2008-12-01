@@ -119,7 +119,7 @@ public class ShareProjectWizard extends AbstractSVNWizard implements IConfigurat
 				retVal = this.selectLocation == null ? super.getNextPage(page) : super.getNextPage(super.getNextPage(page));
 			}
 			else {
-				this.addLocation.setInitialUrl("");
+				this.addLocation.setInitialUrl(""); //$NON-NLS-1$
 				this.addLocation.setForceDisableRoots(false);
 //				this.addLocation.setMessage(AddRepositoryLocationPage.DEFAULT_MESSAGE);
 				retVal = super.getNextPage(page);
@@ -274,7 +274,7 @@ public class ShareProjectWizard extends AbstractSVNWizard implements IConfigurat
 		//drop .svn folders if we want to do a fresh share
 		IActionOperation predecessor = null;
 		if (this.alreadyConnected()) {
-			op.add(predecessor = new AbstractActionOperation("Operation.DropSVNMeta") {
+			op.add(predecessor = new AbstractActionOperation("Operation_DropSVNMeta") { //$NON-NLS-1$
 				public ISchedulingRule getSchedulingRule() {
 					return MultiRule.combine(ShareProjectWizard.this.getProjects());
 				}
@@ -357,7 +357,7 @@ public class ShareProjectWizard extends AbstractSVNWizard implements IConfigurat
 		protected IActionOperation mainOp;
 		
 		public PostShareCommitOperation(IActionOperation mainOp) {
-			super("Operation.PrepareCommit");
+			super("Operation_PrepareCommit"); //$NON-NLS-1$
 			this.mainOp = mainOp;
 		}
 		

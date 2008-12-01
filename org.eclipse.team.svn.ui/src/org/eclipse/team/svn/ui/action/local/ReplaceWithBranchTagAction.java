@@ -64,7 +64,7 @@ public class ReplaceWithBranchTagAction extends AbstractWorkingCopyAction {
 			ReplaceWarningDialog dialog = new ReplaceWarningDialog(shell);
 			if (dialog.open() == 0) {
 				IRepositoryResource selected = panel.getSelectedResource();
-				CompositeOperation op = new CompositeOperation("Operation.ReplaceWithRevision");
+				CompositeOperation op = new CompositeOperation("Operation_ReplaceWithRevision"); //$NON-NLS-1$
 				SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
 				op.add(saveOp);
 				op.add(new ReplaceWithRemoteOperation(resources[0], selected));

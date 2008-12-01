@@ -69,7 +69,7 @@ public class SelectProjectsGroupPage extends AbstractVerifiedWizardPage implemen
 		super(
 			SelectProjectsGroupPage.class.getName(), 
 			SVNUIMessages.SelectProjectsGroupPage_Title, 
-			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
+			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif")); //$NON-NLS-1$
 		
 		this.setDescription(SVNUIMessages.SelectProjectsGroupPage_Description);
 		this.allProjects = projects;
@@ -198,7 +198,7 @@ public class SelectProjectsGroupPage extends AbstractVerifiedWizardPage implemen
 				SelectProjectsGroupPage.this.viewer.setInput(SelectProjectsGroupPage.this.projectGroups);
 			}
 		});
-		String []allItems = new String[] {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+		String []allItems = new String[] {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
 		String []items = allItems;
 		if (this.maxURLLength < 10) {
 			items = new String[this.maxURLLength];
@@ -284,7 +284,7 @@ public class SelectProjectsGroupPage extends AbstractVerifiedWizardPage implemen
 		this.viewer.setInput(this.projectGroups);
 		
 //		Setting context help
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.projectGroupContext");
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.projectGroupContext"); //$NON-NLS-1$
 		
 		return composite;
 	}

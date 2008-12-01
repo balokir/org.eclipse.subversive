@@ -86,7 +86,7 @@ public class OverrideAndCommitModelActionHelper extends AbstractActionHelper {
 			keepLocks = commitPanel.getKeepLocks();
 		}
 		
-		CompositeOperation op = new CompositeOperation("Operation.UOverrideAndCommit");
+		CompositeOperation op = new CompositeOperation("Operation_UOverrideAndCommit"); //$NON-NLS-1$
 
 		final MarkAsMergedOperation mergeOp = new MarkAsMergedOperation(resources[0], true, msg, keepLocks);
 		op.add(mergeOp);
@@ -120,7 +120,7 @@ public class OverrideAndCommitModelActionHelper extends AbstractActionHelper {
 		CommitOperation mainOp = new CommitOperation(mergeOp, msg, true, keepLocks);
 		IActionOperation[] dependsOn = new IActionOperation[] {mergeOp};
 		op.add(mainOp, dependsOn);
-		op.add(new AbstractActionOperation("Operation.UNodeKindChanged") {
+		op.add(new AbstractActionOperation("Operation_UNodeKindChanged") { //$NON-NLS-1$
             protected void runImpl(IProgressMonitor monitor) throws Exception {
                 final IResource []diffNodeKind = mergeOp.getHavingDifferentNodeKind();
                 if (diffNodeKind.length > 0) {

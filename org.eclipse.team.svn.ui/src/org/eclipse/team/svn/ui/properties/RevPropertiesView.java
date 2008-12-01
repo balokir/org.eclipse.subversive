@@ -68,14 +68,14 @@ public class RevPropertiesView extends ViewPart implements IRepositoriesStateCha
 	
 	public void refreshView() {
 		if (this.location == null || this.revision == null) {
-			this.setContentDescription("");
+			this.setContentDescription(""); //$NON-NLS-1$
 			return;
 		}
 		this.setContentDescription(SVNUIMessages.format(SVNUIMessages.RevisionPropertyView_Decript, new String [] {String.valueOf(this.location), String.valueOf(this.revision)}));
 		this.revPropComposite.setPending(true);
-		CompositeOperation op = new CompositeOperation("ShowRevProp");
+		CompositeOperation op = new CompositeOperation("ShowRevProp"); //$NON-NLS-1$
 		op.add((IActionOperation)(this.provider = new GetRevisionPropertiesOperation(this.location, this.revision)));
-		op.add(new AbstractActionOperation("ShowRevProp") {
+		op.add(new AbstractActionOperation("ShowRevProp") { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				RevPropertiesView.this.revPropComposite.setInput(RevPropertiesView.this.provider.getRevisionProperties());
 				RevPropertiesView.this.revPropComposite.setPending(false);
@@ -92,7 +92,7 @@ public class RevPropertiesView extends ViewPart implements IRepositoriesStateCha
 	    		RevPropertiesView.this.refreshView();
 	    	}
         };
-        action.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/refresh.gif"));
+        action.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/refresh.gif")); //$NON-NLS-1$
         tbm.add(action);
         tbm.update(true);
 		
@@ -100,7 +100,7 @@ public class RevPropertiesView extends ViewPart implements IRepositoriesStateCha
 		this.refreshView();
 
 		//Setting context help
-	    PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.revPropertiesViewContext");
+	    PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.revPropertiesViewContext"); //$NON-NLS-1$
 	}
 	
 	protected void disconnectView() {
@@ -109,7 +109,7 @@ public class RevPropertiesView extends ViewPart implements IRepositoriesStateCha
 		this.revPropComposite.setInput(new SVNProperty[0]);
 		UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 			public void run() {
-				RevPropertiesView.this.setContentDescription("");
+				RevPropertiesView.this.setContentDescription(""); //$NON-NLS-1$
 			}			
 		});
 	}

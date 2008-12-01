@@ -33,7 +33,7 @@ public class ShowRevisionPropertiesOperation extends AbstractActionOperation {
 	protected IWorkbenchPage page;
 	
 	public ShowRevisionPropertiesOperation(IWorkbenchPage page, IRepositoryLocation location, SVNRevision revision) {
-		super("Operation.ShowRevProperties");
+		super("Operation_ShowRevProperties"); //$NON-NLS-1$
 		this.page = page;
 		this.location = location;
 		this.revision = revision;

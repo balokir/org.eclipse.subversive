@@ -67,7 +67,7 @@ public class AlreadyConnectedPage extends AbstractVerifiedWizardPage {
 		super(
 			AlreadyConnectedPage.class.getName(), 
 			SVNUIMessages.AlreadyConnectedPage_Title, 
-			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
+			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif")); //$NON-NLS-1$
 		
 		this.setDescription(SVNUIMessages.AlreadyConnectedPage_Description);
 	}
@@ -253,7 +253,7 @@ public class AlreadyConnectedPage extends AbstractVerifiedWizardPage {
 		this.initControls();
 		
 //		Setting context help
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.alreadyConnectedContext");
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.alreadyConnectedContext"); //$NON-NLS-1$
 		
 		return composite;
 	}

@@ -247,22 +247,22 @@ public abstract class AbstractResourceDecorator extends LabelProvider implements
 			new IVariableContentProvider() {
 				public String getValue(IVariable var) {
 					if (var.equals(TextVariableSetProvider.VAR_ADDED_FLAG)) {
-						return IStateFilter.SF_ADDED.accept(resource, state, mask) ? AbstractResourceDecorator.this.addedChars : "";
+						return IStateFilter.SF_ADDED.accept(resource, state, mask) ? AbstractResourceDecorator.this.addedChars : ""; //$NON-NLS-1$
 					}
 					else if (var.equals(TextVariableSetProvider.VAR_OUTGOING_FLAG)) {
-						return (IStateFilter.SF_COMMITABLE.accept(resource, state, mask) || IStateFilter.SF_CONFLICTING.accept(resource, state, mask)) ? AbstractResourceDecorator.this.outgoingChars : "";
+						return (IStateFilter.SF_COMMITABLE.accept(resource, state, mask) || IStateFilter.SF_CONFLICTING.accept(resource, state, mask)) ? AbstractResourceDecorator.this.outgoingChars : ""; //$NON-NLS-1$
 					}
 					
 					if (var.equals(TextVariableSetProvider.VAR_REVISION)) {
-						return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask) && !IStateFilter.SF_PREREPLACEDREPLACED.accept(resource, state, mask) ? String.valueOf(local.getRevision()) : "";
+						return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask) && !IStateFilter.SF_PREREPLACEDREPLACED.accept(resource, state, mask) ? String.valueOf(local.getRevision()) : ""; //$NON-NLS-1$
 					}
 					else if (var.equals(TextVariableSetProvider.VAR_AUTHOR)) {
 					    String author = local.getAuthor() == null ? "[no author]" : local.getAuthor(); 
-						return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask) ? author : "";
+						return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask) ? author : ""; //$NON-NLS-1$
 					}
 					else if (var.equals(TextVariableSetProvider.VAR_DATE)) {
 						if (!IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask)) {
-							return "";
+							return ""; //$NON-NLS-1$
 						}
 						long date = local.getLastCommitDate();
 						if (date == 0) {
@@ -271,17 +271,17 @@ public abstract class AbstractResourceDecorator extends LabelProvider implements
 						return DateFormatter.formatDate(date);
 					}
 					else if (var.equals(TextVariableSetProvider.VAR_RESOURCE_URL)) {
-						return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask) ? SVNUtility.decodeURL(remote.getUrl()) : "";
+						return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask) ? SVNUtility.decodeURL(remote.getUrl()) : ""; //$NON-NLS-1$
 					}
 					else if (var.equals(TextVariableSetProvider.VAR_SHORT_RESOURCE_URL)) {
 						if (IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask)) {
 							String shortURL = SVNUtility.decodeURL(remote.getUrl()).substring(remote.getRepositoryLocation().getRepositoryRootUrl().length());
-							return shortURL.startsWith("/") ? shortURL.substring(1) : shortURL;
+							return shortURL.startsWith("/") ? shortURL.substring(1) : shortURL; //$NON-NLS-1$
 						}
-						return "";
+						return ""; //$NON-NLS-1$
 					}
 					else if (var.equals(TextVariableSetProvider.VAR_LOCATION_URL)) {
-						return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask) ? remote.getRepositoryLocation().getUrlAsIs() : "";
+						return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask) ? remote.getRepositoryLocation().getUrlAsIs() : ""; //$NON-NLS-1$
 					}
 					else if (var.equals(TextVariableSetProvider.VAR_LOCATION_LABEL)) {
 						if (IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask)) {
@@ -289,39 +289,39 @@ public abstract class AbstractResourceDecorator extends LabelProvider implements
 							String label = location.getLabel();
 							return label == null || label.length() == 0 ? location.getUrlAsIs() : label;
 						}
-						return "";
+						return ""; //$NON-NLS-1$
 					}
 					else if (var.equals(TextVariableSetProvider.VAR_ROOT_PREFIX)) {
 						if (IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask)) {
 							int kind = ((IRepositoryRoot)remote.getRoot()).getKind();
 							return kind == IRepositoryRoot.KIND_TAGS ? AbstractResourceDecorator.this.tagPrefix : (
 										kind == IRepositoryRoot.KIND_BRANCHES ? AbstractResourceDecorator.this.branchPrefix : (
-											kind == IRepositoryRoot.KIND_TRUNK ? AbstractResourceDecorator.this.trunkPrefix : ""
+											kind == IRepositoryRoot.KIND_TRUNK ? AbstractResourceDecorator.this.trunkPrefix : "" //$NON-NLS-1$
 										)
 									);
 						}
-						return "";
+						return ""; //$NON-NLS-1$
 					} 
 					else if (var.equals(TextVariableSetProvider.VAR_ASCENDANT)) {
 						if (IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask)) {
 							return SVNUtility.getAscendant(remote);
 						}
-						return "";												
+						return "";												 //$NON-NLS-1$
 					}
 					else if (var.equals(TextVariableSetProvider.VAR_DESCENDANT)) {
 						if (IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask)) {
 							return SVNUtility.getDescendant(remote);
 						}
-						return "";												
+						return "";												 //$NON-NLS-1$
 					}
 					else if (var.equals(TextVariableSetProvider.VAR_FULLNAME)) {
 						if (IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask)) {
 							return SVNUtility.getPathUpToRoot(remote);
 						}
-						return "";												
+						return "";												 //$NON-NLS-1$
 					}
 					else if (var.equals(TextVariableSetProvider.VAR_REMOTE_NAME)) {
-						return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask) ? remote.getName() : "";
+						return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask) ? remote.getName() : ""; //$NON-NLS-1$
 					}
 					if (var.equals(TextVariableSetProvider.VAR_NAME)) {
 						return local.getName();
@@ -379,15 +379,15 @@ public abstract class AbstractResourceDecorator extends LabelProvider implements
 
 	protected synchronized void initStatic(final AbstractResourceDecorator self, final IResourceStatesListener targetListener) {
 		if (AbstractResourceDecorator.instanceCounter++ == 0) {
-			AbstractResourceDecorator.OVR_NEW = SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/new_resource.gif");
+			AbstractResourceDecorator.OVR_NEW = SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/new_resource.gif"); //$NON-NLS-1$
 			// we cannot use pencil icon for modified resources due to CVS uses it in order to show watch/edit states
 //			AbstractResourceDecorator.OVR_MODIFIED = SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/modified_resource.gif");
-			AbstractResourceDecorator.OVR_CONFLICTED = SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/conflicted_unresolved.gif");
-			AbstractResourceDecorator.OVR_OBSTRUCTED = SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/obstructed.gif");
-			AbstractResourceDecorator.OVR_DELETED = SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/deleted.gif");
-			AbstractResourceDecorator.OVR_LOCKED = SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/lock.gif");
-			AbstractResourceDecorator.OVR_NEEDS_LOCK = SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/needs_lock.gif");
-			AbstractResourceDecorator.OVR_SWITCHED = SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/switched.gif");
+			AbstractResourceDecorator.OVR_CONFLICTED = SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/conflicted_unresolved.gif"); //$NON-NLS-1$
+			AbstractResourceDecorator.OVR_OBSTRUCTED = SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/obstructed.gif"); //$NON-NLS-1$
+			AbstractResourceDecorator.OVR_DELETED = SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/deleted.gif"); //$NON-NLS-1$
+			AbstractResourceDecorator.OVR_LOCKED = SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/lock.gif"); //$NON-NLS-1$
+			AbstractResourceDecorator.OVR_NEEDS_LOCK = SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/needs_lock.gif"); //$NON-NLS-1$
+			AbstractResourceDecorator.OVR_SWITCHED = SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/switched.gif"); //$NON-NLS-1$
 			
 			AbstractResourceDecorator.installedListener = new IResourceStatesListener() {
 				public void resourcesStateChanged(ResourceStatesChangedEvent event) {

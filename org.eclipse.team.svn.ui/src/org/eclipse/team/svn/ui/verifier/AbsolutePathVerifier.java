@@ -42,10 +42,10 @@ public class AbsolutePathVerifier extends AbstractFormattedVerifier {
     }
 
     protected boolean isRealtive(String path) {
-    	StringTokenizer tok = new StringTokenizer(path, "/\\", false);
+    	StringTokenizer tok = new StringTokenizer(path, "/\\", false); //$NON-NLS-1$
     	while (tok.hasMoreTokens()) {
     		String token = tok.nextToken();
-    		if (token.matches("(\\.)+")) {
+    		if (token.matches("(\\.)+")) { //$NON-NLS-1$
     			return true;
     		}
     	}

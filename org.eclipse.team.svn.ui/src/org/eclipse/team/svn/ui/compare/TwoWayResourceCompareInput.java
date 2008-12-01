@@ -180,7 +180,7 @@ public class TwoWayResourceCompareInput extends ResourceCompareInput {
 						if (element instanceof CompareNode && ((CompareNode)element).getChangeType() == SVNEntryStatus.Kind.REPLACED) {
 							Image image = this.images.get(element);
 							if (image == null) {
-								OverlayedImageDescriptor imageDescriptor = new OverlayedImageDescriptor(this.baseProvider.getImage(element), SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/replaced_2way.gif"), new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V);
+								OverlayedImageDescriptor imageDescriptor = new OverlayedImageDescriptor(this.baseProvider.getImage(element), SVNTeamUIPlugin.instance().getImageDescriptor("icons/overlays/replaced_2way.gif"), new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V); //$NON-NLS-1$
 								this.images.put(element,image = imageDescriptor.createImage());
 							}
 							return image;

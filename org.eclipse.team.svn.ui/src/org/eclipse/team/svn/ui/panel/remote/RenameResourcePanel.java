@@ -35,7 +35,7 @@ public class RenameResourcePanel extends AbstractGetResourceNamePanel {
     }
     
 	public String getHelpId() {
-    	return "org.eclipse.team.svn.help.renameDialogContext";
+    	return "org.eclipse.team.svn.help.renameDialogContext"; //$NON-NLS-1$
 	}
     
 }

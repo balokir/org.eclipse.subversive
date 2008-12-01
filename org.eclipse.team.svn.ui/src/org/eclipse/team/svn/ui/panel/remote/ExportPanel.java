@@ -128,7 +128,7 @@ public class ExportPanel extends AbstractDialogPanel {
 	}
 	
 	public String getHelpId() {
-    	return "org.eclipse.team.svn.help.remote_exportDialogContext";
+    	return "org.eclipse.team.svn.help.remote_exportDialogContext"; //$NON-NLS-1$
 	}
 	
 	public String getLocation() {

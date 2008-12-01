@@ -96,7 +96,7 @@ public class WorkingSetDecorator extends LabelProvider implements ILightweightLa
 						if (this.changedFont == null) {
 							this.loadConfiguration();
 						}
-						decoration.addPrefix(SVNTeamPreferences.getDecorationString(store, SVNTeamPreferences.DECORATION_FLAG_OUTGOING_NAME) + " ");
+						decoration.addPrefix(SVNTeamPreferences.getDecorationString(store, SVNTeamPreferences.DECORATION_FLAG_OUTGOING_NAME) + " "); //$NON-NLS-1$
 						if (this.useFonts) {
 							decoration.setBackgroundColor(this.changedBackgroundColor);
 							decoration.setForegroundColor(this.changedForegroundColor);

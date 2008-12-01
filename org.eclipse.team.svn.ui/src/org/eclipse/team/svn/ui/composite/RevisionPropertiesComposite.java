@@ -113,11 +113,11 @@ public class RevisionPropertiesComposite extends Composite {
 	
 	protected void rereshTableData() {
 		if (this.isPending) {
-			this.propertyViewer.setInput(new String [] {""});
+			this.propertyViewer.setInput(new String [] {""}); //$NON-NLS-1$
 			return;
 		}
 		this.propertyViewer.setInput(RevisionPropertiesComposite.this.properties);
-		this.propertyText.setText("");
+		this.propertyText.setText(""); //$NON-NLS-1$
 	}
 	
 	protected void createControls(Composite parent) {
@@ -219,7 +219,7 @@ public class RevisionPropertiesComposite extends Composite {
 					if (columnIndex == RevisionPropertiesComposite.COLUMN_NAME) {
 						return SVNUIMessages.getString(RepositoryPending.PENDING);
 					}
-					return "";
+					return ""; //$NON-NLS-1$
 				}
 				SVNProperty data = (SVNProperty) element;
 				if (columnIndex == 0) {

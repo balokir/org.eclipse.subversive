@@ -99,7 +99,7 @@ public class RepositoryLocation extends RepositoryFictiveNode implements IParent
 	}
 	
 	public ImageDescriptor getImageDescriptor(Object object) {
-		return SVNTeamUIPlugin.instance().getImageDescriptor("icons/objects/repository.gif");
+		return SVNTeamUIPlugin.instance().getImageDescriptor("icons/objects/repository.gif"); //$NON-NLS-1$
 	}
 
 	public boolean equals(Object obj) {

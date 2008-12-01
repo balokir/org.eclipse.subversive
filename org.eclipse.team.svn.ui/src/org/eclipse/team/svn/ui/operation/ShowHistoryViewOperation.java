@@ -37,28 +37,28 @@ public class ShowHistoryViewOperation extends AbstractActionOperation {
 	protected int mask;
 
 	public ShowHistoryViewOperation(IResource local, int mask, int options) {
-		super("Operation.ShowHistory");
+		super("Operation_ShowHistory"); //$NON-NLS-1$
 		this.mask = mask;
 		this.options = options;
 		this.local = local;
 	}
 
 	public ShowHistoryViewOperation(IRepositoryResource remote, int mask, int options) {
-		super("Operation.ShowHistory");
+		super("Operation_ShowHistory"); //$NON-NLS-1$
 		this.mask = mask;
 		this.options = options;
 		this.remote = remote;
 	}
 
 	public ShowHistoryViewOperation(IRepositoryResourceProvider provider, int mask, int options) {
-		super("Operation.ShowHistory");
+		super("Operation_ShowHistory"); //$NON-NLS-1$
 		this.mask = mask;
 		this.options = options;
 		this.provider = provider;
 	}
 
 	public ShowHistoryViewOperation(IResource compareWith, IRepositoryResource remote, int mask, int options) {
-		super("Operation.ShowHistory");
+		super("Operation_ShowHistory"); //$NON-NLS-1$
 		this.mask = mask | ISVNHistoryView.COMPARE_MODE;
 		this.options = options | ISVNHistoryView.COMPARE_MODE;
 		this.remote = remote;

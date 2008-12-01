@@ -47,8 +47,8 @@ import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
  * @author Alexander Gurov
  */
 public class ReportingComposite extends Composite {
-	public static final String MAIL_HISTORY = "mailHistory";
-	public static final String USER_NAME_HISTORY = "userNameHistory";
+	public static final String MAIL_HISTORY = "mailHistory"; //$NON-NLS-1$
+	public static final String USER_NAME_HISTORY = "userNameHistory"; //$NON-NLS-1$
 	
 	protected UserInputHistory mailHistory;
 	protected UserInputHistory userNameHistory;

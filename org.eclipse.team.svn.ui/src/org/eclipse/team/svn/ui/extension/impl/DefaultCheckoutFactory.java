@@ -51,7 +51,7 @@ public class DefaultCheckoutFactory implements ICheckoutFactory {
 	protected class EclipseProjectsFilter implements LocateProjectsOperation.ILocateFilter {
 		public boolean isProject(IRepositoryResource remote, IRepositoryResource[] children) {
 			for (int i = 0; i < children.length; i++) {
-				if (children[i] instanceof IRepositoryFile && children[i].getName().equals(".project")) {
+				if (children[i] instanceof IRepositoryFile && children[i].getName().equals(".project")) { //$NON-NLS-1$
 					return true;
 				}
 			}
@@ -91,7 +91,7 @@ public class DefaultCheckoutFactory implements ICheckoutFactory {
 					return SVNUIMessages.DefaultCheckoutFactory_EclipseProject;
 				}
 			}
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;

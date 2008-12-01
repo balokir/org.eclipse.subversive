@@ -118,7 +118,7 @@ public class RevisionComposite extends Composite {
 	public SVNRevisionRange []getSelectedRevisions() {
 		// check for unspecified
 		if (this.revisions[0].from.getKind() == SVNRevision.Kind.START) {
-			UIMonitorUtility.doTaskNowDefault(new AbstractActionOperation("Operation.DetectStartRevision") {
+			UIMonitorUtility.doTaskNowDefault(new AbstractActionOperation("Operation_DetectStartRevision") { //$NON-NLS-1$
 				protected void runImpl(IProgressMonitor monitor) throws Exception {
 					ISVNConnector proxy = RevisionComposite.this.selectedResource.getRepositoryLocation().acquireSVNProxy();
 					try {
@@ -203,7 +203,7 @@ public class RevisionComposite extends Composite {
 				this.selectedRevision = this.defaultRevision;
 				this.lastSelectedRevision = -1;
 				
-				this.revisionField.setText("");
+				this.revisionField.setText(""); //$NON-NLS-1$
 				this.headRevisionRadioButton.setSelection(!this.checkStyled);
 				if (this.checkStyled) {
 					this.startFromCopyRadioButton.setSelection(true);
@@ -416,9 +416,9 @@ public class RevisionComposite extends Composite {
 					if (dialog.open() == 0) {
 						if (RevisionComposite.this.checkStyled) {
 							RevisionComposite.this.revisions = panel.getSelectedRevisions();
-							String text = "";
+							String text = ""; //$NON-NLS-1$
 							for (SVNRevisionRange range : RevisionComposite.this.revisions) {
-								text += text.length() == 0 ? range.toString() : (", " + range.toString());
+								text += text.length() == 0 ? range.toString() : (", " + range.toString()); //$NON-NLS-1$
 							}
 						    RevisionComposite.this.revisionField.setText(text);
 						}
@@ -489,7 +489,7 @@ public class RevisionComposite extends Composite {
 		String input = this.revisionField.getText();
 		try {
 			if (this.checkStyled) {
-				String []parts = input.split(",");
+				String []parts = input.split(","); //$NON-NLS-1$
 		    	ArrayList<SVNRevisionRange> revisions = new ArrayList<SVNRevisionRange>();
 				for (String part : parts) {
 					revisions.add(new SVNRevisionRange(part.trim()));

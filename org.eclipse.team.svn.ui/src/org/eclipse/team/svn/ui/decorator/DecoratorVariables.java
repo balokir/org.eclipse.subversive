@@ -39,7 +39,7 @@ public final class DecoratorVariables {
 	 */
 	private String amend(IVariable var, IVariableContentProvider provider) {
 		IVariable[] variables = parseFormatLine(provider.getValue(var));
-		String value = "";
+		String value = ""; //$NON-NLS-1$
 		for(int i = 0; i < variables.length; i++) {
 			String variableValue = provider.getValue(variables[i]);
 			if (!variables[i].equals(var)) {
@@ -50,7 +50,7 @@ public final class DecoratorVariables {
 					value += variableValue;
 				}
 				else {
-					value += "?{" + variables[i].getName() + "}?";
+					value += "?{" + variables[i].getName() + "}?"; //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		}
@@ -59,8 +59,8 @@ public final class DecoratorVariables {
 	
 	public void decorateText(IDecoration decoration, IVariable []format, IVariableContentProvider provider) {
 		int centerPoint = Arrays.asList(format).indexOf(this.variableSetProvider.getCenterVariable());		
-		String prefix = "";
-		String suffix = "";
+		String prefix = ""; //$NON-NLS-1$
+		String suffix = ""; //$NON-NLS-1$
 		for (int i = 0; i < format.length; i++) {
 			if (!format[i].equals(this.variableSetProvider.getCenterVariable())) {
 				if (centerPoint != -1 && i < centerPoint) {
@@ -84,13 +84,13 @@ public final class DecoratorVariables {
 	}
 	
 	public static String prepareFormatLine(IVariable []format) {
-		String retVal = "";
+		String retVal = ""; //$NON-NLS-1$
 		for (int i = 0; i < format.length; i++) {
 			if (format[i] instanceof UserVariable) {
 				retVal += format[i].getName();
 			}
 			else {
-				retVal += "{" + format[i].getName() + "}";
+				retVal += "{" + format[i].getName() + "}"; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return retVal;

@@ -174,7 +174,7 @@ public class PropertyKeywordEditPanel extends AbstractDialogPanel {
 						return keyElement.getSample();
 					}
 					default: {
-						return "";
+						return ""; //$NON-NLS-1$
 					}
 				}
 			}
@@ -218,11 +218,11 @@ public class PropertyKeywordEditPanel extends AbstractDialogPanel {
 			maskComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			this.useMaskCheckbox = new Button(maskComposite, SWT.CHECK);
 			this.useMaskCheckbox.setText(SVNUIMessages.PropertyKeywordEditPanel_UseMask);
-			this.maskHistory = new UserInputHistory("keywordsEditPanel");
+			this.maskHistory = new UserInputHistory("keywordsEditPanel"); //$NON-NLS-1$
 			this.maskText = new Combo(maskComposite, SWT.BORDER);
 			this.maskText.setItems(this.maskHistory.getHistory());
 			if (this.maskText.getItemCount() == 0) {
-				this.maskText.setText("*");
+				this.maskText.setText("*"); //$NON-NLS-1$
 			}
 			else {
 				this.maskText.select(0);
@@ -278,7 +278,7 @@ public class PropertyKeywordEditPanel extends AbstractDialogPanel {
 	}
 	
 	public String getHelpId() {
-    	return "org.eclipse.team.svn.help.setKeysDialogContext";
+    	return "org.eclipse.team.svn.help.setKeysDialogContext"; //$NON-NLS-1$
     }
 	
 	public void performKeywordChanges() {
@@ -319,7 +319,7 @@ public class PropertyKeywordEditPanel extends AbstractDialogPanel {
 			}
 		};
 		   
-		CompositeOperation composite = new CompositeOperation("Operation.SetKeywords");
+		CompositeOperation composite = new CompositeOperation("Operation_SetKeywords"); //$NON-NLS-1$
 		composite.add(new SetMultiPropertiesOperation(resourceProvider, propertyProvider, filter, this.recursionEnabled && this.setRecursively ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE));
 		composite.add(new RefreshResourcesOperation(resourceProvider));
 		UIMonitorUtility.doTaskScheduledActive(composite);
@@ -437,7 +437,7 @@ public class PropertyKeywordEditPanel extends AbstractDialogPanel {
 	   
 	   protected void saveChangesImpl() {
 		   this.useMask = this.useMaskCheckbox == null ? false : this.useMaskCheckbox.getSelection();
-		   this.mask = this.maskText == null ? "*" : this.maskText.getText().trim();
+		   this.mask = this.maskText == null ? "*" : this.maskText.getText().trim(); //$NON-NLS-1$
 		   this.setRecursively = this.setRecursivelyCheckbox == null ? false : this.setRecursivelyCheckbox.getSelection();
 		   if (this.useMask) {
 			   this.maskHistory.addLine(this.maskText.getText());

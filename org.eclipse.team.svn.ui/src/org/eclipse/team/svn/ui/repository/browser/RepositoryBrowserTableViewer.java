@@ -45,12 +45,12 @@ import org.eclipse.team.svn.ui.utility.ColumnedViewerComparator;
  * @author Sergiy Logvin
  */
 public class RepositoryBrowserTableViewer extends TableViewer {
-	public static final String FMT_REPOSITORY_RESOURCE = "";
-	public static final String FMT_REPOSITORY_FILE = "{" + ToolTipVariableSetProvider.NAME_OF_LOCK_OWNER + "}" +
-													 "{" + ToolTipVariableSetProvider.NAME_OF_LOCK_CREATION_DATE + "}" +
-													 "{" + ToolTipVariableSetProvider.NAME_OF_LOCK_EXPIRATION_DATE + "}" +
-													 "{" + ToolTipVariableSetProvider.NAME_OF_LOCK_COMMENT + "}";
-	public static final String FMT_REPOSITORY_FOLDER =  "";
+	public static final String FMT_REPOSITORY_RESOURCE = ""; //$NON-NLS-1$
+	public static final String FMT_REPOSITORY_FILE = "{" + ToolTipVariableSetProvider.NAME_OF_LOCK_OWNER + "}" + //$NON-NLS-1$ //$NON-NLS-2$
+													 "{" + ToolTipVariableSetProvider.NAME_OF_LOCK_CREATION_DATE + "}" + //$NON-NLS-1$ //$NON-NLS-2$
+													 "{" + ToolTipVariableSetProvider.NAME_OF_LOCK_EXPIRATION_DATE + "}" + //$NON-NLS-1$ //$NON-NLS-2$
+													 "{" + ToolTipVariableSetProvider.NAME_OF_LOCK_COMMENT + "}"; //$NON-NLS-1$ //$NON-NLS-2$
+	public static final String FMT_REPOSITORY_FOLDER =  ""; //$NON-NLS-1$
 	public static final String FMT_REPOSITORY_BRANCHES = RepositoryBrowserTableViewer.FMT_REPOSITORY_FOLDER;
 	public static final String FMT_REPOSITORY_ROOT = RepositoryBrowserTableViewer.FMT_REPOSITORY_FOLDER;
 	public static final String FMT_REPOSITORY_TAGS = RepositoryBrowserTableViewer.FMT_REPOSITORY_FOLDER;
@@ -102,7 +102,7 @@ public class RepositoryBrowserTableViewer extends TableViewer {
 		this.getTable().setLayout(new TableLayout());
 		this.getTable().addMouseTrackListener(new MouseTrackAdapter() {
 			public void mouseHover(MouseEvent e) {
-				String tooltipText = "";
+				String tooltipText = ""; //$NON-NLS-1$
 				TableItem item = RepositoryBrowserTableViewer.this.getTable().getItem(new Point(e.x, e.y));
 				if (item != null) {
 					Object data = item.getData();
@@ -114,7 +114,7 @@ public class RepositoryBrowserTableViewer extends TableViewer {
 			}			
 
 			public void mouseExit(MouseEvent e) {
-				RepositoryBrowserTableViewer.this.getTable().setToolTipText("");
+				RepositoryBrowserTableViewer.this.getTable().setToolTipText(""); //$NON-NLS-1$
 			}
 		});	
 

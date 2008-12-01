@@ -250,7 +250,7 @@ public class HistoryActionManager {
 				public void menuAboutToShow(IMenuManager manager) {
 					manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 					
-					HistoryAction refreshAction = new HistoryAction("HistoryView.Refresh", "icons/common/refresh.gif") {
+					HistoryAction refreshAction = new HistoryAction("HistoryView_Refresh", "icons/common/refresh.gif") { //$NON-NLS-1$ //$NON-NLS-2$
 						public void run() {
 							HistoryActionManager.this.view.refresh(ISVNHistoryView.REFRESH_ALL);
 						}
@@ -328,7 +328,7 @@ public class HistoryActionManager {
 			if (!containsMergeHistory) {
 				if (HistoryActionManager.this.view.getRepositoryResource() instanceof IRepositoryFile) {
 					String name = HistoryActionManager.this.view.getRepositoryResource().getName();
-					manager.add(tAction = new HistoryAction("HistoryView.Open") {
+					manager.add(tAction = new HistoryAction("HistoryView_Open") { //$NON-NLS-1$
 						public void run() {
 							HistoryActionManager.this.handleDoubleClick((TreeViewer)viewer, selection[0], false);
 						}
@@ -338,10 +338,10 @@ public class HistoryActionManager {
 					
 					//FIXME: "Open with" submenu shouldn't be hardcoded after reworking of
 					//       the HistoryView. Should be made like the RepositoriesView menu.
-					MenuManager sub = new MenuManager(SVNUIMessages.HistoryView_OpenWith, "historyOpenWithMenu");
+					MenuManager sub = new MenuManager(SVNUIMessages.HistoryView_OpenWith, "historyOpenWithMenu"); //$NON-NLS-1$
 					sub.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 					
-					sub.add(new Separator("nonDefaultTextEditors"));
+					sub.add(new Separator("nonDefaultTextEditors")); //$NON-NLS-1$
 					IEditorDescriptor[] editors = SVNTeamUIPlugin.instance().getWorkbench().getEditorRegistry().getEditors(name);
 					for (int i = 0; i < editors.length; i++) {
 	    				if (!editors[i].getId().equals(EditorsUI.DEFAULT_TEXT_EDITOR_ID)) {
@@ -349,7 +349,7 @@ public class HistoryActionManager {
 	    				}
 	    			}
 						
-					sub.add(new Separator("variousEditors"));
+					sub.add(new Separator("variousEditors")); //$NON-NLS-1$
 					HistoryActionManager.this.addMenuItem(viewer, sub, SVNUIMessages.HistoryView_TextEditor, new OpenFileWithAction());
 					HistoryActionManager.this.addMenuItem(viewer, sub, SVNUIMessages.HistoryView_SystemEditor, new OpenFileWithExternalAction());
 					HistoryActionManager.this.addMenuItem(viewer, sub, SVNUIMessages.HistoryView_InplaceEditor, new OpenFileWithInplaceAction());
@@ -364,7 +364,7 @@ public class HistoryActionManager {
 	    			CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() == ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x ||
 	    			HistoryActionManager.this.view.getRepositoryResource() instanceof IRepositoryFile;
 	    		
-				manager.add(tAction = new HistoryAction("HistoryView.CompareEachOther") {
+				manager.add(tAction = new HistoryAction("HistoryView_CompareEachOther") { //$NON-NLS-1$
 					public void run() {
 						SVNLogEntry msg0 = (SVNLogEntry)selection[0].getEntity();
 						SVNLogEntry msg1 = (SVNLogEntry)selection[1].getEntity();
@@ -382,14 +382,14 @@ public class HistoryActionManager {
 				});
 				tAction.setEnabled(selection.length == 2 && isCompareAllowed);
 				
-				manager.add(tAction = new HistoryAction("HistoryView.CompareCurrentWith", new String[] {revision}) {
+				manager.add(tAction = new HistoryAction("HistoryView_CompareCurrentWith", new String[] {revision}) { //$NON-NLS-1$
 					public void run() {
 						HistoryActionManager.this.compareWithCurrent(current);
 					}
 				});
 				tAction.setEnabled(selection.length == 1 && isCompareAllowed);
 				
-				manager.add(tAction = new HistoryAction("HistoryView.CompareWithPrevious") {
+				manager.add(tAction = new HistoryAction("HistoryView_CompareWithPrevious") { //$NON-NLS-1$
 					public void run() {
 						HistoryActionManager.this.compareWithPreviousRevision(null, new IRepositoryResourceProvider() {
 							public IRepositoryResource[] getRepositoryResources() {
@@ -403,7 +403,7 @@ public class HistoryActionManager {
 				
 				manager.add(new Separator());
 				
-				manager.add(tAction = new HistoryAction("ShowPropertiesAction.label", "icons/views/propertiesedit.gif") {
+				manager.add(tAction = new HistoryAction("ShowPropertiesAction_label", "icons/views/propertiesedit.gif") { //$NON-NLS-1$ //$NON-NLS-2$
 					public void run() {
 						SVNLogEntry current = (SVNLogEntry)selection[0].getEntity();
 						IRepositoryResource resource = HistoryActionManager.this.getResourceForSelectedRevision(current);
@@ -414,7 +414,7 @@ public class HistoryActionManager {
 				});
 				tAction.setEnabled(selection.length == 1);
 				
-				manager.add(tAction = new HistoryAction("SynchronizeActionGroup.CompareProperties") {
+				manager.add(tAction = new HistoryAction("SynchronizeActionGroup_CompareProperties") { //$NON-NLS-1$
 					public void run() {
 						SVNLogEntry first = (SVNLogEntry)selection[0].getEntity();
 						SVNLogEntry second = (SVNLogEntry)selection[1].getEntity();
@@ -438,7 +438,7 @@ public class HistoryActionManager {
 				tAction.setEnabled(selection.length == 2);
 			}
 			
-			manager.add(tAction = new HistoryAction("ShowRevisionProperties.label") {
+			manager.add(tAction = new HistoryAction("ShowRevisionProperties_label") { //$NON-NLS-1$
 				public void run() {
 					SVNRevision selectedRevision = SVNRevision.fromNumber(HistoryActionManager.this.getSelectedRevision());
 					IRepositoryLocation location = HistoryActionManager.this.getResourceForHeadRevision().getRepositoryLocation();
@@ -450,7 +450,7 @@ public class HistoryActionManager {
 			
 			if (!containsMergeHistory) {
 				if (HistoryActionManager.this.view.getRepositoryResource() instanceof IRepositoryFile) {
-					manager.add(tAction = new HistoryAction("ShowAnnotationCommand.label") {
+					manager.add(tAction = new HistoryAction("ShowAnnotationCommand_label") { //$NON-NLS-1$
 						public void run() {
 					        IRepositoryResource remote = HistoryActionManager.this.getResourceForSelectedRevision((SVNLogEntry)selection[0].getEntity());
 							UIMonitorUtility.doTaskScheduledDefault(new RemoteShowAnnotationOperation(remote));
@@ -461,20 +461,20 @@ public class HistoryActionManager {
 				
 				manager.add(new Separator());
 				
-				manager.add(tAction = new HistoryAction("ExportCommand.label", "icons/common/export.gif") {
+				manager.add(tAction = new HistoryAction("ExportCommand_label", "icons/common/export.gif") { //$NON-NLS-1$ //$NON-NLS-2$
 					public void run() {
 						HistoryActionManager.this.doExport(selection[0]);
 					}
 				});
 				tAction.setEnabled(selection.length == 1);
-				manager.add(tAction = new HistoryAction("CreatePatchCommand.label") {
+				manager.add(tAction = new HistoryAction("CreatePatchCommand_label") { //$NON-NLS-1$
 					public void run() {
 						HistoryActionManager.this.createPatch(selection);
 					}
 				});
 				tAction.setEnabled(selection.length == 1 && existsInPrevious || selection.length == 2);
 				if (HistoryActionManager.this.view.getResource() != null) {
-					manager.add(tAction = new HistoryAction("HistoryView.GetContents") {
+					manager.add(tAction = new HistoryAction("HistoryView_GetContents") { //$NON-NLS-1$
 						public void run() {
 							if (HistoryActionManager.this.confirmReplacement()) {
 								HistoryActionManager.this.getRevisionContents((SVNLogEntry)selection[0].getEntity());
@@ -484,7 +484,7 @@ public class HistoryActionManager {
 					tAction.setEnabled(selection.length == 1);
 				}
 				if (HistoryActionManager.this.view.getResource() != null)  {
-					manager.add(tAction = new HistoryAction("HistoryView.UpdateTo") {
+					manager.add(tAction = new HistoryAction("HistoryView_UpdateTo") { //$NON-NLS-1$
 						public void run() {
 							if (HistoryActionManager.this.confirmReplacement()) {
 								HistoryActionManager.this.updateTo((SVNLogEntry)selection[0].getEntity());
@@ -510,7 +510,7 @@ public class HistoryActionManager {
 					branchFrom = SVNUIMessages.format(SVNUIMessages.HistoryView_BranchFrom, new String[] {revision});
 					tagFrom = SVNUIMessages.format(SVNUIMessages.HistoryView_TagFrom, new String[] {revision});
 				}
-				manager.add(tAction = new HistoryAction(branchFrom, "icons/common/actions/branch.gif") {
+				manager.add(tAction = new HistoryAction(branchFrom, "icons/common/actions/branch.gif") { //$NON-NLS-1$
 					public void run() {
 						PreparedBranchTagOperation op = BranchTagAction.getBranchTagOperation(new IRepositoryResource[] {HistoryActionManager.this.getResourceForSelectedRevision((SVNLogEntry)selection[0].getEntity())}, UIMonitorUtility.getShell(), BranchTagAction.BRANCH_ACTION);
 						if (op != null) {
@@ -519,7 +519,7 @@ public class HistoryActionManager {
 					}
 				});
 				tAction.setEnabled(selection.length == 1);
-				manager.add(tAction = new HistoryAction(tagFrom, "icons/common/actions/tag.gif") {
+				manager.add(tAction = new HistoryAction(tagFrom, "icons/common/actions/tag.gif") { //$NON-NLS-1$
 					public void run() {
 						PreparedBranchTagOperation op = BranchTagAction.getBranchTagOperation(new IRepositoryResource[] {HistoryActionManager.this.getResourceForSelectedRevision((SVNLogEntry)selection[0].getEntity())}, UIMonitorUtility.getShell(), BranchTagAction.TAG_ACTION);
 						if (op != null) {
@@ -528,7 +528,7 @@ public class HistoryActionManager {
 					}
 				});
 				tAction.setEnabled(selection.length == 1);
-				manager.add(tAction = new HistoryAction("AddRevisionLinkAction.label") {
+				manager.add(tAction = new HistoryAction("AddRevisionLinkAction_label") { //$NON-NLS-1$
 					public void run() {
 						HistoryActionManager.this.addRevisionLinks(selection);
 					}
@@ -538,7 +538,7 @@ public class HistoryActionManager {
 			
 			manager.add(new Separator());
 			
-			manager.add(tAction = new HistoryAction("HistoryView.CopyHistory", "icons/common/copy.gif") {
+			manager.add(tAction = new HistoryAction("HistoryView_CopyHistory", "icons/common/copy.gif") { //$NON-NLS-1$ //$NON-NLS-2$
 				public void run() {
 					HistoryActionManager.this.handleCopy(selection);
 				}
@@ -550,12 +550,12 @@ public class HistoryActionManager {
 		protected void addFilterPart(final StructuredViewer viewer, IMenuManager manager) {
 			manager.add(new Separator());
 			Action tAction = null;
-		    manager.add(tAction = new HistoryAction("HistoryView.QuickFilter", "icons/views/history/filter.gif") {
+		    manager.add(tAction = new HistoryAction("HistoryView_QuickFilter", "icons/views/history/filter.gif") { //$NON-NLS-1$ //$NON-NLS-2$
 		        public void run() {
 		            HistoryActionManager.this.view.setFilter();
 		        }
 		    });
-		    manager.add(tAction = new HistoryAction("HistoryView.ClearFilter", "icons/views/history/clear_filter.gif") {
+		    manager.add(tAction = new HistoryAction("HistoryView_ClearFilter", "icons/views/history/clear_filter.gif") { //$NON-NLS-1$ //$NON-NLS-2$
 		        public void run() {
 		        	HistoryActionManager.this.view.clearFilter();
 		        }
@@ -565,7 +565,7 @@ public class HistoryActionManager {
 		
 		protected void addLocalPart(final StructuredViewer viewer, IMenuManager manager, final ILogNode []selection) {
 			Action tAction = null;
-			manager.add(tAction = new HistoryAction("HistoryView.Open") {
+			manager.add(tAction = new HistoryAction("HistoryView_Open") { //$NON-NLS-1$
 				public void run() {
 					HistoryActionManager.this.handleDoubleClick((TreeViewer)viewer, selection[0], false);
 				}
@@ -575,19 +575,19 @@ public class HistoryActionManager {
 			
 			manager.add(new Separator());
 			
-			manager.add(tAction = new HistoryAction("HistoryView.CompareEachOther") {
+			manager.add(tAction = new HistoryAction("HistoryView_CompareEachOther") { //$NON-NLS-1$
 				public void run() {
 					HistoryActionManager.this.runCompareForLocal(selection);
 				}
 			});
 			tAction.setEnabled(selection.length == 2);
-			manager.add(tAction = new HistoryAction("HistoryView.CompareCurrentWith", new String[] {SVNUIMessages.HistoryView_RevisionLocal}) {
+			manager.add(tAction = new HistoryAction("HistoryView_CompareCurrentWith", new String[] {SVNUIMessages.HistoryView_RevisionLocal}) { //$NON-NLS-1$
 				public void run() {
 					HistoryActionManager.this.runCompareForLocal(selection);
 				}
 			});
 			tAction.setEnabled(selection.length == 1);
-			manager.add(tAction = new HistoryAction("HistoryView.CompareWithPrevious") {
+			manager.add(tAction = new HistoryAction("HistoryView_CompareWithPrevious") { //$NON-NLS-1$
 				public void run() {
 					SVNLocalFileRevision [] localHistory = HistoryActionManager.this.view.getLocalHistory();
 					SVNLocalFileRevision currentSelected = (SVNLocalFileRevision)selection[0].getEntity();
@@ -606,13 +606,13 @@ public class HistoryActionManager {
 			
 			manager.add(new Separator());
 			
-			manager.add(tAction = new HistoryAction("ExportCommand.label", "icons/common/export.gif") {
+			manager.add(tAction = new HistoryAction("ExportCommand_label", "icons/common/export.gif") { //$NON-NLS-1$ //$NON-NLS-2$
 				public void run() {
 					HistoryActionManager.this.doExport(selection[0]);
 				}
 			});
 			tAction.setEnabled(selection.length == 1);
-			manager.add(tAction = new HistoryAction("HistoryView.GetContents") {
+			manager.add(tAction = new HistoryAction("HistoryView_GetContents") { //$NON-NLS-1$
 				public void run() {
 					try {
 						((IFile)HistoryActionManager.this.view.getResource()).setContents(((SVNLocalFileRevision)selection[0].getEntity()).getState(), true, true, new NullProgressMonitor());
@@ -628,7 +628,7 @@ public class HistoryActionManager {
 		protected void addLocalOrRemotePart(StructuredViewer viewer, IMenuManager manager, final ILogNode []selection, boolean containsMergeHistory) {
 			Action tAction = null;
 			if (!containsMergeHistory) {
-				manager.add(tAction = new HistoryAction("HistoryView.CompareEachOther") {
+				manager.add(tAction = new HistoryAction("HistoryView_CompareEachOther") { //$NON-NLS-1$
 					public void run() {
 						ArrayList<Object> selected = new ArrayList<Object>();
 						for (ILogNode item : selection) {
@@ -650,7 +650,7 @@ public class HistoryActionManager {
 		
 		protected void addCommonPart(StructuredViewer viewer, IMenuManager manager, final ILogNode []selection, boolean containsMergeHistory) {
 			Action tAction = null;
-			manager.add(tAction = new HistoryAction("HistoryView.CopyHistory", "icons/common/copy.gif") {
+			manager.add(tAction = new HistoryAction("HistoryView_CopyHistory", "icons/common/copy.gif") { //$NON-NLS-1$ //$NON-NLS-2$
 				public void run() {
 					HistoryActionManager.this.handleCopy(selection);
 				}
@@ -715,10 +715,10 @@ public class HistoryActionManager {
 		    FileDialog dlg = new FileDialog(UIMonitorUtility.getShell(), SWT.PRIMARY_MODAL | SWT.SAVE);
 			dlg.setText(SVNUIMessages.ExportPanel_Title);
 			dlg.setFileName(revision.getName());
-			dlg.setFilterExtensions(new String[] {"*.*"});
+			dlg.setFilterExtensions(new String[] {"*.*"}); //$NON-NLS-1$
 			final String file = dlg.open();
 			if (file != null) {
-				IActionOperation op = new AbstractActionOperation("Operation.ExportLocalHistory") {
+				IActionOperation op = new AbstractActionOperation("Operation_ExportLocalHistory") { //$NON-NLS-1$
 					protected void runImpl(IProgressMonitor monitor) throws Exception {
 						FileOutputStream output = new FileOutputStream(file);
 						InputStream input = null;
@@ -766,7 +766,7 @@ public class HistoryActionManager {
 	protected void addRevisionLinks(ILogNode []tSelection) {
 		IRepositoryLocation location = this.view.getRepositoryResource().getRepositoryLocation();
 		
-		CompositeOperation op = new CompositeOperation("Operation.HAddSelectedRevision");
+		CompositeOperation op = new CompositeOperation("Operation_HAddSelectedRevision"); //$NON-NLS-1$
 		for (ILogNode node : tSelection) {
 			SVNLogEntry item = (SVNLogEntry)node.getEntity();
 			IRepositoryResource resource = SVNUtility.copyOf(this.view.getRepositoryResource());
@@ -782,7 +782,7 @@ public class HistoryActionManager {
 	
 	protected void updateTo(final SVNLogEntry item) {	    
 		IResource []resources = new IResource[] {this.view.getResource()};
-	    CompositeOperation op = new CompositeOperation("Operation.HUpdateTo");
+	    CompositeOperation op = new CompositeOperation("Operation_HUpdateTo"); //$NON-NLS-1$
 		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
 		op.add(saveOp);
 	    op.add(new UpdateOperation(resources, SVNRevision.fromNumber(item.revision), true));
@@ -828,7 +828,7 @@ public class HistoryActionManager {
 	}
 	
 	public String getSelectedMessagesAsString(ILogNode []selection) {
-		String [] historyText = {""};
+		String [] historyText = {""}; //$NON-NLS-1$
 		HashSet<ILogNode> processed = new HashSet<ILogNode>();
 		long revision = this.view.getCurrentRevision();
 		for (ILogNode node : selection) {
@@ -843,15 +843,15 @@ public class HistoryActionManager {
 			return;
 		}
 		processed.add(node);
-		String toAdd = "";
+		String toAdd = ""; //$NON-NLS-1$
 		toAdd += node.getLabel(0, ILogNode.LABEL_FLAT, revision);
 		for (int i = 1; i < ILogNode.NUM_OF_COLUMNS; i++) {
-			toAdd += "\t" + node.getLabel(i, ILogNode.LABEL_FLAT, revision);
+			toAdd += "\t" + node.getLabel(i, ILogNode.LABEL_FLAT, revision); //$NON-NLS-1$
 		}
 		toAdd = toAdd.trim();
-		if (!toAdd.equals(""))
+		if (!toAdd.equals("")) //$NON-NLS-1$
 		{
-			retStr[0] += toAdd + System.getProperty("line.separator");
+			retStr[0] += toAdd + System.getProperty("line.separator"); //$NON-NLS-1$
 		}
 		if (node.hasChildren()) {
 			ILogNode []children = node.getChildren();
@@ -863,14 +863,14 @@ public class HistoryActionManager {
 	
 	protected String toString(HashSet<ILogNode> processed, ILogNode node, long revision) {
 		if (processed.contains(node)) {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 		processed.add(node);
 		String historyText = node.getLabel(0, ILogNode.LABEL_FLAT, revision);
 		for (int i = 1; i < ILogNode.NUM_OF_COLUMNS; i++) {
-			historyText += "\t" + node.getLabel(i, ILogNode.LABEL_FLAT, revision);
+			historyText += "\t" + node.getLabel(i, ILogNode.LABEL_FLAT, revision); //$NON-NLS-1$
 		}
-		return historyText + System.getProperty("line.separator");
+		return historyText + System.getProperty("line.separator"); //$NON-NLS-1$
 	}
 	
 	protected void handleDoubleClick(TreeViewer viewer, ILogNode item, boolean doubleClick) {
@@ -980,11 +980,11 @@ public class HistoryActionManager {
 		CompareRevisionAction compare = null;
 		try {
 			compare = CompareRevisionAction.class.getConstructor((Class [])null).newInstance((Object [])null);
-			compare.getClass().getMethod("setPage", new Class[] {HistoryPage.class}).invoke(compare, this.view.getHistoryPage());
+			compare.getClass().getMethod("setPage", new Class[] {HistoryPage.class}).invoke(compare, this.view.getHistoryPage()); //$NON-NLS-1$
 		}
 		catch (Exception ex) {
 			try {
-				compare = CompareRevisionAction.class.getConstructor(new Class[] {String.class, HistoryPage.class}).newInstance(new Object[] {"", this.view.getHistoryPage()});
+				compare = CompareRevisionAction.class.getConstructor(new Class[] {String.class, HistoryPage.class}).newInstance(new Object[] {"", this.view.getHistoryPage()}); //$NON-NLS-1$
 			}
 			catch (RuntimeException ex1) {
 				throw ex1;
@@ -1040,7 +1040,7 @@ public class HistoryActionManager {
 							if ((HistoryActionManager.this.view.getOptions() & ISVNHistoryView.COMPARE_MODE) != 0) {
 								boolean isPreviousExists = data.action == SVNLogPath.ChangeType.MODIFIED
 									|| data.action == SVNLogPath.ChangeType.REPLACED
-									|| data.copiedFromPath != null && !data.copiedFromPath.equals("");
+									|| data.copiedFromPath != null && !data.copiedFromPath.equals(""); //$NON-NLS-1$
 								if (isPreviousExists) {
 									FromChangedPathDataProvider provider = new FromChangedPathDataProvider(data, false);
 									HistoryActionManager.this.compareWithPreviousRevision(provider, provider);
@@ -1079,7 +1079,7 @@ public class HistoryActionManager {
 					Action tAction = null;
 					
 					IEditorRegistry editorRegistry = SVNTeamUIPlugin.instance().getWorkbench().getEditorRegistry();
-					manager.add(tAction = new HistoryAction("HistoryView.Open") {
+					manager.add(tAction = new HistoryAction("HistoryView_Open") { //$NON-NLS-1$
 						public void run() {
 							HistoryActionManager.this.openRemoteResource(firstData, OpenRemoteFileOperation.OPEN_DEFAULT, null);
 						}
@@ -1090,10 +1090,10 @@ public class HistoryActionManager {
 					
 					//FIXME: "Open with" submenu shouldn't be hardcoded after reworking of
 					//       the HistoryView. Should be made like the RepositoriesView menu.
-					MenuManager sub = new MenuManager(SVNUIMessages.HistoryView_OpenWith, "historyOpenWithMenu");
+					MenuManager sub = new MenuManager(SVNUIMessages.HistoryView_OpenWith, "historyOpenWithMenu"); //$NON-NLS-1$
 					sub.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 					
-					sub.add(new Separator("nonDefaultTextEditors"));
+					sub.add(new Separator("nonDefaultTextEditors")); //$NON-NLS-1$
 					IEditorDescriptor[] editors = editorRegistry.getEditors(name);
 					for (int i = 0; i < editors.length; i++) {
 						final String id = editors[i].getId();
@@ -1108,9 +1108,9 @@ public class HistoryActionManager {
 	    				}
 	    			}
 						
-					sub.add(new Separator("variousEditors"));
+					sub.add(new Separator("variousEditors")); //$NON-NLS-1$
 					IEditorDescriptor descriptor = null;
-					sub.add(tAction = new HistoryAction("HistoryView.TextEditor") {
+					sub.add(tAction = new HistoryAction("HistoryView_TextEditor") { //$NON-NLS-1$
 						public void run() {
 							HistoryActionManager.this.openRemoteResource(firstData, OpenRemoteFileOperation.OPEN_SPECIFIED, EditorsUI.DEFAULT_TEXT_EDITOR_ID);
 						}
@@ -1118,7 +1118,7 @@ public class HistoryActionManager {
 					descriptor = editorRegistry.findEditor(EditorsUI.DEFAULT_TEXT_EDITOR_ID);
 					tAction.setImageDescriptor(descriptor.getImageDescriptor());
 					tAction.setEnabled(affectedTableSelection.size() == 1);
-					sub.add(tAction = new HistoryAction("HistoryView.SystemEditor") {
+					sub.add(tAction = new HistoryAction("HistoryView_SystemEditor") { //$NON-NLS-1$
 						public void run() {
 							HistoryActionManager.this.openRemoteResource(firstData, OpenRemoteFileOperation.OPEN_EXTERNAL, null);
 						}
@@ -1130,7 +1130,7 @@ public class HistoryActionManager {
 					else {
 						tAction.setEnabled(false);
 					}
-					sub.add(tAction = new HistoryAction("HistoryView.InplaceEditor") {
+					sub.add(tAction = new HistoryAction("HistoryView_InplaceEditor") { //$NON-NLS-1$
 						public void run() {
 							HistoryActionManager.this.openRemoteResource(firstData, OpenRemoteFileOperation.OPEN_INPLACE, null);
 						}
@@ -1142,7 +1142,7 @@ public class HistoryActionManager {
 					else {
 						tAction.setEnabled(false);
 					}
-					sub.add(tAction = new HistoryAction("HistoryView.DefaultEditor") {
+					sub.add(tAction = new HistoryAction("HistoryView_DefaultEditor") { //$NON-NLS-1$
 						public void run() {
 							HistoryActionManager.this.openRemoteResource(firstData, OpenRemoteFileOperation.OPEN_DEFAULT, null);
 						}
@@ -1158,7 +1158,7 @@ public class HistoryActionManager {
 					if (affectedTableSelection.size() > 0) {
 						isPreviousExists = HistoryActionManager.this.checkSelectionForExistanceInPrev(affectedTableSelection);
 					}
-					manager.add(tAction = new HistoryAction("HistoryView.CompareWithPrevious") {
+					manager.add(tAction = new HistoryAction("HistoryView_CompareWithPrevious") { //$NON-NLS-1$
 						public void run() {
 							FromChangedPathDataProvider provider = new FromChangedPathDataProvider(firstData, false);
 							HistoryActionManager.this.compareWithPreviousRevision(provider, provider);
@@ -1168,21 +1168,21 @@ public class HistoryActionManager {
 					
 					manager.add(new Separator());
 					
-					manager.add(tAction = new HistoryAction("ShowPropertiesAction.label", "icons/views/propertiesedit.gif") {
+					manager.add(tAction = new HistoryAction("ShowPropertiesAction_label", "icons/views/propertiesedit.gif") { //$NON-NLS-1$ //$NON-NLS-2$
 						public void run() {
 							FromChangedPathDataProvider provider = new FromChangedPathDataProvider(firstData, false);
 							HistoryActionManager.this.showProperties(provider, provider);
 						}
 					});
 					tAction.setEnabled(affectedTableSelection.size() == 1);
-					manager.add(tAction = new HistoryAction("ShowResourceHistoryCommand.label", "icons/views/history.gif") {
+					manager.add(tAction = new HistoryAction("ShowResourceHistoryCommand_label", "icons/views/history.gif") { //$NON-NLS-1$ //$NON-NLS-2$
 						public void run() {
 							FromChangedPathDataProvider provider = new FromChangedPathDataProvider(firstData, false);
 							HistoryActionManager.this.showHistory(provider, provider);
 						}
 					});
 					tAction.setEnabled(affectedTableSelection.size() == 1);
-					manager.add(tAction = new HistoryAction("ShowAnnotationCommand.label") {
+					manager.add(tAction = new HistoryAction("ShowAnnotationCommand_label") { //$NON-NLS-1$
 						public void run() {
 							HistoryActionManager.this.showAnnotation(firstData);
 						}
@@ -1191,14 +1191,14 @@ public class HistoryActionManager {
 					
 					manager.add(new Separator());
 					
-					manager.add(tAction = new HistoryAction("ExportCommand.label", "icons/common/export.gif") {
+					manager.add(tAction = new HistoryAction("ExportCommand_label", "icons/common/export.gif") { //$NON-NLS-1$ //$NON-NLS-2$
 						public void run() {
 							FromChangedPathDataProvider provider = new FromChangedPathDataProvider(firstData, false);
 							HistoryActionManager.this.doExport(viewer.getControl().getShell(), provider, provider);
 						}
 					});
 					tAction.setEnabled(affectedTableSelection.size() > 0 && firstData.action != SVNLogPath.ChangeType.DELETED);
-					manager.add(tAction = new HistoryAction("CreatePatchCommand.label") {
+					manager.add(tAction = new HistoryAction("CreatePatchCommand_label") { //$NON-NLS-1$
 						public void run() {
 							FromChangedPathDataProvider provider = new FromChangedPathDataProvider(firstData, false);
 							HistoryActionManager.this.createPatchToPrevious(viewer.getControl().getShell(), provider, provider);
@@ -1207,10 +1207,10 @@ public class HistoryActionManager {
 					tAction.setEnabled(isPreviousExists);
 					
 					if (HistoryActionManager.this.view.getResource() != null) {
-						manager.add(tAction = new HistoryAction("HistoryView.GetContents") {
+						manager.add(tAction = new HistoryAction("HistoryView_GetContents") { //$NON-NLS-1$
 							public void run() {
 								FromChangedPathDataProvider provider = new FromChangedPathDataProvider(firstData, false);
-								HistoryActionManager.this.getContentAffected(provider, provider, "/" + firstData.getFullResourcePath());
+								HistoryActionManager.this.getContentAffected(provider, provider, "/" + firstData.getFullResourcePath()); //$NON-NLS-1$
 							}
 						});
 						tAction.setEnabled(affectedTableSelection.size() > 0 && firstData.action != SVNLogPath.ChangeType.DELETED);
@@ -1219,21 +1219,21 @@ public class HistoryActionManager {
 					
 					String branchFrom = SVNUIMessages.format(SVNUIMessages.HistoryView_BranchFrom, new String [] {String.valueOf(HistoryActionManager.this.selectedRevision)});
 					String tagFrom = SVNUIMessages.format(SVNUIMessages.HistoryView_TagFrom, new String [] {String.valueOf(HistoryActionManager.this.selectedRevision)});
-					manager.add(tAction = new HistoryAction(branchFrom, "icons/common/actions/branch.gif") {
+					manager.add(tAction = new HistoryAction(branchFrom, "icons/common/actions/branch.gif") { //$NON-NLS-1$
 						public void run() {
 							FromChangedPathDataProvider provider = new FromChangedPathDataProvider(firstData, false);
 							HistoryActionManager.this.createBranchTag(viewer.getControl().getShell(), provider, provider, BranchTagAction.BRANCH_ACTION);
 						}
 					});
 					tAction.setEnabled(affectedTableSelection.size() > 0 && firstData.action != SVNLogPath.ChangeType.DELETED);
-					manager.add(tAction = new HistoryAction(tagFrom, "icons/common/actions/tag.gif") {
+					manager.add(tAction = new HistoryAction(tagFrom, "icons/common/actions/tag.gif") { //$NON-NLS-1$
 						public void run() {
 							FromChangedPathDataProvider provider = new FromChangedPathDataProvider(firstData, false);
 							HistoryActionManager.this.createBranchTag(viewer.getControl().getShell(), provider, provider, BranchTagAction.TAG_ACTION);
 						}
 					});
 					tAction.setEnabled(affectedTableSelection.size() > 0 && firstData.action != SVNLogPath.ChangeType.DELETED);
-					manager.add(tAction = new HistoryAction("AddRevisionLinkAction.label") {
+					manager.add(tAction = new HistoryAction("AddRevisionLinkAction_label") { //$NON-NLS-1$
 						public void run() {
 							FromChangedPathDataProvider provider = new FromChangedPathDataProvider(firstData, false);
 							HistoryActionManager.this.addRevisionLink(provider, provider);
@@ -1269,7 +1269,7 @@ public class HistoryActionManager {
 	        		final AffectedPathsNode node = (AffectedPathsNode)affectedTableSelection.getFirstElement();
 	        		
 	        		Action tAction = null;
-	        		manager.add(tAction = new HistoryAction("HistoryView.CompareWithPrevious") {
+	        		manager.add(tAction = new HistoryAction("HistoryView_CompareWithPrevious") { //$NON-NLS-1$
 						public void run() {
 							FromAffectedPathsNodeProvider provider = new FromAffectedPathsNodeProvider(node);
 							HistoryActionManager.this.compareWithPreviousRevision(provider, provider);
@@ -1285,14 +1285,14 @@ public class HistoryActionManager {
 	        		
 	        		manager.add(new Separator());
 	        		
-	        		manager.add(tAction = new HistoryAction("ShowPropertiesAction.label", "icons/views/propertiesedit.gif") {
+	        		manager.add(tAction = new HistoryAction("ShowPropertiesAction_label", "icons/views/propertiesedit.gif") { //$NON-NLS-1$ //$NON-NLS-2$
 						public void run() {
 							FromAffectedPathsNodeProvider provider = new FromAffectedPathsNodeProvider(node);
 							HistoryActionManager.this.showProperties(provider, provider);
 						}
 	        		});
 	        		tAction.setEnabled(HistoryActionManager.this.selectedRevision != 0 && affectedTableSelection.size() == 1 /*&& (node.getStatus() == null || node.getStatus().charAt(0) == 'M')*/);
-	        		manager.add(tAction = new HistoryAction("ShowResourceHistoryCommand.label", "icons/views/history.gif") {
+	        		manager.add(tAction = new HistoryAction("ShowResourceHistoryCommand_label", "icons/views/history.gif") { //$NON-NLS-1$ //$NON-NLS-2$
 						public void run() {
 							FromAffectedPathsNodeProvider provider = new FromAffectedPathsNodeProvider(node);
 							HistoryActionManager.this.showHistory(provider, provider);
@@ -1302,14 +1302,14 @@ public class HistoryActionManager {
 	        		
 					manager.add(new Separator());
 					
-					manager.add(tAction = new HistoryAction("ExportCommand.label", "icons/common/export.gif") {
+					manager.add(tAction = new HistoryAction("ExportCommand_label", "icons/common/export.gif") { //$NON-NLS-1$ //$NON-NLS-2$
 						public void run() {
 							FromAffectedPathsNodeProvider provider = new FromAffectedPathsNodeProvider(node);
 							HistoryActionManager.this.doExport(viewer.getControl().getShell(), provider, provider);
 						}
 					});
 					tAction.setEnabled(affectedTableSelection.size() > 0 && node.getStatus() != SVNLogPath.ChangeType.DELETED);
-	        		manager.add(tAction = new HistoryAction("CreatePatchCommand.label") {
+	        		manager.add(tAction = new HistoryAction("CreatePatchCommand_label") { //$NON-NLS-1$
 						public void run() {					
 							FromAffectedPathsNodeProvider provider = new FromAffectedPathsNodeProvider(node);
 							HistoryActionManager.this.createPatchToPrevious(viewer.getControl().getShell(), provider, provider);
@@ -1318,7 +1318,7 @@ public class HistoryActionManager {
 	        		tAction.setEnabled(affectedTableSelection.size() == 1 && HistoryActionManager.this.selectedRevision != 0 && affectedTableSelection.size() == 1 && (node.getStatus() == '\0' || node.getStatus() == SVNLogPath.ChangeType.MODIFIED));
 	        		
 	        		if (HistoryActionManager.this.view.getResource() != null) {
-	        			manager.add(tAction = new HistoryAction("HistoryView.GetContents") {
+	        			manager.add(tAction = new HistoryAction("HistoryView_GetContents") { //$NON-NLS-1$
 							public void run() {
 								FromAffectedPathsNodeProvider provider = new FromAffectedPathsNodeProvider(node);
 								HistoryActionManager.this.getContentAffected(provider, provider, node.getFullPath());
@@ -1329,21 +1329,21 @@ public class HistoryActionManager {
 	        		
 	        		manager.add(new Separator());
 	        		
-	        		manager.add(tAction = new HistoryAction("HistoryView.BranchFrom", new String [] {String.valueOf(HistoryActionManager.this.selectedRevision)}, "icons/common/actions/branch.gif") {
+	        		manager.add(tAction = new HistoryAction("HistoryView_BranchFrom", new String [] {String.valueOf(HistoryActionManager.this.selectedRevision)}, "icons/common/actions/branch.gif") { //$NON-NLS-1$ //$NON-NLS-2$
 	        			public void run() {
 	        				FromAffectedPathsNodeProvider provider = new FromAffectedPathsNodeProvider(node);
 							HistoryActionManager.this.createBranchTag(viewer.getControl().getShell(), provider, provider, BranchTagAction.BRANCH_ACTION);
 	        			}
 	        		});
 	        		tAction.setEnabled(affectedTableSelection.size() > 0 && node.getStatus() != SVNLogPath.ChangeType.DELETED);
-	        		manager.add(tAction = new HistoryAction("HistoryView.TagFrom", new String [] {String.valueOf(HistoryActionManager.this.selectedRevision)}, "icons/common/actions/tag.gif") {
+	        		manager.add(tAction = new HistoryAction("HistoryView_TagFrom", new String [] {String.valueOf(HistoryActionManager.this.selectedRevision)}, "icons/common/actions/tag.gif") { //$NON-NLS-1$ //$NON-NLS-2$
 	        			public void run() {
 	        				FromAffectedPathsNodeProvider provider = new FromAffectedPathsNodeProvider(node);
 							HistoryActionManager.this.createBranchTag(viewer.getControl().getShell(), provider, provider, BranchTagAction.TAG_ACTION);
 	        			}
 	        		});
 	        		tAction.setEnabled(affectedTableSelection.size() > 0 && node.getStatus() != SVNLogPath.ChangeType.DELETED);
-	        		manager.add(tAction = new HistoryAction("AddRevisionLinkAction.label") {
+	        		manager.add(tAction = new HistoryAction("AddRevisionLinkAction_label") { //$NON-NLS-1$
 						public void run() {
 							FromAffectedPathsNodeProvider provider = new FromAffectedPathsNodeProvider(node);
 							HistoryActionManager.this.addRevisionLink(provider, provider);
@@ -1366,7 +1366,7 @@ public class HistoryActionManager {
 				SVNChangedPathData current = (SVNChangedPathData)next;
 				if (!(current.action == SVNLogPath.ChangeType.MODIFIED
 					|| current.action == SVNLogPath.ChangeType.REPLACED
-					|| (current.copiedFromPath != null && !current.copiedFromPath.equals("")))){
+					|| (current.copiedFromPath != null && !current.copiedFromPath.equals("")))){ //$NON-NLS-1$
 					return false;
 				}
 			}
@@ -1550,7 +1550,7 @@ public class HistoryActionManager {
 	}
 	
 	protected void addRevisionLink(IActionOperation preOp, IRepositoryResourceProvider provider) {
-		CompositeOperation op = new CompositeOperation("Operation.HAddSelectedRevision");
+		CompositeOperation op = new CompositeOperation("Operation_HAddSelectedRevision"); //$NON-NLS-1$
 		op.add(preOp);
 		IActionOperation []condition = new IActionOperation[] {preOp};
 		op.add(new AddRevisionLinkOperation(provider, this.selectedRevision), condition);
@@ -1585,7 +1585,7 @@ public class HistoryActionManager {
 		protected IRepositoryResource returnResource;
 		
 		public FromAffectedPathsNodeProvider(AffectedPathsNode affectedPathsItem) {
-			super("Operation.GetRepositoryResource");
+			super("Operation_GetRepositoryResource"); //$NON-NLS-1$
 			this.affectedPathsItem = affectedPathsItem;
 		}
 		
@@ -1593,7 +1593,7 @@ public class HistoryActionManager {
 			String rootUrl = HistoryActionManager.this.view.getRepositoryResource().getRepositoryLocation().getRepositoryRootUrl();
 			String path = this.affectedPathsItem.getFullPath();
 
-			String resourceUrl = rootUrl + (path.startsWith("/") ? "" : "/") + path;
+			String resourceUrl = rootUrl + (path.startsWith("/") ? "" : "/") + path; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			SVNRevision revision = SVNRevision.fromNumber(HistoryActionManager.this.selectedRevision);
 			
 			IRepositoryLocation location = HistoryActionManager.this.view.getRepositoryResource().getRepositoryLocation();
@@ -1612,7 +1612,7 @@ public class HistoryActionManager {
 		protected boolean filesOnly;
 		
 		public FromChangedPathDataProvider(SVNChangedPathData affectedPathsItem, boolean filesOnly) {
-			super("Operation.GetRepositoryResource");
+			super("Operation_GetRepositoryResource"); //$NON-NLS-1$
 			this.affectedPathsItem = affectedPathsItem;
 			this.filesOnly = filesOnly;
 		}
@@ -1620,7 +1620,7 @@ public class HistoryActionManager {
 		protected void runImpl(IProgressMonitor monitor) throws Exception {
 			String affectedPath = this.affectedPathsItem.getFullResourcePath();
 			String rootUrl = HistoryActionManager.this.view.getRepositoryResource().getRepositoryLocation().getRepositoryRootUrl();
-			String resourceUrl = rootUrl + "/" + affectedPath;
+			String resourceUrl = rootUrl + "/" + affectedPath; //$NON-NLS-1$
 			SVNRevision revision = SVNRevision.fromNumber(this.affectedPathsItem.action == SVNLogPath.ChangeType.DELETED ? HistoryActionManager.this.selectedRevision - 1 : HistoryActionManager.this.selectedRevision);
 			
 			SVNEntryInfo info = null;
@@ -1675,7 +1675,7 @@ public class HistoryActionManager {
 		protected HashMap<String, String> url2status;
 		
 		public FromDifferenceRepositoryResourceProvider(SVNLogEntry [] logEntries) {//(HashMap<SVNLogPath, Long> paths, SVNLogEntry selectedLogEntry) {
-			super("Operation.GetRepositoryResource");
+			super("Operation_GetRepositoryResource"); //$NON-NLS-1$
 			this.newer = HistoryActionManager.this.getResourceForSelectedRevision(logEntries[0]);
 			this.older = HistoryActionManager.this.getResourceForSelectedRevision(logEntries[1]);
 			this.location = this.newer.getRepositoryLocation();

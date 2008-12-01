@@ -129,7 +129,7 @@ public class SVNTeamPerformancePage extends AbstractSVNTeamPreferencesPage {
 		});
 		
 //		Setting context help
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.performancePreferencesContext");
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.performancePreferencesContext"); //$NON-NLS-1$
 		
 		return composite;
 	}

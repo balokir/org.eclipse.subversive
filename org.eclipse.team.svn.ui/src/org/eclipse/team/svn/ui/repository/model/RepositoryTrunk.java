@@ -28,7 +28,7 @@ public class RepositoryTrunk extends RepositoryFolder {
 	}
 
 	protected ImageDescriptor getImageDescriptorImpl() {
-		return this.isExternals() ? super.getImageDescriptorImpl() : SVNTeamUIPlugin.instance().getImageDescriptor("icons/objects/head.gif");
+		return this.isExternals() ? super.getImageDescriptorImpl() : SVNTeamUIPlugin.instance().getImageDescriptor("icons/objects/head.gif"); //$NON-NLS-1$
 	}
 	
 	public RGB getForeground(Object element) {

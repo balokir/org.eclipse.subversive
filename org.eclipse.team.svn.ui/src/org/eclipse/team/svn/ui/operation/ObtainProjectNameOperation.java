@@ -46,7 +46,7 @@ public class ObtainProjectNameOperation extends AbstractActionOperation {
 	protected HashMap<String, IRepositoryResource> names2Resources;
 
 	public ObtainProjectNameOperation(IRepositoryResource[] resources) {
-		super("Operation.ObtainProjectName");
+		super("Operation_ObtainProjectName"); //$NON-NLS-1$
 		this.resources = resources;
 		this.names2Resources = new HashMap<String, IRepositoryResource>();
 	}
@@ -65,7 +65,7 @@ public class ObtainProjectNameOperation extends AbstractActionOperation {
 			this.resources = this.resourceProvider.getRepositoryResources();
 		}
 		for (int i = 0; i < this.resources.length && !monitor.isCanceled(); i++) {
-			ProgressMonitorUtility.setTaskInfo(monitor, this, MessageFormat.format(this.getOperationResource("Scanning"), new Object[] {this.resources[i].getName()}));
+			ProgressMonitorUtility.setTaskInfo(monitor, this, MessageFormat.format(this.getOperationResource("Scanning"), new Object[] {this.resources[i].getName()})); //$NON-NLS-1$
 			
 			final int j = i;
 			this.protectStep(new IUnprotectedOperation() {
@@ -102,7 +102,7 @@ public class ObtainProjectNameOperation extends AbstractActionOperation {
 					}
 					else {
 						for (int k = 1; ; k++) {
-							newName = name + " (" + k + ")";
+							newName = name + " (" + k + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 							if (!ObtainProjectNameOperation.this.names2Resources.containsKey(newName) && (caseInsensitiveOS ? !lowerCaseNames.contains(newName.toLowerCase()) : true)) {
 								ObtainProjectNameOperation.this.names2Resources.put(newName, ObtainProjectNameOperation.this.resources[j]);
 								if (caseInsensitiveOS) {
@@ -120,7 +120,7 @@ public class ObtainProjectNameOperation extends AbstractActionOperation {
 	}
 	
 	protected String obtainProjectName(IRepositoryResource resource, IProgressMonitor monitor) throws Exception {
-		String projFileUrl = resource.getUrl() + "/.project";
+		String projFileUrl = resource.getUrl() + "/.project"; //$NON-NLS-1$
 		IRepositoryResource projFile = resource.getRepositoryLocation().asRepositoryFile(projFileUrl, false);
 		if (projFile.exists()) {
 			GetFileContentOperation op = new GetFileContentOperation(projFile);
@@ -128,15 +128,15 @@ public class ObtainProjectNameOperation extends AbstractActionOperation {
 			InputStream is = op.getContent();
 			BufferedReader reader = null;
 			try {
-				reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+				reader = new BufferedReader(new InputStreamReader(is, "UTF-8")); //$NON-NLS-1$
 				String currentString;
 				int first;
 				int last;
 				while ((currentString = reader.readLine()) != null) {
 					//FIXME incorrect search: could be on different lines
-					if ((first = currentString.indexOf("<name>")) >= 0 &&
-						(last = currentString.indexOf("</name>")) >= 0) {
-						String name = currentString.substring(first + "<name>".length(), last);
+					if ((first = currentString.indexOf("<name>")) >= 0 && //$NON-NLS-1$
+						(last = currentString.indexOf("</name>")) >= 0) { //$NON-NLS-1$
+						String name = currentString.substring(first + "<name>".length(), last); //$NON-NLS-1$
 						return name.length() > 0 ? name : null;
 					}
 				}

@@ -60,7 +60,7 @@ public class UILoggedOperation extends LoggedOperation {
 					IStatus.ERROR, 
 					SVNTeamPlugin.NATURE_ID, 
 					IStatus.OK, 
-					status.getMessage() + ": " + t.getMessage(), 
+					status.getMessage() + ": " + t.getMessage(),  //$NON-NLS-1$
 					t);
 		status.merge(st);
 		UILoggedOperation.logError(st);
@@ -83,7 +83,7 @@ public class UILoggedOperation extends LoggedOperation {
 			UILoggedOperation.errorQueue.add(new Object[] {pluginID, operationName, errorStatus});
 			if (UILoggedOperation.errorQueue.size() == 1) {
 		    	// release calling thread
-				Job job = new Job("") {
+				Job job = new Job("") { //$NON-NLS-1$
 					protected IStatus run(IProgressMonitor monitor) {
 		            	boolean showCheckBox = SVNTeamPreferences.getMailReporterBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MAILREPORTER_ENABLED_NAME);
 		            	
@@ -219,8 +219,8 @@ public class UILoggedOperation extends LoggedOperation {
         }
         
         IStatus []children = status.getChildren();
-        String advanceMess = "";
-        String simpleMess = "";
+        String advanceMess = ""; //$NON-NLS-1$
+        String simpleMess = ""; //$NON-NLS-1$
         for (int i = 0; i < children.length; i++) {
             Throwable exception = children[i].getException();
         	if (!allowsCancelled && (exception instanceof SVNConnectorCancelException || exception instanceof ActivityCancelledException || exception instanceof OperationCanceledException) || 
@@ -229,8 +229,8 @@ public class UILoggedOperation extends LoggedOperation {
         	}
         	String simpleMsg = UILoggedOperation.getSimpleMessage(children[i]);
         	String advancedMsg = UILoggedOperation.getSingleStatusMessage(children[i]);
-        	advanceMess += advanceMess.length() == 0 ? advancedMsg : ("\n\n" + advancedMsg);
-    		simpleMess += simpleMess.length() == 0 ? simpleMsg : ("\n" + simpleMsg);
+        	advanceMess += advanceMess.length() == 0 ? advancedMsg : ("\n\n" + advancedMsg); //$NON-NLS-1$
+    		simpleMess += simpleMess.length() == 0 ? simpleMsg : ("\n" + simpleMsg); //$NON-NLS-1$
         	if (exception instanceof SVNConnectorCancelException || 
         		exception instanceof ActivityCancelledException || 
         		exception instanceof OperationCanceledException || 

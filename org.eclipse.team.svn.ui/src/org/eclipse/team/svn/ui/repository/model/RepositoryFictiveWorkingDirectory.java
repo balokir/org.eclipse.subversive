@@ -22,7 +22,7 @@ import org.eclipse.ui.PlatformUI;
  *
  */
 public class RepositoryFictiveWorkingDirectory extends RepositoryFictiveNode {
-	public static final String WORKING_DIR_LABEL = "..";
+	public static final String WORKING_DIR_LABEL = ".."; //$NON-NLS-1$
 	
 	protected Object associatedDirectory;
 	

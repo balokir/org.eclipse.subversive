@@ -145,7 +145,7 @@ public class BranchTagSelectionComposite extends Composite {
 				if (idx != -1) {
 	            	String comboText = BranchTagSelectionComposite.this.urlText.getItem(idx);
 	            	if (comboText.equals(BranchTagSelectionComposite.this.ignored)) {
-	            		BranchTagSelectionComposite.this.urlText.setText("");
+	            		BranchTagSelectionComposite.this.urlText.setText(""); //$NON-NLS-1$
 	            	}
 				}
 			}
@@ -219,7 +219,7 @@ public class BranchTagSelectionComposite extends Composite {
 	}
 	
 	public IRepositoryResource getSelectedResource() {
-		String url = this.considerStructure ? (this.root.getUrl() + "/" + this.url) : this.url;
+		String url = this.considerStructure ? (this.root.getUrl() + "/" + this.url) : this.url; //$NON-NLS-1$
 		IRepositoryResource resource = this.getDestination(SVNUtility.asEntryReference(url), false);
 		resource.setSelectedRevision(this.revisionComposite.getSelectedRevision());
 		return resource;

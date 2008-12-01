@@ -66,10 +66,10 @@ public class ResourcePropertyEditPanel extends AbstractPropertyEditPanel {
 		String [] properties = this.predefinedPropertiesRegexps.keySet().toArray(new String[0]);
 		IRepositoryResource base = SVNRemoteStorage.instance().asRepositoryResource(this.selectedResources[0]);
 		for (int i = 0; i <  properties.length; i++) {
-			this.verifiers.put(properties[i], new PropertyVerifier("EditPropertiesInputField", this.predefinedPropertiesRegexps.get(properties[i]), properties[i], base));
+			this.verifiers.put(properties[i], new PropertyVerifier("EditPropertiesInputField", this.predefinedPropertiesRegexps.get(properties[i]), properties[i], base)); //$NON-NLS-1$
 		}
 		for (int i = 0; i < this.customProps.length; i++) {
-			this.verifiers.put(this.customProps[i].propName, new PropertyVerifier("EditPropertiesInputField", this.customProps[i].regExp.equals("") ? null : this.customProps[i].regExp, this.customProps[i].propName, base));
+			this.verifiers.put(this.customProps[i].propName, new PropertyVerifier("EditPropertiesInputField", this.customProps[i].regExp.equals("") ? null : this.customProps[i].regExp, this.customProps[i].propName, base)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
@@ -94,7 +94,7 @@ public class ResourcePropertyEditPanel extends AbstractPropertyEditPanel {
 	}
 	
 	public String getFilterMask() {
-		return this.applyComposite == null ? "" : this.applyComposite.getFilterMask();
+		return this.applyComposite == null ? "" : this.applyComposite.getFilterMask(); //$NON-NLS-1$
 	}
 	
 	public boolean useMask() {
@@ -127,7 +127,7 @@ public class ResourcePropertyEditPanel extends AbstractPropertyEditPanel {
 	}
 	
     public String getHelpId() {
-    	return "org.eclipse.team.svn.help.setPropsDialogContext";
+    	return "org.eclipse.team.svn.help.setPropsDialogContext"; //$NON-NLS-1$
     }
 	
 	protected int computeResourcesType() {

@@ -22,7 +22,7 @@ import org.eclipse.team.svn.ui.SVNUIMessages;
  * @author Alexander Gurov
  */
 public class RepositoryPending extends RepositoryFictiveNode {
-	public static final String PENDING = "RepositoriesView_Model_Pending";
+	public static final String PENDING = "RepositoriesView_Model_Pending"; //$NON-NLS-1$
 	
 	protected RepositoryResource parent;
 	
@@ -47,7 +47,7 @@ public class RepositoryPending extends RepositoryFictiveNode {
 	}
 	
 	public ImageDescriptor getImageDescriptor(Object object) {
-		return SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/repositories/browser_pending.gif");
+		return SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/repositories/browser_pending.gif"); //$NON-NLS-1$
 	}
 
 }

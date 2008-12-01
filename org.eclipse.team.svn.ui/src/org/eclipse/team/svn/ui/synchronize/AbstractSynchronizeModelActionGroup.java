@@ -32,9 +32,9 @@ import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipantActionGroup;
  */
 public abstract class AbstractSynchronizeModelActionGroup extends ModelSynchronizeParticipantActionGroup {
 
-	public static final String GROUP_MANAGE_LOCALS = "modelManageLocalChanges";
-	public static final String GROUP_PROCESS_ALL = "modelProcessAllItems";
-	public static final String GROUP_TEAM = "modelTeam";
+	public static final String GROUP_MANAGE_LOCALS = "modelManageLocalChanges"; //$NON-NLS-1$
+	public static final String GROUP_PROCESS_ALL = "modelProcessAllItems"; //$NON-NLS-1$
+	public static final String GROUP_TEAM = "modelTeam"; //$NON-NLS-1$
 	
 	protected ISynchronizePageConfiguration configuration;
 	
@@ -85,12 +85,12 @@ public abstract class AbstractSynchronizeModelActionGroup extends ModelSynchroni
 		
 		boolean isEuropa = false;
 		String description = Platform.getProduct().getDescription();
-		int idx = description.indexOf("Version:");
+		int idx = description.indexOf("Version:"); //$NON-NLS-1$
 		if (idx != -1) {
-			idx += "Version:".length() + 1;
+			idx += "Version:".length() + 1; //$NON-NLS-1$
 			if (idx + 5 < description.length()) {
 				description = description.substring(idx, idx + 5);
-				isEuropa = "3.4.0".compareTo(description) > 0;
+				isEuropa = "3.4.0".compareTo(description) > 0; //$NON-NLS-1$
 			}
 		}
 		if (isEuropa) {

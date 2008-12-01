@@ -20,7 +20,7 @@ import org.eclipse.team.svn.core.utility.PatternProvider;
  * @author Sergiy Logvin
  */
 public class BugtraqModel {
-	public static final String BUG_ID = "%BUGID%";
+	public static final String BUG_ID = "%BUGID%"; //$NON-NLS-1$
 	
 	protected String url;
 	protected String label;
@@ -83,7 +83,7 @@ public class BugtraqModel {
 	}
 
 	public void setLogregex(String logregex) {
-		this.logregex = logregex.split("\r\n|\r|\n");
+		this.logregex = logregex.split("\r\n|\r|\n"); //$NON-NLS-1$
 	}
 	
 	public boolean isDoubleLogRegexp() {

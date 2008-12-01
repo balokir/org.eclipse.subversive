@@ -327,7 +327,7 @@ public class LogMessagesComposite extends SashForm {
 					if (this.oldSelection != selection || this.hideUnrelated != LogMessagesComposite.this.info.isRelatedPathsOnly()) {
 						String message = selection.getComment();
 						if (message == null || message.length() == 0) {
-							message = selection.getType() == ILogNode.TYPE_SVN ? SVNMessages.SVNInfo_NoComment : "";
+							message = selection.getType() == ILogNode.TYPE_SVN ? SVNMessages.SVNInfo_NoComment : ""; //$NON-NLS-1$
 						}
 						LogMessagesComposite.this.commentViewManager.setComment(message);
 
@@ -346,7 +346,7 @@ public class LogMessagesComposite extends SashForm {
 					}
 				}
 				else {
-					LogMessagesComposite.this.commentViewManager.setComment("");
+					LogMessagesComposite.this.commentViewManager.setComment(""); //$NON-NLS-1$
 					LogMessagesComposite.this.affectedPathsComposite.setInput(null, null, null, -1);
 					this.oldSelection = null;
 				}

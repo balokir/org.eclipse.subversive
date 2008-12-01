@@ -79,7 +79,7 @@ public class OverrideAndUpdateAction extends AbstractSynchronizeModelAction {
 			resources[0] = panel.getSelectedResources();
 		}
 		
-		CompositeOperation op = new CompositeOperation("Operation.UOverrideAndUpdate");
+		CompositeOperation op = new CompositeOperation("Operation_UOverrideAndUpdate"); //$NON-NLS-1$
 
 		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources[0]);
 		op.add(saveOp);

@@ -36,7 +36,7 @@ public class CommentLogEntryFilter implements ILogEntryFilter {
 			return true;
 		}
 		StringMatcher matcher = new StringMatcher(this.commentToAccept);
-		String comment = logEntry.message == null ? "" : logEntry.message;
+		String comment = logEntry.message == null ? "" : logEntry.message; //$NON-NLS-1$
 		return matcher.match(comment);
 	}
 

@@ -30,7 +30,7 @@ import org.eclipse.team.svn.ui.utility.UserInputHistory;
  * @author Sergiy Logvin
  */
 public class CredentialsComposite extends Composite {
-	protected static final String USER_HISTORY_NAME = "repositoryUser";
+	protected static final String USER_HISTORY_NAME = "repositoryUser"; //$NON-NLS-1$
 	
 	protected Combo userName;
 	protected Text password;

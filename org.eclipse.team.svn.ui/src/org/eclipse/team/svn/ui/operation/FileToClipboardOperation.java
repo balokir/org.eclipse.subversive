@@ -37,7 +37,7 @@ public class FileToClipboardOperation extends AbstractActionOperation {
 	}
 	
 	public FileToClipboardOperation(String fileName, boolean deleteFile) {
-		super("Operation.FileToClipboard");
+		super("Operation_FileToClipboard"); //$NON-NLS-1$
 		this.fileName = fileName;
 		this.deleteFile = deleteFile;
 	}

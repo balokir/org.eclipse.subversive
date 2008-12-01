@@ -27,16 +27,16 @@ public class DiscardConfirmationDialog extends MessageDialog {
 	public static final int MSG_RESOURCE = 2;
 	
 	protected static final String [][] MESSAGES = new String[][] {
-		new String[] {"DiscardConfirmationDialog.Location.Title", "DiscardConfirmationDialog.Location.Message"},	
-		new String[] {"DiscardConfirmationDialog.RevisionLink.Title", "DiscardConfirmationDialog.RevisionLink.Message"},	
-		new String[] {"DiscardConfirmationDialog.Resource.Title", "DiscardConfirmationDialog.Resource.Message"}
+		new String[] {"DiscardConfirmationDialog_Location_Title", "DiscardConfirmationDialog_Location_Message"},	 //$NON-NLS-1$ //$NON-NLS-2$
+		new String[] {"DiscardConfirmationDialog_RevisionLink_Title", "DiscardConfirmationDialog_RevisionLink_Message"},	 //$NON-NLS-1$ //$NON-NLS-2$
+		new String[] {"DiscardConfirmationDialog_Resource_Title", "DiscardConfirmationDialog_Resource_Message"} //$NON-NLS-1$ //$NON-NLS-2$
 	};
 
 	public DiscardConfirmationDialog(Shell parentShell, boolean oneLocation, int msgSelector) {
 		super(parentShell, 
-			SVNUIMessages.getString(DiscardConfirmationDialog.MESSAGES[msgSelector][0] + (oneLocation ? ".Single" : ".Multi")), 
+			SVNUIMessages.getString(DiscardConfirmationDialog.MESSAGES[msgSelector][0] + (oneLocation ? "_Single" : "_Multi")),  //$NON-NLS-1$ //$NON-NLS-2$
 			null, 
-			SVNUIMessages.getString(DiscardConfirmationDialog.MESSAGES[msgSelector][1] + (oneLocation ? ".Single" : ".Multi")),
+			SVNUIMessages.getString(DiscardConfirmationDialog.MESSAGES[msgSelector][1] + (oneLocation ? "_Single" : "_Multi")), //$NON-NLS-1$ //$NON-NLS-2$
 			MessageDialog.QUESTION, 
 			new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 
 			0);

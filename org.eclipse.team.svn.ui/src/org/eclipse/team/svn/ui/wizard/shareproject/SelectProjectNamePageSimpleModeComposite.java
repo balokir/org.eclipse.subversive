@@ -64,7 +64,7 @@ public class SelectProjectNamePageSimpleModeComposite extends Composite implemen
 		IProject pr = projects[0];
 		String url = baseResource.getUrl();
 		if (!this.multiProject) {
-			url += "/" + pr.getName();	
+			url += "/" + pr.getName();	 //$NON-NLS-1$
 		}		
 		this.resourceSelectionComposite.setUrl(url);
 	}
@@ -81,7 +81,7 @@ public class SelectProjectNamePageSimpleModeComposite extends Composite implemen
 				this,
 				SWT.NONE,
 				this.validationManager, 
-				"selectProjectNamePage", 
+				"selectProjectNamePage",  //$NON-NLS-1$
 				baseResource,				
 				SVNUIMessages.SelectProjectNamePage_Select_Title,
 				SVNUIMessages.SelectProjectNamePage_Select_Description);				
@@ -101,9 +101,9 @@ public class SelectProjectNamePageSimpleModeComposite extends Composite implemen
 				String selectedUrl = SelectProjectNamePageSimpleModeComposite.this.resourceSelectionComposite.getSelectedResource().getUrl();
 				selectedUrl = SVNUtility.normalizeURL(selectedUrl);
 				if (selectedUrl.startsWith(toTrim)) {
-					folderName = selectedUrl.equals(toTrim) ? "" : selectedUrl.substring(toTrim.length() + 1);																				
+					folderName = selectedUrl.equals(toTrim) ? "" : selectedUrl.substring(toTrim.length() + 1);																				 //$NON-NLS-1$
 					if (SelectProjectNamePageSimpleModeComposite.this.multiProject) {
-						folderName += "/" + project.getName();
+						folderName += "/" + project.getName(); //$NON-NLS-1$
 					}						
 				} else {
 					throw new RuntimeException("Inconsistent repository location and selected repository url. "
@@ -116,7 +116,7 @@ public class SelectProjectNamePageSimpleModeComposite extends Composite implemen
 	}
 
 	public String getRootProjectName() {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	public void save() {

@@ -26,8 +26,8 @@ import org.eclipse.swt.graphics.Font;
  */
 public class ToolTipMessage implements IDecoration {
 	
-	public String prefix = "";
-	public String suffix = "";
+	public String prefix = ""; //$NON-NLS-1$
+	public String suffix = ""; //$NON-NLS-1$
 
 	public void addOverlay(ImageDescriptor overlay) {
 	}

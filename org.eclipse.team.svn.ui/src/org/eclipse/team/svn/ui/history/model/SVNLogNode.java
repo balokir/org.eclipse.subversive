@@ -50,7 +50,7 @@ public class SVNLogNode extends AbstractLogNode {
 	}
 
 	public ImageDescriptor getImageDescriptor() {
-		return SVNTeamUIPlugin.instance().getImageDescriptor(this.parent instanceof SVNLogNode ? "icons/objects/repository-gray.gif" : "icons/objects/repository.gif");
+		return SVNTeamUIPlugin.instance().getImageDescriptor(this.parent instanceof SVNLogNode ? "icons/objects/repository-gray.gif" : "icons/objects/repository.gif"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public boolean requiresBoldFont(long currentRevision) {
@@ -62,7 +62,7 @@ public class SVNLogNode extends AbstractLogNode {
 			case ILogNode.COLUMN_REVISION: {
 				String retVal = String.valueOf(this.entry.revision);
 				if (currentRevision == this.entry.revision) {
-					retVal = "*" + retVal;
+					retVal = "*" + retVal; //$NON-NLS-1$
 				}
 				return retVal;
 			}
@@ -84,12 +84,12 @@ public class SVNLogNode extends AbstractLogNode {
 					return FileUtility.formatMultilineText(retVal);
 				}
 				else if (labelType == ILogNode.LABEL_FLAT) {
-					return AbstractLogNode.flattenMultiLineText(retVal, " ");
+					return AbstractLogNode.flattenMultiLineText(retVal, " "); //$NON-NLS-1$
 				}
 				return retVal;
 			}
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	
 	public Object getEntity() {

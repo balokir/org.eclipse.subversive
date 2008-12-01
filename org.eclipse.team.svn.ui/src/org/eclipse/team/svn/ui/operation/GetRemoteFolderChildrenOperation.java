@@ -54,7 +54,7 @@ public class GetRemoteFolderChildrenOperation extends AbstractActionOperation {
 	}
 
 	public GetRemoteFolderChildrenOperation(IRepositoryContainer parent, boolean sortChildren) {
-		super("Operation.GetRemoteChildren");
+		super("Operation_GetRemoteChildren"); //$NON-NLS-1$
 		this.parent = parent;
 		this.sortChildren = sortChildren;
 		this.externalsNames = new HashMap<IRepositoryResource, String>();

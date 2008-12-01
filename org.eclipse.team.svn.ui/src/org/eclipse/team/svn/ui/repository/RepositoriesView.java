@@ -87,24 +87,24 @@ public class RepositoriesView extends ViewPart {
 		MenuManager menuMgr = new MenuManager();
         menuMgr.addMenuListener(new IMenuListener() {
             public void menuAboutToShow(final IMenuManager manager) {
-        		MenuManager sub = new MenuManager(SVNUIMessages.RepositoriesView_New, "addMenu");
-        		sub.add(new Separator("mainGroup"));
-        		sub.add(new Separator("managementGroup"));
-        		sub.add(new Separator("repositoryGroup"));
+        		MenuManager sub = new MenuManager(SVNUIMessages.RepositoriesView_New, "addMenu"); //$NON-NLS-1$
+        		sub.add(new Separator("mainGroup")); //$NON-NLS-1$
+        		sub.add(new Separator("managementGroup")); //$NON-NLS-1$
+        		sub.add(new Separator("repositoryGroup")); //$NON-NLS-1$
         		sub.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
         		Action newRepositoryLocation = new Action(SVNUIMessages.RepositoriesView_RepositoryLocation) {
 					public void run() {
 						new NewRepositoryLocationAction().run(this);
 					}
         		};
-        		newRepositoryLocation.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/objects/repository.gif"));
+        		newRepositoryLocation.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/objects/repository.gif")); //$NON-NLS-1$
         		sub.add(newRepositoryLocation);
         		manager.add(sub);
         		
-				manager.add(new Separator("checkoutGroup"));
+				manager.add(new Separator("checkoutGroup")); //$NON-NLS-1$
                 
-        		sub = new MenuManager(SVNUIMessages.RepositoriesView_OpenWith, "openWithMenu");
-        		sub.add(new Separator("dynamicGroup"));
+        		sub = new MenuManager(SVNUIMessages.RepositoriesView_OpenWith, "openWithMenu"); //$NON-NLS-1$
+        		sub.add(new Separator("dynamicGroup")); //$NON-NLS-1$
         		IStructuredSelection selection = (IStructuredSelection)provider.getSelection();
         		if (selection.size() == 1) {
         			Object item = selection.getFirstElement();
@@ -125,29 +125,29 @@ public class RepositoriesView extends ViewPart {
         				}
         			}
         		}
-        		sub.add(new Separator("fixedGroup"));
+        		sub.add(new Separator("fixedGroup")); //$NON-NLS-1$
         		sub.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
         		manager.add(sub);
                 
-                manager.add(new Separator("miscGroup"));
+                manager.add(new Separator("miscGroup")); //$NON-NLS-1$
                 
-        		sub = new MenuManager(SVNUIMessages.RepositoriesView_Refactor, "refactorMenu");
-        		sub.add(new Separator("mainGroup"));
+        		sub = new MenuManager(SVNUIMessages.RepositoriesView_Refactor, "refactorMenu"); //$NON-NLS-1$
+        		sub.add(new Separator("mainGroup")); //$NON-NLS-1$
         		sub.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
         		manager.add(sub);
         		
-				manager.add(new Separator("locationGroup"));
+				manager.add(new Separator("locationGroup")); //$NON-NLS-1$
 				
-                manager.add(new Separator("propertiesGroup"));
+                manager.add(new Separator("propertiesGroup")); //$NON-NLS-1$
 
-                manager.add(new Separator("importExportGroup"));
+                manager.add(new Separator("importExportGroup")); //$NON-NLS-1$
                 
-				sub = new MenuManager(SVNUIMessages.RepositoriesView_CompareWith, "compareMenu");
-        		sub.add(new Separator("mainGroup"));
+				sub = new MenuManager(SVNUIMessages.RepositoriesView_CompareWith, "compareMenu"); //$NON-NLS-1$
+        		sub.add(new Separator("mainGroup")); //$NON-NLS-1$
         		sub.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-        		manager.prependToGroup("importExportGroup", sub);
+        		manager.prependToGroup("importExportGroup", sub); //$NON-NLS-1$
                 
-                manager.add(new Separator("refreshGroup"));
+                manager.add(new Separator("refreshGroup")); //$NON-NLS-1$
                 
 				manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
             }
@@ -186,27 +186,27 @@ public class RepositoriesView extends ViewPart {
                 }
             }
         }); 
-        tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/refresh.gif"));
+        tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/refresh.gif")); //$NON-NLS-1$
         tAction.setToolTipText(SVNUIMessages.SVNView_Refresh_ToolTip);
         
-		tbm.add(new Separator("collapseAllGroup"));
+		tbm.add(new Separator("collapseAllGroup")); //$NON-NLS-1$
 		
         tbm.add(tAction = new Action(SVNUIMessages.RepositoriesView_CollapseAll_Label) {
 			public void run() {
 			    RepositoriesView.this.repositoryTree.collapseAll();				
 			}
         }); 
-        tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/collapseall.gif"));
+        tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/collapseall.gif")); //$NON-NLS-1$
         tAction.setToolTipText(SVNUIMessages.RepositoriesView_CollapseAll_ToolTip);
         
-		tbm.add(new Separator("repositoryGroup"));
+		tbm.add(new Separator("repositoryGroup")); //$NON-NLS-1$
         
         tbm.add(tAction = new Action(SVNUIMessages.RepositoriesView_NewLocation_Label) {
 			public void run() {
 				new NewRepositoryLocationAction().run(this);
 			}
         }); 
-        tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/repositories/new_location.gif"));
+        tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/repositories/new_location.gif")); //$NON-NLS-1$
         tAction.setToolTipText(SVNUIMessages.RepositoriesView_NewLocation_ToolTip);
         
         tbm.add(this.showBrowserAction = new Action(SVNUIMessages.RepositoriesView_ShowBrowser_Label, Action.AS_CHECK_BOX) {
@@ -219,7 +219,7 @@ public class RepositoriesView extends ViewPart {
 				}
 			}			
         });        
-        this.showBrowserAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/repositories/browser.gif"));
+        this.showBrowserAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/repositories/browser.gif")); //$NON-NLS-1$
         this.showBrowserAction.setToolTipText(SVNUIMessages.RepositoriesView_ShowBrowser_ToolTip);
 
         this.repositoryTree.getControl().addKeyListener(new KeyAdapter() {
@@ -284,7 +284,7 @@ public class RepositoriesView extends ViewPart {
 		});
 		
 		//Setting context help
-	    PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.repositoryViewContext");
+	    PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.repositoryViewContext"); //$NON-NLS-1$
 	}
 	
 	public void dispose() {
@@ -349,7 +349,7 @@ public class RepositoriesView extends ViewPart {
 
 	protected void showRepositoryBrowser(final boolean force) {
 		final IWorkbenchPage page = this.getSite().getPage();
-		UIMonitorUtility.doTaskBusyDefault(new AbstractActionOperation("Operation.ShowBrowser") {
+		UIMonitorUtility.doTaskBusyDefault(new AbstractActionOperation("Operation_ShowBrowser") { //$NON-NLS-1$
             protected void runImpl(IProgressMonitor monitor) throws Exception {
         		RepositoryBrowser browser = (RepositoryBrowser)page.showView(RepositoryBrowser.VIEW_ID);
     			ISelection selection = RepositoriesView.this.repositoryTree.getSelection();

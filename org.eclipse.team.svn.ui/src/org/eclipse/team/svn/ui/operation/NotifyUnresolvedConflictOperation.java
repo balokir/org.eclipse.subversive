@@ -26,7 +26,7 @@ public class NotifyUnresolvedConflictOperation extends AbstractActionOperation {
     protected IUnresolvedConflictDetector sign;
 
     public NotifyUnresolvedConflictOperation(IUnresolvedConflictDetector sign) {
-        super("Operation.NotifyConflicts");
+        super("Operation_NotifyConflicts"); //$NON-NLS-1$
         this.sign = sign;
     }
     

@@ -37,7 +37,7 @@ public class PropertyNameVerifier extends AbstractFormattedVerifier {
         this.ignoreStrings.add(SVNUIMessages.PropertyEditPanel_tsvn_description);
         this.ignoreStrings.add(SVNUIMessages.PropertyEditPanel_bugtraq_description);
         this.ignoreStrings.add(SVNUIMessages.AbstractPropertyEditPanel_custom_description);
-        this.ignoreStrings.add("    "  + SVNUIMessages.AbstractPropertyEditPanel_custom_hint);
+        this.ignoreStrings.add("    "  + SVNUIMessages.AbstractPropertyEditPanel_custom_hint); //$NON-NLS-1$
     }
 
     protected String getErrorMessageImpl(Control input) {
@@ -48,12 +48,12 @@ public class PropertyNameVerifier extends AbstractFormattedVerifier {
         if (this.ignoreStrings.contains(property)) {
         	return SVNUIMessages.AbstractPropertyEditPanel_Name_Verifier_IgnoreStrings;
         }
-        Pattern pattern = Pattern.compile("[a-zA-Z].*");
+        Pattern pattern = Pattern.compile("[a-zA-Z].*"); //$NON-NLS-1$
         Matcher matcher = pattern.matcher(property);
         if (!matcher.matches()) {
         	return PropertyNameVerifier.ERROR_MESSAGE_LETTER;
         }
-        pattern = Pattern.compile("[a-zA-Z0-9:\\-_.]*");
+        pattern = Pattern.compile("[a-zA-Z0-9:\\-_.]*"); //$NON-NLS-1$
         if (!pattern.matcher(property).matches()) {
         	return PropertyNameVerifier.ERROR_MESSAGE_SYMBOLS;
         }

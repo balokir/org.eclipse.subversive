@@ -39,7 +39,7 @@ import org.eclipse.ui.console.MessageConsoleStream;
  * @author Alexander Gurov
  */
 public class SVNConsole extends MessageConsole implements IPropertyChangeListener {
-	public static final String SVN_CONSOLE_TYPE = "org.eclipse.team.svn.ui.console.SVNConsole";
+	public static final String SVN_CONSOLE_TYPE = "org.eclipse.team.svn.ui.console.SVNConsole"; //$NON-NLS-1$
 	
 	protected MessageConsoleStream cmdStream;
 	protected MessageConsoleStream okStream;
@@ -50,7 +50,7 @@ public class SVNConsole extends MessageConsole implements IPropertyChangeListene
 	protected boolean enabled;
 	
 	public SVNConsole() {
-		super(SVNUIMessages.SVNConsole_Name, SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/console.gif"));
+		super(SVNUIMessages.SVNConsole_Name, SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/console.gif")); //$NON-NLS-1$
 		
 		super.setType(SVNConsole.SVN_CONSOLE_TYPE);
 		
@@ -194,7 +194,7 @@ public class SVNConsole extends MessageConsole implements IPropertyChangeListene
 
 		public void markEnd() {
 			if (this.outputStarted) {
-				this.write(IConsoleStream.LEVEL_CMD, "*** ");
+				this.write(IConsoleStream.LEVEL_CMD, "*** "); //$NON-NLS-1$
 				if (this.hasError) {
 					this.write(IConsoleStream.LEVEL_ERROR, SVNUIMessages.SVNConsole_Error);
 				}
@@ -204,7 +204,7 @@ public class SVNConsole extends MessageConsole implements IPropertyChangeListene
 				else {
 					this.write(IConsoleStream.LEVEL_CMD, this.cancelled ? SVNUIMessages.SVNConsole_Cancelled : SVNUIMessages.SVNConsole_Ok);
 				}
-				this.write(IConsoleStream.LEVEL_CMD, " " + SVNUIMessages.format(SVNUIMessages.SVNConsole_Took, new String[] {new SimpleDateFormat("mm:ss.SSS").format(new Date(System.currentTimeMillis() - this.start))}) + "\n\n");
+				this.write(IConsoleStream.LEVEL_CMD, " " + SVNUIMessages.format(SVNUIMessages.SVNConsole_Took, new String[] {new SimpleDateFormat("mm:ss.SSS").format(new Date(System.currentTimeMillis() - this.start))}) + "\n\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 		}
 
@@ -263,7 +263,7 @@ public class SVNConsole extends MessageConsole implements IPropertyChangeListene
 		protected void print(final MessageConsoleStream stream, final String data) {
 			// workaround for the Eclipse issue #136943 
 			if (UIMonitorUtility.getDisplay().getThread() == Thread.currentThread()) {
-				ProgressMonitorUtility.doTaskScheduledDefault(new AbstractActionOperation("Operation.WriteToConsoleResources") {
+				ProgressMonitorUtility.doTaskScheduledDefault(new AbstractActionOperation("Operation_WriteToConsoleResources") { //$NON-NLS-1$
 					protected void runImpl(IProgressMonitor monitor) throws Exception {
 						stream.print(data);
 					}
@@ -279,9 +279,9 @@ public class SVNConsole extends MessageConsole implements IPropertyChangeListene
 			if (this.buffer != null) {
 				String tmp = this.buffer;
 				this.buffer = null;
-				this.write(IConsoleStream.LEVEL_CMD, "*** ");
+				this.write(IConsoleStream.LEVEL_CMD, "*** "); //$NON-NLS-1$
 				this.write(IConsoleStream.LEVEL_CMD, tmp);
-				this.write(IConsoleStream.LEVEL_CMD, "\n");
+				this.write(IConsoleStream.LEVEL_CMD, "\n"); //$NON-NLS-1$
 			}
 		}
 		

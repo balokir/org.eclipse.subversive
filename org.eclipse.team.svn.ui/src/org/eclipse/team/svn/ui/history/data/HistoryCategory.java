@@ -43,7 +43,7 @@ public class HistoryCategory {
 			case HistoryCategory.CATEGORY_THIS_MONTH : return SVNUIMessages.LogMessagesComposite_Group_Month;
 			case HistoryCategory.CATEGORY_EARLIER : return SVNUIMessages.LogMessagesComposite_Group_Earlier;
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	
 	public Object[] getEntries() {

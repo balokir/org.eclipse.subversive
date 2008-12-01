@@ -28,7 +28,7 @@ public class RepositoryTags extends RepositoryFolder {
 	}
 
 	protected ImageDescriptor getImageDescriptorImpl() {
-		return this.isExternals() ? super.getImageDescriptorImpl() : SVNTeamUIPlugin.instance().getImageDescriptor("icons/objects/tags.gif");
+		return this.isExternals() ? super.getImageDescriptorImpl() : SVNTeamUIPlugin.instance().getImageDescriptor("icons/objects/tags.gif"); //$NON-NLS-1$
 	}
 	
 	public RGB getForeground(Object element) {

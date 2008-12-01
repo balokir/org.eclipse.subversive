@@ -55,13 +55,13 @@ public class AskTrustSSLServerPanel extends AbstractDialogPanel {
     }
     
 	public void createControlsImpl(Composite parent) {
-		String []baseLines = this.message.split("\n");
+		String []baseLines = this.message.split("\n"); //$NON-NLS-1$
 		final String [][]tableData = new String[baseLines.length][];
 		for (int i = 0; i < baseLines.length; i++) {
 			int idx = baseLines[i].indexOf(':');
 			tableData[i] = new String[2];
 			if (idx != -1) {
-				int idx2 = baseLines[i].indexOf("https:");
+				int idx2 = baseLines[i].indexOf("https:"); //$NON-NLS-1$
 				if (idx2 == -1) {
 					tableData[i][0] = baseLines[i].substring(0, idx);
 					tableData[i][1] = baseLines[i].substring(idx + 1).trim();
@@ -69,14 +69,14 @@ public class AskTrustSSLServerPanel extends AbstractDialogPanel {
 				else {
 					tableData[i][0] = baseLines[i].substring(0, idx2).trim();
 					tableData[i][1] = baseLines[i].substring(idx2).trim();
-					if (tableData[i][1].endsWith(":")) {
+					if (tableData[i][1].endsWith(":")) { //$NON-NLS-1$
 						tableData[i][1] = tableData[i][1].substring(0, tableData[i][1].length() - 1);
 					}
 				}
 			}
 			else {
 				tableData[i][0] = baseLines[i];
-				tableData[i][1] = "";
+				tableData[i][1] = ""; //$NON-NLS-1$
 			}
 		}
 		
@@ -133,7 +133,7 @@ public class AskTrustSSLServerPanel extends AbstractDialogPanel {
 			public void widgetSelected(SelectionEvent e) {
 				int idx = table.getSelectionIndex();
 				if (idx > -1 && idx < tableData.length) {
-					text.setText(PatternProvider.replaceAll(tableData[idx][1].trim(), ", ", "\n"));
+					text.setText(PatternProvider.replaceAll(tableData[idx][1].trim(), ", ", "\n")); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		};

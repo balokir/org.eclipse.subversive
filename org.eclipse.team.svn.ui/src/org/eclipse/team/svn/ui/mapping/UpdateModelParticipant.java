@@ -63,7 +63,7 @@ public class UpdateModelParticipant extends AbstractSVNModelParticipant implemen
 	}
 	
 	protected void initializeConfiguration(ISynchronizePageConfiguration configuration) {
-		configuration.setProperty(ISynchronizePageConfiguration.P_VIEWER_ID, "org.eclipse.team.svn.ui.workspaceSynchronization");
+		configuration.setProperty(ISynchronizePageConfiguration.P_VIEWER_ID, "org.eclipse.team.svn.ui.workspaceSynchronization"); //$NON-NLS-1$
 		super.initializeConfiguration(configuration);		
 	}
 	

@@ -109,13 +109,13 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 			}
 		}, IResource.DEPTH_INFINITE);
 
-		this.dialogTitle = SVNUIMessages.getString(this.nationalizationId + "_Title");
-		this.dialogDescription = SVNUIMessages.getString(this.nationalizationId + "_Description");
+		this.dialogTitle = SVNUIMessages.getString(this.nationalizationId + "_Title"); //$NON-NLS-1$
+		this.dialogDescription = SVNUIMessages.getString(this.nationalizationId + "_Description"); //$NON-NLS-1$
 		if (SVNTeamPreferences.getRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_NAME)) {
-			this.defaultMessage = SVNUIMessages.getString(this.nationalizationId + "_MessageAuto");
+			this.defaultMessage = SVNUIMessages.getString(this.nationalizationId + "_MessageAuto"); //$NON-NLS-1$
 		}
 		else {
-			this.defaultMessage = SVNUIMessages.getString(this.nationalizationId + "_Message");
+			this.defaultMessage = SVNUIMessages.getString(this.nationalizationId + "_Message"); //$NON-NLS-1$
 		}
 
 		this.existingNodesNamesSet = existingNames;
@@ -153,7 +153,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 
 	public IRepositoryResource getDestination() {
 		this.destinationUrl = this.destinationUrl.trim();
-		while (this.destinationUrl.endsWith("/") || this.destinationUrl.endsWith("\\")) {
+		while (this.destinationUrl.endsWith("/") || this.destinationUrl.endsWith("\\")) { //$NON-NLS-1$ //$NON-NLS-2$
 			this.destinationUrl = this.destinationUrl.substring(0, this.destinationUrl.length() - 1);
 		}
 		return this.root.getRepositoryLocation().asRepositoryContainer(this.destinationUrl, false);
@@ -180,11 +180,11 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 
 		GridLayout layout = new GridLayout();
 		Composite select = null;
-		String substitutionUppercase = SVNUIMessages.getString(this.nationalizationId + "_NodeName");
+		String substitutionUppercase = SVNUIMessages.getString(this.nationalizationId + "_NodeName"); //$NON-NLS-1$
 		if (this.startsWith) {
 			select = new Group(parent, SWT.NULL);
 			layout.numColumns = 2;
-			((Group) select).setText(this.considerStructure ? substitutionUppercase : SVNUIMessages.getString(this.nationalizationId + "_Location_roup"));
+			((Group) select).setText(this.considerStructure ? substitutionUppercase : SVNUIMessages.getString(this.nationalizationId + "_Location_roup")); //$NON-NLS-1$
 		}
 		else {
 			select = new Composite(parent, SWT.NONE);
@@ -199,7 +199,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 			Label description = new Label(select, SWT.NONE);
 			data = new GridData();
 			description.setLayoutData(data);
-			description.setText(this.considerStructure ? substitutionUppercase : SVNUIMessages.getString(this.nationalizationId + "_Location_Field"));
+			description.setText(this.considerStructure ? substitutionUppercase : SVNUIMessages.getString(this.nationalizationId + "_Location_Field")); //$NON-NLS-1$
 		}
 		this.createTopPart(select, substitutionUppercase);
 
@@ -214,7 +214,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 			this.startWithCheck = new Button(inner, SWT.CHECK);
 			data = new GridData(GridData.FILL_HORIZONTAL);
 			this.startWithCheck.setLayoutData(data);
-			this.startWithCheck.setText(SVNUIMessages.getString(this.nationalizationId + "_StartsWith"));
+			this.startWithCheck.setText(SVNUIMessages.getString(this.nationalizationId + "_StartsWith")); //$NON-NLS-1$
 			this.startWithCheck.setSelection(false);
 			this.startWithCheck.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
@@ -225,7 +225,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 			this.freezeExternalsCheck = new Button(inner, SWT.CHECK);
 			data = new GridData(GridData.FILL_HORIZONTAL);
 			this.freezeExternalsCheck.setLayoutData(data);
-			this.freezeExternalsCheck.setText(SVNUIMessages.getString(this.nationalizationId + "_FreezeExternals"));
+			this.freezeExternalsCheck.setText(SVNUIMessages.getString(this.nationalizationId + "_FreezeExternals")); //$NON-NLS-1$
 			this.freezeExternalsCheck.setSelection(false);
 		}
 
@@ -241,7 +241,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 		group.setLayout(new GridLayout());
 		data = new GridData(GridData.FILL_BOTH);
 		group.setLayoutData(data);
-		group.setText(SVNUIMessages.getString(this.nationalizationId + "_Comment"));
+		group.setText(SVNUIMessages.getString(this.nationalizationId + "_Comment")); //$NON-NLS-1$
 
 		this.comment = new CommentComposite(group, this);
 		data = new GridData(GridData.FILL_BOTH);
@@ -296,7 +296,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 			protected String getWarningMessage(Control input) {
 				IResource []resources = AbstractBranchTagPanel.this.resourceSelection.getSelectedResources();
 				if ((resources != null && resources.length != 0 || AbstractBranchTagPanel.this.disableSwitch) && AbstractBranchTagPanel.this.startWithCheck.getSelection()) {
-					return AbstractBranchTagPanel.this.defaultMessage + " " + SVNUIMessages.getString(AbstractBranchTagPanel.this.nationalizationId + "_Warning");
+					return AbstractBranchTagPanel.this.defaultMessage + " " + SVNUIMessages.getString(AbstractBranchTagPanel.this.nationalizationId + "_Warning"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				return null;
 			}
@@ -324,14 +324,14 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 		if (!this.considerStructure) {
 			this.resourceNameHistory = new UserInputHistory(this.historyName);
 			this.destinationCombo.setText(this.destinationUrl);
-			String name = SVNUIMessages.getString(this.nationalizationId + "_Location_Verifier");
+			String name = SVNUIMessages.getString(this.nationalizationId + "_Location_Verifier"); //$NON-NLS-1$
 			verifier.add(new URLVerifier(name));
 			verifier.add(new AbsolutePathVerifier(name));
 			verifier.add(new AbstractVerifier() {
 				protected String getErrorMessage(Control input) {
 					String url = AbstractBranchTagPanel.this.root.getRepositoryLocation().getUrl();
 					if (!AbstractBranchTagPanel.this.destinationCombo.getText().startsWith(url)) {
-						return SVNUIMessages.format(AbstractBranchTagPanel.this.nationalizationId + "_Location_Verifier_DoesNotCorresponds", new String[] {AbstractBranchTagPanel.this.destinationCombo.getText(), url});
+						return SVNUIMessages.format(AbstractBranchTagPanel.this.nationalizationId + "_Location_Verifier_DoesNotCorresponds", new String[] {AbstractBranchTagPanel.this.destinationCombo.getText(), url}); //$NON-NLS-1$
 					}
 					if (AbstractBranchTagPanel.this.startsWith) {
 						if (!AbstractBranchTagPanel.this.destinationCombo.getText().startsWith(AbstractBranchTagPanel.this.root.getUrl())) {
@@ -343,7 +343,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 						}
 					}
 					if (AbstractBranchTagPanel.this.root.getUrl().equals(SVNUtility.normalizeURL(AbstractBranchTagPanel.this.destinationCombo.getText()))) {
-						return SVNUIMessages.getString(AbstractBranchTagPanel.this.nationalizationId + "_Location_Verifier_NoTagName");
+						return SVNUIMessages.getString(AbstractBranchTagPanel.this.nationalizationId + "_Location_Verifier_NoTagName"); //$NON-NLS-1$
 					}
 					return null;
 				}
@@ -356,7 +356,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 			browse.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					RepositoryTreePanel panel = new RepositoryTreePanel(SVNUIMessages.getString(
-							AbstractBranchTagPanel.this.nationalizationId + "_SelectionProposal"),
+							AbstractBranchTagPanel.this.nationalizationId + "_SelectionProposal"), //$NON-NLS-1$
 							SVNUIMessages.RepositoryBrowsingPanel_Description,
 							SVNUIMessages.RepositoryBrowsingPanel_Message,
 							null,
@@ -374,9 +374,9 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 			});
 		}
 		else {
-			this.resourceNameHistory = new UserInputHistory(this.historyName + "Name");
+			this.resourceNameHistory = new UserInputHistory(this.historyName + "Name"); //$NON-NLS-1$
 
-			String name = SVNUIMessages.getString(this.nationalizationId + "_NodeName_Verifier");
+			String name = SVNUIMessages.getString(this.nationalizationId + "_NodeName_Verifier"); //$NON-NLS-1$
 			verifier.add(new NonEmptyFieldVerifier(name) {
 				protected String getErrorMessageImpl(Control input) {
 					String msg = super.getErrorMessageImpl(input);
@@ -397,7 +397,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 				protected String getWarningMessage(Control input) {
 					String name = AbstractBranchTagPanel.this.destinationCombo.getText();
 					if (AbstractBranchTagPanel.this.existingNodesNamesSet != null && AbstractBranchTagPanel.this.existingNodesNamesSet.contains(name)) {
-						return SVNUIMessages.format(AbstractBranchTagPanel.this.nationalizationId + "_NodeName_Verifier_Error_Exists", new String[] {name});
+						return SVNUIMessages.format(AbstractBranchTagPanel.this.nationalizationId + "_NodeName_Verifier_Error_Exists", new String[] {name}); //$NON-NLS-1$
 					}
 					return null;
 				}
@@ -406,7 +406,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 			browse.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					RepositoryTreePanel panel = new RepositoryTreePanel(SVNUIMessages.getString(
-							AbstractBranchTagPanel.this.nationalizationId + "_SelectionProposal"),
+							AbstractBranchTagPanel.this.nationalizationId + "_SelectionProposal"), //$NON-NLS-1$
 							SVNUIMessages.RepositoryBrowsingPanel_Description,
 							SVNUIMessages.RepositoryBrowsingPanel_Message,
 							null,
@@ -437,7 +437,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 			this.resourceNameHistory.addLine(this.destinationUrl);
 		}
 		else {
-			this.destinationUrl = this.destinationUrl + "/" + this.destinationCombo.getText();
+			this.destinationUrl = this.destinationUrl + "/" + this.destinationCombo.getText(); //$NON-NLS-1$
 			this.resourceNameHistory.addLine(this.destinationCombo.getText());
 		}
 
@@ -477,7 +477,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 				IResource[] resourcesToProcess = AbstractBranchTagPaneParticipantHelper.this.getSelectedResources();
 				
 				if ((resourcesToProcess.length == 0 || AbstractBranchTagPanel.this.disableSwitch) && AbstractBranchTagPanel.this.startWithCheck.getSelection()) {
-					return AbstractBranchTagPanel.this.defaultMessage + " " + SVNUIMessages.getString(AbstractBranchTagPanel.this.nationalizationId + "_Warning");
+					return AbstractBranchTagPanel.this.defaultMessage + " " + SVNUIMessages.getString(AbstractBranchTagPanel.this.nationalizationId + "_Warning"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				return null;
 			}	

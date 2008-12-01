@@ -86,7 +86,7 @@ public class SynchronizeLabelDecorator extends LabelProvider implements ILabelDe
 			if (variant != null) {
 			    ILocalResource remote = variant.getResource();
 			    if (remote.getRevision() != SVNRevision.INVALID_REVISION_NUMBER) {
-					return text + " " + variant.getContentIdentifier();
+					return text + " " + variant.getContentIdentifier(); //$NON-NLS-1$
 			    }
 			}
 		}

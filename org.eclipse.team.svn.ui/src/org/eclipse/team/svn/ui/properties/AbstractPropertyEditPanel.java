@@ -127,7 +127,7 @@ public abstract class AbstractPropertyEditPanel extends AbstractDialogPanel {
 			this.propertyValue = propertyToEdit.value;
 		}
 		else {
-			this.propertyName = this.propertyValue = "";
+			this.propertyName = this.propertyValue = ""; //$NON-NLS-1$
 		}
 	}
 	
@@ -185,7 +185,7 @@ public abstract class AbstractPropertyEditPanel extends AbstractDialogPanel {
 		descriptionComposite.setLayout(descriptionLayout);
 
 		Label bulb = new Label(descriptionComposite, SWT.NONE);
-		bulb.setImage(SVNTeamUIPlugin.instance().getImageDescriptor("icons/dialogs/bulb.png").createImage());
+		bulb.setImage(SVNTeamUIPlugin.instance().getImageDescriptor("icons/dialogs/bulb.png").createImage()); //$NON-NLS-1$
 		data = new GridData();
 		data.verticalAlignment = SWT.TOP;
 		bulb.setLayoutData(data);
@@ -307,7 +307,7 @@ public abstract class AbstractPropertyEditPanel extends AbstractDialogPanel {
 			names.add(customProperties[i].propName);
 		}
 		if (this.customProps.length == 0) {
-			names.add("    " + SVNUIMessages.AbstractPropertyEditPanel_custom_hint);
+			names.add("    " + SVNUIMessages.AbstractPropertyEditPanel_custom_hint); //$NON-NLS-1$
 		}
 		String[] propertyNames = names.toArray(new String[names.size()]);
 		return propertyNames;
@@ -320,7 +320,7 @@ public abstract class AbstractPropertyEditPanel extends AbstractDialogPanel {
 			return (prop.description != null && prop.description.trim().length() > 0) ? prop.description : SVNUIMessages.AbstractPropertyEditPanel_NoDescription;			
 		}
 		SVNTeamPropsPreferencePage.CustomProperty customProp = this.getCustomProperty(propName);
-		if (customProp != null && !customProp.descriprion.equals("")) {
+		if (customProp != null && !customProp.descriprion.equals("")) { //$NON-NLS-1$
 			return customProp.descriprion;
 		}
 		return SVNUIMessages.AbstractPropertyEditPanel_UserDefined;

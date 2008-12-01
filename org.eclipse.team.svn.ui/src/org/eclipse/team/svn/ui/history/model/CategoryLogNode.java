@@ -72,14 +72,14 @@ public class CategoryLogNode extends AbstractLogNode {
 	}
 	
 	public ImageDescriptor getImageDescriptor() {
-		return SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/group_by_date.gif");
+		return SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history/group_by_date.gif"); //$NON-NLS-1$
 	}
 
 	public String getLabel(int columnIndex, int labelType, long currentRevision) {
 		if (columnIndex == ILogNode.COLUMN_REVISION) {
 			return this.category.getName();
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	
 	public int getType() {
@@ -91,7 +91,7 @@ public class CategoryLogNode extends AbstractLogNode {
 	}
 
 	public String getAuthor() {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	public int getChangesCount() {
@@ -99,7 +99,7 @@ public class CategoryLogNode extends AbstractLogNode {
 	}
 
 	public String getComment() {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	public long getRevision() {

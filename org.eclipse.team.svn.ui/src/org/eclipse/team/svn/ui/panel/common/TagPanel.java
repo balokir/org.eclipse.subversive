@@ -43,7 +43,7 @@ public class TagPanel extends AbstractBranchTagPanel {
     }
     
     public String getHelpId() {
-    	return "org.eclipse.team.svn.help.tagDialogContext";
+    	return "org.eclipse.team.svn.help.tagDialogContext"; //$NON-NLS-1$
     }
     
 }

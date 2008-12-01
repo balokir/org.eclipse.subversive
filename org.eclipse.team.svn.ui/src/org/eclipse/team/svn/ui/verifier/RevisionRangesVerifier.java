@@ -30,7 +30,7 @@ public class RevisionRangesVerifier extends AbstractFormattedVerifier {
 	public RevisionRangesVerifier(String fieldName) {
 		super(fieldName);
 		RevisionRangesVerifier.ERROR_MESSAGE = SVNUIMessages.format(SVNUIMessages.Verifier_RevisionRanges, new String[] {AbstractFormattedVerifier.FIELD_NAME});
-		this.pattern = Pattern.compile("\\d+(-\\d+)?(\\s*,\\s*\\d+(-\\d+)?)*");
+		this.pattern = Pattern.compile("\\d+(-\\d+)?(\\s*,\\s*\\d+(-\\d+)?)*"); //$NON-NLS-1$
 	}
 
 	protected String getErrorMessageImpl(Control input) {

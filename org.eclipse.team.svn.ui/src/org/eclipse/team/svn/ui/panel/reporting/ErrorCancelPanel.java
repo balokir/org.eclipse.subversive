@@ -124,7 +124,7 @@ public class ErrorCancelPanel extends AbstractDialogPanel {
 		data.heightHint = 100;
 		this.errorTextField.setLayoutData(data);
 		this.errorTextField.setEditable(false);
-		this.errorTextField.setText(this.simpleMessage + "\n" + this.advancedMessage);
+		this.errorTextField.setText(this.simpleMessage + "\n" + this.advancedMessage); //$NON-NLS-1$
 		
 		if (this.sendMail) {
 	    	Composite mailComposite = new Composite(parent, SWT.NONE);
@@ -159,9 +159,9 @@ public class ErrorCancelPanel extends AbstractDialogPanel {
     
 	public String getHelpId() {
 		if (this.sendMail) {
-			return "org.eclipse.team.svn.help.errorDialogContext";
+			return "org.eclipse.team.svn.help.errorDialogContext"; //$NON-NLS-1$
 		}
-		return "org.eclipse.team.svn.help.cancelDialogContext";
+		return "org.eclipse.team.svn.help.cancelDialogContext"; //$NON-NLS-1$
 	}
     
     protected void saveChangesImpl() {
@@ -189,7 +189,7 @@ public class ErrorCancelPanel extends AbstractDialogPanel {
     }
     
     public String getImagePath() {
-    	return "icons/dialogs/" + (this.panelType == ErrorCancelPanel.ERROR_PANEL_TYPE && this.isPluginError ? "operation_error.gif" : "select_revision.gif");
+    	return "icons/dialogs/" + (this.panelType == ErrorCancelPanel.ERROR_PANEL_TYPE && this.isPluginError ? "operation_error.gif" : "select_revision.gif"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
     
 }

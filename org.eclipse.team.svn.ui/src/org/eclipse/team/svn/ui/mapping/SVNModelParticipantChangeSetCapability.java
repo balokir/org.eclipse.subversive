@@ -37,7 +37,7 @@ public class SVNModelParticipantChangeSetCapability extends ChangeSetCapability 
 		for (int i = 0; i < sets.length; i++) {
 			if (SVNChangeSetCapability.containsOneOf(sets[i], resourcesToCommit)) {
 				String comment = sets[i].getComment();
-				retVal = retVal == null ? comment : (retVal + "\n" + comment);
+				retVal = retVal == null ? comment : (retVal + "\n" + comment); //$NON-NLS-1$
 			}
 		}
 		return retVal;

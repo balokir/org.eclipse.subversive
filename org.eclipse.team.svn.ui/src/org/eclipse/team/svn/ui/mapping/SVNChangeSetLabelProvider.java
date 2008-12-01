@@ -42,7 +42,7 @@ public class SVNChangeSetLabelProvider extends ResourceModelLabelProvider {
 
 	public String getText(Object element) {
 		if (element instanceof ActiveChangeSet && SVNTeamUIPlugin.instance().getModelCangeSetManager().isDefault((ActiveChangeSet)element)) {
-			return super.getText(element) + " " + SVNUIMessages.ChangeSet_DefaultDecoration;
+			return super.getText(element) + " " + SVNUIMessages.ChangeSet_DefaultDecoration; //$NON-NLS-1$
 		}
 		return super.getText(element);
 	}
@@ -66,7 +66,7 @@ public class SVNChangeSetLabelProvider extends ResourceModelLabelProvider {
 
 	private Image getChangeSetImage() {
 		if (this.changeSetImage == null) {
-			this.changeSetImage = SVNTeamUIPlugin.instance().getImageDescriptor("icons/objects/changeset.gif").createImage();
+			this.changeSetImage = SVNTeamUIPlugin.instance().getImageDescriptor("icons/objects/changeset.gif").createImage(); //$NON-NLS-1$
 		}
 		return this.changeSetImage;
 	}

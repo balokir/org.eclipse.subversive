@@ -94,7 +94,7 @@ public class RelocatedProjectHelper implements IResolutionHelper {
 				CompositeOperation op = new CompositeOperation(mainOp.getId());
 				
 				op.add(scannerOp);
-				op.add(new AbstractWorkingCopyOperation("Operation.ChangeRepositoryLocation", new IResource[] {project}) {
+				op.add(new AbstractWorkingCopyOperation("Operation_ChangeRepositoryLocation", new IResource[] {project}) { //$NON-NLS-1$
 					protected void runImpl(IProgressMonitor monitor) throws Exception {
 						location.setUrl(relocatedTo);
 						location.setUrl(location.getRepositoryRootUrl());
@@ -103,7 +103,7 @@ public class RelocatedProjectHelper implements IResolutionHelper {
 					}
 				});
 				op.add(mainOp);
-				op.add(new AbstractWorkingCopyOperation("Operation.CheckRelocationState", new IResource[] {project}) {
+				op.add(new AbstractWorkingCopyOperation("Operation_CheckRelocationState", new IResource[] {project}) { //$NON-NLS-1$
 					protected void runImpl(IProgressMonitor monitor) throws Exception {
 						if (mainOp.getExecutionState() != IActionOperation.OK) {
 							SVNRemoteStorage.instance().copyRepositoryLocation(location, backup);

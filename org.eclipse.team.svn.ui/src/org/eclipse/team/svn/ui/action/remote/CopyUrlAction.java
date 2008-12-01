@@ -36,7 +36,7 @@ public class CopyUrlAction extends AbstractRepositoryTeamAction {
 	}
 
 	public void runImpl(IAction action) {
-		IActionOperation op = new AbstractActionOperation("Operation.CopyURL") {
+		IActionOperation op = new AbstractActionOperation("Operation_CopyURL") { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				Clipboard clipboard = new Clipboard(CopyUrlAction.this.getShell().getDisplay());
 				try {
