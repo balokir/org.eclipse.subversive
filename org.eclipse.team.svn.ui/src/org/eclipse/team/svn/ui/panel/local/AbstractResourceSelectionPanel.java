@@ -12,7 +12,6 @@
 package org.eclipse.team.svn.ui.panel.local;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -34,7 +33,6 @@ import org.eclipse.team.svn.ui.verifier.AbstractVerifier;
  */
 public abstract class AbstractResourceSelectionPanel extends AbstractDialogPanel {
 	protected IResource []resources;
-	protected CheckboxTableViewer tableViewer;
 	protected ResourceSelectionComposite selectionComposite;
 //	protected int subPathStart;	// common root length, unfortunately doesn't work with more than one repository location
 	protected IResource[] userSelectedResources;
@@ -51,18 +49,16 @@ public abstract class AbstractResourceSelectionPanel extends AbstractDialogPanel
 
 	public IResource []getSelectedResources() {
 		if (this.paneParticipantHelper.isParticipantPane()) {
-			return this.paneParticipantHelper.getSelectedResources(); 		
-		} else {
-			return this.selectionComposite.getSelectedResources();			
-		}				
+			return this.paneParticipantHelper.getSelectedResources();
+		}
+		return this.selectionComposite.getSelectedResources();							
 	}
 
 	public IResource []getNotSelectedResources() {
     	if (this.paneParticipantHelper.isParticipantPane()) {    		
     		return this.paneParticipantHelper.getNotSelectedResources(); 		
-    	} else {
-    		return this.selectionComposite.getNotSelectedResources();
-    	}    	
+    	}
+    	return this.selectionComposite.getNotSelectedResources();    	
 	}
 
     public Point getPrefferedSizeImpl() {

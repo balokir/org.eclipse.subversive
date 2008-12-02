@@ -911,6 +911,8 @@ public class SVNUIMessages extends BaseMessages {
 	public static String Operation_WriteToConsoleResources;
 	public static String Operation_WriteToConsoleResources_Id;
 	public static String OptionsActionGroup_ShowInfoContiguous;
+	public static String OverrideResourcesPanel_Affected;
+	public static String OverrideResourcesPanel_Affected_Warning;
 	public static String OverrideResourcesPanel_Description_Commit;
 	public static String OverrideResourcesPanel_Description_Update;
 	public static String OverrideResourcesPanel_Message;

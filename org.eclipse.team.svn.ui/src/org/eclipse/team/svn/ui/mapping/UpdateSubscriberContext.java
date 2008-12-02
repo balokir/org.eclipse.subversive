@@ -106,11 +106,28 @@ public class UpdateSubscriberContext extends SubscriberMergeContext {
 					changedResources[0] = UnacceptableOperationNotificator.shrinkResourcesWithNotOnRespositoryParents(UIMonitorUtility.getShell(), changedResources[0]); 					
 				}
 			});
-			changedResources[0] = FileUtility.addOperableParents(changedResources[0], IStateFilter.SF_NOTONREPOSITORY);
-			allResources.addAll(Arrays.asList(changedResources[0]));
+			
+			ArrayList<IResource> affected = new ArrayList<IResource>();
+	 		if (changedResources[0] != null) {
+				IResource [] changedWithOperableParents = FileUtility.addOperableParents(changedResources[0], IStateFilter.SF_NOTONREPOSITORY);
+				ArrayList<IResource> changedList = new ArrayList<IResource>(Arrays.asList(changedResources[0]));
+				for (IResource current : changedWithOperableParents) {
+					if (!changedList.contains(current)) {
+						changedList.add(current);
+						IResource [] currentAffectedArray = FileUtility.getResourcesRecursive(new IResource [] {current}, IStateFilter.SF_ANY_CHANGE);
+						for (IResource currentAffected : currentAffectedArray) {
+							if (!changedList.contains(currentAffected)) {
+								affected.add(currentAffected);
+							}
+						}
+					}
+				}
+				changedResources [0] = changedWithOperableParents;
+	 			allResources.addAll(Arrays.asList(changedResources[0]));
+	 		}
 			if (allResources.size() > 0) {
 				IResource []fullSet = allResources.toArray(new IResource[allResources.size()]);
-				final OverrideResourcesPanel panel = new OverrideResourcesPanel(fullSet, fullSet, OverrideResourcesPanel.MSG_UPDATE);
+				final OverrideResourcesPanel panel = new OverrideResourcesPanel(fullSet, fullSet, OverrideResourcesPanel.MSG_UPDATE, affected.toArray(new IResource [affected.size()]));
 				final int [] dialogRetVal = new int [1];
 				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 					public void run() {
