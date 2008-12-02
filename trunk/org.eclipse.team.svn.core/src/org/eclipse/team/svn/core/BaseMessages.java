@@ -56,8 +56,8 @@ public class BaseMessages extends NLS {
     	 * if key contains not valid characters for java identifier
     	 * then replace not valid characters to underscore
     	 */
-    	if (key.indexOf("-") != -1) {
-    		key = key.replaceAll("-", "_");
+    	if (key.indexOf("-") != -1) { //$NON-NLS-1$
+    		key = key.replaceAll("-", "_"); //$NON-NLS-1$ //$NON-NLS-2$
     	}
     	
     	try {
