@@ -113,10 +113,10 @@ public final class FileUtility {
 		}
 		String retVal = FileUtility.getResourceImpl(bundle, key);
 		if (retVal != null) {
-			if (key.indexOf("Error") != -1) {
-				String id = FileUtility.getResourceImpl(bundle, key + ".Id");
+			if (key.indexOf("Error") != -1) { //$NON-NLS-1$
+				String id = FileUtility.getResourceImpl(bundle, key + ".Id"); //$NON-NLS-1$
 				if (id != null) {
-					retVal = id + ": " + retVal;
+					retVal = id + ": " + retVal; //$NON-NLS-1$
 				}
 			}
 			return retVal;
