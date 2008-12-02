@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.mylyn;
 
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -21,7 +19,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * @author Alexander Gurov
  */
 public class SVNMylynIntegrationPlugin extends AbstractUIPlugin {
-	public static final String ID = "org.eclipse.team.svn.mylyn";
+	public static final String ID = "org.eclipse.team.svn.mylyn"; //$NON-NLS-1$
 	
 	private static SVNMylynIntegrationPlugin instance;
 	
@@ -32,10 +30,6 @@ public class SVNMylynIntegrationPlugin extends AbstractUIPlugin {
 	
     public static SVNMylynIntegrationPlugin instance() {
     	return SVNMylynIntegrationPlugin.instance;
-    }
-    
-    public String getResource(String key) {
-        return FileUtility.getResource(Platform.getResourceBundle(this.getBundle()), key);
     }
     
 }

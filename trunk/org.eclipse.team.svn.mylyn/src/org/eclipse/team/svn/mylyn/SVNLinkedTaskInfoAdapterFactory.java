@@ -56,7 +56,7 @@ public class SVNLinkedTaskInfoAdapterFactory implements IAdapterFactory {
 		Object adapted =  Platform.getAdapterManager().getAdapter(adaptableObject, SVNLogEntry.class);
 		if (adapted != null) {
 			SVNLogEntry historyEntry = (SVNLogEntry)adapted;
-			String comment = historyEntry.message == null ? "" : historyEntry.message;
+			String comment = historyEntry.message == null ? "" : historyEntry.message; //$NON-NLS-1$
 			
 			IWorkbenchPage page = UIMonitorUtility.getActivePage();
 			if (page != null) {

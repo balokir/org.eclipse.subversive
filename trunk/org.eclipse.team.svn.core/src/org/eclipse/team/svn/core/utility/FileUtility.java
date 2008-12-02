@@ -29,6 +29,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 import java.util.Set;
 
 import org.eclipse.core.internal.preferences.Base64;
@@ -93,26 +95,43 @@ public final class FileUtility {
 		return set.equals(resource) ? true : (resource == null ? false : FileUtility.relatesTo(set, resource.getParent()));
 	}
 	
-//	TODO delete	
-//	public static String getResource(ResourceBundle bundle, String key) {
-//		if (key == null) {
-//			return null;
-//		}
-//		if (bundle == null) {
-//			return key;
-//		}
-//		String retVal = FileUtility.getResourceImpl(bundle, key);
-//		if (retVal != null) {
-//			if (key.indexOf("Error") != -1) {
-//				String id = FileUtility.getResourceImpl(bundle, key + ".Id");
-//				if (id != null) {
-//					retVal = id + ": " + retVal;
-//				}
-//			}
-//			return retVal;
-//		}
-//		return key;
-//	}
+	/**
+	 * Returns resource from bundle
+	 * 
+	 * You shouldn't use this method if you follow to new Eclipse's resource bundles approach 
+	 * 
+	 * @param bundle
+	 * @param key
+	 * @return
+	 */
+	public static String getResource(ResourceBundle bundle, String key) {
+		if (key == null) {
+			return null;
+		}
+		if (bundle == null) {
+			return key;
+		}
+		String retVal = FileUtility.getResourceImpl(bundle, key);
+		if (retVal != null) {
+			if (key.indexOf("Error") != -1) {
+				String id = FileUtility.getResourceImpl(bundle, key + ".Id");
+				if (id != null) {
+					retVal = id + ": " + retVal;
+				}
+			}
+			return retVal;
+		}
+		return key;
+	}
+	
+	private static String getResourceImpl(ResourceBundle bundle, String key) {
+		try {
+			return bundle.getString(key);
+		}
+		catch (MissingResourceException ex) {
+			return null;
+		}
+	}
 	
 	public static String getWorkingCopyPath(IResource resource) {
 		return FileUtility.getResourcePath(resource).toString();
@@ -736,16 +755,6 @@ public final class FileUtility {
 		ProgressMonitorUtility.doTaskExternalDefault(op, new NullProgressMonitor());
 		return op.getChildren();
 	}
-	
-//	TODO delete	
-//	private static String getResourceImpl(ResourceBundle bundle, String key) {
-//		try {
-//			return bundle.getString(key);
-//		}
-//		catch (MissingResourceException ex) {
-//			return null;
-//		}
-//	}
 	
 	private FileUtility() {
 	}

@@ -17,7 +17,7 @@ import org.eclipse.team.svn.core.BaseMessages;
 public class SVNUIMessages extends BaseMessages {
 
 	protected static final String BUNDLE_NAME = "org.eclipse.team.svn.ui.messages";	 //$NON-NLS-1$
-		
+	
 	public static String AbstractGetResourceNamePanel_Comment;
 	public static String AbstractGetResourceNamePanel_Message_MultiPart;
 	public static String AbstractGetResourceNamePanel_Message_Simple;
@@ -50,14 +50,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String AddRepositoryLocationPage_RootURL;
 	public static String AddRepositoryLocationPage_Title;
 	public static String AddRevisionLinkAction_label;
-	public static String AddRevisionLinkAction_tooltip;
-	public static String AddToSVNAction_label;
-	public static String AddToSVNAction_tooltip;
-	public static String AddToSVNCommand_label;
 	public static String AddToSVNCommand_tooltip;
-	public static String AddToSVNIgnoreAction_label;
-	public static String AddToSVNIgnoreAction_tooltip;
-	public static String AddToSVNIgnoreCommand_label;
 	public static String AddToSVNIgnoreCommand_tooltip;
 	public static String AddToSVNPanel_Delete_Action_Lable;
 	public static String AddToSVNPanel_Description;
@@ -130,8 +123,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String AutoPropsPreferencePage_dialogTitleImport;
 
 	public static String BranchAction_label;
-	public static String BranchAction_tooltip;
-	public static String BranchCommand_label;
 	public static String BranchCommand_tooltip;
 	public static String BranchPanel_Comment;
 	public static String BranchPanel_Description;
@@ -154,10 +145,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String BranchTagAction_Error_Branch;
 	public static String BranchTagAction_Error_Tag;
 	public static String Branch_Read_Separator;
-	public static String BreakLockAction_label;
-	public static String BreakLockAction_tooltip;
-	public static String BugReportAction_label;
-	public static String BugReportAction_tooltip;
 	public static String BuiltInAnnotateRevision_Author;
 	public static String BuiltInAnnotateRevision_Date;
 	public static String BuiltInAnnotateRevision_MergedWith;
@@ -173,7 +160,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String Button_SelectAll;
 	public static String Button_Simple;
 
-	public static String ChangeSetModel_Name;
 	public static String ChangeSetModel_UnassignedChangeSetTitle;
 	public static String ChangeSet_DefaultDecoration;
 	public static String ChangeSet_NewSet;
@@ -187,15 +173,9 @@ public class SVNUIMessages extends BaseMessages {
 	public static String CheckoutAction_Type2;
 	public static String CheckoutAction_Type3;
 	public static String CheckoutAction_Type4;
-	public static String CheckoutAction_label;
-	public static String CheckoutAction_tooltip;
-	public static String CheckoutAsAction_label;
-	public static String CheckoutAsAction_tooltip;
 	public static String CheckoutAsFolderPage_Description;
 	public static String CheckoutAsFolderPage_Title;
 	public static String CheckoutAsWizard_Title;
-	public static String CheckoutFromSVN_description;
-	public static String CheckoutFromSVN_label;
 	public static String CheckoutMethodSelectionPage_Description;
 	public static String CheckoutMethodSelectionPage_Externals;
 	public static String CheckoutMethodSelectionPage_Find;
@@ -208,8 +188,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String CheckoutMethodSelectionPage_Title;
 	public static String CheckoutProjectsWizard_SelectLocation_Title;
 	public static String CheckoutProjectsWizard_Title;
-	public static String CleanupAction_label;
-	public static String CleanupAction_tooltip;
 	public static String CleanupCommand_label;
 	public static String CleanupCommand_tooltip;
 	public static String CommentComposite_BugID_Verifier_Error_Number;
@@ -230,10 +208,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String CommentTemplatesPreferencePage_UserTemplates;
 	public static String CommentTemplatesPreferencePage_ViewHint;
 	public static String CommentTemplatesPreferencePage_historySavedCommentsCount;
-	public static String CommentTemplatesPreferencePage_name;
-	public static String CommitAction_label;
-	public static String CommitAction_tooltip;
-	public static String CommitCommand_label;
 	public static String CommitCommand_tooltip;
 	public static String CommitPanel_Comment;
 	public static String CommitPanel_CompareWith_Group;
@@ -276,47 +250,21 @@ public class SVNUIMessages extends BaseMessages {
 	public static String ComparePropsPanel_Description;
 	public static String ComparePropsPanel_Local_Message;
 	public static String ComparePropsPanel_Remote_Message;
-	public static String CompareRemoteWithBranchAction_label;
-	public static String CompareRemoteWithBranchAction_tooltip;
-	public static String CompareRemoteWithTagAction_label;
-	public static String CompareRemoteWithTagAction_tooltip;
-	public static String CompareRepositoryWithBranchCommand_label;
 	public static String CompareRepositoryWithBranchCommand_tooltip;
-	public static String CompareRepositoryWithTagCommand_label;
 	public static String CompareRepositoryWithTagCommand_tooltip;
-	public static String CompareTwoRepositoryResourcesActionEditor_label;
-	public static String CompareTwoRepositoryResourcesActionEditor_tooltip;
-	public static String CompareTwoRepositoryResourcesAction_label;
-	public static String CompareTwoRepositoryResourcesAction_tooltip;
-	public static String CompareTwoRepositoryResourcesCommand_label;
 	public static String CompareTwoRepositoryResourcesCommand_tooltip;
-	public static String CompareTwoSelectedRepositoryResourcesAction_label;
-	public static String CompareTwoSelectedRepositoryResourcesAction_tooltip;
-	public static String CompareTwoSelectedRepositoryResourcesCommand_label;
 	public static String CompareTwoSelectedRepositoryResourcesCommand_tooltip;
-	public static String CompareWithBranchCommand_label;
 	public static String CompareWithBranchCommand_tooltip;
 	public static String CompareWithLatestRevisionAction_label;
-	public static String CompareWithLatestRevisionAction_tooltip;
-	public static String CompareWithLatestRevisionCommand_label;
 	public static String CompareWithLatestRevisionCommand_tooltip;
 	public static String CompareWithRevisionAction_label;
-	public static String CompareWithRevisionAction_tooltip;
-	public static String CompareWithRevisionCommand_label;
 	public static String CompareWithRevisionCommand_tooltip;
-	public static String CompareWithTagCommand_label;
 	public static String CompareWithTagCommand_tooltip;
 	public static String CompareWithWorkingCopyAction_label;
-	public static String CompareWithWorkingCopyAction_tooltip;
-	public static String CompareWithWorkingCopyCommand_label;
 	public static String CompareWithWorkingCopyCommand_tooltip;
-	public static String Compare_Branch_Action_Label;
-	public static String Compare_Branch_Action_Tooltip;
 	public static String Compare_Branch_Description;
 	public static String Compare_Branch_Message;
 	public static String Compare_Branch_Title;
-	public static String Compare_Tag_Action_Label;
-	public static String Compare_Tag_Action_Tooltip;
 	public static String Compare_Tag_Description;
 	public static String Compare_Tag_Message;
 	public static String Compare_Tag_Title;
@@ -325,7 +273,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String ConflictingFileEditorInput_Repository;
 	public static String ConflictingFileEditorInput_Working;
 	public static String ConsolePreferencePage_hyperlinksIsEnabled;
-	public static String ConsolePreferencePage_name;
 	public static String ConsolePreferencePage_textCmdMessage;
 	public static String ConsolePreferencePage_textColorsGroup;
 	public static String ConsolePreferencePage_textErrMessage;
@@ -357,22 +304,12 @@ public class SVNUIMessages extends BaseMessages {
 	public static String ContainerSelectionPanel_Title;
 	public static String CopyAction_Conflict_Message;
 	public static String CopyAction_Conflict_Title;
-	public static String CopyAction_label;
-	public static String CopyAction_tooltip;
-	public static String CopyCommand_label;
 	public static String CopyCommand_tooltip;
 	public static String CopyMove_Comment_Message;
 	public static String CopyMove_SubFolder_Multi;
 	public static String CopyMove_SubFolder_One;
-	public static String CopyRemoteAction_label;
-	public static String CopyRemoteAction_tooltip;
-	public static String CopyRemoteToAction_label;
-	public static String CopyRemoteToAction_tooltip;
 	public static String CopyToAction_Comment_Title;
 	public static String CopyToAction_Select_Title;
-	public static String CopyUrlAction_label;
-	public static String CopyUrlAction_tooltip;
-	public static String CopyUrlCommand_label;
 	public static String CopyUrlCommand_tooltip;
 	public static String CreateFilePanel_Comment;
 	public static String CreateFilePanel_Description;
@@ -385,22 +322,13 @@ public class SVNUIMessages extends BaseMessages {
 	public static String CreateFilePanel_Title;
 	public static String CreateFolderPanel_Description;
 	public static String CreateFolderPanel_Title;
-	public static String CreatePatchAction_label;
-	public static String CreatePatchAction_tooltip;
 	public static String CreatePatchCommand_label;
 	public static String CreatePatchCommand_tooltip;
 	public static String CreatePatchWizard_Title;
-	public static String CreateProjectStructureAction_label;
-	public static String CreateProjectStructureAction_tooltip;
 	public static String CreateProjectStructurePanel_Description;
 	public static String CreateProjectStructurePanel_Monolythic;
 	public static String CreateProjectStructurePanel_SingleOrMulti;
 	public static String CreateProjectStructurePanel_Title;
-	public static String CreateRemoteFileAction_label;
-	public static String CreateRemoteFileAction_tooltip;
-	public static String CreateRemoteFolderAction_label;
-	public static String CreateRemoteFolderAction_tooltip;
-	public static String CreateRemotePatchAction_tooltip;
 	public static String CredentialsComposite_Authentication;
 	public static String CredentialsComposite_Password;
 	public static String CredentialsComposite_SavePassword;
@@ -408,19 +336,9 @@ public class SVNUIMessages extends BaseMessages {
 	public static String CustomPropsPreferencePage_columnHeaderPropName;
 	public static String CustomPropsPreferencePage_columnHeaderRegexp;
 	public static String CustomPropsPreferencePage_description;
-	public static String CutRemoteAction_label;
-	public static String CutRemoteAction_tooltip;
 
-	public static String DecoratorProject_desc;
-	public static String DecoratorProject_name;
-	public static String DecoratorResource_desc;
-	public static String DecoratorResource_name;
-	public static String DecoratorWorkingSet_desc;
-	public static String DecoratorWorkingSet_name;
 	public static String DefaultCheckoutFactory_EclipseProject;
 	public static String DeleteAction_Comment_Title;
-	public static String DeleteRemoteAction_label;
-	public static String DeleteRemoteAction_tooltip;
 	public static String DiscardConfirmationDialog_Location_Message_Multi;
 	public static String DiscardConfirmationDialog_Location_Message_Single;
 	public static String DiscardConfirmationDialog_Location_Title_Multi;
@@ -441,15 +359,9 @@ public class SVNUIMessages extends BaseMessages {
 	public static String DiscardLocationFailurePanel_Message_Single;
 	public static String DiscardLocationFailurePanel_Title_Multi;
 	public static String DiscardLocationFailurePanel_Title_Single;
-	public static String DiscardRepositoryLocationAction_label;
 	public static String DiscardRepositoryLocationAction_tooltip;
-	public static String DiscardRevisionLinksAction_label;
-	public static String DiscardRevisionLinksAction_tooltip;
 	public static String DiscardedLocationHelper_Dialog_Message;
 	public static String DiscardedLocationHelper_Dialog_Title;
-	public static String DisconnectAction_label;
-	public static String DisconnectAction_tooltip;
-	public static String DisconnectCommand_label;
 	public static String DisconnectCommand_tooltip;
 	public static String DisconnectDialog_Message;
 	public static String DisconnectDialog_Option_dropSVNMeta;
@@ -474,8 +386,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String EditCommentTemplatePanel_Title_Edit;
 	public static String EditCommentTemplatePanel_Title_New;
 	public static String EditConflictsAction_label;
-	public static String EditConflictsAction_tooltip;
-	public static String EditConflictsCommand_label;
 	public static String EditConflictsCommand_tooltip;
 	public static String EditCustomPropertiesPanel_Description;
 	public static String EditCustomPropertiesPanel_Message;
@@ -487,12 +397,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String EditCustomPropertiesPanel_Title_Add;
 	public static String EditCustomPropertiesPanel_Title_Edit;
 	public static String EditCustomPropertiesPanel_Validator_RegExp;
-	public static String EditPropertiesAction_label;
-	public static String EditPropertiesAction_tooltip;
-	public static String EditPropertiesCommand_label;
 	public static String EditPropertiesCommand_tooltip;
-	public static String EditRepositoryLocationPropertiesAction_label;
-	public static String EditRepositoryLocationPropertiesAction_tooltip;
 	public static String ErrorCancelPanel_Description_Cancelled;
 	public static String ErrorCancelPanel_Description_Cancelled_Empty;
 	public static String ErrorCancelPanel_Description_Failed;
@@ -540,7 +445,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String Error_SetFileContentTitle;
 	public static String ExportAction_Select_Description;
 	public static String ExportAction_Select_Title;
-	public static String ExportAction_tooltip;
 	public static String ExportCommand_label;
 	public static String ExportCommand_tooltip;
 	public static String ExportLogDialog_Title;
@@ -555,8 +459,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String ExtractToAction_Select_Description;
 	public static String ExtractToAction_Select_Title;
 
-	public static String HelpActionSet_label;
-	public static String HelpActionSet_menu;
 	public static String History;
 	public static String HistoryFilterPanel_Author;
 	public static String HistoryFilterPanel_Author_Verifier;
@@ -624,8 +526,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String IgnoreMethodPanel_Pattern_Verifier;
 	public static String IgnoreMethodPanel_Title_Multi;
 	public static String IgnoreMethodPanel_Title_Single;
-	public static String ImportAction_label;
-	public static String ImportAction_tooltip;
 	public static String ImportFromSVNWizard_Title;
 	public static String ImportPanel_Comment;
 	public static String ImportPanel_Description;
@@ -655,10 +555,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String LocalInfoPage_ResourceURL;
 	public static String LocalInfoPage_Revision;
 	public static String LocalInfoPage_State;
-	public static String LocalInfoPage_name;
 	public static String LockAction_label;
-	public static String LockAction_tooltip;
-	public static String LockCommand_label;
 	public static String LockCommand_tooltip;
 	public static String LockPanel_Comment;
 	public static String LockPanel_Description_Default;
@@ -724,7 +621,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String MainPreferencePage_mergePrompt;
 	public static String MainPreferencePage_mergeUseInteractiveMerge;
 	public static String MainPreferencePage_mergeUseJavaHLMerge;
-	public static String MainPreferencePage_name;
 	public static String MainPreferencePage_propertiesGroupName;
 	public static String MainPreferencePage_propertiesPrompt;
 	public static String MainPreferencePage_propertiesUseEditor;
@@ -755,14 +651,8 @@ public class SVNUIMessages extends BaseMessages {
 	public static String MainPreferencePage_tableSortingGroupName;
 	public static String MainPreferencePage_tableSortingPrompt;
 	public static String MainPreferencePage_viewSettingsTabName;
-	public static String MarkAsMergedAction_label;
-	public static String MarkAsMergedAction_tooltip;
-	public static String MarkAsMergedCommand_label;
 	public static String MarkAsMergedCommand_tooltip;
 	public static String MergeAction_MergeError;
-	public static String MergeAction_label;
-	public static String MergeAction_tooltip;
-	public static String MergeCommand_label;
 	public static String MergeCommand_tooltip;
 	public static String MergePanel_1URL;
 	public static String MergePanel_2URL;
@@ -787,12 +677,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String MergePanel_SourceURL2;
 	public static String MergePanel_SourceURL2_Verifier;
 	public static String MergePanel_Title;
-	public static String MergeParticipant;
 	public static String MergeView_TaskName;
-	public static String MigrateToEclipse_label;
-	public static String MigrateToEclipse_tooltip;
-	public static String MoveRemoteAction_label;
-	public static String MoveRemoteAction_tooltip;
 	public static String MoveToAction_Comment_Title;
 	public static String MoveToAction_Select_Title;
 	public static String MultipleCheckoutMethodSelectionPage_Description;
@@ -807,8 +692,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String NewRepositoryLocationWizard_OverrideAuthor;
 	public static String NewRepositoryLocationWizard_Title_Edit;
 	public static String NewRepositoryLocationWizard_Title_New;
-	public static String NewRepositoryLocation_description;
-	public static String NewRepositoryLocation_label;
 	public static String NonValidLocationErrorDialog_Message;
 	public static String NonValidLocationErrorDialog_Title;
 	public static String NotifyNodeKindChangedDialog_Message;
@@ -816,16 +699,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String NotifyUnresolvedConflictDialog_Message;
 	public static String NotifyUnresolvedConflictDialog_Title;
 
-	public static String OpenRemoteFileAction_label;
-	public static String OpenRemoteFileAction_tooltip;
-	public static String OpenRemoteFileWithDefaultAction_label;
-	public static String OpenRemoteFileWithDefaultAction_tooltip;
-	public static String OpenRemoteFileWithExternalAction_label;
-	public static String OpenRemoteFileWithExternalAction_tooltip;
-	public static String OpenRemoteFileWithInplaceAction_label;
-	public static String OpenRemoteFileWithInplaceAction_tooltip;
-	public static String OpenRemoteFileWithTextAction_label;
-	public static String OpenRemoteFileWithTextAction_tooltip;
 	public static String OperationErrorDialog_Message_DifferentProjects;
 	public static String OperationErrorDialog_Message_DifferentRepositories;
 	public static String Operation_AddConsoleHyperlink;
@@ -1048,10 +921,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String PasswordManagementPreferencePage_Hint;
 	public static String PasswordManagementPreferencePage_Location;
 	public static String PasswordManagementPreferencePage_Username;
-	public static String PasswordManagementPreferencesPage_name;
 	public static String PasteAction_Comment_Title;
-	public static String PasteRemoteAction_label;
-	public static String PasteRemoteAction_tooltip;
 	public static String PatchOptionsPage_Ancestry;
 	public static String PatchOptionsPage_Binary;
 	public static String PatchOptionsPage_Deleted;
@@ -1068,7 +938,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String PatchOptionsPage_Title;
 	public static String PerformancePreferencePage_computeDeep;
 	public static String PerformancePreferencePage_enableCache;
-	public static String PerformancePreferencePage_name;
 	public static String PerformancePreferencePage_optionsDesc;
 	public static String PerformancePreferencePage_preciseEnablements;
 	public static String PreferencePage_demoAscendant;
@@ -1104,7 +973,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String PreferencePage_iconsIndicateSwitched;
 	public static String PreferencePage_iconsPrompt;
 	public static String PreferencePage_iconsTabName;
-	public static String PreferencePage_name;
 	public static String PreferencePage_noteLabel;
 	public static String PreferencePage_preview;
 	public static String PreferencePage_textAddVariables;
@@ -1193,7 +1061,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String PropertyEditPanel_Verifier_bugtraqurl;
 	public static String PropertyEditPanel_Verifier_bugtraqwarnifnoissue;
 	public static String PropertyEditPanel_Verifier_svndate;
-	//public static String PropertyEditPanel_Verifier_svneol_style;
+	public static String PropertyEditPanel_Verifier_svneol_style;
 	public static String PropertyEditPanel_Verifier_svnexternals;
 	public static String PropertyEditPanel_Verifier_svnignore;
 	public static String PropertyEditPanel_Verifier_svnkeywords;
@@ -1238,7 +1106,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String Property_TSVN_LogTemplate;
 	public static String Property_TSVN_LogWidthMarker;
 	public static String Property_TSVN_ProjectLanguage;
-	public static String PropsPreferencePage_name;
 	public static String ProxyComposite_Authentication;
 	public static String ProxyComposite_Description;
 	public static String ProxyComposite_Password;
@@ -1251,8 +1118,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String RecurseDepthSelector_Infinity;
 	public static String RecurseDepthSelector_Label;
 	public static String RecurseDepthSelector_Unknown;
-	public static String RefreshRemoteAction_label;
-	public static String RefreshRemoteAction_tooltip;
 	public static String RelocationChoicesPanel_ChangeLocation;
 	public static String RelocationChoicesPanel_CreateLocation;
 	public static String RelocationChoicesPanel_Description;
@@ -1265,8 +1130,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String RemoveProperty_Recursively;
 	public static String RemoveProperty_Title_Multi;
 	public static String RemoveProperty_Title_Single;
-	public static String RenameRemoteAction_label;
-	public static String RenameRemoteAction_tooltip;
 	public static String RenameResourcePanel_Description;
 	public static String RenameResourcePanel_Title;
 	public static String ReplaceUrlPanel_Description;
@@ -1276,22 +1139,12 @@ public class SVNUIMessages extends BaseMessages {
 	public static String ReplaceUrlPanel_Title;
 	public static String ReplaceWarningDialog_Message;
 	public static String ReplaceWarningDialog_Title;
-	public static String ReplaceWithBranchAction_label;
-	public static String ReplaceWithBranchAction_tooltip;
-	public static String ReplaceWithBranchCommand_label;
 	public static String ReplaceWithBranchCommand_tooltip;
 	public static String ReplaceWithLatestRevisionAction_label;
-	public static String ReplaceWithLatestRevisionAction_tooltip;
-	public static String ReplaceWithLatestRevisionCommand_label;
 	public static String ReplaceWithLatestRevisionCommand_tooltip;
 	public static String ReplaceWithRevisionAction_InputRevisionPanel_Title;
 	public static String ReplaceWithRevisionAction_label;
-	public static String ReplaceWithRevisionAction_tooltip;
-	public static String ReplaceWithRevisionCommand_label;
 	public static String ReplaceWithRevisionCommand_tooltip;
-	public static String ReplaceWithTagAction_label;
-	public static String ReplaceWithTagAction_tooltip;
-	public static String ReplaceWithTagCommand_label;
 	public static String ReplaceWithTagCommand_tooltip;
 	public static String Replace_Branch_Action_Label;
 	public static String Replace_Branch_Description;
@@ -1337,22 +1190,13 @@ public class SVNUIMessages extends BaseMessages {
 	public static String RepositoriesView_RepositoryLocation;
 	public static String RepositoriesView_ShowBrowser_Label;
 	public static String RepositoriesView_ShowBrowser_ToolTip;
-	public static String RepositoryBrowser;
 	public static String RepositoryBrowsingPanel_Description;
 	public static String RepositoryBrowsingPanel_Details;
 	public static String RepositoryBrowsingPanel_Details_Title;
 	public static String RepositoryBrowsingPanel_EmptyLabel;
 	public static String RepositoryBrowsingPanel_Message;
-	public static String RepositoryExploring_description;
-	public static String RepositoryExploring_name;
 	public static String RepositoryFileViewer_Name;
 	public static String RepositoryInfoPage_name;
-	public static String RepositoryNotRelatedNodesBackground_description;
-	public static String RepositoryNotRelatedNodesBackground_label;
-	public static String RepositoryNotRelatedNodesFont_description;
-	public static String RepositoryNotRelatedNodesFont_label;
-	public static String RepositoryNotRelatedNodesForeground_description;
-	public static String RepositoryNotRelatedNodesForeground_label;
 	public static String RepositoryPropertiesComposite_Label;
 	public static String RepositoryPropertiesComposite_SelectNewURL;
 	public static String RepositoryPropertiesComposite_URL;
@@ -1391,17 +1235,10 @@ public class SVNUIMessages extends BaseMessages {
 	public static String RepositoryRootsComposite_Tags_Verifier;
 	public static String RepositoryRootsComposite_Trunk;
 	public static String RepositoryRootsComposite_Trunk_Verifier;
-	public static String RepositoryStructureNodesBackground_description;
-	public static String RepositoryStructureNodesBackground_label;
-	public static String RepositoryStructureNodesFont_description;
-	public static String RepositoryStructureNodesFont_label;
-	public static String RepositoryStructureNodesForeground_description;
-	public static String RepositoryStructureNodesForeground_label;
 	public static String RepositoryTreePanel_Description;
 	public static String RepositoryTreePanel_Message_Multi;
 	public static String RepositoryTreePanel_Message_Single;
 	public static String RepositoryTreePanel_Message_UpTo4;
-	public static String RepositoryView;
 	public static String ResourceCompareInput_BaseSign;
 	public static String ResourceCompareInput_CheckingDelta;
 	public static String ResourceCompareInput_Fetch;
@@ -1416,9 +1253,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String ResourceSelectionComposite_Properties;
 	public static String ResourceSelectionComposite_Resource;
 	public static String ResourceSelectionComposite_Verifier_Error;
-	public static String RevertAction_label;
-	public static String RevertAction_tooltip;
-	public static String RevertCommand_label;
 	public static String RevertCommand_tooltip;
 	public static String RevertPanel_Button_RemoveNonVersioned;
 	public static String RevertPanel_Description;
@@ -1455,15 +1289,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String SSLComposite_File_Verifier;
 	public static String SSLComposite_Passphrase;
 	public static String SSLComposite_SavePassphrase;
-	public static String SVN;
-	public static String SVNChangeResourceBackground_description;
-	public static String SVNChangeResourceBackground_label;
-	public static String SVNChangeResourceFont_description;
-	public static String SVNChangeResourceFont_label;
-	public static String SVNChangeResourceForeground_description;
-	public static String SVNChangeResourceForeground_label;
-	public static String SVNConsoleFont_description;
-	public static String SVNConsoleFont_label;
 	public static String SVNConsole_Cancelled;
 	public static String SVNConsole_Error;
 	public static String SVNConsole_Name;
@@ -1475,25 +1300,12 @@ public class SVNUIMessages extends BaseMessages {
 	public static String SVNContainerSelectionGroup_Verifier_NonSVNWarning;
 	public static String SVNContainerSelectionGroup_Verifier_NotSelected;
 	public static String SVNContainerSelectionGroup_Verifier_Obstructed;
-	public static String SVNGroup_label;
-	public static String SVNIgnoreResourceBackground_description;
-	public static String SVNIgnoreResourceBackground_label;
-	public static String SVNIgnoreResourceFont_description;
-	public static String SVNIgnoreResourceFont_label;
-	public static String SVNIgnoreResourceForeground_description;
-	public static String SVNIgnoreResourceForeground_label;
 	public static String SVNKeywordProperty_AUTHOR_DESCR;
 	public static String SVNKeywordProperty_DATE_DESCR;
 	public static String SVNKeywordProperty_HEAD_URL_DESCR;
 	public static String SVNKeywordProperty_ID_DESCR;
 	public static String SVNKeywordProperty_REVISION_DESCR;
 	public static String SVNLocalFileRevision_CurrentVersion;
-	public static String SVNMergedRevisionForeground_description;
-	public static String SVNMergedRevisionForeground_label;
-	public static String SVNNewWizardsCategoryName;
-	public static String SVNPreferences_description;
-	public static String SVNRepositories_description;
-	public static String SVNTeamQuickDiffProvider_label;
 	public static String SVNView_LinkWith_Label;
 	public static String SVNView_LinkWith_ToolTip;
 	public static String SVNView_Refresh_Label;
@@ -1559,8 +1371,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String SelectRepositoryResourcePage_Select_Title;
 	public static String SelectRepositoryResourcePage_Title;
 	public static String SelectResourceRevisionAction_InputRevisionPanel_Title;
-	public static String SelectRevisionAction_label;
-	public static String SelectRevisionAction_tooltip;
 	public static String SelectRevisionPanel_ClearFilter;
 	public static String SelectRevisionPanel_Description;
 	public static String SelectRevisionPanel_Message;
@@ -1583,47 +1393,28 @@ public class SVNUIMessages extends BaseMessages {
 	public static String SendTipForImprovementAction_Panel_Description;
 	public static String SendTipForImprovementAction_Panel_Message;
 	public static String SendTipForImprovementAction_Panel_Title;
-	public static String SetKeywordsAction_label;
-	public static String SetKeywordsAction_tooltip;
-	public static String SetKeywordsCommand_label;
 	public static String SetKeywordsCommand_tooltip;
 	public static String SetPropertyAction_label;
-	public static String SetPropertyAction_tooltip;
-	public static String SetPropertyCommand_label;
 	public static String SetPropertyCommand_tooltip;
 	public static String SetPropertyWithOverrideDialog_Message;
 	public static String SetPropertyWithOverrideDialog_Title;
 	public static String ShareProjectWizard_Title_Multiple;
 	public static String ShareProjectWizard_Title_Single;
-	public static String ShareProjectWizard_name;
 	public static String ShareProject_Confirmation_Description_Multiple;
 	public static String ShareProject_Confirmation_Description_Single;
 	public static String ShareProject_Confirmation_Title_Multiple;
 	public static String ShareProject_Confirmation_Title_Single;
-	public static String ShareProjectsAction_label;
-	public static String ShareProjectsAction_tooltip;
-	public static String ShareProjectsCommand_label;
 	public static String ShareProjectsCommand_tooltip;
 	public static String ShowAnnotationAction_label;
-	public static String ShowAnnotationAction_tooltip;
 	public static String ShowAnnotationCommand_label;
 	public static String ShowAnnotationCommand_tooltip;
 	public static String ShowBrowsingErrorAction_Dialog_Title;
-	public static String ShowDetailsAction_label;
-	public static String ShowDetailsAction_tooltip;
 	public static String ShowPropertiesAction_label;
-	public static String ShowPropertiesAction_tooltip;
-	public static String ShowResourceHistoryAction_label;
-	public static String ShowResourceHistoryAction_tooltip;
 	public static String ShowResourceHistoryCommand_label;
 	public static String ShowResourceHistoryCommand_tooltip;
 	public static String ShowRevisionProperties_label;
 	public static String SvnPropertiesEditor_name;
-	public static String SvnPropertiesView_name;
 	public static String SwitchAction_Error;
-	public static String SwitchAction_label;
-	public static String SwitchAction_tooltip;
-	public static String SwitchCommand_label;
 	public static String SwitchCommand_tooltip;
 	public static String SwitchPanel_Description;
 	public static String SwitchPanel_Message;
@@ -1647,20 +1438,12 @@ public class SVNUIMessages extends BaseMessages {
 	public static String SynchronizeActionGroup_ShowResourceHistory;
 	public static String SynchronizeActionGroup_Update;
 	public static String SynchronizeActionGroup_UpdateAllIncomingChanges;
-	public static String SynchronizeAction_label;
-	public static String SynchronizeAction_tooltip;
-	public static String SynchronizeCommand_label;
 	public static String SynchronizeCommand_tooltip;
 	public static String SynchronizeDecoration_Text_PropChange;
 	public static String SynchronizeDecoration_Text_PropConflict;
 	public static String SynchronizeParticipant;
-	public static String SynchronizeWizard;
 	public static String SynchronizeWizard_Title;
-	public static String SynchronizeWizard_description;
 
-	public static String TagAction_label;
-	public static String TagAction_tooltip;
-	public static String TagCommand_label;
 	public static String TagCommand_tooltip;
 	public static String TagModifyWarningDialog_Message;
 	public static String TagModifyWarningDialog_Title;
@@ -1701,8 +1484,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String TextDecoratorVariable_short_url;
 	public static String TextDecoratorVariable_user_defined_data;
 	public static String ThreeWayResourceCompareInput_SaveChanges;
-	public static String TipForImprovementAction_label;
-	public static String TipForImprovementAction_tooltip;
 	public static String ToolTipDecoratorVariable_URL;
 	public static String ToolTipDecoratorVariable_last_author;
 	public static String ToolTipDecoratorVariable_last_change_date;
@@ -1730,8 +1511,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String UnacceptableOperation_Message_4;
 	public static String UnacceptableOperation_Title;
 	public static String UnlockAction_label;
-	public static String UnlockAction_tooltip;
-	public static String UnlockCommand_label;
 	public static String UnlockCommand_tooltip;
 	public static String UnlockResourcesDialog_Message;
 	public static String UnlockResourcesDialog_Recursively;
@@ -1747,12 +1526,9 @@ public class SVNUIMessages extends BaseMessages {
 	public static String UpdateAction_List_Description;
 	public static String UpdateAction_List_Message;
 	public static String UpdateAction_List_Title;
-	public static String UpdateAction_label;
-	public static String UpdateAction_tooltip;
 	public static String UpdateAll_Message_Multi;
 	public static String UpdateAll_Message_Single;
 	public static String UpdateAll_Title;
-	public static String UpdateCommand_label;
 	public static String UpdateCommand_tooltip;
 
 	public static String ValidConnectorsSelectionPanel_Clients;
@@ -1795,5 +1571,17 @@ public class SVNUIMessages extends BaseMessages {
 	static {
 		//load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, SVNUIMessages.class);
+	}
+	
+	public static String getString(String key) {
+		return BaseMessages.getString(key, SVNUIMessages.class);
+	}
+	
+	public static String getErrorString(String key) {
+		return BaseMessages.getErrorString(key, SVNUIMessages.class);
+	}
+	
+	public static String formatErrorString(String key, Object[] args) {
+		return BaseMessages.formatErrorString(key, args, SVNUIMessages.class);
 	}
 }

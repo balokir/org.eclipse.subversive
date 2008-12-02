@@ -63,16 +63,6 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
     	return this.console == null ? null : this.console.getConsoleStream();
     }
     
-//    //TODO delete
-//    public String getResource(String key) {
-//        return FileUtility.getResource(Platform.getResourceBundle(this.getBundle()), key);
-//    }
-//    
-//    public String getResource(String key, Object []args) {
-//        String message = this.getResource(key);
-//        return MessageFormat.format(message, args);
-//    }
-    
     public ImageDescriptor getImageDescriptor(String path) {
     	try {
 			return ImageDescriptor.createFromURL(new URL(this.baseUrl, path));
