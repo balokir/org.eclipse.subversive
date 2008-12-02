@@ -86,11 +86,15 @@ public abstract class AbstractDialogPanel implements IDialogPanel, IValidationMa
     public String getImagePath() {
         return this.imagePath;
     }
+    
+    protected String getDialogID() {
+    	return this.getClass().getName();
+    }
 
     public final Point getPrefferedSize() {
 		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
-		int width = SVNTeamPreferences.getDialogInt(store, this.getClass().getName() + ".width"); //$NON-NLS-1$
-		int height = SVNTeamPreferences.getDialogInt(store, this.getClass().getName() + ".height"); //$NON-NLS-1$
+		int width = SVNTeamPreferences.getDialogInt(store, this.getDialogID() + ".width"); //$NON-NLS-1$
+		int height = SVNTeamPreferences.getDialogInt(store, this.getDialogID() + ".height"); //$NON-NLS-1$
 		Point prefSize = this.getPrefferedSizeImpl();
 		width = Math.max(width, prefSize.x);
 		height = Math.max(height, prefSize.y);
@@ -154,8 +158,8 @@ public abstract class AbstractDialogPanel implements IDialogPanel, IValidationMa
 	protected void retainSize() {
 		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
 		Point size = this.parent.getSize();
-		SVNTeamPreferences.setDialogInt(store, this.getClass().getName() + ".width", size.x); //$NON-NLS-1$
-		SVNTeamPreferences.setDialogInt(store, this.getClass().getName() + ".height", size.y); //$NON-NLS-1$
+		SVNTeamPreferences.setDialogInt(store, this.getDialogID() + ".width", size.x); //$NON-NLS-1$
+		SVNTeamPreferences.setDialogInt(store, this.getDialogID() + ".height", size.y); //$NON-NLS-1$
 	}
 	
 	protected final void saveChanges() {

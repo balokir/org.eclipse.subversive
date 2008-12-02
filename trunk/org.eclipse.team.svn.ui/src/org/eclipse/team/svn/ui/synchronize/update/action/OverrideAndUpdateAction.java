@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.ui.synchronize.update.action;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
@@ -64,14 +65,28 @@ public class OverrideAndUpdateAction extends AbstractSynchronizeModelAction {
 		HashSet<IResource> allResources = new HashSet<IResource>(Arrays.asList(obstructedResources));
 		IResource []changedResources = OverrideAndUpdateAction.this.syncInfoSelector.getSelectedResourcesRecursive(ISyncStateFilter.SF_OVERRIDE);
 		changedResources = UnacceptableOperationNotificator.shrinkResourcesWithNotOnRespositoryParents(configuration.getSite().getShell(), changedResources);
-		if (changedResources != null) {
-			changedResources = FileUtility.addOperableParents(changedResources, IStateFilter.SF_NOTONREPOSITORY);
-			allResources.addAll(Arrays.asList(changedResources));
-		}
+		ArrayList<IResource> affected = new ArrayList<IResource>();
+ 		if (changedResources != null) {
+			IResource [] changedWithOperableParents = FileUtility.addOperableParents(changedResources, IStateFilter.SF_NOTONREPOSITORY);
+			ArrayList<IResource> changedList = new ArrayList<IResource>(Arrays.asList(changedResources));
+			for (IResource current : changedWithOperableParents) {
+				if (!changedList.contains(current)) {
+					changedList.add(current);
+					IResource [] currentAffectedArray = FileUtility.getResourcesRecursive(new IResource [] {current}, IStateFilter.SF_ANY_CHANGE);
+					for (IResource currentAffected : currentAffectedArray) {
+						if (!changedList.contains(currentAffected)) {
+							affected.add(currentAffected);
+						}
+					}
+				}
+			}
+			changedResources = changedWithOperableParents;
+ 			allResources.addAll(Arrays.asList(changedResources));
+ 		}
 		
 		if (allResources.size() > 0) {
 			IResource []fullSet = allResources.toArray(new IResource[allResources.size()]);
-			OverrideResourcesPanel panel = new OverrideResourcesPanel(fullSet, fullSet, OverrideResourcesPanel.MSG_UPDATE);
+			OverrideResourcesPanel panel = new OverrideResourcesPanel(fullSet, fullSet, OverrideResourcesPanel.MSG_UPDATE, affected.toArray(new IResource [affected.size()]));
 			DefaultDialog dialog = new DefaultDialog(configuration.getSite().getShell(), panel);
 			if (dialog.open() != 0) {
 				return null;

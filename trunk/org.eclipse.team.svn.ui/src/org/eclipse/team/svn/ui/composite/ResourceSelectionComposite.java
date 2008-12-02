@@ -126,13 +126,24 @@ public class ResourceSelectionComposite extends Composite {
 	protected Map<ImageDescriptor, Image> images;
 
 	protected Label lblSelectedResourcesNumber;
+	
+	protected boolean showCheckBoxesAndButtons;
 
 	public ResourceSelectionComposite(Composite parent, int style, IResource[] resources, boolean selectAll) {
 		this(parent, style, resources, selectAll, null);
 	}
 
+	public ResourceSelectionComposite(Composite parent, int style, IResource[] resources, boolean selectAll, boolean showCheckBoxesAndButtons) {
+		this(parent, style, resources, selectAll, null, showCheckBoxesAndButtons);
+	}
+		 
 	public ResourceSelectionComposite(Composite parent, int style, IResource[] resources, boolean selectAll, IResource[] userSelectedResources) {
+		this(parent, style, resources, selectAll, userSelectedResources, true);
+	}
+		 	
+	public ResourceSelectionComposite(Composite parent, int style, IResource[] resources, boolean selectAll, IResource[] userSelectedResources, boolean showCheckBoxesAndButtons) {
 		super(parent, style);
+		this.showCheckBoxesAndButtons = showCheckBoxesAndButtons;
 		this.selectedResources = this.resources = resources;
 		this.notSelectedResources = new IResource[0];
 		this.selectionChangedListeners = new ArrayList();
@@ -189,7 +200,8 @@ public class ResourceSelectionComposite extends Composite {
 		gridLayout.marginHeight = gridLayout.marginWidth = 0;
 		this.setLayout(gridLayout);
 
-		Table table = new Table(this, SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.MULTI | SWT.CHECK | SWT.BORDER);
+		int style = SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.MULTI  | SWT.BORDER;
+		Table table = new Table(this, this.showCheckBoxesAndButtons ? style | SWT.CHECK : style);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		TableLayout layout = new TableLayout();
@@ -345,6 +357,30 @@ public class ResourceSelectionComposite extends Composite {
 		}
 		this.updateSelectedResources();
 
+		this.tableViewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+				final IResource resource = (IResource) selection.getFirstElement();
+				IResource[] resources = { resource };
+				if (selection.size() == 1 && !FileUtility.checkForResourcesPresence(resources, IStateFilter.SF_NOTONREPOSITORY, IResource.DEPTH_ZERO)) {
+					UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+						public void run() {
+							ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
+							if (!IStateFilter.SF_INTERNAL_INVALID.accept(local)) {
+								IRepositoryResource remote = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
+								remote.setSelectedRevision(SVNRevision.HEAD);
+								UIMonitorUtility.doTaskScheduledDefault(new CompareResourcesOperation(local, remote, true, true));
+							}
+						}
+					});
+				}
+			}
+		});
+					
+		if (!this.showCheckBoxesAndButtons) {
+			return;
+		}	
+		
 		this.tableViewer.addSelectionChangedListener(this.selectionListener = new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				ResourceSelectionComposite.this.updateSelectedResources();
@@ -405,26 +441,6 @@ public class ResourceSelectionComposite extends Composite {
 		this.lblSelectedResourcesNumber.setText(this.resourceNumberToString(this.selectedResources.length));
 		data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 		this.lblSelectedResourcesNumber.setLayoutData(data);
-
-		this.tableViewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-				final IResource resource = (IResource) selection.getFirstElement();
-				IResource[] resources = { resource };
-				if (selection.size() == 1 && !FileUtility.checkForResourcesPresence(resources, IStateFilter.SF_NOTONREPOSITORY, IResource.DEPTH_ZERO)) {
-					UIMonitorUtility.getDisplay().syncExec(new Runnable() {
-						public void run() {
-							ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-							if (!IStateFilter.SF_INTERNAL_INVALID.accept(local)) {
-								IRepositoryResource remote = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
-								remote.setSelectedRevision(SVNRevision.HEAD);
-								UIMonitorUtility.doTaskScheduledDefault(new CompareResourcesOperation(local, remote, true, true));
-							}
-						}
-					});
-				}
-			}
-		});
 	}
 
 	protected String resourceNumberToString(int value) {
