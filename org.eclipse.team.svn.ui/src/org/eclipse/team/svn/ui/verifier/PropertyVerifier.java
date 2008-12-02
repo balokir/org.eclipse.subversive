@@ -90,8 +90,7 @@ public class PropertyVerifier extends AbstractFormattedVerifier {
 		}
 		Matcher matcher = this.pattern.matcher(inputText);
 		if (!matcher.matches()) {
-			String retVal = SVNUIMessages.getString("PropertyEditPanel_Verifier_" + this.propName); //$NON-NLS-1$
-			//TODO check if this is a valid statement
+			String retVal = SVNUIMessages.getString("PropertyEditPanel_Verifier_" + this.propName); //$NON-NLS-1$		
 			if (retVal.equals("PropertyEditPanel_Verifier_" + this.propName)) { //$NON-NLS-1$
 				return SVNUIMessages.format(SVNUIMessages.PropertyEditPanel_regExp_Verifier, new String[]{this.pattern.pattern()});
 			}

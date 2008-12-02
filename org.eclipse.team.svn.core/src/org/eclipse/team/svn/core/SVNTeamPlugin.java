@@ -92,17 +92,6 @@ public class SVNTeamPlugin extends Plugin {
     	return SVNTeamPlugin.instance;
     }
     
-    /* TODO delete
-    public String getResource(String key) {
-        return FileUtility.getResource(Platform.getResourceBundle(this.getBundle()), key);
-    }
-    
-    public String getResource(String key, Object []args) {
-        String message = this.getResource(key);
-        return MessageFormat.format(message, args);
-    }
-    */
-    
 	public IOptionProvider getOptionProvider() {
 		return CoreExtensionsManager.instance().getOptionProvider();
 	}
