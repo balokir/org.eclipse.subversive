@@ -36,7 +36,7 @@ public class ExpandAllAction extends AbstractSynchronizeModelAction {
 	}
 	
 	protected IActionOperation getOperation(final ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
-		return new AbstractActionOperation(Messages.getString("ExpandAllAction.0")) { //$NON-NLS-1$
+		return new AbstractActionOperation("Operation_UExpandAll") { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 					public void run() {

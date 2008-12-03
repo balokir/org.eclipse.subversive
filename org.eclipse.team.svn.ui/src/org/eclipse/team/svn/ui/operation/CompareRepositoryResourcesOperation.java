@@ -11,12 +11,12 @@
 
 package org.eclipse.team.svn.ui.operation;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.internal.CompareEditor;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNDiffStatus;
@@ -131,7 +131,7 @@ public class CompareRepositoryResourcesOperation extends AbstractActionOperation
 	}
 	
     protected String getShortErrorMessage(Throwable t) {
-		return MessageFormat.format(super.getShortErrorMessage(t), new Object[] {this.next.getName(), this.prev.getName()});
+		return BaseMessages.format(super.getShortErrorMessage(t), new Object[] {this.next.getName(), this.prev.getName()});
 	}
 
 }

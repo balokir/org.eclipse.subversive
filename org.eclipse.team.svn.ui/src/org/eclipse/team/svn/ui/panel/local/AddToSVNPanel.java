@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.ui.panel.local;
 
-import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -26,6 +25,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.local.AddToSVNIgnoreOperation;
@@ -90,7 +90,7 @@ public class AddToSVNPanel extends AbstractResourceSelectionPanel {
 				final IResource[] selectedResources = (IResource[])tSelection.toList().toArray(new IResource[tSelection.size()]);
 				Action tAction = null;
 				if (selectedResources.length == 1) {
-					manager.add(tAction = new Action(MessageFormat.format(SVNUIMessages.AddToSVNPanel_Ignore_Single, selectedResources[0].getName())) {
+					manager.add(tAction = new Action(BaseMessages.format(SVNUIMessages.AddToSVNPanel_Ignore_Single, new String[]{selectedResources[0].getName()})) {
 						public void run() {
 							CompositeOperation op = new CompositeOperation("AddToIgnore"); //$NON-NLS-1$
 							op.add(new AddToSVNIgnoreOperation(selectedResources, IRemoteStorage.IGNORE_NAME, null));
@@ -102,7 +102,7 @@ public class AddToSVNPanel extends AbstractResourceSelectionPanel {
 					String name = selectedResources[0].getName();
 					String [] parts = name.split("\\."); //$NON-NLS-1$
 					if ((parts.length != 0)) {
-						manager.add(tAction = new Action(MessageFormat.format(SVNUIMessages.AddToSVNPanel_Ignore_Single, "*." + parts[parts.length-1])) { //$NON-NLS-1$
+						manager.add(tAction = new Action(BaseMessages.format(SVNUIMessages.AddToSVNPanel_Ignore_Single, new String[]{"*." + parts[parts.length-1]})) { //$NON-NLS-1$
 							public void run() {
 								CompositeOperation op = new CompositeOperation("AddToIgnore"); //$NON-NLS-1$
 								op.add(new AddToSVNIgnoreOperation(selectedResources, IRemoteStorage.IGNORE_EXTENSION, null));

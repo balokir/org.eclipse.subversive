@@ -64,6 +64,8 @@ public class SVNMessages extends BaseMessages {
 	public static String Error_CreateDirectory_Id;
 	public static String Error_InaccessibleResource;
 	public static String Error_InaccessibleResource_Id;
+	public static String Error_InaccessibleResource_2;
+	public static String Error_InaccessibleResource_Id_2;
 	public static String Error_InvalidExtensionPoint;
 	public static String Error_InvalidExtensionPoint_Id;
 	public static String Error_LoadExtensions;

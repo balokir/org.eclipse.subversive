@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.ui.panel.participant;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -20,6 +19,7 @@ import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.AddToSVNIgnoreOperation;
@@ -87,7 +87,7 @@ public class AddToSVNPaneParticipant extends BasePaneParticipant {
 			protected boolean updateSelection(IStructuredSelection selection) {
 				IResource[] selectedResources = this.getAllSelectedResources();
 				if (selectedResources.length == 1) {
-					this.setText(MessageFormat.format(SVNUIMessages.AddToSVNPanel_Ignore_Single, selectedResources[0].getName()));
+					this.setText(BaseMessages.format(SVNUIMessages.AddToSVNPanel_Ignore_Single, selectedResources[0].getName()));
 				} else if (selectedResources.length > 1) {
 					this.setText(SVNUIMessages.AddToSVNPanel_IgnoreByNames_Multiple);
 				}
@@ -119,7 +119,7 @@ public class AddToSVNPaneParticipant extends BasePaneParticipant {
 				IResource[] selectedResources = this.getAllSelectedResources();
 				if (selectedResources.length == 1) {
 					String[] parts = this.getNameParts(selectedResources);
-					this.setText(MessageFormat.format(SVNUIMessages.AddToSVNPanel_Ignore_Single, "*." + parts[parts.length-1])); //$NON-NLS-1$
+					this.setText(BaseMessages.format(SVNUIMessages.AddToSVNPanel_Ignore_Single, "*." + parts[parts.length-1])); //$NON-NLS-1$
 				} else if (selectedResources.length > 1) {
 					this.setText(SVNUIMessages.AddToSVNPanel_IgnoreByExtension_Multiple);
 				}

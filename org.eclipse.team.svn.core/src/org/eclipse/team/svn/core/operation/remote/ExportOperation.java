@@ -11,9 +11,8 @@
 
 package org.eclipse.team.svn.core.operation.remote;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
@@ -66,7 +65,7 @@ public class ExportOperation extends AbstractRepositoryOperation {
 	}
 	
 	protected String getShortErrorMessage(Throwable t) {
-		return MessageFormat.format(super.getShortErrorMessage(t), new Object[] {this.operableData()[0].getUrl()});
+		return BaseMessages.format(super.getShortErrorMessage(t), new Object[] {this.operableData()[0].getUrl()});
 	}
 	
 }

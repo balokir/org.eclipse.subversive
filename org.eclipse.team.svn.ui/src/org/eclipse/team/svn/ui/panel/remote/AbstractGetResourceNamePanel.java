@@ -11,8 +11,6 @@
 
 package org.eclipse.team.svn.ui.panel.remote;
 
-import java.text.MessageFormat;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -22,6 +20,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.CommentComposite;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
@@ -91,7 +90,7 @@ public abstract class AbstractGetResourceNamePanel extends AbstractDialogPanel {
 				String text = this.getText(input);
 				if (AbstractGetResourceNamePanel.this.disallowedName != null &&
 					AbstractGetResourceNamePanel.this.disallowedName.equals(text)) {
-					return MessageFormat.format(this.msg, new Object[] {AbstractFormattedVerifier.FIELD_NAME, text});
+					return BaseMessages.format(this.msg, new Object[] {AbstractFormattedVerifier.FIELD_NAME, text});
 				}
 				return null;
 			}

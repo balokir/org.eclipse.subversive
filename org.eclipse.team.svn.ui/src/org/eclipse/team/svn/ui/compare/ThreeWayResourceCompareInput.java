@@ -12,7 +12,6 @@
 package org.eclipse.team.svn.ui.compare;
 
 import java.io.File;
-import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -41,6 +40,7 @@ import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNDiffStatus;
 import org.eclipse.team.svn.core.connector.SVNEntry;
@@ -182,7 +182,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		
 		String message = SVNUIMessages.ResourceCompareInput_CheckingDelta;
 		for (int i = 0; i < allChanges.length && !monitor.isCanceled(); i++) {
-			monitor.subTask(MessageFormat.format(message, new Object[] {allChanges[i]}));
+			monitor.subTask(BaseMessages.format(message, new Object[] {allChanges[i]}));
 			this.makeBranch(allChanges[i], localChanges.get(allChanges[i]), remoteChanges.get(allChanges[i]), path2node, monitor);
 			ProgressMonitorUtility.progress(monitor, i, allChanges.length);
 		}

@@ -11,11 +11,10 @@
 
 package org.eclipse.team.svn.core.operation.local.property;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNProperty;
@@ -83,7 +82,7 @@ public class GetPropertiesOperation extends AbstractActionOperation implements I
 	}
 	
 	protected String getShortErrorMessage(Throwable t) {
-		return MessageFormat.format(super.getShortErrorMessage(t), new Object[] {this.resource.getName()});
+		return BaseMessages.format(super.getShortErrorMessage(t), new Object[] {this.resource.getName()});
 	}
 	
 }

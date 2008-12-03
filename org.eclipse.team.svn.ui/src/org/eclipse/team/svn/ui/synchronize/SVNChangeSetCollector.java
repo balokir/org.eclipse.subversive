@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.ui.synchronize;
 
-import java.text.MessageFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,6 +25,7 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.core.subscribers.ChangeSet;
 import org.eclipse.team.internal.core.subscribers.CheckedInChangeSet;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoSetChangeSetCollector;
+import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
@@ -97,8 +97,8 @@ public class SVNChangeSetCollector extends SyncInfoSetChangeSetCollector {
 				// rebuild name
 				String name = 
 					String.valueOf(revision) + " " +  //$NON-NLS-1$
-					(resource.getLastCommitDate() == 0 ? svnNoDate : MessageFormat.format(svnDate, new Object[] {DateFormatter.formatDate(set.date)})) + " " +  //$NON-NLS-1$
-					(resource.getAuthor() == null ? svnNoAuthor : MessageFormat.format(svnAuthor, new Object[] {resource.getAuthor()}));
+					(resource.getLastCommitDate() == 0 ? svnNoDate : BaseMessages.format(svnDate, new Object[] {DateFormatter.formatDate(set.date)})) + " " +  //$NON-NLS-1$
+					(resource.getAuthor() == null ? svnNoAuthor : BaseMessages.format(svnAuthor, new Object[] {resource.getAuthor()}));
 				if (set.comment != null) {
 					String comment = set.comment;
 					if (FileUtility.isWindows()) {

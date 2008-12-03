@@ -15,7 +15,7 @@ package org.eclipse.team.svn.ui.history;
 
 import java.io.FileOutputStream;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import com.ibm.icu.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -499,7 +499,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 	public void createControl(Composite parent) {
 		IActionBars actionBars = this.getHistoryPageSite().getWorkbenchPageSite().getActionBars();
 		
-		this.groupByDateAction = new HistoryAction("HistoryView_GroupByDate", "icons/views/history/group_by_date.gif", IAction.AS_CHECK_BOX) { //$NON-NLS-1$ //$NON-NLS-2$
+		this.groupByDateAction = new HistoryAction(SVNUIMessages.HistoryView_GroupByDate, "icons/views/history/group_by_date.gif", IAction.AS_CHECK_BOX) { //$NON-NLS-1$
 			public void run() {
 				SVNHistoryPage.this.options ^= ISVNHistoryView.GROUP_BY_DATE;
 				SVNHistoryPage.this.groupByDateDropDownAction.setChecked((SVNHistoryPage.this.options & ISVNHistoryView.GROUP_BY_DATE) != 0);
@@ -508,7 +508,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 			}
 		};
 		
-		this.showBothAction = new HistoryAction("HistoryView_ShowBoth", "icons/views/history/both_history_mode.gif", IAction.AS_RADIO_BUTTON) { //$NON-NLS-1$ //$NON-NLS-2$
+		this.showBothAction = new HistoryAction(SVNUIMessages.HistoryView_ShowBoth, "icons/views/history/both_history_mode.gif", IAction.AS_RADIO_BUTTON) { //$NON-NLS-1$
 			public void run() {
 				SVNHistoryPage.this.options = SVNHistoryPage.this.options & ~(ISVNHistoryViewInfo.MODE_LOCAL | ISVNHistoryViewInfo.MODE_REMOTE) | ISVNHistoryViewInfo.MODE_BOTH;
 				SVNHistoryPage.this.showBothActionDropDown.setChecked(true);
@@ -518,7 +518,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 				SVNHistoryPage.this.history.refresh(LogMessagesComposite.REFRESH_UI_ALL);
 			}
 		};
-		this.showLocalAction = new HistoryAction("HistoryView_ShowLocal", "icons/views/history/local_history_mode.gif", IAction.AS_RADIO_BUTTON) { //$NON-NLS-1$ //$NON-NLS-2$
+		this.showLocalAction = new HistoryAction(SVNUIMessages.HistoryView_ShowLocal, "icons/views/history/local_history_mode.gif", IAction.AS_RADIO_BUTTON) { //$NON-NLS-1$
 			public void run() {
 				SVNHistoryPage.this.options = SVNHistoryPage.this.options & ~(ISVNHistoryViewInfo.MODE_REMOTE | ISVNHistoryViewInfo.MODE_BOTH) | ISVNHistoryViewInfo.MODE_LOCAL;
 				SVNHistoryPage.this.showLocalActionDropDown.setChecked(true);
@@ -528,7 +528,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 				SVNHistoryPage.this.history.refresh(LogMessagesComposite.REFRESH_UI_ALL);
 			}
 		};
-		this.showRemoteAction = new HistoryAction("HistoryView_ShowRemote", "icons/views/history/remote_history_mode.gif", IAction.AS_RADIO_BUTTON) { //$NON-NLS-1$ //$NON-NLS-2$
+		this.showRemoteAction = new HistoryAction(SVNUIMessages.HistoryView_ShowRemote, "icons/views/history/remote_history_mode.gif", IAction.AS_RADIO_BUTTON) { //$NON-NLS-1$
 			public void run() {
 				SVNHistoryPage.this.options = SVNHistoryPage.this.options & ~(ISVNHistoryViewInfo.MODE_LOCAL | ISVNHistoryViewInfo.MODE_BOTH) | ISVNHistoryViewInfo.MODE_REMOTE;
 				SVNHistoryPage.this.showRemoteActionDropDown.setChecked(true);
@@ -539,14 +539,14 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 			}
 		};
 		
-		this.hideUnrelatedAction = new HistoryAction("HistoryView_HideUnrelatedPaths", "icons/views/history/hide_unrelated.gif", IAction.AS_CHECK_BOX) { //$NON-NLS-1$ //$NON-NLS-2$
+		this.hideUnrelatedAction = new HistoryAction(SVNUIMessages.HistoryView_HideUnrelatedPaths, "icons/views/history/hide_unrelated.gif", IAction.AS_CHECK_BOX) { //$NON-NLS-1$
 			public void run() {
 				SVNHistoryPage.this.options ^= ISVNHistoryView.HIDE_UNRELATED;
 				SVNHistoryPage.this.hideUnrelatedDropDownAction.setChecked((SVNHistoryPage.this.options & ISVNHistoryView.HIDE_UNRELATED) != 0);
 				SVNHistoryPage.this.history.refresh(LogMessagesComposite.REFRESH_UI_AFFECTED);
 			}
 		};
-		this.stopOnCopyAction = new HistoryAction("HistoryView_StopOnCopy", "icons/views/history/stop_on_copy.gif", IAction.AS_CHECK_BOX) { //$NON-NLS-1$ //$NON-NLS-2$
+		this.stopOnCopyAction = new HistoryAction(SVNUIMessages.HistoryView_StopOnCopy, "icons/views/history/stop_on_copy.gif", IAction.AS_CHECK_BOX) { //$NON-NLS-1$
 			public void run() {
 				SVNHistoryPage.this.options ^= ISVNHistoryView.STOP_ON_COPY;
 				SVNHistoryPage.this.stopOnCopyDropDownAction.setChecked((SVNHistoryPage.this.options & ISVNHistoryView.STOP_ON_COPY) != 0);
@@ -554,7 +554,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 			}
 		};
 		
-		this.getNextPageAction = new HistoryAction("HistoryView_GetNextPage", "icons/views/history/paging.gif") { //$NON-NLS-1$ //$NON-NLS-2$
+		this.getNextPageAction = new HistoryAction(SVNUIMessages.HistoryView_GetNextPage, "icons/views/history/paging.gif") { //$NON-NLS-1$
 			public void run() {
 				GetLogMessagesOperation msgOp = SVNHistoryPage.this.createRemoteHistoryFetcher();
 				msgOp.setLimit(SVNHistoryPage.this.limit + 1);
@@ -567,7 +567,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		};
 		String msg = this.limit > 0 ? SVNUIMessages.format(SVNUIMessages.HistoryView_ShowNextX, new String[] { String.valueOf(this.limit) }) : SVNUIMessages.HistoryView_ShowNextPage;
 		this.getNextPageAction.setToolTipText(msg);
-		this.getAllPagesAction = new HistoryAction("HistoryView_ShowAll", "icons/views/history/paging_all.gif") { //$NON-NLS-1$ //$NON-NLS-2$
+		this.getAllPagesAction = new HistoryAction(SVNUIMessages.HistoryView_ShowAll, "icons/views/history/paging_all.gif") { //$NON-NLS-1$
 			public void run() {
 				GetLogMessagesOperation msgOp = SVNHistoryPage.this.createRemoteHistoryFetcher();
 				msgOp.setLimit(0);
@@ -579,12 +579,12 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 			}
 		};
 		
-		this.collapseAllAction = new HistoryAction("RepositoriesView_CollapseAll_Label", "icons/common/collapseall.gif") { //$NON-NLS-1$ //$NON-NLS-2$
+		this.collapseAllAction = new HistoryAction(SVNUIMessages.RepositoriesView_CollapseAll_Label, "icons/common/collapseall.gif") { //$NON-NLS-1$
 			public void run() {
 				SVNHistoryPage.this.history.collapseAll();
 			}
 		};
-		this.compareModeAction = new HistoryAction("HistoryView_CompareMode", "icons/views/history/compare_mode.gif", IAction.AS_CHECK_BOX) { //$NON-NLS-1$ //$NON-NLS-2$
+		this.compareModeAction = new HistoryAction(SVNUIMessages.HistoryView_CompareMode, "icons/views/history/compare_mode.gif", IAction.AS_CHECK_BOX) { //$NON-NLS-1$
 			public void run() {
 				SVNHistoryPage.this.options ^= ISVNHistoryView.COMPARE_MODE;
 				SVNHistoryPage.this.compareModeDropDownAction.setChecked((SVNHistoryPage.this.options & ISVNHistoryView.COMPARE_MODE) != 0);
@@ -610,13 +610,13 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		tbm.add(this.compareModeAction);
 
 		// drop-down menu
-		this.showCommentViewerAction = new HistoryAction("HistoryView_ShowCommentViewer") { //$NON-NLS-1$
+		this.showCommentViewerAction = new HistoryAction(SVNUIMessages.HistoryView_ShowCommentViewer) {
 			public void run() {
 				SVNHistoryPage.this.history.setCommentViewerVisible(SVNHistoryPage.this.showCommentViewerAction.isChecked());
 				SVNHistoryPage.saveBoolean(SVNTeamPreferences.HISTORY_SHOW_MULTILINE_COMMENT_NAME, this.isChecked());
 			}
 		};
-		this.showAffectedPathsViewerAction = new HistoryAction("HistoryView_ShowAffectedPathsViewer") { //$NON-NLS-1$
+		this.showAffectedPathsViewerAction = new HistoryAction(SVNUIMessages.HistoryView_ShowAffectedPathsViewer) {
 			public void run() {
 				boolean showAffected = this.isChecked();
 				SVNHistoryPage.this.history.setAffectedPathsViewerVisible(showAffected);
@@ -626,14 +626,14 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 			}
 		};
 
-		this.hideUnrelatedDropDownAction = new HistoryAction("HistoryView_HideUnrelatedPaths", "icons/views/history/hide_unrelated.gif") { //$NON-NLS-1$ //$NON-NLS-2$
+		this.hideUnrelatedDropDownAction = new HistoryAction(SVNUIMessages.HistoryView_HideUnrelatedPaths, "icons/views/history/hide_unrelated.gif") { //$NON-NLS-1$
 			public void run() {
 				SVNHistoryPage.this.options ^= ISVNHistoryView.HIDE_UNRELATED;
 				SVNHistoryPage.this.hideUnrelatedAction.setChecked((SVNHistoryPage.this.options & ISVNHistoryView.HIDE_UNRELATED) != 0);
 				SVNHistoryPage.this.history.refresh(LogMessagesComposite.REFRESH_UI_AFFECTED);
 			}
 		};
-		this.stopOnCopyDropDownAction = new HistoryAction("HistoryView_StopOnCopy", "icons/views/history/stop_on_copy.gif") { //$NON-NLS-1$ //$NON-NLS-2$
+		this.stopOnCopyDropDownAction = new HistoryAction(SVNUIMessages.HistoryView_StopOnCopy, "icons/views/history/stop_on_copy.gif") { //$NON-NLS-1$
 			public void run() {
 				SVNHistoryPage.this.options ^= ISVNHistoryView.STOP_ON_COPY;
 				SVNHistoryPage.this.stopOnCopyAction.setChecked((SVNHistoryPage.this.options & ISVNHistoryView.STOP_ON_COPY) != 0);
@@ -641,7 +641,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 			}
 		};
 
-		this.groupByDateDropDownAction = new HistoryAction("HistoryView_GroupByDate", "icons/views/history/group_by_date.gif") { //$NON-NLS-1$ //$NON-NLS-2$
+		this.groupByDateDropDownAction = new HistoryAction(SVNUIMessages.HistoryView_GroupByDate, "icons/views/history/group_by_date.gif") { //$NON-NLS-1$
 			public void run() {
 				SVNHistoryPage.this.options ^= ISVNHistoryView.GROUP_BY_DATE;
 				SVNHistoryPage.this.groupByDateAction.setChecked((SVNHistoryPage.this.options & ISVNHistoryView.GROUP_BY_DATE) != 0);
@@ -650,7 +650,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 			}
 		};
 
-		this.exportLogAction = new HistoryAction("HistoryView_ExportLog") { //$NON-NLS-1$
+		this.exportLogAction = new HistoryAction(SVNUIMessages.HistoryView_ExportLog) {
 			public void run() {
 				FileDialog dlg = new FileDialog(UIMonitorUtility.getShell(), SWT.PRIMARY_MODAL | SWT.SAVE);
 				dlg.setText(SVNUIMessages.ExportLogDialog_Title);
@@ -673,7 +673,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 			}
 		};
 		
-		this.showBothActionDropDown = new HistoryAction("HistoryView_ShowBoth", "icons/views/history/both_history_mode.gif", IAction.AS_RADIO_BUTTON) { //$NON-NLS-1$ //$NON-NLS-2$
+		this.showBothActionDropDown = new HistoryAction(SVNUIMessages.HistoryView_ShowBoth, "icons/views/history/both_history_mode.gif", IAction.AS_RADIO_BUTTON) { //$NON-NLS-1$
 			public void run() {
 				SVNHistoryPage.this.options = SVNHistoryPage.this.options & ~(ISVNHistoryViewInfo.MODE_LOCAL | ISVNHistoryViewInfo.MODE_REMOTE) | ISVNHistoryViewInfo.MODE_BOTH;
 				SVNHistoryPage.this.showBothAction.setChecked(true);
@@ -683,7 +683,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 				SVNHistoryPage.this.history.refresh(LogMessagesComposite.REFRESH_UI_ALL);
 			}
 		};
-		this.showLocalActionDropDown = new HistoryAction("HistoryView_ShowLocal", "icons/views/history/local_history_mode.gif", IAction.AS_RADIO_BUTTON) { //$NON-NLS-1$ //$NON-NLS-2$
+		this.showLocalActionDropDown = new HistoryAction(SVNUIMessages.HistoryView_ShowLocal, "icons/views/history/local_history_mode.gif", IAction.AS_RADIO_BUTTON) { //$NON-NLS-1$
 			public void run() {
 				SVNHistoryPage.this.options = SVNHistoryPage.this.options & ~(ISVNHistoryViewInfo.MODE_REMOTE | ISVNHistoryViewInfo.MODE_BOTH) | ISVNHistoryViewInfo.MODE_LOCAL;
 				SVNHistoryPage.this.showBothAction.setChecked(false);
@@ -693,7 +693,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 				SVNHistoryPage.this.history.refresh(LogMessagesComposite.REFRESH_UI_ALL);
 			}
 		};
-		this.showRemoteActionDropDown = new HistoryAction("HistoryView_ShowRemote", "icons/views/history/remote_history_mode.gif", IAction.AS_RADIO_BUTTON) { //$NON-NLS-1$ //$NON-NLS-2$
+		this.showRemoteActionDropDown = new HistoryAction(SVNUIMessages.HistoryView_ShowRemote, "icons/views/history/remote_history_mode.gif", IAction.AS_RADIO_BUTTON) { //$NON-NLS-1$
 			public void run() {
 				SVNHistoryPage.this.options = SVNHistoryPage.this.options & ~(ISVNHistoryViewInfo.MODE_LOCAL | ISVNHistoryViewInfo.MODE_BOTH) | ISVNHistoryViewInfo.MODE_REMOTE;
 				SVNHistoryPage.this.showBothAction.setChecked(false);
@@ -704,24 +704,24 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 			}
 		};
 
-		this.revisionsRangeDropDownAction = new HistoryAction("HistoryView_RevisionsRange") { //$NON-NLS-1$
+		this.revisionsRangeDropDownAction = new HistoryAction(SVNUIMessages.HistoryView_RevisionsRange) {
 			public void run() {
 				SVNHistoryPage.this.defineRevisionsRange();
 			}
 		};
 
-		this.filterDropDownAction = new HistoryAction("HistoryView_QuickFilter", "icons/views/history/filter.gif") { //$NON-NLS-1$ //$NON-NLS-2$
+		this.filterDropDownAction = new HistoryAction(SVNUIMessages.HistoryView_QuickFilter, "icons/views/history/filter.gif") { //$NON-NLS-1$
 			public void run() {
 				SVNHistoryPage.this.setFilter();
 			}
 		};
-		this.clearFilterDropDownAction = new HistoryAction("HistoryView_ClearFilter", "icons/views/history/clear_filter.gif") { //$NON-NLS-1$ //$NON-NLS-2$
+		this.clearFilterDropDownAction = new HistoryAction(SVNUIMessages.HistoryView_ClearFilter, "icons/views/history/clear_filter.gif") { //$NON-NLS-1$
 			public void run() {
 				SVNHistoryPage.this.clearFilter();
 			}
 		};
 		
-		this.compareModeDropDownAction = new HistoryAction("HistoryView_CompareMode", "icons/views/history/compare_mode.gif") { //$NON-NLS-1$ //$NON-NLS-2$
+		this.compareModeDropDownAction = new HistoryAction(SVNUIMessages.HistoryView_CompareMode, "icons/views/history/compare_mode.gif") { //$NON-NLS-1
 			public void run() {
 				SVNHistoryPage.this.options ^= ISVNHistoryView.COMPARE_MODE;
 				SVNHistoryPage.this.compareModeAction.setChecked((SVNHistoryPage.this.options & ISVNHistoryView.COMPARE_MODE) != 0);
@@ -729,13 +729,13 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 			}
 		};
 
-		this.flatAction = new HistoryAction("HistoryView_Flat", "icons/views/history/flat_layout.gif", IAction.AS_RADIO_BUTTON) { //$NON-NLS-1$ //$NON-NLS-2$
+		this.flatAction = new HistoryAction(SVNUIMessages.HistoryView_Flat, "icons/views/history/flat_layout.gif", IAction.AS_RADIO_BUTTON) { //$NON-NLS-1$
 			public void run() {
 				SVNHistoryPage.this.history.setResourceTreeVisible(false);
 				SVNHistoryPage.saveBoolean(SVNTeamPreferences.HISTORY_HIERARCHICAL_LAYOUT, false);
 			}
 		};
-		this.hierarchicalAction = new HistoryAction("HistoryView_Hierarchical", "icons/views/history/tree_layout.gif", IAction.AS_RADIO_BUTTON) { //$NON-NLS-1$ //$NON-NLS-2$
+		this.hierarchicalAction = new HistoryAction(SVNUIMessages.HistoryView_Hierarchical, "icons/views/history/tree_layout.gif", IAction.AS_RADIO_BUTTON) { //$NON-NLS-1$
 			public void run() {
 				SVNHistoryPage.this.history.setResourceTreeVisible(true);
 				SVNHistoryPage.saveBoolean(SVNTeamPreferences.HISTORY_HIERARCHICAL_LAYOUT, true);

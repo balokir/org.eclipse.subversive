@@ -40,5 +40,6 @@ Require-Bundle: org.eclipse.core.resources,
  org.eclipse.core.runtime,
  org.eclipse.team.core,
  org.eclipse.core.filesystem,
- org.eclipse.core.net
+ org.eclipse.core.net,
+ com.ibm.icu
 Eclipse-LazyStart: true; exceptions="org.eclipse.team.svn.core.resource.events"

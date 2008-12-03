@@ -11,7 +11,7 @@
 
 package org.eclipse.team.svn.ui.verifier;
 
-import java.text.SimpleDateFormat;
+import com.ibm.icu.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

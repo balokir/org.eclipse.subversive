@@ -14,7 +14,9 @@ package org.eclipse.team.svn.core.operation.local;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.DateFormat;
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.util.ULocale;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,7 +24,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
@@ -47,7 +48,7 @@ public class InitExtractLogOperation extends AbstractActionOperation {
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.getDefault());
+		DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, ULocale.getDefault());
 		String date = formatter.format(new Date());
 		this.logImpl(""); //$NON-NLS-1$
 		this.logImpl(date);

@@ -11,7 +11,7 @@
 
 package org.eclipse.team.svn.ui.console;
 
-import java.text.SimpleDateFormat;
+import com.ibm.icu.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.eclipse.core.runtime.IProgressMonitor;

@@ -13,7 +13,7 @@ package org.eclipse.team.svn.ui.composite;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
+import com.ibm.icu.util.Calendar;
 import java.util.Comparator;
 
 import org.eclipse.core.runtime.IProgressMonitor;

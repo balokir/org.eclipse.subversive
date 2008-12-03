@@ -11,10 +11,10 @@
 
 package org.eclipse.team.svn.ui.verifier;
 
-import java.text.MessageFormat;
 import java.util.regex.Pattern;
 
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPropsPreferencePage;
 
@@ -98,7 +98,7 @@ public class MultiLinePropertyVerifier extends AbstractFormattedVerifier {
 	}
 
 	protected String formatMainMessage(int line) {
-		return MessageFormat.format(MultiLinePropertyVerifier.ERROR_MESSAGE_INVALID_FORMAT, new Object[] {AbstractFormattedVerifier.FIELD_NAME, String.valueOf(line + 1)});
+		return BaseMessages.format(MultiLinePropertyVerifier.ERROR_MESSAGE_INVALID_FORMAT, new Object[] {AbstractFormattedVerifier.FIELD_NAME, String.valueOf(line + 1)});
 	}
 	
 }

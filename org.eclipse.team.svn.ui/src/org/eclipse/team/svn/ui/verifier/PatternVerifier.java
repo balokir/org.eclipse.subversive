@@ -11,11 +11,10 @@
 
 package org.eclipse.team.svn.ui.verifier;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.internal.core.StringMatcher;
+import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
@@ -38,7 +37,7 @@ public class PatternVerifier extends AbstractFormattedVerifier {
 		StringMatcher matcher = new StringMatcher(pattern, true, false);
 		for (int i = 0; i < this.resources.length; i++) {
 			if (!matcher.match(this.resources[i].getName())) {
-				return MessageFormat.format(PatternVerifier.message, new Object[] {this.resources[i].getName()});
+				return BaseMessages.format(PatternVerifier.message, new Object[] {this.resources[i].getName()});
 			}				
 		}
 		return null;
