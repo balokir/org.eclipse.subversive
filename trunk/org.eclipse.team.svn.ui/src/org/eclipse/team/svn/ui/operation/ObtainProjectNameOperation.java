@@ -14,7 +14,6 @@ package org.eclipse.team.svn.ui.operation;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,6 +21,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -65,7 +65,7 @@ public class ObtainProjectNameOperation extends AbstractActionOperation {
 			this.resources = this.resourceProvider.getRepositoryResources();
 		}
 		for (int i = 0; i < this.resources.length && !monitor.isCanceled(); i++) {
-			ProgressMonitorUtility.setTaskInfo(monitor, this, MessageFormat.format(this.getOperationResource("Scanning"), new Object[] {this.resources[i].getName()})); //$NON-NLS-1$
+			ProgressMonitorUtility.setTaskInfo(monitor, this, BaseMessages.format(this.getOperationResource("Scanning"), new Object[] {this.resources[i].getName()})); //$NON-NLS-1$
 			
 			final int j = i;
 			this.protectStep(new IUnprotectedOperation() {

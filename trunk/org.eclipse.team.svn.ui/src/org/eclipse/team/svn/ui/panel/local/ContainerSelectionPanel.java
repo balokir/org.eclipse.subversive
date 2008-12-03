@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.ui.panel.local;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,6 +29,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.SVNContainerSelectionGroup;
@@ -227,10 +227,10 @@ public class ContainerSelectionPanel extends AbstractDialogPanel {
         	SVNContainerSelectionGroup control = (SVNContainerSelectionGroup)input;
         	int numberconflicts = this.findConflicts(control);
         	if (numberconflicts == 1) {
-        		return MessageFormat.format(this.SOME_RESOURCE_IN_CONFLICT_MESSAGE, new Object[] {this.conflictedResources});
+        		return BaseMessages.format(this.SOME_RESOURCE_IN_CONFLICT_MESSAGE, new Object[] {this.conflictedResources});
         	}
         	if (numberconflicts > 1) {
-        		return MessageFormat.format(this.SOME_RESOURCES_IN_CONFLICT_MESSAGE, new Object[] {this.conflictedResources});
+        		return BaseMessages.format(this.SOME_RESOURCES_IN_CONFLICT_MESSAGE, new Object[] {this.conflictedResources});
         	}
         	if (this.defaultConflictingResourcesNames != null) {
         		return this.defaultConflictingResourcesNames;

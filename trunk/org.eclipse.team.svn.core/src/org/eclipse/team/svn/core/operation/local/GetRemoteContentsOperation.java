@@ -14,11 +14,11 @@ package org.eclipse.team.svn.core.operation.local;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.text.MessageFormat;
 import java.util.HashMap;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
@@ -111,7 +111,7 @@ public class GetRemoteContentsOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	protected String getShortErrorMessage(Throwable t) {
-		return MessageFormat.format(super.getShortErrorMessage(t), new Object[] {FileUtility.getNamesListAsString(this.provider.getRepositoryResources())});
+		return BaseMessages.format(super.getShortErrorMessage(t), new Object[] {FileUtility.getNamesListAsString(this.provider.getRepositoryResources())});
 	}
 
 }

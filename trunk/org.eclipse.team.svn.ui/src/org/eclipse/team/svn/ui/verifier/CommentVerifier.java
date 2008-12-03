@@ -11,9 +11,8 @@
 
 package org.eclipse.team.svn.ui.verifier;
 
-import java.text.MessageFormat;
-
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
@@ -31,7 +30,7 @@ public class CommentVerifier extends AbstractFormattedVerifier {
     
     protected String getErrorMessageImpl(Control input) {
     	if (this.getText(input).trim().length() < this.logMinSize) {
-    		return MessageFormat.format(SVNUIMessages.Verifier_Comment_Error, this.logMinSize);
+    		return BaseMessages.format(SVNUIMessages.Verifier_Comment_Error, this.logMinSize);
     	}
         return null;
     }

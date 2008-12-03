@@ -12,7 +12,6 @@
 package org.eclipse.team.svn.ui.wizard;
 
 import java.io.File;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,6 +35,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
@@ -614,7 +614,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 		}
 		
 		protected String getShortErrorMessage(Throwable t) {
-			return MessageFormat.format(super.getShortErrorMessage(t), new Object[] {this.propertyName, this.resource.getName()});
+			return BaseMessages.format(super.getShortErrorMessage(t), new Object[] {this.propertyName, this.resource.getName()});
 		}
 		
 	}

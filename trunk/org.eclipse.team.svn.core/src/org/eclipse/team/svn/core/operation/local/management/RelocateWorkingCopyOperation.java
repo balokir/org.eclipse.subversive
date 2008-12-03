@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.core.operation.local.management;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +21,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.IConnectedProjectInformation;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
@@ -106,7 +106,7 @@ public class RelocateWorkingCopyOperation extends AbstractWorkingCopyOperation i
 	}
 	
 	protected String getShortErrorMessage(Throwable t) {
-		return MessageFormat.format(super.getShortErrorMessage(t), new Object[] {this.location.getUrl()});
+		return BaseMessages.format(super.getShortErrorMessage(t), new Object[] {this.location.getUrl()});
 	}
 
 }

@@ -11,11 +11,11 @@
 
 package org.eclipse.team.svn.core.operation.remote;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -72,7 +72,7 @@ public class LocateProjectsOperation extends AbstractRepositoryOperation impleme
 					public void run(IProgressMonitor monitor) throws Exception {
 						if (current instanceof IRepositoryContainer) {
 							String message = LocateProjectsOperation.this.getOperationResource("Scanning"); //$NON-NLS-1$
-							ProgressMonitorUtility.setTaskInfo(monitor, LocateProjectsOperation.this, MessageFormat.format(message, new Object[] {current.getUrl()}));
+							ProgressMonitorUtility.setTaskInfo(monitor, LocateProjectsOperation.this, BaseMessages.format(message, new Object[] {current.getUrl()}));
 							IRepositoryResource []children = ((IRepositoryContainer)current).getChildren();
 							if (LocateProjectsOperation.this.filter.isProject(current, children)) {
 								found.add(current);

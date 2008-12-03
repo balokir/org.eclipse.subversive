@@ -12,7 +12,6 @@
 package org.eclipse.team.svn.core.operation.local.refactor;
 
 import java.io.File;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -23,6 +22,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
+import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
@@ -123,7 +123,7 @@ public class DeleteResourceOperation extends AbstractActionOperation {
 		for (int i = 0; i < this.resources.length; i++) {
 			wcPaths[i] = FileUtility.getWorkingCopyPath(this.resources[i]);
 		}
-		return MessageFormat.format(super.getShortErrorMessage(t), wcPaths);
+		return BaseMessages.format(super.getShortErrorMessage(t), wcPaths);
 	}
 	
 	protected static final IStateFilter SF_OBSTRUCTED_OR_NEW = new IStateFilter.AbstractStateFilter() {

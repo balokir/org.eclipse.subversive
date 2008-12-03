@@ -11,11 +11,10 @@
 
 package org.eclipse.team.svn.ui.repository.model;
 
-import java.text.MessageFormat;
-
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNUIMessages;
@@ -71,7 +70,7 @@ public class RepositoryRevision extends RepositoryFictiveNode implements IParent
 	}
 	
 	public String getLabel(Object o) {
-		return MessageFormat.format(RepositoryRevision.REVISION_NAME, new Object[] {this.revision.toString()});
+		return BaseMessages.format(RepositoryRevision.REVISION_NAME, new Object[] {this.revision.toString()});
 	}
 
 	public Object[] getChildren(Object o) {

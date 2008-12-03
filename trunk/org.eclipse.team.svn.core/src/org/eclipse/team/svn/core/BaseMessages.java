@@ -17,6 +17,10 @@ import org.eclipse.osgi.util.NLS;
 
 public class BaseMessages extends NLS {
 
+	public static String format(String translatedString, Object arg) {
+		return BaseMessages.format(translatedString, new Object[]{arg});
+	}
+	
 	public static String format(String translatedString, Object[] args) {
 		return NLS.bind(translatedString, args);
 	}

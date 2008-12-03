@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.ui.mapping;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -31,6 +30,7 @@ import org.eclipse.team.internal.core.subscribers.ChangeSetManager;
 import org.eclipse.team.internal.core.subscribers.DiffChangeSet;
 import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
 import org.eclipse.team.internal.ui.synchronize.IChangeSetProvider;
+import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.mapping.SVNIncomingChangeSet;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
@@ -109,8 +109,8 @@ public class SVNIncomingChangeSetCollector extends ChangeSetManager {
 					// rebuild name
 					String name = 
 						String.valueOf(revision) + " " +  //$NON-NLS-1$
-						(resource.getLastCommitDate() == 0 ? svnNoDate : MessageFormat.format(svnDate, new Object[] {DateFormatter.formatDate(set.getDate())})) + " " +  //$NON-NLS-1$
-						(resource.getAuthor() == null ? svnNoAuthor : MessageFormat.format(svnAuthor, new Object[] {resource.getAuthor()}));
+						(resource.getLastCommitDate() == 0 ? svnNoDate : BaseMessages.format(svnDate, new Object[] {DateFormatter.formatDate(set.getDate())})) + " " +  //$NON-NLS-1$
+						(resource.getAuthor() == null ? svnNoAuthor : BaseMessages.format(svnAuthor, new Object[] {resource.getAuthor()}));
 					if (set.getComment() != null) {
 						String comment = set.getComment();
 						if (FileUtility.isWindows()) {

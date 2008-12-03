@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.ui.compare;
 
-import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +31,7 @@ import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.connector.SVNDiffStatus;
 import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
@@ -114,7 +114,7 @@ public class TwoWayResourceCompareInput extends ResourceCompareInput {
 		HashMap path2node = new HashMap();
 		String message = SVNUIMessages.ResourceCompareInput_CheckingDelta;
 		for (int i = 0; i < this.statuses.length; i++) {
-			monitor.subTask(MessageFormat.format(message, new Object[] {SVNUtility.decodeURL(this.statuses[i].pathPrev)}));
+			monitor.subTask(BaseMessages.format(message, new Object[] {SVNUtility.decodeURL(this.statuses[i].pathPrev)}));
 			
 			CompareNode node = this.makeNode(this.statuses[i], path2node, monitor);
 			path2node.put(new Path(((ResourceElement)node.getRight()).getRepositoryResource().getUrl()), node);

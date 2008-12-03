@@ -12,7 +12,6 @@
 package org.eclipse.team.svn.core.operation.file.management;
 
 import java.io.File;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -23,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
@@ -115,7 +115,7 @@ public class ShareOperation extends AbstractFileOperation {
 				}
 				default: {
 					String message = this.getNationalizedString("Error_UnknownProjectLayoutType"); //$NON-NLS-1$
-					throw new Exception(MessageFormat.format(message, new Object[] {String.valueOf(this.shareLayout)}));
+					throw new Exception(BaseMessages.format(message, new Object[] {String.valueOf(this.shareLayout)}));
 				}
 			}
 			
@@ -159,7 +159,7 @@ public class ShareOperation extends AbstractFileOperation {
 			}
 			default: {
 				String message = this.getNationalizedString("Error_UnknownProjectLayoutType"); //$NON-NLS-1$
-				throw new RuntimeException(MessageFormat.format(message, new Object[] {String.valueOf(this.shareLayout)}));
+				throw new RuntimeException(BaseMessages.format(message, new Object[] {String.valueOf(this.shareLayout)}));
 			}
 		}
 	}

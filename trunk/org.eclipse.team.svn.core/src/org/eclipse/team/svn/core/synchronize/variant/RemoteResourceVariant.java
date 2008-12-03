@@ -11,8 +11,7 @@
 
 package org.eclipse.team.svn.core.synchronize.variant;
 
-import java.text.MessageFormat;
-
+import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -40,7 +39,7 @@ public abstract class RemoteResourceVariant extends ResourceVariant {
         }
     	String retVal = super.getContentIdentifier();
 	    if ((!this.isNotOnRepository() || this.local.isCopied()) && this.local.getAuthor() != null) {
-	        retVal += " " + MessageFormat.format(RemoteResourceVariant.svnAuthor, new Object[] {this.local.getAuthor()});
+	        retVal += " " + BaseMessages.format(RemoteResourceVariant.svnAuthor, new Object[] {this.local.getAuthor()});
 	    }
         return retVal;
     }

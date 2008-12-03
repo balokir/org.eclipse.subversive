@@ -11,14 +11,14 @@
 
 package org.eclipse.team.svn.ui.verifier;
 
-import java.text.SimpleDateFormat;
+import com.ibm.icu.text.SimpleDateFormat;
 
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * Date Format Verifier. Check if the text is a good date and time pattern 
- * based on {@link java.text.SimpleDateFormat}.
+ * based on {@link com.ibm.icu.text.SimpleDateFormat}.
  * @author Thomas Champagne
  */
 public class DateFormatVerifier extends AbstractFormattedVerifier {

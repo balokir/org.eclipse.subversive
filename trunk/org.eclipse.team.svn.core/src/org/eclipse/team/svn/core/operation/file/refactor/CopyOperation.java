@@ -13,11 +13,11 @@ package org.eclipse.team.svn.core.operation.file.refactor;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
+import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -89,7 +89,7 @@ public class CopyOperation extends AbstractFileOperation {
 		File checked = new File(this.localTo.getAbsolutePath() + "/" + what.getName()); //$NON-NLS-1$
 		if (checked.exists()) {
 			String message = this.getNationalizedString("Error_AlreadyExists"); //$NON-NLS-1$
-			throw new UnreportableException(MessageFormat.format(message, new Object[] {checked.getAbsolutePath()}));
+			throw new UnreportableException(BaseMessages.format(message, new Object[] {checked.getAbsolutePath()}));
 		}
 		return checked;
 	}

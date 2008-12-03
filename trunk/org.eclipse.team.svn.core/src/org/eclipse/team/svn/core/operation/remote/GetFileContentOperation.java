@@ -12,9 +12,9 @@
 package org.eclipse.team.svn.core.operation.remote;
 
 import java.io.FileOutputStream;
-import java.text.MessageFormat;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.operation.AbstractGetFileContentOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -67,7 +67,7 @@ public class GetFileContentOperation extends AbstractGetFileContentOperation {
 	}
 	
 	protected String getShortErrorMessage(Throwable t) {
-		return MessageFormat.format(super.getShortErrorMessage(t), new Object[] {this.resource.getUrl()});
+		return BaseMessages.format(super.getShortErrorMessage(t), new Object[] {this.resource.getUrl()});
 	}
 
 }

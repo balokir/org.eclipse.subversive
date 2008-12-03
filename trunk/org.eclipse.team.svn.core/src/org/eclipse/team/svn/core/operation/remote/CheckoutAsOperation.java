@@ -12,7 +12,6 @@
 package org.eclipse.team.svn.core.operation.remote;
 
 import java.io.File;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -27,6 +26,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
+import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.SVNTeamProjectMapper;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
@@ -195,13 +195,13 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 			File []children = target.listFiles();
 			if (children != null && children.length > 0) {
 				String message = this.getNationalizedString("Error_LockedExternally"); //$NON-NLS-1$
-				throw new UnreportableException(MessageFormat.format(message, new Object[] {children[0].getAbsolutePath()}));
+				throw new UnreportableException(BaseMessages.format(message, new Object[] {children[0].getAbsolutePath()}));
 			}
 		}
 	}
 	
 	protected String getShortErrorMessage(Throwable t) {
-		return MessageFormat.format(super.getShortErrorMessage(t), new Object[] {this.resource.getUrl()});
+		return BaseMessages.format(super.getShortErrorMessage(t), new Object[] {this.resource.getUrl()});
 	}
 	
 }

@@ -11,9 +11,10 @@
 
 package org.eclipse.team.svn.core.connector;
 
-import java.text.DateFormat;
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.util.ULocale;
+
 import java.text.ParseException;
-import java.util.Locale;
 
 /**
  * Revision information container
@@ -164,7 +165,7 @@ public class SVNRevision {
 		}
 
 		public String toString() {
-			DateFormat dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.getDefault());
+			DateFormat dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, ULocale.getDefault());
 			return dateTimeFormat.format(new java.util.Date(this.revDate));
 		}
 
@@ -291,7 +292,7 @@ public class SVNRevision {
 		}
 		catch (NumberFormatException ex) {
 			// check if revision specified as date (always locale-specific)
-			DateFormat dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.getDefault());
+			DateFormat dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, ULocale.getDefault());
 			try {
 				return SVNRevision.fromDate(dateTimeFormat.parse(revisionString).getTime());
 			}

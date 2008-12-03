@@ -13,9 +13,9 @@
 
 package org.eclipse.team.svn.ui.preferences;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.SimpleDateFormat;
+import com.ibm.icu.util.ULocale;
 
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -278,21 +278,21 @@ public final class SVNTeamPreferences {
 		DateFormat dateTimeFormat = null;
 		switch (formatMode) {
 		case SVNTeamPreferences.DATE_FORMAT_MODE_SHORT:
-			dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, Locale.getDefault());
+			dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, ULocale.getDefault());
 			break;
 		case SVNTeamPreferences.DATE_FORMAT_MODE_MEDIUM:
-			dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.getDefault());
+			dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, ULocale.getDefault());
 			break;
 		case SVNTeamPreferences.DATE_FORMAT_MODE_LONG:
-			dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, Locale.getDefault());
+			dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, ULocale.getDefault());
 			break;
 		case SVNTeamPreferences.DATE_FORMAT_MODE_CUSTOM:
 			dateTimeFormat = new SimpleDateFormat(
 					SVNTeamPreferences.getDateFormatString(store, SVNTeamPreferences.DATE_FORMAT_CUSTOM_NAME),
-					Locale.getDefault());
+					ULocale.getDefault());
 			break;
 		default:
-			dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, Locale.getDefault());
+			dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, ULocale.getDefault());
 			break;
 		}
 		return dateTimeFormat;

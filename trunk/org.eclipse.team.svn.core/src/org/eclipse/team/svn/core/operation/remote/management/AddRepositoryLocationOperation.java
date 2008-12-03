@@ -11,10 +11,9 @@
 
 package org.eclipse.team.svn.core.operation.remote.management;
 
-import java.text.MessageFormat;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -43,7 +42,7 @@ public class AddRepositoryLocationOperation extends AbstractActionOperation {
 	}
 	
 	protected String getShortErrorMessage(Throwable t) {
-		return MessageFormat.format(super.getShortErrorMessage(t), new Object[] {this.location.getUrl()});
+		return BaseMessages.format(super.getShortErrorMessage(t), new Object[] {this.location.getUrl()});
 	}
 
 }
