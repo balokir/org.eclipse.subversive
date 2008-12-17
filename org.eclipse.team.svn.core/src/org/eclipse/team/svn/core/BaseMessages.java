@@ -86,7 +86,7 @@ public class BaseMessages extends NLS {
 			if (key.startsWith("Error_")) { //$NON-NLS-1$
 				String idKey = key + "_Id"; //$NON-NLS-1$
 				if (BaseMessages.hasString(idKey, clazz)) {
-					retVal = idKey + ": " + retVal; //$NON-NLS-1$
+					retVal = BaseMessages.getString(idKey, clazz) + ": " + retVal; //$NON-NLS-1$
 				}				
 			}			
 		}

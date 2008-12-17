@@ -301,7 +301,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	public ILocalResource asLocalResourceAccessible(IResource resource) {
 		ILocalResource retVal = this.asLocalResource(resource);
 		if (IStateFilter.SF_INTERNAL_INVALID.accept(retVal)) {
-			throw new UnreportableException(SVNMessages.getErrorString("Error_InaccessibleResource_1")); //$NON-NLS-1$
+			throw new UnreportableException(SVNMessages.getErrorString("Error_InaccessibleResource")); //$NON-NLS-1$
 		}
 		return retVal;
 	}
