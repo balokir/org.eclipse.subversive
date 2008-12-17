@@ -13,6 +13,7 @@ package org.eclipse.team.svn.ui.action;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
@@ -20,9 +21,11 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ui.actions.TeamAction;
+import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
+import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.utility.DefaultOperationWrapperFactory;
@@ -65,7 +68,7 @@ public abstract class AbstractSVNTeamAction extends TeamAction {
 	 * @return boolean false if the operation was canceled.
 	 */
 	public final boolean saveAllEditors(boolean confirm) {
-		return IDE.saveAllEditors(this.getSelectedResources(), confirm);
+		return IDE.saveAllEditors(this.getOriginalSelectedResources(), confirm);
 	}
 	
 	public abstract boolean isEnabled();
@@ -159,6 +162,18 @@ public abstract class AbstractSVNTeamAction extends TeamAction {
 		}
 		super.dispose();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.actions.TeamAction#getSelectedResources()
+	 */	
+	protected IResource[] getSelectedResources() {	
+		//FileUtility filters out not valid resources   
+		return FileUtility.getResourcesRecursive(super.getSelectedResources(), IStateFilter.SF_ALL, IResource.DEPTH_ZERO);		
+	}
+	
+	protected IResource[] getOriginalSelectedResources() {		
+		return super.getSelectedResources();		
+	} 
 	
 	protected abstract void checkSelection(IStructuredSelection selection);
 	protected abstract IStructuredSelection getSelection();

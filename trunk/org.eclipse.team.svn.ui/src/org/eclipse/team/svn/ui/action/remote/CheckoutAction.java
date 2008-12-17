@@ -129,11 +129,14 @@ public class CheckoutAction extends AbstractRepositoryModifyWorkspaceAction {
 	}
 	
 	public static NameSet getExistingProjectNames() {
-		IProject []projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-		
+		IProject []projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();		
 		NameSet set = new NameSet(); 
-		for (int i = 0; i < projects.length; i++) {
-			set.existing.put(set.caseInsensitiveOS ? projects[i].getName().toLowerCase() : projects[i].getName(),  FileUtility.getWorkingCopyPath(projects[i]));
+		for (int i = 0; i < projects.length; i++) {			
+			IProject project = projects[i];			
+			String path = !FileUtility.isRemoteProject(project) ? FileUtility.getWorkingCopyPath(project) : project.getName();
+			if (FileUtility.isRemoteProject(project)) {
+				set.existing.put(set.caseInsensitiveOS ? project.getName().toLowerCase() : project.getName(), path);
+			} 				
 		}
 		return set;
 	}

@@ -198,6 +198,21 @@ public final class FileUtility {
         return resource.isLinked(IResource.CHECK_ANCESTORS);
     }
     
+    /*
+     * If we can't get project location we consider it as a remote one, e.g.
+     * if project is not stored in the local file system
+     */
+    public static boolean isRemoteProject(IProject project) {
+    	return project.getLocation() == null;
+    }
+    
+    /*
+     * If the resource is a derived, team private or linked resource, it is ignored
+     */
+    public static boolean isIgnored(IResource resource) {
+    	return resource.isDerived() || resource.isTeamPrivateMember() || FileUtility.isLinked(resource); 
+    }
+    
 	public static String []asPathArray(IResource []resources) {
 	    String []retVal = new String[resources.length];
 		for (int i = 0; i < resources.length; i++) {
@@ -300,6 +315,11 @@ public final class FileUtility {
 	}
 	
 	public static void visitNodes(IResource resource, IResourceVisitor visitor, int depth, boolean useCache) throws Exception {
+		//don't visit ignored resources
+		if (FileUtility.isIgnored(resource)) {
+			return;
+		}
+		
 		boolean stepInside = visitor.visit(resource);
 		if (stepInside &&
 			resource instanceof IContainer && 
@@ -329,7 +349,8 @@ public final class FileUtility {
 		
 		// first check all resources that are already accessible (performance optimizations)
 		for (int i = 0; i < roots.length; i++) {
-			if (roots[i].isTeamPrivateMember()) {//FileUtility.isSVNInternals(roots[i])
+			//don't check ignored resources
+			if (FileUtility.isIgnored(roots[i])) {//FileUtility.isSVNInternals(roots[i])
 				continue;
 			}
 			
@@ -422,7 +443,7 @@ public final class FileUtility {
 		}
 		return tmp.toArray(new IResource[tmp.size()]);
 	}
-	
+		
 	public static IResource []getParents(IResource []resources, boolean excludeIncoming) {
 		HashSet<IResource> parents = new HashSet<IResource>();
 		for (int i = 0; i < resources.length; i++) {
@@ -723,7 +744,8 @@ public final class FileUtility {
 	private static void addChildren(Set<IResource> resources, IResource []roots, IStateFilter filter, int depth, IActionOperation calledFrom, IProgressMonitor monitor) {
 		int nextDepth = depth == IResource.DEPTH_ONE ? IResource.DEPTH_ZERO : IResource.DEPTH_INFINITE;
 		for (int i = 0; i < roots.length && (monitor == null || !monitor.isCanceled()); i++) {
-			if (roots[i].isTeamPrivateMember()) {//FileUtility.isSVNInternals(roots[i])
+			//don't process ignored resources
+			if (FileUtility.isIgnored(roots[i])) {//FileUtility.isSVNInternals(roots[i])
 				continue;
 			}
 			
