@@ -121,6 +121,10 @@ public class LocateResourceURLInHistoryOperation extends AbstractRepositoryOpera
 			
 			long rev = paths[idx].copiedFromRevision;
 			SVNRevision searchRevision = current.getSelectedRevision();
+			
+			if (searchRevision.getKind() != SVNRevision.Kind.NUMBER) {
+				throw new RuntimeException("Unexpected revision kind. Kind: " + searchRevision.getKind());
+			}
 			long searchRev = ((SVNRevision.Number)searchRevision).getNumber();
 			if (rev < searchRev) {
 				if (msgs[index].revision <= searchRev) {
