@@ -194,7 +194,7 @@ public class SelectRepositoryLocationPage extends AbstractVerifiedWizardPage {
 	}
 	
 	protected static String getNationalizationSuffix(boolean importProject) {
-		return "." + (importProject ? "Import" : "Share"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return "_" + (importProject ? "Import" : "Share"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 }
