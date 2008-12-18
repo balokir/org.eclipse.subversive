@@ -378,10 +378,12 @@ public final class SVNUtility {
 			
 			public void next(SVNLogEntry log) {
 				if (log.revision == SVNRevision.INVALID_REVISION_NUMBER) {
-					log = this.mergeTreeBuilder.pop();
-					if (this.mergeTreeBuilder.isEmpty()) {
-						entries.add(log);
-					}
+					if (!this.mergeTreeBuilder.isEmpty()) {
+						log = this.mergeTreeBuilder.pop();						
+						if (this.mergeTreeBuilder.isEmpty()) {
+							entries.add(log);
+						}
+					}															
 					return;
 				}
 				
