@@ -104,7 +104,19 @@ public class ShowConflictEditorOperation extends AbstractWorkingCopyOperation {
 			if (status.length == 1) {
 				IContainer parent = resource.getParent();
 				parent.refreshLocal(IResource.DEPTH_ONE, monitor);
-				IFile local = parent.getFile(new Path(status[0].conflictWorking));
+				/*
+				 * If Subversion considers the file to be unmergeable, then the .mine file isn't 
+				 * created, since it would be identical to the working file.
+				 */
+				IFile local = null;
+				if (status[0].conflictWorking != null && !"".equals(status[0].conflictWorking)) {
+					local = parent.getFile(new Path(status[0].conflictWorking));
+					if (!local.exists()) {
+						local = null;
+					}					
+				}
+				local = local == null ? resource : local;
+				
 				IFile remote = parent.getFile(new Path(status[0].conflictNew));
 				IFile ancestor = parent.getFile(new Path(status[0].conflictOld));
 				this.openEditor(resource, local, remote, ancestor, monitor);
