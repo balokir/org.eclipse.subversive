@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.core.operation.local;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -19,9 +20,12 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
+import org.eclipse.team.svn.core.connector.SVNNotification;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
+import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -51,7 +55,8 @@ public class LockOperation extends AbstractWorkingCopyOperation {
 
     protected void runImpl(final IProgressMonitor monitor) throws Exception {
 		IResource []resources = this.operableData();
-
+		
+		final List<SVNNotification> problems = new ArrayList<SVNNotification>(); 
 		Map<?, ?> wc2Resources = SVNUtility.splitWorkingCopies(resources);
 		for (Iterator<?> it = wc2Resources.entrySet().iterator(); it.hasNext() && !monitor.isCanceled(); ) {
 			Map.Entry entry = (Map.Entry)it.next();
@@ -71,14 +76,56 @@ public class LockOperation extends AbstractWorkingCopyOperation {
 			final ISVNConnector proxy = location.acquireSVNProxy();
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-					proxy.lock(
-						paths, 
-						LockOperation.this.message, 
-						LockOperation.this.force ? ISVNConnector.Options.FORCE : ISVNConnector.Options.NONE, 
-						new SVNProgressMonitor(LockOperation.this, monitor, null));
+					
+					/*
+					 * Lock operation errors are handled in different way than other errors.
+					 * No exception is thrown in case certain file couldn't be locked,
+					 * but instead error event is dispatched. 
+					 * It is implemented in this way because lock operation could be
+					 * performed on multiple files at once and some of them could be locked,
+					 * while some not - caller will receive LOCKED events for successfully locked
+					 * files and LOCK_FAILED for those that wasn't locked. 
+					 */
+					ISVNNotificationCallback listener = new ISVNNotificationCallback() {
+						//SVNEventAction.LOCK_FAILED 23
+						//SVNEventAction.LOCKED 21
+						
+						protected final static int FAILED = 23;
+						
+						public void notify(SVNNotification info) {					
+							if (FAILED == info.action) {									
+								problems.add(info);				
+							}					
+						}						
+					};
+					
+					SVNUtility.addSVNNotifyListener(proxy, listener);					
+					try {
+						proxy.lock(
+								paths, 
+								LockOperation.this.message, 
+								LockOperation.this.force ? ISVNConnector.Options.FORCE : ISVNConnector.Options.NONE, 
+								new SVNProgressMonitor(LockOperation.this, monitor, null));	
+					} finally {
+						SVNUtility.removeSVNNotifyListener(proxy, listener);
+					}
 				}
 			}, monitor, wc2Resources.size());
 			location.releaseSVNProxy(proxy);
+		}
+		
+		//check problems
+		if (!problems.isEmpty()) {
+			StringBuffer res = new StringBuffer();
+			Iterator<SVNNotification> iter = problems.iterator();
+			while (iter.hasNext()) {
+				SVNNotification problem = iter.next();
+				res.append(problem.errMsg);
+				if (iter.hasNext()) {
+					res.append("\n\n");
+				}
+			}
+			throw new UnreportableException(res.toString());
 		}
     }
 
