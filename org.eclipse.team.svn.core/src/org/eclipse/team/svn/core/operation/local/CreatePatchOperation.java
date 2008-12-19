@@ -68,7 +68,7 @@ public class CreatePatchOperation extends AbstractActionOperation {
 	protected String removeSign = "--- "; //$NON-NLS-1$
 	protected String addSign = "+++ "; //$NON-NLS-1$
 	protected String revisionMark = "\t(revision 0)" + this.lineFeed; //$NON-NLS-1$
-	protected String noLF = "\\ No newline at end of file" + this.lineFeed; //$NON-NLS-1$
+	protected String noLF = this.lineFeed + "\\ No newline at end of file" + this.lineFeed; //$NON-NLS-1$
 	protected String rangeStart = "@@ -0,0 +1"; //$NON-NLS-1$
 	protected String rangeEnd = " @@" + this.lineFeed; //$NON-NLS-1$
 	
