@@ -12,15 +12,19 @@
 package org.eclipse.team.svn.core.operation.file;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
+import org.eclipse.team.svn.core.connector.SVNNotification;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
+import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.FileUtility;
@@ -43,6 +47,7 @@ public class UnlockOperation extends AbstractFileOperation {
 	protected void runImpl(final IProgressMonitor monitor) throws Exception {
 		File []files = this.operableData();
 		
+		final List<SVNNotification> problems = new ArrayList<SVNNotification>();
 		Map<?, ?> wc2Resources = SVNUtility.splitWorkingCopies(files);
 		for (Iterator<?> it = wc2Resources.entrySet().iterator(); it.hasNext() && !monitor.isCanceled(); ) {
 			Map.Entry entry = (Map.Entry)it.next();
@@ -63,13 +68,42 @@ public class UnlockOperation extends AbstractFileOperation {
 			});
 			
 			final ISVNConnector proxy = location.acquireSVNProxy();
-			this.protectStep(new IUnprotectedOperation() {
+			this.protectStep(new IUnprotectedOperation() {				
 				public void run(IProgressMonitor monitor) throws Exception {
-					proxy.unlock(paths, ISVNConnector.Options.FORCE, new SVNProgressMonitor(UnlockOperation.this, monitor, null));
+					ISVNNotificationCallback listener = new ISVNNotificationCallback() {
+						//SVNEventAction.UNLOCK_FAILED 24						
+						protected final static int FAILED = 24;						
+						public void notify(SVNNotification info) {					
+							if (FAILED == info.action) {									
+								problems.add(info);				
+							}					
+						}						
+					};
+					
+					SVNUtility.addSVNNotifyListener(proxy, listener);		
+					try {
+						proxy.unlock(paths, ISVNConnector.Options.FORCE, new SVNProgressMonitor(UnlockOperation.this, monitor, null));
+					} finally {
+						SVNUtility.removeSVNNotifyListener(proxy, listener);
+					}
 				}
 			}, monitor, wc2Resources.size());
 			
 			location.releaseSVNProxy(proxy);
+		}
+		
+		//check problems
+		if (!problems.isEmpty()) {
+			StringBuffer res = new StringBuffer();
+			Iterator<SVNNotification> iter = problems.iterator();
+			while (iter.hasNext()) {
+				SVNNotification problem = iter.next();
+				res.append(problem.errMsg);
+				if (iter.hasNext()) {
+					res.append("\n\n");
+				}
+			}
+			throw new UnreportableException(res.toString());
 		}
 	}
 
