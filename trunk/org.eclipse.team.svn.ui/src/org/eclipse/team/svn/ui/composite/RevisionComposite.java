@@ -256,8 +256,10 @@ public class RevisionComposite extends Composite {
 				if (((Button)e.widget).getSelection()) {
 					RevisionComposite.this.changeRevisionButton.setEnabled(false);
 					RevisionComposite.this.revisionField.setEnabled(false);
-					RevisionComposite.this.dateField.setEnabled(false);
-					RevisionComposite.this.timeField.setEnabled(false);
+					if (!RevisionComposite.this.checkStyled) {
+						RevisionComposite.this.dateField.setEnabled(false);
+						RevisionComposite.this.timeField.setEnabled(false);	
+					}					
 					RevisionComposite.this.startFromCopy = false;
 					RevisionComposite.this.defaultToRevisions();
 				}
@@ -279,8 +281,10 @@ public class RevisionComposite extends Composite {
 					if (((Button)e.widget).getSelection()) {
 						RevisionComposite.this.changeRevisionButton.setEnabled(false);
 						RevisionComposite.this.revisionField.setEnabled(false);
-						RevisionComposite.this.dateField.setEnabled(false);
-						RevisionComposite.this.timeField.setEnabled(false);
+						if (!RevisionComposite.this.checkStyled) {
+							RevisionComposite.this.dateField.setEnabled(false);
+							RevisionComposite.this.timeField.setEnabled(false);	
+						}						
 						RevisionComposite.this.startFromCopy = true;
 						RevisionComposite.this.defaultToRevisions();
 					}
@@ -353,8 +357,10 @@ public class RevisionComposite extends Composite {
 				if (((Button)e.widget).getSelection()) {
 					RevisionComposite.this.changeRevisionButton.setEnabled(true);
 					RevisionComposite.this.revisionField.setEnabled(true);
-					RevisionComposite.this.dateField.setEnabled(false);
-					RevisionComposite.this.timeField.setEnabled(false);
+					if (!RevisionComposite.this.checkStyled) {
+						RevisionComposite.this.dateField.setEnabled(false);
+						RevisionComposite.this.timeField.setEnabled(false);
+					}						
 					RevisionComposite.this.startFromCopy = false;
 					RevisionComposite.this.textToRevisions();
 				}
