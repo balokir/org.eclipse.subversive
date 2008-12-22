@@ -31,6 +31,7 @@ import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.SwitchOperation;
 import org.eclipse.team.svn.core.operation.remote.PreparedBranchTagOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -94,8 +95,25 @@ public class BranchTagAction extends AbstractNonRecursiveTeamAction {
 			IRepositoryResource destination = panel.getDestination();
 			
 			boolean forceCreate =
-				isStructureEnabled && resources.length == 1 && resources[0].getType() == IResource.PROJECT && 
-				!org.eclipse.team.svn.ui.action.remote.BranchTagAction.isSingleProjectLayout(remoteResources[0]);
+				isStructureEnabled &&
+				resources.length == 1 &&
+				resources[0].getType() == IResource.PROJECT;
+			
+			if (forceCreate) {
+				/*
+				 * In order to determine that project has a single project layout,
+				 * we check existence of .project file in repository for trunk folder.
+				 * But there can be a situation that .project file doesn't exist in repository
+				 * for trunk folder(probably this can be done intentionally)
+				 * but in workspace we have a checked out trunk folder which is a project root.
+				 * For more details, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=246268
+				 */
+				boolean isSingleProjectLayout = 				 
+					remoteResources[0] instanceof IRepositoryRoot && ((IRepositoryRoot) (remoteResources[0])).getKind() == IRepositoryRoot.KIND_TRUNK ||
+					org.eclipse.team.svn.ui.action.remote.BranchTagAction.isSingleProjectLayout(remoteResources[0]);
+				forceCreate &= !isSingleProjectLayout;
+			} 
+								
 			PreparedBranchTagOperation mainOp = new PreparedBranchTagOperation((actionType == BRANCH_ACTION ? "Branch" : "Tag"), resources, remoteResources, destination, panel.getMessage(), forceCreate);
 			
 			CompositeOperation op = new CompositeOperation(mainOp.getId());
