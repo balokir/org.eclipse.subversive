@@ -8,6 +8,50 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.6.I20081222-1900 [22 December 2008]
+
+Features:
+ * Implement ModelProvider for change sets using IChangeGroupingRequestor (bug 245869)
+
+ * Implement SVN specific ModelSynchronizeParticipant (bug 245872) 
+ 
+ * Implement SVN specific SubscriberMergeContext (bug 245870)
+ 
+ * Add synchronize pane to commit panel (bug 245874)
+ 
+ * Sort changes by status in extract log (bug 255545)
+ 
+ * Message Bundles (bug 253520)
+ 
+ * Localization - ICU4J (bug 254198)
+
+Fixes:
+ * When extracting only remote changes the conflicted resources are not written to log. (bug 253672)
+
+ * Extra projects in synchronize view (bug 253887)
+ 
+ * Problem with creating a branch/tag (bug 255487)
+ 
+ * Subversive deleting unselected and non svn managed files/folders when doing "Override and Update" (bug 251094)
+ 
+ * Check out from SVN repository fails when any workspace project uses the RSE file system (bug 230331)
+ 
+ * java.util.EmptyStackException in SVNUtility (fetching log entries) (bug 249285)
+ 
+ * ClassCastException SVNKit 1.5 getValidReference (bug 252103)
+ 
+ * missing "locked message" for a file already locked (bug 247614)
+ 
+ * Bug report ID-G6B5P (bug 256949)
+ 
+ * Unable to merge: exception when selecting "Revision" radio in merge dialog. (bug 255975)
+ 
+ * Creating a patch with a file that does not end with a newline places the "no newline" marker incorrectly (bug 254545)
+ 
+ * Tags include trunk subdir (bug 246268)    
+ 
+--------------------------------------------------------------------------------
+
 Version 0.7.5.I20081029-1900 [29 October 2008]
 
 Features:
