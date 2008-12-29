@@ -24,6 +24,7 @@ import org.eclipse.team.svn.ui.event.ResourceSelectionChangedEvent;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.panel.participant.BasePaneParticipant;
 import org.eclipse.team.svn.ui.panel.participant.PaneParticipantHelper;
+import org.eclipse.team.svn.ui.panel.participant.PaneParticipantHelper.PaneVerifier;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifier;
 
 /**
@@ -102,9 +103,9 @@ public abstract class AbstractResourceSelectionPanel extends AbstractDialogPanel
         paneControl.setLayoutData(data);                        
         
         this.paneParticipantHelper.initListeners();	        
-                                          
+                   
         //add validator to pane
-        this.attachTo(paneControl, this.paneParticipantHelper.new PaneVerifier());                        
+        this.attachTo(paneControl, new PaneVerifier(this.paneParticipantHelper));                        
     }
     
     public void postInit() {

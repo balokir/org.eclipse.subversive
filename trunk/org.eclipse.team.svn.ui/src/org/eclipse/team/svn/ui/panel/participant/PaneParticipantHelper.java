@@ -161,10 +161,16 @@ public class PaneParticipantHelper {
 	/*
 	 * Pane validator
 	 */
-	public class PaneVerifier extends AbstractVerifier {					
+	public static class PaneVerifier extends AbstractVerifier {					
+		
+		protected PaneParticipantHelper paneParticipantHelper;
+		
+		public PaneVerifier(PaneParticipantHelper paneParticipantHelper) {
+			this.paneParticipantHelper = paneParticipantHelper;
+		}
 		
 		protected String getErrorMessage(Control input) {
-			IResource[] resources = PaneParticipantHelper.this.getSelectedResources();
+			IResource[] resources = this.paneParticipantHelper.getSelectedResources();
 			if (resources.length == 0) {
 				return SVNUIMessages.ParticipantPagePane_Verifier_Error;
 			}

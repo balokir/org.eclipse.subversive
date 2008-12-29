@@ -45,12 +45,16 @@ public class CommitPaneParticipantHelper extends PaneParticipantHelper {
 		return resultSet;
 	}
 	
-	public class CommitPaneVerifier extends PaneVerifier {
-			
+	public static class CommitPaneVerifier extends PaneVerifier {
+					
+		public CommitPaneVerifier(PaneParticipantHelper paneParticipantHelper) {
+			super(paneParticipantHelper);			
+		}
+
 		protected String getErrorMessage(Control input) {
 			String errorMessage = super.getErrorMessage(input);
 			if (errorMessage == null) {
-				IResource[] resourcesToProcess = CommitPaneParticipantHelper.this.getSelectedResources();
+				IResource[] resourcesToProcess = this.paneParticipantHelper.getSelectedResources();
 				if (FileUtility.checkForResourcesPresenceRecursive(resourcesToProcess, IStateFilter.SF_CONFLICTING)) {
 					return SVNUIMessages.CommitPanel_Pane_Conflicting_Error;
 				}
