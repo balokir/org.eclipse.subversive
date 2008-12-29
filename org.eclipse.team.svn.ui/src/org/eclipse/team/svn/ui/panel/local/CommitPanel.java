@@ -100,6 +100,7 @@ import org.eclipse.team.svn.ui.operation.ShowConflictEditorOperation;
 import org.eclipse.team.svn.ui.panel.common.CommentPanel;
 import org.eclipse.team.svn.ui.panel.participant.CommitPaneParticipant;
 import org.eclipse.team.svn.ui.panel.participant.CommitPaneParticipantHelper;
+import org.eclipse.team.svn.ui.panel.participant.CommitPaneParticipantHelper.CommitPaneVerifier;
 import org.eclipse.team.svn.ui.panel.remote.ComparePanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.properties.bugtraq.BugtraqModel;
@@ -313,7 +314,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
         this.paneParticipantHelper.initListeners();
         
         //add validator to pane
-        this.attachTo(paneComposite, this.paneParticipantHelper.new CommitPaneVerifier());
+        this.attachTo(paneComposite, new CommitPaneVerifier(this.paneParticipantHelper));
 	}
 		
 	public String getHelpId() {

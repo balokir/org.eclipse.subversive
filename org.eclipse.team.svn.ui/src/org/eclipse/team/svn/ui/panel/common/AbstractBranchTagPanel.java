@@ -46,6 +46,7 @@ import org.eclipse.team.svn.ui.event.ResourceSelectionChangedEvent;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.panel.participant.BasePaneParticipant;
 import org.eclipse.team.svn.ui.panel.participant.PaneParticipantHelper;
+import org.eclipse.team.svn.ui.panel.participant.PaneParticipantHelper.PaneVerifier;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.synchronize.AbstractSynchronizeActionGroup;
 import org.eclipse.team.svn.ui.utility.UserInputHistory;
@@ -81,7 +82,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 	protected IResource[] newResources;
 	protected boolean disableSwitch;
 
-	protected AbstractBranchTagPaneParticipantHelper paneParticipantHelper;
+	protected PaneParticipantHelper paneParticipantHelper;
 	/*
 	 * As participant pane is not always present, we need to use this flag 
 	 * (instead of paneParticipantHelper.isParticipantPane()) 
@@ -124,7 +125,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 		this.considerStructure = root.getRepositoryLocation().isStructureEnabled()
 				&& SVNTeamPreferences.getRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_NAME);
 		
-		this.paneParticipantHelper = new AbstractBranchTagPaneParticipantHelper();
+		this.paneParticipantHelper = new PaneParticipantHelper();
 	}
 	
 	public IResource[] getSelectedResources() {
@@ -270,7 +271,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
         this.paneParticipantHelper.initListeners();        
                                           
         //add validator to pane
-        this.attachTo(paneControl, this.paneParticipantHelper.new AbstractBranchTagPaneVerifier());            
+        this.attachTo(paneControl, new PanelPaneVerifier(this.paneParticipantHelper));            
 	}
 	
 	protected BasePaneParticipant createPaneParticipant() {
@@ -461,27 +462,30 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
     	if (this.hasParticipantPane) {
     		this.paneParticipantHelper.dispose();
     	}  	
-	}
+	}	
 	
-	protected class AbstractBranchTagPaneParticipantHelper extends PaneParticipantHelper {
-		/*
-		 * Pane validator
-		 */
-		public class AbstractBranchTagPaneVerifier extends PaneVerifier {
+	/*
+	 * Pane validator
+	 */
+	protected class PanelPaneVerifier extends PaneVerifier {
+		
+		public PanelPaneVerifier(PaneParticipantHelper paneParticipantHelper) {
+			super(paneParticipantHelper);
+		}
+
+		protected String getErrorMessage(Control input) {			
+			return null;
+		}
+		
+		protected String getWarningMessage(Control input) {
+			IResource[] resourcesToProcess = this.paneParticipantHelper.getSelectedResources();
 			
-			protected String getErrorMessage(Control input) {			
-				return null;
+			if ((resourcesToProcess.length == 0 || AbstractBranchTagPanel.this.disableSwitch) && AbstractBranchTagPanel.this.startWithCheck.getSelection()) {
+				return AbstractBranchTagPanel.this.defaultMessage + " " + SVNUIMessages.getString(AbstractBranchTagPanel.this.nationalizationId + "_Warning"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			
-			protected String getWarningMessage(Control input) {
-				IResource[] resourcesToProcess = AbstractBranchTagPaneParticipantHelper.this.getSelectedResources();
-				
-				if ((resourcesToProcess.length == 0 || AbstractBranchTagPanel.this.disableSwitch) && AbstractBranchTagPanel.this.startWithCheck.getSelection()) {
-					return AbstractBranchTagPanel.this.defaultMessage + " " + SVNUIMessages.getString(AbstractBranchTagPanel.this.nationalizationId + "_Warning"); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-				return null;
-			}	
+			return null;
 		}	
-	}
+	}	
+	
 	
 }
