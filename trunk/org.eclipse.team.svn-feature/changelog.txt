@@ -8,6 +8,13 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.6.I20081229-1900 [29 December 2008]
+
+Fixes:
+ * Error when trying to create new tag or branch using repository view (bug 259655)
+ 
+--------------------------------------------------------------------------------
+
 Version 0.7.6.I20081222-1900 [22 December 2008]
 
 Features:
