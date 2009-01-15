@@ -179,10 +179,10 @@ public class CompareResourcesOperation extends AbstractActionOperation {
 						
 			String message = input.getMessage();
 			if (message != null) {
-				MessageDialog.openError(shell, Utilities.getString("CompareUIPlugin_compareFailed"), message); //$NON-NLS-1$
+				MessageDialog.openError(shell, Utilities.getString("CompareUIPlugin.compareFailed"), message); //$NON-NLS-1$ Compare's property
 			}
 			else if (input.getCompareResult() == null) {
-				MessageDialog.openInformation(shell, Utilities.getString("CompareUIPlugin_dialogTitle"), Utilities.getString("CompareUIPlugin_noDifferences")); //$NON-NLS-1$ //$NON-NLS-2$
+				MessageDialog.openInformation(shell, Utilities.getString("CompareUIPlugin.dialogTitle"), Utilities.getString("CompareUIPlugin.noDifferences")); //$NON-NLS-1$ //$NON-NLS-2$ Compare's properties
 			}
 			else {
 				return true;
@@ -192,7 +192,7 @@ public class CompareResourcesOperation extends AbstractActionOperation {
 			// cancelled by user		
 		} 
 		catch (InvocationTargetException x) {
-			MessageDialog.openError(shell, Utilities.getString("CompareUIPlugin_compareFailed"), x.getTargetException().getMessage()); //$NON-NLS-1$
+			MessageDialog.openError(shell, Utilities.getString("CompareUIPlugin.compareFailed"), x.getTargetException().getMessage()); //$NON-NLS-1$ Compare's property
 		}
 		return false;
 	}
