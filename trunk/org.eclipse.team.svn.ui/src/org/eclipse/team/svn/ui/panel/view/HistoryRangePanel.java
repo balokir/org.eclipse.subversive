@@ -86,9 +86,14 @@ public class HistoryRangePanel extends AbstractDialogPanel {
 		this.startComposite = new RevisionComposite(cmp, this, true, new String[] {SVNUIMessages.HistoryRangePanel_StartRevision, defaultRevision}, null, false);
 		this.startComposite.setBaseResource(this.resource);
 		this.startComposite.setSelectedResource(this.initStartResource);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		this.startComposite.setLayoutData(data);
+		
 		this.stopComposite = new RevisionComposite(cmp, this, true, new String[] {SVNUIMessages.HistoryRangePanel_StopRevision, defaultRevision}, null, false);
 		this.stopComposite.setBaseResource(this.resource);
 		this.stopComposite.setSelectedResource(this.initStopResource);
+		data = new GridData(GridData.FILL_HORIZONTAL);		
+		this.stopComposite.setLayoutData(data);
 	}
 
 	protected void cancelChangesImpl() {
