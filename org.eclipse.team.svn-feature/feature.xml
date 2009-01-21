@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.team.svn"
       label="%featureName"
-      version="0.7.6.I20081229-1900"
+      version="0.7.6.I20090116-1600"
       provider-name="%providerName"
       plugin="org.eclipse.team.svn">
    <install-handler/>
@@ -150,7 +150,7 @@ Java and all Java-based trademarks are trademarks of Sun Microsystems, Inc. in t
          id="org.eclipse.team.svn.ui"
          download-size="1600"
          install-size="1600"
-         version="0.7.6.I20081229-1900"
+         version="0.7.6.I20090116-1600"
          unpack="false"/>
 
    <plugin
