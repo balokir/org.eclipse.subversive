@@ -5,7 +5,7 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 0.7.6.I20081229-1900 release date: 29 December 2008
+Version 0.7.6.I20090116-1600 release date: 16 January 2009
 
 1. What's New
 
@@ -14,8 +14,12 @@ Version 0.7.6.I20081229-1900 release date: 29 December 2008
    Changes comparatively to the previous version are listed below. The full list of 
    changes you can find in Change Log.
 
-   Fixes:
- 	* Error when trying to create new tag or branch using repository view (bug 259655)
+   Fixes: 	 	
+ 	* Resources list isn't updated in "Override and Update..." (bug 254900)
+	 
+	* Add key shortcuts to controls (bug 254726)
+	 
+	* Revisions Range dialog isn't correctly resized (bug 261328)  	
 	
 2. Information
 
