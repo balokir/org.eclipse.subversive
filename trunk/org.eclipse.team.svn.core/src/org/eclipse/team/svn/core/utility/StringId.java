@@ -13,8 +13,6 @@ package org.eclipse.team.svn.core.utility;
 
 import java.util.Random;
 
-import com.ibm.icu.lang.UCharacter;
-
 public class StringId {
 
 	public static final char ID_SEPARATOR = '-';
@@ -47,18 +45,18 @@ public class StringId {
 		return str.toString();
 	}
 
-	public static boolean isStringId(String strId) {
-		int pos = strId.lastIndexOf(ID_SEPARATOR);
-		if (pos != -1) {
-			strId = strId.substring(pos + 1);
-		}
-		for (int i = 0; i < strId.length(); i++) {
-			char ch = strId.charAt(i);
-			if (!UCharacter.isDigit(ch) && !UCharacter.isUpperCase(ch)) {
-				return false;
-			}
-		}
-		return true;
-	}
+//	public static boolean isStringId(String strId) {
+//		int pos = strId.lastIndexOf(ID_SEPARATOR);
+//		if (pos != -1) {
+//			strId = strId.substring(pos + 1);
+//		}
+//		for (int i = 0; i < strId.length(); i++) {
+//			char ch = strId.charAt(i);
+//			if (!Character.isDigit(ch) && !Character.isUpperCase(ch)) {
+//				return false;
+//			}
+//		}
+//		return true;
+//	}
 
 }
