@@ -18,8 +18,6 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.IDecoration;
 
-import com.ibm.icu.lang.UCharacter;
-
 /**
  * Contains methods used to create decoration
  * 
@@ -75,10 +73,10 @@ public final class DecoratorVariables {
 		}
 		// trim left/trim right
 		int i = 0;
-		for (; i < prefix.length() && UCharacter.isWhitespace(prefix.charAt(i)); i++);
+		for (; i < prefix.length() && Character.isWhitespace(prefix.charAt(i)); i++);
 		prefix = prefix.substring(i);
 		i = suffix.length() - 1;
-		for (; i >= 0 && UCharacter.isWhitespace(suffix.charAt(i)); i--);
+		for (; i >= 0 && Character.isWhitespace(suffix.charAt(i)); i--);
 		suffix = suffix.substring(0, i + 1);
 
 		decoration.addPrefix(prefix);
