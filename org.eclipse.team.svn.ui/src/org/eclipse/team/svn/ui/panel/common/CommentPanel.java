@@ -74,7 +74,7 @@ public class CommentPanel extends AbstractDialogPanel {
 		if (this.bugtraqModel != null && (bugtraqMessage = this.bugtraqModel.getMessage()) != null) {
 			String addString = this.comment.getBugID();
 			if (addString != null && addString.trim().length() > 0) {
-				bugtraqMessage = bugtraqMessage.replaceFirst(BugtraqModel.BUG_ID, addString);
+				bugtraqMessage = bugtraqMessage.replaceAll(BugtraqModel.BUG_ID, addString);
 				if (this.bugtraqModel.isAppend()) {
 					message += "\n" + bugtraqMessage; //$NON-NLS-1$
 				}
