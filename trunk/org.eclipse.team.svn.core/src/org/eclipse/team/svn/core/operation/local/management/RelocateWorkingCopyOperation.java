@@ -91,7 +91,8 @@ public class RelocateWorkingCopyOperation extends AbstractWorkingCopyOperation i
 								if (oldRoot != null) {
 									RelocateWorkingCopyOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn switch --relocate \"" + oldRoot + "\" \"" + rootUrl + "\" \"" + FileUtility.normalizePath(path) + "\"" + FileUtility.getUsernameParam(RelocateWorkingCopyOperation.this.location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 									proxy.relocate(oldRoot, rootUrl, path, Depth.INFINITY, new SVNProgressMonitor(RelocateWorkingCopyOperation.this, monitor, null));
-									provider.relocateResource();
+									//XXX: provider.relocateResource();
+									provider.switchResource(RelocateWorkingCopyOperation.this.location.asRepositoryContainer(rootUrl + url.substring(oldRoot.length()), false));
 									RelocateWorkingCopyOperation.this.resources.add(current);
 								}
 							}
