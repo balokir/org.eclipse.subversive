@@ -47,7 +47,8 @@ public class EditRepositoryLocationPropertiesAction extends AbstractRepositoryMo
 		NewRepositoryLocationWizard wizard = new NewRepositoryLocationWizard(locations[0], false);
 		WizardDialog dialog = new WizardDialog(this.getShell(), wizard);
 		if (dialog.open() == 0) {
-			if (!locations[0].getUrl().startsWith(oldRootUrl)) {
+			String newRootUrl = locations[0].getRepositoryRootUrl();
+			if (!newRootUrl.equals(oldRootUrl)) {
 				FindRelatedProjectsOperation scannerOp = new FindRelatedProjectsOperation(locations[0]);
 				final RelocateWorkingCopyOperation mainOp = new RelocateWorkingCopyOperation(scannerOp, locations[0]);
 				CompositeOperation op = new CompositeOperation(mainOp.getId());
