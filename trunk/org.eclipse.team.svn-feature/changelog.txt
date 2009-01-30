@@ -8,6 +8,19 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.6.I20090130-1900 [30 January 2009]
+
+Fixes:
+ * o.e.team.svn.core has hard dependency to com.ibm.icu bundle (bug 261413)
+ 
+ * Bugtraq properties problem (bug 261857) 
+ 
+ * Problems with relocating project (bug 259626) 
+ 
+ * Share Projects menu item disabled when multiple projects selected (bug 263003) 
+ 
+--------------------------------------------------------------------------------
+
 Version 0.7.6.I20090116-1600 [16 January 2009]
 
 Fixes:
