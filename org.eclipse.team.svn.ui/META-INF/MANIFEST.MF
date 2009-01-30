@@ -3,7 +3,7 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5, JavaSE-1.6
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.team.svn.ui;singleton:=true
-Bundle-Version: 0.7.6.I20090116-1600
+Bundle-Version: 0.7.6.I20090130-1900
 Bundle-ClassPath: .
 Bundle-Activator: org.eclipse.team.svn.ui.SVNTeamUIPlugin
 Bundle-Vendor: %providerName

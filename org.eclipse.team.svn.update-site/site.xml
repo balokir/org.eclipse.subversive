@@ -3,7 +3,7 @@
    <description url="http://download.eclipse.org/technology/subversive/0.7/update-site/">
       Eclipse Subversive - SVN Team Provider
    </description>
-   <feature url="http://www.eclipse.org/downloads/download.php?file=/technology/subversive/0.7/update-site/features/org.eclipse.team.svn_0.7.6.I20090116-1600.jar&amp;r=1&amp;protocol=http" id="org.eclipse.team.svn" version="0.7.6.I20090116-1600">
+   <feature url="http://www.eclipse.org/downloads/download.php?file=/technology/subversive/0.7/update-site/features/org.eclipse.team.svn_0.7.6.I20090130-1900.jar&amp;r=1&amp;protocol=http" id="org.eclipse.team.svn" version="0.7.6.I20090130-1900">
       <category name="Subversive (Incubation)"/>
    </feature>
    <feature url="features/org.eclipse.team.svn.nl1_0.7.6.I20081229-1900.jar" id="org.eclipse.team.svn.nl1" version="0.7.6.I20081229-1900">
@@ -15,7 +15,7 @@
    <feature url="features/org.eclipse.team.svn.mylyn_0.7.6.I20081229-1900.jar" id="org.eclipse.team.svn.mylyn" version="0.7.6.I20081229-1900">
       <category name="Subversive Integration (Incubation)"/>
    </feature>
-   <feature url="features/org.eclipse.team.svn.source_0.7.6.I20090116-1600.jar" id="org.eclipse.team.svn.source" version="0.7.6.I20090116-1600">
+   <feature url="features/org.eclipse.team.svn.source_0.7.6.I20090130-1900.jar" id="org.eclipse.team.svn.source" version="0.7.6.I20090130-1900">
       <category name="Subversive Sources (Incubation)"/>
    </feature>
    <category-def name="Subversive (Incubation)" label="Subversive SVN Team Provider Plugin (Incubation)">
