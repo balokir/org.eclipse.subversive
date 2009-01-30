@@ -18,6 +18,9 @@ public class MylynMessages extends BaseMessages {
 
 	protected static final String BUNDLE_NAME = "org.eclipse.team.svn.mylyn.messages";	 //$NON-NLS-1$
 	
+	public static String Operation_OpenReportEditor;
+	public static String Operation_OpenReportEditor_Id;
+	
 	static {
 		//load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, MylynMessages.class);
