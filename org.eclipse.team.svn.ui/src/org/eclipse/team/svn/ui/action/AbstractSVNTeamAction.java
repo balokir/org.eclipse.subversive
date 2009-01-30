@@ -12,6 +12,8 @@
 package org.eclipse.team.svn.ui.action;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -21,7 +23,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ui.actions.TeamAction;
-import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
@@ -165,11 +166,18 @@ public abstract class AbstractSVNTeamAction extends TeamAction {
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.actions.TeamAction#getSelectedResources()
-	 */	
+	 */		
 	protected IResource[] getSelectedResources() {	
-		//FileUtility filters out not valid resources   
-		return FileUtility.getResourcesRecursive(super.getSelectedResources(), IStateFilter.SF_ALL, IResource.DEPTH_ZERO);		
-	}
+		//filters out not valid resources   		
+		List<IResource> res = new ArrayList<IResource>();
+		IResource[] resources = super.getSelectedResources();
+		for (IResource resource : resources) {
+			if (!FileUtility.isIgnored(resource)) {
+				res.add(resource);
+			}
+		} 				
+		return res.toArray(new IResource[0]);
+	}	
 	
 	protected IResource[] getOriginalSelectedResources() {		
 		return super.getSelectedResources();		
