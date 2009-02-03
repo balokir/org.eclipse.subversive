@@ -191,13 +191,13 @@ public abstract class AbstractDialogPanel implements IDialogPanel, IValidationMa
     public static String makeToBeOperatedMessage(IRepositoryResource []resources) {
 		String message;
 		if (resources.length == 1) {
-			message = "RepositoryTreePanel_Message_Single"; //$NON-NLS-1$
+			message = SVNUIMessages.RepositoryTreePanel_Message_Single;
 		}
 		else if (resources.length < 5) {
-			message = "RepositoryTreePanel_Message_UpTo4"; //$NON-NLS-1$
+			message = SVNUIMessages.RepositoryTreePanel_Message_UpTo4;
 		}
 		else {
-			message = "RepositoryTreePanel_Message_Multi"; //$NON-NLS-1$
+			message = SVNUIMessages.RepositoryTreePanel_Message_Multi;
 		}
 		return SVNUIMessages.format(message, new String[] {FileUtility.getNamesListAsString(resources)});
 	}
