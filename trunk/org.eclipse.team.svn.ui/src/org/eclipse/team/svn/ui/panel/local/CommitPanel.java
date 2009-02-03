@@ -18,8 +18,10 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.Action;
@@ -286,7 +288,12 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				return null;
 			}
 			protected String getWarningMessage(Control input) {
-				return null;
+				String message = null;
+				IResource[] selection = CommitPanel.this.getSelectedResources();																				
+				if (selection != null && selection.length > 0) {
+					message = CommitPanel.validateResources(selection);		
+				}
+				return message;
 			}
 		});
 		this.addContextMenu();			
@@ -888,5 +895,39 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
     		return this.maxWidthVisitor.getMaxLogWidth();
     	}
     }
+    
+    /**
+     * Check if resources have errors or warnings
+     * 
+     * @param resources
+     * @return
+     */
+	public static String validateResources(IResource[] resources) {
+		String message = null;
+		int highestProblemSeverity = CommitPanel.getHighestProblemSeverity(resources);
+		switch (highestProblemSeverity) {
+			case IMarker.SEVERITY_WARNING:
+				message = SVNUIMessages.CommitPanel_Resource_Validation_Warning_Message;
+				break;
+				
+			case IMarker.SEVERITY_ERROR:
+				message = SVNUIMessages.CommitPanel_Resource_Validation_Error_Message;
+				break;
+		}
+		return message;		
+	}
+    
+    public static int getHighestProblemSeverity(IResource[] resources) {
+    	int res = -1;
+    	for (IResource resource : resources) {
+    		try {
+				int problemSeverity = resource.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
+				res = problemSeverity > res ? problemSeverity : res;
+			} catch (CoreException e) {
+				//ignore
+			}    		
+    	}
+    	return res;
+    }    
 	
 }

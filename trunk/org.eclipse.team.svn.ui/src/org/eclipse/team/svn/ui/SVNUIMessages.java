@@ -226,6 +226,8 @@ public class SVNUIMessages extends BaseMessages {
 	public static String CommitPanel_PasteNames_Action;
 	public static String CommitPanel_PasteNames_Button;
 	public static String CommitPanel_ReplaceWith_Group;
+	public static String CommitPanel_Resource_Validation_Error_Message;
+	public static String CommitPanel_Resource_Validation_Warning_Message;	
 	public static String CommitPanel_Revert_Action;
 	public static String CommitPanel_Title;
 	public static String CommitSetPanel_Comment;
