@@ -14,6 +14,7 @@ package org.eclipse.team.svn.ui.action.remote;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.composite.BranchTagSelectionComposite;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.remote.CompareBranchTagPanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
@@ -41,11 +42,14 @@ public class CompareWithBranchTagAction extends CompareAction {
 
 	public void runImpl(IAction action) {
         IRepositoryResource first = this.getSelectedRepositoryResources()[0];
-		CompareBranchTagPanel panel = new CompareBranchTagPanel(first, this.type);
-		DefaultDialog dlg = new DefaultDialog(this.getShell(), panel);
-		if (dlg.open() == 0){
-			this.doCompare(first, panel.getSelectedResoure());
-		}
+        IRepositoryResource[] branchTagResources = BranchTagSelectionComposite.calculateBranchTagResources(first, this.type);
+        if (branchTagResources != null) {
+    		CompareBranchTagPanel panel = new CompareBranchTagPanel(first, this.type, branchTagResources);
+    		DefaultDialog dlg = new DefaultDialog(this.getShell(), panel);
+    		if (dlg.open() == 0){
+    			this.doCompare(first, panel.getSelectedResoure());
+    		}	
+        }
 	}
 
 }

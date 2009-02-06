@@ -23,6 +23,7 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.action.AbstractWorkingCopyAction;
+import org.eclipse.team.svn.ui.composite.BranchTagSelectionComposite;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.history.ISVNHistoryView;
 import org.eclipse.team.svn.ui.operation.CompareResourcesOperation;
@@ -60,19 +61,24 @@ public class CompareWithBranchTagAction extends AbstractWorkingCopyAction {
 		IResource resource = this.getSelectedResources()[0];
 		ILocalResource local = SVNRemoteStorage.instance().asLocalResourceAccessible(resource);
 		IRepositoryResource remote = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
-		CompareBranchTagPanel panel = new CompareBranchTagPanel(remote, this.type);
-		DefaultDialog dlg = new DefaultDialog(this.getShell(), panel);
-		if (dlg.open() == 0){
-			remote = panel.getSelectedResoure();
-			
-			CompareResourcesOperation mainOp = new CompareResourcesOperation(local, remote);
-			CompositeOperation op = new CompositeOperation(mainOp.getId());
-			op.add(mainOp);
-			if (SVNTeamPreferences.getHistoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.HISTORY_CONNECT_TO_COMPARE_WITH_NAME)) {
-				op.add(new ShowHistoryViewOperation(resource, remote, ISVNHistoryView.COMPARE_MODE, ISVNHistoryView.COMPARE_MODE), new IActionOperation[] {mainOp});
-			}
-			this.runScheduled(op);
-		}
+		
+		IRepositoryResource[] branchTagResources = BranchTagSelectionComposite.calculateBranchTagResources(remote, this.type);
+		if (branchTagResources != null) {
+			CompareBranchTagPanel panel = new CompareBranchTagPanel(remote, this.type, branchTagResources);
+			DefaultDialog dlg = new DefaultDialog(this.getShell(), panel);
+			if (dlg.open() == 0){
+				remote = panel.getSelectedResoure();
+				String diffFile = panel.getDiffFile();
+				CompareResourcesOperation mainOp = new CompareResourcesOperation(local, remote);
+				mainOp.setDiffFile(diffFile);
+				CompositeOperation op = new CompositeOperation(mainOp.getId());
+				op.add(mainOp);
+				if (SVNTeamPreferences.getHistoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.HISTORY_CONNECT_TO_COMPARE_WITH_NAME)) {
+					op.add(new ShowHistoryViewOperation(resource, remote, ISVNHistoryView.COMPARE_MODE, ISVNHistoryView.COMPARE_MODE), new IActionOperation[] {mainOp});
+				}
+				this.runScheduled(op);
+			}	
+		}		
 	}
 
 	protected boolean needsToSaveDirtyEditors() {

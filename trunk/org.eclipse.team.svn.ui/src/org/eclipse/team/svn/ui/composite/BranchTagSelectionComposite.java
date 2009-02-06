@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.svn.core.connector.SVNEntryReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -69,17 +70,18 @@ public class BranchTagSelectionComposite extends Composite {
 	
 	protected String ignored;
 		
-	public BranchTagSelectionComposite(Composite parent, int style, IRepositoryResource baseResource, String historyKey, IValidationManager validationManager, int type) {
+	protected IRepositoryResource[] branchTagResources;
+	
+	public BranchTagSelectionComposite(Composite parent, int style, IRepositoryResource baseResource, String historyKey, IValidationManager validationManager, int type, IRepositoryResource[] branchTagResources) {
 		super(parent, style);
 		this.baseResource = baseResource;
 		this.inputHistory = new UserInputHistory(historyKey);
 		this.validationManager = validationManager;
 		this.type = type;
 		this.ignored = this.type == BranchTagSelectionComposite.BRANCH_OPERATED ? SVNUIMessages.Branch_Read_Separator : SVNUIMessages.Tag_Read_Separator;
-		this.considerStructure = 
-			baseResource.getRepositoryLocation().isStructureEnabled() &&
-			SVNTeamPreferences.getRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_NAME);
-		this.root = (this.type == BranchTagSelectionComposite.BRANCH_OPERATED) ? SVNUtility.getBranchesLocation(this.baseResource) : SVNUtility.getTagsLocation(this.baseResource);
+		this.branchTagResources = branchTagResources;
+		this.considerStructure = BranchTagSelectionComposite.considerStructure(this.baseResource);		
+		this.root = BranchTagSelectionComposite.getRepositoryRoot(this.type, this.baseResource);
 		this.createControls(parent);
 	}
 	
@@ -118,21 +120,14 @@ public class BranchTagSelectionComposite extends Composite {
 		this.urlText.setLayoutData(data);
 		this.urlText.setVisibleItemCount(this.inputHistory.getDepth() * 2);
 		this.urlText.setItems(this.inputHistory.getHistory());
-						
-		IRepositoryResource [] children = new IRepositoryResource [0];
-		if (this.considerStructure) {
-			GetRemoteFolderChildrenOperation op = new GetRemoteFolderChildrenOperation(this.root, true);
-			UIMonitorUtility.doTaskNowDefault(op, false);
-			if (op.getChildren() != null) {
-				children = op.getChildren();
-			}
-		}
-		if (children.length > 0) {
+				
+		if (this.branchTagResources.length > 0) {
 			this.urlText.add(this.ignored);
 		}
-		for (int i = 0; i < children.length; i++) {
-			this.urlText.add(children[i].getName());
+		for (IRepositoryResource branchTagResource : this.branchTagResources) {
+			this.urlText.add(branchTagResource.getName());
 		}
+		
 		this.urlText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				BranchTagSelectionComposite.this.url = ((Combo)e.widget).getText();
@@ -240,6 +235,52 @@ public class BranchTagSelectionComposite extends Composite {
 		catch (IllegalArgumentException ex) {
 			return allowsNull ? null : SVNUtility.copyOf(this.baseResource);
 		}
+	}
+	
+	/**
+	 * Look for branches/tags for given resource
+	 * 
+	 * Note that if happened error during execution, it returns null 
+	 * and you should break your operation. It is handled in this way
+	 * because if problem happens user will see an error dialog and so we have to 
+	 * say about error to the caller code in some way 
+	 * 
+	 * @param type			BRANCH_OPERATED or TAG_OPERATED
+	 * @param resource
+	 * @return	
+	 */
+	public static IRepositoryResource[] calculateBranchTagResources(IRepositoryResource resource, int type) {
+		IRepositoryResource[] children = null;
+		boolean hasError = false;
+		boolean considerStructure = BranchTagSelectionComposite.considerStructure(resource);					
+		if (considerStructure) {
+			IRepositoryRoot root = BranchTagSelectionComposite.getRepositoryRoot(type, resource);
+			GetRemoteFolderChildrenOperation op = new GetRemoteFolderChildrenOperation(root, true);
+			UIMonitorUtility.doTaskNowDefault(op, false);
+			if (IActionOperation.ERROR == op.getExecutionState()) {
+				hasError = true;
+			} else {
+				children = op.getChildren();	
+			}			
+		}		
+		if (hasError) {
+			children = null;
+		} else {
+			children = children != null ? children : new IRepositoryResource[0];	
+		}		
+		return children;	
+	}
+	
+	protected static IRepositoryRoot getRepositoryRoot(int type, IRepositoryResource resource) {
+		IRepositoryRoot root = (type == BranchTagSelectionComposite.BRANCH_OPERATED) ? SVNUtility.getBranchesLocation(resource) : SVNUtility.getTagsLocation(resource);
+		return root;
+	}
+	
+	protected static boolean considerStructure(IRepositoryResource resource) {
+		boolean considerStructure = 
+			resource.getRepositoryLocation().isStructureEnabled() &&
+			SVNTeamPreferences.getRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_NAME);
+		return considerStructure;
 	}
 
 }
