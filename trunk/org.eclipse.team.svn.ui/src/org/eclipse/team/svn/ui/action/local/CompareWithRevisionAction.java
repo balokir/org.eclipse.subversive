@@ -50,7 +50,9 @@ public class CompareWithRevisionAction extends AbstractWorkingCopyAction {
 		DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
 		if (dialog.open() == 0) {
 			remote = panel.getSelectedResource();
+			String diffFile = panel.getDiffFile();
 			CompareResourcesOperation mainOp = new CompareResourcesOperation(local, remote);
+			mainOp.setDiffFile(diffFile);
 			CompositeOperation op = new CompositeOperation(mainOp.getId());
 			op.add(mainOp);
 			if (SVNTeamPreferences.getHistoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.HISTORY_CONNECT_TO_COMPARE_WITH_NAME)) {
