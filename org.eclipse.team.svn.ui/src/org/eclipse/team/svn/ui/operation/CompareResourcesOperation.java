@@ -32,6 +32,7 @@ import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.remote.LocateResourceURLInHistoryOperation;
@@ -61,6 +62,7 @@ public class CompareResourcesOperation extends AbstractActionOperation {
 	protected boolean showInDialog;
 	protected boolean forceReuse;
 	protected String forceId;
+	protected String diffFile;
 	
 	public CompareResourcesOperation(ILocalResource local, IRepositoryResource remote) {
 		this(local, remote, false, false);
@@ -84,6 +86,10 @@ public class CompareResourcesOperation extends AbstractActionOperation {
 		this.forceId = forceId;
 	}
 
+	public void setDiffFile(String diffFile) {
+		this.diffFile = diffFile;
+	}
+	
 	public String getForceId() {
 		return this.forceId;
 	}
@@ -98,16 +104,50 @@ public class CompareResourcesOperation extends AbstractActionOperation {
 		final IRepositoryResource []diffPair = new IRepositoryResource[] {this.ancestor, this.remote};
 		SVNRevision revision = this.remote.getSelectedRevision();
 		boolean fetchRemote = revision.getKind() == Kind.HEAD || revision.getKind() == Kind.NUMBER;
+				
+		//generate file in unified diff format
+		if (this.diffFile != null) {
+			this.protectStep(new IUnprotectedOperation() {
+				public void run(IProgressMonitor monitor) throws Exception {
+					String wcPath = FileUtility.getWorkingCopyPath(CompareResourcesOperation.this.local.getResource());
+					SVNEntryRevisionReference refPrev = new SVNEntryRevisionReference(wcPath, null, SVNRevision.WORKING);			
+					SVNEntryRevisionReference refNext = SVNUtility.getEntryRevisionReference(CompareResourcesOperation.this.remote);					
+					String outFileName = CompareResourcesOperation.this.diffFile;			
+								
+					String projectPath = FileUtility.getWorkingCopyPath(CompareResourcesOperation.this.local.getResource().getProject());
+					String relativeToDir = projectPath;
+										
+					int depth = Depth.INFINITY;							
+					long options = ISVNConnector.Options.NONE;
+					//ISVNConnector.Options.IGNORE_ANCESTRY;					
+					String[] changelistNames = new String[0];
+										
+					CompareResourcesOperation.this.writeToConsole(
+							IConsoleStream.LEVEL_CMD, "svn diff -r " //$NON-NLS-1$
+							+ refNext.revision
+							+ " \"" + wcPath + "\"" //$NON-NLS-1$ //$NON-NLS-2$
+							//+ "@" + refNext.pegRevision + "\""
+							+ FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$
+					
+					proxy.diff(refPrev, refNext, relativeToDir, outFileName, depth, options, changelistNames, new SVNProgressMonitor(CompareResourcesOperation.this, monitor, null));							
+				}				
+			}, monitor, 100, 10);
+		}	
+		if (this.getExecutionState() == IActionOperation.ERROR) {
+			return;
+		}
 		
-		this.protectStep(new IUnprotectedOperation() {
-			public void run(IProgressMonitor monitor) throws Exception {
-				proxy.status(FileUtility.getWorkingCopyPath(CompareResourcesOperation.this.local.getResource()), Depth.INFINITY, ISVNConnector.Options.IGNORE_EXTERNALS, null, new ISVNEntryStatusCallback() {
-					public void next(SVNChangeStatus status) {
-						localChanges.add(new SVNDiffStatus(status.path, status.path, status.nodeKind, status.textStatus, status.propStatus));
-					}
-				}, new SVNProgressMonitor(CompareResourcesOperation.this, monitor, null, false));
-			}
-		}, monitor, 100, fetchRemote ? 5 : 60);
+		if (!monitor.isCanceled()) {
+			this.protectStep(new IUnprotectedOperation() {
+				public void run(IProgressMonitor monitor) throws Exception {
+					proxy.status(FileUtility.getWorkingCopyPath(CompareResourcesOperation.this.local.getResource()), Depth.INFINITY, ISVNConnector.Options.IGNORE_EXTERNALS, null, new ISVNEntryStatusCallback() {
+						public void next(SVNChangeStatus status) {
+							localChanges.add(new SVNDiffStatus(status.path, status.path, status.nodeKind, status.textStatus, status.propStatus));
+						}
+					}, new SVNProgressMonitor(CompareResourcesOperation.this, monitor, null, false));
+				}
+			}, monitor, 100, fetchRemote ? 5 : 50);	
+		}
 		
 		if (!monitor.isCanceled() && fetchRemote) {
 			this.protectStep(new IUnprotectedOperation() {

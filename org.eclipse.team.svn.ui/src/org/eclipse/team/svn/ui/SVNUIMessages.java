@@ -341,6 +341,9 @@ public class SVNUIMessages extends BaseMessages {
 
 	public static String DefaultCheckoutFactory_EclipseProject;
 	public static String DeleteAction_Comment_Title;
+	public static String DiffFormatComposite_DiffFile_Name;
+	public static String DiffFormatComposite_GenerateDiffFile_Message;	
+	public static String DiffFormatComposite_SaveDiffFileAs;
 	public static String DiscardConfirmationDialog_Location_Message_Multi;
 	public static String DiscardConfirmationDialog_Location_Message_Single;
 	public static String DiscardConfirmationDialog_Location_Title_Multi;
