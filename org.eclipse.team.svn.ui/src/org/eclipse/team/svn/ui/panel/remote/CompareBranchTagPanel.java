@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.BranchTagSelectionComposite;
+import org.eclipse.team.svn.ui.composite.DiffFormatComposite;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 
 /**
@@ -27,14 +28,17 @@ import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 public class CompareBranchTagPanel extends AbstractDialogPanel {
 	protected IRepositoryResource selectedResource;
 	protected int type;
+	protected IRepositoryResource[] branchTagResources;
 	protected long currentRevision;
 	protected String historyKey;
 	protected BranchTagSelectionComposite selectionComposite;
+	protected DiffFormatComposite diffFormatComposite;
 	
-	public CompareBranchTagPanel(IRepositoryResource baseResource, int type) {
+	public CompareBranchTagPanel(IRepositoryResource baseResource, int type, IRepositoryResource[] branchTagResources) {
 		super();
 		this.selectedResource = baseResource;
 		this.type = type;
+		this.branchTagResources = branchTagResources;
 		if (type == BranchTagSelectionComposite.BRANCH_OPERATED) {
 			this.dialogTitle = SVNUIMessages.Compare_Branch_Title;
 			this.dialogDescription = SVNUIMessages.Compare_Branch_Description;
@@ -51,10 +55,16 @@ public class CompareBranchTagPanel extends AbstractDialogPanel {
 	
 	protected void createControlsImpl(Composite parent) {
         GridData data = null;
-        this.selectionComposite = new BranchTagSelectionComposite(parent, SWT.NONE, this.selectedResource, this.historyKey, this, this.type);
+        this.selectionComposite = new BranchTagSelectionComposite(parent, SWT.NONE, this.selectedResource, this.historyKey, this, this.type, this.branchTagResources);
         data = new GridData(GridData.FILL_HORIZONTAL);
         this.selectionComposite.setLayoutData(data);
         this.selectionComposite.setCurrentRevision(this.currentRevision);
+        
+        this.diffFormatComposite = new DiffFormatComposite(parent, this);
+	}
+	
+	public String getDiffFile() {			
+		return this.diffFormatComposite.getDiffFile();
 	}
 	
 	public IRepositoryResource getSelectedResoure() {

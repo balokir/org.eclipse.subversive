@@ -27,14 +27,16 @@ import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 public class ReplaceBranchTagPanel extends AbstractDialogPanel {
 	protected IRepositoryResource selectedResource;
 	protected int type;
+	protected IRepositoryResource[] branchTagResources;
 	protected long currentRevision;
 	protected String historyKey;
 	protected BranchTagSelectionComposite selectionComposite;
 	
-	public ReplaceBranchTagPanel(IRepositoryResource baseResource, long currentRevision, int type) {
+	public ReplaceBranchTagPanel(IRepositoryResource baseResource, long currentRevision, int type, IRepositoryResource[] branchTagResources) {
 		super();
 		this.selectedResource = baseResource;
 		this.type = type;
+		this.branchTagResources = branchTagResources;
 		if (type == BranchTagSelectionComposite.BRANCH_OPERATED) {
 			this.dialogTitle = SVNUIMessages.Replace_Branch_Title;
 			this.dialogDescription = SVNUIMessages.Replace_Branch_Description;
@@ -51,7 +53,7 @@ public class ReplaceBranchTagPanel extends AbstractDialogPanel {
 	
 	protected void createControlsImpl(Composite parent) {
         GridData data = null;
-        this.selectionComposite = new BranchTagSelectionComposite(parent, SWT.NONE, this.selectedResource, this.historyKey, this, this.type);
+        this.selectionComposite = new BranchTagSelectionComposite(parent, SWT.NONE, this.selectedResource, this.historyKey, this, this.type, this.branchTagResources);
         data = new GridData(GridData.FILL_HORIZONTAL);
         this.selectionComposite.setLayoutData(data);
         this.selectionComposite.setCurrentRevision(this.currentRevision);

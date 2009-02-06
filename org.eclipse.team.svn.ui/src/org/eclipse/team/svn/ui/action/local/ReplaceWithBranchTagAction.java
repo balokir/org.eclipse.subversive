@@ -26,6 +26,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.action.AbstractWorkingCopyAction;
+import org.eclipse.team.svn.ui.composite.BranchTagSelectionComposite;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.dialog.ReplaceWarningDialog;
 import org.eclipse.team.svn.ui.panel.local.ReplaceBranchTagPanel;
@@ -58,20 +59,23 @@ public class ReplaceWithBranchTagAction extends AbstractWorkingCopyAction {
 	public static IActionOperation getReplaceOperation(IResource []resources, Shell shell, int type) {
 		ILocalResource local = SVNRemoteStorage.instance().asLocalResourceAccessible(resources[0]);
 		IRepositoryResource remote = local.isCopied() ? SVNUtility.getCopiedFrom(resources[0]) : SVNRemoteStorage.instance().asRepositoryResource(resources[0]);
-		ReplaceBranchTagPanel panel = new ReplaceBranchTagPanel(remote, local.getRevision(), type);
-		DefaultDialog dlg = new DefaultDialog(shell, panel);
-		if (dlg.open() == 0){
-			ReplaceWarningDialog dialog = new ReplaceWarningDialog(shell);
-			if (dialog.open() == 0) {
-				IRepositoryResource selected = panel.getSelectedResource();
-				CompositeOperation op = new CompositeOperation("Operation_ReplaceWithRevision"); //$NON-NLS-1$
-				SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
-				op.add(saveOp);
-				op.add(new ReplaceWithRemoteOperation(resources[0], selected));
-				op.add(new RestoreProjectMetaOperation(saveOp));
-				op.add(new RefreshResourcesOperation(resources));
-				return op;
-			}
+		IRepositoryResource[] branchTagResources = BranchTagSelectionComposite.calculateBranchTagResources(remote, type);
+		if (branchTagResources != null) {
+			ReplaceBranchTagPanel panel = new ReplaceBranchTagPanel(remote, local.getRevision(), type, branchTagResources);
+			DefaultDialog dlg = new DefaultDialog(shell, panel);
+			if (dlg.open() == 0){
+				ReplaceWarningDialog dialog = new ReplaceWarningDialog(shell);
+				if (dialog.open() == 0) {
+					IRepositoryResource selected = panel.getSelectedResource();
+					CompositeOperation op = new CompositeOperation("Operation_ReplaceWithRevision"); //$NON-NLS-1$
+					SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
+					op.add(saveOp);
+					op.add(new ReplaceWithRemoteOperation(resources[0], selected));
+					op.add(new RestoreProjectMetaOperation(saveOp));
+					op.add(new RefreshResourcesOperation(resources));
+					return op;
+				}
+			}	
 		}
 		return null;
 	}
