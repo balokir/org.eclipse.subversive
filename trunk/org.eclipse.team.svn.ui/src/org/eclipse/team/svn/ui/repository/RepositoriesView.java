@@ -19,6 +19,8 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -37,6 +39,7 @@ import org.eclipse.team.svn.core.svnstorage.events.RepositoriesStateChangedEvent
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractSVNTeamAction;
+import org.eclipse.team.svn.ui.action.local.management.NewRepositoryAction;
 import org.eclipse.team.svn.ui.action.remote.DeleteAction;
 import org.eclipse.team.svn.ui.action.remote.OpenFileAction;
 import org.eclipse.team.svn.ui.action.remote.OpenFileWithAction;
@@ -79,6 +82,8 @@ public class RepositoriesView extends ViewPart {
 	protected Action showBrowserAction;
 	protected IPartListener2 partListener;
 	
+	protected IPropertyChangeListener prefsPropertyListener;
+	
 	public RepositoriesView() {
 		super();
 	}
@@ -92,6 +97,8 @@ public class RepositoriesView extends ViewPart {
         		sub.add(new Separator("managementGroup")); //$NON-NLS-1$
         		sub.add(new Separator("repositoryGroup")); //$NON-NLS-1$
         		sub.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+        		
+        		//new repository location
         		Action newRepositoryLocation = new Action(SVNUIMessages.RepositoriesView_RepositoryLocation) {
 					public void run() {
 						new NewRepositoryLocationAction().run(this);
@@ -99,6 +106,19 @@ public class RepositoriesView extends ViewPart {
         		};
         		newRepositoryLocation.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/objects/repository.gif")); //$NON-NLS-1$
         		sub.add(newRepositoryLocation);
+        		manager.add(sub);
+        		
+        		//new repository
+        		Action newRepository = new Action(SVNUIMessages.RepositoriesView_Repository) {
+					public void run() {
+						new NewRepositoryAction().run(this);
+					}					
+					public boolean isEnabled() {
+						return NewRepositoryAction.checkEnablement();
+					}
+        		};
+        		newRepository.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/repositories/new_repository.gif")); //$NON-NLS-1$        																						
+        		sub.add(newRepository);
         		manager.add(sub);
         		
 				manager.add(new Separator("checkoutGroup")); //$NON-NLS-1$
@@ -209,6 +229,26 @@ public class RepositoriesView extends ViewPart {
         tAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/repositories/new_location.gif")); //$NON-NLS-1$
         tAction.setToolTipText(SVNUIMessages.RepositoriesView_NewLocation_ToolTip);
         
+        //new repositoy action
+        final Action tNewRepositoryAction = new Action(SVNUIMessages.RepositoriesView_NewRepository_Label) {
+			public void run() {
+				new NewRepositoryAction().run(this);
+			}
+        }; 
+        tbm.add(tNewRepositoryAction);
+        tNewRepositoryAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/repositories/new_repository.gif")); //$NON-NLS-1$
+        tNewRepositoryAction.setToolTipText(SVNUIMessages.RepositoriesView_NewRepository_ToolTip);
+        tNewRepositoryAction.setEnabled(NewRepositoryAction.checkEnablement());
+        //add connector changes listener to track action enablement
+        this.prefsPropertyListener = new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				if (SVNTeamPreferences.fullCoreName(SVNTeamPreferences.CORE_SVNCONNECTOR_NAME).equals(event.getProperty())) {
+					tNewRepositoryAction.setEnabled(NewRepositoryAction.checkEnablement());
+				}						
+			}        	
+        };
+        SVNTeamUIPlugin.instance().getPreferenceStore().addPropertyChangeListener(this.prefsPropertyListener);        
+        
         tbm.add(this.showBrowserAction = new Action(SVNUIMessages.RepositoriesView_ShowBrowser_Label, Action.AS_CHECK_BOX) {
 			public void run() {
 				if (this.isChecked()) {
@@ -287,9 +327,12 @@ public class RepositoriesView extends ViewPart {
 	    PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.repositoryViewContext"); //$NON-NLS-1$
 	}
 	
-	public void dispose() {
+	public void dispose() {		
+		this.getViewSite().getPage().removePartListener(this.partListener);
+		if (this.prefsPropertyListener != null) {
+			SVNTeamUIPlugin.instance().getPreferenceStore().removePropertyChangeListener(this.prefsPropertyListener);
+		}
 		super.dispose();
-		this.getViewSite().getPage().removePartListener(this.partListener);		
 	}
 	
 	public void setFocus() {

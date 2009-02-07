@@ -795,4 +795,14 @@ public class ThreadNameModifier implements ISVNConnector {
 		Thread.currentThread().setName(oldName);
 	}
 
+	public void createRepository(String repositoryPath, String repositoryType, ISVNProgressMonitor monitor) throws SVNConnectorException {
+		String oldName = this.overrideThreadName();
+		try {
+			this.connector.createRepository(repositoryPath, repositoryType, monitor);
+		}
+		finally {
+			this.restoreThreadName(oldName);
+		}
+	}
+
 }

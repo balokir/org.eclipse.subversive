@@ -257,6 +257,15 @@ public interface ISVNConnector {
 		public static final long REVISION_PROPERTY_SET = Options.FORCE;
 	}
 
+	/** 
+	 * constant identifying the "bdb"  repository type 
+	 */
+    public final static String REPOSITORY_FSTYPE_BDB = "bdb";
+	/** 
+	 * constant identifying the "fsfs"  repository type 
+	 */
+    public final static String REPOSITORY_FSTYPE_FSFS = "fsfs";
+	
 	public String getConfigDirectory() throws SVNConnectorException;
 
 	public void setConfigDirectory(String configDir) throws SVNConnectorException;
@@ -417,5 +426,7 @@ public interface ISVNConnector {
 	
 	public void removeRevisionProperty(SVNEntryReference reference, String name, long options, ISVNProgressMonitor monitor) throws SVNConnectorException;
 
+	public void createRepository(String repositoryPath, String repositoryType, ISVNProgressMonitor monitor) throws SVNConnectorException;
+	
 	public void dispose();
 }

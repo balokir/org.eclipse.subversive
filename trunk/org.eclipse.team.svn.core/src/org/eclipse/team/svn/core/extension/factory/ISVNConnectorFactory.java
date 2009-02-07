@@ -82,6 +82,18 @@ public interface ISVNConnectorFactory {
 		 * Atomic cross-working copy commit is supported by connector 
 		 */
 		public static final int ATOMIC_X_COMMIT = 0x04;
+		/**
+		 * Creating of repository is supported by connector
+		 */
+		public static final int CREATE_REPOSITORY = 0x08;	
+		/**
+		 * Features supported by SVNKit connectors
+		 */
+		public static final int SVN_KIT_FEATURES = SSH_SETTINGS | PROXY_SETTINGS | ATOMIC_X_COMMIT;
+		/**
+		 * Features supported by JavaHL connectors
+		 */
+		public static final int JAVAHL_FEATURES = CREATE_REPOSITORY;
 	}
 	
 	public static final ISVNConnectorFactory EMPTY = new ISVNConnectorFactory() {

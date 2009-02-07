@@ -914,7 +914,14 @@ public class SVNUIMessages extends BaseMessages {
 	public static String Operation_ValidateLocation;
 	public static String Operation_ValidateLocation_Id;
 	public static String Operation_WriteToConsoleResources;
-	public static String Operation_WriteToConsoleResources_Id;
+	public static String Operation_WriteToConsoleResources_Id;	
+	public static String Operation_CreateRepository;
+	public static String Operation_CreateRepository_Id;
+	public static String Operation_CreateRepository_Error;                     
+	public static String Operation_AddRepositoryLocation;
+	public static String Operation_AddRepositoryLocation_Id;  
+	public static String Operation_AddRepositoryLocation_Error;
+	
 	public static String OptionsActionGroup_ShowInfoContiguous;
 	public static String OverrideResourcesPanel_Affected;
 	public static String OverrideResourcesPanel_Affected_Warning;
@@ -1192,9 +1199,12 @@ public class SVNUIMessages extends BaseMessages {
 	public static String RepositoriesView_New;
 	public static String RepositoriesView_NewLocation_Label;
 	public static String RepositoriesView_NewLocation_ToolTip;
+	public static String RepositoriesView_NewRepository_Label;
+	public static String RepositoriesView_NewRepository_ToolTip;
 	public static String RepositoriesView_OpenWith;
 	public static String RepositoriesView_Refactor;
 	public static String RepositoriesView_RepositoryLocation;
+	public static String RepositoriesView_Repository;
 	public static String RepositoriesView_ShowBrowser_Label;
 	public static String RepositoriesView_ShowBrowser_ToolTip;
 	public static String RepositoryBrowsingPanel_Description;
@@ -1574,6 +1584,19 @@ public class SVNUIMessages extends BaseMessages {
 	public static String Verifier_URL_Short;
 
 	public static String svnPropertiesContentTypeName;
+
+	public static String AddRepositoryPage_Title;
+	public static String AddRepositoryPage_Description;
+	public static String AddRepositoryPage_Message;
+	public static String AddRepositoryPage_RepositoryPath_Label;
+	public static String AddRepositoryPage_RepositoryType_Group;
+	public static String AddRepositoryPage_FileSystem_Button;
+	public static String AddRepositoryPage_BerkeleyDB_Button;
+	public static String AddRepositoryPage_CreateRepositoryLocation_Button;
+
+	public static String PathSelectionComposite_RepositoryPath_Name;
+	public static String PathSelectionComposite_DirectoryDialog_Title;
+	public static String PathSelectionComposite_DirectoryDialog_Description;
 	
 	static {
 		//load message values from bundle file
