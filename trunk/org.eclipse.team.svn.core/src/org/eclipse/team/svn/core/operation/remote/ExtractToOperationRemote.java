@@ -111,8 +111,7 @@ public class ExtractToOperationRemote extends AbstractActionOperation {
 		}
 		int processed = 0;
 		SVNUtility.reorder(resources, true);
-		String previousPref = null;
-		String previousPath = null;
+		HashMap<String, String> repoFolder2localFolder = new HashMap<String, String>();
 		for (IRepositoryResource current : resources) {
 			String currentURL = current.getUrl();
 			Path currentPath = new Path(currentURL);
@@ -125,22 +124,24 @@ public class ExtractToOperationRemote extends AbstractActionOperation {
 					rootName = this.exportRoots2Names.get(url);
 				}
 			}
-			if (previousPref == null || !new Path(previousPref).isPrefixOf(currentPath)) {
-				if (current instanceof IRepositoryContainer) {
-					previousPref = current.getUrl();
-					previousPath = "/" + (rootUrl == null ? current.getName() : current.getUrl().substring(rootUrl.lastIndexOf('/') + 1)); //$NON-NLS-1$
-					toOperate = this.path + previousPath;
+			if (current instanceof IRepositoryContainer) {
+				String localPath = "/" + (rootUrl == null ? current.getName() : current.getUrl().substring(rootUrl.lastIndexOf('/') + 1)); //$NON-NLS-1$
+				repoFolder2localFolder.put(currentURL, localPath);
+				toOperate = this.path + localPath;
+			}
+			else {
+				String localFolderPath; 
+				String parentFolderURL = currentURL.substring(0, currentURL.lastIndexOf('/'));
+				if (!repoFolder2localFolder.containsKey(parentFolderURL))
+				{
+					localFolderPath = "/" + (rootUrl == null ? "" : parentFolderURL.substring(rootUrl.lastIndexOf('/') + 1)); //$NON-NLS-1$
+					repoFolder2localFolder.put(parentFolderURL, localFolderPath);
 				}
 				else
 				{
-					String filePath = rootUrl == null ? "" : current.getUrl().substring(rootUrl.lastIndexOf('/') + 1); //$NON-NLS-1$
-					int lastSlashIdx = filePath.lastIndexOf('/');
-					previousPath = "/" + (lastSlashIdx < 1 ? "" :  filePath.substring(0, filePath.lastIndexOf('/'))); //$NON-NLS-1$ //$NON-NLS-2$
-					toOperate = this.path + previousPath + "/" + current.getName(); //$NON-NLS-1$
+					localFolderPath = repoFolder2localFolder.get(parentFolderURL); 
 				}
-			}
-			else {
-				toOperate = this.path + previousPath + currentURL.substring(previousPref.length());
+				toOperate = this.path + "/" + localFolderPath + currentURL.substring(currentURL.lastIndexOf('/')); //$NON-NLS-1$ 
 			}
 			if (rootUrl != null) {
 				String projectRepoName = rootUrl.substring(rootUrl.lastIndexOf("/") + 1); //$NON-NLS-1$

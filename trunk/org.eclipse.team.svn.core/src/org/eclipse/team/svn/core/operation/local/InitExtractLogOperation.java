@@ -56,7 +56,7 @@ public class InitExtractLogOperation extends AbstractActionOperation {
 	}
 
 	public void log(String participant, String status) {
-		String toPut = status.equals(IStateFilter.ST_NEW) ? IStateFilter.ST_ADDED : status;
+		String toPut = status.equals(IStateFilter.ST_NEW) ? IStateFilter.ST_ADDED : (status.equals(IStateFilter.ST_REPLACED) ? IStateFilter.ST_MODIFIED : status);
 		if (this.extractParticipants.get(toPut) == null) {
 			this.extractParticipants.put(toPut, new ArrayList<String>());
 		}
