@@ -261,10 +261,9 @@ public class AddRepositoryPanel extends AbstractDialogPanel {
 	protected void saveChangesImpl() {
 		this.performFinish();
 	}
-	
-//	//TODO set correct help
-//	public String getHelpId() {		
-//        return "org.eclipse.team.svn.help.newReposWizContext"; //$NON-NLS-1$
-//	}
+		
+	public String getHelpId() {		
+        return "org.eclipse.team.svn.help.addRepositoryContext"; //$NON-NLS-1$
+	}
 
 }

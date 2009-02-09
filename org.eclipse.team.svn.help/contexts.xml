@@ -257,4 +257,9 @@
 		<description>This page of the Create Patch wizard allows the user to choose a revision number to create patch comparatively to.</description>
 		<topic label="Patching" href="teamSupport/SVNaction/patch.html"/>
 	</context>
+	
+	<context id="addRepositoryContext">
+		<description>This dialog provides a probability to create a new repository on local drive. You can specify an option to create a repository location for repository.</description>
+		<topic label="Creating repository" href="teamSupport/create_repository.html"/>
+	</context>		
 </contexts>
