@@ -5,23 +5,40 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 0.7.6.I20090130-1900 release date: 30 January 2009
+Version 0.7.6.I20090213-1500 release date: 13 February 2009
 
 1. What's New
 
    The version is 0.7.6 service release.
    
    Changes comparatively to the previous version are listed below. The full list of 
-   changes you can find in Change Log.
-
-   Fixes: 	 	 		
-	* o.e.team.svn.core has hard dependency to com.ibm.icu bundle (bug 261413)
- 
- 	* Bugtraq properties problem (bug 261857) 
- 
- 	* Problems with relocating project (bug 259626) 
- 
- 	* Share Projects menu item disabled when multiple projects selected (bug 263003)   	
+   changes you can find in Change Log.   	
+	
+	Features:
+	 * Add a pre-commit check for files with errors and warnings (bug 263442) 
+	
+	 * Add ability to output resources comparison in unified diff format (bug 263657) 
+	
+	 * Add ability to create SVN repository (bug 263951)   
+	
+	Fixes:
+	 * Compare with Branches/Tags action problem (bug 263790)    
+	
+	 * Extract bug (bug 264192)
+	
+	 * o.e.team.svn.core has hard dependency to com.ibm.icu bundle (bug 261413)
+	 
+	 * Bugtraq properties problem (bug 261857) 
+	 
+	 * Problems with relocating project (bug 259626) 
+	 
+	 * Share Projects menu item disabled when multiple projects selected (bug 263003) 
+	 
+	 * Resources list isn't updated in "Override and Update..." (bug 254900)
+	 
+	 * Add key shortcuts to controls (bug 254726)
+	 
+	 * Revisions Range dialog isn't correctly resized (bug 261328) 
 	
 2. Information
 
