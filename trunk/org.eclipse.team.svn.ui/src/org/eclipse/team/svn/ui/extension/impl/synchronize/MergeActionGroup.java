@@ -22,6 +22,7 @@ import org.eclipse.team.svn.ui.synchronize.action.CreatePatchFileAction;
 import org.eclipse.team.svn.ui.synchronize.action.EditConflictsAction;
 import org.eclipse.team.svn.ui.synchronize.action.ExpandAllAction;
 import org.eclipse.team.svn.ui.synchronize.action.MergePropertiesAction;
+import org.eclipse.team.svn.ui.synchronize.action.OpenInExternalCompareEditorAction;
 import org.eclipse.team.svn.ui.synchronize.action.RevertAction;
 import org.eclipse.team.svn.ui.synchronize.action.SetKeywordsAction;
 import org.eclipse.team.svn.ui.synchronize.action.SetPropertyAction;
@@ -59,6 +60,12 @@ public class MergeActionGroup extends AbstractSynchronizeActionGroup {
 	}
 	
 	public void configureActions(ISynchronizePageConfiguration configuration) {
+		OpenInExternalCompareEditorAction externalCompareAction = new OpenInExternalCompareEditorAction(SVNUIMessages.OpenInExternalCompareEditor_Action, configuration);
+		this.appendToGroup(
+				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+				ISynchronizePageConfiguration.FILE_GROUP,
+				externalCompareAction);
+		
 		UpdateAction updateAllAction = new UpdateAction(SVNUIMessages.SynchronizeActionGroup_AcceptAllIncomingChanges, configuration, this.getVisibleRootsSelectionProvider());
 		updateAllAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/update.gif")); //$NON-NLS-1$
 		this.appendToGroup(

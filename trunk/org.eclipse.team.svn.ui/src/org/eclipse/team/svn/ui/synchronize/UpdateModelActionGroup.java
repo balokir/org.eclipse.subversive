@@ -25,6 +25,7 @@ import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.EditConflictsMode
 import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.ExtractIncomingToModelAction;
 import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.ExtractOutgoingToModelAction;
 import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.ExtractToModelAction;
+import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.OpenInExternalCompareEditorModelAction;
 import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.RevertModelAction;
 import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.SetKeywordsModelAction;
 import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.SetPropertyModelAction;
@@ -92,6 +93,13 @@ public class UpdateModelActionGroup extends AbstractSynchronizeModelActionGroup 
 	}		
 	
 	protected void configureActions(ISynchronizePageConfiguration configuration) {
+		//open in external compare
+		OpenInExternalCompareEditorModelAction externalCompareAction = new OpenInExternalCompareEditorModelAction(SVNUIMessages.OpenInExternalCompareEditor_Action, configuration);
+		this.appendToGroup(
+				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+				ISynchronizePageConfiguration.FILE_GROUP,
+				externalCompareAction); 
+		
 		//commit all
 		CommitAllModelAction commitAllAction = new CommitAllModelAction(SVNUIMessages.UpdateActionGroup_CommitAllOutgoingChanges, configuration);
 		commitAllAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/commit.gif")); //$NON-NLS-1$

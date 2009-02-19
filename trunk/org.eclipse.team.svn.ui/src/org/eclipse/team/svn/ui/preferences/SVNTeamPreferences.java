@@ -13,16 +13,17 @@
 
 package org.eclipse.team.svn.ui.preferences;
 
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.SimpleDateFormat;
-import com.ibm.icu.util.ULocale;
-
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
+import org.eclipse.team.svn.core.operation.local.DiffViewerSettings;
 import org.eclipse.team.svn.ui.decorator.TextVariableSetProvider;
+
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.SimpleDateFormat;
+import com.ibm.icu.util.ULocale;
 
 /**
  * SVN Team plugin preference names
@@ -273,6 +274,17 @@ public final class SVNTeamPreferences {
 	public static final String CUSTOM_PROPERTIES_LIST_NAME = "customproperties"; //$NON-NLS-1$
 	public static final String CUSTOM_PROPERTIES_LIST_DEFAULT = ""; //$NON-NLS-1$
 	
+	public static final String DIFF_VIEWER_BASE = "preference.diffViewer."; //$NON-NLS-1$
+	public static final String DIFF_VIEWER_EXTERNAL_DEFAULT_COMPARE = "external.default.compare"; //$NON-NLS-1$
+	public static final String DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_PATH = "default.external.program.path"; //$NON-NLS-1$
+	public static final String DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_PARAMETERS = "default.external.program.parameters"; //$NON-NLS-1$
+	public static final String DIFF_VIEWER_RESOURCES_SPECIFIC_PARAMETERS = "resources.specific.parameters"; //$NON-NLS-1$
+	
+	public static final boolean DIFF_VIEWER_EXTERNAL_DEFAULT_COMPARE_DEFAULT = false;
+	public static final String DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_PATH_DEFAULT = ""; //$NON-NLS-1$
+	public static final String DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_PARAMETERS_DEFAULT = ""; //$NON-NLS-1$
+	public static final String DIFF_VIEWER_RESOURCES_SPECIFIC_PARAMETERS_DEFAULT = ""; //$NON-NLS-1$
+	
 	public static DateFormat getDateFormat(IPreferenceStore store) {
 		int formatMode = SVNTeamPreferences.getDateFormatInt(store, SVNTeamPreferences.DATE_FORMAT_NAME);
 		DateFormat dateTimeFormat = null;
@@ -317,6 +329,7 @@ public final class SVNTeamPreferences {
 		SVNTeamPreferences.setDefaultCommitDialogValues(store);
 		SVNTeamPreferences.setDefaultAutoPropertiesValues(store);
 		SVNTeamPreferences.setDefaultCustomPropertiesValues(store);
+		SVNTeamPreferences.setDefaultDiffViewerValues(store);
 	}
 	
 	public static void setDefaultAutoPropertiesValues(IPreferenceStore store) {
@@ -325,6 +338,11 @@ public final class SVNTeamPreferences {
 	
 	public static void setDefaultCustomPropertiesValues(IPreferenceStore store) {
 		store.setDefault(SVNTeamPreferences.fullCustomPropertiesName(SVNTeamPreferences.CUSTOM_PROPERTIES_LIST_NAME), SVNTeamPreferences.AUTO_PROPERTIES_LIST_DEFAULT);
+	}
+	
+	public static void setDefaultDiffViewerValues(IPreferenceStore store) {
+		DiffViewerSettings diffSettings = DiffViewerSettings.getDefaultDiffViewerSettings();
+		SVNTeamDiffViewerPage.saveDiffViewerSettings(diffSettings, store, true);
 	}
 	
 	public static void setDefaultCommitDialogValues(IPreferenceStore store) {
@@ -595,6 +613,36 @@ public final class SVNTeamPreferences {
 	
 	public static String getDecorationString(IPreferenceStore store, String shortName) {
 		return store.getString(SVNTeamPreferences.fullDecorationName(shortName));
+	}	
+	
+	//diff viewer
+	
+	public static String fullDiffViewerName(String shortName) {
+		return SVNTeamPreferences.DIFF_VIEWER_BASE + shortName;
+	}
+	
+	public static String getDiffViewerString(IPreferenceStore store, String shortName) {
+		return store.getString(SVNTeamPreferences.fullDiffViewerName(shortName));
+	}	
+	
+	public static void setDiffViewerString(IPreferenceStore store, String shortName, String value, boolean isDefault) {
+		if (isDefault) {
+			store.setDefault(SVNTeamPreferences.fullDiffViewerName(shortName), value);
+		} else {
+			store.setValue(SVNTeamPreferences.fullDiffViewerName(shortName), value);
+		}		
+	}
+	
+	public static boolean getDiffViewerBoolean(IPreferenceStore store, String shortName) {
+		return store.getBoolean(SVNTeamPreferences.fullDiffViewerName(shortName));
+	}				
+	
+	public static void setDiffViewerBoolean(IPreferenceStore store, String shortName, boolean value, boolean isDefault) {
+		if (isDefault) {
+			store.setDefault(SVNTeamPreferences.fullDiffViewerName(shortName), value);	
+		} else {
+			store.setValue(SVNTeamPreferences.fullDiffViewerName(shortName), value);	
+		}		
 	}
 	
 	public static int getHistoryInt(IPreferenceStore store, String shortName) {

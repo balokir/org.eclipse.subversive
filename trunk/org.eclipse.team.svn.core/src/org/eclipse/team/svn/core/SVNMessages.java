@@ -413,6 +413,19 @@ public class SVNMessages extends BaseMessages {
 	public static String Operation_Update_Error;
 	public static String Operation_Update_Id;
 
+	public static String Operation_DetectExternalCompare;
+	public static String Operation_DetectExternalCompare_Id;
+	public static String Operation_DetectExternalCompare_Error;
+	public static String Operation_ExternalCompare;
+	public static String Operation_ExternalCompare_Id;
+	public static String Operation_ExternalCompare_Error; 
+	public static String Operation_UDiffGenerate;
+	public static String Operation_UDiffGenerate_Id;
+	public static String Operation_UDiffGenerate_Error;
+	public static String Operation_ExternalRepositoryCompare;
+	public static String Operation_ExternalRepositoryCompare_Id;
+	public static String Operation_ExternalRepositoryCompare_Error;
+	
 	public static String Progress_Done;
 	public static String Progress_Running;
 	public static String Progress_SubTask;

@@ -36,6 +36,12 @@ import org.eclipse.team.svn.core.connector.SVNDiffStatus;
 import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
+import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.operation.local.DiffViewerSettings;
+import org.eclipse.team.svn.core.operation.local.DiffViewerSettings.ExternalProgramParameters;
+import org.eclipse.team.svn.core.operation.local.RunExternalCompareOperation.DefaultExternalProgramParametersProvider;
+import org.eclipse.team.svn.core.operation.local.RunExternalCompareOperation.DetectExternalCompareOperationHelper;
+import org.eclipse.team.svn.core.operation.remote.RunExternalRepositoryCompareOperation.ExternalCompareRepositoryOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRepositoryResource;
@@ -45,6 +51,7 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.operation.UILoggedOperation;
+import org.eclipse.team.svn.ui.preferences.SVNTeamDiffViewerPage;
 import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
@@ -106,8 +113,37 @@ public class TwoWayResourceCompareInput extends ResourceCompareInput {
 		});
 		tAction.setEnabled(selection.size() == 1 && (selectedNode.getKind() & Differencer.CHANGE_TYPE_MASK) != Differencer.ADDITION
 				&& (selectedNode.getKind() & Differencer.CHANGE_TYPE_MASK) != Differencer.DELETION);
+		
+		//external compare action		
+		Action externalCompareAction = this.getOpenInExternalCompareEditorAction(selectedNode, selection);
+		manager.add(externalCompareAction);
 	}
 
+	protected Action getOpenInExternalCompareEditorAction(final CompareNode selectedNode, final TreeSelection selection) {
+		final IRepositoryResource leftResource = ((ResourceElement)selectedNode.getLeft()).getRepositoryResource();
+		final IRepositoryResource rightResource = ((ResourceElement)selectedNode.getRight()).getRepositoryResource();
+		
+		DiffViewerSettings diffSettings = SVNTeamDiffViewerPage.loadDiffViewerSettings();
+		DetectExternalCompareOperationHelper detectCompareHelper = new DetectExternalCompareOperationHelper(leftResource, diffSettings);
+		detectCompareHelper.execute(new NullProgressMonitor());
+		
+		final ExternalProgramParameters externalProgramParams = detectCompareHelper.getExternalProgramParameters();
+		
+		boolean isEnabled = selection.size() == 1 && externalProgramParams != null;
+		
+		Action action = new Action(SVNUIMessages.OpenInExternalCompareEditor_Action) {
+			public void run() {				
+				if (externalProgramParams != null) {								
+					IActionOperation op = new ExternalCompareRepositoryOperation(leftResource, rightResource, new DefaultExternalProgramParametersProvider(externalProgramParams));
+					UIMonitorUtility.doTaskScheduledActive(op);
+				}									
+			}
+		};
+		action.setEnabled(isEnabled);
+		
+		return action;
+	}
+	
 	public void initialize(IProgressMonitor monitor) throws Exception {
 		SVNUtility.reorder(this.statuses, true);
 		

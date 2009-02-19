@@ -20,6 +20,7 @@ import org.eclipse.team.svn.core.operation.AbstractGetFileContentOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
@@ -29,13 +30,23 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class GetFileContentOperation extends AbstractGetFileContentOperation {
 	protected IRepositoryResource resource;
-
+	protected IRepositoryResourceProvider provider;
+	
 	public GetFileContentOperation(IRepositoryResource resource) {
 		super("Revision"); //$NON-NLS-1$
 		this.resource = resource;
 	}
 
+	public GetFileContentOperation(IRepositoryResourceProvider provider) {
+		super("Revision"); //$NON-NLS-1$
+		this.provider = provider;
+	}
+	
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
+		if (this.provider != null) {
+			this.resource = this.provider.getRepositoryResources()[0];
+		}
+		
 		String url = this.resource.getUrl();
 		IRepositoryLocation location = this.resource.getRepositoryLocation();
 		ISVNConnector proxy = location.acquireSVNProxy();

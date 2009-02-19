@@ -1593,10 +1593,50 @@ public class SVNUIMessages extends BaseMessages {
 	public static String AddRepositoryPage_FileSystem_Button;
 	public static String AddRepositoryPage_BerkeleyDB_Button;
 	public static String AddRepositoryPage_CreateRepositoryLocation_Button;
-
-	public static String PathSelectionComposite_RepositoryPath_Name;
-	public static String PathSelectionComposite_DirectoryDialog_Title;
-	public static String PathSelectionComposite_DirectoryDialog_Description;
+	public static String AddRepositoryPage_RepositoryPath_Name;
+	public static String AddRepositoryPage_DirectoryDialog_Title;
+	public static String AddRepositoryPage_DirectoryDialog_Description;
+	
+	public static String DiffViewerCompareEditorComposite_Description;
+	public static String DiffViewerCompareEditorComposite_EclipseCompareEditor;
+	public static String DiffViewerCompareEditorComposite_ExternalCompareEditor;
+	
+	public static String DiffViewerExternalProgramComposite_Path_LabelName;
+	public static String DiffViewerExternalProgramComposite_Path_FieldName;
+	public static String DiffViewerExternalProgramComposite_Path_BrowseDialogTitle;
+	public static String DiffViewerExternalProgramComposite_ProgramArguments_Label;
+	public static String DiffViewerExternalProgramComposite_Variables_Button;
+	
+	public static String DiffViewerFileAssociationsComposite_Add_Button;
+	public static String DiffViewerFileAssociationsComposite_Edit_Button;
+	public static String DiffViewerFileAssociationsComposite_ExtensionMimeType_Column;
+	public static String DiffViewerFileAssociationsComposite_ProgramArguments_Label;
+	public static String DiffViewerFileAssociationsComposite_ProgramPath_Column;
+	public static String DiffViewerFileAssociationsComposite_Remove_Button;
+	
+	public static String EditFileAssociationsPanel_AddDialogTitle;
+	public static String EditFileAssociationsPanel_DialogDefaultMessage; 
+	public static String EditFileAssociationsPanel_DialogDescription;
+	public static String EditFileAssociationsPanel_EditDialogTitle;
+	public static String EditFileAssociationsPanel_ExtensionMimeType_FieldName;
+	public static String EditFileAssociationsPanel_ExtensionMimeType_Label;
+	
+	public static String SVNTeamDiffViewerPage_CompareEditor_Tab;
+	public static String SVNTeamDiffViewerPage_File_Associations_Tab;
+	
+	public static String DiffViewerVariablesPanel_BaseVariable_Description;
+	public static String DiffViewerVariablesPanel_DefaultDocVariable_Description;
+	public static String DiffViewerVariablesPanel_DefaultPptVariable_Description;
+	public static String DiffViewerVariablesPanel_DefaultXLSVariable_Description;
+	public static String DiffViewerVariablesPanel_DialogDefaultMessage;
+	public static String DiffViewerVariablesPanel_DialogDescription;
+	public static String DiffViewerVariablesPanel_DialogTitle;
+	public static String DiffViewerVariablesPanel_MergedVariable_Description;
+	public static String DiffViewerVariablesPanel_MineVariable_Description;
+	public static String DiffViewerVariablesPanel_TheirsVariable_Description;
+	public static String DiffViewerVariablesPanel_VariableDescriptionLabel;
+	
+	public static String OpenInExternalCompareEditor_Action;
 	
 	static {
 		//load message values from bundle file
