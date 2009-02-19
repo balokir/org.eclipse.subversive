@@ -20,13 +20,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
@@ -40,14 +35,10 @@ import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNUIMessages;
-import org.eclipse.team.svn.ui.dialog.DefaultDialog;
+import org.eclipse.team.svn.ui.composite.PathSelectionComposite;
 import org.eclipse.team.svn.ui.dialog.NonValidLocationErrorDialog;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
-import org.eclipse.team.svn.ui.verifier.CompositeVerifier;
-import org.eclipse.team.svn.ui.verifier.IValidationManager;
-import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
-import org.eclipse.team.svn.ui.verifier.ResourcePathVerifier;
 
 /**
  * Add repository panel
@@ -80,7 +71,14 @@ public class AddRepositoryPanel extends AbstractDialogPanel {
 		composite.setLayoutData(data);
 		
 		//path
-		this.pathSelectionComposite = new PathSelectionComposite(SVNUIMessages.AddRepositoryPage_RepositoryPath_Label, composite, this);
+		this.pathSelectionComposite = new PathSelectionComposite(
+			SVNUIMessages.AddRepositoryPage_RepositoryPath_Label,
+			SVNUIMessages.AddRepositoryPage_RepositoryPath_Name,
+			SVNUIMessages.AddRepositoryPage_DirectoryDialog_Title,
+			SVNUIMessages.AddRepositoryPage_DirectoryDialog_Description,
+			true,
+			composite, 
+			this);
 		
 		//repository type
 		Group typeGroup = new Group(composite, SWT.NONE);
@@ -111,7 +109,7 @@ public class AddRepositoryPanel extends AbstractDialogPanel {
 	}
 	
 	public String getRepositoryPath() {
-		return this.pathSelectionComposite.getRepositoryPath();		
+		return this.pathSelectionComposite.getSelectedPath();		
 	}
 	
 	public String getRepositoryType() {
@@ -191,68 +189,7 @@ public class AddRepositoryPanel extends AbstractDialogPanel {
 	
 	public IActionOperation getOperationToPeform() {
 		return this.operationToPerform;
-	}
-	
-	public static class PathSelectionComposite extends Composite {		
-		
-		protected IValidationManager validationManager;
-		
-		protected Text pathInput;
-		
-		public PathSelectionComposite(String pathLabelName, Composite parent, IValidationManager validationManager) {
-			super(parent, SWT.NONE);
-			this.validationManager = validationManager;
-			this.createControls(pathLabelName);
-		}
-		
-		public String getRepositoryPath() {
-			return this.pathInput.getText();
-		}
-		
-		protected void createControls(String pathLabelName) {
-			GridLayout layout = new GridLayout();
-			layout.marginHeight = 0; 
-			layout.marginWidth = 0;			
-			layout.numColumns = 3;
-			this.setLayout(layout);
-			GridData data = new GridData(GridData.FILL_HORIZONTAL);
-			this.setLayoutData(data);
-			
-			Label pathLabel = new Label(this, SWT.NONE);
-			data = new GridData();
-			pathLabel.setLayoutData(data);
-			pathLabel.setText(pathLabelName);
-			
-			this.pathInput = new Text(this, SWT.BORDER | SWT.SINGLE);
-			data = new GridData(GridData.FILL_HORIZONTAL);
-			this.pathInput.setLayoutData(data);						
-			
-			Button browseButton = new Button(this, SWT.PUSH);			
-			browseButton.setText(SVNUIMessages.Button_Browse);
-			data = new GridData();
-			data.widthHint = DefaultDialog.computeButtonWidth(browseButton);
-			browseButton.setLayoutData(data);	
-			
-			//validation
-			String name = SVNUIMessages.PathSelectionComposite_RepositoryPath_Name;
-			CompositeVerifier cVerifier = new CompositeVerifier();
-			cVerifier.add(new NonEmptyFieldVerifier(name));
-			cVerifier.add(new ResourcePathVerifier(name));			
-			this.validationManager.attachTo(this.pathInput, cVerifier);
-			
-			browseButton.addListener(SWT.Selection, new Listener() {
-				public void handleEvent(Event event) {
-					DirectoryDialog dlg = new DirectoryDialog(PathSelectionComposite.this.getShell());
-					dlg.setText(SVNUIMessages.PathSelectionComposite_DirectoryDialog_Title);
-					dlg.setMessage(SVNUIMessages.PathSelectionComposite_DirectoryDialog_Description);
-					String path = dlg.open();
-					if (path != null) {
-						PathSelectionComposite.this.pathInput.setText(path);
-					}
-				}				
-			});
-		}		
-	}
+	}	
 
 	protected void cancelChangesImpl() {
 		this.operationToPerform = null;

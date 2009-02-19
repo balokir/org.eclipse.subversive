@@ -291,11 +291,19 @@ public final class FileUtility {
 	}
 	
 	public static String[] decodeStringToArray(String encodedString) {
-        String []valuesArray = new String[] {};
+        String[] valuesArray = new String[] {};
         if (encodedString != null && encodedString.length() > 0) {
-            valuesArray = encodedString.split(";"); //$NON-NLS-1$
-            for (int i = 0; i < valuesArray.length; i++) {
-            	valuesArray[i] = new String(Base64.decode(valuesArray[i].getBytes()));
+            String[] array = encodedString.split(";"); //$NON-NLS-1$
+            for (int i = 0; i < array.length; i++) {
+            	array[i] = new String(Base64.decode(array[i].getBytes()));
+            }
+            //include trailing empty string
+            if (encodedString.endsWith(";")) { //$NON-NLS-1$
+            	valuesArray = new String[array.length + 1];
+            	System.arraycopy(array, 0, valuesArray, 0, array.length);
+            	valuesArray[valuesArray.length -1] = ""; //$NON-NLS-1$
+            } else {
+            	valuesArray = array;
             }
         }
         return valuesArray;
@@ -305,7 +313,7 @@ public final class FileUtility {
         String result = ""; //$NON-NLS-1$
         for (int i = 0; i < valuesArray.length; i++) {
             String str = new String(Base64.encode(valuesArray[i].getBytes()));
-            result += result.length() == 0 ? str : (";" + str); //$NON-NLS-1$
+            result += i == 0 ? str : (";" + str); //$NON-NLS-1$
 		}
         return result;
     }

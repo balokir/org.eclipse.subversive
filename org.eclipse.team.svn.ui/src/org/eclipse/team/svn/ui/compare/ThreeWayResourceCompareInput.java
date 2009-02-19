@@ -48,6 +48,12 @@ import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
+import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.operation.local.DiffViewerSettings;
+import org.eclipse.team.svn.core.operation.local.DiffViewerSettings.ExternalProgramParameters;
+import org.eclipse.team.svn.core.operation.local.RunExternalCompareOperation.DefaultExternalProgramParametersProvider;
+import org.eclipse.team.svn.core.operation.local.RunExternalCompareOperation.DetectExternalCompareOperationHelper;
+import org.eclipse.team.svn.core.operation.local.RunExternalCompareOperation.ExternalCompareOperation;
 import org.eclipse.team.svn.core.resource.ILocalFile;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
@@ -61,8 +67,10 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
+import org.eclipse.team.svn.ui.action.local.CompareWithWorkingCopyAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.operation.UILoggedOperation;
+import org.eclipse.team.svn.ui.preferences.SVNTeamDiffViewerPage;
 import org.eclipse.team.svn.ui.utility.OverlayedImageDescriptor;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
@@ -159,8 +167,40 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 			}
 		});
 		tAction.setEnabled(propertyComparisonAllowed && selection.size() == 1);
+				
+		//external compare action		
+		Action externalCompareAction = this.getOpenInExternalCompareEditorAction(selectedNode, selection);
+		manager.add(externalCompareAction);
 	}
 
+	protected Action getOpenInExternalCompareEditorAction(final CompareNode selectedNode, final TreeSelection selection) {
+		ResourceElement element = (ResourceElement) selectedNode.getLeft();
+		final ILocalResource local = element.getLocalResource();
+		final IResource resource = local.getResource();
+													
+		DiffViewerSettings diffSettings = SVNTeamDiffViewerPage.loadDiffViewerSettings();
+		DetectExternalCompareOperationHelper detectCompareHelper = new DetectExternalCompareOperationHelper(resource, diffSettings);
+		detectCompareHelper.execute(new NullProgressMonitor());
+		final ExternalProgramParameters externalProgramParams = detectCompareHelper.getExternalProgramParameters();
+				
+		boolean isEnabled = selection.size() == 1 && externalProgramParams != null && CompareWithWorkingCopyAction.COMPARE_FILTER.accept(local);
+		
+		Action action = new Action(SVNUIMessages.OpenInExternalCompareEditor_Action) {
+			public void run() {				
+				if (externalProgramParams != null) {																									
+					ResourceElement element = (ResourceElement) selectedNode.getRight();
+					IRepositoryResource remote = element.getRepositoryResource();					
+					
+					IActionOperation op = new ExternalCompareOperation(local, remote, new DefaultExternalProgramParametersProvider(externalProgramParams));
+					UIMonitorUtility.doTaskScheduledActive(op);
+				}									
+			}
+		};
+		action.setEnabled(isEnabled);
+		
+		return action;
+	}
+	
 	public void initialize(IProgressMonitor monitor) throws Exception {
 		Map<String, SVNDiffStatus> localChanges = new HashMap<String, SVNDiffStatus>();
 		Map<String, SVNDiffStatus> remoteChanges = new HashMap<String, SVNDiffStatus>();

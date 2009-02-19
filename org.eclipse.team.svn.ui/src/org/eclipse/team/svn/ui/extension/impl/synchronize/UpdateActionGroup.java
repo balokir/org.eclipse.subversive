@@ -25,6 +25,7 @@ import org.eclipse.team.svn.ui.synchronize.action.ExpandAllAction;
 import org.eclipse.team.svn.ui.synchronize.action.ExtractIncomingToAction;
 import org.eclipse.team.svn.ui.synchronize.action.ExtractOutgoingToAction;
 import org.eclipse.team.svn.ui.synchronize.action.ExtractToAction;
+import org.eclipse.team.svn.ui.synchronize.action.OpenInExternalCompareEditorAction;
 import org.eclipse.team.svn.ui.synchronize.action.RevertAction;
 import org.eclipse.team.svn.ui.synchronize.action.SetKeywordsAction;
 import org.eclipse.team.svn.ui.synchronize.action.SetPropertyAction;
@@ -69,9 +70,15 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 		configuration.addMenuGroup(
 				ISynchronizePageConfiguration.P_TOOLBAR_MENU, 
 				AbstractSynchronizeActionGroup.GROUP_PROCESS_ALL);
-	}
+	} 
 	
 	protected void configureActions(ISynchronizePageConfiguration configuration) {
+		OpenInExternalCompareEditorAction externalCompareAction = new OpenInExternalCompareEditorAction(SVNUIMessages.OpenInExternalCompareEditor_Action, configuration);
+		this.appendToGroup(
+				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+				ISynchronizePageConfiguration.FILE_GROUP,
+				externalCompareAction);
+				
 		UpdateAction updateAllAction = new UpdateAction(SVNUIMessages.SynchronizeActionGroup_UpdateAllIncomingChanges, configuration, this.getVisibleRootsSelectionProvider());
 		updateAllAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/update.gif")); //$NON-NLS-1$
 		this.appendToGroup(
