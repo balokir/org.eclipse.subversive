@@ -5,11 +5,11 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 0.7.6.I20090213-1500 release date: 13 February 2009
+Version 0.7.7.I20090219-1900 release date: 19 February 2009
 
 1. What's New
 
-   The version is 0.7.6 service release.
+   The version is 0.7.7 service release.
    
    Changes comparatively to the previous version are listed below. The full list of 
    changes you can find in Change Log.   	
