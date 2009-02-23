@@ -44,8 +44,18 @@ import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
  */
 public class RunExternalCompareOperation extends CompositeOperation implements IExecutable {
 	
-	public final static String DOC_SCRIPT = "diff-doc.js"; //$NON-NLS-1$
+	public final static String DOC_SCRIPT = "diff-doc.vbs"; //$NON-NLS-1$
+	public final static String DOCX_SCRIPT = "diff-doc.vbs"; //$NON-NLS-1$
 	
+	public final static String XLS_SCRIPT = "diff-xls.vbs"; //$NON-NLS-1$
+	public final static String XLSX_SCRIPT = "diff-xls.vbs"; //$NON-NLS-1$
+	
+	public final static String PPT_SCRIPT = "diff-ppt.vbs"; //$NON-NLS-1$
+	public final static String PPTX_SCRIPT = "diff-ppt.vbs"; //$NON-NLS-1$
+	
+	public final static String ODT_SCRIPT = "diff-odX.vbs"; //$NON-NLS-1$
+	public final static String ODS_SCRIPT = "diff-odX.vbs"; //$NON-NLS-1$
+			
 	protected ExternalCompareOperation externalCompareOperation;
 	
 	public boolean isExecuted() {
@@ -234,15 +244,38 @@ public class RunExternalCompareOperation extends CompositeOperation implements I
 		
 		protected String prepareParameters(IProgressMonitor monitor) throws IOException {
 			String paramaters = this.externalProgramParams.paramatersString;
-			paramaters = paramaters.replace("${base}", this.baseFile);				 //$NON-NLS-1$
-			paramaters = paramaters.replace("${mine}", this.currentFile);				 //$NON-NLS-1$
-			paramaters = paramaters.replace("${theirs}", this.newFile);				 //$NON-NLS-1$
-			paramaters = paramaters.replace("${merged}", this.targetFile);							 //$NON-NLS-1$
+			paramaters = paramaters.replace("${base}", this.baseFile); //$NON-NLS-1$
+			paramaters = paramaters.replace("${mine}", this.currentFile); //$NON-NLS-1$
+			paramaters = paramaters.replace("${theirs}", this.newFile); //$NON-NLS-1$
+			paramaters = paramaters.replace("${merged}", this.targetFile); //$NON-NLS-1$
+			
 			if (paramaters.indexOf("${default-doc-program}") != -1) { //$NON-NLS-1$
 				paramaters = paramaters.replace("${default-doc-program}", RunExternalCompareOperation.getScriptFile(RunExternalCompareOperation.DOC_SCRIPT, monitor).getAbsolutePath()); //$NON-NLS-1$
 			}
+			if (paramaters.indexOf("${default-docx-program}") != -1) { //$NON-NLS-1$
+				paramaters = paramaters.replace("${default-docx-program}", RunExternalCompareOperation.getScriptFile(RunExternalCompareOperation.DOCX_SCRIPT, monitor).getAbsolutePath()); //$NON-NLS-1$
+			}
+
+			if (paramaters.indexOf("${default-xls-program}") != -1) { //$NON-NLS-1$
+				paramaters = paramaters.replace("${default-xls-program}", RunExternalCompareOperation.getScriptFile(RunExternalCompareOperation.XLS_SCRIPT, monitor).getAbsolutePath()); //$NON-NLS-1$
+			}
+			if (paramaters.indexOf("${default-xlsx-program}") != -1) { //$NON-NLS-1$
+				paramaters = paramaters.replace("${default-xlsx-program}", RunExternalCompareOperation.getScriptFile(RunExternalCompareOperation.XLSX_SCRIPT, monitor).getAbsolutePath()); //$NON-NLS-1$
+			}
 			
-			//TODO add other default programs
+			if (paramaters.indexOf("${default-ppt-program}") != -1) { //$NON-NLS-1$
+				paramaters = paramaters.replace("${default-ppt-program}", RunExternalCompareOperation.getScriptFile(RunExternalCompareOperation.PPT_SCRIPT, monitor).getAbsolutePath()); //$NON-NLS-1$
+			}
+			if (paramaters.indexOf("${default-pptx-program}") != -1) { //$NON-NLS-1$
+				paramaters = paramaters.replace("${default-pptx-program}", RunExternalCompareOperation.getScriptFile(RunExternalCompareOperation.PPTX_SCRIPT, monitor).getAbsolutePath()); //$NON-NLS-1$
+			}
+			
+			if (paramaters.indexOf("${default-odt-program}") != -1) { //$NON-NLS-1$
+				paramaters = paramaters.replace("${default-odt-program}", RunExternalCompareOperation.getScriptFile(RunExternalCompareOperation.ODT_SCRIPT, monitor).getAbsolutePath()); //$NON-NLS-1$
+			}
+			if (paramaters.indexOf("${default-ods-program}") != -1) { //$NON-NLS-1$
+				paramaters = paramaters.replace("${default-ods-program}", RunExternalCompareOperation.getScriptFile(RunExternalCompareOperation.ODS_SCRIPT, monitor).getAbsolutePath()); //$NON-NLS-1$
+			}						
 			
 			return paramaters;
 		}
@@ -325,6 +358,11 @@ public class RunExternalCompareOperation extends CompositeOperation implements I
 		File scriptFile = new File(stateArea, fileName);
 		if (!scriptFile.exists()) {
 			URL scriptUrl = FileLocator.find(SVNTeamPlugin.instance().getBundle(), new Path("/resources/" + fileName), null); //$NON-NLS-1$
+			
+			if (scriptUrl == null) {
+				throw new RuntimeException("Failed to locate script file. File name: " + fileName);
+			}
+			
 			InputStream in = null;
 			FileOutputStream out = null;
 			try {

@@ -1626,8 +1626,13 @@ public class SVNUIMessages extends BaseMessages {
 	
 	public static String DiffViewerVariablesPanel_BaseVariable_Description;
 	public static String DiffViewerVariablesPanel_DefaultDocVariable_Description;
+	public static String DiffViewerVariablesPanel_DefaultDocxVariable_Description;
+	public static String DiffViewerVariablesPanel_DefaultXlsVariable_Description;
+	public static String DiffViewerVariablesPanel_DefaultXlsxVariable_Description;
 	public static String DiffViewerVariablesPanel_DefaultPptVariable_Description;
-	public static String DiffViewerVariablesPanel_DefaultXLSVariable_Description;
+	public static String DiffViewerVariablesPanel_DefaultPptxVariable_Description;
+	public static String DiffViewerVariablesPanel_DefaultOdtVariable_Description;
+	public static String DiffViewerVariablesPanel_DefaultOdsVariable_Description;	
 	public static String DiffViewerVariablesPanel_DialogDefaultMessage;
 	public static String DiffViewerVariablesPanel_DialogDescription;
 	public static String DiffViewerVariablesPanel_DialogTitle;

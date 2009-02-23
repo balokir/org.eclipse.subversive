@@ -292,26 +292,52 @@ public class DiffViewerSettings {
 		return this.specificParameters.values().toArray(new ResourceSpecificParameters[0]);
 	}
 
-	public static DiffViewerSettings getDefaultDiffViewerSettings() {
-		//TODO make correct impl.		
+	public static DiffViewerSettings getDefaultDiffViewerSettings() {		
 		DiffViewerSettings diffSettings = new DiffViewerSettings();
 		if (FileUtility.isWindows()) {			
-			diffSettings.setExternalDefaultCompare(false);
-			
-			//java
-			String programPath = "C:/Program Files/TortoiseSVN/bin/TortoiseMerge.exe";
-			String parametersString = "/theirs:\"${theirs}\" /base:\"${base}\" /mine:\"${mine}\" /merged:\"${merged}\"";
-			diffSettings.addResourceSpecificParameters(ResourceSpecificParameterKindEnum.FILE_EXTENSION, "java", new ExternalProgramParameters(programPath, parametersString));
+			diffSettings.setExternalDefaultCompare(false);						
 			
 			//doc
-			programPath = "wscript.exe";
-			parametersString = "\"${default-doc-program}\" \"${base}\" \"${mine}\" //E:javascript";
-			diffSettings.addResourceSpecificParameters(ResourceSpecificParameterKindEnum.FILE_EXTENSION, "doc", new ExternalProgramParameters(programPath, parametersString));
+			String programPath = "wscript.exe"; //$NON-NLS-1$
+			String parametersString = "\"${default-doc-program}\" \"${base}\" \"${mine}\" //E:vbscript"; //$NON-NLS-1$
+			diffSettings.addResourceSpecificParameters(ResourceSpecificParameterKindEnum.FILE_EXTENSION, "doc", new ExternalProgramParameters(programPath, parametersString));	//$NON-NLS-1$
+			//docx
+			programPath = "wscript.exe"; //$NON-NLS-1$
+			parametersString = "\"${default-docx-program}\" \"${base}\" \"${mine}\" //E:vbscript"; //$NON-NLS-1$
+			diffSettings.addResourceSpecificParameters(ResourceSpecificParameterKindEnum.FILE_EXTENSION, "docx", new ExternalProgramParameters(programPath, parametersString)); //$NON-NLS-1$
 			
 			//xls
-			programPath = "wscript.exe";
-			parametersString = "\"C:/Program Files/TortoiseSVN/Diff-Scripts/diff-xls.vbs\" \"${base}\" \"${mine}\" //E:vbscript";
-			diffSettings.addResourceSpecificParameters(ResourceSpecificParameterKindEnum.FILE_EXTENSION, "xls", new ExternalProgramParameters(programPath, parametersString), false);						
+			programPath = "wscript.exe"; //$NON-NLS-1$
+			parametersString = "\"${default-xls-program}\" \"${base}\" \"${mine}\" //E:vbscript"; //$NON-NLS-1$
+			diffSettings.addResourceSpecificParameters(ResourceSpecificParameterKindEnum.FILE_EXTENSION, "xls", new ExternalProgramParameters(programPath, parametersString)); //$NON-NLS-1$
+			//xlsx
+			programPath = "wscript.exe"; //$NON-NLS-1$
+			parametersString = "\"${default-xlsx-program}\" \"${base}\" \"${mine}\" //E:vbscript"; //$NON-NLS-1$
+			diffSettings.addResourceSpecificParameters(ResourceSpecificParameterKindEnum.FILE_EXTENSION, "xlsx", new ExternalProgramParameters(programPath, parametersString)); //$NON-NLS-1$
+			
+			//ppt
+			programPath = "wscript.exe"; //$NON-NLS-1$
+			parametersString = "\"${default-ppt-program}\" \"${base}\" \"${mine}\" //E:vbscript"; //$NON-NLS-1$
+			diffSettings.addResourceSpecificParameters(ResourceSpecificParameterKindEnum.FILE_EXTENSION, "ppt", new ExternalProgramParameters(programPath, parametersString)); //$NON-NLS-1$
+			//pptx
+			programPath = "wscript.exe"; //$NON-NLS-1$
+			parametersString = "\"${default-pptx-program}\" \"${base}\" \"${mine}\" //E:vbscript"; //$NON-NLS-1$
+			diffSettings.addResourceSpecificParameters(ResourceSpecificParameterKindEnum.FILE_EXTENSION, "pptx", new ExternalProgramParameters(programPath, parametersString)); //$NON-NLS-1$
+			
+			//odt
+			programPath = "wscript.exe"; //$NON-NLS-1$
+			parametersString = "\"${default-odt-program}\" \"${base}\" \"${mine}\" //E:vbscript"; //$NON-NLS-1$
+			diffSettings.addResourceSpecificParameters(ResourceSpecificParameterKindEnum.FILE_EXTENSION, "odt", new ExternalProgramParameters(programPath, parametersString));	//$NON-NLS-1$
+			//ods
+			programPath = "wscript.exe"; //$NON-NLS-1$
+			parametersString = "\"${default-ods-program}\" \"${base}\" \"${mine}\" //E:vbscript"; //$NON-NLS-1$
+			diffSettings.addResourceSpecificParameters(ResourceSpecificParameterKindEnum.FILE_EXTENSION, "ods", new ExternalProgramParameters(programPath, parametersString)); //$NON-NLS-1$
+			
+//			//java			
+//			String programPath = "C:/Program Files/TortoiseSVN/bin/TortoiseMerge.exe";
+//			//String parametersString = "/theirs:\"${theirs}\" /base:\"${base}\" /mine:\"${mine}\" /merged:\"${merged}\"";
+//			String parametersString = "/base:\"${base}\" /mine:\"${mine}\" /merged:\"${merged}\"";
+//			diffSettings.addResourceSpecificParameters(ResourceSpecificParameterKindEnum.FILE_EXTENSION, "java", new ExternalProgramParameters(programPath, parametersString));						
 		}
 		return diffSettings;
 	}
