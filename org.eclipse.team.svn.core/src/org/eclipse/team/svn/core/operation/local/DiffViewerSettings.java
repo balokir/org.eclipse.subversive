@@ -84,14 +84,14 @@ public class DiffViewerSettings {
 	
 	public static class ResourceSpecificParameters {
 		
-		public final static int FIELDS_COUNT = 5;
+		public final static int FIELDS_COUNT = 7;
 		
 		public ResourceSpecificParameterKind kind;
 		public ExternalProgramParameters params;		
 		public boolean isEnabled;
 		
-		public ResourceSpecificParameters(ResourceSpecificParameterKindEnum kindEnum, String kindValue, String programPath, String programParams) {
-			this(new ResourceSpecificParameterKind(kindEnum, kindValue), new ExternalProgramParameters(programPath, programParams));
+		public ResourceSpecificParameters(ResourceSpecificParameterKindEnum kindEnum, String kindValue, String diffProgramPath, String mergeProgramPath, String diffProgramParams, String mergeProgramParams) {
+			this(new ResourceSpecificParameterKind(kindEnum, kindValue), new ExternalProgramParameters(diffProgramPath, mergeProgramPath, diffProgramParams, mergeProgramParams));
 		}
 		
 		public ResourceSpecificParameters(ResourceSpecificParameterKind kind, ExternalProgramParameters params) {
@@ -110,8 +110,10 @@ public class DiffViewerSettings {
 			res[0] = this.isEnabled ? "1" : "0"; //$NON-NLS-1$ //$NON-NLS-2$
 			res[1] = ResourceSpecificParameterKindEnum.FILE_EXTENSION.equals(this.kind.kindEnum) ? "1" : "0"; //$NON-NLS-1$ //$NON-NLS-2$
 			res[2] = this.kind.kindValue == null ? "" : this.kind.kindValue; //$NON-NLS-1$
-			res[3] = this.params.programPath == null ? "" : this.params.programPath; //$NON-NLS-1$
-			res[4] = this.params.paramatersString == null ? "" :  this.params.paramatersString; //$NON-NLS-1$
+			res[3] = this.params.diffProgramPath == null ? "" : this.params.diffProgramPath; //$NON-NLS-1$
+			res[4] = this.params.mergeProgramPath == null ? "" : this.params.mergeProgramPath; //$NON-NLS-1$
+			res[5] = this.params.diffParamatersString == null ? "" :  this.params.diffParamatersString; //$NON-NLS-1$
+			res[6] = this.params.mergeParamatersString == null ? "" :  this.params.mergeParamatersString; //$NON-NLS-1$
 			
 			return res;
 		}
@@ -125,7 +127,7 @@ public class DiffViewerSettings {
 			boolean isEnabled = "1".equals(strings[0]); //$NON-NLS-1$
 			ResourceSpecificParameterKindEnum kindEnum = "1".equals(strings[1]) ? ResourceSpecificParameterKindEnum.FILE_EXTENSION : ResourceSpecificParameterKindEnum.MIME_TYPE; //$NON-NLS-1$
 			
-			ResourceSpecificParameters res = new ResourceSpecificParameters(kindEnum, strings[2], strings[3], strings[4]);
+			ResourceSpecificParameters res = new ResourceSpecificParameters(kindEnum, strings[2], strings[3], strings[4], strings[5], strings[6]);
 			res.isEnabled = isEnabled;
 			
 			return res;
@@ -133,12 +135,17 @@ public class DiffViewerSettings {
 	}	
 	
 	public static class ExternalProgramParameters {
-		public String programPath;
-		public String paramatersString;
+		public String diffProgramPath;
+		public String diffParamatersString;
 		
-		public ExternalProgramParameters(String programPath, String paramatersString) {
-			this.programPath = programPath;
-			this.paramatersString = paramatersString;
+		public String mergeProgramPath;		
+		public String mergeParamatersString;
+		
+		public ExternalProgramParameters(String diffProgramPath, String mergeProgramPath, String diffParamatersString, String mergeParamatersString) {
+			this.diffProgramPath = diffProgramPath;
+			this.mergeProgramPath = mergeProgramPath;
+			this.diffParamatersString = diffParamatersString;
+			this.mergeParamatersString = mergeParamatersString;
 		}
 	}
 	
@@ -280,8 +287,12 @@ public class DiffViewerSettings {
 		return this.defaultExternalParameters;
 	}
 	
-	public void setDefaultExternalParameters(String programPath, String paramatersString) {
-		this.defaultExternalParameters = new ExternalProgramParameters(programPath, paramatersString);
+	public void setDefaultExternalParameters(ExternalProgramParameters programParams) {
+		this.defaultExternalParameters = programParams;
+	}
+	
+	public void setDefaultExternalParameters(String diffProgramPath, String mergeProgramPath, String diffParamatersString, String mergeParamatersString) {
+		this.defaultExternalParameters = new ExternalProgramParameters(diffProgramPath, mergeProgramPath, diffParamatersString, mergeParamatersString);
 	}
 	
 	public ResourceSpecificParameters getResourceSpecificParameters(ResourceSpecificParameterKind kind) {
@@ -298,40 +309,56 @@ public class DiffViewerSettings {
 			diffSettings.setExternalDefaultCompare(false);						
 			
 			//doc
-			String programPath = "wscript.exe"; //$NON-NLS-1$
-			String parametersString = "\"${default-doc-program}\" \"${base}\" \"${mine}\" //E:vbscript"; //$NON-NLS-1$
-			diffSettings.addResourceSpecificParameters(ResourceSpecificParameterKindEnum.FILE_EXTENSION, "doc", new ExternalProgramParameters(programPath, parametersString));	//$NON-NLS-1$
+			String diffProgramPath = "wscript.exe"; //$NON-NLS-1$
+			String diffParametersString = "\"${default-doc-program}\" \"${base}\" \"${mine}\" //E:vbscript"; //$NON-NLS-1$			
+			String mergeProgramPath = "wscript.exe"; //$NON-NLS-1$
+			String mergeParametersString = "\"${default-doc-program}\" \"${theirs}\" \"${mine}\" //E:vbscript"; //$NON-NLS-1$
+			diffSettings.addResourceSpecificParameters(ResourceSpecificParameterKindEnum.FILE_EXTENSION, "doc", new ExternalProgramParameters(diffProgramPath, mergeProgramPath, diffParametersString, mergeParametersString));	//$NON-NLS-1$
 			//docx
-			programPath = "wscript.exe"; //$NON-NLS-1$
-			parametersString = "\"${default-docx-program}\" \"${base}\" \"${mine}\" //E:vbscript"; //$NON-NLS-1$
-			diffSettings.addResourceSpecificParameters(ResourceSpecificParameterKindEnum.FILE_EXTENSION, "docx", new ExternalProgramParameters(programPath, parametersString)); //$NON-NLS-1$
+			diffProgramPath = "wscript.exe"; //$NON-NLS-1$
+			diffParametersString = "\"${default-doc-program}\" \"${base}\" \"${mine}\" //E:vbscript"; //$NON-NLS-1$
+			mergeProgramPath = "wscript.exe"; //$NON-NLS-1$
+			mergeParametersString = "\"${default-doc-program}\" \"${theirs}\" \"${mine}\" //E:vbscript"; //$NON-NLS-1$
+			diffSettings.addResourceSpecificParameters(ResourceSpecificParameterKindEnum.FILE_EXTENSION, "docx", new ExternalProgramParameters(diffProgramPath, mergeProgramPath, diffParametersString, mergeParametersString)); //$NON-NLS-1$
 			
 			//xls
-			programPath = "wscript.exe"; //$NON-NLS-1$
-			parametersString = "\"${default-xls-program}\" \"${base}\" \"${mine}\" //E:vbscript"; //$NON-NLS-1$
-			diffSettings.addResourceSpecificParameters(ResourceSpecificParameterKindEnum.FILE_EXTENSION, "xls", new ExternalProgramParameters(programPath, parametersString)); //$NON-NLS-1$
+			diffProgramPath = "wscript.exe"; //$NON-NLS-1$
+			diffParametersString = "\"${default-xls-program}\" \"${base}\" \"${mine}\" //E:vbscript"; //$NON-NLS-1$
+			mergeProgramPath = null;
+			mergeParametersString = null;
+			diffSettings.addResourceSpecificParameters(ResourceSpecificParameterKindEnum.FILE_EXTENSION, "xls", new ExternalProgramParameters(diffProgramPath, mergeProgramPath, diffParametersString, mergeParametersString)); //$NON-NLS-1$
 			//xlsx
-			programPath = "wscript.exe"; //$NON-NLS-1$
-			parametersString = "\"${default-xlsx-program}\" \"${base}\" \"${mine}\" //E:vbscript"; //$NON-NLS-1$
-			diffSettings.addResourceSpecificParameters(ResourceSpecificParameterKindEnum.FILE_EXTENSION, "xlsx", new ExternalProgramParameters(programPath, parametersString)); //$NON-NLS-1$
+			diffProgramPath = "wscript.exe"; //$NON-NLS-1$
+			diffParametersString = "\"${default-xls-program}\" \"${base}\" \"${mine}\" //E:vbscript"; //$NON-NLS-1$
+			mergeProgramPath = null;
+			mergeParametersString = null;
+			diffSettings.addResourceSpecificParameters(ResourceSpecificParameterKindEnum.FILE_EXTENSION, "xlsx", new ExternalProgramParameters(diffProgramPath, mergeProgramPath, diffParametersString, mergeParametersString)); //$NON-NLS-1$
 			
 			//ppt
-			programPath = "wscript.exe"; //$NON-NLS-1$
-			parametersString = "\"${default-ppt-program}\" \"${base}\" \"${mine}\" //E:vbscript"; //$NON-NLS-1$
-			diffSettings.addResourceSpecificParameters(ResourceSpecificParameterKindEnum.FILE_EXTENSION, "ppt", new ExternalProgramParameters(programPath, parametersString)); //$NON-NLS-1$
+			diffProgramPath = "wscript.exe"; //$NON-NLS-1$
+			diffParametersString = "\"${default-ppt-program}\" \"${base}\" \"${mine}\" //E:vbscript"; //$NON-NLS-1$
+			mergeProgramPath = null;
+			mergeParametersString = null;
+			diffSettings.addResourceSpecificParameters(ResourceSpecificParameterKindEnum.FILE_EXTENSION, "ppt", new ExternalProgramParameters(diffProgramPath, mergeProgramPath, diffParametersString, mergeParametersString)); //$NON-NLS-1$
 			//pptx
-			programPath = "wscript.exe"; //$NON-NLS-1$
-			parametersString = "\"${default-pptx-program}\" \"${base}\" \"${mine}\" //E:vbscript"; //$NON-NLS-1$
-			diffSettings.addResourceSpecificParameters(ResourceSpecificParameterKindEnum.FILE_EXTENSION, "pptx", new ExternalProgramParameters(programPath, parametersString)); //$NON-NLS-1$
+			diffProgramPath = "wscript.exe"; //$NON-NLS-1$
+			diffParametersString = "\"${default-ppt-program}\" \"${base}\" \"${mine}\" //E:vbscript"; //$NON-NLS-1$
+			mergeProgramPath = null;
+			mergeParametersString = null;
+			diffSettings.addResourceSpecificParameters(ResourceSpecificParameterKindEnum.FILE_EXTENSION, "pptx", new ExternalProgramParameters(diffProgramPath, mergeProgramPath, diffParametersString, mergeParametersString)); //$NON-NLS-1$
 			
 			//odt
-			programPath = "wscript.exe"; //$NON-NLS-1$
-			parametersString = "\"${default-odt-program}\" \"${base}\" \"${mine}\" //E:vbscript"; //$NON-NLS-1$
-			diffSettings.addResourceSpecificParameters(ResourceSpecificParameterKindEnum.FILE_EXTENSION, "odt", new ExternalProgramParameters(programPath, parametersString));	//$NON-NLS-1$
+			diffProgramPath = "wscript.exe"; //$NON-NLS-1$
+			diffParametersString = "\"${default-odt-program}\" \"${base}\" \"${mine}\" //E:vbscript"; //$NON-NLS-1$
+			mergeProgramPath = "wscript.exe"; //$NON-NLS-1$
+			mergeParametersString = "\"${default-odt-program}\" \"${theirs}\" \"${mine}\" //E:vbscript"; //$NON-NLS-1$
+			diffSettings.addResourceSpecificParameters(ResourceSpecificParameterKindEnum.FILE_EXTENSION, "odt", new ExternalProgramParameters(diffProgramPath, mergeProgramPath, diffParametersString, mergeParametersString));	//$NON-NLS-1$
 			//ods
-			programPath = "wscript.exe"; //$NON-NLS-1$
-			parametersString = "\"${default-ods-program}\" \"${base}\" \"${mine}\" //E:vbscript"; //$NON-NLS-1$
-			diffSettings.addResourceSpecificParameters(ResourceSpecificParameterKindEnum.FILE_EXTENSION, "ods", new ExternalProgramParameters(programPath, parametersString)); //$NON-NLS-1$
+			diffProgramPath = "wscript.exe"; //$NON-NLS-1$
+			diffParametersString = "\"${default-ods-program}\" \"${base}\" \"${mine}\" //E:vbscript"; //$NON-NLS-1$
+			mergeProgramPath = "wscript.exe"; //$NON-NLS-1$
+			mergeParametersString = "\"${default-ods-program}\" \"${theirs}\" \"${mine}\" //E:vbscript"; //$NON-NLS-1$
+			diffSettings.addResourceSpecificParameters(ResourceSpecificParameterKindEnum.FILE_EXTENSION, "ods", new ExternalProgramParameters(diffProgramPath, mergeProgramPath, diffParametersString, mergeParametersString)); //$NON-NLS-1$
 			
 //			//java			
 //			String programPath = "C:/Program Files/TortoiseSVN/bin/TortoiseMerge.exe";

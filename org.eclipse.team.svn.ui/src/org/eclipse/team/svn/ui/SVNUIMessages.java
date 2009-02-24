@@ -1598,20 +1598,20 @@ public class SVNUIMessages extends BaseMessages {
 	public static String AddRepositoryPage_DirectoryDialog_Description;
 	
 	public static String DiffViewerCompareEditorComposite_Description;
-	public static String DiffViewerCompareEditorComposite_EclipseCompareEditor;
 	public static String DiffViewerCompareEditorComposite_ExternalCompareEditor;
 	
 	public static String DiffViewerExternalProgramComposite_Path_LabelName;
 	public static String DiffViewerExternalProgramComposite_Path_FieldName;
 	public static String DiffViewerExternalProgramComposite_Path_BrowseDialogTitle;
-	public static String DiffViewerExternalProgramComposite_ProgramArguments_Label;
+	public static String DiffViewerExternalProgramComposite_DiffProgramArguments_Label;
+	public static String DiffViewerExternalProgramComposite_MergeProgramArguments_Label;
 	public static String DiffViewerExternalProgramComposite_Variables_Button;
 	
 	public static String DiffViewerFileAssociationsComposite_Add_Button;
 	public static String DiffViewerFileAssociationsComposite_Edit_Button;
-	public static String DiffViewerFileAssociationsComposite_ExtensionMimeType_Column;
-	public static String DiffViewerFileAssociationsComposite_ProgramArguments_Label;
-	public static String DiffViewerFileAssociationsComposite_ProgramPath_Column;
+	public static String DiffViewerFileAssociationsComposite_ExtensionMimeType_Column;	
+	public static String DiffViewerFileAssociationsComposite_DiffProgramPath_Column;
+	public static String DiffViewerFileAssociationsComposite_MergeProgramPath_Column;
 	public static String DiffViewerFileAssociationsComposite_Remove_Button;
 	
 	public static String EditFileAssociationsPanel_AddDialogTitle;
@@ -1625,13 +1625,11 @@ public class SVNUIMessages extends BaseMessages {
 	public static String SVNTeamDiffViewerPage_File_Associations_Tab;
 	
 	public static String DiffViewerVariablesPanel_BaseVariable_Description;
-	public static String DiffViewerVariablesPanel_DefaultDocVariable_Description;
-	public static String DiffViewerVariablesPanel_DefaultDocxVariable_Description;
-	public static String DiffViewerVariablesPanel_DefaultXlsVariable_Description;
-	public static String DiffViewerVariablesPanel_DefaultXlsxVariable_Description;
-	public static String DiffViewerVariablesPanel_DefaultPptVariable_Description;
-	public static String DiffViewerVariablesPanel_DefaultPptxVariable_Description;
+	public static String DiffViewerVariablesPanel_DefaultDocVariable_Description;	
+	public static String DiffViewerVariablesPanel_DefaultXlsVariable_Description;	
+	public static String DiffViewerVariablesPanel_DefaultPptVariable_Description;	
 	public static String DiffViewerVariablesPanel_DefaultOdtVariable_Description;
+	public static String DiffViewerVariablesPanel_DefaultOdtMergeVariable_Description;
 	public static String DiffViewerVariablesPanel_DefaultOdsVariable_Description;	
 	public static String DiffViewerVariablesPanel_DialogDefaultMessage;
 	public static String DiffViewerVariablesPanel_DialogDescription;

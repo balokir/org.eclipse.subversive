@@ -179,7 +179,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		final IResource resource = local.getResource();
 													
 		DiffViewerSettings diffSettings = SVNTeamDiffViewerPage.loadDiffViewerSettings();
-		DetectExternalCompareOperationHelper detectCompareHelper = new DetectExternalCompareOperationHelper(resource, diffSettings);
+		DetectExternalCompareOperationHelper detectCompareHelper = new DetectExternalCompareOperationHelper(resource, diffSettings, true);
 		detectCompareHelper.execute(new NullProgressMonitor());
 		final ExternalProgramParameters externalProgramParams = detectCompareHelper.getExternalProgramParameters();
 				

@@ -275,14 +275,18 @@ public final class SVNTeamPreferences {
 	public static final String CUSTOM_PROPERTIES_LIST_DEFAULT = ""; //$NON-NLS-1$
 	
 	public static final String DIFF_VIEWER_BASE = "preference.diffViewer."; //$NON-NLS-1$
-	public static final String DIFF_VIEWER_EXTERNAL_DEFAULT_COMPARE = "external.default.compare"; //$NON-NLS-1$
-	public static final String DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_PATH = "default.external.program.path"; //$NON-NLS-1$
-	public static final String DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_PARAMETERS = "default.external.program.parameters"; //$NON-NLS-1$
+	public static final String DIFF_VIEWER_EXTERNAL_DEFAULT_COMPARE = "external.default.compare"; //$NON-NLS-1$	
+	public static final String DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_DIFF_PATH = "default.external.program.diff.path"; //$NON-NLS-1$
+	public static final String DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_DIFF_PARAMETERS = "default.external.program.diff.parameters"; //$NON-NLS-1$
+	public static final String DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_MERGE_PATH = "default.external.program.merge.path"; //$NON-NLS-1$	
+	public static final String DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_MERGE_PARAMETERS = "default.external.program.merge.parameters"; //$NON-NLS-1$
 	public static final String DIFF_VIEWER_RESOURCES_SPECIFIC_PARAMETERS = "resources.specific.parameters"; //$NON-NLS-1$
 	
 	public static final boolean DIFF_VIEWER_EXTERNAL_DEFAULT_COMPARE_DEFAULT = false;
-	public static final String DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_PATH_DEFAULT = ""; //$NON-NLS-1$
-	public static final String DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_PARAMETERS_DEFAULT = ""; //$NON-NLS-1$
+	public static final String DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_DIFF_PATH_DEFAULT = ""; //$NON-NLS-1$
+	public static final String DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_MERGE_PATH_DEFAULT = ""; //$NON-NLS-1$
+	public static final String DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_DIFF_PARAMETERS_DEFAULT = ""; //$NON-NLS-1$
+	public static final String DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_MERGE_PARAMETERS_DEFAULT = ""; //$NON-NLS-1$
 	public static final String DIFF_VIEWER_RESOURCES_SPECIFIC_PARAMETERS_DEFAULT = ""; //$NON-NLS-1$
 	
 	public static DateFormat getDateFormat(IPreferenceStore store) {
