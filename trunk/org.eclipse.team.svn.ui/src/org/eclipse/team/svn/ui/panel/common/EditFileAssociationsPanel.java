@@ -15,14 +15,19 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.team.svn.core.operation.local.DiffViewerSettings;
 import org.eclipse.team.svn.core.operation.local.DiffViewerSettings.ExternalProgramParameters;
 import org.eclipse.team.svn.core.operation.local.DiffViewerSettings.ResourceSpecificParameterKind;
 import org.eclipse.team.svn.core.operation.local.DiffViewerSettings.ResourceSpecificParameters;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.DiffViewerExternalProgramComposite;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
+import org.eclipse.team.svn.ui.verifier.AbstractFormattedVerifier;
+import org.eclipse.team.svn.ui.verifier.AbstractValidationManagerProxy;
+import org.eclipse.team.svn.ui.verifier.CompositeVerifier;
 import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
 
 /**
@@ -32,14 +37,16 @@ import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
  */
 public class EditFileAssociationsPanel extends AbstractDialogPanel {
 
+	protected DiffViewerSettings diffSettings;
 	protected ResourceSpecificParameters param;
 		
 	protected Text extensionText;
 	protected DiffViewerExternalProgramComposite diffExternalComposite;
 	protected DiffViewerExternalProgramComposite mergeExternalComposite;
 	
-	public EditFileAssociationsPanel(ResourceSpecificParameters param) {
+	public EditFileAssociationsPanel(ResourceSpecificParameters param, DiffViewerSettings diffSettings) {
 		this.param = param;
+		this.diffSettings = diffSettings;
 		
 		this.dialogTitle = this.param == null ? SVNUIMessages.EditFileAssociationsPanel_AddDialogTitle : SVNUIMessages.EditFileAssociationsPanel_EditDialogTitle;
 		this.dialogDescription = SVNUIMessages.EditFileAssociationsPanel_DialogDescription;
@@ -74,12 +81,33 @@ public class EditFileAssociationsPanel extends AbstractDialogPanel {
 		data.horizontalSpan = 2;
 		this.diffExternalComposite.setLayoutData(data);			
 		
-		this.mergeExternalComposite = new DiffViewerExternalProgramComposite(SVNUIMessages.DiffViewerExternalProgramComposite_MergeProgramArguments_Label, composite, this);
+		this.mergeExternalComposite = new DiffViewerExternalProgramComposite(SVNUIMessages.DiffViewerExternalProgramComposite_MergeProgramArguments_Label, composite, new AbstractValidationManagerProxy(this) {
+			protected boolean isVerificationEnabled(Control input) {			
+				return false;
+			}			
+		});
 		data = new GridData(GridData.FILL_HORIZONTAL);		
 		data.horizontalSpan = 2;
 		this.mergeExternalComposite.setLayoutData(data);			
 		
-		this.attachTo(this.extensionText, new NonEmptyFieldVerifier(SVNUIMessages.EditFileAssociationsPanel_ExtensionMimeType_FieldName));
+		CompositeVerifier cmpVerifier = new CompositeVerifier();
+		cmpVerifier.add(new NonEmptyFieldVerifier(SVNUIMessages.EditFileAssociationsPanel_ExtensionMimeType_FieldName));
+		cmpVerifier.add(new AbstractFormattedVerifier(SVNUIMessages.EditFileAssociationsPanel_ExtensionMimeType_FieldName) {
+			protected String getErrorMessageImpl(Control input) {
+				String kindString = ((Text) input).getText();
+				ResourceSpecificParameterKind kind = ResourceSpecificParameterKind.getKind(kindString);				
+				ResourceSpecificParameters resourceParams = EditFileAssociationsPanel.this.diffSettings.getResourceSpecificParameters(kind);
+				if (resourceParams != null && (EditFileAssociationsPanel.this.param != null && !EditFileAssociationsPanel.this.param.kind.equals(kind) || EditFileAssociationsPanel.this.param == null)) {
+					return SVNUIMessages.EditFileAssociationsPanel_DuplicateExtension_Verifier_Error;
+				}
+				return null;
+			}
+
+			protected String getWarningMessageImpl(Control input) {			
+				return null;
+			}			
+		});
+		this.attachTo(this.extensionText, cmpVerifier);
 		
 		//init value
 		if (this.param != null) {

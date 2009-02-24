@@ -31,6 +31,7 @@ import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.DiffViewerSettings.ExternalProgramParameters;
 import org.eclipse.team.svn.core.operation.local.DiffViewerSettings.ResourceSpecificParameterKind;
+import org.eclipse.team.svn.core.operation.local.DiffViewerSettings.ResourceSpecificParameters;
 import org.eclipse.team.svn.core.operation.remote.GetFileContentOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
@@ -136,8 +137,9 @@ public class RunExternalCompareOperation extends CompositeOperation implements I
 				}								
 				
 				//check default external program
-				if (this.externalProgramParams == null && this.diffSettings.isExternalDefaultCompare()) {
-					this.externalProgramParams = this.diffSettings.getDefaultExternalParameters();	
+				ResourceSpecificParameters defaultResourceSpecificParameters = null;
+				if (this.externalProgramParams == null && (defaultResourceSpecificParameters = this.diffSettings.getDefaultResourceSpecificParameters()) != null) {
+					this.externalProgramParams = defaultResourceSpecificParameters.params;
 				}
 			}	
 		}
@@ -153,8 +155,9 @@ public class RunExternalCompareOperation extends CompositeOperation implements I
 				}								
 				
 				//check default external program
-				if (this.externalProgramParams == null && this.diffSettings.isExternalDefaultCompare()) {
-					this.externalProgramParams = this.diffSettings.getDefaultExternalParameters();	
+				ResourceSpecificParameters defaultResourceSpecificParameters = null;
+				if (this.externalProgramParams == null && (defaultResourceSpecificParameters = this.diffSettings.getDefaultResourceSpecificParameters()) != null) {
+					this.externalProgramParams = defaultResourceSpecificParameters.params;
 				}
 			}	
 		}

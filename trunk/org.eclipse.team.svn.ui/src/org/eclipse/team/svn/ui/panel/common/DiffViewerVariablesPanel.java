@@ -50,12 +50,12 @@ public class DiffViewerVariablesPanel extends AbstractDialogPanel {
 		this.variablesMap.put("theirs", SVNUIMessages.DiffViewerVariablesPanel_TheirsVariable_Description); //$NON-NLS-1$
 		this.variablesMap.put("merged", SVNUIMessages.DiffViewerVariablesPanel_MergedVariable_Description); //$NON-NLS-1$
 		
-		this.variablesMap.put("default-doc-program", SVNUIMessages.DiffViewerVariablesPanel_DefaultDocVariable_Description); //$NON-NLS-1$				
-		this.variablesMap.put("default-xls-program", SVNUIMessages.DiffViewerVariablesPanel_DefaultXlsVariable_Description); //$NON-NLS-1$		
-		this.variablesMap.put("default-ppt-program", SVNUIMessages.DiffViewerVariablesPanel_DefaultPptVariable_Description); //$NON-NLS-1$
+		this.variablesMap.put("default-doc-program", SVNUIMessages.format(SVNUIMessages.DiffViewerVariablesPanel_DefaultVariable_Description, SVNUIMessages.DiffViewerVariablesPanel_DefaultDocVariable_Program)); //$NON-NLS-1$				
+		this.variablesMap.put("default-xls-program", SVNUIMessages.format(SVNUIMessages.DiffViewerVariablesPanel_DefaultVariable_Description, SVNUIMessages.DiffViewerVariablesPanel_DefaultXlsVariable_Program)); //$NON-NLS-1$		
+		this.variablesMap.put("default-ppt-program", SVNUIMessages.format(SVNUIMessages.DiffViewerVariablesPanel_DefaultVariable_Description, SVNUIMessages.DiffViewerVariablesPanel_DefaultPptVariable_Program)); //$NON-NLS-1$
 		
-		this.variablesMap.put("default-odt-program", SVNUIMessages.DiffViewerVariablesPanel_DefaultOdtVariable_Description); //$NON-NLS-1$
-		this.variablesMap.put("default-ods-program", SVNUIMessages.DiffViewerVariablesPanel_DefaultOdsVariable_Description); //$NON-NLS-1$
+		this.variablesMap.put("default-odt-program", SVNUIMessages.format(SVNUIMessages.DiffViewerVariablesPanel_DefaultVariable_Description, SVNUIMessages.DiffViewerVariablesPanel_DefaultOdtVariable_Program)); //$NON-NLS-1$
+		this.variablesMap.put("default-ods-program", SVNUIMessages.format(SVNUIMessages.DiffViewerVariablesPanel_DefaultVariable_Description, SVNUIMessages.DiffViewerVariablesPanel_DefaultOdsVariable_Program)); //$NON-NLS-1$
 	}
 	
 	protected void createControlsImpl(Composite parent) {

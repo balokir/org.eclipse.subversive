@@ -33,7 +33,7 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
  */
 public class DiffViewerSettings {		
 		
-	public enum ResourceSpecificParameterKindEnum {MIME_TYPE, FILE_EXTENSION};
+	public enum ResourceSpecificParameterKindEnum {MIME_TYPE, FILE_EXTENSION, DEFAULT};
 	
 	public static class ResourceSpecificParameterKind {
 		public ResourceSpecificParameterKindEnum kindEnum;
@@ -66,9 +66,12 @@ public class DiffViewerSettings {
 		public static ResourceSpecificParameterKind getKind(String kindString) {			
 			String kindValue = null;
 			ResourceSpecificParameterKindEnum kindEnum = null;
-			if (kindString.charAt(0) == '.') {
+			if (kindString.startsWith(".")) { //$NON-NLS-1$
 				kindEnum = ResourceSpecificParameterKindEnum.FILE_EXTENSION;
 				kindValue = kindString.substring(1);
+			} else if (DiffViewerSettings.DEFAULT_RESOURCE_SPECIFIC_PARAMETER_KIND.kindValue.equals(kindString)) {
+				kindEnum = DiffViewerSettings.DEFAULT_RESOURCE_SPECIFIC_PARAMETER_KIND.kindEnum;
+				kindValue = DiffViewerSettings.DEFAULT_RESOURCE_SPECIFIC_PARAMETER_KIND.kindValue;
 			} else {
 				kindEnum = ResourceSpecificParameterKindEnum.MIME_TYPE;
 				kindValue = kindString;
@@ -108,7 +111,7 @@ public class DiffViewerSettings {
 			String[] res = new String[ResourceSpecificParameters.FIELDS_COUNT];
 			
 			res[0] = this.isEnabled ? "1" : "0"; //$NON-NLS-1$ //$NON-NLS-2$
-			res[1] = ResourceSpecificParameterKindEnum.FILE_EXTENSION.equals(this.kind.kindEnum) ? "1" : "0"; //$NON-NLS-1$ //$NON-NLS-2$
+			res[1] = this.kind.kindEnum.name();
 			res[2] = this.kind.kindValue == null ? "" : this.kind.kindValue; //$NON-NLS-1$
 			res[3] = this.params.diffProgramPath == null ? "" : this.params.diffProgramPath; //$NON-NLS-1$
 			res[4] = this.params.mergeProgramPath == null ? "" : this.params.mergeProgramPath; //$NON-NLS-1$
@@ -125,7 +128,15 @@ public class DiffViewerSettings {
 			}
 			
 			boolean isEnabled = "1".equals(strings[0]); //$NON-NLS-1$
-			ResourceSpecificParameterKindEnum kindEnum = "1".equals(strings[1]) ? ResourceSpecificParameterKindEnum.FILE_EXTENSION : ResourceSpecificParameterKindEnum.MIME_TYPE; //$NON-NLS-1$
+			
+			ResourceSpecificParameterKindEnum kindEnum = null;
+			ResourceSpecificParameterKindEnum[] kindEnums = ResourceSpecificParameterKindEnum.values();
+			for (ResourceSpecificParameterKindEnum ke : kindEnums) {
+				if (ke.name().equals(strings[1])) {
+					kindEnum = ke;
+					break;
+				}
+			}
 			
 			ResourceSpecificParameters res = new ResourceSpecificParameters(kindEnum, strings[2], strings[3], strings[4], strings[5], strings[6]);
 			res.isEnabled = isEnabled;
@@ -148,9 +159,9 @@ public class DiffViewerSettings {
 			this.mergeParamatersString = mergeParamatersString;
 		}
 	}
+
+	public static ResourceSpecificParameterKind DEFAULT_RESOURCE_SPECIFIC_PARAMETER_KIND = new ResourceSpecificParameterKind(ResourceSpecificParameterKindEnum.DEFAULT, "*"); //$NON-NLS-1$
 	
-	protected boolean isExternalDefaultCompare;
-	protected ExternalProgramParameters defaultExternalParameters;
 	protected Map<ResourceSpecificParameterKind, ResourceSpecificParameters> specificParameters = new HashMap<ResourceSpecificParameterKind, ResourceSpecificParameters>();
 
 	public static ResourceSpecificParameterKind getSpecificResourceKind(DiffViewerSettings diffSettings, IFile file, IProgressMonitor monitor) {
@@ -228,27 +239,32 @@ public class DiffViewerSettings {
 		return kind;
 	}
 	
-	public void addResourceSpecificParameters(ResourceSpecificParameterKindEnum kindEnum, String kindValue, ExternalProgramParameters params) {
-		this.addResourceSpecificParameters(kindEnum, kindValue, params, true);
+	public boolean addResourceSpecificParameters(ResourceSpecificParameterKindEnum kindEnum, String kindValue, ExternalProgramParameters params) {
+		return this.addResourceSpecificParameters(kindEnum, kindValue, params, true);
 	}
 	
-	public void addResourceSpecificParameters(ResourceSpecificParameterKindEnum kindEnum, String kindValue, ExternalProgramParameters params, boolean isEnabled) {
+	public boolean addResourceSpecificParameters(ResourceSpecificParameterKindEnum kindEnum, String kindValue, ExternalProgramParameters params, boolean isEnabled) {		
 		ResourceSpecificParameterKind kind = new ResourceSpecificParameterKind(kindEnum, kindValue);
 		ResourceSpecificParameters resourceParams = new ResourceSpecificParameters(kind, params, isEnabled);
-		this.addResourceSpecificParameters(resourceParams);
+		return this.addResourceSpecificParameters(resourceParams);
 	}
 	
-	public void addResourceSpecificParameters(ResourceSpecificParameters resourceParams) {
-		this.specificParameters.put(resourceParams.kind, resourceParams);
-		
-		//fire event
-		if (!this.listenersList.isEmpty()) {
-			Object[] listeners = this.listenersList.getListeners();
-			for (int i = 0; i < listeners.length; i ++) {
-				IDiffViewerChangeListener listener = (IDiffViewerChangeListener) listeners[i];
-				listener.addResourceSpecificParameters(resourceParams);
-			}
+	public boolean addResourceSpecificParameters(ResourceSpecificParameters resourceParams) {
+		boolean isAdded = false;
+		if (!this.specificParameters.containsKey(resourceParams.kind)) {
+			this.specificParameters.put(resourceParams.kind, resourceParams);
+			isAdded = true;
+			
+			//fire event
+			if (!this.listenersList.isEmpty()) {
+				Object[] listeners = this.listenersList.getListeners();
+				for (int i = 0; i < listeners.length; i ++) {
+					IDiffViewerChangeListener listener = (IDiffViewerChangeListener) listeners[i];
+					listener.addResourceSpecificParameters(resourceParams);
+				}
+			}	
 		}
+		return isAdded;
 	}
 	
 	public void removeResourceSpecificParameters(ResourceSpecificParameters resourceParams) {				
@@ -275,26 +291,6 @@ public class DiffViewerSettings {
 		}
 	}
 	
-	public void setExternalDefaultCompare(boolean isExternalDefaultCompare) {
-		this.isExternalDefaultCompare = isExternalDefaultCompare;
-	}
-	
-	public boolean isExternalDefaultCompare() {
-		return this.isExternalDefaultCompare;
-	}
-
-	public ExternalProgramParameters getDefaultExternalParameters() {
-		return this.defaultExternalParameters;
-	}
-	
-	public void setDefaultExternalParameters(ExternalProgramParameters programParams) {
-		this.defaultExternalParameters = programParams;
-	}
-	
-	public void setDefaultExternalParameters(String diffProgramPath, String mergeProgramPath, String diffParamatersString, String mergeParamatersString) {
-		this.defaultExternalParameters = new ExternalProgramParameters(diffProgramPath, mergeProgramPath, diffParamatersString, mergeParamatersString);
-	}
-	
 	public ResourceSpecificParameters getResourceSpecificParameters(ResourceSpecificParameterKind kind) {
 		return this.specificParameters.get(kind);
 	}
@@ -303,11 +299,13 @@ public class DiffViewerSettings {
 		return this.specificParameters.values().toArray(new ResourceSpecificParameters[0]);
 	}
 
+	public ResourceSpecificParameters getDefaultResourceSpecificParameters() {		
+		return this.specificParameters.get(DEFAULT_RESOURCE_SPECIFIC_PARAMETER_KIND);
+	}
+	
 	public static DiffViewerSettings getDefaultDiffViewerSettings() {		
 		DiffViewerSettings diffSettings = new DiffViewerSettings();
-		if (FileUtility.isWindows()) {			
-			diffSettings.setExternalDefaultCompare(false);						
-			
+		if (FileUtility.isWindows()) {
 			//doc
 			String diffProgramPath = "wscript.exe"; //$NON-NLS-1$
 			String diffParametersString = "\"${default-doc-program}\" \"${base}\" \"${mine}\" //E:vbscript"; //$NON-NLS-1$			

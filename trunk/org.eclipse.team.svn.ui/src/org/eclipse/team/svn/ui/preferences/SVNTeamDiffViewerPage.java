@@ -11,22 +11,19 @@
 
 package org.eclipse.team.svn.ui.preferences;
 
-import org.eclipse.compare.internal.TabFolderLayout;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.team.svn.core.operation.local.DiffViewerSettings;
-import org.eclipse.team.svn.core.operation.local.DiffViewerSettings.ExternalProgramParameters;
 import org.eclipse.team.svn.core.operation.local.DiffViewerSettings.ResourceSpecificParameters;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
-import org.eclipse.team.svn.ui.composite.DiffViewerCompareEditorComposite;
 import org.eclipse.team.svn.ui.composite.DiffViewerFileAssociationsComposite;
+import org.eclipse.ui.IWorkbench;
 
 /**
  * Diff Viewer preference page
@@ -35,36 +32,29 @@ import org.eclipse.team.svn.ui.composite.DiffViewerFileAssociationsComposite;
  */
 public class SVNTeamDiffViewerPage extends AbstractSVNTeamPreferencesPage {
 	
-	protected DiffViewerCompareEditorComposite compareEditorComposite;
 	protected DiffViewerFileAssociationsComposite fileAssociationsComposite;
 	
 	protected DiffViewerSettings diffSettings;
 	
-	protected Control createContentsImpl(Composite parent) {
-		TabFolder tabFolder = new TabFolder(parent, SWT.NONE);
-		tabFolder.setLayout(new TabFolderLayout());
-		tabFolder.setLayoutData(new GridData());
-		
-		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
-		tabItem.setText(SVNUIMessages.SVNTeamDiffViewerPage_CompareEditor_Tab);
-		this.compareEditorComposite = new DiffViewerCompareEditorComposite(tabFolder, this);
-		tabItem.setControl(this.compareEditorComposite);
-		
-		tabItem = new TabItem(tabFolder, SWT.NONE);
-		tabItem.setText(SVNUIMessages.SVNTeamDiffViewerPage_File_Associations_Tab);
-		
-		this.fileAssociationsComposite = new DiffViewerFileAssociationsComposite(tabFolder, this);
-		tabItem.setControl(this.fileAssociationsComposite);		
-		
-		return tabFolder;
+	public void init(IWorkbench workbench) {
+		this.setDescription(SVNUIMessages.SVNTeamDiffViewerPage_Description);
 	}
 	
-	protected void initializeControls() {			
-		this.compareEditorComposite.setExternalDefaultCompare(this.diffSettings.isExternalDefaultCompare());
-		ExternalProgramParameters externalProgramParams = this.diffSettings.getDefaultExternalParameters();
-
-		this.compareEditorComposite.setExternalProgramParameters(externalProgramParams);		
-		this.compareEditorComposite.initializeControls();				
+	protected Control createContentsImpl(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = layout.marginWidth = 0;
+		layout.numColumns = 1;
+		GridData data = new GridData(GridData.FILL_BOTH);
+		composite.setLayoutData(data);
+		composite.setLayout(layout);						
+                                                		
+		this.fileAssociationsComposite = new DiffViewerFileAssociationsComposite(composite, this);		
+		
+		return composite;
+	}
+	
+	protected void initializeControls() {
 		this.fileAssociationsComposite.initializeControls(this.diffSettings);				
 	}
 
@@ -77,9 +67,6 @@ public class SVNTeamDiffViewerPage extends AbstractSVNTeamPreferencesPage {
 	}
 	
 	protected void saveValues(IPreferenceStore store) {
-		this.diffSettings.setExternalDefaultCompare(this.compareEditorComposite.isExternalDefaultCompare());
-		this.diffSettings.setDefaultExternalParameters(this.compareEditorComposite.getExternalProgramParameters());				
-		
 		SVNTeamDiffViewerPage.saveDiffViewerSettings(this.diffSettings, store);
 	}
 	
@@ -89,13 +76,6 @@ public class SVNTeamDiffViewerPage extends AbstractSVNTeamPreferencesPage {
 	
 	public static DiffViewerSettings loadDiffViewerSettings(IPreferenceStore store) {
 		DiffViewerSettings diffSettings = new DiffViewerSettings();
-		
-		diffSettings.setExternalDefaultCompare(SVNTeamPreferences.getDiffViewerBoolean(store, SVNTeamPreferences.DIFF_VIEWER_EXTERNAL_DEFAULT_COMPARE));
-		diffSettings.setDefaultExternalParameters(
-			SVNTeamPreferences.getDiffViewerString(store, SVNTeamPreferences.DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_DIFF_PATH),
-			SVNTeamPreferences.getDiffViewerString(store, SVNTeamPreferences.DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_MERGE_PATH),
-			SVNTeamPreferences.getDiffViewerString(store, SVNTeamPreferences.DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_DIFF_PARAMETERS),
-			SVNTeamPreferences.getDiffViewerString(store, SVNTeamPreferences.DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_MERGE_PARAMETERS));
 		
 		String encodedString = SVNTeamPreferences.getDiffViewerString(store, SVNTeamPreferences.DIFF_VIEWER_RESOURCES_SPECIFIC_PARAMETERS);
 		String[] stringArray = FileUtility.decodeStringToArray(encodedString);
@@ -118,27 +98,7 @@ public class SVNTeamDiffViewerPage extends AbstractSVNTeamPreferencesPage {
 		SVNTeamDiffViewerPage.saveDiffViewerSettings(diffSettings, store, false);
 	}
 	
-	public static void saveDiffViewerSettings(DiffViewerSettings diffSettings, IPreferenceStore store, boolean isDefault) {							
-		SVNTeamPreferences.setDiffViewerBoolean(store, SVNTeamPreferences.DIFF_VIEWER_EXTERNAL_DEFAULT_COMPARE, diffSettings.isExternalDefaultCompare(), isDefault);
-		String diffProgramPath = null;
-		String mergeProgramPath = null;
-		String diffParamatersString = null;
-		String mergeParamatersString = null;
-		if (diffSettings.isExternalDefaultCompare()) {
-			diffProgramPath = diffSettings.getDefaultExternalParameters().diffProgramPath;
-			mergeProgramPath = diffSettings.getDefaultExternalParameters().mergeProgramPath;
-			diffParamatersString = diffSettings.getDefaultExternalParameters().diffParamatersString;			
-			mergeParamatersString = diffSettings.getDefaultExternalParameters().mergeParamatersString;
-		}
-		diffProgramPath = diffProgramPath == null ? "" : diffProgramPath; //$NON-NLS-1$
-		mergeProgramPath = mergeProgramPath == null ? "" : mergeProgramPath; //$NON-NLS-1$
-		diffParamatersString = diffParamatersString == null ? "" : diffParamatersString; //$NON-NLS-1$
-		mergeParamatersString = mergeParamatersString == null ? "" : mergeParamatersString; //$NON-NLS-1$
-		SVNTeamPreferences.setDiffViewerString(store, SVNTeamPreferences.DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_DIFF_PATH, diffProgramPath, isDefault);	
-		SVNTeamPreferences.setDiffViewerString(store, SVNTeamPreferences.DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_MERGE_PATH, mergeProgramPath, isDefault);
-		SVNTeamPreferences.setDiffViewerString(store, SVNTeamPreferences.DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_DIFF_PARAMETERS, diffParamatersString, isDefault);
-		SVNTeamPreferences.setDiffViewerString(store, SVNTeamPreferences.DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_MERGE_PARAMETERS, mergeParamatersString, isDefault);
-		
+	public static void saveDiffViewerSettings(DiffViewerSettings diffSettings, IPreferenceStore store, boolean isDefault) {
 		ResourceSpecificParameters[] resourceParams = diffSettings.getResourceSpecificParameters();
 		if (resourceParams.length > 0) {
 			String[] stringArray = new String[ResourceSpecificParameters.FIELDS_COUNT * resourceParams.length];

@@ -41,11 +41,13 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.operation.local.DiffViewerSettings;
 import org.eclipse.team.svn.core.operation.local.DiffViewerSettings.IDiffViewerChangeListener;
+import org.eclipse.team.svn.core.operation.local.DiffViewerSettings.ResourceSpecificParameterKindEnum;
 import org.eclipse.team.svn.core.operation.local.DiffViewerSettings.ResourceSpecificParameters;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.common.DiffViewerVariablesPanel;
 import org.eclipse.team.svn.ui.panel.common.EditFileAssociationsPanel;
+import org.eclipse.team.svn.ui.utility.ColumnedViewerComparator;
 import org.eclipse.team.svn.ui.verifier.IValidationManager;
 
 /**
@@ -95,7 +97,7 @@ public class DiffViewerFileAssociationsComposite extends Composite {
 	
 	protected void createControls() {
 		GridLayout layout = new GridLayout();
-		layout.marginHeight = layout.marginWidth = 5;
+		layout.marginHeight = layout.marginWidth = 0;
 		layout.numColumns = 2;
 		GridData data = new GridData(GridData.FILL_BOTH);
 		this.setLayout(layout);
@@ -161,24 +163,34 @@ public class DiffViewerFileAssociationsComposite extends Composite {
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);				
 		
-		TableColumn column = new TableColumn(table, SWT.NONE);
-		column.setResizable(false);
-		
-		column = new TableColumn(table, SWT.NONE);
-		column.setText(SVNUIMessages.DiffViewerFileAssociationsComposite_ExtensionMimeType_Column);
-		
-		column = new TableColumn(table, SWT.NONE);
-		column.setText(SVNUIMessages.DiffViewerFileAssociationsComposite_DiffProgramPath_Column);
-		
-		column = new TableColumn(table, SWT.NONE);
-		column.setText(SVNUIMessages.DiffViewerFileAssociationsComposite_MergeProgramPath_Column);
-				
 		this.tableViewer = new CheckboxTableViewer(table);
 		this.tableViewer.setUseHashlookup(true);
 		//this.tableViewer.setColumnProperties(columnNames);
 				
 		this.tableViewer.setContentProvider(new FileAssociationsContentProvider());				
 		this.tableViewer.setLabelProvider(new FileAssociationsLabelProvider());
+		
+		ColumnedViewerComparator comparator = new FileAssociationsComparator(this.tableViewer);				
+		
+		TableColumn column = new TableColumn(table, SWT.NONE);
+		column.setResizable(false);		
+		
+		column = new TableColumn(table, SWT.NONE);
+		column.setText(SVNUIMessages.DiffViewerFileAssociationsComposite_ExtensionMimeType_Column);
+		column.addSelectionListener(comparator);
+		
+		column = new TableColumn(table, SWT.NONE);
+		column.setText(SVNUIMessages.DiffViewerFileAssociationsComposite_DiffProgramPath_Column);
+		column.addSelectionListener(comparator);
+		
+		column = new TableColumn(table, SWT.NONE);
+		column.setText(SVNUIMessages.DiffViewerFileAssociationsComposite_MergeProgramPath_Column);
+		column.addSelectionListener(comparator);
+		
+		this.tableViewer.setComparator(comparator);
+		comparator.setColumnNumber(DiffViewerFileAssociationsComposite.COLUMN_EXTENSION);
+		this.tableViewer.getTable().setSortColumn(this.tableViewer.getTable().getColumn(DiffViewerFileAssociationsComposite.COLUMN_EXTENSION));
+		this.tableViewer.getTable().setSortDirection(SWT.UP);
 		
 		this.tableViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {			
@@ -211,7 +223,7 @@ public class DiffViewerFileAssociationsComposite extends Composite {
 				
 				DiffViewerFileAssociationsComposite.this.enableButtons();								
 			}			
-		});								
+		});					
 	}
 	
 	protected void enableButtons() {
@@ -259,7 +271,7 @@ public class DiffViewerFileAssociationsComposite extends Composite {
 		
 		this.addButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {			
-				EditFileAssociationsPanel editPanel = new EditFileAssociationsPanel(null);
+				EditFileAssociationsPanel editPanel = new EditFileAssociationsPanel(null, DiffViewerFileAssociationsComposite.this.diffSettings);
 				DefaultDialog dialog = new DefaultDialog(DiffViewerFileAssociationsComposite.this.getShell(), editPanel);
 				if (dialog.open() == 0) {
 					ResourceSpecificParameters resourceParams = editPanel.getResourceSpecificParameters();					
@@ -295,7 +307,7 @@ public class DiffViewerFileAssociationsComposite extends Composite {
 	
 	protected void editFileAssociations(ResourceSpecificParameters resourceParams) {
 		if (resourceParams != null) {
-			EditFileAssociationsPanel editPanel = new EditFileAssociationsPanel(resourceParams);
+			EditFileAssociationsPanel editPanel = new EditFileAssociationsPanel(resourceParams, DiffViewerFileAssociationsComposite.this.diffSettings);
 			DefaultDialog dialog = new DefaultDialog(DiffViewerFileAssociationsComposite.this.getShell(), editPanel);
 			if (dialog.open() == 0) {
 				resourceParams = editPanel.getResourceSpecificParameters();					
@@ -345,6 +357,45 @@ public class DiffViewerFileAssociationsComposite extends Composite {
 		}
 		
 	}
+	
+	/**
+	 * File Associations table comparator 
+	 * 
+	 */
+	protected class FileAssociationsComparator extends  ColumnedViewerComparator {
+		
+		public FileAssociationsComparator(Viewer basedOn) {
+			super(basedOn);
+		}
+
+		public int compareImpl(Viewer viewer, Object row1, Object row2) {
+			ResourceSpecificParameters r1 = (ResourceSpecificParameters) row1;
+			ResourceSpecificParameters r2 = (ResourceSpecificParameters) row2;
+			
+			if (this.column == DiffViewerFileAssociationsComposite.COLUMN_EXTENSION) {
+				ResourceSpecificParameterKindEnum kindEnum1 = r1.kind.kindEnum;
+				ResourceSpecificParameterKindEnum kindEnum2 = r2.kind.kindEnum;
+				
+				if (kindEnum1.equals(kindEnum2)) {
+					return ColumnedViewerComparator.compare(r1.kind.kindValue, r2.kind.kindValue);
+				} else {
+					return kindEnum2.compareTo(kindEnum1);
+				}				 
+			}
+			if (this.column == DiffViewerFileAssociationsComposite.COLUMN_DIFF_PATH) {
+				String path1 = r1.params.diffProgramPath;
+				String path2 = r2.params.diffProgramPath;
+				return ColumnedViewerComparator.compare(path1, path2);
+			}
+			if (this.column == DiffViewerFileAssociationsComposite.COLUMN_MERGE_PATH) {
+				String path1 = r1.params.mergeProgramPath;
+				String path2 = r2.params.mergeProgramPath;
+				return ColumnedViewerComparator.compare(path1, path2);
+			}
+			
+			return 0;
+		}			
+	};
 	
 	/*
 	 * Content provider for file associations table
