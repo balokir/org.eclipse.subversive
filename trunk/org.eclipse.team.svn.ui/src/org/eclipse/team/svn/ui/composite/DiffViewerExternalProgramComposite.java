@@ -39,14 +39,16 @@ import org.eclipse.team.svn.ui.verifier.IValidationManager;
 public class DiffViewerExternalProgramComposite extends Composite {
 
 	protected IValidationManager validationManager;
+	protected String groupLabel;
 	
 	protected List<Control> controls = new ArrayList<Control>();
 	protected PathSelectionComposite pathComposite;
 	protected Text parametersText;
 	protected String programParameters;
 	
-	public DiffViewerExternalProgramComposite(Composite parent, IValidationManager validationManager) {
+	public DiffViewerExternalProgramComposite(String groupLabel, Composite parent, IValidationManager validationManager) {
 		super(parent, SWT.NONE);
+		this.groupLabel = groupLabel;
 		this.validationManager = validationManager;
 		this.createControls();			
 	}
@@ -78,6 +80,14 @@ public class DiffViewerExternalProgramComposite extends Composite {
 		this.setLayout(layout);
 		this.setLayoutData(data);
 		
+		Group parametersGroup = new Group(this, SWT.NULL);
+		layout = new GridLayout();
+		layout.numColumns = 1;
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		parametersGroup.setLayout(layout);
+		parametersGroup.setLayoutData(data);
+		parametersGroup.setText(this.groupLabel);	
+		
 		//program path			
 		this.pathComposite = new PathSelectionComposite(
 			SVNUIMessages.DiffViewerExternalProgramComposite_Path_LabelName,
@@ -85,21 +95,14 @@ public class DiffViewerExternalProgramComposite extends Composite {
 			SVNUIMessages.DiffViewerExternalProgramComposite_Path_BrowseDialogTitle,
 			null,
 			false,
-			this, this.validationManager);
+			parametersGroup,
+			this.validationManager);
 		this.controls.add(this.pathComposite);						
 		
-		//parameters
-		Group parametersGroup = new Group(this, SWT.NULL);
-		layout = new GridLayout();
-		layout.numColumns = 1;
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		parametersGroup.setLayout(layout);
-		parametersGroup.setLayoutData(data);
-		parametersGroup.setText(SVNUIMessages.DiffViewerExternalProgramComposite_ProgramArguments_Label);						
-		
+		//parameters							
 		this.parametersText = new Text(parametersGroup, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.WRAP);
 		data = new GridData(GridData.FILL_BOTH);		
-		data.heightHint = DefaultDialog.convertHeightInCharsToPixels(this.parametersText, 11);
+		data.heightHint = DefaultDialog.convertHeightInCharsToPixels(this.parametersText, 5);
 		this.parametersText.setLayoutData(data);
 		this.controls.add(this.parametersText);
 		

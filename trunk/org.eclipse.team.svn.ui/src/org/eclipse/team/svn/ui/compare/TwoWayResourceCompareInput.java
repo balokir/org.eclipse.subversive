@@ -124,7 +124,7 @@ public class TwoWayResourceCompareInput extends ResourceCompareInput {
 		final IRepositoryResource rightResource = ((ResourceElement)selectedNode.getRight()).getRepositoryResource();
 		
 		DiffViewerSettings diffSettings = SVNTeamDiffViewerPage.loadDiffViewerSettings();
-		DetectExternalCompareOperationHelper detectCompareHelper = new DetectExternalCompareOperationHelper(leftResource, diffSettings);
+		DetectExternalCompareOperationHelper detectCompareHelper = new DetectExternalCompareOperationHelper(leftResource, diffSettings, true);
 		detectCompareHelper.execute(new NullProgressMonitor());
 		
 		final ExternalProgramParameters externalProgramParams = detectCompareHelper.getExternalProgramParameters();

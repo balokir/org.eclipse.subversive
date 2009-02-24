@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.team.svn.core.operation.local.DiffViewerSettings.ExternalProgramParameters;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.verifier.AbstractValidationManagerProxy;
 import org.eclipse.team.svn.ui.verifier.IValidationManager;
@@ -31,10 +32,10 @@ import org.eclipse.team.svn.ui.verifier.IValidationManager;
  */
 public class DiffViewerCompareEditorComposite extends Composite {
 
-	protected Button eclipseEditorButton;
 	protected Button externalEditorButton;
 	protected boolean isExternalDefaultCompare;
-	protected DiffViewerExternalProgramComposite externalComposite;	
+	protected DiffViewerExternalProgramComposite diffExternalComposite;	
+	protected DiffViewerExternalProgramComposite mergeExternalComposite;
 	
 	protected IValidationManager validationManager;
 	
@@ -46,8 +47,7 @@ public class DiffViewerCompareEditorComposite extends Composite {
 	}
 
 	public void initializeControls() {		
-		this.externalEditorButton.setSelection(this.isExternalDefaultCompare);			
-		this.eclipseEditorButton.setSelection(!this.isExternalDefaultCompare);
+		this.externalEditorButton.setSelection(this.isExternalDefaultCompare);
 								
 		this.enableExternalCompositeControls();		
 	}
@@ -63,25 +63,25 @@ public class DiffViewerCompareEditorComposite extends Composite {
 		Label descriptionLabel = new Label(this, SWT.NONE);
 		data = new GridData();
 		descriptionLabel.setLayoutData(data);
-		descriptionLabel.setText(SVNUIMessages.DiffViewerCompareEditorComposite_Description);		
+		descriptionLabel.setText(SVNUIMessages.DiffViewerCompareEditorComposite_Description);				
 		
-		this.eclipseEditorButton = new Button(this, SWT.RADIO);
-		data = new GridData();
-		this.eclipseEditorButton.setLayoutData(data);
-		this.eclipseEditorButton.setText(SVNUIMessages.DiffViewerCompareEditorComposite_EclipseCompareEditor);		
-		
-		this.externalEditorButton = new Button(this, SWT.RADIO);
+		this.externalEditorButton = new Button(this, SWT.CHECK);
 		data = new GridData();
 		this.externalEditorButton.setLayoutData(data);
 		this.externalEditorButton.setText(SVNUIMessages.DiffViewerCompareEditorComposite_ExternalCompareEditor);
 				
-		this.externalComposite = new DiffViewerExternalProgramComposite(this, new AbstractValidationManagerProxy(this.validationManager) {
+		this.diffExternalComposite = new DiffViewerExternalProgramComposite(SVNUIMessages.DiffViewerExternalProgramComposite_DiffProgramArguments_Label, this, new AbstractValidationManagerProxy(this.validationManager) {
 			protected boolean isVerificationEnabled(Control input) {
-				return DiffViewerCompareEditorComposite.this.externalEditorButton.getSelection();	
+				return DiffViewerCompareEditorComposite.this.externalEditorButton.getSelection();				
 			}					
-		});
-		data = (GridData) this.externalComposite.getLayoutData();
-		data.horizontalIndent = 20;		
+		});		
+		
+		this.mergeExternalComposite = new DiffViewerExternalProgramComposite(SVNUIMessages.DiffViewerExternalProgramComposite_MergeProgramArguments_Label, this, new AbstractValidationManagerProxy(this.validationManager) {
+			protected boolean isVerificationEnabled(Control input) {
+				//return DiffViewerCompareEditorComposite.this.externalEditorButton.getSelection();
+				return false;
+			}					
+		});	
 	
 		//handlers
 			
@@ -93,13 +93,13 @@ public class DiffViewerCompareEditorComposite extends Composite {
 				DiffViewerCompareEditorComposite.this.validationManager.validateContent();
 			}			
 		};
-		
-		this.eclipseEditorButton.addListener(SWT.Selection, editorButtonListener);
+				
 		this.externalEditorButton.addListener(SWT.Selection, editorButtonListener);
 	}
 	
 	protected void enableExternalCompositeControls() {
-		this.externalComposite.setEnabled(this.externalEditorButton.getSelection());
+		this.diffExternalComposite.setEnabled(this.externalEditorButton.getSelection());
+		this.mergeExternalComposite.setEnabled(this.externalEditorButton.getSelection());
 	}
 	
 	public boolean isExternalDefaultCompare() {
@@ -110,19 +110,21 @@ public class DiffViewerCompareEditorComposite extends Composite {
 		this.isExternalDefaultCompare = isExternalDefaultCompare;
 	}
 	
-	public void setProgramParameters(String programParameters) {
-		this.externalComposite.setProgramParameters(programParameters);
+	public void setExternalProgramParameters(ExternalProgramParameters programParams) {
+		this.diffExternalComposite.setProgramPath(programParams != null ? programParams.diffProgramPath : null);
+		this.diffExternalComposite.setProgramParameters(programParams != null ? programParams.diffParamatersString : null);
+		
+		this.mergeExternalComposite.setProgramPath(programParams != null ? programParams.mergeProgramPath : null);
+		this.mergeExternalComposite.setProgramParameters(programParams != null ? programParams.mergeParamatersString : null);
 	}
 	
-	public String getProgramParameters() {
-		return this.externalComposite.getProgramParameters();
-	}
-	
-	public void setProgramPath(String programPath) {
-		this.externalComposite.setProgramPath(programPath);
-	}
-	
-	public String getProgramPath() {
-		return this.externalComposite.getProgramPath();
+	public ExternalProgramParameters getExternalProgramParameters() {
+		ExternalProgramParameters params = new ExternalProgramParameters(
+				this.diffExternalComposite.getProgramPath(),
+				this.mergeExternalComposite.getProgramPath(),
+				this.diffExternalComposite.getProgramParameters(),
+				this.mergeExternalComposite.getProgramParameters()
+				);
+		return params;
 	}
 }

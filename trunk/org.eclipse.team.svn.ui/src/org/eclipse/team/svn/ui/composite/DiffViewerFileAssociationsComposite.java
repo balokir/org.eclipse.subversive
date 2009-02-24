@@ -44,6 +44,7 @@ import org.eclipse.team.svn.core.operation.local.DiffViewerSettings.IDiffViewerC
 import org.eclipse.team.svn.core.operation.local.DiffViewerSettings.ResourceSpecificParameters;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
+import org.eclipse.team.svn.ui.panel.common.DiffViewerVariablesPanel;
 import org.eclipse.team.svn.ui.panel.common.EditFileAssociationsPanel;
 import org.eclipse.team.svn.ui.verifier.IValidationManager;
 
@@ -58,13 +59,15 @@ public class DiffViewerFileAssociationsComposite extends Composite {
 
 	protected static final int COLUMN_CHECKBOX = 0;
 	protected static final int COLUMN_EXTENSION = 1;
-	protected static final int COLUMN_PATH = 2;
+	protected static final int COLUMN_DIFF_PATH = 2;
+	protected static final int COLUMN_MERGE_PATH = 3;
 	
 	protected IValidationManager validationManager;	
 	protected DiffViewerSettings diffSettings;
 	
 	protected CheckboxTableViewer tableViewer;
-	protected Text parametersText;
+	protected Text diffParametersText;
+	protected Text mergeParametersText;
 	protected Button addButton;
 	protected Button editButton;
 	protected Button removeButton;
@@ -79,7 +82,8 @@ public class DiffViewerFileAssociationsComposite extends Composite {
 	public void initializeControls(DiffViewerSettings diffSettings) {
 		this.diffSettings = diffSettings;
 		
-		this.parametersText.setText(""); //$NON-NLS-1$
+		this.diffParametersText.setText(""); //$NON-NLS-1$
+		this.mergeParametersText.setText(""); //$NON-NLS-1$
 		this.tableViewer.setInput(diffSettings);		
 		
 		//set checked
@@ -107,25 +111,41 @@ public class DiffViewerFileAssociationsComposite extends Composite {
 		
 		this.createFileAssociationsTable(tableComposite);
 		this.createParametersPreview(tableComposite);
-				
+		
 		this.createButtonsControls(this);
 		this.enableButtons();
 	}
-
+	
 	protected void createParametersPreview(Composite parent) {
-		Group group = new Group(parent, SWT.NONE);
+		//diff
+		Group diffGroup = new Group(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		group.setLayout(layout);
-		group.setLayoutData(data);
-		group.setText(SVNUIMessages.DiffViewerFileAssociationsComposite_ProgramArguments_Label);
+		diffGroup.setLayout(layout);
+		diffGroup.setLayoutData(data);
+		diffGroup.setText(SVNUIMessages.DiffViewerExternalProgramComposite_DiffProgramArguments_Label);
 				
-		this.parametersText = new Text(group, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.WRAP);
+		this.diffParametersText = new Text(diffGroup, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.WRAP);
 		data = new GridData(GridData.FILL_HORIZONTAL);		
-		data.heightHint = DefaultDialog.convertHeightInCharsToPixels(parametersText, 11);
-		this.parametersText.setLayoutData(data);
-		this.parametersText.setBackground(parametersText.getBackground());
-		this.parametersText.setEditable(false);				
+		data.heightHint = DefaultDialog.convertHeightInCharsToPixels(this.diffParametersText, 5);
+		this.diffParametersText.setLayoutData(data);
+		this.diffParametersText.setBackground(this.diffParametersText.getBackground());
+		this.diffParametersText.setEditable(false);
+		
+		//merge
+		Group mergeGroup = new Group(parent, SWT.NONE);
+		layout = new GridLayout();
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		mergeGroup.setLayout(layout);
+		mergeGroup.setLayoutData(data);
+		mergeGroup.setText(SVNUIMessages.DiffViewerExternalProgramComposite_MergeProgramArguments_Label);
+				
+		this.mergeParametersText = new Text(mergeGroup, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.WRAP);
+		data = new GridData(GridData.FILL_HORIZONTAL);		
+		data.heightHint = DefaultDialog.convertHeightInCharsToPixels(this.mergeParametersText, 5);
+		this.mergeParametersText.setLayoutData(data);
+		this.mergeParametersText.setBackground(this.mergeParametersText.getBackground());
+		this.mergeParametersText.setEditable(false);				
 	}
 
 	protected void createFileAssociationsTable(Composite parent) {		
@@ -133,7 +153,8 @@ public class DiffViewerFileAssociationsComposite extends Composite {
 		TableLayout layout = new TableLayout();
 		layout.addColumnData(new ColumnPixelData(20, false));
 		layout.addColumnData(new ColumnWeightData(30, true));
-		layout.addColumnData(new ColumnWeightData(70, true));
+		layout.addColumnData(new ColumnWeightData(40, true));
+		layout.addColumnData(new ColumnWeightData(40, true));
 		GridData data = new GridData(GridData.FILL_BOTH);
 		table.setLayoutData(data);
 		table.setLayout(layout);
@@ -147,7 +168,10 @@ public class DiffViewerFileAssociationsComposite extends Composite {
 		column.setText(SVNUIMessages.DiffViewerFileAssociationsComposite_ExtensionMimeType_Column);
 		
 		column = new TableColumn(table, SWT.NONE);
-		column.setText(SVNUIMessages.DiffViewerFileAssociationsComposite_ProgramPath_Column);
+		column.setText(SVNUIMessages.DiffViewerFileAssociationsComposite_DiffProgramPath_Column);
+		
+		column = new TableColumn(table, SWT.NONE);
+		column.setText(SVNUIMessages.DiffViewerFileAssociationsComposite_MergeProgramPath_Column);
 				
 		this.tableViewer = new CheckboxTableViewer(table);
 		this.tableViewer.setUseHashlookup(true);
@@ -176,10 +200,13 @@ public class DiffViewerFileAssociationsComposite extends Composite {
 				//init parameters control
 				ResourceSpecificParameters param = DiffViewerFileAssociationsComposite.this.getSelectedResourceSpecificParameter();
 				if (param != null) {
-					String paramsStr = param.params.paramatersString;
-					if (paramsStr != null) {
-						DiffViewerFileAssociationsComposite.this.parametersText.setText(paramsStr);
-					}
+					String diffParamsStr = param.params.diffParamatersString;
+					diffParamsStr = diffParamsStr != null ? diffParamsStr : ""; //$NON-NLS-1$
+					DiffViewerFileAssociationsComposite.this.diffParametersText.setText(diffParamsStr);					
+					
+					String mergeParamsStr = param.params.mergeParamatersString;
+					mergeParamsStr = mergeParamsStr != null ? mergeParamsStr : "";  //$NON-NLS-1$
+					DiffViewerFileAssociationsComposite.this.mergeParametersText.setText(mergeParamsStr);					
 				}
 				
 				DiffViewerFileAssociationsComposite.this.enableButtons();								
@@ -222,6 +249,12 @@ public class DiffViewerFileAssociationsComposite extends Composite {
 		this.removeButton.setLayoutData(data);
 		this.removeButton.setText(SVNUIMessages.DiffViewerFileAssociationsComposite_Remove_Button);
 		
+		Button variablesButton = new Button(composite, SWT.PUSH);		
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.widthHint = DefaultDialog.computeButtonWidth(variablesButton);
+		variablesButton.setLayoutData(data);
+		variablesButton.setText(SVNUIMessages.DiffViewerExternalProgramComposite_Variables_Button);
+		
 		//handlers
 		
 		this.addButton.addListener(SWT.Selection, new Listener() {
@@ -249,6 +282,14 @@ public class DiffViewerFileAssociationsComposite extends Composite {
 					DiffViewerFileAssociationsComposite.this.diffSettings.removeResourceSpecificParameters(resourceParams);
 				}					
 			}			
+		});
+		
+		variablesButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				DiffViewerVariablesPanel panel = new DiffViewerVariablesPanel();
+				DefaultDialog dlg = new DefaultDialog(DiffViewerFileAssociationsComposite.this.getShell(), panel);
+				dlg.open();
+			}				
 		});
 	}
 	
@@ -289,8 +330,11 @@ public class DiffViewerFileAssociationsComposite extends Composite {
 				case DiffViewerFileAssociationsComposite.COLUMN_EXTENSION:
 					res = param.kind.formatKindValue();
 					break;
-				case DiffViewerFileAssociationsComposite.COLUMN_PATH:
-					res = param.params.programPath;
+				case DiffViewerFileAssociationsComposite.COLUMN_DIFF_PATH:
+					res = param.params.diffProgramPath;
+					break;
+				case DiffViewerFileAssociationsComposite.COLUMN_MERGE_PATH:
+					res = param.params.mergeProgramPath;
 					break;	
 			}
 			return res;
@@ -320,13 +364,15 @@ public class DiffViewerFileAssociationsComposite extends Composite {
 		public void changeResourceSpecificParameters(ResourceSpecificParameters params) {
 			DiffViewerFileAssociationsComposite.this.tableViewer.update(params, null);
 			//update parametersText
-			DiffViewerFileAssociationsComposite.this.parametersText.setText(params.params.paramatersString);
+			DiffViewerFileAssociationsComposite.this.diffParametersText.setText(params.params.diffParamatersString);
+			DiffViewerFileAssociationsComposite.this.mergeParametersText.setText(params.params.mergeParamatersString);
 		}
 
 		public void removeResourceSpecificParameters(ResourceSpecificParameters params) {
 			DiffViewerFileAssociationsComposite.this.tableViewer.remove(params);
 			//clear parametersText
-			DiffViewerFileAssociationsComposite.this.parametersText.setText(""); //$NON-NLS-1$
+			DiffViewerFileAssociationsComposite.this.diffParametersText.setText(""); //$NON-NLS-1$
+			DiffViewerFileAssociationsComposite.this.mergeParametersText.setText(""); //$NON-NLS-1$
 		}
 		
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {

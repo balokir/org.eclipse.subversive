@@ -50,17 +50,12 @@ public class DiffViewerVariablesPanel extends AbstractDialogPanel {
 		this.variablesMap.put("theirs", SVNUIMessages.DiffViewerVariablesPanel_TheirsVariable_Description); //$NON-NLS-1$
 		this.variablesMap.put("merged", SVNUIMessages.DiffViewerVariablesPanel_MergedVariable_Description); //$NON-NLS-1$
 		
-		this.variablesMap.put("default-doc-program", SVNUIMessages.DiffViewerVariablesPanel_DefaultDocVariable_Description); //$NON-NLS-1$
-		this.variablesMap.put("default-docx-program", SVNUIMessages.DiffViewerVariablesPanel_DefaultDocxVariable_Description); //$NON-NLS-1$
-		
-		this.variablesMap.put("default-xls-program", SVNUIMessages.DiffViewerVariablesPanel_DefaultXlsVariable_Description); //$NON-NLS-1$
-		this.variablesMap.put("default-xlsx-program", SVNUIMessages.DiffViewerVariablesPanel_DefaultXlsxVariable_Description); //$NON-NLS-1$
-		
+		this.variablesMap.put("default-doc-program", SVNUIMessages.DiffViewerVariablesPanel_DefaultDocVariable_Description); //$NON-NLS-1$				
+		this.variablesMap.put("default-xls-program", SVNUIMessages.DiffViewerVariablesPanel_DefaultXlsVariable_Description); //$NON-NLS-1$		
 		this.variablesMap.put("default-ppt-program", SVNUIMessages.DiffViewerVariablesPanel_DefaultPptVariable_Description); //$NON-NLS-1$
-		this.variablesMap.put("default-pptx-program", SVNUIMessages.DiffViewerVariablesPanel_DefaultPptxVariable_Description); //$NON-NLS-1$
 		
 		this.variablesMap.put("default-odt-program", SVNUIMessages.DiffViewerVariablesPanel_DefaultOdtVariable_Description); //$NON-NLS-1$
-		this.variablesMap.put("default-ods-program", SVNUIMessages.DiffViewerVariablesPanel_DefaultOdsVariable_Description); //$NON-NLS-1$				
+		this.variablesMap.put("default-ods-program", SVNUIMessages.DiffViewerVariablesPanel_DefaultOdsVariable_Description); //$NON-NLS-1$
 	}
 	
 	protected void createControlsImpl(Composite parent) {

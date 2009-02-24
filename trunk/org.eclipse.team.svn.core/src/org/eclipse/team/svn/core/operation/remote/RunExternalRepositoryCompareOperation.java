@@ -61,7 +61,7 @@ public class RunExternalRepositoryCompareOperation extends CompositeOperation im
 		protected boolean isExecuted;
 		
 		public ExternalCompareRepositoryOperation(IRepositoryResource left, IRepositoryResource right, IExternalProgramParametersProvider parametersProvider) {
-			this(new DefaultRepositoryResourceProvider(new IRepositoryResource[]{left, right}), parametersProvider);																	
+			this(new DefaultRepositoryResourceProvider(new IRepositoryResource[]{right, left}), parametersProvider);																	
 		}
 		
 		public ExternalCompareRepositoryOperation(final IRepositoryResourceProvider resourcesProvider, IExternalProgramParametersProvider parametersProvider) {
@@ -71,14 +71,14 @@ public class RunExternalRepositoryCompareOperation extends CompositeOperation im
 			//get files operations
 			final AbstractGetFileContentOperation nextFileGetOp = new GetFileContentOperation(new IRepositoryResourceProvider() {
 				public IRepositoryResource[] getRepositoryResources() {
-					return new IRepositoryResource[]{resourcesProvider.getRepositoryResources()[0]};
+					return new IRepositoryResource[]{resourcesProvider.getRepositoryResources()[1]};
 				}				
 			});				
 			this.add(nextFileGetOp);
 			
 			final AbstractGetFileContentOperation prevFileGetOp = new GetFileContentOperation(new IRepositoryResourceProvider() {
 				public IRepositoryResource[] getRepositoryResources() {
-					return new IRepositoryResource[]{resourcesProvider.getRepositoryResources()[1]};
+					return new IRepositoryResource[]{resourcesProvider.getRepositoryResources()[0]};
 				}				
 			});				
 			this.add(prevFileGetOp, new IActionOperation[] {nextFileGetOp});

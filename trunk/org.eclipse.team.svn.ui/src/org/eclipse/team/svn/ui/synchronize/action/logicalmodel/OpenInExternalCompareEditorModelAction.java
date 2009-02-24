@@ -60,7 +60,7 @@ public class OpenInExternalCompareEditorModelAction extends AbstractSynchronizeL
 		if (super.updateSelection(selection) && selection.size() == 1) {
 			IResource resource = this.getSelectedResource();				
 			DiffViewerSettings diffSettings = SVNTeamDiffViewerPage.loadDiffViewerSettings();
-			DetectExternalCompareOperationHelper detectCompareHelper = new DetectExternalCompareOperationHelper(resource, diffSettings);
+			DetectExternalCompareOperationHelper detectCompareHelper = new DetectExternalCompareOperationHelper(resource, diffSettings, true);
 			detectCompareHelper.execute(new NullProgressMonitor());
 			this.externalProgramParams = detectCompareHelper.getExternalProgramParameters();
 			if (this.externalProgramParams != null) {

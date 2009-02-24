@@ -62,17 +62,8 @@ public class SVNTeamDiffViewerPage extends AbstractSVNTeamPreferencesPage {
 	protected void initializeControls() {			
 		this.compareEditorComposite.setExternalDefaultCompare(this.diffSettings.isExternalDefaultCompare());
 		ExternalProgramParameters externalProgramParams = this.diffSettings.getDefaultExternalParameters();
-		String programPath = null;
-		String paramatersString = null;
-		if (this.diffSettings.isExternalDefaultCompare() && externalProgramParams != null) {			 
-			programPath = externalProgramParams.programPath;
-			paramatersString = externalProgramParams.paramatersString;				
-		}		
-		programPath = programPath == null ? "" : programPath; //$NON-NLS-1$
-		paramatersString = paramatersString == null ? "" : paramatersString; //$NON-NLS-1$
-		this.compareEditorComposite.setProgramPath(programPath);
-		this.compareEditorComposite.setProgramParameters(paramatersString);
-		
+
+		this.compareEditorComposite.setExternalProgramParameters(externalProgramParams);		
 		this.compareEditorComposite.initializeControls();				
 		this.fileAssociationsComposite.initializeControls(this.diffSettings);				
 	}
@@ -87,7 +78,7 @@ public class SVNTeamDiffViewerPage extends AbstractSVNTeamPreferencesPage {
 	
 	protected void saveValues(IPreferenceStore store) {
 		this.diffSettings.setExternalDefaultCompare(this.compareEditorComposite.isExternalDefaultCompare());
-		this.diffSettings.setDefaultExternalParameters(this.compareEditorComposite.getProgramPath(), this.compareEditorComposite.getProgramParameters());				
+		this.diffSettings.setDefaultExternalParameters(this.compareEditorComposite.getExternalProgramParameters());				
 		
 		SVNTeamDiffViewerPage.saveDiffViewerSettings(this.diffSettings, store);
 	}
@@ -101,8 +92,10 @@ public class SVNTeamDiffViewerPage extends AbstractSVNTeamPreferencesPage {
 		
 		diffSettings.setExternalDefaultCompare(SVNTeamPreferences.getDiffViewerBoolean(store, SVNTeamPreferences.DIFF_VIEWER_EXTERNAL_DEFAULT_COMPARE));
 		diffSettings.setDefaultExternalParameters(
-			SVNTeamPreferences.getDiffViewerString(store, SVNTeamPreferences.DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_PATH),
-			SVNTeamPreferences.getDiffViewerString(store, SVNTeamPreferences.DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_PARAMETERS));
+			SVNTeamPreferences.getDiffViewerString(store, SVNTeamPreferences.DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_DIFF_PATH),
+			SVNTeamPreferences.getDiffViewerString(store, SVNTeamPreferences.DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_MERGE_PATH),
+			SVNTeamPreferences.getDiffViewerString(store, SVNTeamPreferences.DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_DIFF_PARAMETERS),
+			SVNTeamPreferences.getDiffViewerString(store, SVNTeamPreferences.DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_MERGE_PARAMETERS));
 		
 		String encodedString = SVNTeamPreferences.getDiffViewerString(store, SVNTeamPreferences.DIFF_VIEWER_RESOURCES_SPECIFIC_PARAMETERS);
 		String[] stringArray = FileUtility.decodeStringToArray(encodedString);
@@ -127,16 +120,24 @@ public class SVNTeamDiffViewerPage extends AbstractSVNTeamPreferencesPage {
 	
 	public static void saveDiffViewerSettings(DiffViewerSettings diffSettings, IPreferenceStore store, boolean isDefault) {							
 		SVNTeamPreferences.setDiffViewerBoolean(store, SVNTeamPreferences.DIFF_VIEWER_EXTERNAL_DEFAULT_COMPARE, diffSettings.isExternalDefaultCompare(), isDefault);
-		String programPath = null;
-		String paramatersString = null;
+		String diffProgramPath = null;
+		String mergeProgramPath = null;
+		String diffParamatersString = null;
+		String mergeParamatersString = null;
 		if (diffSettings.isExternalDefaultCompare()) {
-			programPath = diffSettings.getDefaultExternalParameters().programPath;			
-			paramatersString = diffSettings.getDefaultExternalParameters().paramatersString;			
+			diffProgramPath = diffSettings.getDefaultExternalParameters().diffProgramPath;
+			mergeProgramPath = diffSettings.getDefaultExternalParameters().mergeProgramPath;
+			diffParamatersString = diffSettings.getDefaultExternalParameters().diffParamatersString;			
+			mergeParamatersString = diffSettings.getDefaultExternalParameters().mergeParamatersString;
 		}
-		programPath = programPath == null ? "" : programPath; //$NON-NLS-1$
-		paramatersString = paramatersString == null ? "" : paramatersString; //$NON-NLS-1$
-		SVNTeamPreferences.setDiffViewerString(store, SVNTeamPreferences.DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_PATH, programPath, isDefault);	
-		SVNTeamPreferences.setDiffViewerString(store, SVNTeamPreferences.DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_PARAMETERS, paramatersString, isDefault);
+		diffProgramPath = diffProgramPath == null ? "" : diffProgramPath; //$NON-NLS-1$
+		mergeProgramPath = mergeProgramPath == null ? "" : mergeProgramPath; //$NON-NLS-1$
+		diffParamatersString = diffParamatersString == null ? "" : diffParamatersString; //$NON-NLS-1$
+		mergeParamatersString = mergeParamatersString == null ? "" : mergeParamatersString; //$NON-NLS-1$
+		SVNTeamPreferences.setDiffViewerString(store, SVNTeamPreferences.DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_DIFF_PATH, diffProgramPath, isDefault);	
+		SVNTeamPreferences.setDiffViewerString(store, SVNTeamPreferences.DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_MERGE_PATH, mergeProgramPath, isDefault);
+		SVNTeamPreferences.setDiffViewerString(store, SVNTeamPreferences.DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_DIFF_PARAMETERS, diffParamatersString, isDefault);
+		SVNTeamPreferences.setDiffViewerString(store, SVNTeamPreferences.DIFF_VIEWER_DEFAULT_EXTERNAL_PROGRAM_MERGE_PARAMETERS, mergeParamatersString, isDefault);
 		
 		ResourceSpecificParameters[] resourceParams = diffSettings.getResourceSpecificParameters();
 		if (resourceParams.length > 0) {
@@ -148,6 +149,8 @@ public class SVNTeamDiffViewerPage extends AbstractSVNTeamPreferencesPage {
 			}	
 			String encodedString = FileUtility.encodeArrayToString(stringArray);
 			SVNTeamPreferences.setDiffViewerString(store, SVNTeamPreferences.DIFF_VIEWER_RESOURCES_SPECIFIC_PARAMETERS, encodedString, isDefault);
-		}		
+		} else {
+			SVNTeamPreferences.setDiffViewerString(store, SVNTeamPreferences.DIFF_VIEWER_RESOURCES_SPECIFIC_PARAMETERS, "", isDefault); //$NON-NLS-1$
+		}
 	}
 }

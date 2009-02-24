@@ -31,6 +31,9 @@ import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
 import org.eclipse.team.svn.core.operation.SVNResourceRuleFactory;
 import org.eclipse.team.svn.core.operation.local.AbstractWorkingCopyOperation;
+import org.eclipse.team.svn.core.operation.local.DiffViewerSettings.ExternalProgramParameters;
+import org.eclipse.team.svn.core.operation.local.RunExternalCompareOperation.DetectExternalCompareOperationHelper;
+import org.eclipse.team.svn.core.operation.local.RunExternalCompareOperation.ExternalCompareOperationHelper;
 import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
@@ -40,6 +43,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.compare.ComparePanel;
 import org.eclipse.team.svn.ui.compare.ConflictingFileEditorInput;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
+import org.eclipse.team.svn.ui.preferences.SVNTeamDiffViewerPage;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
@@ -109,7 +113,7 @@ public class ShowConflictEditorOperation extends AbstractWorkingCopyOperation {
 				 * created, since it would be identical to the working file.
 				 */
 				IFile local = null;
-				if (status[0].conflictWorking != null && !"".equals(status[0].conflictWorking)) {
+				if (status[0].conflictWorking != null && !"".equals(status[0].conflictWorking)) { //$NON-NLS-1$
 					local = parent.getFile(new Path(status[0].conflictWorking));
 					if (!local.exists()) {
 						local = null;
@@ -119,7 +123,16 @@ public class ShowConflictEditorOperation extends AbstractWorkingCopyOperation {
 				
 				IFile remote = parent.getFile(new Path(status[0].conflictNew));
 				IFile ancestor = parent.getFile(new Path(status[0].conflictOld));
-				this.openEditor(resource, local, remote, ancestor, monitor);
+				
+				//detect compare editor
+				DetectExternalCompareOperationHelper detectCompareEditorHelper = new DetectExternalCompareOperationHelper(resource, SVNTeamDiffViewerPage.loadDiffViewerSettings(), false);
+				detectCompareEditorHelper.execute(monitor);
+				ExternalProgramParameters externalProgramParams = detectCompareEditorHelper.getExternalProgramParameters();
+				if (externalProgramParams != null) {
+					this.openExternalEditor(resource, local, remote, ancestor, externalProgramParams, monitor);
+				} else {
+					this.openEclipseEditor(resource, local, remote, ancestor, monitor);	
+				}
 			}
 		}
 		finally {
@@ -127,7 +140,17 @@ public class ShowConflictEditorOperation extends AbstractWorkingCopyOperation {
 		}
 	}
 	
-	protected void openEditor(final IFile target, IFile left, IFile right, IFile ancestor, IProgressMonitor monitor) throws Exception {
+	protected void openExternalEditor(IFile target, IFile left, IFile right, IFile ancestor, ExternalProgramParameters externalProgramParams, IProgressMonitor monitor) throws Exception {
+		String targetFile = FileUtility.getWorkingCopyPath(target);
+		String oldFile = FileUtility.getWorkingCopyPath(ancestor);
+		String workingFile = FileUtility.getWorkingCopyPath(left);
+		String newFile = FileUtility.getWorkingCopyPath(right);				
+		
+		ExternalCompareOperationHelper compareRunner = new ExternalCompareOperationHelper(oldFile, workingFile, newFile, targetFile, externalProgramParams, false);
+		compareRunner.execute(monitor);
+	}
+
+	protected void openEclipseEditor(final IFile target, IFile left, IFile right, IFile ancestor, IProgressMonitor monitor) throws Exception {
 		CompareConfiguration cc = new CompareConfiguration();
 		cc.setProperty(CompareEditor.CONFIRM_SAVE_PROPERTY, Boolean.TRUE);
 		final ConflictingFileEditorInput compare = new ConflictingFileEditorInput(cc, target, left, right, ancestor);

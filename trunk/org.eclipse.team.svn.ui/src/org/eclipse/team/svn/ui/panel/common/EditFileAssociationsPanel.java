@@ -35,7 +35,8 @@ public class EditFileAssociationsPanel extends AbstractDialogPanel {
 	protected ResourceSpecificParameters param;
 		
 	protected Text extensionText;
-	protected DiffViewerExternalProgramComposite paramsComposite;
+	protected DiffViewerExternalProgramComposite diffExternalComposite;
+	protected DiffViewerExternalProgramComposite mergeExternalComposite;
 	
 	public EditFileAssociationsPanel(ResourceSpecificParameters param) {
 		this.param = param;
@@ -68,10 +69,15 @@ public class EditFileAssociationsPanel extends AbstractDialogPanel {
 		data.widthHint = 100;
 		this.extensionText.setLayoutData(data);
 		
-		this.paramsComposite = new DiffViewerExternalProgramComposite(composite, this);
+		this.diffExternalComposite = new DiffViewerExternalProgramComposite(SVNUIMessages.DiffViewerExternalProgramComposite_DiffProgramArguments_Label, composite, this);
 		data = new GridData(GridData.FILL_HORIZONTAL);		
 		data.horizontalSpan = 2;
-		this.paramsComposite.setLayoutData(data);				
+		this.diffExternalComposite.setLayoutData(data);			
+		
+		this.mergeExternalComposite = new DiffViewerExternalProgramComposite(SVNUIMessages.DiffViewerExternalProgramComposite_MergeProgramArguments_Label, composite, this);
+		data = new GridData(GridData.FILL_HORIZONTAL);		
+		data.horizontalSpan = 2;
+		this.mergeExternalComposite.setLayoutData(data);			
 		
 		this.attachTo(this.extensionText, new NonEmptyFieldVerifier(SVNUIMessages.EditFileAssociationsPanel_ExtensionMimeType_FieldName));
 		
@@ -80,8 +86,11 @@ public class EditFileAssociationsPanel extends AbstractDialogPanel {
 			if (this.param.kind.kindValue != null) {
 				this.extensionText.setText(this.param.kind.formatKindValue());	
 			}								
-			this.paramsComposite.setProgramPath(this.param.params.programPath);
-			this.paramsComposite.setProgramParameters(this.param.params.paramatersString);
+			this.diffExternalComposite.setProgramPath(this.param.params.diffProgramPath);
+			this.diffExternalComposite.setProgramParameters(this.param.params.diffParamatersString);
+			
+			this.mergeExternalComposite.setProgramPath(this.param.params.mergeProgramPath);
+			this.mergeExternalComposite.setProgramParameters(this.param.params.mergeParamatersString);
 		}
 	}		
 	
@@ -89,9 +98,12 @@ public class EditFileAssociationsPanel extends AbstractDialogPanel {
 		String extensionStr = this.extensionText.getText();
 		ResourceSpecificParameterKind kind = ResourceSpecificParameterKind.getKind(extensionStr);
 		
-		String programPath = this.paramsComposite.getProgramPath();
-		String programParams = this.paramsComposite.getProgramParameters();
-		ExternalProgramParameters externalProgramParams = new ExternalProgramParameters(programPath, programParams);
+		ExternalProgramParameters externalProgramParams = new ExternalProgramParameters(
+				this.diffExternalComposite.getProgramPath(),
+				this.mergeExternalComposite.getProgramPath(),
+				this.diffExternalComposite.getProgramParameters(), 
+				this.mergeExternalComposite.getProgramParameters());
+				
 		
 		if (this.param == null) {
 			this.param = new ResourceSpecificParameters(kind, externalProgramParams);

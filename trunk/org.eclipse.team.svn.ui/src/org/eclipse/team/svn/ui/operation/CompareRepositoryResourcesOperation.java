@@ -43,8 +43,7 @@ public class CompareRepositoryResourcesOperation extends CompositeOperation {
 			}
 		};
 		this.add(this.internalCompare, new IActionOperation[]{externalCompare});
-	}
-	
+	}	
 	
 	public CompareRepositoryResourcesOperation(IRepositoryResource prev, IRepositoryResource next, boolean forceReuse) {
 		this(new IRepositoryResourceProvider.DefaultRepositoryResourceProvider(new IRepositoryResource[] {prev, next}), forceReuse);
