@@ -1597,9 +1597,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String AddRepositoryPage_DirectoryDialog_Title;
 	public static String AddRepositoryPage_DirectoryDialog_Description;
 	
-	public static String DiffViewerCompareEditorComposite_Description;
-	public static String DiffViewerCompareEditorComposite_ExternalCompareEditor;
-	
 	public static String DiffViewerExternalProgramComposite_Path_LabelName;
 	public static String DiffViewerExternalProgramComposite_Path_FieldName;
 	public static String DiffViewerExternalProgramComposite_Path_BrowseDialogTitle;
@@ -1620,17 +1617,15 @@ public class SVNUIMessages extends BaseMessages {
 	public static String EditFileAssociationsPanel_EditDialogTitle;
 	public static String EditFileAssociationsPanel_ExtensionMimeType_FieldName;
 	public static String EditFileAssociationsPanel_ExtensionMimeType_Label;
-	
-	public static String SVNTeamDiffViewerPage_CompareEditor_Tab;
-	public static String SVNTeamDiffViewerPage_File_Associations_Tab;
+	public static String EditFileAssociationsPanel_DuplicateExtension_Verifier_Error;
 	
 	public static String DiffViewerVariablesPanel_BaseVariable_Description;
-	public static String DiffViewerVariablesPanel_DefaultDocVariable_Description;	
-	public static String DiffViewerVariablesPanel_DefaultXlsVariable_Description;	
-	public static String DiffViewerVariablesPanel_DefaultPptVariable_Description;	
-	public static String DiffViewerVariablesPanel_DefaultOdtVariable_Description;
-	public static String DiffViewerVariablesPanel_DefaultOdtMergeVariable_Description;
-	public static String DiffViewerVariablesPanel_DefaultOdsVariable_Description;	
+	public static String DiffViewerVariablesPanel_DefaultVariable_Description;
+	public static String DiffViewerVariablesPanel_DefaultDocVariable_Program;
+	public static String DiffViewerVariablesPanel_DefaultPptVariable_Program;
+	public static String DiffViewerVariablesPanel_DefaultXlsVariable_Program;
+	public static String DiffViewerVariablesPanel_DefaultOdtVariable_Program;
+	public static String DiffViewerVariablesPanel_DefaultOdsVariable_Program;	
 	public static String DiffViewerVariablesPanel_DialogDefaultMessage;
 	public static String DiffViewerVariablesPanel_DialogDescription;
 	public static String DiffViewerVariablesPanel_DialogTitle;
@@ -1640,6 +1635,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String DiffViewerVariablesPanel_VariableDescriptionLabel;
 	
 	public static String OpenInExternalCompareEditor_Action;
+	public static String SVNTeamDiffViewerPage_Description;
 	
 	static {
 		//load message values from bundle file

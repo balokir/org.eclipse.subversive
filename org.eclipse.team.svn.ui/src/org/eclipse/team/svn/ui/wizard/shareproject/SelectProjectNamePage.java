@@ -27,10 +27,8 @@ import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.extension.impl.ISelectProjectNamePageData;
-import org.eclipse.team.svn.ui.verifier.AbstractVerifier;
-import org.eclipse.team.svn.ui.verifier.AbstractVerifierProxy;
+import org.eclipse.team.svn.ui.verifier.AbstractValidationManagerProxy;
 import org.eclipse.team.svn.ui.verifier.IValidationManager;
-import org.eclipse.team.svn.ui.verifier.WrapperValidationManagerProxy;
 import org.eclipse.team.svn.ui.wizard.AbstractVerifiedWizardPage;
 import org.eclipse.ui.PlatformUI;
 
@@ -57,7 +55,7 @@ public class SelectProjectNamePage extends AbstractVerifiedWizardPage {
 		this.isSimpleMode = true;				
 	}
 	
-	protected class SelectProjectNamePageValidationManager extends WrapperValidationManagerProxy {
+	protected class SelectProjectNamePageValidationManager extends AbstractValidationManagerProxy {
 				
 		protected boolean isSimpleValidationManager;
 		
@@ -65,14 +63,9 @@ public class SelectProjectNamePage extends AbstractVerifiedWizardPage {
 			super(validationManager);	
 			this.isSimpleValidationManager = isSimpleValidationManager;
 		}
-
-		protected AbstractVerifier wrapVerifier(AbstractVerifier verifier) {
-			return new AbstractVerifierProxy(verifier) {
-				protected boolean isVerificationEnabled(Control input) {
-					return SelectProjectNamePage.this.isSimpleMode == SelectProjectNamePageValidationManager.this.isSimpleValidationManager;
-				}
-			};			
-		}					
+		protected boolean isVerificationEnabled(Control input) {
+			return SelectProjectNamePage.this.isSimpleMode == SelectProjectNamePageValidationManager.this.isSimpleValidationManager;
+		}			
 	}	
 	
 	/*
