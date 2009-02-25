@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.core.operation.local;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -123,8 +122,7 @@ public class DiffViewerSettings {
 		
 		public static ResourceSpecificParameters createFromStrings(String[] strings) {
 			if (strings.length != FIELDS_COUNT) {
-				throw new RuntimeException("Failed to create " + ResourceSpecificParameters.class +  //$NON-NLS-1$
-					" from string array. String array: " + Arrays.asList(strings)); //$NON-NLS-1$
+				return null;
 			}
 			
 			boolean isEnabled = "1".equals(strings[0]); //$NON-NLS-1$
@@ -169,8 +167,9 @@ public class DiffViewerSettings {
 
 		//check file extension			
 		String fileExtension = file.getFileExtension();
-		if (fileExtension != null && diffSettings.specificParameters.containsKey(new ResourceSpecificParameterKind(ResourceSpecificParameterKindEnum.FILE_EXTENSION, fileExtension))) {
-			kind = new ResourceSpecificParameterKind(ResourceSpecificParameterKindEnum.FILE_EXTENSION, fileExtension);
+		ResourceSpecificParameterKind tmpKind;
+		if (fileExtension != null && diffSettings.specificParameters.containsKey(tmpKind = new ResourceSpecificParameterKind(ResourceSpecificParameterKindEnum.FILE_EXTENSION, fileExtension))) {
+			kind = tmpKind;
 		}
 		
 		//check mime type
@@ -190,9 +189,9 @@ public class DiffViewerSettings {
     				}
     			}		    															
     		}	
-    		
-    		if (mimeType != null && diffSettings.specificParameters.containsKey(new ResourceSpecificParameterKind(ResourceSpecificParameterKindEnum.MIME_TYPE, mimeType))) {
-    			kind = new ResourceSpecificParameterKind(ResourceSpecificParameterKindEnum.MIME_TYPE, mimeType);
+    		    		
+    		if (mimeType != null && diffSettings.specificParameters.containsKey(tmpKind = new ResourceSpecificParameterKind(ResourceSpecificParameterKindEnum.MIME_TYPE, mimeType))) {
+    			kind = tmpKind;
 			}
 		}									
 				
@@ -208,8 +207,9 @@ public class DiffViewerSettings {
 		int index = fileName.lastIndexOf("."); //$NON-NLS-1$
 		if (index != -1 && index != fileName.length()) {
 			fileExtension = fileName.substring(index + 1);
-			if (diffSettings.specificParameters.containsKey(new ResourceSpecificParameterKind(ResourceSpecificParameterKindEnum.FILE_EXTENSION, fileExtension))) {
-				kind = new ResourceSpecificParameterKind(ResourceSpecificParameterKindEnum.FILE_EXTENSION, fileExtension);
+			ResourceSpecificParameterKind tmpKind;
+			if (diffSettings.specificParameters.containsKey(tmpKind = new ResourceSpecificParameterKind(ResourceSpecificParameterKindEnum.FILE_EXTENSION, fileExtension))) {
+				kind = tmpKind;
 			}
 		}
 				
@@ -231,8 +231,9 @@ public class DiffViewerSettings {
     			}		    															
     		}	
     		
-    		if (mimeType != null && diffSettings.specificParameters.containsKey(new ResourceSpecificParameterKind(ResourceSpecificParameterKindEnum.MIME_TYPE, mimeType))) {
-    			kind = new ResourceSpecificParameterKind(ResourceSpecificParameterKindEnum.MIME_TYPE, mimeType);
+    		ResourceSpecificParameterKind tmpKind;
+    		if (mimeType != null && diffSettings.specificParameters.containsKey(tmpKind = new ResourceSpecificParameterKind(ResourceSpecificParameterKindEnum.MIME_TYPE, mimeType))) {
+    			kind = tmpKind;
 			}
 		}									
 				

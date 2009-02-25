@@ -6,6 +6,7 @@
 	<topic label="SVN" href="preferences/pref_svn.html"/>
 	<topic label="Comment Templates" href="preferences/pref_comments.html"/>
 	<topic label="Console" href="preferences/pref_console.html"/>
+	<topic label="Diff Viewer" href="preferences/pref_diff_viewer.html"/>
 	<topic label="Label Decorations" href="preferences/pref_label_decors.html"/>
 	<topic label="Password Management" href="preferences/pref_pass.html"/>
 	<topic label="Performance" href="preferences/pref_performance.html"/>

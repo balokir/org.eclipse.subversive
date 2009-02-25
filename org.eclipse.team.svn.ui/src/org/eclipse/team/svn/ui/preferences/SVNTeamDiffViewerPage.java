@@ -24,6 +24,7 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.DiffViewerFileAssociationsComposite;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Diff Viewer preference page
@@ -50,6 +51,9 @@ public class SVNTeamDiffViewerPage extends AbstractSVNTeamPreferencesPage {
 		composite.setLayout(layout);						
                                                 		
 		this.fileAssociationsComposite = new DiffViewerFileAssociationsComposite(composite, this);		
+		
+		//Setting context help
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.diffViewerPreferencesContext"); //$NON-NLS-1$
 		
 		return composite;
 	}
@@ -87,7 +91,9 @@ public class SVNTeamDiffViewerPage extends AbstractSVNTeamPreferencesPage {
 					strings[j] = stringArray[i * ResourceSpecificParameters.FIELDS_COUNT + j]; 
 				}
 				ResourceSpecificParameters param = ResourceSpecificParameters.createFromStrings(strings);
-				diffSettings.addResourceSpecificParameters(param);
+				if (param != null) {
+					diffSettings.addResourceSpecificParameters(param);	
+				}				
 			}
 		}	
 		

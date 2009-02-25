@@ -50,6 +50,10 @@
 		<description>Allows to customize SVN Console.</description>
 		<topic label="Console Preferences" href="preferences/pref_console.html"/>
 	</context>
+	<context id="diffViewerPreferencesContext">
+		<description>Allows to customize external diff/merge program.</description>
+		<topic label="Diff Viewer Preferences" href="preferences/pref_diff_viewer.html"/>
+	</context>	
 	<context id="decorsPreferencesContext">
 		<description>Allows to customize and preview SVN Label Decorations.</description>
 		<topic label="SVN Label Decoration Preferences" href="preferences/pref_label_decors.html"/>
