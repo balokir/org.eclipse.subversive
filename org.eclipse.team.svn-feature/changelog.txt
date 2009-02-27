@@ -8,7 +8,7 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
-Version 0.7.7.I20090219-1900 [19 February 2009]
+Version 0.7.7.I20090224-1900 [24 February 2009]
 
 Features:
  * Add a pre-commit check for files with errors and warnings (bug 263442) 
