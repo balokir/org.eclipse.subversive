@@ -5,7 +5,7 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 0.7.7.I20090219-1900 release date: 19 February 2009
+Version 0.7.7.I20090224-1900 release date: 24 February 2009
 
 1. What's New
 
