@@ -15,7 +15,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSet;
 import org.eclipse.team.internal.core.subscribers.ChangeSet;
 import org.eclipse.team.internal.ui.mapping.ResourceModelSorter;
-import org.eclipse.team.svn.ui.synchronize.SVNChangeSetCollector.SVNCheckedInChangeSet;
+import org.eclipse.team.svn.core.mapping.SVNIncomingChangeSet;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 public class SVNChangeSetSorter extends ResourceModelSorter {
@@ -31,16 +31,16 @@ public class SVNChangeSetSorter extends ResourceModelSorter {
 	}
 
 	@SuppressWarnings("deprecation")
-	public int compare(Viewer viewer, Object o1, Object o2) {
+	public int compare(Viewer viewer, Object o1, Object o2) {	
 		if (o1 instanceof  ChangeSet && o2 instanceof ChangeSet) {
 		    ChangeSet s1 = (ChangeSet) o1;
 		    ChangeSet s2 = (ChangeSet) o2;
 		    if (s1 instanceof ActiveChangeSet && s2 instanceof ActiveChangeSet) {
 		        return this.compareNames(((ActiveChangeSet)s1).getTitle(), ((ActiveChangeSet)s2).getTitle());
 		    }
-		    if (s1 instanceof SVNCheckedInChangeSet && s2 instanceof SVNCheckedInChangeSet) {
-		    	SVNCheckedInChangeSet r1 = (SVNCheckedInChangeSet)s1;
-		    	SVNCheckedInChangeSet r2 = (SVNCheckedInChangeSet)s2;
+		    if (s1 instanceof SVNIncomingChangeSet && s2 instanceof SVNIncomingChangeSet) {
+		    	SVNIncomingChangeSet r1 = (SVNIncomingChangeSet)s1;
+		    	SVNIncomingChangeSet r2 = (SVNIncomingChangeSet)s2;
 				if (getCommentCriteria() == DATE) {
 					return r1.getDate().compareTo(r2.getDate());
 				}
@@ -59,9 +59,9 @@ public class SVNChangeSetSorter extends ResourceModelSorter {
 		    else if (s2 instanceof ActiveChangeSet) {
 		        return 1;
 		    }
-		    if (s1 instanceof SVNCheckedInChangeSet) {
+		    if (s1 instanceof SVNIncomingChangeSet) {
 		        return -1;
-		    } else if (s2 instanceof SVNCheckedInChangeSet) {
+		    } else if (s2 instanceof SVNIncomingChangeSet) {
 		        return 1;
 		    }
 		}
