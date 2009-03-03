@@ -14,6 +14,11 @@
 		<factory adaptableType="org.eclipse.team.svn.ui.history.model.ILogNode" class="org.eclipse.team.svn.mylyn.SVNLinkedTaskInfoAdapterFactory">
 			<adapter type="org.eclipse.mylyn.team.ui.AbstractTaskReference"/>
 		</factory>
+      <factory
+            adaptableType="org.eclipse.team.svn.mylyn.SVNContextChangeSet"
+            class="org.eclipse.team.svn.mylyn.SVNChangeSetAdapterFactory">
+         <adapter type="org.eclipse.core.resources.mapping.ResourceMapping"/>
+      </factory>		
 	</extension>
     
 	<extension
