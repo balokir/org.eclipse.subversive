@@ -76,6 +76,15 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 					});
 				}
 				this.handleSetAddition(set);
+			} else if (set instanceof SVNIncomingChangeSet) {
+				/*
+				 * If we've incoming change set (incoming changes) then previously its resources
+				 * were added to unassigned change set and so we need to delete them in order to avoid
+				 * duplication of incoming change sets
+				 * 
+				 * See bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=261185
+				 */
+				this.handleSetAddition(set);
 			}
 		}
 
