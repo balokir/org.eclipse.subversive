@@ -15,6 +15,7 @@ import java.util.HashSet;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNEntry;
@@ -22,6 +23,7 @@ import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNMergeStatus;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
+import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.operation.local.AbstractMergeSet;
 import org.eclipse.team.svn.core.operation.local.IRemoteStatusOperation;
 import org.eclipse.team.svn.core.operation.local.MergeSet1URL;
@@ -49,7 +51,7 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 	
 	protected MergeScopeHelper mergeScopeHelper;
 	protected MergeStatusOperation mergeStatusOp;
-    protected RemoteStatusCache baseStatusCache;
+    protected IRemoteStatusCache baseStatusCache;
 	
 	public static synchronized MergeSubscriber instance() {
 		if (MergeSubscriber.instance == null) {
@@ -66,7 +68,7 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
         this.mergeScopeHelper = scope;
     }
     
-    protected SyncInfo getSVNSyncInfo(ILocalResource localStatus, IResourceChange remoteStatus) {
+    protected SyncInfo getSVNSyncInfo(ILocalResource localStatus, IResourceChange remoteStatus) throws TeamException {
 		IResourceChange baseStatus = SVNRemoteStorage.instance().resourceChangeFromBytes(this.baseStatusCache.getBytes(localStatus.getResource()));
     	// provide correct base resource: same as right but with the start revision specified
         return
@@ -88,12 +90,12 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
         return mergeOp;
     }
     
-	protected HashSet<IResource> clearRemoteStatusesImpl(IResource []resources) {
+	protected HashSet<IResource> clearRemoteStatusesImpl(IResource []resources) throws TeamException {
 		this.clearRemoteStatusesImpl(this.baseStatusCache, resources);
 		return super.clearRemoteStatusesImpl(resources);
 	}
 	
-    public void refresh(final IResource []resources, final int depth, IProgressMonitor monitor) {
+    public void refresh(final IResource []resources, final int depth, IProgressMonitor monitor) throws TeamException {
 		if (this.mergeScopeHelper != null) {
 			this.baseStatusCache.clearAll();
 			this.mergeScopeHelper.getMergeSet().setStatuses(new SVNMergeStatus[0]);
@@ -200,7 +202,11 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 			originator.setSelectedRevision(SVNRevision.fromNumber(current.startRevision));
 			startResourceChange.setOriginator(originator);
 		}
-		this.baseStatusCache.setBytes(startResourceChange.getResource(), SVNRemoteStorage.instance().resourceChangeAsBytes(startResourceChange));
+		try {
+			this.baseStatusCache.setBytes(startResourceChange.getResource(), SVNRemoteStorage.instance().resourceChangeAsBytes(startResourceChange));
+		} catch (TeamException e) {
+			LoggedOperation.reportError(this.getClass().getName(), e);
+		}
 		
 		return endResourceChange;
 	}
