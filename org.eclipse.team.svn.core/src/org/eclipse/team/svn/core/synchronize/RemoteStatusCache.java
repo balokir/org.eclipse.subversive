@@ -35,13 +35,9 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
  * 
  * @author Alexander Gurov
  */
-public class RemoteStatusCache extends ResourceVariantByteStore {
+public class RemoteStatusCache extends ResourceVariantByteStore implements IRemoteStatusCache {
 	protected Map<IPath, byte[]> resourceStateMap;
 	protected Map<IPath, Set<IResource>> resourceChildrenMap;
-
-	public interface ICacheVisitor {
-		public void visit(IPath path, byte []data);
-	}
 	
 	public RemoteStatusCache() {
 		this.resourceStateMap = new HashMap<IPath, byte[]>();

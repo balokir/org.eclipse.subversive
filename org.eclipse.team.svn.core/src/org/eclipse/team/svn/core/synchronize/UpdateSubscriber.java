@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
@@ -26,6 +27,7 @@ import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.operation.local.IRemoteStatusOperation;
 import org.eclipse.team.svn.core.operation.local.RemoteStatusOperation;
 import org.eclipse.team.svn.core.operation.remote.GetLogMessagesOperation;
@@ -57,7 +59,7 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 		return UpdateSubscriber.instance;
 	}
 	
-	public void refresh(IResource[] resources, int depth, IProgressMonitor monitor) {
+	public void refresh(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException {
 		this.comments.clear();
 		super.refresh(resources, depth, monitor);
 	}
@@ -122,7 +124,12 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 		if (resourceChange == null || resourceChange.getRevision() == SVNRevision.INVALID_REVISION_NUMBER) {
 			return null;
 		}
-		IResourceChange checkForReplacement = SVNRemoteStorage.instance().resourceChangeFromBytes(this.statusCache.getBytes(resourceChange.getResource()));
+		IResourceChange checkForReplacement = null;
+		try {
+			checkForReplacement = SVNRemoteStorage.instance().resourceChangeFromBytes(this.statusCache.getBytes(resourceChange.getResource()));
+		} catch (TeamException e) {
+			LoggedOperation.reportError(this.getClass().getName(), e);			
+		}
 		if (checkForReplacement != null)
 		{
 			if (IStateFilter.SF_ADDED.accept(checkForReplacement)) {

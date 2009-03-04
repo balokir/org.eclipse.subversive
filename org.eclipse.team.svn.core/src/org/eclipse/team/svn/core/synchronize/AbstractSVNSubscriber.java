@@ -26,6 +26,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.subscribers.SubscriberChangeEvent;
@@ -63,12 +64,14 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 	public static final String CONTIGOUS_PREF_NODE = "contigous"; //$NON-NLS-1$
 	public static final String CONTIGOUS_REPORT_DEFAULT = "true"; //$NON-NLS-1$
 	
-    protected RemoteStatusCache statusCache;
+	protected final static QualifiedName REMOTE_CACHE_KEY = new QualifiedName("org.eclipse.team.svn", "remote-cache-key"); //$NON-NLS-1$ //$NON-NLS-2$
+	
+    protected IRemoteStatusCache statusCache;
     protected Set<IResource> oldResources;
     
     public AbstractSVNSubscriber() {
         super();
-		this.statusCache = new RemoteStatusCache();
+		this.statusCache = new PersistentRemoteStatusCache(REMOTE_CACHE_KEY);
 		SVNRemoteStorage.instance().addResourceStatesListener(ResourceStatesChangedEvent.class, this);
 		this.oldResources = new HashSet<IResource>();
     }
@@ -82,7 +85,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 		SVNTeamPlugin.instance().savePluginPreferences();
     }
     
-    public boolean isSynchronizedWithRepository() {
+    public boolean isSynchronizedWithRepository() throws TeamException {
     	return this.statusCache.containsData();
     }
     
@@ -94,7 +97,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 		return FileUtility.isConnected(resource) && !FileUtility.isSVNInternals(resource) && !FileUtility.isIgnored(resource);
     }
 
-    public IResource []members(IResource resource) {
+    public IResource []members(IResource resource) throws TeamException {
     	ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
     	if (IStateFilter.SF_INTERNAL_INVALID.accept(local) || IStateFilter.SF_IGNORED.accept(local) || IStateFilter.SF_NOTEXISTS.accept(local)) {
     		return FileUtility.NO_CHILDREN;
@@ -140,7 +143,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 		return AbstractSVNSubscriber.RV_COMPARATOR;
     }
 
-    public void refresh(IResource []resources, int depth, IProgressMonitor monitor) {
+    public void refresh(IResource []resources, int depth, IProgressMonitor monitor) throws TeamException {
     	ArrayList<IResource> resourcesToOperateList = new ArrayList<IResource>();
     	for (IResource current : resources) {
     		if (FileUtility.isConnected(current)) {
@@ -159,22 +162,27 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 		}
     }
 
-	public void clearRemoteStatuses(IResource []resources) {
+	public void clearRemoteStatuses(IResource []resources) throws TeamException {
 	    HashSet<IResource> refreshScope = this.clearRemoteStatusesImpl(resources);
 		this.resourcesStateChangedImpl(refreshScope.toArray(new IResource[refreshScope.size()]));
 	}
 	
     public void resourcesStateChanged(ResourceStatesChangedEvent event) {
-    	if (event.type == ResourceStatesChangedEvent.CHANGED_NODES) {
-    		this.resourcesStateChangedImpl(event.getResourcesRecursivelly());
-    	}
+    	try {
+    		if (event.type == ResourceStatesChangedEvent.CHANGED_NODES) {    		
+				this.resourcesStateChangedImpl(event.getResourcesRecursivelly());
+    		}
+		} catch (TeamException e) {
+			LoggedOperation.reportError(this.getClass().getName(), e);
+			
+		}    	
     }
     
-	protected HashSet<IResource> clearRemoteStatusesImpl(IResource []resources) {
+	protected HashSet<IResource> clearRemoteStatusesImpl(IResource []resources) throws TeamException {
 		return this.clearRemoteStatusesImpl(this.statusCache, resources);
 	}
 	
-	protected HashSet<IResource> clearRemoteStatusesImpl(RemoteStatusCache cache, IResource []resources) {
+	protected HashSet<IResource> clearRemoteStatusesImpl(IRemoteStatusCache cache, IResource []resources)  throws TeamException {
 		final HashSet<IResource> refreshSet = new HashSet<IResource>();
 		cache.traverse(resources, IResource.DEPTH_INFINITE, new RemoteStatusCache.ICacheVisitor() {
 			public void visit(IPath current, byte []data) {
@@ -190,7 +198,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 		return refreshSet;
 	}
 	
-    protected void resourcesStateChangedImpl(IResource []resources) {
+    protected void resourcesStateChangedImpl(IResource []resources) throws TeamException {
     	Set<IResource> allResources = new HashSet<IResource>(Arrays.asList(resources));
     	for (int i = 0; i < resources.length; i++) {
     		allResources.addAll(Arrays.asList(this.statusCache.allMembers(resources[i])));
@@ -255,7 +263,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 	
 	protected abstract boolean isIncoming(SVNEntryStatus status);
 	protected abstract IResourceChange handleResourceChange(IRemoteStatusOperation rStatusOp, SVNEntryStatus status);
-    protected abstract SyncInfo getSVNSyncInfo(ILocalResource localStatus, IResourceChange remoteStatus);
+    protected abstract SyncInfo getSVNSyncInfo(ILocalResource localStatus, IResourceChange remoteStatus) throws TeamException;
     protected abstract IRemoteStatusOperation addStatusOperation(CompositeOperation op, IResource []resources, int depth);
 
     public class UpdateStatusOperation extends AbstractActionOperation implements ILoggedOperationFactory {
