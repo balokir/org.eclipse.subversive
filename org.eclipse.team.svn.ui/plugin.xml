@@ -259,6 +259,13 @@
 			 <insertionPoint name="additions" separator="true"/>                   
           </popupMenu>
        </viewer>
+       
+	   <viewerActionBinding viewerId="org.eclipse.team.svn.ui.workspaceSynchronization">
+	       <includes>
+	           <actionExtension pattern="org.eclipse.mylyn.ide.ui.actions.TaskResourceMappingActionProvider"/>
+	       </includes>
+	   </viewerActionBinding>	       
+       
    </extension>
    
 <!-- *************** Synchronize Wizards **************** -->
