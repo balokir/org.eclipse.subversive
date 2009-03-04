@@ -207,11 +207,15 @@ public abstract class AbstractPropertyEditPanel extends AbstractDialogPanel {
 		verifier.add(new PropertyNameVerifier(name));
 		this.attachTo(this.nameField, verifier);
 		
-		Button editManual = new Button(composite, SWT.RADIO);
+		final Button editManual = new Button(composite, SWT.RADIO);
 		
 		this.valueField = new Text(composite, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		CompositePropertiesVerifier valueVerifier = new CompositePropertiesVerifier(this.nameField, this.verifiers);
-		this.attachTo(this.valueField, valueVerifier);
+		this.attachTo(this.valueField, new AbstractVerifierProxy(valueVerifier) {
+			protected boolean isVerificationEnabled(Control input) {			
+				return editManual.getSelection();
+			}			
+		});
 
 		data = new GridData();
 		editManual.setLayoutData(data);
