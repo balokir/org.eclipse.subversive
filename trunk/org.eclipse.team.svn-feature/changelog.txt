@@ -8,6 +8,24 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.7.I20090306-1500 [6 March 2009]
+
+Features:
+ * Configuration alternative of a diff viewer for MS-WORD documents (bug 260236)
+
+Fixes:
+ * Sorting by user, date or comment does not work for SVN Changeset model in Synchronize view (bug 264331)
+
+ * SVN Change sets model: Incoming changes are duplicated to a "Unassiged" node (bug 261185)
+ 
+ * NPE when activating Mylyn task (bug 266826)
+ 
+ * Mylyn Context actions are missing from Team Synchronize view if logical models are enabled (bug 264344)
+ 
+ * Synchronization empties outgoing changes if SVN Changesets model is selected (bug 264772)
+ 
+--------------------------------------------------------------------------------
+
 Version 0.7.7.I20090224-1900 [24 February 2009]
 
 Features:
