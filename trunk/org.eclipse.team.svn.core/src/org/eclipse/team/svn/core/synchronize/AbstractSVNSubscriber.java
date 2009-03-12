@@ -13,6 +13,7 @@ package org.eclipse.team.svn.core.synchronize;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -99,7 +100,8 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 
     public IResource []members(IResource resource) throws TeamException {
     	ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-    	if (IStateFilter.SF_INTERNAL_INVALID.accept(local) || IStateFilter.SF_IGNORED.accept(local) || IStateFilter.SF_NOTEXISTS.accept(local)) {
+    	//don't filter out incoming changes here (which don't exist on file system but are phantoms)
+    	if (IStateFilter.SF_INTERNAL_INVALID.accept(local) || IStateFilter.SF_IGNORED.accept(local)) {
     		return FileUtility.NO_CHILDREN;
     	}
     	return this.statusCache.allMembers(resource);
@@ -242,16 +244,36 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				SVNEntryStatus []statuses = rStatusOp.getStatuses();
 				if (statuses != null) {
+					
+					//prepare and sort resources
+					//If we don't sort them, PersistentRemoteStatusCache.setBytes will fail
+					//because it can't set bytes for resource which doesn't have a parent
+					Map<IResource, IResourceChange> resourcesMap = new HashMap<IResource, IResourceChange>();
 					for (int i = 0; i < statuses.length && !monitor.isCanceled(); i++) {
 						if (AbstractSVNSubscriber.this.isIncoming(statuses[i])) {
 							IResourceChange resourceChange = AbstractSVNSubscriber.this.handleResourceChange(rStatusOp, statuses[i]);
 							if (resourceChange != null) {
-								ProgressMonitorUtility.setTaskInfo(monitor, this, String.valueOf(resourceChange.getRevision()));
-								AbstractSVNSubscriber.this.statusCache.setBytes(resourceChange.getResource(), SVNRemoteStorage.instance().resourceChangeAsBytes(resourceChange));
-								changes.add(resourceChange.getResource());
+								IResource resource = resourceChange.getResource();								
+								resourcesMap.put(resource, resourceChange);
 							}
 						}
-						ProgressMonitorUtility.progress(monitor, i, statuses.length);
+					}
+					
+					if (!resourcesMap.isEmpty()) {												
+						IResource[] resources = resourcesMap.keySet().toArray(new IResource[0]);
+						FileUtility.reorder(resources, true);						
+																		
+						//process
+						for (int i = 0; i < resources.length; i ++) {
+							IResource resource = resources[i];
+							IResourceChange resourceChange = resourcesMap.get(resource);
+							
+							ProgressMonitorUtility.setTaskInfo(monitor, this, String.valueOf(resourceChange.getRevision()));
+							AbstractSVNSubscriber.this.statusCache.setBytes(resourceChange.getResource(), SVNRemoteStorage.instance().resourceChangeAsBytes(resourceChange));
+							changes.add(resourceChange.getResource());
+							
+							ProgressMonitorUtility.progress(monitor, i, statuses.length);
+						}																								
 					}
 				}
 			}

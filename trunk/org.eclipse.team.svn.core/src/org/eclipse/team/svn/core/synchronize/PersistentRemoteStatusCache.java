@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -74,6 +75,30 @@ public class PersistentRemoteStatusCache extends PersistantResourceVariantByteSt
 			members.addAll(Arrays.asList(op.getChildren()));
 		}
 		return members.toArray(new IResource[members.size()]);
+	}
+	
+
+	public synchronized IResource[] members(IResource resource) throws TeamException {		
+		if (this.getBytes(resource) == null) {
+			return new IResource[0];
+		}					
+		return super.members(resource);					
+	}
+
+	public synchronized boolean setBytes(IResource resource, byte[] bytes) throws TeamException {	
+		return super.setBytes(resource, bytes);		
+	}	
+	
+	public synchronized byte[] getBytes(IResource resource) throws TeamException {
+		return super.getBytes(resource);		
+	}	
+
+	public synchronized boolean flushBytes(IResource resource, int depth) throws TeamException {							
+		return super.flushBytes(resource, depth);		
+	}
+	
+	public synchronized boolean deleteBytes(IResource resource) throws TeamException {	
+		return super.deleteBytes(resource);		
 	}
 	
 	public synchronized void traverse(IResource []resources, int depth, ICacheVisitor visitor) throws TeamException {

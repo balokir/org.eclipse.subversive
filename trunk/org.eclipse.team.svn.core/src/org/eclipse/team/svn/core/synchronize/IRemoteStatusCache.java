@@ -27,6 +27,7 @@ public interface IRemoteStatusCache {
 	}
 	
 	boolean containsData() throws TeamException;
+	IResource[] members(IResource resource) throws TeamException;
 	IResource []allMembers(IResource resource) throws TeamException;
 	void traverse(IResource []resources, int depth, ICacheVisitor visitor) throws TeamException;		
 	byte []getBytes(IResource resource) throws TeamException;
