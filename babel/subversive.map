@@ -1,4 +1,4 @@
 #file needed for Babel. It should point to the source of each plugin.
-plugin@org.eclipse.team.svn.core=SVN,trunk,http://dev.eclipse.org/svnroot/technology/org.eclipse.subversive,,trunk/org.eclipse.team.svn.core
-plugin@org.eclipse.team.svn.ui=SVN,trunk,http://dev.eclipse.org/svnroot/technology/org.eclipse.subversive,,trunk/org.eclipse.team.svn.ui
-plugin@org.eclipse.team.svn.mylyn=SVN,trunk,http://dev.eclipse.org/svnroot/technology/org.eclipse.subversive,,trunk/org.eclipse.team.svn.mylyn
+plugin@org.eclipse.team.svn.core=SVN,trunk,http://dev.eclipse.org/svnroot/technology/org.eclipse.subversive,,org.eclipse.team.svn.core
+plugin@org.eclipse.team.svn.ui=SVN,trunk,http://dev.eclipse.org/svnroot/technology/org.eclipse.subversive,,org.eclipse.team.svn.ui
+plugin@org.eclipse.team.svn.mylyn=SVN,trunk,http://dev.eclipse.org/svnroot/technology/org.eclipse.subversive,,org.eclipse.team.svn.mylyn
