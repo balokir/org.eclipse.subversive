@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension point="org.eclipse.ui.activities">
+      <activity
+            description="%activity.team.svn.desc"
+            id="activity.team.svn"
+            name="%activity.team.svn">
+      </activity>
+      <activityPatternBinding
+            activityId="activity.team.svn"
+            pattern="org\.eclipse\.team\.svn\.ui/.*">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="activity.team.svn"
+            pattern="org\.eclipse\.team\.svn\.core/.*svnnature">
+      </activityPatternBinding>
+      <activityRequirementBinding
+            activityId="activity.team.svn"
+            requiredActivityId="org.eclipse.team">
+      </activityRequirementBinding>
+   
+   </extension>
+
+</plugin>

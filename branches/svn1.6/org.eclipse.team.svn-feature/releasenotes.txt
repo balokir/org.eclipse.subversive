@@ -1,0 +1,56 @@
+********************************************************************************
+*                          Subversive Release Notes                            *
+*                                                                              *
+* Subversive - a brand new Eclipse Client for Subversion (SVN)                 *
+* See details at http://www.eclipse.org/subversive                             *
+********************************************************************************
+
+Version 0.7.7.I20090224-1900 release date: 24 February 2009
+
+1. What's New
+
+   The version is 0.7.7 service release.
+   
+   Changes comparatively to the previous version are listed below. The full list of 
+   changes you can find in Change Log.   	
+	
+	Features:
+	 * Add a pre-commit check for files with errors and warnings (bug 263442) 
+	
+	 * Add ability to output resources comparison in unified diff format (bug 263657) 
+	
+	 * Add ability to create SVN repository (bug 263951)   
+	
+	Fixes:
+	 * Compare with Branches/Tags action problem (bug 263790)    
+	
+	 * Extract bug (bug 264192)
+	
+	 * o.e.team.svn.core has hard dependency to com.ibm.icu bundle (bug 261413)
+	 
+	 * Bugtraq properties problem (bug 261857) 
+	 
+	 * Problems with relocating project (bug 259626) 
+	 
+	 * Share Projects menu item disabled when multiple projects selected (bug 263003) 
+	 
+	 * Resources list isn't updated in "Override and Update..." (bug 254900)
+	 
+	 * Add key shortcuts to controls (bug 254726)
+	 
+	 * Revisions Range dialog isn't correctly resized (bug 261328) 
+	
+2. Information
+
+2.1. System Requirements
+
+   Subversive requires JDK 1.5 or higher and supports following versions of Eclipse:
+    * 3.3 (tested with 3.3.2)
+    * 3.4 (tested with 3.4)
+   
+   Subversive supports Subversion versions 1.1-1.4 with SVN Kit 1.1.7 and JavaHL 1.4.5, 
+   Subversion version 1.5 with SVN Kit 1.2.0 and JavaHL 1.5.x
+
+2.2 Known issues
+
+	* "Find projects" part of "Find/Checkout As" action could take too much time on slow connections
