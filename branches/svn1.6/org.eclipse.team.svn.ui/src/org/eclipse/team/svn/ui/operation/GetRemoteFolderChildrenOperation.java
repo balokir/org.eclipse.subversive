@@ -11,10 +11,12 @@
 
 package org.eclipse.team.svn.ui.operation;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -82,19 +84,28 @@ public class GetRemoteFolderChildrenOperation extends AbstractActionOperation {
 					//Map externals;
 					try {
 						Map<String, SVNEntryRevisionReference> externals = SVNUtility.parseSVNExternalsProperty(data.value, this.parent);
-						IRepositoryResource []newTmp = new IRepositoryResource[tmp.length + externals.size()];
-						System.arraycopy(tmp, 0, newTmp, 0, tmp.length);
-						int i = 0;
-						for (Iterator<Map.Entry<String, SVNEntryRevisionReference>> it = externals.entrySet().iterator(); it.hasNext(); i++) {
-							Map.Entry<String, SVNEntryRevisionReference> entry = it.next();
-							String name = entry.getKey();
-							SVNEntryRevisionReference ref = entry.getValue();
-							newTmp[tmp.length + i] = SVNRemoteStorage.instance().asRepositoryResource(location, ref.path, false);
-							newTmp[tmp.length + i].setSelectedRevision(ref.revision);
-							newTmp[tmp.length + i].setPegRevision(ref.pegRevision);
-							this.externalsNames.put(newTmp[tmp.length + i], name);
+						List<IRepositoryResource> newTmp = new ArrayList<IRepositoryResource>();
+						for (IRepositoryResource tmpResource : tmp) {
+							newTmp.add(tmpResource);
+						}						
+
+						for (Iterator<Map.Entry<String, SVNEntryRevisionReference>> it = externals.entrySet().iterator(); it.hasNext();) {
+							try {
+								Map.Entry<String, SVNEntryRevisionReference> entry = it.next();
+								String name = entry.getKey();
+								SVNEntryRevisionReference ref = entry.getValue();
+								IRepositoryResource repositoryResourtce = SVNRemoteStorage.instance().asRepositoryResource(location, ref, new SVNProgressMonitor(this, monitor, null));															
+								if (repositoryResourtce != null) {
+									repositoryResourtce.setSelectedRevision(ref.revision);
+									repositoryResourtce.setPegRevision(ref.pegRevision);
+									newTmp.add(repositoryResourtce);							
+									this.externalsNames.put(repositoryResourtce, name);	
+								}
+							} catch (Exception e) {
+								this.reportStatus(new Status(IStatus.WARNING, SVNTeamPlugin.NATURE_ID, IStatus.OK, this.getShortErrorMessage(e), e));
+							}
 						}
-						tmp = newTmp;
+						tmp = newTmp.toArray(new IRepositoryResource[0]);
 					}
 					catch (UnreportableException ex) {
 						this.reportStatus(new Status(IStatus.WARNING, SVNTeamPlugin.NATURE_ID, IStatus.OK, this.getShortErrorMessage(ex), ex));

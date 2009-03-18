@@ -44,12 +44,16 @@ import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.ISVNProgressMonitor;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.connector.SVNEntry;
+import org.eclipse.team.svn.core.connector.SVNEntryInfo;
+import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
+import org.eclipse.team.svn.core.connector.SVNEntry.Kind;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.options.IIgnoreRecommendations;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
@@ -393,6 +397,39 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		}
 		
 		return resource instanceof IContainer ? (IRepositoryResource)location.asRepositoryContainer(url, false) : location.asRepositoryFile(url, false);
+	}
+	
+	public IRepositoryResource asRepositoryResource(IRepositoryLocation location, SVNEntryRevisionReference reference, ISVNProgressMonitor monitor) throws SVNConnectorException {
+		IRepositoryResource res = null;
+		
+		String url = reference.path;	
+		//re-create SVNEntryRevisionReference because SVNUtility.info throws exception if peg revision or revision are null
+		reference = new SVNEntryRevisionReference(SVNUtility.encodeURL(url),
+				reference.pegRevision == null ? SVNRevision.HEAD : reference.pegRevision,
+				reference.revision == null ? SVNRevision.HEAD : reference.revision);
+		
+		if (!new Path(location.getRepositoryRootUrl()).isPrefixOf(new Path(url))) {
+			boolean isFile = false;
+			location = this.wrapLocationIfRequired(location, url, isFile);
+		}
+		
+		ISVNConnector proxy = location.acquireSVNProxy();
+		try {
+			//detect if resource is a file or directory
+			SVNEntryInfo[] entriesInfo = SVNUtility.info(proxy, reference, Depth.EMPTY, monitor);
+			if (entriesInfo.length > 0) {
+				SVNEntryInfo info = entriesInfo[0];
+				if (info.kind == Kind.FILE) {
+					res = location.asRepositoryFile(url, false);
+				} else if (info.kind == Kind.DIR) {
+					res = location.asRepositoryContainer(url, false);
+				}
+			}				
+		} finally {
+			location.releaseSVNProxy(proxy);	
+		}
+						
+		return res;
 	}
 	
 	public IRepositoryResource asRepositoryResource(IRepositoryLocation location, String url, boolean isFile) {
