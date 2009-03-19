@@ -13,7 +13,6 @@ package org.eclipse.team.svn.core.operation.local;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -32,6 +31,7 @@ import org.eclipse.team.svn.core.resource.ILocalFolder;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.svn.core.utility.SVNUtility.SVNExternalPropertyData;
 
 /**
  * Freeze svn:externals revisions. Useful for tags and, possibly, for branches.
@@ -102,30 +102,21 @@ public class FreezeExternalsOperation extends AbstractWorkingCopyOperation imple
 		
 		protected void processExternals(ResourceChange change, SVNProperty property, IActionOperationProcessor processor, IProgressMonitor monitor) throws Exception {
 			// process externals
-			String newValue = ""; //$NON-NLS-1$
-			StringTokenizer tok = new StringTokenizer(property.value, "\n\r", false); //$NON-NLS-1$
-			while (tok.hasMoreTokens()) {
-				String line = tok.nextToken();
-				String []entries = line.split("\\s"); //$NON-NLS-1$
-				if (entries.length == 2) {
-					newValue += this.freezeExternal(change, entries[0], entries[1]);
-				}
-				else {
-					newValue += line;
-				}
+			String newValue = ""; //$NON-NLS-1$			
+			SVNExternalPropertyData[] externals = SVNExternalPropertyData.parse(property.value);
+			for (SVNExternalPropertyData external : externals) {				
+				if (external.pegRevision == null && external.revision == null) {
+					IContainer container = (IContainer)change.getLocal().getResource();
+					ILocalResource local = SVNRemoteStorage.instance().asLocalResourceAccessible(container.findMember(external.localPath));
+					external.revision = String.valueOf(local.getBaseRevision());
+				} 
+				newValue += external.toString();			
 				newValue += "\n"; //$NON-NLS-1$
 			}
-			
+												
 			SetPropertiesOperation setOp = new SetPropertiesOperation(new IResource[] {change.getLocal().getResource()}, property.name, newValue.getBytes(), false);
 			processor.doOperation(setOp, monitor);
-		}
-		
-		protected String freezeExternal(ResourceChange change, String name, String url) {
-			IContainer container = (IContainer)change.getLocal().getResource();
-			ILocalResource local = SVNRemoteStorage.instance().asLocalResourceAccessible(container.findMember(name));
-			return name + "\t-r" + local.getBaseRevision() + "\t" + url; //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		
+		}		
 	}
 	
 }
