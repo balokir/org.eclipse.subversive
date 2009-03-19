@@ -305,7 +305,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	public ILocalResource asLocalResourceAccessible(IResource resource) {
 		ILocalResource retVal = this.asLocalResource(resource);
 		if (IStateFilter.SF_INTERNAL_INVALID.accept(retVal)) {
-			throw new UnreportableException(SVNMessages.getErrorString("Error_InaccessibleResource")); //$NON-NLS-1$
+			throw new UnreportableException(SVNMessages.formatErrorString("Error_InaccessibleResource", new String[]{FileUtility.getWorkingCopyPath(resource)})); //$NON-NLS-1$
 		}
 		return retVal;
 	}
@@ -965,7 +965,12 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 			return null;
 		}
 		ILocalResource local = (ILocalResource)this.localResources.get(parent.getFullPath());
-		if (local != null) {
+		if (local != null
+				/* && 
+				!IStateFilter.SF_INTERNAL_INVALID.accept(local) &&
+				!IStateFilter.SF_IGNORED.accept(local)
+				*/
+				) {
 			return local;
 		}
 		return this.getFirstExistingParentLocal(parent);
