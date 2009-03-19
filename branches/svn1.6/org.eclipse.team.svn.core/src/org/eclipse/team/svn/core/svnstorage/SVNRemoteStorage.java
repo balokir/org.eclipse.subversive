@@ -823,6 +823,11 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 					externalMask = ILocalResource.IS_EXTERNAL;
 				}
 				
+				//check file external
+				if (statuses[i].isFileExternal) {
+					externalMask = ILocalResource.IS_EXTERNAL;
+				}
+				
 				 // get the IS_COPIED flag by parent node (it is not fetched for deletions)
 				boolean forceCopied = parent != null && parent.isCopied();
 				int changeMask = this.getChangeMask(statuses[i].textStatus, statuses[i].propStatus, forceCopied | statuses[i].isCopied, statuses[i].isSwitched);
