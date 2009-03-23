@@ -270,12 +270,60 @@ public class SVNNotification {
 		 * @since 1.5 Got a replaced in an update.
 		 */
 		public static final int UPDATE_REPLACED = 30;
+		
+		 /**
+	     * @since 1.6
+	     * Property added.
+	     */
+	    public static final int PROPERTY_ADDED = 31;
+
+	    /**
+	     * @since 1.6
+	     * Property modified.
+	     */
+	    public static final int PROPERTY_MODIFIED = 32;
+
+	    /**
+	     * @since 1.6
+	     * Property deleted.
+	     */
+	    public static final int PROPERTY_DELETED = 33;
+
+	    /**
+	     * @since 1.6
+	     * Property delete nonexistent.
+	     */
+	    public static final int PROPERTY_DELETED_NONEXISTENT = 34;
+
+	    /**
+	     * @since 1.6
+	     * Revision property set.
+	     */
+	    public static final int REVPROP_SET = 35;
+
+	    /**
+	     * @since 1.6
+	     * Revision property deleted.
+	     */
+	    public static final int REVPROP_DELETE = 36;
+
+	    /**
+	     * @since 1.6
+	     * The last notification in a merge
+	     */
+	    public static final int MERGE_COMPLETED = 37;
+
+	    /**
+	     * @since 1.6
+	     * The path is a tree-conflict victim of the intended action
+	     */
+	    public static final int TREE_CONFLICT = 38;
 
 		/*
 		 * Sometime native JavaHL client returns -1 as action (for example when file is replaced in branch then merged into trunk)...
 		 */
 		public static boolean isKnownAction(int action) {
-			return action >= PerformedAction.ADD /*0*/ && action <= PerformedAction.UPDATE_REPLACED /*30*/;
+			return action >= PerformedAction.ADD /*0*/ && action <= PerformedAction.TREE_CONFLICT /*38*/;
 		}
 		
 		/**
@@ -284,7 +332,8 @@ public class SVNNotification {
 		public static final String[] actionNames = { "add", "copy", "delete", "restore", "revert", "failed revert", "resolved", "skip", "update delete", "update add",
 				"update modified", "update completed", "update external", "status completed", "status external", "sending modified", "sending added", "sending deleted",
 				"sending replaced", "transfer", "blame revision processed", "locked", "unlocked", "locking failed", "unlocking failed", "path exists", "changelist set",
-				"changelist cleared", "merge begin", "foreign merge begin", "replaced"};
+				"changelist cleared", "merge begin", "foreign merge begin", "replaced," +
+				"property added", "property modified", "property deleted", "nonexistent property deleted", "revprop set", "revprop deleted", "merge completed", "tree conflict"};
 	}
 
 	/**

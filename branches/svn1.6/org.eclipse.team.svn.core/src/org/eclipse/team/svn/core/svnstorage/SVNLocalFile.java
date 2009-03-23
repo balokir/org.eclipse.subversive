@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.core.svnstorage;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.team.svn.core.connector.SVNConflictDescriptor;
 import org.eclipse.team.svn.core.resource.ILocalFile;
 
 /**
@@ -20,8 +21,8 @@ import org.eclipse.team.svn.core.resource.ILocalFile;
  * @author Alexander Gurov
  */
 public class SVNLocalFile extends SVNLocalResource implements ILocalFile {
-	public SVNLocalFile(IResource resource, long revision, long baseRevision, String status, int changeMask, String author, long lastCommitDate) {
-		super(resource, revision, baseRevision, status, changeMask, author, lastCommitDate);
+	public SVNLocalFile(IResource resource, long revision, long baseRevision, String status, int changeMask, String author, long lastCommitDate, SVNConflictDescriptor treeConflictDescriptor) {
+		super(resource, revision, baseRevision, status, changeMask, author, lastCommitDate, treeConflictDescriptor);
 	}
 
 }

@@ -84,6 +84,12 @@ public class SVNConflictDescriptor {
 		 * The unversioned entry at the path in the working copy.
 		 */
 		public static final int UNVERSIONED = 4;
+		
+	    /**
+         * Object is already added or schedule-add.
+         * @since New in 1.6.
+         */
+        public static final int ADDED = 5;
 	}
 
 	/**
@@ -189,5 +195,9 @@ public class SVNConflictDescriptor {
 		this.localPath = localPath;
 		this.mergedPath = mergedPath;
 	}
-
+	
+	public SVNConflictDescriptor(String path, int action, int reason) {		
+		this(path, 0, 0, null, false, null, action, reason, null, null, null, null);
+	}
+	
 }

@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.connector.SVNConflictDescriptor;
 import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNMergeStatus;
@@ -140,6 +141,12 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 			}
 			public IResource getExact(IResource []set) {
 				return FileUtility.selectOneOf(MergeSubscriber.this.mergeScopeHelper.getRoots(), set);
+			}		
+			public SVNConflictDescriptor getTreeConflictDescriptor() {
+				return null;
+			}
+			public boolean hasTreeConflict() {
+				return false;
 			}
 		};
 		if (endProvider.getNodeKind() == SVNEntry.Kind.NONE) {
@@ -192,6 +199,12 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 			}
 			public IResource getExact(IResource []set) {
 				return FileUtility.selectOneOf(MergeSubscriber.this.mergeScopeHelper.getRoots(), set);
+			}			
+			public SVNConflictDescriptor getTreeConflictDescriptor() {
+				return null;
+			}
+			public boolean hasTreeConflict() {
+				return false;
 			}
 		};
 		IResourceChange startResourceChange = SVNRemoteStorage.instance().asResourceChange(startProvider, false);

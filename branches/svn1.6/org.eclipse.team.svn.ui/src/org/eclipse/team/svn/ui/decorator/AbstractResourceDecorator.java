@@ -199,7 +199,7 @@ public abstract class AbstractResourceDecorator extends LabelProvider implements
 		else if (IStateFilter.SF_DELETED.accept(resource, state, mask)) {
 			decoration.addOverlay(AbstractResourceDecorator.OVR_DELETED);
 		}
-		else if (IStateFilter.SF_CONFLICTING.accept(resource, state, mask)) {
+		else if (IStateFilter.SF_CONFLICTING.accept(resource, state, mask) || IStateFilter.SF_TREE_CONFLICTING.accept(resource, state, mask)) {
 			if (this.indicateConflicted) {
 				decoration.addOverlay(AbstractResourceDecorator.OVR_CONFLICTED);
 			}
@@ -249,8 +249,8 @@ public abstract class AbstractResourceDecorator extends LabelProvider implements
 					if (var.equals(TextVariableSetProvider.VAR_ADDED_FLAG)) {
 						return IStateFilter.SF_ADDED.accept(resource, state, mask) ? AbstractResourceDecorator.this.addedChars : ""; //$NON-NLS-1$
 					}
-					else if (var.equals(TextVariableSetProvider.VAR_OUTGOING_FLAG)) {
-						return (IStateFilter.SF_COMMITABLE.accept(resource, state, mask) || IStateFilter.SF_CONFLICTING.accept(resource, state, mask)) ? AbstractResourceDecorator.this.outgoingChars : ""; //$NON-NLS-1$
+					else if (var.equals(TextVariableSetProvider.VAR_OUTGOING_FLAG)) {					
+						return (IStateFilter.SF_COMMITABLE.accept(resource, state, mask) || IStateFilter.SF_CONFLICTING.accept(resource, state, mask) || IStateFilter.SF_TREE_CONFLICTING.accept(resource, state, mask)) ? AbstractResourceDecorator.this.outgoingChars : ""; //$NON-NLS-1$
 					}
 					
 					if (var.equals(TextVariableSetProvider.VAR_REVISION)) {

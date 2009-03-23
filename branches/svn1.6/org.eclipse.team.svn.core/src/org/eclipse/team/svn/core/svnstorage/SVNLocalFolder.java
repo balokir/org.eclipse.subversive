@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.connector.SVNConflictDescriptor;
 import org.eclipse.team.svn.core.operation.local.GetAllResourcesOperation;
 import org.eclipse.team.svn.core.resource.ILocalFolder;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -29,8 +30,8 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
  * @author Alexander Gurov
  */
 public class SVNLocalFolder extends SVNLocalResource implements ILocalFolder {
-	public SVNLocalFolder(IResource resource, long revision, long baseRevision, String status, int changeMask, String author, long lastCommitDate) {
-		super(resource, revision, baseRevision, status, changeMask, author, lastCommitDate);
+	public SVNLocalFolder(IResource resource, long revision, long baseRevision, String status, int changeMask, String author, long lastCommitDate, SVNConflictDescriptor treeConflictDescriptor) {
+		super(resource, revision, baseRevision, status, changeMask, author, lastCommitDate, treeConflictDescriptor);
 	}
 
 	public ILocalResource []getChildren() {

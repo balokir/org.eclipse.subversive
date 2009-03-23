@@ -23,6 +23,7 @@ import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.SVNNotification.NodeStatus;
+import org.eclipse.team.svn.core.connector.SVNNotification.PerformedAction;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -103,7 +104,8 @@ public class UpdateOperation extends AbstractFileConflictDetectionOperation impl
 		public void progress(int current, int total, ItemState state) {
 			super.progress(current, total, state);
 		    if (state.contentState == NodeStatus.CONFLICTED || 
-		        state.propState == NodeStatus.CONFLICTED) {
+		        state.propState == NodeStatus.CONFLICTED ||
+		        state.action == PerformedAction.TREE_CONFLICT) {
 		        UpdateOperation.this.hasUnresolvedConflict = true;
 		        UpdateOperation.this.unprocessed.add(new File(state.path));
 		        IPath conflictPath = new Path(state.path);

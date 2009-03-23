@@ -20,6 +20,7 @@ import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.connector.SVNConflictDescriptor.Action;
 import org.eclipse.team.svn.core.connector.SVNProperty.BuiltIn;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -66,6 +67,8 @@ public interface IStateFilter {
 
 	public static final String ST_LINKED = "Linked"; //$NON-NLS-1$
 
+	public static final String ST_TREE_CONFLICTING = "TreeConflicting"; //$NON-NLS-1$
+	
 	public boolean accept(ILocalResource resource);
 	
 	public boolean accept(IResource resource, String state, int mask);
@@ -319,7 +322,9 @@ public interface IStateFilter {
 			return 
 				state == IStateFilter.ST_REPLACED || state == IStateFilter.ST_PREREPLACED ||
 				state == IStateFilter.ST_ADDED || state == IStateFilter.ST_NORMAL || 
-				state == IStateFilter.ST_MODIFIED || state == IStateFilter.ST_CONFLICTING || state == IStateFilter.ST_DELETED || state == IStateFilter.ST_MISSING;
+				state == IStateFilter.ST_MODIFIED || state == IStateFilter.ST_CONFLICTING ||
+				state == IStateFilter.ST_DELETED || state == IStateFilter.ST_MISSING | 
+				state == IStateFilter.ST_TREE_CONFLICTING;
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return this.accept(resource, state, mask);
@@ -339,11 +344,19 @@ public interface IStateFilter {
 	};
 	
 	public static final IStateFilter SF_ONREPOSITORY = new AbstractStateFilter() {
-		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return 
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {									
+			boolean accept = 
 				state == IStateFilter.ST_PREREPLACED || state == IStateFilter.ST_REPLACED || 
 				state == IStateFilter.ST_NORMAL || state == IStateFilter.ST_MODIFIED || 
 				state == IStateFilter.ST_CONFLICTING || state == IStateFilter.ST_DELETED || state == IStateFilter.ST_MISSING;
+			//if there's tree conflict, check if remote resource isn't deleted
+			if (!accept && IStateFilter.ST_TREE_CONFLICTING == state) {
+				if (local == null) {
+					local = SVNRemoteStorage.instance().asLocalResource(resource);
+				}
+				accept |= local.getTreeConflictDescriptor().action != Action.DELETE;
+			}
+			return accept;
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_VERSIONED.accept(resource, state, mask);
@@ -397,6 +410,15 @@ public interface IStateFilter {
 		}
 	};
 	
+	public static final IStateFilter SF_TREE_CONFLICTING = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
+			return state == IStateFilter.ST_TREE_CONFLICTING;
+		}
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
+			return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask);
+		}
+	};
+	
 	public static final IStateFilter SF_DELETED = new AbstractStateFilter() {
 		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return 
@@ -431,7 +453,7 @@ public interface IStateFilter {
 	public static final IStateFilter SF_REVERTABLE = new AbstractStateFilter() {
 		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return 
-				state == IStateFilter.ST_PREREPLACED || state == IStateFilter.ST_CONFLICTING || 
+				state == IStateFilter.ST_PREREPLACED || state == IStateFilter.ST_CONFLICTING || state == IStateFilter.ST_TREE_CONFLICTING ||
 				state == IStateFilter.ST_REPLACED || state == IStateFilter.ST_ADDED || 
 				state == IStateFilter.ST_MODIFIED || state == IStateFilter.ST_DELETED || state == IStateFilter.ST_MISSING;
 		}
