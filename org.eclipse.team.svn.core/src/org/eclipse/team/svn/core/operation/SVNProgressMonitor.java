@@ -121,6 +121,10 @@ public class SVNProgressMonitor implements ISVNProgressMonitor {
 						status = SVNMessages.Console_Action_Unlocked;
 						break;
 					}
+					case PerformedAction.TREE_CONFLICT:
+						status = SVNMessages.Console_Status_Conflicted;
+						severity = IConsoleStream.LEVEL_WARNING;
+						break;
 					default: {
 						int resourceState = contentState == SVNEntryStatus.Kind.NORMAL ? propState : contentState;
 						status = SVNProgressMonitor.getStatus(resourceState);

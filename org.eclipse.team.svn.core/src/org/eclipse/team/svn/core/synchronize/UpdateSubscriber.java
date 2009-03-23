@@ -21,6 +21,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
+import org.eclipse.team.svn.core.connector.SVNConflictDescriptor;
 import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
@@ -115,6 +116,12 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 			}
 			public IResource getExact(IResource []set) {
 				return FileUtility.selectOneOf(scope, set);
+			}
+			public SVNConflictDescriptor getTreeConflictDescriptor() {
+				return null;
+			}
+			public boolean hasTreeConflict() {
+				return false;
 			}
 		};
 		if (provider.getNodeKind() == SVNEntry.Kind.NONE) {

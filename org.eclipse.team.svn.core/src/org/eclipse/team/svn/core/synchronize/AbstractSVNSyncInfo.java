@@ -67,6 +67,10 @@ public abstract class AbstractSVNSyncInfo extends SyncInfo {
         return IStateFilter.SF_CONFLICTING.accept(this.getLocal(), kind, mask);
     }
     
+    protected boolean isTreeConflicted(String kind, int mask) {    	
+        return IStateFilter.SF_TREE_CONFLICTING.accept(this.getLocal(), kind, mask);
+    }    
+    
     protected boolean isNotModified(String kind, int mask) {
         return IStateFilter.SF_NOTMODIFIED.accept(this.getLocal(), kind, mask);
     }

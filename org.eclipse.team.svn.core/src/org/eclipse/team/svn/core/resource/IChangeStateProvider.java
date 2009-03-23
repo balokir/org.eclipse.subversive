@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.core.resource;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.team.svn.core.connector.SVNConflictDescriptor;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 
 /**
@@ -31,4 +32,6 @@ public interface IChangeStateProvider {
 	public boolean isCopied();
 	public boolean isSwitched();
 	public IResource getExact(IResource []set);
+	public boolean hasTreeConflict();
+	SVNConflictDescriptor getTreeConflictDescriptor();
 }

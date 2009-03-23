@@ -29,12 +29,8 @@ public class SVNTeamProviderType extends RepositoryProviderType {
 	public ProjectSetCapability getProjectSetCapability() {
 		return new SVNTeamProjectSetCapability();
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.RepositoryProviderType#getSubscriber()
-	 */
-	public Subscriber getSubscriber() {
-		// TODO Auto-generated method stub
+		
+	public Subscriber getSubscriber() {		
 		return super.getSubscriber();
 	}
 	

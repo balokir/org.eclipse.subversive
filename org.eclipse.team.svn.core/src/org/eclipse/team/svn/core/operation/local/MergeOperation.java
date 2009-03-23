@@ -22,6 +22,7 @@ import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNMergeStatus;
 import org.eclipse.team.svn.core.connector.SVNNotification.NodeStatus;
+import org.eclipse.team.svn.core.connector.SVNNotification.PerformedAction;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
@@ -141,7 +142,7 @@ public class MergeOperation extends AbstractConflictDetectionOperation implement
 		
 		public void progress(int current, int total, ItemState state) {
 			super.progress(current, total, state);
-		    if (state.contentState == NodeStatus.CONFLICTED || state.propState == NodeStatus.CONFLICTED) {
+		    if (state.contentState == NodeStatus.CONFLICTED || state.propState == NodeStatus.CONFLICTED || state.action == PerformedAction.TREE_CONFLICT) {
 		        MergeOperation.this.hasUnresolvedConflict = true;
 			    for (Iterator<IResource> it = MergeOperation.this.processed.iterator(); it.hasNext(); ) {
 			        IResource res = it.next();
