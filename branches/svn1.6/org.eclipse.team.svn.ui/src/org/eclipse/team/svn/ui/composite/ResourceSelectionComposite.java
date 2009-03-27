@@ -448,7 +448,7 @@ public class ResourceSelectionComposite extends Composite {
 	}
 
 	protected String statusAsString(String status, int changeMask) {
-		if ((changeMask & ILocalResource.TEXT_MODIFIED) == 0) {
+		if (status != IStateFilter.ST_TREE_CONFLICTING && (changeMask & ILocalResource.TEXT_MODIFIED) == 0) {
 			return ""; //$NON-NLS-1$
 		}
 		return SVNUtility.getStatusText(status);

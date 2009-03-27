@@ -16,6 +16,7 @@ import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.action.local.CreatePatchAction;
@@ -37,7 +38,8 @@ public class CreatePatchFileModelAction extends AbstractSynchronizeLogicalModelA
 	protected FastSyncInfoFilter getSyncInfoFilter() {
 		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.OUTGOING, SyncInfo.CONFLICTING}) {
             public boolean select(SyncInfo info) {
-                return super.select(info) && IStateFilter.SF_ANY_CHANGE.accept(((AbstractSVNSyncInfo)info).getLocalResource());
+            	ILocalResource local = ((AbstractSVNSyncInfo)info).getLocalResource();
+                return super.select(info) && (IStateFilter.SF_VERSIONED.accept(local) || IStateFilter.SF_ANY_CHANGE.accept(local) && local.getResource().exists());
             }
         };
 	}

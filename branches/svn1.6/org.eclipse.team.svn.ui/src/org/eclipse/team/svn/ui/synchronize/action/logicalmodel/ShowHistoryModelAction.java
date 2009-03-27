@@ -49,7 +49,7 @@ public class ShowHistoryModelAction extends AbstractSynchronizeLogicalModelActio
 				if (syncInfo != null) {
 					ILocalResource incoming = ((ResourceVariant)syncInfo.getRemote()).getResource();
 					if (incoming instanceof IResourceChange) {
-						return IStateFilter.ST_DELETED != incoming.getStatus();
+						return !IStateFilter.SF_ACTION_DELETED.accept(incoming);
 					}
 				}
 				IResource selectedResource = this.getSelectedResource();

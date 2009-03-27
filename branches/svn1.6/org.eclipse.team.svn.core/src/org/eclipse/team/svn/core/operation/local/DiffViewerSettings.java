@@ -18,10 +18,12 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.operation.local.property.GetPropertiesOperation;
 import org.eclipse.team.svn.core.operation.remote.GetRemotePropertiesOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
+import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 
@@ -176,19 +178,21 @@ public class DiffViewerSettings {
 		if (kind == null) {
 			String mimeType = null;
 			
-			GetPropertiesOperation op = new GetPropertiesOperation(file);
-    		ProgressMonitorUtility.doTaskExternalDefault(op, monitor);
-    		if (op.getExecutionState() == IStatus.OK) {
-    			SVNProperty[] props = op.getProperties();
-    			if (props != null) {
-    				for (SVNProperty prop : props) {
-    					if (SVNProperty.BuiltIn.MIME_TYPE.equals(prop.name)) {
-    						mimeType = prop.value;
-    						break;
-    					}
-    				}
-    			}		    															
-    		}	
+			if (IStateFilter.SF_VERSIONED.accept(SVNRemoteStorage.instance().asLocalResource(file))) {
+				GetPropertiesOperation op = new GetPropertiesOperation(file);
+	    		ProgressMonitorUtility.doTaskExternalDefault(op, monitor);
+	    		if (op.getExecutionState() == IStatus.OK) {
+	    			SVNProperty[] props = op.getProperties();
+	    			if (props != null) {
+	    				for (SVNProperty prop : props) {
+	    					if (SVNProperty.BuiltIn.MIME_TYPE.equals(prop.name)) {
+	    						mimeType = prop.value;
+	    						break;
+	    					}
+	    				}
+	    			}		    															
+	    		}		
+			}
     		    		
     		if (mimeType != null && diffSettings.specificParameters.containsKey(tmpKind = new ResourceSpecificParameterKind(ResourceSpecificParameterKindEnum.MIME_TYPE, mimeType))) {
     			kind = tmpKind;

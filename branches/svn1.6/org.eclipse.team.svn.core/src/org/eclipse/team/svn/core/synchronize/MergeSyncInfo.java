@@ -53,7 +53,10 @@ public class MergeSyncInfo extends AbstractSVNSyncInfo {
 
 	    if (this.isTreeConflicted(localKind, localMask)) {
 	    	return SyncInfo.CONFLICTING | SyncInfo.CHANGE;        	
-	    }  
+	    }
+	    if (this.isTreeConflicted(remoteKind, remoteMask)) {
+	    	return SyncInfo.CONFLICTING | SyncInfo.CHANGE;        	
+	    }
 		
 		if (this.isAdded(remoteKind, remoteMask)) {
 			if (this.isNotExists(localKind, localMask) || this.isDeleted(localKind, localMask)) {
