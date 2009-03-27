@@ -8,6 +8,13 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.7.I20090327-1900 [27 March 2009]
+
+Fixes:
+ * Synchronize permanently fails with org.eclipse.team.core.TeamException: Resource ?...? does not exist. (bug 267624)
+ 
+--------------------------------------------------------------------------------
+
 Version 0.7.7.I20090306-1500 [6 March 2009]
 
 Features:
