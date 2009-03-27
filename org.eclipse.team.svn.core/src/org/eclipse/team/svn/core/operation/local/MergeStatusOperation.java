@@ -92,7 +92,7 @@ public class MergeStatusOperation extends AbstractWorkingCopyOperation implement
     	MergeSet1URL info = (MergeSet1URL)this.info;
 		SVNEntryRevisionReference mergeRef = SVNUtility.getEntryRevisionReference(info.from[idx]);
 		String wcPath = FileUtility.getWorkingCopyPath(info.to[idx]);
-		long options = info.ignoreAncestry ? (ISVNConnector.Options.IGNORE_ANCESTRY | ISVNConnector.Options.FORCE) : ISVNConnector.Options.FORCE;
+		long options = info.ignoreAncestry ? (ISVNConnector.Options.IGNORE_ANCESTRY/* | ISVNConnector.Options.FORCE*/) : ISVNConnector.Options.NONE/*ISVNConnector.Options.FORCE*/; 		
 		ISVNConnector proxy = info.from[idx].getRepositoryLocation().acquireSVNProxy();
 		try {
 			proxy.mergeStatus(mergeRef, info.revisions, wcPath, info.depth, options, cb, new SVNProgressMonitor(this, monitor, null));

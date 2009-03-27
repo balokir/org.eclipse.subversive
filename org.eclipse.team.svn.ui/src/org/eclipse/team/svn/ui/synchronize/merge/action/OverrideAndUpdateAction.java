@@ -21,7 +21,9 @@ import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNConflictDescriptor;
 import org.eclipse.team.svn.core.connector.SVNConflictResolution;
+import org.eclipse.team.svn.core.connector.SVNConflictDescriptor.Action;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.GetRemoteContentsOperation;
@@ -51,7 +53,16 @@ public class OverrideAndUpdateAction extends AbstractSynchronizeModelAction {
 	}
 
 	protected FastSyncInfoFilter getSyncInfoFilter() {
-		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.CONFLICTING, SyncInfo.INCOMING});
+		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.CONFLICTING, SyncInfo.INCOMING}) {			
+			public boolean select(SyncInfo info) {							
+				//don't apply for tree conflicts which have incoming remote deletion
+                return super.select(info) && new IStateFilter.AbstractTreeConflictingStateFilter() {
+					protected boolean acceptTreeConflict(SVNConflictDescriptor treeConflict) {
+						return treeConflict.action != Action.DELETE;
+					}                	
+                }.accept(((AbstractSVNSyncInfo)info).getLocalResource());
+            }
+		};
 	}
 
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {

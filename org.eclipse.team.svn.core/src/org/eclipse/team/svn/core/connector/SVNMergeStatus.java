@@ -67,6 +67,18 @@ public class SVNMergeStatus extends SVNEntryStatus {
 	public final boolean skipped;
 
 	/**
+     * @since 1.6
+     * is this item in a tree conflicted state
+     */
+    public final boolean hasTreeConflict;
+
+    /**
+     * @since 1.6
+     * description of the tree conflict
+     */
+    public final SVNConflictDescriptor treeConflictDescriptor;
+	
+	/**
 	 * The {@link SVNMergeStatus} instance could be initialized only once because all fields are final
 	 * 
 	 * @param startUrl
@@ -93,8 +105,12 @@ public class SVNMergeStatus extends SVNEntryStatus {
 	 *            The comment entered for the last merged change. Could be <code>null</code>.
 	 * @param skipped
 	 *            Tells if this resource is skipped during merge or not.
+	 * @param hasTreeConflict
+	 *            is this item in a tree conflicted state
+	 * @param treeConflictDescriptor
+	 *            description of the tree conflict
 	 */
-	public SVNMergeStatus(String startUrl, String endUrl, String path, int nodeKind, int textStatus, int propStatus, long startRevision, long endRevision, long date, String author, String comment, boolean skipped) {
+	public SVNMergeStatus(String startUrl, String endUrl, String path, int nodeKind, int textStatus, int propStatus, long startRevision, long endRevision, long date, String author, String comment, boolean skipped, boolean hasTreeConflict, SVNConflictDescriptor treeConflictDescriptor) {
 		super(nodeKind, textStatus, propStatus);
 		this.startUrl = startUrl;
 		this.endUrl = endUrl;
@@ -105,5 +121,7 @@ public class SVNMergeStatus extends SVNEntryStatus {
 		this.author = author;
 		this.comment = comment;
 		this.skipped = skipped;
+		this.hasTreeConflict = hasTreeConflict;
+		this.treeConflictDescriptor = treeConflictDescriptor;
 	}
 }

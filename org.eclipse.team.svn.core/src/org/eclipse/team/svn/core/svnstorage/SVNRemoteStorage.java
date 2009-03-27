@@ -47,6 +47,7 @@ import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNProgressMonitor;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.SVNConflictDescriptor;
+import org.eclipse.team.svn.core.connector.SVNConflictVersion;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryInfo;
@@ -219,7 +220,6 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		}
 		long lastCommitDate = resource.getLastCommitDate();
 		String comment = resource.getComment();
-		SVNConflictDescriptor conflictDescriptor = resource.getTreeConflictDescriptor();
 		String retVal = 
 	/*0*/	String.valueOf(resource instanceof ILocalFolder) + ";" +  //$NON-NLS-1$
 	/*1*/	new String(Base64.encode(FileUtility.getWorkingCopyPath(resource.getResource()).getBytes())) + ";" +  //$NON-NLS-1$
@@ -231,11 +231,29 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	/*7*/	(kind == SVNRevision.Kind.NUMBER ? String.valueOf(((SVNRevision.Number)resource.getPegRevision()).getNumber()) : String.valueOf(kind)) + ";" + //$NON-NLS-1$
 	/*8*/	(originatorData != null ? originatorData : "null") + ";" + //$NON-NLS-1$ //$NON-NLS-2$
 	/*9*/	(comment == null ? "null" : new String(Base64.encode(comment.getBytes()))) + ";" + //$NON-NLS-1$ //$NON-NLS-2$
-	/*10*/	resource.getChangeMask() + ";" + 					
-	/*11*/	(conflictDescriptor == null ? "null" : String.valueOf(conflictDescriptor.action)) + ";" +			
-	/*12*/	(conflictDescriptor == null ? "null" : String.valueOf(conflictDescriptor.reason));						
+	/*10*/	resource.getChangeMask() + ";" +  //$NON-NLS-1$
+		this.getTreeConflictDescriptorAsString(resource.getTreeConflictDescriptor());								
 								
 		return retVal.getBytes();
+	}
+	
+	protected String getTreeConflictDescriptorAsString(SVNConflictDescriptor conflictDescriptor) {
+		String retVal = 
+	/*11*/	(conflictDescriptor == null ? "null" : String.valueOf(conflictDescriptor.action)) + ";" + //$NON-NLS-1$ //$NON-NLS-2$
+	/*12*/	(conflictDescriptor == null ? "null" : String.valueOf(conflictDescriptor.reason)) + ";" + //$NON-NLS-1$ //$NON-NLS-2$
+	/*13*/  (conflictDescriptor == null ? "null" : String.valueOf(conflictDescriptor.operation)) + ";" + //$NON-NLS-1$ //$NON-NLS-2$
+		this.getSVNConflictVersionAsString(conflictDescriptor == null ? null : conflictDescriptor.srcLeftVersion) + ";" + //$NON-NLS-1$
+		this.getSVNConflictVersionAsString(conflictDescriptor == null ? null : conflictDescriptor.srcRightVersion);
+		return retVal;
+	}
+	
+	protected String getSVNConflictVersionAsString(SVNConflictVersion conflictVersion) {
+		String retVal = 
+	/*14 or 18*/    (conflictVersion == null ? "null" : String.valueOf(conflictVersion.nodeKind)) + ";" + //$NON-NLS-1$ //$NON-NLS-2$
+	/*15 or 19*/	(conflictVersion == null ? "null" : new String(Base64.encode(conflictVersion.pathInRepos.getBytes()))) + ";" + //$NON-NLS-1$ //$NON-NLS-2$
+	/*16 or 20*/	(conflictVersion == null ? "null" : String.valueOf(conflictVersion.pegRevision)) + ";" + //$NON-NLS-1$ //$NON-NLS-2$
+	/*17 or 21*/	(conflictVersion == null ? "null" : new String(Base64.encode(conflictVersion.reposURL.getBytes()))); //$NON-NLS-1$
+		return retVal;
 	}
 	
 	public IResourceChange resourceChangeFromBytes(byte []bytes) {
@@ -263,10 +281,8 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		
 		SVNConflictDescriptor treeConflict = null;
-		if (IStateFilter.ST_TREE_CONFLICTING == status) {			
-			int action = "null".equals(data[11]) ? 0 : Integer.parseInt(data[11]);
-			int reason = "null".equals(data[12]) ? 0 : Integer.parseInt(data[12]);
-			treeConflict = new SVNConflictDescriptor(name, action, reason);	
+		if (IStateFilter.ST_TREE_CONFLICTING == status) {
+			treeConflict = this.getTreeConflictDescriptorFromString(name, data);			
 		}
 				
 		IResourceChange change = 
@@ -280,6 +296,26 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		}
 		
 		return change;
+	}
+	
+	protected SVNConflictDescriptor getTreeConflictDescriptorFromString(String path, String[] data) {
+		SVNConflictDescriptor conflictDescriptor = null;		
+		if (data.length >= 22) {
+			int action = "null".equals(data[11]) ? 0 : Integer.parseInt(data[11]); //$NON-NLS-1$
+			int reason = "null".equals(data[12]) ? 0 : Integer.parseInt(data[12]); //$NON-NLS-1$
+			int operation = "null".equals(data[13]) ? 0 : Integer.parseInt(data[13]); //$NON-NLS-1$
+			conflictDescriptor = new SVNConflictDescriptor(path, action, reason, operation, this.getSVNConflictVersionFromString(data, true), this.getSVNConflictVersionFromString(data, false));	
+		}			
+		return conflictDescriptor;
+	}
+	
+	protected SVNConflictVersion getSVNConflictVersionFromString(String[] data, boolean isLeft) {
+		int indexShift = isLeft ? 0 : 4;
+		int nodeKind = "null".equals(data[14 + indexShift]) ? 0 :  Integer.parseInt(data[14 + indexShift]); //$NON-NLS-1$
+		String pathInRepos = "null".equals(data[15 + indexShift]) ? null : new String(Base64.decode(data[15 + indexShift].getBytes())); //$NON-NLS-1$
+		long pegRevision = "null".equals(data[16 + indexShift]) ? 0 :  Long.parseLong(data[16 + indexShift]); //$NON-NLS-1$
+		String reposUrl = "null".equals(data[17 + indexShift]) ? null : new String(Base64.decode(data[17 + indexShift].getBytes()));		 //$NON-NLS-1$
+		return new SVNConflictVersion(reposUrl, pegRevision, pathInRepos, nodeKind);
 	}
 	
 	public synchronized IResource []getRegisteredChildren(IContainer container) throws Exception {
@@ -788,7 +824,8 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		for (int i = 0; i < statuses.length; i++) {
 			int nodeKind = SVNUtility.getNodeKind(statuses[i].path, statuses[i].nodeKind, true);
 			// ignore files absent in the WC base and WC working. But what is the reason why it is reported ?
-			if (nodeKind == SVNEntry.Kind.NONE) {
+			//try to create local resource for file which has tree conflict but doesn't exist
+			if (nodeKind == SVNEntry.Kind.NONE && !statuses[i].hasTreeConflict) {
 				continue;
 			}
 			

@@ -49,7 +49,10 @@ public class UpdateSyncInfo extends AbstractSVNSyncInfo {
                
         if (this.isTreeConflicted(localKind, localMask)) {
         	return SyncInfo.CONFLICTING | SyncInfo.CHANGE;        	
-        }        
+        }
+        if (this.isTreeConflicted(remoteKind, remoteMask)) {
+	    	return SyncInfo.CONFLICTING | SyncInfo.CHANGE;        	
+	    }
         
         if (this.isReplaced(remoteKind, remoteMask)) {
             if (this.isNotModified(localKind, localMask)) {

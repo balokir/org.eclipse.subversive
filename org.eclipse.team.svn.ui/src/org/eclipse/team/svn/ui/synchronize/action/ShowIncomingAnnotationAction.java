@@ -45,7 +45,7 @@ public class ShowIncomingAnnotationAction extends AbstractSynchronizeModelAction
 		if (selection.size() == 1 && selection.getFirstElement() instanceof SyncInfoModelElement) {
 			AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo)((SyncInfoModelElement)selection.getFirstElement()).getSyncInfo();
 			ILocalResource incoming = ((ResourceVariant)syncInfo.getRemote()).getResource();
-			return incoming instanceof IFileChange && IStateFilter.ST_DELETED != incoming.getStatus();
+			return incoming instanceof IFileChange && !IStateFilter.SF_ACTION_DELETED.accept(incoming);
 		}
 		return false;
 	}

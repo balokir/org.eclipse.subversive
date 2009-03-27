@@ -17,10 +17,12 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNConflictDescriptor;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNConflictDescriptor.Action;
+import org.eclipse.team.svn.core.connector.SVNConflictDescriptor.Reason;
 import org.eclipse.team.svn.core.connector.SVNProperty.BuiltIn;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -182,6 +184,23 @@ public interface IStateFilter {
 		
 	};
 	
+	public static abstract class AbstractTreeConflictingStateFilter extends AbstractStateFilter {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
+			if (state == IStateFilter.ST_TREE_CONFLICTING) {
+				local = this.takeLocal(local, resource);
+				if (local.hasTreeConflict()) {
+					SVNConflictDescriptor treeConflict = local.getTreeConflictDescriptor();
+					return this.acceptTreeConflict(treeConflict);
+				}									
+			}
+			return false;
+		}
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
+			return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask);
+		}
+		protected abstract boolean acceptTreeConflict(SVNConflictDescriptor treeConflict);
+	}
+	
 	public static final IStateFilter SF_INTERNAL_INVALID = new IStateFilter() {
 		public boolean accept(ILocalResource resource) {
 			return resource.getStatus() == IStateFilter.ST_INTERNAL_INVALID;
@@ -319,12 +338,22 @@ public interface IStateFilter {
 	
 	public static final IStateFilter SF_VERSIONED = new AbstractStateFilter() {
 		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return 
+			boolean accept = 
 				state == IStateFilter.ST_REPLACED || state == IStateFilter.ST_PREREPLACED ||
 				state == IStateFilter.ST_ADDED || state == IStateFilter.ST_NORMAL || 
 				state == IStateFilter.ST_MODIFIED || state == IStateFilter.ST_CONFLICTING ||
-				state == IStateFilter.ST_DELETED || state == IStateFilter.ST_MISSING | 
-				state == IStateFilter.ST_TREE_CONFLICTING;
+				state == IStateFilter.ST_DELETED || state == IStateFilter.ST_MISSING; 
+			//check status if there's a tree conflict	
+			if (!accept) {
+				accept = new AbstractTreeConflictingStateFilter() {			
+					protected boolean acceptTreeConflict(SVNConflictDescriptor treeConflict) {
+						int reason = treeConflict.reason;
+						int action = treeConflict.action;						
+						return Reason.MODIFIED == reason || (Reason.DELETED == reason && Action.DELETE != action) || Reason.ADDED == reason;
+					}
+				}.accept(resource, state, mask);
+			}	
+			return accept;
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return this.accept(resource, state, mask);
@@ -348,15 +377,18 @@ public interface IStateFilter {
 			boolean accept = 
 				state == IStateFilter.ST_PREREPLACED || state == IStateFilter.ST_REPLACED || 
 				state == IStateFilter.ST_NORMAL || state == IStateFilter.ST_MODIFIED || 
-				state == IStateFilter.ST_CONFLICTING || state == IStateFilter.ST_DELETED || state == IStateFilter.ST_MISSING;
-			//if there's tree conflict, check if remote resource isn't deleted
-			if (!accept && IStateFilter.ST_TREE_CONFLICTING == state) {
-				if (local == null) {
-					local = SVNRemoteStorage.instance().asLocalResource(resource);
-				}
-				accept |= local.getTreeConflictDescriptor().action != Action.DELETE;
-			}
-			return accept;
+				state == IStateFilter.ST_CONFLICTING || state == IStateFilter.ST_DELETED || state == IStateFilter.ST_MISSING;			
+			//check status if there's a tree conflict
+			if (!accept) {
+				accept = new AbstractTreeConflictingStateFilter() {			
+					protected boolean acceptTreeConflict(SVNConflictDescriptor treeConflict) {
+						int reason = treeConflict.reason;
+						int action = treeConflict.action;						
+						return Reason.MODIFIED == reason || (Reason.DELETED == reason && action != Action.DELETE);		
+					}
+				}.accept(resource, state, mask);
+			}	
+			return accept;			
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_VERSIONED.accept(resource, state, mask);
@@ -413,6 +445,32 @@ public interface IStateFilter {
 	public static final IStateFilter SF_TREE_CONFLICTING = new AbstractStateFilter() {
 		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return state == IStateFilter.ST_TREE_CONFLICTING;
+		}
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
+			return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask);
+		}
+	};
+	
+	/*
+	 * Filter is used to detect if a resource was deleted
+	 * Resource is considered to be deleted if has 'Deleted' status or it has tree conflict with 'Deleted' action.
+	 * 
+	 * We can't simply re-define SF_DELETED filter to take into account tree conflicts, 
+	 * because it's used in other places and may break some logic,
+	 * e.g. decoration in Synchronize view, Package Explorer etc. 
+	 */
+	public static final IStateFilter SF_ACTION_DELETED = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
+			boolean accept = state == IStateFilter.ST_DELETED;
+			if (!accept) {
+				//check tree conflicts
+				accept = new AbstractTreeConflictingStateFilter() {				
+					protected boolean acceptTreeConflict(SVNConflictDescriptor treeConflict) {
+						return treeConflict.action == Action.DELETE;
+					}
+				}.accept(resource, state, mask);
+			}				
+			return accept;
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask);

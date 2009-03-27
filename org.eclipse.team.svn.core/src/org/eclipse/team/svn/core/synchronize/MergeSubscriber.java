@@ -23,6 +23,7 @@ import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNMergeStatus;
 import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.connector.SVNConflictDescriptor.Action;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.operation.local.AbstractMergeSet;
@@ -125,7 +126,7 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 			public int getNodeKind() {
 				int kind = SVNUtility.getNodeKind(current.path, current.nodeKind, true);
 				// if not exists on repository try to check it with WC kind...
-				return kind == SVNEntry.Kind.NONE ? SVNUtility.getNodeKind(current.path, current.nodeKind, false) : kind;
+				return kind == SVNEntry.Kind.NONE && !current.hasTreeConflict ? SVNUtility.getNodeKind(current.path, current.nodeKind, false) : kind;
 			}
 			public String getLocalPath() {
 				return current.path;
@@ -143,13 +144,13 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 				return FileUtility.selectOneOf(MergeSubscriber.this.mergeScopeHelper.getRoots(), set);
 			}		
 			public SVNConflictDescriptor getTreeConflictDescriptor() {
-				return null;
+				return current.treeConflictDescriptor;
 			}
 			public boolean hasTreeConflict() {
-				return false;
+				return current.hasTreeConflict;
 			}
 		};
-		if (endProvider.getNodeKind() == SVNEntry.Kind.NONE) {
+		if (endProvider.getNodeKind() == SVNEntry.Kind.NONE && !current.hasTreeConflict) {
 			return null;
 		}
 		IResourceChange endResourceChange = SVNRemoteStorage.instance().asResourceChange(endProvider, false);
@@ -183,7 +184,7 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 			public int getNodeKind() {
 				int kind = SVNUtility.getNodeKind(current.path, current.nodeKind, true);
 				// if not exists on repository try to check it with WC kind...
-				return kind == SVNEntry.Kind.NONE ? SVNUtility.getNodeKind(current.path, current.nodeKind, false) : kind;
+				return kind == SVNEntry.Kind.NONE && !current.hasTreeConflict ? SVNUtility.getNodeKind(current.path, current.nodeKind, false) : kind;
 			}
 			public String getLocalPath() {
 				return current.path;
@@ -201,10 +202,10 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 				return FileUtility.selectOneOf(MergeSubscriber.this.mergeScopeHelper.getRoots(), set);
 			}			
 			public SVNConflictDescriptor getTreeConflictDescriptor() {
-				return null;
+				return current.treeConflictDescriptor;
 			}
 			public boolean hasTreeConflict() {
-				return false;
+				return current.hasTreeConflict;
 			}
 		};
 		IResourceChange startResourceChange = SVNRemoteStorage.instance().asResourceChange(startProvider, false);
