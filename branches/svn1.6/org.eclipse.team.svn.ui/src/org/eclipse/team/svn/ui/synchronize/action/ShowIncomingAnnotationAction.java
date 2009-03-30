@@ -45,7 +45,9 @@ public class ShowIncomingAnnotationAction extends AbstractSynchronizeModelAction
 		if (selection.size() == 1 && selection.getFirstElement() instanceof SyncInfoModelElement) {
 			AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo)((SyncInfoModelElement)selection.getFirstElement()).getSyncInfo();
 			ILocalResource incoming = ((ResourceVariant)syncInfo.getRemote()).getResource();
-			return incoming instanceof IFileChange && !IStateFilter.SF_ACTION_DELETED.accept(incoming);
+			if (incoming instanceof IFileChange) {
+				return IStateFilter.ST_TREE_CONFLICTING == incoming.getStatus() ? IStateFilter.SF_TREE_CONFLICTING_REPOSITORY_EXIST.accept(incoming) : IStateFilter.ST_DELETED != incoming.getStatus();
+			} 			
 		}
 		return false;
 	}

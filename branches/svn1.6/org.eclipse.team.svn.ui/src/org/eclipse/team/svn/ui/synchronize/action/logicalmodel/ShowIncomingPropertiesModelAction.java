@@ -47,7 +47,9 @@ public class ShowIncomingPropertiesModelAction extends AbstractSynchronizeLogica
 				AbstractSVNSyncInfo syncInfo = this.getSelectedSVNSyncInfo();
 				if (syncInfo != null && syncInfo.getKind() != SyncInfo.IN_SYNC) {
 					ILocalResource incoming = ((ResourceVariant)syncInfo.getRemote()).getResource();
-					return incoming instanceof IResourceChange && !IStateFilter.SF_ACTION_DELETED.accept(incoming);
+					if (incoming instanceof IResourceChange) {
+						return IStateFilter.ST_TREE_CONFLICTING == incoming.getStatus() ? IStateFilter.SF_TREE_CONFLICTING_REPOSITORY_EXIST.accept(incoming) : IStateFilter.ST_DELETED != incoming.getStatus();
+					}
 				}					
 			}	
 		}

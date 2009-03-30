@@ -37,6 +37,7 @@ public class SVNMessages extends BaseMessages {
 	public static String Console_Status_New;
 	public static String Console_Status_Obstructed;
 	public static String Console_Status_Replaced;
+	public static String Console_Status_TreeConflicting;
 	public static String Console_TransmittingData;
 	public static String Console_Update_Status_changed;
 	public static String Console_Update_Status_conflicted;
