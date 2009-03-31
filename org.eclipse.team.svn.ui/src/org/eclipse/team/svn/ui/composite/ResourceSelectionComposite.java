@@ -54,6 +54,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNConflictDescriptor;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
@@ -447,22 +448,32 @@ public class ResourceSelectionComposite extends Composite {
 		return SVNUIMessages.format(SVNUIMessages.ResourceSelectionComposite_Info, new String[] { String.valueOf(value), String.valueOf(this.resources.length) });
 	}
 
-	protected String statusAsString(ILocalResource local) {
-		String status = local.getStatus();
-		if (local.hasTreeConflict() && local.getTreeConflictDescriptor().conflictKind != SVNConflictDescriptor.Kind.CONTENT || 
-			!local.hasTreeConflict() && (local.getChangeMask() & ILocalResource.TEXT_MODIFIED) == 0) {
-			return ""; //$NON-NLS-1$
+	protected String statusAsString(ILocalResource local) {				
+		String status = "";
+		if ((local.getChangeMask() & ILocalResource.TEXT_MODIFIED) != 0) {
+			status = SVNUtility.getStatusText(local.getStatus());
 		}
-		return SVNUtility.getStatusText(status);
+		if (local.hasTreeConflict() && local.getTreeConflictDescriptor().conflictKind == SVNConflictDescriptor.Kind.CONTENT) {
+			if (!"".equals(status)) {
+				status += ", ";
+			}
+			status += SVNMessages.TreeConflicting;			
+		}
+		return status;
 	}
 
 	protected String changeMaskAsString(ILocalResource local) {
-		if (local.hasTreeConflict() && local.getTreeConflictDescriptor().conflictKind == SVNConflictDescriptor.Kind.PROPERTIES) {
-			return IStateFilter.ST_TREE_CONFLICTING;
-		} else if (!local.hasTreeConflict() && (local.getChangeMask() & ILocalResource.PROP_MODIFIED) != 0) {
-			return IStateFilter.ST_MODIFIED;
+		String status = "";
+		if ((local.getChangeMask() & ILocalResource.PROP_MODIFIED) != 0) {
+			status = IStateFilter.ST_MODIFIED;
 		}
-		return ""; //$NON-NLS-1$
+		if (local.hasTreeConflict() && local.getTreeConflictDescriptor().conflictKind == SVNConflictDescriptor.Kind.PROPERTIES) {
+			if (!"".equals(status)) {
+				status += ", ";
+			}
+			status += SVNMessages.TreeConflicting;
+		}
+		return status;
 	}
 
 	public void addResourcesSelectionChangedListener(IResourceSelectionChangeListener listener) {

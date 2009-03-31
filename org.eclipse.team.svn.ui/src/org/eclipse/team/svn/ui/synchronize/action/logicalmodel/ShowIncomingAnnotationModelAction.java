@@ -47,7 +47,7 @@ public class ShowIncomingAnnotationModelAction extends AbstractSynchronizeLogica
 			if (syncInfo != null && syncInfo.getKind() != SyncInfo.IN_SYNC) {
 				ILocalResource incoming = ((ResourceVariant)syncInfo.getRemote()).getResource();
 				if (incoming instanceof IFileChange) {
-					return IStateFilter.ST_TREE_CONFLICTING == incoming.getStatus() ? IStateFilter.SF_TREE_CONFLICTING_REPOSITORY_EXIST.accept(incoming) : IStateFilter.ST_DELETED != incoming.getStatus();
+					return IStateFilter.SF_TREE_CONFLICTING.accept(incoming) ? IStateFilter.SF_TREE_CONFLICTING_REPOSITORY_EXIST.accept(incoming) : IStateFilter.ST_DELETED != incoming.getStatus();
 				}				
 			}
 		}		
