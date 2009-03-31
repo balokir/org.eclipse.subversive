@@ -437,8 +437,7 @@ public class SVNMessages extends BaseMessages {
 	public static String SVNInfo_NoComment;
 	public static String SVNInfo_NoDate;
 	public static String Status_Added;
-	public static String Status_Conflicting;
-	public static String Status_TreeConflicting;
+	public static String Status_Conflicting;	
 	public static String Status_Deleted;
 	public static String Status_Linked;
 	public static String Status_Missing;
@@ -450,6 +449,7 @@ public class SVNMessages extends BaseMessages {
 	public static String Status_Obstructed;
 	public static String Status_Prereplaced;
 	public static String Status_Replaced;
+	public static String TreeConflicting;
 	
 	static {
 		//load message values from bundle file

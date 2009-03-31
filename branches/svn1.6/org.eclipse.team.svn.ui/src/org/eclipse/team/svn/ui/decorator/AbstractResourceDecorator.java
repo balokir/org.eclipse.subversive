@@ -171,8 +171,11 @@ public abstract class AbstractResourceDecorator extends LabelProvider implements
 		}
 	}
 	
-	protected void decorateImpl(final IRepositoryResource remote, final ILocalResource local, final IResource resource, final String state, final int mask, IDecoration decoration) {
-		if (local.isLocked() && this.indicateLocked) {
+	protected void decorateImpl(final IRepositoryResource remote, final ILocalResource local, final IResource resource, final String state, final int mask, IDecoration decoration) {	
+		if (IStateFilter.SF_TREE_CONFLICTING.accept(resource, state, mask) && this.indicateConflicted) {			
+			decoration.addOverlay(AbstractResourceDecorator.OVR_CONFLICTED);			
+		}
+		else if (local.isLocked() && this.indicateLocked) {
 			decoration.addOverlay(AbstractResourceDecorator.OVR_LOCKED);
 		} 
 		else if (IStateFilter.SF_IGNORED.accept(resource, state, mask)) {
@@ -199,7 +202,7 @@ public abstract class AbstractResourceDecorator extends LabelProvider implements
 		else if (IStateFilter.SF_DELETED.accept(resource, state, mask)) {
 			decoration.addOverlay(AbstractResourceDecorator.OVR_DELETED);
 		}
-		else if (IStateFilter.SF_CONFLICTING.accept(resource, state, mask) || IStateFilter.SF_TREE_CONFLICTING.accept(resource, state, mask)) {
+		else if (IStateFilter.SF_CONFLICTING.accept(resource, state, mask)) {
 			if (this.indicateConflicted) {
 				decoration.addOverlay(AbstractResourceDecorator.OVR_CONFLICTED);
 			}

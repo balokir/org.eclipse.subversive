@@ -184,10 +184,8 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		// repositoryTextStatus can be StatusKind::none in two cases: resource not modified and non versioned
 		// in the second case we should ignore repository status calculation
 		
-		boolean hasTreeConflict = changeState.hasTreeConflict();
-		SVNConflictDescriptor treeConflictDescriptor = changeState.getTreeConflictDescriptor();
-		
-		String statusStr = /*revision == SVNRevision.INVALID_REVISION_NUMBER ? IStateFilter.ST_NOTEXISTS : */this.getStatusString(propKind, textKind, hasTreeConflict, update);
+		SVNConflictDescriptor treeConflictDescriptor = changeState.getTreeConflictDescriptor();		
+		String statusStr = /*revision == SVNRevision.INVALID_REVISION_NUMBER ? IStateFilter.ST_NOTEXISTS : */this.getStatusString(propKind, textKind, update);
 		if (nodeKind == SVNEntry.Kind.DIR) {
 		    if ((resource = changeState.getExact(root.findContainersForLocation(location))) == null) {
 		    	return null;
@@ -280,11 +278,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		int changeMask = "null".equals(data[10]) ? ILocalResource.NO_MODIFICATION : Integer.parseInt(data[10]); //$NON-NLS-1$
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		
-		SVNConflictDescriptor treeConflict = null;
-		if (IStateFilter.ST_TREE_CONFLICTING == status) {
-			treeConflict = this.getTreeConflictDescriptorFromString(name, data);			
-		}
-				
+		SVNConflictDescriptor treeConflict = this.getTreeConflictDescriptorFromString(name, data);				
 		IResourceChange change = 
 			isFolder ? 
 			(IResourceChange)new SVNFolderChange(root.getContainerForLocation(new Path(name)), revision, status, changeMask, author, lastCommitDate, treeConflict, pegRevision, comment) : 
@@ -890,7 +884,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 				}
 				changeMask |= externalMask;
 				
-				String status = this.getStatusString(statuses[i].propStatus, statuses[i].textStatus, statuses[i].hasTreeConflict, false);
+				String status = this.getStatusString(statuses[i].propStatus, statuses[i].textStatus, false);
 				if (!statuses[i].isSwitched && statuses[i].url != null && !SVNUtility.decodeURL(statuses[i].url).startsWith(desiredUrl)) {
 					changeMask |= ILocalResource.IS_SWITCHED;
 				}
@@ -1072,19 +1066,12 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		else if (IStateFilter.ST_REPLACED.equals(status)) {
 			return IStateFilter.ST_REPLACED;
 		} 
-		else if (IStateFilter.ST_TREE_CONFLICTING.equals(status)) {
-			return IStateFilter.ST_TREE_CONFLICTING;
-		}
 		throw new RuntimeException(SVNMessages.getErrorString("Error_UnknownStatus")); //$NON-NLS-1$
 	}
 	
-	public String getStatusString(int propKind, int textKind, boolean hasTreeConflict, boolean isRemoteStatus) {
+	public String getStatusString(int propKind, int textKind, boolean isRemoteStatus) {
 		String status = IStateFilter.ST_NORMAL;
 				
-		if (hasTreeConflict) {
-			return IStateFilter.ST_TREE_CONFLICTING;
-		}
-		
 		switch (textKind) {
 			case org.eclipse.team.svn.core.connector.SVNEntryStatus.Kind.IGNORED: {
 				status = IStateFilter.ST_IGNORED;

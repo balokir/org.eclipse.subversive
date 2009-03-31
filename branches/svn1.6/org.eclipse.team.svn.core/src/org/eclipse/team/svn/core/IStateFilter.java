@@ -69,8 +69,6 @@ public interface IStateFilter {
 	public static final String ST_REPLACED = "Replaced"; //$NON-NLS-1$
 
 	public static final String ST_LINKED = "Linked"; //$NON-NLS-1$
-
-	public static final String ST_TREE_CONFLICTING = "TreeConflicting"; //$NON-NLS-1$
 	
 	public boolean accept(ILocalResource resource);
 	
@@ -191,13 +189,11 @@ public interface IStateFilter {
 		 * particular filters in order to avoid stack overflow (e.g. SF_UNVERSIONED, it's called during calculating of local resource)
 		 */
 		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
-			if (state == IStateFilter.ST_TREE_CONFLICTING) {
-				local = this.takeLocal(local, resource);
-				if (local.hasTreeConflict()) {
-					SVNConflictDescriptor treeConflict = local.getTreeConflictDescriptor();
-					return this.acceptTreeConflict(treeConflict, local);
-				}									
-			}
+			local = this.takeLocal(local, resource);
+			if (local.hasTreeConflict()) {
+				SVNConflictDescriptor treeConflict = local.getTreeConflictDescriptor();
+				return this.acceptTreeConflict(treeConflict, local);
+			}									
 			return false;
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
@@ -376,20 +372,20 @@ public interface IStateFilter {
 	
 	public static final IStateFilter SF_VERSIONED = new AbstractStateFilter() {
 		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
-			boolean accept = 
-				state == IStateFilter.ST_REPLACED || state == IStateFilter.ST_PREREPLACED ||
-				state == IStateFilter.ST_ADDED || state == IStateFilter.ST_NORMAL || 
-				state == IStateFilter.ST_MODIFIED || state == IStateFilter.ST_CONFLICTING ||
-				state == IStateFilter.ST_DELETED || state == IStateFilter.ST_MISSING; 
-			//check status if there's a tree conflict	
-			if (!accept && state == IStateFilter.ST_TREE_CONFLICTING) {
-				accept |= new TreeConflictingRepositoryExistStateFilter() {			
+			//at first check tree conflict
+			local = this.takeLocal(local, resource);
+			if (local.hasTreeConflict()) {
+				return new TreeConflictingRepositoryExistStateFilter() {			
 					protected boolean acceptTreeConflict(SVNConflictDescriptor treeConflict, ILocalResource resource) {
 						return super.acceptTreeConflict(treeConflict, resource) || Reason.ADDED == treeConflict.reason;
 					}
-				}.accept(resource, state, mask);
-			}	
-			return accept;
+				}.accept(local);
+			}													
+			return 
+				state == IStateFilter.ST_REPLACED || state == IStateFilter.ST_PREREPLACED ||
+				state == IStateFilter.ST_ADDED || state == IStateFilter.ST_NORMAL || 
+				state == IStateFilter.ST_MODIFIED || state == IStateFilter.ST_CONFLICTING ||
+				state == IStateFilter.ST_DELETED || state == IStateFilter.ST_MISSING; 			
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return this.accept(resource, state, mask);
@@ -398,11 +394,15 @@ public interface IStateFilter {
 	
 	public static final IStateFilter SF_NOTONREPOSITORY = new AbstractStateFilter() {
 		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
+			//at first check tree conflict
+			local = this.takeLocal(local, resource);
+			if (local.hasTreeConflict()) {
+				return !IStateFilter.SF_TREE_CONFLICTING_REPOSITORY_EXIST.accept(local);
+			}	
 			return 
 				state == IStateFilter.ST_PREREPLACED || state == IStateFilter.ST_NEW || 
 				state == IStateFilter.ST_IGNORED || state == IStateFilter.ST_NOTEXISTS ||
-				state == IStateFilter.ST_ADDED ||
-				state == IStateFilter.ST_TREE_CONFLICTING && !IStateFilter.SF_TREE_CONFLICTING_REPOSITORY_EXIST.accept(resource, state, mask);			
+				state == IStateFilter.ST_ADDED;			
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return true;
@@ -410,12 +410,16 @@ public interface IStateFilter {
 	};
 	
 	public static final IStateFilter SF_ONREPOSITORY = new AbstractStateFilter() {
-		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {									
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
+			//at first check tree conflict
+			local = this.takeLocal(local, resource);
+			if (local.hasTreeConflict()) {
+				return IStateFilter.SF_TREE_CONFLICTING_REPOSITORY_EXIST.accept(local);
+			}			
 			return 
 				state == IStateFilter.ST_PREREPLACED || state == IStateFilter.ST_REPLACED || 
 				state == IStateFilter.ST_NORMAL || state == IStateFilter.ST_MODIFIED || 
-				state == IStateFilter.ST_CONFLICTING || state == IStateFilter.ST_DELETED || state == IStateFilter.ST_MISSING ||
-				state == IStateFilter.ST_TREE_CONFLICTING && IStateFilter.SF_TREE_CONFLICTING_REPOSITORY_EXIST.accept(resource, state, mask);						
+				state == IStateFilter.ST_CONFLICTING || state == IStateFilter.ST_DELETED || state == IStateFilter.ST_MISSING;				
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_VERSIONED.accept(resource, state, mask);
@@ -471,7 +475,7 @@ public interface IStateFilter {
 	
 	public static final IStateFilter SF_TREE_CONFLICTING = new AbstractStateFilter() {
 		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return state == IStateFilter.ST_TREE_CONFLICTING;
+			return this.takeLocal(local, resource).hasTreeConflict();
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask);
@@ -512,9 +516,10 @@ public interface IStateFilter {
 	public static final IStateFilter SF_REVERTABLE = new AbstractStateFilter() {
 		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return 
-				state == IStateFilter.ST_PREREPLACED || state == IStateFilter.ST_CONFLICTING || state == IStateFilter.ST_TREE_CONFLICTING ||
+				state == IStateFilter.ST_PREREPLACED || state == IStateFilter.ST_CONFLICTING ||
 				state == IStateFilter.ST_REPLACED || state == IStateFilter.ST_ADDED || 
-				state == IStateFilter.ST_MODIFIED || state == IStateFilter.ST_DELETED || state == IStateFilter.ST_MISSING;
+				state == IStateFilter.ST_MODIFIED || state == IStateFilter.ST_DELETED || state == IStateFilter.ST_MISSING ||
+				IStateFilter.SF_TREE_CONFLICTING.accept(resource, state, mask);
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_VERSIONED.accept(resource, state, mask);

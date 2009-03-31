@@ -55,7 +55,7 @@ public class ExtractIncomingToActionHelper extends AbstractActionHelper {
 					AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo) info;
 					ILocalResource local = syncInfo.getLocalResource();
 					//for resources with tree conflicts check that they exist remotely
-					return IStateFilter.ST_TREE_CONFLICTING == local.getStatus() ? IStateFilter.SF_ONREPOSITORY.accept(local) : true;
+					return IStateFilter.SF_TREE_CONFLICTING.accept(local) ? IStateFilter.SF_ONREPOSITORY.accept(local) : true;
 				}
 				return false;
 			}

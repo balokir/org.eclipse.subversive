@@ -55,7 +55,7 @@ public class OverrideAndUpdateAction extends AbstractSynchronizeModelAction {
 		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.CONFLICTING, SyncInfo.INCOMING}) {			
 			public boolean select(SyncInfo info) {		
 				ILocalResource local = ((AbstractSVNSyncInfo) info).getLocalResource();
-                return super.select(info) && (IStateFilter.ST_TREE_CONFLICTING == local.getStatus() ? IStateFilter.SF_TREE_CONFLICTING_REPOSITORY_EXIST.accept(local) : true);
+                return super.select(info) && (IStateFilter.SF_TREE_CONFLICTING.accept(local) ? IStateFilter.SF_TREE_CONFLICTING_REPOSITORY_EXIST.accept(local) : true);
             }
 		};
 	}
