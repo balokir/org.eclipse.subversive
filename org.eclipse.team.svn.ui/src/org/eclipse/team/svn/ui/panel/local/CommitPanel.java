@@ -282,7 +282,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				if (selection == null || selection.length == 0) {
 					return SVNUIMessages.ResourceSelectionComposite_Verifier_Error;
 				}
-				if (FileUtility.checkForResourcesPresenceRecursive(selection, IStateFilter.SF_CONFLICTING)) {
+				if (FileUtility.checkForResourcesPresenceRecursive(selection, new IStateFilter.OrStateFilter(new IStateFilter[]{IStateFilter.SF_CONFLICTING, IStateFilter.SF_TREE_CONFLICTING}))) {
 					return SVNUIMessages.CommitPanel_Conflicting_Error;
 				}
 				return null;

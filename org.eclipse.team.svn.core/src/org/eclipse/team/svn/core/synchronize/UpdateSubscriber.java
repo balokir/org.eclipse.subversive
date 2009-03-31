@@ -129,7 +129,7 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 			return null;
 		}
 		IResourceChange resourceChange = SVNRemoteStorage.instance().asResourceChange(provider, true);
-		if ((resourceChange == null || resourceChange.getRevision() == SVNRevision.INVALID_REVISION_NUMBER) && !resourceChange.hasTreeConflict()) {
+		if ((resourceChange == null || resourceChange.getRevision() == SVNRevision.INVALID_REVISION_NUMBER)/* && !resourceChange.hasTreeConflict()*/) {
 			return null;
 		}
 		IResourceChange checkForReplacement = null;
