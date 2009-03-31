@@ -226,7 +226,11 @@ public interface IStateFilter {
 			 * 		Take into account IResourceChange ?
 			 */
 			if (treeConflict.operation == Operation.UPDATE || treeConflict.operation == Operation.SWITCHED) {
-				return treeConflict.action != Action.DELETE;
+				/*
+				 * 1. Action 'Delete'
+				 * 2. Not (Action 'Add' and reason 'Add') 
+				 */
+				return treeConflict.action != Action.DELETE && !(treeConflict.action == Action.ADD && treeConflict.reason == Reason.ADDED);
 			} else if (treeConflict.operation == Operation.MERGE) {
 				return treeConflict.action != Action.DELETE && treeConflict.reason == Reason.MODIFIED;
 			}

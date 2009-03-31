@@ -56,7 +56,7 @@ public class CommitPaneParticipantHelper extends PaneParticipantHelper {
 			String errorMessage = super.getErrorMessage(input);
 			if (errorMessage == null) {
 				IResource[] resourcesToProcess = this.paneParticipantHelper.getSelectedResources();
-				if (FileUtility.checkForResourcesPresenceRecursive(resourcesToProcess, IStateFilter.SF_CONFLICTING)) {
+				if (FileUtility.checkForResourcesPresenceRecursive(resourcesToProcess, new IStateFilter.OrStateFilter(new IStateFilter[]{IStateFilter.SF_CONFLICTING, IStateFilter.SF_TREE_CONFLICTING}))) {
 					return SVNUIMessages.CommitPanel_Pane_Conflicting_Error;
 				}
 				return null;
