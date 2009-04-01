@@ -58,6 +58,7 @@ import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.action.local.UpdateAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.operation.ClearUpdateStatusesOperation;
 import org.eclipse.team.svn.ui.operation.NotifyUnresolvedConflictOperation;
@@ -207,7 +208,7 @@ public class UpdateSubscriberContext extends SubscriberMergeContext {
 				return Status.OK_STATUS;
 			}			
 			resources[0] = FileUtility.addOperableParents(resources[0], IStateFilter.SF_UNVERSIONED);
-			final IResource []missing = FileUtility.getResourcesRecursive(resources[0], IStateFilter.SF_MISSING);
+			final IResource []missing = FileUtility.getResourcesRecursive(resources[0], UpdateAction.SF_MISSING_RESOURCES);
 			final boolean [] missingRetVal = new boolean[1];
 			if (missing.length > 0) {
 				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
