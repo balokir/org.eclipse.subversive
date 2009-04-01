@@ -81,7 +81,7 @@ public class UpdateAction extends AbstractSynchronizeModelAction {
 		
 		resources = FileUtility.addOperableParents(resources, IStateFilter.SF_UNVERSIONED);
 		
-		final IResource []missing = FileUtility.getResourcesRecursive(resources, IStateFilter.SF_MISSING);//, IResource.DEPTH_ZERO
+		final IResource []missing = FileUtility.getResourcesRecursive(resources, org.eclipse.team.svn.ui.action.local.UpdateAction.SF_MISSING_RESOURCES);//, IResource.DEPTH_ZERO
 		if (missing.length > 0) {
 			if (!org.eclipse.team.svn.ui.action.local.UpdateAction.updateMissing(configuration.getSite().getShell(), missing)) {
 				return null;

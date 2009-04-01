@@ -21,6 +21,7 @@ import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.UpdateOperation;
+import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.svnstorage.ResourcesParentsProvider;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractRecursiveTeamAction;
@@ -37,6 +38,16 @@ import org.eclipse.team.svn.ui.utility.UnacceptableOperationNotificator;
  */
 public class UpdateAction extends AbstractRecursiveTeamAction {
 
+	public static IStateFilter SF_MISSING_RESOURCES = new IStateFilter.AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
+			//we shouldn't take into account resources with tree conflicts here 
+			return IStateFilter.SF_MISSING.accept(resource, state, mask) && !IStateFilter.SF_TREE_CONFLICTING.accept(resource, state, mask);
+		}
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
+			return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask);
+		}			
+	};
+	
 	public UpdateAction() {
 		super();
 	}
@@ -48,7 +59,7 @@ public class UpdateAction extends AbstractRecursiveTeamAction {
 		}
 		
 		if (this.checkForResourcesPresenceRecursive(IStateFilter.SF_REVERTABLE)) {
-			IResource []missing = this.getSelectedResourcesRecursive(IStateFilter.SF_MISSING);
+			IResource []missing = this.getSelectedResourcesRecursive(UpdateAction.SF_MISSING_RESOURCES);
 			if (missing.length > 0 && !UpdateAction.updateMissing(this.getShell(), missing)) {
 				return;
 			}
