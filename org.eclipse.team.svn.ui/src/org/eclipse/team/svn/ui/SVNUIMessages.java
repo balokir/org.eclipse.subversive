@@ -1636,6 +1636,38 @@ public class SVNUIMessages extends BaseMessages {
 	
 	public static String OpenInExternalCompareEditor_Action;
 	public static String SVNTeamDiffViewerPage_Description;
+
+	public static String EditTreeConflictsPanel_Tip1;
+	public static String EditTreeConflictsPanel_Tip2;
+	public static String EditTreeConflictsPanel_Tip3;
+	public static String EditTreeConflictsPanel_Tips_Label;
+	public static String EditTreeConflictsPanel_Title;
+	public static String EditTreeConflictsPanel_Add_Action;
+	public static String EditTreeConflictsPanel_Add_Reason;
+	public static String EditTreeConflictsPanel_ApplyIncomigChanges_Resolution;
+	public static String EditTreeConflictsPanel_ApplyLocalChanges_Resolution;
+	public static String EditTreeConflictsPanel_Conflict_Resolution_Group;
+	public static String EditTreeConflictsPanel_ConlictInfo_Group;
+	public static String EditTreeConflictsPanel_DefaultMessage;
+	public static String EditTreeConflictsPanel_Delete_Action;
+	public static String EditTreeConflictsPanel_Delete_Reason;
+	public static String EditTreeConflictsPanel_Description;
+	public static String EditTreeConflictsPanel_EndRevision_Label;
+	public static String EditTreeConflictsPanel_IncomingAction_Label;
+	public static String EditTreeConflictsPanel_LocalStatus_Label;
+	public static String EditTreeConflictsPanel_ManualResolution;
+	public static String EditTreeConflictsPanel_Merge_Operation;
+	public static String EditTreeConflictsPanel_Missing_Reason;
+	public static String EditTreeConflictsPanel_Modified_Reason;
+	public static String EditTreeConflictsPanel_Modify_Action;
+	public static String EditTreeConflictsPanel_None_Operation;
+    public static String EditTreeConflictsPanel_Obstructed_Reason;
+    public static String EditTreeConflictsPanel_Operation_Label;
+    public static String EditTreeConflictsPanel_revision; 
+    public static String EditTreeConflictsPanel_StartVersion_Label;
+    public static String EditTreeConflictsPanel_Switch_Operation;
+    public static String EditTreeConflictsPanel_Unversioned_Reason;
+    public static String EditTreeConflictsPanel_Update_Operation;
 	
 	static {
 		//load message values from bundle file
