@@ -125,7 +125,7 @@ public class SVNConflictDescriptor {
 	public final int conflictKind;
 
 	/**
-	 * The node kind (see {@link Kind}).
+	 * The node kind (see {@link SVNEntry.Kind}).
 	 */
 	public final int nodeKind;
 
