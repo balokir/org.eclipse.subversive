@@ -24,9 +24,15 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.team.svn.core.connector.SVNConflictDescriptor.Operation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.operation.remote.GetLogMessagesOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
+import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNUIMessages;
+import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
+import org.eclipse.team.svn.ui.panel.common.SVNHistoryPanel;
+import org.eclipse.team.svn.ui.panel.common.SelectRevisionPanel;
+import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
  * Edit tree conflicts panel
@@ -120,13 +126,13 @@ public class EditTreeConflictsPanel extends AbstractDialogPanel {
 		label.setLayoutData(new GridData());
 		label.setText(SVNUIMessages.format(SVNUIMessages.EditTreeConflictsPanel_revision, String.valueOf(this.local.getTreeConflictDescriptor().srcLeftVersion.pegRevision)));
 		
-		if (this.local.getTreeConflictDescriptor().operation == Operation.MERGE) {
+		if (this.local.getTreeConflictDescriptor().operation == Operation.MERGE || this.local.getTreeConflictDescriptor().operation == Operation.SWITCHED) {
 			Link leftLink = new Link(composite, SWT.NULL); 
 			leftLink.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			leftLink.setText("<a>" + this.helper.getSrcUrl(true) + "</a>"); //$NON-NLS-1$ //$NON-NLS-2$
 			leftLink.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {			
-					//TODO add impl
+					EditTreeConflictsPanel.this.showHistoryPage(true);
 				}			
 			});
 		} else {
@@ -148,11 +154,25 @@ public class EditTreeConflictsPanel extends AbstractDialogPanel {
 		rightLink.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		rightLink.setText("<a>" + this.helper.getSrcUrl(false) + "</a>"); //$NON-NLS-1$ //$NON-NLS-2$
 		rightLink.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {			
-				//TODO add impl.
+			public void handleEvent(Event event) {
+				EditTreeConflictsPanel.this.showHistoryPage(false);
 			}			
 		});
 	}	
+	
+	protected void showHistoryPage(boolean isLeft) {
+		boolean stopOnCopy = true;				
+		IRepositoryResource rr = this.helper.getRepositoryResourceForHistory(isLeft);
+		
+		long currentRevision = this.local.getTreeConflictDescriptor().srcRightVersion.pegRevision;
+		GetLogMessagesOperation msgsOp = SelectRevisionPanel.getMsgsOp(rr, stopOnCopy);
+		
+		if (!UIMonitorUtility.doTaskNowDefault(UIMonitorUtility.getShell(), msgsOp, true).isCancelled() && msgsOp.getExecutionState() == IActionOperation.OK) {		
+			SVNHistoryPanel historyPanel = new SVNHistoryPanel(SVNUIMessages.SVNHistoryPanel_Title, SVNUIMessages.RepositoryTreePanel_Description, SVNUIMessages.SVNHistoryPanel_Message, msgsOp, true, false, currentRevision);
+			DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getShell(), historyPanel);
+			dialog.open();	
+		}
+	}
 	
 	protected void createConflictResolutionControls(Composite parent) {
 		Group composite = new Group(parent, SWT.NULL);
