@@ -12,19 +12,25 @@
 package org.eclipse.team.svn.ui.panel.local;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNConflictDescriptor;
 import org.eclipse.team.svn.core.connector.SVNConflictResolution;
 import org.eclipse.team.svn.core.connector.SVNConflictVersion;
+import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryReference;
+import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.SVNConflictDescriptor.Action;
 import org.eclipse.team.svn.core.connector.SVNConflictDescriptor.Operation;
 import org.eclipse.team.svn.core.connector.SVNConflictDescriptor.Reason;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
 import org.eclipse.team.svn.core.operation.local.MarkResolvedOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RevertOperation;
@@ -32,6 +38,8 @@ import org.eclipse.team.svn.core.operation.local.UpdateOperation;
 import org.eclipse.team.svn.core.operation.local.refactor.DeleteResourceOperation;
 import org.eclipse.team.svn.core.operation.remote.CopyRemoteResourcesToWcOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
+import org.eclipse.team.svn.core.resource.IRepositoryLocation;
+import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 
@@ -261,5 +269,44 @@ public class EditTreeConflictsHelper {
 	
 	protected IActionOperation getResolvedOperation() {
 		return new MarkResolvedOperation(new IResource[] {this.local.getResource()}, SVNConflictResolution.CHOOSE_LOCAL_FULL, ISVNConnector.Depth.INFINITY);		
-	}	
+	}
+	
+	public IRepositoryResource getRepositoryResourceForHistory(boolean isLeft) {
+		SVNConflictVersion version = isLeft ? this.treeConflict.srcLeftVersion : this.treeConflict.srcRightVersion;		
+		String url = this.getSrcUrl(isLeft);		
+		String repos = version.reposURL;
+		repos = SVNUtility.normalizeURL(repos);		
+		SVNRevision revision = SVNRevision.fromNumber(this.treeConflict.srcRightVersion.pegRevision);
+		
+		//find the first parent of resource which exists in repository in end revision (srcRightSource's pegRevision)
+		while (true) {
+			IPath path = new Path(url);
+			path = path.removeLastSegments(1);
+			url = path.toString();
+			
+			IRepositoryLocation location = null;
+			ISVNConnector proxy = null;
+			try {				
+				SVNEntryRevisionReference ref = new SVNEntryRevisionReference(url, revision, revision);								
+				IRepositoryResource rr = SVNUtility.asRepositoryResource(url, true);
+				location = rr.getRepositoryLocation();
+				proxy = location.acquireSVNProxy();				
+				SVNUtility.info(proxy, ref, Depth.EMPTY, new SVNNullProgressMonitor());
+				break;
+			} catch (SVNConnectorException e) {
+				if (repos.equals(url)) {
+					break;
+				}
+			} finally {
+				if (location != null && proxy != null) {
+					location.releaseSVNProxy(proxy);	
+				}				
+			}
+		}			
+				
+		IRepositoryResource repositoryResource = SVNUtility.asRepositoryResource(url, true);
+		repositoryResource.setPegRevision(revision);
+		repositoryResource.setSelectedRevision(revision);
+		return repositoryResource;
+	}
 }
