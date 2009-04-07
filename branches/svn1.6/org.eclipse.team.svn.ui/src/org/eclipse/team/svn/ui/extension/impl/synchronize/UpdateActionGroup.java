@@ -21,6 +21,7 @@ import org.eclipse.team.svn.ui.synchronize.action.ComparePropertiesAction;
 import org.eclipse.team.svn.ui.synchronize.action.CreateBranchAction;
 import org.eclipse.team.svn.ui.synchronize.action.CreatePatchFileAction;
 import org.eclipse.team.svn.ui.synchronize.action.EditConflictsAction;
+import org.eclipse.team.svn.ui.synchronize.action.EditTreeConflictsAction;
 import org.eclipse.team.svn.ui.synchronize.action.ExpandAllAction;
 import org.eclipse.team.svn.ui.synchronize.action.ExtractIncomingToAction;
 import org.eclipse.team.svn.ui.synchronize.action.ExtractOutgoingToAction;
@@ -136,6 +137,11 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				UpdateActionGroup.GROUP_SYNC_CONFLICTS,
 				editConflictsAction);
+		EditTreeConflictsAction editTreeConflictsAction = new EditTreeConflictsAction(SVNUIMessages.UpdateActionGroup_EditTreeConflicts, configuration);
+		this.appendToGroup(
+				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+				UpdateActionGroup.GROUP_SYNC_CONFLICTS,
+				editTreeConflictsAction);
 		ComparePropertiesAction comparePropsAction = new ComparePropertiesAction(SVNUIMessages.SynchronizeActionGroup_CompareProperties, configuration);
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 

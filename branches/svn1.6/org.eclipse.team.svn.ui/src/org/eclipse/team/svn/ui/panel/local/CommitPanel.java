@@ -523,6 +523,23 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				});
 				tAction.setEnabled(FileUtility.checkForResourcesPresenceRecursive(selectedResources, IStateFilter.SF_CONFLICTING));
 				
+				//Edit tree conflicts action
+				manager.add (tAction = new Action(SVNUIMessages.EditTreeConflictsAction_label) {
+					public void run() {
+						if (selectedResources.length > 0) {
+							ILocalResource local = SVNRemoteStorage.instance().asLocalResource(selectedResources[0]);
+							if (local.hasTreeConflict()) {
+								EditTreeConflictsPanel editConflictsPanel = new EditTreeConflictsPanel(local);
+								DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getShell(), editConflictsPanel);
+								if (dialog.open() == 0 && editConflictsPanel.getOperation() != null) {
+									UIMonitorUtility.doTaskScheduledDefault(editConflictsPanel.getOperation());			
+								}		
+							}
+						}																															
+					}
+				});
+				tAction.setEnabled(selectedResources.length == 1 && FileUtility.checkForResourcesPresence(selectedResources, IStateFilter.SF_TREE_CONFLICTING, IResource.DEPTH_ZERO));
+				
 				//Mark as merged action
 				manager.add (tAction = new Action(SVNUIMessages.CommitPanel_MarkAsMerged_Action) {
 					public void run() {

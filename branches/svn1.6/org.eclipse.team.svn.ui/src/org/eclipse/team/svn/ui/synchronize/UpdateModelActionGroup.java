@@ -140,9 +140,8 @@ public class UpdateModelActionGroup extends AbstractSynchronizeModelActionGroup 
 				UpdateModelActionGroup.SVN_SYNC_CONFLICTS,
 				editConflictsAction);
 		
-		//edit tree conflicts
-		//TODO merge 'edit conflicts' and 'edit tree conflicts' actions in one action		
-		EditTreeConflictsModelAction editTreeConflictsAction = new EditTreeConflictsModelAction("Edit Tree Conflicts", configuration);
+		//edit tree conflicts		
+		EditTreeConflictsModelAction editTreeConflictsAction = new EditTreeConflictsModelAction(SVNUIMessages.UpdateActionGroup_EditTreeConflicts, configuration);
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				UpdateModelActionGroup.SVN_SYNC_CONFLICTS,

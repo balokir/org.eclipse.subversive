@@ -55,8 +55,7 @@ public class EditTreeConflictsPanel extends AbstractDialogPanel {
 	public EditTreeConflictsPanel(ILocalResource local) {		
 		this.local = local;
 		this.helper = new EditTreeConflictsHelper(this.local);
-		
-		//TODO make correct values
+				
         this.dialogTitle = SVNUIMessages.EditTreeConflictsPanel_Title;
         this.dialogDescription = SVNUIMessages.EditTreeConflictsPanel_Description;
         this.defaultMessage = SVNUIMessages.EditTreeConflictsPanel_DefaultMessage;
@@ -168,7 +167,7 @@ public class EditTreeConflictsPanel extends AbstractDialogPanel {
 		GetLogMessagesOperation msgsOp = SelectRevisionPanel.getMsgsOp(rr, stopOnCopy);
 		
 		if (!UIMonitorUtility.doTaskNowDefault(UIMonitorUtility.getShell(), msgsOp, true).isCancelled() && msgsOp.getExecutionState() == IActionOperation.OK) {		
-			SVNHistoryPanel historyPanel = new SVNHistoryPanel(SVNUIMessages.SVNHistoryPanel_Title, SVNUIMessages.RepositoryTreePanel_Description, SVNUIMessages.SVNHistoryPanel_Message, msgsOp, true, false, currentRevision);
+			SVNHistoryPanel historyPanel = new SVNHistoryPanel(SVNUIMessages.SVNHistoryPanel_Title, SVNUIMessages.SVNHistoryPanel_Description, SVNUIMessages.SVNHistoryPanel_Message, msgsOp, true, false, currentRevision);
 			DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getShell(), historyPanel);
 			dialog.open();	
 		}
