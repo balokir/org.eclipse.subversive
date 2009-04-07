@@ -140,9 +140,16 @@ public class EditTreeConflictsHelper {
 	}
 	
 	/*
-	 * Synchronize any changes here to hasResolutionForRemoteAction
+	 * When we apply incoming changes we're trying not to make the conflict 
+	 * as resolved (e.g. because of another conflicts may exist or user after this may need
+	 * to perform other additional steps), but it's not always possible, e.g.
+	 * some resolutions require 'revert' operation (which clears conflict markers) 
 	 */
-	public IActionOperation getOperation(boolean isRemoteResolution, boolean isLocalResolution) {
+	public boolean isRemoteOperationResolveTheConflict() {
+		return this.treeConflict.action == Action.MODIFY && (this.treeConflict.operation == Operation.UPDATE || this.treeConflict.operation == Operation.SWITCHED);
+	}
+	
+	public IActionOperation getOperation(boolean isRemoteResolution, boolean isLocalResolution, boolean markAsMerged) {
 		CompositeOperation cmpOp = null;
 		String opName = ""; //$NON-NLS-1$
 		//used as parameter to operations, e.g. update, revert
@@ -159,7 +166,11 @@ public class EditTreeConflictsHelper {
 				cmpOp = this.getRemoteDeleteOperation(opName);
 			} else if (this.treeConflict.action == Action.MODIFY) {																
 				cmpOp = this.getRemoteModifyOperation(opName, isRecursive);								
-			}						
+			}
+			
+			if (markAsMerged && !this.isRemoteOperationResolveTheConflict()) {
+				cmpOp.add(this.getResolvedOperation());
+			}
 		}
 		
 		if (cmpOp != null) {
@@ -182,8 +193,8 @@ public class EditTreeConflictsHelper {
 			cmpOp.add(deleteOp);
 		}				
 		
-		IActionOperation resolveOp = this.getResolvedOperation();
-		cmpOp.add(resolveOp, deleteOp == null ? null : new IActionOperation[]{deleteOp});		
+//		IActionOperation resolveOp = this.getResolvedOperation();
+//		cmpOp.add(resolveOp, deleteOp == null ? null : new IActionOperation[]{deleteOp});		
 		return cmpOp;
 	}
 	
@@ -198,8 +209,7 @@ public class EditTreeConflictsHelper {
 		 */
 		
 		CompositeOperation cmpOp = null;
-		IResource resource = this.local.getResource();	
-		
+		IResource resource = this.local.getResource();			
 		if (this.treeConflict.operation == Operation.UPDATE || this.treeConflict.operation == Operation.SWITCHED) {
 			cmpOp = new CompositeOperation(opName);									
 			
@@ -221,8 +231,8 @@ public class EditTreeConflictsHelper {
 			IActionOperation copyOp = this.getCopyResourceOperation();
 			cmpOp.add(copyOp, deleteOp == null ? null : new IActionOperation[]{deleteOp});
 			
-			IActionOperation resolvedOp = this.getResolvedOperation();
-			cmpOp.add(resolvedOp, new IActionOperation[]{copyOp});														
+//			IActionOperation resolvedOp = this.getResolvedOperation();
+//			cmpOp.add(resolvedOp, new IActionOperation[]{copyOp});														
 		}
 		return cmpOp;
 	}
@@ -253,8 +263,8 @@ public class EditTreeConflictsHelper {
 		}																		
 		cmpOp.add(updateOp, deleteOp == null ? null : new IActionOperation[]{deleteOp});
 		
-		IActionOperation resolveOp = this.getResolvedOperation();
-		cmpOp.add(resolveOp, new IActionOperation[]{updateOp});
+//		IActionOperation resolveOp = this.getResolvedOperation();
+//		cmpOp.add(resolveOp, new IActionOperation[]{updateOp});
 		
 		return cmpOp;					
 	}
