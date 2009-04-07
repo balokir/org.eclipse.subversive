@@ -474,6 +474,4 @@ public class SVNHistoryPanel extends AbstractDialogPanel implements ISVNHistoryV
 		this.showNextPage(false);
 		this.history.setSelectedRevision(revision);
 	}
-	
-	//TODO add help link
 }

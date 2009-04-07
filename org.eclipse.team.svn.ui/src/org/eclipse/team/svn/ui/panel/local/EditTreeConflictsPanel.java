@@ -36,8 +36,6 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
  * Edit tree conflicts panel
- * 
- * TODO add help 
  *  
  * @author Igor Burilo
  */
@@ -51,6 +49,7 @@ public class EditTreeConflictsPanel extends AbstractDialogPanel {
 	protected Button localResolutionButton;
 	protected Button remoteResolutionButton;
 	protected Button manualResolutionButton;
+	protected Button markAsMergedButton;
 	
 	public EditTreeConflictsPanel(ILocalResource local) {		
 		this.local = local;
@@ -199,19 +198,57 @@ public class EditTreeConflictsPanel extends AbstractDialogPanel {
 		this.localResolutionButton = new Button(composite, SWT.RADIO);
 		this.localResolutionButton.setLayoutData(new GridData());
 		this.localResolutionButton.setText(SVNUIMessages.EditTreeConflictsPanel_ApplyLocalChanges_Resolution);
+		this.localResolutionButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {			
+				EditTreeConflictsPanel.this.changeResolutionSelection();
+			}			
+		});
 		
 		this.remoteResolutionButton = new Button(composite, SWT.RADIO);
 		this.remoteResolutionButton.setLayoutData(new GridData());
 		this.remoteResolutionButton.setText(SVNUIMessages.EditTreeConflictsPanel_ApplyIncomigChanges_Resolution);
+		this.remoteResolutionButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {			
+				EditTreeConflictsPanel.this.changeResolutionSelection();
+			}			
+		});
 		
 		this.manualResolutionButton = new Button(composite, SWT.RADIO);
 		this.manualResolutionButton.setLayoutData(new GridData());
-		this.manualResolutionButton.setText(SVNUIMessages.EditTreeConflictsPanel_ManualResolution);
-		this.manualResolutionButton.setSelection(true);			
+		this.manualResolutionButton.setText(SVNUIMessages.EditTreeConflictsPanel_ManualResolution);		
+		this.manualResolutionButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {			
+				EditTreeConflictsPanel.this.changeResolutionSelection();
+			}			
+		});
+		
+		this.markAsMergedButton = new Button(composite, SWT.CHECK);
+		this.markAsMergedButton.setLayoutData(new GridData());		
+		this.markAsMergedButton.setText(SVNUIMessages.EditTreeConflictsPanel_MarkAsMerged_Button);
 	}					
 	
+	public void postInit() {
+		super.postInit();
+		
+		this.manualResolutionButton.setSelection(true);
+		this.changeResolutionSelection();
+	}
+	
+	protected void changeResolutionSelection() {
+		if (this.localResolutionButton.getSelection()) {			
+			this.markAsMergedButton.setSelection(true);
+			this.markAsMergedButton.setEnabled(false);
+		} else if (this.manualResolutionButton.getSelection()) {
+			this.markAsMergedButton.setSelection(false);
+			this.markAsMergedButton.setEnabled(false);
+		} else if (this.remoteResolutionButton.getSelection()) {
+			this.markAsMergedButton.setSelection(true);
+			this.markAsMergedButton.setEnabled(!this.helper.isRemoteOperationResolveTheConflict());
+		}
+	}
+	
 	protected void saveChangesImpl() {
-		this.operation = this.helper.getOperation(this.remoteResolutionButton.getSelection(), this.localResolutionButton.getSelection());		
+		this.operation = this.helper.getOperation(this.remoteResolutionButton.getSelection(), this.localResolutionButton.getSelection(), this.markAsMergedButton.getSelection());		
 	}		
 			
 	protected void cancelChangesImpl() {
@@ -220,5 +257,9 @@ public class EditTreeConflictsPanel extends AbstractDialogPanel {
 	
 	public IActionOperation getOperation() {
 		return this.operation;
-	}	
+	}
+	
+	public String getHelpId() {
+		return "org.eclipse.team.svn.help.editTreeConflictsContext"; //$NON-NLS-1$
+	}
 }
