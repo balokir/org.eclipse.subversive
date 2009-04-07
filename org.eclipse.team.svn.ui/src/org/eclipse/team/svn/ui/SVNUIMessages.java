@@ -391,7 +391,9 @@ public class SVNUIMessages extends BaseMessages {
 	public static String EditCommentTemplatePanel_Title_Edit;
 	public static String EditCommentTemplatePanel_Title_New;
 	public static String EditConflictsAction_label;
+	public static String EditTreeConflictsAction_label;
 	public static String EditConflictsCommand_tooltip;
+	public static String EditTreeConflictsCommand_tooltip;
 	public static String EditCustomPropertiesPanel_Description;
 	public static String EditCustomPropertiesPanel_Message;
 	public static String EditCustomPropertiesPanel_Optional;
@@ -1540,6 +1542,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String UpdateActionGroup_Commit;
 	public static String UpdateActionGroup_CommitAllOutgoingChanges;
 	public static String UpdateActionGroup_EditConflicts;
+	public static String UpdateActionGroup_EditTreeConflicts;
 	public static String UpdateActionGroup_Lock;
 	public static String UpdateActionGroup_OverrideAndCommit;
 	public static String UpdateActionGroup_Unlock;
