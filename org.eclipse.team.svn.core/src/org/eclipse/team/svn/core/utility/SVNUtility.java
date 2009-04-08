@@ -583,8 +583,8 @@ public final class SVNUtility {
 	public static void reorder(SVNChangeStatus []statuses, final boolean parent2Child) {
 		Arrays.sort(statuses, new Comparator<SVNChangeStatus>() {
 			public int compare(SVNChangeStatus o1, SVNChangeStatus o2) {
-				String s1 = o1.path;
-				String s2 = o2.path;
+				String s1 = o1 != null ? o1.path : "";
+				String s2 = o2 != null ? o2.path : "";
 				return parent2Child ? s1.compareTo(s2) : s2.compareTo(s1);
 			}
 			

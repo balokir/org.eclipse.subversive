@@ -860,7 +860,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 				if (externalMask != 0) {
 					statuses[i] = SVNUtility.getSVNInfoForNotConnected(tRes);
 					if (statuses[i] == null) {
-						local = this.registerResource(tRes, SVNRevision.INVALID_REVISION_NUMBER, SVNRevision.INVALID_REVISION_NUMBER, IStateFilter.ST_IGNORED, externalMask, null, 0, statuses[i].treeConflictDescriptor);
+						local = this.registerResource(tRes, SVNRevision.INVALID_REVISION_NUMBER, SVNRevision.INVALID_REVISION_NUMBER, IStateFilter.ST_IGNORED, externalMask, null, 0, null);
 						if (tRes == resource) {
 							retVal = local;
 						}
