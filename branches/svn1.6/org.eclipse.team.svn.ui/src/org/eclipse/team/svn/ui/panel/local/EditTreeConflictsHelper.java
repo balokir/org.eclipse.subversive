@@ -159,24 +159,29 @@ public class EditTreeConflictsHelper {
 			cmpOp = new CompositeOperation(opName);			
 			IActionOperation resolvedOp = this.getResolvedOperation();			
 			cmpOp.add(resolvedOp);						
-		} else if (isRemoteResolution) {						
+		} else if (isRemoteResolution) {
 			if (this.treeConflict.action == Action.ADD) {
 				cmpOp = this.getRemoteAddOperation(opName, isRecursive);										
 			} else if (this.treeConflict.action == Action.DELETE) {
 				cmpOp = this.getRemoteDeleteOperation(opName);
 			} else if (this.treeConflict.action == Action.MODIFY) {																
 				cmpOp = this.getRemoteModifyOperation(opName, isRecursive);								
-			}
-			
-			if (markAsMerged && !this.isRemoteOperationResolveTheConflict()) {
-				cmpOp.add(this.getResolvedOperation());
-			}
+			}						
+		}
+		
+		//add resolved operation
+		boolean isManual = !isRemoteResolution && !isLocalResolution;
+		if (markAsMerged && (isRemoteResolution && !this.isRemoteOperationResolveTheConflict() || isManual)) {			
+			if (isManual) {
+				cmpOp = new CompositeOperation(opName);		
+			}			
+			cmpOp.add(this.getResolvedOperation());
 		}
 		
 		if (cmpOp != null) {
 			//TODO refresh parent ?
 			cmpOp.add(new RefreshResourcesOperation(new IResource[]{this.local.getResource()}));
-		}
+		}						
 		return cmpOp;
 	}
 	

@@ -16,6 +16,7 @@ import org.eclipse.team.internal.core.subscribers.ActiveChangeSet;
 import org.eclipse.team.internal.core.subscribers.ChangeSet;
 import org.eclipse.team.internal.ui.mapping.ResourceModelSorter;
 import org.eclipse.team.svn.core.mapping.SVNIncomingChangeSet;
+import org.eclipse.team.svn.ui.utility.ColumnedViewerComparator;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 public class SVNChangeSetSorter extends ResourceModelSorter {
@@ -70,6 +71,8 @@ public class SVNChangeSetSorter extends ResourceModelSorter {
 
 	@SuppressWarnings({ "deprecation", "unqualified-field-access" })
 	private int compareNames(String s1, String s2) {
+		s1 = s1 == null ? "" : s1; //$NON-NLS-1$
+		s2 = s2 == null ? "" : s2; //$NON-NLS-1$
 		return collator.compare(s1, s2);
 	}
 	

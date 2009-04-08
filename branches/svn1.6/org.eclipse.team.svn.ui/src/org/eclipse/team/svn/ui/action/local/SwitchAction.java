@@ -29,6 +29,7 @@ import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractNonRecursiveTeamAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.dialog.OperationErrorDialog;
+import org.eclipse.team.svn.ui.operation.NotifyUnresolvedConflictOperation;
 import org.eclipse.team.svn.ui.panel.local.SwitchPanel;
 
 /**
@@ -85,7 +86,8 @@ public class SwitchAction extends AbstractNonRecursiveTeamAction {
 			op.add(mainOp);
 			op.add(new RestoreProjectMetaOperation(saveOp));
 			op.add(new RefreshResourcesOperation(resources));
-
+			op.add(new NotifyUnresolvedConflictOperation(mainOp));
+			
 			this.runScheduled(op);
 		}
 	}

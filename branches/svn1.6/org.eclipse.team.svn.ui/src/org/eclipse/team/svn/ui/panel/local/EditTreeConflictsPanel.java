@@ -240,7 +240,7 @@ public class EditTreeConflictsPanel extends AbstractDialogPanel {
 			this.markAsMergedButton.setEnabled(false);
 		} else if (this.manualResolutionButton.getSelection()) {
 			this.markAsMergedButton.setSelection(false);
-			this.markAsMergedButton.setEnabled(false);
+			this.markAsMergedButton.setEnabled(true);
 		} else if (this.remoteResolutionButton.getSelection()) {
 			this.markAsMergedButton.setSelection(true);
 			this.markAsMergedButton.setEnabled(!this.helper.isRemoteOperationResolveTheConflict());
