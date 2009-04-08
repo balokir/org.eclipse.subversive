@@ -117,7 +117,11 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 	protected void markDeleted(ILocalResource local, IProgressMonitor monitor) {
 		this.doOperation(new RevertOperation(new IResource[] {local.getResource()}, true), monitor);
 		this.doOperation(new UpdateOperation(new IResource[] {local.getResource()}, true), monitor);
-		this.doOperation(new DeleteResourceOperation(local.getResource()), monitor);
+		//don't delete the resource which already doesn't exist on file system
+		//this can happen with tree conflicts, for instance, local - delete and remote - delete
+		if (local.getResource().exists()) {
+			this.doOperation(new DeleteResourceOperation(local.getResource()), monitor);	
+		}
 	}
 	
 	protected boolean markExisting(ILocalResource local, IProgressMonitor monitor) throws Exception {

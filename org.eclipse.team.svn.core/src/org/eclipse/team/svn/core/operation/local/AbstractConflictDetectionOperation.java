@@ -11,10 +11,6 @@
 
 package org.eclipse.team.svn.core.operation.local;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 
@@ -24,40 +20,53 @@ import org.eclipse.team.svn.core.resource.IResourceProvider;
  * @author Alexander Gurov
  */
 public abstract class AbstractConflictDetectionOperation extends AbstractWorkingCopyOperation implements IUnresolvedConflictDetector {
-    protected Set<IResource> processed;
-    protected Set<IResource> unprocessed;
-	protected boolean hasUnresolvedConflict;
-	protected String conflictMessage;
+
+	protected UnresolvedConflictDetectorHelper conflictDetectorHelper;
 
     public AbstractConflictDetectionOperation(String operationName, IResource []resources) {
         super(operationName, resources);
+        this.conflictDetectorHelper = new UnresolvedConflictDetectorHelper();
     }
 
     public AbstractConflictDetectionOperation(String operationName, IResourceProvider provider) {
         super(operationName, provider);
+        this.conflictDetectorHelper = new UnresolvedConflictDetectorHelper();
     }
-
+    
+    public void setUnresolvedConflict(boolean hasUnresolvedConflict) {
+		this.conflictDetectorHelper.setUnresolvedConflict(hasUnresolvedConflict);
+	}	
+    
     public boolean hasUnresolvedConflicts() {
-        return this.hasUnresolvedConflict;
+        return this.conflictDetectorHelper.hasUnresolvedConflicts();
     }
     
     public String getMessage() {
-    	return this.conflictMessage;
+    	return this.conflictDetectorHelper.getMessage();
     }
     
     public IResource []getUnprocessed() {
-		return this.unprocessed == null ? new IResource[0] : this.unprocessed.toArray(new IResource[this.unprocessed.size()]);
+		return this.conflictDetectorHelper.getUnprocessed();
     }
 
 	public IResource []getProcessed() {
-		return this.processed == null ? new IResource[0] : this.processed.toArray(new IResource[this.processed.size()]);
+		return this.conflictDetectorHelper.getProcessed();
 	}
 	
-	protected void defineInitialResourceSet(IResource []resources) {
-        this.hasUnresolvedConflict = false;
-        this.unprocessed = new HashSet<IResource>();
-        this.processed = new HashSet<IResource>();
-		this.processed.addAll(Arrays.asList(resources));
+	public void defineInitialResourceSet(IResource []resources) {
+		this.conflictDetectorHelper.defineInitialResourceSet(resources);
 	}
+	
+	public void addUnprocessed(IResource unprocessed) {
+		this.conflictDetectorHelper.addUnprocessed(unprocessed);
+	}
+
+	public void setConflictMessage(String message) {
+		this.conflictDetectorHelper.setConflictMessage(message);		
+	}
+	
+	 public void removeProcessed(IResource resource) {
+		 this.conflictDetectorHelper.removeProcessed(resource);
+	 }
 	
 }

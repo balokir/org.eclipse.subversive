@@ -36,7 +36,7 @@ public class EditTreeConflictsModelAction extends AbstractSynchronizeLogicalMode
 	protected boolean updateSelection(IStructuredSelection selection) {
 		if (super.updateSelection(selection) && selection.size() == 1) {
 			AbstractSVNSyncInfo syncInfo = this.getSelectedSVNSyncInfo();
-			if (IStateFilter.SF_TREE_CONFLICTING.accept(syncInfo.getLocalResource())) {
+			if (syncInfo != null && IStateFilter.SF_TREE_CONFLICTING.accept(syncInfo.getLocalResource())) {
 				return true;
 			}
 		}
