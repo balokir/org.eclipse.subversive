@@ -54,7 +54,9 @@ public class ShowIncomingPropertiesAction extends AbstractSynchronizeModelAction
 			if (element instanceof SyncInfoModelElement) {
 				AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo)((SyncInfoModelElement)selection.getFirstElement()).getSyncInfo();
 				ILocalResource incoming = ((ResourceVariant)syncInfo.getRemote()).getResource();
-				return incoming instanceof IResourceChange && IStateFilter.ST_DELETED != incoming.getStatus();
+				if (incoming instanceof IResourceChange) {
+					return IStateFilter.SF_TREE_CONFLICTING.accept(incoming) ? IStateFilter.SF_TREE_CONFLICTING_REPOSITORY_EXIST.accept(incoming) : IStateFilter.ST_DELETED != incoming.getStatus();
+				}
 			}
 		}
 		return false;

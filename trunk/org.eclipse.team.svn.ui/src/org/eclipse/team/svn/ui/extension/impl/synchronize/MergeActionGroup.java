@@ -20,6 +20,7 @@ import org.eclipse.team.svn.ui.synchronize.action.CleanUpAction;
 import org.eclipse.team.svn.ui.synchronize.action.CreateBranchAction;
 import org.eclipse.team.svn.ui.synchronize.action.CreatePatchFileAction;
 import org.eclipse.team.svn.ui.synchronize.action.EditConflictsAction;
+import org.eclipse.team.svn.ui.synchronize.action.EditTreeConflictsAction;
 import org.eclipse.team.svn.ui.synchronize.action.ExpandAllAction;
 import org.eclipse.team.svn.ui.synchronize.action.MergePropertiesAction;
 import org.eclipse.team.svn.ui.synchronize.action.OpenInExternalCompareEditorAction;
@@ -95,6 +96,11 @@ public class MergeActionGroup extends AbstractSynchronizeActionGroup {
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				MergeActionGroup.GROUP_MERGE_CHANGES,
 				editConflictsAction);
+		EditTreeConflictsAction editTreeConflictsAction = new EditTreeConflictsAction(SVNUIMessages.UpdateActionGroup_EditTreeConflicts, configuration);
+		this.appendToGroup(
+				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+				MergeActionGroup.GROUP_MERGE_CHANGES,
+				editTreeConflictsAction);
 		MergePropertiesAction mergePropertiesAction = new MergePropertiesAction(SVNUIMessages.SynchronizeActionGroup_MergeProperties, configuration);
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 

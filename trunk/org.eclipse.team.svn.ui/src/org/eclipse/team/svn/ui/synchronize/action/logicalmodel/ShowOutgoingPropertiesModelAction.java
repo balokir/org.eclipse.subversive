@@ -40,10 +40,11 @@ public class ShowOutgoingPropertiesModelAction extends AbstractSynchronizeLogica
 	}
 	
 	protected boolean updateSelection(IStructuredSelection selection) {
-		super.updateSelection(selection);
-		if (selection.size() == 1) {	
-			IResource resource = this.getSelectedResource();
-			return IStateFilter.SF_VERSIONED.accept(SVNRemoteStorage.instance().asLocalResource(resource));
+		if (super.updateSelection(selection)) {
+			if (selection.size() == 1) {	
+				IResource resource = this.getSelectedResource();
+				return IStateFilter.SF_VERSIONED.accept(SVNRemoteStorage.instance().asLocalResource(resource));
+			}	
 		}
 	    return false;
 	}

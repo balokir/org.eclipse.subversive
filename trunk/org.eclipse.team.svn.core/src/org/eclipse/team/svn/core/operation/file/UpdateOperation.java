@@ -22,11 +22,10 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
-import org.eclipse.team.svn.core.connector.SVNNotification.NodeStatus;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
-import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
+import org.eclipse.team.svn.core.operation.SVNConflictDetectionProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.FileUtility;
@@ -95,25 +94,21 @@ public class UpdateOperation extends AbstractFileConflictDetectionOperation impl
 		}
 	}
 
-	protected class ConflictDetectionProgressMonitor extends SVNProgressMonitor {
+	protected class ConflictDetectionProgressMonitor extends SVNConflictDetectionProgressMonitor {
 		public ConflictDetectionProgressMonitor(IActionOperation parent, IProgressMonitor monitor, IPath root) {
 			super(parent, monitor, root);
 		}
-		
-		public void progress(int current, int total, ItemState state) {
-			super.progress(current, total, state);
-		    if (state.contentState == NodeStatus.CONFLICTED || 
-		        state.propState == NodeStatus.CONFLICTED) {
-		        UpdateOperation.this.hasUnresolvedConflict = true;
-		        UpdateOperation.this.unprocessed.add(new File(state.path));
-		        IPath conflictPath = new Path(state.path);
-			    for (Iterator it = UpdateOperation.this.processed.iterator(); it.hasNext(); ) {
-			    	File res = (File)it.next();
-			        if (new Path(res.getAbsolutePath()).equals(conflictPath)) {
-			            it.remove();
-			            break;
-			        }
-			    }
+
+		protected void processConflict(ItemState state) {
+			UpdateOperation.this.hasUnresolvedConflict = true;
+	        UpdateOperation.this.unprocessed.add(new File(state.path));
+	        IPath conflictPath = new Path(state.path);
+		    for (Iterator it = UpdateOperation.this.processed.iterator(); it.hasNext(); ) {
+		    	File res = (File)it.next();
+		        if (new Path(res.getAbsolutePath()).equals(conflictPath)) {
+		            it.remove();
+		            break;
+		        }
 		    }
 		}
 	}

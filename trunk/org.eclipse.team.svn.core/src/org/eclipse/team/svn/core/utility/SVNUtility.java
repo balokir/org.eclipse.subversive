@@ -21,7 +21,6 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -167,105 +166,64 @@ public final class SVNUtility {
 	}
 	
 	public static Map<String, SVNEntryRevisionReference> parseSVNExternalsProperty(String property, IRepositoryResource propertyHolder) {
-		if (property == null) {
-			return Collections.emptyMap();
-		}
 		Map<String, SVNEntryRevisionReference> retVal = new HashMap<String, SVNEntryRevisionReference>();
-		String []externals = property.trim().split("[\\n|\\r\\n]+"); // it seems different clients have different behaviours wrt trailing whitespace.. so trim() to be safe //$NON-NLS-1$
-		for (int i = 0; i < externals.length; i++) {
-			String []parts = externals[i].trim().split("[\\t ]+"); //$NON-NLS-1$
-				// 2 - name + URL
-				// 3 - name + -rRevision + URL
-			// 4 - name + -r + Revision + URL
-			//or in SVN 1.5 format
-			// 2 - URL@peg + name
-			// 3 - -rRevision + URL@peg + name
-			// 4 - -r + Revision + URL@peg + name
-				if (parts.length < 2 || parts.length > 4) {
-					throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]); //$NON-NLS-2$
-				}
-				
-			String name = null;
-			String url = null;
+		
+		SVNExternalPropertyData[] externalsData = SVNExternalPropertyData.parse(property);
+		for (SVNExternalPropertyData externalData : externalsData) {
+			String url = externalData.url;
 			SVNRevision revision = null;
 			SVNRevision pegRevision = null;
 			
-			if (SVNUtility.isValidSVNURL(parts[parts.length - 1])) {
-				name = parts[0];
-				try {
-					url = parts[1];
-					if (parts.length == 4) {
-						revision = SVNRevision.fromString(parts[2]);
-						url = parts[3];
-					}
-					else if (parts.length == 3) {
-						revision = SVNRevision.fromString(parts[1].substring(2));
-						url = parts[2];
-					}
-				}
-				catch (Exception ex) {
-					throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]); //$NON-NLS-2$
-				}
-				}
-			else {
-				name = parts[parts.length - 1];
-				try {
-					url = parts[0];
-					if (parts.length == 4) {
-						revision = SVNRevision.fromString(parts[1]);
-						url = parts[2];
-					}
-					else if (parts.length == 3) {
-						revision = SVNRevision.fromString(parts[0].substring(2));
-						url = parts[1];
-					}
-				}
-				catch (Exception ex) {
-					throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]); //$NON-NLS-2$
-				}
-				if (!SVNUtility.isValidSVNURL(url)) {
-					if (url.startsWith("^/")) { //$NON-NLS-1$
-						url = propertyHolder.getRepositoryLocation().getRepositoryRoot().getUrl() + url.substring(1);
-					}
-					else if (url.startsWith("//")) { //$NON-NLS-1$
-						try {
-							String protocol = SVNUtility.getSVNUrl(propertyHolder.getUrl()).getProtocol();
-							if (propertyHolder.getUrl().indexOf(":///") != -1) { //$NON-NLS-1$
-								url = protocol + ":/" + url; //$NON-NLS-1$
-							}
-							else {
-								url = protocol + ":" + url; //$NON-NLS-1$
-							}
-						}
-						catch (MalformedURLException e) {
-							// cannot be thrown
-						}
-					}
-					else if (url.startsWith("/")) { //$NON-NLS-1$
-						String prefix = propertyHolder.getUrl();
-						int idx = prefix.lastIndexOf("//"); //$NON-NLS-1$
-						idx = prefix.indexOf('/', idx + 2);
-						url = prefix.substring(0, idx) + url;
-					}
-					else if (url.startsWith("../")) { //$NON-NLS-1$
-						IRepositoryResource prefix = propertyHolder;
-						while (url.startsWith("../")) { //$NON-NLS-1$
-							url = url.substring(3);
-							prefix = prefix.getParent();
-							if (prefix == null) {
-								throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]); //$NON-NLS-2$
-							}
-						}
-						url = prefix.getUrl() + "/" + url; //$NON-NLS-1$
-					}
-					else {
-						throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]); //$NON-NLS-2$
-					}
-				}
-				SVNEntryReference ref = SVNUtility.asEntryReference(url);
-				url = ref.path;
-				pegRevision = ref.pegRevision;
+			try {
+				if (externalData.revision != null) {
+					revision = SVNRevision.fromString(externalData.revision);
+				}			
+				if (externalData.pegRevision != null) {
+					revision = SVNRevision.fromString(externalData.pegRevision);
+				}				
+			} catch (Exception ex) {
+				throw new UnreportableException("Malformed external, " + externalData.toString());
 			}
+
+			if (!SVNUtility.isValidSVNURL(url)) {
+				if (url.startsWith("^/")) { //$NON-NLS-1$
+					url = propertyHolder.getRepositoryLocation().getRepositoryRoot().getUrl() + url.substring(1);
+				}
+				else if (url.startsWith("//")) { //$NON-NLS-1$
+					try {
+						String protocol = SVNUtility.getSVNUrl(propertyHolder.getUrl()).getProtocol();
+						if (propertyHolder.getUrl().indexOf(":///") != -1) { //$NON-NLS-1$
+							url = protocol + ":/" + url; //$NON-NLS-1$
+						}
+						else {
+							url = protocol + ":" + url; //$NON-NLS-1$
+						}
+					}
+					catch (MalformedURLException e) {
+						// cannot be thrown
+					}
+				}
+				else if (url.startsWith("/")) { //$NON-NLS-1$
+					String prefix = propertyHolder.getUrl();
+					int idx = prefix.lastIndexOf("//"); //$NON-NLS-1$
+					idx = prefix.indexOf('/', idx + 2);
+					url = prefix.substring(0, idx) + url;
+				}
+				else if (url.startsWith("../")) { //$NON-NLS-1$
+					IRepositoryResource prefix = propertyHolder;
+					while (url.startsWith("../")) { //$NON-NLS-1$
+						url = url.substring(3);
+						prefix = prefix.getParent();
+						if (prefix == null) {
+							throw new UnreportableException("Malformed external, " + externalData.toString());
+						}
+					}
+					url = prefix.getUrl() + "/" + url; //$NON-NLS-1$
+				}
+				else {
+					throw new UnreportableException("Malformed external, " + externalData.toString());
+				}
+			}		
 			
 			try {
 				url = SVNUtility.decodeURL(url);
@@ -274,9 +232,10 @@ public final class SVNUtility {
 				// the URL is not encoded
 			}
 		    url = SVNUtility.normalizeURL(url);
-			
-			retVal.put(name, new SVNEntryRevisionReference(url, pegRevision, revision));
+		    
+		    retVal.put(externalData.localPath, new SVNEntryRevisionReference(url, pegRevision, revision));
 		}
+		
 		return retVal;
 	}
 	
@@ -624,8 +583,8 @@ public final class SVNUtility {
 	public static void reorder(SVNChangeStatus []statuses, final boolean parent2Child) {
 		Arrays.sort(statuses, new Comparator<SVNChangeStatus>() {
 			public int compare(SVNChangeStatus o1, SVNChangeStatus o2) {
-				String s1 = o1.path;
-				String s2 = o2.path;
+				String s1 = o1 != null ? o1.path : "";
+				String s2 = o2 != null ? o2.path : "";
 				return parent2Child ? s1.compareTo(s2) : s2.compareTo(s1);
 			}
 			
@@ -1217,9 +1176,128 @@ public final class SVNUtility {
 		}
 		return depthArg + "files "; //$NON-NLS-1$
 	}
+
+	/**
+	 * Work with svn externals, e.g. parses
+	 *
+	 * 
+	 * @author Igor Burilo
+	 */
+	public static class SVNExternalPropertyData {
+		public String localPath;
+		public String url;
+		public String revision;
+		public String pegRevision;
+		public boolean isNewFormat;
+
+		public SVNExternalPropertyData(String localPath, String url, String pegRevision, String revision, boolean isNewFormat) {				
+			super();
+			this.isNewFormat = isNewFormat;
+			this.localPath = localPath;
+			this.pegRevision = pegRevision;
+			this.revision = revision;
+			this.url = url;
+		}
+		
+		/**
+		 * Parse external property and return result in raw format, i.e. 
+		 * it doesn't process and encode url, it doesn't parse revisions etc.
+		 * 
+		 * @param property
+		 * @return
+		 */
+		public static SVNExternalPropertyData[] parse(String property) {
+			if (property == null) {
+				return new SVNExternalPropertyData[0];
+			}
+			
+			List<SVNExternalPropertyData> resList = new ArrayList<SVNExternalPropertyData>();
+							
+			String []externals = property.trim().split("[\\n|\\r\\n]+"); // it seems different clients have different behaviours wrt trailing whitespace.. so trim() to be safe //$NON-NLS-1$
+			for (int i = 0; i < externals.length; i++) {
+				String []parts = externals[i].trim().split("[\\t ]+"); //$NON-NLS-1$
+				// 2 - name + URL
+				// 3 - name + -rRevision + URL
+				// 4 - name + -r + Revision + URL
+				//or in SVN 1.5 format
+				// 2 - URL@peg + name
+				// 3 - -rRevision + URL@peg + name
+				// 4 - -r + Revision + URL@peg + name
+				if (parts.length < 2 || parts.length > 4) {
+					throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]); //$NON-NLS-2$
+				}
+					
+				String name = null;
+				String url = null;
+				String revision = null;
+				String pegRevision = null;
+				boolean isNewFormat = false;
+				
+				if (SVNUtility.isValidSVNURL(parts[parts.length - 1])) {
+					isNewFormat = false;
+					name = parts[0];
+					
+					url = parts[1];
+					if (parts.length == 4) {
+						revision = parts[2];
+						url = parts[3];
+					}
+					else if (parts.length == 3) {
+						revision = parts[1].substring(2);
+						url = parts[2];
+					}								
+				} else {
+					isNewFormat = true;
+					name = parts[parts.length - 1];
+					
+					url = parts[0];
+					if (parts.length == 4) {
+						revision = parts[1];
+						url = parts[2];
+					}
+					else if (parts.length == 3) {
+						revision = parts[0].substring(2);
+						url = parts[1];
+					}
+																																	
+					int idx = url.lastIndexOf('@');				
+					if (idx != -1) {
+						pegRevision = url.substring(idx + 1);
+						url = url.substring(0, idx);
+					}				
+				}
+							
+				SVNExternalPropertyData data = new SVNExternalPropertyData(name, url, pegRevision, revision, isNewFormat);
+				resList.add(data);			
+			}
+			return resList.toArray(new SVNExternalPropertyData[0]);
+		}			
+		
+		public String toString() {
+			StringBuffer res = new StringBuffer();			
+			if (this.isNewFormat) {
+				//Example: -r12 http://svn.example.com/skin-maker@21 third-party/skins/toolkit
+				if (this.revision != null) {
+					res.append("-r").append(this.revision).append("\t");
+				}
+				res.append(this.url);
+				if (this.pegRevision != null) {
+					res.append("@").append(this.pegRevision);
+				}
+				res.append("\t").append(this.localPath);
+			} else {
+				//Example: third-party/skins -r148 http://svn.example.com/skinproj
+				res.append(this.localPath).append("\t");
+				if (this.revision != null) {
+					res.append("-r").append(this.revision).append("\t");
+				}
+				res.append(this.url);
+			}			
+			return res.toString();
+		}
+	}
 	
 	private SVNUtility() {
 		
 	}
-
 }

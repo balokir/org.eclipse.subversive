@@ -49,7 +49,7 @@ public class ShowHistoryAction extends AbstractSynchronizeModelAction {
 				AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo)((SyncInfoModelElement)selection.getFirstElement()).getSyncInfo();
 				ILocalResource incoming = ((ResourceVariant)syncInfo.getRemote()).getResource();
 				if (incoming instanceof IResourceChange) {
-					return IStateFilter.ST_DELETED != incoming.getStatus();
+					return IStateFilter.SF_TREE_CONFLICTING.accept(incoming) ? IStateFilter.SF_TREE_CONFLICTING_REPOSITORY_EXIST.accept(incoming) : IStateFilter.ST_DELETED != incoming.getStatus(); 
 				}
 			}
 			if (selection.getFirstElement() instanceof ISynchronizeModelElement) {

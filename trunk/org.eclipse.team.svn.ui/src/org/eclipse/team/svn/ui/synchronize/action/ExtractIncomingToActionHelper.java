@@ -28,6 +28,7 @@ import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.FiniExtractLogOperation;
 import org.eclipse.team.svn.core.operation.local.InitExtractLogOperation;
 import org.eclipse.team.svn.core.operation.remote.ExtractToOperationRemote;
+import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -48,7 +49,17 @@ public class ExtractIncomingToActionHelper extends AbstractActionHelper {
 	}
 
 	public FastSyncInfoFilter getSyncInfoFilter() {
-		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.INCOMING, SyncInfo.CONFLICTING});
+		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.INCOMING, SyncInfo.CONFLICTING}) {
+			public boolean select(SyncInfo info) {
+				if (super.select(info)) {
+					AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo) info;
+					ILocalResource local = syncInfo.getLocalResource();
+					//for resources with tree conflicts check that they exist remotely
+					return IStateFilter.SF_TREE_CONFLICTING.accept(local) ? IStateFilter.SF_ONREPOSITORY.accept(local) : true;
+				}
+				return false;
+			}
+		};
 	}
 	
 	public IActionOperation getOperation() {

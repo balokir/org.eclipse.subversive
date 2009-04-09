@@ -433,6 +433,15 @@
 		 </action>
          
          <action
+               helpContextId="org.eclipse.team.svn.ui.team_edit_tree_conflicts_action_context"
+               label="%EditTreeConflictsAction.label"
+               tooltip="%EditTreeConflictsAction.tooltip"
+               class="org.eclipse.team.svn.ui.action.local.EditTreeConflictsAction"
+               menubarPath="team.main/group2"
+               definitionId="org.eclipse.team.svn.ui.command.EditTreeConflictsCommand"
+               id="org.eclipse.team.svn.ui.action.local.EditTreeConflictsAction">
+         </action>          
+         <action
                helpContextId="org.eclipse.team.svn.ui.team_edit_conflicts_action_context"
                label="%EditConflictsAction.label"
                tooltip="%EditConflictsAction.tooltip"
@@ -1962,6 +1971,14 @@
            tooltip="%MarkAsMergedAction.tooltip"
            label="%MarkAsMergedAction.label"/>
      <action
+     	   class="org.eclipse.team.svn.ui.action.local.EditTreeConflictsAction"
+     	   definitionId="org.eclipse.team.svn.ui.command.EditTreeConflictsCommand"
+     	   id="org.eclipse.team.svn.ui.action.local.EditTreeConflictsAction"
+     	   menubarPath="svn.main/group1"
+     	   helpContextId="org.eclipse.team.svn.ui.team_edit_tree_conflicts_action_context"
+           tooltip="%EditTreeConflictsAction.tooltip"
+           label="%EditTreeConflictsAction.label"/>             
+     <action
            class="org.eclipse.team.svn.ui.action.local.EditConflictsAction"
            definitionId="org.eclipse.team.svn.ui.command.EditConflictsCommand"
            id="org.eclipse.team.svn.ui.action.local.EditConflictsAction"
@@ -2163,6 +2180,10 @@
           categoryId="org.eclipse.team.svn.ui.command.category"
           id="org.eclipse.team.svn.ui.command.EditConflictsCommand"
           name="%EditConflictsCommand.label"/>
+    <command
+          categoryId="org.eclipse.team.svn.ui.command.category"
+          id="org.eclipse.team.svn.ui.command.EditTreeConflictsCommand"
+          name="%EditTreeConflictsCommand.label"/>          
     <command
           categoryId="org.eclipse.team.svn.ui.command.category"
           id="org.eclipse.team.svn.ui.command.EditPropertiesCommand"

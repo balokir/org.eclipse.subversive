@@ -22,6 +22,7 @@ import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.CompareProperties
 import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.CreateBranchModelAction;
 import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.CreatePatchFileModelAction;
 import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.EditConflictsModelAction;
+import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.EditTreeConflictsModelAction;
 import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.ExtractIncomingToModelAction;
 import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.ExtractOutgoingToModelAction;
 import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.ExtractToModelAction;
@@ -138,6 +139,13 @@ public class UpdateModelActionGroup extends AbstractSynchronizeModelActionGroup 
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				UpdateModelActionGroup.SVN_SYNC_CONFLICTS,
 				editConflictsAction);
+		
+		//edit tree conflicts		
+		EditTreeConflictsModelAction editTreeConflictsAction = new EditTreeConflictsModelAction(SVNUIMessages.UpdateActionGroup_EditTreeConflicts, configuration);
+		this.appendToGroup(
+				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+				UpdateModelActionGroup.SVN_SYNC_CONFLICTS,
+				editTreeConflictsAction);
 		
 		//compare properties
 		ComparePropertiesModelAction comparePropsAction = new ComparePropertiesModelAction(SVNUIMessages.SynchronizeActionGroup_CompareProperties, configuration);

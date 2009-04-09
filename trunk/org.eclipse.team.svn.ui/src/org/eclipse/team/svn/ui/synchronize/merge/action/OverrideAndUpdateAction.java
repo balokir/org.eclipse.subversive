@@ -29,6 +29,7 @@ import org.eclipse.team.svn.core.operation.local.MarkResolvedOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
+import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
@@ -51,7 +52,12 @@ public class OverrideAndUpdateAction extends AbstractSynchronizeModelAction {
 	}
 
 	protected FastSyncInfoFilter getSyncInfoFilter() {
-		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.CONFLICTING, SyncInfo.INCOMING});
+		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.CONFLICTING, SyncInfo.INCOMING}) {			
+			public boolean select(SyncInfo info) {		
+				ILocalResource local = ((AbstractSVNSyncInfo) info).getLocalResource();
+                return super.select(info) && (IStateFilter.SF_TREE_CONFLICTING.accept(local) ? IStateFilter.SF_TREE_CONFLICTING_REPOSITORY_EXIST.accept(local) : true);
+            }
+		};
 	}
 
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {

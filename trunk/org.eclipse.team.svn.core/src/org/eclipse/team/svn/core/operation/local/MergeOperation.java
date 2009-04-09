@@ -12,7 +12,6 @@
 package org.eclipse.team.svn.core.operation.local;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -21,9 +20,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNMergeStatus;
-import org.eclipse.team.svn.core.connector.SVNNotification.NodeStatus;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
+import org.eclipse.team.svn.core.operation.SVNConflictDetectionProgressMonitor;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
@@ -134,26 +132,20 @@ public class MergeOperation extends AbstractConflictDetectionOperation implement
 		}
     }
     
-	protected class ConflictDetectionProgressMonitor extends SVNProgressMonitor {
+	protected class ConflictDetectionProgressMonitor extends SVNConflictDetectionProgressMonitor {
 		public ConflictDetectionProgressMonitor(IActionOperation parent, IProgressMonitor monitor, IPath root) {
 			super(parent, monitor, root);
-		}
-		
-		public void progress(int current, int total, ItemState state) {
-			super.progress(current, total, state);
-		    if (state.contentState == NodeStatus.CONFLICTED || state.propState == NodeStatus.CONFLICTED) {
-		        MergeOperation.this.hasUnresolvedConflict = true;
-			    for (Iterator<IResource> it = MergeOperation.this.processed.iterator(); it.hasNext(); ) {
-			        IResource res = it.next();
-			        if (FileUtility.getResourcePath(res).equals(new Path(state.path))) {
-			            it.remove();
-			            MergeOperation.this.unprocessed.add(res);
-			            break;
-			        }
-			    }
+		}		
+		protected void processConflict(ItemState state) {
+			MergeOperation.this.setUnresolvedConflict(true);
+		    for (IResource res : MergeOperation.this.getProcessed()) {
+		        if (FileUtility.getResourcePath(res).equals(new Path(state.path))) {
+		        	MergeOperation.this.removeProcessed(res);			           
+		            MergeOperation.this.addUnprocessed(res);
+		            break;
+		        }
 		    }
-		}
-		
+		}		
 	}
 
 }

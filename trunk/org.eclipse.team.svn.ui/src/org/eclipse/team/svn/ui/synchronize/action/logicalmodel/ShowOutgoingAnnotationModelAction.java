@@ -38,12 +38,13 @@ public class ShowOutgoingAnnotationModelAction extends AbstractSynchronizeLogica
 	}
 	
 	protected boolean updateSelection(IStructuredSelection selection) {
-		super.updateSelection(selection);
-		if (selection.size() == 1) {						
-			IResource resource = this.getSelectedResource();
-			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-			// null for change set nodes
-			return local instanceof ILocalFile && IStateFilter.SF_ONREPOSITORY.accept(local);
+		if (super.updateSelection(selection)) {
+			if (selection.size() == 1) {						
+				IResource resource = this.getSelectedResource();
+				ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
+				// null for change set nodes
+				return local instanceof ILocalFile && IStateFilter.SF_ONREPOSITORY.accept(local);
+			}	
 		}
 	    return false;
 	}

@@ -26,7 +26,6 @@ import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
-import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
  * Extract selected resources to location (only local resources)
@@ -78,7 +77,7 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 			File operatingDirectory = new File(toOperate);
 			ILocalResource localResource = SVNRemoteStorage.instance().asLocalResourceAccessible(current);
 			if (!IStateFilter.SF_NOTMODIFIED.accept(localResource)) {
-				this.logger.log(operatingDirectory.getAbsolutePath().substring(this.path.length() + 1), SVNUtility.getStatusText(localResource.getStatus()));
+				this.logger.log(operatingDirectory.getAbsolutePath().substring(this.path.length() + 1), localResource.getStatus());
 			}
 			if (IStateFilter.SF_DELETED.accept(localResource)) {
 				if (operatingDirectory.exists() && this.delitionAllowed) {
