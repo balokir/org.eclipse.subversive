@@ -151,9 +151,21 @@ public class SVNEntryInfo {
 	 */
 	public final String propertyRejectFile;
 
+    /**
+     * The depth of the directory or <code>null</code> if the item is a file.
+     * @since 1.6
+     */
+	public final int depth;
+	
+    /**
+     * Info on any tree conflict of which this node is a victim
+     * @since 1.6
+     */
+	public final SVNConflictDescriptor treeConflict;
+	
 	public SVNEntryInfo(String path, String url, long rev, int kind, String reposRootUrl, String reposUUID, long lastChangedRev, long lastChangedDate, String lastChangedAuthor, SVNLock lock,
 			boolean hasWcInfo, int schedule, String copyFromUrl, long copyFromRev, long textTime, long propTime, String checksum, String conflictOld, String conflictNew,
-			String conflictWrk, String propertyRejectFile) {
+			String conflictWrk, String propertyRejectFile, int depth, SVNConflictDescriptor treeConflict) {
 		this.path = path;
 		this.url = url;
 		this.revision = rev;
@@ -175,6 +187,8 @@ public class SVNEntryInfo {
 		this.conflictNew = conflictNew;
 		this.conflictWrk = conflictWrk;
 		this.propertyRejectFile = propertyRejectFile;
+		this.depth = depth;
+		this.treeConflict = treeConflict;
 	}
 
 }

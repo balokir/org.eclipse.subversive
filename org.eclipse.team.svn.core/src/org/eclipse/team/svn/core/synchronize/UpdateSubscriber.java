@@ -21,6 +21,8 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
+import org.eclipse.team.svn.core.connector.SVNConflictDescriptor;
+import org.eclipse.team.svn.core.connector.SVNConflictVersion;
 import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
@@ -116,12 +118,18 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 			public IResource getExact(IResource []set) {
 				return FileUtility.selectOneOf(scope, set);
 			}
+			public SVNConflictDescriptor getTreeConflictDescriptor() {
+				return current.treeConflictDescriptor;
+			}
+			public boolean hasTreeConflict() {
+				return current.hasTreeConflict;
+			}
 		};
 		if (provider.getNodeKind() == SVNEntry.Kind.NONE) {
 			return null;
 		}
 		IResourceChange resourceChange = SVNRemoteStorage.instance().asResourceChange(provider, true);
-		if (resourceChange == null || resourceChange.getRevision() == SVNRevision.INVALID_REVISION_NUMBER) {
+		if ((resourceChange == null || resourceChange.getRevision() == SVNRevision.INVALID_REVISION_NUMBER)/* && !resourceChange.hasTreeConflict()*/) {
 			return null;
 		}
 		IResourceChange checkForReplacement = null;
@@ -191,7 +199,7 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 	
 	protected boolean isIncoming(SVNEntryStatus status) {
 		SVNChangeStatus st = (SVNChangeStatus)status;
-		return st.repositoryPropStatus == SVNEntryStatus.Kind.MODIFIED || st.repositoryTextStatus != SVNEntryStatus.Kind.NONE;
+		return st.repositoryPropStatus == SVNEntryStatus.Kind.MODIFIED || st.repositoryTextStatus != SVNEntryStatus.Kind.NONE || st.hasTreeConflict;
 	}
 	
 	private UpdateSubscriber() {

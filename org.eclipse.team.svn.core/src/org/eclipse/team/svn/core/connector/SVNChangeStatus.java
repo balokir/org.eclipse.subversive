@@ -66,7 +66,12 @@ public class SVNChangeStatus extends SVNEntryStatus {
 	 * <code>true/code> if the entry is switch
 	 */
 	public final boolean isSwitched;
-
+	
+	/**
+	 * @since 1.6 has the item is a file external 
+	 */
+	public final boolean isFileExternal;
+	
 	/**
 	 * The entry remote content status in compare to base revision (see {@link SVNEntryStatus.Kind})
 	 */
@@ -149,6 +154,18 @@ public class SVNChangeStatus extends SVNEntryStatus {
 	public final String reposLastCmtAuthor;
 
 	/**
+     * @since 1.6
+     * is this item in a tree conflicted state
+     */
+    public final boolean hasTreeConflict;
+
+    /**
+     * @since 1.6
+     * description of the tree conflict
+     */
+    public final SVNConflictDescriptor treeConflictDescriptor;
+	
+	/**
 	 * The {@link SVNChangeStatus} instance could be initialized only once because all fields are final
 	 * 
 	 * @param path
@@ -207,11 +224,18 @@ public class SVNChangeStatus extends SVNEntryStatus {
 	 *            the kind of the youngest revision, if out of date
 	 * @param reposLastCmtAuthor
 	 *            the author of the last commit, if out of date
+	 * @param isFileExternal
+	 *            has the item is a file external
+	 * @param hasTreeConflict
+	 *            is this item in a tree conflicted state
+	 * @param treeConflictDescriptor
+	 *            description of the tree conflict
 	 */
 	public SVNChangeStatus(String path, String url, int nodeKind, long revision, long lastChangedRevision, long lastChangedDate, String lastCommitAuthor, int textStatus,
 			int propStatus, int repositoryTextStatus, int repositoryPropStatus, boolean locked, boolean copied, String conflictOld, String conflictNew, String conflictWorking,
 			String urlCopiedFrom, long revisionCopiedFrom, boolean switched, String lockToken, String lockOwner, String lockComment, long lockCreationDate, SVNLock reposLock,
-			long reposLastCmtRevision, long reposLastCmtDate, int reposKind, String reposLastCmtAuthor) {
+			long reposLastCmtRevision, long reposLastCmtDate, int reposKind, String reposLastCmtAuthor,
+			boolean isFileExternal, boolean hasTreeConflict, SVNConflictDescriptor treeConflictDescriptor) {
 		super(nodeKind, textStatus, propStatus);
 		this.path = path;
 		this.url = url;
@@ -238,6 +262,9 @@ public class SVNChangeStatus extends SVNEntryStatus {
 		this.reposLastCmtDate = reposLastCmtDate;
 		this.reposKind = reposKind;
 		this.reposLastCmtAuthor = reposLastCmtAuthor;
+		this.isFileExternal = isFileExternal;
+		this.hasTreeConflict = hasTreeConflict;
+		this.treeConflictDescriptor = treeConflictDescriptor;
 	}
 
 }

@@ -99,7 +99,7 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 			
 			private SVNChangeStatus makeStatus(String path, SVNChangeStatus status) {
 				int deltaSegments = new Path(status.path).segmentCount() - new Path(path).segmentCount();
-				return new SVNChangeStatus(path, status.url != null ? new Path(status.url).removeLastSegments(deltaSegments).toString() : null, SVNEntry.Kind.DIR, SVNRevision.INVALID_REVISION_NUMBER, SVNRevision.INVALID_REVISION_NUMBER, 0, null, SVNEntryStatus.Kind.NORMAL, SVNEntryStatus.Kind.NONE, SVNEntryStatus.Kind.NORMAL, SVNEntryStatus.Kind.MODIFIED, false, false, null, null, null, null, SVNRevision.INVALID_REVISION_NUMBER, false, null, null, null, 0, null, status.reposLastCmtRevision, status.reposLastCmtDate, SVNEntry.Kind.DIR, status.reposLastCmtAuthor);
+				return new SVNChangeStatus(path, status.url != null ? new Path(status.url).removeLastSegments(deltaSegments).toString() : null, SVNEntry.Kind.DIR, SVNRevision.INVALID_REVISION_NUMBER, SVNRevision.INVALID_REVISION_NUMBER, 0, null, SVNEntryStatus.Kind.NORMAL, SVNEntryStatus.Kind.NONE, SVNEntryStatus.Kind.NORMAL, SVNEntryStatus.Kind.MODIFIED, false, false, null, null, null, null, SVNRevision.INVALID_REVISION_NUMBER, false, null, null, null, 0, null, status.reposLastCmtRevision, status.reposLastCmtDate, SVNEntry.Kind.DIR, status.reposLastCmtAuthor, false, false, null);
 			}
 			
 			private Path getProjectPath(String path) {

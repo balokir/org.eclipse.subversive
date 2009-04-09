@@ -142,14 +142,13 @@ public class CommitOperation extends AbstractConflictDetectionOperation implemen
 	
     protected void reportError(Throwable t) {
     	if (t instanceof SVNConnectorUnresolvedConflictException) {
-          	this.hasUnresolvedConflict = true;
-          	this.conflictMessage = t.getMessage();
+          	this.setUnresolvedConflict(true);
+          	this.setConflictMessage(t.getMessage());
         	for (int i = 0; i < this.paths.length; i++) {
-                for (Iterator it = this.processed.iterator(); it.hasNext(); ) {
-                    IResource res = (IResource)it.next();
+                for (IResource res : this.getProcessed()) {                    
     		        if (FileUtility.getResourcePath(res).equals(new Path(this.paths[i]))) {
-    		            it.remove();
-    		            this.unprocessed.add(res);
+    		        	this.removeProcessed(res);    		        
+    		            this.addUnprocessed(res);
     		            break;
     		        }
                 }

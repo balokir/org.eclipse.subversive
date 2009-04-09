@@ -34,6 +34,7 @@ import org.eclipse.team.svn.ui.synchronize.action.CreateBranchAction;
 import org.eclipse.team.svn.ui.synchronize.action.CreatePatchFileAction;
 import org.eclipse.team.svn.ui.synchronize.action.DeletePaneAction;
 import org.eclipse.team.svn.ui.synchronize.action.EditConflictsAction;
+import org.eclipse.team.svn.ui.synchronize.action.EditTreeConflictsAction;
 import org.eclipse.team.svn.ui.synchronize.action.ExtractOutgoingToAction;
 import org.eclipse.team.svn.ui.synchronize.action.OpenInComparePaneAction;
 import org.eclipse.team.svn.ui.synchronize.action.ReplaceWithLatestRevisionPaneAction;
@@ -149,7 +150,14 @@ public class CommitPaneParticipant extends BasePaneParticipant {
 			this.appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					CommitPaneActionGroup.GROUP_SYNC_NORMAL,
-					editConflictsAction);				
+					editConflictsAction);
+			
+			//edit tree conflicts	
+			EditTreeConflictsAction editTreeConflictsAction = new EditTreeConflictsAction(SVNUIMessages.UpdateActionGroup_EditTreeConflicts, configuration);
+			this.appendToGroup(
+					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+					CommitPaneActionGroup.GROUP_SYNC_NORMAL,
+					editTreeConflictsAction);	
 			
 			//mark as merged
 			MarkAsMergedAction markMergedAction = new MarkAsMergedAction(SVNUIMessages.SynchronizeActionGroup_MarkAsMerged, configuration);

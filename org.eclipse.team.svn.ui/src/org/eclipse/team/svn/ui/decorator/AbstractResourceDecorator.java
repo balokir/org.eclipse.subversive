@@ -171,8 +171,11 @@ public abstract class AbstractResourceDecorator extends LabelProvider implements
 		}
 	}
 	
-	protected void decorateImpl(final IRepositoryResource remote, final ILocalResource local, final IResource resource, final String state, final int mask, IDecoration decoration) {
-		if (local.isLocked() && this.indicateLocked) {
+	protected void decorateImpl(final IRepositoryResource remote, final ILocalResource local, final IResource resource, final String state, final int mask, IDecoration decoration) {	
+		if (IStateFilter.SF_TREE_CONFLICTING.accept(resource, state, mask) && this.indicateConflicted) {			
+			decoration.addOverlay(AbstractResourceDecorator.OVR_CONFLICTED);			
+		}
+		else if (local.isLocked() && this.indicateLocked) {
 			decoration.addOverlay(AbstractResourceDecorator.OVR_LOCKED);
 		} 
 		else if (IStateFilter.SF_IGNORED.accept(resource, state, mask)) {
@@ -249,8 +252,8 @@ public abstract class AbstractResourceDecorator extends LabelProvider implements
 					if (var.equals(TextVariableSetProvider.VAR_ADDED_FLAG)) {
 						return IStateFilter.SF_ADDED.accept(resource, state, mask) ? AbstractResourceDecorator.this.addedChars : ""; //$NON-NLS-1$
 					}
-					else if (var.equals(TextVariableSetProvider.VAR_OUTGOING_FLAG)) {
-						return (IStateFilter.SF_COMMITABLE.accept(resource, state, mask) || IStateFilter.SF_CONFLICTING.accept(resource, state, mask)) ? AbstractResourceDecorator.this.outgoingChars : ""; //$NON-NLS-1$
+					else if (var.equals(TextVariableSetProvider.VAR_OUTGOING_FLAG)) {					
+						return (IStateFilter.SF_COMMITABLE.accept(resource, state, mask) || IStateFilter.SF_CONFLICTING.accept(resource, state, mask) || IStateFilter.SF_TREE_CONFLICTING.accept(resource, state, mask)) ? AbstractResourceDecorator.this.outgoingChars : ""; //$NON-NLS-1$
 					}
 					
 					if (var.equals(TextVariableSetProvider.VAR_REVISION)) {

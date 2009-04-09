@@ -37,6 +37,7 @@ public class SVNMessages extends BaseMessages {
 	public static String Console_Status_New;
 	public static String Console_Status_Obstructed;
 	public static String Console_Status_Replaced;
+	public static String Console_Status_TreeConflicting;
 	public static String Console_TransmittingData;
 	public static String Console_Update_Status_changed;
 	public static String Console_Update_Status_conflicted;
@@ -425,6 +426,8 @@ public class SVNMessages extends BaseMessages {
 	public static String Operation_ExternalRepositoryCompare;
 	public static String Operation_ExternalRepositoryCompare_Id;
 	public static String Operation_ExternalRepositoryCompare_Error;
+	public static String Operation_CopyRemoteToWC;
+	public static String Operation_CopyRemoteToWC_Id;
 	
 	public static String Progress_Done;
 	public static String Progress_Running;
@@ -436,7 +439,7 @@ public class SVNMessages extends BaseMessages {
 	public static String SVNInfo_NoComment;
 	public static String SVNInfo_NoDate;
 	public static String Status_Added;
-	public static String Status_Conflicting;
+	public static String Status_Conflicting;	
 	public static String Status_Deleted;
 	public static String Status_Linked;
 	public static String Status_Missing;
@@ -448,6 +451,7 @@ public class SVNMessages extends BaseMessages {
 	public static String Status_Obstructed;
 	public static String Status_Prereplaced;
 	public static String Status_Replaced;
+	public static String TreeConflicting;
 	
 	static {
 		//load message values from bundle file

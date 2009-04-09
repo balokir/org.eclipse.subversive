@@ -85,7 +85,9 @@ public class InfoOperation extends AbstractActionOperation {
             									 statuses[0].conflictOld,
             									 statuses[0].conflictNew,
             									 statuses[0].conflictWorking,
-            									 null);
+            									 null, 
+            									 Depth.UNKNOWN,
+            									 statuses[0].treeConflictDescriptor);
 	                SVNEntryInfo []infos = SVNUtility.info(proxy, new SVNEntryRevisionReference(statuses[0].url, null, SVNRevision.fromNumber(statuses[0].revision)), Depth.EMPTY, new SVNProgressMonitor(this, monitor, null));
 	                
 	                if (infos != null && infos.length > 0) {

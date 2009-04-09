@@ -24,11 +24,10 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
-import org.eclipse.team.svn.core.connector.SVNNotification.NodeStatus;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
-import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
+import org.eclipse.team.svn.core.operation.SVNConflictDetectionProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRemoteStorage;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
@@ -119,32 +118,26 @@ public class UpdateOperation extends AbstractConflictDetectionOperation implemen
 		}
 	}
 
-	protected class ConflictDetectionProgressMonitor extends SVNProgressMonitor {
+	protected class ConflictDetectionProgressMonitor extends SVNConflictDetectionProgressMonitor {
 		public ConflictDetectionProgressMonitor(IActionOperation parent, IProgressMonitor monitor, IPath root) {
 			super(parent, monitor, root);
 		}
-		
-		public void progress(int current, int total, ItemState state) {
-			super.progress(current, total, state);
-		    if (state.contentState == NodeStatus.CONFLICTED || 
-		        state.propState == NodeStatus.CONFLICTED) {
-		        UpdateOperation.this.hasUnresolvedConflict = true;
-			    for (Iterator<IResource> it = UpdateOperation.this.processed.iterator(); it.hasNext(); ) {
-			        IResource res = it.next();
-			        IPath conflictPath = new Path(state.path);
-			        IPath resourcePath = FileUtility.getResourcePath(res);
-			        if (resourcePath.isPrefixOf(conflictPath)) {
-				        if (resourcePath.equals(conflictPath)) {
-				            it.remove();
-				        }
-			        	IResource conflictResource = ResourcesPlugin.getWorkspace().getRoot().findMember(res.getFullPath().append(conflictPath.removeFirstSegments(resourcePath.segmentCount())));
-			            if (conflictResource != null) {
-			            	UpdateOperation.this.unprocessed.add(conflictResource);
-			            }
-			            break;
+		protected void processConflict(ItemState state) {
+			UpdateOperation.this.setUnresolvedConflict(true);
+		    for (IResource res : UpdateOperation.this.getProcessed()) {
+		        IPath conflictPath = new Path(state.path);
+		        IPath resourcePath = FileUtility.getResourcePath(res);
+		        if (resourcePath.isPrefixOf(conflictPath)) {
+			        if (resourcePath.equals(conflictPath)) {
+			        	UpdateOperation.this.removeProcessed(res);
 			        }
-			    }
-		    }
+		        	IResource conflictResource = ResourcesPlugin.getWorkspace().getRoot().findMember(res.getFullPath().append(conflictPath.removeFirstSegments(resourcePath.segmentCount())));
+		            if (conflictResource != null) {
+		            	UpdateOperation.this.addUnprocessed(conflictResource);
+		            }
+		            break;
+		        }
+		    }			
 		}
 		
 	}

@@ -13,6 +13,7 @@ package org.eclipse.team.svn.core.svnstorage;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.connector.SVNConflictDescriptor;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.resource.ICommentProvider;
 import org.eclipse.team.svn.core.resource.IFolderChange;
@@ -30,8 +31,8 @@ public class SVNFolderChange extends SVNLocalFolder implements IFolderChange {
 	protected String comment;
 	protected ICommentProvider provider;
 
-	public SVNFolderChange(IResource resource, long revision, String status, int changeMask, String author, long lastCommitDate, SVNRevision pegRevision, String comment) {
-		super(resource, revision, revision, status, changeMask, author, lastCommitDate);
+	public SVNFolderChange(IResource resource, long revision, String status, int changeMask, String author, long lastCommitDate, SVNConflictDescriptor treeConflictDescriptor, SVNRevision pegRevision, String comment) {
+		super(resource, revision, revision, status, changeMask, author, lastCommitDate, treeConflictDescriptor);
 		this.comment = comment;
 		this.pegRevision = pegRevision;
 	}

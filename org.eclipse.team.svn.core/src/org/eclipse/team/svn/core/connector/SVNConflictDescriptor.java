@@ -84,8 +84,36 @@ public class SVNConflictDescriptor {
 		 * The unversioned entry at the path in the working copy.
 		 */
 		public static final int UNVERSIONED = 4;
+		
+	    /**
+         * Object is already added or schedule-add.
+         * @since New in 1.6.
+         */
+        public static final int ADDED = 5;
 	}
 
+	public static class Operation {
+	    /**
+	     * none
+	     */
+	    public static final int NONE = 0;
+
+	    /**
+	     * update
+	     */
+	    public static final int UPDATE = 1;
+
+	    /**
+	     * switch 
+	     */	   
+	    public static final int SWITCHED = 2;
+
+	    /**
+	     * merge 
+	     */
+	    public static final int MERGE = 3;
+	}
+	
 	/**
 	 * The conflicted entry path.
 	 */
@@ -97,7 +125,7 @@ public class SVNConflictDescriptor {
 	public final int conflictKind;
 
 	/**
-	 * The node kind (see {@link Kind}).
+	 * The node kind (see {@link SVNEntry.Kind}).
 	 */
 	public final int nodeKind;
 
@@ -147,6 +175,15 @@ public class SVNConflictDescriptor {
 	public final String mergedPath;
 
 	/**
+     * @see Operation
+     */
+	public final int operation;
+	
+    public final SVNConflictVersion srcLeftVersion;
+    
+    public final SVNConflictVersion srcRightVersion;
+	
+	/**
 	 * The {@link SVNConflictDescriptor} instance could be initialized only once because all fields are final
 	 * 
 	 * @param path
@@ -173,9 +210,11 @@ public class SVNConflictDescriptor {
 	 *            the local version content path
 	 * @param mergedPath
 	 *            the auto-merged content path
+	 * @param srcLeftVersion
+	 * @param srcRightVersion
 	 */
-	public SVNConflictDescriptor(String path, int conflictKind, int nodeKind, String propertyName, boolean isBinary, String mimeType, int action, int reason, String basePath,
-			String remotePath, String localPath, String mergedPath) {
+	public SVNConflictDescriptor(String path, int conflictKind, int nodeKind, String propertyName, boolean isBinary, String mimeType, int action, int reason, int operation, 
+			String basePath, String remotePath, String localPath, String mergedPath, SVNConflictVersion srcLeftVersion, SVNConflictVersion srcRightVersion) {
 		this.path = path;
 		this.conflictKind = conflictKind;
 		this.nodeKind = nodeKind;
@@ -184,10 +223,20 @@ public class SVNConflictDescriptor {
 		this.mimeType = mimeType;
 		this.action = action;
 		this.reason = reason;
+		this.operation = operation;
 		this.basePath = basePath;
 		this.remotePath = remotePath;
 		this.localPath = localPath;
 		this.mergedPath = mergedPath;
+		this.srcLeftVersion = srcLeftVersion;
+		this.srcRightVersion = srcRightVersion;
 	}
-
+	
+	/*
+	 * Constructor for creating tree conflict descriptor
+	 */
+	public SVNConflictDescriptor(String path, int action, int reason, int operation, SVNConflictVersion srcLeftVersion, SVNConflictVersion srcRightVersion) {		
+		this(path, 0, 0, null, false, null, action, reason, operation, null, null, null, null, srcLeftVersion, srcRightVersion);
+	}
+	
 }

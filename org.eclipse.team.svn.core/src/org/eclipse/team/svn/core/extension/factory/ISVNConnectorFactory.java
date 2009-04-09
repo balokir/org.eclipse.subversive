@@ -21,7 +21,7 @@ import org.eclipse.team.svn.core.operation.UnreportableException;
  * @author Alexander Gurov
  */
 public interface ISVNConnectorFactory {
-	public static final String DEFAULT_ID = "org.eclipse.team.svn.connector.svnkit"; //$NON-NLS-1$
+	public static final String DEFAULT_ID = "org.eclipse.team.svn.connector.svnkit15"; //$NON-NLS-1$
 	public static final String CURRENT_COMPATIBILITY_VERSION = "0.7.1.I20080728-1500"; //$NON-NLS-1$
 	
 	/**
@@ -56,6 +56,10 @@ public interface ISVNConnectorFactory {
 		 * SVN 1.5 compatible API is supported by the connector
 		 */
 		public static final int SVNAPI_1_5_x = 5;
+		/**
+		 * SVN 1.6 compatible API is supported by the connector
+		 */
+		public static final int SVNAPI_1_6_x = 6;
 	}
 	
 	/**

@@ -83,6 +83,10 @@
 		<topic label="Merge Dialog" href="teamSupport/merge_dialog.html"/>
 		<topic label="Merging" href="teamSupport/SVNaction/merge.html"/>
 	</context>
+	<context id="editTreeConflictsContext">
+		<description>This is the Edit Tree Conflict Dialog which shows additional conflict information and allows to resolve the conflict.</description>
+		<topic label="Edit Tree Conflict Dialog" href="teamSupport/tree_conflicts.html"/>
+	</context>	
 	<context id="branchDialogContext">
 		<description>This is the Branch Dialog. It allows to create branches of development. This may be useful in a different cases, for example if different clients wish to get the same product but with some differences in functionality. Of course it's not convenient to create both products from the beginning to the end separately, so the developers create branches.</description>
 		<topic label="Branching" href="teamSupport/SVNaction/branch.html"/>

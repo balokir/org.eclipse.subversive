@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.core.resource;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.team.svn.core.connector.SVNConflictDescriptor;
 
 /**
  * Checked out resource representation
@@ -36,6 +37,10 @@ public interface ILocalResource {
 	public long getBaseRevision();
 	
 	public String getStatus();
+	
+	public boolean hasTreeConflict();
+	
+	public SVNConflictDescriptor getTreeConflictDescriptor();
 	
 	public int getChangeMask();
 	

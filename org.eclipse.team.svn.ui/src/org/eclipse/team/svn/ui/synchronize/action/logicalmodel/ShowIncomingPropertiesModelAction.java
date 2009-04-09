@@ -42,15 +42,17 @@ public class ShowIncomingPropertiesModelAction extends AbstractSynchronizeLogica
 	}
 	
 	protected boolean updateSelection(IStructuredSelection selection) {
-		super.updateSelection(selection);
-		if (selection.size() == 1) {
-			AbstractSVNSyncInfo syncInfo = this.getSelectedSVNSyncInfo();
-			if (syncInfo != null && syncInfo.getKind() != SyncInfo.IN_SYNC) {
-				ILocalResource incoming = ((ResourceVariant)syncInfo.getRemote()).getResource();
-				return incoming instanceof IResourceChange && IStateFilter.ST_DELETED != incoming.getStatus();
-			}					
+		if (super.updateSelection(selection)) {
+			if (selection.size() == 1) {
+				AbstractSVNSyncInfo syncInfo = this.getSelectedSVNSyncInfo();
+				if (syncInfo != null && syncInfo.getKind() != SyncInfo.IN_SYNC) {
+					ILocalResource incoming = ((ResourceVariant)syncInfo.getRemote()).getResource();
+					if (incoming instanceof IResourceChange) {
+						return IStateFilter.SF_TREE_CONFLICTING.accept(incoming) ? IStateFilter.SF_TREE_CONFLICTING_REPOSITORY_EXIST.accept(incoming) : IStateFilter.ST_DELETED != incoming.getStatus();
+					}
+				}					
+			}	
 		}
-
 		return false;
 	}
 	

@@ -282,7 +282,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				if (selection == null || selection.length == 0) {
 					return SVNUIMessages.ResourceSelectionComposite_Verifier_Error;
 				}
-				if (FileUtility.checkForResourcesPresenceRecursive(selection, IStateFilter.SF_CONFLICTING)) {
+				if (FileUtility.checkForResourcesPresenceRecursive(selection, new IStateFilter.OrStateFilter(new IStateFilter[]{IStateFilter.SF_CONFLICTING, IStateFilter.SF_TREE_CONFLICTING}))) {
 					return SVNUIMessages.CommitPanel_Conflicting_Error;
 				}
 				return null;
@@ -522,6 +522,23 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 					}
 				});
 				tAction.setEnabled(FileUtility.checkForResourcesPresenceRecursive(selectedResources, IStateFilter.SF_CONFLICTING));
+				
+				//Edit tree conflicts action
+				manager.add (tAction = new Action(SVNUIMessages.EditTreeConflictsAction_label) {
+					public void run() {
+						if (selectedResources.length > 0) {
+							ILocalResource local = SVNRemoteStorage.instance().asLocalResource(selectedResources[0]);
+							if (local.hasTreeConflict()) {
+								EditTreeConflictsPanel editConflictsPanel = new EditTreeConflictsPanel(local);
+								DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getShell(), editConflictsPanel);
+								if (dialog.open() == 0 && editConflictsPanel.getOperation() != null) {
+									UIMonitorUtility.doTaskScheduledDefault(editConflictsPanel.getOperation());			
+								}		
+							}
+						}																															
+					}
+				});
+				tAction.setEnabled(selectedResources.length == 1 && FileUtility.checkForResourcesPresence(selectedResources, IStateFilter.SF_TREE_CONFLICTING, IResource.DEPTH_ZERO));
 				
 				//Mark as merged action
 				manager.add (tAction = new Action(SVNUIMessages.CommitPanel_MarkAsMerged_Action) {
@@ -836,7 +853,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 	    		
 	    		ILocalResource local = SVNRemoteStorage.instance().asLocalResourceAccessible(this.resources[i]);
     			IResource resourceToProcess = this.resources[i];
-    			while (IStateFilter.SF_UNVERSIONED.accept(local)) {
+    			while (IStateFilter.SF_UNVERSIONED.accept(local) || IStateFilter.SF_TREE_CONFLICTING.accept(local) && !IStateFilter.SF_TREE_CONFLICTING_REPOSITORY_EXIST.accept(local)) {
     				resourceToProcess = resourceToProcess.getParent();
     				local = SVNRemoteStorage.instance().asLocalResourceAccessible(resourceToProcess);
     			}

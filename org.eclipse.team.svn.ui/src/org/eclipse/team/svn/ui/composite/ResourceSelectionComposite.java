@@ -54,6 +54,8 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.SVNMessages;
+import org.eclipse.team.svn.core.connector.SVNConflictDescriptor;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -327,12 +329,11 @@ public class ResourceSelectionComposite extends Composite {
 					String path = resource.getFullPath().toString();
 					return path.startsWith("/") ? path.substring(1) : path; //$NON-NLS-1$
 				}
-				ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-				int changeMask = local.getChangeMask();
+				ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);				
 				if (columnIndex == ResourceSelectionComposite.COLUMN_STATUS) {
-					return ResourceSelectionComposite.this.statusAsString(local.getStatus(), changeMask);
+					return ResourceSelectionComposite.this.statusAsString(local);
 				}
-				return ResourceSelectionComposite.this.changeMaskAsString(changeMask);
+				return ResourceSelectionComposite.this.changeMaskAsString(local);
 			}
 
 			public void addListener(ILabelProviderListener listener) {
@@ -447,18 +448,32 @@ public class ResourceSelectionComposite extends Composite {
 		return SVNUIMessages.format(SVNUIMessages.ResourceSelectionComposite_Info, new String[] { String.valueOf(value), String.valueOf(this.resources.length) });
 	}
 
-	protected String statusAsString(String status, int changeMask) {
-		if ((changeMask & ILocalResource.TEXT_MODIFIED) == 0) {
-			return ""; //$NON-NLS-1$
+	protected String statusAsString(ILocalResource local) {				
+		String status = "";
+		if ((local.getChangeMask() & ILocalResource.TEXT_MODIFIED) != 0) {
+			status = SVNUtility.getStatusText(local.getStatus());
 		}
-		return SVNUtility.getStatusText(status);
+		if (local.hasTreeConflict() && local.getTreeConflictDescriptor().conflictKind == SVNConflictDescriptor.Kind.CONTENT) {
+			if (!"".equals(status)) {
+				status += ", ";
+			}
+			status += SVNMessages.TreeConflicting;			
+		}
+		return status;
 	}
 
-	protected String changeMaskAsString(int changeMask) {
-		if ((changeMask & ILocalResource.PROP_MODIFIED) != 0) {
-			return IStateFilter.ST_MODIFIED;
+	protected String changeMaskAsString(ILocalResource local) {
+		String status = "";
+		if ((local.getChangeMask() & ILocalResource.PROP_MODIFIED) != 0) {
+			status = IStateFilter.ST_MODIFIED;
 		}
-		return ""; //$NON-NLS-1$
+		if (local.hasTreeConflict() && local.getTreeConflictDescriptor().conflictKind == SVNConflictDescriptor.Kind.PROPERTIES) {
+			if (!"".equals(status)) {
+				status += ", ";
+			}
+			status += SVNMessages.TreeConflicting;
+		}
+		return status;
 	}
 
 	public void addResourcesSelectionChangedListener(IResourceSelectionChangeListener listener) {
@@ -559,14 +574,14 @@ public class ResourceSelectionComposite extends Composite {
 			int changeMask1 = local1.getChangeMask();
 			int changeMask2 = local2.getChangeMask();
 			if (this.column == ResourceSelectionComposite.COLUMN_STATUS) {
-				String status1 = ResourceSelectionComposite.this.statusAsString(local1.getStatus(), changeMask1);
-				String status2 = ResourceSelectionComposite.this.statusAsString(local2.getStatus(), changeMask2);
+				String status1 = ResourceSelectionComposite.this.statusAsString(local1);
+				String status2 = ResourceSelectionComposite.this.statusAsString(local2);
 				int retVal = this.compareStatuses(status1, status2);
 				return retVal != 0 ? retVal : this.compareNames(rowData1, rowData2);
 			}
 			if (this.column == ResourceSelectionComposite.COLUMN_PROPSTATUS) {
-				String propStatus1 = changeMaskAsString(changeMask1);
-				String propStatus2 = changeMaskAsString(changeMask2);
+				String propStatus1 = changeMaskAsString(local1);
+				String propStatus2 = changeMaskAsString(local2);
 				return ColumnedViewerComparator.compare(propStatus1, propStatus2);
 			}
 			return 0;

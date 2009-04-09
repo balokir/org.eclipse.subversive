@@ -15,15 +15,17 @@ import java.util.HashSet;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.svn.core.IConnectedProjectInformation;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
-import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
+import org.eclipse.team.svn.core.operation.SVNConflictDetectionProgressMonitor;
 import org.eclipse.team.svn.core.operation.remote.AbstractRepositoryOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -36,20 +38,23 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * 
  * @author Alexander Gurov
  */
-public class SwitchOperation extends AbstractRepositoryOperation {
+public class SwitchOperation extends AbstractRepositoryOperation implements IUnresolvedConflictDetector {
 	protected IResource []resources;
 	protected int depth;
-
+	protected UnresolvedConflictDetectorHelper conflictDetectorHelper; 
+	
 	public SwitchOperation(IResource []resources, IRepositoryResourceProvider destination, int depth) {
 		super("Operation_Switch", destination); //$NON-NLS-1$
 		this.resources = resources;
 		this.depth = depth;
+		this.conflictDetectorHelper = new UnresolvedConflictDetectorHelper();
 	}
 
 	public SwitchOperation(IResource []resources, IRepositoryResource []destination, int depth) {
 		super("Operation_Switch", destination); //$NON-NLS-1$
 		this.resources = resources;
 		this.depth = depth;
+		this.conflictDetectorHelper = new UnresolvedConflictDetectorHelper();
 	}
 	
 	public int getOperationWeight() {
@@ -77,7 +82,7 @@ public class SwitchOperation extends AbstractRepositoryOperation {
 					String wcPath = FileUtility.getWorkingCopyPath(resource);
 					SwitchOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn switch \"" + destination.getUrl() + "\" \"" + FileUtility.normalizePath(wcPath) + "\" -r " + destination.getSelectedRevision() + SVNUtility.getDepthArg(SwitchOperation.this.depth) + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 					proxy.doSwitch(wcPath, SVNUtility.getEntryRevisionReference(destination), SwitchOperation.this.depth,
-							ISVNConnector.Options.NONE, new SVNProgressMonitor(SwitchOperation.this, monitor, null));
+							ISVNConnector.Options.NONE, new ConflictDetectionProgressMonitor(SwitchOperation.this, monitor, null));
 					
 					if (resource instanceof IProject) {
 						IConnectedProjectInformation provider = (IConnectedProjectInformation)RepositoryProvider.getProvider((IProject)resource);
@@ -90,4 +95,48 @@ public class SwitchOperation extends AbstractRepositoryOperation {
 		}
 	}
 
+    public void setUnresolvedConflict(boolean hasUnresolvedConflict) {
+		this.conflictDetectorHelper.setUnresolvedConflict(hasUnresolvedConflict);
+	}	
+    
+    public boolean hasUnresolvedConflicts() {
+        return this.conflictDetectorHelper.hasUnresolvedConflicts();
+    }
+    
+    public String getMessage() {
+    	return this.conflictDetectorHelper.getMessage();
+    }
+    
+    public IResource []getUnprocessed() {
+		return this.conflictDetectorHelper.getUnprocessed();
+    }
+
+	public IResource []getProcessed() {
+		return this.conflictDetectorHelper.getProcessed();
+	}
+	
+	protected void defineInitialResourceSet(IResource []resources) {
+		this.conflictDetectorHelper.defineInitialResourceSet(resources);
+	}
+	
+	public void addUnprocessed(IResource unprocessed) {
+		this.conflictDetectorHelper.addUnprocessed(unprocessed);
+	}
+
+	public void setConflictMessage(String message) {
+		this.conflictDetectorHelper.setConflictMessage(message);		
+	}
+	
+	public void removeProcessed(IResource resource) {
+		this.conflictDetectorHelper.removeProcessed(resource);
+	}
+	
+	protected class ConflictDetectionProgressMonitor extends SVNConflictDetectionProgressMonitor {
+		public ConflictDetectionProgressMonitor(IActionOperation parent, IProgressMonitor monitor, IPath root) {
+			super(parent, monitor, root);
+		}
+		protected void processConflict(ItemState state) {
+			SwitchOperation.this.setUnresolvedConflict(true);
+		}
+	}
 }

@@ -39,6 +39,7 @@ import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractNonRecursiveTeamAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.dialog.OperationErrorDialog;
+import org.eclipse.team.svn.ui.operation.NotifyUnresolvedConflictOperation;
 import org.eclipse.team.svn.ui.panel.common.AbstractBranchTagPanel;
 import org.eclipse.team.svn.ui.panel.common.BranchPanel;
 import org.eclipse.team.svn.ui.panel.common.TagPanel;
@@ -140,9 +141,11 @@ public class BranchTagAction extends AbstractNonRecursiveTeamAction {
 			if (panel.isStartWithSelected()) {
 				SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
 				op.add(saveOp);
-			    op.add(new SwitchOperation(resources, mainOp, Depth.INFINITY), new IActionOperation[] {mainOp});
+				SwitchOperation switchOp = new SwitchOperation(resources, mainOp, Depth.INFINITY);
+			    op.add(switchOp, new IActionOperation[] {mainOp});
 				op.add(new RestoreProjectMetaOperation(saveOp));
 				op.add(new RefreshResourcesOperation(resources));
+				op.add(new NotifyUnresolvedConflictOperation(switchOp));
 			}
 			
 			return op;

@@ -391,7 +391,9 @@ public class SVNUIMessages extends BaseMessages {
 	public static String EditCommentTemplatePanel_Title_Edit;
 	public static String EditCommentTemplatePanel_Title_New;
 	public static String EditConflictsAction_label;
+	public static String EditTreeConflictsAction_label;
 	public static String EditConflictsCommand_tooltip;
+	public static String EditTreeConflictsCommand_tooltip;
 	public static String EditCustomPropertiesPanel_Description;
 	public static String EditCustomPropertiesPanel_Message;
 	public static String EditCustomPropertiesPanel_Optional;
@@ -1388,18 +1390,21 @@ public class SVNUIMessages extends BaseMessages {
 	public static String SelectRepositoryResourcePage_Select_Title;
 	public static String SelectRepositoryResourcePage_Title;
 	public static String SelectResourceRevisionAction_InputRevisionPanel_Title;
-	public static String SelectRevisionPanel_ClearFilter;
+	public static String SVNHistoryPanel_ClearFilter;
 	public static String SelectRevisionPanel_Description;
 	public static String SelectRevisionPanel_Message;
-	public static String SelectRevisionPanel_NotSelected;
-	public static String SelectRevisionPanel_QuickFilter;
-	public static String SelectRevisionPanel_Refresh;
-	public static String SelectRevisionPanel_ShowAll;
-	public static String SelectRevisionPanel_ShowNextPage;
-	public static String SelectRevisionPanel_ShowNextX;
-	public static String SelectRevisionPanel_StopOnCopy;
+	public static String SVNHistoryPanel_NotSelected;
+	public static String SVNHistoryPanel_QuickFilter;
+	public static String SVNHistoryPanel_Refresh;
+	public static String SVNHistoryPanel_ShowAll;
+	public static String SVNHistoryPanel_ShowNextPage;
+	public static String SVNHistoryPanel_ShowNextX;
+	public static String SVNHistoryPanel_StopOnCopy;
+	public static String SVNHistoryPanel_Title;
+	public static String SVNHistoryPanel_Description;
+	public static String SVNHistoryPanel_Message;
 	public static String SelectRevisionPanel_Title;
-	public static String SelectRevisionPanel_Unrelated;
+	public static String SVNHistoryPanel_Unrelated;
 	public static String Select_Branch_Label;
 	public static String Select_Branch_Title;
 	public static String Select_Tag_Label;
@@ -1537,6 +1542,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String UpdateActionGroup_Commit;
 	public static String UpdateActionGroup_CommitAllOutgoingChanges;
 	public static String UpdateActionGroup_EditConflicts;
+	public static String UpdateActionGroup_EditTreeConflicts;
 	public static String UpdateActionGroup_Lock;
 	public static String UpdateActionGroup_OverrideAndCommit;
 	public static String UpdateActionGroup_Unlock;
@@ -1636,7 +1642,40 @@ public class SVNUIMessages extends BaseMessages {
 	
 	public static String OpenInExternalCompareEditor_Action;
 	public static String SVNTeamDiffViewerPage_Description;
-	
+
+	public static String EditTreeConflictsPanel_Tip1;
+	public static String EditTreeConflictsPanel_Tip2;
+	public static String EditTreeConflictsPanel_Tip3;
+	public static String EditTreeConflictsPanel_Tips_Label;
+	public static String EditTreeConflictsPanel_Title;
+	public static String EditTreeConflictsPanel_Add_Action;
+	public static String EditTreeConflictsPanel_Add_Reason;
+	public static String EditTreeConflictsPanel_ApplyIncomigChanges_Resolution;
+	public static String EditTreeConflictsPanel_ApplyLocalChanges_Resolution;
+	public static String EditTreeConflictsPanel_Conflict_Resolution_Group;
+	public static String EditTreeConflictsPanel_ConlictInfo_Group;
+	public static String EditTreeConflictsPanel_DefaultMessage;
+	public static String EditTreeConflictsPanel_Delete_Action;
+	public static String EditTreeConflictsPanel_Delete_Reason;
+	public static String EditTreeConflictsPanel_Description;
+	public static String EditTreeConflictsPanel_EndRevision_Label;
+	public static String EditTreeConflictsPanel_IncomingAction_Label;
+	public static String EditTreeConflictsPanel_LocalStatus_Label;
+	public static String EditTreeConflictsPanel_ManualResolution;
+	public static String EditTreeConflictsPanel_Merge_Operation;
+	public static String EditTreeConflictsPanel_Missing_Reason;
+	public static String EditTreeConflictsPanel_Modified_Reason;
+	public static String EditTreeConflictsPanel_Modify_Action;
+	public static String EditTreeConflictsPanel_None_Operation;
+    public static String EditTreeConflictsPanel_Obstructed_Reason;
+    public static String EditTreeConflictsPanel_Operation_Label;
+    public static String EditTreeConflictsPanel_revision; 
+    public static String EditTreeConflictsPanel_StartVersion_Label;
+    public static String EditTreeConflictsPanel_Switch_Operation;
+    public static String EditTreeConflictsPanel_Unversioned_Reason;
+    public static String EditTreeConflictsPanel_Update_Operation;
+    public static String EditTreeConflictsPanel_MarkAsMerged_Button;
+    
 	static {
 		//load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, SVNUIMessages.class);
