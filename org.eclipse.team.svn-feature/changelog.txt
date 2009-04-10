@@ -8,6 +8,20 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.7.I20090410-1500 [10 April 2009]
+
+Features:
+ * Support for files in svn:externals (bug 269155) 
+ 
+ * Detection of tree conflicts (bug 269156)       
+ 
+Fixes:
+ * All svn:log property values should be normalized to LF endings only (bug 271616) 
+         
+ * Create branch doesn't work in Package Explorer (bug 271656)      
+ 
+--------------------------------------------------------------------------------
+
 Version 0.7.7.I20090327-1900 [27 March 2009]
 
 Fixes:
