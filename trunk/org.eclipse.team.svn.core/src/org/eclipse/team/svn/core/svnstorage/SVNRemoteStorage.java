@@ -606,7 +606,9 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 			}
 		}
 
-		return retVal == null || IStateFilter.SF_UNVERSIONED.accept(retVal) ? this.loadUnversionedSubtree(resource, isLinked, recurse) : retVal;
+		//don't call loadUnversionedSubtree for external resources
+		return (retVal == null || IStateFilter.SF_UNVERSIONED.accept(retVal) && !(IStateFilter.SF_IGNORED.accept(retVal) && IStateFilter.SF_EXTERNAL.accept(retVal)))
+				? this.loadUnversionedSubtree(resource, isLinked, recurse) : retVal;
 	}
 	
 	protected ILocalResource loadUnversionedSubtree(final IResource resource, boolean isLinked, boolean recurse) throws Exception {
@@ -1013,20 +1015,44 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	}
 	
 	protected ILocalResource getFirstExistingParentLocal(IResource node) {
-		IResource parent = node.getParent();
-		if (parent == null) {
-			return null;
-		}
-		ILocalResource local = (ILocalResource)this.localResources.get(parent.getFullPath());
-		if (local != null
-				/* && 
-				!IStateFilter.SF_INTERNAL_INVALID.accept(local) &&
-				!IStateFilter.SF_IGNORED.accept(local)
-				*/
-				) {
-			return local;
-		}
-		return this.getFirstExistingParentLocal(parent);
+		/*
+		 * Fix problem with SVN externals if externals have intermediate folders.
+		 * E.g. externals definition: http://localhost:81/repos/first/SimpleC externals2/a/b/SimpleC
+		 * For more details, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=270022
+		 * 
+		 * Intermediate folders are marked as 'ignored' and possibly as 'external'(not always).
+		 * 
+		 * If parent of the resource has 'ignored' status, we continue the processing
+		 * (don't immediately return it because it can be an intermediate folder)
+		 * and mark it as a possible candidate.
+		 * Then traverse parents until we find resource which is ignored and external - this means we've intermediate externals folders
+		 * or otherwise we return candidate resource.
+		 */
+		IResource resource = node;
+		ILocalResource result = null;		
+		ILocalResource candidate = null;		
+		while (true) {
+			IResource parent = resource.getParent();
+			if (parent == null) {
+				break;
+			}						
+			ILocalResource local = (ILocalResource)this.localResources.get(parent.getFullPath());
+			if (local != null) {
+				if (IStateFilter.SF_IGNORED.accept(local) && IStateFilter.SF_EXTERNAL.accept(local)) {
+					result = local;
+					break;
+				} else if (IStateFilter.SF_IGNORED.accept(local) && !IStateFilter.SF_EXTERNAL.accept(local)) {
+					if (candidate == null) {
+						candidate = local;	
+					}					
+				} else {
+					result = candidate == null ? local : candidate;
+					break;
+				}								
+			}							
+			resource = parent; 
+		}		
+		return result;
 	}
 	
 	protected String deserializeStatus(String status) {
