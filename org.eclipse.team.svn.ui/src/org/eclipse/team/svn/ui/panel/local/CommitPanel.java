@@ -886,7 +886,8 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
     		parentProperties.add(resource);
     		
     		IResource parent = resource.getParent();
-        	if (parent != null && !(parent instanceof IWorkspaceRoot) && !monitor.isCanceled()) {
+        	if (parent != null && !(parent instanceof IWorkspaceRoot) && !monitor.isCanceled() 
+        			&& !IStateFilter.SF_UNVERSIONED.accept(SVNRemoteStorage.instance().asLocalResource(parent))) {
         		return this.processProperty(parent, parentProperties, monitor);
         	}        	
         	return true;
