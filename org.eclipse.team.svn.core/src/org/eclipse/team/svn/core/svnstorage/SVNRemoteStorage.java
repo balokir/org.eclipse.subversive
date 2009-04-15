@@ -294,7 +294,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	
 	protected SVNConflictDescriptor getTreeConflictDescriptorFromString(String path, String[] data) {
 		SVNConflictDescriptor conflictDescriptor = null;		
-		if (data.length >= 22) {
+		if (data.length >= 22 && !"null".equals(data[11])) { //$NON-NLS-1$
 			int action = "null".equals(data[11]) ? 0 : Integer.parseInt(data[11]); //$NON-NLS-1$
 			int reason = "null".equals(data[12]) ? 0 : Integer.parseInt(data[12]); //$NON-NLS-1$
 			int operation = "null".equals(data[13]) ? 0 : Integer.parseInt(data[13]); //$NON-NLS-1$
