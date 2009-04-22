@@ -8,7 +8,16 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
-Version 0.7.7.I20090410-1500 [10 April 2009]
+Version 0.7.7.I20090422-1500 [22 April 2009]
+
+Fixes:
+ * Compare view on right side is empty (bug 272265) 
+         
+ * Call commit dialog for svn:externals (for directory) causes error (bug 272025)       
+ 
+ * svn:externals definition for a sub-sub-directory breaks after running svn update (bug 270022)
+  
+--------------------------------------------------------------------------------
 
 Features:
  * Support for files in svn:externals (bug 269155) 
