@@ -144,11 +144,19 @@ public class UpdateSubscriberContext extends SubscriberMergeContext {
 			CompositeOperation op = new CompositeOperation("Operation_UOverrideAndUpdate"); //$NON-NLS-1$
 			SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources[0]);
 			op.add(saveOp);
+
+			/*
+			 * We should call RemoveNonVersionedResourcesOperation before revert operation, because we don't want 
+			 * to delete ignored resources (revert operation makes 'ignored' resource as 'new' in case if ignore properties were not committed)
+			 * 
+			 * Probably there are case where we need to call RemoveNonVersionedResourcesOperation once again after revert operation,
+			 * but I didn't find them
+			 */
+			RemoveNonVersionedResourcesOperation removeNonVersionedResourcesOp = new RemoveNonVersionedResourcesOperation(resources[0], true);
+			op.add(removeNonVersionedResourcesOp);			
 			RevertOperation revertOp = new RevertOperation(FileUtility.getResourcesRecursive(resources[0], IStateFilter.SF_REVERTABLE, IResource.DEPTH_ZERO), true);
 			op.add(revertOp);
 			op.add(new ClearLocalStatusesOperation(resources[0]));
-			RemoveNonVersionedResourcesOperation removeNonVersionedResourcesOp = new RemoveNonVersionedResourcesOperation(resources[0], true);
-			op.add(removeNonVersionedResourcesOp);
 			// Obstructed resources are deleted now. So, try to revert all corresponding entries
 			RevertOperation revertOp1 = new RevertOperation(FileUtility.getResourcesRecursive(resources[0], IStateFilter.SF_OBSTRUCTED, IResource.DEPTH_ZERO), true);
 			op.add(revertOp1);
