@@ -12,12 +12,11 @@
 
 package org.eclipse.team.svn.core.utility;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -608,73 +607,147 @@ public final class SVNUtility {
 		});
 	}
 	
+    private static final byte[] uri_char_validity = new byte[] {
+        0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0,
+        0, 1, 0, 0, 1, 0, 1, 1,   1, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1,   1, 1, 1, 0, 0, 1, 0, 0,
+
+        /* 64 */
+        1, 1, 1, 1, 1, 1, 1, 1,   1, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1,   1, 1, 1, 0, 0, 0, 0, 1,
+        0, 1, 1, 1, 1, 1, 1, 1,   1, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1,   1, 1, 1, 0, 0, 0, 1, 0,
+
+        /* 128 */
+        0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0,
+
+        /* 192 */
+        0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0,
+    };
+    
+    public static boolean isHexDigit(char ch) {
+        return Character.isDigit(ch) ||
+               (Character.toUpperCase(ch) >= 'A' && Character.toUpperCase(ch) <= 'F');
+    }
+    
+    private static int hexValue(char ch) {
+        if (Character.isDigit(ch)) {
+            return ch - '0';
+        }
+        ch = Character.toUpperCase(ch);
+        return (ch - 'A') + 0x0A;
+    }
+    
 	public static String encodeURL(String url) {
-		try {
-			url = SVNUtility.normalizeURL(url);
-			int idx = url.startsWith("file:///") ? "file:///".length() : (url.startsWith("file://") ? (url.indexOf("/", "file://".length()) + 1) : (url.indexOf("://") + 3)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-			idx = url.indexOf("/", idx); //$NON-NLS-1$
-			if (idx == -1) {
-				return url;
-			}
-			String retVal = url.substring(0, idx);
-			StringTokenizer tok = new StringTokenizer(url.substring(idx), "/ ", true); //$NON-NLS-1$
-			// user name should be never encoded
-			idx = retVal.indexOf('@');
-			if (idx != -1) {
-				String protocol = retVal.substring(0, retVal.indexOf("://") + 3); //$NON-NLS-1$
-				String serverPart = retVal.substring(idx);
-				retVal = protocol + retVal.substring(protocol.length(), idx) + serverPart;
-			}
-			while (tok.hasMoreTokens()) {
-				String token = tok.nextToken();
-				if (token.equals("/")) { //$NON-NLS-1$
-					retVal += token;
-				}
-				else if (token.equals(" ")) { //$NON-NLS-1$
-					retVal += "%20"; //$NON-NLS-1$
-				}
-				else {
-					retVal += URLEncoder.encode(token, "UTF-8"); //$NON-NLS-1$
-				}
-			}
-			return retVal;
+		url = SVNUtility.normalizeURL(url);
+		int idx = url.startsWith("file:///") ? "file:///".length() : (url.startsWith("file://") ? (url.indexOf("/", "file://".length()) + 1) : (url.indexOf("://") + 3)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+		idx = url.indexOf("/", idx); //$NON-NLS-1$
+		if (idx == -1) {
+			return url;
 		}
-		catch (UnsupportedEncodingException ex) {
-			throw new RuntimeException(ex);
-		}
+		String retVal = url.substring(0, idx);	
+		String partToEncode = url.substring(idx);
+		// user name should be never encoded
+		idx = retVal.indexOf('@');
+		if (idx != -1) {
+			String protocol = retVal.substring(0, retVal.indexOf("://") + 3); //$NON-NLS-1$
+			String serverPart = retVal.substring(idx);
+			retVal = protocol + retVal.substring(protocol.length(), idx) + serverPart;
+		}				
+		retVal += doEncode(partToEncode);
+		return retVal;
 	}
 	
 	public static String decodeURL(String url) {
-		try {
-			url = SVNUtility.normalizeURL(url);
-			int idx = url.startsWith("file:///") ? "file:///".length() : (url.startsWith("file://") ? (url.indexOf("/", "file://".length()) + 1) : (url.indexOf("://") + 3)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-			idx = url.indexOf("/", idx); //$NON-NLS-1$
-			if (idx == -1) {
-				return url;
-			}
-			String retVal = url.substring(0, idx);
-			StringTokenizer tok = new StringTokenizer(url.substring(idx), "/+", true); //$NON-NLS-1$
-			// user name should be never decoded
-			idx = retVal.indexOf('@');
-			if (idx != -1) {
-				String protocol = retVal.substring(0, retVal.indexOf("://") + 3); //$NON-NLS-1$
-				String serverPart = retVal.substring(idx);
-				retVal = protocol + retVal.substring(protocol.length(), idx) + serverPart;
-			}
-			while (tok.hasMoreTokens()) {
-				String token = tok.nextToken();
-				if (token.equals("/") || token.equals("+")) { //$NON-NLS-1$ //$NON-NLS-2$
-					retVal += token;
-				}
-				else {
-					retVal += URLDecoder.decode(token, "UTF-8"); //$NON-NLS-1$
-				}
-			}
-			return retVal;
+		url = SVNUtility.normalizeURL(url);
+		int idx = url.startsWith("file:///") ? "file:///".length() : (url.startsWith("file://") ? (url.indexOf("/", "file://".length()) + 1) : (url.indexOf("://") + 3)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+		idx = url.indexOf("/", idx); //$NON-NLS-1$
+		if (idx == -1) {
+			return url;
 		}
-		catch (UnsupportedEncodingException ex) {
-			throw new RuntimeException(ex);
-		}
+		String retVal = url.substring(0, idx);
+		String partToDecode = url.substring(idx);
+		// user name should be never decoded
+		idx = retVal.indexOf('@');
+		if (idx != -1) {
+			String protocol = retVal.substring(0, retVal.indexOf("://") + 3); //$NON-NLS-1$
+			String serverPart = retVal.substring(idx);
+			retVal = protocol + retVal.substring(protocol.length(), idx) + serverPart;
+		}				
+		retVal += doDecode(partToDecode);		
+		return retVal;
+	}
+	        
+	protected static String doEncode(String src) {
+        StringBuffer sb = null;
+        byte[] bytes;
+        try {
+            bytes = src.getBytes("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            bytes = src.getBytes();
+        }
+        for (int i = 0; i < bytes.length; i++) {
+            int index = bytes[i] & 0xFF;
+            if (uri_char_validity[index] > 0) {
+                if (sb != null) {
+                    sb.append((char) bytes[i]);
+                }
+                continue;
+            }
+            if (sb == null) {
+                sb = new StringBuffer();
+                try {
+                    sb.append(new String(bytes, 0, i, "UTF-8"));
+                } catch (UnsupportedEncodingException e) {
+                    sb.append(new String(bytes, 0, i));
+                }
+            }
+            sb.append("%");
+
+            sb.append(Character.toUpperCase(Character.forDigit((index & 0xF0) >> 4, 16)));
+            sb.append(Character.toUpperCase(Character.forDigit(index & 0x0F, 16)));
+        }
+        return sb == null ? src : sb.toString();
+	}
+	
+	protected static String doDecode(String src) {
+        // this is string in ASCII-US encoding.
+        boolean query = false;
+        boolean decoded = false;
+        int length = src.length();
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(length);
+        for(int i = 0; i < length; i++) {
+            byte ch = (byte) src.charAt(i);
+            if (ch == '?') {
+                query = true;
+            } else if (ch == '+' && query) {
+                ch = ' ';
+            } else if (ch == '%' && i + 2 < length &&
+                       isHexDigit(src.charAt(i + 1)) &&
+                       isHexDigit(src.charAt(i + 2))) {
+                ch = (byte) (hexValue(src.charAt(i + 1))*0x10 + hexValue(src.charAt(i + 2)));
+                decoded = true;
+                i += 2;
+            } else {
+                // if character is not URI-safe try to encode it.
+            }
+            bos.write(ch);
+        }
+        if (!decoded) {
+            return src;
+        }
+        try {
+            return new String(bos.toByteArray(), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+        }
+        return src;
 	}
 	
 	public static String normalizeURL(String url) {
