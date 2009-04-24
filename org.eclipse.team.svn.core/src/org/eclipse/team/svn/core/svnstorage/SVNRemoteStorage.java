@@ -431,8 +431,9 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 			ILocalResource parent = this.getFirstExistingParentLocal(resource);
 			if (parent != null && (parent.getChangeMask() & ILocalResource.IS_SWITCHED) != 0) {
 				IPath parentPath = parent.getResource().getFullPath();
-				
-				url = (String)this.switchedToUrls.get(parentPath) + "/" + resource.getFullPath().removeFirstSegments(parentPath.segmentCount()).toString(); //$NON-NLS-1$
+				if (this.switchedToUrls.containsKey(parentPath)) {
+					url = (String)this.switchedToUrls.get(parentPath) + "/" + resource.getFullPath().removeFirstSegments(parentPath.segmentCount()).toString(); //$NON-NLS-1$
+				}
 			}
 		}
 		
