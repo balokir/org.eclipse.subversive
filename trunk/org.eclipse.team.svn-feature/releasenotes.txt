@@ -5,40 +5,44 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 0.7.7.I20090224-1900 release date: 24 February 2009
+Version 0.7.8.I20090428-1500 release date: 28 April 2009
 
 1. What's New
 
-   The version is 0.7.7 service release.
+   The version is 0.7.8 service release.
    
    Changes comparatively to the previous version are listed below. The full list of 
    changes you can find in Change Log.   	
 	
 	Features:
-	 * Add a pre-commit check for files with errors and warnings (bug 263442) 
-	
-	 * Add ability to output resources comparison in unified diff format (bug 263657) 
-	
-	 * Add ability to create SVN repository (bug 263951)   
+	 * Support for files in svn:externals (bug 269155) 
+	 
+	 * Detection of tree conflicts (bug 269156) 
+	 
+	 * Configuration alternative of a diff viewer for MS-WORD documents (bug 260236)
 	
 	Fixes:
-	 * Compare with Branches/Tags action problem (bug 263790)    
+	 * Compare view on right side is empty (bug 272265)         
 	
-	 * Extract bug (bug 264192)
+	 * Call commit dialog for svn:externals (for directory) causes error (bug 272025)       
+	 
+	 * svn:externals definition for a sub-sub-directory breaks after running svn update (bug 270022)  
 	
-	 * o.e.team.svn.core has hard dependency to com.ibm.icu bundle (bug 261413)
+	 * All svn:log property values should be normalized to LF endings only (bug 271616) 
+	         
+	 * Create branch doesn't work in Package Explorer (bug 271656)
+	
+	 * Synchronize permanently fails with org.eclipse.team.core.TeamException: Resource ?...? does not exist. (bug 267624)
+	
+	 * Sorting by user, date or comment does not work for SVN Changeset model in Synchronize view (bug 264331)
+	
+	 * SVN Change sets model: Incoming changes are duplicated to a "Unassiged" node (bug 261185)
 	 
-	 * Bugtraq properties problem (bug 261857) 
+	 * NPE when activating Mylyn task (bug 266826)
 	 
-	 * Problems with relocating project (bug 259626) 
+	 * Mylyn Context actions are missing from Team Synchronize view if logical models are enabled (bug 264344)
 	 
-	 * Share Projects menu item disabled when multiple projects selected (bug 263003) 
-	 
-	 * Resources list isn't updated in "Override and Update..." (bug 254900)
-	 
-	 * Add key shortcuts to controls (bug 254726)
-	 
-	 * Revisions Range dialog isn't correctly resized (bug 261328) 
+	 * Synchronization empties outgoing changes if SVN Changesets model is selected (bug 264772)				
 	
 2. Information
 
@@ -48,8 +52,8 @@ Version 0.7.7.I20090224-1900 release date: 24 February 2009
     * 3.3 (tested with 3.3.2)
     * 3.4 (tested with 3.4)
    
-   Subversive supports Subversion versions 1.1-1.4 with SVN Kit 1.1.7 and JavaHL 1.4.5, 
-   Subversion version 1.5 with SVN Kit 1.2.0 and JavaHL 1.5.x
+   Subversive supports Subversion version 1.5 with SVN Kit 1.2.x and JavaHL 1.5.x, 
+   Subversion version 1.6 with SVN Kit 1.3.x and JavaHL 1.6.x
 
 2.2 Known issues
 
