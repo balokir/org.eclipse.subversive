@@ -8,7 +8,7 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
-Version 0.7.8.I20090428-1500 [28 April 2009]
+Version 0.7.8.I20090505-1500 [05 May 2009]
 
 Features:
  * Support for files in svn:externals (bug 269155) 

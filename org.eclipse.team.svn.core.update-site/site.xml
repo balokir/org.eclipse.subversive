@@ -4,7 +4,7 @@
    <description url="http://download.eclipse.org/technology/subversive/0.7/headless-update-site/">
       Eclipse Subversive - SVN Team Provider Core
    </description>
-   <feature url="features/org.eclipse.team.svn.core_0.7.8.I20090428-1500.jar" id="org.eclipse.team.svn.core" version="0.7.8.I20090428-1500">
+   <feature url="features/org.eclipse.team.svn.core_0.7.8.I20090505-1500.jar" id="org.eclipse.team.svn.core" version="0.7.8.I20090505-1500">
       <category name="Subversive Core (Incubation)"/>
    </feature>
    <category-def name="Subversive Core (Incubation)" label="Subversive SVN Team Provider Core (Incubation)">
