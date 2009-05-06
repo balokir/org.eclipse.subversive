@@ -14,6 +14,7 @@ package org.eclipse.team.svn.core;
 import org.eclipse.team.core.ProjectSetCapability;
 import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.subscribers.Subscriber;
+import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
 
 /**
  * IProject attachement type
@@ -31,7 +32,7 @@ public class SVNTeamProviderType extends RepositoryProviderType {
 	}
 		
 	public Subscriber getSubscriber() {		
-		return super.getSubscriber();
+		return UpdateSubscriber.instance();
 	}
 	
 }
