@@ -2,23 +2,36 @@
 <?eclipse version="3.0"?>
 <plugin>
    <extension point="org.eclipse.ui.activities">
+   
       <activity
-            description="%activity.team.svn.desc"
-            id="activity.team.svn"
-            name="%activity.team.svn">
+      		name="%activity.team.svn"
+      		id="org.eclipse.team.svn"      		
+            description="%activity.team.svn.desc">                                    
       </activity>
+      
       <activityPatternBinding
-            activityId="activity.team.svn"
+            activityId="org.eclipse.team.svn"
             pattern="org\.eclipse\.team\.svn\.ui/.*">
       </activityPatternBinding>
       <activityPatternBinding
-            activityId="activity.team.svn"
+            activityId="org.eclipse.team.svn"
             pattern="org\.eclipse\.team\.svn\.core/.*svnnature">
       </activityPatternBinding>
       <activityRequirementBinding
-            activityId="activity.team.svn"
+            activityId="org.eclipse.team.svn"
             requiredActivityId="org.eclipse.team">
       </activityRequirementBinding>
+
+	  <!-- Subversive in Team category -->
+	  <categoryActivityBinding
+		  activityId="org.eclipse.team.svn"
+	      categoryId="org.eclipse.categories.teamCategory">
+	  </categoryActivityBinding>    
+	
+	  <!-- Subversive capability enabled by default -->
+	  <defaultEnablement
+	      id="org.eclipse.team.svn">
+	  </defaultEnablement>          
    
    </extension>
 
