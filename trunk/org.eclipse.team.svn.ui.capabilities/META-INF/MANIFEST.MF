@@ -5,3 +5,4 @@ Bundle-SymbolicName: org.eclipse.team.svn.ui.capabilities;singleton:=true
 Bundle-Version: 0.7.8.I20090505-1500
 Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.ui
+Bundle-Localization: plugin
