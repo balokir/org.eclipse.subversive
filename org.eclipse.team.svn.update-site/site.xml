@@ -18,6 +18,7 @@
    <feature url="features/org.eclipse.team.svn.source_0.7.8.I20090505-1500.jar" id="org.eclipse.team.svn.source" version="0.7.8.I20090505-1500">
       <category name="Subversive Sources (Incubation)"/>
    </feature>
+   <feature url="features/org.eclipse.team.svn.ui.capabilities_0.7.8.I20090505-1500.jar" id="org.eclipse.team.svn.ui.capabilities" version="0.7.8.I20090505-1500"/>
    <category-def name="Subversive (Incubation)" label="Subversive SVN Team Provider Plugin (Incubation)">
       <description>
          Eclipse Subversive Team Provider for the Subversion version control system.
