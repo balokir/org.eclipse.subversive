@@ -352,7 +352,7 @@ public interface IStateFilter {
 	
 	public static final IStateFilter SF_IGNORED = new AbstractStateFilter() {
 		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return state == IStateFilter.ST_IGNORED;
+			return state == IStateFilter.ST_IGNORED || IStateFilter.SF_UNVERSIONED.accept(resource, state, mask) && SVNUtility.isIgnored(resource);
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return true;
@@ -428,10 +428,10 @@ public interface IStateFilter {
 	
 	public static final IStateFilter SF_NEW = new AbstractStateFilter() {
 		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return state == IStateFilter.ST_PREREPLACED || state == IStateFilter.ST_NEW;
+			return (state == IStateFilter.ST_PREREPLACED || state == IStateFilter.ST_NEW) && !IStateFilter.SF_IGNORED.accept(resource, state, mask);
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return state != IStateFilter.ST_IGNORED && state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
+			return !IStateFilter.SF_IGNORED.accept(resource, state, mask) && state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
 		}
 	};
 	
@@ -529,11 +529,11 @@ public interface IStateFilter {
 	public static final IStateFilter SF_ANY_CHANGE = new AbstractStateFilter() {
 		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return 
-				state != IStateFilter.ST_IGNORED && state != IStateFilter.ST_NORMAL && 
+				!IStateFilter.SF_IGNORED.accept(resource, state, mask) && state != IStateFilter.ST_NORMAL && 
 				state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return state != IStateFilter.ST_IGNORED && state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
+			return !IStateFilter.SF_IGNORED.accept(resource, state, mask) && state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
 		}
 	};
 
@@ -591,7 +591,7 @@ public interface IStateFilter {
 					!IStateFilter.SF_NOTMODIFIED.accept(resource, state, mask);
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return state != IStateFilter.ST_IGNORED && state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
+			return !IStateFilter.SF_IGNORED.accept(resource, state, mask) && state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
 		}
 	};
 	
