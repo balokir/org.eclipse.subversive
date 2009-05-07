@@ -936,8 +936,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	    if (IStateFilter.SF_OBSTRUCTED.accept(resource, status, mask)) {
 	        return IStateFilter.ST_OBSTRUCTED;
 	    }
-	    if (IStateFilter.SF_IGNORED.accept(resource, status, mask) || 
-		    SVNUtility.isIgnored(resource)) {
+	    if (IStateFilter.ST_IGNORED == status) {
 	        return IStateFilter.ST_IGNORED;
 	    }
 	    return this.getTopLevelStatus(resource, status, mask);

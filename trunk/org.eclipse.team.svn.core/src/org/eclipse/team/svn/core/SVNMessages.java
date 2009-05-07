@@ -446,6 +446,7 @@ public class SVNMessages extends BaseMessages {
 	public static String Status_Modified;
 	public static String Status_New;
 	public static String Status_None;
+	public static String Status_Ignored;
 	public static String Status_Normal;
 	public static String Status_NotExists;
 	public static String Status_Obstructed;
