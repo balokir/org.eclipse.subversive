@@ -43,14 +43,18 @@ import org.eclipse.team.svn.ui.operation.OpenRemoteFileOperation;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.ui.history.IHistoryView;
+import org.eclipse.team.ui.history.RevisionAnnotationController;
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.ide.ResourceUtil;
+import org.eclipse.ui.part.MultiPageEditorPart;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 
 /**
@@ -182,26 +186,51 @@ public class BuiltInAnnotate {
 	}
 	
 	protected IEditorPart openEditor(IWorkbenchPage page, IRepositoryResource remote) throws PartInitException {
-		OpenRemoteFileOperation op = new OpenRemoteFileOperation(new IRepositoryFile[] {(IRepositoryFile)remote}, OpenRemoteFileOperation.OPEN_DEFAULT);
+		int openType = OpenRemoteFileOperation.OPEN_DEFAULT;
+		String openWith = null;
+		IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
+		IEditorDescriptor descriptor = registry.getDefaultEditor(remote.getName());
+		if (descriptor == null || !descriptor.isInternal()) {
+			openType = OpenRemoteFileOperation.OPEN_DEFAULT;
+			openWith = EditorsUI.DEFAULT_TEXT_EDITOR_ID; 
+		} else {
+			openType = OpenRemoteFileOperation.OPEN_SPECIFIED;
+			openWith = descriptor.getId();
+		}		
+		OpenRemoteFileOperation op = new OpenRemoteFileOperation(new IRepositoryFile[] {(IRepositoryFile)remote}, openType, openWith);
 		op.setRequiredDefaultEditorKind(AbstractDecoratedTextEditor.class);
 		ProgressMonitorUtility.doTaskExternal(op, new NullProgressMonitor());
 		if (op.getExecutionState() == IActionOperation.OK) {
 			IEditorPart part = op.getEditors()[0];
-			if (part instanceof AbstractDecoratedTextEditor) {
-				return part;
-			}
+			return this.findTextEditorPart(page, part, op.getRepositoryEditorInputs()[0]);
 		}
 		return null;
 	}
 	
 	protected IEditorPart openEditor(IWorkbenchPage page, IFile resource) throws PartInitException {
-		IEditorPart part = ResourceUtil.findEditor(page, resource);
-		if (part != null && part instanceof AbstractDecoratedTextEditor) {
-			page.activate(part);
-			return part;
+		/*
+		 * This method opens a text editor that supports the use of a revision ruler on the given file.
+		 * But despite we don't support revision ruler now, this method is suitable for us
+		 */
+		return RevisionAnnotationController.openEditor(page, resource);
+	}
+	
+	protected AbstractDecoratedTextEditor findTextEditorPart(IWorkbenchPage page, IEditorPart editor, IEditorInput input) {
+		if (editor instanceof AbstractDecoratedTextEditor)
+			return (AbstractDecoratedTextEditor) editor;
+		if (editor instanceof MultiPageEditorPart) {
+			MultiPageEditorPart mpep = (MultiPageEditorPart) editor;
+			IEditorPart[] parts = mpep.findEditors(input);
+			for (int i = 0; i < parts.length; i++) {
+				IEditorPart editorPart = parts[i];
+				if (editorPart instanceof AbstractDecoratedTextEditor) {
+			        page.activate(mpep);
+			        mpep.setActiveEditor(editorPart);
+					return (AbstractDecoratedTextEditor) editorPart;
+				}
+			}
 		}
-		
-		return IDE.openEditor(page, resource, EditorsUI.DEFAULT_TEXT_EDITOR_ID);
+		return null;
 	}
 	
 }
