@@ -48,7 +48,7 @@ public class CompareAction extends AbstractRepositoryTeamAction {
 		if (resources.length != 1) {
 			return false;
 		}
-		boolean isCompareFoldersAllowed = CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() == ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x;
+		boolean isCompareFoldersAllowed = CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() >= ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x;
         return isCompareFoldersAllowed || resources[0] instanceof IRepositoryFile;
     }
     

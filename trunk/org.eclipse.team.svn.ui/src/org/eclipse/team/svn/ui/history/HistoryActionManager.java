@@ -361,7 +361,7 @@ public class HistoryActionManager {
 				}
 				
 	    		boolean isCompareAllowed = 
-	    			CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() == ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x ||
+	    			CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() >= ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x ||
 	    			HistoryActionManager.this.view.getRepositoryResource() instanceof IRepositoryFile;
 	    		
 				manager.add(tAction = new HistoryAction(SVNUIMessages.HistoryView_CompareEachOther) {
@@ -885,7 +885,7 @@ public class HistoryActionManager {
 			return;
 		}
 		boolean isCompareAllowed = 
-			CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() == ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x ||
+			CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() >= ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x ||
 			this.view.getRepositoryResource() instanceof IRepositoryFile;
 		if ((this.view.getOptions() & ISVNHistoryView.COMPARE_MODE) != 0 && doubleClick && isCompareAllowed) {
 			if (type == ILogNode.TYPE_SVN && !(item.getParent() instanceof SVNLogNode)) {
@@ -1275,7 +1275,7 @@ public class HistoryActionManager {
 							HistoryActionManager.this.compareWithPreviousRevision(provider, provider);
 						}
 	        		});
-	        		boolean isCompareFoldersAllowed = CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() == ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x;
+	        		boolean isCompareFoldersAllowed = CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() >= ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x;
 	        		tAction.setEnabled(isCompareFoldersAllowed
 	        				 && HistoryActionManager.this.selectedRevision != 0
 	        				 && affectedTableSelection.size() == 1 &&

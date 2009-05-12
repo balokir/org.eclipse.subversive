@@ -281,7 +281,7 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 					}
 				});
 				tAction.setEnabled(tSelection.size() == 1 && 
-						(CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() == ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x || 
+						(CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() >= ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x || 
 						selectedResources[0].getType() == IResource.FILE) && FileUtility.checkForResourcesPresenceRecursive(selectedResources, CompareWithWorkingCopyAction.COMPARE_FILTER));
 				subMenu.add(tAction = new Action(SVNUIMessages.CompareWithRevisionAction_label) {
 					public void run() {
@@ -299,7 +299,7 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 					}
 				});
 				tAction.setEnabled(tSelection.size() == 1 && 
-						(CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() == ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x || 
+						(CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() >= ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x || 
 						selectedResources[0].getType() == IResource.FILE) && FileUtility.checkForResourcesPresenceRecursive(selectedResources, CompareWithWorkingCopyAction.COMPARE_FILTER));
 				manager.add(subMenu);
 				

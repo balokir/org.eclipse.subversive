@@ -113,7 +113,7 @@ public class SelectDestinationPage extends AbstractVerifiedWizardPage {
 			this.newResourceName.setText(this.resources[0].getName());
 		}
 		verifier.add(new ResourceNameVerifier(name.getText(),
-				CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() == ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x));
+				CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() >= ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x));
 		this.attachTo(this.newResourceName, verifier);
 		
 		return composite;
