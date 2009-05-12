@@ -48,7 +48,7 @@ public class CompareWithBranchTagAction extends AbstractWorkingCopyAction {
 		if (this.getSelectedResources().length == 1 && this.checkForResourcesPresence(CompareWithWorkingCopyAction.COMPARE_FILTER)) {
 			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(this.getSelectedResources()[0]);
 			IRepositoryResource remote = local.isCopied() ? SVNUtility.getCopiedFrom(this.getSelectedResources()[0]) : SVNRemoteStorage.instance().asRepositoryResource(this.getSelectedResources()[0]);		
-			boolean isCompareFoldersAllowed = CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() == ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x;
+			boolean isCompareFoldersAllowed = CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() >= ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x;
 			boolean recommendedLayoutUsed = 
 				SVNTeamPreferences.getRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_NAME) &&
 				remote.getRepositoryLocation().isStructureEnabled();

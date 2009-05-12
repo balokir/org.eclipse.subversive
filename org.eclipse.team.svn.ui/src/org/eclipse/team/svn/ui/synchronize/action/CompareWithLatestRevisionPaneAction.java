@@ -44,7 +44,7 @@ public class CompareWithLatestRevisionPaneAction extends AbstractSynchronizeMode
 		if (super.updateSelection(selection)) {
 			if (selection.size() == 1) {
 				IResource[] selectedResources = this.getAllSelectedResources();
-				return (CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() == ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x || 
+				return (CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() >= ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x || 
 						selectedResources[0].getType() == IResource.FILE) && FileUtility.checkForResourcesPresenceRecursive(selectedResources, CompareWithWorkingCopyAction.COMPARE_FILTER);					
 			}	
 		}
