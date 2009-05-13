@@ -60,6 +60,7 @@ public class SVNTeamPlugin extends Plugin {
 	private ResourceChangeListener rcListener;
 	private SVNFolderListener svnListener;
 	private ServiceTracker tracker;
+	private FileReplaceListener fileReplaceListener;
 	
 	private IErrorHandlingFacility errorHandlingFacility;
 	
@@ -76,6 +77,7 @@ public class SVNTeamPlugin extends Plugin {
         this.pcListener = new ProjectCloseListener();
         this.rcListener = new ResourceChangeListener();
         this.svnListener = new SVNFolderListener();
+        this.fileReplaceListener = new FileReplaceListener();
         
 		this.errorHandlingFacility = new DefaultErrorHandlingFacility();
 	}
@@ -149,6 +151,7 @@ public class SVNTeamPlugin extends Plugin {
 				workspace.addResourceChangeListener(SVNTeamPlugin.this.rcListener, IResourceChangeEvent.POST_CHANGE);
 				workspace.addResourceChangeListener(SVNTeamPlugin.this.svnListener, IResourceChangeEvent.PRE_BUILD);
 				workspace.addResourceChangeListener(SVNTeamPlugin.this.pcListener, IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.PRE_DELETE);
+				workspace.addResourceChangeListener(SVNTeamPlugin.this.fileReplaceListener, IResourceChangeEvent.PRE_BUILD);
 
 				// shouldn't prevent plugin start 
 				try {
@@ -181,6 +184,7 @@ public class SVNTeamPlugin extends Plugin {
 		workspace.removeResourceChangeListener(this.svnListener);
 		workspace.removeResourceChangeListener(this.rcListener);
 		workspace.removeResourceChangeListener(this.pcListener);
+		workspace.removeResourceChangeListener(this.fileReplaceListener);
 		
 		if (this.isLocationsDirty) {
 			SVNRemoteStorage.instance().saveConfiguration();

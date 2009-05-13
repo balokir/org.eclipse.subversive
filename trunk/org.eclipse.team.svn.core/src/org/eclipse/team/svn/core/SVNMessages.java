@@ -428,6 +428,9 @@ public class SVNMessages extends BaseMessages {
 	public static String Operation_ExternalRepositoryCompare_Error;
 	public static String Operation_CopyRemoteToWC;
 	public static String Operation_CopyRemoteToWC_Id;
+	public static String Operation_FileReplaceListener;
+	public static String Operation_FileReplaceListener_Id;
+	public static String Operation_FileReplaceListener_Error;
 	
 	public static String Progress_Done;
 	public static String Progress_Running;
