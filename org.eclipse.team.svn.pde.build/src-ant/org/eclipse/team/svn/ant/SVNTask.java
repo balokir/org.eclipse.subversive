@@ -39,6 +39,7 @@ public class SVNTask extends Task {
 	protected String dest;
 	protected String username;
 	protected String password;
+	protected boolean force;
 	
 	protected String SPACE_WRAP_CHAR = Platform.OS_WIN32.equals(Platform.getOS()) ? "\"" : "'";
 	
@@ -69,6 +70,10 @@ public class SVNTask extends Task {
 		}
 		else if (SVNTask.CMD_EXPORT.equals(this.command)) {
 			cmdLine = "svn export ";
+					    
+			if (this.force) {
+				cmdLine += " --force ";
+			}
 			
 			if (this.rev != null) {
 				cmdLine += " -r " + this.rev;
@@ -110,6 +115,14 @@ public class SVNTask extends Task {
 		this.command = command;
 	}
 
+	public void setForce(boolean force) {
+		this.force = force;
+	}
+
+	public boolean getForce() {
+		return this.force;
+	}
+	
 	public String getUrl() {
 		return this.url;
 	}
