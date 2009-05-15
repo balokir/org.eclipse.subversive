@@ -8,6 +8,37 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.8.I20090515-1900 [15 May 2009]
+
+Features:
+ * Add Capabilities feature
+
+Fixes:
+ * Possible bugs in Subversive Fetch Factory (bug 273230) 
+
+ * Deleting and replacing a resource is a SVN delete/add instead of a modify (bug 276018) 
+
+ * Show annotations does not work in files opened by the XML Editor (bug 267347) 
+
+ * "Compare with Each Other" grayed out (bug 275287) 
+
+ * [Subversive] - Unused NLS Strings for SVN UI (bug 275155) 
+
+ * No assist from "Ignored resources" list. (bug 274793) 
+
+ * RFE: provide Subscriber (bug 272594) 
+
+ * SVNRemoteResourceRevision always returns content of latest revision (bug 271931) 
+   Thanks to Steffen Pingel
+
+ * Attempting to commit files in a folder that has not been added to SVN, locks up Eclipse (bug 251098) 
+
+ * Override and Update deletes all unversioned files disregarding the svn:ignore-list (bug 264500) 
+
+ * A tilde (~) in the repository URL can not be handled (bug 269665)          
+
+--------------------------------------------------------------------------------
+
 Version 0.7.8.I20090506-1500 [06 May 2009]
 
 Features:
