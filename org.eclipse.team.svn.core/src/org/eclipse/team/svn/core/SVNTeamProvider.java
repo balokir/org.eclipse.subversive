@@ -161,24 +161,21 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 		this.breakThreadExecution();
 	}
 	
-	protected void connectToProject() throws HiddenException {
-		// serialize initialization
-		synchronized (SVNTeamProvider.class) {
-			if (this.state == 0) {
-				this.location = null;
-				this.locationId = null;
-				this.resource = null;
-				this.relocatedTo = null;
-				if ((this.errorCode = this.uploadRepositoryResource()) == ErrorDescription.SUCCESS ||
-					(this.errorCode = this.acquireResolution(true)) == ErrorDescription.SUCCESS) {
-	    			this.state = 1;
-	    			return;
-				}
-				
-				this.performDisconnect();
+	protected synchronized void connectToProject() throws HiddenException {				
+		if (this.state == 0) {
+			this.location = null;
+			this.locationId = null;
+			this.resource = null;
+			this.relocatedTo = null;
+			if ((this.errorCode = this.uploadRepositoryResource()) == ErrorDescription.SUCCESS ||
+				(this.errorCode = this.acquireResolution(true)) == ErrorDescription.SUCCESS) {
+    			this.state = 1;
+    			return;
 			}
-			this.breakThreadExecution();
+			
+			this.performDisconnect();
 		}
+		this.breakThreadExecution();
 	}
 	
 	protected int acquireResolution(boolean full) {
