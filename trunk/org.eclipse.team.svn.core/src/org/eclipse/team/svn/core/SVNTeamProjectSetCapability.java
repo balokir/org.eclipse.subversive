@@ -20,20 +20,12 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.core.ProjectSetCapability;
 import org.eclipse.team.core.ProjectSetSerializationContext;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
-import org.eclipse.team.svn.core.operation.remote.CheckoutAsOperation;
 import org.eclipse.team.svn.core.operation.remote.management.SaveRepositoryLocationsOperation;
-import org.eclipse.team.svn.core.resource.IRepositoryLocation;
-import org.eclipse.team.svn.core.resource.IRepositoryResource;
-import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
-import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 
 /**
@@ -42,8 +34,7 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
  * 
  * @author Alexander Gurov
  */
-public class SVNTeamProjectSetCapability extends ProjectSetCapability {
-	protected static final String PLUGIN_INFORMATION = "1.0.1"; //$NON-NLS-1$
+public class SVNTeamProjectSetCapability extends ProjectSetCapability {	
 
 	public SVNTeamProjectSetCapability() {
 		super();
@@ -54,7 +45,7 @@ public class SVNTeamProjectSetCapability extends ProjectSetCapability {
 		try {
 			String []result = new String[projects.length];
 			for (int i = 0; i < projects.length; i++) {
-				result[i] = this.asReference(projects[i]);
+				result[i] = SVNTeamProjectSetCapability.DEFAULT_HANDLER.asReference(projects[i]);
 				monitor.worked(1);
 			}
 			return result;
@@ -65,14 +56,23 @@ public class SVNTeamProjectSetCapability extends ProjectSetCapability {
 	}
 	
 	public IProject[] addToWorkspace(String []referenceStrings, ProjectSetSerializationContext context, IProgressMonitor monitor) throws TeamException {
+		if (referenceStrings.length == 0) {
+			return new IProject[0];
+		}
+		IProjectSetHandler handler = SVNTeamProjectSetCapability.getProjectSetHandler(referenceStrings[0]);
+		if (handler == null) {
+			return new IProject[0];
+		}
+		
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		Map<IProject, String> project2reference = new HashMap<IProject, String>();
 		for (int i = 0; i < referenceStrings.length; i++) {
-			String name = this.getNameForReference(referenceStrings[i]);
+			String name = handler.getProjectNameForReference(referenceStrings[i]);
 			if (name != null) {
 				project2reference.put(root.getProject(name), referenceStrings[i]);
 			}
 		}
+		
 		Set<IProject> allProjects = project2reference.keySet();
 		IProject []projects = this.confirmOverwrite(context, allProjects.toArray(new IProject[allProjects.size()]));
 
@@ -84,7 +84,7 @@ public class SVNTeamProjectSetCapability extends ProjectSetCapability {
 			ArrayList<IProject> retVal = new ArrayList<IProject>();
 			for (int i = 0; i < projects.length; i++) {
 				String fullReference = project2reference.get(projects[i]);
-				IProject project = this.configureCheckoutOperation(op, projects[i], fullReference);
+				IProject project = handler.configureCheckoutOperation(op, projects[i], fullReference);
 				if (project != null) {
 					retVal.add(project);
 				}
@@ -100,72 +100,17 @@ public class SVNTeamProjectSetCapability extends ProjectSetCapability {
 		
 		return projects;
 	}
-	
-	protected IProject configureCheckoutOperation(CompositeOperation op, IProject project, String fullReference) throws TeamException {
-		String []parts = fullReference.split(","); //$NON-NLS-1$
 		
-		IRepositoryLocation location = this.getLocationForReference(parts);
-		IRepositoryResource resource = location.asRepositoryContainer(parts[1], true);
-
-		if (resource != null) {
-			String projectLocation = 
-				project.exists() ? 
-				FileUtility.getResourcePath(project).removeLastSegments(1).toString() : 
-				Platform.getLocation().toString();
-			CheckoutAsOperation mainOp = new CheckoutAsOperation(project.getName(), resource, projectLocation, Depth.INFINITY, false);
-			op.add(mainOp);
-			return mainOp.getProject();
+	protected static IProjectSetHandler DEFAULT_HANDLER = new DefaultProjectSetHandler();
+	protected static IProjectSetHandler SUBCLIPSE_HANDLER = new SubclipseProjectSetHandler();
+	
+	public static IProjectSetHandler getProjectSetHandler(String referenceString) {
+		if (DEFAULT_HANDLER.accept(referenceString)) {
+			return DEFAULT_HANDLER;
+		} else if (SUBCLIPSE_HANDLER.accept(referenceString)) {
+			return SUBCLIPSE_HANDLER;
 		}
 		return null;
-	}
-	
-	protected IRepositoryLocation getLocationForReference(String []parts) {
-		IRepositoryLocation location = null;
-		if (parts.length > 3) {
-			location = SVNRemoteStorage.instance().newRepositoryLocation(parts[3]);
-			if (SVNRemoteStorage.instance().getRepositoryLocation(location.getId()) != null) {
-				return location;
-			}
-		}
-		IRepositoryLocation []locations = SVNRemoteStorage.instance().getRepositoryLocations();
-		Path awaitingFor = new Path(location != null ? location.getUrl() : parts[1]);
-		for (int i = 0; i < locations.length; i++) {
-			if (new Path(locations[i].getUrl()).isPrefixOf(awaitingFor)) {
-				return locations[i];
-			}
-		}
-		if (location == null) {
-			location = SVNRemoteStorage.instance().newRepositoryLocation();
-			location.setUrl(parts[1]);
-		}
-		SVNRemoteStorage.instance().addRepositoryLocation(location);
-		return location;
-	}
-	
-	protected String getNameForReference(String fullReference) {
-		String []parts = fullReference.split(","); //$NON-NLS-1$
-		if (parts.length < 3 || !(parts[0].equals(SVNTeamProjectSetCapability.PLUGIN_INFORMATION))) {
-			return null;
-		}
-		return parts[2];
-	}
-	
-	protected String asReference(IProject project) throws TeamException {
-		IRepositoryResource resource = SVNRemoteStorage.instance().asRepositoryResource(project);
-		IRepositoryLocation location = resource.getRepositoryLocation();
-		
-		// 1) save plugin information
-		// 2) save URL
-		// 3) save project name
-		// non-mandatory part
-		// 4) save repository location
-		String fullReference = PLUGIN_INFORMATION;
-		fullReference += "," + resource.getUrl(); //$NON-NLS-1$
-		fullReference += "," + project.getName(); //$NON-NLS-1$
-		
-		fullReference += "," + SVNRemoteStorage.instance().repositoryLocationAsReference(location); //$NON-NLS-1$
-		
-		return fullReference;
 	}
 	
 }

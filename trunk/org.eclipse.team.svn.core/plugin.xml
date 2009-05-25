@@ -13,6 +13,7 @@
       <repository
             typeClass="org.eclipse.team.svn.core.SVNTeamProviderType"
             class="org.eclipse.team.svn.core.SVNTeamProvider"
+            canImportId="org.tigris.subversion.subclipse.core.svnnature"
             id="org.eclipse.team.svn.core.svnnature"/>
    </extension>
    
