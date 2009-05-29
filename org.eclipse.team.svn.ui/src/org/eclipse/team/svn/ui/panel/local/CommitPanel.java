@@ -227,7 +227,8 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 		layout.numColumns = 2;
 		middleComposite.setLayoutData(data);
 		middleComposite.setLayout(layout);
-		
+				
+		this.keepLocks = SVNTeamUIPlugin.instance().getPreferenceStore().getBoolean(SVNTeamPreferences.COMMIT_DIALOG_KEEP_LOCKS);		
 		this.keepLocksButton = new Button(middleComposite, SWT.CHECK);
 		data = new GridData(GridData.BEGINNING | GridData.FILL_HORIZONTAL);
 		this.keepLocksButton.setLayoutData(data);
@@ -238,7 +239,8 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				CommitPanel.this.keepLocks = CommitPanel.this.keepLocksButton.getSelection();
 			}
 		});
-				
+		this.keepLocksButton.setSelection(this.keepLocks);	
+		
 		this.pasteNamesButton = new Button(middleComposite, SWT.PUSH | SWT.END);
 		data = new GridData();
 		this.pasteNamesButton.setLayoutData(data);
@@ -345,12 +347,12 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 	
 	protected void saveChangesImpl() {
 		super.saveChangesImpl();
-		this.retainWeights();
+		this.savePreferences();
 	}
 	
 	protected void cancelChangesImpl() {
 		super.cancelChangesImpl();
-		this.retainWeights();
+		this.savePreferences();
 	}
 	
 	public boolean canClose() {
@@ -803,10 +805,11 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
     	return new Point(600, SWT.DEFAULT);
     }
     
-    protected void retainWeights() {
+    protected void savePreferences() {
     	int []weights = this.sForm.getWeights();
 		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
 		SVNTeamPreferences.setDialogInt(store, SVNTeamPreferences.COMMIT_DIALOG_WEIGHT_NAME, weights[0] / 10);
+		store.setValue(SVNTeamPreferences.COMMIT_DIALOG_KEEP_LOCKS, this.keepLocks);
     }
          
     public void dispose() {
