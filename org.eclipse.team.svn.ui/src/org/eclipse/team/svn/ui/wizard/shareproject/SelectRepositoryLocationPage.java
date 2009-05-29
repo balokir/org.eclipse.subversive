@@ -13,6 +13,8 @@ package org.eclipse.team.svn.ui.wizard.shareproject;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -21,6 +23,8 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -119,7 +123,17 @@ public class SelectRepositoryLocationPage extends AbstractVerifiedWizardPage {
 		table.setLayout(tLayout);
 
 		this.repositoriesView = new TableViewer(table);
-		
+								
+		this.repositoriesView.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				IWizard wizard = SelectRepositoryLocationPage.this.getWizard();
+				IWizardPage nextPage = wizard.getNextPage(SelectRepositoryLocationPage.this);
+				if (nextPage != null) {
+					wizard.getContainer().showPage(nextPage);	
+				}				
+			}			
+		});
+				
 		ColumnedViewerComparator comparator = new ColumnedViewerComparator(this.repositoriesView) {
 			public int compareImpl(Viewer viewer, Object row1, Object row2) {
 				IRepositoryLocation location1 = (IRepositoryLocation)row1;
@@ -140,10 +154,11 @@ public class SelectRepositoryLocationPage extends AbstractVerifiedWizardPage {
 		col.setResizable(true);
 		col.setText("URL");
 		col.addSelectionListener(comparator);
-
+		
+		this.repositoriesView.setComparator(comparator);
 		this.repositoriesView.getTable().setSortDirection(SWT.UP);
 		this.repositoriesView.getTable().setSortColumn(this.repositoriesView.getTable().getColumn(0));
-		
+						
 		this.repositoriesView.setContentProvider(new ArrayStructuredContentProvider());
 		this.repositoriesView.setLabelProvider(new ITableLabelProvider() {
 			public Image getColumnImage(Object element, int columnIndex) {
