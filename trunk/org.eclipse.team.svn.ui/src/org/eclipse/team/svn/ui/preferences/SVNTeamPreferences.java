@@ -266,6 +266,7 @@ public final class SVNTeamPreferences {
 	public static final int COMMENT_SAVED_COMMENTS_COUNT_DEFAULT = 10;
 	
 	public static final String COMMIT_DIALOG_WEIGHT_NAME = "CommitPanel.weight"; //$NON-NLS-1$
+	public static final String COMMIT_DIALOG_KEEP_LOCKS = "CommitPanel.keepLocks"; //$NON-NLS-1$
 	public static final int COMMIT_DIALOG_WEIGHT_DEFAULT = 50;
 	
 	public static final String AUTO_PROPERTIES_LIST_NAME = "autoproperties"; //$NON-NLS-1$
@@ -339,6 +340,7 @@ public final class SVNTeamPreferences {
 	
 	public static void setDefaultCommitDialogValues(IPreferenceStore store) {
 		store.setDefault(SVNTeamPreferences.COMMIT_DIALOG_WEIGHT_NAME, SVNTeamPreferences.COMMIT_DIALOG_WEIGHT_DEFAULT);
+		store.setDefault(SVNTeamPreferences.COMMIT_DIALOG_KEEP_LOCKS, false);
 	}
 	
 	public static void setDefaultCheckoutValues(IPreferenceStore store) {
