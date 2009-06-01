@@ -56,7 +56,6 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNConflictDescriptor;
-import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -369,7 +368,7 @@ public class ResourceSelectionComposite extends Composite {
 							ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
 							if (!IStateFilter.SF_INTERNAL_INVALID.accept(local)) {
 								IRepositoryResource remote = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
-								remote.setSelectedRevision(SVNRevision.HEAD);
+								remote.setSelectedRevision(CompareResourcesOperation.getRemoteResourceRevisionForCompare(resource));
 								UIMonitorUtility.doTaskScheduledDefault(new CompareResourcesOperation(local, remote, true, true));
 							}
 						}

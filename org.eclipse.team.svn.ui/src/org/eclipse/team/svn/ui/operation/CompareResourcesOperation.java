@@ -11,13 +11,20 @@
 
 package org.eclipse.team.svn.ui.operation;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.operation.local.RunExternalCompareOperation;
 import org.eclipse.team.svn.core.operation.local.UDiffGenerateOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
+import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
 import org.eclipse.team.svn.ui.preferences.SVNTeamDiffViewerPage;
 
 /**
@@ -68,5 +75,29 @@ public class CompareResourcesOperation extends CompositeOperation {
 	
 	public void setForceId(String forceId) {
 		this.internalCompareOp.setForceId(forceId);
+	}
+	
+	/**
+	 * If there are no repository changes (incoming or conflicting), then we compare
+	 * with base revision (don't touch repository)
+	 *
+	 * @param resource
+	 * @return
+	 */
+	public static SVNRevision getRemoteResourceRevisionForCompare(IResource resource) {
+		SVNRevision revision = null;									
+		try {									
+			AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo) UpdateSubscriber.instance().getSyncInfo(resource);
+			int kind = SyncInfo.getDirection(syncInfo.getKind());
+			if (SyncInfo.INCOMING == kind || SyncInfo.CONFLICTING == kind) {
+				revision = SVNRevision.HEAD;
+			} else {
+				revision = SVNRevision.BASE;
+			}									
+		} catch (TeamException te) {
+			LoggedOperation.reportError(CompareResourcesOperation.class.toString(), te);
+			revision = SVNRevision.HEAD;
+		}	
+		return revision;
 	}
 }
