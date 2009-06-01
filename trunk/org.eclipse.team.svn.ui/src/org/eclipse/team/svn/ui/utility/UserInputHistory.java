@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.ui.utility;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -27,6 +28,7 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 public class UserInputHistory {
     
     protected static final String HISTORY_NAME_BASE = "history."; //$NON-NLS-1$
+    protected final static String ENCODING = "UTF-8";
     
     protected String name;
     protected int depth;
@@ -78,7 +80,11 @@ public class UserInputHistory {
         if (historyData != null && historyData.length() > 0) {
             String []historyArray = historyData.split(";"); //$NON-NLS-1$
             for (int i = 0; i < historyArray.length; i++) {
-                historyArray[i] = new String(Base64.decode(historyArray[i].getBytes()));
+            	try {
+            		historyArray[i] = new String(Base64.decode(historyArray[i].getBytes(UserInputHistory.ENCODING)), UserInputHistory.ENCODING);
+                } catch (UnsupportedEncodingException e) {
+                	historyArray[i] = new String(Base64.decode(historyArray[i].getBytes()));
+                }
             }
             this.history.addAll(Arrays.asList(historyArray));
         }
@@ -88,7 +94,11 @@ public class UserInputHistory {
         String result = ""; //$NON-NLS-1$
         for (Iterator it = this.history.iterator(); it.hasNext(); ) {
             String str = (String)it.next();
-            str = new String(Base64.encode(str.getBytes()));
+            try {
+				str = new String(Base64.encode(str.getBytes(UserInputHistory.ENCODING)), UserInputHistory.ENCODING);
+			} catch (UnsupportedEncodingException e) {
+				str = new String(Base64.encode(str.getBytes()));
+			}
             result += result.length() == 0 ? str : (";" + str); //$NON-NLS-1$
         }
         SVNTeamUIPlugin.instance().getPreferenceStore().setValue(UserInputHistory.HISTORY_NAME_BASE + this.name, result);
