@@ -6,7 +6,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -40,7 +39,7 @@ public class OpenInComparePaneAction extends Action {
 				ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
 				if (!IStateFilter.SF_INTERNAL_INVALID.accept(local)) {
 					IRepositoryResource remote = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
-					remote.setSelectedRevision(SVNRevision.HEAD);
+					remote.setSelectedRevision(CompareResourcesOperation.getRemoteResourceRevisionForCompare(resource));
 					UIMonitorUtility.doTaskScheduledDefault(new CompareResourcesOperation(local, remote, false, true));
 				}	    					
 			}
