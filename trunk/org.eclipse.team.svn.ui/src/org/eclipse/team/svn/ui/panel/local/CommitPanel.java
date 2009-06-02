@@ -545,7 +545,8 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				//Mark as merged action
 				manager.add (tAction = new Action(SVNUIMessages.CommitPanel_MarkAsMerged_Action) {
 					public void run() {
-						MarkAsMergedOperation mainOp = new MarkAsMergedOperation(selectedResources, false, null);
+						boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
+						MarkAsMergedOperation mainOp = new MarkAsMergedOperation(selectedResources, false, null, ignoreExternals);
 						CompositeOperation op = new CompositeOperation(mainOp.getId());
 						op.add(mainOp);
 						op.add(new RefreshResourcesOperation(FileUtility.getParents(selectedResources, false)));
@@ -687,7 +688,8 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 						fileDialog.setMessage(SVNUIMessages.ExportAction_Select_Description);
 						String path = fileDialog.open();
 						if (path != null) {
-							UIMonitorUtility.doTaskScheduledDefault(new ExportOperation(FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_EXCLUDE_DELETED, IResource.DEPTH_ZERO) , path, SVNRevision.WORKING));
+							boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
+							UIMonitorUtility.doTaskScheduledDefault(new ExportOperation(FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_EXCLUDE_DELETED, IResource.DEPTH_ZERO) , path, SVNRevision.WORKING, ignoreExternals));
 						}
 					}
 				});

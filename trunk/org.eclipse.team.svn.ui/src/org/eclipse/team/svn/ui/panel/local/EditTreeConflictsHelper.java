@@ -41,7 +41,9 @@ import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.SVNUtility;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 
 /**
  * Helper class for <class>EditTreeConflictsPanel</class>
@@ -221,8 +223,9 @@ public class EditTreeConflictsHelper {
 			IActionOperation resolveOp = new RevertOperation(new IResource[]{resource}, isRecursive);
 			cmpOp.add(resolveOp);						
 			
-			SVNRevision rev = this.treeConflict.operation == Operation.UPDATE ? SVNRevision.HEAD : SVNRevision.fromNumber(this.treeConflict.srcRightVersion.pegRevision); 
-			UpdateOperation updateOp = new UpdateOperation(new IResource[]{resource}, rev, isRecursive);
+			SVNRevision rev = this.treeConflict.operation == Operation.UPDATE ? SVNRevision.HEAD : SVNRevision.fromNumber(this.treeConflict.srcRightVersion.pegRevision);
+			boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
+			UpdateOperation updateOp = new UpdateOperation(new IResource[]{resource}, rev, isRecursive, ignoreExternals);
 			cmpOp.add(updateOp, new IActionOperation[]{resolveOp});	
 		} else if (this.treeConflict.operation == Operation.MERGE) {
 			cmpOp = new CompositeOperation(opName);			
@@ -264,7 +267,8 @@ public class EditTreeConflictsHelper {
 			updateOp = this.getCopyResourceOperation();		
 		} else {
 			SVNRevision rev = this.treeConflict.operation == Operation.UPDATE ? SVNRevision.HEAD : SVNRevision.fromNumber(this.treeConflict.srcRightVersion.pegRevision);
-			updateOp = new UpdateOperation(new IResource[]{this.local.getResource()}, rev, isRecursive);				
+			boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
+			updateOp = new UpdateOperation(new IResource[]{this.local.getResource()}, rev, isRecursive, ignoreExternals);				
 		}																		
 		cmpOp.add(updateOp, deleteOp == null ? null : new IActionOperation[]{deleteOp});
 		

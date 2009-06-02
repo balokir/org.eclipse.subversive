@@ -176,8 +176,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String CheckoutAsFolderPage_Description;
 	public static String CheckoutAsFolderPage_Title;
 	public static String CheckoutAsWizard_Title;
-	public static String CheckoutMethodSelectionPage_Description;
-	public static String CheckoutMethodSelectionPage_Externals;
+	public static String CheckoutMethodSelectionPage_Description;	
 	public static String CheckoutMethodSelectionPage_Find;
 	public static String CheckoutMethodSelectionPage_Folder;
 	public static String CheckoutMethodSelectionPage_HintHead;
@@ -657,6 +656,9 @@ public class SVNUIMessages extends BaseMessages {
 	public static String MainPreferencePage_tableSortingCaseInsensitive;
 	public static String MainPreferencePage_tableSortingGroupName;
 	public static String MainPreferencePage_tableSortingPrompt;
+	public static String MainPreferencePage_externalsGroupName;
+	public static String MainPreferencePage_externalsGroupPrompt;
+	public static String MainPreferencePage_ignoreExternals;
 	public static String MainPreferencePage_viewSettingsTabName;
 	public static String MarkAsMergedCommand_tooltip;
 	public static String MergeAction_MergeError;

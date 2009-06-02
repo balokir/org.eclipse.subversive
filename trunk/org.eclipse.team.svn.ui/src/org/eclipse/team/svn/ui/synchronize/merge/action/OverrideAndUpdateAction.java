@@ -36,7 +36,9 @@ import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.core.synchronize.variant.RemoteResourceVariant;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.operation.ClearMergeStatusesOperation;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -74,7 +76,8 @@ public class OverrideAndUpdateAction extends AbstractSynchronizeModelAction {
 		}
 		
 		IResource []resources = localSet.toArray(new IResource[localSet.size()]);
-		GetRemoteContentsOperation mainOp = new GetRemoteContentsOperation(resources, remoteSet.toArray(new IRepositoryResource[remoteSet.size()]), remote2local);
+		boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
+		GetRemoteContentsOperation mainOp = new GetRemoteContentsOperation(resources, remoteSet.toArray(new IRepositoryResource[remoteSet.size()]), remote2local, ignoreExternals);
 		CompositeOperation op = new CompositeOperation(mainOp.getId());
 		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
 		op.add(saveOp);

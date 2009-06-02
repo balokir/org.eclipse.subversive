@@ -25,10 +25,12 @@ import org.eclipse.team.svn.core.operation.remote.ReplaceWithRemoteOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.action.AbstractNonRecursiveTeamAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.dialog.ReplaceWarningDialog;
 import org.eclipse.team.svn.ui.panel.local.ReplaceWithUrlPanel;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 
 /**
  * Team services menu "replace with revision" action implementation
@@ -63,10 +65,11 @@ public class ReplaceWithRevisionAction extends AbstractNonRecursiveTeamAction {
 			ReplaceWarningDialog dialog = new ReplaceWarningDialog(shell);
 			if (dialog.open() == 0) {
 				IRepositoryResource selected = panel.getSelectedResource();
+				boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
 				CompositeOperation op = new CompositeOperation("Operation_ReplaceWithRevision"); //$NON-NLS-1$
 				SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
 				op.add(saveOp);
-				op.add(new ReplaceWithRemoteOperation(resources[0], selected));
+				op.add(new ReplaceWithRemoteOperation(resources[0], selected, ignoreExternals));
 				op.add(new RestoreProjectMetaOperation(saveOp));
 				op.add(new RefreshResourcesOperation(resources));
 				return op;

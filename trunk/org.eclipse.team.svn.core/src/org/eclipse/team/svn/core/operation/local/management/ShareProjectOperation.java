@@ -65,7 +65,8 @@ public class ShareProjectOperation extends AbstractWorkingCopyOperation {
 	protected boolean managementFoldersEnabled;
 	protected String commitComment;
 	protected IShareProjectPrompt shareProjectPrompt;
-
+	protected boolean ignoreExternals;
+	
 	public ShareProjectOperation(IProject []projects, IRepositoryLocation location, IFolderNameMapper mapper) {
 		this(projects, location, mapper, null);
 	}
@@ -86,6 +87,11 @@ public class ShareProjectOperation extends AbstractWorkingCopyOperation {
 		this.rootName = rootName;
 		this.managementFoldersEnabled = managementFoldersEnabled;
 		this.commitComment = commitComment;
+		this.ignoreExternals = ignoreExternals;
+	}
+	
+	public void setIngoreExternals(boolean ignoreExternals) {
+		this.ignoreExternals = ignoreExternals;
 	}
 	
 	public void setSharePrompt(IShareProjectPrompt prompt) {
@@ -175,8 +181,8 @@ public class ShareProjectOperation extends AbstractWorkingCopyOperation {
 						
 						File tempDir = existingProjects.contains(project) ? ShareProjectOperation.this.createTempDirectory(project) : null;
 						String checkoutTo = tempDir != null ? tempDir.toString() : FileUtility.getWorkingCopyPath(project);
-
-						proxy.checkout(SVNUtility.getEntryRevisionReference(remote), checkoutTo, Depth.INFINITY, ISVNConnector.Options.NONE, new SVNProgressMonitor(ShareProjectOperation.this, monitor, null));
+						long options = ShareProjectOperation.this.ignoreExternals ? ISVNConnector.Options.IGNORE_EXTERNALS : ISVNConnector.Options.NONE;
+						proxy.checkout(SVNUtility.getEntryRevisionReference(remote), checkoutTo, Depth.INFINITY, options, new SVNProgressMonitor(ShareProjectOperation.this, monitor, null));
 						
 						if (tempDir != null) {
 							ShareProjectOperation.this.copySVNMeta(tempDir, FileUtility.getResourcePath(project).toFile());

@@ -39,17 +39,20 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 public class UpdateOperation extends AbstractFileConflictDetectionOperation implements IFileProvider {
 	protected boolean updateUnresolved;
 	protected SVNRevision selectedRevision;
+	protected boolean ignoreExternals;
 	
-	public UpdateOperation(File []files, SVNRevision selectedRevision, boolean updateUnresolved) {
+	public UpdateOperation(File []files, SVNRevision selectedRevision, boolean updateUnresolved, boolean ignoreExternals) {
 		super("Operation_UpdateFile", files); //$NON-NLS-1$
 		this.updateUnresolved = updateUnresolved;
 		this.selectedRevision = selectedRevision;
+		this.ignoreExternals = ignoreExternals;
 	}
 
-	public UpdateOperation(IFileProvider provider, SVNRevision selectedRevision, boolean updateUnresolved) {
+	public UpdateOperation(IFileProvider provider, SVNRevision selectedRevision, boolean updateUnresolved, boolean ignoreExternals) {
 		super("Operation_UpdateFile", provider); //$NON-NLS-1$
 		this.updateUnresolved = updateUnresolved;
 		this.selectedRevision = selectedRevision;
+		this.ignoreExternals = ignoreExternals;
 	}
 
 	public File []getFiles() {
@@ -77,7 +80,7 @@ public class UpdateOperation extends AbstractFileConflictDetectionOperation impl
 					for (int i = 0; i < paths.length && !monitor.isCanceled(); i++) {
 						UpdateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " \"" + paths[i] + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 					}
-					UpdateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " -r " + UpdateOperation.this.selectedRevision + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+					UpdateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " -r " + UpdateOperation.this.selectedRevision + SVNUtility.getIgnoreExternalsArg(UpdateOperation.this.ignoreExternals) + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			});
 			
@@ -85,7 +88,8 @@ public class UpdateOperation extends AbstractFileConflictDetectionOperation impl
 			proxy.setTouchUnresolved(this.updateUnresolved);
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
-					proxy.update(paths, UpdateOperation.this.selectedRevision, Depth.infinityOrFiles(true), ISVNConnector.Options.NONE, new ConflictDetectionProgressMonitor(UpdateOperation.this, monitor, null));
+					long options = UpdateOperation.this.ignoreExternals ? ISVNConnector.Options.IGNORE_EXTERNALS : ISVNConnector.Options.NONE;
+					proxy.update(paths, UpdateOperation.this.selectedRevision, Depth.infinityOrFiles(true), options, new ConflictDetectionProgressMonitor(UpdateOperation.this, monitor, null));
 				}
 			}, monitor, wc2Resources.size());
 			proxy.setTouchUnresolved(false);

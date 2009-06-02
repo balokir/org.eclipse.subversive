@@ -39,19 +39,21 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 public class GetRemoteContentsOperation extends AbstractWorkingCopyOperation {
 	protected IRepositoryResourceProvider provider;
 	protected HashMap<String, String> remotePath2localPath;
-
-	public GetRemoteContentsOperation(IResource [] resources, final IRepositoryResource []remoteResources, HashMap<String, String> remotePath2localPath) {
+	protected boolean ignoreExternals;
+	
+	public GetRemoteContentsOperation(IResource [] resources, final IRepositoryResource []remoteResources, HashMap<String, String> remotePath2localPath, boolean ignoreExternals) {
 		this (resources, new IRepositoryResourceProvider() {
 			public IRepositoryResource[] getRepositoryResources() {
 				return remoteResources;
 			}
-		}, remotePath2localPath);
+		}, remotePath2localPath, ignoreExternals);
 	}
 	
-	public GetRemoteContentsOperation(IResource [] resources, IRepositoryResourceProvider provider, HashMap<String, String> remotePath2localPath) {
+	public GetRemoteContentsOperation(IResource [] resources, IRepositoryResourceProvider provider, HashMap<String, String> remotePath2localPath, boolean ignoreExternals) {
 		super("Operation_GetContent", resources); //$NON-NLS-1$
 		this.provider = provider;
 		this.remotePath2localPath = remotePath2localPath;
+		this.ignoreExternals = ignoreExternals;
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
@@ -101,8 +103,12 @@ public class GetRemoteContentsOperation extends AbstractWorkingCopyOperation {
 				if (!directory.exists()) {
 					directory.mkdirs();
 				}
-				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn export " + url + "@" + remote.getPegRevision() + " -r " + remote.getSelectedRevision() + " \"" + wcPath + "\" --force " + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-				proxy.doExport(SVNUtility.getEntryRevisionReference(remote), wcPath, null, Depth.INFINITY, ISVNConnector.Options.FORCE, new SVNProgressMonitor(this, monitor, null));
+				this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn export " + url + "@" + remote.getPegRevision() + " -r " + remote.getSelectedRevision() + SVNUtility.getIgnoreExternalsArg(this.ignoreExternals) + " \"" + wcPath + "\" --force " + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+				long options = ISVNConnector.Options.FORCE;
+				if (this.ignoreExternals) {
+					options |= ISVNConnector.Options.IGNORE_EXTERNALS;
+				}
+				proxy.doExport(SVNUtility.getEntryRevisionReference(remote), wcPath, null, Depth.INFINITY, options, new SVNProgressMonitor(this, monitor, null));
 			}
 		}
 		finally {

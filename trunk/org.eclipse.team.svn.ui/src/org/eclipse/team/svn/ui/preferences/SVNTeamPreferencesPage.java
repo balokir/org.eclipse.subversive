@@ -86,6 +86,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected boolean enableAutoShare;
 	protected boolean caseInsensitiveSorting;	
 	protected String consultChangeSets;
+	protected boolean ignoreExternals;
 	
 	protected Text headField;
 	protected Text branchesField;
@@ -117,6 +118,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 	protected Button consultCSAlwaysButton;
 	protected Button consultCSNeverButton;
 	protected Button consultCSPromptButton;
+	protected Button ignoreExternalsButton;
 	
 	public SVNTeamPreferencesPage() {
 		super();
@@ -151,6 +153,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		SVNTeamPreferences.setBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_ENABLE_AUTO_SHARE_NAME, this.enableAutoShare);
 		SVNTeamPreferences.setBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_COMPUTE_KEYWORDS_NAME, this.computeKeywordsValues);
 		SVNTeamPreferences.setBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_NAME, this.caseInsensitiveSorting);
+		SVNTeamPreferences.setBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME, this.ignoreExternals);
 		
 		String oldId = CoreExtensionsManager.instance().getSVNConnectorFactory().getId();
 		if (!oldId.equals(this.svnConnector)) {
@@ -206,6 +209,8 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		
 		this.caseInsensitiveSorting = SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_DEFAULT;
 		
+		this.ignoreExternals = SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_DEFAULT;
+		
 		this.svnConnector = SVNTeamPreferences.CORE_SVNCONNECTOR_DEFAULT;
 	}
 	
@@ -236,6 +241,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.enableAutoShare = SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_ENABLE_AUTO_SHARE_NAME);
 		this.computeKeywordsValues = SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_COMPUTE_KEYWORDS_NAME);
 		this.caseInsensitiveSorting = SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_NAME);
+		this.ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(store, SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
 		
 		this.useJavaHLMerge = SVNTeamPreferences.getMergeBoolean(store, SVNTeamPreferences.MERGE_USE_JAVAHL_NAME);
 		this.includeMergedRevisions = SVNTeamPreferences.getMergeBoolean(store, SVNTeamPreferences.MERGE_INCLUDE_MERGED_NAME);
@@ -296,6 +302,8 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.enableAutoShareButton.setSelection(this.enableAutoShare);
 		
 		this.caseInsensitiveSortingButton.setSelection(this.caseInsensitiveSorting);
+		
+		this.ignoreExternalsButton.setSelection(this.ignoreExternals);
 	}
 	
 	protected void initializeClientSettings() {
@@ -544,6 +552,28 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		this.caseInsensitiveSortingButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				SVNTeamPreferencesPage.this.caseInsensitiveSorting = SVNTeamPreferencesPage.this.caseInsensitiveSortingButton.getSelection();
+			}
+		});
+		
+		//svn:externals settings group
+		group = new Group(composite, SWT.NONE);
+		group.setLayout(new GridLayout());
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		group.setText(SVNUIMessages.MainPreferencePage_externalsGroupName);
+		
+		label = new Label(group, SWT.WRAP);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.widthHint = 450;
+		label.setLayoutData(data);
+		label.setText(SVNUIMessages.MainPreferencePage_externalsGroupPrompt);
+		
+		this.ignoreExternalsButton = new Button(group, SWT.CHECK);
+		data = new GridData();
+		this.ignoreExternalsButton.setLayoutData(data);
+		this.ignoreExternalsButton.setText(SVNUIMessages.MainPreferencePage_ignoreExternals);
+		this.ignoreExternalsButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				SVNTeamPreferencesPage.this.ignoreExternals = SVNTeamPreferencesPage.this.ignoreExternalsButton.getSelection();
 			}
 		});
 		

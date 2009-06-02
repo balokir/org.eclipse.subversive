@@ -34,10 +34,6 @@ public class CheckoutOperation extends AbstractActionOperation implements IResou
 	protected IProject []projects;
 	protected CheckoutAsOperation []operations;
 	protected ISchedulingRule rule;
-	
-	public CheckoutOperation(Map<String, IRepositoryResource> checkoutMap, boolean respectHierarchy, String location, int recureDepth) {
-		this(checkoutMap, respectHierarchy, location, recureDepth, false);
-	}
 
 	public CheckoutOperation(Map<String, IRepositoryResource> checkoutMap, boolean respectHierarchy, String location, int recureDepth, boolean ignoreExternals) {
 		super("Operation_CheckOut"); //$NON-NLS-1$
@@ -80,7 +76,7 @@ public class CheckoutOperation extends AbstractActionOperation implements IResou
 		if (location != null && location.trim().length() > 0) {
 			return new CheckoutAsOperation(name, currentResource, respectHierarchy, location, recureDepth, ignoreExternals);
 		}
-		return new CheckoutAsOperation(name, currentResource, recureDepth);
+		return new CheckoutAsOperation(name, currentResource, recureDepth, ignoreExternals);
 	}
 	
 }

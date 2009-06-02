@@ -25,7 +25,9 @@ import org.eclipse.team.svn.core.resource.ILocalFile;
 import org.eclipse.team.svn.core.synchronize.UpdateSyncInfo;
 import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
 import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.operation.ClearUpdateStatusesOperation;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
 import org.eclipse.team.svn.ui.utility.UnacceptableOperationNotificator;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -60,8 +62,8 @@ public class MarkAsMergedAction extends AbstractSynchronizeModelAction {
 		if (resources == null || resources.length == 0) {
 			return null;
 		}
-		
-		MarkAsMergedOperation mainOp = new MarkAsMergedOperation(resources, false, null);
+		boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
+		MarkAsMergedOperation mainOp = new MarkAsMergedOperation(resources, false, null, ignoreExternals);
 
 		CompositeOperation op = new CompositeOperation(mainOp.getId());
 

@@ -43,25 +43,28 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 public class UpdateOperation extends AbstractConflictDetectionOperation implements IResourceProvider {
 	protected SVNRevision selectedRevision;
 	protected boolean doRecursiveUpdate;
+	protected boolean ignoreExternals;
 	
-	public UpdateOperation(IResource []resources, boolean doRecursiveUpdate) {
-	    this(resources, null, doRecursiveUpdate);
+	public UpdateOperation(IResource []resources, boolean doRecursiveUpdate, boolean ignoreExternals) {
+	    this(resources, null, doRecursiveUpdate, ignoreExternals);
 	}
 
-	public UpdateOperation(IResourceProvider provider, boolean doRecursiveUpdate) {
-	    this(provider, null, doRecursiveUpdate);
+	public UpdateOperation(IResourceProvider provider, boolean doRecursiveUpdate, boolean ignoreExternals) {
+	    this(provider, null, doRecursiveUpdate, ignoreExternals);
 	}
 
-	public UpdateOperation(IResourceProvider provider, SVNRevision selectedRevision, boolean doRecursiveUpdate) {
+	public UpdateOperation(IResourceProvider provider, SVNRevision selectedRevision, boolean doRecursiveUpdate, boolean ignoreExternals) {
 		super("Operation_Update", provider);		 //$NON-NLS-1$
 		this.doRecursiveUpdate = doRecursiveUpdate;
 		this.selectedRevision = selectedRevision == null ? SVNRevision.HEAD : selectedRevision;
+		this.ignoreExternals = ignoreExternals;
 	}
 	
-	public UpdateOperation(IResource[] resources, SVNRevision selectedRevision, boolean doRecursiveUpdate) {
+	public UpdateOperation(IResource[] resources, SVNRevision selectedRevision, boolean doRecursiveUpdate, boolean ignoreExternals) {
 		super("Operation_Update", resources); //$NON-NLS-1$
 		this.selectedRevision = selectedRevision == null ? SVNRevision.HEAD : selectedRevision;
 		this.doRecursiveUpdate = doRecursiveUpdate;
+		this.ignoreExternals = ignoreExternals;
 	}
 	
 	public int getOperationWeight() {
@@ -98,18 +101,19 @@ public class UpdateOperation extends AbstractConflictDetectionOperation implemen
 					for (int i = 0; i < paths.length && !monitor.isCanceled(); i++) {
 						UpdateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " \"" + paths[i] + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 					}
-					UpdateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " -r " + UpdateOperation.this.selectedRevision + (UpdateOperation.this.doRecursiveUpdate ? "" : " -N") + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					UpdateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " -r " + UpdateOperation.this.selectedRevision + SVNUtility.getIgnoreExternalsArg(UpdateOperation.this.ignoreExternals) + (UpdateOperation.this.doRecursiveUpdate ? "" : " -N") + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				}
 			});
 			
 			final ISVNConnector proxy = location.acquireSVNProxy();
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
+					long options = UpdateOperation.this.ignoreExternals ? ISVNConnector.Options.IGNORE_EXTERNALS : ISVNConnector.Options.NONE;
 					proxy.update(
 					    paths, 
 					    UpdateOperation.this.selectedRevision, 
 						Depth.unknownOrFiles(UpdateOperation.this.doRecursiveUpdate),
-						ISVNConnector.Options.NONE, 
+						options, 
 						new ConflictDetectionProgressMonitor(UpdateOperation.this, monitor, null));
 				}
 			}, monitor, wc2Resources.size());

@@ -139,9 +139,10 @@ public class BranchTagAction extends AbstractNonRecursiveTeamAction {
 			}
 			
 			if (panel.isStartWithSelected()) {
+				boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
 				SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
 				op.add(saveOp);
-				SwitchOperation switchOp = new SwitchOperation(resources, mainOp, Depth.INFINITY);
+				SwitchOperation switchOp = new SwitchOperation(resources, mainOp, Depth.INFINITY, ignoreExternals);
 			    op.add(switchOp, new IActionOperation[] {mainOp});
 				op.add(new RestoreProjectMetaOperation(saveOp));
 				op.add(new RefreshResourcesOperation(resources));

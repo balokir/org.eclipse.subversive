@@ -17,8 +17,10 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.local.ExportOperation;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractWorkingCopyAction;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 
 /**
  * Export working copy action implementation
@@ -40,7 +42,8 @@ public class ExportAction extends AbstractWorkingCopyAction {
 		fileDialog.setMessage(SVNUIMessages.ExportAction_Select_Description);
 		String path = fileDialog.open();
 		if (path != null) {
-			this.runScheduled(new ExportOperation(resources, path, SVNRevision.WORKING));
+			boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
+			this.runScheduled(new ExportOperation(resources, path, SVNRevision.WORKING, ignoreExternals));
 		}
 	}
 	

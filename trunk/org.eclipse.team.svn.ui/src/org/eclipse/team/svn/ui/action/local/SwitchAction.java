@@ -25,12 +25,14 @@ import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.SVNUtility;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractNonRecursiveTeamAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.dialog.OperationErrorDialog;
 import org.eclipse.team.svn.ui.operation.NotifyUnresolvedConflictOperation;
 import org.eclipse.team.svn.ui.panel.local.SwitchPanel;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 
 /**
  * Switch working copy to the new URL action implementation
@@ -76,8 +78,8 @@ public class SwitchAction extends AbstractNonRecursiveTeamAction {
 		DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
 		if (dialog.open() == 0) {
 			IRepositoryResource []destinations = panel.getSelection(resources);
-
-			SwitchOperation mainOp = new SwitchOperation(resources, destinations, panel.getDepth());
+			boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
+			SwitchOperation mainOp = new SwitchOperation(resources, destinations, panel.getDepth(), ignoreExternals);
 			
 			CompositeOperation op = new CompositeOperation(mainOp.getId());
 

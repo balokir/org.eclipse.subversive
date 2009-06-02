@@ -23,12 +23,14 @@ import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.UpdateOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.svnstorage.ResourcesParentsProvider;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractRecursiveTeamAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.operation.ClearUpdateStatusesOperation;
 import org.eclipse.team.svn.ui.operation.NotifyUnresolvedConflictOperation;
 import org.eclipse.team.svn.ui.panel.local.ResourceListPanel;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.UnacceptableOperationNotificator;
 
 /**
@@ -79,7 +81,8 @@ public class UpdateAction extends AbstractRecursiveTeamAction {
 	}
 
 	public static CompositeOperation getUpdateOperation(IResource []updateSet) {
-		UpdateOperation mainOp = new UpdateOperation(updateSet, true);
+		boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
+		UpdateOperation mainOp = new UpdateOperation(updateSet, true, ignoreExternals);
 		
 		CompositeOperation op = new CompositeOperation(mainOp.getId());
 		

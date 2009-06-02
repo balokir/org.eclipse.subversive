@@ -59,8 +59,9 @@ public class ShareOperation extends AbstractFileOperation {
 	protected int shareLayout;
 	protected boolean managementFoldersEnabled;
 	protected String commitComment;
-
-	public ShareOperation(File []files, IRepositoryLocation location, IFolderNameMapper mapper, String rootName, int shareLayout, boolean managementFoldersEnabled, String commitComment) {
+	protected boolean ignoreExternals;
+	
+	public ShareOperation(File []files, IRepositoryLocation location, IFolderNameMapper mapper, String rootName, int shareLayout, boolean managementFoldersEnabled, String commitComment, boolean ignoreExternals) {
 		super("Operation_ShareFile", files); //$NON-NLS-1$
 		this.location = location;
 		this.mapper = mapper;
@@ -68,9 +69,10 @@ public class ShareOperation extends AbstractFileOperation {
 		this.shareLayout = shareLayout;
 		this.managementFoldersEnabled = managementFoldersEnabled;
 		this.commitComment = commitComment;
+		this.ignoreExternals = ignoreExternals;
 	}
 
-	public ShareOperation(IFileProvider provider, IRepositoryLocation location, IFolderNameMapper mapper, String rootName, int shareLayout, boolean managementFoldersEnabled, String commitComment) {
+	public ShareOperation(IFileProvider provider, IRepositoryLocation location, IFolderNameMapper mapper, String rootName, int shareLayout, boolean managementFoldersEnabled, String commitComment, boolean ignoreExternals) {
 		super("Operation_ShareFile", provider); //$NON-NLS-1$
 		this.location = location;
 		this.mapper = mapper;
@@ -78,6 +80,7 @@ public class ShareOperation extends AbstractFileOperation {
 		this.shareLayout = shareLayout;
 		this.managementFoldersEnabled = managementFoldersEnabled;
 		this.commitComment = commitComment;
+		this.ignoreExternals = ignoreExternals;
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
@@ -127,7 +130,8 @@ public class ShareOperation extends AbstractFileOperation {
 					public void run(IProgressMonitor monitor) throws Exception {
 						IRepositoryContainer remote = (IRepositoryContainer)entry.getValue();
 						File local = (File)entry.getKey();
-						proxy.checkout(SVNUtility.getEntryRevisionReference(remote), local.getAbsolutePath(), Depth.EMPTY, ISVNConnector.Options.NONE, new SVNProgressMonitor(ShareOperation.this, monitor, null));
+						long options = ShareOperation.this.ignoreExternals ? ISVNConnector.Options.IGNORE_EXTERNALS : ISVNConnector.Options.NONE; 
+						proxy.checkout(SVNUtility.getEntryRevisionReference(remote), local.getAbsolutePath(), Depth.EMPTY, options, new SVNProgressMonitor(ShareOperation.this, monitor, null));
 					}
 				}, monitor, local2remote.size());
 			}

@@ -55,10 +55,6 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 	protected int recureDepth;
 	protected boolean ignoreExternals;
 	protected RestoreProjectMetaOperation restoreOp;
-
-	public CheckoutAsOperation(String projectName, IRepositoryResource resource, int recureDepth) {
-		this(projectName, resource, Platform.getLocation().toString(), recureDepth, false);
-	}
 	
 	public CheckoutAsOperation(String projectName, IRepositoryResource resource, int recureDepth, boolean ignoreExternals) {
 		this(projectName, resource, Platform.getLocation().toString(), recureDepth, ignoreExternals);
@@ -168,7 +164,7 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
 			String path = destination.toString();
-			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn checkout \"" + this.resource.getUrl() + "@" + this.resource.getPegRevision() + "\" -r " + this.resource.getSelectedRevision() + SVNUtility.getDepthArg(this.recureDepth) + " \"" + FileUtility.normalizePath(path) + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn checkout \"" + this.resource.getUrl() + "@" + this.resource.getPegRevision() + "\" -r " + this.resource.getSelectedRevision() + SVNUtility.getIgnoreExternalsArg(this.ignoreExternals) + SVNUtility.getDepthArg(this.recureDepth) + " \"" + FileUtility.normalizePath(path) + "\"" + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 			proxy.checkout(
 					SVNUtility.getEntryRevisionReference(this.resource), 
 					path, 

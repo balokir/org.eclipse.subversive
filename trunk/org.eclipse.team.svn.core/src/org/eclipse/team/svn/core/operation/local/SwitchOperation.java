@@ -42,19 +42,22 @@ public class SwitchOperation extends AbstractRepositoryOperation implements IUnr
 	protected IResource []resources;
 	protected int depth;
 	protected UnresolvedConflictDetectorHelper conflictDetectorHelper; 
+	protected boolean ignoreExternals;
 	
-	public SwitchOperation(IResource []resources, IRepositoryResourceProvider destination, int depth) {
+	public SwitchOperation(IResource []resources, IRepositoryResourceProvider destination, int depth, boolean ignoreExternals) {
 		super("Operation_Switch", destination); //$NON-NLS-1$
 		this.resources = resources;
 		this.depth = depth;
 		this.conflictDetectorHelper = new UnresolvedConflictDetectorHelper();
+		this.ignoreExternals = ignoreExternals;
 	}
 
-	public SwitchOperation(IResource []resources, IRepositoryResource []destination, int depth) {
+	public SwitchOperation(IResource []resources, IRepositoryResource []destination, int depth, boolean ignoreExternals) {
 		super("Operation_Switch", destination); //$NON-NLS-1$
 		this.resources = resources;
 		this.depth = depth;
 		this.conflictDetectorHelper = new UnresolvedConflictDetectorHelper();
+		this.ignoreExternals = ignoreExternals;
 	}
 	
 	public int getOperationWeight() {
@@ -80,9 +83,10 @@ public class SwitchOperation extends AbstractRepositoryOperation implements IUnr
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
 					String wcPath = FileUtility.getWorkingCopyPath(resource);
-					SwitchOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn switch \"" + destination.getUrl() + "\" \"" + FileUtility.normalizePath(wcPath) + "\" -r " + destination.getSelectedRevision() + SVNUtility.getDepthArg(SwitchOperation.this.depth) + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					long options = SwitchOperation.this.ignoreExternals ? ISVNConnector.Options.IGNORE_EXTERNALS : ISVNConnector.Options.NONE;
+					SwitchOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn switch \"" + destination.getUrl() + "\" \"" + FileUtility.normalizePath(wcPath) + "\" -r " + destination.getSelectedRevision() + SVNUtility.getIgnoreExternalsArg(SwitchOperation.this.ignoreExternals) + SVNUtility.getDepthArg(SwitchOperation.this.depth) + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 					proxy.doSwitch(wcPath, SVNUtility.getEntryRevisionReference(destination), SwitchOperation.this.depth,
-							ISVNConnector.Options.NONE, new ConflictDetectionProgressMonitor(SwitchOperation.this, monitor, null));
+							options, new ConflictDetectionProgressMonitor(SwitchOperation.this, monitor, null));
 					
 					if (resource instanceof IProject) {
 						IConnectedProjectInformation provider = (IConnectedProjectInformation)RepositoryProvider.getProvider((IProject)resource);

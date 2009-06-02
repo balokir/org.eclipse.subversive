@@ -46,27 +46,30 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
     protected String overrideMessage;
     protected IResource []committables;
     protected IResource []withDifferentNodeKind;
-
-	public MarkAsMergedOperation(IResource[] resources, boolean override, String overrideMessage) {
-		this(resources, override, overrideMessage, false);
+    protected boolean ignoreExternals;
+    
+	public MarkAsMergedOperation(IResource[] resources, boolean override, String overrideMessage, boolean ignoreExternals) {
+		this(resources, override, overrideMessage, false, ignoreExternals);
 	}
 
-	public MarkAsMergedOperation(IResource[] resources, boolean override, String overrideMessage, boolean keepLocks) {
+	public MarkAsMergedOperation(IResource[] resources, boolean override, String overrideMessage, boolean keepLocks, boolean ignoreExternals) {
 		super("Operation_MarkAsMerged", resources); //$NON-NLS-1$
 		this.override = override;
 		this.overrideMessage = overrideMessage;
 		this.keepLocks = keepLocks;
+		this.ignoreExternals = ignoreExternals;
 	}
 
-	public MarkAsMergedOperation(IResourceProvider provider, boolean override, String overrideMessage, boolean keepLocks) {
+	public MarkAsMergedOperation(IResourceProvider provider, boolean override, String overrideMessage, boolean keepLocks, boolean ignoreExternals) {
 		super("Operation_MarkAsMerged", provider); //$NON-NLS-1$
 		this.override = override;
 		this.overrideMessage = overrideMessage;
 		this.keepLocks = keepLocks;
+		this.ignoreExternals = ignoreExternals;
 	}
 	
-	public MarkAsMergedOperation(IResourceProvider provider, boolean override, String overrideMessage) {
-		this(provider, override, overrideMessage, false);
+	public MarkAsMergedOperation(IResourceProvider provider, boolean override, String overrideMessage, boolean ignoreExternals) {
+		this(provider, override, overrideMessage, false, ignoreExternals);
 	}
 
 	public IResource []getResources() {
@@ -116,7 +119,7 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 
 	protected void markDeleted(ILocalResource local, IProgressMonitor monitor) {
 		this.doOperation(new RevertOperation(new IResource[] {local.getResource()}, true), monitor);
-		this.doOperation(new UpdateOperation(new IResource[] {local.getResource()}, true), monitor);
+		this.doOperation(new UpdateOperation(new IResource[] {local.getResource()}, true, this.ignoreExternals), monitor);
 		//don't delete the resource which already doesn't exist on file system
 		//this can happen with tree conflicts, for instance, local - delete and remote - delete
 		if (local.getResource().exists()) {
@@ -140,7 +143,7 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 		    
 		    change.traverse(new RemoveNonVersionedVisitor(true), IResource.DEPTH_INFINITE, this, monitor);
 		    
-			this.doOperation(new UpdateOperation(new IResource[] {local.getResource()}, true), monitor);
+			this.doOperation(new UpdateOperation(new IResource[] {local.getResource()}, true, this.ignoreExternals), monitor);
 			String wcPath = FileUtility.getWorkingCopyPath(local.getResource());
 			boolean isLocalExists = new File(wcPath).exists();
 			if (this.override && isLocalExists) {
@@ -149,7 +152,7 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 			    if (new File(wcPath).exists()) {
 			    	this.doOperation(new CommitOperation(new IResource[] {local.getResource()}, this.overrideMessage, true, this.keepLocks), monitor);
 			    	// update child records for node kind replacement
-			    	this.doOperation(new UpdateOperation(new IResource[] {local.getResource()}, true), monitor);
+			    	this.doOperation(new UpdateOperation(new IResource[] {local.getResource()}, true, this.ignoreExternals), monitor);
 			    }
 			}
 			

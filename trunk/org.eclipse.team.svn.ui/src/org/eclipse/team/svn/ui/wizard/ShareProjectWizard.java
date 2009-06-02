@@ -37,12 +37,14 @@ import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.resource.events.ProjectStatesChangedEvent;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.IResourceSelector;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.extension.factory.ICommitDialog;
 import org.eclipse.team.svn.ui.extension.factory.IShareProjectFactory;
 import org.eclipse.team.svn.ui.panel.local.CommitPanel;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.synchronize.SVNChangeSetCapability;
 import org.eclipse.team.svn.ui.utility.CommitActionUtility;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -250,6 +252,8 @@ public class ShareProjectWizard extends AbstractSVNWizard implements IConfigurat
 		}
 		
 		final ShareProjectOperation mainOp = ExtensionsManager.getInstance().getCurrentShareProjectFactory().getShareProjectOperation(this.getProjects(), location, this.selectName, this.commentPage.getCommitComment());
+		boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
+		mainOp.setIngoreExternals(ignoreExternals);
 		mainOp.setSharePrompt(new IShareProjectPrompt() {
 			public boolean prompt(final IProject []projects) {
 				final int []result = new int[1];

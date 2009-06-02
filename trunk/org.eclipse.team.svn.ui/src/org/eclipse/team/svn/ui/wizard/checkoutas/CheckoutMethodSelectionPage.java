@@ -54,7 +54,6 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 
 	protected String projectName;
 	protected int checkoutType;
-	protected boolean ignoreExternalsSelected;
 
 	public CheckoutMethodSelectionPage(String defaultName, boolean newProjectSelectionEnabled) {
 		super(CheckoutMethodSelectionPage.class.getName(), 
@@ -64,9 +63,7 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 		this.setDescription(SVNUIMessages.CheckoutMethodSelectionPage_Description);
 		
 		this.projectName = this.defaultName = defaultName;
-		this.checkoutType = newProjectSelectionEnabled ? CheckoutMethodSelectionPage.USE_NEW_PROJECT_WIZARD : CheckoutMethodSelectionPage.CHECKOUT_AS_PROJECT;
-
-		this.ignoreExternalsSelected = false;
+		this.checkoutType = newProjectSelectionEnabled ? CheckoutMethodSelectionPage.USE_NEW_PROJECT_WIZARD : CheckoutMethodSelectionPage.CHECKOUT_AS_PROJECT;		
 	}
 	
 	public String getProjectName() {
@@ -87,10 +84,6 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 	
 	public int getRecureDepth() {
 		return this.recureDepthSelector.getDepth();
-	}
-	
-	public boolean isIgnoreExternalsSelected() {
-		return this.ignoreExternalsSelected;
 	}
 	
 	protected Composite createControlImpl(Composite parent) {
@@ -185,18 +178,7 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 		
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.recureDepthSelector = new DepthSelectionComposite(composite, SWT.NONE);
-		this.recureDepthSelector.setLayoutData(data);
-			
-		Button ignoreExternalsCheckbox = new Button (composite, SWT.CHECK);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		ignoreExternalsCheckbox.setLayoutData(data);
-		ignoreExternalsCheckbox.setSelection(false);
-		ignoreExternalsCheckbox.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				CheckoutMethodSelectionPage.this.ignoreExternalsSelected = ((Button)e.widget).getSelection();
-			}
-		});
-		ignoreExternalsCheckbox.setText(SVNUIMessages.CheckoutMethodSelectionPage_Externals);
+		this.recureDepthSelector.setLayoutData(data);			
 		
 //		Setting context help
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.checkoutMethodSelectionContext"); //$NON-NLS-1$
