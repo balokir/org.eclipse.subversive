@@ -54,7 +54,8 @@ public final class SVNTeamPreferences {
 	public static final String BEHAVIOUR_SHOW_SELECTED_RESOURCES_IN_SYNC_PANE_NAME = "resourceSelection.showResourcesInSyncPane"; //$NON-NLS-1$
 	public static final String BEHAVIOUR_ENABLE_AUTO_SHARE_NAME = "share.enableAuto"; //$NON-NLS-1$
 	public static final String BEHAVIOUR_COMPUTE_KEYWORDS_NAME = "keywords.computeValues"; //$NON-NLS-1$
-	public static final String BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_NAME = "sorting.case.insensitive";		 //$NON-NLS-1$
+	public static final String BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_NAME = "sorting.case.insensitive";		 //$NON-NLS-1$	
+	public static final String BEHAVIOUR_IGNORE_EXTERNALS_NAME = "externals.ignore"; //$NON-NLS-1$
 	
 	public static final boolean BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_DEFAULT = true;
 	public static final boolean BEHAVIOUR_COMPUTE_KEYWORDS_DEFAULT = true;
@@ -62,6 +63,7 @@ public final class SVNTeamPreferences {
 	public static final boolean BEHAVIOUR_DO_NOT_SELECT_EXTERNAL_DEFAULT = true;
 	public static final boolean BEHAVIOUR_SHOW_SELECTED_RESOURCES_IN_SYNC_PANE_DEFAULT = false;
 	public static final boolean BEHAVIOUR_COMMIT_SELECT_NEW_RESOURCES_DEFAULT = true;
+	public static final boolean BEHAVIOUR_IGNORE_EXTERNALS_DEFAULT = false;
 	
 	public static final String CONSOLE_AUTOSHOW_TYPE_NAME = "autoshow"; //$NON-NLS-1$
 	public static final String CONSOLE_ENABLED_NAME = "enabled"; //$NON-NLS-1$
@@ -455,6 +457,7 @@ public final class SVNTeamPreferences {
 		store.setDefault(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_ENABLE_AUTO_SHARE_NAME), SVNTeamPreferences.BEHAVIOUR_ENABLE_AUTO_SHARE_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_COMPUTE_KEYWORDS_NAME), SVNTeamPreferences.BEHAVIOUR_COMPUTE_KEYWORDS_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_NAME), SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_DEFAULT);
+		store.setDefault(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_DEFAULT);
 	}
 	
 	public static void setDefaultCoreValues(IPreferenceStore store) {
@@ -510,6 +513,7 @@ public final class SVNTeamPreferences {
 		store.setValue(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_ENABLE_AUTO_SHARE_NAME), SVNTeamPreferences.BEHAVIOUR_ENABLE_AUTO_SHARE_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_COMPUTE_KEYWORDS_NAME), SVNTeamPreferences.BEHAVIOUR_COMPUTE_KEYWORDS_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_NAME), SVNTeamPreferences.BEHAVIOUR_CASE_INSENSITIVE_TABLE_SORTING_DEFAULT);
+		store.setValue(SVNTeamPreferences.fullBehaviourName(SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_DEFAULT);
 	}
 	
 	public static void resetToDefaultSynchronizeValues(IPreferenceStore store) {		

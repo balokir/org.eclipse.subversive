@@ -139,6 +139,7 @@ import org.eclipse.team.svn.ui.operation.ShowHistoryViewOperation;
 import org.eclipse.team.svn.ui.operation.ShowPropertiesOperation;
 import org.eclipse.team.svn.ui.operation.ShowRevisionPropertiesOperation;
 import org.eclipse.team.svn.ui.operation.UILoggedOperation;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFile;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFolder;
 import org.eclipse.team.svn.ui.utility.LockProposeUtility;
@@ -699,7 +700,8 @@ public class HistoryActionManager {
 		if (canWrite) {
 			HashMap<String, String> remote2local = new HashMap<String, String>();
 			remote2local.put(SVNUtility.encodeURL(remote.getUrl()), FileUtility.getWorkingCopyPath(this.view.getResource()));
-			GetRemoteContentsOperation mainOp = new GetRemoteContentsOperation(new IResource[] {this.view.getResource()}, new IRepositoryResource[] {remote}, remote2local);
+			boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
+			GetRemoteContentsOperation mainOp = new GetRemoteContentsOperation(new IResource[] {this.view.getResource()}, new IRepositoryResource[] {remote}, remote2local, ignoreExternals);
 			
 			CompositeOperation op = new CompositeOperation(mainOp.getId());
 			op.add(mainOp);
@@ -749,7 +751,8 @@ public class HistoryActionManager {
 			String path = fileDialog.open();
 			if (path != null) {
 				IRepositoryResource resource = this.traceResourceToRevision((SVNLogEntry)item.getEntity());
-		    	UIMonitorUtility.doTaskScheduledDefault(new ExportOperation(new IRepositoryResource[] {resource}, path, Depth.INFINITY));
+				boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
+		    	UIMonitorUtility.doTaskScheduledDefault(new ExportOperation(new IRepositoryResource[] {resource}, path, Depth.INFINITY, ignoreExternals));
 		    }
 		}
 	}
@@ -782,10 +785,11 @@ public class HistoryActionManager {
 	
 	protected void updateTo(final SVNLogEntry item) {	    
 		IResource []resources = new IResource[] {this.view.getResource()};
+		boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
 	    CompositeOperation op = new CompositeOperation("Operation_HUpdateTo"); //$NON-NLS-1$
 		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
 		op.add(saveOp);
-	    op.add(new UpdateOperation(resources, SVNRevision.fromNumber(item.revision), true));
+	    op.add(new UpdateOperation(resources, SVNRevision.fromNumber(item.revision), true, ignoreExternals));
 		op.add(new RestoreProjectMetaOperation(saveOp));
 	    op.add(new RefreshResourcesOperation(resources));
 		UIMonitorUtility.doTaskScheduledWorkspaceModify(op);
@@ -1413,7 +1417,8 @@ public class HistoryActionManager {
 		fileDialog.setMessage(SVNUIMessages.ExportPanel_ExportFolder_Msg);
 		String path = fileDialog.open();
 		if (path != null) {
-			ExportOperation mainOp = new ExportOperation(provider, path, Depth.INFINITY);
+			boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
+			ExportOperation mainOp = new ExportOperation(provider, path, Depth.INFINITY, ignoreExternals);
 			CompositeOperation op = new CompositeOperation(mainOp.getId());
 			op.add(preOp);
 			op.add(mainOp, new IActionOperation[] {preOp});
@@ -1492,7 +1497,8 @@ public class HistoryActionManager {
 			remote2local.put(SVNUtility.encodeURL(rootUrl + remotePath), FileUtility.getWorkingCopyPath(viewedResource).concat(resourcePath.toString()));
 			resourceToLock = viewedResource.getParent();
 		}
-		GetRemoteContentsOperation mainOp = new GetRemoteContentsOperation(new IResource [] {resourceToLock}, provider, remote2local);
+		boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
+		GetRemoteContentsOperation mainOp = new GetRemoteContentsOperation(new IResource [] {resourceToLock}, provider, remote2local, ignoreExternals);
 		CompositeOperation op = new CompositeOperation(mainOp.getId());
 		op.add(preOp);
 		op.add(mainOp, new IActionOperation[] {preOp});

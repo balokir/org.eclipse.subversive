@@ -96,7 +96,8 @@ public class CheckoutAction extends AbstractRepositoryModifyWorkspaceAction {
 					if (!monitor.isCanceled()) {
 						UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 							public void run() {
-								IActionOperation op = ExtensionsManager.getInstance().getCurrentCheckoutFactory().getCheckoutOperation(UIMonitorUtility.getShell(), toCheckout.toArray(new IRepositoryResource[toCheckout.size()]), null, false, null, Depth.INFINITY, false);
+								boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
+								IActionOperation op = ExtensionsManager.getInstance().getCurrentCheckoutFactory().getCheckoutOperation(UIMonitorUtility.getShell(), toCheckout.toArray(new IRepositoryResource[toCheckout.size()]), null, false, null, Depth.INFINITY, ignoreExternals);
 								if (op != null) {
 									UIMonitorUtility.doTaskScheduledWorkspaceModify(op);
 								}
@@ -110,7 +111,8 @@ public class CheckoutAction extends AbstractRepositoryModifyWorkspaceAction {
 			});
 		}
 		else {
-			IActionOperation op = ExtensionsManager.getInstance().getCurrentCheckoutFactory().getCheckoutOperation(this.getShell(), resources, null, false, null, Depth.INFINITY, false);
+			boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
+			IActionOperation op = ExtensionsManager.getInstance().getCurrentCheckoutFactory().getCheckoutOperation(this.getShell(), resources, null, false, null, Depth.INFINITY, ignoreExternals);
 			if (op != null) {
 				this.runScheduled(op);
 			}

@@ -1249,6 +1249,10 @@ public final class SVNUtility {
 		}
 		return depthArg + "files "; //$NON-NLS-1$
 	}
+	
+	public static String getIgnoreExternalsArg(boolean ignoreExternals) {
+		return ignoreExternals ? " --ignore-externals" : ""; //$NON-NLS-1$ //$NON-NLS-2$
+	}
 
 	/**
 	 * Work with svn externals, e.g. parses

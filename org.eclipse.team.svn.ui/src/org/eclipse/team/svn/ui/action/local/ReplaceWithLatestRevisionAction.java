@@ -37,8 +37,10 @@ import org.eclipse.team.svn.core.resource.ILocalFile;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.action.AbstractNonRecursiveTeamAction;
 import org.eclipse.team.svn.ui.dialog.ReplaceWarningDialog;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 
 /**
  * Team services menu "replace with latest revision" action implementation
@@ -77,7 +79,8 @@ public class ReplaceWithLatestRevisionAction extends AbstractNonRecursiveTeamAct
 			op.add(revertOp);
 			IActionOperation removeOp = new RemoveNonVersionedResourcesOperation(resources, true);
 			op.add(removeOp, new IActionOperation[] {revertOp});
-			op.add(new UpdateOperation(resources, true), new IActionOperation[] {revertOp, removeOp});
+			boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
+			op.add(new UpdateOperation(resources, true, ignoreExternals), new IActionOperation[] {revertOp, removeOp});
 			
 			op.add(new RestoreUnversionedOperation(resources, saveUnversioned));
 			

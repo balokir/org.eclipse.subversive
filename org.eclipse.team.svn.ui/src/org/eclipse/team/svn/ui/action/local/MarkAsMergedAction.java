@@ -18,7 +18,9 @@ import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.local.MarkAsMergedOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.action.AbstractNonRecursiveTeamAction;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 
 /**
  * Mark selected resource as merged action implementation
@@ -32,8 +34,8 @@ public class MarkAsMergedAction extends AbstractNonRecursiveTeamAction {
 
 	public void runImpl(IAction action) {
 		IResource []resources = this.getSelectedResources(IStateFilter.SF_CONFLICTING);
-		
-		MarkAsMergedOperation mainOp = new MarkAsMergedOperation(resources, false, null);
+		boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
+		MarkAsMergedOperation mainOp = new MarkAsMergedOperation(resources, false, null, ignoreExternals);
 		CompositeOperation op = new CompositeOperation(mainOp.getId());
 		op.add(mainOp);
 		op.add(new RefreshResourcesOperation(FileUtility.getParents(resources, false)));

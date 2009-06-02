@@ -15,9 +15,11 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.team.svn.core.operation.remote.ExportOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.SVNUtility;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.action.AbstractRepositoryTeamAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.remote.ExportPanel;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 /**
  * Export Action implementation
  * 
@@ -38,7 +40,8 @@ public class ExportAction extends AbstractRepositoryTeamAction {
 				resources[0] = SVNUtility.copyOf(resources[0]);
 				resources[0].setSelectedRevision(panel.getSelectedRevision());
 			}
-	    	this.runScheduled(new ExportOperation(resources, panel.getLocation(), panel.getDepth()));
+			boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
+	    	this.runScheduled(new ExportOperation(resources, panel.getLocation(), panel.getDepth(), ignoreExternals));
 	    }
 	}
 	

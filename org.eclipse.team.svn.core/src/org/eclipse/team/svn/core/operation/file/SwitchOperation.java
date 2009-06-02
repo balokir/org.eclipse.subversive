@@ -32,10 +32,12 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class SwitchOperation extends AbstractFileConflictDetectionOperation {
 	protected IRepositoryResource destination;
+	protected boolean ignoreExternals;
 	
-	public SwitchOperation(File file, IRepositoryResource destination) {
+	public SwitchOperation(File file, IRepositoryResource destination, boolean ignoreExternals) {
 		super("Operation_SwitchFile", new File[] {file}); //$NON-NLS-1$
 		this.destination = destination;
+		this.ignoreExternals = ignoreExternals;
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
@@ -43,9 +45,10 @@ public class SwitchOperation extends AbstractFileConflictDetectionOperation {
 		
 		IRepositoryLocation location = this.destination.getRepositoryLocation();
 		ISVNConnector proxy = location.acquireSVNProxy();
-		this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn switch \"" + this.destination.getUrl() + "\" \"" + FileUtility.normalizePath(file.getAbsolutePath()) + "\" -r " + this.destination.getSelectedRevision() + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn switch \"" + this.destination.getUrl() + "\" \"" + FileUtility.normalizePath(file.getAbsolutePath()) + "\" -r " + this.destination.getSelectedRevision() + SVNUtility.getIgnoreExternalsArg(this.ignoreExternals) + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		try {
-			proxy.doSwitch(file.getAbsolutePath(), SVNUtility.getEntryRevisionReference(this.destination), Depth.infinityOrFiles(true), ISVNConnector.Options.NONE, new ConflictDetectionProgressMonitor(this, monitor, null));
+			long options = this.ignoreExternals ? ISVNConnector.Options.IGNORE_EXTERNALS : ISVNConnector.Options.NONE; 
+			proxy.doSwitch(file.getAbsolutePath(), SVNUtility.getEntryRevisionReference(this.destination), Depth.infinityOrFiles(true), options, new ConflictDetectionProgressMonitor(this, monitor, null));
 		}
 		finally {
 			location.releaseSVNProxy(proxy);

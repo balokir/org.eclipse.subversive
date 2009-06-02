@@ -63,6 +63,7 @@ import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.operation.ClearUpdateStatusesOperation;
 import org.eclipse.team.svn.ui.operation.NotifyUnresolvedConflictOperation;
 import org.eclipse.team.svn.ui.panel.local.OverrideResourcesPanel;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.synchronize.action.ISyncStateFilter;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.svn.ui.utility.UnacceptableOperationNotificator;
@@ -167,6 +168,7 @@ public class UpdateSubscriberContext extends SubscriberMergeContext {
 			splitted.put(SVNRevision.HEAD, new HashSet<IResource>(Arrays.asList(resources[0])));
 			for (Map.Entry<SVNRevision, Set<IResource>> entry : splitted.entrySet()) {
 				final IResource []toUpdate = entry.getValue().toArray(new IResource[0]);
+				boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
 				UpdateOperation mainOp = new UpdateOperation(new IResourceProvider() {
 					public IResource[] getResources() {
 						return 
@@ -179,7 +181,7 @@ public class UpdateSubscriberContext extends SubscriberMergeContext {
 								}
 							}, IResource.DEPTH_ZERO);
 					}
-				}, entry.getKey(), true);
+				}, entry.getKey(), true, ignoreExternals);
 				op.add(mainOp, new IActionOperation[] {revertOp, revertOp1, removeNonVersionedResourcesOp});
 				op.add(new ClearUpdateStatusesOperation(mainOp));
 			}
@@ -237,7 +239,8 @@ public class UpdateSubscriberContext extends SubscriberMergeContext {
 			Map<SVNRevision, Set<IResource>> splitted = new HashMap<SVNRevision, Set<IResource>>();
 			splitted.put(SVNRevision.HEAD, new HashSet<IResource>(Arrays.asList(resources[0])));
 			for (Map.Entry<SVNRevision, Set<IResource>> entry : splitted.entrySet()) {
-				UpdateOperation mainOp = new UpdateOperation(entry.getValue().toArray(new IResource[0]), entry.getKey(), true);
+				boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
+				UpdateOperation mainOp = new UpdateOperation(entry.getValue().toArray(new IResource[0]), entry.getKey(), true, ignoreExternals);
 				op.add(mainOp);
 				op.add(new ClearUpdateStatusesOperation(mainOp));
 				op.add(new NotifyUnresolvedConflictOperation(mainOp));
@@ -269,7 +272,8 @@ public class UpdateSubscriberContext extends SubscriberMergeContext {
 		if (resources == null || resources.length == 0) {
 			return;
 		}
-		MarkAsMergedOperation mainOp = new MarkAsMergedOperation(resources, false, null);
+		boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
+		MarkAsMergedOperation mainOp = new MarkAsMergedOperation(resources, false, null, ignoreExternals);
 		CompositeOperation op = new CompositeOperation(mainOp.getId());
 		op.add(mainOp);
 		op.add(new ClearUpdateStatusesOperation(resources));

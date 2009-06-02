@@ -50,8 +50,7 @@ public class MultipleCheckoutMethodSelectionPage extends AbstractVerifiedWizardP
 	protected static final int CHECKOUT_AS_PROJECTS = 2;
 	
 	protected int checkoutType;
-	protected DepthSelectionComposite recureDepthSelector;
-	protected boolean ignoreExternals;
+	protected DepthSelectionComposite recureDepthSelector;	
 	protected IRepositoryResource[] selectedResources;
 
 	public MultipleCheckoutMethodSelectionPage(IRepositoryResource[] selectedResources) {
@@ -60,7 +59,6 @@ public class MultipleCheckoutMethodSelectionPage extends AbstractVerifiedWizardP
 			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif")); //$NON-NLS-1$
 		this.selectedResources = selectedResources;
 		this.checkoutType = MultipleCheckoutMethodSelectionPage.FIND_PROJECTS;
-		this.ignoreExternals = false;
 		
 		this.setDescription(SVNUIMessages.MultipleCheckoutMethodSelectionPage_Description);
 	}
@@ -75,10 +73,6 @@ public class MultipleCheckoutMethodSelectionPage extends AbstractVerifiedWizardP
 	
 	public int getRecureDepth() {
 		return this.recureDepthSelector.getDepth();
-	}
-	
-	public boolean isIgnoreExternalsSelected() {
-		return this.ignoreExternals;
 	}
 	
 	public Composite createControlImpl(Composite parent) {
@@ -178,17 +172,6 @@ public class MultipleCheckoutMethodSelectionPage extends AbstractVerifiedWizardP
 		this.recureDepthSelector = new DepthSelectionComposite(composite, SWT.NONE);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.recureDepthSelector.setLayoutData(data);
-		
-		Button ingnoreExternalsCheckbox = new Button (composite, SWT.CHECK);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		ingnoreExternalsCheckbox.setLayoutData(data);
-		ingnoreExternalsCheckbox.setSelection(false);
-		ingnoreExternalsCheckbox.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				MultipleCheckoutMethodSelectionPage.this.ignoreExternals = ((Button)e.widget).getSelection();
-			}
-		});
-		ingnoreExternalsCheckbox.setText(SVNUIMessages.CheckoutMethodSelectionPage_Externals);
 		
 //		Setting context help
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.multiSelectionContext"); //$NON-NLS-1$

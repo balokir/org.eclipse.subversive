@@ -38,11 +38,13 @@ public class ReplaceWithRemoteOperation extends AbstractActionOperation {
 
 	protected IResource toReplace;
 	protected IRepositoryResource remoteRoot;
+	protected boolean ignoreExternals;
 	
-	public ReplaceWithRemoteOperation(IResource toReplace, IRepositoryResource remoteResource) {
+	public ReplaceWithRemoteOperation(IResource toReplace, IRepositoryResource remoteResource, boolean ignoreExternals) {
 		super("Operation_ReplaceWithRemote"); //$NON-NLS-1$
 		this.toReplace = toReplace;
 		this.remoteRoot = remoteResource;
+		this.ignoreExternals = ignoreExternals;
 	}
 	
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
@@ -56,7 +58,11 @@ public class ReplaceWithRemoteOperation extends AbstractActionOperation {
 		final String path = tempPath + this.remoteRoot.getName();
 		final SVNEntryRevisionReference entryRef = SVNUtility.getEntryRevisionReference(this.remoteRoot);		
 		try {
-			proxy.doExport(entryRef, path, null, Depth.INFINITY, ISVNConnector.Options.FORCE, new SVNProgressMonitor(this, monitor, null));
+			long options = ISVNConnector.Options.FORCE;
+			if (this.ignoreExternals) {
+				options |= ISVNConnector.Options.IGNORE_EXTERNALS;
+			}
+			proxy.doExport(entryRef, path, null, Depth.INFINITY, options, new SVNProgressMonitor(this, monitor, null));
 			//perform replacement
 			if (this.toReplace instanceof IFile) {
 				FileUtility.copyFile(new File(toReplacePath), new File(path), monitor);
