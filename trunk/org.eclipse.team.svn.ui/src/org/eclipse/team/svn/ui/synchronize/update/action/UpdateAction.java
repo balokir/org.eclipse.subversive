@@ -112,7 +112,7 @@ public class UpdateAction extends AbstractSynchronizeModelAction {
 		
 		for (Map.Entry<SVNRevision, Set<IResource>> entry : splitted.entrySet()) {
 			boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
-			UpdateOperation mainOp = new UpdateOperation(entry.getValue().toArray(new IResource[0]), entry.getKey(), true, ignoreExternals);
+			UpdateOperation mainOp = new UpdateOperation(entry.getValue().toArray(new IResource[0]), entry.getKey(), ignoreExternals);
 			op.add(mainOp);
 			op.add(new ClearUpdateStatusesOperation(mainOp));
 			op.add(new NotifyUnresolvedConflictOperation(mainOp));

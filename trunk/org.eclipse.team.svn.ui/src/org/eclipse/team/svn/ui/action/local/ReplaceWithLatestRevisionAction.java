@@ -80,7 +80,7 @@ public class ReplaceWithLatestRevisionAction extends AbstractNonRecursiveTeamAct
 			IActionOperation removeOp = new RemoveNonVersionedResourcesOperation(resources, true);
 			op.add(removeOp, new IActionOperation[] {revertOp});
 			boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
-			op.add(new UpdateOperation(resources, true, ignoreExternals), new IActionOperation[] {revertOp, removeOp});
+			op.add(new UpdateOperation(resources, ignoreExternals), new IActionOperation[] {revertOp, removeOp});
 			
 			op.add(new RestoreUnversionedOperation(resources, saveUnversioned));
 			

@@ -789,7 +789,7 @@ public class HistoryActionManager {
 	    CompositeOperation op = new CompositeOperation("Operation_HUpdateTo"); //$NON-NLS-1$
 		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
 		op.add(saveOp);
-	    op.add(new UpdateOperation(resources, SVNRevision.fromNumber(item.revision), true, ignoreExternals));
+	    op.add(new UpdateOperation(resources, SVNRevision.fromNumber(item.revision), ignoreExternals));
 		op.add(new RestoreProjectMetaOperation(saveOp));
 	    op.add(new RefreshResourcesOperation(resources));
 		UIMonitorUtility.doTaskScheduledWorkspaceModify(op);

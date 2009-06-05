@@ -143,6 +143,10 @@
 		<description>This dialog provides a probability to switch a project to a new URL means associating it with another repository location. It's used when the user, for example, want to continue his work with a tag or a branch after creating them or associate the project back with the trunk.</description>
 		<topic label="Switching project to a new URL" href="teamSupport/SVNaction/switch.html"/>
 	</context>
+	<context id="updateDialogContext">
+		<description>This dialog provides a probability to update to a specific revision.</description>
+		<topic label="Update" href="teamSupport/SVNaction/update.html"/>
+	</context>	
 	<context id="revertDialogContext">
 		<description>This dialog provides a probability to revert changes for the chosen resources. Reverting works like if it deletes the file and then updates it to a base revision, but really it doesn't have to do those operation so it doesn't need any network.</description>
 		<topic label="Reverting changes" href="teamSupport/SVNaction/revert.html"/>

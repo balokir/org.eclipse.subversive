@@ -403,6 +403,16 @@
          </action>
          <action
                helpContextId="org.eclipse.team.svn.ui.team_update_action_context"
+               label="%UpdateToRevisionAction.label"
+               tooltip="%UpdateToRevisionAction.tooltip"
+               class="org.eclipse.team.svn.ui.action.local.UpdateToRevisionAction"
+               menubarPath="team.main/group1"
+               id="org.eclipse.team.svn.ui.action.local.UpdateToRevisionAction"
+               definitionId="org.eclipse.team.svn.ui.command.UpdateToRevisionCommand"
+               icon="icons/common/actions/update.gif">
+         </action>         
+         <action
+               helpContextId="org.eclipse.team.svn.ui.team_update_action_context"
                label="%UpdateAction.label"
                tooltip="%UpdateAction.tooltip"
                class="org.eclipse.team.svn.ui.action.local.UpdateAction"
@@ -2022,6 +2032,16 @@
            tooltip="%CreatePatchAction.tooltip"
            label="%CreatePatchAction.label"/>
      <action
+           class="org.eclipse.team.svn.ui.action.local.UpdateToRevisionAction"
+           definitionId="org.eclipse.team.svn.ui.command.UpdateToRevisionCommand"
+           id="org.eclipse.team.svn.ui.action.local.UpdateToRevisionAction"
+           menubarPath="svn.main/group0"
+           toolbarPath="Normal/SVN"
+           helpContextId="org.eclipse.team.svn.ui.team_update_action_context"
+           tooltip="%UpdateToRevisionAction.tooltip"
+           icon="icons/common/actions/update.gif"
+           label="%UpdateToRevisionAction.label"/>           
+     <action
            class="org.eclipse.team.svn.ui.action.local.UpdateAction"
            definitionId="org.eclipse.team.svn.ui.command.UpdateCommand"
            id="org.eclipse.team.svn.ui.action.local.UpdateAction"
@@ -2256,6 +2276,10 @@
           categoryId="org.eclipse.team.svn.ui.command.category"
           id="org.eclipse.team.svn.ui.command.UpdateCommand"
           name="%UpdateCommand.label"/>
+    <command
+          categoryId="org.eclipse.team.svn.ui.command.category"
+          id="org.eclipse.team.svn.ui.command.UpdateToRevisionCommand"
+          name="%UpdateToRevision.label"/>          
  </extension>
  <extension
        point="org.eclipse.ui.bindings">
@@ -2271,6 +2295,10 @@
           commandId="org.eclipse.team.svn.ui.command.UpdateCommand"
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
           sequence="CTRL+ALT+U"/>
+    <key
+          commandId="org.eclipse.team.svn.ui.command.UpdateToRevisionCommand"
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          sequence="CTRL+ALT+D"/>          
     <key
           commandId="org.eclipse.team.svn.ui.command.CreatePatchCommand"
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
