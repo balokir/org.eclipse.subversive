@@ -22,12 +22,16 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.DepthSelectionComposite;
+import org.eclipse.team.svn.ui.composite.RevisionComposite;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifierProxy;
 import org.eclipse.team.svn.ui.verifier.CompositeVerifier;
@@ -50,12 +54,14 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 	protected String defaultName;
 	protected Button selectLocationButton;
 	protected Text nameField;
+	protected RevisionComposite revisionComposite;
 	protected DepthSelectionComposite recureDepthSelector;
 
 	protected String projectName;
 	protected int checkoutType;
-
-	public CheckoutMethodSelectionPage(String defaultName, boolean newProjectSelectionEnabled) {
+	protected IRepositoryResource resource;
+	
+	public CheckoutMethodSelectionPage(String defaultName, boolean newProjectSelectionEnabled, IRepositoryResource resource) {
 		super(CheckoutMethodSelectionPage.class.getName(), 
 			SVNUIMessages.CheckoutMethodSelectionPage_Title, 
 			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif")); //$NON-NLS-1$
@@ -63,7 +69,8 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 		this.setDescription(SVNUIMessages.CheckoutMethodSelectionPage_Description);
 		
 		this.projectName = this.defaultName = defaultName;
-		this.checkoutType = newProjectSelectionEnabled ? CheckoutMethodSelectionPage.USE_NEW_PROJECT_WIZARD : CheckoutMethodSelectionPage.CHECKOUT_AS_PROJECT;		
+		this.checkoutType = newProjectSelectionEnabled ? CheckoutMethodSelectionPage.USE_NEW_PROJECT_WIZARD : CheckoutMethodSelectionPage.CHECKOUT_AS_PROJECT;
+		this.resource = resource;
 	}
 	
 	public String getProjectName() {
@@ -84,6 +91,10 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 	
 	public int getRecureDepth() {
 		return this.recureDepthSelector.getDepth();
+	}
+	
+	public SVNRevision getSelectedRevision() {
+		return this.revisionComposite.getSelectedRevision();
 	}
 	
 	protected Composite createControlImpl(Composite parent) {
@@ -176,9 +187,20 @@ public class CheckoutMethodSelectionPage extends AbstractVerifiedWizardPage {
 			}
 		});
 		
+		Label separator = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 2;
+		data.verticalIndent = 5;
+		separator.setLayoutData(data);		
+		
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.recureDepthSelector = new DepthSelectionComposite(composite, SWT.NONE);
 		this.recureDepthSelector.setLayoutData(data);			
+
+		this.revisionComposite = new RevisionComposite(composite, this, false, new String[]{SVNUIMessages.RevisionComposite_Revision, SVNUIMessages.RevisionComposite_HeadRevision}, SVNRevision.HEAD, false);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		this.revisionComposite.setLayoutData(data);
+		this.revisionComposite.setSelectedResource(this.resource);
 		
 //		Setting context help
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.checkoutMethodSelectionContext"); //$NON-NLS-1$

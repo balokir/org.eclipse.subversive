@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.BaseMessages;
+import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -57,7 +58,11 @@ public class LocateProjectsOperation extends AbstractRepositoryOperation impleme
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		IRepositoryResource []baseFolders = SVNUtility.shrinkChildNodes(this.operableData());
 		for (int i = 0; i < baseFolders.length; i++) {
-			baseFolders[i] = baseFolders[i].getRepositoryLocation().asRepositoryContainer(baseFolders[i].getUrl(), false);
+			SVNRevision selectedRevision = baseFolders[i].getSelectedRevision();
+			SVNRevision pegRevision = baseFolders[i].getPegRevision();
+			baseFolders[i] = baseFolders[i].getRepositoryLocation().asRepositoryContainer(baseFolders[i].getUrl(), false);			
+			baseFolders[i].setSelectedRevision(selectedRevision);
+			baseFolders[i].setPegRevision(pegRevision);
 		}
 		ArrayList<IRepositoryResource> found = new ArrayList<IRepositoryResource>();
 		this.findProjects(monitor, found, baseFolders, 0);

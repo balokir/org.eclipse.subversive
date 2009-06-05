@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -40,6 +39,7 @@ public class UpdateOperation extends AbstractFileConflictDetectionOperation impl
 	protected boolean updateUnresolved;
 	protected SVNRevision selectedRevision;
 	protected boolean ignoreExternals;
+	protected int depth = ISVNConnector.Depth.INFINITY;
 	
 	public UpdateOperation(File []files, SVNRevision selectedRevision, boolean updateUnresolved, boolean ignoreExternals) {
 		super("Operation_UpdateFile", files); //$NON-NLS-1$
@@ -55,6 +55,10 @@ public class UpdateOperation extends AbstractFileConflictDetectionOperation impl
 		this.ignoreExternals = ignoreExternals;
 	}
 
+	public void setDepth(int depth) {
+		this.depth = depth;
+	}
+	
 	public File []getFiles() {
 	    return this.getProcessed();
 	}
@@ -80,7 +84,7 @@ public class UpdateOperation extends AbstractFileConflictDetectionOperation impl
 					for (int i = 0; i < paths.length && !monitor.isCanceled(); i++) {
 						UpdateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " \"" + paths[i] + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 					}
-					UpdateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " -r " + UpdateOperation.this.selectedRevision + SVNUtility.getIgnoreExternalsArg(UpdateOperation.this.ignoreExternals) + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+					UpdateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " -r " + UpdateOperation.this.selectedRevision + SVNUtility.getDepthArg(UpdateOperation.this.depth) + SVNUtility.getIgnoreExternalsArg(UpdateOperation.this.ignoreExternals) + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			});
 			
@@ -89,7 +93,7 @@ public class UpdateOperation extends AbstractFileConflictDetectionOperation impl
 			this.protectStep(new IUnprotectedOperation() {
 				public void run(IProgressMonitor monitor) throws Exception {
 					long options = UpdateOperation.this.ignoreExternals ? ISVNConnector.Options.IGNORE_EXTERNALS : ISVNConnector.Options.NONE;
-					proxy.update(paths, UpdateOperation.this.selectedRevision, Depth.infinityOrFiles(true), options, new ConflictDetectionProgressMonitor(UpdateOperation.this, monitor, null));
+					proxy.update(paths, UpdateOperation.this.selectedRevision, UpdateOperation.this.depth, options, new ConflictDetectionProgressMonitor(UpdateOperation.this, monitor, null));
 				}
 			}, monitor, wc2Resources.size());
 			proxy.setTouchUnresolved(false);
