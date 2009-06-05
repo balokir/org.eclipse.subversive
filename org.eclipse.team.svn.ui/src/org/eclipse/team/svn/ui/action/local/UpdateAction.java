@@ -16,6 +16,8 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
@@ -67,7 +69,7 @@ public class UpdateAction extends AbstractRecursiveTeamAction {
 			}
 		}
 		
-		this.runScheduled(UpdateAction.getUpdateOperation(resources));
+		this.runScheduled(UpdateAction.getUpdateOperation(resources, SVNRevision.HEAD));
 	}
 	
 	public boolean isEnabled() {
@@ -79,10 +81,15 @@ public class UpdateAction extends AbstractRecursiveTeamAction {
 		panel.setShowLocalNames(true);
 		return new DefaultDialog(shell, panel).open() == 0;
 	}
-
-	public static CompositeOperation getUpdateOperation(IResource []updateSet) {
+	
+	public static CompositeOperation getUpdateOperation(IResource []updateSet, SVNRevision selectedRevision) {
+		return UpdateAction.getUpdateOperation(updateSet, selectedRevision, ISVNConnector.Depth.INFINITY);
+	}
+	
+	public static CompositeOperation getUpdateOperation(IResource []updateSet, SVNRevision selectedRevision, int depth) {
 		boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
-		UpdateOperation mainOp = new UpdateOperation(updateSet, true, ignoreExternals);
+		UpdateOperation mainOp = new UpdateOperation(updateSet, selectedRevision, ignoreExternals);
+		mainOp.setDepth(depth);
 		
 		CompositeOperation op = new CompositeOperation(mainOp.getId());
 		

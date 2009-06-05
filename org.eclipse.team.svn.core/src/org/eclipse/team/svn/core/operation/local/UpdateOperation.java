@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -42,29 +41,31 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class UpdateOperation extends AbstractConflictDetectionOperation implements IResourceProvider {
 	protected SVNRevision selectedRevision;
-	protected boolean doRecursiveUpdate;
+	protected int depth = ISVNConnector.Depth.INFINITY;
 	protected boolean ignoreExternals;
 	
-	public UpdateOperation(IResource []resources, boolean doRecursiveUpdate, boolean ignoreExternals) {
-	    this(resources, null, doRecursiveUpdate, ignoreExternals);
+	public UpdateOperation(IResource []resources, boolean ignoreExternals) {
+	    this(resources, null, ignoreExternals);
 	}
 
-	public UpdateOperation(IResourceProvider provider, boolean doRecursiveUpdate, boolean ignoreExternals) {
-	    this(provider, null, doRecursiveUpdate, ignoreExternals);
+	public UpdateOperation(IResourceProvider provider, boolean ignoreExternals) {
+	    this(provider, null, ignoreExternals);
 	}
 
-	public UpdateOperation(IResourceProvider provider, SVNRevision selectedRevision, boolean doRecursiveUpdate, boolean ignoreExternals) {
-		super("Operation_Update", provider);		 //$NON-NLS-1$
-		this.doRecursiveUpdate = doRecursiveUpdate;
+	public UpdateOperation(IResourceProvider provider, SVNRevision selectedRevision, boolean ignoreExternals) {
+		super("Operation_Update", provider);		 //$NON-NLS-1$		
 		this.selectedRevision = selectedRevision == null ? SVNRevision.HEAD : selectedRevision;
 		this.ignoreExternals = ignoreExternals;
 	}
 	
-	public UpdateOperation(IResource[] resources, SVNRevision selectedRevision, boolean doRecursiveUpdate, boolean ignoreExternals) {
+	public UpdateOperation(IResource[] resources, SVNRevision selectedRevision, boolean ignoreExternals) {
 		super("Operation_Update", resources); //$NON-NLS-1$
-		this.selectedRevision = selectedRevision == null ? SVNRevision.HEAD : selectedRevision;
-		this.doRecursiveUpdate = doRecursiveUpdate;
+		this.selectedRevision = selectedRevision == null ? SVNRevision.HEAD : selectedRevision;		
 		this.ignoreExternals = ignoreExternals;
+	}
+	
+	public void setDepth(int depth) {
+		this.depth = depth;
 	}
 	
 	public int getOperationWeight() {
@@ -87,7 +88,7 @@ public class UpdateOperation extends AbstractConflictDetectionOperation implemen
 			Map.Entry entry = (Map.Entry)it.next();
 			final IRepositoryLocation location = storage.getRepositoryLocation((IProject)entry.getKey());
 			IResource []wcResources = (IResource [])((List)entry.getValue()).toArray(new IResource[0]);
-			if (this.doRecursiveUpdate) {
+			if (this.depth == ISVNConnector.Depth.INFINITY || this.depth == ISVNConnector.Depth.UNKNOWN) {
 			    wcResources = FileUtility.shrinkChildNodes(wcResources);
 			}
 			else {
@@ -101,7 +102,7 @@ public class UpdateOperation extends AbstractConflictDetectionOperation implemen
 					for (int i = 0; i < paths.length && !monitor.isCanceled(); i++) {
 						UpdateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " \"" + paths[i] + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 					}
-					UpdateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " -r " + UpdateOperation.this.selectedRevision + SVNUtility.getIgnoreExternalsArg(UpdateOperation.this.ignoreExternals) + (UpdateOperation.this.doRecursiveUpdate ? "" : " -N") + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					UpdateOperation.this.writeToConsole(IConsoleStream.LEVEL_CMD, " -r " + UpdateOperation.this.selectedRevision + SVNUtility.getIgnoreExternalsArg(UpdateOperation.this.ignoreExternals) + SVNUtility.getDepthArg(UpdateOperation.this.depth) + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				}
 			});
 			
@@ -112,7 +113,7 @@ public class UpdateOperation extends AbstractConflictDetectionOperation implemen
 					proxy.update(
 					    paths, 
 					    UpdateOperation.this.selectedRevision, 
-						Depth.unknownOrFiles(UpdateOperation.this.doRecursiveUpdate),
+					    UpdateOperation.this.depth,
 						options, 
 						new ConflictDetectionProgressMonitor(UpdateOperation.this, monitor, null));
 				}

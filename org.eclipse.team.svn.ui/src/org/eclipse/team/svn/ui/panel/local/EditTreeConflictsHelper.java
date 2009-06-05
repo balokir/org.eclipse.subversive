@@ -225,7 +225,7 @@ public class EditTreeConflictsHelper {
 			
 			SVNRevision rev = this.treeConflict.operation == Operation.UPDATE ? SVNRevision.HEAD : SVNRevision.fromNumber(this.treeConflict.srcRightVersion.pegRevision);
 			boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
-			UpdateOperation updateOp = new UpdateOperation(new IResource[]{resource}, rev, isRecursive, ignoreExternals);
+			UpdateOperation updateOp = new UpdateOperation(new IResource[]{resource}, rev, ignoreExternals);
 			cmpOp.add(updateOp, new IActionOperation[]{resolveOp});	
 		} else if (this.treeConflict.operation == Operation.MERGE) {
 			cmpOp = new CompositeOperation(opName);			
@@ -268,7 +268,7 @@ public class EditTreeConflictsHelper {
 		} else {
 			SVNRevision rev = this.treeConflict.operation == Operation.UPDATE ? SVNRevision.HEAD : SVNRevision.fromNumber(this.treeConflict.srcRightVersion.pegRevision);
 			boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
-			updateOp = new UpdateOperation(new IResource[]{this.local.getResource()}, rev, isRecursive, ignoreExternals);				
+			updateOp = new UpdateOperation(new IResource[]{this.local.getResource()}, rev, ignoreExternals);				
 		}																		
 		cmpOp.add(updateOp, deleteOp == null ? null : new IActionOperation[]{deleteOp});
 		

@@ -1678,6 +1678,10 @@ public class SVNUIMessages extends BaseMessages {
     public static String EditTreeConflictsPanel_Update_Operation;
     public static String EditTreeConflictsPanel_MarkAsMerged_Button;
     
+    public static String UpdateToRevisionPanel_Title;
+    public static String UpdateToRevisionPanel_Description;
+    public static String UpdateToRevisionPanel_Message;
+    
 	static {
 		//load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, SVNUIMessages.class);

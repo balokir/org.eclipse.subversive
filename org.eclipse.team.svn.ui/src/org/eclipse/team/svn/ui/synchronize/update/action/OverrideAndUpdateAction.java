@@ -134,7 +134,7 @@ public class OverrideAndUpdateAction extends AbstractSynchronizeModelAction {
 							}
 						}, IResource.DEPTH_ZERO);
 				}
-			}, entry.getKey(), true, ignoreExternals);
+			}, entry.getKey(), ignoreExternals);
 			op.add(mainOp, new IActionOperation[] {revertOp, revertOp1, removeNonVersionedResourcesOp});
 			op.add(new ClearUpdateStatusesOperation(mainOp));
 		}
