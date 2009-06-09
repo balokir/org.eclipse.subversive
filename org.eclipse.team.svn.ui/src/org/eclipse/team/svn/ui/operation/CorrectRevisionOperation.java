@@ -33,6 +33,8 @@ public class CorrectRevisionOperation extends AbstractActionOperation {
 	protected long []knownRevisions;
 	protected GetLogMessagesOperation []msgsOps;
 	protected IResource []resources;
+	protected boolean hasWarning;
+	protected boolean isCancel;
 	
 	public CorrectRevisionOperation(GetLogMessagesOperation msgsOp, IRepositoryResource repositoryResource, long knownRevision, IResource resource) {
 		this(msgsOp == null ? null : new GetLogMessagesOperation[] {msgsOp}, new IRepositoryResource[] {repositoryResource}, new long[] {knownRevision}, new IResource[] {resource});
@@ -53,8 +55,7 @@ public class CorrectRevisionOperation extends AbstractActionOperation {
 		return super.getOperationWeight();
 	}
 	
-	protected void runImpl(final IProgressMonitor monitor) throws Exception {
-		boolean hasWarning = false;
+	protected void runImpl(final IProgressMonitor monitor) throws Exception {		
 		for (int i = 0; i < this.repositoryResources.length; i++) {
 			if (!this.repositoryResources[i].exists() && this.resources != null && this.resources[i] != null && this.resources[i].getType() != IResource.PROJECT) {
 				// calculate peg revision for the repository resource
@@ -74,7 +75,7 @@ public class CorrectRevisionOperation extends AbstractActionOperation {
 				}
 			}
 			if (!this.repositoryResources[i].exists() && this.knownRevisions[i] != SVNRevision.INVALID_REVISION_NUMBER) {
-				hasWarning = true;
+				this.hasWarning = true;
 				SVNRevision rev = SVNRevision.fromNumber(this.knownRevisions[i]);
 				this.repositoryResources[i].setSelectedRevision(rev);
 				this.repositoryResources[i].setPegRevision(rev);
@@ -83,7 +84,7 @@ public class CorrectRevisionOperation extends AbstractActionOperation {
 				}
 			}
 		}
-		if (hasWarning) {
+		if (this.hasWarning) {
 			UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 				public void run() {
 					boolean one = CorrectRevisionOperation.this.repositoryResources.length == 1;
@@ -97,10 +98,19 @@ public class CorrectRevisionOperation extends AbstractActionOperation {
 							0);
 					if (dlg.open() != 0) {
 						monitor.setCanceled(true);
+						CorrectRevisionOperation.this.isCancel = true;
 					}
 				}
 			});
 		}
+	}
+	
+	public boolean hasWarning() {
+		return this.hasWarning;
+	}
+	
+	public boolean isCancel() {
+		return this.isCancel;
 	}
 	
 }

@@ -171,50 +171,54 @@ public class RevisionComposite extends Composite {
 		}
 		else {
 			SVNRevision rev = this.selectedResource.getSelectedRevision();
-			if (rev.getKind() == Kind.NUMBER) {
-				this.selectedRevision = rev;
-				this.lastSelectedRevision = ((SVNRevision.Number)this.selectedRevision).getNumber();
-				
-				this.revisionField.setText(this.selectedRevision.toString());
-				this.headRevisionRadioButton.setSelection(false);
-				if (this.checkStyled) {
-					this.startFromCopyRadioButton.setSelection(false);
-				}
-				else {
-					this.dateTimeRadioButton.setSelection(false);
-				}
-				this.changeRevisionRadioButton.setSelection(true);
-			}
-			else if (rev.getKind() == Kind.DATE && !this.checkStyled) {
-				this.selectedRevision = rev;
-				Calendar calendar = Calendar.getInstance();
-				calendar.setTimeInMillis(((SVNRevision.Date)rev).getDate());
-				this.dateField.setYear(calendar.get(Calendar.YEAR));
-				this.dateField.setMonth(calendar.get(Calendar.MONTH));
-				this.dateField.setDay(calendar.get(Calendar.DAY_OF_MONTH));
-				this.timeField.setHours(calendar.get(Calendar.HOUR_OF_DAY));
-				this.timeField.setMinutes(calendar.get(Calendar.MINUTE));
-				this.timeField.setSeconds(calendar.get(Calendar.SECOND));
-				this.headRevisionRadioButton.setSelection(false);
-				this.dateTimeRadioButton.setSelection(true);
-				this.changeRevisionRadioButton.setSelection(false);
+			this.setRevisionValue(rev);
+		}
+	}
+	
+	public void setRevisionValue(SVNRevision rev) {
+		if (rev.getKind() == Kind.NUMBER) {
+			this.selectedRevision = rev;
+			this.lastSelectedRevision = ((SVNRevision.Number)this.selectedRevision).getNumber();
+			
+			this.revisionField.setText(this.selectedRevision.toString());
+			this.headRevisionRadioButton.setSelection(false);
+			if (this.checkStyled) {
+				this.startFromCopyRadioButton.setSelection(false);
 			}
 			else {
-				this.selectedRevision = this.defaultRevision;
-				this.lastSelectedRevision = -1;
-				
-				this.revisionField.setText(""); //$NON-NLS-1$
-				this.headRevisionRadioButton.setSelection(!this.checkStyled);
-				if (this.checkStyled) {
-					this.startFromCopyRadioButton.setSelection(true);
-				}
-				else {
-					this.dateTimeRadioButton.setSelection(false);
-				}
-				this.changeRevisionRadioButton.setSelection(false);
+				this.dateTimeRadioButton.setSelection(false);
 			}
-			this.setEnabled(true);
+			this.changeRevisionRadioButton.setSelection(true);
 		}
+		else if (rev.getKind() == Kind.DATE && !this.checkStyled) {
+			this.selectedRevision = rev;
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTimeInMillis(((SVNRevision.Date)rev).getDate());
+			this.dateField.setYear(calendar.get(Calendar.YEAR));
+			this.dateField.setMonth(calendar.get(Calendar.MONTH));
+			this.dateField.setDay(calendar.get(Calendar.DAY_OF_MONTH));
+			this.timeField.setHours(calendar.get(Calendar.HOUR_OF_DAY));
+			this.timeField.setMinutes(calendar.get(Calendar.MINUTE));
+			this.timeField.setSeconds(calendar.get(Calendar.SECOND));
+			this.headRevisionRadioButton.setSelection(false);
+			this.dateTimeRadioButton.setSelection(true);
+			this.changeRevisionRadioButton.setSelection(false);
+		}
+		else {
+			this.selectedRevision = this.defaultRevision;
+			this.lastSelectedRevision = -1;
+			
+			this.revisionField.setText(""); //$NON-NLS-1$
+			this.headRevisionRadioButton.setSelection(!this.checkStyled);
+			if (this.checkStyled) {
+				this.startFromCopyRadioButton.setSelection(true);
+			}
+			else {
+				this.dateTimeRadioButton.setSelection(false);
+			}
+			this.changeRevisionRadioButton.setSelection(false);
+		}
+		this.setEnabled(true);
 	}
 	
 	public long getCurrentRevision() {

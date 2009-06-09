@@ -1682,6 +1682,12 @@ public class SVNUIMessages extends BaseMessages {
     public static String UpdateToRevisionPanel_Description;
     public static String UpdateToRevisionPanel_Message;
     
+    public static String ShowAnnotationPanel_Title;
+    public static String ShowAnnotationPanel_Description;
+    public static String ShowAnnotationPanel_DefaultMessage;
+    public static String ShowAnnotationPanel_FromRevision;
+    public static String ShowAnnotationPanel_ToRevision;
+    
 	static {
 		//load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, SVNUIMessages.class);

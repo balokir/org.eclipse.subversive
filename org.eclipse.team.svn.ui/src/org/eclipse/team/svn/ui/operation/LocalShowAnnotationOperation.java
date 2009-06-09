@@ -22,6 +22,8 @@ import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.annotate.BuiltInAnnotate;
+import org.eclipse.team.svn.ui.dialog.DefaultDialog;
+import org.eclipse.team.svn.ui.panel.common.ShowAnnotationPanel;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.IWorkbenchPage;
 
@@ -31,41 +33,45 @@ import org.eclipse.ui.IWorkbenchPage;
  * @author Alexander Gurov
  */
 public class LocalShowAnnotationOperation extends AbstractWorkingCopyOperation {
-	protected SVNRevision revision;
 	
 	public LocalShowAnnotationOperation(IResource resource) {
-		this(resource, null);
-	}
-
-	public LocalShowAnnotationOperation(IResource resource, SVNRevision revision) {
 		super("Operation_ShowAnnotation", new IResource[] {resource}); //$NON-NLS-1$
-		this.revision = revision;
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		final IResource resource = this.operableData()[0];
     	ILocalResource local = SVNRemoteStorage.instance().asLocalResourceAccessible(resource);
     	boolean notExists = IStateFilter.SF_NOTEXISTS.accept(local);
-    	final SVNRevision revision = this.revision != null ? this.revision : (notExists || local.getRevision() == SVNRevision.INVALID_REVISION_NUMBER ? SVNRevision.HEAD : SVNRevision.fromNumber(local.getRevision()));
-    	
+    	final SVNRevision revision = notExists || local.getRevision() == SVNRevision.INVALID_REVISION_NUMBER ? SVNRevision.HEAD : SVNRevision.fromNumber(local.getRevision());    	    	
     	final IRepositoryResource remote = SVNRemoteStorage.instance().asRepositoryResource(resource);
 	    remote.setSelectedRevision(revision);
+	    
 		final CorrectRevisionOperation correctOp = new CorrectRevisionOperation(null, remote, local.getRevision(), resource);
-		
+				
 		this.protectStep(new IUnprotectedOperation() {
 			public void run(IProgressMonitor monitor) throws Exception {
 				correctOp.run(monitor);
 			}
-		}, monitor, 1);
-		
+		}, monitor, 1);				
+		if (correctOp.isCancel()) {
+			return;
+		}						
+		if (!correctOp.hasWarning()) {
+			remote.setSelectedRevision(SVNRevision.HEAD);
+		}
+								
 		UIMonitorUtility.getDisplay().syncExec(new Runnable() {
-			public void run() {
-				IWorkbenchPage page = UIMonitorUtility.getActivePage();
-				if (page != null) {
-				    new BuiltInAnnotate().open(page, remote, (IFile)resource);
-				}
+			public void run() {		    				
+				ShowAnnotationPanel panel = new ShowAnnotationPanel(remote);
+				DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getShell(), panel);
+				if (dialog.open() == 0) {
+					IWorkbenchPage page = UIMonitorUtility.getActivePage();
+					if (page != null) {
+					    new BuiltInAnnotate().open(page, remote, (IFile)resource, panel.getRevisions());
+					}									
+				} 				
 			}
-		});
-	}
+		});	
+	}  					
 	
 }

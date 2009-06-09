@@ -28,6 +28,7 @@ import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNAnnotationData;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.connector.SVNRevisionRange;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -66,8 +67,8 @@ public class BuiltInAnnotate {
 	protected AbstractDecoratedTextEditor textEditor;
 	protected SVNHistoryPage historyPage;
 	
-	public void open(IWorkbenchPage page, IRepositoryResource remote, IFile resource) {
-		GetResourceAnnotationOperation annotateOp = new GetResourceAnnotationOperation(remote);
+	public void open(IWorkbenchPage page, IRepositoryResource remote, IFile resource, SVNRevisionRange revisions) {
+		GetResourceAnnotationOperation annotateOp = new GetResourceAnnotationOperation(remote, revisions);
 		annotateOp.setIncludeMerged(SVNTeamPreferences.getMergeBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MERGE_INCLUDE_MERGED_NAME));
 		IActionOperation showOp = this.prepareBuiltInAnnotate(annotateOp, page, remote, resource);
 		CompositeOperation op = new CompositeOperation(showOp.getId());
