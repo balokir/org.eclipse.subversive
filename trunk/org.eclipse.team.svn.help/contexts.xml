@@ -147,6 +147,9 @@
 		<description>This dialog provides a probability to update to a specific revision.</description>
 		<topic label="Update" href="teamSupport/SVNaction/update.html"/>
 	</context>	
+	<context id="showAnnotationDialogContext">
+		<description>This dialog provides a probability to show annotation for file. Here the user can select start and end revisions to show annotation.</description>		
+	</context>		
 	<context id="revertDialogContext">
 		<description>This dialog provides a probability to revert changes for the chosen resources. Reverting works like if it deletes the file and then updates it to a base revision, but really it doesn't have to do those operation so it doesn't need any network.</description>
 		<topic label="Reverting changes" href="teamSupport/SVNaction/revert.html"/>

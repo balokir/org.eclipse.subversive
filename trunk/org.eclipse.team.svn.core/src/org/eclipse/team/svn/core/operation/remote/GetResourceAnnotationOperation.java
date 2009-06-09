@@ -22,7 +22,7 @@ import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNAnnotationData;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.connector.SVNErrorCodes;
-import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.connector.SVNRevisionRange;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -37,9 +37,11 @@ public class GetResourceAnnotationOperation extends AbstractRepositoryOperation 
 	protected SVNAnnotationData []annotatedLines;
 	protected byte []content;
 	protected boolean includeMerged;
-
-	public GetResourceAnnotationOperation(IRepositoryResource resource) {
+	protected SVNRevisionRange revisions;
+	
+	public GetResourceAnnotationOperation(IRepositoryResource resource, SVNRevisionRange revisions) {
 		super("Operation_GetAnnotation", new IRepositoryResource[] {resource}); //$NON-NLS-1$
+		this.revisions = revisions;
 	}
 	
 	public boolean getIncludeMerged() {
@@ -71,11 +73,11 @@ public class GetResourceAnnotationOperation extends AbstractRepositoryOperation 
 		try {
 //			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn blame " + url + "@" + resource.getPegRevision() + " -r 0:" + resource.getSelectedRevision() + " --username \"" + location.getUsername() + "\"\n");
 			long options = ISVNConnector.Options.IGNORE_MIME_TYPE;
-			options |= this.includeMerged ? ISVNConnector.Options.INCLUDE_MERGED_REVISIONS : ISVNConnector.Options.NONE;
+			options |= this.includeMerged ? ISVNConnector.Options.INCLUDE_MERGED_REVISIONS : ISVNConnector.Options.NONE;			
 			proxy.annotate(
 				SVNUtility.getEntryReference(resource),
-				SVNRevision.fromNumber(0),
-				resource.getSelectedRevision(),
+				this.revisions.from,
+				this.revisions.to,
 				options, new ISVNAnnotationCallback() {
 					public void annotate(String line, SVNAnnotationData data) {
 						lines.add(data);
