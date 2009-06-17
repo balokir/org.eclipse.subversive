@@ -94,7 +94,6 @@ public class SVNRepositoryContainer extends SVNRepositoryResource implements IRe
 					SVNRepositoryResource resource = children[i].nodeKind == Kind.DIR ? (SVNRepositoryResource)this.asRepositoryContainer(childUrl, false) : (SVNRepositoryResource)this.asRepositoryFile(childUrl, false);
 					resource.setRevision(children[i].revision);
 					resource.setInfo(new IRepositoryResource.Information(children[i].lock, children[i].size, children[i].author, children[i].date, children[i].hasProperties));					
-					resource.setPegRevision( SVNRevision.fromNumber(children[i].revision));
 					retVal[i] = resource;
 				}
 				

@@ -79,6 +79,19 @@ public class LocateProjectsOperation extends AbstractRepositoryOperation impleme
 							String message = LocateProjectsOperation.this.getOperationResource("Scanning"); //$NON-NLS-1$
 							ProgressMonitorUtility.setTaskInfo(monitor, LocateProjectsOperation.this, BaseMessages.format(message, new Object[] {current.getUrl()}));
 							IRepositoryResource []children = ((IRepositoryContainer)current).getChildren();
+							/*
+							 * Set peg revision for children
+							 * This is needed in following case:
+							 *  we're looking for projects in specified revision and traverse children
+							 *  for resource. If child exists in specified revision but doesn't
+							 *  in HEAD revision, then we need to specify its peg revision because 
+							 *  'getChildren' operation for children doesn't set peg revision
+							 *  (it means that it equals to HEAD) and it fill cause error.
+							 */
+							for (IRepositoryResource child : children) {
+								child.setPegRevision(current.getSelectedRevision());
+							}	
+							
 							if (LocateProjectsOperation.this.filter.isProject(current, children)) {
 								found.add(current);
 							}
