@@ -88,8 +88,8 @@ public class BranchTagAction extends AbstractNonRecursiveTeamAction {
 		
 		AbstractBranchTagPanel panel = 
 			actionType == BranchTagAction.BRANCH_ACTION ? 
-			new BranchPanel(SVNUtility.getBranchesLocation(remoteResources[0]), true, nodeNames, resources) : 
-			new TagPanel(SVNUtility.getTagsLocation(remoteResources[0]), true, nodeNames, resources);
+			new BranchPanel(SVNUtility.getBranchesLocation(remoteResources[0]), true, nodeNames, resources, new IRepositoryResource[0]) :
+			new TagPanel(SVNUtility.getTagsLocation(remoteResources[0]), true, nodeNames, resources, new IRepositoryResource[0]);
 		DefaultDialog dialog = new DefaultDialog(shell, panel);
 		
 		if (dialog.open() == 0) {

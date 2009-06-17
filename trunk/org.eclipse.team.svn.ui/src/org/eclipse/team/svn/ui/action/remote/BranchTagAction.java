@@ -111,9 +111,19 @@ public class BranchTagAction extends AbstractRepositoryTeamAction {
 				BranchTagAction.isProjectFileExists(resources[0]);
 		}
 		
-		AbstractBranchTagPanel panel = nodeType == BranchTagAction.BRANCH_ACTION ? (AbstractBranchTagPanel)new BranchPanel(SVNUtility.getBranchesLocation(resources[0]), false, nodeNames) : new TagPanel(SVNUtility.getTagsLocation(resources[0]), false, nodeNames);
+		AbstractBranchTagPanel panel = nodeType == BranchTagAction.BRANCH_ACTION ? (AbstractBranchTagPanel)new BranchPanel(SVNUtility.getBranchesLocation(resources[0]), false, nodeNames, resources) : new TagPanel(SVNUtility.getTagsLocation(resources[0]), false, nodeNames, resources);
 		DefaultDialog dialog = new DefaultDialog(shell, panel);
-		return dialog.open() != 0 ? null : new PreparedBranchTagOperation(nodeType == BranchTagAction.BRANCH_ACTION ? "Branch" : "Tag", resources, panel.getDestination(), panel.getMessage(), forceCreate);
+		if (dialog.open() == 0) {
+			IRepositoryResource[] resourcesWithSpecifiedRevision = new IRepositoryResource[resources.length];
+			for (int i = 0; i < resources.length; i ++) {
+				resourcesWithSpecifiedRevision[i] = SVNUtility.copyOf(resources[i]);				
+				resourcesWithSpecifiedRevision[i].setSelectedRevision(panel.getRevisionForRemoteResources());
+				resourcesWithSpecifiedRevision[i].setPegRevision(resources[i].getPegRevision());
+			}
+			return new PreparedBranchTagOperation(nodeType == BranchTagAction.BRANCH_ACTION ? "Branch" : "Tag", resourcesWithSpecifiedRevision, panel.getDestination(), panel.getMessage(), forceCreate);
+		} else {
+			return null;
+		}
 	}
 	
 	public static Set<String> getExistingNodeNames(IRepositoryContainer parent) {

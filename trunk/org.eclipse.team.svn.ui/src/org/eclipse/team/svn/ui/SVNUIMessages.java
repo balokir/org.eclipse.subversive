@@ -1687,6 +1687,7 @@ public class SVNUIMessages extends BaseMessages {
     public static String ShowAnnotationPanel_DefaultMessage;
     public static String ShowAnnotationPanel_FromRevision;
     public static String ShowAnnotationPanel_ToRevision;
+    public static String AbstractBranchTagPanel_Message;
     
 	static {
 		//load message values from bundle file

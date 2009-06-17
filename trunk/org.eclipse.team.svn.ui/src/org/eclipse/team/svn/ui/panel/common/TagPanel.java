@@ -15,6 +15,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
@@ -26,12 +27,12 @@ import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
  */
 public class TagPanel extends AbstractBranchTagPanel {
 
-    public TagPanel(IRepositoryRoot tagTo, boolean showStartsWith, Set existingNames) {
-    	this(tagTo, showStartsWith, existingNames, new IResource[0]);
+    public TagPanel(IRepositoryRoot tagTo, boolean showStartsWith, Set existingNames, IRepositoryResource[] selectedRemoteResources) {
+    	this(tagTo, showStartsWith, existingNames, new IResource[0], selectedRemoteResources);
     }
     
-    public TagPanel(IRepositoryRoot tagTo, boolean showStartsWith, Set existingNames, IResource[] resources) {
-    	super(tagTo, showStartsWith, existingNames, "TagPanel", "tag", resources);
+    public TagPanel(IRepositoryRoot tagTo, boolean showStartsWith, Set existingNames, IResource[] resources, IRepositoryResource[] selectedRemoteResources) {
+    	super(tagTo, showStartsWith, existingNames, "TagPanel", "tag", resources, selectedRemoteResources);
     }
 
     public void createControlsImpl(Composite parent) {
