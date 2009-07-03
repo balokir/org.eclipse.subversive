@@ -101,15 +101,16 @@ public interface IMapFileParser {
 				if (overrideTag != null && overrideTag.length() > 0) {								
 					data.tag = overrideTag;
 				}
-			}						
-			// handle optional path
-			if (data.path == null) {
-				data.path = IFetchFactory.KEY_ELEMENT_NAME;
-			}						
-			// handle optional tag			
-			if (data.tag == null) {
-				data.tag = ""; //$NON-NLS-1$
 			}
+
+			// handle optional path
+//			if (data.path == null) {
+//				data.path = IFetchFactory.KEY_ELEMENT_NAME;
+//			}						
+			// handle optional tag			
+//			if (data.tag == null) {
+//				data.tag = ""; //$NON-NLS-1$
+//			}
 			return data;
 		}		
 	};

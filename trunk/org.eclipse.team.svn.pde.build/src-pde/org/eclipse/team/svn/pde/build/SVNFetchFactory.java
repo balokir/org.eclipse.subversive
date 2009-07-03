@@ -165,15 +165,19 @@ public class SVNFetchFactory implements IFetchFactory {
 		String rev = (String)entryInfos.get(SVNFetchFactory.KEY_REVISION);
 		
 		String tag = (String)entryInfos.get(SVNFetchFactory.KEY_TAG_PATH);
-		
 		String path = (String)entryInfos.get(SVNFetchFactory.KEY_PATH);
-		
-		String baseUrl = rootUrl + "/" + tag + "/" + path + "/"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		String baseUrl = rootUrl;
+		if (tag != null && tag.length() > 0) {
+			baseUrl += "/" + tag; //$NON-NLS-1$
+		}
+		if (path != null && path.length() > 0) {
+			baseUrl += "/" + path; //$NON-NLS-1$
+		}
+		baseUrl += "/"; //$NON-NLS-1$
+					
 		String dest = destination.toString();
-		
 		String username = (String)entryInfos.get(SVNFetchFactory.KEY_USERNAME);
 		String password = (String)entryInfos.get(SVNFetchFactory.KEY_PASSWORD);
-				
 		String force = this.getBooleanValue(entryInfos, SVNFetchFactory.KEY_FORCE);
 						
 		for (String fileName : files) {
@@ -188,8 +192,8 @@ public class SVNFetchFactory implements IFetchFactory {
 						
 		//fill entryInfo
 		entryInfos.put(SVNFetchFactory.KEY_URL, data.url);
-		entryInfos.put(SVNFetchFactory.KEY_PATH, data.path);			
-		if (data.tag != null) {
+		entryInfos.put(SVNFetchFactory.KEY_PATH, data.path);
+		if (data.tag != null && data.tag.length() > 0) {
 			int ind = data.tag.lastIndexOf("/"); //$NON-NLS-1$
 			String tagValue = ind > 0 ? data.tag.substring(ind + 1) : data.tag;
 			String tagPath = data.tag;
