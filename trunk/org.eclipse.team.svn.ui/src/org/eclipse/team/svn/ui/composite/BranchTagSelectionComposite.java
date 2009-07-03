@@ -11,6 +11,8 @@
 
 package org.eclipse.team.svn.ui.composite;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -27,6 +29,7 @@ import org.eclipse.team.svn.core.connector.SVNEntryReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
+import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
@@ -39,10 +42,11 @@ import org.eclipse.team.svn.ui.panel.common.RepositoryTreePanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.svn.ui.utility.UserInputHistory;
+import org.eclipse.team.svn.ui.verifier.AbstractVerifier;
 import org.eclipse.team.svn.ui.verifier.CompositeVerifier;
 import org.eclipse.team.svn.ui.verifier.IValidationManager;
 import org.eclipse.team.svn.ui.verifier.NonEmptyFieldVerifier;
-import org.eclipse.team.svn.ui.verifier.ResourceNameVerifier;
+import org.eclipse.team.svn.ui.verifier.URLVerifier;
 
 /**
  * Composite for branch/tag selection with appropriate revision
@@ -67,8 +71,6 @@ public class BranchTagSelectionComposite extends Composite {
 	protected String selectionTitle;
 	protected String selectionDescription;
 	protected IRepositoryRoot root;
-	
-	protected String ignored;
 		
 	protected IRepositoryResource[] branchTagResources;
 	
@@ -78,9 +80,8 @@ public class BranchTagSelectionComposite extends Composite {
 		this.inputHistory = new UserInputHistory(historyKey);
 		this.validationManager = validationManager;
 		this.type = type;
-		this.ignored = this.type == BranchTagSelectionComposite.BRANCH_OPERATED ? SVNUIMessages.Branch_Read_Separator : SVNUIMessages.Tag_Read_Separator;
 		this.branchTagResources = branchTagResources;
-		this.considerStructure = BranchTagSelectionComposite.considerStructure(this.baseResource);		
+		this.considerStructure = BranchTagSelectionComposite.considerStructure(this.baseResource);
 		this.root = BranchTagSelectionComposite.getRepositoryRoot(this.type, this.baseResource);
 		this.createControls(parent);
 	}
@@ -105,7 +106,7 @@ public class BranchTagSelectionComposite extends Composite {
 		
 		Composite select = new Composite(this, SWT.NONE);	
 		layout = new GridLayout();
-		layout.numColumns = 2;
+		layout.numColumns = this.considerStructure ? 1 : 2;
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		select.setLayout(layout);
@@ -114,19 +115,28 @@ public class BranchTagSelectionComposite extends Composite {
 		
 		final IRepositoryLocation location = this.baseResource.getRepositoryLocation();
 				
-		this.urlText = new Combo(select, SWT.NULL);
+		this.urlText = new Combo(select, this.considerStructure ? SWT.READ_ONLY : SWT.NULL);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
-		this.urlText.setLayoutData(data);
-		this.urlText.setVisibleItemCount(this.inputHistory.getDepth() * 2);
-		this.urlText.setItems(this.inputHistory.getHistory());
-				
-		if (this.branchTagResources.length > 0) {
-			this.urlText.add(this.ignored);
-		}
-		for (IRepositoryResource branchTagResource : this.branchTagResources) {
-			this.urlText.add(branchTagResource.getName());
-		}
+		this.urlText.setLayoutData(data);						
+		
+		if (!this.considerStructure) {
+			this.urlText.setVisibleItemCount(this.inputHistory.getDepth() * 2);
+			this.urlText.setItems(this.inputHistory.getHistory());			
+			this.validationManager.attachTo(this.urlText, new NonEmptyFieldVerifier(resourceLabel.getText()));
+			this.validationManager.attachTo(this.urlText, new URLVerifier(resourceLabel.getText()));					
+		} else {
+			for (IRepositoryResource branchTagResource : this.branchTagResources) {
+				this.urlText.add(branchTagResource.getName());				
+			}
+			
+			//TODO set urlText value to 'none' if there are no branches ?
+			
+			if (this.branchTagResources.length > 0) {
+				this.urlText.select(0);	
+				this.url = this.urlText.getText();
+			}			
+		}		
 		
 		this.urlText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -134,57 +144,32 @@ public class BranchTagSelectionComposite extends Composite {
 				BranchTagSelectionComposite.this.revisionComposite.setSelectedResource(BranchTagSelectionComposite.this.getSelectedResource());
 			}
 		});
-		this.urlText.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				int idx = BranchTagSelectionComposite.this.urlText.getSelectionIndex();
-				if (idx != -1) {
-	            	String comboText = BranchTagSelectionComposite.this.urlText.getItem(idx);
-	            	if (comboText.equals(BranchTagSelectionComposite.this.ignored)) {
-	            		BranchTagSelectionComposite.this.urlText.setText(""); //$NON-NLS-1$
-	            	}
-				}
-			}
-		});
-		this.validationManager.attachTo(this.urlText, new ResourceNameVerifier(resourceLabel.getText(), true));
-		this.validationManager.attachTo(this.urlText, new NonEmptyFieldVerifier(resourceLabel.getText()));
 		
-		this.browse = new Button(select, SWT.PUSH);
-		this.browse.setText(SVNUIMessages.Button_Browse);
-		data = new GridData();
-		data.widthHint = DefaultDialog.computeButtonWidth(this.browse);
-		this.browse.setLayoutData(data);
-		this.browse.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				RepositoryTreePanel panel;
-				String part = BranchTagSelectionComposite.this.type == BranchTagSelectionComposite.BRANCH_OPERATED ? SVNUIMessages.Select_Branch_Title : SVNUIMessages.Select_Tag_Title;
-				if (BranchTagSelectionComposite.this.considerStructure) {
-					panel = new RepositoryTreePanel(part,
-							SVNUIMessages.RepositoryBrowsingPanel_Description,
-							SVNUIMessages.RepositoryBrowsingPanel_Message,
-							null, true, BranchTagSelectionComposite.this.root);
-				}
-				else {
+		if (!this.considerStructure) {
+			this.browse = new Button(select, SWT.PUSH);
+			this.browse.setText(SVNUIMessages.Button_Browse);
+			data = new GridData();
+			data.widthHint = DefaultDialog.computeButtonWidth(this.browse);
+			this.browse.setLayoutData(data);
+			this.browse.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					RepositoryTreePanel panel;
+					String part = BranchTagSelectionComposite.this.type == BranchTagSelectionComposite.BRANCH_OPERATED ? SVNUIMessages.Select_Branch_Title : SVNUIMessages.Select_Tag_Title;					
 					panel = new RepositoryTreePanel(part,
 							SVNUIMessages.RepositoryBrowsingPanel_Description,
 							SVNUIMessages.RepositoryBrowsingPanel_Message,
 							null, true, location);
-				}
-				DefaultDialog browser = new DefaultDialog(BranchTagSelectionComposite.this.getShell(), panel);
-				if (browser.open() == 0) {
-					IRepositoryResource selectedResource = panel.getSelectedResource();
-					boolean samePeg = selectedResource.getPegRevision().equals(BranchTagSelectionComposite.this.baseResource.getPegRevision());
-					if (BranchTagSelectionComposite.this.considerStructure) {
-						String toTrim = BranchTagSelectionComposite.this.root.getUrl();
-						BranchTagSelectionComposite.this.urlText.setText(samePeg ? selectedResource.getUrl().substring(toTrim.length() + 1) : SVNUtility.getEntryReference(selectedResource).toString());
+					DefaultDialog browser = new DefaultDialog(BranchTagSelectionComposite.this.getShell(), panel);
+					if (browser.open() == 0) {
+						IRepositoryResource selectedResource = panel.getSelectedResource();
+						boolean samePeg = selectedResource.getPegRevision().equals(BranchTagSelectionComposite.this.baseResource.getPegRevision());
+						BranchTagSelectionComposite.this.urlText.setText(samePeg ? selectedResource.getUrl() : SVNUtility.getEntryReference(selectedResource).toString());						
+						BranchTagSelectionComposite.this.revisionComposite.setSelectedResource(selectedResource);
+						BranchTagSelectionComposite.this.validationManager.validateContent();
 					}
-					else {
-						BranchTagSelectionComposite.this.urlText.setText(samePeg ? selectedResource.getUrl() : SVNUtility.getEntryReference(selectedResource).toString());
-					}
-					BranchTagSelectionComposite.this.revisionComposite.setSelectedResource(selectedResource);
-					BranchTagSelectionComposite.this.validationManager.validateContent();
 				}
-			}
-		});
+			});	
+		}
 		
 		Composite revisions = new Composite(this, SWT.NONE);
 		layout = new GridLayout();
@@ -205,8 +190,18 @@ public class BranchTagSelectionComposite extends Composite {
 		this.revisionComposite.setSelectedResource(this.baseResource);
 	}
 	
+	public void addUrlModifyListener(ModifyListener listener) {
+		this.urlText.addModifyListener(listener);
+	}
+	
+	public void addUrlVerifier(AbstractVerifier verifier) {
+		this.validationManager.attachTo(this.urlText, verifier);
+	}
+	
 	public void saveChanges() {
-		this.inputHistory.addLine(this.url);
+		if (!this.considerStructure) {
+			this.inputHistory.addLine(this.url);
+		}
 	}
 	
 	public void setCurrentRevision(long currentRevision) {
@@ -281,6 +276,51 @@ public class BranchTagSelectionComposite extends Composite {
 			resource.getRepositoryLocation().isStructureEnabled() &&
 			SVNTeamPreferences.getRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BRANCH_TAG_CONSIDER_STRUCTURE_NAME);
 		return considerStructure;
+	}
+	
+	public static IRepositoryResource getResourceToCompareWith(IRepositoryResource resource, IRepositoryResource brunchTagResource) {
+		/*
+		 * When constructing resource to compare with we assume that
+		 * user follows the recommended layout, i.e. trunk, branches, tags have the same parent;
+		 * otherwise there will be unexpected results. 
+		 * 
+		 * E.g.
+		 * Root/
+		 * 	trunk/
+		 *  branches/
+		 *  tags/
+		 *  
+		 * If for some reason we can't construct the resource to compare with, we return null
+		 * 
+		 * Examples: 
+		 * 	resource:	http://localhost/repos/first/layouts/multiple/trunk/Project/task.txt
+		 * 	brunch:		http://localhost/repos/first/layouts/multiple/branches/br2
+		 * 
+		 *  resource:	http://localhost/repos/first/layouts/multiple/branches/br1/task.txt
+		 * 	brunch:		http://localhost/repos/first/layouts/multiple/branches/br2
+		 */					
+		IRepositoryResource res = null;
+		IPath fromPath = new Path(resource.getUrl());
+		IPath brunchPath = new Path(brunchTagResource.getUrl());		
+		if (brunchPath.segmentCount() > 2) {										
+			int matchedSegments = fromPath.matchingFirstSegments(brunchPath);
+			if (fromPath.segmentCount() >= matchedSegments + 1) {
+				//remove common parent + ('trunk' or branch/tag name)
+				IPath relativePath = fromPath.removeFirstSegments(matchedSegments + 1);
+				String[] segments = relativePath.segments();
+				String relativeUrl = ""; //$NON-NLS-1$
+				//as IPath contains also device, we can't use its toString method
+				for (int i = 0; i < segments.length; i ++) {
+					relativeUrl += segments[i];
+					if (i < segments.length - 1) {
+						relativeUrl += "/"; //$NON-NLS-1$
+					}
+				}
+				String compareUrl = brunchTagResource.getUrl() + "/" + relativeUrl; //$NON-NLS-1$
+				res = resource instanceof IRepositoryFile ? brunchTagResource.asRepositoryFile(compareUrl, false) : brunchTagResource.asRepositoryContainer(compareUrl, false);	
+			}						
+		}		
+		return res;						
 	}
 
 }
