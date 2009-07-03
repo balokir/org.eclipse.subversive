@@ -67,8 +67,8 @@ public class ReplaceWithBranchTagAction extends AbstractWorkingCopyAction {
 			DefaultDialog dlg = new DefaultDialog(shell, panel);
 			if (dlg.open() == 0){
 				ReplaceWarningDialog dialog = new ReplaceWarningDialog(shell);
-				if (dialog.open() == 0) {
-					IRepositoryResource selected = panel.getSelectedResource();
+				if (dialog.open() == 0 && panel.getResourceToReplaceWith() != null) {
+					IRepositoryResource selected = panel.getResourceToReplaceWith();
 					boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
 					CompositeOperation op = new CompositeOperation("Operation_ReplaceWithRevision"); //$NON-NLS-1$
 					SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);

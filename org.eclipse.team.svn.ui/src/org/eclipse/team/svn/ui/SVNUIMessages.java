@@ -143,8 +143,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String BranchPanel_Title;
 	public static String BranchPanel_Warning;
 	public static String BranchTagAction_Error_Branch;
-	public static String BranchTagAction_Error_Tag;
-	public static String Branch_Read_Separator;
+	public static String BranchTagAction_Error_Tag;	
 	public static String BuiltInAnnotateRevision_Author;
 	public static String BuiltInAnnotateRevision_Date;
 	public static String BuiltInAnnotateRevision_MergedWith;
@@ -1489,8 +1488,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String TagPanel_StartsWith;
 	public static String TagPanel_Title;
 	public static String TagPanel_Warning;
-	public static String Tag_Modification_Warning;
-	public static String Tag_Read_Separator;
+	public static String Tag_Modification_Warning;	
 	public static String TextDecoratorVariable_added_flag;
 	public static String TextDecoratorVariable_ascendant;
 	public static String TextDecoratorVariable_author;
@@ -1688,6 +1686,13 @@ public class SVNUIMessages extends BaseMessages {
     public static String ShowAnnotationPanel_FromRevision;
     public static String ShowAnnotationPanel_ToRevision;
     public static String AbstractBranchTagPanel_Message;
+    
+    public static String ReplaceBranchTagPanel_ConstructResultVerifierError;
+    public static String ReplaceBranchTagPanel_ResultDescription;
+    public static String ReplaceBranchTagPanel_ResultNone;
+    public static String CompareBranchTagPanel_ConstructResultVerifierError;
+    public static String CompareBranchTagPanel_ResultDescription;
+    public static String CompareBranchTagPanel_ResultNone;
     
 	static {
 		//load message values from bundle file

@@ -12,13 +12,20 @@
 package org.eclipse.team.svn.ui.panel.remote;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.BranchTagSelectionComposite;
 import org.eclipse.team.svn.ui.composite.DiffFormatComposite;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
+import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
+import org.eclipse.team.svn.ui.verifier.AbstractVerifier;
 
 /**
  * Panel for the Compare With Branch/Tag dialog
@@ -26,17 +33,20 @@ import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
  * @author Alexei Goncharov
  */
 public class CompareBranchTagPanel extends AbstractDialogPanel {
-	protected IRepositoryResource selectedResource;
+	protected IRepositoryResource baseResource;
 	protected int type;
 	protected IRepositoryResource[] branchTagResources;
 	protected long currentRevision;
 	protected String historyKey;
 	protected BranchTagSelectionComposite selectionComposite;
 	protected DiffFormatComposite diffFormatComposite;
+	protected Label resultText;
+	
+	protected IRepositoryResource resourceToCompareWith;
 	
 	public CompareBranchTagPanel(IRepositoryResource baseResource, int type, IRepositoryResource[] branchTagResources) {
 		super();
-		this.selectedResource = baseResource;
+		this.baseResource = baseResource;
 		this.type = type;
 		this.branchTagResources = branchTagResources;
 		if (type == BranchTagSelectionComposite.BRANCH_OPERATED) {
@@ -55,19 +65,81 @@ public class CompareBranchTagPanel extends AbstractDialogPanel {
 	
 	protected void createControlsImpl(Composite parent) {
         GridData data = null;
-        this.selectionComposite = new BranchTagSelectionComposite(parent, SWT.NONE, this.selectedResource, this.historyKey, this, this.type, this.branchTagResources);
+        this.selectionComposite = new BranchTagSelectionComposite(parent, SWT.NONE, this.baseResource, this.historyKey, this, this.type, this.branchTagResources);
         data = new GridData(GridData.FILL_HORIZONTAL);
         this.selectionComposite.setLayoutData(data);
         this.selectionComposite.setCurrentRevision(this.currentRevision);
         
         this.diffFormatComposite = new DiffFormatComposite(parent, this);
+                       
+        Label separator = new Label(parent, SWT.HORIZONTAL | SWT.SEPARATOR);
+        separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        
+        Label label = new Label(parent, SWT.NONE);
+        data = new GridData(GridData.FILL_HORIZONTAL);
+        label.setLayoutData(data);
+        label.setText(SVNUIMessages.CompareBranchTagPanel_ResultDescription);
+        
+        Composite resultComposite = new Composite(parent, SWT.NONE);
+        GridLayout layout = new GridLayout();
+		layout.numColumns = 1;
+		layout.marginHeight = 2;
+		resultComposite.setLayout(layout);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		resultComposite.setLayoutData(data);		
+		resultComposite.setBackground(UIMonitorUtility.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		
+		this.resultText = new Label(resultComposite, SWT.SINGLE | SWT.WRAP);
+		this.resultText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));		
+		this.resultText.setBackground(UIMonitorUtility.getDisplay().getSystemColor(SWT.COLOR_WHITE));		                    
+		
+        this.selectionComposite.addUrlModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				CompareBranchTagPanel.this.setResultLabel();				
+			}
+        });
+        this.selectionComposite.addUrlVerifier(new AbstractVerifier() {
+			protected String getErrorMessage(Control input) {
+				/*
+				 * As resourceToCompareWith may be not yet re-calculated, we do it explicitly here 
+				 */
+				if (BranchTagSelectionComposite.getResourceToCompareWith(CompareBranchTagPanel.this.baseResource, CompareBranchTagPanel.this.getSelectedResource()) == null) {
+					return SVNUIMessages.CompareBranchTagPanel_ConstructResultVerifierError;
+				}
+				return null;
+			}
+			protected String getWarningMessage(Control input) {				
+				return null;
+			}        	
+        });
+        
+        this.setResultLabel();
 	}
+	
+	protected void setResultLabel() {
+		String text = ""; //$NON-NLS-1$
+		this.resourceToCompareWith = null;
+		
+		if (this.getSelectedResource() != null) {
+			this.resourceToCompareWith = BranchTagSelectionComposite.getResourceToCompareWith(this.baseResource, this.getSelectedResource());			
+			if (this.resourceToCompareWith != null) {				
+				text = this.resourceToCompareWith.getUrl();
+			} else {
+				text = SVNUIMessages.CompareBranchTagPanel_ResultNone;
+			}		
+		}	
+		this.resultText.setText(text);	
+	}	
 	
 	public String getDiffFile() {			
 		return this.diffFormatComposite.getDiffFile();
 	}
 	
-	public IRepositoryResource getSelectedResoure() {
+	public IRepositoryResource getResourceToCompareWith() {
+		return this.resourceToCompareWith;
+	}
+	
+	private IRepositoryResource getSelectedResource() {
 		return this.selectionComposite.getSelectedResource();
 	}
 
@@ -77,5 +149,5 @@ public class CompareBranchTagPanel extends AbstractDialogPanel {
 	
 	protected void cancelChangesImpl() {
 	}
-
+	
 }

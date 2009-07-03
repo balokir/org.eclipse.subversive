@@ -66,8 +66,8 @@ public class CompareWithBranchTagAction extends AbstractWorkingCopyAction {
 		if (branchTagResources != null) {
 			CompareBranchTagPanel panel = new CompareBranchTagPanel(remote, this.type, branchTagResources);
 			DefaultDialog dlg = new DefaultDialog(this.getShell(), panel);
-			if (dlg.open() == 0){
-				remote = panel.getSelectedResoure();
+			if (dlg.open() == 0 && panel.getResourceToCompareWith() != null){
+				remote = panel.getResourceToCompareWith();
 				String diffFile = panel.getDiffFile();
 				CompareResourcesOperation mainOp = new CompareResourcesOperation(local, remote);
 				mainOp.setDiffFile(diffFile);
