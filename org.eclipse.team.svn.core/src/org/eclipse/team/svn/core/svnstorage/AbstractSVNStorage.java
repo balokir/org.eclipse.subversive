@@ -287,18 +287,44 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		if (resource == null) {
 			return null;
 		}
-		int selectedKind = resource.getSelectedRevision().getKind();
-		int pegKind = resource.getPegRevision().getKind();
 		String retVal = 
 			new String(Base64.encode(String.valueOf(resource instanceof IRepositoryContainer).getBytes())) + ";" +  //$NON-NLS-1$
 			resource.getRepositoryLocation().getId() + ";" + //$NON-NLS-1$
 			new String(Base64.encode(resource.getUrl().getBytes())) + ";" + //$NON-NLS-1$
-			String.valueOf(selectedKind) + ";" +  //$NON-NLS-1$
-			(selectedKind == Kind.NUMBER ? String.valueOf(((SVNRevision.Number)resource.getSelectedRevision()).getNumber()) : "0") + ";" + //$NON-NLS-1$ //$NON-NLS-2$
+			String.valueOf(resource.getSelectedRevision().getKind()) + ";" +  //$NON-NLS-1$
+			this.convertRevisionToString(resource.getSelectedRevision()) + ";" + //$NON-NLS-1$
 			String.valueOf(IRepositoryRoot.KIND_ROOT) + ";" +  //$NON-NLS-1$
-			String.valueOf(pegKind) + ";" +  //$NON-NLS-1$
-			(pegKind == Kind.NUMBER ? String.valueOf(((SVNRevision.Number)resource.getPegRevision()).getNumber()) : "0"); //$NON-NLS-1$
+			String.valueOf(resource.getPegRevision().getKind()) + ";" +  //$NON-NLS-1$
+			this.convertRevisionToString(resource.getPegRevision()); //$NON-NLS-1$
 		return retVal.getBytes();
+	}
+	
+	protected SVNRevision convertToRevision(int revisionKind, long revNum, boolean isPegRevision) {
+		SVNRevision revision;
+		if (revisionKind == Kind.NUMBER) {
+			if (revNum == SVNRevision.INVALID_REVISION_NUMBER) {
+				revision = isPegRevision ? null : SVNRevision.INVALID_REVISION;
+			} else {
+				revision = SVNRevision.fromNumber(revNum);
+			}						
+		} else if (revisionKind == Kind.DATE) {
+			revision = SVNRevision.fromDate(revNum);
+		} else {
+			revision = SVNRevision.fromKind(revisionKind);			
+		}
+		return revision;
+	}
+	
+	protected String convertRevisionToString(SVNRevision revision) {
+		String strRevision;
+		if (revision.getKind() == Kind.NUMBER) {
+			strRevision = String.valueOf(((SVNRevision.Number) revision).getNumber());
+		} else if (revision.getKind() == Kind.DATE) {
+			strRevision = String.valueOf(((SVNRevision.Date) revision).getDate());
+		} else {
+			strRevision = "0"; //$NON-NLS-1$
+		}	
+		return strRevision;
 	}
 	
 	public IRepositoryResource repositoryResourceFromBytes(byte []bytes) {
@@ -327,12 +353,12 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		}
 		int revisionKind = Integer.parseInt(data[3]);
 		long revNum = Long.parseLong(data[4]);
-		SVNRevision selectedRevision = revisionKind == Kind.NUMBER ? (revNum == SVNRevision.INVALID_REVISION_NUMBER ? SVNRevision.INVALID_REVISION : (SVNRevision)SVNRevision.fromNumber(revNum)) : SVNRevision.fromKind(revisionKind);
+		SVNRevision selectedRevision = this.convertToRevision(revisionKind, revNum, false); 
 		SVNRevision pegRevision = null;
 		if (data.length > 6) {
 			int pegKind = Integer.parseInt(data[6]);
 			long pegNum = Long.parseLong(data[7]);
-			pegRevision = pegKind == Kind.NUMBER ? (pegNum == SVNRevision.INVALID_REVISION_NUMBER ? null : (SVNRevision)SVNRevision.fromNumber(pegNum)) : SVNRevision.fromKind(pegKind);
+			pegRevision = this.convertToRevision(pegKind, pegNum, true);
 		}
 		
 		String urlPart = base64Label ? new String(Base64.decode(data[2].getBytes())) : data[2];

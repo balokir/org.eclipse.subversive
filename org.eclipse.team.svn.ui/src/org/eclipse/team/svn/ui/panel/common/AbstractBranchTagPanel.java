@@ -367,7 +367,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 				protected String getErrorMessage(Control input) {
 					String url = AbstractBranchTagPanel.this.root.getRepositoryLocation().getUrl();
 					if (!AbstractBranchTagPanel.this.destinationCombo.getText().startsWith(url)) {
-						return SVNUIMessages.format(AbstractBranchTagPanel.this.nationalizationId + "_Location_Verifier_DoesNotCorresponds", new String[] {AbstractBranchTagPanel.this.destinationCombo.getText(), url}); //$NON-NLS-1$
+						return SVNUIMessages.format(SVNUIMessages.getString(AbstractBranchTagPanel.this.nationalizationId + "_Location_Verifier_DoesNotCorresponds"), new String[] {AbstractBranchTagPanel.this.destinationCombo.getText(), url}); //$NON-NLS-1$
 					}
 					if (AbstractBranchTagPanel.this.startsWith) {
 						if (!AbstractBranchTagPanel.this.destinationCombo.getText().startsWith(AbstractBranchTagPanel.this.root.getUrl())) {
