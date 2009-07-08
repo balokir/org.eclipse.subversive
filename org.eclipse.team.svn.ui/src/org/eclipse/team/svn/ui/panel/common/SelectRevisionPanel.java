@@ -50,11 +50,16 @@ public class SelectRevisionPanel extends SVNHistoryPanel {
 		List<SVNLogEntry> selected = Arrays.asList(this.selectedLogMessages);
 		long startRev = SVNRevision.INVALID_REVISION_NUMBER;
 		long lastRev = SVNRevision.INVALID_REVISION_NUMBER;
-		for (SVNLogEntry entry : this.logMessages) {
+		for (int i = 0; i < this.logMessages.length ; i ++ ) {
+			SVNLogEntry entry = this.logMessages[i];
 			if (selected.indexOf(entry) != -1) {
 				lastRev = entry.revision;
 				if (startRev == SVNRevision.INVALID_REVISION_NUMBER) {
 					startRev = entry.revision;
+				}				
+				//add the last element to result list
+				if (i == this.logMessages.length - 1) {
+					revisions.add(new SVNRevisionRange(startRev, lastRev));	
 				}
 			}
 			else {
