@@ -146,6 +146,7 @@ public final class FileUtility {
 		return location;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static Map<String, String> getEnvironmentVariables() {
 		try {
 			Method getenv = System.class.getMethod("getenv", (Class [])null); //$NON-NLS-1$
@@ -457,9 +458,6 @@ public final class FileUtility {
 		for (int i = 0; i < resources.length; i++) {
 			IResource parent = resources[i];
 			while ((parent = parent.getParent()) != null && !(parent instanceof IWorkspaceRoot)) {
-				parents.add(parent);
-			}
-			if (parents == resources[i]) {
 				parents.add(parent);
 			}
 		}
