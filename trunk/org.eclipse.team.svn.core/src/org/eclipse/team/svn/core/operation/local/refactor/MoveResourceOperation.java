@@ -48,10 +48,9 @@ public class MoveResourceOperation extends AbstractActionOperation {
 	
 	public boolean isAllowed() {
 		IRemoteStorage storage = SVNRemoteStorage.instance();
-		IRepositoryLocation locationSource = storage.getRepositoryLocation(this.source);
-		IRepositoryLocation locationDestination = storage.getRepositoryLocation(this.destination);
-		return 
-			locationSource.equals(locationDestination);
+		String locationSourceUrl = storage.getRepositoryLocation(this.source).getRepositoryRootUrl();
+		String locationDestinationUrl = storage.getRepositoryLocation(this.destination).getRepositoryRootUrl();
+		return locationSourceUrl.equals(locationDestinationUrl);
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
