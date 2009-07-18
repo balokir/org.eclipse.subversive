@@ -27,6 +27,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.extension.impl.ISelectProjectNamePageData;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.verifier.AbstractValidationManagerProxy;
 import org.eclipse.team.svn.ui.verifier.IValidationManager;
 import org.eclipse.team.svn.ui.wizard.AbstractVerifiedWizardPage;
@@ -52,7 +53,7 @@ public class SelectProjectNamePage extends AbstractVerifiedWizardPage {
 			SelectProjectNamePage.class.getName(), 
 			"",  //$NON-NLS-1$
 			SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif")); //$NON-NLS-1$
-		this.isSimpleMode = true;				
+		this.isSimpleMode = SVNTeamUIPlugin.instance().getPreferenceStore().getBoolean(SVNTeamPreferences.SELECT_PROJECT_NAME_PAGE_IS_SIMPLE_MODE);				
 	}
 	
 	protected class SelectProjectNamePageValidationManager extends AbstractValidationManagerProxy {
@@ -130,7 +131,7 @@ public class SelectProjectNamePage extends AbstractVerifiedWizardPage {
 		
 		this.simpleModeRadionButton = new Button(composite, SWT.RADIO);
 		this.simpleModeRadionButton.setText(SVNUIMessages.SelectProjectNamePage_SimpleModeButton);
-		this.simpleModeRadionButton.setSelection(true);
+		this.simpleModeRadionButton.setSelection(this.isSimpleMode);
 		this.simpleModeRadionButton.addSelectionListener(modeListener);
 		
 		//simple mode controls
@@ -151,6 +152,7 @@ public class SelectProjectNamePage extends AbstractVerifiedWizardPage {
 		
 		this.advancedModeRadionButton = new Button(composite, SWT.RADIO);
 		this.advancedModeRadionButton.setText(SVNUIMessages.SelectProjectNamePage_AdvancedModeButton);
+		this.advancedModeRadionButton.setSelection(!this.isSimpleMode);
 		layout = new GridLayout();
 		gridData = new GridData();
 		gridData.verticalIndent = 5;
@@ -197,6 +199,7 @@ public class SelectProjectNamePage extends AbstractVerifiedWizardPage {
 	
 	public IWizardPage getNextPage() {
 		this.getActivePageData().save();
+		SVNTeamUIPlugin.instance().getPreferenceStore().setValue(SVNTeamPreferences.SELECT_PROJECT_NAME_PAGE_IS_SIMPLE_MODE, this.isSimpleMode);		
 		return super.getNextPage();
 	}
 }

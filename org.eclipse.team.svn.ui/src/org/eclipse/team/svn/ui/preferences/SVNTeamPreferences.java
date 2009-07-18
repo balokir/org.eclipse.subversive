@@ -271,6 +271,8 @@ public final class SVNTeamPreferences {
 	public static final String COMMIT_DIALOG_KEEP_LOCKS = "CommitPanel.keepLocks"; //$NON-NLS-1$
 	public static final int COMMIT_DIALOG_WEIGHT_DEFAULT = 50;
 	
+	public static final String SELECT_PROJECT_NAME_PAGE_IS_SIMPLE_MODE = "SelectProjectNamePage.isSimpleMode"; //$NON-NLS-1$
+	
 	public static final String AUTO_PROPERTIES_LIST_NAME = "autoproperties"; //$NON-NLS-1$
 	public static final String AUTO_PROPERTIES_LIST_DEFAULT = ""; //$NON-NLS-1$
 	
@@ -325,6 +327,8 @@ public final class SVNTeamPreferences {
 		SVNTeamPreferences.setDefaultAutoPropertiesValues(store);
 		SVNTeamPreferences.setDefaultCustomPropertiesValues(store);
 		SVNTeamPreferences.setDefaultDiffViewerValues(store);
+		
+		store.setDefault(SVNTeamPreferences.SELECT_PROJECT_NAME_PAGE_IS_SIMPLE_MODE, true);
 	}
 	
 	public static void setDefaultAutoPropertiesValues(IPreferenceStore store) {
