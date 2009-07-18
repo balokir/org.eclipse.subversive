@@ -761,8 +761,7 @@ public class HistoryActionManager {
 		IRepositoryResource resource = this.getResourceForSelectedRevision(to);
 		String rootUrl = resource.getRepositoryLocation().getRepositoryRootUrl();	
 		String url = this.traceUrlToRevision(rootUrl, resource.getUrl().substring(rootUrl.length()), this.view.getCurrentRevision(), to.revision);		
-		IRepositoryResource retVal = resource instanceof IRepositoryFile ? resource.asRepositoryFile(url, false) : resource.asRepositoryContainer(url, false);
-		retVal.setPegRevision(SVNRevision.fromNumber(to.revision));
+		IRepositoryResource retVal = resource instanceof IRepositoryFile ? resource.asRepositoryFile(url, false) : resource.asRepositoryContainer(url, false);		
 		return retVal;
 	}
 	
