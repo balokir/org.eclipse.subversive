@@ -13,6 +13,7 @@
 
 package org.eclipse.team.svn.ui.decorator;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -199,7 +200,7 @@ public abstract class AbstractResourceDecorator extends LabelProvider implements
 				decoration.addOverlay(AbstractResourceDecorator.OVR_ADDED);
 			}
 		}
-		else if (IStateFilter.SF_DELETED.accept(resource, state, mask)) {
+		else if (this.indicateDeleted && IStateFilter.SF_DELETED.accept(resource, state, mask)) {
 			decoration.addOverlay(AbstractResourceDecorator.OVR_DELETED);
 		}
 		else if (IStateFilter.SF_CONFLICTING.accept(resource, state, mask)) {

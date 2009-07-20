@@ -43,6 +43,8 @@ public class FolderDecorator extends AbstractResourceDecorator {
 	protected void loadConfiguration() {
 		super.loadConfiguration();
 		
+		this.indicateDeleted = true;
+		
 		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
 		
 		String formatLine = SVNTeamPreferences.getDecorationString(store, SVNTeamPreferences.DECORATION_FORMAT_FOLDER_NAME);
