@@ -34,6 +34,8 @@ public class FileDecorator extends AbstractResourceDecorator {
 	protected void loadConfiguration() {
 		super.loadConfiguration();
 		
+		this.indicateDeleted = false;
+		
 		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
 		
 		String formatLine = SVNTeamPreferences.getDecorationString(store, SVNTeamPreferences.DECORATION_FORMAT_FILE_NAME);
