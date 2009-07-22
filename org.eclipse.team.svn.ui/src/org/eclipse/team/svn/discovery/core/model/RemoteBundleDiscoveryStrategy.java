@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.discovery.other.WebUtil;
 
@@ -76,7 +77,7 @@ public class RemoteBundleDiscoveryStrategy extends BundleDiscoveryStrategy {
 					throw new IOException();
 				}
 			} catch (IOException e) {
-				throw new CoreException(new Status(IStatus.ERROR, "DiscoveryCore.ID_PLUGIN",
+				throw new CoreException(new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID,
 						Messages.RemoteBundleDiscoveryStrategy_io_failure_temp_storage, e));
 			}
 			if (monitor.isCanceled()) {

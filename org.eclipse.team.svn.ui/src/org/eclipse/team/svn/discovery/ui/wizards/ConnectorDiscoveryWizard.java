@@ -28,8 +28,9 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.discovery.core.model.ConnectorDescriptorKind;
-import org.eclipse.team.svn.discovery.ui.DiscoveryUi;
+import org.eclipse.team.svn.discovery.core.model.ConnectorDiscovery;
 import org.eclipse.team.svn.discovery.ui.util.DiscoveryUiUtil;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.ui.PlatformUI;
@@ -73,14 +74,6 @@ public class ConnectorDiscoveryWizard extends Wizard {
 
 	private void createEnvironment() {
 		environment = new Hashtable<Object, Object>(System.getProperties());
-		// add the installed Mylyn version to the environment so that we can have
-		// connectors that are filtered based on version of Mylyn
-		Bundle bundle = Platform.getBundle("org.eclipse.mylyn.tasks.core"); //$NON-NLS-1$
-		Version version = bundle.getVersion();
-		environment.put("org.eclipse.mylyn.version", version.toString()); //$NON-NLS-1$
-		environment.put("org.eclipse.mylyn.version.major", version.getMajor()); //$NON-NLS-1$
-		environment.put("org.eclipse.mylyn.version.minor", version.getMinor()); //$NON-NLS-1$
-		environment.put("org.eclipse.mylyn.version.micro", version.getMicro()); //$NON-NLS-1$
 	}
 
 	@Override
@@ -111,7 +104,7 @@ public class ConnectorDiscoveryWizard extends Wizard {
 				});
 			}
 		} catch (InvocationTargetException e) {
-			IStatus status = new Status(IStatus.ERROR, DiscoveryUi.ID_PLUGIN, NLS.bind(
+			IStatus status = new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID, NLS.bind(
 					Messages.ConnectorDiscoveryWizard_installProblems, new Object[] { e.getCause().getMessage() }),
 					e.getCause());
 			DiscoveryUiUtil.logAndDisplayStatus(Messages.ConnectorDiscoveryWizard_cannotInstall, status);
@@ -151,7 +144,9 @@ public class ConnectorDiscoveryWizard extends Wizard {
 	 * before the UI is presented.
 	 */
 	public boolean isShowConnectorDescriptorKindFilter() {
-		return showConnectorDescriptorKindFilter;
+		//TODO uncomment to add filters
+		//return showConnectorDescriptorKindFilter;		
+		return false;
 	}
 
 	/**
