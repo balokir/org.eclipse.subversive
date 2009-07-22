@@ -36,11 +36,10 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.mylyn.commons.net.WebLocation;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
-import org.eclipse.team.svn.discovery.core.util.WebUtil;
+import org.eclipse.team.svn.discovery.other.WebUtil;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Filter;
 import org.osgi.framework.FrameworkUtil;
@@ -356,15 +355,11 @@ public class ConnectorDiscovery {
 		}
 
 		public VerifyUpdateSiteJob call() throws Exception {
-			URL baseUrl = new URL(url);
-			List<WebLocation> locations = new ArrayList<WebLocation>();
-			for (String location : new String[] { "content.jar", "content.xml", "site.xml" }) { //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-				locations.add(new WebLocation(new URL(baseUrl, location).toExternalForm()));
-			}
+			URL baseUrl = new URL(this.url);
+			URL[] locations = new URL[] { new URL(baseUrl, "content.jar"), new URL(baseUrl, "content.xml"), new URL(baseUrl, "site.xml") }; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 			ok = WebUtil.verifyAvailability(locations, true, new NullProgressMonitor());
 			return this;
 		}
-
 	}
 
 	public void dispose() {

@@ -1215,7 +1215,7 @@ public class ConnectorDiscoveryWizardMainPage extends WizardPage {
 	private IStatus computeStatus(InvocationTargetException e, String message) {
 		Throwable cause = e.getCause();
 		IStatus statusCause;
-		if (!(cause instanceof CoreException)) {
+		if (cause instanceof CoreException) {
 			statusCause = ((CoreException) cause).getStatus();
 		} else {
 			statusCause = new Status(IStatus.ERROR, DiscoveryUi.ID_PLUGIN, cause.getMessage(), cause);
