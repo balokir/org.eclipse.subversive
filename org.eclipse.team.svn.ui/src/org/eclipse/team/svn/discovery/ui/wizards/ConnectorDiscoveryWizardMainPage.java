@@ -49,9 +49,6 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.DecorationOverlayIcon;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.mylyn.internal.provisional.commons.ui.CommonImages;
-import org.eclipse.mylyn.internal.provisional.commons.ui.CommonThemes;
-import org.eclipse.mylyn.internal.provisional.commons.ui.GradientCanvas;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.ACC;
@@ -114,14 +111,13 @@ import org.eclipse.team.svn.discovery.core.model.Overview;
 import org.eclipse.team.svn.discovery.core.model.RemoteBundleDiscoveryStrategy;
 import org.eclipse.team.svn.discovery.core.util.DiscoveryCategoryComparator;
 import org.eclipse.team.svn.discovery.core.util.DiscoveryConnectorComparator;
+import org.eclipse.team.svn.discovery.other.GradientCanvas;
 import org.eclipse.team.svn.discovery.ui.DiscoveryImages;
 import org.eclipse.team.svn.discovery.ui.DiscoveryUi;
 import org.eclipse.team.svn.discovery.ui.util.DiscoveryUiUtil;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.progress.WorkbenchJob;
-import org.eclipse.ui.themes.IThemeManager;
 
 /**
  * The main wizard page that allows users to select connectors that they wish to install.
@@ -135,8 +131,9 @@ public class ConnectorDiscoveryWizardMainPage extends WizardPage {
 	private static String URL_DISCOVERY_PROPERTY = "url";
 		
 	private static final String COLOR_WHITE = "white"; //$NON-NLS-1$
-
 	private static final String COLOR_DARK_GRAY = "DarkGray"; //$NON-NLS-1$
+	private static final String COLOR_CATEGORY_GRADIENT_START = "category.gradient.start"; //$NON-NLS-1$
+	private static final String COLOR_CATEGORY_GRADIENT_END = "category.gradient.end"; //$NON-NLS-1$ 
 
 	private static Boolean useNativeSearchField;
 
@@ -342,8 +339,8 @@ public class ConnectorDiscoveryWizardMainPage extends WizardPage {
 	}
 
 	private Label createClearFilterTextControl(Composite filterContainer, final Text filterText) {
-		final Image inactiveImage = CommonImages.FIND_CLEAR_DISABLED.createImage();
-		final Image activeImage = CommonImages.FIND_CLEAR.createImage();
+		final Image inactiveImage = SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/find-clear-disabled.gif").createImage();
+		final Image activeImage = SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/find-clear.gif").createImage();
 		final Image pressedImage = new Image(filterContainer.getDisplay(), activeImage, SWT.IMAGE_GRAY);
 
 		final Label clearButton = new Label(filterContainer, SWT.NONE);
@@ -551,7 +548,6 @@ public class ConnectorDiscoveryWizardMainPage extends WizardPage {
 	}
 
 	private void initializeColors() {
-		IThemeManager themeManager = PlatformUI.getWorkbench().getThemeManager();
 		if (colorWhite == null) {
 			ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
 			if (!colorRegistry.hasValueFor(COLOR_WHITE)) {
@@ -566,12 +562,22 @@ public class ConnectorDiscoveryWizardMainPage extends WizardPage {
 			}
 			colorDisabled = colorRegistry.get(COLOR_DARK_GRAY);
 		}
+		
 		if (colorCategoryGradientStart == null) {
-			colorCategoryGradientStart = themeManager.getCurrentTheme().getColorRegistry().get(
-					CommonThemes.COLOR_CATEGORY_GRADIENT_START);
-			colorCategoryGradientEnd = themeManager.getCurrentTheme().getColorRegistry().get(
-					CommonThemes.COLOR_CATEGORY_GRADIENT_END);
+			ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
+			if (!colorRegistry.hasValueFor(COLOR_CATEGORY_GRADIENT_START)) {
+				colorRegistry.put(COLOR_CATEGORY_GRADIENT_START, new RGB(240, 240, 240));
+			}
+			colorCategoryGradientStart = colorRegistry.get(COLOR_CATEGORY_GRADIENT_START);
 		}
+		
+		if (colorCategoryGradientEnd == null) {
+			ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
+			if (!colorRegistry.hasValueFor(COLOR_CATEGORY_GRADIENT_END)) {
+				colorRegistry.put(COLOR_CATEGORY_GRADIENT_END, new RGB(220, 220, 220));
+			}
+			colorCategoryGradientEnd = colorRegistry.get(COLOR_CATEGORY_GRADIENT_END);
+		}		
 	}
 
 	private void initializeFonts() {
@@ -1144,7 +1150,7 @@ public class ConnectorDiscoveryWizardMainPage extends WizardPage {
 								remoteDiscoveryStrategy.setDiscoveryUrl(discoveryUrl);
 								connectorDiscovery.getDiscoveryStrategies().add(remoteDiscoveryStrategy);								
 							} catch (IOException ie) {
-								LoggedOperation.reportError(this.getClass().toString(), ie);		
+								LoggedOperation.reportError(this.getClass().getName(), ie);		
 							} finally {
 								if (in != null) {
 									try {

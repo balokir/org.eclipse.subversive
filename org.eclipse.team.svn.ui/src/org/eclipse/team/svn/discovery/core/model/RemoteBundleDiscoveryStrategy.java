@@ -25,9 +25,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.mylyn.commons.core.StatusHandler;
 import org.eclipse.mylyn.commons.net.WebLocation;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.discovery.core.util.WebUtil;
 
 /**
@@ -129,8 +129,10 @@ public class RemoteBundleDiscoveryStrategy extends BundleDiscoveryStrategy {
 			for (int attemptCount = 0; attemptCount < maxDiscoveryJarDownloadAttempts; ++attemptCount) {
 				try {
 					if (!bundleUrl.startsWith("http://") && !bundleUrl.startsWith("https://")) { //$NON-NLS-1$//$NON-NLS-2$
-						StatusHandler.log(new Status(IStatus.WARNING, "DiscoveryCore.ID_PLUGIN", NLS.bind(
-								Messages.RemoteBundleDiscoveryStrategy_unrecognized_discovery_url, bundleUrl)));
+						String errMessage = NLS.bind(
+								Messages.RemoteBundleDiscoveryStrategy_unrecognized_discovery_url, bundleUrl);
+						LoggedOperation.reportError(this.getClass().getName(), new Exception(errMessage));
+						
 						continue;
 					}
 					String lastPathElement = bundleUrl.lastIndexOf('/') == -1 ? bundleUrl
@@ -150,9 +152,10 @@ public class RemoteBundleDiscoveryStrategy extends BundleDiscoveryStrategy {
 					}/*don't use sub progress monitor here*/);
 					file = target;
 				} catch (IOException e) {
-					StatusHandler.log(new Status(IStatus.ERROR, "DiscoveryCore.ID_PLUGIN", NLS.bind(
-							Messages.RemoteBundleDiscoveryStrategy_cannot_download_bundle, bundleUrl, e.getMessage()),
-							e));
+					String errMessage = NLS.bind(
+							Messages.RemoteBundleDiscoveryStrategy_cannot_download_bundle, bundleUrl, e.getMessage());
+					LoggedOperation.reportError(this.getClass().getName(), new Exception(errMessage, e));
+					
 					if (isUnknownHostException(e)) {
 						break;
 					}

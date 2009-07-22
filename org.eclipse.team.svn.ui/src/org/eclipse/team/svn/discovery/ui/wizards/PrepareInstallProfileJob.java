@@ -48,7 +48,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.svn.discovery.core.model.ConnectorDescriptor;
 import org.eclipse.team.svn.discovery.ui.DiscoveryUi;
-import org.eclipse.team.svn.discovery.ui.util.DiscoveryUiUtil;
+import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
  * A job that configures a p2 {@link #getInstallAction() install action} for installing one or more
@@ -274,7 +274,7 @@ public class PrepareInstallProfileJob implements IRunnableWithProgress {
 					final boolean[] okayToProceed = new boolean[1];
 					Display.getDefault().syncExec(new Runnable() {
 						public void run() {
-							okayToProceed[0] = MessageDialog.openQuestion(DiscoveryUiUtil.getShell(),
+							okayToProceed[0] = MessageDialog.openQuestion(UIMonitorUtility.getShell(),
 									Messages.InstallConnectorsJob_questionProceed, NLS.bind(
 											Messages.InstallConnectorsJob_questionProceed_long,
 											new Object[] { notFound }));

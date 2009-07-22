@@ -17,12 +17,10 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.mylyn.commons.core.StatusHandler;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.osgi.framework.Bundle;
 
 /**
@@ -81,9 +79,7 @@ public class BundleDiscoveryStrategy extends AbstractDiscoveryStrategy {
 									element.getName()));
 						}
 					} catch (ValidationException e) {
-						StatusHandler.log(new Status(IStatus.ERROR, "DiscoveryCore.ID_PLUGIN",
-								NLS.bind(Messages.BundleDiscoveryStrategy_3, element.getContributor().getName(),
-										e.getMessage()), e));
+						LoggedOperation.reportError(this.getClass().getName(), e);						
 					}
 				}
 				monitor.worked(1);
