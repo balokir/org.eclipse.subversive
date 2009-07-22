@@ -13,6 +13,7 @@ package org.eclipse.team.svn.discovery.core.model;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.team.svn.core.SVNTeamPlugin;
 
 /**
  * Indicate that a validation has occurred on the model.
@@ -25,6 +26,6 @@ public class ValidationException extends CoreException {
 	private static final long serialVersionUID = -7542361242327905294L;
 
 	public ValidationException(String message) {
-		super(new Status(IStatus.ERROR, "DiscoveryCore.ID_PLUGIN", message));
+		super(new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID, message));
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 Tasktop Technologies and others.
+ * Copyright (c) 2004, 2008 Tasktop Technologies, Polarion Software and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -35,6 +36,7 @@ import org.eclipse.ui.internal.browser.WorkbenchBrowserSupport;
 /**
  * @author Mik Kersten
  * @author Steffen Pingel
+ * @author Igor Burilo
  */
 public class WorkbenchUtil {	
 
@@ -70,7 +72,7 @@ public class WorkbenchUtil {
 					IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
 					support.getExternalBrowser().openURL(url);
 				} catch (PartInitException e) {
-					Status status = new Status(IStatus.ERROR, ExtensionsManager.UI_EXTENSION_NAMESPACE,
+					Status status = new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID,
 							Messages.WorkbenchUtil_Browser_Initialization_Failed);
 					MessageDialog.openError(UIMonitorUtility.getShell(), Messages.WorkbenchUtil_Open_Location_Title, status.getMessage());
 				}
@@ -92,16 +94,16 @@ public class WorkbenchUtil {
 		} catch (PartInitException e) {
 			LoggedOperation.reportError(WorkbenchUtil.class.toString(), e);			
 			
-			Status status = new Status(IStatus.ERROR, ExtensionsManager.UI_EXTENSION_NAMESPACE,
+			Status status = new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID,
 					Messages.WorkbenchUtil_Browser_Initialization_Failed, e);
 			MessageDialog.openError(UIMonitorUtility.getShell(), Messages.WorkbenchUtil_Open_Location_Title, status.getMessage());			
 		} catch (MalformedURLException e) {
 			if (location != null && location.trim().equals("")) { //$NON-NLS-1$
-				Status status = new Status(IStatus.WARNING, ExtensionsManager.UI_EXTENSION_NAMESPACE,
+				Status status = new Status(IStatus.WARNING, SVNTeamPlugin.NATURE_ID,
 						Messages.WorkbenchUtil_No_URL_Error, e);
 				MessageDialog.openWarning(UIMonitorUtility.getShell(), Messages.WorkbenchUtil_Open_Location_Title, status.getMessage());
 			} else {
-				Status status = new Status(IStatus.ERROR, ExtensionsManager.UI_EXTENSION_NAMESPACE, NLS.bind(
+				Status status = new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID, NLS.bind(
 						Messages.WorkbenchUtil_Invalid_URL_Error, location), e);
 				MessageDialog.openError(UIMonitorUtility.getShell(), Messages.WorkbenchUtil_Open_Location_Title, status.getMessage());
 			}

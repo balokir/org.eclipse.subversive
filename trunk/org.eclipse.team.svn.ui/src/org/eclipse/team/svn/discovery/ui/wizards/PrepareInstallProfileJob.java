@@ -46,8 +46,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.discovery.core.model.ConnectorDescriptor;
-import org.eclipse.team.svn.discovery.ui.DiscoveryUi;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
@@ -109,7 +109,7 @@ public class PrepareInstallProfileJob implements IRunnableWithProgress {
 						try {
 							InetAddress.getByName(host);
 						} catch (UnknownHostException e) {
-							throw new CoreException(new Status(IStatus.ERROR, DiscoveryUi.ID_PLUGIN, NLS.bind(
+							throw new CoreException(new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID, NLS.bind(
 									Messages.PrepareInstallProfileJob_errorResolvingHostname, descriptor.getName(),
 									host), e));
 						}
@@ -293,7 +293,7 @@ public class PrepareInstallProfileJob implements IRunnableWithProgress {
 									new Object[] { descriptor.getName(), descriptor.getId(), descriptor.getSiteUrl() });
 						}
 					}
-					throw new CoreException(new Status(IStatus.ERROR, DiscoveryUi.ID_PLUGIN, NLS.bind(
+					throw new CoreException(new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID, NLS.bind(
 							Messages.InstallConnectorsJob_connectorsNotAvailable, notFoundDescription), null));
 				}
 			} else if (installableUnits.size() > expectedFeaturesCount) {
@@ -302,7 +302,7 @@ public class PrepareInstallProfileJob implements IRunnableWithProgress {
 			}
 			
 
-			MultiStatus status = new MultiStatus(DiscoveryUi.ID_PLUGIN, 0, Messages.PrepareInstallProfileJob_ok, null);
+			MultiStatus status = new MultiStatus(SVNTeamPlugin.NATURE_ID, 0, Messages.PrepareInstallProfileJob_ok, null);
 			ius = installableUnits.toArray(new IInstallableUnit[installableUnits.size()]);
 			ProfileChangeRequest profileChangeRequest = InstallAction.computeProfileChangeRequest(ius, profileId,
 					status, new SubProgressMonitor(monitor, installableConnectors.size()));
@@ -311,7 +311,7 @@ public class PrepareInstallProfileJob implements IRunnableWithProgress {
 			}
 			if (profileChangeRequest == null) {
 				// failed but no indication as to why
-				throw new CoreException(new Status(IStatus.ERROR, DiscoveryUi.ID_PLUGIN,
+				throw new CoreException(new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID,
 						Messages.PrepareInstallProfileJob_computeProfileChangeRequestFailed, null));
 			}
 			PlannerResolutionOperation operation = new PlannerResolutionOperation(
@@ -326,11 +326,11 @@ public class PrepareInstallProfileJob implements IRunnableWithProgress {
 
 		} catch (URISyntaxException e) {
 			// should never happen, since we already validated URLs.
-			throw new CoreException(new Status(IStatus.ERROR, DiscoveryUi.ID_PLUGIN,
+			throw new CoreException(new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID,
 					Messages.InstallConnectorsJob_unexpectedError_url, e));
 		} catch (MalformedURLException e) {
 			// should never happen, since we already validated URLs.
-			throw new CoreException(new Status(IStatus.ERROR, DiscoveryUi.ID_PLUGIN,
+			throw new CoreException(new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID,
 					Messages.InstallConnectorsJob_unexpectedError_url, e));
 		} finally {
 			monitor.done();
@@ -351,7 +351,7 @@ public class PrepareInstallProfileJob implements IRunnableWithProgress {
 		if (profiles.length > 0) {
 			return profiles[0].getProfileId();
 		}
-		throw new CoreException(new Status(IStatus.ERROR, DiscoveryUi.ID_PLUGIN,
+		throw new CoreException(new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID,
 				Messages.InstallConnectorsJob_profileProblem, null));
 	}
 

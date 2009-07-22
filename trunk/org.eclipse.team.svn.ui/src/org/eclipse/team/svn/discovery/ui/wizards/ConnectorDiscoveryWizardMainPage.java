@@ -98,6 +98,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.discovery.core.model.AbstractDiscoverySource;
 import org.eclipse.team.svn.discovery.core.model.BundleDiscoveryStrategy;
@@ -112,8 +113,6 @@ import org.eclipse.team.svn.discovery.core.model.RemoteBundleDiscoveryStrategy;
 import org.eclipse.team.svn.discovery.core.util.DiscoveryCategoryComparator;
 import org.eclipse.team.svn.discovery.core.util.DiscoveryConnectorComparator;
 import org.eclipse.team.svn.discovery.other.GradientCanvas;
-import org.eclipse.team.svn.discovery.ui.DiscoveryImages;
-import org.eclipse.team.svn.discovery.ui.DiscoveryUi;
 import org.eclipse.team.svn.discovery.ui.util.DiscoveryUiUtil;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.ui.forms.IFormColors;
@@ -134,7 +133,7 @@ public class ConnectorDiscoveryWizardMainPage extends WizardPage {
 	private static final String COLOR_DARK_GRAY = "DarkGray"; //$NON-NLS-1$
 	private static final String COLOR_CATEGORY_GRADIENT_START = "category.gradient.start"; //$NON-NLS-1$
 	private static final String COLOR_CATEGORY_GRADIENT_END = "category.gradient.end"; //$NON-NLS-1$ 
-
+	
 	private static Boolean useNativeSearchField;
 
 	private final List<ConnectorDescriptor> installableConnectors = new ArrayList<ConnectorDescriptor>();
@@ -542,7 +541,7 @@ public class ConnectorDiscoveryWizardMainPage extends WizardPage {
 
 	private void initializeImages() {
 		if (infoImage == null) {
-			infoImage = DiscoveryImages.MESSAGE_INFO.createImage();
+			infoImage = SVNTeamUIPlugin.instance().getImageDescriptor("icons/discovery/message_info.gif").createImage();
 			disposables.add(infoImage);
 		}
 	}
@@ -781,7 +780,7 @@ public class ConnectorDiscoveryWizardMainPage extends WizardPage {
 				boolean unavailable = !enabled && connector.getAvailable() != null;
 				if (unavailable) {
 					if (warningIconImage == null) {
-						warningIconImage = new DecorationOverlayIcon(iconImage, DiscoveryImages.OVERLAY_WARNING_32,
+						warningIconImage = new DecorationOverlayIcon(iconImage, SVNTeamUIPlugin.instance().getImageDescriptor("icons/discovery/message_warning.gif"),
 								IDecoration.TOP_LEFT).createImage();
 						disposables.add(warningIconImage);
 					}
@@ -1218,13 +1217,13 @@ public class ConnectorDiscoveryWizardMainPage extends WizardPage {
 		if (cause instanceof CoreException) {
 			statusCause = ((CoreException) cause).getStatus();
 		} else {
-			statusCause = new Status(IStatus.ERROR, DiscoveryUi.ID_PLUGIN, cause.getMessage(), cause);
+			statusCause = new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID, cause.getMessage(), cause);
 		}
 		if (statusCause.getMessage() != null) {
 			message = NLS.bind(Messages.ConnectorDiscoveryWizardMainPage_message_with_cause, message,
 					statusCause.getMessage());
 		}
-		IStatus status = new MultiStatus(DiscoveryUi.ID_PLUGIN, 0, new IStatus[] { statusCause }, message, cause);
+		IStatus status = new MultiStatus(SVNTeamPlugin.NATURE_ID, 0, new IStatus[] { statusCause }, message, cause);
 		return status;
 	}
 
