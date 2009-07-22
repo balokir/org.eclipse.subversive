@@ -12,6 +12,7 @@ package org.eclipse.team.svn.discovery.core.model;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.net.UnknownHostException;
 
 import org.eclipse.core.internal.registry.ExtensionRegistry;
@@ -25,10 +26,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.mylyn.commons.net.WebLocation;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
-import org.eclipse.team.svn.discovery.core.util.WebUtil;
+import org.eclipse.team.svn.discovery.other.WebUtil;
 
 /**
  * A discovery strategy that downloads a simple directory of remote jars. The directory is first downloaded, then each
@@ -124,7 +124,6 @@ public class RemoteBundleDiscoveryStrategy extends BundleDiscoveryStrategy {
 		}
 
 		public void exec() {
-
 			String bundleUrl = this.location;
 			for (int attemptCount = 0; attemptCount < maxDiscoveryJarDownloadAttempts; ++attemptCount) {
 				try {
@@ -144,7 +143,7 @@ public class RemoteBundleDiscoveryStrategy extends BundleDiscoveryStrategy {
 						break;
 					}
 
-					WebUtil.downloadResource(target, new WebLocation(bundleUrl), new NullProgressMonitor() {
+					WebUtil.downloadResource(target, new URL(bundleUrl), new NullProgressMonitor() {
 						@Override
 						public boolean isCanceled() {
 							return super.isCanceled() || monitor.isCanceled();
@@ -153,7 +152,7 @@ public class RemoteBundleDiscoveryStrategy extends BundleDiscoveryStrategy {
 					file = target;
 				} catch (IOException e) {
 					String errMessage = NLS.bind(
-							Messages.RemoteBundleDiscoveryStrategy_cannot_download_bundle, bundleUrl, e.getMessage());
+							Messages.RemoteBundleDiscoveryStrategy_cannot_download_bundle, bundleUrl);
 					LoggedOperation.reportError(this.getClass().getName(), new Exception(errMessage, e));
 					
 					if (isUnknownHostException(e)) {
