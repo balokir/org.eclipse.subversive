@@ -31,17 +31,15 @@ import org.eclipse.core.runtime.IBundleGroup;
 import org.eclipse.core.runtime.IBundleGroupProvider;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.mylyn.commons.core.StatusHandler;
 import org.eclipse.mylyn.commons.net.WebLocation;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.discovery.core.util.WebUtil;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Filter;
@@ -202,9 +200,10 @@ public class ConnectorDiscovery {
 		for (DiscoveryCategory category : categories) {
 			DiscoveryCategory previous = idToCategory.put(category.getId(), category);
 			if (previous != null) {
-				StatusHandler.log(new Status(IStatus.ERROR, "DiscoveryCore.ID_PLUGIN", NLS.bind(
+				String errMessage = NLS.bind(
 						Messages.ConnectorDiscovery_duplicate_category_id, new Object[] { category.getId(),
-								category.getSource().getId(), previous.getSource().getId() })));
+								category.getSource().getId(), previous.getSource().getId() });
+				LoggedOperation.reportError(this.getClass().getName(), new Exception(errMessage));			
 			}
 		}
 
@@ -214,9 +213,10 @@ public class ConnectorDiscovery {
 				category.getConnectors().add(connector);
 				connector.setCategory(category);
 			} else {
-				StatusHandler.log(new Status(IStatus.ERROR, "DiscoveryCore.ID_PLUGIN", NLS.bind(
+				String errMessage = NLS.bind(
 						Messages.ConnectorDiscovery_bundle_references_unknown_category, new Object[] {
-								connector.getCategoryId(), connector.getId(), connector.getSource().getId() })));
+								connector.getCategoryId(), connector.getId(), connector.getSource().getId() });
+				LoggedOperation.reportError(this.getClass().getName(), new Exception(errMessage));
 			}
 		}
 	}
@@ -232,9 +232,10 @@ public class ConnectorDiscovery {
 					Filter filter = FrameworkUtil.createFilter(connector.getPlatformFilter());
 					match = filter.match(environment);
 				} catch (InvalidSyntaxException e) {
-					StatusHandler.log(new Status(IStatus.ERROR, "DiscoveryCore.ID_PLUGIN", NLS.bind(
+					String errMessage = NLS.bind(
 							Messages.ConnectorDiscovery_illegal_filter_syntax, new Object[] {
-									connector.getPlatformFilter(), connector.getId(), connector.getSource().getId() })));
+									connector.getPlatformFilter(), connector.getId(), connector.getSource().getId() });
+					LoggedOperation.reportError(this.getClass().getName(), new Exception(errMessage, e));					
 				}
 				if (!match) {
 					connectors.remove(connector);
@@ -330,15 +331,8 @@ public class ConnectorDiscovery {
 							if (e.getCause() instanceof OperationCanceledException) {
 								monitor.setCanceled(true);
 								return;
-							}
-							IStatus status;
-							if (e.getCause() instanceof CoreException) {
-								status = ((CoreException) e.getCause()).getStatus();
-							} else {
-								status = new Status(IStatus.ERROR, "DiscoveryCore.ID_PLUGIN",
-										Messages.ConnectorDiscovery_unexpected_exception, e.getCause());
-							}
-							StatusHandler.log(status);
+							}												
+							LoggedOperation.reportError(this.getClass().getName(), e.getCause());
 						}
 						monitor.worked(1);
 					}
@@ -382,8 +376,8 @@ public class ConnectorDiscovery {
 				}
 
 				public void handleException(Throwable exception) {
-					StatusHandler.log(new Status(IStatus.ERROR, "DiscoveryCore.ID_PLUGIN",
-							Messages.ConnectorDiscovery_exception_disposing + strategy.getClass().getName(), exception));
+					String errMessage = Messages.ConnectorDiscovery_exception_disposing + strategy.getClass().getName();
+					LoggedOperation.reportError(this.getClass().getName(), new Exception(errMessage, exception));
 				}
 			});
 		}

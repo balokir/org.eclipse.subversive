@@ -47,7 +47,7 @@ import org.eclipse.team.svn.ui.extension.impl.PredefinedPropertySet;
  * @author Andrej Zachar
  */
 public class ExtensionsManager {
-	private static final String UI_EXTENSION_NAMESPACE = "org.eclipse.team.svn.ui"; //$NON-NLS-1$
+	public static final String UI_EXTENSION_NAMESPACE = "org.eclipse.team.svn.ui"; //$NON-NLS-1$
 	
 	private ICommitActionFactory currentCommitFactory;
 	private IHistoryViewFactory currentMessageFactory;

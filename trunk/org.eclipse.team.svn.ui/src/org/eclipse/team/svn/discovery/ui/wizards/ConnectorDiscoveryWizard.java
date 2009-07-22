@@ -26,12 +26,12 @@ import org.eclipse.equinox.internal.provisional.p2.ui.dialogs.ProvisioningWizard
 import org.eclipse.equinox.internal.provisional.p2.ui.policy.Policy;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.mylyn.internal.provisional.commons.ui.CommonImages;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.svn.discovery.core.model.ConnectorDescriptorKind;
 import org.eclipse.team.svn.discovery.ui.DiscoveryUi;
 import org.eclipse.team.svn.discovery.ui.util.DiscoveryUiUtil;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.ui.PlatformUI;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Version;
@@ -67,7 +67,7 @@ public class ConnectorDiscoveryWizard extends Wizard {
 	public ConnectorDiscoveryWizard() {
 		setWindowTitle(Messages.ConnectorDiscoveryWizard_connectorDiscovery);
 		setNeedsProgressMonitor(true);
-		setDefaultPageImageDescriptor(CommonImages.BANNER_DISOVERY);
+		setDefaultPageImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/banner-discovery.png"));
 		createEnvironment();
 	}
 

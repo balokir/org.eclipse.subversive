@@ -20,8 +20,6 @@ import org.eclipse.osgi.util.NLS;
 class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.team.svn.discovery.core.model.messages"; //$NON-NLS-1$
 
-	public static String BundleDiscoveryStrategy_3;
-
 	public static String BundleDiscoveryStrategy_categoryDisallowed;
 
 	public static String BundleDiscoveryStrategy_task_loading_local_extensions;

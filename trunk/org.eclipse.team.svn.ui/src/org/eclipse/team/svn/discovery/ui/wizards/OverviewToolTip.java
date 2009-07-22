@@ -19,8 +19,6 @@ import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.ToolTip;
-import org.eclipse.mylyn.internal.provisional.commons.ui.GradientToolTip;
-import org.eclipse.mylyn.internal.provisional.commons.ui.WorkbenchUtil;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -40,6 +38,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.team.svn.discovery.core.model.AbstractDiscoverySource;
 import org.eclipse.team.svn.discovery.core.model.Overview;
+import org.eclipse.team.svn.discovery.other.GradientToolTip;
+import org.eclipse.team.svn.discovery.other.WorkbenchUtil;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 
 /**
@@ -149,7 +149,8 @@ class OverviewToolTip extends GradientToolTip {
 
 			// creates a border
 			imageContainer.setBackground(colorBlack);
-		}
+		}			
+		
 		if (hasLearnMoreLink) {
 			Link link = new Link(summaryContainer, SWT.NULL);
 			GridDataFactory.fillDefaults().grab(false, false).align(SWT.BEGINNING, SWT.CENTER).applyTo(link);
@@ -166,6 +167,7 @@ class OverviewToolTip extends GradientToolTip {
 				}
 			});
 		}
+		
 		if (image == null) {
 			// prevent overviews with no image from providing unlimited text.
 			Point optimalSize = summaryContainer.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
