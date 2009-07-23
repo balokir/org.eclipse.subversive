@@ -48,11 +48,9 @@ public class WebUtil {
 	 * @throws IOException
 	 *             if a network or IO problem occurs
 	 */
-	public static void downloadResource(File target, URL sourceUrl, IProgressMonitor monitor) throws IOException {		
+	public static void downloadResource(File target, URL sourceUrl, IProgressMonitor monitor) throws IOException {
 		monitor.beginTask(SVNMessages.format(SVNMessages.WebUtil_task_retrievingUrl, sourceUrl.toString()), IProgressMonitor.UNKNOWN);		
-		try {		
-			WebUtil.initProxySettings(sourceUrl.getHost());
-			
+		try {
 			HttpURLConnection con = (HttpURLConnection) sourceUrl.openConnection();    	 
 			int result = con.getResponseCode();
 			if (result == WebUtil.STATUS_OK) {
@@ -106,9 +104,7 @@ public class WebUtil {
 			throw new IllegalArgumentException();
 		}		
 		monitor.beginTask(SVNMessages.format(SVNMessages.WebUtil_task_verifyingUrl, locations[0].toString()), IProgressMonitor.UNKNOWN);
-		try {						
-			WebUtil.initProxySettings(locations[0].getHost());
-			
+		try {
 			int countFound = 0;
 			for (URL location : locations) {												
 				if (monitor.isCanceled()) {
@@ -142,12 +138,10 @@ public class WebUtil {
 		}
 	}
 	
-	private static void initProxySettings(String host) {
-		IProxyService proxyService = SVNTeamPlugin.instance().getProxyService();				
-		final IProxyData proxyData = proxyService.getProxyDataForHost(host, IProxyData.HTTP_PROXY_TYPE);
-		proxyService.getProxyData();
-		
-		if (proxyService.isProxiesEnabled() && proxyData != null) {						
+	public static void setAuthenticator(Authenticator authenticator) {
+		IProxyService proxyService = SVNTeamPlugin.instance().getProxyService();
+		final IProxyData proxyData = proxyService.getProxyData(IProxyData.HTTP_PROXY_TYPE);		
+		if (proxyService.isProxiesEnabled() && proxyData != null) {
 			String proxyHost = proxyData.getHost();
 			int proxyPort = proxyData.getPort();
 			// change the IProxyData default port to the Java default port
@@ -155,16 +149,10 @@ public class WebUtil {
 				proxyPort = 0;
 			}			
 			System.getProperties().put("http.proxyHost", proxyHost);
-		    System.getProperties().put("http.proxyPort", String.valueOf(proxyPort));  	
-			
-			if (proxyData.isRequiresAuthentication()) {
-				Authenticator.setDefault(new Authenticator() {
-					protected PasswordAuthentication getPasswordAuthentication() {
-						char[] pswd = proxyData.getPassword() == null ? new char[0] :proxyData.getPassword().toCharArray(); 
-						return new PasswordAuthentication(proxyData.getUserId(), pswd);
-		  	    }});
-			}
+		    System.getProperties().put("http.proxyPort", String.valueOf(proxyPort));  								    
+		    if (proxyData.isRequiresAuthentication()) {
+		    	Authenticator.setDefault(authenticator);
+		    }		    
 		}
-	}
-		
+	}		
 }
