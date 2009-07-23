@@ -30,7 +30,6 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
@@ -46,7 +45,6 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractRepositoryModifyWorkspaceAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
-import org.eclipse.team.svn.ui.discovery.wizards.ConnectorDiscoveryWizard;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.operation.ObtainProjectNameOperation;
 import org.eclipse.team.svn.ui.panel.ListSelectionPanel;
@@ -64,16 +62,6 @@ public class CheckoutAction extends AbstractRepositoryModifyWorkspaceAction {
 	}
 
 	public void runImpl(IAction action) {
-		
-		//TODO delete it
-		//check that connectors exist		
-		ConnectorDiscoveryWizard wizard = new ConnectorDiscoveryWizard();
-		WizardDialog dialog = new WizardDialog(UIMonitorUtility.getShell(), wizard);
-		dialog.open();		
-		if (true) {
-			return;
-		}
-		
 		final IRepositoryResource []resources = this.getSelectedRepositoryResources();
 		if (SVNTeamPreferences.getCheckoutBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.CHECKOUT_RESPECT_PROJECT_STRUCTURE_NAME)) {
 			this.runScheduled(new AbstractActionOperation("Operation_CheckLayout") { //$NON-NLS-1$
