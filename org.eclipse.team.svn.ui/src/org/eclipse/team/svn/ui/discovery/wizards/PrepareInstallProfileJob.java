@@ -44,10 +44,10 @@ import org.eclipse.equinox.internal.provisional.p2.ui.operations.PlannerResoluti
 import org.eclipse.equinox.internal.provisional.p2.ui.operations.ProvisioningUtil;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.discovery.model.ConnectorDescriptor;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
@@ -94,7 +94,7 @@ public class PrepareInstallProfileJob implements IRunnableWithProgress {
 
 	public void doRun(IProgressMonitor monitor) throws CoreException {
 		final int totalWork = installableConnectors.size() * 6;
-		monitor.beginTask(Messages.InstallConnectorsJob_task_configuring, totalWork);
+		monitor.beginTask(SVNUIMessages.InstallConnectorsJob_task_configuring, totalWork);
 		try {
 			profileId = computeProfileId();
 			// verify that we can resolve hostnames
@@ -109,9 +109,9 @@ public class PrepareInstallProfileJob implements IRunnableWithProgress {
 						try {
 							InetAddress.getByName(host);
 						} catch (UnknownHostException e) {
-							throw new CoreException(new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID, NLS.bind(
-									Messages.PrepareInstallProfileJob_errorResolvingHostname, descriptor.getName(),
-									host), e));
+							throw new CoreException(new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID, 
+									SVNUIMessages.format(SVNUIMessages.PrepareInstallProfileJob_errorResolvingHostname, new Object[]{descriptor.getName(), host}),
+									e));
 						}
 					}
 				}
@@ -261,7 +261,7 @@ public class PrepareInstallProfileJob implements IRunnableWithProgress {
 				for (ConnectorDescriptor descriptor : installableConnectors) {								
 					if (!foundIds.containsAll(descriptor.getId())) {
 						if (temp.length() > 0) {
-							temp += Messages.InstallConnectorsJob_commaSeparator;
+							temp += SVNUIMessages.InstallConnectorsJob_commaSeparator;
 						}
 						temp += descriptor.getName();
 					}
@@ -275,8 +275,8 @@ public class PrepareInstallProfileJob implements IRunnableWithProgress {
 					Display.getDefault().syncExec(new Runnable() {
 						public void run() {
 							okayToProceed[0] = MessageDialog.openQuestion(UIMonitorUtility.getShell(),
-									Messages.InstallConnectorsJob_questionProceed, NLS.bind(
-											Messages.InstallConnectorsJob_questionProceed_long,
+									SVNUIMessages.InstallConnectorsJob_questionProceed, SVNUIMessages.format(
+											SVNUIMessages.InstallConnectorsJob_questionProceed_long,
 											new Object[] { notFound }));
 						}
 					});
@@ -287,14 +287,14 @@ public class PrepareInstallProfileJob implements IRunnableWithProgress {
 					for (ConnectorDescriptor descriptor : installableConnectors) {
 						if (!foundIds.contains(descriptor.getId())) {
 							if (notFoundDescription.length() > 0) {
-								notFoundDescription += Messages.InstallConnectorsJob_commaSeparator;
+								notFoundDescription += SVNUIMessages.InstallConnectorsJob_commaSeparator;
 							}
-							notFoundDescription += NLS.bind(Messages.PrepareInstallProfileJob_notFoundDescriptorDetail,
+							notFoundDescription += SVNUIMessages.format(SVNUIMessages.PrepareInstallProfileJob_notFoundDescriptorDetail,
 									new Object[] { descriptor.getName(), descriptor.getId(), descriptor.getSiteUrl() });
 						}
 					}
-					throw new CoreException(new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID, NLS.bind(
-							Messages.InstallConnectorsJob_connectorsNotAvailable, notFoundDescription), null));
+					throw new CoreException(new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID, SVNUIMessages.format(
+							SVNUIMessages.InstallConnectorsJob_connectorsNotAvailable, notFoundDescription), null));
 				}
 			} else if (installableUnits.size() > expectedFeaturesCount) {
 				// should never ever happen
@@ -302,7 +302,7 @@ public class PrepareInstallProfileJob implements IRunnableWithProgress {
 			}
 			
 
-			MultiStatus status = new MultiStatus(SVNTeamPlugin.NATURE_ID, 0, Messages.PrepareInstallProfileJob_ok, null);
+			MultiStatus status = new MultiStatus(SVNTeamPlugin.NATURE_ID, 0, SVNUIMessages.PrepareInstallProfileJob_ok, null);
 			ius = installableUnits.toArray(new IInstallableUnit[installableUnits.size()]);
 			ProfileChangeRequest profileChangeRequest = InstallAction.computeProfileChangeRequest(ius, profileId,
 					status, new SubProgressMonitor(monitor, installableConnectors.size()));
@@ -312,10 +312,10 @@ public class PrepareInstallProfileJob implements IRunnableWithProgress {
 			if (profileChangeRequest == null) {
 				// failed but no indication as to why
 				throw new CoreException(new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID,
-						Messages.PrepareInstallProfileJob_computeProfileChangeRequestFailed, null));
+						SVNUIMessages.PrepareInstallProfileJob_computeProfileChangeRequestFailed, null));
 			}
 			PlannerResolutionOperation operation = new PlannerResolutionOperation(
-					Messages.PrepareInstallProfileJob_calculatingRequirements, profileId, profileChangeRequest, null,
+					SVNUIMessages.PrepareInstallProfileJob_calculatingRequirements, profileId, profileChangeRequest, null,
 					status, true);
 			IStatus operationStatus = operation.execute(new SubProgressMonitor(monitor, installableConnectors.size()));
 			if (operationStatus.getSeverity() > IStatus.WARNING) {
@@ -327,11 +327,11 @@ public class PrepareInstallProfileJob implements IRunnableWithProgress {
 		} catch (URISyntaxException e) {
 			// should never happen, since we already validated URLs.
 			throw new CoreException(new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID,
-					Messages.InstallConnectorsJob_unexpectedError_url, e));
+					SVNUIMessages.InstallConnectorsJob_unexpectedError_url, e));
 		} catch (MalformedURLException e) {
 			// should never happen, since we already validated URLs.
 			throw new CoreException(new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID,
-					Messages.InstallConnectorsJob_unexpectedError_url, e));
+					SVNUIMessages.InstallConnectorsJob_unexpectedError_url, e));
 		} finally {
 			monitor.done();
 		}
@@ -352,7 +352,7 @@ public class PrepareInstallProfileJob implements IRunnableWithProgress {
 			return profiles[0].getProfileId();
 		}
 		throw new CoreException(new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID,
-				Messages.InstallConnectorsJob_profileProblem, null));
+				SVNUIMessages.InstallConnectorsJob_profileProblem, null));
 	}
 
 	public PlannerResolutionOperation getPlannerResolutionOperation() {

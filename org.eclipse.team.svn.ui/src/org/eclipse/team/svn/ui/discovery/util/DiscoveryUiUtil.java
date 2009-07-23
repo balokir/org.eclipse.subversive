@@ -16,6 +16,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
@@ -58,7 +59,7 @@ public abstract class DiscoveryUiUtil {
 	public static void displayStatus(Shell shell, final String title, final IStatus status, boolean showLinkToErrorLog) {
 		String message = status.getMessage();
 		if (showLinkToErrorLog) {
-			message += Messages.DiscoveryUi_seeErrorLog;
+			message += SVNUIMessages.DiscoveryUi_seeErrorLog;
 		}
 		switch (status.getSeverity()) {
 		case IStatus.CANCEL:

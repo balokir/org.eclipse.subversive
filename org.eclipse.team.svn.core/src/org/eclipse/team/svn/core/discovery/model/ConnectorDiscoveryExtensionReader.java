@@ -11,6 +11,7 @@
 package org.eclipse.team.svn.core.discovery.model;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.team.svn.core.SVNMessages;
 
 /**
  * Connector Discovery extension point reader, for extension points of type
@@ -57,7 +58,7 @@ public class ConnectorDiscoveryExtensionReader {
 				}
 			}
 		} catch (IllegalArgumentException e) {
-			throw new ValidationException(Messages.ConnectorDiscoveryExtensionReader_unexpected_value_kind);
+			throw new ValidationException(SVNMessages.ConnectorDiscoveryExtensionReader_unexpected_value_kind);
 		}		
 		
 		String ids = element.getAttribute("id"); //$NON-NLS-1$
@@ -86,7 +87,7 @@ public class ConnectorDiscoveryExtensionReader {
 			Icon iconItem = readIcon(child);
 			iconItem.setConnectorDescriptor(connectorDescriptor);
 			if (connectorDescriptor.getIcon() != null) {
-				throw new ValidationException(Messages.ConnectorDiscoveryExtensionReader_unexpected_element_icon);
+				throw new ValidationException(SVNMessages.ConnectorDiscoveryExtensionReader_unexpected_element_icon);
 			}
 			connectorDescriptor.setIcon(iconItem);
 		}
@@ -94,7 +95,7 @@ public class ConnectorDiscoveryExtensionReader {
 			Overview overviewItem = readOverview(child);
 			overviewItem.setConnectorDescriptor(connectorDescriptor);
 			if (connectorDescriptor.getOverview() != null) {
-				throw new ValidationException(Messages.ConnectorDiscoveryExtensionReader_unexpected_element_overview);
+				throw new ValidationException(SVNMessages.ConnectorDiscoveryExtensionReader_unexpected_element_overview);
 			}
 			connectorDescriptor.setOverview(overviewItem);
 		}
@@ -126,7 +127,7 @@ public class ConnectorDiscoveryExtensionReader {
 			Icon iconItem = readIcon(child);
 			iconItem.setConnectorCategory(connectorCategory);
 			if (connectorCategory.getIcon() != null) {
-				throw new ValidationException(Messages.ConnectorDiscoveryExtensionReader_unexpected_element_icon);
+				throw new ValidationException(SVNMessages.ConnectorDiscoveryExtensionReader_unexpected_element_icon);
 			}
 			connectorCategory.setIcon(iconItem);
 		}
@@ -134,7 +135,7 @@ public class ConnectorDiscoveryExtensionReader {
 			Overview overviewItem = readOverview(child);
 			overviewItem.setConnectorCategory(connectorCategory);
 			if (connectorCategory.getOverview() != null) {
-				throw new ValidationException(Messages.ConnectorDiscoveryExtensionReader_unexpected_element_overview);
+				throw new ValidationException(SVNMessages.ConnectorDiscoveryExtensionReader_unexpected_element_overview);
 			}
 			connectorCategory.setOverview(overviewItem);
 		}

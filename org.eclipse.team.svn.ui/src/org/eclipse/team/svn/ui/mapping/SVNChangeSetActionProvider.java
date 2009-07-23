@@ -55,6 +55,7 @@ import org.eclipse.team.internal.ui.synchronize.IChangeSetProvider;
 import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
 import org.eclipse.team.svn.core.mapping.SVNChangeSetModelProvider;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
@@ -195,7 +196,7 @@ public class SVNChangeSetActionProvider extends ResourceModelActionProvider {
         public void run() {
             ActiveChangeSet set = getSelectedSet();
             if (set == null) return;
-            if (MessageDialog.openConfirm(SVNChangeSetActionProvider.this.getSynchronizePageConfiguration().getSite().getShell(), TeamUIMessages.ChangeSetActionGroup_0, NLS.bind(TeamUIMessages.ChangeSetActionGroup_1, new String[] {set.getTitle()}))) { 
+            if (MessageDialog.openConfirm(SVNChangeSetActionProvider.this.getSynchronizePageConfiguration().getSite().getShell(), TeamUIMessages.ChangeSetActionGroup_0, SVNUIMessages.format(TeamUIMessages.ChangeSetActionGroup_1, new String[] {set.getTitle()}))) { 
                 SVNChangeSetActionProvider.this.getActiveChangeSetManager().remove(set);
             }
         }

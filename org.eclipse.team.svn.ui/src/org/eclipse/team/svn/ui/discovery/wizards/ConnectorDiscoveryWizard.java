@@ -25,12 +25,12 @@ import org.eclipse.equinox.internal.provisional.p2.ui.dialogs.ProvisioningWizard
 import org.eclipse.equinox.internal.provisional.p2.ui.policy.Policy;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.discovery.model.ConnectorDescriptorKind;
 import org.eclipse.team.svn.core.discovery.model.ConnectorDiscovery;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.discovery.util.DiscoveryUiUtil;
 import org.eclipse.ui.PlatformUI;
 
@@ -63,7 +63,7 @@ public class ConnectorDiscoveryWizard extends Wizard {
 	private Dictionary<Object, Object> environment;
 
 	public ConnectorDiscoveryWizard() {
-		setWindowTitle(Messages.ConnectorDiscoveryWizard_connectorDiscovery);
+		setWindowTitle(SVNUIMessages.ConnectorDiscoveryWizard_connectorDiscovery);
 		setNeedsProgressMonitor(true);
 		setDefaultPageImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/banner-discovery.png"));
 		createEnvironment();
@@ -101,10 +101,10 @@ public class ConnectorDiscoveryWizard extends Wizard {
 				});
 			}
 		} catch (InvocationTargetException e) {
-			IStatus status = new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID, NLS.bind(
-					Messages.ConnectorDiscoveryWizard_installProblems, new Object[] { e.getCause().getMessage() }),
+			IStatus status = new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID, SVNUIMessages.format(
+					SVNUIMessages.ConnectorDiscoveryWizard_installProblems, new Object[] { e.getCause().getMessage() }),
 					e.getCause());
-			DiscoveryUiUtil.logAndDisplayStatus(Messages.ConnectorDiscoveryWizard_cannotInstall, status);
+			DiscoveryUiUtil.logAndDisplayStatus(SVNUIMessages.ConnectorDiscoveryWizard_cannotInstall, status);
 			return false;
 		} catch (InterruptedException e) {
 			// canceled

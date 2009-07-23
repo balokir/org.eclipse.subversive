@@ -61,7 +61,7 @@ public class UpdateParticipant extends AbstractSVNParticipant {
 			}
 			scopeName = buffer.toString();
 		}
-		return NLS.bind(TeamUIMessages.SubscriberParticipant_namePattern, new String[] { name, scopeName }); 
+		return SVNUIMessages.format(TeamUIMessages.SubscriberParticipant_namePattern, new String[] { name, scopeName }); 
 	}
 	
     protected String getParticipantId() {

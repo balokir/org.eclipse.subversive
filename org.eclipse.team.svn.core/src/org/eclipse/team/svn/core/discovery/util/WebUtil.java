@@ -26,7 +26,7 @@ import java.net.UnknownHostException;
 import org.eclipse.core.net.proxy.IProxyData;
 import org.eclipse.core.net.proxy.IProxyService;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 
 /**
@@ -49,7 +49,7 @@ public class WebUtil {
 	 *             if a network or IO problem occurs
 	 */
 	public static void downloadResource(File target, URL sourceUrl, IProgressMonitor monitor) throws IOException {		
-		monitor.beginTask(NLS.bind(Messages.WebUtil_task_retrievingUrl, sourceUrl.toString()), IProgressMonitor.UNKNOWN);		
+		monitor.beginTask(SVNMessages.format(SVNMessages.WebUtil_task_retrievingUrl, sourceUrl.toString()), IProgressMonitor.UNKNOWN);		
 		try {		
 			WebUtil.initProxySettings(sourceUrl.getHost());
 			
@@ -83,7 +83,7 @@ public class WebUtil {
 					}					
 				}
 			} else {
-				throw new IOException(NLS.bind(Messages.WebUtil_cannotDownload, sourceUrl.toString(), result));
+				throw new IOException(SVNMessages.format(SVNMessages.WebUtil_cannotDownload, new Object[]{ sourceUrl.toString(), result}));
 			}							
 		} finally {						
 			monitor.done();
@@ -105,7 +105,7 @@ public class WebUtil {
 		if (locations.length == 0) {
 			throw new IllegalArgumentException();
 		}		
-		monitor.beginTask(NLS.bind(Messages.WebUtil_task_verifyingUrl, locations[0].toString()), IProgressMonitor.UNKNOWN);
+		monitor.beginTask(SVNMessages.format(SVNMessages.WebUtil_task_verifyingUrl, locations[0].toString()), IProgressMonitor.UNKNOWN);
 		try {						
 			WebUtil.initProxySettings(locations[0].getHost());
 			

@@ -37,7 +37,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.osgi.service.resolver.VersionRange;
-import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.discovery.util.WebUtil;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.osgi.framework.Bundle;
@@ -93,7 +93,7 @@ public class ConnectorDiscovery {
 		final int totalTicks = 100000;
 		final int discoveryTicks = totalTicks - (totalTicks / 10);
 		final int filterTicks = totalTicks - discoveryTicks;
-		monitor.beginTask(Messages.ConnectorDiscovery_task_discovering_connectors, totalTicks);
+		monitor.beginTask(SVNMessages.ConnectorDiscovery_task_discovering_connectors, totalTicks);
 		try {
 			for (AbstractDiscoveryStrategy discoveryStrategy : discoveryStrategies) {
 				discoveryStrategy.setCategories(categories);
@@ -199,8 +199,8 @@ public class ConnectorDiscovery {
 		for (DiscoveryCategory category : categories) {
 			DiscoveryCategory previous = idToCategory.put(category.getId(), category);
 			if (previous != null) {
-				String errMessage = NLS.bind(
-						Messages.ConnectorDiscovery_duplicate_category_id, new Object[] { category.getId(),
+				String errMessage = SVNMessages.format(
+						SVNMessages.ConnectorDiscovery_duplicate_category_id, new Object[] { category.getId(),
 								category.getSource().getId(), previous.getSource().getId() });
 				LoggedOperation.reportError(this.getClass().getName(), new Exception(errMessage));			
 			}
@@ -212,8 +212,8 @@ public class ConnectorDiscovery {
 				category.getConnectors().add(connector);
 				connector.setCategory(category);
 			} else {
-				String errMessage = NLS.bind(
-						Messages.ConnectorDiscovery_bundle_references_unknown_category, new Object[] {
+				String errMessage = SVNMessages.format(
+						SVNMessages.ConnectorDiscovery_bundle_references_unknown_category, new Object[] {
 								connector.getCategoryId(), connector.getId(), connector.getSource().getId() });
 				LoggedOperation.reportError(this.getClass().getName(), new Exception(errMessage));
 			}
@@ -231,8 +231,8 @@ public class ConnectorDiscovery {
 					Filter filter = FrameworkUtil.createFilter(connector.getPlatformFilter());
 					match = filter.match(environment);
 				} catch (InvalidSyntaxException e) {
-					String errMessage = NLS.bind(
-							Messages.ConnectorDiscovery_illegal_filter_syntax, new Object[] {
+					String errMessage = SVNMessages.format(
+							SVNMessages.ConnectorDiscovery_illegal_filter_syntax, new Object[] {
 									connector.getPlatformFilter(), connector.getId(), connector.getSource().getId() });
 					LoggedOperation.reportError(this.getClass().getName(), new Exception(errMessage, e));					
 				}
@@ -296,7 +296,7 @@ public class ConnectorDiscovery {
 			collection.add(descriptor);
 		}
 		final int totalTicks = urlToDescriptors.size();
-		monitor.beginTask(Messages.ConnectorDiscovery_task_verifyingAvailability, totalTicks);
+		monitor.beginTask(SVNMessages.ConnectorDiscovery_task_verifyingAvailability, totalTicks);
 		try {
 			if (!urlToDescriptors.isEmpty()) {
 				ExecutorService executorService = Executors.newFixedThreadPool(Math.min(urlToDescriptors.size(), 4));
@@ -371,7 +371,7 @@ public class ConnectorDiscovery {
 				}
 
 				public void handleException(Throwable exception) {
-					String errMessage = Messages.ConnectorDiscovery_exception_disposing + strategy.getClass().getName();
+					String errMessage = SVNMessages.ConnectorDiscovery_exception_disposing + strategy.getClass().getName();
 					LoggedOperation.reportError(this.getClass().getName(), new Exception(errMessage, exception));
 				}
 			});

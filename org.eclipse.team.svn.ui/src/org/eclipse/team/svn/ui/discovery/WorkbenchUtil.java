@@ -20,11 +20,10 @@ import java.util.Calendar;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
-import org.eclipse.team.svn.ui.extension.ExtensionsManager;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -73,8 +72,8 @@ public class WorkbenchUtil {
 					support.getExternalBrowser().openURL(url);
 				} catch (PartInitException e) {
 					Status status = new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID,
-							Messages.WorkbenchUtil_Browser_Initialization_Failed);
-					MessageDialog.openError(UIMonitorUtility.getShell(), Messages.WorkbenchUtil_Open_Location_Title, status.getMessage());
+							SVNUIMessages.WorkbenchUtil_Browser_Initialization_Failed);
+					MessageDialog.openError(UIMonitorUtility.getShell(), SVNUIMessages.WorkbenchUtil_Open_Location_Title, status.getMessage());
 				}
 			} else {
 				IWebBrowser browser = null;
@@ -95,17 +94,17 @@ public class WorkbenchUtil {
 			LoggedOperation.reportError(WorkbenchUtil.class.toString(), e);			
 			
 			Status status = new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID,
-					Messages.WorkbenchUtil_Browser_Initialization_Failed, e);
-			MessageDialog.openError(UIMonitorUtility.getShell(), Messages.WorkbenchUtil_Open_Location_Title, status.getMessage());			
+					SVNUIMessages.WorkbenchUtil_Browser_Initialization_Failed, e);
+			MessageDialog.openError(UIMonitorUtility.getShell(), SVNUIMessages.WorkbenchUtil_Open_Location_Title, status.getMessage());			
 		} catch (MalformedURLException e) {
 			if (location != null && location.trim().equals("")) { //$NON-NLS-1$
 				Status status = new Status(IStatus.WARNING, SVNTeamPlugin.NATURE_ID,
-						Messages.WorkbenchUtil_No_URL_Error, e);
-				MessageDialog.openWarning(UIMonitorUtility.getShell(), Messages.WorkbenchUtil_Open_Location_Title, status.getMessage());
+						SVNUIMessages.WorkbenchUtil_No_URL_Error, e);
+				MessageDialog.openWarning(UIMonitorUtility.getShell(), SVNUIMessages.WorkbenchUtil_Open_Location_Title, status.getMessage());
 			} else {
-				Status status = new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID, NLS.bind(
-						Messages.WorkbenchUtil_Invalid_URL_Error, location), e);
-				MessageDialog.openError(UIMonitorUtility.getShell(), Messages.WorkbenchUtil_Open_Location_Title, status.getMessage());
+				Status status = new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID, SVNUIMessages.format(
+						SVNUIMessages.WorkbenchUtil_Invalid_URL_Error, location), e);
+				MessageDialog.openError(UIMonitorUtility.getShell(), SVNUIMessages.WorkbenchUtil_Open_Location_Title, status.getMessage());
 			}
 		}
 	}
