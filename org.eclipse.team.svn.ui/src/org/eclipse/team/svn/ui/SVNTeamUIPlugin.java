@@ -18,6 +18,7 @@ import java.net.URL;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -28,8 +29,8 @@ import org.eclipse.team.svn.core.mapping.SVNActiveChangeSetCollector;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
-import org.eclipse.team.svn.discovery.ui.wizards.ConnectorDiscoveryWizard;
 import org.eclipse.team.svn.ui.console.SVNConsole;
+import org.eclipse.team.svn.ui.discovery.wizards.ConnectorDiscoveryWizard;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -110,7 +111,7 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 		this.console = new SVNConsole();
 		
 		//check that connectors exist
-		if (CoreExtensionsManager.instance().getAccessibleClients().isEmpty()) {
+		if (CoreExtensionsManager.instance().getAccessibleClients().isEmpty() && Platform.getBundle("org.eclipse.equinox.p2.repository") != null) {
 			UIMonitorUtility.getDisplay().asyncExec(new Runnable() {
 				public void run() {
 					ConnectorDiscoveryWizard wizard = new ConnectorDiscoveryWizard();

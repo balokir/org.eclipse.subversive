@@ -10,6 +10,8 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.team.svn.core,
  org.eclipse.team.svn.core.connector,
+ org.eclipse.team.svn.core.discovery.model,
+ org.eclipse.team.svn.core.discovery.util,
  org.eclipse.team.svn.core.extension,
  org.eclipse.team.svn.core.extension.crashrecovery,
  org.eclipse.team.svn.core.extension.factory,
