@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.svn.core.discovery.model;
 
+import org.eclipse.team.svn.core.SVNMessages;
+
 /**
  * A means of specifying that a feature must be present in order for the connectorDescriptor to be presented to the
  * user.
@@ -61,10 +63,10 @@ public class FeatureFilter {
 
 	public void validate() throws ValidationException {
 		if (featureId == null || featureId.length() == 0) {
-			throw new ValidationException(Messages.FeatureFilter_must_specify_featureFilter_featureId);
+			throw new ValidationException(SVNMessages.FeatureFilter_must_specify_featureFilter_featureId);
 		}
 		if (version == null || version.length() == 0) {
-			throw new ValidationException(Messages.FeatureFilter_must_specify_featureFilter_version);
+			throw new ValidationException(SVNMessages.FeatureFilter_must_specify_featureFilter_version);
 		}
 	}
 }

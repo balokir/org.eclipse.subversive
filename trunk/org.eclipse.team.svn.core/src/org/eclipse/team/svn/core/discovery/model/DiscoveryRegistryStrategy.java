@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.spi.IDynamicExtensionRegistry;
 import org.eclipse.core.runtime.spi.RegistryContributor;
 import org.eclipse.core.runtime.spi.RegistryStrategy;
-import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.osgi.framework.Bundle;
@@ -92,8 +92,8 @@ class DiscoveryRegistryStrategy extends RegistryStrategy {
 		try {
 			processBundle(registry);
 		} catch (Exception e) {
-			String errMessage = NLS.bind(
-					Messages.DiscoveryRegistryStrategy_cannot_load_bundle, new Object[] {
+			String errMessage = SVNMessages.format(
+					SVNMessages.DiscoveryRegistryStrategy_cannot_load_bundle, new Object[] {
 							this.bundleFile.getName(), this.discoveryUrl, e.getMessage() }); 
 			LoggedOperation.reportError(this.getClass().getName(), new Exception(errMessage, e));						
 		}		
@@ -105,7 +105,7 @@ class DiscoveryRegistryStrategy extends RegistryStrategy {
 
 		ZipEntry pluginXmlEntry = jarFile.getEntry("plugin.xml"); //$NON-NLS-1$
 		if (pluginXmlEntry == null) {
-			throw new IOException(Messages.DiscoveryRegistryStrategy_missing_pluginxml);
+			throw new IOException(SVNMessages.DiscoveryRegistryStrategy_missing_pluginxml);
 		}
 		IContributor contributor = new RegistryContributor(bundleFile.getName(), bundleFile.getName(), null, null);
 		if (((IDynamicExtensionRegistry) registry).hasContributor(contributor)) {

@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.discovery.util.WebUtil;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
@@ -60,7 +60,7 @@ public class RemoteBundleDiscoveryStrategy extends BundleDiscoveryStrategy {
 
 		final int totalTicks = 100000;
 		final int ticksTenPercent = totalTicks / 10;
-		monitor.beginTask(Messages.RemoteBundleDiscoveryStrategy_task_remote_discovery, totalTicks);
+		monitor.beginTask(SVNMessages.RemoteBundleDiscoveryStrategy_task_remote_discovery, totalTicks);
 		try {
 			File registryCacheFolder;
 			try {
@@ -78,7 +78,7 @@ public class RemoteBundleDiscoveryStrategy extends BundleDiscoveryStrategy {
 				}
 			} catch (IOException e) {
 				throw new CoreException(new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID,
-						Messages.RemoteBundleDiscoveryStrategy_io_failure_temp_storage, e));
+						SVNMessages.RemoteBundleDiscoveryStrategy_io_failure_temp_storage, e));
 			}
 			if (monitor.isCanceled()) {
 				return;
@@ -129,8 +129,8 @@ public class RemoteBundleDiscoveryStrategy extends BundleDiscoveryStrategy {
 			for (int attemptCount = 0; attemptCount < maxDiscoveryJarDownloadAttempts; ++attemptCount) {
 				try {
 					if (!bundleUrl.startsWith("http://") && !bundleUrl.startsWith("https://")) { //$NON-NLS-1$//$NON-NLS-2$
-						String errMessage = NLS.bind(
-								Messages.RemoteBundleDiscoveryStrategy_unrecognized_discovery_url, bundleUrl);
+						String errMessage = SVNMessages.format(
+								SVNMessages.RemoteBundleDiscoveryStrategy_unrecognized_discovery_url, bundleUrl);
 						LoggedOperation.reportError(this.getClass().getName(), new Exception(errMessage));
 						
 						continue;
@@ -152,8 +152,8 @@ public class RemoteBundleDiscoveryStrategy extends BundleDiscoveryStrategy {
 					}/*don't use sub progress monitor here*/);
 					file = target;
 				} catch (IOException e) {
-					String errMessage = NLS.bind(
-							Messages.RemoteBundleDiscoveryStrategy_cannot_download_bundle, bundleUrl);
+					String errMessage = SVNMessages.format(
+							SVNMessages.RemoteBundleDiscoveryStrategy_cannot_download_bundle, bundleUrl);
 					LoggedOperation.reportError(this.getClass().getName(), new Exception(errMessage, e));
 					
 					if (isUnknownHostException(e)) {

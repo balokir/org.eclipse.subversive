@@ -14,6 +14,8 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.team.svn.core.SVNMessages;
+
 /**
  * A description of a connector, including kind, description, licensing and brand.
  * 
@@ -191,30 +193,30 @@ public class ConnectorDescriptor {
 
 	public void validate() throws ValidationException {
 		if (kind == null || kind.isEmpty()) {
-			throw new ValidationException(Messages.ConnectorDescriptor_must_specify_connectorDescriptor_kind);
+			throw new ValidationException(SVNMessages.ConnectorDescriptor_must_specify_connectorDescriptor_kind);
 		}
 		if (name == null || name.length() == 0) {
-			throw new ValidationException(Messages.ConnectorDescriptor_must_specify_connectorDescriptor_name);
+			throw new ValidationException(SVNMessages.ConnectorDescriptor_must_specify_connectorDescriptor_name);
 		}
 		if (provider == null || provider.length() == 0) {
-			throw new ValidationException(Messages.ConnectorDescriptor_must_specify_connectorDescriptor_provider);
+			throw new ValidationException(SVNMessages.ConnectorDescriptor_must_specify_connectorDescriptor_provider);
 		}
 		if (license == null || license.length() == 0) {
-			throw new ValidationException(Messages.ConnectorDescriptor_must_specify_connectorDescriptor_license);
+			throw new ValidationException(SVNMessages.ConnectorDescriptor_must_specify_connectorDescriptor_license);
 		}
 		if (siteUrl == null || siteUrl.length() == 0) {
-			throw new ValidationException(Messages.ConnectorDescriptor_must_specify_connectorDescriptor_siteUrl);
+			throw new ValidationException(SVNMessages.ConnectorDescriptor_must_specify_connectorDescriptor_siteUrl);
 		}
 		try {
 			new java.net.URL(siteUrl);
 		} catch (MalformedURLException e) {
-			throw new ValidationException(Messages.ConnectorDescriptor_invalid_connectorDescriptor_siteUrl);
+			throw new ValidationException(SVNMessages.ConnectorDescriptor_invalid_connectorDescriptor_siteUrl);
 		}
 		if (id == null || id.isEmpty()) {
-			throw new ValidationException(Messages.ConnectorDescriptor_must_specify_connectorDescriptor_id);
+			throw new ValidationException(SVNMessages.ConnectorDescriptor_must_specify_connectorDescriptor_id);
 		}
 		if (categoryId == null || categoryId.length() == 0) {
-			throw new ValidationException(Messages.ConnectorDescriptor_must_specify_connectorDescriptor_categoryId);
+			throw new ValidationException(SVNMessages.ConnectorDescriptor_must_specify_connectorDescriptor_categoryId);
 		}
 		for (FeatureFilter featureFilterItem : featureFilter) {
 			featureFilterItem.validate();

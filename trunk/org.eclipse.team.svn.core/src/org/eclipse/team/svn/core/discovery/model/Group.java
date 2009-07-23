@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.svn.core.discovery.model;
 
+import org.eclipse.team.svn.core.SVNMessages;
+
 /**
  * groups provide a way to anchor connectors in a grouping with other like entries.
  * 
@@ -46,7 +48,7 @@ public class Group {
 
 	public void validate() throws ValidationException {
 		if (id == null || id.length() == 0) {
-			throw new ValidationException(Messages.Group_must_specify_group_id);
+			throw new ValidationException(SVNMessages.Group_must_specify_group_id);
 		}
 	}
 }

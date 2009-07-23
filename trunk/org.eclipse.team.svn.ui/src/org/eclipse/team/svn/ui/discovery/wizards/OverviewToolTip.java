@@ -19,7 +19,6 @@ import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.ToolTip;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -38,6 +37,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.team.svn.core.discovery.model.AbstractDiscoverySource;
 import org.eclipse.team.svn.core.discovery.model.Overview;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.discovery.GradientToolTip;
 import org.eclipse.team.svn.ui.discovery.WorkbenchUtil;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
@@ -154,9 +154,9 @@ class OverviewToolTip extends GradientToolTip {
 		if (hasLearnMoreLink) {
 			Link link = new Link(summaryContainer, SWT.NULL);
 			GridDataFactory.fillDefaults().grab(false, false).align(SWT.BEGINNING, SWT.CENTER).applyTo(link);
-			link.setText(Messages.ConnectorDescriptorToolTip_detailsLink);
+			link.setText(SVNUIMessages.ConnectorDescriptorToolTip_detailsLink);
 			link.setBackground(null);
-			link.setToolTipText(NLS.bind(Messages.ConnectorDescriptorToolTip_detailsLink_tooltip, overview.getUrl()));
+			link.setToolTipText(SVNUIMessages.format(SVNUIMessages.ConnectorDescriptorToolTip_detailsLink_tooltip, overview.getUrl()));
 			link.addSelectionListener(new SelectionListener() {
 				public void widgetSelected(SelectionEvent e) {
 					WorkbenchUtil.openUrl(overview.getUrl(), IWorkbenchBrowserSupport.AS_EXTERNAL);

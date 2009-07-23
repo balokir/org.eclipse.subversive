@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.svn.core.discovery.model;
 
+import org.eclipse.team.svn.core.SVNMessages;
+
 /**
  * a category of connectors, which is a way of organizing connectors in top-level groups.
  * 
@@ -106,10 +108,10 @@ public class ConnectorCategory {
 
 	public void validate() throws ValidationException {
 		if (id == null || id.length() == 0) {
-			throw new ValidationException(Messages.ConnectorCategory_must_specify_connectorCategory_id);
+			throw new ValidationException(SVNMessages.ConnectorCategory_must_specify_connectorCategory_id);
 		}
 		if (name == null || name.length() == 0) {
-			throw new ValidationException(Messages.ConnectorCategory_must_specify_connectorCategory_name);
+			throw new ValidationException(SVNMessages.ConnectorCategory_must_specify_connectorCategory_name);
 		}
 		if (icon != null) {
 			icon.validate();
@@ -121,7 +123,7 @@ public class ConnectorCategory {
 					throw new NumberFormatException();
 				}
 			} catch (NumberFormatException e) {
-				throw new ValidationException(Messages.ConnectorCategory_connectorCategory_relevance_invalid);
+				throw new ValidationException(SVNMessages.ConnectorCategory_connectorCategory_relevance_invalid);
 			}
 		}
 		if (overview != null) {
