@@ -115,6 +115,7 @@ import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.discovery.GradientCanvas;
 import org.eclipse.team.svn.ui.discovery.util.DiscoveryUiUtil;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.progress.WorkbenchJob;
 
@@ -284,6 +285,10 @@ public class ConnectorDiscoveryWizardMainPage extends WizardPage {
 		}
 		Dialog.applyDialogFont(container);
 		setControl(container);
+		
+
+		//Setting context help
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.connectorDiscoveryWizContext"); //$NON-NLS-1$
 	}
 
 	private static boolean useNativeSearchField(Composite composite) {

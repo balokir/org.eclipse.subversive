@@ -144,8 +144,7 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 								String pswd = proxyCredentialsManager.getPassword();
 								return new PasswordAuthentication(proxyCredentialsManager.getUsername(), pswd == null ? "".toCharArray() : pswd.toCharArray());
 							}
-						} else {
-							//TODO it seems it's never called
+						} else {							
 							String pswd = proxyCredentialsManager.getPassword();
 							return new PasswordAuthentication(proxyCredentialsManager.getUsername(), pswd == null ? "".toCharArray() : pswd.toCharArray());
 						}																									

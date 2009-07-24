@@ -202,6 +202,10 @@
 		<description>'New SVN Repository Location Wizard' provides a probability to add a new repository location link to your workspace. Customize all necessary options here navigating throughout the wizard's tabs.</description>
 		<topic label="New SVN Repository Location Wizard" href="teamSupport/new_location_wiz.html"/>
 	</context>
+	<context id="connectorDiscoveryWizContext">
+		<description>'Connectors Discovery Wizard' allows user to easily install SVN Connectors.</description>
+		<topic label="SVN Connectors Discovery Wizard" href="teamSupport/connectors_discovery.html"/>
+	</context>	
 
 	<!-- Find/Check Out As Wizard -->
 	<context id="checkoutMethodSelectionContext">

@@ -65,7 +65,7 @@ public class ConnectorDiscoveryWizard extends Wizard {
 	public ConnectorDiscoveryWizard() {
 		setWindowTitle(SVNUIMessages.ConnectorDiscoveryWizard_connectorDiscovery);
 		setNeedsProgressMonitor(true);
-		setDefaultPageImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/banner-discovery.png"));
+		setDefaultPageImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
 		createEnvironment();
 	}
 
