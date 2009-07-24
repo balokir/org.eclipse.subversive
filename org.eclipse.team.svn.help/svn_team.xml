@@ -20,6 +20,7 @@
 	<topic label="SVN Label Decorations" href="teamSupport/svn_label_decor.html"/>
 	<topic label="'SVN' main menu group" href="teamSupport/svn_main_menu.html"/>
 	<topic label="SVN Tree Conflicts" href="teamSupport/tree_conflicts.html"/>
+	<topic label="SVN Connectors Discovery" href="teamSupport/connectors_discovery.html"/>
 	<topic label="Actions" href="teamSupport/actions.html">
 		<link toc="svn_actions.xml" />
 	</topic>
