@@ -61,10 +61,10 @@ public class UpdateToRevisionAction extends AbstractRecursiveTeamAction {
 		DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
 		if (dialog.open() == 0) {
 			revision = panel.getRevision();
-			depth = panel.getDepth();	
-		}		
-		
-		this.runScheduled(UpdateAction.getUpdateOperation(resources, revision, depth));
+			depth = panel.getDepth();
+			
+			this.runScheduled(UpdateAction.getUpdateOperation(resources, revision, depth));
+		}				
 	}
 	
 	public boolean isEnabled() {
