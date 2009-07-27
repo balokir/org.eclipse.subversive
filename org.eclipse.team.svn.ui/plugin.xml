@@ -443,6 +443,16 @@
 		 </action>
          
          <action
+               helpContextId="org.eclipse.team.svn.ui.team_mark_as_merged_action_context"
+               label="%MarkAsMergedAction.label"
+               tooltip="%MarkAsMergedAction.tooltip"
+               class="org.eclipse.team.svn.ui.action.local.MarkAsMergedAction"
+               menubarPath="team.main/group2"
+               definitionId="org.eclipse.team.svn.ui.command.MarkAsMergedCommand"
+               id="org.eclipse.team.svn.ui.action.local.MarkAsMergedAction">
+         </action>         
+                  
+         <action
                helpContextId="org.eclipse.team.svn.ui.team_edit_tree_conflicts_action_context"
                label="%EditTreeConflictsAction.label"
                tooltip="%EditTreeConflictsAction.tooltip"
@@ -624,16 +634,6 @@
                name="projectPersistentProperty"
                value="org.eclipse.team.core.repository=org.eclipse.team.svn.core.svnnature">
          </filter>
-
-         <action
-               helpContextId="org.eclipse.team.svn.ui.team_mark_as_merged_action_context"
-               label="%MarkAsMergedAction.label"
-               tooltip="%MarkAsMergedAction.tooltip"
-               class="org.eclipse.team.svn.ui.action.local.MarkAsMergedAction"
-               menubarPath="team.main/group2"
-               definitionId="org.eclipse.team.svn.ui.command.MarkAsMergedCommand"
-               id="org.eclipse.team.svn.ui.action.local.MarkAsMergedAction">
-         </action>
          
          <action
                label="%ShowAnnotationAction.label"

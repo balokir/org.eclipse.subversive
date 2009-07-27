@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
@@ -34,19 +33,20 @@ import org.eclipse.team.core.subscribers.SubscriberMergeContext;
 import org.eclipse.team.core.subscribers.SubscriberScopeManager;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNConflictResolution;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.operation.local.ClearLocalStatusesOperation;
-import org.eclipse.team.svn.core.operation.local.MarkAsMergedOperation;
+import org.eclipse.team.svn.core.operation.local.MarkResolvedOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RemoveNonVersionedResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.RevertOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.UpdateOperation;
-import org.eclipse.team.svn.core.resource.ILocalFile;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
@@ -258,9 +258,7 @@ public class UpdateSubscriberContext extends SubscriberMergeContext {
 			IResource current = this.getDiffTree().getResource(node);
 			try {
 				AbstractSVNSyncInfo info = (AbstractSVNSyncInfo)UpdateSubscriber.instance().getSyncInfo(current);
-				boolean localIsFile = info.getLocalResource().getResource() instanceof IFile;
-                boolean remoteIsFile = ((ResourceVariant)info.getRemote()).getResource() instanceof ILocalFile;
-                if (!IStateFilter.SF_OBSTRUCTED.accept(info.getLocalResource()) && localIsFile && remoteIsFile) {
+                if (!IStateFilter.SF_OBSTRUCTED.accept(info.getLocalResource())) {
                 	resourceList.add(current);
                 }
 			}
@@ -272,8 +270,7 @@ public class UpdateSubscriberContext extends SubscriberMergeContext {
 		if (resources == null || resources.length == 0) {
 			return;
 		}
-		boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
-		MarkAsMergedOperation mainOp = new MarkAsMergedOperation(resources, false, null, ignoreExternals);
+		MarkResolvedOperation mainOp = new MarkResolvedOperation(resources, SVNConflictResolution.CHOOSE_MERGED, ISVNConnector.Depth.INFINITY);
 		CompositeOperation op = new CompositeOperation(mainOp.getId());
 		op.add(mainOp);
 		op.add(new ClearUpdateStatusesOperation(resources));

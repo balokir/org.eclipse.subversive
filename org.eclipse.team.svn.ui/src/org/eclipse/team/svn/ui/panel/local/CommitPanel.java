@@ -52,6 +52,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNConflictResolution;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
@@ -63,7 +65,7 @@ import org.eclipse.team.svn.core.operation.local.AddToSVNIgnoreOperation;
 import org.eclipse.team.svn.core.operation.local.CreatePatchOperation;
 import org.eclipse.team.svn.core.operation.local.ExportOperation;
 import org.eclipse.team.svn.core.operation.local.LockOperation;
-import org.eclipse.team.svn.core.operation.local.MarkAsMergedOperation;
+import org.eclipse.team.svn.core.operation.local.MarkResolvedOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
@@ -545,8 +547,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				//Mark as merged action
 				manager.add (tAction = new Action(SVNUIMessages.CommitPanel_MarkAsMerged_Action) {
 					public void run() {
-						boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
-						MarkAsMergedOperation mainOp = new MarkAsMergedOperation(selectedResources, false, null, ignoreExternals);
+						MarkResolvedOperation mainOp = new MarkResolvedOperation(selectedResources, SVNConflictResolution.CHOOSE_MERGED, ISVNConnector.Depth.INFINITY);
 						CompositeOperation op = new CompositeOperation(mainOp.getId());
 						op.add(mainOp);
 						op.add(new RefreshResourcesOperation(FileUtility.getParents(selectedResources, false)));

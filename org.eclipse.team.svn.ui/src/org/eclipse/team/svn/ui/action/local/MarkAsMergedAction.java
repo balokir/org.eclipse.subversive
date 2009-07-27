@@ -14,13 +14,13 @@ package org.eclipse.team.svn.ui.action.local;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.SVNConflictResolution;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
-import org.eclipse.team.svn.core.operation.local.MarkAsMergedOperation;
+import org.eclipse.team.svn.core.operation.local.MarkResolvedOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.utility.FileUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.action.AbstractNonRecursiveTeamAction;
-import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 
 /**
  * Mark selected resource as merged action implementation
@@ -34,8 +34,7 @@ public class MarkAsMergedAction extends AbstractNonRecursiveTeamAction {
 
 	public void runImpl(IAction action) {
 		IResource []resources = this.getSelectedResources(IStateFilter.SF_CONFLICTING);
-		boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
-		MarkAsMergedOperation mainOp = new MarkAsMergedOperation(resources, false, null, ignoreExternals);
+		MarkResolvedOperation mainOp = new MarkResolvedOperation(resources, SVNConflictResolution.CHOOSE_MERGED, ISVNConnector.Depth.INFINITY);						
 		CompositeOperation op = new CompositeOperation(mainOp.getId());
 		op.add(mainOp);
 		op.add(new RefreshResourcesOperation(FileUtility.getParents(resources, false)));
