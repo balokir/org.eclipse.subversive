@@ -36,40 +36,37 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 
 /**
- * Mark as merged operation implementation
+ * Override and Commit operation implementation
  * 
  * @author Alexander Gurov
  */
-public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implements IActionOperationProcessor, IResourceProvider {
-    protected boolean override;
+public class OverrideAndCommitOperation extends AbstractWorkingCopyOperation implements IActionOperationProcessor, IResourceProvider {
     protected boolean keepLocks;
     protected String overrideMessage;
     protected IResource []committables;
     protected IResource []withDifferentNodeKind;
     protected boolean ignoreExternals;
     
-	public MarkAsMergedOperation(IResource[] resources, boolean override, String overrideMessage, boolean ignoreExternals) {
-		this(resources, override, overrideMessage, false, ignoreExternals);
+	public OverrideAndCommitOperation(IResource[] resources, String overrideMessage, boolean ignoreExternals) {
+		this(resources, overrideMessage, false, ignoreExternals);
 	}
 
-	public MarkAsMergedOperation(IResource[] resources, boolean override, String overrideMessage, boolean keepLocks, boolean ignoreExternals) {
-		super("Operation_MarkAsMerged", resources); //$NON-NLS-1$
-		this.override = override;
+	public OverrideAndCommitOperation(IResource[] resources, String overrideMessage, boolean keepLocks, boolean ignoreExternals) {
+		super("Operation_MarkAsMerged", resources); //$NON-NLS-1$		
 		this.overrideMessage = overrideMessage;
 		this.keepLocks = keepLocks;
 		this.ignoreExternals = ignoreExternals;
 	}
 
-	public MarkAsMergedOperation(IResourceProvider provider, boolean override, String overrideMessage, boolean keepLocks, boolean ignoreExternals) {
-		super("Operation_MarkAsMerged", provider); //$NON-NLS-1$
-		this.override = override;
+	public OverrideAndCommitOperation(IResourceProvider provider, String overrideMessage, boolean keepLocks, boolean ignoreExternals) {
+		super("Operation_MarkAsMerged", provider); //$NON-NLS-1$	
 		this.overrideMessage = overrideMessage;
 		this.keepLocks = keepLocks;
 		this.ignoreExternals = ignoreExternals;
 	}
 	
-	public MarkAsMergedOperation(IResourceProvider provider, boolean override, String overrideMessage, boolean ignoreExternals) {
-		this(provider, override, overrideMessage, false, ignoreExternals);
+	public OverrideAndCommitOperation(IResourceProvider provider, String overrideMessage, boolean ignoreExternals) {
+		this(provider, overrideMessage, false, ignoreExternals);
 	}
 
 	public IResource []getResources() {
@@ -97,11 +94,11 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 				public void run(IProgressMonitor monitor) throws Exception {
 					ILocalResource local = SVNRemoteStorage.instance().asLocalResourceAccessible(current);
 					if (IStateFilter.SF_DELETED.accept(local) && !IStateFilter.SF_PREREPLACEDREPLACED.accept(local)) {
-						MarkAsMergedOperation.this.markDeleted(local, new NullProgressMonitor());
+						OverrideAndCommitOperation.this.markDeleted(local, new NullProgressMonitor());
 						committables.add(local.getResource());
 					}
 					else if (!IStateFilter.SF_INTERNAL_INVALID.accept(local)) {
-						boolean nodeKindChanged = MarkAsMergedOperation.this.markExisting(local, monitor);
+						boolean nodeKindChanged = OverrideAndCommitOperation.this.markExisting(local, monitor);
 						if (!nodeKindChanged) {
 							committables.add(local.getResource());
 						}
@@ -127,6 +124,26 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 		}
 	}
 	
+	/*
+	 * Steps:
+	 * 	1. Temporary save props and content of the resource (see SavePropertiesVisitor, SaveContentVisitor)
+	 * 	2. Revert
+	 * 	3. Remove all non versioned resources on file system
+	 * 	4. Update
+	 * 	5. If 'override' flag is true and local resource exists:
+	 * 		5.1	If resource doesn't exist on repository, then delete it locally (see prepareToOverride)
+	 * 		5.2	Commit
+	 * 		5.3 Update
+	 * 	6. Restore props and content from temporary storage
+	 * 	
+	 * TODO:
+	 * 1. Case 1:
+	 * File has content conflict, I resolve it by modifying it content and I want to delete conflict files which
+	 * disallow to commit and so I want to call Mark As Merged action. But what if during my modifying of file content
+	 * somebody commits another changes and I call Mark As Merged after these new changes which I didn't even see?
+	 * Problem: after Update I replace it with my temporary content which is a problem because I don't even see new changes.  
+	 * 
+	 */
 	protected boolean markExisting(ILocalResource local, IProgressMonitor monitor) throws Exception {
 	    boolean nodeKindChanged = false;
 	    ResourceChange change = ResourceChange.wrapLocalResource(null, local, true);
@@ -146,7 +163,7 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 			this.doOperation(new UpdateOperation(new IResource[] {local.getResource()}, this.ignoreExternals), monitor);
 			String wcPath = FileUtility.getWorkingCopyPath(local.getResource());
 			boolean isLocalExists = new File(wcPath).exists();
-			if (this.override && isLocalExists) {
+			if (isLocalExists) {
 			    nodeKindChanged = this.prepareToOverride(change, monitor);
 			    //do additional check for exists because prepareToOverride can delete resources
 			    if (new File(wcPath).exists()) {

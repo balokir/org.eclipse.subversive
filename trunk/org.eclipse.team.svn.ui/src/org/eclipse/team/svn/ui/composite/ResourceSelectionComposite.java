@@ -330,9 +330,11 @@ public class ResourceSelectionComposite extends Composite {
 				}
 				ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);				
 				if (columnIndex == ResourceSelectionComposite.COLUMN_STATUS) {
-					return ResourceSelectionComposite.this.statusAsString(local);
+					return ResourceSelectionComposite.this.contentStatusAsString(local);
+				} else if (columnIndex == ResourceSelectionComposite.COLUMN_PROPSTATUS) {
+					return ResourceSelectionComposite.this.propertiesStatusAsString(local);
 				}
-				return ResourceSelectionComposite.this.changeMaskAsString(local);
+				return "";
 			}
 
 			public void addListener(ILabelProviderListener listener) {
@@ -447,7 +449,7 @@ public class ResourceSelectionComposite extends Composite {
 		return SVNUIMessages.format(SVNUIMessages.ResourceSelectionComposite_Info, new String[] { String.valueOf(value), String.valueOf(this.resources.length) });
 	}
 
-	protected String statusAsString(ILocalResource local) {				
+	protected String contentStatusAsString(ILocalResource local) {				
 		String status = "";
 		if ((local.getChangeMask() & ILocalResource.TEXT_MODIFIED) != 0) {
 			status = SVNUtility.getStatusText(local.getStatus());
@@ -460,17 +462,31 @@ public class ResourceSelectionComposite extends Composite {
 		}
 		return status;
 	}
-
-	protected String changeMaskAsString(ILocalResource local) {
+	
+	protected String propertiesStatusAsString(ILocalResource local) {				
 		String status = "";
 		if ((local.getChangeMask() & ILocalResource.PROP_MODIFIED) != 0) {
-			status = IStateFilter.ST_MODIFIED;
+			status = SVNUtility.getStatusText(local.getStatus());
 		}
 		if (local.hasTreeConflict() && local.getTreeConflictDescriptor().conflictKind == SVNConflictDescriptor.Kind.PROPERTIES) {
 			if (!"".equals(status)) {
 				status += ", ";
 			}
-			status += SVNMessages.TreeConflicting;
+			status += SVNMessages.TreeConflicting;			
+		}
+		return status;
+	}
+	
+	protected String contentStatusAsString(ILocalResource local, boolean isContent) {				
+		String status = "";
+		if (isContent && (local.getChangeMask() & ILocalResource.TEXT_MODIFIED) != 0) {
+			status = SVNUtility.getStatusText(local.getStatus());
+		}
+		if (local.hasTreeConflict() && local.getTreeConflictDescriptor().conflictKind == SVNConflictDescriptor.Kind.CONTENT) {
+			if (!"".equals(status)) {
+				status += ", ";
+			}
+			status += SVNMessages.TreeConflicting;			
 		}
 		return status;
 	}
@@ -570,17 +586,15 @@ public class ResourceSelectionComposite extends Composite {
 			}
 			ILocalResource local1 = SVNRemoteStorage.instance().asLocalResource(rowData1);
 			ILocalResource local2 = SVNRemoteStorage.instance().asLocalResource(rowData2);
-			int changeMask1 = local1.getChangeMask();
-			int changeMask2 = local2.getChangeMask();
 			if (this.column == ResourceSelectionComposite.COLUMN_STATUS) {
-				String status1 = ResourceSelectionComposite.this.statusAsString(local1);
-				String status2 = ResourceSelectionComposite.this.statusAsString(local2);
+				String status1 = ResourceSelectionComposite.this.contentStatusAsString(local1);
+				String status2 = ResourceSelectionComposite.this.contentStatusAsString(local2);
 				int retVal = this.compareStatuses(status1, status2);
 				return retVal != 0 ? retVal : this.compareNames(rowData1, rowData2);
 			}
 			if (this.column == ResourceSelectionComposite.COLUMN_PROPSTATUS) {
-				String propStatus1 = changeMaskAsString(local1);
-				String propStatus2 = changeMaskAsString(local2);
+				String propStatus1 = ResourceSelectionComposite.this.propertiesStatusAsString(local1);
+				String propStatus2 = ResourceSelectionComposite.this.propertiesStatusAsString(local2);
 				return ColumnedViewerComparator.compare(propStatus1, propStatus2);
 			}
 			return 0;

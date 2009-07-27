@@ -27,7 +27,7 @@ import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.AddToSVNWithPropertiesOperation;
 import org.eclipse.team.svn.core.operation.local.ClearLocalStatusesOperation;
 import org.eclipse.team.svn.core.operation.local.CommitOperation;
-import org.eclipse.team.svn.core.operation.local.MarkAsMergedOperation;
+import org.eclipse.team.svn.core.operation.local.OverrideAndCommitOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
@@ -88,7 +88,7 @@ public class OverrideAndCommitModelActionHelper extends AbstractActionHelper {
 		
 		CompositeOperation op = new CompositeOperation("Operation_UOverrideAndCommit"); //$NON-NLS-1$
 
-		final MarkAsMergedOperation mergeOp = new MarkAsMergedOperation(resources[0], true, msg, keepLocks);
+		final OverrideAndCommitOperation mergeOp = new OverrideAndCommitOperation(resources[0], msg, keepLocks);
 		op.add(mergeOp);
 		final IResource []addition = FileUtility.getResourcesRecursive(resources[0], OverrideAndCommitModelActionHelper.SF_NEW);
 		if (addition.length != 0) {
