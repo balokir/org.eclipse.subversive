@@ -17,7 +17,9 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.local.change.FolderChange;
@@ -33,6 +35,9 @@ import org.eclipse.team.svn.core.operation.local.refactor.DeleteResourceOperatio
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
+import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
+import org.eclipse.team.svn.core.synchronize.variant.RemoteResourceVariant;
 import org.eclipse.team.svn.core.utility.FileUtility;
 
 /**
@@ -117,9 +122,9 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 		this.withDifferentNodeKind = withDifferentNodeKind.toArray(new IResource[withDifferentNodeKind.size()]);
 	}
 
-	protected void markDeleted(ILocalResource local, IProgressMonitor monitor) {
+	protected void markDeleted(ILocalResource local, IProgressMonitor monitor) throws TeamException {
 		this.doOperation(new RevertOperation(new IResource[] {local.getResource()}, true), monitor);
-		this.doOperation(new UpdateOperation(new IResource[] {local.getResource()}, this.ignoreExternals), monitor);
+		this.doOperation(new UpdateOperation(new IResource[] {local.getResource()}, this.getRevisionToUpdate(local), this.ignoreExternals), monitor);
 		//don't delete the resource which already doesn't exist on file system
 		//this can happen with tree conflicts, for instance, local - delete and remote - delete
 		if (local.getResource().exists()) {
@@ -127,6 +132,17 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 		}
 	}
 	
+	/*
+	 * Steps:
+	 * 	1. Temporary save props and content of the resource (see SavePropertiesVisitor, SaveContentVisitor)
+	 * 	2. Revert
+	 * 	3. Remove all non versioned resources on file system
+	 * 	4. Update
+	 * 	5. If 'override' flag is true and local resource exists:
+	 * 		5.1	If resource doesn't exist on repository, then delete it locally (see prepareToOverride)
+	 * 		5.2	Commit
+	 * 	6. Restore props and content from temporary storage
+	 */
 	protected boolean markExisting(ILocalResource local, IProgressMonitor monitor) throws Exception {
 	    boolean nodeKindChanged = false;
 	    ResourceChange change = ResourceChange.wrapLocalResource(null, local, true);
@@ -143,7 +159,7 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 		    
 		    change.traverse(new RemoveNonVersionedVisitor(true), IResource.DEPTH_INFINITE, this, monitor);
 		    
-			this.doOperation(new UpdateOperation(new IResource[] {local.getResource()}, this.ignoreExternals), monitor);
+			this.doOperation(new UpdateOperation(new IResource[] {local.getResource()}, this.getRevisionToUpdate(local), this.ignoreExternals), monitor);
 			String wcPath = FileUtility.getWorkingCopyPath(local.getResource());
 			boolean isLocalExists = new File(wcPath).exists();
 			if (this.override && isLocalExists) {
@@ -151,8 +167,6 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 			    //do additional check for exists because prepareToOverride can delete resources
 			    if (new File(wcPath).exists()) {
 			    	this.doOperation(new CommitOperation(new IResource[] {local.getResource()}, this.overrideMessage, true, this.keepLocks), monitor);
-			    	// update child records for node kind replacement
-			    	this.doOperation(new UpdateOperation(new IResource[] {local.getResource()}, this.ignoreExternals), monitor);
 			    }
 			}
 			
@@ -168,6 +182,12 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 	    return nodeKindChanged;
 	}
 
+	protected SVNRevision getRevisionToUpdate(ILocalResource local) throws TeamException {
+		AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo) UpdateSubscriber.instance().getSyncInfo(local.getResource());
+		ILocalResource remoteResource = ((RemoteResourceVariant) syncInfo.getRemote()).getResource();
+		return SVNRevision.fromNumber(remoteResource.getRevision());		    		
+	}
+	
 	protected boolean prepareToOverride(ResourceChange change, IProgressMonitor monitor) {
 	    boolean nodeKindBeforeUpdate = change instanceof FolderChange;
 	    if (nodeKindBeforeUpdate) {
