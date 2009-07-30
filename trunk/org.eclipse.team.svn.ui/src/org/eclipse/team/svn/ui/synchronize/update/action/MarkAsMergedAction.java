@@ -12,19 +12,22 @@
 package org.eclipse.team.svn.ui.synchronize.update.action;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.connector.ISVNConnector;
-import org.eclipse.team.svn.core.connector.SVNConflictResolution;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.core.operation.local.MarkResolvedOperation;
+import org.eclipse.team.svn.core.operation.local.MarkAsMergedOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
-import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
+import org.eclipse.team.svn.core.resource.ILocalFile;
+import org.eclipse.team.svn.core.synchronize.UpdateSyncInfo;
+import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
 import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.operation.ClearUpdateStatusesOperation;
+import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeModelAction;
 import org.eclipse.team.svn.ui.utility.UnacceptableOperationNotificator;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -43,8 +46,13 @@ public class MarkAsMergedAction extends AbstractSynchronizeModelAction {
 	protected FastSyncInfoFilter getSyncInfoFilter() {
 		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.CONFLICTING}) {
             public boolean select(SyncInfo info) {
-                return super.select(info) && !IStateFilter.SF_OBSTRUCTED.accept(((AbstractSVNSyncInfo)info).getLocalResource());
-                
+                if (super.select(info)) {
+                    UpdateSyncInfo sync = (UpdateSyncInfo)info;
+                    boolean localIsFile = sync.getLocalResource().getResource() instanceof IFile;
+                    boolean remoteIsFile = ((ResourceVariant)sync.getRemote()).getResource() instanceof ILocalFile;
+                    return !IStateFilter.SF_OBSTRUCTED.accept(sync.getLocalResource()) && localIsFile && remoteIsFile;
+                }
+                return false;
             }
         };
 	}
@@ -54,7 +62,9 @@ public class MarkAsMergedAction extends AbstractSynchronizeModelAction {
 		if (resources == null || resources.length == 0) {
 			return null;
 		}
-		MarkResolvedOperation mainOp = new MarkResolvedOperation(resources, SVNConflictResolution.CHOOSE_MERGED, ISVNConnector.Depth.INFINITY);
+		boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
+		MarkAsMergedOperation mainOp = new MarkAsMergedOperation(resources, false, null, ignoreExternals);
+
 		CompositeOperation op = new CompositeOperation(mainOp.getId());
 
 		op.add(mainOp);
