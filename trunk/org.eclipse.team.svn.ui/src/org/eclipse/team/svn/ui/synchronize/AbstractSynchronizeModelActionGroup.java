@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.ui.synchronize;
 
+import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -84,14 +85,17 @@ public abstract class AbstractSynchronizeModelActionGroup extends ModelSynchroni
 				this.incoming);
 		
 		boolean isEuropa = false;
-		String description = Platform.getProduct().getDescription();
-		int idx = description.indexOf("Version:"); //$NON-NLS-1$
-		if (idx != -1) {
-			idx += "Version:".length() + 1; //$NON-NLS-1$
-			if (idx + 5 < description.length()) {
-				description = description.substring(idx, idx + 5);
-				isEuropa = "3.4.0".compareTo(description) > 0; //$NON-NLS-1$
-			}
+		IProduct product = Platform.getProduct();
+		if (product != null && product.getDescription() != null) {
+			String description = product.getDescription();
+			int idx = description.indexOf("Version:"); //$NON-NLS-1$
+			if (idx != -1) {
+				idx += "Version:".length() + 1; //$NON-NLS-1$
+				if (idx + 5 < description.length()) {
+					description = description.substring(idx, idx + 5);
+					isEuropa = "3.4.0".compareTo(description) > 0; //$NON-NLS-1$
+				}
+			}	
 		}
 		if (isEuropa) {
 			this.addLocalActions(this.outgoing, configuration);
