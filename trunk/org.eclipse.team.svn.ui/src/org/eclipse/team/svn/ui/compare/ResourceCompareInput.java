@@ -31,6 +31,7 @@ import org.eclipse.compare.structuremergeviewer.DiffTreeViewer;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.core.resources.IEncodedStorage;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -409,7 +410,21 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		}
 		
 		public String getCharset() {
-			return this.charset;
+			if (this.charset == null) {
+				//if char set isn't yet set and there's a local resource then
+				//try to get char set from it
+				if (this.localAlias != null && this.localAlias.getResource() instanceof IEncodedStorage) {
+					IEncodedStorage es = (IEncodedStorage) this.localAlias.getResource();
+					try {
+						return es.getCharset();
+					} catch (CoreException e) {
+						//ignore
+					}
+				}
+				return null;
+			} else {
+				return this.charset;
+			}
 		}
 		
 		public void setCharset(String charset){
