@@ -38,6 +38,7 @@ public final class SVNTeamPreferences {
 	public static final String DATE_FORMAT_BASE = "preference.dateFormat."; //$NON-NLS-1$
 	public static final String PROMPT_BASE = "preference.prompt."; //$NON-NLS-1$
 	public static final String PROPERTIES_BASE = "preference.properties."; //$NON-NLS-1$
+	public static final String LOCKS_BASE = "preference.locks."; //$NON-NLS-1$
 	public static final String MAILREPORTER_BASE = "preference.mailreporter."; //$NON-NLS-1$
 	public static final String COMMENT_TEMPLATES_BASE = "preference.templates"; //$NON-NLS-1$
 	public static final String COMMIT_DIALOG_BASE = "preference.commitDialog."; //$NON-NLS-1$
@@ -166,8 +167,10 @@ public final class SVNTeamPreferences {
 	public static final String CONSULT_CHANGE_SETS_IN_COMMIT_DEFAULT = CONSULT_CHANGE_SETS_IN_COMMIT_NEVER;
 	
 	public static final String PROPERTY_LINK_WITH_EDITOR_NAME = "linkWithEditor"; //$NON-NLS-1$
-	
 	public static final boolean PROPERTY_LINK_WITH_EDITOR_DEFAULT = false;
+	
+	public static final String LOCKS_LINK_WITH_EDITOR_NAME = "locksLinkWithEditor"; //$NON-NLS-1$	
+	public static final boolean LOCKS_LINK_WITH_EDITOR_DEFAULT = false;
 	
 	public static final String ENABLE_MODEL_SYNC_NAME = "enableModelSync";	 //$NON-NLS-1$
 	public static final boolean ENABLE_MODEL_SYNC_DEFAULT = true;
@@ -386,6 +389,10 @@ public final class SVNTeamPreferences {
 	
 	public static void setDefaultPropertiesValues(IPreferenceStore store) {
 		store.setDefault(SVNTeamPreferences.fullPropertiesName(SVNTeamPreferences.PROPERTY_LINK_WITH_EDITOR_NAME), SVNTeamPreferences.PROPERTY_LINK_WITH_EDITOR_DEFAULT);
+	}
+	
+	public static void setDefaultLocksValues(IPreferenceStore store) {
+		store.setDefault(SVNTeamPreferences.fullLocksName(SVNTeamPreferences.LOCKS_LINK_WITH_EDITOR_NAME), SVNTeamPreferences.LOCKS_LINK_WITH_EDITOR_DEFAULT);
 	}
 	
 	public static void setDefaultRepositoryValues(IPreferenceStore store) {
@@ -843,6 +850,10 @@ public final class SVNTeamPreferences {
 		return SVNTeamPreferences.PROPERTIES_BASE + shortName;
 	}
 	
+	public static String fullLocksName(String shortName) {
+		return SVNTeamPreferences.LOCKS_BASE + shortName;
+	}
+	
 	public static String fullHistoryName(String shortName) {
 		return SVNTeamPreferences.HISTORY_BASE + shortName;
 	}
@@ -889,6 +900,5 @@ public final class SVNTeamPreferences {
 	
 	private SVNTeamPreferences() {
 		
-	}
-	
+	}	
 }

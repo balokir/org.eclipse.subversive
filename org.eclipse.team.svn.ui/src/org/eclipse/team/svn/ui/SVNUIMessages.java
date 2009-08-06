@@ -1737,6 +1737,20 @@ public class SVNUIMessages extends BaseMessages {
 	public static String PrepareInstallProfileJob_errorResolvingHostname;
 	public static String PrepareInstallProfileJob_ok;
 	
+	public static String LocksComposite_Name;
+	public static String LocksComposite_Path;
+	public static String LocksComposite_State;
+	public static String LocksComposite_Owner;
+	public static String LocksComposite_CreationDate;
+	public static String LocksComposite_Root;
+	public static String LockResourcesTableLabelProvider_NoLocks;
+	public static String LockResourcesTableLabelProvider_Locked;
+	public static String LockResourcesTableLabelProvider_Other;
+	public static String LocksView_SVNLocks;
+	public static String Operation_ScanLocks;
+	public static String Operation_ScanLocks_Id;
+	public static String Operation_ScanLocks_Error;
+	
 	static {
 		//load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, SVNUIMessages.class);
