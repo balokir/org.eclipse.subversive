@@ -121,45 +121,49 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 		this.discoveryConnectors();
 	}
 	
-	protected void discoveryConnectors() {				
-		//check that connectors exist
-		if (CoreExtensionsManager.instance().getAccessibleClients().isEmpty() && Platform.getBundle("org.eclipse.equinox.p2.repository") != null) {			
-			//set proxy authenticator to WebUtil for accessing Internet files
-			WebUtil.setAuthenticator(new Authenticator(){						
-				protected PasswordAuthentication getPasswordAuthentication() {
-					if (this.getRequestorType() == Authenticator.RequestorType.PROXY) {
-						SVNCachedProxyCredentialsManager proxyCredentialsManager = SVNRemoteStorage.instance().getProxyCredentialsManager();					
-						if (proxyCredentialsManager.getUsername() == null || proxyCredentialsManager.getUsername() == "") {
-							final boolean[] result = new boolean[1];
-							UIMonitorUtility.getDisplay().syncExec(new Runnable() {
-								public void run() {
-									PromptCredentialsPanel panel = new PromptCredentialsPanel(getRequestingPrompt(), SVNRepositoryLocation.PROXY_CONNECTION);
-									DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getShell(), panel);
-									if (dialog.open() == 0) {
-										result[0] = true; 
-									}
-								}						
-							});
-							if (result[0]) {
+	protected void discoveryConnectors() {
+		try {			
+			//check that connectors exist
+			if (CoreExtensionsManager.instance().getAccessibleClients().isEmpty() && Platform.getBundle("org.eclipse.equinox.p2.repository") != null) {			
+				//set proxy authenticator to WebUtil for accessing Internet files
+				WebUtil.setAuthenticator(new Authenticator(){						
+					protected PasswordAuthentication getPasswordAuthentication() {
+						if (this.getRequestorType() == Authenticator.RequestorType.PROXY) {
+							SVNCachedProxyCredentialsManager proxyCredentialsManager = SVNRemoteStorage.instance().getProxyCredentialsManager();					
+							if (proxyCredentialsManager.getUsername() == null || proxyCredentialsManager.getUsername() == "") {
+								final boolean[] result = new boolean[1];
+								UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+									public void run() {
+										PromptCredentialsPanel panel = new PromptCredentialsPanel(getRequestingPrompt(), SVNRepositoryLocation.PROXY_CONNECTION);
+										DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getShell(), panel);
+										if (dialog.open() == 0) {
+											result[0] = true; 
+										}
+									}						
+								});
+								if (result[0]) {
+									String pswd = proxyCredentialsManager.getPassword();
+									return new PasswordAuthentication(proxyCredentialsManager.getUsername(), pswd == null ? "".toCharArray() : pswd.toCharArray());
+								}
+							} else {							
 								String pswd = proxyCredentialsManager.getPassword();
 								return new PasswordAuthentication(proxyCredentialsManager.getUsername(), pswd == null ? "".toCharArray() : pswd.toCharArray());
-							}
-						} else {							
-							String pswd = proxyCredentialsManager.getPassword();
-							return new PasswordAuthentication(proxyCredentialsManager.getUsername(), pswd == null ? "".toCharArray() : pswd.toCharArray());
-						}																									
+							}																									
+						}
+						return null;
 					}
-					return null;
-				}
-			});
-			
-			UIMonitorUtility.getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					ConnectorDiscoveryWizard wizard = new ConnectorDiscoveryWizard();
-					WizardDialog dialog = new WizardDialog(UIMonitorUtility.getShell(), wizard);
-					dialog.open();		
-				}
-			});	
+				});
+				
+				UIMonitorUtility.getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						ConnectorDiscoveryWizard wizard = new ConnectorDiscoveryWizard();
+						WizardDialog dialog = new WizardDialog(UIMonitorUtility.getShell(), wizard);
+						dialog.open();		
+					}
+				});	
+			}	
+		} catch (Throwable th) {
+			LoggedOperation.reportError(this.getClass().getName(), th);
 		}					
 	}
 	
