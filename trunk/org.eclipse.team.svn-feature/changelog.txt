@@ -8,6 +8,58 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.8.I20090808-1900 [08 August 2009]
+
+Features:
+ * Support reading Subclipse-generated project set files (bug 276947) 
+
+ * Support reading svn-pde-plugin compatible map files (bug 276949)
+  
+ * Connector discovery UI (ala Mylyn) (bug 280889) 
+
+ * List all locked files in a project (bug 279602) 
+    
+Fixes:
+ * Concurrent thread access to SVNTeamProvider instance leads to HiddenException (bug 249943) 
+ 
+ * Usability improvement for repository table in "Checkout from SVN" wizard (bug 263435) 
+
+ * Remember the "Keep Locks" Setting in the Commit Dialog (bug 271742) 
+
+ * [Subversive] - Tip for improvement ID-Q11B5 (Default behaviour of double click in the commit dialog) (bug 257808) 
+
+ * Incorrect previously entered comment in commit dialog (bug 278606) 
+
+ * Handle external definitions in svn commands (bug 255009) 
+
+ * Add ability to specify revision for operations (bug 279083) 
+
+ * Compare with branch/tag doesn't work as expected (bug 279797) 
+
+ * SVN PDE Build uses wrong default path value (bug 279590) 
+
+ * Adding a dated revision link fails (bug 279828) 
+
+ * Selected revisions at bottom of list don't populate Revisions text field in the Merge dialog (bug 279612) 
+
+ * Check Out As Wizard not usable with keyboard. (bug 279355) 
+
+ * cross-project refactoring (bug 281253) 
+
+ * Show History + Export doesn't work (bug 283917) 
+
+ * SelectProjectNamePage (bug 282583) 
+
+ * Error message is incorrect: Window->Preferences->Team->SVN->SVN Client does not exist (bug 281413)
+
+ * Don't override all revisions in Override and Commit (bug 285138)
+
+ * NPE after calling Override and Update (bug 283018)
+
+ * [Subversive] - Incorrect character encoding used for display in Compare view (bug 276138)
+
+--------------------------------------------------------------------------------
+
 Version 0.7.8.I20090515-1900 [15 May 2009]
 
 Features:
