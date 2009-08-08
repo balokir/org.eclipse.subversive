@@ -149,9 +149,7 @@
             category="org.eclipse.team.svn"
             class="org.eclipse.team.svn.ui.properties.RevPropertiesView"
             id="org.eclipse.team.svn.ui.properties.RevPropertiesView">
-      </view>
-      
-      <!-- TODO: set correct icon -->
+      </view>      
       <view
             name="%SVNLocks"
             icon="icons/views/locksview.gif"
