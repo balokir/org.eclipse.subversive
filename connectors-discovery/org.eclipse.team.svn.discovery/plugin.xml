@@ -9,7 +9,7 @@
             id="org.eclipse.team.svn.discovery.svn.connectors"
             name="Subversive SVN Connectors"
             relevance="50">
-         <icon image32="images/Polarion.png"/>
+         <icon image32="images/Subversive.png"/>
          
          <group id="org.eclipse.team.svn.discovery-svnkit"/>         
          <group id="org.eclipse.team.svn.discovery-javahl"/>
@@ -33,7 +33,7 @@
             name="SVN Kit 1.1.7"
             provider="Polarion"
             siteUrl="http://community.polarion.com/projects/subversive/download/eclipse/2.0/update-site/">
-         <icon image32="images/Subversive.png">
+         <icon image32="images/Polarion.png">
          </icon>
          <overview              
                summary="SVN Kit connector for the Eclipse Subversive. Compatible with SVN 1.4.x. SVNKit is written in Java and does not require any additional binaries or native applications. It is portable and there is no need for OS specific code."
@@ -51,7 +51,7 @@
             name="SVN Kit 1.2.3"
             provider="Polarion"
             siteUrl="http://community.polarion.com/projects/subversive/download/eclipse/2.0/update-site/">
-         <icon image32="images/Subversive.png">
+         <icon image32="images/Polarion.png">
          </icon>
          <overview              
                summary="SVN Kit connector for the Eclipse Subversive. Compatible with SVN 1.5.x. SVNKit is written in Java and does not require any additional binaries or native applications. It is portable and there is no need for OS specific code."
@@ -69,7 +69,7 @@
             name="SVN Kit 1.3.0"
             provider="Polarion"
             siteUrl="http://community.polarion.com/projects/subversive/download/eclipse/2.0/update-site/">
-         <icon image32="images/Subversive.png">
+         <icon image32="images/Polarion.png">
          </icon>
          <overview               
                summary="SVN Kit connector for the Eclipse Subversive. Compatible with SVN 1.6.x. SVNKit is written in Java and does not require any additional binaries or native applications. It is portable and there is no need for OS specific code."
@@ -89,7 +89,7 @@
             name="Native JavaHL 1.4.5"
             provider="Polarion"
             siteUrl="http://community.polarion.com/projects/subversive/download/eclipse/2.0/update-site/">
-        <icon image32="images/Subversive.png">
+        <icon image32="images/Polarion.png">
          </icon>
          <overview             
                summary="JavaHL connector for the Eclipse Subversive. Compatible with SVN 1.4.x. Select only if you use Win32 platform. JavaHL is a part of the Subversion project. Specifically, it is the Java language binding for the Subversion API."
@@ -107,7 +107,7 @@
             name="Native JavaHL 1.5.4"
             provider="Polarion"
             siteUrl="http://community.polarion.com/projects/subversive/download/eclipse/2.0/update-site/">
-        <icon image32="images/Subversive.png">
+        <icon image32="images/Polarion.png">
          </icon>
          <overview            
                summary="JavaHL connector for the Eclipse Subversive. Compatible with SVN 1.5.x. Select only if you use Win32 platform. JavaHL is a part of the Subversion project. Specifically, it is the Java language binding for the Subversion API."
@@ -125,7 +125,7 @@
             name="Native JavaHL 1.6.3"
             provider="Polarion"
             siteUrl="http://community.polarion.com/projects/subversive/download/eclipse/2.0/update-site/">
-       <icon image32="images/Subversive.png">
+       <icon image32="images/Polarion.png">
          </icon>
          <overview
                summary="JavaHL connector for the Eclipse Subversive. Compatible with SVN 1.6.x. Select only if you use Win32 platform. JavaHL is a part of the Subversion project. Specifically, it is the Java language binding for the Subversion API."
