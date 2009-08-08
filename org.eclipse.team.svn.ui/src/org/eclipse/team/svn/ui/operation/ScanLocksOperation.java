@@ -9,7 +9,7 @@
  *    Igor Burilo - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.svn.ui.lock;
+package org.eclipse.team.svn.ui.operation;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,22 +25,23 @@ import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
-import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
+import org.eclipse.team.svn.ui.lock.LockResource;
+import org.eclipse.team.svn.ui.lock.LockResource.LockStatusEnum;
 
 /**
- * Scan locks
+ * Scan locks operation
  * 
  * @author Igor Burilo
  */
-public class RetrieveLocksOperation extends AbstractActionOperation {
+public class ScanLocksOperation extends AbstractActionOperation {
 
-	protected IResource wcResource;
-	protected LocksComposite locksComposite;
+	protected IResource wcResource;	
 	
-	public RetrieveLocksOperation(IResource wcResource, LocksComposite locksComposite) {
+	protected LockResource lockResourceRoot;
+	
+	public ScanLocksOperation(IResource wcResource) {
 		super("Operation_ScanLocks"); //$NON-NLS-1$
-		this.wcResource = wcResource;
-		this.locksComposite = locksComposite;
+		this.wcResource = wcResource;		
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
@@ -51,7 +52,7 @@ public class RetrieveLocksOperation extends AbstractActionOperation {
 			SVNChangeStatus[] changeStatuses = SVNUtility.status(proxy, FileUtility.getWorkingCopyPath(this.wcResource), ISVNConnector.Depth.INFINITY, ISVNConnector.Options.SERVER_SIDE, new SVNProgressMonitor(this, monitor, null));
 			//filter out resources which don't have locks
 			for (SVNChangeStatus status : changeStatuses) {				
-				if (status.isLocked || status.reposLock != null) {
+				if (status.lockToken != null || status.reposLock != null) {
 					lockStatuses.add(status);
 				}
 			}
@@ -59,28 +60,21 @@ public class RetrieveLocksOperation extends AbstractActionOperation {
 		finally {
 		    location.releaseSVNProxy(proxy);
 		}
-		
-		//update composite		
-		this.locksComposite.setPending(false);
 				
-		LockResource root = null;
 		if (!lockStatuses.isEmpty()) {
-			root = this.mapChangeStatusesToLockResource(this.wcResource, lockStatuses.toArray(new SVNChangeStatus[0]));						
-			this.compressLockResources(root);
-			
+			this.lockResourceRoot = this.mapChangeStatusesToLockResource(this.wcResource, lockStatuses.toArray(new SVNChangeStatus[0]));
+			this.compressLockResources(this.lockResourceRoot);			
 			//only debug
 			//root.showResourcesTree();				
-		}					
-		this.locksComposite.setRootLockResource(root);
-		UIMonitorUtility.getDisplay().syncExec(new Runnable() {
-			public void run() {					
-				RetrieveLocksOperation.this.locksComposite.initializeComposite();
-			}
-		});
+		}							
 	}		
 	
+	public LockResource getLockResourceRoot() {
+		return this.lockResourceRoot;
+	}
+	
 	protected void compressLockResources(LockResource resource) {
-		if (resource.isFile) {
+		if (resource.isFile()) {
 			return;
 		}
 		
@@ -123,38 +117,58 @@ public class RetrieveLocksOperation extends AbstractActionOperation {
 				String[] subPaths = relativePath.split("/"); //$NON-NLS-1$
 				LockResource parent = root;
 				for (int i = 0; i < subPaths.length; i ++) {
-					String subPath = subPaths[i];					   
+					String subPath = subPaths[i];
 					LockResource child = parent.getChildByName(subPath);
 					if (child == null) {
 						//last element is always a file
 						if (i == subPaths.length - 1) {
-							//file							
-							boolean isLocalLock;
-							String owner;
-							Date creationDate;
-							String comment;
-							if (status.lockToken != null && status.lockOwner.equals(status.reposLock.owner) && status.lockToken.equals(status.reposLock.token)) {
-								isLocalLock = true;
-								owner = status.lockOwner;
-								creationDate = new Date(status.lockCreationDate);
-								comment = status.lockComment;
-							} else {
-								isLocalLock = false;
-								owner = status.reposLock.owner;
-								creationDate = new Date(status.reposLock.creationDate);
-								comment = status.reposLock.comment;
-							}
-							child = new LockResource(subPath, owner, true, isLocalLock, creationDate, comment);	
+							child = this.createLockFile(status, subPath);
 						} else {
 							//folder
 							child = new LockResource(subPath);
-						}
+						}						
 						parent.addChild(child);
-					}	
-					parent = child;
+					}
+					if (child != null) {
+						parent = child;	
+					}					
 				}
 			}		
 		}
 		return root;
+	}
+	
+	protected LockResource createLockFile(SVNChangeStatus status, String resourceName) {		
+		LockStatusEnum lockStatus = null;
+		String owner = null;
+		Date creationDate = null;
+		String comment = null;
+				
+		if (status.lockToken != null && status.reposLock != null && status.lockOwner.equals(status.reposLock.owner) && status.lockToken.equals(status.reposLock.token)) {
+			//locally locked
+			lockStatus = LockStatusEnum.LOCALLY_LOCKED;
+			owner = status.lockOwner;
+			creationDate = new Date(status.lockCreationDate);
+			comment = status.lockComment;
+		} else if (status.lockToken == null && status.reposLock != null) {
+			//other locked
+			lockStatus = LockStatusEnum.OTHER_LOCKED;
+			owner = status.reposLock.owner;
+			creationDate = new Date(status.reposLock.creationDate);
+			comment = status.reposLock.comment;
+		} else if (status.lockToken != null && status.reposLock == null) {
+			//broken
+			lockStatus = LockStatusEnum.BROKEN;
+			owner = status.lockOwner;
+			creationDate = new Date(status.lockCreationDate);
+			comment = status.lockComment;
+		} else if (status.lockToken != null && status.reposLock != null && !status.lockToken.equals(status.reposLock.token)) {
+			//stolen
+			lockStatus = LockStatusEnum.STOLEN;
+			owner = status.reposLock.owner;
+			creationDate = new Date(status.reposLock.creationDate);
+			comment = status.reposLock.comment;
+		}		
+		return lockStatus != null ? new LockResource(resourceName, owner, true, lockStatus, creationDate, comment, status.path, status.url) : null;			
 	}
 }

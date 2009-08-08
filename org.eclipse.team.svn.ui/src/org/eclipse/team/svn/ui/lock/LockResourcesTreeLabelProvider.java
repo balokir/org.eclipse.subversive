@@ -29,8 +29,7 @@ public class LockResourcesTreeLabelProvider extends LabelProvider {
 	public LockResourcesTreeLabelProvider() {
 		synchronized (LockResourcesTreeLabelProvider.class) {
 			if (LockResourcesTreeLabelProvider.folderIcon == null) {
-				SVNTeamUIPlugin instance = SVNTeamUIPlugin.instance();
-				//TODO use another icon ?
+				SVNTeamUIPlugin instance = SVNTeamUIPlugin.instance();				
 				LockResourcesTreeLabelProvider.folderIcon = instance.getImageDescriptor("icons/views/history/affected_folder.gif").createImage(); //$NON-NLS-1$
 				LockResourcesTreeLabelProvider.rootIcon = instance.getImageDescriptor("icons/objects/repository-root.gif").createImage(); //$NON-NLS-1$
 				CompareUI.disposeOnShutdown(LockResourcesTreeLabelProvider.folderIcon);

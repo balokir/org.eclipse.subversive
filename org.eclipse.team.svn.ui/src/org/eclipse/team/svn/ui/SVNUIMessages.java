@@ -1743,13 +1743,18 @@ public class SVNUIMessages extends BaseMessages {
 	public static String LocksComposite_Owner;
 	public static String LocksComposite_CreationDate;
 	public static String LocksComposite_Root;
-	public static String LockResourcesTableLabelProvider_NoLocks;
-	public static String LockResourcesTableLabelProvider_Locked;
-	public static String LockResourcesTableLabelProvider_Other;
+	public static String LockResourcesTableLabelProvider_NoLocks;	
 	public static String LocksView_SVNLocks;
 	public static String Operation_ScanLocks;
 	public static String Operation_ScanLocks_Id;
 	public static String Operation_ScanLocks_Error;
+	
+	public static String LockResourcesTableLabelProvider_LocalLock;
+	public static String LockResourcesTableLabelProvider_OtherLock;
+	public static String LockResourcesTableLabelProvider_BrokenLock;
+	public static String LockResourcesTableLabelProvider_StolenLock;
+	public static String UpdateActionGroup_ScanLocks;
+	public static String BreakLockAction_label;
 	
 	static {
 		//load message values from bundle file

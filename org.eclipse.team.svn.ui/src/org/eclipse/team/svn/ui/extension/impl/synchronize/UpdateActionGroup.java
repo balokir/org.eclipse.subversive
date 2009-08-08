@@ -42,6 +42,7 @@ import org.eclipse.team.svn.ui.synchronize.update.action.LockAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.MarkAsMergedAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.OverrideAndCommitAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.OverrideAndUpdateAction;
+import org.eclipse.team.svn.ui.synchronize.update.action.ScanLocksAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.UnlockAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.UpdateAction;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -198,6 +199,10 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 		UnlockAction unlockAction = new UnlockAction(SVNUIMessages.UpdateActionGroup_Unlock, configuration);
 		unlockAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/unlock.gif")); //$NON-NLS-1$
 		manager.add(unlockAction);
+		
+		//scan locks
+		ScanLocksAction scanLocksAction = new ScanLocksAction(SVNUIMessages.UpdateActionGroup_ScanLocks, configuration);
+		manager.add(scanLocksAction);
 		
 		manager.add(new Separator());
 		
