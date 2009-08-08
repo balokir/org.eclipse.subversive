@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.ui.lock;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -20,11 +21,15 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
+import org.eclipse.team.svn.core.operation.CompositeOperation;
+import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.AbstractSVNView;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
+import org.eclipse.team.svn.ui.operation.ScanLocksOperation;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.IActionBars;
@@ -135,30 +140,61 @@ public class LocksView extends AbstractSVNView {
 		}
 	}
 	
-	public void setResource(IResource resource, boolean backgroundExecution) {		
+	public void setResourceWithoutActionExecution(IResource resource, boolean backgroundExecution) {
 		this.wcResource = resource;					
 		this.backgroundExecution = backgroundExecution;		
-		this.locksComposite.setResource(resource);		
+		this.locksComposite.setResource(resource);
+	}
+	
+	public void setResource(IResource resource, boolean backgroundExecution) {
+		this.setResourceWithoutActionExecution(resource, backgroundExecution);
 		this.refreshView();
 	}
 	
-	protected void refreshView() {
+	public IActionOperation getUpdateViewOperation() {
+		CompositeOperation op = null;
 		if (this.wcResource != null) {
-			RetrieveLocksOperation mainOp = new RetrieveLocksOperation(this.wcResource, this.locksComposite);
+			final ScanLocksOperation mainOp = new ScanLocksOperation(this.wcResource);
+			op = new CompositeOperation(mainOp.getId());
 			
-			this.locksComposite.setPending(true);
-			this.getSite().getShell().getDisplay().syncExec(new Runnable() {
-				public void run() {
-					LocksView.this.showResourceLabel();
-					LocksView.this.locksComposite.initializeComposite();
+			op.add(new AbstractActionOperation("") { //$NON-NLS-1$
+				protected void runImpl(IProgressMonitor monitor) throws Exception {										
+					//set pending
+					LocksView.this.locksComposite.setPending(true);
+					LocksView.this.getSite().getShell().getDisplay().syncExec(new Runnable() {
+						public void run() {
+							LocksView.this.showResourceLabel();
+							LocksView.this.locksComposite.initializeComposite();
+						}
+					});
 				}
 			});
 			
+			op.add(mainOp);			
+			//update composite
+			op.add(new AbstractActionOperation("") {				 //$NON-NLS-1$
+				protected void runImpl(IProgressMonitor monitor) throws Exception {
+					LocksView.this.locksComposite.setRootLockResource(mainOp.getLockResourceRoot());
+					UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+						public void run() {
+							LocksView.this.locksComposite.setPending(false);
+							LocksView.this.locksComposite.initializeComposite();
+						}
+					});
+				}
+			}, new IActionOperation[]{mainOp});									
+		}
+		return op;
+	}
+	
+	protected void refreshView() {
+		IActionOperation op = this.getUpdateViewOperation();
+		if (op != null) {
 			if (this.backgroundExecution) {
-				UIMonitorUtility.doTaskScheduledDefault(mainOp);
+				UIMonitorUtility.doTaskScheduledDefault(op);
 			}		
 			else {
-				UIMonitorUtility.doTaskScheduledDefault(this, mainOp);
+				UIMonitorUtility.doTaskScheduledDefault(this, op);
 			}	
 		}
 	}

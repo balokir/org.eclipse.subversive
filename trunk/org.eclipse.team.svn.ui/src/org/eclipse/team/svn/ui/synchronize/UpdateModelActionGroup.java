@@ -42,6 +42,7 @@ import org.eclipse.team.svn.ui.synchronize.update.action.logicalmodel.CommitMode
 import org.eclipse.team.svn.ui.synchronize.update.action.logicalmodel.ExpandAllModelAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.logicalmodel.LockModelAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.logicalmodel.OverrideAndCommitModelAction;
+import org.eclipse.team.svn.ui.synchronize.update.action.logicalmodel.ScanLocksModelAction;
 import org.eclipse.team.svn.ui.synchronize.update.action.logicalmodel.UnlockModelAction;
 import org.eclipse.team.ui.mapping.SynchronizationActionProvider;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -223,6 +224,10 @@ public class UpdateModelActionGroup extends AbstractSynchronizeModelActionGroup 
 		UnlockModelAction unlockAction = new UnlockModelAction(SVNUIMessages.UpdateActionGroup_Unlock, configuration);
 		unlockAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/unlock.gif")); //$NON-NLS-1$
 		manager.add(unlockAction);
+		
+		//scan locks		
+		ScanLocksModelAction scanAction = new ScanLocksModelAction(SVNUIMessages.UpdateActionGroup_ScanLocks, configuration);
+		manager.add(scanAction);
 		
 		manager.add(new Separator());
 		

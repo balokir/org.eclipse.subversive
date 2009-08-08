@@ -25,6 +25,7 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
+import org.eclipse.team.svn.ui.lock.LockResource.LockStatusEnum;
 import org.eclipse.team.svn.ui.utility.DateFormatter;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
@@ -53,7 +54,7 @@ public class LockResourcesTableLabelProvider implements ITableLabelProvider, IFo
 	
 	public Image getColumnImage(Object element, int columnIndex) {
 		LockResource node = (LockResource) element;
-		if (node.getName().equals(LocksComposite.PENDING_NAME)) {
+		if (LocksComposite.isFakePending(node)) {
 			if (columnIndex == LocksComposite.COLUMN_NAME) {
 				Image img = this.images.get(PENDING_IMAGE_DESCRIPTOR);
 				if (img == null) {
@@ -63,7 +64,7 @@ public class LockResourcesTableLabelProvider implements ITableLabelProvider, IFo
 				return img;
 			}
 			return null;
-		} else if (node.getName().equals(LocksComposite.NO_LOCKS_NAME)) {
+		} else if (LocksComposite.isFakeNoLocks(node)) {
 			return null;
 		}
 		
@@ -82,12 +83,12 @@ public class LockResourcesTableLabelProvider implements ITableLabelProvider, IFo
 
 	public String getColumnText(Object element, int columnIndex) {
 		LockResource node = (LockResource) element;
-		if (node.getName().equals(LocksComposite.PENDING_NAME)) {
+		if (LocksComposite.isFakePending(node)) {
 			if (columnIndex == LocksComposite.COLUMN_NAME) {
 				return SVNUIMessages.RepositoriesView_Model_Pending;
 			}
 			return null;
-		} else if (node.getName().equals(LocksComposite.NO_LOCKS_NAME)) {
+		} else if (LocksComposite.isFakeNoLocks(node)) {
 			if (columnIndex == LocksComposite.COLUMN_NAME) {
 				return SVNUIMessages.LockResourcesTableLabelProvider_NoLocks;
 			}
@@ -103,7 +104,16 @@ public class LockResourcesTableLabelProvider implements ITableLabelProvider, IFo
 				return data.getPath();
 			}
 			case LocksComposite.COLUMN_STATE: {
-				return data.isLocalLock() ? SVNUIMessages.LockResourcesTableLabelProvider_Locked : SVNUIMessages.LockResourcesTableLabelProvider_Other;
+				if (data.lockStatus == LockStatusEnum.LOCALLY_LOCKED) {
+					return SVNUIMessages.LockResourcesTableLabelProvider_LocalLock;
+				} else if (data.lockStatus == LockStatusEnum.OTHER_LOCKED) {
+					return SVNUIMessages.LockResourcesTableLabelProvider_OtherLock;
+				} else if (data.lockStatus == LockStatusEnum.BROKEN) {
+					return SVNUIMessages.LockResourcesTableLabelProvider_BrokenLock;
+				} else if (data.lockStatus == LockStatusEnum.STOLEN) {
+					return SVNUIMessages.LockResourcesTableLabelProvider_StolenLock;
+				}
+				return ""; //$NON-NLS-1$
 			}
 			case LocksComposite.COLUMN_OWNER: {
 				return data.getOwner();
@@ -139,8 +149,7 @@ public class LockResourcesTableLabelProvider implements ITableLabelProvider, IFo
 	}
 	
 	protected boolean isRequireBoldFont(Object element) {
-		LockResource node = (LockResource) element;
-		return node.getName().equals(LocksComposite.PENDING_NAME) || node.getName().equals(LocksComposite.NO_LOCKS_NAME);
+		return LocksComposite.isFakeLockResource((LockResource) element);
 	}
 
 }

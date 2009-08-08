@@ -17,15 +17,28 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+
 /**
  * Model element for LocksView
  * 
  * @author Igor Burilo
  */
-public class LockResource {
+public class LockResource implements IAdaptable {
 
+	public enum LockStatusEnum {
+		LOCALLY_LOCKED, OTHER_LOCKED, BROKEN, STOLEN		
+	}
+	
 	protected final boolean isFile;
-	protected final boolean isLocalLock;	
+	protected final LockStatusEnum lockStatus;	
 	protected String name;
 	protected final String owner;
 	protected final Date creationDate;
@@ -34,24 +47,30 @@ public class LockResource {
 	protected LockResource parent;	
 	protected Set<LockResource> children; 
 	
+	protected String url;
+	protected String fullFileSystemPath;
+	
 	public interface ILockResourceVisitor {
 		public void visit(LockResource lockResource);
 	}
 	
+	//for folders
 	public LockResource(String directoryName) {
-		this(directoryName, null, false, false, null, null);
+		this(directoryName, null, false, null, null, null, null, null);
 	}
 	
-	public LockResource(String name, String owner, boolean isFile, boolean isLocalLock, Date creationDate, String comment) {
+	public LockResource(String name, String owner, boolean isFile, LockStatusEnum lockStatus, Date creationDate, String comment, String fullFileSystemPath, String url) {
 		this.name = name;
 		this.owner = owner;
 		this.isFile = isFile;
-		this.isLocalLock = isLocalLock;
+		this.lockStatus = lockStatus;
 		this.creationDate = creationDate;
-		this.comment = comment;		
+		this.comment = comment;
+		this.fullFileSystemPath = fullFileSystemPath;
+		this.url = url;		
 		if (!this.isFile) {
 			this.children = new HashSet<LockResource>();
-		}				
+		}					
 	}
 	
 //	public boolean hasChildren() {
@@ -114,8 +133,8 @@ public class LockResource {
 		return this.parent == null;
 	}
 		
-	public boolean isLocalLock() {
-		return isLocalLock;
+	public LockStatusEnum getLockStatus() {
+		return this.lockStatus;
 	}
 
 	public void setName(String name) {
@@ -136,6 +155,10 @@ public class LockResource {
 	
 	public LockResource getParent() {
 		return parent;
+	}
+	
+	public String getComment() {
+		return this.comment;
 	}
 	
 	public String toString() {
@@ -170,7 +193,7 @@ public class LockResource {
 			public void visit(LockResource lockResource) {
 				String str = this.getStrIndent() + "Name: " + lockResource.getName() + ", path: " + lockResource.getPath(); //$NON-NLS-1$ //$NON-NLS-2$
 				if (lockResource.isFile()) {
-					str += ", is local state: " + lockResource.isLocalLock();  //$NON-NLS-1$
+					str += ", lock status: " + lockResource.getLockStatus().toString();  //$NON-NLS-1$
 				}
 				System.out.println(str);				
 				LockResource[] children = lockResource.getChildren();
@@ -188,5 +211,21 @@ public class LockResource {
 				return res.toString();
 			}
 		});
-	}	
+	}
+
+	/*
+	 * Current implementation is applied only for files
+	 */
+	public Object getAdapter(Class adapter) {
+		if (this.isFile()) {
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			IFile file = root.getFileForLocation(new Path(this.fullFileSystemPath));			
+			if (adapter == IResource.class) {
+				return file;
+			} else if (adapter == IRepositoryResource.class && file != null) {
+				return SVNRemoteStorage.instance().asRepositoryResource(SVNRemoteStorage.instance().getRepositoryLocation(file), this.url, true);
+			} 
+		}		
+		return null;
+	}
 }

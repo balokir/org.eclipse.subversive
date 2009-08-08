@@ -39,7 +39,7 @@ public class LockResourcesTableComparator extends ColumnedViewerComparator {
 				return ColumnedViewerComparator.compare(data1.getOwner(), data2.getOwner());
 			}
 			case LocksComposite.COLUMN_STATE : {
-				return ColumnedViewerComparator.compare(data1.isLocalLock() ? "local" : "other", data2.isLocalLock() ? "local" : "other"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				return data1.getLockStatus().compareTo(data2.getLockStatus());
 			}
 			case LocksComposite.COLUMN_DATE : {
 				return data1.getCreationDate().compareTo(data2.getCreationDate());
