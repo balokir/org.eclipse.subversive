@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<site mirrorsURL="http://www.eclipse.org/downloads/download.php?file=/technology/subversive/0.7/update-site/site.xml&amp;protocol=http&amp;format=xml" pack200="true">
+<site>
    <description url="http://download.eclipse.org/technology/subversive/0.7/update-site/">
       Eclipse Subversive - SVN Team Provider
    </description>
-   <feature url="http://www.eclipse.org/downloads/download.php?file=/technology/subversive/0.7/update-site/features/org.eclipse.team.svn_0.7.8.I20090515-1900.jar&amp;r=1&amp;protocol=http" id="org.eclipse.team.svn" version="0.7.8.I20090515-1900">
+   <feature url="features/org.eclipse.team.svn_0.7.8.I20090515-1900.jar" id="org.eclipse.team.svn" version="0.7.8.I20090515-1900">
       <category name="Subversive (Incubation)"/>
    </feature>
    <feature url="features/org.eclipse.team.svn.nl1_0.7.8.I20090515-1900.jar" id="org.eclipse.team.svn.nl1" version="0.7.8.I20090515-1900">
