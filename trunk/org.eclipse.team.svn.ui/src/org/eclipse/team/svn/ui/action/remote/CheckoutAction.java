@@ -136,9 +136,9 @@ public class CheckoutAction extends AbstractRepositoryModifyWorkspaceAction {
 		for (int i = 0; i < projects.length; i++) {			
 			IProject project = projects[i];			
 			String path = !FileUtility.isRemoteProject(project) ? FileUtility.getWorkingCopyPath(project) : project.getName();
-			if (FileUtility.isRemoteProject(project)) {
+			//if (FileUtility.isRemoteProject(project)) {
 				set.existing.put(set.caseInsensitiveOS ? project.getName().toLowerCase() : project.getName(), path);
-			} 				
+			//} 				
 		}
 		return set;
 	}
