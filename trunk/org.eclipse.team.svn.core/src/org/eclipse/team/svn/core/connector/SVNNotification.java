@@ -332,7 +332,7 @@ public class SVNNotification {
 		public static final String[] actionNames = { "add", "copy", "delete", "restore", "revert", "failed revert", "resolved", "skip", "update delete", "update add",
 				"update modified", "update completed", "update external", "status completed", "status external", "sending modified", "sending added", "sending deleted",
 				"sending replaced", "transfer", "blame revision processed", "locked", "unlocked", "locking failed", "unlocking failed", "path exists", "changelist set",
-				"changelist cleared", "merge begin", "foreign merge begin", "replaced," +
+				"changelist cleared", "merge begin", "foreign merge begin", "replaced" +
 				"property added", "property modified", "property deleted", "nonexistent property deleted", "revprop set", "revprop deleted", "merge completed", "tree conflict"};
 	}
 
