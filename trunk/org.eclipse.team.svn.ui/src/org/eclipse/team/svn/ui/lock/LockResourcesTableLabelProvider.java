@@ -25,6 +25,7 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
+import org.eclipse.team.svn.ui.composite.LockResourceSelectionComposite;
 import org.eclipse.team.svn.ui.lock.LockResource.LockStatusEnum;
 import org.eclipse.team.svn.ui.utility.DateFormatter;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -38,11 +39,15 @@ public class LockResourcesTableLabelProvider implements ITableLabelProvider, IFo
 	
 	protected Map<ImageDescriptor, Image> images = new HashMap<ImageDescriptor, Image>();
 
+	protected boolean hasCheckBoxes;	
+	
 	protected final static ImageDescriptor PENDING_IMAGE_DESCRIPTOR = SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/repositories/browser_pending.gif"); //$NON-NLS-1$
 	
 	protected Font boldFont;
 	
-	public LockResourcesTableLabelProvider() {		
+	public LockResourcesTableLabelProvider(boolean hasCheckBoxes) {		
+		this.hasCheckBoxes = hasCheckBoxes;
+		
 		//init font
 		Font defaultFont = JFaceResources.getDefaultFont();
 		FontData[] data = defaultFont.getFontData();
@@ -55,7 +60,7 @@ public class LockResourcesTableLabelProvider implements ITableLabelProvider, IFo
 	public Image getColumnImage(Object element, int columnIndex) {
 		LockResource node = (LockResource) element;
 		if (LocksComposite.isFakePending(node)) {
-			if (columnIndex == LocksComposite.COLUMN_NAME) {
+			if (columnIndex == LockResourceSelectionComposite.COLUMN_NAME) {
 				Image img = this.images.get(PENDING_IMAGE_DESCRIPTOR);
 				if (img == null) {
 					img = PENDING_IMAGE_DESCRIPTOR.createImage();
@@ -68,7 +73,7 @@ public class LockResourcesTableLabelProvider implements ITableLabelProvider, IFo
 			return null;
 		}
 		
-		if (columnIndex == LocksComposite.COLUMN_ICON) {
+		if (this.hasCheckBoxes && columnIndex == LockResourceSelectionComposite.COLUMN_NAME || !this.hasCheckBoxes && columnIndex == 0) {
 			String fileName = node.getName();
 			ImageDescriptor descr = SVNTeamUIPlugin.instance().getWorkbench().getEditorRegistry().getImageDescriptor(fileName);
 			Image img = this.images.get(descr);
@@ -84,12 +89,12 @@ public class LockResourcesTableLabelProvider implements ITableLabelProvider, IFo
 	public String getColumnText(Object element, int columnIndex) {
 		LockResource node = (LockResource) element;
 		if (LocksComposite.isFakePending(node)) {
-			if (columnIndex == LocksComposite.COLUMN_NAME) {
+			if (columnIndex == LockResourceSelectionComposite.COLUMN_NAME) {
 				return SVNUIMessages.RepositoriesView_Model_Pending;
 			}
 			return null;
 		} else if (LocksComposite.isFakeNoLocks(node)) {
-			if (columnIndex == LocksComposite.COLUMN_NAME) {
+			if (columnIndex == LockResourceSelectionComposite.COLUMN_NAME) {
 				return SVNUIMessages.LockResourcesTableLabelProvider_NoLocks;
 			}
 			return null;
@@ -97,13 +102,13 @@ public class LockResourcesTableLabelProvider implements ITableLabelProvider, IFo
 		
 		LockResource data = (LockResource)element;
 		switch (columnIndex) {
-			case LocksComposite.COLUMN_NAME: {
+			case LockResourceSelectionComposite.COLUMN_NAME: {
 				return data.getName();
 			}
-			case LocksComposite.COLUMN_PATH: {
+			case LockResourceSelectionComposite.COLUMN_PATH: {
 				return data.getPath();
 			}
-			case LocksComposite.COLUMN_STATE: {
+			case LockResourceSelectionComposite.COLUMN_STATE: {
 				if (data.lockStatus == LockStatusEnum.LOCALLY_LOCKED) {
 					return SVNUIMessages.LockResourcesTableLabelProvider_LocalLock;
 				} else if (data.lockStatus == LockStatusEnum.OTHER_LOCKED) {
@@ -115,10 +120,10 @@ public class LockResourcesTableLabelProvider implements ITableLabelProvider, IFo
 				}
 				return ""; //$NON-NLS-1$
 			}
-			case LocksComposite.COLUMN_OWNER: {
+			case LockResourceSelectionComposite.COLUMN_OWNER: {
 				return data.getOwner();
 			}
-			case LocksComposite.COLUMN_DATE: {
+			case LockResourceSelectionComposite.COLUMN_DATE: {
 				return DateFormatter.formatDate(data.getCreationDate());
 			}
 		}

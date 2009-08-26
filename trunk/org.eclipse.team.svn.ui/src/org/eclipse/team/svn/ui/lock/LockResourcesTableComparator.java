@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.ui.lock;
 
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.team.svn.ui.composite.LockResourceSelectionComposite;
 import org.eclipse.team.svn.ui.utility.ColumnedViewerComparator;
 
 /**
@@ -29,19 +30,19 @@ public class LockResourcesTableComparator extends ColumnedViewerComparator {
 		LockResource data1 = (LockResource)row1;
 		LockResource data2 = (LockResource)row2;
 		switch (this.column) {
-			case LocksComposite.COLUMN_NAME: {
+			case LockResourceSelectionComposite.COLUMN_NAME: {
 				return ColumnedViewerComparator.compare(data1.getName(), data2.getName());
 			}
-			case LocksComposite.COLUMN_PATH: {
+			case LockResourceSelectionComposite.COLUMN_PATH: {
 				return ColumnedViewerComparator.compare(data1.getPath(), data2.getPath());
 			}
-			case LocksComposite.COLUMN_OWNER: {
+			case LockResourceSelectionComposite.COLUMN_OWNER: {
 				return ColumnedViewerComparator.compare(data1.getOwner(), data2.getOwner());
 			}
-			case LocksComposite.COLUMN_STATE : {
+			case LockResourceSelectionComposite.COLUMN_STATE : {
 				return data1.getLockStatus().compareTo(data2.getLockStatus());
 			}
-			case LocksComposite.COLUMN_DATE : {
+			case LockResourceSelectionComposite.COLUMN_DATE : {
 				return data1.getCreationDate().compareTo(data2.getCreationDate());
 			}		
 		}
