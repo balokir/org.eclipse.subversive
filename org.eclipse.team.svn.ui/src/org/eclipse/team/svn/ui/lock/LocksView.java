@@ -11,6 +11,9 @@
 
 package org.eclipse.team.svn.ui.lock;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
@@ -25,6 +28,7 @@ import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
+import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.AbstractSVNView;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -202,6 +206,32 @@ public class LocksView extends AbstractSVNView {
 	protected void disconnectView() {
 		this.locksComposite.disconnectComposite();
 		this.wcResource = null;
+	}
+	
+	public static IResource[] convertToResources(LockResource[] lockResources) {
+		List<IResource> res = new ArrayList<IResource>();
+		if (lockResources != null) {
+			for (int i = 0; i < lockResources.length; i ++) {
+				Object ob = lockResources[i].getAdapter(IResource.class);
+				if (ob != null) {
+					res.add((IResource)ob);
+				}
+			}
+		}
+		return res.toArray(new IResource[0]);
+	}
+	
+	public static IRepositoryResource[] convertToRepositoryResources(LockResource[] lockResources) {
+		List<IRepositoryResource> res = new ArrayList<IRepositoryResource>();
+		if (lockResources != null) {
+			for (int i = 0; i < lockResources.length; i ++) {
+				Object ob = lockResources[i].getAdapter(IRepositoryResource.class);
+				if (ob != null) {
+					res.add((IRepositoryResource)ob);
+				}
+			}
+		}
+		return res.toArray(new IRepositoryResource[0]);
 	}
 
 	protected boolean needsLinkWithEditorAndSelection() {
