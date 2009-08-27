@@ -15,6 +15,7 @@
 	<topic label="SVN Workspace Synchronization" href="teamSupport/workspace_synch.html"/>
 	<topic label="SVN Merge Dialog" href="teamSupport/merge_dialog.html"/>
 	<topic label="SVN Properties View" href="teamSupport/props_view.html"/>
+	<topic label="SVN Locks View" href="teamSupport/locks_view.html"/>
 	<topic label="SVN Info" href="teamSupport/svn_info.html"/>
 	<topic label="SVN Toolbar" href="teamSupport/svn_toolbar.html"/>
 	<topic label="SVN Label Decorations" href="teamSupport/svn_label_decor.html"/>
