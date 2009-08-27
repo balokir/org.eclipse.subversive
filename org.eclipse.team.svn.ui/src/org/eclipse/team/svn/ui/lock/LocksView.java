@@ -39,6 +39,7 @@ import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * SVN Lock View
@@ -72,8 +73,8 @@ public class LocksView extends AbstractSVNView {
 		
 		this.createActionBars();
 
-        //TODO Setting context help
-	    //PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.propertiesViewContext"); //$NON-NLS-1$
+        //Setting context help
+	    PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.locksViewContext"); //$NON-NLS-1$
 	}
 	
 	protected void createActionBars() {

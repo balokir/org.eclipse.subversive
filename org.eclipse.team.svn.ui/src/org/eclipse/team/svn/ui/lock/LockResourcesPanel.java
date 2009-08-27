@@ -9,7 +9,7 @@
  *    Igor Burilo - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.svn.ui.panel.local;
+package org.eclipse.team.svn.ui.lock;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -27,8 +27,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.CommentComposite;
-import org.eclipse.team.svn.ui.lock.LockResource;
-import org.eclipse.team.svn.ui.lock.LockResourceSelectionComposite;
 import org.eclipse.team.svn.ui.lock.LockResourceSelectionComposite.ILockResourceSelectionChangeListener;
 import org.eclipse.team.svn.ui.lock.LockResourceSelectionComposite.LockResourceSelectionChangedEvent;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
@@ -184,4 +182,8 @@ public class LockResourcesPanel extends AbstractDialogPanel {
 			this.savePreferences();		
 		}
 	}
+	
+	public String getHelpId() {
+    	return "org.eclipse.team.svn.help.lockDialogContext"; //$NON-NLS-1$
+    }
 }

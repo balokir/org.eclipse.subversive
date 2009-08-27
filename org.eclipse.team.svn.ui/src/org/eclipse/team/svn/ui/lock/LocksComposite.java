@@ -56,7 +56,6 @@ import org.eclipse.team.svn.ui.lock.LockResource.LockStatusEnum;
 import org.eclipse.team.svn.ui.lock.LockResourceSelectionComposite.ILockResourceSelectionChangeListener;
 import org.eclipse.team.svn.ui.lock.LockResourceSelectionComposite.LockResourceSelectionChangedEvent;
 import org.eclipse.team.svn.ui.operation.RefreshRemoteResourcesOperation;
-import org.eclipse.team.svn.ui.panel.local.LockResourcesPanel;
 import org.eclipse.team.svn.ui.utility.DefaultOperationWrapperFactory;
 import org.eclipse.team.svn.ui.utility.ICancellableOperationWrapper;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
