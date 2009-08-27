@@ -11,16 +11,16 @@
 
 package org.eclipse.team.svn.ui.utility;
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.core.operation.local.LockOperation;
-import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
-import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
-import org.eclipse.team.svn.ui.dialog.DefaultDialog;
-import org.eclipse.team.svn.ui.panel.local.CommitPanel;
-import org.eclipse.team.svn.ui.panel.local.LockPanel;
+import org.eclipse.team.svn.ui.action.local.LockAction;
+import org.eclipse.team.svn.ui.lock.LockResource;
+import org.eclipse.team.svn.ui.lock.LocksComposite;
+import org.eclipse.team.svn.ui.lock.LockResource.LockStatusEnum;
 
 /**
  * An utility to propose user to lock the file if it needs lock
@@ -29,24 +29,23 @@ import org.eclipse.team.svn.ui.panel.local.LockPanel;
  */
 public class LockProposeUtility {
 	public static boolean proposeLock(final IResource[] resources) {
-		final boolean []success = new boolean[1];
-		CommitPanel.CollectPropertiesOperation op = new CommitPanel.CollectPropertiesOperation(resources);
-		ProgressMonitorUtility.doTaskExternal(op, null);
-		final LockPanel panel = new LockPanel(true, true, op.getMinLockSize());
-		UIMonitorUtility.getDisplay().syncExec(new Runnable() {
-			public void run() {
-				DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getShell(), panel);
-				if (dialog.open() == 0) {
-					LockOperation mainOp = new LockOperation(resources, panel.getMessage(), panel.getForce());
-					CompositeOperation op = new CompositeOperation(mainOp.getId());
-					op.add(mainOp);
-					op.add(new RefreshResourcesOperation(resources), new IActionOperation[] {mainOp});
-					UIMonitorUtility.doTaskBusyDefault(op);
-					success[0] = mainOp.getStatus().getSeverity() == IStatus.OK;
+		final boolean[] success = new boolean[1];		
+		List<LockResource> lockResources = LockAction.getLockResources(resources, resources);
+		if (lockResources != null) {
+			Iterator<LockResource> iter = lockResources.iterator();
+			while (iter.hasNext()) {
+				LockResource lockResource = iter.next();
+				if (lockResource.getLockStatus() == LockStatusEnum.LOCALLY_LOCKED) {
+					iter.remove();
 				}
 			}
-		});
-		
+			
+			IActionOperation op = LocksComposite.performLockAction(lockResources.toArray(new LockResource[0]), false, UIMonitorUtility.getShell());
+			if (op != null) {
+				UIMonitorUtility.doTaskBusyDefault(op);
+				success[0] = op.getStatus().getSeverity() == IStatus.OK;
+			}				
+		}	
 		return success[0];
 	}
 

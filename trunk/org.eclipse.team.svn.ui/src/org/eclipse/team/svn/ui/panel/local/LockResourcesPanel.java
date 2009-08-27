@@ -27,10 +27,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.CommentComposite;
-import org.eclipse.team.svn.ui.composite.LockResourceSelectionComposite;
-import org.eclipse.team.svn.ui.composite.LockResourceSelectionComposite.ILockResourceSelectionChangeListener;
-import org.eclipse.team.svn.ui.composite.LockResourceSelectionComposite.LockResourceSelectionChangedEvent;
 import org.eclipse.team.svn.ui.lock.LockResource;
+import org.eclipse.team.svn.ui.lock.LockResourceSelectionComposite;
+import org.eclipse.team.svn.ui.lock.LockResourceSelectionComposite.ILockResourceSelectionChangeListener;
+import org.eclipse.team.svn.ui.lock.LockResourceSelectionComposite.LockResourceSelectionChangedEvent;
 import org.eclipse.team.svn.ui.panel.AbstractDialogPanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.verifier.AbstractVerifier;
@@ -49,18 +49,18 @@ public class LockResourcesPanel extends AbstractDialogPanel {
 	protected CommentComposite comment;
 	protected SashForm sForm;
 	protected Button forceButton;
-	protected boolean force;	
+	protected boolean forceLock;	
 	
 	public LockResourcesPanel(LockResource[] resources, String dialogTitle, String dialogDescription, String defaultMessage) {
 		this(resources, false, false, dialogTitle, dialogDescription, defaultMessage);
 	}
 	
-	public LockResourcesPanel(LockResource[] resources, boolean hasComment, boolean force, String dialogTitle, String dialogDescription, String defaultMessage) {
+	public LockResourcesPanel(LockResource[] resources, boolean hasComment, boolean forceLock, String dialogTitle, String dialogDescription, String defaultMessage) {
 		super(new String[] {IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL});
 		
 		this.resources = resources;
 		this.hasComment = hasComment;
-		this.force = force;
+		this.forceLock = forceLock;
 		
 		this.dialogTitle = dialogTitle;
 		this.dialogDescription = dialogDescription;
@@ -112,11 +112,11 @@ public class LockResourcesPanel extends AbstractDialogPanel {
     		this.forceButton = new Button(commentParent, SWT.CHECK);
     		data = new GridData();		
     		this.forceButton.setLayoutData(data);
-    		this.forceButton.setText("Steal the locks"); //TODONLS
-    		this.forceButton.setSelection(this.force);
+    		this.forceButton.setText(SVNUIMessages.LockResourcesPanel_StealLocks);
+    		this.forceButton.setSelection(this.forceLock);
     		this.forceButton.addSelectionListener(new SelectionAdapter() {			
     			public void widgetSelected(SelectionEvent e) {
-    				LockResourcesPanel.this.force = forceButton.getSelection();
+    				LockResourcesPanel.this.forceLock = forceButton.getSelection();
     			}
     		});
     		
@@ -158,7 +158,7 @@ public class LockResourcesPanel extends AbstractDialogPanel {
 	}
 	
 	public boolean getForce() {
-		return this.hasComment ? this.force : false;
+		return this.hasComment ? this.forceLock : false;
 	}
 	
 	public LockResource[] getSelectedResources() {

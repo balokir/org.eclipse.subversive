@@ -1753,8 +1753,20 @@ public class SVNUIMessages extends BaseMessages {
 	public static String LockResourcesTableLabelProvider_OtherLock;
 	public static String LockResourcesTableLabelProvider_BrokenLock;
 	public static String LockResourcesTableLabelProvider_StolenLock;
+	public static String LockResourcesTableLabelProvider_NotLocked;
 	public static String UpdateActionGroup_ScanLocks;
 	public static String BreakLockAction_label;
+	public static String BreakLockAction_label2;
+	public static String LocksComposite_UnlockTitle;
+	public static String LocksComposite_UnlockDescription;
+	public static String LocksComposite_UnlockDefaultMessage;
+	public static String LocksComposite_LockTitle;
+	public static String LocksComposite_LockDescription;
+	public static String LocksComposite_LockDefaultMessage;
+	public static String LocksComposite_BreakLockTitle;
+	public static String LocksComposite_BreakLockDescription;
+	public static String LocksComposite_BreakLockDefaultMessage;
+	public static String LockResourcesPanel_StealLocks;
 	
 	static {
 		//load message values from bundle file

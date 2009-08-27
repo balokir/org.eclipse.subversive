@@ -34,7 +34,7 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 public class LockResource implements IAdaptable {
 
 	public enum LockStatusEnum {
-		LOCALLY_LOCKED, OTHER_LOCKED, BROKEN, STOLEN		
+		NONE, LOCALLY_LOCKED, OTHER_LOCKED, BROKEN, STOLEN
 	}
 	
 	protected final boolean isFile;
@@ -52,11 +52,6 @@ public class LockResource implements IAdaptable {
 	
 	public interface ILockResourceVisitor {
 		public void visit(LockResource lockResource);
-	}
-	
-	//for folders
-	public LockResource(String directoryName) {
-		this(directoryName, null, false, null, null, null, null, null);
 	}
 	
 	public LockResource(String name, String owner, boolean isFile, LockStatusEnum lockStatus, Date creationDate, String comment, String fullFileSystemPath, String url) {
@@ -160,6 +155,14 @@ public class LockResource implements IAdaptable {
 	public String getComment() {
 		return this.comment;
 	}
+
+	public String getFullFileSystemPath() {
+		return this.fullFileSystemPath;
+	}
+	
+	public String getUrl() {
+		return this.url;
+	}
 	
 	public String toString() {
 		return this.getPath();
@@ -217,15 +220,23 @@ public class LockResource implements IAdaptable {
 	 * Current implementation is applied only for files
 	 */
 	public Object getAdapter(Class adapter) {
-		if (this.isFile()) {
+		if (this.isFile() && this.fullFileSystemPath != null) {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			IFile file = root.getFileForLocation(new Path(this.fullFileSystemPath));			
 			if (adapter == IResource.class) {
 				return file;
-			} else if (adapter == IRepositoryResource.class && file != null) {
+			} else if (adapter == IRepositoryResource.class && file != null && this.url != null) {
 				return SVNRemoteStorage.instance().asRepositoryResource(SVNRemoteStorage.instance().getRepositoryLocation(file), this.url, true);
 			} 
 		}		
 		return null;
+	}
+	
+	public static LockResource createDirectory(String directoryName) {
+		return new LockResource(directoryName, null, false, LockStatusEnum.NONE, null, null, null, null);		
+	}
+	
+	public static LockResource createNotLockedFile(String fileName, String fullFileSystemPath) {
+		return new LockResource(fileName, null, true, LockStatusEnum.NONE, null, null, fullFileSystemPath, null);
 	}
 }

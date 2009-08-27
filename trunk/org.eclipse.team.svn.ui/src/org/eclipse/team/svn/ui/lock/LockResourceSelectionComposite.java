@@ -9,7 +9,7 @@
  *    Igor Burilo - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.svn.ui.composite;
+package org.eclipse.team.svn.ui.lock;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,9 +40,6 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
-import org.eclipse.team.svn.ui.lock.LockResource;
-import org.eclipse.team.svn.ui.lock.LockResourcesTableComparator;
-import org.eclipse.team.svn.ui.lock.LockResourcesTableLabelProvider;
 import org.eclipse.team.svn.ui.utility.ArrayStructuredContentProvider;
 
 /**

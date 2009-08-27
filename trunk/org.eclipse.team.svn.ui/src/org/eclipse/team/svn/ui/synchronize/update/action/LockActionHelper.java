@@ -11,20 +11,18 @@
 
 package org.eclipse.team.svn.ui.synchronize.update.action;
 
-import org.eclipse.core.resources.IResource;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.core.operation.local.LockOperation;
-import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
-import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
-import org.eclipse.team.svn.ui.dialog.DefaultDialog;
-import org.eclipse.team.svn.ui.panel.local.CommitPanel;
-import org.eclipse.team.svn.ui.panel.local.LockPanel;
+import org.eclipse.team.svn.ui.lock.LockResource;
+import org.eclipse.team.svn.ui.lock.LocksComposite;
+import org.eclipse.team.svn.ui.lock.LockResource.LockStatusEnum;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractActionHelper;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -48,17 +46,16 @@ public class LockActionHelper extends AbstractActionHelper {
 	}
 
 	public IActionOperation getOperation() {
-		IResource [] selectedResources = this.getSyncInfoSelector().getSelectedResources();
-		CommitPanel.CollectPropertiesOperation cop = new CommitPanel.CollectPropertiesOperation(selectedResources);
-		ProgressMonitorUtility.doTaskExternal(cop, null);
-		LockPanel commentPanel = new LockPanel(true, cop.getMinLockSize());
-		DefaultDialog dialog = new DefaultDialog(configuration.getSite().getShell(), commentPanel);
-		if (dialog.open() == 0) {
-		    LockOperation mainOp = new LockOperation(selectedResources, commentPanel.getMessage(), commentPanel.getForce());
-		    CompositeOperation lockOp = new CompositeOperation(mainOp.getId());
-		    lockOp.add(mainOp);
-		    lockOp.add(new RefreshResourcesOperation(selectedResources));
-		    return lockOp;
+		List<LockResource> lockResources = org.eclipse.team.svn.ui.action.local.LockAction.getLockResources(this.getAllSelectedResources(), this.getSyncInfoSelector().getSelectedResources());
+		if (lockResources != null) {
+			Iterator<LockResource> iter = lockResources.iterator();
+			while (iter.hasNext()) {
+				LockResource lockResource = iter.next();
+				if (lockResource.getLockStatus() == LockStatusEnum.LOCALLY_LOCKED) {
+					iter.remove();
+				}
+			}
+			return LocksComposite.performLockAction(lockResources.toArray(new LockResource[0]), false, this.configuration.getSite().getShell());			
 		}
 		return null;
 	}

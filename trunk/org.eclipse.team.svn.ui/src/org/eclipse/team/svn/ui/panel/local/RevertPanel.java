@@ -13,8 +13,9 @@ package org.eclipse.team.svn.ui.panel.local;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
@@ -43,11 +44,9 @@ import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.CreatePatchOperation;
 import org.eclipse.team.svn.core.operation.local.ExportOperation;
-import org.eclipse.team.svn.core.operation.local.LockOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
-import org.eclipse.team.svn.core.operation.local.UnlockOperation;
 import org.eclipse.team.svn.core.operation.local.management.CleanupOperation;
 import org.eclipse.team.svn.core.operation.local.refactor.DeleteResourceOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -57,17 +56,19 @@ import org.eclipse.team.svn.core.resource.events.ResourceStatesChangedEvent;
 import org.eclipse.team.svn.core.svnstorage.ResourcesParentsProvider;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
-import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.local.BranchTagAction;
 import org.eclipse.team.svn.ui.action.local.CompareWithWorkingCopyAction;
+import org.eclipse.team.svn.ui.action.local.LockAction;
 import org.eclipse.team.svn.ui.action.local.ReplaceWithLatestRevisionAction;
 import org.eclipse.team.svn.ui.action.local.ReplaceWithRevisionAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.dialog.DiscardConfirmationDialog;
-import org.eclipse.team.svn.ui.dialog.UnlockResourcesDialog;
+import org.eclipse.team.svn.ui.lock.LockResource;
+import org.eclipse.team.svn.ui.lock.LocksComposite;
+import org.eclipse.team.svn.ui.lock.LockResource.LockStatusEnum;
 import org.eclipse.team.svn.ui.operation.CompareResourcesOperation;
 import org.eclipse.team.svn.ui.panel.participant.BasePaneParticipant;
 import org.eclipse.team.svn.ui.panel.participant.RevertPaneParticipant;
@@ -207,24 +208,20 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 				//Lock action
 				manager.add(tAction = new Action(SVNUIMessages.LockAction_label) {
 					public void run() {
-						boolean containsFolder = false;
-						for (int i = 0; i < selectedResources.length; i++) {
-							if (selectedResources[i] instanceof IContainer) {
-								containsFolder = true;
-								break;
+						IResource[] filteredResources = FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_READY_TO_LOCK, IResource.DEPTH_INFINITE);						
+						List<LockResource> lockResources = LockAction.getLockResources(selectedResources, filteredResources);
+						if (lockResources != null) {
+							Iterator<LockResource> iter = lockResources.iterator();
+							while (iter.hasNext()) {
+								LockResource lockResource = iter.next();
+								if (lockResource.getLockStatus() == LockStatusEnum.LOCALLY_LOCKED) {
+									iter.remove();
+								}
 							}
-						}
-						CommitPanel.CollectPropertiesOperation cop = new CommitPanel.CollectPropertiesOperation(selectedResources);
-						ProgressMonitorUtility.doTaskExternal(cop, null);
-						LockPanel commentPanel = new LockPanel(!containsFolder, cop.getMinLockSize());
-						DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getShell(), commentPanel);
-						if (dialog.open() == 0) {
-						    IResource []resources = FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_READY_TO_LOCK, commentPanel.isRecursive() ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE); 
-						    LockOperation mainOp = new LockOperation(resources, commentPanel.getMessage(), commentPanel.getForce());
-						    CompositeOperation op = new CompositeOperation(mainOp.getId());
-							op.add(mainOp);
-							op.add(new RefreshResourcesOperation(resources));
-							UIMonitorUtility.doTaskNowDefault(op, false);
+							IActionOperation op = LocksComposite.performLockAction(lockResources.toArray(new LockResource[0]), false, UIMonitorUtility.getShell());
+							if (op != null) {
+								UIMonitorUtility.doTaskNowDefault(op, false);
+							}
 						}
 					}
 				});
@@ -234,21 +231,20 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 				//Unlock action
 				manager.add(tAction = new Action(SVNUIMessages.UnlockAction_label) {
 					public void run() {
-						boolean recursive = false;
-						for (int i = 0; i < selectedResources.length; i++) {
-							if (selectedResources[i].getType() != IResource.FILE) {
-								recursive = true;
-								break;
+						IResource[] filteredResources = FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_LOCKED, IResource.DEPTH_INFINITE);						
+						List<LockResource> lockResources = LockAction.getLockResources(selectedResources, filteredResources);
+						if (lockResources != null) {
+							Iterator<LockResource> iter = lockResources.iterator();
+							while (iter.hasNext()) {
+								LockResource lockResource = iter.next();
+								if (lockResource.getLockStatus() != LockStatusEnum.LOCALLY_LOCKED) {
+									iter.remove();
+								}
 							}
-						}
-						UnlockResourcesDialog dialog = new UnlockResourcesDialog(UIMonitorUtility.getShell(), recursive);
-						if (dialog.open() == 0) {
-							IResource []resources = FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_LOCKED, dialog.isRecursive() ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE);
-						    UnlockOperation mainOp = new UnlockOperation(resources);
-							CompositeOperation op = new CompositeOperation(mainOp.getId());
-							op.add(mainOp);
-							op.add(new RefreshResourcesOperation(resources));
-							UIMonitorUtility.doTaskNowDefault(op, false);
+							IActionOperation op = LocksComposite.performUnlockAction(lockResources.toArray(new LockResource[0]), UIMonitorUtility.getShell());
+							if (op != null) {
+								UIMonitorUtility.doTaskNowDefault(op, false);
+							}
 						}
 					}
 				});
