@@ -25,7 +25,6 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
-import org.eclipse.team.svn.ui.composite.LockResourceSelectionComposite;
 import org.eclipse.team.svn.ui.lock.LockResource.LockStatusEnum;
 import org.eclipse.team.svn.ui.utility.DateFormatter;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -117,14 +116,14 @@ public class LockResourcesTableLabelProvider implements ITableLabelProvider, IFo
 					return SVNUIMessages.LockResourcesTableLabelProvider_BrokenLock;
 				} else if (data.lockStatus == LockStatusEnum.STOLEN) {
 					return SVNUIMessages.LockResourcesTableLabelProvider_StolenLock;
-				}
-				return ""; //$NON-NLS-1$
+				}				
+				return SVNUIMessages.LockResourcesTableLabelProvider_NotLocked;
 			}
 			case LockResourceSelectionComposite.COLUMN_OWNER: {
 				return data.getOwner();
 			}
 			case LockResourceSelectionComposite.COLUMN_DATE: {
-				return DateFormatter.formatDate(data.getCreationDate());
+				return data.getCreationDate() != null ? DateFormatter.formatDate(data.getCreationDate()) : ""; //$NON-NLS-1$
 			}
 		}
 		return ""; //$NON-NLS-1$

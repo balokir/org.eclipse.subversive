@@ -35,6 +35,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.team.svn.core.IStateFilter;
@@ -50,11 +51,10 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
-import org.eclipse.team.svn.ui.composite.LockResourceSelectionComposite;
-import org.eclipse.team.svn.ui.composite.LockResourceSelectionComposite.ILockResourceSelectionChangeListener;
-import org.eclipse.team.svn.ui.composite.LockResourceSelectionComposite.LockResourceSelectionChangedEvent;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.lock.LockResource.LockStatusEnum;
+import org.eclipse.team.svn.ui.lock.LockResourceSelectionComposite.ILockResourceSelectionChangeListener;
+import org.eclipse.team.svn.ui.lock.LockResourceSelectionComposite.LockResourceSelectionChangedEvent;
 import org.eclipse.team.svn.ui.operation.RefreshRemoteResourcesOperation;
 import org.eclipse.team.svn.ui.panel.local.LockResourcesPanel;
 import org.eclipse.team.svn.ui.utility.DefaultOperationWrapperFactory;
@@ -82,10 +82,10 @@ public class LocksComposite extends Composite {
 	protected LockResourcesTreeLabelProvider labelProvider;
 	
 	private static final String PENDING_NAME = "pending";  //$NON-NLS-1$
-	private static LockResource FAKE_PENDING = new LockResource(LocksComposite.PENDING_NAME);
+	private static LockResource FAKE_PENDING = LockResource.createDirectory(LocksComposite.PENDING_NAME);
 	
 	private static final String NO_LOCKS_NAME = "nolocks";  //$NON-NLS-1$
-	private static LockResource FAKE_NO_LOCKS = new LockResource(LocksComposite.NO_LOCKS_NAME);
+	private static LockResource FAKE_NO_LOCKS = LockResource.createDirectory(LocksComposite.NO_LOCKS_NAME);
 	
 	public LocksComposite(Composite parent, LocksView locksView) {
 		super(parent, SWT.NONE);
@@ -239,20 +239,12 @@ public class LocksComposite extends Composite {
 			}
 		}
 		
-		Action action = new Action("Lock...") { //TODONLS
-			public void run() {				
-				LockResourcesPanel panel = new LockResourcesPanel(lockResources.toArray(new LockResource[0]), true, true, "Lock", "Lock for selected resources", "The Lock Operation will be applied only to selected resources represented below."); //TODONLS
-				DefaultDialog dlg = new DefaultDialog(LocksComposite.this.getShell(), panel);
-				if (dlg.open() == 0) {			
-					LockResource[] selectedResources = panel.getSelectedResources();
-					IResource[] resources = LocksView.convertToResources(selectedResources);
-									
-					LockOperation mainOp = new LockOperation(resources, panel.getMessage(), panel.getForce());			    
-					CompositeOperation op = new CompositeOperation(mainOp.getId());
-					op.add(mainOp);
-					op.add(new RefreshResourcesOperation(resources));
+		Action action = new Action(SVNUIMessages.LockAction_label) {
+			public void run() {
+				IActionOperation op = LocksComposite.performLockAction(lockResources.toArray(new LockResource[0]), true, LocksComposite.this.getShell());
+				if (op != null) {
 					LocksComposite.this.runScheduled(op);
-				}							
+				}
 			}
 		};
 		action.setEnabled(!lockResources.isEmpty());
@@ -260,8 +252,65 @@ public class LocksComposite extends Composite {
 		return action;			
 	}
 	
+	public static IActionOperation performBreakLockAction(LockResource[] lockResources, Shell shell, final LocksView locksView) {
+		LockResourcesPanel panel = new LockResourcesPanel(lockResources, SVNUIMessages.LocksComposite_BreakLockTitle, SVNUIMessages.LocksComposite_BreakLockDescription, SVNUIMessages.LocksComposite_BreakLockDefaultMessage);
+		DefaultDialog dlg = new DefaultDialog(shell, panel);
+		if (dlg.open() == 0) {			
+			LockResource[] selectedResources = panel.getSelectedResources();
+			IRepositoryResource[] reposResources = LocksView.convertToRepositoryResources(selectedResources);
+			BreakLockOperation mainOp = new BreakLockOperation(reposResources);
+			CompositeOperation op = new CompositeOperation(mainOp.getId());
+			op.add(mainOp);
+			op.add(new RefreshRemoteResourcesOperation(reposResources));
+			op.add(new AbstractActionOperation("") { //$NON-NLS-1$
+				protected void runImpl(IProgressMonitor monitor) throws Exception {
+					LocksView lv = locksView;
+					if (lv == null) {
+						lv = LocksView.instance();
+					}
+					if (lv != null) {
+						lv.refreshView();
+					}
+				}
+			});		
+			return op;			
+		}
+		return null;
+	}
+	
+	public static IActionOperation performUnlockAction(LockResource[] lockResources, Shell shell) {
+		LockResourcesPanel unlockPanel = new LockResourcesPanel(lockResources, SVNUIMessages.LocksComposite_UnlockTitle, SVNUIMessages.LocksComposite_UnlockDescription, SVNUIMessages.LocksComposite_UnlockDefaultMessage);
+		DefaultDialog dlg = new DefaultDialog(shell, unlockPanel);
+		if (dlg.open() == 0) {								
+			LockResource[] selectedResources = unlockPanel.getSelectedResources();
+			IResource[] resources = LocksView.convertToResources(selectedResources);
+			UnlockOperation mainOp = new UnlockOperation(resources);							    
+			CompositeOperation op = new CompositeOperation(mainOp.getId());
+			op.add(mainOp);
+			op.add(new RefreshResourcesOperation(resources));
+			return op;							
+		}		
+		return null;
+	}
+	
+	public static IActionOperation performLockAction(LockResource[] lockResources, boolean forceLock, Shell shell) {
+		LockResourcesPanel panel = new LockResourcesPanel(lockResources, true, forceLock, SVNUIMessages.LocksComposite_LockTitle, SVNUIMessages.LocksComposite_LockDescription, SVNUIMessages.LocksComposite_LockDefaultMessage);
+		DefaultDialog dlg = new DefaultDialog(shell, panel);
+		if (dlg.open() == 0) {			
+			LockResource[] selectedResources = panel.getSelectedResources();
+			IResource[] resources = LocksView.convertToResources(selectedResources);
+							
+			LockOperation mainOp = new LockOperation(resources, panel.getMessage(), panel.getForce());			    
+			CompositeOperation op = new CompositeOperation(mainOp.getId());
+			op.add(mainOp);
+			op.add(new RefreshResourcesOperation(resources));
+			return op;
+		}
+		return null;
+	}
+	
 	protected Action createBreakLockAction(final Map<LockStatusEnum, List<LockResource>> resourcesMap) {
-		Action action = new Action("Break Lock...") { //TODONLS
+		Action action = new Action(SVNUIMessages.BreakLockAction_label2) {
 			public void run() {
 				List<LockResource> lockResources = new ArrayList<LockResource>();
 				if (resourcesMap.containsKey(LockStatusEnum.OTHER_LOCKED)) {
@@ -271,20 +320,8 @@ public class LocksComposite extends Composite {
 					lockResources.addAll(resourcesMap.get(LockStatusEnum.STOLEN));
 				}							
 				if (lockResources != null && !lockResources.isEmpty()) {
-					LockResourcesPanel panel = new LockResourcesPanel(lockResources.toArray(new LockResource[0]), "Break Lock", "Break Lock for selected resources", "The Break Lock Operation will be applied only to selected resources represented below."); //TODONLS
-					DefaultDialog dlg = new DefaultDialog(LocksComposite.this.getShell(), panel);
-					if (dlg.open() == 0) {			
-						LockResource[] selectedResources = panel.getSelectedResources();
-						IRepositoryResource[] reposResources = LocksView.convertToRepositoryResources(selectedResources);
-						BreakLockOperation mainOp = new BreakLockOperation(reposResources);
-						CompositeOperation op = new CompositeOperation(mainOp.getId());
-						op.add(mainOp);
-						op.add(new RefreshRemoteResourcesOperation(reposResources));
-						op.add(new AbstractActionOperation("") { //$NON-NLS-1$
-							protected void runImpl(IProgressMonitor monitor) throws Exception {
-								LocksComposite.this.locksView.refreshView();
-							}
-						});								
+					IActionOperation op = LocksComposite.performBreakLockAction(lockResources.toArray(new LockResource[0]), LocksComposite.this.getShell(), LocksComposite.this.locksView);
+					if (op != null) {
 						LocksComposite.this.runScheduled(op);
 					}
 				}
@@ -295,20 +332,13 @@ public class LocksComposite extends Composite {
 	}
 	
 	protected Action createUnlockAction(final Map<LockStatusEnum, List<LockResource>> resourcesMap) {
-		Action action = new Action("Unlock...") { //TODONLS
+		Action action = new Action(SVNUIMessages.UnlockAction_label) {
 			public void run() {
 				List<LockResource> lockResources = resourcesMap.get(LockStatusEnum.LOCALLY_LOCKED);		
 				if (lockResources != null && !lockResources.isEmpty()) {
-					LockResourcesPanel unlockPanel = new LockResourcesPanel(lockResources.toArray(new LockResource[0]), "Unlock", "Selected resources will be unlocked", "The Unlock Operation will be applied only to selected resources represented below."); //TODONLS
-					DefaultDialog dlg = new DefaultDialog(LocksComposite.this.getShell(), unlockPanel);
-					if (dlg.open() == 0) {								
-						LockResource[] selectedResources = unlockPanel.getSelectedResources();
-						IResource[] resources = LocksView.convertToResources(selectedResources);
-						UnlockOperation mainOp = new UnlockOperation(resources);							    
-						CompositeOperation op = new CompositeOperation(mainOp.getId());
-						op.add(mainOp);
-						op.add(new RefreshResourcesOperation(resources));												
-						LocksComposite.this.runScheduled(op);				
+					IActionOperation op = LocksComposite.performUnlockAction(lockResources.toArray(new LockResource[0]), LocksComposite.this.getShell());
+					if (op != null) {
+						LocksComposite.this.runScheduled(op);
 					}																	
 				}
 			}

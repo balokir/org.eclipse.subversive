@@ -11,17 +11,18 @@
 
 package org.eclipse.team.svn.ui.synchronize.update.action;
 
-import org.eclipse.core.resources.IResource;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
-import org.eclipse.team.svn.core.operation.local.UnlockOperation;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
-import org.eclipse.team.svn.ui.dialog.UnlockResourcesDialog;
+import org.eclipse.team.svn.ui.lock.LockResource;
+import org.eclipse.team.svn.ui.lock.LocksComposite;
+import org.eclipse.team.svn.ui.lock.LockResource.LockStatusEnum;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractActionHelper;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -44,15 +45,17 @@ public class UnlockActionHelper extends AbstractActionHelper {
         };
 	}
 	
-	public IActionOperation getOperation() {
-		IResource [] selectedResources = this.getSyncInfoSelector().getSelectedResources();
-		UnlockResourcesDialog dialog = new UnlockResourcesDialog(configuration.getSite().getShell(), false);
-		if (dialog.open() == 0) {
-		    UnlockOperation mainOp = new UnlockOperation(selectedResources);
-			CompositeOperation unlockOp = new CompositeOperation(mainOp.getId());
-			unlockOp.add(mainOp);
-			unlockOp.add(new RefreshResourcesOperation(selectedResources));
-			return unlockOp;
+	public IActionOperation getOperation() {		
+		List<LockResource> lockResources = org.eclipse.team.svn.ui.action.local.LockAction.getLockResources(this.getAllSelectedResources(), this.getSyncInfoSelector().getSelectedResources());
+		if (lockResources != null) {
+			Iterator<LockResource> iter = lockResources.iterator();
+			while (iter.hasNext()) {
+				LockResource lockResource = iter.next();
+				if (lockResource.getLockStatus() != LockStatusEnum.LOCALLY_LOCKED) {
+					iter.remove();
+				}
+			}
+			return LocksComposite.performUnlockAction(lockResources.toArray(new LockResource[0]), this.configuration.getSite().getShell());			
 		}
 		return null;
 	}

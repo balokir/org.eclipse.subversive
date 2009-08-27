@@ -34,9 +34,11 @@ import org.eclipse.team.svn.ui.AbstractSVNView;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.operation.ScanLocksOperation;
+import org.eclipse.team.svn.ui.operation.ScanLocksOperation.CreateLockResourcesHierarchyOperation;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * SVN Lock View
@@ -158,7 +160,7 @@ public class LocksView extends AbstractSVNView {
 	public IActionOperation getUpdateViewOperation() {
 		CompositeOperation op = null;
 		if (this.wcResource != null) {
-			final ScanLocksOperation mainOp = new ScanLocksOperation(this.wcResource);
+			ScanLocksOperation mainOp = new ScanLocksOperation(new IResource[]{this.wcResource});
 			op = new CompositeOperation(mainOp.getId());
 			
 			op.add(new AbstractActionOperation("") { //$NON-NLS-1$
@@ -174,11 +176,15 @@ public class LocksView extends AbstractSVNView {
 				}
 			});
 			
-			op.add(mainOp);			
+			op.add(mainOp);
+			
+			final CreateLockResourcesHierarchyOperation createHierarchyOp = new CreateLockResourcesHierarchyOperation(mainOp);
+			op.add(createHierarchyOp, new IActionOperation[]{mainOp});
+			
 			//update composite
 			op.add(new AbstractActionOperation("") {				 //$NON-NLS-1$
 				protected void runImpl(IProgressMonitor monitor) throws Exception {
-					LocksView.this.locksComposite.setRootLockResource(mainOp.getLockResourceRoot());
+					LocksView.this.locksComposite.setRootLockResource(createHierarchyOp.getLockResourceRoot());
 					UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 						public void run() {
 							LocksView.this.locksComposite.setPending(false);
@@ -186,7 +192,7 @@ public class LocksView extends AbstractSVNView {
 						}
 					});
 				}
-			}, new IActionOperation[]{mainOp});									
+			}, new IActionOperation[]{createHierarchyOp});									
 		}
 		return op;
 	}
@@ -240,5 +246,18 @@ public class LocksView extends AbstractSVNView {
 
 	public void setFocus() {
 		
+	}
+	
+	public static LocksView instance() {
+		final LocksView []view = new LocksView[1];
+		UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+			public void run() {
+				IWorkbenchWindow window = SVNTeamUIPlugin.instance().getWorkbench().getActiveWorkbenchWindow();
+				if (window != null && window.getActivePage() != null) {
+					view[0] = (LocksView)window.getActivePage().findView(LocksView.VIEW_ID);
+				}
+			}
+		});
+		return view[0];
 	}
 }

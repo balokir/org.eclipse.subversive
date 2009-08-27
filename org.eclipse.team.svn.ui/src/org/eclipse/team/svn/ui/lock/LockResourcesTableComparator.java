@@ -12,7 +12,6 @@
 package org.eclipse.team.svn.ui.lock;
 
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.team.svn.ui.composite.LockResourceSelectionComposite;
 import org.eclipse.team.svn.ui.utility.ColumnedViewerComparator;
 
 /**
