@@ -62,7 +62,7 @@ public abstract class AbstractPropertyEditPanel extends AbstractDialogPanel {
 	protected Combo nameField;
 	protected Text valueField;
 	protected Text fileField;
-	protected Label descriptionField;
+	protected Text descriptionField;
 	
 	protected boolean fileSelected;
 	protected String propertyName;
@@ -189,17 +189,18 @@ public abstract class AbstractPropertyEditPanel extends AbstractDialogPanel {
 		data = new GridData();
 		data.verticalAlignment = SWT.TOP;
 		bulb.setLayoutData(data);
-		
-		this.descriptionField = new Label(descriptionComposite, SWT.WRAP);
+
+		this.descriptionField = new Text(descriptionComposite, SWT.MULTI | SWT.V_SCROLL | SWT.WRAP);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.verticalAlignment = SWT.TOP;
 		data.grabExcessVerticalSpace = true;
-		data.heightHint = 50;
+		data.heightHint = 100;
 		this.descriptionField.setLayoutData(data);
 		this.descriptionField.setText(this.getDescriptionText());
 		this.descriptionField.setBackground(this.nameField.getBackground());
 		descriptionComposite.setBackground(this.nameField.getBackground());
 		bulb.setBackground(this.nameField.getBackground());
+		this.descriptionField.setEditable(false);		
 		
 		CompositeVerifier verifier = new CompositeVerifier();
 		String name = SVNUIMessages.AbstractPropertyEditPanel_Name_Verifier;
