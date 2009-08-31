@@ -67,6 +67,7 @@ import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Options;
 import org.eclipse.team.svn.core.connector.SVNEntry.Kind;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
+import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.extension.options.IIgnoreRecommendations;
 import org.eclipse.team.svn.core.operation.SVNNullProgressMonitor;
 import org.eclipse.team.svn.core.operation.UnreportableException;
@@ -1276,6 +1277,43 @@ public final class SVNUtility {
 			this.url = url;
 		}
 		
+		private static String[] splitExternalOnParts(String str, boolean isCheckSpacesInLocalPath) {
+			if (str == null) {
+				return new String[0];
+			}
+			str = str.trim();
+			
+			if (!isCheckSpacesInLocalPath) {
+				return str.trim().split("[\\t ]+"); //$NON-NLS-1$
+			}
+			
+			//process that local path can be enclosed in quotes or contain the \ (backslash) character for escaping characters
+			List<String> parts = new ArrayList<String>();			
+			StringBuffer tmpString = new StringBuffer();
+			boolean hasQuote = false; 
+			for (int i = 0; i < str.length(); i ++) {
+				char ch = str.charAt(i);
+				if (ch == '\'' || ch == '"') {
+					hasQuote = !hasQuote;
+				} else if (ch == ' ' || ch == '\t') {
+					if (hasQuote) {
+						tmpString.append(ch);
+					} else if (tmpString.length() > 0){
+						parts.add(tmpString.toString());
+						tmpString.setLength(0);
+					}					
+				} else if (ch == '\\' && i + 1 < str.length() - 1 && str.charAt(i + 1) == ' ') {
+					//if space character is escaped with backslash(\) then doesn't separate string to parts here
+					tmpString.append(' ');
+					i ++;
+				} else {
+					tmpString.append(ch);	
+				}				
+			}
+			parts.add(tmpString.toString());			
+			return parts.toArray(new String[0]);
+		}
+		
 		/**
 		 * Parse external property and return result in raw format, i.e. 
 		 * it doesn't process and encode url, it doesn't parse revisions etc.
@@ -1292,7 +1330,8 @@ public final class SVNUtility {
 							
 			String []externals = property.trim().split("[\\n|\\r\\n]+"); // it seems different clients have different behaviours wrt trailing whitespace.. so trim() to be safe //$NON-NLS-1$
 			for (int i = 0; i < externals.length; i++) {
-				String []parts = externals[i].trim().split("[\\t ]+"); //$NON-NLS-1$
+				boolean isCheckSpacesInLocalPath = CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() >= ISVNConnectorFactory.APICompatibility.SVNAPI_1_6_x;
+				String[] parts = SVNExternalPropertyData.splitExternalOnParts(externals[i], isCheckSpacesInLocalPath);
 				// 2 - name + URL
 				// 3 - name + -rRevision + URL
 				// 4 - name + -r + Revision + URL
