@@ -8,6 +8,20 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.8.I20090903-1900 [03 September 2009]
+
+Features:
+ * [Subversive] - Bug report ID-AUVIL (bug 286552)   
+ 
+ * Preview of merge reintegrate fails (bug 287301)
+ 
+ * Support spaces in local path in svn:externals (bug 288107)
+    
+Fixes:
+ * In SVN lock view add actions to resources tree (bug 287577)
+ 
+--------------------------------------------------------------------------------
+
 Version 0.7.8.I20090808-1900 [08 August 2009]
 
 Features:
