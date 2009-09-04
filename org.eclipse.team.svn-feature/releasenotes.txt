@@ -5,7 +5,7 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 0.7.8.I20090506-1500 release date: 06 May 2009
+Version 0.7.8.I20090904-1300 release date: 04 September 2009
 
 1. What's New
 
@@ -15,34 +15,77 @@ Version 0.7.8.I20090506-1500 release date: 06 May 2009
    changes you can find in Change Log.   	
 	
 	Features:
-	 * Support for files in svn:externals (bug 269155) 
+	 * Add Capabilities feature
 	 
-	 * Detection of tree conflicts (bug 269156) 
-	 
-	 * Configuration alternative of a diff viewer for MS-WORD documents (bug 260236)
+	 * Support reading Subclipse-generated project set files (bug 276947) 
+	
+	 * Support reading svn-pde-plugin compatible map files (bug 276949)
+	  
+	 * Connector discovery UI (ala Mylyn) (bug 280889) 
+	
+	 * List all locked files in a project (bug 279602) 
 	
 	Fixes:
-	 * Compare view on right side is empty (bug 272265)         
+	 * Possible bugs in Subversive Fetch Factory (bug 273230) 
 	
-	 * Call commit dialog for svn:externals (for directory) causes error (bug 272025)       
+	 * Deleting and replacing a resource is a SVN delete/add instead of a modify (bug 276018) 
+	
+	 * Show annotations does not work in files opened by the XML Editor (bug 267347) 
+	
+	 * "Compare with Each Other" grayed out (bug 275287) 
+	
+	 * [Subversive] - Unused NLS Strings for SVN UI (bug 275155) 
+	
+	 * No assist from "Ignored resources" list. (bug 274793) 
+	
+	 * RFE: provide Subscriber (bug 272594) 
+	
+	 * SVNRemoteResourceRevision always returns content of latest revision (bug 271931) 
+	   Thanks to Steffen Pingel
+	
+	 * Attempting to commit files in a folder that has not been added to SVN, locks up Eclipse (bug 251098) 
+	
+	 * Override and Update deletes all unversioned files disregarding the svn:ignore-list (bug 264500) 
+	
+	 * A tilde (~) in the repository URL can not be handled (bug 269665)          
+	
+	 * Concurrent thread access to SVNTeamProvider instance leads to HiddenException (bug 249943) 
 	 
-	 * svn:externals definition for a sub-sub-directory breaks after running svn update (bug 270022)  
+	 * Usability improvement for repository table in "Checkout from SVN" wizard (bug 263435) 
 	
-	 * All svn:log property values should be normalized to LF endings only (bug 271616) 
-	         
-	 * Create branch doesn't work in Package Explorer (bug 271656)
+	 * Remember the "Keep Locks" Setting in the Commit Dialog (bug 271742) 
 	
-	 * Synchronize permanently fails with org.eclipse.team.core.TeamException: Resource ?...? does not exist. (bug 267624)
+	 * [Subversive] - Tip for improvement ID-Q11B5 (Default behaviour of double click in the commit dialog) (bug 257808) 
 	
-	 * Sorting by user, date or comment does not work for SVN Changeset model in Synchronize view (bug 264331)
+	 * Incorrect previously entered comment in commit dialog (bug 278606) 
 	
-	 * SVN Change sets model: Incoming changes are duplicated to a "Unassiged" node (bug 261185)
-	 
-	 * NPE when activating Mylyn task (bug 266826)
-	 
-	 * Mylyn Context actions are missing from Team Synchronize view if logical models are enabled (bug 264344)
-	 
-	 * Synchronization empties outgoing changes if SVN Changesets model is selected (bug 264772)				
+	 * Handle external definitions in svn commands (bug 255009) 
+	
+	 * Add ability to specify revision for operations (bug 279083) 
+	
+	 * Compare with branch/tag doesn't work as expected (bug 279797) 
+	
+	 * SVN PDE Build uses wrong default path value (bug 279590) 
+	
+	 * Adding a dated revision link fails (bug 279828) 
+	
+	 * Selected revisions at bottom of list don't populate Revisions text field in the Merge dialog (bug 279612) 
+	
+	 * Check Out As Wizard not usable with keyboard. (bug 279355) 
+	
+	 * cross-project refactoring (bug 281253) 
+	
+	 * Show History + Export doesn't work (bug 283917) 
+	
+	 * SelectProjectNamePage (bug 282583) 
+	
+	 * Error message is incorrect: Window->Preferences->Team->SVN->SVN Client does not exist (bug 281413)
+	
+	 * Don't override all revisions in Override and Commit (bug 285138)
+	
+	 * NPE after calling Override and Update (bug 283018)
+	
+	 * [Subversive] - Incorrect character encoding used for display in Compare view (bug 276138)   			
 	
 2. Information
 
