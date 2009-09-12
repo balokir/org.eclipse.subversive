@@ -16,7 +16,6 @@ import org.eclipse.team.internal.core.subscribers.ActiveChangeSet;
 import org.eclipse.team.internal.core.subscribers.ChangeSet;
 import org.eclipse.team.internal.ui.mapping.ResourceModelSorter;
 import org.eclipse.team.svn.core.mapping.SVNIncomingChangeSet;
-import org.eclipse.team.svn.ui.utility.ColumnedViewerComparator;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 public class SVNChangeSetSorter extends ResourceModelSorter {

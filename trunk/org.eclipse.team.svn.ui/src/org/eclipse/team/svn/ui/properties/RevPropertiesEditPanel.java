@@ -30,7 +30,6 @@ import org.eclipse.team.svn.core.operation.remote.SetRevisionPropertyOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.svnstorage.events.RevisonPropertyChangeEvent;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.extension.factory.PredefinedProperty;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPropsPreferencePage.CustomProperty;

@@ -13,7 +13,6 @@
 
 package org.eclipse.team.svn.ui.decorator;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.IPreferenceStore;

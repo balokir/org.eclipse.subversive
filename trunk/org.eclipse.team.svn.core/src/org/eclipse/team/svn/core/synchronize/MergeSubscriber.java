@@ -23,7 +23,6 @@ import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
 import org.eclipse.team.svn.core.connector.SVNMergeStatus;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.connector.SVNConflictDescriptor.Action;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.operation.local.AbstractMergeSet;

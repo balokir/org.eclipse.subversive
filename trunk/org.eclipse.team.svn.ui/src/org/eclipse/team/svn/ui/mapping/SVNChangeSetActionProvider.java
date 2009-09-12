@@ -36,7 +36,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.TreePath;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.diff.FastDiffFilter;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IDiffTree;
