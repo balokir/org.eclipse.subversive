@@ -13,8 +13,6 @@ package org.eclipse.team.svn.pde.build;
 
 import java.util.Properties;
 
-import org.eclipse.pde.build.IFetchFactory;
-
 /**
  * Map file parser
  * Each parser supports its own map file format

@@ -14,7 +14,6 @@ package org.eclipse.team.svn.ui.synchronize.update;
 import java.util.Collection;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSubscriber;
 import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
