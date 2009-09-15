@@ -208,9 +208,16 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
     	synchronized (this.oldResources) {
     		for (Iterator<IResource> it = this.oldResources.iterator(); it.hasNext(); ) {
 				IResource resource = it.next();
-				SVNChangeStatus status = SVNUtility.getSVNInfoForNotConnected(resource);
-				if (status == null || (status.textStatus != SVNEntryStatus.Kind.DELETED && status.textStatus != SVNEntryStatus.Kind.MISSING)) {
-					allResources.add(resource);
+				/*
+				 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=282000
+				 * I investigated the code but couldn't find the better way how to fix this problem.
+				 * TODO Possibly, there's a better solution for it.
+				 */
+				if (resource.getLocation() != null) {
+					SVNChangeStatus status = SVNUtility.getSVNInfoForNotConnected(resource);
+					if (status == null || (status.textStatus != SVNEntryStatus.Kind.DELETED && status.textStatus != SVNEntryStatus.Kind.MISSING)) {
+						allResources.add(resource);
+					}	
 				}
 			}
         	IResource []refreshSet = allResources.toArray(new IResource[allResources.size()]);
