@@ -1248,6 +1248,9 @@ public final class SVNUtility {
 		if (depth == Depth.IMMEDIATES) {
 			return depthArg + "immediates "; //$NON-NLS-1$
 		}
+		if (depth == Depth.UNKNOWN) {
+			return ""; //$NON-NLS-1$
+		}
 		return depthArg + "files "; //$NON-NLS-1$
 	}
 	

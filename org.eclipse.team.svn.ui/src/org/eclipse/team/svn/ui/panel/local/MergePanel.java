@@ -80,6 +80,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 	protected IRepositoryResource firstSelectedResource;
 	protected IRepositoryResource secondSelectedResource;
 	protected SVNRevisionRange []selectedRevisions;
+	protected boolean isReverseRevisions;
 	
 	protected int mode;
 	
@@ -142,7 +143,31 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 	}
 	
 	public SVNRevisionRange []getSelectedRevisions() {
-		return this.selectedRevisions;
+		SVNRevisionRange[] revisions = null;
+		if (this.selectedRevisions != null) {
+			revisions = new SVNRevisionRange[this.selectedRevisions.length];			
+			for (int i = 0; i < this.selectedRevisions.length; i ++) {
+				SVNRevisionRange range = this.selectedRevisions[i];
+				/*
+				 * If 'from' revision equals to 'to' revision 
+				 * (it can be in case if only one revision is selected in revision selection),
+				 * we process it as --change option (see svn merge command) and we handle it as
+				 * from = Rev -1, to = Rev, taking into account 'Reversed merge' option.
+				 */
+				if (range.from.equals(range.to) && range.from.getKind() == SVNRevision.Kind.NUMBER) {
+					SVNRevision from = SVNRevision.fromNumber(((SVNRevision.Number)range.from).getNumber() - 1);
+					SVNRevision to = range.from;
+					if (this.isReverseRevisions) {
+						SVNRevision tmp = from;
+						from = to;
+						to = tmp;
+					}					
+					range = new SVNRevisionRange(from, to);
+				}
+				revisions[i] = range;
+			}
+		}
+		return revisions;		
 	}
 	
 	public void createControlsImpl(Composite parent) {
@@ -407,6 +432,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
         	this.firstSelectedResource = this.simpleSelectionComposite.getSelectedResource();
     		this.secondSelectedResource = this.simpleSelectionComposite.getSecondSelectedResource();
     		this.selectedRevisions = this.simpleSelectionComposite.getSelectedRevisions();
+    		this.isReverseRevisions = this.simpleSelectionComposite.isReverseRevisions();
         	this.simpleSelectionComposite.saveHistory();
         	
         	this.ignoreAncestry = this.ignoreAncestrySimpleButton.getSelection();

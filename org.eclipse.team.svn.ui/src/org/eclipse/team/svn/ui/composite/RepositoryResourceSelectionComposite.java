@@ -125,6 +125,14 @@ public class RepositoryResourceSelectionComposite extends Composite {
 		return this.getDestination(SVNUtility.asEntryReference(this.url), true) != null;
 	}
 	
+	public boolean isReverseRevisions() {
+		return this.revisionComposite.isReverseRevisions();
+	}
+	
+	public boolean isReverseSecondResourceRevisions() {
+		return this.secondRevisionComposite != null ? this.secondRevisionComposite.isReverseRevisions() : false; 
+	}	
+	
 	public IRepositoryResource getSelectedResource() {
 		IRepositoryResource resource = this.getDestination(SVNUtility.asEntryReference(this.url), false);
 		resource.setSelectedRevision(this.revisionComposite.getSelectedRevision());
