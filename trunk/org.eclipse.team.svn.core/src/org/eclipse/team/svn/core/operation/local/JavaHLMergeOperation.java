@@ -130,15 +130,11 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 					changes += changes.length() > 0 ? ("," + range.from.toString()) : range.from.toString(); //$NON-NLS-1$
 				}
 				else {
-					String rangeStr = range.from.toString() + ":" + range.to.toString(); //$NON-NLS-1$
-					ranges += ranges.length() > 0 ? (" " + rangeStr) : rangeStr; //$NON-NLS-1$
+					ranges += " -r " + range.from.toString() + ":" + range.to.toString(); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 			if (changes.length() > 0) {
 				changes = " -c " + changes; //$NON-NLS-1$
-			}
-			if (ranges.length() > 0) {
-				ranges = " -r " + ranges; //$NON-NLS-1$
 			}
 			this.writeToConsole(IConsoleStream.LEVEL_CMD, "svn merge" + changes + ranges + " \"" + from.getUrl() + "@" + from.getPegRevision() + "\" \"" + FileUtility.normalizePath(wcPath) + "\"" + SVNUtility.getDepthArg(this.depth) +(this.dryRun ? " --dry-run" : "") + (this.ignoreAncestry ? " --ignore-ancestry" : "") + FileUtility.getUsernameParam(location.getUsername()) + "\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
 			proxy.merge(ref1, this.revisions, wcPath, this.depth, options, new MergeProgressMonitor(this, monitor, null));

@@ -111,6 +111,10 @@ public class RevisionComposite extends Composite {
 		this.toFilterCurrent = toFilter;
 	}
 	
+	public boolean isReverseRevisions() {
+		return this.reverseRevisions;
+	}
+	
 	public SVNRevision getSelectedRevision() {
 		return this.selectedRevision;
 	}
