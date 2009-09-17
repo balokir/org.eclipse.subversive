@@ -11,11 +11,8 @@
 
 package org.eclipse.team.svn.core.synchronize;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
@@ -27,7 +24,6 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.PersistantResourceVariantByteStore;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.operation.local.GetAllResourcesOperation;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
@@ -108,16 +104,20 @@ public class PersistentRemoteStatusCache extends PersistantResourceVariantByteSt
 	
 	protected void traverse(IResource resource, int depth, ICacheVisitor visitor) throws TeamException {
 		IPath base = resource.getFullPath();
-		
-		IResource[] resources = this.getAllMembers();
-		for (IResource res : resources) {
-			if (this.isChildOf(base, res.getFullPath(), depth)) {
-				try {
-					visitor.visit(res.getFullPath(), this.getBytes(res));
-	    		} catch (TeamException e) {
-	    			LoggedOperation.reportError(this.getClass().getName(), e);
-	    		}
-	    	}
+		this.traverseImpl(base, resource, depth, visitor);
+	}
+	
+	protected void traverseImpl(IPath base, IResource resource, int depth, ICacheVisitor visitor) throws TeamException {
+		byte []data = this.getBytes(resource);
+		if (data != null && this.isChildOf(base, resource.getFullPath(), depth)) {
+			visitor.visit(resource.getFullPath(), data);
+		}
+		if (depth != IResource.DEPTH_ZERO)
+		{
+			IResource[] resources = this.members(resource);
+			for (IResource res : resources) {
+				this.traverseImpl(base, res, depth == IResource.DEPTH_ONE ? IResource.DEPTH_ZERO : IResource.DEPTH_INFINITE, visitor);
+			}
 		}
 	}
 	
@@ -131,29 +131,6 @@ public class PersistentRemoteStatusCache extends PersistantResourceVariantByteSt
             }
 		}
 		return false;
-	}
-	
-	protected IResource[] getAllMembers() throws TeamException {
-		List<IResource> res = new ArrayList<IResource>();		
-						
-		IResource[] roots = this.roots();		
-		LinkedList<IResource> queue = new LinkedList<IResource>();
-		for (IResource root : roots) {
-			queue.add(root);										
-		}		
-				
-		IResource resource = null;
-		while ((resource = queue.poll()) != null) {
-			if (this.getBytes(resource) != null) {
-				res.add(resource);
-				
-				IResource[] members = this.members(resource);
-				for (IResource member : members) {
-					queue.add(member);										
-				}
-			}						
-		}
-		return res.toArray(new IResource[0]);
 	}
 	
 	protected IResource[] roots() {	
