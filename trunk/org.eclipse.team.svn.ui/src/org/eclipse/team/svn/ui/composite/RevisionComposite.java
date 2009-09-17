@@ -89,9 +89,17 @@ public class RevisionComposite extends Composite {
 	protected IValidationManager validationManager;
 	
 	protected boolean checkStyled;
+	//if checkStyled = false && hasDateTime = false then don't show 'Date' radio button
+	//it's used to hide 'Date' radio button
+	protected boolean hasDateTime;
+	
 	protected SVNRevisionRange []revisions;
 	
 	public RevisionComposite(Composite parent, IValidationManager validationManager, boolean stopOnCopy, String []captions, SVNRevision defaultRevision, boolean checkStyled) {
+		this(parent, validationManager, stopOnCopy,captions, defaultRevision, checkStyled, true);
+	}
+	
+	public RevisionComposite(Composite parent, IValidationManager validationManager, boolean stopOnCopy, String []captions, SVNRevision defaultRevision, boolean checkStyled, boolean hasDateTime) {
 		super(parent, SWT.NONE);
 		this.stopOnCopy = stopOnCopy;
 		this.toFilterCurrent = false;
@@ -100,6 +108,7 @@ public class RevisionComposite extends Composite {
 		this.captions = captions;
 		this.defaultRevision = defaultRevision;
 		this.checkStyled = checkStyled;
+		this.hasDateTime = hasDateTime;
 		this.createControls();
 	}
 	
@@ -189,12 +198,12 @@ public class RevisionComposite extends Composite {
 			if (this.checkStyled) {
 				this.startFromCopyRadioButton.setSelection(false);
 			}
-			else {
+			else if (this.hasDateTime) {
 				this.dateTimeRadioButton.setSelection(false);
 			}
 			this.changeRevisionRadioButton.setSelection(true);
 		}
-		else if (rev.getKind() == Kind.DATE && !this.checkStyled) {
+		else if (rev.getKind() == Kind.DATE && !this.checkStyled && this.hasDateTime) {
 			this.selectedRevision = rev;
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTimeInMillis(((SVNRevision.Date)rev).getDate());
@@ -217,7 +226,7 @@ public class RevisionComposite extends Composite {
 			if (this.checkStyled) {
 				this.startFromCopyRadioButton.setSelection(true);
 			}
-			else {
+			else if (this.hasDateTime) {
 				this.dateTimeRadioButton.setSelection(false);
 			}
 			this.changeRevisionRadioButton.setSelection(false);
@@ -264,7 +273,7 @@ public class RevisionComposite extends Composite {
 				if (((Button)e.widget).getSelection()) {
 					RevisionComposite.this.changeRevisionButton.setEnabled(false);
 					RevisionComposite.this.revisionField.setEnabled(false);
-					if (!RevisionComposite.this.checkStyled) {
+					if (!RevisionComposite.this.checkStyled && RevisionComposite.this.hasDateTime) {
 						RevisionComposite.this.dateField.setEnabled(false);
 						RevisionComposite.this.timeField.setEnabled(false);	
 					}					
@@ -289,7 +298,7 @@ public class RevisionComposite extends Composite {
 					if (((Button)e.widget).getSelection()) {
 						RevisionComposite.this.changeRevisionButton.setEnabled(false);
 						RevisionComposite.this.revisionField.setEnabled(false);
-						if (!RevisionComposite.this.checkStyled) {
+						if (!RevisionComposite.this.checkStyled && RevisionComposite.this.hasDateTime) {
 							RevisionComposite.this.dateField.setEnabled(false);
 							RevisionComposite.this.timeField.setEnabled(false);	
 						}						
@@ -300,7 +309,7 @@ public class RevisionComposite extends Composite {
 				}
 			});
 		}
-		else {
+		else if (this.hasDateTime) {
 			this.dateTimeRadioButton = new Button(group, SWT.RADIO);
 			this.dateTimeRadioButton.setText(SVNUIMessages.RevisionComposite_DateTime);
 			data = new GridData();
@@ -365,7 +374,7 @@ public class RevisionComposite extends Composite {
 				if (((Button)e.widget).getSelection()) {
 					RevisionComposite.this.changeRevisionButton.setEnabled(true);
 					RevisionComposite.this.revisionField.setEnabled(true);
-					if (!RevisionComposite.this.checkStyled) {
+					if (!RevisionComposite.this.checkStyled && RevisionComposite.this.hasDateTime) {
 						RevisionComposite.this.dateField.setEnabled(false);
 						RevisionComposite.this.timeField.setEnabled(false);
 					}						
@@ -470,7 +479,7 @@ public class RevisionComposite extends Composite {
 			this.startFromCopyRadioButton.setEnabled(enabled);
 			this.reverseRevisionsButton.setEnabled(enabled);
 		}
-		else {
+		else if (this.hasDateTime) {
 			this.dateTimeRadioButton.setEnabled(enabled);
 			this.dateField.setEnabled(enabled && this.dateTimeRadioButton.getSelection());
 			this.timeField.setEnabled(enabled && this.dateTimeRadioButton.getSelection());
@@ -478,7 +487,7 @@ public class RevisionComposite extends Composite {
 		this.changeRevisionRadioButton.setEnabled(enabled);
 		this.changeRevisionButton.setEnabled(enabled && this.changeRevisionRadioButton.getSelection());
 		this.revisionField.setEnabled(enabled && this.changeRevisionRadioButton.getSelection());
-	}
+	}	
 	
 	public void additionalValidation() {
 		//override this if there is a need to perform additional validation

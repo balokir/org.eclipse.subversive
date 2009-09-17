@@ -578,7 +578,16 @@
               definitionId="org.eclipse.team.svn.ui.command.ShowResourceHistoryCommand"
               icon="icons/common/actions/showhistory.gif">
          </action>
-         
+             
+         <action
+			   label="%SetExternalDefinitionAction.label"
+               helpContextId="org.eclipse.team.svn.ui.team_set_external_definition_action_context"
+               class="org.eclipse.team.svn.ui.action.local.SetExternalDefinitionAction"
+               tooltip="%SetExternalDefinitionAction.tooltip"
+               menubarPath="team.main/group6"
+               definitionId="org.eclipse.team.svn.ui.command.SetExternalDefinitionCommand"
+               id="org.eclipse.team.svn.ui.action.local.SetExternalDefinitionAction">               
+         </action>         
          <action
 			   label="%SetKeywordsAction.label"
                helpContextId="org.eclipse.team.svn.ui.team_set_keywords_action_context"
@@ -1901,6 +1910,14 @@
            label="%ShowResourceHistoryAction.label"/>
            
      <action
+     	   class="org.eclipse.team.svn.ui.action.local.SetExternalDefinitionAction"
+     	   definitionId="org.eclipse.team.svn.ui.command.SetExternalDefinitionCommand"
+     	   id="org.eclipse.team.svn.ui.action.local.SetExternalDefinitionAction"
+     	   menubarPath="svn.main/group4"
+     	   helpContextId="org.eclipse.team.svn.ui.team_set_external_definition_action_context"
+     	   tooltip="%SetExternalDefinitionAction.tooltip"
+		   label="%SetExternalDefinitionAction.label"/>               
+     <action
            class="org.eclipse.team.svn.ui.action.local.SetKeywordsAction"
            definitionId="org.eclipse.team.svn.ui.command.SetKeywordsCommand"
            id="org.eclipse.team.svn.ui.action.local.SetKeywordsAction"
@@ -2265,11 +2282,15 @@
     <command
           categoryId="org.eclipse.team.svn.ui.command.category"
           id="org.eclipse.team.svn.ui.command.SetPropertyCommand"
-          name="%SetPropertyCommand.label"/>
+          name="%SetPropertyCommand.label"/>          
     <command
           categoryId="org.eclipse.team.svn.ui.command.category"
           id="org.eclipse.team.svn.ui.command.SetKeywordsCommand"
           name="%SetKeywordsCommand.label"/>
+    <command
+          categoryId="org.eclipse.team.svn.ui.command.category"
+          id="org.eclipse.team.svn.ui.command.SetExternalDefinitionCommand"
+          name="%SetExternalDefinitionCommand.label"/>                    
     <command
           categoryId="org.eclipse.team.svn.ui.command.category"
           id="org.eclipse.team.svn.ui.command.ShowAnnotationCommand"

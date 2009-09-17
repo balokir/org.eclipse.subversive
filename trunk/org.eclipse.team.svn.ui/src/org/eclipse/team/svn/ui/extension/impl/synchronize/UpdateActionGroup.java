@@ -28,6 +28,7 @@ import org.eclipse.team.svn.ui.synchronize.action.ExtractOutgoingToAction;
 import org.eclipse.team.svn.ui.synchronize.action.ExtractToAction;
 import org.eclipse.team.svn.ui.synchronize.action.OpenInExternalCompareEditorAction;
 import org.eclipse.team.svn.ui.synchronize.action.RevertAction;
+import org.eclipse.team.svn.ui.synchronize.action.SetExternalDefinitionAction;
 import org.eclipse.team.svn.ui.synchronize.action.SetKeywordsAction;
 import org.eclipse.team.svn.ui.synchronize.action.SetPropertyAction;
 import org.eclipse.team.svn.ui.synchronize.action.ShowHistoryAction;
@@ -184,12 +185,18 @@ public class UpdateActionGroup extends AbstractSynchronizeActionGroup {
 		ShowOutgoingPropertiesAction showPropertiesAction = new ShowOutgoingPropertiesAction(SVNUIMessages.ShowPropertiesAction_label, configuration);
 		showPropertiesAction.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/propertiesedit.gif")); //$NON-NLS-1$
 		manager.add(showPropertiesAction);
+		
 		SetPropertyAction setPropAction = new SetPropertyAction(SVNUIMessages.SynchronizeActionGroup_SetProperty, configuration);
 		manager.add(setPropAction);
+		
 		SetKeywordsAction setKeywordsAction = new SetKeywordsAction(SVNUIMessages.SynchronizeActionGroup_SetKeywords, configuration);
 		manager.add(setKeywordsAction);
+		
+		SetExternalDefinitionAction setExternalsAction = new SetExternalDefinitionAction(SVNUIMessages.Action_SetExternals, configuration);
+		manager.add(setExternalsAction);
+		
 		ShowOutgoingAnnotationAction showAnnotationAction = new ShowOutgoingAnnotationAction(SVNUIMessages.ShowAnnotationCommand_label, configuration);
-		manager.add(showAnnotationAction);
+		manager.add(showAnnotationAction);		
 		
 		manager.add(new Separator());
 		
