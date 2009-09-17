@@ -25,6 +25,7 @@ import org.eclipse.team.svn.ui.synchronize.action.ExpandAllAction;
 import org.eclipse.team.svn.ui.synchronize.action.MergePropertiesAction;
 import org.eclipse.team.svn.ui.synchronize.action.OpenInExternalCompareEditorAction;
 import org.eclipse.team.svn.ui.synchronize.action.RevertAction;
+import org.eclipse.team.svn.ui.synchronize.action.SetExternalDefinitionAction;
 import org.eclipse.team.svn.ui.synchronize.action.SetKeywordsAction;
 import org.eclipse.team.svn.ui.synchronize.action.SetPropertyAction;
 import org.eclipse.team.svn.ui.synchronize.action.ShowHistoryAction;
@@ -134,8 +135,13 @@ public class MergeActionGroup extends AbstractSynchronizeActionGroup {
 		manager.add(showPropertiesAction);
 		SetPropertyAction setPropAction = new SetPropertyAction(SVNUIMessages.SynchronizeActionGroup_SetProperty, configuration);
 		manager.add(setPropAction);
+		
 		SetKeywordsAction setKeywordsAction = new SetKeywordsAction(SVNUIMessages.SynchronizeActionGroup_SetKeywords, configuration);
 		manager.add(setKeywordsAction);
+		
+		SetExternalDefinitionAction setExternalsAction = new SetExternalDefinitionAction(SVNUIMessages.Action_SetExternals, configuration);
+		manager.add(setExternalsAction);
+		
 		ShowOutgoingAnnotationAction showAnnotationAction = new ShowOutgoingAnnotationAction(SVNUIMessages.ShowAnnotationCommand_label, configuration);
 		manager.add(showAnnotationAction);
 		

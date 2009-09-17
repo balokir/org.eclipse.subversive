@@ -28,6 +28,7 @@ import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.ExtractOutgoingTo
 import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.ExtractToModelAction;
 import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.OpenInExternalCompareEditorModelAction;
 import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.RevertModelAction;
+import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.SetExternalDefinitionModelAction;
 import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.SetKeywordsModelAction;
 import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.SetPropertyModelAction;
 import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.ShowHistoryModelAction;
@@ -208,6 +209,10 @@ public class UpdateModelActionGroup extends AbstractSynchronizeModelActionGroup 
 		//set keywords
 		SetKeywordsModelAction setKeywordsAction = new SetKeywordsModelAction(SVNUIMessages.SynchronizeActionGroup_SetKeywords, configuration);
 		manager.add(setKeywordsAction);
+		
+		//set externals
+		SetExternalDefinitionModelAction setExternalsAction = new SetExternalDefinitionModelAction(SVNUIMessages.Action_SetExternals, configuration);
+		manager.add(setExternalsAction);
 		
 		//show annotation
 		ShowOutgoingAnnotationModelAction showAnnotationAction = new ShowOutgoingAnnotationModelAction(SVNUIMessages.ShowAnnotationCommand_label, configuration);

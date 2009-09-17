@@ -68,6 +68,7 @@ import org.eclipse.team.svn.ui.RemoteResourceTransfer;
 import org.eclipse.team.svn.ui.RemoteResourceTransferrable;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
+import org.eclipse.team.svn.ui.action.local.SetExternalDefinitionAction;
 import org.eclipse.team.svn.ui.action.local.SetKeywordsAction;
 import org.eclipse.team.svn.ui.action.local.SetPropertyAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
@@ -311,7 +312,16 @@ public class PropertiesComposite extends Composite {
 							public void run() {
 								PropertiesComposite.this.setKeywords();
 							}
+						});												
+						manager.add(tAction = new Action(SVNUIMessages.Action_SetExternals) {
+							public void run() {
+								IActionOperation op = SetExternalDefinitionAction.getAction(PropertiesComposite.this.wcResource, PropertiesComposite.this.getShell());
+								if (op != null) {
+									UIMonitorUtility.doTaskScheduledDefault(op);
+								}
+							}
 						});
+						tAction.setEnabled(PropertiesComposite.this.wcResource instanceof IContainer);												
 						manager.add(tAction = new Action(SVNUIMessages.PropertiesComposite_ApplyRecursively) {
 							public void run() {
 								SVNProperty[] data = (SVNProperty[]) tSelection.toList().toArray(new SVNProperty[tSelection.size()]);

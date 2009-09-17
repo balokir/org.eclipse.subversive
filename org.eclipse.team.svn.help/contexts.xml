@@ -115,6 +115,11 @@
 		<topic label="Setting keywords" href="teamSupport/SVNaction/set_keys.html"/>
 		<topic label="SVN Properties View" href="teamSupport/props_view.html"/>
 	</context>
+	<context id="setExternalsDialogContext">
+		<description>This dialog provides a probability to set external definition information to be added to a svn:externals property of the selected resource. </description>
+		<topic label="Setting externals" href="teamSupport/SVNaction/set_externals.html"/>
+		<topic label="SVN Properties View" href="teamSupport/props_view.html"/>
+	</context>	
 	<context id="addToVCDialogContext">
 		<description>This dialog provides a probability to choose resources to be added to Version Control.</description>
 		<topic label="Adding resources to Version Control" href="teamSupport/SVNaction/add_vc.html"/>
@@ -265,6 +270,15 @@
 	<!-- Project from SVN Wizard -->
 	<context id="selectCheckResourcesContext">
 		<description>This page of the Project from SVN Wizard allows the user to choose a resources to be checked out in the new project.</description>
+	</context>
+	
+	<!-- Select repository resource Wizard -->
+	<context id="selectRepositoryLocationContext">
+		<description>This page of the Select Resource Wizard allows the user to select a repository location.</description>
+	</context>	
+
+	<context id="selectResourceContext">
+		<description>This page of the Select Resource Wizard allows the user to select a repository resource for external definition.</description>
 	</context>
 	
 	<!-- Patching -->

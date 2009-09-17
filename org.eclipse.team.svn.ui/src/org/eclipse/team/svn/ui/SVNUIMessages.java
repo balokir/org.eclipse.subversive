@@ -1768,6 +1768,22 @@ public class SVNUIMessages extends BaseMessages {
 	public static String LocksComposite_BreakLockDefaultMessage;
 	public static String LockResourcesPanel_StealLocks;
 	
+	public static String ExternalsEditPanel_DialogTitle;
+	public static String ExternalsEditPanel_DialogDescription;
+	public static String ExternalsEditPanel_DialogDefaultMessage;
+	public static String ExternalsEditPanel_PriortoSVN15;
+	public static String ExternalsEditPanel_LocalPathLabel;
+	public static String ExternalsEditPanel_IsFolder;
+	public static String ExternalsEditPanel_LocalPathLabel_Verifier;
+	public static String Verifier_NoSpaces;
+	public static String SelectRepositoryResourceWizard_Title;
+	public static String SelectResourceLocationPage_Title;
+	public static String SelectResourceLocationPage_Description;
+	public static String SelectSimpleRepositoryLocationPage_Title;
+	public static String SelectSimpleRepositoryLocationPage_Description;
+	public static String SelectSimpleRepositoryLocationPage_Details;
+	public static String Action_SetExternals;
+	
 	static {
 		//load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, SVNUIMessages.class);

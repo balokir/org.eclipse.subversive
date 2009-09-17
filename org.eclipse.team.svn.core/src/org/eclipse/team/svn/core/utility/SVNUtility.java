@@ -184,46 +184,8 @@ public final class SVNUtility {
 			} catch (Exception ex) {
 				throw new UnreportableException("Malformed external, " + externalData.toString());
 			}
-
-			if (!SVNUtility.isValidSVNURL(url)) {
-				if (url.startsWith("^/")) { //$NON-NLS-1$
-					url = propertyHolder.getRepositoryLocation().getRepositoryRoot().getUrl() + url.substring(1);
-				}
-				else if (url.startsWith("//")) { //$NON-NLS-1$
-					try {
-						String protocol = SVNUtility.getSVNUrl(propertyHolder.getUrl()).getProtocol();
-						if (propertyHolder.getUrl().indexOf(":///") != -1) { //$NON-NLS-1$
-							url = protocol + ":/" + url; //$NON-NLS-1$
-						}
-						else {
-							url = protocol + ":" + url; //$NON-NLS-1$
-						}
-					}
-					catch (MalformedURLException e) {
-						// cannot be thrown
-					}
-				}
-				else if (url.startsWith("/")) { //$NON-NLS-1$
-					String prefix = propertyHolder.getUrl();
-					int idx = prefix.lastIndexOf("//"); //$NON-NLS-1$
-					idx = prefix.indexOf('/', idx + 2);
-					url = prefix.substring(0, idx) + url;
-				}
-				else if (url.startsWith("../")) { //$NON-NLS-1$
-					IRepositoryResource prefix = propertyHolder;
-					while (url.startsWith("../")) { //$NON-NLS-1$
-						url = url.substring(3);
-						prefix = prefix.getParent();
-						if (prefix == null) {
-							throw new UnreportableException("Malformed external, " + externalData.toString());
-						}
-					}
-					url = prefix.getUrl() + "/" + url; //$NON-NLS-1$
-				}
-				else {
-					throw new UnreportableException("Malformed external, " + externalData.toString());
-				}
-			}		
+			
+			url = SVNUtility.replaceRelativeExternalParts(url, propertyHolder);				
 			
 			try {
 				url = SVNUtility.decodeURL(url);
@@ -237,6 +199,50 @@ public final class SVNUtility {
 		}
 		
 		return retVal;
+	}
+	
+	public static String replaceRelativeExternalParts(String url, IRepositoryResource resource) throws UnreportableException {
+		if (SVNUtility.isValidSVNURL(url)) {
+			return url;
+		}
+		
+		if (url.startsWith("^/")) { //$NON-NLS-1$
+			url = resource.getRepositoryLocation().getRepositoryRoot().getUrl() + url.substring(1);
+		}
+		else if (url.startsWith("//")) { //$NON-NLS-1$
+			try {
+				String protocol = SVNUtility.getSVNUrl(resource.getUrl()).getProtocol();
+				if (resource.getUrl().indexOf(":///") != -1) { //$NON-NLS-1$
+					url = protocol + ":/" + url; //$NON-NLS-1$
+				}
+				else {
+					url = protocol + ":" + url; //$NON-NLS-1$
+				}
+			}
+			catch (MalformedURLException e) {
+				// cannot be thrown
+			}
+		}
+		else if (url.startsWith("/")) { //$NON-NLS-1$
+			String prefix = resource.getUrl();
+			int idx = prefix.lastIndexOf("//"); //$NON-NLS-1$
+			idx = prefix.indexOf('/', idx + 2);
+			url = prefix.substring(0, idx) + url;
+		}
+		else if (url.startsWith("../")) { //$NON-NLS-1$
+			IRepositoryResource prefix = resource;
+			while (url.startsWith("../")) { //$NON-NLS-1$
+				url = url.substring(3);
+				prefix = prefix.getParent();
+				if (prefix == null) {
+					throw new UnreportableException("Malformed url: " + url); //$NON-NLS-1$
+				}
+			}
+			url = prefix.getUrl() + "/" + url; //$NON-NLS-1$
+		} else {
+			throw new UnreportableException("Malformed url: " + url); //$NON-NLS-1$
+		}
+		return url;
 	}
 	
 	public static SVNEntryReference asEntryReference(String url) {

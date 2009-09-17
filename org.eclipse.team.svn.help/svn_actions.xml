@@ -17,6 +17,7 @@
 	<topic label="Locking and unlocking resources" href="teamSupport/SVNaction/locks.html"/>
 	<topic label="Setting properties" href="teamSupport/SVNaction/set_props.html"/>
 	<topic label="Setting keywords" href="teamSupport/SVNaction/set_keys.html"/>
+	<topic label="Setting externals" href="teamSupport/SVNaction/set_externals.html"/>
 	<topic label="Patching" href="teamSupport/SVNaction/patch.html"/>
 	<topic label="Reverting changes" href="teamSupport/SVNaction/revert.html"/>
 	<topic label="Extracting changes" href="teamSupport/SVNaction/extract.html"/>

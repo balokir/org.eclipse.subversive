@@ -68,7 +68,15 @@ public class RepositoryTreeComposite extends Composite {
 	}
 	
 	public void setModelRoot(Object root) {
-		this.repositoryTree.setInput(root);
+		if (root instanceof IRepositoryLocation) {
+			this.repositoryTree.setInput(new RepositoryLocation((IRepositoryLocation)root));
+		} else if (root instanceof IRepositoryBase) {		
+			RepositoryResource resource = RepositoryFolder.wrapChild(null, (IRepositoryResource)root);
+			resource.setViewer(this.repositoryTree);
+			this.repositoryTree.setInput(resource);
+		} else {
+			this.repositoryTree.setInput(root);
+		}
 	}
 
 	public IRepositoryContentFilter getFilter() {
@@ -103,17 +111,8 @@ public class RepositoryTreeComposite extends Composite {
         this.provider = new RepositoryContentProvider(this.repositoryTree);
 		this.repositoryTree.setContentProvider(this.provider);
 		this.repositoryTree.setLabelProvider(new WorkbenchLabelProvider());
-		if (input instanceof IRepositoryLocation) {
-			this.repositoryTree.setInput(new RepositoryLocation((IRepositoryLocation)input));
-		}
-		else if (input instanceof IRepositoryBase) {		
-			RepositoryResource resource = RepositoryFolder.wrapChild(null, (IRepositoryResource)input);
-			resource.setViewer(this.repositoryTree);
-			this.repositoryTree.setInput(resource);
-		}
-		else {
-			this.repositoryTree.setInput(input);
-		}
+		this.setModelRoot(input);
+		
 		this.repositoryTree.setAutoExpandLevel(2);
 		this.ddAdapter = new DrillDownAdapter(this.repositoryTree);
 		this.ddAdapter.addNavigationActions(toolBarMgr);

@@ -35,11 +35,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.IStateFilter;
-import org.eclipse.team.svn.core.connector.ISVNConnector;
-import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
-import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.SVNProperty.BuiltIn;
@@ -48,17 +44,16 @@ import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
-import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.local.AddToSVNOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
+import org.eclipse.team.svn.core.operation.local.property.ConcatenateProperyDataOperation;
 import org.eclipse.team.svn.core.operation.local.property.SetPropertiesOperation;
 import org.eclipse.team.svn.core.operation.remote.CheckoutAsOperation;
 import org.eclipse.team.svn.core.operation.remote.LocateProjectsOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
-import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
@@ -344,7 +339,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 			dependency = new IActionOperation[] {addToSVN};
 		}
 		
-		IResourcePropertyProvider concatenateProps = new CheckoutAsWizard.ConcatenateProperyDataOperation(targetFolder, BuiltIn.EXTERNALS, externalsData.getBytes());
+		IResourcePropertyProvider concatenateProps = new ConcatenateProperyDataOperation(targetFolder, BuiltIn.EXTERNALS, externalsData.getBytes());
 		op.add(concatenateProps, dependency);
 		dependency = new IActionOperation[] {concatenateProps};
 		
@@ -571,67 +566,6 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 		
 		public IProject getProject() {
 			return this.project;
-		}
-		
-	}
-	
-	protected class ConcatenateProperyDataOperation extends AbstractActionOperation implements IResourcePropertyProvider {
-		protected IResource resource;
-		protected String propertyName;
-		protected byte[] concatenatedData;
-		
-		protected SVNProperty property;
-		
-		public ConcatenateProperyDataOperation(IResource resource, String propertyName, byte[] concatenatedData) {
-			super("Operation_ConcatenatePropertyData"); //$NON-NLS-1$
-			this.resource = resource;
-			this.propertyName = propertyName;
-			this.concatenatedData = concatenatedData;
-			this.property = new SVNProperty(propertyName, new String(concatenatedData));
-		}
-
-		protected void runImpl(IProgressMonitor monitor) throws Exception {
-			final String wcPath = FileUtility.getWorkingCopyPath(this.resource);
-			IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(this.resource);
-			final ISVNConnector proxy = location.acquireSVNProxy();
-			SVNProperty existingProperty;
-			try {
-				existingProperty = proxy.getProperty(new SVNEntryRevisionReference(wcPath), BuiltIn.EXTERNALS, new SVNProgressMonitor(CheckoutAsWizard.ConcatenateProperyDataOperation.this, monitor, null));
-			}
-			finally {
-				location.releaseSVNProxy(proxy);
-			}
-			if (existingProperty != null && existingProperty.value != null) {
-				byte[] existingData = existingProperty.value.getBytes();
-				byte[] newData = new byte[existingData.length + this.concatenatedData.length];
-				System.arraycopy(existingData, 0, newData, 0, existingData.length);
-				System.arraycopy(this.concatenatedData, 0, newData, existingData.length, this.concatenatedData.length);
-				this.property = new SVNProperty(this.propertyName, new String(newData));
-			}
-		}
-
-		public IResource getLocal() {
-			return this.resource;
-		}
-
-		public SVNProperty[] getProperties() {
-			return new SVNProperty[] {this.property};
-		}
-
-		public IRepositoryResource getRemote() {
-			return SVNRemoteStorage.instance().asRepositoryResource(this.resource);
-		}
-
-		public boolean isEditAllowed() {
-			return false;
-		}
-
-		public void refresh() {
-			
-		}
-		
-		protected String getShortErrorMessage(Throwable t) {
-			return BaseMessages.format(super.getShortErrorMessage(t), new Object[] {this.propertyName, this.resource.getName()});
 		}
 		
 	}

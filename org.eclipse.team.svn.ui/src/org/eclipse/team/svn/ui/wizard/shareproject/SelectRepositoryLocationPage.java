@@ -110,8 +110,50 @@ public class SelectRepositoryLocationPage extends AbstractVerifiedWizardPage {
 		useExistingLocationButton.setText(SVNUIMessages.SelectRepositoryLocationPage_UseLocation); 
 		useExistingLocationButton.setSelection(true);
 		
-		Table table = new Table(composite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
-		data = new GridData(GridData.FILL_BOTH);
+		this.repositoriesView = SelectRepositoryLocationPage.createRepositoriesListTable(composite, this.repositories);		
+							
+		this.repositoriesView.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				IWizard wizard = SelectRepositoryLocationPage.this.getWizard();
+				IWizardPage nextPage = wizard.getNextPage(SelectRepositoryLocationPage.this);
+				if (nextPage != null) {
+					wizard.getContainer().showPage(nextPage);	
+				}				
+			}			
+		});
+					
+		this.repositoriesView.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection selection = (IStructuredSelection)SelectRepositoryLocationPage.this.repositoriesView.getSelection();
+				SelectRepositoryLocationPage.this.location = (IRepositoryLocation)selection.getFirstElement();
+				SelectRepositoryLocationPage.this.setPageComplete(true);
+			}
+		});
+				
+		IStructuredSelection selection = (IStructuredSelection)this.repositoriesView.getSelection();
+		this.location = (IRepositoryLocation)selection.getFirstElement();
+		
+		//Setting context help
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.reposLocationContext"); //$NON-NLS-1$
+		
+		return composite;
+	}
+
+	public boolean useExistingLocation() {
+		return this.useExistingLocation;
+	}
+	
+	public IRepositoryLocation getRepositoryLocation() {
+		return this.useExistingLocation() ? this.location : null;
+	}
+	
+	protected static String getNationalizationSuffix(boolean importProject) {
+		return "_" + (importProject ? "Import" : "Share"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
+	
+	public static TableViewer createRepositoriesListTable(Composite parent, IRepositoryLocation []repositories) {
+		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.SINGLE | SWT.FULL_SELECTION);
+		GridData data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = 200;
 		table.setLayoutData(data);
 		table.setHeaderVisible(true);
@@ -122,19 +164,9 @@ public class SelectRepositoryLocationPage extends AbstractVerifiedWizardPage {
 		tLayout.addColumnData(new ColumnWeightData(70, true));
 		table.setLayout(tLayout);
 
-		this.repositoriesView = new TableViewer(table);
-								
-		this.repositoriesView.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				IWizard wizard = SelectRepositoryLocationPage.this.getWizard();
-				IWizardPage nextPage = wizard.getNextPage(SelectRepositoryLocationPage.this);
-				if (nextPage != null) {
-					wizard.getContainer().showPage(nextPage);	
-				}				
-			}			
-		});
+		TableViewer repositoriesView = new TableViewer(table);							
 				
-		ColumnedViewerComparator comparator = new ColumnedViewerComparator(this.repositoriesView) {
+		ColumnedViewerComparator comparator = new ColumnedViewerComparator(repositoriesView) {
 			public int compareImpl(Viewer viewer, Object row1, Object row2) {
 				IRepositoryLocation location1 = (IRepositoryLocation)row1;
             	IRepositoryLocation location2 = (IRepositoryLocation)row2;
@@ -155,12 +187,12 @@ public class SelectRepositoryLocationPage extends AbstractVerifiedWizardPage {
 		col.setText("URL");
 		col.addSelectionListener(comparator);
 		
-		this.repositoriesView.setComparator(comparator);
-		this.repositoriesView.getTable().setSortDirection(SWT.UP);
-		this.repositoriesView.getTable().setSortColumn(this.repositoriesView.getTable().getColumn(0));
+		repositoriesView.setComparator(comparator);
+		repositoriesView.getTable().setSortDirection(SWT.UP);
+		repositoriesView.getTable().setSortColumn(repositoriesView.getTable().getColumn(0));
 						
-		this.repositoriesView.setContentProvider(new ArrayStructuredContentProvider());
-		this.repositoriesView.setLabelProvider(new ITableLabelProvider() {
+		repositoriesView.setContentProvider(new ArrayStructuredContentProvider());
+		repositoriesView.setLabelProvider(new ITableLabelProvider() {
 			public Image getColumnImage(Object element, int columnIndex) {
 				return null;
 			}
@@ -181,35 +213,11 @@ public class SelectRepositoryLocationPage extends AbstractVerifiedWizardPage {
 			public void removeListener(ILabelProviderListener listener) {
 			}
 		});
-		this.repositoriesView.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection selection = (IStructuredSelection)SelectRepositoryLocationPage.this.repositoriesView.getSelection();
-				SelectRepositoryLocationPage.this.location = (IRepositoryLocation)selection.getFirstElement();
-				SelectRepositoryLocationPage.this.setPageComplete(true);
-			}
-		});
 		
-		this.repositoriesView.setInput(this.repositories);
-		this.repositoriesView.getTable().select(0);
-		IStructuredSelection selection = (IStructuredSelection)this.repositoriesView.getSelection();
-		this.location = (IRepositoryLocation)selection.getFirstElement();
+		repositoriesView.setInput(repositories);
+		repositoriesView.getTable().select(0);
 		
-//		Setting context help
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.team.svn.help.reposLocationContext"); //$NON-NLS-1$
-		
-		return composite;
-	}
-
-	public boolean useExistingLocation() {
-		return this.useExistingLocation;
-	}
-	
-	public IRepositoryLocation getRepositoryLocation() {
-		return this.useExistingLocation() ? this.location : null;
-	}
-	
-	protected static String getNationalizationSuffix(boolean importProject) {
-		return "_" + (importProject ? "Import" : "Share"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return repositoriesView;
 	}
 
 }
