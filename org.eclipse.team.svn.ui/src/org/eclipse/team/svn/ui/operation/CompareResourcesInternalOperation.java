@@ -61,7 +61,7 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 	protected boolean showInDialog;
 	protected boolean forceReuse;
 	protected String forceId;
-	
+		
 	public CompareResourcesInternalOperation(ILocalResource local, IRepositoryResource remote) {
 		this(local, remote, false, false);
 	}
@@ -205,5 +205,4 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 		}
 		return false;
 	}
-
 }
