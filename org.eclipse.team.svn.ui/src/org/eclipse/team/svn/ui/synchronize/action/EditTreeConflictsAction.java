@@ -36,14 +36,16 @@ public class EditTreeConflictsAction extends AbstractSynchronizeModelAction {
 	}
 	
 	protected boolean updateSelection(IStructuredSelection selection) {
-		if (selection.getFirstElement() instanceof SyncInfoModelElement) {
-			AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo)((SyncInfoModelElement)selection.getFirstElement()).getSyncInfo();
-			return IStateFilter.SF_TREE_CONFLICTING.accept(syncInfo.getLocalResource());
-		}			
-		if (selection.getFirstElement() instanceof ISynchronizeModelElement) {
-			ISynchronizeModelElement element = (ISynchronizeModelElement)selection.getFirstElement();
-			return IStateFilter.SF_TREE_CONFLICTING.accept(SVNRemoteStorage.instance().asLocalResource(element.getResource()));
-		}
+		if (super.updateSelection(selection) && selection.size() == 1) {
+			if (selection.getFirstElement() instanceof SyncInfoModelElement) {
+				AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo)((SyncInfoModelElement)selection.getFirstElement()).getSyncInfo();
+				return IStateFilter.SF_TREE_CONFLICTING.accept(syncInfo.getLocalResource());
+			}			
+			if (selection.getFirstElement() instanceof ISynchronizeModelElement) {
+				ISynchronizeModelElement element = (ISynchronizeModelElement)selection.getFirstElement();
+				return IStateFilter.SF_TREE_CONFLICTING.accept(SVNRemoteStorage.instance().asLocalResource(element.getResource()));
+			}	
+		}		
 		return false;
 	}
 	
