@@ -89,6 +89,15 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 	}
 	
 	protected void runImpl(final IProgressMonitor monitor) throws Exception {
+		/*
+		 * As there's no svn operation (svn diff) which can compare working copy url and repository url
+		 * which doesn't match to working copy url (e.g. compare working copy with another branch etc.)
+		 * we need extra handling: and so we calculate local changes (using svn status)
+		 * and remote changes (using svn diff).
+		 * In order to compare working copy and not matched to it repository url we detect repository
+		 * url corresponding to working copy and compare it with repository url, in other words,
+		 * we compare 2 repository urls.
+		 */		
 		final ArrayList<SVNDiffStatus> localChanges = new ArrayList<SVNDiffStatus>();
 		final ArrayList<SVNDiffStatus> remoteChanges = new ArrayList<SVNDiffStatus>();
 		
