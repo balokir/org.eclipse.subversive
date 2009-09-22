@@ -47,7 +47,7 @@ public class EditTreeConflictsAction extends AbstractRecursiveTeamAction {
 	}
 	
 	public boolean isEnabled() {
-		return this.checkForResourcesPresence(IStateFilter.SF_TREE_CONFLICTING);
+		return this.getSelectedResources().length == 1 && this.checkForResourcesPresence(IStateFilter.SF_TREE_CONFLICTING);
 	}
 
 	protected boolean needsToSaveDirtyEditors() {
