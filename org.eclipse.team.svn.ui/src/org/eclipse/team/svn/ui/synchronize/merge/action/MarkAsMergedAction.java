@@ -43,9 +43,9 @@ public class MarkAsMergedAction extends AbstractSynchronizeModelAction {
 	}
 	
 	protected FastSyncInfoFilter getSyncInfoFilter() {
-		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.CONFLICTING, SyncInfo.INCOMING}) {
+		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.CONFLICTING}) {
             public boolean select(SyncInfo info) {
-                return super.select(info) && !IStateFilter.SF_OBSTRUCTED.accept(((AbstractSVNSyncInfo)info).getLocalResource());
+                return super.select(info) && !IStateFilter.SF_OBSTRUCTED.accept(((AbstractSVNSyncInfo)info).getLocalResource()) && IStateFilter.SF_VERSIONED.accept(((AbstractSVNSyncInfo)info).getLocalResource());
             }
         };
 	}
