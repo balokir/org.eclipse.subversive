@@ -11,9 +11,12 @@
 
 package org.eclipse.team.svn.ui.synchronize.action;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.IResourceChange;
+import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.core.synchronize.variant.RemoteResourceVariant;
 import org.eclipse.team.svn.ui.operation.ShowHistoryViewOperation;
@@ -31,12 +34,22 @@ public class ShowHistoryActionHelper extends AbstractActionHelper {
 	}
 
 	public IActionOperation getOperation() {
-		AbstractSVNSyncInfo info = this.getSelectedSVNSyncInfo();
-		if (info != null ) {
-			RemoteResourceVariant variant = (RemoteResourceVariant)info.getRemote();
-			if (variant.getResource() instanceof IResourceChange) {
-				return new ShowHistoryViewOperation(((IResourceChange)variant.getResource()).getOriginator(), 0, 0);
-			}
+		/*
+		 * If resource exists locally, then show history for local resource 
+		 * (even if there are incoming changes), 
+		 * otherwise show history for remote resource
+		 */
+		IResource resource = this.getSelectedResource();
+		if (IStateFilter.SF_VERSIONED.accept(SVNRemoteStorage.instance().asLocalResource(resource))) {
+			return new ShowHistoryViewOperation(resource, 0, 0);
+		} else {
+			AbstractSVNSyncInfo info = this.getSelectedSVNSyncInfo();
+			if (info != null ) {
+				RemoteResourceVariant variant = (RemoteResourceVariant)info.getRemote();
+				if (variant.getResource() instanceof IResourceChange) {
+					return new ShowHistoryViewOperation(((IResourceChange)variant.getResource()).getOriginator(), 0, 0);
+				}
+			}	
 		}
 		return new ShowHistoryViewOperation(this.getSelectedResource(), 0, 0);
 	}
