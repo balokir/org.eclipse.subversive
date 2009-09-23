@@ -134,6 +134,21 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 					synchronized (this.oldResources) {
 						this.oldResources.add(resource);
 					}
+				} else if (localStatus.hasTreeConflict() && !resource.exists()) {
+					/*
+					 * Handle situation if resource has tree conflict and doesn't exist locally,
+					 * e.g. local - missing, incoming - modify during merge operation.
+					 * 
+					 * E.g. it can be used to update Synchronize View content when we call
+					 * Revert action from Package Explorer. As resource doesn't exist (missing) then
+					 * we don't know anything about it and it's not passed to refresh operation; 
+					 * as a result resource will leave in Synchronize view marked as tree conflicted
+					 * despite that really it was reverted. In order to fix it, we add such resource
+					 * in oldResources list.
+					 */
+					synchronized (this.oldResources) {
+						this.oldResources.add(resource);
+					}
 				}
 			}
 			return info;
