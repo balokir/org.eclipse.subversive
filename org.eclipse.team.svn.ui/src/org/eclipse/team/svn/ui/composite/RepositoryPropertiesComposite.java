@@ -154,8 +154,8 @@ public class RepositoryPropertiesComposite extends Composite implements IPropert
 			public void widgetSelected(SelectionEvent e) {
 			    SVNRemoteStorage storage = SVNRemoteStorage.instance();
 				IRepositoryLocation location = storage.newRepositoryLocation();
-				location.setUrl(RepositoryPropertiesComposite.this.url.getText());
-				location.setLabel(RepositoryPropertiesComposite.this.url.getText());
+				location.setUrl(RepositoryPropertiesComposite.this.getLocationUrl());
+				location.setLabel(RepositoryPropertiesComposite.this.getLocationUrl());
 				
 				location.setPassword(RepositoryPropertiesComposite.this.provider.getPassword());
 				location.setUsername(RepositoryPropertiesComposite.this.provider.getUsername());
@@ -275,7 +275,7 @@ public class RepositoryPropertiesComposite extends Composite implements IPropert
 	}
 	
 	public String getLocationUrl() {
-		return this.url.getText();
+		return this.url.getText().trim();
 	}
 	
 	public void setCredentialsInput(IRepositoryLocation location, ISecurityInfoProvider provider) {
@@ -327,12 +327,12 @@ public class RepositoryPropertiesComposite extends Composite implements IPropert
 	
 	public void saveChanges() {
 		if (this.useLocationButton.getSelection()) {
-			this.repositoryLocation.setLabel(this.url.getText());
+			this.repositoryLocation.setLabel(this.getLocationUrl());
 		}
 		else {
 			this.repositoryLocation.setLabel(this.repositoryLabel.getText());
 		}
-		String newUrl = this.url.getText();
+		String newUrl = this.getLocationUrl();
 		this.urlHistory.addLine(newUrl);
 		this.repositoryLocation.setUrl(newUrl);
 
