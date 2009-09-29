@@ -222,7 +222,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 						};
 					}
 				}, MergePanel.FIRST_URL_HISTORY, this.firstSelectedResource, true, 
-				SVNUIMessages.MergePanel_Selection_Title, SVNUIMessages.MergePanel_Selection_Description, mode, RepositoryResourceSelectionComposite.TEXT_LAST);
+				SVNUIMessages.MergePanel_Selection_Title, SVNUIMessages.MergePanel_Selection_Description, mode, RepositoryResourceSelectionComposite.TEXT_NONE);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.simpleSelectionComposite.setLayoutData(data);
 		this.simpleSelectionComposite.setCurrentRevision(this.currentRevision);
@@ -283,7 +283,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 		
 		this.firstSelectionComposite = new RepositoryResourceSelectionComposite(
 				parent, SWT.NONE, proxy, MergePanel.FIRST_URL_HISTORY, "MergePanel_SourceURL1", this.firstSelectedResource, true,  //$NON-NLS-1$
-				SVNUIMessages.MergePanel_Selection_Title, SVNUIMessages.MergePanel_Selection_Description, RepositoryResourceSelectionComposite.MODE_DEFAULT, RepositoryResourceSelectionComposite.TEXT_LAST);
+				SVNUIMessages.MergePanel_Selection_Title, SVNUIMessages.MergePanel_Selection_Description, RepositoryResourceSelectionComposite.MODE_DEFAULT, RepositoryResourceSelectionComposite.TEXT_NONE);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.firstSelectionComposite.setLayoutData(data);
 		this.firstSelectionComposite.setCurrentRevision(this.currentRevision);
@@ -294,7 +294,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 		
 		this.secondSelectionComposite = new RepositoryResourceSelectionComposite(
 				parent, SWT.NONE, proxy2, MergePanel.SECOND_URL_HISTORY, "MergePanel_SourceURL2", this.secondSelectedResource, true,  //$NON-NLS-1$
-				SVNUIMessages.MergePanel_Selection_Title, SVNUIMessages.MergePanel_Selection_Description, RepositoryResourceSelectionComposite.MODE_DEFAULT, RepositoryResourceSelectionComposite.TEXT_LAST);
+				SVNUIMessages.MergePanel_Selection_Title, SVNUIMessages.MergePanel_Selection_Description, RepositoryResourceSelectionComposite.MODE_DEFAULT, RepositoryResourceSelectionComposite.TEXT_NONE);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.secondSelectionComposite.setLayoutData(data);
 		this.secondSelectionComposite.setCurrentRevision(this.currentRevision);
@@ -336,7 +336,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 						};
 					}
 				}, MergePanel.FIRST_URL_HISTORY, this.firstSelectedResource, true, 
-				SVNUIMessages.MergePanel_Selection_Title, SVNUIMessages.MergePanel_Selection_Description, RepositoryResourceSelectionComposite.MODE_DEFAULT, RepositoryResourceSelectionComposite.TEXT_LAST);
+				SVNUIMessages.MergePanel_Selection_Title, SVNUIMessages.MergePanel_Selection_Description, RepositoryResourceSelectionComposite.MODE_DEFAULT, RepositoryResourceSelectionComposite.TEXT_NONE);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		this.reintegrateSelectionComposite.setLayoutData(data);
 		this.reintegrateSelectionComposite.setCurrentRevision(this.currentRevision);
