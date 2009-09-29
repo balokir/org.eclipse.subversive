@@ -202,7 +202,7 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 	}
 	
 	private UpdateSubscriber() {
-		super();
+		super(true);
 		this.comments = new HashMap<SVNRevision, String>();
 	}
 
