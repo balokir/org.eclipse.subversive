@@ -2375,7 +2375,11 @@
           commandId="org.eclipse.team.svn.ui.command.CompareWithRevisionCommand"
           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
           sequence="CTRL+ALT+R"/>
-          
+    <key
+          commandId="org.eclipse.team.svn.ui.command.MergeCommand"
+          schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+          sequence="CTRL+ALT+E"/>
+                    
     <scheme
           description="The Subversive key bindings"
           id="org.eclipse.team.svn.ui.keybindings.scheme"
