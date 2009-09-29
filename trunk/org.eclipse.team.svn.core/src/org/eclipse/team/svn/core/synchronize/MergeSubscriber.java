@@ -255,7 +255,7 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 	}
 	
     private MergeSubscriber() {
-        super();
+        super(false);
 		this.baseStatusCache = new RemoteStatusCache();
     }
 

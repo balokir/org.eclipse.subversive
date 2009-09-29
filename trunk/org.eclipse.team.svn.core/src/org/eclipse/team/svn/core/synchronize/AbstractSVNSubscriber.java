@@ -70,9 +70,13 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
     protected IRemoteStatusCache statusCache;
     protected Set<IResource> oldResources;
     
-    public AbstractSVNSubscriber() {
+    public AbstractSVNSubscriber(boolean usePersistentCache) {
         super();
-		this.statusCache = new PersistentRemoteStatusCache(REMOTE_CACHE_KEY);
+        if (usePersistentCache) {
+        	this.statusCache = new PersistentRemoteStatusCache(REMOTE_CACHE_KEY);	
+        } else {
+        	this.statusCache = new RemoteStatusCache();
+        }		
 		SVNRemoteStorage.instance().addResourceStatesListener(ResourceStatesChangedEvent.class, this);
 		this.oldResources = new HashSet<IResource>();
     }
