@@ -14,10 +14,11 @@ package org.eclipse.team.svn.core.synchronize;
 import java.util.HashSet;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNConflictDescriptor;
 import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
@@ -70,13 +71,36 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
     }
     
     protected SyncInfo getSVNSyncInfo(ILocalResource localStatus, IResourceChange remoteStatus) throws TeamException {
-		IResourceChange baseStatus = SVNRemoteStorage.instance().resourceChangeFromBytes(this.baseStatusCache.getBytes(localStatus.getResource()));
-    	// provide correct base resource: same as right but with the start revision specified
-        return
-        	remoteStatus != null && IStateFilter.SF_NOTMODIFIED.accept(remoteStatus) ? 
-        	new UpdateSyncInfo(localStatus, null, this.getResourceComparator()) : 
-        	new MergeSyncInfo(localStatus, baseStatus, remoteStatus, this.getResourceComparator());
+    	IResourceChange baseStatus = SVNRemoteStorage.instance().resourceChangeFromBytes(this.baseStatusCache.getBytes(localStatus.getResource()));
+    	AbstractSVNSyncInfo syncInfo;
+    	if (remoteStatus == null && baseStatus == null) {
+    		syncInfo = new MergeSyncInfo(localStatus, null, null, this.getResourceComparator());
+    	} else {
+    		SVNMergeStatus mergeStatus = this.getStatusFor(localStatus.getResource());
+    		if (mergeStatus != null) {
+        		if (mergeStatus.skipped) {
+        			syncInfo = new MergeSyncInfo(localStatus, baseStatus, remoteStatus, this.getResourceComparator());
+        		} else {
+        			syncInfo = new UpdateSyncInfoForMerge(localStatus, baseStatus, remoteStatus, this.getResourceComparator());
+        		}	
+    		} else {
+    			//should never happen
+    			syncInfo = new UpdateSyncInfo(localStatus, null, this.getResourceComparator());	
+    		}    		
+    	}
+    	return syncInfo;
     }
+    
+	protected SVNMergeStatus getStatusFor(IResource resource) {
+		SVNMergeStatus []statuses = this.mergeScopeHelper.getMergeSet().getStatuses();
+		IPath target = FileUtility.getResourcePath(resource);
+		for (int i = 0; i < statuses.length; i++) {
+			if (target.equals(new Path(statuses[i].path))) {
+				return statuses[i];
+			}
+		}
+		return null;
+	}
 
     protected IRemoteStatusOperation addStatusOperation(CompositeOperation op, IResource[] resources, int depth) {
     	MergeStatusOperation mergeOp = this.mergeStatusOp = (this.mergeScopeHelper == null ? null : new MergeStatusOperation(this.mergeScopeHelper.getMergeSet(), resources));
@@ -117,10 +141,10 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 				return current.endRevision == SVNRevision.INVALID_REVISION_NUMBER ? null : SVNRevision.fromNumber(current.endRevision);
 			}
 			public int getTextChangeType() {
-				return current.skipped ? current.textStatus : SVNEntryStatus.Kind.NORMAL;
+				return current.textStatus;
 			}
 			public int getPropertiesChangeType() {
-				return current.skipped ? current.propStatus : SVNEntryStatus.Kind.NONE;
+				return current.propStatus;
 			}
 			public int getNodeKind() {
 				int kind = SVNUtility.getNodeKind(current.path, current.nodeKind, true);

@@ -1455,6 +1455,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String SynchronizeActionGroup_MergeProperties;
 	public static String SynchronizeActionGroup_Outgoing;
 	public static String SynchronizeActionGroup_OverrideAndUpdate;
+	public static String MergeActionGroup_OverrideAndUpdate;
 	public static String SynchronizeActionGroup_Revert;
 	public static String SynchronizeActionGroup_SetKeywords;
 	public static String SynchronizeActionGroup_SetProperty;

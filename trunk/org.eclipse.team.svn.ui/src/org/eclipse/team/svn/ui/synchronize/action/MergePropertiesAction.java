@@ -24,6 +24,7 @@ import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
+import org.eclipse.team.svn.core.synchronize.IMergeSyncInfo;
 import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
 import org.eclipse.team.svn.ui.compare.PropertyCompareInput;
 import org.eclipse.team.svn.ui.compare.ThreeWayPropertyCompareInput;
@@ -51,14 +52,17 @@ public class MergePropertiesAction extends AbstractSynchronizeModelAction {
 			ISynchronizeModelElement element = (ISynchronizeModelElement)selection.getFirstElement();
 			if (element instanceof SyncInfoModelElement) {
 				AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo)((SyncInfoModelElement)selection.getFirstElement()).getSyncInfo();
-				ILocalResource incoming = ((ResourceVariant)syncInfo.getRemote()).getResource();
+				ILocalResource incoming;
+				if (syncInfo instanceof IMergeSyncInfo) {
+					//used in Merge view
+					incoming = ((IMergeSyncInfo) syncInfo).getRemoteResource();
+				} else {
+					incoming = ((ResourceVariant)syncInfo.getRemote()).getResource();	
+				}
 				if (!(incoming instanceof IResourceChange)) {
 					return false;
 				}
-				boolean retVal = IStateFilter.SF_EXCLUDE_DELETED.accept(incoming);
-				if (incoming instanceof IResourceChange) {
-					retVal &= IStateFilter.ST_DELETED != incoming.getStatus();
-				}
+				boolean retVal = IStateFilter.SF_EXCLUDE_DELETED.accept(incoming) & IStateFilter.ST_DELETED != incoming.getStatus();				
 				return retVal && ((incoming.getChangeMask() & ILocalResource.PROP_MODIFIED) != 0
 						|| (syncInfo.getLocalResource().getChangeMask() & ILocalResource.PROP_MODIFIED) != 0);
 			}
@@ -69,8 +73,18 @@ public class MergePropertiesAction extends AbstractSynchronizeModelAction {
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
 		IResource resource = this.getSelectedResource();
 		AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo)((SyncInfoModelElement)elements[0]).getSyncInfo();
-		IResourceChange right = (IResourceChange)((ResourceVariant)syncInfo.getRemote()).getResource();
-		IResourceChange ancestor = (IResourceChange)((ResourceVariant)syncInfo.getBase()).getResource();
+		IResourceChange right;
+		IResourceChange ancestor;
+		if (syncInfo instanceof IMergeSyncInfo) {
+			//used in Merge view
+			IMergeSyncInfo mergeSyncInfo = (IMergeSyncInfo) syncInfo;
+			right = mergeSyncInfo.getRemoteResource();
+			ancestor = mergeSyncInfo.getBaseResource();
+		} else {
+			right = (IResourceChange)((ResourceVariant)syncInfo.getRemote()).getResource();
+			ancestor = (IResourceChange)((ResourceVariant)syncInfo.getBase()).getResource();
+		}
+				
 		SVNEntryRevisionReference baseReference = new SVNEntryRevisionReference(ancestor.getOriginator().getUrl(), ancestor.getPegRevision(), SVNRevision.fromNumber(ancestor.getRevision()));
 		SVNEntryRevisionReference remoteReference = new SVNEntryRevisionReference(right.getOriginator().getUrl(), right.getPegRevision(), SVNRevision.fromNumber(right.getRevision()));
 		PropertyCompareInput input = new ThreeWayPropertyCompareInput(new CompareConfiguration(),

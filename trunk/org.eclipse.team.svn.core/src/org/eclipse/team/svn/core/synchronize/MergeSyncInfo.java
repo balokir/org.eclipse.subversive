@@ -23,11 +23,22 @@ import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
 /**
  * Merge sync info: ignores outgoing changes
  * 
+ * It's used to present sync info for skipped by merge resources, e.g.
+ * skipped resources can be considered as tree conflicts (which appeared in SVN 1.6)
+ * but in previous SVN versions. As tree conflicts were not correctly treated in previous
+ * to SVN 1.6 version, we should somehow show them to user.
+ * 
  * @author Alexander Gurov
  */
-public class MergeSyncInfo extends AbstractSVNSyncInfo {
+public class MergeSyncInfo extends AbstractSVNSyncInfo implements IMergeSyncInfo {
+	
+	protected IResourceChange baseStatus;
+	protected IResourceChange remoteStatus;
+	
 	public MergeSyncInfo(ILocalResource local, IResourceChange base, IResourceChange remote, IResourceVariantComparator comparator) {
 		super(local, base == null ? AbstractSVNSyncInfo.makeBaseVariant(local) : AbstractSVNSyncInfo.makeRemoteVariant(local, base), AbstractSVNSyncInfo.makeRemoteVariant(local, remote), comparator);
+		this.baseStatus = base;
+		this.remoteStatus = remote;
 	}
 
 	protected int calculateKind() throws TeamException {
@@ -90,4 +101,11 @@ public class MergeSyncInfo extends AbstractSVNSyncInfo {
 		return SyncInfo.IN_SYNC;
 	}
 
+	public IResourceChange getBaseResource() {
+		return this.baseStatus;
+	}
+	
+	public IResourceChange getRemoteResource() {
+		return this.remoteStatus;
+	}
 }
