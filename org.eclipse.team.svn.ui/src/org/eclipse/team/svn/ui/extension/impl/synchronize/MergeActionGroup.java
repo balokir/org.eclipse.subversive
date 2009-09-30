@@ -29,12 +29,12 @@ import org.eclipse.team.svn.ui.synchronize.action.SetExternalDefinitionAction;
 import org.eclipse.team.svn.ui.synchronize.action.SetKeywordsAction;
 import org.eclipse.team.svn.ui.synchronize.action.SetPropertyAction;
 import org.eclipse.team.svn.ui.synchronize.action.ShowHistoryAction;
-import org.eclipse.team.svn.ui.synchronize.action.ShowIncomingAnnotationAction;
-import org.eclipse.team.svn.ui.synchronize.action.ShowIncomingPropertiesAction;
 import org.eclipse.team.svn.ui.synchronize.action.ShowOutgoingAnnotationAction;
 import org.eclipse.team.svn.ui.synchronize.action.ShowOutgoingPropertiesAction;
 import org.eclipse.team.svn.ui.synchronize.merge.action.MarkAsMergedAction;
 import org.eclipse.team.svn.ui.synchronize.merge.action.OverrideAndUpdateAction;
+import org.eclipse.team.svn.ui.synchronize.merge.action.ShowIncomingAnnotationAction;
+import org.eclipse.team.svn.ui.synchronize.merge.action.ShowIncomingPropertiesAction;
 import org.eclipse.team.svn.ui.synchronize.merge.action.UpdateAction;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -87,7 +87,7 @@ public class MergeActionGroup extends AbstractSynchronizeActionGroup {
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				MergeActionGroup.GROUP_MERGE_CHANGES,
 				updateAction);
-		OverrideAndUpdateAction overrideAndUpdateAction = new OverrideAndUpdateAction(SVNUIMessages.SynchronizeActionGroup_OverrideAndUpdate, configuration);
+		OverrideAndUpdateAction overrideAndUpdateAction = new OverrideAndUpdateAction(SVNUIMessages.MergeActionGroup_OverrideAndUpdate, configuration);
 		this.appendToGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				MergeActionGroup.GROUP_MERGE_CHANGES,

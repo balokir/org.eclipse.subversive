@@ -17,7 +17,6 @@ import java.util.HashMap;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
@@ -34,7 +33,7 @@ import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
-import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
+import org.eclipse.team.svn.core.synchronize.IMergeSyncInfo;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -57,10 +56,15 @@ public class OverrideAndUpdateAction extends AbstractSynchronizeModelAction {
 	protected FastSyncInfoFilter getSyncInfoFilter() {
 		return new FastSyncInfoFilter.SyncInfoDirectionFilter(new int[] {SyncInfo.CONFLICTING, SyncInfo.INCOMING}) {			
 			public boolean select(SyncInfo info) {
-				ILocalResource incoming = ((ResourceVariant)info.getRemote()).getResource();
-				if (incoming instanceof IResourceChange) {
+				if (super.select(info) && info instanceof IMergeSyncInfo) {
+					//check if there's a tree conflict
 					ILocalResource local = ((AbstractSVNSyncInfo) info).getLocalResource();
-	                return super.select(info) && (IStateFilter.SF_TREE_CONFLICTING.accept(local) ? IStateFilter.SF_TREE_CONFLICTING_REPOSITORY_EXIST.accept(local) : true);	
+					if (IStateFilter.SF_TREE_CONFLICTING.accept(local)) {
+						IResourceChange resourceChange = ((IMergeSyncInfo) info).getRemoteResource();
+						return resourceChange != null && IStateFilter.ST_DELETED != resourceChange.getStatus(); 
+					} else {
+						return true;
+					}
 				}
 				return false;
             }
@@ -75,11 +79,13 @@ public class OverrideAndUpdateAction extends AbstractSynchronizeModelAction {
 		for (int i = 0; i < infos.length; i++) {
 			IResource resource = infos[i].getLocal();
 			localSet.add(resource);
-			ResourceVariant resourceVariant = (ResourceVariant) infos[i].getRemote();
-			if (resourceVariant.getResource() instanceof IResourceChange) {
-				IRepositoryResource remote = ((IResourceChange)resourceVariant.getResource()).getOriginator();
-				remoteSet.add(remote);
-				remote2local.put(SVNUtility.encodeURL(remote.getUrl()), FileUtility.getWorkingCopyPath(resource));	
+			if (infos[i] instanceof IMergeSyncInfo) {
+				IResourceChange resourceChange = ((IMergeSyncInfo) infos[i]).getRemoteResource();
+				if (resourceChange != null) {
+					IRepositoryResource remote = resourceChange.getOriginator();
+					remoteSet.add(remote);
+					remote2local.put(SVNUtility.encodeURL(remote.getUrl()), FileUtility.getWorkingCopyPath(resource));						
+				}
 			}
 		}
 		
