@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.connector.SVNConnectorHelper;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -380,7 +381,7 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		});
 		String []items = new String[fullSet.size()];
 		for (int i = 0; i < items.length; i++) {
-			items[i] = this.factories[i].getName() + " (" + this.factories[i].getClientVersion().replace('\n', ' ') + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+			items[i] = SVNConnectorHelper.getConnectorName(this.factories[i]);
 		}
 		this.svnConnectorField.setItems(items);
 		this.svnConnectorField.setVisibleItemCount(items.length);
