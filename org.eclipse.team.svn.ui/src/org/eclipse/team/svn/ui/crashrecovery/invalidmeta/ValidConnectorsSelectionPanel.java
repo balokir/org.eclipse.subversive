@@ -25,6 +25,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.team.svn.core.connector.SVNConnectorHelper;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -88,7 +89,7 @@ public class ValidConnectorsSelectionPanel extends AbstractDialogPanel {
 		});
 		String []items = new String[this.factories.length];
 		for (int i = 0; i < items.length; i++) {
-			items[i] = this.factories[i].getName() + " (" + this.factories[i].getClientVersion().replace('\n', ' ') + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+			items[i] = SVNConnectorHelper.getConnectorName(this.factories[i]);
 		}
 		this.svnConnectorField.setItems(items);
 		this.svnConnectorField.select(0);
