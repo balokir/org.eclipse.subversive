@@ -13,6 +13,7 @@
 package org.eclipse.team.svn.core.svnstorage;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -666,18 +667,15 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		return status;
 	}
 	
-	protected boolean isFileExists(IPath location) {
-		if (new File(location.toString()).exists()) {
+	public static boolean isFileExists(IPath location) {
+		File file = location.toFile();
+		if (file.exists()) {
 			if (FileUtility.isWindows()) {
 				// should be case sensitive on Windows OS also
-				String []names = new File(location.removeLastSegments(1).toString()).list();
-				if (names != null) {
-					String name = location.lastSegment();
-					for (int i = 0; i < names.length; i++) {
-						if (names[i].equals(name)) {
-							return true;
-						}
-					}
+				try {
+					return file.getName().equals(file.getCanonicalFile().getName());
+				} catch (IOException e) {
+					return false;
 				}
 			}
 			else {
