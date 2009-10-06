@@ -27,8 +27,8 @@ public class TextVariableSetProvider implements IVariableSetProvider {
 	public static final String NAME_OF_LOCATION_URL = "location_url";
 	public static final String NAME_OF_LOCATION_LABEL = "location_label";
 	public static final String NAME_OF_ROOT_PREFIX = "root_prefix";
-	public static final String NAME_OF_ASCENDANT = "ascendant";
-	public static final String NAME_OF_DESCENDANT = "descendant";
+	public static final String NAME_OF_ASCENDANT = "first_branchOrTag_child";
+	public static final String NAME_OF_DESCENDANT = "last_branchOrTag_child";
 	public static final String NAME_OF_FULLNAME = "fullname";
 	public static final String NAME_OF_RESOURCE_URL = "resource_url";
 	public static final String NAME_OF_SHORT_RESOURCE_URL = "short_url";
