@@ -1491,10 +1491,10 @@ public class SVNUIMessages extends BaseMessages {
 	public static String TagPanel_Warning;
 	public static String Tag_Modification_Warning;	
 	public static String TextDecoratorVariable_added_flag;
-	public static String TextDecoratorVariable_ascendant;
+	public static String TextDecoratorVariable_first_branchOrTag_child;
 	public static String TextDecoratorVariable_author;
 	public static String TextDecoratorVariable_date;
-	public static String TextDecoratorVariable_descendant;
+	public static String TextDecoratorVariable_last_branchOrTag_child;
 	public static String TextDecoratorVariable_fullname;
 	public static String TextDecoratorVariable_location_label;
 	public static String TextDecoratorVariable_location_url;
