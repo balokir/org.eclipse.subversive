@@ -767,14 +767,15 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 							int projectEnd = location.toString().length();
 							for (int i = 0; i < st.length && !monitor.isCanceled() && CoreExtensionsManager.instance().getOptionProvider().isSVNCacheEnabled(); i++) {
 								ProgressMonitorUtility.progress(monitor, i, IProgressMonitor.UNKNOWN);
-								
-								if (st[i].nodeKind == SVNEntry.Kind.DIR && st[i].path.length() > projectEnd) {
-									IResource folder = prj.getFolder(new Path(st[i].path.substring(projectEnd)));
-									ProgressMonitorUtility.setTaskInfo(monitor, this, folder.getFullPath().toString());
-									ILocalFolder local = (ILocalFolder)SVNRemoteStorage.this.asLocalResource(folder);
-									if (!IStateFilter.SF_INTERNAL_INVALID.accept(local)) {
-										local.getChildren();
-									}
+								if (st[i] != null) {
+									if (st[i].nodeKind == SVNEntry.Kind.DIR && st[i].path.length() > projectEnd) {
+										IResource folder = prj.getFolder(new Path(st[i].path.substring(projectEnd)));
+										ProgressMonitorUtility.setTaskInfo(monitor, this, folder.getFullPath().toString());
+										ILocalFolder local = (ILocalFolder)SVNRemoteStorage.this.asLocalResource(folder);
+										if (!IStateFilter.SF_INTERNAL_INVALID.accept(local)) {
+											local.getChildren();
+										}
+									}	
 								}
 							}
 						}
@@ -811,6 +812,11 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		}
 	}
 	
+	/*
+	 * Note that this method can modify statuses array 
+	 * (it even can make some statuses to null) passed as input parameter.
+	 * This can happen for external definitions.
+	 */
 	protected ILocalResource fillCache(SVNChangeStatus []statuses, String desiredUrl, IResource resource, int subPathStart, IPath requestedPath) {
 		IProject project = resource.getProject();
 		
