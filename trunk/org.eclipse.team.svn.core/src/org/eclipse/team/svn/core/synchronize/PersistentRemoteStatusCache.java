@@ -39,7 +39,7 @@ public class PersistentRemoteStatusCache extends PersistantResourceVariantByteSt
 		super(qualifiedName);
 	}
 	
-	public synchronized boolean containsData() throws TeamException {
+	public boolean containsData() throws TeamException {
 		boolean containsData = false;
 		IResource[] roots = this.roots();
 		for (IResource root : roots) {
@@ -51,14 +51,14 @@ public class PersistentRemoteStatusCache extends PersistantResourceVariantByteSt
 		return containsData;
 	}
 	
-	public synchronized void clearAll() throws TeamException {
+	public void clearAll() throws TeamException {
 		IResource[] resources = this.roots();		
 		for (IResource resource : resources) {		
 		    this.flushBytes(resource, IResource.DEPTH_INFINITE);		    
 		}
 	}
 	
-	public synchronized IResource []allMembers(IResource resource) throws TeamException {
+	public IResource []allMembers(IResource resource) throws TeamException {
 		if (!(resource instanceof IContainer)) {
     		return FileUtility.NO_CHILDREN;
 		}
@@ -73,30 +73,30 @@ public class PersistentRemoteStatusCache extends PersistantResourceVariantByteSt
 	}
 	
 
-	public synchronized IResource[] members(IResource resource) throws TeamException {		
+	public IResource[] members(IResource resource) throws TeamException {		
 		if (this.getBytes(resource) == null) {
 			return new IResource[0];
 		}					
 		return super.members(resource);					
 	}
 
-	public synchronized boolean setBytes(IResource resource, byte[] bytes) throws TeamException {	
+	public boolean setBytes(IResource resource, byte[] bytes) throws TeamException {	
 		return super.setBytes(resource, bytes);		
 	}	
 	
-	public synchronized byte[] getBytes(IResource resource) throws TeamException {
+	public byte[] getBytes(IResource resource) throws TeamException {
 		return super.getBytes(resource);		
 	}	
 
-	public synchronized boolean flushBytes(IResource resource, int depth) throws TeamException {							
+	public boolean flushBytes(IResource resource, int depth) throws TeamException {							
 		return super.flushBytes(resource, depth);		
 	}
 	
-	public synchronized boolean deleteBytes(IResource resource) throws TeamException {	
+	public boolean deleteBytes(IResource resource) throws TeamException {	
 		return super.deleteBytes(resource);		
 	}
 	
-	public synchronized void traverse(IResource []resources, int depth, ICacheVisitor visitor) throws TeamException {
+	public void traverse(IResource []resources, int depth, ICacheVisitor visitor) throws TeamException {
 		for (int i = 0; i < resources.length; i++) {
 			this.traverse(resources[i], depth, visitor);
 		}
