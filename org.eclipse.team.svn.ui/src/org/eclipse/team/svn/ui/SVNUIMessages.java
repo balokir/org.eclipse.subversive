@@ -924,6 +924,9 @@ public class SVNUIMessages extends BaseMessages {
 	public static String Operation_AddRepositoryLocation;
 	public static String Operation_AddRepositoryLocation_Id;  
 	public static String Operation_AddRepositoryLocation_Error;
+	public static String Operation_CreateLockResourcesHierarchy;
+	public static String Operation_CreateLockResourcesHierarchy_Id;
+	public static String Operation_CreateLockResourcesHierarchy_Error;
 	
 	public static String OptionsActionGroup_ShowInfoContiguous;
 	public static String OverrideResourcesPanel_Affected;
