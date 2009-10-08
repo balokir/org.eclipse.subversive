@@ -37,6 +37,7 @@ import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
+import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSet;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
 import org.eclipse.team.internal.core.subscribers.BatchingChangeSetManager;
@@ -49,13 +50,18 @@ import org.eclipse.team.internal.ui.mapping.ResourceModelContentProvider;
 import org.eclipse.team.internal.ui.mapping.ResourceModelLabelProvider;
 import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
 import org.eclipse.team.internal.ui.synchronize.IChangeSetProvider;
+import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.mapping.SVNChangeSetModelProvider;
 import org.eclipse.team.svn.core.mapping.SVNIncomingChangeSet;
 import org.eclipse.team.svn.core.mapping.SVNUnassignedChangeSet;
+import org.eclipse.team.svn.core.operation.LoggedOperation;
+import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
+import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
+import org.eclipse.team.ui.synchronize.SubscriberParticipant;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.INavigatorContentExtension;
 import org.eclipse.ui.navigator.INavigatorContentService;
@@ -75,16 +81,7 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 						}
 					});
 				}
-				this.handleSetAddition(set);
-			} else if (set instanceof SVNIncomingChangeSet) {
-				/*
-				 * If we've incoming change set (incoming changes) then previously its resources
-				 * were added to unassigned change set and so we need to delete them in order to avoid
-				 * duplication of incoming change sets
-				 * 
-				 * See bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=261185
-				 */
-				this.handleSetAddition(set);
+				SVNChangeSetContentProvider.this.getUnassignedSet().remove(set.getResources());
 			}
 		}
 
@@ -121,7 +118,8 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 			for (int i = 0; i < resources.length; i++) {
 				IResource resource = resources[i];
 				IDiff diff = getContext().getDiffTree().getDiff(resource);
-				if (diff != null && !SVNChangeSetContentProvider.this.isContainedInSet(diff)) {
+				//if active change set deleted, then we can freely add its resources to unassigned change set 
+				if (diff != null) {
 					toAdd.add(diff);
 				}
 			}
@@ -174,7 +172,7 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 					}
 					else {
 			            IDiff diff = SVNChangeSetContentProvider.this.getContext().getDiffTree().getDiff(paths[i]);
-			            if (diff != null && !isContainedInSet(diff)) {
+			            if (diff != null && canAddToUnnassignedChangeSet(diff)) {
 			            	SVNChangeSetContentProvider.this.getTheRest().add(diff);
 			            }
 			        }   
@@ -233,7 +231,7 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 							getTheRest().beginInput();
 							for (int j = 0; j < paths.length; j++) {
 								IDiff diff = getContext().getDiffTree().getDiff(paths[j]);
-								if (diff != null && !isContainedInSet(diff)) {
+								if (diff != null && canAddToUnnassignedChangeSet(diff)) {
 									SVNChangeSetContentProvider.this.getTheRest().add(diff);
 								}
 							}
@@ -363,7 +361,7 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 		final ArrayList<IDiff> diffs = new ArrayList<IDiff>();
 		allChanges.accept(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new IDiffVisitor() {
 			public boolean visit(IDiff diff) {
-				if (!SVNChangeSetContentProvider.this.isContainedInSet(diff))
+				if (canAddToUnnassignedChangeSet(diff))
 					diffs.add(diff);
 				return true;
 			}
@@ -375,8 +373,7 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 		return (ResourceDiffTree)getUnassignedSet().getDiffTree();
 	}
 	
-	protected boolean isContainedInSet(IDiff diff) {
-		ChangeSet[] sets = this.getAllSets();
+	protected boolean isContainedInSet(IDiff diff, ChangeSet[] sets) {
 		for (int i = 0; i < sets.length; i++) {
 			ChangeSet set = sets[i];
 			if (set.contains(ResourceDiffTree.getResourceFor(diff))) {
@@ -544,6 +541,22 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 		return new TreePath[0];
 	}
 
+	/*
+	 * It doesn't include unassigned change set
+	 */
+	private DiffChangeSet[] getOutgoingSets() {
+		ArrayList<DiffChangeSet> result = new ArrayList<DiffChangeSet>();
+		ChangeSetCapability changeSetCapability = this.getChangeSetCapability();
+		if (changeSetCapability != null && changeSetCapability.supportsActiveChangeSets()) {
+			ActiveChangeSetManager collector = changeSetCapability.getActiveChangeSetManager();
+			ChangeSet[] sets = collector.getSets();	
+			for (int i = 0; i < sets.length; i++) {
+				result.add((DiffChangeSet)sets[i]);
+			}
+		}		
+		return result.toArray(new DiffChangeSet[result.size()]);
+	} 
+	
 	private DiffChangeSet[] getAllSets() {
 		ArrayList<DiffChangeSet> result = new ArrayList<DiffChangeSet>();
 		ChangeSetCapability changeSetCapability = this.getChangeSetCapability();
@@ -695,16 +708,8 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 			for (int i = 0; i < removed.length; i++) {
 				getTheRest().remove(removed[i]);
 			}
-			for (int i = 0; i < added.length; i++) {
-				if (!this.isContainedInSet(added[i])) {
-					getTheRest().add(added[i]);
-				}
-			}
-			for (int i = 0; i < changed.length; i++) {
-				if (this.getTheRest().getDiff(changed[i].getPath()) != null) {
-					getTheRest().add(changed[i]);
-				}
-			}
+			this.doDiffsChanged(added);
+			this.doDiffsChanged(changed);
 		}
 		finally {
 			this.getTheRest().endInput(monitor);
@@ -718,7 +723,41 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 			}
 		});
 	}
-
+	
+	protected void doDiffsChanged(IDiff[] diff) {
+		
+		for (int i = 0; i < diff.length; i++) {
+			if (!this.isContainedInSet(diff[i], this.getOutgoingSets())) {
+				if (this.hasLocalChanges(diff[i])) {
+					getTheRest().add(diff[i]);
+				} else {
+					getTheRest().remove(diff[i].getPath());
+				}
+			}
+		}
+	}
+	
+	protected boolean canAddToUnnassignedChangeSet(IDiff diff) {
+		if (!this.isContainedInSet(diff, this.getOutgoingSets())) {
+			return this.hasLocalChanges(diff);
+		}
+		return false;		
+	}
+	
+	protected boolean hasLocalChanges(IDiff diff) {
+		try {						
+			//TODO correctly get subscriber									 			
+			Subscriber subscriber = UpdateSubscriber.instance();									
+			AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo) subscriber.getSyncInfo(ResourceDiffTree.getResourceFor(diff));			
+			if (syncInfo != null && IStateFilter.SF_MODIFIED.accept(syncInfo.getLocalResource())) {
+				return true;
+			} 		
+		} catch (Exception e) {
+			LoggedOperation.reportError(SVNChangeSetContentProvider.class.getName(), e);
+		}
+		return false;
+	}
+	
 	protected void updateLabels(ISynchronizationContext context, IPath[] paths) {
 		super.updateLabels(context, paths);
 		ChangeSet[] sets = this.getSetsShowingPropogatedStateFrom(paths);
