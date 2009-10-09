@@ -3,22 +3,22 @@
    <description url="http://download.eclipse.org/technology/subversive/0.7/update-site/">
       Eclipse Subversive - SVN Team Provider
    </description>
-   <feature url="features/org.eclipse.team.svn_0.7.8.I20090903-1900.jar" id="org.eclipse.team.svn" version="0.7.8.I20090903-1900">
+   <feature url="features/org.eclipse.team.svn_0.7.8.I20091009-1900.jar" id="org.eclipse.team.svn" version="0.7.8.I20091009-1900">
       <category name="Subversive (Incubation)"/>
    </feature>
-   <feature url="features/org.eclipse.team.svn.nl1_0.7.8.I20090808-1900.jar" id="org.eclipse.team.svn.nl1" version="0.7.8.I20090808-1900">
+   <feature url="features/org.eclipse.team.svn.nl1_0.7.8.I20091009-1900.jar" id="org.eclipse.team.svn.nl1" version="0.7.8.I20091009-1900">
       <category name="Subversive (Incubation)"/>
    </feature>
-   <feature url="features/org.eclipse.team.svn.resource.ignore.rules.jdt_0.7.8.I20090808-1900.jar" id="org.eclipse.team.svn.resource.ignore.rules.jdt" version="0.7.8.I20090808-1900">
+   <feature url="features/org.eclipse.team.svn.resource.ignore.rules.jdt_0.7.8.I20091009-1900.jar" id="org.eclipse.team.svn.resource.ignore.rules.jdt" version="0.7.8.I20091009-1900">
       <category name="Subversive (Incubation)"/>
    </feature>
-   <feature url="features/org.eclipse.team.svn.mylyn_0.7.8.I20090808-1900.jar" id="org.eclipse.team.svn.mylyn" version="0.7.8.I20090808-1900">
+   <feature url="features/org.eclipse.team.svn.mylyn_0.7.8.I20091009-1900.jar" id="org.eclipse.team.svn.mylyn" version="0.7.8.I20091009-1900">
       <category name="Subversive Integration (Incubation)"/>
    </feature>
-   <feature url="features/org.eclipse.team.svn.source_0.7.8.I20090903-1900.jar" id="org.eclipse.team.svn.source" version="0.7.8.I20090903-1900">
+   <feature url="features/org.eclipse.team.svn.source_0.7.8.I20091009-1900.jar" id="org.eclipse.team.svn.source" version="0.7.8.I20091009-1900">
       <category name="Subversive Sources (Incubation)"/>
    </feature>
-   <feature url="features/org.eclipse.team.svn.ui.capabilities_0.7.8.I20090808-1900.jar" id="org.eclipse.team.svn.ui.capabilities" version="0.7.8.I20090808-1900"/>
+   <feature url="features/org.eclipse.team.svn.ui.capabilities_0.7.8.I20091009-1900.jar" id="org.eclipse.team.svn.ui.capabilities" version="0.7.8.I20091009-1900"/>
    <category-def name="Subversive (Incubation)" label="Subversive SVN Team Provider Plugin (Incubation)">
       <description>
          Eclipse Subversive Team Provider for the Subversion version control system.

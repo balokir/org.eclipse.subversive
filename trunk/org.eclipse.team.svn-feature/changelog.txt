@@ -8,6 +8,66 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.8.I20091009-1900 [09 October 2009]
+
+Features:
+ * Add dialog for creating external resource (bug 288139) 
+    
+Fixes:
+ * Selection of a single revision to merge results in no changes (bug 287872) 
+
+ * Send Notifications' operation finished with error - repeated dialog (bug 282000) 
+
+ * "Accept" action in the Merge View does not work (bug 289680)
+
+ * "Edit tree conflicts" action is enablement does not corresponds to what it does (bug 289710) 
+
+ * NPE in SVN Kit 1.3.0 (bug 289812) 
+
+ * "Show History" action from the "Synchronize View" is ineffective (bug 289313) 
+
+ * Merge View incorrectly shows conflicting statuses (bug 289691) 
+
+ * ClassCastException in Override and Update in Merge view (bug 290691) 
+
+ * Trim spaces in repository location (bug 290678) 
+
+ * Add key bindings for Merge action (bug 290718) 
+
+ * Problems with URL field in Merge dialog (bug 290717) 
+
+ * Merge and Synchronize interfered with each other (bug 289689) 
+
+ * Context menu actions in the Merge View does not correctly work (bug 290508) 
+
+ * Change connectors string in SVN Connectors list (bug 290677) 
+
+ * Recommended small change in SVNRemoteStorage.isFileExists() to massively improve performance (bug 291089) 
+
+ * "Local" and "Remote" sub-menus of "Synchronize view" do not appear in my RCP app (bug 290574) 
+
+ * Bad trailing character after french translation "En attente" (bug 274961) 
+
+ * Share Project Wizard dialog typo (bug 264685) 
+
+ * error message when resource location does not match repository location (bug 277787) 
+
+ * Ascendant/Descendant Text Decorations Incorrect (bug 248033) 
+
+ * Synchronize action is hanged (bug 291566) 
+
+ * NPE in SVNRemoteStorage (bug 291580) 
+
+ * NLS unused message (bug 291583) 
+
+ * [Subversive] - "Team -> Switch..." should prefill the input URL with selected resource URL (bug 271297) 
+
+ * Merged files are absent from SVN change Sets (TeamSynchronisation) (bug 282677) 
+
+ * svn externals not working for path/subpath entries (bug 272526) 
+ 
+--------------------------------------------------------------------------------
+
 Version 0.7.8.I20090903-1900 [03 September 2009]
 
 Features:
