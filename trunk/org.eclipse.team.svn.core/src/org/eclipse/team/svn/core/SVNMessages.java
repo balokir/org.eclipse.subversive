@@ -48,7 +48,8 @@ public class SVNMessages extends BaseMessages {
 	public static String Console_Update_Status_obstructed;
 	public static String Console_Update_Status_unchanged;
 	public static String Console_Update_Status_unknown;
-
+	public static String Console_UpdateExternal;
+	
 	public static String Error_AlreadyExists;
 	public static String Error_AlreadyExists_Id;
 	public static String Error_AnotherProvider;

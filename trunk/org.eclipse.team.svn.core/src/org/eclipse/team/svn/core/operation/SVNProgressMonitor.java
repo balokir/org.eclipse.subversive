@@ -89,8 +89,10 @@ public class SVNProgressMonitor implements ISVNProgressMonitor {
 			if (action == PerformedAction.UPDATE_COMPLETED || action == PerformedAction.STATUS_COMPLETED) {
 				String message = SVNMessages.format(SVNMessages.Console_AtRevision, new String[] {String.valueOf(revision)});
 				stream.write(IConsoleStream.LEVEL_OK, message);
-			}
-			else {
+			} else if (action == PerformedAction.UPDATE_EXTERNAL) {
+				String message = SVNMessages.format(SVNMessages.Console_UpdateExternal, new String[] {path});
+				stream.write(IConsoleStream.LEVEL_OK, message);
+			} else {
 				int severity = IConsoleStream.LEVEL_OK;
 				String status = null;
 				switch (action) {
