@@ -27,4 +27,8 @@ public class SVNNullProgressMonitor implements ISVNProgressMonitor {
 		return false;
 	}
 
+	public void reportError(String errorMessage) {		
+		
+	}
+
 }

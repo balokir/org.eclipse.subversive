@@ -222,6 +222,10 @@ public class UILoggedOperation extends LoggedOperation {
         String advanceMess = ""; //$NON-NLS-1$
         String simpleMess = ""; //$NON-NLS-1$
         for (int i = 0; i < children.length; i++) {
+            //don't report warning statuses
+        	if (children[i].getSeverity() == IStatus.WARNING) {
+        		continue;
+        	}
             Throwable exception = children[i].getException();
         	if (!allowsCancelled && (exception instanceof SVNConnectorCancelException || exception instanceof ActivityCancelledException || exception instanceof OperationCanceledException) || 
         		exception instanceof HiddenException) {
