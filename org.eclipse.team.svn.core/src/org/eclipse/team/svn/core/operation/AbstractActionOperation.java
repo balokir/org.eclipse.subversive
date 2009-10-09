@@ -150,6 +150,11 @@ public abstract class AbstractActionOperation implements IActionOperation {
 		}
 	}
 	
+	protected void reportWarning(String message, Throwable t) { //$NON-NLS-1$
+		this.writeToConsole(IConsoleStream.LEVEL_WARNING, message + "\n");			
+		this.reportStatus(new Status(IStatus.WARNING, SVNTeamPlugin.NATURE_ID, IStatus.OK, message, t));
+	}
+	
 	protected void reportError(Throwable t) {
 		if (t instanceof SVNConnectorCancelException ||
 			t instanceof ActivityCancelledException) {

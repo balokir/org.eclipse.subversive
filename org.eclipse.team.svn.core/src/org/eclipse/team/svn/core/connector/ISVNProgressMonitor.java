@@ -52,4 +52,6 @@ public interface ISVNProgressMonitor {
 	public void progress(int current, int total, ItemState state);
 
 	public boolean isActivityCancelled();
+	
+	public void reportError(String errorMessage);
 }
