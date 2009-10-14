@@ -45,6 +45,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
+import org.eclipse.team.svn.core.resource.IRevisionLink;
 import org.eclipse.team.svn.core.resource.ISVNStorage;
 import org.eclipse.team.svn.core.resource.SSHSettings;
 import org.eclipse.team.svn.core.resource.SSLSettings;
@@ -249,8 +250,11 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		return location;
 	}
 	
-	public String repositoryLocationAsReference(IRepositoryLocation location) {
-		return location.asReference();
+	/*
+	 * see IRepositoryLocation comments for we need 'saveRevisionLinksComments' parameter 
+	 */
+	public String repositoryLocationAsReference(IRepositoryLocation location, boolean saveRevisionLinksComments) {
+		return location.asReference(saveRevisionLinksComments);
 	}
 	
 	public synchronized void addRepositoryLocation(IRepositoryLocation location) {
@@ -282,8 +286,21 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 	public synchronized void saveConfiguration() throws Exception {
 		this.saveLocations();
 	}
+			
+	public byte[] revisionLinkAsBytes(IRevisionLink link, boolean saveRevisionLinksComments) {
+		String str = this.repositoryResourceAsString(link.getRepositoryResource());
+		if (str != null && saveRevisionLinksComments) {
+			str += ";" + new String(Base64.encode(link.getComment().getBytes()));			 //$NON-NLS-1$
+		}
+		return str != null ? str.getBytes() : null;
+	}
 	
-	public byte []repositoryResourceAsBytes(IRepositoryResource resource) {
+	public byte[] repositoryResourceAsBytes(IRepositoryResource resource) {
+		String str = this.repositoryResourceAsString(resource);
+		return str != null ? str.getBytes() : null;
+	}
+	
+	protected String repositoryResourceAsString(IRepositoryResource resource) {
 		if (resource == null) {
 			return null;
 		}
@@ -296,7 +313,7 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 			String.valueOf(IRepositoryRoot.KIND_ROOT) + ";" +  //$NON-NLS-1$
 			String.valueOf(resource.getPegRevision().getKind()) + ";" +  //$NON-NLS-1$
 			this.convertRevisionToString(resource.getPegRevision()); //$NON-NLS-1$
-		return retVal.getBytes();
+		return retVal;
 	}
 	
 	protected SVNRevision convertToRevision(int revisionKind, long revNum, boolean isPegRevision) {
@@ -329,6 +346,21 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 	
 	public IRepositoryResource repositoryResourceFromBytes(byte []bytes) {
 		return this.repositoryResourceFromBytes(bytes, null);
+	}
+	
+	public IRevisionLink revisionLinkFromBytes(byte []bytes, IRepositoryLocation location) {
+		IRepositoryResource resource = this.repositoryResourceFromBytes(bytes, location);
+		if (resource != null) {
+			String[] data = new String(bytes).split(";"); //$NON-NLS-1$			
+			String comment = null;
+			if (data.length > 8) {
+				comment = new String(Base64.decode(data[8].getBytes()));				
+			}			
+			IRevisionLink link = SVNUtility.createRevisionLink(resource);
+			link.setComment(comment);
+			return link;
+		}
+		return null;
 	}
 	
 	public IRepositoryResource repositoryResourceFromBytes(byte []bytes, IRepositoryLocation location) {
@@ -444,7 +476,7 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		repositoryPreferences.removePreferenceChangeListener(this.repoPrefChangeListener);
 		repositoryPreferences.clear();
 		for (IRepositoryLocation current : this.repositories) {
-			repositoryPreferences.put(current.getId(), this.repositoryLocationAsReference(current));
+			repositoryPreferences.put(current.getId(), this.repositoryLocationAsReference(current, true));
 			this.saveAuthInfo(current, ""); //$NON-NLS-1$
 			String [] realms = current.getRealms().toArray(new String[0]);
 			for (String realm : realms) {

@@ -17,8 +17,8 @@ import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
-import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
+import org.eclipse.team.svn.core.resource.IRevisionLink;
 import org.eclipse.team.svn.core.resource.SSHSettings;
 import org.eclipse.team.svn.core.resource.SSLSettings;
 
@@ -39,8 +39,8 @@ public class SVNRepositoryLocationWrapper implements IRepositoryLocation {
 		this.url = mappedUrl;
 	}
 	
-	public String asReference() {
-		return this.location.asReference();
+	public String asReference(boolean saveRevisionLinksComments) {
+		return this.location.asReference(saveRevisionLinksComments);
 	}
 	
 	public void fillLocationFromReference(String[] referenceParts) {
@@ -97,7 +97,7 @@ public class SVNRepositoryLocationWrapper implements IRepositoryLocation {
 		this.location.addRealm(realm, location);
 	}
 
-	public void addRevisionLink(IRepositoryResource link) {
+	public void addRevisionLink(IRevisionLink link) {
 		this.location.addRevisionLink(link);
 	}
 
@@ -133,7 +133,7 @@ public class SVNRepositoryLocationWrapper implements IRepositoryLocation {
 		return this.location.getRealms();
 	}
 
-	public IRepositoryResource []getRevisionLinks() {
+	public IRevisionLink []getRevisionLinks() {
 		return this.location.getRevisionLinks();
 	}
 
@@ -189,7 +189,7 @@ public class SVNRepositoryLocationWrapper implements IRepositoryLocation {
 		this.location.removeRealm(realm);
 	}
 
-	public void removeRevisionLink(IRepositoryResource link) {
+	public void removeRevisionLink(IRevisionLink link) {
 		this.location.removeRevisionLink(link);
 	}
 

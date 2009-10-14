@@ -543,9 +543,14 @@ public class SVNUIMessages extends BaseMessages {
 	public static String InaccessibleLocationDataHelper_Dialog_Title;
 	public static String InputRevisionPanel_Caption_First;
 	public static String InputRevisionPanel_Caption_Second;
-	public static String InputRevisionPanel_Description;
-	public static String InputRevisionPanel_Message;
-
+	public static String InputRevisionPanel_EditTitle;
+	public static String InputRevisionPanel_AddTitle;
+	public static String InputRevisionPanel_SingleDescription;
+	public static String InputRevisionPanel_MultipleDescription;
+	public static String InputRevisionPanel_SingleMessage;
+	public static String InputRevisionPanel_MultipleMessage;
+	public static String InputRevisionPanel_Comment;
+	
 	public static String ListSelectionPanel_LocalPresentation;
 	public static String ListSelectionPanel_Resource;
 	public static String ListSelectionPanel_Title;
@@ -926,7 +931,10 @@ public class SVNUIMessages extends BaseMessages {
 	public static String Operation_AddRepositoryLocation_Error;
 	public static String Operation_CreateLockResourcesHierarchy;
 	public static String Operation_CreateLockResourcesHierarchy_Id;
-	public static String Operation_CreateLockResourcesHierarchy_Error;
+	public static String Operation_CreateLockResourcesHierarchy_Error;	
+	public static String Operation_EditRevisionLink;
+	public static String Operation_EditRevisionLink_Id;
+	public static String Operation_EditRevisionLink_Error;
 	
 	public static String OptionsActionGroup_ShowInfoContiguous;
 	public static String OverrideResourcesPanel_Affected;
@@ -1393,7 +1401,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String SelectRepositoryResourcePage_Select_Description;
 	public static String SelectRepositoryResourcePage_Select_Title;
 	public static String SelectRepositoryResourcePage_Title;
-	public static String SelectResourceRevisionAction_InputRevisionPanel_Title;
 	public static String SVNHistoryPanel_ClearFilter;
 	public static String SelectRevisionPanel_Description;
 	public static String SelectRevisionPanel_Message;

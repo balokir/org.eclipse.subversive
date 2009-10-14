@@ -78,10 +78,12 @@ import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
+import org.eclipse.team.svn.core.resource.IRevisionLink;
 import org.eclipse.team.svn.core.resource.SSHSettings;
 import org.eclipse.team.svn.core.resource.SSLSettings;
 import org.eclipse.team.svn.core.svnstorage.SVNCachedProxyCredentialsManager;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.svn.core.svnstorage.SVNRevisionLink;
 
 /**
  * SVN Utility functions
@@ -500,6 +502,10 @@ public final class SVNUtility {
 	public static IRepositoryResource copyOf(IRepositoryResource resource) {
 		String url = resource.getUrl();
 		return resource instanceof IRepositoryFile ? (IRepositoryResource)resource.asRepositoryFile(url, false) : resource.asRepositoryContainer(url, false);
+	}
+	
+	public static IRevisionLink createRevisionLink(IRepositoryResource resource) {
+		return new SVNRevisionLink(resource);
 	}
 	
 	public static IRepositoryResource []makeResourceSet(IRepositoryResource upPoint, String relativeReference, boolean isFile) {

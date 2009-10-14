@@ -144,7 +144,8 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 	}
 	
 	protected static void setRepositoryLocation(IProject project, IRepositoryLocation location) throws CoreException {
-		project.setPersistentProperty(SVNTeamProvider.LOCATION_PROPERTY, SVNRemoteStorage.instance().repositoryLocationAsReference(location));
+		//as property length is limited by size, we don't save revision link comments
+		project.setPersistentProperty(SVNTeamProvider.LOCATION_PROPERTY, SVNRemoteStorage.instance().repositoryLocationAsReference(location, false));
 	}
 	
 	protected void restoreLocation() throws HiddenException {

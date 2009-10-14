@@ -24,8 +24,9 @@ import org.eclipse.team.svn.core.operation.remote.management.AddRevisionLinkOper
 import org.eclipse.team.svn.core.operation.remote.management.SaveRepositoryLocationsOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.resource.IRevisionLink;
+import org.eclipse.team.svn.core.resource.IRevisionLinkProvider;
 import org.eclipse.team.svn.core.utility.SVNUtility;
-import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractRepositoryTeamAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.operation.RefreshRepositoryLocationsOperation;
@@ -48,32 +49,41 @@ public class SelectResourceRevisionAction extends AbstractRepositoryTeamAction {
 	
 	protected void runImpl(IRepositoryResource []resources) {
 		SVNRevision selectedRevision = null;
-		
-		if (resources.length == 1) {
-			InputRevisionPanel panel = new InputRevisionPanel(resources[0], SVNUIMessages.SelectResourceRevisionAction_InputRevisionPanel_Title);
-			DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
-			if (dialog.open() == Dialog.OK) {
+		final String comment[] = new String[1];
+				 
+		InputRevisionPanel panel = new InputRevisionPanel(resources.length == 1 ? resources[0] : null, false, null);
+		DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
+		if (dialog.open() == Dialog.OK) {			
+			comment[0] = panel.getRevisionComment();			
+			if (resources.length == 1) {
 				selectedRevision = panel.getSelectedRevision();
 				resources[0] = SVNUtility.copyOf(resources[0]);
-				resources[0].setSelectedRevision(selectedRevision);
+				resources[0].setSelectedRevision(selectedRevision);	
+			}			
+									
+			final LocateResourceURLInHistoryOperation locateOp = new LocateResourceURLInHistoryOperation(resources);
+			AbstractActionOperation mainOp = new AddRevisionLinkOperation(new IRevisionLinkProvider() {
+				public IRevisionLink[] getRevisionLinks() {
+					IRepositoryResource[] resources = locateOp.getRepositoryResources();
+					IRevisionLink[] links = new IRevisionLink[resources.length];
+					for (int i = 0; i < resources.length; i ++) {
+						links[i] = SVNUtility.createRevisionLink(resources[i]);
+						links[i].setComment(comment[0]);
+					} 							
+					return links;
+				}
+			}, selectedRevision);
+			CompositeOperation op = new CompositeOperation(mainOp.getId());
+			op.add(locateOp);
+			op.add(mainOp, new IActionOperation[] {locateOp});
+			op.add(new SaveRepositoryLocationsOperation());
+			HashSet<IRepositoryLocation> locations = new HashSet<IRepositoryLocation>();
+			for (IRepositoryResource resource : resources) {
+				locations.add(resource.getRepositoryLocation());
 			}
-			else {
-				return;
-			}
+			op.add(new RefreshRepositoryLocationsOperation(locations.toArray(new IRepositoryLocation[locations.size()]), true));
+			this.runScheduled(op);
 		}
-		
-		LocateResourceURLInHistoryOperation locateOp = new LocateResourceURLInHistoryOperation(resources);
-		AbstractActionOperation mainOp = new AddRevisionLinkOperation(locateOp, selectedRevision);
-		CompositeOperation op = new CompositeOperation(mainOp.getId());
-		op.add(locateOp);
-		op.add(mainOp, new IActionOperation[] {locateOp});
-		op.add(new SaveRepositoryLocationsOperation());
-		HashSet<IRepositoryLocation> locations = new HashSet<IRepositoryLocation>();
-		for (IRepositoryResource resource : resources) {
-			locations.add(resource.getRepositoryLocation());
-		}
-		op.add(new RefreshRepositoryLocationsOperation(locations.toArray(new IRepositoryLocation[locations.size()]), true));
-		this.runScheduled(op);
 	}
 	
 	public boolean isEnabled() {

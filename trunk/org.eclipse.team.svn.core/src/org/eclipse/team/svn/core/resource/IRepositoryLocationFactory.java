@@ -20,5 +20,8 @@ public interface IRepositoryLocationFactory {
 	public IRepositoryLocation newRepositoryLocation();
 	public void copyRepositoryLocation(IRepositoryLocation to, IRepositoryLocation from);
 	public IRepositoryLocation newRepositoryLocation(String reference);
-	public String repositoryLocationAsReference(IRepositoryLocation location);
+	/*
+	 * see IRepositoryLocation class comments why we need 'saveRevisionLinksComments' parameter
+	 */
+	public String repositoryLocationAsReference(IRepositoryLocation location, boolean saveRevisionLinksComments);
 }

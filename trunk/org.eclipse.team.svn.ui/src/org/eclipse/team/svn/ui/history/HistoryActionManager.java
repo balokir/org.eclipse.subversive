@@ -40,6 +40,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -108,6 +109,8 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceWithStatusProvider;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
+import org.eclipse.team.svn.core.resource.IRevisionLink;
+import org.eclipse.team.svn.core.resource.IRevisionLinkProvider;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
@@ -139,6 +142,7 @@ import org.eclipse.team.svn.ui.operation.ShowHistoryViewOperation;
 import org.eclipse.team.svn.ui.operation.ShowPropertiesOperation;
 import org.eclipse.team.svn.ui.operation.ShowRevisionPropertiesOperation;
 import org.eclipse.team.svn.ui.operation.UILoggedOperation;
+import org.eclipse.team.svn.ui.panel.common.InputRevisionPanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFile;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFolder;
@@ -765,21 +769,37 @@ public class HistoryActionManager {
 		return retVal;
 	}
 	
-	protected void addRevisionLinks(ILogNode []tSelection) {
-		IRepositoryLocation location = this.view.getRepositoryResource().getRepositoryLocation();
-		
-		CompositeOperation op = new CompositeOperation("Operation_HAddSelectedRevision"); //$NON-NLS-1$
-		for (ILogNode node : tSelection) {
-			SVNLogEntry item = (SVNLogEntry)node.getEntity();
-			IRepositoryResource resource = SVNUtility.copyOf(this.view.getRepositoryResource());
-			resource.setSelectedRevision(SVNRevision.fromNumber(item.revision));
-			LocateResourceURLInHistoryOperation locateOp = new LocateResourceURLInHistoryOperation(new IRepositoryResource[] {resource});
-			op.add(locateOp);
-			op.add(new AddRevisionLinkOperation(locateOp, item.revision), new IActionOperation[] {locateOp});
-		}
-		op.add(new SaveRepositoryLocationsOperation());
-		op.add(new RefreshRepositoryLocationsOperation(new IRepositoryLocation [] {location}, true));
-		UIMonitorUtility.doTaskScheduledDefault(op);
+	protected void addRevisionLinks(ILogNode []tSelection) {				
+		InputRevisionPanel panel = new InputRevisionPanel(null, false, null);		
+		DefaultDialog dlg = new DefaultDialog(UIMonitorUtility.getShell(), panel);
+		if (dlg.open() == Dialog.OK) {
+			final String comment = panel.getRevisionComment();
+			IRepositoryLocation location = this.view.getRepositoryResource().getRepositoryLocation();
+			
+			CompositeOperation op = new CompositeOperation("Operation_HAddSelectedRevision"); //$NON-NLS-1$
+			for (ILogNode node : tSelection) {
+				SVNLogEntry item = (SVNLogEntry)node.getEntity();
+				IRepositoryResource resource = SVNUtility.copyOf(this.view.getRepositoryResource());
+				resource.setSelectedRevision(SVNRevision.fromNumber(item.revision));
+				final LocateResourceURLInHistoryOperation locateOp = new LocateResourceURLInHistoryOperation(new IRepositoryResource[] {resource});
+				op.add(locateOp);
+							
+				op.add(new AddRevisionLinkOperation(new IRevisionLinkProvider() {
+					public IRevisionLink[] getRevisionLinks() {
+						IRepositoryResource[] resources = locateOp.getRepositoryResources();																									
+						IRevisionLink[] links = new IRevisionLink[resources.length];
+						for (int i = 0; i < resources.length; i ++) {
+							links[i] = SVNUtility.createRevisionLink(resources[i]);
+							links[i].setComment(comment);
+						} 							
+						return links;
+					}				
+				}, item.revision), new IActionOperation[] {locateOp});
+			}
+			op.add(new SaveRepositoryLocationsOperation());
+			op.add(new RefreshRepositoryLocationsOperation(new IRepositoryLocation [] {location}, true));
+			UIMonitorUtility.doTaskScheduledDefault(op);
+		}	
 	}
 	
 	protected void updateTo(final SVNLogEntry item) {	    
@@ -1553,12 +1573,37 @@ public class HistoryActionManager {
 		}
 		return url;
 	}
-	
-	protected void addRevisionLink(IActionOperation preOp, IRepositoryResourceProvider provider) {
+		
+	protected void addRevisionLink(IActionOperation preOp, final IRepositoryResourceProvider provider) {
 		CompositeOperation op = new CompositeOperation("Operation_HAddSelectedRevision"); //$NON-NLS-1$
 		op.add(preOp);
-		IActionOperation []condition = new IActionOperation[] {preOp};
-		op.add(new AddRevisionLinkOperation(provider, this.selectedRevision), condition);
+		IActionOperation []condition = new IActionOperation[] {preOp};						
+		op.add(new AddRevisionLinkOperation(new IRevisionLinkProvider() {
+			public IRevisionLink[] getRevisionLinks() {				
+				IRepositoryResource[] resources = provider.getRepositoryResources();
+				final int[] dlgRes = new int[1]; 				
+				final InputRevisionPanel panel = new InputRevisionPanel(null, false, null);
+				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+					public void run() {
+						DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getShell(), panel);	
+						dlgRes[0] = dialog.open();
+					}					
+				});								
+				String comment = null;
+				if (dlgRes[0] == Dialog.OK) {						
+					comment = panel.getRevisionComment();
+				}
+				else {
+					return new IRevisionLink[0];
+				}															
+				IRevisionLink[] links = new IRevisionLink[resources.length];
+				for (int i = 0; i < resources.length; i ++) {
+					links[i] = SVNUtility.createRevisionLink(resources[i]);
+					links[i].setComment(comment);
+				} 							
+				return links;
+			}			
+		}, this.selectedRevision), condition);
 		op.add(new SaveRepositoryLocationsOperation(), condition);
 		op.add(new RefreshRepositoryLocationsOperation(new IRepositoryLocation [] {this.view.getRepositoryResource().getRepositoryLocation()}, true), condition);
 		UIMonitorUtility.doTaskScheduledDefault(op);
