@@ -1410,6 +1410,15 @@
                id="org.eclipse.team.svn.ui.action.remote.management.DiscardRevisionLinksAction">
          </action>
          
+         <action
+               label="%EditRevisionLinkAction.label"
+               helpContextId="org.eclipse.team.svn.ui.edit_revision_link_action_context"
+               class="org.eclipse.team.svn.ui.action.remote.management.EditRevisionLinkAction"
+               tooltip="%EditRevisionLinkAction.tooltip"               
+               menubarPath="checkoutGroup"
+               id="org.eclipse.team.svn.ui.action.remote.management.EditRevisionLinkAction">
+         </action>         
+         
       </objectContribution>
       
       <objectContribution

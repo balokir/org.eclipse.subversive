@@ -28,7 +28,13 @@ public interface IRepositoryLocation extends IRepositoryBase, IRepositoryResourc
 	public void setLabel(String label);
 	public String getLabel();
 
-	public String asReference();
+	/*
+	 * As in some cases there can be limitations on reference string size, e.g.
+	 * storing reference string in project set file, 
+	 * storing as Eclipse persistent property(which is limited be Eclipse),
+	 * we provide an option to not save revision link comments
+	 */
+	public String asReference(boolean saveRevisionLinksComments);
 	public void fillLocationFromReference(String [] referenceParts);
 	
 	public String getUrlAsIs();
@@ -53,9 +59,9 @@ public interface IRepositoryLocation extends IRepositoryBase, IRepositoryResourc
 	public void setTagsLocation(String location);
 	public String getUserInputTags();
 	
-	public IRepositoryResource []getRevisionLinks();
-	public void addRevisionLink(IRepositoryResource link);
-	public void removeRevisionLink(IRepositoryResource link);
+	public IRevisionLink []getRevisionLinks();
+	public void addRevisionLink(IRevisionLink link);
+	public void removeRevisionLink(IRevisionLink link);
 
 	public String getUsername();
 	public void setUsername(String username);

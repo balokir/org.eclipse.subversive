@@ -11,12 +11,14 @@
 
 package org.eclipse.team.svn.ui.repository.model;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.resource.IRevisionLink;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -26,17 +28,16 @@ import org.eclipse.ui.PlatformUI;
  * 
  * @author Alexander Gurov
  */
-public class RepositoryRevision extends RepositoryFictiveNode implements IParentTreeNode, IDataTreeNode {
+public class RepositoryRevision extends RepositoryFictiveNode implements IParentTreeNode, IDataTreeNode, IToolTipProvider {
 	protected static String REVISION_NAME;
-	protected IRepositoryResource []resources;
 	protected RepositoryResource []wrappers;
-	protected RepositoryRevisions parent;
+	protected IRevisionLink link;
 	protected SVNRevision revision;
 	
-	public RepositoryRevision(RepositoryRevisions parent, SVNRevision revision) {
+	public RepositoryRevision(IRevisionLink link) {
 		RepositoryRevision.REVISION_NAME = SVNUIMessages.RepositoriesView_Model_Revision;
-		this.parent = parent;
-		this.revision = revision;
+		this.link = link;
+		this.revision = this.link.getRepositoryResource().getSelectedRevision();				
 		this.refresh();
 	}
 	
@@ -52,13 +53,16 @@ public class RepositoryRevision extends RepositoryFictiveNode implements IParent
     	return RepositoryResource.NOT_RELATED_NODES_FONT.getFontData()[0];
     }
     
-	public IRepositoryResource []getRepositoryResources() {
-		return this.resources;
+    public SVNRevision getRevision() {
+    	return this.revision;
+    }
+    
+	public IRevisionLink getRevisionLink() {
+		return this.link;
 	}
 	
 	public void refresh() {
-		this.resources = this.parent.getLinks(this.revision);
-		this.wrappers = RepositoryFolder.wrapChildren(null, this.resources, null);
+		this.wrappers = RepositoryFolder.wrapChildren(null, new IRepositoryResource[] {this.link.getRepositoryResource()}, null);
 	}
 	
 	public Object getData() {
@@ -69,8 +73,24 @@ public class RepositoryRevision extends RepositoryFictiveNode implements IParent
 		return true;
 	}
 	
-	public String getLabel(Object o) {
-		return BaseMessages.format(RepositoryRevision.REVISION_NAME, new Object[] {this.revision.toString()});
+	public String getLabel() {
+		//TODO check externals to other repositories		
+		//TODO after changing externals to other repositories, location isn't updated
+		
+		//show resource url relative to repository root
+		IRepositoryResource resource = this.link.getRepositoryResource();
+		IPath rootPath = new Path(resource.getRepositoryLocation().getRepositoryRootUrl());
+		IPath resourcePath = new Path(resource.getUrl());
+		if (rootPath.isPrefixOf(resourcePath)) {
+			IPath relativePath = resourcePath.makeRelativeTo(rootPath);
+			return "^" + (relativePath.isEmpty() ? "" : ("/" + relativePath.toString())); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		} else {
+			return resourcePath.toString();
+		}								
+	}
+	
+	public String getLabel(Object o) {		
+		return this.getLabel() + " " + this.revision.toString(); //$NON-NLS-1$
 	}
 
 	public Object[] getChildren(Object o) {
@@ -84,9 +104,13 @@ public class RepositoryRevision extends RepositoryFictiveNode implements IParent
 	public boolean equals(Object obj) {
 		if (obj != null && obj instanceof RepositoryRevision) {
 			RepositoryRevision other = (RepositoryRevision)obj;
-			return this.parent.equals(other.parent) && this.revision.equals(other.revision);
+			return this.revision.equals(other.revision);
 		}
 		return super.equals(obj);
+	}
+
+	public String getToolTipMessage(String formatString) {	
+		return this.link.getComment();
 	}
 	
 }

@@ -46,6 +46,7 @@ import org.eclipse.team.svn.ui.action.remote.OpenFileWithAction;
 import org.eclipse.team.svn.ui.action.remote.RefreshAction;
 import org.eclipse.team.svn.ui.action.remote.management.DiscardRepositoryLocationAction;
 import org.eclipse.team.svn.ui.action.remote.management.DiscardRevisionLinksAction;
+import org.eclipse.team.svn.ui.action.remote.management.EditRevisionLinkAction;
 import org.eclipse.team.svn.ui.action.remote.management.NewRepositoryLocationAction;
 import org.eclipse.team.svn.ui.action.remote.management.RefreshRepositoryLocationAction;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
@@ -53,6 +54,7 @@ import org.eclipse.team.svn.ui.repository.browser.RepositoryBrowser;
 import org.eclipse.team.svn.ui.repository.model.RepositoriesRoot;
 import org.eclipse.team.svn.ui.repository.model.RepositoryContentProvider;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFile;
+import org.eclipse.team.svn.ui.repository.model.RepositoryRevision;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorDescriptor;
@@ -272,6 +274,9 @@ public class RepositoriesView extends ViewPart {
 	        		else if (event.keyCode == SWT.DEL) {
 	        		    RepositoriesView.this.handleDeleteKey(selection);
 	        		}
+	        		else if (event.keyCode == SWT.F2) {
+	        		    RepositoriesView.this.handleEdit(selection);
+	        		}
     			}
         	}
         });
@@ -454,6 +459,18 @@ public class RepositoriesView extends ViewPart {
 	    }
 	}
 	
+	protected void handleEdit(IStructuredSelection selection) {
+		if (selection.size() == 1 && selection .getFirstElement() instanceof RepositoryRevision) {
+			Action tmp = new Action() {}; 			
+			AbstractSVNTeamAction action = new EditRevisionLinkAction();
+		    action.selectionChanged(tmp, selection);
+		    action.setActivePart(tmp, RepositoriesView.this);
+		    if (tmp.isEnabled()) {
+			    action.run(tmp);
+		    }
+		} 				
+	}
+		
 	protected void handleDoubleClick(IStructuredSelection selection) {
 	    Action tmp = new Action() {};
 	    AbstractSVNTeamAction action = new OpenFileAction();

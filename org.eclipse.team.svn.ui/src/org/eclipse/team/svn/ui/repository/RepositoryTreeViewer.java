@@ -65,6 +65,7 @@ import org.eclipse.team.svn.ui.repository.model.RepositoryBranches;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFile;
 import org.eclipse.team.svn.ui.repository.model.RepositoryFolder;
 import org.eclipse.team.svn.ui.repository.model.RepositoryResource;
+import org.eclipse.team.svn.ui.repository.model.RepositoryRevision;
 import org.eclipse.team.svn.ui.repository.model.RepositoryRoot;
 import org.eclipse.team.svn.ui.repository.model.RepositoryTags;
 import org.eclipse.team.svn.ui.repository.model.RepositoryTrunk;
@@ -103,6 +104,7 @@ public class RepositoryTreeViewer extends TreeViewer {
 		RepositoryTreeViewer.class2Format.put(RepositoryRoot.class, RepositoryTreeViewer.FMT_REPOSITORY_ROOT);
 		RepositoryTreeViewer.class2Format.put(RepositoryTags.class, RepositoryTreeViewer.FMT_REPOSITORY_TAGS);
 		RepositoryTreeViewer.class2Format.put(RepositoryTrunk.class, RepositoryTreeViewer.FMT_REPOSITORY_TRUNK);
+		RepositoryTreeViewer.class2Format.put(RepositoryRevision.class, "");
 	}
 
 	public static interface IRefreshVisitor {
@@ -438,9 +440,11 @@ public class RepositoryTreeViewer extends TreeViewer {
 				Tree tree = RepositoryTreeViewer.this.getTree();
 				TreeItem item = tree.getItem(new Point(e.x, e.y));
 				if (item != null) {
-					Object data = item.getData();
-					if (data != null && data instanceof IToolTipProvider) {
-						tooltipText = ((IToolTipProvider)data).getToolTipMessage(RepositoryTreeViewer.class2Format.get(data.getClass()));
+					Object data = item.getData();					
+					if (data != null) {
+						if (data instanceof IToolTipProvider) {
+							tooltipText = ((IToolTipProvider)data).getToolTipMessage(RepositoryTreeViewer.class2Format.get(data.getClass()));
+						}
 					}
 				}
 				tree.setToolTipText(tooltipText);

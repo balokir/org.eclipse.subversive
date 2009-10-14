@@ -13,11 +13,12 @@ package org.eclipse.team.svn.core.operation.remote.management;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
-import org.eclipse.team.svn.core.operation.remote.AbstractRepositoryOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
-import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
+import org.eclipse.team.svn.core.resource.IRevisionLink;
+import org.eclipse.team.svn.core.resource.IRevisionLinkProvider;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
@@ -25,52 +26,68 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  * 
  * @author Alexander Gurov
  */
-public class AddRevisionLinkOperation extends AbstractRepositoryOperation {
+public class AddRevisionLinkOperation extends AbstractActionOperation {
+	
+	private IRevisionLink []links;
+	private IRevisionLinkProvider provider;	
 	protected SVNRevision revision;
 	
-	public AddRevisionLinkOperation(IRepositoryResource resource, long revision) {
-		this(resource, SVNRevision.fromNumber(revision));
+	public AddRevisionLinkOperation(IRevisionLink link, long revision) {
+		this(link, SVNRevision.fromNumber(revision));
 	}
 	
-	public AddRevisionLinkOperation(IRepositoryResource resource, SVNRevision revision) {
-		super("Operation_AddRevisionLink", new IRepositoryResource[] {resource}); //$NON-NLS-1$
+	public AddRevisionLinkOperation(IRevisionLink link, SVNRevision revision) {
+		this();
+		this.links = new IRevisionLink[]{link};
 		this.revision = revision;
 	}
 	
-	public AddRevisionLinkOperation(IRepositoryResourceProvider provider, long revision) {
+	public AddRevisionLinkOperation(IRevisionLinkProvider provider, long revision) {
 		this(provider, SVNRevision.fromNumber(revision));
 	}
 	
-	public AddRevisionLinkOperation(IRepositoryResourceProvider provider, SVNRevision revision) {
-		super("Operation_AddRevisionLink", provider); //$NON-NLS-1$
+	public AddRevisionLinkOperation(IRevisionLinkProvider provider, SVNRevision revision) {
+		this();
+		this.provider = provider;
 		this.revision = revision;
+	}	
+	
+	public AddRevisionLinkOperation() {
+		super("Operation_AddRevisionLink"); //$NON-NLS-1$
+	}
+		
+	protected IRevisionLink []operableData() {
+		return this.links == null ? this.provider.getRevisionLinks() : this.links;
 	}
 	
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		IRepositoryResource []resources = this.operableData();
-		for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
-			final IRepositoryResource source = resources[i];
+		IRevisionLink []links = this.operableData();
+		for (int i = 0; i < links.length && !monitor.isCanceled(); i++) {
+			final IRevisionLink source = links[i];
 			this.protectStep(new IUnprotectedOperation() {
-				public void run(IProgressMonitor monitor) throws Exception {
-					IRepositoryLocation location = source.getRepositoryLocation();
-					IRepositoryResource target = SVNUtility.copyOf(source);
+				public void run(IProgressMonitor monitor) throws Exception {		
+					IRepositoryResource sourceResource = source.getRepositoryResource(); 
+					IRepositoryLocation location = sourceResource.getRepositoryLocation();
+					IRepositoryResource targetResource = SVNUtility.copyOf(sourceResource);
 					
-					SVNRevision selectedRevision = AddRevisionLinkOperation.this.revision == null ? source.getSelectedRevision() : AddRevisionLinkOperation.this.revision;
+					SVNRevision selectedRevision = AddRevisionLinkOperation.this.revision == null ? sourceResource.getSelectedRevision() : AddRevisionLinkOperation.this.revision;
 					if (selectedRevision.equals(SVNRevision.HEAD)) {
-						selectedRevision = SVNRevision.fromNumber(source.getRevision());
+						selectedRevision = SVNRevision.fromNumber(sourceResource.getRevision());
 					}
 					
-					SVNRevision pegRevision = source.getPegRevision();
+					SVNRevision pegRevision = sourceResource.getPegRevision();
 					if (pegRevision.equals(SVNRevision.HEAD)) {
 						pegRevision = SVNRevision.fromNumber(location.getRepositoryRoot().getRevision());
 					}
 					
-					target.setSelectedRevision(selectedRevision);
-					target.setPegRevision(pegRevision);
+					targetResource.setSelectedRevision(selectedRevision);
+					targetResource.setPegRevision(pegRevision);
 					
-					location.addRevisionLink(target);
+					IRevisionLink link = SVNUtility.createRevisionLink(targetResource);
+					link.setComment(source.getComment());
+					location.addRevisionLink(link);
 				}
-			}, monitor, resources.length);
+			}, monitor, links.length);
 		}
 	}
 	

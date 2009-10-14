@@ -49,6 +49,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
+import org.eclipse.team.svn.core.resource.IRevisionLink;
 import org.eclipse.team.svn.core.resource.SSHSettings;
 import org.eclipse.team.svn.core.resource.SSLSettings;
 import org.eclipse.team.svn.core.utility.ILoggedOperationFactory;
@@ -83,14 +84,14 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	protected String password;
 	protected boolean passwordSaved;
 	private transient String passwordTemporary;
-	private List serializedRevisionLinks;
+	private List<byte[]> serializedRevisionLinks;
 	private SSLSettings sslSettings;
 	private SSHSettings sshSettings;
 	
 	private transient List<ISVNConnector> proxyCache;
 	private transient HashSet<ISVNConnector> usedProxies;
 	private transient HashMap<Thread, ProxyHolder> thread2Proxy;
-	private transient IRepositoryResource []revisionLinks;
+	private transient IRevisionLink []revisionLinks;
     protected transient boolean trustSiteDefined;
     protected transient int trustSite;
     protected transient int proxyConfigurationState;
@@ -113,7 +114,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		this.id = id;
 	}
 	
-	public String asReference() {
+	public String asReference(boolean saveRevisionLinksComments) {
 		String reference = this.id;
 		reference += ";" + this.getUrlAsIs(); //$NON-NLS-1$
 		reference += ";" + this.getLabel(); //$NON-NLS-1$
@@ -137,9 +138,10 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 			}
 		}
 		reference += ";"; //$NON-NLS-1$
-		IRepositoryResource [] revisionLinks = this.getRevisionLinks();
+		
+		IRevisionLink[] revisionLinks = this.getRevisionLinks();
 		for (int i = 0; i < revisionLinks.length; i++) {
-			String base64revLink = new String(Base64.encode(SVNRemoteStorage.instance().repositoryResourceAsBytes(revisionLinks[i])));
+			String base64revLink = new String(Base64.encode(SVNRemoteStorage.instance().revisionLinkAsBytes(revisionLinks[i], saveRevisionLinksComments)));
 			if (i < revisionLinks.length - 1) {
 				reference += base64revLink + "^"; //$NON-NLS-1$
 			}
@@ -205,7 +207,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		if (containRevisionLinks) {
 			String [] revLinks = referenceParts[12].split("\\^"); //$NON-NLS-1$
 			for (int i = 0 ; i < revLinks.length; i++) {
-				this.addRevisionLink(SVNRemoteStorage.instance().repositoryResourceFromBytes(Base64.decode(revLinks[i].getBytes()), this));
+				this.addRevisionLink(SVNRemoteStorage.instance().revisionLinkFromBytes(Base64.decode(revLinks[i].getBytes()), this));
 			}
 		}
 	}
@@ -368,50 +370,50 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		return this.passwordSaved;
 	}
 
-	public IRepositoryResource []getRevisionLinks() {
+	public IRevisionLink []getRevisionLinks() {
 		synchronized (this.lazyInitLock) {
 			if (this.revisionLinks == null) {
-				List serialized = this.getSerializedRevisionLinks();
-				this.revisionLinks = new IRepositoryResource[serialized.size()];
+				List<byte[]> serialized = this.getSerializedRevisionLinks();
+				this.revisionLinks = new IRevisionLink[serialized.size()];
 				for (int i = 0; i < this.revisionLinks.length; i++) {
 					byte []data = (byte [])serialized.get(i);
-					this.revisionLinks[i] = SVNRemoteStorage.instance().repositoryResourceFromBytes(data, this);
+					this.revisionLinks[i] = SVNRemoteStorage.instance().revisionLinkFromBytes(data, this);
 				}
 			}
 			return this.revisionLinks;
 		}
 	}
 	
-	public void addRevisionLink(IRepositoryResource link) {
+	public void addRevisionLink(IRevisionLink link) {
 		synchronized (this.lazyInitLock) {
-			IRepositoryResource []links = this.getRevisionLinks();
+			IRevisionLink []links = this.getRevisionLinks();
 			int idx = -1;
 			for (int i = 0; i < links.length; i++) {
-				if (links[i].equals(link) && links[i].getSelectedRevision().equals(link.getSelectedRevision())) {
+				if (links[i].equals(link) && links[i].getRepositoryResource().getSelectedRevision().equals(link.getRepositoryResource().getSelectedRevision())) {
 					idx = i;
 					break;
 				}
 			}
 			if (idx == -1) {
-				List serialized = this.getSerializedRevisionLinks();
-				serialized.add(SVNRemoteStorage.instance().repositoryResourceAsBytes(link));
+				List<byte[]> serialized = this.getSerializedRevisionLinks();
+				serialized.add(SVNRemoteStorage.instance().revisionLinkAsBytes(link, true));
 				this.revisionLinks = null;
 			}
 		}
 	}
 	
-	public void removeRevisionLink(IRepositoryResource link) {
+	public void removeRevisionLink(IRevisionLink link) {
 		synchronized (this.lazyInitLock) {
-			IRepositoryResource []links = this.getRevisionLinks();
+			IRevisionLink []links = this.getRevisionLinks();
 			int idx = -1;
 			for (int i = 0; i < links.length; i++) {
-				if (links[i].equals(link) && links[i].getSelectedRevision().equals(link.getSelectedRevision())) {
+				if (links[i].equals(link) && links[i].getRepositoryResource().getSelectedRevision().equals(link.getRepositoryResource().getSelectedRevision())) {
 					idx = i;
 					break;
 				}
 			}
 			if (idx != -1) {
-				List serialized = this.getSerializedRevisionLinks();
+				List<byte[]> serialized = this.getSerializedRevisionLinks();
 				serialized.remove(idx);
 				this.revisionLinks = null;
 			}
@@ -424,8 +426,8 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 
 	public void setUrl(String url) {
 		String oldRootUrl = this.getRepositoryRootUrl();
-		IRepositoryResource []oldLinks = this.getRevisionLinks();
-		List serialized = this.getSerializedRevisionLinks();
+		IRevisionLink[] oldLinks = this.getRevisionLinks();
+		List<byte[]> serialized = this.getSerializedRevisionLinks();
 		
 		this.url = url;
 		
@@ -437,21 +439,22 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 				String newRootUrl = this.getRepositoryRootUrl();
 				synchronized (this.lazyInitLock) {
 					for (int i = 0; i < oldLinks.length; i++) {
-						String linkUrl = oldLinks[i].getUrl();
+						String linkUrl = oldLinks[i].getRepositoryResource().getUrl();
 						int idx = linkUrl.indexOf(oldRootUrl);
 						if (idx == -1) {
 							serialized.set(i, null);
 						}
 						else {
 							linkUrl = newRootUrl + linkUrl.substring(idx + oldRootUrl.length());
-							IRepositoryResource resource = oldLinks[i] instanceof IRepositoryFile ? (IRepositoryResource)this.asRepositoryFile(linkUrl, false) : this.asRepositoryContainer(linkUrl, false);
-							resource.setPegRevision(oldLinks[i].getPegRevision());
-							resource.setSelectedRevision(oldLinks[i].getSelectedRevision());
-							
-							serialized.set(i, SVNRemoteStorage.instance().repositoryResourceAsBytes(resource));
+							IRepositoryResource tmpResource = oldLinks[i] instanceof IRepositoryFile ? (IRepositoryResource)this.asRepositoryFile(linkUrl, false) : this.asRepositoryContainer(linkUrl, false);
+							IRevisionLink link = SVNUtility.createRevisionLink(tmpResource);							
+							link.getRepositoryResource().setPegRevision(oldLinks[i].getRepositoryResource().getPegRevision());
+							link.getRepositoryResource().setSelectedRevision(oldLinks[i].getRepositoryResource().getSelectedRevision());
+							link.setComment(oldLinks[i].getComment());							
+							serialized.set(i, SVNRemoteStorage.instance().revisionLinkAsBytes(link, true));
 						}
 					}
-					for (Iterator it = serialized.iterator(); it.hasNext(); ) {
+					for (Iterator<byte[]> it = serialized.iterator(); it.hasNext(); ) {
 						if (it.next() == null) {
 							it.remove();
 						}
@@ -758,9 +761,9 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		return proxy;
 	}
 	
-	protected List getSerializedRevisionLinks() {
+	protected List<byte[]> getSerializedRevisionLinks() {
 		if (this.serializedRevisionLinks == null) {
-			this.serializedRevisionLinks = new ArrayList();
+			this.serializedRevisionLinks = new ArrayList<byte[]>();
 		}
 		return this.serializedRevisionLinks;
 	}

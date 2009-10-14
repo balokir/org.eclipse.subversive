@@ -53,7 +53,7 @@ public class DefaultProjectSetHandler implements IProjectSetHandler {
 		fullReference += "," + resource.getUrl(); //$NON-NLS-1$
 		fullReference += "," + project.getName(); //$NON-NLS-1$
 		
-		fullReference += "," + SVNRemoteStorage.instance().repositoryLocationAsReference(location); //$NON-NLS-1$
+		fullReference += "," + SVNRemoteStorage.instance().repositoryLocationAsReference(location, false); //$NON-NLS-1$
 		
 		return fullReference;
 	}

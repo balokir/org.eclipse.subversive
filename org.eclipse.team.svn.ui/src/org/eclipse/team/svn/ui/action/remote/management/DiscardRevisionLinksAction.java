@@ -20,7 +20,7 @@ import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.remote.management.SaveRepositoryLocationsOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
-import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.resource.IRevisionLink;
 import org.eclipse.team.svn.ui.action.AbstractRepositoryTeamAction;
 import org.eclipse.team.svn.ui.dialog.DiscardConfirmationDialog;
 import org.eclipse.team.svn.ui.operation.RefreshRepositoryLocationsOperation;
@@ -43,19 +43,16 @@ public class DiscardRevisionLinksAction extends AbstractRepositoryTeamAction {
 		if (dialog.open() == 0) {
 			HashSet<IRepositoryLocation> locations = new HashSet<IRepositoryLocation>();
 			for (int i = 0; i < revisions.length; i++) {
-				locations.add(revisions[i].getRepositoryResources()[0].getRepositoryLocation());
+				locations.add(revisions[i].getRevisionLink().getRepositoryResource().getRepositoryLocation());
 			}
 			AbstractActionOperation mainOp = new AbstractActionOperation("Operation_RemoveRevisionLinks") { //$NON-NLS-1$
-				protected void runImpl(IProgressMonitor monitor)
-						throws Exception {
+				protected void runImpl(IProgressMonitor monitor) throws Exception {
 					for (int i = 0; i < revisions.length; i++) {
-						final IRepositoryResource []links = revisions[i].getRepositoryResources();
+						final IRevisionLink link = revisions[i].getRevisionLink();
 						this.protectStep(new IUnprotectedOperation() {
 							public void run(IProgressMonitor monitor) throws Exception {
-								for (int i = 0; i < links.length; i++) {
-									IRepositoryLocation location = links[i].getRepositoryLocation();
-									location.removeRevisionLink(links[i]);
-								}
+								IRepositoryLocation location = link.getRepositoryResource().getRepositoryLocation();
+								location.removeRevisionLink(link);
 							}
 						}, monitor, revisions.length);
 					}
