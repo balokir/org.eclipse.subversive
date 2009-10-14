@@ -1207,7 +1207,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String RepositoriesView_CompareWith;
 	public static String RepositoriesView_Model_Error;
 	public static String RepositoriesView_Model_Pending;
-	public static String RepositoriesView_Model_Revision;
 	public static String RepositoriesView_Model_Revisions;
 	public static String RepositoriesView_Model_Root;
 	public static String RepositoriesView_New;
