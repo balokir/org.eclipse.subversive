@@ -258,5 +258,8 @@ public class SVNRepositoryLocationWrapper implements IRepositoryLocation {
 	public boolean isPasswordSavedForRealm(String realm) {
 		return this.location.isPasswordSavedForRealm(realm);
 	}
-	
+
+	public boolean equals(Object obj) {
+		return this.location.equals(obj); 
+	}
 }

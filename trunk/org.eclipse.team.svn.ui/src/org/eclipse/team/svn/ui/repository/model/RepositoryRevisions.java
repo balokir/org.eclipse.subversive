@@ -89,7 +89,7 @@ public class RepositoryRevisions extends RepositoryFictiveNode implements IParen
 			IRevisionLink[] links = this.location.getRevisionLinks();				
 			this.children = new RepositoryRevision[links.length];
 			for (int i = 0; i < links.length; i++) {
-				this.children[i] = new RepositoryRevision(links[i]);
+				this.children[i] = new RepositoryRevision(this, links[i]);
 			}
 			Arrays.sort(this.children, new Comparator<RepositoryRevision>() {
 				public int compare(RepositoryRevision o1, RepositoryRevision o2) {			
