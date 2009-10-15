@@ -199,7 +199,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 		if (this.startsWith) {
 			select = new Group(parent, SWT.NULL);
 			layout.numColumns = 2;
-			((Group) select).setText(this.considerStructure ? substitutionUppercase : SVNUIMessages.getString(this.nationalizationId + "_Location_roup")); //$NON-NLS-1$
+			((Group) select).setText(this.considerStructure ? substitutionUppercase : SVNUIMessages.getString(this.nationalizationId + "_Location_Group")); //$NON-NLS-1$
 		}
 		else {
 			select = new Composite(parent, SWT.NONE);
