@@ -48,24 +48,22 @@ public class RepositoryTreePanel extends AbstractDialogPanel {
 	protected boolean allowSourcesInTree;
 	protected boolean allowFiles;
 	protected boolean autoExpandFirstLevel;
+	protected boolean showRevisionLinks;
 	
-	public RepositoryTreePanel(String title, IRepositoryResource[] resources, boolean allowSourcesInTree) {
+	public RepositoryTreePanel(String title, IRepositoryResource[] resources, boolean allowSourcesInTree, boolean showRevisionLinks) {
 		this(title,
 			SVNUIMessages.RepositoryTreePanel_Description, 
 			AbstractDialogPanel.makeToBeOperatedMessage(resources), 
 			resources, 
-			allowSourcesInTree);
+			allowSourcesInTree,
+			showRevisionLinks);
 	}
 	
-	public RepositoryTreePanel(String title, String description, String message, IRepositoryResource[] resources, boolean allowSourcesInTree) {
-		this(title, description, message, resources, allowSourcesInTree, null);
+	public RepositoryTreePanel(String title, String description, String message, IRepositoryResource[] resources, boolean allowSourcesInTree, boolean showRevisionLinks) {
+		this(title, description, message, resources, allowSourcesInTree, null, showRevisionLinks);
 	}
 	
-	public void setAutoExpandFirstLevel(boolean autoExpandFirstLevel) {
-		this.autoExpandFirstLevel = autoExpandFirstLevel;
-	}
-	
-	public RepositoryTreePanel(String title, String description, String message, IRepositoryResource[] resources, boolean allowSourcesInTree, IRepositoryBase root) {
+	public RepositoryTreePanel(String title, String description, String message, IRepositoryResource[] resources, boolean allowSourcesInTree, IRepositoryBase root, boolean showRevisionLinks) {
 		super();
 		this.dialogTitle = title;
 		this.dialogDescription = description;
@@ -73,7 +71,12 @@ public class RepositoryTreePanel extends AbstractDialogPanel {
 		this.selectedResources = resources;
 		this.allowSourcesInTree = allowSourcesInTree;
 		this.allowFiles = false;
-		this.root = root;
+		this.root = root;		
+		this.showRevisionLinks = showRevisionLinks;
+	}
+	
+	public void setAutoExpandFirstLevel(boolean autoExpandFirstLevel) {
+		this.autoExpandFirstLevel = autoExpandFirstLevel;
 	}
 	
 	public boolean isAllowFiles() {
@@ -93,7 +96,7 @@ public class RepositoryTreePanel extends AbstractDialogPanel {
 			this.repositoryTree = new RepositoryTreeComposite(parent, SWT.BORDER, false, this.root);
 		}
 		else if (this.selectedResources.length > 0) {
-			this.repositoryTree = new RepositoryTreeComposite(parent, SWT.BORDER, false, new ProjectRoot(this.selectedResources[0]));
+			this.repositoryTree = new RepositoryTreeComposite(parent, SWT.BORDER, false, new ProjectRoot(this.selectedResources[0], this.showRevisionLinks));
 		}
 		else {
 			this.repositoryTree = new RepositoryTreeComposite(parent, SWT.BORDER);
@@ -108,7 +111,7 @@ public class RepositoryTreePanel extends AbstractDialogPanel {
 			this.repositoryTree.setFilter(new RepositoryLocationFilter(url) {
 				public boolean accept(Object obj) {
 					if (obj instanceof RepositoryFile && !RepositoryTreePanel.this.allowFiles || 
-						obj instanceof RepositoryRevisions || 
+						!RepositoryTreePanel.this.showRevisionLinks && obj instanceof RepositoryRevisions || 
 						obj instanceof RepositoryFolder && RepositoryTreePanel.this.isSource(((RepositoryFolder)obj).getRepositoryResource())) {
 						return false;
 					}
@@ -155,14 +158,19 @@ public class RepositoryTreePanel extends AbstractDialogPanel {
 	}
 	
 	public static class ProjectRoot extends RepositoryFictiveNode implements IParentTreeNode {
-		protected RepositoryResource []children;
+		protected Object []children;
 		
-		public ProjectRoot(IRepositoryResource resource) {
+		public ProjectRoot(IRepositoryResource resource, boolean showRevisionLinks) {
 			IRepositoryResource projectRoot = SVNUtility.getTrunkLocation(resource);
 			if (((IRepositoryRoot)projectRoot).getKind() == IRepositoryRoot.KIND_TRUNK) {
 				projectRoot = projectRoot.getParent();
+			}	
+			this.children = new Object[showRevisionLinks ? 3 : 2];
+			this.children[0] = RepositoryFolder.wrapChild(null, projectRoot);
+			this.children[1] = RepositoryFolder.wrapChild(null, resource.getRepositoryLocation().getRepositoryRoot());
+			if (showRevisionLinks) {
+				this.children[2] = new RepositoryRevisions(resource.getRepositoryLocation());
 			}
-			this.children = new RepositoryResource[] {RepositoryFolder.wrapChild(null, projectRoot), RepositoryFolder.wrapChild(null, resource.getRepositoryLocation().getRepositoryRoot())};
 		}
 
 		public boolean hasChildren() {

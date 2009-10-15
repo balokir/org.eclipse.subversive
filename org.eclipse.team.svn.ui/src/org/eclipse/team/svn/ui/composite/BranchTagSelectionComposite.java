@@ -158,7 +158,7 @@ public class BranchTagSelectionComposite extends Composite {
 					panel = new RepositoryTreePanel(part,
 							SVNUIMessages.RepositoryBrowsingPanel_Description,
 							SVNUIMessages.RepositoryBrowsingPanel_Message,
-							null, true, location);
+							null, true, location, false);
 					DefaultDialog browser = new DefaultDialog(BranchTagSelectionComposite.this.getShell(), panel);
 					if (browser.open() == 0) {
 						IRepositoryResource selectedResource = panel.getSelectedResource();

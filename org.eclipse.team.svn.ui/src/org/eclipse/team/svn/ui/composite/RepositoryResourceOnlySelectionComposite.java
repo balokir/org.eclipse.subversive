@@ -224,7 +224,7 @@ public class RepositoryResourceOnlySelectionComposite extends Composite {
 						RepositoryResourceOnlySelectionComposite.this.selectionDescription,
 						null, 
 						true, 
-						RepositoryResourceOnlySelectionComposite.this.baseResource);
+						RepositoryResourceOnlySelectionComposite.this.baseResource, false);
 				panel.setAllowFiles(!RepositoryResourceOnlySelectionComposite.this.foldersOnly);
 				DefaultDialog browser = new DefaultDialog(RepositoryResourceOnlySelectionComposite.this.getShell(), panel);
 				if (browser.open() == 0) {

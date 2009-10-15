@@ -300,7 +300,7 @@ public class RepositoryResourceSelectionComposite extends Composite {
 						RepositoryResourceSelectionComposite.this.selectionTitle,
 						RepositoryResourceSelectionComposite.this.selectionDescription,
 						RepositoryResourceSelectionComposite.this.baseResource == null ? new IRepositoryResource[0] : new IRepositoryResource[] {RepositoryResourceSelectionComposite.this.getSelectedResource()}, 
-						true);
+						true, true);
 				panel.setAllowFiles(!RepositoryResourceSelectionComposite.this.foldersOnly);
 				DefaultDialog browser = new DefaultDialog(RepositoryResourceSelectionComposite.this.getShell(), panel);
 				if (browser.open() == 0) {

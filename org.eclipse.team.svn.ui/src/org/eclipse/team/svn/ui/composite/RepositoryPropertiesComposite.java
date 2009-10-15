@@ -182,7 +182,7 @@ public class RepositoryPropertiesComposite extends Composite implements IPropert
 						SVNUIMessages.RepositoryBrowsingPanel_Message,
 						null,
 						true,
-						location);
+						location, false);
 				panel.setAutoExpandFirstLevel(true);
 				DefaultDialog browser = new DefaultDialog(RepositoryPropertiesComposite.this.getShell(), panel);
 				if (browser.open() == 0) {
