@@ -81,6 +81,27 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 					Path projectPath = this.getProjectPath(parent);
 					if (projectPath != null) {
 						if (status.reposKind != SVNEntry.Kind.DIR) {
+							/*
+							 * The reason why we don't set statuses for all parents
+							 * of resource, but set only for its direct parent:
+							 * there are 3 presentations in old Synchronize view
+							 * (Flat, Tree, Compressed Folders). If we set statuses
+							 * for all parents then in Compressed Folders presentation
+							 * resources are shown in another way as they should be.
+							 * Example:
+							 * Project/src/com/Foo.java
+							 * where Foo.java has incoming changes.
+							 * If we set statuses for all parents Sync view would show:
+							 * Project/
+							 * 	src
+							 * 	src/com
+							 *  	Foo.java
+							 * instead of
+							 * Project
+							 * 	src/com
+							 * 		Foo.java
+							 *   
+							 */
 							this.postStatus(parent, status);
 						}
 						this.postStatus(projectPath.toString(), status);
