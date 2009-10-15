@@ -388,7 +388,6 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 					return null;
 				}
 			});
-
 			browse.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					RepositoryTreePanel panel = new RepositoryTreePanel(SVNUIMessages.getString(
@@ -397,7 +396,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 							SVNUIMessages.RepositoryBrowsingPanel_Message,
 							null,
 							true,
-							AbstractBranchTagPanel.this.root.getRepositoryLocation());
+							AbstractBranchTagPanel.this.root.getRepositoryLocation(), false);
 					DefaultDialog browser = new DefaultDialog(AbstractBranchTagPanel.this.manager.getShell(), panel);
 					if (browser.open() == 0) {
 						IRepositoryResource selected = panel.getSelectedResource();
@@ -438,7 +437,6 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 					return null;
 				}
 			});
-
 			browse.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					RepositoryTreePanel panel = new RepositoryTreePanel(SVNUIMessages.getString(
@@ -447,7 +445,7 @@ public abstract class AbstractBranchTagPanel extends AbstractDialogPanel {
 							SVNUIMessages.RepositoryBrowsingPanel_Message,
 							null,
 							true,
-							AbstractBranchTagPanel.this.root.getRoot());
+							AbstractBranchTagPanel.this.root.getRoot(), false);
 					DefaultDialog browser = new DefaultDialog(AbstractBranchTagPanel.this.manager.getShell(), panel);
 					if (browser.open() == 0) {
 						IRepositoryResource selected = panel.getSelectedResource();

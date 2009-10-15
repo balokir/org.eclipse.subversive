@@ -68,7 +68,7 @@ public class SelectDestinationPage extends AbstractVerifiedWizardPage {
 		composite.setLayoutData(data);
 		data = new GridData(GridData.FILL_BOTH);
 		data.horizontalSpan = 2;
-		this.repositoryTree = new RepositoryTreeComposite(composite, SWT.BORDER, false, new RepositoryTreePanel.ProjectRoot(this.resources[0]));
+		this.repositoryTree = new RepositoryTreeComposite(composite, SWT.BORDER, false, new RepositoryTreePanel.ProjectRoot(this.resources[0], false));
 		ProjectRoot root = (ProjectRoot)this.repositoryTree.getRepositoryTreeViewer().getInput();
 		this.repositoryTree.getRepositoryTreeViewer().setExpandedElements(new Object[] {root.getChildren(null)[0]});
 		String url = this.resources[0].getRepositoryLocation().getRepositoryRootUrl();
