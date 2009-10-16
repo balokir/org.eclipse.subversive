@@ -19,6 +19,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -285,5 +286,10 @@ public class ExternalsEditPanel extends AbstractDialogPanel {
 
 	public boolean isFolder() {
 		return this.isFolder;
+	}
+		
+	@Override
+	protected Point getPrefferedSizeImpl() {	
+		return new Point(520, SWT.DEFAULT);
 	}
 }
