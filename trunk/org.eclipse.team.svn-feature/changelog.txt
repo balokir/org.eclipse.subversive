@@ -8,6 +8,17 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.8.I20091016-1800 [16 October 2009]
+
+Features:
+ * Add ability to specify comments for revision links (bug 292280)
+ 
+ * Add 'Add Revision Link' action to Team menu (bug 292424)
+
+ * Provide annotated revision links to save the original revision if switching between trunk and branch (bug 261983)
+
+--------------------------------------------------------------------------------
+
 Version 0.7.8.I20091009-1900 [09 October 2009]
 
 Features:
