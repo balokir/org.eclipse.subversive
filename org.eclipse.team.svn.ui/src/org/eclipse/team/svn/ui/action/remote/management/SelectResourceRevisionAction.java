@@ -15,6 +15,7 @@ import java.util.HashSet;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
@@ -48,11 +49,18 @@ public class SelectResourceRevisionAction extends AbstractRepositoryTeamAction {
 	}
 	
 	protected void runImpl(IRepositoryResource []resources) {
+		IActionOperation op = SelectResourceRevisionAction.getAddRevisionLinkOperation(resources, this.getShell());
+		if (op != null) {
+			this.runScheduled(op);
+		}
+	}
+	
+	public static IActionOperation getAddRevisionLinkOperation(IRepositoryResource []resources, Shell shell) {
 		SVNRevision selectedRevision = null;
 		final String comment[] = new String[1];
 				 
 		InputRevisionPanel panel = new InputRevisionPanel(resources.length == 1 ? resources[0] : null, false, null);
-		DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
+		DefaultDialog dialog = new DefaultDialog(shell, panel);
 		if (dialog.open() == Dialog.OK) {			
 			comment[0] = panel.getRevisionComment();			
 			if (resources.length == 1) {
@@ -82,8 +90,9 @@ public class SelectResourceRevisionAction extends AbstractRepositoryTeamAction {
 				locations.add(resource.getRepositoryLocation());
 			}
 			op.add(new RefreshRepositoryLocationsOperation(locations.toArray(new IRepositoryLocation[locations.size()]), true));
-			this.runScheduled(op);
+			return op;
 		}
+		return null;
 	}
 	
 	public boolean isEnabled() {
