@@ -523,7 +523,15 @@
                definitionId="org.eclipse.team.svn.ui.command.LockCommand"
                icon="icons/common/actions/lock.gif">
          </action>
-         
+         <action
+               label="%AddRevisionLinkAction.label"
+               helpContextId="org.eclipse.team.svn.ui.team_add_revision_link_action_context"
+               class="org.eclipse.team.svn.ui.action.local.AddRevisionLinkAction"
+               tooltip="%AddRevisionLinkAction.tooltip"
+               menubarPath="team.main/group3"
+               id="org.eclipse.team.svn.ui.action.local.AddRevisionLinkAction"
+               definitionId="org.eclipse.team.svn.ui.command.AddRevisionLinkCommand">
+         </action>          
          <action
                label="%SwitchAction.label"
                helpContextId="org.eclipse.team.svn.ui.team_switch_action_context"
@@ -1953,6 +1961,15 @@
            label="%EditPropertiesAction.label"/>
            
      <action
+           class="org.eclipse.team.svn.ui.action.local.AddRevisionLinkAction"
+           definitionId="org.eclipse.team.svn.ui.command.AddRevisionLinkCommand"
+           id="org.eclipse.team.svn.ui.action.local.AddRevisionLinkAction"
+           menubarPath="svn.main/group3"
+           toolbarPath="Normal/SVN"
+           helpContextId="org.eclipse.team.svn.ui.team_add_revision_link_action_context"
+           tooltip="%AddRevisionLinkAction.tooltip"
+           label="%AddRevisionLinkAction.label"/>           
+     <action
            class="org.eclipse.team.svn.ui.action.local.SwitchAction"
            definitionId="org.eclipse.team.svn.ui.command.SwitchCommand"
            id="org.eclipse.team.svn.ui.action.local.SwitchAction"
@@ -2260,6 +2277,10 @@
           categoryId="org.eclipse.team.svn.ui.command.category"
           id="org.eclipse.team.svn.ui.command.LockCommand"
           name="%LockCommand.label"/>
+    <command
+          categoryId="org.eclipse.team.svn.ui.command.category"
+          id="org.eclipse.team.svn.ui.command.AddRevisionLinkCommand"
+          name="%AddRevisionLinkCommand.label"/>          
     <command
           categoryId="org.eclipse.team.svn.ui.command.category"
           id="org.eclipse.team.svn.ui.command.MarkAsMergedCommand"

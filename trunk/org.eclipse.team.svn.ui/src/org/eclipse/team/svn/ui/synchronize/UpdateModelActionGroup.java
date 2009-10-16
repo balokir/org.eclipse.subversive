@@ -17,6 +17,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
+import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.AddRevisionLinkModelAction;
 import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.CleanUpModelAction;
 import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.ComparePropertiesModelAction;
 import org.eclipse.team.svn.ui.synchronize.action.logicalmodel.CreateBranchModelAction;
@@ -192,6 +193,13 @@ public class UpdateModelActionGroup extends AbstractSynchronizeModelActionGroup 
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				UpdateModelActionGroup.GROUP_MANAGE_LOCALS,
 				extractTo);					
+		
+		//add revision link
+		AddRevisionLinkModelAction addRevisionLink = new AddRevisionLinkModelAction(SVNUIMessages.AddRevisionLinkAction_label, configuration);
+		this.appendToGroup(
+				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+				UpdateModelActionGroup.GROUP_MANAGE_LOCALS,
+				addRevisionLink);
 		
 		this.addSpecificActions(extractTo, configuration);
 	}	
