@@ -103,10 +103,20 @@ public class CommitActionUtility {
 			}
 		}
 		
-		CommitOperation mainOp = new CommitOperation(notSelectedResources.length == 0 ? this.selector.getSelectedResources() : selectedResources, message, allowsRecursiveAdd && notSelectedNew.length == notSelectedResources.length, keepLocks);
+		IResource[] resourcesToCommit = new IResource[0]; 
+		boolean isRecursiveCommit = true;				
+		if (FileUtility.checkForResourcesPresence(selectedResources, IStateFilter.SF_EXTERNAL, IResource.DEPTH_ZERO)) {
+			//if 'selectedResources' has externals -> commit resources selected in commit dialog not recursively			
+			resourcesToCommit = selectedResources;
+			isRecursiveCommit = false;
+		}						
+		if (isRecursiveCommit) {
+			resourcesToCommit = notSelectedResources.length == 0 ? this.selector.getSelectedResources() : selectedResources;
+			isRecursiveCommit = allowsRecursiveAdd && notSelectedNew.length == notSelectedResources.length; 
+		}					
 		
+		CommitOperation mainOp = new CommitOperation(resourcesToCommit, message, isRecursiveCommit, keepLocks);
 		CompositeOperation op = new CompositeOperation(mainOp.getId());
-		
 		if (allowsRecursiveAdd) {
 			if (this.newNonRecursive.size() > 0) {
 				IResource []newNonRecursive = (IResource [])this.newNonRecursive.toArray(new IResource[this.newNonRecursive.size()]);
