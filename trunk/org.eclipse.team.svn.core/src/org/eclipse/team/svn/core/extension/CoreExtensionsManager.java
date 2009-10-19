@@ -50,14 +50,11 @@ public class CoreExtensionsManager {
 	private IResolutionHelper []helpers;
 	private IIgnoreRecommendations []ignoreRecommendations;
 
-	private static CoreExtensionsManager instance;
+	private static CoreExtensionsManager instance = new CoreExtensionsManager();
 	
 	private boolean disableHelpers;
 	
-	public synchronized static CoreExtensionsManager instance() {
-		if (CoreExtensionsManager.instance == null) {
-			CoreExtensionsManager.instance = new CoreExtensionsManager();
-		}
+	public static CoreExtensionsManager instance() {
 		return CoreExtensionsManager.instance;
 	}
 	
