@@ -352,7 +352,7 @@ public class ExternalsEditPanel extends AbstractDialogPanel {
 	
 	protected void onChangeUrlText() {
 		this.url = this.urlText.getText();
-		if (!this.isPriorToSVN15Format()) {
+		if (!this.isPriorToSVN15Format() && CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() > ISVNConnectorFactory.APICompatibility.SVNAPI_1_4_x) {
 			try {
 				this.processedUrl = SVNUtility.replaceRelativeExternalParts(this.url, this.repositoryResource);	
 			} catch (Exception e) {

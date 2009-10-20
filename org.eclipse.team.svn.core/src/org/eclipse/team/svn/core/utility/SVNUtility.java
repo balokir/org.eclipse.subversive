@@ -184,7 +184,7 @@ public final class SVNUtility {
 					revision = SVNRevision.fromString(externalData.pegRevision);
 				}				
 			} catch (Exception ex) {
-				throw new UnreportableException("Malformed external, " + externalData.toString());
+				throw new UnreportableException("Malformed external, " + externalData.toString()); //$NON-NLS-1$
 			}
 			
 			url = SVNUtility.replaceRelativeExternalParts(url, propertyHolder);				
@@ -595,8 +595,8 @@ public final class SVNUtility {
 	public static void reorder(SVNChangeStatus []statuses, final boolean parent2Child) {
 		Arrays.sort(statuses, new Comparator<SVNChangeStatus>() {
 			public int compare(SVNChangeStatus o1, SVNChangeStatus o2) {
-				String s1 = o1 != null ? o1.path : "";
-				String s2 = o2 != null ? o2.path : "";
+				String s1 = o1 != null ? o1.path : ""; //$NON-NLS-1$
+				String s2 = o2 != null ? o2.path : ""; //$NON-NLS-1$
 				return parent2Child ? s1.compareTo(s2) : s2.compareTo(s1);
 			}
 			
@@ -702,7 +702,7 @@ public final class SVNUtility {
         StringBuffer sb = null;
         byte[] bytes;
         try {
-            bytes = src.getBytes("UTF-8");
+            bytes = src.getBytes("UTF-8"); //$NON-NLS-1$
         } catch (UnsupportedEncodingException e) {
             bytes = src.getBytes();
         }
@@ -717,12 +717,12 @@ public final class SVNUtility {
             if (sb == null) {
                 sb = new StringBuffer();
                 try {
-                    sb.append(new String(bytes, 0, i, "UTF-8"));
+                    sb.append(new String(bytes, 0, i, "UTF-8")); //$NON-NLS-1$
                 } catch (UnsupportedEncodingException e) {
                     sb.append(new String(bytes, 0, i));
                 }
             }
-            sb.append("%");
+            sb.append("%"); //$NON-NLS-1$
 
             sb.append(Character.toUpperCase(Character.forDigit((index & 0xF0) >> 4, 16)));
             sb.append(Character.toUpperCase(Character.forDigit(index & 0x0F, 16)));
@@ -757,21 +757,38 @@ public final class SVNUtility {
             return src;
         }
         try {
-            return new String(bos.toByteArray(), "UTF-8");
+            return new String(bos.toByteArray(), "UTF-8"); //$NON-NLS-1$
         } catch (UnsupportedEncodingException e) {
         }
         return src;
 	}
 	
 	public static String normalizeURL(String url) {
-	    StringTokenizer tokenizer = new StringTokenizer(PatternProvider.replaceAll(url, "([\\\\])+", "/"), "/", false); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	    String retVal = ""; //$NON-NLS-1$
+		if (url == null) {
+			return null;
+		}
+		url = url.trim();
+		
+		String prefix = ""; //$NON-NLS-1$
+		final String[] knownPrefixes = new String[] {"http://", "https://", "svn://", "svn+ssh://", "file:///", "file://", "^/", "../", "//", "/"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
+		for (int i = 0; i < knownPrefixes.length; i ++) {
+			if (url.startsWith(knownPrefixes[i])) {
+				prefix = knownPrefixes[i];
+				url = url.substring(knownPrefixes[i].length());
+				break;
+			}
+		}
+				
+		StringTokenizer tokenizer = new StringTokenizer(PatternProvider.replaceAll(url, "([\\\\])+", "/"), "/", false); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	    StringBuffer retVal = new StringBuffer();
 	    while (tokenizer.hasMoreTokens()) {
 	        String token = tokenizer.nextToken();
-	        retVal += retVal.length() == 0 ? token : ("/" + token); //$NON-NLS-1$
+	        retVal.append(retVal.length() == 0 ? token : ("/" + token)); //$NON-NLS-1$
 	    }
-	    int idx = retVal.indexOf(':') + 1;
-	    return idx == 0 ? retVal : retVal.substring(0, idx) + (url.startsWith("file:///") ? "//" : "/") + retVal.substring(idx); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	    if (!"".equals(prefix)) { //$NON-NLS-1$
+	    	retVal.insert(0, prefix);
+	    }	    	    
+	    return retVal.toString();
 	}
 	
 	public static Exception validateRepositoryLocation(IRepositoryLocation location) {
@@ -1355,7 +1372,7 @@ public final class SVNUtility {
 				// 3 - -rRevision + URL@peg + name
 				// 4 - -r + Revision + URL@peg + name
 				if (parts.length < 2 || parts.length > 4) {
-					throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]); //$NON-NLS-2$
+					throw new UnreportableException("Malformed external, " + parts.length + ", " + externals[i]);  //$NON-NLS-1$//$NON-NLS-2$
 				}
 					
 				String name = null;
@@ -1409,18 +1426,18 @@ public final class SVNUtility {
 			if (this.isNewFormat) {
 				//Example: -r12 http://svn.example.com/skin-maker@21 third-party/skins/toolkit
 				if (this.revision != null) {
-					res.append("-r").append(this.revision).append("\t");
+					res.append("-r").append(this.revision).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				res.append(this.url);
 				if (this.pegRevision != null) {
-					res.append("@").append(this.pegRevision);
+					res.append("@").append(this.pegRevision); //$NON-NLS-1$
 				}
-				res.append("\t").append(this.localPath);
+				res.append("\t").append(this.localPath); //$NON-NLS-1$
 			} else {
 				//Example: third-party/skins -r148 http://svn.example.com/skinproj
-				res.append(this.localPath).append("\t");
+				res.append(this.localPath).append("\t"); //$NON-NLS-1$
 				if (this.revision != null) {
-					res.append("-r").append(this.revision).append("\t");
+					res.append("-r").append(this.revision).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				res.append(this.url);
 			}			
