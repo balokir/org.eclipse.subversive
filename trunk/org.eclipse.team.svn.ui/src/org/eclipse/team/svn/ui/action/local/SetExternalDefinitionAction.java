@@ -18,6 +18,7 @@ import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.property.ConcatenateProperyDataOperation;
 import org.eclipse.team.svn.core.operation.local.property.GenerateExternalsPropertyOperation;
 import org.eclipse.team.svn.core.operation.local.property.SetPropertiesOperation;
@@ -53,12 +54,14 @@ public class SetExternalDefinitionAction extends AbstractNonRecursiveTeamAction 
 		DefaultDialog dialog = new DefaultDialog(shell != null ? shell : UIMonitorUtility.getShell(), panel);
 		if (dialog.open() == 0) {						 									
 			GenerateExternalsPropertyOperation generatePropOp = new GenerateExternalsPropertyOperation(resource, panel.getUrl(), panel.getRevision(), panel.getLocalPath(), panel.isPriorToSVN15Format());			
-			ConcatenateProperyDataOperation concatOp = new ConcatenateProperyDataOperation(resource, SVNProperty.BuiltIn.EXTERNALS, generatePropOp);			
+			ConcatenateProperyDataOperation concatOp = new ConcatenateProperyDataOperation(resource, SVNProperty.BuiltIn.EXTERNALS, generatePropOp);
+			concatOp.setStringValuesSeparator(""); //$NON-NLS-1$
 			SetPropertiesOperation setPropsOp = new SetPropertiesOperation(new IResource[] {resource}, concatOp, false);			
 			CompositeOperation op = new CompositeOperation(setPropsOp.getId());
 			op.add(generatePropOp);
 			op.add(concatOp, new IActionOperation[]{generatePropOp});
 			op.add(setPropsOp, new IActionOperation[]{concatOp});
+			op.add(new RefreshResourcesOperation(new IResource[] {resource}, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL), new IActionOperation[] {setPropsOp});
 			return op;			
 		}
 		return null;
