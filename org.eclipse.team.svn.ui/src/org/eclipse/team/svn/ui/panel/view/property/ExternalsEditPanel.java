@@ -11,7 +11,12 @@
 
 package org.eclipse.team.svn.ui.panel.view.property;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
@@ -62,7 +67,9 @@ public class ExternalsEditPanel extends AbstractDialogPanel {
 	protected Button folderButton;
 	protected Text localPathText;
 	protected RevisionComposite revisionComposite;
-	protected Button priorToSVN15FormatButton;	
+	protected Button priorToSVN15FormatButton;
+	protected Combo relativeText;
+	protected Button formatButton;
 	
 	protected String localPath;
 	protected boolean priorToSVN15Format;
@@ -71,6 +78,11 @@ public class ExternalsEditPanel extends AbstractDialogPanel {
 	protected boolean isFolder;
 	protected String processedUrl;
 	protected IRepositoryResource repositoryResourceForUrl;
+	
+	protected final static int REPOSITORY_ROOT_INDEX = 0;
+	protected final static int URL_SCHEME_INDEX = 1;
+	protected final static int HOST_NAME_INDEX = 2;
+	protected final static int EXTERNAL_DIRECTORY_INDEX = 3;
 	
 	public ExternalsEditPanel(String historyKey, String comboId, IResource resource, IRepositoryResource repositoryResource) {
 		this.resource = resource;
@@ -109,24 +121,46 @@ public class ExternalsEditPanel extends AbstractDialogPanel {
 		this.priorToSVN15FormatButton.setText(SVNUIMessages.ExternalsEditPanel_PriortoSVN15);
 		this.priorToSVN15FormatButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				ExternalsEditPanel.this.priorToSVN15Format = ExternalsEditPanel.this.priorToSVN15FormatButton.getSelection();
+				ExternalsEditPanel.this.priorToSVN15Format = ExternalsEditPanel.this.priorToSVN15FormatButton.getSelection();				
+				ExternalsEditPanel.this.enableFormatUrl();
+				ExternalsEditPanel.this.enableIsFolder();
+				ExternalsEditPanel.this.onChangeUrlText();
+				ExternalsEditPanel.this.validateContent();
 			}
-		});				
+		});
 		
 		this.initValues();
 	}
 	
 	protected void initValues() {
-		this.isFolder = true;
-		this.folderButton.setSelection(this.isFolder);
-		if (this.isLessSVN16()) {
-			this.folderButton.setEnabled(false);
-		}
-		
 		if(CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() < ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x) {
 			this.priorToSVN15Format = false;
 			this.priorToSVN15FormatButton.setEnabled(this.priorToSVN15Format);
+		}		
+				
+		this.folderButton.setSelection(this.isFolder = true);		
+		this.enableIsFolder();
+
+		this.enableFormatUrl();
+	}
+	
+	protected void enableIsFolder() {
+		if (this.isLessSVN16() || this.isPriorToSVN15Format()) {			
+			this.folderButton.setSelection(this.isFolder = true);
+			this.folderButton.setEnabled(false);
+		} else {
+			this.folderButton.setEnabled(true);
 		}
+	}
+	
+	protected void enableFormatUrl() {
+		boolean isEnable = false;
+		if (!this.isPriorToSVN15Format() && CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() > ISVNConnectorFactory.APICompatibility.SVNAPI_1_4_x) {
+			//url is full and from the same repository
+			isEnable = this.url != null && this.repositoryResourceForUrl != null && SVNUtility.isValidSVNURL(this.url) && this.repositoryResourceForUrl.getRepositoryLocation().getRepositoryRoot().equals(this.repositoryResource.getRepositoryLocation().getRepositoryRoot());			
+		}
+		this.relativeText.setEnabled(isEnable);
+		this.formatButton.setEnabled(isEnable);					
 	}
 	
 	protected void createLocalPathSelectionControls(Composite parent) {
@@ -181,18 +215,47 @@ public class ExternalsEditPanel extends AbstractDialogPanel {
 			public void widgetSelected(SelectionEvent e) {
 				ExternalsEditPanel.this.onRepositoryResourceSelection();								
 			}
-		});	
+		});
+		
+		//format url		
+		Label label = new Label(parent, SWT.NONE);
+		label.setLayoutData(new GridData());
+		label.setText(SVNUIMessages.ExternalsEditPanel_FormatUrl);
+		
+		this.relativeText = new Combo(parent, SWT.READ_ONLY);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+		this.relativeText.setLayoutData(data);
+		
+		this.relativeText.add(SVNUIMessages.ExternalsEditPanel_RelativeToRepositoryRoot, ExternalsEditPanel.REPOSITORY_ROOT_INDEX);
+		this.relativeText.add(SVNUIMessages.ExternalsEditPanel_RelativeToUrlScheme, ExternalsEditPanel.URL_SCHEME_INDEX);
+		this.relativeText.add(SVNUIMessages.ExternalsEditPanel_RelativeToHostName, ExternalsEditPanel.HOST_NAME_INDEX);
+		this.relativeText.add(SVNUIMessages.ExternalsEditPanel_RelativeToDirectory, ExternalsEditPanel.EXTERNAL_DIRECTORY_INDEX);
+		this.relativeText.setVisibleItemCount(4);				
+		this.relativeText.select(0);				
+		
+		this.formatButton = new Button(parent, SWT.PUSH);
+		this.formatButton.setText(SVNUIMessages.ExternalsEditPanel_FormatButton);
+		data = new GridData();
+		data.widthHint = DefaultDialog.computeButtonWidth(this.formatButton);
+		this.formatButton.setLayoutData(data);
+		
+		this.formatButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				ExternalsEditPanel.this.formatUrl();								
+			}
+		});
 				
 		CompositeVerifier urlVerifier = new CompositeVerifier() {
 			@Override
 			protected void fireError(String errorReason) {
-				ExternalsEditPanel.this.revisionComposite.setEnabled(false);
 				super.fireError(errorReason);
+				ExternalsEditPanel.this.onUrlValidity(false);				
 			}
 			@Override
 			protected void fireOk() {
-				ExternalsEditPanel.this.revisionComposite.setEnabled(true);
 				super.fireOk();
+				ExternalsEditPanel.this.onUrlValidity(true);				
 			}
 		};
 		urlVerifier.add(new NonEmptyFieldVerifier(SVNUIMessages.getString(this.comboId + "_Verifier"))); //$NON-NLS-1$
@@ -225,13 +288,79 @@ public class ExternalsEditPanel extends AbstractDialogPanel {
 		this.attachTo(this.localPathText, localPathVerifier);
 	}
 	
+	protected void onUrlValidity(boolean isValidUrl) {
+		this.revisionComposite.setEnabled(isValidUrl);		
+		this.enableFormatUrl();
+	}
+	
+	protected void formatUrl() {
+		String fullUrl = this.url.trim();
+		IPath fullUrlPath = new Path(fullUrl);	
+		int relativeIndex = this.relativeText.getSelectionIndex();
+		if (relativeIndex == ExternalsEditPanel.REPOSITORY_ROOT_INDEX) {
+			IPath repositoryRoot = new Path(this.repositoryResource.getRepositoryLocation().getRepositoryRootUrl());					
+			if (repositoryRoot.isPrefixOf(fullUrlPath)) {
+				String relative = fullUrlPath.makeRelativeTo(repositoryRoot).toString();
+				this.urlText.setText("^/" + relative); //$NON-NLS-1$
+			}
+		} else if (relativeIndex == ExternalsEditPanel.URL_SCHEME_INDEX) {			
+			int index = 0;
+			if (fullUrl.startsWith("file:///")) { //$NON-NLS-1$
+				index = "file:///".length(); //$NON-NLS-1$
+			} else if (fullUrl.startsWith("file://")) { //$NON-NLS-1$
+				index = "file://".length(); //$NON-NLS-1$
+			} else if (fullUrl.startsWith("http://")) { //$NON-NLS-1$
+				index = "http://".length(); //$NON-NLS-1$
+			} else if (fullUrl.startsWith("https://")) { //$NON-NLS-1$
+				index = "https://".length(); //$NON-NLS-1$
+			} else if (fullUrl.startsWith("svn://")) { //$NON-NLS-1$
+				index = "svn://".length(); //$NON-NLS-1$
+			} else if (fullUrl.startsWith("svn+ssh://")) { //$NON-NLS-1$
+				index = "svn+ssh://".length(); //$NON-NLS-1$
+			}
+			if (index != 0) {
+				String relativaPath = "//" + fullUrl.substring(index); //$NON-NLS-1$
+				this.urlText.setText(relativaPath);
+			}				
+		} else if (relativeIndex == ExternalsEditPanel.HOST_NAME_INDEX) {			
+			try {				
+				URL url = SVNUtility.getSVNUrl(fullUrl);
+				String relativePath = url.getFile();
+				this.urlText.setText(relativePath);				
+			} catch (MalformedURLException me) {
+				//ignore
+			} 			
+		} else if (relativeIndex == ExternalsEditPanel.EXTERNAL_DIRECTORY_INDEX) {								
+			//find common path
+			IPath resourcePath = new Path(this.repositoryResource.getUrl());
+			IPath commonPath = resourcePath;
+			int relativeSegmentsCount = 0;			
+			do {
+				commonPath = commonPath.removeLastSegments(1);
+				relativeSegmentsCount ++;
+			} while (!commonPath.isPrefixOf(fullUrlPath) && !commonPath.isEmpty());						
+			if (!commonPath.isEmpty()) {
+				StringBuffer relativePath = new StringBuffer();
+				for (int i = 0; i < relativeSegmentsCount; i ++) {
+					relativePath.append("../"); //$NON-NLS-1$
+				}
+				relativePath.append(fullUrlPath.makeRelativeTo(commonPath).toString());
+				this.urlText.setText(relativePath.toString());
+			}						
+		}
+	}
+	
 	protected void onChangeUrlText() {
-		this.url = this.urlText.getText();			
-		try {
-			this.processedUrl = SVNUtility.replaceRelativeExternalParts(this.url, this.repositoryResource);	
-		} catch (Exception e) {
-			this.processedUrl = null;
-		}			
+		this.url = this.urlText.getText();
+		if (!this.isPriorToSVN15Format()) {
+			try {
+				this.processedUrl = SVNUtility.replaceRelativeExternalParts(this.url, this.repositoryResource);	
+			} catch (Exception e) {
+				this.processedUrl = null;
+			}				
+		} else {
+			this.processedUrl = this.url;
+		}
 		this.repositoryResourceForUrl = this.processedUrl != null ? SVNUtility.asRepositoryResource(this.processedUrl, this.isFolder) : null;		
 		this.revisionComposite.setSelectedResource(this.repositoryResourceForUrl);					
 	}

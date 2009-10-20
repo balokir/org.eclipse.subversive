@@ -1785,6 +1785,12 @@ public class SVNUIMessages extends BaseMessages {
 	public static String ExternalsEditPanel_LocalPathLabel;
 	public static String ExternalsEditPanel_IsFolder;
 	public static String ExternalsEditPanel_LocalPathLabel_Verifier;
+	public static String ExternalsEditPanel_RelativeToDirectory;
+	public static String ExternalsEditPanel_RelativeToHostName;
+	public static String ExternalsEditPanel_RelativeToRepositoryRoot;
+	public static String ExternalsEditPanel_RelativeToUrlScheme;
+	public static String ExternalsEditPanel_FormatUrl;
+	public static String ExternalsEditPanel_FormatButton;
 	public static String Verifier_NoSpaces;
 	public static String SelectRepositoryResourceWizard_Title;
 	public static String SelectResourceLocationPage_Title;
