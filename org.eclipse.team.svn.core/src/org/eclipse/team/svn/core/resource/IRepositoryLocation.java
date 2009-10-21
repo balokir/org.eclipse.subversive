@@ -23,18 +23,39 @@ import org.eclipse.team.svn.core.connector.ISVNConnector;
  */
 public interface IRepositoryLocation extends IRepositoryBase, IRepositoryResourceFactory {
 	
+	/**
+	 * Detect what information should be present while serializing location:
+	 * 
+	 * ALL - save all data.
+	 * 	For example, it's used for storing repository locations between Eclipse sessions. 
+	 * 
+	 * WITHOUT_REVISION_COMMENTS - it's used for storing all info except revision link comments.
+	 * 	For example, it's used for storing locations in project set files, as
+	 * 	comment size can be very big.
+	 * 
+	 * ONLY_REQUIRED_DATA	- it's stored only necessary data required for restoring
+	 * 	location. For example, it's used by setting location property for project;
+	 *  we make location size as small as possible because project's property
+	 *  size is limited by Eclipse.
+	 */
+	public static enum  LocationReferenceTypeEnum {
+		ALL,	
+		WITHOUT_REVISION_COMMENTS,
+		ONLY_REQUIRED_DATA		
+	}
+	
 	public String getId();
 	
 	public void setLabel(String label);
 	public String getLabel();
-
+		
 	/*
-	 * As in some cases there can be limitations on reference string size, e.g.
-	 * storing reference string in project set file, 
-	 * storing as Eclipse persistent property(which is limited be Eclipse),
-	 * we provide an option to not save revision link comments
+	 * As in some cases there can be limitations on reference string size or some
+	 * information is not needed, then we provide a parameter which says what
+	 * information should be saved.
+	 * For more details, see LocationReferenceTypeEnum
 	 */
-	public String asReference(boolean saveRevisionLinksComments);
+	public String asReference(LocationReferenceTypeEnum locationReferenceType);
 	public void fillLocationFromReference(String [] referenceParts);
 	
 	public String getUrlAsIs();

@@ -33,6 +33,7 @@ import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.operation.local.management.DisconnectOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.resource.IRepositoryLocation.LocationReferenceTypeEnum;
 import org.eclipse.team.svn.core.resource.events.ResourceStatesChangedEvent;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
@@ -144,8 +145,8 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 	}
 	
 	protected static void setRepositoryLocation(IProject project, IRepositoryLocation location) throws CoreException {
-		//as property length is limited by size, we don't save revision link comments
-		project.setPersistentProperty(SVNTeamProvider.LOCATION_PROPERTY, SVNRemoteStorage.instance().repositoryLocationAsReference(location, false));
+		//as property length is limited by size, we save only required data
+		project.setPersistentProperty(SVNTeamProvider.LOCATION_PROPERTY, SVNRemoteStorage.instance().repositoryLocationAsReference(location, LocationReferenceTypeEnum.ONLY_REQUIRED_DATA));
 	}
 	
 	protected void restoreLocation() throws HiddenException {

@@ -49,6 +49,7 @@ import org.eclipse.team.svn.core.resource.IRevisionLink;
 import org.eclipse.team.svn.core.resource.ISVNStorage;
 import org.eclipse.team.svn.core.resource.SSHSettings;
 import org.eclipse.team.svn.core.resource.SSLSettings;
+import org.eclipse.team.svn.core.resource.IRepositoryLocation.LocationReferenceTypeEnum;
 import org.eclipse.team.svn.core.svnstorage.events.IRepositoriesStateChangedListener;
 import org.eclipse.team.svn.core.svnstorage.events.IRevisionPropertyChangeListener;
 import org.eclipse.team.svn.core.svnstorage.events.RepositoriesStateChangedEvent;
@@ -251,10 +252,10 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 	}
 	
 	/*
-	 * see IRepositoryLocation comments for we need 'saveRevisionLinksComments' parameter 
+	 * see IRepositoryLocation comments why we need LocationReferenceTypeEnum parameter 
 	 */
-	public String repositoryLocationAsReference(IRepositoryLocation location, boolean saveRevisionLinksComments) {
-		return location.asReference(saveRevisionLinksComments);
+	public String repositoryLocationAsReference(IRepositoryLocation location, LocationReferenceTypeEnum locationReferenceType) {
+		return location.asReference(locationReferenceType);
 	}
 	
 	public synchronized void addRepositoryLocation(IRepositoryLocation location) {
@@ -476,7 +477,7 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		repositoryPreferences.removePreferenceChangeListener(this.repoPrefChangeListener);
 		repositoryPreferences.clear();
 		for (IRepositoryLocation current : this.repositories) {
-			repositoryPreferences.put(current.getId(), this.repositoryLocationAsReference(current, true));
+			repositoryPreferences.put(current.getId(), this.repositoryLocationAsReference(current, LocationReferenceTypeEnum.ALL));
 			this.saveAuthInfo(current, ""); //$NON-NLS-1$
 			String [] realms = current.getRealms().toArray(new String[0]);
 			for (String realm : realms) {

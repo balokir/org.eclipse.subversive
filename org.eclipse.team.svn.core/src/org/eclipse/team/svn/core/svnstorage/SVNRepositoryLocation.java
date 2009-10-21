@@ -114,9 +114,12 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		this.id = id;
 	}
 	
-	public String asReference(boolean saveRevisionLinksComments) {
+	public String asReference(LocationReferenceTypeEnum locationReferenceType) {
 		String reference = this.id;
 		reference += ";" + this.getUrlAsIs(); //$NON-NLS-1$
+		if (locationReferenceType == LocationReferenceTypeEnum.ONLY_REQUIRED_DATA) {
+			return reference;
+		}		
 		reference += ";" + this.getLabel(); //$NON-NLS-1$
 		reference += ";" + this.getBranchesLocation(); //$NON-NLS-1$
 		reference += ";" + this.getTagsLocation(); //$NON-NLS-1$
@@ -141,7 +144,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		
 		IRevisionLink[] revisionLinks = this.getRevisionLinks();
 		for (int i = 0; i < revisionLinks.length; i++) {
-			String base64revLink = new String(Base64.encode(SVNRemoteStorage.instance().revisionLinkAsBytes(revisionLinks[i], saveRevisionLinksComments)));
+			String base64revLink = new String(Base64.encode(SVNRemoteStorage.instance().revisionLinkAsBytes(revisionLinks[i], locationReferenceType != LocationReferenceTypeEnum.WITHOUT_REVISION_COMMENTS)));
 			if (i < revisionLinks.length - 1) {
 				reference += base64revLink + "^"; //$NON-NLS-1$
 			}

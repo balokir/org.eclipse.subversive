@@ -20,6 +20,7 @@ import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.remote.CheckoutAsOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.resource.IRepositoryLocation.LocationReferenceTypeEnum;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 
@@ -53,7 +54,7 @@ public class DefaultProjectSetHandler implements IProjectSetHandler {
 		fullReference += "," + resource.getUrl(); //$NON-NLS-1$
 		fullReference += "," + project.getName(); //$NON-NLS-1$
 		
-		fullReference += "," + SVNRemoteStorage.instance().repositoryLocationAsReference(location, false); //$NON-NLS-1$
+		fullReference += "," + SVNRemoteStorage.instance().repositoryLocationAsReference(location, LocationReferenceTypeEnum.WITHOUT_REVISION_COMMENTS); //$NON-NLS-1$
 		
 		return fullReference;
 	}
