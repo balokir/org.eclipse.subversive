@@ -426,6 +426,11 @@ public final class FileUtility {
 		return FileUtility.getOperableParents(resources, stateFilter, false);
 	}
 	
+	/**
+	 * @param through		Determines whether to proceed higher parents if one of its child isn't accepted by filter
+	 * 						if 'through' is true, then proceed always all parents
+	 * 						if 'through' is false, then don't proceed higher parents if of their child isn't accepted by filter
+	 */
 	public static IResource []getOperableParents(IResource []resources, IStateFilter stateFilter, boolean through) {
 		HashSet<IResource> tmp = new HashSet<IResource>();
 		IResource []parents = FileUtility.getParents(resources, true);
