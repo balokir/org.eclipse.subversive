@@ -39,8 +39,8 @@ public class SVNRepositoryLocationWrapper implements IRepositoryLocation {
 		this.url = mappedUrl;
 	}
 	
-	public String asReference(boolean saveRevisionLinksComments) {
-		return this.location.asReference(saveRevisionLinksComments);
+	public String asReference(LocationReferenceTypeEnum locationReferenceType) {
+		return this.location.asReference(locationReferenceType);
 	}
 	
 	public void fillLocationFromReference(String[] referenceParts) {

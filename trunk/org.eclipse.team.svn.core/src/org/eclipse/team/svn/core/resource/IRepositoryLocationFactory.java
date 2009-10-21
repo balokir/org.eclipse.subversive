@@ -11,6 +11,8 @@
 
 package org.eclipse.team.svn.core.resource;
 
+import org.eclipse.team.svn.core.resource.IRepositoryLocation.LocationReferenceTypeEnum;
+
 /**
  * Repository location factory interface
  * 
@@ -21,7 +23,7 @@ public interface IRepositoryLocationFactory {
 	public void copyRepositoryLocation(IRepositoryLocation to, IRepositoryLocation from);
 	public IRepositoryLocation newRepositoryLocation(String reference);
 	/*
-	 * see IRepositoryLocation class comments why we need 'saveRevisionLinksComments' parameter
+	 * see IRepositoryLocation class comments why we need LocationReferenceTypeEnum parameter
 	 */
-	public String repositoryLocationAsReference(IRepositoryLocation location, boolean saveRevisionLinksComments);
+	public String repositoryLocationAsReference(IRepositoryLocation location, LocationReferenceTypeEnum locationReferenceType);
 }
