@@ -39,12 +39,25 @@ import org.eclipse.ui.IWorkbenchPart;
 public class CommitActionUtility {
 	protected IResourceSelector selector;
 	
-	protected HashSet newNonRecursive;
-	protected HashSet newRecursive;
-	protected HashSet parents;
+	protected HashSet<IResource> newNonRecursive;
+	protected HashSet<IResource> newRecursive;
+	protected HashSet<IResource> parents;
 	
 	protected IResource[] allResources;
-	protected HashSet allResourcesSet;
+	protected HashSet<IResource> allResourcesSet;
+	
+	/*
+	 * Determines whether we can call commit recursively.
+	 * We can't call recursively in following cases:
+	 * 	1. if there are externals among resources which we'll be shown in commit dialog
+	 *  (if call commit on not external directory, externals will not be committed, 
+	 *  because commit doesn't handle externals(in contrast e.g. to 'update'))
+	 *  2. if selected resource and its parent don't exist in repository
+	 *  (if selected resource is new(or added) we show also its parent in commit dialog, 
+	 *  because we can't directly commit resource which parent doesn't exist in repository and
+	 *  so we can't commit recursively) 
+	 */
+	protected boolean canBeRecursiveCommit = true;
 	
 	public CommitActionUtility(IResourceSelector selector) {
 		this.initialize(selector);
@@ -53,15 +66,15 @@ public class CommitActionUtility {
 	public void initialize(IResourceSelector selector) {
 		this.selector = selector;
 		
-		this.allResourcesSet = new HashSet();
+		this.allResourcesSet = new HashSet<IResource>();
 		this.allResourcesSet.addAll(Arrays.asList(this.selector.getSelectedResourcesRecursive(new IStateFilter.OrStateFilter(new IStateFilter[] {IStateFilter.SF_COMMITABLE, IStateFilter.SF_CONFLICTING, IStateFilter.SF_TREE_CONFLICTING, IStateFilter.SF_NEW}))));
 		
-		this.newNonRecursive = new HashSet(Arrays.asList(this.selector.getSelectedResources(IStateFilter.SF_IGNORED)));
-		this.newRecursive = new HashSet(Arrays.asList(FileUtility.getResourcesRecursive((IResource [])this.allResourcesSet.toArray(new IResource[this.allResourcesSet.size()]), IStateFilter.SF_NEW, IResource.DEPTH_ZERO)));
+		this.newNonRecursive = new HashSet<IResource>(Arrays.asList(this.selector.getSelectedResources(IStateFilter.SF_IGNORED)));
+		this.newRecursive = new HashSet<IResource>(Arrays.asList(FileUtility.getResourcesRecursive((IResource [])this.allResourcesSet.toArray(new IResource[this.allResourcesSet.size()]), IStateFilter.SF_NEW, IResource.DEPTH_ZERO)));
 		
-		HashSet fullSet = new HashSet(this.newNonRecursive);
+		HashSet<IResource> fullSet = new HashSet<IResource>(this.newNonRecursive);
 		fullSet.addAll(this.newRecursive);
-		this.parents = new HashSet(Arrays.asList(FileUtility.getOperableParents((IResource [])fullSet.toArray(new IResource[fullSet.size()]), IStateFilter.SF_UNVERSIONED)));
+		this.parents = new HashSet<IResource>(Arrays.asList(FileUtility.getOperableParents((IResource [])fullSet.toArray(new IResource[fullSet.size()]), IStateFilter.SF_UNVERSIONED)));
 		this.newNonRecursive.addAll(this.parents);
 		fullSet.addAll(this.parents);
 		
@@ -70,9 +83,14 @@ public class CommitActionUtility {
 		this.allResources = (IResource [])this.allResourcesSet.toArray(new IResource[this.allResourcesSet.size()]);
 		this.allResourcesSet.addAll(Arrays.asList(FileUtility.addOperableParents(this.allResources, IStateFilter.SF_ADDED, true)));
 		this.allResources = (IResource [])this.allResourcesSet.toArray(new IResource[this.allResourcesSet.size()]);
+				
+		this.canBeRecursiveCommit = FileUtility.getOperableParents(this.selector.getSelectedResources(), IStateFilter.SF_ADDED, false).length == 0;		
+		if (this.canBeRecursiveCommit && FileUtility.checkForResourcesPresence(this.allResources, IStateFilter.SF_EXTERNAL, IResource.DEPTH_ZERO)) {
+			this.canBeRecursiveCommit = false;
+		}
 	}
 	
-	public HashSet getAllResourcesSet() {
+	public HashSet<IResource> getAllResourcesSet() {
 		return this.allResourcesSet;
 	}
 
@@ -84,9 +102,13 @@ public class CommitActionUtility {
 		return this.getNonRecursiveImpl(selectedResources, message, keepLocks, shell, part);
 	}
 	
+	/*
+	 * We separate commit on recursive and not recursive because of performance reasons, i.e. recursive
+	 * commit works significantly faster.
+	 */
 	public CompositeOperation getCompositeCommitOperation(IResource []selectedResources, IResource []notSelectedResources, String message, boolean keepLocks, Shell shell, IWorkbenchPart part, boolean tryRecursive) {
 		return 
-			tryRecursive ? 
+			this.canBeRecursiveCommit && tryRecursive ? 
 			this.getRecursiveImpl(selectedResources, notSelectedResources, message, keepLocks, shell, part) :
 			this.getNonRecursiveImpl(selectedResources, message, keepLocks, shell, part);
 	}
@@ -103,20 +125,10 @@ public class CommitActionUtility {
 			}
 		}
 		
-		IResource[] resourcesToCommit = new IResource[0]; 
-		boolean isRecursiveCommit = true;				
-		if (FileUtility.checkForResourcesPresence(selectedResources, IStateFilter.SF_EXTERNAL, IResource.DEPTH_ZERO)) {
-			//if 'selectedResources' has externals -> commit resources selected in commit dialog not recursively			
-			resourcesToCommit = selectedResources;
-			isRecursiveCommit = false;
-		}						
-		if (isRecursiveCommit) {
-			resourcesToCommit = notSelectedResources.length == 0 ? this.selector.getSelectedResources() : selectedResources;
-			isRecursiveCommit = allowsRecursiveAdd && notSelectedNew.length == notSelectedResources.length; 
-		}					
+		CommitOperation mainOp = new CommitOperation(notSelectedResources.length == 0 ? this.selector.getSelectedResources() : selectedResources, message, allowsRecursiveAdd && notSelectedNew.length == notSelectedResources.length, keepLocks);
 		
-		CommitOperation mainOp = new CommitOperation(resourcesToCommit, message, isRecursiveCommit, keepLocks);
 		CompositeOperation op = new CompositeOperation(mainOp.getId());
+		
 		if (allowsRecursiveAdd) {
 			if (this.newNonRecursive.size() > 0) {
 				IResource []newNonRecursive = (IResource [])this.newNonRecursive.toArray(new IResource[this.newNonRecursive.size()]);
