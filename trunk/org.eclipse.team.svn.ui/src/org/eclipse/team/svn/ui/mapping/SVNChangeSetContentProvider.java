@@ -38,6 +38,7 @@ import org.eclipse.team.core.mapping.IResourceDiffTree;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.core.subscribers.Subscriber;
+import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSet;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
 import org.eclipse.team.internal.core.subscribers.BatchingChangeSetManager;
@@ -50,7 +51,6 @@ import org.eclipse.team.internal.ui.mapping.ResourceModelContentProvider;
 import org.eclipse.team.internal.ui.mapping.ResourceModelLabelProvider;
 import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
 import org.eclipse.team.internal.ui.synchronize.IChangeSetProvider;
-import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.mapping.SVNChangeSetModelProvider;
 import org.eclipse.team.svn.core.mapping.SVNIncomingChangeSet;
 import org.eclipse.team.svn.core.mapping.SVNUnassignedChangeSet;
@@ -61,7 +61,6 @@ import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
-import org.eclipse.team.ui.synchronize.SubscriberParticipant;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.INavigatorContentExtension;
 import org.eclipse.ui.navigator.INavigatorContentService;
@@ -748,10 +747,10 @@ public class SVNChangeSetContentProvider extends ResourceModelContentProvider im
 		try {						
 			//TODO correctly get subscriber									 			
 			Subscriber subscriber = UpdateSubscriber.instance();									
-			AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo) subscriber.getSyncInfo(ResourceDiffTree.getResourceFor(diff));			
-			if (syncInfo != null && IStateFilter.SF_MODIFIED.accept(syncInfo.getLocalResource())) {
+			AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo) subscriber.getSyncInfo(ResourceDiffTree.getResourceFor(diff));
+			if ((SyncInfo.getDirection(syncInfo.getKind()) & SyncInfo.OUTGOING) != 0) {
 				return true;
-			} 		
+			}
 		} catch (Exception e) {
 			LoggedOperation.reportError(SVNChangeSetContentProvider.class.getName(), e);
 		}
