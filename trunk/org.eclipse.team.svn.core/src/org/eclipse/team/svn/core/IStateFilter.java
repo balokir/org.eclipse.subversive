@@ -473,6 +473,16 @@ public interface IStateFilter {
 		}
 	};
 	
+	public static final IStateFilter SF_CONTENT_CONFLICTING = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
+			local = this.takeLocal(local, resource);
+			return local.getTextStatus() == IStateFilter.ST_CONFLICTING;
+		}
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
+			return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask);
+		}
+	};
+	
 	public static final IStateFilter SF_TREE_CONFLICTING = new AbstractStateFilter() {
 		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return this.takeLocal(local, resource).hasTreeConflict();
@@ -641,7 +651,7 @@ public interface IStateFilter {
 			return local.getPropStatus() == IStateFilter.ST_MODIFIED || local.getPropStatus() == IStateFilter.ST_CONFLICTING;
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return false;
+			return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask);
 		}
 	};
 

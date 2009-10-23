@@ -521,10 +521,10 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 				//Edit conflicts action
 				manager.add (tAction = new Action(SVNUIMessages.EditConflictsAction_label) {
 					public void run() {
-						UIMonitorUtility.doTaskScheduledDefault(new ShowConflictEditorOperation(FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_CONFLICTING), true));
+						UIMonitorUtility.doTaskScheduledDefault(new ShowConflictEditorOperation(FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_CONTENT_CONFLICTING), true));
 					}
 				});
-				tAction.setEnabled(FileUtility.checkForResourcesPresenceRecursive(selectedResources, IStateFilter.SF_CONFLICTING));
+				tAction.setEnabled(FileUtility.checkForResourcesPresenceRecursive(selectedResources, IStateFilter.SF_CONTENT_CONFLICTING));
 				
 				//Edit tree conflicts action
 				manager.add (tAction = new Action(SVNUIMessages.EditTreeConflictsAction_label) {
