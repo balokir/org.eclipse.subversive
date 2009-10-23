@@ -8,23 +8,32 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
-Version 0.7.8.I20091016-1800 [16 October 2009]
+Version 0.7.8.I20091023-1300 [23 October 2009]
 
 Features:
+ * Add ability to make relative urls in Set External Definition dialog (bug 292674)
+ 
  * Add ability to specify comments for revision links (bug 292280)
  
  * Add 'Add Revision Link' action to Team menu (bug 292424)
 
  * Provide annotated revision links to save the original revision if switching between trunk and branch (bug 261983)
 
---------------------------------------------------------------------------------
-
-Version 0.7.8.I20091009-1900 [09 October 2009]
-
-Features:
- * Add dialog for creating external resource (bug 288139) 
-    
+ * Add dialog for creating external resource (bug 288139)
+ 
+ * In SVN lock view add actions to resources tree (bug 287577)
+ 
 Fixes:
+ * deadlock in org.eclipse.team.svn.core.SVNTeamPlugin - Eclipse fails to start (bug 291603)
+
+ * Problems with Set External Definition dialog (bug 292781)
+
+ * Commit says dir is not part of commit, but it is (bug 292477)
+
+ * [Subversive] - Bug report ID-L9VHB (bug 254477)
+
+ * There are no new files in outgoing change sets (bug 292927)
+
  * Selection of a single revision to merge results in no changes (bug 287872) 
 
  * Send Notifications' operation finished with error - repeated dialog (bug 282000) 
@@ -77,14 +86,6 @@ Fixes:
 
  * svn externals not working for path/subpath entries (bug 272526) 
  
---------------------------------------------------------------------------------
-
-Version 0.7.8.I20090903-1900 [03 September 2009]
-
-Features:
- * In SVN lock view add actions to resources tree (bug 287577) 
-    
-Fixes:
  * [Subversive] - Bug report ID-AUVIL (bug 286552)   
  
  * Preview of merge reintegrate fails (bug 287301)
