@@ -1791,8 +1791,9 @@ public class HistoryActionManager {
 				IRepositoryResource resourceToAdd = this.getResourceForStatus(status);
 				resourceToAdd.setSelectedRevision(this.newer.getSelectedRevision());
 				resourceToAdd.setPegRevision(this.newer.getPegRevision());
-				resourcesToReturn.add(resourceToAdd);							
-				this.url2status.put(resourceToAdd.getUrl(), SVNRemoteStorage.instance().getStatusString(status.propStatus, status.textStatus, true));
+				resourcesToReturn.add(resourceToAdd);
+				String strStatus = SVNRemoteStorage.getCompoundStatusString(status.propStatus, status.textStatus, true);
+				this.url2status.put(resourceToAdd.getUrl(), strStatus);
 				if (status.textStatus == SVNEntryStatus.Kind.DELETED) {
 					resourcesToDelete.add(resourceToAdd);
 				}

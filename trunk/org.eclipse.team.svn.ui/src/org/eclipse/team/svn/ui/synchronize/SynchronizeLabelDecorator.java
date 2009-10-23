@@ -66,8 +66,8 @@ public class SynchronizeLabelDecorator extends LabelProvider implements ILabelDe
 				    imgDescr = new OverlayedImageDescriptor(image, AbstractSVNParticipant.OVR_REPLACED_IN, new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V);
 			    }
 		    }
-		    Image tmp = this.registerImageDescriptor(imgDescr);
-			if (!(left.getResource() instanceof IContainer) && ((left.getChangeMask() & ILocalResource.PROP_MODIFIED) != 0 || (right.getChangeMask() & ILocalResource.PROP_MODIFIED) != 0)) {
+		    Image tmp = this.registerImageDescriptor(imgDescr);		  
+		    if (!(left.getResource() instanceof IContainer) && (IStateFilter.SF_HAS_PROPERTIES_CHANGES.accept(left) || IStateFilter.SF_HAS_PROPERTIES_CHANGES.accept(right))) {
 			    if (tmp != null) {
 			    	image = tmp;
 			    }

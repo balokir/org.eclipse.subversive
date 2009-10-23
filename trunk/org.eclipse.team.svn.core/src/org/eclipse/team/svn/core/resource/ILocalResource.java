@@ -20,7 +20,11 @@ import org.eclipse.team.svn.core.connector.SVNConflictDescriptor;
  * @author Alexander Gurov
  */
 public interface ILocalResource {	
-	public static final int NO_MODIFICATION = 0x00; 
+	public static final int NO_MODIFICATION = 0x00;
+	/*
+	 * Can be used ONLY for backward compatibility.
+	 * For other cases see 'getTextStatus' and 'getPropStatus' methods
+	 */
 	public static final int TEXT_MODIFIED = 0x01; 
 	public static final int PROP_MODIFIED = 0x02;
 	public static final int IS_COPIED = 0x04;
@@ -36,6 +40,14 @@ public interface ILocalResource {
 	
 	public long getBaseRevision();
 	
+	public String getTextStatus();
+	
+	public String getPropStatus();
+	
+	/**
+	 * Return a compound status from text and property statuses
+	 * @return
+	 */
 	public String getStatus();
 	
 	public boolean hasTreeConflict();

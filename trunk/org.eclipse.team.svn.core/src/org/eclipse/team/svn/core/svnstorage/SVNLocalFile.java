@@ -21,8 +21,8 @@ import org.eclipse.team.svn.core.resource.ILocalFile;
  * @author Alexander Gurov
  */
 public class SVNLocalFile extends SVNLocalResource implements ILocalFile {
-	public SVNLocalFile(IResource resource, long revision, long baseRevision, String status, int changeMask, String author, long lastCommitDate, SVNConflictDescriptor treeConflictDescriptor) {
-		super(resource, revision, baseRevision, status, changeMask, author, lastCommitDate, treeConflictDescriptor);
+	public SVNLocalFile(IResource resource, long revision, long baseRevision, String textStatus, String propStatus, int changeMask, String author, long lastCommitDate, SVNConflictDescriptor treeConflictDescriptor) {
+		super(resource, revision, baseRevision, textStatus, propStatus, changeMask, author, lastCommitDate, treeConflictDescriptor);
 	}
 
 }

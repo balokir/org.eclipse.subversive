@@ -63,8 +63,8 @@ public class MergePropertiesAction extends AbstractSynchronizeModelAction {
 					return false;
 				}
 				boolean retVal = IStateFilter.SF_EXCLUDE_DELETED.accept(incoming) & IStateFilter.ST_DELETED != incoming.getStatus();				
-				return retVal && ((incoming.getChangeMask() & ILocalResource.PROP_MODIFIED) != 0
-						|| (syncInfo.getLocalResource().getChangeMask() & ILocalResource.PROP_MODIFIED) != 0);
+				return retVal && (IStateFilter.SF_HAS_PROPERTIES_CHANGES.accept(incoming)
+						|| IStateFilter.SF_HAS_PROPERTIES_CHANGES.accept(syncInfo.getLocalResource()));
 			}
 		}
 		return false;
