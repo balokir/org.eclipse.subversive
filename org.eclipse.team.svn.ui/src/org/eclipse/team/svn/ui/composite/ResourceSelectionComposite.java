@@ -334,7 +334,7 @@ public class ResourceSelectionComposite extends Composite {
 				} else if (columnIndex == ResourceSelectionComposite.COLUMN_PROPSTATUS) {
 					return ResourceSelectionComposite.this.propertiesStatusAsString(local);
 				}
-				return "";
+				return ""; //$NON-NLS-1$
 			}
 
 			public void addListener(ILabelProviderListener listener) {
@@ -450,13 +450,16 @@ public class ResourceSelectionComposite extends Composite {
 	}
 
 	protected String contentStatusAsString(ILocalResource local) {				
-		String status = "";
-		if ((local.getChangeMask() & ILocalResource.TEXT_MODIFIED) != 0) {
-			status = SVNUtility.getStatusText(local.getStatus());
+		String status = ""; //$NON-NLS-1$
+		if (!IStateFilter.ST_NORMAL.equals(local.getTextStatus())) {
+			status = SVNUtility.getStatusText(local.getTextStatus());			
+			if (local.isCopied()) {
+				status += " (+)"; //$NON-NLS-1$
+			}
 		}
 		if (local.hasTreeConflict() && local.getTreeConflictDescriptor().conflictKind == SVNConflictDescriptor.Kind.CONTENT) {
-			if (!"".equals(status)) {
-				status += ", ";
+			if (!"".equals(status)) { //$NON-NLS-1$
+				status += ", "; //$NON-NLS-1$
 			}
 			status += SVNMessages.TreeConflicting;			
 		}
@@ -464,27 +467,13 @@ public class ResourceSelectionComposite extends Composite {
 	}
 	
 	protected String propertiesStatusAsString(ILocalResource local) {				
-		String status = "";
-		if ((local.getChangeMask() & ILocalResource.PROP_MODIFIED) != 0) {
-			status = SVNUtility.getStatusText(local.getStatus());
+		String status = "";	 //$NON-NLS-1$
+		if (IStateFilter.SF_HAS_PROPERTIES_CHANGES.accept(local)) {
+			status = SVNUtility.getStatusText(local.getPropStatus());
 		}
 		if (local.hasTreeConflict() && local.getTreeConflictDescriptor().conflictKind == SVNConflictDescriptor.Kind.PROPERTIES) {
-			if (!"".equals(status)) {
-				status += ", ";
-			}
-			status += SVNMessages.TreeConflicting;			
-		}
-		return status;
-	}
-	
-	protected String contentStatusAsString(ILocalResource local, boolean isContent) {				
-		String status = "";
-		if (isContent && (local.getChangeMask() & ILocalResource.TEXT_MODIFIED) != 0) {
-			status = SVNUtility.getStatusText(local.getStatus());
-		}
-		if (local.hasTreeConflict() && local.getTreeConflictDescriptor().conflictKind == SVNConflictDescriptor.Kind.CONTENT) {
-			if (!"".equals(status)) {
-				status += ", ";
+			if (!"".equals(status)) { //$NON-NLS-1$
+				status += ", "; //$NON-NLS-1$
 			}
 			status += SVNMessages.TreeConflicting;			
 		}
