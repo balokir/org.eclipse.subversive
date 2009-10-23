@@ -30,8 +30,8 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
  * @author Alexander Gurov
  */
 public class SVNLocalFolder extends SVNLocalResource implements ILocalFolder {
-	public SVNLocalFolder(IResource resource, long revision, long baseRevision, String status, int changeMask, String author, long lastCommitDate, SVNConflictDescriptor treeConflictDescriptor) {
-		super(resource, revision, baseRevision, status, changeMask, author, lastCommitDate, treeConflictDescriptor);
+	public SVNLocalFolder(IResource resource, long revision, long baseRevision, String textStatus, String propStatus, int changeMask, String author, long lastCommitDate, SVNConflictDescriptor treeConflictDescriptor) {
+		super(resource, revision, baseRevision, textStatus, propStatus, changeMask, author, lastCommitDate, treeConflictDescriptor);
 	}
 
 	public ILocalResource []getChildren() {

@@ -25,17 +25,19 @@ public abstract class SVNLocalResource implements ILocalResource {
 	protected IResource resource;
 	protected long revision;
 	protected long baseRevision;
-	protected String status;
+	protected String textStatus;
+	protected String propStatus;
 	protected int changeMask;
 	protected String author;
 	protected long lastCommitDate;
 	protected SVNConflictDescriptor treeConflictDescriptor;
 	
-	protected SVNLocalResource(IResource resource, long revision, long baseRevision, String status, int changeMask, String author, long lastCommitDate, SVNConflictDescriptor treeConflictDescriptor) {
+	protected SVNLocalResource(IResource resource, long revision, long baseRevision, String textStatus, String propStatus, int changeMask, String author, long lastCommitDate, SVNConflictDescriptor treeConflictDescriptor) {
 		this.resource = resource;
 		this.revision = revision;
 		this.baseRevision = baseRevision;
-		this.status = status;
+		this.textStatus = textStatus;
+		this.propStatus = propStatus;
 		this.changeMask = changeMask;
 		this.author = author != null ? author.intern() : null;
 		this.lastCommitDate = lastCommitDate;
@@ -62,8 +64,16 @@ public abstract class SVNLocalResource implements ILocalResource {
 		return this.baseRevision;
 	}
 	
+	public String getTextStatus() {
+		return this.textStatus;
+	}
+	
+	public String getPropStatus() {
+		return this.propStatus;
+	}
+	
 	public String getStatus() {
-		return this.status;
+		return SVNRemoteStorage.getCompoundStatusString(this.textStatus, this.propStatus);
 	}
 	
 	public int getChangeMask() {

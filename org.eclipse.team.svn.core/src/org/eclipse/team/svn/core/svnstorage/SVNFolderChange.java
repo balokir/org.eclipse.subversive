@@ -31,15 +31,15 @@ public class SVNFolderChange extends SVNLocalFolder implements IFolderChange {
 	protected String comment;
 	protected ICommentProvider provider;
 
-	public SVNFolderChange(IResource resource, long revision, String status, int changeMask, String author, long lastCommitDate, SVNConflictDescriptor treeConflictDescriptor, SVNRevision pegRevision, String comment) {
-		super(resource, revision, revision, status, changeMask, author, lastCommitDate, treeConflictDescriptor);
+	public SVNFolderChange(IResource resource, long revision, String textStatus, String propStatus, int changeMask, String author, long lastCommitDate, SVNConflictDescriptor treeConflictDescriptor, SVNRevision pegRevision, String comment) {
+		super(resource, revision, revision, textStatus, propStatus, changeMask, author, lastCommitDate, treeConflictDescriptor);
 		this.comment = comment;
 		this.pegRevision = pegRevision;
 	}
 	
 	public void treatAsReplacement()
 	{
-		this.status = IStateFilter.ST_REPLACED;
+		this.textStatus = IStateFilter.ST_REPLACED;
 	}
 	
 	public SVNRevision getPegRevision() {
