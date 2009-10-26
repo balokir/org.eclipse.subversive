@@ -94,6 +94,8 @@ public class OverrideAndUpdateAction extends AbstractSynchronizeModelAction {
 				return null;
 			}
 			resources[0] = panel.getSelectedResources();
+		} else {
+			return null;
 		}
 		
 		CompositeOperation op = new CompositeOperation("Operation_UOverrideAndUpdate"); //$NON-NLS-1$

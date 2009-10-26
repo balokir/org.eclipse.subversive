@@ -753,6 +753,9 @@ public final class FileUtility {
 	}
 	
 	private static void addChildren(Set<IResource> resources, IResource []roots, IStateFilter filter, int depth, IActionOperation calledFrom, IProgressMonitor monitor) {
+		if (roots == null || roots.length == 0) {
+			return;
+		}
 		int nextDepth = depth == IResource.DEPTH_ONE ? IResource.DEPTH_ZERO : IResource.DEPTH_INFINITE;
 		for (int i = 0; i < roots.length && (monitor == null || !monitor.isCanceled()); i++) {
 			//don't process ignored resources
