@@ -565,6 +565,11 @@ public class SVNUIMessages extends BaseMessages {
 	public static String LocalInfoPage_ResourceURL;
 	public static String LocalInfoPage_Revision;
 	public static String LocalInfoPage_State;
+	public static String LocalInfoPage_PropertyStatus;
+	public static String LocalInfoPage_TextStatus;
+	public static String LocalInfoPage_TreeConflict;
+	public static String LocalInfoPage_TreeConflictDescription;
+	public static String LocalInfoPage_Copied;
 	public static String LockAction_label;
 	public static String LockCommand_tooltip;
 	public static String LockPanel_Comment;
