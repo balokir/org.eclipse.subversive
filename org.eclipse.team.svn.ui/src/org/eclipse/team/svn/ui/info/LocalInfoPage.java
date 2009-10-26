@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
+import org.eclipse.team.svn.core.connector.SVNConflictDescriptor;
 import org.eclipse.team.svn.core.connector.SVNEntryInfo;
 import org.eclipse.team.svn.core.connector.SVNLock;
 import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
@@ -77,15 +78,36 @@ public class LocalInfoPage extends PropertyPage {
 		content.setEditable(false);
 		content.setText(resource.getFullPath().toString());
 		
+		//text status
 		description = new Label(composite, SWT.WRAP);
 		description.setLayoutData(new GridData());
-		description.setText(SVNUIMessages.LocalInfoPage_State);
+		description.setText(SVNUIMessages.LocalInfoPage_TextStatus);
 		
 		content = new Text(composite, SWT.SINGLE);
 		content.setLayoutData(new GridData());
 		content.setEditable(false);
-		content.setText(SVNUtility.getStatusText(local.getStatus()));
+		content.setText(SVNUtility.getStatusText(local.getTextStatus()));
+
+		//property status
+		description = new Label(composite, SWT.WRAP);
+		description.setLayoutData(new GridData());
+		description.setText(SVNUIMessages.LocalInfoPage_PropertyStatus);
 		
+		content = new Text(composite, SWT.SINGLE);
+		content.setLayoutData(new GridData());
+		content.setEditable(false);
+		content.setText(SVNUtility.getStatusText(local.getPropStatus()));
+		
+		//is copied
+		description = new Label(composite, SWT.WRAP);
+		description.setLayoutData(new GridData());
+		description.setText(SVNUIMessages.LocalInfoPage_Copied);
+		
+		content = new Text(composite, SWT.SINGLE);
+		content.setLayoutData(new GridData());
+		content.setEditable(false);
+		content.setText(String.valueOf(local.isCopied()));		
+							
 		SVNEntryInfo info = op.getInfo();
 		if (IStateFilter.SF_ONREPOSITORY.accept(local) && info != null) {
 		    // add space
@@ -183,6 +205,24 @@ public class LocalInfoPage extends PropertyPage {
 				}
 			}
 		}
+		
+		//tree conflict		
+		if (local.hasTreeConflict()) {
+			//add space
+	    	new Label(composite, SWT.WRAP);
+	    	new Label(composite, SWT.WRAP);
+			description = new Label(composite, SWT.WRAP);
+			description.setLayoutData(new GridData());
+			description.setText(SVNUIMessages.LocalInfoPage_TreeConflict);
+			
+			content = new Text(composite, SWT.WRAP);
+			data = new GridData();
+			data.widthHint = 300;
+			content.setLayoutData(data);
+			content.setEditable(false);		
+			content.setText(this.getTreeConflictDescription(local.getTreeConflictDescriptor()));
+		}
+		
 		if (IStateFilter.SF_VERSIONED.accept(local)) {
 			//add space
 			new Label(composite, SWT.WRAP);
@@ -208,5 +248,66 @@ public class LocalInfoPage extends PropertyPage {
 		
         return composite;
     }
+    
+    protected String getTreeConflictDescription(SVNConflictDescriptor conflictDescriptor) {
+		String reason;
+		String action;
+		String operation;
+		switch (conflictDescriptor.reason) {
+		case SVNConflictDescriptor.Reason.MODIFIED:
+			reason = "edit"; //$NON-NLS-1$
+			break;
+		case SVNConflictDescriptor.Reason.OBSTRUCTED:
+			reason = "obstruction"; //$NON-NLS-1$
+			break;
+		case SVNConflictDescriptor.Reason.DELETED:
+			reason = "delete"; //$NON-NLS-1$
+			break;		
+		case SVNConflictDescriptor.Reason.MISSING:
+			reason = "missing"; //$NON-NLS-1$
+			break;	
+		case SVNConflictDescriptor.Reason.UNVERSIONED:
+			reason = "unversioned"; //$NON-NLS-1$
+			break;
+		case SVNConflictDescriptor.Reason.ADDED:
+			reason = "add"; //$NON-NLS-1$
+			break;					
+		default:
+			reason = Integer.toString(conflictDescriptor.reason);
+			break;
+		}
+		switch (conflictDescriptor.action) {
+		case SVNConflictDescriptor.Action.MODIFY:
+			action = "edit"; //$NON-NLS-1$
+			break;
+		case SVNConflictDescriptor.Action.ADD:
+			action = "add"; //$NON-NLS-1$
+			break;
+		case SVNConflictDescriptor.Action.DELETE:
+			action = "delete"; //$NON-NLS-1$
+			break;			
+		default:
+			action = Integer.toString(conflictDescriptor.action);
+			break;
+		}
+		switch (conflictDescriptor.operation) {
+		case SVNConflictDescriptor.Operation.NONE:
+			operation = "none"; //$NON-NLS-1$
+			break;
+		case SVNConflictDescriptor.Operation.UPDATE:
+			operation = "update"; //$NON-NLS-1$
+			break;
+		case SVNConflictDescriptor.Operation.SWITCHED:
+			operation = "switch"; //$NON-NLS-1$
+			break;	
+		case SVNConflictDescriptor.Operation.MERGE:
+			operation = "merge"; //$NON-NLS-1$
+			break;			
+		default:
+			operation = Integer.toString(conflictDescriptor.operation);
+			break;
+		}		
+		return SVNUIMessages.format(SVNUIMessages.LocalInfoPage_TreeConflictDescription, new String[]{reason, action, operation});
+	}
 
 }
