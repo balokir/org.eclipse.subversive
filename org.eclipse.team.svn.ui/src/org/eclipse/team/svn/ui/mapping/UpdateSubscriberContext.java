@@ -141,7 +141,10 @@ public class UpdateSubscriberContext extends SubscriberMergeContext {
 					return Status.OK_STATUS;
 				}
 				resources[0] = panel.getSelectedResources();
-			}
+			} else {
+				return Status.OK_STATUS;
+			}						
+			
 			CompositeOperation op = new CompositeOperation("Operation_UOverrideAndUpdate"); //$NON-NLS-1$
 			SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources[0]);
 			op.add(saveOp);
