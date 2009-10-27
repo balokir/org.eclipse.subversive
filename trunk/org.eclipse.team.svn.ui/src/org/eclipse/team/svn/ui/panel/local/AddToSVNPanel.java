@@ -41,6 +41,7 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
+import org.eclipse.team.svn.ui.action.local.AddToSVNIgnoreAction;
 import org.eclipse.team.svn.ui.dialog.DiscardConfirmationDialog;
 import org.eclipse.team.svn.ui.panel.participant.AddToSVNPaneParticipant;
 import org.eclipse.team.svn.ui.panel.participant.BasePaneParticipant;
@@ -98,7 +99,7 @@ public class AddToSVNPanel extends AbstractResourceSelectionPanel {
 							UIMonitorUtility.doTaskNowDefault(op, true);							
 						}
 					});
-					tAction.setEnabled(true);
+					tAction.setEnabled(FileUtility.checkForResourcesPresence(selectedResources, AddToSVNIgnoreAction.SF_NEW_AND_PARENT_VERSIONED, IResource.DEPTH_ZERO));
 					String name = selectedResources[0].getName();
 					String [] parts = name.split("\\."); //$NON-NLS-1$
 					if ((parts.length != 0)) {
@@ -110,7 +111,7 @@ public class AddToSVNPanel extends AbstractResourceSelectionPanel {
 								UIMonitorUtility.doTaskNowDefault(op, true);
 							}
 						});
-						tAction.setEnabled(true);
+						tAction.setEnabled(FileUtility.checkForResourcesPresence(selectedResources, AddToSVNIgnoreAction.SF_NEW_AND_PARENT_VERSIONED, IResource.DEPTH_ZERO));
 					}
 				}
 				else {
