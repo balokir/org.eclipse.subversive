@@ -50,6 +50,24 @@
         </factory>		
 	</extension>
    
+<!-- *************** Console Factory **************** -->
+   <extension
+         point="org.eclipse.ui.console.consoleFactories">
+      <consoleFactory
+            label="%SVN"            
+            class="org.eclipse.team.svn.ui.console.SVNConsoleFactory"/>
+   </extension>  
+   <extension
+         point="org.eclipse.ui.console.consolePageParticipants">
+      <consolePageParticipant
+            class="org.eclipse.team.svn.ui.console.SVNConsolePageParticipant"
+            id="org.eclipse.team.svn.ui.console.SVNConsolePageParticipant">
+         <enablement>
+            <instanceof value="org.eclipse.team.svn.ui.console.SVNConsole"/>
+         </enablement>
+      </consolePageParticipant>
+   </extension>
+   
 <!-- ************** SVN Team Wizards ********************** -->
    <extension
          point="org.eclipse.ui.newWizards">

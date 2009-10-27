@@ -72,6 +72,10 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
     	return SVNTeamUIPlugin.instance;
     }
     
+    public SVNConsole getConsole() {
+    	return this.console;
+    }
+    
     public IConsoleStream getConsoleStream() {
     	return this.console == null ? null : this.console.getConsoleStream();
     }

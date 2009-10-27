@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.ui.console;
 
-import com.ibm.icu.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -30,8 +29,11 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
+import org.eclipse.ui.console.IConsoleListener;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
+
+import com.ibm.icu.text.SimpleDateFormat;
 
 /**
  * SVN Console implementation
@@ -48,6 +50,37 @@ public class SVNConsole extends MessageConsole implements IPropertyChangeListene
 	
 	protected int autoshow;
 	protected boolean enabled;
+	
+	/**
+	 * This listener is needed to correctly react if console was removed
+	 * (by Remove action from console tool bar) and
+	 * then added: if we remove console by remove action and then add it then
+	 * console's <code>init</code> method will not be called so we call it explicitly here;
+	 * if we call remove action two or more times <code>dispose</code> method
+	 * isn't called so we call it explicitly here.
+	 * 
+	 */
+	public class SVNConsoleListener implements IConsoleListener {
+		
+		public void consolesAdded(IConsole[] consoles) {
+			for (int i = 0; i < consoles.length; i++) {
+				IConsole console = consoles[i];
+				if (console == SVNConsole.this) {
+					SVNConsole.this.init();
+				}
+			}
+		}
+		
+		public void consolesRemoved(IConsole[] consoles) {
+			for (int i = 0; i < consoles.length; i++) {
+				IConsole console = consoles[i];
+				if (console == SVNConsole.this) {
+					ConsolePlugin.getDefault().getConsoleManager().removeConsoleListener(this);
+					SVNConsole.this.dispose();
+				}
+			}
+		}
+	}
 	
 	public SVNConsole() {
 		super(SVNUIMessages.SVNConsole_Name, SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/console.gif")); //$NON-NLS-1$
@@ -115,17 +148,15 @@ public class SVNConsole extends MessageConsole implements IPropertyChangeListene
 	}
 	
 	protected void init() {
-
+		this.enabled = true; 
 	}
 	
 	protected void dispose() {
-
+		this.enabled = false; 
 	}
 	
 	protected void loadPreferences() {
 		IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
-		
-		this.enabled = SVNTeamPreferences.getConsoleBoolean(store, SVNTeamPreferences.CONSOLE_ENABLED_NAME);
 		
 		Color tmp = this.cmdStream.getColor();
 		this.cmdStream.setColor(new Color(UIMonitorUtility.getDisplay(), SVNTeamPreferences.getConsoleRGB(store, SVNTeamPreferences.CONSOLE_CMD_COLOR_NAME)));
@@ -170,13 +201,6 @@ public class SVNConsole extends MessageConsole implements IPropertyChangeListene
 				SVNConsole.this.setFont(PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getFontRegistry().get(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_FONT_NAME)));
 			}
 		});
-		
-		if (this.enabled) {
-			ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[] {this});
-		}
-		else {
-			ConsolePlugin.getDefault().getConsoleManager().removeConsoles(new IConsole[] {this});
-		}
 	}
 
 	protected class SVNConsoleStream implements IConsoleStream {
@@ -215,23 +239,23 @@ public class SVNConsole extends MessageConsole implements IPropertyChangeListene
 		
 		public void doComplexWrite(Runnable runnable) {
 			this.flushBuffer();
-			if (SVNConsole.this.enabled) {
-				runnable.run();
-			}
+			runnable.run();
 		}
-
+		
 		public void write(int severity, String data) {
 			this.flushBuffer();
-			if (SVNConsole.this.enabled) {
-				if (!this.activated &&
-					(SVNConsole.this.autoshow == SVNTeamPreferences.CONSOLE_AUTOSHOW_TYPE_ALWAYS ||
-					SVNConsole.this.autoshow == SVNTeamPreferences.CONSOLE_AUTOSHOW_TYPE_ERROR && 
-					severity == IConsoleStream.LEVEL_ERROR ||
-					SVNConsole.this.autoshow == SVNTeamPreferences.CONSOLE_AUTOSHOW_TYPE_WARNING_ERROR && 
-					(severity == IConsoleStream.LEVEL_ERROR || severity == IConsoleStream.LEVEL_WARNING))) {
-					this.activated = true;
-					ConsolePlugin.getDefault().getConsoleManager().showConsoleView(SVNConsole.this);
-				}
+			
+			if (SVNConsole.this.enabled && !this.activated) {
+				//show console view
+				ConsolePlugin.getDefault().getConsoleManager().showConsoleView(SVNConsole.this);				
+				this.activated = true;
+			} else if (!SVNConsole.this.enabled && this.canShowConsoleAutomatically(severity)) {
+				//open console
+				SVNConsoleFactory.showConsole();
+				this.activated = true;
+			}
+			
+			if (this.activated) {
 				switch (severity) {
 					case IConsoleStream.LEVEL_CMD: {
 						this.print(SVNConsole.this.cmdStream, data);
@@ -256,6 +280,15 @@ public class SVNConsole extends MessageConsole implements IPropertyChangeListene
 			}
 		}
 
+		protected boolean canShowConsoleAutomatically(int severity) {
+			return 
+				SVNConsole.this.autoshow == SVNTeamPreferences.CONSOLE_AUTOSHOW_TYPE_ALWAYS ||
+				SVNConsole.this.autoshow == SVNTeamPreferences.CONSOLE_AUTOSHOW_TYPE_ERROR && 
+				severity == IConsoleStream.LEVEL_ERROR ||
+				SVNConsole.this.autoshow == SVNTeamPreferences.CONSOLE_AUTOSHOW_TYPE_WARNING_ERROR && 
+				(severity == IConsoleStream.LEVEL_ERROR || severity == IConsoleStream.LEVEL_WARNING);
+		}
+		
 		public void markCancelled() {
 			this.cancelled = true;
 		}

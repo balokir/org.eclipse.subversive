@@ -67,7 +67,6 @@ public final class SVNTeamPreferences {
 	public static final boolean BEHAVIOUR_IGNORE_EXTERNALS_DEFAULT = false;
 	
 	public static final String CONSOLE_AUTOSHOW_TYPE_NAME = "autoshow"; //$NON-NLS-1$
-	public static final String CONSOLE_ENABLED_NAME = "enabled"; //$NON-NLS-1$
 	public static final String CONSOLE_HYPERLINKS_ENABLED_NAME = "hyperlinksEnabled"; //$NON-NLS-1$
 	public static final String CONSOLE_FONT_NAME = "font"; //$NON-NLS-1$
 	public static final String CONSOLE_WRAP_ENABLED_NAME = "wrapEnabled"; //$NON-NLS-1$
@@ -90,7 +89,6 @@ public final class SVNTeamPreferences {
 	public static final int CONSOLE_AUTOSHOW_TYPE_WARNING_ERROR = 3;
 	public static final int CONSOLE_AUTOSHOW_TYPE_DEFAULT = SVNTeamPreferences.CONSOLE_AUTOSHOW_TYPE_NEVER;
 	
-	public static final boolean CONSOLE_ENABLED_DEFAULT = true;
 	public static final boolean CONSOLE_HYPERLINKS_ENABLED_DEFAULT = true;
 	
 	public static final boolean CONSOLE_WRAP_ENABLED_DEFAULT = false;
@@ -461,7 +459,6 @@ public final class SVNTeamPreferences {
 		PreferenceConverter.setDefault(store, SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_OK_COLOR_NAME), SVNTeamPreferences.CONSOLE_OK_COLOR_DEFAULT);
 		PreferenceConverter.setDefault(store, SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_CMD_COLOR_NAME), SVNTeamPreferences.CONSOLE_CMD_COLOR_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_AUTOSHOW_TYPE_NAME), SVNTeamPreferences.CONSOLE_AUTOSHOW_TYPE_DEFAULT);
-		store.setDefault(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_ENABLED_NAME), SVNTeamPreferences.CONSOLE_ENABLED_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_HYPERLINKS_ENABLED_NAME), SVNTeamPreferences.CONSOLE_HYPERLINKS_ENABLED_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_WRAP_ENABLED_NAME), SVNTeamPreferences.CONSOLE_WRAP_ENABLED_DEFAULT);
 		store.setDefault(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_LIMIT_ENABLED_NAME), SVNTeamPreferences.CONSOLE_LIMIT_ENABLED_DEFAULT);
@@ -592,7 +589,6 @@ public final class SVNTeamPreferences {
 		SVNTeamPreferences.setConsoleRGB(store, SVNTeamPreferences.CONSOLE_OK_COLOR_NAME, SVNTeamPreferences.CONSOLE_OK_COLOR_DEFAULT);
 		SVNTeamPreferences.setConsoleRGB(store, SVNTeamPreferences.CONSOLE_CMD_COLOR_NAME, SVNTeamPreferences.CONSOLE_CMD_COLOR_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_AUTOSHOW_TYPE_NAME), SVNTeamPreferences.CONSOLE_AUTOSHOW_TYPE_DEFAULT);
-		store.setValue(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_ENABLED_NAME), SVNTeamPreferences.CONSOLE_ENABLED_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_HYPERLINKS_ENABLED_NAME), SVNTeamPreferences.CONSOLE_HYPERLINKS_ENABLED_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_WRAP_ENABLED_NAME), SVNTeamPreferences.CONSOLE_WRAP_ENABLED_DEFAULT);
 		store.setValue(SVNTeamPreferences.fullConsoleName(SVNTeamPreferences.CONSOLE_LIMIT_ENABLED_NAME), SVNTeamPreferences.CONSOLE_LIMIT_ENABLED_DEFAULT);
