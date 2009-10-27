@@ -45,7 +45,6 @@ public class SVNTeamConsolePreferencesPage extends AbstractSVNTeamPreferencesPag
 	protected ColorFieldEditor wrnEditor;
 	protected ColorFieldEditor errEditor;
 	
-	protected boolean enabled;
 	protected boolean hyperlinksEnabled;
 	protected int autoshow;
 	protected boolean wrapEnabled;
@@ -53,7 +52,6 @@ public class SVNTeamConsolePreferencesPage extends AbstractSVNTeamPreferencesPag
 	protected int wrapWidth;
 	protected int limitValue;
 	
-	protected Button enabledButton;
 	protected Button hyperlinksEnabledButton;
 	protected Button showNeverButton;
 	protected Button showAlwaysButton;
@@ -76,7 +74,6 @@ public class SVNTeamConsolePreferencesPage extends AbstractSVNTeamPreferencesPag
 
 		SVNTeamPreferences.setConsoleInt(store, SVNTeamPreferences.CONSOLE_AUTOSHOW_TYPE_NAME, this.autoshow);
 		
-		SVNTeamPreferences.setConsoleBoolean(store, SVNTeamPreferences.CONSOLE_ENABLED_NAME, this.enabled);
 		SVNTeamPreferences.setConsoleBoolean(store, SVNTeamPreferences.CONSOLE_HYPERLINKS_ENABLED_NAME, this.hyperlinksEnabled);
 		
 		SVNTeamPreferences.setConsoleBoolean(store, SVNTeamPreferences.CONSOLE_WRAP_ENABLED_NAME, this.wrapEnabled);
@@ -87,8 +84,7 @@ public class SVNTeamConsolePreferencesPage extends AbstractSVNTeamPreferencesPag
 	}
 	
 	protected void loadDefaultValues(IPreferenceStore store) {
-		this.autoshow = SVNTeamPreferences.CONSOLE_AUTOSHOW_TYPE_DEFAULT;
-		this.enabled = SVNTeamPreferences.CONSOLE_ENABLED_DEFAULT;
+		this.autoshow = SVNTeamPreferences.CONSOLE_AUTOSHOW_TYPE_DEFAULT;		
 		this.hyperlinksEnabled = SVNTeamPreferences.CONSOLE_HYPERLINKS_ENABLED_DEFAULT;
 		this.wrapEnabled = SVNTeamPreferences.CONSOLE_WRAP_ENABLED_DEFAULT;
 		this.wrapWidth = SVNTeamPreferences.CONSOLE_WRAP_WIDTH_DEFAULT;
@@ -103,7 +99,6 @@ public class SVNTeamConsolePreferencesPage extends AbstractSVNTeamPreferencesPag
 	
 	protected void loadValues(IPreferenceStore store) {
 		this.autoshow = SVNTeamPreferences.getConsoleInt(store, SVNTeamPreferences.CONSOLE_AUTOSHOW_TYPE_NAME);
-		this.enabled = SVNTeamPreferences.getConsoleBoolean(store, SVNTeamPreferences.CONSOLE_ENABLED_NAME);
 		this.hyperlinksEnabled = SVNTeamPreferences.getConsoleBoolean(store, SVNTeamPreferences.CONSOLE_HYPERLINKS_ENABLED_NAME);
 		this.wrapEnabled = SVNTeamPreferences.getConsoleBoolean(store, SVNTeamPreferences.CONSOLE_WRAP_ENABLED_NAME);
 		this.wrapWidth = SVNTeamPreferences.getConsoleInt(store, SVNTeamPreferences.CONSOLE_WRAP_WIDTH_NAME);
@@ -133,7 +128,6 @@ public class SVNTeamConsolePreferencesPage extends AbstractSVNTeamPreferencesPag
 			this.showWarningErrorButton.setSelection(true);
 		}
 		
-		this.enabledButton.setSelection(this.enabled);
 		this.hyperlinksEnabledButton.setSelection(this.hyperlinksEnabled);
 		
 		this.wrapEnabledButton.setSelection(this.wrapEnabled);
@@ -154,17 +148,6 @@ public class SVNTeamConsolePreferencesPage extends AbstractSVNTeamPreferencesPag
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.grabExcessVerticalSpace = false;
 		composite.setLayoutData(data);
-		
-		this.enabledButton = new Button(composite, SWT.CHECK);
-		data = new GridData();
-		data.horizontalSpan = 2;
-		this.enabledButton.setLayoutData(data);
-		this.enabledButton.setText(SVNUIMessages.ConsolePreferencePage_textIsEnabled);
-		this.enabledButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent (Event event) {
-				SVNTeamConsolePreferencesPage.this.enabled = SVNTeamConsolePreferencesPage.this.enabledButton.getSelection();
-			}
-		});
 		
 		this.hyperlinksEnabledButton = new Button(composite, SWT.CHECK);
 		data = new GridData();

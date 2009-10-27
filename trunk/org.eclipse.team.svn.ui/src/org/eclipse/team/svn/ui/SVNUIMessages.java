@@ -276,7 +276,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String ConsolePreferencePage_textCmdMessage;
 	public static String ConsolePreferencePage_textColorsGroup;
 	public static String ConsolePreferencePage_textErrMessage;
-	public static String ConsolePreferencePage_textIsEnabled;
 	public static String ConsolePreferencePage_textLimitEnabled;
 	public static String ConsolePreferencePage_textLimitValue;
 	public static String ConsolePreferencePage_textOkMessage;
@@ -1804,6 +1803,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String SelectSimpleRepositoryLocationPage_Description;
 	public static String SelectSimpleRepositoryLocationPage_Details;
 	public static String Action_SetExternals;
+	public static String SVNConsoleRemoveAction_CloseConsole;
 	
 	static {
 		//load message values from bundle file
