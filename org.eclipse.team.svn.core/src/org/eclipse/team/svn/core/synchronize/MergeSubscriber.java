@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNConflictDescriptor;
 import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNEntryStatus;
@@ -279,7 +280,7 @@ public class MergeSubscriber extends AbstractSVNSubscriber {
 	}
 	
     private MergeSubscriber() {
-        super(false);
+        super(false, SVNMessages.MergeSubscriber_Name);
 		this.baseStatusCache = new RemoteStatusCache();
     }
 

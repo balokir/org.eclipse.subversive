@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.SVNConflictDescriptor;
 import org.eclipse.team.svn.core.connector.SVNEntry;
@@ -202,7 +203,7 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 	}
 	
 	private UpdateSubscriber() {
-		super(true);
+		super(true, SVNMessages.UpdateSubscriber_Name);
 		this.comments = new HashMap<SVNRevision, String>();
 	}
 

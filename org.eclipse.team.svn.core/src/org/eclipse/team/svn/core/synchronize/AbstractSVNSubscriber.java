@@ -70,8 +70,11 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
     protected IRemoteStatusCache statusCache;
     protected Set<IResource> oldResources;
     
-    public AbstractSVNSubscriber(boolean usePersistentCache) {
+    protected String name;
+    
+    public AbstractSVNSubscriber(boolean usePersistentCache, String name) {
         super();
+        this.name = name;
         if (usePersistentCache) {
         	this.statusCache = new PersistentRemoteStatusCache(REMOTE_CACHE_KEY);	
         } else {
@@ -95,7 +98,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
     }
     
     public String getName() {
-        return this.getClass().getName();
+        return this.name;
     }
 
     public boolean isSupervised(IResource resource) {

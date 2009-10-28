@@ -505,6 +505,8 @@ public class SVNMessages extends BaseMessages {
 	public static String WebUtil_cannotDownload;
 	public static String WebUtil_task_retrievingUrl;
 	public static String WebUtil_task_verifyingUrl;
+	public static String MergeSubscriber_Name;
+	public static String UpdateSubscriber_Name;
 	
 	static {
 		//load message values from bundle file
