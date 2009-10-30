@@ -13,6 +13,7 @@
 package org.eclipse.team.svn.core.svnstorage;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -78,6 +79,24 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 /**
  * SVN based representation of IRemoteStorage
  * 
+ * How external definitions are handled: 
+ * 	External resources are not marked anymore with external flag (ILocalResource.IS_EXTERNAL)
+ *  because we can't exactly determine whether resource is external or not.
+ *  This depends on where status operation is called. Example:
+ *   Project/
+ *   	src/		http://localhost/repos/foo com/foo
+ *   		com/
+ *   Here versioned folder 'com' is a part of external, so if we call
+ *   status on 'com' folder we'll not get that 'foo' folder is external because
+ *   external is defined on higher level.
+ *  Also if we call status operation on external versioned folder itself
+ *  (but not on its parent folder where external is defined), then we'll not get
+ *  that this folder is external.
+ *  As there are ambiguities with externals detection by using statuses, we
+ *  don't use this approach and simply check if resource is switched or not 
+ *  (by matching urls). So external resources are marked as switched and 
+ *  unversioned external folders are marked as ignored.
+ *  
  * @author Alexander Gurov
  */
 public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStorage {
@@ -616,14 +635,13 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		boolean parentExists = parent != null && parent.isAccessible();
 		if (parentExists && !isLinked) {
 			ILocalResource parentLocal = this.getFirstExistingParentLocal(resource);
-			if (parentLocal == null || !SVNRemoteStorage.SF_NONSVN.accept(parentLocal) || 
-				(parentLocal.getChangeMask() & ILocalResource.IS_EXTERNAL) != 0 && IStateFilter.SF_IGNORED.accept(parentLocal)) {
+			if (parentLocal == null || !SVNRemoteStorage.SF_NONSVN.accept(parentLocal) ||
+				IStateFilter.SF_IGNORED.accept(parentLocal)) {
 			    retVal = this.loadLocalResourcesSubTreeSVNImpl(provider, resource, recurse);
 			}
 		}
 
-		//don't call loadUnversionedSubtree for external resources
-		return (retVal == null || IStateFilter.SF_UNVERSIONED.accept(retVal) && !(IStateFilter.SF_IGNORED.accept(retVal) && IStateFilter.SF_EXTERNAL.accept(retVal)))
+		return (retVal == null || IStateFilter.SF_UNVERSIONED.accept(retVal) && !IStateFilter.SF_IGNORED.accept(retVal))
 				? this.loadUnversionedSubtree(resource, isLinked, recurse) : retVal;
 	}
 	
@@ -634,7 +652,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		// delegate status
 		final String fStatus = status;
 		ILocalResource parent = this.getFirstExistingParentLocal(resource);
-		final int parentCM = parent != null ? (parent.getChangeMask() & (ILocalResource.IS_EXTERNAL | ILocalResource.IS_SWITCHED)) : 0;
+		final int parentCM = parent != null ? (parent.getChangeMask() & (ILocalResource.IS_SWITCHED)) : 0;
 		final ILocalResource []tmp = new ILocalResource[1];
 		FileUtility.visitNodes(resource, new IResourceVisitor() {
             public boolean visit(IResource child) throws CoreException {
@@ -803,6 +821,10 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		return path.append(SVNUtility.getSVNFolderName()).toFile().exists();
 	}
 	
+	protected boolean canFetchStatuses(File file) {		
+		return new File(file, SVNUtility.getSVNFolderName()).exists();
+	}
+	
 	protected SVNChangeStatus []getStatuses(IRepositoryLocation location, String path) throws Exception {
 		ISVNConnector proxy = location.acquireSVNProxy();
 		try {
@@ -877,25 +899,22 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 			ILocalResource local = (ILocalResource)this.localResources.get(tRes.getFullPath());
 			if (local == null) {
 				ILocalResource parent = this.getFirstExistingParentLocal(tRes);
-				int externalMask = statuses[i].textStatus == SVNEntryStatus.Kind.EXTERNAL ? ILocalResource.IS_EXTERNAL : 0;
-				if (externalMask != 0) {
+												
+				if (statuses[i].textStatus == SVNEntryStatus.Kind.EXTERNAL) {
+					/*
+					 * Sometimes we can get the situation that resource has status SVNEntryStatus.Kind.EXTERNAL, 
+					 * but it is versioned (and created by external), so we try to retrieve its
+					 * status despite that SVN returned that it is unversioned.
+					 */					
 					statuses[i] = SVNUtility.getSVNInfoForNotConnected(tRes);
 					if (statuses[i] == null) {
-						local = this.registerResource(tRes, SVNRevision.INVALID_REVISION_NUMBER, SVNRevision.INVALID_REVISION_NUMBER, IStateFilter.ST_IGNORED, IStateFilter.ST_NORMAL, externalMask, null, 0, null);
+						local = this.registerExternalUnversionedResource(tRes);
 						if (tRes == resource) {
 							retVal = local;
 						}
-						continue;
+						continue;	
 					}
-				}
-				else if (parent != null && (parent.getChangeMask() & ILocalResource.IS_EXTERNAL) != 0) {
-					externalMask = ILocalResource.IS_EXTERNAL;
-				}
-				
-				//check file external
-				if (statuses[i].isFileExternal) {
-					externalMask = ILocalResource.IS_EXTERNAL;
-				}
+				}																		
 				
 				 // get the IS_COPIED flag by parent node (it is not fetched for deletions)
 				boolean forceCopied = parent != null && parent.isCopied();
@@ -903,10 +922,39 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 				if (statuses[i].lockToken != null) {
 					changeMask |= ILocalResource.IS_LOCKED;
 				}
-				changeMask |= externalMask;
+				
+				//check file external
+				if (statuses[i].isFileExternal) {				
+					changeMask |= ILocalResource.IS_SWITCHED;
+				}								
 				
 				String textStatus = SVNRemoteStorage.getTextStatusString(statuses[i].propStatus, statuses[i].textStatus, false);
 				String propStatus = SVNRemoteStorage.getPropStatusString(statuses[i].propStatus);
+								
+				/*
+				 * If folder is unversioned but contains in one of its children .svn folder,
+				 * then we consider this folder as unversioned folder created by external definition and
+				 * make its status in corresponding way, i.e. Ignored.
+				 */
+				if (textStatus == IStateFilter.ST_NEW && tRes.getType() == IResource.FOLDER) {
+					if (tRes.getLocation() != null) {
+						File folder = tRes.getLocation().toFile();						
+						boolean hasSVNMeta = false;						
+						do {
+							File[] children = folder.listFiles(new FileFilter() {								
+								public boolean accept(File pathname) {
+									return pathname.isDirectory();
+								}
+							});
+							folder = children.length > 0 ? children[0] : null;
+						} while (folder != null && !(hasSVNMeta = this.canFetchStatuses(folder)));	
+						if (hasSVNMeta) {
+							local = this.registerExternalUnversionedResource(tRes);
+							continue;
+						}
+					}
+				}
+				
 				if (!statuses[i].isSwitched && statuses[i].url != null && !SVNUtility.decodeURL(statuses[i].url).startsWith(desiredUrl)) {
 					changeMask |= ILocalResource.IS_SWITCHED;
 				}
@@ -975,6 +1023,10 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	    return status;
 	}
 	
+	protected ILocalResource registerExternalUnversionedResource(IResource resource) {
+		return this.registerResource(resource, SVNRevision.INVALID_REVISION_NUMBER, SVNRevision.INVALID_REVISION_NUMBER, IStateFilter.ST_IGNORED, IStateFilter.ST_NORMAL, 0, null, 0, null);
+	}
+	
 	protected ILocalResource registerResource(IResource current, long revision, long baseRevision, String textStatus, String propStatus, int changeMask, String author, long date, SVNConflictDescriptor treeConflictDescriptor) {
 	    SVNLocalResource local = null;
 	    
@@ -1034,44 +1086,16 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	}
 	
 	protected ILocalResource getFirstExistingParentLocal(IResource node) {
-		/*
-		 * Fix problem with SVN externals if externals have intermediate folders.
-		 * E.g. externals definition: http://localhost:81/repos/first/SimpleC externals2/a/b/SimpleC
-		 * For more details, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=270022
-		 * 
-		 * Intermediate folders are marked as 'ignored' and possibly as 'external'(not always).
-		 * 
-		 * If parent of the resource has 'ignored' status, we continue the processing
-		 * (don't immediately return it because it can be an intermediate folder)
-		 * and mark it as a possible candidate.
-		 * Then traverse parents until we find resource which is ignored and external - this means we've intermediate externals folders
-		 * or otherwise we return candidate resource.
-		 */
-		IResource resource = node;
-		ILocalResource result = null;		
-		ILocalResource candidate = null;		
-		while (true) {
-			IResource parent = resource.getParent();
-			if (parent == null) {
-				break;
-			}						
-			ILocalResource local = (ILocalResource)this.localResources.get(parent.getFullPath());
-			if (local != null) {
-				if (IStateFilter.SF_IGNORED.accept(local) && IStateFilter.SF_EXTERNAL.accept(local)) {
-					result = local;
-					break;
-				} else if (IStateFilter.SF_IGNORED.accept(local) && !IStateFilter.SF_EXTERNAL.accept(local)) {
-					if (candidate == null) {
-						candidate = local;	
-					}					
-				} else {
-					result = candidate == null ? local : candidate;
-					break;
-				}								
-			}							
-			resource = parent; 
-		}		
-		return result;
+		IResource parent = node.getParent();
+		if (parent == null) {
+			return null;
+		}
+		ILocalResource local = (ILocalResource)this.localResources.get(parent.getFullPath());
+		if (local != null) {
+			return local;
+		}
+		return this.getFirstExistingParentLocal(parent);
+	
 	}
 	
 	protected String deserializeStatus(String status) {

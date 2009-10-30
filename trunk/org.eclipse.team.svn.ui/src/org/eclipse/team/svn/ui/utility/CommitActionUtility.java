@@ -85,7 +85,7 @@ public class CommitActionUtility {
 		this.allResources = (IResource [])this.allResourcesSet.toArray(new IResource[this.allResourcesSet.size()]);
 				
 		this.canBeRecursiveCommit = FileUtility.getOperableParents(this.selector.getSelectedResources(), IStateFilter.SF_ADDED, false).length == 0;		
-		if (this.canBeRecursiveCommit && FileUtility.checkForResourcesPresence(this.allResources, IStateFilter.SF_EXTERNAL, IResource.DEPTH_ZERO)) {
+		if (this.canBeRecursiveCommit && FileUtility.checkForResourcesPresence(this.allResources, IStateFilter.SF_SWITCHED, IResource.DEPTH_ZERO)) {
 			this.canBeRecursiveCommit = false;
 		}
 	}
