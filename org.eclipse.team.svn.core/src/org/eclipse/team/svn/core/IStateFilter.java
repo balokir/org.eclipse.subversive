@@ -268,10 +268,10 @@ public interface IStateFilter {
 			return IStateFilter.SF_EXCLUDE_DELETED.accept(resource, state, mask);
 		}
 	};
-
-	public static final IStateFilter SF_EXTERNAL = new AbstractStateFilter() {
+	
+	public static final IStateFilter SF_SWITCHED = new AbstractStateFilter() {
 		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return (mask & ILocalResource.IS_EXTERNAL) != 0;
+			return (mask & ILocalResource.IS_SWITCHED) != 0;
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return true;

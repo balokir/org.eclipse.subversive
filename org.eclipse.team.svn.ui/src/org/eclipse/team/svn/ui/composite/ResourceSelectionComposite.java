@@ -153,7 +153,7 @@ public class ResourceSelectionComposite extends Composite {
 		if (userSelectedResources != null) {
 			this.userSelectedResources.addAll(Arrays.asList(userSelectedResources));
 		}
-		IResource[] externals = FileUtility.getResourcesRecursive(this.resources, IStateFilter.SF_EXTERNAL, IResource.DEPTH_ZERO);
+		IResource[] externals = FileUtility.getResourcesRecursive(this.resources, IStateFilter.SF_SWITCHED, IResource.DEPTH_ZERO);
 		for (int i = 0; i < externals.length; i++) {
 			this.externalResources.add(externals[i]);
 		}
@@ -544,7 +544,7 @@ public class ResourceSelectionComposite extends Composite {
 
 		while ((resource = resource.getParent()) != null) {
 			ILocalResource localResource = SVNRemoteStorage.instance().asLocalResource(resource);
-			if (IStateFilter.SF_INTERNAL_INVALID.accept(localResource) || (localResource.getChangeMask() & ILocalResource.IS_EXTERNAL) == 0) {
+			if (IStateFilter.SF_INTERNAL_INVALID.accept(localResource) || (localResource.getChangeMask() & ILocalResource.IS_SWITCHED) == 0) {
 				break;
 			}
 			if (this.userSelectedResources.contains(resource)) {
