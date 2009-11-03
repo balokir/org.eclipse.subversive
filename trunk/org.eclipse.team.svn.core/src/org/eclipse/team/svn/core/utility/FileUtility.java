@@ -678,8 +678,7 @@ public final class FileUtility {
 		}
 		return tRoots.toArray(new IResource[tRoots.size()]);		
 	}
-	
-	//TODO probably we don't need this method: check it
+		
 	public static IResource []shrinkChildNodes(IResource []resources) {
 		HashSet<IResource> tRoots = new HashSet<IResource>(Arrays.asList(resources));
 		for (int i = 0; i < resources.length; i++) {

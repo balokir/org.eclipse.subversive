@@ -84,10 +84,7 @@ public class CommitActionUtility {
 		this.allResourcesSet.addAll(Arrays.asList(FileUtility.addOperableParents(this.allResources, IStateFilter.SF_ADDED, true)));
 		this.allResources = (IResource [])this.allResourcesSet.toArray(new IResource[this.allResourcesSet.size()]);
 					
-		this.canBeRecursiveCommit = FileUtility.getOperableParents(this.selector.getSelectedResources(), IStateFilter.SF_ADDED, false).length == 0;
-		
-		//TODO as in recursive case, we use modified for externals 'shrink' method
-		//probably we can allow to recursively commit: need to check
+		this.canBeRecursiveCommit = FileUtility.getOperableParents(this.selector.getSelectedResources(), IStateFilter.SF_ADDED, false).length == 0;				
 		if (this.canBeRecursiveCommit && FileUtility.checkForResourcesPresence(this.allResources, IStateFilter.SF_SWITCHED, IResource.DEPTH_ZERO)) {
 			this.canBeRecursiveCommit = false;
 		}
