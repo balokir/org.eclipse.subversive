@@ -19,8 +19,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
@@ -33,6 +35,7 @@ import org.eclipse.team.svn.ui.utility.DefaultOperationWrapperFactory;
 import org.eclipse.team.svn.ui.utility.ICancellableOperationWrapper;
 import org.eclipse.team.svn.ui.utility.IOperationWrapperFactory;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -127,16 +130,26 @@ public abstract class AbstractSVNTeamAction extends TeamAction {
 	
 	public void selectionChanged(IAction action, ISelection selection) {
 		try {
-			if (selection == null || selection.isEmpty() || !(selection instanceof IStructuredSelection)) {
+			IStructuredSelection structuredSelection = null;
+			if (selection instanceof ITextSelection) {
+				IEditorPart part = this.getTargetPage().getActiveEditor();
+				if (part != null) {
+					IResource resource = (IResource) part.getEditorInput().getAdapter(IResource.class);
+					if (resource != null && resource.getType() == IResource.FILE) {
+						structuredSelection = new StructuredSelection(resource);
+					}
+				}
+			} else if (selection instanceof IStructuredSelection) {
+				structuredSelection = (IStructuredSelection) selection;
+			} 
+			if (structuredSelection == null || structuredSelection.isEmpty()) {
 				if (action != null) {
 					action.setEnabled(false);
 				}
-				return;
-			}
-			
-			this.checkSelection((IStructuredSelection)selection);
-			
-			super.selectionChanged(action, selection);
+			} else {
+				this.checkSelection(structuredSelection);
+				super.selectionChanged(action, structuredSelection);
+			}		
 		}
 		catch (Throwable ex) {
 			LoggedOperation.reportError(SVNUIMessages.getErrorString("Error_MenuEnablement"), ex); //$NON-NLS-1$
