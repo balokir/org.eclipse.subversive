@@ -46,7 +46,7 @@ public class RevertOperation extends AbstractWorkingCopyOperation {
 		IResource []resources = this.operableData();
 
 		if (this.doRecursiveRevert) {
-		    resources = FileUtility.shrinkChildNodes(resources);
+		    resources = FileUtility.shrinkChildNodesWithSwitched(resources);
 		}
 		else {
 			FileUtility.reorder(resources, false);

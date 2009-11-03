@@ -64,7 +64,7 @@ public class AddToSVNOperation extends AbstractWorkingCopyOperation {
 			this.isRecursive = !FileUtility.checkForResourcesPresenceRecursive(resources, IStateFilter.SF_IGNORED);
 		}
 		if (this.isRecursive) {
-			resources = FileUtility.shrinkChildNodes(resources);
+			resources = FileUtility.shrinkChildNodesWithSwitched(resources);
 		}
 		else {
 			FileUtility.reorder(resources, true);
