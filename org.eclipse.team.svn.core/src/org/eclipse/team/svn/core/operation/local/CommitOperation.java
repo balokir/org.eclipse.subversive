@@ -78,7 +78,7 @@ public class CommitOperation extends AbstractConflictDetectionOperation implemen
 		this.defineInitialResourceSet(resources);
 
 		if (this.recursive) {
-		    resources = FileUtility.shrinkChildNodes(resources);
+		    resources = FileUtility.shrinkChildNodesWithSwitched(resources);
 		}
 		else {
 			FileUtility.reorder(resources, true);

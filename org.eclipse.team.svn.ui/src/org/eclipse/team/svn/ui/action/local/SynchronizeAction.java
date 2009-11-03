@@ -44,7 +44,7 @@ public class SynchronizeAction extends AbstractWorkingCopyAction {
 			op = new ShowUpdateViewOperation(new WorkingSetScope(sets), this.getTargetPart());
 		}
 		else {
-			IResource []resources = this.getSelectedResources(IStateFilter.SF_VALID);
+			IResource []resources = this.getSelectedResources(IStateFilter.SF_VERSIONED);
 			op = new ShowUpdateViewOperation(resources, this.getTargetPart());
 		}
 
@@ -52,7 +52,7 @@ public class SynchronizeAction extends AbstractWorkingCopyAction {
 	}
 	
 	public boolean isEnabled() {
-		return this.checkForResourcesPresence(IStateFilter.SF_VALID);
+		return this.checkForResourcesPresence(IStateFilter.SF_VERSIONED);
 	}
 
 	protected boolean needsToSaveDirtyEditors() {

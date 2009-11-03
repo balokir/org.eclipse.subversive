@@ -38,6 +38,8 @@ public interface ILocalResource {
 	//It's not used anymore
 	//public static final int IS_EXTERNAL = 0x20;
 	
+	public static final int IS_UNVERSIONED_EXTERNAL = 0x40;
+	
 	public IResource getResource();
 	
 	public String getName();

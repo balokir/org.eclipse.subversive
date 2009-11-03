@@ -602,8 +602,11 @@ public final class FileUtility {
 	}
 	
 	public static boolean isConnected(IResource resource) {
-		RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject());
-		return provider != null && provider instanceof IConnectedProjectInformation;
+		if (resource.getProject() != null) {
+			RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject());
+			return provider != null && provider instanceof IConnectedProjectInformation;	
+		}
+		return false;
 	}
 	
 	public static IResource []getPathNodes(IResource resource) {
@@ -650,6 +653,33 @@ public final class FileUtility {
 		});
 	}
 	
+	/*
+	 * Take into account that there can be externals in resources: externals should not be
+	 * shrinked with not externals.
+	 */	
+	public static IResource []shrinkChildNodesWithSwitched(IResource []resources) {
+		Set<IResource> resourcesSet = new HashSet<IResource>();
+		Set<IResource> switchedResourcesSet = new HashSet<IResource>();		
+		for (IResource resource : resources) {
+			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
+			if ((local.getChangeMask() & ILocalResource.IS_SWITCHED) == 0) {
+				resourcesSet.add(resource);
+			} else {
+				switchedResourcesSet.add(resource);
+			}
+		}
+		
+		HashSet<IResource> tRoots = new HashSet<IResource>(Arrays.asList(resources));
+		for (int i = 0; i < resources.length; i++) {
+			Set<IResource> roots = resourcesSet.contains(resources[i]) ? resourcesSet : switchedResourcesSet;	
+			if (!roots.isEmpty() && FileUtility.hasRoots(roots, resources[i])) {
+				tRoots.remove(resources[i]);
+			}
+		}
+		return tRoots.toArray(new IResource[tRoots.size()]);		
+	}
+	
+	//TODO probably we don't need this method: check it
 	public static IResource []shrinkChildNodes(IResource []resources) {
 		HashSet<IResource> tRoots = new HashSet<IResource>(Arrays.asList(resources));
 		for (int i = 0; i < resources.length; i++) {
