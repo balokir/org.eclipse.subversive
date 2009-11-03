@@ -25,9 +25,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
+import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
 import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
 import org.eclipse.team.svn.ui.action.IResourceSelector;
 import org.eclipse.team.svn.ui.synchronize.FilteredSynchronizeModelOperation;
@@ -116,12 +118,25 @@ public abstract class AbstractSynchronizeModelAction extends SynchronizeModelAct
 				    		IDiffContainer parent = element.getParent();
 				    		ArrayList<IResource> parents = new ArrayList<IResource>();
 				    		while (parent != null && parent instanceof ISynchronizeModelElement && ((ISynchronizeModelElement)parent).getResource() != null) {
-				    			parents.add(((ISynchronizeModelElement)parent).getResource());
-				    			if (selection.contains(parent)) {
-				    				retVal.addAll(parents);
-				    				break;
+				    			IResource parentResource = ((ISynchronizeModelElement)parent).getResource();
+				    			try {				    									    			
+					    			//As there can be unversioned externals in Sync View, don't process them
+					    			AbstractSVNSyncInfo info = (AbstractSVNSyncInfo) UpdateSubscriber.instance().getSyncInfo(parentResource);
+					    			if (info != null) {
+								        ILocalResource local = info.getLocalResource();
+							    		if (!IStateFilter.SF_UNVERSIONED_EXTERNAL.accept(local)) {
+							    			parents.add(parentResource);	
+							    		}	
+					    			}							    			
+					    			
+					    			if (selection.contains(parent)) {
+					    				retVal.addAll(parents);
+					    				break;
+					    			}
+						    		parent = parent.getParent();	
+				    			} catch (Exception e) {
+				    				LoggedOperation.reportError(this.getClass().getName(), e);
 				    			}
-					    		parent = parent.getParent();
 				    		}
 			    		}
 			    	}

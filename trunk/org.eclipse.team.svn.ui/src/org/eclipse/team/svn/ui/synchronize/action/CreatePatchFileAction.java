@@ -43,7 +43,7 @@ public class CreatePatchFileAction extends AbstractSynchronizeModelAction {
 	}
 	
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
-		IResource []resources = FileUtility.shrinkChildNodes(this.syncInfoSelector.getSelectedResources(new ISyncStateFilter.StateFilterWrapper(IStateFilter.SF_ANY_CHANGE, true)));
+		IResource []resources = FileUtility.shrinkChildNodes(this.syncInfoSelector.getSelectedResources(new ISyncStateFilter.StateFilterWrapper(IStateFilter.SF_ANY_CHANGE, false)));
 		return CreatePatchAction.getCreatePatchOperation(resources, configuration.getSite().getShell());
 	}
 

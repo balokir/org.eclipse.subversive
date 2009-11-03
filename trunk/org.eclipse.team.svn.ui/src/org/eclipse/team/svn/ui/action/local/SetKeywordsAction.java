@@ -39,7 +39,7 @@ public class SetKeywordsAction extends AbstractNonRecursiveTeamAction {
 	}
 	
 	public void runImpl(IAction action) {
-		SetKeywordsAction.doSetKeywords(this.getSelectedResources(IStateFilter.SF_VERSIONED));
+		SetKeywordsAction.doSetKeywords(this.getSelectedResources());
 	}
 	
 	public static void doSetKeywords(final IResource []resources) {

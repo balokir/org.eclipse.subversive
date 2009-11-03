@@ -217,7 +217,7 @@ public class UpdateSubscriberContext extends SubscriberMergeContext {
 				}
 				
 			}); 
-			if (resources[0].length == 0) {
+			if (resources[0] == null || resources[0].length == 0) {
 				return Status.OK_STATUS;
 			}			
 			resources[0] = FileUtility.addOperableParents(resources[0], IStateFilter.SF_UNVERSIONED);

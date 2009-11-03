@@ -90,7 +90,7 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 	}
 	
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		IResource []resources = FileUtility.shrinkChildNodes(this.operableData());
+		IResource []resources = FileUtility.shrinkChildNodesWithSwitched(this.operableData());
 		final ArrayList<IResource> committables = new ArrayList<IResource>();
 		final ArrayList<IResource> withDifferentNodeKind = new ArrayList<IResource>();
 		this.committables = new IResource[0];

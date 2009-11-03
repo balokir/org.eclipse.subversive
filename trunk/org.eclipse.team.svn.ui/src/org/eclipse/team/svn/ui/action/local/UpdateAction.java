@@ -48,7 +48,7 @@ public class UpdateAction extends AbstractRecursiveTeamAction {
 			return IStateFilter.SF_MISSING.accept(resource, state, mask) && !IStateFilter.SF_TREE_CONFLICTING.accept(resource, state, mask);
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask);
+			return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask) || IStateFilter.SF_UNVERSIONED_EXTERNAL.accept(resource, state, mask);
 		}			
 	};
 	

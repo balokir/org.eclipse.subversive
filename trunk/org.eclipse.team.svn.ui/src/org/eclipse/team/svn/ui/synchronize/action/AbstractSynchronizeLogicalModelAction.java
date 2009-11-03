@@ -126,7 +126,14 @@ public abstract class AbstractSynchronizeLogicalModelAction extends ResourceMode
 				    		ArrayList<IResource> parents = new ArrayList<IResource>();
 				    		IResource parent = filteredResource.getParent();
 				    		while (parent != null) {
-				    			parents.add(parent);
+				    			//As there can be unversioned externals in Sync View, don't process them
+				    			AbstractSVNSyncInfo info = (AbstractSVNSyncInfo)UpdateSubscriber.instance().getSyncInfo(parent);
+				    			if (info != null) {
+							        ILocalResource local = info.getLocalResource();
+						    		if (!IStateFilter.SF_UNVERSIONED_EXTERNAL.accept(local)) {
+						    			parents.add(parent);
+						    		}
+				    			}
 				    			if (allSelected.contains(parent)) {
 				    				retVal.addAll(parents);
 				    				break;

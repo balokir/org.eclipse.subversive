@@ -69,7 +69,7 @@ public class CommitActionUtility {
 		this.allResourcesSet = new HashSet<IResource>();
 		this.allResourcesSet.addAll(Arrays.asList(this.selector.getSelectedResourcesRecursive(new IStateFilter.OrStateFilter(new IStateFilter[] {IStateFilter.SF_COMMITABLE, IStateFilter.SF_CONFLICTING, IStateFilter.SF_TREE_CONFLICTING, IStateFilter.SF_NEW}))));
 		
-		this.newNonRecursive = new HashSet<IResource>(Arrays.asList(this.selector.getSelectedResources(IStateFilter.SF_IGNORED)));
+		this.newNonRecursive = new HashSet<IResource>(Arrays.asList(this.selector.getSelectedResources(IStateFilter.SF_IGNORED_BUT_NOT_EXTERNAL)));
 		this.newRecursive = new HashSet<IResource>(Arrays.asList(FileUtility.getResourcesRecursive((IResource [])this.allResourcesSet.toArray(new IResource[this.allResourcesSet.size()]), IStateFilter.SF_NEW, IResource.DEPTH_ZERO)));
 		
 		HashSet<IResource> fullSet = new HashSet<IResource>(this.newNonRecursive);
@@ -83,8 +83,11 @@ public class CommitActionUtility {
 		this.allResources = (IResource [])this.allResourcesSet.toArray(new IResource[this.allResourcesSet.size()]);
 		this.allResourcesSet.addAll(Arrays.asList(FileUtility.addOperableParents(this.allResources, IStateFilter.SF_ADDED, true)));
 		this.allResources = (IResource [])this.allResourcesSet.toArray(new IResource[this.allResourcesSet.size()]);
-				
-		this.canBeRecursiveCommit = FileUtility.getOperableParents(this.selector.getSelectedResources(), IStateFilter.SF_ADDED, false).length == 0;		
+					
+		this.canBeRecursiveCommit = FileUtility.getOperableParents(this.selector.getSelectedResources(), IStateFilter.SF_ADDED, false).length == 0;
+		
+		//TODO as in recursive case, we use modified for externals 'shrink' method
+		//probably we can allow to recursively commit: need to check
 		if (this.canBeRecursiveCommit && FileUtility.checkForResourcesPresence(this.allResources, IStateFilter.SF_SWITCHED, IResource.DEPTH_ZERO)) {
 			this.canBeRecursiveCommit = false;
 		}

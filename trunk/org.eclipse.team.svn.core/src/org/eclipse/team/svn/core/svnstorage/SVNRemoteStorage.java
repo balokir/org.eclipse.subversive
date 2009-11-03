@@ -652,20 +652,25 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		// delegate status
 		final String fStatus = status;
 		ILocalResource parent = this.getFirstExistingParentLocal(resource);
-		final int parentCM = parent != null ? (parent.getChangeMask() & (ILocalResource.IS_SWITCHED)) : 0;
+		final int parentCM = parent != null ? (parent.getChangeMask() & ILocalResource.IS_SWITCHED | parent.getChangeMask() & ILocalResource.IS_UNVERSIONED_EXTERNAL) : 0;
 		final ILocalResource []tmp = new ILocalResource[1];
 		FileUtility.visitNodes(resource, new IResourceVisitor() {
             public boolean visit(IResource child) throws CoreException {
             	if (FileUtility.isSVNInternals(child)) {
             		return false;
             	}
-            	String textState = child == resource ? fStatus : SVNRemoteStorage.this.getDelegatedStatus(child, fStatus, 0);
-            	//int changeMask = (state == IStateFilter.ST_OBSTRUCTED || state == IStateFilter.ST_NEW) ? ILocalResource.TEXT_MODIFIED : ILocalResource.NO_MODIFICATION;
-            	int changeMask = parentCM;
             	String path = FileUtility.getWorkingCopyPath(child);
             	if (new File(path + "/" + SVNUtility.getSVNFolderName()).exists() && SVNUtility.getSVNInfoForNotConnected(child) != null) { //$NON-NLS-1$
             		return false;
+            	}            	            	
+               	String textState = child == resource ? fStatus : SVNRemoteStorage.this.getDelegatedStatus(child, fStatus, 0);            	
+            	int changeMask = parentCM;            	
+            	if (textState == IStateFilter.ST_IGNORED && (changeMask & ILocalResource.IS_UNVERSIONED_EXTERNAL) == 0) {
+            		if (SVNRemoteStorage.this.containsSVNMetaInChildren(resource)) {
+            			changeMask |= ILocalResource.IS_UNVERSIONED_EXTERNAL;
+            		}
             	}
+            	
             	ILocalResource retVal = SVNRemoteStorage.this.registerResource(child, SVNRevision.INVALID_REVISION_NUMBER, SVNRevision.INVALID_REVISION_NUMBER, textState, IStateFilter.ST_NORMAL, changeMask, null, -1, null);
                 if (tmp[0] == null) {
                 	tmp[0] = retVal;
@@ -936,23 +941,9 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 				 * then we consider this folder as unversioned folder created by external definition and
 				 * make its status in corresponding way, i.e. Ignored.
 				 */
-				if (textStatus == IStateFilter.ST_NEW && tRes.getType() == IResource.FOLDER) {
-					if (tRes.getLocation() != null) {
-						File folder = tRes.getLocation().toFile();						
-						boolean hasSVNMeta = false;						
-						do {
-							File[] children = folder.listFiles(new FileFilter() {								
-								public boolean accept(File pathname) {
-									return pathname.isDirectory();
-								}
-							});
-							folder = children.length > 0 ? children[0] : null;
-						} while (folder != null && !(hasSVNMeta = this.canFetchStatuses(folder)));	
-						if (hasSVNMeta) {
-							local = this.registerExternalUnversionedResource(tRes);
-							continue;
-						}
-					}
+				if (textStatus == IStateFilter.ST_NEW && this.containsSVNMetaInChildren(tRes)) {
+					local = this.registerExternalUnversionedResource(tRes);
+					continue;
 				}
 				
 				if (!statuses[i].isSwitched && statuses[i].url != null && !SVNUtility.decodeURL(statuses[i].url).startsWith(desiredUrl)) {
@@ -994,6 +985,25 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		return retVal;
 	}
 	
+	/*
+	 * Contain SVN meta in one of its sub directories
+	 */
+	protected boolean containsSVNMetaInChildren(IResource resource) {
+		boolean hasSVNMeta = false;
+		if (resource.getType() == IResource.FOLDER && resource.getLocation() != null) {
+			File folder = resource.getLocation().toFile();														
+			do {
+				File[] children = folder.listFiles(new FileFilter() {								
+					public boolean accept(File pathname) {
+						return pathname.isDirectory();
+					}
+				});
+				folder = children.length > 0 ? children[0] : null;
+			} while (folder != null && !(hasSVNMeta = this.canFetchStatuses(folder)));	
+		}	
+		return hasSVNMeta;
+	}
+	
 	protected String getDelegatedStatus(IResource resource, String status, int mask) {
 	    // calculate applicability of delegated status
 	    if (IStateFilter.SF_LINKED.accept(resource, status, mask) ||
@@ -1024,7 +1034,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	}
 	
 	protected ILocalResource registerExternalUnversionedResource(IResource resource) {
-		return this.registerResource(resource, SVNRevision.INVALID_REVISION_NUMBER, SVNRevision.INVALID_REVISION_NUMBER, IStateFilter.ST_IGNORED, IStateFilter.ST_NORMAL, 0, null, 0, null);
+		return this.registerResource(resource, SVNRevision.INVALID_REVISION_NUMBER, SVNRevision.INVALID_REVISION_NUMBER, IStateFilter.ST_IGNORED, IStateFilter.ST_NORMAL, ILocalResource.IS_UNVERSIONED_EXTERNAL, null, 0, null);
 	}
 	
 	protected ILocalResource registerResource(IResource current, long revision, long baseRevision, String textStatus, String propStatus, int changeMask, String author, long date, SVNConflictDescriptor treeConflictDescriptor) {

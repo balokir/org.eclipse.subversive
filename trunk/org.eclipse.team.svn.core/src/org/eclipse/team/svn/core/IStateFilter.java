@@ -255,7 +255,7 @@ public interface IStateFilter {
 	        return (mask & ILocalResource.IS_LOCKED) != 0;
 	    }
 	    protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return SF_ONREPOSITORY.accept(resource, state, mask);
+			return SF_ONREPOSITORY.accept(resource, state, mask) || IStateFilter.SF_UNVERSIONED_EXTERNAL.accept(resource, state, mask);
 		}
 	};
 	
@@ -265,7 +265,7 @@ public interface IStateFilter {
 	    }
 	    
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return IStateFilter.SF_EXCLUDE_DELETED.accept(resource, state, mask);
+			return IStateFilter.SF_EXCLUDE_DELETED.accept(resource, state, mask)  || IStateFilter.SF_UNVERSIONED_EXTERNAL.accept(resource, state, mask);
 		}
 	};
 	
@@ -275,6 +275,15 @@ public interface IStateFilter {
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return true;
+		}
+	};
+	
+	public static final IStateFilter SF_UNVERSIONED_EXTERNAL = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
+			return state == IStateFilter.ST_IGNORED && (mask & ILocalResource.IS_UNVERSIONED_EXTERNAL) != 0;
+		}
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
+			return IStateFilter.SF_VERSIONED.accept(resource, state, mask);
 		}
 	};
 	
@@ -314,21 +323,12 @@ public interface IStateFilter {
 		}
 	};
 	
-	public static final IStateFilter SF_VALID = new AbstractStateFilter() {
-		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
-		}
-		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return this.accept(resource, state, mask);
-		}
-	};
-	
 	public static final IStateFilter SF_REPLACED = new AbstractStateFilter() {
 		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return state == IStateFilter.ST_REPLACED;
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return IStateFilter.SF_VERSIONED.accept(resource, state, mask);
+			return IStateFilter.SF_VERSIONED.accept(resource, state, mask) || IStateFilter.SF_UNVERSIONED_EXTERNAL.accept(resource, state, mask);
 		}
 	};
 	
@@ -337,7 +337,7 @@ public interface IStateFilter {
 			return state == IStateFilter.ST_PREREPLACED;
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return IStateFilter.SF_VERSIONED.accept(resource, state, mask);
+			return IStateFilter.SF_VERSIONED.accept(resource, state, mask) || IStateFilter.SF_UNVERSIONED_EXTERNAL.accept(resource, state, mask);
 		}
 	};
 	
@@ -346,13 +346,22 @@ public interface IStateFilter {
 			return state == IStateFilter.ST_PREREPLACED || state == IStateFilter.ST_REPLACED;
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return IStateFilter.SF_VERSIONED.accept(resource, state, mask);
+			return IStateFilter.SF_VERSIONED.accept(resource, state, mask) || IStateFilter.SF_UNVERSIONED_EXTERNAL.accept(resource, state, mask);
 		}
 	};
 	
 	public static final IStateFilter SF_IGNORED = new AbstractStateFilter() {
 		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return state == IStateFilter.ST_IGNORED || IStateFilter.SF_UNVERSIONED.accept(resource, state, mask) && SVNUtility.isIgnored(resource);
+		}
+		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
+			return true;
+		}
+	};
+		
+	public static final IStateFilter SF_IGNORED_BUT_NOT_EXTERNAL = new AbstractStateFilter() {
+		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
+			return IStateFilter.SF_IGNORED.accept(resource, state, mask) && (mask & ILocalResource.IS_UNVERSIONED_EXTERNAL) == 0;
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return true;
@@ -388,7 +397,7 @@ public interface IStateFilter {
 				state == IStateFilter.ST_DELETED || state == IStateFilter.ST_MISSING; 			
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return this.accept(resource, state, mask);
+			return this.accept(resource, state, mask) || IStateFilter.SF_UNVERSIONED_EXTERNAL.accept(resource, state, mask);
 		}
 	};
 	
@@ -400,8 +409,9 @@ public interface IStateFilter {
 				return !IStateFilter.SF_TREE_CONFLICTING_REPOSITORY_EXIST.accept(local);
 			}	
 			return 
-				state == IStateFilter.ST_PREREPLACED || state == IStateFilter.ST_NEW || 
-				state == IStateFilter.ST_IGNORED || state == IStateFilter.ST_NOTEXISTS ||
+				state == IStateFilter.ST_PREREPLACED || state == IStateFilter.ST_NEW ||
+				IStateFilter.SF_IGNORED_BUT_NOT_EXTERNAL.accept(resource, state, mask) ||
+				state == IStateFilter.ST_NOTEXISTS ||
 				state == IStateFilter.ST_ADDED;			
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
@@ -422,7 +432,7 @@ public interface IStateFilter {
 				state == IStateFilter.ST_CONFLICTING || state == IStateFilter.ST_DELETED || state == IStateFilter.ST_MISSING;				
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return IStateFilter.SF_VERSIONED.accept(resource, state, mask);
+			return IStateFilter.SF_VERSIONED.accept(resource, state, mask) || IStateFilter.SF_UNVERSIONED_EXTERNAL.accept(resource, state, mask);
 		}
 	};
 	
@@ -431,7 +441,7 @@ public interface IStateFilter {
 			return (state == IStateFilter.ST_PREREPLACED || state == IStateFilter.ST_NEW) && !IStateFilter.SF_IGNORED.accept(resource, state, mask);
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return !IStateFilter.SF_IGNORED.accept(resource, state, mask) && state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
+			return !IStateFilter.SF_IGNORED_BUT_NOT_EXTERNAL.accept(resource, state, mask) && state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
 		}
 	};
 	
@@ -442,7 +452,7 @@ public interface IStateFilter {
 				state == IStateFilter.ST_NEW || state == IStateFilter.ST_ADDED;
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return IStateFilter.SF_VERSIONED.accept(resource, state, mask);
+			return IStateFilter.SF_VERSIONED.accept(resource, state, mask) || IStateFilter.SF_UNVERSIONED_EXTERNAL.accept(resource, state, mask);
 		}
 	};
 	
@@ -460,7 +470,7 @@ public interface IStateFilter {
 			return state == IStateFilter.ST_MODIFIED || state == IStateFilter.ST_CONFLICTING;
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask);
+			return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask) || IStateFilter.SF_UNVERSIONED_EXTERNAL.accept(resource, state, mask);
 		}
 	};
 	
@@ -469,7 +479,7 @@ public interface IStateFilter {
 			return state == IStateFilter.ST_CONFLICTING;
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask);
+			return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask) || IStateFilter.SF_UNVERSIONED_EXTERNAL.accept(resource, state, mask);
 		}
 	};
 	
@@ -479,7 +489,7 @@ public interface IStateFilter {
 			return local.getTextStatus() == IStateFilter.ST_CONFLICTING;
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask);
+			return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask) || IStateFilter.SF_UNVERSIONED_EXTERNAL.accept(resource, state, mask);
 		}
 	};
 	
@@ -488,7 +498,7 @@ public interface IStateFilter {
 			return this.takeLocal(local, resource).hasTreeConflict();
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask);
+			return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask) || IStateFilter.SF_UNVERSIONED_EXTERNAL.accept(resource, state, mask);
 		}
 	};
 	
@@ -499,7 +509,7 @@ public interface IStateFilter {
 				state == IStateFilter.ST_DELETED || state == IStateFilter.ST_MISSING;
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask);
+			return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask) || IStateFilter.SF_UNVERSIONED_EXTERNAL.accept(resource, state, mask);
 		}
 	};
 	
@@ -508,7 +518,7 @@ public interface IStateFilter {
 			return state == IStateFilter.ST_MISSING;
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask);
+			return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask) || IStateFilter.SF_UNVERSIONED_EXTERNAL.accept(resource, state, mask);
 		}
 	};
 	
@@ -519,7 +529,7 @@ public interface IStateFilter {
 				state == IStateFilter.ST_MODIFIED || state == IStateFilter.ST_DELETED || state == IStateFilter.ST_MISSING;
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return IStateFilter.SF_VERSIONED.accept(resource, state, mask);
+			return IStateFilter.SF_VERSIONED.accept(resource, state, mask) || IStateFilter.SF_UNVERSIONED_EXTERNAL.accept(resource, state, mask);
 		}
 	};
 	
@@ -532,7 +542,7 @@ public interface IStateFilter {
 				IStateFilter.SF_TREE_CONFLICTING.accept(resource, state, mask);
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return IStateFilter.SF_VERSIONED.accept(resource, state, mask);
+			return IStateFilter.SF_VERSIONED.accept(resource, state, mask) || IStateFilter.SF_UNVERSIONED_EXTERNAL.accept(resource, state, mask);
 		}
 	};
 	
@@ -543,7 +553,7 @@ public interface IStateFilter {
 				state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return !IStateFilter.SF_IGNORED.accept(resource, state, mask) && state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
+			return !IStateFilter.SF_IGNORED_BUT_NOT_EXTERNAL.accept(resource, state, mask) && state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
 		}
 	};
 
@@ -555,7 +565,7 @@ public interface IStateFilter {
             return false;
         }
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return this.accept(resource, state, mask);
+			return this.accept(resource, state, mask) || IStateFilter.SF_UNVERSIONED_EXTERNAL.accept(resource, state, mask);
 		}
     };
     
@@ -591,7 +601,7 @@ public interface IStateFilter {
 			return false;
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return IStateFilter.SF_VERSIONED.accept(resource, state, mask);
+			return IStateFilter.SF_VERSIONED.accept(resource, state, mask) || IStateFilter.SF_UNVERSIONED_EXTERNAL.accept(resource, state, mask);
 		}
 	};
 	
@@ -601,7 +611,7 @@ public interface IStateFilter {
 					!IStateFilter.SF_NOTMODIFIED.accept(resource, state, mask);
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return !IStateFilter.SF_IGNORED.accept(resource, state, mask) && state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
+			return !IStateFilter.SF_IGNORED_BUT_NOT_EXTERNAL.accept(resource, state, mask) && state != IStateFilter.ST_OBSTRUCTED && state != IStateFilter.ST_LINKED;
 		}
 	};
 	
@@ -614,7 +624,7 @@ public interface IStateFilter {
             return false;
         }
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return IStateFilter.SF_EXCLUDE_DELETED.accept(resource, state, mask);
+			return IStateFilter.SF_EXCLUDE_DELETED.accept(resource, state, mask) || IStateFilter.SF_UNVERSIONED_EXTERNAL.accept(resource, state, mask);
 		}
     };
 	
@@ -623,7 +633,7 @@ public interface IStateFilter {
 			return resource instanceof IFile && IStateFilter.SF_EXCLUDE_PREREPLACED_AND_DELETED.accept(resource, state, mask);
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return IStateFilter.SF_EXCLUDE_DELETED.accept(resource, state, mask);
+			return IStateFilter.SF_EXCLUDE_DELETED.accept(resource, state, mask) || IStateFilter.SF_UNVERSIONED_EXTERNAL.accept(resource, state, mask);
 		}
 	};
 	
@@ -632,7 +642,7 @@ public interface IStateFilter {
 			return resource instanceof IContainer && IStateFilter.SF_VERSIONED.accept(resource, state, mask);
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return IStateFilter.SF_VERSIONED.accept(resource, state, mask);
+			return IStateFilter.SF_VERSIONED.accept(resource, state, mask) || IStateFilter.SF_UNVERSIONED_EXTERNAL.accept(resource, state, mask);
 		}
 	};
 
@@ -641,7 +651,7 @@ public interface IStateFilter {
 			return resource instanceof IFile && IStateFilter.SF_VERSIONED.accept(resource, state, mask);
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return IStateFilter.SF_VERSIONED.accept(resource, state, mask);
+			return IStateFilter.SF_VERSIONED.accept(resource, state, mask) || IStateFilter.SF_UNVERSIONED_EXTERNAL.accept(resource, state, mask);
 		}
 	};
 	
@@ -651,7 +661,7 @@ public interface IStateFilter {
 			return local.getPropStatus() == IStateFilter.ST_MODIFIED || local.getPropStatus() == IStateFilter.ST_CONFLICTING;
 		}
 		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
-			return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask);
+			return IStateFilter.SF_ONREPOSITORY.accept(resource, state, mask) || IStateFilter.SF_UNVERSIONED_EXTERNAL.accept(resource, state, mask);
 		}
 	};
 

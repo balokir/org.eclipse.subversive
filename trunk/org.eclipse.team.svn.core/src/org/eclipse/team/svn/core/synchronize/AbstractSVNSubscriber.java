@@ -107,8 +107,12 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 
     public IResource []members(IResource resource) throws TeamException {
     	ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
-    	//don't filter out incoming changes here (which don't exist on file system but are phantoms)
-    	if (IStateFilter.SF_INTERNAL_INVALID.accept(local) || IStateFilter.SF_IGNORED.accept(local)) {
+    	/*
+    	 * Don't filter out incoming changes here (which don't exist on file system but are phantoms)
+    	 * 
+    	 * Allow to return members for unversioned external
+    	 */
+    	if (IStateFilter.SF_INTERNAL_INVALID.accept(local) || IStateFilter.SF_IGNORED.accept(local) && !IStateFilter.SF_UNVERSIONED_EXTERNAL.accept(local)) {
     		return FileUtility.NO_CHILDREN;
     	}
     	return this.statusCache.allMembers(resource);
