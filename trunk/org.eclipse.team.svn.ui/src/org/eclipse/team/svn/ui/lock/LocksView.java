@@ -30,6 +30,7 @@ import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.ui.AbstractSVNView;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
@@ -53,7 +54,6 @@ public class LocksView extends AbstractSVNView {
 	public static final String VIEW_ID = LocksView.class.getName();
 	
 	protected LocksComposite locksComposite;
-	protected boolean backgroundExecution;
 	
 	protected Action linkWithEditorAction;
 	protected Action linkWithEditorDropDownAction;
@@ -96,7 +96,7 @@ public class LocksView extends AbstractSVNView {
         tbm.removeAll();
         Action action = new Action(SVNUIMessages.SVNView_Refresh_Label) {
         	public void run() {
-        		LocksView.this.refreshAction();
+        		LocksView.this.refreshView();
 	    	}
         };
         action.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/refresh.gif")); //$NON-NLS-1$
@@ -124,10 +124,6 @@ public class LocksView extends AbstractSVNView {
 	    return this.linkWithEditorAction;
 	}
 	
-	protected void refreshAction() {
-		this.refreshView();				
-	}
-	
 	protected void linkWithEditor() {
 		this.isLinkWithEditorEnabled = !this.isLinkWithEditorEnabled;
         IPreferenceStore store = SVNTeamUIPlugin.instance().getPreferenceStore();
@@ -143,18 +139,17 @@ public class LocksView extends AbstractSVNView {
 			if (resource.equals(this.wcResource)) {
 				return;
 			}
-			this.setResource(resource, true);
+			this.setResource(resource);
 		}
 	}
 	
-	public void setResourceWithoutActionExecution(IResource resource, boolean backgroundExecution) {
-		this.wcResource = resource;					
-		this.backgroundExecution = backgroundExecution;		
+	public void setResourceWithoutActionExecution(IResource resource) {
+		this.wcResource = resource;
 		this.locksComposite.setResource(resource);
 	}
 	
-	public void setResource(IResource resource, boolean backgroundExecution) {
-		this.setResourceWithoutActionExecution(resource, backgroundExecution);
+	public void setResource(IResource resource) {
+		this.setResourceWithoutActionExecution(resource);
 		this.refreshView();
 	}
 	
@@ -178,6 +173,12 @@ public class LocksView extends AbstractSVNView {
 			});
 			
 			op.add(mainOp);
+			/*
+			 * As we don't want that scan locks operation to write in console, pass console stream as null.
+			 * Scan locks operation writes only last notification in status, which is not useful info
+			 * so we disable it.
+			 */
+			mainOp.setConsoleStream(null);
 			
 			final CreateLockResourcesHierarchyOperation createHierarchyOp = new CreateLockResourcesHierarchyOperation(mainOp);
 			op.add(createHierarchyOp, new IActionOperation[]{mainOp});
@@ -201,12 +202,7 @@ public class LocksView extends AbstractSVNView {
 	protected void refreshView() {
 		IActionOperation op = this.getUpdateViewOperation();
 		if (op != null) {
-			if (this.backgroundExecution) {
-				UIMonitorUtility.doTaskScheduledDefault(op);
-			}		
-			else {
-				UIMonitorUtility.doTaskScheduledDefault(this, op);
-			}	
+			ProgressMonitorUtility.doTaskScheduled(op, false);	
 		}
 	}
 	

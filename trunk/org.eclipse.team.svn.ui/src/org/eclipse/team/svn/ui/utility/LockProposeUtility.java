@@ -30,7 +30,7 @@ import org.eclipse.team.svn.ui.lock.LockResource.LockStatusEnum;
 public class LockProposeUtility {
 	public static boolean proposeLock(final IResource[] resources) {
 		final boolean[] success = new boolean[1];		
-		List<LockResource> lockResources = LockAction.getLockResources(resources, resources);
+		List<LockResource> lockResources = LockAction.getLockResources(resources);
 		if (lockResources != null) {
 			Iterator<LockResource> iter = lockResources.iterator();
 			while (iter.hasNext()) {

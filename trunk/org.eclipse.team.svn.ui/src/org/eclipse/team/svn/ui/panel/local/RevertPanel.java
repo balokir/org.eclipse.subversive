@@ -209,7 +209,7 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 				manager.add(tAction = new Action(SVNUIMessages.LockAction_label) {
 					public void run() {
 						IResource[] filteredResources = FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_READY_TO_LOCK, IResource.DEPTH_INFINITE);						
-						List<LockResource> lockResources = LockAction.getLockResources(selectedResources, filteredResources);
+						List<LockResource> lockResources = LockAction.getLockResources(filteredResources);
 						if (lockResources != null) {
 							Iterator<LockResource> iter = lockResources.iterator();
 							while (iter.hasNext()) {
@@ -232,7 +232,7 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 				manager.add(tAction = new Action(SVNUIMessages.UnlockAction_label) {
 					public void run() {
 						IResource[] filteredResources = FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_LOCKED, IResource.DEPTH_INFINITE);						
-						List<LockResource> lockResources = LockAction.getLockResources(selectedResources, filteredResources);
+						List<LockResource> lockResources = LockAction.getLockResources(filteredResources);
 						if (lockResources != null) {
 							Iterator<LockResource> iter = lockResources.iterator();
 							while (iter.hasNext()) {

@@ -46,7 +46,7 @@ public class LockActionHelper extends AbstractActionHelper {
 	}
 
 	public IActionOperation getOperation() {
-		List<LockResource> lockResources = org.eclipse.team.svn.ui.action.local.LockAction.getLockResources(this.getAllSelectedResources(), this.getSyncInfoSelector().getSelectedResources());
+		List<LockResource> lockResources = org.eclipse.team.svn.ui.action.local.LockAction.getLockResources(this.getSyncInfoSelector().getSelectedResources());
 		if (lockResources != null) {
 			Iterator<LockResource> iter = lockResources.iterator();
 			while (iter.hasNext()) {

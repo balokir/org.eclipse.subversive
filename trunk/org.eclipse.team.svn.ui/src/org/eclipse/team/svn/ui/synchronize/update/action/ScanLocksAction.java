@@ -61,7 +61,7 @@ public class ScanLocksAction extends AbstractSynchronizeModelAction {
 			try {
 				LocksView view = (LocksView) page.showView(LocksView.VIEW_ID);
 				if (view != null) {
-					view.setResourceWithoutActionExecution(resource, false);
+					view.setResourceWithoutActionExecution(resource);
 					IActionOperation op = view.getUpdateViewOperation();
 					return op;		
 				}	
