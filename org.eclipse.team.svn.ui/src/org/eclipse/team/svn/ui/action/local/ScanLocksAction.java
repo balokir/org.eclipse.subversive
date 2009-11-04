@@ -29,8 +29,8 @@ public class ScanLocksAction extends AbstractNonRecursiveTeamAction {
 		IResource []resources = this.getSelectedResources(IStateFilter.SF_ONREPOSITORY);
 		try {
 			LocksView view = (LocksView) this.getTargetPage().showView(LocksView.VIEW_ID);
-			view.setResourceWithoutActionExecution(resources[0], false);
-			this.runScheduled(view.getUpdateViewOperation());			
+			view.setResourceWithoutActionExecution(resources[0]);
+			this.runScheduled(view.getUpdateViewOperation());
 		} catch (Throwable e) {
 			LoggedOperation.reportError(ScanLocksAction.class.getName(), e);
 		}

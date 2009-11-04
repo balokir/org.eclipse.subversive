@@ -45,7 +45,7 @@ public class UnlockAction extends AbstractRecursiveTeamAction {
 			}
 		}
 		
-		List<LockResource> lockResources = LockAction.getLockResources(this.getSelectedResources(), filteredResourcesList.toArray(new IResource[0]));
+		List<LockResource> lockResources = LockAction.getLockResources(filteredResourcesList.toArray(new IResource[0]));
 		if (lockResources != null) {
 			Iterator<LockResource> iter = lockResources.iterator();
 			while (iter.hasNext()) {

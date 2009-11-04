@@ -12,14 +12,10 @@
 package org.eclipse.team.svn.ui.action.local;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -30,8 +26,6 @@ import org.eclipse.team.svn.ui.action.AbstractRecursiveTeamAction;
 import org.eclipse.team.svn.ui.lock.LockResource;
 import org.eclipse.team.svn.ui.lock.LocksComposite;
 import org.eclipse.team.svn.ui.lock.LockResource.LockStatusEnum;
-import org.eclipse.team.svn.ui.operation.ScanLocksOperation;
-import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
  * Lock action implementation
@@ -54,7 +48,7 @@ public class LockAction extends AbstractRecursiveTeamAction {
 			}
 		}
 		
-		List<LockResource> lockResources = LockAction.getLockResources(this.getSelectedResources(), filteredResourcesList.toArray(new IResource[0]));
+		List<LockResource> lockResources = LockAction.getLockResources(filteredResourcesList.toArray(new IResource[0]));
 		if (lockResources != null) {
 			Iterator<LockResource> iter = lockResources.iterator();
 			while (iter.hasNext()) {
@@ -72,54 +66,30 @@ public class LockAction extends AbstractRecursiveTeamAction {
 	}
 	
 	/**
-	 * @param parentResources		resources for which scan locks operation will be called
-	 * 								in order to detect lock info, e.g. resource can be locked outside. Indeed,
-	 *  							parentResources are parent of resourcesToProcess
 	 * @param resourcesToProcess	resources for which lock info should be returned
 	 * @return
 	 */
-	public static List<LockResource> getLockResources(IResource[] parentResources, IResource[] resourcesToProcess) {
-		/*
-		 * Scan operation can be called only for resources which exist on repository. If resource isn't on repository, 
-		 * e.g. lock operation is called at unversioned external folder,
-		 * we can't detect outside lock statuses, so we use only local lock info.
-		 */		
-		parentResources = FileUtility.getResourcesRecursive(parentResources, IStateFilter.SF_ONREPOSITORY, IResource.DEPTH_ZERO);
-		
-		List<LockResource> processedLockResources = new ArrayList<LockResource>();		
-		ScanLocksOperation scanLocksOp = new ScanLocksOperation(parentResources);
-		if (!UIMonitorUtility.doTaskNowDefault(scanLocksOp, true).isCancelled() && scanLocksOp.getExecutionState() == IActionOperation.OK) {
-			LockResource[] lockResources = scanLocksOp.getLockResources();
-			Map<IPath, LockResource> lockResourcesMap = new HashMap<IPath, LockResource>(); 
-			for (LockResource lockResource : lockResources) {				
-				lockResourcesMap.put(new Path(lockResource.getFullFileSystemPath()), lockResource);
-			}
-			
-			//match IResource with LocalResource			
-			for (IResource filteredResource : resourcesToProcess) {
-				IPath path = filteredResource.getLocation();				
-				LockResource lr = lockResourcesMap.get(path);
-				if (lr == null) {
-					ILocalResource local = SVNRemoteStorage.instance().asLocalResource(filteredResource);
-					if (local.isLocked()) {
-						lr = new LockResource(filteredResource.getName(), null, true, LockStatusEnum.LOCALLY_LOCKED, null, null, FileUtility.getWorkingCopyPath(filteredResource), null);						
-					} else {
-						lr = LockResource.createNotLockedFile(filteredResource.getName(), FileUtility.getWorkingCopyPath(filteredResource));
-					}
-				}
-				String parentPath = filteredResource.getParent().getFullPath().toString();
+	public static List<LockResource> getLockResources(IResource[] resourcesToProcess) {
+		List<LockResource> res = new ArrayList<LockResource>();
+		for (IResource resource : resourcesToProcess) {
+			ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
+			LockResource lr;
+			if (local.isLocked()) {
+				lr = new LockResource(resource.getName(), null, true, LockStatusEnum.LOCALLY_LOCKED, null, null, FileUtility.getWorkingCopyPath(resource), null);
+			} else {
+				lr = LockResource.createNotLockedFile(resource.getName(), FileUtility.getWorkingCopyPath(resource));
+			}	
+			if (resource.getParent() != null) {
+				String parentPath = resource.getParent().getFullPath().toString();
 				if (parentPath.startsWith("/")) { //$NON-NLS-1$
 					parentPath = parentPath.substring(1);
-				}														
+				}
 				LockResource directory = LockResource.createDirectory(parentPath);
 				directory.addChild(lr);
-				
-				processedLockResources.add(lr);				 								
+				res.add(lr);
 			}
-		} else {
-			return null;
 		}
-		return processedLockResources;
+		return res;
 	}
 	
     public boolean isEnabled() {
