@@ -290,8 +290,7 @@ public class RevisionComposite extends Composite {
 			data = new GridData();
 			data.horizontalSpan = 3;
 			this.startFromCopyRadioButton.setLayoutData(data);
-			this.startFromCopyRadioButton.setSelection(true);
-
+			this.startFromCopyRadioButton.setSelection(this.startFromCopy = true);
 			this.startFromCopyRadioButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					RevisionComposite.this.validationManager.validateContent();
