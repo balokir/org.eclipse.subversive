@@ -8,6 +8,44 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.8.I20091106-1900 [06 November 2009]
+
+Features:
+ * Correctly support externals in actions (bug 290386)
+
+Fixes:
+ * Start from copy uses trunk instead of branch copy revision (bug 294022)
+ 
+ * Problems with locks (bug 294207)
+ 
+ * shortcut stops working after first time (bug 293003)  
+ 
+ * Commit externals problem (bug 290385)
+ 
+ * svn:externals definition for a sub-sub-directory breaks after running svn update (bug 270022)
+ 
+ * Error during reporting an invalid error (bug 293588)
+ 
+ * Make user friendly name for subscriber (bug 293562)
+ 
+ * New NLS unused message with latest update (bug 293464)
+ 
+ * An empty console window defaults to SVN console (SVN Console should be a console that also display under the opened consoles list) (bug 290797)
+ 
+ * Adding file to svn ignore from "Add To SVN Version Control" dialog problem (bug 254902)
+ 
+ * An internal error occurred during: "Overwriting 1 resource.". (bug 292577)
+ 
+ * Extend SVN Info properties (bug 293016)
+ 
+ * NPE when calling Edit Conflicts action (bug 293172)
+ 
+ * Make more precise statuses in Commit dialog (bug 293017)
+ 
+ * Properties decoration problem (bug 293015)
+ 
+--------------------------------------------------------------------------------
+
 Version 0.7.8.I20091023-1300 [23 October 2009]
 
 Features:
