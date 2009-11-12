@@ -296,7 +296,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		IRepositoryResource ancestor = entries[1];
 		IRepositoryResource right = entries[2];
 		
-		if (!right.exists() && IStateFilter.SF_NOTEXISTS.accept(local)) {
+		if (right.getSelectedRevision() != SVNRevision.BASE && IStateFilter.SF_NOTEXISTS.accept(local) && !right.exists()) {
 			return null;
 		}
 		
