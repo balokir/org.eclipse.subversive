@@ -37,6 +37,12 @@ public class SVNFileStorage extends AbstractSVNStorage implements IFileStorage {
 	public static final String PREF_REPOSITORIES_NODE = "externalRepositories"; //$NON-NLS-1$
 	
 	/**
+	 * The name of the preferences node in the Subversive Core preferences that contains
+	 * the flag which determines whether we migrated from Authorization database to Equinox security storage
+	 */
+	public static final String PREF_MIGRATE_FROM_AUTH_DB_NODE = "externalMigrateFromAuthorizationDatabase"; //$NON-NLS-1$
+	
+	/**
 	 * The name of file containing the SVN repository locations information (for integration).
 	 * Deprecated since Subversive 0.7.0 v20080404 - must not be used. The valid information is stored in
 	 * preferences.
@@ -52,7 +58,7 @@ public class SVNFileStorage extends AbstractSVNStorage implements IFileStorage {
     
 	public void initialize(IPath stateInfoLocation) throws Exception {
 		this.setStateInfoFile(stateInfoLocation, SVNFileStorage.STATE_INFO_FILE_NAME);
-		this.initializeImpl(SVNFileStorage.PREF_REPOSITORIES_NODE);
+		this.initializeImpl(SVNFileStorage.PREF_REPOSITORIES_NODE, SVNFileStorage.PREF_MIGRATE_FROM_AUTH_DB_NODE);
 	}
 	
 	public IRepositoryResource asRepositoryResource(File file, boolean allowsNull) {

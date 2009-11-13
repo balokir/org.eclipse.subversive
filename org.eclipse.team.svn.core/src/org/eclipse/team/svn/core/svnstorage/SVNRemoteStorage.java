@@ -108,6 +108,12 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	public static final String PREF_REPOSITORIES_NODE = "repositories"; //$NON-NLS-1$
 	
 	/**
+	 * The name of the preferences node in the Subversive Core preferences that contains
+	 * the flag which determines whether we migrated from Authorization database to Equinox security storage
+	 */
+	public static final String PREF_MIGRATE_FROM_AUTH_DB_NODE = "migrateFromAuthorizationDatabase"; //$NON-NLS-1$
+	
+	/**
 	 * The name of file containing the SVN repository locations information.
 	 * Deprecated since Subversive 0.7.0 v20080404 - must not be used. The valid information
 	 * is stored in preferences.
@@ -187,7 +193,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
     
 	public void initialize(IPath stateInfoLocation) throws Exception {
 		this.setStateInfoFile(stateInfoLocation, SVNRemoteStorage.STATE_INFO_FILE_NAME);
-		this.initializeImpl(SVNRemoteStorage.PREF_REPOSITORIES_NODE);
+		this.initializeImpl(SVNRemoteStorage.PREF_REPOSITORIES_NODE, SVNRemoteStorage.PREF_MIGRATE_FROM_AUTH_DB_NODE);
 	}
 	
 	public IResourceChange asResourceChange(IChangeStateProvider changeState, boolean update) {
