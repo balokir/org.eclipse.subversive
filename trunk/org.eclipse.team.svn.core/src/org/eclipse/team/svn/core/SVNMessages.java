@@ -98,7 +98,11 @@ public class SVNMessages extends BaseMessages {
 	public static String Error_UnknownStatus_Id;
 	public static String Error_UnrecognizedNodeKind;
 	public static String Error_UnrecognizedNodeKind_Id;
-
+	public static String Error_SaveMigratePreference;
+	public static String Error_SaveAutherizationInfo;
+	public static String Error_LoadAuthorizationInfo;
+	public static String Error_RemoveAuthorizationInfo;
+	
 	public static String MergeScope_Name;
 
 	public static String Operation_AddRepositoryLocation;

@@ -14,12 +14,15 @@ package org.eclipse.team.svn.ui.composite;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 
 /**
  * Security warning composite
@@ -34,24 +37,26 @@ public class SecurityWarningComposite extends Composite {
 	}
 	
 	protected void init() {
-		
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginHeight = 0;
+		layout.numColumns = 1;
+		layout.marginHeight = layout.marginWidth = 0;
 		this.setLayout(layout);
 		this.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		Label warningLabel = new Label(this, SWT.NONE);
-		warningLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
-		warningLabel.setImage(Dialog.getImage(Dialog.DLG_IMG_MESSAGE_WARNING));
-		
-		Label description = new Label(this, SWT.WRAP);
+		Link link = new Link(this, SWT.WRAP);
+		link.setText(SVNUIMessages.SecurityWarningComposite_Message);
+		link.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				String pageId = "org.eclipse.equinox.security.ui.storage"; //$NON-NLS-1$
+				PreferencesUtil.createPreferenceDialogOn(null, pageId, new String[] {pageId}, null).open();
+			}
+		});
+				
 		GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_CENTER);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
-		Dialog.applyDialogFont(description);
-		data.heightHint = DefaultDialog.convertHeightInCharsToPixels(description, 2);
-		description.setLayoutData(data);
-		description.setText(SVNUIMessages.SecurityWarningComposite_Message);
+		Dialog.applyDialogFont(link);
+		data.heightHint = DefaultDialog.convertHeightInCharsToPixels(link, 2);
+		link.setLayoutData(data);
     }
 	
 }

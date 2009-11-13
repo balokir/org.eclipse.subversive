@@ -1552,15 +1552,6 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            name="%PasswordManagementPreferencesPage.name"
-            category="org.eclipse.team.svn.ui.SVNTeamPreferences"
-            class="org.eclipse.team.svn.ui.preferences.SVNTeamPasswordManagementPreferencesPage"
-            id="org.eclipse.team.svn.ui.SVNTeamPasswordManagementPreferences">
-      </page>
-   </extension>
-   <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
             name="%ConsolePreferencePage.name"
             category="org.eclipse.team.svn.ui.SVNTeamPreferences"
             class="org.eclipse.team.svn.ui.preferences.SVNTeamConsolePreferencesPage"

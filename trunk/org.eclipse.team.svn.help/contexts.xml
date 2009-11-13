@@ -62,10 +62,6 @@
 		<description>Allows to customize and preview SVN Label Decorations.</description>
 		<topic label="SVN Label Decoration Preferences" href="preferences/pref_label_decors.html"/>
 	</context>
-	<context id="passwordPreferencesContext">
-		<description>This page allows to remove previously saved passwords for a repository locations' access.</description>
-		<topic label="Password Management" href="preferences/pref_pass.html"/>
-	</context>
 	<context id="performancePreferencesContext">
 		<description>Allows to customize password management.</description>
 		<topic label="Performance Preferences" href="preferences/pref_performance.html"/>

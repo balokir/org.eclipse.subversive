@@ -950,9 +950,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String OverrideResourcesPanel_Title;
 
 	public static String ParticipantPagePane_Verifier_Error;
-	public static String PasswordManagementPreferencePage_Hint;
-	public static String PasswordManagementPreferencePage_Location;
-	public static String PasswordManagementPreferencePage_Username;
 	public static String PasteAction_Comment_Title;
 	public static String PatchOptionsPage_Ancestry;
 	public static String PatchOptionsPage_Binary;
