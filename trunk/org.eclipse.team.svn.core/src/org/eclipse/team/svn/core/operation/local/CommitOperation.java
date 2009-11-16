@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNConnectorUnresolvedConflictException;
+import org.eclipse.team.svn.core.connector.SVNErrorCodes;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
@@ -143,7 +144,17 @@ public class CommitOperation extends AbstractConflictDetectionOperation implemen
     protected void reportError(Throwable t) {
     	if (t instanceof SVNConnectorUnresolvedConflictException) {
           	this.setUnresolvedConflict(true);
-          	this.setConflictMessage(t.getMessage());
+          	          
+          	StringBuffer message = new StringBuffer();
+          	if (t.getMessage() != null && t.getMessage().length() > 0) {
+          		message.append(t.getMessage());
+          	}          	
+          	SVNConnectorUnresolvedConflictException ex = (SVNConnectorUnresolvedConflictException) t; 
+          	if (ex.getErrorId() == SVNErrorCodes.fsConflict) {
+          		message.append(message.toString().endsWith("\n") ? "\n" : "\n\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+          		message.append(SVNMessages.CommitOperation_3);
+          	}           	
+          	this.setConflictMessage(message.toString());
         	for (int i = 0; i < this.paths.length; i++) {
                 for (IResource res : this.getProcessed()) {                    
     		        if (FileUtility.getResourcePath(res).equals(new Path(this.paths[i]))) {
