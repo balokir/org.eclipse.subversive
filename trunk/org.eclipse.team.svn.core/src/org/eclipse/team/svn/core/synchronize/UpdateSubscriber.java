@@ -15,9 +15,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.ResourceTraversal;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.diff.IDiff;
+import org.eclipse.team.core.diff.IDiffVisitor;
+import org.eclipse.team.core.diff.IThreeWayDiff;
+import org.eclipse.team.core.subscribers.SubscriberResourceMappingContext;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
@@ -200,6 +207,43 @@ public class UpdateSubscriber extends AbstractSVNSubscriber {
 	protected boolean isIncoming(SVNEntryStatus status) {
 		SVNChangeStatus st = (SVNChangeStatus)status;
 		return st.repositoryPropStatus == SVNEntryStatus.Kind.MODIFIED || st.repositoryTextStatus != SVNEntryStatus.Kind.NONE || st.hasTreeConflict;
+	}
+	
+	/* 
+	 * Override method from super class in order to not contact the server
+	 * if we're interested only in outgoing changes, see 'autoRefresh' param from SubscriberResourceMappingContext
+	 * 
+	 * (non-Javadoc)
+	 * @see org.eclipse.team.core.subscribers.Subscriber#getState(org.eclipse.core.resources.mapping.ResourceMapping, int, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	@Override
+	public int getState(ResourceMapping mapping, int stateMask, IProgressMonitor monitor) throws CoreException {
+		if ((stateMask & IThreeWayDiff.INCOMING) == 0) {
+			// If we're only interested in outgoing changes, used the cached modified state
+			ResourceTraversal[] traversals = mapping.getTraversals(new SubscriberResourceMappingContext(this, false), monitor);
+			final int[] direction = new int[] { 0 };
+			final int[] kind = new int[] { 0 };
+			accept(traversals, new IDiffVisitor() {
+				public boolean visit(IDiff diff) {
+					if (diff instanceof IThreeWayDiff) {
+						IThreeWayDiff twd = (IThreeWayDiff) diff;
+						direction[0] |= twd.getDirection();
+					}
+					// If the traversals contain a combination of kinds, return a CHANGE
+					int diffKind = diff.getKind();
+					if (kind[0] == 0)
+						kind[0] = diffKind;
+					if (kind[0] != diffKind) {
+						kind[0] = IDiff.CHANGE;
+					}
+					// Only need to visit the childen of a change
+					return diffKind == IDiff.CHANGE;
+				}
+			});
+			return (direction[0] | kind[0]) & stateMask;
+		} else {
+			return super.getState(mapping, stateMask, monitor);
+		}
 	}
 	
 	private UpdateSubscriber() {

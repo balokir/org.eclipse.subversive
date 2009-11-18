@@ -176,52 +176,25 @@
             id="org.eclipse.team.svn.ui.lock.LocksView">
       </view>
    </extension>
-   
-<!--   Project tree Label Decorator -->
-	<extension
+    
+<!-- **************** Decorator ******************* -->
+   <extension
          point="org.eclipse.ui.decorators">
       <decorator
             lightweight="true"
             adaptable="true"
-            label="%DecoratorProject.name"
-            class="org.eclipse.team.svn.ui.decorator.wrapper.ProjectDecoratorWrapper"
-            state="true"
-            id="org.eclipse.team.svn.ui.decorator.wrapper.ProjectDecoratorWrapper">
+            location="BOTTOM_RIGHT"
+            label="%Decorator.name"
+            state="false"
+            class="org.eclipse.team.svn.ui.decorator.SVNLightweightDecorator"
+            id="org.eclipse.team.svn.ui.decorator.SVNLightweightDecorator">
          <description>
-            %DecoratorProject.desc
+             %Decorator.desc
          </description>
          <enablement>
-         	<objectClass name="org.eclipse.core.resources.IProject"/>
+             <objectClass name="org.eclipse.core.resources.mapping.ResourceMapping"/> 
          </enablement>
       </decorator>
-      <decorator
-            lightweight="true"
-            adaptable="true"
-            label="%DecoratorResource.name"
-            class="org.eclipse.team.svn.ui.decorator.wrapper.ResourceDecoratorWrapper"
-            state="true"
-            id="org.eclipse.team.svn.ui.decorator.wrapper.ResourceDecoratorWrapper">
-         <description>
-            %DecoratorResource.desc
-         </description>
-         <enablement>
-         	<objectClass name="org.eclipse.core.resources.IResource"/>
-         </enablement>
-      </decorator>
-      <decorator
-            lightweight="true"
-            adaptable="true"
-            label="%DecoratorWorkingSet.name"
-            class="org.eclipse.team.svn.ui.decorator.wrapper.WorkingSetDecoratorWrapper"
-            state="true"
-            id="org.eclipse.team.svn.ui.decorator.wrapper.WorkingSetDecoratorWrapper">
-         <description>
-            %DecoratorWorkingSet.desc
-         </description>
-         <enablement>
-         	<objectClass name="org.eclipse.ui.IWorkingSet"/>
-         </enablement>
-      </decorator>      
    </extension>
    
 <!-- ******************* Configuration Wizard ****************** -->

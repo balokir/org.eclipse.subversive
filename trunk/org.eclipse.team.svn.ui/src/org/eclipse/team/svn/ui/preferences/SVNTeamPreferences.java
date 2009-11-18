@@ -286,6 +286,8 @@ public final class SVNTeamPreferences {
 	public static final String DIFF_VIEWER_BASE = "preference.diffViewer."; //$NON-NLS-1$		
 	public static final String DIFF_VIEWER_RESOURCES_SPECIFIC_PARAMETERS = "resources.specific.parameters"; //$NON-NLS-1$
 	
+	public static final String FIRST_STARTUP = "firstStartup"; //$NON-NLS-1$
+	
 	public static DateFormat getDateFormat(IPreferenceStore store) {
 		int formatMode = SVNTeamPreferences.getDateFormatInt(store, SVNTeamPreferences.DATE_FORMAT_NAME);
 		DateFormat dateTimeFormat = null;
@@ -334,6 +336,7 @@ public final class SVNTeamPreferences {
 		SVNTeamPreferences.setDefaultDiffViewerValues(store);
 		
 		store.setDefault(SVNTeamPreferences.SELECT_PROJECT_NAME_PAGE_IS_SIMPLE_MODE, true);
+		store.setDefault(SVNTeamPreferences.FIRST_STARTUP, true);	
 	}
 	
 	public static void setDefaultAutoPropertiesValues(IPreferenceStore store) {
