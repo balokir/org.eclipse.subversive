@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
@@ -36,11 +37,13 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.svnstorage.SVNRepositoryLocation;
 import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
 import org.eclipse.team.svn.ui.console.SVNConsole;
+import org.eclipse.team.svn.ui.decorator.SVNLightweightDecorator;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.discovery.wizards.ConnectorDiscoveryWizard;
 import org.eclipse.team.svn.ui.panel.callback.PromptCredentialsPanel;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -122,6 +125,18 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 		
 		this.console = new SVNConsole();
 				
+		IPreferenceStore store = this.getPreferenceStore();
+		if (store.getBoolean(SVNTeamPreferences.FIRST_STARTUP)) {
+			// If we enable the decorator in the XML, the SVN plugin will be loaded
+			// on startup even if the user never uses SVN. Therefore, we enable the 
+			// decorator on the first start of the SVN plugin since this indicates that 
+			// the user has done something with SVN. Subsequent startups will load
+			// the SVN plugin unless the user disables the decorator. In this case,
+			// we will not re-enable since we only enable automatically on the first startup.
+			PlatformUI.getWorkbench().getDecoratorManager().setEnabled(SVNLightweightDecorator.ID, true);
+			store.setValue(SVNTeamPreferences.FIRST_STARTUP, false);
+		}
+		
 		this.discoveryConnectors();
 	}
 	

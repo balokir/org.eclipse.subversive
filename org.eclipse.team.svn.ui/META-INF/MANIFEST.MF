@@ -23,7 +23,6 @@ Export-Package: org.eclipse.team.svn.ui,
  org.eclipse.team.svn.ui.crashrecovery.relocated,
  org.eclipse.team.svn.ui.debugmail,
  org.eclipse.team.svn.ui.decorator,
- org.eclipse.team.svn.ui.decorator.wrapper,
  org.eclipse.team.svn.ui.dialog,
  org.eclipse.team.svn.ui.event,
  org.eclipse.team.svn.ui.extension,
@@ -89,6 +88,6 @@ Require-Bundle: org.eclipse.ui.ide,
  org.eclipse.equinox.p2.repository;bundle-version="1.0.0";resolution:=optional,
  org.eclipse.equinox.p2.engine;bundle-version="1.0.100";resolution:=optional,
  org.eclipse.equinox.p2.director;bundle-version="1.0.100";resolution:=optional
-Eclipse-LazyStart: true; exceptions="org.eclipse.team.svn.ui.decorator.wrapper"
+Eclipse-LazyStart: true
 Import-Package: com.ibm.icu.text,
  com.ibm.icu.util
