@@ -8,6 +8,19 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.8.I20091120-1900 [20 November 2009]
+
+Fixes:
+ * Subversive tries to connect to repository for Compare With -> Base from Working Copy (bug 245326)
+
+ * Use Equinox secure storage (bug 295079)
+
+ * Changing svn:ignore on project root directory without updating incoming changes before causes strange behavior (bug 256868)
+
+ * Support lightweight decorations for Synchronize View (bug 245873)
+
+--------------------------------------------------------------------------------
+
 Version 0.7.8.I20091106-1900 [06 November 2009]
 
 Features:
