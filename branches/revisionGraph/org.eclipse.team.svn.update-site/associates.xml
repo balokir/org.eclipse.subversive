@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<associateSites>
+	<associateSite url="http://download.eclipse.org/tools/mylyn/update/weekly/e3.3" label="Mylyn Prerequisites"/>
+</associateSites>
