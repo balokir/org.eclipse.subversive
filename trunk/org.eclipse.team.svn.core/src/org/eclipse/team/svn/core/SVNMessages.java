@@ -72,6 +72,7 @@ public class SVNMessages extends BaseMessages {
 	public static String Error_InvalidExtensionPoint_Id;
 	public static String Error_LoadExtensions;
 	public static String Error_LoadLocations;
+	public static String Error_LoadLocationsFromFile;
 	public static String Error_LockedExternally;
 	public static String Error_LockedExternally_Id;
 	public static String Error_NoSVNClient;
