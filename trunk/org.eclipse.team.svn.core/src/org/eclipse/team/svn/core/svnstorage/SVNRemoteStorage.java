@@ -217,15 +217,25 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		    if ((resource = changeState.getExact(root.findContainersForLocation(location))) == null) {
 		    	return null;
 		    }
+		    //handle resource name for case insensitive OS's
+		    if (!resource.getName().equals(location.lastSegment())) {	    		    		    	
+		    	resource = root.getContainerForLocation(location);	    		    	
+		    }
+		    
 		    int changeMask = SVNRemoteStorage.getChangeMask(textKind, propKind, isCopied, isSwitched);
 		    if (IStateFilter.SF_NOTEXISTS.accept(resource, textStatusStr, changeMask)) {
 				revision = SVNRevision.INVALID_REVISION_NUMBER;
 			}
 			return new SVNFolderChange(resource, revision, textStatusStr, propStatusStr, changeMask, changeState.getChangeAuthor(), changeState.getChangeDate(), treeConflictDescriptor, null, changeState.getComment());
 		}
-	    if ((resource = changeState.getExact(root.findFilesForLocation(location))) == null) {
+	    if ((resource = changeState.getExact(root.findFilesForLocation(location))) == null) {	    	
 	    	return null;
+	    }	    
+	    //handle resource name for case insensitive OS's
+	    if (!resource.getName().equals(location.lastSegment())) {	    		    		    	
+	    	resource = root.getFileForLocation(location);	    		    	
 	    }
+	    
 	    int changeMask = SVNRemoteStorage.getChangeMask(textKind, propKind, isCopied, isSwitched);
 	    if (IStateFilter.SF_NOTEXISTS.accept(resource, textStatusStr, changeMask)) {
 			revision = SVNRevision.INVALID_REVISION_NUMBER;
