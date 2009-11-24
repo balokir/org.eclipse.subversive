@@ -132,7 +132,7 @@ public class OverrideAndCommitModelActionHelper extends AbstractActionHelper {
                 }
             }
 		});
-		op.add(new ClearUpdateStatusesOperation(resources[0]));
+		op.add(new ClearUpdateStatusesOperation(resources[0]), new IActionOperation[]{mainOp});
 		op.add(new RefreshResourcesOperation(resources[0]));
 		ExtensionsManager.getInstance().getCurrentCommitFactory().performAfterCommitTasks(op, mainOp, dependsOn, configuration.getSite().getPart());
 		return op;

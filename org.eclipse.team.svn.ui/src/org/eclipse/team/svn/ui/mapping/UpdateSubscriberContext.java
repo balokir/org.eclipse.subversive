@@ -186,7 +186,7 @@ public class UpdateSubscriberContext extends SubscriberMergeContext {
 					}
 				}, entry.getKey(), ignoreExternals);
 				op.add(mainOp, new IActionOperation[] {revertOp, revertOp1, removeNonVersionedResourcesOp});
-				op.add(new ClearUpdateStatusesOperation(mainOp));
+				op.add(new ClearUpdateStatusesOperation(mainOp), new IActionOperation[]{mainOp});
 			}
 			op.add(new RestoreProjectMetaOperation(saveOp));
 			op.add(new RefreshResourcesOperation(resources[0]/*, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL*/));
@@ -245,7 +245,7 @@ public class UpdateSubscriberContext extends SubscriberMergeContext {
 				boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
 				UpdateOperation mainOp = new UpdateOperation(entry.getValue().toArray(new IResource[0]), entry.getKey(), ignoreExternals);
 				op.add(mainOp);
-				op.add(new ClearUpdateStatusesOperation(mainOp));
+				op.add(new ClearUpdateStatusesOperation(mainOp), new IActionOperation[]{mainOp});
 				op.add(new NotifyUnresolvedConflictOperation(mainOp));
 			}
 			op.add(new RestoreProjectMetaOperation(saveOp));
@@ -279,7 +279,7 @@ public class UpdateSubscriberContext extends SubscriberMergeContext {
 		MarkAsMergedOperation mainOp = new MarkAsMergedOperation(resources, false, null, ignoreExternals);
 		CompositeOperation op = new CompositeOperation(mainOp.getId());
 		op.add(mainOp);
-		op.add(new ClearUpdateStatusesOperation(resources));
+		op.add(new ClearUpdateStatusesOperation(resources), new IActionOperation[]{mainOp});
 		op.add(new RefreshResourcesOperation(FileUtility.getParents(resources, false)));
 		ProgressMonitorUtility.doTaskExternal(op, monitor);
 	}

@@ -68,7 +68,7 @@ public class MarkAsMergedAction extends AbstractSynchronizeModelAction {
 		CompositeOperation op = new CompositeOperation(mainOp.getId());
 
 		op.add(mainOp);
-		op.add(new ClearUpdateStatusesOperation(resources));
+		op.add(new ClearUpdateStatusesOperation(resources), new IActionOperation[]{mainOp});
 		op.add(new RefreshResourcesOperation(FileUtility.getParents(resources, false)));
 
 		return op;

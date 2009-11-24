@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Options;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
+import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.AddToSVNWithPropertiesOperation;
 import org.eclipse.team.svn.core.operation.local.ClearLocalStatusesOperation;
 import org.eclipse.team.svn.core.operation.local.CommitOperation;
@@ -174,7 +175,7 @@ public class CommitActionUtility {
 	
 	protected void addCommonPart(IResource []selectedResources, CompositeOperation op, CommitOperation mainOp, Shell shell, IWorkbenchPart part) {
 		op.add(mainOp);
-		op.add(new ClearUpdateStatusesOperation(selectedResources));
+		op.add(new ClearUpdateStatusesOperation(selectedResources), new IActionOperation[]{mainOp});
 		op.add(new RefreshResourcesOperation(selectedResources));
 		op.add(new NotifyUnresolvedConflictOperation(mainOp));
 		
