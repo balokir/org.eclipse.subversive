@@ -488,16 +488,21 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 		repositoryPreferences.addPreferenceChangeListener(this.repoPrefChangeListener);
 		// if the file exists, we should convert the data and delete the file.
 		if (this.stateInfoFile.exists()) {
-			this.loadLocationsFromFile();
-			this.stateInfoFile.delete();
-			this.saveLocations();
-			return;
-		}
-		try {
-			this.loadLocations();
-		}
-		catch (Exception ex) {
-			LoggedOperation.reportError(SVNMessages.getErrorString("Error_LoadLocations"), ex); //$NON-NLS-1$
+			try {
+				this.loadLocationsFromFile();
+				this.saveLocations();
+			} catch (Exception ex) {
+				LoggedOperation.reportError(SVNMessages.getErrorString("Error_LoadLocationsFromFile"), ex); //$NON-NLS-1$
+			} finally {
+				this.stateInfoFile.delete();
+			}
+		} else {
+			try {
+				this.loadLocations();
+			}
+			catch (Exception ex) {
+				LoggedOperation.reportError(SVNMessages.getErrorString("Error_LoadLocations"), ex); //$NON-NLS-1$
+			}
 		}
 	}
 
