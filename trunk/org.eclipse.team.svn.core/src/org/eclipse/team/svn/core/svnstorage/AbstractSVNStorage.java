@@ -609,14 +609,14 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 				tmp.setPassword(node.get("password", "")); //$NON-NLS-1$ //$NON-NLS-2$
 				
 				//recover SSH settings
-				SSHSettings sshSettings = tmp.getSSHSettings();
+				SSHSettings sshSettings = tmp instanceof SVNRepositoryLocation ? ((SVNRepositoryLocation) tmp).getSSHSettings(false) : tmp.getSSHSettings();
 				sshSettings.setUseKeyFile(node.getBoolean("ssh_use_key", false)); //$NON-NLS-1$
 				sshSettings.setPrivateKeyPath(node.get("ssh_key", "")); //$NON-NLS-1$ //$NON-NLS-2$
 				sshSettings.setPassPhraseSaved(node.getBoolean("ssh_passphrase_saved", false)); //$NON-NLS-1$
 				sshSettings.setPassPhrase(node.get("ssh_passprase", "")); //$NON-NLS-1$ //$NON-NLS-2$
 				
 				//recover SSL settings
-				SSLSettings sslSettings = tmp.getSSLSettings();
+				SSLSettings sslSettings = tmp instanceof SVNRepositoryLocation ? ((SVNRepositoryLocation) tmp).getSSLSettings(false) : tmp.getSSLSettings();
 				sslSettings.setAuthenticationEnabled(node.getBoolean("ssl_enabled", false)); //$NON-NLS-1$
 				sslSettings.setCertificatePath(node.get("ssl_certificate", "")); //$NON-NLS-1$ //$NON-NLS-2$
 				sslSettings.setPassPhraseSaved(node.getBoolean("ssl_passphrase_saved", false)); //$NON-NLS-1$
