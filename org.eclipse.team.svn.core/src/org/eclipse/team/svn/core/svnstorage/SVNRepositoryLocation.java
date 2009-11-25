@@ -100,11 +100,21 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
     protected String authorName;
     
     private Map<String, IRepositoryLocation> additionalRealms;
+    //used for differed in time realms initialization
+    private transient List<String> rawRealms = new ArrayList<String>();
     
     private transient Integer lazyInitLock = new Integer(0);
     private transient Integer proxyManagerLock = new Integer(0);
     private transient Integer repositoryRootLock = new Integer(0);
-
+    private transient Integer authInitLock = new Integer(0);
+    
+    /*
+     * Used for differed in time authentication retrieving.
+     * We need it in order to avoid deadlocks in case of loading 
+     * authentication info initiated from Plugin#start.
+     */    
+    protected transient boolean isRetrieveAuthInfo;    
+      
 	public SVNRepositoryLocation() {
 		super(null);
 	}
@@ -158,7 +168,6 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	
 	public void fillLocationFromReference(String[] referenceParts) {
 		boolean containRevisionLinks = false;
-		ArrayList<String> realms = new ArrayList<String>();
 		switch (referenceParts.length) {
 		case 14:
 			this.getSSHSettings().setPort(Integer.parseInt(referenceParts[13]));
@@ -168,7 +177,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 			}
 		case 12:
 			if (!referenceParts[11].equals("")) { //$NON-NLS-1$
-				realms.addAll(Arrays.asList(referenceParts[11].split("\\^"))); //$NON-NLS-1$
+				this.rawRealms.addAll(Arrays.asList(referenceParts[11].split("\\^"))); //$NON-NLS-1$
 			}
 		case 11:
 			this.setAuthorNameEnabled(referenceParts[10].equals("true")); //$NON-NLS-1$
@@ -198,21 +207,13 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		if (this.label == null || this.label.length() == 0) {
 			this.label = this.url;
 		}
-		try {
-			SVNRemoteStorage.instance().loadAuthInfo(this, ""); //$NON-NLS-1$
-			for (String realm : realms) {
-				SVNRemoteStorage.instance().loadAuthInfo(this, realm);
-			}
-		}
-		catch (Exception ex) {
-			LoggedOperation.reportError("fillLocationFromReference", ex);
-		}
 		if (containRevisionLinks) {
 			String [] revLinks = referenceParts[12].split("\\^"); //$NON-NLS-1$
 			for (int i = 0 ; i < revLinks.length; i++) {
 				this.addRevisionLink(SVNRemoteStorage.instance().revisionLinkFromBytes(Base64.decode(revLinks[i].getBytes()), this));
 			}
 		}
+		this.setRetrieveAuthInfo(true);
 	}
 
 	public Collection<String> getRealms() {
@@ -220,7 +221,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	}
 	
 	public void addRealm(String realm, IRepositoryLocation location) {
-		this.getAdditionalRealms().put(realm, location);
+		this.getAdditionalRealms(false).put(realm, location);
 	}
 	
 	public void removeRealm(String realm) {
@@ -362,14 +363,17 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
     }
 	
 	public String getUsername() {
+		this.checkAuthInfo();
 		return this.username;
 	}
 
 	public String getPassword() {
+		this.checkAuthInfo();
 		return this.passwordSaved ? SVNUtility.base64Decode(this.password) : SVNUtility.base64Decode(this.passwordTemporary);
 	}
 
 	public boolean isPasswordSaved() {
+		this.checkAuthInfo();
 		return this.passwordSaved;
 	}
 
@@ -605,6 +609,13 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	}
 
 	public SSLSettings getSSLSettings() {
+		return this.getSSLSettings(true);
+	}
+	
+	public SSLSettings getSSLSettings(boolean isCheckAuthInfo) {
+		if (isCheckAuthInfo) {
+			this.checkAuthInfo();
+		}				
 		synchronized (this.lazyInitLock) {
 			if (this.sslSettings == null) {
 				this.sslSettings = new SSLSettings();
@@ -613,13 +624,20 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		}
 	}
 
-	public SSHSettings getSSHSettings() {
+	public SSHSettings getSSHSettings(boolean isCheckAuthInfo) {
+		if (isCheckAuthInfo) {
+			this.checkAuthInfo();
+		}				
 		synchronized (this.lazyInitLock) {
 			if (this.sshSettings == null) {
 				this.sshSettings = new SSHSettings();
 			}
 			return this.sshSettings;
 		}
+	}
+	
+	public SSHSettings getSSHSettings() {
+		return this.getSSHSettings(true);
 	}
 	
 	public boolean equals(Object obj) {
@@ -784,9 +802,18 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 	    return SVNUtility.normalizeURL(url);
 	}
 
-	protected synchronized Map<String, IRepositoryLocation> getAdditionalRealms() {
-		if (this.additionalRealms == null) {
-			this.additionalRealms = new LinkedHashMap<String, IRepositoryLocation>();
+	protected Map<String, IRepositoryLocation> getAdditionalRealms() {
+		return this.getAdditionalRealms(true);
+	}
+	
+	protected Map<String, IRepositoryLocation> getAdditionalRealms(boolean isCheckAuthInfo) {
+		if (isCheckAuthInfo) {
+			this.checkAuthInfo();	
+		}				
+		synchronized (this) {
+			if (this.additionalRealms == null) {
+				this.additionalRealms = new LinkedHashMap<String, IRepositoryLocation>();
+			}	
 		}
 		return this.additionalRealms;
 	}
@@ -1058,6 +1085,29 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 			return true;
 		}
 		return false;
+	}
+	
+	protected void setRetrieveAuthInfo(boolean isRetrieveAuthInfo) {
+		synchronized (this.authInitLock) {
+			this.isRetrieveAuthInfo = isRetrieveAuthInfo;	
+		}		
+	}
+	
+	private void checkAuthInfo() {		
+		synchronized (this.authInitLock) {
+			if (this.isRetrieveAuthInfo) {																
+				try {
+					SVNRemoteStorage.instance().loadAuthInfo(this, ""); //$NON-NLS-1$
+					for (String realm : this.rawRealms) {
+						SVNRemoteStorage.instance().loadAuthInfo(this, realm);
+					}
+				} catch (Exception ex) {
+					LoggedOperation.reportError("fillLocationFromReference", ex); //$NON-NLS-1$
+				} finally {
+					this.isRetrieveAuthInfo = false;
+				}											
+			}	
+		}			
 	}
 
 }
