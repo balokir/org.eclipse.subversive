@@ -8,6 +8,21 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.8.I20091127-1900 [27 November 2009]
+
+Fixes:
+ * File is disappeared from Sync view if update finished with error (bug 295984)
+
+ * Correctly show files copied with different register case on Windows (bug 295983)
+
+ * Subversive fails to initialize due to corrupted .svnRepositories file (bug 295954)
+
+ * dead lock on Linux on startup due to password prompt (bug 295951)
+
+ * Eclipse UI stalls for more than 5 minutes in the main thread executing SVNRemoteStorage code (bug 296230)
+
+--------------------------------------------------------------------------------
+
 Version 0.7.8.I20091120-1900 [20 November 2009]
 
 Fixes:
