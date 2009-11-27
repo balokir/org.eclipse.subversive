@@ -13,7 +13,7 @@
 package org.eclipse.team.svn.core.svnstorage;
 
 import java.io.File;
-import java.io.FileFilter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -670,6 +670,11 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		ILocalResource parent = this.getFirstExistingParentLocal(resource);
 		final int parentCM = parent != null ? (parent.getChangeMask() & ILocalResource.IS_SWITCHED | parent.getChangeMask() & ILocalResource.IS_UNVERSIONED_EXTERNAL) : 0;
 		final ILocalResource []tmp = new ILocalResource[1];
+		/*
+		 * Performance optimization: make an assumption that if resource is unversioned external then all its unversioned
+		 * children are also unversioned externals (without traversing them once again) 
+		 */
+		final boolean[] isUnversionedExternalParent = new boolean[]{false};
 		FileUtility.visitNodes(resource, new IResourceVisitor() {
             public boolean visit(IResource child) throws CoreException {
             	if (FileUtility.isSVNInternals(child)) {
@@ -682,8 +687,11 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
                	String textState = child == resource ? fStatus : SVNRemoteStorage.this.getDelegatedStatus(child, fStatus, 0);            	
             	int changeMask = parentCM;            	
             	if (textState == IStateFilter.ST_IGNORED && (changeMask & ILocalResource.IS_UNVERSIONED_EXTERNAL) == 0) {
-            		if (SVNRemoteStorage.this.containsSVNMetaInChildren(resource)) {
+            		if (isUnversionedExternalParent[0] || SVNRemoteStorage.this.containsSVNMetaInChildren(resource)) {
             			changeMask |= ILocalResource.IS_UNVERSIONED_EXTERNAL;
+            			if (!isUnversionedExternalParent[0] && child.equals(resource)) {
+            				isUnversionedExternalParent[0] = true;
+            			}
             		}
             	}
             	
@@ -1009,12 +1017,21 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		if (resource.getType() == IResource.FOLDER && resource.getLocation() != null) {
 			File folder = resource.getLocation().toFile();														
 			do {
-				File[] children = folder.listFiles(new FileFilter() {								
-					public boolean accept(File pathname) {
-						return pathname.isDirectory();
+				/*
+				 * return only the first found folder,
+				 * if folder is found then don't process other resources 
+				 */
+				final boolean[] check = new boolean[] {true};
+				String[] children = folder.list(new FilenameFilter() {
+					public boolean accept(File dir, String name) {
+						boolean accept = false;
+						if (check[0] && (accept = new File(dir, name).isDirectory())) {
+							check[0] = false;
+						}
+						return accept;
 					}
 				});
-				folder = children.length > 0 ? children[0] : null;
+				folder = children.length > 0 ? new File(folder, children[0]) : null;
 			} while (folder != null && !(hasSVNMeta = this.canFetchStatuses(folder)));	
 		}	
 		return hasSVNMeta;
