@@ -652,7 +652,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		if (parentExists && !isLinked) {
 			ILocalResource parentLocal = this.getFirstExistingParentLocal(resource);
 			if (parentLocal == null || !SVNRemoteStorage.SF_NONSVN.accept(parentLocal) ||
-				IStateFilter.SF_IGNORED.accept(parentLocal)) {
+				IStateFilter.SF_UNVERSIONED_EXTERNAL.accept(parentLocal)) {
 			    retVal = this.loadLocalResourcesSubTreeSVNImpl(provider, resource, recurse);
 			}
 		}
@@ -667,7 +667,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		
 		// delegate status
 		final String fStatus = status;
-		ILocalResource parent = this.getFirstExistingParentLocal(resource);
+		final ILocalResource parent = this.getFirstExistingParentLocal(resource);
 		final int parentCM = parent != null ? (parent.getChangeMask() & ILocalResource.IS_SWITCHED | parent.getChangeMask() & ILocalResource.IS_UNVERSIONED_EXTERNAL) : 0;
 		final ILocalResource []tmp = new ILocalResource[1];
 		/*
@@ -686,7 +686,8 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
             	}            	            	
                	String textState = child == resource ? fStatus : SVNRemoteStorage.this.getDelegatedStatus(child, fStatus, 0);            	
             	int changeMask = parentCM;            	
-            	if (textState == IStateFilter.ST_IGNORED && (changeMask & ILocalResource.IS_UNVERSIONED_EXTERNAL) == 0) {
+            	//if resource's parent is ignored but not external, then don't check this resource as it is ignored too
+            	if (!IStateFilter.SF_IGNORED_BUT_NOT_EXTERNAL.accept(parent) && textState == IStateFilter.ST_IGNORED && (changeMask & ILocalResource.IS_UNVERSIONED_EXTERNAL) == 0) {
             		if (isUnversionedExternalParent[0] || SVNRemoteStorage.this.containsSVNMetaInChildren(resource)) {
             			changeMask |= ILocalResource.IS_UNVERSIONED_EXTERNAL;
             			if (!isUnversionedExternalParent[0] && child.equals(resource)) {
@@ -1013,6 +1014,9 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	 * Contain SVN meta in one of its sub directories
 	 */
 	protected boolean containsSVNMetaInChildren(IResource resource) {
+		if (SVNUtility.isIgnored(resource)) {
+			return false;	
+		}			
 		boolean hasSVNMeta = false;
 		if (resource.getType() == IResource.FOLDER && resource.getLocation() != null) {
 			File folder = resource.getLocation().toFile();														
