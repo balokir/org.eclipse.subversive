@@ -687,7 +687,8 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
                	String textState = child == resource ? fStatus : SVNRemoteStorage.this.getDelegatedStatus(child, fStatus, 0);            	
             	int changeMask = parentCM;            	
             	//if resource's parent is ignored but not external, then don't check this resource as it is ignored too
-            	if (!IStateFilter.SF_IGNORED_BUT_NOT_EXTERNAL.accept(parent) && textState == IStateFilter.ST_IGNORED && (changeMask & ILocalResource.IS_UNVERSIONED_EXTERNAL) == 0) {
+            	if ((parent != null && !IStateFilter.SF_IGNORED_BUT_NOT_EXTERNAL.accept(parent) || parent == null) 
+            		&& textState == IStateFilter.ST_IGNORED && (changeMask & ILocalResource.IS_UNVERSIONED_EXTERNAL) == 0) {
             		if (isUnversionedExternalParent[0] || SVNRemoteStorage.this.containsSVNMetaInChildren(resource)) {
             			changeMask |= ILocalResource.IS_UNVERSIONED_EXTERNAL;
             			if (!isUnversionedExternalParent[0] && child.equals(resource)) {
@@ -714,7 +715,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		}
 		else {
 			IPath location = resource.getLocation();
-			if (location != null && this.isFileExists(location)) {
+			if (location != null && SVNRemoteStorage.isFileExists(location)) {
 			    // may be ignored ?
 				status = IStateFilter.ST_IGNORED;
 				if (!SVNUtility.isIgnored(resource)) {
