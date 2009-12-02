@@ -8,6 +8,15 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.8.I20091202-1600 [02 December 2009]
+
+Fixes:
+* NPE in IStateFilter$AbstractStateFilter.accept() (bug 296402) 
+
+* StackOverflowError when getting authentication info (bug 296689) 
+
+--------------------------------------------------------------------------------
+
 Version 0.7.8.I20091127-1900 [27 November 2009]
 
 Fixes:
