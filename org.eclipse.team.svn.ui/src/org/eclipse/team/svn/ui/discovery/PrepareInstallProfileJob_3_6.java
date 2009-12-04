@@ -8,7 +8,7 @@
  * Contributors:
  *     Tasktop Technologies - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.svn.ui.discovery.wizards;
+package org.eclipse.team.svn.ui.discovery;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
@@ -27,30 +27,41 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.equinox.internal.provisional.p2.core.Version;
 import org.eclipse.equinox.internal.provisional.p2.director.ProfileChangeRequest;
 import org.eclipse.equinox.internal.provisional.p2.engine.IProfile;
 import org.eclipse.equinox.internal.provisional.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IProvidedCapability;
+import org.eclipse.equinox.internal.provisional.p2.metadata.Version;
+import org.eclipse.equinox.internal.provisional.p2.metadata.query.Collector;
+import org.eclipse.equinox.internal.provisional.p2.metadata.query.MatchQuery;
+import org.eclipse.equinox.internal.provisional.p2.metadata.query.Query;
 import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
-import org.eclipse.equinox.internal.provisional.p2.query.Collector;
-import org.eclipse.equinox.internal.provisional.p2.query.MatchQuery;
-import org.eclipse.equinox.internal.provisional.p2.query.Query;
+import org.eclipse.equinox.internal.provisional.p2.ui.IProvHelpContextIds;
+import org.eclipse.equinox.internal.provisional.p2.ui.QueryableMetadataRepositoryManager;
 import org.eclipse.equinox.internal.provisional.p2.ui.actions.InstallAction;
+import org.eclipse.equinox.internal.provisional.p2.ui.dialogs.PreselectedIUInstallWizard;
+import org.eclipse.equinox.internal.provisional.p2.ui.dialogs.ProvisioningWizardDialog;
 import org.eclipse.equinox.internal.provisional.p2.ui.operations.PlannerResolutionOperation;
 import org.eclipse.equinox.internal.provisional.p2.ui.operations.ProvisioningUtil;
+import org.eclipse.equinox.internal.provisional.p2.ui.policy.Policy;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.discovery.model.ConnectorDescriptor;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
+import org.eclipse.ui.PlatformUI;
+
+
 
 /**
+ * Install job for Eclipse 3.6
+ * 
  * A job that configures a p2 {@link #getInstallAction() install action} for installing one or more
  * {@link ConnectorDescriptor connectors}. The bulk of the installation work is done by p2; this class just sets up the
  * p2 repository metadata and selects the appropriate features to install. After running the job the
@@ -60,11 +71,11 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  * @author Igor Burilo
  */
 @SuppressWarnings("restriction")
-public class PrepareInstallProfileJob implements IRunnableWithProgress {
+public class PrepareInstallProfileJob_3_6 implements IConnectorsInstallJob {
 
 	private static final String P2_FEATURE_GROUP_SUFFIX = ".feature.group"; //$NON-NLS-1$
 
-	private final List<ConnectorDescriptor> installableConnectors;
+	private List<ConnectorDescriptor> installableConnectors;
 
 	private PlannerResolutionOperation plannerResolutionOperation;
 
@@ -74,25 +85,49 @@ public class PrepareInstallProfileJob implements IRunnableWithProgress {
 
 	private InstallAction installAction;
 
-	public PrepareInstallProfileJob(List<ConnectorDescriptor> installableConnectors) {
-		if (installableConnectors == null || installableConnectors.isEmpty()) {
-			throw new IllegalArgumentException();
-		}
-		this.installableConnectors = new ArrayList<ConnectorDescriptor>(installableConnectors);
+	public PrepareInstallProfileJob_3_6() {
+		
 	}
 
+	public void setInstallableConnectors(List<ConnectorDescriptor> installableConnectors) {
+		this.installableConnectors = installableConnectors;
+	}
+	
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		try {
+			if (this.installableConnectors == null || this.installableConnectors.isEmpty()) {
+				throw new IllegalArgumentException();
+			}
+			
 			doRun(monitor);
 			if (monitor.isCanceled()) {
 				throw new InterruptedException();
 			}
+			doInstall();
+		} catch (OperationCanceledException e) {
+			throw new InterruptedException();
 		} catch (Exception e) {
 			throw new InvocationTargetException(e);
 		}
 	}
 
-	public void doRun(IProgressMonitor monitor) throws CoreException {
+	protected void doInstall() {
+		if (this.getPlannerResolutionOperation() != null && this.getPlannerResolutionOperation().getProvisioningPlan() != null) {
+			UIMonitorUtility.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					PreselectedIUInstallWizard wizard = new PreselectedIUInstallWizard(Policy.getDefault(),
+							getProfileId(), getIUs(), getPlannerResolutionOperation(),
+							new QueryableMetadataRepositoryManager(Policy.getDefault().getQueryContext(), false));
+					WizardDialog dialog = new ProvisioningWizardDialog(UIMonitorUtility.getShell(), wizard);
+					dialog.create();
+					PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IProvHelpContextIds.INSTALL_WIZARD);
+					dialog.open();
+				}
+			});
+		}
+	}
+	
+	protected void doRun(IProgressMonitor monitor) throws CoreException {
 		final int totalWork = installableConnectors.size() * 6;
 		monitor.beginTask(SVNUIMessages.InstallConnectorsJob_task_configuring, totalWork);
 		try {

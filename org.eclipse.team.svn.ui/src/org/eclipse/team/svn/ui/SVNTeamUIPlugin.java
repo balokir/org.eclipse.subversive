@@ -12,37 +12,25 @@
 
 package org.eclipse.team.svn.ui;
 
-import java.net.Authenticator;
 import java.net.MalformedURLException;
-import java.net.PasswordAuthentication;
 import java.net.URL;
 
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
-import org.eclipse.team.svn.core.discovery.util.WebUtil;
-import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.mapping.SVNActiveChangeSetCollector;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
-import org.eclipse.team.svn.core.svnstorage.SVNCachedProxyCredentialsManager;
-import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
-import org.eclipse.team.svn.core.svnstorage.SVNRepositoryLocation;
 import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
 import org.eclipse.team.svn.ui.console.SVNConsole;
 import org.eclipse.team.svn.ui.decorator.SVNLightweightDecorator;
-import org.eclipse.team.svn.ui.dialog.DefaultDialog;
-import org.eclipse.team.svn.ui.discovery.wizards.ConnectorDiscoveryWizard;
-import org.eclipse.team.svn.ui.panel.callback.PromptCredentialsPanel;
+import org.eclipse.team.svn.ui.discovery.DiscoveryConnectorsExecutor;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
-import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -137,53 +125,13 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 			store.setValue(SVNTeamPreferences.FIRST_STARTUP, false);
 		}
 		
-		this.discoveryConnectors();
-	}
-	
-	protected void discoveryConnectors() {
+		//discovery connectors
 		try {			
-			//check that connectors exist
-			if (CoreExtensionsManager.instance().getAccessibleClients().isEmpty() && Platform.getBundle("org.eclipse.equinox.p2.repository") != null) {			
-				//set proxy authenticator to WebUtil for accessing Internet files
-				WebUtil.setAuthenticator(new Authenticator(){						
-					protected PasswordAuthentication getPasswordAuthentication() {
-						if (this.getRequestorType() == Authenticator.RequestorType.PROXY) {
-							SVNCachedProxyCredentialsManager proxyCredentialsManager = SVNRemoteStorage.instance().getProxyCredentialsManager();					
-							if (proxyCredentialsManager.getUsername() == null || proxyCredentialsManager.getUsername() == "") {
-								final boolean[] result = new boolean[1];
-								UIMonitorUtility.getDisplay().syncExec(new Runnable() {
-									public void run() {
-										PromptCredentialsPanel panel = new PromptCredentialsPanel(getRequestingPrompt(), SVNRepositoryLocation.PROXY_CONNECTION);
-										DefaultDialog dialog = new DefaultDialog(UIMonitorUtility.getShell(), panel);
-										if (dialog.open() == 0) {
-											result[0] = true; 
-										}
-									}						
-								});
-								if (result[0]) {
-									String pswd = proxyCredentialsManager.getPassword();
-									return new PasswordAuthentication(proxyCredentialsManager.getUsername(), pswd == null ? "".toCharArray() : pswd.toCharArray());
-								}
-							} else {							
-								String pswd = proxyCredentialsManager.getPassword();
-								return new PasswordAuthentication(proxyCredentialsManager.getUsername(), pswd == null ? "".toCharArray() : pswd.toCharArray());
-							}																									
-						}
-						return null;
-					}
-				});
-				
-				UIMonitorUtility.getDisplay().asyncExec(new Runnable() {
-					public void run() {
-						ConnectorDiscoveryWizard wizard = new ConnectorDiscoveryWizard();
-						WizardDialog dialog = new WizardDialog(UIMonitorUtility.getShell(), wizard);
-						dialog.open();		
-					}
-				});	
-			}	
+			DiscoveryConnectorsExecutor discovery = new DiscoveryConnectorsExecutor();
+			discovery.execute();
 		} catch (Throwable th) {
 			LoggedOperation.reportError(this.getClass().getName(), th);
-		}					
+		}
 	}
 	
 	public void stop(BundleContext context) throws Exception {

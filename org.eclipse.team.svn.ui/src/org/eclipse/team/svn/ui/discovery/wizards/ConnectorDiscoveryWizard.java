@@ -18,27 +18,21 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.equinox.internal.provisional.p2.ui.IProvHelpContextIds;
-import org.eclipse.equinox.internal.provisional.p2.ui.QueryableMetadataRepositoryManager;
-import org.eclipse.equinox.internal.provisional.p2.ui.dialogs.PreselectedIUInstallWizard;
-import org.eclipse.equinox.internal.provisional.p2.ui.dialogs.ProvisioningWizardDialog;
-import org.eclipse.equinox.internal.provisional.p2.ui.policy.Policy;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.discovery.model.ConnectorDescriptorKind;
 import org.eclipse.team.svn.core.discovery.model.ConnectorDiscovery;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
+import org.eclipse.team.svn.ui.discovery.IConnectorsInstallJob;
+import org.eclipse.team.svn.ui.discovery.PrepareInstallProfileJob_3_5;
 import org.eclipse.team.svn.ui.discovery.util.DiscoveryUiUtil;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * A wizard for performing discovery of connectors and selecting connectors to install. When finish is pressed, selected
  * connectors are downloaded and installed.
  * 
- * @see PrepareInstallProfileJob
+ * @see PrepareInstallProfileJob_3_5
  * @see ConnectorDiscoveryWizardMainPage
  * 
  * @author David Green
@@ -49,6 +43,8 @@ public class ConnectorDiscoveryWizard extends Wizard {
 
 	private ConnectorDiscoveryWizardMainPage mainPage;
 
+	protected IConnectorsInstallJob installJob;
+	
 	private final Map<ConnectorDescriptorKind, Boolean> connectorDescriptorKindToVisibility = new HashMap<ConnectorDescriptorKind, Boolean>();
 	{
 		for (ConnectorDescriptorKind kind : ConnectorDescriptorKind.values()) {
@@ -62,7 +58,9 @@ public class ConnectorDiscoveryWizard extends Wizard {
 
 	private Dictionary<Object, Object> environment;
 
-	public ConnectorDiscoveryWizard() {
+	public ConnectorDiscoveryWizard(IConnectorsInstallJob installJob) {
+		this.installJob = installJob;
+		
 		setWindowTitle(SVNUIMessages.ConnectorDiscoveryWizard_connectorDiscovery);
 		setNeedsProgressMonitor(true);
 		setDefaultPageImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/wizards/newconnect.gif"));
@@ -81,35 +79,18 @@ public class ConnectorDiscoveryWizard extends Wizard {
 	@Override
 	public boolean performFinish() {
 		try {
-			final PrepareInstallProfileJob job = new PrepareInstallProfileJob(mainPage.getInstallableConnectors());
-			getContainer().run(true, true, job);
-
-			if (job.getPlannerResolutionOperation() != null
-					&& job.getPlannerResolutionOperation().getProvisioningPlan() != null) {
-				Display.getCurrent().asyncExec(new Runnable() {
-					public void run() {
-						PreselectedIUInstallWizard wizard = new PreselectedIUInstallWizard(Policy.getDefault(),
-								job.getProfileId(), job.getIUs(), job.getPlannerResolutionOperation(),
-								new QueryableMetadataRepositoryManager(Policy.getDefault().getQueryContext(), false));
-						WizardDialog dialog = new ProvisioningWizardDialog(getShell(), wizard);
-						dialog.create();
-						PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(),
-								IProvHelpContextIds.INSTALL_WIZARD);
-
-						dialog.open();
-					}
-				});
-			}
+			this.installJob.setInstallableConnectors(this.mainPage.getInstallableConnectors());
+			this.getContainer().run(true, true, this.installJob);
+			return true;
 		} catch (InvocationTargetException e) {
 			IStatus status = new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID, SVNUIMessages.format(
 					SVNUIMessages.ConnectorDiscoveryWizard_installProblems, new Object[] { e.getCause().getMessage() }),
 					e.getCause());
 			DiscoveryUiUtil.logAndDisplayStatus(SVNUIMessages.ConnectorDiscoveryWizard_cannotInstall, status);
-			return false;
 		} catch (InterruptedException e) {
 			// canceled
 		}
-		return true;
+		return false;
 	}
 
 	/**
