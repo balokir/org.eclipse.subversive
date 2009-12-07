@@ -8,6 +8,15 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.8.I20091207-1900 [07 December 2009]
+
+Fixes:
+ * Subversive Connector Discovery fails on Helios M3 (bug 295156) 
+
+ * Subversive is halting the UI (note that jconsole doesn't detect a deadlock, but still it becomes halted) (bug 296707) 
+
+--------------------------------------------------------------------------------
+
 Version 0.7.8.I20091202-1600 [02 December 2009]
 
 Fixes:
