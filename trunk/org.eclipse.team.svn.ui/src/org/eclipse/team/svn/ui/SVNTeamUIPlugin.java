@@ -29,8 +29,9 @@ import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
 import org.eclipse.team.svn.ui.console.SVNConsole;
 import org.eclipse.team.svn.ui.decorator.SVNLightweightDecorator;
-import org.eclipse.team.svn.ui.discovery.DiscoveryConnectorsExecutor;
+import org.eclipse.team.svn.ui.discovery.DiscoveryConnectorsOperation;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
+import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -125,13 +126,8 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 			store.setValue(SVNTeamPreferences.FIRST_STARTUP, false);
 		}
 		
-		//discovery connectors
-		try {			
-			DiscoveryConnectorsExecutor discovery = new DiscoveryConnectorsExecutor();
-			discovery.execute();
-		} catch (Throwable th) {
-			LoggedOperation.reportError(this.getClass().getName(), th);
-		}
+		//run discovery connectors
+		UIMonitorUtility.doTaskScheduledDefault(new DiscoveryConnectorsOperation());
 	}
 	
 	public void stop(BundleContext context) throws Exception {
