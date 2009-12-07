@@ -939,6 +939,9 @@ public class SVNUIMessages extends BaseMessages {
 	public static String Operation_EditRevisionLink;
 	public static String Operation_EditRevisionLink_Id;
 	public static String Operation_EditRevisionLink_Error;
+	public static String Operation_DiscoveryConnectors;
+	public static String Operation_DiscoveryConnectors_Id; 
+	public static String Operation_DiscoveryConnectors_Error;
 	
 	public static String OptionsActionGroup_ShowInfoContiguous;
 	public static String OverrideResourcesPanel_Affected;
