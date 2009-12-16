@@ -13,8 +13,6 @@ package org.eclipse.team.svn.ui.composite;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -23,7 +21,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.team.svn.core.connector.SVNEntryReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNRevisionRange;
@@ -237,8 +237,9 @@ public class RepositoryResourceSelectionComposite extends Composite {
 			this.urlText.select(0);
 		}
 		this.url = this.urlText.getText();
-		this.urlText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
+		
+		Listener urlTextListener = new Listener() {
+			public void handleEvent(Event e) {
 				RepositoryResourceSelectionComposite.this.url = ((Combo)e.widget).getText();
 				if (RepositoryResourceSelectionComposite.this.isSelectionAvailable()) {
 					RepositoryResourceSelectionComposite.this.revisionComposite.setSelectedResource(RepositoryResourceSelectionComposite.this.getSelectedResource());
@@ -253,7 +254,10 @@ public class RepositoryResourceSelectionComposite extends Composite {
 					}
 				}
 			}
-		});
+		};
+		this.urlText.addListener(SWT.Modify, urlTextListener);
+		this.urlText.addListener(SWT.Selection, urlTextListener);
+		
 		this.verifier = new CompositeVerifier() {
 			protected void fireError(String errorReason) {
 				RepositoryResourceSelectionComposite.this.revisionComposite.setEnabled(false);

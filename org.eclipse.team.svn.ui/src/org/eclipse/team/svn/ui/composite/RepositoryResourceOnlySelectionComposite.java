@@ -13,8 +13,6 @@ package org.eclipse.team.svn.ui.composite;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -23,7 +21,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.team.svn.core.connector.SVNEntryReference;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -180,11 +180,15 @@ public class RepositoryResourceOnlySelectionComposite extends Composite {
 		}
 		
 		this.url = this.urlText.getText();
-		this.urlText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
+		
+		Listener urlTextListener = new Listener() {
+			public void handleEvent(Event e) {
 				RepositoryResourceOnlySelectionComposite.this.url = ((Combo)e.widget).getText();
 			}
-		});
+		};
+		this.urlText.addListener(SWT.Selection, urlTextListener);
+		this.urlText.addListener(SWT.Modify, urlTextListener);
+		
 		this.verifier = new CompositeVerifier();
 		this.verifier.add(new NonEmptyFieldVerifier(SVNUIMessages.getString(this.comboId + "_Verifier"))); //$NON-NLS-1$
 		this.verifier.add(new URLVerifier(SVNUIMessages.getString(this.comboId + "_Verifier")) { //$NON-NLS-1$

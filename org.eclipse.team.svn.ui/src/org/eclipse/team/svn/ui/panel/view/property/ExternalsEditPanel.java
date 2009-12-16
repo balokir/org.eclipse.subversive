@@ -31,7 +31,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
@@ -200,11 +202,13 @@ public class ExternalsEditPanel extends AbstractDialogPanel {
 		this.urlText.setVisibleItemCount(this.urlHistory.getDepth());
 		this.urlText.setItems(this.urlHistory.getHistory());							
 		
-		this.urlText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
+		Listener urlTextListener = new Listener() {
+			public void handleEvent(Event event) {
 				ExternalsEditPanel.this.onChangeUrlText();				
 			}
-		});
+		};
+		this.urlText.addListener(SWT.Selection, urlTextListener);
+		this.urlText.addListener(SWT.Modify, urlTextListener);
 						
 		this.browse = new Button(parent, SWT.PUSH);
 		this.browse.setText(SVNUIMessages.Button_Browse);

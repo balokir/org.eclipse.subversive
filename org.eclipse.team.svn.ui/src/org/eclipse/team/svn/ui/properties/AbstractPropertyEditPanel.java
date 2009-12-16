@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -166,15 +164,17 @@ public abstract class AbstractPropertyEditPanel extends AbstractDialogPanel {
 			public void widgetDefaultSelected(SelectionEvent e) {				
 			}			
 		});
-		this.nameField.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
+		Listener nameFieldListener = new Listener() {
+			public void handleEvent(Event event) {
 				PredefinedProperty prop = AbstractPropertyEditPanel.this.getPredefinedProperty(AbstractPropertyEditPanel.this.nameField.getText());
 				if (prop != null) {
 					AbstractPropertyEditPanel.this.valueField.setText(prop.value);	
 				}
 				AbstractPropertyEditPanel.this.descriptionField.setText(AbstractPropertyEditPanel.this.getDescriptionText());
 			}
-		});
+		};
+		this.nameField.addListener(SWT.Selection, nameFieldListener);
+		this.nameField.addListener(SWT.Modify, nameFieldListener);
 		
 		Composite descriptionComposite = new Composite(composite, SWT.BORDER);
 		data = new GridData(GridData.FILL_HORIZONTAL);
