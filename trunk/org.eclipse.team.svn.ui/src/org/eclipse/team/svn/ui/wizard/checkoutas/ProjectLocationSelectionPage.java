@@ -201,11 +201,15 @@ public class ProjectLocationSelectionPage extends AbstractVerifiedWizardPage {
 		names.add(ProjectLocationSelectionPage.DEFAULT_WORKING_SET);
 		names.addAll(Arrays.asList(wSetNames));
 		this.workingSetNameCombo.setItems((String[])names.toArray(new String[names.size()]));
-		this.workingSetNameCombo.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				ProjectLocationSelectionPage.this.workingSetName = ProjectLocationSelectionPage.this.workingSetNameCombo.getText();
+		
+		Listener workingSetNameComboListener = new Listener() {
+			public void handleEvent(Event event) {
+				ProjectLocationSelectionPage.this.workingSetName = ProjectLocationSelectionPage.this.workingSetNameCombo.getText();				
 			}
-		});
+		}; 
+		this.workingSetNameCombo.addListener(SWT.Selection, workingSetNameComboListener);
+		this.workingSetNameCombo.addListener(SWT.Modify, workingSetNameComboListener);
+		
 		this.workingSetNameCombo.setText(ProjectLocationSelectionPage.DEFAULT_WORKING_SET);
 		this.attachTo(this.workingSetNameCombo, new NonEmptyFieldVerifier(SVNUIMessages.ProjectLocationSelectionPage_WorkingSet_Verifier));
 		

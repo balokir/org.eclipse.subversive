@@ -12,13 +12,13 @@
 package org.eclipse.team.svn.ui.panel.local;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.composite.BranchTagSelectionComposite;
@@ -89,11 +89,11 @@ public class ReplaceBranchTagPanel extends AbstractDialogPanel {
 		this.resultText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));		
 		this.resultText.setBackground(UIMonitorUtility.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		
-        this.selectionComposite.addUrlModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				ReplaceBranchTagPanel.this.setResultLabel();				
+        this.selectionComposite.addUrlModifyListener(new Listener() {
+			public void handleEvent(Event event) {
+				ReplaceBranchTagPanel.this.setResultLabel();
 			}
-        });
+		});
         this.selectionComposite.addUrlVerifier(new AbstractVerifier() {
 			protected String getErrorMessage(Control input) {
 				/*

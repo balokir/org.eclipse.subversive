@@ -24,8 +24,6 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -37,7 +35,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.SVNProperty;
@@ -227,12 +227,15 @@ public class PropertyKeywordEditPanel extends AbstractDialogPanel {
 			else {
 				this.maskText.select(0);
 			}
-			this.maskText.addModifyListener(new ModifyListener() {
-				public void modifyText(ModifyEvent e) {
+			Listener maskTextListener = new Listener() {
+				public void handleEvent(Event event) {
 					PropertyKeywordEditPanel.this.checkboxViewer.setAllGrayed(false);
 					PropertyKeywordEditPanel.this.changeMixedElementsToChecked();
 				}
-			});
+			};
+			this.maskText.addListener(SWT.Selection, maskTextListener);
+			this.maskText.addListener(SWT.Modify, maskTextListener);
+			
 			this.attachTo(this.maskText,
 					new AbstractVerifierProxy(new NonEmptyFieldVerifier(SVNUIMessages.PropertyKeywordEditPanel_Mask_Verifier)) {
 						protected boolean isVerificationEnabled(Control input) {

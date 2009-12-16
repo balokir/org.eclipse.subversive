@@ -730,8 +730,8 @@ public class SVNTeamPreferencesPage extends AbstractSVNTeamPreferencesPage {
 		data = new GridData();
 		data.widthHint = 100;
 		this.dateFormatField.setLayoutData(data);
-		this.dateFormatField.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
+		this.dateFormatField.addListener(SWT.Selection, new Listener() {			
+			public void handleEvent(Event event) {
 				SVNTeamPreferencesPage.this.dateFormat = SVNTeamPreferencesPage.this.dateFormatField.getSelectionIndex();
 				if (SVNTeamPreferencesPage.this.dateFormat == SVNTeamPreferences.DATE_FORMAT_MODE_CUSTOM) {
 					SVNTeamPreferencesPage.this.dateFormatCustomField.setEnabled(true);

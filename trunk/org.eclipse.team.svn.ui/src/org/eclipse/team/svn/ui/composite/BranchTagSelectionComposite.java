@@ -15,8 +15,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -24,7 +22,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.team.svn.core.connector.SVNEntryReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -138,12 +138,16 @@ public class BranchTagSelectionComposite extends Composite {
 			}			
 		}		
 		
-		this.urlText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
+		Listener urlTextListener = new Listener() {
+			public void handleEvent(Event e) {
 				BranchTagSelectionComposite.this.url = ((Combo)e.widget).getText();
-				BranchTagSelectionComposite.this.revisionComposite.setSelectedResource(BranchTagSelectionComposite.this.getSelectedResource());
+				BranchTagSelectionComposite.this.revisionComposite.setSelectedResource(BranchTagSelectionComposite.this.getSelectedResource());							
 			}
-		});
+		};
+		this.urlText.addListener(SWT.Selection, urlTextListener);
+		if (!this.considerStructure) {
+			this.urlText.addListener(SWT.Modify, urlTextListener);
+		}
 		
 		if (!this.considerStructure) {
 			this.browse = new Button(select, SWT.PUSH);
@@ -190,8 +194,11 @@ public class BranchTagSelectionComposite extends Composite {
 		this.revisionComposite.setSelectedResource(this.baseResource);
 	}
 	
-	public void addUrlModifyListener(ModifyListener listener) {
-		this.urlText.addModifyListener(listener);
+	public void addUrlModifyListener(Listener listener) {
+		this.urlText.addListener(SWT.Selection, listener);
+		if (!this.considerStructure) {
+			this.urlText.addListener(SWT.Modify, listener);	
+		}
 	}
 	
 	public void addUrlVerifier(AbstractVerifier verifier) {
