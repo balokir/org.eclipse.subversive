@@ -105,35 +105,60 @@ public class ReportPartsFactory {
 	}
 	
 	public static String getProductPart(IReportingDescriptor provider) {
-		return "<b>Product:</b> " + provider.getProductName() + "<br><br>"; //$NON-NLS-2$
+		return "<b>Product:</b> " + provider.getProductName() + "<br><br>";  //$NON-NLS-1$//$NON-NLS-2$
 	}
 	
 	public static String getVersionPart(IReportingDescriptor provider) {
-		return "<b>Version:</b> " + provider.getProductVersion() + "<br><br>"; //$NON-NLS-2$
+		return "<b>Version:</b> " + provider.getProductVersion() + "<br><br>";  //$NON-NLS-1$//$NON-NLS-2$
 	}
 	
 	public static String getAuthorPart(String email, String name) {
 		String author = (name != null ? name : "") + (email != null && email.trim().length() > 0 ? " &lt;" + email + "&gt;" : ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		author = author.trim().length() > 0 ? author : "<i>[not specified]</i>";
-		return "<b>From:</b> " + author + "<br><br>"; //$NON-NLS-2$
+		author = author.trim().length() > 0 ? author : "<i>[not specified]</i>"; //$NON-NLS-1$
+		return "<b>From:</b> " + author + "<br><br>";  //$NON-NLS-1$//$NON-NLS-2$
 	}
 	
 	public static String getUserCommentPart(String userComment) {
-		userComment = (userComment != null && userComment.trim().length() > 0) ? userComment : "<i>[empty]</i>";
-		return "<b>User comment:</b><br>" + userComment + "<br><br>"; //$NON-NLS-2$
+		userComment = (userComment != null && userComment.trim().length() > 0) ? userComment : "<i>[empty]</i>"; //$NON-NLS-1$
+		return "<b>User comment:</b><br>" + userComment + "<br><br>";  //$NON-NLS-1$//$NON-NLS-2$
 	}
 	
 	public static String getSVNClientPart() {
 		ISVNConnectorFactory factory = CoreExtensionsManager.instance().getSVNConnectorFactory();
-		return "<b>SVN Client:</b> " + factory.getId() + " " + factory.getVersion() + " " + factory.getClientVersion() + "<br><br>"; //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		return "<b>SVN Client:</b> " + factory.getId() + " " + factory.getVersion() + " " + factory.getClientVersion() + "<br><br>";  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 	
 	public static String getJVMPropertiesPart() {
-		Properties props = (Properties)System.getProperties().clone();
-		props.remove("org.osgi.framework.system.packages"); //$NON-NLS-1$
-		props.remove("sun.boot.class.path"); //$NON-NLS-1$
-		props.remove("osgi.bundles"); //$NON-NLS-1$
-		return "<b>JVM Properties:</b><br>" + props.toString().replace('\n', ' ') + "<br><br>"; //$NON-NLS-2$
+		Properties systemProps = System.getProperties();
+		Properties props = new Properties();
+		String[] keys = new String[]{
+			"os.name", //$NON-NLS-1$
+			"os.version", //$NON-NLS-1$
+			"os.arch", //$NON-NLS-1$
+			"user.timezone", //$NON-NLS-1$
+			"file.separator", //$NON-NLS-1$
+			"line.separator", //$NON-NLS-1$
+			"path.separator", //$NON-NLS-1$
+			"file.encoding", //$NON-NLS-1$
+			"user.language", //$NON-NLS-1$
+			"user.country", //$NON-NLS-1$
+			"java.version", //$NON-NLS-1$
+			"java.runtime.version", //$NON-NLS-1$
+			"java.class.version", //$NON-NLS-1$
+			"java.vm.name", //$NON-NLS-1$
+			"java.vm.info",			 //$NON-NLS-1$
+			"java.vendor",			 //$NON-NLS-1$
+			"java.runtime.name", //$NON-NLS-1$
+			"osgi.framework.version", //$NON-NLS-1$
+			"eclipse.commands" //$NON-NLS-1$
+		};
+		for (int i = 0; i < keys.length; i ++) {
+			String key = keys[i];
+			if (systemProps.containsKey(key)) {
+				props.put(key, systemProps.getProperty(key));
+			}
+		}
+		return "<b>JVM Properties:</b><br>" + props.toString().replace('\n', ' ') + "<br><br>";  //$NON-NLS-1$//$NON-NLS-2$
 	}
 	
 }
