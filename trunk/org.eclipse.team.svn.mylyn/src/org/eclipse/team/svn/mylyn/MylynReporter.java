@@ -126,8 +126,7 @@ public class MylynReporter extends AbstractActionOperation implements IReporter 
 	}
 
 	public String buildSubject() {
-		String subject = "[" + this.settings.getProductName() + "] - ";
-		subject += this.summary != null ? this.summary : ((this.type == ReportType.BUG ? "Bug report " : "Tip for improvement ") + this.reportId);
+		String subject = this.summary != null ? this.summary : this.reportId;
 		return subject;
 	}
 
