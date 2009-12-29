@@ -442,6 +442,10 @@ public class SVNMessages extends BaseMessages {
 	public static String Operation_GenerateExternalsProperty_Id;
 	public static String Operation_GenerateExternalsProperty_Error;
 	
+	public static String Operation_GetRemoteChildren;
+	public static String Operation_GetRemoteChildren_Error;
+	public static String Operation_GetRemoteChildren_Id;
+	
 	public static String Progress_Done;
 	public static String Progress_Running;
 	public static String Progress_SubTask;

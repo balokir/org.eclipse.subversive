@@ -19,12 +19,12 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
+import org.eclipse.team.svn.core.operation.remote.GetRemoteFolderChildrenOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.operation.GetRemoteFolderChildrenOperation;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.DefaultOperationWrapperFactory;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -59,7 +59,7 @@ public class RepositoryFolder extends RepositoryResource implements IParentTreeN
 			Object []retVal = RepositoryFolder.wrapChildren(this, this.childrenOp.getChildren(), this.childrenOp);
 			return retVal == null ? new Object[] {this.childrenOp.getExecutionState() != IActionOperation.ERROR ? (Object)new RepositoryPending(this) : new RepositoryError(this.childrenOp.getStatus())} : retVal;
 		}
-		this.childrenOp = new GetRemoteFolderChildrenOperation(container);
+		this.childrenOp = new GetRemoteFolderChildrenOperation(container, SVNTeamPreferences.getRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.REPOSITORY_SHOW_EXTERNALS_NAME));
 		
 		if (!((IRepositoryContainer)this.resource).isChildrenCached()) {
 			CompositeOperation op = new CompositeOperation(this.childrenOp.getId());

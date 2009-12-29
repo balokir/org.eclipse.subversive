@@ -9,7 +9,7 @@
  *    Alexander Gurov - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.team.svn.ui.operation;
+package org.eclipse.team.svn.core.operation.remote;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,27 +37,28 @@ import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.core.resource.IRepositoryResource.Information;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.SVNUtility;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
-import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 
 /**
+ * 
  * Load folder children. Used in asynchronous repository view refresh.
  * 
  * @author Alexander Gurov
  */
 public class GetRemoteFolderChildrenOperation extends AbstractActionOperation {
 	protected IRepositoryContainer parent;
+	protected boolean handleExternals;
 	protected IRepositoryResource []children;
 	protected boolean sortChildren;
 	protected Map<IRepositoryResource, String> externalsNames;
 
-	public GetRemoteFolderChildrenOperation(IRepositoryContainer parent) {
-		this(parent, true);
+	public GetRemoteFolderChildrenOperation(IRepositoryContainer parent, boolean handleExternals) {
+		this(parent, handleExternals, true);
 	}
 
-	public GetRemoteFolderChildrenOperation(IRepositoryContainer parent, boolean sortChildren) {
+	public GetRemoteFolderChildrenOperation(IRepositoryContainer parent, boolean handleExternals, boolean sortChildren) {
 		super("Operation_GetRemoteChildren"); //$NON-NLS-1$
 		this.parent = parent;
+		this.handleExternals = handleExternals;
 		this.sortChildren = sortChildren;
 		this.externalsNames = new HashMap<IRepositoryResource, String>();
 	}
@@ -75,7 +76,7 @@ public class GetRemoteFolderChildrenOperation extends AbstractActionOperation {
 		
 		// handle svn:externals, if present:
 		Information info = this.parent.getInfo();
-		if (info != null && info.hasProperties && SVNTeamPreferences.getRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.REPOSITORY_SHOW_EXTERNALS_NAME)) {
+		if (info != null && info.hasProperties && this.handleExternals) {
 			IRepositoryLocation location = this.parent.getRepositoryLocation();
 			ISVNConnector proxy = location.acquireSVNProxy();
 			try {
