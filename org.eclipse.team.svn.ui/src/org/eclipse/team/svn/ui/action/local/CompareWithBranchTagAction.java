@@ -61,9 +61,10 @@ public class CompareWithBranchTagAction extends AbstractWorkingCopyAction {
 		IResource resource = this.getSelectedResources()[0];
 		ILocalResource local = SVNRemoteStorage.instance().asLocalResourceAccessible(resource);
 		IRepositoryResource remote = local.isCopied() ? SVNUtility.getCopiedFrom(resource) : SVNRemoteStorage.instance().asRepositoryResource(resource);
-		
-		IRepositoryResource[] branchTagResources = BranchTagSelectionComposite.calculateBranchTagResources(remote, this.type);
-		if (branchTagResources != null) {
+			
+		boolean considerStructure = BranchTagSelectionComposite.considerStructure(remote);
+		IRepositoryResource[] branchTagResources = considerStructure ? BranchTagSelectionComposite.calculateBranchTagResources(remote, this.type) : new IRepositoryResource[0];
+		if (!(considerStructure && branchTagResources.length == 0)) {
 			CompareBranchTagPanel panel = new CompareBranchTagPanel(remote, this.type, branchTagResources);
 			DefaultDialog dlg = new DefaultDialog(this.getShell(), panel);
 			if (dlg.open() == 0 && panel.getResourceToCompareWith() != null){

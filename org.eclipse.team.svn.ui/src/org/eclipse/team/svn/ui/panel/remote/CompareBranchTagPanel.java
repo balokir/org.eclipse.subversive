@@ -117,16 +117,14 @@ public class CompareBranchTagPanel extends AbstractDialogPanel {
 	}
 	
 	protected void setResultLabel() {
-		String text = ""; //$NON-NLS-1$
+		String text = SVNUIMessages.CompareBranchTagPanel_ResultNone;
 		this.resourceToCompareWith = null;
 		
 		if (this.getSelectedResource() != null) {
 			this.resourceToCompareWith = BranchTagSelectionComposite.getResourceToCompareWith(this.baseResource, this.getSelectedResource());			
 			if (this.resourceToCompareWith != null) {				
 				text = this.resourceToCompareWith.getUrl();
-			} else {
-				text = SVNUIMessages.CompareBranchTagPanel_ResultNone;
-			}		
+			}
 		}	
 		this.resultText.setText(text);	
 	}	

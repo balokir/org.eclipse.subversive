@@ -41,9 +41,10 @@ public class CompareWithBranchTagAction extends CompareAction {
 	}
 
 	public void runImpl(IAction action) {
-        IRepositoryResource first = this.getSelectedRepositoryResources()[0];
-        IRepositoryResource[] branchTagResources = BranchTagSelectionComposite.calculateBranchTagResources(first, this.type);
-        if (branchTagResources != null) {
+        IRepositoryResource first = this.getSelectedRepositoryResources()[0];                
+		boolean considerStructure = BranchTagSelectionComposite.considerStructure(first);
+		IRepositoryResource[] branchTagResources = considerStructure ? BranchTagSelectionComposite.calculateBranchTagResources(first, this.type) : new IRepositoryResource[0];
+		if (!(considerStructure && branchTagResources.length == 0)) {
     		CompareBranchTagPanel panel = new CompareBranchTagPanel(first, this.type, branchTagResources);
     		DefaultDialog dlg = new DefaultDialog(this.getShell(), panel);
     		if (dlg.open() == 0 && panel.getResourceToCompareWith() != null){

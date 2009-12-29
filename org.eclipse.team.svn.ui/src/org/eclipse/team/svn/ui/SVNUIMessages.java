@@ -796,9 +796,6 @@ public class SVNUIMessages extends BaseMessages {
 	public static String Operation_FillCopyPaste;
 	public static String Operation_FillCopyPaste_Error;
 	public static String Operation_FillCopyPaste_Id;
-	public static String Operation_GetRemoteChildren;
-	public static String Operation_GetRemoteChildren_Error;
-	public static String Operation_GetRemoteChildren_Id;
 	public static String Operation_GetRemoteRevision;
 	public static String Operation_GetRemoteRevision_Error;
 	public static String Operation_GetRemoteRevision_Id;
@@ -942,6 +939,9 @@ public class SVNUIMessages extends BaseMessages {
 	public static String Operation_DiscoveryConnectors;
 	public static String Operation_DiscoveryConnectors_Id; 
 	public static String Operation_DiscoveryConnectors_Error;
+	public static String Operation_GetBranchesTags;
+	public static String Operation_GetBranchesTags_Id;
+	public static String Operation_GetBranchesTags_Error;
 	
 	public static String OptionsActionGroup_ShowInfoContiguous;
 	public static String OverrideResourcesPanel_Affected;
@@ -1804,6 +1804,9 @@ public class SVNUIMessages extends BaseMessages {
 	public static String SelectSimpleRepositoryLocationPage_Details;
 	public static String Action_SetExternals;
 	public static String SVNConsoleRemoveAction_CloseConsole;
+	
+	public static String BranchTagSelectionComposite_NoBranches;
+	public static String BranchTagSelectionComposite_NoTags;
 	
 	static {
 		//load message values from bundle file
