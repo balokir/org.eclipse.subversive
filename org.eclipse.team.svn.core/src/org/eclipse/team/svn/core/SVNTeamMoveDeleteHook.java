@@ -29,12 +29,13 @@ import org.eclipse.team.svn.core.operation.local.AddToSVNWithPropertiesOperation
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.operation.local.RestoreProjectMetaOperation;
 import org.eclipse.team.svn.core.operation.local.SaveProjectMetaOperation;
-import org.eclipse.team.svn.core.operation.local.refactor.CopyResourceOperation;
+import org.eclipse.team.svn.core.operation.local.refactor.CopyResourceFromHookOperation;
 import org.eclipse.team.svn.core.operation.local.refactor.DeleteResourceOperation;
 import org.eclipse.team.svn.core.operation.local.refactor.MoveResourceOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.core.utility.ILoggedOperationFactory;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 
 /**
@@ -89,9 +90,12 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 		op.add(saveOp);
 		if (!moveOp.isAllowed()) {
 			//target was placed on different repository -- do <copy + delete>
-			AbstractActionOperation copyLocalResourceOp = new CopyResourceOperation(source, destination);
+			AbstractActionOperation copyLocalResourceOp = new CopyResourceFromHookOperation(source, destination);
 			op.add(copyLocalResourceOp);
-			op.add(new DeleteResourceOperation(source), new IActionOperation[] {copyLocalResourceOp});
+			op.add(new TrackMoveResultOperation(tree, source, destination, copyLocalResourceOp, false));
+			DeleteResourceOperation deleteOp = new DeleteResourceOperation(source);
+			op.add(deleteOp, new IActionOperation[] {copyLocalResourceOp});
+			op.add(new TrackMoveResultOperation(tree, source, destination, deleteOp, true));
 			op.add(new RestoreProjectMetaOperation(saveOp));
 		    op.add(new RefreshResourcesOperation(new IResource[] {source, destination}, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
 		}
@@ -100,6 +104,7 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 	        AbstractActionOperation addToSVNOp = new AddToSVNWithPropertiesOperation(scheduledForAddition, false); 
 	        op.add(addToSVNOp);
 	       	op.add(moveOp, new IActionOperation[] {addToSVNOp});
+	       	op.add(new TrackMoveResultOperation(tree, source, destination, moveOp, true));
 			op.add(new RestoreProjectMetaOperation(saveOp));
 	       	ArrayList<IResource> fullSet = new ArrayList<IResource>(Arrays.asList(scheduledForAddition));
 	       	fullSet.addAll(Arrays.asList(new IResource[] {source, destination}));
@@ -107,33 +112,95 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 	    }
 	    else {
 	    	op.add(moveOp);
+	    	op.add(new TrackMoveResultOperation(tree, source, destination, moveOp, true));	    		    	
 			op.add(new RestoreProjectMetaOperation(saveOp));
 		    op.add(new RefreshResourcesOperation(new IResource[] {source, destination}, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
 		}
-
-	    // already in WorkspaceModifyOperation context
-	    ProgressMonitorUtility.doTaskExternal(op, monitor);
-		
+		this.runOperation(op, monitor);
+							    	  	    
 		return true;
 	}
+
+	protected void runOperation(IActionOperation op, IProgressMonitor monitor) {
+		// already in WorkspaceModifyOperation context
+		//don't log errors from operations, because errors are logged by caller code (IMoveDeleteHook infrastructure)		    
+	    ProgressMonitorUtility.doTaskExternal(op, monitor, new ILoggedOperationFactory() {
+			public IActionOperation getLogged(IActionOperation operation) {
+				//set only console stream to operation
+				IActionOperation wrappedOperation = SVNTeamPlugin.instance().getOptionProvider().getLoggedOperationFactory().getLogged(operation);
+				operation.setConsoleStream(wrappedOperation.getConsoleStream());
+				return operation;
+			}
+		});
+	}
 	
-	protected boolean doDelete(IResourceTree tree, IResource resource, IProgressMonitor monitor) {
+	protected boolean doDelete(final IResourceTree tree, final IResource resource, IProgressMonitor monitor) {
 		ILocalResource local = SVNRemoteStorage.instance().asLocalResource(resource);
 		if (IStateFilter.SF_INTERNAL_INVALID.accept(local) || IStateFilter.SF_NOTEXISTS.accept(local) || IStateFilter.SF_UNVERSIONED.accept(local)) {
 			return FileUtility.isSVNInternals(resource);
 		}
 		
-	    DeleteResourceOperation mainOp = new DeleteResourceOperation(resource);
+	    final DeleteResourceOperation mainOp = new DeleteResourceOperation(resource);
 	    CompositeOperation op = new CompositeOperation(mainOp.getId());
 		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(new IResource[] {resource});
 		op.add(saveOp);
 	    op.add(mainOp);
+	    	  
+	    op.add(new AbstractActionOperation("Operation_TrackDeleteResult") {			 //$NON-NLS-1$
+			@Override
+			protected void runImpl(IProgressMonitor monitor) throws Exception {
+				if (mainOp.getExecutionState() == IActionOperation.OK) {
+					if (resource.getType() == IResource.FILE) {
+						tree.deletedFile((IFile)resource);
+					}
+					/*
+					 * As we don't delete folder from file system because of .svn folder,
+					 * we don't call corresponding tree.deletedFolder
+					 */					 					
+//					else if (resource.getType() == IResource.FOLDER) {
+//						tree.deletedFolder((IFolder)resource);
+//					}
+				} else if (mainOp.getExecutionState() == IActionOperation.ERROR) {
+					tree.failed(mainOp.getStatus());
+				}
+			}
+		});
+	    	    
 		op.add(new RestoreProjectMetaOperation(saveOp));
 	    op.add(new RefreshResourcesOperation(new IResource[] {resource}, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
-	    // already in WorkspaceModifyOperation context
-	    ProgressMonitorUtility.doTaskExternal(op, monitor);
+	    this.runOperation(op, monitor);
 		
 		return true;
 	}
-
+		
+	protected static class TrackMoveResultOperation extends AbstractActionOperation {
+		
+		protected IResourceTree tree;
+		protected IResource source;
+		protected IResource destination;
+		protected IActionOperation operationToTrack;
+		protected boolean canDeclareMove;
+		
+		public TrackMoveResultOperation(IResourceTree tree, IResource source, IResource destination, IActionOperation operationToTrack, boolean canDeclareMove) {			
+			super("Operation_TrackMoveResult"); //$NON-NLS-1$
+			this.tree = tree;
+			this.source = source;
+			this.destination = destination;
+			this.operationToTrack = operationToTrack;
+			this.canDeclareMove = canDeclareMove;
+		}
+	
+		@Override
+		protected void runImpl(IProgressMonitor monitor) throws Exception {
+			if (this.canDeclareMove && this.operationToTrack.getExecutionState() == IActionOperation.OK) {
+				if (this.source.getType() == IResource.FILE) {
+					this.tree.movedFile((IFile) this.source, (IFile) this.destination);
+				} else if (this.source.getType() == IResource.FOLDER) {
+					this.tree.movedFolderSubtree((IFolder) this.source, (IFolder) this.destination);
+				} 				
+			} else if (this.operationToTrack.getExecutionState() == IActionOperation.ERROR) {
+				this.tree.failed(this.operationToTrack.getStatus());
+			}								
+		}		
+	}   
 }

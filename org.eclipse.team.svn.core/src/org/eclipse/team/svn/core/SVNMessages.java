@@ -103,6 +103,7 @@ public class SVNMessages extends BaseMessages {
 	public static String Error_SaveAutherizationInfo;
 	public static String Error_LoadAuthorizationInfo;
 	public static String Error_RemoveAuthorizationInfo;
+	public static String Error_NoParent;
 	
 	public static String MergeScope_Name;
 
@@ -445,6 +446,15 @@ public class SVNMessages extends BaseMessages {
 	public static String Operation_GetRemoteChildren;
 	public static String Operation_GetRemoteChildren_Error;
 	public static String Operation_GetRemoteChildren_Id;
+	
+	public static String Operation_CopyResourceFromHook;
+	public static String Operation_CopyResourceFromHook_Id;
+	public static String Operation_CopyResourceFromHook_Error;
+	
+	public static String Operation_TrackMoveResult;
+	public static String Operation_TrackMoveResult_Id;
+	public static String Operation_TrackDeleteResult;
+	public static String Operation_TrackDeleteResult_Id;
 	
 	public static String Progress_Done;
 	public static String Progress_Running;
