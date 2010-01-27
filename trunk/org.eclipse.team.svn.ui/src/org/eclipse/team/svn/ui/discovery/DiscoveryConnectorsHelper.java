@@ -77,7 +77,7 @@ public class DiscoveryConnectorsHelper {
 			
 			try {
 				installJob[0] = this.getInstallJob();				
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				//make more user-friendly error message
 				throw new UnreportableException("Errors occured while initializing provisioning framework. This make cause discovery install to fail.", e); //$NON-NLS-1$
 			}
