@@ -18,7 +18,11 @@ import java.net.URL;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
@@ -29,9 +33,8 @@ import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
 import org.eclipse.team.svn.ui.console.SVNConsole;
 import org.eclipse.team.svn.ui.decorator.SVNLightweightDecorator;
-import org.eclipse.team.svn.ui.discovery.DiscoveryConnectorsOperation;
+import org.eclipse.team.svn.ui.discovery.DiscoveryConnectorsHelper;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
-import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -86,6 +89,13 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
         return (String)this.getBundle().getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
     }
     
+    /*
+     * Important: Don't call any CoreExtensionsManager's methods here,
+     * because CoreExtensionsManager instantiates some UI classes through extension
+     * points and there could be problems in following case:
+     * Subversive core calls CoreExtensionsManager, where CoreExtensionsManager calls SVNTeamUIPlugin.start
+     * but SVNTeamUIPlugin.start calls CoreExtensionsManager
+     */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		
@@ -127,7 +137,29 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 		}
 		
 		//run discovery connectors
-		UIMonitorUtility.doTaskScheduledDefault(new DiscoveryConnectorsOperation());
+		this.discoveryConnectors();	
+	}
+	
+	protected void discoveryConnectors() {
+		/*
+		 * We can't run Discovery Connectors through IActionOperation, because
+		 * it uses CoreExtensionsManager (for getting nationalized operation name),
+		 * which isn't allowed here, see bug 300592; so instead we use Job. 
+		 */
+		Job job = new Job(SVNUIMessages.Operation_DiscoveryConnectors) {
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					DiscoveryConnectorsHelper discovery = new DiscoveryConnectorsHelper();														
+					discovery.run(monitor);																
+				} catch (Throwable t) {
+					//shouldn't prevent plug-in start 
+					LoggedOperation.reportError(SVNUIMessages.Operation_DiscoveryConnectors_Error, t); 
+				}
+				return Status.OK_STATUS;
+			}
+		};				
+		job.setUser(false);
+		job.schedule();
 	}
 	
 	public void stop(BundleContext context) throws Exception {
