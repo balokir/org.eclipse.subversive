@@ -21,7 +21,6 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.service.resolver.VersionRange;
 import org.eclipse.team.svn.core.discovery.util.WebUtil;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
-import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.svnstorage.SVNCachedProxyCredentialsManager;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -36,10 +35,12 @@ import org.osgi.framework.Bundle;
  * Operation which checks whether connectors are installed and if they're not,
  * it provides a wizard to installing them.
  * 
+ * Users need to restart Eclipse in order to apply changes
+ * 
  * @author Igor Burilo
  */
-public class DiscoveryConnectorsOperation extends AbstractActionOperation {
-
+public class DiscoveryConnectorsHelper {
+	
 	protected static class ProxyAuthenticator extends Authenticator {
 		
 		protected PasswordAuthentication getPasswordAuthentication() {
@@ -69,12 +70,7 @@ public class DiscoveryConnectorsOperation extends AbstractActionOperation {
 		}
 	}	
 	
-	public DiscoveryConnectorsOperation() {		
-		super("Operation_DiscoveryConnectors"); //$NON-NLS-1$
-	}
-
-	@Override
-	protected void runImpl(IProgressMonitor monitor) throws Exception {
+	public void run(IProgressMonitor monitor) throws Exception {
 		//check that connectors exist
 		if (CoreExtensionsManager.instance().getAccessibleClients().isEmpty() && Platform.getBundle("org.eclipse.equinox.p2.repository") != null) { //$NON-NLS-1$
 			final IConnectorsInstallJob[] installJob = new IConnectorsInstallJob[1];
@@ -122,5 +118,6 @@ public class DiscoveryConnectorsOperation extends AbstractActionOperation {
 		}
 		return runnable;
 	}
-
 }
+
+
