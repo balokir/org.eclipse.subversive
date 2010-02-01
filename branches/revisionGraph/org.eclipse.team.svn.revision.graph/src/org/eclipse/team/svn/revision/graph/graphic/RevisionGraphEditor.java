@@ -1,0 +1,169 @@
+/*******************************************************************************
+ * Copyright (c) 2005-2008 Polarion Software.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Igor Burilo - Initial API and implementation
+ *******************************************************************************/
+package org.eclipse.team.svn.revision.graph.graphic;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.gef.DefaultEditDomain;
+import org.eclipse.gef.EditPartViewer;
+import org.eclipse.gef.GraphicalViewer;
+import org.eclipse.gef.MouseWheelHandler;
+import org.eclipse.gef.MouseWheelZoomHandler;
+import org.eclipse.gef.editparts.ScalableRootEditPart;
+import org.eclipse.gef.editparts.ZoomManager;
+import org.eclipse.gef.ui.parts.GraphicalEditor;
+import org.eclipse.swt.SWT;
+import org.eclipse.team.svn.revision.graph.graphic.editpart.GraphEditPartFactory;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+
+/**
+ * TODO fake editor to quick startup. For real work, rework it.
+ * 
+ * @author Igor Burilo
+ */
+public class RevisionGraphEditor extends GraphicalEditor {
+
+	protected RevisionGraphOutlinePage outlinePage; 
+	
+	public RevisionGraphEditor() {
+		setEditDomain(new DefaultEditDomain(this));
+	}
+
+	@Override
+	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
+		super.init(site, input);			
+	}		
+	
+	/**
+	 * Set up the editor's inital content (after creation).
+	 */
+	@Override
+	protected void initializeGraphicalViewer() {		
+		GraphicalViewer viewer = getGraphicalViewer();
+		viewer.setContents(this.getModel()); // set the contents of this editor
+		
+//		// listen for dropped parts
+//		viewer.addDropTargetListener(createTransferDropTargetListener());		
+	}
+	
+	public RevisionRootNode getModel() {
+		RevisionGraphEditorInput editorInput = (RevisionGraphEditorInput) this.getEditorInput();
+		return editorInput.getModel();
+	}
+	
+	/**
+	 * Configure the graphical viewer before it receives contents.
+	 * <p>This is the place to choose an appropriate RootEditPart and EditPartFactory
+	 * for your editor. The RootEditPart determines the behavior of the editor's "work-area".
+	 * For example, GEF includes zoomable and scrollable root edit parts. The EditPartFactory
+	 * maps model elements to edit parts (controllers).</p>
+	 * @see org.eclipse.gef.ui.parts.GraphicalEditor#configureGraphicalViewer()
+	 */
+	@Override
+	protected void configureGraphicalViewer() {	
+		super.configureGraphicalViewer();
+		
+		GraphicalViewer viewer = getGraphicalViewer();
+		ScalableRootEditPart root = new ScalableRootEditPart();
+		
+		//zoom
+		//TODO probably we need to remember zoom between sessions 
+		List<String> zoomLevels = new ArrayList<String>(3);
+		zoomLevels.add(ZoomManager.FIT_ALL);
+		zoomLevels.add(ZoomManager.FIT_WIDTH);
+		zoomLevels.add(ZoomManager.FIT_HEIGHT);
+		root.getZoomManager().setZoomLevelContributions(zoomLevels);
+		//it seems we don't need it
+//		IAction zoomIn = new ZoomInAction(root.getZoomManager());
+//		IAction zoomOut = new ZoomOutAction(root.getZoomManager());
+//		getActionRegistry().registerAction(zoomIn);
+//		getActionRegistry().registerAction(zoomOut);
+//		getSite().getKeyBindingService().registerAction(zoomIn);
+//		getSite().getKeyBindingService().registerAction(zoomOut);
+		
+		root.getZoomManager().setZoom(1);		
+		// Scroll-wheel Zoom
+		getGraphicalViewer().setProperty(MouseWheelHandler.KeyGenerator.getKey(SWT.MOD1), 
+				MouseWheelZoomHandler.SINGLETON);
+		
+		
+		viewer.setRootEditPart(root);
+		viewer.setEditPartFactory(new GraphEditPartFactory());
+		
+		//context menu
+//		RevisionGraphContextMenuManager menuManager = new RevisionGraphContextMenuManager(viewer, getActionRegistry());
+//		viewer.setContextMenu(menuManager);
+//		getSite().registerContextMenu(menuManager, viewer);
+	}
+
+	protected RevisionGraphOutlinePage getOutlinePage() {
+		if(this.outlinePage == null && this.getGraphicalViewer() != null) {
+			this.outlinePage = new RevisionGraphOutlinePage(this.getGraphicalViewer());			
+		}
+		return this.outlinePage;
+	}
+	
+	public Object getAdapter(Class adapter) {
+		if(adapter == GraphicalViewer.class || adapter == EditPartViewer.class) {
+			return getGraphicalViewer();
+		} else if(adapter == ZoomManager.class) {
+				return ((ScalableRootEditPart) getGraphicalViewer().getRootEditPart()).getZoomManager();
+		} 
+		else if (adapter == IContentOutlinePage.class) {
+			return new RevisionGraphOutlinePage(this.getGraphicalViewer());
+		}
+		return super.getAdapter(adapter);
+	}
+	
+	@Override
+	public void doSave(IProgressMonitor monitor) {
+		
+	}
+	
+	public boolean isDirty() {
+		return false;
+	}
+
+	public boolean isSaveAsAllowed() {
+		return false;
+	}
+	
+	@Override
+	protected void createActions() {	
+		super.createActions();
+		
+//		ActionRegistry registry = getActionRegistry();
+//		IAction action;
+//		
+//		action = new ShowLogAction(this);
+//		registry.registerAction(action);
+//		getSelectionActions().add(action.getId());
+//		
+//		action = new CompareRevisionsAction(this);
+//		registry.registerAction(action);
+//		getSelectionActions().add(action.getId());
+//		
+//		action = new CollapseSourceTreeAction(this);
+//		registry.registerAction(action);
+//		getSelectionActions().add(action.getId());
+	}
+
+	public GraphicalViewer getViewer() {
+		return getGraphicalViewer();
+	}
+
+}
+
