@@ -45,9 +45,13 @@ public class RevisionRootNode extends ChangesNotifier {
 	
 	public RevisionRootNode(PathRevision node) {
 		this.pathRevision = node;
-		this.filterManager = new NodesFilterManager();							
+		this.filterManager = new NodesFilterManager();										
+	}
+	
+	public void init(boolean isSimpleMode) {		
+		this.createInitialConnections();
 		
-		this.createInitialConnections();								
+		this.internalSetMode(isSimpleMode);
 		
 		this.processCurrentModel();
 	}
@@ -210,17 +214,19 @@ public class RevisionRootNode extends ChangesNotifier {
 		return this.isSimpleMode;
 	}
 
-	public void setMode(boolean isSimpleMode) {		
-		this.isSimpleMode = isSimpleMode;	
-				
+	protected void internalSetMode(boolean isSimpleMode) {
+		this.isSimpleMode = isSimpleMode;					
 		if (this.isSimpleMode) {
 			this.filterManager.addFilter(AbstractRevisionNodeFilter.SIMPLE_MODE_FILTER);
 		} else {
 			this.filterManager.removeFilter(AbstractRevisionNodeFilter.SIMPLE_MODE_FILTER);
-		}
+		}		
+	}
+	
+	public void setMode(boolean isSimpleMode) {		
+		this.internalSetMode(isSimpleMode);
 			
-		this.processCurrentModel();
-		
+		this.processCurrentModel();		
 		this.firePropertyChange(RevisionRootNode.LAYOUT_PROPERTY, null, new Boolean(this.isSimpleMode));
 	}	
 }
