@@ -13,6 +13,7 @@ package org.eclipse.team.svn.revision.graph.graphic.layout;
 import java.util.ArrayList;
 
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
+import org.eclipse.team.svn.revision.graph.operation.PathRevision.RevisionNodeAction;
 
 /** 
  * Set Y value in order not to have crossing with bottom nodes
@@ -32,45 +33,38 @@ public class SetYCommand extends AbstractLayoutCommand {
 		this.processNode(this.startNode);
 	}			
 	
-	protected void processNode(RevisionNode node) {		
+	protected void processNode(RevisionNode node) {			
 		RevisionNode nextNodeToProcess;
-		if (node.getCopiedTo().length == 0) {
-			/*
-			 * If node doesn't have 'copy to nodes' then we can
-			 * set its location at once without taking into account other nodes
-			 */
-			ColumnData columnStructure = this.getColumnStructure(node);			
-			columnStructure.top += node.getHeight();
-					
-			nextNodeToProcess = node.getNext() != null ? node.getNext() : this.findNextNodeToProcess(node);									
-		} else {
-			RevisionNode topNode = this.goTopOnMostRightDirection(node);
-			nextNodeToProcess = this.findNextNodeToProcess(topNode);		
-		}				
+		RevisionNode[] copiedTo = node.getCopiedTo();
+		boolean hasOnlyRename = copiedTo.length == 1 && copiedTo[0].pathRevision.action == RevisionNodeAction.RENAME;
 		
+		if (copiedTo.length == 0 || hasOnlyRename) {
+			/*
+			 * If node doesn't have 'copy to nodes' or it has 'Renamed' copy to node 
+			 * then we can set its location at once without taking into account other nodes
+			 */	
+			ColumnData columnData = this.getColumnStructure(node);
+			columnData.addNode(node);					
+			
+			if (hasOnlyRename) {
+				nextNodeToProcess = copiedTo[0];
+			} else {
+				nextNodeToProcess = node.getNext() != null ? node.getNext() : this.findNextNodeToProcess(node);	
+			}	
+		} else {
+			//go top by most right direction
+			RevisionNode topNode = this.goTopOnMostRightDirection(node);
+			nextNodeToProcess = this.findNextNodeToProcess(topNode);
+		}
+				
+		this.updateColumnData();		
+				
 		if (nextNodeToProcess != null) {
 			this.processNode(nextNodeToProcess);
 		}
 	}
 	
-	protected RevisionNode goTopOnMostRightDirection(RevisionNode node) {
-		//go top by most right direction
-		RevisionNode topNode = node;
-		while (true) {
-			ColumnData columnData = this.getColumnStructure(topNode);
-			columnData.addNode(topNode);
-			
-			if (topNode.getCopiedTo().length > 0) {
-				RevisionNode[] copyToNodes = topNode.getCopiedTo();
-				//process most right copy to node
-				topNode = copyToNodes[copyToNodes.length - 1];
-			} else if (topNode.getNext() != null) {
-				topNode = topNode.getNext();
-			} else {
-				break;
-			}
-		} 											
-		
+	protected void updateColumnData() {
 		/*
 		 * find max difference between currentBottom and top
 		 * in order to calculate new top value
@@ -105,7 +99,47 @@ public class SetYCommand extends AbstractLayoutCommand {
 			columnData.increase(increase);
 			columnData.resetCurrentValues();
 		}
-		
+	}
+	
+	protected RevisionNode goTopOnMostRightDirection(RevisionNode node) {
+		RevisionNode topNode = node;
+		while (true) {
+			ColumnData columnData = this.getColumnStructure(topNode);
+			columnData.addNode(topNode);
+			
+			if (topNode.getCopiedTo().length > 0) {
+				RevisionNode[] copyToNodes = topNode.getCopiedTo();
+				//process most right copy to node
+				topNode = copyToNodes[copyToNodes.length - 1];
+														
+				/*
+				 * if there are several copy to nodes, then we need to take into account
+				 * 'top' for each copy node while calculating Y for most right node,
+				 * because there can be a situation that 'top' coordinate for previous copy to node is higher
+				 * than 'top' coordinate for most right node. So in this case we set 'top' for all 
+				 * copy to nodes as max 'top' value from them.  
+				 */
+				if (copyToNodes.length > 1) {
+					//find max top
+					int maxTop = - 1;
+					for (RevisionNode copyTo : copyToNodes) {
+						ColumnData copyToColumnData = this.getColumnStructure(copyTo);
+						maxTop = copyToColumnData.top > maxTop ? copyToColumnData.top : maxTop; 
+					}
+					//increase tops for 'copy to' ColumnData's to max top
+					if (maxTop > -1) {
+						for (RevisionNode copyTo : copyToNodes) {
+							ColumnData copyToColumnData = this.getColumnStructure(copyTo);
+							copyToColumnData.top = maxTop;
+						}
+					}
+				}
+			} else if (topNode.getNext() != null) {
+				topNode = topNode.getNext();
+			} else {
+				break;
+			}
+		} 
 		return topNode;
 	}
 	
@@ -118,33 +152,36 @@ public class SetYCommand extends AbstractLayoutCommand {
 		}
 		return heightOffset;
 	}
-	
-	protected RevisionNode findNextNodeToProcess(RevisionNode topNode) {
+
+	protected RevisionNode findNextNodeToProcess(RevisionNode topNode) {		
 		/*
 		 * go bottom until we find another node to process:
 		 * either there are other copy to nodes or top nodes 		
 		 */
-		RevisionNode tmpNode = topNode;
-		while (true) {			
+		RevisionNode tmpNode = topNode;		
+		while (tmpNode != null) {			
 			if (tmpNode.getCopiedFrom() != null) {
 				RevisionNode copiedFrom = tmpNode.getCopiedFrom();				
 				RevisionNode[] copyToNodes = copiedFrom.getCopiedTo();
 				if (copyToNodes.length > 1) {
+					//find node just before current node
+					boolean isFoundCurrentNode = false;
 					for (int i = copyToNodes.length - 1; i >= 0; i --) {
-						if (!copyToNodes[i].equals(tmpNode)) {
+						if (isFoundCurrentNode) {
 							return copyToNodes[i];
+						}
+						if (copyToNodes[i].equals(tmpNode)) {
+							isFoundCurrentNode = true;
 						} 
 					}
 				}
 				if (copiedFrom.getNext() != null)  {
 					return copiedFrom.getNext();
-				} else {
-					tmpNode = copiedFrom.getPrevious();
 				}
-			} else if (tmpNode.getPrevious() != null) {
-				tmpNode = tmpNode.getPrevious();
+				
+				tmpNode = copiedFrom;
 			} else {
-				break;
+				tmpNode = tmpNode.getPrevious();
 			}
 		}		
 		return null;

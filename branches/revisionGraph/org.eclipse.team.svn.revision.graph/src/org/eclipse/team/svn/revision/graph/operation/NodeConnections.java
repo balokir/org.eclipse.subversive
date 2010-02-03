@@ -11,9 +11,11 @@
 package org.eclipse.team.svn.revision.graph.operation;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 /** 
  * Encapsulate logic of working with connections between nodes  
@@ -24,7 +26,7 @@ public class NodeConnections {
 
 	protected NodeConnections next;	
 	protected NodeConnections previous;	
-	protected List<NodeConnections> copiedTo = new ArrayList<NodeConnections>();
+	protected Set<NodeConnections> copiedTo = new HashSet<NodeConnections>();
 	protected NodeConnections copiedFrom;
 	
 	public NodeConnections[] getCopiedTo() {

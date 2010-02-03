@@ -14,7 +14,6 @@ import org.eclipse.gef.ui.actions.ActionBarContributor;
 import org.eclipse.gef.ui.actions.ZoomComboContributionItem;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.Separator;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphPlugin;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionGraphEditor;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionRootNode;
@@ -31,7 +30,8 @@ public class RevisionGraphActionBarContributor extends ActionBarContributor {
 	
 	protected ChangeLayoutAction changeLayoutAction;
 	
-	//TODO see FlyoutChangeLayoutAction in scheme editor
+	//see FlyoutChangeLayoutAction in scheme editor
+	//TODO set correct switching of Checked button
 	protected static class ChangeLayoutAction extends Action {
 
 		protected IEditorPart editor;

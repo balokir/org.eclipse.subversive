@@ -103,6 +103,10 @@ public class RevisionGraphEditor extends GraphicalEditor {
 		viewer.setRootEditPart(root);
 		viewer.setEditPartFactory(new GraphEditPartFactory());
 		
+		//TODO remember between sessions
+		boolean isSimpleMode = true;
+		this.getModel().init(isSimpleMode);
+		
 		//context menu
 //		RevisionGraphContextMenuManager menuManager = new RevisionGraphContextMenuManager(viewer, getActionRegistry());
 //		viewer.setContextMenu(menuManager);

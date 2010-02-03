@@ -114,6 +114,10 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 		while ((node = nodesQueue.poll()) != null) {
 			this.createRevisionsChainForPath(node);									
 			
+			/*
+			 * For current revision chain build map of nodes, where key is a node from chain and
+			 * value is a list of nodes to which key is copied to
+			 */
 			Map<PathRevision, List<PathRevision>> copiedToEntries = this.findCopiedToNodesInRevisionChain(node);
 						
 			if (!copiedToEntries.isEmpty()) {
@@ -318,7 +322,35 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 					}																				
 				}
 			}
-		}				
+		}		
+		
+		/*
+		 * Post process result map:
+		 * If there was rename in revision chain we couldn't know about it from chain.
+		 * 'Rename' means that revision chain stopped to exist
+		 * in 'renamed' revision, so we need to ignore all copies after rename.
+		 */
+		if (!copyToMap.isEmpty()) {
+			long renameRevision = -1;
+			for (Map.Entry<PathRevision, List<PathRevision>> entry : copyToMap.entrySet()) {
+				PathRevision copyFrom = entry.getKey();
+				List<PathRevision> copyTo = entry.getValue();			
+				if (copyTo.size() == 1 && copyTo.get(0).action == RevisionNodeAction.RENAME) {
+					renameRevision = copyFrom.getRevision();
+					break;
+				}
+			}
+			if (renameRevision != -1) {
+				Iterator<PathRevision> iter = copyToMap.keySet().iterator();
+				while (iter.hasNext()) {
+					PathRevision copyFrom = iter.next();
+					if (copyFrom.getRevision() > renameRevision) {
+						iter.remove();
+					}
+				}												
+			}	
+		}
+		
 		return copyToMap;
 	}
 	

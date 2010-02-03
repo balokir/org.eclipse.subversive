@@ -136,6 +136,16 @@ public class PathRevision extends NodeConnections {
 		return false;
 	}
 	
+	@Override
+	public int hashCode() {
+		final int prime = 31;		
+		int result = 17;
+		result += prime * this.getRevision();
+		result += prime * this.getPath().hashCode();
+		result += prime * this.action.hashCode();		
+		return result;
+	}
+	
 	public PathRevision getStartNodeInChain() {
 		return (PathRevision) super.getStartNodeInChain();
 	}
