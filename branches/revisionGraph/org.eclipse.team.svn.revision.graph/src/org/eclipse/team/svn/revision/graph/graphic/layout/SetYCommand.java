@@ -70,6 +70,7 @@ public class SetYCommand extends AbstractLayoutCommand {
 		 * in order to calculate new top value
 		 */
 		int maxDiff = 0;
+		int offsetForMax = 0;
 		for (ColumnData columnData : this.columnsData) {
 			if (columnData == null || columnData.getCurrentBottom() == 0 && columnData.getCurrentTop() == 0) {
 				continue;
@@ -83,13 +84,18 @@ public class SetYCommand extends AbstractLayoutCommand {
 			if (diff >= 0) {
 				int offset;			
 				RevisionNode bottomCurrentNode = columnData.getCurrentNodes()[0];			
-				if (bottomCurrentNode.getPrevious() != null || (bottomCurrentNode.pathRevision.action == RevisionNodeAction.RENAME)) {
+				if (bottomCurrentNode.getPrevious() != null || 
+					(bottomCurrentNode.pathRevision.action == RevisionNodeAction.RENAME) ||
+					(bottomCurrentNode.getCopiedFrom() != null && bottomCurrentNode.getCopiedFrom().pathRevision.action == RevisionNodeAction.RENAME)) {
 					offset = 0;
 				} else {
 					offset = this.getHeightOffset(columnData);
-				}							
-				diff += offset;				
-				maxDiff = diff > maxDiff ? diff : maxDiff;
+				}			
+				
+				if (diff >= maxDiff) {
+					maxDiff = diff;
+					offsetForMax = offset;
+				}
 			}
 		}						
 		
@@ -98,7 +104,7 @@ public class SetYCommand extends AbstractLayoutCommand {
 			if (columnData == null || columnData.getCurrentBottom() == 0 && columnData.getCurrentTop() == 0) {
 				continue;
 			}
-			columnData.increase(maxDiff);
+			columnData.increase(maxDiff + offsetForMax);
 			columnData.resetCurrentValues();
 		}
 	}
