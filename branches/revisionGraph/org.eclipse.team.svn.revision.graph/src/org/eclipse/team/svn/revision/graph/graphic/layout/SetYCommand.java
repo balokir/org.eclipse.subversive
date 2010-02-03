@@ -33,7 +33,7 @@ public class SetYCommand extends AbstractLayoutCommand {
 		this.processNode(this.startNode);
 	}			
 	
-	protected void processNode(RevisionNode node) {			
+	protected void processNode(RevisionNode node) {				
 		RevisionNode nextNodeToProcess;
 		RevisionNode[] copiedTo = node.getCopiedTo();
 		boolean hasOnlyRename = copiedTo.length == 1 && copiedTo[0].pathRevision.action == RevisionNodeAction.RENAME;
@@ -69,39 +69,41 @@ public class SetYCommand extends AbstractLayoutCommand {
 		 * find max difference between currentBottom and top
 		 * in order to calculate new top value
 		 */
-		int maxDiff = -1;
-		boolean isFirstRow = true;		
-		int heightOffset = 0;
+		int maxDiff = 0;
 		for (ColumnData columnData : this.columnsData) {
 			if (columnData == null || columnData.getCurrentBottom() == 0 && columnData.getCurrentTop() == 0) {
 				continue;
 			}
 			int diff = columnData.top - columnData.getCurrentBottom();
-			if (diff > 0) {
-				maxDiff = diff > maxDiff ? diff : maxDiff;
-				heightOffset = this.getHeightOffset(columnData);	
-			} else if (diff == 0 && !isFirstRow && maxDiff == -1) {
-				maxDiff = 0;
-				heightOffset = this.getHeightOffset(columnData);
-			}
 			
-			if (isFirstRow) {
-				isFirstRow = false;
+			/*
+			 * Between nodes in the same column we need to set offset
+			 * if these nodes don't have direct connection   
+			 */
+			if (diff >= 0) {
+				int offset;			
+				RevisionNode bottomCurrentNode = columnData.getCurrentNodes()[0];			
+				if (bottomCurrentNode.getPrevious() != null || (bottomCurrentNode.pathRevision.action == RevisionNodeAction.RENAME)) {
+					offset = 0;
+				} else {
+					offset = this.getHeightOffset(columnData);
+				}							
+				diff += offset;				
+				maxDiff = diff > maxDiff ? diff : maxDiff;
 			}
 		}						
 		
-		//set new top value		
-		int increase = maxDiff > -1 ? (maxDiff + heightOffset) : 0;			
+		//set new top value
 		for (ColumnData columnData : this.columnsData) {
 			if (columnData == null || columnData.getCurrentBottom() == 0 && columnData.getCurrentTop() == 0) {
 				continue;
 			}
-			columnData.increase(increase);
+			columnData.increase(maxDiff);
 			columnData.resetCurrentValues();
 		}
 	}
 	
-	protected RevisionNode goTopOnMostRightDirection(RevisionNode node) {
+	protected RevisionNode goTopOnMostRightDirection(RevisionNode node) {		
 		RevisionNode topNode = node;
 		while (true) {
 			ColumnData columnData = this.getColumnStructure(topNode);
@@ -121,18 +123,17 @@ public class SetYCommand extends AbstractLayoutCommand {
 				 */
 				if (copyToNodes.length > 1) {
 					//find max top
-					int maxTop = - 1;
+					int maxTop = columnData.top;
 					for (RevisionNode copyTo : copyToNodes) {
 						ColumnData copyToColumnData = this.getColumnStructure(copyTo);
 						maxTop = copyToColumnData.top > maxTop ? copyToColumnData.top : maxTop; 
 					}
-					//increase tops for 'copy to' ColumnData's to max top
-					if (maxTop > -1) {
-						for (RevisionNode copyTo : copyToNodes) {
-							ColumnData copyToColumnData = this.getColumnStructure(copyTo);
-							copyToColumnData.top = maxTop;
-						}
-					}
+					
+					//increase tops for 'copy to' ColumnData's to max top					
+					for (RevisionNode copyTo : copyToNodes) {
+						ColumnData copyToColumnData = this.getColumnStructure(copyTo);							
+						copyToColumnData.top = maxTop;
+					}					
 				}
 			} else if (topNode.getNext() != null) {
 				topNode = topNode.getNext();
