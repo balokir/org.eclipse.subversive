@@ -11,7 +11,6 @@
 package org.eclipse.team.svn.revision.graph.operation;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -32,11 +31,6 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  * @author Igor Burilo
  */
 public class ShowRevisionGraphUtility {
-
-	//TODO refactor in outer class
-	public static interface ISVNLogEntryProvider {
-		SVNLogEntry[] getLogEntries();
-	}
 	
 	public static CompositeOperation getRevisionGraphOperation(IRepositoryResource resource) {
 		CompositeOperation op = new CompositeOperation("ShowRevisionGraphOperation");
@@ -51,20 +45,16 @@ public class ShowRevisionGraphUtility {
 		final CreateRevisionGraphModelOperation createModelOp = new CreateRevisionGraphModelOperation(fetchRevisionsOp, resource);
 		op.add(createModelOp, new IActionOperation[]{fetchRevisionsOp});
 		
+		//validate model		TODO remain this operation for real usage ?
+		final ValidateRevionGraphModelOperation validateModelOp = new ValidateRevionGraphModelOperation(createModelOp); 
+		op.add(validateModelOp, new IActionOperation[]{createModelOp});
+		
 		//visualize
 		AbstractActionOperation showRevisionGraphOp = new AbstractActionOperation("Create Revision Graph Operation") {			
 			@Override
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
-					public void run() {	
-						//TODO add correct impl.
-//						try {
-//							UIMonitorUtility.getActivePage().openEditor(new ResearchRevisionGraphEditorInput(),
-//								"org.eclipse.team.svn.revision.graph.research.ResearchRevisionGraphEditor");
-//						} catch (Exception e) {
-//							LoggedOperation.reportError(this.getClass().getName(), e);
-//						}
-						
+					public void run() {
 						//TODO handle if model is null
 						if (createModelOp.getModel() != null) {
 							try {

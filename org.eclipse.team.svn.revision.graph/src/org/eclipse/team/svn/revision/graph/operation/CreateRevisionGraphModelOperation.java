@@ -28,7 +28,6 @@ import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.revision.graph.operation.PathRevision.ReviosionNodeType;
 import org.eclipse.team.svn.revision.graph.operation.PathRevision.RevisionNodeAction;
-import org.eclipse.team.svn.revision.graph.operation.ShowRevisionGraphUtility.ISVNLogEntryProvider;
 
 /**
  * Create revision graph model
@@ -333,12 +332,16 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 		if (!copyToMap.isEmpty()) {
 			long renameRevision = -1;
 			for (Map.Entry<PathRevision, List<PathRevision>> entry : copyToMap.entrySet()) {
-				PathRevision copyFrom = entry.getKey();
-				List<PathRevision> copyTo = entry.getValue();			
-				if (copyTo.size() == 1 && copyTo.get(0).action == RevisionNodeAction.RENAME) {
-					renameRevision = copyFrom.getRevision();
+				PathRevision copyFrom = entry.getKey();				
+				for (PathRevision copyTo : entry.getValue()) {
+					if (copyTo.action == RevisionNodeAction.RENAME) {
+						renameRevision = copyFrom.getRevision();
+						break;
+					}
+				}				
+				if (renameRevision != -1) {
 					break;
-				}
+				} 
 			}
 			if (renameRevision != -1) {
 				Iterator<PathRevision> iter = copyToMap.keySet().iterator();

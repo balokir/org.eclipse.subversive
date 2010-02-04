@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.graphic;
 
+import java.util.LinkedList;
+
 import org.eclipse.team.svn.revision.graph.operation.NodeConnections;
 import org.eclipse.team.svn.revision.graph.operation.PathRevision;
+import org.eclipse.team.svn.revision.graph.operation.PathRevision.RevisionNodeAction;
 
 /**
  * 
@@ -131,18 +134,21 @@ public class RevisionNode extends ChangesNotifier {
 	}
 	
 	public RevisionNode[] getCopiedTo() {
-		RevisionNode[] res;
+		LinkedList<RevisionNode> res = new LinkedList<RevisionNode>();
 		NodeConnections[] copiedTo = this.currentConnectionItem.getCopiedTo();
 		if (copiedTo.length > 0) {
-			res = new RevisionNode[copiedTo.length];
 			for (int i = 0; i < copiedTo.length; i ++) {
-				NodeConnections node =  copiedTo[i];
-				res[i] = this.castItem(node);
+				NodeConnections node =  copiedTo[i]; 
+				RevisionNode copiedToNode = this.castItem(node);
+				//if there's renamed node, we place it at first position
+				if (copiedToNode.pathRevision.action == RevisionNodeAction.RENAME) {
+					res.addFirst(copiedToNode);
+				} else {
+					res.add(copiedToNode);
+				}
 			}
-		} else {
-			res = new RevisionNode[0];
 		}
-		return res;
+		return res.toArray(new RevisionNode[0]);
 	}
 	
 	public RevisionNode getCopiedFrom() {
