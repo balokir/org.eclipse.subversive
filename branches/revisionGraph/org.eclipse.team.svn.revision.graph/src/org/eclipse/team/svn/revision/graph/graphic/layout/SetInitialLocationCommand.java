@@ -41,12 +41,13 @@ public class SetInitialLocationCommand extends AbstractLayoutCommand {
 		
 		RevisionNode[] copiedTos = node.getCopiedTo();
 		if (copiedTos.length > 0) {
+			int copyToCount = 0;
 			for (int i = 0; i < copiedTos.length; i ++) {
 				/*
 				 * Copy to nodes are shown in next column, except of 'Rename' action
 				 * for which we show nodes in the same column  
 				 */
-				int nextNodeColumn = copiedTos[i].pathRevision.action == RevisionNodeAction.RENAME ? column : (column + i + 1);
+				int nextNodeColumn = copiedTos[i].pathRevision.action == RevisionNodeAction.RENAME ? column : (column + ++copyToCount);
 				this.processNode(copiedTos[i], nextNodeColumn, row + node.getHeight());
 			}
 		}

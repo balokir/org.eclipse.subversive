@@ -35,7 +35,6 @@ import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphPlugin;
-import org.eclipse.team.svn.revision.graph.operation.ShowRevisionGraphUtility.ISVNLogEntryProvider;
 
 /**
  * Fetch revisions from repository and manage cache
