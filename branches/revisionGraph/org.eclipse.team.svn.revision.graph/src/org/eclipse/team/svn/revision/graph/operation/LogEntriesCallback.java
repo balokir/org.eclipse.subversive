@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNLogEntryCallbackWithMergeInfo;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 
 /**
@@ -37,6 +36,8 @@ public class LogEntriesCallback extends SVNLogEntryCallbackWithMergeInfo {
 	protected SVNLogSerializer logSerializer;
 	protected CacheMetadata cacheMetadata;
 			
+	protected Throwable error;
+	
 	public LogEntriesCallback(IActionOperation op, IProgressMonitor monitor, int totalWork, File cacheFolder, CacheMetadata cacheMetadata) {
 		this.op = op;
 		this.monitor = monitor;
@@ -48,29 +49,34 @@ public class LogEntriesCallback extends SVNLogEntryCallbackWithMergeInfo {
 	
 	@Override
 	protected void addEntry(SVNLogEntry entry) {
-		//don't store entries
-		//super.addEntry(entry);
-		
-		this.currentEntry = entry;
-		ProgressMonitorUtility.setTaskInfo(this.monitor, this.op, "Revision: " + entry.revision);
-		ProgressMonitorUtility.progress(this.monitor, ++ this.currentWork, this.totalWork);
-				
-		try {
-			this.logSerializer.save(entry, this.cacheMetadata);
+		if (this.error == null) {
+			//don't store entries
+			//super.addEntry(entry);
 			
-			long start = this.cacheMetadata.getStartSkippedRevision();
-			long end = this.cacheMetadata.getEndSkippedRevision();		
-			if (start > --end) {
-				start = end = 0;
-			} 		
-			this.cacheMetadata.setSkippedRevisions(start, end);
-			this.cacheMetadata.save();
-		} catch (Exception e) {			
-			//if we can't store data in cache, then interrupt the whole process
-			//TODO check that it will interrupt
-			throw new UnreportableException(e);
-		}		
-	}					
+			this.currentEntry = entry;
+			ProgressMonitorUtility.setTaskInfo(this.monitor, this.op, "Revision: " + entry.revision);
+			ProgressMonitorUtility.progress(this.monitor, ++ this.currentWork, this.totalWork);
+					
+			try {
+				this.logSerializer.save(entry, this.cacheMetadata);
+				
+				long start = this.cacheMetadata.getStartSkippedRevision();
+				long end = this.cacheMetadata.getEndSkippedRevision();		
+				if (start > --end) {
+					start = end = 0;
+				} 		
+				this.cacheMetadata.setSkippedRevisions(start, end);
+				this.cacheMetadata.save();				
+			} catch (Throwable e) {
+				this.error = e;				
+				this.monitor.setCanceled(true);				
+			}			
+		}				
+	}		
+	
+	public Throwable getError() {
+		return this.error;
+	}
 	
 //	@Override
 //	protected void addChildEntry(SVNLogEntry parent, SVNLogEntry child) {
