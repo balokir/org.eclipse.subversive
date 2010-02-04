@@ -8,7 +8,7 @@
  * Contributors:
  *    Igor Burilo - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.svn.revision.graph.operation;
+package org.eclipse.team.svn.revision.graph;
 
 import java.util.ArrayList;
 import java.util.HashSet;

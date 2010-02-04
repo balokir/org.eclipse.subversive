@@ -29,8 +29,7 @@ import org.eclipse.team.svn.core.connector.SVNLogPath;
 import org.eclipse.team.svn.core.operation.ActivityCancelledException;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 
-/**    
- * TODO refactor in operations ?
+/**
  * 
  * @author Igor Burilo
  */
@@ -42,6 +41,9 @@ public class SVNLogSerializer {
 		
 	protected File storageDir;	
 	protected long logPathId;
+	
+	protected PrintWriter logEntryWriter;
+	protected PrintWriter pathWriter;
 	
 	protected static class SVNLogEntryExt extends SVNLogEntry {
 
@@ -59,10 +61,7 @@ public class SVNLogSerializer {
 			this.storageDir.mkdirs();
 		}
 	}	
-	
-	/*
-	 * Return sorted entries
-	 */
+		
 	public SVNLogEntry[] load(IProgressMonitor monitor) throws IOException {
 		this.logPathId = 0;
 		
@@ -179,8 +178,9 @@ public class SVNLogSerializer {
 	 * can be called if caller task is canceled
 	 */
 	public void save(SVNLogEntry[] entries, boolean isAppend) throws IOException {
+		CacheMetadata metadata = new CacheMetadata(this.storageDir);
 		if (isAppend) {
-			this.loadLogPathId();	
+			this.logPathId = metadata.getLogPathId();	
 		} else {
 			this.logPathId = 0;
 		}		
@@ -196,7 +196,8 @@ public class SVNLogSerializer {
 				this.saveEntry(entry, logEntryWriter, pathWriter);				 
 			}	
 			
-			this.saveLogPathId();
+			metadata.setLogPathId(this.logPathId);
+			metadata.save();			
 		} finally {
 			if (logEntryWriter != null) {
 				logEntryWriter.close();
@@ -205,44 +206,35 @@ public class SVNLogSerializer {
 				pathWriter.close();
 			}
 		}
-	}		
+	}				
 	
-	protected void loadLogPathId() throws IOException {
-		this.logPathId = 0;
-		File metaInfoFile = new File(this.storageDir, SVNLogSerializer.META_INFO_FILE_NAME);
-		if (metaInfoFile.exists()) {
-			BufferedReader metaReader = new BufferedReader(new FileReader(metaInfoFile));
-			try {
-				String line = metaReader.readLine();
-				if (line != null) {
-					try {
-						this.logPathId = Long.parseLong(line);
-					} catch (NumberFormatException ne) {
-						//ignore
-					}
-				}				
-			} finally {
-				try {
-					metaReader.close();
-				} catch (IOException ie) {
-					//ignore
-				}
-			}
-		}	
+	/*
+	 * If you call this method, don't forget to call 'close' 
+	 */
+	public void save(SVNLogEntry entry, CacheMetadata metadata) throws IOException {
+		if (this.logEntryWriter == null) {
+			//enable auto flush
+			this.logEntryWriter = new PrintWriter(new FileWriter(new File(this.storageDir, SVNLogSerializer.LOG_ENTRY_FILE_NAME), true), true);			
+			this.pathWriter = new PrintWriter(new FileWriter(new File(this.storageDir, SVNLogSerializer.PATH_FILE_NAME), true), true);
+			
+			this.logPathId = metadata.getLogPathId();
+		}
+		
+		this.saveEntry(entry, this.logEntryWriter, this.pathWriter);		
+				
+		metadata.setLogPathId(this.logPathId);		
 	}
 	
-	protected void saveLogPathId() throws IOException {
-		File metaInfoFile = new File(this.storageDir, SVNLogSerializer.META_INFO_FILE_NAME);
-		FileWriter writer = new FileWriter(metaInfoFile);
-		try {
-			writer.write(String.valueOf(this.logPathId));
-		} finally {
-			try {
-				writer.close();
-			} catch (IOException ie) {
-				//ignore
-			}		
+	public void close() {
+		if (this.logEntryWriter != null) {
+			this.logEntryWriter.close();
+		}		
+		if (this.pathWriter != null) {
+			this.pathWriter.close();
 		}
+		
+		this.logEntryWriter = null;
+		this.pathWriter = null;
 	}
 	
 	protected void saveEntry(SVNLogEntry log, PrintWriter logEntryWriter, PrintWriter pathWriter) {		
@@ -305,5 +297,5 @@ public class SVNLogSerializer {
 	
 	protected String decode(String str) {		
 		return "null".equals(str) ? null : SVNUtility.base64Decode(str);
-	}
+	}	
 }

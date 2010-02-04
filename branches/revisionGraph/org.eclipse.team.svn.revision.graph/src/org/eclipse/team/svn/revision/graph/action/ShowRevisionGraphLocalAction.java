@@ -5,7 +5,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
-import org.eclipse.team.svn.revision.graph.operation.ShowRevisionGraphUtility;
+import org.eclipse.team.svn.revision.graph.operation.RevisionGraphUtility;
 import org.eclipse.team.svn.ui.action.AbstractWorkingCopyAction;
 
 /**
@@ -22,7 +22,7 @@ public class ShowRevisionGraphLocalAction extends AbstractWorkingCopyAction {
 	public void runImpl(IAction action) {	
 		IResource []resources = this.getSelectedResources(IStateFilter.SF_ONREPOSITORY);					
 		IRepositoryResource reposResource = SVNRemoteStorage.instance().asRepositoryResource(resources[0]);		
-		this.runScheduled(ShowRevisionGraphUtility.getRevisionGraphOperation(reposResource));
+		this.runScheduled(RevisionGraphUtility.getRevisionGraphOperation(reposResource));
 	}
 		
 	public boolean isEnabled() {

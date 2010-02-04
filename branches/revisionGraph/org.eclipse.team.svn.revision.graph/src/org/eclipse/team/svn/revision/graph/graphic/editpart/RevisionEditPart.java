@@ -22,13 +22,13 @@ import org.eclipse.gef.NodeEditPart;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.team.svn.revision.graph.PathRevision.ReviosionNodeType;
+import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
 import org.eclipse.team.svn.revision.graph.graphic.ChangesNotifier;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionConnectionNode;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionRootNode;
 import org.eclipse.team.svn.revision.graph.graphic.figure.RevisionFigure;
-import org.eclipse.team.svn.revision.graph.operation.PathRevision.ReviosionNodeType;
-import org.eclipse.team.svn.revision.graph.operation.PathRevision.RevisionNodeAction;
 
 /**
  * Edit part for revision node

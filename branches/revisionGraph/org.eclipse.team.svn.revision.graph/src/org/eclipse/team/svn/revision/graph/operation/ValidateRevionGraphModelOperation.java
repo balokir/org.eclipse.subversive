@@ -12,7 +12,10 @@ package org.eclipse.team.svn.revision.graph.operation;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
-import org.eclipse.team.svn.revision.graph.operation.PathRevision.RevisionNodeAction;
+import org.eclipse.team.svn.revision.graph.NodeConnections;
+import org.eclipse.team.svn.revision.graph.PathRevision;
+import org.eclipse.team.svn.revision.graph.TopRightTraverseVisitor;
+import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
 
 /**
  * Validate revision graph model:
@@ -25,9 +28,8 @@ public class ValidateRevionGraphModelOperation extends AbstractActionOperation {
 
 	protected CreateRevisionGraphModelOperation createModelOp;
 	
-	public ValidateRevionGraphModelOperation(CreateRevisionGraphModelOperation createModelOp) {
-		//TODO
-		super("ValidateRevionGraphModel");
+	public ValidateRevionGraphModelOperation(CreateRevisionGraphModelOperation createModelOp) {		
+		super("Validate Revion Graph Model");
 		this.createModelOp = createModelOp;
 	}
 

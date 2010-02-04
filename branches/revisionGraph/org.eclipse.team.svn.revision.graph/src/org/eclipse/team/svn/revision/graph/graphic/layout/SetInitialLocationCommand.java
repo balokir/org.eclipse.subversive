@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.graphic.layout;
 
+import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
-import org.eclipse.team.svn.revision.graph.operation.PathRevision.RevisionNodeAction;
 
 /** 
  * Set x as column
