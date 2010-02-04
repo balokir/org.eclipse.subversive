@@ -12,8 +12,8 @@ package org.eclipse.team.svn.revision.graph.graphic.layout;
 
 import java.util.ArrayList;
 
+import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
-import org.eclipse.team.svn.revision.graph.operation.PathRevision.RevisionNodeAction;
 
 /** 
  * Set Y value in order not to have crossing with bottom nodes

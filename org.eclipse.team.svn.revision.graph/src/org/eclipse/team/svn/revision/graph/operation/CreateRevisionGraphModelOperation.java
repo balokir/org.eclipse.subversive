@@ -26,8 +26,9 @@ import org.eclipse.team.svn.core.connector.SVNLogPath;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
-import org.eclipse.team.svn.revision.graph.operation.PathRevision.ReviosionNodeType;
-import org.eclipse.team.svn.revision.graph.operation.PathRevision.RevisionNodeAction;
+import org.eclipse.team.svn.revision.graph.PathRevision;
+import org.eclipse.team.svn.revision.graph.PathRevision.ReviosionNodeType;
+import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
 
 /**
  * Create revision graph model

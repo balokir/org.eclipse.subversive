@@ -8,8 +8,7 @@
  * Contributors:
  *    Igor Burilo - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.svn.revision.graph.operation;
-
+package org.eclipse.team.svn.revision.graph;
 
 /**
  * Allow to traverse nodes and visit process

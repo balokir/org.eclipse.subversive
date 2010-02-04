@@ -12,9 +12,9 @@ package org.eclipse.team.svn.revision.graph.graphic;
 
 import java.util.LinkedList;
 
-import org.eclipse.team.svn.revision.graph.operation.NodeConnections;
-import org.eclipse.team.svn.revision.graph.operation.PathRevision;
-import org.eclipse.team.svn.revision.graph.operation.PathRevision.RevisionNodeAction;
+import org.eclipse.team.svn.revision.graph.NodeConnections;
+import org.eclipse.team.svn.revision.graph.PathRevision;
+import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
 
 /**
  * 

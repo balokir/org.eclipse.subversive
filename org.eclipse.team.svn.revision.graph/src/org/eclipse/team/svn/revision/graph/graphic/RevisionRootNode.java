@@ -15,10 +15,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import org.eclipse.team.svn.revision.graph.NodeConnections;
+import org.eclipse.team.svn.revision.graph.PathRevision;
+import org.eclipse.team.svn.revision.graph.TopRightTraverseVisitor;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode.RevisionNodeItem;
-import org.eclipse.team.svn.revision.graph.operation.NodeConnections;
-import org.eclipse.team.svn.revision.graph.operation.PathRevision;
-import org.eclipse.team.svn.revision.graph.operation.TopRightTraverseVisitor;
 
 /**
  * Root of revision nodes 
