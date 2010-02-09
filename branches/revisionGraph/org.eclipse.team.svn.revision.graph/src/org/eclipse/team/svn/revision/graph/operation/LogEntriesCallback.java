@@ -11,6 +11,7 @@
 package org.eclipse.team.svn.revision.graph.operation;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
@@ -33,18 +34,19 @@ public class LogEntriesCallback extends SVNLogEntryCallbackWithMergeInfo {
 	protected int currentWork;	
 	protected SVNLogEntry currentEntry;
 	
-	protected SVNLogSerializer logSerializer;
+	protected SVNLogWriter logSerializer;
 	protected CacheMetadata cacheMetadata;
 			
 	protected Throwable error;
 	
-	public LogEntriesCallback(IActionOperation op, IProgressMonitor monitor, int totalWork, File cacheFolder, CacheMetadata cacheMetadata) {
+	public LogEntriesCallback(IActionOperation op, IProgressMonitor monitor, int totalWork, File cacheFolder, CacheMetadata cacheMetadata) throws IOException {
 		this.op = op;
 		this.monitor = monitor;
 		this.totalWork = totalWork;
 		
-		this.logSerializer = new SVNLogSerializer(cacheFolder);
 		this.cacheMetadata = cacheMetadata;
+		
+		this.logSerializer = new SVNLogWriter(cacheFolder);		
 	}
 	
 	@Override
@@ -58,7 +60,7 @@ public class LogEntriesCallback extends SVNLogEntryCallbackWithMergeInfo {
 			ProgressMonitorUtility.progress(this.monitor, ++ this.currentWork, this.totalWork);
 					
 			try {
-				this.logSerializer.save(entry, this.cacheMetadata);
+				this.logSerializer.save(entry);
 				
 				long start = this.cacheMetadata.getStartSkippedRevision();
 				long end = this.cacheMetadata.getEndSkippedRevision();		

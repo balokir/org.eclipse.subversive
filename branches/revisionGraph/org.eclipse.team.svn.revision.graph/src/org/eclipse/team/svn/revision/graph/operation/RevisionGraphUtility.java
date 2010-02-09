@@ -14,7 +14,6 @@ import java.io.File;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -33,23 +32,6 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  */
 public class RevisionGraphUtility {
 	
-	public static class GetRevisionsFromCacheOperation extends AbstractActionOperation implements ISVNLogEntryProvider {
-		protected IRepositoryResource resource;		
-		protected SVNLogEntry[] entries;
-		
-		public GetRevisionsFromCacheOperation(IRepositoryResource resource) {
-			super("Get Revisions From Cache");
-			this.resource = resource;
-		}
-		protected void runImpl(IProgressMonitor monitor) throws Exception {
-			SVNLogSerializer logSerializer = new SVNLogSerializer(RevisionGraphUtility.getCacheFolder(this.resource));
-			this.entries = logSerializer.load(monitor);
-		}		
-		public SVNLogEntry[] getLogEntries() {
-			return this.entries;
-		}
-	}
-	
 	public static CompositeOperation getRevisionGraphOperation(IRepositoryResource resource) {
 		CompositeOperation op = new CompositeOperation("Show Revision Graph Operation");							
 		
@@ -61,13 +43,10 @@ public class RevisionGraphUtility {
 		
 		FetchNewRevisionsOperation fetchNewOp = new FetchNewRevisionsOperation(resource, checkConnectionOp);
 		op.add(fetchNewOp, new IActionOperation[]{fetchSkippedOp});
-		
-		GetRevisionsFromCacheOperation getRevisionsOp = new GetRevisionsFromCacheOperation(resource);
-		op.add(getRevisionsOp, new IActionOperation[]{checkConnectionOp});
 				
 		//create model
-		final CreateRevisionGraphModelOperation createModelOp = new CreateRevisionGraphModelOperation(getRevisionsOp, resource);
-		op.add(createModelOp, new IActionOperation[]{getRevisionsOp});
+		final CreateRevisionGraphModelOperation createModelOp = new CreateRevisionGraphModelOperation(resource);
+		op.add(createModelOp, new IActionOperation[]{checkConnectionOp});
 						
 		//TODO remain this operation for real usage ?
 		//validate model

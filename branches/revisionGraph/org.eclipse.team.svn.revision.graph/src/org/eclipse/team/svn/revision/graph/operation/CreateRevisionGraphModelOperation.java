@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.operation;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -25,8 +26,12 @@ import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNLogPath;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
+import org.eclipse.team.svn.core.operation.ActivityCancelledException;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
+import org.eclipse.team.svn.revision.graph.NodeConnections;
 import org.eclipse.team.svn.revision.graph.PathRevision;
+import org.eclipse.team.svn.revision.graph.TopRightTraverseVisitor;
 import org.eclipse.team.svn.revision.graph.PathRevision.ReviosionNodeType;
 import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
 
@@ -37,81 +42,82 @@ import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
  */
 public class CreateRevisionGraphModelOperation extends AbstractActionOperation {	
 	
-	protected ISVNLogEntryProvider provider;
-	protected SVNLogEntry[] rawEntries;
 	protected IRepositoryResource resource;	
 	
-	/*
-	 * Entries indexes correspond to revision number,
-	 * if there's no entry with particular revision number then entry is null
-	 * 
-	 * Entries are sorted is ascending order  
-	 */
-	protected SVNLogEntry[] entries;
-	
 	protected PathRevision resultNode;
+		
+	protected SVNLogReader logReader;
 	
-	public CreateRevisionGraphModelOperation(SVNLogEntry[] entries, IRepositoryResource resource) {
-		this(resource);
-		this.rawEntries = entries;
-	}
-	
-	public CreateRevisionGraphModelOperation(ISVNLogEntryProvider provider, IRepositoryResource resource) {
-		this(resource);
-		this.provider = provider;		
-	}
-	
-	private CreateRevisionGraphModelOperation(IRepositoryResource resource) {
-		super("CreateRevisionGraphModelOperation");
+	public CreateRevisionGraphModelOperation(IRepositoryResource resource) {
+		super("Create RevisionGraph Model");
 		this.resource = resource;		
 	}
 	
 	@Override
-	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		this.rawEntries = this.operableData(); 
-			
-		String url = this.resource.getUrl();
-		String rootUrl = this.resource.getRepositoryLocation().getRepositoryRootUrl();	
-	
-		SVNRevision svnRevision = this.resource.getSelectedRevision();
-		String path = url.substring(rootUrl.length());				
+	protected void runImpl(IProgressMonitor monitor) throws Exception {	
+		CacheMetadata metadata = new CacheMetadata(RevisionGraphUtility.getCacheFolder(this.resource));
+		metadata.load();
+		this.logReader = new SVNLogReader(RevisionGraphUtility.getCacheFolder(this.resource), metadata.getLastProcessedRevision());
 		
-		//sort
-		long maxRevision = 0;
-		for (SVNLogEntry entry : this.rawEntries) {
-			if (entry.revision > maxRevision) {
-				maxRevision = entry.revision; 
+		try {
+			String url = this.resource.getUrl();
+			String rootUrl = this.resource.getRepositoryLocation().getRepositoryRootUrl();	
+		
+			SVNRevision svnRevision = this.resource.getSelectedRevision();
+			String path = url.substring(rootUrl.length());				
+					
+			long revision;		
+			if (svnRevision.getKind() == SVNRevision.Kind.NUMBER) {
+				revision = ((SVNRevision.Number) svnRevision).getNumber();
+			} else if (svnRevision.getKind() == SVNRevision.Kind.HEAD) {			
+				//revision = this.entries[this.entries.length - 1].revision;				
+				revision = this.logReader.getLastProcessedRevision();
+			} else {
+				throw new Exception("Unexpected revision kind: " + svnRevision);
 			}
-		}								
-		this.entries = new SVNLogEntry[(int)maxRevision + 1];
-		for (SVNLogEntry entry : this.rawEntries) {
-			this.entries[(int)entry.revision] = entry;
-		}
+					
+			SVNLogEntry entry = this.findStartLogEntry(revision, path);
+			if (entry != null) {
+				this.resultNode = this.createRevisionNode(entry, path);	
+										
+				this.process(this.resultNode, monitor);								
 				
-		long revision;		
-		if (svnRevision.getKind() == SVNRevision.Kind.NUMBER) {
-			revision = ((SVNRevision.Number) svnRevision).getNumber();
-		} else if (svnRevision.getKind() == SVNRevision.Kind.HEAD) {			
-			revision = this.entries[this.entries.length - 1].revision;
-		} else {
-			throw new Exception("Unexpected revision kind: " + svnRevision);
-		}
-				
-		SVNLogEntry entry = this.findStartLogEntry(revision, path);
-		if (entry != null) {
-			this.resultNode = this.createRevisionNode(entry, path);	
-			this.process(this.resultNode);						
+				//fill result model with other data: author, message, date, children
+				new TopRightTraverseVisitor() {				
+					protected void visit(NodeConnections node) {
+						PathRevision pathRevision = (PathRevision) node;						
+						try {
+							SVNLogEntry logEntry = CreateRevisionGraphModelOperation.this.logReader.loadRawLogEntry(pathRevision.getRevision());
+							if (logEntry != null) {
+								pathRevision.setMessage(logEntry.message);
+								pathRevision.setDate(logEntry.date);
+								pathRevision.setAuthor(logEntry.author);	
+							}
+						} catch (IOException ie) {
+							CreateRevisionGraphModelOperation.this.reportWarning("Failed to load log entry data for revision: " + pathRevision.getRevision(), ie);
+						}
+					}
+				}.traverse(this.resultNode.getStartNodeInGraph());
+			}									
+		} finally {
+			this.logReader.close();
 		}
 	}
 	
 	/*
 	 * Note that 'Replacing' is used as 'copied' if 'Replacing' contains 'copied from path'
 	 */
-	protected void process(PathRevision startNode) {
+	protected void process(PathRevision startNode, IProgressMonitor monitor) {
 		Queue<PathRevision> nodesQueue = new LinkedList<PathRevision>();
 		nodesQueue.offer(startNode);		
 		PathRevision node;
 		while ((node = nodesQueue.poll()) != null) {
+			
+			if (monitor.isCanceled()) {
+				throw new ActivityCancelledException();
+			}
+			ProgressMonitorUtility.setTaskInfo(monitor, this, "Processing node: " + node.getPath() + "@" + node.getRevision());
+						
 			this.createRevisionsChainForPath(node);									
 			
 			/*
@@ -168,7 +174,7 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 			long rev = node.getRevision();
 			PathRevision processNode = node;
 			while (true) {								
-				if (++ rev < this.entries.length) {
+				if (++ rev < this.logReader.getLastProcessedRevision()) {
 					SVNLogEntry entry = this.getEntry(rev);
 					if (entry != null) {
 						PathRevision nextNode = this.createRevisionNode(entry, node.getPath());
@@ -237,7 +243,7 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 		Map<PathRevision, List<PathRevision>> copyToMap = new HashMap<PathRevision, List<PathRevision>>();
 		
 		//look from 'start' to HEAD in entries, copied from path or parent
-		for (long i = startRevision; i < this.entries.length; i ++) {
+		for (long i = startRevision; i < this.logReader.getLastProcessedRevision(); i ++) {
 			SVNLogEntry entry = this.getEntry(i);
 			if (entry != null && entry.changedPaths != null) {
 				/*						
@@ -555,11 +561,15 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 	 * Note that entry can be null, e.g. because of cache repository, cache corrupted
 	 */
 	protected SVNLogEntry getEntry(long revision) {		
-		return this.entries[(int) revision];
-	}
-	
-	protected SVNLogEntry[] operableData() {
-		return this.rawEntries == null ? this.provider.getLogEntries() : this.rawEntries;
+		try {
+			SVNLogPath[] paths = this.logReader.loadLogPaths(revision);
+			if (paths.length > 0) {
+				return new SVNLogEntry(revision, 0, null, null, paths, false);
+			}
+		} catch (IOException ie) {
+			this.reportWarning("Failed to load log paths for revision: " + revision, ie);
+		}
+		return null;
 	}
 	
 	/**
