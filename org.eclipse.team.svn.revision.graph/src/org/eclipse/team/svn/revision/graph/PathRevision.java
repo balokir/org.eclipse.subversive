@@ -40,9 +40,9 @@ public class PathRevision extends NodeConnections {
 	protected final String path;	
 	protected final long revision;
 	
-	protected final long date;
-	protected final String author;
-	protected final String message;	
+	protected long date;
+	protected String author;
+	protected String message;	
 	protected final SVNLogPath[] changedPaths;
 
 	//TODO move to UI model ?
@@ -168,5 +168,17 @@ public class PathRevision extends NodeConnections {
 	
 	public PathRevision getCopiedFrom() {
 		return (PathRevision) super.getCopiedFrom();
+	}
+
+	public void setMessage(String message) {
+		this.message = message;	
+	}
+	
+	public void setDate(long date) {
+		this.date = date;		
+	}
+
+	public void setAuthor(String author) {
+		this.author = author;		
 	}		
 }

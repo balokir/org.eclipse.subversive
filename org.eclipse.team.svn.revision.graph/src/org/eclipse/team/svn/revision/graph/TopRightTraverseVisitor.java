@@ -14,17 +14,18 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 /**
+ * Allow to traverse nodes and visit
  * 
  * @author Igor Burilo
  */
-public abstract class TopRightTraverseVisitor implements INodeVisitor {	
+public abstract class TopRightTraverseVisitor {	
 	
 	public void traverse(NodeConnections startNode) {
 		Queue<NodeConnections> queue = new LinkedList<NodeConnections>();						
 		queue.offer(startNode);			
 		
 		NodeConnections node = null;
-		while ((node = queue.poll()) != null) {				
+		while ((node = queue.poll()) != null) {
 			this.visit(node);
 			
 			NodeConnections next = node.getNext();
@@ -38,5 +39,7 @@ public abstract class TopRightTraverseVisitor implements INodeVisitor {
 			}
 		}			
 	}
+
+	protected abstract void visit(NodeConnections node);	
 
 }

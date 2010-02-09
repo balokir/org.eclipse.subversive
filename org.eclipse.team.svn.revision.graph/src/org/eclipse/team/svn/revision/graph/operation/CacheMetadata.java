@@ -25,14 +25,12 @@ public class CacheMetadata {
 	protected final static String START_SKIPPED_REVISION = "startSkippedRevision";
 	protected final static String END_SKIPPED_REVISION = "endSkippedRevision";
 	protected final static String LAST_PROCESSED_REVISION = "lastProcessedRevision";
-	protected final static String LOG_PATH_ID = "logPathId";
 	
 	protected File metadataFile;
 	
 	protected long startSkippedRevision;
 	protected long endSkippedRevision;
-	protected long lastProcessedRevision;
-	protected long logPathId;
+	protected long lastProcessedRevision;	
 			
 	public CacheMetadata(File cacheFolder) {		
 		this.metadataFile = new File(cacheFolder, "metadata.txt");
@@ -49,8 +47,7 @@ public class CacheMetadata {
 				props.load(in);
 				this.startSkippedRevision = this.getLongProperty(props, CacheMetadata.START_SKIPPED_REVISION);
 				this.endSkippedRevision = this.getLongProperty(props, CacheMetadata.END_SKIPPED_REVISION);
-				this.lastProcessedRevision = this.getLongProperty(props, CacheMetadata.LAST_PROCESSED_REVISION);
-				this.logPathId = this.getLongProperty(props, CacheMetadata.LOG_PATH_ID);
+				this.lastProcessedRevision = this.getLongProperty(props, CacheMetadata.LAST_PROCESSED_REVISION);				
 			} finally {
 				try { in.close(); } catch (IOException e) { /*ignore*/ }
 			}			
@@ -58,7 +55,6 @@ public class CacheMetadata {
 			this.startSkippedRevision = 0;
 			this.endSkippedRevision = 0;
 			this.lastProcessedRevision = 0;
-			this.logPathId = 0;
 		} 
 	}
 	
@@ -82,8 +78,7 @@ public class CacheMetadata {
 		Properties props = new Properties();
 		props.put(CacheMetadata.START_SKIPPED_REVISION, String.valueOf(this.startSkippedRevision));
 		props.put(CacheMetadata.END_SKIPPED_REVISION, String.valueOf(this.endSkippedRevision));
-		props.put(CacheMetadata.LAST_PROCESSED_REVISION, String.valueOf(this.lastProcessedRevision));
-		props.put(CacheMetadata.LOG_PATH_ID, String.valueOf(this.logPathId));
+		props.put(CacheMetadata.LAST_PROCESSED_REVISION, String.valueOf(this.lastProcessedRevision));	
 		
 		FileOutputStream out = new FileOutputStream(this.metadataFile);		
 		try {
@@ -112,13 +107,5 @@ public class CacheMetadata {
 	
 	public void setLastProcessedRevision(long revision) {
 		this.lastProcessedRevision = revision;
-	}
-
-	public long getLogPathId() {
-		return this.logPathId;
-	}
-	
-	public void setLogPathId(long logPathId) {
-		this.logPathId = logPathId;		
-	}
+	}	
 }
