@@ -26,7 +26,6 @@ import org.eclipse.team.svn.core.connector.SVNLogPath;
 import org.eclipse.team.svn.core.operation.ActivityCancelledException;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
-import org.eclipse.team.svn.revision.graph.investigate.TimeMeasure;
 
 /**
  * Entry point to cache 

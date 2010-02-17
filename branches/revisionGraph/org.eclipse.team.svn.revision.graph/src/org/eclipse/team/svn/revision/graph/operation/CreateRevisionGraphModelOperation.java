@@ -37,7 +37,7 @@ import org.eclipse.team.svn.revision.graph.cache.ChangedPathStructure;
 import org.eclipse.team.svn.revision.graph.cache.PathStorage;
 import org.eclipse.team.svn.revision.graph.cache.RevisionDataContainer;
 import org.eclipse.team.svn.revision.graph.cache.RevisionStructure;
-import org.eclipse.team.svn.revision.graph.investigate.TimeMeasure;
+import org.eclipse.team.svn.revision.graph.cache.TimeMeasure;
 
 /**
  * Create revision graph model
