@@ -17,10 +17,10 @@ import org.eclipse.draw2d.AbstractLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
+import org.eclipse.team.svn.revision.graph.cache.TimeMeasure;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
 import org.eclipse.team.svn.revision.graph.graphic.editpart.RevisionEditPart;
 import org.eclipse.team.svn.revision.graph.graphic.editpart.RevisionGraphEditPart;
-import org.eclipse.team.svn.revision.graph.investigate.TimeMeasure;
 
 /**
  * Base class for graph layout managers

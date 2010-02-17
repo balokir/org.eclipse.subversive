@@ -19,8 +19,8 @@ import org.eclipse.team.svn.revision.graph.NodeConnections;
 import org.eclipse.team.svn.revision.graph.PathRevision;
 import org.eclipse.team.svn.revision.graph.TopRightTraverseVisitor;
 import org.eclipse.team.svn.revision.graph.cache.RevisionDataContainer;
+import org.eclipse.team.svn.revision.graph.cache.TimeMeasure;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode.RevisionNodeItem;
-import org.eclipse.team.svn.revision.graph.investigate.TimeMeasure;
 
 /**
  * Root of revision nodes 
@@ -35,9 +35,7 @@ public class RevisionRootNode extends ChangesNotifier {
 	protected final RevisionDataContainer dataContainer;
 	
 	protected RevisionNode initialStartNode;
-	protected RevisionNode currentStartNode;
-	
-	protected List<RevisionConnectionNode> connectionsStore = new ArrayList<RevisionConnectionNode>(); 
+	protected RevisionNode currentStartNode;	
 	
 	protected boolean isSimpleMode;
 		
@@ -91,7 +89,7 @@ public class RevisionRootNode extends ChangesNotifier {
 			}.traverse(this.currentStartNode.getCurrentConnectionItem());			
 		}
 		
-		//restore current connections to initial state 
+		//restore current connections to initial state
 		this.createCurrentConnectionsFromInitial();					
 		
 		//TODO apply collapse
@@ -101,6 +99,7 @@ public class RevisionRootNode extends ChangesNotifier {
 		if (startItem != null) {				
 			this.currentStartNode = startItem.getRevisionNode();
 		}				
+		
 		//TODO handle that after filtering and collapsing there are no nodes 
 						
 		//prepare children and connections
@@ -113,18 +112,17 @@ public class RevisionRootNode extends ChangesNotifier {
 				currentNodesList.add(item.getRevisionNode());
 								
 				if (item.getNext() != null) {
-					RevisionConnectionNode con = RevisionRootNode.this.createConnection(item.getRevisionNode(), item.getNext().getRevisionNode(), false);
+					RevisionConnectionNode con = new RevisionConnectionNode(item.getRevisionNode(), item.getNext().getRevisionNode());
 					RevisionRootNode.this.currentConnections.add(con);
 				}			
 				if (item.getCopiedTo().length > 0) {
 					for (RevisionNodeItem copyToItem : item.getCopiedTo()) {
-						RevisionConnectionNode con = RevisionRootNode.this.createConnection(item.getRevisionNode(), copyToItem.getRevisionNode(), false);
+						RevisionConnectionNode con = new RevisionConnectionNode(item.getRevisionNode(), copyToItem.getRevisionNode());
 						RevisionRootNode.this.currentConnections.add(con);
 					}
 				}
 			}
 		}.traverse(this.currentStartNode.getCurrentConnectionItem());
-		
 		
 		//update previous nodes
 		if (!previousNodes.isEmpty()) {
@@ -134,24 +132,6 @@ public class RevisionRootNode extends ChangesNotifier {
 		}
 		
 		processMeasure.end();
-	}
-	
-	protected RevisionConnectionNode createConnection(RevisionNode source, RevisionNode target, boolean isCreate) {
-		RevisionConnectionNode con = null;
-		if (!isCreate && !this.connectionsStore.isEmpty()) {
-			for (RevisionConnectionNode existingCon : this.connectionsStore) {
-				if (existingCon.source.equals(source) && existingCon.target.equals(target)) {
-					con = existingCon;
-					break;
-				}
-			}
-		} 
-		
-		if (con == null) {
-			con = new RevisionConnectionNode(source, target);
-			this.connectionsStore.add(con);
-		}		
-		return con;		
 	}
 	
 	protected final void createInitialConnections() {
@@ -169,8 +149,7 @@ public class RevisionRootNode extends ChangesNotifier {
 			PathRevision pathNext = node.pathRevision.getNext();
 			if (pathNext != null) {
 				RevisionNode next = this.createRevisionNode(pathNext);				
-				initialItem.setNext(next.getInitialConnectionItem());				
-				this.createConnection(node, next, true);				
+				initialItem.setNext(next.getInitialConnectionItem());
 				queue.offer(next);
 			}
 			
@@ -178,7 +157,6 @@ public class RevisionRootNode extends ChangesNotifier {
 			for (PathRevision pathCopiedToNode : pathCopiedToNodes) {
 				RevisionNode copiedTo = this.createRevisionNode(pathCopiedToNode);
 				initialItem.addCopiedTo(copiedTo.getInitialConnectionItem());
-				this.createConnection(node, copiedTo, true);				
 				queue.offer(copiedTo);
 			}
 		}			
