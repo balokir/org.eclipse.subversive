@@ -12,7 +12,7 @@ package org.eclipse.team.svn.revision.graph;
 
 import java.util.Iterator;
 
-import org.eclipse.team.svn.core.connector.SVNLogPath;
+import org.eclipse.team.svn.revision.graph.cache.ChangedPathStructure;
 
 /** 
  * TODO implement IPropertySource for Properties View ?
@@ -37,22 +37,22 @@ public class PathRevision extends NodeConnections {
 		NONE		
 	}
 		
-	protected final String path;	
+	protected final int pathIndex;	
 	protected final long revision;
 	
 	protected long date;
 	protected String author;
 	protected String message;	
-	protected final SVNLogPath[] changedPaths;
+	protected final ChangedPathStructure[] changedPaths;
 
 	//TODO move to UI model ?
 	public final ReviosionNodeType type;
 	
 	public final RevisionNodeAction action;			
 	
-	public PathRevision(long revision, String path, long date, String author, String message, SVNLogPath[] changedPaths, RevisionNodeAction action, ReviosionNodeType type) {
+	public PathRevision(long revision, int pathIndex, long date, String author, String message, ChangedPathStructure[] changedPaths, RevisionNodeAction action, ReviosionNodeType type) {
 		this.revision = revision;
-		this.path = path;
+		this.pathIndex = pathIndex;
 		this.date = date;
 		this.author = author;
 		this.message = message;
@@ -61,9 +61,13 @@ public class PathRevision extends NodeConnections {
 		this.type = type;
 	}
 	
-	public String getPath() {
-		return path;
+	public int getPathIndex() {
+		return pathIndex;
 	}
+	
+//	public String getPath() {
+//		return CacheReader.pathStorage.getPath(this.pathIndex);
+//	}
 	
 	public long getRevision() {
 		return revision;
@@ -81,7 +85,7 @@ public class PathRevision extends NodeConnections {
 		return message;
 	}
 
-	public SVNLogPath[] getChangedPaths() {
+	public ChangedPathStructure[] getChangedPaths() {
 		return changedPaths;
 	}		
 	
@@ -121,7 +125,7 @@ public class PathRevision extends NodeConnections {
 	
 	@Override
 	public String toString() {
-		return String.format("%s@%d, action:%s", this.path, this.revision, this.action);
+		return String.format("%s@%d, action:%s", this.pathIndex, this.revision, this.action);
 	}
 	
 	@Override
@@ -130,7 +134,7 @@ public class PathRevision extends NodeConnections {
 			PathRevision node = (PathRevision) obj;
 			return
 				this.getRevision() == node.getRevision() && 
-				this.getPath().equals(node.getPath()) &&
+				this.getPathIndex() == node.getPathIndex() &&
 				this.action == node.action;
 		}
 		return false;
@@ -141,7 +145,7 @@ public class PathRevision extends NodeConnections {
 		final int prime = 31;		
 		int result = 17;
 		result += prime * this.getRevision();
-		result += prime * this.getPath().hashCode();
+		result += prime * this.getPathIndex();
 		result += prime * this.action.hashCode();		
 		return result;
 	}

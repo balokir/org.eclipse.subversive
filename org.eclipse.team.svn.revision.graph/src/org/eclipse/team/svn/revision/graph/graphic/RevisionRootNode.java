@@ -18,7 +18,9 @@ import java.util.Queue;
 import org.eclipse.team.svn.revision.graph.NodeConnections;
 import org.eclipse.team.svn.revision.graph.PathRevision;
 import org.eclipse.team.svn.revision.graph.TopRightTraverseVisitor;
+import org.eclipse.team.svn.revision.graph.cache.RevisionDataContainer;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode.RevisionNodeItem;
+import org.eclipse.team.svn.revision.graph.investigate.TimeMeasure;
 
 /**
  * Root of revision nodes 
@@ -30,6 +32,7 @@ import org.eclipse.team.svn.revision.graph.graphic.RevisionNode.RevisionNodeItem
 public class RevisionRootNode extends ChangesNotifier {
 	
 	protected final PathRevision pathRevision;	
+	protected final RevisionDataContainer dataContainer;
 	
 	protected RevisionNode initialStartNode;
 	protected RevisionNode currentStartNode;
@@ -43,8 +46,9 @@ public class RevisionRootNode extends ChangesNotifier {
 	protected List<RevisionNode> currentNodesList = new ArrayList<RevisionNode>();
 	protected List<RevisionConnectionNode> currentConnections = new ArrayList<RevisionConnectionNode>();
 	
-	public RevisionRootNode(PathRevision node) {
+	public RevisionRootNode(PathRevision node, RevisionDataContainer dataContainer) {
 		this.pathRevision = node;
+		this.dataContainer = dataContainer;
 		this.filterManager = new NodesFilterManager();										
 	}
 	
@@ -71,6 +75,8 @@ public class RevisionRootNode extends ChangesNotifier {
 	} 				
 	
 	protected void processCurrentModel() {
+		TimeMeasure processMeasure = new TimeMeasure("Re-structure nodes in model");
+		
 		/*
 		 * Remember previous nodes in order to update them, 
 		 * i.e. update their connections, as during filtering, collapsing
@@ -126,6 +132,8 @@ public class RevisionRootNode extends ChangesNotifier {
 				prevNode.refreshConnections();
 			}			
 		}
+		
+		processMeasure.end();
 	}
 	
 	protected RevisionConnectionNode createConnection(RevisionNode source, RevisionNode target, boolean isCreate) {
@@ -228,5 +236,9 @@ public class RevisionRootNode extends ChangesNotifier {
 			
 		this.processCurrentModel();		
 		this.firePropertyChange(RevisionRootNode.LAYOUT_PROPERTY, null, new Boolean(this.isSimpleMode));
+	}
+	
+	public String getRevisionPath(int pathIndex) {
+		return this.dataContainer.getPathStorage().getPath(pathIndex);	
 	}	
 }

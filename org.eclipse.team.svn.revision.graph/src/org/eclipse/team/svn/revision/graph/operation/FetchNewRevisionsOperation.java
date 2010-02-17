@@ -12,6 +12,7 @@ package org.eclipse.team.svn.revision.graph.operation;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.revision.graph.cache.CacheMetadata;
 
 /**
  * Fetch revisions after last processed revision
@@ -20,8 +21,8 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
  */
 public class FetchNewRevisionsOperation extends BaseFetchOperation {
 	
-	public FetchNewRevisionsOperation(IRepositoryResource resource, CheckRepositoryConnectionOperation checkConnectionOp) {
-		super("Fetch New Revisions", resource, checkConnectionOp);
+	public FetchNewRevisionsOperation(IRepositoryResource resource, CheckRepositoryConnectionOperation checkConnectionOp, PrepareRevisionDataOperation prepareDataOp) {
+		super("Fetch New Revisions", resource, checkConnectionOp, prepareDataOp);
 	}
 
 	@Override

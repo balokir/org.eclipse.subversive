@@ -41,14 +41,10 @@ public class SVNRevisionGraphPlugin extends AbstractUIPlugin {
     public void start(BundleContext context) throws Exception {
 		super.start(context);
 	
-		this.baseUrl = context.getBundle().getEntry("/"); //$NON-NLS-1$
-		
-		//TODO add our start
+		this.baseUrl = context.getBundle().getEntry("/"); //$NON-NLS-1$				
     }
     
-    public void stop(BundleContext context) throws Exception {    	
-    	//TODO add our stop
-    	
+    public void stop(BundleContext context) throws Exception {    	    	
     	super.stop(context);
     }
     
