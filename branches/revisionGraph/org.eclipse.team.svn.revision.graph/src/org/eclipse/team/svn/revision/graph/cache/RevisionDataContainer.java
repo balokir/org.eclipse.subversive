@@ -24,9 +24,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNLogPath;
 import org.eclipse.team.svn.core.operation.ActivityCancelledException;
+import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.revision.graph.investigate.TimeMeasure;
 
 /**
+ * Entry point to cache 
+ * 
  * @author Igor Burilo
  */
 public class RevisionDataContainer {	
@@ -192,31 +196,61 @@ public class RevisionDataContainer {
 		return pathIndexesInStream;
 	}
 	
-	protected ChangedPathStructure[] readChangedPaths() throws IOException {
-		//TODO delete
-		int y = 0;
+	protected ChangedPathStructure[] readChangedPaths(IProgressMonitor monitor, IActionOperation calledFrom) throws IOException {		
+		if (calledFrom != null) {
+			ProgressMonitorUtility.setTaskInfo(monitor, calledFrom, "Load changed paths");	
+		}	
 		
+		/*
+		 * As there can be many changed paths, we provide progress here, e.g.
+		 * for Apache repository it's about 7 million paths.
+		 * 
+		 * Now it takes about 24 sec to load data
+		 */		
 		int size = (int) this.metadata.getChangedPathsCount();
 		ChangedPathStructure[] changedPaths = new ChangedPathStructure[size];
 		for (int i = 0; i < size; i ++) {
+			
+			//show progress for each 100.000 path
+			if (i % 100000 == 0 && i != 0) {
+				if (calledFrom != null) {
+					ProgressMonitorUtility.setTaskInfo(monitor, calledFrom, "Load changed paths: " + i + " from: " + size);	
+				}
+				if (monitor.isCanceled()) {
+					throw new ActivityCancelledException();
+				}
+			}
+			
 			ChangedPathStructure changedPath = new ChangedPathStructure();
 			boolean hasNext = changedPath.load(this);
 			changedPaths[i] = changedPath;			
 			if (!hasNext) {
 				break;
-			}
-			
-			if (y ++ % 100000 == 0) {
-				System.out.println(y);
-			}
+			}						
 		}
 		return changedPaths;
 	}
 	
-	protected RevisionStructure[] readRevisions() throws IOException {
-		int size = (int) this.metadata.getLastProcessedRevision() + 1;
+	protected RevisionStructure[] readRevisions(IProgressMonitor monitor, IActionOperation calledFrom) throws IOException {
+		if (calledFrom != null) {
+			ProgressMonitorUtility.setTaskInfo(monitor, calledFrom, "Load revisions");	
+		}	
+		
+		int size = (int) this.metadata.getLastProcessedRevision() + 1;		
 		RevisionStructure[] revisions = new RevisionStructure[size];
-		for (int i = 0; i < size - 1; i ++) {
+		int count = size - 1;
+		for (int i = 0; i < count; i ++) {
+			
+			//show progress for each 100.000 revision
+			if (i % 100000 == 0 && i != 0) {
+				if (calledFrom != null) {
+					ProgressMonitorUtility.setTaskInfo(monitor, calledFrom, "Load revisions: " + i + " from: " + count);	
+				}
+				if (monitor.isCanceled()) {
+					throw new ActivityCancelledException();
+				}
+			}
+			
 			RevisionStructure revision = new RevisionStructure();
 			boolean hasNext = revision.load(this);
 			revisions[(int) revision.getRevision()] = revision;			
@@ -266,7 +300,7 @@ public class RevisionDataContainer {
 		}
 	}
 	
-	public void initForRead(IProgressMonitor monitor) throws IOException {
+	public void initForRead(IProgressMonitor monitor, IActionOperation calledFrom) throws IOException {
 		if (this.metadata.getLastProcessedRevision() == 0) {
 			this.revisions = new RevisionStructure[0];
 			return;
@@ -278,19 +312,19 @@ public class RevisionDataContainer {
 		this.changedPathsInStream = new BufferedReader(new FileReader(new File(this.cacheDir, RevisionDataContainer.CHANGED_PATHS_FILE)));
 		this.revisionDataInStream = new RandomAccessFile(new File(this.cacheDir, RevisionDataContainer.REVISION_DATA_FILE), "r");
 		
-		try {						
+		try {		
 			//read changed paths
 			TimeMeasure changedPathsMeasure = new TimeMeasure("Load changed paths");	
-			ChangedPathStructure[] changedPaths = this.readChangedPaths();
+			ChangedPathStructure[] changedPaths = this.readChangedPaths(monitor, calledFrom);
 			changedPathsMeasure.end();
 			
 			if (monitor.isCanceled()) {
 				throw new ActivityCancelledException();
 			}
 			
-			//read revisions
+			//read revisions			
 			TimeMeasure revisionsMeasure = new TimeMeasure("Load revisions");
-			this.revisions = this.readRevisions();
+			this.revisions = this.readRevisions(monitor, calledFrom);
 			revisionsMeasure.end();
 			
 			if (monitor.isCanceled()) {
@@ -367,6 +401,10 @@ public class RevisionDataContainer {
 			try { this.revisionDataInStream.close(); } catch (IOException e) { /*ignore*/ }
 			this.revisionDataInStream = null;
 		}	
+		
+		//clear not needed resources
+		this.revisions = null;
+		this.copyToContainer = null;
 	}
 	
 	public void closeForWrite() {

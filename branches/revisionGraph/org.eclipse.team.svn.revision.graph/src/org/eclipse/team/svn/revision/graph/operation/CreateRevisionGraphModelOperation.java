@@ -64,9 +64,10 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 				
 		TimeMeasure readMeasure = new TimeMeasure("Read data");		
 		this.dataContainer = this.prepareDataOp.getDataContainer();
-		this.dataContainer.initForRead(monitor);		
+		this.dataContainer.initForRead(monitor, this);		
 		readMeasure.end();
 		
+		ProgressMonitorUtility.setTaskInfo(monitor, this, "Proccessing model");
 		TimeMeasure processMeasure = new TimeMeasure("Create model");
 		try {
 			String url = this.resource.getUrl();
@@ -91,18 +92,14 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 			if (entry != null) {
 				this.resultNode = this.createRevisionNode(entry, pathIndex);	
 										
-				this.process(this.resultNode, monitor);								
+				this.process(this.resultNode, monitor);
 				
 				//fill result model with other data: author, message, date, children
 				new TopRightTraverseVisitor() {				
 					protected void visit(NodeConnections node) {
-						PathRevision pathRevision = (PathRevision) node;							
-						
-						try {							
-							RevisionStructure revisionStructure = getEntry(pathRevision.getRevision());
-							if (revisionStructure != null) {
-								dataContainer.loadRevisionData(revisionStructure);																						
-							}
+						PathRevision pathRevision = (PathRevision) node;
+						try {										
+							dataContainer.loadRevisionData(pathRevision.getRevisionData());
 						} catch (IOException ie) {
 							CreateRevisionGraphModelOperation.this.reportWarning("Failed to load log entry data for revision: " + pathRevision.getRevision(), ie);
 						}
@@ -130,7 +127,6 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 			if (monitor.isCanceled()) {
 				throw new ActivityCancelledException();
 			}
-			ProgressMonitorUtility.setTaskInfo(monitor, this, "Processing node: " + node.getPathIndex() + "@" + node.getRevision());
 						
 			this.createRevisionsChainForPath(node);									
 			
@@ -527,7 +523,7 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 			}
 		}
 		
-		PathRevision node = new PathRevision(entry.getRevision(), nodePath, 0, null, null, entry.getChangedPaths(), action, type);
+		PathRevision node = new PathRevision(entry, nodePath, action, type);
 		return node;
 	}
 	
