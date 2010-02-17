@@ -21,12 +21,13 @@ import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphPlugin;
+import org.eclipse.team.svn.revision.graph.cache.RevisionDataContainer;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionGraphEditorInput;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionRootNode;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /** 
- * Utility which builds revision graph operation
+ * Utility which builds revision graph operation 
  *     
  * @author Igor Burilo
  */
@@ -37,17 +38,20 @@ public class RevisionGraphUtility {
 		
 		CheckRepositoryConnectionOperation checkConnectionOp = new CheckRepositoryConnectionOperation(resource);
 		op.add(checkConnectionOp);
-				
-		FetchSkippedRevisionsOperation fetchSkippedOp = new FetchSkippedRevisionsOperation(resource, checkConnectionOp);
-		op.add(fetchSkippedOp, new IActionOperation[]{checkConnectionOp});
 		
-		FetchNewRevisionsOperation fetchNewOp = new FetchNewRevisionsOperation(resource, checkConnectionOp);
-		op.add(fetchNewOp, new IActionOperation[]{fetchSkippedOp});
-				
+		final PrepareRevisionDataOperation prepareDataOp = new PrepareRevisionDataOperation(resource);
+		op.add(prepareDataOp, new IActionOperation[]{checkConnectionOp});
+			
+		FetchSkippedRevisionsOperation fetchSkippedOp = new FetchSkippedRevisionsOperation(resource, checkConnectionOp, prepareDataOp);
+		op.add(fetchSkippedOp, new IActionOperation[]{prepareDataOp});
+		
+		FetchNewRevisionsOperation fetchNewOp = new FetchNewRevisionsOperation(resource, checkConnectionOp, prepareDataOp);
+		op.add(fetchNewOp, new IActionOperation[]{fetchSkippedOp});					
+		
 		//create model
-		final CreateRevisionGraphModelOperation createModelOp = new CreateRevisionGraphModelOperation(resource);
-		op.add(createModelOp, new IActionOperation[]{checkConnectionOp});
-						
+		final CreateRevisionGraphModelOperation createModelOp = new CreateRevisionGraphModelOperation(resource, prepareDataOp);
+		op.add(createModelOp, new IActionOperation[]{checkConnectionOp});		
+		
 		//TODO remain this operation for real usage ?
 		//validate model
 		final ValidateRevionGraphModelOperation validateModelOp = new ValidateRevionGraphModelOperation(createModelOp); 
@@ -61,8 +65,9 @@ public class RevisionGraphUtility {
 					public void run() {
 						//TODO handle if model is null
 						if (createModelOp.getModel() != null) {
-							try {
-								UIMonitorUtility.getActivePage().openEditor(new RevisionGraphEditorInput(new RevisionRootNode(createModelOp.getModel())),
+							try {								
+								RevisionDataContainer dataContainer = prepareDataOp.getDataContainer();
+								UIMonitorUtility.getActivePage().openEditor(new RevisionGraphEditorInput(new RevisionRootNode(createModelOp.getModel(), dataContainer)),
 									"org.eclipse.team.svn.revision.graph.graphic.RevisionGraphEditor");
 							} catch (Exception e) {
 								LoggedOperation.reportError(this.getClass().getName(), e);
@@ -77,6 +82,7 @@ public class RevisionGraphUtility {
 		return op;
 	}
 	
+	//TODO we can got a long file name, e.g. about 90 characters which may cause problems
 	public static File getCacheFolder(IRepositoryResource resource) {
 		IPath stateLocation = SVNRevisionGraphPlugin.instance().getStateLocation();
 		String folderName = SVNUtility.base64Encode(resource.getRepositoryLocation().getRepositoryRootUrl());		

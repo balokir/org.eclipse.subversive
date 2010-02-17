@@ -22,7 +22,6 @@ import java.util.Queue;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNLogPath;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
@@ -34,6 +33,11 @@ import org.eclipse.team.svn.revision.graph.PathRevision;
 import org.eclipse.team.svn.revision.graph.TopRightTraverseVisitor;
 import org.eclipse.team.svn.revision.graph.PathRevision.ReviosionNodeType;
 import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
+import org.eclipse.team.svn.revision.graph.cache.ChangedPathStructure;
+import org.eclipse.team.svn.revision.graph.cache.PathStorage;
+import org.eclipse.team.svn.revision.graph.cache.RevisionDataContainer;
+import org.eclipse.team.svn.revision.graph.cache.RevisionStructure;
+import org.eclipse.team.svn.revision.graph.investigate.TimeMeasure;
 
 /**
  * Create revision graph model
@@ -43,55 +47,61 @@ import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
 public class CreateRevisionGraphModelOperation extends AbstractActionOperation {	
 	
 	protected IRepositoryResource resource;	
+	protected PrepareRevisionDataOperation prepareDataOp;
+	protected RevisionDataContainer dataContainer;
 	
 	protected PathRevision resultNode;
-		
-	protected SVNLogReader logReader;
-	
-	public CreateRevisionGraphModelOperation(IRepositoryResource resource) {
+				
+	public CreateRevisionGraphModelOperation(IRepositoryResource resource, PrepareRevisionDataOperation prepareDataOp) {
 		super("Create RevisionGraph Model");
 		this.resource = resource;		
+		this.prepareDataOp = prepareDataOp;
 	}
 	
 	@Override
-	protected void runImpl(IProgressMonitor monitor) throws Exception {	
-		CacheMetadata metadata = new CacheMetadata(RevisionGraphUtility.getCacheFolder(this.resource));
-		metadata.load();
-		this.logReader = new SVNLogReader(RevisionGraphUtility.getCacheFolder(this.resource), metadata.getLastProcessedRevision());
+	protected void runImpl(IProgressMonitor monitor) throws Exception {		
+		TimeMeasure totalMeasure = new TimeMeasure("Total");
+				
+		TimeMeasure readMeasure = new TimeMeasure("Read data");		
+		this.dataContainer = this.prepareDataOp.getDataContainer();
+		this.dataContainer.initForRead(monitor);		
+		readMeasure.end();
 		
+		TimeMeasure processMeasure = new TimeMeasure("Create model");
 		try {
 			String url = this.resource.getUrl();
 			String rootUrl = this.resource.getRepositoryLocation().getRepositoryRootUrl();	
 		
 			SVNRevision svnRevision = this.resource.getSelectedRevision();
-			String path = url.substring(rootUrl.length());				
+			String path = url.substring(rootUrl.length());
+						
+			int pathIndex = this.dataContainer.getPathStorage().add(path);
 					
 			long revision;		
 			if (svnRevision.getKind() == SVNRevision.Kind.NUMBER) {
 				revision = ((SVNRevision.Number) svnRevision).getNumber();
 			} else if (svnRevision.getKind() == SVNRevision.Kind.HEAD) {			
 				//revision = this.entries[this.entries.length - 1].revision;				
-				revision = this.logReader.getLastProcessedRevision();
+				revision = this.dataContainer.getLastProcessedRevision();
 			} else {
 				throw new Exception("Unexpected revision kind: " + svnRevision);
-			}
-					
-			SVNLogEntry entry = this.findStartLogEntry(revision, path);
+			}								
+			
+			RevisionStructure entry = this.findStartLogEntry(revision, pathIndex);
 			if (entry != null) {
-				this.resultNode = this.createRevisionNode(entry, path);	
+				this.resultNode = this.createRevisionNode(entry, pathIndex);	
 										
 				this.process(this.resultNode, monitor);								
 				
 				//fill result model with other data: author, message, date, children
 				new TopRightTraverseVisitor() {				
 					protected void visit(NodeConnections node) {
-						PathRevision pathRevision = (PathRevision) node;						
-						try {
-							SVNLogEntry logEntry = CreateRevisionGraphModelOperation.this.logReader.loadRawLogEntry(pathRevision.getRevision());
-							if (logEntry != null) {
-								pathRevision.setMessage(logEntry.message);
-								pathRevision.setDate(logEntry.date);
-								pathRevision.setAuthor(logEntry.author);	
+						PathRevision pathRevision = (PathRevision) node;							
+						
+						try {							
+							RevisionStructure revisionStructure = getEntry(pathRevision.getRevision());
+							if (revisionStructure != null) {
+								dataContainer.loadRevisionData(revisionStructure);																						
 							}
 						} catch (IOException ie) {
 							CreateRevisionGraphModelOperation.this.reportWarning("Failed to load log entry data for revision: " + pathRevision.getRevision(), ie);
@@ -100,8 +110,12 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 				}.traverse(this.resultNode.getStartNodeInGraph());
 			}									
 		} finally {
-			this.logReader.close();
-		}
+			this.dataContainer.closeForRead();
+		}	
+		
+		processMeasure.end();
+		
+		totalMeasure.end();
 	}
 	
 	/*
@@ -116,7 +130,7 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 			if (monitor.isCanceled()) {
 				throw new ActivityCancelledException();
 			}
-			ProgressMonitorUtility.setTaskInfo(monitor, this, "Processing node: " + node.getPath() + "@" + node.getRevision());
+			ProgressMonitorUtility.setTaskInfo(monitor, this, "Processing node: " + node.getPathIndex() + "@" + node.getRevision());
 						
 			this.createRevisionsChainForPath(node);									
 			
@@ -174,10 +188,10 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 			long rev = node.getRevision();
 			PathRevision processNode = node;
 			while (true) {								
-				if (++ rev < this.logReader.getLastProcessedRevision()) {
-					SVNLogEntry entry = this.getEntry(rev);
+				if (++ rev < this.dataContainer.getLastProcessedRevision()) {
+					RevisionStructure entry = this.getEntry(rev);
 					if (entry != null) {
-						PathRevision nextNode = this.createRevisionNode(entry, node.getPath());
+						PathRevision nextNode = this.createRevisionNode(entry, node.getPathIndex());
 						//not modified nodes are not included in chain
 						if (nextNode.action != RevisionNodeAction.NONE) {
 							//'rename' stops processing 
@@ -203,9 +217,9 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 			PathRevision processNode = node;
 			while (true) {
 				if (-- rev > 0) {
-					SVNLogEntry entry = this.getEntry(rev);
+					RevisionStructure entry = this.getEntry(rev);
 					if (entry != null) {
-						PathRevision prevNode = this.createRevisionNode(entry, node.getPath());
+						PathRevision prevNode = this.createRevisionNode(entry, node.getPathIndex());
 						//not modified nodes are not included in chain
 						if (prevNode.action != RevisionNodeAction.NONE) {
 							processNode.setPrevious(prevNode);
@@ -233,103 +247,53 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 		return node.action == RevisionNodeAction.DELETE;			
 	}
 	
-	protected Map<PathRevision, List<PathRevision>> findCopiedToNodesInRevisionChain(PathRevision node) {		
-		//find path and revisions range for it [start - end]
-		String path = node.getPath();
-		long startRevision = node.getStartNodeInChain().getRevision();
-		PathRevision endNodeInChain = node.getEndNodeInChain();
-		long endRevision = this.isDeletedNode(endNodeInChain) ? endNodeInChain.getRevision() : Long.MAX_VALUE; 
+	protected List<ChangedPathStructure> filterOutCopyToData(List<ChangedPathStructure> copyToList, long startRevision, long endRevision, int path) {
+		/*						
+		 * Filter out unrelated changed paths
+		 *  		 
+		 * There can be following situation:
+		 * Action:		Path:									Copy from path:								Revision
+		 * Added		/RevisionGraph/tags/t1					/RevisionGraph/branches/br1					7349
+		 * Replacing	/RevisionGraph/tags/t1/src/Foo.java		/RevisionGraph/branches/br1/src/Foo.java	7351
+		 * 
+		 * In this case we need to choose more specific case and remove other case, 
+		 * this is important because they have different copied from revision
+		 */		
+		List<ChangedPathStructure> filteredCopyToList = new ArrayList<ChangedPathStructure>();
 		
-		Map<PathRevision, List<PathRevision>> copyToMap = new HashMap<PathRevision, List<PathRevision>>();
-		
-		//look from 'start' to HEAD in entries, copied from path or parent
-		for (long i = startRevision; i < this.logReader.getLastProcessedRevision(); i ++) {
-			SVNLogEntry entry = this.getEntry(i);
-			if (entry != null && entry.changedPaths != null) {
-				/*						
-				 * Filter out unrelated changed paths
-				 *  		 
-				 * There can be following situation:
-				 * Action:		Path:									Copy from path:								Revision
-				 * Added		/RevisionGraph/tags/t1					/RevisionGraph/branches/br1					7349
-				 * Replacing	/RevisionGraph/tags/t1/src/Foo.java		/RevisionGraph/branches/br1/src/Foo.java	7351
-				 * 
-				 * In this case we need to choose more specific case and remove other case, 
-				 * this is important because they have different copied from revision
-				 */					
-				List<SVNLogPath> changedPaths = new ArrayList<SVNLogPath>();
-				for (SVNLogPath changedPath : entry.changedPaths) {		
-					if ((changedPath.action == SVNLogPath.ChangeType.ADDED || changedPath.action == SVNLogPath.ChangeType.REPLACED) && 
-							changedPath.copiedFromPath != null &&
-							changedPath.copiedFromRevision >= startRevision && changedPath.copiedFromRevision <= endRevision) {
-						
-						if (this.isParentPath(changedPath.copiedFromPath, path)) {
-							boolean canAdd = true;
-							if (!changedPaths.isEmpty()) {
-								Iterator<SVNLogPath> iter = changedPaths.iterator();
-								while (iter.hasNext()) {
-									SVNLogPath existingChangedPath = iter.next();
-									if (this.isParentPath(existingChangedPath.path, changedPath.path) && 
-										this.isParentPath(existingChangedPath.copiedFromPath, changedPath.copiedFromPath)) {
-										iter.remove();																				
-									} else if (this.isParentPath(changedPath.path, existingChangedPath.path) &&
-											this.isParentPath(changedPath.copiedFromPath, existingChangedPath.copiedFromPath)) {
-										//ignore
-										canAdd = false;
-										break;
-									}
-								}
+		for (ChangedPathStructure copy : copyToList) {		
+			long rev = copy.getCopiedFromRevision();
+			if (rev >= startRevision && rev <= endRevision) {							
+				
+				if (this.isParentPath(copy.getCopiedFromPathIndex(), path)) {
+					boolean canAdd = true;
+					if (!filteredCopyToList.isEmpty()) {
+						Iterator<ChangedPathStructure> iter = filteredCopyToList.iterator();
+						while (iter.hasNext()) {
+							ChangedPathStructure existingChangedPath = iter.next();
+							if (this.isParentPath(existingChangedPath.getPathIndex(), copy.getPathIndex()) && 
+								this.isParentPath(existingChangedPath.getCopiedFromPathIndex(), copy.getCopiedFromPathIndex())) {
+								iter.remove();																				
+							} else if (this.isParentPath(copy.getPathIndex(), existingChangedPath.getPathIndex()) &&
+									this.isParentPath(copy.getCopiedFromPathIndex(), existingChangedPath.getCopiedFromPathIndex())) {
+								//ignore
+								canAdd = false;
+								break;
 							}
-							
-							if (canAdd) {
-								changedPaths.add(changedPath);	
-							}							
-						}											
-					}																								
-				}
-								
-				for (SVNLogPath changedPath : changedPaths) {		
-					/*           
-			         * Example:
-					 * 	'trunk' copy to 'branch'
-					 * 	1. path = trunk
-					 * 	2. path = trunk/src/com
-					 */																												
-					String copyToPath = null;
-					if (path.equals(changedPath.copiedFromPath)) {
-						//check exact matching
-						copyToPath = changedPath.path;							
-					} else {
-						//copy was from path's parent																											 
-						copyToPath = changedPath.path + path.substring(changedPath.copiedFromPath.length()); 
+						}
 					}
 					
-					if (copyToPath != null) {
-						PathRevision copyToNode = this.createRevisionNode(entry, copyToPath);							
-						PathRevision copyFromNode = node.findNodeInChain(changedPath.copiedFromRevision);
-						if (copyFromNode == null) {
-							///revision has no modifications and so it's not in the chain
-							SVNLogEntry copyFromEntry = this.getEntry(changedPath.copiedFromRevision);								
-							if (copyFromEntry != null) {									
-								copyFromNode = this.createRevisionNode(copyFromEntry, path);
-							}																
-						}
-													
-						if (copyFromNode != null) {
-							List<PathRevision> copyToNodes;
-							if (copyToMap.containsKey(copyFromNode)) {
-								copyToNodes = copyToMap.get(copyFromNode);
-							} else {
-								copyToNodes = new ArrayList<PathRevision>();
-								copyToMap.put(copyFromNode, copyToNodes);
-							}
-							copyToNodes.add(copyToNode);
-						}
-					}																				
-				}
-			}
-		}		
+					if (canAdd) {
+						filteredCopyToList.add(copy);	
+					}							
+				}											
+			}					
+		}
 		
+		return filteredCopyToList;
+	}
+	
+	protected void postProcessCopyToMap(Map<PathRevision, List<PathRevision>> copyToMap) {
 		/*
 		 * Post process result map:
 		 * If there was rename in revision chain we couldn't know about it from chain.
@@ -360,6 +324,76 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 				}												
 			}	
 		}
+	}
+	
+	protected Map<PathRevision, List<PathRevision>> findCopiedToNodesInRevisionChain(PathRevision node) {
+		Map<PathRevision, List<PathRevision>> copyToMap = new HashMap<PathRevision, List<PathRevision>>();					
+		
+		//find path and revisions range for it [start - end]			
+		long startRevision = node.getStartNodeInChain().getRevision();
+		PathRevision endNodeInChain = node.getEndNodeInChain();
+		long endRevision = this.isDeletedNode(endNodeInChain) ? endNodeInChain.getRevision() : Long.MAX_VALUE;
+		
+		int path = node.getPathIndex();	
+		do {
+						
+			List<ChangedPathStructure> copyToList = this.dataContainer.getCopiedToData(path);
+			List<ChangedPathStructure> filteredCopyToList = this.filterOutCopyToData(copyToList, startRevision, endRevision, node.getPathIndex());
+									
+			Iterator<ChangedPathStructure> iter = filteredCopyToList.iterator();
+			while (iter.hasNext()) {							
+				ChangedPathStructure changedPath = iter.next();
+									
+				/*           
+		         * Example:
+				 * 	'trunk' copy to 'branch'
+				 * 	1. path = trunk
+				 * 	2. path = trunk/src/com
+				 */																												
+				int copyToPath = PathStorage.UNKNOWN_INDEX;
+				if (node.getPathIndex() == changedPath.getCopiedFromPathIndex()) {
+					//check exact matching
+					copyToPath = changedPath.getPathIndex();							
+				} else {
+					//copy was from path's parent																											 
+					//copyToPath = changedPath.pathIndex + node.getPathIndex().substring(changedPath.copiedFromPathIndex.length());					
+					int[] relativeParts = this.dataContainer.getPathStorage().makeRelative(changedPath.getCopiedFromPathIndex(), node.getPathIndex());
+					copyToPath = this.dataContainer.getPathStorage().add(changedPath.getPathIndex(), relativeParts);										
+				}	
+				
+				if (copyToPath != PathStorage.UNKNOWN_INDEX) {
+					RevisionStructure rsCopyTo = this.getEntry(changedPath.getRevision());
+					PathRevision copyToNode = null;
+					if (rsCopyTo != null) {
+						copyToNode = this.createRevisionNode(rsCopyTo, changedPath.getPathIndex());
+					}
+					
+					if (copyToNode != null) {
+						PathRevision copyFromNode = node.findNodeInChain(changedPath.getCopiedFromRevision());
+						if (copyFromNode == null) {
+							///revision has no modifications and so it's not in the chain
+							RevisionStructure copyFromEntry = this.getEntry(changedPath.getCopiedFromRevision());								
+							if (copyFromEntry != null) {									
+								copyFromNode = this.createRevisionNode(copyFromEntry, node.getPathIndex());
+							}																
+						}
+						
+						if (copyFromNode != null) {
+							List<PathRevision> copyToNodes;
+							if (copyToMap.containsKey(copyFromNode)) {
+								copyToNodes = copyToMap.get(copyFromNode);
+							} else {
+								copyToNodes = new ArrayList<PathRevision>();
+								copyToMap.put(copyFromNode, copyToNodes);
+							}
+							copyToNodes.add(copyToNode);
+						}
+					} 			
+				}									
+			}									
+		} while ((path = this.dataContainer.getPathStorage().getParentPathIndex(path)) != PathStorage.ROOT_INDEX);
+		
+		this.postProcessCopyToMap(copyToMap);
 		
 		return copyToMap;
 	}
@@ -369,27 +403,29 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 		 * copied from: 	branches/br1 
 		 * copied from:		branches/br1/src/com
 		 */			
-		SVNLogEntry entry = this.getEntry(node.getRevision());
-		if (entry != null && entry.changedPaths != null) {			
-			SVNLogPath parentPath = null;			
-			for (SVNLogPath changedPath : entry.changedPaths) {
-				if (changedPath.copiedFromPath != null && this.isParentPath(changedPath.path, node.getPath())) {					
-					if (parentPath != null && this.isParentPath(parentPath.path, changedPath.path) || parentPath == null) {
+		RevisionStructure entry = this.getEntry(node.getRevision());
+		if (entry != null && entry.hasChangedPaths()) {			
+			ChangedPathStructure parentPath = null;			
+			for (ChangedPathStructure changedPath : entry.getChangedPaths()) {
+				if (changedPath.getCopiedFromPathIndex() != PathStorage.UNKNOWN_INDEX && this.isParentPath(changedPath.getPathIndex(), node.getPathIndex())) {					
+					if (parentPath != null && this.isParentPath(parentPath.getPathIndex(), changedPath.getPathIndex()) || parentPath == null) {
 						parentPath = changedPath;
 					}												
 				}			
 			}
 			
 			if (parentPath != null) {
-				SVNLogEntry copiedFromEntry = this.getEntry(parentPath.copiedFromRevision);
+				RevisionStructure copiedFromEntry = this.getEntry(parentPath.getCopiedFromRevision());
 				if (copiedFromEntry != null) {
-					String copiedFromPath;						
-					if (parentPath.path.equals(node.getPath())) {
+					int copiedFromPath;						
+					if (parentPath.getPathIndex() == node.getPathIndex()) {
 						//check exact matching
-						copiedFromPath = parentPath.copiedFromPath;
+						copiedFromPath = parentPath.getCopiedFromPathIndex();
 					} else {
-						//check if copy was from path's parent						
-						copiedFromPath = parentPath.copiedFromPath + node.getPath().substring(parentPath.path.length());
+						//check if copy was from path's parent									
+						//copiedFromPath = parentPath.copiedFromPathIndex + node.getPathIndex().substring(parentPath.pathIndex.length());
+						int[] relativeParts = this.dataContainer.getPathStorage().makeRelative(parentPath.getPathIndex(), node.getPathIndex());
+						copiedFromPath = this.dataContainer.getPathStorage().add(parentPath.getCopiedFromPathIndex(), relativeParts);
 					}
 					return this.createRevisionNode(copiedFromEntry, copiedFromPath);	
 				}
@@ -398,14 +434,14 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 		return null;
 	}
 	
-	protected SVNLogEntry findStartLogEntry(long revision, String path) {		
+	protected RevisionStructure findStartLogEntry(long revision, int path) {		
 		for (long i = revision; i > 0; i --) {
-			SVNLogEntry entry = this.getEntry(i);
-			if (entry != null && entry.changedPaths != null) {			
-				for (SVNLogPath changedPath : entry.changedPaths) {						
-					if (this.isParentPath(changedPath.path, path)) {
-						if (changedPath.action == SVNLogPath.ChangeType.ADDED || 
-							changedPath.action == SVNLogPath.ChangeType.REPLACED && changedPath.copiedFromPath != null) {
+			RevisionStructure entry = this.getEntry(i);
+			if (entry != null && entry.hasChangedPaths()) {			
+				for (ChangedPathStructure changedPath : entry.getChangedPaths()) {						
+					if (this.isParentPath(changedPath.getPathIndex(), path)) {
+						if (changedPath.getAction() == SVNLogPath.ChangeType.ADDED || 
+							changedPath.getAction() == SVNLogPath.ChangeType.REPLACED && changedPath.getCopiedFromPathIndex() != PathStorage.UNKNOWN_INDEX) {
 							return entry;
 						}
 					}					
@@ -420,24 +456,22 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 	 *  If path is created during 'rename', then returned node path corresponds to passed path
 	 * 	If path is deleted during 'rename', then returned node path doesn't correspond to passed path 		 
 	 */
-	protected PathRevision createRevisionNode(SVNLogEntry entry, String path) {			
+	protected PathRevision createRevisionNode(RevisionStructure entry, int pathIndex) {		
 		//path can be changed during rename
-		String nodePath = path;
+		int nodePath = pathIndex;
 		RevisionNodeAction action = PathRevision.RevisionNodeAction.NONE;	
 				
-		if (entry.changedPaths != null) {
-			SVNLogPath parentPath = null;
-			SVNLogPath childPath = null;
-			IPath pCurrentPath = new Path(path);
-			for (SVNLogPath changedPath : entry.changedPaths) {
-				IPath pChangedPath = new Path(changedPath.path);
-				if (this.isParentPath(pChangedPath, pCurrentPath)) {
-					if (parentPath != null && this.isParentPath(new Path(parentPath.path), pChangedPath) || parentPath == null) {
+		if (entry.hasChangedPaths()) {
+			ChangedPathStructure parentPath = null;
+			ChangedPathStructure childPath = null;			
+			for (ChangedPathStructure changedPath : entry.getChangedPaths()) {				
+				if (this.isParentPath(changedPath.getPathIndex(), pathIndex)) {
+					if (parentPath != null && this.isParentPath(parentPath.getPathIndex(), changedPath.getPathIndex()) || parentPath == null) {
 						parentPath = changedPath;
 					}					
 				}				
-				if (this.isParentPath(pCurrentPath, pChangedPath)) {
-					if (childPath != null && this.isParentPath(pChangedPath, new Path(childPath.path)) || childPath == null) {
+				if (this.isParentPath(pathIndex, changedPath.getPathIndex())) {
+					if (childPath != null && this.isParentPath(changedPath.getPathIndex(), childPath.getPathIndex()) || childPath == null) {
 						childPath = changedPath;
 					}
 				}
@@ -445,36 +479,39 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 			
 			if (parentPath != null) {				
 				//as checkRenameAction is complex, it should be verified first
-				SVNLogPath renamedLogPath = this.checkRenameAction(path, parentPath, entry);				
+				ChangedPathStructure renamedLogPath = this.checkRenameAction(pathIndex, parentPath, entry);				
 				if (renamedLogPath != null) {
 					action = RevisionNodeAction.RENAME;
 					
-					if (parentPath.action == SVNLogPath.ChangeType.DELETED) {
-						nodePath = renamedLogPath.path;
-						if (path.startsWith(parentPath.path) && path.length() > parentPath.path.length()) {
-							nodePath += path.substring(parentPath.path.length());
+					if (parentPath.getAction() == SVNLogPath.ChangeType.DELETED) {
+						nodePath = renamedLogPath.getPathIndex();
+						if (/*pathIndex.startsWith(parentPath.pathIndex) && pathIndex.length() > parentPath.pathIndex.length()*/
+								this.dataContainer.getPathStorage().isParentIndex(parentPath.getPathIndex(), pathIndex)) {
+							//nodePath += pathIndex.substring(parentPath.pathIndex.length());
+							int[] relativeParts = this.dataContainer.getPathStorage().makeRelative(parentPath.getPathIndex(), pathIndex);
+							nodePath = this.dataContainer.getPathStorage().add(nodePath, relativeParts);	
 						}
 					} else {
-						nodePath = path;
+						nodePath = pathIndex;
 					}
-				} else if (this.isAddOnlyAction(path, parentPath)) {
+				} else if (this.isAddOnlyAction(pathIndex, parentPath)) {
 					action = RevisionNodeAction.ADD;					
-				} else if (this.isCopyAction(path, parentPath)) {
+				} else if (this.isCopyAction(pathIndex, parentPath)) {
 					action = RevisionNodeAction.COPY;					
-				} else if (this.isDeleteAction(path, parentPath)) {
+				} else if (this.isDeleteAction(pathIndex, parentPath)) {
 					action = RevisionNodeAction.DELETE;				
 				}		
 			} 
 			if (action == PathRevision.RevisionNodeAction.NONE && childPath != null) {
-				if (this.isModifyAction(path, childPath)) {
+				if (this.isModifyAction(pathIndex, childPath)) {
 					action = RevisionNodeAction.MODIFY;
 				}
 			}			
 		}
 		
 		ReviosionNodeType type = ReviosionNodeType.OTHER;
-		if (this.resource.getRepositoryLocation().isStructureEnabled() && (action == RevisionNodeAction.ADD || action == RevisionNodeAction.COPY)) {
-			IPath pPath = new Path(nodePath);
+		if (this.resource.getRepositoryLocation().isStructureEnabled() && (action == RevisionNodeAction.ADD || action == RevisionNodeAction.COPY)) {					
+			IPath pPath = new Path(this.dataContainer.getPathStorage().getPath(nodePath));
 			String[] segments = pPath.segments();
 			for (int i = segments.length - 1; i >= 0; i --) {
 				if (this.resource.getRepositoryLocation().getTrunkLocation().equals(segments[i])) {
@@ -490,7 +527,7 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 			}
 		}
 		
-		PathRevision node = new PathRevision(entry.revision, nodePath, entry.date, entry.author, entry.message, entry.changedPaths, action, type);
+		PathRevision node = new PathRevision(entry.getRevision(), nodePath, 0, null, null, entry.getChangedPaths(), action, type);
 		return node;
 	}
 	
@@ -498,33 +535,33 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 	 * It doesn't check whether this rename or delete,
 	 * so if you need to differ them, call rename action at first
 	 */
-	protected boolean isDeleteAction(String path, SVNLogPath parentChangedPath) {
+	protected boolean isDeleteAction(int path, ChangedPathStructure parentChangedPath) {
 		return 
-			parentChangedPath.action == SVNLogPath.ChangeType.REPLACED && parentChangedPath.copiedFromPath == null ||
-			parentChangedPath.action == SVNLogPath.ChangeType.DELETED;
+			parentChangedPath.getAction() == SVNLogPath.ChangeType.REPLACED && parentChangedPath.getCopiedFromPathIndex() == PathStorage.UNKNOWN_INDEX ||
+			parentChangedPath.getAction() == SVNLogPath.ChangeType.DELETED;
 	}
 	
-	protected boolean isAddOnlyAction(String path, SVNLogPath parentChangedPath) {
-		return parentChangedPath.action == SVNLogPath.ChangeType.ADDED && parentChangedPath.copiedFromPath == null;
+	protected boolean isAddOnlyAction(int path, ChangedPathStructure parentChangedPath) {
+		return parentChangedPath.getAction() == SVNLogPath.ChangeType.ADDED && parentChangedPath.getCopiedFromPathIndex() == PathStorage.UNKNOWN_INDEX;
 	}		
 
-	protected boolean isCopyAction(String path, SVNLogPath parentChangedPath) {
-		return parentChangedPath.copiedFromPath != null &&
-			(parentChangedPath.action == SVNLogPath.ChangeType.ADDED || parentChangedPath.action == SVNLogPath.ChangeType.REPLACED);					
+	protected boolean isCopyAction(int path, ChangedPathStructure parentChangedPath) {
+		return parentChangedPath.getCopiedFromPathIndex() != PathStorage.UNKNOWN_INDEX &&
+			(parentChangedPath.getAction() == SVNLogPath.ChangeType.ADDED || parentChangedPath.getAction() == SVNLogPath.ChangeType.REPLACED);					
 	}
 	
 	/*
 	 * If there's 'rename' return SVNLogPath which corresponds to 'Added' action,
 	 * if there's no 'rename' return null 
 	 */
-	protected SVNLogPath checkRenameAction(String path, SVNLogPath parentChangedPath, SVNLogEntry parentEntry) {
+	protected ChangedPathStructure checkRenameAction(int path, ChangedPathStructure parentChangedPath, RevisionStructure parentEntry) {
 		/*						Copied from:
 		 * Deleted	path		
 		 * Added	path-2		path
 		 */
-		if (parentChangedPath.action == SVNLogPath.ChangeType.DELETED) {
-			for (SVNLogPath chPath : parentEntry.changedPaths) {
-				if (chPath.action == SVNLogPath.ChangeType.ADDED && this.isParentPath(chPath.copiedFromPath, path)) {
+		if (parentChangedPath.getAction() == SVNLogPath.ChangeType.DELETED) {
+			for (ChangedPathStructure chPath : parentEntry.getChangedPaths()) {
+				if (chPath.getAction() == SVNLogPath.ChangeType.ADDED && this.isParentPath(chPath.getCopiedFromPathIndex(), path)) {
 					return chPath;
 				}
 			}
@@ -534,8 +571,8 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 		 * Deleted	path-2
 		 */
 		if (this.isCopyAction(path, parentChangedPath)) {
-			for (SVNLogPath chPath : parentEntry.changedPaths) {
-				if (chPath.action == SVNLogPath.ChangeType.DELETED && chPath.path.equals(parentChangedPath.copiedFromPath)) {
+			for (ChangedPathStructure chPath : parentEntry.getChangedPaths()) {
+				if (chPath.getAction() == SVNLogPath.ChangeType.DELETED && chPath.getPathIndex() == parentChangedPath.getCopiedFromPathIndex()) {
 					return parentChangedPath;
 				}
 			}
@@ -543,33 +580,19 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 		return null;
 	}
 	
-	protected boolean isModifyAction(String path, SVNLogPath childChangedPath) {
-		return childChangedPath.path.equals(path) ? (childChangedPath.action == SVNLogPath.ChangeType.MODIFIED) : true; 
+	protected boolean isModifyAction(int path, ChangedPathStructure childChangedPath) {
+		return childChangedPath.getPathIndex() == path ? (childChangedPath.getAction() == SVNLogPath.ChangeType.MODIFIED) : true; 
 	}
 	
-	protected boolean isParentPath(String parentPath, String childPath) {
-		IPath pParentPath = new Path(parentPath);
-		IPath pChildPath = new Path(childPath);
-		return this.isParentPath(pParentPath, pChildPath);		
-	}
-	
-	protected boolean isParentPath(IPath parentPath, IPath childPath) {
-		return parentPath.isPrefixOf(childPath);
+	protected boolean isParentPath(int parentPathIndex, int childPathIndex) {
+		return this.dataContainer.getPathStorage().isParentIndex(parentPathIndex, childPathIndex);		
 	}
 	
 	/*
 	 * Note that entry can be null, e.g. because of cache repository, cache corrupted
 	 */
-	protected SVNLogEntry getEntry(long revision) {		
-		try {
-			SVNLogPath[] paths = this.logReader.loadLogPaths(revision);
-			if (paths.length > 0) {
-				return new SVNLogEntry(revision, 0, null, null, paths, false);
-			}
-		} catch (IOException ie) {
-			this.reportWarning("Failed to load log paths for revision: " + revision, ie);
-		}
-		return null;
+	protected RevisionStructure getEntry(long revision) {
+		return this.dataContainer.getRevision(revision);
 	}
 	
 	/**

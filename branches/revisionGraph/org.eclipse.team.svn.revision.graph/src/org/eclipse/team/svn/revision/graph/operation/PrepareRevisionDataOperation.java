@@ -11,25 +11,32 @@
 package org.eclipse.team.svn.revision.graph.operation;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
-import org.eclipse.team.svn.revision.graph.cache.CacheMetadata;
+import org.eclipse.team.svn.revision.graph.cache.RevisionDataContainer;
 
 /**
- * Fetch previously skipped revisions
  * 
  * @author Igor Burilo
  */
-public class FetchSkippedRevisionsOperation extends BaseFetchOperation {
+public class PrepareRevisionDataOperation extends AbstractActionOperation {
+
+	protected IRepositoryResource resource;
 	
-	public FetchSkippedRevisionsOperation(IRepositoryResource resource, CheckRepositoryConnectionOperation checkConnectionOp, PrepareRevisionDataOperation prepareDataOp) {
-		super("Fetch Skipped Revisions", resource, checkConnectionOp, prepareDataOp);	
+	protected RevisionDataContainer dataContainer;
+	
+	public PrepareRevisionDataOperation(IRepositoryResource resource) {
+		super("PrepareRevisionDataOperation");
+		this.resource = resource;
 	}
-
+	
 	@Override
-	protected void prepareData(CacheMetadata metadata, IProgressMonitor monitor) throws Exception {		
-		this.startRevision = metadata.getStartSkippedRevision();
-		this.endRevision = metadata.getEndSkippedRevision();			
-		this.canRun = this.startRevision != 0;							
+	protected void runImpl(IProgressMonitor monitor) throws Exception {
+		this.dataContainer = new RevisionDataContainer(RevisionGraphUtility.getCacheFolder(this.resource));
+		this.dataContainer.prepareData(monitor);
 	}
-
+	
+	public RevisionDataContainer getDataContainer() {
+		return this.dataContainer;
+	}		
 }

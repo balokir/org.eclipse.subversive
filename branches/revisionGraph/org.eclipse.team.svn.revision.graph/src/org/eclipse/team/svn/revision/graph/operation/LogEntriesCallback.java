@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.operation;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -18,6 +17,7 @@ import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNLogEntryCallbackWithMergeInfo;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
+import org.eclipse.team.svn.revision.graph.cache.RevisionDataContainer;
 
 /**
  * Provide progress for operation
@@ -34,19 +34,15 @@ public class LogEntriesCallback extends SVNLogEntryCallbackWithMergeInfo {
 	protected int currentWork;	
 	protected SVNLogEntry currentEntry;
 	
-	protected SVNLogWriter logSerializer;
-	protected CacheMetadata cacheMetadata;
+	protected RevisionDataContainer dataContainer;
 			
 	protected Throwable error;
 	
-	public LogEntriesCallback(IActionOperation op, IProgressMonitor monitor, int totalWork, File cacheFolder, CacheMetadata cacheMetadata) throws IOException {
+	public LogEntriesCallback(IActionOperation op, IProgressMonitor monitor, int totalWork, RevisionDataContainer dataContainer) throws IOException {
 		this.op = op;
 		this.monitor = monitor;
-		this.totalWork = totalWork;
-		
-		this.cacheMetadata = cacheMetadata;
-		
-		this.logSerializer = new SVNLogWriter(cacheFolder);		
+		this.totalWork = totalWork;				
+		this.dataContainer = dataContainer;
 	}
 	
 	@Override
@@ -60,15 +56,15 @@ public class LogEntriesCallback extends SVNLogEntryCallbackWithMergeInfo {
 			ProgressMonitorUtility.progress(this.monitor, ++ this.currentWork, this.totalWork);
 					
 			try {
-				this.logSerializer.save(entry);
+				this.dataContainer.saveEntry(entry);
 				
-				long start = this.cacheMetadata.getStartSkippedRevision();
-				long end = this.cacheMetadata.getEndSkippedRevision();		
+				long start = this.dataContainer.getCacheMetadata().getStartSkippedRevision();
+				long end = this.dataContainer.getCacheMetadata().getEndSkippedRevision();		
 				if (start > --end) {
 					start = end = 0;
 				} 		
-				this.cacheMetadata.setSkippedRevisions(start, end);
-				this.cacheMetadata.save();				
+				this.dataContainer.getCacheMetadata().setSkippedRevisions(start, end);
+				this.dataContainer.getCacheMetadata().save();				
 			} catch (Throwable e) {
 				this.error = e;				
 				this.monitor.setCanceled(true);				
@@ -89,9 +85,4 @@ public class LogEntriesCallback extends SVNLogEntryCallbackWithMergeInfo {
 //					". Add merge revision: " + child.revision + " to revision: " + parent.revision);						
 //		}			 							
 //	}
-	
-	public void dispose() {
-		this.logSerializer.close();
-	}	
-
 }

@@ -20,6 +20,7 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
 import org.eclipse.team.svn.revision.graph.graphic.editpart.RevisionEditPart;
 import org.eclipse.team.svn.revision.graph.graphic.editpart.RevisionGraphEditPart;
+import org.eclipse.team.svn.revision.graph.investigate.TimeMeasure;
 
 /**
  * Base class for graph layout managers
@@ -46,7 +47,9 @@ public abstract class AbstractGraphLayoutManager extends AbstractLayout {
 		return result.getSize();	
 	}
 		
-	public void layout(IFigure container) {							
+	public void layout(IFigure container) {	
+		TimeMeasure layoutMeasure = new TimeMeasure("Layout");
+		
 		RevisionNode startNode = null;
 		
 		//set width and height
@@ -74,7 +77,9 @@ public abstract class AbstractGraphLayoutManager extends AbstractLayout {
 			RevisionNode node = editPart.getCastedModel();
 			Rectangle bounds = new Rectangle(node.getX(), node.getY(), node.getWidth(), node.getHeight());
 			editPart.getFigure().setBounds(bounds);
-		}					
+		}	
+		
+		layoutMeasure.end();
 	}			
 	
 	protected abstract AbstractLayoutCommand[] getLayoutCommands(RevisionNode startNode);

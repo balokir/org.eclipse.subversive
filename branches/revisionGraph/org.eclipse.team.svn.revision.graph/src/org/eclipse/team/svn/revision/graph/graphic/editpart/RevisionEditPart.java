@@ -121,8 +121,14 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 		IFigure figure = getFigure();
 		if (figure instanceof RevisionFigure) {
 			RevisionFigure rFigure = (RevisionFigure) figure;
-			rFigure.init(revision.pathRevision.getRevision(), revision.pathRevision.getPath());
+			String path = this.getRevisionRootNode().getRevisionPath(revision.pathRevision.getPathIndex());
+			rFigure.init(revision.pathRevision.getRevision(), path);
 		}					    
+	}
+	
+	protected RevisionRootNode getRevisionRootNode() {
+		RevisionRootNode root = ((RevisionGraphEditPart) getParent()).getCastedModel();
+		return root;
 	}
 	
 	public RevisionNode getCastedModel() {
@@ -131,13 +137,13 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 		
 	@Override
 	protected List<RevisionConnectionNode> getModelSourceConnections() {
-		RevisionRootNode root = ((RevisionGraphEditPart) getParent()).getCastedModel();
+		RevisionRootNode root = this.getRevisionRootNode();
 		return root.getConnections(this.getCastedModel(), true);
 	}
 	
 	@Override
 	protected List<RevisionConnectionNode> getModelTargetConnections() {
-		RevisionRootNode root = ((RevisionGraphEditPart) getParent()).getCastedModel();
+		RevisionRootNode root = this.getRevisionRootNode();
 		return root.getConnections(this.getCastedModel(), false);
 	}	
 	
