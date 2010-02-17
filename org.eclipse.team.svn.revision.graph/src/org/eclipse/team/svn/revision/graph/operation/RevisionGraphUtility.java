@@ -41,7 +41,7 @@ public class RevisionGraphUtility {
 		
 		final PrepareRevisionDataOperation prepareDataOp = new PrepareRevisionDataOperation(resource);
 		op.add(prepareDataOp, new IActionOperation[]{checkConnectionOp});
-			
+					
 		FetchSkippedRevisionsOperation fetchSkippedOp = new FetchSkippedRevisionsOperation(resource, checkConnectionOp, prepareDataOp);
 		op.add(fetchSkippedOp, new IActionOperation[]{prepareDataOp});
 		

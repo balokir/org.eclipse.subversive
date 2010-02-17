@@ -15,7 +15,10 @@ import java.io.RandomAccessFile;
 
 
 /**
- * TODO save author and message in optimized way
+ * 
+ * For 45000 revisions it takes to create needed objects:
+ * date: 0.5 sec, memory: 29MB
+ * (45000 revisions is number of revisions for subversion/trunk on apache repository) 
  * 
  * @author Igor Burilo
  */

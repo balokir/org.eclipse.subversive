@@ -168,6 +168,17 @@ public class RevisionGraphEditor extends GraphicalEditor {
 	public GraphicalViewer getViewer() {
 		return getGraphicalViewer();
 	}
+		
+	@Override
+	public void dispose() {
+		//clear resources
+		RevisionGraphEditorInput editorInput = (RevisionGraphEditorInput) this.getEditorInput();
+		if (editorInput != null) {
+			editorInput.model = null;	
+		}
+		
+		super.dispose();
+	}
 
 }
 

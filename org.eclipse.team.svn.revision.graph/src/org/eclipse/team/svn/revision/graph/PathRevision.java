@@ -13,6 +13,7 @@ package org.eclipse.team.svn.revision.graph;
 import java.util.Iterator;
 
 import org.eclipse.team.svn.revision.graph.cache.ChangedPathStructure;
+import org.eclipse.team.svn.revision.graph.cache.RevisionStructure;
 
 /** 
  * TODO implement IPropertySource for Properties View ?
@@ -38,26 +39,18 @@ public class PathRevision extends NodeConnections {
 	}
 		
 	protected final int pathIndex;	
-	protected final long revision;
 	
-	protected long date;
-	protected String author;
-	protected String message;	
-	protected final ChangedPathStructure[] changedPaths;
-
+	protected final RevisionStructure revisionData;	
+	
 	//TODO move to UI model ?
 	public final ReviosionNodeType type;
 	
 	public final RevisionNodeAction action;			
 	
-	public PathRevision(long revision, int pathIndex, long date, String author, String message, ChangedPathStructure[] changedPaths, RevisionNodeAction action, ReviosionNodeType type) {
-		this.revision = revision;
+	public PathRevision(RevisionStructure revisionData, int pathIndex, RevisionNodeAction action, ReviosionNodeType type) {
+		this.revisionData = revisionData;
 		this.pathIndex = pathIndex;
-		this.date = date;
-		this.author = author;
-		this.message = message;
-		this.changedPaths =	changedPaths;
-		this.action = action;					
+		this.action = action;
 		this.type = type;
 	}
 	
@@ -70,23 +63,23 @@ public class PathRevision extends NodeConnections {
 //	}
 	
 	public long getRevision() {
-		return revision;
+		return this.revisionData.getRevision();
 	}
 	
 	public long getDate() {
-		return date;
+		return this.revisionData.getDate();
 	}
 
 	public String getAuthor() {
-		return author;
+		return this.revisionData.getAuthor();
 	}
 	
 	public String getMessage() {
-		return message;
+		return this.revisionData.getMessage();
 	}
 
 	public ChangedPathStructure[] getChangedPaths() {
-		return changedPaths;
+		return this.revisionData.getChangedPaths();
 	}		
 	
 	public void insertNodeInRevisionsChain(PathRevision node) { 
@@ -125,7 +118,7 @@ public class PathRevision extends NodeConnections {
 	
 	@Override
 	public String toString() {
-		return String.format("%s@%d, action:%s", this.pathIndex, this.revision, this.action);
+		return String.format("%s@%d, action:%s", this.pathIndex, this.getRevision(), this.action);
 	}
 	
 	@Override
@@ -174,15 +167,8 @@ public class PathRevision extends NodeConnections {
 		return (PathRevision) super.getCopiedFrom();
 	}
 
-	public void setMessage(String message) {
-		this.message = message;	
-	}
-	
-	public void setDate(long date) {
-		this.date = date;		
-	}
-
-	public void setAuthor(String author) {
-		this.author = author;		
-	}		
+	public RevisionStructure getRevisionData() {
+		return this.revisionData;
+		
+	}	
 }
