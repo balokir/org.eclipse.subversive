@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.graphic.layout;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
 
@@ -23,34 +26,52 @@ public class SetInitialLocationCommand extends AbstractLayoutCommand {
 
 	public SetInitialLocationCommand(RevisionNode startNode) {
 		super(startNode);
+	}	
+	
+	public void run() {		
+		this.startNode.setX(0);
+		this.startNode.setY(0);
+		
+		Queue<RevisionNode> queue = new LinkedList<RevisionNode>();
+		queue.add(this.startNode);
+		
+		RevisionNode node = null;
+		while ((node = queue.poll()) != null) {
+			this.processCopyTo(node, queue);
+			
+			//process next nodes
+			RevisionNode previous = node;
+			while (previous.getNext() != null) {
+				RevisionNode next = previous.getNext();				
+				next.setX(previous.getX());
+				next.setY(previous.getY() + previous.getHeight());
+				previous = next;
+				
+				this.processCopyTo(next, queue);
+			}						
+		}		
 	}
 
-	@Override
-	public void run() {
-		this.processNode(this.startNode, 0, 0);
-	}
-	
-	protected void processNode(RevisionNode node, int column, int row) {
-		node.setX(column);
-		node.setY(row);				
-		
-		RevisionNode next = node.getNext();
-		if (next != null) {
-			this.processNode(next, column, row + node.getHeight());
-		}
-		
+	protected void processCopyTo(RevisionNode node, Queue<RevisionNode> queue) {		
 		RevisionNode[] copiedTos = node.getCopiedTo();
 		if (copiedTos.length > 0) {
+			int column = node.getX();
+			int row = node.getY();			
+			
 			int copyToCount = 0;
 			for (int i = 0; i < copiedTos.length; i ++) {
 				/*
 				 * Copy to nodes are shown in next column, except of 'Rename' action
 				 * for which we show nodes in the same column  
 				 */
-				int nextNodeColumn = copiedTos[i].pathRevision.action == RevisionNodeAction.RENAME ? column : (column + ++copyToCount);
-				this.processNode(copiedTos[i], nextNodeColumn, row + node.getHeight());
+				RevisionNode copiedTo = copiedTos[i];
+				int nextNodeColumn = copiedTo.pathRevision.action == RevisionNodeAction.RENAME ? column : (column + ++copyToCount);
+				copiedTo.setX(nextNodeColumn);
+				copiedTo.setY(row + node.getHeight());
+				
+				queue.offer(copiedTo);
 			}
-		}
+		}		
 	}
 
 }

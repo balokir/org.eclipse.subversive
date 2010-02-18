@@ -51,6 +51,16 @@ public class RevisionNode extends ChangesNotifier {
 		}
 
 		@Override
+		public RevisionNodeItem getPrevious() {
+			return (RevisionNodeItem) this.previous;
+		} 
+		
+		@Override
+		public RevisionNodeItem getCopiedFrom() {
+			return (RevisionNodeItem) this.copiedFrom;
+		}
+		
+		@Override
 		public RevisionNodeItem[] getCopiedTo() {
 			return this.copiedTo.toArray(new RevisionNodeItem[0]);
 		}

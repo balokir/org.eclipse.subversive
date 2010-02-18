@@ -29,40 +29,37 @@ public class SetYCommand extends AbstractLayoutCommand {
 	}
 
 	@Override
-	public void run() {		
-		this.processNode(this.startNode);
-	}			
-	
-	protected void processNode(RevisionNode node) {				
-		RevisionNode nextNodeToProcess;
-		RevisionNode[] copiedTo = node.getCopiedTo();
-		boolean hasOnlyRename = copiedTo.length == 1 && copiedTo[0].pathRevision.action == RevisionNodeAction.RENAME;
-		
-		if (copiedTo.length == 0 || hasOnlyRename) {
-			/*
-			 * If node doesn't have 'copy to nodes' or it has 'Renamed' copy to node 
-			 * then we can set its location at once without taking into account other nodes
-			 */	
-			ColumnData columnData = this.getColumnStructure(node);
-			columnData.addNode(node);					
+	public void run() {
+		RevisionNode node = this.startNode;		
+		while (node != null) {
+			RevisionNode nextNodeToProcess;
+			RevisionNode[] copiedTo = node.getCopiedTo();
+			boolean hasOnlyRename = copiedTo.length == 1 && copiedTo[0].pathRevision.action == RevisionNodeAction.RENAME;
 			
-			if (hasOnlyRename) {
-				nextNodeToProcess = copiedTo[0];
+			if (copiedTo.length == 0 || hasOnlyRename) {
+				/*
+				 * If node doesn't have 'copy to nodes' or it has 'Renamed' copy to node 
+				 * then we can set its location at once without taking into account other nodes
+				 */	
+				ColumnData columnData = this.getColumnStructure(node);
+				columnData.addNode(node);					
+				
+				if (hasOnlyRename) {
+					nextNodeToProcess = copiedTo[0];
+				} else {
+					nextNodeToProcess = node.getNext() != null ? node.getNext() : this.findNextNodeToProcess(node);	
+				}	
 			} else {
-				nextNodeToProcess = node.getNext() != null ? node.getNext() : this.findNextNodeToProcess(node);	
-			}	
-		} else {
-			//go top by most right direction
-			RevisionNode topNode = this.goTopOnMostRightDirection(node);
-			nextNodeToProcess = this.findNextNodeToProcess(topNode);
-		}
+				//go top by most right direction
+				RevisionNode topNode = this.goTopOnMostRightDirection(node);
+				nextNodeToProcess = this.findNextNodeToProcess(topNode);
+			}
+					
+			this.updateColumnData();		
 				
-		this.updateColumnData();		
-				
-		if (nextNodeToProcess != null) {
-			this.processNode(nextNodeToProcess);
-		}
-	}
+			node = nextNodeToProcess;
+		}				
+	}			
 	
 	protected void updateColumnData() {
 		/*

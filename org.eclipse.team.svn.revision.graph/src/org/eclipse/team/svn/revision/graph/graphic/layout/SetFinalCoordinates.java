@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.graphic.layout;
 
-import java.util.LinkedList;
-
+import org.eclipse.team.svn.revision.graph.NodeConnections;
+import org.eclipse.team.svn.revision.graph.TopRightTraverseVisitor;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
+import org.eclipse.team.svn.revision.graph.graphic.RevisionNode.RevisionNodeItem;
 
 /**
  * Set correct X coordinate: previously it contained column number
@@ -35,26 +36,15 @@ public class SetFinalCoordinates extends AbstractLayoutCommand {
 
 	@Override
 	public void run() {	
-		int maxY = this.setYcommand.getMaxY();			
-		
-		LinkedList<RevisionNode> queue = new LinkedList<RevisionNode>();
-		queue.offer(this.startNode);
-			
-		while (!queue.isEmpty()) {
-			RevisionNode node = queue.poll();
-			
-			node.setX(node.getX() * (node.getWidth() + this.widthOffset));							
-			node.setY(maxY - (node.getY() + node.getHeight()));
-			
-			if (node.getNext() != null) {
-				queue.offer(node.getNext());
+		final int maxY = this.setYcommand.getMaxY();						
+		new TopRightTraverseVisitor() {			
+			@Override
+			protected void visit(NodeConnections cNode) {
+				RevisionNode node = ((RevisionNodeItem) cNode).getRevisionNode();				
+				node.setX(node.getX() * (node.getWidth() + SetFinalCoordinates.this.widthOffset));							
+				node.setY(maxY - (node.getY() + node.getHeight()));				
 			}
-			if (node.getCopiedTo().length > 0) {
-				for (RevisionNode copyTo : node.getCopiedTo()) {
-					queue.offer(copyTo);
-				}
-			} 
-		}
+		}.traverse(this.startNode.getCurrentConnectionItem());
 	}
 
 }
