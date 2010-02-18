@@ -120,10 +120,10 @@ public class RevisionNode extends ChangesNotifier {
 		return false;
 	}
 	
-//	@Override
-//	public int hashCode() {	
-//		return this.pathRevision.hashCode();
-//	}
+	@Override
+	public int hashCode() {	
+		return this.pathRevision.hashCode();
+	}
 	
 	public RevisionNode getNext() {		
 		return this.castItem(this.currentConnectionItem.getNext());

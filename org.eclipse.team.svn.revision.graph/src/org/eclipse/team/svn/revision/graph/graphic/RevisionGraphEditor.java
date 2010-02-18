@@ -23,6 +23,7 @@ import org.eclipse.gef.editparts.ScalableRootEditPart;
 import org.eclipse.gef.editparts.ZoomManager;
 import org.eclipse.gef.ui.parts.GraphicalEditor;
 import org.eclipse.swt.SWT;
+import org.eclipse.team.svn.revision.graph.cache.TimeMeasure;
 import org.eclipse.team.svn.revision.graph.graphic.editpart.GraphEditPartFactory;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
@@ -51,12 +52,23 @@ public class RevisionGraphEditor extends GraphicalEditor {
 	 * Set up the editor's inital content (after creation).
 	 */
 	@Override
-	protected void initializeGraphicalViewer() {		
-		GraphicalViewer viewer = getGraphicalViewer();
-		viewer.setContents(this.getModel()); // set the contents of this editor
-		
-//		// listen for dropped parts
-//		viewer.addDropTargetListener(createTransferDropTargetListener());		
+	protected void initializeGraphicalViewer() {
+		/*
+		 * This can be a time consuming operation, e.g.
+		 * for 43000 revisions it takes about 62 sec.
+		 * But it seems we can't do anything with it, as
+		 * this operation has to be executed in UI thread. 
+		 * 
+		 *  See GEF bug: https://bugs.eclipse.org/bugs/show_bug.cgi?id=255534
+		 */
+		GraphicalViewer viewer = getGraphicalViewer();				
+		TimeMeasure setContentsMeasure = new TimeMeasure("Set contents");
+		//set the contents of this editor
+		viewer.setContents(getModel()); 
+		setContentsMeasure.end();		
+						
+		// listen for dropped parts
+		//viewer.addDropTargetListener(createTransferDropTargetListener());		
 	}
 	
 	public RevisionRootNode getModel() {
@@ -104,7 +116,7 @@ public class RevisionGraphEditor extends GraphicalEditor {
 		viewer.setEditPartFactory(new GraphEditPartFactory());
 		
 		//TODO remember between sessions
-		boolean isSimpleMode = true;
+		boolean isSimpleMode = false;
 		this.getModel().init(isSimpleMode);
 		
 		//context menu
