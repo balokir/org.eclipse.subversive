@@ -11,8 +11,11 @@
 package org.eclipse.team.svn.revision.graph.graphic;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 
 import org.eclipse.team.svn.revision.graph.NodeConnections;
@@ -40,9 +43,11 @@ public class RevisionRootNode extends ChangesNotifier {
 	protected boolean isSimpleMode;
 		
 	protected NodesFilterManager filterManager;
-	
+		
 	protected List<RevisionNode> currentNodesList = new ArrayList<RevisionNode>();
-	protected List<RevisionConnectionNode> currentConnections = new ArrayList<RevisionConnectionNode>();
+		
+	protected Map<RevisionNode, List<RevisionConnectionNode>> currentSourceConnections = new HashMap<RevisionNode, List<RevisionConnectionNode>>();
+	protected Map<RevisionNode, List<RevisionConnectionNode>> currentTargetConnections = new HashMap<RevisionNode, List<RevisionConnectionNode>>();
 	
 	public RevisionRootNode(PathRevision node, RevisionDataContainer dataContainer) {
 		this.pathRevision = node;
@@ -62,14 +67,9 @@ public class RevisionRootNode extends ChangesNotifier {
 		return this.currentNodesList;
 	}
 	
-	public List<RevisionConnectionNode> getConnections(RevisionNode node, boolean isSource) {
-		List<RevisionConnectionNode> res = new ArrayList<RevisionConnectionNode>();
-		for (RevisionConnectionNode con : this.currentConnections) {
-			if (isSource && con.source.equals(node) || !isSource && con.target.equals(node)) {
-				res.add(con);
-			}
-		}
-		return res;		
+	public List<RevisionConnectionNode> getConnections(RevisionNode node, boolean isSource) {	
+		List<RevisionConnectionNode> res = isSource ? this.currentSourceConnections.get(node) : this.currentTargetConnections.get(node);
+		return res != null ? res : Collections.<RevisionConnectionNode>emptyList();
 	} 				
 	
 	protected void processCurrentModel() {
@@ -104,7 +104,8 @@ public class RevisionRootNode extends ChangesNotifier {
 						
 		//prepare children and connections
 		this.currentNodesList.clear();
-		this.currentConnections.clear();
+		this.currentSourceConnections.clear();
+		this.currentTargetConnections.clear();
 		
 		new TopRightTraverseVisitor() {			
 			public void visit(NodeConnections node) {				
@@ -112,13 +113,11 @@ public class RevisionRootNode extends ChangesNotifier {
 				currentNodesList.add(item.getRevisionNode());
 								
 				if (item.getNext() != null) {
-					RevisionConnectionNode con = new RevisionConnectionNode(item.getRevisionNode(), item.getNext().getRevisionNode());
-					RevisionRootNode.this.currentConnections.add(con);
+					addCurrentConnection(item.getRevisionNode(), item.getNext().getRevisionNode());									
 				}			
 				if (item.getCopiedTo().length > 0) {
 					for (RevisionNodeItem copyToItem : item.getCopiedTo()) {
-						RevisionConnectionNode con = new RevisionConnectionNode(item.getRevisionNode(), copyToItem.getRevisionNode());
-						RevisionRootNode.this.currentConnections.add(con);
+						addCurrentConnection(item.getRevisionNode(), copyToItem.getRevisionNode());
 					}
 				}
 			}
@@ -132,6 +131,26 @@ public class RevisionRootNode extends ChangesNotifier {
 		}
 		
 		processMeasure.end();
+	}
+	
+	protected void addCurrentConnection(RevisionNode source, RevisionNode target) {
+		RevisionConnectionNode con = new RevisionConnectionNode(source, target);
+		
+		//source
+		List<RevisionConnectionNode> sourceConnections = this.currentSourceConnections.get(source);
+		if (sourceConnections == null) {
+			sourceConnections = new ArrayList<RevisionConnectionNode>();
+			this.currentSourceConnections.put(source, sourceConnections);
+		}
+		sourceConnections.add(con);
+		
+		//target
+		List<RevisionConnectionNode> targetConnections = this.currentTargetConnections.get(target);
+		if (targetConnections == null) {
+			targetConnections = new ArrayList<RevisionConnectionNode>();
+			this.currentTargetConnections.put(target, targetConnections);
+		}
+		targetConnections.add(con);		
 	}
 	
 	protected final void createInitialConnections() {
