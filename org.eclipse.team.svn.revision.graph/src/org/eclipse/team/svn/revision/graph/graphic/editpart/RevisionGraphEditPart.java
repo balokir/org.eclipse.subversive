@@ -12,11 +12,16 @@ package org.eclipse.team.svn.revision.graph.graphic.editpart;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.FreeformLayer;
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.gef.EditPart;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionRootNode;
@@ -82,6 +87,81 @@ public class RevisionGraphEditPart extends AbstractGraphicalEditPart implements 
 		if (RevisionRootNode.LAYOUT_PROPERTY.equals(evt.getPropertyName())) {
 			refreshChildren();			
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.gef.editparts.AbstractEditPart#refreshChildren()
+	 * 
+	 * Override implementation in base class because there can be cases where
+	 * not all previous children are deleted. Example:
+	 * 
+	 * Previous children:
+	 * 1 2 3
+	 * 
+	 * New children:
+	 * 2 4
+	 * 
+	 * In base class implementation '1' element will not be deleted
+	 * and as a result we'll get incorrect layout
+	 */
+	@Override
+	protected void refreshChildren() {
+		int i;
+		EditPart editPart;
+		Object model;
+
+		Map modelToEditPart = new HashMap();
+		List children = getChildren();
+		
+		List oldChildren = new ArrayList(children);
+
+		for (i = 0; i < children.size(); i++) {
+			editPart = (EditPart)children.get(i);
+			modelToEditPart.put(editPart.getModel(), editPart);
+		}
+
+		List modelObjects = getModelChildren();
+		
+		HashSet<Object> newModelObjectsHashSet = new HashSet<Object>();
+		
+		for (i = 0; i < modelObjects.size(); i++) {
+			model = modelObjects.get(i);						
+
+			newModelObjectsHashSet.add(model);									
+			
+			//Do a quick check to see if editPart[i] == model[i]
+			if (i < children.size()
+				&& ((EditPart) children.get(i)).getModel() == model)
+					continue;
+
+			//Look to see if the EditPart is already around but in the wrong location
+			editPart = (EditPart)modelToEditPart.get(model);
+
+			if (editPart != null)
+				reorderChild (editPart, i);
+			else {
+				//An editpart for this model doesn't exist yet.  Create and insert one.
+				editPart = createChild(model);
+				addChild(editPart, i);
+			}
+		}
+			
+//		List trash = new ArrayList();
+//		for (; i < children.size(); i++)
+//			trash.add(children.get(i));
+//		for (i = 0; i < trash.size(); i++) {
+//			EditPart ep = (EditPart)trash.get(i);
+//			//System.out.println("remove child: " + ep);
+//			removeChild(ep);
+//		}
+		
+		//remove not existed elements
+		for (int j = 0; j < oldChildren.size(); j++) {
+			EditPart oldEditPart = (EditPart) oldChildren.get(j);						
+			if (!newModelObjectsHashSet.contains(oldEditPart.getModel())) {
+				removeChild(oldEditPart);
+			}
+		}		
 	}
 	
 }
