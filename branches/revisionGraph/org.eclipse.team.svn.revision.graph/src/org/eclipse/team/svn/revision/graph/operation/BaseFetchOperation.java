@@ -21,6 +21,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.revision.graph.cache.CacheMetadata;
 import org.eclipse.team.svn.revision.graph.cache.RevisionDataContainer;
+import org.eclipse.team.svn.revision.graph.cache.TimeMeasure;
 
 /**
  * 
@@ -44,7 +45,9 @@ public abstract class BaseFetchOperation extends AbstractActionOperation {
 		this.prepareDataOp = prepareDataOp;
 	}
 
-	protected void runImpl(IProgressMonitor monitor) throws Exception {				
+	protected void runImpl(IProgressMonitor monitor) throws Exception {
+		TimeMeasure measure = new TimeMeasure("Fetch revisions " + this.getClass().getName());
+		
 		if (this.checkConnectionOp.hasConnection()) {						
 			
 			RevisionDataContainer dataContainer = this.prepareDataOp.getDataContainer();
@@ -79,6 +82,8 @@ public abstract class BaseFetchOperation extends AbstractActionOperation {
 				} 		
 			}						
 		}		
+		
+		measure.end();
 	}
 	
 	protected abstract void prepareData(CacheMetadata metadata, IProgressMonitor monitor) throws Exception;
