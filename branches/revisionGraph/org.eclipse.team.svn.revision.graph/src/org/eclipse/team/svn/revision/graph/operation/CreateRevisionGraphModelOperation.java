@@ -50,12 +50,14 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 	protected PrepareRevisionDataOperation prepareDataOp;
 	protected RevisionDataContainer dataContainer;
 	
-	protected PathRevision resultNode;
-				
+	protected PathRevisionConnectionsValidator pathRevisionValidator;
+	
+	protected PathRevision resultNode; 
+	
 	public CreateRevisionGraphModelOperation(IRepositoryResource resource, PrepareRevisionDataOperation prepareDataOp) {
 		super("Create RevisionGraph Model");
 		this.resource = resource;		
-		this.prepareDataOp = prepareDataOp;
+		this.prepareDataOp = prepareDataOp;		
 	}
 	
 	@Override
@@ -66,6 +68,8 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 		this.dataContainer = this.prepareDataOp.getDataContainer();
 		this.dataContainer.initForRead(monitor, this);		
 		readMeasure.end();
+		
+		this.pathRevisionValidator = new PathRevisionConnectionsValidator(this.dataContainer);
 		
 		ProgressMonitorUtility.setTaskInfo(monitor, this, "Proccessing model");
 		TimeMeasure processMeasure = new TimeMeasure("Create model");
@@ -361,7 +365,7 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 					RevisionStructure rsCopyTo = this.getEntry(changedPath.getRevision());
 					PathRevision copyToNode = null;
 					if (rsCopyTo != null) {
-						copyToNode = this.createRevisionNode(rsCopyTo, changedPath.getPathIndex());
+						copyToNode = this.createRevisionNode(rsCopyTo, copyToPath);
 					}
 					
 					if (copyToNode != null) {
@@ -524,6 +528,7 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 		}
 		
 		PathRevision node = new PathRevision(entry, nodePath, action, type);
+		node.setValidator(this.pathRevisionValidator);
 		return node;
 	}
 	

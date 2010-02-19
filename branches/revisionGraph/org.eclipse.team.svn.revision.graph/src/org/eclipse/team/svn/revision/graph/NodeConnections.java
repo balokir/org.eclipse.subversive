@@ -20,6 +20,9 @@ import java.util.Set;
 /** 
  * Encapsulate logic of working with connections between nodes  
  * 
+ * Methods which add new data to model may throw RuntimeException's
+ * if node connections are not valid after operation
+ * 
  * @author Igor Burilo
  */
 public class NodeConnections {
@@ -57,6 +60,8 @@ public class NodeConnections {
 		if (tmp2 != null) {
 			tmp2.next = null;	
 		}		
+		
+		this.validate();
 	}
 	
 	public void removeNext() {
@@ -81,6 +86,10 @@ public class NodeConnections {
 	}
 			
 	public void addCopiedTo(NodeConnections node) {
+		this.addCopiedTo(node, true);
+	}
+	
+	protected void addCopiedTo(NodeConnections node, boolean canValidate) {
 		if (node == null) {
 			throw new IllegalArgumentException("Node can't be null");
 		}
@@ -95,6 +104,10 @@ public class NodeConnections {
 		
 		if (tmp != null) {
 			tmp.removeCopiedTo(node);	
+		}
+		
+		if (canValidate) {
+			this.validate();	
 		}		
 	}
 	
@@ -131,8 +144,10 @@ public class NodeConnections {
 			throw new IllegalArgumentException("Nodes can't be null");
 		}				
 		for (NodeConnections node : nodes) {
-			this.addCopiedTo(node);
+			this.addCopiedTo(node, false);
 		}			
+		
+		this.validate();
 	}	
 	
 	public void setCopiedFrom(NodeConnections node) {
@@ -217,6 +232,14 @@ public class NodeConnections {
 		}
 		return first;
 	}			
+	
+	/**
+	 * Validate node connections after the changes has been applied.
+	 * Base implementation does nothing
+	 */
+	protected void validate() {
+		//do nothing
+	}
 	
 	//---- for debug
 	public static void showGraph(NodeConnections node) {

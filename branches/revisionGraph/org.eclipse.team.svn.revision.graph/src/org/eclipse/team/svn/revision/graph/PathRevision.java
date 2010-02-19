@@ -13,7 +13,9 @@ package org.eclipse.team.svn.revision.graph;
 import java.util.Iterator;
 
 import org.eclipse.team.svn.revision.graph.cache.ChangedPathStructure;
+import org.eclipse.team.svn.revision.graph.cache.RevisionDataContainer;
 import org.eclipse.team.svn.revision.graph.cache.RevisionStructure;
+import org.eclipse.team.svn.revision.graph.operation.PathRevisionConnectionsValidator;
 
 /** 
  * TODO implement IPropertySource for Properties View ?
@@ -46,6 +48,8 @@ public class PathRevision extends NodeConnections {
 	public final ReviosionNodeType type;
 	
 	public final RevisionNodeAction action;			
+	
+	protected PathRevisionConnectionsValidator validator;
 	
 	public PathRevision(RevisionStructure revisionData, int pathIndex, RevisionNodeAction action, ReviosionNodeType type) {
 		this.revisionData = revisionData;
@@ -118,7 +122,11 @@ public class PathRevision extends NodeConnections {
 	
 	@Override
 	public String toString() {
-		return String.format("%s@%d, action:%s", this.pathIndex, this.getRevision(), this.action);
+		return String.format("%d@%d, action:%s", this.pathIndex, this.getRevision(), this.action);
+	}
+		
+	public String toString(RevisionDataContainer dataContainer) {
+		return String.format("%s@%d, action:%s", dataContainer.getPathStorage().getPath(this.pathIndex), this.getRevision(), this.action);
 	}
 	
 	@Override
@@ -168,7 +176,21 @@ public class PathRevision extends NodeConnections {
 	}
 
 	public RevisionStructure getRevisionData() {
-		return this.revisionData;
-		
+		return this.revisionData;		
 	}	
+	
+	public void setValidator(PathRevisionConnectionsValidator validator) {
+		this.validator = validator;		
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.svn.revision.graph.NodeConnections#validate()
+	 */
+	@Override
+	protected void validate() {
+		if (this.validator != null) {
+			this.validator.validate(this);	
+		}		
+	}
+	
 }
