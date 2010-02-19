@@ -267,18 +267,21 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 				
 				if (this.isParentPath(copy.getCopiedFromPathIndex(), path)) {
 					boolean canAdd = true;
+					//if in particular revision there are several copies related to path then we select more specific copy
 					if (!filteredCopyToList.isEmpty()) {
 						Iterator<ChangedPathStructure> iter = filteredCopyToList.iterator();
 						while (iter.hasNext()) {
 							ChangedPathStructure existingChangedPath = iter.next();
-							if (this.isParentPath(existingChangedPath.getPathIndex(), copy.getPathIndex()) && 
-								this.isParentPath(existingChangedPath.getCopiedFromPathIndex(), copy.getCopiedFromPathIndex())) {
-								iter.remove();																				
-							} else if (this.isParentPath(copy.getPathIndex(), existingChangedPath.getPathIndex()) &&
-									this.isParentPath(copy.getCopiedFromPathIndex(), existingChangedPath.getCopiedFromPathIndex())) {
-								//ignore
-								canAdd = false;
-								break;
+							if (existingChangedPath.getRevision() == copy.getRevision()) {
+								if (this.isParentPath(existingChangedPath.getPathIndex(), copy.getPathIndex()) && 
+										this.isParentPath(existingChangedPath.getCopiedFromPathIndex(), copy.getCopiedFromPathIndex())) {
+										iter.remove();																				
+									} else if (this.isParentPath(copy.getPathIndex(), existingChangedPath.getPathIndex()) &&
+											this.isParentPath(copy.getCopiedFromPathIndex(), existingChangedPath.getCopiedFromPathIndex())) {
+										//ignore
+										canAdd = false;
+										break;
+									}	
 							}
 						}
 					}
