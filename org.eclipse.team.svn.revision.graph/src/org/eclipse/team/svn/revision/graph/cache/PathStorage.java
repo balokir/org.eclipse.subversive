@@ -103,13 +103,18 @@ public class PathStorage {
 		return res;
 	}
 	
-	public boolean isParentIndex(int parentPathIndex, int childPathIndex) {
-		int index = childPathIndex;
-		do {
-			if (index == parentPathIndex) {
-				return true;
-			}
-		} while ((index = this.getParentPathIndex(index)) != ROOT_INDEX);
+	/*
+	 * Parent childPathIndex is more or equal to parentPathIndex
+	 */
+	public boolean isParentIndex(int parentPathIndex, int childPathIndex) {		
+		if (childPathIndex >= parentPathIndex) {
+			int index = childPathIndex;
+			do {
+				if (index == parentPathIndex) {
+					return true;
+				}
+			} while ((index = this.getParentPathIndex(index)) != ROOT_INDEX);	
+		}		
 		return false;
 	}
 	

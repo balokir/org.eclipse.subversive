@@ -52,11 +52,6 @@ public class RevisionGraphUtility {
 		final CreateRevisionGraphModelOperation createModelOp = new CreateRevisionGraphModelOperation(resource, prepareDataOp);
 		op.add(createModelOp, new IActionOperation[]{checkConnectionOp});		
 		
-		//TODO remain this operation for real usage ?
-		//validate model
-		final ValidateRevionGraphModelOperation validateModelOp = new ValidateRevionGraphModelOperation(createModelOp); 
-		op.add(validateModelOp, new IActionOperation[]{createModelOp});
-		
 		//visualize
 		AbstractActionOperation showRevisionGraphOp = new AbstractActionOperation("Create Revision Graph Operation") {			
 			@Override

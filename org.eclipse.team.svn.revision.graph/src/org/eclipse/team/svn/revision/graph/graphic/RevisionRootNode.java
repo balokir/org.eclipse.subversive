@@ -13,12 +13,10 @@ package org.eclipse.team.svn.revision.graph.graphic;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.Set;
 
 import org.eclipse.team.svn.revision.graph.NodeConnections;
 import org.eclipse.team.svn.revision.graph.PathRevision;
@@ -82,12 +80,13 @@ public class RevisionRootNode extends ChangesNotifier {
 		 * i.e. update their connections, as during filtering, collapsing
 		 * some nodes can be deleted
 		 */		
-		List<RevisionConnectionNode> previousConnections = new ArrayList<RevisionConnectionNode>();		
-		for (List<RevisionConnectionNode> connections : currentSourceConnections.values()) {
-			previousConnections.addAll(connections);
-		}
-		for (List<RevisionConnectionNode> connections : currentTargetConnections.values()) {
-			previousConnections.addAll(connections);
+		final List<RevisionNode> previousNodes = new ArrayList<RevisionNode>();
+		if (this.currentStartNode != null) {			
+			new TopRightTraverseVisitor() {
+				public void visit(NodeConnections node) {
+					previousNodes.add(((RevisionNodeItem) node).getRevisionNode());
+				}				
+			}.traverse(this.currentStartNode.getCurrentConnectionItem());			
 		}
 		
 		//restore current connections to initial state
@@ -129,22 +128,11 @@ public class RevisionRootNode extends ChangesNotifier {
 		 * 
 		 * This operation can take long time. It has the same problem as with setContents#setContents
 		 */				
-		if (!previousConnections.isEmpty()) {			
-			Set<RevisionConnectionNode> newConnections = new HashSet<RevisionConnectionNode>();
-			for (List<RevisionConnectionNode> connections : currentSourceConnections.values()) {
-				newConnections.addAll(connections);
-			}
-			for (List<RevisionConnectionNode> connections : currentTargetConnections.values()) {
-				newConnections.addAll(connections);
-			}
-						
-			Set<RevisionNode> changedNodes = new HashSet<RevisionNode>();				
-			for (RevisionConnectionNode previousConnection : previousConnections) {
-				if (!newConnections.contains(previousConnection)) {
-					changedNodes.add(previousConnection.source);
-					changedNodes.add(previousConnection.target);
-				}
-			}
+		//update previous nodes
+		if (!previousNodes.isEmpty()) {
+			for (RevisionNode prevNode : previousNodes) {
+				prevNode.refreshConnections();
+			}			
 		}
 						
 		processMeasure.end();
