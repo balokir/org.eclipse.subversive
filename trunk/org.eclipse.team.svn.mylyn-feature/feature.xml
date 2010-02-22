@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.team.svn.mylyn"
       label="%featureName"
-      version="0.7.8.I20091023-1300"
+      version="0.7.8.I20100222-1600"
       provider-name="%providerName"
       colocation-affinity="org.eclipse.team.svn">
    <install-handler/>
@@ -126,7 +126,7 @@ Java and all Java-based trademarks are trademarks of Sun Microsystems, Inc. in t
          id="org.eclipse.team.svn.mylyn"
          download-size="20"
          install-size="20"
-         version="0.7.8.I20091023-1300"
+         version="0.7.8.I20100222-1600"
          unpack="false"/>
 
 </feature>

@@ -8,6 +8,25 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.8.I20100222-1600 [22 February 2010]
+
+Fixes:
+ * Reintegrate says "No changes found" (bug 297720)
+
+ * Change bugs title (bug 298574)
+
+ * Filter JVM Properties when creating Mylyn task (bug 298575)
+
+ * Compare with branch doesn't work with externals (bug 298573)
+
+ * Undo after directory move causes irrecoverable data loss (bug 297779)
+
+ * NPE in getNationalizedString if Localization is not installed (bug 300592)
+
+ * Can not get Subversive working in I20100122-0800 (bug 300591)
+
+--------------------------------------------------------------------------------
+
 Version 0.7.8.I20091207-1900 [07 December 2009]
 
 Fixes:
