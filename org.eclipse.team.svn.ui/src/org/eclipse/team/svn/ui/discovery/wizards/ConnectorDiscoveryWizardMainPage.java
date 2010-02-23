@@ -658,7 +658,7 @@ public class ConnectorDiscoveryWizardMainPage extends WizardPage {
 			checkbox = new Button(checkboxContainer, SWT.CHECK);
 			checkbox.setText(" "); //$NON-NLS-1$
 			// help UI tests
-			checkbox.setData("connectorId", connector.getId()); //$NON-NLS-1$
+			checkbox.setData("connectorId", connector.getInstallableUnits()); //$NON-NLS-1$
 			configureLook(checkbox, background);
 			checkbox.setSelection(installableConnectors.contains(connector));
 			checkbox.addFocusListener(new FocusAdapter() {
@@ -1065,7 +1065,7 @@ public class ConnectorDiscoveryWizardMainPage extends WizardPage {
 		if (kindFiltered) {
 			return true;
 		}
-		if (installedFeatures != null && installedFeatures.contains(descriptor.getId())) {
+		if (installedFeatures != null && installedFeatures.contains(descriptor.getInstallableUnits())) {
 			// always filter installed features per bug 275777
 			return true;
 		}

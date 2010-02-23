@@ -36,7 +36,7 @@ public class ConnectorDescriptor {
 
 	protected String siteUrl;
 
-	protected List<String> id = new ArrayList<String>();
+	protected List<String> installableUnits = new ArrayList<String>();
 
 	protected String categoryId;
 
@@ -126,12 +126,12 @@ public class ConnectorDescriptor {
 	/**
 	 * The id of the feature that installs this connector
 	 */
-	public List<String> getId() {
-		return id;
+	public List<String> getInstallableUnits() {
+		return installableUnits;
 	}
 
-	public void setId(List<String> id) {
-		this.id = id;
+	public void setInstallableUnits(List<String> id) {
+		this.installableUnits = id;
 	}
 
 	/**
@@ -212,7 +212,7 @@ public class ConnectorDescriptor {
 		} catch (MalformedURLException e) {
 			throw new ValidationException(SVNMessages.ConnectorDescriptor_invalid_connectorDescriptor_siteUrl);
 		}
-		if (id == null || id.isEmpty()) {
+		if (installableUnits == null || installableUnits.isEmpty()) {
 			throw new ValidationException(SVNMessages.ConnectorDescriptor_must_specify_connectorDescriptor_id);
 		}
 		if (categoryId == null || categoryId.length() == 0) {

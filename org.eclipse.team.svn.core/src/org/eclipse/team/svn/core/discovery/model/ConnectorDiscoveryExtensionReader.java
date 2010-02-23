@@ -65,7 +65,7 @@ public class ConnectorDiscoveryExtensionReader {
 		if (ids != null) {
 			String[] aids = ids.split("\\s*,\\s*"); //$NON-NLS-1$
 			for (String id : aids) {
-				connectorDescriptor.getId().add(id);
+				connectorDescriptor.getInstallableUnits().add(id);
 			}
 		}		
 		
