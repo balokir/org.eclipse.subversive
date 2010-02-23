@@ -11,12 +11,12 @@
 package org.eclipse.team.svn.ui.discovery;
 
 import java.lang.reflect.InvocationTargetException;
-import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -26,37 +26,29 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.equinox.internal.provisional.p2.director.ProfileChangeRequest;
-import org.eclipse.equinox.internal.provisional.p2.engine.IProfile;
-import org.eclipse.equinox.internal.provisional.p2.engine.IProfileRegistry;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.internal.provisional.p2.metadata.IProvidedCapability;
-import org.eclipse.equinox.internal.provisional.p2.metadata.Version;
-import org.eclipse.equinox.internal.provisional.p2.metadata.query.Collector;
-import org.eclipse.equinox.internal.provisional.p2.metadata.query.MatchQuery;
-import org.eclipse.equinox.internal.provisional.p2.metadata.query.Query;
-import org.eclipse.equinox.internal.provisional.p2.metadata.repository.IMetadataRepository;
-import org.eclipse.equinox.internal.provisional.p2.ui.IProvHelpContextIds;
-import org.eclipse.equinox.internal.provisional.p2.ui.QueryableMetadataRepositoryManager;
-import org.eclipse.equinox.internal.provisional.p2.ui.actions.InstallAction;
-import org.eclipse.equinox.internal.provisional.p2.ui.dialogs.PreselectedIUInstallWizard;
-import org.eclipse.equinox.internal.provisional.p2.ui.dialogs.ProvisioningWizardDialog;
-import org.eclipse.equinox.internal.provisional.p2.ui.operations.PlannerResolutionOperation;
-import org.eclipse.equinox.internal.provisional.p2.ui.operations.ProvisioningUtil;
-import org.eclipse.equinox.internal.provisional.p2.ui.policy.Policy;
+import org.eclipse.equinox.p2.core.ProvisionException;
+import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.IProvidedCapability;
+import org.eclipse.equinox.p2.metadata.Version;
+import org.eclipse.equinox.p2.operations.InstallOperation;
+import org.eclipse.equinox.p2.operations.ProvisioningSession;
+import org.eclipse.equinox.p2.operations.RepositoryTracker;
+import org.eclipse.equinox.p2.query.IQuery;
+import org.eclipse.equinox.p2.query.IQueryResult;
+import org.eclipse.equinox.p2.query.MatchQuery;
+import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
+import org.eclipse.equinox.p2.ui.ProvisioningUI;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.discovery.model.ConnectorDescriptor;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
-import org.eclipse.ui.PlatformUI;
-
 
 
 /**
@@ -64,46 +56,56 @@ import org.eclipse.ui.PlatformUI;
  * 
  * A job that configures a p2 {@link #getInstallAction() install action} for installing one or more
  * {@link ConnectorDescriptor connectors}. The bulk of the installation work is done by p2; this class just sets up the
- * p2 repository metadata and selects the appropriate features to install. After running the job the
+ * p2 repository meta-data and selects the appropriate features to install. After running the job the
  * {@link #getInstallAction() install action} must be run to perform the installation.
  * 
  * @author David Green
+ * @author Steffen Pingel
  * @author Igor Burilo
  */
-@SuppressWarnings("restriction")
 public class PrepareInstallProfileJob_3_6 implements IConnectorsInstallJob {
 
 	private static final String P2_FEATURE_GROUP_SUFFIX = ".feature.group"; //$NON-NLS-1$
 
 	private List<ConnectorDescriptor> installableConnectors;
 
-	private PlannerResolutionOperation plannerResolutionOperation;
+	private final ProvisioningUI provisioningUI;
 
-	private String profileId;
+	private Set<URI> repositoryLocations;
 
-	private IInstallableUnit[] ius;
-
-	private InstallAction installAction;
-
-	public PrepareInstallProfileJob_3_6() {
-		
+	public PrepareInstallProfileJob_3_6() {		
+		this.provisioningUI = ProvisioningUI.getDefaultUI();
 	}
 
 	public void setInstallableConnectors(List<ConnectorDescriptor> installableConnectors) {
-		this.installableConnectors = installableConnectors;
+		if (installableConnectors == null || installableConnectors.isEmpty()) {
+			throw new IllegalArgumentException();
+		}
+		this.installableConnectors = new ArrayList<ConnectorDescriptor>(installableConnectors);
 	}
 	
-	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+	public void run(IProgressMonitor progressMonitor) throws InvocationTargetException, InterruptedException {
 		try {
-			if (this.installableConnectors == null || this.installableConnectors.isEmpty()) {
-				throw new IllegalArgumentException();
+			SubMonitor monitor = SubMonitor.convert(progressMonitor, SVNUIMessages.InstallConnectorsJob_task_configuring,
+					100);
+			try {
+				final IInstallableUnit[] ius = computeInstallableUnits(monitor.newChild(50));
+
+				checkCancelled(monitor);
+
+				final InstallOperation installOperation = resolve(monitor.newChild(50), ius,
+						repositoryLocations.toArray(new URI[0]));
+
+				checkCancelled(monitor);
+
+				Display.getDefault().asyncExec(new Runnable() {
+					public void run() {
+						provisioningUI.openInstallWizard(UIMonitorUtility.getShell(), ius, installOperation, null);
+					}
+				});
+			} finally {
+				monitor.done();
 			}
-			
-			doRun(monitor);
-			if (monitor.isCanceled()) {
-				throw new InterruptedException();
-			}
-			doInstall();
 		} catch (OperationCanceledException e) {
 			throw new InterruptedException();
 		} catch (Exception e) {
@@ -111,253 +113,54 @@ public class PrepareInstallProfileJob_3_6 implements IConnectorsInstallJob {
 		}
 	}
 
-	protected void doInstall() {
-		if (this.getPlannerResolutionOperation() != null && this.getPlannerResolutionOperation().getProvisioningPlan() != null) {
-			UIMonitorUtility.getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					PreselectedIUInstallWizard wizard = new PreselectedIUInstallWizard(Policy.getDefault(),
-							getProfileId(), getIUs(), getPlannerResolutionOperation(),
-							new QueryableMetadataRepositoryManager(Policy.getDefault().getQueryContext(), false));
-					WizardDialog dialog = new ProvisioningWizardDialog(UIMonitorUtility.getShell(), wizard);
-					dialog.create();
-					PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(), IProvHelpContextIds.INSTALL_WIZARD);
-					dialog.open();
-				}
-			});
+	private void checkCancelled(IProgressMonitor monitor) {
+		if (monitor.isCanceled()) {
+			throw new OperationCanceledException();
 		}
 	}
-	
-	protected void doRun(IProgressMonitor monitor) throws CoreException {
-		final int totalWork = installableConnectors.size() * 6;
-		monitor.beginTask(SVNUIMessages.InstallConnectorsJob_task_configuring, totalWork);
+
+	private InstallOperation resolve(IProgressMonitor monitor, final IInstallableUnit[] ius, URI[] repositories)
+			throws CoreException {
+		final InstallOperation installOperation = provisioningUI.getInstallOperation(ius, repositories);
+		IStatus operationStatus = installOperation.resolveModal(new SubProgressMonitor(monitor,
+				installableConnectors.size()));
+		if (operationStatus.getSeverity() > IStatus.WARNING) {
+			throw new CoreException(operationStatus);
+		}
+		return installOperation;
+	}
+
+	public IInstallableUnit[] computeInstallableUnits(SubMonitor monitor) throws CoreException {
 		try {
-			profileId = computeProfileId();
-			// verify that we can resolve hostnames
-			// this is a pre-emptive check so that we can provide better error handling
-			// than that provided by P2.
-			{
-				Set<String> hostnames = new HashSet<String>();
-				for (ConnectorDescriptor descriptor : installableConnectors) {
-					URL url = new URL(descriptor.getSiteUrl());
-					String host = url.getHost();
-					if (host != null && host.length() > 0 && hostnames.add(host)) {
-						try {
-							InetAddress.getByName(host);
-						} catch (UnknownHostException e) {
-							throw new CoreException(new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID, 
-									SVNUIMessages.format(SVNUIMessages.PrepareInstallProfileJob_errorResolvingHostname, new Object[]{descriptor.getName(), host}),
-									e));
-						}
-					}
-				}
-			}
+			monitor.setWorkRemaining(100);
+			// add repository urls and load meta data
+			List<IMetadataRepository> repositories = addRepositories(monitor.newChild(50));
+			final List<IInstallableUnit> installableUnits = queryInstallableUnits(monitor.newChild(50), repositories);
+			removeOldVersions(installableUnits);
+			checkForUnavailable(installableUnits);
+			return installableUnits.toArray(new IInstallableUnit[installableUnits.size()]);
 
-			// Tell p2 that it's okay to use these repositories
-			Set<URL> repositoryURLs = new HashSet<URL>();
-			for (ConnectorDescriptor descriptor : installableConnectors) {
-				URL url = new URL(descriptor.getSiteUrl());
-				if (repositoryURLs.add(url)) {
-					if (monitor.isCanceled()) {
-						return;
-					}
-					ProvisioningUtil.addMetadataRepository(url.toURI(), true);
-					ProvisioningUtil.addArtifactRepository(url.toURI(), true);
-					ProvisioningUtil.setColocatedRepositoryEnablement(url.toURI(), true);
-
-				}
-				monitor.worked(1);
-			}
-			if (repositoryURLs.isEmpty()) {
-				// should never happen
-				throw new IllegalStateException();
-			}
-			// Fetch p2's metadata for these repositories
-			List<IMetadataRepository> repositories = new ArrayList<IMetadataRepository>();
-			final Map<IMetadataRepository, URL> repositoryToURL = new HashMap<IMetadataRepository, URL>();
-			{
-				int unit = installableConnectors.size() / repositoryURLs.size();
-				for (URL updateSiteUrl : repositoryURLs) {
-					if (monitor.isCanceled()) {
-						return;
-					}
-					IMetadataRepository repository = ProvisioningUtil.loadMetadataRepository(updateSiteUrl.toURI(),
-							new SubProgressMonitor(monitor, unit));
-					repositories.add(repository);
-					repositoryToURL.put(repository, updateSiteUrl);
-				}
-			}
-			// Perform a query to get the installable units.  This causes p2 to determine what features are available
-			// in each repository.  We select installable units by matching both the feature id and the repository; it
-			// is possible though unlikely that the same feature id is available from more than one of the selected
-			// repositories, and we must ensure that the user gets the one that they asked for.
-			final List<IInstallableUnit> installableUnits = new ArrayList<IInstallableUnit>();
-			{
-				int unit = installableConnectors.size() / repositories.size();
-
-				for (final IMetadataRepository repository : repositories) {
-					if (monitor.isCanceled()) {
-						return;
-					}
-					URL repositoryUrl = repositoryToURL.get(repository);
-					final Set<String> installableUnitIdsThisRepository = new HashSet<String>();
-					// determine all installable units for this repository
-					for (ConnectorDescriptor descriptor : installableConnectors) {
-						try {
-							if (repositoryUrl.equals(new URL(descriptor.getSiteUrl()))) {
-								for (String featureId : descriptor.getId()) {
-									installableUnitIdsThisRepository.add(featureId);
-								}
-							}
-						} catch (MalformedURLException e) {
-							// will never happen, ignore
-						}
-					}
-					Collector collector = new Collector();
-					Query query = new MatchQuery() {
-						@Override
-						public boolean isMatch(Object object) {
-							if (!(object instanceof IInstallableUnit)) {
-								return false;
-							}
-							IInstallableUnit candidate = (IInstallableUnit) object;
-
-							if ("true".equalsIgnoreCase(candidate.getProperty("org.eclipse.equinox.p2.type.group"))) { //$NON-NLS-1$ //$NON-NLS-2$
-								String id = candidate.getId();
-								if (isQualifyingFeature(installableUnitIdsThisRepository, id)) {
-									IProvidedCapability[] providedCapabilities = candidate.getProvidedCapabilities();
-									if (providedCapabilities != null && providedCapabilities.length > 0) {
-										for (IProvidedCapability capability : providedCapabilities) {
-											if ("org.eclipse.equinox.p2.iu".equals(capability.getNamespace())) { //$NON-NLS-1$
-												String name = capability.getName();
-												if (isQualifyingFeature(installableUnitIdsThisRepository, name)) {
-													return true;
-												}
-											}
-										}
-									}
-								}
-							}
-							return false;
-						}
-
-						private boolean isQualifyingFeature(final Set<String> installableUnitIdsThisRepository,
-								String id) {
-							return id.endsWith(P2_FEATURE_GROUP_SUFFIX)
-									&& installableUnitIdsThisRepository.contains(id.substring(0,
-											id.indexOf(P2_FEATURE_GROUP_SUFFIX)));
-						}
-					};
-					repository.query(query, collector, new SubProgressMonitor(monitor, unit));
-
-					addAll(installableUnits, collector);
-				}
-			}
-
-			// filter those installable units that have a duplicate in the list with a higher version number.
-			// it's possible that some repositories will host multiple versions of a particular feature.  we assume
-			// that the user wants the highest version.			
-			Map<String, Version> symbolicNameToVersion = new HashMap<String, Version>();
-			for (IInstallableUnit unit : installableUnits) {
-				Version version = symbolicNameToVersion.get(unit.getId());
-				if (version == null || version.compareTo(unit.getVersion()) == -1) {
-					symbolicNameToVersion.put(unit.getId(), unit.getVersion());
-				}
-			}
-			if (symbolicNameToVersion.size() != installableUnits.size()) {
-				for (IInstallableUnit unit : new ArrayList<IInstallableUnit>(installableUnits)) {
-					Version version = symbolicNameToVersion.get(unit.getId());
-					if (!version.equals(unit.getVersion())) {
-						installableUnits.remove(unit);
-					}
-				}
-			}
-			
-			// Verify that we found what we were looking for: it's possible that we have connector descriptors
-			// that are no longer available on their respective sites.  In that case we must inform the user.
-			// (Unfortunately this is the earliest point at which we can know)
-			HashSet<String> features = new HashSet<String>();
-			for (ConnectorDescriptor cd : installableConnectors) {
-				features.addAll(cd.getId());
-			}
-			int expectedFeaturesCount = features.size();
-			if (installableUnits.size() < expectedFeaturesCount) {
-				// at least one selected connector could not be found in a repository
-				Set<String> foundIds = new HashSet<String>();
-				for (IInstallableUnit unit : installableUnits) {
-					String id = unit.getId();
-					if (id.endsWith(P2_FEATURE_GROUP_SUFFIX)) {
-						id = id.substring(0, id.indexOf(P2_FEATURE_GROUP_SUFFIX));
-					}
-					foundIds.add(id);
-				}
-	
-				final String notFound;			
-				String temp = ""; //$NON-NLS-1$
-				for (ConnectorDescriptor descriptor : installableConnectors) {								
-					if (!foundIds.containsAll(descriptor.getId())) {
-						if (temp.length() > 0) {
-							temp += SVNUIMessages.InstallConnectorsJob_commaSeparator;
-						}
-						temp += descriptor.getName();
-					}
-				}
-				notFound = temp;
-				
-				boolean proceed = false;
-				if (!installableUnits.isEmpty()) {
-					// instead of aborting here we ask the user if they wish to proceed anyways
-					final boolean[] okayToProceed = new boolean[1];
-					Display.getDefault().syncExec(new Runnable() {
-						public void run() {
-							okayToProceed[0] = MessageDialog.openQuestion(UIMonitorUtility.getShell(),
-									SVNUIMessages.InstallConnectorsJob_questionProceed, SVNUIMessages.format(
-											SVNUIMessages.InstallConnectorsJob_questionProceed_long,
-											new Object[] { notFound }));
-						}
-					});
-					proceed = okayToProceed[0];
-				}
-				if (!proceed) {
-					String notFoundDescription = ""; //$NON-NLS-1$
-					for (ConnectorDescriptor descriptor : installableConnectors) {
-						if (!foundIds.contains(descriptor.getId())) {
-							if (notFoundDescription.length() > 0) {
-								notFoundDescription += SVNUIMessages.InstallConnectorsJob_commaSeparator;
-							}
-							notFoundDescription += SVNUIMessages.format(SVNUIMessages.PrepareInstallProfileJob_notFoundDescriptorDetail,
-									new Object[] { descriptor.getName(), descriptor.getId(), descriptor.getSiteUrl() });
-						}
-					}
-					throw new CoreException(new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID, SVNUIMessages.format(
-							SVNUIMessages.InstallConnectorsJob_connectorsNotAvailable, notFoundDescription), null));
-				}
-			} else if (installableUnits.size() > expectedFeaturesCount) {
-				// should never ever happen
-				throw new IllegalStateException();
-			}
-			
-
-			MultiStatus status = new MultiStatus(SVNTeamPlugin.NATURE_ID, 0, SVNUIMessages.PrepareInstallProfileJob_ok, null);
-			ius = installableUnits.toArray(new IInstallableUnit[installableUnits.size()]);
-			ProfileChangeRequest profileChangeRequest = InstallAction.computeProfileChangeRequest(ius, profileId,
-					status, new SubProgressMonitor(monitor, installableConnectors.size()));
-			if (status.getSeverity() > IStatus.WARNING) {
-				throw new CoreException(status);
-			}
-			if (profileChangeRequest == null) {
-				// failed but no indication as to why
-				throw new CoreException(new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID,
-						SVNUIMessages.PrepareInstallProfileJob_computeProfileChangeRequestFailed, null));
-			}
-			PlannerResolutionOperation operation = new PlannerResolutionOperation(
-					SVNUIMessages.PrepareInstallProfileJob_calculatingRequirements, profileId, profileChangeRequest, null,
-					status, true);
-			IStatus operationStatus = operation.execute(new SubProgressMonitor(monitor, installableConnectors.size()));
-			if (operationStatus.getSeverity() > IStatus.WARNING) {
-				throw new CoreException(operationStatus);
-			}
-
-			plannerResolutionOperation = operation;
+//			MultiStatus status = new MultiStatus(DiscoveryUi.ID_PLUGIN, 0, Messages.PrepareInstallProfileJob_ok, null);
+//			ius = installableUnits.toArray(new IInstallableUnit[installableUnits.size()]);
+//			ProfileChangeRequest profileChangeRequest = InstallAction.computeProfileChangeRequest(ius, profileId,
+//					status, new SubProgressMonitor(monitor, installableConnectors.size()));
+//			if (status.getSeverity() > IStatus.WARNING) {
+//				throw new CoreException(status);
+//			}
+//			if (profileChangeRequest == null) {
+//				// failed but no indication as to why
+//				throw new CoreException(new Status(IStatus.ERROR, DiscoveryUi.ID_PLUGIN,
+//						Messages.PrepareInstallProfileJob_computeProfileChangeRequestFailed, null));
+//			}
+//			PlannerResolutionOperation operation = new PlannerResolutionOperation(
+//					Messages.PrepareInstallProfileJob_calculatingRequirements, profileId, profileChangeRequest, null,
+//					status, true);
+//			IStatus operationStatus = operation.execute(new SubProgressMonitor(monitor, installableConnectors.size()));
+//			if (operationStatus.getSeverity() > IStatus.WARNING) {
+//				throw new CoreException(operationStatus);
+//			}
+//
+//			plannerResolutionOperation = operation;
 
 		} catch (URISyntaxException e) {
 			// should never happen, since we already validated URLs.
@@ -372,37 +175,182 @@ public class PrepareInstallProfileJob_3_6 implements IConnectorsInstallJob {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private boolean addAll(final List<IInstallableUnit> installableUnits, Collector collector) {
-		return installableUnits.addAll(collector.toCollection());
-	}
-
-	private String computeProfileId() throws CoreException {
-		IProfile profile = ProvisioningUtil.getProfile(IProfileRegistry.SELF);
-		if (profile != null) {
-			return profile.getProfileId();
+	/**
+	 * Verifies that we found what we were looking for: it's possible that we have connector descriptors that are no
+	 * longer available on their respective sites. In that case we must inform the user. Unfortunately this is the
+	 * earliest point at which we can know.
+	 */
+	private void checkForUnavailable(final List<IInstallableUnit> installableUnits) throws CoreException {
+		// at least one selected connector could not be found in a repository
+		Set<String> foundIds = new HashSet<String>();
+		for (IInstallableUnit unit : installableUnits) {
+			String id = unit.getId();
+			if (id.endsWith(P2_FEATURE_GROUP_SUFFIX)) {
+				id = id.substring(0, id.indexOf(P2_FEATURE_GROUP_SUFFIX));
+			}
+			foundIds.add(id);
 		}
-		IProfile[] profiles = ProvisioningUtil.getProfiles();
-		if (profiles.length > 0) {
-			return profiles[0].getProfileId();
+
+		String message = ""; //$NON-NLS-1$
+		String detailedMessage = ""; //$NON-NLS-1$
+		for (ConnectorDescriptor descriptor : installableConnectors) {
+			StringBuilder unavailableIds = null;
+			for (String id : descriptor.getInstallableUnits()) {
+				if (!foundIds.contains(id)) {
+					if (unavailableIds == null) {
+						unavailableIds = new StringBuilder();
+					} else {
+						unavailableIds.append(SVNUIMessages.InstallConnectorsJob_commaSeparator);
+					}
+					unavailableIds.append(id);
+				}
+			}
+			if (unavailableIds != null) {
+				if (message.length() > 0) {
+					message += SVNUIMessages.InstallConnectorsJob_commaSeparator;
+				}
+				message += descriptor.getName();
+
+				if (detailedMessage.length() > 0) {
+					detailedMessage += SVNUIMessages.InstallConnectorsJob_commaSeparator;
+				}
+				detailedMessage += NLS.bind(SVNUIMessages.PrepareInstallProfileJob_notFoundDescriptorDetail, new Object[] {
+						descriptor.getName(), unavailableIds.toString(), descriptor.getSiteUrl() });
+			}
 		}
-		throw new CoreException(new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID,
-				SVNUIMessages.InstallConnectorsJob_profileProblem, null));
+
+		if (message.length() > 0) {
+			// instead of aborting here we ask the user if they wish to proceed anyways
+			final boolean[] okayToProceed = new boolean[1];
+			final String finalMessage = message;
+			Display.getDefault().syncExec(new Runnable() {
+				public void run() {
+					okayToProceed[0] = MessageDialog.openQuestion(UIMonitorUtility.getShell(),
+							SVNUIMessages.InstallConnectorsJob_questionProceed, NLS.bind(
+									SVNUIMessages.InstallConnectorsJob_questionProceed_long, new Object[] { finalMessage }));
+				}
+			});
+			if (!okayToProceed[0]) {
+				throw new CoreException(new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID, NLS.bind(
+						SVNUIMessages.InstallConnectorsJob_connectorsNotAvailable, detailedMessage), null));
+			}
+		}
 	}
 
-	public PlannerResolutionOperation getPlannerResolutionOperation() {
-		return plannerResolutionOperation;
+	/**
+	 * Filters those installable units that have a duplicate in the list with a higher version number. it's possible
+	 * that some repositories will host multiple versions of a particular feature. we assume that the user wants the
+	 * highest version.
+	 */
+	private void removeOldVersions(final List<IInstallableUnit> installableUnits) {
+		Map<String, Version> symbolicNameToVersion = new HashMap<String, Version>();
+		for (IInstallableUnit unit : installableUnits) {
+			Version version = symbolicNameToVersion.get(unit.getId());
+			if (version == null || version.compareTo(unit.getVersion()) == -1) {
+				symbolicNameToVersion.put(unit.getId(), unit.getVersion());
+			}
+		}
+		if (symbolicNameToVersion.size() != installableUnits.size()) {
+			for (IInstallableUnit unit : new ArrayList<IInstallableUnit>(installableUnits)) {
+				Version version = symbolicNameToVersion.get(unit.getId());
+				if (!version.equals(unit.getVersion())) {
+					installableUnits.remove(unit);
+				}
+			}
+		}
 	}
 
-	public String getProfileId() {
-		return profileId;
+	/**
+	 * Perform a query to get the installable units. This causes p2 to determine what features are available in each
+	 * repository. We select installable units by matching both the feature id and the repository; it is possible though
+	 * unlikely that the same feature id is available from more than one of the selected repositories, and we must
+	 * ensure that the user gets the one that they asked for.
+	 */
+	private List<IInstallableUnit> queryInstallableUnits(SubMonitor monitor, List<IMetadataRepository> repositories)
+			throws URISyntaxException {
+		final List<IInstallableUnit> installableUnits = new ArrayList<IInstallableUnit>();
+
+		monitor.setWorkRemaining(repositories.size());
+		for (final IMetadataRepository repository : repositories) {
+			checkCancelled(monitor);
+			final Set<String> installableUnitIdsThisRepository = getDescriptorIds(repository);
+			IQuery<IInstallableUnit> query = new MatchQuery<IInstallableUnit>() {
+				@Override
+				public boolean isMatch(IInstallableUnit candidate) {
+					if ("true".equalsIgnoreCase(candidate.getProperty("org.eclipse.equinox.p2.type.group"))) { //$NON-NLS-1$ //$NON-NLS-2$
+						String id = candidate.getId();
+						if (isQualifyingFeature(installableUnitIdsThisRepository, id)) {
+							Collection<IProvidedCapability> providedCapabilities = candidate.getProvidedCapabilities();
+							if (providedCapabilities != null && providedCapabilities.size() > 0) {
+								for (IProvidedCapability capability : providedCapabilities) {
+									if ("org.eclipse.equinox.p2.iu".equals(capability.getNamespace())) { //$NON-NLS-1$
+										String name = capability.getName();
+										if (isQualifyingFeature(installableUnitIdsThisRepository, name)) {
+											return true;
+										}
+									}
+								}
+							}
+						}
+					}
+					return false;
+				}
+
+				private boolean isQualifyingFeature(final Set<String> installableUnitIdsThisRepository, String id) {
+					return id.endsWith(P2_FEATURE_GROUP_SUFFIX)
+							&& installableUnitIdsThisRepository.contains(id.substring(0,
+									id.indexOf(P2_FEATURE_GROUP_SUFFIX)));
+				}
+			};
+			IQueryResult<IInstallableUnit> result = repository.query(query, monitor.newChild(1));
+			installableUnits.addAll(result.toSet());
+		}
+		return installableUnits;
 	}
 
-	public IInstallableUnit[] getIUs() {
-		return ius;
+	private List<IMetadataRepository> addRepositories(SubMonitor monitor) throws MalformedURLException,
+			URISyntaxException, ProvisionException {
+		// tell p2 that it's okay to use these repositories
+		ProvisioningSession session = ProvisioningUI.getDefaultUI().getSession();
+		RepositoryTracker repositoryTracker = ProvisioningUI.getDefaultUI().getRepositoryTracker();
+		repositoryLocations = new HashSet<URI>();
+		monitor.setWorkRemaining(installableConnectors.size() * 5);
+		for (ConnectorDescriptor descriptor : installableConnectors) {
+			URI uri = new URL(descriptor.getSiteUrl()).toURI();
+			if (repositoryLocations.add(uri)) {
+				checkCancelled(monitor);
+				repositoryTracker.addRepository(uri, null, session);
+//					ProvisioningUtil.addMetaDataRepository(url.toURI(), true);
+//					ProvisioningUtil.addArtifactRepository(url.toURI(), true);
+//					ProvisioningUtil.setColocatedRepositoryEnablement(url.toURI(), true);
+			}
+			monitor.worked(1);
+		}
+
+		// fetch meta-data for these repositories
+		ArrayList<IMetadataRepository> repositories = new ArrayList<IMetadataRepository>();
+		monitor.setWorkRemaining(repositories.size());
+		for (URI uri : repositoryLocations) {
+			checkCancelled(monitor);
+			IMetadataRepository repository = session.getMetadataRepositoryManager().loadRepository(uri,
+					monitor.newChild(1));
+			repositories.add(repository);
+		}
+		return repositories;
 	}
 
-	public InstallAction getInstallAction() {
-		return installAction;
+	private Set<String> getDescriptorIds(final IMetadataRepository repository) throws URISyntaxException {
+		final Set<String> installableUnitIdsThisRepository = new HashSet<String>();
+		// determine all installable units for this repository
+		for (ConnectorDescriptor descriptor : installableConnectors) {
+			try {
+				if (repository.getLocation().equals(new URL(descriptor.getSiteUrl()).toURI())) {
+					installableUnitIdsThisRepository.addAll(descriptor.getInstallableUnits());
+				}
+			} catch (MalformedURLException e) {
+				// will never happen, ignore
+			}
+		}
+		return installableUnitIdsThisRepository;
 	}
 }

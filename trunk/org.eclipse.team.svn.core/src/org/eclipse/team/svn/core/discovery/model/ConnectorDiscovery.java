@@ -214,7 +214,7 @@ public class ConnectorDiscovery {
 			} else {
 				String errMessage = SVNMessages.format(
 						SVNMessages.ConnectorDiscovery_bundle_references_unknown_category, new Object[] {
-								connector.getCategoryId(), connector.getId(), connector.getSource().getId() });
+								connector.getCategoryId(), connector.getInstallableUnits(), connector.getSource().getId() });
 				LoggedOperation.reportError(this.getClass().getName(), new Exception(errMessage));
 			}
 		}
@@ -233,7 +233,7 @@ public class ConnectorDiscovery {
 				} catch (InvalidSyntaxException e) {
 					String errMessage = SVNMessages.format(
 							SVNMessages.ConnectorDiscovery_illegal_filter_syntax, new Object[] {
-									connector.getPlatformFilter(), connector.getId(), connector.getSource().getId() });
+									connector.getPlatformFilter(), connector.getInstallableUnits(), connector.getSource().getId() });
 					LoggedOperation.reportError(this.getClass().getName(), new Exception(errMessage, e));					
 				}
 				if (!match) {

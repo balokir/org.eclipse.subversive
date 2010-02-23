@@ -202,7 +202,7 @@ public class PrepareInstallProfileJob_3_5 implements IConnectorsInstallJob {
 					for (ConnectorDescriptor descriptor : installableConnectors) {
 						try {
 							if (repositoryUrl.equals(new URL(descriptor.getSiteUrl()))) {
-								for (String featureId : descriptor.getId()) {
+								for (String featureId : descriptor.getInstallableUnits()) {
 									installableUnitIdsThisRepository.add(featureId);
 								}
 							}
@@ -275,7 +275,7 @@ public class PrepareInstallProfileJob_3_5 implements IConnectorsInstallJob {
 			// (Unfortunately this is the earliest point at which we can know)
 			HashSet<String> features = new HashSet<String>();
 			for (ConnectorDescriptor cd : installableConnectors) {
-				features.addAll(cd.getId());
+				features.addAll(cd.getInstallableUnits());
 			}
 			int expectedFeaturesCount = features.size();
 			if (installableUnits.size() < expectedFeaturesCount) {
@@ -292,7 +292,7 @@ public class PrepareInstallProfileJob_3_5 implements IConnectorsInstallJob {
 				final String notFound;			
 				String temp = ""; //$NON-NLS-1$
 				for (ConnectorDescriptor descriptor : installableConnectors) {								
-					if (!foundIds.containsAll(descriptor.getId())) {
+					if (!foundIds.containsAll(descriptor.getInstallableUnits())) {
 						if (temp.length() > 0) {
 							temp += SVNUIMessages.InstallConnectorsJob_commaSeparator;
 						}
@@ -318,12 +318,12 @@ public class PrepareInstallProfileJob_3_5 implements IConnectorsInstallJob {
 				if (!proceed) {
 					String notFoundDescription = ""; //$NON-NLS-1$
 					for (ConnectorDescriptor descriptor : installableConnectors) {
-						if (!foundIds.contains(descriptor.getId())) {
+						if (!foundIds.contains(descriptor.getInstallableUnits())) {
 							if (notFoundDescription.length() > 0) {
 								notFoundDescription += SVNUIMessages.InstallConnectorsJob_commaSeparator;
 							}
 							notFoundDescription += SVNUIMessages.format(SVNUIMessages.PrepareInstallProfileJob_notFoundDescriptorDetail,
-									new Object[] { descriptor.getName(), descriptor.getId(), descriptor.getSiteUrl() });
+									new Object[] { descriptor.getName(), descriptor.getInstallableUnits(), descriptor.getSiteUrl() });
 						}
 					}
 					throw new CoreException(new Status(IStatus.ERROR, SVNTeamPlugin.NATURE_ID, SVNUIMessages.format(
