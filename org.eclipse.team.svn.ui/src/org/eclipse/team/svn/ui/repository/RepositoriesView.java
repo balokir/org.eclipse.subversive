@@ -44,6 +44,7 @@ import org.eclipse.team.svn.ui.action.remote.DeleteAction;
 import org.eclipse.team.svn.ui.action.remote.OpenFileAction;
 import org.eclipse.team.svn.ui.action.remote.OpenFileWithAction;
 import org.eclipse.team.svn.ui.action.remote.RefreshAction;
+import org.eclipse.team.svn.ui.action.remote.RenameAction;
 import org.eclipse.team.svn.ui.action.remote.management.DiscardRepositoryLocationAction;
 import org.eclipse.team.svn.ui.action.remote.management.DiscardRevisionLinksAction;
 import org.eclipse.team.svn.ui.action.remote.management.EditRevisionLinkAction;
@@ -460,11 +461,16 @@ public class RepositoriesView extends ViewPart {
 	}
 	
 	protected void handleEdit(IStructuredSelection selection) {
-		if (selection.size() == 1 && selection .getFirstElement() instanceof RepositoryRevision) {
-			Action tmp = new Action() {}; 			
-			AbstractSVNTeamAction action = new EditRevisionLinkAction();
+		Action tmp = new Action() {}; 
+	    AbstractSVNTeamAction action = new RenameAction();
+	    action.selectionChanged(tmp, selection);
+	    action.setActivePart(tmp, this);
+	    if (tmp.isEnabled()) {
+		    action.run(tmp);
+	    } else {			
+			action = new EditRevisionLinkAction();
 		    action.selectionChanged(tmp, selection);
-		    action.setActivePart(tmp, RepositoriesView.this);
+		    action.setActivePart(tmp, this);
 		    if (tmp.isEnabled()) {
 			    action.run(tmp);
 		    }
