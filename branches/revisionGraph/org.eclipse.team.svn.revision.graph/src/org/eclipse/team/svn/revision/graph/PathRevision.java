@@ -22,7 +22,7 @@ import org.eclipse.team.svn.revision.graph.operation.PathRevisionConnectionsVali
  * 
  * @author Igor Burilo
  */
-public class PathRevision extends NodeConnections {
+public class PathRevision extends NodeConnections<PathRevision> {
 
 	public enum ReviosionNodeType {
 		TRUNK,
@@ -62,10 +62,6 @@ public class PathRevision extends NodeConnections {
 		return pathIndex;
 	}
 	
-//	public String getPath() {
-//		return CacheReader.pathStorage.getPath(this.pathIndex);
-//	}
-	
 	public long getRevision() {
 		return this.revisionData.getRevision();
 	}
@@ -88,9 +84,9 @@ public class PathRevision extends NodeConnections {
 	
 	public void insertNodeInRevisionsChain(PathRevision node) { 
 		PathRevision prevNodeToProcess = null;
-		Iterator<NodeConnections> iter = this.iterateRevisionsChain();
+		Iterator<PathRevision> iter = this.iterateRevisionsChain();
 		while (iter.hasNext()) {
-			PathRevision nodeToProcess = (PathRevision) iter.next();
+			PathRevision nodeToProcess = iter.next();
 			if (nodeToProcess.getRevision() < node.getRevision()) {
 				prevNodeToProcess = nodeToProcess;
 			} else {
@@ -103,16 +99,16 @@ public class PathRevision extends NodeConnections {
 		} else if (prevNodeToProcess.getNext() == null) {
 			prevNodeToProcess.setNext(node);
 		} else {
-			NodeConnections tmpNode = prevNodeToProcess.getNext();
+			PathRevision tmpNode = prevNodeToProcess.getNext();
 			prevNodeToProcess.setNext(node);
 			node.setNext(tmpNode);
 		}	
 	}
 	
 	public PathRevision findNodeInChain(long revision) {		
-		Iterator<NodeConnections> iter = this.iterateRevisionsChain();
+		Iterator<PathRevision> iter = this.iterateRevisionsChain();
 		while (iter.hasNext()) {
-			PathRevision nodeToProcess = (PathRevision) iter.next();
+			PathRevision nodeToProcess = iter.next();
 			if (nodeToProcess.getRevision() == revision) {
 				return nodeToProcess;
 			}
@@ -151,28 +147,8 @@ public class PathRevision extends NodeConnections {
 		return result;
 	}
 	
-	public PathRevision getStartNodeInChain() {
-		return (PathRevision) super.getStartNodeInChain();
-	}
-	
-	public PathRevision getEndNodeInChain() {
-		return (PathRevision) super.getEndNodeInChain();
-	}	
-	
-	public PathRevision getNext() {
-		return (PathRevision) super.getNext();
-	}
-	
-	public PathRevision getPrevious() {
-		return (PathRevision) super.getPrevious();
-	}
-	
 	public PathRevision[] getCopiedTo() {
 		return this.copiedTo.toArray(new PathRevision[0]);
-	}
-	
-	public PathRevision getCopiedFrom() {
-		return (PathRevision) super.getCopiedFrom();
 	}
 
 	public RevisionStructure getRevisionData() {

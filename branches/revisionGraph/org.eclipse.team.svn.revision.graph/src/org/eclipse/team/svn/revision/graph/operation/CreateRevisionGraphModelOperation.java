@@ -28,7 +28,6 @@ import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.ActivityCancelledException;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
-import org.eclipse.team.svn.revision.graph.NodeConnections;
 import org.eclipse.team.svn.revision.graph.PathRevision;
 import org.eclipse.team.svn.revision.graph.TopRightTraverseVisitor;
 import org.eclipse.team.svn.revision.graph.PathRevision.ReviosionNodeType;
@@ -99,9 +98,9 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 				this.process(this.resultNode, monitor);
 				
 				//fill result model with other data: author, message, date, children
-				new TopRightTraverseVisitor() {				
-					protected void visit(NodeConnections node) {
-						PathRevision pathRevision = (PathRevision) node;
+				new TopRightTraverseVisitor<PathRevision>() {				
+					protected void visit(PathRevision node) {
+						PathRevision pathRevision = node;
 						try {										
 							dataContainer.loadRevisionData(pathRevision.getRevisionData());
 						} catch (IOException ie) {

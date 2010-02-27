@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
-import org.eclipse.team.svn.revision.graph.NodeConnections;
 import org.eclipse.team.svn.revision.graph.PathRevision;
 import org.eclipse.team.svn.revision.graph.TopRightTraverseVisitor;
 import org.eclipse.team.svn.revision.graph.cache.RevisionDataContainer;
@@ -82,9 +81,9 @@ public class RevisionRootNode extends ChangesNotifier {
 		 */		
 		final List<RevisionNode> previousNodes = new ArrayList<RevisionNode>();
 		if (this.currentStartNode != null) {			
-			new TopRightTraverseVisitor() {
-				public void visit(NodeConnections node) {
-					previousNodes.add(((RevisionNodeItem) node).getRevisionNode());
+			new TopRightTraverseVisitor<RevisionNodeItem>() {
+				public void visit(RevisionNodeItem node) {
+					previousNodes.add(node.getRevisionNode());
 				}				
 			}.traverse(this.currentStartNode.getCurrentConnectionItem());			
 		}
@@ -107,9 +106,9 @@ public class RevisionRootNode extends ChangesNotifier {
 		this.currentSourceConnections.clear();
 		this.currentTargetConnections.clear();
 		
-		new TopRightTraverseVisitor() {			
-			public void visit(NodeConnections node) {				
-				RevisionNodeItem item = (RevisionNodeItem) node;
+		new TopRightTraverseVisitor<RevisionNodeItem>() {			
+			public void visit(RevisionNodeItem node) {				
+				RevisionNodeItem item = node;
 				currentNodesList.add(item.getRevisionNode());
 												
 				if (item.getNext() != null) {
@@ -188,9 +187,9 @@ public class RevisionRootNode extends ChangesNotifier {
 	
 	protected void createCurrentConnectionsFromInitial() {
 		//copy connections from initial to current
-		new TopRightTraverseVisitor() {			
-			public void visit(NodeConnections node) {
-				RevisionNodeItem initialItem = (RevisionNodeItem) node;
+		new TopRightTraverseVisitor<RevisionNodeItem>() {			
+			public void visit(RevisionNodeItem node) {
+				RevisionNodeItem initialItem = node;
 				RevisionNodeItem currentItem = initialItem.getRevisionNode().getCurrentConnectionItem();
 				
 				if (initialItem.getNext() != null) {

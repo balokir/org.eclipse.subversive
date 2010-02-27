@@ -11,6 +11,7 @@
 package org.eclipse.team.svn.revision.graph;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -25,22 +26,26 @@ import java.util.Set;
  * 
  * @author Igor Burilo
  */
-public class NodeConnections {
+public class NodeConnections<T extends NodeConnections<T>>{
 
-	protected NodeConnections next;	
-	protected NodeConnections previous;	
-	protected Set<NodeConnections> copiedTo = new HashSet<NodeConnections>();
-	protected NodeConnections copiedFrom;
+	protected T next;	
+	protected T previous;	
+	protected Set<T> copiedTo = new HashSet<T>();
+	protected T copiedFrom;
 	
-	public NodeConnections[] getCopiedTo() {
-		return this.copiedTo.toArray(new NodeConnections[0]);
+	public T[] getCopiedTo(T[] a) {
+		return this.copiedTo.toArray(a);
 	}
 	
-	public NodeConnections getCopiedFrom() {
+	public Collection<T> getCopiedToAsCollection() {
+		return new ArrayList<T>(this.copiedTo);
+	}
+	
+	public T getCopiedFrom() {
 		return this.copiedFrom;
 	}
 		
-	public void setNext(NodeConnections nextNode) {
+	public void setNext(T nextNode) {
 		if (nextNode == null) {
 			throw new IllegalArgumentException("Node can't be null");
 		}
@@ -48,11 +53,11 @@ public class NodeConnections {
 			return;
 		}
 		
-		NodeConnections tmp1 = this.next;
-		NodeConnections tmp2 = nextNode.previous;
+		T tmp1 = this.next;
+		T tmp2 = nextNode.previous;
 		
 		this.next = nextNode;		
-		nextNode.previous = this;					
+		nextNode.previous = this.convertThisToGeneric();					
 		
 		if (tmp1 != null) {
 			tmp1.previous = null;	
@@ -62,7 +67,7 @@ public class NodeConnections {
 		}		
 		
 		this.validate();
-	}
+	}		
 	
 	public void removeNext() {
 		if (this.next != null) {
@@ -71,12 +76,12 @@ public class NodeConnections {
 		}
 	}
 	
-	public void setPrevious(NodeConnections prevNode) {
+	public void setPrevious(T prevNode) {
 		if (prevNode == null) {
 			throw new IllegalArgumentException("Node can't be null");
 		}
-		prevNode.setNext(this);				
-	}
+		prevNode.setNext(this.convertThisToGeneric());				
+	}	
 	
 	public void removePrevious() {
 		if (this.previous != null) {
@@ -85,11 +90,11 @@ public class NodeConnections {
 		}
 	}
 			
-	public void addCopiedTo(NodeConnections node) {
+	public void addCopiedTo(T node) {
 		this.addCopiedTo(node, true);
 	}
 	
-	protected void addCopiedTo(NodeConnections node, boolean canValidate) {
+	protected void addCopiedTo(T node, boolean canValidate) {
 		if (node == null) {
 			throw new IllegalArgumentException("Node can't be null");
 		}
@@ -97,10 +102,10 @@ public class NodeConnections {
 			return;
 		}
 		
-		NodeConnections tmp = node.copiedFrom; 
+		T tmp = node.copiedFrom; 
 			
 		this.copiedTo.add(node);
-		node.copiedFrom = this;
+		node.copiedFrom = this.convertThisToGeneric();
 		
 		if (tmp != null) {
 			tmp.removeCopiedTo(node);	
@@ -109,16 +114,16 @@ public class NodeConnections {
 		if (canValidate) {
 			this.validate();	
 		}		
-	}
+	}	
 	
-	public void removeCopiedTo(NodeConnections node) {
+	public void removeCopiedTo(T node) {
 		if (node == null) {
 			throw new IllegalArgumentException("Node can't be null");
 		}
 		if (!this.copiedTo.isEmpty()) {
-			Iterator<NodeConnections> iter = this.copiedTo.iterator();
+			Iterator<T> iter = this.copiedTo.iterator();
 			while (iter.hasNext()) {
-				NodeConnections copyTo = iter.next();
+				T copyTo = iter.next();
 				if (copyTo.equals(node)) {
 					copyTo.copiedFrom = null;
 					iter.remove();
@@ -126,68 +131,68 @@ public class NodeConnections {
 				}
 			}	
 		}
-	}
+	}	
 	
 	public void removeAllCopiedTo() {
 		if (!this.copiedTo.isEmpty()) {
-			Iterator<NodeConnections> iter = this.copiedTo.iterator();
+			Iterator<T> iter = this.copiedTo.iterator();
 			while (iter.hasNext()) {
-				NodeConnections copyTo = iter.next();
+				T copyTo = iter.next();
 				copyTo.copiedFrom = null;
 				iter.remove();
 			}	
 		}
 	}
 	
-	public void addCopiedTo(NodeConnections[] nodes) {
+	public void addCopiedTo(T[] nodes) {
 		if (nodes == null || nodes.length == 0) {
 			throw new IllegalArgumentException("Nodes can't be null");
 		}				
-		for (NodeConnections node : nodes) {
+		for (T node : nodes) {
 			this.addCopiedTo(node, false);
 		}			
 		
 		this.validate();
 	}	
 	
-	public void setCopiedFrom(NodeConnections node) {
+	public void setCopiedFrom(T node) {
 		if (node == null) {
 			throw new IllegalArgumentException("Node can't be null");
 		}
-		node.addCopiedTo(this);		
+		node.addCopiedTo(this.convertThisToGeneric());		
 	}
 	
 	public void removeCopiedFrom() {
 		if (this.copiedFrom != null) {
-			this.copiedFrom.removeCopiedTo(this);
+			this.copiedFrom.removeCopiedTo(this.convertThisToGeneric());
 		}
 	}
 	
-	public NodeConnections getNext() {
+	public T getNext() {
 		return this.next;
 	}
 	
-	public NodeConnections getPrevious() {
+	public T getPrevious() {
 		return this.previous;
 	}
 	
 	/*
 	 * Return iterator which starts to iterate from start node in chain
 	 */
-	public Iterator<NodeConnections> iterateRevisionsChain() {		
-		return new Iterator<NodeConnections>() {
-			protected NodeConnections nextNode;			
+	public Iterator<T> iterateRevisionsChain() {		
+		return new Iterator<T>() {
+			protected T nextNode;			
 			{
 				this.nextNode = NodeConnections.this.getStartNodeInChain();
 			}
 			public boolean hasNext() {
 				return this.nextNode != null;
 			}
-			public NodeConnections next() {
+			public T next() {
 				if (!this.hasNext()) {
 					throw new NoSuchElementException();
 				}
-				NodeConnections res = this.nextNode;
+				T res = this.nextNode;
 				this.nextNode = this.nextNode.next;
 				return res;
 			}
@@ -198,8 +203,8 @@ public class NodeConnections {
 		};
 	}
 	
-	public NodeConnections getStartNodeInChain() {
-		NodeConnections node = this;
+	public T getStartNodeInChain() {
+		T node = this.convertThisToGeneric();
 		while (true) {
 			if (node.getPrevious() == null) {
 				return node;
@@ -209,8 +214,8 @@ public class NodeConnections {
 		}
 	}
 	
-	public NodeConnections getEndNodeInChain() {
-		NodeConnections node = this;
+	public T getEndNodeInChain() {
+		T node = this.convertThisToGeneric();
 		while (true) {
 			if (node.getNext() == null) {
 				return node;
@@ -220,10 +225,10 @@ public class NodeConnections {
 		}
 	}
 		
-	public NodeConnections getStartNodeInGraph() {		
-		NodeConnections first = this.getStartNodeInChain();
+	public T getStartNodeInGraph() {		
+		T first = this.getStartNodeInChain();
 		while (true) {
-			NodeConnections copiedFrom = first.getCopiedFrom();
+			T copiedFrom = first.getCopiedFrom();
 			if (copiedFrom != null) {
 				first = copiedFrom.getStartNodeInChain();
 			} else {
@@ -241,23 +246,28 @@ public class NodeConnections {
 		//do nothing
 	}
 	
+	@SuppressWarnings("unchecked")
+	protected T convertThisToGeneric() {
+		return (T) this;
+	}
+	
 	//---- for debug
-	public static void showGraph(NodeConnections node) {
+	public static <T extends NodeConnections<T>> void showGraph(T node) {
 		System.out.println("\r\n------------------");
 		
 		//find start node
-		NodeConnections first = node.getStartNodeInGraph();
+		T first = node.getStartNodeInGraph();
 		doShowGraph(first);
 	}
 	
-	protected static void doShowGraph(NodeConnections node) {				
-		List<NodeConnections> nextNodes = new ArrayList<NodeConnections>();
+	protected static <T extends NodeConnections<T>> void doShowGraph(T node) {				
+		List<T> nextNodes = new ArrayList<T>();
 		
 		System.out.println();
 		
-		Iterator<NodeConnections> iter = node.iterateRevisionsChain();
+		Iterator<T> iter = node.iterateRevisionsChain();
 		while (iter.hasNext()) {
-			NodeConnections start = iter.next();
+			T start = iter.next();
 			StringBuffer str = new StringBuffer();
 			str.append(start);
 			
@@ -265,11 +275,10 @@ public class NodeConnections {
 				//nextNodes.add(start.getCopiedFromNode());
 				str.append("\r\n\tcopied from node: " + start.getCopiedFrom() + ", ");
 			}
-			
-			NodeConnections[] copyToNodes = start.getCopiedTo();
-			if (copyToNodes.length > 0) {
+						
+			if (!start.copiedTo.isEmpty()) {
 				str.append("\r\n\tcopy to nodes: ");
-				for (NodeConnections copyToNode : copyToNodes) {
+				for (T copyToNode : start.copiedTo) {
 					nextNodes.add(copyToNode);
 					str.append("\r\n\t" + copyToNode);
 				}
@@ -279,7 +288,7 @@ public class NodeConnections {
 			//start = start.nextNode();
 		}
 		
-		for (NodeConnections nextNode : nextNodes) {
+		for (T nextNode : nextNodes) {
 			doShowGraph(nextNode);
 		}
 	}
