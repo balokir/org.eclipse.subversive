@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.graphic.layout;
 
-import org.eclipse.team.svn.revision.graph.NodeConnections;
 import org.eclipse.team.svn.revision.graph.TopRightTraverseVisitor;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode.RevisionNodeItem;
@@ -37,10 +36,10 @@ public class SetFinalCoordinates extends AbstractLayoutCommand {
 	@Override
 	public void run() {	
 		final int maxY = this.setYcommand.getMaxY();						
-		new TopRightTraverseVisitor() {			
+		new TopRightTraverseVisitor<RevisionNodeItem>() {			
 			@Override
-			protected void visit(NodeConnections cNode) {
-				RevisionNode node = ((RevisionNodeItem) cNode).getRevisionNode();				
+			protected void visit(RevisionNodeItem cNode) {
+				RevisionNode node = cNode.getRevisionNode();				
 				node.setX(node.getX() * (node.getWidth() + SetFinalCoordinates.this.widthOffset));							
 				node.setY(maxY - (node.getY() + node.getHeight()));				
 			}

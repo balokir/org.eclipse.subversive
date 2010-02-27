@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -18,28 +19,28 @@ import java.util.Queue;
  * 
  * @author Igor Burilo
  */
-public abstract class TopRightTraverseVisitor {	
+public abstract class TopRightTraverseVisitor<T extends NodeConnections<T>> {	
 	
-	public void traverse(NodeConnections startNode) {
-		Queue<NodeConnections> queue = new LinkedList<NodeConnections>();						
+	public void traverse(T startNode) {
+		Queue<T> queue = new LinkedList<T>();						
 		queue.offer(startNode);			
 		
-		NodeConnections node = null;
+		T node = null;
 		while ((node = queue.poll()) != null) {
 			this.visit(node);
 			
-			NodeConnections next = node.getNext();
+			T next = node.getNext();
 			if (next != null) {
 				queue.offer(next);
 			}
 			
-			NodeConnections[] copiedToNodes = node.getCopiedTo();
-			for (NodeConnections copiedToNode : copiedToNodes) {
+			Collection<T> copiedToNodes = node.getCopiedToAsCollection();
+			for (T copiedToNode : copiedToNodes) {
 				queue.offer(copiedToNode);
 			}
 		}			
 	}
 
-	protected abstract void visit(NodeConnections node);	
+	protected abstract void visit(T node);	
 
 }

@@ -39,28 +39,12 @@ public class RevisionNode extends ChangesNotifier {
 	protected int x;
 	protected int y;
 	
-	public class RevisionNodeItem extends NodeConnections {					
+	public class RevisionNodeItem extends NodeConnections<RevisionNodeItem> {					
 				
 		public RevisionNode getRevisionNode() {
 			return RevisionNode.this;
-		}
-		
-		@Override
-		public RevisionNodeItem getNext() {
-			return (RevisionNodeItem) this.next;
-		}
-
-		@Override
-		public RevisionNodeItem getPrevious() {
-			return (RevisionNodeItem) this.previous;
-		} 
-		
-		@Override
-		public RevisionNodeItem getCopiedFrom() {
-			return (RevisionNodeItem) this.copiedFrom;
-		}
-		
-		@Override
+		}				
+				
 		public RevisionNodeItem[] getCopiedTo() {
 			return this.copiedTo.toArray(new RevisionNodeItem[0]);
 		}
@@ -145,10 +129,10 @@ public class RevisionNode extends ChangesNotifier {
 	
 	public RevisionNode[] getCopiedTo() {
 		LinkedList<RevisionNode> res = new LinkedList<RevisionNode>();
-		NodeConnections[] copiedTo = this.currentConnectionItem.getCopiedTo();
+		RevisionNodeItem[] copiedTo = this.currentConnectionItem.getCopiedTo();
 		if (copiedTo.length > 0) {
 			for (int i = 0; i < copiedTo.length; i ++) {
-				NodeConnections node =  copiedTo[i]; 
+				RevisionNodeItem node =  copiedTo[i]; 
 				RevisionNode copiedToNode = this.castItem(node);
 				//if there's renamed node, we place it at first position
 				if (copiedToNode.pathRevision.action == RevisionNodeAction.RENAME) {
@@ -165,8 +149,8 @@ public class RevisionNode extends ChangesNotifier {
 		return this.castItem(this.currentConnectionItem.getCopiedFrom());
 	}
 	
-	protected RevisionNode castItem(NodeConnections node) {		
-		return node != null ? ((RevisionNodeItem) node).getRevisionNode() : null;
+	protected RevisionNode castItem(RevisionNodeItem node) {		
+		return node != null ? node.getRevisionNode() : null;
 	}
 
 	public void refreshConnections() {
