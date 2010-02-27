@@ -94,7 +94,7 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 			
 			RevisionStructure entry = this.findStartLogEntry(revision, pathIndex);
 			if (entry != null) {
-				this.resultNode = this.createRevisionNode(entry, pathIndex);	
+				this.resultNode = this.createRevisionNode(entry, pathIndex, true);	
 										
 				this.process(this.resultNode, monitor);
 				
@@ -191,7 +191,7 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 				if (++ rev < this.dataContainer.getLastProcessedRevision()) {
 					RevisionStructure entry = this.getEntry(rev);
 					if (entry != null) {
-						PathRevision nextNode = this.createRevisionNode(entry, node.getPathIndex());
+						PathRevision nextNode = this.createRevisionNode(entry, node.getPathIndex(), true);
 						//not modified nodes are not included in chain
 						if (nextNode.action != RevisionNodeAction.NONE) {
 							//'rename' stops processing 
@@ -219,7 +219,7 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 				if (-- rev > 0) {
 					RevisionStructure entry = this.getEntry(rev);
 					if (entry != null) {
-						PathRevision prevNode = this.createRevisionNode(entry, node.getPathIndex());
+						PathRevision prevNode = this.createRevisionNode(entry, node.getPathIndex(), true);
 						//not modified nodes are not included in chain
 						if (prevNode.action != RevisionNodeAction.NONE) {
 							processNode.setPrevious(prevNode);
@@ -368,7 +368,7 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 					RevisionStructure rsCopyTo = this.getEntry(changedPath.getRevision());
 					PathRevision copyToNode = null;
 					if (rsCopyTo != null) {
-						copyToNode = this.createRevisionNode(rsCopyTo, copyToPath);
+						copyToNode = this.createRevisionNode(rsCopyTo, copyToPath, false);
 					}
 					
 					if (copyToNode != null) {
@@ -377,7 +377,7 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 							///revision has no modifications and so it's not in the chain
 							RevisionStructure copyFromEntry = this.getEntry(changedPath.getCopiedFromRevision());								
 							if (copyFromEntry != null) {									
-								copyFromNode = this.createRevisionNode(copyFromEntry, node.getPathIndex());
+								copyFromNode = this.createRevisionNode(copyFromEntry, node.getPathIndex(), false);
 							}																
 						}
 						
@@ -430,7 +430,7 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 						int[] relativeParts = this.dataContainer.getPathStorage().makeRelative(parentPath.getPathIndex(), node.getPathIndex());
 						copiedFromPath = this.dataContainer.getPathStorage().add(parentPath.getCopiedFromPathIndex(), relativeParts);
 					}
-					return this.createRevisionNode(copiedFromEntry, copiedFromPath);	
+					return this.createRevisionNode(copiedFromEntry, copiedFromPath, false);	
 				}
 			}
 		}
@@ -444,7 +444,7 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 				for (ChangedPathStructure changedPath : entry.getChangedPaths()) {						
 					if (this.isParentPath(changedPath.getPathIndex(), path)) {
 						if (changedPath.getAction() == SVNLogPath.ChangeType.ADDED || 
-							changedPath.getAction() == SVNLogPath.ChangeType.REPLACED && changedPath.getCopiedFromPathIndex() != PathStorage.UNKNOWN_INDEX) {
+							changedPath.getCopiedFromPathIndex() != PathStorage.UNKNOWN_INDEX) {
 							return entry;
 						}
 					}					
@@ -454,12 +454,17 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 		return null;
 	}
 	
-	/*
+	/** 
+	 * Create PathRevision node with filled action and type 
+	 * 
 	 * As 'rename' is complex action (copy + delete) we handle it in specific way:
 	 *  If path is created during 'rename', then returned node path corresponds to passed path
-	 * 	If path is deleted during 'rename', then returned node path doesn't correspond to passed path 		 
+	 * 	If path is deleted during 'rename', then returned node path doesn't correspond to passed path
+	 * 
+	 * @param isCalledFromChain This flag is used if there's Replace action, depending on how from where
+	 * 							this method is called resulted action varies	 
 	 */
-	protected PathRevision createRevisionNode(RevisionStructure entry, int pathIndex) {		
+	protected PathRevision createRevisionNode(RevisionStructure entry, int pathIndex, boolean isCalledFromChain) {		
 		//path can be changed during rename
 		int nodePath = pathIndex;
 		RevisionNodeAction action = PathRevision.RevisionNodeAction.NONE;	
@@ -480,30 +485,48 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 				}
 			}
 			
-			if (parentPath != null) {				
-				//as checkRenameAction is complex, it should be verified first
-				ChangedPathStructure renamedLogPath = this.checkRenameAction(pathIndex, parentPath, entry);				
-				if (renamedLogPath != null) {
-					action = RevisionNodeAction.RENAME;
-					
-					if (parentPath.getAction() == SVNLogPath.ChangeType.DELETED) {
-						nodePath = renamedLogPath.getPathIndex();
-						if (/*pathIndex.startsWith(parentPath.pathIndex) && pathIndex.length() > parentPath.pathIndex.length()*/
-								this.dataContainer.getPathStorage().isParentIndex(parentPath.getPathIndex(), pathIndex)) {
-							//nodePath += pathIndex.substring(parentPath.pathIndex.length());
-							int[] relativeParts = this.dataContainer.getPathStorage().makeRelative(parentPath.getPathIndex(), pathIndex);
-							nodePath = this.dataContainer.getPathStorage().add(nodePath, relativeParts);	
-						}
+			if (parentPath != null) {
+				/*
+				 * At first, check Replace as this is a special case. We can have following cases with Replace:
+				 * 												  Copy From Path:
+				 * Replacing /subversion/branches/tree-conflicts  /subversion/branches/tree-conflicts 		872329
+				 * Replacing /RevisionGraph/tags/t1/src/Foo.java  /RevisionGraph/branches/br1/src/Foo.java	7351
+				 * 
+				 * In this case if depending on where we call this method, node's action will be 
+				 * either Delete or Copy
+				 */
+				if (parentPath.getAction() == SVNLogPath.ChangeType.REPLACED) {					
+					//has copied from
+					if (parentPath.getCopiedFromPathIndex() != PathStorage.UNKNOWN_INDEX) {						
+						action = isCalledFromChain ? RevisionNodeAction.DELETE : RevisionNodeAction.COPY;
 					} else {
-						nodePath = pathIndex;
-					}
-				} else if (this.isAddOnlyAction(pathIndex, parentPath)) {
-					action = RevisionNodeAction.ADD;					
-				} else if (this.isCopyAction(pathIndex, parentPath)) {
-					action = RevisionNodeAction.COPY;					
-				} else if (this.isDeleteAction(pathIndex, parentPath)) {
-					action = RevisionNodeAction.DELETE;				
-				}		
+						action = RevisionNodeAction.DELETE;
+					}															
+				} else {
+					//as checkRenameAction is complex, it should be verified first
+					ChangedPathStructure renamedLogPath = this.checkRenameAction(pathIndex, parentPath, entry);				
+					if (renamedLogPath != null) {
+						action = RevisionNodeAction.RENAME;
+						
+						if (parentPath.getAction() == SVNLogPath.ChangeType.DELETED) {
+							nodePath = renamedLogPath.getPathIndex();
+							if (/*pathIndex.startsWith(parentPath.pathIndex) && pathIndex.length() > parentPath.pathIndex.length()*/
+									this.dataContainer.getPathStorage().isParentIndex(parentPath.getPathIndex(), pathIndex)) {
+								//nodePath += pathIndex.substring(parentPath.pathIndex.length());
+								int[] relativeParts = this.dataContainer.getPathStorage().makeRelative(parentPath.getPathIndex(), pathIndex);
+								nodePath = this.dataContainer.getPathStorage().add(nodePath, relativeParts);	
+							}
+						} else {
+							nodePath = pathIndex;
+						}
+					} else if (this.isAddOnlyAction(pathIndex, parentPath)) {
+						action = RevisionNodeAction.ADD;					
+					} else if (this.isCopyAction(pathIndex, parentPath)) {
+						action = RevisionNodeAction.COPY;					
+					} else if (this.isDeleteAction(pathIndex, parentPath)) {
+						action = RevisionNodeAction.DELETE;				
+					}			
+				}
 			} 
 			if (action == PathRevision.RevisionNodeAction.NONE && childPath != null) {
 				if (this.isModifyAction(pathIndex, childPath)) {
@@ -540,9 +563,7 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 	 * so if you need to differ them, call rename action at first
 	 */
 	protected boolean isDeleteAction(int path, ChangedPathStructure parentChangedPath) {
-		return 
-			parentChangedPath.getAction() == SVNLogPath.ChangeType.REPLACED && parentChangedPath.getCopiedFromPathIndex() == PathStorage.UNKNOWN_INDEX ||
-			parentChangedPath.getAction() == SVNLogPath.ChangeType.DELETED;
+		return parentChangedPath.getAction() == SVNLogPath.ChangeType.DELETED;
 	}
 	
 	protected boolean isAddOnlyAction(int path, ChangedPathStructure parentChangedPath) {
@@ -550,8 +571,7 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 	}		
 
 	protected boolean isCopyAction(int path, ChangedPathStructure parentChangedPath) {
-		return parentChangedPath.getCopiedFromPathIndex() != PathStorage.UNKNOWN_INDEX &&
-			(parentChangedPath.getAction() == SVNLogPath.ChangeType.ADDED || parentChangedPath.getAction() == SVNLogPath.ChangeType.REPLACED);					
+		return parentChangedPath.getCopiedFromPathIndex() != PathStorage.UNKNOWN_INDEX && parentChangedPath.getAction() == SVNLogPath.ChangeType.ADDED;					
 	}
 	
 	/*
