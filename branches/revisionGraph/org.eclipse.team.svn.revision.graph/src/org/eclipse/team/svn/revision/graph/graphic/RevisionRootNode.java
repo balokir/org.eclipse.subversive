@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
+import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.revision.graph.PathRevision;
 import org.eclipse.team.svn.revision.graph.TopRightTraverseVisitor;
 import org.eclipse.team.svn.revision.graph.cache.RevisionDataContainer;
@@ -241,5 +242,13 @@ public class RevisionRootNode extends ChangesNotifier {
 	
 	public String getRevisionPath(int pathIndex) {
 		return this.dataContainer.getPathStorage().getPath(pathIndex);	
+	}
+
+	public IRepositoryLocation getRepositoryLocation() {
+		return this.dataContainer.getRepositoryLocation();
+	}
+	
+	public String getRevisionFullPath(RevisionNode revisionNode) {
+		return this.dataContainer.getRevisionFullPath(revisionNode.pathRevision.getPathIndex());
 	}	
 }

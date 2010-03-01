@@ -21,9 +21,16 @@ import org.eclipse.gef.MouseWheelHandler;
 import org.eclipse.gef.MouseWheelZoomHandler;
 import org.eclipse.gef.editparts.ScalableRootEditPart;
 import org.eclipse.gef.editparts.ZoomManager;
+import org.eclipse.gef.ui.actions.ActionRegistry;
 import org.eclipse.gef.ui.parts.GraphicalEditor;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.team.svn.revision.graph.cache.TimeMeasure;
+import org.eclipse.team.svn.revision.graph.graphic.actions.CompareWithEachOtherAction;
+import org.eclipse.team.svn.revision.graph.graphic.actions.CompareWithHeadAction;
+import org.eclipse.team.svn.revision.graph.graphic.actions.CompareWithPreviousAction;
+import org.eclipse.team.svn.revision.graph.graphic.actions.RevisionGraphContextMenuManager;
+import org.eclipse.team.svn.revision.graph.graphic.actions.ShowHistoryAction;
 import org.eclipse.team.svn.revision.graph.graphic.editpart.GraphEditPartFactory;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
@@ -116,13 +123,13 @@ public class RevisionGraphEditor extends GraphicalEditor {
 		viewer.setEditPartFactory(new GraphEditPartFactory());
 		
 		//TODO remember between sessions
-		boolean isSimpleMode = false;
+		boolean isSimpleMode = true;
 		this.getModel().init(isSimpleMode);
 		
 		//context menu
-//		RevisionGraphContextMenuManager menuManager = new RevisionGraphContextMenuManager(viewer, getActionRegistry());
-//		viewer.setContextMenu(menuManager);
-//		getSite().registerContextMenu(menuManager, viewer);
+		RevisionGraphContextMenuManager menuManager = new RevisionGraphContextMenuManager(viewer, getActionRegistry());
+		viewer.setContextMenu(menuManager);
+		getSite().registerContextMenu(menuManager, viewer);
 	}
 
 	protected RevisionGraphOutlinePage getOutlinePage() {
@@ -158,23 +165,29 @@ public class RevisionGraphEditor extends GraphicalEditor {
 	}
 	
 	@Override
-	protected void createActions() {	
-		super.createActions();
+	protected void createActions() {
+		//register other actions
 		
-//		ActionRegistry registry = getActionRegistry();
-//		IAction action;
-//		
-//		action = new ShowLogAction(this);
-//		registry.registerAction(action);
-//		getSelectionActions().add(action.getId());
-//		
-//		action = new CompareRevisionsAction(this);
-//		registry.registerAction(action);
-//		getSelectionActions().add(action.getId());
-//		
-//		action = new CollapseSourceTreeAction(this);
-//		registry.registerAction(action);
-//		getSelectionActions().add(action.getId());
+		ActionRegistry registry = getActionRegistry();
+		IAction action;
+				
+		List<String> selectedActions = getSelectionActions();
+		
+		action = new ShowHistoryAction(this);
+		registry.registerAction(action);
+		selectedActions.add(action.getId());
+		
+		action = new CompareWithEachOtherAction(this);
+		registry.registerAction(action);
+		selectedActions.add(action.getId());
+		
+		action = new CompareWithHeadAction(this);
+		registry.registerAction(action);
+		selectedActions.add(action.getId());
+		
+		action = new CompareWithPreviousAction(this);
+		registry.registerAction(action);
+		selectedActions.add(action.getId());
 	}
 
 	public GraphicalViewer getViewer() {

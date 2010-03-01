@@ -25,6 +25,7 @@ import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNLogPath;
 import org.eclipse.team.svn.core.operation.ActivityCancelledException;
 import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 
 /**
@@ -42,6 +43,8 @@ public class RevisionDataContainer {
 	protected final static String PATH_INDEXES_FILE = "pathIndexes.newdata";
 	
 	protected File cacheDir;
+	
+	protected IRepositoryLocation repositoryLocation;
 	
 	protected CacheMetadata metadata;
 		
@@ -77,8 +80,9 @@ public class RevisionDataContainer {
 	protected PrintWriter pathStringsOutStream;
 	protected PrintWriter pathIndexesOutStream;
 	
-	public RevisionDataContainer(File cacheDir) {
-		this.cacheDir = cacheDir;								
+	public RevisionDataContainer(File cacheDir, IRepositoryLocation repositoryLocation) {
+		this.cacheDir = cacheDir;
+		this.repositoryLocation = repositoryLocation;
 	}
 	
 	public void prepareData(IProgressMonitor monitor) throws IOException {
@@ -97,7 +101,17 @@ public class RevisionDataContainer {
 		return this.metadata;
 	}
 	
+	public String getRevisionFullPath(int pathIndex) {
+		String url = this.repositoryLocation.getRepositoryRootUrl();
+		url += "/" + this.pathStorage.getPath(pathIndex);
+		return url;
+	}
 	
+	public IRepositoryLocation getRepositoryLocation() {
+		return this.repositoryLocation;
+	}
+	
+		
 	//--- loaded from cache data
 	
 	public long getLastProcessedRevision() {
