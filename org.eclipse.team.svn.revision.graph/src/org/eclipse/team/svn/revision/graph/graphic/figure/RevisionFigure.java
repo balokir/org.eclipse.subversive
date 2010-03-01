@@ -17,6 +17,10 @@ import java.util.StringTokenizer;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.RoundedRectangle;
 import org.eclipse.draw2d.ToolbarLayout;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.team.svn.revision.graph.PathRevision.ReviosionNodeType;
+import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
+import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
 
 /**
  * 
@@ -27,10 +31,26 @@ public class RevisionFigure extends RoundedRectangle {
 	protected final static int FIGURE_WIDTH = 150;
 	protected final static int LINE_HEIGHT = 20;
 	
+	//TODO correctly work with system resources
+	protected final static Color trunkColor = new Color(null, 188, 255, 188);
+	protected final static Color branchColor = new Color(null, 229, 255, 229);
+	protected final static Color tagColor = new Color(null, 239, 252, 162);	
+	protected final static Color createOrCopyColor = new Color(null, 229, 255, 229);	
+	protected final static Color renameColor = new Color(null, 229, 229, 255);
+	protected final static Color deleteColor = new Color(null, 255, 229, 229);	
+	protected final static Color modifyColor = new Color(null, 229, 229, 229);
+	protected final static Color otherColor = new Color(null, 255, 255, 255);
+	
+	protected RevisionNode revisionNode;
+		
 	protected Label revisionLabel;
 	protected PathsFigure pathsFigure;
 	
-	public RevisionFigure() {
+	protected Color originalBgColor;
+	
+	public RevisionFigure(RevisionNode revisionNode) {
+		this.revisionNode = revisionNode;
+		
 		ToolbarLayout layout = new ToolbarLayout();
 		layout.setVertical(true);
 		
@@ -47,7 +67,30 @@ public class RevisionFigure extends RoundedRectangle {
 	    this.add(this.revisionLabel);
 		
 	    this.pathsFigure = new PathsFigure();	    
-	    this.add(this.pathsFigure);	    	    	    	    
+	    this.add(this.pathsFigure);	    
+	    	   
+	    //init color
+	    ReviosionNodeType type = revisionNode.pathRevision.type;
+		RevisionNodeAction action = revisionNode.pathRevision.action;		
+	    Color color;
+		if (ReviosionNodeType.TRUNK.equals(type)) {
+			color = trunkColor;			
+		} else if (ReviosionNodeType.BRANCH.equals(type)) {
+			color = branchColor;
+		} else if (ReviosionNodeType.TAG.equals(type)) {
+			color = tagColor;
+		} else if (RevisionNodeAction.ADD.equals(action) || RevisionNodeAction.COPY.equals(action)) {
+			color = createOrCopyColor;
+		} else if (RevisionNodeAction.RENAME.equals(action)) {
+			color = renameColor;
+		} else if (RevisionNodeAction.DELETE.equals(action)) {
+			color = deleteColor;			
+		} else if (RevisionNodeAction.MODIFY.equals(action)) {
+			color = modifyColor;
+		} else {
+			color = otherColor;
+		}		
+		this.setBackgroundColor(this.originalBgColor = color);			
 	}
 	
 	public void init(long revision, String path) {		
@@ -65,5 +108,13 @@ public class RevisionFigure extends RoundedRectangle {
 		}
 		
 		this.setPreferredSize(RevisionFigure.FIGURE_WIDTH, RevisionFigure.LINE_HEIGHT * pathParts.size() + 1);
+	}
+
+	public void setSelected(boolean isSelected) {
+		if (isSelected) {
+			this.setBackgroundColor(org.eclipse.draw2d.ColorConstants.blue);
+		} else {
+			this.setBackgroundColor(this.originalBgColor);
+		}		
 	}		
 }

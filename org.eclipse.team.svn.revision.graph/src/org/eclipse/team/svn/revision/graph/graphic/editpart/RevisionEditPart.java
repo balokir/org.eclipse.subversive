@@ -18,12 +18,13 @@ import org.eclipse.draw2d.ChopboxAnchor;
 import org.eclipse.draw2d.ConnectionAnchor;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.gef.ConnectionEditPart;
+import org.eclipse.gef.DragTracker;
+import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.NodeEditPart;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.team.svn.revision.graph.PathRevision.ReviosionNodeType;
-import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
+import org.eclipse.gef.editpolicies.SelectionEditPolicy;
+import org.eclipse.gef.tools.SelectEditPartTracker;
 import org.eclipse.team.svn.revision.graph.graphic.ChangesNotifier;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionConnectionNode;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
@@ -31,25 +32,11 @@ import org.eclipse.team.svn.revision.graph.graphic.RevisionRootNode;
 import org.eclipse.team.svn.revision.graph.graphic.figure.RevisionFigure;
 
 /**
- * Edit part for revision node
- * 
- * TODO correctly work with system resources, i.e. fonts, colors etc.
+ * Edit part for revision node 
  *  
  * @author Igor Burilo
  */
 public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeEditPart, PropertyChangeListener {	
-	
-	protected Color bgColor;
-	
-	//TODO correctly handle system resources
-	protected final Color trunkColor = new Color(null, 188, 255, 188);
-	protected final Color branchColor = new Color(null, 229, 255, 229);
-	protected final Color tagColor = new Color(null, 239, 252, 162);	
-	protected final Color createOrCopyColor = new Color(null, 229, 255, 229);	
-	protected final Color renameColor = new Color(null, 229, 229, 255);
-	protected final Color deleteColor = new Color(null, 255, 229, 229);	
-	protected final Color modifyColor = new Color(null, 229, 229, 229);
-	protected final Color otherColor = new Color(null, 255, 255, 255);
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.gef.editparts.AbstractGraphicalEditPart#activate()
@@ -72,43 +59,9 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 	}
 	
 	@Override
-	protected IFigure createFigure() {			
-		RevisionNode node = this.getCastedModel();		
-		ReviosionNodeType type = node.pathRevision.type;
-		RevisionNodeAction action = node.pathRevision.action;
-		
-		IFigure figure;
-		Color color;
-		if (ReviosionNodeType.TRUNK.equals(type)) {
-			color = this.trunkColor;
-			figure = new RevisionFigure();
-		} else if (ReviosionNodeType.BRANCH.equals(type)) {
-			color = this.branchColor;
-			figure = new RevisionFigure();
-		} else if (ReviosionNodeType.TAG.equals(type)) {
-			color = this.tagColor;
-			figure = new RevisionFigure();
-		} else if (RevisionNodeAction.ADD.equals(action) || RevisionNodeAction.COPY.equals(action)) {
-			color = this.createOrCopyColor;
-			figure = new RevisionFigure();
-		} else if (RevisionNodeAction.RENAME.equals(action)) {
-			color = this.renameColor;
-			figure = new RevisionFigure();
-		} else if (RevisionNodeAction.DELETE.equals(action)) {
-			color = this.deleteColor;			
-			figure = new RevisionFigure();
-		} else if (RevisionNodeAction.MODIFY.equals(action)) {
-			color = this.modifyColor;
-			figure = new RevisionFigure();
-		} else {
-			color = this.otherColor;
-			figure = new RevisionFigure();
-		}					
-				
-		figure.setBackgroundColor(this.bgColor = color);				
-		
-		//TODO figure.setToolTip(new RevisionTooltipFigure(this.getCastedModel()));
-		
+	protected IFigure createFigure() {
+		RevisionFigure figure = new RevisionFigure(this.getCastedModel());									
+		//TODO figure.setToolTip(new RevisionTooltipFigure(this.getCastedModel()));		
 		return figure;
 	}	
 	
@@ -126,7 +79,7 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 		}					    
 	}
 	
-	protected RevisionRootNode getRevisionRootNode() {
+	public RevisionRootNode getRevisionRootNode() {
 		RevisionRootNode root = ((RevisionGraphEditPart) getParent()).getCastedModel();
 		return root;
 	}
@@ -149,7 +102,14 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 	
 	@Override
 	protected void createEditPolicies() { 
-		
+		this.installEditPolicy(EditPolicy.SELECTION_FEEDBACK_ROLE, new SelectionEditPolicy() {			
+			protected void showSelection() {
+				((RevisionFigure) this.getHostFigure()).setSelected(true);				
+			}			
+			protected void hideSelection() {
+				((RevisionFigure) this.getHostFigure()).setSelected(false);	
+			}
+		});	
 	}
 	
 	@Override
@@ -160,6 +120,16 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.gef.editparts.AbstractGraphicalEditPart#getDragTracker(org.eclipse.gef.Request)
+	 * 
+	 * As we don't allow dragging, override basic implementation
+	 */
+	@Override
+	public DragTracker getDragTracker(Request request) {		
+		return new SelectEditPartTracker(this); 
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.gef.NodeEditPart#getSourceConnectionAnchor(org.eclipse.gef.ConnectionEditPart)
 	 */
