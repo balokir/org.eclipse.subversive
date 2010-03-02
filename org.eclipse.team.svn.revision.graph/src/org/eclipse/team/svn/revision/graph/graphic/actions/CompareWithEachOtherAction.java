@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.graphic.actions;
 
-import org.eclipse.team.svn.core.operation.CompositeOperation;
-import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
+import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
+import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
+import org.eclipse.team.svn.core.resource.IRepositoryFile;
+import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.revision.graph.graphic.editpart.RevisionEditPart;
-import org.eclipse.team.svn.revision.graph.operation.GetRepositoryResourcesForCompareOperation;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.operation.CompareRepositoryResourcesOperation;
 import org.eclipse.ui.IWorkbenchPart;
@@ -38,27 +39,36 @@ public class CompareWithEachOtherAction extends BaseRevisionGraphAction {
 
 	@Override
 	protected boolean calculateEnabled() {
-		RevisionEditPart[] editParts = this.getSelectedEditParts();
-		if (editParts.length == 2 && 
-			editParts[0].getCastedModel().pathRevision.action != RevisionNodeAction.DELETE &&
-			editParts[1].getCastedModel().pathRevision.action != RevisionNodeAction.DELETE) {
-			return true;
+		RevisionEditPart[] editParts = null;
+		if (this.getSelectedEditParts().length == 2 && 
+			(editParts = this.getSelectedEditParts(BaseRevisionGraphAction.NOT_DELETED_ACTION_FILTER)).length == 2) {
+			IRepositoryResource resource = this.convertToResource(editParts[0]);
+			boolean isCompareAllowed = 
+				CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() >= ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x ||
+				resource instanceof IRepositoryFile;
+			if (isCompareAllowed) {
+				return true;
+			}	
 		}
 		return false;
 	}
 	
 	@Override
 	public void run() {
-		CompositeOperation op = new CompositeOperation("Operation_CompareRepository");
-
-		RevisionEditPart[] editParts = this.getSelectedEditParts();
-		GetRepositoryResourcesForCompareOperation getResourcesOp = new GetRepositoryResourcesForCompareOperation(editParts);				
-		op.add(getResourcesOp);
-		
-		CompareRepositoryResourcesOperation compareOp = new CompareRepositoryResourcesOperation(getResourcesOp);
-		compareOp.setForceId(this.toString());
-		op.add(compareOp, new IActionOperation[] {getResourcesOp});
-		
+		IRepositoryResource[] resources = this.convertToResources(this.getSelectedEditParts());
+		IRepositoryResource prev = resources[0];
+		IRepositoryResource next = null;
+		if (resources.length == 2) {
+			next = resources[1]; 
+		}				
+		if (next != null && ((SVNRevision.Number)next.getSelectedRevision()).getNumber() < ((SVNRevision.Number) prev.getSelectedRevision()).getNumber()) {				
+			IRepositoryResource tmp = prev;
+			prev = next;
+			next = tmp;									
+		}
+				
+		CompareRepositoryResourcesOperation op = new CompareRepositoryResourcesOperation(prev, next);
+		op.setForceId(this.toString());				
 		this.runOperation(op);
 	}
 

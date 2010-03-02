@@ -25,7 +25,7 @@ import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNLogPath;
 import org.eclipse.team.svn.core.operation.ActivityCancelledException;
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.core.resource.IRepositoryLocation;
+import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 
 /**
@@ -44,7 +44,7 @@ public class RevisionDataContainer {
 	
 	protected File cacheDir;
 	
-	protected IRepositoryLocation repositoryLocation;
+	protected IRepositoryResource resource;
 	
 	protected CacheMetadata metadata;
 		
@@ -80,9 +80,9 @@ public class RevisionDataContainer {
 	protected PrintWriter pathStringsOutStream;
 	protected PrintWriter pathIndexesOutStream;
 	
-	public RevisionDataContainer(File cacheDir, IRepositoryLocation repositoryLocation) {
+	public RevisionDataContainer(File cacheDir, IRepositoryResource resource) {
 		this.cacheDir = cacheDir;
-		this.repositoryLocation = repositoryLocation;
+		this.resource = resource;
 	}
 	
 	public void prepareData(IProgressMonitor monitor) throws IOException {
@@ -101,14 +101,21 @@ public class RevisionDataContainer {
 		return this.metadata;
 	}
 	
+	/** 
+	 * @param pathIndex
+	 * @return	full path which contains repository root 
+	 */
 	public String getRevisionFullPath(int pathIndex) {
-		String url = this.repositoryLocation.getRepositoryRootUrl();
-		url += "/" + this.pathStorage.getPath(pathIndex);
+		String url = this.resource.getRepositoryLocation().getRepositoryRootUrl();
+		url += this.pathStorage.getPath(pathIndex);
 		return url;
 	}
 	
-	public IRepositoryLocation getRepositoryLocation() {
-		return this.repositoryLocation;
+	/** 
+	 * @return resource for which revision graph is launched
+	 */
+	public IRepositoryResource getRepositoryResource() {
+		return this.resource;
 	}
 	
 		

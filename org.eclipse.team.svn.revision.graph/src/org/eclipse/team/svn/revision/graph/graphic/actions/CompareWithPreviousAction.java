@@ -10,16 +10,13 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.graphic.actions;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.connector.SVNRevision;
-import org.eclipse.team.svn.core.operation.CompositeOperation;
-import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
+import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
+import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.SVNUtility;
-import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
-import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
 import org.eclipse.team.svn.revision.graph.graphic.editpart.RevisionEditPart;
-import org.eclipse.team.svn.revision.graph.operation.GetRepositoryResourcesForCompareOperation;
 import org.eclipse.team.svn.ui.operation.CompareRepositoryResourcesOperation;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -41,42 +38,31 @@ public class CompareWithPreviousAction extends BaseRevisionGraphAction {
 	}
 
 	@Override
-	protected boolean calculateEnabled() {	
-		RevisionEditPart[] editParts = this.getSelectedEditParts();
-		if (editParts.length == 1) {
-			RevisionEditPart editPart = editParts[0];
-			RevisionNode node = editPart.getCastedModel();
-			RevisionNodeAction action = node.pathRevision.action;
-			if (action == RevisionNodeAction.MODIFY || action == RevisionNodeAction.NONE) {
+	protected boolean calculateEnabled() {			
+		RevisionEditPart[] editParts = null;
+		if (this.getSelectedEditParts().length == 1 && 
+			(editParts = this.getSelectedEditParts(BaseRevisionGraphAction.EXIST_IN_PREVIOUS_FILTER)).length == 1) {
+			IRepositoryResource resource = this.convertToResource(editParts[0]);
+			boolean isCompareAllowed = 
+				CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() >= ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x ||
+				resource instanceof IRepositoryFile;
+			if (isCompareAllowed) {
 				return true;
-			}			
+			}	
 		}
 		return false;
 	}
 	
 	@Override
 	public void run() {
-		CompositeOperation op = new CompositeOperation("Operation_CompareRepository");
-
-		RevisionEditPart editPart = this.getSelectedEditPart();
-		GetRepositoryResourcesForCompareOperation getResourcesOp = new GetRepositoryResourcesForCompareOperation(new RevisionEditPart[]{editPart}) {
-			@Override
-			protected void runImpl(IProgressMonitor monitor) throws Exception {
-				super.runImpl(monitor);
-				
-				IRepositoryResource next = this.getRepositoryResources()[0];						
-				IRepositoryResource prev = SVNUtility.copyOf(next);
-				prev.setSelectedRevision(SVNRevision.fromNumber(((SVNRevision.Number)next.getSelectedRevision()).getNumber() - 1));
-				this.resources =  new IRepositoryResource[] {prev, next};
-			}
-		};			
-		op.add(getResourcesOp);
+		IRepositoryResource next = this.convertToResource(this.getSelectedEditPart());						
+		IRepositoryResource prev = SVNUtility.copyOf(next);
+		prev.setSelectedRevision(SVNRevision.fromNumber(((SVNRevision.Number)next.getSelectedRevision()).getNumber() - 1));
+		prev.setPegRevision(next.getPegRevision());				
 		
-		CompareRepositoryResourcesOperation compareOp = new CompareRepositoryResourcesOperation(getResourcesOp);
-		compareOp.setForceId(this.toString());
-		op.add(compareOp, new IActionOperation[]{getResourcesOp});
-		
+		CompareRepositoryResourcesOperation op = new CompareRepositoryResourcesOperation(prev, next);
+		op.setForceId(this.toString());				
 		this.runOperation(op);			
-	}
+	}	
 
 }

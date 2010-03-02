@@ -15,12 +15,21 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.gef.ui.actions.SelectionAction;
+import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.resource.IRepositoryFile;
+import org.eclipse.team.svn.core.resource.IRepositoryLocation;
+import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.utility.SVNUtility;
+import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
+import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
+import org.eclipse.team.svn.revision.graph.graphic.RevisionRootNode;
 import org.eclipse.team.svn.revision.graph.graphic.editpart.RevisionEditPart;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
+ * Base class for revision graph actions
  * 
  * @author Igor Burilo
  */
@@ -30,6 +39,40 @@ public abstract class BaseRevisionGraphAction extends SelectionAction {
 		super(part);
 	}
 		
+	/*
+	 * Filter for revision edit parts
+	 */
+	protected static abstract class AbstractRevisionEditPartFilter {		
+		public abstract boolean accept(RevisionEditPart editPart);	
+	}
+	
+	protected final static AbstractRevisionEditPartFilter NOT_DELETED_ACTION_FILTER = new AbstractRevisionEditPartFilter() {
+		@Override
+		public boolean accept(RevisionEditPart editPart) {			
+			RevisionNode node = editPart.getCastedModel();
+			return node.pathRevision.action != RevisionNodeAction.DELETE;
+		}		
+	};
+	
+	protected final static AbstractRevisionEditPartFilter EXIST_IN_PREVIOUS_FILTER = new AbstractRevisionEditPartFilter() {
+		@Override
+		public boolean accept(RevisionEditPart editPart) {			
+			RevisionNode node = editPart.getCastedModel();
+			RevisionNodeAction action = node.pathRevision.action;
+			if (action == RevisionNodeAction.MODIFY || action == RevisionNodeAction.NONE) {
+				return true;
+			}		
+			return false;
+		}		
+	};
+	
+	protected final static AbstractRevisionEditPartFilter NULL_FILTER = new AbstractRevisionEditPartFilter() {
+		@Override
+		public boolean accept(RevisionEditPart editPart) {	
+			return true;
+		}
+	};
+	
 	protected void runOperation(final IActionOperation op) {
 		if (op == null) {
 			return;
@@ -37,7 +80,11 @@ public abstract class BaseRevisionGraphAction extends SelectionAction {
 		UIMonitorUtility.doTaskScheduledDefault(this.getWorkbenchPart(), op);
 	}
 	
-	protected RevisionEditPart[] getSelectedEditParts() {
+	protected boolean isEnable(AbstractRevisionEditPartFilter filter, int editPartsCount) {
+		return this.getSelectedEditParts().length == editPartsCount && this.getSelectedEditParts(filter).length == editPartsCount;
+	}
+	
+	protected RevisionEditPart[] getSelectedEditParts(AbstractRevisionEditPartFilter filter) {
 		List<RevisionEditPart> res = new ArrayList<RevisionEditPart>();
 		List<?> selected = this.getSelectedObjects();
 		if (!selected.isEmpty()) {
@@ -45,11 +92,18 @@ public abstract class BaseRevisionGraphAction extends SelectionAction {
 			while (iter.hasNext()) {
 				Object obj = iter.next();
 				if (obj instanceof RevisionEditPart) {
-					res.add((RevisionEditPart) obj);
+					RevisionEditPart editPart = (RevisionEditPart) obj;
+					if (filter.accept(editPart)) {
+						res.add(editPart);
+					}					
 				}
 			}						
 		} 	
 		return res.toArray(new RevisionEditPart[0]);
+	}
+	
+	protected RevisionEditPart[] getSelectedEditParts() {
+		return this.getSelectedEditParts(NULL_FILTER);
 	}
 	
 	protected RevisionEditPart getSelectedEditPart() {
@@ -61,5 +115,31 @@ public abstract class BaseRevisionGraphAction extends SelectionAction {
 			}
 		}
 		return null;
+	}
+		
+	protected IRepositoryResource[] convertToResources(RevisionEditPart[] editParts) {
+		IRepositoryResource[] result = new IRepositoryResource[editParts.length];
+		for (int i = 0; i < editParts.length; i ++) {
+			result[i] = this.convertToResource(editParts[i]);
+		}
+		return result;
+	}
+	
+	protected IRepositoryResource convertToResource(RevisionEditPart editPart) {
+		RevisionNode revisionNode = editPart.getCastedModel();
+		RevisionRootNode rootNode = editPart.getRevisionRootNode();	
+		
+		boolean isFolder = !(rootNode.getRepositoryResource() instanceof IRepositoryFile);					
+		String url = rootNode.getRevisionFullPath(revisionNode);		
+		IRepositoryResource resource = SVNUtility.asRepositoryResource(url, isFolder);
+		SVNRevision svnRev = SVNRevision.fromNumber(revisionNode.pathRevision.getRevision());
+		resource.setSelectedRevision(svnRev);
+		resource.setPegRevision(svnRev);
+		
+		return resource;
+	}
+	
+	protected IRepositoryLocation getRepositoryLocation(RevisionEditPart editPart) {
+		return editPart.getRevisionRootNode().getRepositoryResource().getRepositoryLocation();
 	}
 }

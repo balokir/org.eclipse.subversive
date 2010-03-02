@@ -32,7 +32,7 @@ public class PrepareRevisionDataOperation extends AbstractActionOperation {
 	
 	@Override
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		this.dataContainer = new RevisionDataContainer(RevisionGraphUtility.getCacheFolder(this.resource), this.resource.getRepositoryLocation());
+		this.dataContainer = new RevisionDataContainer(RevisionGraphUtility.getCacheFolder(this.resource), this.resource);
 		this.dataContainer.prepareData(monitor);
 	}
 	
