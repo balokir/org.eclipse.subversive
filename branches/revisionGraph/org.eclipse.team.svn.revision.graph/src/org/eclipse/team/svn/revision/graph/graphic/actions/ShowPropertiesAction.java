@@ -10,40 +10,43 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.graphic.actions;
 
+import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
+import org.eclipse.team.svn.core.operation.remote.GetRemotePropertiesOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
-import org.eclipse.team.svn.ui.operation.ShowHistoryViewOperation;
+import org.eclipse.team.svn.ui.operation.ShowPropertiesOperation;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
 
 /**
- * Show History for revision node action
  * 
  * @author Igor Burilo
  */
-public class ShowHistoryAction extends BaseRevisionGraphAction {
+public class ShowPropertiesAction extends BaseRevisionGraphAction {
 
-	public final static String ShowHistoryAction_ID = "ShowHistory";	
+	public final static String ShowPropertiesAction_ID = "ShowProperties";	
 	
-	public ShowHistoryAction(IWorkbenchPart part) {
+	public ShowPropertiesAction(IWorkbenchPart part) {
 		super(part);
 		
-		setText(SVNUIMessages.ShowResourceHistoryCommand_label);
-		setId(ShowHistoryAction_ID);
-		setToolTipText("Show History");		
-		setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history.gif"));		
+		setText(SVNUIMessages.ShowPropertiesAction_label);
+		setId(ShowPropertiesAction_ID);
+		setToolTipText(SVNUIMessages.ShowPropertiesAction_label);		
+		setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/propertiesedit.gif"));
 	}
 
 	@Override
-	protected boolean calculateEnabled() {		
+	protected boolean calculateEnabled() {
 		return this.isEnable(BaseRevisionGraphAction.NOT_DELETED_ACTION_FILTER, 1);
 	}
 	
 	@Override
-	public void run() {					
+	public void run() {
 		IRepositoryResource resource = this.convertToResource(this.getSelectedEditPart());
-		ShowHistoryViewOperation op = new ShowHistoryViewOperation(resource, 0, 0);				
-		this.runOperation(op);			
-	}	
-		
+		IResourcePropertyProvider provider = new GetRemotePropertiesOperation(resource);
+		ShowPropertiesOperation op = new ShowPropertiesOperation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), resource, provider);
+		this.runOperation(op);				
+	}
+
 }

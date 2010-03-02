@@ -24,9 +24,11 @@ import org.eclipse.ui.IWorkbenchActionConstants;
  */
 public class RevisionGraphContextMenuManager extends ContextMenuProvider {
 
+	public static final String GROUP_OPEN = "open";
 	public static final String GROUP_COMPARE = "compare";
-	//TODO rename
-	public static final String GROUP_SINGLE_REVISIONS = "singleRevision";
+	public static final String GROUP_1 = "group1";
+	public static final String GROUP_2 = "group2";
+	public static final String GROUP_3 = "group3";
 	
 	protected ActionRegistry actionRegistry;
 	
@@ -37,11 +39,17 @@ public class RevisionGraphContextMenuManager extends ContextMenuProvider {
 
 	@Override
 	public void buildContextMenu(IMenuManager menu) {
+		menu.add(new Separator(RevisionGraphContextMenuManager.GROUP_OPEN));
 		menu.add(new Separator(RevisionGraphContextMenuManager.GROUP_COMPARE));
-		menu.add(new Separator(RevisionGraphContextMenuManager.GROUP_SINGLE_REVISIONS));
+		menu.add(new Separator(RevisionGraphContextMenuManager.GROUP_1));
+		menu.add(new Separator(RevisionGraphContextMenuManager.GROUP_2));
+		menu.add(new Separator(RevisionGraphContextMenuManager.GROUP_3));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		
-		IAction action = this.actionRegistry.getAction(CompareWithEachOtherAction.CompareWithEachOtherAction_ID);
+		IAction action = this.actionRegistry.getAction(OpenAction.OpenAction_ID);
+		menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_OPEN, action);
+		
+		action = this.actionRegistry.getAction(CompareWithEachOtherAction.CompareWithEachOtherAction_ID);
 		menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_COMPARE, action);
 		
 		action = this.actionRegistry.getAction(CompareWithHeadAction.CompareWithHeadAction_ID);
@@ -51,7 +59,31 @@ public class RevisionGraphContextMenuManager extends ContextMenuProvider {
 		menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_COMPARE, action);	
 		
 		action = this.actionRegistry.getAction(ShowHistoryAction.ShowHistoryAction_ID);
-		menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_SINGLE_REVISIONS, action);		
+		menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_1, action);
+		
+		action = this.actionRegistry.getAction(ShowPropertiesAction.ShowPropertiesAction_ID);
+		menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_1, action);
+		
+		action = this.actionRegistry.getAction(ComparePropertiesAction.ComparePropertiesAction_ID);
+		menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_1, action);	
+		
+		action = this.actionRegistry.getAction(ExportAction.ExportAction_ID);
+		menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_2, action);
+		
+		action = this.actionRegistry.getAction(CreatePatchAction.CreatePatchAction_ID);
+		menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_2, action);
+		
+		action = this.actionRegistry.getAction(ExtractAction.ExtractAction_ID);
+		menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_2, action);
+		
+		action = this.actionRegistry.getAction(CreateBranchTagAction.CreateBranchAction_ID);
+		menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_3, action);
+		
+		action = this.actionRegistry.getAction(CreateBranchTagAction.CreateTagAction_ID);
+		menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_3, action);
+		
+		action = this.actionRegistry.getAction(AddRevisionLinksAction.AddRevisionLinksAction_ID);
+		menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_3, action);	
 	}
 
 }

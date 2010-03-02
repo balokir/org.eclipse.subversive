@@ -26,12 +26,21 @@ import org.eclipse.gef.ui.parts.GraphicalEditor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.team.svn.revision.graph.cache.TimeMeasure;
+import org.eclipse.team.svn.revision.graph.graphic.actions.AddRevisionLinksAction;
+import org.eclipse.team.svn.revision.graph.graphic.actions.ComparePropertiesAction;
 import org.eclipse.team.svn.revision.graph.graphic.actions.CompareWithEachOtherAction;
 import org.eclipse.team.svn.revision.graph.graphic.actions.CompareWithHeadAction;
 import org.eclipse.team.svn.revision.graph.graphic.actions.CompareWithPreviousAction;
+import org.eclipse.team.svn.revision.graph.graphic.actions.CreateBranchTagAction;
+import org.eclipse.team.svn.revision.graph.graphic.actions.CreatePatchAction;
+import org.eclipse.team.svn.revision.graph.graphic.actions.ExportAction;
+import org.eclipse.team.svn.revision.graph.graphic.actions.ExtractAction;
+import org.eclipse.team.svn.revision.graph.graphic.actions.OpenAction;
 import org.eclipse.team.svn.revision.graph.graphic.actions.RevisionGraphContextMenuManager;
 import org.eclipse.team.svn.revision.graph.graphic.actions.ShowHistoryAction;
+import org.eclipse.team.svn.revision.graph.graphic.actions.ShowPropertiesAction;
 import org.eclipse.team.svn.revision.graph.graphic.editpart.GraphEditPartFactory;
+import org.eclipse.team.svn.ui.action.remote.BranchTagAction;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
@@ -186,6 +195,42 @@ public class RevisionGraphEditor extends GraphicalEditor {
 		selectedActions.add(action.getId());
 		
 		action = new CompareWithPreviousAction(this);
+		registry.registerAction(action);
+		selectedActions.add(action.getId());
+		
+		action = new ShowPropertiesAction(this);
+		registry.registerAction(action);
+		selectedActions.add(action.getId());
+		
+		action = new ComparePropertiesAction(this);
+		registry.registerAction(action);
+		selectedActions.add(action.getId());
+		
+		action = new ExportAction(this);
+		registry.registerAction(action);
+		selectedActions.add(action.getId());
+		
+		action = new CreatePatchAction(this);
+		registry.registerAction(action);
+		selectedActions.add(action.getId());
+		
+		action = new ExtractAction(this);
+		registry.registerAction(action);
+		selectedActions.add(action.getId());
+		
+		action = new CreateBranchTagAction(this, BranchTagAction.BRANCH_ACTION);
+		registry.registerAction(action);
+		selectedActions.add(action.getId());
+		
+		action = new CreateBranchTagAction(this, BranchTagAction.TAG_ACTION);
+		registry.registerAction(action);
+		selectedActions.add(action.getId());
+		
+		action = new AddRevisionLinksAction(this);
+		registry.registerAction(action);
+		selectedActions.add(action.getId());
+		
+		action = new OpenAction(this);
 		registry.registerAction(action);
 		selectedActions.add(action.getId());
 	}
