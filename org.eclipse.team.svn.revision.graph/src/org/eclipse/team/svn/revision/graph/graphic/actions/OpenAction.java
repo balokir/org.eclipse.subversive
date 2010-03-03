@@ -11,10 +11,8 @@
 package org.eclipse.team.svn.revision.graph.graphic.actions;
 
 import org.eclipse.team.svn.core.operation.IActionOperation;
-import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
-import org.eclipse.team.svn.revision.graph.graphic.editpart.RevisionEditPart;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.operation.OpenRemoteFileOperation;
 import org.eclipse.ui.IWorkbenchPart;
@@ -29,8 +27,7 @@ public class OpenAction extends BaseRevisionGraphAction {
 	
 	public OpenAction(IWorkbenchPart part) {
 		super(part);
-			
-		//TODO add image
+					
 		setText(SVNUIMessages.HistoryView_Open);
 		setId(OpenAction_ID);
 		setToolTipText(SVNUIMessages.HistoryView_Open);				
@@ -38,13 +35,12 @@ public class OpenAction extends BaseRevisionGraphAction {
 
 	@Override
 	protected boolean calculateEnabled() {
-		RevisionEditPart[] editParts = this.getSelectedEditParts(BaseRevisionGraphAction.NOT_DELETED_ACTION_FILTER);
-		return editParts.length == 1 && this.convertToResource(editParts[0]) instanceof IRepositoryFile;	
+		return this.isEnable(BaseRevisionGraphAction.NOT_DELETED_ACTION_FILTER, 1);				
 	}
 	
 	@Override
 	public void run() {
-		IRepositoryResource[] resources = this.convertToResources(this.getSelectedEditParts(BaseRevisionGraphAction.NOT_DELETED_ACTION_FILTER));
+		IRepositoryResource[] resources = BaseRevisionGraphAction.convertToResources(this.getSelectedEditParts(BaseRevisionGraphAction.NOT_DELETED_ACTION_FILTER));
 		IActionOperation op = new OpenRemoteFileOperation(new IRepositoryResourceProvider.DefaultRepositoryResourceProvider(resources), OpenRemoteFileOperation.OPEN_DEFAULT);	
 		this.runOperation(op);			
 	}

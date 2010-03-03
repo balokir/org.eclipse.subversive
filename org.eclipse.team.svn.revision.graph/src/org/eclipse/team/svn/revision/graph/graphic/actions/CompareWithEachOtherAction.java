@@ -42,7 +42,7 @@ public class CompareWithEachOtherAction extends BaseRevisionGraphAction {
 		RevisionEditPart[] editParts = null;
 		if (this.getSelectedEditParts().length == 2 && 
 			(editParts = this.getSelectedEditParts(BaseRevisionGraphAction.NOT_DELETED_ACTION_FILTER)).length == 2) {
-			IRepositoryResource resource = this.convertToResource(editParts[0]);
+			IRepositoryResource resource = BaseRevisionGraphAction.convertToResource(editParts[0]);
 			boolean isCompareAllowed = 
 				CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() >= ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x ||
 				resource instanceof IRepositoryFile;
@@ -55,7 +55,7 @@ public class CompareWithEachOtherAction extends BaseRevisionGraphAction {
 	
 	@Override
 	public void run() {
-		IRepositoryResource[] resources = this.convertToResources(this.getSelectedEditParts());
+		IRepositoryResource[] resources = BaseRevisionGraphAction.convertToResources(this.getSelectedEditParts());
 		IRepositoryResource prev = resources[0];
 		IRepositoryResource next = null;
 		if (resources.length == 2) {

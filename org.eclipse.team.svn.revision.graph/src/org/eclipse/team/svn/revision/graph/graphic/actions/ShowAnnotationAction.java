@@ -11,39 +11,35 @@
 package org.eclipse.team.svn.revision.graph.graphic.actions;
 
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
-import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
-import org.eclipse.team.svn.ui.operation.ShowHistoryViewOperation;
+import org.eclipse.team.svn.ui.operation.RemoteShowAnnotationOperation;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * Show History for revision node action
  * 
  * @author Igor Burilo
  */
-public class ShowHistoryAction extends BaseRevisionGraphAction {
+public class ShowAnnotationAction extends BaseRevisionGraphAction {
 
-	public final static String ShowHistoryAction_ID = "ShowHistory";	
+	public final static String ShowAnnotationAction_ID = "ShowAnnotation";
 	
-	public ShowHistoryAction(IWorkbenchPart part) {
+	public ShowAnnotationAction(IWorkbenchPart part) {
 		super(part);
 		
-		setText(SVNUIMessages.ShowResourceHistoryCommand_label);
-		setId(ShowHistoryAction_ID);
-		setToolTipText("Show History");		
-		setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history.gif"));		
+		setText(SVNUIMessages.ShowAnnotationCommand_label);
+		setId(ShowAnnotationAction_ID);
+		setToolTipText(SVNUIMessages.ShowAnnotationCommand_label);		
 	}
 
 	@Override
-	protected boolean calculateEnabled() {		
+	protected boolean calculateEnabled() {	
 		return this.isEnable(BaseRevisionGraphAction.NOT_DELETED_ACTION_FILTER, 1);
 	}
 	
 	@Override
-	public void run() {					
+	public void run() {
 		IRepositoryResource resource = BaseRevisionGraphAction.convertToResource(this.getSelectedEditPart());
-		ShowHistoryViewOperation op = new ShowHistoryViewOperation(resource, 0, 0);				
-		this.runOperation(op);			
-	}	
-		
+		this.runOperation(new RemoteShowAnnotationOperation(resource));
+	}
+
 }

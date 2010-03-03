@@ -65,7 +65,7 @@ public class ExtractAction extends BaseRevisionGraphAction {
 		fileDialog.setMessage(SVNUIMessages.ExtractToAction_Select_Description);
 		String path = fileDialog.open();
 		if (path != null) {
-			IRepositoryResource[] resources = this.convertToResources(this.getSelectedEditParts());
+			IRepositoryResource[] resources = BaseRevisionGraphAction.convertToResources(this.getSelectedEditParts());
 			
 			HashMap<String, String> resource2project = new HashMap<String, String>();				
 			IRepositoryResource remote = resources[0];
