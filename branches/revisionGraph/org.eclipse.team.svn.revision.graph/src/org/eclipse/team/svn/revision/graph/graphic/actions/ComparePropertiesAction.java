@@ -44,7 +44,7 @@ public class ComparePropertiesAction extends BaseRevisionGraphAction {
 	@Override
 	public void run() {						
 		RevisionEditPart[] editParts = this.getSelectedEditParts(BaseRevisionGraphAction.NOT_DELETED_ACTION_FILTER);
-		IRepositoryResource[] resources = this.convertToResources(editParts);		
+		IRepositoryResource[] resources = BaseRevisionGraphAction.convertToResources(editParts);		
 		IRepositoryResource first = resources[0];
 		IRepositoryResource second = resources[1];
 										

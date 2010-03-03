@@ -42,7 +42,7 @@ public class CompareWithHeadAction extends BaseRevisionGraphAction {
 		RevisionEditPart[] editParts = null;
 		if (this.getSelectedEditParts().length == 1 && 
 			(editParts = this.getSelectedEditParts(BaseRevisionGraphAction.NOT_DELETED_ACTION_FILTER)).length == 1) {
-			IRepositoryResource resource = this.convertToResource(editParts[0]);
+			IRepositoryResource resource = BaseRevisionGraphAction.convertToResource(editParts[0]);
 			boolean isCompareAllowed = 
 				CoreExtensionsManager.instance().getSVNConnectorFactory().getSVNAPIVersion() >= ISVNConnectorFactory.APICompatibility.SVNAPI_1_5_x ||
 				resource instanceof IRepositoryFile;
@@ -55,7 +55,7 @@ public class CompareWithHeadAction extends BaseRevisionGraphAction {
 	
 	@Override
 	public void run() {		
-		IRepositoryResource resource = this.convertToResource(this.getSelectedEditPart());
+		IRepositoryResource resource = BaseRevisionGraphAction.convertToResource(this.getSelectedEditPart());
 		
 		IRepositoryResource headResource = resource instanceof IRepositoryFile ?
 			(IRepositoryResource)((IRepositoryRoot)resource.getRoot()).asRepositoryFile(resource.getUrl(), false) : 

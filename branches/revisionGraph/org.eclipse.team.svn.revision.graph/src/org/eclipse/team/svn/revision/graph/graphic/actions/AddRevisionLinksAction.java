@@ -53,7 +53,7 @@ public class AddRevisionLinksAction extends BaseRevisionGraphAction {
 		DefaultDialog dlg = new DefaultDialog(this.getWorkbenchPart().getSite().getShell(), panel);
 		if (dlg.open() == Dialog.OK) {
 			RevisionEditPart[] editParts = this.getSelectedEditParts(BaseRevisionGraphAction.NOT_DELETED_ACTION_FILTER);
-			final IRepositoryResource[] resources = this.convertToResources(editParts);
+			final IRepositoryResource[] resources = BaseRevisionGraphAction.convertToResources(editParts);
 			
 			CompositeOperation op = new CompositeOperation("Operation_HAddSelectedRevision");									
 			

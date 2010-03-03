@@ -116,16 +116,20 @@ public abstract class BaseRevisionGraphAction extends SelectionAction {
 		}
 		return null;
 	}
-		
-	protected IRepositoryResource[] convertToResources(RevisionEditPart[] editParts) {
+	
+	protected IRepositoryLocation getRepositoryLocation(RevisionEditPart editPart) {
+		return editPart.getRevisionRootNode().getRepositoryResource().getRepositoryLocation();
+	}
+	
+	public static IRepositoryResource[] convertToResources(RevisionEditPart[] editParts) {		
 		IRepositoryResource[] result = new IRepositoryResource[editParts.length];
 		for (int i = 0; i < editParts.length; i ++) {
-			result[i] = this.convertToResource(editParts[i]);
+			result[i] = BaseRevisionGraphAction.convertToResource(editParts[i]);
 		}
 		return result;
 	}
 	
-	protected IRepositoryResource convertToResource(RevisionEditPart editPart) {
+	public static IRepositoryResource convertToResource(RevisionEditPart editPart) {
 		RevisionNode revisionNode = editPart.getCastedModel();
 		RevisionRootNode rootNode = editPart.getRevisionRootNode();	
 		
@@ -137,9 +141,5 @@ public abstract class BaseRevisionGraphAction extends SelectionAction {
 		resource.setPegRevision(svnRev);
 		
 		return resource;
-	}
-	
-	protected IRepositoryLocation getRepositoryLocation(RevisionEditPart editPart) {
-		return editPart.getRevisionRootNode().getRepositoryResource().getRepositoryLocation();
 	}
 }

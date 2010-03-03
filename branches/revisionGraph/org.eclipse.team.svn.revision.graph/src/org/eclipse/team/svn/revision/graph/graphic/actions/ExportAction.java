@@ -48,7 +48,7 @@ public class ExportAction extends BaseRevisionGraphAction {
 		fileDialog.setMessage(SVNUIMessages.ExportPanel_ExportFolder_Msg);
 		String path = fileDialog.open();
 		if (path != null) {
-			IRepositoryResource resource = this.convertToResource(this.getSelectedEditPart());
+			IRepositoryResource resource = BaseRevisionGraphAction.convertToResource(this.getSelectedEditPart());
 			boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
 			ExportOperation op = new ExportOperation(new IRepositoryResource[]{resource}, path, Depth.INFINITY, ignoreExternals);						
 			this.runOperation(op);	

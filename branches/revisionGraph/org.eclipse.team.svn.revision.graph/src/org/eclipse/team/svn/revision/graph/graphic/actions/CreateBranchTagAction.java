@@ -72,7 +72,7 @@ public class CreateBranchTagAction extends BaseRevisionGraphAction {
 	
 	@Override
 	public void run() {
-		IRepositoryResource[] resources = this.convertToResources(this.getSelectedEditParts(BaseRevisionGraphAction.NOT_DELETED_ACTION_FILTER));
+		IRepositoryResource[] resources = BaseRevisionGraphAction.convertToResources(this.getSelectedEditParts(BaseRevisionGraphAction.NOT_DELETED_ACTION_FILTER));
 		PreparedBranchTagOperation op = BranchTagAction.getBranchTagOperation(resources, getWorkbenchPart().getSite().getShell(), CreateBranchTagAction.this.action);
 		this.runOperation(op);									
 	}

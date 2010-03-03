@@ -53,7 +53,7 @@ public class CreatePatchAction extends BaseRevisionGraphAction {
 	
 	@Override
 	public void run() {		
-		IRepositoryResource[] resources = this.convertToResources(this.getSelectedEditParts());
+		IRepositoryResource[] resources = BaseRevisionGraphAction.convertToResources(this.getSelectedEditParts());
 		
 		CreatePatchWizard wizard = new CreatePatchWizard(resources[0].getName());
 		WizardDialog dialog = new WizardDialog(this.getWorkbenchPart().getSite().getShell(), wizard);

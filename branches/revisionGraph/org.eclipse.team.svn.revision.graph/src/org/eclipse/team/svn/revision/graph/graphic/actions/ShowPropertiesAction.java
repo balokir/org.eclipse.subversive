@@ -43,7 +43,7 @@ public class ShowPropertiesAction extends BaseRevisionGraphAction {
 	
 	@Override
 	public void run() {
-		IRepositoryResource resource = this.convertToResource(this.getSelectedEditPart());
+		IRepositoryResource resource = BaseRevisionGraphAction.convertToResource(this.getSelectedEditPart());
 		IResourcePropertyProvider provider = new GetRemotePropertiesOperation(resource);
 		ShowPropertiesOperation op = new ShowPropertiesOperation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), resource, provider);
 		this.runOperation(op);				

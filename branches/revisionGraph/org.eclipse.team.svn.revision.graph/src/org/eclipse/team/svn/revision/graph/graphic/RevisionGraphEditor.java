@@ -37,6 +37,7 @@ import org.eclipse.team.svn.revision.graph.graphic.actions.ExportAction;
 import org.eclipse.team.svn.revision.graph.graphic.actions.ExtractAction;
 import org.eclipse.team.svn.revision.graph.graphic.actions.OpenAction;
 import org.eclipse.team.svn.revision.graph.graphic.actions.RevisionGraphContextMenuManager;
+import org.eclipse.team.svn.revision.graph.graphic.actions.ShowAnnotationAction;
 import org.eclipse.team.svn.revision.graph.graphic.actions.ShowHistoryAction;
 import org.eclipse.team.svn.revision.graph.graphic.actions.ShowPropertiesAction;
 import org.eclipse.team.svn.revision.graph.graphic.editpart.GraphEditPartFactory;
@@ -136,7 +137,7 @@ public class RevisionGraphEditor extends GraphicalEditor {
 		this.getModel().init(isSimpleMode);
 		
 		//context menu
-		RevisionGraphContextMenuManager menuManager = new RevisionGraphContextMenuManager(viewer, getActionRegistry());
+		RevisionGraphContextMenuManager menuManager = new RevisionGraphContextMenuManager(viewer, this, getActionRegistry());
 		viewer.setContextMenu(menuManager);
 		getSite().registerContextMenu(menuManager, viewer);
 	}
@@ -231,6 +232,10 @@ public class RevisionGraphEditor extends GraphicalEditor {
 		selectedActions.add(action.getId());
 		
 		action = new OpenAction(this);
+		registry.registerAction(action);
+		selectedActions.add(action.getId());
+		
+		action = new ShowAnnotationAction(this);
 		registry.registerAction(action);
 		selectedActions.add(action.getId());
 	}
