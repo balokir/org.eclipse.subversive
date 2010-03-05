@@ -37,7 +37,6 @@ import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
-import org.eclipse.team.svn.core.synchronize.variant.RemoteResourceVariant;
 import org.eclipse.team.svn.core.utility.FileUtility;
 
 /**
@@ -184,7 +183,7 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 
 	protected SVNRevision getRevisionToUpdate(ILocalResource local) throws TeamException {
 		AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo) UpdateSubscriber.instance().getSyncInfo(local.getResource());
-		ILocalResource remoteResource = ((RemoteResourceVariant) syncInfo.getRemote()).getResource();
+		ILocalResource remoteResource = syncInfo.getRemoteChangeResource();
 		return SVNRevision.fromNumber(remoteResource.getRevision());		    		
 	}
 	

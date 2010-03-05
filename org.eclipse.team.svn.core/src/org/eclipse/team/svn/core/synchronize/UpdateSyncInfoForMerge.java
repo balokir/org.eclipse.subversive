@@ -46,7 +46,6 @@ import org.eclipse.team.svn.core.resource.IResourceChange;
 public class UpdateSyncInfoForMerge extends UpdateSyncInfo implements IMergeSyncInfo {
 
 	protected IResourceChange baseStatus;
-	protected IResourceChange remoteStatus;
 	
 	public UpdateSyncInfoForMerge(ILocalResource local, IResourceChange baseStatus, IResourceChange remoteStatus, IResourceVariantComparator comparator) {
 		super(local, null, comparator);
@@ -57,9 +56,4 @@ public class UpdateSyncInfoForMerge extends UpdateSyncInfo implements IMergeSync
 	public IResourceChange getBaseResource() {
 		return this.baseStatus;
 	}
-	
-	public IResourceChange getRemoteResource() {
-		return this.remoteStatus;
-	}	
-	
 }

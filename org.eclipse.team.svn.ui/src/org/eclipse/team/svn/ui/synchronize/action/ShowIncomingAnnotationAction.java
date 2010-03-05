@@ -20,8 +20,6 @@ import org.eclipse.team.svn.core.resource.IFileChange;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
-import org.eclipse.team.svn.core.synchronize.variant.RemoteResourceVariant;
-import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
 import org.eclipse.team.svn.ui.operation.RemoteShowAnnotationOperation;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -44,7 +42,7 @@ public class ShowIncomingAnnotationAction extends AbstractSynchronizeModelAction
 		super.updateSelection(selection);
 		if (selection.size() == 1 && selection.getFirstElement() instanceof SyncInfoModelElement) {
 			AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo)((SyncInfoModelElement)selection.getFirstElement()).getSyncInfo();
-			ILocalResource incoming = ((ResourceVariant)syncInfo.getRemote()).getResource();
+			ILocalResource incoming = syncInfo.getRemoteChangeResource();
 			if (incoming instanceof IFileChange) {
 				return IStateFilter.SF_TREE_CONFLICTING.accept(incoming) ? IStateFilter.SF_TREE_CONFLICTING_REPOSITORY_EXIST.accept(incoming) : IStateFilter.ST_DELETED != incoming.getStatus();
 			} 			
@@ -53,7 +51,7 @@ public class ShowIncomingAnnotationAction extends AbstractSynchronizeModelAction
 	}
 
 	protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
-	    IResourceChange change = (IResourceChange)((RemoteResourceVariant)this.getSelectedSVNSyncInfo().getRemote()).getResource();
+	    IResourceChange change = (IResourceChange)this.getSelectedSVNSyncInfo().getRemoteChangeResource();
 		return new RemoteShowAnnotationOperation(change.getOriginator());
 	}
 

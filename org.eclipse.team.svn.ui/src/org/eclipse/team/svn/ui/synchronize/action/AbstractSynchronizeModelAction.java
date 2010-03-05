@@ -30,7 +30,6 @@ import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
-import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
 import org.eclipse.team.svn.ui.action.IResourceSelector;
 import org.eclipse.team.svn.ui.synchronize.FilteredSynchronizeModelOperation;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
@@ -106,7 +105,7 @@ public abstract class AbstractSynchronizeModelAction extends SynchronizeModelAct
 			    HashSet<IResource> retVal = new HashSet<IResource>();
 			    for (int i = 0; i < infos.length; i++) {
 			        ILocalResource local = infos[i].getLocalResource();
-			        ILocalResource remote = ((ResourceVariant)infos[i].getRemote()).getResource();
+			        ILocalResource remote = infos[i].getRemoteChangeResource();
 			        if (remote instanceof IResourceChange && filter.acceptRemote(remote.getResource(), remote.getStatus(), remote.getChangeMask()) || filter.accept(local)) {
 			            retVal.add(local.getResource());
 			        }

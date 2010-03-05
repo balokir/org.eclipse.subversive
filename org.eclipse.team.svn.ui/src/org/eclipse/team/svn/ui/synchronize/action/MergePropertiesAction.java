@@ -25,7 +25,6 @@ import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.core.synchronize.IMergeSyncInfo;
-import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
 import org.eclipse.team.svn.ui.compare.PropertyCompareInput;
 import org.eclipse.team.svn.ui.compare.ThreeWayPropertyCompareInput;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
@@ -57,7 +56,7 @@ public class MergePropertiesAction extends AbstractSynchronizeModelAction {
 					//used in Merge view
 					incoming = ((IMergeSyncInfo) syncInfo).getRemoteResource();
 				} else {
-					incoming = ((ResourceVariant)syncInfo.getRemote()).getResource();	
+					incoming = syncInfo.getRemoteChangeResource();	
 				}
 				if (!(incoming instanceof IResourceChange)) {
 					return false;
@@ -81,8 +80,8 @@ public class MergePropertiesAction extends AbstractSynchronizeModelAction {
 			right = mergeSyncInfo.getRemoteResource();
 			ancestor = mergeSyncInfo.getBaseResource();
 		} else {
-			right = (IResourceChange)((ResourceVariant)syncInfo.getRemote()).getResource();
-			ancestor = (IResourceChange)((ResourceVariant)syncInfo.getBase()).getResource();
+			right = (IResourceChange)syncInfo.getRemoteChangeResource();
+			ancestor = (IResourceChange)syncInfo.getBaseChangeResource();
 		}
 				
 		SVNEntryRevisionReference baseReference = new SVNEntryRevisionReference(ancestor.getOriginator().getUrl(), ancestor.getPegRevision(), SVNRevision.fromNumber(ancestor.getRevision()));

@@ -54,7 +54,6 @@ import org.eclipse.team.svn.core.svnstorage.ResourcesParentsProvider;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
 import org.eclipse.team.svn.core.synchronize.UpdateSyncInfo;
-import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -87,7 +86,7 @@ public class UpdateSubscriberContext extends SubscriberMergeContext {
 					IResource current = this.getDiffTree().getResource(diff);
 					AbstractSVNSyncInfo info = (AbstractSVNSyncInfo)UpdateSubscriber.instance().getSyncInfo(current);
 					ILocalResource local = info.getLocalResource();
-			        ILocalResource remote = ((ResourceVariant)info.getRemote()).getResource();
+			        ILocalResource remote = info.getRemoteChangeResource();
 			        if (remote instanceof IResourceChange && ISyncStateFilter.SF_OVERRIDE.acceptRemote(remote.getResource(), remote.getStatus(), remote.getChangeMask()) || ISyncStateFilter.SF_OVERRIDE.accept(local)) {
 			            overrideList.add(current);
 			        }
@@ -262,7 +261,7 @@ public class UpdateSubscriberContext extends SubscriberMergeContext {
 			try {
 				AbstractSVNSyncInfo info = (AbstractSVNSyncInfo)UpdateSubscriber.instance().getSyncInfo(current);
 				boolean localIsFile = info.getLocalResource().getResource() instanceof IFile;
-                boolean remoteIsFile = ((ResourceVariant)info.getRemote()).getResource() instanceof ILocalFile;
+                boolean remoteIsFile = info.getRemoteChangeResource() instanceof ILocalFile;
                 if (!IStateFilter.SF_OBSTRUCTED.accept(info.getLocalResource()) && localIsFile && remoteIsFile) {
                 	resourceList.add(current);
                 }

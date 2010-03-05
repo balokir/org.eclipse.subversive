@@ -38,7 +38,6 @@ import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
-import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.ui.action.IResourceSelector;
 import org.eclipse.team.svn.ui.operation.UILoggedOperation;
@@ -96,7 +95,7 @@ public abstract class AbstractSynchronizeLogicalModelAction extends ResourceMode
 				    for (int i = 0; i < filtered.length; i++) {
 				    	AbstractSVNSyncInfo info = (AbstractSVNSyncInfo)UpdateSubscriber.instance().getSyncInfo(filtered[i]);
 				        ILocalResource local = info.getLocalResource();
-				        ILocalResource remote = ((ResourceVariant)info.getRemote()).getResource();
+				        ILocalResource remote = info.getRemoteChangeResource();
 				        if (remote instanceof IResourceChange && filter.acceptRemote(remote.getResource(), remote.getStatus(), remote.getChangeMask()) || filter.accept(local)) {
 				            retVal.add(local.getResource());
 				        }

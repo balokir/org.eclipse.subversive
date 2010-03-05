@@ -36,7 +36,7 @@ import org.eclipse.team.svn.core.mapping.SVNIncomingChangeSet;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
-import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
+import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.utility.DateFormatter;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -80,8 +80,7 @@ public class SVNIncomingChangeSetCollector extends ChangeSetManager {
 				if ((info.getKind() & SyncInfo.INCOMING) == 0) {
 					continue;
 				}
-				ResourceVariant remote = (ResourceVariant) info.getRemote();
-				ILocalResource resource = remote.getResource();
+				ILocalResource resource = ((AbstractSVNSyncInfo) info).getRemoteChangeResource();
 				long revision = resource.getRevision();
 				SVNIncomingChangeSet set = sets.get(revision);
 				boolean updateName = false;

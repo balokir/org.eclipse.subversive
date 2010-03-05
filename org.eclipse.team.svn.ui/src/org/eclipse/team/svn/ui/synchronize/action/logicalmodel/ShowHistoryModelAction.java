@@ -19,7 +19,6 @@ import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
-import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeLogicalModelAction;
 import org.eclipse.team.svn.ui.synchronize.action.ShowHistoryActionHelper;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -47,7 +46,7 @@ public class ShowHistoryModelAction extends AbstractSynchronizeLogicalModelActio
 			if (selection.size() == 1) {						
 				AbstractSVNSyncInfo syncInfo = this.getSelectedSVNSyncInfo();
 				if (syncInfo != null) {
-					ILocalResource incoming = ((ResourceVariant)syncInfo.getRemote()).getResource();
+					ILocalResource incoming = syncInfo.getRemoteChangeResource();
 					if (incoming instanceof IResourceChange) {
 						return IStateFilter.SF_TREE_CONFLICTING.accept(incoming) ? IStateFilter.SF_TREE_CONFLICTING_REPOSITORY_EXIST.accept(incoming) : IStateFilter.ST_DELETED != incoming.getStatus();
 					}

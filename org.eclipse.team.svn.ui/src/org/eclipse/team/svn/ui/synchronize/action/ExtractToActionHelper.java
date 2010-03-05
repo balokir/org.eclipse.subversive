@@ -33,7 +33,6 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
-import org.eclipse.team.svn.core.synchronize.variant.RemoteResourceVariant;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -97,7 +96,7 @@ public class ExtractToActionHelper extends AbstractActionHelper {
 			AbstractSVNSyncInfo[] syncInfos = this.getSVNSyncInfos();
 			for (AbstractSVNSyncInfo info : syncInfos) {
 				if (SyncInfo.getDirection(info.getKind()) == SyncInfo.INCOMING) {
-					IResourceChange change = ((IResourceChange)((RemoteResourceVariant)info.getRemote()).getResource());
+					IResourceChange change = (IResourceChange)info.getRemoteChangeResource();
 					if (remote.getUrl().equals(change.getOriginator().getUrl())) {
 						url2status.put(remote.getUrl(), change.getStatus());
 					}

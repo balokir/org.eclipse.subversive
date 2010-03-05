@@ -17,7 +17,6 @@ import org.eclipse.team.core.variants.IResourceVariantComparator;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
-import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
 
 /**
  * Concrete SyncInfo implementation
@@ -34,10 +33,10 @@ public class UpdateSyncInfo extends AbstractSVNSyncInfo {
         String localKind = this.local == null ? IStateFilter.ST_NOTEXISTS : this.local.getStatus();
         int localMask = this.local == null ? 0 : this.local.getChangeMask();
         String remoteKind = 
-        	this.getRemote() == null ? 
+        	this.remoteStatus == null ? 
         	(this.isNonVersioned(localKind, localMask) ? IStateFilter.ST_NOTEXISTS : IStateFilter.ST_NORMAL) : 
-        	((ResourceVariant)this.getRemote()).getStatus();
-        int remoteMask = this.getRemote() == null ? 0 : ((ResourceVariant)this.getRemote()).getResource().getChangeMask();
+        		this.remoteStatus.getStatus();
+        int remoteMask = this.remoteStatus == null ? 0 : this.remoteStatus.getChangeMask();
         	
         if (this.isLinked(localKind, localMask)) {
         	// Corresponding resource can be added at remote site

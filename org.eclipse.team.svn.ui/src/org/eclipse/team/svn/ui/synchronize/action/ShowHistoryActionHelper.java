@@ -15,10 +15,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
-import org.eclipse.team.svn.core.synchronize.variant.RemoteResourceVariant;
 import org.eclipse.team.svn.ui.operation.ShowHistoryViewOperation;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -45,9 +45,9 @@ public class ShowHistoryActionHelper extends AbstractActionHelper {
 		} else {
 			AbstractSVNSyncInfo info = this.getSelectedSVNSyncInfo();
 			if (info != null ) {
-				RemoteResourceVariant variant = (RemoteResourceVariant)info.getRemote();
-				if (variant.getResource() instanceof IResourceChange) {
-					return new ShowHistoryViewOperation(((IResourceChange)variant.getResource()).getOriginator(), 0, 0);
+				ILocalResource incoming = info.getRemoteChangeResource();
+				if (incoming instanceof IResourceChange) {
+					return new ShowHistoryViewOperation(((IResourceChange)incoming).getOriginator(), 0, 0);
 				}
 			}	
 		}

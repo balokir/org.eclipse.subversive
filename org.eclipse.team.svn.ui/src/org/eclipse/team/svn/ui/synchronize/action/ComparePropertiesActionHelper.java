@@ -22,7 +22,6 @@ import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
-import org.eclipse.team.svn.core.synchronize.variant.RemoteResourceVariant;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.compare.PropertyCompareInput;
 import org.eclipse.team.svn.ui.compare.ThreeWayPropertyCompareInput;
@@ -45,7 +44,7 @@ public class ComparePropertiesActionHelper extends AbstractActionHelper {
 		IRepositoryResource remote =  SVNRemoteStorage.instance().asRepositoryResource(resource);
 	    SVNEntryRevisionReference baseReference = new SVNEntryRevisionReference(FileUtility.getWorkingCopyPath(resource), null, SVNRevision.BASE);
 	    SVNEntryRevisionReference remoteReference = baseReference;
-	    ILocalResource change = ((RemoteResourceVariant)this.getSelectedSVNSyncInfo().getRemote()).getResource();
+	    ILocalResource change = this.getSelectedSVNSyncInfo().getRemoteChangeResource();
 	    if (change instanceof IResourceChange) {
 	    	remote = ((IResourceChange)change).getOriginator();
 	    	remoteReference = new SVNEntryRevisionReference(remote.getUrl(), remote.getPegRevision(), SVNRevision.fromNumber(((IResourceChange)change).getRevision()));
