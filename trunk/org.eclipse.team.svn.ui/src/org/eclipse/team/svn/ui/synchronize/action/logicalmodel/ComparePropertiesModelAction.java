@@ -19,7 +19,6 @@ import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
-import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
 import org.eclipse.team.svn.ui.synchronize.action.AbstractSynchronizeLogicalModelAction;
 import org.eclipse.team.svn.ui.synchronize.action.ComparePropertiesActionHelper;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -51,7 +50,7 @@ public class ComparePropertiesModelAction extends AbstractSynchronizeLogicalMode
 		if (selection.size() == 1) {
 			AbstractSVNSyncInfo syncInfo = this.getSelectedSVNSyncInfo();
 			if (syncInfo != null && syncInfo.getKind() != SyncInfo.IN_SYNC) {
-				ILocalResource incoming = ((ResourceVariant)syncInfo.getRemote()).getResource();
+				ILocalResource incoming = syncInfo.getRemoteChangeResource();
 				boolean retVal = IStateFilter.SF_EXCLUDE_DELETED.accept(incoming);
 				if (incoming instanceof IResourceChange) {
 					retVal &= IStateFilter.ST_DELETED != incoming.getStatus();

@@ -48,7 +48,7 @@ public class SynchronizeLabelDecorator extends LabelProvider implements ILabelDe
 	    AbstractSVNSyncInfo info = this.getSyncInfo(element);
 		if (info != null) {
 		    ILocalResource left = info.getLocalResource();
-		    ILocalResource right = ((ResourceVariant)info.getRemote()).getResource();
+		    ILocalResource right = info.getRemoteChangeResource();
 		    OverlayedImageDescriptor imgDescr = null;
 		    if (IStateFilter.SF_OBSTRUCTED.accept(left)) {
 			    imgDescr = new OverlayedImageDescriptor(image, AbstractSVNParticipant.OVR_OBSTRUCTED, new Point(22, 16), OverlayedImageDescriptor.RIGHT | OverlayedImageDescriptor.CENTER_V);
@@ -82,6 +82,7 @@ public class SynchronizeLabelDecorator extends LabelProvider implements ILabelDe
 	public String decorateText(String text, Object element) {
 	    AbstractSVNSyncInfo info = this.getSyncInfo(element);
 		if (info != null) {
+			//TODO how to handle it ?
 			ResourceVariant variant = (ResourceVariant)info.getRemote();
 			if (variant != null) {
 			    ILocalResource remote = variant.getResource();

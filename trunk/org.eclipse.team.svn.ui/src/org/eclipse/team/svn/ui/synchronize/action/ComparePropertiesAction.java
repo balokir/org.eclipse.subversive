@@ -20,7 +20,6 @@ import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
-import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -48,7 +47,7 @@ public class ComparePropertiesAction extends AbstractSynchronizeModelAction {
 			ISynchronizeModelElement element = (ISynchronizeModelElement)selection.getFirstElement();
 			if (element instanceof SyncInfoModelElement) {
 				AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo)((SyncInfoModelElement)selection.getFirstElement()).getSyncInfo();
-				ILocalResource incoming = ((ResourceVariant)syncInfo.getRemote()).getResource();
+				ILocalResource incoming = syncInfo.getRemoteChangeResource();
 				boolean retVal = IStateFilter.SF_EXCLUDE_DELETED.accept(incoming);
 				if (incoming instanceof IResourceChange) {
 					retVal &= IStateFilter.ST_DELETED != incoming.getStatus();

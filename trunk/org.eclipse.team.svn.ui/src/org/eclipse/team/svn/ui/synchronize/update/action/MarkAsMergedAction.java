@@ -23,7 +23,6 @@ import org.eclipse.team.svn.core.operation.local.MarkAsMergedOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.resource.ILocalFile;
 import org.eclipse.team.svn.core.synchronize.UpdateSyncInfo;
-import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.operation.ClearUpdateStatusesOperation;
@@ -49,7 +48,7 @@ public class MarkAsMergedAction extends AbstractSynchronizeModelAction {
                 if (super.select(info)) {
                     UpdateSyncInfo sync = (UpdateSyncInfo)info;
                     boolean localIsFile = sync.getLocalResource().getResource() instanceof IFile;
-                    boolean remoteIsFile = ((ResourceVariant)sync.getRemote()).getResource() instanceof ILocalFile;
+                    boolean remoteIsFile = sync.getRemoteChangeResource() instanceof ILocalFile;
                     return !IStateFilter.SF_OBSTRUCTED.accept(sync.getLocalResource()) && localIsFile && remoteIsFile;
                 }
                 return false;

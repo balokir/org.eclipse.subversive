@@ -20,7 +20,6 @@ import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
-import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -47,7 +46,7 @@ public class ShowHistoryAction extends AbstractSynchronizeModelAction {
 		if (selection.size() == 1) {
 			if (selection.getFirstElement() instanceof SyncInfoModelElement) {
 				AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo)((SyncInfoModelElement)selection.getFirstElement()).getSyncInfo();
-				ILocalResource incoming = ((ResourceVariant)syncInfo.getRemote()).getResource();
+				ILocalResource incoming = syncInfo.getRemoteChangeResource();
 				if (incoming instanceof IResourceChange) {
 					return IStateFilter.SF_TREE_CONFLICTING.accept(incoming) ? IStateFilter.SF_TREE_CONFLICTING_REPOSITORY_EXIST.accept(incoming) : IStateFilter.ST_DELETED != incoming.getStatus(); 
 				}

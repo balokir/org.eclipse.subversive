@@ -18,7 +18,6 @@ import org.eclipse.team.core.variants.IResourceVariantComparator;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
-import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
 
 /**
  * Merge sync info: ignores outgoing changes
@@ -33,20 +32,17 @@ import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
 public class MergeSyncInfo extends AbstractSVNSyncInfo implements IMergeSyncInfo {
 	
 	protected IResourceChange baseStatus;
-	protected IResourceChange remoteStatus;
 	
 	public MergeSyncInfo(ILocalResource local, IResourceChange base, IResourceChange remote, IResourceVariantComparator comparator) {
-		super(local, base == null ? AbstractSVNSyncInfo.makeBaseVariant(local) : AbstractSVNSyncInfo.makeRemoteVariant(local, base), AbstractSVNSyncInfo.makeRemoteVariant(local, remote), comparator);
+		super(local, base == null ? AbstractSVNSyncInfo.makeBaseVariant(local) : AbstractSVNSyncInfo.makeRemoteVariant(local, base), AbstractSVNSyncInfo.makeRemoteVariant(local, remote), comparator, remote);
 		this.baseStatus = base;
-		this.remoteStatus = remote;
 	}
-
+	
 	protected int calculateKind() throws TeamException {
 		String localKind = this.local == null ? IStateFilter.ST_NOTEXISTS : this.local.getStatus();
 		int localMask = this.local == null ? 0 : this.local.getChangeMask();
-		String remoteKind = this.getRemote() == null ? (this.isNonVersioned(localKind, localMask) ? IStateFilter.ST_NOTEXISTS : IStateFilter.ST_NORMAL) : ((ResourceVariant) this
-				.getRemote()).getStatus();
-		int remoteMask = this.getRemote() == null ? 0 : ((ResourceVariant) this.getRemote()).getResource().getChangeMask();
+		String remoteKind = this.remoteStatus == null ? (this.isNonVersioned(localKind, localMask) ? IStateFilter.ST_NOTEXISTS : IStateFilter.ST_NORMAL) : this.remoteStatus.getStatus();
+		int remoteMask = this.remoteStatus == null ? 0 : this.remoteStatus.getChangeMask();
 
 		if (this.isLinked(localKind, localMask)) {
         	// Corresponding resource at remote site can produce a change
@@ -101,11 +97,12 @@ public class MergeSyncInfo extends AbstractSVNSyncInfo implements IMergeSyncInfo
 		return SyncInfo.IN_SYNC;
 	}
 
-	public IResourceChange getBaseResource() {
-		return this.baseStatus;
+	@Override
+	public ILocalResource getBaseChangeResource() {
+		return this.baseStatus == null ? this.local : this.baseStatus;
 	}
 	
-	public IResourceChange getRemoteResource() {
-		return this.remoteStatus;
+	public IResourceChange getBaseResource() {
+		return this.baseStatus;
 	}
 }

@@ -17,7 +17,6 @@ import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
 import org.eclipse.team.svn.core.operation.remote.GetRemotePropertiesOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
-import org.eclipse.team.svn.core.synchronize.variant.RemoteResourceVariant;
 import org.eclipse.team.svn.ui.operation.ShowPropertiesOperation;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.PlatformUI;
@@ -34,7 +33,7 @@ public class ShowIncomingPropertiesActionHelper extends AbstractActionHelper {
 	}
 
 	public IActionOperation getOperation() {
-	    IResourceChange change = (IResourceChange)((RemoteResourceVariant)this.getSelectedSVNSyncInfo().getRemote()).getResource();
+		IResourceChange change = (IResourceChange)this.getSelectedSVNSyncInfo().getRemoteChangeResource();
 	    IRepositoryResource remote = change.getOriginator();
 		IResourcePropertyProvider provider = new GetRemotePropertiesOperation(remote);
 		ShowPropertiesOperation op = new ShowPropertiesOperation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), remote, provider);

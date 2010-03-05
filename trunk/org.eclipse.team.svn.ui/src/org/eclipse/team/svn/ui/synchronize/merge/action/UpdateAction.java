@@ -32,8 +32,6 @@ import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
-import org.eclipse.team.svn.core.synchronize.variant.RemoteResourceVariant;
-import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -91,11 +89,11 @@ public class UpdateAction extends AbstractSynchronizeModelAction {
 		ArrayList<IRepositoryResource> remoteSet = new ArrayList<IRepositoryResource>();
 		ArrayList<IResource> localSet = new ArrayList<IResource>();
 		for (int i = 0; i < infos.length; i++) {
-	        ILocalResource remote = ((ResourceVariant)infos[i].getRemote()).getResource();
+	        ILocalResource remote = infos[i].getRemoteChangeResource();
 	        if (remote instanceof IResourceChange && ISyncStateFilter.SF_ONREPOSITORY.acceptRemote(remote.getResource(), remote.getStatus(), remote.getChangeMask())) {
 				IResource resource = infos[i].getLocal();
 				localSet.add(resource);
-				IRepositoryResource remoteResource = ((IResourceChange)((RemoteResourceVariant)infos[i].getRemote()).getResource()).getOriginator();
+				IRepositoryResource remoteResource = ((IResourceChange)infos[i].getRemoteChangeResource()).getOriginator();
 				remoteSet.add(remoteResource);
 				remote2local.put(SVNUtility.encodeURL(remoteResource.getUrl()), FileUtility.getWorkingCopyPath(resource));
 	        }
