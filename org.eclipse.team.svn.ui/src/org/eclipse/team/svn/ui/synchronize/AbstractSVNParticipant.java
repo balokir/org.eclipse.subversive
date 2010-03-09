@@ -99,7 +99,7 @@ public abstract class AbstractSVNParticipant extends SubscriberParticipant imple
 			configuration.addActionContribution(actionGroup);
 		}
 		
-		configuration.addLabelDecorator(this.createLabelDecorator());
+		configuration.addLabelDecorator(this.createLabelDecorator(configuration));
 		
 		if (this.isSetModes()) {
 			configuration.setSupportedModes(this.getSupportedModes());
@@ -116,8 +116,8 @@ public abstract class AbstractSVNParticipant extends SubscriberParticipant imple
 		return true;
 	}
 	
-	protected ILabelDecorator createLabelDecorator() {
-		return new SynchronizeLabelDecorator();
+	protected ILabelDecorator createLabelDecorator(ISynchronizePageConfiguration configuration) {
+		return new SynchronizeLabelDecorator(configuration);
 	}
 	
 	private void setDefaults() {

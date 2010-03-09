@@ -87,13 +87,13 @@ public class MergeParticipant extends AbstractSVNParticipant {
         return SVNUIMessages.MergeView_TaskName;
     }
     
-    protected ILabelDecorator createLabelDecorator() {
-    	return new MergeLabelDecorator();
+    protected ILabelDecorator createLabelDecorator(ISynchronizePageConfiguration configuration) {
+    	return new MergeLabelDecorator(configuration);
     }
     
 	protected class MergeLabelDecorator extends SynchronizeLabelDecorator {
-	    public MergeLabelDecorator() {
-	        super();
+	    public MergeLabelDecorator(ISynchronizePageConfiguration configuration) {
+	        super(configuration);
 	    }
 	    
 		public Image decorateImage(Image image, Object element) {
