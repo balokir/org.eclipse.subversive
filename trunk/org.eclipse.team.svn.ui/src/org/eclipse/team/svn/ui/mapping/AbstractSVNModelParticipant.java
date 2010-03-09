@@ -56,14 +56,14 @@ public abstract class AbstractSVNModelParticipant extends ModelSynchronizePartic
 			configuration.addActionContribution(actionGroup);
 		}
 				
-		configuration.addLabelDecorator(this.createLabelDecorator());
+		configuration.addLabelDecorator(this.createLabelDecorator(configuration));
 
 		configuration.setSupportedModes(this.getSupportedModes());
 		configuration.setMode(this.getDefaultMode());
 	}	
 	
-	protected ILabelDecorator createLabelDecorator() {
-		return new SynchronizeLabelDecorator();
+	protected ILabelDecorator createLabelDecorator(ISynchronizePageConfiguration configuration) {
+		return new SynchronizeLabelDecorator(configuration);
 	}
 	
     protected abstract int getSupportedModes();
