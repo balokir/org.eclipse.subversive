@@ -12,7 +12,6 @@
 package org.eclipse.team.svn.ui.composite;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -305,8 +304,8 @@ public class BranchTagSelectionComposite extends Composite {
 		 * 	brunch:		http://localhost/repos/first/layouts/multiple/branches/br2
 		 */					
 		IRepositoryResource res = null;
-		IPath fromPath = new Path(resource.getUrl());
-		IPath brunchPath = new Path(brunchTagResource.getUrl());		
+		IPath fromPath = SVNUtility.createPathForSVNUrl(resource.getUrl());
+		IPath brunchPath = SVNUtility.createPathForSVNUrl(brunchTagResource.getUrl());		
 		if (brunchPath.segmentCount() > 2) {										
 			int matchedSegments = fromPath.matchingFirstSegments(brunchPath);
 			if (fromPath.segmentCount() >= matchedSegments + 1) {

@@ -199,7 +199,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	public IResourceChange asResourceChange(IChangeStateProvider changeState, boolean update) {
 		IResource resource = null;
 	    IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IPath location = new Path(changeState.getLocalPath());
+	    IPath location = new Path(changeState.getLocalPath());
 		int nodeKind = changeState.getNodeKind();
 		int propKind = changeState.getPropertiesChangeType();
 		int textKind = changeState.getTextChangeType();
@@ -449,7 +449,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 			for (Iterator it = this.switchedToUrls.entrySet().iterator(); it.hasNext(); ) {
 				Map.Entry entry = (Map.Entry)it.next();
 				String cachedUrl = (String)entry.getValue();
-				if (new Path(cachedUrl).isPrefixOf(new Path(url))) {
+				if (SVNUtility.createPathForSVNUrl(cachedUrl).isPrefixOf(SVNUtility.createPathForSVNUrl(url))) {
 					IPath target = ((IPath)entry.getKey()).append(url.substring(cachedUrl.length())).removeFirstSegments(1);
 					return this.asLocalResource(kind == IResource.FOLDER ? (IResource)project.getFolder(target) : project.getFile(target));
 				}
@@ -490,7 +490,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		if (url == null) {
 			url = this.makeUrl(resource, baseResource);
 		}
-		else if (!new Path(location.getRepositoryRootUrl()).isPrefixOf(new Path(url))) {
+		else if (!SVNUtility.createPathForSVNUrl(location.getRepositoryRootUrl()).isPrefixOf(SVNUtility.createPathForSVNUrl(url))) {
 			location = this.wrapLocationIfRequired(location, url, resource.getType() == IResource.FILE);
 		}
 		
@@ -506,7 +506,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 				reference.pegRevision == null ? SVNRevision.HEAD : reference.pegRevision,
 				reference.revision == null ? SVNRevision.HEAD : reference.revision);
 		
-		if (!new Path(location.getRepositoryRootUrl()).isPrefixOf(new Path(url))) {
+		if (!SVNUtility.createPathForSVNUrl(location.getRepositoryRootUrl()).isPrefixOf(SVNUtility.createPathForSVNUrl(url))) {
 			boolean isFile = false;
 			location = this.wrapLocationIfRequired(location, url, isFile);
 		}
@@ -531,7 +531,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	}
 	
 	public IRepositoryResource asRepositoryResource(IRepositoryLocation location, String url, boolean isFile) {
-		if (!new Path(location.getRepositoryRootUrl()).isPrefixOf(new Path(url))) {
+		if (!SVNUtility.createPathForSVNUrl(location.getRepositoryRootUrl()).isPrefixOf(SVNUtility.createPathForSVNUrl(url))) {
 			location = this.wrapLocationIfRequired(location, url, isFile);
 		}
 		
@@ -543,7 +543,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 	}
 	
 	protected IRepositoryLocation wrapLocationIfRequired(IRepositoryLocation location, String url, boolean isFile) {
-		if (!new Path(location.getRepositoryRootUrl()).isPrefixOf(new Path(url))) {
+		if (!SVNUtility.createPathForSVNUrl(location.getRepositoryRootUrl()).isPrefixOf(SVNUtility.createPathForSVNUrl(url))) {
 			synchronized (this.externalsLocations) {
 				List locations = (List)this.externalsLocations.get(location);
 				if (locations == null) {

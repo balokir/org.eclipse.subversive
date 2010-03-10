@@ -29,7 +29,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -239,7 +238,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 		int nodeKind = stLocal == null ? this.getNodeKind(stRemote) : this.getNodeKind(stLocal);
 		ILocalResource local = this.getLocalResource(localPath, nodeKind == SVNEntry.Kind.FILE);
 		// 2) skip all ignored resources that does not have real remote variants
-		if ((stRemote != null || !IStateFilter.SF_IGNORED.accept(local)) && !path2node.containsKey(new Path(SVNRemoteStorage.instance().asRepositoryResource(local.getResource()).getUrl()))) {
+		if ((stRemote != null || !IStateFilter.SF_IGNORED.accept(local)) && !path2node.containsKey(SVNUtility.createPathForSVNUrl(SVNRemoteStorage.instance().asRepositoryResource(local.getResource()).getUrl()))) {
 			if (local.isCopied() && IStateFilter.SF_ADDED.accept(local) && !local.getResource().equals(this.local.getResource())) {
 				// 3) if node is moved and is not a root node traverse all children
 				FileUtility.checkForResourcesPresenceRecursive(new IResource[] {local.getResource()}, new IStateFilter.AbstractStateFilter() {
@@ -257,7 +256,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 								CompareNode node = ThreeWayResourceCompareInput.this.makeNode(local, stLocal, null, path2node, monitor);
 								if (node != null) {
 									IRepositoryResource remote = ((ResourceElement)node.getLeft()).getRepositoryResource();
-									path2node.put(new Path(remote.getUrl()), node);
+									path2node.put(SVNUtility.createPathForSVNUrl(remote.getUrl()), node);
 								}
 							}
 							catch (RuntimeException ex) {
@@ -268,7 +267,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 							}
 						}
 						else {
-							path2node.put(new Path(SVNRemoteStorage.instance().asRepositoryResource(resource).getUrl()), null);
+							path2node.put(SVNUtility.createPathForSVNUrl(SVNRemoteStorage.instance().asRepositoryResource(resource).getUrl()), null);
 						}
 						return false;
 					}
@@ -279,7 +278,7 @@ public class ThreeWayResourceCompareInput extends ResourceCompareInput {
 				CompareNode node = this.makeNode(local, stLocal, stRemote, path2node, monitor);
 				if (node != null) {
 					IRepositoryResource resource = ((ResourceElement)node.getLeft()).getRepositoryResource();
-					path2node.put(new Path(resource.getUrl()), node);
+					path2node.put(SVNUtility.createPathForSVNUrl(resource.getUrl()), node);
 				}
 			}
 		}

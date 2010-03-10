@@ -13,7 +13,6 @@ package org.eclipse.team.svn.ui.panel.local;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNConflictDescriptor;
@@ -299,7 +298,7 @@ public class EditTreeConflictsHelper {
 		
 		//find the first parent of resource which exists in repository in end revision (srcRightSource's pegRevision)
 		while (true) {
-			IPath path = new Path(url);
+			IPath path = SVNUtility.createPathForSVNUrl(url);
 			path = path.removeLastSegments(1);
 			url = path.toString();
 			

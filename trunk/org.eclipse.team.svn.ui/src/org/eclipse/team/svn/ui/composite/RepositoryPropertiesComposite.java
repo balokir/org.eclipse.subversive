@@ -11,7 +11,6 @@
 
 package org.eclipse.team.svn.ui.composite;
 
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -312,7 +311,7 @@ public class RepositoryPropertiesComposite extends Composite implements IPropert
 					catch (Exception ex) {
 						// is not encoded URL
 					}
-					if (!new Path(RepositoryPropertiesComposite.this.rootUrl).isPrefixOf(new Path(newUrl))) {
+					if (!SVNUtility.createPathForSVNUrl(RepositoryPropertiesComposite.this.rootUrl).isPrefixOf(SVNUtility.createPathForSVNUrl(newUrl))) {
 						return SVNUIMessages.RepositoryPropertiesComposite_URL_Verifier_Warning;
 					}
 					return null;

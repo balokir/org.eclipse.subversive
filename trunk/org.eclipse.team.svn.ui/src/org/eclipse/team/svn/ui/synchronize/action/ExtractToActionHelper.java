@@ -17,7 +17,6 @@ import java.util.HashSet;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
@@ -33,6 +32,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -88,7 +88,7 @@ public class ExtractToActionHelper extends AbstractActionHelper {
 			if (current instanceof IProject) {
 				resource2project.put(remote.getUrl(), current.getName());
 			}
-			else if (!new Path(projectRemote.getUrl()).isPrefixOf(new Path(remote.getUrl()))) {
+			else if (!SVNUtility.createPathForSVNUrl(projectRemote.getUrl()).isPrefixOf(SVNUtility.createPathForSVNUrl(remote.getUrl()))) {
 				//external reference
 				resource2project.put(remote.getUrl(), current.getFullPath().toString().substring(1));
 			}

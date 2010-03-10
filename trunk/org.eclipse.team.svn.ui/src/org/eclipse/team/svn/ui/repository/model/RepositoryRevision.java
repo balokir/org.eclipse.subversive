@@ -12,13 +12,13 @@
 package org.eclipse.team.svn.ui.repository.model;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRevisionLink;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
@@ -84,8 +84,8 @@ public class RepositoryRevision extends RepositoryFictiveNode implements IParent
 		 * as relative to repository root, so they're shown with full url
 		 */
 		IRepositoryResource resource = this.link.getRepositoryResource();		
-		IPath rootPath = new Path(this.parent.getRepositoryLocation().getRepositoryRootUrl());
-		IPath resourcePath = new Path(resource.getUrl());
+		IPath rootPath = SVNUtility.createPathForSVNUrl(this.parent.getRepositoryLocation().getRepositoryRootUrl());
+		IPath resourcePath = SVNUtility.createPathForSVNUrl(resource.getUrl());
 		if (rootPath.isPrefixOf(resourcePath)) {
 			IPath relativePath = resourcePath.makeRelativeTo(rootPath);
 			return "^" + (relativePath.isEmpty() ? "" : ("/" + relativePath.toString())); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

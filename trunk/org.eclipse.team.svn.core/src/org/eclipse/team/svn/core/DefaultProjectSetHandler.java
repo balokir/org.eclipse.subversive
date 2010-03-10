@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.core;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
@@ -23,6 +23,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation.LocationReferenceTypeEnum;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
  * Default handler for project set
@@ -86,9 +87,9 @@ public class DefaultProjectSetHandler implements IProjectSetHandler {
 			}
 		}
 		IRepositoryLocation []locations = SVNRemoteStorage.instance().getRepositoryLocations();
-		Path awaitingFor = new Path(location != null ? location.getUrl() : parts[1]);
+		IPath awaitingFor = SVNUtility.createPathForSVNUrl(location != null ? location.getUrl() : parts[1]);
 		for (int i = 0; i < locations.length; i++) {
-			if (new Path(locations[i].getUrl()).isPrefixOf(awaitingFor)) {
+			if (SVNUtility.createPathForSVNUrl(locations[i].getUrl()).isPrefixOf(awaitingFor)) {
 				return locations[i];
 			}
 		}

@@ -19,7 +19,6 @@ import java.util.Map;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -97,7 +96,7 @@ public class SelectProjectsGroupPage extends AbstractVerifiedWizardPage implemen
 				this.getProjectsGroup(null).add(this.allProjects[i]);
 			}
 			else {
-				IPath url = new Path(SVNUtility.decodeURL(info.url));
+				IPath url = SVNUtility.createPathForSVNUrl(SVNUtility.decodeURL(info.url));
 				if (this.maxURLLength < url.segmentCount()) {
 					this.maxURLLength = url.segmentCount();
 				}

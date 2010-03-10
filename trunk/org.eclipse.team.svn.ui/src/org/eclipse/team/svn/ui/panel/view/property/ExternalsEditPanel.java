@@ -16,7 +16,6 @@ import java.net.URL;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
@@ -299,10 +298,10 @@ public class ExternalsEditPanel extends AbstractDialogPanel {
 	
 	protected void formatUrl() {
 		String fullUrl = this.url.trim();
-		IPath fullUrlPath = new Path(fullUrl);	
+		IPath fullUrlPath = SVNUtility.createPathForSVNUrl(fullUrl);	
 		int relativeIndex = this.relativeText.getSelectionIndex();
 		if (relativeIndex == ExternalsEditPanel.REPOSITORY_ROOT_INDEX) {
-			IPath repositoryRoot = new Path(this.repositoryResource.getRepositoryLocation().getRepositoryRootUrl());					
+			IPath repositoryRoot = SVNUtility.createPathForSVNUrl(this.repositoryResource.getRepositoryLocation().getRepositoryRootUrl());					
 			if (repositoryRoot.isPrefixOf(fullUrlPath)) {
 				String relative = fullUrlPath.makeRelativeTo(repositoryRoot).toString();
 				this.urlText.setText("^/" + relative); //$NON-NLS-1$
@@ -336,7 +335,7 @@ public class ExternalsEditPanel extends AbstractDialogPanel {
 			} 			
 		} else if (relativeIndex == ExternalsEditPanel.EXTERNAL_DIRECTORY_INDEX) {								
 			//find common path
-			IPath resourcePath = new Path(this.repositoryResource.getUrl());
+			IPath resourcePath = SVNUtility.createPathForSVNUrl(this.repositoryResource.getUrl());
 			IPath commonPath = resourcePath;
 			int relativeSegmentsCount = 0;			
 			do {

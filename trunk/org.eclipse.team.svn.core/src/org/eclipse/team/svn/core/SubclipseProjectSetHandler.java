@@ -12,7 +12,7 @@
 package org.eclipse.team.svn.core;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
@@ -22,6 +22,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
  * Subclipse handler for project set
@@ -62,9 +63,9 @@ public class SubclipseProjectSetHandler implements IProjectSetHandler {
 		IRepositoryLocation location = null;
 		String url = parts[1];		
 		IRepositoryLocation []locations = SVNRemoteStorage.instance().getRepositoryLocations();
-		Path awaitingFor = new Path(url);
+		IPath awaitingFor = SVNUtility.createPathForSVNUrl(url);
 		for (int i = 0; i < locations.length; i++) {
-			if (new Path(locations[i].getUrl()).isPrefixOf(awaitingFor)) {
+			if (SVNUtility.createPathForSVNUrl(locations[i].getUrl()).isPrefixOf(awaitingFor)) {
 				return locations[i];
 			}
 		}

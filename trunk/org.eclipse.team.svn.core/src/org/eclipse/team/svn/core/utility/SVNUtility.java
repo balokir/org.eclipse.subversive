@@ -39,6 +39,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.Team;
+import org.eclipse.team.svn.core.PathForURL;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
@@ -115,7 +116,7 @@ public final class SVNUtility {
 		location.setTrunkLocation(CoreExtensionsManager.instance().getOptionProvider().getDefaultTrunkName());
 		location.setBranchesLocation(CoreExtensionsManager.instance().getOptionProvider().getDefaultBranchesName());
 		location.setTagsLocation(CoreExtensionsManager.instance().getOptionProvider().getDefaultTagsName());
-		Path urlPath = new Path(url);
+		IPath urlPath = SVNUtility.createPathForSVNUrl(url);
 		if (urlPath.lastSegment().equals(location.getTrunkLocation())) {
 			url = urlPath.removeLastSegments(1).toString();
 		}
@@ -439,16 +440,16 @@ public final class SVNUtility {
 		if (!SVNUtility.isValidSVNURL(resourceUrl)) {
 			return new IRepositoryRoot[0];
 		}
-		IPath url = new Path(resourceUrl);
+		IPath url = SVNUtility.createPathForSVNUrl(resourceUrl);
 		IRepositoryLocation []locations = SVNRemoteStorage.instance().getRepositoryLocations();
 		ArrayList<IRepositoryRoot> roots = new ArrayList<IRepositoryRoot>();
 		for (int i = 0; i < locations.length; i++) {
-			IPath locationUrl = new Path(locations[i].getUrl());
+			IPath locationUrl = SVNUtility.createPathForSVNUrl(locations[i].getUrl());
 			if (url.segmentCount() < locationUrl.segmentCount() && !url.isPrefixOf(locationUrl)) {
 				continue;
 			}
 			if (locationUrl.isPrefixOf(url) || // performance optimization: repository root URL detection [if is not cached] requires interaction with a remote host
-				new Path(locations[i].getRepositoryRootUrl()).isPrefixOf(url)) {
+				SVNUtility.createPathForSVNUrl(locations[i].getRepositoryRootUrl()).isPrefixOf(url)) {
 				SVNUtility.addRepositoryRoot(roots, (IRepositoryRoot)locations[i].asRepositoryContainer(resourceUrl, false).getRoot(), longestOnly);
 			}
 		}
@@ -465,8 +466,8 @@ public final class SVNUtility {
 	
 	private static void addRepositoryRoot(List<IRepositoryRoot> container, IRepositoryRoot root, boolean longestOnly) {
 		if (longestOnly && container.size() > 0) {
-			int cnt = new Path(root.getUrl()).segmentCount();
-			int cnt2 = new Path(container.get(0).getUrl()).segmentCount();
+			int cnt = SVNUtility.createPathForSVNUrl(root.getUrl()).segmentCount();
+			int cnt2 = SVNUtility.createPathForSVNUrl(container.get(0).getUrl()).segmentCount();
 			if (cnt > cnt2) {
 				container.clear();
 				container.add(root);
@@ -949,12 +950,12 @@ public final class SVNUtility {
 					wc2Resources.put(wcRoot[0], wcResources = new ArrayList());
 				}
 				
-				Path rootPath = new Path(((File)wcRoot[0]).getAbsolutePath());
-				Path rootInfoPath = new Path(((SVNEntryInfo)wcRoot[1]).url);
+				IPath rootPath = new Path(((File)wcRoot[0]).getAbsolutePath());
+				IPath rootInfoPath = SVNUtility.createPathForSVNUrl(((SVNEntryInfo)wcRoot[1]).url);
 				for (Iterator it = restOfFiles.iterator(); it.hasNext(); ) {
 					File checked = (File)it.next();
 					if (rootPath.isPrefixOf(new Path(checked.getAbsolutePath()))) {
-						if (rootInfoPath.isPrefixOf(new Path(file2info.get(checked).url))) {
+						if (rootInfoPath.isPrefixOf(SVNUtility.createPathForSVNUrl(file2info.get(checked).url))) {
 							wcResources.add(checked);
 							it.remove();
 						}
@@ -980,7 +981,7 @@ public final class SVNUtility {
 				if (oldInfo == null) {
 					oldInfo = rootInfo;
 				}
-				else if (!new Path(rootInfo.url).isPrefixOf(new Path(oldInfo.url))) {
+				else if (!SVNUtility.createPathForSVNUrl(rootInfo.url).isPrefixOf(SVNUtility.createPathForSVNUrl(oldInfo.url))) {
 					return new Object[] {oldRoot, oldInfo};
 				}
 				oldRoot = node;
@@ -1216,9 +1217,9 @@ public final class SVNUtility {
 		IRepositoryResource base = resources[0].getParent();
 		while (base != null) {	// can be null for resources from different repositories
 			int startsCnt = 0;
-			Path baseUrl = new Path(base.getUrl());
+			IPath baseUrl = SVNUtility.createPathForSVNUrl(base.getUrl());
 			for (int i = 0; i < resources.length; i++) {
-				if (baseUrl.isPrefixOf(new Path(resources[i].getUrl()))) {
+				if (baseUrl.isPrefixOf(SVNUtility.createPathForSVNUrl(resources[i].getUrl()))) {
 					startsCnt++;
 				}
 			}
@@ -1443,6 +1444,16 @@ public final class SVNUtility {
 			}			
 			return res.toString();
 		}
+	}
+
+	/**
+	 * This method should be used instead of creating {@link Path} directly when you need to manipulate with URLs.
+	 * 
+	 * @param fullPath
+	 * @return
+	 */
+	public static IPath createPathForSVNUrl(String fullPath) {
+		return new PathForURL(fullPath, true);
 	}
 	
 	private SVNUtility() {

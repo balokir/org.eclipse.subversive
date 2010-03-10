@@ -13,7 +13,6 @@ package org.eclipse.team.svn.ui.wizard.shareproject;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.TableViewer;
@@ -109,7 +108,7 @@ public class AddRepositoryLocationPage extends AbstractVerifiedWizardPage {
 		this.propertiesTabFolder.setForceDisableRoots(force, this.initialUrl == null || this.initialUrl.length() == 0 ? null : new AbstractFormattedVerifier(SVNUIMessages.AddRepositoryLocationPage_RootURL) {
 		    protected String getErrorMessageImpl(Control input) {
 				String url = this.getText(input);
-				if (!new Path(url).isPrefixOf(new Path(SVNUtility.decodeURL(AddRepositoryLocationPage.this.initialUrl)))) {
+				if (!SVNUtility.createPathForSVNUrl(url).isPrefixOf(SVNUtility.createPathForSVNUrl(SVNUtility.decodeURL(AddRepositoryLocationPage.this.initialUrl)))) {
 					return SVNUIMessages.format(SVNUIMessages.AddRepositoryLocationPage_FixedURL_Verifier_Error, new String[] {AbstractFormattedVerifier.FIELD_NAME, AddRepositoryLocationPage.this.initialUrl});
 				}
 				return null;
@@ -158,7 +157,7 @@ public class AddRepositoryLocationPage extends AbstractVerifiedWizardPage {
 		this.propertiesTabFolder.saveChanges();	
 		
 		if (this.propertiesTabFolder.isStructureEnabled()) {
-			String endsPart = new Path(newUrl).lastSegment();
+			String endsPart = SVNUtility.createPathForSVNUrl(newUrl).lastSegment();
 			if (endsPart.equals(this.propertiesTabFolder.getRepositoryLocation().getTrunkLocation()) ||
 				endsPart.equals(this.propertiesTabFolder.getRepositoryLocation().getBranchesLocation()) ||
 				endsPart.equals(this.propertiesTabFolder.getRepositoryLocation().getTagsLocation())) {
@@ -179,7 +178,7 @@ public class AddRepositoryLocationPage extends AbstractVerifiedWizardPage {
 					IRepositoryLocation location = this.editable == null ? this.getRepositoryLocation() : this.editable;
 					boolean useCustomLabel = false;
 					useCustomLabel = !location.getUrl().equals(location.getLabel());
-					newUrl = (new Path(newUrl)).removeLastSegments(1).toString();
+					newUrl = (SVNUtility.createPathForSVNUrl(newUrl)).removeLastSegments(1).toString();
 					location.setUrl(newUrl);
 					if (!useCustomLabel) {
 						location.setLabel(newUrl);
