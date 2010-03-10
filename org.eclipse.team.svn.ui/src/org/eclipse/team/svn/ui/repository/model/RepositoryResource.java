@@ -18,7 +18,6 @@ import java.util.Map;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -36,6 +35,7 @@ import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource.Information;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.decorator.DecoratorVariables;
@@ -107,7 +107,7 @@ public abstract class RepositoryResource implements IWorkbenchAdapter, IWorkbenc
     
     public boolean isRelatesToLocation() {
     	if (this.relatesToLocation == null) {
-            this.relatesToLocation = Boolean.valueOf(this.resource.getSelectedRevision().getKind() == Kind.HEAD && new Path(this.resource.getRepositoryLocation().getUrl()).isPrefixOf(new Path(this.resource.getUrl())));
+            this.relatesToLocation = Boolean.valueOf(this.resource.getSelectedRevision().getKind() == Kind.HEAD && SVNUtility.createPathForSVNUrl(this.resource.getRepositoryLocation().getUrl()).isPrefixOf(SVNUtility.createPathForSVNUrl(this.resource.getUrl())));
     	}
     	return this.relatesToLocation.booleanValue();
     }

@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.internal.preferences.Base64;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
@@ -327,7 +327,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
     		return null;
     	}
     	
-    	Path urlPath = new Path(url);
+    	IPath urlPath = SVNUtility.createPathForSVNUrl(url);
     	String name = urlPath.lastSegment();
     	
     	if (location.isStructureEnabled()) {
@@ -341,7 +341,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
                 return new SVNRepositoryBranches(location, url, SVNRevision.HEAD);
             }
     	}
-    	Path locationUrl = new Path(location.getUrl());
+    	IPath locationUrl = SVNUtility.createPathForSVNUrl(location.getUrl());
         if (urlPath.equals(locationUrl)) {
             return location.getRoot();
         }
@@ -349,7 +349,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
         	// do not access repository root if it is not required
             return new SVNRepositoryFolder(location, url, SVNRevision.HEAD);
         }
-        if (urlPath.equals(new Path(location.getRepositoryRootUrl()))) {
+        if (urlPath.equals(SVNUtility.createPathForSVNUrl(location.getRepositoryRootUrl()))) {
             return location.getRepositoryRoot();
         }
         return new SVNRepositoryFolder(location, url, SVNRevision.HEAD);
@@ -438,7 +438,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		
 		this.url = url;
 		
-		if (oldRootUrl != null && !new Path(oldRootUrl).isPrefixOf(new Path(this.getUrl()))) {
+		if (oldRootUrl != null && !SVNUtility.createPathForSVNUrl(oldRootUrl).isPrefixOf(SVNUtility.createPathForSVNUrl(this.getUrl()))) {
 			this.repositoryRootUrl = null;
 			this.repositoryUUID = null;
 			
@@ -652,11 +652,11 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
     	if (url == null) {
     		throw new IllegalArgumentException(SVNMessages.getErrorString("Error_NullURL")); //$NON-NLS-1$
     	}
-        Path repoPath = new Path(location.getUrl());
-    	Path urlPath = new Path(url);
+        IPath repoPath = SVNUtility.createPathForSVNUrl(location.getUrl());
+    	IPath urlPath = SVNUtility.createPathForSVNUrl(url);
     	// do not access repository root URL if it is not required
         if (!repoPath.isPrefixOf(urlPath)) {
-            Path rootPath = new Path(location.getRepositoryRootUrl());
+            IPath rootPath = SVNUtility.createPathForSVNUrl(location.getRepositoryRootUrl());
         	if (!rootPath.isPrefixOf(urlPath)) {
         		if (!allowsNull) {
             		if (!urlPath.isPrefixOf(rootPath)) {
@@ -715,7 +715,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 				}
 				if (infos != null && infos.length > 0 && infos[0] != null) {
 					retVal[0] = SVNUtility.decodeURL(infos[0].reposRootUrl);
-					if (!new Path(retVal[0]).isPrefixOf(new Path(url))) {
+					if (!SVNUtility.createPathForSVNUrl(retVal[0]).isPrefixOf(SVNUtility.createPathForSVNUrl(url))) {
 						// different host name could be returned by server side
 						SVNURLStreamHandler userUrl = SVNUtility.getSVNUrlStreamHandler(url);
 						SVNURLStreamHandler returnedURL = SVNUtility.getSVNUrlStreamHandler(retVal[0]);

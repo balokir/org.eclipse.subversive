@@ -37,7 +37,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.jface.action.Action;
@@ -190,7 +189,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 	}
 
 	protected void findRootNode(Map<IPath, IDiffElement> path2node, IRepositoryResource resource, IProgressMonitor monitor) {
-		this.root = (BaseCompareNode)path2node.get(new Path(resource.getUrl()));
+		this.root = (BaseCompareNode)path2node.get(SVNUtility.createPathForSVNUrl(resource.getUrl()));
 	}
 	
 	protected void refreshTitles() throws Exception {
@@ -342,7 +341,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 			return null;
 		}
 		
-		Path parentUrl = new Path(parent.getUrl());
+		IPath parentUrl = SVNUtility.createPathForSVNUrl(parent.getUrl());
 		IDiffContainer node = path2node.get(parentUrl);
 		if (node == null) {
 			path2node.put(parentUrl, node = this.makeStubNode(this.getParentCompareNode(parent, path2node), parent));

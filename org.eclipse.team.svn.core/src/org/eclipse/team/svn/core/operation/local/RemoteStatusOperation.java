@@ -68,17 +68,17 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		IResource []resources = FileUtility.shrinkChildNodes(this.operableData());
 		
-		final HashSet<Path> projectPaths = new HashSet<Path>();
+		final HashSet<IPath> projectPaths = new HashSet<IPath>();
 		for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {
 			projectPaths.add(new Path(FileUtility.getWorkingCopyPath(resources[i].getProject())));
 		}
-		final HashMap<Path, SVNChangeStatus> result = new HashMap<Path, SVNChangeStatus>();
+		final HashMap<IPath, SVNChangeStatus> result = new HashMap<IPath, SVNChangeStatus>();
 		final ISVNEntryStatusCallback cb = new ISVNEntryStatusCallback() {
 			public void next(SVNChangeStatus status) {
 				result.put(new Path(status.path), status);
 				String parent = new File(status.path).getParent();
 				if (parent != null) {// can be null for drive roots
-					Path projectPath = this.getProjectPath(parent);
+					IPath projectPath = this.getProjectPath(parent);
 					if (projectPath != null) {
 						if (status.reposKind != SVNEntry.Kind.DIR) {
 							/*
@@ -110,7 +110,7 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 			}
 			
 			private void postStatus(String path, SVNChangeStatus baseStatus) {
-				Path tPath = new Path(path);
+				IPath tPath = new Path(path);
 				SVNChangeStatus st = result.get(tPath);
 				if (st == null || st.reposLastCmtRevision < baseStatus.reposLastCmtRevision) {
 					SVNChangeStatus status = this.makeStatus(path, baseStatus);
@@ -120,12 +120,12 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 			
 			private SVNChangeStatus makeStatus(String path, SVNChangeStatus status) {
 				int deltaSegments = new Path(status.path).segmentCount() - new Path(path).segmentCount();
-				return new SVNChangeStatus(path, status.url != null ? new Path(status.url).removeLastSegments(deltaSegments).toString() : null, SVNEntry.Kind.DIR, SVNRevision.INVALID_REVISION_NUMBER, SVNRevision.INVALID_REVISION_NUMBER, 0, null, SVNEntryStatus.Kind.NORMAL, SVNEntryStatus.Kind.NONE, SVNEntryStatus.Kind.NORMAL, SVNEntryStatus.Kind.MODIFIED, false, false, null, null, null, null, SVNRevision.INVALID_REVISION_NUMBER, false, null, null, null, 0, null, status.reposLastCmtRevision, status.reposLastCmtDate, SVNEntry.Kind.DIR, status.reposLastCmtAuthor, false, false, null);
+				return new SVNChangeStatus(path, status.url != null ? SVNUtility.createPathForSVNUrl(status.url).removeLastSegments(deltaSegments).toString() : null, SVNEntry.Kind.DIR, SVNRevision.INVALID_REVISION_NUMBER, SVNRevision.INVALID_REVISION_NUMBER, 0, null, SVNEntryStatus.Kind.NORMAL, SVNEntryStatus.Kind.NONE, SVNEntryStatus.Kind.NORMAL, SVNEntryStatus.Kind.MODIFIED, false, false, null, null, null, null, SVNRevision.INVALID_REVISION_NUMBER, false, null, null, null, 0, null, status.reposLastCmtRevision, status.reposLastCmtDate, SVNEntry.Kind.DIR, status.reposLastCmtAuthor, false, false, null);
 			}
 			
-			private Path getProjectPath(String path) {
-				Path tPath = new Path(path);
-				for (Path projectPath : projectPaths) {
+			private IPath getProjectPath(String path) {
+				IPath tPath = new Path(path);
+				for (IPath projectPath : projectPaths) {
 					if (projectPath.isPrefixOf(tPath)) {
 						return projectPath;
 					}

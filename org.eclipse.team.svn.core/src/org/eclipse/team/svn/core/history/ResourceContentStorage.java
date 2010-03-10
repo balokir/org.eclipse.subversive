@@ -27,6 +27,7 @@ import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.GetFileContentOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
  * Resource content storage
@@ -65,7 +66,7 @@ public class ResourceContentStorage implements IEncodedStorage {
 	}
 
 	public IPath getFullPath() {
-		return new Path(this.remote.getUrl());
+		return SVNUtility.createPathForSVNUrl(this.remote.getUrl());
 	}
 	
 	public IPath getTemporaryPath() {

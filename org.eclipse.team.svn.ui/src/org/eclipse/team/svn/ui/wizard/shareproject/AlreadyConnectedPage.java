@@ -13,7 +13,6 @@ package org.eclipse.team.svn.ui.wizard.shareproject;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -81,8 +80,8 @@ public class AlreadyConnectedPage extends AbstractVerifiedWizardPage {
 				this.url = tmp;
 			}
 			else {
-				IPath tPath = new Path(this.url);
-				IPath tPath2 = new Path(tmp);
+				IPath tPath = SVNUtility.createPathForSVNUrl(this.url);
+				IPath tPath2 = SVNUtility.createPathForSVNUrl(tmp);
 				if (tPath2.isPrefixOf(tPath)) {
 					this.url = tmp;
 				}

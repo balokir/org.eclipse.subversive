@@ -13,9 +13,9 @@ package org.eclipse.team.svn.core.svnstorage;
 
 import java.io.Serializable;
 
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.team.svn.core.resource.IRepositoryBase;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 
 /**
  * SVN implementation of IRepositoryBase
@@ -38,7 +38,7 @@ public abstract class SVNRepositoryBase extends PlatformObject implements IRepos
 	}
 	
 	public String getName() {
-		return new Path(this.getUrl()).lastSegment();
+		return SVNUtility.createPathForSVNUrl(this.getUrl()).lastSegment();
 	}
 	
 	public String getUrl() {

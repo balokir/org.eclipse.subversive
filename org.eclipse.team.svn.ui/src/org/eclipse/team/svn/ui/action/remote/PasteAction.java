@@ -14,7 +14,7 @@ package org.eclipse.team.svn.ui.action.remote;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.Transfer;
@@ -102,10 +102,10 @@ public class PasteAction extends AbstractRepositoryTeamAction {
 	}
 	
 	protected boolean isSource(IRepositoryResource selectedResource, IRepositoryResource resource) {
-		Path selectedUrl = new Path(selectedResource.getUrl());
+		IPath selectedUrl = SVNUtility.createPathForSVNUrl(selectedResource.getUrl());
 		return 
-			new Path(resource.getUrl()).isPrefixOf(selectedUrl) || 
-			resource.getParent() != null && new Path(resource.getParent().getUrl()).equals(selectedUrl);
+			SVNUtility.createPathForSVNUrl(resource.getUrl()).isPrefixOf(selectedUrl) || 
+			resource.getParent() != null && SVNUtility.createPathForSVNUrl(resource.getParent().getUrl()).equals(selectedUrl);
 	}
 	
 	protected RemoteResourceTransferrable getTransferrable() {

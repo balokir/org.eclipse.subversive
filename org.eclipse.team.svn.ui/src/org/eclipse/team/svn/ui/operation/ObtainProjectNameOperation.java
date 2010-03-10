@@ -19,7 +19,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
@@ -31,6 +30,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
+import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 
@@ -86,7 +86,7 @@ public class ObtainProjectNameOperation extends AbstractActionOperation {
 								name = resource.getParent().getName();
 							}
 							else {
-								name = new Path(location.getUrl()).lastSegment();
+								name = SVNUtility.createPathForSVNUrl(location.getUrl()).lastSegment();
 							}
 							name = FileUtility.formatResourceName(name);
 						}

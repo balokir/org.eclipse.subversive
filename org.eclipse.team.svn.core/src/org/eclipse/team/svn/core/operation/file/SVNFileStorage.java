@@ -14,7 +14,6 @@ package org.eclipse.team.svn.core.operation.file;
 import java.io.File;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryInfo;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
@@ -97,10 +96,10 @@ public class SVNFileStorage extends AbstractSVNStorage implements IFileStorage {
 	}
 	
 	protected IRepositoryLocation findLocation(String resourceUrl, String rootUrl) {
-		Path url = new Path(resourceUrl);
+		IPath url = SVNUtility.createPathForSVNUrl(resourceUrl);
 		IRepositoryLocation []locations = this.getRepositoryLocations();
 		for (int i = 0; i < locations.length; i++) {
-			if (new Path(locations[i].getUrl()).isPrefixOf(url)) {
+			if (SVNUtility.createPathForSVNUrl(locations[i].getUrl()).isPrefixOf(url)) {
 				return locations[i];
 			}
 		}

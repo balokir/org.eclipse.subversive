@@ -19,8 +19,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
@@ -114,12 +114,12 @@ public class ExtractToOperationRemote extends AbstractActionOperation {
 		HashMap<String, String> repoFolder2localFolder = new HashMap<String, String>();
 		for (IRepositoryResource current : resources) {
 			String currentURL = current.getUrl();
-			Path currentPath = new Path(currentURL);
+			IPath currentPath = SVNUtility.createPathForSVNUrl(currentURL);
 			String toOperate = ""; //$NON-NLS-1$
 			String rootUrl = null;
 			String rootName = null;
 			for (String url : this.exportRoots2Names.keySet()) {
-				if (new Path(url).isPrefixOf(currentPath)) {
+				if (SVNUtility.createPathForSVNUrl(url).isPrefixOf(currentPath)) {
 					rootUrl = url;
 					rootName = this.exportRoots2Names.get(url);
 				}

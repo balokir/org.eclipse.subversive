@@ -20,7 +20,6 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -153,7 +152,7 @@ public class TwoWayResourceCompareInput extends ResourceCompareInput {
 			monitor.subTask(BaseMessages.format(message, new Object[] {SVNUtility.decodeURL(this.statuses[i].pathPrev)}));
 			
 			CompareNode node = this.makeNode(this.statuses[i], path2node, monitor);
-			path2node.put(new Path(((ResourceElement)node.getRight()).getRepositoryResource().getUrl()), node);
+			path2node.put(SVNUtility.createPathForSVNUrl(((ResourceElement)node.getRight()).getRepositoryResource().getUrl()), node);
 			
 			ProgressMonitorUtility.progress(monitor, i, this.statuses.length);
 		}
