@@ -614,7 +614,7 @@ public final class FileUtility {
 	}
 	
 	public static IResource []getPathNodes(IResource []resources) {
-		List<IResource> tmp = Arrays.asList(resources);
+		Set<IResource> tmp = new HashSet<IResource>(Arrays.asList(resources));
 		Set<IResource> modifiedRoots = new HashSet<IResource>();
 		IWorkspaceRoot wRoot = ResourcesPlugin.getWorkspace().getRoot();
 		
