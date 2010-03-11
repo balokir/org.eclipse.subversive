@@ -47,6 +47,9 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 public class SVNTeamProvider extends RepositoryProvider implements IConnectedProjectInformation {
 	public final static QualifiedName RESOURCE_PROPERTY = new QualifiedName("org.eclipse.team.svn", "resource"); //$NON-NLS-1$ //$NON-NLS-2$
 	public final static QualifiedName LOCATION_PROPERTY = new QualifiedName("org.eclipse.team.svn", "location"); //$NON-NLS-1$ //$NON-NLS-2$
+	public final static QualifiedName VERIFY_TAG_ON_COMMIT_PROPERTY = new QualifiedName("org.eclipse.team.svn", "verifyTagOnCommit"); //$NON-NLS-1$ //$NON-NLS-2$
+	
+	public final static boolean DEFAULT_VERIFY_TAG_ON_COMMIT = true;
 
 	protected IRepositoryLocation location;
 	protected IRepositoryResource resource;
@@ -295,6 +298,23 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 			}
 		}
 		return null;
+	}
+
+	public boolean isVerifyTagOnCommit() {
+		try {
+			String strProp = this.getProject().getPersistentProperty(SVNTeamProvider.VERIFY_TAG_ON_COMMIT_PROPERTY);	
+			if (strProp == null) {
+				return SVNTeamProvider.DEFAULT_VERIFY_TAG_ON_COMMIT;
+			}
+			return Boolean.valueOf(strProp).booleanValue();	
+		} catch (CoreException e) {
+			//ignore and return default value
+			return SVNTeamProvider.DEFAULT_VERIFY_TAG_ON_COMMIT;
+		}		
+	}
+
+	public void setVerifyTagOnCommit(boolean isVerifyTagOnCommit) throws CoreException {
+		this.getProject().setPersistentProperty(SVNTeamProvider.VERIFY_TAG_ON_COMMIT_PROPERTY, String.valueOf(isVerifyTagOnCommit));		
 	}
 	
 }

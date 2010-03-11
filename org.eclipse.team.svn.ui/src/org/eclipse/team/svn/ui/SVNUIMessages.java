@@ -568,6 +568,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String LocalInfoPage_TextStatus;
 	public static String LocalInfoPage_TreeConflict;
 	public static String LocalInfoPage_TreeConflictDescription;
+	public static String LocalInfoPage_VerifyTagModification;
 	public static String LocalInfoPage_Copied;
 	public static String LockAction_label;
 	public static String LockCommand_tooltip;
@@ -1484,6 +1485,7 @@ public class SVNUIMessages extends BaseMessages {
 	public static String TagCommand_tooltip;
 	public static String TagModifyWarningDialog_Message;
 	public static String TagModifyWarningDialog_Title;
+	public static String TagModifyWarningDialog_CustomText;
 	public static String TagPanel_Comment;
 	public static String TagPanel_Description;
 	public static String TagPanel_Exists_Verifier_Error;
