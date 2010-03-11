@@ -38,10 +38,12 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.svn.core.PathForURL;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.SVNTeamProvider;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNDiffStatusCallback;
 import org.eclipse.team.svn.core.connector.ISVNEntryCallback;
@@ -1258,13 +1260,22 @@ public final class SVNUtility {
 		return (IRepositoryRoot)rootParent.asRepositoryContainer(rootName, false);
 	}
 	
-	public static boolean isTagOperated(IResource [] resources) {
+	/**
+	 * @param resources
+	 * @return projects which contain modifications on tag
+	 */
+	public static IProject[] getTagOperatedProjects(IResource[] resources) {
+		Set<IProject> operatedProjects = new HashSet<IProject>();
 		for (int i = 0; i < resources.length; i++) {
-        	if (((IRepositoryRoot)SVNRemoteStorage.instance().asRepositoryResource(resources[i]).getRoot()).getKind() == IRepositoryRoot.KIND_TAGS) {
-        		return true;
-        	}
+			IProject project = resources[i].getProject();
+			if (project != null && !operatedProjects.contains(project)) {
+				SVNTeamProvider provider = (SVNTeamProvider) RepositoryProvider.getProvider(project, SVNTeamPlugin.NATURE_ID);
+				if (provider != null && provider.isVerifyTagOnCommit() && ((IRepositoryRoot)SVNRemoteStorage.instance().asRepositoryResource(resources[i]).getRoot()).getKind() == IRepositoryRoot.KIND_TAGS) {
+					operatedProjects.add(project);
+				}
+			}	
         }
-		return false;
+		return operatedProjects.toArray(new IProject[0]);
 	}
 	
 	public static String getDepthArg(int depth) {

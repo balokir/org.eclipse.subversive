@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.ui.synchronize.action;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -68,10 +69,11 @@ public class CommitActionHelper extends AbstractActionHelper {
 	
 	public static IActionOperation getCommitOperation(IResourceSelector resourceSelector, ISynchronizePageConfiguration configuration) {
 		CommitActionUtility commitUtility = new CommitActionUtility(resourceSelector);
-		
 		IResource[] resources = commitUtility.getAllResources();
-		if (SVNUtility.isTagOperated(resources)) {
-			TagModifyWarningDialog dlg = new TagModifyWarningDialog(configuration.getSite().getShell());
+		
+		IProject[] tagOperatedProjects = SVNUtility.getTagOperatedProjects(resources);
+		if (tagOperatedProjects.length != 0) {
+			TagModifyWarningDialog dlg = new TagModifyWarningDialog(configuration.getSite().getShell(), tagOperatedProjects);
         	if (dlg.open() != 0) {
         		return null;
         	}

@@ -12,20 +12,29 @@
 
 package org.eclipse.team.svn.ui.info;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.SVNMessages;
+import org.eclipse.team.svn.core.SVNTeamPlugin;
+import org.eclipse.team.svn.core.SVNTeamProvider;
 import org.eclipse.team.svn.core.connector.SVNConflictDescriptor;
 import org.eclipse.team.svn.core.connector.SVNEntryInfo;
 import org.eclipse.team.svn.core.connector.SVNLock;
 import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
+import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.operation.local.InfoOperation;
 import org.eclipse.team.svn.core.operation.local.property.GetPropertiesOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
@@ -46,6 +55,13 @@ import org.eclipse.ui.internal.util.Util;
 public class LocalInfoPage extends PropertyPage {
 	protected PropertiesComposite properties;
 	
+	protected IResource resource;
+	protected ILocalResource local;
+	 
+	protected Button verifyTagButton;
+	
+	protected boolean isVerifyTagOnCommit;
+	
     public LocalInfoPage() {
         super();
     }
@@ -59,13 +75,15 @@ public class LocalInfoPage extends PropertyPage {
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		composite.setLayoutData(data);
 		
-		this.noDefaultAndApplyButton();
-		
-		IResource resource = (IResource)Util.getAdapter(this.getElement(), IResource.class);
+		this.resource = (IResource)Util.getAdapter(this.getElement(), IResource.class);
 		InfoOperation op = new InfoOperation(resource);
 		UIMonitorUtility.doTaskBusyDefault(op);
 		
-		ILocalResource local = op.getLocal();
+		this.local = op.getLocal();
+		
+		if (!(resource instanceof IProject)) {
+			this.noDefaultAndApplyButton();	
+		}
 		
 		Label description = new Label(composite, SWT.WRAP);
 		description.setLayoutData(new GridData());
@@ -222,6 +240,8 @@ public class LocalInfoPage extends PropertyPage {
 			content.setEditable(false);		
 			content.setText(this.getTreeConflictDescription(local.getTreeConflictDescriptor()));
 		}
+				
+		this.createOptions(composite);
 		
 		if (IStateFilter.SF_VERSIONED.accept(local)) {
 			//add space
@@ -309,5 +329,56 @@ public class LocalInfoPage extends PropertyPage {
 		}		
 		return SVNUIMessages.format(SVNUIMessages.LocalInfoPage_TreeConflictDescription, new String[]{reason, action, operation});
 	}
+    
+    protected void createOptions(Composite parent) {
+    	if (this.resource instanceof IProject) {
+			SVNTeamProvider provider = (SVNTeamProvider)RepositoryProvider.getProvider((IProject) this.resource, SVNTeamPlugin.NATURE_ID);
+			
+			//add space
+			new Label(parent, SWT.WRAP);
+		    new Label(parent, SWT.WRAP);
+		    
+			this.verifyTagButton = new Button(parent, SWT.CHECK);
+			GridData data = new GridData();
+			data.horizontalSpan = 2;
+			this.verifyTagButton.setLayoutData(data);
+			this.verifyTagButton.setText(SVNUIMessages.LocalInfoPage_VerifyTagModification);
+			this.verifyTagButton.addListener(SWT.Selection, new Listener() {
+				public void handleEvent(Event event) {
+					LocalInfoPage.this.isVerifyTagOnCommit = LocalInfoPage.this.verifyTagButton.getSelection();
+				}
+			});
+			
+			this.verifyTagButton.setSelection(this.isVerifyTagOnCommit = provider.isVerifyTagOnCommit());
+		}
+    }    
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.preference.PreferencePage#performOk()
+     */
+    @Override
+    public boolean performOk() {
+    	if (this.resource instanceof IProject) {
+    		SVNTeamProvider provider = (SVNTeamProvider) RepositoryProvider.getProvider((IProject) this.resource, SVNTeamPlugin.NATURE_ID);
+    		if (this.isVerifyTagOnCommit != provider.isVerifyTagOnCommit()) {
+    			try {
+    				provider.setVerifyTagOnCommit(this.isVerifyTagOnCommit);
+        		} catch (CoreException e) {
+        			LoggedOperation.reportError(this.getClass().getName(), e);
+        		}
+    		}
+    	}
+    	return true;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
+     */
+    @Override
+    protected void performDefaults() {    	
+    	super.performDefaults();
+    	
+    	this.verifyTagButton.setSelection(this.isVerifyTagOnCommit = SVNTeamProvider.DEFAULT_VERIFY_TAG_ON_COMMIT);
+    }
 
 }

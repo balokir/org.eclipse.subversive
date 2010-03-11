@@ -12,6 +12,7 @@
 
 package org.eclipse.team.svn.ui.action.local;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.svn.core.IStateFilter;
@@ -39,8 +40,10 @@ public class CommitAction extends AbstractRecursiveTeamAction {
 	public void runImpl(IAction action) {
 		CommitActionUtility commitUtility = new CommitActionUtility(this);
         IResource [] allResources = commitUtility.getAllResources();
-        if (SVNUtility.isTagOperated(allResources)) {
-        	TagModifyWarningDialog dlg = new TagModifyWarningDialog(this.getShell());
+        
+        IProject[] tagOperatedProjects = SVNUtility.getTagOperatedProjects(allResources);
+        if (tagOperatedProjects.length != 0) {
+        	TagModifyWarningDialog dlg = new TagModifyWarningDialog(this.getShell(), tagOperatedProjects);
         	if (dlg.open() != 0) {
         		return;
         	}
