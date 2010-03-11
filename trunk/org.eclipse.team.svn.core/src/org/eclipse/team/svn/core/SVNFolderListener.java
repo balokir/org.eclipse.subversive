@@ -24,6 +24,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
@@ -67,6 +68,16 @@ public class SVNFolderListener implements IResourceChangeListener {
 							
 							if (resource.getType() == IResource.PROJECT && delta.getKind() == IResourceDelta.ADDED && delta.getFlags() == IResourceDelta.OPEN &&
 								SVNTeamPlugin.instance().getOptionProvider().isAutomaticProjectShareEnabled() && ((IProject)resource).isOpen()) {
+								
+								/*
+								 * If project is already connected, then don't reconnect it again. 
+								 * Project may be connected and we can get such event if we just checked out project.
+								 * Also this may cause problem if there are several locations with the same url, see bug 298862.  
+								 */
+								if (RepositoryProvider.getProvider((IProject) resource, SVNTeamPlugin.NATURE_ID) != null) {
+									return false;
+								}
+								
 								SVNChangeStatus info = SVNUtility.getSVNInfoForNotConnected(resource);
 								if (info != null && info.url != null) {
 									String url = SVNUtility.decodeURL(info.url);
