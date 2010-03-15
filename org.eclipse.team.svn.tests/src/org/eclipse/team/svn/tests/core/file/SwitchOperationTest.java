@@ -25,7 +25,7 @@ public class SwitchOperationTest extends AbstractOperationTestCase {
 
 	protected IActionOperation getOperation() {
 		IRepositoryResource switchDestination = this.getLocation().asRepositoryContainer(SVNUtility.getProposedBranchesLocation(this.getLocation()) + "/" + this.getFirstFolder().getName(), false);
-		return new SwitchOperation(this.getFirstFolder(), switchDestination);
+		return new SwitchOperation(this.getFirstFolder(), switchDestination, true);
 	}
 
 }

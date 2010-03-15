@@ -11,6 +11,8 @@
 
 package org.eclipse.team.svn.tests.core;
 
+import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.connector.SVNRevisionRange;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.GetResourceAnnotationOperation;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -23,7 +25,7 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 public abstract class GetResourceAnnotationOperationTest extends AbstractOperationTestCase {
 	protected IActionOperation getOperation() {
 	    SVNRemoteStorage storage = SVNRemoteStorage.instance();
-		return new GetResourceAnnotationOperation(storage.asRepositoryResource(this.getFirstProject().getFile("maven.xml")));
+		return new GetResourceAnnotationOperation(storage.asRepositoryResource(this.getFirstProject().getFile("maven.xml")), new SVNRevisionRange(SVNRevision.fromNumber(0), SVNRevision.HEAD));
 	}
 
 }

@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.tests.core;
 
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
+import org.eclipse.team.svn.core.resource.IRepositoryLocation.LocationReferenceTypeEnum;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 
 import junit.framework.TestCase;
@@ -44,7 +45,7 @@ public abstract class RepositoryLocationsManagementTest extends TestCase {
 			throw new RuntimeException(e);
 		}
 		
-		String reference = storage.repositoryLocationAsReference(location);
+		String reference = storage.repositoryLocationAsReference(location, LocationReferenceTypeEnum.ALL);
 		
 		IRepositoryLocation refTest = storage.newRepositoryLocation(reference);
 		
