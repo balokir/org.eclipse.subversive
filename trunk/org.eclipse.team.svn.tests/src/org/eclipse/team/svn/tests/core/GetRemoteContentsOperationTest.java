@@ -33,7 +33,7 @@ public abstract class GetRemoteContentsOperationTest extends AbstractOperationTe
 	    IRepositoryResource remote = storage.asRepositoryResource(this.getFirstProject().getFile("maven.xml"));
 	    HashMap<String, String> remote2local = new HashMap<String, String>();
 	    remote2local.put(SVNUtility.encodeURL(remote.getUrl()), FileUtility.getWorkingCopyPath(local));
-		return new GetRemoteContentsOperation(new IResource[] {local}, new IRepositoryResource[] {remote}, remote2local);
+		return new GetRemoteContentsOperation(new IResource[] {local}, new IRepositoryResource[] {remote}, remote2local, true);
 	}
 
 }

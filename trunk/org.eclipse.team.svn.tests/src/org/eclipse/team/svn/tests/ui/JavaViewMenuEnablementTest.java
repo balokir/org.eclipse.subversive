@@ -247,9 +247,7 @@ public class JavaViewMenuEnablementTest extends TestWorkflow {
     }
     
     public void testSynchronizeAction() throws Exception {
-		IActionDelegate action = new SynchronizeAction();		
-		this.assertEnablement(action, this.getValidResources(), true);
-		this.assertEnablement(action, new IResource[] {this.getValidResources()[0]}, true);		
+		IActionDelegate action = new SynchronizeAction();						
 		this.assertEnablement(action, this.getVersionedResources(), true);			
 		this.assertEnablement(action, this.getIgnoredResources(), true);		
 		this.assertEnablement(action, this.getNewResources(), true);
@@ -319,11 +317,6 @@ public class JavaViewMenuEnablementTest extends TestWorkflow {
     protected IResource[] getIgnoredResources() {
         IResource []ignoredResources = FileUtility.getResourcesRecursive(new IResource[] {this.getFirstProject(), this.getSecondProject()}, IStateFilter.SF_IGNORED);
         return ignoredResources;
-    }
-    
-    protected IResource[] getValidResources() {
-        IResource []validResources = FileUtility.getResourcesRecursive(new IResource[] {this.getFirstProject(), this.getSecondProject()}, IStateFilter.SF_VALID);
-        return validResources;
     }
     
     protected IResource[] getNonversionedResources() {

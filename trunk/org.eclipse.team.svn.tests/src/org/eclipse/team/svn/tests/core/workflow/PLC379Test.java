@@ -46,7 +46,7 @@ public class PLC379Test  extends TestWorkflow {
             protected IActionOperation getOperation() {
                 return new AbstractLockingTestOperation("PLC379Test") {
                     protected void runImpl(IProgressMonitor monitor) throws Exception {
-                        new CheckoutAsOperation("TestProject", SVNUtility.getProposedTrunk(getLocation()).asRepositoryContainer(getSecondProject().getName(), false), Depth.INFINITY).run(monitor);
+                        new CheckoutAsOperation("TestProject", SVNUtility.getProposedTrunk(getLocation()).asRepositoryContainer(getSecondProject().getName(), false), Depth.INFINITY, true).run(monitor);
                         FileOutputStream fos = null;
                         try {
                             fos = new FileOutputStream (getFirstProject().getLocation().toString() + "/123");

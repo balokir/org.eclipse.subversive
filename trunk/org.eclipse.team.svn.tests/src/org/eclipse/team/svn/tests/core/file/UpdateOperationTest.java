@@ -23,7 +23,7 @@ import org.eclipse.team.svn.core.operation.file.UpdateOperation;
 public class UpdateOperationTest extends AbstractOperationTestCase {
 
 	protected IActionOperation getOperation() {
-		return new UpdateOperation(this.getBothFolders(), SVNRevision.HEAD, false);
+		return new UpdateOperation(this.getBothFolders(), SVNRevision.HEAD, false, true);
 	}
 
 }

@@ -30,7 +30,7 @@ public class ShareOperationTest extends AbstractOperationTestCase {
 				return folder.getName();
 			}
 		};
-        return new ShareOperation(this.getBothFolders(), this.getLocation(), folderNameMapper, "rootName", ShareOperation.LAYOUT_DEFAULT, true, "Share Project test");
+        return new ShareOperation(this.getBothFolders(), this.getLocation(), folderNameMapper, "rootName", ShareOperation.LAYOUT_DEFAULT, true, "Share Project test", true);
 	}
 
 }
