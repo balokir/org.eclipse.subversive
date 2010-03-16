@@ -25,7 +25,6 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.revision.graph.graphic.editpart.RevisionEditPart;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.history.FromDifferenceRepositoryResourceProviderOperation;
-import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -60,7 +59,7 @@ public class ExtractAction extends BaseRevisionGraphAction {
 	
 	@Override
 	public void run() {
-		DirectoryDialog fileDialog = new DirectoryDialog(UIMonitorUtility.getShell());
+		DirectoryDialog fileDialog = new DirectoryDialog(this.getWorkbenchPart().getSite().getShell());
 		fileDialog.setText(SVNUIMessages.ExtractToAction_Select_Title);
 		fileDialog.setMessage(SVNUIMessages.ExtractToAction_Select_Description);
 		String path = fileDialog.open();
