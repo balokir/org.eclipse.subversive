@@ -21,11 +21,36 @@ public class RevisionConnectionNode {
 	public final RevisionNode target;
 	
 	public RevisionConnectionNode(RevisionNode source, RevisionNode target) {
+		if (source == null) {
+			throw new IllegalArgumentException("source");
+		}
+		if (target == null) {
+			throw new IllegalArgumentException("target");
+		}
 		this.source = source;
 		this.target = target;	
 	}
 	
-
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}		
+		if (obj instanceof RevisionConnectionNode) {
+			RevisionConnectionNode node = (RevisionConnectionNode) obj;
+			return this.source.equals(node.source) && this.target.equals(node.target);
+		}
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		int result = 17;
+		result = result * 31 + this.source.hashCode();
+		result = result * 31 + this.target.hashCode();
+		return result;
+	}
+	
 	@Override
 	public String toString() {
 		return "Connection. Source: " + this.source + ", target: " + this.target;

@@ -13,12 +13,13 @@ package org.eclipse.team.svn.revision.graph.graphic;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 
-import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.revision.graph.PathRevision;
 import org.eclipse.team.svn.revision.graph.TopRightTraverseVisitor;
@@ -75,13 +76,13 @@ public class RevisionRootNode extends ChangesNotifier {
 	
 	protected void processCurrentModel() {
 		TimeMeasure processMeasure = new TimeMeasure("Re-structure nodes in model");
-		
+				
 		/*
 		 * Remember previous nodes in order to update them, 
 		 * i.e. update their connections, as during filtering, collapsing
 		 * some nodes can be deleted
-		 */		
-		final List<RevisionNode> previousNodes = new ArrayList<RevisionNode>();
+		 */										
+		final Set<RevisionNode> previousNodes = new HashSet<RevisionNode>();
 		if (this.currentStartNode != null) {			
 			new TopRightTraverseVisitor<RevisionNodeItem>() {
 				public void visit(RevisionNodeItem node) {
@@ -89,7 +90,56 @@ public class RevisionRootNode extends ChangesNotifier {
 				}				
 			}.traverse(this.currentStartNode.getCurrentConnectionItem());			
 		}
+										
+		Set<RevisionConnectionNode> previousConnections = new HashSet<RevisionConnectionNode>();		
+		for (List<RevisionConnectionNode> connections : this.currentSourceConnections.values()) {
+			previousConnections.addAll(connections);
+		}		
+
+		//process model
+		this.doProcessCurrentModel();
+						
 		
+		/*
+		 * update previous nodes
+		 * 
+		 * This operation can take long time. It has the same problem as with setContents#setContents
+		 */				
+		if (!previousConnections.isEmpty()) {								
+			Set<RevisionConnectionNode> newConnections = new HashSet<RevisionConnectionNode>();
+			for (List<RevisionConnectionNode> connections : this.currentSourceConnections.values()) {
+				newConnections.addAll(connections);
+			}
+						
+			Set<RevisionNode> changedNodes = new HashSet<RevisionNode>();
+			
+			for (RevisionConnectionNode previousConnection : previousConnections) {
+				if (!newConnections.contains(previousConnection)) {
+					changedNodes.add(previousConnection.source);
+					changedNodes.add(previousConnection.target);
+				}
+			}
+			
+			//check new connections
+			for (RevisionConnectionNode newConnection : newConnections) {
+				if (!previousConnections.contains(newConnection)) {															
+					if (previousNodes.contains(newConnection.source)) {
+						changedNodes.add(newConnection.source);
+					}					
+					if (previousNodes.contains(newConnection.target)) {
+						changedNodes.add(newConnection.target);	
+					}					
+				}
+			}						
+			
+			for (RevisionNode changedNode : changedNodes) {			
+				changedNode.refreshConnections();
+			}
+		}						
+		processMeasure.end();
+	}
+	
+	protected void doProcessCurrentModel() {
 		//restore current connections to initial state
 		this.createCurrentConnectionsFromInitial();					
 		
@@ -123,20 +173,6 @@ public class RevisionRootNode extends ChangesNotifier {
 				}
 			}
 		}.traverse(this.currentStartNode.getCurrentConnectionItem());
-		
-		/*
-		 * update previous nodes
-		 * 
-		 * This operation can take long time. It has the same problem as with setContents#setContents
-		 */				
-		//update previous nodes
-		if (!previousNodes.isEmpty()) {
-			for (RevisionNode prevNode : previousNodes) {
-				prevNode.refreshConnections();
-			}			
-		}
-						
-		processMeasure.end();
 	}
 	
 	protected void addCurrentConnection(RevisionNode source, RevisionNode target) {

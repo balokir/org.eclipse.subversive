@@ -626,4 +626,11 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 	public PathRevision getModel() {
 		return this.resultNode;
 	}
+	
+	/*
+	 * For DEBUG
+	 */
+	protected String getPath(int pathIndex) {
+		return this.dataContainer.getPathStorage().getPath(pathIndex);
+	}
 }
