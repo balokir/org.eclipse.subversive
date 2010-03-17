@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.graphic;
 
+import java.beans.PropertyChangeListener;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 
 import org.eclipse.team.svn.revision.graph.NodeConnections;
@@ -20,54 +23,32 @@ import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
  * 
  * @author Igor Burilo
  */
-public class RevisionNode extends ChangesNotifier {
+public class RevisionNode extends NodeConnections<RevisionNode> {
 
 	public final PathRevision pathRevision;
 	
-	protected RevisionNodeItem initialConnectionItem;
-	protected RevisionNodeItem currentConnectionItem;	
+	protected final ChangesNotifier changesNotifier;		
+	
+	protected boolean isFiltered;
 	
 	protected boolean isNextCollapsed;
 	protected boolean isPreviousCollapsed;
 	protected boolean isCopiedToCollapsed;
-	protected boolean isCopiedFromCollapsed;
+	protected boolean isCopiedFromCollapsed;	
 	
 	//TODO use in different hierarchy
 	protected int width;
 	protected int height;
 	
 	protected int x;
-	protected int y;
-	
-	public class RevisionNodeItem extends NodeConnections<RevisionNodeItem> {					
-				
-		public RevisionNode getRevisionNode() {
-			return RevisionNode.this;
-		}				
-				
-		public RevisionNodeItem[] getCopiedTo() {
-			return this.copiedTo.toArray(new RevisionNodeItem[0]);
-		}
-		
-		@Override
-		public String toString() {			
-			return RevisionNode.this.toString();
-		}				
-	}		
+	protected int y;	
 	
 	public RevisionNode(PathRevision pathRevision) {
 		this.pathRevision = pathRevision;
-		this.initialConnectionItem = new RevisionNodeItem();
-		this.currentConnectionItem = new RevisionNodeItem();
-	}
+		this.changesNotifier = new ChangesNotifier();				
+	}	
 	
-	public RevisionNodeItem getInitialConnectionItem() {
-		return this.initialConnectionItem;
-	}
-		
-	public RevisionNodeItem getCurrentConnectionItem() {
-		return this.currentConnectionItem;
-	}
+	//--- layout methods 
 	
 	public void setSize(int width, int height) {
 		this.width = width;
@@ -98,13 +79,167 @@ public class RevisionNode extends ChangesNotifier {
 		this.y = y;
 	}
 	
+	
+	//--- connections manipulation
+	
 	@Override
-	public String toString() {
-		return this.pathRevision.toString() + 
-		", location: " + this.x + ", " + this.y + 
-		", size: " + this.width + ", " + this.height; 
+	public RevisionNode getNext() {		
+		if (this.isNextCollapsed) {
+			return null;
+		}		
+		RevisionNode node = this;
+		while ((node = node.internalGetNext()) != null) {						
+			if (!node.isFiltered) {
+				return node;
+			}			
+		}
+		return null;
 	}
 	
+	public RevisionNode internalGetNext() {
+		return super.getNext();
+	}
+	
+	@Override
+	public RevisionNode getPrevious() {		
+		if (this.isPreviousCollapsed) {
+			return null;
+		}		
+		RevisionNode node = this;
+		while ((node = node.internalGetPrevious()) != null) {						
+			if (!node.isFiltered) {
+				return node;
+			}			
+		}
+		return null;
+	}
+	
+	public RevisionNode internalGetPrevious() {
+		return super.getPrevious();
+	}
+		
+	@Override
+	public RevisionNode[] getCopiedTo(RevisionNode[] a) {
+		return this.getCopiedTo();
+	}
+	
+	public RevisionNode[] getCopiedTo() {
+		if (this.isCopiedToCollapsed) {
+			return new RevisionNode[0];
+		}
+		return this.internalGetCopiedTo();		
+	}
+	
+	public RevisionNode[] internalGetCopiedTo() {
+		Collection<RevisionNode> collection = this.internalGetCopiedToAsCollection();
+		return collection.toArray(new RevisionNode[0]);						
+	}
+	
+	@Override
+	public Collection<RevisionNode> getCopiedToAsCollection() {
+		if (this.isCopiedToCollapsed) {
+			return Collections.emptyList();
+		}
+		return this.internalGetCopiedToAsCollection();
+	}
+		
+	public Collection<RevisionNode> internalGetCopiedToAsCollection() {
+		LinkedList<RevisionNode> res = new LinkedList<RevisionNode>();
+		Collection<RevisionNode> copiedTo = super.getCopiedToAsCollection();
+		if (!copiedTo.isEmpty()) {
+			for (RevisionNode copiedToNode : copiedTo) { 
+				//if there's renamed node, we place it at first position
+				if (copiedToNode.pathRevision.action == RevisionNodeAction.RENAME) {
+					res.addFirst(copiedToNode);
+				} else {
+					res.add(copiedToNode);
+				}
+			}
+		}
+		return res;
+	}
+	
+	@Override
+	public RevisionNode getCopiedFrom() {
+		if (this.isCopiedFromCollapsed) {
+			return null;
+		}
+		return internalGetCopiedFrom();
+	}
+
+	public RevisionNode internalGetCopiedFrom() {
+		return this.copiedFrom;
+	}
+	
+	//--- notifications
+	
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		this.changesNotifier.addPropertyChangeListener(listener);
+	}
+	
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		this.changesNotifier.removePropertyChangeListener(listener);
+	}
+	
+	public void refreshConnections() {
+		this.changesNotifier.firePropertyChange(ChangesNotifier.REFRESH_CONNECTIONS_PROPERTY, null, this);		
+	}
+	
+	
+	//--- Accessors
+	
+	public void setFiltered(boolean isFiltered) {
+		this.isFiltered = isFiltered;
+	}
+	
+	public boolean isFiltered() {
+		return this.isFiltered;
+	}
+	
+	public boolean isNextCollapsed() {
+		return isNextCollapsed;
+	}
+	
+	public void setNextCollapsed(boolean isNextCollapsed) {
+		this.isNextCollapsed = isNextCollapsed;
+		
+		//TODO check notifications on big graph
+		this.changesNotifier.firePropertyChange(ChangesNotifier.EXPAND_COLLAPSE_PROPERTY, null, null);
+	}
+	
+	public boolean isPreviousCollapsed() {
+		return isPreviousCollapsed;
+	}
+	
+	public void setPreviousCollapsed(boolean isPreviousCollapsed) {
+		this.isPreviousCollapsed = isPreviousCollapsed;
+		
+		this.changesNotifier.firePropertyChange(ChangesNotifier.EXPAND_COLLAPSE_PROPERTY, null, null);
+	}
+	
+	public boolean isCopiedToCollapsed() {
+		return isCopiedToCollapsed;
+	}
+	
+	public void setCopiedToCollapsed(boolean isCopiedToCollapsed) {
+		this.isCopiedToCollapsed = isCopiedToCollapsed;
+		
+		this.changesNotifier.firePropertyChange(ChangesNotifier.EXPAND_COLLAPSE_PROPERTY, null, null);
+	}
+	
+	public boolean isCopiedFromCollapsed() {
+		return isCopiedFromCollapsed;
+	}
+	
+	public void setCopiedFromCollapsed(boolean isCopiedFromCollapsed) {
+		this.isCopiedFromCollapsed = isCopiedFromCollapsed;
+		
+		this.changesNotifier.firePropertyChange(ChangesNotifier.EXPAND_COLLAPSE_PROPERTY, null, null);
+	}
+	
+
+	//--- Object methods
+
 	@Override
 	public boolean equals(Object obj) {	
 		if (obj instanceof RevisionNode) {
@@ -119,42 +254,11 @@ public class RevisionNode extends ChangesNotifier {
 		return this.pathRevision.hashCode();
 	}
 	
-	public RevisionNode getNext() {		
-		return this.castItem(this.currentConnectionItem.getNext());
-	}
-	
-	public RevisionNode getPrevious() {		
-		return this.castItem(this.currentConnectionItem.getPrevious());
-	}
-	
-	public RevisionNode[] getCopiedTo() {
-		LinkedList<RevisionNode> res = new LinkedList<RevisionNode>();
-		RevisionNodeItem[] copiedTo = this.currentConnectionItem.getCopiedTo();
-		if (copiedTo.length > 0) {
-			for (int i = 0; i < copiedTo.length; i ++) {
-				RevisionNodeItem node =  copiedTo[i]; 
-				RevisionNode copiedToNode = this.castItem(node);
-				//if there's renamed node, we place it at first position
-				if (copiedToNode.pathRevision.action == RevisionNodeAction.RENAME) {
-					res.addFirst(copiedToNode);
-				} else {
-					res.add(copiedToNode);
-				}
-			}
-		}
-		return res.toArray(new RevisionNode[0]);
-	}
-	
-	public RevisionNode getCopiedFrom() {
-		return this.castItem(this.currentConnectionItem.getCopiedFrom());
-	}
-	
-	protected RevisionNode castItem(RevisionNodeItem node) {		
-		return node != null ? node.getRevisionNode() : null;
-	}
-
-	public void refreshConnections() {
-		this.firePropertyChange(ChangesNotifier.REFRESH_CONNECTIONS_PROPERTY, null, this);		
+	@Override
+	public String toString() {
+		return this.pathRevision.toString() + 
+			", location: " + this.x + ", " + this.y + 
+			", size: " + this.width + ", " + this.height; 
 	}
 		
 }

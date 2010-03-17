@@ -12,7 +12,6 @@ package org.eclipse.team.svn.revision.graph.graphic.layout;
 
 import org.eclipse.team.svn.revision.graph.TopRightTraverseVisitor;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
-import org.eclipse.team.svn.revision.graph.graphic.RevisionNode.RevisionNodeItem;
 
 /**
  * Set correct X coordinate: previously it contained column number
@@ -36,14 +35,13 @@ public class SetFinalCoordinates extends AbstractLayoutCommand {
 	@Override
 	public void run() {	
 		final int maxY = this.setYcommand.getMaxY();						
-		new TopRightTraverseVisitor<RevisionNodeItem>() {			
+		new TopRightTraverseVisitor<RevisionNode>() {			
 			@Override
-			protected void visit(RevisionNodeItem cNode) {
-				RevisionNode node = cNode.getRevisionNode();				
+			protected void visit(RevisionNode node) {				
 				node.setX(node.getX() * (node.getWidth() + SetFinalCoordinates.this.widthOffset));							
 				node.setY(maxY - (node.getY() + node.getHeight()));				
 			}
-		}.traverse(this.startNode.getCurrentConnectionItem());
+		}.traverse(this.startNode);
 	}
 
 }

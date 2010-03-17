@@ -27,6 +27,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.team.svn.revision.graph.cache.TimeMeasure;
 import org.eclipse.team.svn.revision.graph.graphic.actions.AddRevisionLinksAction;
+import org.eclipse.team.svn.revision.graph.graphic.actions.CollapseExpandAction;
 import org.eclipse.team.svn.revision.graph.graphic.actions.ComparePropertiesAction;
 import org.eclipse.team.svn.revision.graph.graphic.actions.CompareWithEachOtherAction;
 import org.eclipse.team.svn.revision.graph.graphic.actions.CompareWithHeadAction;
@@ -133,7 +134,7 @@ public class RevisionGraphEditor extends GraphicalEditor {
 		viewer.setEditPartFactory(new GraphEditPartFactory());
 		
 		//TODO remember between sessions
-		boolean isSimpleMode = true;
+		boolean isSimpleMode = false;
 		this.getModel().init(isSimpleMode);
 		
 		//context menu
@@ -236,6 +237,40 @@ public class RevisionGraphEditor extends GraphicalEditor {
 		selectedActions.add(action.getId());
 		
 		action = new ShowAnnotationAction(this);
+		registry.registerAction(action);
+		selectedActions.add(action.getId());
+		
+		//collapse/expand
+		
+		action = new CollapseExpandAction(this, CollapseExpandAction.CollapseNextAction_ID);
+		registry.registerAction(action);
+		selectedActions.add(action.getId());
+		
+		action = new CollapseExpandAction(this, CollapseExpandAction.CollapsePreviousAction_ID);
+		registry.registerAction(action);
+		selectedActions.add(action.getId());
+		
+		action = new CollapseExpandAction(this, CollapseExpandAction.CollapseCopiedToAction_ID);
+		registry.registerAction(action);
+		selectedActions.add(action.getId());
+		
+		action = new CollapseExpandAction(this, CollapseExpandAction.CollapseCopiedFromAction_ID);
+		registry.registerAction(action);
+		selectedActions.add(action.getId());
+		
+		action = new CollapseExpandAction(this, CollapseExpandAction.ExpandNextAction_ID);
+		registry.registerAction(action);
+		selectedActions.add(action.getId());
+		
+		action = new CollapseExpandAction(this, CollapseExpandAction.ExpandPreviousAction_ID);
+		registry.registerAction(action);
+		selectedActions.add(action.getId());
+		
+		action = new CollapseExpandAction(this, CollapseExpandAction.ExpandCopiedToAction_ID);
+		registry.registerAction(action);
+		selectedActions.add(action.getId());
+		
+		action = new CollapseExpandAction(this, CollapseExpandAction.ExpandCopiedFromAction_ID);
 		registry.registerAction(action);
 		selectedActions.add(action.getId());
 	}

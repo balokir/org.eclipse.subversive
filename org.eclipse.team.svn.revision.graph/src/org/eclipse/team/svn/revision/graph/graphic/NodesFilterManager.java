@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.graphic;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
+import org.eclipse.team.svn.revision.graph.TopRightTraverseVisitor;
 import org.eclipse.team.svn.revision.graph.graphic.AbstractRevisionNodeFilter.AndRevisionNodeFilter;
-import org.eclipse.team.svn.revision.graph.graphic.RevisionNode.RevisionNodeItem;
 
 /**
  * 
@@ -32,99 +31,25 @@ public class NodesFilterManager {
 		this.filters.removeFilter(filter);
 	}
 	
-	/*
-	 * Return first node accepted by filter
-	 */
-	public RevisionNodeItem applyFilters(RevisionNodeItem inputNode) {		
-		if (this.filters.filters.isEmpty()) {
-			return inputNode;
-		}
-		
-		RevisionNodeItem outputStartNode = null;
-		
-		//find first node accepted by filters
-		RevisionNodeItem startNode = this.findFirstNodeAcceptedByFilter(inputNode);
-		if (startNode != null) {
-			if (startNode.getPrevious() != null) {
-				startNode.removePrevious();				
-			}
-			if (startNode.getCopiedFrom() != null) {
-				startNode.removeCopiedFrom();
+	public void applyFilters(RevisionNode startNode) {
+		final AbstractRevisionNodeFilter filter = this.filters.filters.isEmpty() ? AbstractRevisionNodeFilter.ACCEPT_ALL_FILTER : this.filters;
+		new TopRightTraverseVisitor<RevisionNode>() {
+			
+			protected void visit(RevisionNode node) {
+				boolean isAccepted = filter.accept(node);
+				node.setFiltered(!isAccepted);
 			}
 			
-			outputStartNode = startNode;
-			this.doApplyFilters(startNode);
-		} else {
-			outputStartNode = null;
-		}		
-		return outputStartNode;
+			@Override
+			protected RevisionNode getNext(RevisionNode node) {
+				return node.internalGetNext();
+			};
+			
+			@Override
+			protected Collection<RevisionNode> getCopiedToAsCollection(RevisionNode node) {
+				return node.internalGetCopiedToAsCollection();
+			}
+		}.traverse(startNode);
 	}
-	
-	protected void doApplyFilters(RevisionNodeItem startNode) {				
-		//go top 
-		RevisionNodeItem previouslyAcceptedNode = startNode;
-		RevisionNodeItem currentNode = startNode;
-		while ((currentNode = currentNode.getNext()) != null) {			
-			if (this.filters.accept(currentNode.getRevisionNode())) {
-				if (previouslyAcceptedNode.getNext() == null || previouslyAcceptedNode.getNext() != null && !previouslyAcceptedNode.getNext().equals(currentNode)) {
-					previouslyAcceptedNode.setNext(currentNode);	
-				}				
-				previouslyAcceptedNode = currentNode;
-			} else {
-				if (previouslyAcceptedNode.getNext() != null) {
-					previouslyAcceptedNode.removeNext();	
-				}				
-			}
-		}
-		
-		//process copy to
-		List<RevisionNodeItem> nextNodesToProcess = new ArrayList<RevisionNodeItem>(); 
-		currentNode = startNode;
-		do {
-			if (currentNode.getCopiedTo().length > 0) {
-				for (RevisionNodeItem copyTo : currentNode.getCopiedTo()) {
-					if (!this.filters.accept(copyTo.getRevisionNode())) {
-						currentNode.removeCopiedTo(copyTo);
-					} else {
-						nextNodesToProcess.add(copyTo);
-					}
-				}
-			}						
-		} while ((currentNode = currentNode.getNext()) != null);
-		
-		if (!nextNodesToProcess.isEmpty()) {
-			for (RevisionNodeItem node : nextNodesToProcess) {
-				this.doApplyFilters(node);
-			}
-		}
-	}
-		
-	protected RevisionNodeItem findFirstNodeAcceptedByFilter(RevisionNodeItem startNode) {
-		//traverse nodes until we find first node accepted by filter
-		
-		List<RevisionNodeItem> nextNodesToProcess = new ArrayList<RevisionNodeItem>(); 
-		
-		RevisionNodeItem currentNode = startNode;
-		do {
-			if (this.filters.accept(currentNode.getRevisionNode())) {
-				return currentNode;
-			} else {
-				if (currentNode.getCopiedTo().length > 0) {
-					for (RevisionNodeItem copyTo : currentNode.getCopiedTo()) {
-						nextNodesToProcess.add(copyTo);
-					}
-				}
-			}
-		} while ((currentNode = currentNode.getNext()) != null);				
-		
-		if (!nextNodesToProcess.isEmpty()) {
-			for (RevisionNodeItem node : nextNodesToProcess) {
-				RevisionNodeItem res = this.findFirstNodeAcceptedByFilter(node);
-				if (res != null) {
-					return res;
-				}
-			}
-		}		
-		return null;
-	}
+
 }

@@ -23,6 +23,7 @@ import org.eclipse.draw2d.FreeformLayer;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
+import org.eclipse.team.svn.revision.graph.graphic.ChangesNotifier;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionRootNode;
 import org.eclipse.team.svn.revision.graph.graphic.layout.GraphLayoutManager;
@@ -84,7 +85,8 @@ public class RevisionGraphEditPart extends AbstractGraphicalEditPart implements 
 	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent evt) {
-		if (RevisionRootNode.LAYOUT_PROPERTY.equals(evt.getPropertyName())) {
+		if (RevisionRootNode.LAYOUT_PROPERTY.equals(evt.getPropertyName()) ||
+			ChangesNotifier.EXPAND_COLLAPSE_PROPERTY.equals(evt.getPropertyName())) {
 			refreshChildren();			
 		}
 	}
