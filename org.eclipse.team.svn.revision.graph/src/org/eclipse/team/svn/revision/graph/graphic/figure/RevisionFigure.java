@@ -118,7 +118,8 @@ public class RevisionFigure extends RoundedRectangle {
 		
 		this.updateExpandCollapseStatus();
 		
-		this.setPreferredSize(RevisionFigure.FIGURE_WIDTH, RevisionFigure.LINE_HEIGHT * pathParts.size() + 1);
+		this.setPreferredSize(RevisionFigure.FIGURE_WIDTH, RevisionFigure.LINE_HEIGHT * pathParts.size() + 1 
+				/*TODO delete after removing expandCollapseStatus*/+ RevisionFigure.LINE_HEIGHT);
 	}
 	
 	public void updateExpandCollapseStatus() {					

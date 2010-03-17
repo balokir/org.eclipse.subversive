@@ -49,9 +49,7 @@ public abstract class AbstractGraphLayoutManager extends AbstractLayout {
 		
 	public void layout(IFigure container) {	
 		TimeMeasure layoutMeasure = new TimeMeasure("Layout");
-		
-		RevisionNode startNode = null;
-		
+						
 		//set width and height
 		Iterator<?> iter = this.graphPart.getChildren().iterator();
 		while (iter.hasNext()) {
@@ -59,10 +57,9 @@ public abstract class AbstractGraphLayoutManager extends AbstractLayout {
 			Dimension size = editPart.getFigure().getPreferredSize(-1, -1);
 			RevisionNode node = editPart.getCastedModel();
 			node.setSize(size.width, size.height);
-			if (startNode == null && node.getCopiedFrom() == null && node.getPrevious() == null) {
-				startNode = node;
-			}
 		}		
+				
+		RevisionNode startNode = this.graphPart.getCastedModel().getCurrentStartNode();				
 		
 		//make actual layout
 		AbstractLayoutCommand[] layoutCommands = this.getLayoutCommands(startNode); 		
