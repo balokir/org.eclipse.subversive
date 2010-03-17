@@ -11,6 +11,8 @@
 package org.eclipse.team.svn.revision.graph.operation;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.team.svn.core.connector.SVNConnectorCancelException;
 import org.eclipse.team.svn.core.connector.SVNConnectorException;
 import org.eclipse.team.svn.core.connector.SVNRevision;
@@ -18,6 +20,7 @@ import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.ActivityCancelledException;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
+import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
  * Check connection to repository and returns last revision in repository.
@@ -51,9 +54,25 @@ public class CheckRepositoryConnectionOperation extends AbstractActionOperation 
 		}
 				
 		if (!this.hasConnection) {
-			//TODO ask if there's no connection
-			boolean isProceedWithoutConnection = true;
-			if (!isProceedWithoutConnection) {
+			
+			final boolean[] isProceedWithoutConnection = new boolean[]{ false };
+			//ask if there's no connection
+			UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+				public void run() {									
+					MessageDialog dlg = new MessageDialog(
+						UIMonitorUtility.getShell(), 
+						"Revision Graph",
+						null, 
+						"There has been a problem contacting the server. Do you want to continue and use the cached data instead?",
+						MessageDialog.QUESTION, 
+						new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 
+						0);
+
+					isProceedWithoutConnection[0] = dlg.open() == 0;
+				}
+			});	
+			
+			if (!isProceedWithoutConnection[0]) {
 				throw new ActivityCancelledException();
 			}	
 		}
