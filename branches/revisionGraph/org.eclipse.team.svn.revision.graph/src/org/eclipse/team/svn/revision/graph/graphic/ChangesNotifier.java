@@ -21,6 +21,7 @@ public class ChangesNotifier {
 
 	public final static String REFRESH_CONNECTIONS_PROPERTY = "refresh";
 	public final static String LAYOUT_PROPERTY = "layout";
+	public final static String EXPAND_COLLAPSE_PROPERTY = "expandCollapse";	
 	
 	protected PropertyChangeSupport listeners = new PropertyChangeSupport(this);
 	

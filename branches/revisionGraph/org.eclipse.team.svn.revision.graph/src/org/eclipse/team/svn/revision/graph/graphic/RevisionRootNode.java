@@ -25,12 +25,9 @@ import org.eclipse.team.svn.revision.graph.PathRevision;
 import org.eclipse.team.svn.revision.graph.TopRightTraverseVisitor;
 import org.eclipse.team.svn.revision.graph.cache.RevisionDataContainer;
 import org.eclipse.team.svn.revision.graph.cache.TimeMeasure;
-import org.eclipse.team.svn.revision.graph.graphic.RevisionNode.RevisionNodeItem;
 
 /**
  * Root of revision nodes 
- *
- * TODO add expand/collapse
  * 
  * @author Igor Burilo
  */
@@ -58,11 +55,12 @@ public class RevisionRootNode extends ChangesNotifier {
 	}
 	
 	public void init(boolean isSimpleMode) {		
-		this.createInitialConnections();
+		this.createRevisionNodesModel();
+		this.currentStartNode = this.initialStartNode;
 		
 		this.internalSetMode(isSimpleMode);
 		
-		this.processCurrentModel();
+		this.filter(false);
 	}
 	
 	public List<RevisionNode> getChildren() {
@@ -74,7 +72,13 @@ public class RevisionRootNode extends ChangesNotifier {
 		return res != null ? res : Collections.<RevisionConnectionNode>emptyList();
 	} 				
 	
-	protected void processCurrentModel() {
+	/*
+	 * Change revision graph model
+	 * 
+	 * This method doesn't actually changes the model, it only
+	 * performs needed pre and post actions. Model is changed by passed operation. 
+	 */
+	protected void changeModel(RevisionModelOperation op) {
 		TimeMeasure processMeasure = new TimeMeasure("Re-structure nodes in model");
 				
 		/*
@@ -84,22 +88,42 @@ public class RevisionRootNode extends ChangesNotifier {
 		 */										
 		final Set<RevisionNode> previousNodes = new HashSet<RevisionNode>();
 		if (this.currentStartNode != null) {			
-			new TopRightTraverseVisitor<RevisionNodeItem>() {
-				public void visit(RevisionNodeItem node) {
-					previousNodes.add(node.getRevisionNode());
+			new TopRightTraverseVisitor<RevisionNode>() {
+				public void visit(RevisionNode node) {
+					previousNodes.add(node);
 				}				
-			}.traverse(this.currentStartNode.getCurrentConnectionItem());			
+			}.traverse(this.currentStartNode);			
 		}
 										
 		Set<RevisionConnectionNode> previousConnections = new HashSet<RevisionConnectionNode>();		
 		for (List<RevisionConnectionNode> connections : this.currentSourceConnections.values()) {
 			previousConnections.addAll(connections);
 		}		
-
-		//process model
-		this.doProcessCurrentModel();
-						
 		
+		//change model
+		op.run();				
+				
+		//prepare children and connections
+		this.currentNodesList.clear();
+		this.currentSourceConnections.clear();
+		this.currentTargetConnections.clear();
+		
+		new TopRightTraverseVisitor<RevisionNode>() {			
+			public void visit(RevisionNode node) {				
+				RevisionNode item = node;
+				currentNodesList.add(item);
+												
+				if (item.getNext() != null) {
+					addCurrentConnection(item, item.getNext());									
+				}			
+				if (item.getCopiedTo().length > 0) {
+					for (RevisionNode copyToItem : item.getCopiedTo()) {
+						addCurrentConnection(item, copyToItem);
+					}
+				}
+			}
+		}.traverse(this.currentStartNode);
+				
 		/*
 		 * update previous nodes
 		 * 
@@ -139,42 +163,6 @@ public class RevisionRootNode extends ChangesNotifier {
 		processMeasure.end();
 	}
 	
-	protected void doProcessCurrentModel() {
-		//restore current connections to initial state
-		this.createCurrentConnectionsFromInitial();					
-		
-		//TODO apply collapse
-		
-		//apply filters
-		RevisionNodeItem startItem = this.filterManager.applyFilters(this.currentStartNode.getCurrentConnectionItem());
-		if (startItem != null) {				
-			this.currentStartNode = startItem.getRevisionNode();
-		}				
-		
-		//TODO handle that after filtering and collapsing there are no nodes 
-						
-		//prepare children and connections
-		this.currentNodesList.clear();
-		this.currentSourceConnections.clear();
-		this.currentTargetConnections.clear();
-		
-		new TopRightTraverseVisitor<RevisionNodeItem>() {			
-			public void visit(RevisionNodeItem node) {				
-				RevisionNodeItem item = node;
-				currentNodesList.add(item.getRevisionNode());
-												
-				if (item.getNext() != null) {
-					addCurrentConnection(item.getRevisionNode(), item.getNext().getRevisionNode());									
-				}			
-				if (item.getCopiedTo().length > 0) {
-					for (RevisionNodeItem copyToItem : item.getCopiedTo()) {
-						addCurrentConnection(item.getRevisionNode(), copyToItem.getRevisionNode());
-					}
-				}
-			}
-		}.traverse(this.currentStartNode.getCurrentConnectionItem());
-	}
-	
 	protected void addCurrentConnection(RevisionNode source, RevisionNode target) {
 		RevisionConnectionNode con = new RevisionConnectionNode(source, target);
 		
@@ -195,7 +183,10 @@ public class RevisionRootNode extends ChangesNotifier {
 		targetConnections.add(con);		
 	}
 	
-	protected final void createInitialConnections() {
+	/*
+	 * Convert PathRevision model to RevisionNode model
+	 */
+	protected final void createRevisionNodesModel() {
 		Queue<RevisionNode> queue = new LinkedList<RevisionNode>();
 		
 		PathRevision pathFirst = (PathRevision) this.pathRevision.getStartNodeInGraph();
@@ -204,52 +195,22 @@ public class RevisionRootNode extends ChangesNotifier {
 		queue.offer(first);
 		
 		RevisionNode node = null;
-		while ((node = queue.poll()) != null) {
-			RevisionNodeItem initialItem = node.getInitialConnectionItem();							
+		while ((node = queue.poll()) != null) {							
 			
 			PathRevision pathNext = node.pathRevision.getNext();
 			if (pathNext != null) {
 				RevisionNode next = this.createRevisionNode(pathNext);				
-				initialItem.setNext(next.getInitialConnectionItem());
+				node.setNext(next);
 				queue.offer(next);
 			}
 			
 			PathRevision[] pathCopiedToNodes = node.pathRevision.getCopiedTo();
 			for (PathRevision pathCopiedToNode : pathCopiedToNodes) {
 				RevisionNode copiedTo = this.createRevisionNode(pathCopiedToNode);
-				initialItem.addCopiedTo(copiedTo.getInitialConnectionItem());
+				node.addCopiedTo(copiedTo);
 				queue.offer(copiedTo);
 			}
 		}			
-	}
-	
-	protected void createCurrentConnectionsFromInitial() {
-		//copy connections from initial to current
-		new TopRightTraverseVisitor<RevisionNodeItem>() {			
-			public void visit(RevisionNodeItem node) {
-				RevisionNodeItem initialItem = node;
-				RevisionNodeItem currentItem = initialItem.getRevisionNode().getCurrentConnectionItem();
-				
-				if (initialItem.getNext() != null) {
-					RevisionNode nextRNode = initialItem.getNext().getRevisionNode();
-					currentItem.setNext(nextRNode.getCurrentConnectionItem());	
-				} else {
-					currentItem.removeNext();
-				}
-				
-				//reset previous value
-				currentItem.removeAllCopiedTo();
-				//add new values
-				if (initialItem.getCopiedTo().length != 0) {
-					for (RevisionNodeItem copiedTo : initialItem.getCopiedTo()) {
-						RevisionNode rCopiedTo = copiedTo.getRevisionNode();
-						currentItem.addCopiedTo(rCopiedTo.getCurrentConnectionItem());
-					}
-				}			
-			}
-		}.traverse(this.initialStartNode.getInitialConnectionItem());
-			
-		this.currentStartNode = this.initialStartNode;
 	}
 	
 	protected RevisionNode createRevisionNode(PathRevision pathRevision) {		
@@ -273,8 +234,7 @@ public class RevisionRootNode extends ChangesNotifier {
 	public void setMode(boolean isSimpleMode) {		
 		this.internalSetMode(isSimpleMode);
 			
-		this.processCurrentModel();		
-		this.firePropertyChange(RevisionRootNode.LAYOUT_PROPERTY, null, new Boolean(this.isSimpleMode));
+		this.filter(true);
 	}
 	
 	public String getRevisionPath(int pathIndex) {
@@ -287,5 +247,149 @@ public class RevisionRootNode extends ChangesNotifier {
 	
 	public String getRevisionFullPath(RevisionNode revisionNode) {
 		return this.dataContainer.getRevisionFullPath(revisionNode.pathRevision.getPathIndex());
-	}	
+	}		
+	
+	
+	/*
+	 * Operation which changes revision nodes model
+	 * 
+	 * TODO handle that after filtering and collapsing there are no nodes
+	 */
+	protected abstract class RevisionModelOperation {
+		public abstract void run();
+				
+		protected RevisionNode findStartNode(RevisionNode topNode) {
+			//go bottom starting from 'topNode' to find start node
+			RevisionNode startNode = topNode;
+			while (true) {
+				RevisionNode tmp = startNode.getPrevious();
+				if (tmp != null) {
+					startNode = tmp;
+				} else {
+					tmp = startNode.getCopiedFrom();
+					if (tmp != null) {
+						startNode = tmp;
+					} else {
+						break;
+					}
+				}
+			}
+			return startNode;
+		}
+	}
+
+	protected void filter(boolean isMakeNotification) {
+		this.changeModel(new RevisionModelOperation() {
+			public void run() {
+				//apply filter to the whole model
+				filterManager.applyFilters(initialStartNode);
+						
+				RevisionNode candidateNode = this.findStartNode(currentStartNode);			
+				currentStartNode = currentStartNode != candidateNode ? candidateNode :
+					(currentStartNode.isFiltered() ? currentStartNode.getNext() : currentStartNode);				
+			}			
+		});
+		
+		if (isMakeNotification) {
+			this.firePropertyChange(RevisionRootNode.LAYOUT_PROPERTY, null, new Boolean(this.isSimpleMode));
+		}
+	}
+	
+	//--- Expand/Collapse
+	
+	public void collapseNext(final RevisionNode node) {						
+		this.changeModel(new RevisionModelOperation() {					
+			public void run() {
+				node.setNextCollapsed(true);
+				
+				//current start node isn't changed here
+			}
+		});
+		
+		this.firePropertyChange(RevisionRootNode.EXPAND_COLLAPSE_PROPERTY, null, node);
+	}
+
+	public void collapsePrevious(final RevisionNode node) {
+		this.changeModel(new RevisionModelOperation() {					
+			public void run() {
+				node.setPreviousCollapsed(true);
+				
+				RevisionRootNode.this.currentStartNode = node;
+			}
+		});					
+		
+		this.firePropertyChange(RevisionRootNode.EXPAND_COLLAPSE_PROPERTY, null, node);			
+	}
+
+	public void collapseCopiedTo(final RevisionNode node) {		
+		this.changeModel(new RevisionModelOperation() {					
+			public void run() {
+				node.setCopiedToCollapsed(true);
+				
+				//current start node isn't changed here
+			}
+		});					 
+		
+		this.firePropertyChange(RevisionRootNode.EXPAND_COLLAPSE_PROPERTY, null, node);		
+	}
+
+	public void collapseCopiedFrom(final RevisionNode node) {
+		this.changeModel(new RevisionModelOperation() {					
+			public void run() {
+				node.setCopiedFromCollapsed(true);
+				
+				RevisionRootNode.this.currentStartNode = node;
+			}
+		});					
+		
+		this.firePropertyChange(RevisionRootNode.EXPAND_COLLAPSE_PROPERTY, null, node);					
+	}
+
+	public void expandNext(final RevisionNode node) {
+		this.changeModel(new RevisionModelOperation() {					
+			public void run() {
+				node.setNextCollapsed(false);
+				
+				//current start node isn't changed here
+			}
+		});					 
+		
+		this.firePropertyChange(RevisionRootNode.EXPAND_COLLAPSE_PROPERTY, null, node);				
+	}
+
+	public void expandPrevious(final RevisionNode node) {
+		this.changeModel(new RevisionModelOperation() {					
+			public void run() {
+				node.setPreviousCollapsed(false);
+				
+				RevisionRootNode.this.currentStartNode = findStartNode(node);
+			}
+		});					
+		
+		this.firePropertyChange(RevisionRootNode.EXPAND_COLLAPSE_PROPERTY, null, node);
+	}
+
+	public void expandCopiedTo(final RevisionNode node) {
+		this.changeModel(new RevisionModelOperation() {					
+			public void run() {
+				node.setCopiedToCollapsed(false);
+				
+				//current start node isn't changed here 
+			}
+		});					
+		
+		this.firePropertyChange(RevisionRootNode.EXPAND_COLLAPSE_PROPERTY, null, node);			
+	}
+
+	public void expandCopiedFrom(final RevisionNode node) {
+		this.changeModel(new RevisionModelOperation() {					
+			public void run() {
+				node.setCopiedFromCollapsed(false);
+				
+				RevisionRootNode.this.currentStartNode = this.findStartNode(node);
+			}
+		});					
+		
+		this.firePropertyChange(RevisionRootNode.EXPAND_COLLAPSE_PROPERTY, null, node);		
+	}
 }

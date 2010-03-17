@@ -160,11 +160,18 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 	
 	/* (non-Javadoc)
 	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
+	 * 
+	 * Listen to model notifications
 	 */
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (ChangesNotifier.REFRESH_CONNECTIONS_PROPERTY.equals(evt.getPropertyName())) {
 			this.refreshSourceConnections();
 			this.refreshTargetConnections();
-		}		
+		} else if (ChangesNotifier.EXPAND_COLLAPSE_PROPERTY.equals(evt.getPropertyName())) {			
+			IFigure figure = getFigure();
+			if (figure instanceof RevisionFigure) {
+				((RevisionFigure) figure).updateExpandCollapseStatus();
+			}
+		}
 	}
 }

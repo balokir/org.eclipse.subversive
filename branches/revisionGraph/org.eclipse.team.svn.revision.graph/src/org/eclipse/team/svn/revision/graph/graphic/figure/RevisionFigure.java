@@ -46,6 +46,12 @@ public class RevisionFigure extends RoundedRectangle {
 	protected Label revisionLabel;
 	protected PathsFigure pathsFigure;
 	
+	/*
+	 * TODO should be removed when correct collapse/expand
+	 * visualization is implemented
+	 */
+	protected Label expandCollapseStatusLabel;
+	
 	protected Color originalBgColor;
 	
 	public RevisionFigure(RevisionNode revisionNode) {
@@ -69,6 +75,9 @@ public class RevisionFigure extends RoundedRectangle {
 	    this.pathsFigure = new PathsFigure();	    
 	    this.add(this.pathsFigure);	    
 	    	   
+	    this.expandCollapseStatusLabel = new Label();
+	    this.add(this.expandCollapseStatusLabel);
+	    
 	    //init color
 	    ReviosionNodeType type = revisionNode.pathRevision.type;
 		RevisionNodeAction action = revisionNode.pathRevision.action;		
@@ -107,8 +116,24 @@ public class RevisionFigure extends RoundedRectangle {
 			this.pathsFigure.add(label);						
 		}
 		
+		this.updateExpandCollapseStatus();
+		
 		this.setPreferredSize(RevisionFigure.FIGURE_WIDTH, RevisionFigure.LINE_HEIGHT * pathParts.size() + 1);
 	}
+	
+	public void updateExpandCollapseStatus() {					
+		String status =
+			/*"next: " +*/ "T" + this.getCollapseString(this.revisionNode.isNextCollapsed()) + " " + 
+			/*"copy_to: " +*/ "R" + this.getCollapseString(this.revisionNode.isCopiedToCollapsed()) + " " +
+			/*"previous: " +*/ "B" + this.getCollapseString(this.revisionNode.isPreviousCollapsed()) + " " +			
+			/*"copy_from: " +*/ "L" + this.getCollapseString(this.revisionNode.isCopiedFromCollapsed());						
+			
+			this.expandCollapseStatusLabel.setText(status);		
+	}
+	
+	protected String getCollapseString(boolean isCollapsed) {
+		return isCollapsed ? "+" : "-";
+	} 
 
 	public void setSelected(boolean isSelected) {
 		if (isSelected) {
@@ -116,5 +141,5 @@ public class RevisionFigure extends RoundedRectangle {
 		} else {
 			this.setBackgroundColor(this.originalBgColor);
 		}		
-	}		
+	}	
 }

@@ -29,18 +29,32 @@ public abstract class TopRightTraverseVisitor<T extends NodeConnections<T>> {
 		while ((node = queue.poll()) != null) {
 			this.visit(node);
 			
-			T next = node.getNext();
+			T next = this.getNext(node);
 			if (next != null) {
 				queue.offer(next);
 			}
 			
-			Collection<T> copiedToNodes = node.getCopiedToAsCollection();
+			Collection<T> copiedToNodes = this.getCopiedToAsCollection(node);
 			for (T copiedToNode : copiedToNodes) {
 				queue.offer(copiedToNode);
 			}
 		}			
 	}
 
+	/*
+	 * Can be overridden in sub-classes
+	 */
+	protected Collection<T> getCopiedToAsCollection(T node) {
+		return node.getCopiedToAsCollection();
+	}
+	
+	/*
+	 * Can be overridden in sub-classes
+	 */
+	protected T getNext(T node) {
+		return node.getNext();
+	}
+	
 	protected abstract void visit(T node);	
 
 }

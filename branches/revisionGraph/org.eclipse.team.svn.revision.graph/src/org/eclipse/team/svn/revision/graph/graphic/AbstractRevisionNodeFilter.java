@@ -24,6 +24,12 @@ public abstract class AbstractRevisionNodeFilter {
 
 	public abstract boolean accept(RevisionNode node);
 	
+	public static AbstractRevisionNodeFilter ACCEPT_ALL_FILTER = new AbstractRevisionNodeFilter() {
+		public boolean accept(RevisionNode node) {
+			return true;
+		}
+	};
+	
 	public static AbstractRevisionNodeFilter SIMPLE_MODE_FILTER = new AbstractRevisionNodeFilter() {
 		
 		public boolean accept(RevisionNode node) {			
