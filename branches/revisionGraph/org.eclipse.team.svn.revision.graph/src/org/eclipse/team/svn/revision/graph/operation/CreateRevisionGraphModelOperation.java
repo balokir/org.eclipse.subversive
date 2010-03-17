@@ -627,6 +627,10 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 		return this.resultNode;
 	}
 	
+	public IRepositoryResource getResource() {
+		return this.resource;
+	}
+	
 	/*
 	 * For DEBUG
 	 */

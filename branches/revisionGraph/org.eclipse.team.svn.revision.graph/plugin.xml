@@ -2,13 +2,14 @@
 <?eclipse version="3.0"?>
 <plugin>
 
+   <!-- TODO: use correct icon -->
    <extension point="org.eclipse.ui.editors">
       <editor
             class="org.eclipse.team.svn.revision.graph.graphic.RevisionGraphEditor"                        
             id="org.eclipse.team.svn.revision.graph.graphic.RevisionGraphEditor"
-            name="Revision Graph Editor"   
-            contributorClass="org.eclipse.team.svn.revision.graph.graphic.actions.RevisionGraphActionBarContributor">         
-            >
+            name="Revision Graph Editor"
+            icon="icons/editor_icon.png"   
+            contributorClass="org.eclipse.team.svn.revision.graph.graphic.actions.RevisionGraphActionBarContributor">                     
       </editor>
    </extension>
 

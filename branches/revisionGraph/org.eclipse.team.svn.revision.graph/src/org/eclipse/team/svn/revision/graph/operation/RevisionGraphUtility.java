@@ -21,7 +21,6 @@ import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphPlugin;
-import org.eclipse.team.svn.revision.graph.cache.RevisionDataContainer;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionGraphEditorInput;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionRootNode;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -60,15 +59,11 @@ public class RevisionGraphUtility {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 					public void run() {
-						try {
-							RevisionGraphEditorInput input;
-							if (createModelOp.getModel() != null) {
-								RevisionDataContainer dataContainer = prepareDataOp.getDataContainer();
-								input = new RevisionGraphEditorInput(new RevisionRootNode(createModelOp.getModel(), dataContainer));
-							} else {
-								input = new RevisionGraphEditorInput("There's no data");
-							}
-							
+						try {							
+							Object modelObject = createModelOp.getModel() != null ? 
+								new RevisionRootNode(createModelOp.getModel(), prepareDataOp.getDataContainer()) : 
+								"There's no data";
+							RevisionGraphEditorInput input = new RevisionGraphEditorInput(createModelOp.getResource(), modelObject);
 							UIMonitorUtility.getActivePage().openEditor(input, RevisionGraphUtility.EDITOR_ID);														
 						} catch (Exception e) {
 							LoggedOperation.reportError(this.getClass().getName(), e);
