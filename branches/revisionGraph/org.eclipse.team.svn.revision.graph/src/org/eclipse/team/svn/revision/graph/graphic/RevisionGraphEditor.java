@@ -89,7 +89,7 @@ public class RevisionGraphEditor extends GraphicalEditor {
 		//viewer.addDropTargetListener(createTransferDropTargetListener());		
 	}
 	
-	public RevisionRootNode getModel() {
+	public Object getModel() {
 		RevisionGraphEditorInput editorInput = (RevisionGraphEditorInput) this.getEditorInput();
 		return editorInput.getModel();
 	}
@@ -133,14 +133,17 @@ public class RevisionGraphEditor extends GraphicalEditor {
 		viewer.setRootEditPart(root);
 		viewer.setEditPartFactory(new GraphEditPartFactory());
 		
-		//TODO remember between sessions
-		boolean isSimpleMode = false;
-		this.getModel().init(isSimpleMode);
-		
-		//context menu
-		RevisionGraphContextMenuManager menuManager = new RevisionGraphContextMenuManager(viewer, this, getActionRegistry());
-		viewer.setContextMenu(menuManager);
-		getSite().registerContextMenu(menuManager, viewer);
+		Object model = this.getModel();
+		if (model instanceof RevisionRootNode) {
+			//TODO remember between sessions
+			boolean isSimpleMode = false;
+			((RevisionRootNode) model).init(isSimpleMode);
+			
+			//context menu
+			RevisionGraphContextMenuManager menuManager = new RevisionGraphContextMenuManager(viewer, this, getActionRegistry());
+			viewer.setContextMenu(menuManager);
+			getSite().registerContextMenu(menuManager, viewer);
+		}
 	}
 
 	protected RevisionGraphOutlinePage getOutlinePage() {

@@ -59,7 +59,7 @@ public class RevisionGraphContextMenuManager extends ContextMenuProvider {
 
 	@SuppressWarnings("unchecked")
 	@Override	
-	public void buildContextMenu(IMenuManager menu) {
+	public void buildContextMenu(IMenuManager menu) {		
 		IRepositoryResource graphCalledResource = ((RevisionGraphEditPart) this.getViewer().getContents()).getCastedModel().getRepositoryResource();
 		boolean isGraphCalledOnFile = graphCalledResource instanceof IRepositoryFile;						
 		

@@ -25,7 +25,10 @@ public class GraphEditPartFactory implements EditPartFactory {
 
 	public EditPart createEditPart(EditPart context, Object model) {		
 		EditPart editPart = null;
-		if (model instanceof RevisionRootNode) {
+		
+		if (model instanceof String) {
+			editPart = new StringEditPart();
+		} else if (model instanceof RevisionRootNode) {
 			editPart = new RevisionGraphEditPart();
 		} else if (model instanceof RevisionNode) {
 			editPart = new RevisionEditPart();
@@ -37,7 +40,7 @@ public class GraphEditPartFactory implements EditPartFactory {
 			editPart.setModel(model);
 			return editPart;
 		} else { 
-			//TODO delete it when code becomes stable
+			//should never happen
 			throw new RuntimeException("Can't create part for model element: "
 				+ ((model != null) ? model.getClass().getName() : "null"));
 		}
