@@ -48,9 +48,12 @@ public class RevisionGraphActionBarContributor extends ActionBarContributor {
 		@Override
 		public void run() {			
 			if (this.editor instanceof RevisionGraphEditor) {
-				RevisionGraphEditor graphEditor = (RevisionGraphEditor) editor;
-				RevisionRootNode model = graphEditor.getModel();
-				model.setMode(this.isChecked());			
+				RevisionGraphEditor graphEditor = (RevisionGraphEditor) this.editor;
+				Object objModel = graphEditor.getModel();
+				if (objModel instanceof RevisionRootNode) {
+					RevisionRootNode model = (RevisionRootNode) objModel;
+					model.setMode(this.isChecked());
+				}
 			}			
 		}
 	}
@@ -61,6 +64,10 @@ public class RevisionGraphActionBarContributor extends ActionBarContributor {
 		
 		this.editor = (RevisionGraphEditor)editor;
 		this.changeLayoutAction.setActiveEditor(this.editor);
+		
+		if (!(this.editor.getModel() instanceof RevisionRootNode)) {
+			this.changeLayoutAction.setEnabled(false);	
+		}		
 	}
 	
 	@Override

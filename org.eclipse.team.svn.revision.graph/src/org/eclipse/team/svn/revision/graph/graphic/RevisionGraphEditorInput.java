@@ -21,9 +21,9 @@ import org.eclipse.ui.IPersistableElement;
  */
 public class RevisionGraphEditorInput implements IEditorInput {
 
-	protected RevisionRootNode model;
+	protected Object model;
 	
-	public RevisionGraphEditorInput(RevisionRootNode model) {
+	public RevisionGraphEditorInput(Object model) {
 		this.model = model;
 	}
 	
@@ -44,14 +44,22 @@ public class RevisionGraphEditorInput implements IEditorInput {
 	}
 
 	public String getToolTipText() {
-		return "Revision Graph Input Tooltip";
+		return "Revision Graph";
 	}
 
 	public Object getAdapter(Class adapter) {
 		return null;
 	}
 	
-	public RevisionRootNode getModel() {
+	/**
+	 * Current model can be either <class>String</class> or <class>RevisionRootNode</class>
+	 * 
+	 * String indicates that we can't create model for some reason, e.g.
+	 * there's no connection to repository and cache is empty
+	 * 
+	 * @return model
+	 */
+	public Object getModel() {
 		return this.model;
 	}
 	

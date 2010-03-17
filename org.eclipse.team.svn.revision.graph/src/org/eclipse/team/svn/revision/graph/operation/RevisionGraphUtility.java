@@ -32,6 +32,8 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  * @author Igor Burilo
  */
 public class RevisionGraphUtility {
+
+	protected final static String EDITOR_ID = "org.eclipse.team.svn.revision.graph.graphic.RevisionGraphEditor";
 	
 	public static CompositeOperation getRevisionGraphOperation(IRepositoryResource resource) {
 		CompositeOperation op = new CompositeOperation("Show Revision Graph Operation");							
@@ -58,15 +60,18 @@ public class RevisionGraphUtility {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 					public void run() {
-						//TODO handle if model is null
-						if (createModelOp.getModel() != null) {
-							try {								
+						try {
+							RevisionGraphEditorInput input;
+							if (createModelOp.getModel() != null) {
 								RevisionDataContainer dataContainer = prepareDataOp.getDataContainer();
-								UIMonitorUtility.getActivePage().openEditor(new RevisionGraphEditorInput(new RevisionRootNode(createModelOp.getModel(), dataContainer)),
-									"org.eclipse.team.svn.revision.graph.graphic.RevisionGraphEditor");
-							} catch (Exception e) {
-								LoggedOperation.reportError(this.getClass().getName(), e);
+								input = new RevisionGraphEditorInput(new RevisionRootNode(createModelOp.getModel(), dataContainer));
+							} else {
+								input = new RevisionGraphEditorInput("There's no data");
 							}
+							
+							UIMonitorUtility.getActivePage().openEditor(input, RevisionGraphUtility.EDITOR_ID);														
+						} catch (Exception e) {
+							LoggedOperation.reportError(this.getClass().getName(), e);
 						}						
 					}			
 				});	
