@@ -80,7 +80,9 @@ public class RevisionRootNode extends ChangesNotifier {
 	 */
 	protected void changeModel(RevisionModelOperation op) {
 		TimeMeasure processMeasure = new TimeMeasure("Re-structure nodes in model");
-				
+			
+		boolean hasPreviousData = !this.currentNodesList.isEmpty();
+		
 		/*
 		 * Remember previous nodes in order to update them, 
 		 * i.e. update their connections, as during filtering, collapsing
@@ -129,7 +131,7 @@ public class RevisionRootNode extends ChangesNotifier {
 		 * 
 		 * This operation can take long time. It has the same problem as with setContents#setContents
 		 */				
-		if (!previousConnections.isEmpty()) {								
+		if (hasPreviousData) {								
 			Set<RevisionConnectionNode> newConnections = new HashSet<RevisionConnectionNode>();
 			for (List<RevisionConnectionNode> connections : this.currentSourceConnections.values()) {
 				newConnections.addAll(connections);
@@ -249,6 +251,9 @@ public class RevisionRootNode extends ChangesNotifier {
 		return this.dataContainer.getRevisionFullPath(revisionNode.pathRevision.getPathIndex());
 	}		
 	
+	public RevisionNode getCurrentStartNode() {
+		return this.currentStartNode;
+	}
 	
 	/*
 	 * Operation which changes revision nodes model
