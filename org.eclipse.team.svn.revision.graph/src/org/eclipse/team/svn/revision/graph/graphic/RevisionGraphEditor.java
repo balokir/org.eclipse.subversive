@@ -25,6 +25,7 @@ import org.eclipse.gef.ui.actions.ActionRegistry;
 import org.eclipse.gef.ui.parts.GraphicalEditor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.SWT;
+import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.revision.graph.cache.TimeMeasure;
 import org.eclipse.team.svn.revision.graph.graphic.actions.AddRevisionLinksAction;
 import org.eclipse.team.svn.revision.graph.graphic.actions.CollapseExpandAction;
@@ -87,6 +88,18 @@ public class RevisionGraphEditor extends GraphicalEditor {
 						
 		// listen for dropped parts
 		//viewer.addDropTargetListener(createTransferDropTargetListener());		
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.EditorPart#setInput(org.eclipse.ui.IEditorInput)
+	 */
+	@Override
+	protected void setInput(IEditorInput input) {		
+		super.setInput(input);
+		
+		IRepositoryResource resource = ((RevisionGraphEditorInput) input).getResource();
+		String partName = String.format("Revision Graph (%s [Rev:%s])", resource.getName(), resource.getSelectedRevision().toString());
+		this.setPartName(partName);
 	}
 	
 	public Object getModel() {

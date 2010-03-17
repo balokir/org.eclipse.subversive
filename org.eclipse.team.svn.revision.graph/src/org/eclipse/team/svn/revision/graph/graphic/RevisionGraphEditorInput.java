@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.graphic;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
 
@@ -21,33 +23,32 @@ import org.eclipse.ui.IPersistableElement;
  */
 public class RevisionGraphEditorInput implements IEditorInput {
 
+	protected IRepositoryResource resource;
 	protected Object model;
 	
-	public RevisionGraphEditorInput(Object model) {
+	public RevisionGraphEditorInput(IRepositoryResource resource, Object model) {
+		if (resource == null) {
+			throw new IllegalArgumentException("resource");
+		} 
+		if (model == null) {
+			throw new IllegalArgumentException("model");
+		} 
+		
+		this.resource = resource;
 		this.model = model;
-	}
-	
-	public boolean exists() {
-		return false;
-	}
-
-	public ImageDescriptor getImageDescriptor() {
-		return null;
 	}
 
 	public String getName() {
-		return "Revision Graph Input";
+		//TODO use the same string as in editor
+		String tooltip = String.format("Revision Graph (%s [Rev:%s])", resource.getName(), resource.getSelectedRevision().toString());
+		return tooltip;
 	}
-
-	public IPersistableElement getPersistable() {	
-		return null;
-	}
-
+	
 	public String getToolTipText() {
-		return "Revision Graph";
+		return this.getName();
 	}
-
-	public Object getAdapter(Class adapter) {
+	
+	public ImageDescriptor getImageDescriptor() {
 		return null;
 	}
 	
@@ -63,8 +64,30 @@ public class RevisionGraphEditorInput implements IEditorInput {
 		return this.model;
 	}
 	
+	public IRepositoryResource getResource() {
+		return this.resource;
+	}
+	
 	public boolean equals(Object obj) {
-		return obj instanceof RevisionGraphEditorInput;
+		if (this == obj) {
+			return true;
+		} 		
+		if (obj instanceof RevisionGraphEditorInput) {
+			return this.resource.equals(((RevisionGraphEditorInput) obj).resource);
+		}		
+		return false;
+	}
+	
+	public boolean exists() {
+		return false;
+	}
+	
+	public IPersistableElement getPersistable() {	
+		return null;
+	}
+
+	public Object getAdapter(Class adapter) {
+		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 
 }
