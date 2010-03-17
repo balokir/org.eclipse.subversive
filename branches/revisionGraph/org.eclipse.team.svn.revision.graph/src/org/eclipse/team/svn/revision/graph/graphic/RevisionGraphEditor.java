@@ -136,7 +136,7 @@ public class RevisionGraphEditor extends GraphicalEditor {
 		Object model = this.getModel();
 		if (model instanceof RevisionRootNode) {
 			//TODO remember between sessions
-			boolean isSimpleMode = false;
+			boolean isSimpleMode = true;
 			((RevisionRootNode) model).init(isSimpleMode);
 			
 			//context menu
