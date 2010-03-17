@@ -43,8 +43,7 @@ public class PathRevision extends NodeConnections<PathRevision> {
 	protected final int pathIndex;	
 	
 	protected final RevisionStructure revisionData;	
-	
-	//TODO move to UI model ?
+		
 	public final ReviosionNodeType type;
 	
 	public final RevisionNodeAction action;			

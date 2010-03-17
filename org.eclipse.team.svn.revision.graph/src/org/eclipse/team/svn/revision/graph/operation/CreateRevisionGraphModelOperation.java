@@ -538,7 +538,7 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 		if (this.resource.getRepositoryLocation().isStructureEnabled() && (action == RevisionNodeAction.ADD || action == RevisionNodeAction.COPY)) {					
 			IPath pPath = new Path(this.dataContainer.getPathStorage().getPath(nodePath));
 			String[] segments = pPath.segments();
-			for (int i = segments.length - 1; i >= 0; i --) {
+			for (int i = 0; i < segments.length; i ++) {
 				if (this.resource.getRepositoryLocation().getTrunkLocation().equals(segments[i])) {
 					type = ReviosionNodeType.TRUNK;
 					break;
