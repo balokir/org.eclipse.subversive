@@ -246,7 +246,8 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 		return node.action == RevisionNodeAction.DELETE;			
 	}
 	
-	protected List<ChangedPathStructure> filterOutCopyToData(List<ChangedPathStructure> copyToList, long startRevision, long endRevision, int path) {
+	protected void filterOutCopyToData(long startRevision, long endRevision, int path, 
+		List<ChangedPathStructure> candidateCopyToList, List<ChangedPathStructure> filteredCopyToList) {
 		/*						
 		 * Filter out unrelated changed paths
 		 *  		 
@@ -257,42 +258,39 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 		 * 
 		 * In this case we need to choose more specific case and remove other case, 
 		 * this is important because they have different copied from revision
-		 */		
-		List<ChangedPathStructure> filteredCopyToList = new ArrayList<ChangedPathStructure>();
+		 */
 		
-		for (ChangedPathStructure copy : copyToList) {		
-			long rev = copy.getCopiedFromRevision();
+		for (ChangedPathStructure candidateCopy : candidateCopyToList) {		
+			long rev = candidateCopy.getCopiedFromRevision();
 			if (rev >= startRevision && rev <= endRevision) {							
 				
-				if (this.isParentPath(copy.getCopiedFromPathIndex(), path)) {
+				if (this.isParentPath(candidateCopy.getCopiedFromPathIndex(), path)) {
 					boolean canAdd = true;
 					//if in particular revision there are several copies related to path then we select more specific copy
 					if (!filteredCopyToList.isEmpty()) {
 						Iterator<ChangedPathStructure> iter = filteredCopyToList.iterator();
 						while (iter.hasNext()) {
 							ChangedPathStructure existingChangedPath = iter.next();
-							if (existingChangedPath.getRevision() == copy.getRevision()) {
-								if (this.isParentPath(existingChangedPath.getPathIndex(), copy.getPathIndex()) && 
-										this.isParentPath(existingChangedPath.getCopiedFromPathIndex(), copy.getCopiedFromPathIndex())) {
-										iter.remove();																				
-									} else if (this.isParentPath(copy.getPathIndex(), existingChangedPath.getPathIndex()) &&
-											this.isParentPath(copy.getCopiedFromPathIndex(), existingChangedPath.getCopiedFromPathIndex())) {
-										//ignore
-										canAdd = false;
-										break;
-									}	
+							if (existingChangedPath.getRevision() == candidateCopy.getRevision()) {
+								if (this.isParentPath(existingChangedPath.getPathIndex(), candidateCopy.getPathIndex()) && 
+										this.isParentPath(existingChangedPath.getCopiedFromPathIndex(), candidateCopy.getCopiedFromPathIndex())) {
+									iter.remove();
+								} else if (this.isParentPath(candidateCopy.getPathIndex(), existingChangedPath.getPathIndex()) &&
+										this.isParentPath(candidateCopy.getCopiedFromPathIndex(), existingChangedPath.getCopiedFromPathIndex())) {
+									//ignore
+									canAdd = false;
+									break;
+								}	
 							}
 						}
 					}
 					
 					if (canAdd) {
-						filteredCopyToList.add(copy);	
+						filteredCopyToList.add(candidateCopy);	
 					}							
 				}											
 			}					
 		}
-		
-		return filteredCopyToList;
 	}
 	
 	protected void postProcessCopyToMap(Map<PathRevision, List<PathRevision>> copyToMap) {
@@ -335,65 +333,65 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 		long startRevision = node.getStartNodeInChain().getRevision();
 		PathRevision endNodeInChain = node.getEndNodeInChain();
 		long endRevision = this.isDeletedNode(endNodeInChain) ? endNodeInChain.getRevision() : Long.MAX_VALUE;
-		
-		int path = node.getPathIndex();	
-		do {
-						
-			List<ChangedPathStructure> copyToList = this.dataContainer.getCopiedToData(path);
-			List<ChangedPathStructure> filteredCopyToList = this.filterOutCopyToData(copyToList, startRevision, endRevision, node.getPathIndex());
-									
-			Iterator<ChangedPathStructure> iter = filteredCopyToList.iterator();
-			while (iter.hasNext()) {							
-				ChangedPathStructure changedPath = iter.next();
-									
-				/*           
-		         * Example:
-				 * 	'trunk' copy to 'branch'
-				 * 	1. path = trunk
-				 * 	2. path = trunk/src/com
-				 */																												
-				int copyToPath = PathStorage.UNKNOWN_INDEX;
-				if (node.getPathIndex() == changedPath.getCopiedFromPathIndex()) {
-					//check exact matching
-					copyToPath = changedPath.getPathIndex();							
-				} else {
-					//copy was from path's parent																											 
-					//copyToPath = changedPath.pathIndex + node.getPathIndex().substring(changedPath.copiedFromPathIndex.length());					
-					int[] relativeParts = this.dataContainer.getPathStorage().makeRelative(changedPath.getCopiedFromPathIndex(), node.getPathIndex());
-					copyToPath = this.dataContainer.getPathStorage().add(changedPath.getPathIndex(), relativeParts);										
-				}	
 				
-				if (copyToPath != PathStorage.UNKNOWN_INDEX) {
-					RevisionStructure rsCopyTo = this.getEntry(changedPath.getRevision());
-					PathRevision copyToNode = null;
-					if (rsCopyTo != null) {
-						copyToNode = this.createRevisionNode(rsCopyTo, copyToPath, false);
+		//traverse path and its parents in order to get all copied to data		
+		List<ChangedPathStructure> filteredCopyToList = new ArrayList<ChangedPathStructure>();		
+		for (int path = node.getPathIndex(); path != PathStorage.ROOT_INDEX; path = this.dataContainer.getPathStorage().getParentPathIndex(path)) {
+			this.filterOutCopyToData(startRevision, endRevision, node.getPathIndex(), this.dataContainer.getCopiedToData(path), filteredCopyToList);
+		}
+		
+		Iterator<ChangedPathStructure> iter = filteredCopyToList.iterator();
+		while (iter.hasNext()) {
+			ChangedPathStructure changedPath = iter.next();
+
+			/*
+	         * Example:
+			 * 	'trunk' copy to 'branch'
+			 * 	1. path = trunk
+			 * 	2. path = trunk/src/com
+			 */
+			int copyToPath = PathStorage.UNKNOWN_INDEX;
+			if (node.getPathIndex() == changedPath.getCopiedFromPathIndex()) {
+				//check exact matching
+				copyToPath = changedPath.getPathIndex();
+			} else {
+				//copy was from path's parent																											 
+				//copyToPath = changedPath.pathIndex + node.getPathIndex().substring(changedPath.copiedFromPathIndex.length());					
+				int[] relativeParts = this.dataContainer.getPathStorage().makeRelative(changedPath.getCopiedFromPathIndex(), node.getPathIndex());
+				copyToPath = this.dataContainer.getPathStorage().add(changedPath.getPathIndex(), relativeParts);
+			}	
+			
+			if (copyToPath != PathStorage.UNKNOWN_INDEX) {
+				RevisionStructure rsCopyTo = this.getEntry(changedPath.getRevision());
+				PathRevision copyToNode = null;
+				if (rsCopyTo != null) {
+					copyToNode = this.createRevisionNode(rsCopyTo, copyToPath, false);
+				}
+				
+				if (copyToNode != null) {
+					PathRevision copyFromNode = node.findNodeInChain(changedPath.getCopiedFromRevision());
+					if (copyFromNode == null) {
+						///revision has no modifications and so it's not in the chain
+						RevisionStructure copyFromEntry = this.getEntry(changedPath.getCopiedFromRevision());
+						if (copyFromEntry != null) {									
+							copyFromNode = this.createRevisionNode(copyFromEntry, node.getPathIndex(), false);
+						}																
 					}
 					
-					if (copyToNode != null) {
-						PathRevision copyFromNode = node.findNodeInChain(changedPath.getCopiedFromRevision());
-						if (copyFromNode == null) {
-							///revision has no modifications and so it's not in the chain
-							RevisionStructure copyFromEntry = this.getEntry(changedPath.getCopiedFromRevision());								
-							if (copyFromEntry != null) {									
-								copyFromNode = this.createRevisionNode(copyFromEntry, node.getPathIndex(), false);
-							}																
+					if (copyFromNode != null) {
+						List<PathRevision> copyToNodes;
+						if (copyToMap.containsKey(copyFromNode)) {
+							copyToNodes = copyToMap.get(copyFromNode);
+						} else {
+							copyToNodes = new ArrayList<PathRevision>();
+							copyToMap.put(copyFromNode, copyToNodes);
 						}
-						
-						if (copyFromNode != null) {
-							List<PathRevision> copyToNodes;
-							if (copyToMap.containsKey(copyFromNode)) {
-								copyToNodes = copyToMap.get(copyFromNode);
-							} else {
-								copyToNodes = new ArrayList<PathRevision>();
-								copyToMap.put(copyFromNode, copyToNodes);
-							}
-							copyToNodes.add(copyToNode);
-						}
-					} 			
-				}									
+						copyToNodes.add(copyToNode);
+					}
+				}
 			}									
-		} while ((path = this.dataContainer.getPathStorage().getParentPathIndex(path)) != PathStorage.ROOT_INDEX);
+		}
+		
 		
 		this.postProcessCopyToMap(copyToMap);
 		
