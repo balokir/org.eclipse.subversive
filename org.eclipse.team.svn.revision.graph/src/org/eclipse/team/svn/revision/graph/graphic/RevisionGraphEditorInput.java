@@ -16,9 +16,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
 
-/** 
- * TODO correctly implement
- * 
+/**  
  * @author Igor Burilo
  */
 public class RevisionGraphEditorInput implements IEditorInput {
