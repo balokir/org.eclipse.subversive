@@ -299,20 +299,16 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 		 * in 'renamed' revision, so we need to ignore all copies after rename.
 		 */
 		if (!copyToMap.isEmpty()) {
-			long renameRevision = -1;
+			long renameRevision = Long.MAX_VALUE;
 			for (Map.Entry<PathRevision, List<PathRevision>> entry : copyToMap.entrySet()) {
 				PathRevision copyFrom = entry.getKey();				
 				for (PathRevision copyTo : entry.getValue()) {
-					if (copyTo.action == RevisionNodeAction.RENAME) {
+					if (copyTo.action == RevisionNodeAction.RENAME && renameRevision > copyFrom.getRevision()) {
 						renameRevision = copyFrom.getRevision();
-						break;
 					}
-				}				
-				if (renameRevision != -1) {
-					break;
-				} 
+				}
 			}
-			if (renameRevision != -1) {
+			if (renameRevision != Long.MAX_VALUE) {
 				Iterator<PathRevision> iter = copyToMap.keySet().iterator();
 				while (iter.hasNext()) {
 					PathRevision copyFrom = iter.next();
