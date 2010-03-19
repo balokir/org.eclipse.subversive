@@ -21,10 +21,16 @@ import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
  */
 public class ColumnData {
 
-	int top;
+	protected int id;
+	
+	private int top;
 	private int currentBottom;
 	private int currentTop;	
 	private List<RevisionNode> currentNodes = new ArrayList<RevisionNode>();
+	
+	public ColumnData(int id) {
+		this.id  = id;
+	}
 	
 	public void addNode(RevisionNode node) {
 		if (this.currentNodes.isEmpty()) {
@@ -64,4 +70,8 @@ public class ColumnData {
 	public int getCurrentTop() {
 		return currentTop;
 	}	
+	
+	public int getTop() {
+		return this.top;
+	}
 }

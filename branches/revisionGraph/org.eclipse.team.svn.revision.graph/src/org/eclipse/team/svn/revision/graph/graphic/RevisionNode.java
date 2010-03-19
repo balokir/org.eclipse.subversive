@@ -13,6 +13,7 @@ package org.eclipse.team.svn.revision.graph.graphic;
 import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.eclipse.team.svn.revision.graph.NodeConnections;
@@ -91,7 +92,10 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 		while ((node = node.internalGetNext()) != null) {						
 			if (!node.isFiltered) {
 				return node;
-			}			
+			}
+			if (node.isNextCollapsed) {
+				return null;
+			}
 		}
 		return null;
 	}
@@ -110,6 +114,9 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 			if (!node.isFiltered) {
 				return node;
 			}			
+			if (node.isPreviousCollapsed) {
+				return null;
+			}
 		}
 		return null;
 	}
@@ -124,15 +131,7 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 	}
 	
 	public RevisionNode[] getCopiedTo() {
-		if (this.isCopiedToCollapsed) {
-			return new RevisionNode[0];
-		}
-		return this.internalGetCopiedTo();		
-	}
-	
-	public RevisionNode[] internalGetCopiedTo() {
-		Collection<RevisionNode> collection = this.internalGetCopiedToAsCollection();
-		return collection.toArray(new RevisionNode[0]);						
+		return this.getCopiedToAsCollection().toArray(new RevisionNode[0]);		
 	}
 	
 	@Override
@@ -140,7 +139,14 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 		if (this.isCopiedToCollapsed) {
 			return Collections.emptyList();
 		}
-		return this.internalGetCopiedToAsCollection();
+		Collection<RevisionNode> copiedTo = this.internalGetCopiedToAsCollection();
+		Iterator<RevisionNode> iter = copiedTo.iterator();
+		while (iter.hasNext()) {
+			if (iter.next().isFiltered) {
+				iter.remove();
+			}
+		}
+		return copiedTo;
 	}
 		
 	public Collection<RevisionNode> internalGetCopiedToAsCollection() {
@@ -164,7 +170,8 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 		if (this.isCopiedFromCollapsed) {
 			return null;
 		}
-		return internalGetCopiedFrom();
+		RevisionNode copiedFrom = this.internalGetCopiedFrom();
+		return copiedFrom != null ? (copiedFrom.isFiltered ? null : copiedFrom) : null;
 	}
 
 	public RevisionNode internalGetCopiedFrom() {
