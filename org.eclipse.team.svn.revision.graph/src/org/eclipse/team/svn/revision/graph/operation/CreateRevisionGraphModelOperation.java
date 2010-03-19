@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.svn.core.connector.SVNLogPath;
 import org.eclipse.team.svn.core.connector.SVNRevision;
+import org.eclipse.team.svn.core.connector.SVNLogPath.ChangeType;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.ActivityCancelledException;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -469,12 +470,46 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 		if (entry.hasChangedPaths()) {
 			ChangedPathStructure parentPath = null;
 			ChangedPathStructure childPath = null;			
-			for (ChangedPathStructure changedPath : entry.getChangedPaths()) {				
+			for (ChangedPathStructure changedPath : entry.getChangedPaths()) {
+								
+				/*
+				 * If we have several changed paths corresponding to passed path
+				 * then select more appropriate one.
+				 * 
+				 * Example:
+				 * Added       /tags/tg1/C++           ...(copied from)
+				 * Modified    /tags/tg1/C++/hgh.h
+				 * 
+				 * Passed path: /tags/tg1/C++/hgh.h
+				 * 
+				 * Then as a parent we need to select '/tags/tg1/C++' but not '/tags/tg1/C++/hgh.h'  
+				 */
 				if (this.isParentPath(changedPath.getPathIndex(), pathIndex)) {
-					if (parentPath != null && this.isParentPath(parentPath.getPathIndex(), changedPath.getPathIndex()) || parentPath == null) {
+					if (parentPath != null) {
+						ChangedPathStructure parent;
+						ChangedPathStructure child;
+						if (this.isParentPath(parentPath.getPathIndex(), changedPath.getPathIndex())) {
+							parent = parentPath;
+							child = changedPath;
+						} else {
+							parent = changedPath;
+							child = parentPath;
+						}						
+						
+						if (child.getAction() != ChangeType.MODIFIED) {
+							parentPath = child;
+						} else {
+							parentPath = parent.getAction() != ChangeType.MODIFIED ? parent : child;
+						}
+					} else {
 						parentPath = changedPath;
-					}					
-				}				
+					}
+				}
+				
+				/*
+				 * it seems it doesn't matter which changed path to select if we have several
+				 * child paths
+				 */				
 				if (this.isParentPath(pathIndex, changedPath.getPathIndex())) {
 					if (childPath != null && this.isParentPath(changedPath.getPathIndex(), childPath.getPathIndex()) || childPath == null) {
 						childPath = changedPath;

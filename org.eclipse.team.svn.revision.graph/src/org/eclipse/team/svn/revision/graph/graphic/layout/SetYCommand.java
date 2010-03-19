@@ -96,7 +96,7 @@ public class SetYCommand extends AbstractLayoutCommand {
 			if (columnData == null || columnData.getCurrentBottom() == 0 && columnData.getCurrentTop() == 0) {
 				continue;
 			}
-			int diff = columnData.top - columnData.getCurrentBottom();
+			int diff = columnData.getTop() - columnData.getCurrentBottom();
 			
 			/*
 			 * Between nodes in the same column we need to set offset
@@ -223,7 +223,7 @@ public class SetYCommand extends AbstractLayoutCommand {
 					this.columnsData.add(null);
 				}
 			}			
-			this.columnsData.add(index, columnStructure = new ColumnData());
+			this.columnsData.add(index, columnStructure = new ColumnData(index));
 		} else {
 			columnStructure = this.columnsData.get(index);
 		}
@@ -234,7 +234,7 @@ public class SetYCommand extends AbstractLayoutCommand {
 		int maxY = -1;
 		for (ColumnData data : this.columnsData) {
 			if (data != null) {
-				maxY = data.top > maxY ? data.top : maxY;
+				maxY = data.getTop() > maxY ? data.getTop() : maxY;
 			}
 		}
 		return maxY;
