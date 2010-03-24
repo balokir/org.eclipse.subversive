@@ -77,7 +77,11 @@ public class RevisionGraphUtility {
 		return op;
 	}
 	
-	//TODO we can got a long file name, e.g. about 90 characters which may cause problems
+	/*
+	 * TODO we can got a long file name, e.g. about 90 characters which may cause problems
+	 * 
+	 * TODO cache folder should not depend on protocol
+	 */
 	public static File getCacheFolder(IRepositoryResource resource) {
 		IPath stateLocation = SVNRevisionGraphPlugin.instance().getStateLocation();
 		String folderName = SVNUtility.base64Encode(resource.getRepositoryLocation().getRepositoryRootUrl());		

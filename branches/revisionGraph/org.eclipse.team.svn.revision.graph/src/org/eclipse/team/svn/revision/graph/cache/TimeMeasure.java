@@ -19,21 +19,27 @@ import java.util.Date;
  */
 public class TimeMeasure {
 
+	boolean isActive = false;
+	
 	String message;
 	
 	Date start;
 	Date end;
 	
 	public TimeMeasure(String message) {
-		this.message = message;
-		this.start = new Date();
-		System.out.println("Started: " + message);
+		if (this.isActive) {
+			this.message = message;
+			this.start = new Date();
+			System.out.println("Started: " + message);
+		}
 	}
 	
 	public void end() {
-		this.end = new Date();
-		long diff = this.end.getTime() - this.start.getTime();
-		double show = diff / 1000.0;
-		System.out.println("--- Finished: " + message + ": " + show);
+		if (this.isActive) {
+			this.end = new Date();
+			long diff = this.end.getTime() - this.start.getTime();
+			double show = diff / 1000.0;
+			System.out.println("--- Finished: " + message + ": " + show);	
+		}
 	}
 }
