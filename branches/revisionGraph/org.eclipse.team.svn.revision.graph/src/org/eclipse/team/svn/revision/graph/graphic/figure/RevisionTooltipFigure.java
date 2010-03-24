@@ -10,66 +10,135 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.graphic.figure;
 
+import org.eclipse.draw2d.ColorConstants;
+import org.eclipse.draw2d.Figure;
+import org.eclipse.draw2d.GridData;
+import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.LineBorder;
-import org.eclipse.draw2d.RectangleFigure;
 import org.eclipse.draw2d.ToolbarLayout;
-import org.eclipse.swt.graphics.Color;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.team.svn.core.SVNMessages;
+import org.eclipse.team.svn.revision.graph.cache.RevisionDataContainer;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
+import org.eclipse.team.svn.ui.utility.DateFormatter;
 
 /**
- * TODO make correct implementation
+ * Tooltip for revision node
  * 
  * @author Igor Burilo
  */
-public class RevisionTooltipFigure extends RectangleFigure {
+public class RevisionTooltipFigure extends Figure {
 
-	protected RevisionNode revisionNode;
+	protected final RevisionNode revisionNode;
+	protected final RevisionDataContainer dataContainer;
 	
-	public RevisionTooltipFigure(RevisionNode revisionNode) {
+	protected Label pathText;
+	protected Label authorText;
+	protected Label dateText;
+	protected Label copyText;
+	protected Label commentText;
+	
+	public RevisionTooltipFigure(RevisionNode revisionNode, RevisionDataContainer dataContainer) {
 		this.revisionNode = revisionNode;
+		this.dataContainer = dataContainer;
 		
-		/*
-		 * TODO 
-		 * 
-		 * make scrollable
-		 * add shadow
-		 * use font types: bold, italic
-		 * insets
-		 */
-		
-		Color bColor = new Color(null, 255, 255, 225);
-		
-		ToolbarLayout layout = new ToolbarLayout(false);
-		layout.setSpacing(2);		
-		this.setLayoutManager(layout);
-		
-		this.setBackgroundColor(bColor);
-		this.setOpaque(true);
-		
-		Label label = new Label("Revision: 2688 (tagged)");
-		this.add(label);
-		
-		label = new Label("URL: /tags/0.10.2"); 
-		this.add(label);
-		
-		label = new Label("Copied from: /trunk@587"); 
-		this.add(label);
-		
-		label = new Label("Author: guest"); 
-		this.add(label);
-		
-		label = new Label("Date: 25 June 2008"); 
-		this.add(label);
-		
-		this.add(new Label(""));
-		
-		label = new Label("Comment:"); 
-		this.add(label);				
-		
-		label = new Label("make correct correct connection make correct correct connection\r\n make correct correct connection"); 
-		this.add(label);
-								
-		this.setBorder(new LineBorder(bColor));
+		this.createControls();
+		this.initControls();
+				
+		this.setBorder(new LineBorder(ColorConstants.white));
 	}
+	
+	protected void createControls() {
+		ToolbarLayout parentLayout = new ToolbarLayout();
+		this.setLayoutManager(parentLayout);
+		
+		Figure parent = new Figure();
+		this.add(parent);
+		
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		parent.setLayoutManager(layout);
+		
+		this.pathText = new Label();
+		parent.add(this.pathText);
+		GridData data = new GridData();
+		data.horizontalAlignment = SWT.LEFT;
+		data.grabExcessHorizontalSpace = true;
+		data.horizontalSpan = 2;
+		layout.setConstraint(this.pathText, data);
+		Font boldFont = JFaceResources.getFontRegistry().getBold(JFaceResources.DEFAULT_FONT);
+		this.pathText.setFont(boldFont);
+		
+		//author
+		Label authorLabel = new Label("Author:");
+		parent.add(authorLabel);
+		data = new GridData();
+		layout.setConstraint(authorLabel, data);
+		
+		this.authorText = new Label();
+		parent.add(this.authorText);
+		layout.setConstraint(this.authorText, new GridData());
+		
+		//date
+		Label dateLabel = new Label("Date:");
+		parent.add(dateLabel);
+		data = new GridData();
+		layout.setConstraint(dateLabel, data);
+		
+		this.dateText = new Label();
+		parent.add(this.dateText);
+		layout.setConstraint(this.dateText, new GridData());
+		
+		//copied from
+		if (this.revisionNode.getCopiedFrom() != null) {
+			Label copyLabel = new Label("Copied from:");
+			parent.add(copyLabel);
+			data = new GridData();
+			layout.setConstraint(copyLabel, data);
+			
+			this.copyText = new Label();
+			parent.add(this.copyText);
+			layout.setConstraint(this.copyText, new GridData());	
+		}
+		
+		//comment
+		Label commentLabel = new Label("Comment:");
+		parent.add(commentLabel);
+		data = new GridData();
+		data.horizontalAlignment = SWT.LEFT;
+		data.grabExcessHorizontalSpace = true;
+		data.horizontalSpan = 2;
+		layout.setConstraint(commentLabel, data);
+		
+		this.commentText = new Label();
+		parent.add(this.commentText);
+		data = new GridData();
+		data.horizontalAlignment = SWT.LEFT;
+		data.grabExcessHorizontalSpace = true;
+		data.horizontalSpan = 2;
+		layout.setConstraint(this.commentText, data); 
+	}
+	
+	protected void initControls() {
+		this.pathText.setIcon(RevisionFigure.getRevisionNodeIcon(this.revisionNode));
+		this.pathText.setText(this.dataContainer.getPathStorage().getPath(this.revisionNode.pathRevision.getPathIndex()) + "@" + this.revisionNode.pathRevision.getRevision());
+		
+		String author = this.revisionNode.pathRevision.getAuthor();
+		this.authorText.setText(author == null || author.length() == 0 ? SVNMessages.SVNInfo_NoAuthor : author);
+		
+		long date = this.revisionNode.pathRevision.getDate(); 
+		this.dateText.setText(date == 0 ? SVNMessages.SVNInfo_NoDate : DateFormatter.formatDate(date));
+		
+		if (this.revisionNode.getCopiedFrom() != null) {
+			RevisionNode copiedFrom = this.revisionNode.getCopiedFrom();
+			this.copyText.setText(this.dataContainer.getPathStorage().getPath(copiedFrom.pathRevision.getPathIndex()) + "@" + copiedFrom.pathRevision.getRevision());
+		}
+		
+		String comment = this.revisionNode.pathRevision.getMessage();
+		this.commentText.setText(comment == null || comment.length() == 0 ? SVNMessages.SVNInfo_NoComment : comment);
+	}
+
 }

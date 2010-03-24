@@ -140,42 +140,11 @@ public class RevisionFigure extends RoundedRectangle {
 		}					
 		this.commentFigure.setText(comment);
 		
-		//init color and node icon
-	    ReviosionNodeType type = revisionNode.pathRevision.type;
-		RevisionNodeAction action = revisionNode.pathRevision.action;		
-	    Color color;
-	    Image nodeIcon = null;
-		if (ReviosionNodeType.TRUNK.equals(type)) {
-			color = trunkColor;
-			nodeIcon = trunkImg;
-		} else if (ReviosionNodeType.BRANCH.equals(type)) {
-			color = branchColor;
-			nodeIcon = branchImg;
-		} else if (ReviosionNodeType.TAG.equals(type)) {
-			color = tagColor;
-			nodeIcon = tagImg;
-		} else if (RevisionNodeAction.ADD.equals(action) || RevisionNodeAction.COPY.equals(action)) {
-			color = createOrCopyColor;
-			nodeIcon = addImg;
-		} else if (RevisionNodeAction.RENAME.equals(action)) {
-			color = renameColor;
-			nodeIcon = renameImg;
-		} else if (RevisionNodeAction.DELETE.equals(action)) {
-			color = deleteColor;
-			nodeIcon = deleteImg;
-		} else if (RevisionNodeAction.MODIFY.equals(action)) {
-			color = modifyColor;
-			nodeIcon = modifyImg;
-		} else {
-			color = otherColor;
-			nodeIcon = otherImg;
-		}
-		
-		this.setBackgroundColor(this.originalBgColor = color);
-		
-		if (nodeIcon != null) {
-			this.revisionFigure.setIcon(nodeIcon);	
-		}		
+		//init color and node icon		
+	    Color color = RevisionFigure.getRevisionNodeColor(this.revisionNode);
+	    Image nodeIcon = RevisionFigure.getRevisionNodeIcon(this.revisionNode);	    		
+		this.setBackgroundColor(this.originalBgColor = color);				
+		this.revisionFigure.setIcon(nodeIcon);					
 	}
 	
 	public void init() {
@@ -193,5 +162,53 @@ public class RevisionFigure extends RoundedRectangle {
 	
 	public RevisionNode getRevisionNode() {
 		return this.revisionNode;
+	}
+	
+	public static Color getRevisionNodeColor(RevisionNode revisionNode) {
+	    ReviosionNodeType type = revisionNode.pathRevision.type;
+		RevisionNodeAction action = revisionNode.pathRevision.action;		
+	    Color color;	   	    
+		if (ReviosionNodeType.TRUNK.equals(type)) {
+			color = trunkColor;			
+		} else if (ReviosionNodeType.BRANCH.equals(type)) {
+			color = branchColor;			
+		} else if (ReviosionNodeType.TAG.equals(type)) {
+			color = tagColor;
+		} else if (RevisionNodeAction.ADD.equals(action) || RevisionNodeAction.COPY.equals(action)) {
+			color = createOrCopyColor;
+		} else if (RevisionNodeAction.RENAME.equals(action)) {
+			color = renameColor;
+		} else if (RevisionNodeAction.DELETE.equals(action)) {
+			color = deleteColor;
+		} else if (RevisionNodeAction.MODIFY.equals(action)) {
+			color = modifyColor;
+		} else {
+			color = otherColor;
+		}
+		return color;
+	}
+	
+	public static Image getRevisionNodeIcon(RevisionNode revisionNode) {
+	    ReviosionNodeType type = revisionNode.pathRevision.type;
+		RevisionNodeAction action = revisionNode.pathRevision.action;			    
+	    Image nodeIcon = null;
+		if (ReviosionNodeType.TRUNK.equals(type)) {			
+			nodeIcon = trunkImg;
+		} else if (ReviosionNodeType.BRANCH.equals(type)) {
+			nodeIcon = branchImg;
+		} else if (ReviosionNodeType.TAG.equals(type)) {
+			nodeIcon = tagImg;
+		} else if (RevisionNodeAction.ADD.equals(action) || RevisionNodeAction.COPY.equals(action)) {
+			nodeIcon = addImg;
+		} else if (RevisionNodeAction.RENAME.equals(action)) {
+			nodeIcon = renameImg;
+		} else if (RevisionNodeAction.DELETE.equals(action)) {
+			nodeIcon = deleteImg;
+		} else if (RevisionNodeAction.MODIFY.equals(action)) {
+			nodeIcon = modifyImg;
+		} else {
+			nodeIcon = otherImg;
+		}
+		return nodeIcon;
 	}
 }

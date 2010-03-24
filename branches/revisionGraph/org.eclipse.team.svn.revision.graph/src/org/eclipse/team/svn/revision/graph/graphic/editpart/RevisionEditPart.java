@@ -101,7 +101,8 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 		RevisionNode revision = this.getCastedModel();
 		
 		//main layer
-		String path = this.getRevisionRootNode().getRevisionPath(revision.pathRevision.getPathIndex());				
+		RevisionRootNode rootNode = this.getRevisionRootNode();
+		String path = rootNode.getRevisionPath(revision.pathRevision.getPathIndex());				
 		
 		this.revisionFigure = new RevisionFigure(revision, path);													
 		Layer revisionLayer = new Layer();			
@@ -116,7 +117,7 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 		this.mainPane.add(revisionLayer, RevisionEditPart.REVISION_LAYER);
 		this.mainPane.add(this.expandLayer, RevisionEditPart.EXPAND_COLLAPSE_LAYER);
 					
-		this.mainPane.setToolTip(new RevisionTooltipFigure(revision));		
+		this.mainPane.setToolTip(new RevisionTooltipFigure(revision, rootNode.getDataContainer()));		
 		
 		return this.mainPane;
 	}	
