@@ -251,6 +251,10 @@ public class RevisionRootNode extends ChangesNotifier {
 		return this.dataContainer.getRevisionFullPath(revisionNode.pathRevision.getPathIndex());
 	}		
 	
+	public RevisionDataContainer getDataContainer() {
+		return this.dataContainer;
+	}
+	
 	public RevisionNode getCurrentStartNode() {
 		return this.currentStartNode;
 	}
