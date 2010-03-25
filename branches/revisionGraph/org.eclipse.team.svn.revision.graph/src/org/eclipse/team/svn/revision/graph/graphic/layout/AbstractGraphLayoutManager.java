@@ -68,14 +68,7 @@ public abstract class AbstractGraphLayoutManager extends AbstractLayout {
 		}		
 		
 		//apply changes
-		iter = this.graphPart.getChildren().iterator();
-		while (iter.hasNext()) {
-			RevisionEditPart editPart = (RevisionEditPart) iter.next();
-			RevisionNode node = editPart.getCastedModel();
-			Rectangle bounds = new Rectangle(node.getX(), node.getY(), node.getWidth(), node.getHeight());
-			editPart.getFigure().setBounds(bounds);
-			editPart.getRevisionFigure().setBounds(bounds);			
-		}	
+		this.graphPart.applyLayoutResults();
 		
 		layoutMeasure.end();
 	}			
