@@ -14,7 +14,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 
-import org.eclipse.draw2d.ChopboxAnchor;
 import org.eclipse.draw2d.ConnectionAnchor;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Layer;
@@ -33,12 +32,16 @@ import org.eclipse.team.svn.revision.graph.graphic.ChangesNotifier;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionConnectionNode;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionRootNode;
+import org.eclipse.team.svn.revision.graph.graphic.RevisionSourceAnchor;
+import org.eclipse.team.svn.revision.graph.graphic.RevisionTargetAnchor;
 import org.eclipse.team.svn.revision.graph.graphic.figure.ExpandCollapseDecorationFigure;
 import org.eclipse.team.svn.revision.graph.graphic.figure.RevisionFigure;
 import org.eclipse.team.svn.revision.graph.graphic.figure.RevisionTooltipFigure;
 
 /**
  * Edit part for revision node 
+ *  
+ * In order to show expand/collapse we use layers 
  *  
  * @author Igor Burilo
  */
@@ -168,15 +171,7 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 				revisionFigure.setSelected(false);	
 			}
 		});	
-	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof RevisionEditPart) {
-			return this.getCastedModel().equals(((RevisionEditPart) obj).getCastedModel());
-		}
-		return false;
-	}
+	}	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.gef.editparts.AbstractGraphicalEditPart#getDragTracker(org.eclipse.gef.Request)
@@ -188,32 +183,38 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 		return new SelectEditPartTracker(this); 
 	}
 	
+	
+	//--- anchors
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.gef.NodeEditPart#getSourceConnectionAnchor(org.eclipse.gef.ConnectionEditPart)
 	 */
 	public ConnectionAnchor getSourceConnectionAnchor(ConnectionEditPart connection) {	
-		return new ChopboxAnchor(this.getFigure());
+		RevisionConnectionNode conNode = ((RevisionConnectionEditPart) connection).getCastedModel(); 
+		return new RevisionSourceAnchor(this.getFigure(), conNode.getSource(), conNode.getTarget());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.gef.NodeEditPart#getSourceConnectionAnchor(org.eclipse.gef.Request)
 	 */
 	public ConnectionAnchor getSourceConnectionAnchor(Request request) {
-		return new ChopboxAnchor(this.getFigure());
+		//it should never happen
+		throw new IllegalStateException();
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.gef.NodeEditPart#getTargetConnectionAnchor(org.eclipse.gef.ConnectionEditPart)
 	 */
 	public ConnectionAnchor getTargetConnectionAnchor(ConnectionEditPart connection) {
-		return new ChopboxAnchor(this.getFigure());
+		return new RevisionTargetAnchor(this.getFigure());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.gef.NodeEditPart#getTargetConnectionAnchor(org.eclipse.gef.Request)
-	 */
+	 */	
 	public ConnectionAnchor getTargetConnectionAnchor(Request request) {
-		return new ChopboxAnchor(this.getFigure());
+		//it should never happen
+		throw new IllegalStateException();
 	}
 	
 	/* (non-Javadoc)
@@ -229,4 +230,17 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 			this.expandCollapseDecorationFigure.update();
 		}
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof RevisionEditPart) {
+			return this.getCastedModel().equals(((RevisionEditPart) obj).getCastedModel());
+		}
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return this.getCastedModel().hashCode();
+	};
 }

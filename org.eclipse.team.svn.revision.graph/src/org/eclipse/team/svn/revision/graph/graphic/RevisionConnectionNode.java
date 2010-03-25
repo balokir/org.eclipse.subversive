@@ -31,6 +31,14 @@ public class RevisionConnectionNode {
 		this.target = target;	
 	}
 	
+	public RevisionNode getSource() {
+		return this.source;
+	}
+	
+	public RevisionNode getTarget() {
+		return this.target;
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
