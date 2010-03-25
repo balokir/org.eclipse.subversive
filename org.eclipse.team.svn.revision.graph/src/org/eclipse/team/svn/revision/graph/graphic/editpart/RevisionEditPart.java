@@ -20,6 +20,7 @@ import org.eclipse.draw2d.Layer;
 import org.eclipse.draw2d.LayeredPane;
 import org.eclipse.draw2d.MouseEvent;
 import org.eclipse.draw2d.MouseMotionListener;
+import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.ConnectionEditPart;
 import org.eclipse.gef.DragTracker;
 import org.eclipse.gef.EditPolicy;
@@ -124,6 +125,19 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 		
 		return this.mainPane;
 	}	
+	
+	public void applyLayoutResults() {
+		RevisionNode node = this.getCastedModel();
+		Rectangle bounds = new Rectangle(node.getX(), node.getY(), node.getWidth(), node.getHeight());
+		this.getFigure().setBounds(bounds);
+		this.getRevisionFigure().setBounds(bounds);
+
+//		Iterator<?> conIter = this.getSourceConnections().iterator();
+//		while (conIter.hasNext()) {
+//			RevisionConnectionEditPart conEditPart = (RevisionConnectionEditPart) conIter.next();
+//			conEditPart.applyLayoutResults();
+//		}			
+	}
 	
 	public RevisionFigure getRevisionFigure() {
 		return this.revisionFigure;

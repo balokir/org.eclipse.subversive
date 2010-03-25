@@ -15,13 +15,17 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.draw2d.ConnectionLayer;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.FreeformLayer;
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.ManhattanConnectionRouter;
 import org.eclipse.gef.EditPart;
+import org.eclipse.gef.LayerConstants;
 import org.eclipse.gef.editparts.AbstractGraphicalEditPart;
 import org.eclipse.team.svn.revision.graph.graphic.ChangesNotifier;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
@@ -82,6 +86,18 @@ public class RevisionGraphEditPart extends AbstractGraphicalEditPart implements 
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.gef.editparts.AbstractEditPart#refreshVisuals()
+	 */
+	@Override
+	protected void refreshVisuals() {
+		super.refreshVisuals();
+		
+		//set connections router
+		ConnectionLayer connectionLayer = (ConnectionLayer) getLayer(LayerConstants.CONNECTION_LAYER);
+		connectionLayer.setConnectionRouter(new ManhattanConnectionRouter());
+	}
+	
+	/* (non-Javadoc)
 	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent evt) {
@@ -89,6 +105,14 @@ public class RevisionGraphEditPart extends AbstractGraphicalEditPart implements 
 			ChangesNotifier.EXPAND_COLLAPSE_PROPERTY.equals(evt.getPropertyName())) {
 			refreshChildren();			
 		}
+	}
+	
+	public void applyLayoutResults() {
+		Iterator<?> iter = this.getChildren().iterator();
+		while (iter.hasNext()) {
+			RevisionEditPart editPart = (RevisionEditPart) iter.next();
+			editPart.applyLayoutResults();									
+		}	
 	}
 	
 	/* (non-Javadoc)
