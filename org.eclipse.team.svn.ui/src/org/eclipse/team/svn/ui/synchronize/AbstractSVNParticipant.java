@@ -14,6 +14,7 @@ package org.eclipse.team.svn.ui.synchronize;
 
 import java.util.Collection;
 import java.util.Iterator;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelDecorator;
@@ -47,15 +48,22 @@ public abstract class AbstractSVNParticipant extends SubscriberParticipant imple
 	
 	private ChangeSetCapability capability;
 
+	static {
+		SVNTeamUIPlugin instance = SVNTeamUIPlugin.instance();
+		AbstractSVNParticipant.OVR_OBSTRUCTED = instance.getImageDescriptor("icons/overlays/obstructed.gif"); //$NON-NLS-1$
+		AbstractSVNParticipant.OVR_REPLACED_OUT = instance.getImageDescriptor("icons/overlays/replaced_out.gif"); //$NON-NLS-1$
+		AbstractSVNParticipant.OVR_REPLACED_IN = instance.getImageDescriptor("icons/overlays/replaced_in.gif"); //$NON-NLS-1$
+		AbstractSVNParticipant.OVR_REPLACED_CONF = instance.getImageDescriptor("icons/overlays/replaced_conf.gif"); //$NON-NLS-1$
+		AbstractSVNParticipant.OVR_PROPCHANGE = instance.getImageDescriptor("icons/overlays/prop_changed.png"); //$NON-NLS-1$
+	}
+	
 	public AbstractSVNParticipant() {
         super();
-        this.setDefaults();
     }
 
     public AbstractSVNParticipant(ISynchronizeScope scope) {
         super(scope);
 		this.setSubscriber(this.getMatchingSubscriber());
-		this.setDefaults();
     }
     
 	public void init(String secondaryId, IMemento memento) throws PartInitException {
@@ -119,17 +127,6 @@ public abstract class AbstractSVNParticipant extends SubscriberParticipant imple
 	protected ILabelDecorator createLabelDecorator(ISynchronizePageConfiguration configuration) {
 		return new SynchronizeLabelDecorator(configuration);
 	}
-	
-	private void setDefaults() {
-	    if (AbstractSVNParticipant.OVR_REPLACED_OUT == null) {
-	        SVNTeamUIPlugin instance = SVNTeamUIPlugin.instance();
-            AbstractSVNParticipant.OVR_OBSTRUCTED = instance.getImageDescriptor("icons/overlays/obstructed.gif"); //$NON-NLS-1$
-            AbstractSVNParticipant.OVR_REPLACED_OUT = instance.getImageDescriptor("icons/overlays/replaced_out.gif"); //$NON-NLS-1$
-            AbstractSVNParticipant.OVR_REPLACED_IN = instance.getImageDescriptor("icons/overlays/replaced_in.gif"); //$NON-NLS-1$
-            AbstractSVNParticipant.OVR_REPLACED_CONF = instance.getImageDescriptor("icons/overlays/replaced_conf.gif"); //$NON-NLS-1$
-            AbstractSVNParticipant.OVR_PROPCHANGE = instance.getImageDescriptor("icons/overlays/prop_changed.png"); //$NON-NLS-1$
-	    }
-	}	
     
     public abstract AbstractSVNSubscriber getMatchingSubscriber();
     protected abstract String getParticipantId();
