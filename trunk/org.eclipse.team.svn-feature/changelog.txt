@@ -8,6 +8,27 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.8.I20100326-1700 [26 March 2010]
+
+Fixes:
+ * Error during decoration in Helios M6 (bug 307203)
+
+ * Subversive Connector Discovery fails on Helios (bug 295156) 
+
+ * Any key binding for rename in SVN Repositories view, should be "F2" (bug 299592) 
+
+ * SVN Workspace Synchronization: Synchronize function does not display proper Icon Decoration for an "Incoming Deletion" (bug 282338) 
+
+ * FileUtility#getPathNodes is inefficient for large change sets (bug 266492) 
+
+ * One slash in URL during Share Project (bug 303085) 
+
+ * Problems when project contains folder called "tags" (bug 303032) 
+
+ * Label for SVN URL changes after restart (bug 298862) 
+   
+--------------------------------------------------------------------------------
+
 Version 0.7.8.I20100222-1600 [22 February 2010]
 
 Fixes:
