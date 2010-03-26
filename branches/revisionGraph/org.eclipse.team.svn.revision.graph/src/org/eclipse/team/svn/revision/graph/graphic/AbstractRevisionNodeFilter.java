@@ -34,10 +34,10 @@ public abstract class AbstractRevisionNodeFilter {
 		
 		public boolean accept(RevisionNode node) {			
 			if (node.getCopiedTo().length > 0 || 
-				(node.pathRevision.action == RevisionNodeAction.ADD || 
-				node.pathRevision.action == RevisionNodeAction.DELETE ||
-				node.pathRevision.action == RevisionNodeAction.COPY ||
-				node.pathRevision.action == RevisionNodeAction.RENAME)) {
+				(node.getAction() == RevisionNodeAction.ADD || 
+				node.getAction() == RevisionNodeAction.DELETE ||
+				node.getAction() == RevisionNodeAction.COPY ||
+				node.getAction() == RevisionNodeAction.RENAME)) {
 				return true;
 			}
 			return false;

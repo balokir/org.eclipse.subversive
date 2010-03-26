@@ -51,7 +51,7 @@ public class SetYCommand extends AbstractLayoutCommand {
 			RevisionNodeData nextNodeToProcessData;
 			
 			RevisionNode[] copiedTo = nodeData.node.getCopiedTo();
-			boolean hasOnlyRename = copiedTo.length == 1 && copiedTo[0].pathRevision.action == RevisionNodeAction.RENAME;
+			boolean hasOnlyRename = copiedTo.length == 1 && copiedTo[0].getAction() == RevisionNodeAction.RENAME;
 			
 			if (copiedTo.length == 0 || hasOnlyRename) {
 				/*
@@ -106,8 +106,8 @@ public class SetYCommand extends AbstractLayoutCommand {
 				int offset;			
 				RevisionNode bottomCurrentNode = columnData.getCurrentNodes()[0];			
 				if (bottomCurrentNode.getPrevious() != null || 
-					(bottomCurrentNode.pathRevision.action == RevisionNodeAction.RENAME) ||
-					(bottomCurrentNode.getCopiedFrom() != null && bottomCurrentNode.getCopiedFrom().pathRevision.action == RevisionNodeAction.RENAME)) {
+					(bottomCurrentNode.getAction() == RevisionNodeAction.RENAME) ||
+					(bottomCurrentNode.getCopiedFrom() != null && bottomCurrentNode.getCopiedFrom().getAction() == RevisionNodeAction.RENAME)) {
 					offset = 0;
 				} else {
 					offset = this.getHeightOffset(columnData);

@@ -65,7 +65,7 @@ public class SetInitialLocationCommand extends AbstractLayoutCommand {
 				 * for which we show nodes in the same column  
 				 */
 				RevisionNode copiedTo = copiedTos[i];
-				int nextNodeColumn = copiedTo.pathRevision.action == RevisionNodeAction.RENAME ? column : (column + ++copyToCount);
+				int nextNodeColumn = copiedTo.getAction() == RevisionNodeAction.RENAME ? column : (column + ++copyToCount);
 				copiedTo.setX(nextNodeColumn);
 				copiedTo.setY(row + node.getHeight());
 				

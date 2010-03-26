@@ -52,7 +52,7 @@ public class CreateBranchTagAction extends BaseRevisionGraphAction {
 		if (this.getSelectedEditParts().length == 1 && 
 			(editParts = this.getSelectedEditParts(BaseRevisionGraphAction.NOT_DELETED_ACTION_FILTER)).length == 1) {
 			
-			String revision = String.valueOf(editParts[0].getCastedModel().pathRevision.getRevision());
+			String revision = String.valueOf(editParts[0].getCastedModel().getRevision());
 			String title = this.action == BranchTagAction.BRANCH_ACTION ? 
 				SVNUIMessages.format(SVNUIMessages.HistoryView_BranchFrom, new String[] {revision}) :
 				SVNUIMessages.format(SVNUIMessages.HistoryView_TagFrom, new String[] {revision});				

@@ -50,7 +50,7 @@ public abstract class BaseRevisionGraphAction extends SelectionAction {
 		@Override
 		public boolean accept(RevisionEditPart editPart) {			
 			RevisionNode node = editPart.getCastedModel();
-			return node.pathRevision.action != RevisionNodeAction.DELETE;
+			return node.getAction() != RevisionNodeAction.DELETE;
 		}		
 	};
 	
@@ -58,7 +58,7 @@ public abstract class BaseRevisionGraphAction extends SelectionAction {
 		@Override
 		public boolean accept(RevisionEditPart editPart) {			
 			RevisionNode node = editPart.getCastedModel();
-			RevisionNodeAction action = node.pathRevision.action;
+			RevisionNodeAction action = node.getAction();
 			if (action == RevisionNodeAction.MODIFY || action == RevisionNodeAction.NONE) {
 				return true;
 			}		
@@ -136,7 +136,7 @@ public abstract class BaseRevisionGraphAction extends SelectionAction {
 		boolean isFolder = !(rootNode.getRepositoryResource() instanceof IRepositoryFile);					
 		String url = rootNode.getRevisionFullPath(revisionNode);		
 		IRepositoryResource resource = SVNUtility.asRepositoryResource(url, isFolder);
-		SVNRevision svnRev = SVNRevision.fromNumber(revisionNode.pathRevision.getRevision());
+		SVNRevision svnRev = SVNRevision.fromNumber(revisionNode.getRevision());
 		resource.setSelectedRevision(svnRev);
 		resource.setPegRevision(svnRev);
 		

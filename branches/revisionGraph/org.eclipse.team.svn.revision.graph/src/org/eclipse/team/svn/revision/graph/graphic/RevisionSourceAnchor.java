@@ -36,7 +36,7 @@ public class RevisionSourceAnchor extends AbstractConnectionAnchor {
 
 	public Point getLocation(Point reference) {
 		boolean isTop = 
-			this.target.pathRevision.action == RevisionNodeAction.RENAME || 
+			this.target.getAction() == RevisionNodeAction.RENAME || 
 			this.target.getPrevious() != null; 
 		
 		Rectangle rect = getOwner().getBounds();

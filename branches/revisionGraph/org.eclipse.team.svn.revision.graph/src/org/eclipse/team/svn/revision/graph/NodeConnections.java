@@ -28,10 +28,10 @@ import java.util.Set;
  */
 public class NodeConnections<T extends NodeConnections<T>>{
 
-	protected T next;	
-	protected T previous;	
-	protected Set<T> copiedTo = new HashSet<T>();
-	protected T copiedFrom;
+	private T next;	
+	private T previous;	
+	private Set<T> copiedTo = new HashSet<T>();
+	private T copiedFrom;
 	
 	public T[] getCopiedTo(T[] a) {
 		return this.copiedTo.toArray(a);

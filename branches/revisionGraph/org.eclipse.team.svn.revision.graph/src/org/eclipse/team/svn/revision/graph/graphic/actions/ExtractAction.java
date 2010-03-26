@@ -50,7 +50,7 @@ public class ExtractAction extends BaseRevisionGraphAction {
 		} else {
 			RevisionEditPart[] editParts = this.getSelectedEditParts(BaseRevisionGraphAction.NOT_DELETED_ACTION_FILTER);
 			//check that resources have the same path
-			if (editParts.length == 2 && editParts[0].getCastedModel().pathRevision.getPathIndex() == editParts[1].getCastedModel().pathRevision.getPathIndex()) {
+			if (editParts.length == 2 && editParts[0].getCastedModel().getPathIndex() == editParts[1].getCastedModel().getPathIndex()) {
 				return true;
 			}
 		}
