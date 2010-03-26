@@ -60,17 +60,23 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 	
 	/*
 	 * Show expand/collapse decoration
+	 * 
+	 * TODO There are cases in which expand/collapse decoration isn't removed
+	 * when we leave revision node: it happens when we leave
+	 * node by moving mouse cursor over plus/minus icon. 
 	 */
 	protected class NodeMouseMotionListener extends MouseMotionListener.Stub {
-
+		
 		public void mouseEntered(MouseEvent me) {
 			expandCollapseDecorationFigure.setBounds(revisionFigure.getBounds());									
 			expandLayer.setVisible(true);
 		}
 
-		public void mouseExited(MouseEvent me) {			
-			expandLayer.setVisible(false);			
-		}	
+		public void mouseExited(MouseEvent me) {
+			if (!mainPane.getBounds().contains(me.x, me.y)) { 
+				expandLayer.setVisible(false);
+			}
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -106,7 +112,7 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 		
 		//main layer
 		RevisionRootNode rootNode = this.getRevisionRootNode();
-		String path = rootNode.getRevisionPath(revision.pathRevision.getPathIndex());				
+		String path = rootNode.getRevisionPath(revision.getPathIndex());				
 		
 		this.revisionFigure = new RevisionFigure(revision, path);													
 		Layer revisionLayer = new Layer();			
@@ -122,9 +128,9 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 		this.mainPane.add(this.expandLayer, RevisionEditPart.EXPAND_COLLAPSE_LAYER);
 					
 		this.mainPane.setToolTip(new RevisionTooltipFigure(revision, rootNode.getDataContainer()));		
-		
+				
 		return this.mainPane;
-	}	
+	}
 	
 	public void applyLayoutResults() {
 		RevisionNode node = this.getCastedModel();

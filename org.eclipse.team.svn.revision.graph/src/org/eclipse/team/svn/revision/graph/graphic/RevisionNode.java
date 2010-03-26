@@ -18,15 +18,18 @@ import java.util.LinkedList;
 
 import org.eclipse.team.svn.revision.graph.NodeConnections;
 import org.eclipse.team.svn.revision.graph.PathRevision;
+import org.eclipse.team.svn.revision.graph.PathRevision.ReviosionNodeType;
 import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
 
 /**
+ * Getter methods which names start with 'internal' don't take
+ * into account filtering and collapsing 
  * 
  * @author Igor Burilo
  */
 public class RevisionNode extends NodeConnections<RevisionNode> {
 
-	public final PathRevision pathRevision;
+	protected final PathRevision pathRevision;
 	
 	protected final ChangesNotifier changesNotifier;		
 	
@@ -35,7 +38,7 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 	protected boolean isNextCollapsed;
 	protected boolean isPreviousCollapsed;
 	protected boolean isCopiedToCollapsed;
-	protected boolean isCopiedFromCollapsed;	
+	protected boolean isCopiedFromCollapsed;
 	
 	//TODO use in different hierarchy
 	protected int width;
@@ -175,8 +178,9 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 	}
 
 	public RevisionNode internalGetCopiedFrom() {
-		return this.copiedFrom;
+		return super.getCopiedFrom();
 	}
+
 	
 	//--- notifications
 	
@@ -192,8 +196,36 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 		this.changesNotifier.firePropertyChange(ChangesNotifier.REFRESH_CONNECTIONS_PROPERTY, null, this);		
 	}
 	
-	
+
 	//--- Accessors
+	
+	public int getPathIndex() {
+		return this.pathRevision.getPathIndex();
+	}
+	
+	public ReviosionNodeType getType() {
+		return this.pathRevision.type;
+	}
+	
+	public RevisionNodeAction getAction() {
+		return this.pathRevision.action;
+	}
+	
+	public long getRevision() {
+		return this.pathRevision.getRevision();
+	}
+	
+	public String getMessage() {
+		return this.pathRevision.getMessage();
+	}
+	
+	public String getAuthor() {
+		return this.pathRevision.getAuthor();
+	}
+	
+	public long getDate() {
+		return this.pathRevision.getDate();
+	}
 	
 	public void setFiltered(boolean isFiltered) {
 		this.isFiltered = isFiltered;

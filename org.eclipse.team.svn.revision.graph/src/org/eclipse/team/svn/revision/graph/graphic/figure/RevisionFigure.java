@@ -97,9 +97,9 @@ public class RevisionFigure extends RoundedRectangle {
 		this.revisionFigure.setFont(boldFont);		
 
 		//path
-		if (this.revisionNode.pathRevision.action == RevisionNodeAction.ADD || 
-			this.revisionNode.pathRevision.action == RevisionNodeAction.COPY ||
-			this.revisionNode.pathRevision.action == RevisionNodeAction.RENAME) {
+		if (this.revisionNode.getAction() == RevisionNodeAction.ADD || 
+			this.revisionNode.getAction() == RevisionNodeAction.COPY ||
+			this.revisionNode.getAction() == RevisionNodeAction.RENAME) {
 			
 			//wrap path using text layout
 			FlowPage pathFlowPageFigure = new FlowPage();
@@ -126,13 +126,13 @@ public class RevisionFigure extends RoundedRectangle {
 	}			
 	
 	protected void initControls() {
-		this.revisionFigure.setText(String.valueOf(this.revisionNode.pathRevision.getRevision()));
+		this.revisionFigure.setText(String.valueOf(this.revisionNode.getRevision()));
 		
 		if (this.pathTextFlow != null) {
 			this.pathTextFlow.setText(this.path);	
 		}				
 
-		String comment = this.revisionNode.pathRevision.getMessage();
+		String comment = this.revisionNode.getMessage();
 		if (comment != null && comment.length() > 0) {
 			comment = comment.replaceAll("\r\n|\r|\n", " ");
 		} else {
@@ -165,8 +165,8 @@ public class RevisionFigure extends RoundedRectangle {
 	}
 	
 	public static Color getRevisionNodeColor(RevisionNode revisionNode) {
-	    ReviosionNodeType type = revisionNode.pathRevision.type;
-		RevisionNodeAction action = revisionNode.pathRevision.action;		
+	    ReviosionNodeType type = revisionNode.getType();
+		RevisionNodeAction action = revisionNode.getAction();		
 	    Color color;	   	    
 		if (ReviosionNodeType.TRUNK.equals(type)) {
 			color = trunkColor;			
@@ -189,8 +189,8 @@ public class RevisionFigure extends RoundedRectangle {
 	}
 	
 	public static Image getRevisionNodeIcon(RevisionNode revisionNode) {
-	    ReviosionNodeType type = revisionNode.pathRevision.type;
-		RevisionNodeAction action = revisionNode.pathRevision.action;			    
+	    ReviosionNodeType type = revisionNode.getType();
+		RevisionNodeAction action = revisionNode.getAction();			    
 	    Image nodeIcon = null;
 		if (ReviosionNodeType.TRUNK.equals(type)) {			
 			nodeIcon = trunkImg;

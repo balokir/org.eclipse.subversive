@@ -147,7 +147,7 @@ public class PathRevision extends NodeConnections<PathRevision> {
 	}
 	
 	public PathRevision[] getCopiedTo() {
-		return this.copiedTo.toArray(new PathRevision[0]);
+		return super.getCopiedTo(new PathRevision[0]);
 	}
 
 	public RevisionStructure getRevisionData() {

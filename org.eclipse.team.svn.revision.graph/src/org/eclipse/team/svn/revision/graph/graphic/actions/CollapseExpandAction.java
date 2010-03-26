@@ -15,7 +15,8 @@ import org.eclipse.team.svn.revision.graph.graphic.editpart.RevisionEditPart;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * 
+ * TODO correctly implement
+ *  
  * @author Igor Burilo
  */
 public class CollapseExpandAction extends BaseRevisionGraphAction {

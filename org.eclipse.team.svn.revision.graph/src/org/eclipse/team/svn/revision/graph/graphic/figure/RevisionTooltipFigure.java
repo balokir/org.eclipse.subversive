@@ -124,20 +124,20 @@ public class RevisionTooltipFigure extends Figure {
 	
 	protected void initControls() {
 		this.pathText.setIcon(RevisionFigure.getRevisionNodeIcon(this.revisionNode));
-		this.pathText.setText(this.dataContainer.getPathStorage().getPath(this.revisionNode.pathRevision.getPathIndex()) + "@" + this.revisionNode.pathRevision.getRevision());
+		this.pathText.setText(this.dataContainer.getPathStorage().getPath(this.revisionNode.getPathIndex()) + "@" + this.revisionNode.getRevision());
 		
-		String author = this.revisionNode.pathRevision.getAuthor();
+		String author = this.revisionNode.getAuthor();
 		this.authorText.setText(author == null || author.length() == 0 ? SVNMessages.SVNInfo_NoAuthor : author);
 		
-		long date = this.revisionNode.pathRevision.getDate(); 
+		long date = this.revisionNode.getDate(); 
 		this.dateText.setText(date == 0 ? SVNMessages.SVNInfo_NoDate : DateFormatter.formatDate(date));
 		
 		if (this.revisionNode.getCopiedFrom() != null) {
 			RevisionNode copiedFrom = this.revisionNode.getCopiedFrom();
-			this.copyText.setText(this.dataContainer.getPathStorage().getPath(copiedFrom.pathRevision.getPathIndex()) + "@" + copiedFrom.pathRevision.getRevision());
+			this.copyText.setText(this.dataContainer.getPathStorage().getPath(copiedFrom.getPathIndex()) + "@" + copiedFrom.getRevision());
 		}
 		
-		String comment = this.revisionNode.pathRevision.getMessage();
+		String comment = this.revisionNode.getMessage();
 		this.commentText.setText(comment == null || comment.length() == 0 ? SVNMessages.SVNInfo_NoComment : comment);
 	}
 

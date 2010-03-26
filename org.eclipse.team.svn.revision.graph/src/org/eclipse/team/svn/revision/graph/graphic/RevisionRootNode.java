@@ -118,10 +118,10 @@ public class RevisionRootNode extends ChangesNotifier {
 				if (item.getNext() != null) {
 					addCurrentConnection(item, item.getNext());									
 				}			
-				if (item.getCopiedTo().length > 0) {
-					for (RevisionNode copyToItem : item.getCopiedTo()) {
-						addCurrentConnection(item, copyToItem);
-					}
+				
+				RevisionNode[] copiedTo = item.getCopiedTo();
+				for (RevisionNode copyToItem : copiedTo) {
+					addCurrentConnection(item, copyToItem);
 				}
 			}
 		}.traverse(this.currentStartNode);
@@ -185,32 +185,41 @@ public class RevisionRootNode extends ChangesNotifier {
 		targetConnections.add(con);		
 	}
 	
+	protected static class RevisionNodeItem {
+		final RevisionNode revisionNode;
+		final PathRevision pathRevision;
+		public RevisionNodeItem(RevisionNode revisionNode, PathRevision pathRevision) {
+			this.revisionNode = revisionNode;
+			this.pathRevision = pathRevision;
+		}
+	}
+	
 	/*
 	 * Convert PathRevision model to RevisionNode model
 	 */
 	protected final void createRevisionNodesModel() {
-		Queue<RevisionNode> queue = new LinkedList<RevisionNode>();
+		Queue<RevisionNodeItem> queue = new LinkedList<RevisionNodeItem>();
 		
 		PathRevision pathFirst = (PathRevision) this.pathRevision.getStartNodeInGraph();
 		RevisionNode first = this.createRevisionNode(pathFirst);
 		this.initialStartNode = first;		
-		queue.offer(first);
+		queue.offer(new RevisionNodeItem(first, pathFirst));
 		
-		RevisionNode node = null;
+		RevisionNodeItem node = null;
 		while ((node = queue.poll()) != null) {							
 			
 			PathRevision pathNext = node.pathRevision.getNext();
 			if (pathNext != null) {
 				RevisionNode next = this.createRevisionNode(pathNext);				
-				node.setNext(next);
-				queue.offer(next);
+				node.revisionNode.setNext(next);
+				queue.offer(new RevisionNodeItem(next, pathNext));
 			}
 			
 			PathRevision[] pathCopiedToNodes = node.pathRevision.getCopiedTo();
 			for (PathRevision pathCopiedToNode : pathCopiedToNodes) {
 				RevisionNode copiedTo = this.createRevisionNode(pathCopiedToNode);
-				node.addCopiedTo(copiedTo);
-				queue.offer(copiedTo);
+				node.revisionNode.addCopiedTo(copiedTo);
+				queue.offer(new RevisionNodeItem(copiedTo, pathCopiedToNode));
 			}
 		}			
 	}
@@ -248,7 +257,7 @@ public class RevisionRootNode extends ChangesNotifier {
 	}
 	
 	public String getRevisionFullPath(RevisionNode revisionNode) {
-		return this.dataContainer.getRevisionFullPath(revisionNode.pathRevision.getPathIndex());
+		return this.dataContainer.getRevisionFullPath(revisionNode.getPathIndex());
 	}		
 	
 	public RevisionDataContainer getDataContainer() {
