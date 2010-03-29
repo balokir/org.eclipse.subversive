@@ -18,10 +18,18 @@ import java.beans.PropertyChangeSupport;
  * @author Igor Burilo
  */
 public class ChangesNotifier {
-
-	public final static String REFRESH_CONNECTIONS_PROPERTY = "refresh";
-	public final static String LAYOUT_PROPERTY = "layout";
-	public final static String EXPAND_COLLAPSE_PROPERTY = "expandCollapse";	
+	
+	//used by RevisionRootNode to notify that filtering was applied 
+	public final static String FILTER_NODES_PROPERTY = "filterNodes";
+	
+	//used by RevisionRootNode to notify that nodes expanded/collapsed
+	public final static String EXPAND_COLLAPSE_NODES_PROPERTY = "expandCollapseNodes";
+	
+	//used by RevisionNode to notify that expanded/collapsed was called on node
+	public final static String EXPAND_COLLAPSE_ON_NODE_PROPERTY = "expandCollapseOnNode";
+	
+	//used by RevisionNode to notify that its connections were changed
+	public final static String REFRESH_NODE_CONNECTIONS_PROPERTY = "refreshNodeConnections";
 	
 	protected PropertyChangeSupport listeners = new PropertyChangeSupport(this);
 	

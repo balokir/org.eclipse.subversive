@@ -225,7 +225,7 @@ public class RevisionRootNode extends ChangesNotifier {
 	}
 	
 	protected RevisionNode createRevisionNode(PathRevision pathRevision) {		
-		RevisionNode node = new RevisionNode(pathRevision);		
+		RevisionNode node = new RevisionNode(pathRevision, this);
 		return node;		
 	}
 
@@ -309,7 +309,7 @@ public class RevisionRootNode extends ChangesNotifier {
 		});
 		
 		if (isMakeNotification) {
-			this.firePropertyChange(RevisionRootNode.LAYOUT_PROPERTY, null, new Boolean(this.isSimpleMode));
+			this.firePropertyChange(RevisionRootNode.FILTER_NODES_PROPERTY, null, new Boolean(this.isSimpleMode));
 		}
 	}
 	
@@ -318,96 +318,120 @@ public class RevisionRootNode extends ChangesNotifier {
 	public void collapseNext(final RevisionNode node) {						
 		this.changeModel(new RevisionModelOperation() {					
 			public void run() {
-				node.setNextCollapsed(true);
+				node.internalSetNextCollapsed(true);
 				
 				//current start node isn't changed here
 			}
 		});
 		
-		this.firePropertyChange(RevisionRootNode.EXPAND_COLLAPSE_PROPERTY, null, node);
+		this.firePropertyChange(RevisionRootNode.EXPAND_COLLAPSE_NODES_PROPERTY, null, null);
 	}
 
+	public void collapseRename(final RevisionNode node) {						
+		this.changeModel(new RevisionModelOperation() {					
+			public void run() {
+				node.internalSetRenameCollapsed(true);
+				
+				//current start node isn't changed here
+			}
+		});
+		
+		this.firePropertyChange(RevisionRootNode.EXPAND_COLLAPSE_NODES_PROPERTY, null, null);
+	}
+	
 	public void collapsePrevious(final RevisionNode node) {
 		this.changeModel(new RevisionModelOperation() {					
 			public void run() {
-				node.setPreviousCollapsed(true);
+				node.internalSetPreviousCollapsed(true);
 				
 				RevisionRootNode.this.currentStartNode = node;
 			}
 		});					
 		
-		this.firePropertyChange(RevisionRootNode.EXPAND_COLLAPSE_PROPERTY, null, node);			
+		this.firePropertyChange(RevisionRootNode.EXPAND_COLLAPSE_NODES_PROPERTY, null, null);			
 	}
 
 	public void collapseCopiedTo(final RevisionNode node) {		
 		this.changeModel(new RevisionModelOperation() {					
 			public void run() {
-				node.setCopiedToCollapsed(true);
+				node.internalSetCopiedToCollapsed(true);
 				
 				//current start node isn't changed here
 			}
 		});					 
 		
-		this.firePropertyChange(RevisionRootNode.EXPAND_COLLAPSE_PROPERTY, null, node);		
+		this.firePropertyChange(RevisionRootNode.EXPAND_COLLAPSE_NODES_PROPERTY, null, null);		
 	}
 
 	public void collapseCopiedFrom(final RevisionNode node) {
 		this.changeModel(new RevisionModelOperation() {					
 			public void run() {
-				node.setCopiedFromCollapsed(true);
+				node.internalSetCopiedFromCollapsed(true);
 				
 				RevisionRootNode.this.currentStartNode = node;
 			}
 		});					
 		
-		this.firePropertyChange(RevisionRootNode.EXPAND_COLLAPSE_PROPERTY, null, node);					
+		this.firePropertyChange(RevisionRootNode.EXPAND_COLLAPSE_NODES_PROPERTY, null, null);					
 	}
 
 	public void expandNext(final RevisionNode node) {
 		this.changeModel(new RevisionModelOperation() {					
 			public void run() {
-				node.setNextCollapsed(false);
+				node.internalSetNextCollapsed(false);
 				
 				//current start node isn't changed here
 			}
 		});					 
 		
-		this.firePropertyChange(RevisionRootNode.EXPAND_COLLAPSE_PROPERTY, null, node);				
+		this.firePropertyChange(RevisionRootNode.EXPAND_COLLAPSE_NODES_PROPERTY, null, null);				
+	}
+	
+	public void expandRename(final RevisionNode node) {
+		this.changeModel(new RevisionModelOperation() {					
+			public void run() {
+				node.internalSetRenameCollapsed(false);
+				
+				//current start node isn't changed here
+			}
+		});					 
+		
+		this.firePropertyChange(RevisionRootNode.EXPAND_COLLAPSE_NODES_PROPERTY, null, null);				
 	}
 
 	public void expandPrevious(final RevisionNode node) {
 		this.changeModel(new RevisionModelOperation() {					
 			public void run() {
-				node.setPreviousCollapsed(false);
+				node.internalSetPreviousCollapsed(false);
 				
 				RevisionRootNode.this.currentStartNode = findStartNode(node);
 			}
 		});					
 		
-		this.firePropertyChange(RevisionRootNode.EXPAND_COLLAPSE_PROPERTY, null, node);
+		this.firePropertyChange(RevisionRootNode.EXPAND_COLLAPSE_NODES_PROPERTY, null, null);
 	}
 
 	public void expandCopiedTo(final RevisionNode node) {
 		this.changeModel(new RevisionModelOperation() {					
 			public void run() {
-				node.setCopiedToCollapsed(false);
+				node.internalSetCopiedToCollapsed(false);
 				
 				//current start node isn't changed here 
 			}
 		});					
 		
-		this.firePropertyChange(RevisionRootNode.EXPAND_COLLAPSE_PROPERTY, null, node);			
+		this.firePropertyChange(RevisionRootNode.EXPAND_COLLAPSE_NODES_PROPERTY, null, null);			
 	}
 
 	public void expandCopiedFrom(final RevisionNode node) {
 		this.changeModel(new RevisionModelOperation() {					
 			public void run() {
-				node.setCopiedFromCollapsed(false);
+				node.internalSetCopiedFromCollapsed(false);
 				
 				RevisionRootNode.this.currentStartNode = this.findStartNode(node);
 			}
 		});					
 		
-		this.firePropertyChange(RevisionRootNode.EXPAND_COLLAPSE_PROPERTY, null, node);		
+		this.firePropertyChange(RevisionRootNode.EXPAND_COLLAPSE_NODES_PROPERTY, null, null);		
 	}
 }
