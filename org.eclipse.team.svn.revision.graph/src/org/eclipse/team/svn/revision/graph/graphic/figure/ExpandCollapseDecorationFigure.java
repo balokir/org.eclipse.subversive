@@ -34,8 +34,8 @@ import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
  */
 public class ExpandCollapseDecorationFigure extends Figure {
 
-	protected static Image minusImage = SVNRevisionGraphPlugin.instance().getImageDescriptor("/icons/minus.gif").createImage(); 
-	protected static Image plusImage = SVNRevisionGraphPlugin.instance().getImageDescriptor("/icons/plus.gif").createImage();
+	public final static Image MINUS_IMAGE; 
+	public final static Image PLUS_IMAGE;
 	
 	protected final RevisionNode revisionNode;
 	protected final boolean isShowOnlyCollapse;
@@ -48,6 +48,14 @@ public class ExpandCollapseDecorationFigure extends Figure {
 	protected ImageFigure bottomFigure;
 	
 	protected enum Status { EXPANDED, COLLAPSED, NONE };
+	
+	static {
+		MINUS_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("/icons/minus.gif").createImage();
+		SVNRevisionGraphPlugin.disposeOnShutdown(MINUS_IMAGE);
+		
+		PLUS_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("/icons/plus.gif").createImage();
+		SVNRevisionGraphPlugin.disposeOnShutdown(PLUS_IMAGE);
+	}
 	
 	public ExpandCollapseDecorationFigure(RevisionNode revisionNode, boolean isShowOnlyCollapse) {
 		this.revisionNode = revisionNode;
@@ -156,8 +164,8 @@ public class ExpandCollapseDecorationFigure extends Figure {
 	}
 	
 	protected Image getIcon(Status status) {
-		return status == Status.COLLAPSED ? ExpandCollapseDecorationFigure.plusImage : 
-			(status == Status.EXPANDED ? ExpandCollapseDecorationFigure.minusImage : null);
+		return status == Status.COLLAPSED ? ExpandCollapseDecorationFigure.PLUS_IMAGE : 
+			(status == Status.EXPANDED ? ExpandCollapseDecorationFigure.MINUS_IMAGE : null);
 	}
 	
 	protected Status postProcessStatus(Status status) {

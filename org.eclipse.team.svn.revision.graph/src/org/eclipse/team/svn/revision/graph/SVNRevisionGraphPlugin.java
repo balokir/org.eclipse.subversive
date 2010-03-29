@@ -12,8 +12,12 @@ package org.eclipse.team.svn.revision.graph;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Resource;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -29,6 +33,8 @@ public class SVNRevisionGraphPlugin extends AbstractUIPlugin {
 	private volatile static SVNRevisionGraphPlugin instance = null;
 	
 	private URL baseUrl;
+	
+	protected static List<Resource> disposeOnShutdownResources = new ArrayList<Resource>();
 	
 	public SVNRevisionGraphPlugin() {	
 		SVNRevisionGraphPlugin.instance = this;
@@ -46,6 +52,16 @@ public class SVNRevisionGraphPlugin extends AbstractUIPlugin {
     
     public void stop(BundleContext context) throws Exception {    	    	
     	super.stop(context);
+    	
+    	if (disposeOnShutdownResources != null) {
+			Iterator<Resource> iter = disposeOnShutdownResources.iterator();
+			while (iter.hasNext()) {
+				Resource resource = iter.next();
+				if (!resource.isDisposed()) {
+					resource.dispose();
+				}
+			}			
+		}
     }
     
     public ImageDescriptor getImageDescriptor(String path) {
@@ -57,5 +73,11 @@ public class SVNRevisionGraphPlugin extends AbstractUIPlugin {
 			return null;
 		}
     }
+    
+    public static void disposeOnShutdown(Resource resource) {
+		if (resource != null) {
+			disposeOnShutdownResources.add(resource);
+		}
+	}
 	
 }
