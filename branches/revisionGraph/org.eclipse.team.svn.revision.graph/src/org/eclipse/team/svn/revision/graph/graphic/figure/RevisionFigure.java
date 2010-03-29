@@ -10,11 +10,16 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.graphic.figure;
 
+import org.eclipse.draw2d.Border;
+import org.eclipse.draw2d.ColorConstants;
+import org.eclipse.draw2d.Figure;
+import org.eclipse.draw2d.FocusBorder;
 import org.eclipse.draw2d.GridData;
 import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.Label;
 import org.eclipse.draw2d.PositionConstants;
-import org.eclipse.draw2d.RoundedRectangle;
+import org.eclipse.draw2d.SchemeBorder;
+import org.eclipse.draw2d.SchemeBorder.Scheme;
 import org.eclipse.draw2d.text.FlowPage;
 import org.eclipse.draw2d.text.ParagraphTextLayout;
 import org.eclipse.draw2d.text.TextFlow;
@@ -27,48 +32,100 @@ import org.eclipse.team.svn.revision.graph.SVNRevisionGraphPlugin;
 import org.eclipse.team.svn.revision.graph.PathRevision.ReviosionNodeType;
 import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
+import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
  * Figure for revision node
  * 
- * TODO make correct background colors
- * 
- * TODO correctly work with system resources (see all places)
- * 
- * TODO customize colors
- * 
  * @author Igor Burilo
  */
-public class RevisionFigure extends RoundedRectangle {
+public class RevisionFigure extends Figure {
 
 	protected final static int FIGURE_WIDTH = 200;
 			
-	protected final static Color trunkColor = new Color(null, 188, 255, 188);
-	protected final static Color branchColor = new Color(null, 229, 255, 229);
-	protected final static Color tagColor = new Color(null, 239, 252, 162);	
-	protected final static Color createOrCopyColor = new Color(null, 229, 255, 229);	
-	protected final static Color renameColor = new Color(null, 229, 229, 255);
-	protected final static Color deleteColor = new Color(null, 255, 229, 229);	
-	protected final static Color modifyColor = new Color(null, 229, 229, 229);
-	protected final static Color otherColor = new Color(null, 255, 255, 255);
+	public final static Color TRUNK_COLOR;
+	public final static Color BRANCH_COLOR;
+	public final static Color TAG_COLOR;	
+	public final static Color CREATE_OR_COPY_COLOR;	
+	public final static Color RENAME_COLOR;
+	public final static Color DELETE_COLOR;	
+	public final static Color MODIFY_COLOR;
+	public final static Color OTHER_COLOR;
+	public final static Color SELECTED_COLOR;
 	
-	protected final static Image trunkImg = SVNRevisionGraphPlugin.instance().getImageDescriptor("/icons/trunk.gif").createImage();
-	protected final static Image branchImg = SVNRevisionGraphPlugin.instance().getImageDescriptor("/icons/branch.gif").createImage();
-	protected final static Image tagImg = SVNRevisionGraphPlugin.instance().getImageDescriptor("/icons/tag.gif").createImage();
-	protected final static Image addImg = SVNRevisionGraphPlugin.instance().getImageDescriptor("/icons/add.gif").createImage();
-	protected final static Image deleteImg = SVNRevisionGraphPlugin.instance().getImageDescriptor("/icons/delete.gif").createImage();
-	protected final static Image modifyImg = SVNRevisionGraphPlugin.instance().getImageDescriptor("/icons/modify.gif").createImage();
-	protected final static Image renameImg = SVNRevisionGraphPlugin.instance().getImageDescriptor("/icons/rename.gif").createImage();
-	protected final static Image otherImg = SVNRevisionGraphPlugin.instance().getImageDescriptor("/icons/other.gif").createImage();
+	public final static Image TRUNK_IMAGE;
+	public final static Image BRANCH_IMAGE;
+	public final static Image TAG_IMAGE;
+	public final static Image ADD_IMAGE;
+	public final static Image DELETE_IMAGE;
+	public final static Image MODIFY_IMAGE;
+	public final static Image RENAME_IMAGE;
+	public final static Image OTHER_IMAGE;
 	
 	protected RevisionNode revisionNode;
 	protected String path;
 	
 	protected Color originalBgColor;
+	protected Border originalBorder;
 	
 	protected Label revisionFigure;
 	protected TextFlow pathTextFlow;
 	protected Label commentFigure;
+	
+	static {
+		//images
+		TRUNK_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("/icons/trunk.gif").createImage();
+		SVNRevisionGraphPlugin.disposeOnShutdown(TRUNK_IMAGE);
+		
+		BRANCH_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("/icons/branch.gif").createImage();
+		SVNRevisionGraphPlugin.disposeOnShutdown(BRANCH_IMAGE);
+		
+		TAG_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("/icons/tag.gif").createImage();
+		SVNRevisionGraphPlugin.disposeOnShutdown(TAG_IMAGE);
+		
+		ADD_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("/icons/add.gif").createImage();
+		SVNRevisionGraphPlugin.disposeOnShutdown(ADD_IMAGE);
+		
+		DELETE_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("/icons/delete.gif").createImage();
+		SVNRevisionGraphPlugin.disposeOnShutdown(DELETE_IMAGE);
+		
+		MODIFY_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("/icons/modify.gif").createImage();
+		SVNRevisionGraphPlugin.disposeOnShutdown(MODIFY_IMAGE);
+		
+		RENAME_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("/icons/rename.gif").createImage();
+		SVNRevisionGraphPlugin.disposeOnShutdown(RENAME_IMAGE);
+		
+		OTHER_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("/icons/other.gif").createImage();
+		SVNRevisionGraphPlugin.disposeOnShutdown(OTHER_IMAGE);
+		
+		//colors
+		TRUNK_COLOR = new Color(UIMonitorUtility.getDisplay(), 0, 255, 128);
+		SVNRevisionGraphPlugin.disposeOnShutdown(TRUNK_COLOR);
+		
+		BRANCH_COLOR = new Color(UIMonitorUtility.getDisplay(), 84, 159, 252);
+		SVNRevisionGraphPlugin.disposeOnShutdown(BRANCH_COLOR);
+		
+		TAG_COLOR = new Color(UIMonitorUtility.getDisplay(), 255, 255, 128);
+		SVNRevisionGraphPlugin.disposeOnShutdown(TAG_COLOR);
+		
+		CREATE_OR_COPY_COLOR = new Color(UIMonitorUtility.getDisplay(), 198, 255, 198);
+		SVNRevisionGraphPlugin.disposeOnShutdown(CREATE_OR_COPY_COLOR);
+		
+		RENAME_COLOR = new Color(UIMonitorUtility.getDisplay(), 128, 128, 255);
+		SVNRevisionGraphPlugin.disposeOnShutdown(RENAME_COLOR);
+		
+		DELETE_COLOR = new Color(UIMonitorUtility.getDisplay(), 255, 140, 140);
+		SVNRevisionGraphPlugin.disposeOnShutdown(DELETE_COLOR);
+		
+		MODIFY_COLOR = new Color(UIMonitorUtility.getDisplay(), 192, 192, 192);
+		SVNRevisionGraphPlugin.disposeOnShutdown(MODIFY_COLOR);
+		
+		OTHER_COLOR = new Color(UIMonitorUtility.getDisplay(), 245, 245, 245);
+		SVNRevisionGraphPlugin.disposeOnShutdown(OTHER_COLOR);
+		
+		SELECTED_COLOR = new Color(UIMonitorUtility.getDisplay(), 47, 104, 200);
+		SVNRevisionGraphPlugin.disposeOnShutdown(SELECTED_COLOR);
+	}
 	
 	public RevisionFigure(RevisionNode revisionNode, String path) {
 		this.revisionNode = revisionNode;
@@ -76,6 +133,10 @@ public class RevisionFigure extends RoundedRectangle {
 		
 		this.createControls();								
 		this.initControls();
+						
+		this.setBorder(this.originalBorder = new SchemeBorder(new Scheme(
+				new Color[]{ColorConstants.button},
+				new Color[]{ColorConstants.buttonDarkest})));
 		
 		//non-transparent
 		this.setOpaque(true);
@@ -150,13 +211,16 @@ public class RevisionFigure extends RoundedRectangle {
 	public void init() {
 		this.setPreferredSize(RevisionFigure.FIGURE_WIDTH, this.getPreferredSize().height);
 	}
-	
-	//TODO make correct selection presentation
+		
 	public void setSelected(boolean isSelected) {
 		if (isSelected) {
-			this.setBackgroundColor(org.eclipse.draw2d.ColorConstants.blue);			
+			this.setBackgroundColor(SELECTED_COLOR);
+			this.setForegroundColor(ColorConstants.white);
+			this.setBorder(new FocusBorder());
 		} else {
 			this.setBackgroundColor(this.originalBgColor);
+			this.setForegroundColor(ColorConstants.black);
+			this.setBorder(this.originalBorder);
 		}		
 	}	
 	
@@ -169,21 +233,21 @@ public class RevisionFigure extends RoundedRectangle {
 		RevisionNodeAction action = revisionNode.getAction();		
 	    Color color;	   	    
 		if (ReviosionNodeType.TRUNK.equals(type)) {
-			color = trunkColor;			
+			color = TRUNK_COLOR;			
 		} else if (ReviosionNodeType.BRANCH.equals(type)) {
-			color = branchColor;			
+			color = BRANCH_COLOR;
 		} else if (ReviosionNodeType.TAG.equals(type)) {
-			color = tagColor;
+			color = TAG_COLOR;
 		} else if (RevisionNodeAction.ADD.equals(action) || RevisionNodeAction.COPY.equals(action)) {
-			color = createOrCopyColor;
+			color = CREATE_OR_COPY_COLOR;
 		} else if (RevisionNodeAction.RENAME.equals(action)) {
-			color = renameColor;
+			color = RENAME_COLOR;
 		} else if (RevisionNodeAction.DELETE.equals(action)) {
-			color = deleteColor;
+			color = DELETE_COLOR;
 		} else if (RevisionNodeAction.MODIFY.equals(action)) {
-			color = modifyColor;
+			color = MODIFY_COLOR;
 		} else {
-			color = otherColor;
+			color = OTHER_COLOR;
 		}
 		return color;
 	}
@@ -193,21 +257,21 @@ public class RevisionFigure extends RoundedRectangle {
 		RevisionNodeAction action = revisionNode.getAction();			    
 	    Image nodeIcon = null;
 		if (ReviosionNodeType.TRUNK.equals(type)) {			
-			nodeIcon = trunkImg;
+			nodeIcon = TRUNK_IMAGE;
 		} else if (ReviosionNodeType.BRANCH.equals(type)) {
-			nodeIcon = branchImg;
+			nodeIcon = BRANCH_IMAGE;
 		} else if (ReviosionNodeType.TAG.equals(type)) {
-			nodeIcon = tagImg;
+			nodeIcon = TAG_IMAGE;
 		} else if (RevisionNodeAction.ADD.equals(action) || RevisionNodeAction.COPY.equals(action)) {
-			nodeIcon = addImg;
+			nodeIcon = ADD_IMAGE;
 		} else if (RevisionNodeAction.RENAME.equals(action)) {
-			nodeIcon = renameImg;
+			nodeIcon = RENAME_IMAGE;
 		} else if (RevisionNodeAction.DELETE.equals(action)) {
-			nodeIcon = deleteImg;
+			nodeIcon = DELETE_IMAGE;
 		} else if (RevisionNodeAction.MODIFY.equals(action)) {
-			nodeIcon = modifyImg;
+			nodeIcon = MODIFY_IMAGE;
 		} else {
-			nodeIcon = otherImg;
+			nodeIcon = OTHER_IMAGE;
 		}
 		return nodeIcon;
 	}
