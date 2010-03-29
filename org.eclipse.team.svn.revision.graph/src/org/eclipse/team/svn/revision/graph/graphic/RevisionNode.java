@@ -22,14 +22,12 @@ import org.eclipse.team.svn.revision.graph.PathRevision.ReviosionNodeType;
 import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
 
 /**
- * Getter methods which names start with 'internal' don't take
- * into account filtering and collapsing 
- * 
  * @author Igor Burilo
  */
 public class RevisionNode extends NodeConnections<RevisionNode> {
 
-	protected final PathRevision pathRevision;
+	private final PathRevision pathRevision;
+	private final RevisionRootNode rootNode;
 	
 	protected final ChangesNotifier changesNotifier;		
 	
@@ -37,8 +35,11 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 	
 	protected boolean isNextCollapsed;
 	protected boolean isPreviousCollapsed;
-	protected boolean isCopiedToCollapsed;
 	protected boolean isCopiedFromCollapsed;
+	//Separate copy to and rename flags
+	protected boolean isCopiedToCollapsed;
+	protected boolean isRenameCollapsed;
+	
 	
 	//TODO use in different hierarchy
 	protected int width;
@@ -47,8 +48,9 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 	protected int x;
 	protected int y;	
 	
-	public RevisionNode(PathRevision pathRevision) {
+	public RevisionNode(PathRevision pathRevision, RevisionRootNode rootNode) {
 		this.pathRevision = pathRevision;
+		this.rootNode = rootNode;
 		this.changesNotifier = new ChangesNotifier();				
 	}	
 	
@@ -86,6 +88,11 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 	
 	//--- connections manipulation
 	
+	/*
+	 * Getter methods which names start with 'internal' don't take
+	 * into account filtering and collapsing
+	 */
+	 
 	@Override
 	public RevisionNode getNext() {		
 		if (this.isNextCollapsed) {
@@ -138,34 +145,31 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 	}
 	
 	@Override
-	public Collection<RevisionNode> getCopiedToAsCollection() {
-		if (this.isCopiedToCollapsed) {
+	public Collection<RevisionNode> getCopiedToAsCollection() {		
+		if (this.isCopiedToCollapsed && this.isRenameCollapsed) {
 			return Collections.emptyList();
 		}
+		
+		LinkedList<RevisionNode> result = new LinkedList<RevisionNode>();		
 		Collection<RevisionNode> copiedTo = this.internalGetCopiedToAsCollection();
 		Iterator<RevisionNode> iter = copiedTo.iterator();
 		while (iter.hasNext()) {
-			if (iter.next().isFiltered) {
-				iter.remove();
-			}
-		}
-		return copiedTo;
-	}
-		
-	public Collection<RevisionNode> internalGetCopiedToAsCollection() {
-		LinkedList<RevisionNode> res = new LinkedList<RevisionNode>();
-		Collection<RevisionNode> copiedTo = super.getCopiedToAsCollection();
-		if (!copiedTo.isEmpty()) {
-			for (RevisionNode copiedToNode : copiedTo) { 
-				//if there's renamed node, we place it at first position
-				if (copiedToNode.pathRevision.action == RevisionNodeAction.RENAME) {
-					res.addFirst(copiedToNode);
-				} else {
-					res.add(copiedToNode);
+			RevisionNode node = iter.next();						
+			if (!node.isFiltered) {
+				boolean isRename = node.getAction() == RevisionNodeAction.RENAME;
+				if (!isRename && !this.isCopiedToCollapsed) {
+					result.add(node);
+				} else if (isRename && !this.isRenameCollapsed) {
+					//if there's renamed node, we place it at first position
+					result.addFirst(node);
 				}
 			}
 		}
-		return res;
+		return result;
+	}
+		
+	public Collection<RevisionNode> internalGetCopiedToAsCollection() {
+		return super.getCopiedToAsCollection();
 	}
 	
 	@Override
@@ -193,7 +197,7 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 	}
 	
 	public void refreshConnections() {
-		this.changesNotifier.firePropertyChange(ChangesNotifier.REFRESH_CONNECTIONS_PROPERTY, null, this);		
+		this.changesNotifier.firePropertyChange(ChangesNotifier.REFRESH_NODE_CONNECTIONS_PROPERTY, null, this);		
 	}
 	
 
@@ -235,15 +239,30 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 		return this.isFiltered;
 	}
 	
+	
+	//--- expand/collapse
+	
+	/*
+	 * Methods which names start with 'internal' don't fire notifications 
+	 */
+	
 	public boolean isNextCollapsed() {
 		return isNextCollapsed;
 	}
 	
 	public void setNextCollapsed(boolean isNextCollapsed) {
-		this.isNextCollapsed = isNextCollapsed;
+		//delegate to parent
+		if (isNextCollapsed) {
+			this.rootNode.collapseNext(this);
+		} else {
+			this.rootNode.expandNext(this);
+		}
 		
-		//TODO check notifications on big graph
-		this.changesNotifier.firePropertyChange(ChangesNotifier.EXPAND_COLLAPSE_PROPERTY, null, null);
+		this.changesNotifier.firePropertyChange(ChangesNotifier.EXPAND_COLLAPSE_ON_NODE_PROPERTY, null, null);
+	}
+	
+	public void internalSetNextCollapsed(boolean isNextCollapsed) {
+		this.isNextCollapsed = isNextCollapsed;
 	}
 	
 	public boolean isPreviousCollapsed() {
@@ -251,19 +270,56 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 	}
 	
 	public void setPreviousCollapsed(boolean isPreviousCollapsed) {
-		this.isPreviousCollapsed = isPreviousCollapsed;
+		//delegate to parent
+		if (isPreviousCollapsed) {
+			this.rootNode.collapsePrevious(this);
+		} else {
+			this.rootNode.expandPrevious(this);
+		}
 		
-		this.changesNotifier.firePropertyChange(ChangesNotifier.EXPAND_COLLAPSE_PROPERTY, null, null);
+		this.changesNotifier.firePropertyChange(ChangesNotifier.EXPAND_COLLAPSE_ON_NODE_PROPERTY, null, null);
 	}
 	
+	public void internalSetPreviousCollapsed(boolean isPreviousCollapsed) {
+		this.isPreviousCollapsed = isPreviousCollapsed;
+	}
+	 
 	public boolean isCopiedToCollapsed() {
 		return isCopiedToCollapsed;
 	}
 	
 	public void setCopiedToCollapsed(boolean isCopiedToCollapsed) {
-		this.isCopiedToCollapsed = isCopiedToCollapsed;
+		//delegate to parent
+		if (isCopiedToCollapsed) {
+			this.rootNode.collapseCopiedTo(this);
+		} else {
+			this.rootNode.expandCopiedTo(this);
+		}
 		
-		this.changesNotifier.firePropertyChange(ChangesNotifier.EXPAND_COLLAPSE_PROPERTY, null, null);
+		this.changesNotifier.firePropertyChange(ChangesNotifier.EXPAND_COLLAPSE_ON_NODE_PROPERTY, null, null);
+	}
+	
+	public void internalSetCopiedToCollapsed(boolean isCopiedToCollapsed) {
+		this.isCopiedToCollapsed = isCopiedToCollapsed;
+	}
+	
+	public boolean isRenameCollapsed() {
+		return isRenameCollapsed;
+	}
+	
+	public void setRenameCollapsed(boolean isRenameCollapsed) {
+		//delegate to parent
+		if (isRenameCollapsed) {
+			this.rootNode.collapseRename(this);
+		} else {
+			this.rootNode.expandRename(this);
+		}
+		
+		this.changesNotifier.firePropertyChange(ChangesNotifier.EXPAND_COLLAPSE_ON_NODE_PROPERTY, null, null);
+	}
+	
+	public void internalSetRenameCollapsed(boolean isRenameCollapsed) {
+		this.isRenameCollapsed = isRenameCollapsed;
 	}
 	
 	public boolean isCopiedFromCollapsed() {
@@ -271,9 +327,18 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 	}
 	
 	public void setCopiedFromCollapsed(boolean isCopiedFromCollapsed) {
-		this.isCopiedFromCollapsed = isCopiedFromCollapsed;
+		//delegate to parent
+		if (isCopiedFromCollapsed) {
+			this.rootNode.collapseCopiedFrom(this);
+		} else {
+			this.rootNode.expandCopiedFrom(this);
+		}
 		
-		this.changesNotifier.firePropertyChange(ChangesNotifier.EXPAND_COLLAPSE_PROPERTY, null, null);
+		this.changesNotifier.firePropertyChange(ChangesNotifier.EXPAND_COLLAPSE_ON_NODE_PROPERTY, null, null);
+	}
+	
+	public void internalSetCopiedFromCollapsed(boolean isCopiedFromCollapsed) {
+		this.isCopiedFromCollapsed = isCopiedFromCollapsed;	
 	}
 	
 

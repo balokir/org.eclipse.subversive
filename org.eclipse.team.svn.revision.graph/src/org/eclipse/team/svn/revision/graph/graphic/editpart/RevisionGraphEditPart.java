@@ -101,8 +101,8 @@ public class RevisionGraphEditPart extends AbstractGraphicalEditPart implements 
 	 * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent evt) {
-		if (RevisionRootNode.LAYOUT_PROPERTY.equals(evt.getPropertyName()) ||
-			ChangesNotifier.EXPAND_COLLAPSE_PROPERTY.equals(evt.getPropertyName())) {
+		if (RevisionRootNode.FILTER_NODES_PROPERTY.equals(evt.getPropertyName()) ||
+			ChangesNotifier.EXPAND_COLLAPSE_NODES_PROPERTY.equals(evt.getPropertyName())) {
 			refreshChildren();			
 		}
 	}

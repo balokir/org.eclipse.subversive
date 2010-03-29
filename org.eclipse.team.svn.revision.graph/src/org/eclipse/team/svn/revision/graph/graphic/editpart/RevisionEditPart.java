@@ -49,12 +49,14 @@ import org.eclipse.team.svn.revision.graph.graphic.figure.RevisionTooltipFigure;
 public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeEditPart, PropertyChangeListener {				
 	
 	protected final static String REVISION_LAYER = "revision";
-	protected final static String EXPAND_COLLAPSE_LAYER = "expandCollapse";
+	protected final static String COLLAPSE_LAYER = "collapse";
+	protected final static String EXPAND_LAYER = "expand";
 	
 	protected LayeredPane mainPane;
 	protected RevisionFigure revisionFigure;
+	protected ExpandCollapseDecorationFigure collapseFigure;
 	protected Layer expandLayer;
-	protected ExpandCollapseDecorationFigure expandCollapseDecorationFigure;	
+	protected ExpandCollapseDecorationFigure expandFigure;
 	
 	protected NodeMouseMotionListener nodeMouseMotionListener;
 	
@@ -68,16 +70,24 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 	protected class NodeMouseMotionListener extends MouseMotionListener.Stub {
 		
 		public void mouseEntered(MouseEvent me) {
-			expandCollapseDecorationFigure.setBounds(revisionFigure.getBounds());									
-			expandLayer.setVisible(true);
+			RevisionEditPart.this.addExpandFigure();
 		}
 
 		public void mouseExited(MouseEvent me) {
 			if (!mainPane.getBounds().contains(me.x, me.y)) { 
-				expandLayer.setVisible(false);
+				RevisionEditPart.this.removeExpandFigure();
 			}
 		}
 	}
+	
+	public void removeExpandFigure() {
+		this.expandLayer.setVisible(false);
+	}
+	
+	public void addExpandFigure() {
+		this.expandLayer.setVisible(true);
+	}
+	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.gef.editparts.AbstractGraphicalEditPart#activate()
@@ -118,14 +128,21 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 		Layer revisionLayer = new Layer();			
 		revisionLayer.add(this.revisionFigure);
 		
-		//expand/collapse layer
-		this.expandCollapseDecorationFigure = new ExpandCollapseDecorationFigure(revision);			
-		this.expandLayer = new Layer();					
-		this.expandLayer.add(this.expandCollapseDecorationFigure);						
+		//expand/collapse layers
+		Layer collapseLayer = new Layer();
+		this.collapseFigure = new ExpandCollapseDecorationFigure(revision, true);
+		collapseLayer.add(this.collapseFigure);				
+		
+		this.expandLayer = new Layer();											
+		this.expandFigure = new ExpandCollapseDecorationFigure(revision, false);
+		this.expandLayer.add(this.expandFigure);
 		this.expandLayer.setVisible(false);
-					
+		
 		this.mainPane.add(revisionLayer, RevisionEditPart.REVISION_LAYER);
-		this.mainPane.add(this.expandLayer, RevisionEditPart.EXPAND_COLLAPSE_LAYER);
+		
+		//TODO add expand/collapse
+//		this.mainPane.add(collapseLayer, RevisionEditPart.COLLAPSE_LAYER);
+//		this.mainPane.add(this.expandLayer, RevisionEditPart.EXPAND_LAYER);
 					
 		this.mainPane.setToolTip(new RevisionTooltipFigure(revision, rootNode.getDataContainer()));		
 				
@@ -137,20 +154,18 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 		Rectangle bounds = new Rectangle(node.getX(), node.getY(), node.getWidth(), node.getHeight());
 		this.getFigure().setBounds(bounds);
 		this.getRevisionFigure().setBounds(bounds);
-
+		this.collapseFigure.setBounds(bounds);
+		this.expandFigure.setBounds(bounds);
+		
 //		Iterator<?> conIter = this.getSourceConnections().iterator();
 //		while (conIter.hasNext()) {
 //			RevisionConnectionEditPart conEditPart = (RevisionConnectionEditPart) conIter.next();
 //			conEditPart.applyLayoutResults();
-//		}			
+//		}
 	}
 	
 	public RevisionFigure getRevisionFigure() {
 		return this.revisionFigure;
-	}
-	
-	public Layer getExpandLayer() {
-		return this.expandLayer;
 	}
 	
 	@Override
@@ -243,11 +258,14 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 	 * Listen to model notifications
 	 */
 	public void propertyChange(PropertyChangeEvent evt) {
-		if (ChangesNotifier.REFRESH_CONNECTIONS_PROPERTY.equals(evt.getPropertyName())) {
+		if (ChangesNotifier.REFRESH_NODE_CONNECTIONS_PROPERTY.equals(evt.getPropertyName())) {
 			this.refreshSourceConnections();
 			this.refreshTargetConnections();
-		} else if (ChangesNotifier.EXPAND_COLLAPSE_PROPERTY.equals(evt.getPropertyName())) {			
-			this.expandCollapseDecorationFigure.update();
+		} else if (ChangesNotifier.EXPAND_COLLAPSE_ON_NODE_PROPERTY.equals(evt.getPropertyName())) {
+			this.collapseFigure.update();
+			this.expandFigure.update();
+			
+			this.removeExpandFigure();
 		}
 	}
 	

@@ -122,7 +122,7 @@ public class RevisionFigure extends RoundedRectangle {
 		data.widthHint = RevisionFigure.FIGURE_WIDTH - 10;
 		data.horizontalAlignment = SWT.BEGINNING;							
 		layout.setConstraint(this.commentFigure, data);
-		this.commentFigure.setLabelAlignment(PositionConstants.LEFT);								
+		this.commentFigure.setLabelAlignment(PositionConstants.LEFT);
 	}			
 	
 	protected void initControls() {
