@@ -24,6 +24,7 @@ import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
+import org.eclipse.team.svn.revision.graph.SVNRevisionGraphPlugin;
 import org.eclipse.team.svn.revision.graph.operation.RevisionGraphUtility;
 import org.eclipse.team.svn.ui.extension.impl.DefaultSynchronizeViewActionContributor;
 import org.eclipse.team.svn.ui.extension.impl.synchronize.UpdateActionGroup;
@@ -43,6 +44,7 @@ public class GraphSynchronizeViewActionContributor extends DefaultSynchronizeVie
 
 		public ShowRevisionGraphAction(String text, ISynchronizePageConfiguration configuration) {
 			super(text, configuration);
+			this.setImageDescriptor(SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/showgraph.png"));
 		}
 		
 		@Override

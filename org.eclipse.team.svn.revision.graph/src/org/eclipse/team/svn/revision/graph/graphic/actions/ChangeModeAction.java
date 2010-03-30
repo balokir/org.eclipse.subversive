@@ -34,7 +34,7 @@ public class ChangeModeAction extends Action {
 		this.editor = editor;
 		
 		this.setToolTipText("Show only revisions with copies");
-		this.setImageDescriptor(SVNRevisionGraphPlugin.instance().getImageDescriptor("/icons/mode.gif"));
+		this.setImageDescriptor(SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/mode.gif"));
 		this.setId(ChangeModeAction.ChangeModeAction_ID);		
 	}
 	
