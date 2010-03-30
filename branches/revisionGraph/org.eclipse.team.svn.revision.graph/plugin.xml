@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
-
-   <!-- TODO: use correct icon -->
+  
    <extension point="org.eclipse.ui.editors">
       <editor
             class="org.eclipse.team.svn.revision.graph.graphic.RevisionGraphEditor"                        
@@ -19,7 +18,7 @@
       <objectContribution
             adaptable="true"
             objectClass="org.eclipse.core.resources.mapping.ResourceMapping"
-            id="org.eclipse.team.svn.ui.ResourceContributions">
+            id="org.eclipse.team.svn.revision.graph.ResourceContributions">
             
          <enablement>
            <adapt type="org.eclipse.core.resources.mapping.ResourceMapping">
@@ -28,13 +27,13 @@
          </enablement>
          
          <action
-              helpContextId="org.eclipse.team.svn.ui.show_revision_graph_action_context"
+              helpContextId="org.eclipse.team.svn.revision.graph.show_revision_graph_action_context"
               label="%ShowRevisionGraphAction.label"
               tooltip="%ShowRevisionGraphAction.tooltip"
               class="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphLocalAction"
               menubarPath="team.main/group4"
               id="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphLocalAction"
-              definitionId="org.eclipse.team.svn.ui.command.ShowRevisionGraphCommand">
+              definitionId="org.eclipse.team.svn.revision.graph.command.ShowRevisionGraphCommand">
          </action>
          
 	  </objectContribution>
@@ -43,18 +42,25 @@
             	
       <objectContribution
             objectClass="org.eclipse.team.svn.ui.repository.model.RepositoryLocation"
-            id="org.eclipse.team.svn.ui.RepositoryLocationContributions">
+            id="org.eclipse.team.svn.revision.graph.RepositoryLocationContributions">
             	  
-	  	 <!-- TODO add Show Revision Graph ? -->
+         <action
+              helpContextId="org.eclipse.team.svn.revision.graph.show_revision_graph_action_context"
+              label="%ShowRevisionGraphAction.label"
+              tooltip="%ShowRevisionGraphAction.tooltip"
+              class="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphRemoteAction"
+              menubarPath="propertiesGroup"
+              id="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphRemoteAction">
+         </action>
 	  	 	  
 	  </objectContribution>
 	              	
       <objectContribution
             objectClass="org.eclipse.team.svn.ui.repository.model.RepositoryFolder"
-            id="org.eclipse.team.svn.ui.RepositoryFolderContributions">
+            id="org.eclipse.team.svn.revision.graph.RepositoryFolderContributions">
             	
          <action
-              helpContextId="org.eclipse.team.svn.ui.show_revision_graph_action_context"
+              helpContextId="org.eclipse.team.svn.revision.graph.show_revision_graph_action_context"
               label="%ShowRevisionGraphAction.label"
               tooltip="%ShowRevisionGraphAction.tooltip"
               class="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphRemoteAction"
@@ -66,10 +72,10 @@
 	  
       <objectContribution
             objectClass="org.eclipse.team.svn.ui.repository.model.RepositoryFile"
-            id="org.eclipse.team.svn.ui.RepositoryFileContributions">
+            id="org.eclipse.team.svn.revision.graph.RepositoryFileContributions">
             
          <action
-              helpContextId="org.eclipse.team.svn.ui.show_revision_graph_action_context"
+              helpContextId="org.eclipse.team.svn.revision.graph.show_revision_graph_action_context"
               label="%ShowRevisionGraphAction.label"
               tooltip="%ShowRevisionGraphAction.tooltip"
               class="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphRemoteAction"
@@ -78,12 +84,19 @@
          </action>              
             	  
 	  </objectContribution>
-	  
+	  	  	  
       <objectContribution
             objectClass="org.eclipse.team.svn.ui.repository.RepositoryFileEditorInput"
-            id="org.eclipse.team.svn.ui.RepositoryFileEditorInputContributions">
+            id="org.eclipse.team.svn.revision.graph.RepositoryFileEditorInputContributions">
             
-            <!-- TODO add Show Revision Graph ? -->
+         <action
+              helpContextId="org.eclipse.team.svn.revision.graph.show_revision_graph_action_context"
+              label="%ShowRevisionGraphAction.label"
+              tooltip="%ShowRevisionGraphAction.tooltip"
+              class="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphRemoteAction"
+              menubarPath="propertiesGroup"
+              id="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphRemoteAction">
+         </action>             
             
 	  </objectContribution>
   </extension>
@@ -92,29 +105,55 @@
   <extension
 		point="org.eclipse.ui.actionSets">	  	  
     <actionSet
-        id="org.eclipse.team.svn.ui.action.shortcuts"
-        label="SVN"
+        id="org.eclipse.team.svn.revision.graph.action.shortcuts"
+        label="SVN Revision Graph"
         description="Customizable SVN Actions"
         visible="false">
         	  	  
        <action
      	  class="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphLocalAction"
-     	  definitionId="org.eclipse.team.svn.ui.command.ShowRevisionGraphCommand"
+     	  definitionId="org.eclipse.team.svn.revision.graph.command.ShowRevisionGraphCommand"
      	  id="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphLocalAction"
      	  menubarPath="svn.main/group5"     	  
-          helpContextId="org.eclipse.team.svn.ui.show_revision_graph_action_context"
+          helpContextId="org.eclipse.team.svn.revision.graph.show_revision_graph_action_context"
           tooltip="%ShowRevisionGraphAction.tooltip"
           label="%ShowRevisionGraphAction.label"/>   	  	  
     </actionSet>
     
   </extension>	         	
+
+  <!-- Contribute to model-aware synchronize view -->  	
+  <extension point="org.eclipse.ui.navigator.viewer">
+       <viewerActionBinding viewerId="org.eclipse.team.svn.ui.workspaceSynchronization">
+          <includes>
+       	     <actionExtension pattern="org.eclipse.team.svn.revision.graph.action.GraphSynchronizeViewActionProvider" />		       	      
+          </includes>
+       </viewerActionBinding>
+  </extension>	
+
+   <extension point="org.eclipse.ui.navigator.navigatorContent">
+	   <actionProvider           
+	   		class="org.eclipse.team.svn.revision.graph.action.GraphSynchronizeViewActionProvider"
+	     	id="org.eclipse.team.svn.revision.graph.action.GraphSynchronizeViewActionProvider">
+	     	
+	     <enablement>	     			  
+	       	<adapt type="org.eclipse.core.resources.IResource"/>
+	     </enablement>
+
+	   </actionProvider>
+   </extension>
+	
+  <!-- Contribute to not-model-aware synchronize view -->
+  <extension point="org.eclipse.team.svn.ui.synchronizeActionContribution">
+     <contributor class="org.eclipse.team.svn.revision.graph.action.GraphSynchronizeViewActionContributor"/>
+  </extension>	
 	
   <extension
        point="org.eclipse.ui.commands">
     	
     <command
           categoryId="org.eclipse.team.svn.ui.command.category"
-          id="org.eclipse.team.svn.ui.command.ShowRevisionGraphCommand"
+          id="org.eclipse.team.svn.revision.graph.command.ShowRevisionGraphCommand"
           name="%ShowRevisionGraphCommand.label"/>  	
   </extension>
 
@@ -122,8 +161,9 @@
        point="org.eclipse.ui.bindings">
        
     <key
-	  commandId="org.eclipse.team.svn.ui.command.ShowRevisionGraphCommand"
+	  commandId="org.eclipse.team.svn.revision.graph.command.ShowRevisionGraphCommand"
 	  schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
 	  sequence="CTRL+ALT+Q"/>       
   </extension>
+    
 </plugin>
