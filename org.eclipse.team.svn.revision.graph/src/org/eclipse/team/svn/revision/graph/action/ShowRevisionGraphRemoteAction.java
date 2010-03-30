@@ -12,6 +12,7 @@ package org.eclipse.team.svn.revision.graph.action;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.revision.graph.operation.RevisionGraphUtility;
 import org.eclipse.team.svn.ui.action.AbstractRepositoryTeamAction;
 
@@ -32,7 +33,17 @@ public class ShowRevisionGraphRemoteAction extends AbstractRepositoryTeamAction 
 	}
 	
 	public boolean isEnabled() {
-		return this.getSelectedRepositoryResources().length == 1;
+		IRepositoryResource[] resources = this.getSelectedRepositoryResources();
+		if (resources.length == 1) {
+			IRepositoryResource resource = resources[0];
+			//don't enable for repository root
+			if (resource instanceof IRepositoryRoot) {
+				return !resource.getUrl().equals(resource.getRepositoryLocation().getRepositoryRootUrl());
+			} else {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }
