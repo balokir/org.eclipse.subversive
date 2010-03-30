@@ -33,7 +33,8 @@
               class="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphLocalAction"
               menubarPath="team.main/group4"
               id="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphLocalAction"
-              definitionId="org.eclipse.team.svn.revision.graph.command.ShowRevisionGraphCommand">
+              definitionId="org.eclipse.team.svn.revision.graph.command.ShowRevisionGraphCommand"
+              icon="icons/showgraph.png">
          </action>
          
 	  </objectContribution>
@@ -50,7 +51,8 @@
               tooltip="%ShowRevisionGraphAction.tooltip"
               class="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphRemoteAction"
               menubarPath="propertiesGroup"
-              id="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphRemoteAction">
+              id="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphRemoteAction"
+              icon="icons/showgraph.png">
          </action>
 	  	 	  
 	  </objectContribution>
@@ -65,7 +67,8 @@
               tooltip="%ShowRevisionGraphAction.tooltip"
               class="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphRemoteAction"
               menubarPath="propertiesGroup"
-              id="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphRemoteAction">
+              id="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphRemoteAction"
+              icon="icons/showgraph.png">
          </action>
            
 	  </objectContribution>
@@ -80,7 +83,8 @@
               tooltip="%ShowRevisionGraphAction.tooltip"
               class="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphRemoteAction"
               menubarPath="propertiesGroup"
-              id="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphRemoteAction">
+              id="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphRemoteAction"
+              icon="icons/showgraph.png">
          </action>              
             	  
 	  </objectContribution>
@@ -95,7 +99,8 @@
               tooltip="%ShowRevisionGraphAction.tooltip"
               class="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphRemoteAction"
               menubarPath="propertiesGroup"
-              id="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphRemoteAction">
+              id="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphRemoteAction"
+              icon="icons/showgraph.png">
          </action>             
             
 	  </objectContribution>
@@ -117,7 +122,8 @@
      	  menubarPath="svn.main/group5"     	  
           helpContextId="org.eclipse.team.svn.revision.graph.show_revision_graph_action_context"
           tooltip="%ShowRevisionGraphAction.tooltip"
-          label="%ShowRevisionGraphAction.label"/>   	  	  
+          label="%ShowRevisionGraphAction.label"
+          icon="icons/showgraph.png"/>   	  	  
     </actionSet>
     
   </extension>	         	

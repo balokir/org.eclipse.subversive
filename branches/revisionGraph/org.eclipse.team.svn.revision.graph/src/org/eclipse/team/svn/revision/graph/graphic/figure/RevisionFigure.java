@@ -74,28 +74,28 @@ public class RevisionFigure extends Figure {
 	
 	static {
 		//images
-		TRUNK_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("/icons/trunk.gif").createImage();
+		TRUNK_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/trunk.gif").createImage();
 		SVNRevisionGraphPlugin.disposeOnShutdown(TRUNK_IMAGE);
 		
-		BRANCH_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("/icons/branch.gif").createImage();
+		BRANCH_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/branch.gif").createImage();
 		SVNRevisionGraphPlugin.disposeOnShutdown(BRANCH_IMAGE);
 		
-		TAG_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("/icons/tag.gif").createImage();
+		TAG_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/tag.gif").createImage();
 		SVNRevisionGraphPlugin.disposeOnShutdown(TAG_IMAGE);
 		
-		ADD_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("/icons/add.gif").createImage();
+		ADD_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/add.gif").createImage();
 		SVNRevisionGraphPlugin.disposeOnShutdown(ADD_IMAGE);
 		
-		DELETE_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("/icons/delete.gif").createImage();
+		DELETE_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/delete.gif").createImage();
 		SVNRevisionGraphPlugin.disposeOnShutdown(DELETE_IMAGE);
 		
-		MODIFY_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("/icons/modify.gif").createImage();
+		MODIFY_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/modify.gif").createImage();
 		SVNRevisionGraphPlugin.disposeOnShutdown(MODIFY_IMAGE);
 		
-		RENAME_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("/icons/rename.gif").createImage();
+		RENAME_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/rename.gif").createImage();
 		SVNRevisionGraphPlugin.disposeOnShutdown(RENAME_IMAGE);
 		
-		OTHER_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("/icons/other.gif").createImage();
+		OTHER_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/other.gif").createImage();
 		SVNRevisionGraphPlugin.disposeOnShutdown(OTHER_IMAGE);
 		
 		//colors
