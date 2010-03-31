@@ -62,6 +62,10 @@ public class RevisionGraphEditorInput implements IEditorInput {
 		return this.model;
 	}
 	
+	public void setModel(Object model) {
+		this.model = model;
+	}
+	
 	public IRepositoryResource getResource() {
 		return this.resource;
 	}

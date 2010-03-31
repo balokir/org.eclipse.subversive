@@ -661,6 +661,10 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 		return this.resource;
 	}
 	
+	public RevisionDataContainer getDataContainer() {
+		return this.dataContainer;
+	}
+	
 	/*
 	 * For DEBUG
 	 */

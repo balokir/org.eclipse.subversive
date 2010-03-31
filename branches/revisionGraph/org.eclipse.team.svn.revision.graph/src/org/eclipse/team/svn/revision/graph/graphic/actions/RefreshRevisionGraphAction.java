@@ -11,31 +11,28 @@
 package org.eclipse.team.svn.revision.graph.graphic.actions;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.team.svn.revision.graph.SVNRevisionGraphPlugin;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionGraphEditor;
-import org.eclipse.team.svn.revision.graph.graphic.RevisionRootNode;
+import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
 import org.eclipse.ui.IEditorPart;
 
-/** 
- * Action to switch between modes
- * 
- * (as implementation reference see FlyoutChangeLayoutAction in scheme editor)
+/**
+ * Refresh revision graph
  * 
  * @author Igor Burilo
  */
-public class ChangeModeAction extends Action {
+public class RefreshRevisionGraphAction extends Action {
 
-	public final static String ChangeModeAction_ID = "ChangeMode";
+	public final static String RefreshRevisionGraphAction_ID = "RefreshRevisionGraph";
 	
 	protected IEditorPart editor;
 	
-	public ChangeModeAction(IEditorPart editor) {
-		super("Show Only Revisions with Copies", Action.AS_CHECK_BOX);
+	public RefreshRevisionGraphAction(IEditorPart editor) {
+		super("Refresh");
 		this.editor = editor;
 		
-		this.setToolTipText("Show Only Revisions with Copies");
-		this.setImageDescriptor(SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/mode.gif"));
-		this.setId(ChangeModeAction.ChangeModeAction_ID);		
+		this.setToolTipText("Refresh");
+		this.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/refresh.gif"));
+		this.setId(RefreshRevisionGraphAction.RefreshRevisionGraphAction_ID);		
 	}
 	
 	public void setActiveEditor(IEditorPart editor) {
@@ -45,12 +42,7 @@ public class ChangeModeAction extends Action {
 	@Override
 	public void run() {			
 		if (this.editor instanceof RevisionGraphEditor) {
-			RevisionGraphEditor graphEditor = (RevisionGraphEditor) this.editor;
-			Object objModel = graphEditor.getModel();
-			if (objModel instanceof RevisionRootNode) {
-				RevisionRootNode model = (RevisionRootNode) objModel;
-				model.setMode(this.isChecked());
-			}
+			((RevisionGraphEditor) this.editor).handleRefresh();			
 		}			
 	}
 }
