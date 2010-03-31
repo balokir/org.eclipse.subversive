@@ -24,6 +24,7 @@ public class RevisionGraphActionBarContributor extends GraphActionBarContributor
 	protected RevisionGraphEditor editor;	
 	
 	protected ChangeModeAction changeModetAction;
+	protected RefreshRevisionGraphAction refreshAction;
 	
 	@Override
 	public void setActiveEditor(IEditorPart editor) {
@@ -31,9 +32,11 @@ public class RevisionGraphActionBarContributor extends GraphActionBarContributor
 		
 		this.editor = (RevisionGraphEditor)editor;
 		this.changeModetAction.setActiveEditor(this.editor);
+		this.refreshAction.setActiveEditor(this.editor);
 		
 		if (!(this.editor.getModel() instanceof RevisionRootNode)) {
-			this.changeModetAction.setEnabled(false);	
+			this.changeModetAction.setEnabled(false);
+			this.refreshAction.setEnabled(false);
 		} else {
 			RevisionRootNode rootNode = (RevisionRootNode) this.editor.getModel();
 			this.changeModetAction.setChecked(rootNode.isSimpleMode());
@@ -44,12 +47,16 @@ public class RevisionGraphActionBarContributor extends GraphActionBarContributor
 	protected void buildActions() {
 		this.changeModetAction = new ChangeModeAction(this.editor);		
 		addAction(this.changeModetAction);
+		
+		this.refreshAction = new RefreshRevisionGraphAction(this.editor);
+		addAction(this.refreshAction);
 	}
 	
 	@Override
 	public void contributeToToolBar(IToolBarManager toolBarManager) {
 		super.contributeToToolBar(toolBarManager);
 					
+		toolBarManager.add(this.refreshAction);  
 		toolBarManager.add(this.changeModetAction);  
 		
 		//toolBarManager.add(new Separator());
