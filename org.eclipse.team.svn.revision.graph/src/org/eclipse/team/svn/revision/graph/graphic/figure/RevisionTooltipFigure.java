@@ -21,7 +21,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.team.svn.core.SVNMessages;
-import org.eclipse.team.svn.revision.graph.cache.RevisionDataContainer;
+import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
 import org.eclipse.team.svn.ui.utility.DateFormatter;
 
@@ -33,7 +33,7 @@ import org.eclipse.team.svn.ui.utility.DateFormatter;
 public class RevisionTooltipFigure extends Figure {
 
 	protected final RevisionNode revisionNode;
-	protected final RevisionDataContainer dataContainer;
+	protected final RepositoryCache repositoryCache;
 	
 	protected Label pathText;
 	protected Label authorText;
@@ -41,9 +41,9 @@ public class RevisionTooltipFigure extends Figure {
 	protected Label copyText;
 	protected Label commentText;
 	
-	public RevisionTooltipFigure(RevisionNode revisionNode, RevisionDataContainer dataContainer) {
+	public RevisionTooltipFigure(RevisionNode revisionNode, RepositoryCache repositoryCache) {
 		this.revisionNode = revisionNode;
-		this.dataContainer = dataContainer;
+		this.repositoryCache = repositoryCache;
 		
 		this.createControls();
 		this.initControls();
@@ -124,7 +124,7 @@ public class RevisionTooltipFigure extends Figure {
 	
 	protected void initControls() {
 		this.pathText.setIcon(RevisionFigure.getRevisionNodeIcon(this.revisionNode));
-		this.pathText.setText(this.dataContainer.getPathStorage().getPath(this.revisionNode.getPathIndex()) + "@" + this.revisionNode.getRevision());
+		this.pathText.setText(this.repositoryCache.getPathStorage().getPath(this.revisionNode.getPathIndex()) + "@" + this.revisionNode.getRevision());
 		
 		String author = this.revisionNode.getAuthor();
 		this.authorText.setText(author == null || author.length() == 0 ? SVNMessages.SVNInfo_NoAuthor : author);
@@ -134,7 +134,7 @@ public class RevisionTooltipFigure extends Figure {
 		
 		if (this.revisionNode.getCopiedFrom() != null) {
 			RevisionNode copiedFrom = this.revisionNode.getCopiedFrom();
-			this.copyText.setText(this.dataContainer.getPathStorage().getPath(copiedFrom.getPathIndex()) + "@" + copiedFrom.getRevision());
+			this.copyText.setText(this.repositoryCache.getPathStorage().getPath(copiedFrom.getPathIndex()) + "@" + copiedFrom.getRevision());
 		}
 		
 		String comment = this.revisionNode.getMessage();

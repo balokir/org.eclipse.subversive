@@ -144,7 +144,7 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 //		this.mainPane.add(collapseLayer, RevisionEditPart.COLLAPSE_LAYER);
 //		this.mainPane.add(this.expandLayer, RevisionEditPart.EXPAND_LAYER);
 					
-		this.mainPane.setToolTip(new RevisionTooltipFigure(revision, rootNode.getDataContainer()));		
+		this.mainPane.setToolTip(new RevisionTooltipFigure(revision, rootNode.getRepositoryCache()));		
 				
 		return this.mainPane;
 	}

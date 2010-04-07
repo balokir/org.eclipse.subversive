@@ -12,7 +12,7 @@ package org.eclipse.team.svn.revision.graph.operation;
 
 import org.eclipse.team.svn.revision.graph.PathRevision;
 import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
-import org.eclipse.team.svn.revision.graph.cache.RevisionDataContainer;
+import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
 
 /** 
  * Validate revision graph node:
@@ -28,10 +28,10 @@ import org.eclipse.team.svn.revision.graph.cache.RevisionDataContainer;
  */
 public class PathRevisionConnectionsValidator {
 
-	protected RevisionDataContainer dataContainer;
+	protected RepositoryCache repositoryCache;
 	
-	public PathRevisionConnectionsValidator(RevisionDataContainer dataContainer) {
-		this.dataContainer = dataContainer;
+	public PathRevisionConnectionsValidator(RepositoryCache repositoryCache) {
+		this.repositoryCache = repositoryCache;
 	}
 	
 	public void validate(PathRevision node) {		
@@ -39,20 +39,20 @@ public class PathRevisionConnectionsValidator {
 		if (node.getNext() != null && node.getPathIndex() != node.getNext().getPathIndex()) {
 			this.reportProblem(node, 
 				"Its path and next node path are not equal. " +
-				"Next node: " + node.getNext().toString(this.dataContainer));						
+				"Next node: " + node.getNext().toString(this.repositoryCache));						
 		}
 		if (node.getPrevious() != null && node.getPathIndex() != node.getPrevious().getPathIndex()) {
 			this.reportProblem(node, 
 				"Its path and previous node path are not equal. " +
-				"Previous node: " + node.getPrevious().toString(this.dataContainer));						
+				"Previous node: " + node.getPrevious().toString(this.repositoryCache));						
 		}
 		
 		//check copy from and not previous
 		if (node.getCopiedFrom() != null && node.getPrevious() != null) {
 			this.reportProblem(node,							 
 				"It contains previous and copied from nodes. " +
-				"Previous node: " + node.getPrevious().toString(this.dataContainer) + ", " +
-				"copied from node: " + node.getCopiedFrom().toString(this.dataContainer));
+				"Previous node: " + node.getPrevious().toString(this.repositoryCache) + ", " +
+				"copied from node: " + node.getCopiedFrom().toString(this.repositoryCache));
 		}				
 		
 		//check rename					
@@ -65,16 +65,16 @@ public class PathRevisionConnectionsValidator {
 				if (node.getNext() != null) {
 					this.reportProblem(node,
 						"It contains next and rename nodes. " +
-						"Next node: " + node.getNext().toString(this.dataContainer) + ", " +
-						"rename node: " + copiedToNode.toString(this.dataContainer));								
+						"Next node: " + node.getNext().toString(this.repositoryCache) + ", " +
+						"rename node: " + copiedToNode.toString(this.repositoryCache));								
 				}
 				
 				//check that there's only one rename
 				if (renameNode != null) {
 					this.reportProblem(node,										 
 						"It contains several rename nodes. " +
-						"Rename node1: " + renameNode.toString(this.dataContainer) + ", " +
-						"rename node2: " + copiedToNode.toString(this.dataContainer));
+						"Rename node1: " + renameNode.toString(this.repositoryCache) + ", " +
+						"rename node2: " + copiedToNode.toString(this.repositoryCache));
 				}
 				
 				renameNode = copiedToNode;
@@ -83,7 +83,7 @@ public class PathRevisionConnectionsValidator {
 	}
 
 	protected void reportProblem(PathRevision node, String string) {
-		String message = "Not valid node: " + node.toString(this.dataContainer) + ". ";
+		String message = "Not valid node: " + node.toString(this.repositoryCache) + ". ";
 		throw new RuntimeException(message + string);		
 	}
 }

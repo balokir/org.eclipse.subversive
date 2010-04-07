@@ -27,26 +27,18 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  */
 public class RevisionGraphUtility {
 
-	protected final static String EDITOR_ID = "org.eclipse.team.svn.revision.graph.graphic.RevisionGraphEditor";
+	protected final static String EDITOR_ID = "org.eclipse.team.svn.revision.graph.graphic.RevisionGraphEditor"; 
 	
-	public static CompositeOperation getRevisionGraphOperation(IRepositoryResource resource) {
+	public static CompositeOperation getRevisionGraphOperation(final IRepositoryResource resource) {
 		CompositeOperation op = new CompositeOperation("Show Revision Graph Operation");							
 		
-		CheckRepositoryConnectionOperation checkConnectionOp = new CheckRepositoryConnectionOperation(resource);
-		op.add(checkConnectionOp);
-		
-		final PrepareRevisionDataOperation prepareDataOp = new PrepareRevisionDataOperation(resource);
-		op.add(prepareDataOp, new IActionOperation[]{checkConnectionOp});
-					
-		FetchSkippedRevisionsOperation fetchSkippedOp = new FetchSkippedRevisionsOperation(resource, checkConnectionOp, prepareDataOp);
-		op.add(fetchSkippedOp, new IActionOperation[]{prepareDataOp});
-		
-		FetchNewRevisionsOperation fetchNewOp = new FetchNewRevisionsOperation(resource, checkConnectionOp, prepareDataOp);
-		op.add(fetchNewOp, new IActionOperation[]{fetchSkippedOp});					
-		
+		//create cache
+		CreateCacheDataOperation createCacheOp = new CreateCacheDataOperation(resource);
+		op.add(createCacheOp);
+				
 		//create model
-		final CreateRevisionGraphModelOperation createModelOp = new CreateRevisionGraphModelOperation(resource, prepareDataOp);
-		op.add(createModelOp, new IActionOperation[]{checkConnectionOp});		
+		final CreateRevisionGraphModelOperation createModelOp = new CreateRevisionGraphModelOperation(resource, createCacheOp);
+		op.add(createModelOp, new IActionOperation[] {createCacheOp} );		
 		
 		//visualize
 		AbstractActionOperation showRevisionGraphOp = new AbstractActionOperation("Create Revision Graph Operation") {			
@@ -56,7 +48,7 @@ public class RevisionGraphUtility {
 					public void run() {
 						try {							
 							Object modelObject = createModelOp.getModel() != null ? 
-								new RevisionRootNode(createModelOp.getModel(), prepareDataOp.getDataContainer()) : 
+								new RevisionRootNode(resource, createModelOp.getModel(), createModelOp.getRepositoryCache()) : 
 								"There's no data";
 							RevisionGraphEditorInput input = new RevisionGraphEditorInput(createModelOp.getResource(), modelObject);
 							UIMonitorUtility.getActivePage().openEditor(input, RevisionGraphUtility.EDITOR_ID);														

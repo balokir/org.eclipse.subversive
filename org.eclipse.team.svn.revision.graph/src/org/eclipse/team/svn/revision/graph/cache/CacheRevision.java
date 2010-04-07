@@ -22,22 +22,22 @@ import java.io.IOException;
 /**
  * @author Igor Burilo
  */
-public class RevisionStructure {
+public class CacheRevision {
 	
 	protected long revision;
 
 	//TODO don't separate it to another class
-	protected RevisionDataStructure revisionData;
+	protected CacheRevisionData revisionData;
 	
-	protected ChangedPathStructure[] changedPaths = new ChangedPathStructure[0];
+	protected CacheChangedPath[] changedPaths = new CacheChangedPath[0];
 	
-	public RevisionStructure(long revision, ChangedPathStructure[] changedPaths, RevisionDataStructure revisionData) {
+	public CacheRevision(long revision, CacheChangedPath[] changedPaths, CacheRevisionData revisionData) {
 		this.revision = revision;
 		this.changedPaths = changedPaths;
 		this.revisionData = revisionData;
 	}
 	
-	public RevisionStructure(byte[] bytes) {
+	public CacheRevision(byte[] bytes) {
 		this.fromBytes(bytes);
 	}
 	
@@ -45,7 +45,7 @@ public class RevisionStructure {
 		return this.changedPaths.length > 0;
 	}
 	
-	public ChangedPathStructure[] getChangedPaths() {
+	public CacheChangedPath[] getChangedPaths() {
 		return this.changedPaths;
 	} 
 	
@@ -73,10 +73,10 @@ public class RevisionStructure {
 							
 			//changed paths
 			int changedPathsCount = bytesIn.readInt();
-			this.changedPaths = new ChangedPathStructure[changedPathsCount];
+			this.changedPaths = new CacheChangedPath[changedPathsCount];
 			for (int i = 0; i < changedPathsCount; i ++) {
 				byte[] pathBytes = BytesUtility.readBytesWithLength(bytesIn);
-				this.changedPaths[i] = new ChangedPathStructure(pathBytes);			
+				this.changedPaths[i] = new CacheChangedPath(pathBytes);			
 			}
 			
 			//revision data		
@@ -84,7 +84,7 @@ public class RevisionStructure {
 			if (revisionDataLength > 0) {
 				byte[] revisionDataBytes = new byte[revisionDataLength];
 				bytesIn.readFully(revisionDataBytes);
-				this.revisionData = new RevisionDataStructure(revisionDataBytes);
+				this.revisionData = new CacheRevisionData(revisionDataBytes);
 			}	
 		} catch (IOException e) {
 			//ignore
@@ -113,7 +113,7 @@ public class RevisionStructure {
 			
 			//changed paths
 			revisionBytes.writeInt(this.changedPaths.length);
-			for (ChangedPathStructure changedPath : this.changedPaths) {
+			for (CacheChangedPath changedPath : this.changedPaths) {
 				byte[] pathBytes = changedPath.toBytes();
 				BytesUtility.writeBytesWithLength(revisionBytes, pathBytes);			
 			}

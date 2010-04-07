@@ -19,8 +19,7 @@ import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.SVNUtility;
-import org.eclipse.team.svn.revision.graph.cache.CacheMetadata;
-import org.eclipse.team.svn.revision.graph.cache.RevisionDataContainer;
+import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
 import org.eclipse.team.svn.revision.graph.cache.TimeMeasure;
 
 /**
@@ -31,29 +30,27 @@ public abstract class BaseFetchOperation extends AbstractActionOperation {
 
 	protected IRepositoryResource resource;
 	protected CheckRepositoryConnectionOperation checkConnectionOp;
-	protected PrepareRevisionDataOperation prepareDataOp;
+	protected RepositoryCache repositoryCache;
 	
 	//should be filled by derived classes
 	protected boolean canRun;
 	protected long startRevision;
 	protected long endRevision;	
 	
-	public BaseFetchOperation(String operationName, IRepositoryResource resource, CheckRepositoryConnectionOperation checkConnectionOp, PrepareRevisionDataOperation prepareDataOp) {
+	public BaseFetchOperation(String operationName, IRepositoryResource resource, CheckRepositoryConnectionOperation checkConnectionOp, RepositoryCache repositoryCache) {
 		super(operationName);
 		this.resource = resource;
 		this.checkConnectionOp = checkConnectionOp;
-		this.prepareDataOp = prepareDataOp;
+		this.repositoryCache = repositoryCache;
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		TimeMeasure measure = new TimeMeasure("Fetch revisions " + this.getClass().getName());
 		
-		if (this.checkConnectionOp.hasConnection()) {						
-			
-			RevisionDataContainer dataContainer = this.prepareDataOp.getDataContainer();
-			this.prepareData(dataContainer.getCacheMetadata(), monitor);
+		if (this.checkConnectionOp.hasConnection()) {												
+			this.prepareData(monitor);
 			if (this.canRun) {
-				LogEntriesCallback callback = new LogEntriesCallback(this, monitor, (int) (this.endRevision - this.startRevision + 1), dataContainer);
+				LogEntriesCallback callback = new LogEntriesCallback(this, monitor, (int) (this.endRevision - this.startRevision + 1), repositoryCache);
 				
 				ISVNConnector proxy = this.resource.getRepositoryLocation().acquireSVNProxy();
 				try {
@@ -78,8 +75,8 @@ public abstract class BaseFetchOperation extends AbstractActionOperation {
 					}
 					
 					//save not yet saved revisions
-					if (dataContainer.isDirty()) {
-						dataContainer.save(monitor);
+					if (repositoryCache.isDirty()) {
+						repositoryCache.save(monitor);
 					}
 				} 		
 			}						
@@ -88,6 +85,6 @@ public abstract class BaseFetchOperation extends AbstractActionOperation {
 		measure.end();
 	}
 	
-	protected abstract void prepareData(CacheMetadata metadata, IProgressMonitor monitor) throws Exception;
+	protected abstract void prepareData(IProgressMonitor monitor) throws Exception;
 
 }

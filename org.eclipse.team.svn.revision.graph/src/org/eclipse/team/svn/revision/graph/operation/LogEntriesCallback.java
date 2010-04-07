@@ -17,7 +17,7 @@ import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNLogEntryCallbackWithMergeInfo;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
-import org.eclipse.team.svn.revision.graph.cache.RevisionDataContainer;
+import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
 
 /**
  * Provide progress for operation
@@ -37,17 +37,17 @@ public class LogEntriesCallback extends SVNLogEntryCallbackWithMergeInfo {
 	protected int currentWork;	
 	protected SVNLogEntry currentEntry;
 	
-	protected RevisionDataContainer dataContainer;
+	protected RepositoryCache repositoryCache;
 	
 	protected int processedRevisionsCount;
 	
 	protected Throwable error;
 	
-	public LogEntriesCallback(IActionOperation op, IProgressMonitor monitor, int totalWork, RevisionDataContainer dataContainer) throws IOException {
+	public LogEntriesCallback(IActionOperation op, IProgressMonitor monitor, int totalWork, RepositoryCache repositoryCache) throws IOException {
 		this.op = op;
 		this.monitor = monitor;
 		this.totalWork = totalWork;				
-		this.dataContainer = dataContainer;
+		this.repositoryCache = repositoryCache;
 	}
 	
 	@Override
@@ -61,19 +61,19 @@ public class LogEntriesCallback extends SVNLogEntryCallbackWithMergeInfo {
 			ProgressMonitorUtility.progress(this.monitor, ++ this.currentWork, this.totalWork);
 					
 			try {
-				this.dataContainer.addEntry(entry);
+				this.repositoryCache.addEntry(entry);
 				
 				//save
 				if (++ this.processedRevisionsCount  % LogEntriesCallback.REVISIONS_COUNT_FOR_SAVE == 0) {
-					this.dataContainer.save(this.monitor);
+					this.repositoryCache.save(this.monitor);
 				}
 				
-				long start = this.dataContainer.getCacheMetadata().getStartSkippedRevision();
-				long end = this.dataContainer.getCacheMetadata().getEndSkippedRevision();		
+				long start = this.repositoryCache.getCacheInfo().getStartSkippedRevision();
+				long end = this.repositoryCache.getCacheInfo().getEndSkippedRevision();		
 				if (start > --end) {
 					start = end = 0;
 				} 		
-				this.dataContainer.getCacheMetadata().setSkippedRevisions(start, end);				
+				this.repositoryCache.getCacheInfo().setSkippedRevisions(start, end);				
 			} catch (Throwable e) {
 				this.error = e;				
 				this.monitor.setCanceled(true);				

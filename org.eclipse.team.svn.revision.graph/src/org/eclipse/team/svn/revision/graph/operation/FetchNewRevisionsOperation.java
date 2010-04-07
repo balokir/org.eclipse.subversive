@@ -12,7 +12,8 @@ package org.eclipse.team.svn.revision.graph.operation;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
-import org.eclipse.team.svn.revision.graph.cache.CacheMetadata;
+import org.eclipse.team.svn.revision.graph.cache.RepositoryCacheInfo;
+import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
 
 /**
  * Fetch revisions after last processed revision
@@ -21,22 +22,24 @@ import org.eclipse.team.svn.revision.graph.cache.CacheMetadata;
  */
 public class FetchNewRevisionsOperation extends BaseFetchOperation {
 	
-	public FetchNewRevisionsOperation(IRepositoryResource resource, CheckRepositoryConnectionOperation checkConnectionOp, PrepareRevisionDataOperation prepareDataOp) {
-		super("Fetch New Revisions", resource, checkConnectionOp, prepareDataOp);
+	public FetchNewRevisionsOperation(IRepositoryResource resource, CheckRepositoryConnectionOperation checkConnectionOp, RepositoryCache repositoryCache) {
+		super("Fetch New Revisions", resource, checkConnectionOp, repositoryCache);
 	}
 
 	@Override
-	protected void prepareData(CacheMetadata metadata, IProgressMonitor monitor) throws Exception {
-		this.startRevision = metadata.getLastProcessedRevision() + 1;
+	protected void prepareData(IProgressMonitor monitor) throws Exception {
+		RepositoryCacheInfo cacheInfo = this.repositoryCache.getCacheInfo();
+		
+		this.startRevision = cacheInfo.getLastProcessedRevision() + 1;
 		this.endRevision = this.checkConnectionOp.getLastRepositoryRevision();
 		
-		this.canRun = this.checkConnectionOp.getLastRepositoryRevision() > metadata.getLastProcessedRevision();
+		this.canRun = this.checkConnectionOp.getLastRepositoryRevision() > cacheInfo.getLastProcessedRevision();
 		if (this.canRun) {
-			metadata.setSkippedRevisions(this.startRevision, this.endRevision);
-			metadata.setLastProcessedRevision(this.endRevision);
-			metadata.save();	
+			cacheInfo.setSkippedRevisions(this.startRevision, this.endRevision);
+			cacheInfo.setLastProcessedRevision(this.endRevision);
+			cacheInfo.save();	
 			
-			this.prepareDataOp.getDataContainer().expandRevisionsCount(this.endRevision);
+			this.repositoryCache.expandRevisionsCount(this.endRevision);
 		}
 	}
 		

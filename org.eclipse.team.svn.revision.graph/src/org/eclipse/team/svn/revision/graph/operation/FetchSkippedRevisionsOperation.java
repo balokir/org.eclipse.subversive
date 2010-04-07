@@ -12,7 +12,7 @@ package org.eclipse.team.svn.revision.graph.operation;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
-import org.eclipse.team.svn.revision.graph.cache.CacheMetadata;
+import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
 
 /**
  * Fetch previously skipped revisions
@@ -21,14 +21,14 @@ import org.eclipse.team.svn.revision.graph.cache.CacheMetadata;
  */
 public class FetchSkippedRevisionsOperation extends BaseFetchOperation {
 	
-	public FetchSkippedRevisionsOperation(IRepositoryResource resource, CheckRepositoryConnectionOperation checkConnectionOp, PrepareRevisionDataOperation prepareDataOp) {
-		super("Fetch Skipped Revisions", resource, checkConnectionOp, prepareDataOp);	
+	public FetchSkippedRevisionsOperation(IRepositoryResource resource, CheckRepositoryConnectionOperation checkConnectionOp, RepositoryCache repositoryCache) {
+		super("Fetch Skipped Revisions", resource, checkConnectionOp, repositoryCache);	
 	}
 
 	@Override
-	protected void prepareData(CacheMetadata metadata, IProgressMonitor monitor) throws Exception {		
-		this.startRevision = metadata.getStartSkippedRevision();
-		this.endRevision = metadata.getEndSkippedRevision();			
+	protected void prepareData(IProgressMonitor monitor) throws Exception {		
+		this.startRevision = this.repositoryCache.getCacheInfo().getStartSkippedRevision();
+		this.endRevision = this.repositoryCache.getCacheInfo().getEndSkippedRevision();			
 		this.canRun = this.startRevision != 0;							
 	}
 

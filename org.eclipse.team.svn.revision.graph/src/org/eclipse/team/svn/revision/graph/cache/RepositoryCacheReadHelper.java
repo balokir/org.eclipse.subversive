@@ -21,16 +21,16 @@ import java.util.zip.Inflater;
 /**
  * @author Igor Burilo
  */
-public class RevisionsContainerReadHelper {
+public class RepositoryCacheReadHelper {
 
-	protected final RevisionDataContainer dataContainer;	
+	protected final RepositoryCache repositoryCache;	
 	
-	public RevisionsContainerReadHelper(RevisionDataContainer dataContainer) {
-		this.dataContainer = dataContainer;		
+	public RepositoryCacheReadHelper(RepositoryCache repositoryCache) {
+		this.repositoryCache = repositoryCache;		
 	}
 	
 	public void load() throws IOException {
-		File cacheFile = new File(this.dataContainer.cacheDir, RevisionDataContainer.getCacheFileName(this.dataContainer.resource));
+		File cacheFile = this.repositoryCache.cacheFile;
 		if (!cacheFile.exists()) {
 			return;
 		}			
@@ -51,7 +51,7 @@ public class RevisionsContainerReadHelper {
 		int revisionsInBlock = in.readInt();
 		int blocksCount = in.readInt();
 		
-		this.dataContainer.revisions = new RevisionStructure[revisionsCountWithNulls];
+		this.repositoryCache.revisions = new CacheRevision[revisionsCountWithNulls];
 		
 		//process blocks		 
 		for (int i = 0; i < blocksCount; i ++) {
@@ -60,7 +60,7 @@ public class RevisionsContainerReadHelper {
 			int revisionsCount = revisionsInBlock;
 			//handle last block
 			if (i == blocksCount - 1) {	
-				revisionsCount = RevisionsContainerWriteHelper.getRevisionsCountInLastBlock(revisionsCountWithoutNulls, revisionsInBlock);
+				revisionsCount = RepositoryCacheWriteHelper.getRevisionsCountInLastBlock(revisionsCountWithoutNulls, revisionsInBlock);
 			}
 			
 			this.readRevisionsFromBlock(revisionsCount, blockBytes);			
@@ -72,8 +72,8 @@ public class RevisionsContainerReadHelper {
 			DataInput bytesIn = new DataInputStream(new ByteArrayInputStream(blockBytes));
 			for (int i = 0; i < revisionsCount; i ++) {												
 				byte[] revisionBytes = BytesUtility.readBytesWithLength(bytesIn);			
-				RevisionStructure revisionStructure = new RevisionStructure(revisionBytes);	
-				this.dataContainer.revisions[(int) revisionStructure.revision] = revisionStructure;
+				CacheRevision revisionStructure = new CacheRevision(revisionBytes);	
+				this.repositoryCache.revisions[(int) revisionStructure.revision] = revisionStructure;
 			}				
 		} catch (IOException ie) {
 			//ignore
@@ -81,6 +81,6 @@ public class RevisionsContainerReadHelper {
 	}
 	
 	protected void loadPaths(DataInput in, Inflater decoder) throws IOException {
-		this.dataContainer.pathStorage.load(in, decoder);		
+		this.repositoryCache.pathStorage.load(in, decoder);		
 	}
 }

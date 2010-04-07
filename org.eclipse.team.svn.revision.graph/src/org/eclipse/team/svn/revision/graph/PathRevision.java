@@ -12,9 +12,9 @@ package org.eclipse.team.svn.revision.graph;
 
 import java.util.Iterator;
 
-import org.eclipse.team.svn.revision.graph.cache.ChangedPathStructure;
-import org.eclipse.team.svn.revision.graph.cache.RevisionDataContainer;
-import org.eclipse.team.svn.revision.graph.cache.RevisionStructure;
+import org.eclipse.team.svn.revision.graph.cache.CacheChangedPath;
+import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
+import org.eclipse.team.svn.revision.graph.cache.CacheRevision;
 import org.eclipse.team.svn.revision.graph.operation.PathRevisionConnectionsValidator;
 
 /** 
@@ -42,7 +42,7 @@ public class PathRevision extends NodeConnections<PathRevision> {
 		
 	protected final int pathIndex;	
 	
-	protected final RevisionStructure revisionData;	
+	protected final CacheRevision cacheRevision;	
 		
 	public final ReviosionNodeType type;
 	
@@ -50,8 +50,8 @@ public class PathRevision extends NodeConnections<PathRevision> {
 	
 	protected PathRevisionConnectionsValidator validator;
 	
-	public PathRevision(RevisionStructure revisionData, int pathIndex, RevisionNodeAction action, ReviosionNodeType type) {
-		this.revisionData = revisionData;
+	public PathRevision(CacheRevision revisionData, int pathIndex, RevisionNodeAction action, ReviosionNodeType type) {
+		this.cacheRevision = revisionData;
 		this.pathIndex = pathIndex;
 		this.action = action;
 		this.type = type;
@@ -62,23 +62,23 @@ public class PathRevision extends NodeConnections<PathRevision> {
 	}
 	
 	public long getRevision() {
-		return this.revisionData.getRevision();
+		return this.cacheRevision.getRevision();
 	}
 	
 	public long getDate() {
-		return this.revisionData.getDate();
+		return this.cacheRevision.getDate();
 	}
 
 	public String getAuthor() {
-		return this.revisionData.getAuthor();
+		return this.cacheRevision.getAuthor();
 	}
 	
 	public String getMessage() {
-		return this.revisionData.getMessage();
+		return this.cacheRevision.getMessage();
 	}
 
-	public ChangedPathStructure[] getChangedPaths() {
-		return this.revisionData.getChangedPaths();
+	public CacheChangedPath[] getChangedPaths() {
+		return this.cacheRevision.getChangedPaths();
 	}		
 	
 	public void insertNodeInRevisionsChain(PathRevision node) { 
@@ -120,8 +120,8 @@ public class PathRevision extends NodeConnections<PathRevision> {
 		return String.format("%d@%d, action:%s", this.pathIndex, this.getRevision(), this.action);
 	}
 		
-	public String toString(RevisionDataContainer dataContainer) {
-		return String.format("%s@%d, action:%s", dataContainer.getPathStorage().getPath(this.pathIndex), this.getRevision(), this.action);
+	public String toString(RepositoryCache repositoryCache) {
+		return String.format("%s@%d, action:%s", repositoryCache.getPathStorage().getPath(this.pathIndex), this.getRevision(), this.action);
 	}
 	
 	@Override
@@ -150,8 +150,8 @@ public class PathRevision extends NodeConnections<PathRevision> {
 		return super.getCopiedTo(new PathRevision[0]);
 	}
 
-	public RevisionStructure getRevisionData() {
-		return this.revisionData;		
+	public CacheRevision getRevisionData() {
+		return this.cacheRevision;		
 	}	
 	
 	public void setValidator(PathRevisionConnectionsValidator validator) {
