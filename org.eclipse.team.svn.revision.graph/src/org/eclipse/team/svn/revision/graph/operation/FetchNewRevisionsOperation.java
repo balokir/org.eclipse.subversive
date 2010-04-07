@@ -35,6 +35,8 @@ public class FetchNewRevisionsOperation extends BaseFetchOperation {
 			metadata.setSkippedRevisions(this.startRevision, this.endRevision);
 			metadata.setLastProcessedRevision(this.endRevision);
 			metadata.save();	
+			
+			this.prepareDataOp.getDataContainer().expandRevisionsCount(this.endRevision);
 		}
 	}
 		

@@ -43,6 +43,10 @@ public class Pair {
 		return result;			
 	}
 	
+	public boolean isRoot() {
+		return this.parentIndex == PathStorage.ROOT_INDEX && this.stringIndex == PathStorage.ROOT_INDEX;
+	}
+	
 	@Override
 	public String toString() {		
 		return "parent: " + this.parentIndex + " child: " + this.stringIndex;

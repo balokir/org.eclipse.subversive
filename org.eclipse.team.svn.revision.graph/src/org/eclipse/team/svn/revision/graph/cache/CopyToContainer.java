@@ -42,5 +42,11 @@ public class CopyToContainer {
 	public List<ChangedPathStructure> getCopyTo(int pathId) {
 		return this.pathCopyToData.get(pathId);
 	}
+
+	public void clear() {
+		if (!this.pathCopyToData.isEmpty()) {
+			this.pathCopyToData.clear();
+		}		
+	}
 	
 }

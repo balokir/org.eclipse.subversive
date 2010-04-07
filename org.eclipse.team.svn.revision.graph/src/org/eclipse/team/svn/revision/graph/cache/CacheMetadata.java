@@ -25,20 +25,15 @@ public class CacheMetadata {
 	protected final static String START_SKIPPED_REVISION = "startSkippedRevision";
 	protected final static String END_SKIPPED_REVISION = "endSkippedRevision";
 	protected final static String LAST_PROCESSED_REVISION = "lastProcessedRevision";
-	protected final static String CHANGED_PATHS_COUNT = "changedPathsCount";
 	
 	protected File metadataFile;
 	
 	protected long startSkippedRevision;
 	protected long endSkippedRevision;
-	protected long lastProcessedRevision;
-	protected long changedPathsCount; 
+	protected long lastProcessedRevision; 
 	
-	public CacheMetadata(File cacheFolder) {		
-		this.metadataFile = new File(cacheFolder, "metadata.txt");
-		if (!cacheFolder.exists()) {
-			cacheFolder.mkdirs();
-		}
+	public CacheMetadata(File metadataFile) {		
+		this.metadataFile = metadataFile;		
 	}
 	
 	public void load() throws IOException {
@@ -50,7 +45,6 @@ public class CacheMetadata {
 				this.startSkippedRevision = this.getLongProperty(props, CacheMetadata.START_SKIPPED_REVISION);
 				this.endSkippedRevision = this.getLongProperty(props, CacheMetadata.END_SKIPPED_REVISION);
 				this.lastProcessedRevision = this.getLongProperty(props, CacheMetadata.LAST_PROCESSED_REVISION);
-				this.changedPathsCount = this.getLongProperty(props, CacheMetadata.CHANGED_PATHS_COUNT);
 			} finally {
 				try { in.close(); } catch (IOException e) { /*ignore*/ }
 			}			
@@ -58,7 +52,6 @@ public class CacheMetadata {
 			this.startSkippedRevision = 0;
 			this.endSkippedRevision = 0;
 			this.lastProcessedRevision = 0;
-			this.changedPathsCount = 0;
 		} 
 	}
 	
@@ -75,15 +68,11 @@ public class CacheMetadata {
 		return res;
 	}
 	
-	/*
-	 * If you call this method, don't forget to call 'close' 
-	 */
 	public void save() throws IOException {
 		Properties props = new Properties();
 		props.put(CacheMetadata.START_SKIPPED_REVISION, String.valueOf(this.startSkippedRevision));
 		props.put(CacheMetadata.END_SKIPPED_REVISION, String.valueOf(this.endSkippedRevision));
 		props.put(CacheMetadata.LAST_PROCESSED_REVISION, String.valueOf(this.lastProcessedRevision));	
-		props.put(CacheMetadata.CHANGED_PATHS_COUNT, String.valueOf(this.changedPathsCount));
 		
 		FileOutputStream out = new FileOutputStream(this.metadataFile);		
 		try {
@@ -104,10 +93,6 @@ public class CacheMetadata {
 	public long getLastProcessedRevision() {
 		return this.lastProcessedRevision;
 	}
-
-	public long getChangedPathsCount() {
-		return this.changedPathsCount;
-	}
 	
 	public void setSkippedRevisions(long start, long end) {
 		this.startSkippedRevision = start;
@@ -117,8 +102,4 @@ public class CacheMetadata {
 	public void setLastProcessedRevision(long revision) {
 		this.lastProcessedRevision = revision;
 	}	
-	
-	public void setChangedPathsCount(long changedPathsCount) {
-		this.changedPathsCount = changedPathsCount;
-	}
 }

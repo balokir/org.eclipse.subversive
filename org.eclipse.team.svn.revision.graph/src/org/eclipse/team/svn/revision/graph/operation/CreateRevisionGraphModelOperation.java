@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.operation;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,9 +27,7 @@ import org.eclipse.team.svn.core.connector.SVNLogPath.ChangeType;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.ActivityCancelledException;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
-import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.revision.graph.PathRevision;
-import org.eclipse.team.svn.revision.graph.TopRightTraverseVisitor;
 import org.eclipse.team.svn.revision.graph.PathRevision.ReviosionNodeType;
 import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
 import org.eclipse.team.svn.revision.graph.cache.ChangedPathStructure;
@@ -61,62 +58,40 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 	}
 	
 	@Override
-	protected void runImpl(IProgressMonitor monitor) throws Exception {		
-		TimeMeasure totalMeasure = new TimeMeasure("Total");
-				
-		TimeMeasure readMeasure = new TimeMeasure("Read data");		
+	protected void runImpl(IProgressMonitor monitor) throws Exception {												
 		this.dataContainer = this.prepareDataOp.getDataContainer();
-		this.dataContainer.initForRead(monitor, this);		
-		readMeasure.end();
+		this.dataContainer.prepareModel();		
 		
 		this.pathRevisionValidator = new PathRevisionConnectionsValidator(this.dataContainer);
 		
-		ProgressMonitorUtility.setTaskInfo(monitor, this, "Proccessing model");
 		TimeMeasure processMeasure = new TimeMeasure("Create model");
-		try {
-			String url = this.resource.getUrl();
-			String rootUrl = this.resource.getRepositoryLocation().getRepositoryRootUrl();	
 		
-			SVNRevision svnRevision = this.resource.getSelectedRevision();
-			String path = url.substring(rootUrl.length());
-						
-			int pathIndex = this.dataContainer.getPathStorage().add(path);
+		String url = this.resource.getUrl();
+		String rootUrl = this.resource.getRepositoryLocation().getRepositoryRootUrl();	
+	
+		SVNRevision svnRevision = this.resource.getSelectedRevision();
+		String path = url.substring(rootUrl.length());
 					
-			long revision;		
-			if (svnRevision.getKind() == SVNRevision.Kind.NUMBER) {
-				revision = ((SVNRevision.Number) svnRevision).getNumber();
-			} else if (svnRevision.getKind() == SVNRevision.Kind.HEAD) {			
-				//revision = this.entries[this.entries.length - 1].revision;				
-				revision = this.dataContainer.getLastProcessedRevision();
-			} else {
-				throw new Exception("Unexpected revision kind: " + svnRevision);
-			}								
-			
-			RevisionStructure entry = this.findStartLogEntry(revision, pathIndex);
-			if (entry != null) {
-				this.resultNode = this.createRevisionNode(entry, pathIndex, false);	
-										
-				this.process(this.resultNode, monitor);
+		int pathIndex = this.dataContainer.getPathStorage().add(path);
 				
-				//fill result model with other data: author, message, date, children
-				new TopRightTraverseVisitor<PathRevision>() {				
-					protected void visit(PathRevision node) {
-						PathRevision pathRevision = node;
-						try {										
-							dataContainer.loadRevisionData(pathRevision.getRevisionData());
-						} catch (IOException ie) {
-							CreateRevisionGraphModelOperation.this.reportWarning("Failed to load log entry data for revision: " + pathRevision.getRevision(), ie);
-						}
-					}
-				}.traverse(this.resultNode.getStartNodeInGraph());
-			}									
-		} finally {
-			this.dataContainer.closeForRead();
-		}	
+		long revision;		
+		if (svnRevision.getKind() == SVNRevision.Kind.NUMBER) {
+			revision = ((SVNRevision.Number) svnRevision).getNumber();
+		} else if (svnRevision.getKind() == SVNRevision.Kind.HEAD) {			
+			//revision = this.entries[this.entries.length - 1].revision;				
+			revision = this.dataContainer.getLastProcessedRevision();
+		} else {
+			throw new Exception("Unexpected revision kind: " + svnRevision);
+		}								
 		
+		RevisionStructure entry = this.findStartLogEntry(revision, pathIndex);
+		if (entry != null) {
+			this.resultNode = this.createRevisionNode(entry, pathIndex, false);	
+									
+			this.process(this.resultNode, monitor);						
+		}									
+				
 		processMeasure.end();
-		
-		totalMeasure.end();
 	}
 	
 	protected void process(PathRevision startNode, IProgressMonitor monitor) {

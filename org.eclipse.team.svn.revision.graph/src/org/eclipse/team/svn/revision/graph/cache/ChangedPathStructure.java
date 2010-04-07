@@ -10,40 +10,38 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.cache;
 
-import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInput;
+import java.io.DataInputStream;
+import java.io.DataOutput;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
-
 
 /**
- * TODO
- *  always save copied from info ?
- *  
  * @author Igor Burilo
  */
 public class ChangedPathStructure {
-
-	protected int id;		
+		
 	protected int pathIndex;	
 	protected char action;
-	protected long revision;	
+	
+	//TODO we don't need it
+	protected long revision;
+	
 	protected int copiedFromPathIndex;	
 	protected long copiedFromRevision;
-
-	public ChangedPathStructure() {		
-	}
 	
-	public ChangedPathStructure(int id, int pathIndex, char action, long revision, int copiedFromPathIndex, long copiedFromRevision) {
-		this.id = id;
+	public ChangedPathStructure(int pathIndex, char action, long revision, int copiedFromPathIndex, long copiedFromRevision) {
 		this.pathIndex = pathIndex;
-		this.action = action;
+		this.action = action;		
 		this.revision = revision;
 		this.copiedFromPathIndex = copiedFromPathIndex;
 		this.copiedFromRevision = copiedFromRevision;
 	}
 	
-	public long getId() {
-		return id;
+	public ChangedPathStructure(byte[] bytes) {
+		this.fromBytes(bytes);
 	}
 
 	public int getPathIndex() {
@@ -55,9 +53,9 @@ public class ChangedPathStructure {
 	}
 
 	public long getRevision() {
-		return revision;
+		return this.revision;
 	}
-
+	
 	public int getCopiedFromPathIndex() {
 		return copiedFromPathIndex;
 	}
@@ -65,39 +63,60 @@ public class ChangedPathStructure {
 	public long getCopiedFromRevision() {
 		return copiedFromRevision;
 	}
-
-	public void save(RevisionDataContainer revisionDataContainer) throws IOException {
-		PrintWriter out = revisionDataContainer.getChangedPathsOutStream();
-				
-		String separator = " ";
-		out.println(
-			this.id + separator +  	
-			this.pathIndex + separator + 
-			this.action + separator + 
-			this.revision + separator + 
-			this.copiedFromPathIndex + separator +
-			this.copiedFromRevision);
-		
-		CacheMetadata metadata = revisionDataContainer.getCacheMetadata();
-		metadata.setChangedPathsCount(metadata.getChangedPathsCount() + 1);
+	
+	protected final void fromBytes(byte[] bytes) {
+		try {
+			DataInput dataIn = new DataInputStream(new ByteArrayInputStream(bytes));
+						
+			this.pathIndex = dataIn.readInt();
+			this.action = dataIn.readChar();			
+			this.revision = dataIn.readLong();
+			
+			byte copyFlag = dataIn.readByte();
+			if (copyFlag == 1) {
+				this.copiedFromPathIndex = dataIn.readInt();
+				this.copiedFromRevision = dataIn.readLong();
+			} else {
+				this.copiedFromPathIndex = PathStorage.UNKNOWN_INDEX;
+				this.copiedFromRevision = 0;
+			}	
+		} catch (IOException e) {
+			//ignore
+		}		
 	}
 	
-	public boolean load(RevisionDataContainer revisionDataContainer) throws IOException {
-		BufferedReader changedPathsIn = revisionDataContainer.getChangedPathsInStream();
-		String line = changedPathsIn.readLine();
-		if (line != null) {			
-			String[] parts = line.split(" ");
-			this.id = Integer.parseInt(parts[0]);
-			this.pathIndex = Integer.parseInt(parts[1]);
-			this.action = parts[2].charAt(0);
+	public byte[] toBytes() {
+		/*
+		 * Write:
+		 * 	
+		 * path index
+		 * action		
+		 * revision
+		 * copied from flag
+		 * copied from path index
+		 * copied from revision
+		 */
+		try {
+			ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
+			DataOutput bytes = new DataOutputStream(byteArray);
+								
+			bytes.writeInt(this.pathIndex);
+			bytes.writeChar(this.action);			
+			bytes.writeLong(this.revision);
 			
-			this.revision = Long.parseLong(parts[3]);
-			this.copiedFromPathIndex = Integer.parseInt(parts[4]);
-			this.copiedFromRevision = Long.parseLong(parts[5]);
-											
-			return true;
-		} else {
-			return false;
+			//copied from
+			if (this.copiedFromPathIndex != PathStorage.UNKNOWN_INDEX) {
+				bytes.writeByte(1);
+									
+				bytes.writeInt(this.copiedFromPathIndex);
+				bytes.writeLong(this.copiedFromRevision);
+			} else {
+				bytes.writeByte(0);
+			}				
+			return byteArray.toByteArray();
+		} catch (IOException ie) {
+			//ignore
+			return new byte[0];
 		}
 	}
 	

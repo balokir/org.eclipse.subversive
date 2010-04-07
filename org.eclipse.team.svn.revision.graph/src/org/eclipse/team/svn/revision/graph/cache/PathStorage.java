@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.cache;
 
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 
 /**
  * Effectively stores paths
@@ -32,28 +36,19 @@ public class PathStorage {
 	
 	//contains indexes which compose paths
 	protected IndexPairsStorage pathIndex = new IndexPairsStorage();
-	
-	public int add(String path) {
-		try {
-			return this.add(path, null);
-		} catch (IOException e) {
-			//never happens
-			return PathStorage.UNKNOWN_INDEX;
-		}
-	}
 		
 	/*
 	 * Split path by parts and add them
 	 */
-	public int add(String path, RevisionDataContainer revisionDataContainer)  throws IOException {		
+	public int add(String path) {		
 		if (path == null) {
 			return UNKNOWN_INDEX;
 		}		
 		int resultIndex = ROOT_INDEX;
 		String[] parts = path.split(PATH_SEPARATOR);
 		for (String part : parts) {			
-			int stringIndex = this.strings.add(part, revisionDataContainer);						
-			resultIndex = this.pathIndex.add(new Pair(resultIndex, stringIndex), revisionDataContainer);
+			int stringIndex = this.strings.add(part);						
+			resultIndex = this.pathIndex.add(new Pair(resultIndex, stringIndex));
 		}		
 		return resultIndex;
 	}
@@ -76,7 +71,7 @@ public class PathStorage {
 		LinkedList<Pair> list = new LinkedList<Pair>();
 		int tmpIndex = index;
 		Pair pair = null;
-		while ((pair = this.pathIndex.getValue(tmpIndex)) != null && pair != IndexPairsStorage.ROOT_PAIR) {
+		while ((pair = this.pathIndex.getValue(tmpIndex)) != null && !pair.isRoot()) {
 			list.addFirst(pair);
 			tmpIndex = pair.parentIndex;
 		}		
@@ -92,14 +87,10 @@ public class PathStorage {
 	} 
 	
 	public int add(int parentIndex, int[] childParts) {
-		int res = parentIndex;
-		try {
-			for (int childPart : childParts) {			
-				res = this.pathIndex.add(new Pair(res, childPart), null);
-			}
-		} catch (IOException ie) {
-			//never happens
-		}
+		int res = parentIndex;		
+		for (int childPart : childParts) {			
+			res = this.pathIndex.add(new Pair(res, childPart));
+		}		
 		return res;
 	}
 	
@@ -151,24 +142,29 @@ public class PathStorage {
 		} else {
 			return new int[0];
 		}				
-	}
+	}	
 	
-	public void load(RevisionDataContainer revisionDataContainer) throws IOException {		
-		while (true) {
-			boolean hasNext = this.strings.load(revisionDataContainer);
-			if (!hasNext) {
-				break;
-			}
-		}
+	public void save(DataOutput out, Deflater encoder) throws IOException {
+		/*
+		 * Write:
+		 * 
+		 * compressed strings storage
+		 * compressed path indexes storage
+		 */
+		BytesUtility.compressAndWrite(this.strings.toBytes(), out, encoder);
 		
-		while (true) {
-			boolean hasNext = this.pathIndex.load(revisionDataContainer);
-			if (!hasNext) {
-				break;
-			}
-		}		
+		BytesUtility.compressAndWrite(this.pathIndex.toBytes(), out, encoder);
 	}
 	
+	public void load(DataInput in, Inflater decoder) throws IOException {
+		byte[] stringsBytes = BytesUtility.decompressAndRead(in, decoder);
+		this.strings = new StringStorage(stringsBytes);
+		
+		byte[] pathIndexesBytes = BytesUtility.decompressAndRead(in, decoder);
+		this.pathIndex = new IndexPairsStorage(pathIndexesBytes);
+	}
+
+
 	public static void main(String[] s) throws Exception {
 		String s1 = "/test/wiki-migration/project_wiki-plus-polarion/_wiki/Space_1/Page_1/attachment-1.txt";
 		String s2 = "/sss";
@@ -176,16 +172,16 @@ public class PathStorage {
 		String s4 = "/test/wiki-migration/project_wiki-plus-polarion";
 		
 		PathStorage instance = new PathStorage();
-		int i1 = instance.add(s1, null);
-		int i2 = instance.add(s2, null);
-		int i3 = instance.add(s3, null);
-		int i4 = instance.add(s4, null);
+		int i1 = instance.add(s1);
+		int i2 = instance.add(s2);
+		int i3 = instance.add(s3);
+		int i4 = instance.add(s4);
 		
 		System.out.println(instance.getPath(i1));		
 		System.out.println(instance.getPath(i2));
 		
 		//test makeRelative
-		int i10 = instance.add("/g1/g2/g3", null);
+		int i10 = instance.add("/g1/g2/g3");
 		int[] res = instance.makeRelative(i2, i1);						
 		System.out.println(instance.getPath(instance.add(i10, res)));
 		

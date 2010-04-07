@@ -10,12 +10,15 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.cache;
 
-import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInput;
+import java.io.DataInputStream;
+import java.io.DataOutput;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 
-/**
- * 
+/** 
  * @author Igor Burilo
  */
 public class StringStorage extends GenericStorage<String> {
@@ -24,29 +27,42 @@ public class StringStorage extends GenericStorage<String> {
 		this.addSimple("");
 	}
 	
-	@Override
-	protected void save(String data, RevisionDataContainer revisionDataContainer) {
-		//don't save root
-		if (this.dataList.size() > 1) {
-			PrintWriter out = revisionDataContainer.getPathStringsOutStream();
-			out.println(data);	
+	public StringStorage(byte[] bytes) {
+		this.fromBytes(bytes);
+	}
+
+	protected final void fromBytes(byte[] bytes) {
+		try {
+			DataInput bytesIn = new DataInputStream(new ByteArrayInputStream(bytes));
+			
+			int stringsCount = bytesIn.readInt();
+			for (int i = 0; i < stringsCount; i ++) {
+				byte[] strBytes = BytesUtility.readBytesWithLength(bytesIn);
+				String str = BytesUtility.getString(strBytes);
+				
+				this.dataList.add(str);				
+				this.hash.put(str, this.dataList.size() - 1);								
+			}	
+		} catch (IOException e) {
+			//ignore
 		}
 	}
 	
-	/**  
-	 * @return	Flag which indicates whether there's next data to process 
-	 */
-	public boolean load(RevisionDataContainer revisionDataContainer) throws IOException {
-		BufferedReader in = revisionDataContainer.getPathStringsInStream();
-		String line = in.readLine();
-		if (line != null) {
-			this.dataList.add(line);
-			this.hash.put(line, this.dataList.size() - 1);								
-			return true;
-		} else {
-			return false;
+	public byte[] toBytes() {
+		try {
+			ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
+			DataOutput bytes = new DataOutputStream(byteArray);	
+			
+			bytes.writeInt(this.dataList.size());
+			for (String str : this.dataList) {
+				byte[] strBytes = BytesUtility.convertStringToBytes(str);
+				BytesUtility.writeBytesWithLength(bytes, strBytes);														
+			}
+			return byteArray.toByteArray();	
+		} catch (IOException ie) {
+			//ignore
+			return new byte[0];
 		}
 	}
-
 
 }
