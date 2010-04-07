@@ -27,6 +27,9 @@ import org.eclipse.team.svn.revision.graph.cache.RevisionDataContainer;
  */
 public class LogEntriesCallback extends SVNLogEntryCallbackWithMergeInfo {
 	
+	//TODO check it for real big repository
+	protected final static int REVISIONS_COUNT_FOR_SAVE = 1000;
+	
 	protected IActionOperation op;
 	protected int totalWork;
 	protected IProgressMonitor monitor;
@@ -35,7 +38,9 @@ public class LogEntriesCallback extends SVNLogEntryCallbackWithMergeInfo {
 	protected SVNLogEntry currentEntry;
 	
 	protected RevisionDataContainer dataContainer;
-			
+	
+	protected int processedRevisionsCount;
+	
 	protected Throwable error;
 	
 	public LogEntriesCallback(IActionOperation op, IProgressMonitor monitor, int totalWork, RevisionDataContainer dataContainer) throws IOException {
@@ -56,15 +61,19 @@ public class LogEntriesCallback extends SVNLogEntryCallbackWithMergeInfo {
 			ProgressMonitorUtility.progress(this.monitor, ++ this.currentWork, this.totalWork);
 					
 			try {
-				this.dataContainer.saveEntry(entry);
+				this.dataContainer.addEntry(entry);
+				
+				//save
+				if (++ this.processedRevisionsCount  % LogEntriesCallback.REVISIONS_COUNT_FOR_SAVE == 0) {
+					this.dataContainer.save(this.monitor);
+				}
 				
 				long start = this.dataContainer.getCacheMetadata().getStartSkippedRevision();
 				long end = this.dataContainer.getCacheMetadata().getEndSkippedRevision();		
 				if (start > --end) {
 					start = end = 0;
 				} 		
-				this.dataContainer.getCacheMetadata().setSkippedRevisions(start, end);
-				this.dataContainer.getCacheMetadata().save();				
+				this.dataContainer.getCacheMetadata().setSkippedRevisions(start, end);				
 			} catch (Throwable e) {
 				this.error = e;				
 				this.monitor.setCanceled(true);				

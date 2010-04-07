@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.operation;
 
+import java.io.File;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.revision.graph.SVNRevisionGraphPlugin;
 import org.eclipse.team.svn.revision.graph.cache.RevisionDataContainer;
 
 /**
@@ -32,8 +35,9 @@ public class PrepareRevisionDataOperation extends AbstractActionOperation {
 	
 	@Override
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		this.dataContainer = new RevisionDataContainer(RevisionGraphUtility.getCacheFolder(this.resource), this.resource);
-		this.dataContainer.prepareData(monitor);
+		File storageFolder = SVNRevisionGraphPlugin.instance().getStateLocation().toFile();
+		this.dataContainer = new RevisionDataContainer(storageFolder, this.resource);
+		this.dataContainer.load(monitor);
 	}
 	
 	public RevisionDataContainer getDataContainer() {

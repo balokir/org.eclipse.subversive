@@ -19,7 +19,7 @@ import java.util.Date;
  */
 public class TimeMeasure {
 
-	boolean isActive = false;
+	boolean isActive = true;
 	
 	String message;
 	

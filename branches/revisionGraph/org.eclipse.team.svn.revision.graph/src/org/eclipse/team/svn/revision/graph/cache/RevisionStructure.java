@@ -10,41 +10,35 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.cache;
 
-import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInput;
+import java.io.DataInputStream;
+import java.io.DataOutput;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
- * 
  * @author Igor Burilo
  */
 public class RevisionStructure {
-
-	public final static int UNKNOWN_ADDRESS = -1;
 	
 	protected long revision;
-		
-	protected long dataAddress;
-	protected List<Integer> changedPathIds;
 
+	//TODO don't separate it to another class
 	protected RevisionDataStructure revisionData;
+	
 	protected ChangedPathStructure[] changedPaths = new ChangedPathStructure[0];
 	
-	public RevisionStructure()  {		
+	public RevisionStructure(long revision, ChangedPathStructure[] changedPaths, RevisionDataStructure revisionData) {
+		this.revision = revision;
+		this.changedPaths = changedPaths;
+		this.revisionData = revisionData;
 	}
 	
-	public RevisionStructure(long revision) {
-		this.revision = revision;		
-	}
-	
-	protected void addChangedPathId(int changedPathId) {
-		if (this.changedPathIds == null) {
-			this.changedPathIds = new ArrayList<Integer>();
-		}
-		this.changedPathIds.add(changedPathId);
+	public RevisionStructure(byte[] bytes) {
+		this.fromBytes(bytes);
 	}
 	
 	public boolean hasChangedPaths() {
@@ -71,55 +65,76 @@ public class RevisionStructure {
 		return this.revisionData != null ? this.revisionData.getMessage() : null;
 	}
 	
-	protected void setRevisionData(RevisionDataStructure revisionData) {
-		this.revisionData = revisionData;
-	}
-	
-	protected void setChangedPaths(ChangedPathStructure[] changedPaths) {
-		this.changedPaths = changedPaths;
-		if (this.changedPathIds != null) {
-			this.changedPathIds = null;
-		}
-	}
-	
-	public void save(RevisionDataContainer revisionDataContainer) throws IOException {
-		long revisionDataAddress = RevisionStructure.UNKNOWN_ADDRESS;
-		if (this.revisionData != null) {
-			revisionDataAddress = this.revisionData.save(revisionDataContainer);	
-		}		
-
-		String pathsString = "";
-		ChangedPathStructure[] changedPaths = this.getChangedPaths();
-		for (ChangedPathStructure changedPath : changedPaths) {				
-			changedPath.save(revisionDataContainer);				
-			pathsString += " " + changedPath.getId();
-		} 
-				
-		PrintWriter revisionsOut = revisionDataContainer.getRevisionsOutStream();
-		revisionsOut.println(this.revision + " " + revisionDataAddress + pathsString);
-	}
-	
-	/**  
-	 * @return	Flag which indicates whether there's next data to process 
-	 */
-	public boolean load(RevisionDataContainer revisionDataContainer) throws IOException {
-		BufferedReader revisionsIn = revisionDataContainer.getRevisionsInStream();
-		String line = revisionsIn.readLine();
-		if (line != null) {
-			String[] parts = line.split(" ");
-			this.revision = Long.parseLong(parts[0]);
-			this.dataAddress = Long.parseLong(parts[1]);							
-						
-			if (parts.length > 2) {
-				for (int i = 2; i < parts.length; i ++) {
-					int ref = Integer.parseInt(parts[i]);			
-					this.addChangedPathId(ref);					
-				}				
+	protected final void fromBytes(byte[] bytes) {
+		try {
+			DataInput bytesIn = new DataInputStream(new ByteArrayInputStream(bytes));
+			
+			this.revision = bytesIn.readLong();
+							
+			//changed paths
+			int changedPathsCount = bytesIn.readInt();
+			this.changedPaths = new ChangedPathStructure[changedPathsCount];
+			for (int i = 0; i < changedPathsCount; i ++) {
+				byte[] pathBytes = BytesUtility.readBytesWithLength(bytesIn);
+				this.changedPaths[i] = new ChangedPathStructure(pathBytes);			
 			}
-			return true;
-		} else {
-			return false;
-		}
+			
+			//revision data		
+			int revisionDataLength = bytesIn.readInt();		
+			if (revisionDataLength > 0) {
+				byte[] revisionDataBytes = new byte[revisionDataLength];
+				bytesIn.readFully(revisionDataBytes);
+				this.revisionData = new RevisionDataStructure(revisionDataBytes);
+			}	
+		} catch (IOException e) {
+			//ignore
+		}				
+	}
+	
+	public byte[] toBytes() {
+		/*
+		 * Write:
+		 * 
+		 * revision
+		 * changed paths count
+		 * for each changed path
+		 * 		changed path length
+		 *  	changed path bytes
+		 *  revision data length
+		 *  revision data bytes
+		 */
+		
+		try {
+			ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
+			DataOutput revisionBytes = new DataOutputStream(byteArray);
+			
+			//revision
+			revisionBytes.writeLong(this.revision);
+			
+			//changed paths
+			revisionBytes.writeInt(this.changedPaths.length);
+			for (ChangedPathStructure changedPath : this.changedPaths) {
+				byte[] pathBytes = changedPath.toBytes();
+				BytesUtility.writeBytesWithLength(revisionBytes, pathBytes);			
+			}
+			
+			//revision data		
+			if (this.revisionData != null) {
+				byte[] dataBytes = this.revisionData.toBytes();
+				BytesUtility.writeBytesWithLength(revisionBytes, dataBytes);						
+			} else {			
+				revisionBytes.writeInt(0);
+			}			
+			return byteArray.toByteArray();
+		} catch (IOException e) {
+			//ignore
+			return new byte[0];
+		}		
+	}
+	
+	@Override
+	public String toString() {
+		return String.valueOf(this.revision);
 	}
 	
 }

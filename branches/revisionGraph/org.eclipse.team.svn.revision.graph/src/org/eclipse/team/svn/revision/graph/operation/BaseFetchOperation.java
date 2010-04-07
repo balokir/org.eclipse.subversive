@@ -52,8 +52,7 @@ public abstract class BaseFetchOperation extends AbstractActionOperation {
 			
 			RevisionDataContainer dataContainer = this.prepareDataOp.getDataContainer();
 			this.prepareData(dataContainer.getCacheMetadata(), monitor);
-			if (this.canRun) {				
-				dataContainer.initForWrite();				
+			if (this.canRun) {
 				LogEntriesCallback callback = new LogEntriesCallback(this, monitor, (int) (this.endRevision - this.startRevision + 1), dataContainer);
 				
 				ISVNConnector proxy = this.resource.getRepositoryLocation().acquireSVNProxy();
@@ -69,7 +68,7 @@ public abstract class BaseFetchOperation extends AbstractActionOperation {
 						new SVNProgressMonitor(this, monitor, null));	
 				} finally {
 					this.resource.getRepositoryLocation().releaseSVNProxy(proxy);
-
+					
 					if (callback.getError() != null){
 						Throwable t = callback.getError();
 						if (!(t instanceof RuntimeException)) {
@@ -78,7 +77,10 @@ public abstract class BaseFetchOperation extends AbstractActionOperation {
 						this.reportError(t);
 					}
 					
-					dataContainer.closeForWrite();
+					//save not yet saved revisions
+					if (dataContainer.isDirty()) {
+						dataContainer.save(monitor);
+					}
 				} 		
 			}						
 		}		

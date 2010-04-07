@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.cache;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,17 +24,10 @@ public abstract class GenericStorage<T> {
 	protected ArrayList<T> dataList = new ArrayList<T>();
 	protected Map<T, Integer> hash = new HashMap<T, Integer>();				
 	
-	/*
-	 * if revisionDataContainer is not null, then save data
-	 */
-	public int add(T data, RevisionDataContainer revisionDataContainer) throws IOException {			
+	public int add(T data) {			
 		int index = this.find(data);
 		if (index == PathStorage.UNKNOWN_INDEX) {
 			index = this.addSimple(data);
-			
-			if (revisionDataContainer != null) {
-				this.save(data, revisionDataContainer);	
-			}			
 		}
 		return index;										
 	}
@@ -55,6 +47,4 @@ public abstract class GenericStorage<T> {
 	public T getValue(int index) {
 		return this.dataList.get(index);
 	}
-	
-	protected abstract void save(T data, RevisionDataContainer revisionDataContainer) throws IOException;
 }
