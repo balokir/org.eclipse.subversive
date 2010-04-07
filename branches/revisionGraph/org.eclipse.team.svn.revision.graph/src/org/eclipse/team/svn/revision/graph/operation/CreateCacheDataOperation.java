@@ -12,28 +12,40 @@ package org.eclipse.team.svn.revision.graph.operation;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
+import org.eclipse.team.svn.core.operation.ActivityCancelledException;
+import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.revision.graph.SVNRevisionGraphPlugin;
+import org.eclipse.team.svn.revision.graph.cache.RepositoryCacheInfo;
 import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
 
-/**
- * Load cache data
- * 
+/** 
  * @author Igor Burilo
  */
-public class PrepareRevisionDataOperation extends AbstractActionOperation {
+public class CreateCacheDataOperation extends AbstractActionOperation {
+
+	protected IRepositoryResource resource;
 	
+	protected RepositoryCacheInfo cacheInfo;
 	protected RepositoryCache repositoryCache;
 	
-	public PrepareRevisionDataOperation(RepositoryCache repositoryCache) {
-		super("PrepareRevisionDataOperation");
-		this.repositoryCache = repositoryCache;
+	public CreateCacheDataOperation(IRepositoryResource resource) {
+		super("Create Cache Data");
+		this.resource = resource;
 	}
-	
-	@Override
+
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		this.repositoryCache.load(monitor);
+		this.cacheInfo = SVNRevisionGraphPlugin.instance().getRepositoryCachesManager().getCache(this.resource);
+		this.repositoryCache = this.cacheInfo.createCacheData(this.resource, monitor);
+		
+		if (this.repositoryCache == null) {
+			throw new ActivityCancelledException();
+		}			
 	}
-	
+
+	public RepositoryCacheInfo getCacheInfo() {
+		return this.cacheInfo;
+	}
 	public RepositoryCache getRepositoryCache() {
 		return this.repositoryCache;
-	}		
+	}						
 }

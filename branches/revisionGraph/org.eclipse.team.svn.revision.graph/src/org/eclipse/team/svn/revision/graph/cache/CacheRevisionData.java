@@ -26,7 +26,7 @@ import java.io.IOException;
  * 
  * @author Igor Burilo
  */
-public class RevisionDataStructure {
+public class CacheRevisionData {
 	
 	//TODO use indexes instead of strings
 	protected String author;
@@ -34,13 +34,13 @@ public class RevisionDataStructure {
 	protected long date;
 	protected String message;
 	
-	public RevisionDataStructure(long date, String author, String message) {
+	public CacheRevisionData(long date, String author, String message) {
 		this.date = date;
 		this.author = author;
 		this.message = message;
 	}
 	
-	public RevisionDataStructure(byte[] bytes) {
+	public CacheRevisionData(byte[] bytes) {
 		this.fromBytes(bytes);
 	}
 	

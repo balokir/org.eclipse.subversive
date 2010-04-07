@@ -21,7 +21,7 @@ import java.io.IOException;
 /**
  * @author Igor Burilo
  */
-public class ChangedPathStructure {
+public class CacheChangedPath {
 		
 	protected int pathIndex;	
 	protected char action;
@@ -32,7 +32,7 @@ public class ChangedPathStructure {
 	protected int copiedFromPathIndex;	
 	protected long copiedFromRevision;
 	
-	public ChangedPathStructure(int pathIndex, char action, long revision, int copiedFromPathIndex, long copiedFromRevision) {
+	public CacheChangedPath(int pathIndex, char action, long revision, int copiedFromPathIndex, long copiedFromRevision) {
 		this.pathIndex = pathIndex;
 		this.action = action;		
 		this.revision = revision;
@@ -40,7 +40,7 @@ public class ChangedPathStructure {
 		this.copiedFromRevision = copiedFromRevision;
 	}
 	
-	public ChangedPathStructure(byte[] bytes) {
+	public CacheChangedPath(byte[] bytes) {
 		this.fromBytes(bytes);
 	}
 

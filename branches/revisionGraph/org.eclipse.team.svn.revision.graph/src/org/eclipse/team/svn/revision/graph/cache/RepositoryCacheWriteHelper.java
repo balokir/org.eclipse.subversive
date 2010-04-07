@@ -22,16 +22,16 @@ import java.util.zip.Deflater;
 /** 
  * @author Igor Burilo
  */
-public class RevisionsContainerWriteHelper {
+public class RepositoryCacheWriteHelper {
 
-	protected final RevisionDataContainer dataContainer;	
+	protected final RepositoryCache repositoryCache;	
 	
-	public RevisionsContainerWriteHelper(RevisionDataContainer dataContainer) {
-		this.dataContainer = dataContainer;		
+	public RepositoryCacheWriteHelper(RepositoryCache repositoryCache) {
+		this.repositoryCache = repositoryCache;		
 	}
 	
 	public void save() throws IOException {		
-		File cacheFile = new File(this.dataContainer.cacheDir, RevisionDataContainer.getCacheFileName(this.dataContainer.getRepositoryResource()));
+		File cacheFile = this.repositoryCache.cacheFile;
 		DataOutputStream bytesWriter = new DataOutputStream(new FileOutputStream(cacheFile));
 		Deflater encoder = new Deflater();
 		try {
@@ -45,8 +45,8 @@ public class RevisionsContainerWriteHelper {
 
 	protected void saveRevisions(DataOutput out, Deflater encoder) throws IOException {
 		//TODO handle if there's no data
-		List<RevisionStructure> revisionsWithoutNulls = this.dataContainer.getRevisionsWithoutNulls();		
-		int revisionsCountWithNulls = this.dataContainer.revisions.length;
+		List<CacheRevision> revisionsWithoutNulls = this.repositoryCache.getRevisionsWithoutNulls();		
+		int revisionsCountWithNulls = this.repositoryCache.revisions.length;
 		
 		final int revisionsInBlock = 1000;
 		
@@ -76,7 +76,7 @@ public class RevisionsContainerWriteHelper {
 	 * Save revisions on equal blocks in order not to keep in memory large amount of data
 	 */
 	protected void convertRevisionsToBytes(DataOutput out, Deflater encoder,
-		List<RevisionStructure> revisions, int blocksCount, int revisionsInBlock) throws IOException {
+		List<CacheRevision> revisions, int blocksCount, int revisionsInBlock) throws IOException {
 		
 		/*
 		 * For each block write:
@@ -88,7 +88,7 @@ public class RevisionsContainerWriteHelper {
 		DataOutput revisionsBytes = new DataOutputStream(byteArray);
 		
 		int revisionsCounter = 0;				
-		int revisionsInLastBlock = RevisionsContainerWriteHelper.getRevisionsCountInLastBlock(revisions.size(), revisionsInBlock);		
+		int revisionsInLastBlock = RepositoryCacheWriteHelper.getRevisionsCountInLastBlock(revisions.size(), revisionsInBlock);		
 		for (int i = 0; i < blocksCount; i ++) {			
 			int revisionsCount = revisionsInBlock;
 			if (i == (blocksCount - 1)) {
@@ -96,7 +96,7 @@ public class RevisionsContainerWriteHelper {
 			}
 			
 			for (int j = 0; j < revisionsCount; j ++) {							
-				RevisionStructure revision = revisions.get(revisionsCounter ++);				
+				CacheRevision revision = revisions.get(revisionsCounter ++);				
 				byte[] revisionBytes = revision.toBytes();
 				BytesUtility.writeBytesWithLength(revisionsBytes, revisionBytes);		
 			}					
@@ -114,6 +114,6 @@ public class RevisionsContainerWriteHelper {
 	}
 	
 	protected void savePaths(DataOutput out, Deflater encoder) throws IOException {
-		this.dataContainer.pathStorage.save(out, encoder);
+		this.repositoryCache.pathStorage.save(out, encoder);
 	}
 }

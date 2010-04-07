@@ -23,7 +23,7 @@ import java.util.Set;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.revision.graph.PathRevision;
 import org.eclipse.team.svn.revision.graph.TopRightTraverseVisitor;
-import org.eclipse.team.svn.revision.graph.cache.RevisionDataContainer;
+import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
 import org.eclipse.team.svn.revision.graph.cache.TimeMeasure;
 
 /**
@@ -33,8 +33,9 @@ import org.eclipse.team.svn.revision.graph.cache.TimeMeasure;
  */
 public class RevisionRootNode extends ChangesNotifier {
 	
+	protected final IRepositoryResource resource;
 	protected final PathRevision pathRevision;	
-	protected final RevisionDataContainer dataContainer;
+	protected final RepositoryCache repositoryCache;
 	
 	protected RevisionNode initialStartNode;
 	protected RevisionNode currentStartNode;	
@@ -48,9 +49,10 @@ public class RevisionRootNode extends ChangesNotifier {
 	protected Map<RevisionNode, List<RevisionConnectionNode>> currentSourceConnections = new HashMap<RevisionNode, List<RevisionConnectionNode>>();
 	protected Map<RevisionNode, List<RevisionConnectionNode>> currentTargetConnections = new HashMap<RevisionNode, List<RevisionConnectionNode>>();
 	
-	public RevisionRootNode(PathRevision node, RevisionDataContainer dataContainer) {
+	public RevisionRootNode(IRepositoryResource resource, PathRevision node, RepositoryCache repositoryCache) {
+		this.resource = resource;
 		this.pathRevision = node;
-		this.dataContainer = dataContainer;
+		this.repositoryCache = repositoryCache;
 		this.filterManager = new NodesFilterManager();										
 	}
 	
@@ -249,19 +251,28 @@ public class RevisionRootNode extends ChangesNotifier {
 	}
 	
 	public String getRevisionPath(int pathIndex) {
-		return this.dataContainer.getPathStorage().getPath(pathIndex);	
+		return this.repositoryCache.getPathStorage().getPath(pathIndex);	
 	}
 
+	/** 
+	 * @return resource for which revision graph is launched
+	 */
 	public IRepositoryResource getRepositoryResource() {
-		return this.dataContainer.getRepositoryResource();
+		return this.resource;
 	}
 	
+	/** 
+	 * @param pathIndex
+	 * @return	full path which contains repository root 
+	 */
 	public String getRevisionFullPath(RevisionNode revisionNode) {
-		return this.dataContainer.getRevisionFullPath(revisionNode.getPathIndex());
-	}		
+		String url = this.resource.getRepositoryLocation().getRepositoryRootUrl();
+		url += this.repositoryCache.getPathStorage().getPath(revisionNode.getPathIndex());
+		return url;
+	}
 	
-	public RevisionDataContainer getDataContainer() {
-		return this.dataContainer;
+	public RepositoryCache getRepositoryCache() {
+		return this.repositoryCache;
 	}
 	
 	public RevisionNode getCurrentStartNode() {

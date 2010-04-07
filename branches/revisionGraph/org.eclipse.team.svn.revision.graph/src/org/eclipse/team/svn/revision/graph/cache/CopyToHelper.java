@@ -16,30 +16,30 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Container which contains 'copy to' data for particular path 
+ * Helper which contains 'copy to' data for particular path 
  * 
  * @author Igor Burilo
  */
-public class CopyToContainer {
+public class CopyToHelper {
 
 	/*
 	 * pathIndex -> list of ChangedPathStructure
 	 * 
 	 * there can be several copies from the same path@rev 
 	 */	
-	protected Map<Integer, List<ChangedPathStructure>> pathCopyToData = new HashMap<Integer, List<ChangedPathStructure>>();
+	protected Map<Integer, List<CacheChangedPath>> pathCopyToData = new HashMap<Integer, List<CacheChangedPath>>();
 
-	public void add(ChangedPathStructure changedPath) {
+	public void add(CacheChangedPath changedPath) {
 		int pathIndex = changedPath.getCopiedFromPathIndex();	
-		List<ChangedPathStructure> list = this.pathCopyToData.get(pathIndex);
+		List<CacheChangedPath> list = this.pathCopyToData.get(pathIndex);
 		if (list == null) {
-			list = new ArrayList<ChangedPathStructure>();
+			list = new ArrayList<CacheChangedPath>();
 			this.pathCopyToData.put(pathIndex, list);			
 		}
 		list.add(changedPath);
 	}
 	
-	public List<ChangedPathStructure> getCopyTo(int pathId) {
+	public List<CacheChangedPath> getCopyTo(int pathId) {
 		return this.pathCopyToData.get(pathId);
 	}
 
