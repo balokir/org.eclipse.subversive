@@ -39,6 +39,7 @@ public class RepositoryCacheReadHelper {
 		try {
 			this.loadRevisions(bytesReader, decoder);
 			this.loadPaths(bytesReader, decoder);
+			this.loadAuthors(bytesReader, decoder);
 		} finally {
 			try { bytesReader.close(); } catch (IOException ie) { /*ignore*/ }
 			decoder.end();
@@ -82,5 +83,10 @@ public class RepositoryCacheReadHelper {
 	
 	protected void loadPaths(DataInput in, Inflater decoder) throws IOException {
 		this.repositoryCache.pathStorage.load(in, decoder);		
+	}
+	
+	protected void loadAuthors(DataInput in, Inflater decoder) throws IOException {
+		byte[] bytes = BytesUtility.decompressAndRead(in, decoder);
+		this.repositoryCache.authors = new StringStorage(bytes);		
 	}
 }

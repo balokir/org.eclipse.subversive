@@ -21,6 +21,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.team.svn.core.SVNMessages;
+import org.eclipse.team.svn.revision.graph.cache.PathStorage;
 import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
 import org.eclipse.team.svn.ui.utility.DateFormatter;
@@ -126,7 +127,8 @@ public class RevisionTooltipFigure extends Figure {
 		this.pathText.setIcon(RevisionFigure.getRevisionNodeIcon(this.revisionNode));
 		this.pathText.setText(this.repositoryCache.getPathStorage().getPath(this.revisionNode.getPathIndex()) + "@" + this.revisionNode.getRevision());
 		
-		String author = this.revisionNode.getAuthor();
+		int authorIndex = this.revisionNode.getAuthorIndex();
+		String author =  authorIndex != PathStorage.UNKNOWN_INDEX ? this.repositoryCache.getAuthorStorage().getValue(authorIndex) : null;
 		this.authorText.setText(author == null || author.length() == 0 ? SVNMessages.SVNInfo_NoAuthor : author);
 		
 		long date = this.revisionNode.getDate(); 
