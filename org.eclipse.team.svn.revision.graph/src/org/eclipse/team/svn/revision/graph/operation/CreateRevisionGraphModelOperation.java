@@ -31,9 +31,9 @@ import org.eclipse.team.svn.revision.graph.PathRevision;
 import org.eclipse.team.svn.revision.graph.PathRevision.ReviosionNodeType;
 import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
 import org.eclipse.team.svn.revision.graph.cache.CacheChangedPath;
+import org.eclipse.team.svn.revision.graph.cache.CacheRevision;
 import org.eclipse.team.svn.revision.graph.cache.PathStorage;
 import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
-import org.eclipse.team.svn.revision.graph.cache.CacheRevision;
 import org.eclipse.team.svn.revision.graph.cache.TimeMeasure;
 
 /**
@@ -44,23 +44,22 @@ import org.eclipse.team.svn.revision.graph.cache.TimeMeasure;
 public class CreateRevisionGraphModelOperation extends AbstractActionOperation {	
 	
 	protected IRepositoryResource resource;	
-	protected CreateCacheDataOperation createCacheOp;
+	protected IRepositoryCacheProvider cacheProvider;
 	protected RepositoryCache repositoryCache;
 	
 	protected PathRevisionConnectionsValidator pathRevisionValidator;
 	
 	protected PathRevision resultNode; 
 	
-	public CreateRevisionGraphModelOperation(IRepositoryResource resource, CreateCacheDataOperation createCacheOp) {
+	public CreateRevisionGraphModelOperation(IRepositoryResource resource, IRepositoryCacheProvider cacheProvider) {
 		super("Create RevisionGraph Model");
 		this.resource = resource;		
-		this.createCacheOp = createCacheOp;
+		this.cacheProvider = cacheProvider;
 	}
 	
 	@Override
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		this.repositoryCache = this.createCacheOp.getRepositoryCache();		
-		this.repositoryCache.prepareModel();		
+		this.repositoryCache = this.cacheProvider.getRepositoryCache();	
 		
 		this.pathRevisionValidator = new PathRevisionConnectionsValidator(this.repositoryCache);
 		

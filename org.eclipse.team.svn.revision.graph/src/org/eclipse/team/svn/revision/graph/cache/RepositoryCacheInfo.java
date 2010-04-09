@@ -14,7 +14,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
@@ -42,7 +44,35 @@ public class RepositoryCacheInfo {
 	protected long lastProcessedRevision; 
 	protected String cacheDataFileName;
 	
-	protected final File metadataFile;	
+	protected final File metadataFile;
+	
+	
+	//--- access to below resources require synchronization
+	
+	//indicates whether we're calculating cache now
+	protected boolean isCalculating;
+	
+	protected int cacheReferencesCount;
+	protected RepositoryCache repositoryCache;
+	
+	protected Set<IRepositoryResource> resourcesForWhichCacheIsOpened = new HashSet<IRepositoryResource>();
+	
+	protected final Object calculateLock = new Object();
+	
+	public enum CacheResultEnum {
+		OK, BROKEN, CALCULATING
+	} 
+	
+	public static class CacheResult {
+
+		public final CacheResultEnum status;
+		public final RepositoryCache repositoryCache;
+		
+		public CacheResult(CacheResultEnum status, RepositoryCache repositoryCache) {
+			this.status = status;
+			this.repositoryCache = repositoryCache;
+		}		
+	}
 	
 	public RepositoryCacheInfo(File metadataFile) {		
 		this.metadataFile = metadataFile;		
@@ -149,32 +179,162 @@ public class RepositoryCacheInfo {
 	}
 	
 	/**
-	 * Calculate cache data
+	 * Calculate cache data.
 	 * 
-	 * If there's error during cache creating, then return null
+	 * In order to release cache from memory call <code>disposeRepositoryCache</code>.
+	 * 
+	 * Policies how cache data is created:
+	 * 
+	 * - if another task is calculating/refreshing cache, 
+	 *   then don't calculate and return {@link CacheResultEnum.CALCULATING} status
+	 *   
+	 * - if cache was already calculated for passed resource and dispose method wasn't called for it, 
+	 *   then don't calculate and return {@link CacheResultEnum.BROKEN} status
+	 *   
+	 * - if error or canceling happened during calculating, then return {@link CacheResultEnum.BROKEN}  
+	 * 
+	 * - if cache is successfully calculated, then return {@link CacheResultEnum.OK} and resulted cache 
+	 * 
+	 * - if there are references to cache and this method is called, then update cache
 	 */
-	public RepositoryCache createCacheData(IRepositoryResource resource, IProgressMonitor monitor) {		
-		File cacheDataFile = new File(this.metadataFile.getParentFile(), this.cacheDataFileName);		
-		RepositoryCache repositoryCache = new RepositoryCache(cacheDataFile, this);
+	public CacheResult createCacheData(IRepositoryResource resource, IProgressMonitor monitor) {		
+		boolean isRefresh = false;
+		RepositoryCache previousCache = null;
+		synchronized (this.calculateLock) {
+			
+			if (this.resourcesForWhichCacheIsOpened.contains(resource)) {
+				return new CacheResult(CacheResultEnum.BROKEN, null);
+			}
+			
+			if (this.isCalculating) {
+				return new CacheResult(CacheResultEnum.CALCULATING, null);
+			} else {
+				this.isCalculating = true;
+			}			
+			
+			previousCache = this.repositoryCache;
+			
+			if (previousCache != null) {	
+				isRefresh = true;				
+			}						
+		}		
 		
-		final CompositeOperation op = new CompositeOperation("Create Cache Data Operation");
+		try {
+			RepositoryCache cache;
+			IActionOperation op;
+			if (isRefresh) {
+				op = this.getRefreshOperation(resource, previousCache);
+				cache = previousCache;
+			} else {
+				File cacheDataFile = new File(this.metadataFile.getParentFile(), this.cacheDataFileName);		
+				cache = new RepositoryCache(cacheDataFile, this);			
+				op = this.getCreateOperation(resource, cache);
+			}			
+			
+			//call synchronously				
+			ProgressMonitorUtility.doTask(UIMonitorUtility.DEFAULT_FACTORY.getLogged(op), monitor, 1, 1);
+			
+			if (op.getExecutionState() == IActionOperation.OK) {				
+				synchronized (this.calculateLock) {
+					if (!this.resourcesForWhichCacheIsOpened.contains(resource)) {
+						this.cacheReferencesCount ++;
+						this.resourcesForWhichCacheIsOpened.add(resource);
+					}
+					this.repositoryCache = cache;	
+				}				
+				cache.prepareModel();
+				return new CacheResult(CacheResultEnum.OK, cache);
+			} else {
+				return new CacheResult(CacheResultEnum.BROKEN, null);
+			}
+			
+		} finally {
+			synchronized (this.calculateLock) {
+				this.isCalculating = false;
+			}
+		}
+	}
+	
+	public CacheResult refreshCacheData(IRepositoryResource resource, IProgressMonitor monitor) {
+		RepositoryCache previousCache = null;
+		synchronized (this.calculateLock) {
+			previousCache = this.repositoryCache;			
+			if (previousCache == null) {
+				return new CacheResult(CacheResultEnum.BROKEN, null);
+			}
+			
+			if (this.isCalculating) {
+				return new CacheResult(CacheResultEnum.CALCULATING, null);
+			} else {
+				this.isCalculating = true;
+			}	
+		}
+		
+		try {		
+			IActionOperation op = this.getRefreshOperation(resource, previousCache);				
+			
+			//call synchronously				
+			ProgressMonitorUtility.doTask(UIMonitorUtility.DEFAULT_FACTORY.getLogged(op), monitor, 1, 1);			
+			
+			if (op.getExecutionState() == IActionOperation.OK) {
+				previousCache.prepareModel();								
+				return new CacheResult(CacheResultEnum.OK, previousCache);
+			} else {
+				return new CacheResult(CacheResultEnum.BROKEN, null);
+			}
+						
+		} finally {
+			synchronized (this.calculateLock) {
+				this.isCalculating = false;
+			}
+		}
+	}
+	
+	protected IActionOperation getCreateOperation(IRepositoryResource resource, RepositoryCache cache) {
+		CompositeOperation op = new CompositeOperation("Create Cache Operation");
 		
 		CheckRepositoryConnectionOperation checkConnectionOp = new CheckRepositoryConnectionOperation(resource);
 		op.add(checkConnectionOp);
 		
-		PrepareRevisionDataOperation prepareDataOp = new PrepareRevisionDataOperation(repositoryCache);
+		PrepareRevisionDataOperation prepareDataOp = new PrepareRevisionDataOperation(cache);
 		op.add(prepareDataOp, new IActionOperation[]{checkConnectionOp});
 					
-		FetchSkippedRevisionsOperation fetchSkippedOp = new FetchSkippedRevisionsOperation(resource, checkConnectionOp, repositoryCache);
+		FetchSkippedRevisionsOperation fetchSkippedOp = new FetchSkippedRevisionsOperation(resource, checkConnectionOp, cache);
 		op.add(fetchSkippedOp, new IActionOperation[]{prepareDataOp});
 		
-		FetchNewRevisionsOperation fetchNewOp = new FetchNewRevisionsOperation(resource, checkConnectionOp, repositoryCache);
+		FetchNewRevisionsOperation fetchNewOp = new FetchNewRevisionsOperation(resource, checkConnectionOp, cache);
 		op.add(fetchNewOp, new IActionOperation[]{fetchSkippedOp});	
 		
-		//call synchronously				
-		ProgressMonitorUtility.doTask(UIMonitorUtility.DEFAULT_FACTORY.getLogged(op), monitor, 1, 1);
+		return op;
+	}
+	
+	protected IActionOperation getRefreshOperation(IRepositoryResource resource, RepositoryCache cache) {
+		CompositeOperation op = new CompositeOperation("Refresh Cache Operation");
 		
-		return op.getExecutionState() == IActionOperation.OK ? repositoryCache : null;
+		CheckRepositoryConnectionOperation checkConnectionOp = new CheckRepositoryConnectionOperation(resource);
+		op.add(checkConnectionOp);						
+					
+		FetchSkippedRevisionsOperation fetchSkippedOp = new FetchSkippedRevisionsOperation(resource, checkConnectionOp, cache);
+		op.add(fetchSkippedOp, new IActionOperation[]{checkConnectionOp});
+		
+		FetchNewRevisionsOperation fetchNewOp = new FetchNewRevisionsOperation(resource, checkConnectionOp, cache);
+		op.add(fetchNewOp, new IActionOperation[]{fetchSkippedOp});	
+		
+		return op;
+	}
+	
+	/** 
+	 * Only if there are no more references to cache, dispose it
+	 */
+	public void disposeRepositoryCache(IRepositoryResource resource) {
+		synchronized (this.calculateLock) {			
+			this.resourcesForWhichCacheIsOpened.remove(resource);
+			
+			if (this.cacheReferencesCount > 0 && -- this.cacheReferencesCount == 0) {
+				//clear cache
+				this.repositoryCache = null;		
+			}
+		}		
 	}
 	
 	public void export(File destination) {
