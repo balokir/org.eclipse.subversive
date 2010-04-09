@@ -69,8 +69,8 @@ public class PathRevision extends NodeConnections<PathRevision> {
 		return this.cacheRevision.getDate();
 	}
 
-	public String getAuthor() {
-		return this.cacheRevision.getAuthor();
+	public int getAuthorIndex() {
+		return this.cacheRevision.getAuthorIndex();
 	}
 	
 	public String getMessage() {

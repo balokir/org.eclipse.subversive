@@ -37,6 +37,7 @@ public class RepositoryCacheWriteHelper {
 		try {
 			this.saveRevisions(bytesWriter, encoder);
 			this.savePaths(bytesWriter, encoder);
+			this.saveAuthors(bytesWriter, encoder);
 		} finally {
 			try { bytesWriter.close(); } catch (IOException ie) { /*ignore*/ }
 			encoder.end();
@@ -115,5 +116,14 @@ public class RepositoryCacheWriteHelper {
 	
 	protected void savePaths(DataOutput out, Deflater encoder) throws IOException {
 		this.repositoryCache.pathStorage.save(out, encoder);
+	}
+	
+	protected void saveAuthors(DataOutput out, Deflater encoder) throws IOException {
+		/*
+		 * Write:
+		 * 
+		 * compressed authors storage
+		 */
+		BytesUtility.compressAndWrite(this.repositoryCache.authors.toBytes(), out, encoder);		
 	}
 }

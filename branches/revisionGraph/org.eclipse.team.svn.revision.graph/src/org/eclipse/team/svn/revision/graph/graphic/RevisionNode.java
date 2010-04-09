@@ -22,6 +22,8 @@ import org.eclipse.team.svn.revision.graph.PathRevision.ReviosionNodeType;
 import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
 
 /**
+ * TODO use indexes or strings ?
+ * 
  * @author Igor Burilo
  */
 public class RevisionNode extends NodeConnections<RevisionNode> {
@@ -223,8 +225,8 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 		return this.pathRevision.getMessage();
 	}
 	
-	public String getAuthor() {
-		return this.pathRevision.getAuthor();
+	public int getAuthorIndex() {
+		return this.pathRevision.getAuthorIndex();
 	}
 	
 	public long getDate() {

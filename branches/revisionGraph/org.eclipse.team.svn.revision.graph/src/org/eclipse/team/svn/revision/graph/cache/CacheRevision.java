@@ -24,17 +24,19 @@ import java.io.IOException;
  */
 public class CacheRevision {
 	
-	protected long revision;
-
-	//TODO don't separate it to another class
-	protected CacheRevisionData revisionData;
+	protected long revision;	
+	protected int authorIndex;	
+	protected long date;	
+	protected String message;
 	
 	protected CacheChangedPath[] changedPaths = new CacheChangedPath[0];
 	
-	public CacheRevision(long revision, CacheChangedPath[] changedPaths, CacheRevisionData revisionData) {
-		this.revision = revision;
+	public CacheRevision(long revision, int authorIndex, long date, String message, CacheChangedPath[] changedPaths) {
+		this.revision = revision;		
+		this.authorIndex = authorIndex;
+		this.date = date;
+		this.message = message;
 		this.changedPaths = changedPaths;
-		this.revisionData = revisionData;
 	}
 	
 	public CacheRevision(byte[] bytes) {
@@ -53,16 +55,16 @@ public class CacheRevision {
 		return this.revision;
 	}
 	
-	public String getAuthor() {
-		return this.revisionData != null ? this.revisionData.getAuthor() : null;		
+	public int getAuthorIndex() {
+		return this.authorIndex;		
 	} 
 	
 	public long getDate() {
-		return this.revisionData != null ? this.revisionData.getDate() : 0;
+		return this.date;
 	}
 	
 	public String getMessage() {
-		return this.revisionData != null ? this.revisionData.getMessage() : null;
+		return this.message;
 	}
 	
 	protected final void fromBytes(byte[] bytes) {
@@ -70,7 +72,19 @@ public class CacheRevision {
 			DataInput bytesIn = new DataInputStream(new ByteArrayInputStream(bytes));
 			
 			this.revision = bytesIn.readLong();
-							
+					
+			this.date = bytesIn.readLong();
+			
+			this.authorIndex = bytesIn.readInt();
+			
+			//message
+			int messageLength = bytesIn.readInt();
+			if (messageLength > 0) {
+				byte[] strBytes = new byte[messageLength];
+				bytesIn.readFully(strBytes);
+				this.message = BytesUtility.getString(strBytes);
+			}
+			
 			//changed paths
 			int changedPathsCount = bytesIn.readInt();
 			this.changedPaths = new CacheChangedPath[changedPathsCount];
@@ -78,14 +92,6 @@ public class CacheRevision {
 				byte[] pathBytes = BytesUtility.readBytesWithLength(bytesIn);
 				this.changedPaths[i] = new CacheChangedPath(pathBytes);			
 			}
-			
-			//revision data		
-			int revisionDataLength = bytesIn.readInt();		
-			if (revisionDataLength > 0) {
-				byte[] revisionDataBytes = new byte[revisionDataLength];
-				bytesIn.readFully(revisionDataBytes);
-				this.revisionData = new CacheRevisionData(revisionDataBytes);
-			}	
 		} catch (IOException e) {
 			//ignore
 		}				
@@ -96,12 +102,14 @@ public class CacheRevision {
 		 * Write:
 		 * 
 		 * revision
+		 * date
+		 * author index
+		 * message length
+		 * message bytes
 		 * changed paths count
 		 * for each changed path
 		 * 		changed path length
 		 *  	changed path bytes
-		 *  revision data length
-		 *  revision data bytes
 		 */
 		
 		try {
@@ -111,6 +119,20 @@ public class CacheRevision {
 			//revision
 			revisionBytes.writeLong(this.revision);
 			
+			//date
+			revisionBytes.writeLong(this.date);
+			
+			//author
+			revisionBytes.writeInt(this.authorIndex);
+
+			//message	
+			if (this.message != null && this.message.length() > 0) {
+				byte[] messageBytes = BytesUtility.convertStringToBytes(this.message);
+				BytesUtility.writeBytesWithLength(revisionBytes, messageBytes);
+			} else {
+				revisionBytes.writeInt(0);
+			}			
+			
 			//changed paths
 			revisionBytes.writeInt(this.changedPaths.length);
 			for (CacheChangedPath changedPath : this.changedPaths) {
@@ -118,13 +140,6 @@ public class CacheRevision {
 				BytesUtility.writeBytesWithLength(revisionBytes, pathBytes);			
 			}
 			
-			//revision data		
-			if (this.revisionData != null) {
-				byte[] dataBytes = this.revisionData.toBytes();
-				BytesUtility.writeBytesWithLength(revisionBytes, dataBytes);						
-			} else {			
-				revisionBytes.writeInt(0);
-			}			
 			return byteArray.toByteArray();
 		} catch (IOException e) {
 			//ignore

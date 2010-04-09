@@ -36,6 +36,8 @@ public class RepositoryCache {
 	
 	protected PathStorage pathStorage;
 	
+	protected StringStorage authors;
+	
 	protected CopyToHelper copyToContainer = new CopyToHelper();
 	
 	//flag which indicates whether there are not saved revisions
@@ -97,6 +99,10 @@ public class RepositoryCache {
 		return this.pathStorage;
 	}
 	
+	public StringStorage getAuthorStorage() {
+		return this.authors;
+	}
+	
 	public List<CacheChangedPath> getCopiedToData(int pathId) {		
 		List<CacheChangedPath> res = this.copyToContainer.pathCopyToData.get(pathId);
 		return res != null ? new ArrayList<CacheChangedPath>(res) : new ArrayList<CacheChangedPath>();
@@ -115,11 +121,11 @@ public class RepositoryCache {
 		} else {
 			changedPaths = new CacheChangedPath[0];
 		}		
-				
-		//data
-		CacheRevisionData revisionData = new CacheRevisionData(entry.date, entry.author, entry.message);
-			
-		CacheRevision revision = new CacheRevision(entry.revision, changedPaths, revisionData);		
+									
+		
+		int authorIndex = entry.author != null ? this.authors.add(entry.author) : PathStorage.UNKNOWN_INDEX;
+		
+		CacheRevision revision = new CacheRevision(entry.revision, authorIndex, entry.date, entry.message, changedPaths);		
 		return revision;
 	}
 	
@@ -176,6 +182,7 @@ public class RepositoryCache {
 
 	public void load(IProgressMonitor monitor) throws IOException {
 		this.pathStorage = new PathStorage();
+		this.authors = new StringStorage();
 		
 		if (this.cacheInfo.getLastProcessedRevision() == 0) {
 			this.revisions = new CacheRevision[0];
