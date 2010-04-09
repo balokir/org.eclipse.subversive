@@ -33,7 +33,7 @@ public class RevisionGraphUtility {
 		CompositeOperation op = new CompositeOperation("Show Revision Graph Operation");							
 		
 		//create cache
-		CreateCacheDataOperation createCacheOp = new CreateCacheDataOperation(resource);
+		CreateCacheDataOperation createCacheOp = new CreateCacheDataOperation(resource, false);
 		op.add(createCacheOp);
 				
 		//create model

@@ -27,6 +27,11 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
+import org.eclipse.team.svn.core.operation.CompositeOperation;
+import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.revision.graph.cache.TimeMeasure;
 import org.eclipse.team.svn.revision.graph.graphic.actions.AddRevisionLinksAction;
@@ -45,7 +50,10 @@ import org.eclipse.team.svn.revision.graph.graphic.actions.ShowAnnotationAction;
 import org.eclipse.team.svn.revision.graph.graphic.actions.ShowHistoryAction;
 import org.eclipse.team.svn.revision.graph.graphic.actions.ShowPropertiesAction;
 import org.eclipse.team.svn.revision.graph.graphic.editpart.GraphEditPartFactory;
+import org.eclipse.team.svn.revision.graph.operation.CreateCacheDataOperation;
+import org.eclipse.team.svn.revision.graph.operation.CreateRevisionGraphModelOperation;
 import org.eclipse.team.svn.ui.action.remote.BranchTagAction;
+import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
@@ -174,55 +182,48 @@ public class RevisionGraphEditor extends GraphicalEditor {
 	}
 
 	public void handleRefresh() {
+		final Object objModel = this.getModel();
+		if (!(objModel instanceof RevisionRootNode)) {
+			return;
+		}			
+		final RevisionRootNode previousModel = (RevisionRootNode) objModel;				
+		final IRepositoryResource resource = previousModel.getRepositoryResource();
+				
+		//TODO disable editor during refresh: take note that cancel can be called
 		
-		//TODO add correct implementation
+		CompositeOperation op = new CompositeOperation("Refresh Revision Graph");											
 		
-//		Object objModel = this.getModel();
-//		if (!(objModel instanceof RevisionRootNode)) {
-//			return;
-//		}			
-//		final RevisionRootNode previousModel = (RevisionRootNode) objModel;	
-//		IRepositoryResource resource = previousModel.getRepositoryResource();
-//		
-//		//TODO disable editor during refresh: take note that cancel can be called
-//		
-//		CompositeOperation op = new CompositeOperation("Refresh Revision Graph");											
-//		
-//		CheckRepositoryConnectionOperation checkConnectionOp = new CheckRepositoryConnectionOperation(resource);
-//		op.add(checkConnectionOp);
-//		
-//		final PrepareRevisionDataOperation prepareDataOp = new PrepareRevisionDataOperation(resource);
-//		op.add(prepareDataOp, new IActionOperation[]{checkConnectionOp});
-//					
-//		FetchSkippedRevisionsOperation fetchSkippedOp = new FetchSkippedRevisionsOperation(resource, checkConnectionOp, prepareDataOp);
-//		op.add(fetchSkippedOp, new IActionOperation[]{prepareDataOp});
-//		
-//		FetchNewRevisionsOperation fetchNewOp = new FetchNewRevisionsOperation(resource, checkConnectionOp, prepareDataOp);
-//		op.add(fetchNewOp, new IActionOperation[]{fetchSkippedOp});					
-//				
-//		final CreateRevisionGraphModelOperation createModelOp = new CreateRevisionGraphModelOperation(resource, prepareDataOp);
-//		op.add(createModelOp, new IActionOperation[]{checkConnectionOp});	
-//		
-//		op.add(new AbstractActionOperation("Refresh Revision Graph") {
-//			protected void runImpl(IProgressMonitor monitor) throws Exception {
-//				if (createModelOp.getModel() != null) {
-//					UIMonitorUtility.getDisplay().syncExec(new Runnable() {
-//						public void run() {							
-//							RevisionRootNode modelObject = new RevisionRootNode(createModelOp.getModel(), createModelOp.getDataContainer());							
-//							((RevisionGraphEditorInput) getEditorInput()).setModel(modelObject);							
-//							boolean isSimpleMode = previousModel.isSimpleMode();
-//							modelObject.init(isSimpleMode);							
-//							getGraphicalViewer().setContents(modelObject);															
-//						}			
-//					});	
-//				} else {
-//					//it should not happen in normal case
-//					throw new UnreportableException("Failed to update revision graph, its model is null");
-//				}				
-//			}
-//		}, new IActionOperation[] {createModelOp});				
-//		
-//		UIMonitorUtility.doTaskScheduledDefault(this, op);
+		CreateCacheDataOperation updateCacheOp = new CreateCacheDataOperation(resource, true);
+		op.add(updateCacheOp);
+				
+		final CreateRevisionGraphModelOperation createModelOp = new CreateRevisionGraphModelOperation(resource, updateCacheOp);
+		op.add(createModelOp, new IActionOperation[]{updateCacheOp});	
+		
+		op.add(new AbstractActionOperation("Refresh Revision Graph") {
+			protected void runImpl(IProgressMonitor monitor) throws Exception {
+				if (createModelOp.getModel() != null) {
+					UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+						public void run() {
+							GraphicalViewer viewer = getGraphicalViewer();
+							Control control = null;
+							if (viewer != null && (control = viewer.getControl()) != null && !control.isDisposed()) {								
+								RevisionRootNode modelObject = new RevisionRootNode(resource, createModelOp.getModel(), createModelOp.getRepositoryCache());							
+								((RevisionGraphEditorInput) getEditorInput()).setModel(modelObject);							
+								boolean isSimpleMode = previousModel.isSimpleMode();
+								modelObject.init(isSimpleMode);			
+														
+								viewer.setContents(modelObject);	
+							}																													
+						}			
+					});	
+				} else {
+					//it should not happen in normal case
+					throw new UnreportableException("Failed to update revision graph, its model is null");
+				}				
+			}
+		}, new IActionOperation[] {createModelOp});				
+		
+		UIMonitorUtility.doTaskScheduledDefault(this, op);
 	}
 	
 	protected RevisionGraphOutlinePage getOutlinePage() {
@@ -366,6 +367,12 @@ public class RevisionGraphEditor extends GraphicalEditor {
 		//clear resources
 		RevisionGraphEditorInput editorInput = (RevisionGraphEditorInput) this.getEditorInput();
 		if (editorInput != null) {
+			Object model = editorInput.getModel();
+			if (model instanceof RevisionRootNode) {
+				RevisionRootNode rootNode = (RevisionRootNode) model; 
+				rootNode.getRepositoryCache().getCacheInfo().disposeRepositoryCache(rootNode.getRepositoryResource());
+			}
+			
 			editorInput.setModel(null);	
 		}
 		
