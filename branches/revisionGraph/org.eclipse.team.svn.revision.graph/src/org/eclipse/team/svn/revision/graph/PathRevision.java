@@ -73,8 +73,8 @@ public class PathRevision extends NodeConnections<PathRevision> {
 		return this.cacheRevision.getAuthorIndex();
 	}
 	
-	public String getMessage() {
-		return this.cacheRevision.getMessage();
+	public int getMessageIndex() {
+		return this.cacheRevision.getMessageIndex();
 	}
 
 	public CacheChangedPath[] getChangedPaths() {

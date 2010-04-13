@@ -19,8 +19,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 /**
- * firstIndex  points to IndexPairsStorage
- * secondIndex points to StringStorage
  * 
  * @author Igor Burilo
  */
@@ -59,8 +57,8 @@ public class IndexPairsStorage extends GenericStorage<Pair> {
 			
 			bytes.writeInt(this.dataList.size());
 			for (Pair pair : this.dataList) {
-				bytes.writeInt(pair.parentIndex);						
-				bytes.writeInt(pair.stringIndex);	
+				bytes.writeInt(pair.first);						
+				bytes.writeInt(pair.second);	
 			}
 			return byteArray.toByteArray();	
 		} catch (IOException ie) {
