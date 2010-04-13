@@ -77,7 +77,7 @@ public class CacheChangedPath {
 				this.copiedFromPathIndex = dataIn.readInt();
 				this.copiedFromRevision = dataIn.readLong();
 			} else {
-				this.copiedFromPathIndex = PathStorage.UNKNOWN_INDEX;
+				this.copiedFromPathIndex = RepositoryCache.UNKNOWN_INDEX;
 				this.copiedFromRevision = 0;
 			}	
 		} catch (IOException e) {
@@ -105,7 +105,7 @@ public class CacheChangedPath {
 			bytes.writeLong(this.revision);
 			
 			//copied from
-			if (this.copiedFromPathIndex != PathStorage.UNKNOWN_INDEX) {
+			if (this.copiedFromPathIndex != RepositoryCache.UNKNOWN_INDEX) {
 				bytes.writeByte(1);
 									
 				bytes.writeInt(this.copiedFromPathIndex);

@@ -27,15 +27,15 @@ public class CacheRevision {
 	protected long revision;	
 	protected int authorIndex;	
 	protected long date;	
-	protected String message;
+	protected int messageIndex;
 	
 	protected CacheChangedPath[] changedPaths = new CacheChangedPath[0];
 	
-	public CacheRevision(long revision, int authorIndex, long date, String message, CacheChangedPath[] changedPaths) {
+	public CacheRevision(long revision, int authorIndex, long date, int messageIndex, CacheChangedPath[] changedPaths) {
 		this.revision = revision;		
 		this.authorIndex = authorIndex;
 		this.date = date;
-		this.message = message;
+		this.messageIndex = messageIndex;
 		this.changedPaths = changedPaths;
 	}
 	
@@ -63,8 +63,8 @@ public class CacheRevision {
 		return this.date;
 	}
 	
-	public String getMessage() {
-		return this.message;
+	public int getMessageIndex() {
+		return this.messageIndex;
 	}
 	
 	protected final void fromBytes(byte[] bytes) {
@@ -77,13 +77,7 @@ public class CacheRevision {
 			
 			this.authorIndex = bytesIn.readInt();
 			
-			//message
-			int messageLength = bytesIn.readInt();
-			if (messageLength > 0) {
-				byte[] strBytes = new byte[messageLength];
-				bytesIn.readFully(strBytes);
-				this.message = BytesUtility.getString(strBytes);
-			}
+			this.messageIndex = bytesIn.readInt();
 			
 			//changed paths
 			int changedPathsCount = bytesIn.readInt();
@@ -125,13 +119,8 @@ public class CacheRevision {
 			//author
 			revisionBytes.writeInt(this.authorIndex);
 
-			//message	
-			if (this.message != null && this.message.length() > 0) {
-				byte[] messageBytes = BytesUtility.convertStringToBytes(this.message);
-				BytesUtility.writeBytesWithLength(revisionBytes, messageBytes);
-			} else {
-				revisionBytes.writeInt(0);
-			}			
+			//message
+			revisionBytes.writeInt(this.messageIndex);							
 			
 			//changed paths
 			revisionBytes.writeInt(this.changedPaths.length);

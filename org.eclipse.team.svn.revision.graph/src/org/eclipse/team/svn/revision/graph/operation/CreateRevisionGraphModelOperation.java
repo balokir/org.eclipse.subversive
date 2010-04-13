@@ -318,7 +318,7 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 			 * 	1. path = trunk
 			 * 	2. path = trunk/src/com
 			 */
-			int copyToPath = PathStorage.UNKNOWN_INDEX;
+			int copyToPath = RepositoryCache.UNKNOWN_INDEX;
 			if (node.getPathIndex() == changedPath.getCopiedFromPathIndex()) {
 				//check exact matching
 				copyToPath = changedPath.getPathIndex();
@@ -329,7 +329,7 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 				copyToPath = this.repositoryCache.getPathStorage().add(changedPath.getPathIndex(), relativeParts);
 			}	
 			
-			if (copyToPath != PathStorage.UNKNOWN_INDEX) {
+			if (copyToPath != RepositoryCache.UNKNOWN_INDEX) {
 				CacheRevision rsCopyTo = this.getEntry(changedPath.getRevision());
 				PathRevision copyToNode = null;
 				if (rsCopyTo != null) {
@@ -375,7 +375,7 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 		if (entry != null && entry.hasChangedPaths()) {			
 			CacheChangedPath parentPath = null;			
 			for (CacheChangedPath changedPath : entry.getChangedPaths()) {
-				if (changedPath.getCopiedFromPathIndex() != PathStorage.UNKNOWN_INDEX && this.isParentPath(changedPath.getPathIndex(), node.getPathIndex())) {					
+				if (changedPath.getCopiedFromPathIndex() != RepositoryCache.UNKNOWN_INDEX && this.isParentPath(changedPath.getPathIndex(), node.getPathIndex())) {					
 					if (parentPath != null && this.isParentPath(parentPath.getPathIndex(), changedPath.getPathIndex()) || parentPath == null) {
 						parentPath = changedPath;
 					}												
@@ -410,7 +410,7 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 				for (CacheChangedPath changedPath : entry.getChangedPaths()) {						
 					if (this.isParentPath(changedPath.getPathIndex(), path)) {
 						if (changedPath.getAction() == SVNLogPath.ChangeType.ADDED || 
-							changedPath.getCopiedFromPathIndex() != PathStorage.UNKNOWN_INDEX) {
+							changedPath.getCopiedFromPathIndex() != RepositoryCache.UNKNOWN_INDEX) {
 							return entry;
 						}
 					}					
@@ -569,11 +569,11 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 	}
 	
 	protected boolean isAddOnlyAction(CacheChangedPath parentChangedPath) {
-		return parentChangedPath.getAction() == SVNLogPath.ChangeType.ADDED && parentChangedPath.getCopiedFromPathIndex() == PathStorage.UNKNOWN_INDEX;
+		return parentChangedPath.getAction() == SVNLogPath.ChangeType.ADDED && parentChangedPath.getCopiedFromPathIndex() == RepositoryCache.UNKNOWN_INDEX;
 	}		
 
 	protected boolean isCopyAction(CacheChangedPath parentChangedPath) {
-		return parentChangedPath.getCopiedFromPathIndex() != PathStorage.UNKNOWN_INDEX;					
+		return parentChangedPath.getCopiedFromPathIndex() != RepositoryCache.UNKNOWN_INDEX;					
 	}
 	
 	/*

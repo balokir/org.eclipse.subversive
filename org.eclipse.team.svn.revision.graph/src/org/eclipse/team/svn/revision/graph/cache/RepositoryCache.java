@@ -24,6 +24,8 @@ import org.eclipse.team.svn.core.connector.SVNLogPath;
  */
 public class RepositoryCache {	
 	
+	public final static int UNKNOWN_INDEX = -1;
+	
 	protected final File cacheFile;
 	
 	protected final RepositoryCacheInfo cacheInfo;
@@ -37,6 +39,8 @@ public class RepositoryCache {
 	protected PathStorage pathStorage;
 	
 	protected StringStorage authors;
+	
+	protected MessageStorage messages;
 	
 	protected CopyToHelper copyToContainer = new CopyToHelper();
 	
@@ -69,6 +73,8 @@ public class RepositoryCache {
 		} else {
 			this.revisions = new CacheRevision[(int) revisionsCount];
 		}
+		
+		this.messages.expandMessagesCount(revisionsCount);
 	}
 	
 		
@@ -103,6 +109,10 @@ public class RepositoryCache {
 		return this.authors;
 	}
 	
+	public MessageStorage getMessageStorage() {
+		return this.messages;
+	}
+	
 	public List<CacheChangedPath> getCopiedToData(int pathId) {		
 		List<CacheChangedPath> res = this.copyToContainer.pathCopyToData.get(pathId);
 		return res != null ? new ArrayList<CacheChangedPath>(res) : new ArrayList<CacheChangedPath>();
@@ -121,11 +131,12 @@ public class RepositoryCache {
 		} else {
 			changedPaths = new CacheChangedPath[0];
 		}		
-									
+											
+		int authorIndex = entry.author != null ? this.authors.add(entry.author) : RepositoryCache.UNKNOWN_INDEX;
 		
-		int authorIndex = entry.author != null ? this.authors.add(entry.author) : PathStorage.UNKNOWN_INDEX;
+		int messageIndex = this.messages.add(entry.message, entry.revision);
 		
-		CacheRevision revision = new CacheRevision(entry.revision, authorIndex, entry.date, entry.message, changedPaths);		
+		CacheRevision revision = new CacheRevision(entry.revision, authorIndex, entry.date, messageIndex, changedPaths);		
 		return revision;
 	}
 	
@@ -145,7 +156,7 @@ public class RepositoryCache {
 			}
 						
 			for (CacheChangedPath cp : revisionStructure.getChangedPaths()) {
-				if (cp.copiedFromPathIndex != PathStorage.UNKNOWN_INDEX) {
+				if (cp.copiedFromPathIndex != RepositoryCache.UNKNOWN_INDEX) {
 					this.copyToContainer.add(cp);
 				}
 			}							
@@ -171,6 +182,11 @@ public class RepositoryCache {
 		if (this.writeHelper == null) {
 			this.writeHelper = new RepositoryCacheWriteHelper(this);
 		}
+		
+		TimeMeasure compressMeasure = new TimeMeasure("Compress messages");
+		this.messages.compress();
+		compressMeasure.end();
+		
 		TimeMeasure saveMeasure = new TimeMeasure("saveMeasure"); 
 		this.writeHelper.save();
 		saveMeasure.end();
@@ -181,15 +197,20 @@ public class RepositoryCache {
 	}
 
 	public void load(IProgressMonitor monitor) throws IOException {
-		this.pathStorage = new PathStorage();
-		this.authors = new StringStorage();
+		long lastProcessedRevision = this.cacheInfo.getLastProcessedRevision();
 		
-		if (this.cacheInfo.getLastProcessedRevision() == 0) {
+		this.pathStorage = new PathStorage();
+		this.authors = new StringStorage();				
+		
+		if (lastProcessedRevision == 0) {
 			this.revisions = new CacheRevision[0];
+			this.messages = new MessageStorage(0);
 			return;
 		}		
-		this.revisions = new CacheRevision[(int) this.cacheInfo.getLastProcessedRevision() + 1];
 				
+		this.revisions = new CacheRevision[(int) lastProcessedRevision + 1];
+		this.messages = new MessageStorage((int) lastProcessedRevision + 1);
+		
 		if (this.readHelper == null) {
 			this.readHelper = new RepositoryCacheReadHelper(this);	
 		}		

@@ -56,6 +56,11 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 		this.changesNotifier = new ChangesNotifier();				
 	}	
 	
+	//TODO delete
+	public RevisionRootNode getRootNode() {
+		return this.rootNode;
+	}
+	
 	//--- layout methods 
 	
 	public void setSize(int width, int height) {
@@ -221,8 +226,8 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 		return this.pathRevision.getRevision();
 	}
 	
-	public String getMessage() {
-		return this.pathRevision.getMessage();
+	public int getMessageIndex() {
+		return this.pathRevision.getMessageIndex();
 	}
 	
 	public int getAuthorIndex() {

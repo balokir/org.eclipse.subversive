@@ -26,7 +26,6 @@ import java.util.zip.Inflater;
  */
 public class PathStorage {
 		
-	public final static int UNKNOWN_INDEX = -1;	
 	public final static int ROOT_INDEX = 0;			
 	
 	protected final static String PATH_SEPARATOR = "/";
@@ -34,7 +33,11 @@ public class PathStorage {
 	//contains strings
 	protected StringStorage strings = new StringStorage();		
 	
-	//contains indexes which compose paths
+	/*
+	 * contains indexes which compose paths:
+	 * 	firstIndex  points to IndexPairsStorage
+     *  secondIndex points to StringStorage 
+	 */
 	protected IndexPairsStorage pathIndex = new IndexPairsStorage();
 		
 	/*
@@ -42,7 +45,7 @@ public class PathStorage {
 	 */
 	public int add(String path) {		
 		if (path == null) {
-			return UNKNOWN_INDEX;
+			return RepositoryCache.UNKNOWN_INDEX;
 		}		
 		int resultIndex = ROOT_INDEX;
 		String[] parts = path.split(PATH_SEPARATOR);
@@ -58,7 +61,7 @@ public class PathStorage {
 		if (!pairs.isEmpty()) {
 			StringBuffer res = new StringBuffer();
 			for (Pair pair : pairs) {				
-				String path = this.strings.getValue(pair.stringIndex);
+				String path = this.strings.getValue(pair.second);
 				res.append(PATH_SEPARATOR).append(path);
 			}		
 			return res.toString();
@@ -71,9 +74,9 @@ public class PathStorage {
 		LinkedList<Pair> list = new LinkedList<Pair>();
 		int tmpIndex = index;
 		Pair pair = null;
-		while ((pair = this.pathIndex.getValue(tmpIndex)) != null && !pair.isRoot()) {
+		while ((pair = this.pathIndex.getValue(tmpIndex)) != null && !this.isRootPair(pair)) {
 			list.addFirst(pair);
-			tmpIndex = pair.parentIndex;
+			tmpIndex = pair.first;
 		}		
 		return list;		
 	}
@@ -83,7 +86,7 @@ public class PathStorage {
 	}
 	
 	public int getParentPathIndex(int pathIndex) {
-		return this.getParentPathPair(pathIndex).parentIndex;
+		return this.getParentPathPair(pathIndex).first;
 	} 
 	
 	public int add(int parentIndex, int[] childParts) {
@@ -125,8 +128,8 @@ public class PathStorage {
 		int index = childPathIndex;
 		while (index != parentPathIndex) {
 			Pair indexPair = this.pathIndex.getValue(index);			
-			elements.addFirst(indexPair.stringIndex);
-			index = indexPair.parentIndex;
+			elements.addFirst(indexPair.second);
+			index = indexPair.first;
 		}				
 		return this.collection2Array(elements);		
 	}
@@ -164,6 +167,9 @@ public class PathStorage {
 		this.pathIndex = new IndexPairsStorage(pathIndexesBytes);
 	}
 
+	public boolean isRootPair(Pair pair) {
+		return pair.first == PathStorage.ROOT_INDEX && pair.second == PathStorage.ROOT_INDEX;
+	}
 
 	public static void main(String[] s) throws Exception {
 		String s1 = "/test/wiki-migration/project_wiki-plus-polarion/_wiki/Space_1/Page_1/attachment-1.txt";

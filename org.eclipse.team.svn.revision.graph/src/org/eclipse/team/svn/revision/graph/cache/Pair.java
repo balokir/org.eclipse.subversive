@@ -17,19 +17,19 @@ package org.eclipse.team.svn.revision.graph.cache;
  */
 public class Pair {
 
-	public final int parentIndex;
-	public final int stringIndex;		
+	public final int first;
+	public final int second;		
 	
-	public Pair(int parentIndex, int childIndex) {
-		this.parentIndex = parentIndex;
-		this.stringIndex = childIndex;
+	public Pair(int first, int second) {
+		this.first = first;
+		this.second = second;
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof Pair) { 
 			Pair p = (Pair) obj;
-			return this.parentIndex == p.parentIndex && this.stringIndex == p.stringIndex;
+			return this.first == p.first && this.second == p.second;
 		}
 		return false;
 	}
@@ -38,17 +38,13 @@ public class Pair {
 	public int hashCode() {			
 		final int prime = 31;		
 		int result = 17;
-		result += prime * this.parentIndex;
-		result += prime * this.stringIndex;				
+		result += prime * this.first;
+		result += prime * this.second;				
 		return result;			
-	}
-	
-	public boolean isRoot() {
-		return this.parentIndex == PathStorage.ROOT_INDEX && this.stringIndex == PathStorage.ROOT_INDEX;
 	}
 	
 	@Override
 	public String toString() {		
-		return "parent: " + this.parentIndex + " child: " + this.stringIndex;
+		return "first: " + this.first + " second: " + this.second;
 	}
 }

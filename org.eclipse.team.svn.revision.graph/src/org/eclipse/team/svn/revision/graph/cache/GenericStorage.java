@@ -26,7 +26,7 @@ public abstract class GenericStorage<T> {
 	
 	public int add(T data) {			
 		int index = this.find(data);
-		if (index == PathStorage.UNKNOWN_INDEX) {
+		if (index == RepositoryCache.UNKNOWN_INDEX) {
 			index = this.addSimple(data);
 		}
 		return index;										
@@ -34,7 +34,7 @@ public abstract class GenericStorage<T> {
 		
 	public int find(T data) {
 		Integer index = this.hash.get(data);
-		return index == null ? PathStorage.UNKNOWN_INDEX : index;
+		return index == null ? RepositoryCache.UNKNOWN_INDEX : index;
 	}
 
 	public int addSimple(T data) {
