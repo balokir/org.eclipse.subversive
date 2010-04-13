@@ -122,7 +122,7 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 		
 		//main layer
 		RevisionRootNode rootNode = this.getRevisionRootNode();
-		String path = rootNode.getRevisionPath(revision.getPathIndex());				
+		String path = revision.getPath();				
 		
 		this.revisionFigure = new RevisionFigure(revision, path);													
 		Layer revisionLayer = new Layer();			

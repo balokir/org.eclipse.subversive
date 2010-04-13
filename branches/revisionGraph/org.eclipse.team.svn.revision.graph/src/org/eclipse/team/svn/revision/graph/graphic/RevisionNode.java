@@ -20,10 +20,9 @@ import org.eclipse.team.svn.revision.graph.NodeConnections;
 import org.eclipse.team.svn.revision.graph.PathRevision;
 import org.eclipse.team.svn.revision.graph.PathRevision.ReviosionNodeType;
 import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
+import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
 
 /**
- * TODO use indexes or strings ?
- * 
  * @author Igor Burilo
  */
 public class RevisionNode extends NodeConnections<RevisionNode> {
@@ -56,10 +55,6 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 		this.changesNotifier = new ChangesNotifier();				
 	}	
 	
-	//TODO delete
-	public RevisionRootNode getRootNode() {
-		return this.rootNode;
-	}
 	
 	//--- layout methods 
 	
@@ -210,8 +205,8 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 
 	//--- Accessors
 	
-	public int getPathIndex() {
-		return this.pathRevision.getPathIndex();
+	public String getPath() {
+		return this.rootNode.getRepositoryCache().getPathStorage().getPath(this.pathRevision.getPathIndex());
 	}
 	
 	public ReviosionNodeType getType() {
@@ -226,12 +221,16 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 		return this.pathRevision.getRevision();
 	}
 	
-	public int getMessageIndex() {
-		return this.pathRevision.getMessageIndex();
+	public String getMessage() {
+		int messageIndex = this.pathRevision.getMessageIndex();
+		String message = messageIndex != RepositoryCache.UNKNOWN_INDEX ? this.rootNode.getRepositoryCache().getMessageStorage().getMessage(messageIndex) : null;
+		return message;
 	}
 	
-	public int getAuthorIndex() {
-		return this.pathRevision.getAuthorIndex();
+	public String getAuthor() {
+		int authorIndex = this.pathRevision.getAuthorIndex();
+		String author = authorIndex != RepositoryCache.UNKNOWN_INDEX ? this.rootNode.getRepositoryCache().getAuthorStorage().getValue(authorIndex) : null;
+		return author;
 	}
 	
 	public long getDate() {
