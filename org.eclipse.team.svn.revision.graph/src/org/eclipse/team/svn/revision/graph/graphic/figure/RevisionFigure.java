@@ -31,7 +31,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphPlugin;
 import org.eclipse.team.svn.revision.graph.PathRevision.ReviosionNodeType;
 import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
-import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
@@ -193,10 +192,8 @@ public class RevisionFigure extends Figure {
 		if (this.pathTextFlow != null) {
 			this.pathTextFlow.setText(this.path);	
 		}				
-
-		int messageIndex = this.revisionNode.getMessageIndex();
-		String comment = messageIndex != RepositoryCache.UNKNOWN_INDEX ? this.revisionNode.getRootNode().getRepositoryCache().getMessageStorage().getMessage(messageIndex) : null;		
-		
+					
+		String comment = this.revisionNode.getMessage();
 		if (comment != null && comment.length() > 0) {
 			comment = comment.replaceAll("\r\n|\r|\n", " ");
 		} else {

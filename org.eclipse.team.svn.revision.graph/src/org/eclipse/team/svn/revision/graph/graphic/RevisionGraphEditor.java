@@ -35,7 +35,6 @@ import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.revision.graph.cache.TimeMeasure;
 import org.eclipse.team.svn.revision.graph.graphic.actions.AddRevisionLinksAction;
-import org.eclipse.team.svn.revision.graph.graphic.actions.CollapseExpandAction;
 import org.eclipse.team.svn.revision.graph.graphic.actions.ComparePropertiesAction;
 import org.eclipse.team.svn.revision.graph.graphic.actions.CompareWithEachOtherAction;
 import org.eclipse.team.svn.revision.graph.graphic.actions.CompareWithHeadAction;
@@ -135,8 +134,7 @@ public class RevisionGraphEditor extends GraphicalEditor {
 		GraphicalViewer viewer = getGraphicalViewer();
 		ScalableRootEditPart root = new ScalableRootEditPart();
 		
-		//zoom
-		//TODO probably we need to remember zoom between sessions 
+		//zoom 
 		List<String> zoomLevels = new ArrayList<String>(3);
 		zoomLevels.add(ZoomManager.FIT_ALL);
 		zoomLevels.add(ZoomManager.FIT_WIDTH);
@@ -160,8 +158,7 @@ public class RevisionGraphEditor extends GraphicalEditor {
 		viewer.setEditPartFactory(new GraphEditPartFactory());
 		
 		Object model = this.getModel();
-		if (model instanceof RevisionRootNode) {
-			//TODO remember between sessions
+		if (model instanceof RevisionRootNode) {			
 			boolean isSimpleMode = true;
 			((RevisionRootNode) model).init(isSimpleMode);
 			
@@ -321,41 +318,7 @@ public class RevisionGraphEditor extends GraphicalEditor {
 		
 		action = new ShowAnnotationAction(this);
 		registry.registerAction(action);
-		selectedActions.add(action.getId());
-		
-		//collapse/expand
-		
-		action = new CollapseExpandAction(this, CollapseExpandAction.CollapseNextAction_ID);
-		registry.registerAction(action);
-		selectedActions.add(action.getId());
-		
-		action = new CollapseExpandAction(this, CollapseExpandAction.CollapsePreviousAction_ID);
-		registry.registerAction(action);
-		selectedActions.add(action.getId());
-		
-		action = new CollapseExpandAction(this, CollapseExpandAction.CollapseCopiedToAction_ID);
-		registry.registerAction(action);
-		selectedActions.add(action.getId());
-		
-		action = new CollapseExpandAction(this, CollapseExpandAction.CollapseCopiedFromAction_ID);
-		registry.registerAction(action);
-		selectedActions.add(action.getId());
-		
-		action = new CollapseExpandAction(this, CollapseExpandAction.ExpandNextAction_ID);
-		registry.registerAction(action);
-		selectedActions.add(action.getId());
-		
-		action = new CollapseExpandAction(this, CollapseExpandAction.ExpandPreviousAction_ID);
-		registry.registerAction(action);
-		selectedActions.add(action.getId());
-		
-		action = new CollapseExpandAction(this, CollapseExpandAction.ExpandCopiedToAction_ID);
-		registry.registerAction(action);
-		selectedActions.add(action.getId());
-		
-		action = new CollapseExpandAction(this, CollapseExpandAction.ExpandCopiedFromAction_ID);
-		registry.registerAction(action);
-		selectedActions.add(action.getId());
+		selectedActions.add(action.getId());		
 	}
 
 	public GraphicalViewer getViewer() {

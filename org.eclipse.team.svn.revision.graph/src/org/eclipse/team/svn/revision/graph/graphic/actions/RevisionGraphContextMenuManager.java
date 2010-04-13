@@ -26,7 +26,6 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionGraphEditor;
-import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
 import org.eclipse.team.svn.revision.graph.graphic.editpart.RevisionEditPart;
 import org.eclipse.team.svn.revision.graph.graphic.editpart.RevisionGraphEditPart;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
@@ -46,7 +45,6 @@ public class RevisionGraphContextMenuManager extends ContextMenuProvider {
 	public static final String GROUP_1 = "group1";
 	public static final String GROUP_2 = "group2";
 	public static final String GROUP_3 = "group3";
-	public static final String GROUP_EXPAND_COLLAPSE = "expandCollapse";
 	
 	protected ActionRegistry actionRegistry;
 	protected RevisionGraphEditor graphEditor;
@@ -70,7 +68,6 @@ public class RevisionGraphContextMenuManager extends ContextMenuProvider {
 		menu.add(new Separator(RevisionGraphContextMenuManager.GROUP_1));
 		menu.add(new Separator(RevisionGraphContextMenuManager.GROUP_2));
 		menu.add(new Separator(RevisionGraphContextMenuManager.GROUP_3));
-		menu.add(new Separator(RevisionGraphContextMenuManager.GROUP_EXPAND_COLLAPSE));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	
 		List<EditPart> editParts = this.getViewer().getSelectedEditParts();
@@ -157,46 +154,6 @@ public class RevisionGraphContextMenuManager extends ContextMenuProvider {
 		
 		action = this.actionRegistry.getAction(AddRevisionLinksAction.AddRevisionLinksAction_ID);
 		menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_3, action);
-		
-		this.addExpandCollapseActions(menu, revisionEditParts);		
-	}
-	
-	protected void addExpandCollapseActions(IMenuManager menu, List<RevisionEditPart> revisionEditParts) {
-		if (revisionEditParts.size() == 1) {
-			RevisionNode node = revisionEditParts.get(0).getCastedModel();
-			
-			if (node.isNextCollapsed()) {
-				IAction action = this.actionRegistry.getAction(CollapseExpandAction.ExpandNextAction_ID);
-				menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_EXPAND_COLLAPSE, action);
-			} else {
-				IAction action = this.actionRegistry.getAction(CollapseExpandAction.CollapseNextAction_ID);
-				menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_EXPAND_COLLAPSE, action);
-			}
-			
-			if (node.isPreviousCollapsed()) {
-				IAction action = this.actionRegistry.getAction(CollapseExpandAction.ExpandPreviousAction_ID);
-				menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_EXPAND_COLLAPSE, action);
-			} else {
-				IAction action = this.actionRegistry.getAction(CollapseExpandAction.CollapsePreviousAction_ID);
-				menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_EXPAND_COLLAPSE, action);
-			}
-			
-			if (node.isCopiedToCollapsed()) {
-				IAction action = this.actionRegistry.getAction(CollapseExpandAction.ExpandCopiedToAction_ID);
-				menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_EXPAND_COLLAPSE, action);
-			} else {
-				IAction action = this.actionRegistry.getAction(CollapseExpandAction.CollapseCopiedToAction_ID);
-				menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_EXPAND_COLLAPSE, action);
-			}
-			
-			if (node.isCopiedFromCollapsed()) {
-				IAction action = this.actionRegistry.getAction(CollapseExpandAction.ExpandCopiedFromAction_ID);
-				menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_EXPAND_COLLAPSE, action);
-			} else {
-				IAction action = this.actionRegistry.getAction(CollapseExpandAction.CollapseCopiedFromAction_ID);
-				menu.appendToGroup(RevisionGraphContextMenuManager.GROUP_EXPAND_COLLAPSE, action);
-			}
-		}
 	}
 
 	protected Action addMenuItem(EditPartViewer viewer, MenuManager menuManager, String label, final SelectionAction action) {

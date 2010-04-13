@@ -33,7 +33,6 @@ import org.eclipse.team.svn.ui.utility.DateFormatter;
 public class RevisionTooltipFigure extends Figure {
 
 	protected final RevisionNode revisionNode;
-	protected final RepositoryCache repositoryCache;
 	
 	protected Label pathText;
 	protected Label authorText;
@@ -43,7 +42,6 @@ public class RevisionTooltipFigure extends Figure {
 	
 	public RevisionTooltipFigure(RevisionNode revisionNode, RepositoryCache repositoryCache) {
 		this.revisionNode = revisionNode;
-		this.repositoryCache = repositoryCache;
 		
 		this.createControls();
 		this.initControls();
@@ -124,10 +122,9 @@ public class RevisionTooltipFigure extends Figure {
 	
 	protected void initControls() {
 		this.pathText.setIcon(RevisionFigure.getRevisionNodeIcon(this.revisionNode));
-		this.pathText.setText(this.repositoryCache.getPathStorage().getPath(this.revisionNode.getPathIndex()) + "@" + this.revisionNode.getRevision());
+		this.pathText.setText(this.revisionNode.getPath() + "@" + this.revisionNode.getRevision());
 		
-		int authorIndex = this.revisionNode.getAuthorIndex();
-		String author = authorIndex != RepositoryCache.UNKNOWN_INDEX ? this.repositoryCache.getAuthorStorage().getValue(authorIndex) : null;
+		String author = this.revisionNode.getAuthor();
 		this.authorText.setText(author == null || author.length() == 0 ? SVNMessages.SVNInfo_NoAuthor : author);
 		
 		long date = this.revisionNode.getDate(); 
@@ -135,11 +132,10 @@ public class RevisionTooltipFigure extends Figure {
 		
 		if (this.revisionNode.getCopiedFrom() != null) {
 			RevisionNode copiedFrom = this.revisionNode.getCopiedFrom();
-			this.copyText.setText(this.repositoryCache.getPathStorage().getPath(copiedFrom.getPathIndex()) + "@" + copiedFrom.getRevision());
+			this.copyText.setText(copiedFrom.getPath() + "@" + copiedFrom.getRevision());
 		}
 		
-		int messageIndex = this.revisionNode.getMessageIndex();
-		String comment = messageIndex != RepositoryCache.UNKNOWN_INDEX ? this.repositoryCache.getMessageStorage().getMessage(messageIndex) : null;
+		String comment = this.revisionNode.getMessage();
 		this.commentText.setText(comment == null || comment.length() == 0 ? SVNMessages.SVNInfo_NoComment : comment);
 	}
 

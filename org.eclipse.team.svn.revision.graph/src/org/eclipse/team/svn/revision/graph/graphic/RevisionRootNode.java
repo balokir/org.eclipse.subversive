@@ -267,7 +267,7 @@ public class RevisionRootNode extends ChangesNotifier {
 	 */
 	public String getRevisionFullPath(RevisionNode revisionNode) {
 		String url = this.resource.getRepositoryLocation().getRepositoryRootUrl();
-		url += this.repositoryCache.getPathStorage().getPath(revisionNode.getPathIndex());
+		url += revisionNode.getPath();
 		return url;
 	}
 	
