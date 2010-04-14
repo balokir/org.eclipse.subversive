@@ -13,6 +13,7 @@ package org.eclipse.team.svn.revision.graph.graphic;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
 
@@ -26,10 +27,10 @@ public class RevisionGraphEditorInput implements IEditorInput {
 	
 	public RevisionGraphEditorInput(IRepositoryResource resource, Object model) {
 		if (resource == null) {
-			throw new IllegalArgumentException("resource");
+			throw new IllegalArgumentException("resource"); //$NON-NLS-1$
 		} 
 		if (model == null) {
-			throw new IllegalArgumentException("model");
+			throw new IllegalArgumentException("model"); //$NON-NLS-1$
 		} 
 		
 		this.resource = resource;
@@ -37,8 +38,7 @@ public class RevisionGraphEditorInput implements IEditorInput {
 	}
 
 	public String getName() {
-		//TODO use the same string as in editor
-		String tooltip = String.format("Revision Graph (%s [Rev:%s])", resource.getName(), resource.getSelectedRevision().toString());
+		String tooltip = SVNRevisionGraphMessages.format(SVNRevisionGraphMessages.RevisionGraphEditor_EditName, new Object[]{resource.getName(), resource.getSelectedRevision().toString()});
 		return tooltip;
 	}
 	

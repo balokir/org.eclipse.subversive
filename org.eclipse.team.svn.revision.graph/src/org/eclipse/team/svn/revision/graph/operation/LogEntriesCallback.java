@@ -17,6 +17,7 @@ import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNLogEntryCallbackWithMergeInfo;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
+import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
 import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
 
 /**
@@ -56,7 +57,7 @@ public class LogEntriesCallback extends SVNLogEntryCallbackWithMergeInfo {
 			//super.addEntry(entry);
 			
 			this.currentEntry = entry;
-			ProgressMonitorUtility.setTaskInfo(this.monitor, this.op, "Revision: " + entry.revision);
+			ProgressMonitorUtility.setTaskInfo(this.monitor, this.op, SVNRevisionGraphMessages.format(SVNRevisionGraphMessages.LogEntriesCallback_Message, entry.revision));
 			ProgressMonitorUtility.progress(this.monitor, ++ this.currentWork, this.totalWork);
 					
 			try {

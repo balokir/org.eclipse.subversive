@@ -27,7 +27,7 @@ public class TimeMeasure {
 		if (TimeMeasure.isDebug) {
 			this.message = message;
 			this.start = System.nanoTime();
-			System.out.println("Started: " + message);
+			System.out.println("Started: " + message); //$NON-NLS-1$
 		}
 	}
 	
@@ -35,7 +35,7 @@ public class TimeMeasure {
 		if (TimeMeasure.isDebug) {			
 			long diff = System.nanoTime() - this.start;
 			double show = diff / 1000000000.0;
-			System.out.println("--- Finished: " + this.message + ": " + show);	
+			System.out.println("--- Finished: " + this.message + ": " + show);	 //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 }

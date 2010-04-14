@@ -52,7 +52,7 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 	protected PathRevision resultNode; 
 	
 	public CreateRevisionGraphModelOperation(IRepositoryResource resource, IRepositoryCacheProvider cacheProvider) {
-		super("Create RevisionGraph Model");
+		super("Operation_CreateRevisionGraphModel"); //$NON-NLS-1$
 		this.resource = resource;		
 		this.cacheProvider = cacheProvider;
 	}
@@ -63,7 +63,7 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 		
 		this.pathRevisionValidator = new PathRevisionConnectionsValidator(this.repositoryCache);
 		
-		TimeMeasure processMeasure = new TimeMeasure("Create model");
+		TimeMeasure processMeasure = new TimeMeasure("Create model"); //$NON-NLS-1$
 		
 		String url = this.resource.getUrl();
 		String rootUrl = this.resource.getRepositoryLocation().getRepositoryRootUrl();	
@@ -80,7 +80,7 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 			//revision = this.entries[this.entries.length - 1].revision;				
 			revision = this.repositoryCache.getLastProcessedRevision();
 		} else {
-			throw new Exception("Unexpected revision kind: " + svnRevision);
+			throw new Exception("Unexpected revision kind: " + svnRevision); //$NON-NLS-1$
 		}								
 		
 		CacheRevision entry = this.findStartLogEntry(revision, pathIndex);

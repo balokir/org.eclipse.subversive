@@ -13,6 +13,7 @@ package org.eclipse.team.svn.revision.graph.graphic.actions;
 import org.eclipse.jface.action.Action;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionGraphEditor;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.ui.IEditorPart;
 
 /**
@@ -22,16 +23,16 @@ import org.eclipse.ui.IEditorPart;
  */
 public class RefreshRevisionGraphAction extends Action {
 
-	public final static String RefreshRevisionGraphAction_ID = "RefreshRevisionGraph";
+	public final static String RefreshRevisionGraphAction_ID = "RefreshRevisionGraph"; //$NON-NLS-1$
 	
 	protected IEditorPart editor;
 	
 	public RefreshRevisionGraphAction(IEditorPart editor) {
-		super("Refresh");
+		super(SVNUIMessages.SVNView_Refresh_Label);
 		this.editor = editor;
 		
-		this.setToolTipText("Refresh");
-		this.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/refresh.gif"));
+		this.setToolTipText(SVNUIMessages.SVNView_Refresh_ToolTip);
+		this.setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/refresh.gif")); //$NON-NLS-1$
 		this.setId(RefreshRevisionGraphAction.RefreshRevisionGraphAction_ID);		
 	}
 	

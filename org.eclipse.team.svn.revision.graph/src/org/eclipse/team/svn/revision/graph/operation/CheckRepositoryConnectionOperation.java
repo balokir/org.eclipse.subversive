@@ -20,6 +20,7 @@ import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.ActivityCancelledException;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
+import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
@@ -36,7 +37,7 @@ public class CheckRepositoryConnectionOperation extends AbstractActionOperation 
 	protected long lastRepositoryRevision;
 	
 	public CheckRepositoryConnectionOperation(IRepositoryResource resource) {
-		super("Check Repository Connection");
+		super("Operation_CheckRepositoryConnection"); //$NON-NLS-1$
 		this.resource = resource;
 	}
 
@@ -61,9 +62,9 @@ public class CheckRepositoryConnectionOperation extends AbstractActionOperation 
 				public void run() {									
 					MessageDialog dlg = new MessageDialog(
 						UIMonitorUtility.getShell(), 
-						"Revision Graph",
+						SVNRevisionGraphMessages.Dialog_GraphTitle,
 						null, 
-						"There has been a problem contacting the server. Do you want to continue and use the cached data instead?",
+						SVNRevisionGraphMessages.CheckRepositoryConnectionOperation_DialogMessage,
 						MessageDialog.QUESTION, 
 						new String[] {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 
 						0);

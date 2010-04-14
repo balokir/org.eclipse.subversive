@@ -33,6 +33,7 @@ import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
 import org.eclipse.team.svn.revision.graph.cache.TimeMeasure;
 import org.eclipse.team.svn.revision.graph.graphic.actions.AddRevisionLinksAction;
 import org.eclipse.team.svn.revision.graph.graphic.actions.ComparePropertiesAction;
@@ -90,7 +91,7 @@ public class RevisionGraphEditor extends GraphicalEditor {
 		 *  See GEF bug: https://bugs.eclipse.org/bugs/show_bug.cgi?id=255534
 		 */
 		GraphicalViewer viewer = getGraphicalViewer();				
-		TimeMeasure setContentsMeasure = new TimeMeasure("Set contents");
+		TimeMeasure setContentsMeasure = new TimeMeasure("Set contents"); //$NON-NLS-1$
 		//set the contents of this editor
 		viewer.setContents(getModel()); 
 		setContentsMeasure.end();		
@@ -107,7 +108,7 @@ public class RevisionGraphEditor extends GraphicalEditor {
 		super.setInput(input);
 		
 		IRepositoryResource resource = ((RevisionGraphEditorInput) input).getResource();
-		String partName = String.format("Revision Graph (%s [Rev:%s])", resource.getName(), resource.getSelectedRevision().toString());
+		String partName = SVNRevisionGraphMessages.format(SVNRevisionGraphMessages.RevisionGraphEditor_EditName, new Object[]{resource.getName(), resource.getSelectedRevision().toString()});
 		this.setPartName(partName);
 	}
 	
@@ -188,7 +189,7 @@ public class RevisionGraphEditor extends GraphicalEditor {
 				
 		//TODO disable editor during refresh: take note that cancel can be called
 		
-		CompositeOperation op = new CompositeOperation("Refresh Revision Graph");											
+		CompositeOperation op = new CompositeOperation("Operation_RefreshGraph"); //$NON-NLS-1$
 		
 		CreateCacheDataOperation updateCacheOp = new CreateCacheDataOperation(resource, true);
 		op.add(updateCacheOp);
@@ -196,7 +197,7 @@ public class RevisionGraphEditor extends GraphicalEditor {
 		final CreateRevisionGraphModelOperation createModelOp = new CreateRevisionGraphModelOperation(resource, updateCacheOp);
 		op.add(createModelOp, new IActionOperation[]{updateCacheOp});	
 		
-		op.add(new AbstractActionOperation("Refresh Revision Graph") {
+		op.add(new AbstractActionOperation("Operation_RefreshGraph") { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				if (createModelOp.getModel() != null) {
 					UIMonitorUtility.getDisplay().syncExec(new Runnable() {
@@ -215,7 +216,7 @@ public class RevisionGraphEditor extends GraphicalEditor {
 					});	
 				} else {
 					//it should not happen in normal case
-					throw new UnreportableException("Failed to update revision graph, its model is null");
+					throw new UnreportableException("Failed to update revision graph, its model is null"); //$NON-NLS-1$
 				}				
 			}
 		}, new IActionOperation[] {createModelOp});				

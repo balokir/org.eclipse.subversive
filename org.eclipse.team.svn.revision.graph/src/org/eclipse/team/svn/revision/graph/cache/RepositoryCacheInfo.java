@@ -34,10 +34,10 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  */
 public class RepositoryCacheInfo {
 
-	protected final static String START_SKIPPED_REVISION = "startSkippedRevision";
-	protected final static String END_SKIPPED_REVISION = "endSkippedRevision";
-	protected final static String LAST_PROCESSED_REVISION = "lastProcessedRevision";
-	protected final static String CACHE_DATA_FILE_NAME = "dataFileName";
+	protected final static String START_SKIPPED_REVISION = "startSkippedRevision"; //$NON-NLS-1$
+	protected final static String END_SKIPPED_REVISION = "endSkippedRevision"; //$NON-NLS-1$
+	protected final static String LAST_PROCESSED_REVISION = "lastProcessedRevision"; //$NON-NLS-1$
+	protected final static String CACHE_DATA_FILE_NAME = "dataFileName"; //$NON-NLS-1$
 	
 	protected long startSkippedRevision;
 	protected long endSkippedRevision;
@@ -84,11 +84,11 @@ public class RepositoryCacheInfo {
 		this.lastProcessedRevision = 0;
 		
 		String metaName = this.metadataFile.getName();
-		int index = metaName.lastIndexOf(".");
+		int index = metaName.lastIndexOf("."); //$NON-NLS-1$
 		if (index != -1) {
-			this.cacheDataFileName = metaName.substring(0, index) + ".data";
+			this.cacheDataFileName = metaName.substring(0, index) + ".data"; //$NON-NLS-1$
 		} else {
-			this.cacheDataFileName = metaName + ".data";
+			this.cacheDataFileName = metaName + ".data"; //$NON-NLS-1$
 		}			
 	}
 	
@@ -291,7 +291,7 @@ public class RepositoryCacheInfo {
 	}
 	
 	protected IActionOperation getCreateOperation(IRepositoryResource resource, RepositoryCache cache) {
-		CompositeOperation op = new CompositeOperation("Create Cache Operation");
+		CompositeOperation op = new CompositeOperation("Operation_CreateCache"); //$NON-NLS-1$
 		
 		CheckRepositoryConnectionOperation checkConnectionOp = new CheckRepositoryConnectionOperation(resource);
 		op.add(checkConnectionOp);
@@ -309,7 +309,7 @@ public class RepositoryCacheInfo {
 	}
 	
 	protected IActionOperation getRefreshOperation(IRepositoryResource resource, RepositoryCache cache) {
-		CompositeOperation op = new CompositeOperation("Refresh Cache Operation");
+		CompositeOperation op = new CompositeOperation("Operation_RefreshCache"); //$NON-NLS-1$
 		
 		CheckRepositoryConnectionOperation checkConnectionOp = new CheckRepositoryConnectionOperation(resource);
 		op.add(checkConnectionOp);						

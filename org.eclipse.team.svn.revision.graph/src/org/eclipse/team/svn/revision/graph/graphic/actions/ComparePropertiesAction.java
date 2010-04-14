@@ -26,7 +26,7 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class ComparePropertiesAction extends BaseRevisionGraphAction {
 
-	public final static String ComparePropertiesAction_ID = "CompareProperties";
+	public final static String ComparePropertiesAction_ID = "CompareProperties"; //$NON-NLS-1$
 	
 	public ComparePropertiesAction(IWorkbenchPart part) {
 		super(part);

@@ -24,7 +24,7 @@ public class PrepareRevisionDataOperation extends AbstractActionOperation {
 	protected RepositoryCache repositoryCache;
 	
 	public PrepareRevisionDataOperation(RepositoryCache repositoryCache) {
-		super("PrepareRevisionDataOperation");
+		super("Operation_PrepareRevisionData"); //$NON-NLS-1$
 		this.repositoryCache = repositoryCache;
 	}
 	

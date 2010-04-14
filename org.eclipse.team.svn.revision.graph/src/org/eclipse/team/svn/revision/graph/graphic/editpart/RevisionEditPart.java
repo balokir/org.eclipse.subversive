@@ -48,9 +48,9 @@ import org.eclipse.team.svn.revision.graph.graphic.figure.RevisionTooltipFigure;
  */
 public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeEditPart, PropertyChangeListener {				
 	
-	protected final static String REVISION_LAYER = "revision";
-	protected final static String COLLAPSE_LAYER = "collapse";
-	protected final static String EXPAND_LAYER = "expand";
+	protected final static String REVISION_LAYER = "revision"; //$NON-NLS-1$
+	protected final static String COLLAPSE_LAYER = "collapse"; //$NON-NLS-1$
+	protected final static String EXPAND_LAYER = "expand"; //$NON-NLS-1$
 	
 	protected LayeredPane mainPane;
 	protected RevisionFigure revisionFigure;

@@ -45,6 +45,6 @@ public class Pair {
 	
 	@Override
 	public String toString() {		
-		return "first: " + this.first + " second: " + this.second;
+		return "first: " + this.first + " second: " + this.second; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

@@ -16,6 +16,7 @@ import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.SVNUtility;
+import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
 import org.eclipse.team.svn.revision.graph.graphic.editpart.RevisionEditPart;
 import org.eclipse.team.svn.ui.operation.CompareRepositoryResourcesOperation;
 import org.eclipse.ui.IWorkbenchPart;
@@ -27,14 +28,14 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class CompareWithPreviousAction extends BaseRevisionGraphAction {
 
-	public final static String CompareWithPreviousAction_ID = "CompareWithPrevious";	
+	public final static String CompareWithPreviousAction_ID = "CompareWithPrevious";	 //$NON-NLS-1$
 	
 	public CompareWithPreviousAction(IWorkbenchPart part) {
 		super(part);
 		
-		setText("Compare with Previous Revision");
+		setText(SVNRevisionGraphMessages.CompareWithPreviousRevisionAction);
 		setId(CompareWithPreviousAction_ID);
-		setToolTipText("Compare with Previous Revision");
+		setToolTipText(SVNRevisionGraphMessages.CompareWithPreviousRevisionAction);
 	}
 
 	@Override

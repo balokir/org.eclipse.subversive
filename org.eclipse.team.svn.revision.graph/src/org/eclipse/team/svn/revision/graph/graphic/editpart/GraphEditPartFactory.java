@@ -41,8 +41,8 @@ public class GraphEditPartFactory implements EditPartFactory {
 			return editPart;
 		} else { 
 			//should never happen
-			throw new RuntimeException("Can't create part for model element: "
-				+ ((model != null) ? model.getClass().getName() : "null"));
+			throw new RuntimeException("Can't create part for model element: " //$NON-NLS-1$
+				+ ((model != null) ? model.getClass().getName() : "null")); //$NON-NLS-1$
 		}
 	}
 }

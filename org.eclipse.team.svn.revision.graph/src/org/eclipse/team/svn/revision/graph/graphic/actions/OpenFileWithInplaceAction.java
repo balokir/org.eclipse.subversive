@@ -25,7 +25,7 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class OpenFileWithInplaceAction extends BaseRevisionGraphAction {
 
-	public final static String OpenFileWithInplaceAction_ID = "OpenFileWithInplace";	
+	public final static String OpenFileWithInplaceAction_ID = "OpenFileWithInplace";	 //$NON-NLS-1$
 	
 	public OpenFileWithInplaceAction(IWorkbenchPart part) {
 		super(part);

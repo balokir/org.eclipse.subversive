@@ -21,6 +21,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.team.svn.core.SVNMessages;
+import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
 import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
 import org.eclipse.team.svn.ui.utility.DateFormatter;
@@ -71,7 +72,7 @@ public class RevisionTooltipFigure extends Figure {
 		this.pathText.setFont(boldFont);
 		
 		//author
-		Label authorLabel = new Label("Author:");
+		Label authorLabel = new Label(SVNRevisionGraphMessages.RevisionTooltipFigure_Author);
 		parent.add(authorLabel);
 		data = new GridData();
 		layout.setConstraint(authorLabel, data);
@@ -81,7 +82,7 @@ public class RevisionTooltipFigure extends Figure {
 		layout.setConstraint(this.authorText, new GridData());
 		
 		//date
-		Label dateLabel = new Label("Date:");
+		Label dateLabel = new Label(SVNRevisionGraphMessages.RevisionTooltipFigure_Date);
 		parent.add(dateLabel);
 		data = new GridData();
 		layout.setConstraint(dateLabel, data);
@@ -92,7 +93,7 @@ public class RevisionTooltipFigure extends Figure {
 		
 		//copied from
 		if (this.revisionNode.getCopiedFrom() != null) {
-			Label copyLabel = new Label("Copied from:");
+			Label copyLabel = new Label(SVNRevisionGraphMessages.RevisionTooltipFigure_CopiedFrom);
 			parent.add(copyLabel);
 			data = new GridData();
 			layout.setConstraint(copyLabel, data);
@@ -103,7 +104,7 @@ public class RevisionTooltipFigure extends Figure {
 		}
 		
 		//comment
-		Label commentLabel = new Label("Comment:");
+		Label commentLabel = new Label(SVNRevisionGraphMessages.RevisionTooltipFigure_Comment);
 		parent.add(commentLabel);
 		data = new GridData();
 		data.horizontalAlignment = SWT.LEFT;
@@ -122,7 +123,7 @@ public class RevisionTooltipFigure extends Figure {
 	
 	protected void initControls() {
 		this.pathText.setIcon(RevisionFigure.getRevisionNodeIcon(this.revisionNode));
-		this.pathText.setText(this.revisionNode.getPath() + "@" + this.revisionNode.getRevision());
+		this.pathText.setText(this.revisionNode.getPath() + "@" + this.revisionNode.getRevision()); //$NON-NLS-1$
 		
 		String author = this.revisionNode.getAuthor();
 		this.authorText.setText(author == null || author.length() == 0 ? SVNMessages.SVNInfo_NoAuthor : author);
@@ -132,7 +133,7 @@ public class RevisionTooltipFigure extends Figure {
 		
 		if (this.revisionNode.getCopiedFrom() != null) {
 			RevisionNode copiedFrom = this.revisionNode.getCopiedFrom();
-			this.copyText.setText(copiedFrom.getPath() + "@" + copiedFrom.getRevision());
+			this.copyText.setText(copiedFrom.getPath() + "@" + copiedFrom.getRevision()); //$NON-NLS-1$
 		}
 		
 		String comment = this.revisionNode.getMessage();

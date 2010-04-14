@@ -24,8 +24,8 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class CreateBranchTagAction extends BaseRevisionGraphAction {
 
-	public final static String CreateBranchAction_ID = "CreateBranch";
-	public final static String CreateTagAction_ID = "CreateTag";
+	public final static String CreateBranchAction_ID = "CreateBranch"; //$NON-NLS-1$
+	public final static String CreateTagAction_ID = "CreateTag"; //$NON-NLS-1$
 	
 	protected int action;
 	
@@ -37,12 +37,12 @@ public class CreateBranchTagAction extends BaseRevisionGraphAction {
 			setText(SVNUIMessages.HistoryView_BranchFromRevision);
 			setId(CreateBranchAction_ID);
 			setToolTipText(SVNUIMessages.HistoryView_BranchFromRevision);		
-			setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/branch.gif"));						
+			setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/branch.gif")); //$NON-NLS-1$
 		} else {
 			setText(SVNUIMessages.HistoryView_TagFromRevision);
 			setId(CreateTagAction_ID);
 			setToolTipText(SVNUIMessages.HistoryView_TagFromRevision);		
-			setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/tag.gif"));			
+			setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/actions/tag.gif")); //$NON-NLS-1$
 		}		
 	}
 

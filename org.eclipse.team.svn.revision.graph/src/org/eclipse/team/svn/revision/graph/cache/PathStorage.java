@@ -28,7 +28,7 @@ public class PathStorage {
 		
 	public final static int ROOT_INDEX = 0;			
 	
-	protected final static String PATH_SEPARATOR = "/";
+	protected final static String PATH_SEPARATOR = "/"; //$NON-NLS-1$
 	
 	//contains strings
 	protected StringStorage strings = new StringStorage();		

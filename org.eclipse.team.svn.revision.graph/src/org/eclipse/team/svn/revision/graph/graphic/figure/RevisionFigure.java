@@ -28,6 +28,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphPlugin;
 import org.eclipse.team.svn.revision.graph.PathRevision.ReviosionNodeType;
 import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
@@ -74,28 +75,28 @@ public class RevisionFigure extends Figure {
 	
 	static {
 		//images
-		TRUNK_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/trunk.gif").createImage();
+		TRUNK_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/trunk.gif").createImage(); //$NON-NLS-1$
 		SVNRevisionGraphPlugin.disposeOnShutdown(TRUNK_IMAGE);
 		
-		BRANCH_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/branch.gif").createImage();
+		BRANCH_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/branch.gif").createImage(); //$NON-NLS-1$
 		SVNRevisionGraphPlugin.disposeOnShutdown(BRANCH_IMAGE);
 		
-		TAG_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/tag.gif").createImage();
+		TAG_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/tag.gif").createImage(); //$NON-NLS-1$
 		SVNRevisionGraphPlugin.disposeOnShutdown(TAG_IMAGE);
 		
-		ADD_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/add.gif").createImage();
+		ADD_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/add.gif").createImage(); //$NON-NLS-1$
 		SVNRevisionGraphPlugin.disposeOnShutdown(ADD_IMAGE);
 		
-		DELETE_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/delete.gif").createImage();
+		DELETE_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/delete.gif").createImage(); //$NON-NLS-1$
 		SVNRevisionGraphPlugin.disposeOnShutdown(DELETE_IMAGE);
 		
-		MODIFY_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/modify.gif").createImage();
+		MODIFY_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/modify.gif").createImage(); //$NON-NLS-1$
 		SVNRevisionGraphPlugin.disposeOnShutdown(MODIFY_IMAGE);
 		
-		RENAME_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/rename.gif").createImage();
+		RENAME_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/rename.gif").createImage(); //$NON-NLS-1$
 		SVNRevisionGraphPlugin.disposeOnShutdown(RENAME_IMAGE);
 		
-		OTHER_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/other.gif").createImage();
+		OTHER_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/other.gif").createImage(); //$NON-NLS-1$
 		SVNRevisionGraphPlugin.disposeOnShutdown(OTHER_IMAGE);
 		
 		//colors
@@ -195,9 +196,9 @@ public class RevisionFigure extends Figure {
 					
 		String comment = this.revisionNode.getMessage();
 		if (comment != null && comment.length() > 0) {
-			comment = comment.replaceAll("\r\n|\r|\n", " ");
+			comment = comment.replaceAll("\r\n|\r|\n", " "); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
-			comment = "[no comment]";
+			comment = SVNMessages.SVNInfo_NoComment;
 		}					
 		this.commentFigure.setText(comment);
 		

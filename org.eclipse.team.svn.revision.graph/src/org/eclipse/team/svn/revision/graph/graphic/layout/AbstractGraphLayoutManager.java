@@ -48,7 +48,7 @@ public abstract class AbstractGraphLayoutManager extends AbstractLayout {
 	}
 		
 	public void layout(IFigure container) {	
-		TimeMeasure layoutMeasure = new TimeMeasure("Layout");
+		TimeMeasure layoutMeasure = new TimeMeasure("Layout"); //$NON-NLS-1$
 						
 		//set width and height
 		Iterator<?> iter = this.graphPart.getChildren().iterator();

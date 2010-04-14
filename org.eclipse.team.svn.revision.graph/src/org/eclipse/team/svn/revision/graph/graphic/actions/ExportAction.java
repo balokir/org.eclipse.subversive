@@ -25,7 +25,7 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class ExportAction extends BaseRevisionGraphAction {
 
-	public final static String ExportAction_ID = "Export";
+	public final static String ExportAction_ID = "Export"; //$NON-NLS-1$
 	
 	public ExportAction(IWorkbenchPart part) {
 		super(part);
@@ -33,7 +33,7 @@ public class ExportAction extends BaseRevisionGraphAction {
 		setText(SVNUIMessages.ExportCommand_label);
 		setId(ExportAction_ID);
 		setToolTipText(SVNUIMessages.ExportCommand_label);		
-		setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/export.gif"));
+		setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/common/export.gif")); //$NON-NLS-1$
 	}
 
 	@Override

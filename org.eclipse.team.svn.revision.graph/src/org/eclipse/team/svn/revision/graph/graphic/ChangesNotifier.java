@@ -20,16 +20,16 @@ import java.beans.PropertyChangeSupport;
 public class ChangesNotifier {
 	
 	//used by RevisionRootNode to notify that filtering was applied 
-	public final static String FILTER_NODES_PROPERTY = "filterNodes";
+	public final static String FILTER_NODES_PROPERTY = "filterNodes"; //$NON-NLS-1$
 	
 	//used by RevisionRootNode to notify that nodes expanded/collapsed
-	public final static String EXPAND_COLLAPSE_NODES_PROPERTY = "expandCollapseNodes";
+	public final static String EXPAND_COLLAPSE_NODES_PROPERTY = "expandCollapseNodes"; //$NON-NLS-1$
 	
 	//used by RevisionNode to notify that expanded/collapsed was called on node
-	public final static String EXPAND_COLLAPSE_ON_NODE_PROPERTY = "expandCollapseOnNode";
+	public final static String EXPAND_COLLAPSE_ON_NODE_PROPERTY = "expandCollapseOnNode"; //$NON-NLS-1$
 	
 	//used by RevisionNode to notify that its connections were changed
-	public final static String REFRESH_NODE_CONNECTIONS_PROPERTY = "refreshNodeConnections";
+	public final static String REFRESH_NODE_CONNECTIONS_PROPERTY = "refreshNodeConnections"; //$NON-NLS-1$
 	
 	protected PropertyChangeSupport listeners = new PropertyChangeSupport(this);
 	

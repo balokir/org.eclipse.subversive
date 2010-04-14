@@ -40,11 +40,11 @@ import org.eclipse.ui.editors.text.EditorsUI;
  */
 public class RevisionGraphContextMenuManager extends ContextMenuProvider {
 
-	public static final String GROUP_OPEN = "open";
-	public static final String GROUP_COMPARE = "compare";
-	public static final String GROUP_1 = "group1";
-	public static final String GROUP_2 = "group2";
-	public static final String GROUP_3 = "group3";
+	public static final String GROUP_OPEN = "open"; //$NON-NLS-1$
+	public static final String GROUP_COMPARE = "compare"; //$NON-NLS-1$
+	public static final String GROUP_1 = "group1"; //$NON-NLS-1$
+	public static final String GROUP_2 = "group2"; //$NON-NLS-1$
+	public static final String GROUP_3 = "group3"; //$NON-NLS-1$
 	
 	protected ActionRegistry actionRegistry;
 	protected RevisionGraphEditor graphEditor;
@@ -92,10 +92,10 @@ public class RevisionGraphContextMenuManager extends ContextMenuProvider {
 			
 			//---- open with
 						
-			MenuManager sub = new MenuManager(SVNUIMessages.HistoryView_OpenWith, "graphOpenWithMenu");
+			MenuManager sub = new MenuManager(SVNUIMessages.HistoryView_OpenWith, "graphOpenWithMenu"); //$NON-NLS-1$
 			sub.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 			
-			sub.add(new Separator("nonDefaultTextEditors"));
+			sub.add(new Separator("nonDefaultTextEditors")); //$NON-NLS-1$
 			if (resourceName != null) {
 				IEditorDescriptor[] editors = SVNTeamUIPlugin.instance().getWorkbench().getEditorRegistry().getEditors(resourceName);
 				for (int i = 0; i < editors.length; i++) {

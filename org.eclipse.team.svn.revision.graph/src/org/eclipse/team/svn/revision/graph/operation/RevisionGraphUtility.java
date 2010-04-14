@@ -16,6 +16,7 @@ import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionGraphEditorInput;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionRootNode;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -27,10 +28,10 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  */
 public class RevisionGraphUtility {
 
-	protected final static String EDITOR_ID = "org.eclipse.team.svn.revision.graph.graphic.RevisionGraphEditor"; 
+	protected final static String EDITOR_ID = "org.eclipse.team.svn.revision.graph.graphic.RevisionGraphEditor";  //$NON-NLS-1$
 	
 	public static CompositeOperation getRevisionGraphOperation(final IRepositoryResource resource) {
-		CompositeOperation op = new CompositeOperation("Show Revision Graph Operation");							
+		CompositeOperation op = new CompositeOperation("Operation_ShowRevisionGraph"); //$NON-NLS-1$
 		
 		//create cache
 		CreateCacheDataOperation createCacheOp = new CreateCacheDataOperation(resource, false);
@@ -41,7 +42,7 @@ public class RevisionGraphUtility {
 		op.add(createModelOp, new IActionOperation[] {createCacheOp} );		
 		
 		//visualize
-		AbstractActionOperation showRevisionGraphOp = new AbstractActionOperation("Create Revision Graph Operation") {			
+		AbstractActionOperation showRevisionGraphOp = new AbstractActionOperation("Operation_ShowRevisionGraph") { //$NON-NLS-1$
 			@Override
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
@@ -49,7 +50,7 @@ public class RevisionGraphUtility {
 						try {							
 							Object modelObject = createModelOp.getModel() != null ? 
 								new RevisionRootNode(resource, createModelOp.getModel(), createModelOp.getRepositoryCache()) : 
-								"There's no data";
+								SVNRevisionGraphMessages.NoData;
 							RevisionGraphEditorInput input = new RevisionGraphEditorInput(createModelOp.getResource(), modelObject);
 							UIMonitorUtility.getActivePage().openEditor(input, RevisionGraphUtility.EDITOR_ID);														
 						} catch (Exception e) {

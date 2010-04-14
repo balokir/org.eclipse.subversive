@@ -22,10 +22,10 @@ public class RevisionConnectionNode {
 	
 	public RevisionConnectionNode(RevisionNode source, RevisionNode target) {
 		if (source == null) {
-			throw new IllegalArgumentException("source");
+			throw new IllegalArgumentException("source"); //$NON-NLS-1$
 		}
 		if (target == null) {
-			throw new IllegalArgumentException("target");
+			throw new IllegalArgumentException("target"); //$NON-NLS-1$
 		}
 		this.source = source;
 		this.target = target;	
@@ -61,7 +61,7 @@ public class RevisionConnectionNode {
 	
 	@Override
 	public String toString() {
-		return "Connection. Source: " + this.source + ", target: " + this.target;
+		return "Connection. Source: " + this.source + ", target: " + this.target; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 }

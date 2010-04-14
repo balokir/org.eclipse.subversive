@@ -23,7 +23,7 @@ import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
 public class FetchNewRevisionsOperation extends BaseFetchOperation {
 	
 	public FetchNewRevisionsOperation(IRepositoryResource resource, CheckRepositoryConnectionOperation checkConnectionOp, RepositoryCache repositoryCache) {
-		super("Fetch New Revisions", resource, checkConnectionOp, repositoryCache);
+		super("Operation_FetchNewRevisions", resource, checkConnectionOp, repositoryCache); //$NON-NLS-1$
 	}
 
 	@Override

@@ -11,6 +11,7 @@
 package org.eclipse.team.svn.revision.graph.graphic.actions;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphPlugin;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionGraphEditor;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionRootNode;
@@ -25,16 +26,16 @@ import org.eclipse.ui.IEditorPart;
  */
 public class ChangeModeAction extends Action {
 
-	public final static String ChangeModeAction_ID = "ChangeMode";
+	public final static String ChangeModeAction_ID = "ChangeMode"; //$NON-NLS-1$
 	
 	protected IEditorPart editor;
 	
 	public ChangeModeAction(IEditorPart editor) {
-		super("Show Only Revisions with Copies", Action.AS_CHECK_BOX);
+		super(SVNRevisionGraphMessages.ShowRevisionsWithCopiesAction, Action.AS_CHECK_BOX);
 		this.editor = editor;
 		
-		this.setToolTipText("Show Only Revisions with Copies");
-		this.setImageDescriptor(SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/mode.gif"));
+		this.setToolTipText(SVNRevisionGraphMessages.ShowRevisionsWithCopiesAction);
+		this.setImageDescriptor(SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/mode.gif")); //$NON-NLS-1$
 		this.setId(ChangeModeAction.ChangeModeAction_ID);		
 	}
 	

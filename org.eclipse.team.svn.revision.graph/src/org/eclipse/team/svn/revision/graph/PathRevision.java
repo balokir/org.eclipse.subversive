@@ -117,11 +117,12 @@ public class PathRevision extends NodeConnections<PathRevision> {
 	
 	@Override
 	public String toString() {
-		return String.format("%d@%d, action:%s", this.pathIndex, this.getRevision(), this.action);
+		return String.format("%d@%d, action:%s", this.pathIndex, this.getRevision(), this.action); //$NON-NLS-1$
 	}
 		
+	//TODO delete
 	public String toString(RepositoryCache repositoryCache) {
-		return String.format("%s@%d, action:%s", repositoryCache.getPathStorage().getPath(this.pathIndex), this.getRevision(), this.action);
+		return String.format("%s@%d, action:%s", repositoryCache.getPathStorage().getPath(this.pathIndex), this.getRevision(), this.action); //$NON-NLS-1$
 	}
 	
 	@Override

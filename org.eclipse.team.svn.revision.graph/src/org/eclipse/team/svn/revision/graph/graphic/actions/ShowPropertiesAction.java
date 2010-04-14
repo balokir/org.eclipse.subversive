@@ -25,7 +25,7 @@ import org.eclipse.ui.PlatformUI;
  */
 public class ShowPropertiesAction extends BaseRevisionGraphAction {
 
-	public final static String ShowPropertiesAction_ID = "ShowProperties";	
+	public final static String ShowPropertiesAction_ID = "ShowProperties";	 //$NON-NLS-1$
 	
 	public ShowPropertiesAction(IWorkbenchPart part) {
 		super(part);
@@ -33,7 +33,7 @@ public class ShowPropertiesAction extends BaseRevisionGraphAction {
 		setText(SVNUIMessages.ShowPropertiesAction_label);
 		setId(ShowPropertiesAction_ID);
 		setToolTipText(SVNUIMessages.ShowPropertiesAction_label);		
-		setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/propertiesedit.gif"));
+		setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/propertiesedit.gif")); //$NON-NLS-1$
 	}
 
 	@Override

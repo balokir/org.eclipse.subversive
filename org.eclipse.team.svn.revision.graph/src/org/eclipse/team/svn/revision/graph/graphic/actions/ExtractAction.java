@@ -33,7 +33,7 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class ExtractAction extends BaseRevisionGraphAction {
 
-	public final static String ExtractAction_ID = "Extract";
+	public final static String ExtractAction_ID = "Extract"; //$NON-NLS-1$
 	
 	public ExtractAction(IWorkbenchPart part) {
 		super(part);
