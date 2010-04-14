@@ -13,7 +13,6 @@ package org.eclipse.team.svn.revision.graph.graphic.figure;
 import org.eclipse.draw2d.Border;
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Figure;
-import org.eclipse.draw2d.FocusBorder;
 import org.eclipse.draw2d.GridData;
 import org.eclipse.draw2d.GridLayout;
 import org.eclipse.draw2d.Label;
@@ -217,11 +216,11 @@ public class RevisionFigure extends Figure {
 		if (isSelected) {
 			this.setBackgroundColor(SELECTED_COLOR);
 			this.setForegroundColor(ColorConstants.white);
-			this.setBorder(new FocusBorder());
+			//this.setBorder(new FocusBorder());
 		} else {
 			this.setBackgroundColor(this.originalBgColor);
 			this.setForegroundColor(ColorConstants.black);
-			this.setBorder(this.originalBorder);
+			//this.setBorder(this.originalBorder);
 		}		
 	}	
 	
