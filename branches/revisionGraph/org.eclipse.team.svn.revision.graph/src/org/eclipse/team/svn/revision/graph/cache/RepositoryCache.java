@@ -13,6 +13,7 @@ package org.eclipse.team.svn.revision.graph.cache;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -113,9 +114,9 @@ public class RepositoryCache {
 		return this.messages;
 	}
 	
-	public List<CacheChangedPath> getCopiedToData(int pathId) {		
-		List<CacheChangedPath> res = this.copyToContainer.pathCopyToData.get(pathId);
-		return res != null ? new ArrayList<CacheChangedPath>(res) : new ArrayList<CacheChangedPath>();
+	public List<CacheChangedPathWithRevision> getCopiedToData(int pathId) {		
+		List<CacheChangedPathWithRevision> res = this.copyToContainer.getCopyTo(pathId);
+		return res != null ? new ArrayList<CacheChangedPathWithRevision>(res) : Collections.<CacheChangedPathWithRevision>emptyList();
 	}
 	
 	//--- Convert
@@ -143,21 +144,21 @@ public class RepositoryCache {
 	protected CacheChangedPath convert(SVNLogPath logPath, long revision) {
 		int pathIndex = this.pathStorage.add(logPath.path);
 		int copiedFromPathIndex = this.pathStorage.add(logPath.copiedFromPath);
-		CacheChangedPath changedPath = new CacheChangedPath(pathIndex, logPath.action, revision, copiedFromPathIndex, logPath.copiedFromRevision);		
+		CacheChangedPath changedPath = new CacheChangedPath(pathIndex, logPath.action, copiedFromPathIndex, logPath.copiedFromRevision);		
 		return changedPath;
 	}			
 	
 	protected void initCopyToData() {
 		this.copyToContainer.clear();
 					
-		for (CacheRevision revisionStructure : this.revisions) {
-			if (revisionStructure == null) {
+		for (CacheRevision cacheRevision : this.revisions) {
+			if (cacheRevision == null) {
 				continue;
 			}
 						
-			for (CacheChangedPath cp : revisionStructure.getChangedPaths()) {
+			for (CacheChangedPath cp : cacheRevision.getChangedPaths()) {
 				if (cp.copiedFromPathIndex != RepositoryCache.UNKNOWN_INDEX) {
-					this.copyToContainer.add(cp);
+					this.copyToContainer.add(cp, cacheRevision.getRevision());
 				}
 			}							
 		}	

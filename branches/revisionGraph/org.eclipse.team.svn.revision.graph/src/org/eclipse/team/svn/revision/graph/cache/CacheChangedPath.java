@@ -26,16 +26,12 @@ public class CacheChangedPath {
 	protected int pathIndex;	
 	protected char action;
 	
-	//TODO we don't need it
-	protected long revision;
-	
 	protected int copiedFromPathIndex;	
 	protected long copiedFromRevision;
 	
-	public CacheChangedPath(int pathIndex, char action, long revision, int copiedFromPathIndex, long copiedFromRevision) {
+	public CacheChangedPath(int pathIndex, char action, int copiedFromPathIndex, long copiedFromRevision) {
 		this.pathIndex = pathIndex;
 		this.action = action;		
-		this.revision = revision;
 		this.copiedFromPathIndex = copiedFromPathIndex;
 		this.copiedFromRevision = copiedFromRevision;
 	}
@@ -51,10 +47,6 @@ public class CacheChangedPath {
 	public char getAction() {
 		return action;
 	}
-
-	public long getRevision() {
-		return this.revision;
-	}
 	
 	public int getCopiedFromPathIndex() {
 		return copiedFromPathIndex;
@@ -69,8 +61,7 @@ public class CacheChangedPath {
 			DataInput dataIn = new DataInputStream(new ByteArrayInputStream(bytes));
 						
 			this.pathIndex = dataIn.readInt();
-			this.action = dataIn.readChar();			
-			this.revision = dataIn.readLong();
+			this.action = dataIn.readChar();
 			
 			byte copyFlag = dataIn.readByte();
 			if (copyFlag == 1) {
@@ -91,7 +82,6 @@ public class CacheChangedPath {
 		 * 	
 		 * path index
 		 * action		
-		 * revision
 		 * copied from flag
 		 * copied from path index
 		 * copied from revision
@@ -101,8 +91,7 @@ public class CacheChangedPath {
 			DataOutput bytes = new DataOutputStream(byteArray);
 								
 			bytes.writeInt(this.pathIndex);
-			bytes.writeChar(this.action);			
-			bytes.writeLong(this.revision);
+			bytes.writeChar(this.action);
 			
 			//copied from
 			if (this.copiedFromPathIndex != RepositoryCache.UNKNOWN_INDEX) {

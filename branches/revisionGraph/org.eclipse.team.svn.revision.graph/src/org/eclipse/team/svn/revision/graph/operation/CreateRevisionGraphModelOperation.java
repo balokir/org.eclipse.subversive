@@ -31,6 +31,7 @@ import org.eclipse.team.svn.revision.graph.PathRevision;
 import org.eclipse.team.svn.revision.graph.PathRevision.ReviosionNodeType;
 import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
 import org.eclipse.team.svn.revision.graph.cache.CacheChangedPath;
+import org.eclipse.team.svn.revision.graph.cache.CacheChangedPathWithRevision;
 import org.eclipse.team.svn.revision.graph.cache.CacheRevision;
 import org.eclipse.team.svn.revision.graph.cache.PathStorage;
 import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
@@ -219,7 +220,7 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 	}
 	
 	protected void filterOutCopyToData(long startRevision, long endRevision, int path, 
-		List<CacheChangedPath> candidateCopyToList, List<CacheChangedPath> filteredCopyToList) {
+		List<CacheChangedPathWithRevision> candidateCopyToList, List<CacheChangedPathWithRevision> filteredCopyToList) {
 		/*						
 		 * Filter out unrelated changed paths
 		 *  		 
@@ -232,7 +233,7 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 		 * this is important because they have different copied from revision
 		 */
 		
-		for (CacheChangedPath candidateCopy : candidateCopyToList) {		
+		for (CacheChangedPathWithRevision candidateCopy : candidateCopyToList) {		
 			long rev = candidateCopy.getCopiedFromRevision();
 			if (rev >= startRevision && rev <= endRevision) {							
 				
@@ -240,9 +241,9 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 					boolean canAdd = true;
 					//if in particular revision there are several copies related to path then we select more specific copy
 					if (!filteredCopyToList.isEmpty()) {
-						Iterator<CacheChangedPath> iter = filteredCopyToList.iterator();
+						Iterator<CacheChangedPathWithRevision> iter = filteredCopyToList.iterator();
 						while (iter.hasNext()) {
-							CacheChangedPath existingChangedPath = iter.next();
+							CacheChangedPathWithRevision existingChangedPath = iter.next();
 							if (existingChangedPath.getRevision() == candidateCopy.getRevision()) {
 								if (this.isParentPath(existingChangedPath.getPathIndex(), candidateCopy.getPathIndex()) && 
 										this.isParentPath(existingChangedPath.getCopiedFromPathIndex(), candidateCopy.getCopiedFromPathIndex())) {
@@ -303,14 +304,14 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 		long endRevision = this.isDeletedNode(endNodeInChain) ? endNodeInChain.getRevision() : Long.MAX_VALUE;
 				
 		//traverse path and its parents in order to get all copied to data		
-		List<CacheChangedPath> filteredCopyToList = new ArrayList<CacheChangedPath>();		
+		List<CacheChangedPathWithRevision> filteredCopyToList = new ArrayList<CacheChangedPathWithRevision>();		
 		for (int path = node.getPathIndex(); path != PathStorage.ROOT_INDEX; path = this.repositoryCache.getPathStorage().getParentPathIndex(path)) {
 			this.filterOutCopyToData(startRevision, endRevision, node.getPathIndex(), this.repositoryCache.getCopiedToData(path), filteredCopyToList);
 		}
 		
-		Iterator<CacheChangedPath> iter = filteredCopyToList.iterator();
+		Iterator<CacheChangedPathWithRevision> iter = filteredCopyToList.iterator();
 		while (iter.hasNext()) {
-			CacheChangedPath changedPath = iter.next();
+			CacheChangedPathWithRevision changedPath = iter.next();
 
 			/*
 	         * Example:
