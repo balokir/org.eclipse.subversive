@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.cache;
 
-import java.util.Date;
-
 /**
  * For debug purposes to track operation duration
  * 
@@ -19,27 +17,25 @@ import java.util.Date;
  */
 public class TimeMeasure {
 
-	boolean isActive = false;
+	public static boolean isDebug = false;
 	
-	String message;
+	protected String message;
 	
-	Date start;
-	Date end;
+	protected long start;
 	
 	public TimeMeasure(String message) {
-		if (this.isActive) {
+		if (TimeMeasure.isDebug) {
 			this.message = message;
-			this.start = new Date();
+			this.start = System.nanoTime();
 			System.out.println("Started: " + message);
 		}
 	}
 	
 	public void end() {
-		if (this.isActive) {
-			this.end = new Date();
-			long diff = this.end.getTime() - this.start.getTime();
-			double show = diff / 1000.0;
-			System.out.println("--- Finished: " + message + ": " + show);	
+		if (TimeMeasure.isDebug) {			
+			long diff = System.nanoTime() - this.start;
+			double show = diff / 1000000000.0;
+			System.out.println("--- Finished: " + this.message + ": " + show);	
 		}
 	}
 }

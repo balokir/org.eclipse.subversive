@@ -104,12 +104,6 @@ public class MessageStorage {
 						
 		for (int i = 0; i < words.length; i ++) {
 			String word = words[i];
-			
-			//TODO delete
-			if ("".equals(word)) {
-				throw new RuntimeException();
-			}			
-			
 			int index = this.strings.add(word);
 			this.messages[messageIndex][i] = this.getStringToken(index); 						
 		}				
@@ -204,6 +198,15 @@ public class MessageStorage {
 		return index;
 	}
 	
+	
+	protected static class MutableInteger {
+		int value;
+		
+		public MutableInteger(int value) {
+			this.value = value;
+		}		
+	}
+	
 	/*
 	 * Helper class which allows to compress pairs
 	 */
@@ -227,8 +230,9 @@ public class MessageStorage {
 			while (true) {
 				int compressedPairs = this.compress();
 				
-				//TODO delete
-				System.out.println("compressed pairs: " + compressedPairs);
+				if (TimeMeasure.isDebug) {
+					System.out.println("compressed pairs: " + compressedPairs);	
+				}
 				
 				if (compressedPairs == 0) {
 					break;
@@ -239,7 +243,7 @@ public class MessageStorage {
 		}
 		
 		protected int compress() {						
-			Map<Pair, Integer> occurrence = this.calculatePairsOccurrence();			
+			Map<Pair, MutableInteger> occurrence = this.calculatePairsOccurrence();			
 			int compressedPairs = 0;
 			if (this.createNewPairs(occurrence)) {
 				compressedPairs = this.replaceTokensOnPairs();	
@@ -306,8 +310,8 @@ public class MessageStorage {
 			return compressedPairs;
 		}
 		
-		protected Map<Pair, Integer> calculatePairsOccurrence() {
-			Map<Pair, Integer> occurrence = new HashMap<Pair, Integer>();
+		protected Map<Pair, MutableInteger> calculatePairsOccurrence() {
+			Map<Pair, MutableInteger> occurrence = new HashMap<Pair, MutableInteger>();
 			
 			for (int i = 0; i < this.messagesForProcessingStatus.length; i ++) {				
 				if (this.messagesForProcessingStatus[i]) {
@@ -319,15 +323,13 @@ public class MessageStorage {
 							int token = messageTokens[j];
 							
 							Pair pair = new Pair(previousToken, token);
-							
-							//TODO delete
-							if (previousToken == 0 && token == 0) {
-								throw new RuntimeException();
-							}
-							
-							Integer count = occurrence.get(pair);
-							count = count != null ? new Integer(count.intValue() + 1) : new Integer(1);
-							occurrence.put(pair, count);
+																					
+							MutableInteger count = occurrence.get(pair);
+							if (count != null) {
+								count.value ++;
+							} else {
+								occurrence.put(pair, new MutableInteger(1));
+							}														
 							
 							previousToken = token;
 						}	
@@ -337,10 +339,10 @@ public class MessageStorage {
 			return occurrence;
 		}
 		
-		protected boolean createNewPairs(Map<Pair, Integer> occurrence) {
+		protected boolean createNewPairs(Map<Pair, MutableInteger> occurrence) {
 			boolean hasNewPairs = false;
-			for (Map.Entry<Pair, Integer> entry : occurrence.entrySet()) {
-				if (entry.getValue() >= MessageStorage.MIN_PAIRS_COUNT) {
+			for (Map.Entry<Pair, MutableInteger> entry : occurrence.entrySet()) {
+				if (entry.getValue().value >= MessageStorage.MIN_PAIRS_COUNT) {
 					hasNewPairs = true;
 					pairs.add(entry.getKey());
 				}

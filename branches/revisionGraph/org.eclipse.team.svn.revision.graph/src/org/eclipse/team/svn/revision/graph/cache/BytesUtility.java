@@ -83,13 +83,13 @@ public class BytesUtility {
 	public static byte[] compressBytes(Deflater encoder, byte[] bytes) {			
 		encoder.setInput(bytes);
 		encoder.finish();	
-				
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(bytes.length);			
-		byte[] buffer = new byte[1024];		
-		while(!encoder.finished()) {			
-			int bytesCompressed = encoder.deflate(buffer);			
+						
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(bytes.length);
+		byte[] buffer = new byte[bytes.length];
+		while(!encoder.finished()) {
+			int bytesCompressed = encoder.deflate(buffer);
 			bos.write(buffer, 0, bytesCompressed);
-		}				
+		}
 		
 		//reset for next input
 		encoder.reset();

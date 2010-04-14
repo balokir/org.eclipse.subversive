@@ -27,8 +27,7 @@ import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
  */
 public class LogEntriesCallback extends SVNLogEntryCallbackWithMergeInfo {
 	
-	//TODO check it for real big repository
-	protected final static int REVISIONS_COUNT_FOR_SAVE = 1000;
+	protected final static int REVISIONS_COUNT_FOR_SAVE = 50000;
 	
 	protected IActionOperation op;
 	protected int totalWork;
