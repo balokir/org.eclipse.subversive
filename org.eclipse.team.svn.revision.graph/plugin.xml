@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+  
+   <extension point="org.eclipse.ui.editors">
+      <editor
+            class="org.eclipse.team.svn.revision.graph.graphic.RevisionGraphEditor"                        
+            id="org.eclipse.team.svn.revision.graph.graphic.RevisionGraphEditor"
+            name="Revision Graph Editor"
+            icon="icons/editor_icon.png"   
+            contributorClass="org.eclipse.team.svn.revision.graph.graphic.actions.RevisionGraphActionBarContributor">                     
+      </editor>
+   </extension>
+
+<!-- ******************* Menus ******************** -->
+	<extension
+		point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="true"
+            objectClass="org.eclipse.core.resources.mapping.ResourceMapping"
+            id="org.eclipse.team.svn.revision.graph.ResourceContributions">
+            
+         <enablement>
+           <adapt type="org.eclipse.core.resources.mapping.ResourceMapping">
+              <test property="org.eclipse.core.resources.projectPersistentProperty" args="org.eclipse.team.core.repository,org.eclipse.team.svn.core.svnnature" />
+           </adapt>
+         </enablement>
+         
+         <action
+              helpContextId="org.eclipse.team.svn.revision.graph.show_revision_graph_action_context"
+              label="%ShowRevisionGraphAction.label"
+              tooltip="%ShowRevisionGraphAction.tooltip"
+              class="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphLocalAction"
+              menubarPath="team.main/group4"
+              id="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphLocalAction"
+              definitionId="org.eclipse.team.svn.revision.graph.command.ShowRevisionGraphCommand"
+              icon="icons/showgraph.png">
+         </action>
+         
+	  </objectContribution>
+	  
+	  <!-- ******************* Repository Management Menu ******************** -->
+            	
+      <objectContribution
+            objectClass="org.eclipse.team.svn.ui.repository.model.RepositoryLocation"
+            id="org.eclipse.team.svn.revision.graph.RepositoryLocationContributions">
+            	  
+         <action
+              helpContextId="org.eclipse.team.svn.revision.graph.show_revision_graph_action_context"
+              label="%ShowRevisionGraphAction.label"
+              tooltip="%ShowRevisionGraphAction.tooltip"
+              class="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphRemoteAction"
+              menubarPath="propertiesGroup"
+              id="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphRemoteAction"
+              icon="icons/showgraph.png">
+         </action>
+	  	 	  
+	  </objectContribution>
+	              	
+      <objectContribution
+            objectClass="org.eclipse.team.svn.ui.repository.model.RepositoryFolder"
+            id="org.eclipse.team.svn.revision.graph.RepositoryFolderContributions">
+            	
+         <action
+              helpContextId="org.eclipse.team.svn.revision.graph.show_revision_graph_action_context"
+              label="%ShowRevisionGraphAction.label"
+              tooltip="%ShowRevisionGraphAction.tooltip"
+              class="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphRemoteAction"
+              menubarPath="propertiesGroup"
+              id="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphRemoteAction"
+              icon="icons/showgraph.png">
+         </action>
+           
+	  </objectContribution>
+	  
+      <objectContribution
+            objectClass="org.eclipse.team.svn.ui.repository.model.RepositoryFile"
+            id="org.eclipse.team.svn.revision.graph.RepositoryFileContributions">
+            
+         <action
+              helpContextId="org.eclipse.team.svn.revision.graph.show_revision_graph_action_context"
+              label="%ShowRevisionGraphAction.label"
+              tooltip="%ShowRevisionGraphAction.tooltip"
+              class="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphRemoteAction"
+              menubarPath="propertiesGroup"
+              id="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphRemoteAction"
+              icon="icons/showgraph.png">
+         </action>              
+            	  
+	  </objectContribution>
+	  	  	  
+      <objectContribution
+            objectClass="org.eclipse.team.svn.ui.repository.RepositoryFileEditorInput"
+            id="org.eclipse.team.svn.revision.graph.RepositoryFileEditorInputContributions">
+            
+         <action
+              helpContextId="org.eclipse.team.svn.revision.graph.show_revision_graph_action_context"
+              label="%ShowRevisionGraphAction.label"
+              tooltip="%ShowRevisionGraphAction.tooltip"
+              class="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphRemoteAction"
+              menubarPath="propertiesGroup"
+              id="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphRemoteAction"
+              icon="icons/showgraph.png">
+         </action>             
+            
+	  </objectContribution>
+  </extension>
+  
+<!-- **************** Main Menu ******************* -->
+  <extension
+		point="org.eclipse.ui.actionSets">	  	  
+    <actionSet
+        id="org.eclipse.team.svn.revision.graph.action.shortcuts"
+        label="SVN Revision Graph"
+        description="Customizable SVN Actions"
+        visible="false">
+        	  	  
+       <action
+     	  class="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphLocalAction"
+     	  definitionId="org.eclipse.team.svn.revision.graph.command.ShowRevisionGraphCommand"
+     	  id="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphLocalAction"
+     	  menubarPath="svn.main/group5"     	  
+          helpContextId="org.eclipse.team.svn.revision.graph.show_revision_graph_action_context"
+          tooltip="%ShowRevisionGraphAction.tooltip"
+          label="%ShowRevisionGraphAction.label"
+          icon="icons/showgraph.png"/>   	  	  
+    </actionSet>
+    
+  </extension>	         	
+
+  <!-- Contribute to model-aware synchronize view -->  	
+  <extension point="org.eclipse.ui.navigator.viewer">
+       <viewerActionBinding viewerId="org.eclipse.team.svn.ui.workspaceSynchronization">
+          <includes>
+       	     <actionExtension pattern="org.eclipse.team.svn.revision.graph.action.GraphSynchronizeViewActionProvider" />		       	      
+          </includes>
+       </viewerActionBinding>
+  </extension>	
+
+   <extension point="org.eclipse.ui.navigator.navigatorContent">
+	   <actionProvider           
+	   		class="org.eclipse.team.svn.revision.graph.action.GraphSynchronizeViewActionProvider"
+	     	id="org.eclipse.team.svn.revision.graph.action.GraphSynchronizeViewActionProvider">
+	     	
+	     <enablement>	     			  
+	       	<adapt type="org.eclipse.core.resources.IResource"/>
+	     </enablement>
+
+	   </actionProvider>
+   </extension>
+	
+  <!-- Contribute to not-model-aware synchronize view -->
+  <extension point="org.eclipse.team.svn.ui.synchronizeActionContribution">
+     <contributor class="org.eclipse.team.svn.revision.graph.action.GraphSynchronizeViewActionContributor"/>
+  </extension>	
+	
+  <extension
+       point="org.eclipse.ui.commands">
+    	
+    <command
+          categoryId="org.eclipse.team.svn.ui.command.category"
+          id="org.eclipse.team.svn.revision.graph.command.ShowRevisionGraphCommand"
+          name="%ShowRevisionGraphCommand.label"/>  	
+  </extension>
+
+  <extension
+       point="org.eclipse.ui.bindings">
+       
+    <key
+	  commandId="org.eclipse.team.svn.revision.graph.command.ShowRevisionGraphCommand"
+	  schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	  sequence="CTRL+ALT+Q"/>       
+  </extension>
+    
+</plugin>
