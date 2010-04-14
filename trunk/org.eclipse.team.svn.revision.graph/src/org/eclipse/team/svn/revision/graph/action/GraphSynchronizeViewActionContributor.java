@@ -52,9 +52,8 @@ public class GraphSynchronizeViewActionContributor extends DefaultSynchronizeVie
 		protected boolean updateSelection(IStructuredSelection selection) {
 			if (selection.size() == 1 && super.updateSelection(selection)) {						
 				if (selection.getFirstElement() instanceof SyncInfoModelElement) {
-					AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo)((SyncInfoModelElement)selection.getFirstElement()).getSyncInfo();
-					//TODO apply changes from trunk for 'getRemote()'
-					ILocalResource incoming = ((ResourceVariant)syncInfo.getRemote()).getResource();
+					AbstractSVNSyncInfo syncInfo = (AbstractSVNSyncInfo)((SyncInfoModelElement)selection.getFirstElement()).getSyncInfo();				
+					ILocalResource incoming = syncInfo.getRemoteChangeResource();														
 					if (incoming instanceof IResourceChange) {
 						return true; 
 					}
