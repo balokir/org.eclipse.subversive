@@ -27,19 +27,19 @@ public class CopyToHelper {
 	 * 
 	 * there can be several copies from the same path@rev 
 	 */	
-	protected Map<Integer, List<CacheChangedPath>> pathCopyToData = new HashMap<Integer, List<CacheChangedPath>>();
+	protected Map<Integer, List<CacheChangedPathWithRevision>> pathCopyToData = new HashMap<Integer, List<CacheChangedPathWithRevision>>();
 
-	public void add(CacheChangedPath changedPath) {
+	public void add(CacheChangedPath changedPath, long revision) {
 		int pathIndex = changedPath.getCopiedFromPathIndex();	
-		List<CacheChangedPath> list = this.pathCopyToData.get(pathIndex);
+		List<CacheChangedPathWithRevision> list = this.pathCopyToData.get(pathIndex);
 		if (list == null) {
-			list = new ArrayList<CacheChangedPath>();
+			list = new ArrayList<CacheChangedPathWithRevision>();
 			this.pathCopyToData.put(pathIndex, list);			
 		}
-		list.add(changedPath);
+		list.add(new CacheChangedPathWithRevision(changedPath, revision));
 	}
 	
-	public List<CacheChangedPath> getCopyTo(int pathId) {
+	public List<CacheChangedPathWithRevision> getCopyTo(int pathId) {
 		return this.pathCopyToData.get(pathId);
 	}
 
