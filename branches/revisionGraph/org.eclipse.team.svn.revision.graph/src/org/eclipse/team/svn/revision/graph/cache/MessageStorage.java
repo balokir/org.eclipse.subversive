@@ -57,7 +57,7 @@ public class MessageStorage {
 	
 	public MessageStorage(int messagesCount) {
 		if (messagesCount < 0) {
-			throw new IllegalArgumentException("Messages count: " + messagesCount);
+			throw new IllegalArgumentException("Messages count: " + messagesCount); //$NON-NLS-1$
 		}
 		
 		this.init(messagesCount);
@@ -76,7 +76,7 @@ public class MessageStorage {
 	
 	public void expandMessagesCount(long messagesCount) {
 		if (messagesCount < this.messages.length) {
-			throw new IllegalArgumentException("Expand count: " + messagesCount + ", current length: " + this.messages.length);
+			throw new IllegalArgumentException("Expand count: " + messagesCount + ", current length: " + this.messages.length); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		if (this.messages.length != 0) {
@@ -94,7 +94,7 @@ public class MessageStorage {
 	
 	public int add(String message, long revision) {
 		if (revision >= this.messages.length) {
-			throw new IndexOutOfBoundsException("Revision: " + revision + ", size: " + this.messages.length);
+			throw new IndexOutOfBoundsException("Revision: " + revision + ", size: " + this.messages.length); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		String[] words = message != null && message.length() > 0 ? splitOnWords(message) : new String[0]; 								
@@ -113,7 +113,7 @@ public class MessageStorage {
 	
 	public String getMessage(int messageIndex) {
 		if (messageIndex < 0 || messageIndex >= this.messages.length) {
-			throw new IllegalArgumentException("Index: " + messageIndex + ", size: " + this.messages.length);
+			throw new IllegalArgumentException("Index: " + messageIndex + ", size: " + this.messages.length); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		StringBuffer result = new StringBuffer();
@@ -231,7 +231,7 @@ public class MessageStorage {
 				int compressedPairs = this.compress();
 				
 				if (TimeMeasure.isDebug) {
-					System.out.println("compressed pairs: " + compressedPairs);	
+					System.out.println("compressed pairs: " + compressedPairs);	 //$NON-NLS-1$
 				}
 				
 				if (compressedPairs == 0) {
@@ -426,13 +426,10 @@ public class MessageStorage {
 		MessageStorage storage = new MessageStorage(2);
 		
 		int i1 = storage.add("hello world a hello world b hello world f", 0);
-		
 		int i2 = storage.add("my hello world d hello world g", 1);
-		
-		
+				
 		storage.compress();
-		
-		
+				
 		System.out.println(storage.getMessage(i1));
 		System.out.println(storage.getMessage(i2));		
 	}

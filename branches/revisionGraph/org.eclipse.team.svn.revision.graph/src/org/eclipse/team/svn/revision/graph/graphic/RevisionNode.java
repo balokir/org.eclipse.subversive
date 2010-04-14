@@ -367,8 +367,8 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 	@Override
 	public String toString() {
 		return this.pathRevision.toString() + 
-			", location: " + this.x + ", " + this.y + 
-			", size: " + this.width + ", " + this.height; 
+			", location: " + this.x + ", " + this.y +  //$NON-NLS-1$ //$NON-NLS-2$
+			", size: " + this.width + ", " + this.height;  //$NON-NLS-1$ //$NON-NLS-2$
 	}
 		
 }

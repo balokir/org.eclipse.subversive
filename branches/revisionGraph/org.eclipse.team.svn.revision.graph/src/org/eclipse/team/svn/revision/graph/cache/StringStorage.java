@@ -24,7 +24,7 @@ import java.io.IOException;
 public class StringStorage extends GenericStorage<String> {
 	
 	public StringStorage() {
-		this.addSimple("");
+		this.addSimple(""); //$NON-NLS-1$
 	}
 	
 	public StringStorage(byte[] bytes) {

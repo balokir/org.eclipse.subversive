@@ -23,15 +23,15 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class ShowHistoryAction extends BaseRevisionGraphAction {
 
-	public final static String ShowHistoryAction_ID = "ShowHistory";	
+	public final static String ShowHistoryAction_ID = "ShowHistory"; //$NON-NLS-1$
 	
 	public ShowHistoryAction(IWorkbenchPart part) {
 		super(part);
 		
 		setText(SVNUIMessages.ShowResourceHistoryCommand_label);
 		setId(ShowHistoryAction_ID);
-		setToolTipText("Show History");		
-		setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history.gif"));		
+		setToolTipText(SVNUIMessages.ShowResourceHistoryCommand_label);		
+		setImageDescriptor(SVNTeamUIPlugin.instance().getImageDescriptor("icons/views/history.gif")); //$NON-NLS-1$
 	}
 
 	@Override

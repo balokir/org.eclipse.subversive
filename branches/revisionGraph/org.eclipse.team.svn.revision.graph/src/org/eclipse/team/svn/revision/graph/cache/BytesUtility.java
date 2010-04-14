@@ -26,7 +26,7 @@ public class BytesUtility {
 	
     public static byte[] convertStringToBytes(String val) {
     	try {
-			return val.getBytes("UTF-8");
+			return val.getBytes("UTF-8"); //$NON-NLS-1$
 		} catch (UnsupportedEncodingException e) {
 			//ignore
 			return new byte[0];
@@ -35,7 +35,7 @@ public class BytesUtility {
     
     public static String getString(byte[] b) {
     	try {
-			return new String(b, "UTF-8");
+			return new String(b, "UTF-8"); //$NON-NLS-1$
 		} catch (UnsupportedEncodingException e) {
 			//ignore
 			return null;

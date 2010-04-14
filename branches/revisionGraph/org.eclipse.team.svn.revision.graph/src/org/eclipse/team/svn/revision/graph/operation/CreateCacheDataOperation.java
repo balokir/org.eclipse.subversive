@@ -16,6 +16,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.ActivityCancelledException;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphPlugin;
 import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
 import org.eclipse.team.svn.revision.graph.cache.RepositoryCacheInfo;
@@ -34,7 +35,7 @@ public class CreateCacheDataOperation extends AbstractActionOperation implements
 	protected RepositoryCache repositoryCache;
 	
 	public CreateCacheDataOperation(IRepositoryResource resource, boolean isRefresh) {
-		super("Create Cache Data Operation");
+		super("Operation_CreateCacheData"); //$NON-NLS-1$
 		this.resource = resource;
 		this.isRefresh = isRefresh;
 	}
@@ -54,9 +55,9 @@ public class CreateCacheDataOperation extends AbstractActionOperation implements
 				public void run() {									
 					MessageDialog dlg = new MessageDialog(
 						UIMonitorUtility.getShell(), 
-						"Revision Graph",
+						SVNRevisionGraphMessages.Dialog_GraphTitle,
 						null, 
-						"Cache for this repository is calculating now. Please wait when it finishes and retry again.",
+						SVNRevisionGraphMessages.CreateCacheDataOperation_DialogMessage,
 						MessageDialog.INFORMATION, 
 						new String[] {IDialogConstants.OK_LABEL}, 
 						0);

@@ -21,7 +21,7 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class ShowAnnotationAction extends BaseRevisionGraphAction {
 
-	public final static String ShowAnnotationAction_ID = "ShowAnnotation";
+	public final static String ShowAnnotationAction_ID = "ShowAnnotation"; //$NON-NLS-1$
 	
 	public ShowAnnotationAction(IWorkbenchPart part) {
 		super(part);

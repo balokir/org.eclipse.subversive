@@ -25,7 +25,7 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class OpenFileWithExternalAction extends BaseRevisionGraphAction {
 
-	public final static String OpenFileWithExternalAction_ID = "OpenFileWithExternal";	
+	public final static String OpenFileWithExternalAction_ID = "OpenFileWithExternal";	 //$NON-NLS-1$
 	
 	public OpenFileWithExternalAction(IWorkbenchPart part) {
 		super(part);

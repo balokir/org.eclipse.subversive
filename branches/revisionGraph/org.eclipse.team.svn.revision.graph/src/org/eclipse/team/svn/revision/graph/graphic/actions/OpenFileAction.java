@@ -24,7 +24,7 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class OpenFileAction extends BaseRevisionGraphAction {
 
-	public final static String OpenFileAction_ID = "OpenFile";
+	public final static String OpenFileAction_ID = "OpenFile"; //$NON-NLS-1$
 	
 	public OpenFileAction(IWorkbenchPart part) {
 		super(part);

@@ -30,7 +30,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
  */
 public class RepositoryCachesManager {
 
-	protected final static String REPOSITORIES_FILE_NAME = "repositories.data";
+	protected final static String REPOSITORIES_FILE_NAME = "repositories.data"; //$NON-NLS-1$
 	
 	//repository root without protocol -> cacheInfo 
 	protected Map<String, RepositoryCacheInfo> caches = new HashMap<String, RepositoryCacheInfo>(); 
@@ -49,7 +49,7 @@ public class RepositoryCachesManager {
 	
 	protected void save() throws IOException {				
 		File file = new File(this.cacheFolder, RepositoryCachesManager.REPOSITORIES_FILE_NAME);		
-		PrintWriter out = new PrintWriter(file, "UTF-8");
+		PrintWriter out = new PrintWriter(file, "UTF-8"); //$NON-NLS-1$
 		try {
 			for (Map.Entry<String, RepositoryCacheInfo> entry : this.caches.entrySet()) {
 				out.println(entry.getKey());
@@ -63,7 +63,7 @@ public class RepositoryCachesManager {
 	protected final void load() throws IOException {
 		File file = new File(this.cacheFolder, RepositoryCachesManager.REPOSITORIES_FILE_NAME);
 		if (file.exists()) {
-			BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+			BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8")); //$NON-NLS-1$
 			try {												
 				while (true) {
 					String url = in.readLine();
@@ -92,7 +92,7 @@ public class RepositoryCachesManager {
 			String url = getRepositoryRoot(resource);
 			RepositoryCacheInfo cacheInfo = this.caches.get(url);
 			if (cacheInfo == null) {
-				File metadataFile = new File(this.cacheFolder, escapeUrl(url) + ".meta");
+				File metadataFile = new File(this.cacheFolder, escapeUrl(url) + ".meta"); //$NON-NLS-1$
 				cacheInfo = new RepositoryCacheInfo(metadataFile);
 				cacheInfo.init();
 				
@@ -122,7 +122,7 @@ public class RepositoryCachesManager {
 	 */
 	protected static String getRepositoryRoot(IRepositoryResource resource) {
 		String url = resource.getRepositoryLocation().getRepositoryRootUrl();		
-		final String[] knownPrefixes = new String[] {"http://", "https://", "svn://", "svn+ssh://", "file:///", "file://" };
+		final String[] knownPrefixes = new String[] {"http://", "https://", "svn://", "svn+ssh://", "file:///", "file://" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 		for (int i = 0; i < knownPrefixes.length; i ++) {
 			if (url.startsWith(knownPrefixes[i])) {				
 				url = url.substring(knownPrefixes[i].length());
@@ -134,8 +134,8 @@ public class RepositoryCachesManager {
 	
 	protected static String escapeUrl(String url) {		
 		try {
-			url = url.replaceAll("[\\/:*?\"<>|]", "_");
-			url = URLEncoder.encode(url, "UTF-8");
+			url = url.replaceAll("[\\/:*?\"<>|]", "_"); //$NON-NLS-1$ //$NON-NLS-2$
+			url = URLEncoder.encode(url, "UTF-8"); //$NON-NLS-1$
 		} catch (UnsupportedEncodingException e) {
 			//ignore
 		}

@@ -24,6 +24,7 @@ import org.eclipse.team.svn.core.resource.IResourceChange;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.synchronize.AbstractSVNSyncInfo;
 import org.eclipse.team.svn.core.synchronize.variant.ResourceVariant;
+import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphPlugin;
 import org.eclipse.team.svn.revision.graph.operation.RevisionGraphUtility;
 import org.eclipse.team.svn.ui.extension.impl.DefaultSynchronizeViewActionContributor;
@@ -44,7 +45,7 @@ public class GraphSynchronizeViewActionContributor extends DefaultSynchronizeVie
 
 		public ShowRevisionGraphAction(String text, ISynchronizePageConfiguration configuration) {
 			super(text, configuration);
-			this.setImageDescriptor(SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/showgraph.png"));
+			this.setImageDescriptor(SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/showgraph.png")); //$NON-NLS-1$
 		}
 		
 		@Override
@@ -80,7 +81,7 @@ public class GraphSynchronizeViewActionContributor extends DefaultSynchronizeVie
 		Collection contributions = super.getUpdateContributions();
 		contributions.add(new AbstractSynchronizeActionGroup() {						
 			protected void configureActions(ISynchronizePageConfiguration configuration) {
-				ShowRevisionGraphAction showGraphAction = new ShowRevisionGraphAction("Show Revision Graph", configuration);
+				ShowRevisionGraphAction showGraphAction = new ShowRevisionGraphAction(SVNRevisionGraphMessages.ShowRevisionGraphAction, configuration);
 				this.appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					UpdateActionGroup.GROUP_MANAGE_LOCALS,
@@ -98,7 +99,7 @@ public class GraphSynchronizeViewActionContributor extends DefaultSynchronizeVie
 		Collection contributions = super.getMergeContributions();
 		contributions.add(new AbstractSynchronizeActionGroup() {						
 			protected void configureActions(ISynchronizePageConfiguration configuration) {
-				ShowRevisionGraphAction showGraphAction = new ShowRevisionGraphAction("Show Revision Graph", configuration);
+				ShowRevisionGraphAction showGraphAction = new ShowRevisionGraphAction(SVNRevisionGraphMessages.ShowRevisionGraphAction, configuration);
 				this.appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					UpdateActionGroup.GROUP_MANAGE_LOCALS,

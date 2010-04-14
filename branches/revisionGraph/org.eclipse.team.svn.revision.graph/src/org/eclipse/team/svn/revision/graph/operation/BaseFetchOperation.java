@@ -45,7 +45,7 @@ public abstract class BaseFetchOperation extends AbstractActionOperation {
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
-		TimeMeasure measure = new TimeMeasure("Fetch revisions " + this.getClass().getName());
+		TimeMeasure measure = new TimeMeasure("Fetch revisions " + this.getClass().getName()); //$NON-NLS-1$
 		
 		if (this.checkConnectionOp.hasConnection()) {												
 			this.prepareData(monitor);

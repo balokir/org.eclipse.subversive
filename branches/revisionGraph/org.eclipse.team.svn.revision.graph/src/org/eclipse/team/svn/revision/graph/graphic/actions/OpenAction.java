@@ -23,7 +23,7 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class OpenAction extends BaseRevisionGraphAction {
 
-	public final static String OpenAction_ID = "Open";
+	public final static String OpenAction_ID = "Open"; //$NON-NLS-1$
 	
 	public OpenAction(IWorkbenchPart part) {
 		super(part);

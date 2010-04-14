@@ -32,7 +32,7 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class AddRevisionLinksAction extends BaseRevisionGraphAction {
 
-	public final static String AddRevisionLinksAction_ID = "AddRevisionLinks";	
+	public final static String AddRevisionLinksAction_ID = "AddRevisionLinks";	 //$NON-NLS-1$
 	
 	public AddRevisionLinksAction(IWorkbenchPart part) {
 		super(part);
@@ -55,7 +55,7 @@ public class AddRevisionLinksAction extends BaseRevisionGraphAction {
 			RevisionEditPart[] editParts = this.getSelectedEditParts(BaseRevisionGraphAction.NOT_DELETED_ACTION_FILTER);
 			final IRepositoryResource[] resources = BaseRevisionGraphAction.convertToResources(editParts);
 			
-			CompositeOperation op = new CompositeOperation("Operation_HAddSelectedRevision");									
+			CompositeOperation op = new CompositeOperation("Operation_HAddSelectedRevision"); //$NON-NLS-1$
 			
 			final String comment = panel.getRevisionComment();
 			AddRevisionLinkOperation addLinksOp = new AddRevisionLinkOperation(new IRevisionLinkProvider() {

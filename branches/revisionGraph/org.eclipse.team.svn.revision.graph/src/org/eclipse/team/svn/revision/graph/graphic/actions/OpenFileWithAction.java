@@ -25,7 +25,7 @@ import org.eclipse.ui.editors.text.EditorsUI;
  */
 public class OpenFileWithAction extends BaseRevisionGraphAction {
 
-	public final static String OpenFileWithAction_ID = "OpenFileWith";	
+	public final static String OpenFileWithAction_ID = "OpenFileWith";	 //$NON-NLS-1$
 	
 	protected String editorId;
 	protected boolean allowsMultiple;

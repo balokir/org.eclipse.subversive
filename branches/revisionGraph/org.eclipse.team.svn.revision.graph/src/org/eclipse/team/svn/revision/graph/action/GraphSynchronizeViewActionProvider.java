@@ -25,6 +25,7 @@ import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphPlugin;
 import org.eclipse.team.svn.revision.graph.operation.RevisionGraphUtility;
 import org.eclipse.team.svn.ui.synchronize.UpdateModelActionGroup;
@@ -50,9 +51,9 @@ public class GraphSynchronizeViewActionProvider extends CommonActionProvider {
 		protected IStructuredSelection selection = new StructuredSelection(); 
 		
 		public ShowRevisionGraphAction() {
-			this.setText("Show Revision Graph");
-			this.setToolTipText("Show Revision Graph");
-			this.setImageDescriptor(SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/showgraph.png"));
+			this.setText(SVNRevisionGraphMessages.ShowRevisionGraphAction);
+			this.setToolTipText(SVNRevisionGraphMessages.ShowRevisionGraphAction);
+			this.setImageDescriptor(SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/showgraph.png")); //$NON-NLS-1$
 		}
 		
 		public void init(IViewPart viewPart) {

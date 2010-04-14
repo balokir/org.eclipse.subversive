@@ -50,10 +50,10 @@ public class ExpandCollapseDecorationFigure extends Figure {
 	protected enum Status { EXPANDED, COLLAPSED, NONE };
 	
 	static {
-		MINUS_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/minus.gif").createImage();
+		MINUS_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/minus.gif").createImage(); //$NON-NLS-1$
 		SVNRevisionGraphPlugin.disposeOnShutdown(MINUS_IMAGE);
 		
-		PLUS_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/plus.gif").createImage();
+		PLUS_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/plus.gif").createImage(); //$NON-NLS-1$
 		SVNRevisionGraphPlugin.disposeOnShutdown(PLUS_IMAGE);
 	}
 	

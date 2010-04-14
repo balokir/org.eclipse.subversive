@@ -47,7 +47,7 @@ public class NodeConnections<T extends NodeConnections<T>>{
 		
 	public void setNext(T nextNode) {
 		if (nextNode == null) {
-			throw new IllegalArgumentException("Node can't be null");
+			throw new IllegalArgumentException("Node can't be null"); //$NON-NLS-1$
 		}
 		if (this.next != null && this.next.equals(nextNode)) {
 			return;
@@ -78,7 +78,7 @@ public class NodeConnections<T extends NodeConnections<T>>{
 	
 	public void setPrevious(T prevNode) {
 		if (prevNode == null) {
-			throw new IllegalArgumentException("Node can't be null");
+			throw new IllegalArgumentException("Node can't be null"); //$NON-NLS-1$
 		}
 		prevNode.setNext(this.convertThisToGeneric());				
 	}	
@@ -96,7 +96,7 @@ public class NodeConnections<T extends NodeConnections<T>>{
 	
 	protected void addCopiedTo(T node, boolean canValidate) {
 		if (node == null) {
-			throw new IllegalArgumentException("Node can't be null");
+			throw new IllegalArgumentException("Node can't be null"); //$NON-NLS-1$
 		}
 		if (this.copiedTo.contains(node)) {
 			return;
@@ -118,7 +118,7 @@ public class NodeConnections<T extends NodeConnections<T>>{
 	
 	public void removeCopiedTo(T node) {
 		if (node == null) {
-			throw new IllegalArgumentException("Node can't be null");
+			throw new IllegalArgumentException("Node can't be null"); //$NON-NLS-1$
 		}
 		if (!this.copiedTo.isEmpty()) {
 			Iterator<T> iter = this.copiedTo.iterator();
@@ -146,7 +146,7 @@ public class NodeConnections<T extends NodeConnections<T>>{
 	
 	public void addCopiedTo(T[] nodes) {
 		if (nodes == null || nodes.length == 0) {
-			throw new IllegalArgumentException("Nodes can't be null");
+			throw new IllegalArgumentException("Nodes can't be null"); //$NON-NLS-1$
 		}				
 		for (T node : nodes) {
 			this.addCopiedTo(node, false);
@@ -157,7 +157,7 @@ public class NodeConnections<T extends NodeConnections<T>>{
 	
 	public void setCopiedFrom(T node) {
 		if (node == null) {
-			throw new IllegalArgumentException("Node can't be null");
+			throw new IllegalArgumentException("Node can't be null"); //$NON-NLS-1$
 		}
 		node.addCopiedTo(this.convertThisToGeneric());		
 	}
@@ -253,7 +253,7 @@ public class NodeConnections<T extends NodeConnections<T>>{
 	
 	//---- for debug
 	public static <T extends NodeConnections<T>> void showGraph(T node) {
-		System.out.println("\r\n------------------");
+		System.out.println("\r\n------------------"); //$NON-NLS-1$
 		
 		//find start node
 		T first = node.getStartNodeInGraph();
@@ -273,14 +273,14 @@ public class NodeConnections<T extends NodeConnections<T>>{
 			
 			if (start.getCopiedFrom() != null) {
 				//nextNodes.add(start.getCopiedFromNode());
-				str.append("\r\n\tcopied from node: " + start.getCopiedFrom() + ", ");
+				str.append("\r\n\tcopied from node: " + start.getCopiedFrom() + ", "); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 						
 			if (!start.copiedTo.isEmpty()) {
-				str.append("\r\n\tcopy to nodes: ");
+				str.append("\r\n\tcopy to nodes: "); //$NON-NLS-1$
 				for (T copyToNode : start.copiedTo) {
 					nextNodes.add(copyToNode);
-					str.append("\r\n\t" + copyToNode);
+					str.append("\r\n\t" + copyToNode); //$NON-NLS-1$
 				}
 			}
 			System.out.println(str);

@@ -27,7 +27,7 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class CompareWithEachOtherAction extends BaseRevisionGraphAction {
 
-	public final static String CompareWithEachOtherAction_ID = "CompareWithEachOther";	
+	public final static String CompareWithEachOtherAction_ID = "CompareWithEachOther";	 //$NON-NLS-1$
 	
 	public CompareWithEachOtherAction(IWorkbenchPart part) {
 		super(part);

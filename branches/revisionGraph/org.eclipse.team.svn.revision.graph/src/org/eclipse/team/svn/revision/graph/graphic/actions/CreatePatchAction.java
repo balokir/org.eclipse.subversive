@@ -27,7 +27,7 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class CreatePatchAction extends BaseRevisionGraphAction {
 
-	public final static String CreatePatchAction_ID = "CreatePatch";
+	public final static String CreatePatchAction_ID = "CreatePatch"; //$NON-NLS-1$
 	
 	public CreatePatchAction(IWorkbenchPart part) {
 		super(part);

@@ -38,21 +38,21 @@ public class PathRevisionConnectionsValidator {
 		//nodes in the same chain should have the same path
 		if (node.getNext() != null && node.getPathIndex() != node.getNext().getPathIndex()) {
 			this.reportProblem(node, 
-				"Its path and next node path are not equal. " +
-				"Next node: " + node.getNext().toString(this.repositoryCache));						
+				"Its path and next node path are not equal. " + //$NON-NLS-1$
+				"Next node: " + node.getNext().toString(this.repositoryCache)); //$NON-NLS-1$
 		}
 		if (node.getPrevious() != null && node.getPathIndex() != node.getPrevious().getPathIndex()) {
 			this.reportProblem(node, 
-				"Its path and previous node path are not equal. " +
-				"Previous node: " + node.getPrevious().toString(this.repositoryCache));						
+				"Its path and previous node path are not equal. " + //$NON-NLS-1$
+				"Previous node: " + node.getPrevious().toString(this.repositoryCache)); //$NON-NLS-1$
 		}
 		
 		//check copy from and not previous
 		if (node.getCopiedFrom() != null && node.getPrevious() != null) {
 			this.reportProblem(node,							 
-				"It contains previous and copied from nodes. " +
-				"Previous node: " + node.getPrevious().toString(this.repositoryCache) + ", " +
-				"copied from node: " + node.getCopiedFrom().toString(this.repositoryCache));
+				"It contains previous and copied from nodes. " + //$NON-NLS-1$
+				"Previous node: " + node.getPrevious().toString(this.repositoryCache) + ", " + //$NON-NLS-1$ //$NON-NLS-2$
+				"copied from node: " + node.getCopiedFrom().toString(this.repositoryCache)); //$NON-NLS-1$
 		}				
 		
 		//check rename					
@@ -64,17 +64,17 @@ public class PathRevisionConnectionsValidator {
 				//check rename and not next
 				if (node.getNext() != null) {
 					this.reportProblem(node,
-						"It contains next and rename nodes. " +
-						"Next node: " + node.getNext().toString(this.repositoryCache) + ", " +
-						"rename node: " + copiedToNode.toString(this.repositoryCache));								
+						"It contains next and rename nodes. " + //$NON-NLS-1$
+						"Next node: " + node.getNext().toString(this.repositoryCache) + ", " + //$NON-NLS-1$ //$NON-NLS-2$
+						"rename node: " + copiedToNode.toString(this.repositoryCache)); //$NON-NLS-1$
 				}
 				
 				//check that there's only one rename
 				if (renameNode != null) {
 					this.reportProblem(node,										 
-						"It contains several rename nodes. " +
-						"Rename node1: " + renameNode.toString(this.repositoryCache) + ", " +
-						"rename node2: " + copiedToNode.toString(this.repositoryCache));
+						"It contains several rename nodes. " + //$NON-NLS-1$
+						"Rename node1: " + renameNode.toString(this.repositoryCache) + ", " + //$NON-NLS-1$ //$NON-NLS-2$
+						"rename node2: " + copiedToNode.toString(this.repositoryCache)); //$NON-NLS-1$
 				}
 				
 				renameNode = copiedToNode;
@@ -83,7 +83,7 @@ public class PathRevisionConnectionsValidator {
 	}
 
 	protected void reportProblem(PathRevision node, String string) {
-		String message = "Not valid node: " + node.toString(this.repositoryCache) + ". ";
+		String message = "Not valid node: " + node.toString(this.repositoryCache) + ". "; //$NON-NLS-1$ //$NON-NLS-2$
 		throw new RuntimeException(message + string);		
 	}
 }

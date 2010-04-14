@@ -81,7 +81,7 @@ public class RevisionRootNode extends ChangesNotifier {
 	 * performs needed pre and post actions. Model is changed by passed operation. 
 	 */
 	protected void changeModel(RevisionModelOperation op) {
-		TimeMeasure processMeasure = new TimeMeasure("Re-structure nodes in model");
+		TimeMeasure processMeasure = new TimeMeasure("Re-structure nodes in model"); //$NON-NLS-1$
 			
 		boolean hasPreviousData = !this.currentNodesList.isEmpty();
 		

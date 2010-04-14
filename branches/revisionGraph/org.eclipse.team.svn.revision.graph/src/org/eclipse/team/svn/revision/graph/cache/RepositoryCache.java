@@ -63,7 +63,7 @@ public class RepositoryCache {
 		revisionsCount += 1;
 		
 		if (revisionsCount < this.revisions.length) {
-			throw new IllegalArgumentException("Revisions: " + revisionsCount + ", size: " + this.revisions.length);
+			throw new IllegalArgumentException("Revisions: " + revisionsCount + ", size: " + this.revisions.length); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		if (this.revisions.length != 0) {			
@@ -183,11 +183,11 @@ public class RepositoryCache {
 			this.writeHelper = new RepositoryCacheWriteHelper(this);
 		}
 		
-		TimeMeasure compressMeasure = new TimeMeasure("Compress messages");
+		TimeMeasure compressMeasure = new TimeMeasure("Compress messages"); //$NON-NLS-1$
 		this.messages.compress();
 		compressMeasure.end();
 		
-		TimeMeasure saveMeasure = new TimeMeasure("saveMeasure"); 
+		TimeMeasure saveMeasure = new TimeMeasure("Save measure");  //$NON-NLS-1$
 		this.writeHelper.save();
 		saveMeasure.end();
 		
