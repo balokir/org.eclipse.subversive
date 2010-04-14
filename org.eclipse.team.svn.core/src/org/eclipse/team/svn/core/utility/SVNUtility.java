@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.internal.preferences.Base64;
@@ -49,7 +48,6 @@ import org.eclipse.team.svn.core.connector.ISVNDiffStatusCallback;
 import org.eclipse.team.svn.core.connector.ISVNEntryCallback;
 import org.eclipse.team.svn.core.connector.ISVNEntryInfoCallback;
 import org.eclipse.team.svn.core.connector.ISVNEntryStatusCallback;
-import org.eclipse.team.svn.core.connector.ISVNLogEntryCallback;
 import org.eclipse.team.svn.core.connector.ISVNMergeStatusCallback;
 import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
 import org.eclipse.team.svn.core.connector.ISVNProgressMonitor;
@@ -62,6 +60,7 @@ import org.eclipse.team.svn.core.connector.SVNEntryInfo;
 import org.eclipse.team.svn.core.connector.SVNEntryReference;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
+import org.eclipse.team.svn.core.connector.SVNLogEntryCallbackWithMergeInfo;
 import org.eclipse.team.svn.core.connector.SVNMergeStatus;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNRevision;
@@ -342,33 +341,9 @@ public final class SVNUtility {
 	}
 	
 	public static SVNLogEntry []logEntries(ISVNConnector proxy, SVNEntryReference reference, SVNRevision revisionStart, SVNRevision revisionEnd, long options, String[] revProps, long limit, ISVNProgressMonitor monitor) throws SVNConnectorException {
-		final ArrayList<SVNLogEntry> entries = new ArrayList<SVNLogEntry>();
-		proxy.logEntries(reference, revisionStart, revisionEnd, revProps, limit, options, new ISVNLogEntryCallback() {
-			private Stack<SVNLogEntry> mergeTreeBuilder = new Stack<SVNLogEntry>();
-			
-			public void next(SVNLogEntry log) {
-				if (log.revision == SVNRevision.INVALID_REVISION_NUMBER) {
-					if (!this.mergeTreeBuilder.isEmpty()) {
-						log = this.mergeTreeBuilder.pop();						
-						if (this.mergeTreeBuilder.isEmpty()) {
-							entries.add(log);
-						}
-					}															
-					return;
-				}
-				
-				if (!this.mergeTreeBuilder.isEmpty()) {
-					this.mergeTreeBuilder.peek().add(log);
-				}
-				else if (!log.hasChildren()) {
-					entries.add(log);
-				}
-				if (log.hasChildren()) {
-					this.mergeTreeBuilder.push(log);
-				}
-			}
-		}, monitor);
-		return entries.toArray(new SVNLogEntry[entries.size()]);
+		SVNLogEntryCallbackWithMergeInfo callback = new SVNLogEntryCallbackWithMergeInfo();
+		proxy.logEntries(reference, revisionStart, revisionEnd, revProps, limit, options, callback, monitor);
+		return callback.getEntries();
 	}
 	
 	public static SVNEntryInfo []info(ISVNConnector proxy, SVNEntryRevisionReference reference, int depth, ISVNProgressMonitor monitor) throws SVNConnectorException {
