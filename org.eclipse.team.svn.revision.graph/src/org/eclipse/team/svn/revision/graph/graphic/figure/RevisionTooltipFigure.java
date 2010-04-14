@@ -22,7 +22,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
-import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
 import org.eclipse.team.svn.ui.utility.DateFormatter;
 
@@ -41,7 +40,7 @@ public class RevisionTooltipFigure extends Figure {
 	protected Label copyText;
 	protected Label commentText;
 	
-	public RevisionTooltipFigure(RevisionNode revisionNode, RepositoryCache repositoryCache) {
+	public RevisionTooltipFigure(RevisionNode revisionNode) {
 		this.revisionNode = revisionNode;
 		
 		this.createControls();

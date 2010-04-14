@@ -22,7 +22,6 @@ import org.eclipse.gef.MouseWheelZoomHandler;
 import org.eclipse.gef.editparts.ScalableRootEditPart;
 import org.eclipse.gef.editparts.ZoomManager;
 import org.eclipse.gef.ui.actions.ActionRegistry;
-import org.eclipse.gef.ui.parts.GraphicalEditor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -60,8 +59,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 /**
- * TODO fake editor to quick startup. For real work, rework it.
- * 
  * @author Igor Burilo
  */
 public class RevisionGraphEditor extends GraphicalEditor {
