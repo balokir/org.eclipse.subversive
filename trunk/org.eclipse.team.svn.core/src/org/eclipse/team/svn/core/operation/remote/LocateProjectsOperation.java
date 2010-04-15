@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.BaseMessages;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryContainer;
@@ -46,7 +47,7 @@ public class LocateProjectsOperation extends AbstractRepositoryOperation impleme
 	}
 	
 	public LocateProjectsOperation(IRepositoryResource []startFrom, ILocateFilter filter, int limitation) {
-		super("Operation_LocateProjects", startFrom); //$NON-NLS-1$
+		super("Operation_LocateProjects", SVNMessages.class, startFrom); //$NON-NLS-1$
 		this.levelLimitation = limitation;
 		this.filter = filter;
 	}

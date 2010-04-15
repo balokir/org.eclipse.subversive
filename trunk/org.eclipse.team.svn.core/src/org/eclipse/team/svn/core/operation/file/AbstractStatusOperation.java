@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNEntryStatusCallback;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
@@ -34,13 +35,13 @@ public abstract class AbstractStatusOperation extends AbstractFileOperation {
 	protected SVNChangeStatus []statuses;
 	protected boolean recursive;
 
-	public AbstractStatusOperation(String operationName, File []files, boolean recursive) {
-		super(operationName, files);
+	public AbstractStatusOperation(String operationName, Class<? extends NLS> messagesClass, File []files, boolean recursive) {
+		super(operationName, messagesClass, files);
 		this.recursive = recursive;
 	}
 
-	public AbstractStatusOperation(String operationName, IFileProvider provider, boolean recursive) {
-		super(operationName, provider);
+	public AbstractStatusOperation(String operationName, Class<? extends NLS> messagesClass, IFileProvider provider, boolean recursive) {
+		super(operationName, messagesClass, provider);
 		this.recursive = recursive;
 	}
 

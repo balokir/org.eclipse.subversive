@@ -42,7 +42,7 @@ public class InitExtractLogOperation extends AbstractActionOperation {
 	protected String logPath;
 	
 	public InitExtractLogOperation(String logPath) {
-		super("Operation_InitExtractLog"); //$NON-NLS-1$
+		super("Operation_InitExtractLog", SVNMessages.class); //$NON-NLS-1$
 		this.logPath = logPath;
 		this.extractParticipants = new HashMap<String, List<String>>();
 	}

@@ -13,6 +13,7 @@ package org.eclipse.team.svn.core.operation.local.property;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
@@ -37,7 +38,7 @@ public class GenerateExternalsPropertyOperation extends AbstractActionOperation 
 	protected SVNProperty property;
 	
 	public GenerateExternalsPropertyOperation(IResource resource, String url, SVNRevision revision, String localPath, boolean isPriorToSVN15Format) {		
-		super("Operation_GenerateExternalsProperty"); //$NON-NLS-1$
+		super("Operation_GenerateExternalsProperty", SVNMessages.class); //$NON-NLS-1$
 		this.resource = resource;
 		this.url = url;
 		this.revision = revision;

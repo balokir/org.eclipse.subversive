@@ -11,6 +11,7 @@
 
 package org.eclipse.team.svn.core.operation.remote;
 
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
@@ -24,13 +25,13 @@ public abstract class AbstractRepositoryOperation extends AbstractActionOperatio
 	private IRepositoryResource []resources;
 	private IRepositoryResourceProvider provider;
 	
-	public AbstractRepositoryOperation(String operationName, IRepositoryResource []resources) {
-		super(operationName);
+	public AbstractRepositoryOperation(String operationName, Class<? extends NLS> messagesClass, IRepositoryResource []resources) {
+		super(operationName, messagesClass);
 		this.resources = resources;
 	}
 	
-	public AbstractRepositoryOperation(String operationName, IRepositoryResourceProvider provider) {
-		super(operationName);
+	public AbstractRepositoryOperation(String operationName, Class<? extends NLS> messagesClass, IRepositoryResourceProvider provider) {
+		super(operationName, messagesClass);
 		this.provider = provider;
 	}
 	

@@ -85,7 +85,7 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 		}
 		
 		MoveResourceOperation moveOp = new MoveResourceOperation(source, destination);
-		CompositeOperation op = new CompositeOperation(moveOp.getId());
+		CompositeOperation op = new CompositeOperation(moveOp.getId(), moveOp.getMessagesClass());
 		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(new IResource[] {source, destination});
 		op.add(saveOp);
 		if (!moveOp.isAllowed()) {
@@ -141,12 +141,12 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 		}
 		
 	    final DeleteResourceOperation mainOp = new DeleteResourceOperation(resource);
-	    CompositeOperation op = new CompositeOperation(mainOp.getId());
+	    CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(new IResource[] {resource});
 		op.add(saveOp);
 	    op.add(mainOp);
 	    	  
-	    op.add(new AbstractActionOperation("Operation_TrackDeleteResult") {			 //$NON-NLS-1$
+	    op.add(new AbstractActionOperation("Operation_TrackDeleteResult", SVNMessages.class) {			 //$NON-NLS-1$
 			@Override
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				if (mainOp.getExecutionState() == IActionOperation.OK) {
@@ -182,7 +182,7 @@ public class SVNTeamMoveDeleteHook implements IMoveDeleteHook {
 		protected boolean canDeclareMove;
 		
 		public TrackMoveResultOperation(IResourceTree tree, IResource source, IResource destination, IActionOperation operationToTrack, boolean canDeclareMove) {			
-			super("Operation_TrackMoveResult"); //$NON-NLS-1$
+			super("Operation_TrackMoveResult", SVNMessages.class); //$NON-NLS-1$
 			this.tree = tree;
 			this.source = source;
 			this.destination = destination;

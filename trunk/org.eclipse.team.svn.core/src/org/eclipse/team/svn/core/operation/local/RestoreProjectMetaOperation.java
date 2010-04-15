@@ -17,6 +17,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.utility.FileUtility;
@@ -35,7 +36,7 @@ public class RestoreProjectMetaOperation extends AbstractActionOperation {
 	}
 	
 	public RestoreProjectMetaOperation(SaveProjectMetaOperation saveOp, boolean force) {
-		super("Operation_RestoreMeta"); //$NON-NLS-1$
+		super("Operation_RestoreMeta", SVNMessages.class); //$NON-NLS-1$
 		this.saveOp = saveOp;
 		this.force = force;
 	}

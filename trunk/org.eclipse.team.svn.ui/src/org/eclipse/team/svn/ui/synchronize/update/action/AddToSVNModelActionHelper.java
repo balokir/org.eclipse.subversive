@@ -56,7 +56,7 @@ public class AddToSVNModelActionHelper extends AbstractActionHelper {
 		}
 		AddToSVNWithPropertiesOperation mainOp = new AddToSVNWithPropertiesOperation(resources, false);
 		
-		CompositeOperation op = new CompositeOperation(mainOp.getId());
+		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 
 		op.add(mainOp);
 		op.add(new RefreshResourcesOperation(resources/*, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL*/));

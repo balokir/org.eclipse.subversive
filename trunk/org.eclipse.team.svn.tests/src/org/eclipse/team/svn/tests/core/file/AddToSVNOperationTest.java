@@ -42,7 +42,7 @@ public class AddToSVNOperationTest extends AbstractOperationTestCase {
 		}
 		
 		AddToSVNOperation mainOp = new AddToSVNOperation(toCommit.toArray(new File[toCommit.size()]), true);
-        CompositeOperation op = new CompositeOperation(mainOp.getId());
+        CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
         op.add(mainOp);
         return op;
 	}

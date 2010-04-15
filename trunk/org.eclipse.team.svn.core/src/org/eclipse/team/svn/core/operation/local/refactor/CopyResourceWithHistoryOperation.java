@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
@@ -38,7 +39,7 @@ public class CopyResourceWithHistoryOperation extends AbstractActionOperation {
 	protected IResource destination;
 	
 	public CopyResourceWithHistoryOperation(IResource source, IResource destination) {
-		super("Operation_CopyLocalH"); //$NON-NLS-1$
+		super("Operation_CopyLocalH", SVNMessages.class); //$NON-NLS-1$
 		this.source = source;
 		this.destination = destination;
 	}

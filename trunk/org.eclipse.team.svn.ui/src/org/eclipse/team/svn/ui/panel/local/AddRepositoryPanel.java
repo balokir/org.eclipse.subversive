@@ -131,7 +131,7 @@ public class AddRepositoryPanel extends AbstractDialogPanel {
 		final IRepositoryLocation location = SVNRemoteStorage.instance().newRepositoryLocation();
 		SVNUtility.initializeRepositoryLocation(location, url);
 		
-		AbstractActionOperation mainOp = new AbstractActionOperation("Operation_CreateRepository") { //$NON-NLS-1$
+		AbstractActionOperation mainOp = new AbstractActionOperation("Operation_CreateRepository", SVNUIMessages.class) { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				ISVNConnector proxy = location.acquireSVNProxy();				
 				try {					
@@ -152,11 +152,11 @@ public class AddRepositoryPanel extends AbstractDialogPanel {
 			}			
 		};
 				
-		CompositeOperation op = new CompositeOperation(mainOp.getId());
+		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 		op.add(mainOp);
 		
 		if (this.isCreateRepositoryLocation()) {			
-			op.add(new AbstractActionOperation("Operation_AddRepositoryLocation") { //$NON-NLS-1$
+			op.add(new AbstractActionOperation("Operation_AddRepositoryLocation", SVNUIMessages.class) { //$NON-NLS-1$
 				protected void runImpl(IProgressMonitor monitor) throws Exception {		
 					//validate repository location before adding
 					final boolean[] isAddLocation = new boolean[1];

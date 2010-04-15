@@ -32,7 +32,7 @@ public class DeletePaneAction extends AbstractSynchronizeModelAction {
 		DiscardConfirmationDialog dialog = new DiscardConfirmationDialog(UIMonitorUtility.getShell(), selectedResources.length == 1, DiscardConfirmationDialog.MSG_RESOURCE);
 		if (dialog.open() == 0) {
 			DeleteResourceOperation deleteOperation = new DeleteResourceOperation(selectedResources);
-			CompositeOperation op = new CompositeOperation(deleteOperation.getId());
+			CompositeOperation op = new CompositeOperation(deleteOperation.getId(), deleteOperation.getMessagesClass());
 			SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(selectedResources);
 			RestoreProjectMetaOperation restoreOp = new RestoreProjectMetaOperation(saveOp);
 			op.add(saveOp);

@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNMergeStatus;
@@ -36,13 +37,13 @@ public class MergeOperation extends AbstractConflictDetectionOperation implement
 	protected boolean force;
 
 	public MergeOperation(IResource []resources, AbstractMergeSet info, boolean force) {
-		super("Operation_Merge", resources); //$NON-NLS-1$
+		super("Operation_Merge", SVNMessages.class, resources); //$NON-NLS-1$
 		this.info = info;
 		this.force = force;
 	}
 
 	public MergeOperation(IResourceProvider provider, AbstractMergeSet info, boolean force) {
-		super("Operation_Merge", provider); //$NON-NLS-1$
+		super("Operation_Merge", SVNMessages.class, provider); //$NON-NLS-1$
 		this.info = info;
 		this.force = force;
 	}

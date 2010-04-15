@@ -64,7 +64,7 @@ public class CheckoutAction extends AbstractRepositoryModifyWorkspaceAction {
 	public void runImpl(IAction action) {
 		final IRepositoryResource []resources = this.getSelectedRepositoryResources();
 		if (SVNTeamPreferences.getCheckoutBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.CHECKOUT_RESPECT_PROJECT_STRUCTURE_NAME)) {
-			this.runScheduled(new AbstractActionOperation("Operation_CheckLayout") { //$NON-NLS-1$
+			this.runScheduled(new AbstractActionOperation("Operation_CheckLayout", SVNUIMessages.class) { //$NON-NLS-1$
 				protected void runImpl(IProgressMonitor monitor) throws Exception {
 					final HashSet<IRepositoryResource> toCheckout = new HashSet<IRepositoryResource>();
 					for (int i = 0; i < resources.length && !monitor.isCanceled(); i++) {

@@ -85,7 +85,7 @@ public class FileReplaceListener implements IResourceChangeListener {
 			}						
 		}
 		if (!localResources.isEmpty()) {		
-			final AbstractActionOperation mainOp = new AbstractActionOperation("Operation_FileReplaceListener") { //$NON-NLS-1$
+			final AbstractActionOperation mainOp = new AbstractActionOperation("Operation_FileReplaceListener", SVNMessages.class) { //$NON-NLS-1$
 				protected void runImpl(IProgressMonitor monitor) throws Exception {																				
 					for (final ILocalResource local : localResources) {														
 						if (monitor.isCanceled()) {
@@ -155,7 +155,7 @@ public class FileReplaceListener implements IResourceChangeListener {
 				}
 			};			
 			
-			CompositeOperation cmpOp = new CompositeOperation(mainOp.getId());
+			CompositeOperation cmpOp = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 			cmpOp.add(mainOp);
 			cmpOp.add(new RefreshResourcesOperation(resources.toArray(new IResource[0])));			
 			ProgressMonitorUtility.doTaskScheduledDefault(cmpOp);

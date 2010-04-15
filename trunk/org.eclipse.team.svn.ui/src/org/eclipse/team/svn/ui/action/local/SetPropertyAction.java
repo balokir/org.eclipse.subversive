@@ -30,6 +30,7 @@ import org.eclipse.team.svn.core.operation.local.property.SetPropertiesOperation
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.StringMatcher;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractNonRecursiveTeamAction;
 import org.eclipse.team.svn.ui.composite.PropertiesComposite;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
@@ -66,7 +67,7 @@ public class SetPropertyAction extends AbstractNonRecursiveTeamAction {
 		IActionOperation loadOp = null;
 		if (isFileSelected) {
 			final File f = new File(fileName);
-	        loadOp = new AbstractActionOperation("Operation_SLoadFileContent") { //$NON-NLS-1$
+	        loadOp = new AbstractActionOperation("Operation_SLoadFileContent", SVNUIMessages.class) { //$NON-NLS-1$
 	            protected void runImpl(IProgressMonitor monitor) throws Exception {
 	                FileInputStream input = null;
 	                try {
@@ -116,7 +117,7 @@ public class SetPropertyAction extends AbstractNonRecursiveTeamAction {
 			};
 			mainOp = new SetMultiPropertiesOperation(resources, propertyProvider, filter, isRecursive && !strict ? IResource.DEPTH_INFINITE : IResource.DEPTH_ZERO);
 		}
-		CompositeOperation composite = new CompositeOperation(mainOp.getId());
+		CompositeOperation composite = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 		if (loadOp != null) {
 			composite.add(loadOp);
 			composite.add(mainOp, new IActionOperation[] {loadOp});

@@ -13,6 +13,7 @@ package org.eclipse.team.svn.core.operation.local;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.resource.events.ProjectStatesChangedEvent;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -27,7 +28,7 @@ public class NotifyProjectStatesChangedOperation extends AbstractActionOperation
 	protected int eventType;
 
 	public NotifyProjectStatesChangedOperation(IProject []projects, int eventType) {
-		super("Operation_NotifyProjectChange"); //$NON-NLS-1$
+		super("Operation_NotifyProjectChange", SVNMessages.class); //$NON-NLS-1$
 		this.projects = projects;
 		this.eventType = eventType;
 	}

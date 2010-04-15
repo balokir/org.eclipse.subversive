@@ -14,6 +14,7 @@ package org.eclipse.team.svn.core.operation.file;
 import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNConflictResolution;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
@@ -31,12 +32,12 @@ public class MarkResolvedOperation extends AbstractFileOperation {
 	protected boolean recursive;
 	
 	public MarkResolvedOperation(File []files, boolean recursive) {
-		super("Operation_MarkResolvedFile", files); //$NON-NLS-1$
+		super("Operation_MarkResolvedFile", SVNMessages.class, files); //$NON-NLS-1$
 		this.recursive = recursive;
 	}
 
 	public MarkResolvedOperation(IFileProvider provider, boolean recursive) {
-		super("Operation_MarkResolvedFile", provider); //$NON-NLS-1$
+		super("Operation_MarkResolvedFile", SVNMessages.class, provider); //$NON-NLS-1$
 		this.recursive = recursive;
 	}
 

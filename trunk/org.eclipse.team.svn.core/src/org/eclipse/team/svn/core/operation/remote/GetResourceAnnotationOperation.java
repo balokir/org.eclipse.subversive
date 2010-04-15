@@ -17,6 +17,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.BaseMessages;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNAnnotationCallback;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNAnnotationData;
@@ -40,7 +41,7 @@ public class GetResourceAnnotationOperation extends AbstractRepositoryOperation 
 	protected SVNRevisionRange revisions;
 	
 	public GetResourceAnnotationOperation(IRepositoryResource resource, SVNRevisionRange revisions) {
-		super("Operation_GetAnnotation", new IRepositoryResource[] {resource}); //$NON-NLS-1$
+		super("Operation_GetAnnotation", SVNMessages.class, new IRepositoryResource[] {resource}); //$NON-NLS-1$
 		this.revisions = revisions;
 	}
 	

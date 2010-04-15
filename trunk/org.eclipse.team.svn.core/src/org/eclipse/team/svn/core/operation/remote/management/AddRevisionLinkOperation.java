@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.core.operation.remote.management;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -53,7 +54,7 @@ public class AddRevisionLinkOperation extends AbstractActionOperation {
 	}	
 	
 	public AddRevisionLinkOperation() {
-		super("Operation_AddRevisionLink"); //$NON-NLS-1$
+		super("Operation_AddRevisionLink", SVNMessages.class); //$NON-NLS-1$
 	}
 		
 	protected IRevisionLink []operableData() {

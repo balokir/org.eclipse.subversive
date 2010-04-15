@@ -20,6 +20,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
@@ -43,7 +44,7 @@ public class SaveProjectMetaOperation extends AbstractWorkingCopyOperation imple
 	}
 	
 	public SaveProjectMetaOperation(IResource []resources, String startsWith) {
-		super("Operation_SaveMeta", resources); //$NON-NLS-1$
+		super("Operation_SaveMeta", SVNMessages.class, resources); //$NON-NLS-1$
 		this.savedMetas = new HashMap<String, File>();
 		this.startsWith = startsWith;
 	}
@@ -53,7 +54,7 @@ public class SaveProjectMetaOperation extends AbstractWorkingCopyOperation imple
 	}
 	
 	public SaveProjectMetaOperation(IResourceProvider provider, String startsWith) {
-		super("Operation_SaveMeta", provider); //$NON-NLS-1$
+		super("Operation_SaveMeta", SVNMessages.class, provider); //$NON-NLS-1$
 		this.savedMetas = new HashMap<String, File>();
 		this.startsWith = startsWith;
 	}

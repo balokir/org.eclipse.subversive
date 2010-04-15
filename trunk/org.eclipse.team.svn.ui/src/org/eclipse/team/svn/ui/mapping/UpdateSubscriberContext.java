@@ -34,6 +34,7 @@ import org.eclipse.team.core.subscribers.SubscriberMergeContext;
 import org.eclipse.team.core.subscribers.SubscriberScopeManager;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -57,6 +58,7 @@ import org.eclipse.team.svn.core.synchronize.UpdateSyncInfo;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.local.UpdateAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.operation.ClearUpdateStatusesOperation;
@@ -144,7 +146,7 @@ public class UpdateSubscriberContext extends SubscriberMergeContext {
 				return Status.OK_STATUS;
 			}						
 			
-			CompositeOperation op = new CompositeOperation("Operation_UOverrideAndUpdate"); //$NON-NLS-1$
+			CompositeOperation op = new CompositeOperation("Operation_UOverrideAndUpdate", SVNUIMessages.class); //$NON-NLS-1$
 			SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources[0]);
 			op.add(saveOp);
 
@@ -233,7 +235,7 @@ public class UpdateSubscriberContext extends SubscriberMergeContext {
 				}
 			}
 			
-			CompositeOperation op = new CompositeOperation("Operation_Update"); //$NON-NLS-1$
+			CompositeOperation op = new CompositeOperation("Operation_Update", SVNMessages.class); //$NON-NLS-1$
 			SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources[0]);
 			op.add(saveOp);
 			
@@ -276,7 +278,7 @@ public class UpdateSubscriberContext extends SubscriberMergeContext {
 		}
 		boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
 		MarkAsMergedOperation mainOp = new MarkAsMergedOperation(resources, false, null, ignoreExternals);
-		CompositeOperation op = new CompositeOperation(mainOp.getId());
+		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 		op.add(mainOp);
 		op.add(new ClearUpdateStatusesOperation(resources), new IActionOperation[]{mainOp});
 		op.add(new RefreshResourcesOperation(FileUtility.getParents(resources, false)));

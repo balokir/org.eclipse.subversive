@@ -12,6 +12,7 @@ package org.eclipse.team.svn.revision.graph.operation;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
+import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
 import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
 
 /**
@@ -24,7 +25,7 @@ public class PrepareRevisionDataOperation extends AbstractActionOperation {
 	protected RepositoryCache repositoryCache;
 	
 	public PrepareRevisionDataOperation(RepositoryCache repositoryCache) {
-		super("Operation_PrepareRevisionData"); //$NON-NLS-1$
+		super("Operation_PrepareRevisionData", SVNRevisionGraphMessages.class); //$NON-NLS-1$
 		this.repositoryCache = repositoryCache;
 	}
 	

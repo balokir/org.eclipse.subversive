@@ -14,6 +14,7 @@ package org.eclipse.team.svn.core.operation.file;
 import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
@@ -31,12 +32,12 @@ public class AddToSVNOperation extends AbstractFileOperation {
 	protected boolean isRecursive;
 	
 	public AddToSVNOperation(File []files, boolean isRecursive) {
-		super("Operation_AddToSVNFile", files); //$NON-NLS-1$
+		super("Operation_AddToSVNFile", SVNMessages.class, files); //$NON-NLS-1$
 		this.isRecursive = isRecursive;
 	}
 
 	public AddToSVNOperation(IFileProvider provider, boolean isRecursive) {
-		super("Operation_AddToSVNFile", provider); //$NON-NLS-1$
+		super("Operation_AddToSVNFile", SVNMessages.class, provider); //$NON-NLS-1$
 		this.isRecursive = isRecursive;
 	}
 

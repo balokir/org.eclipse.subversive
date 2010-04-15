@@ -87,7 +87,7 @@ public class PropertiesView extends AbstractSVNView {
 				PropertiesView.this.propertiesComposite.initializeComposite();
 			}
 		});
-		CompositeOperation composite = new CompositeOperation("Operation_ShowProperties"); //$NON-NLS-1$
+		CompositeOperation composite = new CompositeOperation("Operation_ShowProperties", SVNUIMessages.class); //$NON-NLS-1$
 		if (this.propertyProvider != null && this.propertyProvider.getExecutionState() != IStatus.OK) {
 			composite.add(this.propertyProvider);
 			composite.add(this.propertiesComposite.getRefreshViewOperation(), new IActionOperation[] {this.propertyProvider});

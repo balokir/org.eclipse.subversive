@@ -79,7 +79,7 @@ public class ExtractToOperationRemote extends AbstractActionOperation {
 	 * @param delitionAllowed - specifies if deletion allowed if the resource is marked for deletion
 	 */
 	public ExtractToOperationRemote(IRepositoryResourceWithStatusProvider incomingResourcesProvider, Collection<String> markedForDelition, String path, HashMap<String, String> exportRoots2Names, InitExtractLogOperation logger, boolean delitionAllowed) {
-		super("Operation_ExtractTo"); //$NON-NLS-1$
+		super("Operation_ExtractTo", SVNMessages.class); //$NON-NLS-1$
 		this.logger = logger;
 		this.dataProvider = incomingResourcesProvider;
 		this.path = path;
@@ -89,7 +89,7 @@ public class ExtractToOperationRemote extends AbstractActionOperation {
 	}
 
 	public ExtractToOperationRemote(IRepositoryResourceWithStatusProvider incomingResourcesProvider, IRepositoryResourceProvider markedForDelition, String path, HashMap<String, String> exportRoots2Names, InitExtractLogOperation logger, boolean delitionAllowed) {
-		super("Operation_ExtractTo"); //$NON-NLS-1$
+		super("Operation_ExtractTo", SVNMessages.class); //$NON-NLS-1$
 		this.logger = logger;
 		this.dataProvider = incomingResourcesProvider;
 		this.path = path;

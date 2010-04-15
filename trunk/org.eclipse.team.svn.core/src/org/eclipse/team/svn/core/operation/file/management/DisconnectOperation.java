@@ -14,6 +14,7 @@ package org.eclipse.team.svn.core.operation.file.management;
 import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.file.AbstractFileOperation;
 import org.eclipse.team.svn.core.operation.file.IFileProvider;
 import org.eclipse.team.svn.core.utility.FileUtility;
@@ -26,11 +27,11 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class DisconnectOperation extends AbstractFileOperation {
 	public DisconnectOperation(File []files) {
-		super("Operation_DisconnectFile", files); //$NON-NLS-1$
+		super("Operation_DisconnectFile", SVNMessages.class, files); //$NON-NLS-1$
 	}
 
 	public DisconnectOperation(IFileProvider provider) {
-		super("Operation_DisconnectFile", provider); //$NON-NLS-1$
+		super("Operation_DisconnectFile", SVNMessages.class, provider); //$NON-NLS-1$
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {

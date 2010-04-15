@@ -37,7 +37,7 @@ public class GetBranchesTagsOperation extends AbstractActionOperation {
 	protected IRepositoryResource []children;
 		
 	public GetBranchesTagsOperation(IRepositoryContainer parent, boolean isBranch) {		
-		super("Operation_GetBranchesTags"); //$NON-NLS-1$
+		super("Operation_GetBranchesTags", SVNUIMessages.class); //$NON-NLS-1$
 		this.parent = parent;
 		this.isBranch = isBranch;
 	}

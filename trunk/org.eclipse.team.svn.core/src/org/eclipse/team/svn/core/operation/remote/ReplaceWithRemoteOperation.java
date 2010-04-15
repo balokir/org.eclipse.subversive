@@ -18,6 +18,7 @@ import java.util.Arrays;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
@@ -41,7 +42,7 @@ public class ReplaceWithRemoteOperation extends AbstractActionOperation {
 	protected boolean ignoreExternals;
 	
 	public ReplaceWithRemoteOperation(IResource toReplace, IRepositoryResource remoteResource, boolean ignoreExternals) {
-		super("Operation_ReplaceWithRemote"); //$NON-NLS-1$
+		super("Operation_ReplaceWithRemote", SVNMessages.class); //$NON-NLS-1$
 		this.toReplace = toReplace;
 		this.remoteRoot = remoteResource;
 		this.ignoreExternals = ignoreExternals;

@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.core.operation.local;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
@@ -38,7 +39,7 @@ public class UDiffGenerateOperation extends AbstractActionOperation {
 	protected String diffFile;
 	
 	public UDiffGenerateOperation(ILocalResource local, IRepositoryResource remote, String diffFile) {
-		super("Operation_UDiffGenerate"); //$NON-NLS-1$
+		super("Operation_UDiffGenerate", SVNMessages.class); //$NON-NLS-1$
 		this.local = local;
 		this.remote = remote;
 		this.diffFile = diffFile;

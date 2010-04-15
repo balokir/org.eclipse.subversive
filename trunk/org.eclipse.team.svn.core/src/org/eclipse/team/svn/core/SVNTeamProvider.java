@@ -216,10 +216,10 @@ public class SVNTeamProvider extends RepositoryProvider implements IConnectedPro
 
 	protected void performDisconnect() {
     	this.state = -1;
-    	CompositeOperation op = new CompositeOperation("Operation_OpenProject"); //$NON-NLS-1$
+    	CompositeOperation op = new CompositeOperation("Operation_OpenProject", SVNMessages.class); //$NON-NLS-1$
     	op.add(new DisconnectOperation(new IProject[] {this.getProject()}, false));
     	// notify user about the problem is happened
-    	op.add(new AbstractActionOperation(op.getId()) {
+    	op.add(new AbstractActionOperation(op.getId(), op.getMessagesClass()) {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				throw new UnreportableException(SVNTeamProvider.this.getAutoDisconnectMessage());
 			}

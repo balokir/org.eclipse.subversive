@@ -63,7 +63,7 @@ public class PasteAction extends AbstractRepositoryTeamAction {
 				(AbstractCopyMoveResourcesOperation)new CopyResourcesOperation(resources[0], transferrable.resources, commentPanel.getMessage(), null) :
 				new MoveResourcesOperation(resources[0], transferrable.resources, commentPanel.getMessage(), null);
 
-			CompositeOperation op = new CompositeOperation(pasteOp.getId());
+			CompositeOperation op = new CompositeOperation(pasteOp.getId(), pasteOp.getMessagesClass());
 			
 			op.add(pasteOp);
 			op.add(new RefreshRemoteResourcesOperation(

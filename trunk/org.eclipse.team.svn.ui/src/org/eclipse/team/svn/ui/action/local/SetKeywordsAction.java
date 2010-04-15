@@ -22,6 +22,7 @@ import org.eclipse.team.svn.core.operation.local.property.GetMultiPropertiesOper
 import org.eclipse.team.svn.core.operation.local.property.IPropertyProvider;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractNonRecursiveTeamAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.view.property.PropertyKeywordEditPanel;
@@ -51,10 +52,10 @@ public class SetKeywordsAction extends AbstractNonRecursiveTeamAction {
 			}, null);
 		}
 		else {
-			CompositeOperation composite = new CompositeOperation("Operation_SetKeywordsProperty"); //$NON-NLS-1$
+			CompositeOperation composite = new CompositeOperation("Operation_SetKeywordsProperty", SVNUIMessages.class); //$NON-NLS-1$
 			final GetMultiPropertiesOperation getKeywordsOp = new GetMultiPropertiesOperation(resources, IResource.DEPTH_INFINITE, IStateFilter.SF_EXCLUDE_PREREPLACED_AND_DELETED_FILES, BuiltIn.KEYWORDS);
 			composite.add(getKeywordsOp);
-			composite.add(new AbstractActionOperation(composite.getId()) {
+			composite.add(new AbstractActionOperation(composite.getId(), composite.getMessagesClass()) {
 				protected void runImpl(final IProgressMonitor monitor) throws Exception {
 					if (!monitor.isCanceled()) {
 						SetKeywordsAction.queryUser(resources, getKeywordsOp, getKeywordsOp);

@@ -20,6 +20,7 @@ import java.io.InputStream;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 
@@ -33,7 +34,7 @@ public abstract class AbstractGetFileContentOperation extends AbstractActionOper
 	protected File tmpFile;
 
 	public AbstractGetFileContentOperation(String getOperationType) {
-		super("Operation_GetFileContent_" + getOperationType); //$NON-NLS-1$
+		super("Operation_GetFileContent_" + getOperationType, SVNMessages.class); //$NON-NLS-1$
 	}
 	
 	public String getTemporaryPath() {
@@ -43,7 +44,7 @@ public abstract class AbstractGetFileContentOperation extends AbstractActionOper
 	public InputStream getContent() {
 		final InputStream []retVal = new InputStream[] {new ByteArrayInputStream(new byte[0])};
 		if (this.tmpFile != null && this.tmpFile.exists()) {
-			ProgressMonitorUtility.doTaskExternal(new AbstractActionOperation("Operation_GetFileContent_CreateStream") { //$NON-NLS-1$
+			ProgressMonitorUtility.doTaskExternal(new AbstractActionOperation("Operation_GetFileContent_CreateStream", SVNMessages.class) { //$NON-NLS-1$
 				protected void runImpl(IProgressMonitor monitor) throws Exception {
 					retVal[0] = new FileInputStream(AbstractGetFileContentOperation.this.tmpFile);
 				}
@@ -53,7 +54,7 @@ public abstract class AbstractGetFileContentOperation extends AbstractActionOper
 	}
 	
 	public void setContent(final byte []data) {
-		ProgressMonitorUtility.doTaskExternal(new AbstractActionOperation("Operation_GetFileContent_SetContent") { //$NON-NLS-1$
+		ProgressMonitorUtility.doTaskExternal(new AbstractActionOperation("Operation_GetFileContent_SetContent", SVNMessages.class) { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				if (AbstractGetFileContentOperation.this.tmpFile == null) {
 					AbstractGetFileContentOperation.this.tmpFile = AbstractGetFileContentOperation.this.createTempFile();

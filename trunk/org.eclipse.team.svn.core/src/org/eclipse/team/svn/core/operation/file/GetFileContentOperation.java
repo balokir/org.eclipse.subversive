@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.OutputStream;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
@@ -41,7 +42,7 @@ public class GetFileContentOperation extends AbstractFileOperation {
 	}
 	
 	public GetFileContentOperation(File file, SVNRevision revision, SVNRevision pegRevision, int bufferSize, OutputStream target) {
-		super("Operation_GetFileContent", new File[] {file}); //$NON-NLS-1$
+		super("Operation_GetFileContent", SVNMessages.class, new File[] {file}); //$NON-NLS-1$
 		this.revision = revision;
 		this.pegRevision = pegRevision;
 		this.bufferSize = bufferSize;

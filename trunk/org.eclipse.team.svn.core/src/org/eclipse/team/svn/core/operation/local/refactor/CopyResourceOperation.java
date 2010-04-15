@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.svn.core.BaseMessages;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.SVNResourceRuleFactory;
 import org.eclipse.team.svn.core.utility.FileUtility;
@@ -34,7 +35,7 @@ public class CopyResourceOperation extends AbstractActionOperation {
 	}
 	
 	public CopyResourceOperation(IResource source, IResource destination, boolean skipSVNMeta) {
-		super("Operation_CopyLocal"); //$NON-NLS-1$
+		super("Operation_CopyLocal", SVNMessages.class); //$NON-NLS-1$
 		this.source = source;
 		this.destination = destination;
 		this.skipSVNMeta = skipSVNMeta;

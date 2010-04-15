@@ -44,7 +44,7 @@ public abstract class AbstractCopyMoveAction extends AbstractRepositoryTeamActio
 			IRepositoryResource destination = copyMoveWizard.getDestination();
 			
 			AbstractCopyMoveResourcesOperation moveOp = this.makeCopyOperation(destination, selected, message, copyMoveWizard.getNewName());
-			CompositeOperation op = new CompositeOperation(moveOp.getId());
+			CompositeOperation op = new CompositeOperation(moveOp.getId(), moveOp.getMessagesClass());
 			op.add(moveOp);
 			op.add(new SetRevisionAuthorNameOperation(moveOp, Options.FORCE));
 			op.add(this.makeRefreshOperation(destination, selected));

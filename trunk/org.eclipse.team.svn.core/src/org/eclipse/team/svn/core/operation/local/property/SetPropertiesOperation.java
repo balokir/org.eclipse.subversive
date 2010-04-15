@@ -13,6 +13,7 @@ package org.eclipse.team.svn.core.operation.local.property;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
@@ -41,19 +42,19 @@ public class SetPropertiesOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	public SetPropertiesOperation(IResource []resources, SVNProperty []data, boolean isRecursive) {
-		super("Operation_SetProperties", resources); //$NON-NLS-1$
+		super("Operation_SetProperties", SVNMessages.class, resources); //$NON-NLS-1$
 		this.propertyData = data;
 		this.isRecursive = isRecursive;
 	}
 	
 	public SetPropertiesOperation(IResourceProvider resourceProvider, SVNProperty []data, boolean isRecursive) {
-		super("Operation_SetProperties", resourceProvider); //$NON-NLS-1$
+		super("Operation_SetProperties", SVNMessages.class, resourceProvider); //$NON-NLS-1$
 		this.propertyData = data;
 		this.isRecursive = isRecursive;
 	}
 	
 	public SetPropertiesOperation(IResource []resources, IResourcePropertyProvider propertyProvider, boolean isRecursive) {
-		super("Operation_SetProperties", resources); //$NON-NLS-1$
+		super("Operation_SetProperties", SVNMessages.class, resources); //$NON-NLS-1$
 		this.propertyProvider = propertyProvider;
 		this.isRecursive = isRecursive;
 	}

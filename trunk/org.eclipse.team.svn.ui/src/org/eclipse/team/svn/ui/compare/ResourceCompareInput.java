@@ -55,6 +55,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNDiffStatus;
 import org.eclipse.team.svn.core.connector.SVNEntry;
 import org.eclipse.team.svn.core.connector.SVNRevision;
@@ -539,7 +540,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 		protected void handleOpen(final SelectionEvent event) {
 			final BaseCompareNode node = (BaseCompareNode)((TreeItem)event.item).getData();
 			CompositeOperation fetchContent = node.getFetcher();
-			fetchContent.add(new AbstractActionOperation("Operation_FetchContent") { //$NON-NLS-1$
+			fetchContent.add(new AbstractActionOperation("Operation_FetchContent", SVNUIMessages.class) { //$NON-NLS-1$
 				protected void runImpl(IProgressMonitor monitor) throws Exception {
 					final Throwable []t = new Throwable[1];
 					UIMonitorUtility.getDisplay().syncExec(new Runnable() {
@@ -619,13 +620,13 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 			final ResourceElement left = (ResourceElement)this.getLeft();
 			final ResourceElement ancestor = (ResourceElement)this.getAncestor();
 			final ResourceElement right = (ResourceElement)this.getRight();
-			CompositeOperation op = new CompositeOperation(SVNUIMessages.ResourceCompareInput_Fetch);
+			CompositeOperation op = new CompositeOperation(SVNUIMessages.ResourceCompareInput_Fetch, SVNUIMessages.class);
 			
 			if (left != null && left.getType() != ITypedElement.FOLDER_TYPE) {
 				final AbstractGetFileContentOperation fetchOp = left.getFetcher();
 				if (fetchOp != null) {
 					op.add(fetchOp);
-					op.add(new AbstractActionOperation("Operation_DetectCharset") { //$NON-NLS-1$
+					op.add(new AbstractActionOperation("Operation_DetectCharset", SVNMessages.class) { //$NON-NLS-1$
 		                protected void runImpl(IProgressMonitor monitor) throws Exception {
 		                	left.setCharset(BaseCompareNode.this.detectCharset(fetchOp.getContent()));
 		                }
@@ -636,7 +637,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 				final AbstractGetFileContentOperation fetchOp = ancestor.getFetcher();
 				if (fetchOp != null) {
 					op.add(fetchOp);
-					op.add(new AbstractActionOperation("Operation_DetectCharset") { //$NON-NLS-1$
+					op.add(new AbstractActionOperation("Operation_DetectCharset", SVNMessages.class) { //$NON-NLS-1$
 		                protected void runImpl(IProgressMonitor monitor) throws Exception {
 		                	ancestor.setCharset(BaseCompareNode.this.detectCharset(fetchOp.getContent()));
 		                }
@@ -647,7 +648,7 @@ public abstract class ResourceCompareInput extends CompareEditorInput {
 				final AbstractGetFileContentOperation fetchOp = right.getFetcher();
 				if (fetchOp != null) {
 					op.add(fetchOp);
-					op.add(new AbstractActionOperation("Operation_DetectCharset") { //$NON-NLS-1$
+					op.add(new AbstractActionOperation("Operation_DetectCharset", SVNMessages.class) { //$NON-NLS-1$
 		                protected void runImpl(IProgressMonitor monitor) throws Exception {
 		                	right.setCharset(BaseCompareNode.this.detectCharset(fetchOp.getContent()));
 		                }

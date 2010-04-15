@@ -32,6 +32,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.crashrecovery.relocated.RelocationChoicesPanel;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -76,7 +77,7 @@ public class RelocatedProjectHelper implements IResolutionHelper {
 			
 			if (panel.getRecoveryAction() == RelocationChoicesPanel.RELOCATE_THE_PROJECT_BACK) {
 				RelocateWorkingCopyOperation mainOp = new RelocateWorkingCopyOperation(new IResource[] {project}, location);
-				CompositeOperation op = new CompositeOperation(mainOp.getId());
+				CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 				
 				op.add(mainOp);
 				op.add(new RefreshResourcesOperation(mainOp));
@@ -91,10 +92,10 @@ public class RelocatedProjectHelper implements IResolutionHelper {
 				
 				FindRelatedProjectsOperation scannerOp = new FindRelatedProjectsOperation(location, new IProject[] {project});
 				final RelocateWorkingCopyOperation mainOp = new RelocateWorkingCopyOperation(scannerOp, location);
-				CompositeOperation op = new CompositeOperation(mainOp.getId());
+				CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 				
 				op.add(scannerOp);
-				op.add(new AbstractWorkingCopyOperation("Operation_ChangeRepositoryLocation", new IResource[] {project}) { //$NON-NLS-1$
+				op.add(new AbstractWorkingCopyOperation("Operation_ChangeRepositoryLocation", SVNUIMessages.class, new IResource[] {project}) { //$NON-NLS-1$
 					protected void runImpl(IProgressMonitor monitor) throws Exception {
 						location.setUrl(relocatedTo);
 						location.setUrl(location.getRepositoryRootUrl());
@@ -103,7 +104,7 @@ public class RelocatedProjectHelper implements IResolutionHelper {
 					}
 				});
 				op.add(mainOp);
-				op.add(new AbstractWorkingCopyOperation("Operation_CheckRelocationState", new IResource[] {project}) { //$NON-NLS-1$
+				op.add(new AbstractWorkingCopyOperation("Operation_CheckRelocationState", SVNUIMessages.class, new IResource[] {project}) { //$NON-NLS-1$
 					protected void runImpl(IProgressMonitor monitor) throws Exception {
 						if (mainOp.getExecutionState() != IActionOperation.OK) {
 							SVNRemoteStorage.instance().copyRepositoryLocation(location, backup);

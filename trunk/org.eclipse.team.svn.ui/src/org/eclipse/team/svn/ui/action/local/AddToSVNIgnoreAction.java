@@ -60,7 +60,7 @@ public class AddToSVNIgnoreAction extends AbstractNonRecursiveTeamAction {
 		if (dialog.open() == 0) {
 			AddToSVNIgnoreOperation mainOp = new AddToSVNIgnoreOperation(resources, panel.getIgnoreType(), panel.getIgnorePattern());
 			
-			CompositeOperation op = new CompositeOperation(mainOp.getId());
+			CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 			
 			if (operableParents.length > 0) {
 				op.add(new AddToSVNOperation(operableParents));

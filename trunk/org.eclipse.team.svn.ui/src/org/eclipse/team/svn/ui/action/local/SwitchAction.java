@@ -81,7 +81,7 @@ public class SwitchAction extends AbstractNonRecursiveTeamAction {
 			boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
 			SwitchOperation mainOp = new SwitchOperation(resources, destinations, panel.getDepth(), ignoreExternals);
 			
-			CompositeOperation op = new CompositeOperation(mainOp.getId());
+			CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 
 			SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
 			op.add(saveOp);

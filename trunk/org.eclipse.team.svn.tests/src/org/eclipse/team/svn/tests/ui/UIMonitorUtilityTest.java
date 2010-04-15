@@ -15,6 +15,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
@@ -100,7 +101,7 @@ public class UIMonitorUtilityTest extends TestCase {
 
 	protected class TestFailureOperation extends AbstractActionOperation {
 		public TestFailureOperation() {
-			super("Test");
+			super("Test", SVNMessages.class);
 		}
 		
 		protected void runImpl(IProgressMonitor monitor) throws Exception {

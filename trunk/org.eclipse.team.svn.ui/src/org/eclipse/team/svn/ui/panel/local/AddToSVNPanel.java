@@ -27,6 +27,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.local.AddToSVNIgnoreOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
@@ -93,7 +94,7 @@ public class AddToSVNPanel extends AbstractResourceSelectionPanel {
 				if (selectedResources.length == 1) {
 					manager.add(tAction = new Action(BaseMessages.format(SVNUIMessages.AddToSVNPanel_Ignore_Single, new String[]{selectedResources[0].getName()})) {
 						public void run() {
-							CompositeOperation op = new CompositeOperation("AddToIgnore"); //$NON-NLS-1$
+							CompositeOperation op = new CompositeOperation("Operation_AddToSVNIgnore", SVNMessages.class); //$NON-NLS-1$
 							op.add(new AddToSVNIgnoreOperation(selectedResources, IRemoteStorage.IGNORE_NAME, null));
 							op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(selectedResources), IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
 							UIMonitorUtility.doTaskNowDefault(op, true);							
@@ -105,7 +106,7 @@ public class AddToSVNPanel extends AbstractResourceSelectionPanel {
 					if ((parts.length != 0)) {
 						manager.add(tAction = new Action(BaseMessages.format(SVNUIMessages.AddToSVNPanel_Ignore_Single, new String[]{"*." + parts[parts.length-1]})) { //$NON-NLS-1$
 							public void run() {
-								CompositeOperation op = new CompositeOperation("AddToIgnore"); //$NON-NLS-1$
+								CompositeOperation op = new CompositeOperation("Operation_AddToSVNIgnore", SVNMessages.class); //$NON-NLS-1$
 								op.add(new AddToSVNIgnoreOperation(selectedResources, IRemoteStorage.IGNORE_EXTENSION, null));
 								op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(selectedResources), IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
 								UIMonitorUtility.doTaskNowDefault(op, true);
@@ -117,7 +118,7 @@ public class AddToSVNPanel extends AbstractResourceSelectionPanel {
 				else {
 					manager.add(tAction = new Action(SVNUIMessages.AddToSVNPanel_IgnoreByNames_Multiple) {
 						public void run() {
-							CompositeOperation op = new CompositeOperation("AddToIgnore"); //$NON-NLS-1$
+							CompositeOperation op = new CompositeOperation("Operation_AddToSVNIgnore", SVNMessages.class); //$NON-NLS-1$
 							op.add(new AddToSVNIgnoreOperation(selectedResources, IRemoteStorage.IGNORE_NAME, null));
 							op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(selectedResources), IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
 							UIMonitorUtility.doTaskNowDefault(op, true);
@@ -126,7 +127,7 @@ public class AddToSVNPanel extends AbstractResourceSelectionPanel {
 					tAction.setEnabled(tSelection.size() > 0);
 					manager.add(tAction = new Action(SVNUIMessages.AddToSVNPanel_IgnoreByExtension_Multiple) {
 						public void run() {
-							CompositeOperation op = new CompositeOperation("AddToIgnore"); //$NON-NLS-1$
+							CompositeOperation op = new CompositeOperation("Operation_AddToSVNIgnore", SVNMessages.class); //$NON-NLS-1$
 							op.add(new AddToSVNIgnoreOperation(selectedResources, IRemoteStorage.IGNORE_EXTENSION, null));
 							op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(selectedResources), IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
 							UIMonitorUtility.doTaskNowDefault(op, true);							
@@ -140,7 +141,7 @@ public class AddToSVNPanel extends AbstractResourceSelectionPanel {
 						DiscardConfirmationDialog dialog = new DiscardConfirmationDialog(UIMonitorUtility.getShell(), selectedResources.length == 1, DiscardConfirmationDialog.MSG_RESOURCE);
 						if (dialog.open() == 0) {
 							DeleteResourceOperation deleteOperation = new DeleteResourceOperation(selectedResources);
-							CompositeOperation op = new CompositeOperation(deleteOperation.getId());
+							CompositeOperation op = new CompositeOperation(deleteOperation.getId(), deleteOperation.getMessagesClass());
 							SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(selectedResources);
 							RestoreProjectMetaOperation restoreOp = new RestoreProjectMetaOperation(saveOp);
 							op.add(saveOp);

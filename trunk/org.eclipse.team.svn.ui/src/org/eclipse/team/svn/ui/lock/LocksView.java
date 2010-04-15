@@ -157,9 +157,9 @@ public class LocksView extends AbstractSVNView {
 		CompositeOperation op = null;
 		if (this.wcResource != null) {
 			ScanLocksOperation mainOp = new ScanLocksOperation(new IResource[]{this.wcResource});
-			op = new CompositeOperation(mainOp.getId());
+			op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 			
-			op.add(new AbstractActionOperation("") { //$NON-NLS-1$
+			op.add(new AbstractActionOperation("", SVNUIMessages.class) { //$NON-NLS-1$
 				protected void runImpl(IProgressMonitor monitor) throws Exception {										
 					//set pending
 					LocksView.this.locksComposite.setPending(true);
@@ -184,7 +184,7 @@ public class LocksView extends AbstractSVNView {
 			op.add(createHierarchyOp, new IActionOperation[]{mainOp});
 			
 			//update composite
-			op.add(new AbstractActionOperation("") {				 //$NON-NLS-1$
+			op.add(new AbstractActionOperation("", SVNUIMessages.class) {				 //$NON-NLS-1$
 				protected void runImpl(IProgressMonitor monitor) throws Exception {
 					LocksView.this.locksComposite.setRootLockResource(createHierarchyOp.getLockResourceRoot());
 					UIMonitorUtility.getDisplay().syncExec(new Runnable() {

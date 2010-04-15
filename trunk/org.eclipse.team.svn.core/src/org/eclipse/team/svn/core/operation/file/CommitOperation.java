@@ -47,14 +47,14 @@ public class CommitOperation extends AbstractFileConflictDetectionOperation impl
 	protected String []paths;
 
 	public CommitOperation(File []files, String message, boolean recursive, boolean keepLocks) {
-		super("Operation_CommitFile", files); //$NON-NLS-1$
+		super("Operation_CommitFile", SVNMessages.class, files); //$NON-NLS-1$
 		this.message = message;
 		this.recursive = recursive;
 		this.keepLocks = keepLocks;
 	}
 
 	public CommitOperation(IFileProvider provider, String message, boolean recursive, boolean keepLocks) {
-		super("Operation_CommitFile", provider); //$NON-NLS-1$
+		super("Operation_CommitFile", SVNMessages.class, provider); //$NON-NLS-1$
 		this.message = message;
 		this.recursive = recursive;
 		this.keepLocks = keepLocks;

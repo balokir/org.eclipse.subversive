@@ -63,7 +63,7 @@ public class RevertAction extends AbstractRecursiveTeamAction {
 		    
 			RevertOperation mainOp = new RevertOperation(revertableResources, recursive);
 			
-			CompositeOperation op = new CompositeOperation(mainOp.getId());
+			CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 			
 			SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(changedResources);
 			RestoreProjectMetaOperation restoreOp = new RestoreProjectMetaOperation(saveOp);

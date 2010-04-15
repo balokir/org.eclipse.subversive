@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.core.operation.remote;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
@@ -39,7 +40,7 @@ public class CreatePatchOperation extends AbstractRepositoryOperation {
 	}
 	
 	public CreatePatchOperation(IRepositoryResource first, IRepositoryResource second, String fileName, boolean recurse, boolean ignoreDeleted, boolean processBinary, boolean ignoreAncestry) {
-		super("Operation_CreatePatchRemote", new IRepositoryResource[] {first, second}); //$NON-NLS-1$
+		super("Operation_CreatePatchRemote", SVNMessages.class, new IRepositoryResource[] {first, second}); //$NON-NLS-1$
 		this.fileName = fileName;
 		this.recurse = recurse;
 		this.ignoreDeleted = ignoreDeleted;

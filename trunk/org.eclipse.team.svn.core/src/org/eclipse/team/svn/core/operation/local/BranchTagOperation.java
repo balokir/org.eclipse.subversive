@@ -39,7 +39,7 @@ public class BranchTagOperation extends AbstractWorkingCopyOperation {
 	protected String message;
 	
 	public BranchTagOperation(String operationName, IResource[] resources, IRepositoryResource destination, String message) {
-		super("Operation_" + operationName, resources); //$NON-NLS-1$
+		super("Operation_" + operationName, SVNMessages.class, resources); //$NON-NLS-1$
 		this.destination = destination;
 		this.message = message;
 	}

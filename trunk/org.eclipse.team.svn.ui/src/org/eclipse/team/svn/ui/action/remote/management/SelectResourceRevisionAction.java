@@ -81,7 +81,7 @@ public class SelectResourceRevisionAction extends AbstractRepositoryTeamAction {
 					return links;
 				}
 			}, selectedRevision);
-			CompositeOperation op = new CompositeOperation(mainOp.getId());
+			CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 			op.add(locateOp);
 			op.add(mainOp, new IActionOperation[] {locateOp});
 			op.add(new SaveRepositoryLocationsOperation());

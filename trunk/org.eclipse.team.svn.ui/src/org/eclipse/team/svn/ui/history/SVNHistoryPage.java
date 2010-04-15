@@ -15,7 +15,6 @@ package org.eclipse.team.svn.ui.history;
 
 import java.io.FileOutputStream;
 import java.text.ParseException;
-import com.ibm.icu.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -88,6 +87,8 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
+
+import com.ibm.icu.text.SimpleDateFormat;
 
 /**
  * Generic HistoryView page
@@ -847,7 +848,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 		msgsOp.setIncludeMerged(SVNTeamPreferences.getMergeBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MERGE_INCLUDE_MERGED_NAME));
 		
 		final IStructuredSelection selected = (IStructuredSelection) this.history.getTreeViewer().getSelection();
-		IActionOperation showOp = new AbstractActionOperation("Operation_HShowHistory") { //$NON-NLS-1$
+		IActionOperation showOp = new AbstractActionOperation("Operation_HShowHistory", SVNUIMessages.class) { //$NON-NLS-1$
 			private long revision = SVNHistoryPage.this.currentRevision;
 
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
@@ -895,7 +896,7 @@ public class SVNHistoryPage extends HistoryPage implements ISVNHistoryView, IRes
 				});
 			}
 		};
-		CompositeOperation op = new CompositeOperation(showOp.getId(), true);
+		CompositeOperation op = new CompositeOperation(showOp.getId(), showOp.getMessagesClass(), true);
 		op.add(new CorrectRevisionOperation(msgsOp, this.repositoryResource, this.currentRevision, this.wcResource));
 		op.add(msgsOp);
 		op.add(showOp);

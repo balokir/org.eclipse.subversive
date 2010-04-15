@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -40,7 +41,7 @@ import org.eclipse.team.svn.ui.debugmail.ReportPartsFactory;
 public abstract class AbstractOperationTestCase extends TestCase {
 	
 	public void testSetOperationName() {
-		AbstractActionOperation op = new AbstractActionOperation("old name") {
+		AbstractActionOperation op = new AbstractActionOperation("old name", SVNMessages.class) {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 			}
 
@@ -55,7 +56,7 @@ public abstract class AbstractOperationTestCase extends TestCase {
 	
 	public void testGetExecutionState() {
 		// test the failure of an execution
-		AbstractActionOperation op = new AbstractActionOperation("old name") {
+		AbstractActionOperation op = new AbstractActionOperation("old name", SVNMessages.class) {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				throw new Exception();
 			}
@@ -140,7 +141,7 @@ public abstract class AbstractOperationTestCase extends TestCase {
 	
 	protected abstract class AbstractLockingTestOperation extends AbstractActionOperation {
 		public AbstractLockingTestOperation(String operationName) {
-			super(operationName);
+			super(operationName, SVNMessages.class);
 		}
 
 		public ISchedulingRule getSchedulingRule() {

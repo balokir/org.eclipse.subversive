@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryReference;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
@@ -37,7 +38,7 @@ public class CopyRemoteResourcesToWcOperation extends AbstractActionOperation {
 	protected IResource resource;
 	
 	public CopyRemoteResourcesToWcOperation(SVNEntryReference entry, boolean isFolder, IResource resource) {
-		super("Operation_CopyRemoteToWC"); //$NON-NLS-1$
+		super("Operation_CopyRemoteToWC", SVNMessages.class); //$NON-NLS-1$
 		this.entry = entry;
 		this.isFolder = isFolder;
 		this.resource = resource;

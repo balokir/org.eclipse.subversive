@@ -43,6 +43,7 @@ import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.compare.ComparePanel;
 import org.eclipse.team.svn.ui.compare.ResourceCompareInput;
 import org.eclipse.team.svn.ui.compare.ThreeWayResourceCompareInput;
@@ -71,7 +72,7 @@ public class CompareResourcesInternalOperation extends AbstractActionOperation {
 	}
 	
 	public CompareResourcesInternalOperation(ILocalResource local, IRepositoryResource remote, boolean forceReuse, boolean showInDialog) {
-		super("Operation_CompareLocal"); //$NON-NLS-1$
+		super("Operation_CompareLocal", SVNUIMessages.class); //$NON-NLS-1$
 		this.local = local;
 		this.ancestor = local.isCopied() ? SVNUtility.getCopiedFrom(local.getResource()) : SVNRemoteStorage.instance().asRepositoryResource(local.getResource());
 		this.ancestor.setSelectedRevision(SVNRevision.fromNumber(local.getBaseRevision()));

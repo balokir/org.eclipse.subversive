@@ -88,13 +88,13 @@ public class MergeAction extends AbstractNonRecursiveTeamAction {
 				else {
 					mainOp = new JavaHLMergeOperation(resources, firstSet, false);
 				}
-		    	CompositeOperation op = new CompositeOperation(mainOp.getId());
+		    	CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 	    		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
 	    		op.add(saveOp);
 		    	op.add(mainOp);
 	    		op.add(new RestoreProjectMetaOperation(saveOp));
 		    	op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(resources)));
-		    	mergeOp = op;
+		    	mergeOp = op;		    	
 	    	}
 	    	else if (panel.getMode() == MergePanel.MODE_2URL) {
 				mergeOp = new ShowMergeViewOperation(resources, firstSet, secondSet, panel.getIgnoreAncestry(), panel.getDepth(), this.getTargetPart());
@@ -106,7 +106,7 @@ public class MergeAction extends AbstractNonRecursiveTeamAction {
 				mergeOp = new ShowMergeViewOperation(resources, firstSet, this.getTargetPart());
 			}
 	    	if (panel.getMode() != MergePanel.MODE_1URL) {
-	    		CompositeOperation op = new CompositeOperation(mergeOp.getId());
+	    		CompositeOperation op = new CompositeOperation(mergeOp.getId(), mergeOp.getMessagesClass());
 	    		op.add(locateFirst);
 		    	if (panel.getMode() == MergePanel.MODE_2URL) {
 		    		op.add(locateSecond);

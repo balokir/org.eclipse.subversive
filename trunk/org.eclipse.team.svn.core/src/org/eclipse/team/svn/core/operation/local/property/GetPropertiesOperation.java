@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.svn.core.BaseMessages;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNProperty;
@@ -43,7 +44,7 @@ public class GetPropertiesOperation extends AbstractActionOperation implements I
 	}
 	
 	public GetPropertiesOperation(IResource resource, SVNRevision revision) {
-		super("Operation_GetProperties"); //$NON-NLS-1$
+		super("Operation_GetProperties", SVNMessages.class); //$NON-NLS-1$
 		this.resource = resource;
 		this.revision = revision;
 	}

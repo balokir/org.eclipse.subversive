@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.svn.core.operation.local.AbstractWorkingCopyOperation;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * UI operation that can clear remote statuses storage in the synchronize view
@@ -25,11 +26,11 @@ import org.eclipse.team.svn.core.synchronize.UpdateSubscriber;
  */
 public class ClearUpdateStatusesOperation extends AbstractWorkingCopyOperation {
 	public ClearUpdateStatusesOperation(IResource[] resources) {
-		super("Operation_ClearUpdateStatusesCache", resources); //$NON-NLS-1$
+		super("Operation_ClearUpdateStatusesCache", SVNUIMessages.class, resources); //$NON-NLS-1$
 	}
 
 	public ClearUpdateStatusesOperation(IResourceProvider provider) {
-		super("Operation_ClearUpdateStatusesCache", provider); //$NON-NLS-1$
+		super("Operation_ClearUpdateStatusesCache", SVNUIMessages.class, provider); //$NON-NLS-1$
 	}
 
 	public ISchedulingRule getSchedulingRule() {

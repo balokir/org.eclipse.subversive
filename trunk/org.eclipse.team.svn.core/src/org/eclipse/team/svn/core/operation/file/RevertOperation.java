@@ -14,6 +14,7 @@ package org.eclipse.team.svn.core.operation.file;
 import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
@@ -32,12 +33,12 @@ public class RevertOperation extends AbstractFileOperation {
 	protected boolean recursive;
 
 	public RevertOperation(File []files, boolean recursive) {
-		super("Operation_RevertFile", files); //$NON-NLS-1$
+		super("Operation_RevertFile", SVNMessages.class, files); //$NON-NLS-1$
 		this.recursive = recursive;
 	}
 
 	public RevertOperation(IFileProvider provider, boolean recursive) {
-		super("Operation_RevertFile", provider); //$NON-NLS-1$
+		super("Operation_RevertFile", SVNMessages.class, provider); //$NON-NLS-1$
 		this.recursive = recursive;
 	}
 

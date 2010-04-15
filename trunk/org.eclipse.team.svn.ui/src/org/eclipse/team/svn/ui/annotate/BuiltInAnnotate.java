@@ -39,6 +39,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.history.SVNHistoryPage;
 import org.eclipse.team.svn.ui.operation.OpenRemoteFileOperation;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
@@ -71,16 +72,16 @@ public class BuiltInAnnotate {
 		GetResourceAnnotationOperation annotateOp = new GetResourceAnnotationOperation(remote, revisions);
 		annotateOp.setIncludeMerged(SVNTeamPreferences.getMergeBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MERGE_INCLUDE_MERGED_NAME));
 		IActionOperation showOp = this.prepareBuiltInAnnotate(annotateOp, page, remote, resource);
-		CompositeOperation op = new CompositeOperation(showOp.getId());
+		CompositeOperation op = new CompositeOperation(showOp.getId(), showOp.getMessagesClass());
 		op.add(annotateOp);
 		op.add(showOp, new IActionOperation[] {annotateOp});
 		UIMonitorUtility.doTaskScheduledDefault(page.getActivePart(), op);
 	}
 
 	protected IActionOperation prepareBuiltInAnnotate(final GetResourceAnnotationOperation annotateOp, final IWorkbenchPage page, final IRepositoryResource remote, final IFile resource) {
-		CompositeOperation op = new CompositeOperation("Operation_BuiltInShowAnnotation"); //$NON-NLS-1$
+		CompositeOperation op = new CompositeOperation("Operation_BuiltInShowAnnotation", SVNUIMessages.class); //$NON-NLS-1$
 		final RevisionInformation info = new RevisionInformation();
-		IActionOperation prepareRevisions = new AbstractActionOperation("Operation_PrepareRevisions") { //$NON-NLS-1$
+		IActionOperation prepareRevisions = new AbstractActionOperation("Operation_PrepareRevisions", SVNUIMessages.class) { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				Map<String, BuiltInAnnotateRevision> revisions = new HashMap<String, BuiltInAnnotateRevision>();
 				SVNAnnotationData []data = annotateOp.getAnnotatedLines();
@@ -128,7 +129,7 @@ public class BuiltInAnnotate {
 			}
 		};
 		op.add(prepareRevisions, new IActionOperation[] {annotateOp});
-		IActionOperation attachMessages = new AbstractActionOperation("Operation_BuiltInShowView") { //$NON-NLS-1$
+		IActionOperation attachMessages = new AbstractActionOperation("Operation_BuiltInShowView", SVNUIMessages.class) { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				page.getActivePart().getSite().getShell().getDisplay().syncExec(new Runnable() {
 					public void run() {

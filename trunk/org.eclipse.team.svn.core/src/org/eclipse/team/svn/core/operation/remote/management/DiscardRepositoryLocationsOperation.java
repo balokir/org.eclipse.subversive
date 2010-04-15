@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.core.operation.remote.management;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -26,7 +27,7 @@ public class DiscardRepositoryLocationsOperation extends AbstractActionOperation
 	protected IRepositoryLocation []locations;
 	
 	public DiscardRepositoryLocationsOperation(IRepositoryLocation []locations) {
-		super("Operation_DiscardRepositoryLocation"); //$NON-NLS-1$
+		super("Operation_DiscardRepositoryLocation", SVNMessages.class); //$NON-NLS-1$
 		this.locations = locations;
 	}
 	

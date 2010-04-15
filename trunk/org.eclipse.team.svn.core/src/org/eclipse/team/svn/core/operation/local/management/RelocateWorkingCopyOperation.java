@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.IConnectedProjectInformation;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
@@ -47,12 +48,12 @@ public class RelocateWorkingCopyOperation extends AbstractWorkingCopyOperation i
 	protected List<IProject> resources;
 
 	public RelocateWorkingCopyOperation(IResource []resources, IRepositoryLocation location) {
-		super("Operation_RelocateResources", resources); //$NON-NLS-1$
+		super("Operation_RelocateResources", SVNMessages.class, resources); //$NON-NLS-1$
 		this.location = location;
 	}
 	
 	public RelocateWorkingCopyOperation(IResourceProvider provider, IRepositoryLocation location) {
-		super("Operation_RelocateResources", provider); //$NON-NLS-1$
+		super("Operation_RelocateResources", SVNMessages.class, provider); //$NON-NLS-1$
 		this.location = location;
 	}
 

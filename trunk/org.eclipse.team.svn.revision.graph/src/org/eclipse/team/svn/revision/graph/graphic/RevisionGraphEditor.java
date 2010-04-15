@@ -186,7 +186,7 @@ public class RevisionGraphEditor extends GraphicalEditor {
 				
 		//TODO disable editor during refresh: take note that cancel can be called
 		
-		CompositeOperation op = new CompositeOperation("Operation_RefreshGraph"); //$NON-NLS-1$
+		CompositeOperation op = new CompositeOperation("Operation_RefreshGraph", SVNRevisionGraphMessages.class); //$NON-NLS-1$
 		
 		CreateCacheDataOperation updateCacheOp = new CreateCacheDataOperation(resource, true);
 		op.add(updateCacheOp);
@@ -194,7 +194,7 @@ public class RevisionGraphEditor extends GraphicalEditor {
 		final CreateRevisionGraphModelOperation createModelOp = new CreateRevisionGraphModelOperation(resource, updateCacheOp);
 		op.add(createModelOp, new IActionOperation[]{updateCacheOp});	
 		
-		op.add(new AbstractActionOperation("Operation_RefreshGraph") { //$NON-NLS-1$
+		op.add(new AbstractActionOperation("Operation_RefreshGraph", SVNRevisionGraphMessages.class) { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				if (createModelOp.getModel() != null) {
 					UIMonitorUtility.getDisplay().syncExec(new Runnable() {

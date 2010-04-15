@@ -21,6 +21,7 @@ import org.eclipse.team.svn.core.operation.local.MergeSet2URL;
 import org.eclipse.team.svn.core.operation.local.MergeSetReintegrate;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.synchronize.merge.MergeParticipant;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
@@ -54,7 +55,7 @@ public class ShowMergeViewOperation extends AbstractActionOperation {
     }
 
     public ShowMergeViewOperation(IResource []locals, IRepositoryResourceProvider from, SVNRevisionRange []revisions, boolean ignoreAncestry, int depth, IWorkbenchPart part) {
-        super("Operation_ShowMergeView"); //$NON-NLS-1$
+        super("Operation_ShowMergeView", SVNUIMessages.class); //$NON-NLS-1$
         this.part = part;
         this.locals = locals;
         this.from = from;
@@ -64,7 +65,7 @@ public class ShowMergeViewOperation extends AbstractActionOperation {
     }
     
     public ShowMergeViewOperation(IResource []locals, IRepositoryResourceProvider fromStart, IRepositoryResourceProvider fromEnd, boolean ignoreAncestry, int depth, IWorkbenchPart part) {
-        super("Operation_ShowMergeView"); //$NON-NLS-1$
+        super("Operation_ShowMergeView", SVNUIMessages.class); //$NON-NLS-1$
         this.part = part;
         this.locals = locals;
         this.from = fromStart;
@@ -74,7 +75,7 @@ public class ShowMergeViewOperation extends AbstractActionOperation {
     }
     
     public ShowMergeViewOperation(IResource []locals, IRepositoryResourceProvider from, IWorkbenchPart part) {
-        super("Operation_ShowMergeView"); //$NON-NLS-1$
+        super("Operation_ShowMergeView", SVNUIMessages.class); //$NON-NLS-1$
         this.part = part;
         this.locals = locals;
         this.from = from;

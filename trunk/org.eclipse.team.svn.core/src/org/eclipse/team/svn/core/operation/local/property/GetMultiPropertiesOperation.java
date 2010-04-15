@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNProperty;
@@ -52,7 +53,7 @@ public class GetMultiPropertiesOperation extends AbstractActionOperation impleme
 	 * 		If null then all the properties will be computed for the resources.
 	 */
 	public GetMultiPropertiesOperation(IResource []resources, int depth, IStateFilter filter, String propertyName) {
-		super("Operation_GetMultiProperties"); //$NON-NLS-1$
+		super("Operation_GetMultiProperties", SVNMessages.class); //$NON-NLS-1$
 		this.resources = resources;
 		this.propertyName = propertyName;
 		this.filter = filter != null ? filter : IStateFilter.SF_VERSIONED;

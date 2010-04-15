@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -57,7 +58,7 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 	}
 
 	public MarkAsMergedOperation(IResource[] resources, boolean override, String overrideMessage, boolean keepLocks, boolean ignoreExternals) {
-		super("Operation_MarkAsMerged", resources); //$NON-NLS-1$
+		super("Operation_MarkAsMerged", SVNMessages.class, resources); //$NON-NLS-1$
 		this.override = override;
 		this.overrideMessage = overrideMessage;
 		this.keepLocks = keepLocks;
@@ -65,7 +66,7 @@ public class MarkAsMergedOperation extends AbstractWorkingCopyOperation implemen
 	}
 
 	public MarkAsMergedOperation(IResourceProvider provider, boolean override, String overrideMessage, boolean keepLocks, boolean ignoreExternals) {
-		super("Operation_MarkAsMerged", provider); //$NON-NLS-1$
+		super("Operation_MarkAsMerged", SVNMessages.class, provider); //$NON-NLS-1$
 		this.override = override;
 		this.overrideMessage = overrideMessage;
 		this.keepLocks = keepLocks;

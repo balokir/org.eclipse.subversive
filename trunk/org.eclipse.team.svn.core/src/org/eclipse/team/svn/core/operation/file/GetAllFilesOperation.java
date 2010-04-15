@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNEntryStatusCallback;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
@@ -35,7 +36,7 @@ public class GetAllFilesOperation extends AbstractFileOperation implements IFile
 	protected File []children;
 	
 	public GetAllFilesOperation(File file) {
-		super("Operation_GetAllFiles", new File[] {file}); //$NON-NLS-1$
+		super("Operation_GetAllFiles", SVNMessages.class, new File[] {file}); //$NON-NLS-1$
 	}
 
 	public File []getFiles() {

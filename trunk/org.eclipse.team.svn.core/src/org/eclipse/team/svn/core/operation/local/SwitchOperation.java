@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.svn.core.IConnectedProjectInformation;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
@@ -45,7 +46,7 @@ public class SwitchOperation extends AbstractRepositoryOperation implements IUnr
 	protected boolean ignoreExternals;
 	
 	public SwitchOperation(IResource []resources, IRepositoryResourceProvider destination, int depth, boolean ignoreExternals) {
-		super("Operation_Switch", destination); //$NON-NLS-1$
+		super("Operation_Switch", SVNMessages.class, destination); //$NON-NLS-1$
 		this.resources = resources;
 		this.depth = depth;
 		this.conflictDetectorHelper = new UnresolvedConflictDetectorHelper();
@@ -53,7 +54,7 @@ public class SwitchOperation extends AbstractRepositoryOperation implements IUnr
 	}
 
 	public SwitchOperation(IResource []resources, IRepositoryResource []destination, int depth, boolean ignoreExternals) {
-		super("Operation_Switch", destination); //$NON-NLS-1$
+		super("Operation_Switch", SVNMessages.class, destination); //$NON-NLS-1$
 		this.resources = resources;
 		this.depth = depth;
 		this.conflictDetectorHelper = new UnresolvedConflictDetectorHelper();

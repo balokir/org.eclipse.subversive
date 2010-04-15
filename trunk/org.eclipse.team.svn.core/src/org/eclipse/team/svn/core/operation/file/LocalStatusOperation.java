@@ -13,6 +13,8 @@ package org.eclipse.team.svn.core.operation.file;
 
 import java.io.File;
 
+import org.eclipse.team.svn.core.SVNMessages;
+
 /**
  * Working copy resources status
  * 
@@ -20,11 +22,11 @@ import java.io.File;
  */
 public class LocalStatusOperation extends AbstractStatusOperation {
 	public LocalStatusOperation(File []files, boolean recursive) {
-		super("Operation_LocalStatusFile", files, recursive); //$NON-NLS-1$
+		super("Operation_LocalStatusFile", SVNMessages.class, files, recursive); //$NON-NLS-1$
 	}
 
 	public LocalStatusOperation(IFileProvider provider, boolean recursive) {
-		super("Operation_LocalStatusFile", provider, recursive); //$NON-NLS-1$
+		super("Operation_LocalStatusFile", SVNMessages.class, provider, recursive); //$NON-NLS-1$
 	}
 
 	protected boolean isRemote() {

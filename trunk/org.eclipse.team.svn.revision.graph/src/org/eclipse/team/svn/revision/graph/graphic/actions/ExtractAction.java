@@ -89,7 +89,7 @@ public class ExtractAction extends BaseRevisionGraphAction {
 			InitExtractLogOperation logger = new InitExtractLogOperation(path);
 			FromDifferenceRepositoryResourceProviderOperation provider = new FromDifferenceRepositoryResourceProviderOperation(next, prev);
 			
-			CompositeOperation op = new CompositeOperation(SVNMessages.Operation_ExtractTo);
+			CompositeOperation op = new CompositeOperation(SVNMessages.Operation_ExtractTo, SVNMessages.class);
 			op.add(provider);
 			op.add(logger);
 			op.add(new ExtractToOperationRemote(provider, provider.getDeletionsProvider(), path, resource2project, logger, true), new IActionOperation [] {provider});

@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.SVNConnectorCancelException;
@@ -64,6 +65,10 @@ public class LoggedOperation implements IActionOperation {
 	
 	public String getId() {
 		return this.op.getId();
+	}
+	
+	public Class<? extends NLS> getMessagesClass() {
+		return this.op.getMessagesClass();
 	}
 	
 	public final IStatus getStatus() {

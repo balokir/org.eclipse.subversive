@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.core.operation.remote.management;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.file.SVNFileStorage;
@@ -24,7 +25,7 @@ import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
  */
 public class SaveRepositoryLocationsOperation extends AbstractActionOperation {
 	public SaveRepositoryLocationsOperation() {
-		super("Operation_SaveRepositoryLocations"); //$NON-NLS-1$
+		super("Operation_SaveRepositoryLocations", SVNMessages.class); //$NON-NLS-1$
 	}
 	
 	public int getOperationWeight() {

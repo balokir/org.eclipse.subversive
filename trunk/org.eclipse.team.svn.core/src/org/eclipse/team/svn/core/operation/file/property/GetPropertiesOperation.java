@@ -14,6 +14,7 @@ package org.eclipse.team.svn.core.operation.file.property;
 import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNProperty;
@@ -39,7 +40,7 @@ public class GetPropertiesOperation extends AbstractFileOperation {
 	}
 
 	public GetPropertiesOperation(File file, SVNRevision revision) {
-		super("Operation_GetPropertiesFile", new File[] {file}); //$NON-NLS-1$
+		super("Operation_GetPropertiesFile", SVNMessages.class, new File[] {file}); //$NON-NLS-1$
 		this.revision = revision;
 	}
 

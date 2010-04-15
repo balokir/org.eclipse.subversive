@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 
 /**
@@ -32,13 +33,13 @@ public abstract class AbstractFileOperation extends AbstractActionOperation {
 	private IFileProvider provider;
 	private File []files;
 
-	public AbstractFileOperation(String operationName, File []files) {
-		super(operationName);
+	public AbstractFileOperation(String operationName, Class<? extends NLS> messagesClass, File []files) {
+		super(operationName, messagesClass);
 		this.files = files;
 	}
 
-	public AbstractFileOperation(String operationName, IFileProvider provider) {
-		super(operationName);
+	public AbstractFileOperation(String operationName, Class<? extends NLS> messagesClass, IFileProvider provider) {
+		super(operationName, messagesClass);
 		this.provider = provider;
 	}
 

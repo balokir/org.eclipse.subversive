@@ -15,6 +15,7 @@ import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
@@ -41,7 +42,7 @@ public class SetPropertyOperation extends AbstractFileOperation {
 	}
 
 	public SetPropertyOperation(File []files, SVNProperty []data, boolean isRecursive) {
-		super("Operation_SetPropertiesFile", files); //$NON-NLS-1$
+		super("Operation_SetPropertiesFile", SVNMessages.class, files); //$NON-NLS-1$
 		this.propertyData = data;
 		this.isRecursive = isRecursive;
 	}
@@ -51,7 +52,7 @@ public class SetPropertyOperation extends AbstractFileOperation {
 	}
 
 	public SetPropertyOperation(IFileProvider provider, SVNProperty []data, boolean isRecursive) {
-		super("Operation_SetPropertiesFile", provider); //$NON-NLS-1$
+		super("Operation_SetPropertiesFile", SVNMessages.class, provider); //$NON-NLS-1$
 		this.propertyData = data;
 		this.isRecursive = isRecursive;
 	}

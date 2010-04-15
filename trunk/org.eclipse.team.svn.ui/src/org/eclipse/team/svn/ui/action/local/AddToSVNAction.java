@@ -35,7 +35,7 @@ public class AddToSVNAction extends AbstractRecursiveTeamAction {
 		if (resources != null) {
 			AddToSVNWithPropertiesOperation mainOp = new AddToSVNWithPropertiesOperation(resources[0], false);
 			
-			CompositeOperation op = new CompositeOperation(mainOp.getId());
+			CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 			op.add(mainOp);
 			if (resources[1].length > 0) {
 				op.add(new AddToSVNWithPropertiesOperation(resources[1], true));

@@ -37,7 +37,7 @@ public class RenameResourceOperation extends AbstractRepositoryOperation impleme
 	protected RevisionPair []revisionPair;
 	
 	public RenameResourceOperation(IRepositoryResource resource, String newName, String message) {
-		super("Operation_Rename", new IRepositoryResource[] {resource}); //$NON-NLS-1$
+		super("Operation_Rename", SVNMessages.class, new IRepositoryResource[] {resource}); //$NON-NLS-1$
 		this.message = message;
 		this.newName = newName;
 	}

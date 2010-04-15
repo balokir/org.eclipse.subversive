@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.ExtractToOperationLocal;
@@ -106,7 +107,7 @@ public class ExtractToActionHelper extends AbstractActionHelper {
 				markedForDelition.add(remote.getUrl());
 			}
 		}
-		CompositeOperation op = new CompositeOperation("Operation_ExtractTo"); //$NON-NLS-1$
+		CompositeOperation op = new CompositeOperation("Operation_ExtractTo", SVNMessages.class); //$NON-NLS-1$
 		InitExtractLogOperation logger = new InitExtractLogOperation(path);
 		op.add(logger);
 		op.add(new ExtractToOperationLocal(outgoingChanges, path, true, logger));

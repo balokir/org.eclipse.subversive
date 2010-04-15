@@ -19,6 +19,7 @@ import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryFile;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.repository.IRepositoryEditorInput;
 import org.eclipse.team.svn.ui.repository.RepositoryFileEditorInput;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -69,7 +70,7 @@ public class OpenRemoteFileOperation extends AbstractActionOperation {
 	}
 	
 	public OpenRemoteFileOperation(IRepositoryEditorInput []inputs, int openType, String openWith) {
-		super("Operation_OpenFile"); //$NON-NLS-1$
+		super("Operation_OpenFile", SVNUIMessages.class); //$NON-NLS-1$
 		this.inputs = inputs;
 		this.openType = openType;
 		this.openWith = openWith;

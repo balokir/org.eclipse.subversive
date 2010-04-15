@@ -16,6 +16,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.osgi.util.NLS;
+
 /**
  * Abstract operation that implement functionality to detect unresolved conflicts in time of WC operations
  * 
@@ -27,12 +29,12 @@ public abstract class AbstractFileConflictDetectionOperation extends AbstractFil
 	protected boolean hasUnresolvedConflict;
 	protected String conflictMessage;
 
-	public AbstractFileConflictDetectionOperation(String operationName, File[] files) {
-		super(operationName, files);
+	public AbstractFileConflictDetectionOperation(String operationName, Class<? extends NLS> messagesClass, File[] files) {
+		super(operationName, messagesClass, files);
 	}
 
-	public AbstractFileConflictDetectionOperation(String operationName, IFileProvider provider) {
-		super(operationName, provider);
+	public AbstractFileConflictDetectionOperation(String operationName, Class<? extends NLS> messagesClass, IFileProvider provider) {
+		super(operationName, messagesClass, provider);
 	}
 
     public boolean hasUnresolvedConflicts() {

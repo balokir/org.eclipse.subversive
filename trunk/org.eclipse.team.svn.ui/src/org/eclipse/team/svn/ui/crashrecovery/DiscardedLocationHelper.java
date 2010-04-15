@@ -67,7 +67,7 @@ public class DiscardedLocationHelper implements IResolutionHelper {
 			
 			if (solved[0]) {
 				AddRepositoryLocationOperation mainOp = new AddRepositoryLocationOperation(location);
-				CompositeOperation op = new CompositeOperation(mainOp.getId());
+				CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 				op.add(mainOp);
 				op.add(new SaveRepositoryLocationsOperation());
 				op.add(new RefreshRepositoryLocationsOperation(new IRepositoryLocation[] {location}, true));

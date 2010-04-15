@@ -117,7 +117,7 @@ public class BranchTagAction extends AbstractNonRecursiveTeamAction {
 								
 			PreparedBranchTagOperation mainOp = new PreparedBranchTagOperation((actionType == BRANCH_ACTION ? "Branch" : "Tag"), resources, remoteResources, destination, panel.getMessage(), forceCreate);
 			
-			CompositeOperation op = new CompositeOperation(mainOp.getId());
+			CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 			
 			IResource []newResources = panel.getSelectedResources();
 			if (newResources != null && newResources.length > 0) {

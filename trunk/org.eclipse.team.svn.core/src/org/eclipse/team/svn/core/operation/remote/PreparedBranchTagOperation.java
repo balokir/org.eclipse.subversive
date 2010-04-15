@@ -48,7 +48,7 @@ public class PreparedBranchTagOperation extends CompositeOperation implements IR
 	}
 	
 	public PreparedBranchTagOperation(String operationName, IRepositoryResource []resources, IRepositoryResource destination, String message, boolean forceCreate) {
-		super("Operation_Prepared" + operationName); //$NON-NLS-1$
+		super("Operation_Prepared" + operationName, SVNMessages.class); //$NON-NLS-1$
 		this.operationName = operationName;
 		this.resources = resources;
 		this.destination = destination;
@@ -95,7 +95,7 @@ public class PreparedBranchTagOperation extends CompositeOperation implements IR
 			}
 			
 			if (this.wcResources == null) {
-				BranchTagOperation branchtagOp = new BranchTagOperation(this.operationName, this.resources, this.destination, this.message);
+				BranchTagOperation branchtagOp = new BranchTagOperation(this.operationName, SVNMessages.class, this.resources, this.destination, this.message);
 				this.add(branchtagOp, op == null ? null : new IActionOperation[] {op});
 				this.add(new SetRevisionAuthorNameOperation(branchtagOp, Options.FORCE));
 			}

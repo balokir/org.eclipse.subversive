@@ -16,6 +16,7 @@ import java.util.StringTokenizer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNProperty;
@@ -40,14 +41,14 @@ public class AddToSVNIgnoreOperation extends AbstractWorkingCopyOperation {
 	protected String pattern;
 
 	public AddToSVNIgnoreOperation(IResource []resources, int ignoreType, String pattern) {
-		super("Operation_AddToSVNIgnore", resources); //$NON-NLS-1$
+		super("Operation_AddToSVNIgnore", SVNMessages.class, resources); //$NON-NLS-1$
 		
 		this.ignoreType = ignoreType;
 		this.pattern = pattern;
 	}
 
 	public AddToSVNIgnoreOperation(IResourceProvider provider, int ignoreType, String pattern) {
-		super("Operation_AddToSVNIgnore", provider); //$NON-NLS-1$
+		super("Operation_AddToSVNIgnore", SVNMessages.class, provider); //$NON-NLS-1$
 		
 		this.ignoreType = ignoreType;
 		this.pattern = pattern;

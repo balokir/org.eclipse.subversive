@@ -40,7 +40,7 @@ public class DeleteResourcesOperation extends AbstractRepositoryOperation implem
 	protected ArrayList<RevisionPair> revisionsPairs;
 	
 	public DeleteResourcesOperation(IRepositoryResource []resources, String message) {
-		super("Operation_DeleteRemote", resources); //$NON-NLS-1$
+		super("Operation_DeleteRemote", SVNMessages.class, resources); //$NON-NLS-1$
 		this.message = message;
 	}
 

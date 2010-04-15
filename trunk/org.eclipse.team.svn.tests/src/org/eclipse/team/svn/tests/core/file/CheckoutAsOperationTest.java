@@ -13,6 +13,7 @@ package org.eclipse.team.svn.tests.core.file;
 
 import java.io.File;
 
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -29,7 +30,7 @@ public class CheckoutAsOperationTest extends AbstractOperationTestCase {
 	
 	protected IActionOperation getOperation() {
 		IRepositoryResource from = this.getLocation().asRepositoryContainer(SVNUtility.getProposedTrunkLocation(this.getLocation()) + "/" + this.getFirstFolder().getName(), false);
-		CompositeOperation composite = new CompositeOperation("Checkout");
+		CompositeOperation composite = new CompositeOperation("Checkout", SVNMessages.class);
 		for (int i = 0; i < 10; i++) {
 			File to = new File(this.getFirstFolder().getPath() + "_checkout_" + i);
 			CheckoutAsOperation op = new CheckoutAsOperation(to, from, Depth.INFINITY, false, true);

@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
 import org.eclipse.team.svn.core.connector.SVNNotification;
@@ -40,13 +41,13 @@ public class LockOperation extends AbstractFileOperation {
 	protected boolean force;
 
 	public LockOperation(File []files, String message, boolean force) {
-		super("Operation_LockFile", files); //$NON-NLS-1$
+		super("Operation_LockFile", SVNMessages.class, files); //$NON-NLS-1$
 		this.message = message;
 		this.force = force;
 	}
 
 	public LockOperation(IFileProvider provider, String message, boolean force) {
-		super("Operation_LockFile", provider); //$NON-NLS-1$
+		super("Operation_LockFile", SVNMessages.class, provider); //$NON-NLS-1$
 		this.message = message;
 		this.force = force;
 	}

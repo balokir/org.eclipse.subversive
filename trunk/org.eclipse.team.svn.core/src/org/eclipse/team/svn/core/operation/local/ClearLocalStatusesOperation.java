@@ -14,6 +14,7 @@ package org.eclipse.team.svn.core.operation.local;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
@@ -25,11 +26,11 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
  */
 public class ClearLocalStatusesOperation extends AbstractWorkingCopyOperation {
 	public ClearLocalStatusesOperation(IResource[] resources) {
-		super("Operation_ClearLocalStatuses", resources); //$NON-NLS-1$
+		super("Operation_ClearLocalStatuses", SVNMessages.class, resources); //$NON-NLS-1$
 	}
 
 	public ClearLocalStatusesOperation(IResourceProvider provider) {
-		super("Operation_ClearLocalStatuses", provider); //$NON-NLS-1$
+		super("Operation_ClearLocalStatuses", SVNMessages.class, provider); //$NON-NLS-1$
 	}
 
 	public ISchedulingRule getSchedulingRule() {

@@ -36,12 +36,12 @@ public class ReconnectProjectOperation extends AbstractWorkingCopyOperation {
 	protected IRepositoryLocation location;
 
 	public ReconnectProjectOperation(IProject []projects, IRepositoryLocation location) {
-		super("Operation_Reconnect", projects); //$NON-NLS-1$
+		super("Operation_Reconnect", SVNMessages.class, projects); //$NON-NLS-1$
 		this.location = location;
 	}
 	
 	public ReconnectProjectOperation(IResourceProvider provider, IRepositoryLocation location) {
-		super("Operation_Reconnect", provider); //$NON-NLS-1$
+		super("Operation_Reconnect", SVNMessages.class, provider); //$NON-NLS-1$
 		this.location = location;
 	}
 	

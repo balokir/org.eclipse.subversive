@@ -13,6 +13,7 @@ package org.eclipse.team.svn.core.operation.remote;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.BaseMessages;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNRevision;
@@ -40,7 +41,7 @@ public class GetLogMessagesOperation extends AbstractRepositoryOperation {
 	}
 	
 	public GetLogMessagesOperation(IRepositoryResource resource, boolean stopOnCopy) {
-		super("Operation_GetLogMessages", new IRepositoryResource[] {resource}); //$NON-NLS-1$
+		super("Operation_GetLogMessages", SVNMessages.class, new IRepositoryResource[] {resource}); //$NON-NLS-1$
 		this.stopOnCopy = stopOnCopy;
 		this.includeMerged = false;
 		this.discoverPaths = true;

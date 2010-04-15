@@ -34,6 +34,7 @@ import org.eclipse.team.svn.core.resource.events.IResourceStatesListener;
 import org.eclipse.team.svn.core.resource.events.ResourceStatesChangedEvent;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.editors.text.IStorageDocumentProvider;
 import org.eclipse.ui.ide.ResourceUtil;
@@ -146,7 +147,7 @@ public class SVNTeamQuickDiffProvider implements IQuickDiffReferenceProvider, IR
 		if (this.updateJob != null && this.updateJob.getState() != Job.NONE) {
 			this.updateJob.cancel();
 		}
-		this.updateJob = ProgressMonitorUtility.doTaskScheduledDefault(new AbstractActionOperation("Operation_QuickDiff") { //$NON-NLS-1$
+		this.updateJob = ProgressMonitorUtility.doTaskScheduledDefault(new AbstractActionOperation("Operation_QuickDiff", SVNUIMessages.class) { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				SVNTeamQuickDiffProvider.this.readDocument(monitor);
 			}
@@ -166,7 +167,7 @@ public class SVNTeamQuickDiffProvider implements IQuickDiffReferenceProvider, IR
 			if (this.savedState == null || !IStateFilter.SF_INTERNAL_INVALID.accept(tmp) && this.savedState.getRevision() != tmp.getRevision()) {
 				this.savedState = tmp;
 				final GetLocalFileContentOperation contentOp = new GetLocalFileContentOperation(tmp.getResource(), Kind.BASE);
-				CompositeOperation op = new CompositeOperation("Operation_PrepareQuickDiff"); //$NON-NLS-1$
+				CompositeOperation op = new CompositeOperation("Operation_PrepareQuickDiff", SVNUIMessages.class); //$NON-NLS-1$
 				op.add(contentOp);
 				op.add(new InitializeDocumentOperation(encoding) {
 					public InputStream getInputStream() {
@@ -185,7 +186,7 @@ public class SVNTeamQuickDiffProvider implements IQuickDiffReferenceProvider, IR
 		public String encoding;
 		
 		public InitializeDocumentOperation(String encoding) {
-			super("Operation_InitializeDocument"); //$NON-NLS-1$
+			super("Operation_InitializeDocument", SVNUIMessages.class); //$NON-NLS-1$
 			this.encoding = encoding;
 		}
 		

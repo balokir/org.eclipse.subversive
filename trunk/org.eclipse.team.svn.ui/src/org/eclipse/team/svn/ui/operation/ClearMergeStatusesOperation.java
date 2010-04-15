@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.svn.core.operation.local.AbstractWorkingCopyOperation;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.synchronize.MergeSubscriber;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * Clear merge statuses operation implementation
@@ -25,11 +26,11 @@ import org.eclipse.team.svn.core.synchronize.MergeSubscriber;
  */
 public class ClearMergeStatusesOperation extends AbstractWorkingCopyOperation {
 	public ClearMergeStatusesOperation(IResource[] resources) {
-		super("Operation_ClearMergeStatusesCache", resources); //$NON-NLS-1$
+		super("Operation_ClearMergeStatusesCache", SVNUIMessages.class, resources); //$NON-NLS-1$
 	}
 
 	public ClearMergeStatusesOperation(IResourceProvider provider) {
-		super("Operation_ClearMergeStatusesCache", provider); //$NON-NLS-1$
+		super("Operation_ClearMergeStatusesCache", SVNUIMessages.class, provider); //$NON-NLS-1$
 	}
 
 	public ISchedulingRule getSchedulingRule() {

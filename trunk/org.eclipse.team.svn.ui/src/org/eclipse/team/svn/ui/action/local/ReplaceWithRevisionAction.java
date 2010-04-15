@@ -26,6 +26,7 @@ import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractNonRecursiveTeamAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.dialog.ReplaceWarningDialog;
@@ -66,7 +67,7 @@ public class ReplaceWithRevisionAction extends AbstractNonRecursiveTeamAction {
 			if (dialog.open() == 0) {
 				IRepositoryResource selected = panel.getSelectedResource();
 				boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
-				CompositeOperation op = new CompositeOperation("Operation_ReplaceWithRevision"); //$NON-NLS-1$
+				CompositeOperation op = new CompositeOperation("Operation_ReplaceWithRevision", SVNUIMessages.class); //$NON-NLS-1$
 				SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
 				op.add(saveOp);
 				op.add(new ReplaceWithRemoteOperation(resources[0], selected, ignoreExternals));

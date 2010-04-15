@@ -80,7 +80,7 @@ public class ShareProjectOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	public ShareProjectOperation(IProject []projects, IRepositoryLocation location, IFolderNameMapper mapper, String rootName, int shareLayout, boolean managementFoldersEnabled, String commitComment) {
-		super("Operation_ShareProject", projects); //$NON-NLS-1$
+		super("Operation_ShareProject", SVNMessages.class, projects); //$NON-NLS-1$
 		this.mapper = mapper;
 		this.location = location;
 		this.shareLayout = shareLayout;

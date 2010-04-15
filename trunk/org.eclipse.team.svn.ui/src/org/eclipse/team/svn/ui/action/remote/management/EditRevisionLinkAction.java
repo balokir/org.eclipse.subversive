@@ -26,6 +26,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRevisionLink;
 import org.eclipse.team.svn.core.resource.IRevisionLinkProvider;
 import org.eclipse.team.svn.core.utility.SVNUtility;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractRepositoryTeamAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.operation.RefreshRepositoryLocationsOperation;
@@ -55,10 +56,10 @@ public class EditRevisionLinkAction extends AbstractRepositoryTeamAction {
 			SVNRevision selectedRevision = panel.getSelectedRevision();
 			final String comment = panel.getRevisionComment();
 			
-			CompositeOperation op = new CompositeOperation("Operation_EditRevisionLink"); //$NON-NLS-1$
+			CompositeOperation op = new CompositeOperation("Operation_EditRevisionLink", SVNUIMessages.class); //$NON-NLS-1$
 			if (!oldRevision.equals(selectedRevision)) {
 				//delete old link and re-create new link															
-				IActionOperation mainOp = new AbstractActionOperation("Operation_EditRevisionLink") { //$NON-NLS-1$
+				IActionOperation mainOp = new AbstractActionOperation("Operation_EditRevisionLink", SVNUIMessages.class) { //$NON-NLS-1$
 					protected void runImpl(IProgressMonitor monitor) throws Exception {
 						oldLink.getRepositoryResource().getRepositoryLocation().removeRevisionLink(oldLink);						
 					}
@@ -86,7 +87,7 @@ public class EditRevisionLinkAction extends AbstractRepositoryTeamAction {
 				op.add(addOp, new IActionOperation[] {mainOp, locateOp});				
 			} else {
 				//change link comment								
-				IActionOperation mainOp = new AbstractActionOperation("Operation_EditRevisionLink") { //$NON-NLS-1$
+				IActionOperation mainOp = new AbstractActionOperation("Operation_EditRevisionLink", SVNUIMessages.class) { //$NON-NLS-1$
 					protected void runImpl(IProgressMonitor monitor) throws Exception {
 						oldLink.setComment(comment);
 					}

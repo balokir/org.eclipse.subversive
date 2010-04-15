@@ -208,7 +208,7 @@ public class AddRepositoryLocationPage extends AbstractVerifiedWizardPage {
 		
 		if (this.propertiesTabFolder.isValidateOnFinishRequested() && panel == null) {
 			final Exception []problem = new Exception[1];
-			UIMonitorUtility.doTaskNowDefault(this.getShell(), new AbstractActionOperation("Operation_ValidateLocation") { //$NON-NLS-1$
+			UIMonitorUtility.doTaskNowDefault(this.getShell(), new AbstractActionOperation("Operation_ValidateLocation", SVNUIMessages.class) { //$NON-NLS-1$
 				protected void runImpl(IProgressMonitor monitor) throws Exception {
 					problem[0] = SVNUtility.validateRepositoryLocation(AddRepositoryLocationPage.this.propertiesTabFolder.getRepositoryLocation());
 				}
@@ -226,14 +226,14 @@ public class AddRepositoryLocationPage extends AbstractVerifiedWizardPage {
 
 		AbstractActionOperation mainOp = 
 			shouldntBeAdded ?
-			new AbstractActionOperation("Operation_CommitLocationChanges") { //$NON-NLS-1$
+			new AbstractActionOperation("Operation_CommitLocationChanges", SVNUIMessages.class) { //$NON-NLS-1$
 				protected void runImpl(IProgressMonitor monitor) throws Exception {
 					AddRepositoryLocationPage.this.editable.reconfigure();
 				}
 			} :
 			(AbstractActionOperation)new AddRepositoryLocationOperation(this.getRepositoryLocation());
 		
-		CompositeOperation op = new CompositeOperation(mainOp.getId());
+		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 		
 		op.add(mainOp);
 		op.add(new SaveRepositoryLocationsOperation());

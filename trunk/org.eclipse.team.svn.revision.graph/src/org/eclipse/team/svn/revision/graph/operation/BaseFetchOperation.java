@@ -19,6 +19,7 @@ import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
 import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.SVNUtility;
+import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
 import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
 import org.eclipse.team.svn.revision.graph.cache.TimeMeasure;
 
@@ -38,7 +39,7 @@ public abstract class BaseFetchOperation extends AbstractActionOperation {
 	protected long endRevision;	
 	
 	public BaseFetchOperation(String operationName, IRepositoryResource resource, CheckRepositoryConnectionOperation checkConnectionOp, RepositoryCache repositoryCache) {
-		super(operationName);
+		super(operationName, SVNRevisionGraphMessages.class);
 		this.resource = resource;
 		this.checkConnectionOp = checkConnectionOp;
 		this.repositoryCache = repositoryCache;

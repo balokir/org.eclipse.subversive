@@ -49,7 +49,7 @@ public class CompareWithLatestRevisionAction extends AbstractWorkingCopyAction {
 		remote.setSelectedRevision(SVNRevision.HEAD);
 		
 		CompareResourcesOperation mainOp = new CompareResourcesOperation(local, remote);
-		CompositeOperation op = new CompositeOperation(mainOp.getId());
+		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 		op.add(new CorrectRevisionOperation(null, remote, local.getRevision(), resource));
 		op.add(mainOp);
 		if (SVNTeamPreferences.getHistoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.HISTORY_CONNECT_TO_COMPARE_WITH_NAME)) {

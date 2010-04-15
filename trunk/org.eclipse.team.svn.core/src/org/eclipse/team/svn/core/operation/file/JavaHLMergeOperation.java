@@ -14,6 +14,7 @@ package org.eclipse.team.svn.core.operation.file;
 import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
@@ -34,7 +35,7 @@ public class JavaHLMergeOperation extends AbstractFileOperation {
 	protected ISVNNotificationCallback notify;
 	
 	public JavaHLMergeOperation(File localTo, IRepositoryResource from1, IRepositoryResource from2, boolean dryRun, ISVNNotificationCallback notify) {
-		super("Operation_JavaHLMergeFile", new File[] {localTo}); //$NON-NLS-1$
+		super("Operation_JavaHLMergeFile", SVNMessages.class, new File[] {localTo}); //$NON-NLS-1$
 		this.from1 = from1;
 		this.from2 = from2;
 		this.dryRun = dryRun;

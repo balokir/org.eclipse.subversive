@@ -19,6 +19,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.console.IPatternMatchListenerDelegate;
@@ -79,7 +80,7 @@ public class LocalPathMatcher implements IPatternMatchListenerDelegate, IPropert
 		protected PatternMatchEvent event;
 		
 		public AddConsoleHyperlinkOperation(PatternMatchEvent event) {
-			super("Operation_AddConsoleHyperlink"); //$NON-NLS-1$
+			super("Operation_AddConsoleHyperlink", SVNUIMessages.class); //$NON-NLS-1$
 			this.event = event;
 		}
 		

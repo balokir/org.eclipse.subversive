@@ -55,7 +55,7 @@ public class AddRevisionLinksAction extends BaseRevisionGraphAction {
 			RevisionEditPart[] editParts = this.getSelectedEditParts(BaseRevisionGraphAction.NOT_DELETED_ACTION_FILTER);
 			final IRepositoryResource[] resources = BaseRevisionGraphAction.convertToResources(editParts);
 			
-			CompositeOperation op = new CompositeOperation("Operation_HAddSelectedRevision"); //$NON-NLS-1$
+			CompositeOperation op = new CompositeOperation("Operation_HAddSelectedRevision", SVNUIMessages.class); //$NON-NLS-1$
 			
 			final String comment = panel.getRevisionComment();
 			AddRevisionLinkOperation addLinksOp = new AddRevisionLinkOperation(new IRevisionLinkProvider() {

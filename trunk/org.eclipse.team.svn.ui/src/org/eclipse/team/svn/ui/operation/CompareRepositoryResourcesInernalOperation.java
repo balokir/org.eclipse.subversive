@@ -31,6 +31,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.compare.ResourceCompareInput;
 import org.eclipse.team.svn.ui.compare.TwoWayResourceCompareInput;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
@@ -52,7 +53,7 @@ public class CompareRepositoryResourcesInernalOperation extends AbstractActionOp
 	}
 	
 	public CompareRepositoryResourcesInernalOperation(IRepositoryResource prev, IRepositoryResource next, boolean forceReuse) {
-		super("Operation_CompareRepository"); //$NON-NLS-1$
+		super("Operation_CompareRepository", SVNUIMessages.class); //$NON-NLS-1$
 		this.prev = prev;
 		this.next = next;
 		this.forceReuse = forceReuse;

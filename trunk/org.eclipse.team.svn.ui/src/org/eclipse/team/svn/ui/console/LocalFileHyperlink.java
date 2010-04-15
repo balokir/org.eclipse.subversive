@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
@@ -57,7 +58,7 @@ public class LocalFileHyperlink implements IHyperlink {
 		protected String filePath;
 		
 		public OpenLocalFileOperation(String filePath) {
-			super("Operation_OpenLocalFile"); //$NON-NLS-1$
+			super("Operation_OpenLocalFile", SVNUIMessages.class); //$NON-NLS-1$
 			this.filePath = filePath;
 		}
 

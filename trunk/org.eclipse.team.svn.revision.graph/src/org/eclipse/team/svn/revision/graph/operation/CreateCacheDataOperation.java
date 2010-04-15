@@ -35,7 +35,7 @@ public class CreateCacheDataOperation extends AbstractActionOperation implements
 	protected RepositoryCache repositoryCache;
 	
 	public CreateCacheDataOperation(IRepositoryResource resource, boolean isRefresh) {
-		super("Operation_CreateCacheData"); //$NON-NLS-1$
+		super("Operation_CreateCacheData", SVNRevisionGraphMessages.class); //$NON-NLS-1$
 		this.resource = resource;
 		this.isRefresh = isRefresh;
 	}

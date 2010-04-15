@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.svn.core.BaseMessages;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamProjectMapper;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
@@ -69,7 +70,7 @@ public class CheckoutAsOperation extends AbstractActionOperation {
 	}
 	
 	public CheckoutAsOperation(String projectName, IRepositoryResource resource, String projectLocation, int recureDepth, boolean ignoreExternals) {
-		super("Operation_CheckOutAs"); //$NON-NLS-1$
+		super("Operation_CheckOutAs", SVNMessages.class); //$NON-NLS-1$
 		projectName = FileUtility.formatResourceName(projectName);
 		if (FileUtility.isCaseInsensitiveOS()) {
 			IProject []projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();

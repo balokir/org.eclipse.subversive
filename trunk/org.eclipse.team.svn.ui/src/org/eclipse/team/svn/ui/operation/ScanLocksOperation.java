@@ -30,6 +30,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.lock.LockResource;
 import org.eclipse.team.svn.ui.lock.LockResource.LockStatusEnum;
 
@@ -50,7 +51,7 @@ public class ScanLocksOperation extends AbstractActionOperation {
 	}
 	
 	public ScanLocksOperation(IResource[] resources, int depth) {
-		super("Operation_ScanLocks"); //$NON-NLS-1$
+		super("Operation_ScanLocks", SVNUIMessages.class); //$NON-NLS-1$
 		this.resources = resources;		
 		this.depth = depth;
 	}
@@ -146,7 +147,7 @@ public class ScanLocksOperation extends AbstractActionOperation {
 		protected LockResource lockResourceRoot;
 		
 		public CreateLockResourcesHierarchyOperation(ScanLocksOperation scanOp) {			
-			super("Operation_CreateLockResourcesHierarchy"); //$NON-NLS-1$
+			super("Operation_CreateLockResourcesHierarchy", SVNUIMessages.class); //$NON-NLS-1$
 			this.scanOp = scanOp;
 		}
 

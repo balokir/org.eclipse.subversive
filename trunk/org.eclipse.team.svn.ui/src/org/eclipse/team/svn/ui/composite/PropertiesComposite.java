@@ -131,7 +131,7 @@ public class PropertiesComposite extends Composite {
 	}
 	
 	public IActionOperation getRefreshViewOperation() {
-		return new AbstractActionOperation("Operation_PShowProperties") { //$NON-NLS-1$
+		return new AbstractActionOperation("Operation_PShowProperties", SVNUIMessages.class) { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				synchronized (PropertiesComposite.this) {
 					if (PropertiesComposite.this.provider != null && PropertiesComposite.this.provider.getExecutionState() == IActionOperation.OK) {
@@ -345,7 +345,7 @@ public class PropertiesComposite extends Composite {
 								if (PropertiesComposite.this.repositoryResource != null) {
 									PropertiesComposite.this.provider = new GetRemotePropertiesOperation(PropertiesComposite.this.repositoryResource);
 								}
-								CompositeOperation composite = new CompositeOperation("Operation_PRefresh"); //$NON-NLS-1$
+								CompositeOperation composite = new CompositeOperation("Operation_PRefresh", SVNUIMessages.class); //$NON-NLS-1$
 								if (PropertiesComposite.this.provider != null && PropertiesComposite.this.provider.getExecutionState() != IStatus.OK) {
 									composite.add(PropertiesComposite.this.provider);
 									composite.add(PropertiesComposite.this.getRefreshViewOperation(), new IActionOperation[] {PropertiesComposite.this.provider});
@@ -410,7 +410,7 @@ public class PropertiesComposite extends Composite {
 		if (dialog.open() != 0) {
 			return;
 		}
-		CompositeOperation composite = new CompositeOperation("Operation_PRemoveProperty"); //$NON-NLS-1$
+		CompositeOperation composite = new CompositeOperation("Operation_PRemoveProperty", SVNUIMessages.class); //$NON-NLS-1$
 
 		composite.add(new RemovePropertiesOperation(new IResource[] {this.wcResource}, data, dialog.isRecursive()));
 		composite.add(this.getRefreshOperation(dialog.isRecursive() ? IResource.DEPTH_INFINITE : IResource.DEPTH_ZERO));
@@ -463,7 +463,7 @@ public class PropertiesComposite extends Composite {
 		fileDialog.setFileName(data.name);
 		final String fileName = fileDialog.open();
 
-		AbstractActionOperation saveValue = new AbstractActionOperation("Operation_PSaveValueToFile") { //$NON-NLS-1$
+		AbstractActionOperation saveValue = new AbstractActionOperation("Operation_PSaveValueToFile", SVNUIMessages.class) { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				FileOutputStream output = null;
 				if (fileName != null) {
@@ -480,7 +480,7 @@ public class PropertiesComposite extends Composite {
 	}
 	
 	protected IActionOperation getRefreshOperation(int depth) {
-		CompositeOperation composite = new CompositeOperation("Operation_PRefreshView"); //$NON-NLS-1$
+		CompositeOperation composite = new CompositeOperation("Operation_PRefreshView", SVNUIMessages.class); //$NON-NLS-1$
 		composite.add(this.getRefreshViewOperation());
 		if (this.wcResource != null) {
 			composite.add(new RefreshResourcesOperation(new IResource[] {this.wcResource}, IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));

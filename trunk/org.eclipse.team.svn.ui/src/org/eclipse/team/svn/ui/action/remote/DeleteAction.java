@@ -50,11 +50,11 @@ public class DeleteAction extends AbstractRepositoryTeamAction {
 			IRepositoryResource []commonParents = SVNUtility.getCommonParents(resources);
 			
 			DeleteResourcesOperation mainOp = new DeleteResourcesOperation(resources, commentPanel.getMessage());
-			CompositeOperation op = new CompositeOperation(mainOp.getId());
+			CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 			
 			op.add(mainOp);
 			op.add(new RefreshRemoteResourcesOperation(commonParents));
-			op.add(new AbstractActionOperation("") { //$NON-NLS-1$
+			op.add(new AbstractActionOperation("", SVNUIMessages.class) { //$NON-NLS-1$
 				protected void runImpl(IProgressMonitor monitor) throws Exception {
 					DeleteAction.this.getShell().getDisplay().syncExec(new Runnable() {
 						public void run() {

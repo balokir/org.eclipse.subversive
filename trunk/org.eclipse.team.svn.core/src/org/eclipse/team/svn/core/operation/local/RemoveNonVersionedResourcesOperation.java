@@ -13,6 +13,7 @@ package org.eclipse.team.svn.core.operation.local;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.local.change.IActionOperationProcessor;
@@ -31,12 +32,12 @@ public class RemoveNonVersionedResourcesOperation extends AbstractWorkingCopyOpe
 	protected boolean addedAlso;
 	
     public RemoveNonVersionedResourcesOperation(IResource[] resources, boolean addedAlso) {
-        super("Operation_RemoveNonSVN", resources); //$NON-NLS-1$
+        super("Operation_RemoveNonSVN", SVNMessages.class, resources); //$NON-NLS-1$
 		this.addedAlso = addedAlso;
     }
 
     public RemoveNonVersionedResourcesOperation(IResourceProvider provider, boolean addedAlso) {
-        super("Operation_RemoveNonSVN", provider); //$NON-NLS-1$
+        super("Operation_RemoveNonSVN", SVNMessages.class, provider); //$NON-NLS-1$
 		this.addedAlso = addedAlso;
     }
 

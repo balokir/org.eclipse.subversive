@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNEntryStatusCallback;
 import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
@@ -36,11 +37,11 @@ public class RemoteStatusOperation extends AbstractStatusOperation implements IS
 	protected Map<String, Number> pegRevisions = new HashMap<String, Number>();
 
 	public RemoteStatusOperation(File []files, boolean recursive) {
-		super("Operation_UpdateStatusFile", files, recursive); //$NON-NLS-1$
+		super("Operation_UpdateStatusFile", SVNMessages.class, files, recursive); //$NON-NLS-1$
 	}
 
 	public RemoteStatusOperation(IFileProvider provider, boolean recursive) {
-		super("Operation_UpdateStatusFile", provider, recursive); //$NON-NLS-1$
+		super("Operation_UpdateStatusFile", SVNMessages.class, provider, recursive); //$NON-NLS-1$
 	}
 	
 	public SVNRevision getPegRevision(File change) {

@@ -109,7 +109,7 @@ public class SVNTeamPlugin extends Plugin {
     	SVNRemoteStorage.instance().reconfigureLocations();
 		
 		// remove temporary files if IDE is crached time ago...
-		ProgressMonitorUtility.doTaskScheduledDefault(new AbstractActionOperation("Remove Temporary Files") {
+		ProgressMonitorUtility.doTaskScheduledDefault(new AbstractActionOperation("Remove Temporary Files", SVNMessages.class) {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				SVNTeamPlugin.instance().getStateLocation().toFile().listFiles(new FileFilter() {
 					public boolean accept(File pathname) {

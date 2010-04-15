@@ -17,6 +17,7 @@ import java.util.HashSet;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNMergeStatusCallback;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
@@ -39,7 +40,7 @@ public class MergeStatusOperation extends AbstractWorkingCopyOperation implement
 	protected SVNMergeStatus []retVal;
 	
 	public MergeStatusOperation(AbstractMergeSet info, IResource []resources) {
-		super("Operation_MergeStatus", resources == null ? info.to : resources); //$NON-NLS-1$
+		super("Operation_MergeStatus", SVNMessages.class, resources == null ? info.to : resources); //$NON-NLS-1$
 		this.info = info;
 	}
 	

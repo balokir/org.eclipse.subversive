@@ -700,7 +700,7 @@ public class HistoryActionManager {
 			boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
 			GetRemoteContentsOperation mainOp = new GetRemoteContentsOperation(new IResource[] {this.view.getResource()}, new IRepositoryResource[] {remote}, remote2local, ignoreExternals);
 			
-			CompositeOperation op = new CompositeOperation(mainOp.getId());
+			CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 			op.add(mainOp);
 			op.add(new RefreshResourcesOperation(new IResource[] {this.view.getResource()}));
 
@@ -717,7 +717,7 @@ public class HistoryActionManager {
 			dlg.setFilterExtensions(new String[] {"*.*"}); //$NON-NLS-1$
 			final String file = dlg.open();
 			if (file != null) {
-				IActionOperation op = new AbstractActionOperation("Operation_ExportLocalHistory") { //$NON-NLS-1$
+				IActionOperation op = new AbstractActionOperation("Operation_ExportLocalHistory", SVNUIMessages.class) { //$NON-NLS-1$
 					protected void runImpl(IProgressMonitor monitor) throws Exception {
 						FileOutputStream output = new FileOutputStream(file);
 						InputStream input = null;
@@ -769,7 +769,7 @@ public class HistoryActionManager {
 			final String comment = panel.getRevisionComment();
 			IRepositoryLocation location = this.view.getRepositoryResource().getRepositoryLocation();
 			
-			CompositeOperation op = new CompositeOperation("Operation_HAddSelectedRevision"); //$NON-NLS-1$
+			CompositeOperation op = new CompositeOperation("Operation_HAddSelectedRevision", SVNUIMessages.class); //$NON-NLS-1$
 			for (ILogNode node : tSelection) {
 				SVNLogEntry item = (SVNLogEntry)node.getEntity();
 				IRepositoryResource resource = SVNUtility.copyOf(this.view.getRepositoryResource());
@@ -798,7 +798,7 @@ public class HistoryActionManager {
 	protected void updateTo(final SVNLogEntry item) {	    
 		IResource []resources = new IResource[] {this.view.getResource()};
 		boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
-	    CompositeOperation op = new CompositeOperation("Operation_HUpdateTo"); //$NON-NLS-1$
+	    CompositeOperation op = new CompositeOperation("Operation_HUpdateTo", SVNUIMessages.class); //$NON-NLS-1$
 		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
 		op.add(saveOp);
 	    op.add(new UpdateOperation(resources, SVNRevision.fromNumber(item.revision), ignoreExternals));
@@ -972,7 +972,7 @@ public class HistoryActionManager {
 			IRepositoryResource remote = this.view.getRepositoryResource();
 			resource2project.put(remote.getUrl(), remote.getName());
 		}
-		CompositeOperation op = new CompositeOperation(SVNMessages.Operation_ExtractTo);
+		CompositeOperation op = new CompositeOperation(SVNMessages.Operation_ExtractTo, SVNMessages.class);
 		InitExtractLogOperation logger = new InitExtractLogOperation(path);
 		FromDifferenceRepositoryResourceProviderOperation provider = new FromDifferenceRepositoryResourceProviderOperation(this.getResourceForSelectedRevision(selectedLogs[0]), this.getResourceForSelectedRevision(selectedLogs[1]));
 		op.add(provider);
@@ -1415,7 +1415,7 @@ public class HistoryActionManager {
 		PreparedBranchTagOperation op = BranchTagAction.getBranchTagOperation(resources, shell, type);
 
 		if (op != null) {
-			CompositeOperation composite = new CompositeOperation(op.getId());
+			CompositeOperation composite = new CompositeOperation(op.getId(), op.getMessagesClass());
 			composite.add(op);
 			RefreshRemoteResourcesOperation refreshOp = new RefreshRemoteResourcesOperation(new IRepositoryResource[] {op.getDestination().getParent()});
 			composite.add(refreshOp, new IActionOperation[] {op});
@@ -1431,7 +1431,7 @@ public class HistoryActionManager {
 		if (path != null) {
 			boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
 			ExportOperation mainOp = new ExportOperation(provider, path, Depth.INFINITY, ignoreExternals);
-			CompositeOperation op = new CompositeOperation(mainOp.getId());
+			CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 			op.add(preOp);
 			op.add(mainOp, new IActionOperation[] {preOp});
 	    	UIMonitorUtility.doTaskScheduledDefault(op);
@@ -1442,7 +1442,7 @@ public class HistoryActionManager {
 		FromChangedPathDataProvider provider = new FromChangedPathDataProvider(selectedPath, true);
 		OpenRemoteFileOperation openOp = new OpenRemoteFileOperation(provider, openType, openWith);
 		
-		CompositeOperation composite = new CompositeOperation(openOp.getId(), true);
+		CompositeOperation composite = new CompositeOperation(openOp.getId(), openOp.getMessagesClass(), true);
 		composite.add(provider);
 		composite.add(openOp, new IActionOperation[] {provider});
 		UIMonitorUtility.doTaskScheduledActive(composite);
@@ -1451,7 +1451,7 @@ public class HistoryActionManager {
 	protected void showAnnotation(SVNChangedPathData selectedPath) {
 		FromChangedPathDataProvider provider = new FromChangedPathDataProvider(selectedPath, true);
 		RemoteShowAnnotationOperation mainOp = new RemoteShowAnnotationOperation(provider);
-		CompositeOperation op = new CompositeOperation(mainOp.getId(), true);
+		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass(), true);
 		op.add(provider);
 		op.add(mainOp, new IActionOperation[] {provider});
 		UIMonitorUtility.doTaskScheduledActive(op);
@@ -1459,7 +1459,7 @@ public class HistoryActionManager {
 	
 	protected void showHistory(IActionOperation preOp, IRepositoryResourceProvider provider) {
 		ShowHistoryViewOperation mainOp = new ShowHistoryViewOperation(provider, 0, 0);
-		CompositeOperation op = new CompositeOperation(mainOp.getId());
+		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 		op.add(preOp);
 		op.add(mainOp, new IActionOperation[] {preOp});
 		UIMonitorUtility.doTaskScheduledActive(op);
@@ -1468,7 +1468,7 @@ public class HistoryActionManager {
 	protected void showProperties(IActionOperation preOp, IRepositoryResourceProvider provider) {
 		IResourcePropertyProvider propertyProvider = new GetRemotePropertiesOperation(provider);
 		ShowPropertiesOperation mainOp = new ShowPropertiesOperation(UIMonitorUtility.getActivePage(), provider, propertyProvider);
-		CompositeOperation op = new CompositeOperation(mainOp.getId());
+		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 		op.add(preOp);
 		op.add(mainOp, new IActionOperation[] {preOp});
 		UIMonitorUtility.doTaskScheduledActive(op);
@@ -1511,7 +1511,7 @@ public class HistoryActionManager {
 		}
 		boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
 		GetRemoteContentsOperation mainOp = new GetRemoteContentsOperation(new IResource [] {resourceToLock}, provider, remote2local, ignoreExternals);
-		CompositeOperation op = new CompositeOperation(mainOp.getId());
+		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 		op.add(preOp);
 		op.add(mainOp, new IActionOperation[] {preOp});
 		op.add(new RefreshResourcesOperation(new IResource [] {resourceToLock}));
@@ -1568,7 +1568,7 @@ public class HistoryActionManager {
 	}
 		
 	protected void addRevisionLink(IActionOperation preOp, final IRepositoryResourceProvider provider) {
-		CompositeOperation op = new CompositeOperation("Operation_HAddSelectedRevision"); //$NON-NLS-1$
+		CompositeOperation op = new CompositeOperation("Operation_HAddSelectedRevision", SVNUIMessages.class); //$NON-NLS-1$
 		op.add(preOp);
 		IActionOperation []condition = new IActionOperation[] {preOp};						
 		op.add(new AddRevisionLinkOperation(new IRevisionLinkProvider() {
@@ -1613,7 +1613,7 @@ public class HistoryActionManager {
 		});
 		mainOp.setForceId(this.getCompareForceId());
 		if (preOp != null) {
-			CompositeOperation op = new CompositeOperation(mainOp.getId());
+			CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 			op.add(preOp);
 			op.add(mainOp, new IActionOperation[] {preOp});
 			UIMonitorUtility.doTaskScheduledActive(op);
@@ -1628,7 +1628,7 @@ public class HistoryActionManager {
 		protected IRepositoryResource returnResource;
 		
 		public FromAffectedPathsNodeProvider(AffectedPathsNode affectedPathsItem) {
-			super("Operation_GetRepositoryResource"); //$NON-NLS-1$
+			super("Operation_GetRepositoryResource", SVNUIMessages.class); //$NON-NLS-1$
 			this.affectedPathsItem = affectedPathsItem;
 		}
 		
@@ -1655,7 +1655,7 @@ public class HistoryActionManager {
 		protected boolean filesOnly;
 		
 		public FromChangedPathDataProvider(SVNChangedPathData affectedPathsItem, boolean filesOnly) {
-			super("Operation_GetRepositoryResource"); //$NON-NLS-1$
+			super("Operation_GetRepositoryResource", SVNUIMessages.class); //$NON-NLS-1$
 			this.affectedPathsItem = affectedPathsItem;
 			this.filesOnly = filesOnly;
 		}

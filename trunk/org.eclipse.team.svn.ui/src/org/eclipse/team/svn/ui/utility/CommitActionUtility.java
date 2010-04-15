@@ -128,7 +128,7 @@ public class CommitActionUtility {
 		
 		CommitOperation mainOp = new CommitOperation(notSelectedResources.length == 0 ? this.selector.getSelectedResources() : selectedResources, message, allowsRecursiveAdd && notSelectedNew.length == notSelectedResources.length, keepLocks);
 		
-		CompositeOperation op = new CompositeOperation(mainOp.getId());
+		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 		
 		if (allowsRecursiveAdd) {
 			if (this.newNonRecursive.size() > 0) {
@@ -159,7 +159,7 @@ public class CommitActionUtility {
 	protected CompositeOperation getNonRecursiveImpl(IResource []selectedResources, String message, boolean keepLocks, Shell shell, IWorkbenchPart part) {
 		CommitOperation mainOp = new CommitOperation(selectedResources, message, false, keepLocks);
 		
-		CompositeOperation op = new CompositeOperation(mainOp.getId());
+		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 		
 		IResource []newResources = FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_UNVERSIONED, IResource.DEPTH_ZERO);
 		if (newResources.length > 0) {

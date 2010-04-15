@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNEntryStatusCallback;
 import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
@@ -52,12 +53,12 @@ public class RemoteStatusOperation extends AbstractWorkingCopyOperation implemen
 	protected Map<String, Number> pegRevisions;
 
 	public RemoteStatusOperation(IResource []resources) {
-		super("Operation_UpdateStatus", resources); //$NON-NLS-1$
+		super("Operation_UpdateStatus", SVNMessages.class, resources); //$NON-NLS-1$
 		this.pegRevisions = new HashMap<String, Number>();
 	}
 
 	public RemoteStatusOperation(IResourceProvider provider) {
-		super("Operation_UpdateStatus", provider); //$NON-NLS-1$
+		super("Operation_UpdateStatus", SVNMessages.class, provider); //$NON-NLS-1$
 		this.pegRevisions = new HashMap<String, Number>();
 	}
 
