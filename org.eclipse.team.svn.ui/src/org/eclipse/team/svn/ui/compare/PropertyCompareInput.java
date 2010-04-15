@@ -42,6 +42,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNProperty;
@@ -134,7 +135,7 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 		GetPropertiesOperation leftPropOperation = new GetPropertiesOperation(this.left, this.location);
 		GetPropertiesOperation rightPropOperation = new GetPropertiesOperation(this.right, this.location);
 		GetPropertiesOperation ancestorPropOperation = null;
-		final CompositeOperation op = new CompositeOperation(leftPropOperation.getOperationName());
+		final CompositeOperation op = new CompositeOperation(leftPropOperation.getOperationName(), SVNMessages.class);
 		op.add(leftPropOperation);
 		op.add(rightPropOperation);
 		if (this.ancestor != null) {
@@ -354,7 +355,7 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 		protected IRepositoryLocation location;
 		
 		public SavePropChangesOperation(SVNEntryRevisionReference reference, SVNProperty propToSet, IRepositoryLocation location) {
-			super("Operation_SetProperties"); //$NON-NLS-1$
+			super("Operation_SetProperties", SVNMessages.class); //$NON-NLS-1$
 			this.propToSet = propToSet;
 			this.reference = reference;
 			this.location = location;
@@ -377,7 +378,7 @@ public abstract class PropertyCompareInput extends CompareEditorInput {
 		protected SVNProperty [] properties;
 		
 		public GetPropertiesOperation(SVNEntryRevisionReference reference, IRepositoryLocation location) {
-			super("Operation_GetRevisionProperties"); //$NON-NLS-1$
+			super("Operation_GetRevisionProperties", SVNMessages.class); //$NON-NLS-1$
 			this.reference = reference;
 			this.location = location;
 		}

@@ -21,6 +21,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -53,13 +54,13 @@ public class UpdateOperation extends AbstractConflictDetectionOperation implemen
 	}
 
 	public UpdateOperation(IResourceProvider provider, SVNRevision selectedRevision, boolean ignoreExternals) {
-		super("Operation_Update", provider);		 //$NON-NLS-1$		
+		super("Operation_Update", SVNMessages.class, provider);		 //$NON-NLS-1$		
 		this.selectedRevision = selectedRevision == null ? SVNRevision.HEAD : selectedRevision;
 		this.ignoreExternals = ignoreExternals;
 	}
 	
 	public UpdateOperation(IResource[] resources, SVNRevision selectedRevision, boolean ignoreExternals) {
-		super("Operation_Update", resources); //$NON-NLS-1$
+		super("Operation_Update", SVNMessages.class, resources); //$NON-NLS-1$
 		this.selectedRevision = selectedRevision == null ? SVNRevision.HEAD : selectedRevision;		
 		this.ignoreExternals = ignoreExternals;
 	}

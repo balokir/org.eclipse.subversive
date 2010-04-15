@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * Allows us to get revision in the separate thread
@@ -26,7 +27,7 @@ public class GetRemoteResourceRevisionOperation extends AbstractActionOperation 
 	protected long revision;
 
 	public GetRemoteResourceRevisionOperation(IRepositoryResource resource) {
-		super("Operation_GetRemoteRevision"); //$NON-NLS-1$
+		super("Operation_GetRemoteRevision", SVNUIMessages.class); //$NON-NLS-1$
 		this.resource = resource;
 		this.revision = SVNRevision.INVALID_REVISION_NUMBER;
 	}

@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNResourceRuleFactory;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
@@ -52,7 +53,7 @@ public class RefreshResourcesOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	public RefreshResourcesOperation(IResource []resources, int depth, int refreshType) {
-		super("Operation_RefreshResources", resources); //$NON-NLS-1$
+		super("Operation_RefreshResources", SVNMessages.class, resources); //$NON-NLS-1$
 		this.depth = depth;
 		this.refreshType = refreshType;
 	}
@@ -62,7 +63,7 @@ public class RefreshResourcesOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	public RefreshResourcesOperation(IResourceProvider provider, int depth, int refreshType) {
-		super("Operation_RefreshResources", provider); //$NON-NLS-1$
+		super("Operation_RefreshResources", SVNMessages.class, provider); //$NON-NLS-1$
 		this.depth = depth;
 		this.refreshType = refreshType;
 	}

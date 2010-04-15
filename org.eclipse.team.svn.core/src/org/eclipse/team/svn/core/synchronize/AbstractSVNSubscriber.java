@@ -264,7 +264,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
   	}
     
 	protected IResource []findChanges(IResource []resources, int depth, IProgressMonitor monitor, ILoggedOperationFactory operationWrapperFactory) {
-		CompositeOperation op = new CompositeOperation(""); //$NON-NLS-1$
+		CompositeOperation op = new CompositeOperation("", SVNMessages.class); //$NON-NLS-1$
 		
 		final IRemoteStatusOperation rStatusOp = this.addStatusOperation(op, resources, depth);
 		if (rStatusOp == null) {
@@ -273,7 +273,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
 		op.setOperationName(rStatusOp.getId());
 		
 		final ArrayList<IResource> changes = new ArrayList<IResource>();
-		op.add(new AbstractActionOperation("Operation_FetchChanges") { //$NON-NLS-1$
+		op.add(new AbstractActionOperation("Operation_FetchChanges", SVNMessages.class) { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				SVNEntryStatus []statuses = rStatusOp.getStatuses();
 				if (statuses != null) {
@@ -326,7 +326,7 @@ public abstract class AbstractSVNSubscriber extends Subscriber implements IResou
     	protected int depth;
     	
     	public UpdateStatusOperation(IResource []resources, int depth) {
-    		super("Operation_UpdateStatus"); //$NON-NLS-1$
+    		super("Operation_UpdateStatus", SVNMessages.class); //$NON-NLS-1$
     		this.resources = resources;
     		this.depth = depth;
     	}

@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
 import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
@@ -58,7 +59,7 @@ public class DeleteResourceOperation extends AbstractActionOperation {
 	}
 	
 	public DeleteResourceOperation(IResource[] resources, boolean keepLocal) {
-		super("Operation_DeleteLocal"); //$NON-NLS-1$
+		super("Operation_DeleteLocal", SVNMessages.class); //$NON-NLS-1$
 		this.resources = resources;
 		this.keepLocal = keepLocal;
 	}
@@ -127,10 +128,10 @@ public class DeleteResourceOperation extends AbstractActionOperation {
 	}
 	
 	protected static final IStateFilter SF_OBSTRUCTED_OR_NEW = new IStateFilter.AbstractStateFilter() {
-		protected boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
+		public boolean acceptImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_OBSTRUCTED.accept(resource, state, mask) || IStateFilter.SF_NEW.accept(resource, state, mask);
 		}
-		protected boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
+		public boolean allowsRecursionImpl(ILocalResource local, IResource resource, String state, int mask) {
 			return IStateFilter.SF_OBSTRUCTED.allowsRecursion(resource, state, mask) || IStateFilter.SF_NEW.allowsRecursion(resource, state, mask);
 		}
 	};

@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.tests.core.file.property;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.file.AbstractFileOperation;
@@ -32,7 +33,7 @@ public class GetPropertyOpertionTest extends AbstractOperationTestCase {
 	}
 	
 	protected IActionOperation getOperation() {
-		return new AbstractFileOperation("Get Properties Operation Test", this.getListFiles()) {
+		return new AbstractFileOperation("Get Properties Operation Test", SVNMessages.class, this.getListFiles()) {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				GetPropertiesOperation getOp = new GetPropertiesOperation(GetPropertyOpertionTest.this.getFirstFolder());
 				getOp.run(monitor);

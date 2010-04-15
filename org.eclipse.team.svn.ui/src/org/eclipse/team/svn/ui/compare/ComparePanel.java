@@ -61,12 +61,12 @@ public class ComparePanel extends AbstractDialogPanel {
 	protected void saveChangesImpl() {
 		
 		RefreshResourcesOperation refreshOp = new RefreshResourcesOperation(new IResource[] {this.resource.getProject()});
-		AbstractWorkingCopyOperation mainOp = new AbstractWorkingCopyOperation("Operation_SaveChanges", new IResource[] {this.resource.getProject()}) { //$NON-NLS-1$
+		AbstractWorkingCopyOperation mainOp = new AbstractWorkingCopyOperation("Operation_SaveChanges", SVNUIMessages.class, new IResource[] {this.resource.getProject()}) { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				ComparePanel.this.compareInput.saveChanges(monitor);
 			}
 		};
-		CompositeOperation composite = new CompositeOperation(mainOp.getId());
+		CompositeOperation composite = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 		composite.add(mainOp);
 		composite.add(refreshOp);
 		UIMonitorUtility.doTaskBusyWorkspaceModify(composite);

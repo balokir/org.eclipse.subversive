@@ -16,6 +16,7 @@ import java.util.StringTokenizer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNProperty;
@@ -44,7 +45,7 @@ public class AddToSVNOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	public AddToSVNOperation(IResource[] resources, boolean isRecursive) {
-		super("Operation_AddToSVN", resources); //$NON-NLS-1$
+		super("Operation_AddToSVN", SVNMessages.class, resources); //$NON-NLS-1$
 		this.isRecursive = isRecursive;
 	}
 
@@ -53,7 +54,7 @@ public class AddToSVNOperation extends AbstractWorkingCopyOperation {
 	}
 
 	public AddToSVNOperation(IResourceProvider provider, boolean isRecursive) {
-		super("Operation_AddToSVN", provider); //$NON-NLS-1$
+		super("Operation_AddToSVN", SVNMessages.class, provider); //$NON-NLS-1$
 		this.isRecursive = isRecursive;
 	}
 

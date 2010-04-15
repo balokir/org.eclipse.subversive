@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNResourceRuleFactory;
@@ -33,7 +34,7 @@ public class DisconnectOperation extends AbstractActionOperation {
 	protected boolean dropSVNFolders;
 
 	public DisconnectOperation(IProject []projects, boolean dropSVNFolders) {
-		super("Operation_Disconnect"); //$NON-NLS-1$
+		super("Operation_Disconnect", SVNMessages.class); //$NON-NLS-1$
 		this.projects = projects;
 		this.dropSVNFolders = dropSVNFolders;
 	}

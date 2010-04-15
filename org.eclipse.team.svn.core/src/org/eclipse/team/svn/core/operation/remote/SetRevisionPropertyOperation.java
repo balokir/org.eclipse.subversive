@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.core.operation.remote;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryReference;
 import org.eclipse.team.svn.core.connector.SVNProperty;
@@ -61,7 +62,7 @@ public class SetRevisionPropertyOperation extends AbstractActionOperation {
 	 * @author Alexei Goncharov
 	 */
 	public SetRevisionPropertyOperation(IRepositoryLocation location, SVNRevision revision, IRevisionPropertiesProvider revPropProvider) {
-		super("Operation_SetRevisionProperty"); //$NON-NLS-1$
+		super("Operation_SetRevisionProperty", SVNMessages.class); //$NON-NLS-1$
 		this.revision = revision;
 		this.provider = revPropProvider;
 		this.location = location;

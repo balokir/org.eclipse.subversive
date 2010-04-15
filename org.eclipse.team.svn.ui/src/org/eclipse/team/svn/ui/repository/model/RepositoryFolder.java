@@ -62,7 +62,7 @@ public class RepositoryFolder extends RepositoryResource implements IParentTreeN
 		this.childrenOp = new GetRemoteFolderChildrenOperation(container, SVNTeamPreferences.getRepositoryBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.REPOSITORY_SHOW_EXTERNALS_NAME));
 		
 		if (!((IRepositoryContainer)this.resource).isChildrenCached()) {
-			CompositeOperation op = new CompositeOperation(this.childrenOp.getId());
+			CompositeOperation op = new CompositeOperation(this.childrenOp.getId(), this.childrenOp.getMessagesClass());
 			op.add(this.childrenOp);
 			op.add(this.getRefreshOperation(this.getViewer()));
 

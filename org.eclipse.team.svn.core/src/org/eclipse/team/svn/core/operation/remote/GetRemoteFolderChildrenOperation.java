@@ -22,6 +22,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
@@ -56,7 +57,7 @@ public class GetRemoteFolderChildrenOperation extends AbstractActionOperation {
 	}
 
 	public GetRemoteFolderChildrenOperation(IRepositoryContainer parent, boolean handleExternals, boolean sortChildren) {
-		super("Operation_GetRemoteChildren"); //$NON-NLS-1$
+		super("Operation_GetRemoteChildren", SVNMessages.class); //$NON-NLS-1$
 		this.parent = parent;
 		this.handleExternals = handleExternals;
 		this.sortChildren = sortChildren;

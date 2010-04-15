@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.svn.core.BaseMessages;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -35,7 +36,7 @@ public class MoveResourceOperation extends AbstractActionOperation {
 	protected IResource destination;
 
 	public MoveResourceOperation(IResource source, IResource destination) {
-		super("Operation_MoveLocal"); //$NON-NLS-1$
+		super("Operation_MoveLocal", SVNMessages.class); //$NON-NLS-1$
 		this.source = source;
 		this.destination = destination;
 	}

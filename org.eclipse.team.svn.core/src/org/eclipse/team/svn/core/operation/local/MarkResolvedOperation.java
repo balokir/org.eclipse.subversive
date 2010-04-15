@@ -13,6 +13,7 @@ package org.eclipse.team.svn.core.operation.local;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.SVNProgressMonitor;
@@ -31,13 +32,13 @@ public class MarkResolvedOperation extends AbstractWorkingCopyOperation {
 	protected int depth;
 	
 	public MarkResolvedOperation(IResource[] resources, int conflictResult, int depth) {
-		super("Operation_MarkResolved", resources); //$NON-NLS-1$
+		super("Operation_MarkResolved", SVNMessages.class, resources); //$NON-NLS-1$
 		this.conflictResult = conflictResult;
 		this.depth = depth;
 	}
 
 	public MarkResolvedOperation(IResourceProvider provider, int conflictResult, int depth) {
-		super("Operation_MarkResolved", provider); //$NON-NLS-1$
+		super("Operation_MarkResolved", SVNMessages.class, provider); //$NON-NLS-1$
 		this.conflictResult = conflictResult;
 		this.depth = depth;
 	}

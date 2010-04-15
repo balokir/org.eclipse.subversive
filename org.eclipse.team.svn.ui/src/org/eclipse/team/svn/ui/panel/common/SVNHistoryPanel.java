@@ -383,7 +383,7 @@ public class SVNHistoryPanel extends AbstractDialogPanel implements ISVNHistoryV
 		msgsOp.setIncludeMerged(SVNTeamPreferences.getMergeBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.MERGE_INCLUDE_MERGED_NAME));
 		
 		final IStructuredSelection selected = (IStructuredSelection)this.history.getTreeViewer().getSelection();
-    	IActionOperation showOp = new AbstractActionOperation("Operation_ShowMessages") { //$NON-NLS-1$
+    	IActionOperation showOp = new AbstractActionOperation("Operation_ShowMessages", SVNUIMessages.class) { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				SVNTeamUIPlugin.instance().getWorkbench().getDisplay().syncExec(new Runnable() {
 					public void run() {
@@ -417,7 +417,7 @@ public class SVNHistoryPanel extends AbstractDialogPanel implements ISVNHistoryV
 				});
 			}
 		};
-		CompositeOperation op = new CompositeOperation(showOp.getId());
+		CompositeOperation op = new CompositeOperation(showOp.getId(), showOp.getMessagesClass());
 		op.add(msgsOp);
 		op.add(showOp);
 		UIMonitorUtility.doTaskNowDefault(op, true);

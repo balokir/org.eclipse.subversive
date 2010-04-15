@@ -14,6 +14,7 @@ package org.eclipse.team.svn.core.operation.remote;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
@@ -36,8 +37,8 @@ public abstract class AbstractCopyMoveResourcesOperation extends AbstractReposit
 	protected String resName;
 	protected ArrayList<RevisionPair> revisionsPairs;
 	
-	public AbstractCopyMoveResourcesOperation(String operationName, IRepositoryResource destinationResource, IRepositoryResource []selectedResources, String message, String resName) {
-		super(operationName, selectedResources);
+	public AbstractCopyMoveResourcesOperation(String operationName, Class<? extends NLS> messagesClass, IRepositoryResource destinationResource, IRepositoryResource []selectedResources, String message, String resName) {
+		super(operationName, messagesClass, selectedResources);
 		this.destinationResource = destinationResource;
 		this.message = message;
 		this.resName = resName;

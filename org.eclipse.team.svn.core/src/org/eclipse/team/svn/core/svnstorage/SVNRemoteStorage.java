@@ -170,7 +170,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
     public void fireResourceStatesChangedEvent(final ResourceStatesChangedEvent event) {
 		if (event.resources.length > 0) {
 		    // events should be serialized and called asynchronous to caller thread
-	    	ProgressMonitorUtility.doTaskScheduled(new AbstractActionOperation("Operation_SendNotifications") { //$NON-NLS-1$
+	    	ProgressMonitorUtility.doTaskScheduled(new AbstractActionOperation("Operation_SendNotifications", SVNMessages.class) { //$NON-NLS-1$
 	    		protected void runImpl(IProgressMonitor monitor) throws Exception {
 	    	    	IResourceStatesListener []listeners = null;
 	    	    	synchronized (SVNRemoteStorage.this.resourceStateListeners) {
@@ -794,7 +794,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		synchronized (this.fetchQueue) {
 			this.fetchQueue.add(new Object[] {st, target});
 			if (this.fetchQueue.size() == 1) {
-				ProgressMonitorUtility.doTaskScheduledDefault(new AbstractActionOperation("Operation_UpdateSVNCache") { //$NON-NLS-1$
+				ProgressMonitorUtility.doTaskScheduledDefault(new AbstractActionOperation("Operation_UpdateSVNCache", SVNMessages.class) { //$NON-NLS-1$
 					public ISchedulingRule getSchedulingRule() {
 						return null;
 					}

@@ -34,7 +34,7 @@ public class CleanupAction extends AbstractWorkingCopyAction {
 		IResource []resources = this.getSelectedResources(IStateFilter.SF_VERSIONED_FOLDERS);
 
 		CleanupOperation mainOp = new CleanupOperation(resources);
-		CompositeOperation op = new CompositeOperation(mainOp.getId());
+		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 
 		op.add(mainOp);
 		op.add(new RefreshResourcesOperation(resources));

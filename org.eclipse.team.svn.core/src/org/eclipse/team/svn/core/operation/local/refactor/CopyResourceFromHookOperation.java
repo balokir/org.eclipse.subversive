@@ -39,7 +39,7 @@ public class CopyResourceFromHookOperation extends AbstractActionOperation {
 	protected IResource destination;
 	
 	public CopyResourceFromHookOperation(IResource source, IResource destination) {
-		super("Operation_CopyResourceFromHook"); //$NON-NLS-1$
+		super("Operation_CopyResourceFromHook", SVNMessages.class); //$NON-NLS-1$
 		this.source = source;
 		this.destination = destination;
 	}

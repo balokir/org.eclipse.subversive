@@ -21,6 +21,7 @@ import org.eclipse.team.svn.core.operation.remote.GetLogMessagesOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
@@ -41,7 +42,7 @@ public class CorrectRevisionOperation extends AbstractActionOperation {
 	}
 
 	public CorrectRevisionOperation(GetLogMessagesOperation []msgsOps, IRepositoryResource []repositoryResources, long []knownRevisions, IResource []resources) {
-		super("Operation_CorrectRevision"); //$NON-NLS-1$
+		super("Operation_CorrectRevision", SVNUIMessages.class); //$NON-NLS-1$
 		this.repositoryResources = repositoryResources;
 		this.knownRevisions = knownRevisions;
 		this.msgsOps = msgsOps;

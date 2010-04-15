@@ -14,6 +14,7 @@ package org.eclipse.team.svn.core.operation.file.management;
 import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -34,11 +35,11 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
  */
 public class CleanupOperation extends AbstractFileOperation {
 	public CleanupOperation(File []files) {
-		super("Operation_CleanupFile", files); //$NON-NLS-1$
+		super("Operation_CleanupFile", SVNMessages.class, files); //$NON-NLS-1$
 	}
 
 	public CleanupOperation(IFileProvider provider) {
-		super("Operation_CleanupFile", provider); //$NON-NLS-1$
+		super("Operation_CleanupFile", SVNMessages.class, provider); //$NON-NLS-1$
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {

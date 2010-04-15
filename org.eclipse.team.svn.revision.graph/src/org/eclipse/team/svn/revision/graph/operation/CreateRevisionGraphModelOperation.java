@@ -28,6 +28,7 @@ import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.ActivityCancelledException;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.revision.graph.PathRevision;
+import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
 import org.eclipse.team.svn.revision.graph.PathRevision.ReviosionNodeType;
 import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
 import org.eclipse.team.svn.revision.graph.cache.CacheChangedPath;
@@ -53,7 +54,7 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 	protected PathRevision resultNode; 
 	
 	public CreateRevisionGraphModelOperation(IRepositoryResource resource, IRepositoryCacheProvider cacheProvider) {
-		super("Operation_CreateRevisionGraphModel"); //$NON-NLS-1$
+		super("Operation_CreateRevisionGraphModel", SVNRevisionGraphMessages.class); //$NON-NLS-1$
 		this.resource = resource;		
 		this.cacheProvider = cacheProvider;
 	}

@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.core.operation.remote;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
@@ -26,7 +27,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
  */
 public class MoveResourcesOperation extends AbstractCopyMoveResourcesOperation {
 	public MoveResourcesOperation(IRepositoryResource destinationResource, IRepositoryResource[] selectedResources, String message, String name) {
-		super("Operation_MoveRemote", destinationResource, selectedResources, message, name); //$NON-NLS-1$
+		super("Operation_MoveRemote", SVNMessages.class, destinationResource, selectedResources, message, name); //$NON-NLS-1$
 	}
 	
 	protected String[] getRevisionPaths(String srcUrl, String dstUrl) {

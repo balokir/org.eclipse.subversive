@@ -36,6 +36,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.connector.SVNProperty.BuiltIn;
@@ -294,7 +295,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 			}
 			if (op != null) {
 				if (this.priorOp != null) {
-					CompositeOperation tmp = new CompositeOperation(op.getId());
+					CompositeOperation tmp = new CompositeOperation(op.getId(), op.getMessagesClass());
 					tmp.add(this.priorOp);
 					tmp.add(op, new IActionOperation[] {this.priorOp});
 					op = tmp;
@@ -305,7 +306,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 	}
 	
 	protected IActionOperation getCheckoutAsFolderOperationUnshared(IContainer targetFolder, IRepositoryResource []resources, Map mappings) {
-		CompositeOperation op = new CompositeOperation(SVNUIMessages.Operation_CheckoutAsFolder);
+		CompositeOperation op = new CompositeOperation(SVNUIMessages.Operation_CheckoutAsFolder, SVNUIMessages.class);
 		for (int i = 0; i < resources.length; i++) {
 			IPath location = FileUtility.getResourcePath(targetFolder);
 			File target = location.append((String)mappings.get(resources[i])).toFile();
@@ -325,7 +326,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 			externalsData += line;
 		}
 		
-		CompositeOperation op = new CompositeOperation(SVNUIMessages.Operation_CheckoutAsFolder);
+		CompositeOperation op = new CompositeOperation(SVNUIMessages.Operation_CheckoutAsFolder, SVNMessages.class);
 		IActionOperation [] dependency = null;
 		IResource []localResources = new IResource[] {targetFolder};
 		ILocalResource localResource = SVNRemoteStorage.instance().asLocalResourceAccessible(targetFolder);
@@ -396,7 +397,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 		modifiedResource.setSelectedRevision(revisionToCheckoutFrom);
 		CheckoutAsOperation mainOp = new CheckoutAsOperation(projectName, modifiedResource, location, recureDepth, SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME));
 		
-		CompositeOperation op = new CompositeOperation(mainOp.getId());
+		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 
 		if (isUseNewProjectWizard) {
 			SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(new IResource[] {mainOp.getProject()}, ""); //$NON-NLS-1$
@@ -415,7 +416,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 	}
 	
 	protected CompositeOperation prepareForMultiple(HashMap name2resources, String location, int recureDepth, String workingSetName, SVNRevision revisionToCheckoutFrom) {
-		CompositeOperation op = new CompositeOperation(""); //$NON-NLS-1$
+		CompositeOperation op = new CompositeOperation("", SVNUIMessages.class); //$NON-NLS-1$
 		IResource []locals = new IResource[name2resources.keySet().size()];
 		String name;
 		int i = 0;
@@ -444,7 +445,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 		}		
 		LocateProjectsOperation mainOp = new LocateProjectsOperation(resources, ExtensionsManager.getInstance().getCurrentCheckoutFactory().getLocateFilter(), 5); //TODO level limitation now is hardcoded		
 		
-		final CompositeOperation op = new CompositeOperation(mainOp.getId());
+		final CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 		op.add(mainOp);
 		IRepositoryResourceProvider provider = ExtensionsManager.getInstance().getCurrentCheckoutFactory().additionalProcessing(op, mainOp);
 		ObtainProjectNameOperation obtainOperation = new ObtainProjectNameOperation(provider);
@@ -455,7 +456,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 	}
 	
 	protected AbstractActionOperation getCheckoutProjectOperation(final IRepositoryResource []resources, final ObtainProjectNameOperation obtainOperation, final int recureDepth, final SVNRevision revisionToCheckoutFrom) {
-		return new AbstractActionOperation("Operation_CheckoutProjects") { //$NON-NLS-1$
+		return new AbstractActionOperation("Operation_CheckoutProjects", SVNUIMessages.class) { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 					public void run() {
@@ -502,7 +503,7 @@ public class CheckoutAsWizard extends AbstractSVNWizard {
 							if (op != null) {
 								String wsName = wizard.getWorkingSetName();
 								if (CheckoutAsWizard.this.priorOp != null || wsName != null) {
-									CompositeOperation tmp = new CompositeOperation(op.getId());
+									CompositeOperation tmp = new CompositeOperation(op.getId(), op.getMessagesClass());
 									if (CheckoutAsWizard.this.priorOp != null) {
 										tmp.add(CheckoutAsWizard.this.priorOp);
 										tmp.add(op, new IActionOperation[] {CheckoutAsWizard.this.priorOp});

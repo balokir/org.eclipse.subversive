@@ -43,6 +43,7 @@ import org.eclipse.team.svn.core.operation.local.AbstractWorkingCopyOperation;
 import org.eclipse.team.svn.core.operation.local.RefreshResourcesOperation;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.operation.RefreshRepositoryLocationsOperation;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
@@ -64,7 +65,7 @@ public class MigrateToEclipse extends AbstractMainMenuAction {
 	protected static final byte []NEW_ENTRY2 = new byte[] {'L', 'o', 'r', 'g', '/', 'e', 'c', 'l', 'i', 'p', 's', 'e'};
 	
 	public void run(IAction action) {
-		CompositeOperation op = new CompositeOperation("Operation_MigrateToEclipse"); //$NON-NLS-1$
+		CompositeOperation op = new CompositeOperation("Operation_MigrateToEclipse", SVNUIMessages.class); //$NON-NLS-1$
 		op.add(new ConvertRepositoryFiles());
 		op.add(new ConvertSettings());
 		RemapProjects remapOp = new RemapProjects();
@@ -112,7 +113,7 @@ main:
 		protected List<IProject> processed;
 		
 		public RemapProjects() {
-			super("Operation_RemapProjects", (IResource [])null); //$NON-NLS-1$
+			super("Operation_RemapProjects", SVNUIMessages.class, (IResource [])null); //$NON-NLS-1$
 		}
 
 		public IResource []getResources() {
@@ -155,7 +156,7 @@ main:
 	
 	protected static class ConvertSettings extends AbstractActionOperation {
 		public ConvertSettings() {
-			super("Operation_ConvertSettings"); //$NON-NLS-1$
+			super("Operation_ConvertSettings", SVNUIMessages.class); //$NON-NLS-1$
 		}
 	
 		protected void runImpl(IProgressMonitor monitor) throws Exception {
@@ -184,7 +185,7 @@ main:
 	
 	protected static class ConvertRepositoryFiles extends AbstractActionOperation {
 		public ConvertRepositoryFiles() {
-			super("Operation_ConvertRepositoryFiles"); //$NON-NLS-1$
+			super("Operation_ConvertRepositoryFiles", SVNUIMessages.class); //$NON-NLS-1$
 		}
 
 		protected void runImpl(IProgressMonitor monitor) throws Exception {

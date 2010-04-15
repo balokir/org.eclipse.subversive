@@ -14,6 +14,7 @@ package org.eclipse.team.svn.core.operation.remote;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
@@ -39,8 +40,8 @@ public class BranchTagOperation extends AbstractRepositoryOperation implements I
 	protected String message;
 	protected ArrayList<RevisionPair> revisionsPairs;
 
-	public BranchTagOperation(String operationName, IRepositoryResource []resources, IRepositoryResource destination, String message) {
-		super("Operation_" + operationName, resources); //$NON-NLS-1$
+	public BranchTagOperation(String operationName, Class<? extends NLS> messagesClass, IRepositoryResource []resources, IRepositoryResource destination, String message) {
+		super("Operation_" + operationName, messagesClass, resources); //$NON-NLS-1$
 		this.destinationUrl = destination.getUrl();
 		this.message = message;
 	}

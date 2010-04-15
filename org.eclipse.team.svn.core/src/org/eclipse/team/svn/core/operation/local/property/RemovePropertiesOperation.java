@@ -13,6 +13,7 @@ package org.eclipse.team.svn.core.operation.local.property;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
@@ -35,13 +36,13 @@ public class RemovePropertiesOperation extends AbstractWorkingCopyOperation {
 	protected boolean isRecursive;
 	
 	public RemovePropertiesOperation(IResource []resources, SVNProperty []data, boolean isRecursive) {
-		super("Operation_RemoveProperties", resources); //$NON-NLS-1$
+		super("Operation_RemoveProperties", SVNMessages.class, resources); //$NON-NLS-1$
 		this.data = data;
 		this.isRecursive = isRecursive; 
 	}
 	
 	public RemovePropertiesOperation(IResourceProvider resourceProvider, SVNProperty []data, boolean isRecursive) {
-		super("Operation_RemoveProperties", resourceProvider); //$NON-NLS-1$
+		super("Operation_RemoveProperties", SVNMessages.class, resourceProvider); //$NON-NLS-1$
 		this.data = data;
 		this.isRecursive = isRecursive; 
 	}

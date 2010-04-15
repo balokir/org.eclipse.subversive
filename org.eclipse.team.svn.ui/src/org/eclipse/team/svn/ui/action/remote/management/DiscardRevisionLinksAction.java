@@ -21,6 +21,7 @@ import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.remote.management.SaveRepositoryLocationsOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.IRevisionLink;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractRepositoryTeamAction;
 import org.eclipse.team.svn.ui.dialog.DiscardConfirmationDialog;
 import org.eclipse.team.svn.ui.operation.RefreshRepositoryLocationsOperation;
@@ -45,7 +46,7 @@ public class DiscardRevisionLinksAction extends AbstractRepositoryTeamAction {
 			for (int i = 0; i < revisions.length; i++) {
 				locations.add(revisions[i].getRevisionLink().getRepositoryResource().getRepositoryLocation());
 			}
-			AbstractActionOperation mainOp = new AbstractActionOperation("Operation_RemoveRevisionLinks") { //$NON-NLS-1$
+			AbstractActionOperation mainOp = new AbstractActionOperation("Operation_RemoveRevisionLinks", SVNUIMessages.class) { //$NON-NLS-1$
 				protected void runImpl(IProgressMonitor monitor) throws Exception {
 					for (int i = 0; i < revisions.length; i++) {
 						final IRevisionLink link = revisions[i].getRevisionLink();
@@ -58,7 +59,7 @@ public class DiscardRevisionLinksAction extends AbstractRepositoryTeamAction {
 					}
 				}
 			};
-			CompositeOperation op = new CompositeOperation(mainOp.getId());
+			CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 			op.add(mainOp);
 			op.add(new SaveRepositoryLocationsOperation());
 			op.add(new RefreshRepositoryLocationsOperation(locations.toArray(new IRepositoryLocation[locations.size()]), true));

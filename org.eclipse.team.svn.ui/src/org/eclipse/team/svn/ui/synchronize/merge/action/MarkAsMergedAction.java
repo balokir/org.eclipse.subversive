@@ -54,7 +54,7 @@ public class MarkAsMergedAction extends AbstractSynchronizeModelAction {
 		IResource []resources = this.syncInfoSelector.getSelectedResources();
 
 		MarkResolvedOperation mainOp = new MarkResolvedOperation(resources, SVNConflictResolution.CHOOSE_MERGED, ISVNConnector.Depth.INFINITY);
-		CompositeOperation op = new CompositeOperation(mainOp.getId());
+		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 		op.add(mainOp);
 		op.add(new RefreshResourcesOperation(FileUtility.getParents(resources, false)));
 		op.add(new ClearMergeStatusesOperation(resources));

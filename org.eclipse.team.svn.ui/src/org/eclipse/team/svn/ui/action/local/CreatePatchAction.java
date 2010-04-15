@@ -49,7 +49,7 @@ public class CreatePatchAction extends AbstractWorkingCopyAction {
 			WizardDialog dialog = new WizardDialog(shell, wizard);
 			if (dialog.open() == 0) {
 				CreatePatchOperation mainOp = new CreatePatchOperation(wizard.getSelection(), wizard.getFileName(), wizard.isRecursive(), wizard.isIgnoreDeleted(), wizard.isProcessBinary(), wizard.isProcessUnversioned(), wizard.getRootPoint());
-				CompositeOperation op = new CompositeOperation(mainOp.getId());
+				CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 				op.add(mainOp);
 				switch (wizard.getWriteMode()) {
 					case CreatePatchWizard.WRITE_TO_WORKSPACE_FILE: {

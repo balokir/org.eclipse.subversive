@@ -92,7 +92,7 @@ public class UpdateAction extends AbstractRecursiveTeamAction {
 		UpdateOperation mainOp = new UpdateOperation(updateSet, selectedRevision, ignoreExternals);
 		mainOp.setDepth(depth);
 		
-		CompositeOperation op = new CompositeOperation(mainOp.getId());
+		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 		
 		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(updateSet);
 		op.add(saveOp);

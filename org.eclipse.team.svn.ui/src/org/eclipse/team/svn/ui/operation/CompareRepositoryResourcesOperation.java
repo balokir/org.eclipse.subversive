@@ -17,6 +17,7 @@ import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.remote.RunExternalRepositoryCompareOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.preferences.SVNTeamDiffViewerPage;
 
 /**
@@ -30,7 +31,7 @@ public class CompareRepositoryResourcesOperation extends CompositeOperation {
 	protected CompareRepositoryResourcesInernalOperation internalCompare;
 	
 	public CompareRepositoryResourcesOperation(IRepositoryResourceProvider provider, boolean forceReuse) {
-		super("Operation_CompareRepository"); //$NON-NLS-1$		
+		super("Operation_CompareRepository", SVNUIMessages.class); //$NON-NLS-1$		
 		
 		final RunExternalRepositoryCompareOperation externalCompare = new RunExternalRepositoryCompareOperation(provider, SVNTeamDiffViewerPage.loadDiffViewerSettings());
 		this.add(externalCompare);

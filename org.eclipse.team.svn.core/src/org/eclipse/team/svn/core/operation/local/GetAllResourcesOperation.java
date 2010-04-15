@@ -14,6 +14,7 @@ package org.eclipse.team.svn.core.operation.local;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 
@@ -27,7 +28,7 @@ public class GetAllResourcesOperation extends AbstractActionOperation {
 	protected IResource []children;
 
 	public GetAllResourcesOperation(IContainer container) {
-		super("Operation_GetResourceList"); //$NON-NLS-1$
+		super("Operation_GetResourceList", SVNMessages.class); //$NON-NLS-1$
 		this.container = container;
 		this.children = new IResource[0];
 	}

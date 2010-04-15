@@ -13,6 +13,7 @@ package org.eclipse.team.svn.core.operation.remote;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
 import org.eclipse.team.svn.core.connector.SVNLogPath;
@@ -36,11 +37,11 @@ public class LocateResourceURLInHistoryOperation extends AbstractRepositoryOpera
 	protected IRepositoryResource []converted;
 
 	public LocateResourceURLInHistoryOperation(IRepositoryResource []resources) {
-		super("Operation_LocateURLInHistory", resources); //$NON-NLS-1$
+		super("Operation_LocateURLInHistory", SVNMessages.class, resources); //$NON-NLS-1$
 	}
 
 	public LocateResourceURLInHistoryOperation(IRepositoryResourceProvider provider) {
-		super("Operation_LocateURLInHistory", provider); //$NON-NLS-1$
+		super("Operation_LocateURLInHistory", SVNMessages.class, provider); //$NON-NLS-1$
 	}
 
 	public IRepositoryResource []getRepositoryResources() {

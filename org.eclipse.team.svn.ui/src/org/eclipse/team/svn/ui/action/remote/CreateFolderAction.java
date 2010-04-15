@@ -44,7 +44,7 @@ public class CreateFolderAction extends AbstractRepositoryTeamAction {
 			String message = panel.getMessage();
 
 			CreateFolderOperation mainOp = new CreateFolderOperation(resources[0], folder, message);
-			CompositeOperation op = new CompositeOperation(mainOp.getId());
+			CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 			
 			op.add(mainOp);
 			op.add(new RefreshRemoteResourcesOperation(resources));

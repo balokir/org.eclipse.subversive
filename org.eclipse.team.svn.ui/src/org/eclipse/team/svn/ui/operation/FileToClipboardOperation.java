@@ -21,6 +21,7 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
@@ -37,7 +38,7 @@ public class FileToClipboardOperation extends AbstractActionOperation {
 	}
 	
 	public FileToClipboardOperation(String fileName, boolean deleteFile) {
-		super("Operation_FileToClipboard"); //$NON-NLS-1$
+		super("Operation_FileToClipboard", SVNUIMessages.class); //$NON-NLS-1$
 		this.fileName = fileName;
 		this.deleteFile = deleteFile;
 	}

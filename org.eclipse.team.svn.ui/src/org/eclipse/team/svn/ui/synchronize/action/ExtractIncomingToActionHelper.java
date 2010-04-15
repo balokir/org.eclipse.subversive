@@ -107,7 +107,7 @@ public class ExtractIncomingToActionHelper extends AbstractActionHelper {
 		}
 		InitExtractLogOperation logger = new InitExtractLogOperation(path);
 		ExtractToOperationRemote mainOp = new ExtractToOperationRemote(incomingResourcesToOperate.toArray(new IRepositoryResource[incomingResourcesToOperate.size()]), url2status, markedForDelition, path,  resource2project, logger, true);
-		CompositeOperation op = new CompositeOperation(mainOp.getId());
+		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 		op.add(logger);
 		op.add(mainOp);
 		op.add(new FiniExtractLogOperation(logger));

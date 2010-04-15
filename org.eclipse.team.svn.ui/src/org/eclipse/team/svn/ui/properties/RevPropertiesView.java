@@ -73,9 +73,9 @@ public class RevPropertiesView extends ViewPart implements IRepositoriesStateCha
 		}
 		this.setContentDescription(SVNUIMessages.format(SVNUIMessages.RevisionPropertyView_Decript, new String [] {String.valueOf(this.location), String.valueOf(this.revision)}));
 		this.revPropComposite.setPending(true);
-		CompositeOperation op = new CompositeOperation("ShowRevProp"); //$NON-NLS-1$
+		CompositeOperation op = new CompositeOperation("ShowRevProp", SVNUIMessages.class); //$NON-NLS-1$
 		op.add((IActionOperation)(this.provider = new GetRevisionPropertiesOperation(this.location, this.revision)));
-		op.add(new AbstractActionOperation("ShowRevProp") { //$NON-NLS-1$
+		op.add(new AbstractActionOperation("ShowRevProp", SVNUIMessages.class) { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				RevPropertiesView.this.revPropComposite.setInput(RevPropertiesView.this.provider.getRevisionProperties());
 				RevPropertiesView.this.revPropComposite.setPending(false);

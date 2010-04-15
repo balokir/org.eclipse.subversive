@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 
 /**
@@ -31,12 +32,12 @@ public class CompositeOperation extends AbstractActionOperation implements ICons
 	protected boolean checkWarnings;
 	protected int totalWeight;
 
-	public CompositeOperation(String operationName) {
-		this(operationName, false);
+	public CompositeOperation(String operationName, Class<? extends NLS> messagesClass) {
+		this(operationName, messagesClass, false);
 	}
 	
-	public CompositeOperation(String operationName, boolean checkWarnings) {
-		super(operationName);
+	public CompositeOperation(String operationName, Class<? extends NLS> messagesClass, boolean checkWarnings) {
+		super(operationName, messagesClass);
 		this.operations = new ArrayList<Pair>();
 		this.checkWarnings = checkWarnings;
 		this.totalWeight = 0;

@@ -25,6 +25,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -103,7 +104,7 @@ public class UpdateAction extends AbstractSynchronizeModelAction {
 			}
 		}
 
-		CompositeOperation op = new CompositeOperation("Operation_Update"); //$NON-NLS-1$
+		CompositeOperation op = new CompositeOperation("Operation_Update", SVNMessages.class); //$NON-NLS-1$
 		
 		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
 		op.add(saveOp);

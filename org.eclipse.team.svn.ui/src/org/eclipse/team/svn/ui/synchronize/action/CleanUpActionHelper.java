@@ -39,7 +39,7 @@ public class CleanUpActionHelper extends AbstractActionHelper {
 		IResource[] selectedResources = this.getAllSelectedResources();
 		IResource[] filteredResources = FileUtility.filterResources(selectedResources, IStateFilter.SF_VERSIONED_FOLDERS, IResource.DEPTH_ZERO);
 		CleanupOperation mainOp = new CleanupOperation(filteredResources);
-		CompositeOperation op = new CompositeOperation(mainOp.getId());
+		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 		op.add(mainOp);
 		op.add(new RefreshResourcesOperation(filteredResources));
 		return op;

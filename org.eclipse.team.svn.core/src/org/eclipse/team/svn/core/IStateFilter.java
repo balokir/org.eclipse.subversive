@@ -575,7 +575,7 @@ public interface IStateFilter {
 				return false;
 			}
 			final SVNProperty [][]propData = new SVNProperty[1][];
-			IActionOperation op = new AbstractActionOperation("Operation_CheckProperty") { //$NON-NLS-1$
+			IActionOperation op = new AbstractActionOperation("Operation_CheckProperty", SVNMessages.class) { //$NON-NLS-1$
 				protected void runImpl(IProgressMonitor monitor) throws Exception {
 					IRepositoryLocation location = SVNRemoteStorage.instance().getRepositoryLocation(resource);
 					ISVNConnector proxy = location.acquireSVNProxy();

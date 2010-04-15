@@ -61,7 +61,7 @@ public class BranchTagAction extends AbstractRepositoryTeamAction {
 		PreparedBranchTagOperation op = BranchTagAction.getBranchTagOperation(resources, this.getShell(), this.nodeType);
 
 		if (op != null) {
-			CompositeOperation composite = new CompositeOperation(op.getId());
+			CompositeOperation composite = new CompositeOperation(op.getId(), op.getMessagesClass());
 			composite.add(op);
 			composite.add(new RefreshRemoteResourcesOperation(new IRepositoryResource[] {op.getDestination().getParent()}), new IActionOperation[] {op});
 			this.runScheduled(composite);

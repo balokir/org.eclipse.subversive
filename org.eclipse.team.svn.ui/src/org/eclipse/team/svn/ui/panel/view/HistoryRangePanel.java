@@ -107,7 +107,7 @@ public class HistoryRangePanel extends AbstractDialogPanel {
 		this.initStartResource.setSelectedRevision(this.getStartRevision());
 		this.initStopResource.setSelectedRevision(this.getStopRevision());
 
-		UIMonitorUtility.doTaskNowDefault(new AbstractActionOperation("Operation_CheckRevisions") { //$NON-NLS-1$
+		UIMonitorUtility.doTaskNowDefault(new AbstractActionOperation("Operation_CheckRevisions", SVNUIMessages.class) { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				ISVNConnector proxy = HistoryRangePanel.this.initStartResource.getRepositoryLocation().acquireSVNProxy();
 				try {

@@ -39,7 +39,7 @@ public class CreateFileOperation extends AbstractRepositoryOperation implements 
 	protected RevisionPair []revisionPair;
 	
 	public CreateFileOperation(IRepositoryResource resource, String path, String message, String []fileNames) {
-		super("Operation_CreateFile", new IRepositoryResource[] {resource}); //$NON-NLS-1$
+		super("Operation_CreateFile", SVNMessages.class, new IRepositoryResource[] {resource}); //$NON-NLS-1$
 		this.path = path;
 		this.message = message;
 		this.fileNames = fileNames;

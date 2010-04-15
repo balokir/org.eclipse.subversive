@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
@@ -36,7 +37,7 @@ public class CheckoutOperation extends AbstractActionOperation implements IResou
 	protected ISchedulingRule rule;
 
 	public CheckoutOperation(Map<String, IRepositoryResource> checkoutMap, boolean respectHierarchy, String location, int recureDepth, boolean ignoreExternals) {
-		super("Operation_CheckOut"); //$NON-NLS-1$
+		super("Operation_CheckOut", SVNMessages.class); //$NON-NLS-1$
 		
 		ArrayList<IProject> projects = new ArrayList<IProject>();
 		ArrayList<CheckoutAsOperation> operations = new ArrayList<CheckoutAsOperation>();

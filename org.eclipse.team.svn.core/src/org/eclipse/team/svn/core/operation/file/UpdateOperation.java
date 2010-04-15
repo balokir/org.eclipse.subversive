@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -42,14 +43,14 @@ public class UpdateOperation extends AbstractFileConflictDetectionOperation impl
 	protected int depth = ISVNConnector.Depth.INFINITY;
 	
 	public UpdateOperation(File []files, SVNRevision selectedRevision, boolean updateUnresolved, boolean ignoreExternals) {
-		super("Operation_UpdateFile", files); //$NON-NLS-1$
+		super("Operation_UpdateFile", SVNMessages.class, files); //$NON-NLS-1$
 		this.updateUnresolved = updateUnresolved;
 		this.selectedRevision = selectedRevision;
 		this.ignoreExternals = ignoreExternals;
 	}
 
 	public UpdateOperation(IFileProvider provider, SVNRevision selectedRevision, boolean updateUnresolved, boolean ignoreExternals) {
-		super("Operation_UpdateFile", provider); //$NON-NLS-1$
+		super("Operation_UpdateFile", SVNMessages.class, provider); //$NON-NLS-1$
 		this.updateUnresolved = updateUnresolved;
 		this.selectedRevision = selectedRevision;
 		this.ignoreExternals = ignoreExternals;

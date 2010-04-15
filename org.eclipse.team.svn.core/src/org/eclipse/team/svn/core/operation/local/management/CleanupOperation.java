@@ -13,6 +13,7 @@ package org.eclipse.team.svn.core.operation.local.management;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -32,11 +33,11 @@ import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
  */
 public class CleanupOperation extends AbstractWorkingCopyOperation {
 	public CleanupOperation(IResource[] resources) {
-		super("Operation_CleanupResources", resources); //$NON-NLS-1$
+		super("Operation_CleanupResources", SVNMessages.class, resources); //$NON-NLS-1$
 	}
 
 	public CleanupOperation(IResourceProvider provider) {
-		super("Operation_CleanupResources", provider); //$NON-NLS-1$
+		super("Operation_CleanupResources", SVNMessages.class, provider); //$NON-NLS-1$
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {

@@ -23,6 +23,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.svn.core.IConnectedProjectInformation;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -44,7 +45,7 @@ public class FindRelatedProjectsOperation extends AbstractActionOperation implem
 	}
 	
 	public FindRelatedProjectsOperation(IRepositoryLocation location, IProject []exceptProjects) {
-		super("Operation_FindRelatedProjects"); //$NON-NLS-1$
+		super("Operation_FindRelatedProjects", SVNMessages.class); //$NON-NLS-1$
 		this.location = location;
 		if (exceptProjects != null) {
 			this.exceptProjects = new HashSet<IProject>(Arrays.asList(exceptProjects));

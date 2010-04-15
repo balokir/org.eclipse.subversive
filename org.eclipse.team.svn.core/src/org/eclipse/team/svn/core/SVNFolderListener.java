@@ -103,7 +103,7 @@ public class SVNFolderListener implements IResourceChangeListener {
 										location = SVNRemoteStorage.instance().newRepositoryLocation();
 										SVNUtility.initializeRepositoryLocation(location, url);
 										AddRepositoryLocationOperation mainOp = new AddRepositoryLocationOperation(location);
-										CompositeOperation op = new CompositeOperation(mainOp.getId());
+										CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 										op.add(mainOp);
 										op.add(new SaveRepositoryLocationsOperation());
 										// important! location doubles when it is added asynchronously and several projects for the same location are imported 

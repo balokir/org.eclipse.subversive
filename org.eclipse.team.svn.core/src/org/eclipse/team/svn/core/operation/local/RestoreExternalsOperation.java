@@ -15,6 +15,7 @@ import java.util.Iterator;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.operation.local.change.IActionOperationProcessor;
@@ -30,7 +31,7 @@ public class RestoreExternalsOperation extends AbstractWorkingCopyOperation impl
 	protected FreezeExternalsOperation freezeOp;
 
 	public RestoreExternalsOperation(FreezeExternalsOperation freezeOp) {
-		super("Operation_RestoreExternals", freezeOp); //$NON-NLS-1$
+		super("Operation_RestoreExternals", SVNMessages.class, freezeOp); //$NON-NLS-1$
 		this.freezeOp = freezeOp;
 	}
 

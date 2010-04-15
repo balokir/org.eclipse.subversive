@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
@@ -107,10 +108,10 @@ public class RevPropertiesEditPanel extends AbstractPropertyEditPanel {
 	public static void doSetRevisionProperty(RevPropertiesEditPanel panel, final IRepositoryLocation location, final SVNRevision revision) {
 		final SVNProperty []data = new SVNProperty[] {new SVNProperty(panel.getPropertyName(), panel.getPropertyValue())};
 		SetRevisionPropertyOperation setPropOp = null;
-		CompositeOperation op = new CompositeOperation(""); //$NON-NLS-1$
+		CompositeOperation op = new CompositeOperation("", SVNUIMessages.class); //$NON-NLS-1$
 		if (panel.isFileSelected()) {
 			final File f = new File(panel.getPropertyFile());
-			AbstractActionOperation loadOp = new AbstractActionOperation("Operation_SLoadFileContent") { //$NON-NLS-1$
+			AbstractActionOperation loadOp = new AbstractActionOperation("Operation_SLoadFileContent", SVNUIMessages.class) { //$NON-NLS-1$
 	            protected void runImpl(IProgressMonitor monitor) throws Exception {
 	                FileInputStream input = null;
 	                try {
@@ -139,7 +140,7 @@ public class RevPropertiesEditPanel extends AbstractPropertyEditPanel {
 		}
 		op.setOperationName(setPropOp.getOperationName());
 		op.add(setPropOp);
-		op.add(new AbstractActionOperation(setPropOp.getOperationName()) {
+		op.add(new AbstractActionOperation(setPropOp.getOperationName(), SVNMessages.class) {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				SVNRemoteStorage.instance().fireRevisionPropertyChangeEvent(new RevisonPropertyChangeEvent(
 						RevisonPropertyChangeEvent.SET, 

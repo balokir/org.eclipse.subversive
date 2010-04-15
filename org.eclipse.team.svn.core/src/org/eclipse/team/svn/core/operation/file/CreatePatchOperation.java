@@ -14,6 +14,7 @@ package org.eclipse.team.svn.core.operation.file;
 import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
@@ -35,7 +36,7 @@ public class CreatePatchOperation extends AbstractFileOperation {
 	protected boolean useRelativePath;
 
 	public CreatePatchOperation(File file, String fileName, boolean recurse, boolean ignoreDeleted, boolean processBinary, boolean useRelativePath) {
-		super("Operation_CreatePatchFile", new File[] {file}); //$NON-NLS-1$
+		super("Operation_CreatePatchFile", SVNMessages.class, new File[] {file}); //$NON-NLS-1$
 		this.fileName = fileName;
 		this.recurse = recurse;
 		this.ignoreDeleted = ignoreDeleted;

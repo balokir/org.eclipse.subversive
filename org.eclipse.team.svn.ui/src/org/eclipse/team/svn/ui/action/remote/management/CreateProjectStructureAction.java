@@ -48,7 +48,7 @@ public class CreateProjectStructureAction extends AbstractRepositoryTeamAction {
 			String []folders = name.length() == 0 ? new String[] {trunk, branches, tags} : new String[] {name + "/" + trunk, name + "/" + branches, name + "/" + tags}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 			CreateFolderOperation mainOp = new CreateFolderOperation(parent[0], folders, panel.getMessage());
-			CompositeOperation op = new CompositeOperation(mainOp.getId());
+			CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 			op.add(mainOp);
 			op.add(new RefreshRemoteResourcesOperation(parent), new IActionOperation[] {mainOp});
 			

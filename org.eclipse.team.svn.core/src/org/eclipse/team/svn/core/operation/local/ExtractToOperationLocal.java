@@ -47,7 +47,7 @@ public class ExtractToOperationLocal extends AbstractActionOperation {
 	 * @param delitionAllowed - specifies if deletion allowed if the resource is marked for deletion
 	 */
 	public ExtractToOperationLocal(IResource [] outgoingResources, String path, boolean delitionAllowed, InitExtractLogOperation logger) {
-		super(SVNMessages.Operation_ExtractTo);
+		super(SVNMessages.Operation_ExtractTo, SVNMessages.class);
 		this.outgoingResources = outgoingResources;
 		this.path = path;
 		this.delitionAllowed = delitionAllowed;

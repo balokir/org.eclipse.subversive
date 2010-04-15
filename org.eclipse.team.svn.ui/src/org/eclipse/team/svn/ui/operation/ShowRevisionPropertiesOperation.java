@@ -16,6 +16,7 @@ import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.properties.RevPropertiesView;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.IWorkbenchPage;
@@ -33,7 +34,7 @@ public class ShowRevisionPropertiesOperation extends AbstractActionOperation {
 	protected IWorkbenchPage page;
 	
 	public ShowRevisionPropertiesOperation(IWorkbenchPage page, IRepositoryLocation location, SVNRevision revision) {
-		super("Operation_ShowRevProperties"); //$NON-NLS-1$
+		super("Operation_ShowRevProperties", SVNUIMessages.class); //$NON-NLS-1$
 		this.page = page;
 		this.location = location;
 		this.revision = revision;

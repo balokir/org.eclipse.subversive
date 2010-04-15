@@ -31,7 +31,7 @@ public class RevisionGraphUtility {
 	protected final static String EDITOR_ID = "org.eclipse.team.svn.revision.graph.graphic.RevisionGraphEditor";  //$NON-NLS-1$
 	
 	public static CompositeOperation getRevisionGraphOperation(final IRepositoryResource resource) {
-		CompositeOperation op = new CompositeOperation("Operation_ShowRevisionGraph"); //$NON-NLS-1$
+		CompositeOperation op = new CompositeOperation("Operation_ShowRevisionGraph", SVNRevisionGraphMessages.class); //$NON-NLS-1$
 		
 		//create cache
 		CreateCacheDataOperation createCacheOp = new CreateCacheDataOperation(resource, false);
@@ -42,7 +42,7 @@ public class RevisionGraphUtility {
 		op.add(createModelOp, new IActionOperation[] {createCacheOp} );		
 		
 		//visualize
-		AbstractActionOperation showRevisionGraphOp = new AbstractActionOperation("Operation_ShowRevisionGraph") { //$NON-NLS-1$
+		AbstractActionOperation showRevisionGraphOp = new AbstractActionOperation("Operation_ShowRevisionGraph", SVNRevisionGraphMessages.class) { //$NON-NLS-1$
 			@Override
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				UIMonitorUtility.getDisplay().syncExec(new Runnable() {

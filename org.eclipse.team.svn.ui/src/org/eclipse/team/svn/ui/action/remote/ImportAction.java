@@ -39,7 +39,7 @@ public class ImportAction extends AbstractRepositoryTeamAction {
 		DefaultDialog dialog = new DefaultDialog(this.getShell(), panel);
 	    if (dialog.open() == 0) {
 	    	ImportOperation mainOp = new ImportOperation(resource, panel.getLocation(), panel.getMessage(), panel.getDepth());
-			CompositeOperation op = new CompositeOperation(mainOp.getId());
+			CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 			op.add(mainOp);
 			op.add(new RefreshRemoteResourcesOperation(this.getSelectedRepositoryResources()));
 			op.add(new SetRevisionAuthorNameOperation(mainOp, Options.FORCE));

@@ -17,6 +17,7 @@ import org.eclipse.team.svn.core.operation.remote.AbstractRepositoryOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.repository.RepositoriesView;
 import org.eclipse.team.svn.ui.repository.RepositoryTreeViewer;
 import org.eclipse.team.svn.ui.repository.model.IDataTreeNode;
@@ -29,11 +30,11 @@ import org.eclipse.team.svn.ui.repository.model.IDataTreeNode;
 public class RefreshRemoteResourcesOperation extends AbstractRepositoryOperation {
 
 	public RefreshRemoteResourcesOperation(IRepositoryResource []resources) {
-		super("Operation_RefreshRemote", resources); //$NON-NLS-1$
+		super("Operation_RefreshRemote", SVNUIMessages.class, resources); //$NON-NLS-1$
 	}
 
 	public RefreshRemoteResourcesOperation(IRepositoryResourceProvider provider) {
-		super("Operation_RefreshRemote", provider); //$NON-NLS-1$
+		super("Operation_RefreshRemote", SVNUIMessages.class, provider); //$NON-NLS-1$
 	}
 	
 	public int getOperationWeight() {

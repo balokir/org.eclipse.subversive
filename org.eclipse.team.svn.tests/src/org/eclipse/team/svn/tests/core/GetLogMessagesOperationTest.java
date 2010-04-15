@@ -25,7 +25,7 @@ public abstract class GetLogMessagesOperationTest extends AbstractOperationTestC
 	protected IActionOperation getOperation() {
 	    SVNRemoteStorage storage = SVNRemoteStorage.instance();
 	    GetLogMessagesOperation mainOp = new GetLogMessagesOperation(storage.asRepositoryResource(this.getFirstProject()));
-	    CompositeOperation op = new CompositeOperation(mainOp.getId());
+	    CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 	    op.add(mainOp);
 	    op.add(new GetLogMessagesOperation(storage.asRepositoryResource(this.getSecondProject())));
 		return op;

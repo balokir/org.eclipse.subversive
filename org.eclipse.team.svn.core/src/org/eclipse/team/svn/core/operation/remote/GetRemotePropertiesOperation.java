@@ -14,6 +14,7 @@ package org.eclipse.team.svn.core.operation.remote;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.BaseMessages;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
@@ -32,11 +33,11 @@ public class GetRemotePropertiesOperation extends AbstractRepositoryOperation im
 	protected SVNProperty []properties;
 
 	public GetRemotePropertiesOperation(IRepositoryResource resource) {
-		super("Operation_GetRevisionProperties", new IRepositoryResource[] {resource}); //$NON-NLS-1$
+		super("Operation_GetRevisionProperties", SVNMessages.class, new IRepositoryResource[] {resource}); //$NON-NLS-1$
 	}
 	
 	public GetRemotePropertiesOperation(IRepositoryResourceProvider provider) {
-		super("Operation_GetRevisionProperties", provider); //$NON-NLS-1$
+		super("Operation_GetRevisionProperties", SVNMessages.class, provider); //$NON-NLS-1$
 	}
 
 	public SVNProperty []getProperties() {

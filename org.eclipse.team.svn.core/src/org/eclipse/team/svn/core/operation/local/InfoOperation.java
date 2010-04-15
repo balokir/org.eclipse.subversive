@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNChangeStatus;
 import org.eclipse.team.svn.core.connector.SVNEntryInfo;
@@ -41,7 +42,7 @@ public class InfoOperation extends AbstractActionOperation {
     protected SVNEntryInfo info;
 
     public InfoOperation(IResource resource) {
-        super("Operation_Info"); //$NON-NLS-1$
+        super("Operation_Info", SVNMessages.class); //$NON-NLS-1$
         this.resource = resource;
     }
 

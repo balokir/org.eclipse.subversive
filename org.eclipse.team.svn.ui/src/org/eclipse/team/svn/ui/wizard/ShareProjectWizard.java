@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.svn.core.IStateFilter;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
@@ -206,7 +207,7 @@ public class ShareProjectWizard extends AbstractSVNWizard implements IConfigurat
 			this.getFreshConnectOperation() :
 			this.getAlreadyConnectedOperation(this.connectedPage.createUsingProjectSettings());
 
-		final CompositeOperation op = new CompositeOperation(mainOp.getId());
+		final CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 
 		op.add(new NotifyProjectStatesChangedOperation(mainOp.getProjects(), ProjectStatesChangedEvent.ST_PRE_SHARED));
 		
@@ -273,12 +274,12 @@ public class ShareProjectWizard extends AbstractSVNWizard implements IConfigurat
 				return result[0] == 0;
 			}
 		});
-		CompositeOperationImpl op = new CompositeOperationImpl(mainOp.getId());
+		CompositeOperationImpl op = new CompositeOperationImpl(mainOp.getId(), mainOp.getMessagesClass());
 		
 		//drop .svn folders if we want to do a fresh share
 		IActionOperation predecessor = null;
 		if (this.alreadyConnected()) {
-			op.add(predecessor = new AbstractActionOperation("Operation_DropSVNMeta") { //$NON-NLS-1$
+			op.add(predecessor = new AbstractActionOperation("Operation_DropSVNMeta", SVNUIMessages.class) { //$NON-NLS-1$
 				public ISchedulingRule getSchedulingRule() {
 					return MultiRule.combine(ShareProjectWizard.this.getProjects());
 				}
@@ -343,8 +344,8 @@ public class ShareProjectWizard extends AbstractSVNWizard implements IConfigurat
 	}
 	
 	protected class CompositeOperationImpl extends CompositeOperation implements IShareProjectWrapper {
-		public CompositeOperationImpl(String name) {
-			super(name);
+		public CompositeOperationImpl(String name, Class<? extends NLS> messagesClass) {
+			super(name, messagesClass);
 		}
 
 		public IResource []getResources() {
@@ -361,7 +362,7 @@ public class ShareProjectWizard extends AbstractSVNWizard implements IConfigurat
 		protected IActionOperation mainOp;
 		
 		public PostShareCommitOperation(IActionOperation mainOp) {
-			super("Operation_PrepareCommit"); //$NON-NLS-1$
+			super("Operation_PrepareCommit", SVNUIMessages.class); //$NON-NLS-1$
 			this.mainOp = mainOp;
 		}
 		

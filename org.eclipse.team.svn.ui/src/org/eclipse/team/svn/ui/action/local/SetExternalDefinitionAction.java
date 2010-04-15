@@ -57,7 +57,7 @@ public class SetExternalDefinitionAction extends AbstractNonRecursiveTeamAction 
 			ConcatenateProperyDataOperation concatOp = new ConcatenateProperyDataOperation(resource, SVNProperty.BuiltIn.EXTERNALS, generatePropOp);
 			concatOp.setStringValuesSeparator(""); //$NON-NLS-1$
 			SetPropertiesOperation setPropsOp = new SetPropertiesOperation(new IResource[] {resource}, concatOp, false);			
-			CompositeOperation op = new CompositeOperation(setPropsOp.getId());
+			CompositeOperation op = new CompositeOperation(setPropsOp.getId(), setPropsOp.getMessagesClass());
 			op.add(generatePropOp);
 			op.add(concatOp, new IActionOperation[]{generatePropOp});
 			op.add(setPropsOp, new IActionOperation[]{concatOp});

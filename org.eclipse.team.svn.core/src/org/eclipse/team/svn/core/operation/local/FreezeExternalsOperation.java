@@ -17,6 +17,7 @@ import java.util.Collection;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNProperty.BuiltIn;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -42,11 +43,11 @@ public class FreezeExternalsOperation extends AbstractWorkingCopyOperation imple
 	protected ArrayList<ResourceChange> changes = new ArrayList<ResourceChange>();
 	
 	public FreezeExternalsOperation(IResource[] resources) {
-		super("Operation_FreezeExternals", resources); //$NON-NLS-1$
+		super("Operation_FreezeExternals", SVNMessages.class, resources); //$NON-NLS-1$
 	}
 
 	public FreezeExternalsOperation(IResourceProvider provider) {
-		super("Operation_FreezeExternals", provider); //$NON-NLS-1$
+		super("Operation_FreezeExternals", SVNMessages.class, provider); //$NON-NLS-1$
 	}
 	
 	public IResource []getResources() {

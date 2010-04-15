@@ -103,7 +103,7 @@ public class UpdateAction extends AbstractSynchronizeModelAction {
 		if (resources.length > 0) {
 			boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
 			GetRemoteContentsOperation mainOp = new GetRemoteContentsOperation(resources, remoteSet.toArray(new IRepositoryResource[remoteSet.size()]), remote2local, ignoreExternals);
-			CompositeOperation op = new CompositeOperation(mainOp.getId());
+			CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 			SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
 			op.add(saveOp);
 			op.add(mainOp);

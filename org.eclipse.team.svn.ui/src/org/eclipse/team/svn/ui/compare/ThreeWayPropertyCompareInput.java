@@ -20,6 +20,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
@@ -111,7 +112,7 @@ public class ThreeWayPropertyCompareInput extends PropertyCompareInput {
 		//perform property removing
 		final String propName = currentNode.getName();
 		IActionOperation op = null;
-		UIMonitorUtility.doTaskNowDefault(op = new AbstractActionOperation("Operation_RemoveProperties") { //$NON-NLS-1$
+		UIMonitorUtility.doTaskNowDefault(op = new AbstractActionOperation("Operation_RemoveProperties", SVNMessages.class) { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				final ISVNConnector proxy = ThreeWayPropertyCompareInput.this.location.acquireSVNProxy();
 				try {

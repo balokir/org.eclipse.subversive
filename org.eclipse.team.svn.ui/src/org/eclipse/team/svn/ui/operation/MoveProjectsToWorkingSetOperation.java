@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.operation.local.AbstractWorkingCopyOperation;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 
@@ -33,12 +34,12 @@ public class MoveProjectsToWorkingSetOperation extends AbstractWorkingCopyOperat
 	protected String workingSetName;
 	
 	public MoveProjectsToWorkingSetOperation(IResource []projects, String workingSetName) {
-		super("Operation_MoveToWorkingSet", projects); //$NON-NLS-1$
+		super("Operation_MoveToWorkingSet", SVNUIMessages.class, projects); //$NON-NLS-1$
 		this.workingSetName = workingSetName;
 	}
 
 	public MoveProjectsToWorkingSetOperation(IResourceProvider provider, String workingSetName) {
-		super("Operation_MoveToWorkingSet", provider); //$NON-NLS-1$
+		super("Operation_MoveToWorkingSet", SVNUIMessages.class, provider); //$NON-NLS-1$
 		this.workingSetName = workingSetName;
 	}
 	

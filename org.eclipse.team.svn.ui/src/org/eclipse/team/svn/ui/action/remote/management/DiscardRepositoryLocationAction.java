@@ -36,6 +36,7 @@ import org.eclipse.team.svn.core.operation.remote.management.DiscardRepositoryLo
 import org.eclipse.team.svn.core.operation.remote.management.SaveRepositoryLocationsOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.resource.events.ProjectStatesChangedEvent;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractRepositoryTeamAction;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.dialog.DiscardConfirmationDialog;
@@ -90,7 +91,7 @@ public class DiscardRepositoryLocationAction extends AbstractRepositoryTeamActio
 			int retVal = new DefaultDialog(this.getShell(), panel).open();
 			if (retVal == 0 || retVal == 1) {
 				DisconnectOperation disconnectOp = new DisconnectOperation(tmp, false);
-				CompositeOperation op = new CompositeOperation(disconnectOp.getId());
+				CompositeOperation op = new CompositeOperation(disconnectOp.getId(), disconnectOp.getMessagesClass());
 				op.add(new NotifyProjectStatesChangedOperation(tmp, ProjectStatesChangedEvent.ST_PRE_DISCONNECTED));
 				op.add(disconnectOp);
 				
@@ -99,7 +100,7 @@ public class DiscardRepositoryLocationAction extends AbstractRepositoryTeamActio
 				}
 				else {
 					op.add(new NotifyProjectStatesChangedOperation(tmp, ProjectStatesChangedEvent.ST_PRE_DELETED));
-					op.add(new AbstractWorkingCopyOperation("Operation_DeleteProjects", tmp) { //$NON-NLS-1$
+					op.add(new AbstractWorkingCopyOperation("Operation_DeleteProjects", SVNUIMessages.class, tmp) { //$NON-NLS-1$
 						protected void runImpl(IProgressMonitor monitor) throws Exception {
 							IProject []projects = (IProject [])this.operableData();
 							for (int i = 0; i < projects.length && !monitor.isCanceled(); i++) {
@@ -121,7 +122,7 @@ public class DiscardRepositoryLocationAction extends AbstractRepositoryTeamActio
 	protected void doDiscard(IRepositoryLocation []locations, IActionOperation disconnectOp) {
 		DiscardRepositoryLocationsOperation mainOp = new DiscardRepositoryLocationsOperation(locations);
 		
-		CompositeOperation op = new CompositeOperation(mainOp.getId());
+		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 		
 		if (disconnectOp != null) {
 			op.add(disconnectOp);

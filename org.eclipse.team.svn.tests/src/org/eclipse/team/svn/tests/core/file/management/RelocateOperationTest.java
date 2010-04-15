@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.tests.core.file.management;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.file.AbstractFileOperation;
 import org.eclipse.team.svn.core.operation.file.SVNFileStorage;
@@ -31,7 +32,7 @@ public class RelocateOperationTest extends AbstractOperationTestCase {
      }
 
 	protected IActionOperation getOperation() {
-		return new AbstractFileOperation("Relocate", this.getBothFolders()) {
+		return new AbstractFileOperation("Relocate", SVNMessages.class, this.getBothFolders()) {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				SVNFileStorage storage = SVNFileStorage.instance();
 				IRepositoryLocation newLocation = RelocateOperationTest.this.getLocation();

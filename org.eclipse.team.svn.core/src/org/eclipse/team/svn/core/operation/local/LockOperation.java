@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
 import org.eclipse.team.svn.core.connector.SVNNotification;
@@ -42,13 +43,13 @@ public class LockOperation extends AbstractWorkingCopyOperation {
 	protected boolean force;
 
 	public LockOperation(IResource []resources, String message, boolean force) {
-		super("Operation_Lock", resources); //$NON-NLS-1$
+		super("Operation_Lock", SVNMessages.class, resources); //$NON-NLS-1$
 		this.message = message;
 		this.force = force;
 	}
 
 	public LockOperation(IResourceProvider provider, String message, boolean force) {
-		super("Operation_Lock", provider); //$NON-NLS-1$
+		super("Operation_Lock", SVNMessages.class, provider); //$NON-NLS-1$
 		this.message = message;
 		this.force = force;
 	}

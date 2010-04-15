@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.team.svn.core.BaseMessages;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -41,13 +42,13 @@ public class CopyOperation extends AbstractFileOperation {
 	protected boolean forceNonSVN;
 	
 	public CopyOperation(File []files, File localTo, boolean forceNonSVN) {
-		super("Operation_CopyFile", files); //$NON-NLS-1$
+		super("Operation_CopyFile", SVNMessages.class, files); //$NON-NLS-1$
 		this.localTo = localTo;
 		this.forceNonSVN = forceNonSVN;
 	}
 
 	public CopyOperation(IFileProvider provider, File localTo, boolean forceNonSVN) {
-		super("Operation_CopyFile", provider); //$NON-NLS-1$
+		super("Operation_CopyFile", SVNMessages.class, provider); //$NON-NLS-1$
 		this.localTo = localTo;
 		this.forceNonSVN = forceNonSVN;
 	}

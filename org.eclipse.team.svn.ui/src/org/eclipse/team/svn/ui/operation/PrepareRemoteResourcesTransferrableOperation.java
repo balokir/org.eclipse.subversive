@@ -19,6 +19,7 @@ import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.ui.RemoteResourceTransfer;
 import org.eclipse.team.svn.ui.RemoteResourceTransferrable;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 
 /**
  * Copy/Cut remote resources into clipboard operation implementation
@@ -31,7 +32,7 @@ public class PrepareRemoteResourcesTransferrableOperation extends AbstractAction
 	protected int operation;
 
 	public PrepareRemoteResourcesTransferrableOperation(IRepositoryResource []resources, int operation, Display display) {
-		super("Operation_FillCopyPaste"); //$NON-NLS-1$
+		super("Operation_FillCopyPaste", SVNUIMessages.class); //$NON-NLS-1$
 		this.resources = resources;
 		this.display = display;
 		this.operation = operation;

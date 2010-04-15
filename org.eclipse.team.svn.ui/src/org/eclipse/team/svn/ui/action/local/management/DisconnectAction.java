@@ -45,7 +45,7 @@ public class DisconnectAction extends AbstractLocalTeamAction {
 
 			DisconnectOperation mainOp = new DisconnectOperation(projects, opType == DisconnectAction.OP_DROP);
 			
-			CompositeOperation op = new CompositeOperation(mainOp.getId());
+			CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 			
 			op.add(new NotifyProjectStatesChangedOperation(projects, ProjectStatesChangedEvent.ST_PRE_DISCONNECTED));
 			op.add(mainOp);

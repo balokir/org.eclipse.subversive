@@ -37,7 +37,7 @@ public class CheckRepositoryConnectionOperation extends AbstractActionOperation 
 	protected long lastRepositoryRevision;
 	
 	public CheckRepositoryConnectionOperation(IRepositoryResource resource) {
-		super("Operation_CheckRepositoryConnection"); //$NON-NLS-1$
+		super("Operation_CheckRepositoryConnection", SVNRevisionGraphMessages.class); //$NON-NLS-1$
 		this.resource = resource;
 	}
 

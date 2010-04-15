@@ -45,7 +45,7 @@ public class CreateFolderOperation extends AbstractRepositoryOperation implement
 	}
 
 	public CreateFolderOperation(IRepositoryResource parent, String []names, String comment) {
-		super("Operation_CreateFolder", new IRepositoryResource[] {parent}); //$NON-NLS-1$
+		super("Operation_CreateFolder", SVNMessages.class, new IRepositoryResource[] {parent}); //$NON-NLS-1$
 		this.names = names;
 		this.comment = comment;
 	}

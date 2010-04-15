@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.core.operation.remote;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.AbstractGetFileContentOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
@@ -36,7 +37,7 @@ public class RunExternalRepositoryCompareOperation extends CompositeOperation im
 	protected ExternalCompareRepositoryOperation externalCompareOperation;
 	
 	public RunExternalRepositoryCompareOperation(final IRepositoryResourceProvider provider, DiffViewerSettings diffSettings) {
-		super("Operation_ExternalRepositoryCompare"); //$NON-NLS-1$
+		super("Operation_ExternalRepositoryCompare", SVNMessages.class); //$NON-NLS-1$
 		
 		final DetectExternalCompareOperation detectOperation = new DetectExternalCompareOperation(provider, diffSettings);
 		this.add(detectOperation);
@@ -65,7 +66,7 @@ public class RunExternalRepositoryCompareOperation extends CompositeOperation im
 		}
 		
 		public ExternalCompareRepositoryOperation(final IRepositoryResourceProvider resourcesProvider, IExternalProgramParametersProvider parametersProvider) {
-			super("Operation_ExternalRepositoryCompare"); //$NON-NLS-1$
+			super("Operation_ExternalRepositoryCompare", SVNMessages.class); //$NON-NLS-1$
 			this.parametersProvider = parametersProvider;
 			
 			//get files operations
@@ -84,7 +85,7 @@ public class RunExternalRepositoryCompareOperation extends CompositeOperation im
 			this.add(prevFileGetOp, new IActionOperation[] {nextFileGetOp});
 			
 			//Run external program operation
-			this.add(new AbstractActionOperation("Operation_ExternalRepositoryCompare") { //$NON-NLS-1$
+			this.add(new AbstractActionOperation("Operation_ExternalRepositoryCompare", SVNMessages.class) { //$NON-NLS-1$
 				protected void runImpl(IProgressMonitor monitor) throws Exception {					
 					ExternalCompareOperationHelper externalRunHelper = new ExternalCompareOperationHelper(
 							prevFileGetOp.getTemporaryPath(),

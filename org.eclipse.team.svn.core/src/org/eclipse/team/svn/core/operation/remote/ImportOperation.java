@@ -38,7 +38,7 @@ public class ImportOperation extends AbstractRepositoryOperation implements IRev
 	protected RevisionPair []revisionPair;
 	
 	public ImportOperation(IRepositoryResource resource, String path, String message, int depth) {
-		super("Operation_Import", new IRepositoryResource[] {resource}); //$NON-NLS-1$
+		super("Operation_Import", SVNMessages.class, new IRepositoryResource[] {resource}); //$NON-NLS-1$
 		this.path = path;
 		this.message = message;
 		this.depth = depth;

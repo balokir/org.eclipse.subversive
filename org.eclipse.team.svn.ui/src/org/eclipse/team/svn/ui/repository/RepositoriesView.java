@@ -398,7 +398,7 @@ public class RepositoriesView extends ViewPart {
 
 	protected void showRepositoryBrowser(final boolean force) {
 		final IWorkbenchPage page = this.getSite().getPage();
-		UIMonitorUtility.doTaskBusyDefault(new AbstractActionOperation("Operation_ShowBrowser") { //$NON-NLS-1$
+		UIMonitorUtility.doTaskBusyDefault(new AbstractActionOperation("Operation_ShowBrowser", SVNUIMessages.class) { //$NON-NLS-1$
             protected void runImpl(IProgressMonitor monitor) throws Exception {
         		RepositoryBrowser browser = (RepositoryBrowser)page.showView(RepositoryBrowser.VIEW_ID);
     			ISelection selection = RepositoriesView.this.repositoryTree.getSelection();

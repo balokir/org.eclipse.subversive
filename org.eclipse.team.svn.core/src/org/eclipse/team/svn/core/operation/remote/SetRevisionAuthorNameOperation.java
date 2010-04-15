@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.core.operation.remote;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
@@ -42,7 +43,7 @@ public class SetRevisionAuthorNameOperation extends AbstractActionOperation {
 	}
 	
 	public SetRevisionAuthorNameOperation(IRevisionProvider provider, long options) {
-		super("Operation_SetRevisionAuthorName"); //$NON-NLS-1$
+		super("Operation_SetRevisionAuthorName", SVNMessages.class); //$NON-NLS-1$
 		this.provider = provider;
 		this.options = options;
 	}

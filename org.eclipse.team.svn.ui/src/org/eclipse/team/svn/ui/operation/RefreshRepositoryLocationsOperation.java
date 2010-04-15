@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.repository.RepositoriesView;
 import org.eclipse.team.svn.ui.repository.RepositoryTreeViewer;
 import org.eclipse.team.svn.ui.repository.model.RepositoryLocation;
@@ -33,7 +34,7 @@ public class RefreshRepositoryLocationsOperation extends AbstractActionOperation
 	}
 
 	public RefreshRepositoryLocationsOperation(IRepositoryLocation []resources, boolean deep) {
-		super("Operation_RefreshLocations"); //$NON-NLS-1$
+		super("Operation_RefreshLocations", SVNUIMessages.class); //$NON-NLS-1$
 		this.resources = resources;
 		this.deep = deep;
 	}

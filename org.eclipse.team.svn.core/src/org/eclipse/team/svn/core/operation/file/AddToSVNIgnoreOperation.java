@@ -14,6 +14,7 @@ package org.eclipse.team.svn.core.operation.file;
 import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
@@ -29,14 +30,14 @@ public class AddToSVNIgnoreOperation extends AbstractFileOperation {
 	protected String pattern;
 
 	public AddToSVNIgnoreOperation(File []files, int ignoreType, String pattern) {
-		super("Operation_AddToSVNIgnoreFile", files); //$NON-NLS-1$
+		super("Operation_AddToSVNIgnoreFile", SVNMessages.class, files); //$NON-NLS-1$
 		
 		this.ignoreType = ignoreType;
 		this.pattern = pattern;
 	}
 
 	public AddToSVNIgnoreOperation(IFileProvider provider, int ignoreType, String pattern) {
-		super("Operation_AddToSVNIgnoreFile", provider); //$NON-NLS-1$
+		super("Operation_AddToSVNIgnoreFile", SVNMessages.class, provider); //$NON-NLS-1$
 		
 		this.ignoreType = ignoreType;
 		this.pattern = pattern;

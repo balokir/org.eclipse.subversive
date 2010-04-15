@@ -14,6 +14,7 @@ package org.eclipse.team.svn.core.operation.local;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.BaseMessages;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
@@ -38,14 +39,14 @@ public class ExportOperation extends AbstractWorkingCopyOperation {
 	protected boolean ignoreExternals;
 	
 	public ExportOperation(IResource[] resources, String path, SVNRevision revision, boolean ignoreExternals) {
-		super("Operation_ExportRevision", resources); //$NON-NLS-1$
+		super("Operation_ExportRevision", SVNMessages.class, resources); //$NON-NLS-1$
 		this.revision = revision;
 		this.path = path;
 		this.ignoreExternals = ignoreExternals;
 	}
 
 	public ExportOperation(IResourceProvider provider, String path, SVNRevision revision, boolean ignoreExternals) {
-		super("Operation_ExportRevision", provider); //$NON-NLS-1$
+		super("Operation_ExportRevision", SVNMessages.class, provider); //$NON-NLS-1$
 		this.revision = revision;
 		this.path = path;
 		this.ignoreExternals = ignoreExternals;

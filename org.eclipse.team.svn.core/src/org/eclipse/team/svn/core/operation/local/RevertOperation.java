@@ -13,6 +13,7 @@ package org.eclipse.team.svn.core.operation.local;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
@@ -33,12 +34,12 @@ public class RevertOperation extends AbstractWorkingCopyOperation {
 	protected boolean doRecursiveRevert;
 
 	public RevertOperation(IResource []resources, boolean doRecursiveRevert) {
-		super("Operation_Revert", resources); //$NON-NLS-1$
+		super("Operation_Revert", SVNMessages.class, resources); //$NON-NLS-1$
 		this.doRecursiveRevert = doRecursiveRevert;
 	}
 
 	public RevertOperation(IResourceProvider provider, boolean doRecursiveRevert) {
-		super("Operation_Revert", provider); //$NON-NLS-1$
+		super("Operation_Revert", SVNMessages.class, provider); //$NON-NLS-1$
 		this.doRecursiveRevert = doRecursiveRevert;
 	}
 

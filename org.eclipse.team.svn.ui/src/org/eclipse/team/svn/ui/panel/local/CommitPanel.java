@@ -52,6 +52,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
@@ -474,7 +475,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 					if (tSelection.size() > 1) {
 						subMenu.add(tAction = new Action(SVNUIMessages.CommitPanel_IgnoreByName_Multiple_Action) {
 							public void run() {
-								CompositeOperation op = new CompositeOperation("AddToIgnore"); //$NON-NLS-1$
+								CompositeOperation op = new CompositeOperation("Operation_AddToSVNIgnore", SVNMessages.class); //$NON-NLS-1$
 								op.add(new AddToSVNIgnoreOperation(selectedResources, IRemoteStorage.IGNORE_NAME, null));
 								op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(CommitPanel.this.resources), IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
 								UIMonitorUtility.doTaskNowDefault(op, true);
@@ -483,7 +484,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 						tAction.setEnabled(true);
 						subMenu.add(tAction = new Action(SVNUIMessages.CommitPanel_IgnoreByExtension_Multiple_Action) {
 							public void run() {
-								CompositeOperation op = new CompositeOperation("AddToIgnore"); //$NON-NLS-1$
+								CompositeOperation op = new CompositeOperation("Operation_AddToSVNIgnore", SVNMessages.class); //$NON-NLS-1$
 								op.add(new AddToSVNIgnoreOperation(selectedResources, IRemoteStorage.IGNORE_EXTENSION, null));
 								op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(CommitPanel.this.resources), IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
 								UIMonitorUtility.doTaskNowDefault(op, true);							
@@ -494,7 +495,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 					else {
 						subMenu.add(tAction = new Action(selectedResources[0].getName()) {
 							public void run() {
-								CompositeOperation op = new CompositeOperation("AddToIgnore"); //$NON-NLS-1$
+								CompositeOperation op = new CompositeOperation("Operation_AddToSVNIgnore", SVNMessages.class); //$NON-NLS-1$
 								op.add(new AddToSVNIgnoreOperation(selectedResources, IRemoteStorage.IGNORE_NAME, null));
 								op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(CommitPanel.this.resources), IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
 								UIMonitorUtility.doTaskNowDefault(op, true);							
@@ -506,7 +507,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 						if ((parts.length != 0)) {
 							subMenu.add(tAction = new Action("*." + parts[parts.length-1]) { //$NON-NLS-1$
 								public void run() {
-									CompositeOperation op = new CompositeOperation("AddToIgnore"); //$NON-NLS-1$
+									CompositeOperation op = new CompositeOperation("Operation_AddToSVNIgnore", SVNMessages.class); //$NON-NLS-1$
 									op.add(new AddToSVNIgnoreOperation(selectedResources, IRemoteStorage.IGNORE_EXTENSION, null));
 									op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(CommitPanel.this.resources), IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
 									UIMonitorUtility.doTaskNowDefault(op, true);
@@ -548,7 +549,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 					public void run() {
 						boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
 						MarkAsMergedOperation mainOp = new MarkAsMergedOperation(selectedResources, false, null, ignoreExternals);
-						CompositeOperation op = new CompositeOperation(mainOp.getId());
+						CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 						op.add(mainOp);
 						op.add(new RefreshResourcesOperation(FileUtility.getParents(selectedResources, false)));
 						UIMonitorUtility.doTaskNowDefault(op, false);
@@ -697,7 +698,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 					public void run() {
 						IResource []resources = FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_VERSIONED_FOLDERS, IResource.DEPTH_ZERO);
 						CleanupOperation mainOp = new CleanupOperation(resources);
-						CompositeOperation op = new CompositeOperation(mainOp.getId());
+						CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 						op.add(mainOp);
 						op.add(new RefreshResourcesOperation(resources));
 						UIMonitorUtility.doTaskNowDefault(op, false);						
@@ -712,7 +713,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
 						DiscardConfirmationDialog dialog = new DiscardConfirmationDialog(UIMonitorUtility.getShell(), selectedResources.length == 1, DiscardConfirmationDialog.MSG_RESOURCE);
 						if (dialog.open() == 0) {
 							DeleteResourceOperation deleteOperation = new DeleteResourceOperation(selectedResources);
-							CompositeOperation op = new CompositeOperation(deleteOperation.getId());
+							CompositeOperation op = new CompositeOperation(deleteOperation.getId(), deleteOperation.getMessagesClass());
 							SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(selectedResources);
 							RestoreProjectMetaOperation restoreOp = new RestoreProjectMetaOperation(saveOp);
 							op.add(saveOp);
@@ -830,7 +831,7 @@ public class CommitPanel extends CommentPanel implements ICommentDialogPanel {
     	protected CompositePropFindVisitor compositeVisitor;
     	
     	public CollectPropertiesOperation(IResource []resources) {
-    		super("Operation_CollectProperties"); //$NON-NLS-1$
+    		super("Operation_CollectProperties", SVNUIMessages.class); //$NON-NLS-1$
     		this.resources = resources;
     		this.logTemplateVisitor = new LogTemplatesPropFindVisitor();
     		this.bugtraqVisitor = new BugtraqPropFindVisitor();

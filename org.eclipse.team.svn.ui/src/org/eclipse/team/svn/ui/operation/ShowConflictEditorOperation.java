@@ -40,6 +40,7 @@ import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.compare.ComparePanel;
 import org.eclipse.team.svn.ui.compare.ConflictingFileEditorInput;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
@@ -56,12 +57,12 @@ public class ShowConflictEditorOperation extends AbstractWorkingCopyOperation {
 	protected boolean showInDialog;
 	
 	public ShowConflictEditorOperation(IResource []resources, boolean showInDialog) {
-		super("Operation_ShowConflictEditor", resources); //$NON-NLS-1$
+		super("Operation_ShowConflictEditor", SVNUIMessages.class, resources); //$NON-NLS-1$
 		this.showInDialog = showInDialog;
 	}
 
 	public ShowConflictEditorOperation(IResourceProvider provider, boolean showInDialog) {
-		super("Operation_ShowConflictEditor", provider); //$NON-NLS-1$
+		super("Operation_ShowConflictEditor", SVNUIMessages.class, provider); //$NON-NLS-1$
 		this.showInDialog = showInDialog;
 	}
 

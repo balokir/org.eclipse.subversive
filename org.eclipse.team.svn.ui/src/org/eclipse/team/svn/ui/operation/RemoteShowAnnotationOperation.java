@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.operation.remote.AbstractRepositoryOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.annotate.BuiltInAnnotate;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.common.ShowAnnotationPanel;
@@ -28,11 +29,11 @@ import org.eclipse.ui.IWorkbenchPage;
  */
 public class RemoteShowAnnotationOperation extends AbstractRepositoryOperation {
 	public RemoteShowAnnotationOperation(IRepositoryResource resource) {
-		super("Operation_ShowAnnotationRemote", new IRepositoryResource[] {resource}); //$NON-NLS-1$
+		super("Operation_ShowAnnotationRemote", SVNUIMessages.class, new IRepositoryResource[] {resource}); //$NON-NLS-1$
 	}
 
 	public RemoteShowAnnotationOperation(IRepositoryResourceProvider provider) {
-		super("Operation_ShowAnnotationRemote", provider); //$NON-NLS-1$
+		super("Operation_ShowAnnotationRemote", SVNUIMessages.class, provider); //$NON-NLS-1$
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {

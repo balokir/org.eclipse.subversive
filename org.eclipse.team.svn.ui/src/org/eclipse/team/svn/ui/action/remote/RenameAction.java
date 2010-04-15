@@ -45,7 +45,7 @@ public class RenameAction extends AbstractRepositoryTeamAction {
 		if (dialog.open() == 0) {
 			RenameResourceOperation mainOp = new RenameResourceOperation(resources[0], panel.getResourceName(), panel.getMessage());
 			
-			CompositeOperation op = new CompositeOperation(mainOp.getId());
+			CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 			
 			op.add(mainOp);
 			op.add(new RefreshRemoteResourcesOperation(SVNUtility.getCommonParents(resources)));

@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNProperty;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
@@ -40,14 +41,14 @@ public class SetMultiPropertiesOperation extends AbstractWorkingCopyOperation {
 	protected IStateFilter filter;
 	
 	public SetMultiPropertiesOperation(IResourceProvider resourceProvider, IPropertyProvider propertyProvider, IStateFilter filter, int depth) {
-		super("Operation_SetMultiProperties", resourceProvider); //$NON-NLS-1$
+		super("Operation_SetMultiProperties", SVNMessages.class, resourceProvider); //$NON-NLS-1$
 		this.propertyProvider = propertyProvider;
 		this.depth = depth;
 		this.filter = filter != null ? filter : IStateFilter.SF_VERSIONED;
 	}
 	
 	public SetMultiPropertiesOperation(IResource[] resources, IPropertyProvider propertyProvider, IStateFilter filter, int depth) {
-		super("Operation_SetMultiProperties", resources); //$NON-NLS-1$
+		super("Operation_SetMultiProperties", SVNMessages.class, resources); //$NON-NLS-1$
 		this.propertyProvider = propertyProvider;
 		this.depth = depth;
 		this.filter = filter != null ? filter : IStateFilter.SF_VERSIONED;

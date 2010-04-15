@@ -23,7 +23,7 @@ import org.eclipse.team.svn.core.operation.local.GetAllResourcesOperation;
 public abstract class GetAllResourcesOperationTest extends AbstractOperationTestCase {
 	protected IActionOperation getOperation() {
 	    GetAllResourcesOperation mainOp = new GetAllResourcesOperation(this.getFirstProject());
-	    CompositeOperation op = new CompositeOperation(mainOp.getId());
+	    CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 	    op.add(mainOp);
 	    op.add(new GetAllResourcesOperation(this.getSecondProject()));
 		return op;

@@ -21,6 +21,7 @@ import org.eclipse.team.svn.core.operation.local.AbstractWorkingCopyOperation;
 import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.annotate.BuiltInAnnotate;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.panel.common.ShowAnnotationPanel;
@@ -35,7 +36,7 @@ import org.eclipse.ui.IWorkbenchPage;
 public class LocalShowAnnotationOperation extends AbstractWorkingCopyOperation {
 	
 	public LocalShowAnnotationOperation(IResource resource) {
-		super("Operation_ShowAnnotation", new IResource[] {resource}); //$NON-NLS-1$
+		super("Operation_ShowAnnotation", SVNUIMessages.class, new IResource[] {resource}); //$NON-NLS-1$
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {

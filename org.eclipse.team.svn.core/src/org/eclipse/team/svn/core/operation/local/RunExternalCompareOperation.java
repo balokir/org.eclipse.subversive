@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.SVNRevision.Kind;
@@ -177,7 +178,7 @@ public class RunExternalCompareOperation extends CompositeOperation implements I
 		protected DetectExternalCompareOperationHelper helper;
 		
 		protected DetectExternalCompareOperation(DiffViewerSettings diffSettings) {
-			super("Operation_DetectExternalCompare"); //$NON-NLS-1$
+			super("Operation_DetectExternalCompare", SVNMessages.class); //$NON-NLS-1$
 			this.diffSettings = diffSettings;
 		}
 		public DetectExternalCompareOperation(IResource resource, DiffViewerSettings diffSettings) {
@@ -312,7 +313,7 @@ public class RunExternalCompareOperation extends CompositeOperation implements I
 		protected boolean isExecuted;
 		
 		public ExternalCompareOperation(ILocalResource local, IRepositoryResource remote, final IExternalProgramParametersProvider parametersProvider) {
-			super("Operation_ExternalCompare"); //$NON-NLS-1$
+			super("Operation_ExternalCompare", SVNMessages.class); //$NON-NLS-1$
 			this.parametersProvider = parametersProvider;							
 				
 			/* As external program allows only cmd params we should pre-create
@@ -335,7 +336,7 @@ public class RunExternalCompareOperation extends CompositeOperation implements I
 			this.add(newFileGetOp, new IActionOperation[]{currentFileGetOp});
 					
 			//Run external program					
-			this.add(new AbstractActionOperation("Operation_ExternalCompare") { //$NON-NLS-1$
+			this.add(new AbstractActionOperation("Operation_ExternalCompare", SVNMessages.class) { //$NON-NLS-1$
 				protected void runImpl(IProgressMonitor monitor) throws Exception {
 					ExternalCompareOperationHelper externalRunHelper = new ExternalCompareOperationHelper(
 							oldFileGetOp.getTemporaryPath(),
@@ -363,7 +364,7 @@ public class RunExternalCompareOperation extends CompositeOperation implements I
 	}
 	
 	public RunExternalCompareOperation(ILocalResource local, IRepositoryResource remote, DiffViewerSettings diffSettings) {		
-		super("Operation_ExternalCompare");		 //$NON-NLS-1$
+		super("Operation_ExternalCompare", SVNMessages.class);		 //$NON-NLS-1$
 				
 		DetectExternalCompareOperation detectOperation = new DetectExternalCompareOperation(local.getResource(), diffSettings);
 		this.add(detectOperation);

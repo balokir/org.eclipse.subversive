@@ -14,6 +14,7 @@ package org.eclipse.team.svn.core.operation;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Action operation interface
@@ -38,6 +39,8 @@ public interface IActionOperation {
 	public int getOperationWeight();
 	
 	public String getId();
+	
+	public Class<? extends NLS> getMessagesClass();
 	
 	public ISchedulingRule getSchedulingRule();
 	

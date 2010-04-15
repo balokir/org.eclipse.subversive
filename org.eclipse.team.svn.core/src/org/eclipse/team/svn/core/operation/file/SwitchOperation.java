@@ -15,6 +15,7 @@ import java.io.File;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IActionOperation;
@@ -35,7 +36,7 @@ public class SwitchOperation extends AbstractFileConflictDetectionOperation {
 	protected boolean ignoreExternals;
 	
 	public SwitchOperation(File file, IRepositoryResource destination, boolean ignoreExternals) {
-		super("Operation_SwitchFile", new File[] {file}); //$NON-NLS-1$
+		super("Operation_SwitchFile", SVNMessages.class, new File[] {file}); //$NON-NLS-1$
 		this.destination = destination;
 		this.ignoreExternals = ignoreExternals;
 	}

@@ -164,7 +164,7 @@ public class CreateFilePanel extends AbstractDialogPanel {
 		tokenizer.whitespaceChars(32, 32);
 		final Set<String> fileNames = new HashSet<String>();
 		
-		new AbstractActionOperation("Operation_ParseFile") { //$NON-NLS-1$
+		new AbstractActionOperation("Operation_ParseFile", SVNUIMessages.class) { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				while (tokenizer.nextToken() != StreamTokenizer.TT_EOF) {
 					fileNames.add(tokenizer.sval);

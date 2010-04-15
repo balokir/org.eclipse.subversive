@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
 import org.eclipse.team.svn.core.connector.SVNNotification;
@@ -40,11 +41,11 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class UnlockOperation extends AbstractWorkingCopyOperation {
     public UnlockOperation(IResource []resources) {
-        super("Operation_Unlock", resources); //$NON-NLS-1$
+        super("Operation_Unlock", SVNMessages.class, resources); //$NON-NLS-1$
     }
 
     public UnlockOperation(IResourceProvider provider) {
-        super("Operation_Unlock", provider); //$NON-NLS-1$
+        super("Operation_Unlock", SVNMessages.class, provider); //$NON-NLS-1$
     }
     
     protected void runImpl(final IProgressMonitor monitor) throws Exception {

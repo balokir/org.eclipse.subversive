@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.svn.core.IStateFilter;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
@@ -77,7 +78,7 @@ public class CreatePatchOperation extends AbstractActionOperation {
 	}
 	
 	public CreatePatchOperation(IResource []resources, String fileName, boolean recurse, boolean ignoreDeleted, boolean processBinary, boolean processUnversioned, int rootPoint) {
-		super("Operation_CreatePatchLocal"); //$NON-NLS-1$
+		super("Operation_CreatePatchLocal", SVNMessages.class); //$NON-NLS-1$
 		this.resources = resources;
 		this.fileName = fileName;
 		this.recurse = recurse;

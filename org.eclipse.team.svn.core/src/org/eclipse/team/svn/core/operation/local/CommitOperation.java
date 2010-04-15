@@ -51,7 +51,7 @@ public class CommitOperation extends AbstractConflictDetectionOperation implemen
 	protected String []paths;
 
 	public CommitOperation(IResource []resources, String message, boolean recursive, boolean keepLocks) {
-		super("Operation_Commit", resources); //$NON-NLS-1$
+		super("Operation_Commit", SVNMessages.class, resources); //$NON-NLS-1$
 		this.message = message;
 		this.recursive = recursive;
 		this.keepLocks = keepLocks;
@@ -62,7 +62,7 @@ public class CommitOperation extends AbstractConflictDetectionOperation implemen
 	}
 
 	public CommitOperation(IResourceProvider provider, String message, boolean recursive, boolean keepLocks) {
-		super("Operation_Commit", provider); //$NON-NLS-1$
+		super("Operation_Commit", SVNMessages.class, provider); //$NON-NLS-1$
 		this.message = message;
 		this.recursive = recursive;
 		this.keepLocks = keepLocks;

@@ -52,7 +52,7 @@ public class FromDifferenceRepositoryResourceProviderOperation extends AbstractR
 	}
 	
 	public FromDifferenceRepositoryResourceProviderOperation(IRepositoryResourceProvider provider) {//(HashMap<SVNLogPath, Long> paths, SVNLogEntry selectedLogEntry) {
-		super("Operation_GetRepositoryResource", provider); //$NON-NLS-1$				
+		super("Operation_GetRepositoryResource", SVNUIMessages.class, provider); //$NON-NLS-1$				
 		this.url2status = new HashMap<String, String>();
 	}
 	

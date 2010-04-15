@@ -311,7 +311,7 @@ public abstract class RepositoryResource implements IWorkbenchAdapter, IWorkbenc
 		}
 
 		this.revisionOp = new GetRemoteResourceRevisionOperation(this.resource);
-		CompositeOperation op = new CompositeOperation(this.revisionOp.getId());
+		CompositeOperation op = new CompositeOperation(this.revisionOp.getId(), this.revisionOp.getMessagesClass());
 		op.add(this.revisionOp);
 		op.add(this.getRefreshOperation(this.getViewer()));
 
@@ -338,7 +338,7 @@ public abstract class RepositoryResource implements IWorkbenchAdapter, IWorkbenc
 		protected RepositoryTreeViewer viewer;
 		
 		public RefreshOperation(RepositoryTreeViewer viewer) {
-			super("Operation_RefreshView"); //$NON-NLS-1$
+			super("Operation_RefreshView", SVNUIMessages.class); //$NON-NLS-1$
 			this.viewer = viewer;
 		}
 

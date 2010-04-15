@@ -14,6 +14,7 @@ package org.eclipse.team.svn.core.operation.file.management;
 import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
@@ -36,12 +37,12 @@ public class RelocateOperation extends AbstractFileOperation {
 	protected String toUrl;
 	
 	public RelocateOperation(File []folders, String toUrl) {
-		super("Operation_RelocateFile", folders); //$NON-NLS-1$
+		super("Operation_RelocateFile", SVNMessages.class, folders); //$NON-NLS-1$
 		this.toUrl = toUrl;
 	}
 
 	public RelocateOperation(IFileProvider provider, String toUrl) {
-		super("Operation_RelocateFile", provider); //$NON-NLS-1$
+		super("Operation_RelocateFile", SVNMessages.class, provider); //$NON-NLS-1$
 		this.toUrl = toUrl;
 	}
 

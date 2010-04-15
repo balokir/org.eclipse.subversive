@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNNotificationCallback;
 import org.eclipse.team.svn.core.connector.SVNNotification;
@@ -37,11 +38,11 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class UnlockOperation extends AbstractFileOperation {
 	public UnlockOperation(File []files) {
-		super("Operation_UnlockFile", files); //$NON-NLS-1$
+		super("Operation_UnlockFile", SVNMessages.class, files); //$NON-NLS-1$
 	}
 
 	public UnlockOperation(IFileProvider provider) {
-		super("Operation_UnlockFile", provider); //$NON-NLS-1$
+		super("Operation_UnlockFile", SVNMessages.class, provider); //$NON-NLS-1$
 	}
 
 	protected void runImpl(final IProgressMonitor monitor) throws Exception {

@@ -14,6 +14,7 @@ package org.eclipse.team.svn.core.operation.remote.management;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.team.svn.core.BaseMessages;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
@@ -27,7 +28,7 @@ public class AddRepositoryLocationOperation extends AbstractActionOperation {
 	protected IRepositoryLocation location;
 
 	public AddRepositoryLocationOperation(IRepositoryLocation location) {
-		super("Operation_AddRepositoryLocation"); //$NON-NLS-1$
+		super("Operation_AddRepositoryLocation", SVNMessages.class); //$NON-NLS-1$
 		this.location = location;
 	}
 

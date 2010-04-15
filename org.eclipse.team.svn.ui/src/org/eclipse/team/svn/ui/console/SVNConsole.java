@@ -296,7 +296,7 @@ public class SVNConsole extends MessageConsole implements IPropertyChangeListene
 		protected void print(final MessageConsoleStream stream, final String data) {
 			// workaround for the Eclipse issue #136943 
 			if (UIMonitorUtility.getDisplay().getThread() == Thread.currentThread()) {
-				ProgressMonitorUtility.doTaskScheduledDefault(new AbstractActionOperation("Operation_WriteToConsoleResources") { //$NON-NLS-1$
+				ProgressMonitorUtility.doTaskScheduledDefault(new AbstractActionOperation("Operation_WriteToConsoleResources", SVNUIMessages.class) { //$NON-NLS-1$
 					protected void runImpl(IProgressMonitor monitor) throws Exception {
 						stream.print(data);
 					}

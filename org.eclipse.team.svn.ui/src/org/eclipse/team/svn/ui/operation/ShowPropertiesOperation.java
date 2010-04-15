@@ -18,6 +18,7 @@ import org.eclipse.team.svn.core.operation.IResourcePropertyProvider;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryResourceProvider;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.properties.PropertiesView;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.IWorkbenchPage;
@@ -40,7 +41,7 @@ public class ShowPropertiesOperation extends AbstractActionOperation {
 	}
 	
 	public ShowPropertiesOperation(IWorkbenchPage page, IAdaptable resource, IResourcePropertyProvider propertyProvider) {
-		super("Operation_ShowProperties"); //$NON-NLS-1$
+		super("Operation_ShowProperties", SVNUIMessages.class); //$NON-NLS-1$
 		this.resource = resource;
 		this.page = page;
 		this.propertyProvider = propertyProvider;

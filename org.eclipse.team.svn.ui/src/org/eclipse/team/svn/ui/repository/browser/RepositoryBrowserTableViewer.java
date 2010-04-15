@@ -226,7 +226,7 @@ public class RepositoryBrowserTableViewer extends TableViewer {
 					AbstractCopyMoveResourcesOperation mainOp = event.detail == DND.DROP_MOVE
 							? new MoveResourcesOperation(aboveResource.getRepositoryResource(), ((RemoteResourceTransferrable)event.data).resources, commentPanel.getMessage(), null)
 							: new CopyResourcesOperation(aboveResource.getRepositoryResource(), ((RemoteResourceTransferrable)event.data).resources, commentPanel.getMessage(), null);
-					CompositeOperation op = new CompositeOperation(mainOp.getId());
+					CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 					op.add(mainOp);
 					ArrayList<IRepositoryResource> toRefresh = new ArrayList<IRepositoryResource>();
 					toRefresh.add(aboveResource.getRepositoryResource());

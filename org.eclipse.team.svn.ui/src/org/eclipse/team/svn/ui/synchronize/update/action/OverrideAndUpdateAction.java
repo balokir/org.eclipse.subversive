@@ -36,6 +36,7 @@ import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.operation.ClearUpdateStatusesOperation;
 import org.eclipse.team.svn.ui.panel.local.OverrideResourcesPanel;
@@ -98,7 +99,7 @@ public class OverrideAndUpdateAction extends AbstractSynchronizeModelAction {
 			return null;
 		}
 		
-		CompositeOperation op = new CompositeOperation("Operation_UOverrideAndUpdate"); //$NON-NLS-1$
+		CompositeOperation op = new CompositeOperation("Operation_UOverrideAndUpdate", SVNUIMessages.class); //$NON-NLS-1$
 
 		SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources[0]);
 		op.add(saveOp);

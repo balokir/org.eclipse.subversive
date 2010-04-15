@@ -13,6 +13,7 @@ package org.eclipse.team.svn.core.operation.remote;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.BaseMessages;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
@@ -35,14 +36,14 @@ public class ExportOperation extends AbstractRepositoryOperation {
 	protected boolean ignoreExternals;
 	
 	public ExportOperation(IRepositoryResource []resources, String path, int depth, boolean ignoreExternals) {
-		super("Operation_ExportRevision", resources); //$NON-NLS-1$
+		super("Operation_ExportRevision", SVNMessages.class, resources); //$NON-NLS-1$
 		this.path = path;
 		this.depth = depth;
 		this.ignoreExternals = ignoreExternals;
 	}
 	
 	public ExportOperation(IRepositoryResourceProvider provider, String path, int depth, boolean ignoreExternals) {
-		super("Operation_ExportRevision", provider); //$NON-NLS-1$
+		super("Operation_ExportRevision", SVNMessages.class, provider); //$NON-NLS-1$
 		this.path = path;
 		this.depth = depth;
 		this.ignoreExternals = ignoreExternals;

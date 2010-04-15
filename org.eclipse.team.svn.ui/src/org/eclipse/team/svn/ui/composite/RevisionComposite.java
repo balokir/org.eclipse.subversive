@@ -131,7 +131,7 @@ public class RevisionComposite extends Composite {
 	public SVNRevisionRange []getSelectedRevisions() {
 		// check for unspecified
 		if (this.revisions[0].from.getKind() == SVNRevision.Kind.START) {
-			UIMonitorUtility.doTaskNowDefault(new AbstractActionOperation("Operation_DetectStartRevision") { //$NON-NLS-1$
+			UIMonitorUtility.doTaskNowDefault(new AbstractActionOperation("Operation_DetectStartRevision", SVNUIMessages.class) { //$NON-NLS-1$
 				protected void runImpl(IProgressMonitor monitor) throws Exception {
 					ISVNConnector proxy = RevisionComposite.this.selectedResource.getRepositoryLocation().acquireSVNProxy();
 					try {

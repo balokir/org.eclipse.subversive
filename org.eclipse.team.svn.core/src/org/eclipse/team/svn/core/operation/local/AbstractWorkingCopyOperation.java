@@ -18,6 +18,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 
@@ -30,13 +31,13 @@ public abstract class AbstractWorkingCopyOperation extends AbstractActionOperati
 	private IResource []resources;
 	private IResourceProvider provider;
 
-	public AbstractWorkingCopyOperation(String operationName, IResource []resources) {
-		super(operationName);
+	public AbstractWorkingCopyOperation(String operationName, Class<? extends NLS> messagesClass, IResource []resources) {
+		super(operationName, messagesClass);
 		this.resources = resources;
 	}
 	
-	public AbstractWorkingCopyOperation(String operationName, IResourceProvider provider) {
-		super(operationName);
+	public AbstractWorkingCopyOperation(String operationName, Class<? extends NLS> messagesClass, IResourceProvider provider) {
+		super(operationName, messagesClass);
 		this.provider = provider;
 	}
 	

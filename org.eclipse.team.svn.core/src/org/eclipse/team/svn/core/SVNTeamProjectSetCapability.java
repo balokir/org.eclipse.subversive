@@ -77,7 +77,7 @@ public class SVNTeamProjectSetCapability extends ProjectSetCapability {
 		IProject []projects = this.confirmOverwrite(context, allProjects.toArray(new IProject[allProjects.size()]));
 
 		if (projects != null && projects.length > 0) {
-			final CompositeOperation op = new CompositeOperation("Operation_ImportProjectSet"); //$NON-NLS-1$
+			final CompositeOperation op = new CompositeOperation("Operation_ImportProjectSet", SVNMessages.class); //$NON-NLS-1$
 			
 			op.add(new SaveRepositoryLocationsOperation());
 			

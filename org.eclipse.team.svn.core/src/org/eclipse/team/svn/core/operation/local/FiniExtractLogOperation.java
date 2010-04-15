@@ -13,6 +13,7 @@
 package org.eclipse.team.svn.core.operation.local;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 
 /**
@@ -24,7 +25,7 @@ public class FiniExtractLogOperation extends AbstractActionOperation {
 	protected InitExtractLogOperation logger;
 	
 	public FiniExtractLogOperation(InitExtractLogOperation logger) {
-		super("Operation_FiniExtractLog"); //$NON-NLS-1$
+		super("Operation_FiniExtractLog", SVNMessages.class); //$NON-NLS-1$
 		this.logger = logger;
 	}
 

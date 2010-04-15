@@ -23,6 +23,7 @@ import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
+import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
 import org.eclipse.team.svn.revision.graph.operation.CheckRepositoryConnectionOperation;
 import org.eclipse.team.svn.revision.graph.operation.FetchNewRevisionsOperation;
 import org.eclipse.team.svn.revision.graph.operation.FetchSkippedRevisionsOperation;
@@ -291,7 +292,7 @@ public class RepositoryCacheInfo {
 	}
 	
 	protected IActionOperation getCreateOperation(IRepositoryResource resource, RepositoryCache cache) {
-		CompositeOperation op = new CompositeOperation("Operation_CreateCache"); //$NON-NLS-1$
+		CompositeOperation op = new CompositeOperation("Operation_CreateCache", SVNRevisionGraphMessages.class); //$NON-NLS-1$
 		
 		CheckRepositoryConnectionOperation checkConnectionOp = new CheckRepositoryConnectionOperation(resource);
 		op.add(checkConnectionOp);
@@ -309,7 +310,7 @@ public class RepositoryCacheInfo {
 	}
 	
 	protected IActionOperation getRefreshOperation(IRepositoryResource resource, RepositoryCache cache) {
-		CompositeOperation op = new CompositeOperation("Operation_RefreshCache"); //$NON-NLS-1$
+		CompositeOperation op = new CompositeOperation("Operation_RefreshCache", SVNRevisionGraphMessages.class); //$NON-NLS-1$
 		
 		CheckRepositoryConnectionOperation checkConnectionOp = new CheckRepositoryConnectionOperation(resource);
 		op.add(checkConnectionOp);						

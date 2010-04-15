@@ -157,7 +157,7 @@ public class EditTreeConflictsHelper {
 		boolean isRecursive = true;
 		if (isLocalResolution) {
 			//resolved
-			cmpOp = new CompositeOperation(opName);			
+			cmpOp = new CompositeOperation(opName, SVNUIMessages.class);			
 			IActionOperation resolvedOp = this.getResolvedOperation();			
 			cmpOp.add(resolvedOp);						
 		} else if (isRemoteResolution) {
@@ -174,7 +174,7 @@ public class EditTreeConflictsHelper {
 		boolean isManual = !isRemoteResolution && !isLocalResolution;
 		if (markAsMerged && (isRemoteResolution && !this.isRemoteOperationResolveTheConflict() || isManual)) {			
 			if (isManual) {
-				cmpOp = new CompositeOperation(opName);		
+				cmpOp = new CompositeOperation(opName, SVNUIMessages.class);		
 			}			
 			cmpOp.add(this.getResolvedOperation());
 		}
@@ -191,7 +191,7 @@ public class EditTreeConflictsHelper {
 		 * If item doesn't exist locally, i.e. missing or deleted then: resolved
 		 * otherwise: delete + resolved
 		 */
-		CompositeOperation cmpOp = new CompositeOperation(opName);				
+		CompositeOperation cmpOp = new CompositeOperation(opName, SVNUIMessages.class);				
 		
 		DeleteResourceOperation deleteOp = null;				
 		if (IStateFilter.ST_DELETED != this.local.getStatus() && IStateFilter.ST_MISSING != this.local.getStatus()) {
@@ -217,7 +217,7 @@ public class EditTreeConflictsHelper {
 		CompositeOperation cmpOp = null;
 		IResource resource = this.local.getResource();			
 		if (this.treeConflict.operation == Operation.UPDATE || this.treeConflict.operation == Operation.SWITCHED) {
-			cmpOp = new CompositeOperation(opName);									
+			cmpOp = new CompositeOperation(opName, SVNUIMessages.class);									
 			
 			IActionOperation resolveOp = new RevertOperation(new IResource[]{resource}, isRecursive);
 			cmpOp.add(resolveOp);						
@@ -227,7 +227,7 @@ public class EditTreeConflictsHelper {
 			UpdateOperation updateOp = new UpdateOperation(new IResource[]{resource}, rev, ignoreExternals);
 			cmpOp.add(updateOp, new IActionOperation[]{resolveOp});	
 		} else if (this.treeConflict.operation == Operation.MERGE) {
-			cmpOp = new CompositeOperation(opName);			
+			cmpOp = new CompositeOperation(opName, SVNUIMessages.class);			
 			
 			DeleteResourceOperation deleteOp = null;				
 			if (resource.exists()) {
@@ -252,7 +252,7 @@ public class EditTreeConflictsHelper {
 		 * For 'merge' operation we perform a copy
 		 * For 'update' operation we perform update because file already exists in repository		 
 		 */						
-		CompositeOperation cmpOp = new CompositeOperation(opName);						
+		CompositeOperation cmpOp = new CompositeOperation(opName, SVNUIMessages.class);						
 			
 		DeleteResourceOperation deleteOp = null;
 		//if resource exists on file system we delete it

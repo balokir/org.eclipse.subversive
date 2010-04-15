@@ -15,6 +15,7 @@ import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -36,13 +37,13 @@ public class RemovePropertyOperation extends AbstractFileOperation {
 	protected String []names;
 
 	public RemovePropertyOperation(File []files, String []names, boolean isRecursive) {
-		super("Operation_RemovePropertiesFile", files); //$NON-NLS-1$
+		super("Operation_RemovePropertiesFile", SVNMessages.class, files); //$NON-NLS-1$
 		this.names = names;
 		this.isRecursive = isRecursive;
 	}
 
 	public RemovePropertyOperation(IFileProvider provider, String []names, boolean isRecursive) {
-		super("Operation_RemovePropertiesFile", provider); //$NON-NLS-1$
+		super("Operation_RemovePropertiesFile", SVNMessages.class, provider); //$NON-NLS-1$
 		this.names = names;
 		this.isRecursive = isRecursive;
 	}

@@ -15,6 +15,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.svn.core.BaseMessages;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.SVNTeamPlugin;
 import org.eclipse.team.svn.core.connector.SVNConnectorCancelException;
@@ -32,9 +34,11 @@ public abstract class AbstractActionOperation implements IActionOperation {
 	protected String name;
 	protected boolean isExecuted;
 	protected IConsoleStream consoleStream;
+	protected Class<? extends NLS> messagesClass;
 	
-	public AbstractActionOperation(String operationName) {
+	public AbstractActionOperation(String operationName, Class<? extends NLS> messagesClass) {
 		this.isExecuted = false;
+		this.messagesClass = messagesClass;
 		this.setOperationName(operationName);
 		this.updateStatusMessage();
 	}
@@ -117,6 +121,10 @@ public abstract class AbstractActionOperation implements IActionOperation {
 		return this.nameId;
 	}
 	
+	public Class<? extends NLS> getMessagesClass() {
+		return this.messagesClass;
+	}
+	
 	protected abstract void runImpl(IProgressMonitor monitor) throws Exception;
 	
 	protected void writeCancelledToConsole() {
@@ -186,8 +194,8 @@ public abstract class AbstractActionOperation implements IActionOperation {
 		return this.getNationalizedString(this.nameId + "_" + key); //$NON-NLS-1$
 	}
 	
-	protected final String getNationalizedString(String key) {
-		String retVal = SVNMessages.getErrorString(key);
+	protected final String getNationalizedString(String key) {		
+		String retVal = BaseMessages.getErrorString(key, this.messagesClass);
 		if (retVal.equals(key)) {
 			return CoreExtensionsManager.instance().getOptionProvider().getResource(key);
 		}

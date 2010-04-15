@@ -62,7 +62,7 @@ public class ShareOperation extends AbstractFileOperation {
 	protected boolean ignoreExternals;
 	
 	public ShareOperation(File []files, IRepositoryLocation location, IFolderNameMapper mapper, String rootName, int shareLayout, boolean managementFoldersEnabled, String commitComment, boolean ignoreExternals) {
-		super("Operation_ShareFile", files); //$NON-NLS-1$
+		super("Operation_ShareFile", SVNMessages.class, files); //$NON-NLS-1$
 		this.location = location;
 		this.mapper = mapper;
 		this.rootName = rootName;
@@ -73,7 +73,7 @@ public class ShareOperation extends AbstractFileOperation {
 	}
 
 	public ShareOperation(IFileProvider provider, IRepositoryLocation location, IFolderNameMapper mapper, String rootName, int shareLayout, boolean managementFoldersEnabled, String commitComment, boolean ignoreExternals) {
-		super("Operation_ShareFile", provider); //$NON-NLS-1$
+		super("Operation_ShareFile", SVNMessages.class, provider); //$NON-NLS-1$
 		this.location = location;
 		this.mapper = mapper;
 		this.rootName = rootName;

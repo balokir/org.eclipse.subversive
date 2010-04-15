@@ -34,7 +34,7 @@ public class BreakLockAction extends AbstractRepositoryTeamAction {
 		IRepositoryResource []resources = this.getSelectedRepositoryResources();
 		
 		BreakLockOperation mainOp = new BreakLockOperation(resources);
-		CompositeOperation op = new CompositeOperation(mainOp.getId());
+		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 		op.add(mainOp);
 		op.add(new RefreshRemoteResourcesOperation(resources));
 		

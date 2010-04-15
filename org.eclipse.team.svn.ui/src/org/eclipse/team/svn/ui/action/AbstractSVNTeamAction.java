@@ -79,7 +79,7 @@ public abstract class AbstractSVNTeamAction extends TeamAction {
 	public abstract void runImpl(IAction action);
 	
 	protected final void execute(final IAction action) throws InvocationTargetException, InterruptedException {
-		ProgressMonitorUtility.doTaskExternal(new AbstractActionOperation("Operation_CallMenuAction") { //$NON-NLS-1$
+		ProgressMonitorUtility.doTaskExternal(new AbstractActionOperation("Operation_CallMenuAction", SVNUIMessages.class) { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				if (AbstractSVNTeamAction.this.isEnabled()) {
 					if (AbstractSVNTeamAction.this.needsToSaveDirtyEditors() && 

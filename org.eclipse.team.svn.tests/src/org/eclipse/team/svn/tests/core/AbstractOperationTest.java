@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.SVNConnectorCancelException;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
@@ -36,7 +37,7 @@ public abstract class AbstractOperationTest extends TestCase {
 	}
 
 	public void testSetOperationName() {
-		AbstractActionOperation op = new AbstractActionOperation("old name") {
+		AbstractActionOperation op = new AbstractActionOperation("old name", SVNMessages.class) {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 			}
 
@@ -51,7 +52,7 @@ public abstract class AbstractOperationTest extends TestCase {
 
 	public void testGetExecutionState() {
 		// test the failure of an execution
-		AbstractActionOperation op = new AbstractActionOperation("name") {
+		AbstractActionOperation op = new AbstractActionOperation("name", SVNMessages.class) {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				throw new Exception();
 			}
@@ -66,7 +67,7 @@ public abstract class AbstractOperationTest extends TestCase {
 
 	public void testRun() {
 		// test the cancellation of an execution
-		AbstractActionOperation op = new AbstractActionOperation("name") {
+		AbstractActionOperation op = new AbstractActionOperation("name", SVNMessages.class) {
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				monitor.setCanceled(true);
 				reportStatus(new IStatus() {
@@ -136,7 +137,7 @@ public abstract class AbstractOperationTest extends TestCase {
 		String expected = "SVN: 'op name' operation finished with error: Throwable";
 		class MockAbstractActionOperation extends AbstractActionOperation {
 			public MockAbstractActionOperation() {
-				super("op name");
+				super("op name", SVNMessages.class);
 			}
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 			}

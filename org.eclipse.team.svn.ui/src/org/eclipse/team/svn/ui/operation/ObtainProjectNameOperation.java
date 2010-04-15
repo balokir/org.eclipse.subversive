@@ -32,6 +32,7 @@ import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.preferences.SVNTeamPreferences;
 
 /**
@@ -46,7 +47,7 @@ public class ObtainProjectNameOperation extends AbstractActionOperation {
 	protected HashMap<String, IRepositoryResource> names2Resources;
 
 	public ObtainProjectNameOperation(IRepositoryResource[] resources) {
-		super("Operation_ObtainProjectName"); //$NON-NLS-1$
+		super("Operation_ObtainProjectName", SVNUIMessages.class); //$NON-NLS-1$
 		this.resources = resources;
 		this.names2Resources = new HashMap<String, IRepositoryResource>();
 	}

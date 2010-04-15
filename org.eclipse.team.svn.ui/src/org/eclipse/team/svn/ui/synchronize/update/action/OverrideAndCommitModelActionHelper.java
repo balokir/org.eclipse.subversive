@@ -33,6 +33,7 @@ import org.eclipse.team.svn.core.resource.ILocalResource;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 import org.eclipse.team.svn.core.synchronize.UpdateSyncInfo;
 import org.eclipse.team.svn.core.utility.FileUtility;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.dialog.NotifyNodeKindChangedDialog;
 import org.eclipse.team.svn.ui.extension.ExtensionsManager;
 import org.eclipse.team.svn.ui.extension.factory.ICommitDialog;
@@ -86,7 +87,7 @@ public class OverrideAndCommitModelActionHelper extends AbstractActionHelper {
 			keepLocks = commitPanel.getKeepLocks();
 		}
 		
-		CompositeOperation op = new CompositeOperation("Operation_UOverrideAndCommit"); //$NON-NLS-1$
+		CompositeOperation op = new CompositeOperation("Operation_UOverrideAndCommit", SVNUIMessages.class); //$NON-NLS-1$
 
 		final MarkAsMergedOperation mergeOp = new MarkAsMergedOperation(resources[0], true, msg, keepLocks);
 		op.add(mergeOp);
@@ -120,7 +121,7 @@ public class OverrideAndCommitModelActionHelper extends AbstractActionHelper {
 		CommitOperation mainOp = new CommitOperation(mergeOp, msg, true, keepLocks);
 		IActionOperation[] dependsOn = new IActionOperation[] {mergeOp};
 		op.add(mainOp, dependsOn);
-		op.add(new AbstractActionOperation("Operation_UNodeKindChanged") { //$NON-NLS-1$
+		op.add(new AbstractActionOperation("Operation_UNodeKindChanged", SVNUIMessages.class) { //$NON-NLS-1$
             protected void runImpl(IProgressMonitor monitor) throws Exception {
                 final IResource []diffNodeKind = mergeOp.getHavingDifferentNodeKind();
                 if (diffNodeKind.length > 0) {

@@ -14,6 +14,7 @@ package org.eclipse.team.svn.core.operation.local;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNProgressMonitor;
 import org.eclipse.team.svn.core.connector.SVNEntryReference;
@@ -57,7 +58,7 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	public JavaHLMergeOperation(IResource []localTo, IRepositoryResourceProvider from, SVNRevisionRange []revisions, boolean dryRun, boolean ignoreAncestry, int depth) {
-		super("Operation_JavaHLMerge", localTo); //$NON-NLS-1$
+		super("Operation_JavaHLMerge", SVNMessages.class, localTo); //$NON-NLS-1$
 		this.from = from;
 		this.revisions = revisions;
 		this.dryRun = dryRun;
@@ -66,7 +67,7 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	public JavaHLMergeOperation(IResource []localTo, IRepositoryResourceProvider fromStart, IRepositoryResourceProvider fromEnd, boolean dryRun, boolean ignoreAncestry, int depth) {
-		super("Operation_JavaHLMerge", localTo); //$NON-NLS-1$
+		super("Operation_JavaHLMerge", SVNMessages.class, localTo); //$NON-NLS-1$
 		this.from = fromStart;
 		this.fromEnd = fromEnd;
 		this.dryRun = dryRun;
@@ -75,7 +76,7 @@ public class JavaHLMergeOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	public JavaHLMergeOperation(IResource []localTo, IRepositoryResourceProvider from, boolean dryRun) {
-		super("Operation_JavaHLMerge", localTo); //$NON-NLS-1$
+		super("Operation_JavaHLMerge", SVNMessages.class, localTo); //$NON-NLS-1$
 		this.from = from;
 		this.dryRun = dryRun;
 	}

@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.svn.core.BaseMessages;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.AddToSVNIgnoreOperation;
@@ -78,7 +79,7 @@ public class AddToSVNPaneParticipant extends BasePaneParticipant {
 			
 			protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
 				IResource[] selectedResources = this.getAllSelectedResources();
-				CompositeOperation op = new CompositeOperation("AddToIgnore"); //$NON-NLS-1$
+				CompositeOperation op = new CompositeOperation("Operation_AddToSVNIgnore", SVNMessages.class); //$NON-NLS-1$
 				op.add(new AddToSVNIgnoreOperation(selectedResources, IRemoteStorage.IGNORE_NAME, null));
 				op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(selectedResources), IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
 				return op;
@@ -109,7 +110,7 @@ public class AddToSVNPaneParticipant extends BasePaneParticipant {
 			
 			protected IActionOperation getOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
 				IResource[] selectedResources = this.getAllSelectedResources();
-				CompositeOperation op = new CompositeOperation("AddToIgnore"); //$NON-NLS-1$
+				CompositeOperation op = new CompositeOperation("Operation_AddToSVNIgnore", SVNMessages.class); //$NON-NLS-1$
 				op.add(new AddToSVNIgnoreOperation(selectedResources, IRemoteStorage.IGNORE_EXTENSION, null));
 				op.add(new RefreshResourcesOperation(new ResourcesParentsProvider(selectedResources), IResource.DEPTH_INFINITE, RefreshResourcesOperation.REFRESH_ALL));
 				return op;

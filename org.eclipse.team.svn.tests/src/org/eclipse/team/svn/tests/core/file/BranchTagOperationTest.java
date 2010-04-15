@@ -29,7 +29,7 @@ public class BranchTagOperationTest extends AbstractOperationTestCase {
 		SVNFileStorage storage = SVNFileStorage.instance(); 
         IRepositoryResource branchTagResource = storage.asRepositoryResource(this.getFirstFolder(), true);
         PreparedBranchTagOperation mainOp = new PreparedBranchTagOperation("Branch", new IRepositoryResource[] {branchTagResource}, SVNUtility.getProposedBranches(this.getLocation()), "test branch", false);
-        CompositeOperation op = new CompositeOperation(mainOp.getId());
+        CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
         op.add(mainOp);
         op.add(new PreparedBranchTagOperation("Tag", new IRepositoryResource[] {branchTagResource}, SVNUtility.getProposedTags(this.getLocation()), "test branch", false));
         return op;

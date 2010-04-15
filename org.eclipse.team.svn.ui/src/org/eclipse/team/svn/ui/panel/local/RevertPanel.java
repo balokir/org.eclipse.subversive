@@ -345,7 +345,7 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 					public void run() {
 						IResource []resources = FileUtility.getResourcesRecursive(selectedResources, IStateFilter.SF_VERSIONED_FOLDERS, IResource.DEPTH_ZERO);
 						CleanupOperation mainOp = new CleanupOperation(resources);
-						CompositeOperation op = new CompositeOperation(mainOp.getId());
+						CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 						op.add(mainOp);
 						op.add(new RefreshResourcesOperation(resources));
 						UIMonitorUtility.doTaskNowDefault(op, false);						
@@ -360,7 +360,7 @@ public class RevertPanel extends AbstractResourceSelectionPanel {
 						DiscardConfirmationDialog dialog = new DiscardConfirmationDialog(UIMonitorUtility.getShell(), selectedResources.length == 1, DiscardConfirmationDialog.MSG_RESOURCE);
 						if (dialog.open() == 0) {
 							DeleteResourceOperation deleteOperation = new DeleteResourceOperation(selectedResources);
-							CompositeOperation op = new CompositeOperation(deleteOperation.getId());
+							CompositeOperation op = new CompositeOperation(deleteOperation.getId(), deleteOperation.getMessagesClass());
 							SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(selectedResources);
 							RestoreProjectMetaOperation restoreOp = new RestoreProjectMetaOperation(saveOp);
 							op.add(saveOp);

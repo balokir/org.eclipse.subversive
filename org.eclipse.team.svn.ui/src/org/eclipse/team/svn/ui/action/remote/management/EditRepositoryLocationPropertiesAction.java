@@ -23,6 +23,7 @@ import org.eclipse.team.svn.core.operation.local.management.FindRelatedProjectsO
 import org.eclipse.team.svn.core.operation.local.management.RelocateWorkingCopyOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryLocation;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractRepositoryModifyWorkspaceAction;
 import org.eclipse.team.svn.ui.wizard.NewRepositoryLocationWizard;
 
@@ -51,10 +52,10 @@ public class EditRepositoryLocationPropertiesAction extends AbstractRepositoryMo
 			if (!newRootUrl.equals(oldRootUrl)) {
 				FindRelatedProjectsOperation scannerOp = new FindRelatedProjectsOperation(locations[0]);
 				final RelocateWorkingCopyOperation mainOp = new RelocateWorkingCopyOperation(scannerOp, locations[0]);
-				CompositeOperation op = new CompositeOperation(mainOp.getId());
+				CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 				op.add(scannerOp);
 				op.add(mainOp);
-				op.add(new AbstractActionOperation("Operation_CheckRelocationState") { //$NON-NLS-1$
+				op.add(new AbstractActionOperation("Operation_CheckRelocationState", SVNUIMessages.class) { //$NON-NLS-1$
 					protected void runImpl(IProgressMonitor monitor) throws Exception {
 						if (mainOp.getExecutionState() != IActionOperation.OK) {
 							SVNRemoteStorage.instance().copyRepositoryLocation(locations[0], backup);

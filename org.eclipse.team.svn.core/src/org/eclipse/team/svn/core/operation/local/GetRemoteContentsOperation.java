@@ -19,6 +19,7 @@ import java.util.HashMap;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.BaseMessages;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
@@ -50,7 +51,7 @@ public class GetRemoteContentsOperation extends AbstractWorkingCopyOperation {
 	}
 	
 	public GetRemoteContentsOperation(IResource [] resources, IRepositoryResourceProvider provider, HashMap<String, String> remotePath2localPath, boolean ignoreExternals) {
-		super("Operation_GetContent", resources); //$NON-NLS-1$
+		super("Operation_GetContent", SVNMessages.class, resources); //$NON-NLS-1$
 		this.provider = provider;
 		this.remotePath2localPath = remotePath2localPath;
 		this.ignoreExternals = ignoreExternals;

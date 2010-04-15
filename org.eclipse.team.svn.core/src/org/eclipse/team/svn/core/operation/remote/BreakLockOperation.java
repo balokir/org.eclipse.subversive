@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.connector.ISVNConnector;
 import org.eclipse.team.svn.core.operation.IConsoleStream;
 import org.eclipse.team.svn.core.operation.IUnprotectedOperation;
@@ -32,7 +33,7 @@ import org.eclipse.team.svn.core.utility.SVNUtility;
  */
 public class BreakLockOperation extends AbstractRepositoryOperation {
 	public BreakLockOperation(IRepositoryResource []resources) {
-		super("Operation_BreakLock", resources); //$NON-NLS-1$
+		super("Operation_BreakLock", SVNMessages.class, resources); //$NON-NLS-1$
 	}
 
 	protected void runImpl(final IProgressMonitor monitor) throws Exception {

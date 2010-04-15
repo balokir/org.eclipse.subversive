@@ -258,10 +258,10 @@ public class LocksComposite extends Composite {
 			LockResource[] selectedResources = panel.getSelectedResources();
 			IRepositoryResource[] reposResources = LocksView.convertToRepositoryResources(selectedResources);
 			BreakLockOperation mainOp = new BreakLockOperation(reposResources);
-			CompositeOperation op = new CompositeOperation(mainOp.getId());
+			CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 			op.add(mainOp);
 			op.add(new RefreshRemoteResourcesOperation(reposResources));
-			op.add(new AbstractActionOperation("") { //$NON-NLS-1$
+			op.add(new AbstractActionOperation("", SVNUIMessages.class) { //$NON-NLS-1$
 				protected void runImpl(IProgressMonitor monitor) throws Exception {
 					LocksView lv = locksView;
 					if (lv == null) {
@@ -284,7 +284,7 @@ public class LocksComposite extends Composite {
 			LockResource[] selectedResources = unlockPanel.getSelectedResources();
 			IResource[] resources = LocksView.convertToResources(selectedResources);
 			UnlockOperation mainOp = new UnlockOperation(resources);							    
-			CompositeOperation op = new CompositeOperation(mainOp.getId());
+			CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 			op.add(mainOp);
 			op.add(new RefreshResourcesOperation(resources));
 			return op;							
@@ -300,7 +300,7 @@ public class LocksComposite extends Composite {
 			IResource[] resources = LocksView.convertToResources(selectedResources);
 							
 			LockOperation mainOp = new LockOperation(resources, panel.getMessage(), panel.getForce());			    
-			CompositeOperation op = new CompositeOperation(mainOp.getId());
+			CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 			op.add(mainOp);
 			op.add(new RefreshResourcesOperation(resources));
 			return op;

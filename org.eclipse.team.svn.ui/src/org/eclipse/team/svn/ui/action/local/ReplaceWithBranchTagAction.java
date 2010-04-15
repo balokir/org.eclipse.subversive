@@ -26,6 +26,7 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.svnstorage.SVNRemoteStorage;
 import org.eclipse.team.svn.core.utility.SVNUtility;
 import org.eclipse.team.svn.ui.SVNTeamUIPlugin;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.action.AbstractWorkingCopyAction;
 import org.eclipse.team.svn.ui.composite.BranchTagSelectionComposite;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
@@ -72,7 +73,7 @@ public class ReplaceWithBranchTagAction extends AbstractWorkingCopyAction {
 				if (dialog.open() == 0 && panel.getResourceToReplaceWith() != null) {
 					IRepositoryResource selected = panel.getResourceToReplaceWith();
 					boolean ignoreExternals = SVNTeamPreferences.getBehaviourBoolean(SVNTeamUIPlugin.instance().getPreferenceStore(), SVNTeamPreferences.BEHAVIOUR_IGNORE_EXTERNALS_NAME);
-					CompositeOperation op = new CompositeOperation("Operation_ReplaceWithRevision"); //$NON-NLS-1$
+					CompositeOperation op = new CompositeOperation("Operation_ReplaceWithRevision", SVNUIMessages.class); //$NON-NLS-1$
 					SaveProjectMetaOperation saveOp = new SaveProjectMetaOperation(resources);
 					op.add(saveOp);
 					op.add(new ReplaceWithRemoteOperation(resources[0], selected, ignoreExternals));

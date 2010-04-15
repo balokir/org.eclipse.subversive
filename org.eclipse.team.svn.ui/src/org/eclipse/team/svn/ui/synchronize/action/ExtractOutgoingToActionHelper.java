@@ -71,7 +71,7 @@ public class ExtractOutgoingToActionHelper extends AbstractActionHelper {
 		}
 		InitExtractLogOperation logger = new InitExtractLogOperation(path);
 		ExtractToOperationLocal mainOp = new ExtractToOperationLocal(outgoingResources.toArray(new IResource[outgoingResources.size()]), path, true, logger);
-		CompositeOperation op = new CompositeOperation(mainOp.getId());
+		CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 		op.add(logger);
 		op.add(mainOp);
 		op.add(new FiniExtractLogOperation(logger));

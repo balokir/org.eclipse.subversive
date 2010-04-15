@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.tests.core;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.local.management.FindRelatedProjectsOperation;
@@ -34,7 +35,7 @@ public abstract class RelocateWorkingCopyOperationTest extends AbstractOperation
                 String old = newLocation.getUrl();
                 newLocation.setUrl("http://testurl");
                 
-                CompositeOperation op = new CompositeOperation("Relocate Test");
+                CompositeOperation op = new CompositeOperation("Relocate Test", SVNMessages.class);
                 FindRelatedProjectsOperation scannerOp = new FindRelatedProjectsOperation(newLocation);
                 op.add(scannerOp);
                 op.add(new RelocateWorkingCopyOperation(scannerOp, newLocation), new IActionOperation[] {scannerOp});
@@ -49,7 +50,7 @@ public abstract class RelocateWorkingCopyOperationTest extends AbstractOperation
                 assertFalse("RelocateWorkingCopyOperation Test",  remote != null && remote.exists());
                 
                 newLocation.setUrl(old);
-                op = new CompositeOperation("Relocate Test");
+                op = new CompositeOperation("Relocate Test", SVNMessages.class);
                 scannerOp = new FindRelatedProjectsOperation(newLocation);
                 op.add(scannerOp);
                 op.add(new RelocateWorkingCopyOperation(scannerOp, newLocation), new IActionOperation[] {scannerOp});

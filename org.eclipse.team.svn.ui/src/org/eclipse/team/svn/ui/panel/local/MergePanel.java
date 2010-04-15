@@ -413,7 +413,7 @@ public class MergePanel extends AbstractAdvancedDialogPanel {
 		});
 		
 		if (this.mode != MergePanel.MODE_1URL) {
-			CompositeOperation op = new CompositeOperation(mergeOp.getId());
+			CompositeOperation op = new CompositeOperation(mergeOp.getId(), mergeOp.getMessagesClass());
 			op.add(locateFirst);
 			if (this.mode == MergePanel.MODE_2URL) {
 				op.add(locateSecond);

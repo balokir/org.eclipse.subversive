@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.core.operation.local;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.svn.core.resource.IResourceProvider;
 
 /**
@@ -23,13 +24,13 @@ public abstract class AbstractConflictDetectionOperation extends AbstractWorking
 
 	protected UnresolvedConflictDetectorHelper conflictDetectorHelper;
 
-    public AbstractConflictDetectionOperation(String operationName, IResource []resources) {
-        super(operationName, resources);
+    public AbstractConflictDetectionOperation(String operationName, Class<? extends NLS> messagesClass, IResource []resources) {
+        super(operationName, messagesClass, resources);
         this.conflictDetectorHelper = new UnresolvedConflictDetectorHelper();
     }
 
-    public AbstractConflictDetectionOperation(String operationName, IResourceProvider provider) {
-        super(operationName, provider);
+    public AbstractConflictDetectionOperation(String operationName, Class<? extends NLS> messagesClass, IResourceProvider provider) {
+        super(operationName, messagesClass, provider);
         this.conflictDetectorHelper = new UnresolvedConflictDetectorHelper();
     }
     

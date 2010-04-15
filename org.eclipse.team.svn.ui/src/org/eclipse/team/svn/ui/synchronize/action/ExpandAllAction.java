@@ -18,6 +18,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -36,7 +37,7 @@ public class ExpandAllAction extends AbstractSynchronizeModelAction {
 	}
 	
 	protected IActionOperation getOperation(final ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
-		return new AbstractActionOperation("Operation_UExpandAll") { //$NON-NLS-1$
+		return new AbstractActionOperation("Operation_UExpandAll", SVNUIMessages.class) { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 					public void run() {

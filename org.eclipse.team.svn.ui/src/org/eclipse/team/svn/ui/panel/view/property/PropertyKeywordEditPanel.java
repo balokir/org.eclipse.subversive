@@ -322,7 +322,7 @@ public class PropertyKeywordEditPanel extends AbstractDialogPanel {
 			}
 		};
 		   
-		CompositeOperation composite = new CompositeOperation("Operation_SetKeywords"); //$NON-NLS-1$
+		CompositeOperation composite = new CompositeOperation("Operation_SetKeywords", SVNUIMessages.class); //$NON-NLS-1$
 		composite.add(new SetMultiPropertiesOperation(resourceProvider, propertyProvider, filter, this.recursionEnabled && this.setRecursively ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE));
 		composite.add(new RefreshResourcesOperation(resourceProvider));
 		UIMonitorUtility.doTaskScheduledActive(composite);

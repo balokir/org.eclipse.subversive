@@ -27,7 +27,7 @@ public abstract class CheckoutOperationTest extends AbstractOperationTestCase {
 	protected IActionOperation getOperation() {
 	    IRepositoryResource trunk = SVNUtility.getProposedTrunk(this.getLocation());
 	    CheckoutAsOperation mainOp = new CheckoutAsOperation(this.getFirstProject().getName(), trunk.asRepositoryContainer(this.getFirstProject().getName(), false), Depth.INFINITY, true);
-	    CompositeOperation op = new CompositeOperation(mainOp.getId());
+	    CompositeOperation op = new CompositeOperation(mainOp.getId(), mainOp.getMessagesClass());
 	    op.add(mainOp);
 	    op.add(new CheckoutAsOperation(this.getSecondProject().getName(), trunk.asRepositoryContainer(this.getSecondProject().getName(), false), Depth.INFINITY, true));
 		return op;

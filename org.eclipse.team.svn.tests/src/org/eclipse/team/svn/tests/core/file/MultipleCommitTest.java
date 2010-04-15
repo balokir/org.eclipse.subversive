@@ -12,6 +12,7 @@
 package org.eclipse.team.svn.tests.core.file;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.operation.file.AbstractFileOperation;
 import org.eclipse.team.svn.core.operation.file.CommitOperation;
@@ -28,7 +29,7 @@ import org.eclipse.team.svn.tests.core.file.property.SetPropertyOperationTest;
 public class MultipleCommitTest extends AbstractOperationTestCase {
 
 	protected IActionOperation getOperation() {
-		return new AbstractFileOperation("Commit", this.getListFilesRecursive()) {
+		return new AbstractFileOperation("Commit", SVNMessages.class, this.getListFilesRecursive()) {
 
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				new SetPropertyOperation(this.operableData(), 

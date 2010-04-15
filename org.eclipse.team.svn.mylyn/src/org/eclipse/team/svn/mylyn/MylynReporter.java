@@ -50,7 +50,7 @@ public class MylynReporter extends AbstractActionOperation implements IReporter 
 	protected String userComment;
 	
 	public MylynReporter(TaskRepository repository, AbstractTaskDataHandler taskDataHandler, IReportingDescriptor settings, ReportType type) {
-		super(MylynMessages.getErrorString("Operation_OpenReportEditor")); //$NON-NLS-1$
+		super(MylynMessages.getErrorString("Operation_OpenReportEditor"), MylynMessages.class); //$NON-NLS-1$
 		
 		this.settings = settings;
 		this.type = type;
