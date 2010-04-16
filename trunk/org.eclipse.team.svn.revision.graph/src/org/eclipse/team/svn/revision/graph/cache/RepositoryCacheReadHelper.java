@@ -37,6 +37,8 @@ public class RepositoryCacheReadHelper {
 		DataInputStream bytesReader = new DataInputStream(new FileInputStream(cacheFile));
 		Inflater decoder = new Inflater();
 		try {
+			this.repositoryCache.cacheVersion = bytesReader.readInt();
+			
 			this.loadRevisions(bytesReader, decoder);
 			this.loadPaths(bytesReader, decoder);
 			this.loadAuthors(bytesReader, decoder);
