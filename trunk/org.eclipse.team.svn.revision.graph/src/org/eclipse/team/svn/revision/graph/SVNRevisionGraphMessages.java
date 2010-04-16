@@ -57,6 +57,16 @@ public class SVNRevisionGraphMessages extends BaseMessages {
 	public static String LogEntriesCallback_Message;
 	public static String NoData;
 	
+	public static String RevisionFigure_Branch;
+	public static String RevisionFigure_Copy;
+	public static String RevisionFigure_Create;
+	public static String RevisionFigure_Delete;
+	public static String RevisionFigure_Edit;
+	public static String RevisionFigure_NoChanges;
+	public static String RevisionFigure_Rename;
+	public static String RevisionFigure_Tag;
+	public static String RevisionFigure_Trunk;
+	
 	static {
 		//load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, SVNRevisionGraphMessages.class);
