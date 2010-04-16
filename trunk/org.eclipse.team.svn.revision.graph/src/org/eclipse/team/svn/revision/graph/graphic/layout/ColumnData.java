@@ -35,11 +35,9 @@ public class ColumnData {
 	public void addNode(RevisionNode node) {
 		if (this.currentNodes.isEmpty()) {
 			this.currentBottom = node.getY();
-			this.currentTop = node.getY() + node.getHeight();
-		} else {
-			this.currentTop += node.getHeight();
 		}
 		
+		this.currentTop = node.getY() + node.getHeight();		
 		this.currentNodes.add(node);
 	}
 
