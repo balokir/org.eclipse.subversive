@@ -35,6 +35,8 @@ public class RepositoryCacheWriteHelper {
 		DataOutputStream bytesWriter = new DataOutputStream(new FileOutputStream(cacheFile));
 		Deflater encoder = new Deflater();
 		try {
+			bytesWriter.writeInt(this.repositoryCache.cacheVersion);
+			
 			this.saveRevisions(bytesWriter, encoder);
 			this.savePaths(bytesWriter, encoder);
 			this.saveAuthors(bytesWriter, encoder);

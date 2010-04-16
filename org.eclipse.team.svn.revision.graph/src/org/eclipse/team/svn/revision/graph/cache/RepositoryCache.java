@@ -30,7 +30,9 @@ public class RepositoryCache {
 	protected final File cacheFile;
 	
 	protected final RepositoryCacheInfo cacheInfo;
-					
+				
+	protected int cacheVersion = 1;
+	
 	/*
 	 * Index in array corresponds to revision number
 	 * May contain null elements
