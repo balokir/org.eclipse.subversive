@@ -104,13 +104,18 @@ public class SetYCommand extends AbstractLayoutCommand {
 			 */
 			if (diff >= 0) {
 				int offset;			
-				RevisionNode bottomCurrentNode = columnData.getCurrentNodes()[0];			
+				RevisionNode[] currentNodes = columnData.getCurrentNodes();
+				RevisionNode bottomCurrentNode = currentNodes[0];
 				if (bottomCurrentNode.getPrevious() != null || 
 					(bottomCurrentNode.getAction() == RevisionNodeAction.RENAME) ||
-					(bottomCurrentNode.getCopiedFrom() != null && bottomCurrentNode.getCopiedFrom().getAction() == RevisionNodeAction.RENAME)) {
-					offset = 0;
+					(bottomCurrentNode.getCopiedFrom() != null && bottomCurrentNode.getCopiedFrom().getAction() == RevisionNodeAction.RENAME) ||
+					bottomCurrentNode.getPrevious() == null && bottomCurrentNode.getCopiedFrom() == null) {
+					
+					//nodes have direct connection: add vertical offset between them 
+					offset = diff == 0 ? 0 : SetInitialLocationCommand.VERTICAL_OFFSET;
 				} else {
-					offset = this.getHeightOffset(columnData);
+					//nodes don't have direct connection: add double vertical offset between them
+					offset = this.getHeightOffset(columnData) + 2 * SetInitialLocationCommand.VERTICAL_OFFSET;
 				}			
 				
 				if (diff >= maxDiff) {
