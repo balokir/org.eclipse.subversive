@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<site>
+<site
+      associateSitesURL="http://download.eclipse.org/technology/subversive/0.7/update-site/associates.xml">
    <description url="http://download.eclipse.org/technology/subversive/0.7/update-site/">
       Eclipse Subversive - SVN Team Provider
    </description>
-   <feature url="features/org.eclipse.team.svn_0.7.8.I20100326-1700.jar" id="org.eclipse.team.svn" version="0.7.8.I20100326-1700">
+   <feature url="features/org.eclipse.team.svn_0.7.8.I20100419-1900.jar" id="org.eclipse.team.svn" version="0.7.8.I20100419-1900">
       <category name="Subversive (Incubation)"/>
    </feature>
    <feature url="features/org.eclipse.team.svn.nl1_0.7.8.I20091127-1900.jar" id="org.eclipse.team.svn.nl1" version="0.7.8.I20091127-1900">
@@ -12,10 +13,13 @@
    <feature url="features/org.eclipse.team.svn.resource.ignore.rules.jdt_0.7.8.I20091023-1300.jar" id="org.eclipse.team.svn.resource.ignore.rules.jdt" version="0.7.8.I20091023-1300">
       <category name="Subversive (Incubation)"/>
    </feature>
-   <feature url="features/org.eclipse.team.svn.mylyn_0.7.8.I20100222-1600.jar" id="org.eclipse.team.svn.mylyn" version="0.7.8.I20100222-1600">
+   <feature url="features/org.eclipse.team.svn.mylyn_0.7.8.I20100419-1900.jar" id="org.eclipse.team.svn.mylyn" version="0.7.8.I20100419-1900">
       <category name="Subversive Integration (Incubation)"/>
    </feature>
-   <feature url="features/org.eclipse.team.svn.source_0.7.8.I20100326-1700.jar" id="org.eclipse.team.svn.source" version="0.7.8.I20100326-1700">
+   <feature url="features/org.eclipse.team.svn.revision.graph_0.7.8.I20100419-1900.jar" id="org.eclipse.team.svn.revision.graph" version="0.7.8.I20100419-1900">
+      <category name="Subversive (Incubation)"/>
+   </feature>
+   <feature url="features/org.eclipse.team.svn.source_0.7.8.I20100419-1900.jar" id="org.eclipse.team.svn.source" version="0.7.8.I20100419-1900">
       <category name="Subversive Sources (Incubation)"/>
    </feature>
    <feature url="features/org.eclipse.team.svn.ui.capabilities_0.7.8.I20091023-1300.jar" id="org.eclipse.team.svn.ui.capabilities" version="0.7.8.I20091023-1300"/>

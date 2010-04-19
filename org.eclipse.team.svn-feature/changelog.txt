@@ -8,6 +8,16 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.8.I20100419-1900 [19 April 2010]
+
+Fixes:
+ * Allow to specify operation id from multiple message bundles (bug 309290)
+
+Features:
+ * Provide view with graph of changes: branches, tags etc. (bug 211253)
+
+--------------------------------------------------------------------------------
+
 Version 0.7.8.I20100326-1700 [26 March 2010]
 
 Fixes:
