@@ -30,7 +30,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphPlugin;
 import org.eclipse.team.svn.revision.graph.PathRevision.ReviosionNodeType;
@@ -187,14 +186,18 @@ public class RevisionFigure extends RoundedRectangle {
 			this.add(pathFlowPageFigure);			
 		}									
 		
-		//comment			
-		this.commentFigure = new Label();
-		this.add(commentFigure);
-		data = new GridData();
-		data.widthHint = RevisionFigure.FIGURE_WIDTH - 10;
-		data.horizontalAlignment = SWT.BEGINNING;							
-		layout.setConstraint(this.commentFigure, data);
-		this.commentFigure.setLabelAlignment(PositionConstants.LEFT);
+		//comment		
+		String comment = this.revisionNode.getMessage();
+		if (comment != null && comment.length() > 0) {
+			this.commentFigure = new Label();
+			this.add(commentFigure);
+			data = new GridData();
+			data.widthHint = RevisionFigure.FIGURE_WIDTH - 10;
+			data.horizontalAlignment = SWT.BEGINNING;							
+			layout.setConstraint(this.commentFigure, data);
+			this.commentFigure.setLabelAlignment(PositionConstants.LEFT);
+			this.commentFigure.setForegroundColor(ColorConstants.gray);	
+		}
 	}			
 	
 	protected void outlineShape(Graphics graphics) {
@@ -229,14 +232,12 @@ public class RevisionFigure extends RoundedRectangle {
 		if (this.pathTextFlow != null) {
 			this.pathTextFlow.setText(this.path);	
 		}				
-					
-		String comment = this.revisionNode.getMessage();
-		if (comment != null && comment.length() > 0) {
+		
+		if (this.commentFigure != null) {
+			String comment = this.revisionNode.getMessage();					
 			comment = comment.replaceAll("\r\n|\r|\n", " "); //$NON-NLS-1$ //$NON-NLS-2$
-		} else {
-			comment = SVNMessages.SVNInfo_NoComment;
-		}					
-		this.commentFigure.setText(comment);
+			this.commentFigure.setText(comment);
+		}		 						
 		
 		//init color and node icon		
 	    Color color = RevisionFigure.getRevisionNodeColor(this.revisionNode);
