@@ -774,7 +774,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 			target = target.getParent();
 		}
 		IRepositoryResource baseResource = provider.getRepositoryResource();
-		SVNChangeStatus []statuses = this.getStatuses(baseResource.getRepositoryLocation(), resourcePath.toString());
+		SVNChangeStatus []statuses = this.getStatuses(resourcePath.toString());
 		String desiredUrl = this.makeUrl(target, baseResource);
 		ILocalResource retVal = this.fillCache(statuses, desiredUrl, resource, subPathStart, requestedPath);
 		
@@ -856,8 +856,8 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 		return new File(file, SVNUtility.getSVNFolderName()).exists();
 	}
 	
-	protected SVNChangeStatus []getStatuses(IRepositoryLocation location, String path) throws Exception {
-		ISVNConnector proxy = location.acquireSVNProxy();
+	protected SVNChangeStatus []getStatuses(String path) throws Exception {
+		ISVNConnector proxy = CoreExtensionsManager.instance().getSVNConnectorFactory().newInstance();
 		try {
 			SVNChangeStatus []statuses = SVNUtility.status(proxy, path, Depth.IMMEDIATES, ISVNConnector.Options.INCLUDE_UNCHANGED | ISVNConnector.Options.INCLUDE_IGNORED, new SVNNullProgressMonitor());
 			SVNUtility.reorder(statuses, true);
@@ -875,7 +875,7 @@ public class SVNRemoteStorage extends AbstractSVNStorage implements IRemoteStora
 			return new SVNChangeStatus[0];
 		}
 		finally {
-			location.releaseSVNProxy(proxy);
+			proxy.dispose();
 		}
 	}
 	
