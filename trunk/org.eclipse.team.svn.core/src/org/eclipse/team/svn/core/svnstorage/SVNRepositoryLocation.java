@@ -141,14 +141,12 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		reference += ";" + this.authorNameEnabled + ";"; //$NON-NLS-1$ //$NON-NLS-2$
 		String [] realms = this.getRealms().toArray(new String [0]);
 		for (int i = 0; i < realms.length; i++) {
-			if (this.getAdditionalRealms().get(realms[i]).isPasswordSaved()) {
-				if (i < realms.length - 1) {
-					reference += realms[i] + "^"; //$NON-NLS-1$
-				}
-				else {
-					reference += realms[i];
-				}
+			if (i < realms.length - 1) {
+				reference += realms[i] + "^"; //$NON-NLS-1$
 			}
+			else {
+				reference += realms[i];
+			}			
 		}
 		reference += ";"; //$NON-NLS-1$
 		
@@ -162,7 +160,10 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 				reference += base64revLink;
 			}
 		}
-		reference += ";" + this.getSSHSettings().getPort(); //$NON-NLS-1$
+		
+		//write this line only for compatibility issues, previously it contained ssh port
+		reference += ";" + 0; //$NON-NLS-1$
+		
 		return reference;
 	}
 	
@@ -170,7 +171,11 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		boolean containRevisionLinks = false;
 		switch (referenceParts.length) {
 		case 14:
-			this.getSSHSettings().setPort(Integer.parseInt(referenceParts[13]));
+			//check ssh port for compatibility issues 
+			int sshPort = Integer.parseInt(referenceParts[13]);
+			if (sshPort != 0) {
+				this.getSSHSettings().setPort(sshPort);
+			}
 		case 13:
 			if (!referenceParts[12].equals("")) { //$NON-NLS-1$
 				containRevisionLinks = true;
@@ -1021,6 +1026,8 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
     				settings.setPrivateKeyPath(this.prompt.getSSHPrivateKeyPath());
     				settings.setPassPhraseSaved(this.prompt.isSSHPrivateKeyPassphraseSaved());
     				settings.setPassPhrase(this.getSSHPrivateKeyPassphrase());
+    			} else {
+    				settings.setPort(this.prompt.getSSHPort());
     			}
     		}
     		if (connectionType == SVNRepositoryLocation.SSL_CONNECTION) {

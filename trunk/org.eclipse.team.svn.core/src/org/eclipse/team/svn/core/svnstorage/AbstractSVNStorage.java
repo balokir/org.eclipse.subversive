@@ -515,9 +515,7 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 			this.saveAuthInfo(current, ""); //$NON-NLS-1$
 			String [] realms = current.getRealms().toArray(new String[0]);
 			for (String realm : realms) {
-				if (current.isPasswordSavedForRealm(realm)) {
-					this.saveAuthInfo(current, realm);
-				}
+				this.saveAuthInfo(current, realm);
 			}
 		}
 		
@@ -567,6 +565,7 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 				node.putBoolean("ssh_passphrase_saved", useKeyFile ? savePassphrase : false, false); //$NON-NLS-1$ //$NON-NLS-2$
 				node.put("ssh_key", useKeyFile ? sshSettings.getPrivateKeyPath() : "", false); //$NON-NLS-1$ //$NON-NLS-2$				
 				node.put("ssh_passprase", (useKeyFile && savePassphrase) ? sshSettings.getPassPhrase() : "", true); //$NON-NLS-1$ //$NON-NLS-2$
+				node.putInt("ssh_port", sshSettings.getPort(), false);
 				
 				//store SSL settings
 				SSLSettings sslSettings = tmp.getSSLSettings();
@@ -614,6 +613,9 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 				sshSettings.setPrivateKeyPath(node.get("ssh_key", "")); //$NON-NLS-1$ //$NON-NLS-2$
 				sshSettings.setPassPhraseSaved(node.getBoolean("ssh_passphrase_saved", false)); //$NON-NLS-1$
 				sshSettings.setPassPhrase(node.get("ssh_passprase", "")); //$NON-NLS-1$ //$NON-NLS-2$
+				int defaultPort = sshSettings.getPort();
+				defaultPort = defaultPort != 0 ? defaultPort : SSHSettings.SSH_PORT_DEFAULT;
+				sshSettings.setPort(node.getInt("ssh_port", defaultPort));
 				
 				//recover SSL settings
 				SSLSettings sslSettings = tmp instanceof SVNRepositoryLocation ? ((SVNRepositoryLocation) tmp).getSSLSettings(false) : tmp.getSSLSettings();
@@ -658,6 +660,7 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 			sshSettings.setPrivateKeyPath(authInfo.get("ssh_key")); //$NON-NLS-1$
 			sshSettings.setPassPhraseSaved(authInfo.get("ssh_passphrase_saved").equals("true")); //$NON-NLS-1$ //$NON-NLS-2$
 			sshSettings.setPassPhrase(authInfo.get("ssh_passprase")); //$NON-NLS-1$
+			//don't load port here as it wasn't saved
 			
 			//recover SSL settings
 			SSLSettings sslSettings = tmp instanceof SVNRepositoryLocation ? ((SVNRepositoryLocation) tmp).getSSLSettings(false) : tmp.getSSLSettings();
