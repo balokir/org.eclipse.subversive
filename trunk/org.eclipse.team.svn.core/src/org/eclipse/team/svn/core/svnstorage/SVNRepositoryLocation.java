@@ -1021,13 +1021,12 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
         
     		if (connectionType == SVNRepositoryLocation.SSH_CONNECTION) {
     			SSHSettings settings = location.getSSHSettings();
+    			settings.setPort(this.prompt.getSSHPort());
     			settings.setUseKeyFile(this.prompt.isSSHPublicKeySelected());
     			if (settings.isUseKeyFile()) {
     				settings.setPrivateKeyPath(this.prompt.getSSHPrivateKeyPath());
     				settings.setPassPhraseSaved(this.prompt.isSSHPrivateKeyPassphraseSaved());
     				settings.setPassPhrase(this.getSSHPrivateKeyPassphrase());
-    			} else {
-    				settings.setPort(this.prompt.getSSHPort());
     			}
     		}
     		if (connectionType == SVNRepositoryLocation.SSL_CONNECTION) {
