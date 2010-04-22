@@ -288,7 +288,7 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 		this.cachedRealms.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				deleteRealm.setEnabled(RepositoryPropertiesTabFolder.this.cachedRealms.getSelectionIndex() != 0);
-				RepositoryPropertiesTabFolder.this.realmSelectionChanged();
+				RepositoryPropertiesTabFolder.this.realmSelectionChanged(false);
 			}
 		});
 		
@@ -305,7 +305,7 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 					itemSet.remove(item);
 					RepositoryPropertiesTabFolder.this.cachedRealms.setItems((String [])itemSet.toArray(new String[itemSet.size()]));
 					RepositoryPropertiesTabFolder.this.cachedRealms.select(idx - 1);
-					RepositoryPropertiesTabFolder.this.realmSelectionChanged();
+					RepositoryPropertiesTabFolder.this.realmSelectionChanged(false);
 				}
 				boolean enabled = RepositoryPropertiesTabFolder.this.cachedRealms.getItems().length > 1;
 				((Button)e.widget).setEnabled(enabled);
@@ -347,26 +347,36 @@ public class RepositoryPropertiesTabFolder extends Composite implements IPropert
 			this.repositoryLocation.getRealms().size() > 0) {
 			this.cachedRealms.select(1);
 			deleteRealm.setEnabled(true);
-			this.realmSelectionChanged();
+			this.realmSelectionChanged(true);
 		}
 	}
 	
-	protected void realmSelectionChanged() {
+	/*
+	 * We need isFirstTime flag in order not to load values from controls to models for the first time
+	 * as initial control values are default.
+	 */
+	protected void realmSelectionChanged(boolean isFirstTime) {
 		IRepositoryLocation location = this.repositoryLocation;
 		int idx = this.cachedRealms.getSelectionIndex();
 		if (idx != 0) {
 			location = location.getLocationForRealm(this.cachedRealms.getItem(idx));
 		}
 		
-		this.repositoryPropertiesPanel.saveChanges();
+		if (!isFirstTime) {
+			this.repositoryPropertiesPanel.saveChanges();
+		}
 		this.repositoryPropertiesPanel.setCredentialsInput(location, this);
 		this.repositoryPropertiesPanel.resetChanges();
 		if ((CoreExtensionsManager.instance().getSVNConnectorFactory().getSupportedFeatures() & ISVNConnectorFactory.OptionalFeatures.SSH_SETTINGS) != 0) {
-			this.sshComposite.saveChanges();
+			if (!isFirstTime) {
+				this.sshComposite.saveChanges();
+			}
 			this.sshComposite.setCredentialsInput(location.getSSHSettings());
 			this.sshComposite.resetChanges();
 		}
-		this.sslComposite.saveChanges();
+		if (!isFirstTime) {
+			this.sslComposite.saveChanges();
+		}
 		this.sslComposite.setCredentialsInput(location.getSSLSettings());
 		this.sslComposite.resetChanges();
 	}
