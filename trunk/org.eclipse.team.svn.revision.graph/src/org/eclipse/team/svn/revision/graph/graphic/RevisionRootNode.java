@@ -38,7 +38,13 @@ public class RevisionRootNode extends ChangesNotifier {
 	protected final RepositoryCache repositoryCache;
 	
 	protected RevisionNode initialStartNode;
+	//set its value only through setter
 	protected RevisionNode currentStartNode;	
+	/*
+	 * used during filtering to find start node if currentStartNode is null,
+	 * currentStartNode can be null if during previous filtering all nodes are filtered out
+	 */
+	protected RevisionNode lastNotNullCurrentStartNode;
 	
 	protected boolean isSimpleMode;
 		
@@ -58,7 +64,7 @@ public class RevisionRootNode extends ChangesNotifier {
 	
 	public void init(boolean isSimpleMode) {		
 		this.createRevisionNodesModel();
-		this.currentStartNode = this.initialStartNode;
+		this.setCurrentStartNode(this.initialStartNode);
 		
 		this.internalSetMode(isSimpleMode);
 		
@@ -275,20 +281,34 @@ public class RevisionRootNode extends ChangesNotifier {
 		return this.repositoryCache;
 	}
 	
+	/**
+	 * It can be null if all nodes filtered and(or) collapsed
+	 */
 	public RevisionNode getCurrentStartNode() {
 		return this.currentStartNode;
 	}
 	
+	protected void setCurrentStartNode(RevisionNode node) {
+		if (node != null) {
+			this.lastNotNullCurrentStartNode = node;			
+		}
+		this.currentStartNode = node;
+	}
+	
 	/*
 	 * Operation which changes revision nodes model
-	 * 
-	 * TODO handle that after filtering and collapsing there are no nodes
 	 */
 	protected abstract class RevisionModelOperation {
 		public abstract void run();
 				
+		/*
+		 * Go bottom starting from 'topNode' to find start node. 
+		 * Result can't be null
+		 */
 		protected RevisionNode findStartNode(RevisionNode topNode) {
-			//go bottom starting from 'topNode' to find start node
+			if (topNode == null) {
+				throw new IllegalArgumentException("Node can't be null");
+			}
 			RevisionNode startNode = topNode;
 			while (true) {
 				RevisionNode tmp = startNode.getPrevious();
@@ -313,9 +333,12 @@ public class RevisionRootNode extends ChangesNotifier {
 				//apply filter to the whole model
 				filterManager.applyFilters(initialStartNode);
 						
-				RevisionNode candidateNode = this.findStartNode(currentStartNode);			
-				currentStartNode = currentStartNode != candidateNode ? candidateNode :
-					(currentStartNode.isFiltered() ? currentStartNode.getNext() : currentStartNode);				
+				/*
+				 * if there are no nodes after filtering, just show nothing in graph.
+				 * You can return back by disabling filter
+				 */
+				RevisionNode candidateNode = this.findStartNode(currentStartNode != null ? currentStartNode : lastNotNullCurrentStartNode);
+				setCurrentStartNode(candidateNode.isFiltered() ? candidateNode.getNext() : candidateNode);
 			}			
 		});
 		
@@ -355,7 +378,7 @@ public class RevisionRootNode extends ChangesNotifier {
 			public void run() {
 				node.internalSetPreviousCollapsed(true);
 				
-				RevisionRootNode.this.currentStartNode = node;
+				setCurrentStartNode(node);
 			}
 		});					
 		
@@ -379,7 +402,7 @@ public class RevisionRootNode extends ChangesNotifier {
 			public void run() {
 				node.internalSetCopiedFromCollapsed(true);
 				
-				RevisionRootNode.this.currentStartNode = node;
+				setCurrentStartNode(node);
 			}
 		});					
 		
@@ -415,7 +438,7 @@ public class RevisionRootNode extends ChangesNotifier {
 			public void run() {
 				node.internalSetPreviousCollapsed(false);
 				
-				RevisionRootNode.this.currentStartNode = findStartNode(node);
+				setCurrentStartNode(findStartNode(node));
 			}
 		});					
 		
@@ -439,7 +462,7 @@ public class RevisionRootNode extends ChangesNotifier {
 			public void run() {
 				node.internalSetCopiedFromCollapsed(false);
 				
-				RevisionRootNode.this.currentStartNode = this.findStartNode(node);
+				setCurrentStartNode(this.findStartNode(node));
 			}
 		});					
 		
