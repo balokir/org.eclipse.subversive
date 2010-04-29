@@ -49,6 +49,7 @@ import org.eclipse.team.svn.revision.graph.graphic.actions.ShowAnnotationAction;
 import org.eclipse.team.svn.revision.graph.graphic.actions.ShowHistoryAction;
 import org.eclipse.team.svn.revision.graph.graphic.actions.ShowPropertiesAction;
 import org.eclipse.team.svn.revision.graph.graphic.editpart.GraphEditPartFactory;
+import org.eclipse.team.svn.revision.graph.graphic.editpart.GraphScalableRootEditPart;
 import org.eclipse.team.svn.revision.graph.operation.CreateCacheDataOperation;
 import org.eclipse.team.svn.revision.graph.operation.CreateRevisionGraphModelOperation;
 import org.eclipse.team.svn.ui.action.remote.BranchTagAction;
@@ -130,7 +131,7 @@ public class RevisionGraphEditor extends GraphicalEditor {
 		super.configureGraphicalViewer();
 		
 		GraphicalViewer viewer = getGraphicalViewer();
-		ScalableRootEditPart root = new ScalableRootEditPart();
+		GraphScalableRootEditPart root = new GraphScalableRootEditPart();
 		
 		//zoom 
 		List<String> zoomLevels = new ArrayList<String>(3);

@@ -10,16 +10,18 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.graphic.figure;
 
-import org.eclipse.draw2d.Border;
+import java.util.Iterator;
+
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.FlowLayout;
 import org.eclipse.draw2d.Graphics;
 import org.eclipse.draw2d.GridData;
 import org.eclipse.draw2d.GridLayout;
+import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.Label;
+import org.eclipse.draw2d.MarginBorder;
 import org.eclipse.draw2d.PositionConstants;
-import org.eclipse.draw2d.RoundedRectangle;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.draw2d.text.FlowPage;
@@ -42,10 +44,12 @@ import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
  * 
  * @author Igor Burilo
  */
-public class RevisionFigure extends RoundedRectangle {
+public class RevisionFigure extends Figure {
 
 	protected final static int FIGURE_WIDTH = 200;
 			
+	protected final static int SHADOW_OFFSET = 2;
+	
 	public final static Color TRUNK_COLOR;
 	public final static Color BRANCH_COLOR;
 	public final static Color TAG_COLOR;	
@@ -68,9 +72,11 @@ public class RevisionFigure extends RoundedRectangle {
 	protected RevisionNode revisionNode;
 	protected String path;
 	
-	protected Color originalBgColor;
-	protected Border originalBorder;
-	
+	protected Color originalNodeColor;	
+	protected Color nodeColor;
+	protected Color borderColor;
+	protected Color childrenColor;
+		
 	protected Label revisionFigure;
 	protected Label statusFigure;
 	protected TextFlow pathTextFlow;
@@ -140,12 +146,12 @@ public class RevisionFigure extends RoundedRectangle {
 		
 		//non-transparent
 		this.setOpaque(true);
+		
+		//set border in order to change client area because of shadow
+		this.setBorder(new MarginBorder(0, 0, SHADOW_OFFSET, SHADOW_OFFSET));
 	}
 	
-	protected void createControls() {		
-		
-		this.setCornerDimensions(new Dimension(8, 8));
-		
+	protected void createControls() {
 		GridLayout layout = new GridLayout();		
 		//layout.marginHeight = layout.marginWidth = 2;
 		//layout.horizontalSpacing = layout.verticalSpacing = 3; 		
@@ -199,30 +205,58 @@ public class RevisionFigure extends RoundedRectangle {
 			this.commentFigure.setForegroundColor(ColorConstants.gray);	
 		}
 	}			
-	
-	protected void outlineShape(Graphics graphics) {
-		//draw border in corresponding to revision node color		
-		Color color = getRevisionNodeBorderColor(this.revisionNode);				
-		graphics.setForegroundColor(color);
-		
-		super.outlineShape(graphics);
-	}
-	
+
 	@Override
-	protected void fillShape(Graphics graphics) {		
-		//add shadow		
-		final int shadow = 2;
-		final Rectangle bounds = getBounds();
-		graphics.pushState();
-		graphics.setBackgroundColor(ColorConstants.gray);
-		graphics.setAlpha(140);
-		graphics.setClip(new Rectangle(bounds.x, bounds.y, bounds.width+shadow, bounds.height + shadow));
-		final Rectangle shadowRect = bounds.getCopy().translate(shadow, shadow);
-		graphics.fillRoundRectangle(shadowRect, corner.width, corner.height);
-		graphics.popState();
+	protected void paintFigure(Graphics g) {
+		super.paintFigure(g);		
 		
-		super.fillShape(graphics);
+		final Dimension corner = new Dimension(8, 8);		
+		final Rectangle initialBounds = getBounds();		
+		final int lineWidth = 1;
+		//g.drawRectangle(initialBounds);		
+		
+		//shadow		
+		Rectangle shadowBounds = initialBounds.getCopy();
+		shadowBounds.resize(-SHADOW_OFFSET, - SHADOW_OFFSET).translate(SHADOW_OFFSET, SHADOW_OFFSET);
+		g.setBackgroundColor(ColorConstants.gray);		
+		g.fillRoundRectangle(shadowBounds, corner.width, corner.height);							
+		
+		//main		
+		g.setLineWidthFloat(lineWidth);
+		
+		Rectangle mainBounds = initialBounds.getCopy();
+		mainBounds.resize(-SHADOW_OFFSET, -SHADOW_OFFSET);
+										
+		g.setBackgroundColor(this.nodeColor);		
+		g.setForegroundColor(this.borderColor);
+		
+		g.fillRoundRectangle(mainBounds, corner.width, corner.height);			
+		this.drawOutline(g, corner, mainBounds, lineWidth);	
+		
+		//set color for children
+		Iterator<?> iter = this.getChildren().iterator();
+		while (iter.hasNext()) {
+			IFigure child = (IFigure) iter.next();
+			//don't change color for comment as it's set for it explicitly
+			if (child != this.commentFigure) {
+				child.setForegroundColor(this.childrenColor);	
+			}			
+		}
 	}
+	
+	protected void drawOutline(Graphics graphics, Dimension corner, Rectangle bounds, int lineWidth) {
+	    float lineInset = Math.max(1.0f, lineWidth) / 2.0f;
+	    int inset1 = (int)Math.floor(lineInset);
+	    int inset2 = (int)Math.ceil(lineInset);
+	
+	    Rectangle r = Rectangle.SINGLETON.setBounds(bounds);
+	    r.x += inset1 ; 
+	    r.y += inset1; 
+	    r.width -= inset1 + inset2;
+	    r.height -= inset1 + inset2;
+		
+		graphics.drawRoundRectangle(r, Math.max(0, corner.width - (int)lineInset), Math.max(0, corner.height - (int)lineInset));
+	} 
 	
 	protected void initControls() {
 		this.revisionFigure.setText(String.valueOf(this.revisionNode.getRevision()));
@@ -239,11 +273,14 @@ public class RevisionFigure extends RoundedRectangle {
 			this.commentFigure.setText(comment);
 		}		 						
 		
-		//init color and node icon		
-	    Color color = RevisionFigure.getRevisionNodeColor(this.revisionNode);
-	    Image nodeIcon = RevisionFigure.getRevisionNodeIcon(this.revisionNode);	    		
-		this.setBackgroundColor(this.originalBgColor = color);				
-		this.revisionFigure.setIcon(nodeIcon);					
+		//init color and node icon
+	    Image nodeIcon = RevisionFigure.getRevisionNodeIcon(this.revisionNode);	    						
+		this.revisionFigure.setIcon(nodeIcon);
+		
+		this.originalNodeColor = RevisionFigure.getRevisionNodeColor(this.revisionNode);
+		this.nodeColor = this.originalNodeColor;
+		this.borderColor = RevisionFigure.getRevisionNodeBorderColor(this.revisionNode);
+		this.childrenColor = ColorConstants.black;
 	}
 	
 	public void init() {
@@ -252,13 +289,15 @@ public class RevisionFigure extends RoundedRectangle {
 		
 	public void setSelected(boolean isSelected) {
 		if (isSelected) {
-			this.setBackgroundColor(SELECTED_COLOR);
-			this.setForegroundColor(ColorConstants.white);
+			this.nodeColor = SELECTED_COLOR;
+			this.childrenColor = ColorConstants.white;
 		} else {
-			this.setBackgroundColor(this.originalBgColor);
-			this.setForegroundColor(ColorConstants.black);
+			this.nodeColor = this.originalNodeColor;
+			this.childrenColor = ColorConstants.black;
 		}		
-	}	
+		
+		this.repaint();
+	}
 	
 	public RevisionNode getRevisionNode() {
 		return this.revisionNode;
