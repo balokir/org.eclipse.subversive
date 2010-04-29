@@ -16,6 +16,8 @@ import java.util.List;
 
 import org.eclipse.draw2d.ConnectionAnchor;
 import org.eclipse.draw2d.IFigure;
+import org.eclipse.draw2d.MouseEvent;
+import org.eclipse.draw2d.MouseMotionListener;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.ConnectionEditPart;
 import org.eclipse.gef.DragTracker;
@@ -31,59 +33,34 @@ import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionRootNode;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionSourceAnchor;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionTargetAnchor;
+import org.eclipse.team.svn.revision.graph.graphic.figure.ExpandCollapseDecoration;
 import org.eclipse.team.svn.revision.graph.graphic.figure.RevisionFigure;
 import org.eclipse.team.svn.revision.graph.graphic.figure.RevisionTooltipFigure;
 
 /**
  * Edit part for revision node
- *  
- * TODO add expand/collapse
  * 
  * @author Igor Burilo
  */
 public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeEditPart, PropertyChangeListener {				
+			
+	protected RevisionFigure revisionFigure;		
+	protected ExpandCollapseDecoration collapseDecoration;
 	
-//	protected final static String REVISION_LAYER = "revision"; //$NON-NLS-1$
-//	protected final static String COLLAPSE_LAYER = "collapse"; //$NON-NLS-1$
-//	protected final static String EXPAND_LAYER = "expand"; //$NON-NLS-1$
+	protected NodeMouseMotionListener nodeMouseMotionListener;
 	
-//	protected LayeredPane mainPane;
-	protected RevisionFigure revisionFigure;
-	
-//	protected ExpandCollapseDecorationFigure collapseFigure;
-//	protected Layer expandLayer;
-//	protected ExpandCollapseDecorationFigure expandFigure;	
-//	protected NodeMouseMotionListener nodeMouseMotionListener;
-//	
-//	/*
-//	 * Show expand/collapse decoration
-//	 * 
-//	 * TODO There are cases in which expand/collapse decoration isn't removed
-//	 * when we leave revision node: it happens when we leave
-//	 * node by moving mouse cursor over plus/minus icon. 
-//	 */
-//	protected class NodeMouseMotionListener extends MouseMotionListener.Stub {
-//		
-//		public void mouseEntered(MouseEvent me) {
-//			RevisionEditPart.this.addExpandFigure();
-//		}
-//
-//		public void mouseExited(MouseEvent me) {
-//			if (!mainPane.getBounds().contains(me.x, me.y)) { 
-//				RevisionEditPart.this.removeExpandFigure();
-//			}
-//		}
-//	}
-//	
-//	public void removeExpandFigure() {
-//		this.expandLayer.setVisible(false);
-//	}
-//	
-//	public void addExpandFigure() {
-//		this.expandLayer.setVisible(true);
-//	}
-	
-	
+	protected class NodeMouseMotionListener extends MouseMotionListener.Stub {
+		public void mouseEntered(MouseEvent me) {
+			collapseDecoration.showExpanded(true);
+		}
+		public void mouseExited(MouseEvent me) {
+			if (!collapseDecoration.containsPoint(me.getLocation())) {
+				//System.out.println("--main: mouseExited");
+				collapseDecoration.showExpanded(false);
+			}			
+		}
+	}
+		
 	/* (non-Javadoc)
 	 * @see org.eclipse.gef.editparts.AbstractGraphicalEditPart#activate()
 	 */
@@ -101,59 +78,37 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 	public void deactivate() {
 		getCastedModel().removePropertyChangeListener(this);
 		
-//		if (this.nodeMouseMotionListener != null) {
-//			this.mainPane.removeMouseMotionListener(this.nodeMouseMotionListener);
-//		}
+		if (this.nodeMouseMotionListener != null) {
+			this.revisionFigure.removeMouseMotionListener(this.nodeMouseMotionListener);
+		}
+		
+		if (this.collapseDecoration != null) {
+			this.collapseDecoration.removeDecoration();
+		}
 		
 		super.deactivate();
 	} 	
 
 	@Override
-	protected IFigure createFigure() {				
-//		this.mainPane = new LayeredPane();
-//		this.mainPane.addMouseMotionListener(this.nodeMouseMotionListener = new NodeMouseMotionListener());
-		
-		RevisionNode revision = this.getCastedModel();
-		
-		//main layer
-		String path = revision.getPath();				
-		
-		this.revisionFigure = new RevisionFigure(revision, path);													
-//		Layer revisionLayer = new Layer();			
-//		revisionLayer.add(this.revisionFigure);
-		
-//		//expand/collapse layers
-//		Layer collapseLayer = new Layer();
-//		this.collapseFigure = new ExpandCollapseDecorationFigure(revision, true);
-//		collapseLayer.add(this.collapseFigure);				
-//		
-//		this.expandLayer = new Layer();											
-//		this.expandFigure = new ExpandCollapseDecorationFigure(revision, false);
-//		this.expandLayer.add(this.expandFigure);
-//		this.expandLayer.setVisible(false);
-//		
-//		this.mainPane.add(revisionLayer, RevisionEditPart.REVISION_LAYER);
-//		
-//		this.mainPane.add(collapseLayer, RevisionEditPart.COLLAPSE_LAYER);
-//		this.mainPane.add(this.expandLayer, RevisionEditPart.EXPAND_LAYER);
-//					
-//		this.mainPane.setToolTip(new RevisionTooltipFigure(revision, rootNode.getRepositoryCache()));		
-//				
-//		return this.mainPane;
+	protected IFigure createFigure() {
+		RevisionNode revision = this.getCastedModel();				
+		String path = revision.getPath();						
+		this.revisionFigure = new RevisionFigure(revision, path);
 		
 		this.revisionFigure.setToolTip(new RevisionTooltipFigure(revision));
+		this.revisionFigure.addMouseMotionListener(this.nodeMouseMotionListener = new NodeMouseMotionListener());			
+		
+		IFigure decorationLayer = this.getLayer(GraphScalableRootEditPart.DECORATION_LAYER);
+		this.collapseDecoration = new ExpandCollapseDecoration(revision, decorationLayer);
 		
 		return this.revisionFigure;
 	}
-	
+		
 	public void applyLayoutResults() {
 		RevisionNode node = this.getCastedModel();
-		Rectangle bounds = new Rectangle(node.getX(), node.getY(), node.getWidth(), node.getHeight());
-//		this.getFigure().setBounds(bounds);
-		this.revisionFigure.setBounds(bounds);
-		
-//		this.collapseFigure.setBounds(bounds);
-//		this.expandFigure.setBounds(bounds);
+		Rectangle bounds = new Rectangle(node.getX(), node.getY(), node.getWidth(), node.getHeight());				
+		this.revisionFigure.setBounds(bounds);		
+		this.collapseDecoration.setDecoratedFigure(this.revisionFigure);			
 		
 //		Iterator<?> conIter = this.getSourceConnections().iterator();
 //		while (conIter.hasNext()) {
@@ -260,10 +215,9 @@ public class RevisionEditPart extends AbstractGraphicalEditPart implements NodeE
 			this.refreshSourceConnections();
 			this.refreshTargetConnections();
 		} else if (ChangesNotifier.EXPAND_COLLAPSE_ON_NODE_PROPERTY.equals(evt.getPropertyName())) {
-//			this.collapseFigure.update();
-//			this.expandFigure.update();
-//			
-//			this.removeExpandFigure();
+			//remove old decoration			
+			this.collapseDecoration.internalShowExpanded(false);
+			this.collapseDecoration.removeDecoration();			
 		}
 	}
 	
