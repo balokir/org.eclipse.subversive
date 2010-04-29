@@ -60,11 +60,12 @@ public abstract class AbstractGraphLayoutManager extends AbstractLayout {
 		}		
 				
 		RevisionNode startNode = this.graphPart.getCastedModel().getCurrentStartNode();				
-		
-		//make actual layout
-		AbstractLayoutCommand[] layoutCommands = this.getLayoutCommands(startNode); 		
-		for (AbstractLayoutCommand command : layoutCommands) {
-			command.run();
+		if (startNode != null) {
+			//make actual layout
+			AbstractLayoutCommand[] layoutCommands = this.getLayoutCommands(startNode); 		
+			for (AbstractLayoutCommand command : layoutCommands) {
+				command.run();
+			}	
 		}		
 		
 		//apply changes

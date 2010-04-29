@@ -30,17 +30,26 @@ public abstract class AbstractRevisionNodeFilter {
 		}
 	};
 	
+	/**
+	 * Filter out modified nodes which don't have copy to
+	 */
 	public static AbstractRevisionNodeFilter SIMPLE_MODE_FILTER = new AbstractRevisionNodeFilter() {
 		
-		public boolean accept(RevisionNode node) {			
-			if (node.getCopiedTo().length > 0 || 
-				(node.getAction() == RevisionNodeAction.ADD || 
-				node.getAction() == RevisionNodeAction.DELETE ||
-				node.getAction() == RevisionNodeAction.COPY ||
-				node.getAction() == RevisionNodeAction.RENAME)) {
-				return true;
+		public boolean accept(RevisionNode node) {
+			if (node.getAction() == RevisionNodeAction.MODIFY) {
+				//if node has collapses then don't filter it out
+				if (node.isNextCollapsed() || 
+					node.isPreviousCollapsed() ||
+					node.isCopiedFromCollapsed() ||
+					node.isCopiedToCollapsed() ||
+					node.isRenameCollapsed()) {
+					return true;
+				}
+				if (node.getCopiedTo().length == 0) {
+					return false;
+				}
 			}
-			return false;
+			return true;
 		}		
 	};
 	
