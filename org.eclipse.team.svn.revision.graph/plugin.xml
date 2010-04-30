@@ -171,5 +171,15 @@
 	  schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
 	  sequence="CTRL+ALT+Q"/>       
   </extension>
-    
+  
+<!-- **************** Preferences ******************* -->
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="%RevisionGraphPreferencePage.name"
+            category="org.eclipse.team.svn.ui.SVNTeamPreferences"
+            class="org.eclipse.team.svn.revision.graph.preferences.SVNTeamRevisionGraphPage"
+            id="org.eclipse.team.svn.revision.graph.preferences.SVNTeamRevisionGraphPage">
+      </page>
+   </extension>    
 </plugin>

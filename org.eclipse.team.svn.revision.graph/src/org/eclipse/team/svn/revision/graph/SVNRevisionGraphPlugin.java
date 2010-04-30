@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Resource;
 import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.revision.graph.cache.RepositoryCachesManager;
+import org.eclipse.team.svn.revision.graph.preferences.SVNRevisionGraphPreferences;
 import org.eclipse.team.svn.ui.SVNUIMessages;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -49,15 +51,16 @@ public class SVNRevisionGraphPlugin extends AbstractUIPlugin {
     
     public void start(BundleContext context) throws Exception {
 		super.start(context);
-	
-		this.baseUrl = context.getBundle().getEntry("/"); //$NON-NLS-1$
 		
-		this.cachesManager = new RepositoryCachesManager(this.getStateLocation().toFile());
+		SVNRevisionGraphPreferences.setDefaultValues(this.getPreferenceStore());
+		
+		this.baseUrl = context.getBundle().getEntry("/"); //$NON-NLS-1$
+						
+		String cachePath = SVNRevisionGraphPreferences.getCacheString(this.getPreferenceStore(), SVNRevisionGraphPreferences.CACHE_DIRECTORY_NAME);
+		this.cachesManager = new RepositoryCachesManager(new File(cachePath));
     }
     
-    public void stop(BundleContext context) throws Exception {    	    	
-    	super.stop(context);
-    	
+    public void stop(BundleContext context) throws Exception {
     	if (disposeOnShutdownResources != null) {
 			Iterator<Resource> iter = disposeOnShutdownResources.iterator();
 			while (iter.hasNext()) {
@@ -67,6 +70,12 @@ public class SVNRevisionGraphPlugin extends AbstractUIPlugin {
 				}
 			}			
 		}
+    	
+    	if (this.cachesManager != null) {
+    		this.cachesManager.dispose();
+    	}    	
+    	
+    	super.stop(context);
     }
     
     public ImageDescriptor getImageDescriptor(String path) {

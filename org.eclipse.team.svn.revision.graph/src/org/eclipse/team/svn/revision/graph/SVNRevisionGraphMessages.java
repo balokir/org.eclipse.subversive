@@ -41,6 +41,10 @@ public class SVNRevisionGraphMessages extends BaseMessages {
 	public static String Operation_PrepareRevisionData_Id;
 	public static String Operation_ShowRevisionGraph;
 	public static String Operation_ShowRevisionGraph_Id;
+	public static String Operation_ExportCaches;
+	public static String Operation_ExportCaches_Id;
+	public static String Operation_ImportCaches;
+	public static String Operation_ImportCaches_Id;
 	
 	public static String ShowRevisionGraphAction;
 	public static String ShowRevisionsWithCopiesAction;
@@ -66,6 +70,22 @@ public class SVNRevisionGraphMessages extends BaseMessages {
 	public static String RevisionFigure_Rename;
 	public static String RevisionFigure_Tag;
 	public static String RevisionFigure_Trunk;
+	
+	public static String SVNTeamRevisionGraphPage_Description;
+	public static String SVNTeamRevisionGraphPage_Export;
+	public static String SVNTeamRevisionGraphPage_ExportDescription;
+	public static String SVNTeamRevisionGraphPage_ExportTitle;
+	public static String SVNTeamRevisionGraphPage_Group_CacheDirectory;
+	public static String SVNTeamRevisionGraphPage_Import;
+	public static String SVNTeamRevisionGraphPage_ImportDescription;
+	public static String SVNTeamRevisionGraphPage_ImportTitle;
+	public static String SVNTeamRevisionGraphPage_Remove;
+	public static String SVNTeamRevisionGraphPage_RemoveConfirm_Description;
+	public static String SVNTeamRevisionGraphPage_RemoveConfirm_Title;
+	public static String SVNTeamRevisionGraphPage_Path_BrowseDialogDescription;
+	public static String SVNTeamRevisionGraphPage_Path_BrowseDialogTitle;
+	public static String SVNTeamRevisionGraphPage_Path_Field;
+	public static String SVNTeamRevisionGraphPage_Path_Label;
 	
 	static {
 		//load message values from bundle file

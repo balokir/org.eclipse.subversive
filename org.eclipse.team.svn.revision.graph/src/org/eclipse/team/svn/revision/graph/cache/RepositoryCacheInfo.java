@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
+import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
 import org.eclipse.team.svn.revision.graph.operation.CheckRepositoryConnectionOperation;
@@ -45,6 +46,7 @@ public class RepositoryCacheInfo {
 	protected long lastProcessedRevision; 
 	protected String cacheDataFileName;
 	
+	protected final String repositoryName;
 	protected final File metadataFile;
 	
 	
@@ -75,22 +77,26 @@ public class RepositoryCacheInfo {
 		}		
 	}
 	
-	public RepositoryCacheInfo(File metadataFile) {		
+	public RepositoryCacheInfo(String repositoryName, File metadataFile) {
+		this.repositoryName = repositoryName;
 		this.metadataFile = metadataFile;		
-	}
-	
-	public void init() {
+		
 		this.startSkippedRevision = 0;
 		this.endSkippedRevision = 0;
 		this.lastProcessedRevision = 0;
-		
-		String metaName = this.metadataFile.getName();
-		int index = metaName.lastIndexOf("."); //$NON-NLS-1$
+				
+		this.cacheDataFileName = RepositoryCacheInfo.getCacheDataFileName(this.metadataFile.getName());
+	}
+	
+	public static String getCacheDataFileName(String metadataFileName) {		
+		int index = metadataFileName.lastIndexOf("."); //$NON-NLS-1$
+		String cacheDataFileName;
 		if (index != -1) {
-			this.cacheDataFileName = metaName.substring(0, index) + ".data"; //$NON-NLS-1$
+			cacheDataFileName = metadataFileName.substring(0, index) + ".data"; //$NON-NLS-1$
 		} else {
-			this.cacheDataFileName = metaName + ".data"; //$NON-NLS-1$
-		}			
+			cacheDataFileName = metadataFileName + ".data"; //$NON-NLS-1$
+		}		
+		return cacheDataFileName;
 	}
 	
 	public void load() throws IOException {
@@ -106,9 +112,7 @@ public class RepositoryCacheInfo {
 			} finally {
 				try { in.close(); } catch (IOException e) { /*ignore*/ }
 			}			
-		} else {
-			this.init();
-		} 
+		}
 	}
 	
 	protected String getProperty(Properties props, String propertyName) {
@@ -179,6 +183,10 @@ public class RepositoryCacheInfo {
 		return this.metadataFile;
 	}
 	
+	public String getRepositoryName() {	
+		return this.repositoryName;
+	}
+	
 	/**
 	 * Calculate cache data.
 	 * 
@@ -227,8 +235,7 @@ public class RepositoryCacheInfo {
 				op = this.getRefreshOperation(resource, previousCache);
 				cache = previousCache;
 			} else {
-				File cacheDataFile = new File(this.metadataFile.getParentFile(), this.cacheDataFileName);		
-				cache = new RepositoryCache(cacheDataFile, this);			
+				cache = new RepositoryCache(this.getCacheDataFile(), this);			
 				op = this.getCreateOperation(resource, cache);
 			}			
 			
@@ -254,6 +261,11 @@ public class RepositoryCacheInfo {
 				this.isCalculating = false;
 			}
 		}
+	}
+	
+	protected File getCacheDataFile() {
+		File cacheDataFile = new File(this.metadataFile.getParentFile(), this.cacheDataFileName);
+		return cacheDataFile;
 	}
 	
 	public CacheResult refreshCacheData(IRepositoryResource resource, IProgressMonitor monitor) {
@@ -338,7 +350,48 @@ public class RepositoryCacheInfo {
 		}		
 	}
 	
-	public void export(File destination) {
-		//TODO implement
+	/**	
+	 * Export cache to destination folder
+	 * 
+	 * @return false if cache can't be exported because it's calculating at this moment
+	 */
+	public boolean export(File destination, IProgressMonitor monitor) throws Exception {
+		synchronized (this.calculateLock) {
+			if (this.isCalculating) {
+				return false;
+			}
+			
+			File cacheDataFile = this.getCacheDataFile();
+			if (this.metadataFile.exists() && cacheDataFile.exists()) {
+				FileUtility.copyFile(destination, cacheDataFile, monitor);				
+				FileUtility.copyFile(destination, this.metadataFile, monitor);
+			}	
+			
+			return true;
+		}
+	}
+
+	/**	
+	 * Remove cache from file system
+	 * 
+	 * @return false if cache can't be deleted because it's calculating at this moment
+	 */
+	public boolean remove() {
+		synchronized (this.calculateLock) {
+			if (this.isCalculating) {
+				return false;
+			}
+			
+			this.metadataFile.delete();
+			
+			File cacheDataFile = this.getCacheDataFile();
+			cacheDataFile.delete();	
+			
+			return true;
+		}			
+	}
+	
+	public String toString() {
+		return this.repositoryName;
 	}
 }
