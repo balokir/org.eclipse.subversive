@@ -8,6 +8,26 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.8.I20100430-2000 [30 April 2010]
+
+Fixes:
+ * SVN Deadlock while trying to open Password Dialog (bug 301417)
+
+ * SSH settings are not correctly switched in repository locations dialog (bug 310088)
+
+ * Ssh port not being saved between eclipse restarts (bug 249074)
+
+ * Make consistent licenses (bug 310430)
+
+ * org.eclipse.team.svn.ui.lock package isn't exported (bug 310422)
+
+Features:
+ * Allow to manage revision graph caches (bug 311015)
+
+ * Allow to expand/collapse revision nodes (bug 310979)
+
+--------------------------------------------------------------------------------
+
 Version 0.7.8.I20100419-1900 [19 April 2010]
 
 Fixes:
