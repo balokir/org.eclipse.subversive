@@ -265,7 +265,8 @@ public class RepositoryCachesManager implements IPropertyChangeListener {
 										FileUtility.copyFile(RepositoryCachesManager.this.cacheFolder, metadataFile, monitor);	
 										
 										//record to repositories
-										RepositoryCacheInfo cacheInfo = new RepositoryCacheInfo(url, metadataFile);
+										File newMetadataFile = new File(RepositoryCachesManager.this.cacheFolder, metaFileName);
+										RepositoryCacheInfo cacheInfo = new RepositoryCacheInfo(url, newMetadataFile);
 										cacheInfo.load();
 										
 										synchronized (lock) {
