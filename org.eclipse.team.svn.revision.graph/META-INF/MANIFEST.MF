@@ -31,4 +31,5 @@ Export-Package: org.eclipse.team.svn.revision.graph,
  org.eclipse.team.svn.revision.graph.graphic.editpart,
  org.eclipse.team.svn.revision.graph.graphic.figure,
  org.eclipse.team.svn.revision.graph.graphic.layout,
- org.eclipse.team.svn.revision.graph.operation
+ org.eclipse.team.svn.revision.graph.operation,
+ org.eclipse.team.svn.revision.graph.preferences
