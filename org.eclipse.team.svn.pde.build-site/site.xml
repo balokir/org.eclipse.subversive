@@ -3,7 +3,7 @@
    <description url="http://download.eclipse.org/technology/subversive/pde-build/0.7/update-site/">
       Eclipse Subversive - SVN PDE Build Extensions
    </description>
-   <feature url="features/org.eclipse.team.svn.pde.build_0.7.8.I20090525-1500.jar" id="org.eclipse.team.svn.pde.build" version="0.7.8.I20090525-1500">
+   <feature url="features/org.eclipse.team.svn.pde.build_0.7.8.I20100430-2000.jar" id="org.eclipse.team.svn.pde.build" version="0.7.8.I20100430-2000">
       <category name="SVN PDE Build Extension"/>
    </feature>
    <category-def name="SVN PDE Build Extension" label="SVN PDE Build Extension">
