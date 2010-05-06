@@ -8,7 +8,7 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
-Version 0.7.8.I20100430-2000 [30 April 2010]
+Version 0.7.8.I20100506-1300 [06 May 2010]
 
 Fixes:
  * SVN Deadlock while trying to open Password Dialog (bug 301417)

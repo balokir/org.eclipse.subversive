@@ -76,7 +76,7 @@ public class BytesUtility {
 		try {
 			return BytesUtility.decompressBytes(decoder, compressedBytes, rawLength);
 		} catch (DataFormatException e) {
-			throw new IOException(e);
+			throw new IOException(e.getMessage());
 		} 
 	}
 	
