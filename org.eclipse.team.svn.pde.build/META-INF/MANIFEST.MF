@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-RequiredExecutionEnvironment: J2SE-1.5, JavaSE-1.6
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.team.svn.pde.build;singleton:=true
-Bundle-Version: 0.7.8.I20100430-2000
+Bundle-Version: 0.7.8.I20100506-1300
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-ClassPath: .

@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.team.svn.nl1"
       label="%featureName"
-      version="0.7.8.I20100430-2000"
+      version="0.7.8.I20100506-1300"
       provider-name="%providerName"
       plugin="org.eclipse.team.svn.nl1"
       colocation-affinity="org.eclipse.team.svn">
@@ -30,14 +30,14 @@
          id="org.eclipse.team.svn.nl1"
          download-size="4"
          install-size="4"
-         version="0.7.8.I20100430-2000"
+         version="0.7.8.I20100506-1300"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.team.svn.core.nl1"
          download-size="10"
          install-size="10"
-         version="0.7.8.I20100430-2000"
+         version="0.7.8.I20100506-1300"
          fragment="true"
          unpack="false"/>
 
@@ -45,7 +45,7 @@
          id="org.eclipse.team.svn.ui.nl1"
          download-size="40"
          install-size="40"
-         version="0.7.8.I20100430-2000"
+         version="0.7.8.I20100506-1300"
          fragment="true"
          unpack="false"/>
 
