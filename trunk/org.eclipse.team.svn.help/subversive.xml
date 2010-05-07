@@ -7,7 +7,7 @@
 	<topic label="Requirements" href="gettingStarted/aboutSubversive/requirements.html"/>
 	<topic label="Subversive installation instructions" href="gettingStarted/aboutSubversive/install.html"/>
 	<topic label="Subversive update instructions" href="gettingStarted/aboutSubversive/update_eclipse.html"/>
-	<topic label="Migrating from Polarion.org versions" href="gettingStarted/aboutSubversive/update_polarion.html"/>
+	<topic label="Migrating from Polarion.com versions" href="gettingStarted/aboutSubversive/update_polarion.html"/>
 	<topic label="Subversive modules" href="gettingStarted/aboutSubversive/modules.html"/>
 	<topic label="Subversive architecture" href="gettingStarted/aboutSubversive/arch.html"/>
 	<topic label="Subversive extension points" href="gettingStarted/aboutSubversive/extensions.html"/>
