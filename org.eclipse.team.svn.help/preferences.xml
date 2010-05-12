@@ -11,4 +11,5 @@
 	<topic label="Password Management" href="preferences/pref_pass.html"/>
 	<topic label="Performance" href="preferences/pref_performance.html"/>
 	<topic label="Properties Configuration" href="preferences/pref_autoprops.html"/>
+	<topic label="Revision Graph" href="preferences/pref_graph.html"/>
 </toc>

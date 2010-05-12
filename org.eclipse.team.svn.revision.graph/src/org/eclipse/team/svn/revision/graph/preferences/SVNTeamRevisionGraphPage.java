@@ -45,6 +45,7 @@ import org.eclipse.team.svn.ui.composite.PathSelectionComposite;
 import org.eclipse.team.svn.ui.dialog.DefaultDialog;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Revision graph preferences page implementation
@@ -82,8 +83,8 @@ public class SVNTeamRevisionGraphPage extends AbstractSVNRevisionGraphPreference
 		this.createButtons(composite);						
 		this.createDirectorySelection(composite);	
 
-		//TODO Setting context help
-		//PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.commentTemplatesPreferencesContext"); //$NON-NLS-1$
+		//Setting context help
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, "org.eclipse.team.svn.help.revisionGraphPreferencesContext"); //$NON-NLS-1$
 		
 		return composite;
 	}
