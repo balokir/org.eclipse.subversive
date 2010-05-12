@@ -112,14 +112,18 @@
     <actionSet
         id="org.eclipse.team.svn.revision.graph.action.shortcuts"
         label="SVN Revision Graph"
-        description="Customizable SVN Actions"
+        description="Customizable SVN Revision Graph Actions"
         visible="false">
-        	  	  
+		<menu label="SVN Revision Graph"
+			id="svn.graph.main"
+			path="additions">
+			<separator name="group0"></separator>
+		</menu>	        	  	  
        <action
      	  class="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphLocalAction"
      	  definitionId="org.eclipse.team.svn.revision.graph.command.ShowRevisionGraphCommand"
      	  id="org.eclipse.team.svn.revision.graph.action.ShowRevisionGraphLocalAction"
-     	  menubarPath="svn.main/group5"     	  
+     	  menubarPath="svn.graph.main/group0"     	  
           helpContextId="org.eclipse.team.svn.revision.graph.show_revision_graph_action_context"
           tooltip="%ShowRevisionGraphAction.tooltip"
           label="%ShowRevisionGraphAction.label"
