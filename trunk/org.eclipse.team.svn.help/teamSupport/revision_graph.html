@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+	<title>SVN Revision Graph</title>
+	<meta name="copyright"  content="Copyright (c) 2005-2010 Polarion Software. All rights reserved. This page is provided under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at http://www.eclipse.org/legal/epl-v10.html Contributors: Igor Burilo."/>
+	<LINK REL="STYLESHEET" HREF="../book.css" CHARSET="ISO-8859-1" TYPE="text/css"/>
+	<script language="JavaScript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"></script>
+</head>
+<body>
+
+	<table cellpadding = "0" cellspacing = "0" border = "0" width = "100%">
+		<tr>
+			<td class="head_picture">
+				<img src="../images/guide_1.gif"/>
+			</td>
+			<td class="head_picture" width="100%"  align="right">
+				<img src="../images/guide_2.gif"/>
+			</td>
+		</tr>
+	</table>
+<h2>SVN Revision Graph</h2>
+    <i>'SVN Revision Graph'</i> is a graphical representation of history for any resource. Using Revision Graph we can see a resource history with copy operation, applied for this resource. Represented information includes information about branches and tags for resource, so it allows to see a revision history for a resource and all its branches and tags. It's a main advantage of the Revision Graph over a History View, because History View is able to display only a history for resource, but not its copies. As the result Revision Graph is very useful in case if branches and tags are used, so users can see the whole picture of resource changes together with all branches and tags, where it was used on the one screen.
+    <br/>
+    <br/>
+    <b>Revision Graph features:</b>
+	<ul>
+		<li>Displaying of the revision graph for resource</li>
+		<li>Switching between compact and full data representation (In compact view revision with no copy operations are filtered out. Full data representation displays all revisions)</li>
+		<li>Supported actions for displayed revisions: compare revisions, show content, export content, display history and other operations, available for History View (the same list of actions is available in the revision Graph)</li>
+		<li>Graph zooming and thubnailing in Outline view</li>
+		<li>Expanding/collapsing revisions</li>
+	</ul>
+	</p>
+	<p>This is how <i>'SVN Revision Graph'</i> looks like:</p>
+	<img border = "0" src="../images/svn_revision_graph.png" alt="SVN Revision Graph"/>
+	<p><b><i>Toolbar</i></b></p>
+	<p><b>Refresh</b> - contacts SVN repository and updates revision graph.</p>
+	<p><b>Show Only Revisions with Copies</b> - filter out revisions which have modifications but don't have copies.</p>
+	<p><b>Zoom</b> - allows to change zooming.</p>
+	<p><b><i>Pop-up menu</i></b></p>	
+	<p><b>Open/Open With</b> - opens the resource of current selected revision.</p>
+	<p><b>Compare with Each Other</b> - compares to selected revisions of the resource.</p>
+	<p><b>Compare Current with HEAD</b> - compares selected resource to HEAD.</p>
+	<p><b>Compare with Previous Revision</b> - compares selected resource to previous revision.</p>
+	<p><b>Show History</b> - shows SVN History View for a selected resource.</p>
+	<p><b>Show Properties</b> - shows SVN Properties View for a selected resource.</p>
+	<p><b>Compare Properties</b> - compare properties to selected revisions of the resource.</p>
+	<p><b>Show Annotation...</b> - shows SVN Annotations View for a selected resource.</p>
+	<p><b>Export...</b> - exports a selected resource to a local folder.</p>
+	<p><b>Create Patch...</b> - creates a patch from a selected resource in compare with another URL or revision.</p>
+	<p><b>Extract...</b> - extract a selected resource to a local folder.</p>
+	<p><b>Branch from</b> - creates a branch from a selected revision.</p>
+	<p><b>Tag from</b> - creates a tag from a selected revision.</p>
+	<p><b>Add Revision Link...</b> - creates a revision link and adds it to a revisions folder.</p>
+	<img border="0" src="../images/rel_tops.png" alt="Related topics"/>
+	<br/>
+	<a href="../preferences/pref_graph.html">Revision Graph</a>
+	<br/>
+	<a href="../teamSupport/repos_persp.html">SVN Repository Exploring Perspective</a>	
+</body>
+</html>
+

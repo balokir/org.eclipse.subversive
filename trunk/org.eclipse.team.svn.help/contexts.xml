@@ -46,6 +46,10 @@
 		<description>On this page user can Import, Export, Add, Remove and Edit automatic properties for specified files or define custom properties.</description>
 		<topic label=" Automatic Properties Preferences" href="preferences/pref_autoprops.html"/>
 	</context>
+	<context id="revisionGraphPreferencesContext">
+		<description>On this page user can manage repository caches.</description>
+		<topic label="Revision Graph Preferences" href="preferences/pref_graph.html"/>
+	</context>	
 	<context id="commentTemplatesPreferencesContext">
 		<description>On this page user can create, edit or remove comment templates for committing, preview selected template. To add a comment template press 'New' and simply type it in an editable space of a dialog.</description>
 		<topic label="Comment Templates Preferences" href="preferences/pref_comments.html"/>
