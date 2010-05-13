@@ -5,96 +5,126 @@
 * See details at http://www.eclipse.org/subversive                             *
 ********************************************************************************
 
-Version 0.7.8.I20091023-1300 release date: 23 October 2009
+Version 0.7.9.I20100512-1900 release date: 12 May 2010
 
 1. What's New
 
-   The version is 0.7.8 service release.
+   The version is 0.7.9 service release.
    
    Changes comparatively to the previous version are listed below. The full list of 
    changes you can find in Change Log.   	
+		
+	Features:
+	 * Allow to manage revision graph caches (bug 311015)
 	
-    Features:
-	 * Add ability to make relative urls in Set External Definition dialog (bug 292674)
-	 
-	 * Add ability to specify comments for revision links (bug 292280)
-	 
-	 * Add 'Add Revision Link' action to Team menu (bug 292424)
+	 * Allow to expand/collapse revision nodes (bug 310979)
 	
-	 * Provide annotated revision links to save the original revision if switching between trunk and branch (bug 261983)
+	 * Provide view with graph of changes: branches, tags etc. (bug 211253)
 	
-	 * Add dialog for creating external resource (bug 288139)
-	 
-	 * In SVN lock view add actions to resources tree (bug 287577)
+	 * Correctly support externals in actions (bug 290386)
 	 
 	Fixes:
-	 * deadlock in org.eclipse.team.svn.core.SVNTeamPlugin - Eclipse fails to start (bug 291603)
-	
-	 * Problems with Set External Definition dialog (bug 292781)
-	
-	 * Commit says dir is not part of commit, but it is (bug 292477)
-	
-	 * [Subversive] - Bug report ID-L9VHB (bug 254477)
-	
-	 * There are no new files in outgoing change sets (bug 292927)
-	
-	 * Selection of a single revision to merge results in no changes (bug 287872) 
-	
-	 * Send Notifications' operation finished with error - repeated dialog (bug 282000) 
-	
-	 * "Accept" action in the Merge View does not work (bug 289680)
-	
-	 * "Edit tree conflicts" action is enablement does not corresponds to what it does (bug 289710) 
-	
-	 * NPE in SVN Kit 1.3.0 (bug 289812) 
-	
-	 * "Show History" action from the "Synchronize View" is ineffective (bug 289313) 
-	
-	 * Merge View incorrectly shows conflicting statuses (bug 289691) 
-	
-	 * ClassCastException in Override and Update in Merge view (bug 290691) 
-	
-	 * Trim spaces in repository location (bug 290678) 
-	
-	 * Add key bindings for Merge action (bug 290718) 
-	
-	 * Problems with URL field in Merge dialog (bug 290717) 
-	
-	 * Merge and Synchronize interfered with each other (bug 289689) 
-	
-	 * Context menu actions in the Merge View does not correctly work (bug 290508) 
-	
-	 * Change connectors string in SVN Connectors list (bug 290677) 
-	
-	 * Recommended small change in SVNRemoteStorage.isFileExists() to massively improve performance (bug 291089) 
-	
-	 * "Local" and "Remote" sub-menus of "Synchronize view" do not appear in my RCP app (bug 290574) 
-	
-	 * Bad trailing character after french translation "En attente" (bug 274961) 
-	
-	 * Share Project Wizard dialog typo (bug 264685) 
-	
-	 * error message when resource location does not match repository location (bug 277787) 
-	
-	 * Ascendant/Descendant Text Decorations Incorrect (bug 248033) 
-	
-	 * Synchronize action is hanged (bug 291566) 
-	
-	 * NPE in SVNRemoteStorage (bug 291580) 
-	
-	 * NLS unused message (bug 291583) 
-	
-	 * [Subversive] - "Team -> Switch..." should prefill the input URL with selected resource URL (bug 271297) 
-	
-	 * Merged files are absent from SVN change Sets (TeamSynchronisation) (bug 282677) 
-	
-	 * svn externals not working for path/subpath entries (bug 272526) 
+	 * Invalid action contribution by revision graph (bug 312624)
+	  
+	 * Add help for revision graph (bug 312562)	
 	 
-	 * [Subversive] - Bug report ID-AUVIL (bug 286552)   
+	 * SVN Deadlock while trying to open Password Dialog (bug 301417)
+	
+	 * SSH settings are not correctly switched in repository locations dialog (bug 310088)
+	
+	 * Ssh port not being saved between eclipse restarts (bug 249074)
+	
+	 * Make consistent licenses (bug 310430)
+	
+	 * org.eclipse.team.svn.ui.lock package isn't exported (bug 310422)
 	 
-	 * Preview of merge reintegrate fails (bug 287301)
+	 * Allow to specify operation id from multiple message bundles (bug 309290)
+	
+	 * Error during decoration in Helios M6 (bug 307203)
+	
+	 * Subversive Connector Discovery fails on Helios (bug 295156) 
+	
+	 * Any key binding for rename in SVN Repositories view, should be "F2" (bug 299592) 
+	
+	 * SVN Workspace Synchronization: Synchronize function does not display proper Icon Decoration for an "Incoming Deletion" (bug 282338) 
+	
+	 * FileUtility#getPathNodes is inefficient for large change sets (bug 266492) 
+	
+	 * One slash in URL during Share Project (bug 303085) 
+	
+	 * Problems when project contains folder called "tags" (bug 303032) 
+	
+	 * Label for SVN URL changes after restart (bug 298862) 
 	 
-	 * Support spaces in local path in svn:externals (bug 288107) 		  			
+	 * Reintegrate says "No changes found" (bug 297720)
+	
+	 * Change bugs title (bug 298574)
+	
+	 * Filter JVM Properties when creating Mylyn task (bug 298575)
+	
+	 * Compare with branch doesn't work with externals (bug 298573)
+	
+	 * Undo after directory move causes irrecoverable data loss (bug 297779)
+	
+	 * NPE in getNationalizedString if Localization is not installed (bug 300592)
+	
+	 * Can not get Subversive working in I20100122-0800 (bug 300591)
+	  
+	 * Subversive Connector Discovery fails on Helios M3 (bug 295156) 
+	
+	 * Subversive is halting the UI (note that jconsole doesn't detect a deadlock, but still it becomes halted) (bug 296707)
+	   
+	 * NPE in IStateFilter$AbstractStateFilter.accept() (bug 296402) 
+	
+	 * StackOverflowError when getting authentication info (bug 296689)
+	   
+	 * File is disappeared from Sync view if update finished with error (bug 295984)
+	
+	 * Correctly show files copied with different register case on Windows (bug 295983)
+	
+	 * Subversive fails to initialize due to corrupted .svnRepositories file (bug 295954)
+	
+	 * dead lock on Linux on startup due to password prompt (bug 295951)
+	
+	 * Eclipse UI stalls for more than 5 minutes in the main thread executing SVNRemoteStorage code (bug 296230)
+	    
+	 * Subversive tries to connect to repository for Compare With -> Base from Working Copy (bug 245326)
+	
+	 * Use Equinox secure storage (bug 295079)
+	
+	 * Changing svn:ignore on project root directory without updating incoming changes before causes strange behavior (bug 256868)
+	
+	 * Support lightweight decorations for Synchronize View (bug 245873)
+	     
+	 * Start from copy uses trunk instead of branch copy revision (bug 294022)
+	 
+	 * Problems with locks (bug 294207)
+	 
+	 * shortcut stops working after first time (bug 293003)  
+	 
+	 * Commit externals problem (bug 290385)
+	 
+	 * svn:externals definition for a sub-sub-directory breaks after running svn update (bug 270022)
+	 
+	 * Error during reporting an invalid error (bug 293588)
+	 
+	 * Make user friendly name for subscriber (bug 293562)
+	 
+	 * New NLS unused message with latest update (bug 293464)
+	 
+	 * An empty console window defaults to SVN console (SVN Console should be a console that also display under the opened consoles list) (bug 290797)
+	 
+	 * Adding file to svn ignore from "Add To SVN Version Control" dialog problem (bug 254902)
+	 
+	 * An internal error occurred during: "Overwriting 1 resource.". (bug 292577)
+	 
+	 * Extend SVN Info properties (bug 293016)
+	 
+	 * NPE when calling Edit Conflicts action (bug 293172)
+	 
+	 * Make more precise statuses in Commit dialog (bug 293017)
+	 
+	 * Properties decoration problem (bug 293015)	
 	
 2. Information
 

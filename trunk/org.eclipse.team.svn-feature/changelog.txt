@@ -8,9 +8,22 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
-Version 0.7.8.I20100506-1300 [06 May 2010]
+Version 0.7.9.I20100512-1900 [12 May 2010]
 
+Features:
+ * Allow to manage revision graph caches (bug 311015)
+
+ * Allow to expand/collapse revision nodes (bug 310979)
+
+ * Provide view with graph of changes: branches, tags etc. (bug 211253)
+
+ * Correctly support externals in actions (bug 290386)
+ 
 Fixes:
+ * Invalid action contribution by revision graph (bug 312624)
+  
+ * Add help for revision graph (bug 312562)
+ 
  * SVN Deadlock while trying to open Password Dialog (bug 301417)
 
  * SSH settings are not correctly switched in repository locations dialog (bug 310088)
@@ -20,27 +33,9 @@ Fixes:
  * Make consistent licenses (bug 310430)
 
  * org.eclipse.team.svn.ui.lock package isn't exported (bug 310422)
-
-Features:
- * Allow to manage revision graph caches (bug 311015)
-
- * Allow to expand/collapse revision nodes (bug 310979)
-
---------------------------------------------------------------------------------
-
-Version 0.7.8.I20100419-1900 [19 April 2010]
-
-Fixes:
+ 
  * Allow to specify operation id from multiple message bundles (bug 309290)
 
-Features:
- * Provide view with graph of changes: branches, tags etc. (bug 211253)
-
---------------------------------------------------------------------------------
-
-Version 0.7.8.I20100326-1700 [26 March 2010]
-
-Fixes:
  * Error during decoration in Helios M6 (bug 307203)
 
  * Subversive Connector Discovery fails on Helios (bug 295156) 
@@ -56,12 +51,7 @@ Fixes:
  * Problems when project contains folder called "tags" (bug 303032) 
 
  * Label for SVN URL changes after restart (bug 298862) 
-   
---------------------------------------------------------------------------------
-
-Version 0.7.8.I20100222-1600 [22 February 2010]
-
-Fixes:
+ 
  * Reintegrate says "No changes found" (bug 297720)
 
  * Change bugs title (bug 298574)
@@ -75,30 +65,15 @@ Fixes:
  * NPE in getNationalizedString if Localization is not installed (bug 300592)
 
  * Can not get Subversive working in I20100122-0800 (bug 300591)
-
---------------------------------------------------------------------------------
-
-Version 0.7.8.I20091207-1900 [07 December 2009]
-
-Fixes:
+  
  * Subversive Connector Discovery fails on Helios M3 (bug 295156) 
 
- * Subversive is halting the UI (note that jconsole doesn't detect a deadlock, but still it becomes halted) (bug 296707) 
+ * Subversive is halting the UI (note that jconsole doesn't detect a deadlock, but still it becomes halted) (bug 296707)
+   
+ * NPE in IStateFilter$AbstractStateFilter.accept() (bug 296402) 
 
---------------------------------------------------------------------------------
-
-Version 0.7.8.I20091202-1600 [02 December 2009]
-
-Fixes:
-* NPE in IStateFilter$AbstractStateFilter.accept() (bug 296402) 
-
-* StackOverflowError when getting authentication info (bug 296689) 
-
---------------------------------------------------------------------------------
-
-Version 0.7.8.I20091127-1900 [27 November 2009]
-
-Fixes:
+ * StackOverflowError when getting authentication info (bug 296689)
+   
  * File is disappeared from Sync view if update finished with error (bug 295984)
 
  * Correctly show files copied with different register case on Windows (bug 295983)
@@ -108,12 +83,7 @@ Fixes:
  * dead lock on Linux on startup due to password prompt (bug 295951)
 
  * Eclipse UI stalls for more than 5 minutes in the main thread executing SVNRemoteStorage code (bug 296230)
-
---------------------------------------------------------------------------------
-
-Version 0.7.8.I20091120-1900 [20 November 2009]
-
-Fixes:
+    
  * Subversive tries to connect to repository for Compare With -> Base from Working Copy (bug 245326)
 
  * Use Equinox secure storage (bug 295079)
@@ -121,15 +91,7 @@ Fixes:
  * Changing svn:ignore on project root directory without updating incoming changes before causes strange behavior (bug 256868)
 
  * Support lightweight decorations for Synchronize View (bug 245873)
-
---------------------------------------------------------------------------------
-
-Version 0.7.8.I20091106-1900 [06 November 2009]
-
-Features:
- * Correctly support externals in actions (bug 290386)
-
-Fixes:
+     
  * Start from copy uses trunk instead of branch copy revision (bug 294022)
  
  * Problems with locks (bug 294207)
@@ -159,7 +121,7 @@ Fixes:
  * Make more precise statuses in Commit dialog (bug 293017)
  
  * Properties decoration problem (bug 293015)
- 
+      
 --------------------------------------------------------------------------------
 
 Version 0.7.8.I20091023-1300 [23 October 2009]
