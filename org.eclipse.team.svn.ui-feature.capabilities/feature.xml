@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.team.svn.ui.capabilities"
       label="%featureName"
-      version="0.7.8.I20100506-1300"
+      version="0.7.9.I20100512-1900"
       provider-name="%providerName"
       plugin="org.eclipse.team.svn.ui.capabilities">
 
@@ -23,7 +23,7 @@
          id="org.eclipse.team.svn.ui.capabilities"
          download-size="0"
          install-size="0"
-         version="0.7.8.I20100506-1300"
+         version="0.7.9.I20100512-1900"
          unpack="false"/>
 
 </feature>

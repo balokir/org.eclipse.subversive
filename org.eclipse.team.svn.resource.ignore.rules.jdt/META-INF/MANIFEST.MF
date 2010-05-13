@@ -3,7 +3,7 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5, JavaSE-1.6
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.team.svn.resource.ignore.rules.jdt;singleton:=true
-Bundle-Version: 0.7.8.I20100506-1300
+Bundle-Version: 0.7.9.I20100512-1900
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-ClassPath: .

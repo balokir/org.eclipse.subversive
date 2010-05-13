@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.team.svn.pde.build"
       label="%featureName"
-      version="0.7.8.I20100506-1300"
+      version="0.7.9.I20100512-1900"
       provider-name="%providerName">
 
    <description>
@@ -22,7 +22,7 @@
          id="org.eclipse.team.svn.pde.build"
          download-size="20"
          install-size="20"
-         version="0.7.8.I20100506-1300"
+         version="0.7.9.I20100512-1900"
          unpack="false"/>
 
 </feature>
