@@ -133,8 +133,12 @@ Version 0.7.9.I20100512-1900 release date: 12 May 2010
    Subversive requires JDK 1.5 or higher and supports following versions of Eclipse:
     * 3.3 (tested with 3.3.2)
     * 3.4 (tested with 3.4)
+    * 3.5
+    * 3.6
    
-   Subversive supports Subversion version 1.5 with SVN Kit 1.2.x and JavaHL 1.5.x, 
+   Subversive supports 
+   Subversion version 1.4 with SVN Kit 1.1.x and JavaHL 1.4.x,
+   Subversion version 1.5 with SVN Kit 1.2.x and JavaHL 1.5.x, 
    Subversion version 1.6 with SVN Kit 1.3.x and JavaHL 1.6.x
 
 2.2 Known issues
