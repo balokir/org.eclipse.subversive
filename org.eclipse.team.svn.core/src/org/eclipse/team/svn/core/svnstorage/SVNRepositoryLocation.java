@@ -36,7 +36,6 @@ import org.eclipse.team.svn.core.connector.SVNEntryRevisionReference;
 import org.eclipse.team.svn.core.connector.SVNRevision;
 import org.eclipse.team.svn.core.connector.ISVNConnector.Depth;
 import org.eclipse.team.svn.core.extension.CoreExtensionsManager;
-import org.eclipse.team.svn.core.extension.factory.ISVNConnectorFactory;
 import org.eclipse.team.svn.core.extension.options.IOptionProvider;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.ActivityCancelledException;
@@ -838,11 +837,8 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 
 	public static class BaseCredentialsPromptWrapper implements ISVNCredentialsPrompt {
 		protected ISVNCredentialsPrompt prompt;
-		protected String tryRealm;
-		protected String threadName;
-		// Inadequate connector library behaviour: correct connector shouldn't ask for the same credentials twice for atomic operation if credentials are valid
-		protected static final int MAX_ACCESS_COUNT = 5;
-		protected int accessCount;
+		//protected String tryRealm;
+		//protected String threadName;
 		
 		protected IRepositoryLocation realmLocation;
 		protected IRepositoryLocation location;
@@ -970,30 +966,7 @@ public class SVNRepositoryLocation extends SVNRepositoryBase implements IReposit
 		}
 		
 		protected boolean tryCachedRealm(String realm) {
-			if (!ISVNConnectorFactory.DEFAULT_ID.equals(CoreExtensionsManager.instance().getSVNConnectorFactory().getId())) {
-				return false;
-			}
-			String threadName = Thread.currentThread().getName();
-			if (this.tryRealm == null || !this.tryRealm.equals(realm) || !threadName.equals(this.threadName) || this.accessCount < BaseCredentialsPromptWrapper.MAX_ACCESS_COUNT) {
-				this.realmLocation = this.location.getLocationForRealm(realm);
-				if (this.realmLocation != null) {
-					if (threadName.equals(this.threadName) && this.tryRealm.equals(realm)) {
-						this.accessCount++;
-					}
-					else {
-						this.accessCount = 0;
-					}
-					this.tryRealm = realm;
-					this.threadName = threadName;
-					return true;
-				}
-			}
-			else {
-				this.tryRealm = null;
-				this.realmLocation = null;
-				this.threadName = null;
-				this.accessCount = 0;
-			}
+			//provide implementation if needed
 			return false;
 		}
 		
