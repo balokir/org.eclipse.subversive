@@ -553,7 +553,7 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 				boolean toStorePass = tmp.isPasswordSaved();
 
 				//store normal password settings
-				node.put("username", tmp.getUsername(), false); //$NON-NLS-1$
+				node.put("username", toStorePass ? tmp.getUsername() : "", false); //$NON-NLS-1$
 				node.put("password", toStorePass ? tmp.getPassword() : "", true); //$NON-NLS-1$ //$NON-NLS-2$
 				node.putBoolean("password_saved", toStorePass, false); //$NON-NLS-1$
 				
@@ -603,9 +603,10 @@ public abstract class AbstractSVNStorage implements ISVNStorage {
 				}
 				
 				//recover normal password settings
-				tmp.setUsername(node.get("username", "")); //$NON-NLS-1$ //$NON-NLS-2$
-				tmp.setPasswordSaved(node.getBoolean("password_saved", false)); //$NON-NLS-1$
-				tmp.setPassword(node.get("password", "")); //$NON-NLS-1$ //$NON-NLS-2$
+				boolean isPasswordSaved = node.getBoolean("password_saved", false); //$NON-NLS-1$ 
+				tmp.setPasswordSaved(isPasswordSaved);
+				tmp.setUsername(isPasswordSaved ? node.get("username", "") : ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$				
+				tmp.setPassword(isPasswordSaved ? node.get("password", "") : ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				
 				//recover SSH settings
 				SSHSettings sshSettings = tmp instanceof SVNRepositoryLocation ? ((SVNRepositoryLocation) tmp).getSSHSettings(false) : tmp.getSSHSettings();
