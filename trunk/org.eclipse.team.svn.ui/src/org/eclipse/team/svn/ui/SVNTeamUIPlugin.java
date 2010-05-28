@@ -103,8 +103,6 @@ public class SVNTeamUIPlugin extends AbstractUIPlugin {
 		
 		this.getModelCangeSetManager();
 		
-		SVNTeamPreferences.setDefaultValues(this.getPreferenceStore());
-		
 		Preferences corePreferences = SVNTeamPlugin.instance().getPluginPreferences();
 		
 		// Earlier Subversive releases save connector id in SVNTeamPlugin store

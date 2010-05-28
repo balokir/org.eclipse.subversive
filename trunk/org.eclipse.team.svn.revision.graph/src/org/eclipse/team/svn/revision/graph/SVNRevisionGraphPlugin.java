@@ -52,8 +52,6 @@ public class SVNRevisionGraphPlugin extends AbstractUIPlugin {
     public void start(BundleContext context) throws Exception {
 		super.start(context);
 		
-		SVNRevisionGraphPreferences.setDefaultValues(this.getPreferenceStore());
-		
 		this.baseUrl = context.getBundle().getEntry("/"); //$NON-NLS-1$
 						
 		String cachePath = SVNRevisionGraphPreferences.getCacheString(this.getPreferenceStore(), SVNRevisionGraphPreferences.CACHE_DIRECTORY_NAME);

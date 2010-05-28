@@ -1557,7 +1557,13 @@
 			id="org.eclipse.team.svn.ui.SVNTeamPropsPreferences"
 			name="%PropsPreferencePage.name"/>
 	</extension>
-
+    <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.eclipse.team.svn.ui.preferences.SVNTeamPreferenceInitializer">
+      </initializer>
+    </extension>
+    
 <!-- ********** Quick-diff Provider ************** -->
 	<extension
 		point="org.eclipse.ui.workbench.texteditor.quickDiffReferenceProvider">
