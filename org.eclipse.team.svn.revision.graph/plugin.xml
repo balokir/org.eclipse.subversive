@@ -186,4 +186,10 @@
             id="org.eclipse.team.svn.revision.graph.preferences.SVNTeamRevisionGraphPage">
       </page>
    </extension>    
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.eclipse.team.svn.revision.graph.preferences.SVNRevisionGraphPreferencesInitializer">
+      </initializer>
+   </extension>   
 </plugin>
