@@ -8,6 +8,17 @@
 Now the Subversive project was moved to Eclipse.org and new version numbers was introduced. 
 Change Log's for older versions still present in this file.
 
+Version 0.7.9.I20100528-1600 [28 May 2010]
+
+Fixes:
+ * Lock user account with Subversive (bug 314490) 
+	
+ * Realm credentials are not used in auth prompt (bug 314639) 
+		
+ * Unable to customize preferences when Subversive is embedded in an eclipse product (bug 311019) 
+	
+--------------------------------------------------------------------------------
+
 Version 0.7.9.I20100512-1900 [12 May 2010]
 
 Features:
