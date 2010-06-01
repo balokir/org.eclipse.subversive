@@ -66,7 +66,7 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 		this.pathRevisionValidator = new PathRevisionConnectionsValidator(this.repositoryCache);
 		
 		TimeMeasure processMeasure = new TimeMeasure("Create model"); //$NON-NLS-1$
-		
+							
 		String url = this.resource.getUrl();
 		String rootUrl = this.resource.getRepositoryLocation().getRepositoryRootUrl();	
 	
@@ -89,13 +89,27 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 		if (entry != null) {
 			this.resultNode = this.createRevisionNode(entry, pathIndex, false);	
 									
-			this.process(this.resultNode, monitor);						
+			this.createRevisionGraph(this.resultNode, monitor);
+			this.addMergeInfo(monitor);
 		}									
 				
 		processMeasure.end();
 	}
 	
-	protected void process(PathRevision startNode, IProgressMonitor monitor) {
+	/*
+	 * Add merge information to already created revision graph
+	 */
+	protected void addMergeInfo(IProgressMonitor monitor) {
+		TimeMeasure mergeMeasure = new TimeMeasure("Add merge info"); //$NON-NLS-1$
+		GraphMergeInfoProcessor mergeProcessor = new GraphMergeInfoProcessor(this);
+		mergeProcessor.run(monitor);
+		mergeMeasure.end();
+	}
+	
+	/*
+	 * Create revision graph: create nodes and connections between them
+	 */
+	protected void createRevisionGraph(PathRevision startNode, IProgressMonitor monitor) {
 		Queue<PathRevision> nodesQueue = new LinkedList<PathRevision>();
 		nodesQueue.offer(startNode);		
 		PathRevision node;
