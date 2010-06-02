@@ -43,6 +43,10 @@ public class RepositoryCacheReadHelper {
 			this.loadPaths(bytesReader, decoder);
 			this.loadAuthors(bytesReader, decoder);
 			this.loadMessages(bytesReader, decoder);
+			//merge info is added in '2' version
+			if (this.repositoryCache.getCacheVersion() >= 2) {
+				this.loadMergeInfo(bytesReader, decoder);
+			}
 		} finally {
 			try { bytesReader.close(); } catch (IOException ie) { /*ignore*/ }
 			decoder.end();
@@ -96,5 +100,10 @@ public class RepositoryCacheReadHelper {
 	protected void loadMessages(DataInput in, Inflater decoder) throws IOException {
 		byte[] bytes = BytesUtility.decompressAndRead(in, decoder);
 		this.repositoryCache.messages = new MessageStorage(bytes);
+	}
+	
+	protected void loadMergeInfo(DataInput in, Inflater decoder) throws IOException {
+		byte[] bytes = BytesUtility.decompressAndRead(in, decoder);
+		this.repositoryCache.mergeInfo = new MergeInfoStorage(bytes);
 	}
 }

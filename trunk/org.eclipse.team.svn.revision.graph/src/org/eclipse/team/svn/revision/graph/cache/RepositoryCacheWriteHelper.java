@@ -40,7 +40,8 @@ public class RepositoryCacheWriteHelper {
 			this.saveRevisions(bytesWriter, encoder);
 			this.savePaths(bytesWriter, encoder);
 			this.saveAuthors(bytesWriter, encoder);
-			this.saveMessages(bytesWriter, encoder);			
+			this.saveMessages(bytesWriter, encoder);
+			this.saveMergeInfo(bytesWriter, encoder);
 		} finally {
 			try { bytesWriter.close(); } catch (IOException ie) { /*ignore*/ }
 			encoder.end();
@@ -137,6 +138,15 @@ public class RepositoryCacheWriteHelper {
 		 * compressed messages storage
 		 */
 		BytesUtility.compressAndWrite(this.repositoryCache.messages.toBytes(), out, encoder);
+	}
+	
+	protected void saveMergeInfo(DataOutput out, Deflater encoder) throws IOException {
+		/*
+		 * Write:
+		 * 
+		 * compressed merge info
+		 */
+		BytesUtility.compressAndWrite(this.repositoryCache.mergeInfo.toBytes(), out, encoder);
 	}
 	
 }

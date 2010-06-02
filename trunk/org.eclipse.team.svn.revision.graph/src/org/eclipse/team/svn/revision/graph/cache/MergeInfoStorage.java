@@ -46,7 +46,18 @@ public class MergeInfoStorage {
 			this.mergeInfo.put(mergeTargetRevision, revs);
 		}
 		revs.add(mergeSourceRevision);
-	} 
+	}
+	
+	public void addMergeInfo(long mergeTargetRevision, long[] mergeSourceRevisions) {
+		Set<Long> revs = this.mergeInfo.get(mergeTargetRevision);
+		if (revs == null) {
+			revs = new HashSet<Long>();
+			this.mergeInfo.put(mergeTargetRevision, revs);
+		}
+		for (long mergeSourceRevision : mergeSourceRevisions) {
+			revs.add(mergeSourceRevision);
+		}		
+	}
 	
 	public long[] getMergeTargetRevisions() {
 		Set<Long> revisions =  this.mergeInfo.keySet();

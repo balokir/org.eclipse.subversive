@@ -70,6 +70,19 @@ public class PathStorage {
 		}		
 	}	
 	
+	/**
+	 * return array of parents for passed path. Array includes also 
+	 * passed path as last element. Shorter path is stored in low index position 
+	 */
+	public List<Integer> getPathParents(int pathIndex) {
+		LinkedList<Integer> parents = new LinkedList<Integer>();
+		while (pathIndex != PathStorage.ROOT_INDEX) {
+			parents.addFirst(pathIndex);
+			pathIndex = this.getParentPathIndex(pathIndex);			
+		}
+		return parents;
+	}
+	
 	protected List<Pair> getPathPairs(int index) {
 		LinkedList<Pair> list = new LinkedList<Pair>();
 		int tmpIndex = index;

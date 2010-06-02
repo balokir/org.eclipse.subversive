@@ -10,11 +10,17 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.team.svn.revision.graph.cache.CacheChangedPath;
-import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
 import org.eclipse.team.svn.revision.graph.cache.CacheRevision;
+import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
 import org.eclipse.team.svn.revision.graph.operation.PathRevisionConnectionsValidator;
 
 /** 
@@ -39,7 +45,65 @@ public class PathRevision extends NodeConnections<PathRevision> {
 		RENAME,		
 		NONE		
 	}
+	
+	/*
+	 * As there can be many revisions merged from one path,
+	 * merge from data is grouped by path 
+	 */
+	public static class MergeData {
+		public final int path;
+		protected Set<Long> revisions = new HashSet<Long>();
 		
+		public MergeData(int path) {
+			this.path = path;
+		}
+		
+		public MergeData(int path, long revision) {
+			this.path = path;
+			this.revisions.add(revision);
+		}
+		
+		public void addRevision(long revision) {
+			this.revisions.add(revision);
+		}
+		
+		public void addRevisions(long[] revisions) {
+			for (long revision : revisions) {
+				this.addRevision(revision);
+			}
+		}
+		
+		public void addRevisions(Collection<Long> revisions) {
+			this.revisions.addAll(revisions);
+		}
+		
+		public long[] getRevisions() {
+			long[] result = new long[this.revisions.size()];
+			int i = 0;
+			for (long rev : this.revisions) {
+				result[i ++] = rev;
+			}
+			return result;
+		}
+		
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj instanceof MergeData) {
+				MergeData md = (MergeData) obj;
+				if (this.path == md.path) {
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		public int hashCode() {
+			return this.path;
+		}
+	}
+	
 	protected final int pathIndex;	
 	
 	protected final CacheRevision cacheRevision;	
@@ -47,6 +111,11 @@ public class PathRevision extends NodeConnections<PathRevision> {
 	public final ReviosionNodeType type;
 	
 	public final RevisionNodeAction action;			
+	
+	//don't group revisions by path
+	protected Map<Integer, MergeData> mergeTo = Collections.emptyMap();
+	//group revisions by path
+	protected Map<Integer, MergeData> mergedFrom = Collections.emptyMap();
 	
 	protected PathRevisionConnectionsValidator validator;
 	
@@ -81,6 +150,58 @@ public class PathRevision extends NodeConnections<PathRevision> {
 		return this.cacheRevision.getChangedPaths();
 	}		
 	
+	public void addMergeTo(int path, long revision) {
+		if (this.mergeTo == Collections.EMPTY_MAP) {			
+			this.mergeTo = new HashMap<Integer, MergeData>();
+		}		
+		MergeData mergeData = this.mergeTo.get(path);
+		if (mergeData == null) {
+			mergeData = new MergeData(path);
+			this.mergeTo.put(path, mergeData);
+		}
+		mergeData.addRevision(revision);
+	}
+	
+	public boolean hasMergeTo() {
+		return !this.mergeTo.isEmpty();
+	}
+	
+	public MergeData[] getMergeTo() {
+		return this.mergeTo.values().toArray(new MergeData[0]);
+	}
+		
+	public void addMergedFrom(int path, long[] revisions) {
+		if (this.mergedFrom == Collections.EMPTY_MAP) {			
+			this.mergedFrom = new HashMap<Integer, MergeData>();
+		}		
+		MergeData mergeData = this.mergedFrom.get(path);
+		if (mergeData == null) {
+			mergeData = new MergeData(path);
+			this.mergedFrom.put(path, mergeData);
+		}
+		mergeData.addRevisions(revisions);
+	}
+	
+	public void addMergedFrom(int path, Collection<Long> revisions) {
+		if (this.mergedFrom == Collections.EMPTY_MAP) {			
+			this.mergedFrom = new HashMap<Integer, MergeData>();
+		}		
+		MergeData mergeData = this.mergedFrom.get(path);
+		if (mergeData == null) {
+			mergeData = new MergeData(path);
+			this.mergedFrom.put(path, mergeData);
+		}
+		mergeData.addRevisions(revisions);
+	}
+	
+	public boolean hasMergedFrom() {
+		return !this.mergedFrom.isEmpty();
+	}
+	
+	public MergeData[] getMergedFrom() {
+		return this.mergedFrom.values().toArray(new MergeData[0]);
+	}
+
 	public void insertNodeInRevisionsChain(PathRevision node) { 
 		PathRevision prevNodeToProcess = null;
 		Iterator<PathRevision> iter = this.iterateRevisionsChain();
