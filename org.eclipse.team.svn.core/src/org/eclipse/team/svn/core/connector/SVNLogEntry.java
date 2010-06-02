@@ -107,5 +107,9 @@ public class SVNLogEntry {
 		}
 		return false;
 	}
+	
+	public String toString() {
+		return this.revision + ", author: " + String.valueOf(this.author) + ", has children: " + this.hasChildren(); //$NON-NLS-1$ //$NON-NLS-2$
+	}
 
 }

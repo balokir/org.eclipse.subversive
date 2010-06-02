@@ -18,6 +18,7 @@ import java.util.LinkedList;
 
 import org.eclipse.team.svn.revision.graph.NodeConnections;
 import org.eclipse.team.svn.revision.graph.PathRevision;
+import org.eclipse.team.svn.revision.graph.PathRevision.MergeData;
 import org.eclipse.team.svn.revision.graph.PathRevision.ReviosionNodeType;
 import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
 import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
@@ -48,6 +49,22 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 	
 	protected int x;
 	protected int y;	
+	
+	
+	public static class NodeMergeData {
+		public final String path;
+		public final long[] revisions;
+		
+		public NodeMergeData(String path, long revision) {
+			this.path = path;
+			this.revisions = new long[] {revision};
+		}
+		
+		public NodeMergeData(String path, long[] revisions) {
+			this.path = path;
+			this.revisions = revisions;
+		}
+	} 
 	
 	public RevisionNode(PathRevision pathRevision, RevisionRootNode rootNode) {
 		this.pathRevision = pathRevision;
@@ -237,6 +254,34 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 		return this.pathRevision.getDate();
 	}
 	
+	public boolean hasMergeTo() {
+		return this.pathRevision.hasMergeTo();
+	}
+	
+	public NodeMergeData[] getMergeTo() {
+		MergeData[] rawData = this.pathRevision.getMergeTo();
+		NodeMergeData[] data = new NodeMergeData[rawData.length];
+		for (int i = 0; i < rawData.length; i ++) {
+			String path = this.rootNode.getRepositoryCache().getPathStorage().getPath(rawData[i].path);
+			data[i] = new NodeMergeData(path, rawData[i].getRevisions());
+		}
+		return data;
+	}
+	
+	public boolean hasMergedFrom() {
+		return this.pathRevision.hasMergedFrom();
+	}
+	
+	public NodeMergeData[] getMergedFrom() {
+		MergeData[] rawData = this.pathRevision.getMergedFrom();
+		NodeMergeData[] data = new NodeMergeData[rawData.length];
+		for (int i = 0; i < rawData.length; i ++) {
+			String path = this.rootNode.getRepositoryCache().getPathStorage().getPath(rawData[i].path);
+			data[i] = new NodeMergeData(path, rawData[i].getRevisions());
+		}
+		return data;
+	}
+	
 	public void setFiltered(boolean isFiltered) {
 		this.isFiltered = isFiltered;
 	}
@@ -244,6 +289,7 @@ public class RevisionNode extends NodeConnections<RevisionNode> {
 	public boolean isFiltered() {
 		return this.isFiltered;
 	}
+	
 	
 	
 	//--- expand/collapse

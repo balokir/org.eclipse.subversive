@@ -10,15 +10,13 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.operation;
 
-import java.io.IOException;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.svn.core.connector.SVNLogEntry;
-import org.eclipse.team.svn.core.connector.SVNLogEntryCallbackWithMergeInfo;
 import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
 import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
+import org.eclipse.team.svn.revision.graph.operation.BaseFetchOperation.ISVNLogEntryCallbackWithError;
 
 /**
  * Provide progress for operation
@@ -26,7 +24,7 @@ import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
  * 
  * @author Igor Burilo
  */
-public class LogEntriesCallback extends SVNLogEntryCallbackWithMergeInfo {
+public class LogEntriesCallback implements ISVNLogEntryCallbackWithError {
 	
 	protected final static int REVISIONS_COUNT_FOR_SAVE = 50000;
 	
@@ -34,8 +32,7 @@ public class LogEntriesCallback extends SVNLogEntryCallbackWithMergeInfo {
 	protected int totalWork;
 	protected IProgressMonitor monitor;
 	
-	protected int currentWork;	
-	protected SVNLogEntry currentEntry;
+	protected int currentWork;
 	
 	protected RepositoryCache repositoryCache;
 	
@@ -43,20 +40,21 @@ public class LogEntriesCallback extends SVNLogEntryCallbackWithMergeInfo {
 	
 	protected Throwable error;
 	
-	public LogEntriesCallback(IActionOperation op, IProgressMonitor monitor, int totalWork, RepositoryCache repositoryCache) throws IOException {
+	public LogEntriesCallback(IActionOperation op, IProgressMonitor monitor, int totalWork, RepositoryCache repositoryCache) {
 		this.op = op;
 		this.monitor = monitor;
 		this.totalWork = totalWork;				
 		this.repositoryCache = repositoryCache;
 	}
 	
-	@Override
+	public void next(SVNLogEntry log) {
+		//if (log.revision != SVNRevision.INVALID_REVISION_NUMBER) {
+			this.addEntry(log);
+		//}
+	}
+		
 	protected void addEntry(SVNLogEntry entry) {
 		if (this.error == null) {
-			//don't store entries
-			//super.addEntry(entry);
-			
-			this.currentEntry = entry;
 			ProgressMonitorUtility.setTaskInfo(this.monitor, this.op, SVNRevisionGraphMessages.format(SVNRevisionGraphMessages.LogEntriesCallback_Message, entry.revision));
 			ProgressMonitorUtility.progress(this.monitor, ++ this.currentWork, this.totalWork);
 					
@@ -84,14 +82,4 @@ public class LogEntriesCallback extends SVNLogEntryCallbackWithMergeInfo {
 	public Throwable getError() {
 		return this.error;
 	}
-	
-//	@Override
-//	protected void addChildEntry(SVNLogEntry parent, SVNLogEntry child) {
-//		super.addChildEntry(parent, child);
-//		
-//		if (this.currentEntry != null) {
-//			ProgressMonitorUtility.setTaskInfo(this.monitor, this.op, "Revision: " + this.currentEntry.revision + 
-//					". Add merge revision: " + child.revision + " to revision: " + parent.revision);						
-//		}			 							
-//	}
 }

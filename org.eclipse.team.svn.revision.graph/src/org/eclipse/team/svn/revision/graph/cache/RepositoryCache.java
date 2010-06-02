@@ -31,7 +31,8 @@ public class RepositoryCache {
 	
 	protected final RepositoryCacheInfo cacheInfo;
 				
-	protected int cacheVersion = 1;
+	//merge info is added in '2' version
+	protected int cacheVersion = 2;
 	
 	/*
 	 * Index in array corresponds to revision number
@@ -47,7 +48,8 @@ public class RepositoryCache {
 	
 	protected CopyToHelper copyToContainer = new CopyToHelper();
 	
-	//flag which indicates whether there are not saved revisions
+	protected MergeInfoStorage mergeInfo;
+		
 	protected boolean isDirty;
 	
 	protected RepositoryCacheWriteHelper writeHelper;
@@ -116,9 +118,17 @@ public class RepositoryCache {
 		return this.messages;
 	}
 	
+	public MergeInfoStorage getMergeInfoStorage() {
+		return this.mergeInfo;
+	}
+	
 	public List<CacheChangedPathWithRevision> getCopiedToData(int pathId) {		
 		List<CacheChangedPathWithRevision> res = this.copyToContainer.getCopyTo(pathId);
 		return res != null ? new ArrayList<CacheChangedPathWithRevision>(res) : Collections.<CacheChangedPathWithRevision>emptyList();
+	}
+	
+	public int getCacheVersion() {
+		return this.cacheVersion;
 	}
 	
 	//--- Convert
@@ -170,6 +180,9 @@ public class RepositoryCache {
 		this.initCopyToData();
 	}
 	
+	/**
+	 * @return true if there's not yet saved data, e.g. revisions, merge info
+	 */
 	public boolean isDirty() {
 		return this.isDirty;
 	}
@@ -179,6 +192,19 @@ public class RepositoryCache {
 		this.revisions[(int) revisionStructure.revision] = revisionStructure;
 		
 		this.isDirty = true;
+	}
+	
+	public void addMergeInfo(SVNLogEntry entryWithMerges) {
+		SVNLogEntry[] children = entryWithMerges.getChildren();
+		if (children != null && children.length > 0) {
+			long[] mergeRevs = new long[children.length];
+			for (int i = 0; i < children.length; i ++) {
+				mergeRevs[i] = children[i].revision;				
+			}		
+			this.mergeInfo.addMergeInfo(entryWithMerges.revision, mergeRevs);
+			
+			this.isDirty = true;	
+		}				
 	}
 	
 	public void save(IProgressMonitor monitor) throws IOException {
@@ -194,31 +220,34 @@ public class RepositoryCache {
 		this.writeHelper.save();
 		saveMeasure.end();
 		
+		/*
+		 * save also cache info as there's no sense to save cache data but
+		 * not to save its meta data
+		 */
 		this.cacheInfo.save();
 		
 		this.isDirty = false;
 	}
 
 	public void load(IProgressMonitor monitor) throws IOException {
-		long lastProcessedRevision = this.cacheInfo.getLastProcessedRevision();
-		
 		this.pathStorage = new PathStorage();
 		this.authors = new StringStorage();				
+		this.mergeInfo = new MergeInfoStorage();
 		
+		long lastProcessedRevision = this.cacheInfo.getLastProcessedRevision();
 		if (lastProcessedRevision == 0) {
 			this.revisions = new CacheRevision[0];
 			this.messages = new MessageStorage(0);
-			return;
+		} else {
+			this.revisions = new CacheRevision[(int) lastProcessedRevision + 1];
+			this.messages = new MessageStorage((int) lastProcessedRevision + 1);
+			
+			if (this.readHelper == null) {
+				this.readHelper = new RepositoryCacheReadHelper(this);	
+			}		
+			this.readHelper.load();
 		}		
-				
-		this.revisions = new CacheRevision[(int) lastProcessedRevision + 1];
-		this.messages = new MessageStorage((int) lastProcessedRevision + 1);
-		
-		if (this.readHelper == null) {
-			this.readHelper = new RepositoryCacheReadHelper(this);	
-		}		
-		this.readHelper.load();				
-		
+
 		this.isDirty = false;
 	}
 }

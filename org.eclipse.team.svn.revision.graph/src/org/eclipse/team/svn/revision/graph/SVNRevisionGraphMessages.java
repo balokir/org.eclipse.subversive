@@ -45,6 +45,10 @@ public class SVNRevisionGraphMessages extends BaseMessages {
 	public static String Operation_ExportCaches_Id;
 	public static String Operation_ImportCaches;
 	public static String Operation_ImportCaches_Id;
+	public static String Operation_FetchNewMergeInfo;
+	public static String Operation_FetchNewMergeInfo_Id;
+	public static String Operation_FetchSkippedMergeInfo;
+	public static String Operation_FetchSkippedMergeInfo_Id; 
 	
 	public static String ShowRevisionGraphAction;
 	public static String ShowRevisionsWithCopiesAction;

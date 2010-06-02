@@ -26,12 +26,17 @@ import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
 import org.eclipse.team.svn.revision.graph.operation.CheckRepositoryConnectionOperation;
+import org.eclipse.team.svn.revision.graph.operation.FetchNewMergeInfoOperation;
 import org.eclipse.team.svn.revision.graph.operation.FetchNewRevisionsOperation;
+import org.eclipse.team.svn.revision.graph.operation.FetchSkippedMergeInfoOperation;
 import org.eclipse.team.svn.revision.graph.operation.FetchSkippedRevisionsOperation;
 import org.eclipse.team.svn.revision.graph.operation.PrepareRevisionDataOperation;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
+ * Contain cache meta data information
+ * Provide operations to manipulate with cache, e.g. remove, export
+ *  
  * @author Igor Burilo
  */
 public class RepositoryCacheInfo {
@@ -39,6 +44,11 @@ public class RepositoryCacheInfo {
 	protected final static String START_SKIPPED_REVISION = "startSkippedRevision"; //$NON-NLS-1$
 	protected final static String END_SKIPPED_REVISION = "endSkippedRevision"; //$NON-NLS-1$
 	protected final static String LAST_PROCESSED_REVISION = "lastProcessedRevision"; //$NON-NLS-1$
+	
+	protected final static String MERGE_START_SKIPPED_REVISION = "mergeStartSkippedRevision"; //$NON-NLS-1$
+	protected final static String MERGE_END_SKIPPED_REVISION = "mergeEndSkippedRevision"; //$NON-NLS-1$
+	protected final static String MERGE_LAST_PROCESSED_REVISION = "mergeLastProcessedRevision"; //$NON-NLS-1$
+	
 	protected final static String CACHE_DATA_FILE_NAME = "dataFileName"; //$NON-NLS-1$
 	
 	protected long startSkippedRevision;
@@ -46,9 +56,14 @@ public class RepositoryCacheInfo {
 	protected long lastProcessedRevision; 
 	protected String cacheDataFileName;
 	
+	protected long mergeStartSkippedRevision;
+	protected long mergeEndSkippedRevision;	
+	protected long mergeLastProcessedRevision; 
+	
 	protected final String repositoryName;
 	protected final File metadataFile;
 	
+	protected boolean isDirty;
 	
 	//--- access to below resources require synchronization
 	
@@ -85,6 +100,10 @@ public class RepositoryCacheInfo {
 		this.endSkippedRevision = 0;
 		this.lastProcessedRevision = 0;
 				
+		this.mergeStartSkippedRevision = 0;
+		this.mergeEndSkippedRevision = 0;
+		this.mergeLastProcessedRevision = 0;
+		
 		this.cacheDataFileName = RepositoryCacheInfo.getCacheDataFileName(this.metadataFile.getName());
 	}
 	
@@ -108,11 +127,18 @@ public class RepositoryCacheInfo {
 				this.startSkippedRevision = this.getLongProperty(props, RepositoryCacheInfo.START_SKIPPED_REVISION);
 				this.endSkippedRevision = this.getLongProperty(props, RepositoryCacheInfo.END_SKIPPED_REVISION);
 				this.lastProcessedRevision = this.getLongProperty(props, RepositoryCacheInfo.LAST_PROCESSED_REVISION);
+				
+				this.mergeStartSkippedRevision = this.getLongProperty(props, RepositoryCacheInfo.MERGE_START_SKIPPED_REVISION);
+				this.mergeEndSkippedRevision = this.getLongProperty(props, RepositoryCacheInfo.MERGE_END_SKIPPED_REVISION);
+				this.mergeLastProcessedRevision = this.getLongProperty(props, RepositoryCacheInfo.MERGE_LAST_PROCESSED_REVISION);
+				
 				this.cacheDataFileName = this.getProperty(props, RepositoryCacheInfo.CACHE_DATA_FILE_NAME); 
 			} finally {
 				try { in.close(); } catch (IOException e) { /*ignore*/ }
 			}			
 		}
+		
+		this.isDirty = false;
 	}
 	
 	protected String getProperty(Properties props, String propertyName) {
@@ -141,9 +167,15 @@ public class RepositoryCacheInfo {
 	
 	public void save() throws IOException {
 		Properties props = new Properties();
+		
 		props.put(RepositoryCacheInfo.START_SKIPPED_REVISION, String.valueOf(this.startSkippedRevision));
 		props.put(RepositoryCacheInfo.END_SKIPPED_REVISION, String.valueOf(this.endSkippedRevision));
-		props.put(RepositoryCacheInfo.LAST_PROCESSED_REVISION, String.valueOf(this.lastProcessedRevision));	
+		props.put(RepositoryCacheInfo.LAST_PROCESSED_REVISION, String.valueOf(this.lastProcessedRevision));
+		
+		props.put(RepositoryCacheInfo.MERGE_START_SKIPPED_REVISION, String.valueOf(this.mergeStartSkippedRevision));
+		props.put(RepositoryCacheInfo.MERGE_END_SKIPPED_REVISION, String.valueOf(this.mergeEndSkippedRevision));
+		props.put(RepositoryCacheInfo.MERGE_LAST_PROCESSED_REVISION, String.valueOf(this.mergeLastProcessedRevision));
+		
 		props.put(RepositoryCacheInfo.CACHE_DATA_FILE_NAME, this.cacheDataFileName);
 		
 		FileOutputStream out = new FileOutputStream(this.metadataFile);		
@@ -152,28 +184,63 @@ public class RepositoryCacheInfo {
 		} finally {
 			try { out.close(); } catch (IOException e) {/*ignore*/}
 		}
-	}
+		
+		this.isDirty = false;
+	}	
 	
-	public long getStartSkippedRevision() {
-		return this.startSkippedRevision;
-	}
-
-	public long getEndSkippedRevision() {
-		return this.endSkippedRevision;
-	}
-
+	//--- general revisions
+	
 	public long getLastProcessedRevision() {
 		return this.lastProcessedRevision;
 	}
 	
-	public void setSkippedRevisions(long start, long end) {
-		this.startSkippedRevision = start;
-		this.endSkippedRevision = end;		
-	}
-	
 	public void setLastProcessedRevision(long revision) {
 		this.lastProcessedRevision = revision;
+		
+		this.isDirty = true;
+	}
+
+	public long getStartSkippedRevision() {
+		return this.startSkippedRevision;
+	}
+	
+	public long getEndSkippedRevision() {
+		return this.endSkippedRevision;
 	}	
+	
+	public void setSkippedRevisions(long start, long end) {
+		this.startSkippedRevision = start;
+		this.endSkippedRevision = end;	
+		
+		this.isDirty = true;
+	}
+	
+	//--- merge revisions
+	
+	public long getMergeLastProcessedRevision() {
+		return this.mergeLastProcessedRevision;
+	}
+	
+	public void setMergeLastProcessedRevision(long revision) {
+		this.mergeLastProcessedRevision = revision;
+		
+		this.isDirty = true;
+	}
+	
+	public long getMergeStartSkippedRevision() {
+		return this.mergeStartSkippedRevision;
+	}
+
+	public long getMergeEndSkippedRevision() {
+		return this.mergeEndSkippedRevision;
+	}
+	
+	public void setMergeSkippedRevisions(long start, long end) {
+		this.mergeStartSkippedRevision = start;
+		this.mergeEndSkippedRevision = end;	
+		
+		this.isDirty = true;
+	}			
 	
 	public String getCacheDataFileName() {
 		return this.cacheDataFileName;
@@ -185,6 +252,13 @@ public class RepositoryCacheInfo {
 	
 	public String getRepositoryName() {	
 		return this.repositoryName;
+	}
+	
+	/**
+	 * @return true if there's not yet saved data
+	 */
+	public boolean isDirty() {
+		return this.isDirty;
 	}
 	
 	/**
@@ -310,13 +384,24 @@ public class RepositoryCacheInfo {
 		op.add(checkConnectionOp);
 		
 		PrepareRevisionDataOperation prepareDataOp = new PrepareRevisionDataOperation(cache);
-		op.add(prepareDataOp, new IActionOperation[]{checkConnectionOp});
-					
+		op.add(prepareDataOp, new IActionOperation[]{checkConnectionOp});							
+		
 		FetchSkippedRevisionsOperation fetchSkippedOp = new FetchSkippedRevisionsOperation(resource, checkConnectionOp, cache);
 		op.add(fetchSkippedOp, new IActionOperation[]{prepareDataOp});
 		
 		FetchNewRevisionsOperation fetchNewOp = new FetchNewRevisionsOperation(resource, checkConnectionOp, cache);
 		op.add(fetchNewOp, new IActionOperation[]{fetchSkippedOp});	
+
+		//TODO
+		boolean includeMerged = true;
+		
+		if (includeMerged) {
+			FetchSkippedMergeInfoOperation fetchSkippedMergeOp = new FetchSkippedMergeInfoOperation(resource, checkConnectionOp, cache);
+			op.add(fetchSkippedMergeOp, new IActionOperation[]{fetchNewOp});
+			
+			FetchNewMergeInfoOperation fetchNewMergeOp = new FetchNewMergeInfoOperation(resource, checkConnectionOp, cache);
+			op.add(fetchNewMergeOp, new IActionOperation[]{fetchSkippedMergeOp});		
+		}
 		
 		return op;
 	}
@@ -326,12 +411,23 @@ public class RepositoryCacheInfo {
 		
 		CheckRepositoryConnectionOperation checkConnectionOp = new CheckRepositoryConnectionOperation(resource);
 		op.add(checkConnectionOp);						
-					
+							
 		FetchSkippedRevisionsOperation fetchSkippedOp = new FetchSkippedRevisionsOperation(resource, checkConnectionOp, cache);
 		op.add(fetchSkippedOp, new IActionOperation[]{checkConnectionOp});
 		
 		FetchNewRevisionsOperation fetchNewOp = new FetchNewRevisionsOperation(resource, checkConnectionOp, cache);
 		op.add(fetchNewOp, new IActionOperation[]{fetchSkippedOp});	
+		
+		//TODO
+		boolean includeMerged = true;
+		
+		if (includeMerged) {
+			FetchSkippedMergeInfoOperation fetchSkippedMergeOp = new FetchSkippedMergeInfoOperation(resource, checkConnectionOp, cache);
+			op.add(fetchSkippedMergeOp, new IActionOperation[]{fetchNewOp});
+			
+			FetchNewMergeInfoOperation fetchNewMergeOp = new FetchNewMergeInfoOperation(resource, checkConnectionOp, cache);
+			op.add(fetchNewMergeOp, new IActionOperation[]{fetchSkippedMergeOp});		
+		}
 		
 		return op;
 	}

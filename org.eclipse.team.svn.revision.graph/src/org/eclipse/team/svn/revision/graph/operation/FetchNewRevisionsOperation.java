@@ -11,6 +11,8 @@
 package org.eclipse.team.svn.revision.graph.operation;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.connector.ISVNConnector;
+import org.eclipse.team.svn.core.connector.ISVNConnector.Options;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.revision.graph.cache.RepositoryCacheInfo;
 import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
@@ -25,8 +27,7 @@ public class FetchNewRevisionsOperation extends BaseFetchOperation {
 	public FetchNewRevisionsOperation(IRepositoryResource resource, CheckRepositoryConnectionOperation checkConnectionOp, RepositoryCache repositoryCache) {
 		super("Operation_FetchNewRevisions", resource, checkConnectionOp, repositoryCache); //$NON-NLS-1$
 	}
-
-	@Override
+	
 	protected void prepareData(IProgressMonitor monitor) throws Exception {
 		RepositoryCacheInfo cacheInfo = this.repositoryCache.getCacheInfo();
 		
@@ -35,6 +36,10 @@ public class FetchNewRevisionsOperation extends BaseFetchOperation {
 		
 		this.canRun = this.checkConnectionOp.getLastRepositoryRevision() > cacheInfo.getLastProcessedRevision();
 		if (this.canRun) {
+			this.logOptions = Options.DISCOVER_PATHS;
+			this.revProps = ISVNConnector.DEFAULT_LOG_ENTRY_PROPS;
+			this.logEntryCallback = new LogEntriesCallback(this, monitor, (int) (this.endRevision - this.startRevision + 1), this.repositoryCache);
+				
 			cacheInfo.setSkippedRevisions(this.startRevision, this.endRevision);
 			cacheInfo.setLastProcessedRevision(this.endRevision);
 			cacheInfo.save();	

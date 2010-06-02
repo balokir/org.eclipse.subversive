@@ -39,7 +39,7 @@ import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
 public class GraphMergeInfoProcessor {
 
 	//flag to enable/disable debug
-	protected final static boolean DEBUG = true;
+	protected final static boolean DEBUG = false;
 	
 	protected final CreateRevisionGraphModelOperation createGraphOp;
 	protected RepositoryCache repositoryCache;
