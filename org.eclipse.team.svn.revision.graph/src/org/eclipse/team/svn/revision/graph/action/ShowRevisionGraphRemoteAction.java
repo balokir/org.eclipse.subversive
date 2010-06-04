@@ -11,6 +11,7 @@
 package org.eclipse.team.svn.revision.graph.action;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.team.svn.core.operation.IActionOperation;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.resource.IRepositoryRoot;
 import org.eclipse.team.svn.revision.graph.operation.RevisionGraphUtility;
@@ -29,7 +30,10 @@ public class ShowRevisionGraphRemoteAction extends AbstractRepositoryTeamAction 
 	
 	public void runImpl(IAction action) {
 		IRepositoryResource resource = this.getSelectedRepositoryResources()[0];
-		this.runScheduled(RevisionGraphUtility.getRevisionGraphOperation(resource));
+		IActionOperation op = RevisionGraphUtility.getRevisionGraphOperation(resource);
+		if (op != null) {
+			this.runScheduled(op);
+		}
 	}
 	
 	public boolean isEnabled() {

@@ -22,8 +22,8 @@ import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
  */
 public class FetchSkippedMergeInfoOperation extends BaseFetchOperation {
 
-	public FetchSkippedMergeInfoOperation(IRepositoryResource resource, CheckRepositoryConnectionOperation checkConnectionOp, RepositoryCache repositoryCache) {		
-		super("Operation_FetchSkippedMergeInfo", resource, checkConnectionOp, repositoryCache);	 //$NON-NLS-1$
+	public FetchSkippedMergeInfoOperation(IRepositoryResource resource, RepositoryCache repositoryCache) {		
+		super("Operation_FetchSkippedMergeInfo", resource, repositoryCache);	 //$NON-NLS-1$
 	}
 
 	@Override

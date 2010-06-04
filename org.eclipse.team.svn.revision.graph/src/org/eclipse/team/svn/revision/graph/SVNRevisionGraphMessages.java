@@ -49,6 +49,8 @@ public class SVNRevisionGraphMessages extends BaseMessages {
 	public static String Operation_FetchNewMergeInfo_Id;
 	public static String Operation_FetchSkippedMergeInfo;
 	public static String Operation_FetchSkippedMergeInfo_Id; 
+	public static String Operation_AddMergeInfo;
+	public static String Operation_AddMergeInfo_Id;
 	
 	public static String ShowRevisionGraphAction;
 	public static String ShowRevisionsWithCopiesAction;
@@ -90,6 +92,13 @@ public class SVNRevisionGraphMessages extends BaseMessages {
 	public static String SVNTeamRevisionGraphPage_Path_BrowseDialogTitle;
 	public static String SVNTeamRevisionGraphPage_Path_Field;
 	public static String SVNTeamRevisionGraphPage_Path_Label;
+	
+	public static String ShowRevisionGraphPanel_Description;
+	public static String ShowRevisionGraphPanel_Message;
+	public static String ShowRevisionGraphPanel_ShowAllRevisions;
+	public static String ShowRevisionGraphPanel_ShowMergeInfo;
+	public static String ShowRevisionGraphPanel_Title;
+	public static String CheckRepositoryConnectionOperation_MergeNotSupported;
 	
 	static {
 		//load message values from bundle file

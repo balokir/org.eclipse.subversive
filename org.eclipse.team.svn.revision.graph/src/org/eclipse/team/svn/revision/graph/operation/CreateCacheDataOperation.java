@@ -11,7 +11,6 @@
 package org.eclipse.team.svn.revision.graph.operation;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.ActivityCancelledException;
@@ -22,45 +21,45 @@ import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
 import org.eclipse.team.svn.revision.graph.cache.RepositoryCacheInfo;
 import org.eclipse.team.svn.revision.graph.cache.RepositoryCacheInfo.CacheResult;
 import org.eclipse.team.svn.revision.graph.cache.RepositoryCacheInfo.CacheResultEnum;
+import org.eclipse.team.svn.revision.graph.operation.RepositoryConnectionInfo.IRepositoryConnectionInfoProvider;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
+ * Create or refresh repository cache operation
+ * 
  * @author Igor Burilo
  */
 public class CreateCacheDataOperation extends AbstractActionOperation implements IRepositoryCacheProvider {
 
 	protected IRepositoryResource resource;
 	protected boolean isRefresh;
+	protected IRepositoryConnectionInfoProvider repositoryConnectionInfoProvider;	
 	
 	protected RepositoryCache repositoryCache;
 	
-	public CreateCacheDataOperation(IRepositoryResource resource, boolean isRefresh) {
+	public CreateCacheDataOperation(IRepositoryResource resource, boolean isRefresh, 
+		IRepositoryConnectionInfoProvider repositoryConnectionInfoProvider) {
+		
 		super("Operation_CreateCacheData", SVNRevisionGraphMessages.class); //$NON-NLS-1$
 		this.resource = resource;
 		this.isRefresh = isRefresh;
+		this.repositoryConnectionInfoProvider = repositoryConnectionInfoProvider;
 	}
 
-	protected void runImpl(IProgressMonitor monitor) throws Exception {				
+	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		RepositoryCacheInfo cacheInfo = SVNRevisionGraphPlugin.instance().getRepositoryCachesManager().getCache(this.resource);
+		RepositoryConnectionInfo connectionData = this.repositoryConnectionInfoProvider.getRepositoryConnectionInfo();
 		CacheResult cacheResult = this.isRefresh ? 
-				cacheInfo.refreshCacheData(this.resource, monitor) :
-				cacheInfo.createCacheData(this.resource, monitor);
+				cacheInfo.refreshCacheData(this.resource, connectionData, monitor) :
+				cacheInfo.createCacheData(this.resource, connectionData, monitor);
 		
 		if (cacheResult.status == CacheResultEnum.BROKEN) {
 			throw new ActivityCancelledException();
 		} else if (cacheResult.status == CacheResultEnum.CALCULATING) {
-									
 			//say that cache is calculating now by another task
 			UIMonitorUtility.getDisplay().syncExec(new Runnable() {
 				public void run() {									
-					MessageDialog dlg = new MessageDialog(
-						UIMonitorUtility.getShell(), 
-						SVNRevisionGraphMessages.Dialog_GraphTitle,
-						null, 
-						SVNRevisionGraphMessages.CreateCacheDataOperation_DialogMessage,
-						MessageDialog.INFORMATION, 
-						new String[] {IDialogConstants.OK_LABEL}, 
-						0);
+					MessageDialog dlg = RevisionGraphUtility.getCacheCalculatingDialog();
 					dlg.open();
 				}
 			});	
@@ -71,9 +70,9 @@ public class CreateCacheDataOperation extends AbstractActionOperation implements
 		} else {
 			//unknown
 			throw new ActivityCancelledException();
-		}		
+		}
 	}
-
+	
 	public RepositoryCache getRepositoryCache() {
 		return this.repositoryCache;
 	}						

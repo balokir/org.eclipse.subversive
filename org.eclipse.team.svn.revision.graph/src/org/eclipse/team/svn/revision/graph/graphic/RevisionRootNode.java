@@ -47,7 +47,8 @@ public class RevisionRootNode extends ChangesNotifier {
 	protected RevisionNode lastNotNullCurrentStartNode;
 	
 	protected boolean isSimpleMode;
-		
+	protected boolean isIncludeMergeInfo;
+	
 	protected NodesFilterManager filterManager;
 		
 	protected List<RevisionNode> currentNodesList = new ArrayList<RevisionNode>();
@@ -62,11 +63,11 @@ public class RevisionRootNode extends ChangesNotifier {
 		this.filterManager = new NodesFilterManager();										
 	}
 	
-	public void init(boolean isSimpleMode) {		
+	public void init() {		
 		this.createRevisionNodesModel();
 		this.setCurrentStartNode(this.initialStartNode);
 		
-		this.internalSetMode(isSimpleMode);
+		this.simpleSetMode(isSimpleMode);
 		
 		this.filter(false);
 	}
@@ -240,8 +241,9 @@ public class RevisionRootNode extends ChangesNotifier {
 	public boolean isSimpleMode() {
 		return this.isSimpleMode;
 	}
-
-	protected void internalSetMode(boolean isSimpleMode) {
+	
+	//just changes the flag
+	public void simpleSetMode(boolean isSimpleMode) {
 		this.isSimpleMode = isSimpleMode;					
 		if (this.isSimpleMode) {
 			this.filterManager.addFilter(AbstractRevisionNodeFilter.SIMPLE_MODE_FILTER);
@@ -250,10 +252,19 @@ public class RevisionRootNode extends ChangesNotifier {
 		}		
 	}
 	
+	//re-build model
 	public void setMode(boolean isSimpleMode) {		
-		this.internalSetMode(isSimpleMode);
+		this.simpleSetMode(isSimpleMode);
 			
 		this.filter(true);
+	}
+	
+	public void setIncludeMergeInfo(boolean isIncludeMergeInfo) {
+		this.isIncludeMergeInfo = isIncludeMergeInfo;
+	}
+	
+	public boolean isIncludeMergeInfo() {
+		return this.isIncludeMergeInfo;
 	}
 	
 	public String getRevisionPath(int pathIndex) {
@@ -307,7 +318,7 @@ public class RevisionRootNode extends ChangesNotifier {
 		 */
 		protected RevisionNode findStartNode(RevisionNode topNode) {
 			if (topNode == null) {
-				throw new IllegalArgumentException("Node can't be null");
+				throw new IllegalArgumentException("Node can't be null"); //$NON-NLS-1$
 			}
 			RevisionNode startNode = topNode;
 			while (true) {

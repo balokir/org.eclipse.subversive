@@ -31,7 +31,6 @@ import org.eclipse.team.svn.revision.graph.cache.TimeMeasure;
 public abstract class BaseFetchOperation extends AbstractActionOperation {
 
 	protected final IRepositoryResource resource;
-	protected final CheckRepositoryConnectionOperation checkConnectionOp;
 	protected final RepositoryCache repositoryCache;
 	
 	//should be filled by derived classes in 'prepareData' method
@@ -46,56 +45,53 @@ public abstract class BaseFetchOperation extends AbstractActionOperation {
 		Throwable getError();		
 	}
 	
-	public BaseFetchOperation(String operationName, IRepositoryResource resource, CheckRepositoryConnectionOperation checkConnectionOp, RepositoryCache repositoryCache) {
+	public BaseFetchOperation(String operationName, IRepositoryResource resource, RepositoryCache repositoryCache) {
 		super(operationName, SVNRevisionGraphMessages.class);
 		this.resource = resource;
-		this.checkConnectionOp = checkConnectionOp;
 		this.repositoryCache = repositoryCache;
 	}
 
 	protected void runImpl(IProgressMonitor monitor) throws Exception {
 		TimeMeasure measure = new TimeMeasure("Fetch revisions " + this.getClass().getName()); //$NON-NLS-1$
-		
-		if (this.checkConnectionOp.hasConnection()) {												
-			this.prepareData(monitor);
-			if (this.canRun) {
-				ISVNConnector proxy = this.resource.getRepositoryLocation().acquireSVNProxy();
-				try {
-					proxy.logEntries(
-						SVNUtility.getEntryReference(this.resource.getRepositoryLocation().getRepositoryRoot()),								
-						SVNRevision.fromNumber(this.endRevision),
-						SVNRevision.fromNumber(this.startRevision),
-						this.revProps,
-						0,
-						this.logOptions,
-						this.logEntryCallback,
-						new SVNProgressMonitor(this, monitor, null));	
-				} finally {
-					this.resource.getRepositoryLocation().releaseSVNProxy(proxy);
-					
-					if (this.logEntryCallback.getError() != null){
-						Throwable t = this.logEntryCallback.getError();
-						if (!(t instanceof RuntimeException)) {
-							t = new UnreportableException(t);
-						}
-						this.reportError(t);
+									
+		this.prepareData(monitor);
+		if (this.canRun) {
+			ISVNConnector proxy = this.resource.getRepositoryLocation().acquireSVNProxy();
+			try {
+				proxy.logEntries(
+					SVNUtility.getEntryReference(this.resource.getRepositoryLocation().getRepositoryRoot()),
+					SVNRevision.fromNumber(this.endRevision),
+					SVNRevision.fromNumber(this.startRevision),
+					this.revProps,
+					0,
+					this.logOptions,
+					this.logEntryCallback,
+					new SVNProgressMonitor(this, monitor, null));
+			} finally {
+				this.resource.getRepositoryLocation().releaseSVNProxy(proxy);
+				
+				if (this.logEntryCallback.getError() != null){
+					Throwable t = this.logEntryCallback.getError();
+					if (!(t instanceof RuntimeException)) {
+						t = new UnreportableException(t);
 					}
-					
-					//save not yet saved revisions
-					if (this.repositoryCache.isDirty()) {
-						this.repositoryCache.save(monitor);
-					}
-					/*
-					 * There can be cases where cache data isn't modified but cache info is modified,
-					 * e.g. when we process merge info we record skipped information for
-					 * every revision even if it doesn't contain merge info
-					 */
-					if (this.repositoryCache.getCacheInfo().isDirty()) {
-						this.repositoryCache.getCacheInfo().save();
-					}
-				} 		
-			}						
-		}		
+					this.reportError(t);
+				}
+				
+				//save not yet saved revisions
+				if (this.repositoryCache.isDirty()) {
+					this.repositoryCache.save(monitor);
+				}
+				/*
+				 * There can be cases where cache data isn't modified but cache info is modified,
+				 * e.g. when we process merge info we record skipped information for
+				 * every revision even if it doesn't contain merge info
+				 */
+				if (this.repositoryCache.getCacheInfo().isDirty()) {
+					this.repositoryCache.getCacheInfo().save();
+				}
+			}
+		}
 		
 		measure.end();
 	}
