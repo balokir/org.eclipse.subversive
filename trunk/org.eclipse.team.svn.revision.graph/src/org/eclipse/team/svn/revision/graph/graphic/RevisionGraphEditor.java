@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.graphic;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +24,7 @@ import org.eclipse.gef.editparts.ScalableRootEditPart;
 import org.eclipse.gef.editparts.ZoomManager;
 import org.eclipse.gef.ui.actions.ActionRegistry;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -30,9 +32,12 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.CompositeOperation;
 import org.eclipse.team.svn.core.operation.IActionOperation;
+import org.eclipse.team.svn.core.operation.LoggedOperation;
 import org.eclipse.team.svn.core.operation.UnreportableException;
 import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
+import org.eclipse.team.svn.revision.graph.SVNRevisionGraphPlugin;
+import org.eclipse.team.svn.revision.graph.cache.RepositoryCacheInfo;
 import org.eclipse.team.svn.revision.graph.cache.TimeMeasure;
 import org.eclipse.team.svn.revision.graph.graphic.actions.AddRevisionLinksAction;
 import org.eclipse.team.svn.revision.graph.graphic.actions.ComparePropertiesAction;
@@ -50,8 +55,11 @@ import org.eclipse.team.svn.revision.graph.graphic.actions.ShowHistoryAction;
 import org.eclipse.team.svn.revision.graph.graphic.actions.ShowPropertiesAction;
 import org.eclipse.team.svn.revision.graph.graphic.editpart.GraphEditPartFactory;
 import org.eclipse.team.svn.revision.graph.graphic.editpart.GraphScalableRootEditPart;
+import org.eclipse.team.svn.revision.graph.operation.AddMergeInfoOperation;
+import org.eclipse.team.svn.revision.graph.operation.CheckRepositoryConnectionOperation;
 import org.eclipse.team.svn.revision.graph.operation.CreateCacheDataOperation;
 import org.eclipse.team.svn.revision.graph.operation.CreateRevisionGraphModelOperation;
+import org.eclipse.team.svn.revision.graph.operation.RevisionGraphUtility;
 import org.eclipse.team.svn.ui.action.remote.BranchTagAction;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 import org.eclipse.ui.IEditorInput;
@@ -157,9 +165,8 @@ public class RevisionGraphEditor extends GraphicalEditor {
 		viewer.setEditPartFactory(new GraphEditPartFactory());
 		
 		Object model = this.getModel();
-		if (model instanceof RevisionRootNode) {			
-			boolean isSimpleMode = true;
-			((RevisionRootNode) model).init(isSimpleMode);
+		if (model instanceof RevisionRootNode) {
+			((RevisionRootNode) model).init();
 			
 			//context menu
 			RevisionGraphContextMenuManager menuManager = new RevisionGraphContextMenuManager(viewer, this, getActionRegistry());
@@ -189,12 +196,40 @@ public class RevisionGraphEditor extends GraphicalEditor {
 		
 		CompositeOperation op = new CompositeOperation("Operation_RefreshGraph", SVNRevisionGraphMessages.class); //$NON-NLS-1$
 		
-		CreateCacheDataOperation updateCacheOp = new CreateCacheDataOperation(resource, true);
-		op.add(updateCacheOp);
+		//check if cache is calculating now
+		try {
+			RepositoryCacheInfo cacheInfo = SVNRevisionGraphPlugin.instance().getRepositoryCachesManager().getCache(resource);
+			if (cacheInfo.isCacheDataCalculating()) {
+				UIMonitorUtility.getDisplay().syncExec(new Runnable() {
+					public void run() {		
+						MessageDialog dlg = RevisionGraphUtility.getCacheCalculatingDialog();
+						dlg.open();
+					}
+				});
+				return;
+			}	
+		} catch (IOException e) {
+			LoggedOperation.reportError(RevisionGraphUtility.class.getName(), e);
+			return;
+		}
+		
+		//check repository connection
+		CheckRepositoryConnectionOperation checkConnectionOp = new CheckRepositoryConnectionOperation(resource, previousModel.isIncludeMergeInfo(), false);
+		op.add(checkConnectionOp);
 				
+		//update cache
+		CreateCacheDataOperation updateCacheOp = new CreateCacheDataOperation(resource, true, checkConnectionOp);
+		op.add(updateCacheOp, new IActionOperation[]{checkConnectionOp});		
+		
+		//create model
 		final CreateRevisionGraphModelOperation createModelOp = new CreateRevisionGraphModelOperation(resource, updateCacheOp);
 		op.add(createModelOp, new IActionOperation[]{updateCacheOp});	
 		
+		//add merge info
+		AddMergeInfoOperation addMergeInfoOp = new AddMergeInfoOperation(createModelOp, checkConnectionOp);
+		op.add(addMergeInfoOp, new IActionOperation[]{createModelOp});		
+		
+		//visualize
 		op.add(new AbstractActionOperation("Operation_RefreshGraph", SVNRevisionGraphMessages.class) { //$NON-NLS-1$
 			protected void runImpl(IProgressMonitor monitor) throws Exception {
 				if (createModelOp.getModel() != null) {
@@ -205,8 +240,9 @@ public class RevisionGraphEditor extends GraphicalEditor {
 							if (viewer != null && (control = viewer.getControl()) != null && !control.isDisposed()) {								
 								RevisionRootNode modelObject = new RevisionRootNode(resource, createModelOp.getModel(), createModelOp.getRepositoryCache());							
 								((RevisionGraphEditorInput) getEditorInput()).setModel(modelObject);							
-								boolean isSimpleMode = previousModel.isSimpleMode();
-								modelObject.init(isSimpleMode);			
+								modelObject.simpleSetMode(previousModel.isSimpleMode());
+								modelObject.setIncludeMergeInfo(previousModel.isIncludeMergeInfo());
+								modelObject.init();			
 														
 								viewer.setContents(modelObject);	
 							}																													

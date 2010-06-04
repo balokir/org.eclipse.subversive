@@ -21,14 +21,17 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.team.svn.core.operation.AbstractActionOperation;
 import org.eclipse.team.svn.core.operation.ActivityCancelledException;
 import org.eclipse.team.svn.revision.graph.PathRevision;
+import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
 import org.eclipse.team.svn.revision.graph.TopRightTraverseVisitor;
 import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
 import org.eclipse.team.svn.revision.graph.cache.CacheChangedPath;
 import org.eclipse.team.svn.revision.graph.cache.CacheRevision;
 import org.eclipse.team.svn.revision.graph.cache.MergeInfoStorage;
 import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
+import org.eclipse.team.svn.revision.graph.operation.RepositoryConnectionInfo.IRepositoryConnectionInfoProvider;
 
 /**
  * Add merge information to already created revision graph.
@@ -36,12 +39,13 @@ import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
  * 
  * @author Igor Burilo
  */
-public class GraphMergeInfoProcessor {
+public class AddMergeInfoOperation extends AbstractActionOperation {
 
 	//flag to enable/disable debug
 	protected final static boolean DEBUG = false;
-	
-	protected final CreateRevisionGraphModelOperation createGraphOp;
+		
+	protected CreateRevisionGraphModelOperation createGraphOp;
+	protected IRepositoryConnectionInfoProvider repositoryConnectionInfoProvider;
 	protected RepositoryCache repositoryCache;
 	
 	
@@ -59,13 +63,24 @@ public class GraphMergeInfoProcessor {
 	//merges detected during calculating 'merge from'
 	protected DetectedMerges mergedFromDetectedMerges;
 	
-	public GraphMergeInfoProcessor(CreateRevisionGraphModelOperation createGraphOp) {
+	public AddMergeInfoOperation(CreateRevisionGraphModelOperation createGraphOp, IRepositoryConnectionInfoProvider repositoryConnectionInfoProvider) {		
+		super("Operation_AddMergeInfo", SVNRevisionGraphMessages.class); //$NON-NLS-1$
 		this.createGraphOp = createGraphOp;
-		this.repositoryCache = this.createGraphOp.repositoryCache;
-		this.mergedFromDetectedMerges = new DetectedMerges(this.repositoryCache);
+		this.repositoryConnectionInfoProvider = repositoryConnectionInfoProvider;
 	}
 	
-	public void run(final IProgressMonitor monitor) {
+	protected void runImpl(final IProgressMonitor monitor) throws Exception {
+		if (!this.repositoryConnectionInfoProvider.getRepositoryConnectionInfo().isSupportMergeInfo) {
+			return;
+		}
+		PathRevision model = this.createGraphOp.getModel(); 
+		if (model == null) {
+			return;
+		}
+		
+		this.repositoryCache = this.createGraphOp.getRepositoryCache();
+		this.mergedFromDetectedMerges = new DetectedMerges(this.repositoryCache);
+		
 		this.preprocess();
 						
 		/*
@@ -75,7 +90,7 @@ public class GraphMergeInfoProcessor {
 		 * in order to be able to re-use 'merged from' results
 		 */
 		
-		PathRevision startNode = this.createGraphOp.resultNode.getStartNodeInGraph();
+		PathRevision startNode = model.getStartNodeInGraph();
 		
 		//process merged from
 		new TopRightTraverseVisitor<PathRevision>() {
@@ -84,8 +99,8 @@ public class GraphMergeInfoProcessor {
 					throw new ActivityCancelledException();
 				}
 				if (node.action != RevisionNodeAction.NONE) {
-					if (GraphMergeInfoProcessor.this.mergeTargetRevisions.contains(node.getRevision())) {
-						GraphMergeInfoProcessor.this.processMergedFrom(node);
+					if (AddMergeInfoOperation.this.mergeTargetRevisions.contains(node.getRevision())) {
+						AddMergeInfoOperation.this.processMergedFrom(node);
 					}
 				}
 			}			
@@ -98,8 +113,8 @@ public class GraphMergeInfoProcessor {
 					throw new ActivityCancelledException();
 				}
 				if (node.action != RevisionNodeAction.NONE) {
-					if (GraphMergeInfoProcessor.this.mergeSourceRevisions.containsKey(node.getRevision())) {
-						GraphMergeInfoProcessor.this.processMergedTo(node);	
+					if (AddMergeInfoOperation.this.mergeSourceRevisions.containsKey(node.getRevision())) {
+						AddMergeInfoOperation.this.processMergedTo(node);	
 					}
 				}
 			}			
@@ -114,7 +129,7 @@ public class GraphMergeInfoProcessor {
 		 * 					br3@20
 		 */
 		
-		if (GraphMergeInfoProcessor.DEBUG) {		
+		if (AddMergeInfoOperation.DEBUG) {		
 			System.out.println("\nprocess merged to: " + this.getPathAsString(node.getPathIndex(), node.getRevision()) +  //$NON-NLS-1$
 				" (Note that source and target are reversed)"); //$NON-NLS-1$
 		}
@@ -149,7 +164,7 @@ public class GraphMergeInfoProcessor {
 		 * br4/src/com@7,12,18... -> br2@28
 		 */
 				
-		if (GraphMergeInfoProcessor.DEBUG) {
+		if (AddMergeInfoOperation.DEBUG) {
 			System.out.println("\nprocess merged from: " + this.getPathAsString(node.getPathIndex(), node.getRevision())); //$NON-NLS-1$
 		}
 		
@@ -174,7 +189,7 @@ public class GraphMergeInfoProcessor {
 		
 		long sourceRevision = mergeSourceRevision.getRevision();
 		
-		if (GraphMergeInfoProcessor.DEBUG) {
+		if (AddMergeInfoOperation.DEBUG) {
 			System.out.println("\n" + getIndent(1) + "source revision: " + sourceRevision); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
@@ -183,19 +198,19 @@ public class GraphMergeInfoProcessor {
 		pathsLabel:
 		for (CacheChangedPath changedPath : changedPaths) {
 	
-			if (GraphMergeInfoProcessor.DEBUG) {
+			if (AddMergeInfoOperation.DEBUG) {
 				System.out.println("\n" + getIndent(2) + "Changed path: " + this.getPath(changedPath.getPathIndex())); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
 			//check if path is covered by detected merges
 			for (MergeData mergeData : detectedMerges.mergeDataCol) {
-				if (this.createGraphOp.isParentPath(mergeData.mergeSourcePath, changedPath.getPathIndex())) {
+				if (this.isParentPath(mergeData.mergeSourcePath, changedPath.getPathIndex())) {
 					//if there's still no current revision, add it
 					if (!mergeData.mergeSourceRevisions.contains(sourceRevision)) {																		
 						mergeData.mergeSourceRevisions.add(sourceRevision);
 					}
 					
-					if (GraphMergeInfoProcessor.DEBUG) {
+					if (AddMergeInfoOperation.DEBUG) {
 						System.out.println(getIndent(3) + "Covered by already detected merge: " + this.getPath(mergeData.mergeSourcePath)); //$NON-NLS-1$
 					}
 					
@@ -215,7 +230,7 @@ public class GraphMergeInfoProcessor {
 						legacyMerge.mergeTargetPath, legacyMerge.mergeTargetRevision,
 						legacyMerge.mergeSourcePath, sourceRevision);
 					
-					if (GraphMergeInfoProcessor.DEBUG) {
+					if (AddMergeInfoOperation.DEBUG) {
 						System.out.println(getIndent(3) + "Covered by 'copy from' detected merge: " + this.getPath(md.mergeSourcePath)); //$NON-NLS-1$
 					}
 					
@@ -343,7 +358,7 @@ public class GraphMergeInfoProcessor {
 			return null;
 		}		
 		
-		if (GraphMergeInfoProcessor.DEBUG) {
+		if (AddMergeInfoOperation.DEBUG) {
 			System.out.println("\n" + getIndent(3) + "Sources: " + sourceHistoryLevel);		 //$NON-NLS-1$ //$NON-NLS-2$
 			for (PathHistory sourcePathHistory : sourceHistory) {
 				System.out.println(getIndent(4) + sourcePathHistory.toString(this.repositoryCache));
@@ -370,7 +385,7 @@ public class GraphMergeInfoProcessor {
 					if (sPath.path != tPath.path) {
 						MergeData res = new MergeData(sPath.path, sPath.revision, tPath.path, tPath.revision);
 						
-						if (GraphMergeInfoProcessor.DEBUG) {
+						if (AddMergeInfoOperation.DEBUG) {
 							System.out.println(getIndent(3) + "Found merge: " + //$NON-NLS-1$
 								this.getPathAsString(tPath) + " --> " + //$NON-NLS-1$
 								this.getPathAsString(sPath));								
@@ -388,7 +403,7 @@ public class GraphMergeInfoProcessor {
 	protected boolean hasMergeTarget(PathRevision node) {		
 		int nodePath = node.getPathIndex();
 		for (CacheChangedPath cacheChangedPath : node.getChangedPaths()) {
-			if (this.createGraphOp.isParentPath(cacheChangedPath.getPathIndex(), nodePath)) {
+			if (this.isParentPath(cacheChangedPath.getPathIndex(), nodePath)) {
 				return true;
 			}
 		}		
@@ -408,7 +423,7 @@ public class GraphMergeInfoProcessor {
 	protected boolean hasMergeSource(PathRevision node) {
 		int nodePath = node.getPathIndex();
 		for (CacheChangedPath cacheChangedPath : node.getChangedPaths()) {
-			if (this.createGraphOp.isParentPath(nodePath, cacheChangedPath.getPathIndex())) {
+			if (this.isParentPath(nodePath, cacheChangedPath.getPathIndex())) {
 				return true;
 			}
 		}		
@@ -485,6 +500,10 @@ public class GraphMergeInfoProcessor {
 		}		
 	}
 	
+	protected boolean isParentPath(int parentPathIndex, int childPathIndex) {
+		return this.repositoryCache.getPathStorage().isParentIndex(parentPathIndex, childPathIndex);		
+	}
+	
 	
 	//--- for debug
 	
@@ -540,7 +559,7 @@ public class GraphMergeInfoProcessor {
 		}
 		
 		private void addPathWithParents(int path, long revision) {
-			List<Integer> parents = GraphMergeInfoProcessor.this.repositoryCache.getPathStorage().getPathParents(path);
+			List<Integer> parents = AddMergeInfoOperation.this.repositoryCache.getPathStorage().getPathParents(path);
 			//longer path has lower index in pathsHistory
 			ListIterator<Integer> iter = parents.listIterator(parents.size());			
 			while (iter.hasPrevious()) {
@@ -586,7 +605,7 @@ public class GraphMergeInfoProcessor {
 		
 		protected PathWithRevision getCopyFromPath(PathWithRevision path) {
 			CopyData copyFrom = null;
-			CopyDataContainer copyDataContainer = GraphMergeInfoProcessor.this.copyStructure.get(path.path);
+			CopyDataContainer copyDataContainer = AddMergeInfoOperation.this.copyStructure.get(path.path);
 			if (copyDataContainer != null) {			
 				for (CopyData copyData : copyDataContainer.copiedFrom) {
 					/*

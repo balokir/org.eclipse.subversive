@@ -23,17 +23,20 @@ import org.eclipse.team.svn.revision.graph.cache.RepositoryCacheInfo;
  */
 public class FetchNewMergeInfoOperation extends BaseFetchOperation {
 
-	public FetchNewMergeInfoOperation(IRepositoryResource resource, CheckRepositoryConnectionOperation checkConnectionOp, RepositoryCache repositoryCache) {	
-		super("Operation_FetchNewMergeInfo", resource, checkConnectionOp, repositoryCache); //$NON-NLS-1$
+	protected long lastRepositoryRevision;
+	
+	public FetchNewMergeInfoOperation(IRepositoryResource resource, RepositoryCache repositoryCache, long lastRepositoryRevision) {	
+		super("Operation_FetchNewMergeInfo", resource, repositoryCache); //$NON-NLS-1$
+		this.lastRepositoryRevision = lastRepositoryRevision;
 	}
 	
 	protected void prepareData(IProgressMonitor monitor) throws Exception {
 		RepositoryCacheInfo cacheInfo = this.repositoryCache.getCacheInfo();
 		
 		this.startRevision = cacheInfo.getMergeLastProcessedRevision() + 1;
-		this.endRevision = this.checkConnectionOp.getLastRepositoryRevision();
+		this.endRevision = this.lastRepositoryRevision;
 		
-		this.canRun = this.checkConnectionOp.getLastRepositoryRevision() > cacheInfo.getMergeLastProcessedRevision();
+		this.canRun = this.lastRepositoryRevision > cacheInfo.getMergeLastProcessedRevision();
 		if (this.canRun) {
 			this.logOptions = ISVNConnector.Options.INCLUDE_MERGED_REVISIONS;
 			//don't retrieve any revision properties, e.g. author, date, comment

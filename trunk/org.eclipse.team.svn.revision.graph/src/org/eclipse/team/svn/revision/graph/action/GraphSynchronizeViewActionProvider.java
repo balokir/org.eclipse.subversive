@@ -80,8 +80,10 @@ public class GraphSynchronizeViewActionProvider extends CommonActionProvider {
 		protected void doRun() { 			
 			IResource resource = this.getSelectedResource();
 			IRepositoryResource reposResource = SVNRemoteStorage.instance().asRepositoryResource(resource);
-			IActionOperation op = RevisionGraphUtility.getRevisionGraphOperation(reposResource);		
-			UIMonitorUtility.doTaskScheduledDefault(this.viewPart, op);	
+			IActionOperation op = RevisionGraphUtility.getRevisionGraphOperation(reposResource);
+			if (op != null) {
+				UIMonitorUtility.doTaskScheduledDefault(this.viewPart, op);	
+			}
 		}
 
 		public void selectionChanged(IAction action, ISelection selection) {

@@ -24,17 +24,20 @@ import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
  */
 public class FetchNewRevisionsOperation extends BaseFetchOperation {
 	
-	public FetchNewRevisionsOperation(IRepositoryResource resource, CheckRepositoryConnectionOperation checkConnectionOp, RepositoryCache repositoryCache) {
-		super("Operation_FetchNewRevisions", resource, checkConnectionOp, repositoryCache); //$NON-NLS-1$
+	protected long lastRepositoryRevision;
+	
+	public FetchNewRevisionsOperation(IRepositoryResource resource, RepositoryCache repositoryCache, long lastRepositoryRevision) {
+		super("Operation_FetchNewRevisions", resource, repositoryCache); //$NON-NLS-1$
+		this.lastRepositoryRevision = lastRepositoryRevision;
 	}
 	
 	protected void prepareData(IProgressMonitor monitor) throws Exception {
 		RepositoryCacheInfo cacheInfo = this.repositoryCache.getCacheInfo();
 		
 		this.startRevision = cacheInfo.getLastProcessedRevision() + 1;
-		this.endRevision = this.checkConnectionOp.getLastRepositoryRevision();
+		this.endRevision = this.lastRepositoryRevision;
 		
-		this.canRun = this.checkConnectionOp.getLastRepositoryRevision() > cacheInfo.getLastProcessedRevision();
+		this.canRun = this.lastRepositoryRevision > cacheInfo.getLastProcessedRevision();
 		if (this.canRun) {
 			this.logOptions = Options.DISCOVER_PATHS;
 			this.revProps = ISVNConnector.DEFAULT_LOG_ENTRY_PROPS;

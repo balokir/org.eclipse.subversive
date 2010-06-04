@@ -23,8 +23,8 @@ import org.eclipse.team.svn.revision.graph.cache.RepositoryCache;
  */
 public class FetchSkippedRevisionsOperation extends BaseFetchOperation {
 	
-	public FetchSkippedRevisionsOperation(IRepositoryResource resource, CheckRepositoryConnectionOperation checkConnectionOp, RepositoryCache repositoryCache) {
-		super("Operation_FetchSkippedRevisions", resource, checkConnectionOp, repositoryCache);	 //$NON-NLS-1$
+	public FetchSkippedRevisionsOperation(IRepositoryResource resource, RepositoryCache repositoryCache) {
+		super("Operation_FetchSkippedRevisions", resource, repositoryCache);	 //$NON-NLS-1$
 	}
 	
 	protected void prepareData(IProgressMonitor monitor) throws Exception {		

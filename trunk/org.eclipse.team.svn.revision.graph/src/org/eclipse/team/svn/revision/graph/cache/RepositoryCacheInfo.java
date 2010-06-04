@@ -25,12 +25,12 @@ import org.eclipse.team.svn.core.resource.IRepositoryResource;
 import org.eclipse.team.svn.core.utility.FileUtility;
 import org.eclipse.team.svn.core.utility.ProgressMonitorUtility;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
-import org.eclipse.team.svn.revision.graph.operation.CheckRepositoryConnectionOperation;
 import org.eclipse.team.svn.revision.graph.operation.FetchNewMergeInfoOperation;
 import org.eclipse.team.svn.revision.graph.operation.FetchNewRevisionsOperation;
 import org.eclipse.team.svn.revision.graph.operation.FetchSkippedMergeInfoOperation;
 import org.eclipse.team.svn.revision.graph.operation.FetchSkippedRevisionsOperation;
 import org.eclipse.team.svn.revision.graph.operation.PrepareRevisionDataOperation;
+import org.eclipse.team.svn.revision.graph.operation.RepositoryConnectionInfo;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
 /**
@@ -261,6 +261,18 @@ public class RepositoryCacheInfo {
 		return this.isDirty;
 	}
 	
+	/** 
+	 * @return Flag which indicates whether cache is calculating now
+	 * 
+	 * We need this flag in order not to show or pre-calculate any needed cache
+	 * information if cache is calculating now, e.g. check connection, customize graph settings etc.
+	 */
+	public boolean isCacheDataCalculating() {
+		synchronized (this.calculateLock) {
+			return this.isCalculating;
+		}
+	}
+	
 	/**
 	 * Calculate cache data.
 	 * 
@@ -280,7 +292,9 @@ public class RepositoryCacheInfo {
 	 * 
 	 * - if there are references to cache and this method is called, then update cache
 	 */
-	public CacheResult createCacheData(IRepositoryResource resource, IProgressMonitor monitor) {		
+	public CacheResult createCacheData(IRepositoryResource resource,
+		RepositoryConnectionInfo connectionData, IProgressMonitor monitor) {
+		
 		boolean isRefresh = false;
 		RepositoryCache previousCache = null;
 		synchronized (this.calculateLock) {
@@ -306,11 +320,11 @@ public class RepositoryCacheInfo {
 			RepositoryCache cache;
 			IActionOperation op;
 			if (isRefresh) {
-				op = this.getRefreshOperation(resource, previousCache);
+				op = this.getCreateOperation(resource, previousCache, true, connectionData);
 				cache = previousCache;
 			} else {
 				cache = new RepositoryCache(this.getCacheDataFile(), this);			
-				op = this.getCreateOperation(resource, cache);
+				op = this.getCreateOperation(resource, cache, false, connectionData);
 			}			
 			
 			//call synchronously				
@@ -342,7 +356,9 @@ public class RepositoryCacheInfo {
 		return cacheDataFile;
 	}
 	
-	public CacheResult refreshCacheData(IRepositoryResource resource, IProgressMonitor monitor) {
+	public CacheResult refreshCacheData(IRepositoryResource resource, 
+		RepositoryConnectionInfo connectionData, IProgressMonitor monitor) {
+		
 		RepositoryCache previousCache = null;
 		synchronized (this.calculateLock) {
 			previousCache = this.repositoryCache;			
@@ -358,7 +374,7 @@ public class RepositoryCacheInfo {
 		}
 		
 		try {		
-			IActionOperation op = this.getRefreshOperation(resource, previousCache);				
+			IActionOperation op = this.getCreateOperation(resource, previousCache, true, connectionData);				
 			
 			//call synchronously				
 			ProgressMonitorUtility.doTask(UIMonitorUtility.DEFAULT_FACTORY.getLogged(op), monitor, 1, 1);			
@@ -377,57 +393,32 @@ public class RepositoryCacheInfo {
 		}
 	}
 	
-	protected IActionOperation getCreateOperation(IRepositoryResource resource, RepositoryCache cache) {
-		CompositeOperation op = new CompositeOperation("Operation_CreateCache", SVNRevisionGraphMessages.class); //$NON-NLS-1$
+	protected IActionOperation getCreateOperation(IRepositoryResource resource, RepositoryCache cache, 
+		boolean isRefresh, RepositoryConnectionInfo connectionData) {
 		
-		CheckRepositoryConnectionOperation checkConnectionOp = new CheckRepositoryConnectionOperation(resource);
-		op.add(checkConnectionOp);
+		CompositeOperation op = new CompositeOperation(isRefresh ? "Operation_RefreshCache" : "Operation_CreateCache", SVNRevisionGraphMessages.class); //$NON-NLS-1$ //$NON-NLS-2$						
 		
-		PrepareRevisionDataOperation prepareDataOp = new PrepareRevisionDataOperation(cache);
-		op.add(prepareDataOp, new IActionOperation[]{checkConnectionOp});							
+		PrepareRevisionDataOperation prepareDataOp = null;
+		if (!isRefresh) {
+			prepareDataOp = new PrepareRevisionDataOperation(cache);
+			op.add(prepareDataOp);
+		}							
 		
-		FetchSkippedRevisionsOperation fetchSkippedOp = new FetchSkippedRevisionsOperation(resource, checkConnectionOp, cache);
-		op.add(fetchSkippedOp, new IActionOperation[]{prepareDataOp});
-		
-		FetchNewRevisionsOperation fetchNewOp = new FetchNewRevisionsOperation(resource, checkConnectionOp, cache);
-		op.add(fetchNewOp, new IActionOperation[]{fetchSkippedOp});	
-
-		//TODO
-		boolean includeMerged = true;
-		
-		if (includeMerged) {
-			FetchSkippedMergeInfoOperation fetchSkippedMergeOp = new FetchSkippedMergeInfoOperation(resource, checkConnectionOp, cache);
-			op.add(fetchSkippedMergeOp, new IActionOperation[]{fetchNewOp});
+		if (connectionData.hasConnection) {
+			FetchSkippedRevisionsOperation fetchSkippedOp = new FetchSkippedRevisionsOperation(resource, cache);
+			op.add(fetchSkippedOp, prepareDataOp != null ? new IActionOperation[]{prepareDataOp} : new IActionOperation[0]);
 			
-			FetchNewMergeInfoOperation fetchNewMergeOp = new FetchNewMergeInfoOperation(resource, checkConnectionOp, cache);
-			op.add(fetchNewMergeOp, new IActionOperation[]{fetchSkippedMergeOp});		
-		}
-		
-		return op;
-	}
-	
-	protected IActionOperation getRefreshOperation(IRepositoryResource resource, RepositoryCache cache) {
-		CompositeOperation op = new CompositeOperation("Operation_RefreshCache", SVNRevisionGraphMessages.class); //$NON-NLS-1$
-		
-		CheckRepositoryConnectionOperation checkConnectionOp = new CheckRepositoryConnectionOperation(resource);
-		op.add(checkConnectionOp);						
-							
-		FetchSkippedRevisionsOperation fetchSkippedOp = new FetchSkippedRevisionsOperation(resource, checkConnectionOp, cache);
-		op.add(fetchSkippedOp, new IActionOperation[]{checkConnectionOp});
-		
-		FetchNewRevisionsOperation fetchNewOp = new FetchNewRevisionsOperation(resource, checkConnectionOp, cache);
-		op.add(fetchNewOp, new IActionOperation[]{fetchSkippedOp});	
-		
-		//TODO
-		boolean includeMerged = true;
-		
-		if (includeMerged) {
-			FetchSkippedMergeInfoOperation fetchSkippedMergeOp = new FetchSkippedMergeInfoOperation(resource, checkConnectionOp, cache);
-			op.add(fetchSkippedMergeOp, new IActionOperation[]{fetchNewOp});
-			
-			FetchNewMergeInfoOperation fetchNewMergeOp = new FetchNewMergeInfoOperation(resource, checkConnectionOp, cache);
-			op.add(fetchNewMergeOp, new IActionOperation[]{fetchSkippedMergeOp});		
-		}
+			FetchNewRevisionsOperation fetchNewOp = new FetchNewRevisionsOperation(resource, cache, connectionData.lastRepositoryRevision);
+			op.add(fetchNewOp, new IActionOperation[]{fetchSkippedOp});
+									
+			if (connectionData.isSupportMergeInfo) {
+				FetchSkippedMergeInfoOperation fetchSkippedMergeOp = new FetchSkippedMergeInfoOperation(resource, cache);
+				op.add(fetchSkippedMergeOp, new IActionOperation[]{fetchNewOp});
+				
+				FetchNewMergeInfoOperation fetchNewMergeOp = new FetchNewMergeInfoOperation(resource, cache, connectionData.lastRepositoryRevision);
+				op.add(fetchNewMergeOp, new IActionOperation[]{fetchSkippedMergeOp});		
+			}
+		}	
 		
 		return op;
 	}

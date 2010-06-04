@@ -204,6 +204,9 @@
 	<context id="revisionLinkDialogContext">
 		<description>This dialog provides the user a probability to select a revision to create a link to.</description>
 	</context>
+	<context id="showRevisionGraphDialogContext">
+		<description>This dialog provides the user a probability to specify options for revision graph.</description>
+	</context>	
 
 	<!-- Wizards Contexts -->
 	<!-- New Repository Location Wizard -->

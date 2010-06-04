@@ -90,20 +90,9 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 			this.resultNode = this.createRevisionNode(entry, pathIndex, false);	
 									
 			this.createRevisionGraph(this.resultNode, monitor);
-			this.addMergeInfo(monitor);
 		}									
 				
 		processMeasure.end();
-	}
-	
-	/*
-	 * Add merge information to already created revision graph
-	 */
-	protected void addMergeInfo(IProgressMonitor monitor) {
-		TimeMeasure mergeMeasure = new TimeMeasure("Add merge info"); //$NON-NLS-1$
-		GraphMergeInfoProcessor mergeProcessor = new GraphMergeInfoProcessor(this);
-		mergeProcessor.run(monitor);
-		mergeMeasure.end();
 	}
 	
 	/*
@@ -640,6 +629,8 @@ public class CreateRevisionGraphModelOperation extends AbstractActionOperation {
 	
 	/**
 	 * Return start node of revision chain for passed resource
+	 * 
+	 * Model can be null if it can't be calculated for some reason
 	 * 
 	 * @return
 	 */
