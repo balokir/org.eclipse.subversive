@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.team.svn.revision.graph.graphic.figure;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.Figure;
 import org.eclipse.draw2d.GridData;
@@ -22,6 +27,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.team.svn.core.SVNMessages;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
+import org.eclipse.team.svn.revision.graph.graphic.NodeMergeData;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
 import org.eclipse.team.svn.ui.utility.DateFormatter;
 
@@ -38,6 +44,10 @@ public class RevisionTooltipFigure extends Figure {
 	protected Label authorText;
 	protected Label dateText;
 	protected Label copyText;
+		
+	protected Label mergedFromText;
+	protected Label mergedToText;
+	
 	protected Label commentText;
 	
 	public RevisionTooltipFigure(RevisionNode revisionNode) {
@@ -53,6 +63,8 @@ public class RevisionTooltipFigure extends Figure {
 		ToolbarLayout parentLayout = new ToolbarLayout();
 		this.setLayoutManager(parentLayout);
 		
+		Font boldFont = JFaceResources.getFontRegistry().getBold(JFaceResources.DEFAULT_FONT);
+		
 		Figure parent = new Figure();
 		this.add(parent);
 		
@@ -67,14 +79,14 @@ public class RevisionTooltipFigure extends Figure {
 		data.grabExcessHorizontalSpace = true;
 		data.horizontalSpan = 2;
 		layout.setConstraint(this.pathText, data);
-		Font boldFont = JFaceResources.getFontRegistry().getBold(JFaceResources.DEFAULT_FONT);
 		this.pathText.setFont(boldFont);
-		
+				
 		//author
 		Label authorLabel = new Label(SVNRevisionGraphMessages.RevisionTooltipFigure_Author);
 		parent.add(authorLabel);
 		data = new GridData();
 		layout.setConstraint(authorLabel, data);
+		authorLabel.setFont(boldFont);
 		
 		this.authorText = new Label();
 		parent.add(this.authorText);
@@ -85,6 +97,7 @@ public class RevisionTooltipFigure extends Figure {
 		parent.add(dateLabel);
 		data = new GridData();
 		layout.setConstraint(dateLabel, data);
+		dateLabel.setFont(boldFont);		
 		
 		this.dateText = new Label();
 		parent.add(this.dateText);
@@ -96,10 +109,51 @@ public class RevisionTooltipFigure extends Figure {
 			parent.add(copyLabel);
 			data = new GridData();
 			layout.setConstraint(copyLabel, data);
+			copyLabel.setFont(boldFont);
 			
 			this.copyText = new Label();
 			parent.add(this.copyText);
 			layout.setConstraint(this.copyText, new GridData());	
+		}
+		
+		//merged from
+		if (this.revisionNode.hasMergedFrom()) {
+			Label mergedFromLabel = new Label(SVNRevisionGraphMessages.RevisionTooltipFigure_MergedFrom);
+			parent.add(mergedFromLabel);
+			data = new GridData();
+			data.horizontalAlignment = SWT.LEFT;
+			data.grabExcessHorizontalSpace = true;
+			data.horizontalSpan = 2;
+			layout.setConstraint(mergedFromLabel, data);			
+			mergedFromLabel.setFont(boldFont);
+			
+			this.mergedFromText = new Label();
+			parent.add(this.mergedFromText);
+			data = new GridData();
+			data.horizontalAlignment = SWT.LEFT;
+			data.grabExcessHorizontalSpace = true;
+			data.horizontalSpan = 2;
+			layout.setConstraint(this.mergedFromText, data);
+		}
+		
+		//merged from
+		if (this.revisionNode.hasMergeTo()) {
+			Label mergedToLabel = new Label(SVNRevisionGraphMessages.RevisionTooltipFigure_MergeTo);
+			parent.add(mergedToLabel);
+			data = new GridData();
+			data.horizontalAlignment = SWT.LEFT;
+			data.grabExcessHorizontalSpace = true;
+			data.horizontalSpan = 2;
+			layout.setConstraint(mergedToLabel, data);
+			mergedToLabel.setFont(boldFont);			
+			
+			this.mergedToText = new Label();
+			parent.add(this.mergedToText);
+			data = new GridData();
+			data.horizontalAlignment = SWT.LEFT;
+			data.grabExcessHorizontalSpace = true;
+			data.horizontalSpan = 2;
+			layout.setConstraint(this.mergedToText, data);
 		}
 		
 		//comment
@@ -110,6 +164,7 @@ public class RevisionTooltipFigure extends Figure {
 		data.grabExcessHorizontalSpace = true;
 		data.horizontalSpan = 2;
 		layout.setConstraint(commentLabel, data);
+		commentLabel.setFont(boldFont);
 		
 		this.commentText = new Label();
 		parent.add(this.commentText);
@@ -135,8 +190,106 @@ public class RevisionTooltipFigure extends Figure {
 			this.copyText.setText(copiedFrom.getPath() + "@" + copiedFrom.getRevision()); //$NON-NLS-1$
 		}
 		
+		
+		
+		//merged from
+		if (this.revisionNode.hasMergedFrom()) {
+			StringBuilder str = new StringBuilder();
+			NodeMergeData[] mergedData = this.revisionNode.getMergedFrom();
+						
+			/*
+			 * As there can be many revisions then we sort and
+			 * group them and limit revisions number in one row
+			 */
+			
+			//as first row contains path, then revisions count should be less
+			final int maxRevisionsInFirstRow = 5;
+			final int maxRevisionsInRow = 15;
+								
+			for (int i = 0; i < mergedData.length; i ++) {
+				str.append(mergedData[i].path).append(": "); //$NON-NLS-1$
+				
+				boolean isFirstRow = true;
+				List<Range> ranges = Range.getRanges(mergedData[i].getRevisions());
+				for (int j = 0, n = ranges.size(); j < n; j ++) {
+					str.append(ranges.get(j));
+																				
+					if (j != n - 1) {
+						str.append(","); //$NON-NLS-1$
+						
+						if (isFirstRow && ((j + 1) % maxRevisionsInFirstRow == 0)) {
+							str.append("\n"); //$NON-NLS-1$
+							isFirstRow = false;
+						} else if (!isFirstRow && ((j + 1) % maxRevisionsInRow == 0)) {
+							str.append("\n"); //$NON-NLS-1$
+						}
+					}										
+				}												
+				
+				if (i != mergedData.length - 1) {
+					str.append("\n"); //$NON-NLS-1$
+				}
+			}
+			this.mergedFromText.setText(str.toString());
+		}
+		
+		//merge to
+		if (this.revisionNode.hasMergeTo()) {
+			StringBuilder str = new StringBuilder();
+			NodeMergeData[] mergedData = this.revisionNode.getMergeTo();
+			for (int i = 0; i < mergedData.length; i ++) {
+				str.append(mergedData[i].path).append(": "); //$NON-NLS-1$
+				
+				long[] revisions = mergedData[i].getRevisions();
+				Arrays.sort(revisions);
+				for (int j = 0, n = revisions.length; j < n; j ++) {
+					str.append(revisions[j]);
+					if (j != n - 1) {
+						str.append(","); //$NON-NLS-1$
+					}
+				}
+								
+				if (i != mergedData.length - 1) {
+					str.append("\n"); //$NON-NLS-1$
+				}
+			}
+												
+			this.mergedToText.setText(str.toString());
+		}				
+		
 		String comment = this.revisionNode.getMessage();
 		this.commentText.setText(comment == null || comment.length() == 0 ? SVNMessages.SVNInfo_NoComment : comment);
+	}
+	
+	protected static class Range {
+		long start;
+		long end;
+		
+		Range(long start) {
+			this.end = this.start = start;
+		}		
+		public String toString() {
+			return this.start != this.end ? (this.start + "-" + this.end) : String.valueOf(this.start);  //$NON-NLS-1$
+		}
+		static List<Range> getRanges(long[] revisions) {
+			if (revisions.length == 0) {
+				return Collections.emptyList();				
+			}			
+			Arrays.sort(revisions);
+			List<Range> ranges = new ArrayList<Range>();
+			Range range = new Range(revisions[0]);
+			ranges.add(range);
+			for (int i = 1; i < revisions.length; i ++) {
+				long rev = revisions[i];
+				if (rev -1 != range.end) {
+					range = new Range(rev);
+					ranges.add(range);
+				} else {
+					range.end = rev;
+				}
+			}			
+			return ranges;
+		}
 	}
 
 }

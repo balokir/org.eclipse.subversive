@@ -36,6 +36,7 @@ import org.eclipse.team.svn.revision.graph.SVNRevisionGraphMessages;
 import org.eclipse.team.svn.revision.graph.SVNRevisionGraphPlugin;
 import org.eclipse.team.svn.revision.graph.PathRevision.ReviosionNodeType;
 import org.eclipse.team.svn.revision.graph.PathRevision.RevisionNodeAction;
+import org.eclipse.team.svn.revision.graph.graphic.NodeMergeData;
 import org.eclipse.team.svn.revision.graph.graphic.RevisionNode;
 import org.eclipse.team.svn.ui.utility.UIMonitorUtility;
 
@@ -68,6 +69,9 @@ public class RevisionFigure extends Figure {
 	public final static Image MODIFY_IMAGE;
 	public final static Image RENAME_IMAGE;
 	public final static Image OTHER_IMAGE;
+	public final static Image INCOMING_MERGE_IMAGE;
+	public final static Image OUTGOING_MERGE_IMAGE;
+	public final static Image MERGE_IMAGE;
 	
 	protected RevisionNode revisionNode;
 	protected String path;
@@ -81,6 +85,9 @@ public class RevisionFigure extends Figure {
 	protected Label statusFigure;
 	protected TextFlow pathTextFlow;
 	protected Label commentFigure;
+		
+	protected Label mergeToLabel;
+	protected Label mergeFromLabel;
 	
 	static {
 		//images
@@ -107,6 +114,15 @@ public class RevisionFigure extends Figure {
 		
 		OTHER_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/other.png").createImage(); //$NON-NLS-1$
 		SVNRevisionGraphPlugin.disposeOnShutdown(OTHER_IMAGE);
+		
+		INCOMING_MERGE_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/incoming.gif").createImage(); //$NON-NLS-1$
+		SVNRevisionGraphPlugin.disposeOnShutdown(INCOMING_MERGE_IMAGE);
+		
+		OUTGOING_MERGE_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/outgoing.gif").createImage(); //$NON-NLS-1$
+		SVNRevisionGraphPlugin.disposeOnShutdown(OUTGOING_MERGE_IMAGE);
+		
+		MERGE_IMAGE = SVNRevisionGraphPlugin.instance().getImageDescriptor("icons/merge.gif").createImage(); //$NON-NLS-1$
+		SVNRevisionGraphPlugin.disposeOnShutdown(MERGE_IMAGE);
 		
 		//colors
 		TRUNK_COLOR = new Color(UIMonitorUtility.getDisplay(), 188, 255, 188);
@@ -172,6 +188,35 @@ public class RevisionFigure extends Figure {
 		//status
 		this.statusFigure = new Label();
 		revisionParent.add(this.statusFigure);		
+		
+		//merge
+		if (this.revisionNode.hasMergedFrom() || this.revisionNode.hasMergeTo()) {
+			Figure mergeParent = new Figure();
+			this.add(mergeParent);		
+			FlowLayout mergeParentLayout = new FlowLayout(true);
+			mergeParent.setLayoutManager(mergeParentLayout);
+			data = new GridData();
+			layout.setConstraint(mergeParent, data);						
+			
+			Label mergeTextLabel = new Label(SVNRevisionGraphMessages.RevisionFigure_Merges);
+			mergeParent.add(mergeTextLabel);						
+			mergeTextLabel.setIcon(MERGE_IMAGE);
+			mergeTextLabel.setFont(boldFont);							
+			
+			//incoming
+			if (this.revisionNode.hasMergedFrom()) {
+				this.mergeFromLabel = new Label();
+				mergeParent.add(this.mergeFromLabel);			
+				this.mergeFromLabel.setIcon(INCOMING_MERGE_IMAGE);
+			}			
+			
+			//outgoing
+			if (this.revisionNode.hasMergeTo()) {
+				this.mergeToLabel = new Label();
+				mergeParent.add(this.mergeToLabel);				
+				this.mergeToLabel.setIcon(OUTGOING_MERGE_IMAGE);
+			}
+		}
 				
 		//path
 		if (this.revisionNode.getAction() == RevisionNodeAction.ADD || 
@@ -281,6 +326,30 @@ public class RevisionFigure extends Figure {
 		this.nodeColor = this.originalNodeColor;
 		this.borderColor = RevisionFigure.getRevisionNodeBorderColor(this.revisionNode);
 		this.childrenColor = ColorConstants.black;
+		
+		//merges
+		
+		/*
+		 * show number of merges and number of revisions
+		 * in these merges, e.g. 2 (40 revs) 
+		 */
+		if (this.revisionNode.hasMergedFrom()) {
+			StringBuilder str = new StringBuilder();
+			NodeMergeData[] md = this.revisionNode.getMergedFrom();
+			str.append(md.length).append(" ("); //$NON-NLS-1$
+			int revsCount = 0;
+			for (NodeMergeData data : md) {
+				revsCount += data.getRevisionsCount();
+			}
+			str.append(revsCount).append(" ").append(SVNRevisionGraphMessages.RevisionFigure_Revisions).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
+			this.mergeFromLabel.setText(str.toString());
+		}
+		//shown only number of merges
+		if (this.revisionNode.hasMergeTo()) {
+			NodeMergeData[] md = this.revisionNode.getMergeTo();
+			String str = String.valueOf(md.length);
+			this.mergeToLabel.setText(str);
+		}		
 	}
 	
 	public void init() {
